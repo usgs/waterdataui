@@ -10,9 +10,6 @@ fi
 
 if [ "$ARG1" == '--clean' ]; then
 	echo "Cleaning out current dependencies";
-
-    rm -rf node_modules;
-	rm -rf wqp/static;
 	rm -rf env;
 fi
 
