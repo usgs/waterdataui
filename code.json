@@ -1,0 +1,46 @@
+[
+  {
+    "name": "Water Data UI",
+    "organization": "U.S. Geological Survey",
+    "description": "Water Data for the Nation - contains a page for each NWIS site",
+    "version": "v0.1.0",
+    "status": "Development",
+
+    "permissions": {
+      "usageType": "openSource",
+      "licenses": [
+        {
+          "name": "Public Domain, CC0-1.0",
+          "URL": "https://github.com/usgs/best-practices/blob/master/LICENSE.md"
+        }
+      ]
+    },
+
+    "homepageURL": "https://github.com/usgs/waterdataui",
+    "downloadURL": "https://github.com/usgs/waterdataui/archive/master.zip",
+    "disclaimerURL": "https://github.com/usgs/waterdataui/blob/master/LICENSE.md",
+    "repositoryUrl": "https://github.com/usgs/waterdataui.git",
+    "vcs": "git",
+
+    "laborHours": null,
+
+    "tags": [
+      "water data",
+      "NWIS"
+    ],
+
+    "languages": [
+      "python 3.6",
+      "javascript"
+    ],
+
+    "contact": {
+      "name": "Mary Bucknell",
+      "email": "mbucknell@usgs.gov"
+    },
+
+    "date": {
+      "metadataLastUpdated": "2017-12-18"
+    }
+  }
+]
