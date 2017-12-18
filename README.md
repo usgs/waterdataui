@@ -15,7 +15,7 @@ run the tests. Below are the installation instructions if not using the bash scr
 ```bash
 % env/bin/python -m unittest
 ```
-3. To override any Flask configuration parameters, create instance/config.py and add an variables. These will override
+3. To override any Flask configuration parameters, create instance/config.py and add variables. These will override
 any values in the project's config.py.
 4. To run the development server, execute the following:
 ```bash
