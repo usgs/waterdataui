@@ -1,0 +1,4 @@
+include *.md
+recursive-include waterdata/templates *
+prune instance
+global-exclude .gitignore
