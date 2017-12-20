@@ -1,0 +1,67 @@
+{
+  "name": "waterdataui-assets",
+  "version": "0.1.0dev",
+  "description": "Compiled static assets for Water Data For The Nation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf dist && mkdir dist",
+    "build": "npm run clean && run-p build:*",
+    "build:css": "node-sass --include-path node_modules/uswds/src/stylesheets assets/styles/main.scss | uglifycss > dist/main.css",
+    "build:fonts": "mkdir -p dist/fonts && cp node_modules/uswds/src/fonts/* dist/fonts",
+    "build:images": "mkdir -p dist/img && cp -r node_modules/uswds/src/img/* dist/img",
+    "build:js": "browserify -t uglifyify assets/scripts/index.js | uglifyjs -c > dist/bundle.js",
+    "serve:static": "live-server --port=9000 --cors --no-browser dist",
+    "serve:python": "env/bin/python run.py",
+    "start": "run-p watch serve:python",
+    "watch": "run-p watch:* serve:static",
+    "watch:css": "nodemon -w assets/styles -e scss -x \"npm run build:css\"",
+    "watch:fonts": "nodemon -w node_modules/uswds/src/fonts -x \"npm run build:fonts\"",
+    "watch:images": "npm run build:images",
+    "watch:js": "watchify assets/scripts/index.js -o dist/bundle.js -dv"
+  },
+  "engines": {
+    "node": "8.9.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/usgs/waterdataui.git"
+  },
+  "author": "USGS",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/usgs/waterdataui/issues"
+  },
+  "homepage": "https://github.com/usgs/waterdataui#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babelify": "^8.0.0",
+    "browserify": "^14.5.0",
+    "live-server": "^1.2.0",
+    "node-sass": "^4.7.2",
+    "nodemon": "^1.13.3",
+    "npm-run-all": "^4.1.2",
+    "rollupify": "^0.4.0",
+    "uglify-js": "^3.2.2",
+    "uglifycss": "0.0.27",
+    "uglifyify": "^4.0.5",
+    "watchify": "^3.9.0"
+  },
+  "dependencies": {
+    "uswds": "^1.4.4"
+  },
+  "browserify": {
+    "transform": [
+      "rollupify",
+      [
+        "babelify",
+        {
+          "presets": [
+            "env"
+          ]
+        }
+      ]
+    ]
+  }
+}

@@ -105,3 +105,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Node.js stuff
+node_modules/
