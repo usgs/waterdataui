@@ -33,7 +33,7 @@
     "url": "https://github.com/usgs/waterdataui/issues"
   },
   "homepage": "https://github.com/usgs/waterdataui#readme",
-  "dependencies": {
+  "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babelify": "^8.0.0",
@@ -46,8 +46,10 @@
     "uglify-js": "^3.2.2",
     "uglifycss": "0.0.27",
     "uglifyify": "^4.0.5",
-    "uswds": "^1.4.4",
     "watchify": "^3.9.0"
+  },
+  "dependencies": {
+    "uswds": "^1.4.4"
   },
   "browserify": {
     "transform": [
