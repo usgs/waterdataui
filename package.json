@@ -12,12 +12,13 @@
     "build:images": "mkdir -p dist/img && cp -r node_modules/uswds/src/img/* dist/img",
     "build:js": "browserify -t uglifyify assets/scripts/index.js | uglifyjs -c > dist/bundle.js",
     "serve:static": "live-server --port=9000 --cors --no-browser dist",
+    "serve:python": "env/bin/python run.py",
+    "start": "run-p watch serve:python",
     "watch": "run-p watch:* serve:static",
     "watch:css": "nodemon -w assets/styles -e scss -x \"npm run build:css\"",
     "watch:fonts": "nodemon -w node_modules/uswds/src/fonts -x \"npm run build:fonts\"",
     "watch:images": "npm run build:images",
-    "watch:js": "watchify assets/scripts/index.js -o dist/bundle.js -dv",
-    "watch:python": "./run.py"
+    "watch:js": "watchify assets/scripts/index.js -o dist/bundle.js -dv"
   },
   "engines": {
     "node": "8.9.3"
