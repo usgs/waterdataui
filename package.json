@@ -19,6 +19,9 @@
     "watch:js": "watchify assets/scripts/index.js -o dist/bundle.js -dv",
     "watch:python": "./run.py"
   },
+  "engines": {
+    "node": "8.9.3"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/usgs/waterdataui.git"
