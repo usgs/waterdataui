@@ -56,7 +56,7 @@ def identify_data_files(directory_names, exclusions=('.gitignore', '.webassets-c
 
 
 parsed_requirements = read_requirements()
-data_files = identify_data_files(['static'])
+data_files = identify_data_files(['assets/dist'])
 setup(name='usgs_waterdata_ui',
       version='0.1.0dev',
       description='USGS Water Data',
