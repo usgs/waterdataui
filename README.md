@@ -115,18 +115,11 @@ env/bin/python -m unittest
 
 The Javascript tests may be run via node.js or in a browser.
 
-To run tests in Chrome via Karma, these are all equivalent:
+To run tests in Chrome via Karma, these are equivalent:
 
 ```bash
 npm test
 npm run test
-npm run test:karma
-```
-
-To run tests in node.js via Jasmine:
-
-```bash
-npm run test:jasmine
 ```
 
 To watch Javascript files for changes and re-run tests with Karma on change,
