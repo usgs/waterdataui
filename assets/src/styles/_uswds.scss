@@ -3,6 +3,9 @@
  * Standards. Unused includes are commented out, for space efficiency.
  */
 
+$font-path: './fonts';
+$image-path: './img';
+
 // Vendor -------------- //
 @import 'lib/bourbon';
 @import 'lib/neat';
