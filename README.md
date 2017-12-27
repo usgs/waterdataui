@@ -38,13 +38,7 @@ virtualenv --python=python3.6 env
 env/bin/pip install -r requirements.txt
 ```
 
-2. The python tests can be run as follows:
-
-```bash
-env/bin/python -m unittest
-```
-
-3. To override any Flask configuration parameters, modify `instance/config.py`.
+2. To override any Flask configuration parameters, modify `instance/config.py`.
 These will override any values in the project's `config.py`.
 
 ### Node.js dependencies
@@ -105,4 +99,39 @@ changes:
 
 ```bash
 npm run serve:static
+```
+
+## Running tests
+
+### Python tests
+
+The Python tests can be run as follows:
+
+```bash
+env/bin/python -m unittest
+```
+
+### Javascript tests
+
+The Javascript tests may be run via node.js or in a browser.
+
+To run tests in Chrome via Karma, these are all equivalent:
+
+```bash
+npm test
+npm run test
+npm run test:karma
+```
+
+To run tests in node.js via Jasmine:
+
+```bash
+npm run test:jasmine
+```
+
+To watch Javascript files for changes and re-run tests with Karma on change,
+run:
+
+```bash
+npm run test:watch
 ```
