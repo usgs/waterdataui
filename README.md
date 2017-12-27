@@ -1,5 +1,8 @@
 # Water Data for the Nation UI
 
+[![Build Status](https://travis-ci.org/danielnaab/waterdataui.svg?branch=wdfn-9-travisci)](https://travis-ci.org/danielnaab/waterdataui)
+[![Coverage Status](https://coveralls.io/repos/github/danielnaab/waterdataui/badge.svg?branch=wdfn-9-travisci)](https://coveralls.io/github/danielnaab/waterdataui?branch=wdfn-9-travisci)
+
 This repo contains a Flask web application that is used to create pages for
 USGS water data. The application has been developed using Python 3.6 and
 Node.js 8.9.3. This is a work in progress.
