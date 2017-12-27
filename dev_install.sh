@@ -9,7 +9,7 @@ if [ ! -s instance/config.py ]; then
 fi
 
 # Read the required node version from package.json
-NODE_VERSION=$(python -c "import json; print(json.loads(open('./package.json').read())['engines']['node'])")
+NODE_VERSION=$(python3 -c "import json; print(json.loads(open('./package.json').read())['engines']['node'])")
 echo "Node.js $NODE_VERSION required."
 if [ $(node --version) != v$NODE_VERSION ]; then
 	echo "Please use node.js version $NODE_VERSION."
