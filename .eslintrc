@@ -1,6 +1,12 @@
 {
+  "env": {
+    "commonjs": true,
+    "es6": true
+  },
+  "extends": "eslint:recommended",
   "rules": {
     "comma-dangle": [2,"never"],
+    "linebreak-style": ["error", "unix"],
     "no-cond-assign": [2,"except-parens"],
     "no-console": 2,
     "no-constant-condition": 2,
@@ -31,6 +37,8 @@
     "no-undef": 2,
     "no-use-before-define": 2,
     "brace-style": [1,"1tbs",{}],
-    "no-mixed-spaces-and-tabs": 2
+    "no-mixed-spaces-and-tabs": 2,
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"]
   }
 }
