@@ -1,5 +1,7 @@
 # Water Data for the Nation UI
 
+[![Dependency Status](https://gemnasium.com/badges/github.com/usgs/waterdataui.svg)](https://gemnasium.com/github.com/usgs/waterdataui)
+
 This repo contains a Flask web application that is used to create pages for
 USGS water data. The application has been developed using Python 3.6 and
 Node.js 8.9.3. This is a work in progress.
