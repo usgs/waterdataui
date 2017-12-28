@@ -1,6 +1,7 @@
 # Water Data for the Nation UI
 
 [![Dependency Status](https://gemnasium.com/badges/github.com/usgs/waterdataui.svg)](https://gemnasium.com/github.com/usgs/waterdataui)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/05497ebda0d2450bb11eba0e436f4360)](https://www.codacy.com/app/ayan/waterdataui?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=usgs/waterdataui&amp;utm_campaign=Badge_Grade)
 
 This repo contains a Flask web application that is used to create pages for
 USGS water data. The application has been developed using Python 3.6 and
