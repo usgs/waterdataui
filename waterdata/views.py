@@ -7,6 +7,7 @@ import pandas as pd
 import requests as r
 
 from . import app, __version__
+from .utils import get_water_services_data, parse_rdb
 
 
 water_services = app.config['WATER_SERVICES']
@@ -19,10 +20,7 @@ def home():
 
 @app.route('/monitoringlocation/<site_no>')
 def monitoring_location(site_no):
-    water_services_target = urljoin(water_services, 'nwis/site/?site={}'.format(site_no))
-    ws_resp = r.get(water_services_target)
-    rdb_site_data = StringIO(ws_resp.content.decode('utf-8'))
-    df = pd.read_csv(rdb_site_data, sep='\t', comment='#', dtype=str).iloc[1::]
-    data = df.to_dict('records')[0]
+    raw_rdb_data = get_water_services_data(water_services, 'nwis/site/?site={}'.format(site_no))
+    data = parse_rdb(raw_rdb_data)
     station_name = data['station_nm']
     return render_template('monitoringlocation.html', station_name=station_name)
