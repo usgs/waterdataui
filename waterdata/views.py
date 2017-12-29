@@ -1,10 +1,5 @@
 
-from io import StringIO
-from urllib.parse import urljoin
-
 from flask import render_template
-import pandas as pd
-import requests as r
 
 from . import app, __version__
 from .utils import get_water_services_data, parse_rdb
