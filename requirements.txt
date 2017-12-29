@@ -1,6 +1,16 @@
+certifi==2017.11.5
+chardet==3.0.4
 click==6.7
 Flask==0.12.2
+idna==2.6
 itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
+numpy==1.13.3
+pandas==0.21.1
+python-dateutil==2.6.1
+pytz==2017.3
+requests==2.18.4
+six==1.11.0
+urllib3==1.22
 Werkzeug==0.13

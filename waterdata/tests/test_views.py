@@ -4,6 +4,7 @@ from unittest import TestCase
 from .. import app
 from ..views import __version__
 
+
 class TestHomeView(TestCase):
 
     def setUp(self):
