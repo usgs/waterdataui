@@ -1,11 +1,14 @@
+"""
+Unit tests for the main WDFN views.
+"""
 
 from unittest import TestCase
 
 from .. import app
 from ..views import __version__
 
-class TestHomeView(TestCase):
 
+class TestHomeView(TestCase):
     def setUp(self):
         self.app_client = app.test_client()
 
