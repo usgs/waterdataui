@@ -19,8 +19,8 @@ def home():
 
 @app.route('/monitoringlocation/<site_no>')
 def monitoring_location(site_no):
-    waterservices_target = urljoin(water_services, 'nwis/site/?site={}'.format(site_no))
-    ws_resp = r.get(waterservices_target)
+    water_services_target = urljoin(water_services, 'nwis/site/?site={}'.format(site_no))
+    ws_resp = r.get(water_services_target)
     rdb_site_data = StringIO(ws_resp.content.decode('utf-8'))
     df = pd.read_csv(rdb_site_data, sep='\t', comment='#', dtype=str).iloc[1::]
     data = df.to_dict('records')[0]
