@@ -9,9 +9,10 @@
         <title>WDFN UI Home</title>
     </head>
     <body>
+        <div id="skip"><a href="#main-content">Skip to main content</a></div>
         {% include 'partials/usa_banner.html' %}
         {% include 'partials/header.html' %}
-        <main class="usa-grid">
+        <main id="main-content" class="usa-grid">
             {% block content %}{% endblock %}
         </main>
         {% include 'partials/footer.html' %}
