@@ -10,7 +10,7 @@ def execute_get_request(hostname, path=None, params=None):
     :param str hostname: Scheme and hostname of the target service
     :param str path: path part of the url
     :param dict params: dictionary of query parameters
-    :return: response of the web service call or None if
+    :return: response of the web service call or None if request times-out or cannot connect
     :rtype: requests.Response
 
     """
