@@ -6,7 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{{ config.STATIC_ROOT }}/main.css">
         <script src="{{ config.STATIC_ROOT }}/bundle.js"></script>
-        <title>WDFN UI Home</title>
+        <title>
+            {% block title %}WDFN UI Home{% endblock %}
+        </title>
     </head>
     <body>
         <div id="skip"><a href="#main-content">Skip to main content</a></div>
