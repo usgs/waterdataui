@@ -4,8 +4,12 @@
     <div class="usa-width-one-whole">
         {% if status_code == 200 %}
             <h1>Station Name: {{ station.station_nm }}</h1>
-            <a href="{{ config.LEGACY_SITE_INVENTORY_ENDPOINT }}/?site_no={{ station.site_no }}" target="_blank">Legacy site inventory page</a>
+            <ul>
+                <li><a href="{{ config.LEGACY_ENDPOINTS.INVENTORY }}/?site_no={{ station.site_no }}" target="_blank">Legacy site inventory page</a></li>
+                <li><a href="{{ config.LEGACY_ENDPOINTS.UV }}/?ts_id=158053&format=img_default&site_no={{ station.site_no }}&period=7" target="_blank">Legacy Presentation Chart</a></li>
+            </ul>
 
+            <div class="hydrograph" data-siteno="{{ station.site_no }}"></div>
             <table>
             <thead>
                 <tr>

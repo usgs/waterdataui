@@ -41,6 +41,7 @@
     "babel-preset-env": "^1.6.1",
     "babelify": "^8.0.0",
     "browserify": "^14.5.0",
+    "eslint-plugin-jasmine": "^2.9.1",
     "jasmine": "^2.8.0",
     "karma": "^2.0.0",
     "karma-browserify": "^5.1.2",
@@ -59,7 +60,9 @@
     "watchify": "^3.9.0"
   },
   "dependencies": {
-    "uswds": "^1.4.4"
+    "d3": "^4.12.2",
+    "uswds": "^1.4.4",
+    "xhr": "^2.4.1"
   },
   "browserify": {
     "transform": [
@@ -73,5 +76,8 @@
         }
       ]
     ]
+  },
+  "browser": {
+    "request": "xhr"
   }
 }

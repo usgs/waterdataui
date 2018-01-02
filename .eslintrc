@@ -1,8 +1,16 @@
 {
   "env": {
     "commonjs": true,
-    "es6": true
+    "es6": true,
+    "jasmine": true
   },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "jasmine"
+  ],
   "extends": "eslint:recommended",
   "rules": {
     "comma-dangle": [2,"never"],
@@ -13,5 +21,8 @@
     "no-mixed-spaces-and-tabs": 2,
     "quotes": ["error", "single"],
     "semi": ["error", "always"]
+  },
+  "globals": {
+    "document": true
   }
 }
