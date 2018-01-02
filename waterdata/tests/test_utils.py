@@ -38,24 +38,21 @@ class TestGetWaterServicesData(TestCase):
     def test_success(self, r_mock):
         r_mock.get(self.test_url, status_code=200, text=self.test_rdb_text, reason='OK')
         result = get_water_services_data(self.test_hostname, 'nwis/site/?site={}'.format(self.test_site_number))
-        self.assertEqual(len(result), 3)
-        self.assertIn(self.test_site_number, result[0])
-        self.assertEqual('OK', result[2])
+        expected = (self.test_rdb_text, 200, 'OK')
+        self.assertTupleEqual(expected, result)
 
     @requests_mock.mock()
     def test_bad_request(self, r_mock):
         r_mock.get(self.test_url, status_code=400, text=self.test_bad_resp, reason='Some Reason')
         result = get_water_services_data(self.test_hostname, 'nwis/site/?site={}'.format(self.test_site_number))
-        self.assertEqual(len(result), 3)
-        self.assertIsNone(result[0])
-        self.assertEqual('Some Reason', result[2])
+        expected = (None, 400, 'Some Reason')
+        self.assertTupleEqual(expected, result)
 
     def test_service_timeout(self):
         with mock.patch('waterdata.utils.r.get') as r_mock:
             r_mock.side_effect = r.exceptions.Timeout
             result = get_water_services_data(self.test_hostname, 'nwis/site/?site={}'.format(self.test_site_number))
         expected = (None, None, None)
-        self.assertEqual(len(result), 3)
         self.assertTupleEqual(expected, result)
 
 
