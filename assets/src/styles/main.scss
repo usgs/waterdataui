@@ -15,6 +15,7 @@
     }
   }
   .usgs-header-links-container {
+    margin: 4px 8px;
     font-size: $small-font-size;
     @media screen and (max-width: $small-screen) {
       #usgs-home-link {
@@ -23,11 +24,6 @@
     }
     @media screen and (min-width: $small-screen) {
       font-size: $base-font-size
-
-    }
-    ul {
-      list-style-type: none;
-      margin: 4px 8px;
     }
     display: inline-block;
     float: right;

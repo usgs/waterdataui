@@ -11,9 +11,9 @@
     <body>
         {% include 'partials/usa_banner.html' %}
         {% include 'partials/header.html' %}
-        <div class="usa-nav-container">
+        <main class="usa-grid">
             {% block content %}{% endblock %}
-        </div>
+        </main>
         {% include 'partials/footer.html' %}
         {% block extra_body %}{% endblock %}
     </body>
