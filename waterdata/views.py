@@ -1,3 +1,6 @@
+"""
+Main application views.
+"""
 
 from flask import render_template
 
@@ -8,8 +11,10 @@ from .utils import get_water_services_data, parse_rdb
 water_services = app.config['WATER_SERVICES']
 
 
+
 @app.route('/')
 def home():
+    """Render the home page."""
     return render_template('index.html', version=__version__)
 
 

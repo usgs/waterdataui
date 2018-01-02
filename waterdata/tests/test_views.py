@@ -1,3 +1,6 @@
+"""
+Unit tests for the main WDFN views.
+"""
 
 from unittest import TestCase
 
@@ -8,7 +11,6 @@ from ..views import __version__
 
 
 class TestHomeView(TestCase):
-
     def setUp(self):
         self.app_client = app.test_client()
 
