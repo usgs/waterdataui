@@ -23,6 +23,13 @@ def execute_get_request(hostname, path=None, params=None):
 
 
 def parse_rdb(rdb_iter_lines):
+    """
+    Parse records in an RDB file into dictionaries.
+
+    :param iterator rdb_iter_lines: iterator containing lines from an RDB file
+    :rtype: Iterator
+
+    """
     found_header = False
     headers = []
     while not found_header:
