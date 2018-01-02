@@ -1,1 +1,35 @@
 @import './uswds';
+
+.usgs-banner-container {
+  background-color: #000000;
+  a {
+    color: white;
+    text-decoration: none;
+  }
+
+  .usgs-logo {
+    display: inline-block;
+    width: 100px;
+    @media screen and (min-width: $small-screen) {
+      width: 178px;
+    }
+  }
+  .usgs-header-links-container {
+    font-size: $small-font-size;
+    @media screen and (max-width: $small-screen) {
+      #usgs-home-link {
+        font-size: 0px
+      }
+    }
+    @media screen and (min-width: $small-screen) {
+      font-size: $base-font-size
+
+    }
+    ul {
+      list-style-type: none;
+      margin: 4px 8px;
+    }
+    display: inline-block;
+    float: right;
+  }
+}
