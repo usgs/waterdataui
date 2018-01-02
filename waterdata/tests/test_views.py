@@ -52,19 +52,19 @@ class TestMonitoringLocationView(TestCase):
     @requests_mock.mock()
     def test_everything_okay(self, r_mock):
         r_mock.get(self.test_url, status_code=200, text=self.test_rdb_text)
-        response = self.app_client.get('/monitoringlocation/{}'.format(self.test_site_number))
+        response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
         self.assertEqual(response.status_code, 200)
         self.assertIn('Some Random Site', response.data.decode('utf-8'))
 
     @requests_mock.mock()
     def test_4XX_from_water_services(self, r_mock):
         r_mock.get(self.test_url, status_code=400, reason='Site number is invalid.')
-        response = self.app_client.get('/monitoringlocation/{}'.format(self.test_site_number))
+        response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
         self.assertEqual(response.status_code, 200)
         self.assertIn('Site number is invalid.', response.data.decode('utf-8'))
 
     @requests_mock.mock()
     def test_500_from_water_services(self, r_mock):
         r_mock.get(self.test_url, status_code=500)
-        response = self.app_client.get('/monitoringlocation/{}'.format(self.test_site_number))
+        response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
         self.assertEqual(response.status_code, 502)

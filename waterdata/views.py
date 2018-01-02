@@ -17,7 +17,7 @@ def home():
     return render_template('index.html', version=__version__)
 
 
-@app.route('/monitoringlocation/<site_no>')
+@app.route('/monitoring-location/<site_no>')
 def monitoring_location(site_no):
     """
     Monitoring Location view
@@ -29,12 +29,12 @@ def monitoring_location(site_no):
     if status == 200:
         data = parse_rdb(content)[0]
         station_name = data['station_nm']
-        return render_template('monitoringlocation.html',
+        return render_template('monitoring_location.html',
                                status_code=status,
                                station_name=station_name
                                )
     elif 400 <= status < 500:
-        return render_template('monitoringlocation.html',
+        return render_template('monitoring_location.html',
                                status_code=status,
                                reason=reason
                                )
