@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h3>Station Name: {{ station_name }}</h3>
+    {% if status_code == 200 %}
+        <h3>Station Name: {{ station_name }}</h3>
+    {% else %}
+        <h3> Error: HTTP {{ status_code }} -- {{ reason }} </h3>
+    {% endif %}
 {% endblock content %}

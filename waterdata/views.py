@@ -15,7 +15,26 @@ def home():
 
 @app.route('/monitoringlocation/<site_no>')
 def monitoring_location(site_no):
-    raw_rdb_data = get_water_services_data(water_services, 'nwis/site/?site={}'.format(site_no))
-    data = parse_rdb(raw_rdb_data)
-    station_name = data['station_nm']
-    return render_template('monitoringlocation.html', station_name=station_name)
+    """
+    Monitoring Location view
+    :param site_no: USGS site number
+
+    """
+    rdb_resp_data = get_water_services_data(water_services, 'nwis/site/?site={}'.format(site_no))
+    content, status, reason = rdb_resp_data
+    if status == 200:
+        data = parse_rdb(content)[0]
+        station_name = data['station_nm']
+        return render_template('monitoringlocation.html',
+                               status_code=status,
+                               station_name=station_name
+                               )
+    elif 400 <= status < 500:
+        return render_template('monitoringlocation.html',
+                               status_code=status,
+                               reason=reason
+                               )
+    elif status == 500:
+        return render_template('errors/500.html'), 502
+    else:
+        return render_template('errors/500.html'), 500

@@ -11,6 +11,7 @@ pandas==0.21.1
 python-dateutil==2.6.1
 pytz==2017.3
 requests==2.18.4
+requests-mock==1.4.0
 six==1.11.0
 urllib3==1.22
 Werkzeug==0.13
