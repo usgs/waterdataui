@@ -1,3 +1,3 @@
 DEBUG = False
 
-WATER_SERVICES = 'https://waterservices.usgs.gov'
+SERVICE_ROOT = 'https://waterservices.usgs.gov'

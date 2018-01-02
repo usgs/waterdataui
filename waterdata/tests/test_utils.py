@@ -4,15 +4,15 @@ from unittest import TestCase, mock
 import requests_mock
 import requests as r
 
-from ..utils import get_water_services_data, parse_rdb
+from ..utils import execute_get_request, parse_rdb
 
 
 class TestGetWaterServicesData(TestCase):
 
     def setUp(self):
-        self.test_hostname = 'http://blah.usgs.fake'
+        self.test_service_root = 'http://blah.usgs.fake'
         self.test_site_number = '345670'
-        self.test_url = '{0}/nwis/site/?site={1}'.format(self.test_hostname, self.test_site_number)
+        self.test_url = '{0}/nwis/site/?site={1}'.format(self.test_service_root, self.test_site_number)
         self.test_rdb_text = ('#\n#\n# US Geological Survey\n# retrieved: 2018-01-02 09:31:20 -05:00\t(caas01)\n#\n# '
                               'The Site File stores location and general information about groundwater,\n# surface '
                               'water, and meteorological sites\n# for sites in USA.\n#\n# File-format description:  '
@@ -37,64 +37,134 @@ class TestGetWaterServicesData(TestCase):
     @requests_mock.mock()
     def test_success(self, r_mock):
         r_mock.get(self.test_url, status_code=200, text=self.test_rdb_text, reason='OK')
-        result = get_water_services_data(self.test_hostname, 'nwis/site/?site={}'.format(self.test_site_number))
-        expected = (self.test_rdb_text, 200, 'OK')
-        self.assertTupleEqual(expected, result)
+        result = execute_get_request(self.test_service_root,
+                                     path='/nwis/site/',
+                                     params={'site': self.test_site_number}
+                                     )
+        self.assertIsInstance(result, r.Response)
+        self.assertEqual(self.test_rdb_text, result.text)
+        self.assertEqual('OK', result.reason)
 
     @requests_mock.mock()
     def test_bad_request(self, r_mock):
         r_mock.get(self.test_url, status_code=400, text=self.test_bad_resp, reason='Some Reason')
-        result = get_water_services_data(self.test_hostname, 'nwis/site/?site={}'.format(self.test_site_number))
-        expected = (None, 400, 'Some Reason')
-        self.assertTupleEqual(expected, result)
+        result = execute_get_request(self.test_service_root,
+                                     path='/nwis/site/',
+                                     params={'site': self.test_site_number}
+                                     )
+        self.assertIsInstance(result, r.Response)
+        self.assertEqual(self.test_bad_resp, result.text)
+        self.assertEqual('Some Reason', result.reason)
+
+    @requests_mock.mock()
+    def test_no_opt_args(self, r_mock):
+        r_mock.get(self.test_service_root, status_code=200)
+        result = execute_get_request(self.test_service_root)
+        self.assertEqual(result.status_code, 200)
 
     def test_service_timeout(self):
         with mock.patch('waterdata.utils.r.get') as r_mock:
             r_mock.side_effect = r.exceptions.Timeout
-            result = get_water_services_data(self.test_hostname, 'nwis/site/?site={}'.format(self.test_site_number))
-        expected = (None, None, None)
-        self.assertTupleEqual(expected, result)
+            result = execute_get_request(self.test_url,
+                                         path='/nwis/site/',
+                                         params={'site': self.test_site_number}
+                                         )
+        self.assertIsNone(result)
+
+    def test_connection_error(self):
+        with mock.patch('waterdata.utils.r.get') as r_mock:
+            r_mock.side_effect = r.exceptions.ConnectionError
+            result = execute_get_request(self.test_url,
+                                         path='/nwis/site/',
+                                         params={'site': self.test_site_number}
+                                         )
+        self.assertIsNone(result)
 
 
 class TestParseRdb(TestCase):
 
     def setUp(self):
-        self.test_rdb_text = ('#\n#\n# US Geological Survey\n# retrieved: 2018-01-02 09:31:20 -05:00\t(caas01)\n#\n# '
-                              'The Site File stores location and general information about groundwater,\n# surface '
-                              'water, and meteorological sites\n# for sites in USA.\n#\n# File-format description:  '
-                              'http://help.waterdata.usgs.gov/faq/about-tab-delimited-output\n# Automated-retrieval '
-                              'info: http://waterservices.usgs.gov/rest/Site-Service.html\n#\n# Contact:   '
-                              'gs-w_support_nwisweb@usgs.gov\n#\n'
-                              '# The following selected fields are included in this '
-                              'output:\n#\n#  agency_cd       -- Agency\n'
-                              '#  site_no         -- Site identification number\n#  station_nm      -- Site name\n'
-                              '#  site_tp_cd      -- Site type\n#  dec_lat_va      -- Decimal latitude\n'
-                              '#  dec_long_va     -- Decimal longitude\n'
-                              '#  coord_acy_cd    -- Latitude-longitude accuracy\n'
-                              '#  dec_coord_datum_cd -- Decimal Latitude-longitude datum\n'
-                              '#  alt_va          -- Altitude of Gage/land surface\n'
-                              '#  alt_acy_va      -- Altitude accuracy\n#  alt_datum_cd    -- Altitude datum\n'
-                              '#  huc_cd          -- Hydrologic unit code\n#\nagency_cd\tsite_no\tstation_nm\t'
-                              'site_tp_cd\tdec_lat_va\tdec_long_va\tcoord_acy_cd\tdec_coord_datum_cd\talt_va\t'
-                              'alt_acy_va\talt_datum_cd\thuc_cd\n5s\t15s\t50s\t7s\t16s\t16s\t1s\t10s\t8s\t3s\t10s\t'
-                              '16s\nUSGS\t345670\tSome Random Site\tST\t200.94977778\t-100.12763889\tS\t'
-                              'NAD83\t 151.20\t .1\tNAVD88\t02070010\n')
+        self.test_rdb_lines = ['#',
+                               '#',
+                               '# US Geological Survey',
+                               '# retrieved: 2018-01-02 09:31:20 -05:00	(caas01)',
+                               '#',
+                               '# The Site File stores location and general information about groundwater,',
+                               '# surface water, and meteorological sites',
+                               '# for sites in USA.',
+                               '#',
+                               ('# File-format description:  '
+                                'http://help.waterdata.usgs.gov/faq/about-tab-delimited-output'),
+                               '# Automated-retrieval info: http://waterservices.usgs.gov/rest/Site-Service.html',
+                               '#',
+                               '# Contact:   gs-w_support_nwisweb@usgs.gov',
+                               '#',
+                               '# The following selected fields are included in this output:',
+                               '#',
+                               '#  agency_cd       -- Agency',
+                               '#  site_no         -- Site identification number',
+                               '#  station_nm      -- Site name',
+                               '#  site_tp_cd      -- Site type',
+                               '#  dec_lat_va      -- Decimal latitude',
+                               '#  dec_long_va     -- Decimal longitude',
+                               '#  coord_acy_cd    -- Latitude-longitude accuracy',
+                               '#  dec_coord_datum_cd -- Decimal Latitude-longitude datum',
+                               '#  alt_va          -- Altitude of Gage/land surface',
+                               '#  alt_acy_va      -- Altitude accuracy',
+                               '#  alt_datum_cd    -- Altitude datum',
+                               '#  huc_cd          -- Hydrologic unit code',
+                               '#',
+                               ('agency_cd	site_no	station_nm	site_tp_cd	dec_lat_va	dec_long_va	coord_acy_cd	'
+                                'dec_coord_datum_cd	alt_va	alt_acy_va	alt_datum_cd	huc_cd'),
+                               '5s	15s	50s	7s	16s	16s	1s	10s	8s	3s	10s	16s',
+                               ('USGS	345670	Some Random Site	ST	200.94977778	-100.12763889	S	NAD83	 '
+                                '151.20	 .1	NAVD88	02070010'),
+                               ('USGS	345671	Some Random Site 1	ST	201.94977778	-101.12763889	S	NAD83	 '
+                                '151.20	 .1	NAVD88	02070010')
+                               ]
+        self.test_iter = iter(self.test_rdb_lines)
 
     def test_parse(self):
-        result = parse_rdb(self.test_rdb_text)
-        expected = {'agency_cd': 'USGS',
-                    'site_no': '345670',
-                    'station_nm':
-                    'Some Random Site',
-                    'site_tp_cd': 'ST',
-                    'dec_lat_va': '200.94977778',
-                    'dec_long_va': '-100.12763889',
-                    'coord_acy_cd': 'S',
-                    'dec_coord_datum_cd':'NAD83',
-                    'alt_va': ' 151.20',
-                    'alt_acy_va': ' .1',
-                    'alt_datum_cd': 'NAVD88',
-                    'huc_cd': '02070010'
-                    }
-        self.assertListEqual(result, [expected])
-        self.assertDictEqual(result[0], expected)
+        result = parse_rdb(self.test_iter)
+        expected_1 = {'agency_cd': 'USGS',
+                      'site_no': '345670',
+                      'station_nm':
+                      'Some Random Site',
+                      'site_tp_cd': 'ST',
+                      'dec_lat_va': '200.94977778',
+                      'dec_long_va': '-100.12763889',
+                      'coord_acy_cd': 'S',
+                      'dec_coord_datum_cd': 'NAD83',
+                      'alt_va': ' 151.20',
+                      'alt_acy_va': ' .1',
+                      'alt_datum_cd': 'NAVD88',
+                      'huc_cd': '02070010'
+                      }
+        expected_2 = {'agency_cd': 'USGS',
+                      'site_no': '345671',
+                      'station_nm':
+                      'Some Random Site 1',
+                      'site_tp_cd': 'ST',
+                      'dec_lat_va': '201.94977778',
+                      'dec_long_va': '-101.12763889',
+                      'coord_acy_cd': 'S',
+                      'dec_coord_datum_cd': 'NAD83',
+                      'alt_va': ' 151.20',
+                      'alt_acy_va': ' .1',
+                      'alt_datum_cd': 'NAVD88',
+                      'huc_cd': '02070010'
+                      }
+        self.assertDictEqual(next(result), expected_1)
+        self.assertDictEqual(next(result), expected_2)
+
+    def test_no_data(self):
+        with self.assertRaises(Exception) as e:
+            parse_rdb(iter([]))
+            message = e.message
+            self.assertEqual(message, 'RDB column headers not found.')
+
+    def test_only_comments(self):
+        with self.assertRaises(Exception) as e:
+            parse_rdb(iter(self.test_rdb_lines[0:5]))
+            message = e.message
+            self.assertEqual(message, 'RDB column headers not found.')
