@@ -20,10 +20,10 @@ def execute_get_request(hostname, path=None, params=None):
     """
     target = urljoin(hostname, path)
     try:
-        ws_resp = r.get(target, params=params)
+        resp = r.get(target, params=params)
     except (r.exceptions.Timeout, r.exceptions.ConnectionError):
-        ws_resp = r.Response()  # return an empty response object
-    return ws_resp
+        resp = r.Response()  # return an empty response object
+    return resp
 
 
 def parse_rdb(rdb_iter_lines):
