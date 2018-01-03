@@ -21,6 +21,4 @@ script:
   - npm run test
 
 after_success:
-  - find coverage/ -mindepth 2 -iname '*.info' -exec cp -t coverage/ '{}' +
-  - coveralls-lcov -v -n coverage/lcov.info > coverage/coverage.json
-  - coveralls --merge=coverage/coverage.json
+  - coveralls
