@@ -1,3 +1,10 @@
+"""
+Setuptools configuration for the Water Data For The Nation user interface.
+
+This setup script requires that static assets have been built into the
+`assets/dist` directory prior to the build.
+"""
+
 import os
 from setuptools import setup, find_packages
 
@@ -23,8 +30,8 @@ def read(filepath):
     :return: file contents
     :rtype: str
     """
-    with open(filepath, 'r') as f:
-        content = f.read()
+    with open(filepath, 'r') as file:
+        content = file.read()
     return content
 
 
@@ -46,17 +53,19 @@ def identify_data_files(directory_names, exclusions=('.gitignore', '.webassets-c
     """
     directory_data_files = []
     for directory_name in directory_names:
-        for root, dirs, files in os.walk(directory_name):
-            pathnames = [os.path.abspath(os.path.join(root, filename))
-                         for filename in files if not any(ex in os.path.join(root, filename) for ex in exclusions)]
-            if len(pathnames) > 0:
+        for root, _, files in os.walk(directory_name):
+            pathnames = [
+                os.path.abspath(os.path.join(root, filename))
+                for filename in files
+                if not any(ex in os.path.join(root, filename)
+                           for ex in exclusions)
+            ]
+            if pathnames:
                 data_file_element = (root, pathnames)
                 directory_data_files.append(data_file_element)
     return directory_data_files
 
 
-parsed_requirements = read_requirements()
-data_files = identify_data_files(['assets/dist'])
 setup(name='usgs_waterdata_ui',
       version='0.1.0dev',
       description='USGS Water Data',
@@ -65,7 +74,7 @@ setup(name='usgs_waterdata_ui',
       packages=find_packages(),
       include_package_data=True,
       long_description=read('README.md'),
-      install_requires=parsed_requirements['install_requires'],
+      install_requires=read_requirements()['install_requires'],
       platforms='any',
       test_suite='unittest:TestLoader',
       zip_safe=False,
@@ -74,5 +83,4 @@ setup(name='usgs_waterdata_ui',
       py_modules=['config'],
       # include static files in the distributable
       # they will appear in the root of the virtualenv upon dist installation
-      data_files=data_files
-      )
+      data_files=identify_data_files(['assets/dist']))

@@ -1,17 +1,18 @@
-#skip a {
-  position:absolute;
-  left:-10000px;
-  top:auto;
-  width:1px;
-  height:1px;
-  overflow:hidden;
-}
+#skip {
+  a {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
 
-#skip a:focus
-{
-  position:static;
-  width:auto;
-  height:auto;
+  a:focus {
+    position: static;
+    width: auto;
+    height: auto;
+  }
 }
 .usgs-banner-container {
   background-color: #000000;
@@ -23,7 +24,7 @@
   .usgs-logo {
     display: inline-block;
     width: 100px;
-    @media screen and (min-width: $small-screen) {
+    @include media($small-screen) {
       width: 178px;
     }
   }
@@ -34,7 +35,7 @@
         font-size: 0px
       }
     }
-    @media screen and (min-width: $small-screen) {
+    @include media($small-screen) {
       font-size: $base-font-size
     }
     display: inline-block;
@@ -46,3 +47,4 @@
     }
   }
 }
+

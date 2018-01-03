@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="usa-width-one-whole">
+        {% if status_code == 200 %}
+            <h1>Station Name: {{ station_name }}</h1>
+        {% else %}
+            <h1>Error: HTTP {{ status_code }} -- {{ reason }}</h1>
+        {% endif %}
+    </div>
+{% endblock content %}
