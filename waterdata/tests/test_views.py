@@ -24,7 +24,7 @@ class TestHomeView(TestCase):
 class TestMonitoringLocationView(TestCase):
 
     def setUp(self):
-        self.test_hostname = app.config['WATER_SERVICES']
+        self.test_hostname = app.config['SERVICE_ROOT']
         self.app_client = app.test_client()
         self.test_site_number = '345670'
         self.test_url = '{0}/nwis/site/?site={1}'.format(self.test_hostname, self.test_site_number)
@@ -57,14 +57,14 @@ class TestMonitoringLocationView(TestCase):
         self.assertIn('Some Random Site', response.data.decode('utf-8'))
 
     @requests_mock.mock()
-    def test_4XX_from_water_services(self, r_mock):
+    def test_4xx_from_water_services(self, r_mock):
         r_mock.get(self.test_url, status_code=400, reason='Site number is invalid.')
         response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
         self.assertEqual(response.status_code, 200)
         self.assertIn('Site number is invalid.', response.data.decode('utf-8'))
 
     @requests_mock.mock()
-    def test_500_from_water_services(self, r_mock):
+    def test_5xx_from_water_services(self, r_mock):
         r_mock.get(self.test_url, status_code=500)
         response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
-        self.assertEqual(response.status_code, 502)
+        self.assertEqual(response.status_code, 503)

@@ -10,7 +10,7 @@ def execute_get_request(hostname, path=None, params=None):
     :param str hostname: Scheme and hostname of the target service
     :param str path: path part of the url
     :param dict params: dictionary of query parameters
-    :return: response of the web service call or None if request times-out or cannot connect
+    :return: response of the web service call or an empty response object if call is unsuccessful
     :rtype: requests.Response
 
     """
@@ -18,7 +18,7 @@ def execute_get_request(hostname, path=None, params=None):
     try:
         ws_resp = r.get(target, params=params)
     except (r.exceptions.Timeout, r.exceptions.ConnectionError):
-        ws_resp = None
+        ws_resp = r.Response()  # return an empty response object
     return ws_resp
 
 

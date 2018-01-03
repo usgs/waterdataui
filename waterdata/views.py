@@ -8,7 +8,7 @@ from . import app, __version__
 from .utils import execute_get_request, parse_rdb
 
 
-service_root = app.config['SERVICE_ROOT']
+SERVICE_ROOT = app.config['SERVICE_ROOT']
 
 
 @app.route('/')
@@ -24,26 +24,25 @@ def monitoring_location(site_no):
     :param site_no: USGS site number
 
     """
-    resp = execute_get_request(service_root, path='/nwis/site/', params={'site': site_no, 'format': 'rdb'})
-    try:
-        status = resp.status_code
-    except AttributeError:
-        return render_template('errors/500.html'), 500
+    resp = execute_get_request(SERVICE_ROOT, path='/nwis/site/', params={'site': site_no, 'format': 'rdb'})
+    status = resp.status_code
+    if status == 200:
+        iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
+        station_record = next(iter_data)
+        station_name = station_record['station_nm']
+        template = 'monitoring_location.html'
+        context = {'status_code': status, 'station_name': station_name}
+        http_code = 200
+    elif 400 <= status < 500:
+        template = 'monitoring_location.html'
+        context = {'status_code': status, 'reason': resp.reason}
+        http_code = 200
+    elif 500 <= status <= 511:
+        template = 'errors/500.html'
+        context = {}
+        http_code = 503
     else:
-        if status == 200:
-            iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
-            station_record = next(iter_data)
-            station_name = station_record['station_nm']
-            return render_template('monitoring_location.html',
-                                   status_code=status,
-                                   station_name=station_name
-                                   )
-        elif 400 <= status < 500:
-            return render_template('monitoring_location.html',
-                                   status_code=status,
-                                   reason=resp.reason
-                                   )
-        elif 500 <= status <= 511:
-            return render_template('errors/500.html'), 503
-        else:
-            return render_template('errors/500.html'), 500
+        template = 'errors/500.html'
+        context = {}
+        http_code = 500
+    return render_template(template, **context), http_code

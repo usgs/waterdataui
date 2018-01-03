@@ -1,3 +1,6 @@
+"""
+Unit tests for the main WDFN views.
+"""
 
 from unittest import TestCase, mock
 
@@ -60,6 +63,7 @@ class TestGetWaterServicesData(TestCase):
     def test_no_opt_args(self, r_mock):
         r_mock.get(self.test_service_root, status_code=200)
         result = execute_get_request(self.test_service_root)
+        self.assertIsInstance(result, r.Response)
         self.assertEqual(result.status_code, 200)
 
     def test_service_timeout(self):
@@ -69,7 +73,10 @@ class TestGetWaterServicesData(TestCase):
                                          path='/nwis/site/',
                                          params={'site': self.test_site_number}
                                          )
-        self.assertIsNone(result)
+        self.assertIsInstance(result, r.Response)
+        self.assertIsNone(result.status_code)
+        self.assertIsNone(result.content)
+        self.assertEqual(result.text, '')
 
     def test_connection_error(self):
         with mock.patch('waterdata.utils.r.get') as r_mock:
@@ -78,7 +85,10 @@ class TestGetWaterServicesData(TestCase):
                                          path='/nwis/site/',
                                          params={'site': self.test_site_number}
                                          )
-        self.assertIsNone(result)
+        self.assertIsInstance(result, r.Response)
+        self.assertIsNone(result.status_code)
+        self.assertIsNone(result.content)
+        self.assertEqual(result.text, '')
 
 
 class TestParseRdb(TestCase):
@@ -122,10 +132,9 @@ class TestParseRdb(TestCase):
                                ('USGS	345671	Some Random Site 1	ST	201.94977778	-101.12763889	S	NAD83	 '
                                 '151.20	 .1	NAVD88	02070010')
                                ]
-        self.test_iter = iter(self.test_rdb_lines)
 
     def test_parse(self):
-        result = parse_rdb(self.test_iter)
+        result = parse_rdb(iter(self.test_rdb_lines))
         expected_1 = {'agency_cd': 'USGS',
                       'site_no': '345670',
                       'station_nm':
@@ -158,13 +167,18 @@ class TestParseRdb(TestCase):
         self.assertDictEqual(next(result), expected_2)
 
     def test_no_data(self):
-        with self.assertRaises(Exception) as e:
+        with self.assertRaises(Exception) as err:
             parse_rdb(iter([]))
-            message = e.message
+            message = err.message
             self.assertEqual(message, 'RDB column headers not found.')
 
     def test_only_comments(self):
-        with self.assertRaises(Exception) as e:
+        with self.assertRaises(Exception) as err:
             parse_rdb(iter(self.test_rdb_lines[0:5]))
-            message = e.message
+            message = err.message
             self.assertEqual(message, 'RDB column headers not found.')
+
+    def test_no_records(self):
+        result = parse_rdb(iter(self.test_rdb_lines[:-2]))
+        result_list = list(result)
+        self.assertFalse(result_list)  # list should be empty and evaluate to False
