@@ -39,4 +39,7 @@ npm install
 echo "Building static assets"
 npm run build
 
+echo "Running js tests"
+npm run test
+
 echo "Finished setting up waterdataui";

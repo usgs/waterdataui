@@ -11,6 +11,7 @@ install:
   - pip install coverage
   - pip install coveralls
   - npm install
+  - gem install coveralls-lcov
 
 before_script:
   - export DISPLAY=:99.0
@@ -18,7 +19,7 @@ before_script:
 
 script:
   - coverage run --omit=waterdata/tests/*.py,/home/travis/virtualenv/* -m unittest
-  - node_modules/karma/bin/karma start --no-colors
+  - npm run test
 
 after_success:
   - find coverage/ -mindepth 2 -iname '*.info' -exec cp -t coverage/ '{}' +
