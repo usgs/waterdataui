@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h3>Version: {{ version }}</h3>
+    <div class="usa-width-one-whole">
+        <h3>Version: {{ version }}</h3>
+        <h5>Example site pages</h5>
+        <ul>
+            <li><a href="{{ url_for('monitoring_location', site_no='05370000') }}">Eau Galle River at Spring Valley, WI</a></li>
+        </ul>
+    </div>
 {% endblock content %}
