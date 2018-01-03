@@ -1,3 +1,7 @@
+"""
+Utility functions
+
+"""
 from urllib.parse import urljoin
 
 import requests as r
