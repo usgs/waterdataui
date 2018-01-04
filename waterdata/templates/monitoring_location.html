@@ -9,14 +9,14 @@
             <table>
             <thead>
                 <tr>
-                    <th scope="col">Element</th>
+                    <th scope="col">Description</th>
                     <th scope="col">Station Data</th>
                 </tr>
             </thead>
             <tbody>
                 {% for key, value in station.items() %}
                 <tr>
-                    <th scope="row"> {{ key }} </th>
+                    <th scope="row"> {{ STATION_FIELDS_D[key] }} </th>
                     <td> {{ value }} </td>
                 </tr>
                 {% endfor %}
