@@ -29,9 +29,8 @@ def monitoring_location(site_no):
     if status == 200:
         iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
         station_record = next(iter_data)
-        station_name = station_record['station_nm']
         template = 'monitoring_location.html'
-        context = {'status_code': status, 'station_name': station_name}
+        context = {'status_code': status, 'station': station_record}
         http_code = 200
     elif 400 <= status < 500:
         template = 'monitoring_location.html'
