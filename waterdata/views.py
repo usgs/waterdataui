@@ -24,7 +24,11 @@ def monitoring_location(site_no):
     :param site_no: USGS site number
 
     """
-    resp = execute_get_request(SERVICE_ROOT, path='/nwis/site/', params={'site': site_no, 'format': 'rdb'})
+    resp = execute_get_request(
+        SERVICE_ROOT,
+        path='/nwis/site/',
+        params={'site': site_no, 'siteOutput':'expanded', 'format': 'rdb'})
+
     status = resp.status_code
     if status == 200:
         iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
