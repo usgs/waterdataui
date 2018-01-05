@@ -5,6 +5,24 @@
         {% if status_code == 200 %}
             <h1>Station Name: {{ station.station_nm }}</h1>
             <a href="{{ config.LEGACY_SITE_INVENTORY_ENDPOINT }}/?site_no={{ station.site_no }}" target="_blank">Legacy site inventory page</a>
+
+            <table>
+            <thead>
+                <tr>
+                    <th scope="col">Description</th>
+                    <th scope="col">Station Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key, value in station.items() %}
+                <tr>
+                    <th scope="row"> {{ STATION_FIELDS_D[key] }} </th>
+                    <td> {{ value }} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+
         {% else %}
             <h1>Error: HTTP {{ status_code }} -- {{ reason }}</h1>
         {% endif %}

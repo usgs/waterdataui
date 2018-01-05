@@ -5,9 +5,11 @@
         <h3>Version: {{ version }}</h3>
         <h5>Example site pages</h5>
         <ul>
-            <li><a href="{{ url_for('monitoring_location', site_no='05370000') }}">Eau Galle River at Spring Valley, WI</a></li>
-            <li><a href="{{ url_for('monitoring_location', site_no='01646500') }}">Potomac River Near Wash, DC Little Falls Pump Sta</a></li>
-            <li><a href="{{ url_for('monitoring_location', site_no='08279500') }}">Rio Grande at Embudo, NM</a></li>
+            <li><a href="{{ url_for('monitoring_location', site_no='05370000') }}">05370000 - Eau Galle River at Spring Valley, WI</a></li>
+            <li><a href="{{ url_for('monitoring_location', site_no='01646500') }}">01646500 - Potomac River Near Wash, DC Little Falls Pump Sta</a></li>
+            <li><a href="{{ url_for('monitoring_location', site_no='08279500') }}">08279500 - Rio Grande at Embudo, NM</a></li>
+            <li><a href="{{ url_for('monitoring_location', site_no='08470400', agency_cd='USIBW') }}">08470400 - USIBW Arroyo Colorado at Harlingen, TX</a></li>
+            <li><a href="{{ url_for('monitoring_location', site_no='08470400', agency_cd='USGS') }}">08470400 - Arroyo Colorado at Harlingen, TX</a></li>
         </ul>
     </div>
 {% endblock content %}
