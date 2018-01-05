@@ -2,7 +2,7 @@
 Main application views.
 """
 
-from flask import render_template
+from flask import render_template, request
 
 from . import app, __version__
 from .utils import execute_get_request, parse_rdb
@@ -19,17 +19,22 @@ def home():
     return render_template('index.html', version=__version__)
 
 
-@app.route('/monitoring-location/<site_no>')
+@app.route('/monitoring-location/<site_no>', methods=['GET'])
 def monitoring_location(site_no):
     """
     Monitoring Location view
     :param site_no: USGS site number
 
     """
+    agency_cd = request.args.get('agency_cd')
+
     resp = execute_get_request(
         SERVICE_ROOT,
         path='/nwis/site/',
-        params={'site': site_no, 'siteOutput':'expanded', 'format': 'rdb'})
+        params={'site'      : site_no,
+                'agencyCd'  : agency_cd,
+                'siteOutput': 'expanded',
+                'format'    : 'rdb'})
 
     status = resp.status_code
     if status == 200:
