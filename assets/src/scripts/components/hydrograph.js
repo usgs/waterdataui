@@ -17,7 +17,7 @@ export default class Hydrograph {
      * @param {String} title y-axis label
      * @param {Node} element Dom node to insert
      */
-    constructor({data, title, element}) {
+    constructor({data=[], title='Data', element=document.body}) {
         this._data = data;
         this._title = title;
         this._element = element;
