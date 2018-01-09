@@ -1,4 +1,4 @@
-import Hydrograph from './hydrograph';
+const Hydrograph = require('./hydrograph');
 
 
 describe('Hydrograph charting module', function () {

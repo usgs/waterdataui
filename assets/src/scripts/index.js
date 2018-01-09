@@ -1,7 +1,7 @@
 require('uswds');
 
-import { getTimeseries } from './models';
-import Hydrograph from './components/hydrograph';
+const { getTimeseries } = require('./models');
+const Hydrograph = require('./components/hydrograph');
 
 
 document.addEventListener('DOMContentLoaded', function () {

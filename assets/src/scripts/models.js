@@ -1,5 +1,5 @@
-import request from 'request';
-import { timeFormat } from 'd3-time-format';
+const request = require('request');
+const { timeFormat } = require('d3-time-format');
 
 
 const SERVICE_ROOT = 'https://waterservices.usgs.gov/nwis';

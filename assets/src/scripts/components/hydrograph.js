@@ -1,14 +1,14 @@
 /**
  * Hydrograph charting module.
  */
-import { bisector, extent } from 'd3-array';
-import { axisBottom, axisLeft } from 'd3-axis';
-import { format } from 'd3-format';
-import { scaleLog, scaleTime } from 'd3-scale';
-import { mouse, select } from 'd3-selection';
-import { line } from 'd3-shape';
-import { timeDay } from 'd3-time';
-import { timeFormat } from 'd3-time-format';
+const { bisector, extent } = require('d3-array');
+const { axisBottom, axisLeft } = require('d3-axis');
+const { format } = require('d3-format');
+const { scaleLog, scaleTime } = require('d3-scale');
+const { mouse, select } = require('d3-selection');
+const { line } = require('d3-shape');
+const { timeDay } = require('d3-time');
+const { timeFormat } = require('d3-time-format');
 
 
 // Define width, height and margin for the SVG.
@@ -24,7 +24,7 @@ const MARGIN = {
 };
 
 
-export default class Hydrograph {
+class Hydrograph {
     /**
      * @param {Array} data IV data as returned by models/getTimeseries
      * @param {String} title y-axis label
@@ -202,3 +202,6 @@ export default class Hydrograph {
             });
     }
 }
+
+
+module.exports = Hydrograph;
