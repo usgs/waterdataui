@@ -43,6 +43,7 @@ def monitoring_location(site_no):
         template = 'monitoring_location.html'
         context = {'status_code'       : status,
                    'station'           : station_record,
+                   'station_with_values'
                    'STATION_FIELDS_D'  : STATION_FIELDS_D}
         http_code = 200
     elif 400 <= status < 500:

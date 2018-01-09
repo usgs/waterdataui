@@ -17,7 +17,8 @@
                 {% for key, value in station.items() %}
                 <tr>
                     <th scope="row"> {{ STATION_FIELDS_D[key] }} </th>
-                    <td> {{ value }} </td>
+
+                    <td> {{ disambguiate(key, value) }} </td>
                 </tr>
                 {% endfor %}
             </tbody>

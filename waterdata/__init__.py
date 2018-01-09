@@ -1,6 +1,7 @@
 """
 Initialize the Water Data for the Nation Flask application.
 """
+import json
 
 from flask import Flask
 
@@ -15,5 +16,14 @@ try:
     app.config.from_pyfile('config.py')
 except FileNotFoundError:
     pass
+
+# Read lookup files and save to the app.config
+with open(app.config.get('NWIS_CODE_LOOKUP_FILENAME'), 'r') as f:
+    app.config['NWIS_CODE_LOOKUP'] = json.loads(f.read())
+
+with open(app.config.get('COUNTRY_STATE_COUNTY_LOOKUP_FILENAME'), 'r') as f:
+    app.config['COUNTRY_STATE_COUNTY_LOOKUP'] = json.loads(f.read())
+
+
 
 from . import views  # pylint: disable=C0413
