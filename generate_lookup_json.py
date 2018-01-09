@@ -1,17 +1,22 @@
 #!/usr/bin/env python3.6
 
-import json
+import os
 
-from nwis_lookups import get_dict_from_rdb, translate_to_lookup, translate_codes_by_group
-from wqp_lookups import get_lookup_by_json, get_nwis_state_lookup, get_nwis_county_lookup, is_us_county
+import json
+import logging
+
+from waterdata.utils import execute_get_request, parse_rdb
+from nwis_code_lookups.nwis_lookups import translate_to_lookup, translate_codes_by_group
+from nwis_code_lookups.wqp_lookups import get_lookup_by_json, get_nwis_state_lookup, get_nwis_county_lookup, is_us_county
 """
 Generates a json object that will contain keys for the various codes used in NWIS site info expanded service
 """
 
-CODE_ENDPOINT = 'https://help.waterdata.usgs.gov/code'
+
+CODE_HOST_ENDPOINT = 'https://help.waterdata.usgs.gov'
 
 CODE_LOOKUP_CONFIG = [
-    {'code_key': 'agency_cd', 'name': 'party_nm', 'url': '{0}/agency_cd_querya'.format(CODE_ENDPOINT), 'site_key': 'agency_cd'},
+    {'code_key': 'agency_cd', 'name': 'party_nm', 'urlpath': 'code/agency_cd_query', 'site_key': 'agency_cd'},
 #    {'code_key': 'site_tp_cd', 'name': 'site_tp_ln', 'desc': 'site_tp_ds', 'url': '{0}/site_tp_query'.format(CODE_ENDPOINT), 'site_key': 'site_tp_cd'},
 #    {'code_key': 'parm_cd', 'name': 'parm_nm', 'url': '{0}/parameter_cd_query'.format(CODE_ENDPOINT), 'params' : {'group_cd': '%'}, 'site_key': 'parm_cd'},
 #    {'code_key': 'Code', 'name': 'Description', 'url': '{0}/alt_datum_cd_query'.format(CODE_ENDPOINT), 'site_key': 'alt_datum_cd'},
@@ -24,7 +29,7 @@ CODE_LOOKUP_CONFIG = [
 ]
 
 GROUPED_CODE_LOOKUP_CONFIG = [
-    {'code_key': 'nat_aqfr_cd', 'name': 'nat_aqfr_nm', 'url': '{0}/nat_aqfr_query'.format(CODE_ENDPOINT), 'site_key': 'nat_aqfr_cd'},
+    {'code_key': 'nat_aqfr_cd', 'name': 'nat_aqfr_nm', 'urlpath': 'code/nat_aqfr_query', 'site_key': 'nat_aqfr_cd'},
 #    {'code_key': 'aqfr_cd', 'name': 'aqfr_nm', 'url': '{0}/aqfr_cd_query'.format(CODE_ENDPOINT), 'site_key': 'aqfr_cd'}
 ]
 
@@ -36,21 +41,35 @@ COUNTRY_CODES = ['US', 'CA']
 def generate_lookup_file(filename='nwis_lookup.json'):
     lookups = {}
     for lookup_config in CODE_LOOKUP_CONFIG:
-        code_dict_iter = get_dict_from_rdb(lookup_config.get('url'), params=lookup_config.get('params', None))
-        lookups[lookup_config.get('site_key')] = translate_to_lookup(
-            code_dict_iter,
-            lookup_config.get('code_key'),
-            lookup_config.get('name'),
-            lookup_config.get('desc', '')
-        )
-    for lookup_config in GROUPED_CODE_LOOKUP_CONFIG:
-        code_dict_iter = get_dict_from_rdb(lookup_config.get('url'))
-        lookups[lookup_config.get('site_key')] = translate_codes_by_group(
-            code_dict_iter,
-            lookup_config.get('code_key'),
-            lookup_config.get('name'))
+        params = {'fmt': 'rdb'}
+        if 'params' in lookup_config:
+            params.update(lookup_config.get('params'))
+        resp = execute_get_request(CODE_HOST_ENDPOINT, path=lookup_config.get('urlpath'), params=params)
+        if resp.status_code == 200:
+            code_dict_iter = parse_rdb(resp.iter_lines(decode_unicode=True))
+            lookups[lookup_config.get('site_key')] = translate_to_lookup(
+                code_dict_iter,
+                lookup_config.get('code_key'),
+                lookup_config.get('name'),
+                lookup_config.get('desc', '')
+            )
+        else:
+            logging.debug('Could not retrieve NWIS code lookup {0}'.format(lookup_config.get('urlpath')))
+            lookups[lookup_config.get('site_key')] = {}
 
-    with open(filename, 'w') as f:
+    for lookup_config in GROUPED_CODE_LOOKUP_CONFIG:
+        resp = execute_get_request(CODE_HOST_ENDPOINT, lookup_config.get('urlpath'), params={'fmt': 'rdb'})
+        if resp.status_code == 200:
+            code_dict_iter = parse_rdb(resp.iter_lines(decode_unicode=True))
+            lookups[lookup_config.get('site_key')] = translate_codes_by_group(
+                code_dict_iter,
+                lookup_config.get('code_key'),
+                lookup_config.get('name')
+            )
+        else:
+            lookups[lookup_config.get('site_key')] = {}
+
+    with open(os.path.join('data', filename), 'w') as f:
         f.write(json.dumps(lookups, indent=4))
 
 
@@ -67,10 +86,11 @@ def generate_country_state_county_file(filename='nwis_country_state_lookup.json'
     for state in state_with_county_lookups.keys():
         lookups['US']['state_cd'][state]['county_cd'] = state_with_county_lookups[state]
 
-    with open(filename, 'w') as f:
+    with open(os.path.join('data', filename), 'w') as f:
         f.write(json.dumps(lookups, indent=4))
 
 
 if __name__ == '__main__':
+
     generate_lookup_file()
     generate_country_state_county_file()

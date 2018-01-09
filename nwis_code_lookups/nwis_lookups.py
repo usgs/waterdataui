@@ -91,8 +91,11 @@ def translate_to_lookup(dict_iter, code_key, name_key, desc_key):
     :param str desc_key:
     :rtype: dict
     """
+    def has_code_key(lookup):
+        return code_key in lookup
 
-    lookup_tuple = [(code_lookup.get(code_key), get_lookup_value(code_lookup, name_key, desc_key)) for code_lookup in dict_iter]
+    filtered_dict = filter(has_code_key, dict_iter)
+    lookup_tuple = [(code_lookup.get(code_key), get_lookup_value(code_lookup, name_key, desc_key)) for code_lookup in filtered_dict]
     return dict(lookup_tuple)
 
 
@@ -107,10 +110,15 @@ def translate_codes_by_group(dict_iter, code_key, name_key):
     :return: dict
     """
 
+    def has_code_key(lookup):
+        return code_key in lookup
+
     def get_code(d):
         return d.get(code_key)
 
-    data = sorted(dict_iter, key=get_code)
+    filtered_dict = filter(has_code_key, dict_iter)
+
+    data = sorted(filtered_dict, key=get_code)
     grouped_list = [(k, get_lookup_value(next(g), name_key, '')) for k, g in groupby(data, key=get_code)]
     return dict(grouped_list)
 
