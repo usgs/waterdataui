@@ -2,7 +2,7 @@
 Unit tests for the main WDFN views.
 """
 
-from unittest import TestCase
+from unittest import TestCase, mock
 
 import requests_mock
 
@@ -27,7 +27,11 @@ class TestMonitoringLocationView(TestCase):
         self.test_hostname = app.config['SERVICE_ROOT']
         self.app_client = app.test_client()
         self.test_site_number = '345670'
+        #self.test_agency_cd = 'USGS'
         self.test_url = '{0}/nwis/site/?site={1}'.format(self.test_hostname, self.test_site_number)
+        #self.test_url = '{0}/nwis/site/?site={1}&agencyCd={2}'.format(self.test_hostname,
+        #                                                              self.test_site_number,
+        #                                                              self.test_agency_cd)
         self.test_rdb_text = ('#\n#\n# US Geological Survey\n# retrieved: 2018-01-02 09:31:20 -05:00\t(caas01)\n#\n# '
                               'The Site File stores location and general information about groundwater,\n# surface '
                               'water, and meteorological sites\n# for sites in USA.\n#\n# File-format description:  '
@@ -67,4 +71,18 @@ class TestMonitoringLocationView(TestCase):
     def test_5xx_from_water_services(self, r_mock):
         r_mock.get(self.test_url, status_code=500)
         response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
+        self.assertEqual(response.status_code, 503)
+
+    @mock.patch('waterdata.views.execute_get_request')
+    def test_agency_cd(self, r_mock):
+        r_mock.return_value.status_code = 500
+        response = self.app_client.get('/monitoring-location/{0}?agency_cd=USGS'.format(self.test_site_number))
+        r_mock.assert_called_with(self.test_hostname,
+                                  path='/nwis/site/',
+                                  params={'site'      : self.test_site_number,
+                                          'agencyCd'  : 'USGS',
+                                          'siteOutput': 'expanded',
+                                          'format'    : 'rdb'
+                                         }
+                                 )
         self.assertEqual(response.status_code, 503)

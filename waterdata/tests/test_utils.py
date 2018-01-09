@@ -90,34 +90,6 @@ class TestGetWaterServicesData(TestCase):
         self.assertIsNone(result.content)
         self.assertEqual(result.text, '')
 
-    def test_agency_cd(self):
-        with mock.patch('waterdata.utils.execute_get_request') as r_mock:
-            r_mock.test_url = 'https://waterservices.usgs.gov'
-            r_mock.test_site_number = '08470400'
-            r_mock.test_agencyCd = 'USIBW'
-            result = execute_get_request(r_mock.test_url,
-                                         path='/nwis/site/',
-                                         params={'site'      : r_mock.test_site_number,
-                                                 'agencyCd'  : r_mock.test_agencyCd,
-                                                 'siteOutput': 'expanded',
-                                                 'format'    : 'rdb'
-                                                }
-                                        )
-            iter_data = parse_rdb(result.iter_lines(decode_unicode=True))
-            station_record = next(iter_data)
-            agency_code = station_record['agency_cd']
-
-        #print('\n')
-        #print('self.test_url:      ' + str(self.test_url)      +'\n')
-        #print('result.url:         ' + str(result.url)         +'\n')
-        #print('result.status_code: ' + str(result.status_code) +'\n')
-        #print('result:             ' + str(result)             +'\n')
-        #print('agency_code:        ' + str(agency_code)        +'\n')
-
-        # Assert agency code successful as an input var and
-        # Assert returned agency code in rdb matches
-        self.assertEqual(result.status_code, 200)
-        self.assertEqual(agency_code, 'USIBW')
 
 class TestParseRdb(TestCase):
 
