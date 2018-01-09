@@ -27,11 +27,7 @@ class TestMonitoringLocationView(TestCase):
         self.test_hostname = app.config['SERVICE_ROOT']
         self.app_client = app.test_client()
         self.test_site_number = '345670'
-        #self.test_agency_cd = 'USGS'
         self.test_url = '{0}/nwis/site/?site={1}'.format(self.test_hostname, self.test_site_number)
-        #self.test_url = '{0}/nwis/site/?site={1}&agencyCd={2}'.format(self.test_hostname,
-        #                                                              self.test_site_number,
-        #                                                              self.test_agency_cd)
         self.test_rdb_text = ('#\n#\n# US Geological Survey\n# retrieved: 2018-01-02 09:31:20 -05:00\t(caas01)\n#\n# '
                               'The Site File stores location and general information about groundwater,\n# surface '
                               'water, and meteorological sites\n# for sites in USA.\n#\n# File-format description:  '
