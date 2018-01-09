@@ -7,6 +7,7 @@
         <link rel="shortcut icon" type="image/ico" href="{{ config.STATIC_ROOT }}/img/usgs_favicon.ico">
         <link rel="stylesheet" href="{{ config.STATIC_ROOT }}/main.css">
         <script src="{{ config.STATIC_ROOT }}/bundle.js"></script>
+        {% block linked_data %}{% endblock %}
         <title>
             {% block title %}WDFN UI Home{% endblock %}
         </title>

@@ -7,7 +7,49 @@ from unittest import TestCase, mock
 import requests_mock
 import requests as r
 
-from ..utils import execute_get_request, parse_rdb
+from ..utils import build_site_linked_data, execute_get_request, parse_rdb
+
+
+class TestBuildSiteLinkedData(TestCase):
+
+    def setUp(self):
+        # use only the subset of data that can be returned from waterservices
+        self.test_good_data = {'agency_cd': 'USGS',
+                               'site_no': '0123456',
+                               'station_nm': 'Stick Figure River Station',
+                               'dec_lat_va': '78.3901',
+                               'dec_long_va': '-98.1701',
+                               }
+        self.test_bad_data = {'agency_cd': 'USGS',
+                              'site_number': '0123456',
+                              'station_nm': 'Stick Figure River Station',
+                              'dec_lat_va': '78.3901',
+                              'dec_long_va': '-98.1701',
+                              }
+
+    def test_linked_data(self):
+        result = build_site_linked_data(self.test_good_data)
+        expected = {'@context': ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
+                                 'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
+                                 ],
+                    '@id': 'https://waterdata.usgs.gov/monitoring-location/0123456',
+                    '@type': 'http://www.opengeospatial.org/standards/waterml2/hy_features/HY_HydroLocation',
+                    'name': 'Stick Figure River Station',
+                    'sameAs': 'https://waterdata.usgs.gov/nwis/inventory/?site_no=0123456',
+                    'image': ('https://waterdata.usgs.gov/nwisweb/graph'
+                              '?agency_cd=USGS&site_no=0123456&parm_cd=00060&period=100'),
+                    'HY_HydroLocationType': 'hydrometricStation',
+                    'geo': {'@type': 'schema:GeoCoordinates',
+                            'latitude': '78.3901',
+                            'longitude': '-98.1701'
+                            }
+                    }
+        self.assertDictEqual(result, expected)
+
+    def test_messed_keys(self):
+        result = build_site_linked_data(self.test_bad_data)
+        self.assertIsInstance(result, dict)
+        self.assertFalse(result)
 
 
 class TestGetWaterServicesData(TestCase):

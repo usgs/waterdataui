@@ -55,6 +55,11 @@ class TestMonitoringLocationView(TestCase):
         response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
         self.assertEqual(response.status_code, 200)
         self.assertIn('Some Random Site', response.data.decode('utf-8'))
+        self.assertIn('@context', response.data.decode('utf-8'))
+        # make sure no weird escaping happens when the page responds
+        self.assertIn('https://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no=345670&parm_cd=00060&period=100',
+                      response.data.decode('utf-8')
+                      )
 
     @requests_mock.mock()
     def test_4xx_from_water_services(self, r_mock):
@@ -62,6 +67,7 @@ class TestMonitoringLocationView(TestCase):
         response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
         self.assertEqual(response.status_code, 200)
         self.assertIn('Site number is invalid.', response.data.decode('utf-8'))
+        self.assertNotIn('@context', response.data.decode('utf-8'))
 
     @requests_mock.mock()
     def test_5xx_from_water_services(self, r_mock):

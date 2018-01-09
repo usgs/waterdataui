@@ -53,3 +53,48 @@ def parse_rdb(rdb_iter_lines):
     for record in rdb_iter_lines:
         record_values = record.split('\t')
         yield dict(zip(headers, record_values))
+
+
+def build_site_linked_data(site_data):
+    """
+    Given site metadata, construct a dictionary / json-ld for the site.
+    The constructed json-ld conforms to the context documents
+    at https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld
+    and https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld.
+
+    If a site is missing a piece of data that is needed by the json-ld,
+    an empty dictionary is returned.
+
+    :param dict site_data: dictionary derived from RDB with site metadata
+    :return: json-ld key value pairs
+    :rtype: dict
+
+    """
+    contexts = ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
+                'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
+                ]
+    try:
+        monitoring_location_no = site_data['site_no']
+        monitoring_location_name = site_data['station_nm']
+        latitude = site_data['dec_lat_va']
+        longitude = site_data['dec_long_va']
+        agency_code = site_data['agency_cd']
+    except KeyError:
+        linked_data = {}
+    else:
+        linked_data = {'@context': contexts,
+                       '@id': 'https://waterdata.usgs.gov/monitoring-location/{}'.format(monitoring_location_no),
+                       '@type': 'http://www.opengeospatial.org/standards/waterml2/hy_features/HY_HydroLocation',
+                       'name': monitoring_location_name,
+                       'sameAs': 'https://waterdata.usgs.gov/nwis/inventory/?site_no={}'.format(monitoring_location_no),
+                       'image': ('https://waterdata.usgs.gov/nwisweb/graph?'
+                                 'agency_cd={0}&site_no={1}&parm_cd=00060&period=100').format(agency_code,
+                                                                                              monitoring_location_no
+                                                                                              ),
+                       'HY_HydroLocationType': 'hydrometricStation',
+                       'geo': {'@type': 'schema:GeoCoordinates',
+                               'latitude': latitude,
+                               'longitude': longitude
+                               }
+                       }
+    return linked_data

@@ -1,5 +1,13 @@
 {% extends 'base.html' %}
 
+{% block linked_data %}
+    {% if json_ld is defined %}
+    <script type="application/ld+json">
+        {{ json_ld }}
+    </script>
+    {% endif %}
+{% endblock linked_data %}
+
 {% block content %}
     <div class="usa-width-one-whole">
         {% if status_code == 200 %}
