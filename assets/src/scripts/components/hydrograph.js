@@ -11,6 +11,19 @@ import { timeDay } from 'd3-time';
 import { timeFormat } from 'd3-time-format';
 
 
+// Define width, height and margin for the SVG.
+// Use a fixed size, and scale to device width using CSS.
+const WIDTH = 800;
+const HEIGHT = WIDTH / 2;
+const ASPECT_RATIO_PERCENT = `${100 * HEIGHT / WIDTH}%`;
+const MARGIN = {
+    top: 20,
+    right: 75,
+    bottom: 45,
+    left: 50
+};
+
+
 export default class Hydrograph {
     /**
      * @param {Array} data IV data as returned by models/getTimeseries
@@ -21,17 +34,6 @@ export default class Hydrograph {
         this._data = data;
         this._title = title;
         this._element = element;
-
-        // Define width, height and margin for the SVG.
-        // Use a fixed size, and scale to device width using CSS.
-        this._width = 800;
-        this._height = this._width / 2;
-        this._margin = {
-            top: 20,
-            right: 75,
-            bottom: 45,
-            left: 50
-        };
 
         if (this._data && this._data.length) {
             this._drawChart();
@@ -46,19 +48,21 @@ export default class Hydrograph {
         const svg = select(this._element)
             .append('div')
             .attr('class', 'hydrograph-container')
+            .style('padding-bottom', ASPECT_RATIO_PERCENT)
             .append('svg')
             .attr('preserveAspectRatio', 'xMinYMin meet')
-            .attr('viewBox', `0 0 ${this._width} ${this._height}`);
+            .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`);
 
         // We'll actually be appending to a <g> element
         const plot = svg.append('g')
-            .attr('transform', `translate(${this._margin.left},${this._margin.top})`);
+            .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
         // Create x/y scaling for the full (100%) view.
         const {xScale, yScale} = this._createScales();
+        const {xAxis, yAxis} = this._createAxes(xScale, yScale);
 
         // Draw the graph components with the given scaling.
-        this._plotAxes(plot, xScale, yScale);
+        this._plotAxes(plot, xAxis, yAxis);
         this._plotDataLine(plot, xScale, yScale);
         this._plotTooltips(plot, xScale, yScale);
     }
@@ -89,50 +93,54 @@ export default class Hydrograph {
         yExtent[1] += yPadding;
 
         const xScale = scaleTime()
-            .range([0, this._width - this._margin.right])
+            .range([0, WIDTH - MARGIN.right])
             .domain(xExtent);
 
         const yScale = scaleLog()
             .nice()
-            .range([this._height - (this._margin.top + this._margin.bottom), 0])
+            .range([HEIGHT - (MARGIN.top + MARGIN.bottom), 0])
             .domain(yExtent);
 
         return {xScale, yScale};
     }
 
-    _plotAxes(plot, xScale, yScale) {
-        const m = this._margin;
-
-        // Add x-axis
+    _createAxes(xScale, yScale) {
+        // Create x-axis
         const xAxis = axisBottom()
             .scale(xScale)
             .ticks(timeDay)
             .tickFormat(timeFormat('%b %d, %Y'))
             .tickSizeOuter(0);
-        plot.append('g')
-            .attr('class', 'x-axis')
-            .attr('transform', `translate(0, ${this._height - (m.top + m.bottom)})`)
-            .call(xAxis);
 
+        // Create y-axis
         const tickCount = 5;
         const yDomain = yScale.domain();
         const tickSize = (yDomain[1] - yDomain[0]) / tickCount;
-
-        // Add y-axis and a text label
         const yAxis = axisLeft()
             .scale(yScale)
             .tickValues(Array(tickCount).fill(0).map((_, index) => {
                 return yDomain[0] + index * tickSize;
             }))
             .tickFormat(format('d'))
-            .tickSizeInner(-this._width + m.right)
+            .tickSizeInner(-WIDTH + MARGIN.right)
             .tickSizeOuter(0);
+
+        return {xAxis, yAxis};
+    }
+
+    _plotAxes(plot, xAxis, yAxis) {
+        plot.append('g')
+            .attr('class', 'x-axis')
+            .attr('transform', `translate(0, ${HEIGHT - (MARGIN.top + MARGIN.bottom)})`)
+            .call(xAxis);
+
+        // Add y-axis and a text label
         plot.append('g')
             .attr('class', 'y-axis')
             .call(yAxis)
             .append('text')
                 .attr('transform', 'rotate(-90)')
-                .attr('x', this._height / -2 + m.top)
+                .attr('x', HEIGHT / -2 + MARGIN.top)
                 .attr('y', 6)
                 .attr('dy', '0.71em')
                 .text(this._title);
@@ -164,8 +172,8 @@ export default class Hydrograph {
         let data = this._data;
         plot.append('rect')
             .attr('class', 'overlay')
-            .attr('width', this._width)
-            .attr('height', this._height)
+            .attr('width', WIDTH)
+            .attr('height', HEIGHT)
             .on('mouseover', () => focus.style('display', null))
             .on('mouseout', () => focus.style('display', 'none'))
             .on('mousemove', function () {
