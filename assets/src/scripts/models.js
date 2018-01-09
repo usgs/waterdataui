@@ -1,6 +1,11 @@
-const request = require('request');
+import request from 'request';
+import { timeFormat } from 'd3-time-format';
+
 
 const SERVICE_ROOT = 'https://waterservices.usgs.gov/nwis';
+
+// Create a time formatting function from D3's timeFormat
+const formatTime = timeFormat('%c %Z');
 
 
 export function getTimeseries({sites, params}, callback) {
@@ -27,7 +32,7 @@ export function getTimeseries({sites, params}, callback) {
                         return {
                             time: date,
                             value: parseInt(value.value),
-                            label: `${date.toLocaleDateString()}\n${value.value} ${series.variable.unit.unitCode}`
+                            label: `${formatTime(date)}\n${value.value} ${series.variable.unit.unitCode}`
                         };
                     })
                 };
