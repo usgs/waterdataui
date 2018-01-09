@@ -17,20 +17,20 @@ CODE_HOST_ENDPOINT = 'https://help.waterdata.usgs.gov'
 
 CODE_LOOKUP_CONFIG = [
     {'code_key': 'agency_cd', 'name': 'party_nm', 'urlpath': 'code/agency_cd_query', 'site_key': 'agency_cd'},
-#    {'code_key': 'site_tp_cd', 'name': 'site_tp_ln', 'desc': 'site_tp_ds', 'url': '{0}/site_tp_query'.format(CODE_ENDPOINT), 'site_key': 'site_tp_cd'},
-#    {'code_key': 'parm_cd', 'name': 'parm_nm', 'url': '{0}/parameter_cd_query'.format(CODE_ENDPOINT), 'params' : {'group_cd': '%'}, 'site_key': 'parm_cd'},
-#    {'code_key': 'Code', 'name': 'Description', 'url': '{0}/alt_datum_cd_query'.format(CODE_ENDPOINT), 'site_key': 'alt_datum_cd'},
-#    {'code_key': 'gw_ref_cd', 'name': 'gw_ref_ds', 'url': '{0}/alt_meth_cd_query'.format(CODE_ENDPOINT), 'site_key': 'alt_meth_cd'},
-#    {'code_key': 'Code', 'name': 'Description', 'url': '{0}/aqfr_type_cd_query'.format(CODE_ENDPOINT), 'site_key': 'aqfr_type_cd'},
-#    {'code_key': 'gw_ref_cd', 'name': 'gw_ref_ds', 'url': '{0}/coord_acy_cd_query'.format(CODE_ENDPOINT), 'site_key': 'coord_acy_cd'},
-#    {'code_key': 'gw_ref_cd', 'name': 'gw_ref_ds', 'url': '{0}/coord_meth_cd_query'.format(CODE_ENDPOINT), 'site_key': 'coord_meth_cd'},
-#    {'code_key': 'gw_ref_cd', 'name': 'gw_ref_ds', 'url': '{0}/reliability_cd_query'.format(CODE_ENDPOINT), 'site_key': 'reliability_cd'},
-#    {'code_key': 'gw_ref_cd', 'name': 'gw_ref_nm', 'desc': 'gw_ref_ds', 'url': '{0}/topo_cd_query'.format(CODE_ENDPOINT), 'site_key': 'topo_cd'}
+    {'code_key': 'site_tp_cd', 'name': 'site_tp_ln', 'desc': 'site_tp_ds', 'urlpath': 'code/site_tp_query', 'site_key': 'site_tp_cd'},
+    {'code_key': 'parm_cd', 'name': 'parm_nm', 'urlpath': 'code/parameter_cd_query', 'params' : {'group_cd': '%'}, 'site_key': 'parm_cd'},
+    {'code_key': 'Code', 'name': 'Description', 'urlpath': 'code/alt_datum_cd_query', 'site_key': 'alt_datum_cd'},
+    {'code_key': 'gw_ref_cd', 'name': 'gw_ref_ds', 'urlpath': 'code/alt_meth_cd_query', 'site_key': 'alt_meth_cd'},
+    {'code_key': 'Code', 'name': 'Description', 'urlpath': 'code/aqfr_type_cd_query', 'site_key': 'aqfr_type_cd'},
+    {'code_key': 'gw_ref_cd', 'name': 'gw_ref_ds', 'urlpath': 'code/coord_acy_cd_query', 'site_key': 'coord_acy_cd'},
+    {'code_key': 'gw_ref_cd', 'name': 'gw_ref_ds', 'urlpath': 'code/coord_meth_cd_query', 'site_key': 'coord_meth_cd'},
+    {'code_key': 'gw_ref_cd', 'name': 'gw_ref_ds', 'urlpath': 'code/reliability_cd_query', 'site_key': 'reliability_cd'},
+    {'code_key': 'gw_ref_cd', 'name': 'gw_ref_nm', 'desc': 'gw_ref_ds', 'urlpath': 'code/topo_cd_query', 'site_key': 'topo_cd'}
 ]
 
 GROUPED_CODE_LOOKUP_CONFIG = [
     {'code_key': 'nat_aqfr_cd', 'name': 'nat_aqfr_nm', 'urlpath': 'code/nat_aqfr_query', 'site_key': 'nat_aqfr_cd'},
-#    {'code_key': 'aqfr_cd', 'name': 'aqfr_nm', 'url': '{0}/aqfr_cd_query'.format(CODE_ENDPOINT), 'site_key': 'aqfr_cd'}
+    {'code_key': 'aqfr_cd', 'name': 'aqfr_nm', 'urlpath': 'code/aqfr_cd_query', 'site_key': 'aqfr_cd'}
 ]
 
 WQP_LOOKUP_ENDPOINT = 'https://www.waterqualitydata.us/Codes'
