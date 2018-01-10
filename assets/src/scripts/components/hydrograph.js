@@ -123,6 +123,7 @@ class Hydrograph {
             }))
             .tickFormat(format('d'))
             .tickSizeInner(-WIDTH + MARGIN.right)
+            .tickPadding(12)
             .tickSizeOuter(0);
 
         return {xAxis, yAxis};
