@@ -60,17 +60,33 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
     :param dict country_state_county_lookups:
     :rtype: dict
     """
+
+    def get_state_name (country_code, state_code):
+        """
+        Return the name of the state with country_code and state_code
+        :param str country_code:
+        :param str state_code:
+        :rtype: str
+        """
+        country_lookup = country_state_county_lookups.get(country_code, {})
+        state_lookup = country_lookup.get('state_cd', {})
+
+        return state_lookup.get(state_code, {}).get('name', state_code)
+
     transformed_location = {}
 
     country_code = location.get('country_cd')
     state_code = location.get('state_cd')
     county_code = location.get('county_cd')
+    district_code = location.get('district_cd')
 
     for (key, value) in location.items():
         if key == 'state_cd' and country_code and state_code:
-            country_lookup = country_state_county_lookups.get(country_code, {})
-            state_lookup = country_lookup.get('state_cd', {})
-            transformed_value = state_lookup.get(state_code, {}).get('name', state_code)
+            transformed_value = get_state_name(country_code, state_code)
+
+        elif key == 'district_cd' and country_code and district_code:
+            transformed_value = get_state_name(country_code, district_code)
+
         elif key == 'county_cd' and country_code and state_code and country_code:
             country_lookup = country_state_county_lookups.get(country_code, {})
             state_lookup = country_lookup.get('state_cd', {}).get(state_code, {})

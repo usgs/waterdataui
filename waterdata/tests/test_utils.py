@@ -281,12 +281,14 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'site_no': '12345678',
             'country_cd': 'US',
             'state_cd': '01',
+            'district_cd': '02',
             'county_cd': '002'
         }
         expected_location = {
             'site_no': '12345678',
             'country_cd': 'US',
             'state_cd': 'Alabama',
+            'district_cd': 'Alaska',
             'county_cd': 'Baldwin County'
         }
         self.assertEqual(
@@ -332,12 +334,14 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'site_no': '12345678',
             'country_cd': 'US',
             'state_cd': '10',
+            'district_cd': '11',
             'county_cd': '004'
         }
         expected_location = {
             'site_no': '12345678',
             'country_cd': 'US',
             'state_cd': '10',
+            'district_cd': '11',
             'county_cd': '004'
         }
         self.assertEqual(
