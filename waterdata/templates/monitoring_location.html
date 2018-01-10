@@ -6,7 +6,7 @@
             <h1>Station Name: {{ station.station_nm }}</h1>
             <ul>
                 <li><a href="{{ config.LEGACY_ENDPOINTS.INVENTORY }}/?site_no={{ station.site_no }}" target="_blank">Legacy site inventory page</a></li>
-                <li><a href="{{ config.LEGACY_ENDPOINTS.UV }}/?ts_id=158053&format=img_default&site_no={{ station.site_no }}&period=7" target="_blank">Legacy Presentation Chart</a></li>
+                <li><a href="{{ config.LEGACY_ENDPOINTS.UV }}/?format=img_default&site_no={{ station.site_no }}&period=7" target="_blank">Legacy Presentation Chart</a></li>
             </ul>
 
             <div class="hydrograph" data-siteno="{{ station.site_no }}"></div>
