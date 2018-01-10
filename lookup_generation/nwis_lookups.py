@@ -1,9 +1,8 @@
-
-from itertools import groupby
-
 """
 Utilities to retrieve NWIS RDB codes
 """
+
+from itertools import groupby
 
 
 def _get_lookup_value(code_lookup, name_key, desc_key):

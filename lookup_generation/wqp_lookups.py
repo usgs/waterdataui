@@ -1,12 +1,11 @@
+"""
+Utilities to retrieve lookup information from WQP state and county lookups
+"""
 
 from itertools import groupby
 import logging
 
 from waterdata.utils import execute_get_request
-
-"""
-Utilities to retrieve lookup information from WQP state and county lookups
-"""
 
 
 def get_lookup_by_json(hostname, path=None, params=None):

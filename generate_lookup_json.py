@@ -1,5 +1,10 @@
 #!/usr/bin/env python3.6
 
+"""
+Generates two files, each containing a json object that will contain keys for the various codes used in
+NWIS site info expanded service
+"""
+
 import argparse
 import json
 import logging
@@ -10,10 +15,6 @@ from lookup_generation.nwis_lookups import translate_to_lookup, translate_codes_
 from lookup_generation.wqp_lookups import get_lookup_by_json, get_nwis_state_lookup, get_nwis_county_lookup, \
     is_us_county
 
-"""
-Generates two files, each containing a json object that will contain keys for the various codes used in 
-NWIS site info expanded service
-"""
 
 CODE_HOST_ENDPOINT = 'https://help.waterdata.usgs.gov'
 
