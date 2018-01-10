@@ -2,11 +2,9 @@
 Unit tests for the main WDFN views.
 """
 
-from unittest import TestCase, mock
+from unittest import TestCase
 
 import requests_mock
-
-from flask import Response
 
 from .. import app
 from ..views import __version__
