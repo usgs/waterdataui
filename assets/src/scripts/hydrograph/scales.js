@@ -2,6 +2,13 @@ const { extent } = require('d3-array');
 const { scaleLog, scaleTime } = require('d3-scale');
 
 
+/**
+ * Create scales for hydrograph charts. X is linear to time and Y is logarithmic.
+ * @param  {Array} data    Array containing {time, value} items
+ * @param  {Integer} xSize X range of scale
+ * @param  {Integer} ySize Y range of scale
+ * @return {Object}        {xScale, yScale}
+ */
 function createScales(data, xSize, ySize) {
     // Calculate max and min for data
     const xExtent = extent(data, d => d.time);

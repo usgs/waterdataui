@@ -4,6 +4,13 @@ const { timeDay } = require('d3-time');
 const { timeFormat } = require('d3-time-format');
 
 
+/**
+ * Create an x and y axis for hydrograph
+ * @param  {D3 Scale} xScale    Scale object for the x-axis
+ * @param  {D3 Scale} yScale    Scale object for the y-axis
+ * @param  {Integer} yTickSize  Size of inner ticks for the y-axis
+ * @return {Object}             {xAxis, yAxis}
+ */
 function createAxes(xScale, yScale, yTickSize) {
     // Create x-axis
     const xAxis = axisBottom()
@@ -30,6 +37,16 @@ function createAxes(xScale, yScale, yTickSize) {
 }
 
 
+/**
+ * Adds the given axes to a node
+ * @param  {Selected} options.plot    Node to append to
+ * @param  {D3 Axis} options.xAxis    x-axis
+ * @param  {D3 Axis} options.yAxis    y-axis
+ * @param  {Object} options.xLoc      {x, y} location of x-axis
+ * @param  {Object} options.yLoc      {x, y} location of y-axis
+ * @param  {Object} options.yLabelLoc {x, y} location of y-axis label
+ * @param  {String} options.yTitle    y-axis label
+ */
 function appendAxes({plot, xAxis, yAxis, xLoc, yLoc, yLabelLoc, yTitle}) {
     plot.append('g')
         .attr('class', 'x-axis')
