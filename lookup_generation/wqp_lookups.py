@@ -12,8 +12,9 @@ Utilities to retrieve lookup information from WQP state and county lookups
 def get_lookup_by_json(hostname, path=None, params=None):
     """
     Make an HttpRequest to endpoint and return dict
-    :param str endpoint:
-    :param dict
+    :param str hostname:
+    :param str path:
+    :param dict params:
     :rtype: dict
     """
     request_params = {'mimeType': 'json'}
@@ -65,10 +66,10 @@ def get_nwis_county_lookup(wqp_lookups):
     def get_state_fips(lookup_value):
         return lookup_value.get('value').split(':')[1]
 
-    def get_county_lookup (wqp_lookup):
-        county_fips = wqp_lookup.get('value').split(':')[2]
-        county_name = wqp_lookup.get('desc').split(', ')[2]
-        return (county_fips, county_name)
+    def get_county_lookup(county_wqp_lookup):
+        county_fips = county_wqp_lookup.get('value').split(':')[2]
+        county_name = county_wqp_lookup.get('desc').split(', ')[2]
+        return county_fips, county_name
 
     lookup = {}
     sorted_state_list = sorted(wqp_lookups, key=get_state_fips)

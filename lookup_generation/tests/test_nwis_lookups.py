@@ -3,13 +3,14 @@ from unittest import TestCase
 
 from ..nwis_lookups import translate_to_lookup, translate_codes_by_group
 
+
 class TranslateToLookupTestCase(TestCase):
 
     def setUp(self):
         self.test_dict_iter = [
-            {'this_cd': 'value1', 'this_name': 'Name1', 'this_desc' : 'Description 1'},
-            {'this_cd': 'value2', 'this_name': 'Name2', 'this_desc' : 'Description 2'},
-            {'this_cd': 'value3', 'this_name': 'Name3', 'this_desc' : 'Description 3'}
+            {'this_cd': 'value1', 'this_name': 'Name1', 'this_desc': 'Description 1'},
+            {'this_cd': 'value2', 'this_name': 'Name2', 'this_desc': 'Description 2'},
+            {'this_cd': 'value3', 'this_name': 'Name3', 'this_desc': 'Description 3'}
         ]
 
     def test_empty_dict(self):
@@ -45,6 +46,7 @@ class TranslateToLookupTestCase(TestCase):
                           'value2': {'name': 'Name2', 'desc': None},
                           'value3': {'name': 'Name3', 'desc': None}}
                          )
+
 
 class TranslateCodesByGroupTestCase(TestCase):
 

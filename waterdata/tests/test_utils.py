@@ -188,7 +188,7 @@ class GetDisambiguatedValuesTestCase(TestCase):
 
     def setUp(self):
         self.test_code_lookups = {
-            'agency_cd' : {
+            'agency_cd': {
                 'USGS': {'name': 'U.S. Geological Survey'},
                 'USEPA': {'name': 'U.S. Environmental Protection Agency'}
 
@@ -234,17 +234,19 @@ class GetDisambiguatedValuesTestCase(TestCase):
             }
         }
 
-
     def test_empty_location(self):
-        self.assertEqual(get_disambiguated_values({}, self.test_code_lookups, self.test_country_state_county_lookup), {})
+        self.assertEqual(get_disambiguated_values({}, self.test_code_lookups, self.test_country_state_county_lookup),
+                         {})
 
     def test_location_with_no_keys_in_lookups(self):
         test_location = {
-            'station_name' : 'This is a name',
+            'station_name': 'This is a name',
             'site_no': '12345678'
         }
-        self.assertEqual(get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
-                         test_location)
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            test_location
+        )
 
     def test_location_with_keys_in_code_lookups(self):
         test_location = {
@@ -408,4 +410,5 @@ class GetDisambiguatedValuesTestCase(TestCase):
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
-            expected_location)
+            expected_location
+        )

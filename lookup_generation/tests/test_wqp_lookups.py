@@ -12,7 +12,7 @@ class GetLookupByJsonTestCase(TestCase):
         get_lookup_by_json('http://fakehost.com', path='codes', params={'param1': 'value1'})
         mrequest.assert_called_with('http://fakehost.com',
                                     path='codes',
-                                    params = {'param1': 'value1', 'mimeType': 'json'})
+                                    params={'param1': 'value1', 'mimeType': 'json'})
 
     def test_bad_request(self, mrequest):
         mrequest.return_value.status_code = 500
@@ -56,6 +56,7 @@ class GetNwisStateLookupTestCase(TestCase):
                          {'55': {'name': 'Wisconsin'},
                           '01': {'name': 'Alabama'}}
                          )
+
 
 class GetNwisCountyLookupTestCase(TestCase):
 
