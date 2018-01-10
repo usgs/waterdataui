@@ -2,7 +2,7 @@
 require('uswds');
 
 const { getTimeseries } = require('./models');
-const Hydrograph = require('./components/hydrograph');
+const Hydrograph = require('./hydrograph');
 
 
 document.addEventListener('DOMContentLoaded', function () {

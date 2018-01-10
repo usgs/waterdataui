@@ -1,14 +1,12 @@
 /**
  * Hydrograph charting module.
  */
-const { bisector, extent } = require('d3-array');
-const { axisBottom, axisLeft } = require('d3-axis');
-const { format } = require('d3-format');
-const { scaleLog, scaleTime } = require('d3-scale');
+const { bisector } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
-const { timeDay } = require('d3-time');
-const { timeFormat } = require('d3-time-format');
+
+const { appendAxes, createAxes } = require('./axes');
+const { createScales } = require('./scales');
 
 
 // Define width, height and margin for the SVG.
@@ -24,13 +22,17 @@ const MARGIN = {
 };
 
 
+// Function that returns the left bounding point for a given chart point.
+const bisectDate = bisector(d => d.time).left;
+
+
 class Hydrograph {
     /**
      * @param {Array} data IV data as returned by models/getTimeseries
      * @param {String} title y-axis label
      * @param {Node} element Dom node to insert
      */
-    constructor({data=[], title='Data', element=document.body}) {
+    constructor({data=[], title='Data', element=document.body}={}) {
         this._data = data;
         this._title = title;
         this._element = element;
@@ -58,11 +60,23 @@ class Hydrograph {
             .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
         // Create x/y scaling for the full (100%) view.
-        const {xScale, yScale} = this._createScales();
-        const {xAxis, yAxis} = this._createAxes(xScale, yScale);
+        const {xScale, yScale} = createScales(
+            this._data,
+            WIDTH - MARGIN.right,
+            HEIGHT - (MARGIN.top + MARGIN.bottom)
+        );
+        const {xAxis, yAxis} = createAxes(xScale, yScale, -WIDTH + MARGIN.right);
 
         // Draw the graph components with the given scaling.
-        this._plotAxes(plot, xAxis, yAxis);
+        appendAxes({
+            plot,
+            xAxis,
+            yAxis,
+            xLoc: {x: 0, y: HEIGHT - (MARGIN.top + MARGIN.bottom)},
+            yLoc: {x: 0, y: 0},
+            yLabelLoc: {x: HEIGHT / -2 + MARGIN.top, y: 6},
+            yTitle: this._title
+        });
         this._plotDataLine(plot, xScale, yScale);
         this._plotTooltips(plot, xScale, yScale);
     }
@@ -82,71 +96,6 @@ class Hydrograph {
             .html(message);
     }
 
-    _createScales() {
-        // Calculate max and min for data
-        const xExtent = extent(this._data, d => d.time);
-        const yExtent = extent(this._data, d => d.value);
-
-        // Add 20% of the y range as padding on both sides of the extent.
-        let yPadding = 0.2 * (yExtent[1] - yExtent[0]);
-        yExtent[0] -= yPadding;
-        yExtent[1] += yPadding;
-
-        const xScale = scaleTime()
-            .range([0, WIDTH - MARGIN.right])
-            .domain(xExtent);
-
-        const yScale = scaleLog()
-            .nice()
-            .range([HEIGHT - (MARGIN.top + MARGIN.bottom), 0])
-            .domain(yExtent);
-
-        return {xScale, yScale};
-    }
-
-    _createAxes(xScale, yScale) {
-        // Create x-axis
-        const xAxis = axisBottom()
-            .scale(xScale)
-            .ticks(timeDay)
-            .tickFormat(timeFormat('%b %d, %Y'))
-            .tickSizeOuter(0);
-
-        // Create y-axis
-        const tickCount = 5;
-        const yDomain = yScale.domain();
-        const tickSize = (yDomain[1] - yDomain[0]) / tickCount;
-        const yAxis = axisLeft()
-            .scale(yScale)
-            .tickValues(Array(tickCount).fill(0).map((_, index) => {
-                return yDomain[0] + index * tickSize;
-            }))
-            .tickFormat(format('d'))
-            .tickSizeInner(-WIDTH + MARGIN.right)
-            .tickPadding(12)
-            .tickSizeOuter(0);
-
-        return {xAxis, yAxis};
-    }
-
-    _plotAxes(plot, xAxis, yAxis) {
-        plot.append('g')
-            .attr('class', 'x-axis')
-            .attr('transform', `translate(0, ${HEIGHT - (MARGIN.top + MARGIN.bottom)})`)
-            .call(xAxis);
-
-        // Add y-axis and a text label
-        plot.append('g')
-            .attr('class', 'y-axis')
-            .call(yAxis)
-            .append('text')
-                .attr('transform', 'rotate(-90)')
-                .attr('x', HEIGHT / -2 + MARGIN.top)
-                .attr('y', 6)
-                .attr('dy', '0.71em')
-                .text(this._title);
-    }
-
     _plotDataLine(plot, xScale, yScale) {
         const newLine = line()
             .x(d => xScale(d.time))
@@ -159,8 +108,7 @@ class Hydrograph {
     }
 
     _plotTooltips(plot, xScale, yScale) {
-        let bisectDate = bisector(d => d.time).left;
-
+        // Create a node to hightlight the currently selected date/time.
         let focus = plot.append('g')
             .attr('class', 'focus')
             .style('display', 'none');
@@ -170,37 +118,48 @@ class Hydrograph {
 
         focus.append('text');
 
-        let data = this._data;
         plot.append('rect')
             .attr('class', 'overlay')
             .attr('width', WIDTH)
             .attr('height', HEIGHT)
             .on('mouseover', () => focus.style('display', null))
             .on('mouseout', () => focus.style('display', 'none'))
-            .on('mousemove', function () {
-                let time = xScale.invert(mouse(this)[0]);
-                let index = bisectDate(data, time, 1);
+            .on('mousemove', (d, i, nodes) => {
+                // Get the nearest data point for the current mouse position.
+                let time = xScale.invert(mouse(nodes[i])[0]);
+                let {datum, index} = this._getNearestTime(time);
 
-                let datum;
-                let d0 = data[index - 1];
-                let d1 = data[index];
-                if (d0 && d1) {
-                    datum = time - d0.time > d1.time - time ? d1 : d0;
-                } else {
-                    datum = d0 || d1;
-                }
-
+                // Move the focus node to this date/time.
                 focus.attr('transform', `translate(${xScale(datum.time)}, ${yScale(datum.value)})`);
 
                 // Draw text, anchored to the left or right, depending on
                 // which side of the graph the point is on.
-                let isFirstHalf = index < data.length / 2;
+                let isFirstHalf = index < this._data.length / 2;
                 focus.select('text')
                     .text(() => datum.label)
                     .attr('text-anchor', isFirstHalf ? 'start' : 'end')
                     .attr('x', isFirstHalf ? 15 : -15)
                     .attr('dy', isFirstHalf ? '.31em' : '-.31em');
             });
+    }
+
+    _getNearestTime(time) {
+        let index = bisectDate(this._data, time, 1);
+
+        let datum;
+        let d0 = this._data[index - 1];
+        let d1 = this._data[index];
+        if (d0 && d1) {
+            datum = time - d0.time > d1.time - time ? d1 : d0;
+        } else {
+            datum = d0 || d1;
+        }
+
+        // Return the nearest data point and its index.
+        return {
+            datum,
+            index: datum == d0 ? index - 1 : index
+        };
     }
 }
 
