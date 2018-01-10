@@ -1,29 +1,38 @@
 
 from itertools import groupby
-import requests
+import logging
+
+from waterdata.utils import execute_get_request
 
 """
 Utilities to retrieve lookup information from WQP state and county lookups
 """
 
 
-def get_lookup_by_json(endpoint, params=None):
+def get_lookup_by_json(hostname, path=None, params=None):
     """
     Make an HttpRequest to endpoint and return dict
     :param str endpoint:
+    :param dict
     :rtype: dict
     """
     request_params = {'mimeType': 'json'}
     if params:
         request_params.update(params)
-    resp = requests.get(endpoint, params=request_params)
-    return resp.json()
+    resp = execute_get_request(hostname, path=path, params=request_params)
+    if resp.status_code == 200:
+        result = resp.json()
+    else:
+        logging.error('Unable to retrieve lookup at {0} from host {1}'.format(path, hostname))
+        result = {}
+
+    return result
 
 
 def is_us_county(wqp_lookup_code):
     """
     Returns True if the WQP county lookup code is for the US.
-    :param str wqp_lookup_code:
+    :param dict wqp_lookup_code:
     :rtype: bool
     """
     return wqp_lookup_code.get('value', '').split(':')[0] == 'US'

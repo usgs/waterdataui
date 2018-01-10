@@ -34,7 +34,7 @@ GROUPED_CODE_LOOKUP_CONFIG = [
     {'code_key': 'aqfr_cd', 'name': 'aqfr_nm', 'urlpath': 'code/aqfr_cd_query', 'site_key': 'aqfr_cd'}
 ]
 
-WQP_LOOKUP_ENDPOINT = 'https://www.waterqualitydata.us/Codes'
+WQP_LOOKUP_ENDPOINT = 'https://www.waterqualitydata.us'
 
 COUNTRY_CODES = ['US', 'CA']
 
@@ -61,7 +61,7 @@ def generate_lookup_file(datadir, filename='nwis_lookup.json'):
                 lookup_config.get('desc', '')
             )
         else:
-            logging.debug('Could not retrieve NWIS code lookup {0}'.format(lookup_config.get('urlpath')))
+            logging.error('Could not retrieve NWIS code lookup {0} from host {1}'.format(lookup_config.get('urlpath'), CODE_HOST_ENDPOINT))
             lookups[lookup_config.get('site_key')] = {}
 
     for lookup_config in GROUPED_CODE_LOOKUP_CONFIG:
@@ -74,6 +74,7 @@ def generate_lookup_file(datadir, filename='nwis_lookup.json'):
                 lookup_config.get('name')
             )
         else:
+            logging.error('Unable to retrieve looks for {0}'.format(lookup_config.get('urlpath')))
             lookups[lookup_config.get('site_key')] = {}
 
     with open(os.path.join(datadir, filename), 'w') as f:
@@ -88,10 +89,10 @@ def generate_country_state_county_file(datadir, filename='nwis_country_state_loo
     """
     lookups = {}
     for country in COUNTRY_CODES:
-        lookup_dict = get_lookup_by_json('{0}/statecode'.format(WQP_LOOKUP_ENDPOINT), {'countrycode': country})
+        lookup_dict = get_lookup_by_json(WQP_LOOKUP_ENDPOINT, path='Codes/statecode',params={'countrycode': country})
         lookups[country] = {'state_cd': get_nwis_state_lookup(lookup_dict.get('codes', []))}
 
-    county_lookup = get_lookup_by_json('{0}/countycode'.format(WQP_LOOKUP_ENDPOINT))
+    county_lookup = get_lookup_by_json(WQP_LOOKUP_ENDPOINT, path='Codes/countycode')
     us_county_lookups = filter(is_us_county, county_lookup.get('codes', []))
     state_with_county_lookups = get_nwis_county_lookup(us_county_lookups)
 
