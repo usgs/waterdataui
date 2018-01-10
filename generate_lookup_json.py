@@ -6,8 +6,8 @@ import json
 import logging
 
 from waterdata.utils import execute_get_request, parse_rdb
-from nwis_code_lookups.nwis_lookups import translate_to_lookup, translate_codes_by_group
-from nwis_code_lookups.wqp_lookups import get_lookup_by_json, get_nwis_state_lookup, get_nwis_county_lookup, is_us_county
+from lookup_generation.nwis_lookups import translate_to_lookup, translate_codes_by_group
+from lookup_generation.wqp_lookups import get_lookup_by_json, get_nwis_state_lookup, get_nwis_county_lookup, is_us_county
 
 """
 Generates a json object that will contain keys for the various codes used in NWIS site info expanded service
