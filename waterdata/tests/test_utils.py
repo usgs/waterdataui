@@ -43,7 +43,7 @@ class TestGetWaterServicesData(TestCase):
         result = execute_get_request(self.test_service_root,
                                      path='/nwis/site/',
                                      params={'site': self.test_site_number}
-                                     )
+                                    )
         self.assertIsInstance(result, r.Response)
         self.assertEqual(self.test_rdb_text, result.text)
         self.assertEqual('OK', result.reason)
@@ -54,7 +54,7 @@ class TestGetWaterServicesData(TestCase):
         result = execute_get_request(self.test_service_root,
                                      path='/nwis/site/',
                                      params={'site': self.test_site_number}
-                                     )
+                                    )
         self.assertIsInstance(result, r.Response)
         self.assertEqual(self.test_bad_resp, result.text)
         self.assertEqual('Some Reason', result.reason)
@@ -72,7 +72,7 @@ class TestGetWaterServicesData(TestCase):
             result = execute_get_request(self.test_url,
                                          path='/nwis/site/',
                                          params={'site': self.test_site_number}
-                                         )
+                                        )
         self.assertIsInstance(result, r.Response)
         self.assertIsNone(result.status_code)
         self.assertIsNone(result.content)
@@ -84,7 +84,7 @@ class TestGetWaterServicesData(TestCase):
             result = execute_get_request(self.test_url,
                                          path='/nwis/site/',
                                          params={'site': self.test_site_number}
-                                         )
+                                        )
         self.assertIsInstance(result, r.Response)
         self.assertIsNone(result.status_code)
         self.assertIsNone(result.content)
@@ -131,7 +131,7 @@ class TestParseRdb(TestCase):
                                 '151.20	 .1	NAVD88	02070010'),
                                ('USGS	345671	Some Random Site 1	ST	201.94977778	-101.12763889	S	NAD83	 '
                                 '151.20	 .1	NAVD88	02070010')
-                               ]
+                              ]
 
     def test_parse(self):
         result = parse_rdb(iter(self.test_rdb_lines))
@@ -148,7 +148,7 @@ class TestParseRdb(TestCase):
                       'alt_acy_va': ' .1',
                       'alt_datum_cd': 'NAVD88',
                       'huc_cd': '02070010'
-                      }
+                     }
         expected_2 = {'agency_cd': 'USGS',
                       'site_no': '345671',
                       'station_nm':
@@ -162,21 +162,19 @@ class TestParseRdb(TestCase):
                       'alt_acy_va': ' .1',
                       'alt_datum_cd': 'NAVD88',
                       'huc_cd': '02070010'
-                      }
+                     }
         self.assertDictEqual(next(result), expected_1)
         self.assertDictEqual(next(result), expected_2)
 
     def test_no_data(self):
         with self.assertRaises(Exception) as err:
             parse_rdb(iter([]))
-            message = err.message
-            self.assertEqual(message, 'RDB column headers not found.')
+            self.assertEqual(err.exception.message, 'RDB column headers not found.')
 
     def test_only_comments(self):
         with self.assertRaises(Exception) as err:
             parse_rdb(iter(self.test_rdb_lines[0:5]))
-            message = err.message
-            self.assertEqual(message, 'RDB column headers not found.')
+            self.assertEqual(err.exception.message, 'RDB column headers not found.')
 
     def test_no_records(self):
         result = parse_rdb(iter(self.test_rdb_lines[:-2]))
