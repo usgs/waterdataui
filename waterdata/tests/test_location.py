@@ -3,9 +3,9 @@ Unit tests for waterdata.waterservices classes and functions.
 
 """
 import datetime
-from unittest import TestCase
+from unittest import TestCase, mock
 
-import requests_mock
+import requests as r
 
 from ..location import MonitoringLocation
 
@@ -13,11 +13,6 @@ from ..location import MonitoringLocation
 class TestMonitoringLocation(TestCase):
 
     def setUp(self):
-        self.test_site = '01630500'
-        self.test_url = ('https://waterservices.usgs.gov/nwis/site/'
-                         '?format=rdb&sites={}&seriesCatalogOutput=true'
-                         '&siteStatus=all&agencyCd=USGS'
-                         ).format(self.test_site)
         self.test_rdb_text = ('#\nagency_cd\tsite_no\tstation_nm\tsite_tp_cd\tdec_lat_va\tdec_long_va\tcoord_acy_cd\t'
                               'dec_coord_datum_cd\talt_va\talt_acy_va\talt_datum_cd\thuc_cd\tdata_type_cd\tparm_cd\t'
                               'stat_cd\tts_id\tloc_web_ds\tmedium_grp_cd\tparm_grp_cd\tsrs_id\taccess_cd\tbegin_date\t'
@@ -47,8 +42,9 @@ class TestMonitoringLocation(TestCase):
                               'wat\t\t1646694\t0\t2007-10-01\t2018-01-10\t3754\nUSGS\t01646500\t'
                               'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\tS\t'
                               'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00095\t\t69943\tFrom multiparameter sonde\t'
-                              'wat\t\t1646694\t0\t2013-11-23\t2018-01-10\t1509\n'
+                              'wat\t\t1646694\t0\t2013-11-23\t2018-01-10\t1509'
                               )
+        self.test_rdb_text_lines = self.test_rdb_text.split('\n')
         self.rdb_no_discharge = ('#\nagency_cd\tsite_no\tstation_nm\tsite_tp_cd\tdec_lat_va\tdec_long_va\tcoord_acy_cd\t'
                                  'dec_coord_datum_cd\talt_va\talt_acy_va\talt_datum_cd\thuc_cd\tdata_type_cd\tparm_cd\t'
                                  'stat_cd\tts_id\tloc_web_ds\tmedium_grp_cd\tparm_grp_cd\t'
@@ -80,13 +76,18 @@ class TestMonitoringLocation(TestCase):
                                  'wat\t\t1646694\t0\t2007-10-01\t2018-01-10\t3754\nUSGS\t01646500\t'
                                  'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\tS\t'
                                  'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00095\t\t69943\tFrom multiparameter sonde\t'
-                                 'wat\t\t1646694\t0\t2013-11-23\t2018-01-10\t1509\n'
+                                 'wat\t\t1646694\t0\t2013-11-23\t2018-01-10\t1509'
                                  )
+        self.rdb_no_discharge_lines = self.rdb_no_discharge.split('\n')
 
-    @requests_mock.mock()
+    @mock.patch('waterdata.location.execute_get_request')
     def test_site_with_params(self, r_mock):
-        r_mock.get(self.test_url, status_code=200, text=self.test_rdb_text, reason='OK')
+        m_resp = mock.Mock(spec=r.Response)
+        m_resp.status_code = 200
+        m_resp.iter_lines.return_value = iter(self.test_rdb_text_lines)
+        r_mock.return_value = m_resp
         ml = MonitoringLocation(self.test_site)
+
         site_capabilities = ml.get_capabilities()
         expected_capabilities = {'00060', '00010', '00095', '00065'}
         discharge_dates = ml.get_site_parameter('00060')
@@ -106,9 +107,12 @@ class TestMonitoringLocation(TestCase):
         self.assertDictEqual(discharge_dates, expected_dates)
         self.assertIsNone(no_param)
 
-    @requests_mock.mock()
+    @mock.patch('waterdata.location.execute_get_request')
     def test_no_site_matching_request(self, r_mock):
-        r_mock.get(self.test_url, status_code=404, reason='No sites found matching this request.')
+        m_resp = mock.Mock(spec=r.Response)
+        m_resp.status_code = 404
+        r_mock.return_value = m_resp
+
         ml = MonitoringLocation(self.test_site)
         site_capabilities = ml.get_capabilities()
         discharge_dates = ml.get_site_parameter('00060')
@@ -118,9 +122,13 @@ class TestMonitoringLocation(TestCase):
         self.assertFalse(site_capabilities)
         self.assertIsNone(discharge_dates)
 
-    @requests_mock.mock()
+    @mock.patch('waterdata.location.execute_get_request')
     def test_json_ld(self, r_mock):
-        r_mock.get(self.test_url, status_code=200, text=self.test_rdb_text, reason='OK')
+        m_resp = mock.Mock(spec=r.Response)
+        m_resp.status_code = 200
+        m_resp.iter_lines.return_value = iter(self.test_rdb_text_lines)
+        r_mock.return_value = m_resp
+
         ml = MonitoringLocation(self.test_site)
         json_ld = ml.build_linked_data()
         expected = {'@context': ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
@@ -137,9 +145,13 @@ class TestMonitoringLocation(TestCase):
                     }
         self.assertDictEqual(json_ld, expected)
 
-    @requests_mock.mock()
+    @mock.patch('waterdata.location.execute_get_request')
     def test_json_ld_no_discharge(self, r_mock):
-        r_mock.get(self.test_url, status_code=200, text=self.rdb_no_discharge, reason='OK')
+        m_resp = mock.Mock(spec=r.Response)
+        m_resp.status_code = 200
+        m_resp.iter_lines.return_value = iter(self.rdb_no_discharge_lines)
+        r_mock.return_value = m_resp
+
         ml = MonitoringLocation(self.test_site)
         json_ld = ml.build_linked_data()
         expected = {'@context': ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',

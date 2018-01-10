@@ -4,52 +4,9 @@ Unit tests for the main WDFN views.
 
 from unittest import TestCase, mock
 
-import requests_mock
 import requests as r
 
-from ..utils import build_site_linked_data, execute_get_request, parse_rdb
-
-
-class TestBuildSiteLinkedData(TestCase):
-
-    def setUp(self):
-        # use only the subset of data that can be returned from waterservices
-        self.test_good_data = {'agency_cd': 'USGS',
-                               'site_no': '0123456',
-                               'station_nm': 'Stick Figure River Station',
-                               'dec_lat_va': '78.3901',
-                               'dec_long_va': '-98.1701',
-                               }
-        self.test_bad_data = {'agency_cd': 'USGS',
-                              'site_number': '0123456',
-                              'station_nm': 'Stick Figure River Station',
-                              'dec_lat_va': '78.3901',
-                              'dec_long_va': '-98.1701',
-                              }
-
-    def test_linked_data(self):
-        result = build_site_linked_data(self.test_good_data)
-        expected = {'@context': ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
-                                 'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
-                                 ],
-                    '@id': 'https://waterdata.usgs.gov/monitoring-location/0123456',
-                    '@type': 'http://www.opengeospatial.org/standards/waterml2/hy_features/HY_HydroLocation',
-                    'name': 'Stick Figure River Station',
-                    'sameAs': 'https://waterdata.usgs.gov/nwis/inventory/?site_no=0123456',
-                    'image': ('https://waterdata.usgs.gov/nwisweb/graph'
-                              '?agency_cd=USGS&site_no=0123456&parm_cd=00060&period=100'),
-                    'HY_HydroLocationType': 'hydrometricStation',
-                    'geo': {'@type': 'schema:GeoCoordinates',
-                            'latitude': '78.3901',
-                            'longitude': '-98.1701'
-                            }
-                    }
-        self.assertDictEqual(result, expected)
-
-    def test_messed_keys(self):
-        result = build_site_linked_data(self.test_bad_data)
-        self.assertIsInstance(result, dict)
-        self.assertFalse(result)
+from ..utils import execute_get_request, parse_rdb
 
 
 class TestGetWaterServicesData(TestCase):
@@ -61,7 +18,7 @@ class TestGetWaterServicesData(TestCase):
         self.test_rdb_text = ('#\n#\n# US Geological Survey\n# retrieved: 2018-01-02 09:31:20 -05:00\t(caas01)\n#\n# '
                               'The Site File stores location and general information about groundwater,\n# surface '
                               'water, and meteorological sites\n# for sites in USA.\n#\n# File-format description:  '
-                              'http://help.waterdata.usgs.gov/faq/about-tab-delimited-output\n# Automated-retrieval '
+                              'http://help.wpythonaterdata.usgs.gov/faq/about-tab-delimited-output\n# Automated-retrieval '
                               'info: http://waterservices.usgs.gov/rest/Site-Service.html\n#\n# Contact:   '
                               'gs-w_support_nwisweb@usgs.gov\n#\n# The following selected fields are included in this '
                               'output:\n#\n#  agency_cd       -- Agency\n'
@@ -79,55 +36,68 @@ class TestGetWaterServicesData(TestCase):
                               'NAD83\t 151.20\t .1\tNAVD88\t02070010\n')
         self.test_bad_resp = 'Garbage Text'
 
-    @requests_mock.mock()
+    @mock.patch('waterdata.utils.r.get')
     def test_success(self, r_mock):
+        m_resp = mock.Mock(r.Response)
+        m_resp.text = self.test_rdb_text
+        m_resp.reason = 'OK'
+        r_mock.return_value = m_resp
+
         r_mock.get(self.test_url, status_code=200, text=self.test_rdb_text, reason='OK')
         result = execute_get_request(self.test_service_root,
                                      path='/nwis/site/',
                                      params={'site': self.test_site_number}
                                      )
-        self.assertIsInstance(result, r.Response)
+        r_mock.assert_called_with('http://blah.usgs.fake/nwis/site/', params={'site': '345670'})
         self.assertEqual(self.test_rdb_text, result.text)
         self.assertEqual('OK', result.reason)
 
-    @requests_mock.mock()
+    @mock.patch('waterdata.utils.r.get')
     def test_bad_request(self, r_mock):
-        r_mock.get(self.test_url, status_code=400, text=self.test_bad_resp, reason='Some Reason')
+        m_resp = mock.Mock(spec=r.Response)
+        m_resp.status_code = 400
+        m_resp.text = self.test_bad_resp
+        m_resp.reason = 'Some Reason'
+        r_mock.return_value = m_resp
+
         result = execute_get_request(self.test_service_root,
                                      path='/nwis/site/',
                                      params={'site': self.test_site_number}
                                      )
-        self.assertIsInstance(result, r.Response)
+        r_mock.assert_called_with('http://blah.usgs.fake/nwis/site/', params={'site': '345670'})
         self.assertEqual(self.test_bad_resp, result.text)
         self.assertEqual('Some Reason', result.reason)
 
-    @requests_mock.mock()
+    @mock.patch('waterdata.utils.r.get')
     def test_no_opt_args(self, r_mock):
-        r_mock.get(self.test_service_root, status_code=200)
+        m_resp = mock.Mock(spec=r.Response)
+        m_resp.status_code = 200
+        r_mock.return_value = m_resp
+
         result = execute_get_request(self.test_service_root)
-        self.assertIsInstance(result, r.Response)
+        r_mock.assert_called_with('http://blah.usgs.fake', params=None)
         self.assertEqual(result.status_code, 200)
 
-    def test_service_timeout(self):
-        with mock.patch('waterdata.utils.r.get') as r_mock:
-            r_mock.side_effect = r.exceptions.Timeout
-            result = execute_get_request(self.test_url,
-                                         path='/nwis/site/',
-                                         params={'site': self.test_site_number}
-                                         )
-        self.assertIsInstance(result, r.Response)
+    @mock.patch('waterdata.utils.r.get')
+    def test_service_timeout(self, r_mock):
+        r_mock.side_effect = r.exceptions.Timeout
+        result = execute_get_request(self.test_url,
+                                     path='/nwis/site/',
+                                     params={'site': self.test_site_number}
+                                     )
+        r_mock.assert_called_with('http://blah.usgs.fake/nwis/site/', params={'site': '345670'})
         self.assertIsNone(result.status_code)
         self.assertIsNone(result.content)
         self.assertEqual(result.text, '')
 
-    def test_connection_error(self):
-        with mock.patch('waterdata.utils.r.get') as r_mock:
-            r_mock.side_effect = r.exceptions.ConnectionError
-            result = execute_get_request(self.test_url,
-                                         path='/nwis/site/',
-                                         params={'site': self.test_site_number}
-                                         )
-        self.assertIsInstance(result, r.Response)
+    @mock.patch('waterdata.utils.r.get')
+    def test_connection_error(self, r_mock):
+        r_mock.side_effect = r.exceptions.ConnectionError
+        result = execute_get_request(self.test_url,
+                                     path='/nwis/site/',
+                                     params={'site': self.test_site_number}
+                                     )
+        r_mock.assert_called_with('http://blah.usgs.fake/nwis/site/', params={'site': '345670'})
         self.assertIsNone(result.status_code)
         self.assertIsNone(result.content)
         self.assertEqual(result.text, '')
