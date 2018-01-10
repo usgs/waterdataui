@@ -1,10 +1,10 @@
 """
 Initialize the Water Data for the Nation Flask application.
 """
+import json
 import logging
 import os
 import sys
-import json
 
 from flask import Flask
 
