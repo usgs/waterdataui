@@ -6,7 +6,8 @@ import json
 from flask import render_template, request, Markup
 
 from . import app, __version__
-from .utils import build_site_linked_data, execute_get_request, parse_rdb
+from .location import MonitoringLocation
+from .utils import execute_get_request, parse_rdb
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -48,7 +49,8 @@ def monitoring_location(site_no):
                    'STATION_FIELDS_D'  : STATION_FIELDS_D
                    }
         http_code = 200
-        json_ld = build_site_linked_data(station_record)
+        ml = MonitoringLocation(site_no, agency_cd)
+        json_ld = ml.build_linked_data()
         # don't want to create more DOM elements if we don't have to
         # define json_ld in the context only if there's json-ld to render
         if json_ld:
