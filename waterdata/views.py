@@ -23,6 +23,7 @@ def home():
 def monitoring_location(site_no):
     """
     Monitoring Location view
+
     :param site_no: USGS site number
 
     """
