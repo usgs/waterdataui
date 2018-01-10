@@ -1,18 +1,18 @@
 #!/usr/bin/env python3.6
 
-import os
-
+import argparse
 import json
 import logging
+import os
 
 from waterdata.utils import execute_get_request, parse_rdb
 from lookup_generation.nwis_lookups import translate_to_lookup, translate_codes_by_group
 from lookup_generation.wqp_lookups import get_lookup_by_json, get_nwis_state_lookup, get_nwis_county_lookup, is_us_county
 
 """
-Generates a json object that will contain keys for the various codes used in NWIS site info expanded service
+Generates two files, each containing a json object that will contain keys for the various codes used in 
+NWIS site info expanded service
 """
-
 
 CODE_HOST_ENDPOINT = 'https://help.waterdata.usgs.gov'
 
@@ -39,7 +39,13 @@ WQP_LOOKUP_ENDPOINT = 'https://www.waterqualitydata.us/Codes'
 COUNTRY_CODES = ['US', 'CA']
 
 
-def generate_lookup_file(filename='nwis_lookup.json'):
+def generate_lookup_file(datadir, filename='nwis_lookup.json'):
+    """
+    Generates a json object from NWIS code calls and writes the json object to a file.
+    :param str datadir: directory where file is written
+    :param str filename: name of the file containing the json object
+
+    """
     lookups = {}
     for lookup_config in CODE_LOOKUP_CONFIG:
         params = {'fmt': 'rdb'}
@@ -70,11 +76,16 @@ def generate_lookup_file(filename='nwis_lookup.json'):
         else:
             lookups[lookup_config.get('site_key')] = {}
 
-    with open(os.path.join('data', filename), 'w') as f:
+    with open(os.path.join(datadir, filename), 'w') as f:
         f.write(json.dumps(lookups, indent=4))
 
 
-def generate_country_state_county_file(filename='nwis_country_state_lookup.json'):
+def generate_country_state_county_file(datadir, filename='nwis_country_state_lookup.json'):
+    """
+    Generates a json object from WQP country, state, and county lookups and writes the json object to a file.
+    :param str datadir: directory where file is written
+    :param str filename: name of the file containing the json object
+    """
     lookups = {}
     for country in COUNTRY_CODES:
         lookup_dict = get_lookup_by_json('{0}/statecode'.format(WQP_LOOKUP_ENDPOINT), {'countrycode': country})
@@ -87,11 +98,15 @@ def generate_country_state_county_file(filename='nwis_country_state_lookup.json'
     for state in state_with_county_lookups.keys():
         lookups['US']['state_cd'][state]['county_cd'] = state_with_county_lookups[state]
 
-    with open(os.path.join('data', filename), 'w') as f:
+    with open(os.path.join(datadir, filename), 'w') as f:
         f.write(json.dumps(lookups, indent=4))
 
 
 if __name__ == '__main__':
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('--datadir', type=str, default = 'data')
 
-    generate_lookup_file()
-    generate_country_state_county_file()
+    args = arg_parser.parse_args()
+
+    generate_lookup_file(args.datadir)
+    generate_country_state_county_file(args.datadir)
