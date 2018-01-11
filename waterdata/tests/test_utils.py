@@ -18,7 +18,7 @@ class TestGetWaterServicesData(TestCase):
         self.test_rdb_text = ('#\n#\n# US Geological Survey\n# retrieved: 2018-01-02 09:31:20 -05:00\t(caas01)\n#\n# '
                               'The Site File stores location and general information about groundwater,\n# surface '
                               'water, and meteorological sites\n# for sites in USA.\n#\n# File-format description:  '
-                              'http://help.wpythonaterdata.usgs.gov/faq/about-tab-delimited-output\n# Automated-retrieval '
+                              'http://help.waterdata.usgs.gov/faq/about-tab-delimited-output\n# Automated-retrieval '
                               'info: http://waterservices.usgs.gov/rest/Site-Service.html\n#\n# Contact:   '
                               'gs-w_support_nwisweb@usgs.gov\n#\n# The following selected fields are included in this '
                               'output:\n#\n#  agency_cd       -- Agency\n'
