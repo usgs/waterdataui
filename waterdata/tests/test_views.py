@@ -113,16 +113,16 @@ class TestMonitoringLocationView(TestCase):
         response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
         self.assertEqual(response.status_code, 503)
 
-    @mock.patch('waterdata.views.execute_get_request')
+    @mock.patch('waterdata.location.execute_get_request')
     def test_agency_cd(self, r_mock):
         r_mock.return_value.status_code = 500
         response = self.app_client.get('/monitoring-location/{0}?agency_cd=USGS'.format(self.test_site_number))
         r_mock.assert_called_with(self.test_hostname,
-                                  path='/nwis/site/',
-                                  params={'site'      : self.test_site_number,
-                                          'agencyCd'  : 'USGS',
-                                          'siteOutput': 'expanded',
-                                          'format'    : 'rdb'
-                                         }
-                                 )
+                                  '/nwis/site/',
+                                  {'site': self.test_site_number,
+                                   'agencyCd': 'USGS',
+                                   'siteOutput': 'expanded',
+                                   'format': 'rdb'
+                                   }
+                                  )
         self.assertEqual(response.status_code, 503)
