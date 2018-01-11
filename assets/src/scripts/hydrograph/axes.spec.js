@@ -8,23 +8,34 @@ describe('Chart axes', () => {
     const xScale = scaleLinear().range([0, 10]).domain([0, 10]);
     const yScale = scaleLinear().range([0, 10]).domain([0, 10]);
     const {xAxis, yAxis} = createAxes(xScale, yScale, 100);
+    let svg;
 
-    it('axes created', () => {
-        expect(xAxis).toEqual(jasmine.any(Function));
-        expect(yAxis).toEqual(jasmine.any(Function));
-    });
-
-    it('axes appended', () => {
-        let svg = select(document.body).append('svg');
+    beforeEach(() => {
+        svg = select(document.body).append('svg');
         appendAxes({
             plot: svg,
             xAxis,
             yAxis,
-            xLoc: {x:10, y: 10},
+            xLoc: {x: 10, y: 10},
             yLoc: {x: 0, y: 100},
             yLabelLoc: {x: 10, y: 10},
             yTitle: 'Label title'
         });
+    });
+
+    afterEach(() => {
+        select('svg').remove();
+    });
+
+    it('axes created', () => {
+        expect(xAxis).toEqual(jasmine.any(Function));
+        expect(yAxis).toEqual(jasmine.any(Function));
+        expect(yAxis.tickSizeInner()).toBe(100);
+        expect(xAxis.scale()).toBe(xScale);
+        expect(yAxis.scale()).toBe(yScale);
+    });
+
+    it('axes appended', () => {
         // Should be translated
         expect(svg.select('.x-axis').attr('transform')).toBe('translate(10, 10)');
         expect(svg.select('.y-axis').attr('transform')).toBe('translate(0, 100)');

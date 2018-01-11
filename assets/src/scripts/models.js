@@ -15,7 +15,7 @@ const formatTime = timeFormat('%c %Z');
  */
 function get(url, callback) {
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
+    xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             try {
                 var data = JSON.parse(xmlhttp.responseText);
