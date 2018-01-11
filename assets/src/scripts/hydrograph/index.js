@@ -74,7 +74,7 @@ class Hydrograph {
             yAxis,
             xLoc: {x: 0, y: HEIGHT - (MARGIN.top + MARGIN.bottom)},
             yLoc: {x: 0, y: 0},
-            yLabelLoc: {x: HEIGHT / -2 + MARGIN.top, y: 6},
+            yLabelLoc: {x: HEIGHT / -2 + MARGIN.top, y: -35},
             yTitle: this._title
         });
         this._plotDataLine(plot, xScale, yScale);
