@@ -53,3 +53,55 @@ def parse_rdb(rdb_iter_lines):
     for record in rdb_iter_lines:
         record_values = record.split('\t')
         yield dict(zip(headers, record_values))
+
+
+def get_disambiguated_values(location, code_lookups, country_state_county_lookups):
+    """
+    Convert values for keys that contains codes to human readable names using the lookups
+    :param dict location:
+    :param dict code_lookups:
+    :param dict country_state_county_lookups:
+    :rtype: dict
+    """
+
+    def get_state_name (country_code, state_code):
+        """
+        Return the name of the state with country_code and state_code
+        :param str country_code:
+        :param str state_code:
+        :rtype: str
+        """
+        country_lookup = country_state_county_lookups.get(country_code, {})
+        state_lookup = country_lookup.get('state_cd', {})
+
+        return state_lookup.get(state_code, {}).get('name', state_code)
+
+    transformed_location = {}
+
+    country_code = location.get('country_cd')
+    state_code = location.get('state_cd')
+    county_code = location.get('county_cd')
+    district_code = location.get('district_cd')
+
+    for (key, value) in location.items():
+        if key == 'state_cd' and country_code and state_code:
+            transformed_value = get_state_name(country_code, state_code)
+
+        elif key == 'district_cd' and country_code and district_code:
+            transformed_value = get_state_name(country_code, district_code)
+
+        elif key == 'county_cd' and country_code and state_code and country_code:
+            country_lookup = country_state_county_lookups.get(country_code, {})
+            state_lookup = country_lookup.get('state_cd', {}).get(state_code, {})
+            county_lookup = state_lookup.get('county_cd', {})
+
+            transformed_value = county_lookup.get(county_code, {}).get('name', county_code)
+
+        elif key in code_lookups:
+            transformed_value = code_lookups.get(key).get(value, {}).get('name', value)
+
+        else:
+            transformed_value = value
+        transformed_location[key] = transformed_value
+
+    return transformed_location

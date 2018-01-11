@@ -6,7 +6,7 @@ from unittest import TestCase, mock
 
 import requests as r
 
-from ..utils import execute_get_request, parse_rdb
+from ..utils import execute_get_request, parse_rdb, get_disambiguated_values
 
 
 class TestGetWaterServicesData(TestCase):
@@ -143,7 +143,7 @@ class TestParseRdb(TestCase):
                                 '151.20	 .1	NAVD88	02070010'),
                                ('USGS	345671	Some Random Site 1	ST	201.94977778	-101.12763889	S	NAD83	 '
                                 '151.20	 .1	NAVD88	02070010')
-                               ]
+                              ]
 
     def test_parse(self):
         result = parse_rdb(iter(self.test_rdb_lines))
@@ -160,7 +160,7 @@ class TestParseRdb(TestCase):
                       'alt_acy_va': ' .1',
                       'alt_datum_cd': 'NAVD88',
                       'huc_cd': '02070010'
-                      }
+                     }
         expected_2 = {'agency_cd': 'USGS',
                       'site_no': '345671',
                       'station_nm':
@@ -174,23 +174,251 @@ class TestParseRdb(TestCase):
                       'alt_acy_va': ' .1',
                       'alt_datum_cd': 'NAVD88',
                       'huc_cd': '02070010'
-                      }
+                     }
         self.assertDictEqual(next(result), expected_1)
         self.assertDictEqual(next(result), expected_2)
 
     def test_no_data(self):
         with self.assertRaises(Exception) as err:
             parse_rdb(iter([]))
-            message = err.message
-            self.assertEqual(message, 'RDB column headers not found.')
+            self.assertEqual(err.exception.message, 'RDB column headers not found.')
 
     def test_only_comments(self):
         with self.assertRaises(Exception) as err:
             parse_rdb(iter(self.test_rdb_lines[0:5]))
-            message = err.message
-            self.assertEqual(message, 'RDB column headers not found.')
+            self.assertEqual(err.exception.message, 'RDB column headers not found.')
 
     def test_no_records(self):
         result = parse_rdb(iter(self.test_rdb_lines[:-2]))
         result_list = list(result)
         self.assertFalse(result_list)  # list should be empty and evaluate to False
+
+
+class GetDisambiguatedValuesTestCase(TestCase):
+
+    def setUp(self):
+        self.test_code_lookups = {
+            'agency_cd': {
+                'USGS': {'name': 'U.S. Geological Survey'},
+                'USEPA': {'name': 'U.S. Environmental Protection Agency'}
+
+            },
+            'nat_aqfr_cd': {
+                'N100AKUNCD': {
+                    'name': 'Alaska unconsolidated-deposit aquifers'
+                },
+                'N100ALLUVL': {
+                    'name': 'Alluvial aquifers'
+                },
+                'N100BSNRGB': {
+                    'name': 'Basin and Range basin-fill aquifers'
+                },
+            }
+        }
+        self.test_country_state_county_lookup = {
+            'US': {
+                'state_cd': {
+                    '01': {
+                        'name': 'Alabama',
+                        'county_cd': {
+                            '001': {'name': 'Autauga County'},
+                            '002': {'name': 'Baldwin County'}
+                        },
+                    },
+                    '02': {
+                        'name': 'Alaska',
+                        'county_cd': {
+                            '013': 'Aleutians East Borough'
+                        }
+                    }
+                }
+            },
+            'CA': {
+                'state_cd': {
+                    '01': {'name': 'Alberta'},
+                    '02': {
+                        'name': 'British Columbia'
+                    },
+
+                }
+            }
+        }
+
+    def test_empty_location(self):
+        self.assertEqual(get_disambiguated_values({}, self.test_code_lookups, self.test_country_state_county_lookup),
+                         {})
+
+    def test_location_with_no_keys_in_lookups(self):
+        test_location = {
+            'station_name': 'This is a name',
+            'site_no': '12345678'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            test_location
+        )
+
+    def test_location_with_keys_in_code_lookups(self):
+        test_location = {
+            'site_no': '12345678',
+            'agency_cd': 'USGS',
+            'nat_aqfr_cd': 'N100BSNRGB'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'agency_cd': 'U.S. Geological Survey',
+            'nat_aqfr_cd': 'Basin and Range basin-fill aquifers'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_location_with_key_values_not_in_code_lookups(self):
+        test_location = {
+            'site_no': '12345678',
+            'agency_cd': 'USDA',
+            'nat_aqfr_cd': 'N100BSNRGB'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'agency_cd': 'USDA',
+            'nat_aqfr_cd': 'Basin and Range basin-fill aquifers'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_state_county_in_state_county_lookup(self):
+        test_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': '01',
+            'district_cd': '02',
+            'county_cd': '002'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': 'Alabama',
+            'district_cd': 'Alaska',
+            'county_cd': 'Baldwin County'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_state_county_no_county_in_lookup(self):
+        test_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': '01',
+            'county_cd': '004'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': 'Alabama',
+            'county_cd': '004'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_state_with_no_counties_in_lookup(self):
+        test_location = {
+            'site_no': '12345678',
+            'country_cd': 'CA',
+            'state_cd': '01',
+            'county_cd': '004'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'country_cd': 'CA',
+            'state_cd': 'Alberta',
+            'county_cd': '004'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_no_state_in_lookup(self):
+        test_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': '10',
+            'district_cd': '11',
+            'county_cd': '004'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': '10',
+            'district_cd': '11',
+            'county_cd': '004'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_no_country_in_lookup(self):
+        test_location = {
+            'site_no': '12345678',
+            'country_cd': 'MX',
+            'state_cd': '10',
+            'county_cd': '004'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'country_cd': 'MX',
+            'state_cd': '10',
+            'county_cd': '004'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_missing_country(self):
+        test_location = {
+            'site_no': '12345678',
+            'state_cd': '10',
+            'county_cd': '004'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'state_cd': '10',
+            'county_cd': '004'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_missing_state(self):
+        test_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'county_cd': '001'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'county_cd': '001'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_missing_county(self):
+        test_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': '01',
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': 'Alabama',
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location
+        )

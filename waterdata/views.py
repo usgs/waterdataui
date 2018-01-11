@@ -7,7 +7,7 @@ from flask import render_template, request, Markup
 
 from . import app, __version__
 from .location import MonitoringLocation
-from .utils import parse_rdb
+from .utils import execute_get_request, parse_rdb, get_disambiguated_values
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -37,10 +37,16 @@ def monitoring_location(site_no):
         iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
         station_record = next(iter_data)
         template = 'monitoring_location.html'
-        context = {'status_code'       : status,
-                   'station'           : station_record,
-                   'STATION_FIELDS_D'  : STATION_FIELDS_D
-                   }
+        context = {
+            'status_code'       : status,
+            'station'           : station_record,
+            'location_with_values' : get_disambiguated_values(
+                station_record,
+                app.config['NWIS_CODE_LOOKUP'],
+                app.config['COUNTRY_STATE_COUNTY_LOOKUP']
+            ),
+            'STATION_FIELDS_D'  : STATION_FIELDS_D
+        }
         http_code = 200
         json_ld = ml.build_linked_data()
         # don't want to create more DOM elements if we don't have to
