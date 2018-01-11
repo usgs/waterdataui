@@ -68,6 +68,14 @@ class MonitoringLocation:
         return resp, list(parsed_rdb)
 
     def __get_location_attribute(self, attribute_name):
+        """
+        Internal method to extract the value attribute from a list
+        of dictionaries.
+
+        :param str attribute_name: name of the attribute to be retrived.
+        :return: attribute value
+
+        """
         try:
             attr_value = self._site_info[0][attribute_name]
         except (IndexError, KeyError):
@@ -75,6 +83,17 @@ class MonitoringLocation:
         return attr_value
 
     def get_expanded_metadata(self):
+        """
+        Get the expanded metadata for a site.
+
+        Note that the 'siteOutput' query parameter
+        cannot be used with the 'seriesCatalogOutput' parameter.
+        So, we have to make another webservice call.
+
+        :return: response object and expanded metadata
+        :rtype: tuple
+
+        """
         params = {'format': 'rdb',
                   'site': self.location_number,
                   'siteOutput': 'expanded',
