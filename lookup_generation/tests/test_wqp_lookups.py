@@ -1,6 +1,8 @@
 
 from unittest import TestCase, mock
 
+import requests
+
 from ..wqp_lookups import get_lookup_by_json, is_us_county, get_nwis_state_lookup, get_nwis_county_lookup
 
 
@@ -8,6 +10,7 @@ from ..wqp_lookups import get_lookup_by_json, is_us_county, get_nwis_state_looku
 class GetLookupByJsonTestCase(TestCase):
 
     def test_sets_query_params_correctly(self, mrequest):
+        mrequest.return_value = requests.Response()
         mrequest.return_value.status_code = 500
         get_lookup_by_json('http://fakehost.com', path='codes', params={'param1': 'value1'})
         mrequest.assert_called_with('http://fakehost.com',
@@ -15,6 +18,7 @@ class GetLookupByJsonTestCase(TestCase):
                                     params={'param1': 'value1', 'mimeType': 'json'})
 
     def test_bad_request(self, mrequest):
+        mrequest.return_value = requests.Response()
         mrequest.return_value.status_code = 500
         self.assertEqual(get_lookup_by_json('http://fakehost.com', path='codes'), {})
 
@@ -22,6 +26,7 @@ class GetLookupByJsonTestCase(TestCase):
         def test_json():
             return {'codes': []}
 
+        mrequest.return_value = requests.Response()
         mrequest.return_value.status_code = 200
         mrequest.return_value.json = test_json
         self.assertEqual(get_lookup_by_json('http://fakehost.com', path='codes'), {'codes': []})
