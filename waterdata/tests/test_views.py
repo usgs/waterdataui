@@ -117,11 +117,11 @@ class TestMonitoringLocationView(TestCase):
         r_mock.return_value.status_code = 500
         response = self.app_client.get('/monitoring-location/{0}?agency_cd=USGS'.format(self.test_site_number))
         r_mock.assert_called_with(self.test_hostname,
-                                  '/nwis/site/',
-                                  {'site': self.test_site_number,
-                                   'agencyCd': 'USGS',
-                                   'siteOutput': 'expanded',
-                                   'format': 'rdb'
-                                   }
+                                  path='/nwis/site/',
+                                  params={'site': self.test_site_number,
+                                          'agencyCd': 'USGS',
+                                          'siteOutput': 'expanded',
+                                          'format': 'rdb'
+                                          }
                                   )
         self.assertEqual(response.status_code, 503)
