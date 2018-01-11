@@ -62,13 +62,11 @@ class TestMonitoringLocationView(TestCase):
                              }
 
     @mock.patch('waterdata.views.MonitoringLocation')
-    @mock.patch('waterdata.location.execute_get_request')
-    def test_everything_okay(self, r_mock, ml_mock):
+    def test_everything_okay(self, ml_mock):
         m_resp = mock.Mock()
         m_resp.status_code = 200
         m_resp.text = self.test_rdb_text
         m_resp.iter_lines.return_value = iter(self.test_rdb_lines)
-        r_mock.return_value = m_resp
         # Mocking a class creates a MagicMock()...
         # when an instance of the class is created, a new MagicMock is created.
         # Then when one refers to the return_value of class's MagicMock, one gets
@@ -79,7 +77,7 @@ class TestMonitoringLocationView(TestCase):
         # Its return value is then another MagicMock representing an instance.
         # Hence, the syntax below for mocking an instance method:
         ml_mock.return_value.build_linked_data.return_value = self.test_json_ld
-        ml_mock.return_value.get_expanded_metadata.return_value = (m_resp, {})
+        ml_mock.return_value.get_expanded_metadata.return_value = (m_resp, {'stuff': 'other stuff'})
 
         response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
         self.assertEqual(response.status_code, 200)
