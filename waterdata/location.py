@@ -126,7 +126,7 @@ class MonitoringLocation:
 
         :param str parameter_cd: the USGS parameter code of interest
         :return: a parameter's "start_date", "end_date", and "record_count" if available; dates are Python date objects
-        :rtype: dict or None
+        :rtype: collection.namedtuple or None
 
         """
         try:
