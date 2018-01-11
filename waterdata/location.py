@@ -11,18 +11,14 @@ from .utils import execute_get_request, parse_rdb
 from . import app
 
 
-Parameter = namedtuple('Parameter', ['parameter_cd',
-                                     'start_date',
-                                     'end_date',
-                                     'record_count']
-                       )
+Parameter = namedtuple('Parameter', ['parameter_cd', 'start_date', 'end_date', 'record_count'])
 
 
 class MonitoringLocation:
 
     service_endpoint = app.config['SERVICE_ROOT']
 
-    def __init__(self, monitoring_location_number, agency_cd='USGS'):
+    def __init__(self, monitoring_location_record):
         """
         A monitoring location object.
 
@@ -33,18 +29,21 @@ class MonitoringLocation:
             latitude (str): decimal latitude
             longitude (str): decimal longitude
 
-        :param: str monitoring_location_number: identifier for the monitoring location
-        :param: str agency_cd: agency that "owns" the monitoring location; defaults to 'USGS'
+        :param: dict monitoring_location_record: a record for a site from an RDB file; the dictionary must contain the
+        following keys at a minimum: site_no, agency_cd, station_nm, dec_lat_va, dec_long_va
 
         """
-        self.location_number = monitoring_location_number
-        self.agency_code = agency_cd
-        self._resp, self._site_info = self._get_location_info()
-        self.location_name = self.__get_location_attribute('station_nm')
-        self.latitude = self.__get_location_attribute('dec_lat_va')
-        self.longitude = self.__get_location_attribute('dec_long_va')
+        for key, value in monitoring_location_record.items():
+            setattr(self, '_{}'.format(key), value)
+        self.location_number = getattr(self, '_site_no')
+        self.agency_code = getattr(self, '_agency_cd')
+        self.location_name = getattr(self, '_station_nm')
+        self.latitude = getattr(self, '_dec_lat_va')
+        self.longitude = getattr(self, '_dec_long_va')
+        self._resp = None
+        self._site_param_info = None
 
-    def _get_location_info(self):
+    def _get_location_parameter_info(self):
         """
         Perform a web service call get basic information
         about a site and the types of data available at the
@@ -67,22 +66,7 @@ class MonitoringLocation:
             parsed_rdb = parse_rdb(resp.iter_lines(decode_unicode=True))
         return resp, list(parsed_rdb)
 
-    def __get_location_attribute(self, attribute_name):
-        """
-        Internal method to extract the value attribute from a list
-        of dictionaries.
-
-        :param str attribute_name: name of the attribute to be retrived.
-        :return: attribute value
-
-        """
-        try:
-            attr_value = self._site_info[0][attribute_name]
-        except (IndexError, KeyError):
-            attr_value = None
-        return attr_value
-
-    def get_expanded_metadata(self):
+    def get_location_metadata(self, expanded=False):
         """
         Get the expanded metadata for a site.
 
@@ -96,9 +80,10 @@ class MonitoringLocation:
         """
         params = {'format': 'rdb',
                   'site': self.location_number,
-                  'siteOutput': 'expanded',
                   'agencyCd': self.agency_code
                   }
+        if expanded:
+            params['siteOutput'] = 'expanded'
         resp = execute_get_request(self.service_endpoint, '/nwis/site/', params)
         if resp.status_code != 200:
             return resp, {}
@@ -115,7 +100,9 @@ class MonitoringLocation:
         :rtype: set
 
         """
-        supported_params = set([timeseries['parm_cd'] for timeseries in self._site_info])
+        if (self._resp is None or self._site_param_info is None) or self._resp.status_code != 200:
+            self._resp, self._site_param_info = self._get_location_parameter_info()
+        supported_params = set([timeseries['parm_cd'] for timeseries in self._site_param_info])
         return supported_params
 
     def get_site_parameter(self, parameter_cd):
@@ -129,8 +116,10 @@ class MonitoringLocation:
         :rtype: collection.namedtuple or None
 
         """
+        if (self._resp is None or self._site_param_info is None) or self._resp.status_code != 200:
+            self._resp, self._site_param_info = self._get_location_parameter_info()
         try:
-            param_series = next((timeseries for timeseries in self._site_info
+            param_series = next((timeseries for timeseries in self._site_param_info
                                  if timeseries['parm_cd'] == parameter_cd))
         except StopIteration:
             return None
@@ -161,27 +150,24 @@ class MonitoringLocation:
         :rtype: dict
 
         """
-        if self._resp.status_code == 200:
-            contexts = ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
-                        'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
-                        ]
-            linked_data = {'@context': contexts,
-                           '@id': 'https://waterdata.usgs.gov/monitoring-location/{}'.format(self.location_number),
-                           '@type': 'http://www.opengeospatial.org/standards/waterml2/hy_features/HY_HydroLocation',
-                           'name': self.location_name,
-                           'sameAs': 'https://waterdata.usgs.gov/nwis/inventory/?site_no={}'.format(self.location_number),
-                           'HY_HydroLocationType': 'hydrometricStation',
-                           'geo': {'@type': 'schema:GeoCoordinates',
-                                   'latitude': self.latitude,
-                                   'longitude': self.longitude
-                                   }
-                           }
-            location_caps = self.get_capabilities()
-            if '00060' in location_caps:
-                linked_data['image'] = ('https://waterdata.usgs.gov/nwisweb/graph?'
-                                        'agency_cd={0}&site_no={1}&parm_cd=00060&period=100').format(self.agency_code,
-                                                                                                     self.location_number
-                                                                                                     )
-        else:
-            linked_data = {}
+        contexts = ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
+                    'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
+                    ]
+        linked_data = {'@context': contexts,
+                       '@id': 'https://waterdata.usgs.gov/monitoring-location/{}'.format(self.location_number),
+                       '@type': 'http://www.opengeospatial.org/standards/waterml2/hy_features/HY_HydroLocation',
+                       'name': self.location_name,
+                       'sameAs': 'https://waterdata.usgs.gov/nwis/inventory/?site_no={}'.format(self.location_number),
+                       'HY_HydroLocationType': 'hydrometricStation',
+                       'geo': {'@type': 'schema:GeoCoordinates',
+                               'latitude': self.latitude,
+                               'longitude': self.longitude
+                               }
+                       }
+        location_caps = self.get_capabilities()
+        if '00060' in location_caps:
+            linked_data['image'] = ('https://waterdata.usgs.gov/nwisweb/graph?'
+                                    'agency_cd={0}&site_no={1}&parm_cd=00060&period=100').format(self.agency_code,
+                                                                                                 self.location_number
+                                                                                                 )
         return linked_data

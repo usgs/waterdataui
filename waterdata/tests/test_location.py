@@ -13,7 +13,13 @@ from ..location import Parameter, MonitoringLocation
 class TestMonitoringLocation(TestCase):
 
     def setUp(self):
-        self.test_site = '01630500'
+        # an actual test record may include many more columns from an RDB file record
+        self.test_record = {'site_no': '01630500',
+                            'agency_cd': 'USGS',
+                            'station_nm': 'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA',
+                            'dec_lat_va': '38.94977778',
+                            'dec_long_va': '-77.12763889'
+                            }
         self.test_rdb_text = ('#\nagency_cd\tsite_no\tstation_nm\tsite_tp_cd\tdec_lat_va\tdec_long_va\tcoord_acy_cd\t'
                               'dec_coord_datum_cd\talt_va\talt_acy_va\talt_datum_cd\thuc_cd\tdata_type_cd\tparm_cd\t'
                               'stat_cd\tts_id\tloc_web_ds\tmedium_grp_cd\tparm_grp_cd\tsrs_id\taccess_cd\tbegin_date\t'
@@ -107,9 +113,9 @@ class TestMonitoringLocation(TestCase):
         m_resp.iter_lines.return_value = iter(self.test_rdb_text_lines)
         r_mock.return_value = m_resp
 
-        ml = MonitoringLocation(self.test_site)
+        ml = MonitoringLocation(self.test_record)
         m_resp.iter_lines.return_value = iter(self.rdb_expanded_metadata_lines)
-        resp, expanded_metadata = ml.get_expanded_metadata()
+        resp, expanded_metadata = ml.get_location_metadata(expanded=True)
         expected = {'agency_cd': 'USGS',
                     'site_no': '01630500',
                     'station_nm': 'BLAH',
@@ -153,8 +159,28 @@ class TestMonitoringLocation(TestCase):
                     'depth_src_cd': '',
                     'project_no': '249100100'
                     }
+        r_mock.assert_called_with('https://waterservices.usgs.gov',
+                                  '/nwis/site/',
+                                  {'format': 'rdb', 'site': '01630500', 'agencyCd': 'USGS', 'siteOutput': 'expanded'}
+                                  )
         self.assertIsInstance(resp, r.Response)
         self.assertDictEqual(expanded_metadata, expected)
+
+    @mock.patch('waterdata.location.execute_get_request')
+    def test_basic_metadata_request(self, r_mock):
+        m_resp = mock.Mock(spec=r.Response)
+        m_resp.status_code = 200
+        m_resp.iter_lines.return_value = iter(self.test_rdb_text_lines)
+        r_mock.return_value = m_resp
+
+        ml = MonitoringLocation(self.test_record)
+        m_resp.iter_lines.return_value = iter(self.rdb_expanded_metadata_lines)  # don't care what the actual data is
+        resp, metadata = ml.get_location_metadata(expanded=False)
+        r_mock.assert_called_with('https://waterservices.usgs.gov',
+                                  '/nwis/site/',
+                                  {'format': 'rdb', 'site': '01630500', 'agencyCd': 'USGS'}
+                                  )
+        self.assertIsInstance(resp, r.Response)
 
     @mock.patch('waterdata.location.execute_get_request')
     def test_unsuccessful_metadata_request(self, r_mock):
@@ -163,12 +189,12 @@ class TestMonitoringLocation(TestCase):
         m_resp.iter_lines.return_value = iter(self.test_rdb_text_lines)
         r_mock.return_value = m_resp
 
-        ml = MonitoringLocation(self.test_site)
+        ml = MonitoringLocation(self.test_record)
         m_resp.status_code = 400
         m_resp.iter_lines.return_value = iter(self.rdb_expanded_metadata_lines)
-        resp, expanded_metadata = ml.get_expanded_metadata()
+        resp, metadata = ml.get_location_metadata()
         self.assertIsInstance(resp, r.Response)
-        self.assertFalse(expanded_metadata)
+        self.assertFalse(metadata)
 
     @mock.patch('waterdata.location.execute_get_request')
     def test_site_with_params(self, r_mock):
@@ -177,7 +203,7 @@ class TestMonitoringLocation(TestCase):
         m_resp.iter_lines.return_value = iter(self.test_rdb_text_lines)
         r_mock.return_value = m_resp
 
-        ml = MonitoringLocation(self.test_site)
+        ml = MonitoringLocation(self.test_record)
         site_capabilities = ml.get_capabilities()
         expected_capabilities = {'00060', '00010', '00095', '00065'}
         discharge_dates = ml.get_site_parameter('00060')
@@ -191,7 +217,7 @@ class TestMonitoringLocation(TestCase):
         self.assertEqual(ml.longitude, '-77.12763889')
         self.assertEqual(ml.location_name, 'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA')
         # assertions against methods
-        self.assertEqual(ml.location_number, self.test_site)
+        self.assertEqual(ml.location_number, self.test_record['site_no'])
         self.assertSetEqual(site_capabilities, expected_capabilities)
         self.assertEqual(discharge_dates, expected_dates)
         self.assertIsNone(no_param)
@@ -202,12 +228,9 @@ class TestMonitoringLocation(TestCase):
         m_resp.status_code = 404
         r_mock.return_value = m_resp
 
-        ml = MonitoringLocation(self.test_site)
+        ml = MonitoringLocation(self.test_record)
         site_capabilities = ml.get_capabilities()
         discharge_dates = ml.get_site_parameter('00060')
-        self.assertIsNone(ml.latitude)
-        self.assertIsNone(ml.longitude)
-        self.assertIsNone(ml.location_name)
         self.assertFalse(site_capabilities)
         self.assertIsNone(discharge_dates)
 
@@ -218,7 +241,7 @@ class TestMonitoringLocation(TestCase):
         m_resp.iter_lines.return_value = iter(self.test_rdb_text_lines)
         r_mock.return_value = m_resp
 
-        ml = MonitoringLocation(self.test_site)
+        ml = MonitoringLocation(self.test_record)
         json_ld = ml.build_linked_data()
         expected = {'@context': ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
                                  'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
@@ -241,7 +264,7 @@ class TestMonitoringLocation(TestCase):
         m_resp.iter_lines.return_value = iter(self.rdb_no_discharge_lines)
         r_mock.return_value = m_resp
 
-        ml = MonitoringLocation(self.test_site)
+        ml = MonitoringLocation(self.test_record)
         json_ld = ml.build_linked_data()
         expected = {'@context': ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
                                  'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
@@ -256,13 +279,6 @@ class TestMonitoringLocation(TestCase):
         self.assertDictEqual(json_ld, expected)
         self.assertNotIn('image', json_ld.keys())
 
-    @mock.patch('waterdata.location.execute_get_request')
-    def test_json_ld_400(self, r_mock):
-        m_resp = mock.Mock(spec=r.Response)
-        m_resp.status_code = 400
-        r_mock.return_value = m_resp
-
-        ml = MonitoringLocation(self.test_site)
-        json_ld = ml.build_linked_data()
-        self.assertFalse(json_ld)
-
+    def test_incorrect_instantiation(self):
+        with self.assertRaises(AttributeError):
+            MonitoringLocation({'blah': 'blah'})

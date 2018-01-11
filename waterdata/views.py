@@ -30,12 +30,18 @@ def monitoring_location(site_no):
 
     """
     agency_cd = request.args.get('agency_cd')
-    ml = MonitoringLocation(site_no, agency_cd)
-    resp, station_record = ml.get_expanded_metadata()
+
+    resp = execute_get_request(SERVICE_ROOT,
+                               path='/nwis/site/',
+                               params = {'site': site_no, 'agencyCd': agency_cd,
+                                         'siteOutput': 'expanded', 'format': 'rdb'
+                                         }
+                               )
     status = resp.status_code
     if status == 200:
         iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
         station_record = next(iter_data)
+        ml = MonitoringLocation(station_record)
         template = 'monitoring_location.html'
         context = {
             'status_code'       : status,

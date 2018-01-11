@@ -61,12 +61,14 @@ class TestMonitoringLocationView(TestCase):
                                        'agency_cd=USGS&site_no=01630500&parm_cd=00060&period=100')
                              }
 
+    @mock.patch('waterdata.views.execute_get_request')
     @mock.patch('waterdata.views.MonitoringLocation')
-    def test_everything_okay(self, ml_mock):
+    def test_everything_okay(self, ml_mock, r_mock):
         m_resp = mock.Mock()
         m_resp.status_code = 200
         m_resp.text = self.test_rdb_text
         m_resp.iter_lines.return_value = iter(self.test_rdb_lines)
+        r_mock.return_value = m_resp
         # Mocking a class creates a MagicMock()...
         # when an instance of the class is created, a new MagicMock is created.
         # Then when one refers to the return_value of class's MagicMock, one gets
@@ -77,7 +79,6 @@ class TestMonitoringLocationView(TestCase):
         # Its return value is then another MagicMock representing an instance.
         # Hence, the syntax below for mocking an instance method:
         ml_mock.return_value.build_linked_data.return_value = self.test_json_ld
-        ml_mock.return_value.get_expanded_metadata.return_value = (m_resp, {'stuff': 'other stuff'})
 
         response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
         self.assertEqual(response.status_code, 200)
@@ -89,7 +90,7 @@ class TestMonitoringLocationView(TestCase):
                       response.data.decode('utf-8')
                       )
 
-    @mock.patch('waterdata.location.execute_get_request')
+    @mock.patch('waterdata.views.execute_get_request')
     def test_4xx_from_water_services(self, r_mock):
         m_resp = mock.Mock()
         m_resp.status_code = 400
@@ -101,7 +102,7 @@ class TestMonitoringLocationView(TestCase):
         self.assertIn('Site number is invalid.', response.data.decode('utf-8'))
         self.assertNotIn('@context', response.data.decode('utf-8'))
 
-    @mock.patch('waterdata.location.execute_get_request')
+    @mock.patch('waterdata.views.execute_get_request')
     def test_5xx_from_water_services(self, r_mock):
         m_resp = mock.Mock()
         m_resp.status_code = 500
@@ -111,7 +112,7 @@ class TestMonitoringLocationView(TestCase):
         response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
         self.assertEqual(response.status_code, 503)
 
-    @mock.patch('waterdata.location.execute_get_request')
+    @mock.patch('waterdata.views.execute_get_request')
     def test_agency_cd(self, r_mock):
         r_mock.return_value.status_code = 500
         response = self.app_client.get('/monitoring-location/{0}?agency_cd=USGS'.format(self.test_site_number))
