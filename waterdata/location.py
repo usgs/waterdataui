@@ -3,11 +3,19 @@ Utility functions and classes for working with
 USGS water services.
 
 """
+from collections import namedtuple
 import datetime
 
 from .utils import execute_get_request, parse_rdb
 
 from . import app
+
+
+Parameter = namedtuple('Parameter', ['parameter_cd',
+                                     'start_date',
+                                     'end_date',
+                                     'record_count']
+                       )
 
 
 class MonitoringLocation:
@@ -31,7 +39,7 @@ class MonitoringLocation:
         """
         self.location_number = monitoring_location_number
         self.agency_code = agency_cd
-        self._site_info = self._get_location_info()
+        self._resp, self._site_info = self._get_location_info()
         self.location_name = self.__get_location_attribute('station_nm')
         self.latitude = self.__get_location_attribute('dec_lat_va')
         self.longitude = self.__get_location_attribute('dec_long_va')
@@ -54,10 +62,10 @@ class MonitoringLocation:
                   }
         resp = execute_get_request(self.service_endpoint, '/nwis/site/', params)
         if resp.status_code != 200:
-            return []
+            return resp, []
         else:
             parsed_rdb = parse_rdb(resp.iter_lines(decode_unicode=True))
-        return list(parsed_rdb)
+        return resp, list(parsed_rdb)
 
     def __get_location_attribute(self, attribute_name):
         try:
@@ -65,6 +73,20 @@ class MonitoringLocation:
         except (IndexError, KeyError):
             attr_value = None
         return attr_value
+
+    def get_expanded_metadata(self):
+        params = {'format': 'rdb',
+                  'site': self.location_number,
+                  'siteOutput': 'expanded',
+                  'agencyCd': self.agency_code
+                  }
+        resp = execute_get_request(self.service_endpoint, '/nwis/site/', params)
+        if resp.status_code != 200:
+            return resp, {}
+        else:
+            parsed_rdb = parse_rdb(resp.iter_lines(decode_unicode=True))
+            expanded_data = next(parsed_rdb)
+        return resp, expanded_data
 
     def get_capabilities(self):
         """
@@ -99,12 +121,12 @@ class MonitoringLocation:
             start_date = datetime.datetime.strptime(record_start_date, '%Y-%m-%d').date()
             end_date = datetime.datetime.strptime(record_end_date, '%Y-%m-%d').date()
             record_count = param_series['count_nu']
-            parameter_data = {'parameter_cd': parameter_cd,
-                              'start_date': start_date,
-                              'end_date': end_date,
-                              'record_count': record_count
-                              }
-        return parameter_data
+            parameter = Parameter(parameter_cd=parameter_cd,
+                                  start_date=start_date,
+                                  end_date=end_date,
+                                  record_count=record_count
+                                  )
+        return parameter
 
     def build_linked_data(self):
         """

@@ -7,7 +7,7 @@ from flask import render_template, request, Markup
 
 from . import app, __version__
 from .location import MonitoringLocation
-from .utils import execute_get_request, parse_rdb
+from .utils import parse_rdb
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -30,15 +30,8 @@ def monitoring_location(site_no):
 
     """
     agency_cd = request.args.get('agency_cd')
-
-    resp = execute_get_request(
-        SERVICE_ROOT,
-        path='/nwis/site/',
-        params={'site'      : site_no,
-                'agencyCd'  : agency_cd,
-                'siteOutput': 'expanded',
-                'format'    : 'rdb'})
-
+    ml = MonitoringLocation(site_no, agency_cd)
+    resp, station_record = ml.get_expanded_metadata()
     status = resp.status_code
     if status == 200:
         iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
@@ -49,7 +42,6 @@ def monitoring_location(site_no):
                    'STATION_FIELDS_D'  : STATION_FIELDS_D
                    }
         http_code = 200
-        ml = MonitoringLocation(site_no, agency_cd)
         json_ld = ml.build_linked_data()
         # don't want to create more DOM elements if we don't have to
         # define json_ld in the context only if there's json-ld to render
