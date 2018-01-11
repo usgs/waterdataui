@@ -161,24 +161,27 @@ class MonitoringLocation:
         :rtype: dict
 
         """
-        contexts = ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
-                    'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
-                    ]
-        linked_data = {'@context': contexts,
-                       '@id': 'https://waterdata.usgs.gov/monitoring-location/{}'.format(self.location_number),
-                       '@type': 'http://www.opengeospatial.org/standards/waterml2/hy_features/HY_HydroLocation',
-                       'name': self.location_name,
-                       'sameAs': 'https://waterdata.usgs.gov/nwis/inventory/?site_no={}'.format(self.location_number),
-                       'HY_HydroLocationType': 'hydrometricStation',
-                       'geo': {'@type': 'schema:GeoCoordinates',
-                               'latitude': self.latitude,
-                               'longitude': self.longitude
-                               }
-                       }
-        location_caps = self.get_capabilities()
-        if '00060' in location_caps:
-            linked_data['image'] = ('https://waterdata.usgs.gov/nwisweb/graph?'
-                                    'agency_cd={0}&site_no={1}&parm_cd=00060&period=100').format(self.agency_code,
-                                                                                                 self.location_number
-                                                                                                 )
+        if self._resp.status_code == 200:
+            contexts = ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
+                        'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
+                        ]
+            linked_data = {'@context': contexts,
+                           '@id': 'https://waterdata.usgs.gov/monitoring-location/{}'.format(self.location_number),
+                           '@type': 'http://www.opengeospatial.org/standards/waterml2/hy_features/HY_HydroLocation',
+                           'name': self.location_name,
+                           'sameAs': 'https://waterdata.usgs.gov/nwis/inventory/?site_no={}'.format(self.location_number),
+                           'HY_HydroLocationType': 'hydrometricStation',
+                           'geo': {'@type': 'schema:GeoCoordinates',
+                                   'latitude': self.latitude,
+                                   'longitude': self.longitude
+                                   }
+                           }
+            location_caps = self.get_capabilities()
+            if '00060' in location_caps:
+                linked_data['image'] = ('https://waterdata.usgs.gov/nwisweb/graph?'
+                                        'agency_cd={0}&site_no={1}&parm_cd=00060&period=100').format(self.agency_code,
+                                                                                                     self.location_number
+                                                                                                     )
+        else:
+            linked_data = {}
         return linked_data

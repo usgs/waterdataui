@@ -255,3 +255,14 @@ class TestMonitoringLocation(TestCase):
                     }
         self.assertDictEqual(json_ld, expected)
         self.assertNotIn('image', json_ld.keys())
+
+    @mock.patch('waterdata.location.execute_get_request')
+    def test_json_ld_400(self, r_mock):
+        m_resp = mock.Mock(spec=r.Response)
+        m_resp.status_code = 400
+        r_mock.return_value = m_resp
+
+        ml = MonitoringLocation(self.test_site)
+        json_ld = ml.build_linked_data()
+        self.assertFalse(json_ld)
+
