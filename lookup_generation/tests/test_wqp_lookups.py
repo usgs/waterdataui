@@ -12,7 +12,7 @@ class GetLookupByJsonTestCase(TestCase):
     def test_sets_query_params_correctly(self, mrequest):
         mrequest.return_value = requests.Response()
         mrequest.return_value.status_code = 500
-        get_lookup_by_json('http://fakehost.com', path='codes', params={'param1': 'value1'})
+        self.assertEqual(get_lookup_by_json('http://fakehost.com', path='codes', params={'param1': 'value1'}), {})
         mrequest.assert_called_with('http://fakehost.com',
                                     path='codes',
                                     params={'param1': 'value1', 'mimeType': 'json'})
