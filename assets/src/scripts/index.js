@@ -5,7 +5,7 @@ const { getTimeseries } = require('./models');
 const Hydrograph = require('./hydrograph');
 
 
-document.addEventListener('DOMContentLoaded', function () {
+function main() {
     let nodes = document.getElementsByClassName('hydrograph');
     for (let node of nodes) {
         getTimeseries({sites: [node.dataset.siteno]}, series => {
@@ -17,4 +17,10 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
-}, false);
+}
+
+if (document.readyState !== 'loading') {
+    main();
+} else {
+    document.addEventListener('DOMContentLoaded', main, false);
+}

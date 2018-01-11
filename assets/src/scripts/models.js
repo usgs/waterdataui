@@ -1,8 +1,9 @@
 const { timeFormat } = require('d3-time-format');
 
 
-const SERVICE_ROOT = 'https://waterservices.usgs.gov/nwis';
-
+// Define Water Services root URL - use global variable if defined, otherwise
+// use production.
+const SERVICE_ROOT = window.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
 
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');

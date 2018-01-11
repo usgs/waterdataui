@@ -24,6 +24,7 @@
   },
   "globals": {
     "document": true,
-    "XMLHttpRequest": true
+    "XMLHttpRequest": true,
+    "window": true
   }
 }
