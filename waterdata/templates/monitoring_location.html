@@ -19,9 +19,10 @@
                 </tr>
             </thead>
             <tbody>
-                {% for key, value in station.items() %}
+                {% for key, value in location_with_values.items() %}
                 <tr>
                     <th scope="row"> {{ STATION_FIELDS_D[key] }} </th>
+
                     <td> {{ value }} </td>
                 </tr>
                 {% endfor %}

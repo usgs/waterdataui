@@ -14,8 +14,10 @@
     </head>
     <body>
         <div id="skip"><a href="#main-content">Skip to main content</a></div>
-        {% include 'partials/usa_banner.html' %}
-        {% include 'partials/header.html' %}
+        <header role="banner">
+            {% include 'partials/usa_banner.html' %}
+            {% include 'partials/header.html' %}
+        </header>
         <main id="main-content" class="usa-grid">
             {% block content %}{% endblock %}
         </main>
