@@ -6,8 +6,8 @@ import json
 from flask import render_template, request, Markup
 
 from . import app, __version__
-from .location import MonitoringLocation
-from .utils import execute_get_request, parse_rdb, get_disambiguated_values
+from .location_utils import get_capabilities, build_linked_data, get_disambiguated_values
+from .utils import execute_get_request, parse_rdb
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -43,7 +43,27 @@ def monitoring_location(site_no):
     if status == 200:
         iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
         station_record = next(iter_data)
-        ml = MonitoringLocation(station_record)
+        parameter_data_resp = execute_get_request(SERVICE_ROOT,
+                                                  path='/nwis/site/',
+                                                  params={'format': 'rdb',
+                                                          'sites': site_no,
+                                                          'seriesCatalogOutput': True,
+                                                          'siteStatus': 'all',
+                                                          'agencyCd': agency_cd
+                                                          }
+                                                  )
+        if parameter_data_resp.status_code == 200:
+            param_data = parse_rdb(parameter_data_resp.iter_lines(decode_unicode=True))
+            location_capabilities = get_capabilities(param_data)
+            json_ld = build_linked_data(site_no,
+                                        station_record.get('station_nm'),
+                                        agency_cd,
+                                        station_record.get('dec_lat_va', ''),
+                                        station_record.get('dec_long_va', ''),
+                                        location_capabilities
+                                        )
+        else:
+            json_ld = None
         template = 'monitoring_location.html'
         context = {
             'status_code'       : status,
@@ -56,7 +76,6 @@ def monitoring_location(site_no):
             'STATION_FIELDS_D'  : STATION_FIELDS_D
         }
         http_code = 200
-        json_ld = ml.build_linked_data()
         # don't want to create more DOM elements if we don't have to
         # define json_ld in the context only if there's json-ld to render
         if json_ld:

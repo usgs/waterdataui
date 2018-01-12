@@ -3,238 +3,372 @@ Unit tests for waterdata.waterservices classes and functions.
 
 """
 import datetime
-from unittest import TestCase, mock
+from unittest import TestCase
 
-import requests as r
+from ..location_utils import Parameter, get_capabilities, get_site_parameter, build_linked_data,\
+    get_disambiguated_values
+from ..utils import parse_rdb
 
-from ..location import Parameter, MonitoringLocation
+from .data import TEST_RDB_PARAMETER_DATA
 
 
-class TestMonitoringLocation(TestCase):
+class GetDisambiguatedValuesTestCase(TestCase):
 
     def setUp(self):
-        # an actual test record may include many more columns from an RDB file record
-        self.test_record = {'site_no': '01630500',
-                            'agency_cd': 'USGS',
-                            'station_nm': 'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA',
-                            'dec_lat_va': '38.94977778',
-                            'dec_long_va': '-77.12763889'
+        self.test_code_lookups = {
+            'agency_cd': {
+                'USGS': {'name': 'U.S. Geological Survey'},
+                'USEPA': {'name': 'U.S. Environmental Protection Agency'}
+
+            },
+            'nat_aqfr_cd': {
+                'N100AKUNCD': {
+                    'name': 'Alaska unconsolidated-deposit aquifers'
+                },
+                'N100ALLUVL': {
+                    'name': 'Alluvial aquifers'
+                },
+                'N100BSNRGB': {
+                    'name': 'Basin and Range basin-fill aquifers'
+                },
+            }
+        }
+        self.test_country_state_county_lookup = {
+            'US': {
+                'state_cd': {
+                    '01': {
+                        'name': 'Alabama',
+                        'county_cd': {
+                            '001': {'name': 'Autauga County'},
+                            '002': {'name': 'Baldwin County'}
+                        },
+                    },
+                    '02': {
+                        'name': 'Alaska',
+                        'county_cd': {
+                            '013': 'Aleutians East Borough'
+                        }
+                    }
+                }
+            },
+            'CA': {
+                'state_cd': {
+                    '01': {'name': 'Alberta'},
+                    '02': {
+                        'name': 'British Columbia'
+                    },
+
+                }
+            }
+        }
+
+    def test_empty_location(self):
+        self.assertEqual(get_disambiguated_values({}, self.test_code_lookups, self.test_country_state_county_lookup),
+                         {})
+
+    def test_location_with_no_keys_in_lookups(self):
+        test_location = {
+            'station_name': 'This is a name',
+            'site_no': '12345678'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            test_location
+        )
+
+    def test_location_with_keys_in_code_lookups(self):
+        test_location = {
+            'site_no': '12345678',
+            'agency_cd': 'USGS',
+            'nat_aqfr_cd': 'N100BSNRGB'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'agency_cd': 'U.S. Geological Survey',
+            'nat_aqfr_cd': 'Basin and Range basin-fill aquifers'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_location_with_key_values_not_in_code_lookups(self):
+        test_location = {
+            'site_no': '12345678',
+            'agency_cd': 'USDA',
+            'nat_aqfr_cd': 'N100BSNRGB'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'agency_cd': 'USDA',
+            'nat_aqfr_cd': 'Basin and Range basin-fill aquifers'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_state_county_in_state_county_lookup(self):
+        test_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': '01',
+            'district_cd': '02',
+            'county_cd': '002'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': 'Alabama',
+            'district_cd': 'Alaska',
+            'county_cd': 'Baldwin County'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_state_county_no_county_in_lookup(self):
+        test_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': '01',
+            'county_cd': '004'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': 'Alabama',
+            'county_cd': '004'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_state_with_no_counties_in_lookup(self):
+        test_location = {
+            'site_no': '12345678',
+            'country_cd': 'CA',
+            'state_cd': '01',
+            'county_cd': '004'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'country_cd': 'CA',
+            'state_cd': 'Alberta',
+            'county_cd': '004'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_no_state_in_lookup(self):
+        test_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': '10',
+            'district_cd': '11',
+            'county_cd': '004'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': '10',
+            'district_cd': '11',
+            'county_cd': '004'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_no_country_in_lookup(self):
+        test_location = {
+            'site_no': '12345678',
+            'country_cd': 'MX',
+            'state_cd': '10',
+            'county_cd': '004'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'country_cd': 'MX',
+            'state_cd': '10',
+            'county_cd': '004'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_missing_country(self):
+        test_location = {
+            'site_no': '12345678',
+            'state_cd': '10',
+            'county_cd': '004'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'state_cd': '10',
+            'county_cd': '004'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_missing_state(self):
+        test_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'county_cd': '001'
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'county_cd': '001'
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location)
+
+    def test_missing_county(self):
+        test_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': '01',
+        }
+        expected_location = {
+            'site_no': '12345678',
+            'country_cd': 'US',
+            'state_cd': 'Alabama',
+        }
+        self.assertEqual(
+            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
+            expected_location
+        )
+
+
+class TestGetCapabilities(TestCase):
+
+    def setUp(self):
+        self.param_00060 = {'parm_cd': '00060',
+                            'start_date': '1990-07-08',
+                            'end_date': '2001-08-12',
+                            'count_nu': '871'
                             }
-        self.test_rdb_text = ('#\nagency_cd\tsite_no\tstation_nm\tsite_tp_cd\tdec_lat_va\tdec_long_va\tcoord_acy_cd\t'
-                              'dec_coord_datum_cd\talt_va\talt_acy_va\talt_datum_cd\thuc_cd\tdata_type_cd\tparm_cd\t'
-                              'stat_cd\tts_id\tloc_web_ds\tmedium_grp_cd\tparm_grp_cd\tsrs_id\taccess_cd\tbegin_date\t'
-                              'end_date\tcount_nu\n5s\t15s\t50s\t7s\t16s\t16s\t1s\t10s\t8s\t3s\t10s\t16s\t2s\t5s\t5s\t'
-                              '5n\t30s\t3s\t3s\t5n\t4n\t20d\t20d\t5n\nUSGS\t01630500\t'
-                              'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\t'
-                              'S\tNAD83\t 37.20\t .1\tNAVD88\t'
-                              '02070008\tuv\t00010\t\t69930\t4.1 ft from riverbed (middle)\twat\t\t1645597\t0\t'
-                              '2007-10-01\t2018-01-10\t3754\nUSGS\t01630500\t'
-                              'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\tS\t'
-                              'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00010\t\t69931\t'
-                              '1.0 ft from riverbed (bottom)\twat\t\t1645597\t0\t2007-10-01\t2018-01-10\t3754\nUSGS\t'
-                              '01630500\tPOTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t'
-                              '-77.12763889\tS\tNAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00010\t\t69932\t'
-                              '7.1 ft from riverbed (top)\twat\t\t1645597\t0\t2007-10-01\t2018-01-10\t3754\nUSGS\t'
-                              '01630500\tPOTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t'
-                              '-77.12763889\tS\tNAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00010\t\t69942\t'
-                              'From multiparameter sonde\twat\t\t1645597\t0\t2013-11-23\t2018-01-10\t1509\nUSGS\t'
-                              '01630500\tPOTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t'
-                              '-77.12763889\tS\tNAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00060\t\t69928\t\twat\t\t'
-                              '1645423\t0\t1972-06-09\t2018-01-10\t16651\nUSGS\t01630500\t'
-                              'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t'
-                              '-77.12763889\tS\tNAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00065\t\t69929\t\twat\t\t'
-                              '17164583\t0\t2007-10-01\t2018-01-10\t3754\nUSGS\t01630500\t'
-                              'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\tS\t'
-                              'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00095\t\t69933\t7.1 ft from riverbed (top)\t'
-                              'wat\t\t1646694\t0\t2007-10-01\t2018-01-10\t3754\nUSGS\t01630500\t'
-                              'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\tS\t'
-                              'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00095\t\t69943\tFrom multiparameter sonde\t'
-                              'wat\t\t1646694\t0\t2013-11-23\t2018-01-10\t1509'
+        self.param_00010 = {'parm_cd': '00010',
+                            'start_date': '2007-10-01',
+                            'end_date': '2018-01-10',
+                            'count_nu': '3754'
+                            }
+        self.param_00095 = {'parm_cd': '00095',
+                            'start_date': '2007-10-01',
+                            'end_date': '2018-01-10',
+                            'count_nu': '198'
+                            }
+        self.param_00065 = {'parm_cd': '00065',
+                            'start_date': '2007-10-01',
+                            'end_date': '2018-01-10',
+                            'count_nu': '800'
+                            }
+        self.test_rdb_param_data = [self.param_00010, self.param_00060, self.param_00065, self.param_00095]
+
+    def test_get_capabilities(self):
+        result = get_capabilities(self.test_rdb_param_data)
+        expected = {'00060', '00010', '00095', '00065'}
+        self.assertSetEqual(result, expected)
+
+
+class TestGetSiteParameter(TestCase):
+
+    def setUp(self):
+        self.test_code = '00010'
+        self.param_00060 = {'parm_cd': '00060',
+                            'start_date': '1990-07-08',
+                            'end_date': '2001-08-12',
+                            'count_nu': '871'
+                            }
+        self.param_00010 = {'parm_cd': '00010',
+                            'start_date': '2007-10-01',
+                            'end_date': '2018-01-10',
+                            'count_nu': '3754'
+                            }
+        self.param_00095 = {'parm_cd': '00095',
+                            'start_date': '2007-10-01',
+                            'end_date': '2018-01-10',
+                            'count_nu': '198'
+                            }
+        self.param_00065 = {'parm_cd': '00065',
+                            'start_date': '2007-10-01',
+                            'end_date': '2018-01-10',
+                            'count_nu': '800'
+                            }
+        self.test_rdb_param_data = [self.param_00010, self.param_00060, self.param_00065, self.param_00095]
+
+    def test_code_found(self):
+        result = get_site_parameter(self.test_rdb_param_data, self.test_code)
+        expected = Parameter(parameter_cd=self.test_code,
+                             start_date=datetime.date(2007, 10, 1),
+                             end_date=datetime.date(2018, 1, 10),
+                             record_count='3754'
+                             )
+        self.assertEqual(result, expected)
+
+    def test_code_not_found(self):
+        result = get_site_parameter(self.test_rdb_param_data, 'blah')
+        self.assertIsNone(result)
+
+
+class TestBuildLinkedData(TestCase):
+
+    def setUp(self):
+        self.loc_number = '09876543'
+        self.loc_name = 'Gliese 536 b'
+        self.agency_code = 'Cat Leadership Academy'
+        self.latitude = '-800.12'
+        self.longitude = '12.12'
+        self.caps_with_discharge = {'00060', '00065'}
+        self.caps_sans_discharge = {'00065', '00090'}
+
+    def test_with_discharge(self):
+        result = build_linked_data(self.loc_number,
+                                   self.loc_name,
+                                   self.agency_code,
+                                   self.latitude,
+                                   self.longitude,
+                                   self.caps_with_discharge
+                                   )
+        expected = {'@context': ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
+                                 'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
+                                 ],
+                    '@id': 'https://waterdata.usgs.gov/monitoring-location/09876543',
+                    '@type': 'http://www.opengeospatial.org/standards/waterml2/hy_features/HY_HydroLocation',
+                    'name': 'Gliese 536 b',
+                    'sameAs': 'https://waterdata.usgs.gov/nwis/inventory/?site_no=09876543',
+                    'HY_HydroLocationType': 'hydrometricStation',
+                    'geo': {'@type': 'schema:GeoCoordinates',
+                            'latitude': '-800.12',
+                            'longitude': '12.12'
+                            },
+                    'image': ('https://waterdata.usgs.gov/nwisweb/graph'
+                              '?agency_cd=Cat Leadership Academy&site_no=09876543&parm_cd=00060&period=100'
                               )
-        self.test_rdb_text_lines = self.test_rdb_text.split('\n')
-        self.rdb_no_discharge = ('#\nagency_cd\tsite_no\tstation_nm\tsite_tp_cd\tdec_lat_va'
-                                 '\tdec_long_va\tcoord_acy_cd\t'
-                                 'dec_coord_datum_cd\talt_va\talt_acy_va\talt_datum_cd\thuc_cd\tdata_type_cd\tparm_cd\t'
-                                 'stat_cd\tts_id\tloc_web_ds\tmedium_grp_cd\tparm_grp_cd\t'
-                                 'srs_id\taccess_cd\tbegin_date\t'
-                                 'end_date\tcount_nu\n5s\t15s\t50s\t7s\t16s\t16s\t1s\t'
-                                 '10s\t8s\t3s\t10s\t16s\t2s\t5s\t5s\t'
-                                 '5n\t30s\t3s\t3s\t5n\t4n\t20d\t20d\t5n\nUSGS\t01630500\t'
-                                 'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\t'
-                                 'S\tNAD83\t 37.20\t .1\tNAVD88\t'
-                                 '02070008\tuv\t00010\t\t69930\t4.1 ft from riverbed (middle)\twat\t\t1645597\t0\t'
-                                 '2007-10-01\t2018-01-10\t3754\nUSGS\t01630500\t'
-                                 'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\tS\t'
-                                 'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00010\t\t69931\t'
-                                 '1.0 ft from riverbed (bottom)\twat\t\t1645597\t0\t'
-                                 '2007-10-01\t2018-01-10\t3754\nUSGS\t'
-                                 '01630500\tPOTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t'
-                                 '-77.12763889\tS\tNAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00010\t\t69932\t'
-                                 '7.1 ft from riverbed (top)\twat\t\t1645597\t0\t2007-10-01\t2018-01-10\t3754\nUSGS\t'
-                                 '01630500\tPOTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t'
-                                 '-77.12763889\tS\tNAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00010\t\t69942\t'
-                                 'From multiparameter sonde\twat\t\t1645597\t0\t2013-11-23\t'
-                                 '2018-01-10\t1509\nUSGS\t01630500\t'
-                                 'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t'
-                                 '-77.12763889\tS\tNAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00065\t\t69929\t\twat\t\t'
-                                 '17164583\t0\t2007-10-01\t2018-01-10\t3754\nUSGS\t01630500\t'
-                                 'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\tS\t'
-                                 'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00095\t\t'
-                                 '69933\t7.1 ft from riverbed (top)\t'
-                                 'wat\t\t1646694\t0\t2007-10-01\t2018-01-10\t3754\nUSGS\t01630500\t'
-                                 'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\tS\t'
-                                 'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00095\t\t69943\tFrom multiparameter sonde\t'
-                                 'wat\t\t1646694\t0\t2013-11-23\t2018-01-10\t1509'
-                                 )
-        self.rdb_no_discharge_lines = self.rdb_no_discharge.split('\n')
-        self.rdb_expanded_metadata = ('#\nagency_cd\tsite_no\tstation_nm\tsite_tp_cd\tlat_va\tlong_va\tdec_lat_va'
-                                      '\tdec_long_va\tcoord_meth_cd\tcoord_acy_cd\tcoord_datum_cd\tdec_coord_datum_cd'
-                                      '\tdistrict_cd\tstate_cd\tcounty_cd\tcountry_cd\tland_net_ds\tmap_nm'
-                                      '\tmap_scale_fc\talt_va\talt_meth_cd\talt_acy_va\talt_datum_cd\thuc_cd'
-                                      '\tbasin_cd\ttopo_cd\tinstruments_cd\tconstruction_dt\tinventory_dt'
-                                      '\tdrain_area_va\tcontrib_drain_area_va\ttz_cd\tlocal_time_fg\treliability_cd'
-                                      '\tgw_file_cd\tnat_aqfr_cd\taqfr_cd\taqfr_type_cd\twell_depth_va'
-                                      '\thole_depth_va\tdepth_src_cd\tproject_no\n5s\t15s\t50s\t7s\t16s\t16s\t16s'
-                                      '\t16s\t1s\t1s\t10s\t10s\t3s\t2s\t3s\t2s\t23s\t20s\t7s\t8s\t1s\t3s\t10s'
-                                      '\t16s\t2s\t1s\t30s\t8s\t8s\t8s\t8s\t6s\t1s\t1s\t30s\t10s\t8s\t1s\t8s\t8s\t1s'
-                                      '\t12s\nUSGS\t01630500\tBLAH\tST\t'
-                                      '445110\t0921418\t-145.8527318\t-192.2380633\tM\tS\tNAD83\tNAD83\t55\t55'
-                                      '\t093\tUS\t  SENES6  T27N  R15W  4\tSPRING VALLEY\t  24000'
-                                      '\t 900.04\tL\t.01\tNAVD88\t07050005\t\t'
-                                      '\tNNYNYNYNNNNYNNNNYNNNNNNNNNNNNN\t\t\t64\t\tCST\tY'
-                                      '\t\tNNNNNNNN\t\t\t\t\t\t\t249100100'
-                                      )
-        self.rdb_expanded_metadata_lines = self.rdb_expanded_metadata.split('\n')
+                    }
+        self.assertDictEqual(result, expected)
 
-    @mock.patch('waterdata.location.execute_get_request')
-    def test_expanded_metadata(self, r_mock):
-        m_resp = mock.Mock(spec=r.Response)
-        m_resp.status_code = 200
-        m_resp.iter_lines.return_value = iter(self.test_rdb_text_lines)
-        r_mock.return_value = m_resp
-
-        ml = MonitoringLocation(self.test_record)
-        m_resp.iter_lines.return_value = iter(self.rdb_expanded_metadata_lines)
-        resp = ml.get_location_metadata(expanded=True)[0]
-        r_mock.assert_called_with('https://waterservices.usgs.gov',
-                                  '/nwis/site/',
-                                  {'format': 'rdb', 'site': '01630500', 'agencyCd': 'USGS', 'siteOutput': 'expanded'}
-                                  )
-        self.assertIsInstance(resp, r.Response)
-
-    @mock.patch('waterdata.location.execute_get_request')
-    def test_basic_metadata_request(self, r_mock):
-        m_resp = mock.Mock(spec=r.Response)
-        m_resp.status_code = 200
-        m_resp.iter_lines.return_value = iter(self.test_rdb_text_lines)
-        r_mock.return_value = m_resp
-
-        ml = MonitoringLocation(self.test_record)
-        m_resp.iter_lines.return_value = iter(self.rdb_expanded_metadata_lines)  # don't care what the actual data is
-        resp = ml.get_location_metadata(expanded=False)[0]
-        r_mock.assert_called_with('https://waterservices.usgs.gov',
-                                  '/nwis/site/',
-                                  {'format': 'rdb', 'site': '01630500', 'agencyCd': 'USGS'}
-                                  )
-        self.assertIsInstance(resp, r.Response)
-
-    @mock.patch('waterdata.location.execute_get_request')
-    def test_unsuccessful_metadata_request(self, r_mock):
-        m_resp = mock.Mock(spec=r.Response)
-        m_resp.status_code = 200
-        m_resp.iter_lines.return_value = iter(self.test_rdb_text_lines)
-        r_mock.return_value = m_resp
-
-        ml = MonitoringLocation(self.test_record)
-        m_resp.status_code = 400
-        m_resp.iter_lines.return_value = iter(self.rdb_expanded_metadata_lines)
-        resp, metadata = ml.get_location_metadata()
-        self.assertIsInstance(resp, r.Response)
-        self.assertFalse(metadata)
-
-    @mock.patch('waterdata.location.execute_get_request')
-    def test_site_with_params(self, r_mock):
-        m_resp = mock.Mock(spec=r.Response)
-        m_resp.status_code = 200
-        m_resp.iter_lines.return_value = iter(self.test_rdb_text_lines)
-        r_mock.return_value = m_resp
-
-        ml = MonitoringLocation(self.test_record)
-        site_capabilities = ml.get_capabilities()
-        expected_capabilities = {'00060', '00010', '00095', '00065'}
-        discharge_dates = ml.get_site_parameter('00060')
-        expected_dates = Parameter(parameter_cd='00060',
-                                   start_date=datetime.date(1972, 6, 9),
-                                   end_date=datetime.date(2018, 1, 10),
-                                   record_count='16651')
-        no_param = ml.get_site_parameter('12345')
-        # assertions against attributes
-        self.assertEqual(ml.latitude, '38.94977778')
-        self.assertEqual(ml.longitude, '-77.12763889')
-        self.assertEqual(ml.location_name, 'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA')
-        # assertions against methods
-        self.assertEqual(ml.location_number, self.test_record['site_no'])
-        self.assertSetEqual(site_capabilities, expected_capabilities)
-        self.assertEqual(discharge_dates, expected_dates)
-        self.assertIsNone(no_param)
-
-    @mock.patch('waterdata.location.execute_get_request')
-    def test_no_site_matching_request(self, r_mock):
-        m_resp = mock.Mock(spec=r.Response)
-        m_resp.status_code = 404
-        r_mock.return_value = m_resp
-
-        ml = MonitoringLocation(self.test_record)
-        site_capabilities = ml.get_capabilities()
-        discharge_dates = ml.get_site_parameter('00060')
-        self.assertFalse(site_capabilities)
-        self.assertIsNone(discharge_dates)
-
-    @mock.patch('waterdata.location.execute_get_request')
-    def test_json_ld(self, r_mock):
-        m_resp = mock.Mock(spec=r.Response)
-        m_resp.status_code = 200
-        m_resp.iter_lines.return_value = iter(self.test_rdb_text_lines)
-        r_mock.return_value = m_resp
-
-        ml = MonitoringLocation(self.test_record)
-        json_ld = ml.build_linked_data()
+    def test_sans_discharge(self):
+        result = build_linked_data(self.loc_number,
+                                   self.loc_name,
+                                   self.agency_code,
+                                   self.latitude,
+                                   self.longitude,
+                                   self.caps_sans_discharge
+                                   )
         expected = {'@context': ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
                                  'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
                                  ],
-                    '@id': 'https://waterdata.usgs.gov/monitoring-location/01630500',
+                    '@id': 'https://waterdata.usgs.gov/monitoring-location/09876543',
                     '@type': 'http://www.opengeospatial.org/standards/waterml2/hy_features/HY_HydroLocation',
-                    'name': 'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA',
-                    'sameAs': 'https://waterdata.usgs.gov/nwis/inventory/?site_no=01630500',
+                    'name': 'Gliese 536 b',
+                    'sameAs': 'https://waterdata.usgs.gov/nwis/inventory/?site_no=09876543',
                     'HY_HydroLocationType': 'hydrometricStation',
-                    'geo': {'@type': 'schema:GeoCoordinates', 'latitude': '38.94977778', 'longitude': '-77.12763889'},
-                    'image': ('https://waterdata.usgs.gov/nwisweb/graph?'
-                              'agency_cd=USGS&site_no=01630500&parm_cd=00060&period=100')
+                    'geo': {'@type': 'schema:GeoCoordinates',
+                            'latitude': '-800.12',
+                            'longitude': '12.12'
+                            }
                     }
-        self.assertDictEqual(json_ld, expected)
-
-    @mock.patch('waterdata.location.execute_get_request')
-    def test_json_ld_no_discharge(self, r_mock):
-        m_resp = mock.Mock(spec=r.Response)
-        m_resp.status_code = 200
-        m_resp.iter_lines.return_value = iter(self.rdb_no_discharge_lines)
-        r_mock.return_value = m_resp
-
-        ml = MonitoringLocation(self.test_record)
-        json_ld = ml.build_linked_data()
-        expected = {'@context': ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
-                                 'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
-                                 ],
-                    '@id': 'https://waterdata.usgs.gov/monitoring-location/01630500',
-                    '@type': 'http://www.opengeospatial.org/standards/waterml2/hy_features/HY_HydroLocation',
-                    'name': 'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA',
-                    'sameAs': 'https://waterdata.usgs.gov/nwis/inventory/?site_no=01630500',
-                    'HY_HydroLocationType': 'hydrometricStation',
-                    'geo': {'@type': 'schema:GeoCoordinates', 'latitude': '38.94977778', 'longitude': '-77.12763889'}
-                    }
-        self.assertDictEqual(json_ld, expected)
-        self.assertNotIn('image', json_ld.keys())
-
-    def test_incorrect_instantiation(self):
-        with self.assertRaises(AttributeError):
-            MonitoringLocation({'blah': 'blah'})
+        self.assertDictEqual(result, expected)

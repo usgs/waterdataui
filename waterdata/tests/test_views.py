@@ -47,40 +47,53 @@ class TestMonitoringLocationView(TestCase):
                               '16s\nUSGS\t01630500\tSome Random Site\tST\t200.94977778\t-100.12763889\tS\t'
                               'NAD83\t 151.20\t .1\tNAVD88\t02070010')
         self.test_rdb_lines = self.test_rdb_text.split('\n')
-        self.test_json_ld = {'@context': ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
-                                          'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
-                                          ],
-                             '@id': 'https://waterdata.usgs.gov/monitoring-location/01630500',
-                             '@type': 'http://www.opengeospatial.org/standards/waterml2/hy_features/HY_HydroLocation',
-                             'name': 'Some Random Site',
-                             'sameAs': 'https://waterdata.usgs.gov/nwis/inventory/?site_no=01630500',
-                             'HY_HydroLocationType': 'hydrometricStation',
-                             'geo': {'@type': 'schema:GeoCoordinates', 'latitude': '200.94977778',
-                                     'longitude': '-100.12763889'},
-                             'image': ('https://waterdata.usgs.gov/nwisweb/graph?'
-                                       'agency_cd=USGS&site_no=01630500&parm_cd=00060&period=100')
-                             }
+        self.test_param_rdb = ('#\nagency_cd\tsite_no\tstation_nm\tsite_tp_cd\tdec_lat_va\tdec_long_va\tcoord_acy_cd\t'
+                               'dec_coord_datum_cd\talt_va\talt_acy_va\talt_datum_cd\thuc_cd\tdata_type_cd\tparm_cd\t'
+                               'stat_cd\tts_id\tloc_web_ds\tmedium_grp_cd\tparm_grp_cd\tsrs_id\taccess_cd\tbegin_date\t'
+                               'end_date\tcount_nu\n5s\t15s\t50s\t7s\t16s\t16s\t1s\t10s\t8s\t3s\t10s\t16s\t2s\t5s\t5s\t'
+                               '5n\t30s\t3s\t3s\t5n\t4n\t20d\t20d\t5n\nUSGS\t01630500\t'
+                               'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\t'
+                               'S\tNAD83\t 37.20\t .1\tNAVD88\t'
+                               '02070008\tuv\t00010\t\t69930\t4.1 ft from riverbed (middle)\twat\t\t1645597\t0\t'
+                               '2007-10-01\t2018-01-10\t3754\nUSGS\t01630500\t'
+                               'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\tS\t'
+                               'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00010\t\t69931\t'
+                               '1.0 ft from riverbed (bottom)\twat\t\t1645597\t0\t2007-10-01\t2018-01-10\t3754\nUSGS\t'
+                               '01630500\tPOTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t'
+                               '-77.12763889\tS\tNAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00010\t\t69932\t'
+                               '7.1 ft from riverbed (top)\twat\t\t1645597\t0\t2007-10-01\t2018-01-10\t3754\nUSGS\t'
+                               '01630500\tPOTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t'
+                               '-77.12763889\tS\tNAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00010\t\t69942\t'
+                               'From multiparameter sonde\twat\t\t1645597\t0\t2013-11-23\t2018-01-10\t1509\nUSGS\t'
+                               '01630500\tPOTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t'
+                               '-77.12763889\tS\tNAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00060\t\t69928\t\twat\t\t'
+                               '1645423\t0\t1972-06-09\t2018-01-10\t16651\nUSGS\t01630500\t'
+                               'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t'
+                               '-77.12763889\tS\tNAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00065\t\t69929\t\twat\t\t'
+                               '17164583\t0\t2007-10-01\t2018-01-10\t3754\nUSGS\t01630500\t'
+                               'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\tS\t'
+                               'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00095\t\t69933\t7.1 ft from riverbed (top)\t'
+                               'wat\t\t1646694\t0\t2007-10-01\t2018-01-10\t3754\nUSGS\t01630500\t'
+                               'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\tS\t'
+                               'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00095\t\t69943\tFrom multiparameter sonde\t'
+                               'wat\t\t1646694\t0\t2013-11-23\t2018-01-10\t1509'
+                               )
+        self.parameter_lines = self.test_param_rdb.split('\n')
 
     @mock.patch('waterdata.views.execute_get_request')
-    @mock.patch('waterdata.views.MonitoringLocation')
-    def test_everything_okay(self, ml_mock, r_mock):
+    def test_everything_okay(self, r_mock):
         m_resp = mock.Mock()
         m_resp.status_code = 200
         m_resp.text = self.test_rdb_text
         m_resp.iter_lines.return_value = iter(self.test_rdb_lines)
-        r_mock.return_value = m_resp
-        # Mocking a class creates a MagicMock()...
-        # when an instance of the class is created, a new MagicMock is created.
-        # Then when one refers to the return_value of class's MagicMock, one gets
-        # the MagicMock that was created when the instance was created.
-        # This means syntax is slightly different between class and instance methods.
-        #
-        # Here, ml_mock represents the MagicMock object of the class.
-        # Its return value is then another MagicMock representing an instance.
-        # Hence, the syntax below for mocking an instance method:
-        ml_mock.return_value.build_linked_data.return_value = self.test_json_ld
+        m_resp_param = mock.Mock()
+        m_resp_param.status_code = 200
+        m_resp_param.iter_lines.return_value = iter(self.parameter_lines)
 
-        response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
+        return_values = [m_resp, m_resp_param]
+        r_mock.side_effect = return_values
+
+        response = self.app_client.get('/monitoring-location/{}?agency_cd=USGS'.format(self.test_site_number))
         self.assertEqual(response.status_code, 200)
         self.assertIn('Some Random Site', response.data.decode('utf-8'))
         self.assertIn('@context', response.data.decode('utf-8'))
