@@ -45,12 +45,15 @@ def parse_rdb(rdb_iter_lines):
         except StopIteration:
             raise Exception('RDB column headers not found.')
         else:
-            if line[0] != '#':
+            if line and line[0] != '#':
                 headers = line.split('\t')
                 found_header = True
     # skip the next line in the RDB file
     next(rdb_iter_lines)
     for record in rdb_iter_lines:
+        # Ignore empty lines
+        if not record.split():
+            continue
         record_values = record.split('\t')
         yield dict(zip(headers, record_values))
 
@@ -64,7 +67,7 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
     :rtype: dict
     """
 
-    def get_state_name (country_code, state_code):
+    def get_state_name(country_code, state_code):
         """
         Return the name of the state with country_code and state_code
         :param str country_code:
