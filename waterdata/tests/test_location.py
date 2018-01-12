@@ -7,9 +7,6 @@ from unittest import TestCase
 
 from ..location_utils import Parameter, get_capabilities, get_site_parameter, build_linked_data,\
     get_disambiguated_values
-from ..utils import parse_rdb
-
-from .data import TEST_RDB_PARAMETER_DATA
 
 
 class GetDisambiguatedValuesTestCase(TestCase):
