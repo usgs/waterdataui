@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block linked_data %}
-    {% if json_ld is defined %}
+{% block page_script %}
+    {% if json_ld %}
     <script type="application/ld+json">
         {{ json_ld }}
     </script>
     {% endif %}
-{% endblock linked_data %}
+{% endblock page_script %}
 
 {% if station %}{% set page_title = station.station_nm %}{% endif %}
 

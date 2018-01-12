@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="{{ config.STATIC_ROOT }}/main.css">
         <script type="text/javascript">var SERVICE_ROOT = '{{ config.SERVICE_ROOT }}/nwis';</script>
         <script async src="{{ config.STATIC_ROOT }}/bundle.js"></script>
-        {% block linked_data %}{% endblock %}
+        {% block page_script %}{% endblock %}
         <title>
             {% block title %}{% if page_title %}{{ page_title }} - {% endif %}USGS Water Data for the Nation{% endblock %}
         </title>

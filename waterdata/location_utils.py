@@ -84,7 +84,7 @@ def get_site_parameter(location_parameter_records, parameter_cd):
     :param iterable location_parameter_records: an iterable containing of location parameter
     :param str parameter_cd: the USGS parameter code of interest
     :return: a parameter's "start_date", "end_date", and "record_count" if available; dates are Python date objects
-    :rtype: collection.namedtuple or None
+    :rtype: waterdata.location_utils.Parameter or None
 
     """
     try:
@@ -98,12 +98,11 @@ def get_site_parameter(location_parameter_records, parameter_cd):
         start_date = datetime.datetime.strptime(record_start_date, '%Y-%m-%d').date()
         end_date = datetime.datetime.strptime(record_end_date, '%Y-%m-%d').date()
         record_count = param_series['count_nu']
-        parameter = Parameter(parameter_cd=parameter_cd,
-                              start_date=start_date,
-                              end_date=end_date,
-                              record_count=record_count
-                              )
-    return parameter
+    return Parameter(parameter_cd=parameter_cd,
+                     start_date=start_date,
+                     end_date=end_date,
+                     record_count=record_count
+                     )
 
 
 def build_linked_data(location_number, location_name, agency_code, latitude, longitude, location_capabilities):
@@ -112,9 +111,6 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
     The constructed json-ld conforms to the context documents
     at https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld
     and https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld.
-
-    If a site is missing a piece of data that is needed by the json-ld,
-    an empty dictionary is returned.
 
     :param str location_number: location's identification code or number
     :param str location_name: location's name

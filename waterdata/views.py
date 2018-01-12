@@ -57,13 +57,14 @@ def monitoring_location(site_no):
             location_capabilities = get_capabilities(param_data)
             json_ld = build_linked_data(site_no,
                                         station_record.get('station_nm'),
-                                        agency_cd,
+                                        station_record.get('agency_cd'),
                                         station_record.get('dec_lat_va', ''),
                                         station_record.get('dec_long_va', ''),
                                         location_capabilities
                                         )
+            safe_json_ld = Markup(json.dumps(json_ld, indent=4))
         else:
-            json_ld = None
+            safe_json_ld = None
         template = 'monitoring_location.html'
         context = {
             'status_code'       : status,
@@ -73,13 +74,10 @@ def monitoring_location(site_no):
                 app.config['NWIS_CODE_LOOKUP'],
                 app.config['COUNTRY_STATE_COUNTY_LOOKUP']
             ),
-            'STATION_FIELDS_D'  : STATION_FIELDS_D
+            'STATION_FIELDS_D'  : STATION_FIELDS_D,
+            'json_ld': safe_json_ld
         }
         http_code = 200
-        # don't want to create more DOM elements if we don't have to
-        # define json_ld in the context only if there's json-ld to render
-        if json_ld:
-            context['json_ld'] = Markup(json.dumps(json_ld, indent=4))
     elif 400 <= status < 500:
         template = 'monitoring_location.html'
         context = {'status_code': status, 'reason': resp.reason}
