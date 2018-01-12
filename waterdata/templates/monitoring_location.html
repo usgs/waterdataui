@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% set page_title = station.station_nm %}
+
 {% block content %}
     <div class="usa-width-one-whole">
         {% if status_code == 200 %}

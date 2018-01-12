@@ -9,7 +9,7 @@
         <script type="text/javascript">var SERVICE_ROOT = '{{ config.SERVICE_ROOT }}/nwis';</script>
         <script async src="{{ config.STATIC_ROOT }}/bundle.js"></script>
         <title>
-            {% block title %}WDFN UI Home{% endblock %}
+            {% block title %}{% if page_title %}{{ page_title }} - {% endif %}USGS Water Data for the Nation{% endblock %}
         </title>
     </head>
     <body>
