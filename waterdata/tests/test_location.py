@@ -115,56 +115,12 @@ class TestMonitoringLocation(TestCase):
 
         ml = MonitoringLocation(self.test_record)
         m_resp.iter_lines.return_value = iter(self.rdb_expanded_metadata_lines)
-        resp, expanded_metadata = ml.get_location_metadata(expanded=True)
-        expected = {'agency_cd': 'USGS',
-                    'site_no': '01630500',
-                    'station_nm': 'BLAH',
-                    'site_tp_cd': 'ST',
-                    'lat_va': '445110',
-                    'long_va': '0921418',
-                    'dec_lat_va': '-145.8527318',
-                    'dec_long_va': '-192.2380633',
-                    'coord_meth_cd': 'M',
-                    'coord_acy_cd': 'S',
-                    'coord_datum_cd': 'NAD83',
-                    'dec_coord_datum_cd': 'NAD83',
-                    'district_cd': '55',
-                    'state_cd': '55',
-                    'county_cd': '093',
-                    'country_cd': 'US',
-                    'land_net_ds': '  SENES6  T27N  R15W  4',
-                    'map_nm': 'SPRING VALLEY',
-                    'map_scale_fc': '  24000',
-                    'alt_va': ' 900.04',
-                    'alt_meth_cd': 'L',
-                    'alt_acy_va': '.01',
-                    'alt_datum_cd': 'NAVD88',
-                    'huc_cd': '07050005',
-                    'basin_cd': '',
-                    'topo_cd': '',
-                    'instruments_cd': 'NNYNYNYNNNNYNNNNYNNNNNNNNNNNNN',
-                    'construction_dt': '',
-                    'inventory_dt': '',
-                    'drain_area_va': '64',
-                    'contrib_drain_area_va': '',
-                    'tz_cd': 'CST',
-                    'local_time_fg': 'Y',
-                    'reliability_cd': '',
-                    'gw_file_cd': 'NNNNNNNN',
-                    'nat_aqfr_cd': '',
-                    'aqfr_cd': '',
-                    'aqfr_type_cd': '',
-                    'well_depth_va': '',
-                    'hole_depth_va': '',
-                    'depth_src_cd': '',
-                    'project_no': '249100100'
-                    }
+        resp = ml.get_location_metadata(expanded=True)[0]
         r_mock.assert_called_with('https://waterservices.usgs.gov',
                                   '/nwis/site/',
                                   {'format': 'rdb', 'site': '01630500', 'agencyCd': 'USGS', 'siteOutput': 'expanded'}
                                   )
         self.assertIsInstance(resp, r.Response)
-        self.assertDictEqual(expanded_metadata, expected)
 
     @mock.patch('waterdata.location.execute_get_request')
     def test_basic_metadata_request(self, r_mock):
@@ -175,7 +131,7 @@ class TestMonitoringLocation(TestCase):
 
         ml = MonitoringLocation(self.test_record)
         m_resp.iter_lines.return_value = iter(self.rdb_expanded_metadata_lines)  # don't care what the actual data is
-        resp, metadata = ml.get_location_metadata(expanded=False)
+        resp = ml.get_location_metadata(expanded=False)[0]
         r_mock.assert_called_with('https://waterservices.usgs.gov',
                                   '/nwis/site/',
                                   {'format': 'rdb', 'site': '01630500', 'agencyCd': 'USGS'}
