@@ -243,22 +243,22 @@ class TestGetCapabilities(TestCase):
 
     def setUp(self):
         self.param_00060 = {'parm_cd': '00060',
-                            'start_date': '1990-07-08',
+                            'begin_date': '1990-07-08',
                             'end_date': '2001-08-12',
                             'count_nu': '871'
                             }
         self.param_00010 = {'parm_cd': '00010',
-                            'start_date': '2007-10-01',
+                            'begin_date': '2007-10-01',
                             'end_date': '2018-01-10',
                             'count_nu': '3754'
                             }
         self.param_00095 = {'parm_cd': '00095',
-                            'start_date': '2007-10-01',
+                            'begin_date': '2007-10-01',
                             'end_date': '2018-01-10',
                             'count_nu': '198'
                             }
         self.param_00065 = {'parm_cd': '00065',
-                            'start_date': '2007-10-01',
+                            'begin_date': '2007-10-01',
                             'end_date': '2018-01-10',
                             'count_nu': '800'
                             }
@@ -275,22 +275,22 @@ class TestGetSiteParameter(TestCase):
     def setUp(self):
         self.test_code = '00010'
         self.param_00060 = {'parm_cd': '00060',
-                            'start_date': '1990-07-08',
+                            'begin_date': '1990-07-08',
                             'end_date': '2001-08-12',
                             'count_nu': '871'
                             }
         self.param_00010 = {'parm_cd': '00010',
-                            'start_date': '2007-10-01',
+                            'begin_date': '2007-10-01',
                             'end_date': '2018-01-10',
                             'count_nu': '3754'
                             }
         self.param_00095 = {'parm_cd': '00095',
-                            'start_date': '2007-10-01',
+                            'begin_date': '2007-10-01',
                             'end_date': '2018-01-10',
                             'count_nu': '198'
                             }
         self.param_00065 = {'parm_cd': '00065',
-                            'start_date': '2007-10-01',
+                            'begin_date': '2007-10-01',
                             'end_date': '2018-01-10',
                             'count_nu': '800'
                             }
