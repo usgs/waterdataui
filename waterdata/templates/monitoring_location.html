@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% set page_title = station.station_nm %}
+{% if station %}{% set page_title = station.station_nm %}{% endif %}
 
 {% block content %}
     <div class="usa-width-one-whole">
