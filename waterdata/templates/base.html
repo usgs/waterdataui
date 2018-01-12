@@ -6,16 +6,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="shortcut icon" type="image/ico" href="{{ config.STATIC_ROOT }}/img/usgs_favicon.ico">
         <link rel="stylesheet" href="{{ config.STATIC_ROOT }}/main.css">
-        <script src="{{ config.STATIC_ROOT }}/bundle.js"></script>
+        <script type="text/javascript">var SERVICE_ROOT = '{{ config.SERVICE_ROOT }}/nwis';</script>
+        <script async src="{{ config.STATIC_ROOT }}/bundle.js"></script>
         {% block linked_data %}{% endblock %}
         <title>
-            {% block title %}WDFN UI Home{% endblock %}
+            {% block title %}{% if page_title %}{{ page_title }} - {% endif %}USGS Water Data for the Nation{% endblock %}
         </title>
     </head>
     <body>
         <div id="skip"><a href="#main-content">Skip to main content</a></div>
-        {% include 'partials/usa_banner.html' %}
-        {% include 'partials/header.html' %}
+        <header role="banner">
+            {% include 'partials/usa_banner.html' %}
+            {% include 'partials/header.html' %}
+        </header>
         <main id="main-content" class="usa-grid">
             {% block content %}{% endblock %}
         </main>
