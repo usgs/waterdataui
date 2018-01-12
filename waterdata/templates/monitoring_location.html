@@ -1,5 +1,13 @@
 {% extends 'base.html' %}
 
+{% block page_script %}
+    {% if json_ld %}
+    <script type="application/ld+json">
+        {{ json_ld }}
+    </script>
+    {% endif %}
+{% endblock page_script %}
+
 {% if station %}{% set page_title = station.station_nm %}{% endif %}
 
 {% block content %}

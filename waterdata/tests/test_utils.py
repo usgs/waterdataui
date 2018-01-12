@@ -4,10 +4,9 @@ Unit tests for the main WDFN views.
 
 from unittest import TestCase, mock
 
-import requests_mock
 import requests as r
 
-from ..utils import execute_get_request, parse_rdb, get_disambiguated_values
+from ..utils import execute_get_request, parse_rdb
 
 
 class TestGetWaterServicesData(TestCase):
@@ -37,55 +36,68 @@ class TestGetWaterServicesData(TestCase):
                               'NAD83\t 151.20\t .1\tNAVD88\t02070010\n')
         self.test_bad_resp = 'Garbage Text'
 
-    @requests_mock.mock()
+    @mock.patch('waterdata.utils.r.get')
     def test_success(self, r_mock):
+        m_resp = mock.Mock(r.Response)
+        m_resp.text = self.test_rdb_text
+        m_resp.reason = 'OK'
+        r_mock.return_value = m_resp
+
         r_mock.get(self.test_url, status_code=200, text=self.test_rdb_text, reason='OK')
         result = execute_get_request(self.test_service_root,
                                      path='/nwis/site/',
                                      params={'site': self.test_site_number}
-                                    )
-        self.assertIsInstance(result, r.Response)
+                                     )
+        r_mock.assert_called_with('http://blah.usgs.fake/nwis/site/', params={'site': '345670'})
         self.assertEqual(self.test_rdb_text, result.text)
         self.assertEqual('OK', result.reason)
 
-    @requests_mock.mock()
+    @mock.patch('waterdata.utils.r.get')
     def test_bad_request(self, r_mock):
-        r_mock.get(self.test_url, status_code=400, text=self.test_bad_resp, reason='Some Reason')
+        m_resp = mock.Mock(spec=r.Response)
+        m_resp.status_code = 400
+        m_resp.text = self.test_bad_resp
+        m_resp.reason = 'Some Reason'
+        r_mock.return_value = m_resp
+
         result = execute_get_request(self.test_service_root,
                                      path='/nwis/site/',
                                      params={'site': self.test_site_number}
-                                    )
-        self.assertIsInstance(result, r.Response)
+                                     )
+        r_mock.assert_called_with('http://blah.usgs.fake/nwis/site/', params={'site': '345670'})
         self.assertEqual(self.test_bad_resp, result.text)
         self.assertEqual('Some Reason', result.reason)
 
-    @requests_mock.mock()
+    @mock.patch('waterdata.utils.r.get')
     def test_no_opt_args(self, r_mock):
-        r_mock.get(self.test_service_root, status_code=200)
+        m_resp = mock.Mock(spec=r.Response)
+        m_resp.status_code = 200
+        r_mock.return_value = m_resp
+
         result = execute_get_request(self.test_service_root)
-        self.assertIsInstance(result, r.Response)
+        r_mock.assert_called_with('http://blah.usgs.fake', params=None)
         self.assertEqual(result.status_code, 200)
 
-    def test_service_timeout(self):
-        with mock.patch('waterdata.utils.r.get') as r_mock:
-            r_mock.side_effect = r.exceptions.Timeout
-            result = execute_get_request(self.test_url,
-                                         path='/nwis/site/',
-                                         params={'site': self.test_site_number}
-                                        )
-        self.assertIsInstance(result, r.Response)
+    @mock.patch('waterdata.utils.r.get')
+    def test_service_timeout(self, r_mock):
+        r_mock.side_effect = r.exceptions.Timeout
+        result = execute_get_request(self.test_url,
+                                     path='/nwis/site/',
+                                     params={'site': self.test_site_number}
+                                     )
+        r_mock.assert_called_with('http://blah.usgs.fake/nwis/site/', params={'site': '345670'})
         self.assertIsNone(result.status_code)
         self.assertIsNone(result.content)
         self.assertEqual(result.text, '')
 
-    def test_connection_error(self):
-        with mock.patch('waterdata.utils.r.get') as r_mock:
-            r_mock.side_effect = r.exceptions.ConnectionError
-            result = execute_get_request(self.test_url,
-                                         path='/nwis/site/',
-                                         params={'site': self.test_site_number}
-                                        )
-        self.assertIsInstance(result, r.Response)
+    @mock.patch('waterdata.utils.r.get')
+    def test_connection_error(self, r_mock):
+        r_mock.side_effect = r.exceptions.ConnectionError
+        result = execute_get_request(self.test_url,
+                                     path='/nwis/site/',
+                                     params={'site': self.test_site_number}
+                                     )
+        r_mock.assert_called_with('http://blah.usgs.fake/nwis/site/', params={'site': '345670'})
         self.assertIsNone(result.status_code)
         self.assertIsNone(result.content)
         self.assertEqual(result.text, '')
@@ -180,233 +192,3 @@ class TestParseRdb(TestCase):
         result = parse_rdb(iter(self.test_rdb_lines[:-2]))
         result_list = list(result)
         self.assertFalse(result_list)  # list should be empty and evaluate to False
-
-
-class GetDisambiguatedValuesTestCase(TestCase):
-
-    def setUp(self):
-        self.test_code_lookups = {
-            'agency_cd': {
-                'USGS': {'name': 'U.S. Geological Survey'},
-                'USEPA': {'name': 'U.S. Environmental Protection Agency'}
-
-            },
-            'nat_aqfr_cd': {
-                'N100AKUNCD': {
-                    'name': 'Alaska unconsolidated-deposit aquifers'
-                },
-                'N100ALLUVL': {
-                    'name': 'Alluvial aquifers'
-                },
-                'N100BSNRGB': {
-                    'name': 'Basin and Range basin-fill aquifers'
-                },
-            }
-        }
-        self.test_country_state_county_lookup = {
-            'US': {
-                'state_cd': {
-                    '01': {
-                        'name': 'Alabama',
-                        'county_cd': {
-                            '001': {'name': 'Autauga County'},
-                            '002': {'name': 'Baldwin County'}
-                        },
-                    },
-                    '02': {
-                        'name': 'Alaska',
-                        'county_cd': {
-                            '013': 'Aleutians East Borough'
-                        }
-                    }
-                }
-            },
-            'CA': {
-                'state_cd': {
-                    '01': {'name': 'Alberta'},
-                    '02': {
-                        'name': 'British Columbia'
-                    },
-
-                }
-            }
-        }
-
-    def test_empty_location(self):
-        self.assertEqual(get_disambiguated_values({}, self.test_code_lookups, self.test_country_state_county_lookup),
-                         {})
-
-    def test_location_with_no_keys_in_lookups(self):
-        test_location = {
-            'station_name': 'This is a name',
-            'site_no': '12345678'
-        }
-        self.assertEqual(
-            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
-            test_location
-        )
-
-    def test_location_with_keys_in_code_lookups(self):
-        test_location = {
-            'site_no': '12345678',
-            'agency_cd': 'USGS',
-            'nat_aqfr_cd': 'N100BSNRGB'
-        }
-        expected_location = {
-            'site_no': '12345678',
-            'agency_cd': 'U.S. Geological Survey',
-            'nat_aqfr_cd': 'Basin and Range basin-fill aquifers'
-        }
-        self.assertEqual(
-            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
-            expected_location)
-
-    def test_location_with_key_values_not_in_code_lookups(self):
-        test_location = {
-            'site_no': '12345678',
-            'agency_cd': 'USDA',
-            'nat_aqfr_cd': 'N100BSNRGB'
-        }
-        expected_location = {
-            'site_no': '12345678',
-            'agency_cd': 'USDA',
-            'nat_aqfr_cd': 'Basin and Range basin-fill aquifers'
-        }
-        self.assertEqual(
-            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
-            expected_location)
-
-    def test_state_county_in_state_county_lookup(self):
-        test_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'state_cd': '01',
-            'district_cd': '02',
-            'county_cd': '002'
-        }
-        expected_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'state_cd': 'Alabama',
-            'district_cd': 'Alaska',
-            'county_cd': 'Baldwin County'
-        }
-        self.assertEqual(
-            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
-            expected_location)
-
-    def test_state_county_no_county_in_lookup(self):
-        test_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'state_cd': '01',
-            'county_cd': '004'
-        }
-        expected_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'state_cd': 'Alabama',
-            'county_cd': '004'
-        }
-        self.assertEqual(
-            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
-            expected_location)
-
-    def test_state_with_no_counties_in_lookup(self):
-        test_location = {
-            'site_no': '12345678',
-            'country_cd': 'CA',
-            'state_cd': '01',
-            'county_cd': '004'
-        }
-        expected_location = {
-            'site_no': '12345678',
-            'country_cd': 'CA',
-            'state_cd': 'Alberta',
-            'county_cd': '004'
-        }
-        self.assertEqual(
-            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
-            expected_location)
-
-    def test_no_state_in_lookup(self):
-        test_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'state_cd': '10',
-            'district_cd': '11',
-            'county_cd': '004'
-        }
-        expected_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'state_cd': '10',
-            'district_cd': '11',
-            'county_cd': '004'
-        }
-        self.assertEqual(
-            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
-            expected_location)
-
-    def test_no_country_in_lookup(self):
-        test_location = {
-            'site_no': '12345678',
-            'country_cd': 'MX',
-            'state_cd': '10',
-            'county_cd': '004'
-        }
-        expected_location = {
-            'site_no': '12345678',
-            'country_cd': 'MX',
-            'state_cd': '10',
-            'county_cd': '004'
-        }
-        self.assertEqual(
-            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
-            expected_location)
-
-    def test_missing_country(self):
-        test_location = {
-            'site_no': '12345678',
-            'state_cd': '10',
-            'county_cd': '004'
-        }
-        expected_location = {
-            'site_no': '12345678',
-            'state_cd': '10',
-            'county_cd': '004'
-        }
-        self.assertEqual(
-            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
-            expected_location)
-
-    def test_missing_state(self):
-        test_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'county_cd': '001'
-        }
-        expected_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'county_cd': '001'
-        }
-        self.assertEqual(
-            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
-            expected_location)
-
-    def test_missing_county(self):
-        test_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'state_cd': '01',
-        }
-        expected_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'state_cd': 'Alabama',
-        }
-        self.assertEqual(
-            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
-            expected_location
-        )
