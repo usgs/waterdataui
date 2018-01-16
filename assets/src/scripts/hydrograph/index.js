@@ -4,6 +4,7 @@
 const { bisector } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
+const { timeFormat } = require('d3-time-format');
 
 const { appendAxes, createAxes } = require('./axes');
 const { createScales } = require('./scales');
@@ -25,16 +26,22 @@ const MARGIN = {
 // Function that returns the left bounding point for a given chart point.
 const bisectDate = bisector(d => d.time).left;
 
+// Create a time formatting function from D3's timeFormat
+const formatTime = timeFormat('%c %Z');
 
 class Hydrograph {
     /**
      * @param {Array} data IV data as returned by models/getTimeseries
-     * @param {String} title y-axis label
+     * @param {String} yLabel y-axis label
+     * @param {String} title for svg's title attribute
+     * @param {String} desc for svg's desc attribute
      * @param {Node} element Dom node to insert
      */
-    constructor({data=[], title='Data', element=document.body}={}) {
+    constructor({data=[], yLabel='Data', title='Time series graph', desc='Time series graph',  element=document.body}={}) {
         this._data = data;
+        this._yLabel = yLabel;
         this._title = title;
+        this._desc = desc;
         this._element = element;
 
         if (this._data && this._data.length) {
@@ -53,6 +60,9 @@ class Hydrograph {
             .style('padding-bottom', ASPECT_RATIO_PERCENT)
             .append('svg')
             .attr('title', this._title)
+            .attr('desc', this._desc)
+            .attr('aria-labelledby', 'title')
+            .attr('desc', this._desc)
             .attr('preserveAspectRatio', 'xMinYMin meet')
             .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`);
 
@@ -76,7 +86,7 @@ class Hydrograph {
             xLoc: {x: 0, y: HEIGHT - (MARGIN.top + MARGIN.bottom)},
             yLoc: {x: 0, y: 0},
             yLabelLoc: {x: HEIGHT / -2 + MARGIN.top, y: -35},
-            yTitle: this._title
+            yTitle: this._yLabel
         });
         this._plotDataLine(plot, xScale, yScale);
         this._plotTooltips(plot, xScale, yScale);

@@ -45,9 +45,14 @@ export function getTimeseries({sites, params=['00060']}, callback) {
             callback(null, error || 'Unexpected error');
         }
         callback(data.value.timeSeries.map(series => {
+            let startDate = new Date(series.values[0].value[0].dateTime);
+            let endDate = new Date(series.values[0].value.slice(-1)[0].dateTime);
             return {
                 code: series.variable.variableCode[0].value,
-                description: series.variable.variableDescription,
+                variableName: series.variable.variableName,
+                variableDescription: series.variable.variableDescription,
+                seriesStartDate: formatTime(startDate),
+                seriesEndDate: formatTime(endDate),
                 values: series.values[0].value.map(value => {
                     let date = new Date(value.dateTime);
                     return {

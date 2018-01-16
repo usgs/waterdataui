@@ -13,7 +13,9 @@ function main() {
             new Hydrograph({
                 element: node,
                 data: dataIsValid ? series[0].values : [],
-                title: dataIsValid ? series[0].description : 'No data'
+                yLabel: dataIsValid ? series[0].description : 'No data',
+                title: dataIsValid ? series[0].variableName : '',
+                desc: dataIsValid ? series[0].variableDescription + ' from ' + series[0].seriesStartDate + ' to ' + series[0].seriesEndDate: ''
             });
         });
     }
