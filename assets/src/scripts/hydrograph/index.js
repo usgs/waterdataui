@@ -52,6 +52,7 @@ class Hydrograph {
             .attr('class', 'hydrograph-container')
             .style('padding-bottom', ASPECT_RATIO_PERCENT)
             .append('svg')
+            .attr('title', this._title)
             .attr('preserveAspectRatio', 'xMinYMin meet')
             .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`);
 
