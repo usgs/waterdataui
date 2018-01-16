@@ -9,7 +9,7 @@ import os
 DEBUG = False
 
 SERVICE_ROOT = 'https://waterservices.usgs.gov'
-CGI_ENDPOINTS = {
+NWIS_ENDPOINTS = {
     'INVENTORY': 'https://waterdata.usgs.gov/nwis/inventory',
     'UV': 'https://waterdata.usgs.gov/nwis/uv'
 }
