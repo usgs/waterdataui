@@ -39,10 +39,18 @@ def monitoring_location(site_no):
     status = resp.status_code
     if status == 200:
         iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
-        station_record = next(iter_data)
+
+        data_list = list(iter_data)
+
         template = 'monitoring_location.html'
+
+        station_nm = ''
+        if len(data_list) == 1:
+            station_nm = data_list[0]['station_nm']
+
         context = {'status_code'       : status,
-                   'station'           : station_record,
+                   'station'           : data_list,
+                   'station_nm'        : station_nm,
                    'STATION_FIELDS_D'  : STATION_FIELDS_D}
         http_code = 200
     elif 400 <= status < 500:

@@ -3,9 +3,32 @@
 {% block content %}
     <div class="usa-width-one-whole">
         {% if status_code == 200 %}
-            <h1>Station Name: {{ station.station_nm }}</h1>
-            <a href="{{ config.LEGACY_SITE_INVENTORY_ENDPOINT }}/?site_no={{ station.site_no }}" target="_blank">Legacy site inventory page</a>
 
+            {% if station|length > 1 %}
+
+            <h1>Multiple sites found</h1>
+            <table class="usa-table-borderless">
+            <thead>
+                <tr>
+                    <th scope="col">Please pick a site:</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for site in station %}
+                <tr>
+                    <td><a href="{{ url_for('monitoring_location', site_no=site['site_no'], agency_cd=site['agency_cd']) }}">{{ site['agency_cd'] }}</a></td>
+                    <td> {{ site['agency_cd'] }} </td>
+                    <td> {{ site['site_no'] }} </td>
+                    <td> {{ site['station_nm'] }} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+
+            {% else %}
+
+            <h1>Station Name: {{ station_nm }}</h1>
+             <a href="{{ config.LEGACY_SITE_INVENTORY_ENDPOINT }}/?site_no={{ station.site_no }}" target="_blank">Legacy site inventory page</a>
             <table>
             <thead>
                 <tr>
@@ -14,14 +37,18 @@
                 </tr>
             </thead>
             <tbody>
-                {% for key, value in station.items() %}
-                <tr>
-                    <th scope="row"> {{ STATION_FIELDS_D[key] }} </th>
-                    <td> {{ value }} </td>
-                </tr>
+                {% for site in station %}
+                    {% for field in site %}
+                        <tr>
+                            <th scope="row"> {{ STATION_FIELDS_D[field] }} </th>
+                            <td> {{ site[field] }} </td>
+                        </tr>
+                    {% endfor %}
                 {% endfor %}
             </tbody>
             </table>
+
+            {% endif %}
 
         {% else %}
             <h1>Error: HTTP {{ status_code }} -- {{ reason }}</h1>
