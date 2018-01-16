@@ -7,17 +7,19 @@
             {% if station|length > 1 %}
 
             <h1>Multiple sites found</h1>
+            <h3>Please pick a site:</h3>
             <table class="usa-table-borderless">
             <thead>
                 <tr>
-                    <th scope="col">Please pick a site:</th>
+                    <th scope="col">Agency</th>
+                    <th scope="col">Site number</th>
+                    <th scope="col">Site name</th>
                 </tr>
             </thead>
             <tbody>
                 {% for site in station %}
                 <tr>
                     <td><a href="{{ url_for('monitoring_location', site_no=site['site_no'], agency_cd=site['agency_cd']) }}">{{ site['agency_cd'] }}</a></td>
-                    <td> {{ site['agency_cd'] }} </td>
                     <td> {{ site['site_no'] }} </td>
                     <td> {{ site['station_nm'] }} </td>
                 </tr>
