@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% if huc_cd %}{% set page_title = huc.huc_nm %}{% endif %}
+
+{% block content %}
+    <div class="usa-width-one-whole">
+        {% if http_code == 200 %}
+            <h1>Hydrological Unit: {{ huc.huc_nm }}</h1>
+
+            {% if huc.children %}
+            <table>
+            <thead>
+                <tr>
+                    <th scope="col">HUC</th>
+                    <th scope="col">Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for huc_cd in huc.children %}
+                <tr>
+                    <th scope="row"><a href="{{ url_for('hydrological_unit', huc_cd=huc_cd) }}">{{ huc_cd }}</a></th>
+                    <td> {{ config.HUC_LOOKUP.hucs[huc_cd].huc_nm }} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+            {% endif %}
+        {% else %}
+            <h1>Error: HTTP {{ http_code }} -- HUC not found.</h1>
+        {% endif %}
+    </div>
+{% endblock content %}

@@ -82,3 +82,21 @@ class TestMonitoringLocationView(TestCase):
                                          }
                                  )
         self.assertEqual(response.status_code, 503)
+
+
+class TestHydrologicalUnitView(TestCase):
+    def setUp(self):
+        self.app_client = app.test_client()
+
+    def test_huc2(self):
+        response = self.app_client.get('/hydrological-unit')
+        self.assertEqual(response.status_code, 200)
+
+    def test_all_exist(self):
+        for huc_cd in app.config['HUC_LOOKUP']['hucs'].keys():
+            response = self.app_client.get('/hydrological-unit/{}'.format(huc_cd))
+            self.assertEqual(response.status_code, 200)
+
+    def test_404s(self):
+        response = self.app_client.get('/hydrological-unit/1')
+        self.assertEqual(response.status_code, 404)

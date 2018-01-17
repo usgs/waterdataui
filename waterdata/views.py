@@ -66,3 +66,28 @@ def monitoring_location(site_no):
         context = {}
         http_code = 500
     return render_template(template, **context), http_code
+
+
+@app.route('/hydrological-unit', defaults={'huc_cd': None}, methods=['GET'])
+@app.route('/hydrological-unit/<huc_cd>', methods=['GET'])
+def hydrological_unit(huc_cd):
+    """
+    Hydrological unit view
+
+    :param huc_cd: ID for this unit
+    """
+
+    # Get the data corresponding to this HUC
+    if huc_cd:
+        huc = app.config['HUC_LOOKUP']['hucs'].get(huc_cd, None)
+
+    # If we don't have a HUC, display all the root HUC2 units as children.
+    else:
+        huc = {
+            'huc_nm': 'HUC2',
+            'children': app.config['HUC_LOOKUP']['classes']['HUC2']
+        }
+
+    http_code = 200 if huc else 404
+    return render_template('hydrological_unit.html',
+                           huc=huc, http_code=http_code), http_code
