@@ -2,7 +2,7 @@
   "name": "waterdataui-assets",
   "version": "0.1.0dev",
   "description": "Compiled static assets for Water Data For The Nation",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "test": "karma start",
     "test:chrome": "karma start --browsers Chrome",
@@ -13,7 +13,7 @@
     "build:css": "node-sass --include-path node_modules/uswds/src/stylesheets assets/src/styles/main.scss | uglifycss > assets/dist/main.css",
     "build:fonts": "mkdir -p assets/dist/fonts && cp node_modules/uswds/src/fonts/* assets/dist/fonts",
     "build:images": "mkdir -p assets/dist/img && cp -r node_modules/uswds/src/img/* assets/dist/img && cp -r assets/src/img/* assets/dist/img",
-    "build:js": "browserify -p tinyify assets/src/scripts/index.js | uglifyjs -c > assets/dist/bundle.js",
+    "build:js": "browserify -p tinyify assets/src/scripts/main.js | uglifyjs -c > assets/dist/bundle.js",
     "serve:static": "live-server --port=9000 --cors --no-browser assets/dist",
     "serve:python": "env/bin/python run.py",
     "start": "run-p watch serve:python",
@@ -21,7 +21,7 @@
     "watch:css": "nodemon -w assets/src/styles -e scss -x \"npm run build:css\"",
     "watch:fonts": "nodemon -w node_modules/uswds/src/fonts -x \"npm run build:fonts\"",
     "watch:images": "nodemon -w assets/src/img -x \"npm run build:images\"",
-    "watch:js": "watchify assets/src/scripts/index.js -o assets/dist/bundle.js -dv"
+    "watch:js": "watchify assets/src/scripts/main.js -o assets/dist/bundle.js -dv"
   },
   "engines": {
     "node": "8.9.3"

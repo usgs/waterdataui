@@ -4,10 +4,10 @@
 const { bisector } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
-const { timeFormat } = require('d3-time-format');
 
 const { appendAxes, createAxes } = require('./axes');
 const { createScales } = require('./scales');
+const { addAccessibility } = require('../svgAccessibility');
 
 
 // Define width, height and margin for the SVG.
@@ -25,9 +25,6 @@ const MARGIN = {
 
 // Function that returns the left bounding point for a given chart point.
 const bisectDate = bisector(d => d.time).left;
-
-// Create a time formatting function from D3's timeFormat
-const formatTime = timeFormat('%c %Z');
 
 class Hydrograph {
     /**
@@ -59,14 +56,15 @@ class Hydrograph {
             .attr('class', 'hydrograph-container')
             .style('padding-bottom', ASPECT_RATIO_PERCENT)
             .append('svg')
-            .attr('id', this._element.dataset.siteno + '-svg')
-            .attr('title', this._title)
-            .attr('desc', this._desc)
-            .attr('aria-labelledby', 'title desc')
-            .attr('desc', this._desc)
-            .attr('tabindex', 0)
             .attr('preserveAspectRatio', 'xMinYMin meet')
             .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`);
+
+        addAccessibility({
+            svg: svg,
+            title: this._title,
+            description: this._desc,
+            isInteractive: true
+        });
 
         // We'll actually be appending to a <g> element
         const plot = svg.append('g')
