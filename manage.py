@@ -4,10 +4,6 @@
 Entrypoint for Flask development server.
 """
 
-import json
-import logging
-import os
-
 import click
 from flask.cli import FlaskGroup
 
