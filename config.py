@@ -20,3 +20,4 @@ LOGGING_LEVEL = logging.DEBUG
 
 NWIS_CODE_LOOKUP_FILENAME = os.path.join('data', 'nwis_lookup.json')
 COUNTRY_STATE_COUNTY_LOOKUP_FILENAME = os.path.join('data', 'nwis_country_state_lookup.json')
+HUC_LOOKUP_FILENAME = os.path.join('data', 'huc_lookup.json')

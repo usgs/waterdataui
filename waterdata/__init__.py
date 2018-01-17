@@ -49,7 +49,8 @@ with open(app.config.get('NWIS_CODE_LOOKUP_FILENAME'), 'r') as f:
 with open(app.config.get('COUNTRY_STATE_COUNTY_LOOKUP_FILENAME'), 'r') as f:
     app.config['COUNTRY_STATE_COUNTY_LOOKUP'] = json.loads(f.read())
 
-
+with open(app.config.get('HUC_LOOKUP_FILENAME'), 'r') as f:
+    app.config['HUC_LOOKUP'] = json.loads(f.read())
 
 
 if app.config.get('LOGGING_ENABLED'):
