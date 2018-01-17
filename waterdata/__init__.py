@@ -54,9 +54,9 @@ with open(app.config.get('HUC_LOOKUP_FILENAME'), 'r') as f:
 
 
 if app.config.get('LOGGING_ENABLED'):
-    log_directory = app.config.get('LOGGING_DIRECTORY')
+    # pylint: disable=C0103
     loglevel = app.config.get('LOGGING_LEVEL')
-    handler = _create_log_handler(log_directory)
+    handler = _create_log_handler(log_directory=app.config.get('LOGGING_DIRECTORY'))
     # Do not set logging level in the handler.
     # Otherwise, if Flask's DEBUG is set to False,
     # all logging will be disabled.
