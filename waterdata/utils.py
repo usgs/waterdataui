@@ -6,6 +6,8 @@ from urllib.parse import urljoin
 
 import requests as r
 
+from . import app
+
 
 def execute_get_request(hostname, path=None, params=None):
     """
@@ -21,7 +23,8 @@ def execute_get_request(hostname, path=None, params=None):
     target = urljoin(hostname, path)
     try:
         resp = r.get(target, params=params)
-    except (r.exceptions.Timeout, r.exceptions.ConnectionError):
+    except (r.exceptions.Timeout, r.exceptions.ConnectionError) as err:
+        app.logger.debug(repr(err))
         resp = r.Response()  # return an empty response object
     return resp
 

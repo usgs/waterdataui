@@ -4,7 +4,6 @@ Unit tests for the main WDFN views.
 
 from unittest import TestCase, mock
 
-import requests_mock
 import requests as r
 
 from ..utils import execute_get_request, parse_rdb
@@ -37,55 +36,68 @@ class TestGetWaterServicesData(TestCase):
                               'NAD83\t 151.20\t .1\tNAVD88\t02070010\n')
         self.test_bad_resp = 'Garbage Text'
 
-    @requests_mock.mock()
+    @mock.patch('waterdata.utils.r.get')
     def test_success(self, r_mock):
+        m_resp = mock.Mock(r.Response)
+        m_resp.text = self.test_rdb_text
+        m_resp.reason = 'OK'
+        r_mock.return_value = m_resp
+
         r_mock.get(self.test_url, status_code=200, text=self.test_rdb_text, reason='OK')
         result = execute_get_request(self.test_service_root,
                                      path='/nwis/site/',
                                      params={'site': self.test_site_number}
-                                    )
-        self.assertIsInstance(result, r.Response)
+                                     )
+        r_mock.assert_called_with('http://blah.usgs.fake/nwis/site/', params={'site': '345670'})
         self.assertEqual(self.test_rdb_text, result.text)
         self.assertEqual('OK', result.reason)
 
-    @requests_mock.mock()
+    @mock.patch('waterdata.utils.r.get')
     def test_bad_request(self, r_mock):
-        r_mock.get(self.test_url, status_code=400, text=self.test_bad_resp, reason='Some Reason')
+        m_resp = mock.Mock(spec=r.Response)
+        m_resp.status_code = 400
+        m_resp.text = self.test_bad_resp
+        m_resp.reason = 'Some Reason'
+        r_mock.return_value = m_resp
+
         result = execute_get_request(self.test_service_root,
                                      path='/nwis/site/',
                                      params={'site': self.test_site_number}
-                                    )
-        self.assertIsInstance(result, r.Response)
+                                     )
+        r_mock.assert_called_with('http://blah.usgs.fake/nwis/site/', params={'site': '345670'})
         self.assertEqual(self.test_bad_resp, result.text)
         self.assertEqual('Some Reason', result.reason)
 
-    @requests_mock.mock()
+    @mock.patch('waterdata.utils.r.get')
     def test_no_opt_args(self, r_mock):
-        r_mock.get(self.test_service_root, status_code=200)
+        m_resp = mock.Mock(spec=r.Response)
+        m_resp.status_code = 200
+        r_mock.return_value = m_resp
+
         result = execute_get_request(self.test_service_root)
-        self.assertIsInstance(result, r.Response)
+        r_mock.assert_called_with('http://blah.usgs.fake', params=None)
         self.assertEqual(result.status_code, 200)
 
-    def test_service_timeout(self):
-        with mock.patch('waterdata.utils.r.get') as r_mock:
-            r_mock.side_effect = r.exceptions.Timeout
-            result = execute_get_request(self.test_url,
-                                         path='/nwis/site/',
-                                         params={'site': self.test_site_number}
-                                        )
-        self.assertIsInstance(result, r.Response)
+    @mock.patch('waterdata.utils.r.get')
+    def test_service_timeout(self, r_mock):
+        r_mock.side_effect = r.exceptions.Timeout
+        result = execute_get_request(self.test_url,
+                                     path='/nwis/site/',
+                                     params={'site': self.test_site_number}
+                                     )
+        r_mock.assert_called_with('http://blah.usgs.fake/nwis/site/', params={'site': '345670'})
         self.assertIsNone(result.status_code)
         self.assertIsNone(result.content)
         self.assertEqual(result.text, '')
 
-    def test_connection_error(self):
-        with mock.patch('waterdata.utils.r.get') as r_mock:
-            r_mock.side_effect = r.exceptions.ConnectionError
-            result = execute_get_request(self.test_url,
-                                         path='/nwis/site/',
-                                         params={'site': self.test_site_number}
-                                        )
-        self.assertIsInstance(result, r.Response)
+    @mock.patch('waterdata.utils.r.get')
+    def test_connection_error(self, r_mock):
+        r_mock.side_effect = r.exceptions.ConnectionError
+        result = execute_get_request(self.test_url,
+                                     path='/nwis/site/',
+                                     params={'site': self.test_site_number}
+                                     )
+        r_mock.assert_called_with('http://blah.usgs.fake/nwis/site/', params={'site': '345670'})
         self.assertIsNone(result.status_code)
         self.assertIsNone(result.content)
         self.assertEqual(result.text, '')

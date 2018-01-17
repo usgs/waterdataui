@@ -1,5 +1,15 @@
 {% extends 'base.html' %}
 
+{% block page_script %}
+    {% if json_ld %}
+    <script type="application/ld+json">
+        {{ json_ld }}
+    </script>
+    {% endif %}
+{% endblock page_script %}
+
+{% if station %}{% set page_title = station.station_nm %}{% endif %}
+
 {% block content %}
     <div class="usa-width-one-whole">
         {% if status_code == 200 %}
@@ -30,7 +40,12 @@
             {% else %}
 
             <h1>Station Name: {{ station_nm }}</h1>
-             <a href="{{ config.LEGACY_SITE_INVENTORY_ENDPOINT }}/?site_no={{ station.site_no }}" target="_blank">Legacy site inventory page</a>
+            <ul>
+                <li><a href="{{ config.NWIS_ENDPOINTS.INVENTORY }}/?site_no={{ site_no }}" target="_blank">Site inventory page</a></li>
+                <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?cb_00060=on&format=gif_mult_parms&site_no={{ site_no }}&period=7" target="_blank">Interactive grapher</a></li>
+                <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?format=img_default&site_no={{ site_no }}&period=7" target="_blank">Presentation Charts</a></li>
+            </ul>
+            <div class="hydrograph" data-siteno="{{ site_no }}"></div>
             <table>
             <thead>
                 <tr>
@@ -38,16 +53,17 @@
                     <th scope="col">Station Data</th>
                 </tr>
             </thead>
+
             <tbody>
-                {% for site in station %}
-                    {% for field in site %}
-                        <tr>
-                            <th scope="row"> {{ STATION_FIELDS_D[field] }} </th>
-                            <td> {{ site[field] }} </td>
-                        </tr>
-                    {% endfor %}
-                {% endfor %}
+                 {% for key, value in location_with_values.items() %}
+                 <tr>
+                     <th scope="row"> {{ STATION_FIELDS_D[key] }} </th>
+
+                     <td> {{ value }} </td>
+                 </tr>
+                 {% endfor %}
             </tbody>
+
             </table>
 
             {% endif %}

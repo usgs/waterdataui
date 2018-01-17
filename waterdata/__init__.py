@@ -1,11 +1,37 @@
 """
 Initialize the Water Data for the Nation Flask application.
 """
+import json
+import logging
+import os
+import sys
 
 from flask import Flask
 
 
 __version__ = '0.1.0dev'
+
+
+def _create_log_handler(log_directory=None, log_name=__name__):
+    """
+    Create a handler object. The logs will be streamed
+    to stdout using StreamHandler if a log directory is not specified.
+    If a logfile is specified, a handler will be created so logs
+    will be written to the file.
+    :param str log_directory: optional path of a directory where logs can be written to
+    :return: a handler
+    :rtype: logging.Handler
+    """
+    if log_directory is not None:
+        log_file = '{}.log'.format(log_name)
+        log_path = os.path.join(log_directory, log_file)
+        log_handler = logging.FileHandler(log_path)
+    else:
+        log_handler = logging.StreamHandler(sys.stdout)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - {%(pathname)s:L%(lineno)d} - %(message)s')
+    log_handler.setFormatter(formatter)
+    return log_handler
+
 
 app = Flask(__name__.split()[0], instance_relative_config=True)  # pylint: disable=C0103
 
@@ -15,5 +41,27 @@ try:
     app.config.from_pyfile('config.py')
 except FileNotFoundError:
     pass
+
+# Read lookup files and save to the app.config
+with open(app.config.get('NWIS_CODE_LOOKUP_FILENAME'), 'r') as f:
+    app.config['NWIS_CODE_LOOKUP'] = json.loads(f.read())
+
+with open(app.config.get('COUNTRY_STATE_COUNTY_LOOKUP_FILENAME'), 'r') as f:
+    app.config['COUNTRY_STATE_COUNTY_LOOKUP'] = json.loads(f.read())
+
+
+
+
+if app.config.get('LOGGING_ENABLED'):
+    log_directory = app.config.get('LOGGING_DIRECTORY')
+    loglevel = app.config.get('LOGGING_LEVEL')
+    handler = _create_log_handler(log_directory)
+    # Do not set logging level in the handler.
+    # Otherwise, if Flask's DEBUG is set to False,
+    # all logging will be disabled.
+    # Instead, set the level in the logger object.
+    app.logger.setLevel(loglevel)
+    app.logger.addHandler(handler)
+
 
 from . import views  # pylint: disable=C0413
