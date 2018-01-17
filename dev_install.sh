@@ -31,7 +31,7 @@ echo "Installing python requirements";
 env/bin/pip install -r requirements.txt;
 
 echo "Running Python tests";
-env/bin/python -m unittest
+env/bin/python -m pytest waterdata
 
 echo "Installing node.js dependencies"
 npm install
