@@ -52,8 +52,8 @@ export function getTimeseries({sites, params=['00060']}, callback) {
                 code: series.variable.variableCode[0].value,
                 variableName: series.variable.variableName,
                 variableDescription: series.variable.variableDescription,
-                seriesStartDate: formatTime(startDate),
-                seriesEndDate: formatTime(endDate),
+                seriesStartDate: startDate,
+                seriesEndDate: endDate,
                 values: series.values[0].value.map(value => {
                     let date = new Date(value.dateTime);
                     return {

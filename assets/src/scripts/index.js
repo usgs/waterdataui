@@ -1,9 +1,12 @@
 // Initialize the 18F Web design standards
 require('uswds');
+const { timeFormat } = require('d3-time-format');
 
 const { getTimeseries } = require('./models');
 const Hydrograph = require('./hydrograph');
 
+// Create a time formatting function from D3's timeFormat
+const formatTime = timeFormat('%c %Z');
 
 function main() {
     let nodes = document.getElementsByClassName('hydrograph');
@@ -15,7 +18,7 @@ function main() {
                 data: dataIsValid ? series[0].values : [],
                 yLabel: dataIsValid ? series[0].description : 'No data',
                 title: dataIsValid ? series[0].variableName : '',
-                desc: dataIsValid ? series[0].variableDescription + ' from ' + series[0].seriesStartDate + ' to ' + series[0].seriesEndDate: ''
+                desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
             });
         });
     }
