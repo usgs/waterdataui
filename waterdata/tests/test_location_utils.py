@@ -68,9 +68,13 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'station_name': 'This is a name',
             'site_no': '12345678'
         }
+        expected_location = {
+            'station_name': {'name': 'This is a name', 'code': 'This is a name'},
+            'site_no': {'name': '12345678', 'code': '12345678'}
+        }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
-            test_location
+            expected_location
         )
 
     def test_location_with_keys_in_code_lookups(self):
@@ -80,9 +84,9 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'nat_aqfr_cd': 'N100BSNRGB'
         }
         expected_location = {
-            'site_no': '12345678',
-            'agency_cd': 'U.S. Geological Survey',
-            'nat_aqfr_cd': 'Basin and Range basin-fill aquifers'
+            'site_no': {'name': '12345678', 'code': '12345678'},
+            'agency_cd': {'name': 'U.S. Geological Survey', 'code': 'USGS'},
+            'nat_aqfr_cd': {'name': 'Basin and Range basin-fill aquifers', 'code': 'N100BSNRGB'}
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
@@ -95,9 +99,9 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'nat_aqfr_cd': 'N100BSNRGB'
         }
         expected_location = {
-            'site_no': '12345678',
-            'agency_cd': 'USDA',
-            'nat_aqfr_cd': 'Basin and Range basin-fill aquifers'
+            'site_no': {'code': '12345678', 'name': '12345678'},
+            'agency_cd': {'code': 'USDA', 'name': 'USDA'},
+            'nat_aqfr_cd': {'code': 'N100BSNRGB', 'name': 'Basin and Range basin-fill aquifers'}
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
@@ -112,11 +116,11 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'county_cd': '002'
         }
         expected_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'state_cd': 'Alabama',
-            'district_cd': 'Alaska',
-            'county_cd': 'Baldwin County'
+            'site_no': {'name': '12345678', 'code': '12345678'},
+            'country_cd': {'name': 'US', 'code': 'US'},
+            'state_cd': {'name': 'Alabama', 'code': '01'},
+            'district_cd': {'name': 'Alaska', 'code': '02'},
+            'county_cd': {'name': 'Baldwin County', 'code': '002'}
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
@@ -130,10 +134,10 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'county_cd': '004'
         }
         expected_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'state_cd': 'Alabama',
-            'county_cd': '004'
+            'site_no': {'name': '12345678', 'code': '12345678'},
+            'country_cd': {'name': 'US', 'code': 'US'},
+            'state_cd': {'name': 'Alabama', 'code': '01'},
+            'county_cd': {'name': '004', 'code': '004'}
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
@@ -147,10 +151,10 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'county_cd': '004'
         }
         expected_location = {
-            'site_no': '12345678',
-            'country_cd': 'CA',
-            'state_cd': 'Alberta',
-            'county_cd': '004'
+            'site_no': {'name': '12345678', 'code': '12345678'},
+            'country_cd': {'name': 'CA', 'code': 'CA'},
+            'state_cd': {'name': 'Alberta', 'code': '01'},
+            'county_cd': {'name': '004', 'code': '004'}
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
@@ -165,11 +169,11 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'county_cd': '004'
         }
         expected_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'state_cd': '10',
-            'district_cd': '11',
-            'county_cd': '004'
+            'site_no': {'name': '12345678', 'code': '12345678'},
+            'country_cd': {'name': 'US', 'code': 'US'},
+            'state_cd': {'name': '10', 'code': '10'},
+            'district_cd': {'name': '11', 'code': '11'},
+            'county_cd': {'name': '004', 'code': '004'}
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
@@ -183,10 +187,10 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'county_cd': '004'
         }
         expected_location = {
-            'site_no': '12345678',
-            'country_cd': 'MX',
-            'state_cd': '10',
-            'county_cd': '004'
+            'site_no': {'name': '12345678', 'code': '12345678'},
+            'country_cd': {'name': 'MX', 'code': 'MX'},
+            'state_cd': {'name': '10', 'code': '10'},
+            'county_cd': {'name': '004', 'code': '004'}
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
@@ -199,9 +203,9 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'county_cd': '004'
         }
         expected_location = {
-            'site_no': '12345678',
-            'state_cd': '10',
-            'county_cd': '004'
+            'site_no': {'name': '12345678', 'code': '12345678'},
+            'state_cd': {'name': '10', 'code': '10'},
+            'county_cd': {'name': '004', 'code': '004'}
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
@@ -214,9 +218,9 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'county_cd': '001'
         }
         expected_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'county_cd': '001'
+            'site_no': {'name': '12345678', 'code': '12345678'},
+            'country_cd': {'name': 'US', 'code': 'US'},
+            'county_cd': {'name': '001', 'code': '001'}
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
@@ -229,9 +233,9 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'state_cd': '01',
         }
         expected_location = {
-            'site_no': '12345678',
-            'country_cd': 'US',
-            'state_cd': 'Alabama',
+            'site_no': {'name': '12345678', 'code': '12345678'},
+            'country_cd': {'name': 'US', 'code': 'US'},
+            'state_cd': {'name': 'Alabama', 'code': '01'},
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup),
