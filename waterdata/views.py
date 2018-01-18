@@ -36,9 +36,7 @@ def monitoring_location(site_no):
                                params={'site': site_no,
                                        'agencyCd': agency_cd,
                                        'siteOutput': 'expanded',
-                                       'format': 'rdb'
-                                       }
-                               )
+                                       'format': 'rdb'})
     status = resp.status_code
     if status == 200:
         iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
@@ -49,9 +47,7 @@ def monitoring_location(site_no):
                                                           'sites': site_no,
                                                           'seriesCatalogOutput': True,
                                                           'siteStatus': 'all',
-                                                          'agencyCd': agency_cd
-                                                          }
-                                                  )
+                                                          'agencyCd': agency_cd})
         if parameter_data_resp.status_code == 200:
             param_data = parse_rdb(parameter_data_resp.iter_lines(decode_unicode=True))
             location_capabilities = get_capabilities(param_data)
@@ -60,8 +56,7 @@ def monitoring_location(site_no):
                                         station_record.get('agency_cd'),
                                         station_record.get('dec_lat_va', ''),
                                         station_record.get('dec_long_va', ''),
-                                        location_capabilities
-                                        )
+                                        location_capabilities)
             safe_json_ld = Markup(json.dumps(json_ld, indent=4))
         else:
             safe_json_ld = None
