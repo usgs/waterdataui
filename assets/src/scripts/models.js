@@ -57,7 +57,7 @@ export function getTimeseries({sites, params=['00060']}, callback) {
                     let date = new Date(value.dateTime);
                     return {
                         time: date,
-                        value: parseInt(value.value),
+                        value: parseFloat(value.value),
                         label: `${formatTime(date)}\n${value.value} ${series.variable.unit.unitCode}`
                     };
                 })

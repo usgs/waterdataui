@@ -28,9 +28,9 @@ function createAxes(xScale, yScale, yTickSize) {
         .tickValues(Array(tickCount).fill(0).map((_, index) => {
             return yDomain[0] + index * tickSize;
         }))
-        .tickFormat(format('d'))
+        .tickFormat(format('.2f'))
         .tickSizeInner(yTickSize)
-        .tickPadding(12)
+        .tickPadding(14)
         .tickSizeOuter(0);
 
     return {xAxis, yAxis};

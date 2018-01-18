@@ -26,7 +26,6 @@ function createScales(data, xSize, ySize) {
 
     // yScale is oriented on the bottom
     const yScale = scaleLog()
-        .nice()
         .range([ySize, 0])
         .domain(yExtent);
 
