@@ -39,9 +39,9 @@ function createAxes(xScale, yScale, yTickSize) {
 
 /**
  * Adds the given axes to a node
- * @param  {Object} plot    Node to append to
- * @param  {Object} xAxis    D3 Axis x-axis
- * @param  {Object} yAxis    D3 Axis y-axis
+ * @param  {Object} plot      Node to append to
+ * @param  {Object} xAxis     D3 Axis x-axis
+ * @param  {Object} yAxis     D3 Axis y-axis
  * @param  {Object} xLoc      {x, y} location of x-axis
  * @param  {Object} yLoc      {x, y} location of y-axis
  * @param  {Object} yLabelLoc {x, y} location of y-axis label
