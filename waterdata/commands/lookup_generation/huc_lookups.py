@@ -35,7 +35,7 @@ def get_huc_data():
             children=[],
             parent=unit['huc_cd'][:len(unit['huc_cd']) - 2] or None,
             **unit
-        ) for unit in parse_rdb(iter(response.text.splitlines()))
+        ) for unit in parse_rdb(response.iter_lines(decode_unicode=True))
     }
 
     # Add references to parent/child relationships and categorize by length.
