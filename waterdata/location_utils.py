@@ -66,7 +66,8 @@ def get_capabilities(location_parameter_records):
     """
     Determine the parameters measured at the site.
 
-    :param iterable location_parameter_records: an iterable containing of location parameters
+    :param iterable location_parameter_records: an iterable containing location parameters, the location parameters
+        must contain a `parm_cd` key
     :return: USGS parameter codes measured at a site
     :rtype: set
 
