@@ -7,7 +7,7 @@ const { line } = require('d3-shape');
 
 const { appendAxes, createAxes } = require('./axes');
 const { createScales } = require('./scales');
-const { addAccessibility } = require('../svgAccessibility');
+const { addAccessibility , addSROnlyTable } = require('../svgAccessibility');
 
 
 // Define width, height and margin for the SVG.
@@ -66,6 +66,13 @@ class Hydrograph {
             isInteractive: true
         });
 
+        addSROnlyTable({
+            container: this._element,
+            columnNames: [this._title, 'Time'],
+            data: this._data.map((value) => {
+                return [value.value, value.time];
+            })
+        });
         // We'll actually be appending to a <g> element
         const plot = svg.append('g')
             .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);

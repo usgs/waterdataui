@@ -1,6 +1,8 @@
+const { select } = require('d3-selection');
+
 /**
- *
- * @param {Node or String} svg - if string should select an svg
+ * Adds accessibility attributes to the svg
+ * @param {Object} svg - Can be a selector string or d3 selection for an svg element
  * @param {String} title
  * @param {String} description
  * @param {Boolean} isInteractive
@@ -14,8 +16,39 @@ function addAccessibility({svg, title, description, isInteractive}) {
     }
 }
 
-//function addSROnlyTable({selector, columnNames, data})
+/**
+ * Appends a table for screen readers only containing the data. The number
+ * of elements in columnNames should match the number of elements in each element
+ * of the data array.
+ * @param {Object} container - Can be a selector string or d3 selection
+ * @param {Array of String} columnNames
+ * @param {Array of Array } data
+ */
+function addSROnlyTable({container, columnNames, data}) {
+    const table = select(container)
+        .append('table')
+        .attr('class', 'usa-sr-only');
 
+    table.append('thead')
+        .append('tr')
+        .selectAll('th')
+        .data(columnNames)
+        .enter().append('th')
+            .attr('scope', 'col')
+            .text(function(d) { return d; });
 
-module.exports = {addAccessibility};
+    const data_rows = table.append('tbody')
+        .selectAll('tr')
+        .data(data)
+        .enter().append('tr');
+
+    data_rows.selectAll('td')
+        .data(function(d) { return d; })
+        .enter().append('td')
+            .attr('scope', 'row')
+            .text(function(d) { return d; });
+
+}
+
+module.exports = {addAccessibility, addSROnlyTable};
 
