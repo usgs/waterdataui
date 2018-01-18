@@ -7,7 +7,7 @@ const { line } = require('d3-shape');
 
 const { appendAxes, createAxes } = require('./axes');
 const { createScales } = require('./scales');
-const { addAccessibility , addSROnlyTable } = require('../svgAccessibility');
+const { addSVGAccessibility , addSROnlyTable } = require('../accessibility');
 
 
 // Define width, height and margin for the SVG.
@@ -59,7 +59,7 @@ class Hydrograph {
             .attr('preserveAspectRatio', 'xMinYMin meet')
             .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`);
 
-        addAccessibility({
+        addSVGAccessibility({
             svg: svg,
             title: this._title,
             description: this._desc,

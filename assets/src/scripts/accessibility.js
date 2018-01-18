@@ -7,7 +7,7 @@ const { select } = require('d3-selection');
  * @param {String} description
  * @param {Boolean} isInteractive
  */
-function addAccessibility({svg, title, description, isInteractive}) {
+function addSVGAccessibility({svg, title, description, isInteractive}) {
     svg.attr('title', title)
         .attr('desc', description)
         .attr('aria-labelledby', 'title desc');
@@ -20,7 +20,7 @@ function addAccessibility({svg, title, description, isInteractive}) {
  * Appends a table for screen readers only containing the data. The number
  * of elements in columnNames should match the number of elements in each element
  * of the data array.
- * @param {Object} container - Can be a selector string or d3 selection
+ * @param {String} container - Can be a selector string or d3 selection
  * @param {Array of String} columnNames
  * @param {Array of Array } data
  */
@@ -50,5 +50,5 @@ function addSROnlyTable({container, columnNames, data}) {
 
 }
 
-module.exports = {addAccessibility, addSROnlyTable};
+module.exports = {addSVGAccessibility, addSROnlyTable};
 

@@ -128,7 +128,7 @@ describe('Hydrograph charting module', () => {
 });
 
 
-const MOCK_DATA = `[
+const MOCK_DATA = [
     {
         "label": "1/3/2018, 10:00:00 AM -0600\n24.0 ft3/s",
         "time": "2018-01-03T16:00:00.000Z",
@@ -179,4 +179,4 @@ const MOCK_DATA = `[
         "time": "2018-01-03T18:15:00.000Z",
         "value": 24
     }
-]`;
+]
