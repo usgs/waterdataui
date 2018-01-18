@@ -52,7 +52,7 @@ def parse_rdb(rdb_iter_lines):
     next(rdb_iter_lines)
     for record in rdb_iter_lines:
         # Ignore empty lines
-        if not record.split():
+        if not record.strip():
             continue
         record_values = record.split('\t')
         yield dict(zip(headers, record_values))
