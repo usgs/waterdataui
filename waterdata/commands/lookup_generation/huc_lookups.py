@@ -41,7 +41,8 @@ def get_huc_data():
     # Add references to parent/child relationships and categorize by length.
     classes = defaultdict(list)
     for huc in hucs.values():
-        classes['HUC%s' % len(huc['huc_cd'])].append(huc['huc_cd'])
+        huc_len = len(huc['huc_cd'])
+        classes[f'HUC{huc_len}'].append(huc['huc_cd'])
         if huc['parent']:
             hucs[huc['parent']]['children'].append(huc['huc_cd'])
 
