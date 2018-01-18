@@ -6,9 +6,9 @@ const { timeFormat } = require('d3-time-format');
 
 /**
  * Create an x and y axis for hydrograph
- * @param  {Object} xScale    D3 Scale object for the x-axis
- * @param  {Object} yScale    D3 Scale object for the y-axis
- * @param  {Number} yTickSize  Size of inner ticks for the y-axis
+ * @param  {Object} xScale      D3 Scale object for the x-axis
+ * @param  {Object} yScale      D3 Scale object for the y-axis
+ * @param  {Number} yTickSize   Size of inner ticks for the y-axis
  * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
 function createAxes(xScale, yScale, yTickSize) {
