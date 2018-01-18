@@ -108,6 +108,19 @@ def hydrological_unit(huc_cd):
             'children': app.config['HUC_LOOKUP']['classes']['HUC2']
         }
 
+    # If this is a HUC8 site, get the monitoring locations within it.
+    monitoring_locations = []
+    if huc and huc.get('kind') == 'HUC8':
+        response = execute_get_request(
+            SERVICE_ROOT,
+            path='/nwis/site/',
+            params={'format': 'rdb', 'huc': huc_cd}
+        )
+        if response.status_code == 200:
+            monitoring_locations = parse_rdb(response.iter_lines(decode_unicode=True))
+
     http_code = 200 if huc else 404
-    return render_template('hydrological_unit.html',
-                           huc=huc, http_code=http_code), http_code
+    return render_template(
+        'hydrological_unit.html',
+        huc=huc, http_code=http_code, monitoring_locations=monitoring_locations
+    ), http_code

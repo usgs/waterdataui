@@ -27,6 +27,7 @@ def test_huc_lookup(huc_mock):
         assert key == value['huc_cd'], 'Dict key does not equal HUC'
         parent_cd = key[:len(key) - 2] or None
         assert parent_cd == value['parent'], 'Bad parent HUC reference'
+        assert value['kind'] == 'HUC{}'.format(len(key)), 'Wrong HUC classification'
         if parent_cd:
             assert key in hucs[parent_cd]['children'], 'No child reference for %s' % key
 

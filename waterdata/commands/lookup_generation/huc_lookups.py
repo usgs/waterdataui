@@ -34,6 +34,7 @@ def get_huc_data():
         unit['huc_cd']: dict(
             children=[],
             parent=unit['huc_cd'][:len(unit['huc_cd']) - 2] or None,
+            kind='HUC{}'.format(len(unit['huc_cd'])),
             **unit
         ) for unit in parse_rdb(response.iter_lines(decode_unicode=True))
     }
@@ -59,5 +60,6 @@ def generate_hucs_file(datadir):
     """
 
     file_name = os.path.join(datadir, 'huc_lookup.json')
+    data = get_huc_data()
     with open(file_name, 'w') as output_file:
-        output_file.write(json.dumps(get_huc_data(), indent=4))
+        output_file.write(json.dumps(data, indent=4))
