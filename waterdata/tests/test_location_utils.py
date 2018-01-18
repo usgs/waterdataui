@@ -269,6 +269,10 @@ class TestGetCapabilities(TestCase):
         expected = {'00060', '00010', '00095', '00065'}
         self.assertSetEqual(result, expected)
 
+    def test_get_empty(self):
+        result = get_capabilities([])
+        self.assertFalse(result)
+
 
 class TestGetSiteParameter(TestCase):
 
