@@ -16,55 +16,52 @@
 
             {% if station|length > 1 %}
 
-            <h1>Multiple sites found</h1>
-            <h3>Please pick a site:</h3>
-            <table class="usa-table-borderless">
-            <thead>
-                <tr>
-                    <th scope="col">Agency</th>
-                    <th scope="col">Site number</th>
-                    <th scope="col">Site name</th>
-                </tr>
-            </thead>
-            <tbody>
+                <h1>Multiple sites found</h1>
+                <h3>Please pick a site:</h3>
+                <table class="usa-table-borderless">
+                <thead>
+                    <tr>
+                        <th scope="col">Agency</th>
+                        <th scope="col">Site number</th>
+                        <th scope="col">Site name</th>
+                    </tr>
+                </thead>
+                <tbody>
                 {% for site in station %}
-                <tr>
-                    <td><a href="{{ url_for('monitoring_location', site_no=site['site_no'], agency_cd=site['agency_cd']) }}">{{ site['agency_cd'] }}</a></td>
-                    <td> {{ site['site_no'] }} </td>
-                    <td> {{ site['station_nm'] }} </td>
-                </tr>
+                    <tr>
+                        <td><a href="{{ url_for('monitoring_location', site_no=site['site_no'], agency_cd=site['agency_cd']) }}">{{ site['agency_cd'] }}</a></td>
+                        <td> {{ site['site_no'] }} </td>
+                        <td> {{ site['station_nm'] }} </td>
+                    </tr>
                 {% endfor %}
-            </tbody>
-            </table>
+                </tbody>
+                </table>
 
             {% else %}
 
-            <h1>Station Name: {{ station_nm }}</h1>
-            <ul>
-                <li><a href="{{ config.NWIS_ENDPOINTS.INVENTORY }}/?site_no={{ site_no }}" target="_blank">Site inventory page</a></li>
-                <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?cb_00060=on&format=gif_mult_parms&site_no={{ site_no }}&period=7" target="_blank">Interactive grapher</a></li>
-                <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?format=img_default&site_no={{ site_no }}&period=7" target="_blank">Presentation Charts</a></li>
-            </ul>
-            <div class="hydrograph" data-siteno="{{ site_no }}"></div>
-            <table>
-            <thead>
-                <tr>
-                    <th scope="col">Description</th>
-                    <th scope="col">Station Data</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                 {% for key, value in location_with_values.items() %}
-                 <tr>
-                     <th scope="row"> {{ STATION_FIELDS_D[key] }} </th>
-
-                     <td> {{ value }} </td>
-                 </tr>
-                 {% endfor %}
-            </tbody>
-
-            </table>
+                <h1>Station Name: {{ station_nm }}</h1>
+                <ul>
+                    <li><a href="{{ config.NWIS_ENDPOINTS.INVENTORY }}/?site_no={{ site_no }}" target="_blank">Site inventory page</a></li>
+                    <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?cb_00060=on&format=gif_mult_parms&site_no={{ site_no }}&period=7" target="_blank">Interactive grapher</a></li>
+                    <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?format=img_default&site_no={{ site_no }}&period=7" target="_blank">Presentation Charts</a></li>
+                </ul>
+                <div class="hydrograph" data-siteno="{{ site_no }}"></div>
+                <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Description</th>
+                        <th scope="col">Station Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for key, value in location_with_values.items() %}
+                    <tr>
+                        <th scope="row"> {{ STATION_FIELDS_D[key] }} </th>
+                        <td> {{ value }} </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                </table>
 
             {% endif %}
 

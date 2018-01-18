@@ -33,10 +33,10 @@ def monitoring_location(site_no):
 
     resp = execute_get_request(SERVICE_ROOT,
                                path='/nwis/site/',
-                               params={'site'      : site_no,
-                                       'agencyCd'  : agency_cd,
+                               params={'site': site_no,
+                                       'agencyCd': agency_cd,
                                        'siteOutput': 'expanded',
-                                       'format'    : 'rdb'
+                                       'format': 'rdb'
                                       }
                               )
     status = resp.status_code
@@ -49,26 +49,25 @@ def monitoring_location(site_no):
 
         station_nm = ''
         site_no = ''
+
+        context = {'status_code': status,
+                   'station': data_list,
+                   'station_nm': station_nm,
+                   'site_no': site_no,
+                   'STATION_FIELDS_D': STATION_FIELDS_D}
+
         if len(data_list) == 1:
             station_nm = data_list[0]['station_nm']
             site_no = data_list[0]['site_no']
 
-        context = {'status_code'       : status,
-                   'station'           : data_list,
-                   'station_nm'        : station_nm,
-                   'site_no'           : site_no,
-                   'STATION_FIELDS_D'  : STATION_FIELDS_D}
-
-
-        if len(data_list) == 1:
             station_record = data_list[0]
             parameter_data_resp = execute_get_request(SERVICE_ROOT,
                                                       path='/nwis/site/',
-                                                      params={'format'             : 'rdb',
-                                                              'sites'              : site_no,
+                                                      params={'format': 'rdb',
+                                                              'sites': site_no,
                                                               'seriesCatalogOutput': True,
-                                                              'siteStatus'         : 'all',
-                                                              'agencyCd'           : agency_cd
+                                                              'siteStatus': 'all',
+                                                              'agencyCd': agency_cd
                                                              }
                                                      )
 
@@ -89,17 +88,17 @@ def monitoring_location(site_no):
                 safe_json_ld = None
 
             context = {
-                'status_code'          : status,
-                'station'              : data_list,
-                'station_nm'           : station_nm,
-                'site_no'              : site_no,
-                'location_with_values' : get_disambiguated_values(
+                'status_code': status,
+                'station': data_list,
+                'station_nm': station_nm,
+                'site_no': site_no,
+                'location_with_values': get_disambiguated_values(
                     station_record,
                     app.config['NWIS_CODE_LOOKUP'],
                     app.config['COUNTRY_STATE_COUNTY_LOOKUP']
                 ),
-                'STATION_FIELDS_D'     : STATION_FIELDS_D,
-                'json_ld'              : safe_json_ld
+                'STATION_FIELDS_D': STATION_FIELDS_D,
+                'json_ld': safe_json_ld
             }
 
         http_code = 200
