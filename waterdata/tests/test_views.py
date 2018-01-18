@@ -22,10 +22,9 @@ class TestHomeView(TestCase):
 class TestMonitoringLocationView(TestCase):
 
     def setUp(self):
-        self.test_hostname = app.config['SERVICE_ROOT']
         self.app_client = app.test_client()
         self.test_site_number = '01630500'
-        self.test_url = '{0}/nwis/site/?site={1}'.format(self.test_hostname, self.test_site_number)
+        self.test_url = '{0}/nwis/site/?site={1}'.format(app.config['SERVICE_ROOT'], self.test_site_number)
         self.test_rdb_text = ('#\n#\n# US Geological Survey\n# retrieved: 2018-01-02 09:31:20 -05:00\t(caas01)\n#\n# '
                               'The Site File stores location and general information about groundwater,\n# surface '
                               'water, and meteorological sites\n# for sites in USA.\n#\n# File-format description:  '
@@ -77,7 +76,7 @@ class TestMonitoringLocationView(TestCase):
                                'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\tS\t'
                                'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00095\t\t69943\tFrom multiparameter sonde\t'
                                'wat\t\t1646694\t0\t2013-11-23\t2018-01-10\t1509'
-                               )
+                              )
         self.parameter_lines = self.test_param_rdb.split('\n')
 
     @mock.patch('waterdata.views.execute_get_request')
@@ -101,7 +100,7 @@ class TestMonitoringLocationView(TestCase):
         self.assertIn(('https://waterdata.usgs.gov/nwisweb/graph'
                        '?agency_cd=USGS&site_no=01630500&parm_cd=00060&period=100'),
                       response.data.decode('utf-8')
-                      )
+                     )
 
     @mock.patch('waterdata.views.execute_get_request')
     def test_4xx_from_water_services(self, r_mock):
@@ -129,14 +128,14 @@ class TestMonitoringLocationView(TestCase):
     def test_agency_cd(self, r_mock):
         r_mock.return_value.status_code = 500
         response = self.app_client.get('/monitoring-location/{0}?agency_cd=USGS'.format(self.test_site_number))
-        r_mock.assert_called_with(self.test_hostname,
+        r_mock.assert_called_with(app.config['SERVICE_ROOT'],
                                   path='/nwis/site/',
                                   params={'site': self.test_site_number,
                                           'agencyCd': 'USGS',
                                           'siteOutput': 'expanded',
                                           'format': 'rdb'
-                                          }
-                                  )
+                                         }
+                                 )
         self.assertEqual(response.status_code, 503)
 
 
