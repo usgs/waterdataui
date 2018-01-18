@@ -176,7 +176,7 @@ class Hydrograph {
         // Return the nearest data point and its index.
         return {
             datum,
-            index: datum == d0 ? index - 1 : index
+            index: datum === d0 ? index - 1 : index
         };
     }
 }

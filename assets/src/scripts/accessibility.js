@@ -21,8 +21,8 @@ function addSVGAccessibility({svg, title, description, isInteractive}) {
  * of elements in columnNames should match the number of elements in each element
  * of the data array.
  * @param {String} container - Can be a selector string or d3 selection
- * @param {Array of String} columnNames
- * @param {Array of Array } data
+ * @param {Array} columnNames - array of strings
+ * @param {Array} data - array of array of strings
  */
 function addSROnlyTable({container, columnNames, data}) {
     const table = select(container)
@@ -35,7 +35,9 @@ function addSROnlyTable({container, columnNames, data}) {
         .data(columnNames)
         .enter().append('th')
             .attr('scope', 'col')
-            .text(function(d) { return d; });
+            .text(function(d) {
+                return d;
+            });
 
     const data_rows = table.append('tbody')
         .selectAll('tr')
@@ -43,10 +45,14 @@ function addSROnlyTable({container, columnNames, data}) {
         .enter().append('tr');
 
     data_rows.selectAll('td')
-        .data(function(d) { return d; })
+        .data(function(d) {
+            return d;
+        })
         .enter().append('td')
             .attr('scope', 'row')
-            .text(function(d) { return d; });
+            .text(function(d) {
+                return d;
+            });
 
 }
 
