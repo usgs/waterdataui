@@ -34,7 +34,7 @@ class Hydrograph {
      * @param {String} desc for svg's desc attribute
      * @param {Node} element Dom node to insert
      */
-    constructor({data=[], yLabel='Data', title='', desc='', element}={}) {
+    constructor({data=[], yLabel='Data', title='', desc='', element}) {
         this._data = data;
         this._yLabel = yLabel;
         this._title = title;
