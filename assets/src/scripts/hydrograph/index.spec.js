@@ -5,6 +5,7 @@ const Hydrograph = require('../hydrograph/index');
 
 describe('Hydrograph charting module', () => {
     let graphNode;
+
     beforeEach(() => {
         select('body')
             .append('div')
@@ -17,12 +18,12 @@ describe('Hydrograph charting module', () => {
     });
 
     it('empty graph displays warning', () => {
-        let graph = new Hydrograph({element: graphNode});
+        new Hydrograph({element: graphNode});
         expect(graphNode.innerHTML).toContain('No data is available');
     });
 
     it('single data point renders', () => {
-        let graph = new Hydrograph({
+        new Hydrograph({
             element: graphNode,
             data: [{
                 time: new Date(),
@@ -31,6 +32,35 @@ describe('Hydrograph charting module', () => {
             }]
         });
         expect(graphNode.innerHTML).toContain('hydrograph-container');
+    });
+
+    describe('SVG has been made accessibile', () => {
+        let svg;
+        beforeEach(() => {
+            new Hydrograph({
+                element: graphNode,
+                title: 'My Title',
+                desc: 'My Description',
+                data: [{
+                    time: new Date(),
+                    value: 10,
+                    label: 'Label'
+                }]
+            });
+            svg = select('svg');
+        });
+
+        it('title and desc attributes are present', function() {
+            expect(svg.attr('title'), 'My Title');
+            expect(svg.attr('desc'), 'My Description');
+            let labelledBy = svg.attr('aria-labelledby');
+            expect(labelledBy).toContain('title');
+            expect(labelledBy).toContain('desc');
+        });
+
+        it('svg should be focusable', function() {
+           expect(svg.attr('tabindex')).toBe('0');
+        });
     });
 
     describe('Renders real data from site #05370000', () => {
@@ -149,4 +179,4 @@ const MOCK_DATA = `[
         "time": "2018-01-03T18:15:00.000Z",
         "value": 24
     }
-]`
+]`;
