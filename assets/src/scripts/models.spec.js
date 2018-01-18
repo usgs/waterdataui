@@ -25,7 +25,10 @@ describe('Models module', () => {
         getTimeseries({sites: [siteID], params: [paramCode]}, series => {
             expect(series.length).toBe(1);
             expect(series[0].code).toBe(paramCode);
-            expect(series[0].description).toBe('Discharge, cubic feet per second');
+            expect(series[0].variableName).toBe('Streamflow, ft&#179;/s');
+            expect(series[0].variableDescription).toBe('Discharge, cubic feet per second');
+            expect(series[0].seriesStartDate).toBe('1/2/2018, 3:00:00 PM -0600');
+            expect(series[0].seriesEndDate).toBe('1/9/2018, 2:15:00 PM -0600');
             expect(series[0].values.length).toBe(670);
             done();
         });
