@@ -8,6 +8,7 @@
     {% endif %}
 {% endblock page_script %}
 
+{% set body_id = 'monitoring-location' %}
 {% if station %}{% set page_title = station.station_nm %}{% endif %}
 
 {% block content %}
@@ -21,7 +22,7 @@
             </ul>
             <div class="hydrograph" data-siteno="{{ station.site_no }}"></div>
 
-            <table summary="Descriptive metadata about this monitoring location">
+            <table id="site-summary" summary="Descriptive metadata about this monitoring location">
                 <thead>
                     <tr>
                         <th scope="col">Metadata Element</th>
@@ -33,7 +34,7 @@
                     {% for key, value in location_with_values.items() %}
                         <tr>
                             <th scope="row">{{ STATION_FIELDS_D[key] }}</th>
-                            <td>{{ value.name }}</td>
+                            <td class="loc-metadata">{{ value.name }}</td>
                             <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
                         </tr>
                     {% endfor %}
