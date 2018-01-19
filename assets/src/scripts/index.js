@@ -26,7 +26,7 @@ function main() {
             new Hydrograph({
                 element: node,
                 data: dataIsValid ? series[0].values : [],
-                yLabel: dataIsValid ? series[0].description : 'No data',
+                yLabel: dataIsValid ? series[0].variableDescription : 'No data',
                 title: dataIsValid ? series[0].variableName : '',
                 desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
             });
