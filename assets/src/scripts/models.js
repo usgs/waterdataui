@@ -12,26 +12,20 @@ const formatTime = timeFormat('%c %Z');
 
 /**
  * Simple XMLHttpRequest wrapper.
- * @param  {String}   url      URL to retrieve
- * @param  {Function} callback Callback function to call with (data, error)
+ * @param  {String} url - URL to retrieve
+ * @return {Promise} resolves to the json data in the response, rejects with error message
  */
-function get(url, callback) {
-    window.fetch(url, {})
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                let error = new Error(response.statusText);
-                throw error;
-            }
-        })
-        .then(function(data) {
-            callback(data);
-        },
-        function(error) {
-            callback(null, error.message);
-        });
+function get(url) {
+    return window.fetch(url, {}).then((response) => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            let error = new Error(response.statusText);
+            throw error;
+        }
+    });
 }
+
 
 
 /**
@@ -41,12 +35,9 @@ function get(url, callback) {
  * @param  {Function} callback       Callback to be called with (data, error)
  */
 export function getTimeseries({sites, params=['00060']}, callback) {
-    let url = `${SERVICE_ROOT}/ivs/?sites=${sites.join(',')}&parameterCd=${params.join(',')}&period=P7D&indent=on&siteStatus=all&format=json`;
-    get(url, (data, error) => {
-        if (error) {
-            callback(null, error || 'Unexpected error');
-        }
-        else {
+    let url = `${SERVICE_ROOT}/iv/?sites=${sites.join(',')}&parameterCd=${params.join(',')}&period=P7D&indent=on&siteStatus=all&format=json`;
+    get(url)
+        .then((data) => {
             callback(data.value.timeSeries.map(series => {
                     let startDate = new Date(series.values[0].value[0].dateTime);
                     let endDate = new Date(
@@ -69,6 +60,8 @@ export function getTimeseries({sites, params=['00060']}, callback) {
                     };
                 }
             ));
-        }
-    });
+        })
+        .catch((error) => {
+            callback(null, error);
+        });
 }
