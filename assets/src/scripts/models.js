@@ -26,19 +26,17 @@ function get(url) {
     });
 }
 
-
-
 /**
  * Get a given timeseries dataset from Water Services.
  * @param  {Array}    sites  Array of site IDs to retrieve.
  * @param  {Array}    params List of parameter codes
- * @param  {Function} callback       Callback to be called with (data, error)
+ * @return {Promise} resolves to an array of timeseries model object, rejects to an error
  */
-export function getTimeseries({sites, params=['00060']}, callback) {
+export function getTimeseries({sites, params=['00060']}) {
     let url = `${SERVICE_ROOT}/iv/?sites=${sites.join(',')}&parameterCd=${params.join(',')}&period=P7D&indent=on&siteStatus=all&format=json`;
-    get(url)
+    return get(url)
         .then((data) => {
-            callback(data.value.timeSeries.map(series => {
+            return data.value.timeSeries.map(series => {
                     let startDate = new Date(series.values[0].value[0].dateTime);
                     let endDate = new Date(
                         series.values[0].value.slice(-1)[0].dateTime);
@@ -59,9 +57,9 @@ export function getTimeseries({sites, params=['00060']}, callback) {
                         })
                     };
                 }
-            ));
-        })
-        .catch((error) => {
-            callback(null, error);
+            );
+        },
+        (error) => {
+            return error;
         });
 }
