@@ -32,8 +32,17 @@ function get(url) {
  * @param  {Array}    params List of parameter codes
  * @return {Promise} resolves to an array of timeseries model object, rejects to an error
  */
-export function getTimeseries({sites, params=['00060']}) {
-    let url = `${SERVICE_ROOT}/iv/?sites=${sites.join(',')}&parameterCd=${params.join(',')}&period=P7D&indent=on&siteStatus=all&format=json`;
+export function getTimeseries({sites, params=['00060'], startDate=null, endDate=null}) {
+    let timeParams;
+    if (!startDate && !endDate) {
+        timeParams = 'period=P7D';
+    }
+    else {
+        let startString = startDate ? startDate.toISOString() : '';
+        let endString = endDate ? endDate.toISOString() : '';
+        timeParams = `startDT=${startString}&endDT=${endString}`;
+    }
+    let url = `${SERVICE_ROOT}/iv/?sites=${sites.join(',')}&parameterCd=${params.join(',')}&${timeParams}&indent=on&siteStatus=all&format=json`;
     return get(url)
         .then((data) => {
             return data.value.timeSeries.map(series => {
