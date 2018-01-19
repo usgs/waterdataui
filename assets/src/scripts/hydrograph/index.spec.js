@@ -1,34 +1,72 @@
 const { select, selectAll } = require('d3-selection');
 
-const Hydrograph = require('./index');
+const Hydrograph = require('../hydrograph/index');
 
 
 describe('Hydrograph charting module', () => {
+    let graphNode;
+
+    beforeEach(() => {
+        select('body')
+            .append('div')
+            .attr('id', 'hydrograph');
+        graphNode = document.getElementById('hydrograph')
+    });
+
+    afterEach(() => {
+        select('#hydrograph').remove();
+    });
+
     it('empty graph displays warning', () => {
-        let graph = new Hydrograph();
-        expect(graph._element.innerHTML).toContain('No data is available');
+        new Hydrograph({element: graphNode});
+        expect(graphNode.innerHTML).toContain('No data is available');
     });
 
     it('single data point renders', () => {
-        let graph = new Hydrograph({data: [{
-            time: new Date(),
-            value: 10,
-            label: 'Label'
-        }]});
-        expect(graph._element.innerHTML).toContain('hydrograph-container');
+        new Hydrograph({
+            element: graphNode,
+            data: [{
+                time: new Date(),
+                value: 10,
+                label: 'Label'
+            }]
+        });
+        expect(graphNode.innerHTML).toContain('hydrograph-container');
+    });
+
+    describe('SVG has been made accessibile', () => {
+        let svg;
+        beforeEach(() => {
+            new Hydrograph({
+                element: graphNode,
+                title: 'My Title',
+                desc: 'My Description',
+                data: [{
+                    time: new Date(),
+                    value: 10,
+                    label: 'Label'
+                }]
+            });
+            svg = select('svg');
+        });
+
+        it('title and desc attributes are present', function() {
+            expect(svg.attr('title'), 'My Title');
+            expect(svg.attr('desc'), 'My Description');
+            let labelledBy = svg.attr('aria-labelledby');
+            expect(labelledBy).toContain('title');
+            expect(labelledBy).toContain('desc');
+        });
+
+        it('svg should be focusable', function() {
+           expect(svg.attr('tabindex')).toBe('0');
+        });
     });
 
     describe('Renders real data from site #05370000', () => {
+        /* eslint no-use-before-define: "ignore" */
         beforeEach(() => {
-            /* eslint no-use-before-define: "ignore" */
-            select('body')
-                .append('div')
-                .attr('class', 'hydrograph');
-            new Hydrograph({data: MOCK_DATA});
-        });
-
-        afterEach(() => {
-            selectAll('.hydrograph').remove();
+            new Hydrograph({element: graphNode, data: MOCK_DATA});
         });
 
         it('should render an svg node', () => {
@@ -55,15 +93,7 @@ describe('Hydrograph charting module', () => {
             };
         });
         beforeEach(() => {
-            /* eslint no-use-before-define: "ignore" */
-            select('body')
-                .append('div')
-                .attr('class', 'hydrograph');
-            graph = new Hydrograph({data});
-        });
-
-        afterEach(() => {
-            selectAll('.hydrograph').remove();
+            graph = new Hydrograph({element: graphNode, data: data});
         });
 
         it('return correct data points via getNearestTime' , () => {
@@ -72,7 +102,7 @@ describe('Hydrograph charting module', () => {
             function expectOffset(offset, side) {
                 for (let [index, datum] of data.entries()) {
                     let expected;
-                    if (side == 'left' || index == data.length - 1) {
+                    if (side === 'left' || index === data.length - 1) {
                         expected = {datum, index};
                     } else {
                         expected = {datum: data[index + 1], index: index + 1};
@@ -98,7 +128,7 @@ describe('Hydrograph charting module', () => {
 });
 
 
-const MOCK_DATA = `[
+const MOCK_DATA = [
     {
         "label": "1/3/2018, 10:00:00 AM -0600\n24.0 ft3/s",
         "time": "2018-01-03T16:00:00.000Z",
@@ -149,4 +179,4 @@ const MOCK_DATA = `[
         "time": "2018-01-03T18:15:00.000Z",
         "value": 24
     }
-]`
+];
