@@ -43,13 +43,16 @@ except FileNotFoundError:
     pass
 
 # Read lookup files and save to the app.config
-with open(app.config.get('NWIS_CODE_LOOKUP_FILENAME'), 'r') as f:
+with open(os.path.join(app.config.get('DATA_DIR'),
+                       app.config.get('NWIS_CODE_LOOKUP_FILENAME')), 'r') as f:
     app.config['NWIS_CODE_LOOKUP'] = json.loads(f.read())
 
-with open(app.config.get('COUNTRY_STATE_COUNTY_LOOKUP_FILENAME'), 'r') as f:
+with open(os.path.join(app.config.get('DATA_DIR'),
+                       app.config.get('COUNTRY_STATE_COUNTY_LOOKUP_FILENAME')), 'r') as f:
     app.config['COUNTRY_STATE_COUNTY_LOOKUP'] = json.loads(f.read())
 
-with open(app.config.get('HUC_LOOKUP_FILENAME'), 'r') as f:
+with open(os.path.join(app.config.get('DATA_DIR'),
+                       app.config.get('HUC_LOOKUP_FILENAME')), 'r') as f:
     app.config['HUC_LOOKUP'] = json.loads(f.read())
 
 

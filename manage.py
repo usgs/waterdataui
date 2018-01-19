@@ -4,21 +4,18 @@
 Entrypoint for Flask development server.
 """
 
-import os
-
 import click
 from flask.cli import FlaskGroup
 
 from waterdata import app
 
 
-DEFAULT_DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 cli = FlaskGroup(create_app=lambda script_info: app)
 
 
 @cli.command()
 @click.option('--datadir', type=click.Path(dir_okay=True, file_okay=False),
-              default=DEFAULT_DATA_DIR,
+              default=app.config.get('DATA_DIR'),
               help='Output directory for generation JSON file.')
 @click.option('--all', 'gen_all', is_flag=True, default=False,
               help='Generate all lookup files.')
