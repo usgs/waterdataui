@@ -113,7 +113,7 @@ npm run serve:static
 The Python tests can be run as follows:
 
 ```bash
-env/bin/python -m unittest
+env/bin/python -m pytest waterdata
 ```
 
 ### Javascript tests

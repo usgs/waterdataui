@@ -11,8 +11,8 @@ import logging
 import os
 
 from waterdata.utils import execute_get_request, parse_rdb
-from lookup_generation.nwis_lookups import translate_to_lookup, translate_codes_by_group
-from lookup_generation.wqp_lookups import get_lookup_by_json, get_nwis_state_lookup, get_nwis_county_lookup, \
+from .nwis_lookups import translate_to_lookup, translate_codes_by_group
+from .wqp_lookups import get_lookup_by_json, get_nwis_state_lookup, get_nwis_county_lookup, \
     is_us_county
 
 
@@ -150,13 +150,3 @@ def generate_country_state_county_file(datadir, filename='nwis_country_state_loo
 
     with open(os.path.join(datadir, filename), 'w') as f:
         f.write(json.dumps(lookups, indent=4))
-
-
-if __name__ == '__main__':
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--datadir', type=str, default='data')
-
-    args = arg_parser.parse_args()
-
-    generate_lookup_file(args.datadir)
-    generate_country_state_county_file(args.datadir)

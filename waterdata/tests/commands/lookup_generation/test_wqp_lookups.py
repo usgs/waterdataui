@@ -3,10 +3,11 @@ from unittest import TestCase, mock
 
 import requests
 
-from ..wqp_lookups import get_lookup_by_json, is_us_county, get_nwis_state_lookup, get_nwis_county_lookup
+from waterdata.commands.lookup_generation.wqp_lookups import (
+    get_lookup_by_json, is_us_county, get_nwis_state_lookup, get_nwis_county_lookup)
 
 
-@mock.patch('lookup_generation.wqp_lookups.execute_get_request')
+@mock.patch('waterdata.commands.lookup_generation.wqp_lookups.execute_get_request')
 class GetLookupByJsonTestCase(TestCase):
 
     def test_sets_query_params_correctly(self, mrequest):
