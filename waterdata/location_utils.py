@@ -6,11 +6,13 @@ USGS water services.
 from collections import namedtuple
 import datetime
 
+from flask import url_for
+
 
 Parameter = namedtuple('Parameter', ['parameter_cd', 'start_date', 'end_date', 'record_count'])
 
 
-def get_disambiguated_values(location, code_lookups, country_state_county_lookups):
+def get_disambiguated_values(location, code_lookups, country_state_county_lookups, huc_lookups):
     """
     Convert values for keys that contains codes to human readable names using the lookups
     :param dict location:
@@ -67,6 +69,13 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
         elif key in code_lookups:
             value_dict = code_lookups.get(key).get(value) or {'name': value}
             transformed_value = dict(code=value, **value_dict)
+
+        elif key == 'huc_cd':
+            transformed_value = {
+                'name': huc_lookups['hucs'][value]['huc_nm'],
+                'code': value,
+                'url': url_for('hydrological_unit', huc_cd=value)
+            }
 
         else:
             transformed_value = {

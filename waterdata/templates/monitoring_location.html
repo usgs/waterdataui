@@ -21,22 +21,23 @@
             </ul>
             <div class="hydrograph" data-siteno="{{ station.site_no }}"></div>
 
-            <table>
-            <thead>
-                <tr>
-                    <th scope="col">Description</th>
-                    <th scope="col">Station Data</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for key, value in location_with_values.items() %}
-                <tr>
-                    <th scope="row"> {{ STATION_FIELDS_D[key] }} </th>
-
-                    <td> {{ value.name }} </td>
-                </tr>
-                {% endfor %}
-            </tbody>
+            <table summary="Descriptive metadata about this monitoring location">
+                <thead>
+                    <tr>
+                        <th scope="col">Metadata Element</th>
+                        <th scope="col">Location Metadata</th>
+                        <th scope="col">Metadata Code</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, value in location_with_values.items() %}
+                        <tr>
+                            <th scope="row">{{ STATION_FIELDS_D[key] }}</th>
+                            <td>{{ value.name }}</td>
+                            <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>
 
         {% else %}
