@@ -62,7 +62,8 @@
   },
   "dependencies": {
     "d3": "^4.12.2",
-    "uswds": "^1.4.4"
+    "uswds": "^1.4.4",
+    "whatwg-fetch": "^2.0.3"
   },
   "browserify": {
     "transform": [
