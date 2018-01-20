@@ -119,7 +119,7 @@ class TestHydrologicalUnitView:
         assert response.status_code == 404
 
     def test_locations_list(self, client):
-        response = client.get('/hydrological-unit/01010001')
+        response = client.get('/hydrological-unit/01010001/monitoring-locations')
         assert response.status_code == 200
         text = response.data.decode('utf-8')
         # There are eight instances of this site in MOCK_SITE_LIST_2.

@@ -26,6 +26,9 @@
                 </table>
             {% endif %}
 
+            {% if show_locations_link %}
+                <a href="{{ url_for('hydrological_unit_locations', huc_cd=huc.huc_cd) }}">Monitoring Locations</a>
+            {% endif %}
             {% if monitoring_locations %}
                 <table>
                     <caption>Monitoring Locations</caption>
