@@ -5,7 +5,8 @@ Unit tests for waterdata.waterservices classes and functions.
 import datetime
 from unittest import TestCase
 
-from ..location_utils import Parameter, get_capabilities, get_site_parameter, build_linked_data,\
+from waterdata import app
+from waterdata.location_utils import Parameter, get_capabilities, get_site_parameter, build_linked_data,\
     get_disambiguated_values
 
 
@@ -56,6 +57,62 @@ class GetDisambiguatedValuesTestCase(TestCase):
                     },
 
                 }
+            }
+        }
+        self.test_huc_lookup = {
+            "hucs": {
+                "01": {
+                    "children": [
+                        "0101"
+                    ],
+                    "parent": None,
+                    "kind": "HUC2",
+                    "huc_cd": "01",
+                    "huc_class_cd": "Region",
+                    "huc_nm": "New England Region"
+                },
+                "0101": {
+                    "children": [
+                        "010100"
+                    ],
+                    "parent": "01",
+                    "kind": "HUC4",
+                    "huc_cd": "0101",
+                    "huc_class_cd": "Subregion",
+                    "huc_nm": "St. John"
+                },
+                "010100": {
+                    "children": [
+                        "01010001"
+                    ],
+                    "parent": "0101",
+                    "kind": "HUC6",
+                    "huc_cd": "010100",
+                    "huc_class_cd": "Accounting Unit",
+                    "huc_nm": "St. John"
+                },
+                "01010001": {
+                    "children": [],
+                    "parent": "010100",
+                    "kind": "HUC8",
+                    "huc_cd": "01010001",
+                    "huc_class_cd": "Cataloging Unit",
+                    "huc_nm": "Upper St. John"
+                }
+            },
+            "classes": {
+                "HUC2": [
+                    "01"
+                ],
+                "HUC4": [
+                    "0101"
+                ],
+                "HUC6": [
+                    "010100"
+                ],
+                "HUC8": [
+                    "01010001"
+                ]
             }
         }
 
@@ -241,6 +298,45 @@ class GetDisambiguatedValuesTestCase(TestCase):
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup, {}),
             expected_location
         )
+
+    def test_huc2(self):
+        with app.test_request_context():
+            test_location = {
+                'huc_cd': '01'
+            }
+            expected_location = {
+                'huc_cd': {'name': 'New England Region', 'code': '01', 'url': '/hydrological-unit/01'}
+            }
+            self.assertEqual(
+                get_disambiguated_values(test_location, {}, {}, self.test_huc_lookup),
+                expected_location
+            )
+
+    def test_huc8(self):
+        with app.test_request_context():
+            test_location = {
+                'huc_cd': '01010001'
+            }
+            expected_location = {
+                'huc_cd': {'name': 'Upper St. John', 'code': '01010001', 'url': '/hydrological-unit/01010001'}
+            }
+            self.assertEqual(
+                get_disambiguated_values(test_location, {}, {}, self.test_huc_lookup),
+                expected_location
+            )
+
+    def test_huc8_missing(self):
+        with app.test_request_context():
+            test_location = {
+                'huc_cd': '01010002'
+            }
+            expected_location = {
+                'huc_cd': {'name': None, 'code': '01010002', 'url': '/hydrological-unit/01010002'}
+            }
+            self.assertEqual(
+                get_disambiguated_values(test_location, {}, {}, self.test_huc_lookup),
+                expected_location
+            )
 
 
 class TestGetCapabilities(TestCase):

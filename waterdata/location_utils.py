@@ -72,7 +72,7 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
 
         elif key == 'huc_cd':
             transformed_value = {
-                'name': huc_lookups['hucs'][value]['huc_nm'],
+                'name': huc_lookups['hucs'].get(value, {}).get('huc_nm'),
                 'code': value,
                 'url': url_for('hydrological_unit', huc_cd=value)
             }
