@@ -21,14 +21,14 @@ def test_help():
     assert result.exit_code == 0
 
 
-def test_nwis(app, fs, nwis_mock):
-    fs.CreateDirectory(DATA_DIR)
-
-    runner = CliRunner()
-    result = runner.invoke(manage.cli, ['generate_lookups', '--nwis'])
-
-    assert result.exit_code == 0
-    assert os.path.exists(os.path.join(app.config['DATA_DIR'], 'nwis_lookup.json'))
+# def test_nwis(app, fs, nwis_mock):
+#     fs.CreateDirectory(DATA_DIR)
+#
+#     runner = CliRunner()
+#     result = runner.invoke(manage.cli, ['generate_lookups', '--nwis'])
+#
+#     assert result.exit_code == 0
+#     assert os.path.exists(os.path.join(app.config['DATA_DIR'], 'nwis_lookup.json'))
 
 
 def test_regions(app, fs, regions_mock):

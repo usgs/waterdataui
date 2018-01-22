@@ -54,9 +54,6 @@
         "AWRA": {
             "name": "American Water Resources Association"
         },
-        "": {
-            "name": null
-        },
         "AYRES": {
             "name": "Ayres Associates"
         },
@@ -2246,10 +2243,6 @@
             "name": "Stream",
             "desc": "\"A body of running water moving under gravity flow in a defined channel. The channel may be entirely natural, or altered by engineering practices through straightening, dredging, and (or) lining. An entirely artificial channel should be qualified with the \"\"canal\"\" or \"\"ditch\"\" secondary site type.\""
         },
-        "": {
-            "name": null,
-            "desc": null
-        },
         "ST-CA": {
             "name": "Canal",
             "desc": "An artificial watercourse designed for navigation, drainage, or irrigation by connecting two or more bodies of water; it is larger than a ditch."
@@ -3185,9 +3178,6 @@
         },
         "01007": {
             "name": "Barium, water, unfiltered, recoverable, micrograms per liter"
-        },
-        "": {
-            "name": null
         },
         "01008": {
             "name": "Barium, bed sediment, recoverable, dry weight, milligrams per kilogram"
@@ -70838,9 +70828,6 @@
         },
         "01287": {
             "name": "28.7 PERCENTILE"
-        },
-        "": {
-            "name": null
         },
         "01288": {
             "name": "28.8 PERCENTILE"
