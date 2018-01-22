@@ -5,8 +5,8 @@ const { scaleLog, scaleTime } = require('d3-scale');
 /**
  * Create scales for hydrograph charts. X is linear to time and Y is logarithmic.
  * @param  {Array} data    Array containing {time, value} items
- * @param  {Integer} xSize X range of scale
- * @param  {Integer} ySize Y range of scale
+ * @param  {Number} xSize X range of scale
+ * @param  {Number} ySize Y range of scale
  * @return {Object}        {xScale, yScale}
  */
 function createScales(data, xSize, ySize) {

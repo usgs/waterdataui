@@ -41,6 +41,7 @@
     "babel-preset-env": "^1.6.1",
     "babelify": "^8.0.0",
     "browserify": "^15.1.0",
+    "eslint": "^4.15.0",
     "eslint-plugin-jasmine": "^2.9.1",
     "jasmine": "^2.8.0",
     "jasmine-ajax": "^3.3.1",

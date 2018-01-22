@@ -14,12 +14,13 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'assets/**/*.js'
+      'assets/src/scripts/**/*.js'
     ],
 
 
     // list of files / patterns to exclude
     exclude: [
+        'assets/src/scripts/index.js'
     ],
 
 
@@ -29,6 +30,9 @@ module.exports = function(config) {
         'assets/src/scripts/**/!(*.spec).js': ['coverage'],
         'assets/src/scripts/**/*.js': ['browserify']
     },
+      browserify: {
+        debug: true
+      },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
