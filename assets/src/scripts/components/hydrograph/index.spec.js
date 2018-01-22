@@ -1,6 +1,6 @@
 const { select, selectAll } = require('d3-selection');
 
-const Hydrograph = require('../hydrograph/index');
+const Hydrograph = require('./index').Hydrograph;
 
 
 describe('Hydrograph charting module', () => {
