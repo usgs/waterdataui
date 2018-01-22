@@ -833,7 +833,7 @@ state_cd    aqfr_cd aqfr_nm
 01  123CCKS Chickasawhay Limestone
 01  123FRHL Forest Hill Sand
 01  123GLND Glendon Limestone Member of Byram Formation"""
-MOCK_STAT_CD_DATA="""#
+MOCK_STAT_CD_DATA = """#
 # National Water Information System
 # 2018/01/22
 #
@@ -877,7 +877,7 @@ stat_CD	stat_NM	stat_DS
 01016	1.6 PERCENTILE	1.6 PERCENTILE
 01017	1.7 PERCENTILE	1.7 PERCENTILE
 01018	1.8 PERCENTILE	1.8 PERCENTILE"""
-MOCK_MEDIUM_CD_DATA="""#
+MOCK_MEDIUM_CD_DATA = """#
 # National Water Information System
 # 2018/01/22
 #
