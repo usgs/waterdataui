@@ -34,7 +34,13 @@
                     {% for key, value in location_with_values.items() %}
                         <tr>
                             <th scope="row">{{ STATION_FIELDS_D[key] }}</th>
-                            <td class="loc-metadata">{{ value.name }}</td>
+                            <td class="loc-metadata">
+                                {% if value.url %}
+                                    <a href="{{ value.url }}">{{ value.name }}</a>
+                                {% else %}
+                                    {{ value.name }}
+                                {% endif %}
+                                </td>
                             <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
                         </tr>
                     {% endfor %}
