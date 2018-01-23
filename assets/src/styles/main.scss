@@ -6,3 +6,7 @@ $usgs-blue: #02274B;
 @import './footer';
 
 @import './hydrograph';
+
+body#monitoring-location {
+    @import './pages/monitoring_location';
+}
