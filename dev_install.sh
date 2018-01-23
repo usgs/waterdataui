@@ -18,9 +18,12 @@ if [ $(node --version) != v$NODE_VERSION ]; then
 fi
 
 if [ "$ARG1" == '--clean' ]; then
-	echo "Cleaning out current dependencies";
+	echo "Cleaning out current dependencies and built assets and artifacts";
 	rm -rf env;
 	rm -rf node_modules;
+	rm -rf assets/dist;
+	rm -rf dist
+	rm -rf build
 fi
 
 if [ ! -s env ]; then
@@ -31,7 +34,7 @@ echo "Installing python requirements";
 env/bin/pip install -r requirements.txt;
 
 echo "Running Python tests";
-env/bin/python -m unittest
+env/bin/python -m pytest waterdata
 
 echo "Installing node.js dependencies"
 npm install

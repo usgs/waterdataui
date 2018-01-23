@@ -15,11 +15,12 @@ const formatTime = timeFormat('%c %Z');
  * @param  {Function} callback Callback function to call with (data, error)
  */
 function get(url, callback) {
-    var xmlhttp = new XMLHttpRequest();
+    let xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            let data;
             try {
-                var data = JSON.parse(xmlhttp.responseText);
+                data = JSON.parse(xmlhttp.responseText);
             } catch(err) {
                 callback(null, err.message);
             }
@@ -34,8 +35,8 @@ function get(url, callback) {
 
 /**
  * Get a given timeseries dataset from Water Services.
- * @param  {Array}    options.sites  Array of site IDs to retrieve.
- * @param  {Array}    options.params List of parameter codes
+ * @param  {Array}    sites  Array of site IDs to retrieve.
+ * @param  {Array}    params List of parameter codes
  * @param  {Function} callback       Callback to be called with (data, error)
  */
 export function getTimeseries({sites, params=['00060']}, callback) {
@@ -45,9 +46,14 @@ export function getTimeseries({sites, params=['00060']}, callback) {
             callback(null, error || 'Unexpected error');
         }
         callback(data.value.timeSeries.map(series => {
+            let startDate = new Date(series.values[0].value[0].dateTime);
+            let endDate = new Date(series.values[0].value.slice(-1)[0].dateTime);
             return {
                 code: series.variable.variableCode[0].value,
-                description: series.variable.variableDescription,
+                variableName: series.variable.variableName,
+                variableDescription: series.variable.variableDescription,
+                seriesStartDate: startDate,
+                seriesEndDate: endDate,
                 values: series.values[0].value.map(value => {
                     let date = new Date(value.dateTime);
                     return {

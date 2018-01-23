@@ -7,6 +7,7 @@ const { line } = require('d3-shape');
 
 const { appendAxes, createAxes } = require('./axes');
 const { createScales } = require('./scales');
+const { addSVGAccessibility , addSROnlyTable } = require('../accessibility');
 
 
 // Define width, height and margin for the SVG.
@@ -25,16 +26,19 @@ const MARGIN = {
 // Function that returns the left bounding point for a given chart point.
 const bisectDate = bisector(d => d.time).left;
 
-
 class Hydrograph {
     /**
      * @param {Array} data IV data as returned by models/getTimeseries
-     * @param {String} title y-axis label
+     * @param {String} yLabel y-axis label
+     * @param {String} title for svg's title attribute
+     * @param {String} desc for svg's desc attribute
      * @param {Node} element Dom node to insert
      */
-    constructor({data=[], title='Data', element=document.body}={}) {
+    constructor({data=[], yLabel='Data', title='', desc='', element}) {
         this._data = data;
+        this._yLabel = yLabel;
         this._title = title;
+        this._desc = desc;
         this._element = element;
 
         if (this._data && this._data.length) {
@@ -55,6 +59,20 @@ class Hydrograph {
             .attr('preserveAspectRatio', 'xMinYMin meet')
             .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`);
 
+        addSVGAccessibility({
+            svg: svg,
+            title: this._title,
+            description: this._desc,
+            isInteractive: true
+        });
+
+        addSROnlyTable({
+            container: this._element,
+            columnNames: [this._title, 'Time'],
+            data: this._data.map((value) => {
+                return [value.value, value.time];
+            })
+        });
         // We'll actually be appending to a <g> element
         const plot = svg.append('g')
             .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
@@ -75,7 +93,7 @@ class Hydrograph {
             xLoc: {x: 0, y: HEIGHT - (MARGIN.top + MARGIN.bottom)},
             yLoc: {x: 0, y: 0},
             yLabelLoc: {x: HEIGHT / -2 + MARGIN.top, y: -35},
-            yTitle: this._title
+            yTitle: this._yLabel
         });
         this._plotDataLine(plot, xScale, yScale);
         this._plotTooltips(plot, xScale, yScale);
@@ -158,7 +176,7 @@ class Hydrograph {
         // Return the nearest data point and its index.
         return {
             datum,
-            index: datum == d0 ? index - 1 : index
+            index: datum === d0 ? index - 1 : index
         };
     }
 }

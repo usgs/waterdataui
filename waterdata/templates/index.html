@@ -3,6 +3,9 @@
 {% block content %}
     <div class="usa-width-one-whole">
         <h3>Version: {{ version }}</h3>
+        <ul>
+            <li><a href="{{ url_for('hydrological_unit') }}">Hydrological Units</a></li>
+        </ul>
         <h5>Example site pages</h5>
         <ul>
             <li><a href="{{ url_for('monitoring_location', site_no='05370000') }}">05370000 - Eau Galle River at Spring Valley, WI</a></li>

@@ -11,8 +11,8 @@ import logging
 import os
 
 from waterdata.utils import execute_get_request, parse_rdb
-from lookup_generation.nwis_lookups import translate_to_lookup, translate_codes_by_group
-from lookup_generation.wqp_lookups import get_lookup_by_json, get_nwis_state_lookup, get_nwis_county_lookup, \
+from .nwis_lookups import translate_to_lookup, translate_codes_by_group
+from .wqp_lookups import get_lookup_by_json, get_nwis_state_lookup, get_nwis_county_lookup, \
     is_us_county
 
 
@@ -32,7 +32,10 @@ CODE_LOOKUP_CONFIG = [
     {'code_key': 'gw_ref_cd', 'name': 'gw_ref_ds', 'urlpath': 'code/reliability_cd_query',
      'site_key': 'reliability_cd'},
     {'code_key': 'gw_ref_cd', 'name': 'gw_ref_nm', 'desc': 'gw_ref_ds', 'urlpath': 'code/topo_cd_query',
-     'site_key': 'topo_cd'}
+     'site_key': 'topo_cd'},
+    {'code_key': 'medium_cd', 'name': 'medium_nm', 'urlpath': 'code/medium_cd_query', 'site_key': 'medium_grp_cd'},
+    {'code_key': 'stat_CD', 'name': 'stat_NM', 'urlpath': '/code/stat_cd_nm_query?stat_nm_cd=%25',
+     'site_key': 'stat_cd'}
 ]
 
 GROUPED_CODE_LOOKUP_CONFIG = [
@@ -43,6 +46,43 @@ GROUPED_CODE_LOOKUP_CONFIG = [
 WQP_LOOKUP_ENDPOINT = 'https://www.waterqualitydata.us'
 
 COUNTRY_CODES = ['US', 'CA']
+
+
+# manually created lookups
+# derived from a press release from July 2009
+
+PARAMETER_GROUPS = {'INF': {'name': 'Information'},
+                    'PHY': {'name': 'Physical'},
+                    'INM': {'name': 'Inorganics, Major, Metals'},
+                    'INN': {'name': 'Inorganics, Major, Non-metals'},
+                    'NUT': {'name': 'Nutrient'},
+                    'MBI': {'name': 'Microbiological'},
+                    'BIO': {'name': 'Biological'},
+                    'IMM': {'name': 'Inorganics, Minor, metals'},
+                    'IMN': {'name': 'Inorganics, Minor, Non-metals'},
+                    'TOX': {'name': 'Toxicity'},
+                    'OPE': {'name': 'Organics, pesticide'},
+                    'OPC': {'name': 'Organics, PCBs'},
+                    'OOT': {'name': 'Organics, other'},
+                    'RAD': {'name': 'Radiochemistry'},
+                    'ISO': {'name': 'Stable Isotopes'},
+                    'SED': {'name': 'Sediment'},
+                    'POP': {'name': 'Population/Community'},
+                    'OTH': {'name': 'Other'},
+                    'HAB': {'name': 'Habitat'}}
+
+
+DATA_TYPES = {'iv': {'name': 'Instantaneous Values'},
+              'uv': {'name': 'Unit Values'},
+              'rt': {'name': 'Real-time Data'},
+              'dv': {'name': 'Daily Values'},
+              'pk': {'name': 'Peak Measurements'},
+              'sv': {'name': 'Site Visits'},
+              'gw': {'name': 'Groundwater Levels'},
+              'qw': {'name': 'Water-quality'},
+              'id': {'name': 'Historical Instantaneous Values'},
+              'aw': {'name': 'USGS Active Groundwater Level Network Site'},
+              'ad': {'name': 'USGS Annual Water Data Reports Site'}}
 
 
 def generate_lookup_file(datadir, filename='nwis_lookup.json'):
@@ -83,7 +123,9 @@ def generate_lookup_file(datadir, filename='nwis_lookup.json'):
         else:
             logging.error('Unable to retrieve looks for {0}'.format(lookup_config.get('urlpath')))
             lookups[lookup_config.get('site_key')] = {}
-
+    # add manually created lookups
+    lookups['parm_grp_cd'] = PARAMETER_GROUPS
+    lookups['data_type_cd'] = DATA_TYPES
     with open(os.path.join(datadir, filename), 'w') as f:
         f.write(json.dumps(lookups, indent=4))
 
@@ -108,13 +150,3 @@ def generate_country_state_county_file(datadir, filename='nwis_country_state_loo
 
     with open(os.path.join(datadir, filename), 'w') as f:
         f.write(json.dumps(lookups, indent=4))
-
-
-if __name__ == '__main__':
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--datadir', type=str, default='data')
-
-    args = arg_parser.parse_args()
-
-    generate_lookup_file(args.datadir)
-    generate_country_state_county_file(args.datadir)

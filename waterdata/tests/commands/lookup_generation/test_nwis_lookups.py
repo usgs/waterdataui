@@ -1,7 +1,8 @@
 
 from unittest import TestCase
 
-from ..nwis_lookups import translate_to_lookup, translate_codes_by_group
+from waterdata.commands.lookup_generation.nwis_lookups import (
+    translate_to_lookup, translate_codes_by_group)
 
 
 class TranslateToLookupTestCase(TestCase):

@@ -192,3 +192,8 @@ class TestParseRdb(TestCase):
         result = parse_rdb(iter(self.test_rdb_lines[:-2]))
         result_list = list(result)
         self.assertFalse(result_list)  # list should be empty and evaluate to False
+
+    def test_ignore_empty_lines(self):
+        result = parse_rdb(iter(self.test_rdb_lines + ['\n', '\n']))
+        result_list = list(result)
+        self.assertEqual(len(result_list), 2)
