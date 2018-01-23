@@ -1,19 +1,21 @@
-function attachToNode(node, {latitude, longitude}) {
+const HYDRO_URL = 'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Esri_Hydro_Reference_Overlay/MapServer';
+
+
+function attachToNode(node, {latitude, longitude, zoom}) {
     // Create map on node
     const map = L.map(node, {
         center: [latitude, longitude],
-        zoom: 8
+        zoom: zoom
     });
 
-    // Use OpenStreetMap layers
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
-        zoom: 8,
-        maxZoom: 18
-    }).addTo(map);
+    // Basemap
+    L.esri.basemapLayer('Gray').addTo(map);
 
     // Add a marker at the site location
     L.marker([latitude, longitude]).addTo(map);
+
+    // Add the ESRI World Hydro Reference Overlay
+    L.esri.tiledMapLayer({url: HYDRO_URL}).addTo(map);
 }
 
 
