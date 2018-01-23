@@ -1,5 +1,5 @@
 const { timeFormat } = require('d3-time-format');
-require('whatwg-fetch');
+const { get } = require('./ajax');
 
 
 // Define Water Services root URL - use global variable if defined, otherwise
@@ -8,23 +8,6 @@ const SERVICE_ROOT = window.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis
 
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');
-
-
-/**
- * Simple XMLHttpRequest wrapper.
- * @param  {String} url - URL to retrieve
- * @return {Promise} resolves to the json data in the response, rejects with error message
- */
-function get(url) {
-    return window.fetch(url, {}).then((response) => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            let error = new Error(response.statusText);
-            throw error;
-        }
-    });
-}
 
 /**
  * Get a given timeseries dataset from Water Services.
@@ -44,7 +27,8 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
     }
     let url = `${SERVICE_ROOT}/iv/?sites=${sites.join(',')}&parameterCd=${params.join(',')}&${timeParams}&indent=on&siteStatus=all&format=json`;
     return get(url)
-        .then((data) => {
+        .then((response) => {
+            let data = JSON.parse(response);
             return data.value.timeSeries.map(series => {
                     let startDate = new Date(series.values[0].value[0].dateTime);
                     let endDate = new Date(
