@@ -3,7 +3,9 @@ require('uswds');
 const { timeFormat } = require('d3-time-format');
 
 const { getTimeseries } = require('./models');
+const { parseRDBtoObj } = require('./models');
 const Hydrograph = require('./hydrograph');
+const { get } = require("./ajax");
 
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');
@@ -11,7 +13,12 @@ const formatTime = timeFormat('%c %Z');
 function main() {
     let nodes = document.getElementsByClassName('hydrograph');
     for (let node of nodes) {
-        getTimeseries({sites: [node.dataset.siteno]}, series => {
+        let siteno = node.dataset.siteno;
+        let medianUrl = 'https://waterservices.usgs.gov/nwis/stat/?format=rdb&sites=' + siteno + '&statReportType=daily&statTypeCd=median&parameterCd=00060'
+        let medianData = get(medianUrl).then(function(result) {
+            parseRDBtoObj(result);
+        });
+        getTimeseries({sites: [siteno]}, series => {
             let dataIsValid = series[0] && !series[0].values.some(d => d.value === -999999);
             new Hydrograph({
                 element: node,

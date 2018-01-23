@@ -66,3 +66,27 @@ export function getTimeseries({sites, params=['00060']}, callback) {
         }));
     });
 }
+
+
+/**
+ * Function to parse RDB to Objects
+*/
+export function parseRDBtoObj(rdbData) {
+    let rdbLines = rdbData.split('\n');
+    var dataLines = rdbLines.filter(rdbLine => rdbLine[0] != '#').filter(rdbLine => rdbLine.length > 0);
+    // remove the useless column
+    dataLines.splice(1, 1);
+    var recordData = [];
+    if (dataLines.length > 0) {
+        let headers = dataLines.shift().split('\t');
+        for (let dataLine of dataLines) {
+            let data = dataLine.split('\t');
+            let dataObject = {};
+            for (var i=0; i < headers.length; i++) {
+                dataObject[headers[i]] = data[i];
+            }
+            recordData.push(dataObject);
+        }
+    }
+    return recordData;
+}
