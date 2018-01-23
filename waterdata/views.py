@@ -70,9 +70,11 @@ def monitoring_location(site_no):
                                                      )
 
             if parameter_data_resp.status_code == 200:
-                param_data = parse_rdb(parameter_data_resp.iter_lines(decode_unicode=True))
-
-                location_capabilities = get_capabilities(param_data)
+                param_data = [param_datum for param_datum in
+                              parse_rdb(parameter_data_resp.iter_lines(decode_unicode=True)) if param_datum['parm_cd']]
+                site_dataseries = [get_disambiguated_values(param_datum, app.config['NWIS_CODE_LOOKUP'], {}) for
+                                   param_datum in param_data]
+                location_capabilities = set(param_datum['parm_cd'] for param_datum in param_data)
                 json_ld = build_linked_data(site_no,
                                             station_record.get('station_nm'),
                                             station_record.get('agency_cd'),
@@ -84,6 +86,7 @@ def monitoring_location(site_no):
 
             else:
                 safe_json_ld = None
+                site_dataseries = None
 
             context = {
                 'status_code': status,
@@ -96,7 +99,8 @@ def monitoring_location(site_no):
                     app.config['COUNTRY_STATE_COUNTY_LOOKUP']
                 ),
                 'STATION_FIELDS_D': STATION_FIELDS_D,
-                'json_ld': safe_json_ld
+                'json_ld': safe_json_ld,
+                'site_dataseries': site_dataseries
             }
 
         http_code = 200
