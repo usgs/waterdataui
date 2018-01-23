@@ -4,11 +4,19 @@ const { get } = require('./ajax');
 
 // Define Water Services root URL - use global variable if defined, otherwise
 // use production.
-const SERVICE_ROOT = window.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
+const CURRENT_DATA_SERVICE_ROOT = window.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
 
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');
-const isoFormatTime = utcFormat('%Y-%m-%dT%H:%M')
+const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
+
+function olderThan120Days(date) {
+    return date < new Date() - 120;
+}
+
+function tsServiceRoot(date) {
+    return olderThan120Days(date) ? 'https://nwis.waterservices.usgs.gov/nwis' : CURRENT_DATA_SERVICE_ROOT;
+}
 
 /**
  * Get a given timeseries dataset from Water Services.
@@ -18,15 +26,18 @@ const isoFormatTime = utcFormat('%Y-%m-%dT%H:%M')
  */
 export function getTimeseries({sites, params=['00060'], startDate=null, endDate=null}) {
     let timeParams;
+    let serviceRoot;
     if (!startDate && !endDate) {
         timeParams = 'period=P7D';
+        serviceRoot = CURRENT_DATA_SERVICE_ROOT;
     }
     else {
         let startString = startDate ? isoFormatTime(startDate) : '';
         let endString = endDate ? isoFormatTime(endDate) : '';
         timeParams = `startDT=${startString}&endDT=${endString}`;
+        serviceRoot = tsServiceRoot(startDate);
     }
-    let url = `${SERVICE_ROOT}/iv/?sites=${sites.join(',')}&parameterCd=${params.join(',')}&${timeParams}&indent=on&siteStatus=all&format=json`;
+    let url = `${serviceRoot}/iv/?sites=${sites.join(',')}&parameterCd=${params.join(',')}&${timeParams}&indent=on&siteStatus=all&format=json`;
     return get(url)
         .then((response) => {
             let data = JSON.parse(response);

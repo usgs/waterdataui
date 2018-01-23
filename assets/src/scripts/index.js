@@ -1,9 +1,10 @@
 // Initialize the 18F Web design standards
 require('uswds');
-const { timeFormat } = require('d3-time-format');
+const { timeFormat, utcFormat } = require('d3-time-format');
 
 const { getTimeseries } = require('./models');
 const Hydrograph = require('./hydrograph');
+const { get } = require('./ajax');
 
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');
@@ -21,7 +22,7 @@ function getLastYearTimeseries({site, startTime, endTime}) {
 function main() {
     let nodes = document.getElementsByClassName('hydrograph');
     for (let node of nodes) {
-        let getPromise = getTimeseries({sites: [node.dataset.siteno]}).then((series) => {
+        getTimeseries({sites: [node.dataset.siteno]}).then((series) => {
             let dataIsValid = series && series[0] && !series[0].values.some(d => d.value === -999999);
             new Hydrograph({
                 element: node,
@@ -30,7 +31,7 @@ function main() {
                 title: dataIsValid ? series[0].variableName : '',
                 desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
             });
-            getTimeseries({sites: [node.dataset.siteno], startDate: new Date('2018-01-01'), endDate: new Date('2018-01-08')})
+            getLastYearTimeseries({site: node.dataset.siteno, startTime: series[0].seriesStartDate, endTime: series[0].seriesEndDate})
                 .then((data) => {
                     console.log('Fetching last year time series');
             });
