@@ -35,7 +35,7 @@ describe('Charting scales', () => {
         expect(range[1]).toEqual(0);
     });
 
-    fit('WDFN-66: yScale deals with range [0,1] correctly', () => {
+    it('WDFN-66: yScale deals with range [0,1] correctly', () => {
         expect(yScale(0)).not.toBeNaN();
         expect(yScale(.5)).not.toBeNaN();
         expect(yScale(.999)).not.toBeNaN();
