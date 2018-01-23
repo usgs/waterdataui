@@ -3,7 +3,7 @@ require('uswds');
 const { timeFormat } = require('d3-time-format');
 
 const { getTimeseries } = require('./models');
-const { parseRDBtoObj } = require('./models');
+const { parseRDB } = require('./models');
 const Hydrograph = require('./hydrograph');
 const { get } = require("./ajax");
 
@@ -16,7 +16,7 @@ function main() {
         let siteno = node.dataset.siteno;
         let medianUrl = 'https://waterservices.usgs.gov/nwis/stat/?format=rdb&sites=' + siteno + '&statReportType=daily&statTypeCd=median&parameterCd=00060'
         let medianData = get(medianUrl).then(function(result) {
-            parseRDBtoObj(result);
+            parseRDB(result);
         });
         getTimeseries({sites: [siteno]}, series => {
             let dataIsValid = series[0] && !series[0].values.some(d => d.value === -999999);

@@ -71,7 +71,7 @@ export function getTimeseries({sites, params=['00060']}, callback) {
 /**
  * Function to parse RDB to Objects
 */
-export function parseRDBtoObj(rdbData) {
+export function parseRDB(rdbData) {
     let rdbLines = rdbData.split('\n');
     var dataLines = rdbLines.filter(rdbLine => rdbLine[0] != '#').filter(rdbLine => rdbLine.length > 0);
     // remove the useless column
@@ -88,5 +88,6 @@ export function parseRDBtoObj(rdbData) {
             recordData.push(dataObject);
         }
     }
+    console.log(recordData);
     return recordData;
 }
