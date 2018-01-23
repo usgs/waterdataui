@@ -53,7 +53,7 @@ def monitoring_location(site_no):
                           parse_rdb(parameter_data_resp.iter_lines(decode_unicode=True)) if param_datum['parm_cd']]
             site_dataseries = [get_disambiguated_values(param_datum, app.config['NWIS_CODE_LOOKUP'], {}) for
                                param_datum in param_data]
-            location_capabilities = set([param_datum['parm_cd'] for param_datum in param_data])
+            location_capabilities = set(param_datum['parm_cd'] for param_datum in param_data)
             json_ld = build_linked_data(site_no,
                                         station_record.get('station_nm'),
                                         station_record.get('agency_cd'),
