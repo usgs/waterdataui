@@ -71,6 +71,14 @@ def nwis_mock():
             'https://help.waterdata.usgs.gov/code/aqfr_cd_query?fmt=rdb',
             text=MOCK_AQFR_CD_DATA
         )
+        mock_req.get(
+            'https://help.waterdata.usgs.gov/code/stat_cd_nm_query?stat_nm_cd=%25&fmt=rdb',
+            text=MOCK_STAT_CD_DATA
+        )
+        mock_req.get(
+            'https://help.waterdata.usgs.gov/code/medium_cd_query?fmt=rdb',
+            text=MOCK_MEDIUM_CD_DATA
+        )
         yield
 
 
@@ -825,3 +833,60 @@ state_cd    aqfr_cd aqfr_nm
 01  123CCKS Chickasawhay Limestone
 01  123FRHL Forest Hill Sand
 01  123GLND Glendon Limestone Member of Byram Formation"""
+MOCK_STAT_CD_DATA = """#
+# National Water Information System
+# 2018/01/22
+#
+#
+# Date Retrieved: USGS Water Data for the Nation Help System
+#
+stat_CD	stat_NM	stat_DS
+5s	19s	34s
+00001	MAXIMUM	MAXIMUM VALUES
+00002	MINIMUM	MINIMUM VALUES
+00003	MEAN	MEAN VALUES
+00004	AM	VALUES TAKEN BETWEEN 0001 AND 1200
+00005	PM	VALUES TAKEN BETWEEN 1201 AND 2400
+00006	SUM	SUMMATION VALUES
+00007	MODE	MODAL VALUES
+00008	MEDIAN	MEDIAN VALUES
+00009	STD	STANDARD DEVIATION VALUES
+00010	VARIANCE	VARIANCE VALUES
+00011	INSTANTANEOUS	RANDOM INSTANTANEOUS VALUES
+00012	EQUIVALENT MEAN	EQUIVALENT MEAN VALUES
+00013	SKEWNESS	SKEWNESS VALUES
+00021	TIDAL HIGH-HIGH	TIDAL HIGH-HIGH VALUES
+00022	TIDAL LOW-HIGH	TIDAL LOW-HIGH VALUES
+00023	TIDAL HIGH-LOW	TIDAL HIGH-LOW VALUES
+00024	TIDAL LOW-LOW	TIDAL LOW-LOW VALUES
+01001	0.1 PERCENTILE	0.1 PERCENTILE
+01002	0.2 PERCENTILE	0.2 PERCENTILE
+01003	0.3 PERCENTILE	0.3 PERCENTILE
+01004	0.4 PERCENTILE	0.4 PERCENTILE
+01005	0.5 PERCENTILE	0.5 PERCENTILE
+01006	0.6 PERCENTILE	0.6 PERCENTILE
+01007	0.7 PERCENTILE	0.7 PERCENTILE
+01008	0.8 PERCENTILE	0.8 PERCENTILE
+01009	0.9 PERCENTILE	0.9 PERCENTILE
+01010	1.0 PERCENTILE	1.0 PERCENTILE
+01011	1.1 PERCENTILE	1.1 PERCENTILE
+01012	1.2 PERCENTILE	1.2 PERCENTILE
+01013	1.3 PERCENTILE	1.3 PERCENTILE
+01014	1.4 PERCENTILE	1.4 PERCENTILE
+01015	1.5 PERCENTILE	1.5 PERCENTILE
+01016	1.6 PERCENTILE	1.6 PERCENTILE
+01017	1.7 PERCENTILE	1.7 PERCENTILE
+01018	1.8 PERCENTILE	1.8 PERCENTILE"""
+MOCK_MEDIUM_CD_DATA = """#
+# National Water Information System
+# 2018/01/22
+#
+#
+# Date Retrieved: USGS Water Data for the Nation Help System
+#
+medium_cd	medium_nm	medium_ds	medium_lgcy_cd
+3s	32s	424s	1s
+WS	Surface water	Water on the surface of the Earth stored or transported in rivers, streams, estuaries, lakes, ponds, swamps, glaciers, or other aquatic areas. It also may refer to water in urban drains and storm-sewer systems.	9
+WG	Groundwater	Water below the surface of the Earth contained in the saturated zone. It does not include soil moisture or interstitial water.	6
+WW	Wet deposition	Water reaching the Earth's surface through precipitation as rain, snow, sleet, hail, or condensation of fog and dew. The water may contain undissolved particulate and gaseous materials acquired from the atmosphere during precipitation.	7
+WI	Interstitial water	Water occuring in the small openings, spaces, pores, and voids between particles of unconsolidated materials. Includes water found in the interstices of shallow sediments of a lake, wetland, reservoir, or stream, and in the vadose zone between the root zone and the water table. The water is held in place by entrapment, ionic attraction, and capillary or adhesive forces, rather than from pressure components of saturation.	F"""
