@@ -70,15 +70,15 @@
                                     <tbody>
                                         {% for series in site_dataseries %}
                                             <tr>
-                                                <td scope="row">{{ series.parm_cd }}</td>
-                                                <td>{{ series.loc_web_ds }}</td>
-                                                <td>{{ series.data_type_cd }}</td>
-                                                <td>{{ series.stat_cd }}</td>
-                                                <td>{{ series.parm_grp_cd }}</td>
-                                                <td>{{ series.srs_id }}</td>
-                                                <td>{{ series.begin_date }}</td>
-                                                <td>{{ series.end_date }}</td>
-                                                <td>{{ series.count_nu }}</td>
+                                                <td scope="row">{{ series.parm_cd.name }}</td>
+                                                <td>{{ series.loc_web_ds.name }}</td>
+                                                <td>{{ series.data_type_cd.name }}</td>
+                                                <td>{{ series.stat_cd.name }}</td>
+                                                <td>{{ series.parm_grp_cd.name }}</td>
+                                                <td>{{ series.srs_id.name }}</td>
+                                                <td>{{ series.begin_date.name }}</td>
+                                                <td>{{ series.end_date.name }}</td>
+                                                <td>{{ series.count_nu.name }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
