@@ -1,4 +1,4 @@
-const { timeFormat } = require('d3-time-format');
+const { timeFormat, utcFormat } = require('d3-time-format');
 const { get } = require('./ajax');
 
 
@@ -8,6 +8,7 @@ const SERVICE_ROOT = window.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis
 
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');
+const isoFormatTime = utcFormat('%Y-%m-%dT%H:%M')
 
 /**
  * Get a given timeseries dataset from Water Services.
@@ -21,8 +22,8 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
         timeParams = 'period=P7D';
     }
     else {
-        let startString = startDate ? startDate.toISOString() : '';
-        let endString = endDate ? endDate.toISOString() : '';
+        let startString = startDate ? isoFormatTime(startDate) : '';
+        let endString = endDate ? isoFormatTime(endDate) : '';
         timeParams = `startDT=${startString}&endDT=${endString}`;
     }
     let url = `${SERVICE_ROOT}/iv/?sites=${sites.join(',')}&parameterCd=${params.join(',')}&${timeParams}&indent=on&siteStatus=all&format=json`;
