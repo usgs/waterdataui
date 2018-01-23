@@ -96,7 +96,8 @@ def monitoring_location(site_no):
                 'location_with_values': get_disambiguated_values(
                     station_record,
                     app.config['NWIS_CODE_LOOKUP'],
-                    app.config['COUNTRY_STATE_COUNTY_LOOKUP']
+                    app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
+                    app.config['HUC_LOOKUP']
                 ),
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': safe_json_ld,
