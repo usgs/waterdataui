@@ -45,19 +45,11 @@ def monitoring_location(site_no):
 
         template = 'monitoring_location.html'
 
-        station_nm = ''
-        site_no = ''
-
         context = {'status_code': status,
-                   'station': data_list,
-                   'station_nm': station_nm,
-                   'site_no': site_no,
+                   'stations': data_list,
                    'STATION_FIELDS_D': STATION_FIELDS_D}
 
         if len(data_list) == 1:
-            station_nm = data_list[0]['station_nm']
-            site_no = data_list[0]['site_no']
-
             station_record = data_list[0]
             parameter_data_resp = execute_get_request(SERVICE_ROOT,
                                                       path='/nwis/site/',
@@ -90,9 +82,7 @@ def monitoring_location(site_no):
 
             context = {
                 'status_code': status,
-                'station': data_list,
-                'station_nm': station_nm,
-                'site_no': site_no,
+                'stations': data_list,
                 'location_with_values': get_disambiguated_values(
                     station_record,
                     app.config['NWIS_CODE_LOOKUP'],

@@ -9,13 +9,13 @@
 {% endblock page_script %}
 
 {% set body_id = 'monitoring-location' %}
-{% if station %}{% set page_title = station.station_nm %}{% endif %}
+{% if stations|length == 1 %}{% set page_title = stations[0].station_nm %}{% endif %}
 
 {% block content %}
     <div class="usa-width-one-whole">
         {% if status_code == 200 %}
 
-            {% if station|length > 1 %}
+            {% if stations|length > 1 %}
 
                 <h1>Multiple sites found</h1>
                 <h3>Please pick a site:</h3>
@@ -28,24 +28,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                {% for site in station %}
+                {% for site in stations %}
                     <tr>
-                        <td><a href="{{ url_for('monitoring_location', site_no=site['site_no'], agency_cd=site['agency_cd']) }}">{{ site['agency_cd'] }}</a></td>
-                        <td> {{ site['site_no'] }} </td>
-                        <td> {{ site['station_nm'] }} </td>
+                        <td><a href="{{ url_for('monitoring_location', site_no=site.site_no, agency_cd=site.agency_cd) }}">{{ site.agency_cd }}</a></td>
+                        <td> {{ site.site_no }} </td>
+                        <td> {{ site.station_nm }} </td>
                     </tr>
                 {% endfor %}
                 </tbody>
                 </table>
 
             {% else %}
-                <h1>Station Name: {{ station.station_nm }}</h1>
+                <h1>Station Name: {{ stations[0].station_nm }}</h1>
                 <ul>
-                    <li><a href="{{ config.NWIS_ENDPOINTS.INVENTORY }}/?site_no={{ station.site_no }}" target="_blank">Site inventory page</a></li>
-                    <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?cb_00060=on&format=gif_mult_parms&site_no={{ station.site_no }}&period=7" target="_blank">Interactive grapher</a></li>
-                    <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?format=img_default&site_no={{ station.site_no }}&period=7" target="_blank">Presentation Charts</a></li>
+                    <li><a href="{{ config.NWIS_ENDPOINTS.INVENTORY }}/?site_no={{ stations[0].site_no }}" target="_blank">Site inventory page</a></li>
+                    <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?cb_00060=on&format=gif_mult_parms&site_no={{ stations[0].site_no }}&period=7" target="_blank">Interactive grapher</a></li>
+                    <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?format=img_default&site_no={{ stations[0].site_no }}&period=7" target="_blank">Presentation Charts</a></li>
                 </ul>
-                <div class="hydrograph" data-siteno="{{ station[0].site_no }}"></div>
+                <div class="hydrograph" data-siteno="{{ stations[0].site_no }}"></div>
                 {% if site_dataseries %}
                     <ul class="usa-accordion">
                         <li>
