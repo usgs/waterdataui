@@ -13,7 +13,7 @@
             {% block title %}{% if page_title %}{{ page_title }} - {% endif %}USGS Water Data for the Nation{% endblock %}
         </title>
     </head>
-    <body>
+    <body {% if body_id %}id="{{ body_id }}"{% endif %}>
         <div id="skip"><a href="#main-content">Skip to main content</a></div>
         <header role="banner">
             {% include 'partials/usa_banner.html' %}

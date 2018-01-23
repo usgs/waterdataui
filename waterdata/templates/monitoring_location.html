@@ -8,6 +8,7 @@
     {% endif %}
 {% endblock page_script %}
 
+{% set body_id = 'monitoring-location' %}
 {% if station %}{% set page_title = station.station_nm %}{% endif %}
 
 {% block content %}
@@ -87,21 +88,29 @@
                     </ul>
                 {% endif %}
 
-                <table>
-                <thead>
-                    <tr>
-                        <th scope="col">Description</th>
-                        <th scope="col">Station Data</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for key, value in location_with_values.items() %}
+                <table id="site-summary" summary="Descriptive metadata about this monitoring location">
+                    <thead>
                         <tr>
-                            <th scope="row"> {{ STATION_FIELDS_D[key] }} </th>
-                            <td> {{ value }} </td>
+                            <th scope="col">Metadata Element</th>
+                            <th scope="col">Location Metadata</th>
+                            <th scope="col">Metadata Code</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
+                    </thead>
+                    <tbody>
+                        {% for key, value in location_with_values.items() %}
+                            <tr>
+                                <th scope="row">{{ STATION_FIELDS_D[key] }}</th>
+                                <td class="loc-metadata">
+                                    {% if value.url %}
+                                        <a href="{{ value.url }}">{{ value.name }}</a>
+                                    {% else %}
+                                        {{ value.name }}
+                                    {% endif %}
+                                    </td>
+                                <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
 
             {% endif %}
