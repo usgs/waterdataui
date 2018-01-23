@@ -1,7 +1,7 @@
 /**
  * Hydrograph charting module.
  */
-const { bisector } = require('d3-array');
+const { bisector, extent, min, max } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
 
@@ -40,6 +40,7 @@ class Hydrograph {
         this._title = title;
         this._desc = desc;
         this._element = element;
+        this.plot;
 
         if (this._data && this._data.length) {
             this._drawChart();
@@ -48,10 +49,27 @@ class Hydrograph {
         }
     }
 
+    addTimeSeries({data, legendLabel}) {
+        const yExtent = extent(data, d => d.value);
+        const currentYDomain = this.scale.yScale.domain();
+        this.scale.yScale.domain([min([yExtent[0], currentYDomain[0]]), max([yExtent[1], currentYDomain[1]])])
+        const {xScale, yScale } = createScales(data,
+            WIDTH - MARGIN.right,
+            HEIGHT - (MARGIN.top + MARGIN.bottom))
+        const newLine = line()
+            .x(d => xScale(d.time))
+            .y(d => this.scale.yScale(d.value));
+
+        this.plot.append('path')
+            .datum(data)
+            .classed('line', true)
+            .attr('d', newLine);
+    }
+
     _drawChart() {
         // Set up parent element and SVG
         this._element.innerHTML = '';
-        const svg = select(this._element)
+        let svg = select(this._element)
             .append('div')
             .attr('class', 'hydrograph-container')
             .style('padding-bottom', ASPECT_RATIO_PERCENT)
@@ -74,20 +92,20 @@ class Hydrograph {
             })
         });
         // We'll actually be appending to a <g> element
-        const plot = svg.append('g')
+        this.plot = svg.append('g')
             .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
         // Create x/y scaling for the full (100%) view.
-        const {xScale, yScale} = createScales(
+        this.scale = createScales(
             this._data,
             WIDTH - MARGIN.right,
             HEIGHT - (MARGIN.top + MARGIN.bottom)
         );
-        const {xAxis, yAxis} = createAxes(xScale, yScale, -WIDTH + MARGIN.right);
+        const {xAxis, yAxis} = createAxes(this.scale.xScale, this.scale.yScale, -WIDTH + MARGIN.right);
 
         // Draw the graph components with the given scaling.
         appendAxes({
-            plot,
+            plot: this.plot,
             xAxis,
             yAxis,
             xLoc: {x: 0, y: HEIGHT - (MARGIN.top + MARGIN.bottom)},
@@ -95,8 +113,8 @@ class Hydrograph {
             yLabelLoc: {x: HEIGHT / -2 + MARGIN.top, y: -35},
             yTitle: this._yLabel
         });
-        this._plotDataLine(plot, xScale, yScale);
-        this._plotTooltips(plot, xScale, yScale);
+        this._plotDataLine(this.plot, this.scale.xScale, this.scale.yScale);
+        this._plotTooltips(this.plot, this.scale.xScale, this.scale.yScale);
     }
 
     _drawMessage(message) {
