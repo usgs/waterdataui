@@ -14,79 +14,106 @@
 {% block content %}
     <div class="usa-width-one-whole">
         {% if status_code == 200 %}
-            <h1>Station Name: {{ station.station_nm }}</h1>
-            <ul>
-                <li><a href="{{ config.NWIS_ENDPOINTS.INVENTORY }}/?site_no={{ station.site_no }}" target="_blank">Site inventory page</a></li>
-                <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?cb_00060=on&format=gif_mult_parms&site_no={{ station.site_no }}&period=7" target="_blank">Interactive grapher</a></li>
-                <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?format=img_default&site_no={{ station.site_no }}&period=7" target="_blank">Presentation Charts</a></li>
-            </ul>
-            <div class="hydrograph" data-siteno="{{ station.site_no }}"></div>
-            {% if site_dataseries %}
-                <ul class="usa-accordion">
-                    <li>
-                        <button class="usa-accordion-button" aria-expanded="false" aria-controls="ts-a1">
-                            Data Series
-                        </button>
-                        <div id="ts-a1" class="usa-accordion-content">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Parameter</th>
-                                        <th scope="col">Description</th>
-                                        <th scope="col">Data Type</th>
-                                        <th scope="col">Statistic</th>
-                                        <th scope="col">Parameter Group</th>
-                                        <th scope="col">SRS ID</th>
-                                        <th scope="col">Start Date</th>
-                                        <th scope="col">End Date</th>
-                                        <th scope="col">Record Count</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for series in site_dataseries %}
-                                        <tr>
-                                            <td scope="row">{{ series.parm_cd }}</td>
-                                            <td>{{ series.loc_web_ds }}</td>
-                                            <td>{{ series.data_type_cd }}</td>
-                                            <td>{{ series.stat_cd }}</td>
-                                            <td>{{ series.parm_grp_cd }}</td>
-                                            <td>{{ series.srs_id }}</td>
-                                            <td>{{ series.begin_date }}</td>
-                                            <td>{{ series.end_date }}</td>
-                                            <td>{{ series.count_nu }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </li>
-                </ul>
-            {% endif %}
 
-            <table id="site-summary" summary="Descriptive metadata about this monitoring location">
+            {% if station|length > 1 %}
+
+                <h1>Multiple sites found</h1>
+                <h3>Please pick a site:</h3>
+                <table class="usa-table-borderless">
                 <thead>
                     <tr>
-                        <th scope="col">Metadata Element</th>
-                        <th scope="col">Location Metadata</th>
-                        <th scope="col">Metadata Code</th>
+                        <th scope="col">Agency</th>
+                        <th scope="col">Site number</th>
+                        <th scope="col">Site name</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for key, value in location_with_values.items() %}
-                        <tr>
-                            <th scope="row">{{ STATION_FIELDS_D[key] }}</th>
-                            <td class="loc-metadata">
-                                {% if value.url %}
-                                    <a href="{{ value.url }}">{{ value.name }}</a>
-                                {% else %}
-                                    {{ value.name }}
-                                {% endif %}
-                                </td>
-                            <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
-                        </tr>
-                    {% endfor %}
+                {% for site in station %}
+                    <tr>
+                        <td><a href="{{ url_for('monitoring_location', site_no=site['site_no'], agency_cd=site['agency_cd']) }}">{{ site['agency_cd'] }}</a></td>
+                        <td> {{ site['site_no'] }} </td>
+                        <td> {{ site['station_nm'] }} </td>
+                    </tr>
+                {% endfor %}
                 </tbody>
-            </table>
+                </table>
+
+            {% else %}
+                <h1>Station Name: {{ station.station_nm }}</h1>
+                <ul>
+                    <li><a href="{{ config.NWIS_ENDPOINTS.INVENTORY }}/?site_no={{ station.site_no }}" target="_blank">Site inventory page</a></li>
+                    <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?cb_00060=on&format=gif_mult_parms&site_no={{ station.site_no }}&period=7" target="_blank">Interactive grapher</a></li>
+                    <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?format=img_default&site_no={{ station.site_no }}&period=7" target="_blank">Presentation Charts</a></li>
+                </ul>
+                <div class="hydrograph" data-siteno="{{ station[0].site_no }}"></div>
+                {% if site_dataseries %}
+                    <ul class="usa-accordion">
+                        <li>
+                            <button class="usa-accordion-button" aria-expanded="false" aria-controls="ts-a1">
+                                Data Series
+                            </button>
+                            <div id="ts-a1" class="usa-accordion-content">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Parameter</th>
+                                            <th scope="col">Description</th>
+                                            <th scope="col">Data Type</th>
+                                            <th scope="col">Statistic</th>
+                                            <th scope="col">Parameter Group</th>
+                                            <th scope="col">SRS ID</th>
+                                            <th scope="col">Start Date</th>
+                                            <th scope="col">End Date</th>
+                                            <th scope="col">Record Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for series in site_dataseries %}
+                                            <tr>
+                                                <td scope="row">{{ series.parm_cd }}</td>
+                                                <td>{{ series.loc_web_ds }}</td>
+                                                <td>{{ series.data_type_cd }}</td>
+                                                <td>{{ series.stat_cd }}</td>
+                                                <td>{{ series.parm_grp_cd }}</td>
+                                                <td>{{ series.srs_id }}</td>
+                                                <td>{{ series.begin_date }}</td>
+                                                <td>{{ series.end_date }}</td>
+                                                <td>{{ series.count_nu }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </li>
+                    </ul>
+                {% endif %}
+
+                <table id="site-summary" summary="Descriptive metadata about this monitoring location">
+                    <thead>
+                        <tr>
+                            <th scope="col">Metadata Element</th>
+                            <th scope="col">Location Metadata</th>
+                            <th scope="col">Metadata Code</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, value in location_with_values.items() %}
+                            <tr>
+                                <th scope="row">{{ STATION_FIELDS_D[key] }}</th>
+                                <td class="loc-metadata">
+                                    {% if value.url %}
+                                        <a href="{{ value.url }}">{{ value.name }}</a>
+                                    {% else %}
+                                        {{ value.name }}
+                                    {% endif %}
+                                    </td>
+                                <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% endif %}
 
         {% else %}
             <h1>Error: HTTP {{ status_code }} -- {{ reason }}</h1>
