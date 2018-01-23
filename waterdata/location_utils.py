@@ -6,11 +6,13 @@ USGS water services.
 from collections import namedtuple
 import datetime
 
+from flask import url_for
+
 
 Parameter = namedtuple('Parameter', ['parameter_cd', 'start_date', 'end_date', 'record_count'])
 
 
-def get_disambiguated_values(location, code_lookups, country_state_county_lookups):
+def get_disambiguated_values(location, code_lookups, country_state_county_lookups, huc_lookups):
     """
     Convert values for keys that contains codes to human readable names using the lookups
     :param dict location:
@@ -19,7 +21,7 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
     :rtype: dict
     """
 
-    def get_state_name (country_code, state_code):
+    def get_state_name(country_code, state_code):
         """
         Return the name of the state with country_code and state_code
         :param str country_code:
@@ -29,7 +31,7 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
         country_lookup = country_state_county_lookups.get(country_code, {})
         state_lookup = country_lookup.get('state_cd', {})
 
-        return state_lookup.get(state_code, {}).get('name', state_code)
+        return state_lookup.get(state_code, {}).get('name')
 
     transformed_location = {}
 
@@ -40,23 +42,47 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
 
     for (key, value) in location.items():
         if key == 'state_cd' and country_code and state_code:
-            transformed_value = get_state_name(country_code, state_code)
+            state_name = get_state_name(country_code, state_code)
+            transformed_value = {
+                'name': state_name or state_code,
+                'code': state_code if state_name != state_code else None
+            }
 
         elif key == 'district_cd' and country_code and district_code:
-            transformed_value = get_state_name(country_code, district_code)
+            state_name = get_state_name(country_code, district_code)
+            transformed_value = {
+                'name': state_name or district_code,
+                'code': district_code if state_name != district_code else None
+            }
 
         elif key == 'county_cd' and country_code and state_code and country_code:
             country_lookup = country_state_county_lookups.get(country_code, {})
             state_lookup = country_lookup.get('state_cd', {}).get(state_code, {})
             county_lookup = state_lookup.get('county_cd', {})
 
-            transformed_value = county_lookup.get(county_code, {}).get('name', county_code)
+            county_name = county_lookup.get(county_code, {}).get('name')
+            transformed_value = {
+                'name': county_name or county_code,
+                'code': county_code if county_name != county_code else None
+            }
 
         elif key in code_lookups:
-            transformed_value = code_lookups.get(key).get(value, {}).get('name', value)
+            value_dict = code_lookups.get(key).get(value) or {'name': value}
+            transformed_value = dict(code=value, **value_dict)
+
+        elif key == 'huc_cd':
+            transformed_value = {
+                'name': huc_lookups['hucs'].get(value, {}).get('huc_nm'),
+                'code': value,
+                'url': url_for('hydrological_unit', huc_cd=value)
+            }
 
         else:
-            transformed_value = value
+            transformed_value = {
+                'name': value,
+                'code': value
+            }
+
         transformed_location[key] = transformed_value
 
     return transformed_location
@@ -103,7 +129,7 @@ def get_site_parameter(location_parameter_records, parameter_cd):
                      start_date=start_date,
                      end_date=end_date,
                      record_count=record_count
-                     )
+                    )
 
 
 def build_linked_data(location_number, location_name, agency_code, latitude, longitude, location_capabilities):
@@ -125,7 +151,7 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
     """
     contexts = ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
                 'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
-                ]
+               ]
     linked_data = {'@context': contexts,
                    '@id': 'https://waterdata.usgs.gov/monitoring-location/{}'.format(location_number),
                    '@type': 'http://www.opengeospatial.org/standards/waterml2/hy_features/HY_HydroLocation',
@@ -135,11 +161,11 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
                    'geo': {'@type': 'schema:GeoCoordinates',
                            'latitude': latitude,
                            'longitude': longitude
-                           }
-                   }
+                          }
+                  }
     if '00060' in location_capabilities:
         linked_data['image'] = ('https://waterdata.usgs.gov/nwisweb/graph?'
                                 'agency_cd={0}&site_no={1}&parm_cd=00060&period=100').format(agency_code,
                                                                                              location_number
-                                                                                             )
+                                                                                            )
     return linked_data

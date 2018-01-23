@@ -5,11 +5,18 @@ $usgs-blue: #02274B;
 @import './header';
 @import './footer';
 
+
 .wdfn-component {
     &[data-component='hydrograph'] {
         @import './components/hydrograph';
     }
     &[data-component='map'] {
         @import './components/map';
+    }
+}
+
+body {
+    &#monitoring-location {
+        @import './pages/monitoring_location';
     }
 }
