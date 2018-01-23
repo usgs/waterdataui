@@ -1,5 +1,5 @@
 const { extent } = require('d3-array');
-const { scaleLog, scaleTime } = require('d3-scale');
+const { scaleLinear, scaleTime } = require('d3-scale');
 
 
 /**
@@ -25,7 +25,7 @@ function createScales(data, xSize, ySize) {
         .domain(xExtent);
 
     // yScale is oriented on the bottom
-    const yScale = scaleLog()
+    const yScale = scaleLinear()
         .range([ySize, 0])
         .domain(yExtent);
 
