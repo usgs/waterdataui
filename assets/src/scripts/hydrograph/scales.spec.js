@@ -34,4 +34,10 @@ describe('Charting scales', () => {
         expect(range[0]).toEqual(100);
         expect(range[1]).toEqual(0);
     });
+
+    it('WDFN-66: yScale deals with range [0,1] correctly', () => {
+        expect(yScale(0)).not.toBeNaN();
+        expect(yScale(.5)).not.toBeNaN();
+        expect(yScale(.999)).not.toBeNaN();
+    });
 });
