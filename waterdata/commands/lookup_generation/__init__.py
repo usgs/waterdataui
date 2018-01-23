@@ -98,7 +98,6 @@ def generate_lookup_file(datadir, filename='nwis_lookup.json'):
         if 'params' in lookup_config:
             params.update(lookup_config.get('params'))
         resp = execute_get_request(CODE_HOST_ENDPOINT, path=lookup_config.get('urlpath'), params=params)
-        print(resp.url)
         if resp.status_code == 200:
             code_dict_iter = parse_rdb(resp.iter_lines(decode_unicode=True))
             lookups[lookup_config.get('site_key')] = translate_to_lookup(
