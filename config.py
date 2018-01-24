@@ -5,6 +5,7 @@ Application configuration settings.
 import logging
 import os
 
+from waterdata import __version__ as APP_VERSION
 
 DEBUG = False
 
