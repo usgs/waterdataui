@@ -8,6 +8,7 @@ const { line } = require('d3-shape');
 const { appendAxes, createAxes } = require('./axes');
 const { createScales } = require('./scales');
 const { addSVGAccessibility , addSROnlyTable } = require('../accessibility');
+const { parseRDB } = require('../models');
 
 
 // Define width, height and margin for the SVG.
@@ -34,11 +35,13 @@ class Hydrograph {
      * @param {String} desc for svg's desc attribute
      * @param {Node} element Dom node to insert
      */
-    constructor({data=[], yLabel='Data', title='', desc='', element}) {
+    constructor({data=[], yLabel='Data', title='', desc='', medianPromise, element}) {
         this._data = data;
+        console.log(this._data);
         this._yLabel = yLabel;
         this._title = title;
         this._desc = desc;
+        this._medianPromise = medianPromise;
         this._element = element;
 
         if (this._data && this._data.length) {
@@ -77,6 +80,9 @@ class Hydrograph {
         const plot = svg.append('g')
             .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
+        const medianPlot = svg.append('g')
+            .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
+
         // Create x/y scaling for the full (100%) view.
         const {xScale, yScale} = createScales(
             this._data,
@@ -96,6 +102,7 @@ class Hydrograph {
             yTitle: this._yLabel
         });
         this._plotDataLine(plot, xScale, yScale);
+        this._plotMedianPoints(medianPlot);
         this._plotTooltips(plot, xScale, yScale);
     }
 
@@ -123,6 +130,35 @@ class Hydrograph {
             .datum(this._data)
             .classed('line', true)
             .attr('d', newLine);
+    }
+
+    _parseMedianData(medianData) {
+    let data = [];
+    let currentYear = new Date().getFullYear();
+    for(let medianDatum of medianData) {
+        let median = new Object();
+        let month = medianDatum.month_nu-1;
+        let day = medianDatum.day_nu;
+        let recordDate = new Date(2018, month, day);
+        median.time = recordDate;
+        median.value = medianDatum.p50_va;;
+        data.push(median);
+    }
+    return data;
+    }
+
+    _plotMedianPoints(plot) {
+        this._medianPromise.then(
+            (resp) => {
+                let statistics = parseRDB(resp)
+                let medianData = this._parseMedianData(statistics);
+                plot.selectAll('circle')
+                    .data(medianData)
+                    .enter()
+                    .append('circle')
+                    .attr('r', '8px')
+                    .attr('fill', 'blue');
+            });
     }
 
     _plotTooltips(plot, xScale, yScale) {

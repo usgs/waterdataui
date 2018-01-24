@@ -70,7 +70,7 @@ export function getTimeseries({sites, params=['00060']}, callback) {
 
 /**
  * Function to parse RDB to Objects
-*/
+ */
 export function parseRDB(rdbData) {
     let rdbLines = rdbData.split('\n');
     var dataLines = rdbLines.filter(rdbLine => rdbLine[0] != '#').filter(rdbLine => rdbLine.length > 0);
@@ -90,3 +90,22 @@ export function parseRDB(rdbData) {
     }
     return recordData;
 }
+
+/*
+ * Read median RDB data into something that makes sense
+ */
+export function parseMedianData(medianData) {
+    let data = [];
+    let currentYear = new Date().getFullYear();
+    for(let medianDatum of medianData) {
+        let median = new Object();
+        let month = medianDatum.month_nu-1;
+        let day = medianDatum.day_nu;
+        let recordDate = new Date(2018, month, day);
+        median.time = recordDate;
+        median.value = medianDatum.p50_va;;
+        data.push(median);
+    }
+    return data;
+}
+
