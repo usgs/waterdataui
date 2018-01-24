@@ -5,7 +5,7 @@ const { bisector, extent, min, max } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
 
-const { appendAxes, createAxes } = require('./axes');
+const { appendAxes, updateYAxis, createAxes } = require('./axes');
 const { createScales } = require('./scales');
 const { addSVGAccessibility , addSROnlyTable } = require('../accessibility');
 
@@ -69,16 +69,9 @@ class Hydrograph {
             .classed('line', true)
             .attr('d', newLine);
 
-        //Update the yaxis
-        const tickCount = 5;
-        const yDomain = yScale.domain();
-        const tickSize = (yDomain[1] - yDomain[0]) / tickCount;
-        this.axis.yAxis
-            .tickValues(Array(5).fill(0).map((_, index) => {
-                return yDomain[0] + index * tickSize;
-            }));
+        updateYAxis(this.axis.yAxis, this.scale.yScale);
         this.svg.select('.y-axis')
-            .call(this.axis.yAxis)
+            .call(this.axis.yAxis);
 
 
         //Update the current ts

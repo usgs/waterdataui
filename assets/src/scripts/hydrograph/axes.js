@@ -3,6 +3,16 @@ const { format } = require('d3-format');
 const { timeDay } = require('d3-time');
 const { timeFormat } = require('d3-time-format');
 
+const yTickCount = 5;
+
+function yTickValues(yScale) {
+    const yDomain = yScale.domain();
+    const tickSize = (yDomain[1] - yDomain[0]) / yTickCount;
+    return Array(yTickCount).fill(0).map((_, index) => {
+        return yDomain[0] + index * tickSize;
+    });
+}
+
 
 /**
  * Create an x and y axis for hydrograph
@@ -20,14 +30,9 @@ function createAxes(xScale, yScale, yTickSize) {
         .tickSizeOuter(0);
 
     // Create y-axis
-    const tickCount = 5;
-    const yDomain = yScale.domain();
-    const tickSize = (yDomain[1] - yDomain[0]) / tickCount;
     const yAxis = axisLeft()
         .scale(yScale)
-        .tickValues(Array(tickCount).fill(0).map((_, index) => {
-            return yDomain[0] + index * tickSize;
-        }))
+        .tickValues(yTickValues(yScale))
         .tickFormat(format('.2f'))
         .tickSizeInner(yTickSize)
         .tickPadding(14)
@@ -36,6 +41,9 @@ function createAxes(xScale, yScale, yTickSize) {
     return {xAxis, yAxis};
 }
 
+function updateYAxis(yAxis, yScale) {
+    yAxis.tickValues(yTickValues(yScale));
+}
 
 /**
  * Adds the given axes to a node
@@ -68,4 +76,4 @@ function appendAxes({plot, xAxis, yAxis, xLoc, yLoc, yLabelLoc, yTitle}) {
 }
 
 
-module.exports = {createAxes, appendAxes};
+module.exports = {createAxes, updateYAxis, appendAxes};
