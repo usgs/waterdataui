@@ -1,21 +1,25 @@
+const { map: createMap, marker: createMarker } = require('leaflet');
+const { BasemapLayer, TiledMapLayer } = require('esri-leaflet');
+
+
 const HYDRO_URL = 'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Esri_Hydro_Reference_Overlay/MapServer';
 
 
 function attachToNode(node, {latitude, longitude, zoom}) {
     // Create map on node
-    const map = L.map(node, {
+    const map = createMap(node, {
         center: [latitude, longitude],
         zoom: zoom
     });
 
-    // Basemap
-    L.esri.basemapLayer('Gray').addTo(map);
-
-    // Add a marker at the site location
-    L.marker([latitude, longitude]).addTo(map);
+    // Add a gray basemap layer
+    map.addLayer(new BasemapLayer('Gray'));
 
     // Add the ESRI World Hydro Reference Overlay
-    L.esri.tiledMapLayer({url: HYDRO_URL}).addTo(map);
+    map.addLayer(new TiledMapLayer({url: HYDRO_URL}));
+
+    // Add a marker at the site location
+    createMarker([latitude, longitude]).addTo(map);
 }
 
 
