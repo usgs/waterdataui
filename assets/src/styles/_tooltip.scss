@@ -1,0 +1,53 @@
+// Based off http://refills.bourbon.io/components/
+.tooltip-item {
+    $base-border-color: gainsboro !default;
+    $base-border-radius: 3px !default;
+    $base-line-height: 1.5em !default;
+    $dark-gray: #333 !default;
+    $base-font-color: $dark-gray !default;
+    $tooltip-background: white;
+    $tooltip-color: $base-font-color;
+    $tooltip-width: 16em;
+    $tooltip-shadow: 0 2px 2px silver;
+    $tooltip-distance-from-item: 3em;
+
+    background: $tooltip-background;
+    border: 1px solid $base-border-color;
+    border-radius: $base-border-radius;
+    display: inline-block;
+    padding: 0.5em 1em;
+    position: relative;
+    text-align: center;
+
+    &:focus,
+    &:hover .tooltip {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .tooltip {
+        word-wrap: normal;
+        @include position(absolute, null 0 $tooltip-distance-from-item 0);
+        background-color: $tooltip-background;
+        background: #fff;
+        border-radius: $base-border-radius;
+        box-shadow: $tooltip-shadow;
+        color: $tooltip-color;
+        font-size: 0.9em; // Make sure you use -webkit-backface-visibility: hidden; on the body element to prevent 1px nudging bugs.
+        line-height: 1.5em;
+        margin: 0 auto;
+        width: $tooltip-width;
+        opacity: 0;
+        padding: 1em;
+        text-align: center;
+        transition: all 0.2s ease-in-out;
+        visibility: hidden;
+        z-index: 10;
+
+        p {
+            color: $base-font-color;
+            line-height: $base-line-height;
+            margin: 0;
+        }
+    }
+}
