@@ -4,10 +4,13 @@
 const { bisector, extent, min, max } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
+const { timeFormat } = require('d3-time-format');
+
+const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
+const { getTimeseries } = require('../../models');
 
 const { appendAxes, updateYAxis, createAxes } = require('./axes');
 const { createScales } = require('./scales');
-const { addSVGAccessibility , addSROnlyTable } = require('../accessibility');
 
 
 // Define width, height and margin for the SVG.
@@ -25,6 +28,11 @@ const MARGIN = {
 
 // Function that returns the left bounding point for a given chart point.
 const bisectDate = bisector(d => d.time).left;
+
+
+// Create a time formatting function from D3's timeFormat
+const formatTime = timeFormat('%c %Z');
+
 
 class Hydrograph {
     /**
@@ -214,4 +222,18 @@ class Hydrograph {
 }
 
 
-module.exports = Hydrograph;
+function attachToNode(node, {siteno}) {
+    getTimeseries({sites: [siteno]}, series => {
+        let dataIsValid = series[0] && !series[0].values.some(d => d.value === -999999);
+        new Hydrograph({
+            element: node,
+            data: dataIsValid ? series[0].values : [],
+            yLabel: dataIsValid ? series[0].variableDescription : 'No data',
+            title: dataIsValid ? series[0].variableName : '',
+            desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
+        });
+    });
+}
+
+
+module.exports = {Hydrograph, attachToNode};
