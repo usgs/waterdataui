@@ -22,6 +22,7 @@ function getLastYearTimeseries({site, startTime, endTime}) {
 function main() {
     let nodes = document.getElementsByClassName('hydrograph');
     let hydrograph;
+    let getLastYearTS;
     for (let node of nodes) {
         getTimeseries({sites: [node.dataset.siteno]}).then((series) => {
             let dataIsValid = series && series[0] && !series[0].values.some(d => d.value === -999999);
@@ -33,13 +34,13 @@ function main() {
                 desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
             });
             if (dataIsValid) {
-                getLastYearTimeseries({
+                getLastYearTS = getLastYearTimeseries({
                     site: node.dataset.siteno,
                     startTime: series[0].seriesStartDate,
                     endTime: series[0].seriesEndDate
-                }).then((series) => {
-                    hydrograph.addTimeSeries({data: series[0].values, legendLabel: 'Last Year'});
-                });
+                });//.then((series) => {
+                  //  hydrograph.addTimeSeries({data: series[0].values, legendLabel: 'Last Year'});
+                //});
             }
         }, () =>
             hydrograph = new Hydrograph({

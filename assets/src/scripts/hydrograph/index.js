@@ -35,14 +35,16 @@ class Hydrograph {
      * @param {Node} element Dom node to insert
      */
     constructor({data=[], yLabel='Data', title='', desc='', element}) {
-        this._data = data;
         this._yLabel = yLabel;
         this._title = title;
         this._desc = desc;
         this._element = element;
-        this.plot;
+        this.scale;
+        this.axis;
+        this.tsData = {};
 
-        if (this._data && this._data.length) {
+        if (data && data.length) {
+            this.tsData.current = data;
             this._drawChart();
         } else {
             this._drawMessage('No data is available for this site.');
@@ -55,7 +57,7 @@ class Hydrograph {
         this.scale.yScale.domain([min([yExtent[0], currentYDomain[0]]), max([yExtent[1], currentYDomain[1]])])
         const {xScale, yScale } = createScales(data,
             WIDTH - MARGIN.right,
-            HEIGHT - (MARGIN.top + MARGIN.bottom))
+            HEIGHT - (MARGIN.top + MARGIN.bottom));
         const newLine = line()
             .x(d => xScale(d.time))
             .y(d => this.scale.yScale(d.value));
@@ -87,7 +89,7 @@ class Hydrograph {
         addSROnlyTable({
             container: this._element,
             columnNames: [this._title, 'Time'],
-            data: this._data.map((value) => {
+            data: this.tsData.current.map((value) => {
                 return [value.value, value.time];
             })
         });
@@ -97,24 +99,24 @@ class Hydrograph {
 
         // Create x/y scaling for the full (100%) view.
         this.scale = createScales(
-            this._data,
+            this.tsData.current,
             WIDTH - MARGIN.right,
             HEIGHT - (MARGIN.top + MARGIN.bottom)
         );
-        const {xAxis, yAxis} = createAxes(this.scale.xScale, this.scale.yScale, -WIDTH + MARGIN.right);
+        this.axis = createAxes(this.scale.xScale, this.scale.yScale, -WIDTH + MARGIN.right);
 
         // Draw the graph components with the given scaling.
         appendAxes({
             plot: this.plot,
-            xAxis,
-            yAxis,
+            xAxis: this.axis.xAxis,
+            yAxis: this.axis.yAxis,
             xLoc: {x: 0, y: HEIGHT - (MARGIN.top + MARGIN.bottom)},
             yLoc: {x: 0, y: 0},
             yLabelLoc: {x: HEIGHT / -2 + MARGIN.top, y: -35},
             yTitle: this._yLabel
         });
-        this._plotDataLine(this.plot, this.scale.xScale, this.scale.yScale);
-        this._plotTooltips(this.plot, this.scale.xScale, this.scale.yScale);
+        this._plotDataLine(this.plot, this.scale, 'current');
+        this._plotTooltips(this.plot, this.scale, 'current');
     }
 
     _drawMessage(message) {
@@ -132,18 +134,19 @@ class Hydrograph {
             .html(message);
     }
 
-    _plotDataLine(plot, xScale, yScale) {
+    _plotDataLine(plot, scale, tsDataKey) {
         const newLine = line()
-            .x(d => xScale(d.time))
-            .y(d => yScale(d.value));
+            .x(d => scale.xScale(d.time))
+            .y(d => scale.yScale(d.value));
 
         plot.append('path')
-            .datum(this._data)
+            .datum(this.tsData[tsDataKey])
             .classed('line', true)
+            .attr('id', 'ts-' + tsDataKey)
             .attr('d', newLine);
     }
 
-    _plotTooltips(plot, xScale, yScale) {
+    _plotTooltips(plot, scale, tsDataKey) {
         // Create a node to hightlight the currently selected date/time.
         let focus = plot.append('g')
             .attr('class', 'focus')
@@ -162,15 +165,15 @@ class Hydrograph {
             .on('mouseout', () => focus.style('display', 'none'))
             .on('mousemove', (d, i, nodes) => {
                 // Get the nearest data point for the current mouse position.
-                let time = xScale.invert(mouse(nodes[i])[0]);
-                let {datum, index} = this._getNearestTime(time);
+                let time = scale.xScale.invert(mouse(nodes[i])[0]);
+                let {datum, index} = this._getNearestTime(time, tsDataKey);
 
                 // Move the focus node to this date/time.
-                focus.attr('transform', `translate(${xScale(datum.time)}, ${yScale(datum.value)})`);
+                focus.attr('transform', `translate(${scale.xScale(datum.time)}, ${scale.yScale(datum.value)})`);
 
                 // Draw text, anchored to the left or right, depending on
                 // which side of the graph the point is on.
-                let isFirstHalf = index < this._data.length / 2;
+                let isFirstHalf = index < this.tsData[tsDataKey].length / 2;
                 focus.select('text')
                     .text(() => datum.label)
                     .attr('text-anchor', isFirstHalf ? 'start' : 'end')
@@ -179,12 +182,12 @@ class Hydrograph {
             });
     }
 
-    _getNearestTime(time) {
-        let index = bisectDate(this._data, time, 1);
+    _getNearestTime(time, tsDataKey) {
+        let index = bisectDate(this.tsData[tsDataKey], time, 1);
 
         let datum;
-        let d0 = this._data[index - 1];
-        let d1 = this._data[index];
+        let d0 = this.tsData[tsDataKey][index - 1];
+        let d1 = this.tsData[tsDataKey][index];
         if (d0 && d1) {
             datum = time - d0.time > d1.time - time ? d1 : d0;
         } else {
