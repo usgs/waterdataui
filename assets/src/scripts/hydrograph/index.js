@@ -37,7 +37,6 @@ class Hydrograph {
      */
     constructor({data=[], yLabel='Data', title='', desc='', medianPromise, element}) {
         this._data = data;
-        console.log(this._data);
         this._yLabel = yLabel;
         this._title = title;
         this._desc = desc;
@@ -102,7 +101,7 @@ class Hydrograph {
             yTitle: this._yLabel
         });
         this._plotDataLine(plot, xScale, yScale);
-        this._plotMedianPoints(medianPlot);
+        this._plotMedianPoints(medianPlot, xScale, yScale);
         this._plotTooltips(plot, xScale, yScale);
     }
 
@@ -139,7 +138,7 @@ class Hydrograph {
         let median = new Object();
         let month = medianDatum.month_nu-1;
         let day = medianDatum.day_nu;
-        let recordDate = new Date(2018, month, day);
+        let recordDate = new Date(currentYear, month, day);
         median.time = recordDate;
         median.value = medianDatum.p50_va;;
         data.push(median);
@@ -147,17 +146,26 @@ class Hydrograph {
     return data;
     }
 
-    _plotMedianPoints(plot) {
+    _plotMedianPoints(plot, xScale, yScale) {
         this._medianPromise.then(
             (resp) => {
                 let statistics = parseRDB(resp)
                 let medianData = this._parseMedianData(statistics);
+                //let data1 = {time: new Date(2018, 0, 22), value: 25};
+                //let data2 = {time: new Date(2018, 0, 23), value: 24};
+                //let medianData = [data1, data2];
                 plot.selectAll('circle')
                     .data(medianData)
                     .enter()
                     .append('circle')
                     .attr('r', '8px')
-                    .attr('fill', 'blue');
+                    .attr('fill', 'blue')
+                    .attr('cx', function(d) {
+                        return xScale(d.time);
+                    })
+                    .attr('cy', function(d) {
+                        return yScale(d.value);
+                    });
             });
     }
 

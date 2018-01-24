@@ -29,11 +29,6 @@ function main() {
                 desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
             });
         });
-        let medianUrl = 'https://waterservices.usgs.gov/nwis/stat/?format=rdb&sites=' + siteno + '&statReportType=daily&statTypeCd=median&parameterCd=00060'
-        get(medianUrl).then(function(result) {
-            let medianData = parseRDB(result);
-            let plotData = parseMedianData(medianData);
-        });
     }
 }
 

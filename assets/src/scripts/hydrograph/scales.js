@@ -12,8 +12,9 @@ const { scaleLinear, scaleTime } = require('d3-scale');
 function createScales(data, xSize, ySize) {
     // Calculate max and min for data
     const xExtent = extent(data, d => d.time);
-    const yExtent = extent(data, d => d.value);
-
+    //const yExtent = extent(data, d => d.value);
+    const yExtent = [10, 30];
+    console.log(yExtent);
     // Add 20% of the y range as padding on both sides of the extent.
     let yPadding = 0.2 * (yExtent[1] - yExtent[0]);
     yExtent[0] -= yPadding;
