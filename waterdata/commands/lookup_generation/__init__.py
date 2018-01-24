@@ -35,7 +35,11 @@ CODE_LOOKUP_CONFIG = [
      'site_key': 'topo_cd'},
     {'code_key': 'medium_cd', 'name': 'medium_nm', 'urlpath': 'code/medium_cd_query', 'site_key': 'medium_grp_cd'},
     {'code_key': 'stat_CD', 'name': 'stat_NM', 'urlpath': '/code/stat_cd_nm_query?stat_nm_cd=%25',
-     'site_key': 'stat_cd'}
+     'site_key': 'stat_cd'},
+    {'code_key': 'gw_ref_cd', 'name': 'gw_ref_ds', 'urlpath': '/code/coord_datum_cd_query',
+     'site_key': 'coord_datum_cd'},
+    {'code_key': 'gw_ref_cd', 'name': 'gw_ref_ds', 'urlpath': '/code/coord_datum_cd_query',
+     'site_key': 'dec_coord_datum_cd'},
 ]
 
 GROUPED_CODE_LOOKUP_CONFIG = [
