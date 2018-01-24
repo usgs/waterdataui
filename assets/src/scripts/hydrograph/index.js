@@ -52,6 +52,7 @@ class Hydrograph {
     }
 
     addTimeSeries({data, legendLabel}) {
+        this.tsData[legendLabel] = data;
         const yExtent = extent(data, d => d.value);
         const currentYDomain = this.scale.yScale.domain();
         this.scale.yScale.domain([min([yExtent[0], currentYDomain[0]]), max([yExtent[1], currentYDomain[1]])])
@@ -66,6 +67,14 @@ class Hydrograph {
             .datum(data)
             .classed('line', true)
             .attr('d', newLine);
+
+        //Update the yaxis
+        select('.y-axis')
+            .call(this.axis.yAxis);
+
+        //Update the current ts
+        select('#ts-current')
+            .attr('d', this.currentLine(this.tsData.current));
     }
 
     _drawChart() {
@@ -135,7 +144,7 @@ class Hydrograph {
     }
 
     _plotDataLine(plot, scale, tsDataKey) {
-        const newLine = line()
+        this.currentLine = line()
             .x(d => scale.xScale(d.time))
             .y(d => scale.yScale(d.value));
 
@@ -143,7 +152,7 @@ class Hydrograph {
             .datum(this.tsData[tsDataKey])
             .classed('line', true)
             .attr('id', 'ts-' + tsDataKey)
-            .attr('d', newLine);
+            .attr('d', this.currentLine);
     }
 
     _plotTooltips(plot, scale, tsDataKey) {

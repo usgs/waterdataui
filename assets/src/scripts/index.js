@@ -49,6 +49,15 @@ function main() {
             })
         );
     }
+
+    document.getElementById('show-last-year-input').addEventListener('change', (evt) =>
+        getLastYearTS.then((series) => {
+            hydrograph.addTimeSeries({
+                data: series[0].values,
+                legendLabel: 'lastyear'
+            });
+        })
+     );
 }
 
 if (document.readyState !== 'loading') {
