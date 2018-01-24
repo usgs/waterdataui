@@ -41,6 +41,7 @@ class Hydrograph {
         this._element = element;
         this.scale;
         this.axis;
+        this.svg;
         this.tsData = {};
 
         if (data && data.length) {
@@ -69,8 +70,16 @@ class Hydrograph {
             .attr('d', newLine);
 
         //Update the yaxis
-        select('.y-axis')
-            .call(this.axis.yAxis);
+        const tickCount = 5;
+        const yDomain = yScale.domain();
+        const tickSize = (yDomain[1] - yDomain[0]) / tickCount;
+        this.axis.yAxis
+            .tickValues(Array(5).fill(0).map((_, index) => {
+                return yDomain[0] + index * tickSize;
+            }));
+        this.svg.select('.y-axis')
+            .call(this.axis.yAxis)
+
 
         //Update the current ts
         select('#ts-current')
@@ -80,7 +89,7 @@ class Hydrograph {
     _drawChart() {
         // Set up parent element and SVG
         this._element.innerHTML = '';
-        let svg = select(this._element)
+        this.svg = select(this._element)
             .append('div')
             .attr('class', 'hydrograph-container')
             .style('padding-bottom', ASPECT_RATIO_PERCENT)
@@ -89,7 +98,7 @@ class Hydrograph {
             .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`);
 
         addSVGAccessibility({
-            svg: svg,
+            svg: this.svg,
             title: this._title,
             description: this._desc,
             isInteractive: true
@@ -103,7 +112,7 @@ class Hydrograph {
             })
         });
         // We'll actually be appending to a <g> element
-        this.plot = svg.append('g')
+        this.plot = this.svg.append('g')
             .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
         // Create x/y scaling for the full (100%) view.
