@@ -88,6 +88,5 @@ export function parseRDB(rdbData) {
             recordData.push(dataObject);
         }
     }
-    console.log(recordData);
     return recordData;
 }
