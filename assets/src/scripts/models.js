@@ -68,3 +68,13 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
             return error;
         });
 }
+
+export function getPreviousYearTimeseries({site, startTime, endTime}) {
+    let lastYearStartTime = new Date(startTime.getTime());
+    let lastYearEndTime = new Date(endTime.getTime());
+
+    lastYearStartTime.setFullYear(startTime.getFullYear() - 1);
+    lastYearEndTime.setFullYear(endTime.getFullYear() - 1);
+
+    return getTimeseries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
+}

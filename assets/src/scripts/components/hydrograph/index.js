@@ -4,10 +4,10 @@
 const { bisector, extent, min, max } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
-const { timeFormat, utcFormat } = require('d3-time-format');
+const { timeFormat } = require('d3-time-format');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
-const { getTimeseries } = require('../../models');
+const { getTimeseries, getPreviousYearTimeseries } = require('../../models');
 
 const { appendAxes, updateYAxis, createAxes } = require('./axes');
 const { createScales, updateYScale } = require('./scales');
@@ -64,7 +64,7 @@ class Hydrograph {
         this.tsData[legendLabel] = data;
         const currentYExtent = extent(this.tsData.current, d => d.value);
         const yExtent = extent(data, d => d.value);
-        const newExtent = [min([yExtent[0], currentYExtent[0]]), max([yExtent[1], currentYExtent[1]])]
+        const newExtent = [min([yExtent[0], currentYExtent[0]]), max([yExtent[1], currentYExtent[1]])];
         updateYScale(this.scale.yScale, newExtent);
         const {xScale, yScale } = createScales(data,
             WIDTH - MARGIN.right,
@@ -236,16 +236,6 @@ class Hydrograph {
     }
 }
 
-function getLastYearTimeseries({site, startTime, endTime}) {
-    let lastYearStartTime = new Date(startTime.getTime());
-    let lastYearEndTime = new Date(endTime.getTime());
-
-    lastYearStartTime.setFullYear(startTime.getFullYear() - 1);
-    lastYearEndTime.setFullYear(endTime.getFullYear() - 1);
-
-    return getTimeseries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
-}
-
 
 function attachToNode(node, {siteno}) {
     let hydrograph;
@@ -260,11 +250,11 @@ function attachToNode(node, {siteno}) {
                 desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
             });
             if (dataIsValid) {
-                getLastYearTS = getLastYearTimeseries({
+                getLastYearTS = getPreviousYearTimeseries({
                     site: node.dataset.siteno,
                     startTime: series[0].seriesStartDate,
                     endTime: series[0].seriesEndDate
-                })
+                });
             }
         }, () =>
             hydrograph = new Hydrograph({
