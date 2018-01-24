@@ -10,7 +10,7 @@ const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { getTimeseries } = require('../../models');
 
 const { appendAxes, updateYAxis, createAxes } = require('./axes');
-const { createScales } = require('./scales');
+const { createScales, updateYScale } = require('./scales');
 
 
 // Define width, height and margin for the SVG.
@@ -62,9 +62,10 @@ class Hydrograph {
 
     addTimeSeries({data, legendLabel}) {
         this.tsData[legendLabel] = data;
+        const currentYExtent = extent(this.tsData.current, d => d.value);
         const yExtent = extent(data, d => d.value);
-        const currentYDomain = this.scale.yScale.domain();
-        this.scale.yScale.domain([min([yExtent[0], currentYDomain[0]]), max([yExtent[1], currentYDomain[1]])])
+        const newExtent = [min([yExtent[0], currentYExtent[0]]), max([yExtent[1], currentYExtent[1]])]
+        updateYScale(this.scale.yScale, newExtent);
         const {xScale, yScale } = createScales(data,
             WIDTH - MARGIN.right,
             HEIGHT - (MARGIN.top + MARGIN.bottom));
@@ -75,13 +76,27 @@ class Hydrograph {
         this.plot.append('path')
             .datum(data)
             .classed('line', true)
+            .attr('id', 'ts-' + legendLabel)
             .attr('d', newLine);
 
         updateYAxis(this.axis.yAxis, this.scale.yScale);
         this.svg.select('.y-axis')
             .call(this.axis.yAxis);
 
+        //Update the current ts
+        select('#ts-current')
+            .attr('d', this.currentLine(this.tsData.current));
+    }
 
+    removeTimeSeries(legendLabel) {
+        const currentYExtent = extent(this.tsData.current, d => d.value);
+
+        this.svg.select('#ts-' + legendLabel).remove();
+        delete this.tsData[legendLabel];
+        updateYScale(this.scale.yScale, currentYExtent);
+        updateYAxis(this.axis.yAxis, this.scale.yScale);
+        this.svg.select('.y-axis')
+            .call(this.axis.yAxis);
         //Update the current ts
         select('#ts-current')
             .attr('d', this.currentLine(this.tsData.current));
@@ -249,9 +264,7 @@ function attachToNode(node, {siteno}) {
                     site: node.dataset.siteno,
                     startTime: series[0].seriesStartDate,
                     endTime: series[0].seriesEndDate
-                });//.then((series) => {
-                  //  hydrograph.addTimeSeries({data: series[0].values, legendLabel: 'Last Year'});
-                //});
+                })
             }
         }, () =>
             hydrograph = new Hydrograph({
@@ -259,14 +272,19 @@ function attachToNode(node, {siteno}) {
                 data: []
             })
         );
-    document.getElementById('show-last-year-input').addEventListener('change', (evt) =>
-        getLastYearTS.then((series) => {
-            hydrograph.addTimeSeries({
-                data: series[0].values,
-                legendLabel: 'lastyear'
+    document.getElementById('show-last-year-input').addEventListener('change', (evt) => {
+        if (evt.target.checked) {
+            getLastYearTS.then((series) => {
+                hydrograph.addTimeSeries({
+                    data: series[0].values,
+                    legendLabel: 'lastyear'
+                });
             });
-        })
-     );
+        }
+        else {
+            hydrograph.removeTimeSeries('lastyear');
+        }
+    });
 }
 
 
