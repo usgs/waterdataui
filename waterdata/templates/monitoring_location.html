@@ -51,7 +51,7 @@
                 </ul>
 
                 <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ stations[0].site_no }}"></div>
-                <div class="wdfn-component" data-component="map" data-latitude="{{ stations[0].dec_lat_va }}" data-longitude="{{ stations[0].dec_long_va }}" data-zoom=8></div>
+                {% if stations[0].dec_lat_va and stations[0].dec_long_va %}<div class="wdfn-component" data-component="map" data-latitude="{{ stations[0].dec_lat_va }}" data-longitude="{{ stations[0].dec_long_va }}" data-zoom=8></div>{% endif %}
 
                 {% if site_dataseries %}
                     <ul class="usa-accordion">
