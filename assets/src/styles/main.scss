@@ -1,3 +1,5 @@
+@import 'leaflet';
+
 @import './uswds';
 
 $usgs-blue: #02274B;
@@ -6,8 +8,18 @@ $usgs-blue: #02274B;
 @import './header';
 @import './footer';
 
-@import './hydrograph';
 
-body#monitoring-location {
-    @import './pages/monitoring_location';
+.wdfn-component {
+    &[data-component='hydrograph'] {
+        @import './components/hydrograph';
+    }
+    &[data-component='map'] {
+        @import './components/map';
+    }
+}
+
+body {
+    &#monitoring-location {
+        @import './pages/monitoring_location';
+    }
 }
