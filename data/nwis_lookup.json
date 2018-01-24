@@ -79482,6 +79482,70 @@
             "name": "OBSERVATION AT 2400"
         }
     },
+    "coord_datum_cd": {
+        "NAD27": {
+            "name": "North American Datum of 1927"
+        },
+        "NAD83": {
+            "name": "North American Datum of 1983"
+        },
+        "OLDAK": {
+            "name": "Old Alaska (Mainland) and Aleutian Islands Datum"
+        },
+        "OLDGUAM": {
+            "name": "Old Guam Datum"
+        },
+        "OLDHI": {
+            "name": "Old Hawaiian Datum"
+        },
+        "OLDPR": {
+            "name": "Old Puerto Rico and Virgin Islands Datum"
+        },
+        "OLDSAMOA": {
+            "name": "Old American Samoa Datum"
+        },
+        "PUERTORICO": {
+            "name": "Puerto Rico & Virgin Islands"
+        },
+        "WGS72": {
+            "name": "World Datum 1972"
+        },
+        "WGS84": {
+            "name": "World Datum 1984"
+        }
+    },
+    "dec_coord_datum_cd": {
+        "NAD27": {
+            "name": "North American Datum of 1927"
+        },
+        "NAD83": {
+            "name": "North American Datum of 1983"
+        },
+        "OLDAK": {
+            "name": "Old Alaska (Mainland) and Aleutian Islands Datum"
+        },
+        "OLDGUAM": {
+            "name": "Old Guam Datum"
+        },
+        "OLDHI": {
+            "name": "Old Hawaiian Datum"
+        },
+        "OLDPR": {
+            "name": "Old Puerto Rico and Virgin Islands Datum"
+        },
+        "OLDSAMOA": {
+            "name": "Old American Samoa Datum"
+        },
+        "PUERTORICO": {
+            "name": "Puerto Rico & Virgin Islands"
+        },
+        "WGS72": {
+            "name": "World Datum 1972"
+        },
+        "WGS84": {
+            "name": "World Datum 1984"
+        }
+    },
     "nat_aqfr_cd": {
         "N100AKUNCD": {
             "name": "Alaska unconsolidated-deposit aquifers"
