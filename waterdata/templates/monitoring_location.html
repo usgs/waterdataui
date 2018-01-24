@@ -106,7 +106,15 @@
                                     {% else %}
                                         {{ value.name }}
                                     {% endif %}
-                                    </td>
+                                    {% if value.desc %}
+                                        <div class="tooltip-item">
+                                            <sub aria-describedby="tooltip-{{ value.code }}">?</sub>
+                                            <div class="tooltip">
+                                                <p id="tooltip-{{ value.code }}">{{ value.desc }}</p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </td>
                                 <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
                             </tr>
                         {% endfor %}
