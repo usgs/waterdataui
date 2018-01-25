@@ -47,13 +47,10 @@ class Hydrograph {
         this._title = title;
         this._desc = desc;
         this._element = element;
-        this.scale;
-        this.axis;
-        this.svg;
-        this.tsData = {};
+        this._tsData = {};
 
         if (data && data.length) {
-            this.tsData.current = data;
+            this._tsData.current = data;
             this._drawChart();
         } else {
             this._drawMessage('No data is available for this site.');
@@ -61,45 +58,40 @@ class Hydrograph {
     }
 
     addTimeSeries({data, legendLabel}) {
-        this.tsData[legendLabel] = data;
-        const currentYExtent = extent(this.tsData.current, d => d.value);
+        this._tsData[legendLabel] = data;
+        const currentYExtent = extent(this._tsData.current, d => d.value);
         const yExtent = extent(data, d => d.value);
         const newExtent = [min([yExtent[0], currentYExtent[0]]), max([yExtent[1], currentYExtent[1]])];
         updateYScale(this.scale.yScale, newExtent);
         const {xScale, yScale } = createScales(data,
             WIDTH - MARGIN.right,
             HEIGHT - (MARGIN.top + MARGIN.bottom));
-        const newLine = line()
-            .x(d => xScale(d.time))
-            .y(d => this.scale.yScale(d.value));
 
-        this.plot.append('path')
-            .datum(data)
-            .classed('line', true)
-            .attr('id', 'ts-' + legendLabel)
-            .attr('d', newLine);
-
+        // Update the yAxis
         updateYAxis(this.axis.yAxis, this.scale.yScale);
         this.svg.select('.y-axis')
             .call(this.axis.yAxis);
 
         //Update the current ts
         select('#ts-current')
-            .attr('d', this.currentLine(this.tsData.current));
+            .attr('d', this.currentLine(this._tsData.current));
+
+        // Add the new time series
+        this._plotDataLine(this.plot, {xScale: xScale, yScale: this.scale.yScale}, legendLabel);
     }
 
     removeTimeSeries(legendLabel) {
-        const currentYExtent = extent(this.tsData.current, d => d.value);
+        const currentYExtent = extent(this._tsData.current, d => d.value);
 
         this.svg.select('#ts-' + legendLabel).remove();
-        delete this.tsData[legendLabel];
+        delete this._tsData[legendLabel];
         updateYScale(this.scale.yScale, currentYExtent);
         updateYAxis(this.axis.yAxis, this.scale.yScale);
         this.svg.select('.y-axis')
             .call(this.axis.yAxis);
         //Update the current ts
         select('#ts-current')
-            .attr('d', this.currentLine(this.tsData.current));
+            .attr('d', this.currentLine(this._tsData.current));
     }
 
     _drawChart() {
@@ -122,7 +114,7 @@ class Hydrograph {
         addSROnlyTable({
             container: this._element,
             columnNames: [this._title, 'Time'],
-            data: this.tsData.current.map((value) => {
+            data: this._tsData.current.map((value) => {
                 return [value.value, value.time];
             })
         });
@@ -132,7 +124,7 @@ class Hydrograph {
 
         // Create x/y scaling for the full (100%) view.
         this.scale = createScales(
-            this.tsData.current,
+            this._tsData.current,
             WIDTH - MARGIN.right,
             HEIGHT - (MARGIN.top + MARGIN.bottom)
         );
@@ -148,7 +140,7 @@ class Hydrograph {
             yLabelLoc: {x: HEIGHT / -2 + MARGIN.top, y: -35},
             yTitle: this._yLabel
         });
-        this._plotDataLine(this.plot, this.scale, 'current');
+        this.currentLine = this._plotDataLine(this.plot, this.scale, 'current');
         this._plotTooltips(this.plot, this.scale, 'current');
     }
 
@@ -168,15 +160,16 @@ class Hydrograph {
     }
 
     _plotDataLine(plot, scale, tsDataKey) {
-        this.currentLine = line()
+        let tsLine = line()
             .x(d => scale.xScale(d.time))
             .y(d => scale.yScale(d.value));
 
         plot.append('path')
-            .datum(this.tsData[tsDataKey])
+            .datum(this._tsData[tsDataKey])
             .classed('line', true)
             .attr('id', 'ts-' + tsDataKey)
-            .attr('d', this.currentLine);
+            .attr('d', tsLine);
+        return tsLine
     }
 
     _plotTooltips(plot, scale, tsDataKey) {
@@ -206,7 +199,7 @@ class Hydrograph {
 
                 // Draw text, anchored to the left or right, depending on
                 // which side of the graph the point is on.
-                let isFirstHalf = index < this.tsData[tsDataKey].length / 2;
+                let isFirstHalf = index < this._tsData[tsDataKey].length / 2;
                 focus.select('text')
                     .text(() => datum.label)
                     .attr('text-anchor', isFirstHalf ? 'start' : 'end')
@@ -216,11 +209,11 @@ class Hydrograph {
     }
 
     _getNearestTime(time, tsDataKey) {
-        let index = bisectDate(this.tsData[tsDataKey], time, 1);
+        let index = bisectDate(this._tsData[tsDataKey], time, 1);
 
         let datum;
-        let d0 = this.tsData[tsDataKey][index - 1];
-        let d1 = this.tsData[tsDataKey][index];
+        let d0 = this._tsData[tsDataKey][index - 1];
+        let d1 = this._tsData[tsDataKey][index];
         if (d0 && d1) {
             datum = time - d0.time > d1.time - time ? d1 : d0;
         } else {
