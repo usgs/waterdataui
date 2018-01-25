@@ -10,30 +10,6 @@ const formatTime = timeFormat('%c %Z');
 
 
 /**
- * Simple XMLHttpRequest wrapper.
- * @param  {String}   url      URL to retrieve
- * @param  {Function} callback Callback function to call with (data, error)
- */
-// function get(url, callback) {
-//     let xmlhttp = new XMLHttpRequest();
-//     xmlhttp.onreadystatechange = function () {
-//         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-//             let data;
-//             try {
-//                 data = JSON.parse(xmlhttp.responseText);
-//             } catch(err) {
-//                 callback(null, err.message);
-//             }
-//             callback(data);
-//         }
-//     };
-//
-//     xmlhttp.open('GET', url, true);
-//     xmlhttp.send();
-// }
-
-
-/**
  * Get a given timeseries dataset from Water Services.
  * @param  {Array}    sites  Array of site IDs to retrieve.
  * @param  {Array}    params List of parameter codes
@@ -62,16 +38,16 @@ export function getSiteStatistics({sites, params=['00060'], statType='median'}) 
  */
 export function parseRDB(rdbData) {
     let rdbLines = rdbData.split('\n');
-    var dataLines = rdbLines.filter(rdbLine => rdbLine[0] != '#').filter(rdbLine => rdbLine.length > 0);
+    let dataLines = rdbLines.filter(rdbLine => rdbLine[0] != '#').filter(rdbLine => rdbLine.length > 0);
     // remove the useless row
     dataLines.splice(1, 1);
-    var recordData = [];
+    let recordData = [];
     if (dataLines.length > 0) {
         let headers = dataLines.shift().split('\t');
         for (let dataLine of dataLines) {
             let data = dataLine.split('\t');
             let dataObject = {};
-            for (var i=0; i < headers.length; i++) {
+            for (let i=0; i < headers.length; i++) {
                 dataObject[headers[i]] = data[i];
             }
             recordData.push(dataObject);
@@ -84,22 +60,36 @@ export function parseRDB(rdbData) {
  *  Read median RDB data into something that makes sense
  *
  * @param medianData
+ * @param timeSeries
  * @returns {Array}
  */
-export function parseMedianData(medianData) {
+export function parseMedianData(medianData, timeSeries) {
     let data = [];
-    let currentYear = new Date().getFullYear();
+    let lastTsDate = timeSeries[timeSeries.length - 1].time;
+    let yearPresent = lastTsDate.getFullYear();
+    let lastTsDay = lastTsDate.getDate();
+    let yearPrevious = yearPresent - 1;
     for(let medianDatum of medianData) {
         let month = medianDatum.month_nu-1;
         let day = medianDatum.day_nu;
-        let recordDate = new Date(2018, month, day);
+        let recordDate;
+        let tempDate = new Date(yearPresent, month, day);
+        if (tempDate <= lastTsDate && tempDate >= new Date(yearPresent, 0, 1)) {
+            recordDate = tempDate;
+        }
+        else {
+            recordDate = new Date(yearPrevious, month, day);
+        }
         let median = {
             time: recordDate,
             value: medianDatum.p50_va
         };
         data.push(median);
     }
-    return data;
+    //return array with times sorted in ascending order
+    return data.sort(function(a, b) {
+       return a.time - b.time;
+    });
 }
 
 

@@ -215,7 +215,7 @@ function attachToNode(node, {siteno}) {
         let tsDataResp = values[0];
         let medianStatsResp = values[1];
         let series = readTS(tsDataResp);
-        let medianStats = parseMedianData(parseRDB(medianStatsResp));
+        let medianStats = parseMedianData(parseRDB(medianStatsResp), series[0].values);
         let dataIsValid = series[0] && !series[0].values.some(d => d.value === -999999);
         new Hydrograph({
             element: node,
