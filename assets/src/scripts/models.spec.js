@@ -1,41 +1,57 @@
-// Add Ajax mock to the jasmine global.
-require('jasmine-ajax');
-
-const { getTimeseries } = require('./models');
+var proxyquire = require('proxyquireify')(require);
 
 
-describe('Models module', () => {
-    beforeEach(() => {
-        jasmine.Ajax.install();
-    });
+fdescribe('Models module', () => {
 
-    afterEach(() => {
-        jasmine.Ajax.uninstall();
-    });
-
-    it('getTimeseries parses valid response data', (done) => {
+    describe('getTimeSeries function', () => {
         let paramCode = '00060';
         let siteID = '05413500';
+        let ajaxMock;
+        let models;
 
-        jasmine.Ajax.stubRequest('https://waterservices.usgs.gov/nwis/iv/?sites=05413500&parameterCd=00060&period=P7D&indent=on&siteStatus=all&format=json').andReturn({
-            'status': 200,
-            'contentType': 'text/json',
-            'responseText': MOCK_DATA  /* eslint no-use-before-define: "ignore" */
-        });
-        getTimeseries({sites: [siteID], params: [paramCode]}, series => {
-            expect(series.length).toBe(1);
-            expect(series[0].code).toBe(paramCode);
-            expect(series[0].variableName).toBe('Streamflow, ft&#179;/s');
-            expect(series[0].variableDescription).toBe('Discharge, cubic feet per second');
-            expect(series[0].seriesStartDate).toEqual(new Date('1/2/2018, 3:00:00 PM -0600'));
-            expect(series[0].seriesEndDate).toEqual(new Date('1/9/2018, 2:15:00 PM -0600'));
-            expect(series[0].values.length).toBe(670);
-            done();
+        beforeEach(() => {
+            let getPromise = Promise.resolve(MOCK_DATA);
+
+            ajaxMock = {
+                get: function() {
+                    return getPromise;
+                }
+            };
+            getPromise.then((resp) => {
+                console.log('Got resp');
+            });
+            models = proxyquire('./models', {'./ajax': ajaxMock});
         });
 
+
+        it('getTimeseries parses valid response data', (done) => {
+            let paramCode = '00060';
+            let siteID = '05413500';
+
+            //jasmine.Ajax.stubRequest(
+            //    'https://waterservices.usgs.gov/nwis/iv/?sites=05413500&parameterCd=00060&period=P7D&indent=on&siteStatus=all&format=json').
+            //    andReturn({
+            //        'status': 200,
+            //        'contentType': 'text/json',
+            //        'responseText': MOCK_DATA  /* eslint no-use-before-define: "ignore" */
+             //   });
+            models.getTimeseries({sites: [siteID], params: [paramCode]}).then((series) => {
+                expect(series.length).toBe(1);
+                expect(series[0].code).toBe(paramCode);
+                expect(series[0].variableName).toBe('Streamflow, ft&#179;/s');
+                expect(series[0].variableDescription).
+                    toBe('Discharge, cubic feet per second');
+                expect(series[0].seriesStartDate).
+                    toEqual(new Date('1/2/2018, 3:00:00 PM -0600'));
+                expect(series[0].seriesEndDate).
+                    toEqual(new Date('1/9/2018, 2:15:00 PM -0600'));
+                expect(series[0].values.length).toBe(670);
+                done();
+            });
+
+        });
     });
 });
-
 
 const MOCK_DATA = `
 {"name" : "ns1:timeSeriesResponseType",

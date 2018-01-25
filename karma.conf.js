@@ -1,6 +1,6 @@
 // Karma configuration
 // Generated on Wed Dec 27 2017 10:17:29 GMT-0600 (CST)
-
+var proxyquire = require('proxyquireify');
 module.exports = function(config) {
   config.set({
 
@@ -31,7 +31,12 @@ module.exports = function(config) {
         'assets/src/scripts/**/*.js': ['browserify']
     },
       browserify: {
-        debug: true
+        debug: true,
+          configure: function(bundle) {
+            bundle
+                .plugin(proxyquire.plugin)
+                .require(require.resolve('./assets/src/scripts'), { entry: true });
+          }
       },
 
     // test results reporter to use
