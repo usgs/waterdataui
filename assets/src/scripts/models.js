@@ -72,12 +72,8 @@ export function parseMedianData(medianData, timeSeries) {
     for(let medianDatum of medianData) {
         let month = medianDatum.month_nu-1;
         let day = medianDatum.day_nu;
-        let recordDate;
-        let tempDate = new Date(yearPresent, month, day);
-        if (tempDate <= lastTsDate && tempDate >= new Date(yearPresent, 0, 1)) {
-            recordDate = tempDate;
-        }
-        else {
+        let recordDate = new Date(yearPresent, month, day);
+        if (!(new Date(yearPresent, 0, 1) <= recordDate && recordDate <= lastTsDate)) {
             recordDate = new Date(yearPrevious, month, day);
         }
         let median = {
