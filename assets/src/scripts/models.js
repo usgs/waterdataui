@@ -1,5 +1,4 @@
 const { timeFormat } = require('d3-time-format');
-const { get } = require("./ajax");
 
 
 // Define Water Services root URL - use global variable if defined, otherwise
@@ -15,7 +14,6 @@ const formatTime = timeFormat('%c %Z');
  * @param  {String}   url      URL to retrieve
  * @param  {Function} callback Callback function to call with (data, error)
  */
-/*
 function get(url, callback) {
     let xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
@@ -34,7 +32,7 @@ function get(url, callback) {
     xmlhttp.send();
 }
 
-*/
+
 /**
  * Get a given timeseries dataset from Water Services.
  * @param  {Array}    sites  Array of site IDs to retrieve.
@@ -68,70 +66,3 @@ export function getTimeseries({sites, params=['00060']}, callback) {
         }));
     });
 }
-
-
-export function readIV(dataStr) {
-    let data = JSON.parse(dataStr);
-    return data.value.timeSeries.map(series => {
-                let startDate = new Date(series.values[0].value[0].dateTime);
-                let endDate = new Date(series.values[0].value.slice(-1)[0].dateTime);
-                return {
-                    code: series.variable.variableCode[0].value,
-                    variableName: series.variable.variableName,
-                    variableDescription: series.variable.variableDescription,
-                    seriesStartDate: startDate,
-                    seriesEndDate: endDate,
-                    values: series.values[0].value.map(value => {
-                        let date = new Date(value.dateTime);
-                        return {
-                            time: date,
-                            value: parseFloat(value.value),
-                            label: `${formatTime(date)}\n${value.value} ${series.variable.unit.unitCode}`
-                        };
-                    })
-                };
-            });
-}
-
-
-/**
- * Function to parse RDB to Objects
- */
-export function parseRDB(rdbData) {
-    let rdbLines = rdbData.split('\n');
-    let dataLines = rdbLines.filter(rdbLine => rdbLine[0] != '#').filter(rdbLine => rdbLine.length > 0);
-    // remove the useless column
-    dataLines.splice(1, 1);
-    let recordData = [];
-    if (dataLines.length > 0) {
-        let headers = dataLines.shift().split('\t');
-        for (let dataLine of dataLines) {
-            let data = dataLine.split('\t');
-            let dataObject = {};
-            for (let i=0; i < headers.length; i++) {
-                dataObject[headers[i]] = data[i];
-            }
-            recordData.push(dataObject);
-        }
-    }
-    return recordData;
-}
-
-/*
- * Read median RDB data into something that makes sense
- */
-export function parseMedianData(medianData) {
-    let data = [];
-    let currentYear = new Date().getFullYear();
-    for(let medianDatum of medianData) {
-        let median = new Object();
-        let month = medianDatum.month_nu-1;
-        let day = medianDatum.day_nu;
-        let recordDate = new Date(2018, month, day);
-        median.time = recordDate;
-        median.value = medianDatum.p50_va;;
-        data.push(median);
-    }
-    return data;
-}
-
