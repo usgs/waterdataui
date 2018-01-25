@@ -57,8 +57,13 @@ class Hydrograph {
         }
     }
 
-    addTimeSeries({data, legendLabel}) {
-        this._tsData[legendLabel] = data;
+    /**
+     * Add a new time series to the Hydrograph. The time series is assumed to be
+     * data that is over the same date range in a different year.
+     * @param {Array} data - IV data as returned by models.getTimeseires
+     */
+    addCompareTimeSeries(data) {
+        this._tsData.compare = data;
         const currentYExtent = extent(this._tsData.current, d => d.value);
         const yExtent = extent(data, d => d.value);
         const yDataExtent = [min([yExtent[0], currentYExtent[0]]), max([yExtent[1], currentYExtent[1]])];
@@ -76,14 +81,17 @@ class Hydrograph {
             .attr('d', this.currentLine(this._tsData.current));
 
         // Add the new time series
-        this._plotDataLine(this.plot, {xScale: xScale, yScale: this.scale.yScale}, legendLabel);
+        this._plotDataLine(this.plot, {xScale: xScale, yScale: this.scale.yScale}, 'compare');
     }
 
-    removeTimeSeries(legendLabel) {
+    /**
+     * Remove the compare time series from the plot and rescale
+     */
+    removeCompareTimeSeries() {
         const currentYExtent = extent(this._tsData.current, d => d.value);
 
-        this.svg.select('#ts-' + legendLabel).remove();
-        delete this._tsData[legendLabel];
+        this.svg.select('#ts-compare').remove();
+        delete this._tsData.compare;
         updateYScale(this.scale.yScale, currentYExtent);
         updateYAxis(this.axis.yAxis, this.scale.yScale);
         this.svg.select('.y-axis')
@@ -261,14 +269,11 @@ function attachToNode(node, {siteno}) {
         lastYearInput[0].addEventListener('change', (evt) => {
             if (evt.target.checked) {
                 getLastYearTS.then((series) => {
-                    hydrograph.addTimeSeries({
-                        data: series[0].values,
-                        legendLabel: 'lastyear'
-                    });
+                    hydrograph.addCompareTimeSeries(series[0].values);
                 });
             }
             else {
-                hydrograph.removeTimeSeries('lastyear');
+                hydrograph.removeCompareTimeSeries();
             }
         });
     }
