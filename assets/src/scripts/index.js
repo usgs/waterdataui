@@ -2,9 +2,7 @@
 require('uswds');
 const { timeFormat } = require('d3-time-format');
 
-const { getTimeseries } = require('./models');
-const { parseRDB } = require('./models');
-const { parseMedianData } = require('./models');
+const { getTimeseries, readIV, parseRDB } = require('./models');
 const Hydrograph = require('./hydrograph');
 const { get } = require("./ajax");
 
@@ -15,7 +13,18 @@ function main() {
     let nodes = document.getElementsByClassName('hydrograph');
     for (let node of nodes) {
         let siteno = node.dataset.siteno;
-        let hydrograph;
+        let params = params=['00060'];
+        let timeSeriesUrl = `${SERVICE_ROOT}/iv/?sites=${[siteno].join(',')}&parameterCd=${params.join(',')}&period=P7D&indent=on&siteStatus=all&format=json`;
+        let timeSeries = get(timeSeriesUrl);
+        console.log(timeSeries);
+        let medianUrl = 'https://waterservices.usgs.gov/nwis/stat/?format=rdb&sites=' + siteno + '&statReportType=daily&statTypeCd=median&parameterCd=00060';
+        let median = get(medianUrl);
+        Promise.all([timeSeries, median]).then(function(values) {
+            let timeSeriesVals = readIV(values[0]);
+            console.log(timeSeriesVals);
+            let medianVals = values[1];
+        });
+        /*
         getTimeseries({sites: [siteno]}, series => {
             let medianUrl = 'https://waterservices.usgs.gov/nwis/stat/?format=rdb&sites=' + siteno + '&statReportType=daily&statTypeCd=median&parameterCd=00060'
             let median = get(medianUrl);
@@ -29,6 +38,7 @@ function main() {
                 desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
             });
         });
+        */
     }
 }
 
