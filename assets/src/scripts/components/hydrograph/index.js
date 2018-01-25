@@ -10,7 +10,7 @@ const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { getTimeseries, getPreviousYearTimeseries } = require('../../models');
 
 const { appendAxes, updateYAxis, createAxes } = require('./axes');
-const { createScales, updateYScale } = require('./scales');
+const { createScales, createXScale, updateYScale } = require('./scales');
 
 
 // Define width, height and margin for the SVG.
@@ -62,10 +62,9 @@ class Hydrograph {
         const currentYExtent = extent(this._tsData.current, d => d.value);
         const yExtent = extent(data, d => d.value);
         const newExtent = [min([yExtent[0], currentYExtent[0]]), max([yExtent[1], currentYExtent[1]])];
+
         updateYScale(this.scale.yScale, newExtent);
-        const {xScale, yScale } = createScales(data,
-            WIDTH - MARGIN.right,
-            HEIGHT - (MARGIN.top + MARGIN.bottom));
+        const xScale = createXScale(data, WIDTH - MARGIN.right);
 
         // Update the yAxis
         updateYAxis(this.axis.yAxis, this.scale.yScale);
@@ -169,7 +168,7 @@ class Hydrograph {
             .classed('line', true)
             .attr('id', 'ts-' + tsDataKey)
             .attr('d', tsLine);
-        return tsLine
+        return tsLine;
     }
 
     _plotTooltips(plot, scale, tsDataKey) {

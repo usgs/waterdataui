@@ -6,6 +6,26 @@ function extendDomain(extent) {
     return [extent[0] - padding, extent[1] + padding];
 }
 
+function createXScale(data, xSize) {
+    // Calculate max and min for data
+    const xExtent = extent(data, d => d.time);
+
+    // xScale is oriented on the left
+    return scaleTime()
+        .range([0, xSize])
+        .domain(xExtent);
+}
+
+function createYScale(data, ySize) {
+    // Calculate max and min for data
+    const yExtent = extent(data, d => d.value);
+
+    // yScale is oriented on the bottom
+    return scaleLinear()
+        .range([ySize, 0])
+        .domain(extendDomain(yExtent));
+}
+
 /**
  * Create scales for hydrograph charts. X is linear to time and Y is logarithmic.
  * @param  {Array} data    Array containing {time, value} items
@@ -14,19 +34,8 @@ function extendDomain(extent) {
  * @return {Object}        {xScale, yScale}
  */
 function createScales(data, xSize, ySize) {
-    // Calculate max and min for data
-    const xExtent = extent(data, d => d.time);
-    const yExtent = extent(data, d => d.value);
-
-    // xScale is oriented on the left
-    const xScale = scaleTime()
-        .range([0, xSize])
-        .domain(xExtent);
-
-    // yScale is oriented on the bottom
-    const yScale = scaleLinear()
-        .range([ySize, 0])
-        .domain(extendDomain(yExtent));
+    const xScale = createXScale(data, xSize);
+    const yScale = createYScale(data, ySize);
 
     return {xScale, yScale};
 }
@@ -38,4 +47,4 @@ function updateYScale(yScale, newYDataExtent) {
 }
 
 
-module.exports = {createScales, updateYScale};
+module.exports = {createScales, createXScale, createYScale, updateYScale};
