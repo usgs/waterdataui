@@ -1,11 +1,9 @@
-var proxyquire = require('proxyquireify')(require);
+let proxyquire = require('proxyquireify')(require);
 
 
-fdescribe('Models module', () => {
+describe('Models module', () => {
 
     describe('getTimeSeries function', () => {
-        let paramCode = '00060';
-        let siteID = '05413500';
         let ajaxMock;
         let models;
 
@@ -17,9 +15,6 @@ fdescribe('Models module', () => {
                     return getPromise;
                 }
             };
-            getPromise.then((resp) => {
-                console.log('Got resp');
-            });
             models = proxyquire('./models', {'./ajax': ajaxMock});
         });
 
@@ -28,13 +23,6 @@ fdescribe('Models module', () => {
             let paramCode = '00060';
             let siteID = '05413500';
 
-            //jasmine.Ajax.stubRequest(
-            //    'https://waterservices.usgs.gov/nwis/iv/?sites=05413500&parameterCd=00060&period=P7D&indent=on&siteStatus=all&format=json').
-            //    andReturn({
-            //        'status': 200,
-            //        'contentType': 'text/json',
-            //        'responseText': MOCK_DATA  /* eslint no-use-before-define: "ignore" */
-             //   });
             models.getTimeseries({sites: [siteID], params: [paramCode]}).then((series) => {
                 expect(series.length).toBe(1);
                 expect(series[0].code).toBe(paramCode);

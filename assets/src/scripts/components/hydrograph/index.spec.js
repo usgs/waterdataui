@@ -108,7 +108,7 @@ describe('Hydrograph charting module', () => {
                         expected = {datum: data[index + 1], index: index + 1};
                     }
                     let time = new Date(datum.time.getTime() + offset);
-                    let returned = graph._getNearestTime(time);
+                    let returned = graph._getNearestTime(time, 'current');
                     expect(returned.datum.time).toBe(expected.datum.time);
                     expect(returned.datum.index).toBe(expected.datum.index);
                 }
