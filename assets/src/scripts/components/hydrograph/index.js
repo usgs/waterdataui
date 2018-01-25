@@ -61,9 +61,9 @@ class Hydrograph {
         this._tsData[legendLabel] = data;
         const currentYExtent = extent(this._tsData.current, d => d.value);
         const yExtent = extent(data, d => d.value);
-        const newExtent = [min([yExtent[0], currentYExtent[0]]), max([yExtent[1], currentYExtent[1]])];
+        const yDataExtent = [min([yExtent[0], currentYExtent[0]]), max([yExtent[1], currentYExtent[1]])];
 
-        updateYScale(this.scale.yScale, newExtent);
+        updateYScale(this.scale.yScale, yDataExtent);
         const xScale = createXScale(data, WIDTH - MARGIN.right);
 
         // Update the yAxis
