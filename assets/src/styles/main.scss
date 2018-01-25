@@ -1,12 +1,14 @@
 @import 'leaflet';
 
 @import './uswds';
+@import '../../../node_modules/font-awesome/scss/font-awesome';
 
 $usgs-blue: #02274B;
 
-@import './tooltip';
-@import './header';
-@import './footer';
+@import './partials/footer';
+@import './partials/header';
+@import './partials/social_share';
+@import './partials/tooltip';
 
 
 .wdfn-component {

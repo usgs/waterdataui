@@ -39,6 +39,8 @@
 
             {% else %}
                 <h1>Station Name: {{ stations[0].station_nm }}</h1>
+                {% include 'partials/social_share.html' %}
+
                 <ul>
                     <li><a href="{{ config.NWIS_ENDPOINTS.INVENTORY }}/?site_no={{ stations[0].site_no }}" target="_blank">Site inventory page</a></li>
                     <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?cb_00060=on&format=gif_mult_parms&site_no={{ stations[0].site_no }}&period=7" target="_blank">Interactive grapher</a></li>
