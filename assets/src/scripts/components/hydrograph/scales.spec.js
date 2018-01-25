@@ -44,7 +44,7 @@ describe('Charting scales', () => {
     it('Domain should be extended if the new data extent exceeds the extent used to create the yScale', () => {
         const currentDomain = yScale.domain();
         updateYScale(yScale, [-1, 25]);
-        const newDomain = yScale.domain()
+        const newDomain = yScale.domain();
         expect(newDomain[1]).toBeGreaterThan(currentDomain[1]);
         expect(newDomain[0]).toBeLessThan(currentDomain[0]);
     });

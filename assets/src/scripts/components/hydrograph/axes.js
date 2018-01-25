@@ -5,6 +5,11 @@ const { timeFormat } = require('d3-time-format');
 
 const yTickCount = 5;
 
+/**
+ * Helper function which generates y tick values for a scale
+ * @param {Object} yScale - d3 scale
+ * @returns {Array} of tick values
+ */
 function yTickValues(yScale) {
     const yDomain = yScale.domain();
     const tickSize = (yDomain[1] - yDomain[0]) / yTickCount;
@@ -41,6 +46,11 @@ function createAxes(xScale, yScale, yTickSize) {
     return {xAxis, yAxis};
 }
 
+/**
+ * Updates/Sets the yAxis.tickValues
+ * @param {Object} yAxis - d3 axis
+ * @param {Object} yScale - d3 scale
+ */
 function updateYAxis(yAxis, yScale) {
     yAxis.tickValues(yTickValues(yScale));
 }

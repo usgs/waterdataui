@@ -1,4 +1,4 @@
-const { createAxes, appendAxes } = require('./axes');
+const { createAxes, updateYAxis, appendAxes } = require('./axes');
 const { scaleLinear } = require('d3-scale');
 const { select } = require('d3-selection');
 
@@ -40,5 +40,16 @@ describe('Chart axes', () => {
         expect(svg.select('.x-axis').attr('transform')).toBe('translate(10, 10)');
         expect(svg.select('.y-axis').attr('transform')).toBe('translate(0, 100)');
         expect(svg.select('.y-axis-label').text()).toEqual('Label title');
+    });
+
+    it('tickValues should change with scale with new domain', () => {
+        const originalTickValues = yAxis.tickValues();
+        yScale.domain([2, 20]);
+        updateYAxis(yAxis, yScale);
+        expect(yAxis.tickValues()).not.toEqual(originalTickValues);
+
+        yScale.domain([0, 10]);
+        updateYAxis(yAxis, yScale);
+        expect(yAxis.tickValues()).toEqual(originalTickValues);
     });
 });
