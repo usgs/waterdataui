@@ -126,7 +126,7 @@ describe('Hydrograph charting module', () => {
         });
     });
 
-    fdescribe('Adding and removing compare time series', () => {
+    describe('Adding and removing compare time series', () => {
         /* eslint no-use-before-define: "ignore" */
         let hydrograph;
         beforeEach(() => {
@@ -142,6 +142,9 @@ describe('Hydrograph charting module', () => {
             hydrograph.removeCompareTimeSeries();
             expect(selectAll('svg path.line').size()).toBe(1);
         });
+
+        //TODO: Consider adding a test which checks that the y axis is rescaled by
+        // examining the contents of the text labels.
     });
 });
 
@@ -202,7 +205,7 @@ const MOCK_DATA_FOR_PREVIOUS_YEAR = [
     {
         "label": "1/3/2017, 10:00:00 AM -0600\n24.0 ft3/s",
         "time": "2017-01-03T16:00:00.000Z",
-        "value": 24
+        "value": 20
     },
     {
         "label": "1/3/2017, 10:15:00 AM -0600\n24.6 ft3/s",
@@ -212,32 +215,32 @@ const MOCK_DATA_FOR_PREVIOUS_YEAR = [
     {
         "label": "1/3/2017, 10:30:00 AM -0600\n24.6 ft3/s",
         "time": "2017-01-03T16:30:00.000Z",
-        "value": 24
+        "value": 25
     },
     {
         "label": "1/3/2017, 10:45:00 AM -0600\n25.0 ft3/s",
         "time": "2017-01-03T16:45:00.000Z",
-        "value": 25
+        "value": 28
     },
     {
         "label": "1/3/2017, 11:00:00 AM -0600\n24.6 ft3/s",
         "time": "2017-01-03T17:00:00.000Z",
-        "value": 24
+        "value": 29
     },
     {
         "label": "1/3/2017, 11:15:00 AM -0600\n24.6 ft3/s",
         "time": "2017-01-03T17:15:00.000Z",
-        "value": 24
+        "value": 29
     },
     {
         "label": "1/3/2017, 11:30:00 AM -0600\n24.0 ft3/s",
         "time": "2017-01-03T17:30:00.000Z",
-        "value": 24
+        "value": 29
     },
     {
         "label": "1/3/2017, 11:45:00 AM -0600\n24.0 ft3/s",
         "time": "2017-01-03T17:45:00.000Z",
-        "value": 24
+        "value": 30
     },
     {
         "label": "1/3/2018, 12:00:00 PM -0600\n24.0 ft3/s",
