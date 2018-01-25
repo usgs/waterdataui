@@ -1,7 +1,7 @@
 // Add Ajax mock to the jasmine global.
 require('jasmine-ajax');
 
-const { getTimeseries, parseRDB } = require('./models');
+const { getTimeseries, parseRDB,  parseMedianData} = require('./models');
 
 
 describe('Models module', () => {
@@ -37,9 +37,16 @@ describe('Models module', () => {
 
     it('parseRDB successfully parses RDB content', () => {
        let result = parseRDB(MOCK_RDB);
+       console.log(result);
        expect(result.length).toEqual(13);
        expect(Object.keys(result[0])).toEqual(['agency_cd', 'site_no', 'parameter_cd', 'ts_id', 'loc_web_ds', 'month_nu',
            'day_nu', 'begin_yr', 'end_yr', 'count_nu', 'p50_va']);
+    });
+
+    it('parseMedian data successfully constructs data for plotting', () => {
+        let result = parseMedianData(MOCK_MEDIAN_DATA, MOCK_TIMESERIES);
+        expect(result.length).toEqual(3);
+        expect(result[0]).toEqual({time: new Date(2017, 7, 5), value: '15'});
     });
 });
 
@@ -2905,3 +2912,13 @@ USGS	05370000	00060	153885		1	11	1969	2017	49	15
 USGS	05370000	00060	153885		1	12	1969	2017	49	15
 USGS	05370000	00060	153885		1	13	1969	2017	49	15
 `;
+
+const MOCK_MEDIAN_DATA = [
+    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '1', day_nu: '1', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '16'},
+    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '1', day_nu: '13', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '15'},
+    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '8', day_nu: '5', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '15'}
+];
+const MOCK_TIMESERIES = [
+    {'time': new Date(2018, 0, 10), 'value': 21.02},
+    {'time': new Date(2018, 0, 13), 'value': 22.15}
+];
