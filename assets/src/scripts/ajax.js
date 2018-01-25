@@ -16,7 +16,7 @@ export function get(url) {
             }
             else {
                 // Otherwise reject with the status text
-                // whic will hopefully be a meaningful error
+                // which will hopefully be a meaningful error
                 reject(Error(req.statusText));
             }
         };
