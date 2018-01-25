@@ -22,6 +22,8 @@ function tsServiceRoot(date) {
  * Get a given timeseries dataset from Water Services.
  * @param  {Array}    sites  Array of site IDs to retrieve.
  * @param  {Array}    params List of parameter codes
+ * @param {Date} startDate
+ * @param {Date} endData
  * @return {Promise} resolves to an array of timeseries model object, rejects to an error
  */
 export function getTimeseries({sites, params=['00060'], startDate=null, endDate=null}) {
@@ -30,8 +32,7 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
     if (!startDate && !endDate) {
         timeParams = 'period=P7D';
         serviceRoot = CURRENT_DATA_SERVICE_ROOT;
-    }
-    else {
+    } else {
         let startString = startDate ? isoFormatTime(startDate) : '';
         let endString = endDate ? isoFormatTime(endDate) : '';
         timeParams = `startDT=${startString}&endDT=${endString}`;

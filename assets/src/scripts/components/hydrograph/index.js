@@ -63,12 +63,16 @@ class Hydrograph {
      * @param {Array} data - IV data as returned by models.getTimeseires
      */
     addCompareTimeSeries(data) {
+        //Save data - TODO will be needed in order to implement the tooltips
         this._tsData.compare = data;
+
+        // Update the yScale by determining the new extent
         const currentYExtent = extent(this._tsData.current, d => d.value);
         const yExtent = extent(data, d => d.value);
         const yDataExtent = [min([yExtent[0], currentYExtent[0]]), max([yExtent[1], currentYExtent[1]])];
-
         updateYScale(this.scale.yScale, yDataExtent);
+
+        // Create a x scale for the new data
         const xScale = createXScale(data, WIDTH - MARGIN.right);
 
         // Update the yAxis
@@ -76,7 +80,7 @@ class Hydrograph {
         this.svg.select('.y-axis')
             .call(this.axis.yAxis);
 
-        //Update the current ts
+        //Update the current ts line
         select('#ts-current')
             .attr('d', this.currentLine(this._tsData.current));
 
@@ -88,15 +92,18 @@ class Hydrograph {
      * Remove the compare time series from the plot and rescale
      */
     removeCompareTimeSeries() {
-        const currentYExtent = extent(this._tsData.current, d => d.value);
-
+        // Remote the compare time series
         this.svg.select('#ts-compare').remove();
         delete this._tsData.compare;
+
+        // Update the y scale and  redraw the axis
+        const currentYExtent = extent(this._tsData.current, d => d.value);
         updateYScale(this.scale.yScale, currentYExtent);
         updateYAxis(this.axis.yAxis, this.scale.yScale);
         this.svg.select('.y-axis')
             .call(this.axis.yAxis);
-        //Update the current ts
+
+        //Redraw the current ts
         select('#ts-current')
             .attr('d', this.currentLine(this._tsData.current));
     }
@@ -271,8 +278,7 @@ function attachToNode(node, {siteno}) {
                 getLastYearTS.then((series) => {
                     hydrograph.addCompareTimeSeries(series[0].values);
                 });
-            }
-            else {
+            } else {
                 hydrograph.removeCompareTimeSeries();
             }
         });

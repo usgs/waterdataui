@@ -8,6 +8,7 @@ describe('Models module', () => {
         let models;
 
         beforeEach(() => {
+            /* eslint no-use-before-define: "ignore" */
             let getPromise = Promise.resolve(MOCK_DATA);
 
             ajaxMock = {
