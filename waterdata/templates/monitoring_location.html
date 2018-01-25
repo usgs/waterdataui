@@ -112,7 +112,9 @@
                                     {% endif %}
                                     {% if value.desc %}
                                         <div class="tooltip-item">
-                                            <sub aria-describedby="tooltip-{{ value.code }}">?</sub>
+                                            <sup aria-describedby="tooltip-{{ value.code }}">
+                                                <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                            </sup>
                                             <div class="tooltip">
                                                 <p id="tooltip-{{ value.code }}">{{ value.desc }}</p>
                                             </div>
