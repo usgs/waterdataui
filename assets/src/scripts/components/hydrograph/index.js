@@ -4,11 +4,13 @@
 const { bisector } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
+const { timeFormat } = require('d3-time-format');
+
+const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
+const { getTimeseries } = require('../../models');
 
 const { appendAxes, createAxes } = require('./axes');
 const { createScales } = require('./scales');
-const { addSVGAccessibility , addSROnlyTable } = require('../accessibility');
-const { parseRDB } = require('../models');
 
 
 // Define width, height and margin for the SVG.
@@ -27,6 +29,11 @@ const MARGIN = {
 // Function that returns the left bounding point for a given chart point.
 const bisectDate = bisector(d => d.time).left;
 
+
+// Create a time formatting function from D3's timeFormat
+const formatTime = timeFormat('%c %Z');
+
+
 class Hydrograph {
     /**
      * @param {Array} data IV data as returned by models/getTimeseries
@@ -35,12 +42,11 @@ class Hydrograph {
      * @param {String} desc for svg's desc attribute
      * @param {Node} element Dom node to insert
      */
-    constructor({data=[], yLabel='Data', title='', desc='', medianPromise, element}) {
+    constructor({data=[], yLabel='Data', title='', desc='', element}) {
         this._data = data;
         this._yLabel = yLabel;
         this._title = title;
         this._desc = desc;
-        this._medianPromise = medianPromise;
         this._element = element;
 
         if (this._data && this._data.length) {
@@ -79,9 +85,6 @@ class Hydrograph {
         const plot = svg.append('g')
             .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
-        const medianPlot = svg.append('g')
-            .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
-
         // Create x/y scaling for the full (100%) view.
         const {xScale, yScale} = createScales(
             this._data,
@@ -101,7 +104,6 @@ class Hydrograph {
             yTitle: this._yLabel
         });
         this._plotDataLine(plot, xScale, yScale);
-        this._plotMedianPoints(medianPlot, xScale, yScale);
         this._plotTooltips(plot, xScale, yScale);
     }
 
@@ -129,44 +131,6 @@ class Hydrograph {
             .datum(this._data)
             .classed('line', true)
             .attr('d', newLine);
-    }
-
-    _parseMedianData(medianData) {
-    let data = [];
-    let currentYear = new Date().getFullYear();
-    for(let medianDatum of medianData) {
-        let median = new Object();
-        let month = medianDatum.month_nu-1;
-        let day = medianDatum.day_nu;
-        let recordDate = new Date(currentYear, month, day);
-        median.time = recordDate;
-        median.value = medianDatum.p50_va;;
-        data.push(median);
-    }
-    return data;
-    }
-
-    _plotMedianPoints(plot, xScale, yScale) {
-        this._medianPromise.then(
-            (resp) => {
-                let statistics = parseRDB(resp)
-                let medianData = this._parseMedianData(statistics);
-                //let data1 = {time: new Date(2018, 0, 22), value: 25};
-                //let data2 = {time: new Date(2018, 0, 23), value: 24};
-                //let medianData = [data1, data2];
-                plot.selectAll('circle')
-                    .data(medianData)
-                    .enter()
-                    .append('circle')
-                    .attr('r', '8px')
-                    .attr('fill', 'blue')
-                    .attr('cx', function(d) {
-                        return xScale(d.time);
-                    })
-                    .attr('cy', function(d) {
-                        return yScale(d.value);
-                    });
-            });
     }
 
     _plotTooltips(plot, xScale, yScale) {
@@ -226,4 +190,18 @@ class Hydrograph {
 }
 
 
-module.exports = Hydrograph;
+function attachToNode(node, {siteno}) {
+    getTimeseries({sites: [siteno]}, series => {
+        let dataIsValid = series[0] && !series[0].values.some(d => d.value === -999999);
+        new Hydrograph({
+            element: node,
+            data: dataIsValid ? series[0].values : [],
+            yLabel: dataIsValid ? series[0].variableDescription : 'No data',
+            title: dataIsValid ? series[0].variableName : '',
+            desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
+        });
+    });
+}
+
+
+module.exports = {Hydrograph, attachToNode};

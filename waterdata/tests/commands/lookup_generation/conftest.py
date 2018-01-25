@@ -21,7 +21,7 @@ def huc_mock():
 
 @pytest.fixture(scope='module')
 def nwis_mock():
-    """Mock data for HUC service call."""
+    """Mock data for NWIS help service calls."""
     with requests_mock.mock() as mock_req:
         mock_req.get(
             'https://help.waterdata.usgs.gov/code/agency_cd_query?fmt=rdb',
@@ -78,6 +78,10 @@ def nwis_mock():
         mock_req.get(
             'https://help.waterdata.usgs.gov/code/medium_cd_query?fmt=rdb',
             text=MOCK_MEDIUM_CD_DATA
+        )
+        mock_req.get(
+            'https://help.waterdata.usgs.gov/code/coord_datum_cd_query?fmt=rdb',
+            text=MOCK_COORD_DATUM_CD_DATA
         )
         yield
 
@@ -890,3 +894,25 @@ WS	Surface water	Water on the surface of the Earth stored or transported in rive
 WG	Groundwater	Water below the surface of the Earth contained in the saturated zone. It does not include soil moisture or interstitial water.	6
 WW	Wet deposition	Water reaching the Earth's surface through precipitation as rain, snow, sleet, hail, or condensation of fog and dew. The water may contain undissolved particulate and gaseous materials acquired from the atmosphere during precipitation.	7
 WI	Interstitial water	Water occuring in the small openings, spaces, pores, and voids between particles of unconsolidated materials. Includes water found in the interstices of shallow sediments of a lake, wetland, reservoir, or stream, and in the vadose zone between the root zone and the water table. The water is held in place by entrapment, ionic attraction, and capillary or adhesive forces, rather than from pressure components of saturation.	F"""
+MOCK_COORD_DATUM_CD_DATA = """#
+# National Water Information System
+# 2018/01/24
+#
+#
+# Date Retrieved: USGS Water Data for the Nation Help System
+#
+gw_ref_cd   gw_ref_ds
+10s 48s
+NAD27   North American Datum of 1927
+NAD83   North American Datum of 1983
+OLDAK   Old Alaska (Mainland) and Aleutian Island Datum
+OLDAK   Old Alaska (Mainland) and Aleutian Islands Datum
+OLDGUAM Old Guam Datum
+OLDHI   Old Hawaiian Datum
+OLDPR   Old Puerto Rico and Virgin Island Datum
+OLDPR   Old Puerto Rico and Virgin Islands Datum
+OLDSAMOA    Old American Samoa Datum
+PUERTORICO  Puerto Rico & Virgin Islands
+WGS72   World Datum 1972
+WGS84   World Datum 1984
+"""

@@ -14,7 +14,6 @@
 {% block content %}
     <div class="usa-width-one-whole">
         {% if status_code == 200 %}
-
             {% if stations|length > 1 %}
 
                 <h1>Multiple sites found</h1>
@@ -45,7 +44,10 @@
                     <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?cb_00060=on&format=gif_mult_parms&site_no={{ stations[0].site_no }}&period=7" target="_blank">Interactive grapher</a></li>
                     <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?format=img_default&site_no={{ stations[0].site_no }}&period=7" target="_blank">Presentation Charts</a></li>
                 </ul>
-                <div class="hydrograph" data-siteno="{{ stations[0].site_no }}"></div>
+
+                <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ stations[0].site_no }}"></div>
+                {% if stations[0].dec_lat_va and stations[0].dec_long_va %}<div class="wdfn-component" data-component="map" data-latitude="{{ stations[0].dec_lat_va }}" data-longitude="{{ stations[0].dec_long_va }}" data-zoom=8></div>{% endif %}
+
                 {% if site_dataseries %}
                     <ul class="usa-accordion">
                         <li>
@@ -106,7 +108,15 @@
                                     {% else %}
                                         {{ value.name }}
                                     {% endif %}
-                                    </td>
+                                    {% if value.desc %}
+                                        <div class="tooltip-item">
+                                            <sub aria-describedby="tooltip-{{ value.code }}">?</sub>
+                                            <div class="tooltip">
+                                                <p id="tooltip-{{ value.code }}">{{ value.desc }}</p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </td>
                                 <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
                             </tr>
                         {% endfor %}
