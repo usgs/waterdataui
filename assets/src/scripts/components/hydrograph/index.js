@@ -7,12 +7,10 @@ const { line } = require('d3-shape');
 const { timeFormat } = require('d3-time-format');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
-const { getTimeseries } = require('../../models');
+const { getTimeseries, parseRDB } = require('../../models');
 
 const { appendAxes, createAxes } = require('./axes');
 const { createScales } = require('./scales');
-
-const { parseRDB } = require('../models');
 
 
 // Define width, height and margin for the SVG.
