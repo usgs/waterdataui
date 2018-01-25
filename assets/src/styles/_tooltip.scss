@@ -42,7 +42,7 @@
         text-align: center;
         transition: all 0.2s ease-in-out;
         visibility: hidden;
-        z-index: 10;
+        z-index: 1000;
 
         p {
             color: $base-font-color;
