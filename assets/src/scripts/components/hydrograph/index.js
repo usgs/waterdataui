@@ -37,13 +37,15 @@ const formatTime = timeFormat('%c %Z');
 class Hydrograph {
     /**
      * @param {Array} data IV data as returned by models/getTimeseries
+     * @param {Array} calculated median for discharge
      * @param {String} yLabel y-axis label
      * @param {String} title for svg's title attribute
      * @param {String} desc for svg's desc attribute
      * @param {Node} element Dom node to insert
      */
-    constructor({data=[], yLabel='Data', title='', desc='', element}) {
+    constructor({data=[], medianStats=[], yLabel='Data', title='', desc='', element}) {
         this._data = data;
+        this._medianStats = medianStats;
         this._yLabel = yLabel;
         this._title = title;
         this._desc = desc;
@@ -104,7 +106,7 @@ class Hydrograph {
             yTitle: this._yLabel
         });
         this._plotDataLine(plot, xScale, yScale);
-        //this._plotMedianPoints(plot, xScale, yScale);
+        this._plotMedianPoints(plot, xScale, yScale);
         this._plotTooltips(plot, xScale, yScale);
     }
 
@@ -135,25 +137,17 @@ class Hydrograph {
     }
 
     _plotMedianPoints(plot, xScale, yScale) {
-        this._medianPromise.then(
-            (resp) => {
-                let statistics = parseRDB(resp);
-                let medianData = this._parseMedianData(statistics);
-                //let data1 = {time: new Date(2018, 0, 22), value: 25};
-                //let data2 = {time: new Date(2018, 0, 23), value: 24};
-                //let medianData = [data1, data2];
-                plot.selectAll('circle')
-                    .data(medianData)
-                    .enter()
-                    .append('circle')
-                    .attr('r', '8px')
-                    .attr('fill', 'blue')
-                    .attr('cx', function(d) {
-                        return xScale(d.time);
-                    })
-                    .attr('cy', function(d) {
-                        return yScale(d.value);
-                    });
+        plot.selectAll('circle')
+            .data(this._medianStats)
+            .enter()
+            .append('circle')
+            .attr('r', '8px')
+            .attr('fill', 'blue')
+            .attr('cx', function(d) {
+                return xScale(d.time);
+            })
+            .attr('cy', function(d) {
+                return yScale(d.value);
             });
     }
 
@@ -226,26 +220,12 @@ function attachToNode(node, {siteno}) {
         new Hydrograph({
             element: node,
             data: dataIsValid ? series[0].values: [],
+            medianStats: medianStats,
             yLabel: dataIsValid ? series[0].variableDescription : 'No data',
             title: dataIsValid ? series[0].variableName : '',
             desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
         });
     });
 }
-
-
-// function attachToNode(node, {siteno}) {
-//     let ts = getTimeseries({sites: [siteno]}, series => {
-//         let dataIsValid = series[0] && !series[0].values.some(d => d.value === -999999);
-//         new Hydrograph({
-//             element: node,
-//             data: dataIsValid ? series[0].values : [],
-//             yLabel: dataIsValid ? series[0].variableDescription : 'No data',
-//             title: dataIsValid ? series[0].variableName : '',
-//             desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
-//         });
-//     });
-// }
-
 
 module.exports = {Hydrograph, attachToNode};
