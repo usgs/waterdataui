@@ -106,6 +106,7 @@ class Hydrograph {
             yTitle: this._yLabel
         });
         this._plotDataLine(plot, xScale, yScale);
+        this._plotMedianPoints(plot, xScale, yScale);
         this._plotTooltips(plot, xScale, yScale);
     }
 
