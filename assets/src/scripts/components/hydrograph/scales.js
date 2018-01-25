@@ -1,11 +1,24 @@
 const { extent } = require('d3-array');
 const { scaleLinear, scaleTime } = require('d3-scale');
 
-function extendDomain(extent) {
-    const padding = 0.2 * (extent[1] - extent[0]);
-    return [extent[0] - padding, extent[1] + padding];
+const paddingRatio = 0.2;
+
+/**
+ *  Return domainExtent padded on both ends by paddingRatio
+ *  @param {Array} domainExtent - array of two numbers
+ *  @return {Array} - array of two numbers
+ */
+function extendDomain(domainExtent) {
+    const padding = paddingRatio * (domainExtent[1] - domainExtent[0]);
+    return [domainExtent[0] - padding, domainExtent[1] + padding];
 }
 
+/**
+ * Create an xcale oriented on the left
+ * @param {Array} data - Array contains {time, ...}
+ * @param {Number} xSize - range of scale
+ * @eturn {Object} d3 scale for time.
+ */
 function createXScale(data, xSize) {
     // Calculate max and min for data
     const xExtent = extent(data, d => d.time);
@@ -16,6 +29,12 @@ function createXScale(data, xSize) {
         .domain(xExtent);
 }
 
+/**
+ * Create an ycale oriented on the bottom
+ * @param {Array} data - Array contains {value, ...}
+ * @param {Number} xSize - range of scale
+ * @eturn {Object} d3 scale for value.
+ */
 function createYScale(data, ySize) {
     // Calculate max and min for data
     const yExtent = extent(data, d => d.value);
@@ -40,9 +59,13 @@ function createScales(data, xSize, ySize) {
     return {xScale, yScale};
 }
 
+/**
+ * Updates the domain of yScale with the new extent including the paddingRatio
+ * @param yScale
+ * @param newYDataExtent
+ */
 function updateYScale(yScale, newYDataExtent) {
-    let yPadding = 0.2 * (newYDataExtent[1] - newYDataExtent[0]);
-    yScale.domain([newYDataExtent[0] - yPadding, newYDataExtent[1] + yPadding]);
+    yScale.domain(extendDomain(newYDataExtent));
 
 }
 

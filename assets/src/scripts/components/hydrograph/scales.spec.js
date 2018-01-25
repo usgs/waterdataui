@@ -1,4 +1,4 @@
-const { createScales } = require('./scales');
+const { createScales, updateYScale } = require('./scales');
 
 
 describe('Charting scales', () => {
@@ -39,5 +39,21 @@ describe('Charting scales', () => {
         expect(yScale(0)).not.toBeNaN();
         expect(yScale(.5)).not.toBeNaN();
         expect(yScale(.999)).not.toBeNaN();
+    });
+
+    it('Domain should be extended if the new data extent exceeds the extent used to create the yScale', () => {
+        const currentDomain = yScale.domain();
+        updateYScale(yScale, [-1, 25]);
+        const newDomain = yScale.domain()
+        expect(newDomain[1]).toBeGreaterThan(currentDomain[1]);
+        expect(newDomain[0]).toBeLessThan(currentDomain[0]);
+    });
+
+    it('Domain should not be descreased if the new data extent is less than the extents used to create the yScale', () => {
+        const currentDomain = yScale.domain();
+        updateYScale(yScale, [2, 20]);
+        const newDomain = yScale.domain();
+        expect(newDomain[0]).toBeGreaterThan(currentDomain[0]);
+        expect(newDomain[1]).toBeLessThan(currentDomain[1]);
     });
 });
