@@ -104,7 +104,6 @@ class Hydrograph {
 
     _drawChart() {
         // Set up parent element and SVG
-        this._element.innerHTML = '';
         this.svg = select(this._element)
             .append('div')
             .attr('class', 'hydrograph-container')
@@ -241,13 +240,16 @@ function attachToNode(node, {siteno}) {
     let hydrograph;
     let getLastYearTS;
     getTimeseries({sites: [siteno]}).then((series) => {
-            let dataIsValid = series && series[0] && !series[0].values.some(d => d.value === -999999);
+            let dataIsValid = series && series[0] &&
+                !series[0].values.some(d => d.value === -999999);
             hydrograph = new Hydrograph({
                 element: node,
                 data: dataIsValid ? series[0].values : [],
                 yLabel: dataIsValid ? series[0].variableDescription : 'No data',
                 title: dataIsValid ? series[0].variableName : '',
-                desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
+                desc: dataIsValid ? series[0].variableDescription + ' from ' +
+                    formatTime(series[0].seriesStartDate) + ' to ' +
+                    formatTime(series[0].seriesEndDate) : ''
             });
             if (dataIsValid) {
                 getLastYearTS = getPreviousYearTimeseries({
@@ -261,20 +263,23 @@ function attachToNode(node, {siteno}) {
                 element: node,
                 data: []
             })
-        );
-    document.getElementById('show-last-year-input').addEventListener('change', (evt) => {
-        if (evt.target.checked) {
-            getLastYearTS.then((series) => {
-                hydrograph.addTimeSeries({
-                    data: series[0].values,
-                    legendLabel: 'lastyear'
+    );
+    let lastYearInput = node.getElementsByClassName('hydrograph-last-year-input');
+    if (lastYearInput.length > 0) {
+        lastYearInput[0].addEventListener('change', (evt) => {
+            if (evt.target.checked) {
+                getLastYearTS.then((series) => {
+                    hydrograph.addTimeSeries({
+                        data: series[0].values,
+                        legendLabel: 'lastyear'
+                    });
                 });
-            });
-        }
-        else {
-            hydrograph.removeTimeSeries('lastyear');
-        }
-    });
+            }
+            else {
+                hydrograph.removeTimeSeries('lastyear');
+            }
+        });
+    }
 }
 
 
