@@ -12,6 +12,8 @@ const { getTimeseries } = require('../../models');
 const { appendAxes, createAxes } = require('./axes');
 const { createScales } = require('./scales');
 
+const { parseRDB } = require('../models');
+
 
 // Define width, height and margin for the SVG.
 // Use a fixed size, and scale to device width using CSS.
@@ -131,6 +133,44 @@ class Hydrograph {
             .datum(this._data)
             .classed('line', true)
             .attr('d', newLine);
+    }
+
+    _parseMedianData(medianData) {
+    let data = [];
+    let currentYear = new Date().getFullYear();
+    for(let medianDatum of medianData) {
+        let month = medianDatum.month_nu-1;
+        let day = medianDatum.day_nu;
+        let median = {
+            time: new Date(currentYear, month, day),
+            value: medianDatum.p50_va
+        };
+        data.push(median);
+    }
+    return data;
+    }
+
+    _plotMedianPoints(plot, xScale, yScale) {
+        this._medianPromise.then(
+            (resp) => {
+                let statistics = parseRDB(resp);
+                let medianData = this._parseMedianData(statistics);
+                //let data1 = {time: new Date(2018, 0, 22), value: 25};
+                //let data2 = {time: new Date(2018, 0, 23), value: 24};
+                //let medianData = [data1, data2];
+                plot.selectAll('circle')
+                    .data(medianData)
+                    .enter()
+                    .append('circle')
+                    .attr('r', '8px')
+                    .attr('fill', 'blue')
+                    .attr('cx', function(d) {
+                        return xScale(d.time);
+                    })
+                    .attr('cy', function(d) {
+                        return yScale(d.value);
+                    });
+            });
     }
 
     _plotTooltips(plot, xScale, yScale) {
