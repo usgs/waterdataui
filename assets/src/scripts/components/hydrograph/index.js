@@ -7,7 +7,7 @@ const { line } = require('d3-shape');
 const { timeFormat } = require('d3-time-format');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
-const { getTimeseries, parseRDB } = require('../../models');
+const { getTimeseries, getSiteStatistics, parseRDB, readTS, parseMedianData } = require('../../models');
 
 const { appendAxes, createAxes } = require('./axes');
 const { createScales } = require('./scales');
@@ -104,7 +104,7 @@ class Hydrograph {
             yTitle: this._yLabel
         });
         this._plotDataLine(plot, xScale, yScale);
-        this._plotMedianPoints(plot, xScale, yScale);
+        //this._plotMedianPoints(plot, xScale, yScale);
         this._plotTooltips(plot, xScale, yScale);
     }
 
@@ -132,21 +132,6 @@ class Hydrograph {
             .datum(this._data)
             .classed('line', true)
             .attr('d', newLine);
-    }
-
-    _parseMedianData(medianData) {
-    let data = [];
-    let currentYear = new Date().getFullYear();
-    for(let medianDatum of medianData) {
-        let month = medianDatum.month_nu-1;
-        let day = medianDatum.day_nu;
-        let median = {
-            time: new Date(currentYear, month, day),
-            value: medianDatum.p50_va
-        };
-        data.push(median);
-    }
-    return data;
     }
 
     _plotMedianPoints(plot, xScale, yScale) {
@@ -230,17 +215,37 @@ class Hydrograph {
 
 
 function attachToNode(node, {siteno}) {
-    getTimeseries({sites: [siteno]}, series => {
+    let ts = getTimeseries({sites: [siteno]});
+    let medianStats = getSiteStatistics({sites: [siteno]});
+    Promise.all([ts, medianStats]).then(function(values) {
+        let tsDataResp = values[0];
+        let medianStatsResp = values[1];
+        let series = readTS(tsDataResp);
+        let medianStats = parseMedianData(parseRDB(medianStatsResp));
         let dataIsValid = series[0] && !series[0].values.some(d => d.value === -999999);
         new Hydrograph({
             element: node,
-            data: dataIsValid ? series[0].values : [],
+            data: dataIsValid ? series[0].values: [],
             yLabel: dataIsValid ? series[0].variableDescription : 'No data',
             title: dataIsValid ? series[0].variableName : '',
             desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
         });
     });
 }
+
+
+// function attachToNode(node, {siteno}) {
+//     let ts = getTimeseries({sites: [siteno]}, series => {
+//         let dataIsValid = series[0] && !series[0].values.some(d => d.value === -999999);
+//         new Hydrograph({
+//             element: node,
+//             data: dataIsValid ? series[0].values : [],
+//             yLabel: dataIsValid ? series[0].variableDescription : 'No data',
+//             title: dataIsValid ? series[0].variableName : '',
+//             desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
+//         });
+//     });
+// }
 
 
 module.exports = {Hydrograph, attachToNode};
