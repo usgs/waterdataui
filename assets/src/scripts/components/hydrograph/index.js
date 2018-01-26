@@ -152,7 +152,7 @@ class Hydrograph {
     }
 
     _plotTooltips(plot, xScale, yScale) {
-        // Create a node to hightlight the currently selected date/time.
+        // Create a node to highlight the currently selected date/time.
         let focus = plot.append('g')
             .attr('class', 'focus')
             .style('display', 'none');
@@ -215,6 +215,7 @@ function attachToNode(node, {siteno}) {
         let tsDataResp = values[0];
         let medianStatsResp = values[1];
         let series = readTS(tsDataResp);
+        console.log(series);
         let medianStats = parseMedianData(parseRDB(medianStatsResp), series[0].values);
         let dataIsValid = series[0] && !series[0].values.some(d => d.value === -999999);
         new Hydrograph({

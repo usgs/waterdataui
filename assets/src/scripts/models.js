@@ -39,7 +39,7 @@ export function getSiteStatistics({sites, params=['00060'], statType='median'}) 
  */
 export function parseRDB(rdbData) {
     let rdbLines = rdbData.split('\n');
-    let dataLines = rdbLines.filter(rdbLine => rdbLine[0] != '#').filter(rdbLine => rdbLine.length > 0);
+    let dataLines = rdbLines.filter(rdbLine => rdbLine[0] !== '#').filter(rdbLine => rdbLine.length > 0);
     // remove the useless row
     dataLines.splice(1, 1);
     let recordData = [];
@@ -67,10 +67,13 @@ export function parseRDB(rdbData) {
 export function parseMedianData(medianData, timeSeries) {
     let data = [];
     if (medianData.length > 0 && timeSeries.length > 0) {
-        let lastTsDate = timeSeries[timeSeries.length - 1].time;
+        let lastTSRecord = timeSeries[timeSeries.length - 1];
+        let lastTsDate = lastTSRecord.time;
         let yearPresent = lastTsDate.getFullYear();
         let lastTsDay = lastTsDate.getDate();
         let yearPrevious = yearPresent - 1;
+        let lastTsLabel = lastTSRecord.label.split(' ');
+        let unit = lastTsLabel[lastTsLabel.length - 1];
         for(let medianDatum of medianData) {
             let month = medianDatum.month_nu-1;
             let day = medianDatum.day_nu;
@@ -80,7 +83,8 @@ export function parseMedianData(medianData, timeSeries) {
             }
             let median = {
                 time: recordDate,
-                value: medianDatum.p50_va
+                value: medianDatum.p50_va,
+                label: `${formatTime(recordDate)}\n${medianDatum.p50_va} ${unit}`
             };
             data.push(median);
         }
