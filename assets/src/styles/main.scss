@@ -1,7 +1,8 @@
 @import 'leaflet';
 
-@import './uswds';
+$fa-font-path: './fonts' !default;
 @import '../../../node_modules/font-awesome/scss/font-awesome';
+@import './uswds';
 
 $usgs-blue: #02274B;
 
