@@ -32,7 +32,11 @@
             stroke: $usgs-blue;
         }
         #ts-compare {
-            stroke: #008000;
+            stroke-dasharray: 1, 3
+        }
+        .x-top-axis {
+            path {
+            }
         }
         .axis {
             path {

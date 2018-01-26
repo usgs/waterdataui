@@ -94,6 +94,7 @@ class Hydrograph {
     removeCompareTimeSeries() {
         // Remove the compare time series
         this.svg.select('#ts-compare').remove();
+        this.svg.select('.x-top-axis').remove();
         delete this._tsData.compare;
 
         // Update the y scale and  redraw the axis
