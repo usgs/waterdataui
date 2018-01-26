@@ -10,6 +10,7 @@ from waterdata import __version__ as APP_VERSION
 DEBUG = False
 
 SERVICE_ROOT = 'https://waterservices.usgs.gov'
+PAST_SERVICE_ROOT = 'https://nwis.waterservices.usgs.gov'
 NWIS_ENDPOINTS = {
     'INVENTORY': 'https://waterdata.usgs.gov/nwis/inventory',
     'UV': 'https://waterdata.usgs.gov/nwis/uv'
