@@ -31,7 +31,7 @@ function createAxes(xScale, yScale, yTickSize) {
     const xAxis = axisBottom()
         .scale(xScale)
         .ticks(timeDay)
-        .tickFormat(timeFormat('%b %d, %Y'))
+        .tickFormat(timeFormat('%b %d'))
         .tickSizeOuter(0);
 
     // Create y-axis
