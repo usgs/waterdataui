@@ -42,13 +42,23 @@ describe('Models module', () => {
            'day_nu', 'begin_yr', 'end_yr', 'count_nu', 'p50_va']);
     });
 
+    it('parseRDB handles no data', () => {
+       let result = parseRDB(MOCK_RDB_NO_DATA);
+       expect(result.length).toEqual(0);
+    });
+
+    it('parseRDB handles no headers', () => {
+       let result = parseRDB(`#Some Stuff`);
+       expect(result.length).toEqual(0);
+    });
+
     it('parseMedian data successfully constructs data for plotting', () => {
         let result = parseMedianData(MOCK_MEDIAN_DATA, MOCK_TIMESERIES);
         expect(result.length).toEqual(3);
         expect(result[0]).toEqual({time: new Date(2017, 7, 5), value: '15'});
     });
 
-    fit('parseMedia data handles empty data', () => {
+    it('parseMedia data handles empty data', () => {
         let result = parseMedianData([], []);
         expect(result.length).toEqual(0);
     });
@@ -2880,6 +2890,43 @@ const MOCK_DATA = `
 "typeSubstituted" : false
 }
 `;
+
+const MOCK_RDB_NO_DATA = `#
+#
+# US Geological Survey, Water Resources Data
+# retrieved: 2018-01-25 16:05:49 -05:00	(natwebsdas01)
+#
+# This file contains USGS Daily Statistics
+#
+# Note:The statistics generated are based on approved daily-mean data and may not match those published by the USGS in official publications.
+# The user is responsible for assessment and use of statistics from this site.
+# For more details on why the statistics may not match, visit http://help.waterdata.usgs.gov/faq/about-statistics.
+#
+# Data heading explanations.
+# agency_cd       -- agency code
+# site_no         -- Site identification number
+# parameter_cd    -- Parameter code
+# station_nm      -- Site name
+# loc_web_ds      -- Additional measurement description
+#
+# Data for the following 1 site(s) are contained in this file
+# agency_cd   site_no      parameter_cd   station_nm (loc_web_ds)
+# USGS        05370000     00060          EAU GALLE RIVER AT SPRING VALLEY, WI
+#
+# Explanation of Parameter Codes
+# parameter_cd	Parameter Name
+# 00060         Discharge, cubic feet per second
+#
+# Data heading explanations.
+# month_nu    ... The month for which the statistics apply.
+# day_nu      ... The day for which the statistics apply.
+# begin_yr    ... First water year of data of daily mean values for this day.
+# end_yr      ... Last water year of data of daily mean values for this day.
+# count_nu    ... Number of values used in the calculation.
+# p50_va      ... 50 percentile (median) of daily mean values for this day.
+#
+agency_cd	site_no	parameter_cd	ts_id	loc_web_ds	month_nu	day_nu	begin_yr	end_yr	count_nu	p50_va
+`
 
 const MOCK_RDB = `#
 #
