@@ -141,8 +141,8 @@ class Hydrograph {
             .data(this._medianStats)
             .enter()
             .append('circle')
-            .attr('r', '8px')
-            .attr('fill', 'yellow')
+            .attr('r', '4px')
+            .attr('fill', 'orange')
             .attr('x', function(d) {
                 return xScale(d.time);
             })
@@ -164,7 +164,7 @@ class Hydrograph {
                 return d.label;
             })
             .attr('x', function(d) {
-                return xScale(d.time) + 10;
+                return xScale(d.time) + 5;
             })
             .attr('y', function(d) {
                 return yScale(d.value);
