@@ -12,10 +12,8 @@
     $tooltip-distance-from-item: 3em;
 
     background: $tooltip-background;
-    border: 1px solid $base-border-color;
     border-radius: $base-border-radius;
     display: inline-block;
-    padding: 0.5em 1em;
     position: relative;
     text-align: center;
 
@@ -42,7 +40,7 @@
         text-align: center;
         transition: all 0.2s ease-in-out;
         visibility: hidden;
-        z-index: 10;
+        z-index: 1000;
 
         p {
             color: $base-font-color;

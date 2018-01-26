@@ -39,6 +39,8 @@
 
             {% else %}
                 <h1>Station Name: {{ stations[0].station_nm }}</h1>
+                {% include 'partials/social_share.html' %}
+
                 <ul>
                     <li><a href="{{ config.NWIS_ENDPOINTS.INVENTORY }}/?site_no={{ stations[0].site_no }}" target="_blank">Site inventory page</a></li>
                     <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?cb_00060=on&format=gif_mult_parms&site_no={{ stations[0].site_no }}&period=7" target="_blank">Interactive grapher</a></li>
@@ -76,7 +78,7 @@
                                     <tbody>
                                         {% for series in site_dataseries %}
                                             <tr>
-                                                <td scope="row">{{ series.parm_cd.name }}</td>
+                                                <th scope="row">{{ series.parm_cd.name }}</td>
                                                 <td>{{ series.loc_web_ds.name }}</td>
                                                 <td>{{ series.data_type_cd.name }}</td>
                                                 <td>{{ series.stat_cd.name }}</td>
@@ -114,7 +116,9 @@
                                     {% endif %}
                                     {% if value.desc %}
                                         <div class="tooltip-item">
-                                            <sub aria-describedby="tooltip-{{ value.code }}">?</sub>
+                                            <sup aria-describedby="tooltip-{{ value.code }}">
+                                                <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                            </sup>
                                             <div class="tooltip">
                                                 <p id="tooltip-{{ value.code }}">{{ value.desc }}</p>
                                             </div>
