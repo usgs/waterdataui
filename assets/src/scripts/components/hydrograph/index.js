@@ -92,7 +92,7 @@ class Hydrograph {
      * Remove the compare time series from the plot and rescale
      */
     removeCompareTimeSeries() {
-        // Remote the compare time series
+        // Remove the compare time series
         this.svg.select('#ts-compare').remove();
         delete this._tsData.compare;
 
