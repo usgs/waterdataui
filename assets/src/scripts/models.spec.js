@@ -1,7 +1,7 @@
 // Add Ajax mock to the jasmine global.
 require('jasmine-ajax');
 
-const { getTimeseries, parseRDB,  parseMedianData} = require('./models');
+const { getTimeseries, parseRDB,  parseMedianData, getSiteStatistics} = require('./models');
 
 
 describe('Models module', () => {
@@ -37,7 +37,6 @@ describe('Models module', () => {
 
     it('parseRDB successfully parses RDB content', () => {
        let result = parseRDB(MOCK_RDB);
-       console.log(result);
        expect(result.length).toEqual(13);
        expect(Object.keys(result[0])).toEqual(['agency_cd', 'site_no', 'parameter_cd', 'ts_id', 'loc_web_ds', 'month_nu',
            'day_nu', 'begin_yr', 'end_yr', 'count_nu', 'p50_va']);
@@ -47,6 +46,26 @@ describe('Models module', () => {
         let result = parseMedianData(MOCK_MEDIAN_DATA, MOCK_TIMESERIES);
         expect(result.length).toEqual(3);
         expect(result[0]).toEqual({time: new Date(2017, 7, 5), value: '15'});
+    });
+
+    fit('parseMedia data handles empty data', () => {
+        let result = parseMedianData([], []);
+        expect(result.length).toEqual(0);
+    });
+
+    xit('getSiteStatistics returns a valid responsd', (done) => {
+       let siteID = '006713901';
+
+       jasmine.Ajax.stubRequest('https://waterservices.usgs.gov/nwis/stat/?format=rdb&sites=006713901&statReportType=daily&statTypeCd=median&parameterCd=00060').andReturn({
+           'status': 200,
+           'contentType': 'text/json',
+           'responseText': MOCK_RDB
+       });
+
+       getSiteStatistics({sites: [siteID]}).then((result) => {
+           console.log(result);
+           done();
+       });
     });
 });
 

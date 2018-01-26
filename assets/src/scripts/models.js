@@ -29,6 +29,7 @@ export function getTimeseries({sites, params=['00060']}) {
  */
 export function getSiteStatistics({sites, params=['00060'], statType='median'}) {
     let url = `${SERVICE_ROOT}/stat/?format=rdb&sites=${sites.join(',')}&statReportType=daily&statTypeCd=${statType}&parameterCd=${params.join(',')}`;
+    console.log(url);
     return get(url);
 }
 
@@ -65,22 +66,24 @@ export function parseRDB(rdbData) {
  */
 export function parseMedianData(medianData, timeSeries) {
     let data = [];
-    let lastTsDate = timeSeries[timeSeries.length - 1].time;
-    let yearPresent = lastTsDate.getFullYear();
-    let lastTsDay = lastTsDate.getDate();
-    let yearPrevious = yearPresent - 1;
-    for(let medianDatum of medianData) {
-        let month = medianDatum.month_nu-1;
-        let day = medianDatum.day_nu;
-        let recordDate = new Date(yearPresent, month, day);
-        if (!(new Date(yearPresent, 0, 1) <= recordDate && recordDate <= lastTsDate)) {
-            recordDate = new Date(yearPrevious, month, day);
+    if (medianData.length > 0 && timeSeries.length > 0) {
+        let lastTsDate = timeSeries[timeSeries.length - 1].time;
+        let yearPresent = lastTsDate.getFullYear();
+        let lastTsDay = lastTsDate.getDate();
+        let yearPrevious = yearPresent - 1;
+        for(let medianDatum of medianData) {
+            let month = medianDatum.month_nu-1;
+            let day = medianDatum.day_nu;
+            let recordDate = new Date(yearPresent, month, day);
+            if (!(new Date(yearPresent, 0, 1) <= recordDate && recordDate <= lastTsDate)) {
+                recordDate = new Date(yearPrevious, month, day);
+            }
+            let median = {
+                time: recordDate,
+                value: medianDatum.p50_va
+            };
+            data.push(median);
         }
-        let median = {
-            time: recordDate,
-            value: medianDatum.p50_va
-        };
-        data.push(median);
     }
     //return array with times sorted in ascending order
     return data.sort(function(a, b) {
