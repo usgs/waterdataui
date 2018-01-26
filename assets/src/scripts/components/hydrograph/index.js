@@ -87,6 +87,8 @@ class Hydrograph {
         const plot = svg.append('g')
             .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
+        const legend = svg.append('g');
+
         // Create x/y scaling for the full (100%) view.
         const {xScale, yScale} = createScales(
             this._data,
@@ -169,6 +171,10 @@ class Hydrograph {
             .attr('y', function(d) {
                 return yScale(d.value);
             });
+    }
+
+    _plotLegend(plot) {
+        // Create legend for the plot
     }
 
     _plotTooltips(plot, xScale, yScale) {
