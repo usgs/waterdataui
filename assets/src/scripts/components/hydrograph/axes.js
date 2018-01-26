@@ -1,4 +1,4 @@
-const { axisBottom, axisTop, axisLeft } = require('d3-axis');
+const { axisBottom, axisLeft } = require('d3-axis');
 const { format } = require('d3-format');
 const { timeDay } = require('d3-time');
 const { timeFormat } = require('d3-time-format');
