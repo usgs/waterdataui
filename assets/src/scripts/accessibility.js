@@ -49,8 +49,7 @@ function addSROnlyTable({container, columnNames, data}) {
         .data(function(d) {
             return d;
         })
-        .enter().append('th')
-            .attr('scope', 'row')
+        .enter().append('td')
             .text(function(d) {
                 return d;
             });
