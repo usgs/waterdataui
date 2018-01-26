@@ -1,3 +1,5 @@
+require('babel-polyfill');
+
 // Initialize the 18F Web design standards
 require('uswds');
 
