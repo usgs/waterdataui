@@ -63,7 +63,7 @@ class Hydrograph {
      * @param {Array} data - IV data as returned by models.getTimeseires
      */
     addCompareTimeSeries(data) {
-        //Save data - TODO will be needed in order to implement the tooltips
+        //Save data - will be needed in order to implement the tooltips
         this._tsData.compare = data;
 
         // Update the yScale by determining the new extent
