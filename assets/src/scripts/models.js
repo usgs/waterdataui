@@ -99,7 +99,7 @@ export function parseMedianData(medianData, timeSeries) {
             let median = {
                 time: recordDate,
                 value: medianDatum.p50_va,
-                label: `${formatTime(recordDate)}\n${medianDatum.p50_va} ${unit}`
+                label: `${medianDatum.p50_va} ${unit}`
             };
             // don't include leap days if it's not a leap year
             if (!isLeapYear(recordDate.getFullYear())) {

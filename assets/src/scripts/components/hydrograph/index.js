@@ -137,16 +137,36 @@ class Hydrograph {
     }
 
     _plotMedianPoints(plot, xScale, yScale) {
-        plot.selectAll('circle')
+        plot.selectAll('medianPoint')
             .data(this._medianStats)
             .enter()
             .append('circle')
             .attr('r', '8px')
-            .attr('fill', 'blue')
+            .attr('fill', 'yellow')
+            .attr('x', function(d) {
+                return xScale(d.time);
+            })
+            .attr('y', function(d) {
+                return yScale(d.value);
+            })
             .attr('cx', function(d) {
                 return xScale(d.time);
             })
             .attr('cy', function(d) {
+                return yScale(d.value);
+            });
+
+        plot.selectAll('medianPointText')
+            .data(this._medianStats)
+            .enter()
+            .append('text')
+            .text(function(d) {
+                return d.label;
+            })
+            .attr('x', function(d) {
+                return xScale(d.time) + 10;
+            })
+            .attr('y', function(d) {
                 return yScale(d.value);
             });
     }
