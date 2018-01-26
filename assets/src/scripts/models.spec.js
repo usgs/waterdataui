@@ -73,7 +73,7 @@ describe('Models module', () => {
        });
 
        getSiteStatistics({sites: [siteID]}).then((result) => {
-           console.log(result);
+           expect(result).toBe(true);
            done();
        });
     });
