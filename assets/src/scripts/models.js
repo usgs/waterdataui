@@ -29,7 +29,6 @@ export function getTimeseries({sites, params=['00060']}) {
  */
 export function getSiteStatistics({sites, params=['00060'], statType='median'}) {
     let url = `${SERVICE_ROOT}/stat/?format=rdb&sites=${sites.join(',')}&statReportType=daily&statTypeCd=${statType}&parameterCd=${params.join(',')}`;
-    console.log(url);
     return get(url);
 }
 
@@ -58,14 +57,26 @@ export function parseRDB(rdbData) {
 }
 
 /**
+ * Determine if a given year is a leap year
+ *
+ * @param year
+ * @returns {boolean}
+ */
+export function isLeapYear(year) {
+    return (year % 4) === 0;
+}
+
+/**
  *  Read median RDB data into something that makes sense
  *
  * @param medianData
  * @param timeSeries
+ * @params subsetDays
  * @returns {Array}
  */
 export function parseMedianData(medianData, timeSeries) {
     let data = [];
+    let sliceData = [];
     if (medianData.length > 0 && timeSeries.length > 0) {
         let lastTSRecord = timeSeries[timeSeries.length - 1];
         let lastTsDate = lastTSRecord.time;
@@ -74,7 +85,11 @@ export function parseMedianData(medianData, timeSeries) {
         let yearPrevious = yearPresent - 1;
         let lastTsLabel = lastTSRecord.label.split(' ');
         let unit = lastTsLabel[lastTsLabel.length - 1];
-        for(let medianDatum of medianData) {
+        // calculate the number of days to display
+        let firstTSRecord = timeSeries[0];
+        let firstTsDay = firstTSRecord.time.getDate();
+        let days = lastTsDay - firstTsDay;
+        for (let medianDatum of medianData) {
             let month = medianDatum.month_nu-1;
             let day = medianDatum.day_nu;
             let recordDate = new Date(yearPresent, month, day);
@@ -86,13 +101,24 @@ export function parseMedianData(medianData, timeSeries) {
                 value: medianDatum.p50_va,
                 label: `${formatTime(recordDate)}\n${medianDatum.p50_va} ${unit}`
             };
-            data.push(median);
+            // don't include leap days if it's not a leap year
+            if (!isLeapYear(recordDate.getFullYear())) {
+                if (month == 1 && day == 29) {
+                }
+                else {
+                    data.push(median);
+                }
+            }
+            else {
+                data.push(median);
+            }
         }
+        //return array with times sorted in ascending order
+        sliceData = data.sort(function(a, b){
+           return a.time - b.time;
+        }).slice(data.length-days, data.length);
     }
-    //return array with times sorted in ascending order
-    return data.sort(function(a, b) {
-       return a.time - b.time;
-    });
+    return sliceData;
 }
 
 
