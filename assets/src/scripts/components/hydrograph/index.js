@@ -159,7 +159,6 @@ class Hydrograph {
             yTitle: this._yLabel
         });
         this.currentLine = this._plotDataLine(this.plot, this.scale, 'current');
-        //this._plotMedianPoints(this.plot, xScale, yScale);
         this._plotTooltips(this.plot, this.scale, 'current');
     }
 
