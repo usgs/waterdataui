@@ -138,7 +138,7 @@ class Hydrograph {
         this.plot = this.svg.append('g')
             .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
-        const legend = svg.append('g');
+        // const legend = svg.append('g');
 
         // Create x/y scaling for the full (100%) view.
         this.scale = createScales(
@@ -159,8 +159,8 @@ class Hydrograph {
             yTitle: this._yLabel
         });
         this.currentLine = this._plotDataLine(this.plot, this.scale, 'current');
-        this._plotMedianPoints(plot, xScale, yScale);
-        this._plotTooltips(plot, xScale, yScale);
+        //this._plotMedianPoints(this.plot, xScale, yScale);
+        this._plotTooltips(this.plot, this.scale, 'current');
     }
 
     _drawMessage(message) {
