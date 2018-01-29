@@ -198,6 +198,9 @@ class Hydrograph {
         let yscale = this.scale.yScale;
         updateYScale(yscale, yDataExtent);
         updateYAxis(this.axis.yAxis, yscale);
+        //Redraw the current ts
+        select('#ts-current')
+            .attr('d', this.currentLine(this._tsData.current));
         this.svg.select('.y-axis')
             .call(this.axis.yAxis);
         this.plot.selectAll('medianPoint')
