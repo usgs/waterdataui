@@ -1,6 +1,8 @@
 const { select, selectAll } = require('d3-selection');
+const { reduxProvide: provide } = require('d3-redux');
 
-const Hydrograph = require('./index').Hydrograph;
+const { attachToNode, getNearestTime, timeSeriesGraph } = require('./index');
+const { Actions, configureStore } = require('./store');
 
 
 describe('Hydrograph charting module', () => {
@@ -18,35 +20,59 @@ describe('Hydrograph charting module', () => {
     });
 
     it('empty graph displays warning', () => {
-        new Hydrograph({element: graphNode});
+        attachToNode(graphNode, {});
         expect(graphNode.innerHTML).toContain('No data is available');
     });
 
     it('single data point renders', () => {
-        new Hydrograph({
-            element: graphNode,
-            data: [{
-                time: new Date(),
-                value: 10,
-                label: 'Label'
-            }]
+        const store = configureStore({
+            tsData: {
+                current: {
+                    data: [{
+                        time: new Date(),
+                        value: 10,
+                        label: 'Label'
+                    }],
+                    show: true
+                },
+                compare: {
+                    data: [],
+                    show: false
+                }
+            },
+            title: '',
+            desc: ''
         });
+        select(graphNode)
+            .call(provide(store))
+            .call(timeSeriesGraph, store);
         expect(graphNode.innerHTML).toContain('hydrograph-container');
     });
 
     describe('SVG has been made accessibile', () => {
         let svg;
         beforeEach(() => {
-            new Hydrograph({
-                element: graphNode,
+            const store = configureStore({
+                tsData: {
+                    current: {
+                        data: [{
+                            time: new Date(),
+                            value: 10,
+                            label: 'Label'
+                        }],
+                        show: true
+                    },
+                    compare: {
+                        data: [],
+                        show: false
+                    }
+                },
                 title: 'My Title',
                 desc: 'My Description',
-                data: [{
-                    time: new Date(),
-                    value: 10,
-                    label: 'Label'
-                }]
             });
+            select(graphNode)
+                .call(provide(store))
+                .call(timeSeriesGraph, store);
             svg = select('svg');
         });
 
@@ -66,7 +92,23 @@ describe('Hydrograph charting module', () => {
     describe('Renders real data from site #05370000', () => {
         /* eslint no-use-before-define: "ignore" */
         beforeEach(() => {
-            new Hydrograph({element: graphNode, data: MOCK_DATA});
+            const store = configureStore({
+                tsData: {
+                    current: {
+                        data: MOCK_DATA,
+                        show: true
+                    },
+                    compare: {
+                        data: [],
+                        show: false
+                    }
+                },
+                title: 'My Title',
+                desc: 'My Description',
+            });
+            select(graphNode)
+                .call(provide(store))
+                .call(timeSeriesGraph, store);
         });
 
         it('should render an svg node', () => {
@@ -84,16 +126,12 @@ describe('Hydrograph charting module', () => {
     });
 
     describe('Hydrograph tooltips', () => {
-        let graph;
         let data = [12, 13, 14, 15, 16].map(hour => {
             return {
                 time: new Date(`2018-01-03T${hour}:00:00.000Z`),
                 label: 'label',
                 value: 0
             };
-        });
-        beforeEach(() => {
-            graph = new Hydrograph({element: graphNode, data: data});
         });
 
         it('return correct data points via getNearestTime' , () => {
@@ -108,7 +146,8 @@ describe('Hydrograph charting module', () => {
                         expected = {datum: data[index + 1], index: index + 1};
                     }
                     let time = new Date(datum.time.getTime() + offset);
-                    let returned = graph._getNearestTime(time, 'current');
+                    let returned = getNearestTime(data, time);
+
                     expect(returned.datum.time).toBe(expected.datum.time);
                     expect(returned.datum.index).toBe(expected.datum.index);
                 }
@@ -129,17 +168,33 @@ describe('Hydrograph charting module', () => {
     describe('Adding and removing compare time series', () => {
         /* eslint no-use-before-define: "ignore" */
         let hydrograph;
+        let store;
         beforeEach(() => {
-            hydrograph = new Hydrograph({element: graphNode, data: MOCK_DATA});
-            hydrograph.addCompareTimeSeries(MOCK_DATA_FOR_PREVIOUS_YEAR);
+            store = configureStore({
+                tsData: {
+                    current: {
+                        data: MOCK_DATA,
+                        show: true
+                    },
+                    compare: {
+                        data: MOCK_DATA_FOR_PREVIOUS_YEAR,
+                        show: true
+                    }
+                },
+                title: 'My Title',
+                desc: 'My Description',
+            });
+            select(graphNode)
+                .call(provide(store))
+                .call(timeSeriesGraph, store);
         });
 
         it('Should render two lines', () => {
             expect(selectAll('svg path.line').size()).toBe(2);
         });
 
-        it('Should remove one of lthe lines when removing the compare time series', () => {
-            hydrograph.removeCompareTimeSeries();
+        it('Should remove one of the lines when removing the compare time series', () => {
+            store.dispatch(Actions.toggleTimeseries('compare', false));
             expect(selectAll('svg path.line').size()).toBe(1);
         });
 

@@ -38,6 +38,7 @@
   "homepage": "https://github.com/usgs/waterdataui#readme",
   "devDependencies": {
     "babel-core": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babelify": "^8.0.0",
@@ -57,6 +58,7 @@
     "nodemon": "^1.14.11",
     "npm-run-all": "^4.1.2",
     "proxyquireify": "^3.2.1",
+    "redux-mock-store": "^1.5.1",
     "tinyify": "^2.4.0",
     "uglify-js": "^3.3.5",
     "uglifycss": "0.0.27",
@@ -64,9 +66,13 @@
   },
   "dependencies": {
     "d3": "^4.12.2",
+    "d3-redux": "0.0.6",
     "esri-leaflet": "^2.1.2",
     "font-awesome": "^4.7.0",
     "leaflet": "^1.3.1",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0",
+    "reselect": "^3.0.1",
     "uswds": "^1.4.4"
   },
   "browserify": {

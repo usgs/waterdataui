@@ -14,8 +14,7 @@ describe('svgAccessibility tests', () => {
         });
 
         it('Should add a title, desc, and aria attributes', () => {
-            addSVGAccessibility({
-                svg: svg,
+            addSVGAccessibility(svg, {
                 title: 'This is a title',
                 description: 'This is a description',
                 isInteractive: false
@@ -29,8 +28,7 @@ describe('svgAccessibility tests', () => {
         });
 
         it('Should not add a tabindex if isInteractive is false', () => {
-            addSVGAccessibility({
-                svg: svg,
+            addSVGAccessibility(svg, {
                 title: 'This is a title',
                 description: 'This is a description',
                 isInteractive: false
@@ -39,8 +37,7 @@ describe('svgAccessibility tests', () => {
         });
 
         it('Should add a tabindex if isInteractive is true', () => {
-            addSVGAccessibility({
-                svg: svg,
+            addSVGAccessibility(svg, {
                 title: 'This is a title',
                 description: 'This is a description',
                 isInteractive: true
@@ -49,7 +46,7 @@ describe('svgAccessibility tests', () => {
         });
     });
 
-    describe('addSROnlyTable tests', () => {
+    describe('SROnlyTable tests', () => {
        let container;
        let columnNames = ['Postal Code', 'FIPS', 'Name'];
        let data = [
@@ -61,8 +58,7 @@ describe('svgAccessibility tests', () => {
 
        beforeEach(() => {
            container = select('body').append('div').attr('id', 'test-div');
-           addSROnlyTable({
-               container: document.getElementById('test-div'),
+           addSROnlyTable(select(document.getElementById('test-div')), {
                columnNames: columnNames,
                data: data
            });
