@@ -86,9 +86,9 @@ class Hydrograph {
         select('#ts-current')
             .attr('d', this.currentLine(this._tsData.current));
 
+        //remove the median stats plot and recreate
         this.svg.selectAll('#median-point').remove();
         this.svg.selectAll('#median-text').remove();
-
         this._plotMedianPoints();
 
         // Add the new time series
@@ -103,9 +103,6 @@ class Hydrograph {
         this.svg.select('#ts-compare').remove();
         this.svg.select('.x-top-axis').remove();
 
-        this.svg.selectAll('#median-point').remove();
-        this.svg.selectAll('#median-text').remove();
-
         delete this._tsData.compare;
 
         // Update the y scale and  redraw the axis
@@ -118,6 +115,9 @@ class Hydrograph {
         //Redraw the current ts
         select('#ts-current')
             .attr('d', this.currentLine(this._tsData.current));
+        //remove the median stats plot and recreate
+        this.svg.selectAll('#median-point').remove();
+        this.svg.selectAll('#median-text').remove();
         this._plotMedianPoints();
     }
 
