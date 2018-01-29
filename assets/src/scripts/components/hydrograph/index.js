@@ -7,7 +7,7 @@ const { line } = require('d3-shape');
 const { timeFormat } = require('d3-time-format');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
-const { getTimeseries, getPreviousYearTimeseries, getSiteStatistics, parseRDB, readTS, parseMedianData } = require('../../models');
+const { getTimeseries, getPreviousYearTimeseries, getMedianStatistics } = require('../../models');
 
 const { appendAxes, updateYAxis, createAxes } = require('./axes');
 const { createScales, createXScale, updateYScale } = require('./scales');
@@ -191,38 +191,47 @@ class Hydrograph {
         return tsLine;
     }
 
-    _plotMedianPoints(plot, xScale, yScale) {
-        plot.selectAll('medianPoint')
-            .data(this._medianStats)
+    plotMedianPoints(data) {
+        const currentYExtent = extent(this._tsData.current, d => d.value);
+        const yExtent = extent(data, d => d.value);
+        const yDataExtent = [min([yExtent[0], currentYExtent[0]]), max([yExtent[1], currentYExtent[1]])];
+        let xscale = this.scale.xScale;
+        let yscale = this.scale.yScale;
+        updateYScale(yscale, yDataExtent);
+        updateYAxis(this.axis.yAxis, yscale);
+        this.svg.select('.y-axis')
+            .call(this.axis.yAxis);
+        this.plot.selectAll('medianPoint')
+            .data(data)
             .enter()
             .append('circle')
             .attr('r', '4px')
             .attr('fill', 'orange')
             .attr('x', function(d) {
-                return xScale(d.time);
+                return xscale(d.time);
             })
             .attr('y', function(d) {
-                return yScale(d.value);
+                return yscale(d.value);
             })
             .attr('cx', function(d) {
-                return xScale(d.time);
+                return xscale(d.time);
             })
             .attr('cy', function(d) {
-                return yScale(d.value);
+                return yscale(d.value);
             });
 
-        plot.selectAll('medianPointText')
-            .data(this._medianStats)
+        this.plot.selectAll('medianPointText')
+            .data(data)
             .enter()
             .append('text')
             .text(function(d) {
                 return d.label;
             })
             .attr('x', function(d) {
-                return xScale(d.time) + 5;
+                return xscale(d.time) + 5;
             })
             .attr('y', function(d) {
-                return yScale(d.value);
+                return yscale(d.value);
             });
     }
 
@@ -290,7 +299,9 @@ class Hydrograph {
 function attachToNode(node, {siteno}) {
     let hydrograph;
     let getLastYearTS;
-    getTimeseries({sites: [siteno]}).then((series) => {
+    let medianStatistics;
+    let ts = getTimeseries({sites: [siteno]});
+    ts.then((series) => {
             let dataIsValid = series && series[0] &&
                 !series[0].values.some(d => d.value === -999999);
             hydrograph = new Hydrograph({
@@ -308,6 +319,14 @@ function attachToNode(node, {siteno}) {
                     startTime: series[0].seriesStartDate,
                     endTime: series[0].seriesEndDate
                 });
+                medianStatistics = getMedianStatistics({
+                   sites: [node.dataset.siteno],
+                   timeseries: series[0].values
+                });
+                medianStatistics.then(
+                    (data) => {
+                        hydrograph.plotMedianPoints(data)
+                    });
             }
         }, () =>
             hydrograph = new Hydrograph({

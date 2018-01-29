@@ -70,7 +70,7 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
                 return error;
             });
 }
-export function getSiteStatistics({sites, params=['00060'], statType='median'}) {
+export function getSiteStatistics({sites, statType='median', params=['00060']}) {
     let url = `${SERVICE_ROOT}/stat/?format=rdb&sites=${sites.join(',')}&statReportType=daily&statTypeCd=${statType}&parameterCd=${params.join(',')}`;
     return get(url);
 }
@@ -196,4 +196,13 @@ export function getPreviousYearTimeseries({site, startTime, endTime}) {
     lastYearEndTime.setFullYear(endTime.getFullYear() - 1);
 
     return getTimeseries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
+}
+
+export function getMedianStatistics({sites, timeseries, params=['00060']}) {
+    let medianRDB = getSiteStatistics({sites: sites, statType: 'median', params: params});
+    return medianRDB.then((response) => {
+        return parseMedianData(parseRDB(response), timeseries);
+    }, (error) => {
+        return error;
+    });
 }
