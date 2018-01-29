@@ -194,14 +194,13 @@ export function getPreviousYearTimeseries({site, startTime, endTime}) {
 
     lastYearStartTime.setFullYear(startTime.getFullYear() - 1);
     lastYearEndTime.setFullYear(endTime.getFullYear() - 1);
-
     return getTimeseries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
 }
 
-export function getMedianStatistics({sites, timeseries, params=['00060']}) {
+export function getMedianStatistics({sites, params=['00060']}) {
     let medianRDB = getSiteStatistics({sites: sites, statType: 'median', params: params});
     return medianRDB.then((response) => {
-        return parseMedianData(parseRDB(response), timeseries);
+        return parseRDB(response);
     }, (error) => {
         return error;
     });
