@@ -1,10 +1,13 @@
 /**
  * Hydrograph charting module.
  */
+require('d3');
 const { bisector, extent, min, max } = require('d3-array');
 const { mouse, select } = require('d3-selection');
-const { line } = require('d3-shape');
+const { line, symbol, symbolCircle } = require('d3-shape');
+const { scaleOrdinal } = require('d3-scale');
 const { timeFormat } = require('d3-time-format');
+const { legendSymbol } = require('d3-svg-legend');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { getTimeseries, getPreviousYearTimeseries, getMedianStatistics, parseMedianData } = require('../../models');
@@ -149,7 +152,7 @@ class Hydrograph {
         this.plot = this.svg.append('g')
             .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
-        // const legend = svg.append('g');
+        this.legend = this.svg.append('g');
 
         // Create x/y scaling for the full (100%) view.
         this.scale = createScales(
@@ -172,6 +175,7 @@ class Hydrograph {
         this.currentLine = this._plotDataLine(this.plot, this.scale, 'current');
         this.medianPoints = this._plotMedianPoints();
         this._plotTooltips(this.plot, this.scale, 'current');
+        this._plotLegend();
     }
 
     _drawMessage(message) {
@@ -241,8 +245,27 @@ class Hydrograph {
             });
     }
 
-    _plotLegend(plot) {
+    _plotLegend() {
         // Create legend for the plot
+        let circle = symbol()
+            .type(symbolCircle)();
+
+        let symbolScale = scaleOrdinal()
+            .domain(['my circle'])
+            .range([circle]);
+
+        this.legend
+            .attr('class', 'legend')
+            .attr('transform', 'translate(20, 20)');
+
+        let legendPath = legendSymbol()
+            .scale(symbolScale)
+            .orient('horizontal')
+            .title('Test Legend')
+            .labelWrap(80);
+
+        this.svg.select('.legend')
+            .call(legendPath);
     }
 
     _plotTooltips(plot, scale, tsDataKey) {
