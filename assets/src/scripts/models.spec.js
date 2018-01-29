@@ -1,84 +1,307 @@
-// Add Ajax mock to the jasmine global.
-require('jasmine-ajax');
-
-const { getTimeseries, parseRDB,  parseMedianData, getSiteStatistics} = require('./models');
+let proxyquire = require('proxyquireify')(require);
 
 
 describe('Models module', () => {
-    beforeEach(() => {
-        jasmine.Ajax.install();
-    });
 
-    afterEach(() => {
-        jasmine.Ajax.uninstall();
-    });
+    describe('getTimeSeries function', () => {
+        let ajaxMock;
+        let models;
 
-    it('getTimeseries parses valid response data', (done) => {
-        let paramCode = '00060';
-        let siteID = '05413500';
+        const paramCode = '00060';
+        const siteID = '05413500';
 
-        jasmine.Ajax.stubRequest('https://waterservices.usgs.gov/nwis/iv/?sites=05413500&parameterCd=00060&period=P7D&indent=on&siteStatus=all&format=json').andReturn({
-            'status': 200,
-            'contentType': 'text/json',
-            'responseText': MOCK_DATA  /* eslint no-use-before-define: "ignore" */
-        });
-        getTimeseries({sites: [siteID], params: [paramCode]}, series => {
-            expect(series.length).toBe(1);
-            expect(series[0].code).toBe(paramCode);
-            expect(series[0].variableName).toBe('Streamflow, ft&#179;/s');
-            expect(series[0].variableDescription).toBe('Discharge, cubic feet per second');
-            expect(series[0].seriesStartDate).toEqual(new Date('1/2/2018, 3:00:00 PM -0600'));
-            expect(series[0].seriesEndDate).toEqual(new Date('1/9/2018, 2:15:00 PM -0600'));
-            expect(series[0].values.length).toBe(670);
-            done();
+
+        beforeEach(() => {
+            /* eslint no-use-before-define: "ignore" */
+            let getPromise = Promise.resolve(MOCK_DATA);
+
+            ajaxMock = {
+                get: function() {
+                    return getPromise;
+                }
+            };
+            spyOn(ajaxMock, 'get').and.callThrough();
+            models = proxyquire('./models', {'./ajax': ajaxMock});
         });
 
+        it('Get url includes paramCds and sites', () => {
+            models.getTimeseries({sites: [siteID], params: [paramCode]});
+            expect(ajaxMock.get).toHaveBeenCalled();
+            let ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
+            expect(ajaxUrl).toContain('sites=' + siteID);
+            expect(ajaxUrl).toContain('parameterCd=' + paramCode);
+
+            models.getTimeseries({sites: [siteID, '12345678'], params: [paramCode, '00080']});
+            ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
+            expect(ajaxUrl).toContain('sites=' + siteID + ',12345678');
+            expect(ajaxUrl).toContain('parameterCd=' + paramCode + ',00080');
+        });
+
+        it('Get url includes has the default time period if startDate and endDate are null', () => {
+            models.getTimeseries({sites: [siteID], params: [paramCode]});
+            let ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
+            expect(ajaxUrl).toContain('period=P7D');
+            expect(ajaxUrl).not.toContain('startDT');
+            expect(ajaxUrl).not.toContain('endDT');
+        });
+
+        it('Get url includes startDT and endDT when startDate and endDate are non-null', () =>{
+            const startDate = new Date('2018-01-02T15:00:00.000-06:00');
+            const endDate = new Date('2018-01-02T16:45:00.000-06:00');
+            models.getTimeseries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
+            let ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
+            expect(ajaxUrl).not.toContain('period=P7D');
+            expect(ajaxUrl).toContain('startDT=2018-01-02T21:00');
+            expect(ajaxUrl).toContain('endDT=2018-01-02T22:45');
+        });
+
+        it('getTimeseries parses valid response data', (done) => {
+            models.getTimeseries({sites: [siteID], params: [paramCode]}).then((series) => {
+                expect(series.length).toBe(1);
+                expect(series[0].code).toBe(paramCode);
+                expect(series[0].variableName).toBe('Streamflow, ft&#179;/s');
+                expect(series[0].variableDescription).
+                    toBe('Discharge, cubic feet per second');
+                expect(series[0].seriesStartDate).
+                    toEqual(new Date('1/2/2018, 3:00:00 PM -0600'));
+                expect(series[0].seriesEndDate).
+                    toEqual(new Date('1/9/2018, 2:15:00 PM -0600'));
+                expect(series[0].values.length).toBe(670);
+                done();
+            });
+        });
+
+        it('Uses current data service root if data requested is less than 120 days old', () => {
+            models.getTimeseries({sites: [siteID], params: [paramCode]});
+            expect(ajaxMock.get.calls.mostRecent().args[0]).toContain('https://waterservices.usgs.gov/nwis');
+
+            const startDate = new Date() - 110;
+            const endDate = new Date() - 10;
+            models.getTimeseries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
+            expect(ajaxMock.get.calls.mostRecent().args[0]).toContain('https://waterservices.usgs.gov/nwis');
+        });
+
+        it('Uses nwis data service root if data requested is more than 120 days old', () => {
+            const startDate = new Date() - 121;
+            const endDate = new Date() - 10;
+            models.getTimeseries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
+            expect(ajaxMock.get.calls.mostRecent().args[0]).toContain('https://nwis.waterservices.usgs.gov/nwis');
+        });
     });
 
-    it('parseRDB successfully parses RDB content', () => {
-       let result = parseRDB(MOCK_RDB);
-       expect(result.length).toEqual(13);
-       expect(Object.keys(result[0])).toEqual(['agency_cd', 'site_no', 'parameter_cd', 'ts_id', 'loc_web_ds', 'month_nu',
-           'day_nu', 'begin_yr', 'end_yr', 'count_nu', 'p50_va']);
-    });
+    describe('getPreviousYearTimeseries', () => {
+        let ajaxMock;
+        let models;
 
-    it('parseRDB handles no data', () => {
-       let result = parseRDB(MOCK_RDB_NO_DATA);
-       expect(result.length).toEqual(0);
-    });
+        const paramCode = '00060';
+        const siteID = '05413500';
 
-    it('parseRDB handles no headers', () => {
-       let result = parseRDB(`#Some Stuff`);
-       expect(result.length).toEqual(0);
-    });
+        const startDate = new Date('2018-01-02T15:00:00.000-06:00');
+        const endDate = new Date('2018-01-02T16:45:00.000-06:00');
 
-    it('parseMedian data successfully constructs data for plotting', () => {
-        let result = parseMedianData(MOCK_MEDIAN_DATA, MOCK_TIMESERIES);
-        expect(result.length).toEqual(3);
-        expect(result[0]).toEqual({time: new Date(2017, 7, 5), value: '15'});
-    });
+        beforeEach(() => {
+            /* eslint no-use-before-define: "ignore" */
+            let getPromise = Promise.resolve(MOCK_LAST_YEAR_DATA);
 
-    it('parseMedia data handles empty data', () => {
-        let result = parseMedianData([], []);
-        expect(result.length).toEqual(0);
-    });
+            ajaxMock = {
+                get: function() {
+                    return getPromise;
+                }
+            };
+            spyOn(ajaxMock, 'get').and.callThrough();
+            models = proxyquire('./models', {'./ajax': ajaxMock});
+        });
 
-    xit('getSiteStatistics returns a valid responsd', (done) => {
-       let siteID = '006713901';
+        it('Retrieves data using the startDT and endDT parameters', () => {
+            models.getPreviousYearTimeseries({site: siteID, startTime: startDate, endTime: endDate});
+            expect(ajaxMock.get).toHaveBeenCalled();
+            const ajaxArg = ajaxMock.get.calls.mostRecent().args[0];
+            expect(ajaxArg).toContain('startDT=2017-01-02T21:00');
+            expect(ajaxArg).toContain('endDT=2017-01-02T22:45');
+        });
 
-       jasmine.Ajax.stubRequest('https://waterservices.usgs.gov/nwis/stat/?format=rdb&sites=006713901&statReportType=daily&statTypeCd=median&parameterCd=00060').andReturn({
-           'status': 200,
-           'contentType': 'text/json',
-           'responseText': MOCK_RDB
-       });
+        it('Parses valid data', () => {
+            models.getPreviousYearTimeseries({site: siteID, startTime: startDate, endTime: endDate}).then((series) => {
+                expect(series.length).toBe(1);
+                expect(series[0].code).toBe(paramCode);
+                expect(series[0].variableName).toBe('Streamflow, ft&#179;/s');
+                expect(series[0].variableDescription).
+                    toBe('Discharge, cubic feet per second');
+                expect(series[0].seriesStartDate).
+                    toEqual(new Date('1/2/2017, 3:00:00 PM -0600'));
+                expect(series[0].seriesEndDate).
+                    toEqual(new Date('1/2/2017, 4:45:00 PM -0600'));
+                expect(series[0].values.length).toBe(8);
+                done();
+            });
+        })
 
-       getSiteStatistics({sites: [siteID]}).then((result) => {
-           expect(result).toBe(true);
-           done();
-       });
-    });
+
+    })
 });
 
+const MOCK_LAST_YEAR_DATA = `
+{"name" : "ns1:timeSeriesResponseType",
+"declaredType" : "org.cuahsi.waterml.TimeSeriesResponseType",
+"scope" : "javax.xml.bind.JAXBElement$GlobalScope",
+"value" : {
+  "queryInfo" : {
+    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=05413500&parameterCd=00060&period=P7D&indent=on&siteStatus=all&format=json",
+    "criteria" : {
+      "locationParam" : "[ALL:05413500]",
+      "variableParam" : "[00060]",
+      "parameter" : [ ]
+    },
+    "note" : [ {
+      "value" : "[ALL:05413500]",
+      "title" : "filter:sites"
+    }, {
+      "value" : "[mode=PERIOD, period=P7D, modifiedSince=null]",
+      "title" : "filter:timeRange"
+    }, {
+      "value" : "methodIds=[ALL]",
+      "title" : "filter:methodId"
+    }, {
+      "value" : "2017-01-09T20:46:07.542Z",
+      "title" : "requestDT"
+    }, {
+      "value" : "1df59e50-f57e-11e7-8ba8-6cae8b663fb6",
+      "title" : "requestId"
+    }, {
+      "value" : "Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.",
+      "title" : "disclaimer"
+    }, {
+      "value" : "vaas01",
+      "title" : "server"
+    } ]
+  },
+  "timeSeries" : [ {
+    "sourceInfo" : {
+      "siteName" : "GRANT RIVER AT BURTON, WI",
+      "siteCode" : [ {
+        "value" : "05413500",
+        "network" : "NWIS",
+        "agencyCode" : "USGS"
+      } ],
+      "timeZoneInfo" : {
+        "defaultTimeZone" : {
+          "zoneOffset" : "-06:00",
+          "zoneAbbreviation" : "CST"
+        },
+        "daylightSavingsTimeZone" : {
+          "zoneOffset" : "-05:00",
+          "zoneAbbreviation" : "CDT"
+        },
+        "siteUsesDaylightSavingsTime" : true
+      },
+      "geoLocation" : {
+        "geogLocation" : {
+          "srs" : "EPSG:4326",
+          "latitude" : 42.72027778,
+          "longitude" : -90.8191667
+        },
+        "localSiteXY" : [ ]
+      },
+      "note" : [ ],
+      "siteType" : [ ],
+      "siteProperty" : [ {
+        "value" : "ST",
+        "name" : "siteTypeCd"
+      }, {
+        "value" : "07060003",
+        "name" : "hucCd"
+      }, {
+        "value" : "55",
+        "name" : "stateCd"
+      }, {
+        "value" : "55043",
+        "name" : "countyCd"
+      } ]
+    },
+    "variable" : {
+      "variableCode" : [ {
+        "value" : "00060",
+        "network" : "NWIS",
+        "vocabulary" : "NWIS:UnitValues",
+        "variableID" : 45807197,
+        "default" : true
+      } ],
+      "variableName" : "Streamflow, ft&#179;/s",
+      "variableDescription" : "Discharge, cubic feet per second",
+      "valueType" : "Derived Value",
+      "unit" : {
+        "unitCode" : "ft3/s"
+      },
+      "options" : {
+        "option" : [ {
+          "name" : "Statistic",
+          "optionCode" : "00000"
+        } ]
+      },
+      "note" : [ ],
+      "noDataValue" : -999999.0,
+      "variableProperty" : [ ],
+      "oid" : "45807197"
+    },
+    "values" : [ {
+      "value" : [ {
+        "value" : "302",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T15:00:00.000-06:00"
+      }, {
+        "value" : "301",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T15:15:00.000-06:00"
+      }, {
+        "value" : "302",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T15:30:00.000-06:00"
+      }, {
+        "value" : "301",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T15:45:00.000-06:00"
+      }, {
+        "value" : "300",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T16:00:00.000-06:00"
+      }, {
+        "value" : "302",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T16:15:00.000-06:00"
+      }, {
+        "value" : "300",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T16:30:00.000-06:00"
+      }, {
+        "value" : "300",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T16:45:00.000-06:00"
+      }],
+      "qualifier" : [ {
+        "qualifierCode" : "P",
+        "qualifierDescription" : "Provisional data subject to revision.",
+        "qualifierID" : 0,
+        "network" : "NWIS",
+        "vocabulary" : "uv_rmk_cd"
+      } ],
+      "qualityControlLevel" : [ ],
+      "method" : [ {
+        "methodDescription" : "",
+        "methodID" : 158049
+      } ],
+      "source" : [ ],
+      "offset" : [ ],
+      "sample" : [ ],
+      "censorCode" : [ ]
+    } ],
+    "name" : "USGS:05413500:00060:00000"
+  } ]
+},
+"nil" : false,
+"globalScope" : true,
+"typeSubstituted" : false
+}`
+;
 
 const MOCK_DATA = `
 {"name" : "ns1:timeSeriesResponseType",
@@ -2890,101 +3113,3 @@ const MOCK_DATA = `
 "typeSubstituted" : false
 }
 `;
-
-const MOCK_RDB_NO_DATA = `#
-#
-# US Geological Survey, Water Resources Data
-# retrieved: 2018-01-25 16:05:49 -05:00	(natwebsdas01)
-#
-# This file contains USGS Daily Statistics
-#
-# Note:The statistics generated are based on approved daily-mean data and may not match those published by the USGS in official publications.
-# The user is responsible for assessment and use of statistics from this site.
-# For more details on why the statistics may not match, visit http://help.waterdata.usgs.gov/faq/about-statistics.
-#
-# Data heading explanations.
-# agency_cd       -- agency code
-# site_no         -- Site identification number
-# parameter_cd    -- Parameter code
-# station_nm      -- Site name
-# loc_web_ds      -- Additional measurement description
-#
-# Data for the following 1 site(s) are contained in this file
-# agency_cd   site_no      parameter_cd   station_nm (loc_web_ds)
-# USGS        05370000     00060          EAU GALLE RIVER AT SPRING VALLEY, WI
-#
-# Explanation of Parameter Codes
-# parameter_cd	Parameter Name
-# 00060         Discharge, cubic feet per second
-#
-# Data heading explanations.
-# month_nu    ... The month for which the statistics apply.
-# day_nu      ... The day for which the statistics apply.
-# begin_yr    ... First water year of data of daily mean values for this day.
-# end_yr      ... Last water year of data of daily mean values for this day.
-# count_nu    ... Number of values used in the calculation.
-# p50_va      ... 50 percentile (median) of daily mean values for this day.
-#
-agency_cd	site_no	parameter_cd	ts_id	loc_web_ds	month_nu	day_nu	begin_yr	end_yr	count_nu	p50_va
-`
-
-const MOCK_RDB = `#
-#
-# US Geological Survey, Water Resources Data
-# retrieved: 2018-01-25 16:05:49 -05:00	(natwebsdas01)
-#
-# This file contains USGS Daily Statistics
-#
-# Note:The statistics generated are based on approved daily-mean data and may not match those published by the USGS in official publications.
-# The user is responsible for assessment and use of statistics from this site.
-# For more details on why the statistics may not match, visit http://help.waterdata.usgs.gov/faq/about-statistics.
-#
-# Data heading explanations.
-# agency_cd       -- agency code
-# site_no         -- Site identification number
-# parameter_cd    -- Parameter code
-# station_nm      -- Site name
-# loc_web_ds      -- Additional measurement description
-#
-# Data for the following 1 site(s) are contained in this file
-# agency_cd   site_no      parameter_cd   station_nm (loc_web_ds)
-# USGS        05370000     00060          EAU GALLE RIVER AT SPRING VALLEY, WI
-#
-# Explanation of Parameter Codes
-# parameter_cd	Parameter Name
-# 00060         Discharge, cubic feet per second
-#
-# Data heading explanations.
-# month_nu    ... The month for which the statistics apply.
-# day_nu      ... The day for which the statistics apply.
-# begin_yr    ... First water year of data of daily mean values for this day.
-# end_yr      ... Last water year of data of daily mean values for this day.
-# count_nu    ... Number of values used in the calculation.
-# p50_va      ... 50 percentile (median) of daily mean values for this day.
-#
-agency_cd	site_no	parameter_cd	ts_id	loc_web_ds	month_nu	day_nu	begin_yr	end_yr	count_nu	p50_va
-5s	15s	5s	10n	15s	3n	3n	6n	6n	8n	12s
-USGS	05370000	00060	153885		1	1	1969	2017	49	16
-USGS	05370000	00060	153885		1	2	1969	2017	49	16
-USGS	05370000	00060	153885		1	3	1969	2017	49	16
-USGS	05370000	00060	153885		1	4	1969	2017	49	15
-USGS	05370000	00060	153885		1	5	1969	2017	49	15
-USGS	05370000	00060	153885		1	6	1969	2017	49	15
-USGS	05370000	00060	153885		1	7	1969	2017	49	15
-USGS	05370000	00060	153885		1	8	1969	2017	49	15
-USGS	05370000	00060	153885		1	9	1969	2017	49	15
-USGS	05370000	00060	153885		1	10	1969	2017	49	15
-USGS	05370000	00060	153885		1	11	1969	2017	49	15
-USGS	05370000	00060	153885		1	12	1969	2017	49	15
-USGS	05370000	00060	153885		1	13	1969	2017	49	15
-`;
-
-const MOCK_MEDIAN_DATA = [
-    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '1', day_nu: '1', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '16'},
-    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '1', day_nu: '13', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '15'},
-    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '8', day_nu: '5', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '15'}
-];
-const MOCK_TIMESERIES = [
-    {'time': new Date(2018, 0, 10), 'value': 21.02},
-    {'time': new Date(2018, 0, 13), 'value': 22.15}
-];

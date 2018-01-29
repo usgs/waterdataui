@@ -1,16 +1,16 @@
 /**
  * Hydrograph charting module.
  */
-const { bisector } = require('d3-array');
+const { bisector, extent, min, max } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
 const { timeFormat } = require('d3-time-format');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
-const { getTimeseries, getSiteStatistics, parseRDB, readTS, parseMedianData } = require('../../models');
+const { getTimeseries, getPreviousYearTimeseries, getSiteStatistics, parseRDB, readTS, parseMedianData } = require('../../models');
 
-const { appendAxes, createAxes } = require('./axes');
-const { createScales } = require('./scales');
+const { appendAxes, updateYAxis, createAxes } = require('./axes');
+const { createScales, createXScale, updateYScale } = require('./scales');
 
 
 // Define width, height and margin for the SVG.
@@ -44,24 +44,75 @@ class Hydrograph {
      * @param {Node} element Dom node to insert
      */
     constructor({data=[], medianStats=[], yLabel='Data', title='', desc='', element}) {
-        this._data = data;
-        this._medianStats = medianStats;
         this._yLabel = yLabel;
         this._title = title;
         this._desc = desc;
         this._element = element;
+        this._tsData = {};
 
-        if (this._data && this._data.length) {
+        if (data && data.length) {
+            this._tsData.current = data;
             this._drawChart();
         } else {
             this._drawMessage('No data is available for this site.');
         }
     }
 
+    /**
+     * Add a new time series to the Hydrograph. The time series is assumed to be
+     * data that is over the same date range in a different year.
+     * @param {Array} data - IV data as returned by models.getTimeseires
+     */
+    addCompareTimeSeries(data) {
+        //Save data - will be needed in order to implement the tooltips
+        this._tsData.compare = data;
+
+        // Update the yScale by determining the new extent
+        const currentYExtent = extent(this._tsData.current, d => d.value);
+        const yExtent = extent(data, d => d.value);
+        const yDataExtent = [min([yExtent[0], currentYExtent[0]]), max([yExtent[1], currentYExtent[1]])];
+        updateYScale(this.scale.yScale, yDataExtent);
+
+        // Create a x scale for the new data
+        const xScale = createXScale(data, WIDTH - MARGIN.right);
+
+        // Update the yAxis
+        updateYAxis(this.axis.yAxis, this.scale.yScale);
+        this.svg.select('.y-axis')
+            .call(this.axis.yAxis);
+
+        //Update the current ts line
+        select('#ts-current')
+            .attr('d', this.currentLine(this._tsData.current));
+
+        // Add the new time series
+        this._plotDataLine(this.plot, {xScale: xScale, yScale: this.scale.yScale}, 'compare');
+    }
+
+    /**
+     * Remove the compare time series from the plot and rescale
+     */
+    removeCompareTimeSeries() {
+        // Remove the compare time series
+        this.svg.select('#ts-compare').remove();
+        this.svg.select('.x-top-axis').remove();
+        delete this._tsData.compare;
+
+        // Update the y scale and  redraw the axis
+        const currentYExtent = extent(this._tsData.current, d => d.value);
+        updateYScale(this.scale.yScale, currentYExtent);
+        updateYAxis(this.axis.yAxis, this.scale.yScale);
+        this.svg.select('.y-axis')
+            .call(this.axis.yAxis);
+
+        //Redraw the current ts
+        select('#ts-current')
+            .attr('d', this.currentLine(this._tsData.current));
+    }
+
     _drawChart() {
         // Set up parent element and SVG
-        this._element.innerHTML = '';
-        const svg = select(this._element)
+        this.svg = select(this._element)
             .append('div')
             .attr('class', 'hydrograph-container')
             .style('padding-bottom', ASPECT_RATIO_PERCENT)
@@ -70,7 +121,7 @@ class Hydrograph {
             .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`);
 
         addSVGAccessibility({
-            svg: svg,
+            svg: this.svg,
             title: this._title,
             description: this._desc,
             isInteractive: true
@@ -79,35 +130,35 @@ class Hydrograph {
         addSROnlyTable({
             container: this._element,
             columnNames: [this._title, 'Time'],
-            data: this._data.map((value) => {
+            data: this._tsData.current.map((value) => {
                 return [value.value, value.time];
             })
         });
         // We'll actually be appending to a <g> element
-        const plot = svg.append('g')
+        this.plot = this.svg.append('g')
             .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
         const legend = svg.append('g');
 
         // Create x/y scaling for the full (100%) view.
-        const {xScale, yScale} = createScales(
-            this._data,
+        this.scale = createScales(
+            this._tsData.current,
             WIDTH - MARGIN.right,
             HEIGHT - (MARGIN.top + MARGIN.bottom)
         );
-        const {xAxis, yAxis} = createAxes(xScale, yScale, -WIDTH + MARGIN.right);
+        this.axis = createAxes(this.scale.xScale, this.scale.yScale, -WIDTH + MARGIN.right);
 
         // Draw the graph components with the given scaling.
         appendAxes({
-            plot,
-            xAxis,
-            yAxis,
+            plot: this.plot,
+            xAxis: this.axis.xAxis,
+            yAxis: this.axis.yAxis,
             xLoc: {x: 0, y: HEIGHT - (MARGIN.top + MARGIN.bottom)},
             yLoc: {x: 0, y: 0},
             yLabelLoc: {x: HEIGHT / -2 + MARGIN.top, y: -35},
             yTitle: this._yLabel
         });
-        this._plotDataLine(plot, xScale, yScale);
+        this.currentLine = this._plotDataLine(this.plot, this.scale, 'current');
         this._plotMedianPoints(plot, xScale, yScale);
         this._plotTooltips(plot, xScale, yScale);
     }
@@ -127,15 +178,17 @@ class Hydrograph {
             .html(message);
     }
 
-    _plotDataLine(plot, xScale, yScale) {
-        const newLine = line()
-            .x(d => xScale(d.time))
-            .y(d => yScale(d.value));
+    _plotDataLine(plot, scale, tsDataKey) {
+        let tsLine = line()
+            .x(d => scale.xScale(d.time))
+            .y(d => scale.yScale(d.value));
 
         plot.append('path')
-            .datum(this._data)
+            .datum(this._tsData[tsDataKey])
             .classed('line', true)
-            .attr('d', newLine);
+            .attr('id', 'ts-' + tsDataKey)
+            .attr('d', tsLine);
+        return tsLine;
     }
 
     _plotMedianPoints(plot, xScale, yScale) {
@@ -177,8 +230,8 @@ class Hydrograph {
         // Create legend for the plot
     }
 
-    _plotTooltips(plot, xScale, yScale) {
-        // Create a node to highlight the currently selected date/time.
+    _plotTooltips(plot, scale, tsDataKey) {
+        // Create a node to hightlight the currently selected date/time.
         let focus = plot.append('g')
             .attr('class', 'focus')
             .style('display', 'none');
@@ -196,15 +249,15 @@ class Hydrograph {
             .on('mouseout', () => focus.style('display', 'none'))
             .on('mousemove', (d, i, nodes) => {
                 // Get the nearest data point for the current mouse position.
-                let time = xScale.invert(mouse(nodes[i])[0]);
-                let {datum, index} = this._getNearestTime(time);
+                let time = scale.xScale.invert(mouse(nodes[i])[0]);
+                let {datum, index} = this._getNearestTime(time, tsDataKey);
 
                 // Move the focus node to this date/time.
-                focus.attr('transform', `translate(${xScale(datum.time)}, ${yScale(datum.value)})`);
+                focus.attr('transform', `translate(${scale.xScale(datum.time)}, ${scale.yScale(datum.value)})`);
 
                 // Draw text, anchored to the left or right, depending on
                 // which side of the graph the point is on.
-                let isFirstHalf = index < this._data.length / 2;
+                let isFirstHalf = index < this._tsData[tsDataKey].length / 2;
                 focus.select('text')
                     .text(() => datum.label)
                     .attr('text-anchor', isFirstHalf ? 'start' : 'end')
@@ -213,12 +266,12 @@ class Hydrograph {
             });
     }
 
-    _getNearestTime(time) {
-        let index = bisectDate(this._data, time, 1);
+    _getNearestTime(time, tsDataKey) {
+        let index = bisectDate(this._tsData[tsDataKey], time, 1);
 
         let datum;
-        let d0 = this._data[index - 1];
-        let d1 = this._data[index];
+        let d0 = this._tsData[tsDataKey][index - 1];
+        let d1 = this._tsData[tsDataKey][index];
         if (d0 && d1) {
             datum = time - d0.time > d1.time - time ? d1 : d0;
         } else {
@@ -235,23 +288,45 @@ class Hydrograph {
 
 
 function attachToNode(node, {siteno}) {
-    let ts = getTimeseries({sites: [siteno]});
-    let medianStats = getSiteStatistics({sites: [siteno]});
-    Promise.all([ts, medianStats]).then(function(values) {
-        let tsDataResp = values[0];
-        let medianStatsResp = values[1];
-        let series = readTS(tsDataResp);
-        let medianStats = parseMedianData(parseRDB(medianStatsResp), series[0].values);
-        let dataIsValid = series[0] && !series[0].values.some(d => d.value === -999999);
-        new Hydrograph({
-            element: node,
-            data: dataIsValid ? series[0].values: [],
-            medianStats: medianStats,
-            yLabel: dataIsValid ? series[0].variableDescription : 'No data',
-            title: dataIsValid ? series[0].variableName : '',
-            desc: dataIsValid ? series[0].variableDescription + ' from ' + formatTime(series[0].seriesStartDate) + ' to ' + formatTime(series[0].seriesEndDate) : ''
+    let hydrograph;
+    let getLastYearTS;
+    getTimeseries({sites: [siteno]}).then((series) => {
+            let dataIsValid = series && series[0] &&
+                !series[0].values.some(d => d.value === -999999);
+            hydrograph = new Hydrograph({
+                element: node,
+                data: dataIsValid ? series[0].values : [],
+                yLabel: dataIsValid ? series[0].variableDescription : 'No data',
+                title: dataIsValid ? series[0].variableName : '',
+                desc: dataIsValid ? series[0].variableDescription + ' from ' +
+                    formatTime(series[0].seriesStartDate) + ' to ' +
+                    formatTime(series[0].seriesEndDate) : ''
+            });
+            if (dataIsValid) {
+                getLastYearTS = getPreviousYearTimeseries({
+                    site: node.dataset.siteno,
+                    startTime: series[0].seriesStartDate,
+                    endTime: series[0].seriesEndDate
+                });
+            }
+        }, () =>
+            hydrograph = new Hydrograph({
+                element: node,
+                data: []
+            })
+    );
+    let lastYearInput = node.getElementsByClassName('hydrograph-last-year-input');
+    if (lastYearInput.length > 0) {
+        lastYearInput[0].addEventListener('change', (evt) => {
+            if (evt.target.checked) {
+                getLastYearTS.then((series) => {
+                    hydrograph.addCompareTimeSeries(series[0].values);
+                });
+            } else {
+                hydrograph.removeCompareTimeSeries();
+            }
         });
-    });
+    }
 }
 
 module.exports = {Hydrograph, attachToNode};
