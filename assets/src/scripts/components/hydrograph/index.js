@@ -1,7 +1,7 @@
 /**
  * Hydrograph charting module.
  */
-const { bisector, extent, min, max } = require('d3-array');
+const { bisector, extent, min, max, range } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
 const { timeFormat } = require('d3-time-format');
@@ -170,6 +170,7 @@ class Hydrograph {
         this.currentLine = this._plotDataLine(this.plot, this.scale, 'current');
         this.medianPoints = this._plotMedianPoints();
         this._plotTooltips(this.plot, this.scale, 'current');
+        this._plotLegend();
     }
 
     _drawMessage(message) {
@@ -237,6 +238,37 @@ class Hydrograph {
             .attr('y', function(d) {
                 return yscale(d.value);
             });
+    }
+
+    _plotLegend() {
+
+        let legend = this.svg.selectAll('.legend')
+            .data([3])
+            .enter()
+            .append('g')
+            .attr('class', 'legend')
+            .attr('transform', function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+        legend.append('line')
+            .attr('id', 'ts-compare')
+            .attr('x1', 200)
+            .attr('x2', 220)
+            .attr('y1', 290)
+            .attr('y2', 290)
+            .style("stroke", "black");
+
+        legend.append('text')
+            .attr('x', 230)
+            .attr('y', 290)
+            .text('Previous');
+
+        legend.append('circle')
+            .attr('r', '4px')
+            .attr('x', 310)
+            .attr('y', 290)
+            .attr('cx', 310)
+            .attr('cy', 290)
+            .attr('fill', 'orange');
     }
 
     _plotTooltips(plot, scale, tsDataKey) {
