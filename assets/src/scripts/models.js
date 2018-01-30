@@ -106,7 +106,16 @@ export function parseRDB(rdbData) {
  * @returns {boolean}
  */
 export function isLeapYear(year) {
-    return (year % 4) === 0;
+    let leapYear = (year % 4) === 0;
+    if ((year % 100) === 0) {
+        if ((year % 400) === 0) {
+            leapYear = true;
+        }
+        else {
+            leapYear = false;
+        }
+    }
+    return leapYear;
 }
 
 /**

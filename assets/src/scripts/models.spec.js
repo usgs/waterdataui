@@ -211,13 +211,20 @@ describe('Models module', () => {
 
     describe('isLeapYear', () => {
 
-        it('Correctly identifies a leap year', () => {
+        it('Correctly identifies a century leap year', () => {
             expect(isLeapYear(2000)).toBeTruthy();
         });
 
-        it('Correclty identifies a non-leap year', () => {
-            expect(isLeapYear(2003)).toBeFalsy();
+        it('Correctly identifies a non-century leap year', () => {
+            expect(isLeapYear(2008)).toBeTruthy();
+        });
 
+        it('Correctly identifies a non-leap year', () => {
+            expect(isLeapYear(2003)).toBeFalsy();
+        });
+
+        it('Correctly identifies 1900 as a non-leap year', () => {
+            expect(isLeapYear(1900)).toBeFalsy();
         });
     });
 });
