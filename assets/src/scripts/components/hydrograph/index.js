@@ -207,9 +207,7 @@ class Hydrograph {
             .data(this._medianStatsData)
             .enter()
             .append('circle')
-            .attr('r', '4px')
             .attr('id', 'median-point')
-            .attr('fill', 'orange')
             .attr('x', function(d) {
                 return xscale(d.time);
             })
