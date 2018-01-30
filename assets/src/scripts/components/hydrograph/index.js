@@ -152,8 +152,6 @@ class Hydrograph {
         this.plot = this.svg.append('g')
             .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
-        this.legend = this.svg.append('g');
-
         // Create x/y scaling for the full (100%) view.
         this.scale = createScales(
             this._tsData.current.concat(this._medianStatsData),
@@ -175,7 +173,6 @@ class Hydrograph {
         this.currentLine = this._plotDataLine(this.plot, this.scale, 'current');
         this.medianPoints = this._plotMedianPoints();
         this._plotTooltips(this.plot, this.scale, 'current');
-        this._plotLegend();
     }
 
     _drawMessage(message) {
@@ -243,29 +240,6 @@ class Hydrograph {
             .attr('y', function(d) {
                 return yscale(d.value);
             });
-    }
-
-    _plotLegend() {
-        // Create legend for the plot
-        let circle = symbol()
-            .type(symbolCircle)();
-
-        let symbolScale = scaleOrdinal()
-            .domain(['my circle'])
-            .range([circle]);
-
-        this.legend
-            .attr('class', 'legend')
-            .attr('transform', 'translate(20, 20)');
-
-        let legendPath = legendSymbol()
-            .scale(symbolScale)
-            .orient('horizontal')
-            .title('Test Legend')
-            .labelWrap(80);
-
-        this.svg.select('.legend')
-            .call(legendPath);
     }
 
     _plotTooltips(plot, scale, tsDataKey) {
