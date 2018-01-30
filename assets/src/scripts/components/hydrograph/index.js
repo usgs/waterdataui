@@ -1,13 +1,10 @@
 /**
  * Hydrograph charting module.
  */
-require('d3');
 const { bisector, extent, min, max } = require('d3-array');
 const { mouse, select } = require('d3-selection');
-const { line, symbol, symbolCircle } = require('d3-shape');
-const { scaleOrdinal } = require('d3-scale');
+const { line } = require('d3-shape');
 const { timeFormat } = require('d3-time-format');
-const { legendSymbol } = require('d3-svg-legend');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { getTimeseries, getPreviousYearTimeseries, getMedianStatistics, parseMedianData } = require('../../models');
