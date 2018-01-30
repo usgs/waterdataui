@@ -17,11 +17,12 @@ const { createScales, createXScale, updateYScale } = require('./scales');
 // Use a fixed size, and scale to device width using CSS.
 const WIDTH = 800;
 const HEIGHT = WIDTH / 2;
+
 const ASPECT_RATIO_PERCENT = `${100 * HEIGHT / WIDTH}%`;
 const MARGIN = {
     top: 20,
     right: 75,
-    bottom: 45,
+    bottom: 50,
     left: 50
 };
 
@@ -243,32 +244,47 @@ class Hydrograph {
     _plotLegend() {
 
         let legend = this.svg.selectAll('.legend')
-            .data([3])
+            .data([0])
             .enter()
             .append('g')
             .attr('class', 'legend')
-            .attr('transform', function(d, i) { return "translate(0," + i * 20 + ")"; });
+            .attr('transform', `translate(50, ${HEIGHT-15})`)
 
-        legend.append('line')
+        let legendGroup1 = legend.append('g');
+
+        let compareMarker = legendGroup1.append('line')
             .attr('id', 'ts-compare')
-            .attr('x1', 200)
-            .attr('x2', 220)
-            .attr('y1', 290)
-            .attr('y2', 290)
+            .attr('x1', 0)
+            .attr('x2', 20)
+            .attr('y1', -4)
+            .attr('y2', -4)
             .style("stroke", "black");
 
-        legend.append('text')
-            .attr('x', 230)
-            .attr('y', 290)
-            .text('Previous');
+        let compareMarkerWidth = compareMarker.node().getBBox().width;
 
-        legend.append('circle')
+        legendGroup1.append('text')
+            .attr('x', compareMarkerWidth + 5)
+            .attr('y', 0)
+            .text('Previous Year');
+
+        let legendGroup1Width = legendGroup1.node().getBBox().width;
+
+        let legendGroup2 = legend.append('g');
+
+        let circleMarker = legendGroup2.append('circle')
             .attr('r', '4px')
-            .attr('x', 310)
-            .attr('y', 290)
-            .attr('cx', 310)
-            .attr('cy', 290)
+            .attr('x', legendGroup1Width+10)
+            .attr('y', -4)
+            .attr('cx', legendGroup1Width+10)
+            .attr('cy', -4)
             .attr('fill', 'orange');
+
+        let circleMarkerWidth = circleMarker.node().getBBox().width;
+
+        legendGroup2.append('text')
+            .attr('x', legendGroup1Width + circleMarkerWidth + 10)
+            .attr('y', 0)
+            .text('Median Discharge');
     }
 
     _plotTooltips(plot, scale, tsDataKey) {
