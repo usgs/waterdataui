@@ -160,22 +160,23 @@ describe('Models module', () => {
         });
     });
 
-    xdescribe('parseMedianData', () => {
+    describe('parseMedianData', () => {
         it('parseMedian data successfully constructs data for plotting', () => {
             let result = parseMedianData(MOCK_MEDIAN_DATA, MOCK_TIMESERIES);
             expect(result.length).toEqual(3);
-            expect(result[0]).toEqual({time: new Date(2017, 7, 5), value: '15'});
+            expect(result[0]).toEqual({time: new Date(2017, 7, 5), value: '15', label: '15 ft3/s'});
         });
 
-        it('parseMedia data handles empty data', () => {
+        it('parseMedian data handles empty data', () => {
             let result = parseMedianData([], []);
             expect(result.length).toEqual(0);
         });
 
-        it('parseMedia data handles empty data', () => {
-            let result = parseMedianData([], []);
-            expect(result.length).toEqual(0);
-        });
+        it('parseMedian data includes leap year when appropriate', () => {
+            let result = parseMedianData(MOCK_MEDIAN_DATA, MOCK_TIMESERIES_LEAP_YEAR);
+            expect(result.length).toEqual(4);
+            expect(result[3]).toEqual({time: new Date(2016, 1, 29), value: '13', label: '13 ft3/s'});
+        })
     });
 
     describe('getSiteStatistics', () => {
@@ -3249,10 +3250,17 @@ agency_cd	site_no	parameter_cd	ts_id	loc_web_ds	month_nu	day_nu	begin_yr	end_yr	
 const MOCK_MEDIAN_DATA = [
     {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '1', day_nu: '1', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '16'},
     {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '1', day_nu: '13', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '15'},
-    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '8', day_nu: '5', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '15'}
+    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '8', day_nu: '5', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '15'},
+    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '2', day_nu: '29', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '13'}
 ];
 
 const MOCK_TIMESERIES = [
-    {'time': new Date(2018, 0, 10), 'value': 21.02},
-    {'time': new Date(2018, 0, 13), 'value': 22.15}
+    {time: new Date(2018, 0, 10), value: 21.02, label: '01/10/2018 21.02 ft3/s'},
+    {time: new Date(2018, 0, 13), value: 22.15, label: '01/13/2018 22.15 ft3/s'}
+];
+
+const MOCK_TIMESERIES_LEAP_YEAR = [
+    {time: new Date(2016, 0, 10), value: 21.02, label: '01/10/2018 21.02 ft3/s'},
+    {time: new Date(2016, 0, 13), value: 22.15, label: '01/13/2018 22.15 ft3/s'},
+    {time: new Date(2016, 2, 14), value: 25.88, label: '03/14/2018 25.88 ft3/s'}
 ];
