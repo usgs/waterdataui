@@ -70,7 +70,7 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
                 return error;
             });
 }
-export function getSiteStatistics({sites, statType='median', params=['00060']}) {
+export function getSiteStatistics({sites, statType, params=['00060']}) {
     let url = `${SERVICE_ROOT}/stat/?format=rdb&sites=${sites.join(',')}&statReportType=daily&statTypeCd=${statType}&parameterCd=${params.join(',')}`;
     return get(url);
 }
@@ -162,30 +162,6 @@ export function parseMedianData(medianData, timeSeries) {
         }).slice(data.length-days, data.length);
     }
     return sliceData;
-}
-
-
-export function readTS(dataStr) {
-    let data = JSON.parse(dataStr);
-    return data.value.timeSeries.map(series => {
-        let startDate = new Date(series.values[0].value[0].dateTime);
-        let endDate = new Date(series.values[0].value.slice(-1)[0].dateTime);
-        return {
-            code: series.variable.variableCode[0].value,
-            variableName: series.variable.variableName,
-            variableDescription: series.variable.variableDescription,
-            seriesStartDate: startDate,
-            seriesEndDate: endDate,
-            values: series.values[0].value.map(value => {
-                let date = new Date(value.dateTime);
-                return {
-                    time: date,
-                    value: parseFloat(value.value),
-                    label: `${formatTime(date)}\n${value.value} ${series.variable.unit.unitCode}`
-                };
-            })
-        };
-    });
 }
 
 export function getPreviousYearTimeseries({site, startTime, endTime}) {

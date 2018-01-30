@@ -1,6 +1,6 @@
 let proxyquire = require('proxyquireify')(require);
 
-const { parseRDB, parseMedianData, getSiteStatistics } = require('./models');
+const { parseRDB, parseMedianData, isLeapYear } = require('./models');
 
 
 describe('Models module', () => {
@@ -180,7 +180,45 @@ describe('Models module', () => {
     });
 
     describe('getSiteStatistics', () => {
+        let ajaxMock;
+        let models;
 
+        const sites = ['05370000'];
+        const statType = 'median';
+        const params = ['00060'];
+
+        beforeEach(() => {
+            let getPromise = Promise.resolve(MOCK_RDB);
+
+            ajaxMock = {
+                get: function() {
+                    return getPromise;
+                }
+            };
+            spyOn(ajaxMock, 'get').and.callThrough();
+            models = proxyquire('./models', {'./ajax': ajaxMock});
+        });
+
+        it('Gets a full year of statistical data', () => {
+            models.getSiteStatistics({sites: sites, statType: statType, params: params});
+            expect(ajaxMock.get).toHaveBeenCalled();
+            let ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
+            expect(ajaxUrl).toContain('statTypeCd=median');
+            expect(ajaxUrl).toContain('parameterCd=00060');
+            expect(ajaxUrl).toContain('sites=05370000');
+        });
+    });
+
+    describe('isLeapYear', () => {
+
+        it('Correctly identifies a leap year', () => {
+            expect(isLeapYear(2000)).toBeTruthy();
+        });
+
+        it('Correclty identifies a non-leap year', () => {
+            expect(isLeapYear(2003)).toBeFalsy();
+
+        });
     });
 });
 
