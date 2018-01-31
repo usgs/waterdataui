@@ -161,19 +161,27 @@ describe('Models module', () => {
     });
 
     describe('parseMedianData', () => {
+
+        const unit = 'ft3/s';
+
+        const startDate = new Date(2018, 0, 10);
+        const endDate = new Date(2018, 0, 13);
+        const leapStartDate = new Date(2016, 0, 10);
+        const leapEndDate = new Date(2016, 2, 14);
+
         it('parseMedian data successfully constructs data for plotting', () => {
-            let result = parseMedianData(MOCK_MEDIAN_DATA, MOCK_TIMESERIES);
+            let result = parseMedianData(MOCK_MEDIAN_DATA, startDate, endDate, unit);
             expect(result.length).toEqual(3);
             expect(result[0]).toEqual({time: new Date(2017, 7, 5), value: '15', label: '15 ft3/s'});
         });
 
         it('parseMedian data handles empty data', () => {
-            let result = parseMedianData([], []);
+            let result = parseMedianData([], startDate, endDate, unit);
             expect(result.length).toEqual(0);
         });
 
         it('parseMedian data includes leap year when appropriate', () => {
-            let result = parseMedianData(MOCK_MEDIAN_DATA, MOCK_TIMESERIES_LEAP_YEAR);
+            let result = parseMedianData(MOCK_MEDIAN_DATA, leapStartDate, leapEndDate, unit);
             expect(result.length).toEqual(4);
             expect(result[3]).toEqual({time: new Date(2016, 1, 29), value: '13', label: '13 ft3/s'});
         })
