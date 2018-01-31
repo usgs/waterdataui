@@ -247,7 +247,7 @@ class Hydrograph {
             .enter()
             .append('g')
             .attr('class', 'legend')
-            .attr('transform', `translate(50, ${HEIGHT-15})`)
+            .attr('transform', `translate(50, ${HEIGHT-15})`);
 
         let legendGroup1 = legend.append('g');
 
@@ -266,24 +266,44 @@ class Hydrograph {
             .attr('y', 0)
             .text('Previous Year');
 
-        let legendGroup1Width = legendGroup1.node().getBBox().width;
+        let legendGroup1Box = legendGroup1.node().getBBox();
 
         let legendGroup2 = legend.append('g');
 
         let circleMarker = legendGroup2.append('circle')
             .attr('r', '4px')
-            .attr('x', legendGroup1Width+10)
+            .attr('x', legendGroup1Box.x + legendGroup1Box.width + 40)
             .attr('y', -4)
-            .attr('cx', legendGroup1Width+10)
+            .attr('cx', legendGroup1Box.x + legendGroup1Box.width + 40)
             .attr('cy', -4)
-            .attr('fill', 'orange');
+            .attr('fill', '#f96713');
 
-        let circleMarkerWidth = circleMarker.node().getBBox().width;
+        let circleMarkerBox = circleMarker.node().getBBox();
 
         legendGroup2.append('text')
-            .attr('x', legendGroup1Width + circleMarkerWidth + 10)
+            .attr('x', circleMarkerBox.x + circleMarkerBox.width + 10)
             .attr('y', 0)
             .text('Median Discharge');
+
+        let legendGroup2Box= legendGroup2.node().getBBox();
+
+        let legendGroup3 = legend.append('g');
+
+        let tsMarker = legendGroup3.append('line')
+            .attr('class', 'line')
+            .attr('x1', legendGroup2Box.x + legendGroup2Box.width + 40)
+            .attr('x2', legendGroup2Box.x + legendGroup2Box.width + 60)
+            .attr('y1', -4)
+            .attr('y2', -4)
+            .style("stroke", "#02274B");
+
+        let tsMarkerBox = tsMarker.node().getBBox();
+
+        legendGroup3.append('text')
+            .attr('x', tsMarkerBox.x + tsMarkerBox.width + 10)
+            .attr('y', 0)
+            .text('Current Year');
+
     }
 
     _plotTooltips(plot, scale, tsDataKey) {
