@@ -106,7 +106,16 @@ export function parseRDB(rdbData) {
  * @returns {boolean}
  */
 export function isLeapYear(year) {
-    return (year % 4) === 0;
+    let leapYear = (year % 4) === 0;
+    if ((year % 100) === 0) {
+        if ((year % 400) === 0) {
+            leapYear = true;
+        }
+        else {
+            leapYear = false;
+        }
+    }
+    return leapYear;
 }
 
 /**
@@ -117,32 +126,27 @@ export function isLeapYear(year) {
  * @params subsetDays
  * @returns {Array}
  */
-export function parseMedianData(medianData, timeSeries) {
+export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, timeSeriesUnit) {
     let data = [];
     let sliceData = [];
-    if (medianData.length > 0 && timeSeries.length > 0) {
-        let lastTSRecord = timeSeries[timeSeries.length - 1];
-        let lastTsDate = lastTSRecord.time;
-        let yearPresent = lastTsDate.getFullYear();
-        let lastTsDay = lastTsDate.getDate();
+    if (medianData.length > 0) {
+        let yearPresent = timeSeriesEndDateTime.getFullYear();
+        let lastTsDay = timeSeriesEndDateTime.getDate();
         let yearPrevious = yearPresent - 1;
-        let lastTsLabel = lastTSRecord.label.split(' ');
-        let unit = lastTsLabel[lastTsLabel.length - 1];
         // calculate the number of days to display
-        let firstTSRecord = timeSeries[0];
-        let firstTsDay = firstTSRecord.time.getDate();
+        let firstTsDay = timeSeriesStartDateTime.getDate();
         let days = lastTsDay - firstTsDay;
         for (let medianDatum of medianData) {
             let month = medianDatum.month_nu-1;
             let day = medianDatum.day_nu;
             let recordDate = new Date(yearPresent, month, day);
-            if (!(new Date(yearPresent, 0, 1) <= recordDate && recordDate <= lastTsDate)) {
+            if (!(new Date(yearPresent, 0, 1) <= recordDate && recordDate <= timeSeriesEndDateTime)) {
                 recordDate = new Date(yearPrevious, month, day);
             }
             let median = {
                 time: recordDate,
                 value: medianDatum.p50_va,
-                label: `${medianDatum.p50_va} ${unit}`
+                label: `${medianDatum.p50_va} ${timeSeriesUnit}`
             };
             // don't include leap days if it's not a leap year
             if (!isLeapYear(recordDate.getFullYear())) {
