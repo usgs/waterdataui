@@ -8,6 +8,7 @@ const { timeFormat } = require('d3-time-format');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { getTimeseries, getPreviousYearTimeseries, getMedianStatistics, parseMedianData } = require('../../models');
+const { unicodeHtmlEntity, getHtmlFromString } = require('../../utils');
 
 const { appendAxes, updateYAxis, createAxes } = require('./axes');
 const { createScales, createXScale, updateYScale } = require('./scales');
@@ -301,8 +302,18 @@ function attachToNode(node, {siteno}) {
     let medianStatistics = getMedianStatistics({sites: [siteno]});
     Promise.all([timeSeries, medianStatistics]).then((data) => {
         let series = data[0];
+        let unit = series[0].variableName.split(' ').pop();
+        let htmlEntities = getHtmlFromString(unit);
+        if (htmlEntities !== null) {
+            for (let htmlEntity of htmlEntities) {
+                let unicodeEntity = unicodeHtmlEntity(htmlEntity);
+                unit = unit.replace(htmlEntity, unicodeEntity);
+            }
+        }
         let stats = data[1];
-        let plotableStats = parseMedianData(stats, series[0].values);
+        let seriesStartDate = series[0].seriesStartDate;
+        let seriesEndDate = series[0].seriesEndDate;
+        let plotableStats = parseMedianData(stats, seriesStartDate, seriesEndDate, unit);
         let dataIsValid = series && series[0] &&
             !series[0].values.some(d => d.value === -999999);
         hydrograph = new Hydrograph({
@@ -318,8 +329,8 @@ function attachToNode(node, {siteno}) {
         if (dataIsValid) {
             getLastYearTS = getPreviousYearTimeseries({
                 site: node.dataset.siteno,
-                startTime: series[0].seriesStartDate,
-                endTime: series[0].seriesEndDate
+                startTime: seriesStartDate,
+                endTime: seriesEndDate
             });
         }
     }, () => {
