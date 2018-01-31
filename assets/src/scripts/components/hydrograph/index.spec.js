@@ -66,7 +66,7 @@ describe('Hydrograph charting module', () => {
     describe('Renders real data from site #05370000', () => {
         /* eslint no-use-before-define: "ignore" */
         beforeEach(() => {
-            new Hydrograph({element: graphNode, data: MOCK_DATA});
+            new Hydrograph({element: graphNode, data: MOCK_DATA, medianStats: MOCK_MEDIAN_STAT_DATA});
         });
 
         it('should render an svg node', () => {
@@ -80,6 +80,11 @@ describe('Hydrograph charting module', () => {
 
             // First, confirm the chart line exists.
             expect(selectAll('svg path.line').size()).toBe(1);
+        });
+
+        it('shoud have a point for the median stat data with a label', () => {
+            expect(selectAll('svg circle#median-point').size()).toBe(1);
+            expect(selectAll('svg text#median-text').size()).toBe(1);
         });
     });
 
@@ -251,5 +256,12 @@ const MOCK_DATA_FOR_PREVIOUS_YEAR = [
         "label": "1/3/2018, 12:15:00 PM -0600\n24.0 ft3/s",
         "time": "2018-01-03T18:15:00.000Z",
         "value": 24
+    }
+];
+const MOCK_MEDIAN_STAT_DATA = [
+    {
+        "label": "18 ft3/s",
+        "time": "2017-01-03T00:00:00.000Z",
+        "value": 18
     }
 ];
