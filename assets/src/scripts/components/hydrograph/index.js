@@ -87,8 +87,10 @@ class Hydrograph {
         select('#ts-current')
             .attr('d', this.currentLine(this._tsData.current));
 
-        //redraw the median stats scatter plot
-        this.svg.selectAll('#median-point').call(this._plotMedianPoints, this.scale, this._medianStatsData);
+        //remove the median stats plot and recreate
+        this.svg.selectAll('#median-point').remove();
+        this.svg.selectAll('#median-text').remove();
+        this._plotMedianPoints();
 
         // Add the new time series
         this._plotDataLine(this.plot, {xScale: xScale, yScale: this.scale.yScale}, 'compare');
@@ -114,8 +116,10 @@ class Hydrograph {
         //Redraw the current ts
         select('#ts-current')
             .attr('d', this.currentLine(this._tsData.current));
-        //redraw the median stats scatter plot
-        this.svg.selectAll('#median-point').call(this._plotMedianPoints, this.scale, this._medianStatsData);
+        //remove the median stats plot and recreate
+        this.svg.selectAll('#median-point').remove();
+        this.svg.selectAll('#median-text').remove();
+        this._plotMedianPoints();
     }
 
     _drawChart() {
@@ -165,7 +169,7 @@ class Hydrograph {
             yTitle: this._yLabel
         });
         this.currentLine = this._plotDataLine(this.plot, this.scale, 'current');
-        this.medianPoints = this._plotMedianPoints(this.plot, this.scale, this._medianStatsData);
+        this.medianPoints = this._plotMedianPoints();
         this._plotTooltips(this.plot, this.scale, 'current');
     }
 
@@ -197,11 +201,11 @@ class Hydrograph {
         return tsLine;
     }
 
-    _plotMedianPoints(plot, scale, data) {
-        let xscale = scale.xScale;
-        let yscale = scale.yScale;
-        plot.selectAll('medianPoint')
-            .data(data)
+    _plotMedianPoints() {
+        let xscale = this.scale.xScale;
+        let yscale = this.scale.yScale;
+        this.plot.selectAll('medianPoint')
+            .data(this._medianStatsData)
             .enter()
             .append('circle')
             .attr('id', 'median-point')
@@ -218,8 +222,8 @@ class Hydrograph {
                 return yscale(d.value);
             });
 
-        plot.selectAll('medianPointText')
-            .data(data)
+        this.plot.selectAll('medianPointText')
+            .data(this._medianStatsData)
             .enter()
             .append('text')
             .text(function(d) {
