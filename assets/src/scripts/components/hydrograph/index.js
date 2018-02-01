@@ -1,6 +1,7 @@
 /**
  * Hydrograph charting module.
  */
+const { namespaces } = require('d3');
 const { bisector, extent, min, max, range } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
@@ -13,7 +14,9 @@ const { unicodeHtmlEntity, getHtmlFromString } = require('../../utils');
 const { appendAxes, updateYAxis, createAxes } = require('./axes');
 const { createScales, createXScale, updateYScale } = require('./scales');
 
+const { lineMarker, circleMarker } = require('./markers');
 
+console.log(lineMarker({x: 1, y: 2, length:20}));
 // Define width, height and margin for the SVG.
 // Use a fixed size, and scale to device width using CSS.
 const WIDTH = 800;
@@ -35,7 +38,6 @@ const bisectDate = bisector(d => d.time).left;
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');
 
-
 class Hydrograph {
     /**
      * @param {Array} data IV data as returned by models/getTimeseries
@@ -52,7 +54,6 @@ class Hydrograph {
         this._element = element;
         this._tsData = {};
         this._medianStatsData = medianStats;
-
         if (data && data.length) {
             this._tsData.current = data;
             this._drawChart();
@@ -71,7 +72,7 @@ class Hydrograph {
         this._tsData.compare = data;
 
         // Update the yScale by determining the new extent
-        const currentYExtent = extent(this._tsData.current.concat(this._medianStatsData), d => d.value);
+        const currentYExtent = extent(this._tsData.current.concat(this._medianStatsData.values), d => d.value);
         const yExtent = extent(data, d => d.value);
         const yDataExtent = [min([yExtent[0], currentYExtent[0]]), max([yExtent[1], currentYExtent[1]])];
         updateYScale(this.scale.yScale, yDataExtent);
@@ -108,7 +109,7 @@ class Hydrograph {
         delete this._tsData.compare;
 
         // Update the y scale and  redraw the axis
-        const currentYExtent = extent(this._tsData.current.concat(this._medianStatsData), d => d.value);
+        const currentYExtent = extent(this._tsData.current.concat(this._medianStatsData.values), d => d.value);
         updateYScale(this.scale.yScale, currentYExtent);
         updateYAxis(this.axis.yAxis, this.scale.yScale);
         this.svg.select('.y-axis')
@@ -153,7 +154,7 @@ class Hydrograph {
 
         // Create x/y scaling for the full (100%) view.
         this.scale = createScales(
-            this._tsData.current.concat(this._medianStatsData),
+            this._tsData.current.concat(this._medianStatsData.values),
             WIDTH - MARGIN.right,
             HEIGHT - (MARGIN.top + MARGIN.bottom)
         );
@@ -207,16 +208,10 @@ class Hydrograph {
         let xscale = this.scale.xScale;
         let yscale = this.scale.yScale;
         this.plot.selectAll('medianPoint')
-            .data(this._medianStatsData)
+            .data(this._medianStatsData.values)
             .enter()
             .append('circle')
             .attr('id', 'median-point')
-            .attr('x', function(d) {
-                return xscale(d.time);
-            })
-            .attr('y', function(d) {
-                return yscale(d.value);
-            })
             .attr('cx', function(d) {
                 return xscale(d.time);
             })
@@ -225,7 +220,7 @@ class Hydrograph {
             });
 
         this.plot.selectAll('medianPointText')
-            .data(this._medianStatsData)
+            .data(this._medianStatsData.values)
             .enter()
             .append('text')
             .text(function(d) {
@@ -249,75 +244,125 @@ class Hydrograph {
             .attr('class', 'legend')
             .attr('transform', `translate(50, ${HEIGHT-15})`);
 
-        let legendGroup1 = legend.append('g');
+        let medianBeginYr = this._medianStatsData.beginYear;
+        let medianEndYr = this._medianStatsData.endYear;
 
-        let detached = select(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+        let legendMarkers = [
+            {type: lineMarker, domId: 'ts-compare', domClass: 'line', text: 'Previous Year'},
+            {type: lineMarker, domId: null, domClass: 'line', text: 'Current Year'},
+            {type: circleMarker, domId: 'median-point', domClass: null, text: `Median Discharge ${medianBeginYr} - ${medianEndYr}`}
+        ];
+        let previousMarkerGroup;
+        const markerGroupOffset = 40;
+        const markerTextOffset = 10;
+        const yPosition = -4;
 
-        detached.append('line')
-            .attr('id', 'ts-compare')
-            .attr('x1', 0)
-            .attr('x2', 20)
-            .attr('y1', -4)
-            .attr('y2', -4)
-            .style("stroke", "black");
+        for (let legendMarker of legendMarkers) {
+            let xPosition;
+            let groupBox;
+            let detachedMarker;
+            if (previousMarkerGroup == null) {
+                xPosition = 0;
+            }
+            else {
+                groupBox = previousMarkerGroup.node().getBBox();
+                xPosition = groupBox.x + groupBox.width + markerGroupOffset;
+            }
+            let markerType = legendMarker.type;
+            let legendGroup = legend.append('g');
+            if (markerType.name === 'lineMarker') {
+                detachedMarker = markerType({
+                    x: xPosition,
+                    y: yPosition,
+                    length: 20,
+                    domId: legendMarker.domId,
+                    domClass: legendMarker.domClass
+                });
+            }
+            if (markerType.name === 'circleMarker') {
+                detachedMarker = markerType({
+                    r: '4px',
+                    x: xPosition,
+                    y: yPosition,
+                    domId: legendMarker.domId,
+                    domClass: legendMarker.domClass
+                });
+            }
+            if (detachedMarker) {
+                legendGroup.node().appendChild(detachedMarker.node());
+                let detachedMarkerBBox = detachedMarker.node().getBBox();
+                legendGroup.append('text')
+                    .attr('x', detachedMarkerBBox.x + detachedMarkerBBox.width + markerTextOffset)
+                    .attr('y', 0)
+                    .text(legendMarker.text);
+            }
+            previousMarkerGroup = legendGroup;
+        }
 
-
-        let compareMarker = legendGroup1.node().appendChild(detached.node());
-        console.log(compareMarker);
-
-
-        // let compareMarker = legendGroup1.append('line')
+        // let legendGroup1 = legend.append('g');
+        //
+        // let detachedGrp1 = select(document.createElementNS(namespaces.svg, 'g'));
+        //
+        // detachedGrp1.append('line')
         //     .attr('id', 'ts-compare')
+        //     .attr('class', 'line')
         //     .attr('x1', 0)
         //     .attr('x2', 20)
         //     .attr('y1', -4)
-        //     .attr('y2', -4)
-        //     .style("stroke", "black");
-
-        let compareMarkerWidth = compareMarker.getBBox().width;
-
-        legendGroup1.append('text')
-            .attr('x', compareMarkerWidth + 5)
-            .attr('y', 0)
-            .text('Previous Year');
-
-        let legendGroup1Box = legendGroup1.node().getBBox();
-
-        let legendGroup2 = legend.append('g');
-
-        let circleMarker = legendGroup2.append('circle')
-            .attr('r', '4px')
-            .attr('x', legendGroup1Box.x + legendGroup1Box.width + 40)
-            .attr('y', -4)
-            .attr('cx', legendGroup1Box.x + legendGroup1Box.width + 40)
-            .attr('cy', -4)
-            .attr('fill', '#f96713');
-
-        let circleMarkerBox = circleMarker.node().getBBox();
-
-        legendGroup2.append('text')
-            .attr('x', circleMarkerBox.x + circleMarkerBox.width + 10)
-            .attr('y', 0)
-            .text('Median Discharge');
-
-        let legendGroup2Box= legendGroup2.node().getBBox();
-
-        let legendGroup3 = legend.append('g');
-
-        let tsMarker = legendGroup3.append('line')
-            .attr('class', 'line')
-            .attr('x1', legendGroup2Box.x + legendGroup2Box.width + 40)
-            .attr('x2', legendGroup2Box.x + legendGroup2Box.width + 60)
-            .attr('y1', -4)
-            .attr('y2', -4)
-            .style("stroke", "#02274B");
-
-        let tsMarkerBox = tsMarker.node().getBBox();
-
-        legendGroup3.append('text')
-            .attr('x', tsMarkerBox.x + tsMarkerBox.width + 10)
-            .attr('y', 0)
-            .text('Current Year');
+        //     .attr('y2', -4);
+        //
+        //
+        // let compareMarker = legendGroup1.node().appendChild(detachedGrp1.node());
+        //
+        // let compareMarkerBBox = compareMarker.getBBox();
+        //
+        // legendGroup1.append('text')
+        //     .attr('x', compareMarkerBBox.x + compareMarkerBBox.width + 5)
+        //     .attr('y', 0)
+        //     .text('Previous Year');
+        //
+        // let legendGroup1Box = legendGroup1.node().getBBox();
+        //
+        // let legendGroup2 = legend.append('g');
+        //
+        // let detachedGrp2 = select(document.createElementNS(namespaces.svg, 'g'));
+        //
+        // detachedGrp2.append('circle')
+        //     .attr('r', '4px')
+        //     .attr('cx', legendGroup1Box.x + legendGroup1Box.width + 40)
+        //     .attr('cy', -4)
+        //     .attr('id', 'median-point');
+        //
+        // let circleMarker = legendGroup2.node().appendChild(detachedGrp2.node());
+        //
+        // let circleMarkerBox = circleMarker.getBBox();
+        //
+        // legendGroup2.append('text')
+        //     .attr('x', circleMarkerBox.x + circleMarkerBox.width + 10)
+        //     .attr('y', 0)
+        //     .text('Median Discharge');
+        //
+        // let legendGroup2Box= legendGroup2.node().getBBox();
+        //
+        // let legendGroup3 = legend.append('g');
+        //
+        // let detachedGrp3 = select(document.createElementNS(namespaces.svg, 'g'));
+        //
+        // detachedGrp3.append('line')
+        //     .attr('class', 'line')
+        //     .attr('x1', legendGroup2Box.x + legendGroup2Box.width + 40)
+        //     .attr('x2', legendGroup2Box.x + legendGroup2Box.width + 60)
+        //     .attr('y1', -4)
+        //     .attr('y2', -4);
+        //
+        // let tsMarker = legendGroup3.node().appendChild(detachedGrp3.node());
+        //
+        // let tsMarkerBox = tsMarker.getBBox();
+        //
+        // legendGroup3.append('text')
+        //     .attr('x', tsMarkerBox.x + tsMarkerBox.width + 10)
+        //     .attr('y', 0)
+        //     .text('Current Year');
 
     }
 
