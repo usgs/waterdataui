@@ -251,7 +251,9 @@ class Hydrograph {
 
         let legendGroup1 = legend.append('g');
 
-        let compareMarker = legendGroup1.append('line')
+        let detached = select(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+
+        detached.append('line')
             .attr('id', 'ts-compare')
             .attr('x1', 0)
             .attr('x2', 20)
@@ -259,7 +261,20 @@ class Hydrograph {
             .attr('y2', -4)
             .style("stroke", "black");
 
-        let compareMarkerWidth = compareMarker.node().getBBox().width;
+
+        let compareMarker = legendGroup1.node().appendChild(detached.node());
+        console.log(compareMarker);
+
+
+        // let compareMarker = legendGroup1.append('line')
+        //     .attr('id', 'ts-compare')
+        //     .attr('x1', 0)
+        //     .attr('x2', 20)
+        //     .attr('y1', -4)
+        //     .attr('y2', -4)
+        //     .style("stroke", "black");
+
+        let compareMarkerWidth = compareMarker.getBBox().width;
 
         legendGroup1.append('text')
             .attr('x', compareMarkerWidth + 5)
