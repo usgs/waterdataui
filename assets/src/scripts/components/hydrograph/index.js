@@ -27,6 +27,7 @@ const MARGIN = {
     bottom: 50,
     left: 50
 };
+const CIRCLE_RADIUS = 4;
 
 
 // Function that returns the left bounding point for a given chart point.
@@ -211,6 +212,7 @@ class Hydrograph {
             .append('circle')
             .attr('id', 'median-point')
             .attr('class', 'median-data-series')
+            .attr('r', CIRCLE_RADIUS)
             .attr('cx', function(d) {
                 return xscale(d.time);
             })
@@ -278,7 +280,7 @@ class Hydrograph {
             }
             if (markerType.name === 'circleMarker') {
                 detachedMarker = markerType({
-                    r: '4px',
+                    r: CIRCLE_RADIUS,
                     x: xPosition,
                     y: yPosition,
                     domId: legendMarker.domId,
