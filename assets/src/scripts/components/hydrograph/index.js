@@ -256,14 +256,14 @@ class Hydrograph {
 
         for (let legendMarker of legendMarkers) {
             let xPosition;
-            let groupBox;
+            let previousMarkerGroupBox;
             let detachedMarker;
             if (previousMarkerGroup == null) {
                 xPosition = 0;
             }
             else {
-                groupBox = previousMarkerGroup.node().getBBox();
-                xPosition = groupBox.x + groupBox.width + markerGroupOffset;
+                previousMarkerGroupBox = previousMarkerGroup.node().getBBox();
+                xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupOffset;
             }
             let markerType = legendMarker.type;
             let legendGroup = legend.append('g');
