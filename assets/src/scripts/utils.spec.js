@@ -1,4 +1,4 @@
-const { unicodeHtmlEntity, getHtmlFromString} = require('./utils');
+const { unicodeHtmlEntity, getHtmlFromString, deltaDays} = require('./utils');
 
 describe('Utils module', () => {
 
@@ -27,4 +27,26 @@ describe('Utils module', () => {
         });
     });
 
+    describe('deltaDays', () => {
+
+        const date1 = new Date(2017, 2, 26, 16, 15, 0);
+        const date2 = new Date(2017, 3, 2, 4, 30, 0);
+        const date3 = new Date(2017, 3, 2, 21, 15, 0);
+        const date4 = new Date(2017, 2, 30, 16, 15, 0);
+
+        it('Returns the correct number of days when it is a bit less than an integer number of days', () => {
+           let result = deltaDays(date1, date2);
+           expect(result).toBe(7);
+        });
+
+        it('Returns the correct number of days when it is a bit more than an integer number of days', () => {
+           let result = deltaDays(date1, date3);
+           expect(result).toBe(7);
+        });
+
+        it('Returns the correct number of days when it is an exact integer number days', () => {
+           let result = deltaDays(date1, date4);
+           expect(result).toBe(4);
+        });
+    });
 });
