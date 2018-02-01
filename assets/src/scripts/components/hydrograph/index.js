@@ -301,23 +301,18 @@ class Hydrograph {
 
         // let legendGroup1 = legend.append('g');
         //
-        // let detachedGrp1 = select(document.createElementNS(namespaces.svg, 'g'));
-        //
-        // detachedGrp1.append('line')
+        // let compareMarker = legendGroup1.append('line')
         //     .attr('id', 'ts-compare')
-        //     .attr('class', 'line')
         //     .attr('x1', 0)
         //     .attr('x2', 20)
         //     .attr('y1', -4)
-        //     .attr('y2', -4);
+        //     .attr('y2', -4)
+        //     .style("stroke", "black");
         //
-        //
-        // let compareMarker = legendGroup1.node().appendChild(detachedGrp1.node());
-        //
-        // let compareMarkerBBox = compareMarker.getBBox();
+        // let compareMarkerWidth = compareMarker.node().getBBox().width;
         //
         // legendGroup1.append('text')
-        //     .attr('x', compareMarkerBBox.x + compareMarkerBBox.width + 5)
+        //     .attr('x', compareMarkerWidth + 5)
         //     .attr('y', 0)
         //     .text('Previous Year');
         //
@@ -325,17 +320,15 @@ class Hydrograph {
         //
         // let legendGroup2 = legend.append('g');
         //
-        // let detachedGrp2 = select(document.createElementNS(namespaces.svg, 'g'));
-        //
-        // detachedGrp2.append('circle')
+        // let circleMarker = legendGroup2.append('circle')
         //     .attr('r', '4px')
+        //     .attr('x', legendGroup1Box.x + legendGroup1Box.width + 40)
+        //     .attr('y', -4)
         //     .attr('cx', legendGroup1Box.x + legendGroup1Box.width + 40)
         //     .attr('cy', -4)
-        //     .attr('id', 'median-point');
+        //     .attr('fill', '#f96713');
         //
-        // let circleMarker = legendGroup2.node().appendChild(detachedGrp2.node());
-        //
-        // let circleMarkerBox = circleMarker.getBBox();
+        // let circleMarkerBox = circleMarker.node().getBBox();
         //
         // legendGroup2.append('text')
         //     .attr('x', circleMarkerBox.x + circleMarkerBox.width + 10)
@@ -346,24 +339,20 @@ class Hydrograph {
         //
         // let legendGroup3 = legend.append('g');
         //
-        // let detachedGrp3 = select(document.createElementNS(namespaces.svg, 'g'));
-        //
-        // detachedGrp3.append('line')
+        // let tsMarker = legendGroup3.append('line')
         //     .attr('class', 'line')
         //     .attr('x1', legendGroup2Box.x + legendGroup2Box.width + 40)
         //     .attr('x2', legendGroup2Box.x + legendGroup2Box.width + 60)
         //     .attr('y1', -4)
-        //     .attr('y2', -4);
+        //     .attr('y2', -4)
+        //     .style("stroke", "#02274B");
         //
-        // let tsMarker = legendGroup3.node().appendChild(detachedGrp3.node());
-        //
-        // let tsMarkerBox = tsMarker.getBBox();
+        // let tsMarkerBox = tsMarker.node().getBBox();
         //
         // legendGroup3.append('text')
         //     .attr('x', tsMarkerBox.x + tsMarkerBox.width + 10)
         //     .attr('y', 0)
         //     .text('Current Year');
-
     }
 
     _plotTooltips(plot, scale, tsDataKey) {
