@@ -235,9 +235,7 @@ class Hydrograph {
 
     _plotLegend() {
 
-        let legend = this.svg.selectAll('.legend')
-            .data([0])
-            .enter()
+        let legend = this.svg
             .append('g')
             .attr('class', 'legend')
             .attr('transform', `translate(50, ${HEIGHT-15})`);
