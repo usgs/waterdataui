@@ -24,3 +24,20 @@ export function getHtmlFromString(someString) {
     let re = /&(?:[a-z]+|#\d+);/g;
     return someString.match(re);
 }
+
+/**
+ * Calculate the difference in days between two Date objects
+ *
+ * @param date1
+ * @param date2
+ * @returns {number}
+ */
+export function deltaDays(date1, date2) {
+    let one_day_ms = 24*60*60*1000;
+    let date1_ms = date1.getTime();
+    let date2_ms = date2.getTime();
+
+    let delta_ms = date2_ms - date1_ms;
+
+    return Math.round(delta_ms/one_day_ms);
+}
