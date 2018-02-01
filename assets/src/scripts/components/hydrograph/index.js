@@ -16,12 +16,10 @@ const { createScales, createXScale, updateYScale } = require('./scales');
 
 const { lineMarker, circleMarker } = require('./markers');
 
-console.log(lineMarker({x: 1, y: 2, length:20}));
 // Define width, height and margin for the SVG.
 // Use a fixed size, and scale to device width using CSS.
 const WIDTH = 800;
 const HEIGHT = WIDTH / 2;
-
 const ASPECT_RATIO_PERCENT = `${100 * HEIGHT / WIDTH}%`;
 const MARGIN = {
     top: 20,
