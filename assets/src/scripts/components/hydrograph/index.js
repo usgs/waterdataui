@@ -238,8 +238,8 @@ class Hydrograph {
 
         let legend = this.svg
             .append('g')
-            .attr('class', 'legend')
-            .attr('transform', `translate(50, ${HEIGHT-15})`);
+            .attr('class', 'legend');
+            //.attr('transform', `translate(50, ${HEIGHT-15})`);
 
         let medianBeginYr = this._medianStatsData.beginYear;
         let medianEndYr = this._medianStatsData.endYear;
@@ -295,6 +295,10 @@ class Hydrograph {
             }
             previousMarkerGroup = legendGroup;
         }
+        // center the legend group in the svg
+        let legendBBox = legend.node().getBBox();
+        let legendXPosition = (WIDTH - legendBBox.width) / 2;
+        legend.attr('transform', `translate(${legendXPosition}, ${HEIGHT-15})`);
 
         // let legendGroup1 = legend.append('g');
         //
