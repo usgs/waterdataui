@@ -210,6 +210,7 @@ class Hydrograph {
             .enter()
             .append('circle')
             .attr('id', 'median-point')
+            .attr('class', 'median-data-series')
             .attr('cx', function(d) {
                 return xscale(d.time);
             })
@@ -246,7 +247,7 @@ class Hydrograph {
         let legendMarkers = [
             {type: lineMarker, domId: 'ts-compare', domClass: 'line', text: 'Previous Year'},
             {type: lineMarker, domId: null, domClass: 'line', text: 'Current Year'},
-            {type: circleMarker, domId: 'median-point', domClass: null, text: `Median Discharge ${medianBeginYr} - ${medianEndYr}`}
+            {type: circleMarker, domId: null, domClass: 'median-data-series', text: `Median Discharge ${medianBeginYr} - ${medianEndYr}`}
         ];
         let previousMarkerGroup;
         const markerGroupOffset = 40;
