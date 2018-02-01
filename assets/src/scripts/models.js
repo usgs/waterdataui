@@ -1,5 +1,6 @@
 const { timeFormat, utcFormat } = require('d3-time-format');
 const { get } = require('./ajax');
+const { deltaDays } = require('./utils');
 
 
 // Define Water Services root URL - use global variable if defined, otherwise
@@ -122,8 +123,9 @@ export function isLeapYear(year) {
  *  Read median RDB data into something that makes sense
  *
  * @param medianData
- * @param timeSeries
- * @params subsetDays
+ * @param timeSeriesStartDateTime
+ * @param timeSeriesEndDateTime
+ * @param timeSeriesUnit
  * @returns {Array}
  */
 export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, timeSeriesUnit) {
@@ -131,11 +133,9 @@ export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesE
     let sliceData = [];
     if (medianData.length > 0) {
         let yearPresent = timeSeriesEndDateTime.getFullYear();
-        let lastTsDay = timeSeriesEndDateTime.getDate();
         let yearPrevious = yearPresent - 1;
         // calculate the number of days to display
-        let firstTsDay = timeSeriesStartDateTime.getDate();
-        let days = lastTsDay - firstTsDay;
+        let days = deltaDays(timeSeriesStartDateTime, timeSeriesEndDateTime);
         for (let medianDatum of medianData) {
             let month = medianDatum.month_nu-1;
             let day = medianDatum.day_nu;
