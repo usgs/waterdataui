@@ -27,18 +27,16 @@ describe('Hydrograph charting module', () => {
     it('single data point renders', () => {
         const store = configureStore({
             tsData: {
-                current: {
-                    data: [{
-                        time: new Date(),
-                        value: 10,
-                        label: 'Label'
-                    }],
-                    show: true
-                },
-                compare: {
-                    data: [],
-                    show: false
-                }
+                current: [{
+                    time: new Date(),
+                    value: 10,
+                    label: 'Label'
+                }],
+                compare: []
+            },
+            showSeries: {
+                current: true,
+                compare: false
             },
             title: '',
             desc: ''
@@ -54,18 +52,16 @@ describe('Hydrograph charting module', () => {
         beforeEach(() => {
             const store = configureStore({
                 tsData: {
-                    current: {
-                        data: [{
-                            time: new Date(),
-                            value: 10,
-                            label: 'Label'
-                        }],
-                        show: true
-                    },
-                    compare: {
-                        data: [],
-                        show: false
-                    }
+                    current: [{
+                        time: new Date(),
+                        value: 10,
+                        label: 'Label'
+                    }],
+                    compare: []
+                },
+                showSeries: {
+                    current: true,
+                    compare: false
                 },
                 title: 'My Title',
                 desc: 'My Description',
@@ -94,18 +90,18 @@ describe('Hydrograph charting module', () => {
         beforeEach(() => {
             const store = configureStore({
                 tsData: {
-                    current: {
-                        data: MOCK_DATA,
-                        show: true
-                    },
-                    compare: {
-                        data: [],
-                        show: false
-                    },
-                    medianStatistics: {
-                        data: MOCK_MEDIAN_STAT_DATA,
-                        show: true
-                    }
+                    current: [{
+                        time: new Date(),
+                        value: 10,
+                        label: 'Label'
+                    }],
+                    compare: [],
+                    medianStatistics: MOCK_MEDIAN_STAT_DATA
+                },
+                showSeries: {
+                    current: true,
+                    compare: false,
+                    medianStatistics: true
                 },
                 title: 'My Title',
                 desc: 'My Description'
@@ -128,7 +124,7 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg path.line').size()).toBe(1);
         });
 
-        it('shoud have a point for the median stat data with a label', () => {
+        it('should have a point for the median stat data with a label', () => {
             expect(selectAll('svg circle#median-point').size()).toBe(1);
             expect(selectAll('svg text#median-text').size()).toBe(1);
         });
@@ -181,14 +177,16 @@ describe('Hydrograph charting module', () => {
         beforeEach(() => {
             store = configureStore({
                 tsData: {
-                    current: {
-                        data: MOCK_DATA,
-                        show: true
-                    },
-                    compare: {
-                        data: MOCK_DATA_FOR_PREVIOUS_YEAR,
-                        show: true
-                    }
+                    current: [{
+                        time: new Date(),
+                        value: 10,
+                        label: 'Label'
+                    }],
+                    compare: []
+                },
+                showSeries: {
+                    current: true,
+                    compare: true
                 },
                 title: 'My Title',
                 desc: 'My Description',

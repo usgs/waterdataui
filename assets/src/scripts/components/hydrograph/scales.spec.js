@@ -9,16 +9,12 @@ describe('Charting scales', () => {
             value: hour
         };
     });
-    let stats = [{
-        'label': '18 ft3/s',
-        'time': '2017-01-03T00:00:00.000Z',
-        'value': 18
-    }];
-    let tsData = {current: {data: data}};
-    let {xScale, yScale} = createScales(tsData, 200, 100);
+    let tsData = {current: data};
+    let showSeries = {current: true};
+    let {xScale, yScale} = createScales(tsData, showSeries, 200, 100);
 
     it('scales created', () => {
-        let {xScale, yScale} = createScales(tsData, 200, 100);
+        let {xScale, yScale} = createScales(tsData, showSeries, 200, 100);
         expect(xScale).toEqual(jasmine.any(Function));
         expect(yScale).toEqual(jasmine.any(Function));
     });

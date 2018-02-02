@@ -93,11 +93,11 @@ const timeSeriesReducer = function (state={}, action) {
                     ...state,
                     tsData: {
                         ...state.tsData,
-                        [action.key]: {
-                            ...state.tsData[action.key],
-                            data: action.data.values,
-                            show: action.show
-                        }
+                        [action.key]: action.data.values
+                    },
+                    showSeries: {
+                        ...state.showSeries,
+                        [action.key]: action.show
                     },
                     title: action.data.variableName,
                     desc: action.data.variableDescription + ' from ' +
@@ -111,12 +111,9 @@ const timeSeriesReducer = function (state={}, action) {
         case 'TOGGLE_TIMESERIES':
             return {
                 ...state,
-                tsData: {
-                    ...state.tsData,
-                    [action.key]: {
-                        ...state.tsData[action.key],
-                        show: action.show
-                    }
+                showSeries: {
+                    ...state.showSeries,
+                    [action.key]: action.show
                 }
             };
 
@@ -125,11 +122,11 @@ const timeSeriesReducer = function (state={}, action) {
                 ...state,
                 tsData: {
                     ...state.tsData,
-                    [action.key]: {
-                        ...state.tsData[action.key],
-                        data: [],
-                        show: false
-                    }
+                    [action.key]: []
+                },
+                showSeries: {
+                    ...state.showSeries,
+                    [action.key]: false
                 }
             };
 
@@ -139,11 +136,11 @@ const timeSeriesReducer = function (state={}, action) {
                 ...state,
                 tsData: {
                     ...state.tsData,
-                    medianStatistics: {
-                        ...state.tsData[action.key],
-                        data: action.medianStatistics,
-                        show: true
-                    }
+                    medianStatistics: action.medianStatistics
+                },
+                showSeries: {
+                    ...state.showSeries,
+                    medianStatistics: true
                 },
                 title: '',
                 desc: ''
@@ -161,18 +158,14 @@ const MIDDLEWARES = [thunk];
 export const configureStore = function (initialState) {
     initialState = {
         tsData: {
-            current: {
-                data: [],
-                show: true
-            },
-            compare: {
-                data: [],
-                show: false
-            },
-            medianStatistics: {
-                data: [],
-                show: false
-            }
+            current: [],
+            compare: [],
+            medianStatistics: []
+        },
+        showSeries: {
+            current: true,
+            compare: false,
+            medianStatistics: false
         },
         title: '',
         desc: '',

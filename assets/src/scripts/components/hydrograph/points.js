@@ -10,7 +10,7 @@ const { xScaleSelector, yScaleSelector } = require('./scales');
  */
 const pointsSelector = function (state, tsDataKey) {
     if (state.tsData[tsDataKey]) {
-        return state.tsData[tsDataKey].data;
+        return state.tsData[tsDataKey];
     }
     return [];
 };
@@ -24,7 +24,7 @@ const pointsSelector = function (state, tsDataKey) {
  */
 const isVisibleSelector = function (state, tsDataKey) {
     if (state.tsData[tsDataKey]) {
-        return state.tsData[tsDataKey].show;
+        return state.showSeries[tsDataKey];
     }
     return false;
 };

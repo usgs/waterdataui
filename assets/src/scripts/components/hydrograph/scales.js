@@ -39,16 +39,16 @@ function createXScale(values, xSize) {
  * @param {Number} ySize - range of scale
  * @eturn {Object} d3 scale for value.
  */
-function createYScale(tsData, ySize) {
+function createYScale(tsData, showSeries, ySize) {
     let yExtent;
 
     // Calculate max and min for data
     for (let key of Object.keys(tsData)) {
-        if (!tsData[key].show || tsData[key].data.length === 0) {
+        if (!showSeries[key] || tsData[key].length === 0) {
             continue;
         }
 
-        const thisExtent = extent(tsData[key].data, d => d.value);
+        const thisExtent = extent(tsData[key], d => d.value);
         if (yExtent !== undefined) {
             yExtent = [
                 Math.min(thisExtent[0], yExtent[0]),
@@ -79,9 +79,9 @@ function createYScale(tsData, ySize) {
  * @param  {Number} ySize Y range of scale
  * @return {Object}        {xScale, yScale}
  */
-function createScales(tsData, xSize, ySize) {
-    const xScale = createXScale(tsData.current.data, xSize);
-    const yScale = createYScale(tsData, ySize);
+function createScales(tsData, showSeries, xSize, ySize) {
+    const xScale = createXScale(tsData.current, xSize);
+    const yScale = createYScale(tsData, showSeries, ySize);
 
     return {xScale, yScale};
 }
@@ -98,7 +98,7 @@ const xScaleSelector = createSelector(
     (state, tsDataKey = 'current') => tsDataKey,
     (tsData, tsDataKey) => {
         if (tsData[tsDataKey]) {
-            return createXScale(tsData[tsDataKey].data, WIDTH - MARGIN.right);
+            return createXScale(tsData[tsDataKey], WIDTH - MARGIN.right);
         } else {
             return null;
         }
@@ -113,7 +113,8 @@ const xScaleSelector = createSelector(
  */
 const yScaleSelector = createSelector(
     (state) => state.tsData,
-    (tsData) => createYScale(tsData, HEIGHT - (MARGIN.top + MARGIN.bottom))
+    (state) => state.showSeries,
+    (tsData, showSeries) => createYScale(tsData, showSeries, HEIGHT - (MARGIN.top + MARGIN.bottom))
 );
 
 
