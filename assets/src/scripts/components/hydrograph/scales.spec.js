@@ -9,6 +9,11 @@ describe('Charting scales', () => {
             value: hour
         };
     });
+    let stats = [{
+        'label': '18 ft3/s',
+        'time': '2017-01-03T00:00:00.000Z',
+        'value': 18
+    }];
     let tsData = {current: {data: data}};
     let {xScale, yScale} = createScales(tsData, 200, 100);
 
@@ -37,7 +42,7 @@ describe('Charting scales', () => {
     });
 
     it('WDFN-66: yScale deals with range [0,1] correctly', () => {
-        expect(yScale(0)).not.toBeNaN();
+        expect(yScale(1)).not.toBeNaN();
         expect(yScale(.5)).not.toBeNaN();
         expect(yScale(.999)).not.toBeNaN();
     });

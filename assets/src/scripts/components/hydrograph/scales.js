@@ -35,7 +35,7 @@ function createXScale(values, xSize) {
 
 /**
  * Create an yscale oriented on the bottom
- * @param {Array} data - Array contains {value, ...}
+ * @param {Array} tsData - Array contains {value, ...}
  * @param {Number} xSize - range of scale
  * @eturn {Object} d3 scale for value.
  */

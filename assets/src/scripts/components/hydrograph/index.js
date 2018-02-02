@@ -120,6 +120,53 @@ const plotTooltips = function (elem, store, tsDataKey) {
 };
 
 
+const plotMedianPoints = function (elem, store) {
+    const state = store.getState();
+    const xscale = xScaleSelector(state);
+    const yscale = yScaleSelector(state);
+    const medianStatsData = pointsSelector(state, 'medianStatistics');
+
+    elem.select('#median-points').remove();
+
+    const container = elem
+        .append('g')
+            .attr('id', 'median-points');
+
+    container.selectAll('medianPoint')
+        .data(medianStatsData)
+        .enter()
+        .append('circle')
+            .attr('id', 'median-point')
+            .attr('x', function(d) {
+                return xscale(d.time);
+            })
+            .attr('y', function(d) {
+                return yscale(d.value);
+            })
+            .attr('cx', function(d) {
+                return xscale(d.time);
+            })
+            .attr('cy', function(d) {
+                return yscale(d.value);
+            });
+
+    container.selectAll('medianPointText')
+        .data(medianStatsData)
+        .enter()
+        .append('text')
+            .text(function(d) {
+                return d.label;
+            })
+            .attr('id', 'median-text')
+            .attr('x', function(d) {
+                return xscale(d.time) + 5;
+            })
+            .attr('y', function(d) {
+                return yscale(d.value);
+            });
+};
+
+
 const timeSeriesGraph = function (elem, store) {
     elem.append('div')
         .attr('class', 'hydrograph-container')
@@ -141,7 +188,8 @@ const timeSeriesGraph = function (elem, store) {
                 .call(connect(plotDataLine), store, 'current')
                 .call(connect(plotDataLine), store, 'compare')
                 //.call(plotTooltips, store, 'compare')
-                .call(plotTooltips, store, 'current');
+                .call(plotTooltips, store, 'current')
+                .call(connect(plotMedianPoints), store);
     elem.call(connect(function (elem) {
         const state = store.getState();
         elem.call(addSROnlyTable, {
