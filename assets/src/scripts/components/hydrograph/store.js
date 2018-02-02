@@ -88,7 +88,7 @@ const timeSeriesReducer = function (state={}, action) {
         case 'ADD_TIMESERIES':
             // If data is valid
             if (action.data && action.data.values &&
-                    !action.data.values.some(d => d.value === -999999)) {
+                    !action.data.values.some(d => d.value === undefined)) {
                 return {
                     ...state,
                     tsData: {

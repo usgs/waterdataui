@@ -48,19 +48,21 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
                         let startDate = new Date(series.values[0].value[0].dateTime);
                         let endDate = new Date(
                             series.values[0].value.slice(-1)[0].dateTime);
+                        let noDataValue = series.variable.noDataValue;
                         return {
                             code: series.variable.variableCode[0].value,
                             variableName: series.variable.variableName,
                             variableDescription: series.variable.variableDescription,
                             seriesStartDate: startDate,
                             seriesEndDate: endDate,
-                            values: series.values[0].value.map(value => {
-                                let date = new Date(value.dateTime);
+                            values: series.values[0].value.map(datum => {
+                                let date = new Date(datum.dateTime);
+                                let value = parseFloat(datum.value);
                                 return {
                                     time: date,
-                                    value: parseFloat(value.value),
-                                    label: `${formatTime(
-                                        date)}\n${value.value} ${series.variable.unit.unitCode}`
+                                    value: value !== noDataValue ? parseFloat(datum.value) : undefined,
+                                    qualifiers: datum.qualifiers,
+                                    label: `${formatTime(date)}\n${datum.value} ${series.variable.unit.unitCode} (Qualifiers: ${datum.qualifiers.join(', ')})`
                                 };
                             })
                         };
@@ -71,6 +73,8 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
                 return error;
             });
 }
+
+
 export function getSiteStatistics({sites, statType, params=['00060']}) {
     let url = `${SERVICE_ROOT}/stat/?format=rdb&sites=${sites.join(',')}&statReportType=daily&statTypeCd=${statType}&parameterCd=${params.join(',')}`;
     return get(url);
