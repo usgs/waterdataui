@@ -2,12 +2,11 @@
  * Hydrograph charting module.
  */
 const { bisector } = require('d3-array');
-const { reduxConnect: connect, reduxDispatch: dispatch,
-        reduxFromState: fromState, reduxProvide: provide } = require('d3-redux');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
+const { connect, dispatch, fromState, provide } = require('../../lib/redux');
 
 const { plotAxes } = require('./axes');
 const { WIDTH, HEIGHT, ASPECT_RATIO_PERCENT, MARGIN } = require('./layout');
