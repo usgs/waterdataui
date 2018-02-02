@@ -241,7 +241,6 @@ class Hydrograph {
         let legend = this.svg
             .append('g')
             .attr('class', 'legend');
-            //.attr('transform', `translate(50, ${HEIGHT-15})`);
 
         let medianBeginYr = this._medianStatsData.beginYear;
         let medianEndYr = this._medianStatsData.endYear;
