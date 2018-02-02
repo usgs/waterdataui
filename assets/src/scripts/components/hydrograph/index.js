@@ -15,6 +15,7 @@ const { appendAxes, updateYAxis, createAxes } = require('./axes');
 const { createScales, createXScale, updateYScale } = require('./scales');
 
 const { lineMarker, circleMarker } = require('./markers');
+const { drawSimpleLegend } = require('./legend');
 
 // Define width, height and margin for the SVG.
 // Use a fixed size, and scale to device width using CSS.
@@ -159,6 +160,8 @@ class Hydrograph {
         );
         this.axis = createAxes(this.scale.xScale, this.scale.yScale, -WIDTH + MARGIN.right);
 
+        this.legendMarkers = [];
+
         // Draw the graph components with the given scaling.
         appendAxes({
             plot: this.plot,
@@ -170,7 +173,7 @@ class Hydrograph {
             yTitle: this._yLabel
         });
         this.currentLine = this._plotDataLine(this.plot, this.scale, 'current');
-        this.medianPoints = this._plotMedianPoints();
+        this._plotMedianPoints();
         this._plotTooltips(this.plot, this.scale, 'current');
         this._plotLegend();
     }
@@ -237,124 +240,31 @@ class Hydrograph {
     }
 
     _plotLegend() {
-
-        let legend = this.svg
-            .append('g')
-            .attr('class', 'legend');
-
         let medianBeginYr = this._medianStatsData.beginYear;
         let medianEndYr = this._medianStatsData.endYear;
 
         let legendMarkers = [
-            {type: lineMarker, domId: 'ts-compare', domClass: 'line', text: 'Previous Year'},
-            {type: lineMarker, domId: null, domClass: 'line', text: 'Current Year'},
-            {type: circleMarker, domId: null, domClass: 'median-data-series', text: `Median Discharge ${medianBeginYr} - ${medianEndYr}`}
+            {
+                type: lineMarker,
+                domId: 'ts-compare',
+                domClass: 'line',
+                text: 'Previous Year'
+            },
+            {
+                type: lineMarker,
+                domId: null,
+                domClass: 'line',
+                text: 'Current Year'
+            },
+            {
+                type: circleMarker,
+                domId: null,
+                domClass: 'median-data-series',
+                text: `Median Discharge ${medianBeginYr} - ${medianEndYr}`,
+                r: CIRCLE_RADIUS
+            }
         ];
-        let previousMarkerGroup;
-        const markerGroupOffset = 40;
-        const markerTextOffset = 10;
-        const yPosition = -4;
-
-        for (let legendMarker of legendMarkers) {
-            let xPosition;
-            let previousMarkerGroupBox;
-            let detachedMarker;
-            if (previousMarkerGroup == null) {
-                xPosition = 0;
-            }
-            else {
-                previousMarkerGroupBox = previousMarkerGroup.node().getBBox();
-                xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupOffset;
-            }
-            let markerType = legendMarker.type;
-            let legendGroup = legend.append('g');
-            if (markerType.name === 'lineMarker') {
-                detachedMarker = markerType({
-                    x: xPosition,
-                    y: yPosition,
-                    length: 20,
-                    domId: legendMarker.domId,
-                    domClass: legendMarker.domClass
-                });
-            }
-            if (markerType.name === 'circleMarker') {
-                detachedMarker = markerType({
-                    r: CIRCLE_RADIUS,
-                    x: xPosition,
-                    y: yPosition,
-                    domId: legendMarker.domId,
-                    domClass: legendMarker.domClass
-                });
-            }
-            if (detachedMarker) {
-                legendGroup.node().appendChild(detachedMarker.node());
-                let detachedMarkerBBox = detachedMarker.node().getBBox();
-                legendGroup.append('text')
-                    .attr('x', detachedMarkerBBox.x + detachedMarkerBBox.width + markerTextOffset)
-                    .attr('y', 0)
-                    .text(legendMarker.text);
-            }
-            previousMarkerGroup = legendGroup;
-        }
-        // center the legend group in the svg
-        let legendBBox = legend.node().getBBox();
-        let legendXPosition = (WIDTH - legendBBox.width) / 2;
-        legend.attr('transform', `translate(${legendXPosition}, ${HEIGHT-15})`);
-
-        // let legendGroup1 = legend.append('g');
-        //
-        // let compareMarker = legendGroup1.append('line')
-        //     .attr('id', 'ts-compare')
-        //     .attr('x1', 0)
-        //     .attr('x2', 20)
-        //     .attr('y1', -4)
-        //     .attr('y2', -4)
-        //     .style("stroke", "black");
-        //
-        // let compareMarkerWidth = compareMarker.node().getBBox().width;
-        //
-        // legendGroup1.append('text')
-        //     .attr('x', compareMarkerWidth + 5)
-        //     .attr('y', 0)
-        //     .text('Previous Year');
-        //
-        // let legendGroup1Box = legendGroup1.node().getBBox();
-        //
-        // let legendGroup2 = legend.append('g');
-        //
-        // let circleMarker = legendGroup2.append('circle')
-        //     .attr('r', '4px')
-        //     .attr('x', legendGroup1Box.x + legendGroup1Box.width + 40)
-        //     .attr('y', -4)
-        //     .attr('cx', legendGroup1Box.x + legendGroup1Box.width + 40)
-        //     .attr('cy', -4)
-        //     .attr('fill', '#f96713');
-        //
-        // let circleMarkerBox = circleMarker.node().getBBox();
-        //
-        // legendGroup2.append('text')
-        //     .attr('x', circleMarkerBox.x + circleMarkerBox.width + 10)
-        //     .attr('y', 0)
-        //     .text('Median Discharge');
-        //
-        // let legendGroup2Box= legendGroup2.node().getBBox();
-        //
-        // let legendGroup3 = legend.append('g');
-        //
-        // let tsMarker = legendGroup3.append('line')
-        //     .attr('class', 'line')
-        //     .attr('x1', legendGroup2Box.x + legendGroup2Box.width + 40)
-        //     .attr('x2', legendGroup2Box.x + legendGroup2Box.width + 60)
-        //     .attr('y1', -4)
-        //     .attr('y2', -4)
-        //     .style("stroke", "#02274B");
-        //
-        // let tsMarkerBox = tsMarker.node().getBBox();
-        //
-        // legendGroup3.append('text')
-        //     .attr('x', tsMarkerBox.x + tsMarkerBox.width + 10)
-        //     .attr('y', 0)
-        //     .text('Current Year');
+        drawSimpleLegend(this.svg, legendMarkers);
     }
 
     _plotTooltips(plot, scale, tsDataKey) {
