@@ -107,12 +107,11 @@ export function parseRDB(rdbData) {
  * @returns {boolean}
  */
 export function isLeapYear(year) {
-    let leapYear = (year % 4) === 0;
-    if ((year % 100) === 0) {
-        if ((year % 400) === 0) {
+    let leapYear = year % 4 === 0;
+    if (year % 100 === 0) {
+        if (year % 400 === 0) {
             leapYear = true;
-        }
-        else {
+        } else {
             leapYear = false;
         }
     }
@@ -150,13 +149,10 @@ export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesE
             };
             // don't include leap days if it's not a leap year
             if (!isLeapYear(recordDate.getFullYear())) {
-                if (month == 1 && day == 29) {
-                }
-                else {
+                if (!(month == 1 && day == 29)) {
                     data.push(median);
                 }
-            }
-            else {
+            } else {
                 data.push(median);
             }
         }
