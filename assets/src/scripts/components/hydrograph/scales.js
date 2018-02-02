@@ -19,9 +19,9 @@ function extendDomain(domainExtent) {
 
 /**
  * Create an x-scale oriented on the left
- * @param {Array} data - Array contains {time, ...}
+ * @param {Array} values - Array contains {time, ...}
  * @param {Number} xSize - range of scale
- * @eturn {Object} d3 scale for time.
+ * @return {Object} d3 scale for time.
  */
 function createXScale(values, xSize) {
     // Calculate max and min for values
@@ -36,7 +36,7 @@ function createXScale(values, xSize) {
 /**
  * Create an yscale oriented on the bottom
  * @param {Array} tsData - Array contains {value, ...}
- * @param {Number} xSize - range of scale
+ * @param {Number} ySize - range of scale
  * @eturn {Object} d3 scale for value.
  */
 function createYScale(tsData, ySize) {
@@ -74,7 +74,7 @@ function createYScale(tsData, ySize) {
 
 /**
  * Create scales for hydrograph charts. X is linear to time and Y is logarithmic.
- * @param  {Array} data    Array containing {time, value} items
+ * @param  {Array} tsData    Array containing {time, value} items
  * @param  {Number} xSize X range of scale
  * @param  {Number} ySize Y range of scale
  * @return {Object}        {xScale, yScale}
@@ -87,6 +87,12 @@ function createScales(tsData, xSize, ySize) {
 }
 
 
+/**
+ * Selector for x-scale
+ * @param  {Object} state       Redux store
+ * @param  {String} tsDataKey   Timeseries key
+ * @return {Function}           D3 scale function
+ */
 const xScaleSelector = createSelector(
     (state) => state.tsData,
     (state, tsDataKey = 'current') => tsDataKey,
@@ -100,6 +106,11 @@ const xScaleSelector = createSelector(
 );
 
 
+/**
+ * Selector for y-scale
+ * @param  {Object} state   Redux store
+ * @return {Function}       D3 scale function
+ */
 const yScaleSelector = createSelector(
     (state) => state.tsData,
     (tsData) => createYScale(tsData, HEIGHT - (MARGIN.top + MARGIN.bottom))

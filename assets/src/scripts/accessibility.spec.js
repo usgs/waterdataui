@@ -46,7 +46,7 @@ describe('svgAccessibility tests', () => {
         });
     });
 
-    describe('SROnlyTable tests', () => {
+    describe('addSROnlyTable tests', () => {
        let container;
        let columnNames = ['Postal Code', 'FIPS', 'Name'];
        let data = [
