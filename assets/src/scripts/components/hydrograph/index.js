@@ -4,11 +4,12 @@
 const { bisector } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
+const { createSelector, createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
-const { connect, dispatch, fromState, provide } = require('../../lib/redux');
+const { dispatch, link, provide } = require('../../lib/redux');
 
-const { plotAxes } = require('./axes');
+const { appendAxes, axesSelector } = require('./axes');
 const { WIDTH, HEIGHT, ASPECT_RATIO_PERCENT, MARGIN } = require('./layout');
 const { pointsSelector, validPointsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
@@ -38,16 +39,15 @@ const drawMessage = function (elem, message) {
 };
 
 
-const plotDataLine = function (elem, store, tsDataKey) {
+const plotDataLine = function (elem, {visible, points, tsDataKey}) {
     const elemId = 'ts-' + tsDataKey;
     elem.selectAll(`#${elemId}`).remove();
 
-    const state = store.getState();
-    if (!isVisibleSelector(state, tsDataKey)) {
+    if (!visible) {
         return;
     }
 
-    elem.datum(fromState(state => validPointsSelector(state, tsDataKey)))
+    elem.datum(points)
         .append('path')
             .classed('line', true)
             .attr('id', elemId)
@@ -76,7 +76,7 @@ const getNearestTime = function (data, time) {
 };
 
 
-const plotTooltips = function (elem, store, tsDataKey) {
+const plotTooltips = function (elem, {xScale, yScale, data}) {
     // Create a node to hightlight the currently selected date/time.
     let focus = elem.append('g')
         .attr('class', 'focus')
@@ -92,11 +92,6 @@ const plotTooltips = function (elem, store, tsDataKey) {
         .on('mouseover', () => focus.style('display', null))
         .on('mouseout', () => focus.style('display', 'none'))
         .on('mousemove', function () {
-            const state = store.getState();
-            const xScale = xScaleSelector(state, tsDataKey);
-            const yScale = yScaleSelector(state, tsDataKey);
-            const data = pointsSelector(state, tsDataKey);
-
             // Get the nearest data point for the current mouse position.
             const time = xScale.invert(mouse(this)[0]);
             const {datum, index} = getNearestTime(data, time);
@@ -119,12 +114,7 @@ const plotTooltips = function (elem, store, tsDataKey) {
 };
 
 
-const plotMedianPoints = function (elem, store) {
-    const state = store.getState();
-    const xscale = xScaleSelector(state);
-    const yscale = yScaleSelector(state);
-    const medianStatsData = pointsSelector(state, 'medianStatistics');
-
+const plotMedianPoints = function (elem, {xscale, yscale, medianStatsData}) {
     elem.select('#median-points').remove();
 
     const container = elem
@@ -166,38 +156,53 @@ const plotMedianPoints = function (elem, store) {
 };
 
 
-const timeSeriesGraph = function (elem, store) {
+const timeSeriesGraph = function (elem) {
     elem.append('div')
         .attr('class', 'hydrograph-container')
         .style('padding-bottom', ASPECT_RATIO_PERCENT)
         .append('svg')
             .attr('preserveAspectRatio', 'xMinYMin meet')
             .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
-            .call(connect(function (elem) {
-                let state = store.getState();
-                elem.call(addSVGAccessibility, {
-                    title: state.title,
-                    description: state.desc,
-                    isInteractive: true
-                });
-            }))
+            .call(link(addSVGAccessibility, createStructuredSelector({
+                title: state => state.title,
+                description: state => state.desc,
+                isInteractive: () => true
+            })))
             .append('g')
                 .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
-                .call(connect(plotAxes), store)
-                .call(connect(plotDataLine), store, 'current')
-                .call(connect(plotDataLine), store, 'compare')
-                //.call(plotTooltips, store, 'compare')
-                .call(plotTooltips, store, 'current')
-                .call(connect(plotMedianPoints), store);
-    elem.call(connect(function (elem) {
-        const state = store.getState();
-        elem.call(addSROnlyTable, {
-            columnNames: [state.title, 'Time'],
-            data: pointsSelector(state, 'current').map((value) => {
+                .call(link(appendAxes, axesSelector))
+                .call(link(plotDataLine, createStructuredSelector({
+                    visible: state => isVisibleSelector(state, 'current'),
+                    points: state => validPointsSelector(state, 'current'),
+                    tsDataKey: () => 'current'
+                }), 'current'))
+                .call(link(plotDataLine, createStructuredSelector({
+                    visible: state => isVisibleSelector(state, 'compare'),
+                    points: state => validPointsSelector(state, 'compare'),
+                    tsDataKey: () => 'compare'
+                }), 'compare'))
+                .call(link(plotTooltips, createStructuredSelector({
+                    xScale: state => xScaleSelector(state, 'current'),
+                    yScale: state => yScaleSelector(state, 'current'),
+                    data: state => pointsSelector(state, 'current')
+                })))
+                .call(link(plotMedianPoints, createStructuredSelector({
+                    xscale: state => xScaleSelector(state),
+                    yscale: state => yScaleSelector(state),
+                    medianStatsData: state => pointsSelector(state, 'medianStatistics')
+                })));
+    elem.call(link(addSROnlyTable, createStructuredSelector({
+        columnNames: createSelector(
+            (state) => state.title,
+            (title) => [title, 'Time']
+        ),
+        data: createSelector(
+            state => pointsSelector(state, 'current'),
+            points => points.map((value) => {
                 return [value.value, value.time];
             })
-        });
-    }));
+        )
+    })));
 };
 
 
@@ -211,7 +216,7 @@ const attachToNode = function (node, {siteno} = {}) {
 
     select(node)
         .call(provide(store))
-        .call(timeSeriesGraph, store)
+        .call(timeSeriesGraph)
         .select('.hydrograph-last-year-input')
             .on('change', dispatch(function () {
                 return Actions.toggleTimeseries('compare', this.checked);

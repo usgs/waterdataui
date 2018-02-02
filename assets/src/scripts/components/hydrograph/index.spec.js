@@ -45,7 +45,7 @@ describe('Hydrograph charting module', () => {
         });
         select(graphNode)
             .call(provide(store))
-            .call(timeSeriesGraph, store);
+            .call(timeSeriesGraph);
         expect(graphNode.innerHTML).toContain('hydrograph-container');
     });
 
@@ -72,7 +72,7 @@ describe('Hydrograph charting module', () => {
             });
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph, store);
+                .call(timeSeriesGraph);
             svg = select('svg');
         });
 
@@ -112,7 +112,7 @@ describe('Hydrograph charting module', () => {
             });
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph, store);
+                .call(timeSeriesGraph);
         });
 
         it('should render an svg node', () => {
@@ -195,7 +195,7 @@ describe('Hydrograph charting module', () => {
             });
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph, store);
+                .call(timeSeriesGraph);
         });
 
         it('Should render two lines', () => {

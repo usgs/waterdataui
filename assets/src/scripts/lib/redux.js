@@ -7,12 +7,14 @@ const storeLocal = local();
 
 
 export function subscribe(store, callback, args) {
-    var currentState = store.getState();
+    let currentState = store.getState();
+
     function handleUpdate() {
-        var nextState = store.getState();
+        let nextState = store.getState();
         if (nextState != currentState) {
             currentState = nextState;
-            callback.apply(null, args);
+            let myArgs = args.concat([nextState]);
+            callback.apply(null, myArgs);
         }
     }
 
@@ -22,28 +24,27 @@ export function subscribe(store, callback, args) {
 
 export function connect(callback) {
     return function(selection) {
-        var args = [selection].concat([].slice.call(arguments, 1));
+        let args = [selection].concat([].slice.call(arguments, 1));
 
-        var stores = [];
-        selection.each(function() {
-            var store = storeLocal.get(this);
+        let stores = [];
+        selection.each(function () {
+            let store = storeLocal.get(this);
             if (stores.indexOf(store) < 0) stores.push(store);
         });
 
-        for (var i = 0; i < stores.length; i++) {
+        for (let i = 0; i < stores.length; i++) {
             subscribe(stores[i], callback, args);
+            callback.apply(null, args.concat([stores[i].getState()]));
         }
-
-        callback.apply(null, args);
     };
 }
 
 
 export function dispatch(handler) {
-    return function(d, i, g) {
-        var action = handler.call(this, d, i, g);
+    return function (d, i, g) {
+        let action = handler.call(this, d, i, g);
         if (action) {
-            var store = storeLocal.get(this);
+            let store = storeLocal.get(this);
             store.dispatch(action);
         }
     };
@@ -51,15 +52,35 @@ export function dispatch(handler) {
 
 
 export function fromState(selector) {
-    return function(d, i, g) {
-        var store = storeLocal.get(this);
-        return selector.call(this, store.getState(), d, i, g);
+    return function () {
+        let store = storeLocal.get(this);
+        return selector.call(this, store.getState(), ...arguments);
     };
 }
 
 
 export function provide(store) {
-    return function(selection) {
+    return function (selection) {
         selection.property(storeLocal, store);
     };
+}
+
+
+/**
+ * Calls the provided D3 callback with provided state when updated.
+ * @param  {Function} func          D3 callback accepting (elem, options)
+ * @param  {Object} selectorOptions Mapping of selectors
+ * @return {Function}               D3 callback
+ */
+export function link(func, selector) {
+    let currentOptions = null;
+    let retval = null;
+    return connect(function (selection, state) {
+        let nextOptions = selector(state);
+        if (currentOptions !== nextOptions) {
+            currentOptions = nextOptions;
+            retval = func.call(null, selection, currentOptions);
+        }
+        return retval;
+    });
 }
