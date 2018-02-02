@@ -1,5 +1,5 @@
 const { timeFormat } = require('d3-time-format');
-const { applyMiddleware, createStore } = require('redux');
+const { applyMiddleware, createStore, compose } = require('redux');
 const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
@@ -155,6 +155,9 @@ const timeSeriesReducer = function (state={}, action) {
 };
 
 
+const MIDDLEWARES = [thunk];
+
+
 export const configureStore = function (initialState) {
     initialState = {
         tsData: {
@@ -175,9 +178,20 @@ export const configureStore = function (initialState) {
         desc: '',
         ...initialState
     };
+
+    let enhancers;
+    if (window.__REDUX_DEVTOOLS_EXTENSION__) {
+        enhancers = compose(
+            applyMiddleware(...MIDDLEWARES),
+            window.__REDUX_DEVTOOLS_EXTENSION__()
+        );
+    } else {
+        enhancers = applyMiddleware(...MIDDLEWARES);
+    }
+
     return createStore(
         timeSeriesReducer,
         initialState,
-        applyMiddleware(thunk)
+        enhancers
     );
 };
