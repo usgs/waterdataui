@@ -248,20 +248,23 @@ class Hydrograph {
                 type: lineMarker,
                 domId: 'ts-compare',
                 domClass: 'line',
-                text: 'Previous Year'
+                text: 'Previous Year',
+                groupId: 'compare-line-marker'
             },
             {
                 type: lineMarker,
                 domId: null,
                 domClass: 'line',
-                text: 'Current Year'
+                text: 'Current Year',
+                groupId: 'current-line-marker'
             },
             {
                 type: circleMarker,
                 domId: null,
                 domClass: 'median-data-series',
                 text: `Median Discharge ${medianBeginYr} - ${medianEndYr}`,
-                r: CIRCLE_RADIUS
+                r: CIRCLE_RADIUS,
+                groupId: 'median-circle-marker'
             }
         ];
         drawSimpleLegend(this.svg, legendMarkers);
