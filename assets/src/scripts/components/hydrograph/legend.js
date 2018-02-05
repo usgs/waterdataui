@@ -37,32 +37,24 @@ function drawSimpleLegend(svg,
         }
         let markerType = legendMarker.type;
         let legendGroup = legend.append('g');
-        if (markerType.name === 'lineMarker') {
-            detachedMarker = markerType({
-                x: xPosition,
-                y: markerYPosition,
-                length: 20,
-                domId: legendMarker.domId,
-                domClass: legendMarker.domClass
-            });
-        }
-        if (markerType.name === 'circleMarker') {
-            detachedMarker = markerType({
-                r: legendMarker.r,
-                x: xPosition,
-                y: markerYPosition,
-                domId: legendMarker.domId,
-                domClass: legendMarker.domClass
-            });
-        }
-        if (detachedMarker) {
-            legendGroup.node().appendChild(detachedMarker.node());
-            let detachedMarkerBBox = detachedMarker.node().getBBox();
-            legendGroup.append('text')
-                .attr('x', detachedMarkerBBox.x + detachedMarkerBBox.width + markerTextOffset)
-                .attr('y', textYPosition)
-                .text(legendMarker.text);
-        }
+        let markerArgs = {
+            r: legendMarker.r ? legendMarker.r : null,
+            x: xPosition,
+            y: markerYPosition,
+            length: 20,
+            domId: legendMarker.domId,
+            domClass: legendMarker.domClass
+        };
+        // add the marker to the svg
+        detachedMarker = markerType(markerArgs);
+        legendGroup.node().appendChild(detachedMarker.node());
+        // add text for the legend marker
+        let detachedMarkerBBox = detachedMarker.node().getBBox();
+        legendGroup.append('text')
+            .attr('x', detachedMarkerBBox.x + detachedMarkerBBox.width + markerTextOffset)
+            .attr('y', textYPosition)
+            .text(legendMarker.text);
+
         previousMarkerGroup = legendGroup;
     }
     // center the legend group in the svg
