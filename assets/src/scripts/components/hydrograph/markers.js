@@ -2,7 +2,7 @@ const { namespaces } = require('d3');
 const { select } = require('d3-selection');
 
 
-export function circleMarker({r, x, y, domId=null, domClass=null}) {
+function circleMarker({r, x, y, domId=null, domClass=null}) {
     let group = select(document.createElementNS(namespaces.svg, 'g'));
     let circle = group.append('circle')
         .attr('r', r)
@@ -18,7 +18,7 @@ export function circleMarker({r, x, y, domId=null, domClass=null}) {
 }
 
 
-export function lineMarker({x, y, length, domId=null, domClass=null}) {
+function lineMarker({x, y, length, domId=null, domClass=null}) {
     let group = select(document.createElementNS(namespaces.svg, 'g'));
     let line = group.append('line')
         .attr('x1', x)
@@ -33,3 +33,6 @@ export function lineMarker({x, y, length, domId=null, domClass=null}) {
     }
     return line;
 }
+
+
+module.exports = {circleMarker, lineMarker};
