@@ -33,7 +33,7 @@ def monitoring_location(site_no):
 
     resp = execute_get_request(SERVICE_ROOT,
                                path='/nwis/site/',
-                               params={'site': site_no,
+                               params={'site' : site_no,
                                        'agencyCd': agency_cd,
                                        'siteOutput': 'expanded',
                                        'format': 'rdb'})
