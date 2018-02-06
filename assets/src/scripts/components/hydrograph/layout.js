@@ -23,7 +23,7 @@ export function getHeight() {
 
 export const MARGIN = {
     top: 20,
-    right: 75,
+    right: 100,
     bottom: 45,
     left: 50
 };

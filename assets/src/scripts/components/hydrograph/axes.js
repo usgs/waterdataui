@@ -55,11 +55,11 @@ function createAxes({xScale, yScale}, yTickSize) {
 const axesSelector = createSelector(
     xScaleSelector('current'),
     yScaleSelector,
-    (state) => state.title,
-    (xScale, yScale, title) => {
+    (state) => state.plotYLabel,
+    (xScale, yScale, plotYLabel) => {
         return {
             ...createAxes({xScale, yScale}, -getWidth() + MARGIN.right),
-            yTitle: title
+            yTitle: plotYLabel
         };
     }
 );
@@ -95,7 +95,7 @@ function appendAxes(elem, {xAxis, yAxis, yTitle}) {
             .attr('transform', 'rotate(-90)')
             .attr('x', yLabelLoc.x)
             .attr('y', yLabelLoc.y)
-            .attr('dy', '0.71em')
+            //.attr('dy', '0.71em')
             .text(yTitle);
 }
 

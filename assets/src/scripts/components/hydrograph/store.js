@@ -100,6 +100,7 @@ export const timeSeriesReducer = function (state={}, action) {
                         [action.key]: action.show
                     },
                     title: action.data.variableName,
+                    plotYLabel: action.data.variableDescription,
                     desc: action.data.variableDescription + ' from ' +
                         formatTime(action.data.seriesStartDate) + ' to ' +
                         formatTime(action.data.seriesEndDate)
