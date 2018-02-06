@@ -1,6 +1,6 @@
 const { extent } = require('d3-array');
 const { scaleLinear, scaleTime } = require('d3-scale');
-const { createSelector } = require('reselect');
+const { createSelector, defaultMemoize: memoize } = require('reselect');
 
 const { WIDTH, HEIGHT, MARGIN } = require('./layout');
 
@@ -88,22 +88,22 @@ function createScales(tsData, showSeries, xSize, ySize) {
 
 
 /**
+ * Factory function creates a function that is:
  * Selector for x-scale
  * @param  {Object} state       Redux store
  * @param  {String} tsDataKey   Timeseries key
  * @return {Function}           D3 scale function
  */
-const xScaleSelector = createSelector(
+const xScaleSelector = memoize(tsDataKey => createSelector(
     (state) => state.tsData,
-    (state, tsDataKey = 'current') => tsDataKey,
-    (tsData, tsDataKey) => {
+    (tsData) => {
         if (tsData[tsDataKey]) {
             return createXScale(tsData[tsDataKey], WIDTH - MARGIN.right);
         } else {
             return null;
         }
     }
-);
+));
 
 
 /**

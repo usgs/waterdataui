@@ -39,7 +39,7 @@ const drawMessage = function (elem, message) {
 };
 
 
-const plotDataLine = function (elem, {visible, points, tsDataKey}) {
+const plotDataLine = function (elem, {visible, points, tsDataKey, xScale, yScale}) {
     const elemId = 'ts-' + tsDataKey;
     elem.selectAll(`#${elemId}`).remove();
 
@@ -51,8 +51,8 @@ const plotDataLine = function (elem, {visible, points, tsDataKey}) {
         .append('path')
             .classed('line', true)
             .attr('id', elemId)
-            .attr('d', line().x(d => d.x)
-                             .y(d => d.y));
+            .attr('d', line().x(d => xScale(d.time))
+                             .y(d => yScale(d.value)));
 };
 
 
@@ -114,8 +114,12 @@ const plotTooltips = function (elem, {xScale, yScale, data}) {
 };
 
 
-const plotMedianPoints = function (elem, {xscale, yscale, medianStatsData}) {
+const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsData}) {
     elem.select('#median-points').remove();
+
+    if (!visible) {
+        return;
+    }
 
     const container = elem
         .append('g')
@@ -172,24 +176,29 @@ const timeSeriesGraph = function (elem) {
                 .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
                 .call(link(appendAxes, axesSelector))
                 .call(link(plotDataLine, createStructuredSelector({
-                    visible: state => isVisibleSelector(state, 'current'),
-                    points: state => validPointsSelector(state, 'current'),
+                    visible: isVisibleSelector('current'),
+                    points: validPointsSelector('current'),
+                    xScale: xScaleSelector('current'),
+                    yScale: yScaleSelector,
                     tsDataKey: () => 'current'
-                }), 'current'))
+                })))
                 .call(link(plotDataLine, createStructuredSelector({
-                    visible: state => isVisibleSelector(state, 'compare'),
-                    points: state => validPointsSelector(state, 'compare'),
+                    visible: isVisibleSelector('compare'),
+                    points: validPointsSelector('compare'),
+                    xScale: xScaleSelector('compare'),
+                    yScale: yScaleSelector,
                     tsDataKey: () => 'compare'
-                }), 'compare'))
+                })))
                 .call(link(plotTooltips, createStructuredSelector({
-                    xScale: state => xScaleSelector(state, 'current'),
-                    yScale: state => yScaleSelector(state, 'current'),
-                    data: state => pointsSelector(state, 'current')
+                    xScale: xScaleSelector('current'),
+                    yScale: yScaleSelector,
+                    data: pointsSelector('current')
                 })))
                 .call(link(plotMedianPoints, createStructuredSelector({
-                    xscale: state => xScaleSelector(state),
-                    yscale: state => yScaleSelector(state),
-                    medianStatsData: state => pointsSelector(state, 'medianStatistics')
+                    visible: isVisibleSelector('medianStatistics'),
+                    xscale: xScaleSelector('current'),
+                    yscale: yScaleSelector,
+                    medianStatsData: pointsSelector('medianStatistics')
                 })));
     elem.call(link(addSROnlyTable, createStructuredSelector({
         columnNames: createSelector(
@@ -197,7 +206,7 @@ const timeSeriesGraph = function (elem) {
             (title) => [title, 'Time']
         ),
         data: createSelector(
-            state => pointsSelector(state, 'current'),
+            pointsSelector('current'),
             points => points.map((value) => {
                 return [value.value, value.time];
             })
