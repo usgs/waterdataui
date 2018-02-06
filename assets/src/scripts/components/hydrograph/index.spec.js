@@ -29,7 +29,8 @@ describe('Hydrograph charting module', () => {
                 time: new Date(),
                 value: 10,
                 label: 'Label'
-            }]
+            }],
+            medianStats: MOCK_MEDIAN_STAT_DATA
         });
         expect(graphNode.innerHTML).toContain('hydrograph-container');
     });
@@ -258,10 +259,15 @@ const MOCK_DATA_FOR_PREVIOUS_YEAR = [
         "value": 24
     }
 ];
-const MOCK_MEDIAN_STAT_DATA = [
-    {
-        "label": "18 ft3/s",
-        "time": "2017-01-03T00:00:00.000Z",
-        "value": 18
-    }
-];
+
+const MOCK_MEDIAN_STAT_DATA = {
+    beginYear: '1970',
+    endYear: '2010',
+    values: [
+        {
+            "label": "18 ft3/s",
+            "time": "2017-01-03T00:00:00.000Z",
+            "value": 18
+        }
+    ]
+};

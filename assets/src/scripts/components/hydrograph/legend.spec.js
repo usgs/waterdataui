@@ -4,7 +4,7 @@ const { select, selectAll } = require('d3-selection');
 const { drawSimpleLegend } = require('./legend');
 const { lineMarker, circleMarker } = require('./markers');
 
-describe('Legend module', () => {
+xdescribe('Legend module', () => {
 
     describe('drawSimpleLegend', () => {
 
