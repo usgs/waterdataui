@@ -79,6 +79,12 @@ export const Actions = {
             type: 'SET_MEDIAN_STATISTICS',
             medianStatistics
         };
+    },
+    resizeTimeseriesPlot(width) {
+        return {
+            type: 'RESIZE_TIMESERIES_PLOT',
+            width
+        };
     }
 };
 
@@ -145,6 +151,12 @@ export const timeSeriesReducer = function (state={}, action) {
                 }
             };
 
+        case 'RESIZE_TIMESERIES_PLOT':
+            return {
+                ...state,
+                width: action.width
+            }
+
         default:
             return state;
     }
@@ -168,6 +180,7 @@ export const configureStore = function (initialState) {
         },
         title: '',
         desc: '',
+        width: 800,
         ...initialState
     };
 

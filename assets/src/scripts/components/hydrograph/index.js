@@ -10,14 +10,11 @@ const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
 
 const { appendAxes, axesSelector } = require('./axes');
-const { MARGIN, updateLayoutVariables } = require('./layout');
+const { ASPECT_RATIO_PERCENT, MARGIN, layoutSelector } = require('./layout');
 const { pointsSelector, validPointsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
 
-let WIDTH;
-let HEIGHT;
-let ASPECT_RATIO_PERCENT;
 
 // Function that returns the left bounding point for a given chart point.
 const bisectDate = bisector(d => d.time).left;
@@ -79,7 +76,7 @@ const getNearestTime = function (data, time) {
 };
 
 
-const plotTooltips = function (elem, {xScale, yScale, data}) {
+const plotTooltips = function (elem, {xScale, yScale, data, layout}) {
     // Create a node to hightlight the currently selected date/time.
     let focus = elem.append('g')
         .attr('class', 'focus')
@@ -90,8 +87,8 @@ const plotTooltips = function (elem, {xScale, yScale, data}) {
 
     elem.append('rect')
         .attr('class', 'overlay')
-        .attr('width', WIDTH)
-        .attr('height', HEIGHT)
+        .attr('width', layout.width)
+        .attr('height', layout.height)
         .on('mouseover', () => focus.style('display', null))
         .on('mouseout', () => focus.style('display', 'none'))
         .on('mousemove', function () {
@@ -163,13 +160,11 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
 };
 
 
-const timeSeriesGraph = function (elem) {
-    elem.append('div')
-        .attr('class', 'hydrograph-container')
-        .style('padding-bottom', ASPECT_RATIO_PERCENT)
-        .append('svg')
+const timeSeriesGraph = function (elem, layout) {
+    elem.selectAll('svg').remove();
+    elem.append('svg')
             //.attr('preserveAspectRatio', 'xMinYMin meet')
-            .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
+            .attr('viewBox', `0 0 ${layout.width} ${layout.height}`)
             .call(link(addSVGAccessibility, createStructuredSelector({
                 title: state => state.title,
                 description: state => state.desc,
@@ -195,6 +190,7 @@ const timeSeriesGraph = function (elem) {
                 .call(link(plotTooltips, createStructuredSelector({
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
+                    layout: layoutSelector,
                     data: pointsSelector('current')
                 })))
                 .call(link(plotMedianPoints, createStructuredSelector({
@@ -226,20 +222,21 @@ const attachToNode = function (node, {siteno} = {}) {
 
     let store = configureStore();
 
-    // Set layout variables
-    let newLayout = updateLayoutVariables(node.offsetWidth);
-    WIDTH = newLayout.width;
-    HEIGHT = newLayout.height;
-    ASPECT_RATIO_PERCENT = newLayout.aspect_ratio_percent;
-
-
+    store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
     select(node)
         .call(provide(store))
-        .call(timeSeriesGraph)
         .select('.hydrograph-last-year-input')
             .on('change', dispatch(function () {
                 return Actions.toggleTimeseries('compare', this.checked);
             }));
+    select(node).append('div')
+            .attr('class', 'hydrograph-container')
+            .style('padding-bottom', ASPECT_RATIO_PERCENT)
+            .call(link(timeSeriesGraph, layoutSelector));
+
+    window.onresize = function() {
+        store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
+    };
     store.dispatch(Actions.retrieveTimeseries(siteno));
 };
 

@@ -4,7 +4,7 @@ const { timeDay } = require('d3-time');
 const { timeFormat } = require('d3-time-format');
 const { createSelector } = require('reselect');
 
-const { getWidth, getHeight, MARGIN } = require('./layout');
+const { layoutSelector, MARGIN } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 
 const yTickCount = 5;
@@ -55,24 +55,26 @@ function createAxes({xScale, yScale}, yTickSize) {
 const axesSelector = createSelector(
     xScaleSelector('current'),
     yScaleSelector,
+    layoutSelector,
     (state) => state.plotYLabel,
-    (xScale, yScale, plotYLabel) => {
+    (xScale, yScale, layout, plotYLabel) => {
         return {
-            ...createAxes({xScale, yScale}, -getWidth() + MARGIN.right),
+            ...createAxes({xScale, yScale}, -layout.width + MARGIN.right),
+            layout: layout,
             yTitle: plotYLabel
         };
     }
 );
 
 
-function appendAxes(elem, {xAxis, yAxis, yTitle}) {
+function appendAxes(elem, {xAxis, yAxis, layout, yTitle}) {
     const xLoc = {
         x: 0,
-        y: getHeight() - (MARGIN.top + MARGIN.bottom)
+        y: layout.height - (MARGIN.top + MARGIN.bottom)
     };
     const yLoc = {x: 0, y: 0};
     const yLabelLoc = {
-        x: getHeight() / -2 + MARGIN.top,
+        x: layout.height / -2 + MARGIN.top,
         y: -35
     };
 
