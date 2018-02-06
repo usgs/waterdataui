@@ -2,7 +2,7 @@ const { extent } = require('d3-array');
 const { scaleLinear, scaleTime } = require('d3-scale');
 const { createSelector, defaultMemoize: memoize } = require('reselect');
 
-const { WIDTH, HEIGHT, MARGIN } = require('./layout');
+const { getWidth, getHeight, MARGIN } = require('./layout');
 
 const paddingRatio = 0.2;
 
@@ -98,7 +98,7 @@ const xScaleSelector = memoize(tsDataKey => createSelector(
     (state) => state.tsData,
     (tsData) => {
         if (tsData[tsDataKey]) {
-            return createXScale(tsData[tsDataKey], WIDTH - MARGIN.right);
+            return createXScale(tsData[tsDataKey], getWidth() - MARGIN.right);
         } else {
             return null;
         }
@@ -114,7 +114,7 @@ const xScaleSelector = memoize(tsDataKey => createSelector(
 const yScaleSelector = createSelector(
     (state) => state.tsData,
     (state) => state.showSeries,
-    (tsData, showSeries) => createYScale(tsData, showSeries, HEIGHT - (MARGIN.top + MARGIN.bottom))
+    (tsData, showSeries) => createYScale(tsData, showSeries, getHeight() - (MARGIN.top + MARGIN.bottom))
 );
 
 

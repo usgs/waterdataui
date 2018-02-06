@@ -10,11 +10,14 @@ const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
 
 const { appendAxes, axesSelector } = require('./axes');
-const { WIDTH, HEIGHT, ASPECT_RATIO_PERCENT, MARGIN } = require('./layout');
+const { MARGIN, updateLayoutVariables } = require('./layout');
 const { pointsSelector, validPointsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
 
+let WIDTH;
+let HEIGHT;
+let ASPECT_RATIO_PERCENT;
 
 // Function that returns the left bounding point for a given chart point.
 const bisectDate = bisector(d => d.time).left;
@@ -165,7 +168,7 @@ const timeSeriesGraph = function (elem) {
         .attr('class', 'hydrograph-container')
         .style('padding-bottom', ASPECT_RATIO_PERCENT)
         .append('svg')
-            .attr('preserveAspectRatio', 'xMinYMin meet')
+            //.attr('preserveAspectRatio', 'xMinYMin meet')
             .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
             .call(link(addSVGAccessibility, createStructuredSelector({
                 title: state => state.title,
@@ -222,6 +225,13 @@ const attachToNode = function (node, {siteno} = {}) {
     }
 
     let store = configureStore();
+
+    // Set layout variables
+    let newLayout = updateLayoutVariables(node.offsetWidth);
+    WIDTH = newLayout.width;
+    HEIGHT = newLayout.height;
+    ASPECT_RATIO_PERCENT = newLayout.aspect_ratio_percent;
+
 
     select(node)
         .call(provide(store))
