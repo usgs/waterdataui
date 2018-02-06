@@ -55,7 +55,7 @@ describe('Redux store', () => {
                     seriesEndDate: new Date('2017-01-10T15:00:00.000-06:00')
                 },
                 show: true
-            })).toEqual({
+            })).toEqual(jasmine.objectContaining({
                 tsData: {
                     current: [{
                         value: 'test'
@@ -64,9 +64,8 @@ describe('Redux store', () => {
                 showSeries: {
                     current: true
                 },
-                title: 'var name',
-                desc: 'var description from 1/1/2017, 3:00:00 PM -0600 to 1/10/2017, 3:00:00 PM -0600'
-            });
+                title: 'var name'
+            }));
         });
 
         it('should handle TOGGLE_TIMESERIES', () => {
