@@ -53,7 +53,6 @@ describe('Legend module', () => {
             let circle = svgNode.select('circle');
             expect(circle.attr('cx')).toBeCloseTo(154);
             expect(circle.attr('class')).toBe('some-other-class');
-            console.log(svgNode);
         });
 
     });
