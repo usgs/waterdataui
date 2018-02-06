@@ -1,4 +1,4 @@
-const { createScales } = require('./scales');
+const { createXScale, createYScale } = require('./scales');
 
 
 describe('Charting scales', () => {
@@ -11,10 +11,10 @@ describe('Charting scales', () => {
     });
     let tsData = {current: data};
     let showSeries = {current: true};
-    let {xScale, yScale} = createScales(tsData, showSeries, 200, 100);
+    let xScale = createXScale(tsData.current, 200);
+    let yScale = createYScale(tsData, showSeries, 100);
 
     it('scales created', () => {
-        let {xScale, yScale} = createScales(tsData, showSeries, 200, 100);
         expect(xScale).toEqual(jasmine.any(Function));
         expect(yScale).toEqual(jasmine.any(Function));
     });
