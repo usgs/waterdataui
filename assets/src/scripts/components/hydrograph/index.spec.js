@@ -83,9 +83,13 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg path.line').size()).toBe(1);
         });
 
-        it('shoud have a point for the median stat data with a label', () => {
+        it('should have a point for the median stat data with a label', () => {
             expect(selectAll('svg circle#median-point').size()).toBe(1);
             expect(selectAll('svg text#median-text').size()).toBe(1);
+        });
+
+        it('should have a legend with two markers', () => {
+            expect(selectAll('g.legend-marker').size()).toBe(2);
         });
     });
 
@@ -144,9 +148,18 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg path.line').size()).toBe(2);
         });
 
-        it('Should remove one of lthe lines when removing the compare time series', () => {
+        it('Should have three legend markers', () => {
+            expect(selectAll('g.legend-marker').size()).toBe(3);
+        });
+
+        it('Should remove one of the lines when removing the compare time series', () => {
             hydrograph.removeCompareTimeSeries();
             expect(selectAll('svg path.line').size()).toBe(1);
+        });
+
+        it('Should have two legend markers after the compare time series is removed', () => {
+            hydrograph.removeCompareTimeSeries();
+            expect(selectAll('g.legend-marker').size()).toBe(2);
         });
 
         //TODO: Consider adding a test which checks that the y axis is rescaled by

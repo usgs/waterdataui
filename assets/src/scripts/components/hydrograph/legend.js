@@ -36,7 +36,8 @@ function drawSimpleLegend(svg,
             xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupOffset;
         }
         let markerType = legendMarker.type;
-        let legendGroup = legend.append('g');
+        let legendGroup = legend.append('g')
+            .attr('class', 'legend-marker');
         if (legendMarker.groupId) {
             legendGroup.attr('id', legendMarker.groupId);
         }
