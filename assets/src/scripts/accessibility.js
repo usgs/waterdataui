@@ -1,5 +1,3 @@
-const { select } = require('d3-selection');
-
 /**
  * Adds accessibility attributes to the svg.
  * This was based on the recommendations in this article: https://www.w3.org/WAI/PF/HTML/wiki/Canvas
@@ -8,7 +6,7 @@ const { select } = require('d3-selection');
  * @param {String} description
  * @param {Boolean} isInteractive
  */
-function addSVGAccessibility({svg, title, description, isInteractive}) {
+function addSVGAccessibility(svg, {title, description, isInteractive}) {
     svg.attr('title', title)
         .attr('desc', description)
         .attr('aria-labelledby', 'title desc');
@@ -25,8 +23,10 @@ function addSVGAccessibility({svg, title, description, isInteractive}) {
  * @param {Array} columnNames - array of strings
  * @param {Array} data - array of array of strings
  */
-function addSROnlyTable({container, columnNames, data}) {
-    const table = select(container)
+function addSROnlyTable(container, {columnNames, data}) {
+    container.selectAll('table.usa-sr-only').remove();
+
+    const table = container
         .append('table')
         .attr('class', 'usa-sr-only');
 
@@ -57,4 +57,3 @@ function addSROnlyTable({container, columnNames, data}) {
 }
 
 module.exports = {addSVGAccessibility, addSROnlyTable};
-
