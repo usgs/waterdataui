@@ -96,6 +96,9 @@ class Hydrograph {
 
         // Add the new time series
         this._plotDataLine(this.plot, {xScale: xScale, yScale: this.scale.yScale}, 'compare');
+
+        this.svg.select('.legend').remove();
+        this._plotLegend(true);
     }
 
     /**
@@ -122,6 +125,9 @@ class Hydrograph {
         this.svg.selectAll('#median-point').remove();
         this.svg.selectAll('#median-text').remove();
         this._plotMedianPoints();
+
+        this.svg.select('.legend').remove();
+        this._plotLegend();
     }
 
     _drawChart() {
@@ -239,18 +245,19 @@ class Hydrograph {
             });
     }
 
-    _plotLegend() {
+    _plotLegend(includeCompareLine=false) {
         let medianBeginYr = this._medianStatsData.beginYear;
         let medianEndYr = this._medianStatsData.endYear;
 
+        let compareLineMarker = {
+            type: lineMarker,
+            domId: 'ts-compare',
+            domClass: 'line',
+            text: 'Previous Year',
+            groupId: 'compare-line-marker'
+        };
+
         let legendMarkers = [
-            {
-                type: lineMarker,
-                domId: 'ts-compare',
-                domClass: 'line',
-                text: 'Previous Year',
-                groupId: 'compare-line-marker'
-            },
             {
                 type: lineMarker,
                 domId: null,
@@ -267,6 +274,11 @@ class Hydrograph {
                 groupId: 'median-circle-marker'
             }
         ];
+
+        if (includeCompareLine) {
+            legendMarkers.push(compareLineMarker);
+        }
+
         drawSimpleLegend(this.svg, legendMarkers);
     }
 
