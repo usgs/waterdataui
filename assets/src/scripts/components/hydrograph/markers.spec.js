@@ -1,6 +1,6 @@
 const { lineMarker, circleMarker } = require('./markers');
 
-fdescribe('Markers module', () => {
+describe('Markers module', () => {
 
     describe('linkMarker', () => {
 
