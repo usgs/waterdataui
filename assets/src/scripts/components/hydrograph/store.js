@@ -174,7 +174,7 @@ export const configureStore = function (initialState) {
     if (window.__REDUX_DEVTOOLS_EXTENSION__) {
         enhancers = compose(
             applyMiddleware(...MIDDLEWARES),
-            window.__REDUX_DEVTOOLS_EXTENSION__()
+            window.__REDUX_DEVTOOLS_EXTENSION__({serialize: true})
         );
     } else {
         enhancers = applyMiddleware(...MIDDLEWARES);
