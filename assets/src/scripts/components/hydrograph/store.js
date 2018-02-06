@@ -87,8 +87,7 @@ export const timeSeriesReducer = function (state={}, action) {
     switch (action.type) {
         case 'ADD_TIMESERIES':
             // If data is valid
-            if (action.data && action.data.values &&
-                    !action.data.values.some(d => d.value === undefined)) {
+            if (action.data && action.data.values) {
                 return {
                     ...state,
                     tsData: {

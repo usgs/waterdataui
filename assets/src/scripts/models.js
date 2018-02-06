@@ -60,8 +60,10 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
                                 let value = parseFloat(datum.value);
                                 return {
                                     time: date,
-                                    value: value !== noDataValue ? parseFloat(datum.value) : undefined,
+                                    value: value !== noDataValue ? parseFloat(datum.value) : null,
                                     qualifiers: datum.qualifiers,
+                                    approved: datum.qualifiers.indexOf('A') > -1,
+                                    estimated: datum.qualifiers.indexOf('E') > -1,
                                     label: `${formatTime(date)}\n${datum.value} ${series.variable.unit.unitCode} (Qualifiers: ${datum.qualifiers.join(', ')})`
                                 };
                             })
