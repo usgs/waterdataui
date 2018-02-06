@@ -145,7 +145,7 @@ export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesE
             }
             let median = {
                 time: recordDate,
-                value: medianDatum.p50_va,
+                value: parseFloat(medianDatum.p50_va),
                 label: `${medianDatum.p50_va} ${timeSeriesUnit}`
             };
             // don't include leap days if it's not a leap year
