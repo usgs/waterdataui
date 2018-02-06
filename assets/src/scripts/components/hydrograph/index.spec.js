@@ -32,11 +32,13 @@ describe('Hydrograph charting module', () => {
                     value: 10,
                     label: 'Label'
                 }],
-                compare: []
+                compare: [],
+                medianStatistics: []
             },
             showSeries: {
                 current: true,
-                compare: false
+                compare: false,
+                medianStatistics: true
             },
             title: '',
             desc: ''
@@ -57,11 +59,13 @@ describe('Hydrograph charting module', () => {
                         value: 10,
                         label: 'Label'
                     }],
-                    compare: []
+                    compare: [],
+                    medianStatistics: []
                 },
                 showSeries: {
                     current: true,
-                    compare: false
+                    compare: false,
+                    medianStatistics: true,
                 },
                 title: 'My Title',
                 desc: 'My Description',
@@ -182,11 +186,13 @@ describe('Hydrograph charting module', () => {
                         value: 10,
                         label: 'Label'
                     }],
-                    compare: []
+                    compare: [],
+                    medianStatistics: []
                 },
                 showSeries: {
                     current: true,
-                    compare: true
+                    compare: true,
+                    medianStatistics: true
                 },
                 title: 'My Title',
                 desc: 'My Description',

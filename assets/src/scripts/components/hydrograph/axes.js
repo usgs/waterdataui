@@ -53,7 +53,7 @@ function createAxes({xScale, yScale}, yTickSize) {
 
 
 const axesSelector = createSelector(
-    xScaleSelector,
+    xScaleSelector('current'),
     yScaleSelector,
     (state) => state.title,
     (xScale, yScale, title) => {
@@ -100,14 +100,4 @@ function appendAxes(elem, {xAxis, yAxis, yTitle}) {
 }
 
 
-/**
- * Adds the given axes to a node
- * @param  {Object} elem      Node to append to
- * @param  {Object} store     Redux store
- */
-function plotAxes(elem, store) {
-    elem.call(appendAxes, axesSelector(store.getState()));
-}
-
-
-module.exports = {createAxes, appendAxes, axesSelector, plotAxes};
+module.exports = {createAxes, appendAxes, axesSelector};

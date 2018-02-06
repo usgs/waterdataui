@@ -1,6 +1,5 @@
-const { createSelector } = require('reselect');
+const { createSelector, defaultMemoize: memoize } = require('reselect');
 
-const { xScaleSelector, yScaleSelector } = require('./scales');
 
 /**
  * Returns the points for a given timeseries.
@@ -8,50 +7,35 @@ const { xScaleSelector, yScaleSelector } = require('./scales');
  * @param  {String} tsDataKey Timeseries key
  * @return {Array}            Array of points.
  */
-const pointsSelector = function (state, tsDataKey) {
-    if (state.tsData[tsDataKey]) {
-        return state.tsData[tsDataKey];
-    }
-    return [];
-};
+const pointsSelector = memoize(tsDataKey => createSelector(
+    state => state.tsData,
+    tsData => tsData[tsDataKey]
+));
 
 
 /**
+ * Factory function creates a function that:
  * Returns the current show state of a timeseries.
  * @param  {Object}  state     Redux store
  * @param  {String}  tsDataKey Timeseries key
  * @return {Boolean}           Show state of the timeseries
  */
-const isVisibleSelector = function (state, tsDataKey) {
-    if (state.tsData[tsDataKey]) {
-        return state.showSeries[tsDataKey];
-    }
-    return false;
-};
+const isVisibleSelector = memoize(tsDataKey => (state) => {
+    return state.showSeries[tsDataKey];
+});
 
 
 /**
+ * Factory function creates a function that:
  * Returns all points in a timeseries with valid data points.
  * @param  {Object} state     Redux store
  * @param  {String} tsDataKey Timeseries key
  * @return {Array}            Array of points.
  */
-const validPointsSelector = createSelector(
-    pointsSelector,
-    xScaleSelector,
-    yScaleSelector,
-    (tsData, xScale, yScale) => {
-        let a = tsData
-            .filter(d => d.value !== undefined)
-            .map(d => {
-                return {
-                    x: xScale(d.time),
-                    y: yScale(d.value)
-                };
-            });
-        return a;
-    }
-);
+const validPointsSelector = memoize(tsDataKey => createSelector(
+    pointsSelector(tsDataKey),
+    (points) => points.filter(pt => pt.value !== undefined)
+));
 
 
 module.exports = { pointsSelector, validPointsSelector, isVisibleSelector };
