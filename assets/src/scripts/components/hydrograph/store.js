@@ -83,7 +83,7 @@ export const Actions = {
 };
 
 
-const timeSeriesReducer = function (state={}, action) {
+export const timeSeriesReducer = function (state={}, action) {
     switch (action.type) {
         case 'ADD_TIMESERIES':
             // If data is valid
@@ -141,9 +141,7 @@ const timeSeriesReducer = function (state={}, action) {
                 showSeries: {
                     ...state.showSeries,
                     medianStatistics: true
-                },
-                title: '',
-                desc: ''
+                }
             };
 
         default:
