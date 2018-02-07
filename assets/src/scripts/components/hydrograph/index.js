@@ -95,8 +95,8 @@ const plotTooltips = function (elem, {xScale, yScale, data, layout}) {
 
     elem.append('rect')
         .attr('class', 'overlay')
-        .attr('width', layout.width)
-        .attr('height', layout.height)
+        .attr('width', '100%')
+        .attr('height', '100%')
         .on('mouseover', () => focus.style('display', null))
         .on('mouseout', () => focus.style('display', 'none'))
         .on('mousemove', function () {
@@ -168,10 +168,12 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
 };
 
 
-const timeSeriesGraph = function (elem, layout) {
-    elem.selectAll('svg').remove();
-    elem.append('svg')
-            .attr('viewBox', `0 0 ${layout.width} ${layout.height}`)
+const timeSeriesGraph = function (elem) {
+    elem.append('div')
+        .attr('class', 'hydrograph-container')
+        .style('padding-bottom', ASPECT_RATIO_PERCENT)
+        .append('svg')
+            .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({
                 title: state => state.title,
                 description: state => state.desc,
@@ -233,14 +235,11 @@ const attachToNode = function (node, {siteno} = {}) {
     let plotSelect = select(node);
     plotSelect
         .call(provide(store))
+        .call(timeSeriesGraph)
         .select('.hydrograph-last-year-input')
             .on('change', dispatch(function () {
                 return Actions.toggleTimeseries('compare', this.checked);
             }));
-    plotSelect.append('div')
-            .attr('class', 'hydrograph-container')
-            .style('padding-bottom', ASPECT_RATIO_PERCENT)
-            .call(link(timeSeriesGraph, layoutSelector));
 
     window.onresize = function() {
         store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
