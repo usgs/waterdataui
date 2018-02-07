@@ -1,4 +1,5 @@
 const { Actions, timeSeriesReducer } = require('./store');
+const { lineMarker, circleMarker } = require('./markers');
 
 
 describe('Redux store', () => {
@@ -106,6 +107,78 @@ describe('Redux store', () => {
                     medianStatistics: true
                 }
             });
+        });
+
+        it('should be able to create line markers', () => {
+            let action = {type: 'SET_LEGEND_MARKERS', key: 'current'};
+            let result = timeSeriesReducer({}, action);
+            expect(result.legendMarkers.current).toEqual({
+                type: lineMarker,
+                domId: 'ts-current',
+                domClass: 'line',
+                text: 'Current Year',
+                groupId: 'current-line-marker'
+            });
+        });
+
+        it('should be able to create circle markers', () => {
+            let action = {type: 'SET_LEGEND_MARKERS', key: 'medianStatistics'};
+            let result = timeSeriesReducer({}, action);
+            expect(result.legendMarkers.medianStatistics).toEqual({
+                type: circleMarker,
+                r: 4,
+                domId: null,
+                domClass: 'median-data-series',
+                groupId: 'median-circle-marker',
+                text: 'Median Discharge'
+            });
+        });
+
+        it('should have no markers if key does not make sense', () => {
+            let action = {type: 'SET_LEGEND_MARKERS', key: 'blah'};
+            expect(timeSeriesReducer({}, action).legendMarkers.blah).toBeNull();
+        });
+
+        it('selection of display markers works when there is nothing on the graph', () => {
+            let action = {type: 'SELECT_DISPLAY_MARKERS', text: 'Select Display Markers'};
+            let result = timeSeriesReducer({}, action);
+            expect(result.displayMarkers).toEqual([]);
+        });
+
+        it('selection of display markers works when there are timeseries', () => {
+            let action = {type: 'SELECT_DISPLAY_MARKERS', text: 'Select Display Markers'};
+            let testState = {
+                showSeries: {
+                    compare: false,
+                    current: true,
+                    medianStatistics: true
+                },
+                legendMarkers: {
+                    compare: 'compare-stand-in',
+                    current: 'current-stand-in',
+                    medianStatistics: 'median-stand-in'
+                }
+            };
+            let result = timeSeriesReducer(testState, action);
+            expect(result.displayMarkers).toEqual(['current-stand-in', 'median-stand-in']);
+        });
+
+        it('selection of display markers returns empty array if legendMarker keys do not match series keys', () => {
+            let action = {type: 'SELECT_DISPLAY_MARKERS', text: 'Select Display Markers'};
+            let testState = {
+                showSeries: {
+                    compare: false,
+                    current: true,
+                    medianStatistics: true
+                },
+                legendMarkers: {
+                    compareX: 'compare-stand-in',
+                    currentX: 'current-stand-in',
+                    medianStatisticsX: 'median-stand-in'
+                }
+            };
+            let result = timeSeriesReducer(testState, action);
+            expect(result.displayMarkers).toEqual([]);
         });
     });
 });

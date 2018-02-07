@@ -180,9 +180,18 @@ export const timeSeriesReducer = function (state={}, action) {
                 marker = defineLineMarker(domId, 'line', text, svgGroup);
             }
             else if (action.key === 'medianStatistics') {
-                let beginYear = state.statisticalMetaData.beginYear;
-                let endYear = state.statisticalMetaData.endYear;
-                text = `Median Discharge ${beginYear} - ${endYear}`;
+                let beginYear;
+                let endYear;
+                try {
+                    beginYear = state.statisticalMetaData.beginYear;
+                    endYear = state.statisticalMetaData.endYear;
+                    text = `Median Discharge ${beginYear} - ${endYear}`;
+                }
+                catch(err) {
+                    beginYear = '';
+                    endYear = '';
+                    text = 'Median Discharge';
+                }
                 marker = defineCircleMarker(4, null, 'median-data-series', text, 'median-circle-marker');
             }
             else {
@@ -198,13 +207,15 @@ export const timeSeriesReducer = function (state={}, action) {
 
         case 'SELECT_DISPLAY_MARKERS':
             let displayMarkers = [];
-            const showSeries = state.showSeries;
-            const markers = state.legendMarkers;
+            const showSeries = state.showSeries ? state.showSeries : {};
+            const markers = state.legendMarkers ? state.legendMarkers : {};
             for (const [key, value] of Object.entries(showSeries)) {
                 let marker;
                 if (value) {
                     marker = markers[key];
-                    displayMarkers.push(marker);
+                    if (marker) {
+                        displayMarkers.push(marker);
+                    }
                 }
             }
             return {
