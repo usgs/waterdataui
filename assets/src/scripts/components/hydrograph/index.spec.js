@@ -3,6 +3,7 @@ const { provide } = require('../../lib/redux');
 
 const { attachToNode, getNearestTime, timeSeriesGraph } = require('./index');
 const { Actions, configureStore } = require('./store');
+const { lineMarker, circleMarker } = require('./markers');
 
 
 describe('Hydrograph charting module', () => {
@@ -117,7 +118,48 @@ describe('Hydrograph charting module', () => {
                     medianStatistics: true
                 },
                 title: 'My Title',
-                desc: 'My Description'
+                desc: 'My Description',
+                legendMarkers: {
+                    current: {
+                        type: lineMarker,
+                        domId: null,
+                        domClass: null,
+                        text: 'blah',
+                        groupId: null
+                    },
+                    compare: {
+                        type: lineMarker,
+                        domId: null,
+                        domClass: null,
+                        text: 'blah',
+                        groupId: null
+                    },
+                    medianStatistics: {
+                        type: circleMarker,
+                        r: 4,
+                        domId: null,
+                        domClass: null,
+                        groupId: null,
+                        text: 'blah'
+                    }
+                },
+                displayMarkers: [
+                    {
+                        type: lineMarker,
+                        domId: null,
+                        domClass: null,
+                        text: 'blah',
+                        groupId: null
+                    },
+                    {
+                        type: circleMarker,
+                        r: 4,
+                        domId: null,
+                        domClass: null,
+                        groupId: null,
+                        text: 'blah'
+                    }
+                ]
             });
             select(graphNode)
                 .call(provide(store))
@@ -140,6 +182,10 @@ describe('Hydrograph charting module', () => {
         it('should have a point for the median stat data with a label', () => {
             expect(selectAll('svg circle#median-point').size()).toBe(1);
             expect(selectAll('svg text#median-text').size()).toBe(1);
+        });
+
+        it('should have a legend with two markers', () => {
+           expect(selectAll('g.legend-marker').size()).toBe(2);
         });
     });
 
@@ -215,6 +261,31 @@ describe('Hydrograph charting module', () => {
                     compare: true,
                     medianStatistics: true
                 },
+                legendMarkers: {
+                    current: {
+                        type: lineMarker,
+                        domId: null,
+                        domClass: null,
+                        text: 'blah',
+                        groupId: null
+                    },
+                    compare: {
+                        type: lineMarker,
+                        domId: null,
+                        domClass: null,
+                        text: 'blah',
+                        groupId: null
+                    },
+                    medianStatistics: {
+                        type: circleMarker,
+                        r: 4,
+                        domId: null,
+                        domClass: null,
+                        groupId: null,
+                        text: 'blah'
+                    }
+                },
+                displayMarkers: [],
                 title: 'My Title',
                 desc: 'My Description',
             });
@@ -227,9 +298,20 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg path.line').size()).toBe(2);
         });
 
+        it('Should have three legend markers', () => {
+            store.dispatch(Actions.selectLegendMarkers());
+            expect(selectAll('g.legend-marker').size()).toBe(3);
+        });
+
         it('Should remove one of the lines when removing the compare time series', () => {
             store.dispatch(Actions.toggleTimeseries('compare', false));
             expect(selectAll('svg path.line').size()).toBe(1);
+        });
+
+        it('Should have two legend markers after the compare time series is removed', () => {
+            store.dispatch(Actions.toggleTimeseries('compare', false));
+            store.dispatch(Actions.selectLegendMarkers());
+            expect(selectAll('g.legend-marker').size()).toBe(2);
         });
 
         //TODO: Consider adding a test which checks that the y axis is rescaled by

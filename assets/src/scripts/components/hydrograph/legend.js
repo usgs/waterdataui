@@ -1,13 +1,3 @@
-const { lineMarker, circleMarker, defineLineMarker, defineCircleMarker } = require('./markers');
-
-const currentTSMarker = defineLineMarker(null, 'line', 'Current Year', 'current-line-marker');
-const medianMarker = defineCircleMarker(4, null, 'median-data-series', 'Median Discharge', 'median-circle-marker');
-const compareTSMarker = defineLineMarker('ts-compare', 'line', 'Last Year', 'compare-line-marker');
-
-const baseMarkers = [currentTSMarker, medianMarker];
-const extendedMarkers = [currentTSMarker, compareTSMarker, medianMarker];
-
-
 /**
  * Create a simple horizontal legend
  *
@@ -78,4 +68,4 @@ function drawSimpleLegend(svg,
 }
 
 
-module.exports = {drawSimpleLegend, baseMarkers, extendedMarkers};
+module.exports = {drawSimpleLegend};

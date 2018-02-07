@@ -6,8 +6,6 @@ const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData } = require('../../models');
 const { getHtmlFromString, unicodeHtmlEntity } = require('../../utils');
 
-const { baseMarkers, extendedMarkers } = require('./legend');
-
 const { defineLineMarker, defineCircleMarker } = require('./markers');
 
 // Create a time formatting function from D3's timeFormat
