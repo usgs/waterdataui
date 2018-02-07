@@ -6,7 +6,7 @@
     overflow: hidden;
 
     svg {
-        font-size: 1em;
+        font-size: 0.8em;
         @include media($small-screen) {
             font-size: 1em;
         }
