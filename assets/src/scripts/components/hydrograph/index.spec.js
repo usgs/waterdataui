@@ -2,6 +2,7 @@ const { select, selectAll } = require('d3-selection');
 const { provide } = require('../../lib/redux');
 
 const { attachToNode, getNearestTime, timeSeriesGraph } = require('./index');
+const { layoutSelector } = require('./layout');
 const { Actions, configureStore } = require('./store');
 
 
@@ -44,12 +45,13 @@ describe('Hydrograph charting module', () => {
                 medianStatistics: true
             },
             title: '',
-            desc: ''
+            desc: '',
+            width: 400
         });
         select(graphNode)
             .call(provide(store))
-            .call(timeSeriesGraph);
-        expect(graphNode.innerHTML).toContain('hydrograph-container');
+            .call(timeSeriesGraph, layoutSelector);
+        expect(graphNode.innerHTML).toContain('<svg');
     });
 
     describe('SVG has been made accessibile', () => {
@@ -78,7 +80,7 @@ describe('Hydrograph charting module', () => {
             });
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph);
+                .call(timeSeriesGraph, layoutSelector);
             svg = select('svg');
         });
 
@@ -121,7 +123,7 @@ describe('Hydrograph charting module', () => {
             });
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph);
+                .call(timeSeriesGraph, layoutSelector);
         });
 
         it('should render an svg node', () => {
@@ -220,7 +222,7 @@ describe('Hydrograph charting module', () => {
             });
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph);
+                .call(timeSeriesGraph, layoutSelector);
         });
 
         it('Should render two lines', () => {
