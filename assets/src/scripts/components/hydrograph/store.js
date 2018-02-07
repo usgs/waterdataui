@@ -4,7 +4,7 @@ const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData } = require('../../models');
-const { getHtmlFromString, unicodeHtmlEntity, replaceHtmlEntities } = require('../../utils');
+const { replaceHtmlEntities } = require('../../utils');
 
 const { defineLineMarker, defineCircleMarker } = require('./markers');
 
