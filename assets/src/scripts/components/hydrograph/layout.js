@@ -1,5 +1,5 @@
-// Define width, height and margin for the SVG.
-// Use a fixed size, and scale to device width using CSS.
+// Define constants for the timeseries graph's aspect ratio and margins as well as a
+// selector function which will return the width/height to use.
 const { createSelector } = require('reselect');
 
 const ASPECT_RATIO = 1 / 2;
