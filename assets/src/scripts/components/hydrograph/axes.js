@@ -97,7 +97,6 @@ function appendAxes(elem, {xAxis, yAxis, layout, yTitle}) {
             .attr('transform', 'rotate(-90)')
             .attr('x', yLabelLoc.x)
             .attr('y', yLabelLoc.y)
-            //.attr('dy', '0.71em')
             .text(yTitle);
 }
 
