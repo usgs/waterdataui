@@ -1,7 +1,6 @@
 // Karma configuration
 // Generated on Wed Dec 27 2017 10:17:29 GMT-0600 (CST)
 var proxyquire = require('proxyquireify');
-
 module.exports = function(config) {
   config.set({
 
