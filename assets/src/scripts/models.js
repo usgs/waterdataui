@@ -58,13 +58,16 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
                             values: series.values[0].value.map(datum => {
                                 let date = new Date(datum.dateTime);
                                 let value = parseFloat(datum.value);
+                                if (value === noDataValue) {
+                                    value = null;
+                                }
                                 return {
                                     time: date,
-                                    value: value !== noDataValue ? parseFloat(datum.value) : null,
+                                    value: value,
                                     qualifiers: datum.qualifiers,
                                     approved: datum.qualifiers.indexOf('A') > -1,
                                     estimated: datum.qualifiers.indexOf('E') > -1,
-                                    label: `${formatTime(date)}\n${datum.value} ${series.variable.unit.unitCode} (Qualifiers: ${datum.qualifiers.join(', ')})`
+                                    label: `${formatTime(date)}\n${value} ${series.variable.unit.unitCode} (Qualifiers: ${datum.qualifiers.join(', ')})`
                                 };
                             })
                         };
