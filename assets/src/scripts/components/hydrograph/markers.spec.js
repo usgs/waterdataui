@@ -22,11 +22,15 @@ describe('Markers module', () => {
     describe('circleMarker', () => {
         let r = 10;
         let x = 2;
-        let y = 2;
+        let y = 9;
 
         it('Returns circle element with correct attributes', () => {
             let circle = circleMarker({r: r, x: x, y: y});
             let node = circle.node();
+            expect(node.nodeName).toBe('circle');
+            expect(node.getAttribute('r')).toBe('10');
+            expect(node.getAttribute('cx')).toBe('2');
+            expect(node.getAttribute('cy')).toBe('9');
         });
     });
 
