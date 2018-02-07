@@ -2,7 +2,7 @@ const { extent } = require('d3-array');
 const { scaleLinear, scaleTime } = require('d3-scale');
 const { createSelector, defaultMemoize: memoize } = require('reselect');
 
-const { WIDTH, HEIGHT, MARGIN } = require('./layout');
+const { layoutSelector, MARGIN } = require('./layout');
 
 const paddingRatio = 0.2;
 
@@ -35,7 +35,8 @@ function createXScale(values, xSize) {
 
 /**
  * Create an yscale oriented on the bottom
- * @param {Array} tsData - Array contains {value, ...}
+ * @param {Array} tsData - where values are Array contains {value, ...}
+ * @param {Object} showSeries  - keys match keys in tsData and values are Boolean
  * @param {Number} ySize - range of scale
  * @eturn {Object} d3 scale for value.
  */
@@ -83,10 +84,11 @@ function createYScale(tsData, showSeries, ySize) {
  * @return {Function}           D3 scale function
  */
 const xScaleSelector = memoize(tsDataKey => createSelector(
+    layoutSelector,
     (state) => state.tsData,
-    (tsData) => {
+    (layout, tsData) => {
         if (tsData[tsDataKey]) {
-            return createXScale(tsData[tsDataKey], WIDTH - MARGIN.right);
+            return createXScale(tsData[tsDataKey], layout.width - MARGIN.right);
         } else {
             return null;
         }
@@ -100,9 +102,10 @@ const xScaleSelector = memoize(tsDataKey => createSelector(
  * @return {Function}       D3 scale function
  */
 const yScaleSelector = createSelector(
+    layoutSelector,
     (state) => state.tsData,
     (state) => state.showSeries,
-    (tsData, showSeries) => createYScale(tsData, showSeries, HEIGHT - (MARGIN.top + MARGIN.bottom))
+    (layout, tsData, showSeries) => createYScale(tsData, showSeries, layout.height - (MARGIN.top + MARGIN.bottom))
 );
 
 

@@ -79,6 +79,12 @@ export const Actions = {
             type: 'SET_MEDIAN_STATISTICS',
             medianStatistics
         };
+    },
+    resizeTimeseriesPlot(width) {
+        return {
+            type: 'RESIZE_TIMESERIES_PLOT',
+            width
+        };
     }
 };
 
@@ -99,6 +105,7 @@ export const timeSeriesReducer = function (state={}, action) {
                         [action.key]: action.show
                     },
                     title: action.data.variableName,
+                    plotYLabel: action.data.variableDescription,
                     desc: action.data.variableDescription + ' from ' +
                         formatTime(action.data.seriesStartDate) + ' to ' +
                         formatTime(action.data.seriesEndDate)
@@ -143,6 +150,12 @@ export const timeSeriesReducer = function (state={}, action) {
                 }
             };
 
+        case 'RESIZE_TIMESERIES_PLOT':
+            return {
+                ...state,
+                width: action.width
+            };
+
         default:
             return state;
     }
@@ -166,6 +179,7 @@ export const configureStore = function (initialState) {
         },
         title: '',
         desc: '',
+        width: 800,
         ...initialState
     };
 
