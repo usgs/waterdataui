@@ -45,11 +45,13 @@ function createYScale(tsData, showSeries, ySize) {
 
     // Calculate max and min for data
     for (let key of Object.keys(tsData)) {
-        if (!showSeries[key] || tsData[key].length === 0) {
+        let points = tsData[key].filter(pt => pt.value !== null);
+
+        if (!showSeries[key] || points.length === 0) {
             continue;
         }
 
-        const thisExtent = extent(tsData[key], d => d.value);
+        const thisExtent = extent(points, d => d.value);
         if (yExtent !== undefined) {
             yExtent = [
                 Math.min(thisExtent[0], yExtent[0]),
