@@ -171,7 +171,6 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
 const timeSeriesGraph = function (elem, layout) {
     elem.selectAll('svg').remove();
     elem.append('svg')
-            //.attr('preserveAspectRatio', 'xMinYMin meet')
             .attr('viewBox', `0 0 ${layout.width} ${layout.height}`)
             .call(link(addSVGAccessibility, createStructuredSelector({
                 title: state => state.title,

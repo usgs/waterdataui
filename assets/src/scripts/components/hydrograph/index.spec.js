@@ -1,5 +1,5 @@
 const { select, selectAll } = require('d3-selection');
-const { provide } = require('../../lib/redux');
+const { provide, link } = require('../../lib/redux');
 
 const { attachToNode, getNearestTime, timeSeriesGraph } = require('./index');
 const { layoutSelector } = require('./layout');
@@ -25,7 +25,7 @@ describe('Hydrograph charting module', () => {
         expect(graphNode.innerHTML).toContain('No data is available');
     });
 
-    it('single data point renders', () => {
+    fit('single data point renders', () => {
         const store = configureStore({
             tsData: {
                 current: [{
@@ -50,8 +50,10 @@ describe('Hydrograph charting module', () => {
         });
         select(graphNode)
             .call(provide(store))
-            .call(timeSeriesGraph, layoutSelector);
-        expect(graphNode.innerHTML).toContain('<svg');
+            .call(link(timeSeriesGraph, layoutSelector));
+        let svgNodes = graphNode.getElementsByTagName('svg');
+        expect(svgNodes.length).toBe(1);
+        expect(svgNodes[0].getAttribute('viewBox')).toContain('400 200');
     });
 
     describe('SVG has been made accessibile', () => {
@@ -77,10 +79,11 @@ describe('Hydrograph charting module', () => {
                 },
                 title: 'My Title',
                 desc: 'My Description',
+                width: 400
             });
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph, layoutSelector);
+                .call(link(timeSeriesGraph, layoutSelector));
             svg = select('svg');
         });
 
@@ -119,11 +122,12 @@ describe('Hydrograph charting module', () => {
                     medianStatistics: true
                 },
                 title: 'My Title',
-                desc: 'My Description'
+                desc: 'My Description',
+                width: 400
             });
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph, layoutSelector);
+                .call(link(timeSeriesGraph, layoutSelector));
         });
 
         it('should render an svg node', () => {
@@ -222,7 +226,7 @@ describe('Hydrograph charting module', () => {
             });
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph, layoutSelector);
+                .call(link(timeSeriesGraph, layoutSelector));
         });
 
         it('Should render two lines', () => {
