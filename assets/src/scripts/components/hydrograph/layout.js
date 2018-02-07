@@ -6,7 +6,7 @@ export const ASPECT_RATIO_PERCENT = `${100 * HEIGHT / WIDTH}%`;
 export const MARGIN = {
     top: 20,
     right: 75,
-    bottom: 45,
+    bottom: 50,
     left: 50
 };
 export const CIRCLE_RADIUS = 4;
