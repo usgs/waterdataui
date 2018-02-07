@@ -7,11 +7,10 @@ const { createSelector, defaultMemoize: memoize } = require('reselect');
  * @param  {String} tsDataKey Timeseries key
  * @return {Array}            Array of points.
  */
-const pointsSelector = memoize(tsDataKey => createSelector(
+const pointsSelector = memoize((tsDataKey) => createSelector(
     state => state.tsData,
     tsData => tsData[tsDataKey]
 ));
-
 
 /**
  * Factory function creates a function that:

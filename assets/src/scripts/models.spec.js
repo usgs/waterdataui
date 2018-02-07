@@ -171,19 +171,19 @@ describe('Models module', () => {
 
         it('parseMedian data successfully constructs data for plotting', () => {
             let result = parseMedianData(MOCK_MEDIAN_DATA, startDate, endDate, unit);
-            expect(result.values.length).toEqual(3);
-            expect(result.values[0]).toEqual({time: new Date(2017, 7, 5), value: '15', label: '15 ft3/s'});
+            expect(result.length).toEqual(3);
+            expect(result[0]).toEqual({time: new Date(2017, 7, 5), value: 15, label: '15 ft3/s'});
         });
 
         it('parseMedian data handles empty data', () => {
             let result = parseMedianData([], startDate, endDate, unit);
-            expect(result.values.length).toEqual(0);
+            expect(result.length).toEqual(0);
         });
 
         it('parseMedian data includes leap year when appropriate', () => {
             let result = parseMedianData(MOCK_MEDIAN_DATA, leapStartDate, leapEndDate, unit);
-            expect(result.values.length).toEqual(4);
-            expect(result.values[3]).toEqual({time: new Date(2016, 1, 29), value: '13', label: '13 ft3/s'});
+            expect(result.length).toEqual(4);
+            expect(result[3]).toEqual({time: new Date(2016, 1, 29), value: 13, label: '13 ft3/s'});
         })
     });
 

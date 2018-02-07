@@ -6,6 +6,8 @@ const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData } = require('../../models');
 const { getHtmlFromString, unicodeHtmlEntity } = require('../../utils');
 
+const { baseMarkers, extendedMarkers } = require('./legend');
+
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');
 
@@ -79,6 +81,12 @@ export const Actions = {
             type: 'SET_MEDIAN_STATISTICS',
             medianStatistics
         };
+    },
+    setLegendMarkers(key) {
+        return {
+            type: 'SET_LEGEND_MARKERS',
+            key
+        };
     }
 };
 
@@ -86,7 +94,6 @@ export const Actions = {
 export const timeSeriesReducer = function (state={}, action) {
     switch (action.type) {
         case 'ADD_TIMESERIES':
-            // If data is valid
             if (action.data && action.data.values &&
                     !action.data.values.some(d => d.value === -999999)) {
                 return {
@@ -99,6 +106,7 @@ export const timeSeriesReducer = function (state={}, action) {
                         ...state.showSeries,
                         [action.key]: action.show
                     },
+                    legendMarkers: baseMarkers,
                     title: action.data.variableName,
                     desc: action.data.variableDescription + ' from ' +
                         formatTime(action.data.seriesStartDate) + ' to ' +
@@ -109,12 +117,20 @@ export const timeSeriesReducer = function (state={}, action) {
             }
 
         case 'TOGGLE_TIMESERIES':
+            let legendMarkers;
+            if (action.key === 'compare' && action.show === true) {
+                legendMarkers = extendedMarkers;
+            }
+            else {
+                legendMarkers = baseMarkers;
+            }
             return {
                 ...state,
                 showSeries: {
                     ...state.showSeries,
                     [action.key]: action.show
-                }
+                },
+                legendMarkers: legendMarkers
             };
 
         case 'RESET_TIMESERIES':
@@ -127,7 +143,8 @@ export const timeSeriesReducer = function (state={}, action) {
                 showSeries: {
                     ...state.showSeries,
                     [action.key]: false
-                }
+                },
+                legendMarkers: baseMarkers
             };
 
 
@@ -136,12 +153,23 @@ export const timeSeriesReducer = function (state={}, action) {
                 ...state,
                 tsData: {
                     ...state.tsData,
-                    medianStatistics: action.medianStatistics
+                    medianStatistics: action.medianStatistics.values
                 },
                 showSeries: {
                     ...state.showSeries,
                     medianStatistics: true
+                },
+                statisticalMetaData: {
+                    ...state.statisticalMetaData,
+                    beginYear: action.medianStatistics.beginYear,
+                    endYear: action.medianStatistics.endYear
                 }
+            };
+
+        case 'SET_LEGEND_MARKERS':
+            return {
+                ...state,
+                legendMarkers: []
             };
 
         default:
@@ -160,11 +188,16 @@ export const configureStore = function (initialState) {
             compare: [],
             medianStatistics: []
         },
+        statisticalMetaData: {
+            beginYear: '',
+            endYear: ''
+        },
         showSeries: {
             current: true,
             compare: false,
             medianStatistics: false
         },
+        legendMarkers: [],
         title: '',
         desc: '',
         ...initialState

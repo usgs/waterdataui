@@ -10,10 +10,11 @@ const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
 
 const { appendAxes, axesSelector } = require('./axes');
-const { WIDTH, HEIGHT, ASPECT_RATIO_PERCENT, MARGIN } = require('./layout');
+const { WIDTH, HEIGHT, ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS } = require('./layout');
 const { pointsSelector, validPointsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
+const { drawSimpleLegend } = require('./legend');
 
 
 // Function that returns the left bounding point for a given chart point.
@@ -114,6 +115,12 @@ const plotTooltips = function (elem, {xScale, yScale, data}) {
 };
 
 
+const plotLegend = function(elem, {markers}) {
+    elem.select('.legend').remove();
+    drawSimpleLegend(elem, markers);
+};
+
+
 const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsData}) {
     elem.select('#median-points').remove();
 
@@ -124,12 +131,13 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
     const container = elem
         .append('g')
             .attr('id', 'median-points');
-
     container.selectAll('medianPoint')
         .data(medianStatsData)
         .enter()
         .append('circle')
             .attr('id', 'median-point')
+            .attr('class', 'median-data-series')
+            .attr('r', CIRCLE_RADIUS)
             .attr('x', function(d) {
                 return xscale(d.time);
             })
@@ -161,45 +169,55 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
 
 
 const timeSeriesGraph = function (elem) {
-    elem.append('div')
+    let svg = elem.append('div')
         .attr('class', 'hydrograph-container')
         .style('padding-bottom', ASPECT_RATIO_PERCENT)
-        .append('svg')
-            .attr('preserveAspectRatio', 'xMinYMin meet')
-            .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
-            .call(link(addSVGAccessibility, createStructuredSelector({
-                title: state => state.title,
-                description: state => state.desc,
-                isInteractive: () => true
-            })))
-            .append('g')
-                .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
-                .call(link(appendAxes, axesSelector))
-                .call(link(plotDataLine, createStructuredSelector({
-                    visible: isVisibleSelector('current'),
-                    points: validPointsSelector('current'),
-                    xScale: xScaleSelector('current'),
-                    yScale: yScaleSelector,
-                    tsDataKey: () => 'current'
-                })))
-                .call(link(plotDataLine, createStructuredSelector({
-                    visible: isVisibleSelector('compare'),
-                    points: validPointsSelector('compare'),
-                    xScale: xScaleSelector('compare'),
-                    yScale: yScaleSelector,
-                    tsDataKey: () => 'compare'
-                })))
-                .call(link(plotTooltips, createStructuredSelector({
-                    xScale: xScaleSelector('current'),
-                    yScale: yScaleSelector,
-                    data: pointsSelector('current')
-                })))
-                .call(link(plotMedianPoints, createStructuredSelector({
-                    visible: isVisibleSelector('medianStatistics'),
-                    xscale: xScaleSelector('current'),
-                    yscale: yScaleSelector,
-                    medianStatsData: pointsSelector('medianStatistics')
-                })));
+        .append('svg');
+
+
+    svg.attr('preserveAspectRatio', 'xMinYMin meet')
+        .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
+        .call(link(addSVGAccessibility, createStructuredSelector({
+            title: state => state.title,
+            description: state => state.desc,
+            isInteractive: () => true
+        })))
+        .append('g')
+        .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
+        .call(link(appendAxes, axesSelector))
+        .call(link(plotDataLine, createStructuredSelector({
+            visible: isVisibleSelector('current'),
+            points: validPointsSelector('current'),
+            xScale: xScaleSelector('current'),
+            yScale: yScaleSelector,
+            tsDataKey: () => 'current'
+        })))
+        .call(link(plotDataLine, createStructuredSelector({
+            visible: isVisibleSelector('compare'),
+            points: validPointsSelector('compare'),
+            xScale: xScaleSelector('compare'),
+            yScale: yScaleSelector,
+            tsDataKey: () => 'compare'
+        })))
+        .call(link(plotTooltips, createStructuredSelector({
+            xScale: xScaleSelector('current'),
+            yScale: yScaleSelector,
+            data: pointsSelector('current')
+        })))
+        .call(link(plotMedianPoints, createStructuredSelector({
+            visible: isVisibleSelector('medianStatistics'),
+            xscale: xScaleSelector('current'),
+            yscale: yScaleSelector,
+            medianStatsData: pointsSelector('medianStatistics')
+        })));
+
+    svg.call(link(plotLegend, createStructuredSelector({
+        markers: createSelector(
+            state => state.legendMarkers,
+            legendMarkers => legendMarkers
+        )
+    })));
+
     elem.call(link(addSROnlyTable, createStructuredSelector({
         columnNames: createSelector(
             (state) => state.title,
@@ -220,9 +238,7 @@ const attachToNode = function (node, {siteno} = {}) {
         select(node).call(drawMessage, 'No data is available.');
         return;
     }
-
     let store = configureStore();
-
     select(node)
         .call(provide(store))
         .call(timeSeriesGraph)
@@ -231,6 +247,7 @@ const attachToNode = function (node, {siteno} = {}) {
                 return Actions.toggleTimeseries('compare', this.checked);
             }));
     store.dispatch(Actions.retrieveTimeseries(siteno));
+    console.log(store.getState());
 };
 
 

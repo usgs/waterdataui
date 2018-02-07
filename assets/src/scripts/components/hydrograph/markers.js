@@ -35,4 +35,26 @@ function lineMarker({x, y, length, domId=null, domClass=null}) {
 }
 
 
-module.exports = {circleMarker, lineMarker};
+const defineLineMarker = function(domId=null, domClass=null, text=null, groupId=null) {
+    return {
+        type: lineMarker,
+        domId: domId,
+        domClass: domClass,
+        text: text,
+        groupId: groupId
+    };
+};
+
+const defineCircleMarker = function(radius, domId=null, domClass=null, text=null, groupId=null) {
+    return {
+        type: circleMarker,
+        r: radius,
+        domId: domId,
+        domClass: domClass,
+        groupId: groupId,
+        text: text
+    };
+};
+
+
+module.exports = {circleMarker, lineMarker, defineLineMarker, defineCircleMarker};

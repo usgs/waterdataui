@@ -9,3 +9,4 @@ export const MARGIN = {
     bottom: 45,
     left: 50
 };
+export const CIRCLE_RADIUS = 4;
