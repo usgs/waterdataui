@@ -8,6 +8,8 @@ const { getHtmlFromString, unicodeHtmlEntity } = require('../../utils');
 
 const { baseMarkers, extendedMarkers } = require('./legend');
 
+const { defineLineMarker, defineCircleMarker } = require('./markers');
+
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');
 
@@ -18,11 +20,12 @@ export const Actions = {
             const timeSeries = getTimeseries({sites: [siteno], startDate, endDate}).then(
                 series => {
                     dispatch(Actions.addTimeseries('current', siteno, series[0]));
-
+                    dispatch(Actions.setLegendMarkers('current'));
                     // Trigger a call to get last year's data
                     const startTime = series[0].seriesStartDate;
                     const endTime = series[0].seriesEndDate;
                     dispatch(Actions.retrieveCompareTimeseries(siteno, startTime, endTime));
+                    dispatch(Actions.setLegendMarkers('compare'));
 
                     return series[0];
                 },
@@ -43,6 +46,8 @@ export const Actions = {
                 }
                 let plotableStats = parseMedianData(stats, startDate, endDate, unit);
                 dispatch(Actions.setMedianStatistics(plotableStats));
+                dispatch(Actions.setLegendMarkers('medianStatistics'));
+                dispatch(Actions.selectLegendMarkers());
             });
         };
     },
@@ -87,6 +92,12 @@ export const Actions = {
             type: 'SET_LEGEND_MARKERS',
             key
         };
+    },
+    selectLegendMarkers() {
+        return {
+            type: 'SELECT_DISPLAY_MARKERS',
+            text: 'Select Display Markers'
+        };
     }
 };
 
@@ -106,7 +117,7 @@ export const timeSeriesReducer = function (state={}, action) {
                         ...state.showSeries,
                         [action.key]: action.show
                     },
-                    legendMarkers: baseMarkers,
+                    //legendMarkers: baseMarkers,
                     title: action.data.variableName,
                     desc: action.data.variableDescription + ' from ' +
                         formatTime(action.data.seriesStartDate) + ' to ' +
@@ -117,20 +128,13 @@ export const timeSeriesReducer = function (state={}, action) {
             }
 
         case 'TOGGLE_TIMESERIES':
-            let legendMarkers;
-            if (action.key === 'compare' && action.show === true) {
-                legendMarkers = extendedMarkers;
-            }
-            else {
-                legendMarkers = baseMarkers;
-            }
+            console.log('Toggling');
             return {
                 ...state,
                 showSeries: {
                     ...state.showSeries,
                     [action.key]: action.show
-                },
-                legendMarkers: legendMarkers
+                }
             };
 
         case 'RESET_TIMESERIES':
@@ -143,10 +147,8 @@ export const timeSeriesReducer = function (state={}, action) {
                 showSeries: {
                     ...state.showSeries,
                     [action.key]: false
-                },
-                legendMarkers: baseMarkers
+                }
             };
-
 
         case 'SET_MEDIAN_STATISTICS':
             return {
@@ -167,9 +169,48 @@ export const timeSeriesReducer = function (state={}, action) {
             };
 
         case 'SET_LEGEND_MARKERS':
+            let marker;
+            let text;
+            if (action.key === 'compare' || action.key === 'current') {
+                text = 'Current Year';
+                let domId = `ts-${action.key}`;
+                let svgGroup = `${action.key}-line-marker`;
+                if (action.key === 'compare') {
+                    text = 'Last Year';
+                }
+                marker = defineLineMarker(domId, 'line', text, svgGroup);
+            }
+            else if (action.key === 'medianStatistics') {
+                let beginYear = state.statisticalMetaData.beginYear;
+                let endYear = state.statisticalMetaData.endYear;
+                text = `Median Discharge ${beginYear} - ${endYear}`;
+                marker = defineCircleMarker(4, null, 'median-data-series', text, 'median-circle-marker');
+            }
+            else {
+                marker = null;
+            }
             return {
                 ...state,
-                legendMarkers: []
+                legendMarkers: {
+                    ...state.legendMarkers,
+                    [action.key]: marker
+                }
+            };
+
+        case 'SELECT_DISPLAY_MARKERS':
+            let displayMarkers = [];
+            const showSeries = state.showSeries;
+            const markers = state.legendMarkers;
+            for (const [key, value] of Object.entries(showSeries)) {
+                let marker;
+                if (value) {
+                    marker = markers[key];
+                    displayMarkers.push(marker);
+                }
+            }
+            return {
+                ...state,
+                displayMarkers: displayMarkers
             };
 
         default:
@@ -197,7 +238,8 @@ export const configureStore = function (initialState) {
             compare: false,
             medianStatistics: false
         },
-        legendMarkers: [],
+        legendMarkers: {},
+        displayMarkers: [],
         title: '',
         desc: '',
         ...initialState

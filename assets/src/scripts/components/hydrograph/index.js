@@ -213,8 +213,8 @@ const timeSeriesGraph = function (elem) {
 
     svg.call(link(plotLegend, createStructuredSelector({
         markers: createSelector(
-            state => state.legendMarkers,
-            legendMarkers => legendMarkers
+            state => state.displayMarkers,
+            displayMarkers => displayMarkers
         )
     })));
 
@@ -243,11 +243,11 @@ const attachToNode = function (node, {siteno} = {}) {
         .call(provide(store))
         .call(timeSeriesGraph)
         .select('.hydrograph-last-year-input')
-            .on('change', dispatch(function () {
-                return Actions.toggleTimeseries('compare', this.checked);
-            }));
+            .on('change', function() {
+                store.dispatch(Actions.toggleTimeseries('compare', this.checked));
+                store.dispatch(Actions.selectLegendMarkers());
+            });
     store.dispatch(Actions.retrieveTimeseries(siteno));
-    console.log(store.getState());
 };
 
 
