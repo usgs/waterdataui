@@ -6,7 +6,7 @@
     overflow: hidden;
 
     svg {
-        font-size: 2em;
+        font-size: 0.7em;
         @include media($small-screen) {
             font-size: 1em;
         }
@@ -50,16 +50,24 @@
                 fill: black;
                 text-anchor: middle;
             }
-        }
-        .tick {
-            line {
-                fill: none;
-                stroke: lightgrey;
-                stroke-opacity: 0.7;
-            }
-            text {
+            .tick {
+                line {
+                    fill: none;
+                    stroke: lightgrey;
+                    stroke-opacity: 0.7;
+                }
             }
         }
+        .x-axis {
+            .tick {
+                line {
+                    fill: none;
+                    stroke: black;
+                    stroke-opacity: 0.7;
+                }
+            }
+        }
+
         #median-point {
             r: 4px;
             fill: #f96713;
