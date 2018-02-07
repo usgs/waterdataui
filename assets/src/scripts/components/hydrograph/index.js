@@ -232,8 +232,7 @@ const attachToNode = function (node, {siteno} = {}) {
     let store = configureStore();
 
     store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
-    let plotSelect = select(node);
-    plotSelect
+    select(node)
         .call(provide(store))
         .call(timeSeriesGraph)
         .select('.hydrograph-last-year-input')
