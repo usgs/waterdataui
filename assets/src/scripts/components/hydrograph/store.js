@@ -128,7 +128,6 @@ export const timeSeriesReducer = function (state={}, action) {
             }
 
         case 'TOGGLE_TIMESERIES':
-            console.log('Toggling');
             return {
                 ...state,
                 showSeries: {

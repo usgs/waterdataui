@@ -26,9 +26,6 @@ function drawSimpleLegend(svg,
                           textYPosition=0,
                           markerGroupOffset=40,
                           markerTextOffset=10) {
-
-    console.log('drawSimpleLegend got called');
-
     let legend = svg
         .append('g')
         .attr('class', 'legend');
