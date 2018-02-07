@@ -230,13 +230,14 @@ const attachToNode = function (node, {siteno} = {}) {
     let store = configureStore();
 
     store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
-    select(node)
+    let plotSelect = select(node);
+    plotSelect
         .call(provide(store))
         .select('.hydrograph-last-year-input')
             .on('change', dispatch(function () {
                 return Actions.toggleTimeseries('compare', this.checked);
             }));
-    select(node).append('div')
+    plotSelect.append('div')
             .attr('class', 'hydrograph-container')
             .style('padding-bottom', ASPECT_RATIO_PERCENT)
             .call(link(timeSeriesGraph, layoutSelector));
