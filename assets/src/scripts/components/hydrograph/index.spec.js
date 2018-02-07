@@ -25,7 +25,7 @@ describe('Hydrograph charting module', () => {
         expect(graphNode.innerHTML).toContain('No data is available');
     });
 
-    fit('single data point renders', () => {
+    it('single data point renders', () => {
         const store = configureStore({
             tsData: {
                 current: [{
