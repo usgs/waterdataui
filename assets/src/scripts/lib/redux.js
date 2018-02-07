@@ -68,10 +68,11 @@ export function provide(store) {
 
 /**
  * Calls the provided D3 callback with provided state when updated.
- * @param  {Function} func          D3 callback accepting (elem, options)
- * @param  {Object} selectorOptions Mapping of selectors
- * @return {Function}               D3 callback
+ * @param  {Function} func   D3 callback accepting (elem, options)
+ * @param  {Object} selector Source selector for options
+ * @return {Function}        D3 callback
  */
+
 export function link(func, selector) {
     let currentOptions = null;
     let retval = null;
