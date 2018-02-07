@@ -11,6 +11,10 @@ const MARGIN = {
     left: 50
 };
 
+/*
+ * @param {Object} state - Redux store
+ * @return {Object} containing width and height properties.
+ */
 const layoutSelector = createSelector(
     (state) => state.width,
     (width) => {
@@ -21,6 +25,6 @@ const layoutSelector = createSelector(
     }
 );
 
-module.exports = {ASPECT_RATIO_PERCENT, MARGIN, layoutSelector}
+module.exports = {ASPECT_RATIO_PERCENT, MARGIN, layoutSelector, ASPECT_RATIO}
 
 

@@ -1,6 +1,7 @@
 // Karma configuration
 // Generated on Wed Dec 27 2017 10:17:29 GMT-0600 (CST)
 var proxyquire = require('proxyquireify');
+
 module.exports = function(config) {
   config.set({
 
@@ -27,7 +28,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-        'assets/src/scripts/**/!(*.spec).js': ['coverage'],
+        'assets/src/scripts/**/!(*.spec).js': [],
         'assets/src/scripts/**/*.js': ['browserify']
     },
       browserify: {
