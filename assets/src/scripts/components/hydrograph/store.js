@@ -99,7 +99,6 @@ export const timeSeriesReducer = function (state={}, action) {
             // If data is valid
             if (action.data && action.data.values) {
                 let variableName = replaceHtmlEntities(action.data.variableName);
-                let titleHtml = getHtmlFromString(variableName);
                 return {
                     ...state,
                     tsData: {

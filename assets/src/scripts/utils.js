@@ -33,9 +33,11 @@ export function getHtmlFromString(someString) {
  */
 export function replaceHtmlEntities(someString) {
     let entities = getHtmlFromString(someString);
-    for (let entity of entities) {
-        let unicodeEntity = unicodeHtmlEntity(entity);
-        someString = someString.replace(entity, unicodeEntity);
+    if (entities) {
+        for (let entity of entities) {
+            let unicodeEntity = unicodeHtmlEntity(entity);
+            someString = someString.replace(entity, unicodeEntity);
+        }
     }
     return someString;
 }
