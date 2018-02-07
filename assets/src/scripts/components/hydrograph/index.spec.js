@@ -30,7 +30,10 @@ describe('Hydrograph charting module', () => {
                 current: [{
                     time: new Date(),
                     value: 10,
-                    label: 'Label'
+                    label: 'Label',
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
                 }],
                 compare: [],
                 medianStatistics: []
@@ -57,7 +60,10 @@ describe('Hydrograph charting module', () => {
                     current: [{
                         time: new Date(),
                         value: 10,
-                        label: 'Label'
+                        label: 'Label',
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
                     }],
                     compare: [],
                     medianStatistics: []
@@ -89,7 +95,7 @@ describe('Hydrograph charting module', () => {
         });
     });
 
-    describe('Renders real data from site #05370000', () => {
+    describe('with real data from site #05370000', () => {
         /* eslint no-use-before-define: "ignore" */
         beforeEach(() => {
             const store = configureStore({
@@ -97,7 +103,10 @@ describe('Hydrograph charting module', () => {
                     current: [{
                         time: new Date(),
                         value: 10,
-                        label: 'Label'
+                        label: 'Label',
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
                     }],
                     compare: [],
                     medianStatistics: MOCK_MEDIAN_STAT_DATA
@@ -184,9 +193,21 @@ describe('Hydrograph charting module', () => {
                     current: [{
                         time: new Date(),
                         value: 10,
-                        label: 'Label'
+                        label: 'Label',
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
+
                     }],
-                    compare: [],
+                    compare: [{
+                        time: new Date(),
+                        value: 10,
+                        label: 'Label',
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
+
+                    }],
                     medianStatistics: []
                 },
                 showSeries: {

@@ -11,7 +11,7 @@ const { dispatch, link, provide } = require('../../lib/redux');
 
 const { appendAxes, axesSelector } = require('./axes');
 const { WIDTH, HEIGHT, ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS } = require('./layout');
-const { pointsSelector, validPointsSelector, isVisibleSelector } = require('./points');
+const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
 const { drawSimpleLegend } = require('./legend');
@@ -40,7 +40,7 @@ const drawMessage = function (elem, message) {
 };
 
 
-const plotDataLine = function (elem, {visible, points, tsDataKey, xScale, yScale}) {
+const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}) {
     const elemId = 'ts-' + tsDataKey;
     elem.selectAll(`#${elemId}`).remove();
 
@@ -48,12 +48,20 @@ const plotDataLine = function (elem, {visible, points, tsDataKey, xScale, yScale
         return;
     }
 
-    elem.datum(points)
-        .append('path')
+    const tsLine = line()
+        .x(d => xScale(new Date(d.time)))
+        .y(d => yScale(d.value));
+
+    for (let line of lines) {
+        elem.append('path')
+            .datum(line.points)
             .classed('line', true)
-            .attr('id', elemId)
-            .attr('d', line().x(d => xScale(d.time))
-                             .y(d => yScale(d.value)));
+            .classed('approved', line.classes.approved)
+            .classed('estimated', line.classes.estimated)
+            .attr('data-title', tsDataKey)
+            .attr('id', `ts-${tsDataKey}`)
+            .attr('d', tsLine);
+    }
 };
 
 
@@ -131,6 +139,7 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
     const container = elem
         .append('g')
             .attr('id', 'median-points');
+
     container.selectAll('medianPoint')
         .data(medianStatsData)
         .enter()
@@ -187,14 +196,14 @@ const timeSeriesGraph = function (elem) {
         .call(link(appendAxes, axesSelector))
         .call(link(plotDataLine, createStructuredSelector({
             visible: isVisibleSelector('current'),
-            points: validPointsSelector('current'),
+            lines: lineSegmentsSelector('current'),
             xScale: xScaleSelector('current'),
             yScale: yScaleSelector,
             tsDataKey: () => 'current'
         })))
         .call(link(plotDataLine, createStructuredSelector({
             visible: isVisibleSelector('compare'),
-            points: validPointsSelector('compare'),
+            lines: lineSegmentsSelector('compare'),
             xScale: xScaleSelector('compare'),
             yScale: yScaleSelector,
             tsDataKey: () => 'compare'
@@ -238,7 +247,9 @@ const attachToNode = function (node, {siteno} = {}) {
         select(node).call(drawMessage, 'No data is available.');
         return;
     }
+
     let store = configureStore();
+
     select(node)
         .call(provide(store))
         .call(timeSeriesGraph)

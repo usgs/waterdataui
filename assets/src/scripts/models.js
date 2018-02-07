@@ -48,19 +48,23 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
                         let startDate = new Date(series.values[0].value[0].dateTime);
                         let endDate = new Date(
                             series.values[0].value.slice(-1)[0].dateTime);
+                        let noDataValue = series.variable.noDataValue;
                         return {
                             code: series.variable.variableCode[0].value,
                             variableName: series.variable.variableName,
                             variableDescription: series.variable.variableDescription,
                             seriesStartDate: startDate,
                             seriesEndDate: endDate,
-                            values: series.values[0].value.map(value => {
-                                let date = new Date(value.dateTime);
+                            values: series.values[0].value.map(datum => {
+                                let date = new Date(datum.dateTime);
+                                let value = parseFloat(datum.value);
                                 return {
                                     time: date,
-                                    value: parseFloat(value.value),
-                                    label: `${formatTime(
-                                        date)}\n${value.value} ${series.variable.unit.unitCode}`
+                                    value: value !== noDataValue ? parseFloat(datum.value) : null,
+                                    qualifiers: datum.qualifiers,
+                                    approved: datum.qualifiers.indexOf('A') > -1,
+                                    estimated: datum.qualifiers.indexOf('E') > -1,
+                                    label: `${formatTime(date)}\n${datum.value} ${series.variable.unit.unitCode} (Qualifiers: ${datum.qualifiers.join(', ')})`
                                 };
                             })
                         };
@@ -71,6 +75,8 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
                 return error;
             });
 }
+
+
 export function getSiteStatistics({sites, statType, params=['00060']}) {
     let url = `${SERVICE_ROOT}/stat/?format=rdb&sites=${sites.join(',')}&statReportType=daily&statTypeCd=${statType}&parameterCd=${params.join(',')}`;
     return get(url);
@@ -107,12 +113,11 @@ export function parseRDB(rdbData) {
  * @returns {boolean}
  */
 export function isLeapYear(year) {
-    let leapYear = (year % 4) === 0;
-    if ((year % 100) === 0) {
-        if ((year % 400) === 0) {
+    let leapYear = year % 4 === 0;
+    if (year % 100 === 0) {
+        if (year % 400 === 0) {
             leapYear = true;
-        }
-        else {
+        } else {
             leapYear = false;
         }
     }
@@ -155,13 +160,10 @@ export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesE
             };
             // don't include leap days if it's not a leap year
             if (!isLeapYear(recordDate.getFullYear())) {
-                if (month == 1 && day == 29) {
-                }
-                else {
+                if (!(month == 1 && day == 29)) {
                     values.push(median);
                 }
-            }
-            else {
+            } else {
                 values.push(median);
             }
         }

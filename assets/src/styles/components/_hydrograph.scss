@@ -28,11 +28,17 @@
         }
         .line {
             fill: none;
-            stroke-width: 1px;
+            stroke-width: 3px;
             stroke: $usgs-blue;
+            &.approved {
+                stroke: darkgreen;
+            }
+            &.estimated {
+                stroke-dasharray: 1, 3;
+            }
         }
         #ts-compare {
-            stroke-dasharray: 1, 3
+            stroke-width: 1px;
         }
         .axis {
             path {

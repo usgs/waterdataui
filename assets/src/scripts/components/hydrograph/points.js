@@ -26,15 +26,58 @@ const isVisibleSelector = memoize(tsDataKey => (state) => {
 
 /**
  * Factory function creates a function that:
- * Returns all points in a timeseries with valid data points.
+ * Returns all points in a timeseries grouped into line segments.
  * @param  {Object} state     Redux store
  * @param  {String} tsDataKey Timeseries key
  * @return {Array}            Array of points.
  */
-const validPointsSelector = memoize(tsDataKey => createSelector(
+const lineSegmentsSelector = memoize(tsDataKey => createSelector(
     pointsSelector(tsDataKey),
-    (points) => points.filter(pt => pt.value !== undefined)
+    (points) => {
+        // Accumulate data into line groups, splitting on the estimated and
+        // approval status.
+        let lines = [];
+        let lastClasses = {};
+
+        for (let pt of points) {
+            // Ignored masked data
+            if (pt.value === null) {
+                lastClasses = {};
+                continue;
+            }
+
+            // Temporary check to help detect test sites.
+            if (pt.qualifiers.length > 1) {
+                /*eslint no-console: "allow"*/
+                console.error('Point has multiple qualifiers', pt.qualifiers);
+            }
+
+            // Classes to put on the line with this point.
+            const lineClasses = {
+                approved: pt.approved,
+                estimated: pt.estimated
+            };
+
+            // If this point doesn't have the same classes as the last point,
+            // create a new line for it.
+            if (lastClasses.approved !== lineClasses.approved ||
+                    lastClasses.estimated !== lineClasses.estimated) {
+                lines.push({
+                    classes: lineClasses,
+                    points: []
+                });
+            }
+
+            // Add this point to the current line.
+            lines[lines.length - 1].points.push(pt);
+
+            // Cache the classes for the next loop iteration.
+            lastClasses = lineClasses;
+        }
+
+        return lines;
+    }
 ));
 
 
-module.exports = { pointsSelector, validPointsSelector, isVisibleSelector };
+module.exports = { pointsSelector, lineSegmentsSelector, isVisibleSelector };
