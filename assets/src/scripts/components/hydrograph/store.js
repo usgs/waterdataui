@@ -4,7 +4,7 @@ const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData } = require('../../models');
-const { getHtmlFromString, unicodeHtmlEntity } = require('../../utils');
+const { getHtmlFromString, unicodeHtmlEntity, replaceHtmlEntities } = require('../../utils');
 
 const { defineLineMarker, defineCircleMarker } = require('./markers');
 
@@ -34,14 +34,7 @@ export const Actions = {
                 const [series, stats] = data;
                 const startDate = series.seriesStartDate;
                 const endDate = series.seriesEndDate;
-                let unit = series.variableName.split(' ').pop();
-                const htmlEntities = getHtmlFromString(unit);
-                if (htmlEntities !== null) {
-                    for (let htmlEntity of htmlEntities) {
-                        let unicodeEntity = unicodeHtmlEntity(htmlEntity);
-                        unit = unit.replace(htmlEntity, unicodeEntity);
-                    }
-                }
+                let unit = replaceHtmlEntities(series.variableName.split(' ').pop());
                 let plotableStats = parseMedianData(stats, startDate, endDate, unit);
                 dispatch(Actions.setMedianStatistics(plotableStats));
                 dispatch(Actions.setLegendMarkers('medianStatistics'));
@@ -105,6 +98,8 @@ export const timeSeriesReducer = function (state={}, action) {
         case 'ADD_TIMESERIES':
             // If data is valid
             if (action.data && action.data.values) {
+                let variableName = replaceHtmlEntities(action.data.variableName);
+                let titleHtml = getHtmlFromString(variableName);
                 return {
                     ...state,
                     tsData: {
@@ -115,7 +110,7 @@ export const timeSeriesReducer = function (state={}, action) {
                         ...state.showSeries,
                         [action.key]: action.show
                     },
-                    title: action.data.variableName,
+                    title: variableName,
                     desc: action.data.variableDescription + ' from ' +
                         formatTime(action.data.seriesStartDate) + ' to ' +
                         formatTime(action.data.seriesEndDate)
