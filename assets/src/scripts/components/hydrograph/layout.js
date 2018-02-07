@@ -25,6 +25,6 @@ const layoutSelector = createSelector(
     }
 );
 
-module.exports = {ASPECT_RATIO_PERCENT, MARGIN, layoutSelector, ASPECT_RATIO}
+module.exports = {ASPECT_RATIO, ASPECT_RATIO_PERCENT, MARGIN, layoutSelector};
 
 
