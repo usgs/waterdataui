@@ -84,7 +84,7 @@ const getNearestTime = function (data, time) {
 };
 
 
-const plotTooltips = function (elem, {xScale, yScale, data, layout}) {
+const plotTooltips = function (elem, {xScale, yScale, data}) {
     // Create a node to hightlight the currently selected date/time.
     let focus = elem.append('g')
         .attr('class', 'focus')
