@@ -154,7 +154,7 @@ export const timeSeriesReducer = function (state={}, action) {
             return {
                 ...state,
                 width: action.width
-            }
+            };
 
         default:
             return state;
