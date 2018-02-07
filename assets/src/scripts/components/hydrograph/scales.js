@@ -72,20 +72,6 @@ function createYScale(tsData, showSeries, ySize) {
         .domain(yExtent);
 }
 
-/**
- * Create scales for hydrograph charts. X is linear to time and Y is logarithmic.
- * @param  {Array} tsData    Array containing {time, value} items
- * @param  {Number} xSize X range of scale
- * @param  {Number} ySize Y range of scale
- * @return {Object}        {xScale, yScale}
- */
-function createScales(tsData, showSeries, xSize, ySize) {
-    const xScale = createXScale(tsData.current, xSize);
-    const yScale = createYScale(tsData, showSeries, ySize);
-
-    return {xScale, yScale};
-}
-
 
 /**
  * Factory function creates a function that is:
@@ -120,4 +106,4 @@ const yScaleSelector = createSelector(
 );
 
 
-module.exports = {createScales, xScaleSelector, yScaleSelector};
+module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector};

@@ -93,8 +93,7 @@ export const timeSeriesReducer = function (state={}, action) {
     switch (action.type) {
         case 'ADD_TIMESERIES':
             // If data is valid
-            if (action.data && action.data.values &&
-                    !action.data.values.some(d => d.value === -999999)) {
+            if (action.data && action.data.values) {
                 return {
                     ...state,
                     tsData: {
@@ -188,7 +187,7 @@ export const configureStore = function (initialState) {
     if (window.__REDUX_DEVTOOLS_EXTENSION__) {
         enhancers = compose(
             applyMiddleware(...MIDDLEWARES),
-            window.__REDUX_DEVTOOLS_EXTENSION__()
+            window.__REDUX_DEVTOOLS_EXTENSION__({serialize: true})
         );
     } else {
         enhancers = applyMiddleware(...MIDDLEWARES);
