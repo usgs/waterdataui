@@ -1,8 +1,7 @@
 const { select, selectAll } = require('d3-selection');
-const { provide, link } = require('../../lib/redux');
+const { provide } = require('../../lib/redux');
 
 const { attachToNode, getNearestTime, timeSeriesGraph } = require('./index');
-const { layoutSelector } = require('./layout');
 const { Actions, configureStore } = require('./store');
 
 
