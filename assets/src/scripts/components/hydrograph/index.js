@@ -146,12 +146,6 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
             .attr('id', 'median-point')
             .attr('class', 'median-data-series')
             .attr('r', CIRCLE_RADIUS)
-            .attr('x', function(d) {
-                return xscale(d.time);
-            })
-            .attr('y', function(d) {
-                return yscale(d.value);
-            })
             .attr('cx', function(d) {
                 return xscale(d.time);
             })
