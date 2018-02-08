@@ -199,7 +199,6 @@ const timeSeriesGraph = function (elem) {
                 .call(link(plotTooltips, createStructuredSelector({
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
-                    layout: layoutSelector,
                     data: pointsSelector('current')
                 })))
                 .call(link(plotMedianPoints, createStructuredSelector({
