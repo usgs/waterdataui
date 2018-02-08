@@ -14,7 +14,7 @@ const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require(
 const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
-const { drawSimpleLegend } = require('./legend');
+const { drawSimpleLegend, legendDisplaySelector } = require('./legend');
 
 
 // Function that returns the left bounding point for a given chart point.
@@ -221,10 +221,8 @@ const timeSeriesGraph = function (elem) {
         })));
 
     svg.call(link(plotLegend, createStructuredSelector({
-        markers: createSelector(
-            state => state.displayMarkers,
-            displayMarkers => displayMarkers
-        )
+        markers: legendDisplaySelector
+
     })));
 
     elem.call(link(addSROnlyTable, createStructuredSelector({
@@ -257,7 +255,7 @@ const attachToNode = function (node, {siteno} = {}) {
         .select('.hydrograph-last-year-input')
             .on('change', function() {
                 store.dispatch(Actions.toggleTimeseries('compare', this.checked));
-                store.dispatch(Actions.selectLegendMarkers());
+                //store.dispatch(Actions.selectLegendMarkers());
             });
 
     window.onresize = function() {

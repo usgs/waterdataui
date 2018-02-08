@@ -83,8 +83,8 @@ const legendDisplaySelector = createSelector(
         let marker;
         for (let key in showSeries) {
             if (showSeries.hasOwnProperty(key)) {
-                if (shownSeries[key]) {
-                    shownSeries.push(showSeries[key]);
+                if (showSeries[key]) {
+                    shownSeries.push(key);
                 }
             }
         }

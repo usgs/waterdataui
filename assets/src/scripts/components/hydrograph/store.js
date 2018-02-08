@@ -18,12 +18,12 @@ export const Actions = {
             const timeSeries = getTimeseries({sites: [siteno], startDate, endDate}).then(
                 series => {
                     dispatch(Actions.addTimeseries('current', siteno, series[0]));
-                    dispatch(Actions.setLegendMarkers('current'));
+                    //dispatch(Actions.setLegendMarkers('current'));
                     // Trigger a call to get last year's data
                     const startTime = series[0].seriesStartDate;
                     const endTime = series[0].seriesEndDate;
                     dispatch(Actions.retrieveCompareTimeseries(siteno, startTime, endTime));
-                    dispatch(Actions.setLegendMarkers('compare'));
+                    //dispatch(Actions.setLegendMarkers('compare'));
 
                     return series[0];
                 },
@@ -37,8 +37,8 @@ export const Actions = {
                 let unit = replaceHtmlEntities(series.variableName.split(' ').pop());
                 let plotableStats = parseMedianData(stats, startDate, endDate, unit);
                 dispatch(Actions.setMedianStatistics(plotableStats));
-                dispatch(Actions.setLegendMarkers('medianStatistics'));
-                dispatch(Actions.selectLegendMarkers());
+                //dispatch(Actions.setLegendMarkers('medianStatistics'));
+                //dispatch(Actions.selectLegendMarkers());
             });
         };
     },
