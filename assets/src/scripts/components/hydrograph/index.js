@@ -84,14 +84,21 @@ const getNearestTime = function (data, time) {
 };
 
 
-const plotTooltips = function (elem, {xScale, yScale, data}) {
+const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, compareXScale, compareData}) {
     // Create a node to highlight the currently selected date/time.
+    elem.select('#plot-tooltip').remove();
+    elem.select('.overlay').remove();
     let focus = elem.append('g')
+        .attr('id', 'plot-tooltip')
         .attr('class', 'focus')
         .style('display', 'none');
     focus.append('circle')
         .attr('r', 7.5);
-    focus.append('text');
+    let tooltipText = focus.append('g')
+    tooltipText.append('text')
+        .attr('class', 'current-tooltip-text');
+    tooltipText.append('text')
+        .attr('class', 'compare-tooltip-text');
 
     elem.append('rect')
         .attr('class', 'overlay')
@@ -106,18 +113,30 @@ const plotTooltips = function (elem, {xScale, yScale, data}) {
             if (!datum) {
                 return;
             }
+            let compareTime;
+            let compare;
+            if (isCompareVisible) {
+                compareTime = compareXScale.invert(mouse(this)[0]);
+                compare = getNearestTime(compareData, compareTime);
+            }
 
             // Move the focus node to this date/time.
             focus.attr('transform', `translate(${xScale(datum.time)}, ${yScale(datum.value)})`);
 
             // Draw text, anchored to the left or right, depending on
             // which side of the graph the point is on.
+            // TODO: Should we use the position of the mouse rather than the index of the date?
             const isFirstHalf = index < data.length / 2;
-            focus.select('text')
-                .text(() => datum.label)
+            tooltipText.select('.current-tooltip-text')
                 .attr('text-anchor', isFirstHalf ? 'start' : 'end')
                 .attr('x', isFirstHalf ? 15 : -15)
-                .attr('dy', isFirstHalf ? '.31em' : '-.31em');
+                .attr('y', '-.31em')
+                .text(() => datum.label);
+            tooltipText.select('.compare-tooltip-text')
+               .text(() => isCompareVisible ? compare.datum.label : '')
+                .attr('text-anchor', isFirstHalf ? 'start' : 'end')
+                .attr('x', isFirstHalf ? 15 : -15)
+                .attr('y', '1em');
         });
 };
 
@@ -199,8 +218,10 @@ const timeSeriesGraph = function (elem) {
                 .call(link(plotTooltips, createStructuredSelector({
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
-                    layout: layoutSelector,
-                    data: pointsSelector('current')
+                    data: pointsSelector('current'),
+                    isCompareVisible: isVisibleSelector('compare'),
+                    compareXScale: xScaleSelector('compare'),
+                    compareData: pointsSelector('compare')
                 })))
                 .call(link(plotMedianPoints, createStructuredSelector({
                     visible: isVisibleSelector('medianStatistics'),
@@ -229,9 +250,10 @@ const attachToNode = function (node, {siteno} = {}) {
         return;
     }
 
-    let store = configureStore();
+    let store = configureStore({
+        width: node.offsetWidth
+    });
 
-    store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
     select(node)
         .call(provide(store))
         .call(timeSeriesGraph)
