@@ -3,7 +3,6 @@ const { provide } = require('../../lib/redux');
 
 const { attachToNode, getNearestTime, timeSeriesGraph } = require('./index');
 const { Actions, configureStore } = require('./store');
-const { lineMarker, circleMarker } = require('./markers');
 
 
 describe('Hydrograph charting module', () => {
@@ -124,48 +123,7 @@ describe('Hydrograph charting module', () => {
                 },
                 title: 'My Title',
                 desc: 'My Description',
-                width: 400,
-                legendMarkers: {
-                    current: {
-                        type: lineMarker,
-                        domId: null,
-                        domClass: null,
-                        text: 'blah',
-                        groupId: null
-                    },
-                    compare: {
-                        type: lineMarker,
-                        domId: null,
-                        domClass: null,
-                        text: 'blah',
-                        groupId: null
-                    },
-                    medianStatistics: {
-                        type: circleMarker,
-                        r: 4,
-                        domId: null,
-                        domClass: null,
-                        groupId: null,
-                        text: 'blah'
-                    }
-                },
-                displayMarkers: [
-                    {
-                        type: lineMarker,
-                        domId: null,
-                        domClass: null,
-                        text: 'blah',
-                        groupId: null
-                    },
-                    {
-                        type: circleMarker,
-                        r: 4,
-                        domId: null,
-                        domClass: null,
-                        groupId: null,
-                        text: 'blah'
-                    }
-                ]
+                width: 400
             });
             select(graphNode)
                 .call(provide(store))
@@ -267,31 +225,6 @@ describe('Hydrograph charting module', () => {
                     compare: true,
                     medianStatistics: true
                 },
-                legendMarkers: {
-                    current: {
-                        type: lineMarker,
-                        domId: null,
-                        domClass: null,
-                        text: 'blah',
-                        groupId: null
-                    },
-                    compare: {
-                        type: lineMarker,
-                        domId: null,
-                        domClass: null,
-                        text: 'blah',
-                        groupId: null
-                    },
-                    medianStatistics: {
-                        type: circleMarker,
-                        r: 4,
-                        domId: null,
-                        domClass: null,
-                        groupId: null,
-                        text: 'blah'
-                    }
-                },
-                displayMarkers: [],
                 title: 'My Title',
                 desc: 'My Description',
             });
@@ -305,7 +238,6 @@ describe('Hydrograph charting module', () => {
         });
 
         it('Should have three legend markers', () => {
-            store.dispatch(Actions.selectLegendMarkers());
             expect(selectAll('g.legend-marker').size()).toBe(3);
         });
 
@@ -316,7 +248,6 @@ describe('Hydrograph charting module', () => {
 
         it('Should have two legend markers after the compare time series is removed', () => {
             store.dispatch(Actions.toggleTimeseries('compare', false));
-            store.dispatch(Actions.selectLegendMarkers());
             expect(selectAll('g.legend-marker').size()).toBe(2);
         });
 

@@ -139,7 +139,6 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
     const container = elem
         .append('g')
             .attr('id', 'median-points');
-    console.log(CIRCLE_RADIUS);
     container.selectAll('medianPoint')
         .data(medianStatsData)
         .enter()
