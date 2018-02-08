@@ -45,11 +45,15 @@ describe('Hydrograph charting module', () => {
                 medianStatistics: true
             },
             title: '',
-            desc: ''
+            desc: '',
+            width: 400
         });
         select(graphNode)
             .call(provide(store))
             .call(timeSeriesGraph);
+        let svgNodes = graphNode.getElementsByTagName('svg');
+        expect(svgNodes.length).toBe(1);
+        expect(svgNodes[0].getAttribute('viewBox')).toContain('400 200');
         expect(graphNode.innerHTML).toContain('hydrograph-container');
     });
 
@@ -76,6 +80,7 @@ describe('Hydrograph charting module', () => {
                 },
                 title: 'My Title',
                 desc: 'My Description',
+                width: 400
             });
             select(graphNode)
                 .call(provide(store))
@@ -119,6 +124,7 @@ describe('Hydrograph charting module', () => {
                 },
                 title: 'My Title',
                 desc: 'My Description',
+                width: 400,
                 legendMarkers: {
                     current: {
                         type: lineMarker,
@@ -320,110 +326,6 @@ describe('Hydrograph charting module', () => {
 });
 
 
-const MOCK_DATA = [
-    {
-        "label": "1/3/2018, 10:00:00 AM -0600\n24.0 ft3/s",
-        "time": "2018-01-03T16:00:00.000Z",
-        "value": 24
-    },
-    {
-        "label": "1/3/2018, 10:15:00 AM -0600\n24.6 ft3/s",
-        "time": "2018-01-03T16:15:00.000Z",
-        "value": 24
-    },
-    {
-        "label": "1/3/2018, 10:30:00 AM -0600\n24.6 ft3/s",
-        "time": "2018-01-03T16:30:00.000Z",
-        "value": 24
-    },
-    {
-        "label": "1/3/2018, 10:45:00 AM -0600\n25.0 ft3/s",
-        "time": "2018-01-03T16:45:00.000Z",
-        "value": 25
-    },
-    {
-        "label": "1/3/2018, 11:00:00 AM -0600\n24.6 ft3/s",
-        "time": "2018-01-03T17:00:00.000Z",
-        "value": 24
-    },
-    {
-        "label": "1/3/2018, 11:15:00 AM -0600\n24.6 ft3/s",
-        "time": "2018-01-03T17:15:00.000Z",
-        "value": 24
-    },
-    {
-        "label": "1/3/2018, 11:30:00 AM -0600\n24.0 ft3/s",
-        "time": "2018-01-03T17:30:00.000Z",
-        "value": 24
-    },
-    {
-        "label": "1/3/2018, 11:45:00 AM -0600\n24.0 ft3/s",
-        "time": "2018-01-03T17:45:00.000Z",
-        "value": 24
-    },
-    {
-        "label": "1/3/2018, 12:00:00 PM -0600\n24.0 ft3/s",
-        "time": "2018-01-03T18:00:00.000Z",
-        "value": 24
-    },
-    {
-        "label": "1/3/2018, 12:15:00 PM -0600\n24.0 ft3/s",
-        "time": "2018-01-03T18:15:00.000Z",
-        "value": 24
-    }
-];
-const MOCK_DATA_FOR_PREVIOUS_YEAR = [
-    {
-        "label": "1/3/2017, 10:00:00 AM -0600\n24.0 ft3/s",
-        "time": "2017-01-03T16:00:00.000Z",
-        "value": 20
-    },
-    {
-        "label": "1/3/2017, 10:15:00 AM -0600\n24.6 ft3/s",
-        "time": "2017-01-03T16:15:00.000Z",
-        "value": 24
-    },
-    {
-        "label": "1/3/2017, 10:30:00 AM -0600\n24.6 ft3/s",
-        "time": "2017-01-03T16:30:00.000Z",
-        "value": 25
-    },
-    {
-        "label": "1/3/2017, 10:45:00 AM -0600\n25.0 ft3/s",
-        "time": "2017-01-03T16:45:00.000Z",
-        "value": 28
-    },
-    {
-        "label": "1/3/2017, 11:00:00 AM -0600\n24.6 ft3/s",
-        "time": "2017-01-03T17:00:00.000Z",
-        "value": 29
-    },
-    {
-        "label": "1/3/2017, 11:15:00 AM -0600\n24.6 ft3/s",
-        "time": "2017-01-03T17:15:00.000Z",
-        "value": 29
-    },
-    {
-        "label": "1/3/2017, 11:30:00 AM -0600\n24.0 ft3/s",
-        "time": "2017-01-03T17:30:00.000Z",
-        "value": 29
-    },
-    {
-        "label": "1/3/2017, 11:45:00 AM -0600\n24.0 ft3/s",
-        "time": "2017-01-03T17:45:00.000Z",
-        "value": 30
-    },
-    {
-        "label": "1/3/2018, 12:00:00 PM -0600\n24.0 ft3/s",
-        "time": "2018-01-03T18:00:00.000Z",
-        "value": 24
-    },
-    {
-        "label": "1/3/2018, 12:15:00 PM -0600\n24.0 ft3/s",
-        "time": "2018-01-03T18:15:00.000Z",
-        "value": 24
-    }
-];
 const MOCK_MEDIAN_STAT_DATA = [
     {
         "label": "18 ft3/s",
