@@ -6,10 +6,6 @@
  * @param {String} description
  * @param {Boolean} isInteractive
  */
-
-
-const { select } = require('d3-selection');
-
 function addSVGAccessibility(svg, {title, description, isInteractive}) {
     svg.attr('title', title)
         .attr('desc', description)
@@ -37,7 +33,7 @@ function addSROnlyTable(container, {columnNames, data, describeById=null, descri
         .attr('class', 'usa-sr-only');
 
     if (describeById && describeByText) {
-        select(`div#${describeById}`).remove();
+        container.select(`div#${describeById}`).remove();
         table.attr('aria-describedBy', describeById);
         container.append('div')
             .attr('id', describeById)
