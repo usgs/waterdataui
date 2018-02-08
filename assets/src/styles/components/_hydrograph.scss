@@ -25,6 +25,12 @@
                 fill: #436BAF;
                 opacity: .6;
             }
+            .current-tooltip-text {
+                font-weight: bold;
+            }
+            .compare-tooltip-text {
+                font-weight: normal;
+            }
         }
         .line {
             fill: none;
