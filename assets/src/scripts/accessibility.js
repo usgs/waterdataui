@@ -22,13 +22,24 @@ function addSVGAccessibility(svg, {title, description, isInteractive}) {
  * @param {String} container - Can be a selector string or d3 selection
  * @param {Array} columnNames - array of strings
  * @param {Array} data - array of array of strings
+ * @param {String} describeById - Optional id string of the element that describes this table
+ * @param {String} describeByText - Optional text that describes this table
  */
-function addSROnlyTable(container, {columnNames, data}) {
+function addSROnlyTable(container, {columnNames, data, describeById=null, describeByText=null}) {
     container.selectAll('table.usa-sr-only').remove();
 
     const table = container
         .append('table')
         .attr('class', 'usa-sr-only');
+
+    if (describeById && describeByText) {
+        container.select(`div#${describeById}`).remove();
+        table.attr('aria-describedby', describeById);
+        container.append('div')
+            .attr('id', describeById)
+            .attr('class', 'usa-sr-only')
+            .text(describeByText);
+    }
 
     table.append('thead')
         .append('tr')
