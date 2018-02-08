@@ -34,7 +34,7 @@ function addSROnlyTable(container, {columnNames, data, describeById=null, descri
 
     if (describeById && describeByText) {
         container.select(`div#${describeById}`).remove();
-        table.attr('aria-describedBy', describeById);
+        table.attr('aria-describedby', describeById);
         container.append('div')
             .attr('id', describeById)
             .attr('class', 'usa-sr-only')
