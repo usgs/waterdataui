@@ -1,7 +1,7 @@
 const { namespaces } = require('d3');
 const { select, selectAll } = require('d3-selection');
 
-const { drawSimpleLegend } = require('./legend');
+const { drawSimpleLegend, legendDisplaySelector } = require('./legend');
 const { lineMarker, circleMarker } = require('./markers');
 
 describe('Legend module', () => {
@@ -55,6 +55,66 @@ describe('Legend module', () => {
             expect(circle.attr('class')).toBe('some-other-class');
         });
 
+    });
+
+    describe('legendDisplaySelector', () => {
+
+        it('should return a marker if a time series is shown', () => {
+            let result = legendDisplaySelector({
+                showSeries:
+                    {
+                        current: true,
+                        compare: false,
+                        medianStatistics: true
+                    },
+                statisticalMetaData: {
+                    'beginYear': 2010,
+                    'endYear': 2012
+                    }
+            });
+            expect(result).toEqual([
+                {
+                    type: lineMarker,
+                    domId: 'ts-current',
+                    domClass: 'line',
+                    text: 'Current Year',
+                    groupId: 'current-line-marker'
+                },
+                {
+                    type: circleMarker,
+                    r: 4,
+                    domId: null,
+                    domClass: 'median-data-series',
+                    groupId: 'median-circle-marker',
+                    text: 'Median Discharge 2010 - 2012'
+                }
+            ]);
+        });
+
+        it('should return an empty array if keys do not match', () => {
+            let result = legendDisplaySelector({
+                showSeries: {
+                    blah: true,
+                    blah2: true
+                },
+                statisticalMetaData: {
+                    beginYear: 2010,
+                    endYear: 2012
+                }
+            }) ;
+            expect(result.length).toEqual(0);
+        });
+
+        it('should not choke if statisticalMetadata years are absent', () => {
+            let result = legendDisplaySelector({
+                showSeries:
+                    {
+                        medianStatistics: true
+                    },
+                statisticalMetaData: {}
+            });
+            expect(result[0].text).toEqual('Median Discharge');
+        });
     });
 
 });

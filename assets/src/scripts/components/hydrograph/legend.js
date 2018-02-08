@@ -99,20 +99,20 @@ const legendDisplaySelector = createSelector(
                 marker = defineLineMarker(domId, 'line', text, svgGroup);
             }
             else if (seriesName === 'medianStatistics') {
-                try {
-                    let beginYear = statisticalMetaData.beginYear;
-                    let endYear = statisticalMetaData.endYear;
+                text = 'Median Discharge';
+                let beginYear = statisticalMetaData.beginYear;
+                let endYear = statisticalMetaData.endYear;
+                if (beginYear && endYear) {
                     text = `Median Discharge ${beginYear} - ${endYear}`;
-                }
-                catch(err) {
-                    text = 'Median Discharge';
                 }
                 marker = defineCircleMarker(CIRCLE_RADIUS, null, 'median-data-series', text, 'median-circle-marker');
             }
             else {
                 marker = null;
             }
-            displayMarkers.push(marker)
+            if (marker) {
+                displayMarkers.push(marker);
+            }
         }
         return displayMarkers;
     }
