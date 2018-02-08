@@ -55,12 +55,16 @@ describe('svgAccessibility tests', () => {
            ['CO', '08', 'Colorado'],
            ['AL', '01', 'Alabama']
                ];
+       let describeById = 'some-id';
+       let describeByText = 'some descriptive text';
 
        beforeEach(() => {
            container = select('body').append('div').attr('id', 'test-div');
            addSROnlyTable(select(document.getElementById('test-div')), {
                columnNames: columnNames,
-               data: data
+               data: data,
+               describeById: describeById,
+               describeByText: describeByText
            });
        });
 
@@ -71,6 +75,11 @@ describe('svgAccessibility tests', () => {
        it('Table with the appropriate class is created', () => {
            expect(document.getElementById('test-div').innerHTML).toContain('table');
            expect(container.select('table').attr('class')).toContain('usa-sr-only');
+       });
+
+       it('Table descriptions are setup', () => {
+            expect(container.select('table').attr('aria-describedBy')).toEqual(describeById);
+            expect(container.select(`div#${describeById}`).text()).toEqual(describeByText);
        });
 
        it('Table should contain three columns in table header', () => {
