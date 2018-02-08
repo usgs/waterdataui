@@ -1,3 +1,8 @@
+// functions to facilitate legend creation for a d3 plot
+const { createSelector } = require('reselect');
+const { defineLineMarker, defineCircleMarker } = require('./markers');
+const { CIRCLE_RADIUS } = require('./layout');
+
 /**
  * Create a simple horizontal legend
  *
@@ -68,4 +73,50 @@ function drawSimpleLegend(svg,
 }
 
 
-module.exports = {drawSimpleLegend};
+const legendDisplaySelector = createSelector(
+    (state) => state.showSeries,
+    (state) => state.statisticalMetaData,
+    (showSeries, statisticalMetaData) => {
+        let shownSeries = [];
+        let displayMarkers = [];
+        let text;
+        let marker;
+        for (let key in showSeries) {
+            if (showSeries.hasOwnProperty(key)) {
+                if (shownSeries[key]) {
+                    shownSeries.push(showSeries[key]);
+                }
+            }
+        }
+        for (let seriesName of shownSeries) {
+            if (seriesName === 'compare' || seriesName === 'current') {
+                text = 'Current Year';
+                let domId = `ts-${seriesName}`;
+                let svgGroup = `${seriesName}-line-marker`;
+                if (seriesName === 'compare') {
+                    text = 'Last Year';
+                }
+                marker = defineLineMarker(domId, 'line', text, svgGroup);
+            }
+            else if (seriesName === 'medianStatistics') {
+                try {
+                    let beginYear = statisticalMetaData.beginYear;
+                    let endYear = statisticalMetaData.endYear;
+                    text = `Median Discharge ${beginYear} - ${endYear}`;
+                }
+                catch(err) {
+                    text = 'Median Discharge';
+                }
+                marker = defineCircleMarker(CIRCLE_RADIUS, null, 'median-data-series', text, 'median-circle-marker');
+            }
+            else {
+                marker = null;
+            }
+            displayMarkers.push(marker)
+        }
+        return displayMarkers;
+    }
+);
+
+
+module.exports = {drawSimpleLegend, legendDisplaySelector};
