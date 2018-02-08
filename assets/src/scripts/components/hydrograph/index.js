@@ -184,8 +184,7 @@ const timeSeriesGraph = function (elem) {
         .append('svg');
 
 
-    svg.attr('preserveAspectRatio', 'xMinYMin meet')
-        .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
+    svg.call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
         .call(link(addSVGAccessibility, createStructuredSelector({
             title: state => state.title,
             description: state => state.desc,
