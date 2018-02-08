@@ -207,35 +207,36 @@ const timeSeriesGraph = function (elem) {
                     yscale: yScaleSelector,
                     medianStatsData: pointsSelector('medianStatistics')
                 })));
-    elem.call(link(addSROnlyTable, createStructuredSelector({
-        columnNames: createSelector(
-            (state) => state.title,
-            (title) => [title, 'Time']
-        ),
-        data: createSelector(
-            pointsSelector('current'),
-            points => points.map((value) => {
-                return [value.value, value.time];
-            })
-        ),
-        describeById: () => {return 'time-series-sr-desc'},
-        describeByText: () => {return 'current time series data in tabular format'}
+    elem.append('div')
+        .call(link(addSROnlyTable, createStructuredSelector({
+            columnNames: createSelector(
+                (state) => state.title,
+                (title) => [title, 'Time']
+            ),
+            data: createSelector(
+                pointsSelector('current'),
+                points => points.map((value) => {
+                    return [value.value, value.time];
+                })
+            ),
+            describeById: () => {return 'time-series-sr-desc'},
+            describeByText: () => {return 'current time series data in tabular format'}
     })));
 
     elem.append('div')
-        .call(link(addSROnlyTable, createStructuredSelector( {
-        columnNames: createSelector(
-            (state) => state.title,
-            (title) => [`Median ${title}`, 'Time']
-        ),
-        data: createSelector(
-            pointsSelector('medianStatistics'),
-            points => points.map((value) => {
-                return [value.value, value.time];
-            })
-        ),
-        describeById: () => {return 'median-statistics-sr-desc'},
-        describeByText: () => {return 'median statistical data in tabular format'}
+        .call(link(addSROnlyTable, createStructuredSelector({
+            columnNames: createSelector(
+                (state) => state.title,
+                (title) => [`Median ${title}`, 'Time']
+            ),
+            data: createSelector(
+                pointsSelector('medianStatistics'),
+                points => points.map((value) => {
+                    return [value.value, value.time];
+                })
+            ),
+            describeById: () => {return 'median-statistics-sr-desc'},
+            describeByText: () => {return 'median statistical data in tabular format'}
     })));
 };
 

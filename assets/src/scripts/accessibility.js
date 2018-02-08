@@ -38,7 +38,7 @@ function addSROnlyTable(container, {columnNames, data, describeById=null, descri
         container.append('div')
             .attr('id', describeById)
             .attr('class', 'usa-sr-only')
-            .text(describeByText)
+            .text(describeByText);
     }
 
     table.append('thead')
