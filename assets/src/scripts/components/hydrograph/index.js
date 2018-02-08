@@ -10,7 +10,7 @@ const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
 
 const { appendAxes, axesSelector } = require('./axes');
-const { WIDTH, HEIGHT, ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS } = require('./layout');
+const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
 const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
@@ -96,8 +96,8 @@ const plotTooltips = function (elem, {xScale, yScale, data}) {
 
     elem.append('rect')
         .attr('class', 'overlay')
-        .attr('width', WIDTH)
-        .attr('height', HEIGHT)
+        .attr('width', '100%')
+        .attr('height', '100%')
         .on('mouseover', () => focus.style('display', null))
         .on('mouseout', () => focus.style('display', 'none'))
         .on('mousemove', function () {
@@ -211,6 +211,7 @@ const timeSeriesGraph = function (elem) {
         .call(link(plotTooltips, createStructuredSelector({
             xScale: xScaleSelector('current'),
             yScale: yScaleSelector,
+            layout: layoutSelector,
             data: pointsSelector('current')
         })))
         .call(link(plotMedianPoints, createStructuredSelector({
@@ -250,6 +251,7 @@ const attachToNode = function (node, {siteno} = {}) {
 
     let store = configureStore();
 
+    store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
     select(node)
         .call(provide(store))
         .call(timeSeriesGraph)
@@ -258,6 +260,10 @@ const attachToNode = function (node, {siteno} = {}) {
                 store.dispatch(Actions.toggleTimeseries('compare', this.checked));
                 store.dispatch(Actions.selectLegendMarkers());
             });
+
+    window.onresize = function() {
+        store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
+    };
     store.dispatch(Actions.retrieveTimeseries(siteno));
 };
 

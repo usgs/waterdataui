@@ -78,6 +78,12 @@ export const Actions = {
             medianStatistics
         };
     },
+    resizeTimeseriesPlot(width) {
+        return {
+            type: 'RESIZE_TIMESERIES_PLOT',
+            width
+        };
+    },
     setLegendMarkers(key) {
         return {
             type: 'SET_LEGEND_MARKERS',
@@ -110,6 +116,7 @@ export const timeSeriesReducer = function (state={}, action) {
                         [action.key]: action.show
                     },
                     title: variableName,
+                    plotYLabel: action.data.variableDescription,
                     desc: action.data.variableDescription + ' from ' +
                         formatTime(action.data.seriesStartDate) + ' to ' +
                         formatTime(action.data.seriesEndDate)
@@ -214,6 +221,12 @@ export const timeSeriesReducer = function (state={}, action) {
                 displayMarkers: displayMarkers
             };
 
+        case 'RESIZE_TIMESERIES_PLOT':
+            return {
+                ...state,
+                width: action.width
+            };
+
         default:
             return state;
     }
@@ -243,6 +256,7 @@ export const configureStore = function (initialState) {
         displayMarkers: [],
         title: '',
         desc: '',
+        width: 800,
         ...initialState
     };
 
