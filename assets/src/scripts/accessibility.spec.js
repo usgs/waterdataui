@@ -78,7 +78,7 @@ describe('svgAccessibility tests', () => {
        });
 
        it('Table descriptions are setup', () => {
-            expect(container.select('table').attr('aria-describedBy')).toEqual(describeById);
+            expect(container.select('table').attr('aria-describedby')).toEqual(describeById);
             expect(container.select(`div#${describeById}`).text()).toEqual(describeByText);
        });
 
