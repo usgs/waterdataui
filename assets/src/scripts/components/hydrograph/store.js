@@ -18,12 +18,10 @@ export const Actions = {
             const timeSeries = getTimeseries({sites: [siteno], startDate, endDate}).then(
                 series => {
                     dispatch(Actions.addTimeseries('current', siteno, series[0]));
-                    //dispatch(Actions.setLegendMarkers('current'));
                     // Trigger a call to get last year's data
                     const startTime = series[0].seriesStartDate;
                     const endTime = series[0].seriesEndDate;
                     dispatch(Actions.retrieveCompareTimeseries(siteno, startTime, endTime));
-                    //dispatch(Actions.setLegendMarkers('compare'));
 
                     return series[0];
                 },
@@ -37,8 +35,6 @@ export const Actions = {
                 let unit = replaceHtmlEntities(series.variableName.split(' ').pop());
                 let plotableStats = parseMedianData(stats, startDate, endDate, unit);
                 dispatch(Actions.setMedianStatistics(plotableStats));
-                //dispatch(Actions.setLegendMarkers('medianStatistics'));
-                //dispatch(Actions.selectLegendMarkers());
             });
         };
     },
@@ -82,18 +78,6 @@ export const Actions = {
         return {
             type: 'RESIZE_TIMESERIES_PLOT',
             width
-        };
-    },
-    setLegendMarkers(key) {
-        return {
-            type: 'SET_LEGEND_MARKERS',
-            key
-        };
-    },
-    selectLegendMarkers() {
-        return {
-            type: 'SELECT_DISPLAY_MARKERS',
-            text: 'Select Display Markers'
         };
     }
 };
@@ -163,62 +147,6 @@ export const timeSeriesReducer = function (state={}, action) {
                     beginYear: action.medianStatistics.beginYear,
                     endYear: action.medianStatistics.endYear
                 }
-            };
-
-        case 'SET_LEGEND_MARKERS':
-            let marker;
-            let text;
-            if (action.key === 'compare' || action.key === 'current') {
-                text = 'Current Year';
-                let domId = `ts-${action.key}`;
-                let svgGroup = `${action.key}-line-marker`;
-                if (action.key === 'compare') {
-                    text = 'Last Year';
-                }
-                marker = defineLineMarker(domId, 'line', text, svgGroup);
-            }
-            else if (action.key === 'medianStatistics') {
-                let beginYear;
-                let endYear;
-                try {
-                    beginYear = state.statisticalMetaData.beginYear;
-                    endYear = state.statisticalMetaData.endYear;
-                    text = `Median Discharge ${beginYear} - ${endYear}`;
-                }
-                catch(err) {
-                    beginYear = '';
-                    endYear = '';
-                    text = 'Median Discharge';
-                }
-                marker = defineCircleMarker(4, null, 'median-data-series', text, 'median-circle-marker');
-            }
-            else {
-                marker = null;
-            }
-            return {
-                ...state,
-                legendMarkers: {
-                    ...state.legendMarkers,
-                    [action.key]: marker
-                }
-            };
-
-        case 'SELECT_DISPLAY_MARKERS':
-            let displayMarkers = [];
-            const showSeries = state.showSeries ? state.showSeries : {};
-            const markers = state.legendMarkers ? state.legendMarkers : {};
-            for (const [key, value] of Object.entries(showSeries)) {
-                let marker;
-                if (value) {
-                    marker = markers[key];
-                    if (marker) {
-                        displayMarkers.push(marker);
-                    }
-                }
-            }
-            return {
-                ...state,
-                displayMarkers: displayMarkers
             };
 
         case 'RESIZE_TIMESERIES_PLOT':

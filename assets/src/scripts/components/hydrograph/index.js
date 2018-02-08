@@ -253,10 +253,9 @@ const attachToNode = function (node, {siteno} = {}) {
         .call(provide(store))
         .call(timeSeriesGraph)
         .select('.hydrograph-last-year-input')
-            .on('change', function() {
-                store.dispatch(Actions.toggleTimeseries('compare', this.checked));
-                //store.dispatch(Actions.selectLegendMarkers());
-            });
+            .on('change', dispatch(function() {
+                return Actions.toggleTimeseries('compare', this.checked);
+            }));
 
     window.onresize = function() {
         store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
