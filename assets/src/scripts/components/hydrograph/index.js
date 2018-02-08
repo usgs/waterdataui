@@ -209,7 +209,6 @@ const timeSeriesGraph = function (elem) {
         .call(link(plotTooltips, createStructuredSelector({
             xScale: xScaleSelector('current'),
             yScale: yScaleSelector,
-            layout: layoutSelector,
             data: pointsSelector('current')
         })))
         .call(link(plotMedianPoints, createStructuredSelector({
@@ -252,7 +251,7 @@ const attachToNode = function (node, {siteno} = {}) {
         .call(provide(store))
         .call(timeSeriesGraph)
         .select('.hydrograph-last-year-input')
-            .on('change', dispatch(function() {
+            .on('change', dispatch(function () {
                 return Actions.toggleTimeseries('compare', this.checked);
             }));
 
