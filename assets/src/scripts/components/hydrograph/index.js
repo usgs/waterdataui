@@ -167,9 +167,13 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
 
             tooltipText.select('.current-tooltip-text')
                 .attr('x', 15)
+                .classed('approved', datum.approved)
+                .classed('estimated', datum.estimated)
                 .text(() => datum.label);
             tooltipText.select('.compare-tooltip-text')
                 .text(() => isCompareVisible ? compare.datum.label : '')
+                .classed('approved', compare ? compare.datum.approved : false)
+                .classed('estimated', compare ? compare.datum.estimated : false)
                 .attr('x', 15)
                 .attr('y', '1em');
         });

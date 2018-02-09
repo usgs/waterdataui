@@ -1,3 +1,6 @@
+$approved: darkgreen;
+$estimated: black;
+
 .hydrograph-container {
     display: inline-block;
     position: relative;
@@ -28,13 +31,20 @@
             line {
                 opacity: .5;
                 stroke-color: #436BAF;
-                stroke-width: 2
+                stroke-width: 1;
+                stroke-dasharray: 5, 5
             }
 
         }
         .tooltip-group {
             .current-tooltip-text {
                 font-weight: bold;
+            }
+            .approved {
+                fill: $approved;
+            }
+            .estimated {
+                fill: $estimated;
             }
             .compare-tooltip-text {
                 font-weight: normal
@@ -45,9 +55,10 @@
             stroke-width: 3px;
             stroke: $usgs-blue;
             &.approved {
-                stroke: darkgreen;
+                stroke: $approved;
             }
             &.estimated {
+                stroke: $estimated;
                 stroke-dasharray: 1, 3;
             }
         }
