@@ -1,4 +1,5 @@
 const { Actions, timeSeriesReducer } = require('./store');
+const { lineMarker, circleMarker } = require('./markers');
 
 
 describe('Redux store', () => {
@@ -97,13 +98,17 @@ describe('Redux store', () => {
         it('should handle SET_MEDIAN_STATISTICS', () => {
             expect(timeSeriesReducer({}, {
                 type: 'SET_MEDIAN_STATISTICS',
-                medianStatistics: 'test data'
+                medianStatistics: {beginYear: '2000', endYear: '2010', values: ['a']}
             })).toEqual({
                 tsData: {
-                    medianStatistics: 'test data'
+                    medianStatistics: ['a']
                 },
                 showSeries: {
                     medianStatistics: true
+                },
+                statisticalMetaData: {
+                    beginYear: '2000',
+                    endYear: '2010'
                 }
             });
         });

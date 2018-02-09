@@ -134,12 +134,17 @@ export function isLeapYear(year) {
  * @param timeSeriesStartDateTime
  * @param timeSeriesEndDateTime
  * @param timeSeriesUnit
- * @returns {Array}
+ * @returns {object}
  */
 export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, timeSeriesUnit) {
-    let data = [];
-    let sliceData = [];
+    let values = [];
+    let sliceValues = [];
+    let beginYear;
+    let endYear;
     if (medianData.length > 0) {
+        let firstRecord = medianData[0];
+        beginYear = firstRecord.begin_yr;
+        endYear = firstRecord.end_yr;
         let yearPresent = timeSeriesEndDateTime.getFullYear();
         let yearPrevious = yearPresent - 1;
         // calculate the number of days to display
@@ -159,18 +164,18 @@ export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesE
             // don't include leap days if it's not a leap year
             if (!isLeapYear(recordDate.getFullYear())) {
                 if (!(month == 1 && day == 29)) {
-                    data.push(median);
+                    values.push(median);
                 }
             } else {
-                data.push(median);
+                values.push(median);
             }
         }
         //return array with times sorted in ascending order
-        sliceData = data.sort(function(a, b){
+        sliceValues = values.sort(function(a, b){
            return a.time - b.time;
-        }).slice(data.length-days, data.length);
+        }).slice(values.length-days, values.length);
     }
-    return sliceData;
+    return {beginYear: beginYear, endYear: endYear, values: sliceValues};
 }
 
 export function getPreviousYearTimeseries({site, startTime, endTime}) {

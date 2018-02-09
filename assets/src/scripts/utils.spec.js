@@ -1,4 +1,4 @@
-const { unicodeHtmlEntity, getHtmlFromString, deltaDays} = require('./utils');
+const { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities} = require('./utils');
 
 describe('Utils module', () => {
 
@@ -48,5 +48,12 @@ describe('Utils module', () => {
            let result = deltaDays(date1, date4);
            expect(result).toBe(4);
         });
+    });
+
+    describe('replaceHtmlEntities', () => {
+
+        it('replaces html entities with unicode', () => {
+            expect(replaceHtmlEntities('kg * m&#178;/s&#179;')).toEqual('kg * m\u00B2/s\u00B3');
+        }) ;
     });
 });

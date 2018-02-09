@@ -10,10 +10,11 @@ const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
 
 const { appendAxes, axesSelector } = require('./axes');
-const { ASPECT_RATIO_PERCENT, MARGIN, layoutSelector } = require('./layout');
+const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
 const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
+const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 
 
 // Function that returns the left bounding point for a given chart point.
@@ -122,6 +123,13 @@ const plotTooltips = function (elem, {xScale, yScale, data}) {
 };
 
 
+const plotLegend = function(elem, {displayItems}) {
+    elem.select('.legend').remove();
+    let markers = createLegendMarkers(displayItems);
+    drawSimpleLegend(elem, markers);
+};
+
+
 const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsData}) {
     elem.select('#median-points').remove();
 
@@ -138,12 +146,8 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
         .enter()
         .append('circle')
             .attr('id', 'median-point')
-            .attr('x', function(d) {
-                return xscale(d.time);
-            })
-            .attr('y', function(d) {
-                return yscale(d.value);
-            })
+            .attr('class', 'median-data-series')
+            .attr('r', CIRCLE_RADIUS)
             .attr('cx', function(d) {
                 return xscale(d.time);
             })
@@ -179,6 +183,9 @@ const timeSeriesGraph = function (elem) {
                 description: state => state.desc,
                 isInteractive: () => true
             })))
+            .call(link(plotLegend, createStructuredSelector({
+                displayItems: legendDisplaySelector
+            })))
             .append('g')
                 .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
                 .call(link(appendAxes, axesSelector))
@@ -207,6 +214,7 @@ const timeSeriesGraph = function (elem) {
                     yscale: yScaleSelector,
                     medianStatsData: pointsSelector('medianStatistics')
                 })));
+
     elem.append('div')
         .call(link(addSROnlyTable, createStructuredSelector({
             columnNames: createSelector(

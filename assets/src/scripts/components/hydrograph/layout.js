@@ -7,9 +7,10 @@ const ASPECT_RATIO_PERCENT = `${100 * ASPECT_RATIO}%`;
 const MARGIN = {
     top: 20,
     right: 75,
-    bottom: 45,
+    bottom: 50,
     left: 50
 };
+const CIRCLE_RADIUS = 4;
 
 /*
  * @param {Object} state - Redux store
@@ -25,6 +26,6 @@ const layoutSelector = createSelector(
     }
 );
 
-module.exports = {ASPECT_RATIO, ASPECT_RATIO_PERCENT, MARGIN, layoutSelector};
+module.exports = {ASPECT_RATIO, ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector};
 
 
