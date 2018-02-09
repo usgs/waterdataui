@@ -172,51 +172,47 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
 
 
 const timeSeriesGraph = function (elem) {
-    let svg = elem.append('div')
+    elem.append('div')
         .attr('class', 'hydrograph-container')
         .style('padding-bottom', ASPECT_RATIO_PERCENT)
-        .append('svg');
-
-
-    svg.call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
-        .call(link(addSVGAccessibility, createStructuredSelector({
-            title: state => state.title,
-            description: state => state.desc,
-            isInteractive: () => true
-        })))
-        .append('g')
-        .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
-        .call(link(appendAxes, axesSelector))
-        .call(link(plotDataLine, createStructuredSelector({
-            visible: isVisibleSelector('current'),
-            lines: lineSegmentsSelector('current'),
-            xScale: xScaleSelector('current'),
-            yScale: yScaleSelector,
-            tsDataKey: () => 'current'
-        })))
-        .call(link(plotDataLine, createStructuredSelector({
-            visible: isVisibleSelector('compare'),
-            lines: lineSegmentsSelector('compare'),
-            xScale: xScaleSelector('compare'),
-            yScale: yScaleSelector,
-            tsDataKey: () => 'compare'
-        })))
-        .call(link(plotTooltips, createStructuredSelector({
-            xScale: xScaleSelector('current'),
-            yScale: yScaleSelector,
-            data: pointsSelector('current')
-        })))
-        .call(link(plotMedianPoints, createStructuredSelector({
-            visible: isVisibleSelector('medianStatistics'),
-            xscale: xScaleSelector('current'),
-            yscale: yScaleSelector,
-            medianStatsData: pointsSelector('medianStatistics')
-        })));
-
-    svg.call(link(plotLegend, createStructuredSelector({
-        markers: legendDisplaySelector
-
-    })));
+        .append('svg')
+            .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
+            .call(link(addSVGAccessibility, createStructuredSelector({
+                title: state => state.title,
+                description: state => state.desc,
+                isInteractive: () => true
+            })))
+            .call(link(plotLegend, createStructuredSelector({
+                markers: legendDisplaySelector
+            })))
+            .append('g')
+                .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
+                .call(link(appendAxes, axesSelector))
+                .call(link(plotDataLine, createStructuredSelector({
+                    visible: isVisibleSelector('current'),
+                    lines: lineSegmentsSelector('current'),
+                    xScale: xScaleSelector('current'),
+                    yScale: yScaleSelector,
+                    tsDataKey: () => 'current'
+                })))
+                .call(link(plotDataLine, createStructuredSelector({
+                    visible: isVisibleSelector('compare'),
+                    lines: lineSegmentsSelector('compare'),
+                    xScale: xScaleSelector('compare'),
+                    yScale: yScaleSelector,
+                    tsDataKey: () => 'compare'
+                })))
+                .call(link(plotTooltips, createStructuredSelector({
+                    xScale: xScaleSelector('current'),
+                    yScale: yScaleSelector,
+                    data: pointsSelector('current')
+                })))
+                .call(link(plotMedianPoints, createStructuredSelector({
+                    visible: isVisibleSelector('medianStatistics'),
+                    xscale: xScaleSelector('current'),
+                    yscale: yScaleSelector,
+                    medianStatsData: pointsSelector('medianStatistics')
+                })));
 
     elem.append('div')
         .call(link(addSROnlyTable, createStructuredSelector({
