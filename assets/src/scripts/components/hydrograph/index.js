@@ -10,8 +10,8 @@ const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
 
 const { appendAxes, axesSelector } = require('./axes');
-const { WIDTH, HEIGHT, ASPECT_RATIO_PERCENT, MARGIN } = require('./layout');
-const { pointsSelector, validPointsSelector, isVisibleSelector } = require('./points');
+const { ASPECT_RATIO_PERCENT, MARGIN, layoutSelector } = require('./layout');
+const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
 
@@ -39,7 +39,7 @@ const drawMessage = function (elem, message) {
 };
 
 
-const plotDataLine = function (elem, {visible, points, tsDataKey, xScale, yScale}) {
+const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}) {
     const elemId = 'ts-' + tsDataKey;
     elem.selectAll(`#${elemId}`).remove();
 
@@ -47,12 +47,20 @@ const plotDataLine = function (elem, {visible, points, tsDataKey, xScale, yScale
         return;
     }
 
-    elem.datum(points)
-        .append('path')
+    const tsLine = line()
+        .x(d => xScale(new Date(d.time)))
+        .y(d => yScale(d.value));
+
+    for (let line of lines) {
+        elem.append('path')
+            .datum(line.points)
             .classed('line', true)
-            .attr('id', elemId)
-            .attr('d', line().x(d => xScale(d.time))
-                             .y(d => yScale(d.value)));
+            .classed('approved', line.classes.approved)
+            .classed('estimated', line.classes.estimated)
+            .attr('data-title', tsDataKey)
+            .attr('id', `ts-${tsDataKey}`)
+            .attr('d', tsLine);
+    }
 };
 
 
@@ -87,8 +95,8 @@ const plotTooltips = function (elem, {xScale, yScale, data}) {
 
     elem.append('rect')
         .attr('class', 'overlay')
-        .attr('width', WIDTH)
-        .attr('height', HEIGHT)
+        .attr('width', '100%')
+        .attr('height', '100%')
         .on('mouseover', () => focus.style('display', null))
         .on('mouseout', () => focus.style('display', 'none'))
         .on('mousemove', function () {
@@ -165,8 +173,7 @@ const timeSeriesGraph = function (elem) {
         .attr('class', 'hydrograph-container')
         .style('padding-bottom', ASPECT_RATIO_PERCENT)
         .append('svg')
-            .attr('preserveAspectRatio', 'xMinYMin meet')
-            .attr('viewBox', `0 0 ${WIDTH} ${HEIGHT}`)
+            .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({
                 title: state => state.title,
                 description: state => state.desc,
@@ -177,14 +184,14 @@ const timeSeriesGraph = function (elem) {
                 .call(link(appendAxes, axesSelector))
                 .call(link(plotDataLine, createStructuredSelector({
                     visible: isVisibleSelector('current'),
-                    points: validPointsSelector('current'),
+                    lines: lineSegmentsSelector('current'),
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
                     tsDataKey: () => 'current'
                 })))
                 .call(link(plotDataLine, createStructuredSelector({
                     visible: isVisibleSelector('compare'),
-                    points: validPointsSelector('compare'),
+                    lines: lineSegmentsSelector('compare'),
                     xScale: xScaleSelector('compare'),
                     yScale: yScaleSelector,
                     tsDataKey: () => 'compare'
@@ -200,17 +207,36 @@ const timeSeriesGraph = function (elem) {
                     yscale: yScaleSelector,
                     medianStatsData: pointsSelector('medianStatistics')
                 })));
-    elem.call(link(addSROnlyTable, createStructuredSelector({
-        columnNames: createSelector(
-            (state) => state.title,
-            (title) => [title, 'Time']
-        ),
-        data: createSelector(
-            pointsSelector('current'),
-            points => points.map((value) => {
-                return [value.value, value.time];
-            })
-        )
+    elem.append('div')
+        .call(link(addSROnlyTable, createStructuredSelector({
+            columnNames: createSelector(
+                (state) => state.title,
+                (title) => [title, 'Time']
+            ),
+            data: createSelector(
+                pointsSelector('current'),
+                points => points.map((value) => {
+                    return [value.value, value.time];
+                })
+            ),
+            describeById: () => {return 'time-series-sr-desc'},
+            describeByText: () => {return 'current time series data in tabular format'}
+    })));
+
+    elem.append('div')
+        .call(link(addSROnlyTable, createStructuredSelector({
+            columnNames: createSelector(
+                (state) => state.title,
+                (title) => [`Median ${title}`, 'Time']
+            ),
+            data: createSelector(
+                pointsSelector('medianStatistics'),
+                points => points.map((value) => {
+                    return [value.value, value.time];
+                })
+            ),
+            describeById: () => {return 'median-statistics-sr-desc'},
+            describeByText: () => {return 'median statistical data in tabular format'}
     })));
 };
 
@@ -223,6 +249,7 @@ const attachToNode = function (node, {siteno} = {}) {
 
     let store = configureStore();
 
+    store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
     select(node)
         .call(provide(store))
         .call(timeSeriesGraph)
@@ -230,6 +257,10 @@ const attachToNode = function (node, {siteno} = {}) {
             .on('change', dispatch(function () {
                 return Actions.toggleTimeseries('compare', this.checked);
             }));
+
+    window.onresize = function() {
+        store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
+    };
     store.dispatch(Actions.retrieveTimeseries(siteno));
 };
 

@@ -2,7 +2,7 @@ const { extent } = require('d3-array');
 const { scaleLinear, scaleTime } = require('d3-scale');
 const { createSelector, defaultMemoize: memoize } = require('reselect');
 
-const { WIDTH, HEIGHT, MARGIN } = require('./layout');
+const { layoutSelector, MARGIN } = require('./layout');
 
 const paddingRatio = 0.2;
 
@@ -35,7 +35,8 @@ function createXScale(values, xSize) {
 
 /**
  * Create an yscale oriented on the bottom
- * @param {Array} tsData - Array contains {value, ...}
+ * @param {Array} tsData - where values are Array contains {value, ...}
+ * @param {Object} showSeries  - keys match keys in tsData and values are Boolean
  * @param {Number} ySize - range of scale
  * @eturn {Object} d3 scale for value.
  */
@@ -44,11 +45,13 @@ function createYScale(tsData, showSeries, ySize) {
 
     // Calculate max and min for data
     for (let key of Object.keys(tsData)) {
-        if (!showSeries[key] || tsData[key].length === 0) {
+        let points = tsData[key].filter(pt => pt.value !== null);
+
+        if (!showSeries[key] || points.length === 0) {
             continue;
         }
 
-        const thisExtent = extent(tsData[key], d => d.value);
+        const thisExtent = extent(points, d => d.value);
         if (yExtent !== undefined) {
             yExtent = [
                 Math.min(thisExtent[0], yExtent[0]),
@@ -72,20 +75,6 @@ function createYScale(tsData, showSeries, ySize) {
         .domain(yExtent);
 }
 
-/**
- * Create scales for hydrograph charts. X is linear to time and Y is logarithmic.
- * @param  {Array} tsData    Array containing {time, value} items
- * @param  {Number} xSize X range of scale
- * @param  {Number} ySize Y range of scale
- * @return {Object}        {xScale, yScale}
- */
-function createScales(tsData, showSeries, xSize, ySize) {
-    const xScale = createXScale(tsData.current, xSize);
-    const yScale = createYScale(tsData, showSeries, ySize);
-
-    return {xScale, yScale};
-}
-
 
 /**
  * Factory function creates a function that is:
@@ -95,10 +84,11 @@ function createScales(tsData, showSeries, xSize, ySize) {
  * @return {Function}           D3 scale function
  */
 const xScaleSelector = memoize(tsDataKey => createSelector(
+    layoutSelector,
     (state) => state.tsData,
-    (tsData) => {
+    (layout, tsData) => {
         if (tsData[tsDataKey]) {
-            return createXScale(tsData[tsDataKey], WIDTH - MARGIN.right);
+            return createXScale(tsData[tsDataKey], layout.width - MARGIN.right);
         } else {
             return null;
         }
@@ -112,10 +102,11 @@ const xScaleSelector = memoize(tsDataKey => createSelector(
  * @return {Function}       D3 scale function
  */
 const yScaleSelector = createSelector(
+    layoutSelector,
     (state) => state.tsData,
     (state) => state.showSeries,
-    (tsData, showSeries) => createYScale(tsData, showSeries, HEIGHT - (MARGIN.top + MARGIN.bottom))
+    (layout, tsData, showSeries) => createYScale(tsData, showSeries, layout.height - (MARGIN.top + MARGIN.bottom))
 );
 
 
-module.exports = {createScales, xScaleSelector, yScaleSelector};
+module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector};

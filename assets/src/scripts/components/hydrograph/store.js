@@ -79,6 +79,12 @@ export const Actions = {
             type: 'SET_MEDIAN_STATISTICS',
             medianStatistics
         };
+    },
+    resizeTimeseriesPlot(width) {
+        return {
+            type: 'RESIZE_TIMESERIES_PLOT',
+            width
+        };
     }
 };
 
@@ -87,8 +93,7 @@ export const timeSeriesReducer = function (state={}, action) {
     switch (action.type) {
         case 'ADD_TIMESERIES':
             // If data is valid
-            if (action.data && action.data.values &&
-                    !action.data.values.some(d => d.value === -999999)) {
+            if (action.data && action.data.values) {
                 return {
                     ...state,
                     tsData: {
@@ -100,6 +105,7 @@ export const timeSeriesReducer = function (state={}, action) {
                         [action.key]: action.show
                     },
                     title: action.data.variableName,
+                    plotYLabel: action.data.variableDescription,
                     desc: action.data.variableDescription + ' from ' +
                         formatTime(action.data.seriesStartDate) + ' to ' +
                         formatTime(action.data.seriesEndDate)
@@ -144,6 +150,12 @@ export const timeSeriesReducer = function (state={}, action) {
                 }
             };
 
+        case 'RESIZE_TIMESERIES_PLOT':
+            return {
+                ...state,
+                width: action.width
+            };
+
         default:
             return state;
     }
@@ -167,6 +179,7 @@ export const configureStore = function (initialState) {
         },
         title: '',
         desc: '',
+        width: 800,
         ...initialState
     };
 
@@ -174,7 +187,7 @@ export const configureStore = function (initialState) {
     if (window.__REDUX_DEVTOOLS_EXTENSION__) {
         enhancers = compose(
             applyMiddleware(...MIDDLEWARES),
-            window.__REDUX_DEVTOOLS_EXTENSION__()
+            window.__REDUX_DEVTOOLS_EXTENSION__({serialize: true})
         );
     } else {
         enhancers = applyMiddleware(...MIDDLEWARES);
