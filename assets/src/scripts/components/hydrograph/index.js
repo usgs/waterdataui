@@ -149,13 +149,13 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
             const isFirstHalf = index < data.length / 2;
             tooltipText.select('.current-tooltip-text')
                 //.attr('text-anchor', isFirstHalf ? 'start' : 'end')
-                //.attr('x', isFirstHalf ? 15 : -15)
+                .attr('x', 15)
                 //.attr('y', '-.31em')
                 .text(() => datum.label);
             tooltipText.select('.compare-tooltip-text')
                .text(() => isCompareVisible ? compare.datum.label : '')
                // .attr('text-anchor', isFirstHalf ? 'start' : 'end')
-               // .attr('x', isFirstHalf ? 15 : -15)
+                .attr('x', 15)
                 .attr('y', '1em');
         });
 };
