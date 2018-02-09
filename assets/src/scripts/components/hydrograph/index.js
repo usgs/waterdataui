@@ -1,7 +1,7 @@
 /**
  * Hydrograph charting module.
  */
-const { bisector } = require('d3-array');
+const { bisector, max } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
 const { createSelector, createStructuredSelector } = require('reselect');
@@ -89,17 +89,24 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
     elem.selectAll('.focus').remove();
     elem.select('.overlay').remove();
     elem.select('.tooltip-group').remove();
-    let currentFocus = elem.append('g')
+    let focus = elem.append('g')
         .attr('class', 'focus')
         .style('display', 'none');
-    currentFocus.append('circle')
-        .attr('r', 7.5);
+    let tooltipLine = focus.append('line')
+        .attr('stroke-width', 2)
+        .attr('class', 'tooltip-focus-line');
 
-    let compareFocus = elem.append('g')
-        .attr('class', 'focus')
-        .style('display', 'none');
-    compareFocus.append('circle')
-        .attr('r', 7.5);
+    //let currentFocus = elem.append('g')
+    //    .attr('class', 'focus')
+    //    .style('display', 'none');
+    ///currentFocus.append('circle')
+     //   .attr('r', 7.5);
+
+    //let compareFocus = elem.append('g')
+    //    .attr('class', 'focus')
+    //    .style('display', 'none');
+    //compareFocus.append('circle')
+    //    .attr('r', 7.5);
 
     let tooltipText = elem.append('g')
         .attr('class', 'tooltip-group');
@@ -113,14 +120,16 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
         .attr('width', '100%')
         .attr('height', '100%')
         .on('mouseover', () => {
-            currentFocus.style('display', null);
-            if (isCompareVisible) {
-                compareFocus.style('display',  null);
-            }
+            focus.style('display', null);
+            //currentFocus.style('display', null);
+            //if (isCompareVisible) {
+            //    compareFocus.style('display',  null);
+            //}
         })
         .on('mouseout', () => {
-            currentFocus.style('display', 'none');
-            compareFocus.style('display', 'none');
+            focus.style('display', 'none');
+            //currentFocus.style('display', 'none');
+            //compareFocus.style('display', 'none');
         })
         .on('mousemove', function () {
             // Get the nearest data point for the current mouse position.
@@ -136,12 +145,21 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
                 compare = getNearestTime(compareData, compareTime);
             }
 
+            let yMax = max([max(data.map((datum) => { return datum.value})), max(compareData.map((datum) => { return datum.value; }))])
+
+            tooltipLine
+                .attr('stroke', 'black')
+                .attr('x1', xScale(datum.time))
+                .attr('x2', xScale(datum.time))
+                .attr('y1', yScale.range()[0])
+                .attr('y2', yScale(yMax));
+
             // Move the focus node to this date/time.
-            currentFocus.attr('transform', `translate(${xScale(datum.time)}, ${yScale(datum.value)})`);
-            if (isCompareVisible) {
-                compareFocus.attr('transform',
-                    `translate(${compareXScale(compare.datum.time)}, ${yScale(compare.datum.value)})`);
-            }
+            //currentFocus.attr('transform', `translate(${xScale(datum.time)}, ${yScale(datum.value)})`);
+            //if (isCompareVisible) {
+            //    compareFocus.attr('transform',
+            //        `translate(${compareXScale(compare.datum.time)}, ${yScale(compare.datum.value)})`);
+           // }
 
             // Draw text, anchored to the left or right, depending on
             // which side of the graph the point is on.
