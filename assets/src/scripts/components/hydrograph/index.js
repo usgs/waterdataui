@@ -86,15 +86,23 @@ const getNearestTime = function (data, time) {
 
 const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, compareXScale, compareData}) {
     // Create a node to highlight the currently selected date/time.
-    elem.select('#plot-tooltip').remove();
+    elem.selectAll('.focus').remove();
     elem.select('.overlay').remove();
-    let focus = elem.append('g')
-        .attr('id', 'plot-tooltip')
+    elem.select('.tooltip-group').remove();
+    let currentFocus = elem.append('g')
         .attr('class', 'focus')
         .style('display', 'none');
-    focus.append('circle')
+    currentFocus.append('circle')
         .attr('r', 7.5);
-    let tooltipText = focus.append('g')
+
+    let compareFocus = elem.append('g')
+        .attr('class', 'focus')
+        .style('display', 'none');
+    compareFocus.append('circle')
+        .attr('r', 7.5);
+
+    let tooltipText = elem.append('g')
+        .attr('class', 'tooltip-group');
     tooltipText.append('text')
         .attr('class', 'current-tooltip-text');
     tooltipText.append('text')
@@ -104,8 +112,16 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
         .attr('class', 'overlay')
         .attr('width', '100%')
         .attr('height', '100%')
-        .on('mouseover', () => focus.style('display', null))
-        .on('mouseout', () => focus.style('display', 'none'))
+        .on('mouseover', () => {
+            currentFocus.style('display', null);
+            if (isCompareVisible) {
+                compareFocus.style('display',  null);
+            }
+        })
+        .on('mouseout', () => {
+            currentFocus.style('display', 'none');
+            compareFocus.style('display', 'none');
+        })
         .on('mousemove', function () {
             // Get the nearest data point for the current mouse position.
             const time = xScale.invert(mouse(this)[0]);
@@ -121,21 +137,25 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
             }
 
             // Move the focus node to this date/time.
-            focus.attr('transform', `translate(${xScale(datum.time)}, ${yScale(datum.value)})`);
+            currentFocus.attr('transform', `translate(${xScale(datum.time)}, ${yScale(datum.value)})`);
+            if (isCompareVisible) {
+                compareFocus.attr('transform',
+                    `translate(${compareXScale(compare.datum.time)}, ${yScale(compare.datum.value)})`);
+            }
 
             // Draw text, anchored to the left or right, depending on
             // which side of the graph the point is on.
             // TODO: Should we use the position of the mouse rather than the index of the date?
             const isFirstHalf = index < data.length / 2;
             tooltipText.select('.current-tooltip-text')
-                .attr('text-anchor', isFirstHalf ? 'start' : 'end')
-                .attr('x', isFirstHalf ? 15 : -15)
-                .attr('y', '-.31em')
+                //.attr('text-anchor', isFirstHalf ? 'start' : 'end')
+                //.attr('x', isFirstHalf ? 15 : -15)
+                //.attr('y', '-.31em')
                 .text(() => datum.label);
             tooltipText.select('.compare-tooltip-text')
                .text(() => isCompareVisible ? compare.datum.label : '')
-                .attr('text-anchor', isFirstHalf ? 'start' : 'end')
-                .attr('x', isFirstHalf ? 15 : -15)
+               // .attr('text-anchor', isFirstHalf ? 'start' : 'end')
+               // .attr('x', isFirstHalf ? 15 : -15)
                 .attr('y', '1em');
         });
 };
