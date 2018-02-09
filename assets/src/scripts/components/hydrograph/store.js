@@ -4,7 +4,7 @@ const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData } = require('../../models');
-const { getHtmlFromString, unicodeHtmlEntity } = require('../../utils');
+const { replaceHtmlEntities } = require('../../utils');
 
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');
@@ -16,7 +16,6 @@ export const Actions = {
             const timeSeries = getTimeseries({sites: [siteno], startDate, endDate}).then(
                 series => {
                     dispatch(Actions.addTimeseries('current', siteno, series[0]));
-
                     // Trigger a call to get last year's data
                     const startTime = series[0].seriesStartDate;
                     const endTime = series[0].seriesEndDate;
@@ -31,14 +30,7 @@ export const Actions = {
                 const [series, stats] = data;
                 const startDate = series.seriesStartDate;
                 const endDate = series.seriesEndDate;
-                let unit = series.variableName.split(' ').pop();
-                const htmlEntities = getHtmlFromString(unit);
-                if (htmlEntities !== null) {
-                    for (let htmlEntity of htmlEntities) {
-                        let unicodeEntity = unicodeHtmlEntity(htmlEntity);
-                        unit = unit.replace(htmlEntity, unicodeEntity);
-                    }
-                }
+                let unit = replaceHtmlEntities(series.variableName.split(' ').pop());
                 let plotableStats = parseMedianData(stats, startDate, endDate, unit);
                 dispatch(Actions.setMedianStatistics(plotableStats));
             });
@@ -94,6 +86,7 @@ export const timeSeriesReducer = function (state={}, action) {
         case 'ADD_TIMESERIES':
             // If data is valid
             if (action.data && action.data.values) {
+                let variableName = replaceHtmlEntities(action.data.variableName);
                 return {
                     ...state,
                     tsData: {
@@ -104,7 +97,7 @@ export const timeSeriesReducer = function (state={}, action) {
                         ...state.showSeries,
                         [action.key]: action.show
                     },
-                    title: action.data.variableName,
+                    title: variableName,
                     plotYLabel: action.data.variableDescription,
                     desc: action.data.variableDescription + ' from ' +
                         formatTime(action.data.seriesStartDate) + ' to ' +
@@ -136,17 +129,21 @@ export const timeSeriesReducer = function (state={}, action) {
                 }
             };
 
-
         case 'SET_MEDIAN_STATISTICS':
             return {
                 ...state,
                 tsData: {
                     ...state.tsData,
-                    medianStatistics: action.medianStatistics
+                    medianStatistics: action.medianStatistics.values
                 },
                 showSeries: {
                     ...state.showSeries,
                     medianStatistics: true
+                },
+                statisticalMetaData: {
+                    ...state.statisticalMetaData,
+                    beginYear: action.medianStatistics.beginYear,
+                    endYear: action.medianStatistics.endYear
                 }
             };
 
@@ -172,11 +169,17 @@ export const configureStore = function (initialState) {
             compare: [],
             medianStatistics: []
         },
+        statisticalMetaData: {
+            beginYear: '',
+            endYear: ''
+        },
         showSeries: {
             current: true,
             compare: false,
             medianStatistics: false
         },
+        legendMarkers: {},
+        displayMarkers: [],
         title: '',
         desc: '',
         width: 800,

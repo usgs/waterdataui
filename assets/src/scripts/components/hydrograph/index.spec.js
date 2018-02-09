@@ -53,6 +53,7 @@ describe('Hydrograph charting module', () => {
         let svgNodes = graphNode.getElementsByTagName('svg');
         expect(svgNodes.length).toBe(1);
         expect(svgNodes[0].getAttribute('viewBox')).toContain('400 200');
+        expect(graphNode.innerHTML).toContain('hydrograph-container');
     });
 
     describe('SVG has been made accessibile', () => {
@@ -146,6 +147,10 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg circle#median-point').size()).toBe(1);
             expect(selectAll('svg text#median-text').size()).toBe(1);
         });
+
+        it('should have a legend with two markers', () => {
+           expect(selectAll('g.legend-marker').size()).toBe(2);
+        });
     });
 
     describe('Hydrograph tooltips', () => {
@@ -190,6 +195,7 @@ describe('Hydrograph charting module', () => {
 
     describe('Adding and removing compare time series', () => {
         /* eslint no-use-before-define: "ignore" */
+        let hydrograph;
         let store;
         beforeEach(() => {
             store = configureStore({
@@ -231,15 +237,25 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg path.line').size()).toBe(2);
         });
 
+        it('Should have three legend markers', () => {
+            expect(selectAll('g.legend-marker').size()).toBe(3);
+        });
+
         it('Should remove one of the lines when removing the compare time series', () => {
             store.dispatch(Actions.toggleTimeseries('compare', false));
             expect(selectAll('svg path.line').size()).toBe(1);
+        });
+
+        it('Should have two legend markers after the compare time series is removed', () => {
+            store.dispatch(Actions.toggleTimeseries('compare', false));
+            expect(selectAll('g.legend-marker').size()).toBe(2);
         });
 
         //TODO: Consider adding a test which checks that the y axis is rescaled by
         // examining the contents of the text labels.
     });
 });
+
 
 const MOCK_MEDIAN_STAT_DATA = [
     {

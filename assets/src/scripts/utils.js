@@ -26,6 +26,23 @@ export function getHtmlFromString(someString) {
 }
 
 /**
+ * Replace html entities with unicode entities
+ *
+ * @param someString
+ * @returns {*}
+ */
+export function replaceHtmlEntities(someString) {
+    let entities = getHtmlFromString(someString);
+    if (entities) {
+        for (let entity of entities) {
+            let unicodeEntity = unicodeHtmlEntity(entity);
+            someString = someString.replace(entity, unicodeEntity);
+        }
+    }
+    return someString;
+}
+
+/**
  * Calculate the difference in days between two Date objects
  *
  * @param date1

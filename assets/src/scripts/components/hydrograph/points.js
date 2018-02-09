@@ -12,7 +12,6 @@ const pointsSelector = memoize(tsDataKey => createSelector(
     tsData => tsData[tsDataKey]
 ));
 
-
 /**
  * Factory function creates a function that:
  * Returns the current show state of a timeseries.
