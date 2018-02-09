@@ -116,7 +116,7 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
     tooltipText.append('text')
         .attr('class', 'compare-tooltip-text');
 
-    let compareMax = isCompareVisible ? max(compareData.map((datum) => datum.value)) : 0
+    let compareMax = isCompareVisible ? max(compareData.map((datum) => datum.value)) : 0;
     let yMax = max([max(data.map((datum) =>  datum.value)), compareMax]);
 
     elem.append('rect')
@@ -140,8 +140,8 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
         .on('mousemove', function () {
             // Get the nearest data point for the current mouse position.
             const time = xScale.invert(mouse(this)[0]);
-            const {datum, index} = getNearestTime(data, time);
-            if (!datum) {
+            const current = getNearestTime(data, time);
+            if (!current.datum) {
                 return;
             }
             let compareTime;
@@ -153,13 +153,13 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
 
             tooltipLine
                 .attr('stroke', 'black')
-                .attr('x1', xScale(datum.time))
-                .attr('x2', xScale(datum.time))
+                .attr('x1', xScale(current.datum.time))
+                .attr('x2', xScale(current.datum.time))
                 .attr('y1', yScale.range()[0])
                 .attr('y2', yScale(yMax));
 
             // Move the focus node to this date/time.
-            currentFocus.attr('transform', `translate(${xScale(datum.time)}, ${yScale(datum.value)})`);
+            currentFocus.attr('transform', `translate(${xScale(current.datum.time)}, ${yScale(current.datum.value)})`);
             if (isCompareVisible) {
                 compareFocus.attr('transform',
                     `translate(${compareXScale(compare.datum.time)}, ${yScale(compare.datum.value)})`);
@@ -167,9 +167,9 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
 
             tooltipText.select('.current-tooltip-text')
                 .attr('x', 15)
-                .classed('approved', datum.approved)
-                .classed('estimated', datum.estimated)
-                .text(() => datum.label);
+                .classed('approved', current.datum.approved)
+                .classed('estimated', current.datum.estimated)
+                .text(() => current.datum.label);
             tooltipText.select('.compare-tooltip-text')
                 .text(() => isCompareVisible ? compare.datum.label : '')
                 .classed('approved', compare ? compare.datum.approved : false)
@@ -287,8 +287,8 @@ const timeSeriesGraph = function (elem) {
                     return [value.value, value.time];
                 })
             ),
-            describeById: () => {return 'time-series-sr-desc'},
-            describeByText: () => {return 'current time series data in tabular format'}
+            describeById: () => 'time-series-sr-desc',
+            describeByText: () => 'current time series data in tabular format'
     })));
 
     elem.append('div')
@@ -303,8 +303,8 @@ const timeSeriesGraph = function (elem) {
                     return [value.value, value.time];
                 })
             ),
-            describeById: () => {return 'median-statistics-sr-desc'},
-            describeByText: () => {return 'median statistical data in tabular format'}
+            describeById: () => 'median-statistics-sr-desc',
+            describeByText: () => 'median statistical data in tabular format'
     })));
 };
 
