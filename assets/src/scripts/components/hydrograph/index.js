@@ -93,27 +93,30 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
         .attr('class', 'focus')
         .style('display', 'none');
     let tooltipLine = focus.append('line')
-        .attr('stroke-width', 2)
         .attr('class', 'tooltip-focus-line');
 
-    //let currentFocus = elem.append('g')
-    //    .attr('class', 'focus')
-    //    .style('display', 'none');
-    ///currentFocus.append('circle')
-     //   .attr('r', 7.5);
+    let currentFocus = elem.append('g')
+        .attr('class', 'focus')
+        .style('display', 'none');
+    currentFocus.append('circle')
+        .attr('r', 5.5);
 
-    //let compareFocus = elem.append('g')
-    //    .attr('class', 'focus')
-    //    .style('display', 'none');
-    //compareFocus.append('circle')
-    //    .attr('r', 7.5);
+    let compareFocus = elem.append('g')
+        .attr('class', 'focus')
+        .style('display', 'none');
+    compareFocus.append('circle')
+        .attr('r', 5.5);
 
     let tooltipText = elem.append('g')
-        .attr('class', 'tooltip-group');
+        .attr('class', 'tooltip-group')
+        .style('display', 'none');
     tooltipText.append('text')
         .attr('class', 'current-tooltip-text');
     tooltipText.append('text')
         .attr('class', 'compare-tooltip-text');
+
+    let compareMax = isCompareVisible ? max(compareData.map((datum) => datum.value)) : 0
+    let yMax = max([max(data.map((datum) =>  datum.value)), compareMax]);
 
     elem.append('rect')
         .attr('class', 'overlay')
@@ -121,15 +124,17 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
         .attr('height', '100%')
         .on('mouseover', () => {
             focus.style('display', null);
-            //currentFocus.style('display', null);
-            //if (isCompareVisible) {
-            //    compareFocus.style('display',  null);
-            //}
+            tooltipText.style('display', null);
+            currentFocus.style('display', null);
+            if (isCompareVisible) {
+                compareFocus.style('display',  null);
+            }
         })
         .on('mouseout', () => {
             focus.style('display', 'none');
-            //currentFocus.style('display', 'none');
-            //compareFocus.style('display', 'none');
+            tooltipText.style('display', 'none');
+            currentFocus.style('display', 'none');
+            compareFocus.style('display', 'none');
         })
         .on('mousemove', function () {
             // Get the nearest data point for the current mouse position.
@@ -145,8 +150,6 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
                 compare = getNearestTime(compareData, compareTime);
             }
 
-            let yMax = max([max(data.map((datum) => { return datum.value})), max(compareData.map((datum) => { return datum.value; }))])
-
             tooltipLine
                 .attr('stroke', 'black')
                 .attr('x1', xScale(datum.time))
@@ -155,24 +158,17 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
                 .attr('y2', yScale(yMax));
 
             // Move the focus node to this date/time.
-            //currentFocus.attr('transform', `translate(${xScale(datum.time)}, ${yScale(datum.value)})`);
-            //if (isCompareVisible) {
-            //    compareFocus.attr('transform',
-            //        `translate(${compareXScale(compare.datum.time)}, ${yScale(compare.datum.value)})`);
-           // }
+            currentFocus.attr('transform', `translate(${xScale(datum.time)}, ${yScale(datum.value)})`);
+            if (isCompareVisible) {
+                compareFocus.attr('transform',
+                    `translate(${compareXScale(compare.datum.time)}, ${yScale(compare.datum.value)})`);
+            }
 
-            // Draw text, anchored to the left or right, depending on
-            // which side of the graph the point is on.
-            // TODO: Should we use the position of the mouse rather than the index of the date?
-            const isFirstHalf = index < data.length / 2;
             tooltipText.select('.current-tooltip-text')
-                //.attr('text-anchor', isFirstHalf ? 'start' : 'end')
                 .attr('x', 15)
-                //.attr('y', '-.31em')
                 .text(() => datum.label);
             tooltipText.select('.compare-tooltip-text')
-               .text(() => isCompareVisible ? compare.datum.label : '')
-               // .attr('text-anchor', isFirstHalf ? 'start' : 'end')
+                .text(() => isCompareVisible ? compare.datum.label : '')
                 .attr('x', 15)
                 .attr('y', '1em');
         });
