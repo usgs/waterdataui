@@ -14,7 +14,7 @@ const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require(
 const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
-const { drawSimpleLegend, legendDisplaySelector } = require('./legend');
+const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 
 
 // Function that returns the left bounding point for a given chart point.
@@ -123,8 +123,9 @@ const plotTooltips = function (elem, {xScale, yScale, data}) {
 };
 
 
-const plotLegend = function(elem, {markers}) {
+const plotLegend = function(elem, {displayItems}) {
     elem.select('.legend').remove();
+    let markers = createLegendMarkers(displayItems);
     drawSimpleLegend(elem, markers);
 };
 
@@ -183,7 +184,7 @@ const timeSeriesGraph = function (elem) {
                 isInteractive: () => true
             })))
             .call(link(plotLegend, createStructuredSelector({
-                markers: legendDisplaySelector
+                displayItems: legendDisplaySelector
             })))
             .append('g')
                 .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)

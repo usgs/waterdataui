@@ -1,7 +1,7 @@
 const { namespaces } = require('d3');
 const { select, selectAll } = require('d3-selection');
 
-const { drawSimpleLegend, legendDisplaySelector } = require('./legend');
+const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 const { lineMarker, circleMarker } = require('./markers');
 
 describe('Legend module', () => {
@@ -57,20 +57,17 @@ describe('Legend module', () => {
 
     });
 
-    describe('legendDisplaySelector', () => {
+    describe('createLegendMarkers', () => {
 
-        it('should return a marker if a time series is shown', () => {
-            let result = legendDisplaySelector({
-                showSeries:
-                    {
-                        current: true,
-                        compare: false,
-                        medianStatistics: true
-                    },
-                statisticalMetaData: {
-                    'beginYear': 2010,
-                    'endYear': 2012
+        it('should return markers for display', () => {
+            let result = createLegendMarkers({
+                dataItems: ['current', 'medianStatistics'],
+                metadata: {
+                    statistics: {
+                        beginYear: 2010,
+                        endYear: 2012
                     }
+                }
             });
             expect(result).toEqual([
                 {
@@ -92,17 +89,56 @@ describe('Legend module', () => {
         });
 
         it('should return an empty array if keys do not match', () => {
-            let result = legendDisplaySelector({
-                showSeries: {
-                    blah: true,
-                    blah2: true
-                },
-                statisticalMetaData: {
-                    beginYear: 2010,
-                    endYear: 2012
+            let result = createLegendMarkers({
+                dataItems: ['blah1', 'blah2'],
+                metadata: {
+                    statistics: {
+                        beginYear: 2010,
+                        endYear: 2012
+                    }
                 }
-            }) ;
+            });
             expect(result.length).toEqual(0);
+        });
+
+        it('should still work if stat begin and end years are absent', () => {
+            let result = createLegendMarkers({
+                dataItems: ['medianStatistics'],
+                metadata: {
+                    statistics: {
+                        beginYear: undefined,
+                        endYear: undefined
+                    }
+                }
+            });
+            expect(result[0].text).toEqual('Median Discharge');
+        })
+    });
+
+    describe('legendDisplaySelector', () => {
+
+        it('should return a marker if a time series is shown', () => {
+            let result = legendDisplaySelector({
+                showSeries:
+                    {
+                        current: true,
+                        compare: false,
+                        medianStatistics: true
+                    },
+                statisticalMetaData: {
+                    'beginYear': 2010,
+                    'endYear': 2012
+                    }
+            });
+            expect(result).toEqual({
+                dataItems: ['current', 'medianStatistics'],
+                metadata: {
+                    statistics: {
+                        beginYear: 2010,
+                        endYear: 2012
+                    }
+                }
+            });
         });
 
         it('should not choke if statisticalMetadata years are absent', () => {
@@ -113,7 +149,10 @@ describe('Legend module', () => {
                     },
                 statisticalMetaData: {}
             });
-            expect(result[0].text).toEqual('Median Discharge');
+            expect(result.metadata.statistics).toEqual({
+                beginYear: undefined,
+                endYear: undefined
+            });
         });
     });
 

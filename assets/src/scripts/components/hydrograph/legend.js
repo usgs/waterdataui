@@ -3,6 +3,7 @@ const { createSelector } = require('reselect');
 const { defineLineMarker, defineCircleMarker } = require('./markers');
 const { CIRCLE_RADIUS } = require('./layout');
 
+
 /**
  * Create a simple horizontal legend
  *
@@ -72,13 +73,53 @@ function drawSimpleLegend(svg,
     legend.attr('transform', `translate(${legendXPosition}, ${svgBBox.height-15})`);
 }
 
+/**
+ * create elements for the legend in the svg
+ *
+ * @param dataPlotElements
+ */
+const createLegendMarkers = function(dataPlotElements) {
+    let text;
+    let marker;
+    let legendMarkers = [];
+    for (let dataItem of dataPlotElements.dataItems) {
+        if (dataItem === 'compare' || dataItem === 'current') {
+            text = 'Current Year';
+            let domId = `ts-${dataItem}`;
+            let svgGroup = `${dataItem}-line-marker`;
+            if (dataItem === 'compare') {
+                text = 'Last Year';
+            }
+            marker = defineLineMarker(domId, 'line', text, svgGroup);
+        }
+        else if (dataItem === 'medianStatistics') {
+            text = 'Median Discharge';
+            let beginYear = dataPlotElements.metadata.statistics.beginYear;
+            let endYear = dataPlotElements.metadata.statistics.endYear;
+            if (beginYear && endYear) {
+                text = `${text} ${beginYear} - ${endYear}`;
+            }
+            marker = defineCircleMarker(CIRCLE_RADIUS, null, 'median-data-series', text, 'median-circle-marker');
+        }
+        else {
+            marker = null;
+        }
+        if (marker) {
+            legendMarkers.push(marker);
+        }
+    }
+    return legendMarkers;
+};
 
+/**
+ * Select attributes from the state useful for legend creation
+ */
 const legendDisplaySelector = createSelector(
     (state) => state.showSeries,
     (state) => state.statisticalMetaData,
     (showSeries, statisticalMetaData) => {
         let shownSeries = [];
-        let displayMarkers = [];
+        let dataPlotElements = {};
         let text;
         let marker;
         for (let key in showSeries) {
@@ -88,35 +129,17 @@ const legendDisplaySelector = createSelector(
                 }
             }
         }
-        for (let seriesName of shownSeries) {
-            if (seriesName === 'compare' || seriesName === 'current') {
-                text = 'Current Year';
-                let domId = `ts-${seriesName}`;
-                let svgGroup = `${seriesName}-line-marker`;
-                if (seriesName === 'compare') {
-                    text = 'Last Year';
-                }
-                marker = defineLineMarker(domId, 'line', text, svgGroup);
+
+        dataPlotElements.dataItems = shownSeries;
+        dataPlotElements.metadata = {
+            statistics: {
+                beginYear: statisticalMetaData.beginYear ? statisticalMetaData.beginYear : undefined,
+                endYear: statisticalMetaData.endYear ? statisticalMetaData.endYear : undefined
             }
-            else if (seriesName === 'medianStatistics') {
-                text = 'Median Discharge';
-                let beginYear = statisticalMetaData.beginYear;
-                let endYear = statisticalMetaData.endYear;
-                if (beginYear && endYear) {
-                    text = `Median Discharge ${beginYear} - ${endYear}`;
-                }
-                marker = defineCircleMarker(CIRCLE_RADIUS, null, 'median-data-series', text, 'median-circle-marker');
-            }
-            else {
-                marker = null;
-            }
-            if (marker) {
-                displayMarkers.push(marker);
-            }
-        }
-        return displayMarkers;
+        };
+        return dataPlotElements;
     }
 );
 
 
-module.exports = {drawSimpleLegend, legendDisplaySelector};
+module.exports = {drawSimpleLegend, createLegendMarkers, legendDisplaySelector};
