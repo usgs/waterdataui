@@ -16,7 +16,7 @@ const createFocusLine = function(elem, {yScale, currentTsData, compareTsData=nul
     focus.append('line')
         .attr('class', 'focus-line')
         .attr('y1', yScale.range()[0])
-        .attr('y2', yScale(yMax));
+        .attr('y2', yMax !== 0 ? yScale(yMax) : yScale.range()[1]);
     return focus;
 };
 
@@ -46,7 +46,13 @@ const createTooltipText = function(elem, tskeys) {
 };
 
 const updateCircleFocus = function(circleFocus, {xScale, yScale, tsDatum}) {
-    circleFocus.attr('transform', `translate(${xScale(tsDatum.time)}, ${yScale(tsDatum.value)})`);
+    if (tsDatum.value) {
+        circleFocus.style('display', null)
+            .attr('transform',
+                `translate(${xScale(tsDatum.time)}, ${yScale(tsDatum.value)})`);
+    } else {
+        circleFocus.style('display', 'none');
+    }
 };
 
 const updateTooltipText = function(text, tsDatum) {
@@ -125,13 +131,13 @@ const createTooltip = function(elem, {xScale, yScale, compareXScale, currentTsDa
         .on('mousemove', function() {
             const currentTime = xScale.invert(mouse(this)[0]);
             const currentData = getNearestTime(currentTsData, currentTime);
-            const currentTimeRange = xScale(currentData.datum.time);
 
             if (!currentData) {
                 return;
             }
 
             // Update the focus line
+            const currentTimeRange = xScale(currentData.datum.time);
             focusLine.select('.focus-line')
                 .attr('x1', currentTimeRange)
                 .attr('x2', currentTimeRange);
