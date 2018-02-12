@@ -1,7 +1,7 @@
 const { select, selectAll } = require('d3-selection');
 const { provide } = require('../../lib/redux');
 
-const { attachToNode, getNearestTime, timeSeriesGraph } = require('./index');
+const { attachToNode, timeSeriesGraph } = require('./index');
 const { Actions, configureStore } = require('./store');
 
 
@@ -155,7 +155,6 @@ describe('Hydrograph charting module', () => {
 
     describe('Adding and removing compare time series', () => {
         /* eslint no-use-before-define: "ignore" */
-        let hydrograph;
         let store;
         beforeEach(() => {
             store = configureStore({
