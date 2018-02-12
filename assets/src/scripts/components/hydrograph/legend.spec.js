@@ -41,7 +41,7 @@ describe('Legend module', () => {
             svgNode.remove();
         });
 
-        it('Adds a legend', () => {
+        it('Adds a legend when width is not provided', () => {
             drawSimpleLegend(svgNode, legendMarkers);
             expect(svgNode.selectAll('.legend').size()).toBe(1);
             expect(svgNode.selectAll('line').size()).toBe(1);
@@ -52,8 +52,23 @@ describe('Legend module', () => {
             expect(line.attr('x2')).toBe('20');
             let circle = svgNode.select('circle');
             expect(circle.attr('class')).toBe('some-other-class');
+            expect(select('g.legend').attr('transform')).toEqual('translate(-127.5, -15)');
         });
 
+
+        it('Adds a legend when width is provided', () => {
+            drawSimpleLegend(svgNode, legendMarkers, 200);
+            expect(svgNode.selectAll('.legend').size()).toBe(1);
+            expect(svgNode.selectAll('line').size()).toBe(1);
+            expect(svgNode.selectAll('circle').size()).toBe(1);
+            expect(svgNode.selectAll('text').size()).toBe(2);
+            let line = svgNode.select('line');
+            expect(line.attr('x1')).toBe('0');
+            expect(line.attr('x2')).toBe('20');
+            let circle = svgNode.select('circle');
+            expect(circle.attr('class')).toBe('some-other-class');
+            expect(select('g.legend').attr('transform')).toEqual('translate(-27.5, -15)');
+        });
     });
 
     describe('createLegendMarkers', () => {

@@ -9,6 +9,7 @@ const { CIRCLE_RADIUS } = require('./layout');
  *
  * @param svg
  * @param legendMarkers
+ * @param width
  * @param startingXPosition
  * @param markerYPosition
  * @param textYPosition
@@ -17,6 +18,7 @@ const { CIRCLE_RADIUS } = require('./layout');
  */
 function drawSimpleLegend(svg,
                           legendMarkers,
+                          width=null,
                           startingXPosition=0,
                           markerYPosition=-4,
                           textYPosition=0,
@@ -69,7 +71,16 @@ function drawSimpleLegend(svg,
     }
     // center the legend group in the svg
     let legendBBox = legend.node().getBBox();
-    let legendXPosition = (svgBBox.width - legendBBox.width) / 2;
+
+    let legendXPosition;
+
+    if (width) {
+        legendXPosition = (width - legendBBox.width) / 2;
+    }
+    else {
+        legendXPosition = (svgBBox.width - legendBBox.width) / 2;
+    }
+
     legend.attr('transform', `translate(${legendXPosition}, ${svgBBox.height-15})`);
 }
 
