@@ -180,10 +180,10 @@ const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, co
 };
 
 
-const plotLegend = function(elem, {displayItems}) {
+const plotLegend = function(elem, {displayItems, width}) {
     elem.select('.legend').remove();
     let markers = createLegendMarkers(displayItems);
-    drawSimpleLegend(elem, markers);
+    drawSimpleLegend(elem, markers, width);
 };
 
 
@@ -241,7 +241,8 @@ const timeSeriesGraph = function (elem) {
                 isInteractive: () => true
             })))
             .call(link(plotLegend, createStructuredSelector({
-                displayItems: legendDisplaySelector
+                displayItems: legendDisplaySelector,
+                width: state => state.width
             })))
             .append('g')
                 .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
