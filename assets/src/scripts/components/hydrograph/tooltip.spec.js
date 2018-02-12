@@ -93,6 +93,7 @@ describe('Hydrograph tooltip module', () => {
             expect(svg.selectAll('line').size()).toBe(1);
             expect(svg.selectAll('circle').size()).toBe(2);
             expect(svg.selectAll('text').size()).toBe(2);
+            expect(svg.selectAll('.overlay').size()).toBe(1);
         });
 
 

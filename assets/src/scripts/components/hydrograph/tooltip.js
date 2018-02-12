@@ -20,7 +20,6 @@ const createFocusLine = function(elem, {yScale, currentTsData, compareTsData=nul
     return focus;
 };
 
-
 const createFocusCircle = function(elem) {
     let focus = elem.append('g')
         .attr('class', 'focus')
@@ -87,7 +86,6 @@ const getNearestTime = function(data, time) {
     };
 };
 
-
 const createTooltip = function(elem, {xScale, yScale, compareXScale, currentTsData, compareTsData, isCompareVisible}) {
     elem.selectAll('.focus').remove();
     elem.select('.tooltip-text-group').remove();
@@ -132,16 +130,21 @@ const createTooltip = function(elem, {xScale, yScale, compareXScale, currentTsDa
             if (!currentData) {
                 return;
             }
+
+            // Update the focus line
             focusLine.select('.focus-line')
                 .attr('x1', currentTimeRange)
                 .attr('x2', currentTimeRange);
 
-            updateTooltipText(tooltipText.select('.current-tooltip-text'), currentData.datum);
+            // Update the current TS focus circle and tooltip text
             updateCircleFocus(focusCurrentCircle, {
                 xScale: xScale,
                 yScale: yScale,
                 tsDatum: currentData.datum
             });
+            updateTooltipText(tooltipText.select('.current-tooltip-text'), currentData.datum);
+
+            //Update the compare TS focus circle and tooltip text if we are showing it.
             if (isCompareVisible) {
                 const compareTime = compareXScale.invert(mouse(this)[0]);
                 const compareData = getNearestTime(compareTsData, compareTime);
