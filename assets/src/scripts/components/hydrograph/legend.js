@@ -72,14 +72,8 @@ function drawSimpleLegend(svg,
     // center the legend group in the svg
     let legendBBox = legend.node().getBBox();
 
-    let legendXPosition;
-
-    if (width) {
-        legendXPosition = (width - legendBBox.width) / 2;
-    }
-    else {
-        legendXPosition = (svgBBox.width - legendBBox.width) / 2;
-    }
+    const svgWidth = width ? width : svgBBox.width;
+    const legendXPosition = (svgWidth - legendBBox.width) / 2;
 
     legend.attr('transform', `translate(${legendXPosition}, ${svgBBox.height-15})`);
 }
