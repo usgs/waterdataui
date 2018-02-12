@@ -1,5 +1,4 @@
-const { namespaces } = require('d3');
-const { select } = require('d3-selection');
+const { select, namespaces } = require('d3-selection');
 
 
 function circleMarker({r, x, y, domId=null, domClass=null}) {
