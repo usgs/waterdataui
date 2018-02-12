@@ -52,7 +52,6 @@ describe('Legend module', () => {
             expect(line.attr('x2')).toBe('20');
             let circle = svgNode.select('circle');
             expect(circle.attr('class')).toBe('some-other-class');
-            expect(select('g.legend').attr('transform')).toEqual('translate(-127.5, -15)');
         });
 
 
@@ -67,7 +66,6 @@ describe('Legend module', () => {
             expect(line.attr('x2')).toBe('20');
             let circle = svgNode.select('circle');
             expect(circle.attr('class')).toBe('some-other-class');
-            expect(select('g.legend').attr('transform')).toEqual('translate(-27.5, -15)');
         });
     });
 
