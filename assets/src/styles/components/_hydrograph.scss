@@ -30,13 +30,13 @@ $estimated: black;
             }
             line {
                 opacity: .5;
-                stroke-color: #436BAF;
+                stroke: #436BAF;
                 stroke-width: 1;
                 stroke-dasharray: 5, 5
             }
 
         }
-        .tooltip-group {
+        .tooltip-text-group {
             .current-tooltip-text {
                 font-weight: bold;
             }

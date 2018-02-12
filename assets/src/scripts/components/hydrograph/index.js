@@ -1,7 +1,7 @@
 /**
  * Hydrograph charting module.
  */
-const { bisector, max } = require('d3-array');
+const { max } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
 const { createSelector, createStructuredSelector } = require('reselect');
@@ -15,10 +15,7 @@ const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./p
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
-
-
-// Function that returns the left bounding point for a given chart point.
-const bisectDate = bisector(d => d.time).left;
+const { createTooltip } = require('./tooltip');
 
 
 
@@ -62,26 +59,6 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
             .attr('id', `ts-${tsDataKey}`)
             .attr('d', tsLine);
     }
-};
-
-
-const getNearestTime = function (data, time) {
-    let index = bisectDate(data, time, 1);
-    let datum;
-    let d0 = data[index - 1];
-    let d1 = data[index];
-
-    if (d0 && d1) {
-        datum = time - d0.time > d1.time - time ? d1 : d0;
-    } else {
-        datum = d0 || d1;
-    }
-
-    // Return the nearest data point and its index.
-    return {
-        datum,
-        index: datum === d0 ? index - 1 : index
-    };
 };
 
 
@@ -267,13 +244,13 @@ const timeSeriesGraph = function (elem) {
                     yscale: yScaleSelector,
                     medianStatsData: pointsSelector('medianStatistics')
                 })))
-                .call(link(plotTooltips, createStructuredSelector({
+                .call(link(createTooltip, createStructuredSelector({
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
-                    data: pointsSelector('current'),
-                    isCompareVisible: isVisibleSelector('compare'),
                     compareXScale: xScaleSelector('compare'),
-                    compareData: pointsSelector('compare')
+                    currentTsData: pointsSelector('current'),
+                    compareTsData: pointsSelector('compare'),
+                    isCompareVisible: isVisibleSelector('compare')
                 })));
 
     elem.append('div')
@@ -335,4 +312,4 @@ const attachToNode = function (node, {siteno} = {}) {
 };
 
 
-module.exports = {attachToNode, getNearestTime, timeSeriesGraph};
+module.exports = {attachToNode, timeSeriesGraph};

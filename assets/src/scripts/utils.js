@@ -1,3 +1,4 @@
+
 /**
  * Determine the unicode variant of an HTML decimal entity
  *
@@ -58,3 +59,4 @@ export function deltaDays(date1, date2) {
 
     return Math.round(delta_ms/one_day_ms);
 }
+
