@@ -64,6 +64,9 @@ const updateTooltipText = function(text, tsDatum) {
  */
 const getNearestTime = function(data, time) {
     // Function that returns the left bounding point for a given chart point.
+    if (data.length < 2) {
+        return null;
+    }
     const bisectDate = bisector(d => d.time).left;
 
     let index = bisectDate(data, time, 1);
@@ -126,6 +129,9 @@ const createTooltip = function(elem, {xScale, yScale, compareXScale, currentTsDa
             const currentData = getNearestTime(currentTsData, currentTime);
             const currentTimeRange = xScale(currentData.datum.time);
 
+            if (!currentData) {
+                return;
+            }
             focusLine.select('.focus-line')
                 .attr('x1', currentTimeRange)
                 .attr('x2', currentTimeRange);
@@ -139,6 +145,9 @@ const createTooltip = function(elem, {xScale, yScale, compareXScale, currentTsDa
             if (isCompareVisible) {
                 const compareTime = compareXScale.invert(mouse(this)[0]);
                 const compareData = getNearestTime(compareTsData, compareTime);
+                if(!compareData) {
+                    return;
+                }
                 updateTooltipText(tooltipText.select('.compare-tooltip-text'), compareData.datum);
                 updateCircleFocus(focusCompareCircle, {
                     xScale: compareXScale,

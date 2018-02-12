@@ -1,8 +1,7 @@
 /**
  * Hydrograph charting module.
  */
-const { max } = require('d3-array');
-const { mouse, select } = require('d3-selection');
+const { select } = require('d3-selection');
 const { line } = require('d3-shape');
 const { createSelector, createStructuredSelector } = require('reselect');
 
@@ -11,10 +10,10 @@ const { dispatch, link, provide } = require('../../lib/redux');
 
 const { appendAxes, axesSelector } = require('./axes');
 const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
+const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
-const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 const { createTooltip } = require('./tooltip');
 
 
@@ -60,102 +59,6 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
             .attr('d', tsLine);
     }
 };
-
-
-const plotTooltips = function (elem, {xScale, yScale, data, isCompareVisible, compareXScale, compareData}) {
-    // Create a node to highlight the currently selected date/time.
-    elem.selectAll('.focus').remove();
-    elem.select('.overlay').remove();
-    elem.select('.tooltip-group').remove();
-    let focus = elem.append('g')
-        .attr('class', 'focus')
-        .style('display', 'none');
-    let tooltipLine = focus.append('line')
-        .attr('class', 'tooltip-focus-line');
-
-    let currentFocus = elem.append('g')
-        .attr('class', 'focus')
-        .style('display', 'none');
-    currentFocus.append('circle')
-        .attr('r', 5.5);
-
-    let compareFocus = elem.append('g')
-        .attr('class', 'focus')
-        .style('display', 'none');
-    compareFocus.append('circle')
-        .attr('r', 5.5);
-
-    let tooltipText = elem.append('g')
-        .attr('class', 'tooltip-group')
-        .style('display', 'none');
-    tooltipText.append('text')
-        .attr('class', 'current-tooltip-text');
-    tooltipText.append('text')
-        .attr('class', 'compare-tooltip-text');
-
-    let compareMax = isCompareVisible ? max(compareData.map((datum) => datum.value)) : 0;
-    let yMax = max([max(data.map((datum) =>  datum.value)), compareMax]);
-
-    elem.append('rect')
-        .attr('class', 'overlay')
-        .attr('width', '100%')
-        .attr('height', '100%')
-        .on('mouseover', () => {
-            focus.style('display', null);
-            tooltipText.style('display', null);
-            currentFocus.style('display', null);
-            if (isCompareVisible) {
-                compareFocus.style('display',  null);
-            }
-        })
-        .on('mouseout', () => {
-            focus.style('display', 'none');
-            tooltipText.style('display', 'none');
-            currentFocus.style('display', 'none');
-            compareFocus.style('display', 'none');
-        })
-        .on('mousemove', function () {
-            // Get the nearest data point for the current mouse position.
-            const time = xScale.invert(mouse(this)[0]);
-            const current = getNearestTime(data, time);
-            if (!current.datum) {
-                return;
-            }
-            let compareTime;
-            let compare;
-            if (isCompareVisible) {
-                compareTime = compareXScale.invert(mouse(this)[0]);
-                compare = getNearestTime(compareData, compareTime);
-            }
-
-            tooltipLine
-                .attr('stroke', 'black')
-                .attr('x1', xScale(current.datum.time))
-                .attr('x2', xScale(current.datum.time))
-                .attr('y1', yScale.range()[0])
-                .attr('y2', yScale(yMax));
-
-            // Move the focus node to this date/time.
-            currentFocus.attr('transform', `translate(${xScale(current.datum.time)}, ${yScale(current.datum.value)})`);
-            if (isCompareVisible) {
-                compareFocus.attr('transform',
-                    `translate(${compareXScale(compare.datum.time)}, ${yScale(compare.datum.value)})`);
-            }
-
-            tooltipText.select('.current-tooltip-text')
-                .attr('x', 15)
-                .classed('approved', current.datum.approved)
-                .classed('estimated', current.datum.estimated)
-                .text(() => current.datum.label);
-            tooltipText.select('.compare-tooltip-text')
-                .text(() => isCompareVisible ? compare.datum.label : '')
-                .classed('approved', compare ? compare.datum.approved : false)
-                .classed('estimated', compare ? compare.datum.estimated : false)
-                .attr('x', 15)
-                .attr('y', '1em');
-        });
-};
-
 
 const plotLegend = function(elem, {displayItems, width}) {
     elem.select('.legend').remove();
