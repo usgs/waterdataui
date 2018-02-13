@@ -79,12 +79,20 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                 .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
                 .attr('class', 'generic-mask');
 
+            let patternId;
+
+            if (tsDataKey === 'compare') {
+                patternId = 'url(#hash-135)';
+            }
+            else {
+                patternId = 'url(#hash-45)';
+            }
             maskGroup.append('rect')
                 .attr('x', xScale(xDomainStart))
                 .attr('y', yScale(yRangeEnd))
                 .attr('width', xScale(xDomainEnd) - xScale(xDomainStart))
                 .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
-                .attr('fill', 'url(#hash-45)');
+                .attr('fill', patternId);
         }
     }
 };
