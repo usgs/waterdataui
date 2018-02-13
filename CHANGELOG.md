@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
+### Added
+- Previous year value is added to the tooltip when shown.
+- Tooltip uses a focus line in addition to the focus circle to show location on the time series line.
+
+### Changed
+- Tooltip text is now fixed in the corner and the font style and color match the line style/color
+used for the time series line. 
+
 
 ## [0.1.0] - 2018-02-13
 ### Added
