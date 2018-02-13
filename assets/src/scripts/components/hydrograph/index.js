@@ -130,7 +130,7 @@ const plotLegend = function(elem, {displayItems, width}) {
 };
 
 
-const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsData}) {
+const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsData, showLabel}) {
     elem.select('#median-points').remove();
 
     if (!visible) {
@@ -153,22 +153,27 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
             })
             .attr('cy', function(d) {
                 return yscale(d.value);
-            });
+            })
+            .on('click', dispatch(function() {
+                return Actions.showMedianStatsLabel(!showLabel);
+            }));
 
-    container.selectAll('medianPointText')
-        .data(medianStatsData)
-        .enter()
-        .append('text')
-            .text(function(d) {
-                return d.label;
-            })
-            .attr('id', 'median-text')
-            .attr('x', function(d) {
-                return xscale(d.time) + 5;
-            })
-            .attr('y', function(d) {
-                return yscale(d.value);
-            });
+    if (showLabel) {
+        container.selectAll('medianPointText')
+            .data(medianStatsData)
+            .enter()
+            .append('text')
+                .text(function(d) {
+                    return d.label;
+                })
+                .attr('id', 'median-text')
+                .attr('x', function(d) {
+                    return xscale(d.time) + 5;
+                })
+                .attr('y', function(d) {
+                    return yscale(d.value);
+                });
+    }
 };
 
 
@@ -213,7 +218,8 @@ const timeSeriesGraph = function (elem) {
                     visible: isVisibleSelector('medianStatistics'),
                     xscale: xScaleSelector('current'),
                     yscale: yScaleSelector,
-                    medianStatsData: pointsSelector('medianStatistics')
+                    medianStatsData: pointsSelector('medianStatistics'),
+                    showLabel: (state) => state.showMedianStatsLabel
                 })));
 
     elem.append('div')
