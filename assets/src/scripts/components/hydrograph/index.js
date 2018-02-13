@@ -146,14 +146,6 @@ const timeSeriesGraph = function (elem) {
                     yScale: yScaleSelector,
                     tsDataKey: () => 'compare'
                 })))
-                .call(link(plotMedianPoints, createStructuredSelector({
-                    visible: isVisibleSelector('medianStatistics'),
-                    xscale: xScaleSelector('current'),
-                    yscale: yScaleSelector,
-                    medianStatsData: pointsSelector('medianStatistics'),
-                    showLabel: (state) => state.showMedianStatsLabel
-
-                })))
                 .call(link(createTooltip, createStructuredSelector({
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
@@ -161,6 +153,14 @@ const timeSeriesGraph = function (elem) {
                     currentTsData: pointsSelector('current'),
                     compareTsData: pointsSelector('compare'),
                     isCompareVisible: isVisibleSelector('compare')
+                })))
+                .call(link(plotMedianPoints, createStructuredSelector({
+                    visible: isVisibleSelector('medianStatistics'),
+                    xscale: xScaleSelector('current'),
+                    yscale: yScaleSelector,
+                    medianStatsData: pointsSelector('medianStatistics'),
+                    showLabel: (state) => state.showMedianStatsLabel
+
                 })));
 
     elem.append('div')
