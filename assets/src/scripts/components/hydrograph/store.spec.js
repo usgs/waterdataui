@@ -1,5 +1,4 @@
 const { Actions, timeSeriesReducer } = require('./store');
-const { lineMarker, circleMarker } = require('./markers');
 
 
 describe('Redux store', () => {
@@ -37,6 +36,21 @@ describe('Redux store', () => {
             expect(Actions.setMedianStatistics('statsData')).toEqual({
                 type: 'SET_MEDIAN_STATISTICS',
                 medianStatistics: 'statsData'
+            });
+        });
+
+        it('should create an action to show the median stats label', () => {
+            expect(Actions.showMedianStatsLabel(true)).toEqual({
+                type: 'SHOW_MEDIAN_STATS_LABEL',
+                show: true
+            });
+
+        });
+
+        it('should create an action to resize plot', () => {
+            expect(Actions.resizeTimeseriesPlot(100)).toEqual({
+                type: 'RESIZE_TIMESERIES_PLOT',
+                width: 100
             });
         });
     });
@@ -110,6 +124,24 @@ describe('Redux store', () => {
                     beginYear: '2000',
                     endYear: '2010'
                 }
+            });
+        });
+
+        it('should handle SHOW_MEDIAN_STATS_LABEL', () => {
+            expect(timeSeriesReducer({}, {
+                type: 'SHOW_MEDIAN_STATS_LABEL',
+                show: true
+            })).toEqual({
+                showMedianStatsLabel: true
+            });
+        });
+
+        it('should handle RESIZE_TIMESERIES_PLOT', () => {
+            expect(timeSeriesReducer({}, {
+                type: 'RESIZE_TIMESERIES_PLOT',
+                width: 100
+            })).toEqual({
+                width: 100
             });
         });
     });
