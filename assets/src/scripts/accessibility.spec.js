@@ -13,18 +13,45 @@ describe('svgAccessibility tests', () => {
             svg.remove();
         });
 
-        it('Should add a title, desc, and aria attributes', () => {
+        it('Should add a title and desc tags and aria attributes', () => {
             addSVGAccessibility(svg, {
                 title: 'This is a title',
                 description: 'This is a description',
                 isInteractive: false
             });
 
-            expect(svg.attr('title')).toBe('This is a title');
-            expect(svg.attr('desc')).toBe('This is a description');
+            const title = svg.selectAll('title');
+            const desc = svg.selectAll('desc');
+
+            expect(title.size()).toBe(1);
+            expect(desc.size()).toBe(1);
+            expect(title.html()).toEqual('This is a title');
+            expect(desc.html()).toEqual('This is a description');
             const labelledBy = svg.attr('aria-labelledby');
             expect(labelledBy).toContain('title');
             expect(labelledBy).toContain('desc');
+        });
+
+        it('Should remove the previous title and desc tags when called again', () => {
+            addSVGAccessibility(svg, {
+                title: 'This is a title',
+                description: 'This is a description',
+                isInteractive: false
+            });
+
+            addSVGAccessibility(svg, {
+                title: 'That is a title',
+                description: 'That is a description',
+                isInteractive: false
+            });
+
+            const title = svg.selectAll('title');
+            const desc = svg.selectAll('desc');
+
+            expect(title.size()).toBe(1);
+            expect(desc.size()).toBe(1);
+            expect(title.html()).toEqual('That is a title');
+            expect(desc.html()).toEqual('That is a description');
         });
 
         it('Should not add a tabindex if isInteractive is false', () => {

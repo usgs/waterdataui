@@ -7,9 +7,13 @@
  * @param {Boolean} isInteractive
  */
 function addSVGAccessibility(svg, {title, description, isInteractive}) {
-    svg.attr('title', title)
-        .attr('desc', description)
-        .attr('aria-labelledby', 'title desc');
+    svg.selectAll('title, desc').remove();
+
+    svg.insert('desc', ':first-child')
+        .html(description);
+    svg.insert('title', ':first-child')
+        .html(title);
+    svg.attr('aria-labelledby', 'title desc');
     if (isInteractive) {
         svg.attr('tabindex', 0);
     }
