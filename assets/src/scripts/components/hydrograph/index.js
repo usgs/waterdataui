@@ -1,7 +1,7 @@
 /**
  * Hydrograph charting module.
  */
-const { bisector } = require('d3-array');
+const { bisector, extent } = require('d3-array');
 const { mouse, select } = require('d3-selection');
 const { line } = require('d3-shape');
 const { createSelector, createStructuredSelector } = require('reselect');
@@ -53,14 +53,39 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
         .y(d => yScale(d.value));
 
     for (let line of lines) {
-        elem.append('path')
-            .datum(line.points)
-            .classed('line', true)
-            .classed('approved', line.classes.approved)
-            .classed('estimated', line.classes.estimated)
-            .attr('data-title', tsDataKey)
-            .attr('id', `ts-${tsDataKey}`)
-            .attr('d', tsLine);
+        if (line.classes.masks.size === 0) {
+            elem.append('path')
+                .datum(line.points)
+                .classed('line', true)
+                .classed('approved', line.classes.approved)
+                .classed('estimated', line.classes.estimated)
+                .attr('data-title', tsDataKey)
+                .attr('id', `ts-${tsDataKey}`)
+                .attr('d', tsLine);
+        }
+        else {
+            elem.selectAll('.mask-group').remove();
+            let xMaskExtent = extent(line.points, d => d.time);
+            let [xDomainStart, xDomainEnd] = xMaskExtent;
+            let [yRangeStart, yRangeEnd] = yScale.domain();
+            let maskGroup = elem
+                .append('g')
+                    .attr('class', 'mask-group');
+
+            maskGroup.append('rect')
+                .attr('x', xScale(xDomainStart))
+                .attr('y', yScale(yRangeEnd))
+                .attr('width', xScale(xDomainEnd) - xScale(xDomainStart))
+                .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
+                .attr('class', 'generic-mask');
+
+            maskGroup.append('rect')
+                .attr('x', xScale(xDomainStart))
+                .attr('y', yScale(yRangeEnd))
+                .attr('width', xScale(xDomainEnd) - xScale(xDomainStart))
+                .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
+                .attr('fill', 'url(#hash-45)');
+        }
     }
 };
 
@@ -120,6 +145,35 @@ const plotTooltips = function (elem, {xScale, yScale, data}) {
                 .attr('x', isFirstHalf ? 15 : -15)
                 .attr('dy', isFirstHalf ? '.31em' : '-.31em');
         });
+};
+
+
+const plotPatterns = function(elem) {
+
+    let defs = elem.append('defs');
+
+    defs.append('mask')
+        .attr('id', 'display-mask')
+        .attr('maskUnits', 'userSpaceOnUse')
+        .append('rect')
+        .attr('x', '0')
+        .attr('y', '0')
+        .attr('width', '100%')
+        .attr('height', '100%')
+        .attr('fill', '#0000ff');
+
+    defs.append('pattern')
+        .attr('id', 'hash-45')
+        .attr('width', '8')
+        .attr('height', '8')
+        .attr('patternUnits', 'userSpaceOnUse')
+        .attr('patternTransform', 'rotate(45)')
+        .append('rect')
+            .attr('width', '4')
+            .attr('height', '8')
+            .attr('transform', 'translate(0, 0)')
+            .attr('fill', '#3633FF')
+            .attr('mask', 'url(#display-mask)');
 };
 
 
@@ -183,6 +237,7 @@ const timeSeriesGraph = function (elem) {
                 description: state => state.desc,
                 isInteractive: () => true
             })))
+            .call(plotPatterns)
             .call(link(plotLegend, createStructuredSelector({
                 displayItems: legendDisplaySelector,
                 width: state => state.width

@@ -1,4 +1,5 @@
 const { createSelector, defaultMemoize: memoize } = require('reselect');
+const { setEquality } = require('../../utils');
 
 
 /**
@@ -37,42 +38,83 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
         // Accumulate data into line groups, splitting on the estimated and
         // approval status.
         let lines = [];
-        let lastClasses = {};
+
+        let lastClasses = {masks: new Set()};
+
+        const masks = new Set([
+            'ICE',
+            'FLD',
+            'BKW',
+            'ZFL',
+            'DRY',
+            'SSN',
+            'PR',
+            'RAT',
+            'EQP',
+            'MNT',
+            'DIS',
+            '***',
+            'TST',
+            'PMP'
+        ]);
 
         for (let pt of points) {
             // Ignored masked data
+            let lineClasses;
+
             if (pt.value === null) {
-                lastClasses = {};
-                continue;
+                let qualifiers = new Set(pt.qualifiers.map(q => {return q.toUpperCase()}));
+                let maskIntersection = new Set([...masks].filter(x => qualifiers.has(x)));
+                lineClasses = {
+                    approved: pt.approved,
+                    estimated: pt.estimated,
+                    masks: maskIntersection
+                };
+
+                if (lastClasses.approved !== lineClasses.approved ||
+                        lastClasses.estimated !== lineClasses.estimated ||
+                        !setEquality(lastClasses.masks, lineClasses.masks)) {
+                    lines.push({
+                        classes: lineClasses,
+                        points: []
+                    });
+                }
+                lines[lines.length - 1].points.push(pt);
+                lastClasses = lineClasses;
             }
 
-            // Temporary check to help detect test sites.
-            if (pt.qualifiers.length > 1) {
-                /*eslint no-console: "allow"*/
-                console.error('Point has multiple qualifiers', pt.qualifiers);
+            else if (pt.value !== null) {
+
+                // Temporary check to help detect test sites.
+                if (pt.qualifiers.length > 1) {
+                    /*eslint no-console: "allow"*/
+                    console.error('Point has multiple qualifiers', pt.qualifiers);
+                }
+
+                // Classes to put on the line with this point.
+                lineClasses = {
+                    approved: pt.approved,
+                    estimated: pt.estimated,
+                    masks: new Set()
+                };
+
+                // If this point doesn't have the same classes as the last point,
+                // create a new line for it.
+                if (lastClasses.approved !== lineClasses.approved ||
+                        lastClasses.estimated !== lineClasses.estimated) {
+                    lines.push({
+                        classes: lineClasses,
+                        points: []
+                    });
+                }
+
+                // Add this point to the current line.
+                lines[lines.length - 1].points.push(pt);
+
+                // Cache the classes for the next loop iteration.
+                lastClasses = lineClasses;
+
             }
-
-            // Classes to put on the line with this point.
-            const lineClasses = {
-                approved: pt.approved,
-                estimated: pt.estimated
-            };
-
-            // If this point doesn't have the same classes as the last point,
-            // create a new line for it.
-            if (lastClasses.approved !== lineClasses.approved ||
-                    lastClasses.estimated !== lineClasses.estimated) {
-                lines.push({
-                    classes: lineClasses,
-                    points: []
-                });
-            }
-
-            // Add this point to the current line.
-            lines[lines.length - 1].points.push(pt);
-
-            // Cache the classes for the next loop iteration.
-            lastClasses = lineClasses;
         }
 
         return lines;
