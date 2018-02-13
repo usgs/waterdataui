@@ -72,6 +72,12 @@ export const Actions = {
             medianStatistics
         };
     },
+    showMedianStatsLabel(show) {
+        return {
+            type: 'SHOW_MEDIAN_STATS_LABEL',
+            show
+        }
+    },
     resizeTimeseriesPlot(width) {
         return {
             type: 'RESIZE_TIMESERIES_PLOT',
@@ -147,6 +153,12 @@ export const timeSeriesReducer = function (state={}, action) {
                 }
             };
 
+        case 'SHOW_MEDIAN_STATS_LABEL':
+            return {
+                ...state,
+                showMedianStatsLabel : action.show
+            };
+
         case 'RESIZE_TIMESERIES_PLOT':
             return {
                 ...state,
@@ -178,11 +190,10 @@ export const configureStore = function (initialState) {
             compare: false,
             medianStatistics: false
         },
-        legendMarkers: {},
-        displayMarkers: [],
         title: '',
         desc: '',
         width: 800,
+        showMedianStatsLabel: false,
         ...initialState
     };
 
