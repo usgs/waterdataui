@@ -100,10 +100,11 @@ describe('Hydrograph charting module', () => {
         });
     });
 
-    describe('with real data from site #05370000', () => {
+    describe('SVG contains the expected elements', () => {
         /* eslint no-use-before-define: "ignore" */
+        let store;
         beforeEach(() => {
-            const store = configureStore({
+            store = configureStore({
                 tsData: {
                     current: [{
                         time: new Date(),
@@ -123,6 +124,7 @@ describe('Hydrograph charting module', () => {
                 },
                 title: 'My Title',
                 desc: 'My Description',
+                showMedianStatsLabel: false,
                 width: 400
             });
             select(graphNode)
@@ -145,11 +147,18 @@ describe('Hydrograph charting module', () => {
 
         it('should have a point for the median stat data with a label', () => {
             expect(selectAll('svg circle#median-point').size()).toBe(1);
-            expect(selectAll('svg text#median-text').size()).toBe(1);
+            expect(selectAll('svg text#median-text').size()).toBe(0);
         });
 
         it('should have a legend with two markers', () => {
            expect(selectAll('g.legend-marker').size()).toBe(2);
+        });
+
+        it('show show the labels for the median stat data showMedianStatsLabel is true', () => {
+            store.dispatch(Actions.showMedianStatsLabel(true));
+
+            expect(selectAll('svg text#median-text').size()).toBe(1);
+
         });
     });
 
