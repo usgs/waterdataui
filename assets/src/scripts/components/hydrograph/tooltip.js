@@ -42,7 +42,6 @@ const createTooltipText = function(elem, tskeys) {
         y += 1;
     }
     return tooltipTextGroup;
-
 };
 
 const updateCircleFocus = function(circleFocus, {xScale, yScale, tsDatum}) {
