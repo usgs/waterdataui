@@ -159,20 +159,20 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
             }));
 
     if (showLabel) {
-        container.selectAll('medianPointText').
-            data(medianStatsData).
-            enter().
-            append('text').
-            text(function(d) {
-                return d.label;
-            }).
-            attr('id', 'median-text').
-            attr('x', function(d) {
-                return xscale(d.time) + 5;
-            }).
-            attr('y', function(d) {
-                return yscale(d.value);
-            });
+        container.selectAll('medianPointText')
+            .data(medianStatsData)
+            .enter()
+            .append('text')
+                .text(function(d) {
+                    return d.label;
+                })
+                .attr('id', 'median-text')
+                .attr('x', function(d) {
+                    return xscale(d.time) + 5;
+                })
+                .attr('y', function(d) {
+                    return yscale(d.value);
+                });
     }
 };
 
