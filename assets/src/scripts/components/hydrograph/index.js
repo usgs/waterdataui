@@ -156,11 +156,11 @@ const plotPatterns = function(elem) {
         .attr('id', 'display-mask')
         .attr('maskUnits', 'userSpaceOnUse')
         .append('rect')
-        .attr('x', '0')
-        .attr('y', '0')
-        .attr('width', '100%')
-        .attr('height', '100%')
-        .attr('fill', '#0000ff');
+            .attr('x', '0')
+            .attr('y', '0')
+            .attr('width', '100%')
+            .attr('height', '100%')
+            .attr('fill', '#0000ff');
 
     defs.append('pattern')
         .attr('id', 'hash-45')
@@ -172,8 +172,21 @@ const plotPatterns = function(elem) {
             .attr('width', '4')
             .attr('height', '8')
             .attr('transform', 'translate(0, 0)')
-            .attr('fill', '#3633FF')
             .attr('mask', 'url(#display-mask)');
+
+    defs.append('pattern')
+        .attr('id', 'hash-135')
+        .attr('width', '8')
+        .attr('height', '8')
+        .attr('patternUnits', 'userSpaceOnUse')
+        .attr('patternTransform', 'rotate(135)')
+        .append('rect')
+            .attr('width', '4')
+            .attr('height', '8')
+            .attr('transform', 'translate(0, 0)')
+            .attr('mask', 'url(#display-mask)');
+
+
 };
 
 
