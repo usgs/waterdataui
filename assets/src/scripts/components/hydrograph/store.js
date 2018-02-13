@@ -178,8 +178,6 @@ export const configureStore = function (initialState) {
             compare: false,
             medianStatistics: false
         },
-        legendMarkers: {},
-        displayMarkers: [],
         title: '',
         desc: '',
         width: 800,
