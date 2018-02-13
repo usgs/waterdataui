@@ -76,7 +76,7 @@ export const Actions = {
         return {
             type: 'SHOW_MEDIAN_STATS_LABEL',
             show
-        }
+        };
     },
     resizeTimeseriesPlot(width) {
         return {
