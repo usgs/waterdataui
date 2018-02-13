@@ -1,4 +1,4 @@
-const { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities} = require('./utils');
+const { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities, setEquality} = require('./utils');
 
 describe('Utils module', () => {
 
@@ -55,5 +55,26 @@ describe('Utils module', () => {
         it('replaces html entities with unicode', () => {
             expect(replaceHtmlEntities('kg * m&#178;/s&#179;')).toEqual('kg * m\u00B2/s\u00B3');
         }) ;
+    });
+
+    describe('setEquality', () => {
+
+        const testSet1 = new Set(['a', 'b', 'c']);
+        const testSet2 = new Set(['a', 'b', 'c']);
+        const testSet3 = new Set(['a', 'b']);
+        const testSet4 = new Set(['x', 'y', 'z']);
+
+        it('returns true if sets are equal', () => {
+            expect(setEquality(testSet1, testSet2)).toBe(true);
+        });
+
+        it('returns false if set lengths are unequal', () => {
+            expect(setEquality(testSet1, testSet3)).toBe(false);
+        });
+
+        it('returns false if set items are unequal', () => {
+            expect(setEquality(testSet1, testSet4)).toBe(false);
+        });
+
     });
 });
