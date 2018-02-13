@@ -154,7 +154,7 @@ describe('Hydrograph charting module', () => {
            expect(selectAll('g.legend-marker').size()).toBe(2);
         });
 
-        it('show show the labels for the median stat data showMedianStatsLabel is true', () => {
+        it('show the labels for the median stat data showMedianStatsLabel is true', () => {
             store.dispatch(Actions.showMedianStatsLabel(true));
 
             expect(selectAll('svg text#median-text').size()).toBe(1);
