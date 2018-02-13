@@ -7,8 +7,7 @@
  * @param {Boolean} isInteractive
  */
 function addSVGAccessibility(svg, {title, description, isInteractive}) {
-    svg.select('title').remove();
-    svg.select('desc').remove();
+    svg.selectAll('title, desc').remove();
 
     svg.insert('desc', ':first-child')
         .html(description);
