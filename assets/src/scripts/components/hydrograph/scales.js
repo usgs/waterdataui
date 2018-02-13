@@ -1,7 +1,8 @@
 const { extent } = require('d3-array');
-const { scaleLinear, scaleTime } = require('d3-scale');
+const { scaleTime } = require('d3-scale');
 const { createSelector, defaultMemoize: memoize } = require('reselect');
 
+const { default: scaleSymlog } = require('../../lib/symlog');
 const { layoutSelector, MARGIN } = require('./layout');
 
 const paddingRatio = 0.2;
@@ -14,8 +15,19 @@ const paddingRatio = 0.2;
  */
 function extendDomain(domainExtent) {
     const padding = paddingRatio * (domainExtent[1] - domainExtent[0]);
+
+    // If all values are above zero, make zero the lower bound
+    if (domainExtent[0] >= 0 && domainExtent[1] >= 0) {
+        return [
+            Math.max(0, domainExtent[0] - padding),
+            domainExtent[1] + padding
+        ];
+    }
+
+    // If we have values less than zero, keep 20% padding around both sides.
     return [domainExtent[0] - padding, domainExtent[1] + padding];
 }
+
 
 /**
  * Create an x-scale oriented on the left
@@ -69,10 +81,9 @@ function createYScale(tsData, showSeries, ySize) {
         yExtent = [0, 1];
     }
 
-    // yScale is oriented on the bottom
-    return scaleLinear()
-        .range([ySize, 0])
-        .domain(yExtent);
+    return scaleSymlog()
+        .domain(yExtent)
+        .range([ySize, 0]);
 }
 
 

@@ -46,12 +46,6 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
                 continue;
             }
 
-            // Temporary check to help detect test sites.
-            if (pt.qualifiers.length > 1) {
-                /*eslint no-console: "allow"*/
-                console.error('Point has multiple qualifiers', pt.qualifiers);
-            }
-
             // Classes to put on the line with this point.
             const lineClasses = {
                 approved: pt.approved,
