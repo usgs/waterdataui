@@ -9,23 +9,19 @@ const paddingRatio = 0.2;
 
 
 /**
- *  Return domainExtent padded on both ends by paddingRatio
- *  @param {Array} domainExtent - array of two numbers
+ *  Return domain padded on both ends by paddingRatio.
+ *  For positive domains, a zero-lower bound on the y-axis is enforced.
+ *  @param {Array} domain - array of two numbers
  *  @return {Array} - array of two numbers
  */
-function extendDomain(domainExtent) {
-    const padding = paddingRatio * (domainExtent[1] - domainExtent[0]);
-
-    // If all values are above zero, make zero the lower bound
-    if (domainExtent[0] >= 0 && domainExtent[1] >= 0) {
-        return [
-            Math.max(0, domainExtent[0] - padding),
-            domainExtent[1] + padding
-        ];
-    }
-
-    // If we have values less than zero, keep 20% padding around both sides.
-    return [domainExtent[0] - padding, domainExtent[1] + padding];
+function extendDomain(domain) {
+    const padding = paddingRatio * (domain[1] - domain[0]);
+    const isPositive = domain[0] >= 0 && domain[1] >= 0;
+    return [
+        // If all values are above zero, make a-axis zero the lower bound
+        isPositive ? Math.max(0, domain[0] - padding) : domain[0] - padding,
+        domain[1] + padding
+    ];
 }
 
 
