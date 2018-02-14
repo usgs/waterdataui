@@ -41,5 +41,6 @@ describe('Charting scales', () => {
         expect(yScale(1)).not.toBeNaN();
         expect(yScale(.5)).not.toBeNaN();
         expect(yScale(.999)).not.toBeNaN();
+        expect(yScale(0)).not.toBeNaN();
     });
 });
