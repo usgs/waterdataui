@@ -99,7 +99,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
 };
 
 
-const plotPatterns = function(elem) {
+const plotSvgDefs = function(elem) {
 
     let defs = elem.append('defs');
 
@@ -206,7 +206,7 @@ const timeSeriesGraph = function (elem) {
                 description: state => state.desc,
                 isInteractive: () => true
             })))
-            .call(plotPatterns)
+            .call(plotSvgDefs)
             .call(link(plotLegend, createStructuredSelector({
                 displayItems: legendDisplaySelector,
                 width: state => state.width

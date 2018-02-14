@@ -136,6 +136,12 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg').size()).toBe(1);
         });
 
+        it('should have a defs node', () => {
+            expect(selectAll('defs').size()).toBe(1);
+            expect(selectAll('defs mask').size()).toBe(1);
+            expect(selectAll('defs pattern').size()).toBe(2);
+        });
+
         it('should render timeseries data as a line', () => {
             // There is not a good way to validate that <path d="..."/>
             // has the correct data, but we can validate that tooltips display
