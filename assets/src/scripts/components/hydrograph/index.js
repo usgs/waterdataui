@@ -80,19 +80,16 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                 .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
                 .attr('class', `mask ${maskName}-mask`);
 
-            let patternId;
+            let patternId = tsDataKey === 'compare' ? 'url(#hash-135)' : 'url(#hash-45)';
 
-            if (tsDataKey === 'compare') {
-                patternId = 'url(#hash-135)';
-            }
-            else {
-                patternId = 'url(#hash-45)';
-            }
+            let xSpan = xScale(xDomainEnd) - xScale(xDomainStart);
+            let rectWidth = xSpan > 0 ? xSpan : 1;
+
             maskGroup.append('rect')
                 .attr('x', xScale(xDomainStart))
                 .attr('y', yScale(yRangeEnd))
-                .attr('width', xScale(xDomainEnd) - xScale(xDomainStart))
-                .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
+                .attr('width', rectWidth)
+                .attr('height', Math.abs(yScale(yRangeEnd) - yScale(yRangeStart)))
                 .attr('fill', patternId);
         }
     }
@@ -136,8 +133,6 @@ const plotSvgDefs = function(elem) {
             .attr('height', '8')
             .attr('transform', 'translate(0, 0)')
             .attr('mask', 'url(#display-mask)');
-
-
 };
 
 
