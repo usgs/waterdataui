@@ -40,6 +40,7 @@ const drawMessage = function (elem, message) {
 const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}) {
     const elemId = 'ts-' + tsDataKey;
     elem.selectAll(`#${elemId}`).remove();
+    elem.selectAll(`.${tsDataKey}-mask-group`).remove();
 
     if (!visible) {
         return;
@@ -61,7 +62,6 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                 .attr('d', tsLine);
         }
         else {
-            elem.selectAll('.mask-group').remove();
             let maskName = line.classes.masks.values().next().value.toLowerCase();
             if (maskName === '***') {
                 maskName = 'unavailable';
@@ -71,7 +71,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
             let [yRangeStart, yRangeEnd] = yScale.domain();
             let maskGroup = elem
                 .append('g')
-                    .attr('class', 'mask-group');
+                    .attr('class', `${tsDataKey}-mask-group`);
 
             maskGroup.append('rect')
                 .attr('x', xScale(xDomainStart))

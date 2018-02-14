@@ -84,7 +84,6 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
             }
 
             else if (pt.value !== null) {
-
                 // Temporary check to help detect test sites.
                 if (pt.qualifiers.length > 1) {
                     /*eslint no-console: "allow"*/
@@ -101,7 +100,8 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
                 // If this point doesn't have the same classes as the last point,
                 // create a new line for it.
                 if (lastClasses.approved !== lineClasses.approved ||
-                        lastClasses.estimated !== lineClasses.estimated) {
+                        lastClasses.estimated !== lineClasses.estimated ||
+                        !setEquality(lastClasses.masks, lineClasses.masks)) {
                     lines.push({
                         classes: lineClasses,
                         points: []
