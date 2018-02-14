@@ -51,7 +51,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
         .y(d => yScale(d.value));
 
     for (let line of lines) {
-        if (line.classes.masks.size === 0) {
+        if (line.classes.dataMask === null) {
             elem.append('path')
                 .datum(line.points)
                 .classed('line', true)
@@ -62,7 +62,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                 .attr('d', tsLine);
         }
         else {
-            let maskName = line.classes.masks.values().next().value.toLowerCase();
+            let maskName = line.classes.dataMask.toLowerCase();
             if (maskName === '***') {
                 maskName = 'unavailable';
             }

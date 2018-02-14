@@ -39,7 +39,7 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
         // approval status.
         let lines = [];
 
-        let lastClasses = {masks: new Set()};
+        let lastClasses = {};
 
         const masks = new Set([
             'ICE',
@@ -61,19 +61,19 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
         for (let pt of points) {
             // Ignored masked data
             let lineClasses;
-
             if (pt.value === null) {
-                let qualifiers = new Set(pt.qualifiers.map(q => {return q.toUpperCase()}));
+                let qualifiers = new Set(pt.qualifiers.map(q => q.toUpperCase()));
+                // current business rules specify that a particular data point
+                // will only have at most one masking qualifier
                 let maskIntersection = new Set([...masks].filter(x => qualifiers.has(x)));
                 lineClasses = {
                     approved: pt.approved,
                     estimated: pt.estimated,
-                    masks: maskIntersection
+                    dataMask: [...maskIntersection][0]
                 };
-
                 if (lastClasses.approved !== lineClasses.approved ||
                         lastClasses.estimated !== lineClasses.estimated ||
-                        !setEquality(lastClasses.masks, lineClasses.masks)) {
+                        lastClasses.dataMask !== lineClasses.dataMask) {
                     lines.push({
                         classes: lineClasses,
                         points: []
@@ -94,14 +94,14 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
                 lineClasses = {
                     approved: pt.approved,
                     estimated: pt.estimated,
-                    masks: new Set()
+                    dataMask: null
                 };
 
                 // If this point doesn't have the same classes as the last point,
                 // create a new line for it.
                 if (lastClasses.approved !== lineClasses.approved ||
                         lastClasses.estimated !== lineClasses.estimated ||
-                        !setEquality(lastClasses.masks, lineClasses.masks)) {
+                        lastClasses.dataMask !== lineClasses.dataMask) {
                     lines.push({
                         classes: lineClasses,
                         points: []
