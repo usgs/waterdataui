@@ -106,14 +106,23 @@ describe('Hydrograph charting module', () => {
         beforeEach(() => {
             store = configureStore({
                 tsData: {
-                    current: [{
-                        time: new Date(),
-                        value: 10,
-                        label: 'Label',
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
-                    }],
+                    current: [
+                        {
+                            time: new Date(),
+                            value: 10,
+                            label: 'Label',
+                            qualifiers: ['P'],
+                            approved: false,
+                            estimated: false
+                        }, {
+                            time: new Date(),
+                            value: null,
+                            label: 'Masked Data',
+                            qualifiers: ['P', 'FLD'],
+                            approved: false,
+                            estimated: false
+                        }
+                    ],
                     compare: [],
                     medianStatistics: MOCK_MEDIAN_STAT_DATA
                 },
@@ -149,6 +158,10 @@ describe('Hydrograph charting module', () => {
 
             // First, confirm the chart line exists.
             expect(selectAll('svg path.line').size()).toBe(1);
+        });
+
+        it('should render a rectangle for masked data', () => {
+            expect(selectAll('g.current-mask-group').size()).toBe(1);
         });
 
         it('should have a point for the median stat data with a label', () => {
