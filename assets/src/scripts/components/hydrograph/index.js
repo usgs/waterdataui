@@ -3,7 +3,7 @@
  */
 const { select } = require('d3-selection');
 const { line } = require('d3-shape');
-const { createSelector, createStructuredSelector } = require('reselect');
+const { createSelector, createStructuredSelector, defaultMemoize: memoize } = require('reselect');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
@@ -14,7 +14,7 @@ const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require
 const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
-const { createTooltip } = require('./tooltip');
+const { createTooltip, getNearestTime } = require('./tooltip');
 
 
 
@@ -113,6 +113,45 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
     }
 };
 
+const tooltipText = function(text, {datum}) {
+    if (datum) {
+        text.classed('approved', datum.approved)
+            .classed('estimated', datum.estimated)
+            .text(() => datum.label);
+    } else {
+        text.text(() => '');
+    }
+};
+
+const tsDatumSelector = memoize(tsDataKey => createSelector(
+    pointsSelector(tsDataKey),
+    state => state.showDataTime,
+    (points, showDataTime) => {
+        if (showDataTime) {
+            return getNearestTime(points, showDataTime);
+        } else {
+            return null;
+        }
+    })
+);
+
+const createTooltipText = function(elem) {
+    const tskeys = ['current', 'compare'];
+    let tooltipTextGroup = elem.append('g')
+        .attr('class', 'tooltip-text-group')
+    let y = 0;
+    for (let tskey of tskeys) {
+        tooltipTextGroup.append('text')
+            .attr('class', `${tskey}-tooltip-text`)
+            .attr('x', 15)
+            .attr('y', `${y}em`)
+            .call(link(tooltipText, createStructuredSelector({
+                datum: tsDatumSelector(tskey)
+            })));
+        y += 1;
+    }
+};
+
 
 const timeSeriesGraph = function (elem) {
     elem.append('div')
@@ -125,6 +164,7 @@ const timeSeriesGraph = function (elem) {
                 description: state => state.desc,
                 isInteractive: () => true
             })))
+            .call(createTooltipText)
             .call(link(plotLegend, createStructuredSelector({
                 displayItems: legendDisplaySelector,
                 width: state => state.width

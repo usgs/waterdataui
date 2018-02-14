@@ -2,6 +2,10 @@
 const { max, bisector } = require('d3-array');
 const { mouse } = require('d3-selection');
 
+const { dispatch } = require('../../lib/redux');
+
+const { Actions } = require('./store');
+
 const maxValue = function (data) {
     return max(data.map((datum) => datum.value));
 };
@@ -107,7 +111,7 @@ const createTooltip = function(elem, {xScale, yScale, compareXScale, currentTsDa
     });
     let focusCurrentCircle = createFocusCircle(elem);
     let focusCompareCircle = createFocusCircle(elem);
-    let tooltipText = createTooltipText(elem, ['current', 'compare']);
+    //let tooltipText = createTooltipText(elem, ['current', 'compare']);
 
     elem.append('rect')
         .attr('class', 'overlay')
@@ -119,18 +123,21 @@ const createTooltip = function(elem, {xScale, yScale, compareXScale, currentTsDa
             if (isCompareVisible) {
                 focusCompareCircle.style('display', null);
             }
-            tooltipText.style('display', null);
+            //tooltipText.style('display', null);
         })
         .on('mouseout', () => {
             focusLine.style('display', 'none');
             focusCurrentCircle.style('display', 'none');
             focusCompareCircle.style('display', 'none');
-            tooltipText.style('display', 'none');
+            //tooltipText.style('display', 'none');
         })
         .on('mousemove', function() {
             const currentTime = xScale.invert(mouse(this)[0]);
             const currentData = getNearestTime(currentTsData, currentTime);
 
+            dispatch.call(elem, function() {
+                return Actions.showDataValues(currentTime);
+            });
             if (!currentData) {
                 return;
             }
@@ -147,7 +154,7 @@ const createTooltip = function(elem, {xScale, yScale, compareXScale, currentTsDa
                 yScale: yScale,
                 tsDatum: currentData.datum
             });
-            updateTooltipText(tooltipText.select('.current-tooltip-text'), currentData.datum);
+            //updateTooltipText(tooltipText.select('.current-tooltip-text'), currentData.datum);
 
             //Update the compare TS focus circle and tooltip text if we are showing it.
             if (isCompareVisible) {
@@ -156,7 +163,7 @@ const createTooltip = function(elem, {xScale, yScale, compareXScale, currentTsDa
                 if(!compareData) {
                     return;
                 }
-                updateTooltipText(tooltipText.select('.compare-tooltip-text'), compareData.datum);
+                //updateTooltipText(tooltipText.select('.compare-tooltip-text'), compareData.datum);
                 updateCircleFocus(focusCompareCircle, {
                     xScale: compareXScale,
                     yScale: yScale,
