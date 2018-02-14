@@ -43,7 +43,7 @@ CODE_LOOKUP_CONFIG = [
 ]
 
 GROUPED_CODE_LOOKUP_CONFIG = [
-    {'code_key': 'nat_aqfr_cd', 'name': 'nat_aqfr_nm', 'urlpath': 'code/nat_aqfr_query', 'site_key': 'nat_aqfr_cd'},
+    {'code_key': 'nat_aqfr_cd', 'name': 'nat_aqfr_nm', 'urlpath': 'code/nat_aqfr_query_by_state', 'site_key': 'nat_aqfr_cd'},
     {'code_key': 'aqfr_cd', 'name': 'aqfr_nm', 'urlpath': 'code/aqfr_cd_query', 'site_key': 'aqfr_cd'}
 ]
 

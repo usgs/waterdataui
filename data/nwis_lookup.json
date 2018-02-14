@@ -7170,7 +7170,7 @@
             "name": "Nitrobenzene, soil, recoverable, dry weight, milligrams per kilogram"
         },
         "30173": {
-            "name": "N-Nitrosodimethylamine, soil, recoverable, dry weight, milligrams per kilogram"
+            "name": "N-Nitrosodimethylamine (NDMA), soil, recoverable, dry weight, milligrams per kilogram"
         },
         "30174": {
             "name": "N-Nitrosodi-n-propylamine, soil, recoverable, dry weight, milligrams per kilogram"
@@ -8346,7 +8346,7 @@
             "name": "Pheophytin a greater than 11 microns, calculated as pheophytin a (P32213) less pheophytin a <11 um (P32276), micrograms per liter"
         },
         "32283": {
-            "name": "Chlorophyll, total, water, in situ, fluorometric, 650-700 nm, relative fluorescence units (RFU)"
+            "name": "Chlorophyll fluorescence (fChl), total, water, in situ, fluorometric, 650-700 nm, relative fluorescence units (RFU)"
         },
         "32284": {
             "name": "Chlorophyll a, total, in situ, fluorescence excitation at 370, 470, 525, 570, 590, 610 nm, fluorescence emission at 700 nm with correction for CDOM, ug/L"
@@ -8457,7 +8457,7 @@
             "name": "Phycocyanin fluorescence (fPC), water, in situ, micrograms per liter as phycocyanin"
         },
         "32320": {
-            "name": "Chlorophylls, water, in situ, fluorometric method, excitation at 470 +-15 nm, emission at 685 +-20 nm, relative fluorescence units (RFU)"
+            "name": "Chlorophyll fluorescence (fChl), water, in situ, fluorometric method, excitation at 470 +-15 nm, emission at 685 +-20 nm, relative fluorescence units (RFU)"
         },
         "32321": {
             "name": "Phycocyanin fluorescence (fPC), water, in situ, relative fluorescence units (RFU)"
@@ -8469,7 +8469,7 @@
             "name": "Phycoerythrin fluorescence (fPE), water, in situ, relative fluorescence units (RFU)"
         },
         "32324": {
-            "name": "Crude oil, water, in situ, fluorometric method, relative fluorescence units (RFU)"
+            "name": "Crude oil fluorescence, water, in situ, relative fluorescence units (RFU)"
         },
         "32325": {
             "name": "Dark measurement spectral average, water, in situ, ultraviolet nitrate analyzer, raw counts"
@@ -9069,16 +9069,16 @@
             "name": "N-Nitrosodiphenylamine, bed sediment, recoverable, dry weight, micrograms per kilogram"
         },
         "34438": {
-            "name": "N-Nitrosodimethylamine, water, unfiltered, recoverable, micrograms per liter"
+            "name": "N-Nitrosodimethylamine (NDMA), water, unfiltered, recoverable, micrograms per liter"
         },
         "34439": {
-            "name": "N-Nitrosodimethylamine, water, filtered, recoverable, micrograms per liter"
+            "name": "N-Nitrosodimethylamine (NDMA), water, filtered, recoverable, micrograms per liter"
         },
         "34440": {
-            "name": "N-Nitrosodimethylamine, suspended sediment, recoverable, micrograms per liter"
+            "name": "N-Nitrosodimethylamine (NDMA), suspended sediment, recoverable, micrograms per liter"
         },
         "34441": {
-            "name": "N-Nitrosodimethylamine, bed sediment, recoverable, dry weight, micrograms per kilogram"
+            "name": "N-Nitrosodimethylamine (NDMA), bed sediment, recoverable, dry weight, micrograms per kilogram"
         },
         "34443": {
             "name": "Naphthalene, water, filtered, recoverable, micrograms per liter"
@@ -12129,7 +12129,7 @@
             "name": "N-Nitrosodi-n-propylamine, bed sediment smaller than 2 millimeters, wet sieved (native water), field, recoverable, dry weight, micrograms per kilogram"
         },
         "49432": {
-            "name": "N-Nitrosodimethylamine, bed sediment smaller than 2 millimeters, wet sieved (native water), field, recoverable, dry weight, micrograms per kilogram"
+            "name": "N-Nitrosodimethylamine (NDMA), bed sediment smaller than 2 millimeters, wet sieved (native water), field, recoverable, dry weight, micrograms per kilogram"
         },
         "49433": {
             "name": "N-Nitrosodiphenylamine, bed sediment smaller than 2 millimeters, wet sieved (native water), field, recoverable, dry weight, micrograms per kilogram"
@@ -15339,7 +15339,7 @@
             "name": "N-Nitrosodiethylamine, soil, recoverable, wet weight, milligrams per kilogram"
         },
         "51736": {
-            "name": "N-Nitrosodimethylamine, soil, recoverable, wet weight, milligrams per kilogram"
+            "name": "N-Nitrosodimethylamine (NDMA), soil, recoverable, wet weight, milligrams per kilogram"
         },
         "51737": {
             "name": "N-Nitrosodi-n-butylamine, soil, recoverable, wet weight, milligrams per kilogram"
@@ -15813,10 +15813,10 @@
             "name": "Trenbolone, water, filtered, recoverable, micrograms per liter"
         },
         "51896": {
-            "name": "17-beta-Estriol 3-sulfate, water, filtered, recoverable, micrograms per liter"
+            "name": "17-beta-Estradiol 3-sulfate, water, filtered, recoverable, micrograms per liter"
         },
         "51897": {
-            "name": "17-beta-Estriol 17-sulfate, water, filtered, recoverable, micrograms per liter"
+            "name": "17-beta-Estradiol 17-sulfate, water, filtered, recoverable, micrograms per liter"
         },
         "51898": {
             "name": "Androsterone sulfate, water, filtered, recoverable, micrograms per liter"
@@ -15843,25 +15843,25 @@
             "name": "Testosterone sulfate, water, filtered, recoverable, micrograms per liter"
         },
         "51906": {
-            "name": "17-beta-Estradiol-17-glucuronide, water, filtered, recoverable, micrograms per liter"
+            "name": "17-beta-Estradiol 17-glucuronide, water, filtered, recoverable, micrograms per liter"
         },
         "51907": {
-            "name": "Androsterone-glucuronide, water, filtered, recoverable, micrograms per liter"
+            "name": "Androsterone glucuronide, water, filtered, recoverable, micrograms per liter"
         },
         "51908": {
             "name": "Diethylstilbesterol glucuronide, water, filtered, recoverable, micrograms per liter"
         },
         "51909": {
-            "name": "Estriol-3-glucuronide, water, filtered, recoverable, micrograms per liter"
+            "name": "Estriol 3-glucuronide, water, filtered, recoverable, micrograms per liter"
         },
         "51910": {
             "name": "Estrone glucuronide, water, filtered, recoverable, micrograms per liter"
         },
         "51911": {
-            "name": "Ethenylestradiol-3-glucuronide, water, filtered, recoverable, micrograms per liter"
+            "name": "Ethenylestradiol 3-glucuronide, water, filtered, recoverable, micrograms per liter"
         },
         "51912": {
-            "name": "Genestein, water, filtered, recoverable, micrograms per liter"
+            "name": "Genistein, water, filtered, recoverable, micrograms per liter"
         },
         "51913": {
             "name": "Daidzein, water, filtered, recoverable, micrograms per liter"
@@ -15930,10 +15930,10 @@
             "name": "Trenbolone, spike, water, filtered, apparent percent recovery"
         },
         "51935": {
-            "name": "17-beta-Estriol-3-sulfate, spike, water, filtered, apparent percent recovery"
+            "name": "17-beta-Estradiol 3-sulfate, spike, water, filtered, apparent percent recovery"
         },
         "51936": {
-            "name": "17-beta-Estriol-17-sulfate, spike, water, filtered, apparent percent recovery"
+            "name": "17-beta-Estradiol 17-sulfate, spike, water, filtered, apparent percent recovery"
         },
         "51937": {
             "name": "Androsterone sulfate, spike, water, filtered, apparent percent recovery"
@@ -15945,40 +15945,40 @@
             "name": "Equilin sulfate, spike, water, filtered, apparent percent recovery"
         },
         "51940": {
-            "name": "Estriol-3-sulfate, spike, water, filtered, apparent percent recovery"
+            "name": "Estriol 3-sulfate, spike, water, filtered, apparent percent recovery"
         },
         "51941": {
-            "name": "Estriol-17-sulfate, spike, water, filtered, apparent percent recovery"
+            "name": "Estriol 17-sulfate, spike, water, filtered, apparent percent recovery"
         },
         "51942": {
-            "name": "Estrone-3-sulfate, spike, water, filtered, apparent percent recovery"
+            "name": "Estrone 3-sulfate, spike, water, filtered, apparent percent recovery"
         },
         "51943": {
-            "name": "Ethinylestradiol-3-sulfate, spike, water, filtered, apparent percent recovery"
+            "name": "Ethinylestradiol 3-sulfate, spike, water, filtered, apparent percent recovery"
         },
         "51944": {
             "name": "Testosterone sulfate, spike, water, filtered, apparent percent recovery"
         },
         "51945": {
-            "name": "17-beta-Estradiol-17-glucuronide, spike, water, filtered, apparent percent recovery"
+            "name": "17-beta-Estradiol 17-glucuronide, spike, water, filtered, apparent percent recovery"
         },
         "51946": {
-            "name": "Androsterone-glucuronide, spike, water, filtered, apparent percent recovery"
+            "name": "Androsterone glucuronide, spike, water, filtered, apparent percent recovery"
         },
         "51947": {
             "name": "Diethylstilbesterol glucuronide, spike, water, filtered, apparent percent recovery"
         },
         "51948": {
-            "name": "Estriol-3-glucuronide, spike, water, filtered, apparent percent recovery"
+            "name": "Estriol 3-glucuronide, spike, water, filtered, apparent percent recovery"
         },
         "51949": {
             "name": "Estrone glucuronide, spike, water, filtered, apparent percent recovery"
         },
         "51950": {
-            "name": "Ethenylestradiol-3-glucuronide, spike, water, filtered, apparent percent recovery"
+            "name": "Ethenylestradiol 3-glucuronide, spike, water, filtered, apparent percent recovery"
         },
         "51951": {
-            "name": "Genestein, spike, water, filtered, apparent percent recovery"
+            "name": "Genistein, spike, water, filtered, apparent percent recovery"
         },
         "51952": {
             "name": "Daidzein, spike, water, filtered, apparent percent recovery"
@@ -20520,7 +20520,7 @@
             "name": "Bis(2-ethylhexyl) phthalate, water, recoverable, nanograms per polar organic chemical integrative sampler (POCIS)"
         },
         "53466": {
-            "name": "Bromoform, water, recoverable, nanograms per polar organic chemical integrative sampler (POCIS)"
+            "name": "Tribromomethane, water, recoverable, nanograms per polar organic chemical integrative sampler (POCIS)"
         },
         "53467": {
             "name": "Camphor, water, recoverable, nanograms per polar organic chemical integrative sampler (POCIS)"
@@ -20559,7 +20559,7 @@
             "name": "Methyl salicylate, water, recoverable, nanograms per polar organic chemical integrative sampler (POCIS)"
         },
         "53479": {
-            "name": "N,N-diethyl-meta-toluamid (DEET), water, recoverable, nanograms per polar organic chemical integrative sampler (POCIS)"
+            "name": "N,N-Diethyl-m-toluamide (DEET), water, recoverable, nanograms per polar organic chemical integrative sampler (POCIS)"
         },
         "53480": {
             "name": "4-Nonylphenol (all branched isomers), water, recoverable, nanograms per polar organic chemical integrative sampler (POCIS)"
@@ -20668,6 +20668,159 @@
         },
         "53515": {
             "name": "Testosterone glucuronide, water, filtered, recoverable, nanograms per liter"
+        },
+        "53516": {
+            "name": "5-alpha-Androstanedione, water, filtered, recoverable, nanograms per liter"
+        },
+        "53517": {
+            "name": "5-alpha-Dihydrotestosterone (5a-DHT), water, filtered, recoverable, nanograms per liter"
+        },
+        "53518": {
+            "name": "Trenbolone acetate, water, filtered, recoverable, nanograms per liter"
+        },
+        "53519": {
+            "name": "Androsterone glucuronide, water, filtered, recoverable, nanograms per liter"
+        },
+        "53520": {
+            "name": "Diethylstilbestrol glucuronide (DES-GlcA), water, filtered, recoverable, nanograms per liter"
+        },
+        "53521": {
+            "name": "17-beta-Estradiol 17-glucuronide, water, filtered, recoverable, nanograms per liter"
+        },
+        "53522": {
+            "name": "Estriol 3-glucuronide, water, filtered, recoverable, nanograms per liter"
+        },
+        "53523": {
+            "name": "Estrone glucuronide, water, filtered, recoverable, nanograms per liter"
+        },
+        "53524": {
+            "name": "Ethenylestradiol 3-glucuronide, water, filtered, recoverable, nanograms per liter"
+        },
+        "53525": {
+            "name": "Androsterone sulfate, water, filtered, recoverable, nanograms per liter"
+        },
+        "53526": {
+            "name": "Equilenin sulfate, water, filtered, recoverable, nanograms per liter"
+        },
+        "53527": {
+            "name": "Equilin sulfate, water, filtered, recoverable, nanograms per liter"
+        },
+        "53528": {
+            "name": "17-beta-Estradiol 3-sulfate, water, filtered, recoverable, nanograms per liter"
+        },
+        "53529": {
+            "name": "17-beta-Estradiol 17-sulfate, water, filtered, recoverable, nanograms per liter"
+        },
+        "53530": {
+            "name": "Estriol 3-sulfate, water, filtered, recoverable, nanograms per liter"
+        },
+        "53531": {
+            "name": "Estriol 17-sulfate, water, filtered, recoverable, nanograms per liter"
+        },
+        "53532": {
+            "name": "Estrone 3-sulfate, water, filtered, recoverable, nanograms per liter"
+        },
+        "53533": {
+            "name": "Ethinylestradiol 3-sulfate, water, filtered, recoverable, nanograms per liter"
+        },
+        "53534": {
+            "name": "Testosterone sulfate, water, filtered, recoverable, nanograms per liter"
+        },
+        "53535": {
+            "name": "Desogestrel, water, filtered, recoverable, nanograms per liter"
+        },
+        "53536": {
+            "name": "Drospirenone, water, filtered, recoverable, nanograms per liter"
+        },
+        "53537": {
+            "name": "Gestodene, water, filtered, recoverable, nanograms per liter"
+        },
+        "53538": {
+            "name": "Levonorgestrel, water, filtered, recoverable, nanograms per liter"
+        },
+        "53539": {
+            "name": "6-alpha-Methyl-17-alpha-hydroxyprogesterone, water, filtered, recoverable, nanograms per liter"
+        },
+        "53540": {
+            "name": "Melengestrol acetate, water, filtered, recoverable, nanograms per liter"
+        },
+        "53541": {
+            "name": "Nestorone, water, filtered, recoverable, nanograms per liter"
+        },
+        "53542": {
+            "name": "Nomegestrol acetate, water, filtered, recoverable, nanograms per liter"
+        },
+        "53543": {
+            "name": "19-Norethinterone, water, filtered, recoverable, nanograms per liter"
+        },
+        "53544": {
+            "name": "Norgestimate, water, filtered, recoverable, nanograms per liter"
+        },
+        "53545": {
+            "name": "Biochanin A, water, filtered, recoverable, nanograms per liter"
+        },
+        "53546": {
+            "name": "Coumesterol, water, filtered, recoverable, nanograms per liter"
+        },
+        "53547": {
+            "name": "Daidzein, water, filtered, recoverable, nanograms per liter"
+        },
+        "53548": {
+            "name": "Equol, water, filtered, recoverable, nanograms per liter"
+        },
+        "53549": {
+            "name": "Formonentin, water, filtered, recoverable, nanograms per liter"
+        },
+        "53550": {
+            "name": "Genestein, water, filtered, recoverable, nanograms per liter"
+        },
+        "53551": {
+            "name": "Beauvericin, water, filtered, recoverable, nanograms per liter"
+        },
+        "53552": {
+            "name": "Deoxynivalenol, water, filtered, recoverable, nanograms per liter"
+        },
+        "53553": {
+            "name": "Nivalenol, water, filtered, recoverable, nanograms per liter"
+        },
+        "53554": {
+            "name": "Verrucarin A, water, filtered, recoverable, nanograms per liter"
+        },
+        "53555": {
+            "name": "alpha-Zearalanol, water, filtered, recoverable, nanograms per liter"
+        },
+        "53556": {
+            "name": "alpha-Zearalenol, water, filtered, recoverable, nanograms per liter"
+        },
+        "53557": {
+            "name": "beta-Zearalenol, water, filtered, recoverable, nanograms per liter"
+        },
+        "53558": {
+            "name": "Zearalenone, water, filtered, recoverable, nanograms per liter"
+        },
+        "53559": {
+            "name": "Clobazam, water, filtered, recoverable, nanograms per liter"
+        },
+        "53560": {
+            "name": "Picloram, water, filtered, recoverable, nanograms per liter"
+        },
+        "53561": {
+            "name": "Clopyralid, water, filtered, recoverable, nanograms per liter"
+        },
+        "53562": {
+            "name": "Metsulfuron-methyl, water, filtered, recoverable, nanograms per liter"
+        },
+        "53563": {
+            "name": "Picloram, water, recoverable, nanograms per polar organic chemical integrative sampler (POCIS)"
+        },
+        "53564": {
+            "name": "Clopyralid, water, recoverable, nanograms per polar organic chemical integrative sampler (POCIS)"
+        },
+        "53565": {
+            "name": "Imazapyr, water, recoverable, nanograms per polar organic chemical integrative sampler (POCIS)"
+        },
+        "53566": {
+            "name": "Metsulfuron-methyl, water, recoverable, nanograms per polar organic chemical integrative sampler (POCIS)"
         },
         "54072": {
             "name": "Strontium-87 plus strontium-86, water, unfiltered, recoverable, micrograms per liter"
@@ -28044,7 +28197,7 @@
             "name": "Isochlortetracycline, water, filtered, recoverable, micrograms per liter"
         },
         "64176": {
-            "name": "N-Nitrosodimethylamine, water, unfiltered, recoverable, nanograms per liter"
+            "name": "N-Nitrosodimethylamine (NDMA), water, unfiltered, recoverable, nanograms per liter"
         },
         "64177": {
             "name": "Bed sediment, dry weight, percent of wet weight"
@@ -41916,7 +42069,7 @@
             "name": "Tolfenamic acid, water, filtered, recoverable, nanograms per liter"
         },
         "68869": {
-            "name": "Torasemide, water, filtered, recoverable, nanograms per liter"
+            "name": "Torsemide, water, filtered, recoverable, nanograms per liter"
         },
         "68870": {
             "name": "Zafirlukast, water, filtered, recoverable, nanograms per liter"
@@ -50534,6 +50687,117 @@
         "90300": {
             "name": "Dissolved oxygen, water, unfiltered, area weighted average, milligrams per liter"
         },
+        "90303": {
+            "name": "5-alpha-Androstanedione, spike, water, filtered, apparent spike recovery"
+        },
+        "90304": {
+            "name": "5-alpha-Dihydrotestosterone (5a-DHT), spike, water, filtered, apparent spike recovery"
+        },
+        "90305": {
+            "name": "Desogestrel, spike, water, filtered, apparent percent recovery"
+        },
+        "90306": {
+            "name": "Drospirenone, spike, water, filtered, apparent percent recovery"
+        },
+        "90307": {
+            "name": "Gestodene, spike, water, filtered, apparent percent recovery"
+        },
+        "90308": {
+            "name": "Levonorgestrel, spike, water, filtered, apparent percent recovery"
+        },
+        "90309": {
+            "name": "Melengestrol acetate, spike, water, filtered, apparent percent recovery"
+        },
+        "90310": {
+            "name": "Nestorone, spike, water, filtered, apparent percent recovery"
+        },
+        "90311": {
+            "name": "Nomegestrol acetate, spike, water, filtered, apparent percent recovery"
+        },
+        "90312": {
+            "name": "Beauvericin, spike, water, filtered, apparent percent recovery"
+        },
+        "90313": {
+            "name": "Deoxynivalenol, spike, water, filtered, apparent percent recovery"
+        },
+        "90314": {
+            "name": "Verrucarin A, spike, water, filtered, apparent percent recovery"
+        },
+        "90315": {
+            "name": "alpha-Zearalenol, spike, water, filtered, apparent percent recovery"
+        },
+        "90316": {
+            "name": "beta-Zearalenol, spike, water, filtered, apparent percent recovery"
+        },
+        "90317": {
+            "name": "Zearalenone, spike, water, filtered, apparent percent recovery"
+        },
+        "90318": {
+            "name": "Lorazepam-d4, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90319": {
+            "name": "Propoxyphene-d11, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90320": {
+            "name": "Ketoconazole-d4, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90321": {
+            "name": "Oxazepam-d5, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90322": {
+            "name": "Carisoprodol-d7, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90323": {
+            "name": "Amitriptyline-d3, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90324": {
+            "name": "Erythromycin-13C-d3, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90325": {
+            "name": "Ezetimibe-d4, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90326": {
+            "name": "Fenofibrate-d6, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90327": {
+            "name": "Fexofenadine-d10, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90328": {
+            "name": "Fluvoxamine-d4, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90329": {
+            "name": "Loperamide-d6, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90330": {
+            "name": "Loratadine-d4, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90331": {
+            "name": "N-Desmethyldiltiazem-d4, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90332": {
+            "name": "Promethazine-d6, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90333": {
+            "name": "Raloxifene-d10, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90334": {
+            "name": "Ranitidine-d6, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90335": {
+            "name": "Tiotropium-d3, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90336": {
+            "name": "Verapamil-d6, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90337": {
+            "name": "Tamoxifen-d5, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90338": {
+            "name": "Hydrocortisone-2,3,4-13C3, surrogate/isotope dilution standard (IDS), NWQL lab code 8240, water, filtered, percent recovery"
+        },
+        "90339": {
+            "name": "Triclosan-13C12, isotope dilution internal standard (IDIS), NWQL Pharm 3, water, filtered, percent recovery"
+        },
         "90340": {
             "name": "2,2',4,4',5,5'-Hexabromodiphenyl ether-13C12, surrogate, NWQL Schedule 4438, water, unfiltered, percent recovery"
         },
@@ -50562,13 +50826,13 @@
             "name": "2,3',4,4',5-Pentachlorobiphenyl-13C12, surrogate, NWQL Schedule 9348, biota, tissue, wet weight, percent recovery"
         },
         "90349": {
-            "name": "3,3',4,4',5-Pentachlorobiphenyll-13C12, surrogate, NWQL Schedule 4438, water, unfiltered, percent recovery"
+            "name": "3,3',4,4',5-Pentachlorobiphenyl-13C12, surrogate, NWQL Schedule 4438, water, unfiltered, percent recovery"
         },
         "90350": {
-            "name": "3,3',4,4',5-Pentachlorobiphenyll-13C12, surrogate, NWQL Schedule 6438, solids, dry weight,percent recovery"
+            "name": "3,3',4,4',5-Pentachlorobiphenyl-13C12, surrogate, NWQL Schedule 6438, solids, dry weight,percent recovery"
         },
         "90351": {
-            "name": "3,3',4,4',5-Pentachlorobiphenyll-13C12, surrogate, NWQL Schedule 9348, biota, tissue, wet weight, percent recovery"
+            "name": "3,3',4,4',5-Pentachlorobiphenyl-13C12, surrogate, NWQL Schedule 9348, biota, tissue, wet weight, percent recovery"
         },
         "90352": {
             "name": "Bisphenol A-d14, surrogate, water, polar organic chemical integrative sampler (POCIS), percent recovery"
@@ -53100,7 +53364,7 @@
             "name": "1,2,3-Trichloropropane, spike, water, unfiltered, percent recovery"
         },
         "91825": {
-            "name": "N-Nitrosodimethylamine, spike, water, unfiltered, percent recovery"
+            "name": "N-Nitrosodimethylamine (NDMA), spike, water, unfiltered, percent recovery"
         },
         "91826": {
             "name": "1,4-Dioxane, spike, water, unfiltered, percent recovery"
@@ -79726,6 +79990,27 @@
         },
         "S100TXCLUP": {
             "name": "Texas coastal uplands aquifer system"
+        },
+        "S300CAMORD": {
+            "name": "Cambrian-Ordovician aquifer system"
+        },
+        "S300DNVRBS": {
+            "name": "Denver Basin aquifer system"
+        },
+        "S400FLORDN": {
+            "name": "Floridan aquifer system"
+        },
+        "S400OZRKPL": {
+            "name": "Ozark Plateaus aquifer system"
+        },
+        "S400RSWLBS": {
+            "name": "Roswell Basin aquifer system"
+        },
+        "S500EDRTRN": {
+            "name": "Edwards-Trinity aquifer system"
+        },
+        "S500INTRMD": {
+            "name": "Intermediate aquifer system"
         }
     },
     "aqfr_cd": {
