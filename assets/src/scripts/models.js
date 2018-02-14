@@ -45,10 +45,14 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
         .then((response) => {
                 let data = JSON.parse(response);
                 return data.value.timeSeries.map(series => {
-                        let startDate = new Date(series.values[0].value[0].dateTime);
-                        let endDate = new Date(
+                        const startDate = new Date(series.values[0].value[0].dateTime);
+                        const endDate = new Date(
                             series.values[0].value.slice(-1)[0].dateTime);
-                        let noDataValue = series.variable.noDataValue;
+                        const noDataValue = series.variable.noDataValue;
+                        const qualifierMapping = series.values[0].qualifier.reduce((map, qualifier) => {
+                            map[qualifier.qualifierCode] = qualifier.qualifierDescription;
+                            return map;
+                        }, {})
                         return {
                             code: series.variable.variableCode[0].value,
                             variableName: series.variable.variableName,
@@ -58,6 +62,7 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
                             values: series.values[0].value.map(datum => {
                                 let date = new Date(datum.dateTime);
                                 let value = parseFloat(datum.value);
+                                const qualifierDescriptions = datum.qualifiers.map((qualifier) => qualifierMapping[qualifier]);
                                 if (value === noDataValue) {
                                     value = null;
                                 }
@@ -67,7 +72,7 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
                                     qualifiers: datum.qualifiers,
                                     approved: datum.qualifiers.indexOf('A') > -1,
                                     estimated: datum.qualifiers.indexOf('E') > -1,
-                                    label: `${formatTime(date)}\n${value} ${series.variable.unit.unitCode} (Qualifiers: ${datum.qualifiers.join(', ')})`
+                                    label: `${formatTime(date)}\n${value} ${series.variable.unit.unitCode} (Qualifiers: (${qualifierDescriptions.join(', ')})`
                                 };
                             })
                         };
