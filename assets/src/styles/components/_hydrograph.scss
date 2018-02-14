@@ -92,9 +92,13 @@ $estimated: black;
                 }
             }
         }
+        #median-points {
+            .median-data-series {
+                cursor: pointer;
+            }
+        }
         .median-data-series {
             fill: #f96713;
-            cursor: pointer;
         }
     }
 }

@@ -145,9 +145,9 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg path.line').size()).toBe(1);
         });
 
-        it('should have a point for the median stat data with a label', () => {
-            expect(selectAll('svg circle#median-point').size()).toBe(1);
-            expect(selectAll('svg text#median-text').size()).toBe(0);
+        it('should have a point for the median stat data without a label', () => {
+            expect(selectAll('svg #median-points circle.median-data-series').size()).toBe(1);
+            expect(selectAll('svg #median-points text').size()).toBe(0);
         });
 
         it('should have a legend with two markers', () => {
@@ -157,7 +157,7 @@ describe('Hydrograph charting module', () => {
         it('show the labels for the median stat data showMedianStatsLabel is true', () => {
             store.dispatch(Actions.showMedianStatsLabel(true));
 
-            expect(selectAll('svg text#median-text').size()).toBe(1);
+            expect(selectAll('svg #median-points text').size()).toBe(1);
 
         });
     });
