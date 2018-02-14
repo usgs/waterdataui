@@ -59,62 +59,42 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
         ]);
 
         for (let pt of points) {
-            // Ignored masked data
-            let lineClasses;
+            // Classes to put on the line with this point.
+            let lineClasses = {
+                approved: pt.approved,
+                estimated: pt.estimated,
+                dataMask: null
+            };
             if (pt.value === null) {
                 let qualifiers = new Set(pt.qualifiers.map(q => q.toUpperCase()));
                 // current business rules specify that a particular data point
                 // will only have at most one masking qualifier
                 let maskIntersection = new Set([...masks].filter(x => qualifiers.has(x)));
-                lineClasses = {
-                    approved: pt.approved,
-                    estimated: pt.estimated,
-                    dataMask: [...maskIntersection][0]
-                };
-                if (lastClasses.approved !== lineClasses.approved ||
-                        lastClasses.estimated !== lineClasses.estimated ||
-                        lastClasses.dataMask !== lineClasses.dataMask) {
-                    lines.push({
-                        classes: lineClasses,
-                        points: []
-                    });
-                }
-                lines[lines.length - 1].points.push(pt);
-                lastClasses = lineClasses;
+                lineClasses.dataMask = [...maskIntersection][0]
             }
-
             else if (pt.value !== null) {
                 // Temporary check to help detect test sites.
                 if (pt.qualifiers.length > 1) {
                     /*eslint no-console: "allow"*/
                     console.error('Point has multiple qualifiers', pt.qualifiers);
                 }
-
-                // Classes to put on the line with this point.
-                lineClasses = {
-                    approved: pt.approved,
-                    estimated: pt.estimated,
-                    dataMask: null
-                };
-
-                // If this point doesn't have the same classes as the last point,
-                // create a new line for it.
-                if (lastClasses.approved !== lineClasses.approved ||
-                        lastClasses.estimated !== lineClasses.estimated ||
-                        lastClasses.dataMask !== lineClasses.dataMask) {
-                    lines.push({
-                        classes: lineClasses,
-                        points: []
-                    });
-                }
-
-                // Add this point to the current line.
-                lines[lines.length - 1].points.push(pt);
-
-                // Cache the classes for the next loop iteration.
-                lastClasses = lineClasses;
-
             }
+            // If this point doesn't have the same classes as the last point,
+            // create a new line for it.
+            if (lastClasses.approved !== lineClasses.approved ||
+                    lastClasses.estimated !== lineClasses.estimated ||
+                    lastClasses.dataMask !== lineClasses.dataMask) {
+                lines.push({
+                    classes: lineClasses,
+                    points: []
+                });
+            }
+
+            // Add this point to the current line.
+            lines[lines.length - 1].points.push(pt);
+
+            // Cache the classes for the next loop iteration.
+            lastClasses = lineClasses;
         }
 
         return lines;
