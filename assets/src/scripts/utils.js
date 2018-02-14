@@ -1,3 +1,4 @@
+
 /**
  * Determine the unicode variant of an HTML decimal entity
  *

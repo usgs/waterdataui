@@ -1,8 +1,8 @@
 /**
  * Hydrograph charting module.
  */
-const { bisector, extent } = require('d3-array');
-const { mouse, select } = require('d3-selection');
+const { select } = require('d3-selection');
+const { extent } = require('d3-array');
 const { line } = require('d3-shape');
 const { createSelector, createStructuredSelector } = require('reselect');
 
@@ -11,14 +11,11 @@ const { dispatch, link, provide } = require('../../lib/redux');
 
 const { appendAxes, axesSelector } = require('./axes');
 const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
+const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
-const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
-
-
-// Function that returns the left bounding point for a given chart point.
-const bisectDate = bisector(d => d.time).left;
+const { createTooltip } = require('./tooltip');
 
 
 
@@ -95,64 +92,6 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                 .attr('fill', patternId);
         }
     }
-};
-
-
-const getNearestTime = function (data, time) {
-    let index = bisectDate(data, time, 1);
-    let datum;
-    let d0 = data[index - 1];
-    let d1 = data[index];
-
-    if (d0 && d1) {
-        datum = time - d0.time > d1.time - time ? d1 : d0;
-    } else {
-        datum = d0 || d1;
-    }
-
-    // Return the nearest data point and its index.
-    return {
-        datum,
-        index: datum === d0 ? index - 1 : index
-    };
-};
-
-
-const plotTooltips = function (elem, {xScale, yScale, data}) {
-    // Create a node to hightlight the currently selected date/time.
-    let focus = elem.append('g')
-        .attr('class', 'focus')
-        .style('display', 'none');
-    focus.append('circle')
-        .attr('r', 7.5);
-    focus.append('text');
-
-    elem.append('rect')
-        .attr('class', 'overlay')
-        .attr('width', '100%')
-        .attr('height', '100%')
-        .on('mouseover', () => focus.style('display', null))
-        .on('mouseout', () => focus.style('display', 'none'))
-        .on('mousemove', function () {
-            // Get the nearest data point for the current mouse position.
-            const time = xScale.invert(mouse(this)[0]);
-            const {datum, index} = getNearestTime(data, time);
-            if (!datum) {
-                return;
-            }
-
-            // Move the focus node to this date/time.
-            focus.attr('transform', `translate(${xScale(datum.time)}, ${yScale(datum.value)})`);
-
-            // Draw text, anchored to the left or right, depending on
-            // which side of the graph the point is on.
-            const isFirstHalf = index < data.length / 2;
-            focus.select('text')
-                .text(() => datum.label)
-                .attr('text-anchor', isFirstHalf ? 'start' : 'end')
-                .attr('x', isFirstHalf ? 15 : -15)
-                .attr('dy', isFirstHalf ? '.31em' : '-.31em');
-        });
 };
 
 
@@ -285,10 +224,13 @@ const timeSeriesGraph = function (elem) {
                     yScale: yScaleSelector,
                     tsDataKey: () => 'compare'
                 })))
-                .call(link(plotTooltips, createStructuredSelector({
+                .call(link(createTooltip, createStructuredSelector({
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
-                    data: pointsSelector('current')
+                    compareXScale: xScaleSelector('compare'),
+                    currentTsData: pointsSelector('current'),
+                    compareTsData: pointsSelector('compare'),
+                    isCompareVisible: isVisibleSelector('compare')
                 })))
                 .call(link(plotMedianPoints, createStructuredSelector({
                     visible: isVisibleSelector('medianStatistics'),
@@ -296,6 +238,7 @@ const timeSeriesGraph = function (elem) {
                     yscale: yScaleSelector,
                     medianStatsData: pointsSelector('medianStatistics'),
                     showLabel: (state) => state.showMedianStatsLabel
+
                 })));
 
     elem.append('div')
@@ -310,8 +253,8 @@ const timeSeriesGraph = function (elem) {
                     return [value.value, value.time];
                 })
             ),
-            describeById: () => {return 'time-series-sr-desc'},
-            describeByText: () => {return 'current time series data in tabular format'}
+            describeById: () => 'time-series-sr-desc',
+            describeByText: () => 'current time series data in tabular format'
     })));
 
     elem.append('div')
@@ -326,8 +269,8 @@ const timeSeriesGraph = function (elem) {
                     return [value.value, value.time];
                 })
             ),
-            describeById: () => {return 'median-statistics-sr-desc'},
-            describeByText: () => {return 'median statistical data in tabular format'}
+            describeById: () => 'median-statistics-sr-desc',
+            describeByText: () => 'median statistical data in tabular format'
     })));
 };
 
@@ -338,9 +281,10 @@ const attachToNode = function (node, {siteno} = {}) {
         return;
     }
 
-    let store = configureStore();
+    let store = configureStore({
+        width: node.offsetWidth
+    });
 
-    store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
     select(node)
         .call(provide(store))
         .call(timeSeriesGraph)
@@ -356,4 +300,4 @@ const attachToNode = function (node, {siteno} = {}) {
 };
 
 
-module.exports = {attachToNode, getNearestTime, timeSeriesGraph};
+module.exports = {attachToNode, timeSeriesGraph};

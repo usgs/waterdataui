@@ -1,7 +1,7 @@
 const { select, selectAll } = require('d3-selection');
 const { provide } = require('../../lib/redux');
 
-const { attachToNode, getNearestTime, timeSeriesGraph } = require('./index');
+const { attachToNode, timeSeriesGraph } = require('./index');
 const { Actions, configureStore } = require('./store');
 
 
@@ -162,49 +162,8 @@ describe('Hydrograph charting module', () => {
         });
     });
 
-    describe('Hydrograph tooltips', () => {
-        let data = [12, 13, 14, 15, 16].map(hour => {
-            return {
-                time: new Date(`2018-01-03T${hour}:00:00.000Z`),
-                label: 'label',
-                value: 0
-            };
-        });
-
-        it('return correct data points via getNearestTime' , () => {
-            // Check each date with the given offset against the hourly-spaced
-            // test data.
-            function expectOffset(offset, side) {
-                for (let [index, datum] of data.entries()) {
-                    let expected;
-                    if (side === 'left' || index === data.length - 1) {
-                        expected = {datum, index};
-                    } else {
-                        expected = {datum: data[index + 1], index: index + 1};
-                    }
-                    let time = new Date(datum.time.getTime() + offset);
-                    let returned = getNearestTime(data, time);
-
-                    expect(returned.datum.time).toBe(expected.datum.time);
-                    expect(returned.datum.index).toBe(expected.datum.index);
-                }
-            }
-
-            let hour = 3600000;  // 1 hour in milliseconds
-
-            // Check each date against an offset from itself.
-            expectOffset(0, 'left');
-            expectOffset(1, 'left');
-            expectOffset(hour / 2 - 1, 'left');
-            expectOffset(hour / 2, 'left');
-            expectOffset(hour / 2 + 1, 'right');
-            expectOffset(hour - 1, 'right');
-        });
-    });
-
     describe('Adding and removing compare time series', () => {
         /* eslint no-use-before-define: "ignore" */
-        let hydrograph;
         let store;
         beforeEach(() => {
             store = configureStore({
