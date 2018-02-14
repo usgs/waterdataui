@@ -62,6 +62,10 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
         }
         else {
             elem.selectAll('.mask-group').remove();
+            let maskName = line.classes.masks.values().next().value.toLowerCase();
+            if (maskName === '***') {
+                maskName = 'unavailable';
+            }
             let xMaskExtent = extent(line.points, d => d.time);
             let [xDomainStart, xDomainEnd] = xMaskExtent;
             let [yRangeStart, yRangeEnd] = yScale.domain();
@@ -74,7 +78,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                 .attr('y', yScale(yRangeEnd))
                 .attr('width', xScale(xDomainEnd) - xScale(xDomainStart))
                 .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
-                .attr('class', 'generic-mask');
+                .attr('class', `mask ${maskName}-mask`);
 
             let patternId;
 

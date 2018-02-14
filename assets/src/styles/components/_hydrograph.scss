@@ -96,9 +96,38 @@ $estimated: black;
             fill: #f96713;
             cursor: pointer;
         }
-        .generic-mask {
-            fill: #33daff;
+        .mask {
             opacity: 0.2;
+        }
+        .ice-mask {
+            fill: #33daff;
+        }
+        .fld-mask {
+            fill: #0c7d40;
+        }
+        .zfl-mask {
+            fill: #f4f727;
+        }
+        .dry-mask {
+            fill: #9a9b77;
+        }
+        .ssn-mask {
+            fill: #17fc04;
+        }
+        .pr-mask {
+            fill: #ec14fe;
+        }
+        .rat-mask {
+            fill: #fe141b;
+        }
+        .eqp-mask {
+            fill: #0557fc;
+        }
+        .mnt-mask {
+            fill: #01fab6;
+        }
+        .unavailable-mask {
+            fill: #abb2b9;
         }
     }
 }
