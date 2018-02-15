@@ -131,46 +131,46 @@ const createTooltip = function(elem, {xScale, yScale, compareXScale, currentTsDa
             focusCompareCircle.style('display', 'none');
             //tooltipText.style('display', 'none');
         })
-        .on('mousemove', function() {
-            const currentTime = xScale.invert(mouse(this)[0]);
-            const currentData = getNearestTime(currentTsData, currentTime);
+        .on('mousemove', dispatch(function() {
+            return Actions.showDataValues(xScale.invert(mouse(elem.node())[0]));
+        }));
+        //.on('mousemove', function() {
+        //    const currentTime = xScale.invert(mouse(this)[0]);
+        //    const currentData = getNearestTime(currentTsData, currentTime);
 
-            dispatch.call(elem, function() {
-                return Actions.showDataValues(currentTime);
-            });
-            if (!currentData) {
-                return;
-            }
+        //    if (!currentData) {
+        //        return;
+        //    }
 
             // Update the focus line
-            const currentTimeRange = xScale(currentData.datum.time);
-            focusLine.select('.focus-line')
-                .attr('x1', currentTimeRange)
-                .attr('x2', currentTimeRange);
+        //    const currentTimeRange = xScale(currentData.datum.time);
+        //    focusLine.select('.focus-line')
+        //        .attr('x1', currentTimeRange)
+        //        .attr('x2', currentTimeRange);
 
             // Update the current TS focus circle and tooltip text
-            updateCircleFocus(focusCurrentCircle, {
-                xScale: xScale,
-                yScale: yScale,
-                tsDatum: currentData.datum
-            });
+        //    updateCircleFocus(focusCurrentCircle, {
+        //        xScale: xScale,
+        //        yScale: yScale,
+        //        tsDatum: currentData.datum
+        //    });
             //updateTooltipText(tooltipText.select('.current-tooltip-text'), currentData.datum);
 
             //Update the compare TS focus circle and tooltip text if we are showing it.
-            if (isCompareVisible) {
-                const compareTime = compareXScale.invert(mouse(this)[0]);
-                const compareData = getNearestTime(compareTsData, compareTime);
-                if(!compareData) {
-                    return;
-                }
+        //    if (isCompareVisible) {
+        //        const compareTime = compareXScale.invert(mouse(this)[0]);
+        //        const compareData = getNearestTime(compareTsData, compareTime);
+        //        if(!compareData) {
+        //            return;
+        //        }
                 //updateTooltipText(tooltipText.select('.compare-tooltip-text'), compareData.datum);
-                updateCircleFocus(focusCompareCircle, {
-                    xScale: compareXScale,
-                    yScale: yScale,
-                    tsDatum: compareData.datum
-                });
-            }
-        });
+        //        updateCircleFocus(focusCompareCircle, {
+        //            xScale: compareXScale,
+        //            yScale: yScale,
+        //            tsDatum: compareData.datum
+        //        });
+        //    }
+        //});
 };
 
 module.exports = {getNearestTime, createTooltip};

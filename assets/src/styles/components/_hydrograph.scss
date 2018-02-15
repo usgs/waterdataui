@@ -39,6 +39,7 @@ $estimated: black;
         .tooltip-text-group {
             .current-tooltip-text {
                 font-weight: bold;
+                fill: red;
             }
             .approved {
                 fill: $approved;

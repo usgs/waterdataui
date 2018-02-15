@@ -78,6 +78,12 @@ export const Actions = {
             show
         };
     },
+    showDataValues(time) {
+        return {
+            type: 'SHOW_DATA_VALUES',
+            time
+        };
+    },
     resizeTimeseriesPlot(width) {
         return {
             type: 'RESIZE_TIMESERIES_PLOT',
@@ -157,6 +163,12 @@ export const timeSeriesReducer = function (state={}, action) {
             return {
                 ...state,
                 showMedianStatsLabel : action.show
+            };
+
+        case 'SHOW_DATA_VALUES':
+            return {
+                ...state,
+                showDataTime: action.time
             };
 
         case 'RESIZE_TIMESERIES_PLOT':

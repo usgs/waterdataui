@@ -116,10 +116,11 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
 const tooltipText = function(text, {datum}) {
     if (datum) {
         text.classed('approved', datum.approved)
-            .classed('estimated', datum.estimated)
-            .text(() => datum.label);
+            .classed('estimated', datum.estimated);
+        console.log('Change label to ' + datum.label)
+        text.html(datum.label);
     } else {
-        text.text(() => '');
+        text.html('Hello');
     }
 };
 
@@ -128,7 +129,7 @@ const tsDatumSelector = memoize(tsDataKey => createSelector(
     state => state.showDataTime,
     (points, showDataTime) => {
         if (showDataTime) {
-            return getNearestTime(points, showDataTime);
+            return getNearestTime(points, showDataTime).datum;
         } else {
             return null;
         }
@@ -139,11 +140,13 @@ const createTooltipText = function(elem) {
     const tskeys = ['current', 'compare'];
     let tooltipTextGroup = elem.append('g')
         .attr('class', 'tooltip-text-group')
-    let y = 0;
+        .attr('width', '100%')
+        .attr('height', '20%');
+    let y = 1;
     for (let tskey of tskeys) {
         tooltipTextGroup.append('text')
             .attr('class', `${tskey}-tooltip-text`)
-            .attr('x', 15)
+            .attr('x', 20)
             .attr('y', `${y}em`)
             .call(link(tooltipText, createStructuredSelector({
                 datum: tsDatumSelector(tskey)

@@ -72,7 +72,7 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
                                     qualifiers: datum.qualifiers,
                                     approved: datum.qualifiers.indexOf('A') > -1,
                                     estimated: datum.qualifiers.indexOf('E') > -1,
-                                    label: `${formatTime(date)}\n${value} ${series.variable.unit.unitCode} (Qualifiers: (${qualifierDescriptions.join(', ')})`
+                                    label: `${formatTime(date)}\n${value} ${series.variable.unit.unitCode} (${qualifierDescriptions.join(', ')})`
                                 };
                             })
                         };
