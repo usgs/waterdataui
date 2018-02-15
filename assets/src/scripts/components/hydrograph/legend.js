@@ -94,7 +94,7 @@ function drawSimpleLegend(svg,
     let legendBBox = legend.node().getBBox();
     const legendXPosition = (svgWidth - legendBBox.width) / 2;
 
-    legend.attr('transform', `translate(${legendXPosition}, ${svgBBox.height-60})`);
+    legend.attr('transform', `translate(${legendXPosition}, ${svgBBox.height - 30})`);
 }
 
 /**
