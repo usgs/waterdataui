@@ -156,7 +156,7 @@ describe('Legend module', () => {
                 {
                     type: rectangleMarker,
                     domId: null,
-                    domClass: 'ice-mask',
+                    domClass: 'mask ice-mask',
                     text: 'Ice',
                     groupId: null,
                     fill: null
@@ -164,7 +164,7 @@ describe('Legend module', () => {
                 {
                     type: rectangleMarker,
                     domId: null,
-                    domClass: 'equipment-malfunction-mask',
+                    domClass: 'mask equipment-malfunction-mask',
                     text: 'Equipment Malfunction',
                     groupId: null,
                     fill: null

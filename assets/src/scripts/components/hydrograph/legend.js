@@ -148,7 +148,7 @@ const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
     let uniqueMasks = new Set(masks.filter(x => x !== null));
     for (let uniqueMask of uniqueMasks) {
         let maskDisplayName = MASK_DESC[uniqueMask];
-        let maskClass = `${maskDisplayName.replace(' ', '-').toLowerCase()}-mask`;
+        let maskClass = `mask ${maskDisplayName.replace(' ', '-').toLowerCase()}-mask`;
         marker = defineRectangleMarker(null, maskClass, maskDisplayName, null);
         legendMarkers.push(marker);
     }
