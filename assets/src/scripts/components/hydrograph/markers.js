@@ -13,7 +13,13 @@ const circleMarker = function({r, x, y, domId=null, domClass=null, fill=null}) {
     if (domClass !== null) {
         circle.attr('class', domClass);
     }
-    if (fill != null) {
+    if (fill !== null) {
+        // Overlay another circle on top of the one above.
+        // This approach is particularly salient if the fill
+        // is an SVG pattern because there is not a way to
+        // specify an SVG pattern with a background color.
+        // The desired background color then comes from the
+        // overlayed circle.
         group.append('circle')
             .attr('r', r)
             .attr('cx', x)
@@ -38,8 +44,13 @@ const rectangleMarker = function({x, y, width, height, domId=null, domClass=null
     if (domClass !== null) {
         rectangle.attr('class', domClass);
     }
-
     if (fill !== null) {
+        // Overlay another rectangle on top of the one above.
+        // This approach is particularly salient if the fill
+        // is an SVG pattern because there is not a way to
+        // specify an SVG pattern with a background color.
+        // The desired background color then comes from the
+        // overlayed rectangle.
         group.append('rect')
             .attr('x', x)
             .attr('y', y)
