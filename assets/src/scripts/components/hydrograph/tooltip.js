@@ -67,7 +67,7 @@ const getNearestTime = function(data, time) {
     };
 };
 /*
- * Returns the tooltipFocus time for a given timeseries
+ * Returns a function that returns the tooltipFocus time for a given timeseries
  * @param {Object} state - Redux store
  * @param {String} tsDataKey - Timeseries key
  * @return {Date}
@@ -77,7 +77,7 @@ const tooltipFocusTimeSelector = memoize(tsDataKey => (state) => {
 });
 
 /*
- * Returns the time series data point nearest the tooltip focus time for the given timeseries
+ * Returns a function that the time series data point nearest the tooltip focus time for the given timeseries
  * @param {Object} state - Redux store
  * @param String} tsDataKey - Timeseries key
  * @return {Object}
