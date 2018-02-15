@@ -64,7 +64,7 @@ def nwis_mock():
             text=MOCK_TOPO_DATA
         )
         mock_req.get(
-            'https://help.waterdata.usgs.gov/code/nat_aqfr_query?fmt=rdb',
+            'https://help.waterdata.usgs.gov/code/nat_aqfr_query_by_state?fmt=rdb',
             text=MOCK_NAT_AQFR_DATA
         )
         mock_req.get(
