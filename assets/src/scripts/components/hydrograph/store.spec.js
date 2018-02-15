@@ -1,7 +1,7 @@
 const { Actions, timeSeriesReducer } = require('./store');
 
 
-describe('Redux store', () => {
+fdescribe('Redux store', () => {
     // TODO: Add tests for retrieveTimeseries and retrieveCompareTimeseries
     describe('asynchronous actions', () => {
     });
@@ -51,6 +51,14 @@ describe('Redux store', () => {
             expect(Actions.resizeTimeseriesPlot(100)).toEqual({
                 type: 'RESIZE_TIMESERIES_PLOT',
                 width: 100
+            });
+        });
+
+        it('show create an action to set the tooltip time', () => {
+            expect(Actions.setTooltipTime(new Date('2018-01-03'), new Date('2017-01-03'))).toEqual({
+                type: 'SET_TOOLTIP_TIME',
+                currentTime: new Date('2018-01-03'),
+                compareTime: new Date('2017-01-03')
             });
         });
     });
@@ -142,6 +150,19 @@ describe('Redux store', () => {
                 width: 100
             })).toEqual({
                 width: 100
+            });
+        });
+
+        it('should handle SET_TOOLTIP_TIME', () => {
+            expect(timeSeriesReducer({}, {
+                type: 'SET_TOOLTIP_TIME',
+                currentTime: new Date('2018-01-03'),
+                compareTime: new Date('2017-01-03')
+            })).toEqual({
+                tooltipFocusTime: {
+                    current: new Date('2018-01-03'),
+                    compare: new Date('2017-01-03')
+                }
             });
         });
     });
