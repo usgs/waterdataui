@@ -109,6 +109,69 @@ describe('Legend module', () => {
             ]);
         });
 
+        fit('should line segment markers for display', () => {
+            let result = createLegendMarkers({
+                dataItems: ['current', 'medianStatistics'],
+                metadata: {
+                    statistics: {
+                        beginYear: 2010,
+                        endYear: 2012
+                    }
+                }
+            }, [
+                {
+                    classes: {approved: false, estimated: false, dataMask: 'ICE'},
+                    points: []
+                },
+                {
+                    classes: {approved: false, estimated: false, dataMask: 'FLD'},
+                    points: []
+                }
+            ]);
+            expect(result).toEqual([
+                {
+                    type: lineMarker,
+                    domId: 'ts-current',
+                    domClass: 'line',
+                    text: 'Current Year',
+                    groupId: 'current-line-marker'
+                },
+                {
+                    type: rectangleMarker,
+                    domId: null,
+                    domClass: 'mask',
+                    text: 'Current Timeseries Mask',
+                    groupId: null,
+                    fill: 'url(#hash-45)'
+                },
+                {
+                    type: circleMarker,
+                    r: 4,
+                    domId: null,
+                    domClass: 'median-data-series',
+                    groupId: 'median-circle-marker',
+                    text: 'Median Discharge 2010 - 2012',
+                    fill: null
+                },
+                {
+                    type: rectangleMarker,
+                    domId: null,
+                    domClass: 'ice-mask',
+                    text: 'Ice',
+                    groupId: null,
+                    fill: null
+                },
+                {
+                    type: rectangleMarker,
+                    domId: null,
+                    domClass: 'fld-mask',
+                    text: 'Flood',
+                    groupId: null,
+                    fill: null
+                }
+            ]);
+        });
+
         it('should return an empty array if keys do not match', () => {
             let result = createLegendMarkers({
                 dataItems: ['blah1', 'blah2'],
@@ -133,7 +196,7 @@ describe('Legend module', () => {
                 }
             });
             expect(result[0].text).toEqual('Median Discharge');
-        })
+        });
     });
 
     describe('legendDisplaySelector', () => {
