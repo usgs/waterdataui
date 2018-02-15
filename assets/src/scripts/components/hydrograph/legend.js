@@ -24,12 +24,15 @@ function drawSimpleLegend(svg,
                           textYPosition=0,
                           markerGroupOffset=40,
                           markerTextOffset=10) {
+    const verticalRowOffset = 20;
+    const svgWidth = width ? width : svgBBox.width;
+    let rowCounter = 0;
+
     let legend = svg
         .append('g')
         .attr('class', 'legend');
 
     let svgBBox = svg.node().getBBox();
-
     let previousMarkerGroup;
 
     for (let legendMarker of legendMarkers) {
@@ -44,6 +47,7 @@ function drawSimpleLegend(svg,
             xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupOffset;
         }
         let markerType = legendMarker.type;
+
         let legendGroup = legend.append('g')
             .attr('class', 'legend-marker');
         if (legendMarker.groupId) {
@@ -52,7 +56,7 @@ function drawSimpleLegend(svg,
         let markerArgs = {
             r: legendMarker.r ? legendMarker.r : null,
             x: xPosition,
-            y: markerYPosition,
+            y: markerYPosition + verticalRowOffset * rowCounter,
             length: 20,
             domId: legendMarker.domId,
             domClass: legendMarker.domClass
@@ -64,18 +68,23 @@ function drawSimpleLegend(svg,
         let detachedMarkerBBox = detachedMarker.node().getBBox();
         legendGroup.append('text')
             .attr('x', detachedMarkerBBox.x + detachedMarkerBBox.width + markerTextOffset)
-            .attr('y', textYPosition)
+            .attr('y', textYPosition + verticalRowOffset * rowCounter)
             .text(legendMarker.text);
-
-        previousMarkerGroup = legendGroup;
+        let legendGroupBBox = legendGroup.node().getBBox();
+        let legendGroupRightXCoordinate = legendGroupBBox.x + legendGroupBBox.width;
+        if (legendGroupRightXCoordinate/svgWidth >= 0.60) {
+            rowCounter += 1;
+            previousMarkerGroup = null;
+        }
+        else {
+            previousMarkerGroup = legendGroup;
+        }
     }
     // center the legend group in the svg
     let legendBBox = legend.node().getBBox();
-
-    const svgWidth = width ? width : svgBBox.width;
     const legendXPosition = (svgWidth - legendBBox.width) / 2;
 
-    legend.attr('transform', `translate(${legendXPosition}, ${svgBBox.height-15})`);
+    legend.attr('transform', `translate(${legendXPosition}, ${svgBBox.height-60})`);
 }
 
 /**
