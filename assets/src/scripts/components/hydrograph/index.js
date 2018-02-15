@@ -82,7 +82,6 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
         .data(medianStatsData)
         .enter()
         .append('circle')
-            .attr('id', 'median-point')
             .attr('class', 'median-data-series')
             .attr('r', CIRCLE_RADIUS)
             .attr('cx', function(d) {
@@ -103,7 +102,6 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
                 .text(function(d) {
                     return d.label;
                 })
-                .attr('id', 'median-text')
                 .attr('x', function(d) {
                     return xscale(d.time) + 5;
                 })
