@@ -106,13 +106,19 @@ const createLegendMarkers = function(dataPlotElements, lineSegments) {
     let text;
     let marker;
     let legendMarkers = [];
+    // create legend markers for data series
     for (let dataItem of dataPlotElements.dataItems) {
+        let hashMarker;
         if (dataItem === 'compare' || dataItem === 'current') {
-            text = 'Current Year';
             let domId = `ts-${dataItem}`;
             let svgGroup = `${dataItem}-line-marker`;
             if (dataItem === 'compare') {
+                hashMarker = defineRectangleMarker(null, 'mask', 'Compare Timeseries Mask', null, 'url(#hash-135');
                 text = 'Last Year';
+            }
+            else {
+                hashMarker = defineRectangleMarker(null, 'mask', 'Current Timeseries Mask', null, 'url(#hash-45');
+                text = 'Current Year';
             }
             marker = defineLineMarker(domId, 'line', text, svgGroup);
         }
@@ -131,13 +137,11 @@ const createLegendMarkers = function(dataPlotElements, lineSegments) {
         if (marker) {
             legendMarkers.push(marker);
         }
+        if (hashMarker) {
+            legendMarkers.push(hashMarker);
+        }
     }
-    // create markers for hashes
-    let currentHashMarker = defineRectangleMarker(null, 'mask', 'Current TS Masks', null, 'url(#hash-45');
-    let compareHashMarker = defineRectangleMarker(null, 'mask', 'Compare TS Masks', null, 'url(#hash-135');
-    legendMarkers.push(currentHashMarker);
-    legendMarkers.push(compareHashMarker);
-    // create markers for data masks
+    // create markers for data masks for different components of data series
     let masks = [];
     lineSegments.map(segment => masks.push(segment.classes.dataMask));
     let uniqueMasks = new Set(masks.filter(x => x !== null));

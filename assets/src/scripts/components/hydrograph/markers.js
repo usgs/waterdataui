@@ -1,7 +1,7 @@
 const { select, namespaces } = require('d3-selection');
 
 
-const circleMarker = function({r, x, y, domId=null, domClass=null}) {
+const circleMarker = function({r, x, y, domId=null, domClass=null, fill=null}) {
     let group = select(document.createElementNS(namespaces.svg, 'g'));
     let circle = group.append('circle')
         .attr('r', r)
@@ -13,6 +13,14 @@ const circleMarker = function({r, x, y, domId=null, domClass=null}) {
     if (domClass !== null) {
         circle.attr('class', domClass);
     }
+    if (fill != null) {
+        group.append('circle')
+            .attr('r', r)
+            .attr('cx', x)
+            .attr('cy', y)
+            .attr('fill', fill);
+    }
+
     return group;
 };
 
@@ -31,7 +39,7 @@ const rectangleMarker = function({x, y, width, height, domId=null, domClass=null
         rectangle.attr('class', domClass);
     }
 
-    if (fill !== null) {);
+    if (fill !== null) {
         group.append('rect')
             .attr('x', x)
             .attr('y', y)
@@ -82,14 +90,15 @@ const defineRectangleMarker = function(domId=null, domClass=null, text=null, gro
     };
 };
 
-const defineCircleMarker = function(radius, domId=null, domClass=null, text=null, groupId=null) {
+const defineCircleMarker = function(radius, domId=null, domClass=null, text=null, groupId=null, fill=null) {
     return {
         type: circleMarker,
         r: radius,
         domId: domId,
         domClass: domClass,
         groupId: groupId,
-        text: text
+        text: text,
+        fill: fill
     };
 };
 
