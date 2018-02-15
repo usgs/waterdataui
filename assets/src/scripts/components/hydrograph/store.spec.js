@@ -1,7 +1,7 @@
 const { Actions, timeSeriesReducer } = require('./store');
 
 
-fdescribe('Redux store', () => {
+describe('Redux store', () => {
     // TODO: Add tests for retrieveTimeseries and retrieveCompareTimeseries
     describe('asynchronous actions', () => {
     });
