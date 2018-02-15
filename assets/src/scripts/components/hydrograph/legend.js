@@ -67,7 +67,8 @@ function drawSimpleLegend(svg,
             height: 10,
             length: 20,
             domId: legendMarker.domId,
-            domClass: legendMarker.domClass
+            domClass: legendMarker.domClass,
+            fill: legendMarker.fill
         };
         // add the marker to the svg
         detachedMarker = markerType(markerArgs);
@@ -131,6 +132,12 @@ const createLegendMarkers = function(dataPlotElements, lineSegments) {
             legendMarkers.push(marker);
         }
     }
+    // create markers for hashes
+    let currentHashMarker = defineRectangleMarker(null, 'mask', 'Current TS Masks', null, 'url(#hash-45');
+    let compareHashMarker = defineRectangleMarker(null, 'mask', 'Compare TS Masks', null, 'url(#hash-135');
+    legendMarkers.push(currentHashMarker);
+    legendMarkers.push(compareHashMarker);
+    // create markers for data masks
     let masks = [];
     lineSegments.map(segment => masks.push(segment.classes.dataMask));
     let uniqueMasks = new Set(masks.filter(x => x !== null));

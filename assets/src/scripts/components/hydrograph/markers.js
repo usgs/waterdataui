@@ -13,11 +13,11 @@ const circleMarker = function({r, x, y, domId=null, domClass=null}) {
     if (domClass !== null) {
         circle.attr('class', domClass);
     }
-    return circle;
+    return group;
 };
 
 
-const rectangleMarker = function({x, y, width, height, domId=null, domClass=null}) {
+const rectangleMarker = function({x, y, width, height, domId=null, domClass=null, fill=null}) {
     let group = select(document.createElementNS(namespaces.svg, 'g'));
     let rectangle = group.append('rect')
         .attr('x', x)
@@ -30,7 +30,16 @@ const rectangleMarker = function({x, y, width, height, domId=null, domClass=null
     if (domClass !== null) {
         rectangle.attr('class', domClass);
     }
-    return rectangle;
+
+    if (fill !== null) {);
+        group.append('rect')
+            .attr('x', x)
+            .attr('y', y)
+            .attr('width', width)
+            .attr('height', height)
+            .attr('fill', fill);
+    }
+    return group;
 };
 
 
@@ -47,7 +56,7 @@ const lineMarker = function({x, y, length, domId=null, domClass=null}) {
     if (domClass !== null) {
         line.attr('class', domClass);
     }
-    return line;
+    return group;
 };
 
 
@@ -62,13 +71,14 @@ const defineLineMarker = function(domId=null, domClass=null, text=null, groupId=
 };
 
 
-const defineRectangleMarker = function(domId=null, domClass=null, text=null, groupId=null) {
+const defineRectangleMarker = function(domId=null, domClass=null, text=null, groupId=null, fill=null) {
     return {
         type: rectangleMarker,
         domId: domId,
         domClass: domClass,
         text: text,
-        groupId: groupId
+        groupId: groupId,
+        fill: fill
     };
 };
 
