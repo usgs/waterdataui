@@ -3,7 +3,7 @@
  */
 const { select } = require('d3-selection');
 const { line } = require('d3-shape');
-const { createSelector, createStructuredSelector} = require('reselect');
+const { createSelector, createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
