@@ -136,10 +136,10 @@ const plotSvgDefs = function(elem) {
 };
 
 
-const plotLegend = function(elem, {displayItems, width}) {
+const plotLegend = function(elem, {displayItems, width, currentSegments, compareSegments}) {
     elem.select('.legend').remove();
-    let markers = createLegendMarkers(displayItems);
-    drawSimpleLegend(elem, markers, width);
+    let plotMarkers = createLegendMarkers(displayItems, currentSegments.concat(compareSegments));
+    drawSimpleLegend(elem, plotMarkers, width);
 };
 
 
@@ -204,6 +204,8 @@ const timeSeriesGraph = function (elem) {
             .call(plotSvgDefs)
             .call(link(plotLegend, createStructuredSelector({
                 displayItems: legendDisplaySelector,
+                currentSegments: lineSegmentsSelector('current'),
+                compareSegments: lineSegmentsSelector('compare'),
                 width: state => state.width
             })))
             .append('g')

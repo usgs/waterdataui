@@ -1,7 +1,7 @@
 const { select, namespaces } = require('d3-selection');
 
 
-function circleMarker({r, x, y, domId=null, domClass=null}) {
+const circleMarker = function({r, x, y, domId=null, domClass=null}) {
     let group = select(document.createElementNS(namespaces.svg, 'g'));
     let circle = group.append('circle')
         .attr('r', r)
@@ -14,10 +14,27 @@ function circleMarker({r, x, y, domId=null, domClass=null}) {
         circle.attr('class', domClass);
     }
     return circle;
-}
+};
 
 
-function lineMarker({x, y, length, domId=null, domClass=null}) {
+const rectangleMarker = function({x, y, width, height, domId=null, domClass=null}) {
+    let group = select(document.createElementNS(namespaces.svg, 'g'));
+    let rectangle = group.append('rect')
+        .attr('x', x)
+        .attr('y', y)
+        .attr('width', width)
+        .attr('height', height);
+    if (domId !== null) {
+        rectangle.attr('id', domId);
+    }
+    if (domClass !== null) {
+        rectangle.attr('class', domClass);
+    }
+    return rectangle;
+};
+
+
+const lineMarker = function({x, y, length, domId=null, domClass=null}) {
     let group = select(document.createElementNS(namespaces.svg, 'g'));
     let line = group.append('line')
         .attr('x1', x)
@@ -31,12 +48,23 @@ function lineMarker({x, y, length, domId=null, domClass=null}) {
         line.attr('class', domClass);
     }
     return line;
-}
+};
 
 
 const defineLineMarker = function(domId=null, domClass=null, text=null, groupId=null) {
     return {
         type: lineMarker,
+        domId: domId,
+        domClass: domClass,
+        text: text,
+        groupId: groupId
+    };
+};
+
+
+const defineRectangleMarker = function(domId=null, domClass=null, text=null, groupId=null) {
+    return {
+        type: rectangleMarker,
         domId: domId,
         domClass: domClass,
         text: text,
@@ -56,4 +84,5 @@ const defineCircleMarker = function(radius, domId=null, domClass=null, text=null
 };
 
 
-module.exports = {circleMarker, lineMarker, defineLineMarker, defineCircleMarker};
+module.exports = {circleMarker, rectangleMarker, lineMarker,defineLineMarker, defineCircleMarker,
+    defineRectangleMarker};

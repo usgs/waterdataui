@@ -1,6 +1,6 @@
 // functions to facilitate legend creation for a d3 plot
 const { createSelector } = require('reselect');
-const { defineLineMarker, defineCircleMarker } = require('./markers');
+const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
 const { CIRCLE_RADIUS } = require('./layout');
 
 
@@ -46,17 +46,25 @@ function drawSimpleLegend(svg,
             previousMarkerGroupBox = previousMarkerGroup.node().getBBox();
             xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupOffset;
         }
-        let markerType = legendMarker.type;
-
         let legendGroup = legend.append('g')
             .attr('class', 'legend-marker');
         if (legendMarker.groupId) {
             legendGroup.attr('id', legendMarker.groupId);
         }
+        let markerType = legendMarker.type;
+        let yPosition;
+        if (markerType === rectangleMarker) {
+            yPosition = markerYPosition * 2.5 + verticalRowOffset * rowCounter;
+        }
+        else {
+            yPosition = markerYPosition + verticalRowOffset * rowCounter
+        }
         let markerArgs = {
             r: legendMarker.r ? legendMarker.r : null,
             x: xPosition,
-            y: markerYPosition + verticalRowOffset * rowCounter,
+            y: yPosition,
+            width: 20,
+            height: 10,
             length: 20,
             domId: legendMarker.domId,
             domClass: legendMarker.domClass
@@ -91,8 +99,9 @@ function drawSimpleLegend(svg,
  * create elements for the legend in the svg
  *
  * @param dataPlotElements
+ * @param lineSegments
  */
-const createLegendMarkers = function(dataPlotElements) {
+const createLegendMarkers = function(dataPlotElements, lineSegments) {
     let text;
     let marker;
     let legendMarkers = [];
@@ -121,6 +130,16 @@ const createLegendMarkers = function(dataPlotElements) {
         if (marker) {
             legendMarkers.push(marker);
         }
+    }
+    let masks = [];
+    lineSegments.map(segment => masks.push(segment.classes.dataMask));
+    let uniqueMasks = new Set(masks.filter(x => x !== null));
+    for (let uniqueMask of uniqueMasks) {
+        let maskLower = uniqueMask.toLowerCase();
+        let maskClass = `${maskLower}-mask`;
+        let maskText = maskLower.charAt(0).toUpperCase() + maskLower.slice(1);
+        marker = defineRectangleMarker(null, maskClass, maskText, null);
+        legendMarkers.push(marker);
     }
     return legendMarkers;
 };
