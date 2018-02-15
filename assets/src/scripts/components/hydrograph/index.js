@@ -14,7 +14,7 @@ const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require
 const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
-const { createTooltip, getNearestTime } = require('./tooltip');
+const { createTooltip, createTooltipText } = require('./tooltip');
 
 
 
@@ -112,53 +112,6 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
                 });
     }
 };
-
-const tooltipText = function(text, {datum}) {
-    if (datum) {
-        text.classed('approved', datum.approved)
-            .classed('estimated', datum.estimated);
-        console.log('Change label to ' + datum.label)
-        text.html(datum.label);
-    } else {
-        text.html('Hello');
-    }
-};
-
-const tooltipTimeSelector = memoize(tsDataKey => (state) => {
-    return state.tsTooltipTime[tsDataKey];
-});
-
-const tsDatumSelector = memoize(tsDataKey => createSelector(
-    pointsSelector(tsDataKey),
-    tooltipTimeSelector(tsDataKey),
-    (points, tsTooltipTime) => {
-        if (tsTooltipTime) {
-            return getNearestTime(points, tsTooltipTime).datum;
-        } else {
-            return null;
-        }
-    })
-);
-
-const createTooltipText = function(elem) {
-    const tskeys = ['current', 'compare'];
-    let tooltipTextGroup = elem.append('g')
-        .attr('class', 'tooltip-text-group')
-        .attr('width', '100%')
-        .attr('height', '20%');
-    let y = 1;
-    for (let tskey of tskeys) {
-        tooltipTextGroup.append('text')
-            .attr('class', `${tskey}-tooltip-text`)
-            .attr('x', 20)
-            .attr('y', `${y}em`)
-            .call(link(tooltipText, createStructuredSelector({
-                datum: tsDatumSelector(tskey)
-            })));
-        y += 1;
-    }
-};
-
 
 const timeSeriesGraph = function (elem) {
     elem.append('div')

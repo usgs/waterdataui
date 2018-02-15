@@ -1,9 +1,11 @@
 
 const { max, bisector } = require('d3-array');
 const { mouse } = require('d3-selection');
+const { createSelector, createStructuredSelector, defaultMemoize: memoize } = require('reselect');
 
-const { dispatch } = require('../../lib/redux');
+const { dispatch, link } = require('../../lib/redux');
 
+const { pointsSelector } = require('./points');
 const { Actions } = require('./store');
 
 const maxValue = function (data) {
@@ -33,36 +35,6 @@ const createFocusCircle = function(elem) {
     return focus;
 };
 
-const createTooltipText = function(elem, tskeys) {
-    let tooltipTextGroup = elem.append('g')
-        .attr('class', 'tooltip-text-group')
-        .style('display', 'none');
-    let y = 0;
-    for (let tskey of tskeys) {
-        tooltipTextGroup.append('text')
-            .attr('class', `${tskey}-tooltip-text`)
-            .attr('x', 15)
-            .attr('y', `${y}em`);
-        y += 1;
-    }
-    return tooltipTextGroup;
-};
-
-const updateCircleFocus = function(circleFocus, {xScale, yScale, tsDatum}) {
-    if (tsDatum.value) {
-        circleFocus.style('display', null)
-            .attr('transform',
-                `translate(${xScale(tsDatum.time)}, ${yScale(tsDatum.value)})`);
-    } else {
-        circleFocus.style('display', 'none');
-    }
-};
-
-const updateTooltipText = function(text, tsDatum) {
-    text.classed('approved', tsDatum.approved)
-        .classed('estimated', tsDatum.estimated)
-        .text(() => tsDatum.label);
-};
 
 /*
  * Return the data point nearest to time and its index.
@@ -95,6 +67,69 @@ const getNearestTime = function(data, time) {
     };
 };
 
+const tooltipTimeSelector = memoize(tsDataKey => (state) => {
+    return state.tsTooltipTime[tsDataKey];
+});
+
+const tsDatumSelector = memoize(tsDataKey => createSelector(
+    pointsSelector(tsDataKey),
+    tooltipTimeSelector(tsDataKey),
+    (points, tsTooltipTime) => {
+        if (tsTooltipTime) {
+            return getNearestTime(points, tsTooltipTime).datum;
+        } else {
+            return null;
+        }
+    })
+);
+
+const tooltipText = function(text, {datum}) {
+    if (datum) {
+        text.classed('approved', datum.approved)
+            .classed('estimated', datum.estimated);
+        text.html(datum.label);
+    } else {
+        text.html('Hello');
+    }
+};
+
+const createTooltipText = function(elem) {
+    const tskeys = ['current', 'compare'];
+    let tooltipTextGroup = elem.append('g')
+        .attr('class', 'tooltip-text-group')
+        .attr('width', '100%')
+        .attr('height', '20%');
+    let y = 1;
+    for (let tskey of tskeys) {
+        tooltipTextGroup.append('text')
+            .attr('class', `${tskey}-tooltip-text`)
+            .attr('x', 20)
+            .attr('y', `${y}em`)
+            .call(link(tooltipText, createStructuredSelector({
+                datum: tsDatumSelector(tskey)
+            })));
+        y += 1;
+    }
+};
+
+const updateFocusLine = function(elem, {currentTime, xScale}) {
+    let x = xScale(currentTime);
+    elem.select('.focus-line')
+        .attr('x1', x)
+        .attr('x2', x);
+};
+
+const updateFocusCircle = function(circleFocus, {tsDatum, xScale, yScale}) {
+    if (tsDatum) {
+        circleFocus.style('display', null)
+            .attr('transform',
+                `translate(${xScale(tsDatum.time)}, ${yScale(tsDatum.value)})`);
+    } else {
+        circleFocus.style('display', 'none');
+    }
+};
+
+
 const createTooltip = function(elem, {xScale, yScale, compareXScale, currentTsData, compareTsData, isCompareVisible}) {
     elem.selectAll('.focus').remove();
     elem.select('.tooltip-text-group').remove();
@@ -111,7 +146,21 @@ const createTooltip = function(elem, {xScale, yScale, compareXScale, currentTsDa
     });
     let focusCurrentCircle = createFocusCircle(elem);
     let focusCompareCircle = createFocusCircle(elem);
-    //let tooltipText = createTooltipText(elem, ['current', 'compare']);
+
+    focusLine.call(link(updateFocusLine, createStructuredSelector({
+        currentTime: state => state.tsTooltipTime['current'],
+        xScale: () => xScale
+    })));
+    focusCurrentCircle.call(link(updateFocusCircle, createStructuredSelector({
+        tsDatum : tsDatumSelector('current'),
+        xScale: () => xScale,
+        yScale: () => yScale
+    })));
+    focusCompareCircle.call(link(updateFocusCircle, createStructuredSelector({
+        tsDatum: tsDatumSelector('compare'),
+        xScale: () => compareXScale,
+        yScale: () => yScale
+    })));
 
     elem.append('rect')
         .attr('class', 'overlay')
@@ -137,43 +186,6 @@ const createTooltip = function(elem, {xScale, yScale, compareXScale, currentTsDa
                 isCompareVisible ? compareXScale.invert(mouse(elem.node())[0]) : null
             );
         }));
-        //.on('mousemove', function() {
-        //    const currentTime = xScale.invert(mouse(this)[0]);
-        //    const currentData = getNearestTime(currentTsData, currentTime);
-
-        //    if (!currentData) {
-        //        return;
-        //    }
-
-            // Update the focus line
-        //    const currentTimeRange = xScale(currentData.datum.time);
-        //    focusLine.select('.focus-line')
-        //        .attr('x1', currentTimeRange)
-        //        .attr('x2', currentTimeRange);
-
-            // Update the current TS focus circle and tooltip text
-        //    updateCircleFocus(focusCurrentCircle, {
-        //        xScale: xScale,
-        //        yScale: yScale,
-        //        tsDatum: currentData.datum
-        //    });
-            //updateTooltipText(tooltipText.select('.current-tooltip-text'), currentData.datum);
-
-            //Update the compare TS focus circle and tooltip text if we are showing it.
-        //    if (isCompareVisible) {
-        //        const compareTime = compareXScale.invert(mouse(this)[0]);
-        //        const compareData = getNearestTime(compareTsData, compareTime);
-        //        if(!compareData) {
-        //            return;
-        //        }
-                //updateTooltipText(tooltipText.select('.compare-tooltip-text'), compareData.datum);
-        //        updateCircleFocus(focusCompareCircle, {
-        //            xScale: compareXScale,
-        //            yScale: yScale,
-        //            tsDatum: compareData.datum
-        //        });
-        //    }
-        //});
 };
 
-module.exports = {getNearestTime, createTooltip};
+module.exports = {getNearestTime, createTooltip, createTooltipText};
