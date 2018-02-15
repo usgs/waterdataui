@@ -54,7 +54,7 @@ describe('Redux store', () => {
             });
         });
 
-        it('show create an action to set the tooltip time', () => {
+        it('should create an action to set the tooltip time', () => {
             expect(Actions.setTooltipTime(new Date('2018-01-03'), new Date('2017-01-03'))).toEqual({
                 type: 'SET_TOOLTIP_TIME',
                 currentTime: new Date('2018-01-03'),
