@@ -70,19 +70,19 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
             const maskDisplayName = MASK_DESC[maskCode].replace(' ', '-').toLowerCase();
             const [xDomainStart, xDomainEnd] = extent(line.points, d => d.time);
             const [yRangeStart, yRangeEnd] = yScale.domain();
-            const maskGroup = elem.append('g')
-                    .attr('class', `${tsDataKey}-mask-group`)
-                    .append('rect')
-                        .attr('x', xScale(xDomainStart))
-                        .attr('y', yScale(yRangeEnd))
-                        .attr('width', xScale(xDomainEnd) - xScale(xDomainStart))
-                        .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
-                        .attr('class', `mask ${maskDisplayName}-mask`);
-
-            const patternId = tsDataKey === 'compare' ? `url(#${HASH_135})` : `url(#${HASH_45})`;
-
+            let maskGroup = elem.append('g')
+                .attr('class', `${tsDataKey}-mask-group`);
             const xSpan = xScale(xDomainEnd) - xScale(xDomainStart);
             const rectWidth = xSpan > 0 ? xSpan : 1;
+
+            maskGroup.append('rect')
+                .attr('x', xScale(xDomainStart))
+                .attr('y', yScale(yRangeEnd))
+                .attr('width', rectWidth)
+                .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
+                .attr('class', `mask ${maskDisplayName}-mask`);
+
+            const patternId = tsDataKey === 'compare' ? `url(#${HASH_135})` : `url(#${HASH_45})`;
 
             maskGroup.append('rect')
                 .attr('x', xScale(xDomainStart))
