@@ -61,12 +61,12 @@ describe('Models module', () => {
             models.getTimeseries({sites: [siteID], params: [paramCode]}).then((series) => {
                 expect(series.length).toBe(1);
                 expect(series[0].code).toBe(paramCode);
-                expect(series[0].variableName).toBe('Streamflow, ft&#179;/s');
-                expect(series[0].variableDescription).
+                expect(series[0].name).toBe('Streamflow, ft³/s');
+                expect(series[0].description).
                     toBe('Discharge, cubic feet per second');
-                expect(series[0].seriesStartDate).
+                expect(series[0].startTime).
                     toEqual(new Date('1/2/2018, 3:00:00 PM -0600'));
-                expect(series[0].seriesEndDate).
+                expect(series[0].endTime).
                     toEqual(new Date('1/9/2018, 2:15:00 PM -0600'));
                 expect(series[0].values.length).toBe(670);
                 done();
@@ -126,12 +126,12 @@ describe('Models module', () => {
             models.getPreviousYearTimeseries({site: siteID, startTime: startDate, endTime: endDate}).then((series) => {
                 expect(series.length).toBe(1);
                 expect(series[0].code).toBe(paramCode);
-                expect(series[0].variableName).toBe('Streamflow, ft&#179;/s');
-                expect(series[0].variableDescription).
+                expect(series[0].name).toBe('Streamflow, ft³/s');
+                expect(series[0].description).
                     toBe('Discharge, cubic feet per second');
-                expect(series[0].seriesStartDate).
+                expect(series[0].startTime).
                     toEqual(new Date('1/2/2017, 3:00:00 PM -0600'));
-                expect(series[0].seriesEndDate).
+                expect(series[0].endTime).
                     toEqual(new Date('1/2/2017, 4:45:00 PM -0600'));
                 expect(series[0].values.length).toBe(8);
                 done();

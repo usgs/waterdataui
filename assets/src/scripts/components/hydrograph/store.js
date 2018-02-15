@@ -1,4 +1,3 @@
-const { timeFormat } = require('d3-time-format');
 const { applyMiddleware, createStore, compose } = require('redux');
 const { default: thunk } = require('redux-thunk');
 
@@ -6,31 +5,28 @@ const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData } = require('../../models');
 const { replaceHtmlEntities } = require('../../utils');
 
-// Create a time formatting function from D3's timeFormat
-const formatTime = timeFormat('%c %Z');
-
 
 export const Actions = {
-    retrieveTimeseries(siteno, startDate=null, endDate=null) {
+    retrieveTimeseries(siteno, params=null, startDate=null, endDate=null) {
         return function (dispatch) {
-            const timeSeries = getTimeseries({sites: [siteno], startDate, endDate}).then(
+            const timeSeries = getTimeseries({sites: [siteno], params, startDate, endDate}).then(
                 series => {
-                    dispatch(Actions.addTimeseries('current', siteno, series[0]));
+                    dispatch(Actions.addTimeseries('current', series[0]));
                     // Trigger a call to get last year's data
-                    const startTime = series[0].seriesStartDate;
-                    const endTime = series[0].seriesEndDate;
-                    dispatch(Actions.retrieveCompareTimeseries(siteno, startTime, endTime));
+                    dispatch(Actions.retrieveCompareTimeseries(siteno, series[0].startTime, series[0].endTime));
 
                     return series[0];
                 },
-                () => dispatch(Actions.resetTimeseries('current'))
+                () => {
+                    dispatch(Actions.resetTimeseries('current'));
+                }
             );
             const medianStatistics = getMedianStatistics({sites: [siteno]});
             Promise.all([timeSeries, medianStatistics]).then((data) => {
                 const [series, stats] = data;
-                const startDate = series.seriesStartDate;
-                const endDate = series.seriesEndDate;
-                let unit = replaceHtmlEntities(series.variableName.split(' ').pop());
+                const startDate = series.startTime;
+                const endDate = series.endTime;
+                let unit = replaceHtmlEntities(series.name.split(' ').pop());
                 let plotableStats = parseMedianData(stats, startDate, endDate, unit);
                 dispatch(Actions.setMedianStatistics(plotableStats));
             });
@@ -39,7 +35,7 @@ export const Actions = {
     retrieveCompareTimeseries(site, startTime, endTime) {
         return function (dispatch) {
             return getPreviousYearTimeseries({site, startTime, endTime}).then(
-                series => dispatch(Actions.addTimeseries('compare', site, series[0], false)),
+                series => dispatch(Actions.addTimeseries('compare', series[0], false)),
                 () => dispatch(Actions.resetTimeseries('compare'))
             );
         };
@@ -51,11 +47,10 @@ export const Actions = {
             show
         };
     },
-    addTimeseries(key, siteno, data, show=true) {
+    addTimeseries(key, data, show=true) {
         return {
             type: 'ADD_TIMESERIES',
             key,
-            siteno,
             data,
             show
         };
@@ -90,28 +85,20 @@ export const Actions = {
 export const timeSeriesReducer = function (state={}, action) {
     switch (action.type) {
         case 'ADD_TIMESERIES':
-            // If data is valid
-            if (action.data && action.data.values) {
-                let variableName = replaceHtmlEntities(action.data.variableName);
-                return {
-                    ...state,
-                    tsData: {
-                        ...state.tsData,
-                        [action.key]: action.data.values
-                    },
-                    showSeries: {
-                        ...state.showSeries,
-                        [action.key]: action.show
-                    },
-                    title: variableName,
-                    plotYLabel: action.data.variableDescription,
-                    desc: action.data.variableDescription + ' from ' +
-                        formatTime(action.data.seriesStartDate) + ' to ' +
-                        formatTime(action.data.seriesEndDate)
-                };
-            } else {
-                return state.dispatch(Actions.resetTimeseries());
-            }
+            return {
+                ...state,
+                tsData: {
+                    ...state.tsData,
+                    [action.key]: {
+                        ...state.tsData[action.key],
+                        [action.data.code]: action.data
+                    }
+                },
+                showSeries: {
+                    ...state.showSeries,
+                    [action.key]: action.show
+                }
+            };
 
         case 'TOGGLE_TIMESERIES':
             return {
@@ -127,7 +114,7 @@ export const timeSeriesReducer = function (state={}, action) {
                 ...state,
                 tsData: {
                     ...state.tsData,
-                    [action.key]: []
+                    [action.key]: {}
                 },
                 showSeries: {
                     ...state.showSeries,
@@ -140,7 +127,12 @@ export const timeSeriesReducer = function (state={}, action) {
                 ...state,
                 tsData: {
                     ...state.tsData,
-                    medianStatistics: action.medianStatistics.values
+                    medianStatistics: {
+                        '00060': {
+                            values: action.medianStatistics.values,
+                            name: '00060:median'
+                        }
+                    }
                 },
                 showSeries: {
                     ...state.showSeries,
@@ -177,9 +169,18 @@ const MIDDLEWARES = [thunk];
 export const configureStore = function (initialState) {
     initialState = {
         tsData: {
-            current: [],
-            compare: [],
-            medianStatistics: []
+            current: {
+            },
+            compare: {
+                '00060': {
+                    values: []
+                }
+            },
+            medianStatistics: {
+                '00060': {
+                    values: []
+                }
+            }
         },
         statisticalMetaData: {
             beginYear: '',
@@ -190,8 +191,7 @@ export const configureStore = function (initialState) {
             compare: false,
             medianStatistics: false
         },
-        title: '',
-        desc: '',
+        currentParameterCode: '00060',
         width: 800,
         showMedianStatsLabel: false,
         ...initialState

@@ -11,7 +11,7 @@ const { dispatch, link, provide } = require('../../lib/redux');
 const { appendAxes, axesSelector } = require('./axes');
 const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
-const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./points');
+const { pointsSelector, lineSegmentsSelector, isVisibleSelector, titleSelector, descriptionSelector } = require('./timeseries');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
 const { createTooltip } = require('./tooltip');
@@ -121,8 +121,8 @@ const timeSeriesGraph = function (elem) {
         .append('svg')
             .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({
-                title: state => state.title,
-                description: state => state.desc,
+                titleSelector,
+                descriptionSelector,
                 isInteractive: () => true
             })))
             .call(link(plotLegend, createStructuredSelector({
@@ -166,7 +166,7 @@ const timeSeriesGraph = function (elem) {
     elem.append('div')
         .call(link(addSROnlyTable, createStructuredSelector({
             columnNames: createSelector(
-                (state) => state.title,
+                titleSelector,
                 (title) => [title, 'Time']
             ),
             data: createSelector(
@@ -182,7 +182,7 @@ const timeSeriesGraph = function (elem) {
     elem.append('div')
         .call(link(addSROnlyTable, createStructuredSelector({
             columnNames: createSelector(
-                (state) => state.title,
+                titleSelector,
                 (title) => [`Median ${title}`, 'Time']
             ),
             data: createSelector(

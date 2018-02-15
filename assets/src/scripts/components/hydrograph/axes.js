@@ -6,6 +6,7 @@ const { createSelector } = require('reselect');
 
 const { layoutSelector, MARGIN } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
+const { yLabelSelector } = require('./timeseries');
 
 const yTickCount = 5;
 
@@ -56,7 +57,7 @@ const axesSelector = createSelector(
     xScaleSelector('current'),
     yScaleSelector,
     layoutSelector,
-    (state) => state.plotYLabel,
+    yLabelSelector,
     (xScale, yScale, layout, plotYLabel) => {
         return {
             ...createAxes({xScale, yScale}, -layout.width + MARGIN.right),

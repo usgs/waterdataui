@@ -1,6 +1,6 @@
 const { timeFormat, utcFormat } = require('d3-time-format');
 const { get } = require('./ajax');
-const { deltaDays } = require('./utils');
+const { deltaDays, replaceHtmlEntities } = require('./utils');
 
 
 // Define Water Services root URL - use global variable if defined, otherwise
@@ -23,12 +23,12 @@ function tsServiceRoot(date) {
 /**
  * Get a given timeseries dataset from Water Services.
  * @param  {Array}    sites  Array of site IDs to retrieve.
- * @param  {Array}    params List of parameter codes
+ * @param  {Array}    params Optional array of parameter codes
  * @param {Date} startDate
  * @param {Date} endData
  * @return {Promise} resolves to an array of timeseries model object, rejects to an error
  */
-export function getTimeseries({sites, params=['00060'], startDate=null, endDate=null}) {
+export function getTimeseries({sites, params=null, startDate=null, endDate=null}) {
     let timeParams;
     let serviceRoot;
     if (!startDate && !endDate) {
@@ -40,48 +40,46 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
         timeParams = `startDT=${startString}&endDT=${endString}`;
         serviceRoot = tsServiceRoot(startDate);
     }
-    let url = `${serviceRoot}/iv/?sites=${sites.join(',')}&parameterCd=${params.join(',')}&${timeParams}&indent=on&siteStatus=all&format=json`;
+    let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
+    let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${paramCds}&${timeParams}&indent=on&siteStatus=all&format=json`;
     return get(url)
         .then((response) => {
-                let data = JSON.parse(response);
-                return data.value.timeSeries.map(series => {
-                        let startDate = new Date(series.values[0].value[0].dateTime);
-                        let endDate = new Date(
-                            series.values[0].value.slice(-1)[0].dateTime);
-                        let noDataValue = series.variable.noDataValue;
+            let data = JSON.parse(response);
+            return data.value.timeSeries.map(series => {
+                let noDataValue = series.variable.noDataValue;
+                return {
+                    id: series.name,
+                    code: series.variable.variableCode[0].value,
+                    name: replaceHtmlEntities(series.variable.variableName),
+                    startTime: new Date(series.values[0].value[0].dateTime),
+                    endTime: new Date(series.values[0].value.slice(-1)[0].dateTime),
+                    description: series.variable.variableDescription,
+                    values: series.values[0].value.map(datum => {
+                        let date = new Date(datum.dateTime);
+                        let value = parseFloat(datum.value);
+                        if (value === noDataValue) {
+                            value = null;
+                        }
                         return {
-                            code: series.variable.variableCode[0].value,
-                            variableName: series.variable.variableName,
-                            variableDescription: series.variable.variableDescription,
-                            seriesStartDate: startDate,
-                            seriesEndDate: endDate,
-                            values: series.values[0].value.map(datum => {
-                                let date = new Date(datum.dateTime);
-                                let value = parseFloat(datum.value);
-                                if (value === noDataValue) {
-                                    value = null;
-                                }
-                                return {
-                                    time: date,
-                                    value: value,
-                                    qualifiers: datum.qualifiers,
-                                    approved: datum.qualifiers.indexOf('A') > -1,
-                                    estimated: datum.qualifiers.indexOf('E') > -1,
-                                    label: `${formatTime(date)}\n${value} ${series.variable.unit.unitCode} (Qualifiers: ${datum.qualifiers.join(', ')})`
-                                };
-                            })
+                            time: date,
+                            value: value,
+                            qualifiers: datum.qualifiers,
+                            approved: datum.qualifiers.indexOf('A') > -1,
+                            estimated: datum.qualifiers.indexOf('E') > -1,
+                            label: `${formatTime(date)}\n${value} ${series.variable.unit.unitCode} (Qualifiers: ${datum.qualifiers.join(', ')})`
                         };
-                    }
-                );
-            },
-            (error) => {
-                return error;
+                    })
+                };
             });
+        }, (error) => {
+            return error;
+        });
 }
 
 
-export function getSiteStatistics({sites, statType, params=['00060']}) {
-    let url = `${SERVICE_ROOT}/stat/?format=rdb&sites=${sites.join(',')}&statReportType=daily&statTypeCd=${statType}&parameterCd=${params.join(',')}`;
+export function getSiteStatistics({sites, statType, params=null}) {
+    let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
+    let url = `${SERVICE_ROOT}/stat/?format=rdb&sites=${sites.join(',')}&statReportType=daily&statTypeCd=${statType}${paramCds}`;
     return get(url);
 }
 

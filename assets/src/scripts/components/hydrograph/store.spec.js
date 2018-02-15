@@ -16,10 +16,9 @@ describe('Redux store', () => {
         });
 
         it('should create an action to add a timeseries', () => {
-            expect(Actions.addTimeseries('current', 1234, 'data', false)).toEqual({
+            expect(Actions.addTimeseries('current', 'data', false)).toEqual({
                 type: 'ADD_TIMESERIES',
                 key: 'current',
-                siteno: 1234,
                 data: 'data',
                 show: false
             });
@@ -57,30 +56,21 @@ describe('Redux store', () => {
 
     describe('reducers', () => {
         it('should handle ADD_TIMESERIES', () => {
-            expect(timeSeriesReducer({}, {
+            expect(timeSeriesReducer({tsData: {}}, {
                 type: 'ADD_TIMESERIES',
                 key: 'current',
-                data: {
-                    values: [{
-                        value: 'test'
-                    }],
-                    variableName: 'var name',
-                    variableDescription: 'var description',
-                    seriesStartDate: new Date('2017-01-01T15:00:00.000-06:00'),
-                    seriesEndDate: new Date('2017-01-10T15:00:00.000-06:00')
-                },
+                data: {code: '00060'},
                 show: true
-            })).toEqual(jasmine.objectContaining({
+            })).toEqual({
                 tsData: {
-                    current: [{
-                        value: 'test'
-                    }]
+                    current: {
+                        '00060': {code: '00060'}
+                    }
                 },
                 showSeries: {
                     current: true
-                },
-                title: 'var name'
-            }));
+                }
+            });
         });
 
         it('should handle TOGGLE_TIMESERIES', () => {
@@ -101,7 +91,7 @@ describe('Redux store', () => {
                 key: 'previous'
             })).toEqual({
                 tsData: {
-                    previous: []
+                    previous: {}
                 },
                 showSeries: {
                     previous: false
@@ -115,7 +105,12 @@ describe('Redux store', () => {
                 medianStatistics: {beginYear: '2000', endYear: '2010', values: ['a']}
             })).toEqual({
                 tsData: {
-                    medianStatistics: ['a']
+                    medianStatistics: {
+                        '00060': {
+                            name: '00060:median',
+                            values: ['a']
+                        }
+                    }
                 },
                 showSeries: {
                     medianStatistics: true

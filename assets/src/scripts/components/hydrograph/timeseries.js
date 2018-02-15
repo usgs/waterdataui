@@ -1,4 +1,8 @@
+const { timeFormat } = require('d3-time-format');
 const { createSelector, defaultMemoize: memoize } = require('reselect');
+
+// Create a time formatting function from D3's timeFormat
+const formatTime = timeFormat('%c %Z');
 
 
 /**
@@ -9,7 +13,14 @@ const { createSelector, defaultMemoize: memoize } = require('reselect');
  */
 const pointsSelector = memoize(tsDataKey => createSelector(
     state => state.tsData,
-    tsData => tsData[tsDataKey]
+    state => state.currentParameterCode,
+    (tsData, parmCd) => {
+        if (tsData[tsDataKey] && tsData[tsDataKey][parmCd]) {
+            return tsData[tsDataKey][parmCd].values;
+        } else {
+            return [];
+        }
+    }
 ));
 
 /**
@@ -74,4 +85,37 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
 ));
 
 
-module.exports = { pointsSelector, lineSegmentsSelector, isVisibleSelector };
+/**
+ * Returns the first valid timeseries for the currently selected parameter
+ * code, to be used for reference data like plot title, description, etc.
+ * @type {Object}   Timeseries, or empty object.
+ */
+const referenceSeriesSelector = createSelector(
+    state => state.tsData['current'][state.currentParameterCode],
+    state => state.tsData['compare'][state.currentParameterCode],
+    (current, compare) => current || compare || {}
+);
+
+
+const yLabelSelector = createSelector(
+    referenceSeriesSelector,
+    series => series.description || ''
+);
+
+
+const titleSelector = createSelector(
+    referenceSeriesSelector,
+    series => series.name || ''
+);
+
+
+const descriptionSelector = createSelector(
+    referenceSeriesSelector,
+    series => series.description + ' from ' +
+        formatTime(series.startTime) + ' to ' +
+        formatTime(series.endTime)
+);
+
+
+module.exports = { pointsSelector, lineSegmentsSelector, isVisibleSelector,
+    yLabelSelector, titleSelector, descriptionSelector };

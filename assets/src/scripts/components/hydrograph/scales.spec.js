@@ -9,10 +9,10 @@ describe('Charting scales', () => {
             value: hour
         };
     });
-    let tsData = {current: data};
+    let tsData = {current: {'00060': {values: data}}};
     let showSeries = {current: true};
-    let xScale = createXScale(tsData.current, 200);
-    let yScale = createYScale(tsData, showSeries, 100);
+    let xScale = createXScale(data, 200);
+    let yScale = createYScale(tsData, '00060', showSeries, 100);
 
     it('scales created', () => {
         expect(xScale).toEqual(jasmine.any(Function));
