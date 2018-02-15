@@ -14,7 +14,7 @@ const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require
 const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
-const { createTooltip } = require('./tooltip');
+const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
 
 
@@ -113,7 +113,6 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
     }
 };
 
-
 const timeSeriesGraph = function (elem) {
     elem.append('div')
         .attr('class', 'hydrograph-container')
@@ -125,6 +124,7 @@ const timeSeriesGraph = function (elem) {
                 description: state => state.desc,
                 isInteractive: () => true
             })))
+            .call(createTooltipText)
             .call(link(plotLegend, createStructuredSelector({
                 displayItems: legendDisplaySelector,
                 width: state => state.width
@@ -146,7 +146,7 @@ const timeSeriesGraph = function (elem) {
                     yScale: yScaleSelector,
                     tsDataKey: () => 'compare'
                 })))
-                .call(link(createTooltip, createStructuredSelector({
+                .call(link(createTooltipFocus, createStructuredSelector({
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
                     compareXScale: xScaleSelector('compare'),
