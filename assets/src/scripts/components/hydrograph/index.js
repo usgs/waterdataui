@@ -18,6 +18,10 @@ const { Actions, configureStore } = require('./store');
 const { createTooltip } = require('./tooltip');
 
 
+// identifiers for svg patterns used in the plot
+const HASH_45 = 'hash-45';
+const HASH_135 = 'hash-135';
+
 
 const drawMessage = function (elem, message) {
     // Set up parent element and SVG
@@ -75,7 +79,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                         .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
                         .attr('class', `mask ${maskDisplayName}-mask`);
 
-            const patternId = tsDataKey === 'compare' ? 'url(#hash-135)' : 'url(#hash-45)';
+            const patternId = tsDataKey === 'compare' ? `url(#${HASH_135})` : `url(#${HASH_45})`;
 
             const xSpan = xScale(xDomainEnd) - xScale(xDomainStart);
             const rectWidth = xSpan > 0 ? xSpan : 1;
@@ -106,7 +110,7 @@ const plotSvgDefs = function(elem) {
             .attr('fill', '#0000ff');
 
     defs.append('pattern')
-        .attr('id', 'hash-45')
+        .attr('id', HASH_45)
         .attr('width', '8')
         .attr('height', '8')
         .attr('patternUnits', 'userSpaceOnUse')
@@ -118,7 +122,7 @@ const plotSvgDefs = function(elem) {
             .attr('mask', 'url(#display-mask)');
 
     defs.append('pattern')
-        .attr('id', 'hash-135')
+        .attr('id', HASH_135)
         .attr('width', '8')
         .attr('height', '8')
         .attr('patternUnits', 'userSpaceOnUse')
