@@ -73,13 +73,6 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
                 let maskIntersection = new Set([...masks].filter(x => qualifiers.has(x)));
                 lineClasses.dataMask = [...maskIntersection][0]
             }
-            else if (pt.value !== null) {
-                // Temporary check to help detect test sites.
-                if (pt.qualifiers.length > 1) {
-                    /*eslint no-console: "allow"*/
-                    console.error('Point has multiple qualifiers', pt.qualifiers);
-                }
-            }
             // If this point doesn't have the same classes as the last point,
             // create a new line for it.
             if (lastClasses.approved !== lineClasses.approved ||
