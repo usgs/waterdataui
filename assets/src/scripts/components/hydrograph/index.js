@@ -3,7 +3,7 @@
  */
 const { select } = require('d3-selection');
 const { line } = require('d3-shape');
-const { createSelector, createStructuredSelector, defaultMemoize: memoize } = require('reselect');
+const { createSelector, createStructuredSelector} = require('reselect');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
@@ -14,7 +14,7 @@ const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require
 const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
-const { createTooltip, createTooltipText } = require('./tooltip');
+const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
 
 
@@ -146,7 +146,7 @@ const timeSeriesGraph = function (elem) {
                     yScale: yScaleSelector,
                     tsDataKey: () => 'compare'
                 })))
-                .call(link(createTooltip, createStructuredSelector({
+                .call(link(createTooltipFocus, createStructuredSelector({
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
                     compareXScale: xScaleSelector('compare'),

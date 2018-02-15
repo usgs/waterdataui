@@ -169,8 +169,8 @@ export const timeSeriesReducer = function (state={}, action) {
         case 'SET_TOOLTIP_TIME':
             return {
                 ...state,
-                tsTooltipTime: {
-                    ...state.tsTooltipTime,
+                tooltipFocusTime: {
+                    ...state.tsFocusTime,
                     current: action.currentTime,
                     compare: action.compareTime
                 }
@@ -211,7 +211,7 @@ export const configureStore = function (initialState) {
         desc: '',
         width: 800,
         showMedianStatsLabel: false,
-        tsTooltipTime: {
+        tooltipFocusTime: {
             current: null,
             compare: null
         },
