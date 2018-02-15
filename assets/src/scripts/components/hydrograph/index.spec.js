@@ -170,7 +170,7 @@ describe('Hydrograph charting module', () => {
         });
 
         it('should have a legend with two markers', () => {
-           expect(selectAll('g.legend-marker').size()).toBe(2);
+           expect(selectAll('g.legend-marker').size()).toBe(4);
         });
 
         it('show the labels for the median stat data showMedianStatsLabel is true', () => {
@@ -225,7 +225,7 @@ describe('Hydrograph charting module', () => {
         });
 
         it('Should have three legend markers', () => {
-            expect(selectAll('g.legend-marker').size()).toBe(3);
+            expect(selectAll('g.legend-marker').size()).toBe(5);
         });
 
         it('Should remove one of the lines when removing the compare time series', () => {
@@ -235,7 +235,7 @@ describe('Hydrograph charting module', () => {
 
         it('Should have two legend markers after the compare time series is removed', () => {
             store.dispatch(Actions.toggleTimeseries('compare', false));
-            expect(selectAll('g.legend-marker').size()).toBe(2);
+            expect(selectAll('g.legend-marker').size()).toBe(3);
         });
 
         //TODO: Consider adding a test which checks that the y axis is rescaled by
