@@ -109,7 +109,7 @@ describe('Legend module', () => {
             ]);
         });
 
-        fit('should line segment markers for display', () => {
+        it('should line segment markers for display', () => {
             let result = createLegendMarkers({
                 dataItems: ['current', 'medianStatistics'],
                 metadata: {
@@ -120,11 +120,11 @@ describe('Legend module', () => {
                 }
             }, [
                 {
-                    classes: {approved: false, estimated: false, dataMask: 'ICE'},
+                    classes: {approved: false, estimated: false, dataMask: 'ice'},
                     points: []
                 },
                 {
-                    classes: {approved: false, estimated: false, dataMask: 'FLD'},
+                    classes: {approved: false, estimated: false, dataMask: 'eqp'},
                     points: []
                 }
             ]);
@@ -164,8 +164,8 @@ describe('Legend module', () => {
                 {
                     type: rectangleMarker,
                     domId: null,
-                    domClass: 'fld-mask',
-                    text: 'Flood',
+                    domClass: 'equipment-malfunction-mask',
+                    text: 'Equipment Malfunction',
                     groupId: null,
                     fill: null
                 }

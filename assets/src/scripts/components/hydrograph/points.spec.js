@@ -145,7 +145,7 @@ describe('Points module', () => {
                     classes: {
                         approved: false,
                         estimated: false,
-                        dataMask: 'ICE'
+                        dataMask: 'ice'
                     },
                     points: [{
                         value: null,
@@ -158,7 +158,7 @@ describe('Points module', () => {
                     classes: {
                         approved: false,
                         estimated: false,
-                        dataMask: 'FLD'
+                        dataMask: 'fld'
                     },
                     points: [{
                         value: null,

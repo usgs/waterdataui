@@ -12,7 +12,7 @@ const { dispatch, link, provide } = require('../../lib/redux');
 const { appendAxes, axesSelector } = require('./axes');
 const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
-const { pointsSelector, lineSegmentsSelector, isVisibleSelector } = require('./points');
+const { pointsSelector, lineSegmentsSelector, isVisibleSelector, MASK_DESC } = require('./points');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
 const { createTooltip } = require('./tooltip');
@@ -62,10 +62,8 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                 .attr('d', tsLine);
         }
         else {
-            let maskName = line.classes.dataMask.toLowerCase();
-            if (maskName === '***') {
-                maskName = 'unavailable';
-            }
+            let maskCode = line.classes.dataMask.toLowerCase();
+            let maskDisplayName = MASK_DESC[maskCode].replace(' ', '-').toLowerCase();
             let xMaskExtent = extent(line.points, d => d.time);
             let [xDomainStart, xDomainEnd] = xMaskExtent;
             let [yRangeStart, yRangeEnd] = yScale.domain();
@@ -78,7 +76,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                 .attr('y', yScale(yRangeEnd))
                 .attr('width', xScale(xDomainEnd) - xScale(xDomainStart))
                 .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
-                .attr('class', `mask ${maskName}-mask`);
+                .attr('class', `mask ${maskDisplayName}-mask`);
 
             let patternId = tsDataKey === 'compare' ? 'url(#hash-135)' : 'url(#hash-45)';
 

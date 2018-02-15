@@ -2,6 +2,7 @@
 const { createSelector } = require('reselect');
 const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
 const { CIRCLE_RADIUS } = require('./layout');
+const { MASK_DESC } = require('./points');
 
 
 /**
@@ -146,10 +147,9 @@ const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
     lineSegments.map(segment => masks.push(segment.classes.dataMask));
     let uniqueMasks = new Set(masks.filter(x => x !== null));
     for (let uniqueMask of uniqueMasks) {
-        let maskLower = uniqueMask.toLowerCase();
-        let maskClass = `${maskLower}-mask`;
-        let maskText = maskLower.charAt(0).toUpperCase() + maskLower.slice(1);
-        marker = defineRectangleMarker(null, maskClass, maskText, null);
+        let maskDisplayName = MASK_DESC[uniqueMask];
+        let maskClass = `${maskDisplayName.replace(' ', '-').toLowerCase()}-mask`;
+        marker = defineRectangleMarker(null, maskClass, maskDisplayName, null);
         legendMarkers.push(marker);
     }
     return legendMarkers;

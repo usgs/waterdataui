@@ -1,6 +1,22 @@
 const { createSelector, defaultMemoize: memoize } = require('reselect');
 const { setEquality } = require('../../utils');
 
+const MASK_DESC = {
+    ice: 'Ice',
+    fld: 'Flood',
+    bkw: 'Backwater',
+    zfl: 'Zeroflow',
+    dry: 'Dry',
+    ssn: 'Seasonal',
+    pr: 'Partial Record',
+    rat: 'Rating Development',
+    eqp: 'Equipment Malfunction',
+    mnt: 'Maintenance',
+    dis: 'Discontinued',
+    tst: 'Test',
+    pmp: 'Pump',
+    '***': 'Unavailable'
+};
 
 /**
  * Returns the points for a given timeseries.
@@ -41,22 +57,7 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
 
         let lastClasses = {};
 
-        const masks = new Set([
-            'ICE',
-            'FLD',
-            'BKW',
-            'ZFL',
-            'DRY',
-            'SSN',
-            'PR',
-            'RAT',
-            'EQP',
-            'MNT',
-            'DIS',
-            '***',
-            'TST',
-            'PMP'
-        ]);
+        const masks = new Set(Object.keys(MASK_DESC));
 
         for (let pt of points) {
             // Classes to put on the line with this point.
@@ -66,7 +67,7 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
                 dataMask: null
             };
             if (pt.value === null) {
-                let qualifiers = new Set(pt.qualifiers.map(q => q.toUpperCase()));
+                let qualifiers = new Set(pt.qualifiers.map(q => q.toLowerCase()));
                 // current business rules specify that a particular data point
                 // will only have at most one masking qualifier
                 let maskIntersection = new Set([...masks].filter(x => qualifiers.has(x)));
@@ -102,4 +103,4 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
 ));
 
 
-module.exports = { pointsSelector, lineSegmentsSelector, isVisibleSelector };
+module.exports = { pointsSelector, lineSegmentsSelector, isVisibleSelector, MASK_DESC };
