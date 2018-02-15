@@ -2,7 +2,7 @@ const { namespaces } = require('d3');
 const { select, selectAll } = require('d3-selection');
 
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
-const { lineMarker, circleMarker } = require('./markers');
+const { lineMarker, circleMarker, rectangleMarker } = require('./markers');
 
 describe('Legend module', () => {
 
@@ -90,12 +90,21 @@ describe('Legend module', () => {
                     groupId: 'current-line-marker'
                 },
                 {
+                    type: rectangleMarker,
+                    domId: null,
+                    domClass: 'mask',
+                    text: 'Current Timeseries Mask',
+                    groupId: null,
+                    fill: 'url(#hash-45)'
+                },
+                {
                     type: circleMarker,
                     r: 4,
                     domId: null,
                     domClass: 'median-data-series',
                     groupId: 'median-circle-marker',
-                    text: 'Median Discharge 2010 - 2012'
+                    text: 'Median Discharge 2010 - 2012',
+                    fill: null
                 }
             ]);
         });

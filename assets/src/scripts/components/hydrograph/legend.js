@@ -25,6 +25,7 @@ function drawSimpleLegend(svg,
                           markerGroupOffset=40,
                           markerTextOffset=10) {
     const verticalRowOffset = 20;
+    const svgBBox = svg.node().getBBox();
     const svgWidth = width ? width : svgBBox.width;
     let rowCounter = 0;
 
@@ -32,7 +33,6 @@ function drawSimpleLegend(svg,
         .append('g')
         .attr('class', 'legend');
 
-    let svgBBox = svg.node().getBBox();
     let previousMarkerGroup;
 
     for (let legendMarker of legendMarkers) {
@@ -102,7 +102,7 @@ function drawSimpleLegend(svg,
  * @param dataPlotElements
  * @param lineSegments
  */
-const createLegendMarkers = function(dataPlotElements, lineSegments) {
+const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
     let text;
     let marker;
     let legendMarkers = [];
@@ -113,11 +113,11 @@ const createLegendMarkers = function(dataPlotElements, lineSegments) {
             let domId = `ts-${dataItem}`;
             let svgGroup = `${dataItem}-line-marker`;
             if (dataItem === 'compare') {
-                hashMarker = defineRectangleMarker(null, 'mask', 'Compare Timeseries Mask', null, 'url(#hash-135');
+                hashMarker = defineRectangleMarker(null, 'mask', 'Compare Timeseries Mask', null, 'url(#hash-135)');
                 text = 'Last Year';
             }
             else {
-                hashMarker = defineRectangleMarker(null, 'mask', 'Current Timeseries Mask', null, 'url(#hash-45');
+                hashMarker = defineRectangleMarker(null, 'mask', 'Current Timeseries Mask', null, 'url(#hash-45)');
                 text = 'Current Year';
             }
             marker = defineLineMarker(domId, 'line', text, svgGroup);
