@@ -170,7 +170,7 @@ export const timeSeriesReducer = function (state={}, action) {
             return {
                 ...state,
                 tooltipFocusTime: {
-                    ...state.tsFocusTime,
+                    ...state.tooltipFocusTime,
                     current: action.currentTime,
                     compare: action.compareTime
                 }
