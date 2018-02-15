@@ -132,7 +132,10 @@ const createTooltip = function(elem, {xScale, yScale, compareXScale, currentTsDa
             //tooltipText.style('display', 'none');
         })
         .on('mousemove', dispatch(function() {
-            return Actions.showDataValues(xScale.invert(mouse(elem.node())[0]));
+            return Actions.setTooltipTime(
+                xScale.invert(mouse(elem.node())[0]),
+                isCompareVisible ? compareXScale.invert(mouse(elem.node())[0]) : null
+            );
         }));
         //.on('mousemove', function() {
         //    const currentTime = xScale.invert(mouse(this)[0]);

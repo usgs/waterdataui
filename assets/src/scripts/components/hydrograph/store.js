@@ -78,10 +78,11 @@ export const Actions = {
             show
         };
     },
-    showDataValues(time) {
+    setTooltipTime(currentTime, compareTime) {
         return {
-            type: 'SHOW_DATA_VALUES',
-            time
+            type: 'SET_TOOLTIP_TIME',
+            currentTime,
+            compareTime
         };
     },
     resizeTimeseriesPlot(width) {
@@ -165,10 +166,14 @@ export const timeSeriesReducer = function (state={}, action) {
                 showMedianStatsLabel : action.show
             };
 
-        case 'SHOW_DATA_VALUES':
+        case 'SET_TOOLTIP_TIME':
             return {
                 ...state,
-                showDataTime: action.time
+                tsTooltipTime: {
+                    ...state.tsTooltipTime,
+                    current: action.currentTime,
+                    compare: action.compareTime
+                }
             };
 
         case 'RESIZE_TIMESERIES_PLOT':
@@ -206,6 +211,10 @@ export const configureStore = function (initialState) {
         desc: '',
         width: 800,
         showMedianStatsLabel: false,
+        tsTooltipTime: {
+            current: null,
+            compare: null
+        },
         ...initialState
     };
 

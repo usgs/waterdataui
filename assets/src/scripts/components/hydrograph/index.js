@@ -124,12 +124,16 @@ const tooltipText = function(text, {datum}) {
     }
 };
 
+const tooltipTimeSelector = memoize(tsDataKey => (state) => {
+    return state.tsTooltipTime[tsDataKey];
+});
+
 const tsDatumSelector = memoize(tsDataKey => createSelector(
     pointsSelector(tsDataKey),
-    state => state.showDataTime,
-    (points, showDataTime) => {
-        if (showDataTime) {
-            return getNearestTime(points, showDataTime).datum;
+    tooltipTimeSelector(tsDataKey),
+    (points, tsTooltipTime) => {
+        if (tsTooltipTime) {
+            return getNearestTime(points, tsTooltipTime).datum;
         } else {
             return null;
         }
