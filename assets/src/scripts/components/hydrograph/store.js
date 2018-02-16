@@ -11,11 +11,11 @@ export const Actions = {
         return function (dispatch) {
             const timeSeries = getTimeseries({sites: [siteno], params, startDate, endDate}).then(
                 series => {
-                    dispatch(Actions.addTimeseries('current', series[0]));
+                    dispatch(Actions.addTimeseries('current', series));
                     // Trigger a call to get last year's data
                     dispatch(Actions.retrieveCompareTimeseries(siteno, series[0].startTime, series[0].endTime));
 
-                    return series[0];
+                    return series;
                 },
                 () => {
                     dispatch(Actions.resetTimeseries('current'));
@@ -24,9 +24,9 @@ export const Actions = {
             const medianStatistics = getMedianStatistics({sites: [siteno]});
             Promise.all([timeSeries, medianStatistics]).then((data) => {
                 const [series, stats] = data;
-                const startDate = series.startTime;
-                const endDate = series.endTime;
-                let unit = replaceHtmlEntities(series.name.split(' ').pop());
+                const startDate = series[0].startTime;
+                const endDate = series[0].endTime;
+                let unit = replaceHtmlEntities(series[0].name.split(' ').pop());
                 let plotableStats = parseMedianData(stats, startDate, endDate, unit);
                 dispatch(Actions.setMedianStatistics(plotableStats));
             });
@@ -35,7 +35,7 @@ export const Actions = {
     retrieveCompareTimeseries(site, startTime, endTime) {
         return function (dispatch) {
             return getPreviousYearTimeseries({site, startTime, endTime}).then(
-                series => dispatch(Actions.addTimeseries('compare', series[0], false)),
+                series => dispatch(Actions.addTimeseries('compare', series, false)),
                 () => dispatch(Actions.resetTimeseries('compare'))
             );
         };
@@ -51,8 +51,12 @@ export const Actions = {
         return {
             type: 'ADD_TIMESERIES',
             key,
-            data,
-            show
+            show,
+            // Key the data on its parameter code
+            data: data.reduce(function (acc, series) {
+                acc[series.code] = series;
+                return acc;
+            }, {})
         };
     },
     resetTimeseries(key) {
@@ -78,6 +82,12 @@ export const Actions = {
             type: 'RESIZE_TIMESERIES_PLOT',
             width
         };
+    },
+    setCurrentParameterCode(parameterCode) {
+        return {
+            type: 'PARAMETER_CODE_SET',
+            parameterCode
+        };
     }
 };
 
@@ -91,7 +101,7 @@ export const timeSeriesReducer = function (state={}, action) {
                     ...state.tsData,
                     [action.key]: {
                         ...state.tsData[action.key],
-                        [action.data.code]: action.data
+                        ...action.data
                     }
                 },
                 showSeries: {
@@ -155,6 +165,12 @@ export const timeSeriesReducer = function (state={}, action) {
             return {
                 ...state,
                 width: action.width
+            };
+
+        case 'PARAMETER_CODE_SET':
+            return {
+                ...state,
+                currentParameterCode: action.parameterCode
             };
 
         default:

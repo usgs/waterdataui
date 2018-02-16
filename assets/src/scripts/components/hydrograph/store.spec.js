@@ -16,10 +16,10 @@ describe('Redux store', () => {
         });
 
         it('should create an action to add a timeseries', () => {
-            expect(Actions.addTimeseries('current', 'data', false)).toEqual({
+            expect(Actions.addTimeseries('current', [{code: 'code1'}, {code: 'code2'}], false)).toEqual({
                 type: 'ADD_TIMESERIES',
                 key: 'current',
-                data: 'data',
+                data: {code1: {code: 'code1'}, code2: {code: 'code2'}},
                 show: false
             });
         });
@@ -59,7 +59,7 @@ describe('Redux store', () => {
             expect(timeSeriesReducer({tsData: {}}, {
                 type: 'ADD_TIMESERIES',
                 key: 'current',
-                data: {code: '00060'},
+                data: {'00060': {code: '00060'}},
                 show: true
             })).toEqual({
                 tsData: {

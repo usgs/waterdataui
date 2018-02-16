@@ -11,6 +11,7 @@ const { dispatch, link, provide } = require('../../lib/redux');
 const { appendAxes, axesSelector } = require('./axes');
 const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
+const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { pointsSelector, lineSegmentsSelector, isVisibleSelector, titleSelector, descriptionSelector } = require('./timeseries');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
@@ -160,8 +161,11 @@ const timeSeriesGraph = function (elem) {
                     yscale: yScaleSelector,
                     medianStatsData: pointsSelector('medianStatistics'),
                     showLabel: (state) => state.showMedianStatsLabel
-
                 })));
+
+    elem.call(link(plotSeriesSelectTable, createStructuredSelector({
+        availableTimeseries: availableTimeseriesSelector
+    })));
 
     elem.append('div')
         .call(link(addSROnlyTable, createStructuredSelector({

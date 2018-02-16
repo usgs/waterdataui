@@ -51,8 +51,11 @@ export function getTimeseries({sites, params=null, startDate=null, endDate=null}
                     id: series.name,
                     code: series.variable.variableCode[0].value,
                     name: replaceHtmlEntities(series.variable.variableName),
-                    startTime: new Date(series.values[0].value[0].dateTime),
-                    endTime: new Date(series.values[0].value.slice(-1)[0].dateTime),
+                    type: series.variable.valueType,
+                    startTime: series.values[0].value.length ?
+                        new Date(series.values[0].value[0].dateTime) : null,
+                    endTime: series.values[0].value.length ?
+                        new Date(series.values[0].value.slice(-1)[0].dateTime) : null,
                     description: series.variable.variableDescription,
                     values: series.values[0].value.map(datum => {
                         let date = new Date(datum.dateTime);
@@ -71,8 +74,10 @@ export function getTimeseries({sites, params=null, startDate=null, endDate=null}
                     })
                 };
             });
-        }, (error) => {
-            return error;
+        })
+        .catch(reason => {
+            console.error(reason);
+            return [];
         });
 }
 
@@ -185,7 +190,7 @@ export function getPreviousYearTimeseries({site, startTime, endTime}) {
     return getTimeseries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
 }
 
-export function getMedianStatistics({sites, params=['00060']}) {
+export function getMedianStatistics({sites, params=null}) {
     let medianRDB = getSiteStatistics({sites: sites, statType: 'median', params: params});
     return medianRDB.then((response) => {
         return parseRDB(response);

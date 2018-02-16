@@ -1,6 +1,26 @@
 $approved: darkgreen;
 $estimated: black;
 
+table#select-timeseries {
+    tbody {
+        tr {
+            cursor: pointer;
+            background-color: $color-gray-lightest;
+            &:hover {
+                td {
+                    background-color: $color-gray-lightest;
+                }
+            }
+            &.selected {
+                cursor: default;
+                td {
+                    background-color: $color-aqua-lightest;
+                }
+            }
+        }
+    }
+}
+
 .hydrograph-container {
     display: inline-block;
     position: relative;
@@ -97,4 +117,5 @@ $estimated: black;
             cursor: pointer;
         }
     }
+
 }
