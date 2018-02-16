@@ -3,7 +3,7 @@ Main application views.
 """
 import json
 
-from flask import render_template, request, Markup, Response
+from flask import render_template, request, Markup
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values
