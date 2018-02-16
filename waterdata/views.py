@@ -98,7 +98,7 @@ def monitoring_location(site_no):
         template = 'errors/500.html'
         context = {}
         http_code = 500
-    if request.headers['Accept'].lower() == 'application/ld+json':
+    if request.headers.get('Accept', '').lower() == 'application/ld+json':
         return app.make_response((json.dumps(json_ld), http_code, {'Content-Type': 'application/ld+json'}))
     return render_template(template, **context), http_code
 

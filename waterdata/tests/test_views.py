@@ -2,6 +2,7 @@
 Unit tests for the main WDFN views.
 """
 
+import json
 import re
 from unittest import TestCase, mock
 
@@ -33,6 +34,7 @@ class TestMonitoringLocationView(TestCase):
         self.test_rdb_lines = self.test_rdb_text.split('\n')
         self.test_param_rdb = MOCK_SITE_LIST_2
         self.parameter_lines = self.test_param_rdb.split('\n')
+        self.headers = {'Accept': 'application/ld+json'}
 
     @mock.patch('waterdata.views.execute_get_request')
     def test_everything_okay(self, r_mock):
@@ -54,8 +56,24 @@ class TestMonitoringLocationView(TestCase):
         # make sure no weird escaping happens when the page responds
         self.assertIn(('https://waterdata.usgs.gov/nwisweb/graph'
                        '?agency_cd=USGS&site_no=01630500&parm_cd=00060&period=100'),
-                      response.data.decode('utf-8')
-                     )
+                      response.data.decode('utf-8'))
+
+    @mock.patch('waterdata.views.execute_get_request')
+    def test_everything_okay_json_ld(self, r_mock):
+        m_resp = mock.Mock()
+        m_resp.status_code = 200
+        m_resp.text = self.test_rdb_text
+        m_resp.iter_lines.return_value = iter(self.test_rdb_lines)
+        m_resp_param = mock.Mock()
+        m_resp_param.status_code = 200
+        m_resp_param.iter_lines.return_value = iter(self.parameter_lines)
+
+        return_values = [m_resp, m_resp_param]
+        r_mock.side_effect = return_values
+        response = self.app_client.get('/monitoring-location/{}?agency_cd=USGS'.format(self.test_site_number),
+                                       headers=self.headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(json.loads(response.data), dict)
 
     @mock.patch('waterdata.views.execute_get_request')
     def test_4xx_from_water_services(self, r_mock):
@@ -70,6 +88,18 @@ class TestMonitoringLocationView(TestCase):
         self.assertNotIn('@context', response.data.decode('utf-8'))
 
     @mock.patch('waterdata.views.execute_get_request')
+    def test_4xx_from_water_services_json_ld(self, r_mock):
+        m_resp = mock.Mock()
+        m_resp.status_code = 400
+        m_resp.reason = 'Site number is invalid.'
+        r_mock.return_value = m_resp
+
+        response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number),
+                                       headers=self.headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(json.loads(response.data))
+
+    @mock.patch('waterdata.views.execute_get_request')
     def test_5xx_from_water_services(self, r_mock):
         m_resp = mock.Mock()
         m_resp.status_code = 500
@@ -80,6 +110,18 @@ class TestMonitoringLocationView(TestCase):
         self.assertEqual(response.status_code, 503)
 
     @mock.patch('waterdata.views.execute_get_request')
+    def test_5xx_from_water_services_json_ld(self, r_mock):
+        m_resp = mock.Mock()
+        m_resp.status_code = 500
+        r_mock.return_value = m_resp
+
+        r_mock.get(self.test_url, status_code=500)
+        response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number),
+                                       headers=self.headers)
+        self.assertEqual(response.status_code, 503)
+        self.assertIsNone(json.loads(response.data))
+
+    @mock.patch('waterdata.views.execute_get_request')
     def test_agency_cd(self, r_mock):
         r_mock.return_value.status_code = 500
         response = self.app_client.get('/monitoring-location/{0}?agency_cd=USGS'.format(self.test_site_number))
@@ -88,9 +130,7 @@ class TestMonitoringLocationView(TestCase):
                                   params={'site': self.test_site_number,
                                           'agencyCd': 'USGS',
                                           'siteOutput': 'expanded',
-                                          'format': 'rdb'
-                                         }
-                                 )
+                                          'format': 'rdb'})
         self.assertEqual(response.status_code, 503)
 
 
