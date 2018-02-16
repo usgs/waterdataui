@@ -30,12 +30,16 @@ def monitoring_location(site_no):
 
     """
     agency_cd = request.args.get('agency_cd')
-    resp = execute_get_request(SERVICE_ROOT,
-                               path='/nwis/site/',
-                               params={'site' : site_no,
-                                       'agencyCd': agency_cd,
-                                       'siteOutput': 'expanded',
-                                       'format': 'rdb'})
+    resp = execute_get_request(
+        SERVICE_ROOT,
+        path='/nwis/site/',
+        params={
+            'site': site_no,
+            'agencyCd': agency_cd,
+            'siteOutput': 'expanded',
+            'format': 'rdb'
+        }
+    )
     status = resp.status_code
     json_ld = None
     if status == 200:
@@ -45,9 +49,11 @@ def monitoring_location(site_no):
 
         template = 'monitoring_location.html'
 
-        context = {'status_code': status,
-                   'stations': data_list,
-                   'STATION_FIELDS_D': STATION_FIELDS_D}
+        context = {
+            'status_code': status,
+            'stations': data_list,
+            'STATION_FIELDS_D': STATION_FIELDS_D
+        }
         station_record = data_list[0]
         if len(data_list) == 1:
             parameter_data_resp = execute_get_request(
