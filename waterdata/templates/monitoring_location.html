@@ -79,9 +79,9 @@
                                     <tbody>
                                         {% for series in site_dataseries %}
                                             <tr>
-                                                <td scope="row">{{ series.parm_cd.name if series.parm_cd.name else '<sub>n/a</sub>' | safe }}</td>
+                                                <td scope="row">{% if series.parm_cd.name %}{{ series.parm_cd.name }}{% else %}<sub>n/a</sub>{% endif %}</td>
                                                 <td>{{ series.loc_web_ds.name }}</td>
-                                                <td>{{ series.parm_cd.code if series.parm_cd.code else '<sub>n/a</sub>' | safe }}</td>
+                                                <td>{% if series.parm_cd.code %}{{ series.parm_cd.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
                                                 <td>{{ series.data_type_cd.name }}</td>
                                                 <td>{{ series.stat_cd.name }}</td>
                                                 <td>{{ series.parm_grp_cd.name }}</td>
@@ -127,7 +127,7 @@
                                         </div>
                                     {% endif %}
                                 </td>
-                                <td>{{ value.code if value.code != value.name else '<sub>n/a</sub>' | safe }}</td>
+                                <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
