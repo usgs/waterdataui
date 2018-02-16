@@ -150,8 +150,7 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
 
     """
     contexts = ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
-                'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
-               ]
+                'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld']
     linked_data = {'@context': contexts,
                    '@id': 'https://waterdata.usgs.gov/monitoring-location/{}'.format(location_number),
                    '@type': 'http://www.opengeospatial.org/standards/waterml2/hy_features/HY_HydroLocation',
@@ -160,12 +159,9 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
                    'HY_HydroLocationType': 'hydrometricStation',
                    'geo': {'@type': 'schema:GeoCoordinates',
                            'latitude': latitude,
-                           'longitude': longitude
-                          }
-                  }
+                           'longitude': longitude}}
     if '00060' in location_capabilities:
         linked_data['image'] = ('https://waterdata.usgs.gov/nwisweb/graph?'
                                 'agency_cd={0}&site_no={1}&parm_cd=00060&period=100').format(agency_code,
-                                                                                             location_number
-                                                                                            )
+                                                                                             location_number)
     return linked_data
