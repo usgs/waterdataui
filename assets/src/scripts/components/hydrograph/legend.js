@@ -1,7 +1,8 @@
 // functions to facilitate legend creation for a d3 plot
 const { createSelector } = require('reselect');
-const { defineLineMarker, defineCircleMarker } = require('./markers');
+const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
 const { CIRCLE_RADIUS } = require('./layout');
+const { MASK_DESC } = require('./points');
 
 
 /**
@@ -24,11 +25,14 @@ function drawSimpleLegend(svg,
                           textYPosition=0,
                           markerGroupOffset=40,
                           markerTextOffset=10) {
+    const verticalRowOffset = 20;
+    const svgBBox = svg.node().getBBox();
+    const svgWidth = width ? width : svgBBox.width;
+    let rowCounter = 0;
+
     let legend = svg
         .append('g')
         .attr('class', 'legend');
-
-    let svgBBox = svg.node().getBBox();
 
     let previousMarkerGroup;
 
@@ -43,19 +47,29 @@ function drawSimpleLegend(svg,
             previousMarkerGroupBox = previousMarkerGroup.node().getBBox();
             xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupOffset;
         }
-        let markerType = legendMarker.type;
         let legendGroup = legend.append('g')
             .attr('class', 'legend-marker');
         if (legendMarker.groupId) {
             legendGroup.attr('id', legendMarker.groupId);
         }
+        let markerType = legendMarker.type;
+        let yPosition;
+        if (markerType === rectangleMarker) {
+            yPosition = markerYPosition * 2.5 + verticalRowOffset * rowCounter;
+        }
+        else {
+            yPosition = markerYPosition + verticalRowOffset * rowCounter
+        }
         let markerArgs = {
             r: legendMarker.r ? legendMarker.r : null,
             x: xPosition,
-            y: markerYPosition,
+            y: yPosition,
+            width: 20,
+            height: 10,
             length: 20,
             domId: legendMarker.domId,
-            domClass: legendMarker.domClass
+            domClass: legendMarker.domClass,
+            fill: legendMarker.fill
         };
         // add the marker to the svg
         detachedMarker = markerType(markerArgs);
@@ -64,36 +78,48 @@ function drawSimpleLegend(svg,
         let detachedMarkerBBox = detachedMarker.node().getBBox();
         legendGroup.append('text')
             .attr('x', detachedMarkerBBox.x + detachedMarkerBBox.width + markerTextOffset)
-            .attr('y', textYPosition)
+            .attr('y', textYPosition + verticalRowOffset * rowCounter)
             .text(legendMarker.text);
-
-        previousMarkerGroup = legendGroup;
+        let legendGroupBBox = legendGroup.node().getBBox();
+        let legendGroupRightXCoordinate = legendGroupBBox.x + legendGroupBBox.width;
+        if (legendGroupRightXCoordinate/svgWidth >= 0.60) {
+            rowCounter += 1;
+            previousMarkerGroup = null;
+        }
+        else {
+            previousMarkerGroup = legendGroup;
+        }
     }
     // center the legend group in the svg
     let legendBBox = legend.node().getBBox();
-
-    const svgWidth = width ? width : svgBBox.width;
     const legendXPosition = (svgWidth - legendBBox.width) / 2;
 
-    legend.attr('transform', `translate(${legendXPosition}, ${svgBBox.height-15})`);
+    legend.attr('transform', `translate(${legendXPosition}, ${svgBBox.height - 30})`);
 }
 
 /**
  * create elements for the legend in the svg
  *
  * @param dataPlotElements
+ * @param lineSegments
  */
-const createLegendMarkers = function(dataPlotElements) {
+const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
     let text;
     let marker;
     let legendMarkers = [];
+    // create legend markers for data series
     for (let dataItem of dataPlotElements.dataItems) {
+        let hashMarker;
         if (dataItem === 'compare' || dataItem === 'current') {
-            text = 'Current Year';
             let domId = `ts-${dataItem}`;
             let svgGroup = `${dataItem}-line-marker`;
             if (dataItem === 'compare') {
+                hashMarker = defineRectangleMarker(null, 'mask', 'Compare Timeseries Mask', null, 'url(#hash-135)');
                 text = 'Last Year';
+            }
+            else {
+                hashMarker = defineRectangleMarker(null, 'mask', 'Current Timeseries Mask', null, 'url(#hash-45)');
+                text = 'Current Year';
             }
             marker = defineLineMarker(domId, 'line', text, svgGroup);
         }
@@ -112,6 +138,19 @@ const createLegendMarkers = function(dataPlotElements) {
         if (marker) {
             legendMarkers.push(marker);
         }
+        if (hashMarker) {
+            legendMarkers.push(hashMarker);
+        }
+    }
+    // create markers for data masks for different components of data series
+    let masks = [];
+    lineSegments.map(segment => masks.push(segment.classes.dataMask));
+    let uniqueMasks = new Set(masks.filter(x => x !== null));
+    for (let uniqueMask of uniqueMasks) {
+        let maskDisplayName = MASK_DESC[uniqueMask];
+        let maskClass = `mask ${maskDisplayName.replace(' ', '-').toLowerCase()}-mask`;
+        marker = defineRectangleMarker(null, maskClass, maskDisplayName, null);
+        legendMarkers.push(marker);
     }
     return legendMarkers;
 };

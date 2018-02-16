@@ -106,14 +106,23 @@ describe('Hydrograph charting module', () => {
         beforeEach(() => {
             store = configureStore({
                 tsData: {
-                    current: [{
-                        time: new Date(),
-                        value: 10,
-                        label: 'Label',
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
-                    }],
+                    current: [
+                        {
+                            time: new Date(),
+                            value: 10,
+                            label: 'Label',
+                            qualifiers: ['P'],
+                            approved: false,
+                            estimated: false
+                        }, {
+                            time: new Date(),
+                            value: null,
+                            label: 'Masked Data',
+                            qualifiers: ['P', 'FLD'],
+                            approved: false,
+                            estimated: false
+                        }
+                    ],
                     compare: [],
                     medianStatistics: MOCK_MEDIAN_STAT_DATA
                 },
@@ -136,6 +145,12 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg').size()).toBe(1);
         });
 
+        it('should have a defs node', () => {
+            expect(selectAll('defs').size()).toBe(1);
+            expect(selectAll('defs mask').size()).toBe(1);
+            expect(selectAll('defs pattern').size()).toBe(2);
+        });
+
         it('should render timeseries data as a line', () => {
             // There is not a good way to validate that <path d="..."/>
             // has the correct data, but we can validate that tooltips display
@@ -145,13 +160,17 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg path.line').size()).toBe(1);
         });
 
+        it('should render a rectangle for masked data', () => {
+            expect(selectAll('g.current-mask-group').size()).toBe(1);
+        });
+
         it('should have a point for the median stat data with a label', () => {
             expect(selectAll('svg #median-points circle.median-data-series').size()).toBe(1);
             expect(selectAll('svg #median-points text').size()).toBe(0);
         });
 
         it('should have a legend with two markers', () => {
-           expect(selectAll('g.legend-marker').size()).toBe(2);
+           expect(selectAll('g.legend-marker').size()).toBe(4);
         });
 
         it('show the labels for the median stat data showMedianStatsLabel is true', () => {
@@ -206,7 +225,7 @@ describe('Hydrograph charting module', () => {
         });
 
         it('Should have three legend markers', () => {
-            expect(selectAll('g.legend-marker').size()).toBe(3);
+            expect(selectAll('g.legend-marker').size()).toBe(5);
         });
 
         it('Should remove one of the lines when removing the compare time series', () => {
@@ -216,7 +235,7 @@ describe('Hydrograph charting module', () => {
 
         it('Should have two legend markers after the compare time series is removed', () => {
             store.dispatch(Actions.toggleTimeseries('compare', false));
-            expect(selectAll('g.legend-marker').size()).toBe(2);
+            expect(selectAll('g.legend-marker').size()).toBe(3);
         });
 
         //TODO: Consider adding a test which checks that the y axis is rescaled by

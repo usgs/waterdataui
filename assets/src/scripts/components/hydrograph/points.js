@@ -1,5 +1,22 @@
 const { createSelector, defaultMemoize: memoize } = require('reselect');
+const { setEquality } = require('../../utils');
 
+const MASK_DESC = {
+    ice: 'Ice',
+    fld: 'Flood',
+    bkw: 'Backwater',
+    zfl: 'Zeroflow',
+    dry: 'Dry',
+    ssn: 'Seasonal',
+    pr: 'Partial Record',
+    rat: 'Rating Development',
+    eqp: 'Equipment Malfunction',
+    mnt: 'Maintenance',
+    dis: 'Discontinued',
+    tst: 'Test',
+    pmp: 'Pump',
+    '***': 'Unavailable'
+};
 
 /**
  * Returns the points for a given timeseries.
@@ -37,25 +54,30 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
         // Accumulate data into line groups, splitting on the estimated and
         // approval status.
         let lines = [];
+
         let lastClasses = {};
 
+        const masks = new Set(Object.keys(MASK_DESC));
+
         for (let pt of points) {
-            // Ignored masked data
-            if (pt.value === null) {
-                lastClasses = {};
-                continue;
-            }
-
             // Classes to put on the line with this point.
-            const lineClasses = {
+            let lineClasses = {
                 approved: pt.approved,
-                estimated: pt.estimated
+                estimated: pt.estimated,
+                dataMask: null
             };
-
+            if (pt.value === null) {
+                let qualifiers = new Set(pt.qualifiers.map(q => q.toLowerCase()));
+                // current business rules specify that a particular data point
+                // will only have at most one masking qualifier
+                let maskIntersection = new Set([...masks].filter(x => qualifiers.has(x)));
+                lineClasses.dataMask = [...maskIntersection][0]
+            }
             // If this point doesn't have the same classes as the last point,
             // create a new line for it.
             if (lastClasses.approved !== lineClasses.approved ||
-                    lastClasses.estimated !== lineClasses.estimated) {
+                    lastClasses.estimated !== lineClasses.estimated ||
+                    lastClasses.dataMask !== lineClasses.dataMask) {
                 lines.push({
                     classes: lineClasses,
                     points: []
@@ -74,4 +96,4 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
 ));
 
 
-module.exports = { pointsSelector, lineSegmentsSelector, isVisibleSelector };
+module.exports = { pointsSelector, lineSegmentsSelector, isVisibleSelector, MASK_DESC };

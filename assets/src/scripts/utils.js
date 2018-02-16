@@ -60,3 +60,15 @@ export function deltaDays(date1, date2) {
     return Math.round(delta_ms/one_day_ms);
 }
 
+/**
+ * Determine if two sets are equal
+ *
+ * @param set1
+ * @param set2
+ * @returns {boolean}
+ */
+export function setEquality(set1, set2) {
+    let sizeEqual = set1.size === set2.size;
+    let itemsEqual = [...set1].every(x => {return set2.has(x)});
+    return sizeEqual && itemsEqual;
+}

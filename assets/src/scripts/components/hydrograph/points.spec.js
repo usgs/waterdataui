@@ -26,7 +26,8 @@ describe('Points module', () => {
             })).toEqual([{
                 classes: {
                     approved: false,
-                    estimated: false
+                    estimated: false,
+                    dataMask: null
                 },
                 points: [{
                     value: 10,
@@ -37,7 +38,8 @@ describe('Points module', () => {
             }, {
                 classes: {
                     approved: true,
-                    estimated: false
+                    estimated: false,
+                    dataMask: null
                 },
                 points: [{
                     value: 10,
@@ -76,7 +78,8 @@ describe('Points module', () => {
             })).toEqual([{
                 classes: {
                     approved: false,
-                    estimated: false
+                    estimated: false,
+                    dataMask: null
                 },
                 points: [{
                     value: 10,
@@ -87,7 +90,8 @@ describe('Points module', () => {
             }, {
                 classes: {
                     approved: false,
-                    estimated: true
+                    estimated: true,
+                    dataMask: null
                 },
                 points: [{
                     value: 10,
@@ -103,7 +107,7 @@ describe('Points module', () => {
             }]);
         });
 
-        it('should ignore masked values', () => {
+        it('should separate out masked values', () => {
             expect(lineSegmentsSelector('current')({
                 tsData: {
                     current: [{
@@ -118,23 +122,52 @@ describe('Points module', () => {
                         estimated: false
                     }, {
                         value: null,
-                        qualifiers: ['P', 'ICE'],
+                        qualifiers: ['P', 'FLD'],
                         approved: false,
                         estimated: false
                     }]
                 }
-            })).toEqual([{
-                classes: {
-                    approved: false,
-                    estimated: false
+            })).toEqual([
+                {
+                    classes: {
+                        approved: false,
+                        estimated: false,
+                        dataMask: null
+                    },
+                    points: [{
+                        value: 10,
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
+                    }]
                 },
-                points: [{
-                    value: 10,
-                    qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
-                }]
-            }]);
+                {
+                    classes: {
+                        approved: false,
+                        estimated: false,
+                        dataMask: 'ice'
+                    },
+                    points: [{
+                        value: null,
+                        qualifiers: ['P', 'ICE'],
+                        approved: false,
+                        estimated: false
+                    }]
+                },
+                {
+                    classes: {
+                        approved: false,
+                        estimated: false,
+                        dataMask: 'fld'
+                    },
+                    points: [{
+                        value: null,
+                        qualifiers: ['P', 'FLD'],
+                        approved: false,
+                        estimated: false
+                    }]
+                }
+            ]);
         });
     });
 });

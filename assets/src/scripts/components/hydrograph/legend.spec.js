@@ -2,7 +2,7 @@ const { namespaces } = require('d3');
 const { select, selectAll } = require('d3-selection');
 
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
-const { lineMarker, circleMarker } = require('./markers');
+const { lineMarker, circleMarker, rectangleMarker } = require('./markers');
 
 describe('Legend module', () => {
 
@@ -90,12 +90,84 @@ describe('Legend module', () => {
                     groupId: 'current-line-marker'
                 },
                 {
+                    type: rectangleMarker,
+                    domId: null,
+                    domClass: 'mask',
+                    text: 'Current Timeseries Mask',
+                    groupId: null,
+                    fill: 'url(#hash-45)'
+                },
+                {
                     type: circleMarker,
                     r: 4,
                     domId: null,
                     domClass: 'median-data-series',
                     groupId: 'median-circle-marker',
-                    text: 'Median Discharge 2010 - 2012'
+                    text: 'Median Discharge 2010 - 2012',
+                    fill: null
+                }
+            ]);
+        });
+
+        it('should line segment markers for display', () => {
+            let result = createLegendMarkers({
+                dataItems: ['current', 'medianStatistics'],
+                metadata: {
+                    statistics: {
+                        beginYear: 2010,
+                        endYear: 2012
+                    }
+                }
+            }, [
+                {
+                    classes: {approved: false, estimated: false, dataMask: 'ice'},
+                    points: []
+                },
+                {
+                    classes: {approved: false, estimated: false, dataMask: 'eqp'},
+                    points: []
+                }
+            ]);
+            expect(result).toEqual([
+                {
+                    type: lineMarker,
+                    domId: 'ts-current',
+                    domClass: 'line',
+                    text: 'Current Year',
+                    groupId: 'current-line-marker'
+                },
+                {
+                    type: rectangleMarker,
+                    domId: null,
+                    domClass: 'mask',
+                    text: 'Current Timeseries Mask',
+                    groupId: null,
+                    fill: 'url(#hash-45)'
+                },
+                {
+                    type: circleMarker,
+                    r: 4,
+                    domId: null,
+                    domClass: 'median-data-series',
+                    groupId: 'median-circle-marker',
+                    text: 'Median Discharge 2010 - 2012',
+                    fill: null
+                },
+                {
+                    type: rectangleMarker,
+                    domId: null,
+                    domClass: 'mask ice-mask',
+                    text: 'Ice',
+                    groupId: null,
+                    fill: null
+                },
+                {
+                    type: rectangleMarker,
+                    domId: null,
+                    domClass: 'mask equipment-malfunction-mask',
+                    text: 'Equipment Malfunction',
+                    groupId: null,
+                    fill: null
                 }
             ]);
         });
@@ -124,7 +196,7 @@ describe('Legend module', () => {
                 }
             });
             expect(result[0].text).toEqual('Median Discharge');
-        })
+        });
     });
 
     describe('legendDisplaySelector', () => {
