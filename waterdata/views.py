@@ -50,13 +50,17 @@ def monitoring_location(site_no):
                    'STATION_FIELDS_D': STATION_FIELDS_D}
         station_record = data_list[0]
         if len(data_list) == 1:
-            parameter_data_resp = execute_get_request(SERVICE_ROOT,
-                                                      path='/nwis/site/',
-                                                      params={'format': 'rdb',
-                                                              'sites': site_no,
-                                                              'seriesCatalogOutput': True,
-                                                              'siteStatus': 'all',
-                                                              'agencyCd': agency_cd})
+            parameter_data_resp = execute_get_request(
+                SERVICE_ROOT,
+                path='/nwis/site/',
+                params={
+                    'format': 'rdb',
+                    'sites': site_no,
+                    'seriesCatalogOutput': True,
+                    'siteStatus': 'all',
+                    'agencyCd': agency_cd
+                }
+            )
             if parameter_data_resp.status_code == 200:
                 param_data = [param_datum for param_datum in
                               parse_rdb(parameter_data_resp.iter_lines(decode_unicode=True))]
@@ -66,12 +70,15 @@ def monitoring_location(site_no):
             else:
                 site_dataseries = None
                 location_capabilities = {}
-            json_ld = build_linked_data(site_no,
-                                        station_record.get('station_nm'),
-                                        station_record.get('agency_cd'),
-                                        station_record.get('dec_lat_va', ''),
-                                        station_record.get('dec_long_va', ''),
-                                        location_capabilities)
+
+            json_ld = build_linked_data(
+                site_no,
+                station_record.get('station_nm'),
+                station_record.get('agency_cd'),
+                station_record.get('dec_lat_va', ''),
+                station_record.get('dec_long_va', ''),
+                location_capabilities
+            )
             context = {
                 'status_code': status,
                 'stations': data_list,
@@ -99,7 +106,10 @@ def monitoring_location(site_no):
         context = {}
         http_code = 500
     if request.headers.get('Accept', '').lower() == 'application/ld+json':
-        return app.make_response((json.dumps(json_ld), http_code, {'Content-Type': 'application/ld+json'}))
+        # did not use flask.json.jsonify because changing it's default
+        # mimetype would require changing the app's JSONIFY_MIMETYPE,
+        # which defaults to application/json... didn't really want to change that
+        return app.response_class(json.dumps(json_ld), status=http_code, mimetype='application/ld+json')
     return render_template(template, **context), http_code
 
 
