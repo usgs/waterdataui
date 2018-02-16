@@ -170,8 +170,6 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
     if '00060' in location_capabilities:
         linked_data['image'] = (
             'https://waterdata.usgs.gov/nwisweb/graph?'
-            'agency_cd={0}&site_no={1}&parm_cd=00060&period=100').format(
-            agency_code,
-            location_number
-        )
+            'agency_cd={0}&site_no={1}&parm_cd=00060&period=100'
+        ).format(agency_code, location_number)
     return linked_data
