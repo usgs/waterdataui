@@ -179,6 +179,7 @@ export function parseMedianTimeseries(medianData, timeSeriesStartDateTime, timeS
         code: medianData[0].parameter_cd,
         name: medianData[0].loc_web_ds,
         type: 'Statistic',
+        unit: timeSeriesUnit,
         startTime: timeSeriesStartDateTime,
         endTime: timeSeriesEndDateTime,
         description: medianData[0].loc_web_ds,

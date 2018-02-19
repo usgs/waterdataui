@@ -119,7 +119,7 @@ const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
             }
             marker = defineLineMarker(domId, 'line', text, svgGroup);
         } else if (dataItem === 'medianStatistics') {
-            text = 'Median Discharge';
+            text = `Median ${dataPlotElements.metadata.statistics.description}`;
             let beginYear = dataPlotElements.metadata.statistics.beginYear;
             let endYear = dataPlotElements.metadata.statistics.endYear;
             if (beginYear && endYear) {
@@ -173,7 +173,8 @@ const legendDisplaySelector = createSelector(
         dataPlotElements.metadata = {
             statistics: {
                 beginYear: statisticalMetaData.beginYear ? statisticalMetaData.beginYear : undefined,
-                endYear: statisticalMetaData.endYear ? statisticalMetaData.endYear : undefined
+                endYear: statisticalMetaData.endYear ? statisticalMetaData.endYear : undefined,
+                description: medianTS.description || ''
             }
         };
         return dataPlotElements;

@@ -138,7 +138,7 @@ const updateFocusLine = function(elem, {currentTime, xScale}) {
 };
 
 const updateFocusCircle = function(circleFocus, {tsDatum, xScale, yScale}) {
-    if (tsDatum) {
+    if (tsDatum && tsDatum.value) {
         circleFocus.style('display', null)
             .attr('transform',
                 `translate(${xScale(tsDatum.time)}, ${yScale(tsDatum.value)})`);
