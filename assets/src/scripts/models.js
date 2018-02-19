@@ -52,6 +52,7 @@ export function getTimeseries({sites, params=null, startDate=null, endDate=null}
                     code: series.variable.variableCode[0].value,
                     name: replaceHtmlEntities(series.variable.variableName),
                     type: series.variable.valueType,
+                    unit: series.variable.unit.unitCode,
                     startTime: series.values[0].value.length ?
                         new Date(series.values[0].value[0].dateTime) : null,
                     endTime: series.values[0].value.length ?
@@ -131,54 +132,95 @@ export function isLeapYear(year) {
 }
 
 /**
- *  Read median RDB data into something that makes sense
- *
+ * Parse one median timeseries dataset.
  * @param medianData
  * @param timeSeriesStartDateTime
  * @param timeSeriesEndDateTime
  * @param timeSeriesUnit
  * @returns {object}
  */
-export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, timeSeriesUnit) {
+export function parseMedianTimeseries(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, timeSeriesUnit) {
     let values = [];
-    let sliceValues = [];
-    let beginYear;
-    let endYear;
-    if (medianData.length > 0) {
-        let firstRecord = medianData[0];
-        beginYear = firstRecord.begin_yr;
-        endYear = firstRecord.end_yr;
-        let yearPresent = timeSeriesEndDateTime.getFullYear();
-        let yearPrevious = yearPresent - 1;
-        // calculate the number of days to display
-        let days = deltaDays(timeSeriesStartDateTime, timeSeriesEndDateTime);
-        for (let medianDatum of medianData) {
-            let month = medianDatum.month_nu-1;
-            let day = medianDatum.day_nu;
-            let recordDate = new Date(yearPresent, month, day);
-            if (!(new Date(yearPresent, 0, 1) <= recordDate && recordDate <= timeSeriesEndDateTime)) {
-                recordDate = new Date(yearPrevious, month, day);
-            }
-            let median = {
-                time: recordDate,
-                value: parseFloat(medianDatum.p50_va),
-                label: `${medianDatum.p50_va} ${timeSeriesUnit}`
-            };
-            // don't include leap days if it's not a leap year
-            if (!isLeapYear(recordDate.getFullYear())) {
-                if (!(month == 1 && day == 29)) {
-                    values.push(median);
-                }
-            } else {
+
+    let yearPresent = timeSeriesEndDateTime.getFullYear();
+    let yearPrevious = yearPresent - 1;
+
+    // calculate the number of days to display
+    let days = deltaDays(timeSeriesStartDateTime, timeSeriesEndDateTime);
+    for (let medianDatum of medianData) {
+        let month = medianDatum.month_nu - 1;
+        let day = medianDatum.day_nu;
+        let recordDate = new Date(yearPresent, month, day);
+        if (!(new Date(yearPresent, 0, 1) <= recordDate && recordDate <= timeSeriesEndDateTime)) {
+            recordDate = new Date(yearPrevious, month, day);
+        }
+        let median = {
+            time: recordDate,
+            value: parseFloat(medianDatum.p50_va),
+            label: `${medianDatum.p50_va} ${timeSeriesUnit}`
+        };
+        // don't include leap days if it's not a leap year
+        if (!isLeapYear(recordDate.getFullYear())) {
+            if (!(month == 1 && day == 29)) {
                 values.push(median);
             }
+        } else {
+            values.push(median);
         }
-        //return array with times sorted in ascending order
-        sliceValues = values.sort(function(a, b){
-           return a.time - b.time;
-        }).slice(values.length-days, values.length);
     }
-    return {beginYear: beginYear, endYear: endYear, values: sliceValues};
+
+    return {
+        id: medianData[0].ts_id,
+        code: medianData[0].parameter_cd,
+        name: medianData[0].loc_web_ds,
+        type: 'Statistic',
+        startTime: timeSeriesStartDateTime,
+        endTime: timeSeriesEndDateTime,
+        description: medianData[0].loc_web_ds,
+        medianMetadata: {
+            beginYear: medianData[0].begin_yr,
+            endYear: medianData[0].end_yr
+        },
+        values: values.sort(function(a, b){
+           return a.time - b.time;
+        }).slice(values.length - days, values.length)
+    };
+}
+
+/**
+ * Read median RDB data into something that makes sense.
+ * @param medianData
+ * @param timeSeriesStartDateTime
+ * @param timeSeriesEndDateTime
+ * @param timeSeriesUnit
+ * @returns {object}
+ */
+export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, timeSeriesUnits) {
+
+    // Organize median data by parameter code and timeseries id
+    const dataByTimseriesID = medianData.reduce(function (byTimseriesID, d) {
+        byTimseriesID[d.parameter_cd] = byTimseriesID[d.parameter_cd] || {};
+        byTimseriesID[d.parameter_cd][d.ts_id] = byTimseriesID[d.parameter_cd][d.ts_id] || [];
+        byTimseriesID[d.parameter_cd][d.ts_id].push(d);
+        return byTimseriesID;
+    }, {});
+
+    const timeseries = {};
+    for (let parameterCd of Object.keys(dataByTimseriesID)) {
+        timeseries[parameterCd] = {};
+        for (let timeseriesId of Object.keys(dataByTimseriesID[parameterCd])) {
+            const rows = dataByTimseriesID[parameterCd][timeseriesId];
+            const parsed = parseMedianTimeseries(rows, timeSeriesStartDateTime, timeSeriesEndDateTime, timeSeriesUnits[parameterCd]);
+            timeseries[parameterCd][timeseriesId] = parsed;
+        }
+    }
+
+    // FIXME: For a quick hack, only show the first set of median data per parameter code.
+    return Object.keys(timeseries).reduce(function (acc, parmCd) {
+        const firstTs = Object.keys(timeseries[parmCd])[0];
+        acc[parmCd] = timeseries[parmCd][firstTs];
+        return acc;
+    }, {});
 }
 
 export function getPreviousYearTimeseries({site, startTime, endTime}) {

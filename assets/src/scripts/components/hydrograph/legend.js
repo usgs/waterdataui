@@ -38,8 +38,7 @@ function drawSimpleLegend(svg,
         let detachedMarker;
         if (previousMarkerGroup == null) {
             xPosition = startingXPosition;
-        }
-        else {
+        } else {
             previousMarkerGroupBox = previousMarkerGroup.node().getBBox();
             xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupOffset;
         }
@@ -96,8 +95,7 @@ const createLegendMarkers = function(dataPlotElements) {
                 text = 'Last Year';
             }
             marker = defineLineMarker(domId, 'line', text, svgGroup);
-        }
-        else if (dataItem === 'medianStatistics') {
+        } else if (dataItem === 'medianStatistics') {
             text = 'Median Discharge';
             let beginYear = dataPlotElements.metadata.statistics.beginYear;
             let endYear = dataPlotElements.metadata.statistics.endYear;
@@ -105,8 +103,7 @@ const createLegendMarkers = function(dataPlotElements) {
                 text = `${text} ${beginYear} - ${endYear}`;
             }
             marker = defineCircleMarker(CIRCLE_RADIUS, null, 'median-data-series', text, 'median-circle-marker');
-        }
-        else {
+        } else {
             marker = null;
         }
         if (marker) {
@@ -121,12 +118,13 @@ const createLegendMarkers = function(dataPlotElements) {
  */
 const legendDisplaySelector = createSelector(
     (state) => state.showSeries,
-    (state) => state.statisticalMetaData,
-    (showSeries, statisticalMetaData) => {
+    (state) => state.tsData,
+    (state) => state.currentParameterCode,
+    (showSeries, tsData, currentParameterCode) => {
+        const medianTS = tsData.medianStatistics[currentParameterCode] || {};
+        const statisticalMetaData = medianTS.medianMetadata || {};
         let shownSeries = [];
         let dataPlotElements = {};
-        let text;
-        let marker;
         for (let key in showSeries) {
             if (showSeries.hasOwnProperty(key)) {
                 if (showSeries[key]) {

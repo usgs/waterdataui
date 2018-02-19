@@ -3,7 +3,6 @@ const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData } = require('../../models');
-const { replaceHtmlEntities } = require('../../utils');
 
 
 export const Actions = {
@@ -26,8 +25,11 @@ export const Actions = {
                 const [series, stats] = data;
                 const startDate = series[0].startTime;
                 const endDate = series[0].endTime;
-                let unit = replaceHtmlEntities(series[0].name.split(' ').pop());
-                let plotableStats = parseMedianData(stats, startDate, endDate, unit);
+                const units = series.reduce((units, series) => {
+                    units[series.code] = series.unit;
+                    return units;
+                }, {});
+                let plotableStats = parseMedianData(stats, startDate, endDate, units);
                 dispatch(Actions.setMedianStatistics(plotableStats));
             });
         };
@@ -138,20 +140,13 @@ export const timeSeriesReducer = function (state={}, action) {
                 tsData: {
                     ...state.tsData,
                     medianStatistics: {
-                        '00060': {
-                            values: action.medianStatistics.values,
-                            name: '00060:median'
-                        }
+                        ...state.tsData['medianStatistics'],
+                        ...action.medianStatistics
                     }
                 },
                 showSeries: {
                     ...state.showSeries,
                     medianStatistics: true
-                },
-                statisticalMetaData: {
-                    ...state.statisticalMetaData,
-                    beginYear: action.medianStatistics.beginYear,
-                    endYear: action.medianStatistics.endYear
                 }
             };
 

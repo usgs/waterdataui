@@ -1,6 +1,6 @@
 let proxyquire = require('proxyquireify')(require);
 
-const { parseRDB, parseMedianData, isLeapYear } = require('./models');
+const { parseRDB, parseMedianTimeseries, isLeapYear } = require('./models');
 
 
 describe('Models module', () => {
@@ -160,7 +160,7 @@ describe('Models module', () => {
         });
     });
 
-    describe('parseMedianData', () => {
+    describe('parseMedianTimeseries', () => {
 
         const unit = 'ft3/s';
 
@@ -170,18 +170,13 @@ describe('Models module', () => {
         const leapEndDate = new Date(2016, 2, 14);
 
         it('parseMedian data successfully constructs data for plotting', () => {
-            let result = parseMedianData(MOCK_MEDIAN_DATA, startDate, endDate, unit);
+            let result = parseMedianTimeseries(MOCK_MEDIAN_DATA, startDate, endDate, unit);
             expect(result.values.length).toEqual(3);
             expect(result.values[0]).toEqual({time: new Date(2017, 7, 5), value: 15, label: '15 ft3/s'});
         });
 
-        it('parseMedian data handles empty data', () => {
-            let result = parseMedianData([], startDate, endDate, unit);
-            expect(result.values.length).toEqual(0);
-        });
-
         it('parseMedian data includes leap year when appropriate', () => {
-            let result = parseMedianData(MOCK_MEDIAN_DATA, leapStartDate, leapEndDate, unit);
+            let result = parseMedianTimeseries(MOCK_MEDIAN_DATA, leapStartDate, leapEndDate, unit);
             expect(result.values.length).toEqual(4);
             expect(result.values[3]).toEqual({time: new Date(2016, 1, 29), value: 13, label: '13 ft3/s'});
         })

@@ -49,7 +49,7 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
         // approval status.
         let lines = [];
         let lastClasses = {};
-
+        console.log(tsDataKey, points);
         for (let pt of points) {
             // Ignored masked data
             if (pt.value === null) {

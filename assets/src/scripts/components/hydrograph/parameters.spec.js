@@ -36,10 +36,10 @@ describe('Parameters module', () => {
             currentParameterCode: '00060'
         });
         expect(available).toEqual([
-            ['00060', {description: '00060', type: '00060type', selected: true, currentYear: true, previousYear: false}],
-            ['00061', {description: '00061', type: '00061type', selected: false, currentYear: true, previousYear: true}],
-            ['00062', {description: '00062', type: '00062type', selected: false, currentYear: true, previousYear: true}],
-            ['00063', {description: '00063', type: '00063type', selected: false, currentYear: false, previousYear: true}]
+            ['00060', {description: '00060', type: '00060type', selected: true, currentYear: true, previousYear: false, medianData: false}],
+            ['00061', {description: '00061', type: '00061type', selected: false, currentYear: true, previousYear: true, medianData: false}],
+            ['00062', {description: '00062', type: '00062type', selected: false, currentYear: true, previousYear: true, medianData: false}],
+            ['00063', {description: '00063', type: '00063type', selected: false, currentYear: false, previousYear: true, medianData: false}]
         ]);
     });
 });

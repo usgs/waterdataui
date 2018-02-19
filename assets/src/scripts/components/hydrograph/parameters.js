@@ -14,15 +14,16 @@ export const availableTimeseriesSelector = createSelector(
     state => state.currentParameterCode,
     (tsData, currentCd) => {
         const codes = {};
-        for (let key of Object.keys(tsData)) {
+        for (let key of Object.keys(tsData).sort()) {
             for (let code of Object.keys(tsData[key])) {
                 codes[code] = codes[code] || {};
                 codes[code] = {
-                    description: tsData[key][code].description || codes[code].description,
-                    type: tsData[key][code].type || codes[code].type,
+                    description: codes[code].description || tsData[key][code].description,
+                    type: codes[code].type || tsData[key][code].type,
                     selected: currentCd === code,
                     currentYear: key === 'current' || codes[code].currentYear === true,
-                    previousYear: key === 'compare' || codes[code].previousYear === true
+                    previousYear: key === 'compare' || codes[code].previousYear === true,
+                    medianData: key === 'medianStatistics' || codes[code].medianData === true
                 };
             }
         }
@@ -54,7 +55,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
     table.append('thead')
         .append('tr')
             .selectAll('th')
-            .data(['Parameter Code', 'Description', 'Value Type', 'Available Now', 'Available Last Year'])
+            .data(['Parameter Code', 'Description', 'Now', 'Last Year', 'Median'])
             .enter().append('th')
                 .attr('scope', 'col')
                 .text(d => d);
@@ -76,10 +77,10 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
                 tr.append('td')
                     .text(parm => parm[1].description);
                 tr.append('td')
-                    .text(parm => parm[1].type);
-                tr.append('td')
                     .html(parm => parm[1].currentYear ? '<i class="fa fa-check" aria-label="Current year data available"></i>' : '');
                 tr.append('td')
                     .html(parm => parm[1].previousYear ? '<i class="fa fa-check" aria-label="Previous year data available"></i>' : '');
+                tr.append('td')
+                    .html(parm => parm[1].medianData ? '<i class="fa fa-check" aria-label="Median data available"></i>' : '');
             });
 };

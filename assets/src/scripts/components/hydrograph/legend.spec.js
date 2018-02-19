@@ -1,5 +1,4 @@
-const { namespaces } = require('d3');
-const { select, selectAll } = require('d3-selection');
+const { select } = require('d3-selection');
 
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 const { lineMarker, circleMarker } = require('./markers');
@@ -8,7 +7,6 @@ describe('Legend module', () => {
 
     describe('drawSimpleLegend', () => {
 
-        let testDiv = document.createElement('div');
         let svgNode;
 
         let legendMarkers = [
@@ -124,23 +122,29 @@ describe('Legend module', () => {
                 }
             });
             expect(result[0].text).toEqual('Median Discharge');
-        })
+        });
     });
 
     describe('legendDisplaySelector', () => {
 
         it('should return a marker if a time series is shown', () => {
             let result = legendDisplaySelector({
-                showSeries:
-                    {
-                        current: true,
-                        compare: false,
-                        medianStatistics: true
-                    },
-                statisticalMetaData: {
-                    'beginYear': 2010,
-                    'endYear': 2012
+                tsData: {
+                    medianStatistics: {
+                        '00060': {
+                            medianMetadata: {
+                                beginYear: 2010,
+                                endYear: 2012
+                            }
+                        }
                     }
+                },
+                showSeries: {
+                    current: true,
+                    compare: false,
+                    medianStatistics: true
+                },
+                currentParameterCode: '00060'
             });
             expect(result).toEqual({
                 dataItems: ['current', 'medianStatistics'],
@@ -155,11 +159,12 @@ describe('Legend module', () => {
 
         it('should not choke if statisticalMetadata years are absent', () => {
             let result = legendDisplaySelector({
-                showSeries:
-                    {
-                        medianStatistics: true
-                    },
-                statisticalMetaData: {}
+                tsData: {
+                    medianStatistics: {}
+                },
+                showSeries: {
+                    medianStatistics: true
+                }
             });
             expect(result.metadata.statistics).toEqual({
                 beginYear: undefined,

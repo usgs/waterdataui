@@ -100,24 +100,15 @@ describe('Redux store', () => {
         });
 
         it('should handle SET_MEDIAN_STATISTICS', () => {
-            expect(timeSeriesReducer({}, {
+            expect(timeSeriesReducer({tsData: {}}, {
                 type: 'SET_MEDIAN_STATISTICS',
-                medianStatistics: {beginYear: '2000', endYear: '2010', values: ['a']}
+                medianStatistics: {medianData: 'here'}
             })).toEqual({
                 tsData: {
-                    medianStatistics: {
-                        '00060': {
-                            name: '00060:median',
-                            values: ['a']
-                        }
-                    }
+                    medianStatistics: {medianData: 'here'}
                 },
                 showSeries: {
                     medianStatistics: true
-                },
-                statisticalMetaData: {
-                    beginYear: '2000',
-                    endYear: '2010'
                 }
             });
         });
