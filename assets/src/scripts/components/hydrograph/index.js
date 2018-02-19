@@ -2,6 +2,7 @@
  * Hydrograph charting module.
  */
 const { select } = require('d3-selection');
+const { extent } = require('d3-array');
 const { line } = require('d3-shape');
 const { createSelector, createStructuredSelector } = require('reselect');
 
@@ -12,11 +13,15 @@ const { appendAxes, axesSelector } = require('./axes');
 const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
-const { pointsSelector, lineSegmentsSelector, isVisibleSelector, titleSelector, descriptionSelector } = require('./timeseries');
+const { pointsSelector, lineSegmentsSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC } = require('./timeseries');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
-const { createTooltip } = require('./tooltip');
+const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
+
+// identifiers for svg patterns used in the plot
+const HASH_45 = 'hash-45';
+const HASH_135 = 'hash-135';
 
 
 const drawMessage = function (elem, message) {
@@ -40,6 +45,7 @@ const drawMessage = function (elem, message) {
 const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}) {
     const elemId = 'ts-' + tsDataKey;
     elem.selectAll(`#${elemId}`).remove();
+    elem.selectAll(`.${tsDataKey}-mask-group`).remove();
 
     if (!visible) {
         return;
@@ -50,21 +56,89 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
         .y(d => yScale(d.value));
 
     for (let line of lines) {
-        elem.append('path')
-            .datum(line.points)
-            .classed('line', true)
-            .classed('approved', line.classes.approved)
-            .classed('estimated', line.classes.estimated)
-            .attr('data-title', tsDataKey)
-            .attr('id', `ts-${tsDataKey}`)
-            .attr('d', tsLine);
+        if (line.classes.dataMask === null) {
+            elem.append('path')
+                .datum(line.points)
+                .classed('line', true)
+                .classed('approved', line.classes.approved)
+                .classed('estimated', line.classes.estimated)
+                .attr('data-title', tsDataKey)
+                .attr('id', `ts-${tsDataKey}`)
+                .attr('d', tsLine);
+        } else {
+            const maskCode = line.classes.dataMask.toLowerCase();
+            const maskDisplayName = MASK_DESC[maskCode].replace(' ', '-').toLowerCase();
+            const [xDomainStart, xDomainEnd] = extent(line.points, d => d.time);
+            const [yRangeStart, yRangeEnd] = yScale.domain();
+            let maskGroup = elem.append('g')
+                .attr('class', `${tsDataKey}-mask-group`);
+            const xSpan = xScale(xDomainEnd) - xScale(xDomainStart);
+            const rectWidth = xSpan > 0 ? xSpan : 1;
+
+            maskGroup.append('rect')
+                .attr('x', xScale(xDomainStart))
+                .attr('y', yScale(yRangeEnd))
+                .attr('width', rectWidth)
+                .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
+                .attr('class', `mask ${maskDisplayName}-mask`);
+
+            const patternId = tsDataKey === 'compare' ? `url(#${HASH_135})` : `url(#${HASH_45})`;
+
+            maskGroup.append('rect')
+                .attr('x', xScale(xDomainStart))
+                .attr('y', yScale(yRangeEnd))
+                .attr('width', rectWidth)
+                .attr('height', Math.abs(yScale(yRangeEnd) - yScale(yRangeStart)))
+                .attr('fill', patternId);
+        }
     }
 };
 
-const plotLegend = function(elem, {displayItems, width}) {
+
+const plotSvgDefs = function(elem) {
+
+    let defs = elem.append('defs');
+
+    defs.append('mask')
+        .attr('id', 'display-mask')
+        .attr('maskUnits', 'userSpaceOnUse')
+        .append('rect')
+            .attr('x', '0')
+            .attr('y', '0')
+            .attr('width', '100%')
+            .attr('height', '100%')
+            .attr('fill', '#0000ff');
+
+    defs.append('pattern')
+        .attr('id', HASH_45)
+        .attr('width', '8')
+        .attr('height', '8')
+        .attr('patternUnits', 'userSpaceOnUse')
+        .attr('patternTransform', 'rotate(45)')
+        .append('rect')
+            .attr('width', '4')
+            .attr('height', '8')
+            .attr('transform', 'translate(0, 0)')
+            .attr('mask', 'url(#display-mask)');
+
+    defs.append('pattern')
+        .attr('id', HASH_135)
+        .attr('width', '8')
+        .attr('height', '8')
+        .attr('patternUnits', 'userSpaceOnUse')
+        .attr('patternTransform', 'rotate(135)')
+        .append('rect')
+            .attr('width', '4')
+            .attr('height', '8')
+            .attr('transform', 'translate(0, 0)')
+            .attr('mask', 'url(#display-mask)');
+};
+
+
+const plotLegend = function(elem, {displayItems, width, currentSegments, compareSegments}) {
     elem.select('.legend').remove();
-    let markers = createLegendMarkers(displayItems);
-    drawSimpleLegend(elem, markers, width);
+    let plotMarkers = createLegendMarkers(displayItems, currentSegments.concat(compareSegments));
+    drawSimpleLegend(elem, plotMarkers, width);
 };
 
 
@@ -83,7 +157,6 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
         .data(medianStatsData)
         .enter()
         .append('circle')
-            .attr('id', 'median-point')
             .attr('class', 'median-data-series')
             .attr('r', CIRCLE_RADIUS)
             .attr('cx', function(d) {
@@ -104,7 +177,6 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
                 .text(function(d) {
                     return d.label;
                 })
-                .attr('id', 'median-text')
                 .attr('x', function(d) {
                     return xscale(d.time) + 5;
                 })
@@ -113,7 +185,6 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
                 });
     }
 };
-
 
 const timeSeriesGraph = function (elem) {
     elem.append('div')
@@ -126,8 +197,12 @@ const timeSeriesGraph = function (elem) {
                 descriptionSelector,
                 isInteractive: () => true
             })))
+            .call(createTooltipText)
+            .call(plotSvgDefs)
             .call(link(plotLegend, createStructuredSelector({
                 displayItems: legendDisplaySelector,
+                currentSegments: lineSegmentsSelector('current'),
+                compareSegments: lineSegmentsSelector('compare'),
                 width: state => state.width
             })))
             .append('g')
@@ -147,7 +222,7 @@ const timeSeriesGraph = function (elem) {
                     yScale: yScaleSelector,
                     tsDataKey: () => 'compare'
                 })))
-                .call(link(createTooltip, createStructuredSelector({
+                .call(link(createTooltipFocus, createStructuredSelector({
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
                     compareXScale: xScaleSelector('compare'),

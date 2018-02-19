@@ -47,6 +47,10 @@ export function getTimeseries({sites, params=null, startDate=null, endDate=null}
             let data = JSON.parse(response);
             return data.value.timeSeries.map(series => {
                 let noDataValue = series.variable.noDataValue;
+                const qualifierMapping = series.values[0].qualifier.reduce((map, qualifier) => {
+                    map[qualifier.qualifierCode] = qualifier.qualifierDescription;
+                    return map;
+                }, {});
                 return {
                     id: series.name,
                     code: series.variable.variableCode[0].value,
@@ -64,13 +68,14 @@ export function getTimeseries({sites, params=null, startDate=null, endDate=null}
                         if (value === noDataValue) {
                             value = null;
                         }
+                        const qualifierDescriptions = datum.qualifiers.map((qualifier) => qualifierMapping[qualifier]);
                         return {
                             time: date,
                             value: value,
                             qualifiers: datum.qualifiers,
                             approved: datum.qualifiers.indexOf('A') > -1,
                             estimated: datum.qualifiers.indexOf('E') > -1,
-                            label: `${formatTime(date)}\n${value} ${series.variable.unit.unitCode} (Qualifiers: ${datum.qualifiers.join(', ')})`
+                            label: `${formatTime(date)}\n${value} ${series.variable.unit.unitCode} (${qualifierDescriptions.join(', ')})`
                         };
                     })
                 };

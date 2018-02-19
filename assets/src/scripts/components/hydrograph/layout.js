@@ -5,9 +5,9 @@ const { createSelector } = require('reselect');
 const ASPECT_RATIO = 1 / 2;
 const ASPECT_RATIO_PERCENT = `${100 * ASPECT_RATIO}%`;
 const MARGIN = {
-    top: 20,
+    top: 40,
     right: 75,
-    bottom: 50,
+    bottom: 70,
     left: 50
 };
 const CIRCLE_RADIUS = 4;

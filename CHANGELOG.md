@@ -7,10 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Previous year value is added to the tooltip when shown.
 - Tooltip uses a focus line in addition to the focus circle to show location on the time series line.
+- Clicking on the median stats circles toggles the visibility of the labels.
 
 ### Changed
 - Tooltip text is now fixed in the corner and the font style and color match the line style/color
 used for the time series line. 
+- Using new endpoint to get the national aquifer code information and regenerated all data files
+- Using the qualifier description in the tooltip
 
 
 ## [0.1.0] - 2018-02-13

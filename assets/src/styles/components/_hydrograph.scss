@@ -112,9 +112,52 @@ table#select-timeseries {
                 }
             }
         }
+        #median-points {
+            .median-data-series {
+                cursor: pointer;
+            }
+         }
         .median-data-series {
             fill: #f96713;
-            cursor: pointer;
+        }
+        .mask {
+            opacity: 0.2;
+        }
+        .ice-mask {
+            fill: #33daff;
+        }
+        .flood-mask {
+            fill: #0c7d40;
+        }
+        .zeroflow-mask {
+            fill: #f4f727;
+        }
+        .dry-mask {
+            fill: #9a9b77;
+        }
+        .seasonal-mask {
+            fill: #17fc04;
+        }
+        .partial-record-mask {
+            fill: #ec14fe;
+        }
+        .rating-development-mask {
+            fill: #fe141b;
+        }
+        .equipment-malfunction-mask {
+            fill: #0557fc;
+        }
+        .maintenance-mask {
+            fill: #01fab6;
+        }
+        .unavailable-mask {
+            fill: #abb2b9;
+        }
+        .test-mask {
+            fill: #4729a5;
+        }
+        .pump-mask {
+            fill: #3498db;
         }
     }
 

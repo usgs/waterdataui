@@ -61,11 +61,12 @@
                                 Data Series
                             </button>
                             <div id="ts-a1" class="usa-accordion-content">
-                                <table>
+                                <table id="site-dataseries">
                                     <thead>
                                         <tr>
                                             <th scope="col">Parameter</th>
                                             <th scope="col">Description</th>
+                                            <th scope="col">USGS Parameter Code</th>
                                             <th scope="col">Data Type</th>
                                             <th scope="col">Statistic</th>
                                             <th scope="col">Parameter Group</th>
@@ -78,8 +79,9 @@
                                     <tbody>
                                         {% for series in site_dataseries %}
                                             <tr>
-                                                <th scope="row">{{ series.parm_cd.name }}</td>
+                                                <td scope="row">{% if series.parm_cd.name %}{{ series.parm_cd.name }}{% else %}<sub>n/a</sub>{% endif %}</td>
                                                 <td>{{ series.loc_web_ds.name }}</td>
+                                                <td>{% if series.parm_cd.code %}{{ series.parm_cd.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
                                                 <td>{{ series.data_type_cd.name }}</td>
                                                 <td>{{ series.stat_cd.name }}</td>
                                                 <td>{{ series.parm_grp_cd.name }}</td>
