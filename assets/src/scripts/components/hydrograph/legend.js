@@ -42,8 +42,7 @@ function drawSimpleLegend(svg,
         let detachedMarker;
         if (previousMarkerGroup == null) {
             xPosition = startingXPosition;
-        }
-        else {
+        } else {
             previousMarkerGroupBox = previousMarkerGroup.node().getBBox();
             xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupOffset;
         }
@@ -56,8 +55,7 @@ function drawSimpleLegend(svg,
         let yPosition;
         if (markerType === rectangleMarker) {
             yPosition = markerYPosition * 2.5 + verticalRowOffset * rowCounter;
-        }
-        else {
+        } else {
             yPosition = markerYPosition + verticalRowOffset * rowCounter;
         }
         let markerArgs = {
@@ -85,8 +83,7 @@ function drawSimpleLegend(svg,
         if (legendGroupRightXCoordinate/svgWidth >= 0.60) {
             rowCounter += 1;
             previousMarkerGroup = null;
-        }
-        else {
+        } else {
             previousMarkerGroup = legendGroup;
         }
     }
@@ -116,14 +113,12 @@ const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
             if (dataItem === 'compare') {
                 hashMarker = defineRectangleMarker(null, 'mask', 'Compare Timeseries Mask', null, 'url(#hash-135)');
                 text = 'Last Year';
-            }
-            else {
+            } else {
                 hashMarker = defineRectangleMarker(null, 'mask', 'Current Timeseries Mask', null, 'url(#hash-45)');
                 text = 'Current Year';
             }
             marker = defineLineMarker(domId, 'line', text, svgGroup);
-        }
-        else if (dataItem === 'medianStatistics') {
+        } else if (dataItem === 'medianStatistics') {
             text = 'Median Discharge';
             let beginYear = dataPlotElements.metadata.statistics.beginYear;
             let endYear = dataPlotElements.metadata.statistics.endYear;
@@ -131,8 +126,7 @@ const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
                 text = `${text} ${beginYear} - ${endYear}`;
             }
             marker = defineCircleMarker(CIRCLE_RADIUS, null, 'median-data-series', text, 'median-circle-marker');
-        }
-        else {
+        } else {
             marker = null;
         }
         if (marker) {
