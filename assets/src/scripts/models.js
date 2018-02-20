@@ -220,7 +220,7 @@ export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesE
     // FIXME: For a quick hack, only show a single set of median data per parameter code.
     // Later, return the complete `timeSeries` list.
     return timeSeries.reduce(function (acc, series) {
-        acc[series.parameter_cd] = series;
+        acc[series.code] = series;
         return acc;
     }, {});
 }
