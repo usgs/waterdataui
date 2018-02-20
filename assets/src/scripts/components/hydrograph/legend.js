@@ -58,7 +58,7 @@ function drawSimpleLegend(svg,
             yPosition = markerYPosition * 2.5 + verticalRowOffset * rowCounter;
         }
         else {
-            yPosition = markerYPosition + verticalRowOffset * rowCounter
+            yPosition = markerYPosition + verticalRowOffset * rowCounter;
         }
         let markerArgs = {
             r: legendMarker.r ? legendMarker.r : null,
@@ -111,7 +111,7 @@ const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
     for (let dataItem of dataPlotElements.dataItems) {
         let hashMarker;
         if (dataItem === 'compare' || dataItem === 'current') {
-            let domId = `ts-${dataItem}`;
+            let domId = `ts-legend-${dataItem}`;
             let svgGroup = `${dataItem}-line-marker`;
             if (dataItem === 'compare') {
                 hashMarker = defineRectangleMarker(null, 'mask', 'Compare Timeseries Mask', null, 'url(#hash-135)');
@@ -164,8 +164,6 @@ const legendDisplaySelector = createSelector(
     (showSeries, statisticalMetaData) => {
         let shownSeries = [];
         let dataPlotElements = {};
-        let text;
-        let marker;
         for (let key in showSeries) {
             if (showSeries.hasOwnProperty(key)) {
                 if (showSeries[key]) {

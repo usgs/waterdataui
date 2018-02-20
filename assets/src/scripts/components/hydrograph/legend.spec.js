@@ -84,7 +84,7 @@ describe('Legend module', () => {
             expect(result).toEqual([
                 {
                     type: lineMarker,
-                    domId: 'ts-current',
+                    domId: 'ts-legend-current',
                     domClass: 'line',
                     text: 'Current Year',
                     groupId: 'current-line-marker'
@@ -131,7 +131,7 @@ describe('Legend module', () => {
             expect(result).toEqual([
                 {
                     type: lineMarker,
-                    domId: 'ts-current',
+                    domId: 'ts-legend-current',
                     domClass: 'line',
                     text: 'Current Year',
                     groupId: 'current-line-marker'
