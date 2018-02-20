@@ -1,5 +1,6 @@
 const { timeFormat } = require('d3-time-format');
-const { createSelector, defaultMemoize: memoize } = require('reselect');
+const memoize = require('fast-memoize');
+const { createSelector } = require('reselect');
 
 
 // Create a time formatting function from D3's timeFormat

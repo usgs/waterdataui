@@ -1,7 +1,8 @@
 
 const { max, bisector } = require('d3-array');
 const { mouse } = require('d3-selection');
-const { createSelector, createStructuredSelector, defaultMemoize: memoize } = require('reselect');
+const memoize = require('fast-memoize');
+const { createSelector, createStructuredSelector } = require('reselect');
 
 const { dispatch, link } = require('../../lib/redux');
 

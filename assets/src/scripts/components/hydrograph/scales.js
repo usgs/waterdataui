@@ -1,6 +1,7 @@
 const { extent } = require('d3-array');
 const { scaleTime } = require('d3-scale');
-const { createSelector, defaultMemoize: memoize } = require('reselect');
+const memoize = require('fast-memoize');
+const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { layoutSelector, MARGIN } = require('./layout');
