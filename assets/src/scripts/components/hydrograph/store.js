@@ -116,7 +116,11 @@ export const timeSeriesReducer = function (state={}, action) {
                 showSeries: {
                     ...state.showSeries,
                     [action.key]: action.show
-                }
+                },
+                // If there isn't a selected parameter code yet, pick the first
+                // one after sorting by ID.
+                currentParameterCode: state.currentParameterCode ||
+                    action.data[Object.keys(action.data).sort()[0]].code
             };
 
         case 'TOGGLE_TIMESERIES':
@@ -199,16 +203,8 @@ export const configureStore = function (initialState) {
         tsData: {
             current: {
             },
-            compare: {
-                '00060': {
-                    values: []
-                }
-            },
-            medianStatistics: {
-                '00060': {
-                    values: []
-                }
-            }
+            compare: {},
+            medianStatistics: {}
         },
         statisticalMetaData: {
             beginYear: '',
@@ -219,7 +215,7 @@ export const configureStore = function (initialState) {
             compare: false,
             medianStatistics: false
         },
-        currentParameterCode: '00060',
+        currentParameterCode: null,
         width: 800,
         showMedianStatsLabel: false,
         tooltipFocusTime: {

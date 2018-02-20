@@ -77,7 +77,8 @@ describe('Redux store', () => {
                 },
                 showSeries: {
                     current: true
-                }
+                },
+                currentParameterCode: '00060'
             });
         });
 

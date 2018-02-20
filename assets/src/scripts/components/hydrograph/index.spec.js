@@ -168,7 +168,8 @@ describe('Hydrograph charting module', () => {
                 title: 'My Title',
                 desc: 'My Description',
                 showMedianStatsLabel: false,
-                width: 400
+                width: 400,
+                currentParameterCode: '00060'
             });
             select(graphNode)
                 .call(provide(store))
@@ -258,6 +259,7 @@ describe('Hydrograph charting module', () => {
                 },
                 title: 'My Title',
                 desc: 'My Description',
+                currentParameterCode: '00060'
             });
             select(graphNode)
                 .call(provide(store))

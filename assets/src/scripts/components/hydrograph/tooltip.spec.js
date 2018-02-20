@@ -177,7 +177,8 @@ describe('Hydrograph tooltip module', () => {
                 tooltipFocusTime: {
                     current: new Date('2018-01-03T14:29:00.000Z'),
                     compare: new Date('2018-01-03T12:39:00.000Z')
-                }
+                },
+                currentParameterCode: '00060'
             });
 
             svg.call(provide(store))
@@ -204,7 +205,8 @@ describe('Hydrograph tooltip module', () => {
                 tooltipFocusTime: {
                     current: new Date('2018-01-03T14:29:00.000Z'),
                     compare: new Date('2018-01-03T12:39:00.000Z')
-                }
+                },
+                currentParameterCode: '00060'
             });
 
             svg.call(provide(store))
@@ -294,7 +296,8 @@ describe('Hydrograph tooltip module', () => {
                 tooltipFocusTime: {
                     current: new Date('2018-01-03T14:29:00.000Z'),
                     compare: new Date('2017-01-03T12:39:00.000Z')
-                }
+                },
+                currentParameterCode: '00060'
             });
 
             svg.call(provide(store)).
