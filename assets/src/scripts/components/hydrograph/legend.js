@@ -42,8 +42,7 @@ function drawSimpleLegend(svg,
         let detachedMarker;
         if (previousMarkerGroup == null) {
             xPosition = startingXPosition;
-        }
-        else {
+        } else {
             previousMarkerGroupBox = previousMarkerGroup.node().getBBox();
             xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupOffset;
         }
@@ -56,9 +55,8 @@ function drawSimpleLegend(svg,
         let yPosition;
         if (markerType === rectangleMarker) {
             yPosition = markerYPosition * 2.5 + verticalRowOffset * rowCounter;
-        }
-        else {
-            yPosition = markerYPosition + verticalRowOffset * rowCounter
+        } else {
+            yPosition = markerYPosition + verticalRowOffset * rowCounter;
         }
         let markerArgs = {
             r: legendMarker.r ? legendMarker.r : null,
@@ -85,8 +83,7 @@ function drawSimpleLegend(svg,
         if (legendGroupRightXCoordinate/svgWidth >= 0.60) {
             rowCounter += 1;
             previousMarkerGroup = null;
-        }
-        else {
+        } else {
             previousMarkerGroup = legendGroup;
         }
     }
@@ -111,19 +108,17 @@ const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
     for (let dataItem of dataPlotElements.dataItems) {
         let hashMarker;
         if (dataItem === 'compare' || dataItem === 'current') {
-            let domId = `ts-${dataItem}`;
+            let domId = `ts-legend-${dataItem}`;
             let svgGroup = `${dataItem}-line-marker`;
             if (dataItem === 'compare') {
                 hashMarker = defineRectangleMarker(null, 'mask', 'Compare Timeseries Mask', null, 'url(#hash-135)');
                 text = 'Last Year';
-            }
-            else {
+            } else {
                 hashMarker = defineRectangleMarker(null, 'mask', 'Current Timeseries Mask', null, 'url(#hash-45)');
                 text = 'Current Year';
             }
             marker = defineLineMarker(domId, 'line', text, svgGroup);
-        }
-        else if (dataItem === 'medianStatistics') {
+        } else if (dataItem === 'medianStatistics') {
             text = 'Median Discharge';
             let beginYear = dataPlotElements.metadata.statistics.beginYear;
             let endYear = dataPlotElements.metadata.statistics.endYear;
@@ -131,8 +126,7 @@ const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
                 text = `${text} ${beginYear} - ${endYear}`;
             }
             marker = defineCircleMarker(CIRCLE_RADIUS, null, 'median-data-series', text, 'median-circle-marker');
-        }
-        else {
+        } else {
             marker = null;
         }
         if (marker) {
@@ -164,8 +158,6 @@ const legendDisplaySelector = createSelector(
     (showSeries, statisticalMetaData) => {
         let shownSeries = [];
         let dataPlotElements = {};
-        let text;
-        let marker;
         for (let key in showSeries) {
             if (showSeries.hasOwnProperty(key)) {
                 if (showSeries[key]) {

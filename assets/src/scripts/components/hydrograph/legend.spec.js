@@ -1,5 +1,4 @@
-const { namespaces } = require('d3');
-const { select, selectAll } = require('d3-selection');
+const { select } = require('d3-selection');
 
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 const { lineMarker, circleMarker, rectangleMarker } = require('./markers');
@@ -8,7 +7,6 @@ describe('Legend module', () => {
 
     describe('drawSimpleLegend', () => {
 
-        let testDiv = document.createElement('div');
         let svgNode;
 
         let legendMarkers = [
@@ -84,7 +82,7 @@ describe('Legend module', () => {
             expect(result).toEqual([
                 {
                     type: lineMarker,
-                    domId: 'ts-current',
+                    domId: 'ts-legend-current',
                     domClass: 'line',
                     text: 'Current Year',
                     groupId: 'current-line-marker'
@@ -131,7 +129,7 @@ describe('Legend module', () => {
             expect(result).toEqual([
                 {
                     type: lineMarker,
-                    domId: 'ts-current',
+                    domId: 'ts-legend-current',
                     domClass: 'line',
                     text: 'Current Year',
                     groupId: 'current-line-marker'

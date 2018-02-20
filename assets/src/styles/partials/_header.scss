@@ -42,8 +42,7 @@
     float: right;
 
     ul {
-      margin: 4px 8px;
-      list-style-type: none;
+      @include unstyled-list();
     }
   }
 }
