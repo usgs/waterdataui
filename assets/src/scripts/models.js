@@ -204,27 +204,23 @@ export function parseMedianTimeseries(medianData, timeSeriesStartDateTime, timeS
 export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, timeSeriesUnits) {
 
     // Organize median data by parameter code and timeseries id
-    const dataByTimseriesID = medianData.reduce(function (byTimseriesID, d) {
-        byTimseriesID[d.parameter_cd] = byTimseriesID[d.parameter_cd] || {};
-        byTimseriesID[d.parameter_cd][d.ts_id] = byTimseriesID[d.parameter_cd][d.ts_id] || [];
-        byTimseriesID[d.parameter_cd][d.ts_id].push(d);
-        return byTimseriesID;
+    const dataByTimeseriesID = medianData.reduce(function (byTimeseriesID, d) {
+        byTimeseriesID[d.ts_id] = byTimeseriesID[d.ts_id] || [];
+        byTimeseriesID[d.ts_id].push(d);
+        return byTimeseriesID;
     }, {});
 
-    const timeseries = {};
-    for (let parameterCd of Object.keys(dataByTimseriesID)) {
-        timeseries[parameterCd] = {};
-        for (let timeseriesId of Object.keys(dataByTimseriesID[parameterCd])) {
-            const rows = dataByTimseriesID[parameterCd][timeseriesId];
-            const parsed = parseMedianTimeseries(rows, timeSeriesStartDateTime, timeSeriesEndDateTime, timeSeriesUnits[parameterCd]);
-            timeseries[parameterCd][timeseriesId] = parsed;
-        }
+    const timeSeries = [];
+    for (let tsID of Object.keys(dataByTimeseriesID)) {
+        const rows = dataByTimeseriesID[tsID];
+        const unit = timeSeriesUnits[rows[0].parameter_cd];
+        timeSeries.push(parseMedianTimeseries(rows, timeSeriesStartDateTime, timeSeriesEndDateTime, unit));
     }
 
-    // FIXME: For a quick hack, only show the first set of median data per parameter code.
-    return Object.keys(timeseries).reduce(function (acc, parmCd) {
-        const firstTs = Object.keys(timeseries[parmCd])[0];
-        acc[parmCd] = timeseries[parmCd][firstTs];
+    // FIXME: For a quick hack, only show a single set of median data per parameter code.
+    // Later, return the complete `timeSeries` list.
+    return timeSeries.reduce(function (acc, series) {
+        acc[series.parameter_cd] = series;
         return acc;
     }, {});
 }
