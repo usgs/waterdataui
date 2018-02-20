@@ -23,7 +23,7 @@ const createFocusLine = function(elem, {yScale, currentTsData, compareTsData=nul
     focus.append('line')
         .attr('class', 'focus-line')
         .attr('y1', yScale.range()[0])
-        .attr('y2', yMax !== 0 ? yScale(yMax) : yScale.range()[1]);
+        .attr('y2', yMax ? yScale(yMax) : yScale.range()[1]);
     return focus;
 };
 
@@ -87,7 +87,7 @@ const tsDatumSelector = memoize(tsDataKey => createSelector(
     pointsSelector(tsDataKey),
     tooltipFocusTimeSelector(tsDataKey),
     (points, tooltipFocusTime) => {
-        if (tooltipFocusTime) {
+        if (tooltipFocusTime && points && points.length) {
             return getNearestTime(points, tooltipFocusTime).datum;
         } else {
             return null;
