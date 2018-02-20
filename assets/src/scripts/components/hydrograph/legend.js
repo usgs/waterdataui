@@ -119,7 +119,10 @@ const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
             }
             marker = defineLineMarker(domId, 'line', text, svgGroup);
         } else if (dataItem === 'medianStatistics') {
-            text = `Median ${dataPlotElements.metadata.statistics.description}`;
+            text = 'Median';
+            if (dataPlotElements.metadata.statistics.description) {
+                text = `${text} ${dataPlotElements.metadata.statistics.description}`;
+            }
             let beginYear = dataPlotElements.metadata.statistics.beginYear;
             let endYear = dataPlotElements.metadata.statistics.endYear;
             if (beginYear && endYear) {

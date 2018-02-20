@@ -101,7 +101,7 @@ describe('Legend module', () => {
                     domId: null,
                     domClass: 'median-data-series',
                     groupId: 'median-circle-marker',
-                    text: 'Median Discharge 2010 - 2012',
+                    text: 'Median 2010 - 2012',
                     fill: null
                 }
             ]);
@@ -148,7 +148,7 @@ describe('Legend module', () => {
                     domId: null,
                     domClass: 'median-data-series',
                     groupId: 'median-circle-marker',
-                    text: 'Median Discharge 2010 - 2012',
+                    text: 'Median 2010 - 2012',
                     fill: null
                 },
                 {
@@ -193,7 +193,7 @@ describe('Legend module', () => {
                     }
                 }
             });
-            expect(result[0].text).toEqual('Median Discharge');
+            expect(result[0].text).toEqual('Median');
         });
     });
 
@@ -223,7 +223,8 @@ describe('Legend module', () => {
                 metadata: {
                     statistics: {
                         beginYear: 2010,
-                        endYear: 2012
+                        endYear: 2012,
+                        description: ''
                     }
                 }
             });
@@ -240,7 +241,8 @@ describe('Legend module', () => {
             });
             expect(result.metadata.statistics).toEqual({
                 beginYear: undefined,
-                endYear: undefined
+                endYear: undefined,
+                description: ''
             });
         });
     });
