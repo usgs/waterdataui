@@ -108,7 +108,7 @@ const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
     for (let dataItem of dataPlotElements.dataItems) {
         let hashMarker;
         if (dataItem === 'compare' || dataItem === 'current') {
-            let domId = `ts-${dataItem}`;
+            let domId = `ts-legend-${dataItem}`;
             let svgGroup = `${dataItem}-line-marker`;
             if (dataItem === 'compare') {
                 hashMarker = defineRectangleMarker(null, 'mask', 'Compare Timeseries Mask', null, 'url(#hash-135)');
