@@ -28,7 +28,7 @@ function drawSimpleLegend(svg,
     const verticalRowOffset = 20;
     const svgBBox = svg.node().getBBox();
     const svgWidth = width ? width : svgBBox.width;
-    let rowCounter = 0
+    let rowCounter = 0;
 
     let legend = svg
         .append('g')
