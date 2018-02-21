@@ -2,6 +2,7 @@
 Unit tests for the main WDFN views.
 """
 
+import json
 import re
 from unittest import TestCase, mock
 
@@ -33,6 +34,7 @@ class TestMonitoringLocationView(TestCase):
         self.test_rdb_lines = self.test_rdb_text.split('\n')
         self.test_param_rdb = MOCK_SITE_LIST_2
         self.parameter_lines = self.test_param_rdb.split('\n')
+        self.headers = {'Accept': 'application/ld+json'}
 
     @mock.patch('waterdata.views.execute_get_request')
     def test_everything_okay(self, r_mock):
@@ -43,9 +45,7 @@ class TestMonitoringLocationView(TestCase):
         m_resp_param = mock.Mock()
         m_resp_param.status_code = 200
         m_resp_param.iter_lines.return_value = iter(self.parameter_lines)
-
-        return_values = [m_resp, m_resp_param]
-        r_mock.side_effect = return_values
+        r_mock.side_effect = [m_resp, m_resp_param]
 
         response = self.app_client.get('/monitoring-location/{}?agency_cd=USGS'.format(self.test_site_number))
         self.assertEqual(response.status_code, 200)
@@ -54,8 +54,18 @@ class TestMonitoringLocationView(TestCase):
         # make sure no weird escaping happens when the page responds
         self.assertIn(('https://waterdata.usgs.gov/nwisweb/graph'
                        '?agency_cd=USGS&site_no=01630500&parm_cd=00060&period=100'),
-                      response.data.decode('utf-8')
-                     )
+                      response.data.decode('utf-8'))
+
+        # reset iterators for json-ld tests
+        m_resp.iter_lines.return_value = iter(self.test_rdb_lines)
+        m_resp_param.iter_lines.return_value = iter(self.parameter_lines)
+        r_mock.side_effect = [m_resp, m_resp_param]
+        json_ld_response = self.app_client.get(
+            '/monitoring-location/{}?agency_cd=USGS'.format(self.test_site_number),
+            headers=self.headers
+        )
+        self.assertEqual(json_ld_response.status_code, 200)
+        self.assertIsInstance(json.loads(json_ld_response.data), dict)
 
     @mock.patch('waterdata.views.execute_get_request')
     def test_4xx_from_water_services(self, r_mock):
@@ -69,6 +79,13 @@ class TestMonitoringLocationView(TestCase):
         self.assertIn('Site number is invalid.', response.data.decode('utf-8'))
         self.assertNotIn('@context', response.data.decode('utf-8'))
 
+        json_ld_response = self.app_client.get(
+            '/monitoring-location/{}'.format(self.test_site_number),
+            headers=self.headers
+        )
+        self.assertEqual(json_ld_response.status_code, 200)
+        self.assertIsNone(json.loads(json_ld_response.data))
+
     @mock.patch('waterdata.views.execute_get_request')
     def test_5xx_from_water_services(self, r_mock):
         m_resp = mock.Mock()
@@ -79,6 +96,13 @@ class TestMonitoringLocationView(TestCase):
         response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
         self.assertEqual(response.status_code, 503)
 
+        json_ld_response = self.app_client.get(
+            '/monitoring-location/{}'.format(self.test_site_number),
+            headers=self.headers
+        )
+        self.assertEqual(json_ld_response.status_code, 503)
+        self.assertIsNone(json.loads(json_ld_response.data))
+
     @mock.patch('waterdata.views.execute_get_request')
     def test_agency_cd(self, r_mock):
         r_mock.return_value.status_code = 500
@@ -88,9 +112,7 @@ class TestMonitoringLocationView(TestCase):
                                   params={'site': self.test_site_number,
                                           'agencyCd': 'USGS',
                                           'siteOutput': 'expanded',
-                                          'format': 'rdb'
-                                         }
-                                 )
+                                          'format': 'rdb'})
         self.assertEqual(response.status_code, 503)
 
 
