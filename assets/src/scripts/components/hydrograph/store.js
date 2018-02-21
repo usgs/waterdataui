@@ -1,8 +1,10 @@
+const merge = require('lodash/merge');
 const { applyMiddleware, createStore, compose } = require('redux');
 const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData } = require('../../models');
+const { normalize } = require('./schema');
 
 
 export const Actions = {
@@ -10,9 +12,11 @@ export const Actions = {
         return function (dispatch) {
             const timeSeries = getTimeseries({sites: [siteno], params, startDate, endDate}).then(
                 series => {
-                    dispatch(Actions.addTimeseries('current', series));
+                    const collection = normalize(series[1], 'current');
+                    dispatch(Actions.addSeriesCollection('current', collection));
+                    dispatch(Actions.addTimeseries('current', series[0]));
                     // Trigger a call to get last year's data
-                    dispatch(Actions.retrieveCompareTimeseries(siteno, series[0].startTime, series[0].endTime));
+                    dispatch(Actions.retrieveCompareTimeseries(siteno, series[0][0].startTime, series[0][0].endTime));
 
                     return series;
                 },
@@ -21,15 +25,14 @@ export const Actions = {
                 }
             );
             const medianStatistics = getMedianStatistics({sites: [siteno]});
-            Promise.all([timeSeries, medianStatistics]).then((data) => {
-                const [series, stats] = data;
+            Promise.all([timeSeries, medianStatistics]).then(([[series, newSeries], stats]) => {
                 const startDate = series[0].startTime;
                 const endDate = series[0].endTime;
                 const units = series.reduce((units, series) => {
                     units[series.code] = series.unit;
                     return units;
                 }, {});
-                let plotableStats = parseMedianData(stats, startDate, endDate, units);
+                let [plotableStats, newPlottableStats] = parseMedianData(stats, startDate, endDate, units);
                 dispatch(Actions.setMedianStatistics(plotableStats));
             });
         };
@@ -37,7 +40,11 @@ export const Actions = {
     retrieveCompareTimeseries(site, startTime, endTime) {
         return function (dispatch) {
             return getPreviousYearTimeseries({site, startTime, endTime}).then(
-                series => dispatch(Actions.addTimeseries('compare', series, false)),
+                series => {
+                    const collection = normalize(series[1], 'compare');
+                    dispatch(Actions.addSeriesCollection('compare', collection));
+                    dispatch(Actions.addTimeseries('compare', series[0], false));
+                },
                 () => dispatch(Actions.resetTimeseries('compare'))
             );
         };
@@ -59,6 +66,14 @@ export const Actions = {
                 acc[series.code] = series;
                 return acc;
             }, {})
+        };
+    },
+    addSeriesCollection(key, data, show=true) {
+        return {
+            type: 'ADD_TIMESERIES_COLLECTION',
+            key,
+            show,
+            data
         };
     },
     resetTimeseries(key) {
@@ -121,6 +136,16 @@ export const timeSeriesReducer = function (state={}, action) {
                 // one after sorting by ID.
                 currentParameterCode: state.currentParameterCode ||
                     action.data[Object.keys(action.data).sort()[0]].code
+            };
+
+        case 'ADD_TIMESERIES_COLLECTION':
+            return {
+                ...state,
+                series: merge({}, state.series, action.data),
+                showSeries: {
+                    ...state.showSeries,
+                    [action.key]: action.show
+                }
             };
 
         case 'TOGGLE_TIMESERIES':

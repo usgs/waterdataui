@@ -45,7 +45,7 @@ export function getTimeseries({sites, params=null, startDate=null, endDate=null}
     return get(url)
         .then((response) => {
             let data = JSON.parse(response);
-            return data.value.timeSeries.map(series => {
+            return [data.value.timeSeries.map(series => {
                 let noDataValue = series.variable.noDataValue;
                 const qualifierMapping = series.values[0].qualifier.reduce((map, qualifier) => {
                     map[qualifier.qualifierCode] = qualifier.qualifierDescription;
@@ -79,7 +79,7 @@ export function getTimeseries({sites, params=null, startDate=null, endDate=null}
                         };
                     })
                 };
-            });
+            }), data];
         })
         .catch(reason => {
             console.error(reason);
@@ -219,10 +219,10 @@ export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesE
 
     // FIXME: For a quick hack, only show a single set of median data per parameter code.
     // Later, return the complete `timeSeries` list.
-    return timeSeries.reduce(function (acc, series) {
+    return [timeSeries.reduce(function (acc, series) {
         acc[series.code] = series;
         return acc;
-    }, {});
+    }, {}), timeSeries];
 }
 
 export function getPreviousYearTimeseries({site, startTime, endTime}) {

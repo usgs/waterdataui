@@ -58,7 +58,7 @@ describe('Models module', () => {
         });
 
         it('getTimeseries parses valid response data', (done) => {
-            models.getTimeseries({sites: [siteID], params: [paramCode]}).then((series) => {
+            models.getTimeseries({sites: [siteID], params: [paramCode]}).then(([series, newSeries]) => {
                 expect(series.length).toBe(1);
                 expect(series[0].code).toBe(paramCode);
                 expect(series[0].name).toBe('Streamflow, ft³/s');
@@ -123,7 +123,7 @@ describe('Models module', () => {
         });
 
         it('Parses valid data', () => {
-            models.getPreviousYearTimeseries({site: siteID, startTime: startDate, endTime: endDate}).then((series) => {
+            models.getPreviousYearTimeseries({site: siteID, startTime: startDate, endTime: endDate}).then(([series, newSeries]) => {
                 expect(series.length).toBe(1);
                 expect(series[0].code).toBe(paramCode);
                 expect(series[0].name).toBe('Streamflow, ft³/s');
@@ -137,8 +137,6 @@ describe('Models module', () => {
                 done();
             });
         })
-
-
     });
 
     describe('parseRDB', () => {
@@ -231,6 +229,7 @@ describe('Models module', () => {
         });
     });
 });
+
 
 const MOCK_LAST_YEAR_DATA = `
 {"name" : "ns1:timeSeriesResponseType",
