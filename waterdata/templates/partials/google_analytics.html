@@ -1,0 +1,12 @@
+{% if config.GA_TRACKING_CODE %}
+    <script>
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', "{{ config.GA_TRACKING_CODE }}", 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+{% endif %}
+
+{% if config.ENABLE_USGS_GA %}
+    <script type="application/javascript" src="https://www2.usgs.gov/scripts/analytics/usgs-analytics.js"></script>
+{%  endif %}
