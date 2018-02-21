@@ -9,7 +9,7 @@ const SERVICE_ROOT = window.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis
 const PAST_SERVICE_ROOT = window.PAST_SERVICE_ROOT  || 'https://nwis.waterservices.usgs.gov/nwis';
 
 // Create a time formatting function from D3's timeFormat
-const formatTime = timeFormat('%c %Z');
+const formatTime = timeFormat('%x, %X');
 const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
 function olderThan120Days(date) {
@@ -64,6 +64,7 @@ export function getTimeseries({sites, params=null, startDate=null, endDate=null}
                     description: series.variable.variableDescription,
                     values: series.values[0].value.map(datum => {
                         let date = new Date(datum.dateTime);
+                        let tzAbbrev = date.toString().match(/\(([^)]+)\)/)[1];
                         let value = parseFloat(datum.value);
                         if (value === noDataValue) {
                             value = null;
@@ -75,7 +76,7 @@ export function getTimeseries({sites, params=null, startDate=null, endDate=null}
                             qualifiers: datum.qualifiers,
                             approved: datum.qualifiers.indexOf('A') > -1,
                             estimated: datum.qualifiers.indexOf('E') > -1,
-                            label: `${formatTime(date)}\n${value || ''} ${value ? series.variable.unit.unitCode : ''} (${qualifierDescriptions.join(', ')})`
+                            label: `${formatTime(date)} ${tzAbbrev}\n${value || ''} ${value ? series.variable.unit.unitCode : ''} (${qualifierDescriptions.join(', ')})`
                         };
                     })
                 };
