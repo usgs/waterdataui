@@ -64,6 +64,9 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
         .selectAll('tr')
         .data(availableTimeseries)
         .enter().append('tr')
+            .attr('ga-on', 'click')
+            .attr('ga-event-category', 'TimeseriesGraph')
+            .attr('ga-event-action', 'selectTimeSeries')
             .classed('selected', parm => parm[1].selected)
             .on('click', dispatch(function (parm) {
                 if (!parm[1].selected) {

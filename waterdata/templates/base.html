@@ -4,6 +4,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        {% include 'partials/google_analytics.html' %}
+
         <link rel="shortcut icon" type="image/ico" href="{{ config.STATIC_ROOT }}/img/usgs_favicon.ico">
         <link rel="stylesheet" href="{{ config.STATIC_ROOT }}/main.css?v={{ config.APP_VERSION }}">
         <script type="text/javascript">var SERVICE_ROOT = '{{ config.SERVICE_ROOT }}/nwis';</script>
