@@ -9,7 +9,7 @@ const SERVICE_ROOT = window.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis
 const PAST_SERVICE_ROOT = window.PAST_SERVICE_ROOT  || 'https://nwis.waterservices.usgs.gov/nwis';
 
 // Create a time formatting function from D3's timeFormat
-const formatTime = timeFormat('%x, %X');
+const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');
 const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
 function olderThan120Days(date) {
