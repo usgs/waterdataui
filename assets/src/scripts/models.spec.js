@@ -69,6 +69,21 @@ describe('Models module', () => {
                 expect(series[0].endTime).
                     toEqual(new Date('1/9/2018, 2:15:00 PM -0600'));
                 expect(series[0].values.length).toBe(670);
+                // grab a data point to make sure it's okay
+                const dataPoint = series[0].values[0];
+                expect(Object.keys(dataPoint)).toEqual(
+                    [
+                        'time',
+                        'value',
+                        'qualifiers',
+                        'approved',
+                        'estimated',
+                        'label'
+                    ]
+                );
+                expect(RegExp(
+                    '[0-9]{1,}.{1}[0-9]{1,}.{1}[0-9]{1,}, [0-9]{1,}:[0-9]{2}:[0-9]{2} [AP]M [A-Z]{2,}'
+                ).test(dataPoint.label)).toBeTruthy();
                 done();
             });
         });
