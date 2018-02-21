@@ -101,7 +101,7 @@ describe('Legend module', () => {
                     domId: null,
                     domClass: 'median-data-series',
                     groupId: 'median-circle-marker',
-                    text: 'Median Discharge 2010 - 2012',
+                    text: 'Median 2010 - 2012',
                     fill: null
                 }
             ]);
@@ -148,7 +148,7 @@ describe('Legend module', () => {
                     domId: null,
                     domClass: 'median-data-series',
                     groupId: 'median-circle-marker',
-                    text: 'Median Discharge 2010 - 2012',
+                    text: 'Median 2010 - 2012',
                     fill: null
                 },
                 {
@@ -193,7 +193,7 @@ describe('Legend module', () => {
                     }
                 }
             });
-            expect(result[0].text).toEqual('Median Discharge');
+            expect(result[0].text).toEqual('Median');
         });
     });
 
@@ -201,23 +201,30 @@ describe('Legend module', () => {
 
         it('should return a marker if a time series is shown', () => {
             let result = legendDisplaySelector({
-                showSeries:
-                    {
-                        current: true,
-                        compare: false,
-                        medianStatistics: true
-                    },
-                statisticalMetaData: {
-                    'beginYear': 2010,
-                    'endYear': 2012
+                tsData: {
+                    medianStatistics: {
+                        '00060': {
+                            medianMetadata: {
+                                beginYear: 2010,
+                                endYear: 2012
+                            }
+                        }
                     }
+                },
+                showSeries: {
+                    current: true,
+                    compare: false,
+                    medianStatistics: true
+                },
+                currentParameterCode: '00060'
             });
             expect(result).toEqual({
                 dataItems: ['current', 'medianStatistics'],
                 metadata: {
                     statistics: {
                         beginYear: 2010,
-                        endYear: 2012
+                        endYear: 2012,
+                        description: ''
                     }
                 }
             });
@@ -225,15 +232,17 @@ describe('Legend module', () => {
 
         it('should not choke if statisticalMetadata years are absent', () => {
             let result = legendDisplaySelector({
-                showSeries:
-                    {
-                        medianStatistics: true
-                    },
-                statisticalMetaData: {}
+                tsData: {
+                    medianStatistics: {}
+                },
+                showSeries: {
+                    medianStatistics: true
+                }
             });
             expect(result.metadata.statistics).toEqual({
                 beginYear: undefined,
-                endYear: undefined
+                endYear: undefined,
+                description: ''
             });
         });
     });

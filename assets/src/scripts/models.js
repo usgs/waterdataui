@@ -1,6 +1,6 @@
 const { timeFormat, utcFormat } = require('d3-time-format');
 const { get } = require('./ajax');
-const { deltaDays } = require('./utils');
+const { deltaDays, replaceHtmlEntities } = require('./utils');
 
 
 // Define Water Services root URL - use global variable if defined, otherwise
@@ -23,12 +23,12 @@ function tsServiceRoot(date) {
 /**
  * Get a given timeseries dataset from Water Services.
  * @param  {Array}    sites  Array of site IDs to retrieve.
- * @param  {Array}    params List of parameter codes
+ * @param  {Array}    params Optional array of parameter codes
  * @param {Date} startDate
  * @param {Date} endData
  * @return {Promise} resolves to an array of timeseries model object, rejects to an error
  */
-export function getTimeseries({sites, params=['00060'], startDate=null, endDate=null}) {
+export function getTimeseries({sites, params=null, startDate=null, endDate=null}) {
     let timeParams;
     let serviceRoot;
     if (!startDate && !endDate) {
@@ -40,53 +40,57 @@ export function getTimeseries({sites, params=['00060'], startDate=null, endDate=
         timeParams = `startDT=${startString}&endDT=${endString}`;
         serviceRoot = tsServiceRoot(startDate);
     }
-    let url = `${serviceRoot}/iv/?sites=${sites.join(',')}&parameterCd=${params.join(',')}&${timeParams}&indent=on&siteStatus=all&format=json`;
+    let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
+    let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${paramCds}&${timeParams}&indent=on&siteStatus=all&format=json`;
     return get(url)
         .then((response) => {
-                let data = JSON.parse(response);
-                return data.value.timeSeries.map(series => {
-                        const startDate = new Date(series.values[0].value[0].dateTime);
-                        const endDate = new Date(
-                            series.values[0].value.slice(-1)[0].dateTime);
-                        const noDataValue = series.variable.noDataValue;
-                        const qualifierMapping = series.values[0].qualifier.reduce((map, qualifier) => {
-                            map[qualifier.qualifierCode] = qualifier.qualifierDescription;
-                            return map;
-                        }, {})
+            let data = JSON.parse(response);
+            return data.value.timeSeries.map(series => {
+                let noDataValue = series.variable.noDataValue;
+                const qualifierMapping = series.values[0].qualifier.reduce((map, qualifier) => {
+                    map[qualifier.qualifierCode] = qualifier.qualifierDescription;
+                    return map;
+                }, {});
+                return {
+                    id: series.name,
+                    code: series.variable.variableCode[0].value,
+                    name: replaceHtmlEntities(series.variable.variableName),
+                    type: series.variable.valueType,
+                    unit: series.variable.unit.unitCode,
+                    startTime: series.values[0].value.length ?
+                        new Date(series.values[0].value[0].dateTime) : null,
+                    endTime: series.values[0].value.length ?
+                        new Date(series.values[0].value.slice(-1)[0].dateTime) : null,
+                    description: series.variable.variableDescription,
+                    values: series.values[0].value.map(datum => {
+                        let date = new Date(datum.dateTime);
+                        let value = parseFloat(datum.value);
+                        if (value === noDataValue) {
+                            value = null;
+                        }
+                        const qualifierDescriptions = datum.qualifiers.map((qualifier) => qualifierMapping[qualifier]);
                         return {
-                            code: series.variable.variableCode[0].value,
-                            variableName: series.variable.variableName,
-                            variableDescription: series.variable.variableDescription,
-                            seriesStartDate: startDate,
-                            seriesEndDate: endDate,
-                            values: series.values[0].value.map(datum => {
-                                let date = new Date(datum.dateTime);
-                                let value = parseFloat(datum.value);
-                                const qualifierDescriptions = datum.qualifiers.map((qualifier) => qualifierMapping[qualifier]);
-                                if (value === noDataValue) {
-                                    value = null;
-                                }
-                                return {
-                                    time: date,
-                                    value: value,
-                                    qualifiers: datum.qualifiers,
-                                    approved: datum.qualifiers.indexOf('A') > -1,
-                                    estimated: datum.qualifiers.indexOf('E') > -1,
-                                    label: `${formatTime(date)}\n${value} ${series.variable.unit.unitCode} (${qualifierDescriptions.join(', ')})`
-                                };
-                            })
+                            time: date,
+                            value: value,
+                            qualifiers: datum.qualifiers,
+                            approved: datum.qualifiers.indexOf('A') > -1,
+                            estimated: datum.qualifiers.indexOf('E') > -1,
+                            label: `${formatTime(date)}\n${value || ''} ${value ? series.variable.unit.unitCode : ''} (${qualifierDescriptions.join(', ')})`
                         };
-                    }
-                );
-            },
-            (error) => {
-                return error;
+                    })
+                };
             });
+        })
+        .catch(reason => {
+            console.error(reason);
+            return [];
+        });
 }
 
 
-export function getSiteStatistics({sites, statType, params=['00060']}) {
-    let url = `${SERVICE_ROOT}/stat/?format=rdb&sites=${sites.join(',')}&statReportType=daily&statTypeCd=${statType}&parameterCd=${params.join(',')}`;
+export function getSiteStatistics({sites, statType, params=null}) {
+    let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
+    let url = `${SERVICE_ROOT}/stat/?format=rdb&sites=${sites.join(',')}&statReportType=daily&statTypeCd=${statType}${paramCds}`;
     return get(url);
 }
 
@@ -133,54 +137,92 @@ export function isLeapYear(year) {
 }
 
 /**
- *  Read median RDB data into something that makes sense
- *
+ * Parse one median timeseries dataset.
  * @param medianData
  * @param timeSeriesStartDateTime
  * @param timeSeriesEndDateTime
  * @param timeSeriesUnit
  * @returns {object}
  */
-export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, timeSeriesUnit) {
+export function parseMedianTimeseries(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, timeSeriesUnit) {
     let values = [];
-    let sliceValues = [];
-    let beginYear;
-    let endYear;
-    if (medianData.length > 0) {
-        let firstRecord = medianData[0];
-        beginYear = firstRecord.begin_yr;
-        endYear = firstRecord.end_yr;
-        let yearPresent = timeSeriesEndDateTime.getFullYear();
-        let yearPrevious = yearPresent - 1;
-        // calculate the number of days to display
-        let days = deltaDays(timeSeriesStartDateTime, timeSeriesEndDateTime);
-        for (let medianDatum of medianData) {
-            let month = medianDatum.month_nu-1;
-            let day = medianDatum.day_nu;
-            let recordDate = new Date(yearPresent, month, day);
-            if (!(new Date(yearPresent, 0, 1) <= recordDate && recordDate <= timeSeriesEndDateTime)) {
-                recordDate = new Date(yearPrevious, month, day);
-            }
-            let median = {
-                time: recordDate,
-                value: parseFloat(medianDatum.p50_va),
-                label: `${medianDatum.p50_va} ${timeSeriesUnit}`
-            };
-            // don't include leap days if it's not a leap year
-            if (!isLeapYear(recordDate.getFullYear())) {
-                if (!(month == 1 && day == 29)) {
-                    values.push(median);
-                }
-            } else {
+
+    let yearPresent = timeSeriesEndDateTime.getFullYear();
+    let yearPrevious = yearPresent - 1;
+
+    // calculate the number of days to display
+    let days = deltaDays(timeSeriesStartDateTime, timeSeriesEndDateTime);
+    for (let medianDatum of medianData) {
+        let month = medianDatum.month_nu - 1;
+        let day = medianDatum.day_nu;
+        let recordDate = new Date(yearPresent, month, day);
+        if (!(new Date(yearPresent, 0, 1) <= recordDate && recordDate <= timeSeriesEndDateTime)) {
+            recordDate = new Date(yearPrevious, month, day);
+        }
+        let median = {
+            time: recordDate,
+            value: parseFloat(medianDatum.p50_va),
+            label: `${medianDatum.p50_va} ${timeSeriesUnit}`
+        };
+        // don't include leap days if it's not a leap year
+        if (!isLeapYear(recordDate.getFullYear())) {
+            if (!(month == 1 && day == 29)) {
                 values.push(median);
             }
+        } else {
+            values.push(median);
         }
-        //return array with times sorted in ascending order
-        sliceValues = values.sort(function(a, b){
-           return a.time - b.time;
-        }).slice(values.length-days, values.length);
     }
-    return {beginYear: beginYear, endYear: endYear, values: sliceValues};
+
+    return {
+        id: medianData[0].ts_id,
+        code: medianData[0].parameter_cd,
+        name: medianData[0].loc_web_ds,
+        type: 'Statistic',
+        unit: timeSeriesUnit,
+        startTime: timeSeriesStartDateTime,
+        endTime: timeSeriesEndDateTime,
+        description: medianData[0].loc_web_ds,
+        medianMetadata: {
+            beginYear: medianData[0].begin_yr,
+            endYear: medianData[0].end_yr
+        },
+        values: values.sort(function(a, b){
+           return a.time - b.time;
+        }).slice(values.length - days, values.length)
+    };
+}
+
+/**
+ * Read median RDB data into something that makes sense.
+ * @param medianData
+ * @param timeSeriesStartDateTime
+ * @param timeSeriesEndDateTime
+ * @param timeSeriesUnit
+ * @returns {object}
+ */
+export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, timeSeriesUnits) {
+
+    // Organize median data by parameter code and timeseries id
+    const dataByTimeseriesID = medianData.reduce(function (byTimeseriesID, d) {
+        byTimeseriesID[d.ts_id] = byTimeseriesID[d.ts_id] || [];
+        byTimeseriesID[d.ts_id].push(d);
+        return byTimeseriesID;
+    }, {});
+
+    const timeSeries = [];
+    for (let tsID of Object.keys(dataByTimeseriesID)) {
+        const rows = dataByTimeseriesID[tsID];
+        const unit = timeSeriesUnits[rows[0].parameter_cd];
+        timeSeries.push(parseMedianTimeseries(rows, timeSeriesStartDateTime, timeSeriesEndDateTime, unit));
+    }
+
+    // FIXME: For a quick hack, only show a single set of median data per parameter code.
+    // Later, return the complete `timeSeries` list.
+    return timeSeries.reduce(function (acc, series) {
+        acc[series.code] = series;
+        return acc;
+    }, {});
 }
 
 export function getPreviousYearTimeseries({site, startTime, endTime}) {
@@ -192,7 +234,7 @@ export function getPreviousYearTimeseries({site, startTime, endTime}) {
     return getTimeseries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
 }
 
-export function getMedianStatistics({sites, params=['00060']}) {
+export function getMedianStatistics({sites, params=null}) {
     let medianRDB = getSiteStatistics({sites: sites, statType: 'median', params: params});
     return medianRDB.then((response) => {
         return parseRDB(response);

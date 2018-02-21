@@ -12,7 +12,8 @@ const { dispatch, link, provide } = require('../../lib/redux');
 const { appendAxes, axesSelector } = require('./axes');
 const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
-const { pointsSelector, lineSegmentsSelector, isVisibleSelector, MASK_DESC } = require('./points');
+const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
+const { pointsSelector, lineSegmentsSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC } = require('./timeseries');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
@@ -64,8 +65,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                 .attr('data-title', tsDataKey)
                 .attr('id', `ts-${tsDataKey}`)
                 .attr('d', tsLine);
-        }
-        else {
+        } else {
             const maskCode = line.classes.dataMask.toLowerCase();
             const maskDisplayName = MASK_DESC[maskCode].replace(' ', '-').toLowerCase();
             const [xDomainStart, xDomainEnd] = extent(line.points, d => d.time);
@@ -193,8 +193,8 @@ const timeSeriesGraph = function (elem) {
         .append('svg')
             .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({
-                title: state => state.title,
-                description: state => state.desc,
+                titleSelector,
+                descriptionSelector,
                 isInteractive: () => true
             })))
             .call(createTooltipText)
@@ -236,13 +236,16 @@ const timeSeriesGraph = function (elem) {
                     yscale: yScaleSelector,
                     medianStatsData: pointsSelector('medianStatistics'),
                     showLabel: (state) => state.showMedianStatsLabel
-
                 })));
+
+    elem.call(link(plotSeriesSelectTable, createStructuredSelector({
+        availableTimeseries: availableTimeseriesSelector
+    })));
 
     elem.append('div')
         .call(link(addSROnlyTable, createStructuredSelector({
             columnNames: createSelector(
-                (state) => state.title,
+                titleSelector,
                 (title) => [title, 'Time']
             ),
             data: createSelector(
@@ -258,7 +261,7 @@ const timeSeriesGraph = function (elem) {
     elem.append('div')
         .call(link(addSROnlyTable, createStructuredSelector({
             columnNames: createSelector(
-                (state) => state.title,
+                titleSelector,
                 (title) => [`Median ${title}`, 'Time']
             ),
             data: createSelector(

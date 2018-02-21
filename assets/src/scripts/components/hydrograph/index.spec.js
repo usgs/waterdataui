@@ -27,16 +27,28 @@ describe('Hydrograph charting module', () => {
     it('single data point renders', () => {
         const store = configureStore({
             tsData: {
-                current: [{
-                    time: new Date(),
-                    value: 10,
-                    label: 'Label',
-                    qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
-                }],
-                compare: [],
-                medianStatistics: []
+                current: {
+                    '00060': {
+                        values: [{
+                            time: new Date(),
+                            value: 10,
+                            label: 'Label',
+                            qualifiers: ['P'],
+                            approved: false,
+                            estimated: false
+                        }],
+                    }
+                },
+                compare: {
+                    '00060': {
+                        values: []
+                    }
+                },
+                medianStatistics: {
+                    '00060': {
+                        values: []
+                    }
+                }
             },
             showSeries: {
                 current: true,
@@ -61,16 +73,28 @@ describe('Hydrograph charting module', () => {
         beforeEach(() => {
             const store = configureStore({
                 tsData: {
-                    current: [{
-                        time: new Date(),
-                        value: 10,
-                        label: 'Label',
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
-                    }],
-                    compare: [],
-                    medianStatistics: []
+                    current: {
+                        '00060': {
+                            values: [{
+                                time: new Date(),
+                                value: 10,
+                                label: 'Label',
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }],
+                        },
+                    },
+                    compare: {
+                        '00060': {
+                            values: []
+                        }
+                    },
+                    medianStatistics: {
+                        '00060': {
+                            values: []
+                        }
+                    },
                 },
                 showSeries: {
                     current: true,
@@ -106,25 +130,35 @@ describe('Hydrograph charting module', () => {
         beforeEach(() => {
             store = configureStore({
                 tsData: {
-                    current: [
-                        {
-                            time: new Date(),
-                            value: 10,
-                            label: 'Label',
-                            qualifiers: ['P'],
-                            approved: false,
-                            estimated: false
-                        }, {
-                            time: new Date(),
-                            value: null,
-                            label: 'Masked Data',
-                            qualifiers: ['P', 'FLD'],
-                            approved: false,
-                            estimated: false
+                    current: {
+                        '00060': {
+                            values: [{
+                                time: new Date(),
+                                value: 10,
+                                label: 'Label',
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                time: new Date(),
+                                value: null,
+                                label: 'Masked Data',
+                                qualifiers: ['P', 'FLD'],
+                                approved: false,
+                                estimated: false
+                            }],
+                        },
+                    },
+                    compare: {
+                        '00060': {
+                            values: []
                         }
-                    ],
-                    compare: [],
-                    medianStatistics: MOCK_MEDIAN_STAT_DATA
+                    },
+                    medianStatistics: {
+                        '00060': {
+                            values: MOCK_MEDIAN_STAT_DATA
+                        }
+                    }
                 },
                 showSeries: {
                     current: true,
@@ -134,7 +168,8 @@ describe('Hydrograph charting module', () => {
                 title: 'My Title',
                 desc: 'My Description',
                 showMedianStatsLabel: false,
-                width: 400
+                width: 400,
+                currentParameterCode: '00060'
             });
             select(graphNode)
                 .call(provide(store))
@@ -187,25 +222,35 @@ describe('Hydrograph charting module', () => {
         beforeEach(() => {
             store = configureStore({
                 tsData: {
-                    current: [{
-                        time: new Date(),
-                        value: 10,
-                        label: 'Label',
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
-
-                    }],
-                    compare: [{
-                        time: new Date(),
-                        value: 10,
-                        label: 'Label',
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
-
-                    }],
-                    medianStatistics: []
+                    current: {
+                        '00060': {
+                            values: [{
+                                time: new Date(),
+                                value: 10,
+                                label: 'Label',
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }],
+                        }
+                    },
+                    compare: {
+                        '00060': {
+                            values: [{
+                                time: new Date(),
+                                value: 10,
+                                label: 'Label',
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }],
+                        }
+                    },
+                    medianStatistics: {
+                        '00060': {
+                            values: []
+                        }
+                    }
                 },
                 showSeries: {
                     current: true,
@@ -214,6 +259,7 @@ describe('Hydrograph charting module', () => {
                 },
                 title: 'My Title',
                 desc: 'My Description',
+                currentParameterCode: '00060'
             });
             select(graphNode)
                 .call(provide(store))

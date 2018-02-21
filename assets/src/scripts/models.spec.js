@@ -1,6 +1,6 @@
 let proxyquire = require('proxyquireify')(require);
 
-const { parseRDB, parseMedianData, isLeapYear } = require('./models');
+const { parseRDB, parseMedianTimeseries, isLeapYear } = require('./models');
 
 
 describe('Models module', () => {
@@ -61,12 +61,12 @@ describe('Models module', () => {
             models.getTimeseries({sites: [siteID], params: [paramCode]}).then((series) => {
                 expect(series.length).toBe(1);
                 expect(series[0].code).toBe(paramCode);
-                expect(series[0].variableName).toBe('Streamflow, ft&#179;/s');
-                expect(series[0].variableDescription).
+                expect(series[0].name).toBe('Streamflow, ft³/s');
+                expect(series[0].description).
                     toBe('Discharge, cubic feet per second');
-                expect(series[0].seriesStartDate).
+                expect(series[0].startTime).
                     toEqual(new Date('1/2/2018, 3:00:00 PM -0600'));
-                expect(series[0].seriesEndDate).
+                expect(series[0].endTime).
                     toEqual(new Date('1/9/2018, 2:15:00 PM -0600'));
                 expect(series[0].values.length).toBe(670);
                 done();
@@ -126,12 +126,12 @@ describe('Models module', () => {
             models.getPreviousYearTimeseries({site: siteID, startTime: startDate, endTime: endDate}).then((series) => {
                 expect(series.length).toBe(1);
                 expect(series[0].code).toBe(paramCode);
-                expect(series[0].variableName).toBe('Streamflow, ft&#179;/s');
-                expect(series[0].variableDescription).
+                expect(series[0].name).toBe('Streamflow, ft³/s');
+                expect(series[0].description).
                     toBe('Discharge, cubic feet per second');
-                expect(series[0].seriesStartDate).
+                expect(series[0].startTime).
                     toEqual(new Date('1/2/2017, 3:00:00 PM -0600'));
-                expect(series[0].seriesEndDate).
+                expect(series[0].endTime).
                     toEqual(new Date('1/2/2017, 4:45:00 PM -0600'));
                 expect(series[0].values.length).toBe(8);
                 done();
@@ -160,7 +160,7 @@ describe('Models module', () => {
         });
     });
 
-    describe('parseMedianData', () => {
+    describe('parseMedianTimeseries', () => {
 
         const unit = 'ft3/s';
 
@@ -170,18 +170,13 @@ describe('Models module', () => {
         const leapEndDate = new Date(2016, 2, 14);
 
         it('parseMedian data successfully constructs data for plotting', () => {
-            let result = parseMedianData(MOCK_MEDIAN_DATA, startDate, endDate, unit);
+            let result = parseMedianTimeseries(MOCK_MEDIAN_DATA, startDate, endDate, unit);
             expect(result.values.length).toEqual(3);
             expect(result.values[0]).toEqual({time: new Date(2017, 7, 5), value: 15, label: '15 ft3/s'});
         });
 
-        it('parseMedian data handles empty data', () => {
-            let result = parseMedianData([], startDate, endDate, unit);
-            expect(result.values.length).toEqual(0);
-        });
-
         it('parseMedian data includes leap year when appropriate', () => {
-            let result = parseMedianData(MOCK_MEDIAN_DATA, leapStartDate, leapEndDate, unit);
+            let result = parseMedianTimeseries(MOCK_MEDIAN_DATA, leapStartDate, leapEndDate, unit);
             expect(result.values.length).toEqual(4);
             expect(result.values[3]).toEqual({time: new Date(2016, 1, 29), value: 13, label: '13 ft3/s'});
         })

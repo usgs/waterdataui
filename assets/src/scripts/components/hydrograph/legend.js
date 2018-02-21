@@ -2,7 +2,7 @@
 const { createSelector } = require('reselect');
 const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
 const { CIRCLE_RADIUS } = require('./layout');
-const { MASK_DESC } = require('./points');
+const { MASK_DESC } = require('./timeseries');
 
 
 /**
@@ -119,7 +119,10 @@ const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
             }
             marker = defineLineMarker(domId, 'line', text, svgGroup);
         } else if (dataItem === 'medianStatistics') {
-            text = 'Median Discharge';
+            text = 'Median';
+            if (dataPlotElements.metadata.statistics.description) {
+                text = `${text} ${dataPlotElements.metadata.statistics.description}`;
+            }
             let beginYear = dataPlotElements.metadata.statistics.beginYear;
             let endYear = dataPlotElements.metadata.statistics.endYear;
             if (beginYear && endYear) {
@@ -154,8 +157,11 @@ const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
  */
 const legendDisplaySelector = createSelector(
     (state) => state.showSeries,
-    (state) => state.statisticalMetaData,
-    (showSeries, statisticalMetaData) => {
+    (state) => state.tsData,
+    (state) => state.currentParameterCode,
+    (showSeries, tsData, currentParameterCode) => {
+        const medianTS = tsData.medianStatistics[currentParameterCode] || {};
+        const statisticalMetaData = medianTS.medianMetadata || {};
         let shownSeries = [];
         let dataPlotElements = {};
         for (let key in showSeries) {
@@ -170,7 +176,8 @@ const legendDisplaySelector = createSelector(
         dataPlotElements.metadata = {
             statistics: {
                 beginYear: statisticalMetaData.beginYear ? statisticalMetaData.beginYear : undefined,
-                endYear: statisticalMetaData.endYear ? statisticalMetaData.endYear : undefined
+                endYear: statisticalMetaData.endYear ? statisticalMetaData.endYear : undefined,
+                description: medianTS.description || ''
             }
         };
         return dataPlotElements;

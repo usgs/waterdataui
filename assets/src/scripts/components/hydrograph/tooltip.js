@@ -1,11 +1,12 @@
 
 const { max, bisector } = require('d3-array');
 const { mouse } = require('d3-selection');
-const { createSelector, createStructuredSelector, defaultMemoize: memoize } = require('reselect');
+const memoize = require('fast-memoize');
+const { createSelector, createStructuredSelector } = require('reselect');
 
 const { dispatch, link } = require('../../lib/redux');
 
-const { pointsSelector } = require('./points');
+const { pointsSelector } = require('./timeseries');
 const { Actions } = require('./store');
 
 const maxValue = function (data) {
@@ -22,7 +23,7 @@ const createFocusLine = function(elem, {yScale, currentTsData, compareTsData=nul
     focus.append('line')
         .attr('class', 'focus-line')
         .attr('y1', yScale.range()[0])
-        .attr('y2', yMax !== 0 ? yScale(yMax) : yScale.range()[1]);
+        .attr('y2', yMax ? yScale(yMax) : yScale.range()[1]);
     return focus;
 };
 
@@ -86,7 +87,7 @@ const tsDatumSelector = memoize(tsDataKey => createSelector(
     pointsSelector(tsDataKey),
     tooltipFocusTimeSelector(tsDataKey),
     (points, tooltipFocusTime) => {
-        if (tooltipFocusTime) {
+        if (tooltipFocusTime && points && points.length) {
             return getNearestTime(points, tooltipFocusTime).datum;
         } else {
             return null;
@@ -138,7 +139,7 @@ const updateFocusLine = function(elem, {currentTime, xScale}) {
 };
 
 const updateFocusCircle = function(circleFocus, {tsDatum, xScale, yScale}) {
-    if (tsDatum) {
+    if (tsDatum && tsDatum.value) {
         circleFocus.style('display', null)
             .attr('transform',
                 `translate(${xScale(tsDatum.time)}, ${yScale(tsDatum.value)})`);

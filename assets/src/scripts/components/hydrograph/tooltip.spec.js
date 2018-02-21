@@ -75,8 +75,16 @@ describe('Hydrograph tooltip module', () => {
             const thisTime = new Date('2018-02-12');
             let state = {
                 tsData: {
-                    current: data,
-                    compare: data
+                    current: {
+                        '00060': {
+                            values: data
+                        }
+                    },
+                    compare: {
+                        '00060': {
+                            values: data
+                        }
+                    }
                 },
                 tooltipFocusTime: {
                     current: thisTime,
@@ -96,13 +104,22 @@ describe('Hydrograph tooltip module', () => {
         it('Should return the nearest datum for the selected time series', function() {
             let state = {
                 tsData: {
-                    current: data,
-                    compare: data
+                    current: {
+                        '00060': {
+                            values: data
+                        }
+                    },
+                    compare: {
+                        '00060': {
+                            values: data
+                        }
+                    }
                 },
                 tooltipFocusTime: {
                     current: new Date('2018-01-03T14:29:00.000Z'),
                     compare: new Date('2018-01-03T12:31:00.000Z')
-                }
+                },
+                currentParameterCode: '00060'
             };
             expect(tsDatumSelector('current')(state).value).toEqual(14);
             expect(tsDatumSelector('compare')(state).value).toEqual(13);
@@ -146,13 +163,22 @@ describe('Hydrograph tooltip module', () => {
         it('Creates the text elements with the label for the focus times', () => {
             let store = configureStore({
                 tsData: {
-                    current: data,
-                    compare: data
+                    current: {
+                        '00060': {
+                            values: data
+                        }
+                    },
+                    compare: {
+                        '00060': {
+                            values: data
+                        }
+                    }
                 },
                 tooltipFocusTime: {
                     current: new Date('2018-01-03T14:29:00.000Z'),
                     compare: new Date('2018-01-03T12:39:00.000Z')
-                }
+                },
+                currentParameterCode: '00060'
             });
 
             svg.call(provide(store))
@@ -165,13 +191,22 @@ describe('Hydrograph tooltip module', () => {
         it('Text contents are updated when the store is provided with new focus times', () => {
             let store = configureStore({
                 tsData: {
-                    current: data,
-                    compare: data
+                    current: {
+                        '00060': {
+                            values: data
+                        }
+                    },
+                    compare: {
+                        '00060': {
+                            values: data
+                        }
+                    }
                 },
                 tooltipFocusTime: {
                     current: new Date('2018-01-03T14:29:00.000Z'),
                     compare: new Date('2018-01-03T12:39:00.000Z')
-                }
+                },
+                currentParameterCode: '00060'
             });
 
             svg.call(provide(store))
@@ -247,13 +282,22 @@ describe('Hydrograph tooltip module', () => {
         it('Focus circles and line are displayed if time is non null', () => {
             let store = configureStore({
                 tsData: {
-                    current: currentTsData,
-                    compare: compareTsData
+                    current: {
+                        '00060': {
+                            values: currentTsData
+                        }
+                    },
+                    compare: {
+                        '00060': {
+                            values: compareTsData
+                        }
+                    }
                 },
                 tooltipFocusTime: {
                     current: new Date('2018-01-03T14:29:00.000Z'),
                     compare: new Date('2017-01-03T12:39:00.000Z')
-                }
+                },
+                currentParameterCode: '00060'
             });
 
             svg.call(provide(store)).

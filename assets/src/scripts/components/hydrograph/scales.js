@@ -1,9 +1,11 @@
 const { extent } = require('d3-array');
 const { scaleTime } = require('d3-scale');
-const { createSelector, defaultMemoize: memoize } = require('reselect');
+const memoize = require('fast-memoize');
+const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { layoutSelector, MARGIN } = require('./layout');
+const { pointsSelector } = require('./timeseries');
 
 const paddingRatio = 0.2;
 
@@ -43,18 +45,21 @@ function createXScale(values, xSize) {
 
 /**
  * Create an yscale oriented on the bottom
- * @param {Array} tsData - where values are Array contains {value, ...}
+ * @param {Array} tsData - where xScale are Array contains {value, ...}
  * @param {Object} showSeries  - keys match keys in tsData and values are Boolean
  * @param {Number} ySize - range of scale
  * @eturn {Object} d3 scale for value.
  */
-function createYScale(tsData, showSeries, ySize) {
+function createYScale(tsData, parmCd, showSeries, ySize) {
     let yExtent;
 
     // Calculate max and min for data
     for (let key of Object.keys(tsData)) {
-        let points = tsData[key].filter(pt => pt.value !== null);
+        if (!tsData[key][parmCd]) {
+            continue;
+        }
 
+        let points = tsData[key][parmCd].values.filter(pt => pt.value !== null);
         if (!showSeries[key] || points.length === 0) {
             continue;
         }
@@ -92,13 +97,9 @@ function createYScale(tsData, showSeries, ySize) {
  */
 const xScaleSelector = memoize(tsDataKey => createSelector(
     layoutSelector,
-    (state) => state.tsData,
-    (layout, tsData) => {
-        if (tsData[tsDataKey]) {
-            return createXScale(tsData[tsDataKey], layout.width - MARGIN.right);
-        } else {
-            return null;
-        }
+    pointsSelector(tsDataKey),
+    (layout, points) => {
+        return createXScale(points, layout.width - MARGIN.right);
     }
 ));
 
@@ -112,7 +113,8 @@ const yScaleSelector = createSelector(
     layoutSelector,
     (state) => state.tsData,
     (state) => state.showSeries,
-    (layout, tsData, showSeries) => createYScale(tsData, showSeries, layout.height - (MARGIN.top + MARGIN.bottom))
+    state => state.currentParameterCode,
+    (layout, tsData, showSeries, parmCd) => createYScale(tsData, parmCd, showSeries, layout.height - (MARGIN.top + MARGIN.bottom))
 );
 
 
