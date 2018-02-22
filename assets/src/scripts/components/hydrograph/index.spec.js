@@ -216,7 +216,6 @@ describe('Hydrograph charting module', () => {
     });
 
     describe('Adding and removing compare time series', () => {
-        /* eslint no-use-before-define: 0 */
         let store;
         beforeEach(() => {
             store = configureStore({
