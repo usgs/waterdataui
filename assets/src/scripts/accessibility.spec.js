@@ -125,6 +125,17 @@ describe('svgAccessibility tests', () => {
                });
            });
        });
+       it('Table should be removed if recreated with no data', () => {
+           addSROnlyTable(select(document.getElementById('test-div')), {
+               columnNames: columnNames,
+               data: [],
+               describeById: describeById,
+               describeByText: describeByText
+           });
+
+           expect(container.select('table').size()).toBe(0);
+           expect(container.select('div').size()).toBe(0);
+       });
 
     });
 });
