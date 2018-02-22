@@ -1,4 +1,4 @@
-const { lineSegmentsSelector } = require('./timeseries');
+const { lineSegmentsSelector, pointsTableDataSelector } = require('./timeseries');
 
 
 describe('Timeseries module', () => {
@@ -183,6 +183,70 @@ describe('Timeseries module', () => {
                     }]
                 }
             ]);
+        });
+    });
+
+    describe('pointsTableDataSelect', () => {
+        it('Return an empty array if series is not visible', () => {
+            expect(pointsTableDataSelector('current')({
+                tsData: {
+                    current: {
+                        '00060': {
+                            values: [{
+                                value: 10,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: 10,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: true
+                            }, {
+                                value: 10,
+                                qualifiers: ['P', 'Ice'],
+                                approved: false,
+                                estimated: true
+                            }]
+                        }
+                    }
+                },
+                showSeries: {
+                    current: false
+                },
+                currentParameterCode: '00060'
+            })).toEqual([]);
+        });
+
+        it('Return an array of arrays if series is visible', () => {
+            expect(pointsTableDataSelector('current')({
+                tsData: {
+                    current: {
+                        '00060': {
+                            values: [{
+                                time: '2018-01-01',
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: 15,
+                                approved: false,
+                                estimated: true
+                            }, {
+                                value: 10,
+                                time: '2018-01-03',
+                                qualifiers: ['P', 'Ice'],
+                                approved: false,
+                                estimated: true
+                            }]
+                        }
+                    }
+                },
+                showSeries: {
+                    current: true
+                },
+                currentParameterCode: '00060'
+            })).toEqual([['', '2018-01-01', 'P'], [15, '', ''], [10, '2018-01-03', 'P, Ice']]);
         });
     });
 });

@@ -13,7 +13,7 @@ const { appendAxes, axesSelector } = require('./axes');
 const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
-const { pointsSelector, lineSegmentsSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC } = require('./timeseries');
+const { pointsSelector, lineSegmentsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC } = require('./timeseries');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
@@ -246,30 +246,29 @@ const timeSeriesGraph = function (elem) {
         .call(link(addSROnlyTable, createStructuredSelector({
             columnNames: createSelector(
                 titleSelector,
-                (title) => [title, 'Time']
+                (title) => [title, 'Time', 'Qualifiers']
             ),
-            data: createSelector(
-                pointsSelector('current'),
-                points => points.map((value) => {
-                    return [value.value, value.time];
-                })
-            ),
-            describeById: () => 'time-series-sr-desc',
+            data: pointsTableDataSelector('current'),
+            describeById: () => 'current-time-series-sr-desc',
             describeByText: () => 'current time series data in tabular format'
     })));
-
+    elem.append('div')
+        .call(link(addSROnlyTable, createStructuredSelector({
+            columnNames: createSelector(
+                titleSelector,
+                (title) => [title, 'Time', 'Qualifiers']
+            ),
+            data: pointsTableDataSelector('compare'),
+            describeById: () => 'compare-time-series-sr-desc',
+            describeByText: () => 'previous year time series data in tabular format'
+    })));
     elem.append('div')
         .call(link(addSROnlyTable, createStructuredSelector({
             columnNames: createSelector(
                 titleSelector,
                 (title) => [`Median ${title}`, 'Time']
             ),
-            data: createSelector(
-                pointsSelector('medianStatistics'),
-                points => points.map((value) => {
-                    return [value.value, value.time];
-                })
-            ),
+            data: pointsTableDataSelector('medianStatistics'),
             describeById: () => 'median-statistics-sr-desc',
             describeByText: () => 'median statistical data in tabular format'
     })));
