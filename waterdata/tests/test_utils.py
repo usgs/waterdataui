@@ -6,7 +6,28 @@ from unittest import TestCase, mock
 
 import requests as r
 
-from ..utils import execute_get_request, parse_rdb
+from ..utils import construct_url, execute_get_request, parse_rdb
+
+
+class TestConstructUrl(TestCase):
+
+    def setUp(self):
+        self.test_netloc = 'https://fakeurl.gov'
+        self.test_path = '/blah1/blah2'
+        self.test_params_dict = {'param1': 'value1', 'param2': 'value2'}
+        self.test_params_sequence = (('param1', 'value1'), ('param2', 'value2'))
+
+    def test_with_params_as_dict(self):
+        expected = 'https://fakeurl.gov/blah1/blah2?param1=value1&param2=value2'
+        self.assertEqual(construct_url(self.test_netloc, self.test_path, self.test_params_dict), expected)
+
+    def test_with_params_as_sequence(self):
+        expected = 'https://fakeurl.gov/blah1/blah2?param1=value1&param2=value2'
+        self.assertEqual(construct_url(self.test_netloc, self.test_path, self.test_params_sequence), expected)
+
+    def test_with_no_params(self):
+        expected = 'https://fakeurl.gov/blah1/blah2'
+        self.assertEqual(construct_url(self.test_netloc, self.test_path), expected)
 
 
 class TestGetWaterServicesData(TestCase):

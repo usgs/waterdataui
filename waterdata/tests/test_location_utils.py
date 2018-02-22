@@ -116,6 +116,11 @@ class GetDisambiguatedValuesTestCase(TestCase):
             }
         }
 
+        self.test_state_abbrev_lookup = [
+            {'name': 'Alabama', 'abbreviation': 'AL'},
+            {'name': 'Alaska', 'abbreviation': 'AK'},
+        ]
+
     def test_empty_location(self):
         self.assertEqual(get_disambiguated_values({}, self.test_code_lookups,
                                                   self.test_country_state_county_lookup, {}, {}),
@@ -180,12 +185,12 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'site_no': {'name': '12345678', 'code': '12345678'},
             'country_cd': {'name': 'US', 'code': 'US'},
             'state_cd': {'name': 'Alabama', 'code': '01'},
-            'district_cd': {'name': 'Alaska', 'code': '02'},
+            'district_cd': {'name': 'Alaska', 'abbreviation': 'AK', 'code': '02'},
             'county_cd': {'name': 'Baldwin County', 'code': '002'}
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups,
-                                     self.test_country_state_county_lookup, {}, {}),
+                                     self.test_country_state_county_lookup, {}, self.test_state_abbrev_lookup),
             expected_location)
 
     def test_state_county_no_county_in_lookup(self):
@@ -236,12 +241,14 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'site_no': {'name': '12345678', 'code': '12345678'},
             'country_cd': {'name': 'US', 'code': 'US'},
             'state_cd': {'name': '10', 'code': '10'},
-            'district_cd': {'name': '11', 'code': '11'},
+            'district_cd': {'name': '11', 'abbreviation': None, 'code': '11'},
             'county_cd': {'name': '004', 'code': '004'}
         }
         self.assertEqual(
-            get_disambiguated_values(test_location, self.test_code_lookups,
-                                     self.test_country_state_county_lookup, {}, {}),
+            get_disambiguated_values(
+                test_location, self.test_code_lookups,
+                self.test_country_state_county_lookup, {}, self.test_state_abbrev_lookup
+            ),
             expected_location)
 
     def test_no_country_in_lookup(self):
