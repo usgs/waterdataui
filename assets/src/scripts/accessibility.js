@@ -37,10 +37,9 @@ function addSROnlyTable(container, {columnNames, data, describeById=null, descri
     if (data.length > 0) {
         const table = container
             .append('table')
-            .attr('class', 'usa-sr-only');
+                .attr('class', 'usa-sr-only');
 
         if (describeById && describeByText) {
-            container.select(`div#${describeById}`).remove();
             table.attr('aria-describedby', describeById);
             container.append('div')
                 .attr('id', describeById)
@@ -50,27 +49,27 @@ function addSROnlyTable(container, {columnNames, data, describeById=null, descri
 
         table.append('thead')
             .append('tr')
-            .selectAll('th')
-            .data(columnNames)
-            .enter().append('th')
-            .attr('scope', 'col')
-            .text(function (d) {
-                return d;
-            });
+                .selectAll('th')
+                    .data(columnNames)
+                    .enter().append('th')
+                        .attr('scope', 'col')
+                        .text(function (d) {
+                            return d;
+                        });
 
         const data_rows = table.append('tbody')
             .selectAll('tr')
-            .data(data)
-            .enter().append('tr');
+                .data(data)
+                .enter().append('tr');
 
         data_rows.selectAll('td')
             .data(function (d) {
                 return d;
             })
             .enter().append('td')
-            .text(function (d) {
-                return d;
-            });
+                .text(function (d) {
+                    return d;
+                });
     }
 
 }
