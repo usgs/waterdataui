@@ -132,11 +132,16 @@
                         {% endfor %}
                     </tbody>
                 </table>
-
+               {% if questions_link %}
+                    <div>
+                        <a href="{{ questions_link }}">Email USGS questions about this site.</a>
+                    </div>
+                {% endif %}
             {% endif %}
 
         {% else %}
             <h1>Error: HTTP {{ status_code }} -- {{ reason }}</h1>
         {% endif %}
+
     </div>
 {% endblock content %}

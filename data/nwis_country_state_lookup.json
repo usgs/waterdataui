@@ -8632,9 +8632,6 @@
             "49": {
                 "name": "Utah",
                 "county_cd": {
-                    "000": {
-                        "name": "Unspecified"
-                    },
                     "001": {
                         "name": "Beaver County"
                     },
