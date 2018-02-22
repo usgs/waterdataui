@@ -7,14 +7,7 @@ var isparta = require('isparta');
 function isDebug(argument) {
     return argument === '--debug';
 }
-var browserifyTransform = '';
-if (!process.argv.some(isDebug)) {
-    browserifyTransform = browserifyBabalIstanbul({
-            instrumenter: isparta,
-            instrumenterConfig: { babel: { presets: ['env'] } },
-            ignore: ['**/lib/**', '**/*.spec.js']
-    });
-}
+
 
 module.exports = function (config) {
     config.set({
@@ -50,8 +43,7 @@ module.exports = function (config) {
                 bundle
                     .plugin(proxyquire.plugin)
                     .require(require.resolve('./assets/src/scripts'), {entry: true});
-            },
-            transform: browserifyTransform
+            }
         },
 
         // test results reporter to use
@@ -97,4 +89,33 @@ module.exports = function (config) {
         // how many browser should be started simultaneous
         concurrency: Infinity
     });
+
+    if (process.argv.some(isDebug)) {
+        config.set({
+            browserify: {
+                debug: true,
+                configure: function (bundle) {
+                    bundle
+                        .plugin(proxyquire.plugin)
+                        .require(require.resolve('./assets/src/scripts'), {entry: true});
+                }
+            }
+        });
+    } else {
+        config.set({
+            browserify: {
+                configure: function (bundle) {
+                    bundle
+                        .plugin(proxyquire.plugin)
+                        .require(require.resolve('./assets/src/scripts'), {entry: true});
+                },
+                transform: [browserifyBabalIstanbul({
+                    instrumenter: isparta,
+                    instrumenterConfig: {babel: {presets: ['env']}},
+                    ignore: ['**/lib/**', '**/*.spec.js']
+                })]
+            }
+        });
+    }
 };
+
