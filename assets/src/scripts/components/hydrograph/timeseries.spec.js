@@ -224,15 +224,12 @@ describe('Timeseries module', () => {
                     current: {
                         '00060': {
                             values: [{
-                                value: 10,
                                 time: '2018-01-01',
                                 qualifiers: ['P'],
                                 approved: false,
                                 estimated: false
                             }, {
                                 value: 15,
-                                time: '2018-01-02',
-                                qualifiers: ['P'],
                                 approved: false,
                                 estimated: true
                             }, {
@@ -249,7 +246,7 @@ describe('Timeseries module', () => {
                     current: true
                 },
                 currentParameterCode: '00060'
-            })).toEqual([[10, '2018-01-01', 'P'], [15, '2018-01-02', 'P'], [10, '2018-01-03', 'P, Ice']]);
+            })).toEqual([['', '2018-01-01', 'P'], [15, '', ''], [10, '2018-01-03', 'P, Ice']]);
         });
     });
 });
