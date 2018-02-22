@@ -13,7 +13,8 @@ function addSVGAccessibility(svg, {title, description, isInteractive}) {
         .html(description);
     svg.insert('title', ':first-child')
         .html(title);
-    svg.attr('aria-labelledby', 'title desc');
+    svg.attr('aria-labelledby', 'title');
+    svg.attr('aria-describedby', 'desc');
     if (isInteractive) {
         svg.attr('tabindex', 0);
     }

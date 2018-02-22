@@ -12,7 +12,7 @@ describe('Hydrograph charting module', () => {
         select('body')
             .append('div')
             .attr('id', 'hydrograph');
-        graphNode = document.getElementById('hydrograph')
+        graphNode = document.getElementById('hydrograph');
     });
 
     afterEach(() => {
@@ -36,7 +36,7 @@ describe('Hydrograph charting module', () => {
                             qualifiers: ['P'],
                             approved: false,
                             estimated: false
-                        }],
+                        }]
                     }
                 },
                 compare: {
@@ -82,8 +82,8 @@ describe('Hydrograph charting module', () => {
                                 qualifiers: ['P'],
                                 approved: false,
                                 estimated: false
-                            }],
-                        },
+                            }]
+                        }
                     },
                     compare: {
                         '00060': {
@@ -94,12 +94,12 @@ describe('Hydrograph charting module', () => {
                         '00060': {
                             values: []
                         }
-                    },
+                    }
                 },
                 showSeries: {
                     current: true,
                     compare: false,
-                    medianStatistics: true,
+                    medianStatistics: true
                 },
                 title: 'My Title',
                 desc: 'My Description',
@@ -114,9 +114,8 @@ describe('Hydrograph charting module', () => {
         it('title and desc attributes are present', function() {
             expect(svg.attr('title'), 'My Title');
             expect(svg.attr('desc'), 'My Description');
-            let labelledBy = svg.attr('aria-labelledby');
-            expect(labelledBy).toContain('title');
-            expect(labelledBy).toContain('desc');
+            expect(svg.attr('aria-labelledby')).toContain('title');
+            expect(svg.attr('aria-describedby')).toContain('desc');
         });
 
         it('svg should be focusable', function() {
@@ -125,7 +124,7 @@ describe('Hydrograph charting module', () => {
     });
 
     describe('SVG contains the expected elements', () => {
-        /* eslint no-use-before-define: "ignore" */
+        /* eslint no-use-before-define: 0 */
         let store;
         beforeEach(() => {
             store = configureStore({
@@ -146,8 +145,8 @@ describe('Hydrograph charting module', () => {
                                 qualifiers: ['P', 'FLD'],
                                 approved: false,
                                 estimated: false
-                            }],
-                        },
+                            }]
+                        }
                     },
                     compare: {
                         '00060': {
@@ -217,7 +216,7 @@ describe('Hydrograph charting module', () => {
     });
 
     describe('Adding and removing compare time series', () => {
-        /* eslint no-use-before-define: "ignore" */
+        /* eslint no-use-before-define: 0 */
         let store;
         beforeEach(() => {
             store = configureStore({
@@ -231,7 +230,7 @@ describe('Hydrograph charting module', () => {
                                 qualifiers: ['P'],
                                 approved: false,
                                 estimated: false
-                            }],
+                            }]
                         }
                     },
                     compare: {
@@ -243,7 +242,7 @@ describe('Hydrograph charting module', () => {
                                 qualifiers: ['P'],
                                 approved: false,
                                 estimated: false
-                            }],
+                            }]
                         }
                     },
                     medianStatistics: {
@@ -292,8 +291,8 @@ describe('Hydrograph charting module', () => {
 
 const MOCK_MEDIAN_STAT_DATA = [
     {
-        "label": "18 ft3/s",
-        "time": "2017-01-03T00:00:00.000Z",
-        "value": 18
+        'label': '18 ft3/s',
+        'time': '2017-01-03T00:00:00.000Z',
+        'value': 18
     }
 ];
