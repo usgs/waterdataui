@@ -42,7 +42,7 @@ module.exports = function (config) {
                 browserifyBabalIstanbul({
                         instrumenter: isparta,
                         instrumenterConfig: { babel: { presets: ['env'] } },
-                        ignore: ['**/node_modules/**', '**/unitest/**']
+                        ignore: ['**/lib/**', '**/*.spec.js']
                 })
             ]
         },
