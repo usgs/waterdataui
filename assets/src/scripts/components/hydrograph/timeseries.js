@@ -52,6 +52,24 @@ const isVisibleSelector = memoize(tsDataKey => (state) => {
     return state.showSeries[tsDataKey];
 });
 
+const pointsTableDataSelector = memoize(tsDataKey => createSelector(
+    pointsSelector(tsDataKey),
+    isVisibleSelector(tsDataKey),
+    (points, isVisible) => {
+        if (isVisible) {
+            return points.map((value) => {
+                return [
+                    value.value || '',
+                    value.time || '',
+                    value.qualifiers && value.qualifiers.length > 0 ? value.qualifiers.join(', ') : ''
+                ];
+            });
+        } else {
+            return [];
+        }
+    }
+));
+
 
 /**
  * Factory function creates a function that:
@@ -141,5 +159,5 @@ const descriptionSelector = createSelector(
 
 module.exports = {
     pointsSelector, lineSegmentsSelector, isVisibleSelector, yLabelSelector,
-    titleSelector, descriptionSelector, MASK_DESC
+    pointsTableDataSelector, titleSelector, descriptionSelector, MASK_DESC
 };
