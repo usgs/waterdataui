@@ -254,10 +254,31 @@ const timeSeriesGraph = function (elem) {
                     return [value.value, value.time];
                 })
             ),
-            describeById: () => 'time-series-sr-desc',
+            describeById: () => 'current-time-series-sr-desc',
             describeByText: () => 'current time series data in tabular format'
     })));
-
+    elem.append('div')
+        .call(link(addSROnlyTable, createStructuredSelector({
+            columnNames: createSelector(
+                titleSelector,
+                (title) => [title, 'Time']
+            ),
+            data: createSelector(
+                isVisibleSelector('compare'),
+                pointsSelector('compare'),
+                (isVisible, points) => {
+                    if (isVisible) {
+                        return points.map((value) => {
+                            return [value.value, value.time]
+                        });
+                    } else {
+                        return [];
+                    }
+                }
+            ),
+            describeById: () => 'compare-time-series-sr-desc',
+            describeByText: () => 'previous year time series data in tabular format'
+    })));
     elem.append('div')
         .call(link(addSROnlyTable, createStructuredSelector({
             columnNames: createSelector(
