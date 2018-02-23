@@ -2,7 +2,7 @@
 Utility functions
 
 """
-from urllib.parse import urljoin
+from urllib.parse import urlencode, urljoin
 
 import requests as r
 
@@ -56,3 +56,19 @@ def parse_rdb(rdb_iter_lines):
             continue
         record_values = record.split('\t')
         yield dict(zip(headers, record_values))
+
+
+def construct_url(netloc, path, parameters=()):
+    """
+    Build a url from its components.
+
+    :param str netloc: protocol and domain name
+    :param str path: url path
+    :param parameters: query parameters
+    :type parameters: dict or sequence of two-member tuples
+    :return: absolute url
+    :rtype: str
+
+    """
+    encoded_parameters = urlencode(parameters)
+    return urljoin(netloc, '{0}?{1}'.format(path, encoded_parameters))

@@ -5,7 +5,6 @@ Generates two files, each containing a json object that will contain keys for th
 NWIS site info expanded service
 """
 
-import argparse
 import json
 import logging
 import os
@@ -56,38 +55,41 @@ COUNTRY_CODES = ['US', 'CA']
 # manually created lookups
 # derived from a press release from July 2009
 
-PARAMETER_GROUPS = {'INF': {'name': 'Information'},
-                    'PHY': {'name': 'Physical'},
-                    'INM': {'name': 'Inorganics, Major, Metals'},
-                    'INN': {'name': 'Inorganics, Major, Non-metals'},
-                    'NUT': {'name': 'Nutrient'},
-                    'MBI': {'name': 'Microbiological'},
-                    'BIO': {'name': 'Biological'},
-                    'IMM': {'name': 'Inorganics, Minor, metals'},
-                    'IMN': {'name': 'Inorganics, Minor, Non-metals'},
-                    'TOX': {'name': 'Toxicity'},
-                    'OPE': {'name': 'Organics, pesticide'},
-                    'OPC': {'name': 'Organics, PCBs'},
-                    'OOT': {'name': 'Organics, other'},
-                    'RAD': {'name': 'Radiochemistry'},
-                    'ISO': {'name': 'Stable Isotopes'},
-                    'SED': {'name': 'Sediment'},
-                    'POP': {'name': 'Population/Community'},
-                    'OTH': {'name': 'Other'},
-                    'HAB': {'name': 'Habitat'}}
+PARAMETER_GROUPS = {
+    'INF': {'name': 'Information'},
+    'PHY': {'name': 'Physical'},
+    'INM': {'name': 'Inorganics, Major, Metals'},
+    'INN': {'name': 'Inorganics, Major, Non-metals'},
+    'NUT': {'name': 'Nutrient'},
+    'MBI': {'name': 'Microbiological'},
+    'BIO': {'name': 'Biological'},
+    'IMM': {'name': 'Inorganics, Minor, metals'},
+    'IMN': {'name': 'Inorganics, Minor, Non-metals'},
+    'TOX': {'name': 'Toxicity'},
+    'OPE': {'name': 'Organics, pesticide'},
+    'OPC': {'name': 'Organics, PCBs'},
+    'OOT': {'name': 'Organics, other'},
+    'RAD': {'name': 'Radiochemistry'},
+    'ISO': {'name': 'Stable Isotopes'},
+    'SED': {'name': 'Sediment'},
+    'POP': {'name': 'Population/Community'},
+    'OTH': {'name': 'Other'},
+    'HAB': {'name': 'Habitat'}
+}
 
-
-DATA_TYPES = {'iv': {'name': 'Instantaneous Values'},
-              'uv': {'name': 'Unit Values'},
-              'rt': {'name': 'Real-time Data'},
-              'dv': {'name': 'Daily Values'},
-              'pk': {'name': 'Peak Measurements'},
-              'sv': {'name': 'Site Visits'},
-              'gw': {'name': 'Groundwater Levels'},
-              'qw': {'name': 'Water-quality'},
-              'id': {'name': 'Historical Instantaneous Values'},
-              'aw': {'name': 'USGS Active Groundwater Level Network Site'},
-              'ad': {'name': 'USGS Annual Water Data Reports Site'}}
+DATA_TYPES = {
+    'iv': {'name': 'Instantaneous Values'},
+    'uv': {'name': 'Unit Values'},
+    'rt': {'name': 'Real-time Data'},
+    'dv': {'name': 'Daily Values'},
+    'pk': {'name': 'Peak Measurements'},
+    'sv': {'name': 'Site Visits'},
+    'gw': {'name': 'Groundwater Levels'},
+    'qw': {'name': 'Water-quality'},
+    'id': {'name': 'Historical Instantaneous Values'},
+    'aw': {'name': 'USGS Active Groundwater Level Network Site'},
+    'ad': {'name': 'USGS Annual Water Data Reports Site'}
+}
 
 
 def generate_lookup_file(datadir, filename='nwis_lookup.json'):
