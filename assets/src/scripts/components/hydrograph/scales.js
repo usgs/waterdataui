@@ -43,6 +43,33 @@ function createXScale(values, xSize) {
         .domain(xExtent);
 }
 
+function simplifiedYScale(tsData, ySize) {
+    let yExtent;
+    let points = tsData.filter(pt => pt.value !== null);
+
+    const thisExtent = extent(points, d => d.value);
+        if (yExtent !== undefined) {
+            yExtent = [
+                Math.min(thisExtent[0], yExtent[0]),
+                Math.max(thisExtent[1], yExtent[1])
+            ];
+        } else {
+            yExtent = thisExtent;
+        }
+
+    // Add padding to the extent and handle empty data sets.
+    if (yExtent) {
+        yExtent = extendDomain(yExtent);
+    } else {
+        yExtent = [0, 1];
+    }
+
+    return scaleSymlog()
+        .domain(yExtent)
+        .range([ySize, 0]);
+}
+
+
 /**
  * Create an yscale oriented on the bottom
  * @param {Array} tsData - where xScale are Array contains {value, ...}
@@ -118,4 +145,4 @@ const yScaleSelector = createSelector(
 );
 
 
-module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector};
+module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, simplifiedYScale};

@@ -1,7 +1,12 @@
-const { createSelector } = require('reselect');
+const { createSelector, createStructuredSelector } = require('reselect');
+const { scaleLinear } = require('d3-scale');
+const { line } = require('d3-shape');
+const { select } = require('d3-selection');
 
 const { Actions } = require('./store');
-const { dispatch } = require('../../lib/redux');
+const { createXScale, simplifiedYScale } = require('./scales');
+const { pointsTableDataSelector } = require('./timeseries');
+const { dispatch, link } = require('../../lib/redux');
 
 
 /**
@@ -49,18 +54,38 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
         .append('table')
             .attr('id', 'select-timeseries')
             .classed('usa-table-borderless', true);
+    const sparkLineSvgWidth = 50;
+    const sparkLineSvgHeight = 30;
+    const sparkLines = function(selection, {tsData}) {
+        const tsDataVals = tsData.values;
+        if (tsDataVals) {
+            let x = createXScale(tsDataVals, sparkLineSvgWidth);
+            let y = simplifiedYScale(tsDataVals, sparkLineSvgHeight);
+            let spark = line()
+                .x(function(d) {
+                    return x(d.time);
+                })
+                .y(function(d) {
+                    return y(d.value);
+                });
+            selection.append('g')
+                .append('path')
+                .attr('d', spark(tsDataVals))
+                .attr('class', 'spark-line');
+        }
+    };
 
     table.append('caption').text('Select a timeseries');
 
     table.append('thead')
         .append('tr')
             .selectAll('th')
-            .data(['Parameter Code', 'Description', 'Now', 'Last Year', 'Median'])
+            .data(['Parameter Code', 'Description', 'Now', 'Last Year', 'Median', 'Graph'])
             .enter().append('th')
                 .attr('scope', 'col')
                 .text(d => d);
 
-    table.append('tbody')
+    let tBody = table.append('tbody')
         .selectAll('tr')
         .data(availableTimeseries)
         .enter().append('tr')
@@ -85,5 +110,25 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
                     .html(parm => parm[1].previousYear ? '<i class="fa fa-check" aria-label="Previous year data available"></i>' : '');
                 tr.append('td')
                     .html(parm => parm[1].medianData ? '<i class="fa fa-check" aria-label="Median data available"></i>' : '');
+                tr.append('td')
+                    .append('svg')
+                    .attr('width', sparkLineSvgWidth.toString())
+                    .attr('height', sparkLineSvgHeight.toString())
+                    .attr('id', (parm) => {return parm[0]});
             });
+
+    let tableSvgs = tBody.selectAll('svg');
+    tableSvgs.each(function(d) {
+        let selection = select(this);
+        let parmCd = d[0];
+        const dataSelector = createSelector(
+            state => state.tsData['current'][parmCd],
+            (parmCdData) => {
+                return parmCdData || {};
+            }
+        );
+        selection.call(link(sparkLines,createStructuredSelector(
+            {tsData: dataSelector}
+        )));
+    });
 };
