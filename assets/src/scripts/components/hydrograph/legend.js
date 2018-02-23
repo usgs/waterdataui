@@ -38,12 +38,11 @@ function drawSimpleLegend(svg,
 
     for (let legendMarker of legendMarkers) {
         let xPosition;
-        let previousMarkerGroupBox;
         let detachedMarker;
         if (previousMarkerGroup == null) {
             xPosition = startingXPosition;
         } else {
-            previousMarkerGroupBox = previousMarkerGroup.node().getBBox();
+            let previousMarkerGroupBox = previousMarkerGroup.node().getBBox();
             xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupOffset;
         }
         let legendGroup = legend.append('g')
