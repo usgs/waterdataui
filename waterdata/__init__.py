@@ -55,10 +55,6 @@ with open(os.path.join(app.config.get('DATA_DIR'),
                        app.config.get('HUC_LOOKUP_FILENAME')), 'r') as f:
     app.config['HUC_LOOKUP'] = json.loads(f.read())
 
-with open(os.path.join(app.config.get('DATA_DIR'),
-                       app.config.get('STATE_LOOKUP_FILENAME')), 'r') as f:
-    app.config['STATE_ABBREV_LOOKUP'] = json.loads(f.read())
-
 
 if app.config.get('LOGGING_ENABLED'):
     # pylint: disable=C0103

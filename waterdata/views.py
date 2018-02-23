@@ -71,7 +71,7 @@ def monitoring_location(site_no):
                 param_data = [param_datum for param_datum in
                               parse_rdb(parameter_data_resp.iter_lines(decode_unicode=True))]
                 site_dataseries = [get_disambiguated_values(param_datum, app.config['NWIS_CODE_LOOKUP'], {},
-                                                            app.config['HUC_LOOKUP'], {}) for param_datum in param_data]
+                                                            app.config['HUC_LOOKUP']) for param_datum in param_data]
                 location_capabilities = set(param_datum['parm_cd'] for param_datum in param_data)
             else:
                 site_dataseries = None
@@ -89,17 +89,14 @@ def monitoring_location(site_no):
                 station_record,
                 app.config['NWIS_CODE_LOOKUP'],
                 app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
-                app.config['HUC_LOOKUP'],
-                app.config['STATE_ABBREV_LOOKUP']
+                app.config['HUC_LOOKUP']
             )
             questions_link = None
             try:
-               district_abbrev = location_with_values['district_cd']['abbreviation']
+                district_abbrev = location_with_values['district_cd']['abbreviation']
             except KeyError:
                 pass
             else:
-                questions_link_host = 'https://water.usgs.gov'
-                questions_link_path = 'contact/gsanswers'
                 questions_link_params = {
                     'pemail': 'gs-w-{}_NWISWeb_Data_Inquiries'.format(district_abbrev.lower()),
                     'subject': 'Site Number: {}'.format(site_no),
@@ -108,7 +105,7 @@ def monitoring_location(site_no):
                         'below that briefly summarizes your request</b></p>'
                     )
                 }
-                questions_link = construct_url(questions_link_host, questions_link_path, questions_link_params)
+                questions_link = construct_url('https://water.usgs.gov', 'contact/gsanswer', questions_link_params)
             context = {
                 'status_code': status,
                 'stations': data_list,

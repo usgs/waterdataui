@@ -8,11 +8,28 @@ import datetime
 
 from flask import url_for
 
+from .constants import US_STATES
 
 Parameter = namedtuple('Parameter', ['parameter_cd', 'start_date', 'end_date', 'record_count'])
 
 
-def get_disambiguated_values(location, code_lookups, country_state_county_lookups, huc_lookups, state_abbrev_lookups):
+def get_state_abbreviation(state_full_name):
+    """
+    Return a state's two letter abbreviation.
+
+    :param str state_full_name:
+    :return: state two letter abbreviation
+    :rtype: str
+    """
+    state = filter(lambda record: record['name'] == state_full_name, US_STATES)
+    try:
+        state_abbrev = next(state).get('abbreviation')
+    except StopIteration:
+        state_abbrev = None
+    return state_abbrev
+
+
+def get_disambiguated_values(location, code_lookups, country_state_county_lookups, huc_lookups):
     """
     Convert values for keys that contains codes to human readable names using the lookups
     :param dict location:
@@ -32,14 +49,6 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
         state_lookup = country_lookup.get('state_cd', {})
 
         return state_lookup.get(state_code, {}).get('name')
-
-    def get_state_abbreviation(state_full_name):
-        state = filter(lambda record: record['name'] == state_full_name, state_abbrev_lookups)
-        try:
-            state_abbrev = next(state).get('abbreviation')
-        except StopIteration:
-            state_abbrev = None
-        return state_abbrev
 
     transformed_location = {}
 

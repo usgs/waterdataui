@@ -55,98 +55,41 @@ COUNTRY_CODES = ['US', 'CA']
 # manually created lookups
 # derived from a press release from July 2009
 
-PARAMETER_GROUPS = {'INF': {'name': 'Information'},
-                    'PHY': {'name': 'Physical'},
-                    'INM': {'name': 'Inorganics, Major, Metals'},
-                    'INN': {'name': 'Inorganics, Major, Non-metals'},
-                    'NUT': {'name': 'Nutrient'},
-                    'MBI': {'name': 'Microbiological'},
-                    'BIO': {'name': 'Biological'},
-                    'IMM': {'name': 'Inorganics, Minor, metals'},
-                    'IMN': {'name': 'Inorganics, Minor, Non-metals'},
-                    'TOX': {'name': 'Toxicity'},
-                    'OPE': {'name': 'Organics, pesticide'},
-                    'OPC': {'name': 'Organics, PCBs'},
-                    'OOT': {'name': 'Organics, other'},
-                    'RAD': {'name': 'Radiochemistry'},
-                    'ISO': {'name': 'Stable Isotopes'},
-                    'SED': {'name': 'Sediment'},
-                    'POP': {'name': 'Population/Community'},
-                    'OTH': {'name': 'Other'},
-                    'HAB': {'name': 'Habitat'}}
+PARAMETER_GROUPS = {
+    'INF': {'name': 'Information'},
+    'PHY': {'name': 'Physical'},
+    'INM': {'name': 'Inorganics, Major, Metals'},
+    'INN': {'name': 'Inorganics, Major, Non-metals'},
+    'NUT': {'name': 'Nutrient'},
+    'MBI': {'name': 'Microbiological'},
+    'BIO': {'name': 'Biological'},
+    'IMM': {'name': 'Inorganics, Minor, metals'},
+    'IMN': {'name': 'Inorganics, Minor, Non-metals'},
+    'TOX': {'name': 'Toxicity'},
+    'OPE': {'name': 'Organics, pesticide'},
+    'OPC': {'name': 'Organics, PCBs'},
+    'OOT': {'name': 'Organics, other'},
+    'RAD': {'name': 'Radiochemistry'},
+    'ISO': {'name': 'Stable Isotopes'},
+    'SED': {'name': 'Sediment'},
+    'POP': {'name': 'Population/Community'},
+    'OTH': {'name': 'Other'},
+    'HAB': {'name': 'Habitat'}
+}
 
-
-DATA_TYPES = {'iv': {'name': 'Instantaneous Values'},
-              'uv': {'name': 'Unit Values'},
-              'rt': {'name': 'Real-time Data'},
-              'dv': {'name': 'Daily Values'},
-              'pk': {'name': 'Peak Measurements'},
-              'sv': {'name': 'Site Visits'},
-              'gw': {'name': 'Groundwater Levels'},
-              'qw': {'name': 'Water-quality'},
-              'id': {'name': 'Historical Instantaneous Values'},
-              'aw': {'name': 'USGS Active Groundwater Level Network Site'},
-              'ad': {'name': 'USGS Annual Water Data Reports Site'}}
-
-US_STATES = [{'name': 'Alabama', 'abbreviation': 'AL'},
-             {'name': 'Alaska', 'abbreviation': 'AK'},
-             {'name': 'American Samoa', 'abbreviation': 'AS'},
-             {'name': 'Arizona', 'abbreviation': 'AZ'},
-             {'name': 'Arkansas', 'abbreviation': 'AR'},
-             {'name': 'California', 'abbreviation': 'CA'},
-             {'name': 'Colorado', 'abbreviation': 'CO'},
-             {'name': 'Connecticut', 'abbreviation': 'CT'},
-             {'name': 'Delaware', 'abbreviation': 'DE'},
-             {'name': 'District Of Columbia', 'abbreviation': 'DC'},
-             {'name': 'Federated States Of Micronesia', 'abbreviation': 'FM'},
-             {'name': 'Florida', 'abbreviation': 'FL'},
-             {'name': 'Georgia', 'abbreviation': 'GA'},
-             {'name': 'Guam', 'abbreviation': 'GU'},
-             {'name': 'Hawaii', 'abbreviation': 'HI'},
-             {'name': 'Idaho', 'abbreviation': 'ID'},
-             {'name': 'Illinois', 'abbreviation': 'IL'},
-             {'name': 'Indiana', 'abbreviation': 'IN'},
-             {'name': 'Iowa', 'abbreviation': 'IA'},
-             {'name': 'Kansas', 'abbreviation': 'KS'},
-             {'name': 'Kentucky', 'abbreviation': 'KY'},
-             {'name': 'Louisiana', 'abbreviation': 'LA'},
-             {'name': 'Maine', 'abbreviation': 'ME'},
-             {'name': 'Marshall Islands', 'abbreviation': 'MH'},
-             {'name': 'Maryland', 'abbreviation': 'MD'},
-             {'name': 'Massachusetts', 'abbreviation': 'MA'},
-             {'name': 'Michigan', 'abbreviation': 'MI'},
-             {'name': 'Minnesota', 'abbreviation': 'MN'},
-             {'name': 'Mississippi', 'abbreviation': 'MS'},
-             {'name': 'Missouri', 'abbreviation': 'MO'},
-             {'name': 'Montana', 'abbreviation': 'MT'},
-             {'name': 'Nebraska', 'abbreviation': 'NE'},
-             {'name': 'Nevada', 'abbreviation': 'NV'},
-             {'name': 'New Hampshire', 'abbreviation': 'NH'},
-             {'name': 'New Jersey', 'abbreviation': 'NJ'},
-             {'name': 'New Mexico', 'abbreviation': 'NM'},
-             {'name': 'New York', 'abbreviation': 'NY'},
-             {'name': 'North Carolina', 'abbreviation': 'NC'},
-             {'name': 'North Dakota', 'abbreviation': 'ND'},
-             {'name': 'Northern Mariana Islands', 'abbreviation': 'MP'},
-             {'name': 'Ohio', 'abbreviation': 'OH'},
-             {'name': 'Oklahoma', 'abbreviation': 'OK'},
-             {'name': 'Oregon', 'abbreviation': 'OR'},
-             {'name': 'Palau', 'abbreviation': 'PW'},
-             {'name': 'Pennsylvania', 'abbreviation': 'PA'},
-             {'name': 'Puerto Rico', 'abbreviation': 'PR'},
-             {'name': 'Rhode Island', 'abbreviation': 'RI'},
-             {'name': 'South Carolina', 'abbreviation': 'SC'},
-             {'name': 'South Dakota', 'abbreviation': 'SD'},
-             {'name': 'Tennessee', 'abbreviation': 'TN'},
-             {'name': 'Texas', 'abbreviation': 'TX'},
-             {'name': 'Utah', 'abbreviation': 'UT'},
-             {'name': 'Vermont', 'abbreviation': 'VT'},
-             {'name': 'Virgin Islands', 'abbreviation': 'VI'},
-             {'name': 'Virginia', 'abbreviation': 'VA'},
-             {'name': 'Washington', 'abbreviation': 'WA'},
-             {'name': 'West Virginia', 'abbreviation': 'WV'},
-             {'name': 'Wisconsin', 'abbreviation': 'WI'},
-             {'name': 'Wyoming', 'abbreviation': 'WY'}]
+DATA_TYPES = {
+    'iv': {'name': 'Instantaneous Values'},
+    'uv': {'name': 'Unit Values'},
+    'rt': {'name': 'Real-time Data'},
+    'dv': {'name': 'Daily Values'},
+    'pk': {'name': 'Peak Measurements'},
+    'sv': {'name': 'Site Visits'},
+    'gw': {'name': 'Groundwater Levels'},
+    'qw': {'name': 'Water-quality'},
+    'id': {'name': 'Historical Instantaneous Values'},
+    'aw': {'name': 'USGS Active Groundwater Level Network Site'},
+    'ad': {'name': 'USGS Annual Water Data Reports Site'}
+}
 
 
 def generate_lookup_file(datadir, filename='nwis_lookup.json'):
@@ -214,8 +157,3 @@ def generate_country_state_county_file(datadir, filename='nwis_country_state_loo
 
     with open(os.path.join(datadir, filename), 'w') as f:
         f.write(json.dumps(lookups, indent=4))
-
-
-def generate_state_abbreviation_file(datadir, filename='us_state_lookup.json'):
-    with open(os.path.join(datadir, filename), 'w') as f:
-        f.write(json.dumps(US_STATES, indent=4))

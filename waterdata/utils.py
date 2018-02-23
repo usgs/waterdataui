@@ -2,7 +2,7 @@
 Utility functions
 
 """
-from urllib.parse import urljoin, urlencode, urlunparse
+from urllib.parse import urlencode, urljoin
 
 import requests as r
 
