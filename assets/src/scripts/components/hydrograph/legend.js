@@ -19,15 +19,14 @@ const { MASK_DESC } = require('./timeseries');
  */
 function drawSimpleLegend(svg,
                           legendMarkers,
-                          width=null,
+                          layout,
                           startingXPosition=0,
                           markerYPosition=-4,
                           textYPosition=0,
                           markerGroupOffset=40,
                           markerTextOffset=10) {
     const verticalRowOffset = 20;
-    const svgBBox = svg.node().getBBox();
-    const svgWidth = width ? width : svgBBox.width;
+    const svgWidth = layout.width ? layout.width : svgBBox.width;
     let rowCounter = 0;
 
     let legend = svg
@@ -79,7 +78,7 @@ function drawSimpleLegend(svg,
             .text(legendMarker.text);
         let legendGroupBBox = legendGroup.node().getBBox();
         let legendGroupRightXCoordinate = legendGroupBBox.x + legendGroupBBox.width;
-        if (legendGroupRightXCoordinate/svgWidth >= 0.60) {
+        if (legendGroupRightXCoordinate/layout.width >= 0.60) {
             rowCounter += 1;
             previousMarkerGroup = null;
         } else {
@@ -88,9 +87,8 @@ function drawSimpleLegend(svg,
     }
     // center the legend group in the svg
     let legendBBox = legend.node().getBBox();
-    const legendXPosition = (svgWidth - legendBBox.width) / 2;
-
-    legend.attr('transform', `translate(${legendXPosition}, ${svgBBox.height - 30})`);
+    const legendXPosition = (layout.width - legendBBox.width) / 2;
+    legend.attr('transform', `translate(${legendXPosition}, ${layout.height - 30})`);
 }
 
 /**

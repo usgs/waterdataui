@@ -135,10 +135,10 @@ const plotSvgDefs = function(elem) {
 };
 
 
-const plotLegend = function(elem, {displayItems, width, currentSegments, compareSegments}) {
+const plotLegend = function(elem, {displayItems, layout, currentSegments, compareSegments}) {
     elem.select('.legend').remove();
     let plotMarkers = createLegendMarkers(displayItems, currentSegments.concat(compareSegments));
-    drawSimpleLegend(elem, plotMarkers, width);
+    drawSimpleLegend(elem, plotMarkers, layout);
 };
 
 
@@ -203,7 +203,7 @@ const timeSeriesGraph = function (elem) {
                 displayItems: legendDisplaySelector,
                 currentSegments: lineSegmentsSelector('current'),
                 compareSegments: lineSegmentsSelector('compare'),
-                width: state => state.width
+                layout: layoutSelector
             })))
             .append('g')
                 .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
