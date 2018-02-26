@@ -7,7 +7,7 @@ const { createSelector } = require('reselect');
 const formatTime = timeFormat('%c %Z');
 
 const MASK_DESC = {
-    ice: 'Ice',
+    ice: 'Ice Affected',
     fld: 'Flood',
     bkw: 'Backwater',
     zfl: 'Zeroflow',

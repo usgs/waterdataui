@@ -11,7 +11,7 @@ const { dispatch, link, provide } = require('../../lib/redux');
 
 const { appendAxes, axesSelector } = require('./axes');
 const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
-const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
+const { drawSimpleLegend, drawSvgLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { pointsSelector, lineSegmentsSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC } = require('./timeseries');
 const { xScaleSelector, yScaleSelector } = require('./scales');
