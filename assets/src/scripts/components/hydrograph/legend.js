@@ -2,51 +2,32 @@
 const { createSelector } = require('reselect');
 const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
 const { CIRCLE_RADIUS, MARGIN } = require('./layout');
-const { MASK_DESC} = require('./timeseries');
+const { MASK_DESC, HASH_ID} = require('./timeseries');
 
-const drawSvgLegend = function(svg, legendMarkers, layout) {
-    let legend = svg.append('svg')
-        .attr('viewBox', `0 0 ${layout.width} 30`)
-        .attr('preserveAspectRatio', 'xMinYMin meet')
-        .classed('legend', true)
-        .attr('x','0')
-        .attr('y', 0)
-        .attr('width', '100%')
-        .attr('height', '100%');
-    legend.append('rect')
-        .attr('width', '100%')
-        .attr('height', '100%')
-        .style('fill', 'red');
-};
+
 /**
- * Create a simple horizontal legend
+ * Create a simple legend
  *
- * @param svg
- * @param legendMarkers
- * @param width
- * @param startingXPosition
- * @param markerYPosition
- * @param textYPosition
- * @param markerGroupOffset
+ * @param {Object} svg - d3 selector
+ * @param {Object} legendMarkers - property for each ts key
+ * @param {Object} layout - width and height of svg.
  * @param markerTextOffset
  */
 function drawSimpleLegend(svg,
                           legendMarkers,
-                          layout,
-                          startingXPosition=0,
-                          markerYPosition=-4,
-                          textYPosition=0,
-                          markerGroupOffset=40,
-                          markerTextOffset=10) {
+                          layout) {
+    const markerYPosition = -4;
+    const markerGroupXOffset = 40;
     const verticalRowOffset = 18;
-    let rowCounter = 0;
+    const markerTextXOffset = 10;
 
+    let rowCounter = 0;
     let legend = svg
         .append('g')
-        .attr('class', 'legend');
+            .attr('class', 'legend');
 
     for (let tsKey in legendMarkers) {
-        let xPosition = startingXPosition;
+        let xPosition = 0;
         let detachedMarker;
         let previousMarkerGroup;
         if (legendMarkers[tsKey].length > 0) {
@@ -55,7 +36,7 @@ function drawSimpleLegend(svg,
         for (let legendMarker of legendMarkers[tsKey]) {
             if (previousMarkerGroup) {
                 let previousMarkerGroupBox = previousMarkerGroup.node().getBBox();
-                xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupOffset;
+                xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupXOffset;
             }
             let legendGroup = legend.append('g')
                 .attr('class', 'legend-marker');
@@ -86,8 +67,8 @@ function drawSimpleLegend(svg,
             // add text for the legend marker
             let detachedMarkerBBox = detachedMarker.node().getBBox();
             legendGroup.append('text')
-                .attr('x', detachedMarkerBBox.x + detachedMarkerBBox.width + markerTextOffset)
-                .attr('y', textYPosition + verticalRowOffset * rowCounter)
+                .attr('x', detachedMarkerBBox.x + detachedMarkerBBox.width + markerTextXOffset)
+                .attr('y', verticalRowOffset * rowCounter)
                 .text(legendMarker.text);
             previousMarkerGroup = legendGroup;
         }
@@ -147,7 +128,7 @@ const createLegendMarkers = function(dataPlotElements, currentLineSegments=[], c
     for (let uniqueMask of uniqueMasks) {
         let maskDisplayName = MASK_DESC[uniqueMask];
         let maskClass = `mask ${maskDisplayName.replace(' ', '-').toLowerCase()}-mask`;
-        marker = defineRectangleMarker(null, maskClass, maskDisplayName, null, 'url(#hash-45)');
+        marker = defineRectangleMarker(null, maskClass, maskDisplayName, null, `url(#${HASH_ID.current})`);
         legendMarkers.current.push(marker);
     }
     let compareMasks = compareLineSegments.map(segment => { return segment.classes.dataMask; });
@@ -155,7 +136,7 @@ const createLegendMarkers = function(dataPlotElements, currentLineSegments=[], c
     for (let uniqueMask of compareUniqueMasks) {
         let maskDisplayName = MASK_DESC[uniqueMask];
         let maskClass = `mask ${maskDisplayName.replace(' ', '-').toLowerCase()}-mask`;
-        marker = defineRectangleMarker(null, maskClass, maskDisplayName, null, 'url(#hash-135)');
+        marker = defineRectangleMarker(null, maskClass, maskDisplayName, null, `url(#${HASH_ID.compare})`);
         legendMarkers.compare. push(marker);
     }
     return legendMarkers;

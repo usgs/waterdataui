@@ -11,17 +11,12 @@ const { dispatch, link, provide } = require('../../lib/redux');
 
 const { appendAxes, axesSelector } = require('./axes');
 const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
-const { drawSimpleLegend, drawSvgLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
+const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
-const { pointsSelector, lineSegmentsSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC } = require('./timeseries');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
+const { pointsSelector, lineSegmentsSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC, HASH_ID } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
-
-
-// identifiers for svg patterns used in the plot
-const HASH_45 = 'hash-45';
-const HASH_135 = 'hash-135';
 
 
 const drawMessage = function (elem, message) {
@@ -82,7 +77,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                 .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
                 .attr('class', `mask ${maskDisplayName}-mask`);
 
-            const patternId = tsDataKey === 'compare' ? `url(#${HASH_135})` : `url(#${HASH_45})`;
+            const patternId = HASH_ID[tsDataKey] ? `url(#${HASH_ID[tsDataKey]})` : '';
 
             maskGroup.append('rect')
                 .attr('x', xScale(xDomainStart))
@@ -110,7 +105,7 @@ const plotSvgDefs = function(elem) {
             .attr('fill', '#0000ff');
 
     defs.append('pattern')
-        .attr('id', HASH_45)
+        .attr('id', HASH_ID.current)
         .attr('width', '8')
         .attr('height', '8')
         .attr('patternUnits', 'userSpaceOnUse')
@@ -122,7 +117,7 @@ const plotSvgDefs = function(elem) {
             .attr('mask', 'url(#display-mask)');
 
     defs.append('pattern')
-        .attr('id', HASH_135)
+        .attr('id', HASH_ID.compare)
         .attr('width', '8')
         .attr('height', '8')
         .attr('patternUnits', 'userSpaceOnUse')
@@ -137,7 +132,7 @@ const plotSvgDefs = function(elem) {
 
 const plotLegend = function(elem, {displayItems, layout, currentSegments, compareSegments}) {
     elem.select('.legend').remove();
-    let plotMarkers = createLegendMarkers(displayItems, currentSegments.concat(compareSegments));
+    let plotMarkers = createLegendMarkers(displayItems, currentSegments, compareSegments);
     drawSimpleLegend(elem, plotMarkers, layout);
 };
 

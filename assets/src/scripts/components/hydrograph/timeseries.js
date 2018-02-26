@@ -23,6 +23,11 @@ const MASK_DESC = {
     '***': 'Unavailable'
 };
 
+const HASH_ID = {
+    current: 'hash-45',
+    compare: 'hash-135'
+};
+
 /**
  * Returns the points for a given timeseries.
  * @param  {Object} state     Redux store
@@ -141,5 +146,5 @@ const descriptionSelector = createSelector(
 
 module.exports = {
     pointsSelector, lineSegmentsSelector, isVisibleSelector, yLabelSelector,
-    titleSelector, descriptionSelector, MASK_DESC
+    titleSelector, descriptionSelector, MASK_DESC, HASH_ID
 };
