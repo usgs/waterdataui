@@ -57,6 +57,32 @@ const isVisibleSelector = memoize(tsDataKey => (state) => {
     return state.showSeries[tsDataKey];
 });
 
+/**
+ * Factor function creates a function that:
+ * Returns all point data as an array of [value, time, qualifiers] if the data is visible.
+ * Otherwise an empty array is returned.
+ * @param {Object} state - Redux store
+ * @param {String} tsDataKey - timeseries key
+ * @param {Array of Array} for each point returns [value, time, qualifiers] or empty array.
+ */
+const pointsTableDataSelector = memoize(tsDataKey => createSelector(
+    pointsSelector(tsDataKey),
+    isVisibleSelector(tsDataKey),
+    (points, isVisible) => {
+        if (isVisible) {
+            return points.map((value) => {
+                return [
+                    value.value || '',
+                    value.time || '',
+                    value.qualifiers && value.qualifiers.length > 0 ? value.qualifiers.join(', ') : ''
+                ];
+            });
+        } else {
+            return [];
+        }
+    }
+));
+
 
 /**
  * Factory function creates a function that:
@@ -146,5 +172,5 @@ const descriptionSelector = createSelector(
 
 module.exports = {
     pointsSelector, lineSegmentsSelector, isVisibleSelector, yLabelSelector,
-    titleSelector, descriptionSelector, MASK_DESC, HASH_ID
+    pointsTableDataSelector, titleSelector, descriptionSelector, MASK_DESC, HASH_ID
 };

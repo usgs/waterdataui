@@ -7,7 +7,7 @@ from unittest import TestCase
 
 from waterdata import app
 from waterdata.location_utils import Parameter, get_capabilities, get_site_parameter, build_linked_data,\
-    get_disambiguated_values
+    get_disambiguated_values, get_state_abbreviation
 
 
 class GetDisambiguatedValuesTestCase(TestCase):
@@ -117,8 +117,10 @@ class GetDisambiguatedValuesTestCase(TestCase):
         }
 
     def test_empty_location(self):
-        self.assertEqual(get_disambiguated_values({}, self.test_code_lookups, self.test_country_state_county_lookup, {}),
-                         {})
+        self.assertEqual(
+            get_disambiguated_values({}, self.test_code_lookups, self.test_country_state_county_lookup, {}),
+            {}
+        )
 
     def test_location_with_no_keys_in_lookups(self):
         test_location = {
@@ -162,7 +164,8 @@ class GetDisambiguatedValuesTestCase(TestCase):
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup, {}),
-            expected_location)
+            expected_location
+        )
 
     def test_state_county_in_state_county_lookup(self):
         test_location = {
@@ -176,12 +179,13 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'site_no': {'name': '12345678', 'code': '12345678'},
             'country_cd': {'name': 'US', 'code': 'US'},
             'state_cd': {'name': 'Alabama', 'code': '01'},
-            'district_cd': {'name': 'Alaska', 'code': '02'},
+            'district_cd': {'name': 'Alaska', 'abbreviation': 'AK', 'code': '02'},
             'county_cd': {'name': 'Baldwin County', 'code': '002'}
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup, {}),
-            expected_location)
+            expected_location
+        )
 
     def test_state_county_no_county_in_lookup(self):
         test_location = {
@@ -215,7 +219,8 @@ class GetDisambiguatedValuesTestCase(TestCase):
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup, {}),
-            expected_location)
+            expected_location
+        )
 
     def test_no_state_in_lookup(self):
         test_location = {
@@ -229,12 +234,16 @@ class GetDisambiguatedValuesTestCase(TestCase):
             'site_no': {'name': '12345678', 'code': '12345678'},
             'country_cd': {'name': 'US', 'code': 'US'},
             'state_cd': {'name': '10', 'code': '10'},
-            'district_cd': {'name': '11', 'code': '11'},
+            'district_cd': {'name': '11', 'abbreviation': None, 'code': '11'},
             'county_cd': {'name': '004', 'code': '004'}
         }
         self.assertEqual(
-            get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup, {}),
-            expected_location)
+            get_disambiguated_values(
+                test_location, self.test_code_lookups,
+                self.test_country_state_county_lookup, {}
+            ),
+            expected_location
+        )
 
     def test_no_country_in_lookup(self):
         test_location = {
@@ -251,7 +260,8 @@ class GetDisambiguatedValuesTestCase(TestCase):
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup, {}),
-            expected_location)
+            expected_location
+        )
 
     def test_missing_country(self):
         test_location = {
@@ -266,7 +276,8 @@ class GetDisambiguatedValuesTestCase(TestCase):
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup, {}),
-            expected_location)
+            expected_location
+        )
 
     def test_missing_state(self):
         test_location = {
@@ -281,7 +292,8 @@ class GetDisambiguatedValuesTestCase(TestCase):
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup, {}),
-            expected_location)
+            expected_location
+        )
 
     def test_missing_county(self):
         test_location = {
@@ -473,3 +485,12 @@ class TestBuildLinkedData(TestCase):
                             }
                     }
         self.assertDictEqual(result, expected)
+
+
+class TestGetStateAbbreviation(TestCase):
+
+    def test_state_found(self):
+        self.assertEqual(get_state_abbreviation('California'), 'CA')
+
+    def test_state_no_found(self):
+        self.assertIsNone(get_state_abbreviation('Tenochtitlan'))

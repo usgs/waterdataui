@@ -7,7 +7,7 @@ from flask import render_template, request, Markup
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values
-from .utils import execute_get_request, parse_rdb
+from .utils import construct_url, execute_get_request, parse_rdb
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -85,18 +85,35 @@ def monitoring_location(site_no):
                 station_record.get('dec_long_va', ''),
                 location_capabilities
             )
+            location_with_values = get_disambiguated_values(
+                station_record,
+                app.config['NWIS_CODE_LOOKUP'],
+                app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
+                app.config['HUC_LOOKUP']
+            )
+            questions_link = None
+            try:
+                district_abbrev = location_with_values['district_cd']['abbreviation']
+            except KeyError:
+                pass
+            else:
+                questions_link_params = {
+                    'pemail': 'gs-w-{}_NWISWeb_Data_Inquiries'.format(district_abbrev.lower()),
+                    'subject': 'Site Number: {}'.format(site_no),
+                    'viewnote': (
+                        '<H1>USGS NWIS Feedback Request</H1><p><b>Please enter a subject in the form '
+                        'below that briefly summarizes your request</b></p>'
+                    )
+                }
+                questions_link = construct_url('https://water.usgs.gov', 'contact/gsanswer', questions_link_params)
             context = {
                 'status_code': status,
                 'stations': data_list,
-                'location_with_values': get_disambiguated_values(
-                    station_record,
-                    app.config['NWIS_CODE_LOOKUP'],
-                    app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
-                    app.config['HUC_LOOKUP']
-                ),
+                'location_with_values': location_with_values,
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
-                'site_dataseries': site_dataseries
+                'site_dataseries': site_dataseries,
+                'questions_link': questions_link
             }
         http_code = 200
     elif 400 <= status < 500:
