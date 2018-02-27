@@ -13,9 +13,9 @@ const { appendAxes, axesSelector } = require('./axes');
 const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
-const { pointsSelector, lineSegmentsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC, HASH_ID } = require('./timeseries');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
+const { pointsSelector, lineSegmentsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC, HASH_ID } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
 const drawMessage = function (elem, message) {

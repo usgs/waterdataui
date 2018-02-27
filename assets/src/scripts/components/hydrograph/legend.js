@@ -1,8 +1,9 @@
 // functions to facilitate legend creation for a d3 plot
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
-const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
+
 const { CIRCLE_RADIUS, MARGIN } = require('./layout');
+const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
 const { lineSegmentsSelector, MASK_DESC, HASH_ID} = require('./timeseries');
 
 
