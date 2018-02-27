@@ -10,9 +10,8 @@ const { lineSegmentsSelector, MASK_DESC, HASH_ID} = require('./timeseries');
  * Create a simple legend
  *
  * @param {Object} svg - d3 selector
- * @param {Object} legendMarkers - property for each ts key
+ * @param {Object} legendMarkers - property for each ts key containing the markers to draw
  * @param {Object} layout - width and height of svg.
- * @param markerTextOffset
  */
 function drawSimpleLegend(svg,
                           legendMarkers,
@@ -90,9 +89,10 @@ const tsMaskMarkers = function(tsKey, masks) {
 /**
  * create elements for the legend in the svg
  *
- * @param dataPlotElements
- * @param lineSegments
- * @return {Array of Array of markers} - Each array represents a line in the legend
+ * @param {Object} displayItems - Object containing keys for each ts. The current and compare will contain an
+ *                 object that has a masks property containing the Set of masks that are currently displayed.
+ *                 The medianStatistics property will contain the metadata for the medianStatistics
+ * @return {Object} - Each key respresnts a ts and contains an array of markers to show.
  */
 const createLegendMarkers = function(displayItems) {
     let legendMarkers = {
@@ -124,7 +124,7 @@ const createLegendMarkers = function(displayItems) {
 const uniqueMasksSelector = memoize(tsDataKey => createSelector(
     lineSegmentsSelector(tsDataKey),
     (lineSegments) => {
-        let masks = lineSegments.map((segment) => { return segment.classes.dataMask; });
+        let masks = lineSegments.map((segment) => segment.classes.dataMask );
         return new Set(masks.filter(x => x !== null));
     }
 ));
