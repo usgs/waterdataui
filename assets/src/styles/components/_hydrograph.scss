@@ -28,13 +28,6 @@ table#select-timeseries {
     vertical-align: top;
     overflow: hidden;
 
-    .legend {
-        font-size: 12px;
-        @include media($medium-screen) {
-            font-size: 16px;
-        }
-    }
-
     svg {
         font-size: 0.7em;
         @include media($medium-screen) {
@@ -117,6 +110,12 @@ table#select-timeseries {
                     stroke: black;
                     stroke-opacity: 0.7;
                 }
+            }
+        }
+        .legend {
+            font-size: 12px;
+            @include media($medium-screen) {
+                font-size: 16px;
             }
         }
         #median-points {
