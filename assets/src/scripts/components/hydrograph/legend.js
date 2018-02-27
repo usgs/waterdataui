@@ -25,15 +25,16 @@ function drawSimpleLegend(svg,
     let rowCounter = 0;
     let legend = svg
         .append('g')
-            .attr('class', 'legend');
+            .attr('class', 'legend')
+            .attr('transform', `translate(${MARGIN.left}, ${layout.height - MARGIN.bottom + 20})`);
 
     for (let tsKey in legendMarkers) {
         let xPosition = 0;
-        let detachedMarker;
         let previousMarkerGroup;
         if (legendMarkers[tsKey].length > 0) {
             rowCounter += 1;
         }
+
         for (let legendMarker of legendMarkers[tsKey]) {
             if (previousMarkerGroup) {
                 let previousMarkerGroupBox = previousMarkerGroup.node().getBBox();
@@ -62,8 +63,9 @@ function drawSimpleLegend(svg,
                 domClass: legendMarker.domClass,
                 fill: legendMarker.fill
             };
+
             // add the marker to the svg
-            detachedMarker = markerType(markerArgs);
+            let detachedMarker = markerType(markerArgs);
             legendGroup.node().appendChild(detachedMarker.node());
             // add text for the legend marker
             let detachedMarkerBBox = detachedMarker.node().getBBox();
@@ -74,7 +76,6 @@ function drawSimpleLegend(svg,
             previousMarkerGroup = legendGroup;
         }
     }
-    legend.attr('transform', `translate(${MARGIN.left}, ${layout.height - MARGIN.bottom + 20})`);
 }
 
 const tsMaskMarkers = function(tsKey, masks) {
