@@ -1,6 +1,6 @@
-const { timeFormat, utcFormat } = require('d3-time-format');
+const { utcFormat } = require('d3-time-format');
 const { get } = require('./ajax');
-const { deltaDays, replaceHtmlEntities } = require('./utils');
+const { deltaDays } = require('./utils');
 
 
 // Define Water Services root URL - use global variable if defined, otherwise
@@ -8,8 +8,6 @@ const { deltaDays, replaceHtmlEntities } = require('./utils');
 const SERVICE_ROOT = window.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
 const PAST_SERVICE_ROOT = window.PAST_SERVICE_ROOT  || 'https://nwis.waterservices.usgs.gov/nwis';
 
-// Create a time formatting function from D3's timeFormat
-const formatTime = timeFormat('%c %Z');
 const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
 function olderThan120Days(date) {
@@ -43,44 +41,7 @@ export function getTimeseries({sites, params=null, startDate=null, endDate=null}
     let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
     let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${paramCds}&${timeParams}&indent=on&siteStatus=all&format=json`;
     return get(url)
-        .then((response) => {
-            let data = JSON.parse(response);
-            return [data.value.timeSeries.map(series => {
-                let noDataValue = series.variable.noDataValue;
-                const qualifierMapping = series.values[0].qualifier.reduce((map, qualifier) => {
-                    map[qualifier.qualifierCode] = qualifier.qualifierDescription;
-                    return map;
-                }, {});
-                return {
-                    id: series.name,
-                    code: series.variable.variableCode[0].value,
-                    name: replaceHtmlEntities(series.variable.variableName),
-                    type: series.variable.valueType,
-                    unit: series.variable.unit.unitCode,
-                    startTime: series.values[0].value.length ?
-                        new Date(series.values[0].value[0].dateTime) : null,
-                    endTime: series.values[0].value.length ?
-                        new Date(series.values[0].value.slice(-1)[0].dateTime) : null,
-                    description: series.variable.variableDescription,
-                    values: series.values[0].value.map(datum => {
-                        let date = new Date(datum.dateTime);
-                        let value = parseFloat(datum.value);
-                        if (value === noDataValue) {
-                            value = null;
-                        }
-                        const qualifierDescriptions = datum.qualifiers.map((qualifier) => qualifierMapping[qualifier]);
-                        return {
-                            time: date,
-                            value: value,
-                            qualifiers: datum.qualifiers,
-                            approved: datum.qualifiers.indexOf('A') > -1,
-                            estimated: datum.qualifiers.indexOf('E') > -1,
-                            label: `${formatTime(date)}\n${value || ''} ${value ? series.variable.unit.unitCode : ''} (${qualifierDescriptions.join(', ')})`
-                        };
-                    })
-                };
-            }), data];
-        })
+        .then(response => JSON.parse(response))
         .catch(reason => {
             console.error(reason);
             return [];

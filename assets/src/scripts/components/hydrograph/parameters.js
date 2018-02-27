@@ -10,27 +10,35 @@ const { dispatch } = require('../../lib/redux');
  * @return {Array}        Sorted array of [code, metadata] pairs.
  */
 export const availableTimeseriesSelector = createSelector(
-    state => state.tsData,
-    state => state.currentParameterCode,
-    (tsData, currentCd) => {
+    state => state.series.variables,
+    state => state.series.timeSeries,
+    state => state.currentVariableID,
+    (variables, timeSeries, currentVariableID) => {
+        if (!variables) {
+            return [];
+        }
+
         const codes = {};
-        for (let key of Object.keys(tsData).sort()) {
-            for (let code of Object.keys(tsData[key])) {
-                codes[code] = codes[code] || {};
-                codes[code] = {
-                    description: codes[code].description || tsData[key][code].description,
-                    type: codes[code].type || tsData[key][code].type,
-                    selected: currentCd === code,
-                    currentYear: key === 'current' || codes[code].currentYear === true,
-                    previousYear: key === 'compare' || codes[code].previousYear === true,
-                    medianData: key === 'medianStatistics' || codes[code].medianData === true
-                };
-            }
+        const seriesList = Object.values(timeSeries);
+        for (const variableID of Object.keys(variables).sort()) {
+            const variable = variables[variableID];
+            codes[variable.variableCode.value] = {
+                variableID: variable.oid,
+                description: variable.variableDescription,
+                selected: currentVariableID === variableID,
+                currentYear: Boolean(seriesList.find(
+                    ts => ts.tsKey === 'current' && ts.variable === variableID)),
+                previousYear: Boolean(seriesList.find(
+                    ts => ts.tsKey === 'compare' && ts.variable === variableID)),
+                medianData: Boolean(seriesList.find(
+                    ts => ts.tsKey === 'median' && ts.variable === variableID))
+            };
         }
         let sorted = [];
         for (let key of Object.keys(codes).sort()) {
             sorted.push([key, codes[key]]);
         }
+
         return sorted;
     }
 );
@@ -67,7 +75,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
             .classed('selected', parm => parm[1].selected)
             .on('click', dispatch(function (parm) {
                 if (!parm[1].selected) {
-                    return Actions.setCurrentParameterCode(parm[0]);
+                    return Actions.setCurrentParameterCode(parm[0], parm[1].variableID);
                 }
             }))
             .call(tr => {

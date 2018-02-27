@@ -57,22 +57,6 @@ describe('Models module', () => {
             expect(ajaxUrl).toContain('endDT=2018-01-02T22:45');
         });
 
-        it('getTimeseries parses valid response data', (done) => {
-            models.getTimeseries({sites: [siteID], params: [paramCode]}).then(([series, newSeries]) => {
-                expect(series.length).toBe(1);
-                expect(series[0].code).toBe(paramCode);
-                expect(series[0].name).toBe('Streamflow, ft³/s');
-                expect(series[0].description).
-                    toBe('Discharge, cubic feet per second');
-                expect(series[0].startTime).
-                    toEqual(new Date('1/2/2018, 3:00:00 PM -0600'));
-                expect(series[0].endTime).
-                    toEqual(new Date('1/9/2018, 2:15:00 PM -0600'));
-                expect(series[0].values.length).toBe(670);
-                done();
-            });
-        });
-
         it('Uses current data service root if data requested is less than 120 days old', () => {
             models.getTimeseries({sites: [siteID], params: [paramCode]});
             expect(ajaxMock.get.calls.mostRecent().args[0]).toContain('https://waterservices.usgs.gov/nwis');

@@ -6,7 +6,7 @@ const { createSelector } = require('reselect');
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');
 
-const MASK_DESC = {
+export const MASK_DESC = {
     ice: 'Ice',
     fld: 'Flood',
     bkw: 'Backwater',
@@ -23,23 +23,130 @@ const MASK_DESC = {
     '***': 'Unavailable'
 };
 
-/**
- * Returns the points for a given timeseries.
- * @param  {Object} state     Redux store
- * @param  {String} tsDataKey Timeseries key
- * @return {Array}            Array of points.
- */
-const pointsSelector = memoize(tsDataKey => createSelector(
-    state => state.tsData,
-    state => state.currentParameterCode,
-    (tsData, parmCd) => {
-        if (tsData[tsDataKey] && tsData[tsDataKey][parmCd]) {
-            return tsData[tsDataKey][parmCd].values;
-        } else {
+
+export const requestSelector = memoize(tsKey => state => {
+    return state.series.requests && state.series.requests[tsKey] ? state.series.requests[tsKey] : null;
+});
+
+
+export const collectionsSelector = memoize(tsKey => createSelector(
+    requestSelector(tsKey),
+    state => state.series.timeSeriesCollections,
+    (request, collections) => {
+        if (!request || !request.timeSeriesCollections || !collections) {
             return [];
+        } else {
+            return request.timeSeriesCollections.map(colID => collections[colID]);
         }
     }
 ));
+
+
+export const currentVariableSelector = createSelector(
+    state => state.series.variables,
+    state => state.currentVariableID,
+    (variables, variableID) => {
+        return variableID ? variables[variableID] : null;
+    }
+);
+
+
+/**
+ * Returns a selector that, for a given tsKey:
+ * Selects all time series.
+ * @param  {String} tsKey       Time-series key
+ * @param  {String} hasPoints   Only return time series that have point data
+ * @param  {Object} state       Redux state
+ * @return {Object}             Time-series data
+ */
+export const timeSeriesSelector = memoize((tsKey, hasPoints=true) => createSelector(
+    state => state.series.timeSeries,
+    collectionsSelector(tsKey),
+    (timeSeries, collections) => {
+        const series = collections.reduce((seriesList, collection) => {
+            const colSeries = collection.timeSeries.map(sID => timeSeries[sID]);
+            Array.prototype.push.apply(seriesList, colSeries);
+            return seriesList;
+        }, {});
+        if (hasPoints) {
+            return series.filter(ts => ts.points.length > 0);
+        } else {
+            return series;
+        }
+    }
+));
+
+
+/**
+ * Returns a selector that, for a given tsKey:
+ * Selects all time series for the current time series variable.
+ * @param  {String} tsKey   Time-series key
+ * @param  {Object} state   Redux state
+ * @return {Object}         Time-series data
+ */
+export const currentTimeSeriesSelector = memoize(tsKey => createSelector(
+    state => state.series.timeSeries,
+    collectionsSelector(tsKey),
+    currentVariableSelector,
+    (timeSeries, collections, variable) => {
+        return collections.filter(c => c.variable === variable.oid).reduce((seriesList, collection) => {
+            const colSeries = collection.timeSeries.map(sID => timeSeries[sID]);
+            Array.prototype.push.apply(seriesList, colSeries);
+            return seriesList;
+        }, []);
+    }
+));
+
+
+/**
+ * Returns the points for a given timeseries.
+ * @param  {Object} state     Redux store
+ * @param  {String} tsKey     Timeseries key
+ * @return {Array}            Array of points.
+ */
+export const pointsSelector = memoize(tsKey => createSelector(
+    currentTimeSeriesSelector(tsKey),
+    (timeSeries) => {
+        // FIXME: Return all points, not just those from the first time series.
+        const pointsList = timeSeries.map(series => series.points);
+        return pointsList[0] || [];
+    }
+));
+
+
+export const classesForPoint = point => {
+    return {
+        approved: point.qualifiers.indexOf('A') > -1,
+        estimated: point.qualifiers.indexOf('E') > -1
+    };
+};
+
+
+/**
+ * Returns an array of points for each visible timeseries.
+ * @param  {Object} state     Redux store
+ * @return {Array}            Array of point arrays.
+ */
+export const visiblePointsSelector = createSelector(
+    pointsSelector('current'),
+    pointsSelector('compare'),
+    pointsSelector('median'),
+    (state) => state.showSeries,
+    (current, compare, median, showSeries) => {
+        const pointArray = [];
+        if (showSeries['current']) {
+            pointArray.push(current);
+        }
+        if (showSeries['compare']) {
+            pointArray.push(compare);
+        }
+        if (showSeries['median']) {
+            pointArray.push(median);
+        }
+        return pointArray;
+    }
+);
+
 
 /**
  * Factory function creates a function that:
@@ -48,7 +155,7 @@ const pointsSelector = memoize(tsDataKey => createSelector(
  * @param  {String}  tsDataKey Timeseries key
  * @return {Boolean}           Show state of the timeseries
  */
-const isVisibleSelector = memoize(tsDataKey => (state) => {
+export const isVisibleSelector = memoize(tsDataKey => (state) => {
     return state.showSeries[tsDataKey];
 });
 
@@ -60,7 +167,7 @@ const isVisibleSelector = memoize(tsDataKey => (state) => {
  * @param  {String} tsDataKey Timeseries key
  * @return {Array}            Array of points.
  */
-const lineSegmentsSelector = memoize(tsDataKey => createSelector(
+export const lineSegmentsSelector = memoize(tsDataKey => createSelector(
     pointsSelector(tsDataKey),
     (points) => {
         // Accumulate data into line groups, splitting on the estimated and
@@ -107,39 +214,25 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
 ));
 
 
-/**
- * Returns the first valid timeseries for the currently selected parameter
- * code, to be used for reference data like plot title, description, etc.
- * @type {Object}   Timeseries, or empty object.
- */
-const referenceSeriesSelector = createSelector(
-    state => state.tsData['current'][state.currentParameterCode],
-    state => state.tsData['compare'][state.currentParameterCode],
-    (current, compare) => current || compare || {}
+export const yLabelSelector = createSelector(
+    currentVariableSelector,
+    variable => variable ? variable.variableDescription : ''
 );
 
 
-const yLabelSelector = createSelector(
-    referenceSeriesSelector,
-    series => series.description || ''
+export const titleSelector = createSelector(
+    currentVariableSelector,
+    variable => variable ? variable.variableName : ''
 );
 
 
-const titleSelector = createSelector(
-    referenceSeriesSelector,
-    series => series.name || ''
+export const descriptionSelector = createSelector(
+    currentVariableSelector,
+    currentTimeSeriesSelector('current'),
+    (variable, timeSeriesList) => {
+        const desc = variable ? variable.variableDescription : '';
+        const startTime = Math.max.apply(timeSeriesList.map(ts => ts.startTime));
+        const endTime = Math.max.apply(timeSeriesList.map(ts => ts.startTime));
+        return `${desc} from ${formatTime(startTime)} to ${formatTime(endTime)}`;
+    }
 );
-
-
-const descriptionSelector = createSelector(
-    referenceSeriesSelector,
-    series => series.description + ' from ' +
-        formatTime(series.startTime) + ' to ' +
-        formatTime(series.endTime)
-);
-
-
-module.exports = {
-    pointsSelector, lineSegmentsSelector, isVisibleSelector, yLabelSelector,
-    titleSelector, descriptionSelector, MASK_DESC
-};

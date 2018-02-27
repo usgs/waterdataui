@@ -1,13 +1,17 @@
 
 const { max, bisector } = require('d3-array');
 const { mouse } = require('d3-selection');
+const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
 const { createSelector, createStructuredSelector } = require('reselect');
 
 const { dispatch, link } = require('../../lib/redux');
 
-const { pointsSelector } = require('./timeseries');
+const { classesForPoint, currentVariableSelector, pointsSelector } = require('./timeseries');
 const { Actions } = require('./store');
+
+const formatTime = timeFormat('%c %Z');
+
 
 const maxValue = function (data) {
     return max(data.map((datum) => datum.value));
@@ -48,7 +52,7 @@ const getNearestTime = function(data, time) {
     if (data.length < 2) {
         return null;
     }
-    const bisectDate = bisector(d => d.time).left;
+    const bisectDate = bisector(d => d.dateTime).left;
 
     let index = bisectDate(data, time, 1);
     let datum;
@@ -56,7 +60,7 @@ const getNearestTime = function(data, time) {
     let d1 = data[index];
 
     if (d0 && d1) {
-        datum = time - d0.time > d1.time - time ? d1 : d0;
+        datum = time - d0.dateTime > d1.dateTime - time ? d1 : d0;
     } else {
         datum = d0 || d1;
     }
@@ -73,9 +77,10 @@ const getNearestTime = function(data, time) {
  * @param {String} tsDataKey - Timeseries key
  * @return {Date}
  */
-const tooltipFocusTimeSelector = memoize(tsDataKey => (state) => {
-    return state.tooltipFocusTime[tsDataKey];
-});
+const tooltipFocusTimeSelector = memoize(tsDataKey => createSelector(
+    state => state.tooltipFocusTime,
+    tooltipFocusTime => tooltipFocusTime[tsDataKey]
+));
 
 /*
  * Returns a function that the time series data point nearest the tooltip focus time for the given timeseries
@@ -95,15 +100,31 @@ const tsDatumSelector = memoize(tsDataKey => createSelector(
     })
 );
 
-const updateTooltipText = function(text, {datum}) {
+const updateTooltipText = function(text, {datum, qualifiers, unitCode}) {
+    let label = '';
+    let classes = {};
     if (datum) {
-        text.classed('approved', datum.approved)
-            .classed('estimated', datum.estimated);
-        text.text(datum.label);
-    } else {
-        text.text('');
+        if (!qualifiers) {
+            return;
+        }
+        const qualifierStr = Object.keys(qualifiers).map(key => qualifiers[key].qualifierDescription).join(', ');
+        const valueStr = `${datum.value || ''} ${datum.value ? unitCode : ''}`;
+        label = `${valueStr} - ${formatTime(datum.dateTime)} (${qualifierStr})`;
+        classes = classesForPoint(datum);
     }
+
+    text.classed('approved', classes.approved)
+        .classed('estimated', classes.estimated);
+    text.text(label);
 };
+
+const qualifiersSelector = state => state.series.qualifiers;
+
+const unitCodeSelector = createSelector(
+    currentVariableSelector,
+    variable => variable ? variable.unit.unitCode : null
+);
+
 
 /*
  * Append a group containing the tooltip text elements to elem
@@ -122,7 +143,9 @@ const createTooltipText = function(elem) {
             .attr('x', 20)
             .attr('y', `${y}em`)
             .call(link(updateTooltipText, createStructuredSelector({
-                datum: tsDatumSelector(tskey)
+                datum: tsDatumSelector(tskey),
+                qualifiers: qualifiersSelector,
+                unitCode: unitCodeSelector
             })));
         y += 1;
     }
@@ -142,7 +165,7 @@ const updateFocusCircle = function(circleFocus, {tsDatum, xScale, yScale}) {
     if (tsDatum && tsDatum.value) {
         circleFocus.style('display', null)
             .attr('transform',
-                `translate(${xScale(tsDatum.time)}, ${yScale(tsDatum.value)})`);
+                `translate(${xScale(tsDatum.dateTime)}, ${yScale(tsDatum.value)})`);
     } else {
         circleFocus.style('display', 'none');
     }

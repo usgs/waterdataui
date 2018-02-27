@@ -5,7 +5,7 @@ const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { layoutSelector, MARGIN } = require('./layout');
-const { pointsSelector } = require('./timeseries');
+const { pointsSelector, visiblePointsSelector } = require('./timeseries');
 
 const paddingRatio = 0.2;
 
@@ -35,7 +35,7 @@ function extendDomain(domain) {
  */
 function createXScale(values, xSize) {
     // Calculate max and min for values
-    const xExtent = values.length ? extent(values, d => d.time) : [0, 1];
+    const xExtent = values.length ? extent(values, d => d.dateTime) : [0, 1];
 
     // xScale is oriented on the left
     return scaleTime()
@@ -50,17 +50,12 @@ function createXScale(values, xSize) {
  * @param {Number} ySize - range of scale
  * @eturn {Object} d3 scale for value.
  */
-function createYScale(tsData, parmCd, showSeries, ySize) {
+function createYScale(pointArrays, ySize) {
     let yExtent;
 
     // Calculate max and min for data
-    for (let key of Object.keys(tsData)) {
-        if (!tsData[key][parmCd]) {
-            continue;
-        }
-
-        let points = tsData[key][parmCd].values.filter(pt => pt.value !== null);
-        if (!showSeries[key] || points.length === 0) {
+    for (const points of pointArrays) {
+        if (points.length === 0) {
             continue;
         }
 
@@ -111,10 +106,8 @@ const xScaleSelector = memoize(tsDataKey => createSelector(
  */
 const yScaleSelector = createSelector(
     layoutSelector,
-    (state) => state.tsData,
-    (state) => state.showSeries,
-    state => state.currentParameterCode,
-    (layout, tsData, showSeries, parmCd) => createYScale(tsData, parmCd, showSeries, layout.height - (MARGIN.top + MARGIN.bottom))
+    visiblePointsSelector,
+    (layout, pointArrays) => createYScale(pointArrays, layout.height - (MARGIN.top + MARGIN.bottom))
 );
 
 

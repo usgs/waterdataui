@@ -12,27 +12,41 @@ export const Actions = {
         return function (dispatch) {
             const timeSeries = getTimeseries({sites: [siteno], params, startDate, endDate}).then(
                 series => {
-                    const collection = normalize(series[1], 'current');
-                    dispatch(Actions.addSeriesCollection('current', collection));
-                    dispatch(Actions.addTimeseries('current', series[0]));
-                    // Trigger a call to get last year's data
-                    dispatch(Actions.retrieveCompareTimeseries(siteno, series[0][0].startTime, series[0][0].endTime));
+                    const collection = normalize(series, 'current');
 
-                    return series;
+                    // Get the start/end times of every time series.
+                    const tsArray = Object.values(collection.timeSeries);
+                    const startTime = new Date(Math.min.apply(null,
+                        tsArray.filter(ts => ts.startTime).map(ts => ts.startTime)));
+                    const endTime = new Date(Math.max.apply(null,
+                        tsArray.filter(ts => ts.endTime).map(ts => ts.endTime)));
+
+                    dispatch(Actions.addSeriesCollection('current', collection));
+                    // Trigger a call to get last year's data
+                    dispatch(Actions.retrieveCompareTimeseries(siteno, startTime, endTime));
+
+                    return collection;
                 },
                 () => {
                     dispatch(Actions.resetTimeseries('current'));
                 }
             );
             const medianStatistics = getMedianStatistics({sites: [siteno]});
-            Promise.all([timeSeries, medianStatistics]).then(([[series, newSeries], stats]) => {
-                const startDate = series[0].startTime;
-                const endDate = series[0].endTime;
-                const units = series.reduce((units, series) => {
+            Promise.all([timeSeries, medianStatistics]).then(([collection, stats]) => {
+                // Get the start/end times of every time series.
+                const tsArray = Object.values(collection.timeSeries);
+                const startTime = new Date(Math.min.apply(null,
+                    tsArray.filter(ts => ts.startTime).map(ts => ts.startTime)));
+                const endTime = new Date(Math.max.apply(null,
+                    tsArray.filter(ts => ts.endTime).map(ts => ts.endTime)));
+
+                /*const units = collection.timeSeries.reduce((units, series) => {
                     units[series.code] = series.unit;
                     return units;
-                }, {});
-                let [plotableStats, newPlottableStats] = parseMedianData(stats, startDate, endDate, units);
+                }, {});*/
+                // FIXME: UNITS
+                const units = {};
+                let [plotableStats, newPlottableStats] = parseMedianData(stats, startTime, endTime, units);
                 dispatch(Actions.setMedianStatistics(plotableStats));
             });
         };
@@ -41,9 +55,8 @@ export const Actions = {
         return function (dispatch) {
             return getPreviousYearTimeseries({site, startTime, endTime}).then(
                 series => {
-                    const collection = normalize(series[1], 'compare');
-                    dispatch(Actions.addSeriesCollection('compare', collection));
-                    dispatch(Actions.addTimeseries('compare', series[0], false));
+                    const collection = normalize(series, 'compare');
+                    dispatch(Actions.addSeriesCollection('compare', collection, false));
                 },
                 () => dispatch(Actions.resetTimeseries('compare'))
             );
@@ -54,18 +67,6 @@ export const Actions = {
             type: 'TOGGLE_TIMESERIES',
             key,
             show
-        };
-    },
-    addTimeseries(key, data, show=true) {
-        return {
-            type: 'ADD_TIMESERIES',
-            key,
-            show,
-            // Key the data on its parameter code
-            data: data.reduce(function (acc, series) {
-                acc[series.code] = series;
-                return acc;
-            }, {})
         };
     },
     addSeriesCollection(key, data, show=true) {
@@ -107,37 +108,19 @@ export const Actions = {
             width
         };
     },
-    setCurrentParameterCode(parameterCode) {
+    setCurrentParameterCode(parameterCode, variableID) {
         return {
             type: 'PARAMETER_CODE_SET',
-            parameterCode
+            parameterCode,
+            variableID
         };
     }
 };
 
 
 export const timeSeriesReducer = function (state={}, action) {
+    let newState;
     switch (action.type) {
-        case 'ADD_TIMESERIES':
-            return {
-                ...state,
-                tsData: {
-                    ...state.tsData,
-                    [action.key]: {
-                        ...state.tsData[action.key],
-                        ...action.data
-                    }
-                },
-                showSeries: {
-                    ...state.showSeries,
-                    [action.key]: action.show
-                },
-                // If there isn't a selected parameter code yet, pick the first
-                // one after sorting by ID.
-                currentParameterCode: state.currentParameterCode ||
-                    action.data[Object.keys(action.data).sort()[0]].code
-            };
-
         case 'ADD_TIMESERIES_COLLECTION':
             return {
                 ...state,
@@ -145,7 +128,33 @@ export const timeSeriesReducer = function (state={}, action) {
                 showSeries: {
                     ...state.showSeries,
                     [action.key]: action.show
-                }
+                },
+                // If there isn't a selected parameter code yet, pick the first
+                // one after sorting by ID.
+                currentParameterCode: state.currentParameterCode || Object.values(
+                    action.data.variables).sort((a, b) => {
+                        const aVal = a.variableCode.value;
+                        const bVal = b.variableCode.value;
+                        if (aVal > bVal) {
+                            return 1;
+                        } else if (aVal < bVal) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    })[0].variableCode.value,
+                currentVariableID: state.currentVariableID || Object.values(
+                    action.data.variables).sort((a, b) => {
+                        const aVal = a.variableCode.value;
+                        const bVal = b.variableCode.value;
+                        if (aVal > bVal) {
+                            return 1;
+                        } else if (aVal < bVal) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    })[0].oid
             };
 
         case 'TOGGLE_TIMESERIES':
@@ -158,27 +167,28 @@ export const timeSeriesReducer = function (state={}, action) {
             };
 
         case 'RESET_TIMESERIES':
-            return {
+            newState = {
                 ...state,
-                tsData: {
-                    ...state.tsData,
-                    [action.key]: {}
-                },
                 showSeries: {
                     ...state.showSeries,
                     [action.key]: false
+                },
+                series: {
+                    ...state.series,
+                    request: {
+                        ...(state.series || {}).request
+                    }
                 }
             };
+            delete newState.series.request[action.key];
+            return newState;
 
         case 'SET_MEDIAN_STATISTICS':
             return {
                 ...state,
-                tsData: {
-                    ...state.tsData,
-                    medianStatistics: {
-                        ...state.tsData['medianStatistics'],
-                        ...action.medianStatistics
-                    }
+                medianStatistics: {
+                    ...state.tsData['medianStatistics'],
+                    ...action.medianStatistics
                 },
                 showSeries: {
                     ...state.showSeries,
@@ -211,7 +221,8 @@ export const timeSeriesReducer = function (state={}, action) {
         case 'PARAMETER_CODE_SET':
             return {
                 ...state,
-                currentParameterCode: action.parameterCode
+                currentParameterCode: action.parameterCode,
+                currentVariableID: action.variableID
             };
 
         default:
@@ -225,6 +236,7 @@ const MIDDLEWARES = [thunk];
 
 export const configureStore = function (initialState) {
     initialState = {
+        series: {},
         tsData: {
             current: {
             },
@@ -241,6 +253,7 @@ export const configureStore = function (initialState) {
             medianStatistics: false
         },
         currentParameterCode: null,
+        currentVariableID: null,
         width: 800,
         showMedianStatsLabel: false,
         tooltipFocusTime: {

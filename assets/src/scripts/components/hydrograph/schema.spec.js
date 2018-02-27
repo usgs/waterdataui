@@ -37,14 +37,14 @@ describe('Normalizr schema', () => {
                 }
             ]}
         });
-        expect(data.siteCode).toEqual({
+        expect(data.siteCodes).toEqual({
             '05413500': {
                 value: '05413500',
                 network: 'NWIS',
                 agencyCode: 'USGS'
             }
         });
-        expect(data.timeZone).toEqual({
+        expect(data.timeZones).toEqual({
             'CST': {
                 zoneOffset: '-06:00',
                 zoneAbbreviation: 'CST'
@@ -58,7 +58,7 @@ describe('Normalizr schema', () => {
             'CDT:CST:true': {
                 defaultTimeZone: 'CST',
                 daylightSavingsTimeZone: 'CDT',
-                siteUsesDaylightSavingsTime:true
+                siteUsesDaylightSavingsTime: true
             }
         });
         expect(data.sourceInfo).toEqual({
@@ -112,12 +112,15 @@ describe('Normalizr schema', () => {
             '158049:current': {
                 qualifier: ['P'],
                 qualityControlLevel: [],
-                method: [158049],
+                method: 158049,
                 source: [],
                 offset: [],
                 sample: [],
                 censorCode: [],
                 tsKey: 'current',
+                variable: '45807197',
+                startTime: new Date('2017-01-02T15:00:00.000-06:00'),
+                endTime: new Date('2017-01-02T15:15:00.000-06:00'),
                 points: [{
                     value: 302,
                     qualifiers: ['P'],
@@ -161,27 +164,22 @@ describe('Normalizr schema', () => {
                 }]
             }
         });
-        expect(data.variableCode).toEqual({
-            '00060': {
-                value: '00060',
-                network: 'NWIS',
-                vocabulary: 'NWIS:UnitValues',
-                variableID:45807197,
-                default:true
-            }
-        });
         expect(data.options).toEqual({
             '00000': {
                 name: 'Statistic',
                 optionCode: '00000'
             }
         });
-        expect(data.variable).toEqual({
+        expect(data.variables).toEqual({
             '45807197': {
-                variableCode: [
-                    '00060'
-                ],
-                variableName: 'Streamflow, ft&#179;/s',
+                variableCode: {
+                    value: '00060',
+                    network: 'NWIS',
+                    vocabulary: 'NWIS:UnitValues',
+                    variableID: 45807197,
+                    default: true
+                },
+                variableName: 'Streamflow, ft³/s',
                 variableDescription: 'Discharge, cubic feet per second',
                 valueType: 'Derived Value',
                 unit: {
@@ -189,7 +187,7 @@ describe('Normalizr schema', () => {
                 },
                 options: ['00000'],
                 note: [],
-                noDataValue:-999999,
+                noDataValue: -999999,
                 variableProperty: [],
                 oid: '45807197'
             }
@@ -204,10 +202,10 @@ describe('Normalizr schema', () => {
                 ]
             }
         });
-        expect(data.request).toEqual({
+        expect(data.requests).toEqual({
             current: {
                 queryInfo: 'current',
-                timeSeriesCollection: [
+                timeSeriesCollections: [
                     'USGS:05413500:00060:00000:current'
                 ]
             }

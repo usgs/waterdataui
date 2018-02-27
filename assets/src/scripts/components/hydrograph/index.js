@@ -52,7 +52,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
     }
 
     const tsLine = line()
-        .x(d => xScale(new Date(d.time)))
+        .x(d => xScale(d.dateTime))
         .y(d => yScale(d.value));
 
     for (let line of lines) {
@@ -68,7 +68,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
         } else {
             const maskCode = line.classes.dataMask.toLowerCase();
             const maskDisplayName = MASK_DESC[maskCode].replace(' ', '-').toLowerCase();
-            const [xDomainStart, xDomainEnd] = extent(line.points, d => d.time);
+            const [xDomainStart, xDomainEnd] = extent(line.points, d => d.dateTime);
             const [yRangeStart, yRangeEnd] = yScale.domain();
             let maskGroup = elem.append('g')
                 .attr('class', `${tsDataKey}-mask-group`);
@@ -160,7 +160,7 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
             .attr('class', 'median-data-series')
             .attr('r', CIRCLE_RADIUS)
             .attr('cx', function(d) {
-                return xscale(d.time);
+                return xscale(d.dateTime);
             })
             .attr('cy', function(d) {
                 return yscale(d.value);
@@ -178,7 +178,7 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
                     return d.label;
                 })
                 .attr('x', function(d) {
-                    return xscale(d.time) + 5;
+                    return xscale(d.dateTime) + 5;
                 })
                 .attr('y', function(d) {
                     return yscale(d.value);
@@ -251,7 +251,7 @@ const timeSeriesGraph = function (elem) {
             data: createSelector(
                 pointsSelector('current'),
                 points => points.map((value) => {
-                    return [value.value, value.time];
+                    return [value.value, value.dateTime];
                 })
             ),
             describeById: () => 'time-series-sr-desc',
@@ -267,7 +267,7 @@ const timeSeriesGraph = function (elem) {
             data: createSelector(
                 pointsSelector('medianStatistics'),
                 points => points.map((value) => {
-                    return [value.value, value.time];
+                    return [value.value, value.dateTime];
                 })
             ),
             describeById: () => 'median-statistics-sr-desc',
