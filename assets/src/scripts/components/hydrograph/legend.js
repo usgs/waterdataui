@@ -1,8 +1,9 @@
 // functions to facilitate legend creation for a d3 plot
+const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
 const { CIRCLE_RADIUS, MARGIN } = require('./layout');
-const { MASK_DESC, HASH_ID} = require('./timeseries');
+const { lineSegmentsSelector, MASK_DESC, HASH_ID} = require('./timeseries');
 
 
 /**
@@ -76,6 +77,15 @@ function drawSimpleLegend(svg,
     legend.attr('transform', `translate(${MARGIN.left}, ${layout.height - MARGIN.bottom + 20})`);
 }
 
+const tsMaskMarkers = function(tsKey, masks) {
+    return [...masks].map((mask) => {
+        const maskName = MASK_DESC[mask];
+        const tsClass = `${maskName.replace(' ', '-').toLowerCase()}-mask`;
+        const fill = `url(#${HASH_ID[tsKey]})`;
+        return defineRectangleMarker(null, `mask ${tsClass}`, maskName, null, fill);
+    });
+};
+
 /**
  * create elements for the legend in the svg
  *
@@ -83,65 +93,40 @@ function drawSimpleLegend(svg,
  * @param lineSegments
  * @return {Array of Array of markers} - Each array represents a line in the legend
  */
-const createLegendMarkers = function(dataPlotElements, currentLineSegments=[], compareLineSegments=[]) {
-    let text;
-    let marker;
+const createLegendMarkers = function(displayItems) {
     let legendMarkers = {
         current: [],
         compare: [],
         medianStatistics: []
     };
 
-    // create legend markers for data series
-    //if dataPlotElements.dataItems
-    for (let dataItem of dataPlotElements.dataItems) {
-        if (dataItem === 'compare' || dataItem === 'current') {
-            let domId = `ts-legend-${dataItem}`;
-            let svgGroup = `${dataItem}-line-marker`;
-            if (dataItem === 'compare') {
-                text = 'Last Year';
-            } else {
-                text = 'Current Year';
-            }
-            marker = defineLineMarker(domId, 'line', text, svgGroup);
-        } else if (dataItem === 'medianStatistics') {
-            text = 'Median';
-            if (dataPlotElements.metadata.statistics.description) {
-                text = `${text} ${dataPlotElements.metadata.statistics.description}`;
-            }
-            let beginYear = dataPlotElements.metadata.statistics.beginYear;
-            let endYear = dataPlotElements.metadata.statistics.endYear;
-            if (beginYear && endYear) {
-                text = `${text} ${beginYear} - ${endYear}`;
-            }
-            marker = defineCircleMarker(CIRCLE_RADIUS, null, 'median-data-series', text, 'median-circle-marker');
-        } else {
-            marker = null;
-        }
-        if (marker) {
-            legendMarkers[dataItem].push(marker);
-        }
+    if (displayItems.current) {
+        legendMarkers.current.push(defineLineMarker(null, 'line', 'Current Year', 'current-year-line-marker'));
+        legendMarkers.current.push(...tsMaskMarkers('current', displayItems.current.masks));
     }
-    // create markers for data masks for different components of data series
-    let currentMasks = currentLineSegments.map(segment => {return segment.classes.dataMask;});
-    let uniqueMasks = new Set(currentMasks.filter(x => x !== null));
-    for (let uniqueMask of uniqueMasks) {
-        let maskDisplayName = MASK_DESC[uniqueMask];
-        let maskClass = `mask ${maskDisplayName.replace(' ', '-').toLowerCase()}-mask`;
-        marker = defineRectangleMarker(null, maskClass, maskDisplayName, null, `url(#${HASH_ID.current})`);
-        legendMarkers.current.push(marker);
+    if (displayItems.compare) {
+        legendMarkers.compare.push(defineLineMarker(null, 'line', 'Last Year', 'compare-year-line-marker'));
+        legendMarkers.compare.push(...tsMaskMarkers('compare', displayItems.compare.masks));
     }
-    let compareMasks = compareLineSegments.map(segment => { return segment.classes.dataMask; });
-    let compareUniqueMasks = new Set(compareMasks.filter(x => x !== null));
-    for (let uniqueMask of compareUniqueMasks) {
-        let maskDisplayName = MASK_DESC[uniqueMask];
-        let maskClass = `mask ${maskDisplayName.replace(' ', '-').toLowerCase()}-mask`;
-        marker = defineRectangleMarker(null, maskClass, maskDisplayName, null, `url(#${HASH_ID.compare})`);
-        legendMarkers.compare. push(marker);
+
+    if (displayItems.medianStatistics) {
+        const stats = displayItems.medianStatistics;
+        const descriptionText = stats.description  ? `${stats.description} ` : '';
+        const dateText = stats.beginYear && stats.endYear ? `${stats.beginYear} - ${stats.endYear}` : '';
+        legendMarkers.medianStatistics.push(
+            defineCircleMarker(CIRCLE_RADIUS, null, 'median-data-series', `Median ${descriptionText}${dateText}`));
     }
+
     return legendMarkers;
 };
 
+const uniqueMasksSelector = memoize(tsDataKey => createSelector(
+    lineSegmentsSelector(tsDataKey),
+    (lineSegments) => {
+        let masks = lineSegments.map((segment) => { return segment.classes.dataMask; });
+        return new Set(masks.filter(x => x !== null));
+    }
+));
 /**
  * Select attributes from the state useful for legend creation
  */
@@ -149,28 +134,29 @@ const legendDisplaySelector = createSelector(
     (state) => state.showSeries,
     (state) => state.tsData,
     (state) => state.currentParameterCode,
-    (showSeries, tsData, currentParameterCode) => {
-        const medianTS = tsData.medianStatistics[currentParameterCode] || {};
-        const statisticalMetaData = medianTS.medianMetadata || {};
-        let shownSeries = [];
-        let dataPlotElements = {};
-        for (let key in showSeries) {
-            if (showSeries[key]) {
-                shownSeries.push(key);
+    uniqueMasksSelector('current'),
+    uniqueMasksSelector('compare'),
+    (showSeries, tsData, currentParameterCode, currentMasks, compareMasks) => {
+        let result = {};
+        if (showSeries.current) {
+            result.current = {masks: currentMasks};
+        }
+        if (showSeries.compare) {
+            result.compare = {masks: compareMasks};
+        }
+        if (showSeries.medianStatistics) {
+            const medianTS = tsData.medianStatistics[currentParameterCode] || {};
+            const statisticalMetaData = medianTS.medianMetadata || {};
+            if (statisticalMetaData) {
+                result.medianStatistics = {
+                    beginYear: statisticalMetaData.beginYear ? statisticalMetaData.beginYear : undefined,
+                    endYear: statisticalMetaData.endYear ? statisticalMetaData.endYear : undefined,
+                    description: medianTS.description || ''
+                };
             }
         }
-
-        dataPlotElements.dataItems = shownSeries;
-        dataPlotElements.metadata = {
-            statistics: {
-                beginYear: statisticalMetaData.beginYear ? statisticalMetaData.beginYear : undefined,
-                endYear: statisticalMetaData.endYear ? statisticalMetaData.endYear : undefined,
-                description: medianTS.description || ''
-            }
-        };
-        return dataPlotElements;
+        return result;
     }
 );
-
 
 module.exports = {drawSimpleLegend, createLegendMarkers, legendDisplaySelector};
