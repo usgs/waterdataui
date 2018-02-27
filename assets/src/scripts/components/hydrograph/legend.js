@@ -173,4 +173,4 @@ const legendDisplaySelector = createSelector(
 );
 
 
-module.exports = {drawSimpleLegend, drawSvgLegend, createLegendMarkers, legendDisplaySelector};
+module.exports = {drawSimpleLegend, createLegendMarkers, legendDisplaySelector};
