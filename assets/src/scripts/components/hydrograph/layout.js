@@ -12,6 +12,11 @@ const MARGIN = {
 };
 const CIRCLE_RADIUS = 4;
 
+const sparkLineDim = {
+    width: 50,
+    height: 30
+}
+
 /*
  * @param {Object} state - Redux store
  * @return {Object} containing width and height properties.
@@ -26,6 +31,6 @@ const layoutSelector = createSelector(
     }
 );
 
-module.exports = {ASPECT_RATIO, ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector};
+module.exports = {ASPECT_RATIO, ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector, sparkLineDim};
 
 

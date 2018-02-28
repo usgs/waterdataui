@@ -169,6 +169,10 @@ const descriptionSelector = createSelector(
         formatTime(series.endTime)
 );
 
+/**
+ * Given a parameter, get the parameters data
+ * and line segments.
+ */
 const dataSelector = memoize(parmCd => createSelector(
     state => state.tsData['current'][parmCd],
     lineSegmentsSelector('current', parmCd),

@@ -4,6 +4,7 @@ const { select } = require('d3-selection');
 
 const { Actions } = require('./store');
 const { dataSelector } = require('./timeseries');
+const { sparkLineDim } = require('./layout');
 const { createXScale, simplifiedYScale } = require('./scales');
 const { dispatch, link } = require('../../lib/redux');
 
@@ -39,6 +40,32 @@ export const availableTimeseriesSelector = createSelector(
     }
 );
 
+/**
+ * Draw a sparkline in a selected SVG element
+ *
+ * @param svgSelection
+ * @param tsData
+ */
+const addSparkLine = function(svgSelection, {tsData}) {
+    const { parmData, lines } = tsData;
+    if (parmData && lines) {
+        let x = createXScale(parmData, sparkLineDim.width);
+        let y = simplifiedYScale(parmData, sparkLineDim.height);
+        let spark = line()
+            .x(function(d) {
+                return x(d.time);
+            })
+            .y(function(d) {
+                return y(d.value);
+            });
+        for (let lineSegment of lines) {
+            svgSelection.append('path')
+                .attr('d', spark(lineSegment.points))
+                .attr('class', 'spark-line');
+        }
+    }
+};
+
 
 /**
  * Draws a table with clickable rows of timeseries parameter codes. Selecting
@@ -53,28 +80,6 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
         .append('table')
             .attr('id', 'select-timeseries')
             .classed('usa-table-borderless', true);
-    const sparkLineSvgWidth = 50;
-    const sparkLineSvgHeight = 30;
-    const sparkLines = function(selection, {tsData}) {
-        const { parmData, lines } = tsData;
-        if (parmData && lines) {
-            let x = createXScale(parmData, sparkLineSvgWidth);
-            let y = simplifiedYScale(parmData, sparkLineSvgHeight);
-            let spark = line()
-                .x(function(d) {
-                    return x(d.time);
-                })
-                .y(function(d) {
-                    return y(d.value);
-                });
-            for (let lineSegment of lines) {
-                selection.append('g')
-                    .append('path')
-                    .attr('d', spark(lineSegment.points))
-                    .attr('class', 'spark-line');
-            }
-        }
-    };
 
     table.append('caption').text('Select a timeseries');
 
@@ -113,16 +118,14 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
                     .html(parm => parm[1].medianData ? '<i class="fa fa-check" aria-label="Median data available"></i>' : '');
                 tr.append('td')
                     .append('svg')
-                    .attr('width', sparkLineSvgWidth.toString())
-                    .attr('height', sparkLineSvgHeight.toString())
-                    .attr('id', (parm) => {return parm[0]});
+                    .attr('width', sparkLineDim.width.toString())
+                    .attr('height', sparkLineDim.height.toString());
             });
 
-    let tableSvgs = tBody.selectAll('svg');
-    tableSvgs.each(function(d) {
+    tBody.selectAll('svg').each(function(d) {
         let selection = select(this);
         let parmCd = d[0];
-        selection.call(link(sparkLines,createStructuredSelector(
+        selection.call(link(addSparkLine, createStructuredSelector(
             {tsData: dataSelector(parmCd)}
         )));
     });
