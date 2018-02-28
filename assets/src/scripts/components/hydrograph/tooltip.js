@@ -10,7 +10,7 @@ const { dispatch, link } = require('../../lib/redux');
 const { classesForPoint, currentVariableSelector, pointsSelector } = require('./timeseries');
 const { Actions } = require('./store');
 
-const formatTime = timeFormat('%c %Z');
+const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');
 
 
 const maxValue = function (data) {
@@ -107,11 +107,12 @@ const updateTooltipText = function(text, {datum, qualifiers, unitCode}) {
         if (!qualifiers) {
             return;
         }
+        let tzAbbrev = datum.dateTime.toString().match(/\(([^)]+)\)/)[1];
         const qualifierStr = Object.keys(qualifiers).filter(
             key => datum.qualifiers.indexOf(key) > -1).map(
                 key => qualifiers[key].qualifierDescription).join(', ');
         const valueStr = `${datum.value || ''} ${datum.value ? unitCode : ''}`;
-        label = `${valueStr} - ${formatTime(datum.dateTime)} (${qualifierStr})`;
+        label = `${valueStr} - ${formatTime(datum.dateTime)} ${tzAbbrev} (${qualifierStr})`;
         classes = classesForPoint(datum);
     }
 

@@ -191,7 +191,7 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
  * @param medianData
  * @param timeSeriesStartDateTime
  * @param timeSeriesEndDateTime
- * @param timeSeriesUnit
+ * @param timeSeriesUnits
  * @returns {object}
  */
 export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, variables) {
