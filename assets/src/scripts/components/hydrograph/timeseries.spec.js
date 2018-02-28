@@ -45,7 +45,6 @@ const TEST_DATA = {
     currentVariableID: '45807197'
 };
 
-
 describe('Timeseries module', () => {
     describe('line segment selector', () => {
         it('should separate on approved', () => {
@@ -58,24 +57,18 @@ describe('Timeseries module', () => {
                         '00060': {
                             points: [{
                                 value: 10,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: false
+                                qualifiers: []
                             }, {
                                 value: 10,
-                                qualifiers: ['P'],
-                                approved: true,
-                                estimated: false
+                                qualifiers: ['A']
                             }, {
                                 value: 10,
-                                qualifiers: ['P'],
-                                approved: true,
-                                estimated: false
+                                qualifiers: ['A']
                             }]
                         }
                     }
                 }
-            })).toEqual([{
+            })).toEqual([[{
                 classes: {
                     approved: false,
                     estimated: false,
@@ -83,9 +76,7 @@ describe('Timeseries module', () => {
                 },
                 points: [{
                     value: 10,
-                    qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
+                    qualifiers: []
                 }]
             }, {
                 classes: {
@@ -95,16 +86,12 @@ describe('Timeseries module', () => {
                 },
                 points: [{
                     value: 10,
-                    qualifiers: ['P'],
-                    approved: true,
-                    estimated: false
+                    qualifiers: ['A']
                 }, {
                     value: 10,
-                    qualifiers: ['P'],
-                    approved: true,
-                    estimated: false
+                    qualifiers: ['A']
                 }]
-            }]);
+            }]]);
         });
 
         it('should separate on estimated', () => {
@@ -117,24 +104,18 @@ describe('Timeseries module', () => {
                         '00060': {
                             points: [{
                                 value: 10,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: false
+                                qualifiers: ['P']
                             }, {
                                 value: 10,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: true
+                                qualifiers: ['P', 'E']
                             }, {
                                 value: 10,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: true
+                                qualifiers: ['P', 'E']
                             }]
                         }
                     }
                 }
-            })).toEqual([{
+            })).toEqual([[{
                 classes: {
                     approved: false,
                     estimated: false,
@@ -142,9 +123,7 @@ describe('Timeseries module', () => {
                 },
                 points: [{
                     value: 10,
-                    qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
+                    qualifiers: ['P']
                 }]
             }, {
                 classes: {
@@ -154,16 +133,12 @@ describe('Timeseries module', () => {
                 },
                 points: [{
                     value: 10,
-                    qualifiers: ['P'],
-                    approved: false,
-                    estimated: true
+                    qualifiers: ['P', 'E']
                 }, {
                     value: 10,
-                    qualifiers: ['P'],
-                    approved: false,
-                    estimated: true
+                    qualifiers: ['P', 'E']
                 }]
-            }]);
+            }]]);
         });
 
         it('should separate out masked values', () => {
@@ -176,24 +151,18 @@ describe('Timeseries module', () => {
                         '00060': {
                             points: [{
                                 value: 10,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: false
+                                qualifiers: ['P']
                             }, {
                                 value: null,
-                                qualifiers: ['P', 'ICE'],
-                                approved: false,
-                                estimated: false
+                                qualifiers: ['P', 'ICE']
                             }, {
                                 value: null,
-                                qualifiers: ['P', 'FLD'],
-                                approved: false,
-                                estimated: false
+                                qualifiers: ['P', 'FLD']
                             }]
                         }
                     }
                 }
-            })).toEqual([
+            })).toEqual([[
                 {
                     classes: {
                         approved: false,
@@ -202,9 +171,7 @@ describe('Timeseries module', () => {
                     },
                     points: [{
                         value: 10,
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
+                        qualifiers: ['P']
                     }]
                 },
                 {
@@ -215,9 +182,7 @@ describe('Timeseries module', () => {
                     },
                     points: [{
                         value: null,
-                        qualifiers: ['P', 'ICE'],
-                        approved: false,
-                        estimated: false
+                        qualifiers: ['P', 'ICE']
                     }]
                 },
                 {
@@ -228,12 +193,10 @@ describe('Timeseries module', () => {
                     },
                     points: [{
                         value: null,
-                        qualifiers: ['P', 'FLD'],
-                        approved: false,
-                        estimated: false
+                        qualifiers: ['P', 'FLD']
                     }]
                 }
-            ]);
+            ]]);
         });
     });
 

@@ -124,9 +124,11 @@ const createLegendMarkers = function(displayItems) {
 
 const uniqueMasksSelector = memoize(tsDataKey => createSelector(
     lineSegmentsSelector(tsDataKey),
-    (lineSegments) => {
-        let masks = lineSegments.map((segment) => segment.classes.dataMask );
-        return new Set(masks.filter(x => x !== null));
+    (tsLineSegments) => {
+        return new Set(tsLineSegments.reduce((masks, lineSegments) => {
+            Array.prototype.push.apply(masks, lineSegments.map((segment) => segment.classes.dataMask));
+            return masks;
+        }, []).filter(x => x !== null));
     }
 ));
 /**

@@ -106,6 +106,7 @@ export const HASH_ID = {
 };
 
 /**
+ * Returns a selector that, for a given tsKey:
  * Returns the points for a given timeseries.
  * @param  {Object} state     Redux store
  * @param  {String} tsKey     Timeseries key
@@ -117,6 +118,21 @@ export const pointsSelector = memoize(tsKey => createSelector(
         // FIXME: Return all points, not just those from the first time series.
         const pointsList = timeSeries.map(series => series.points);
         return pointsList[0] || [];
+    }
+));
+
+
+/**
+ * Returns a selector that, for a given tsKey:
+ * Returns an array of time points for all visible time series.
+ * @param  {Object} state     Redux store
+ * @param  {String} tsKey     Timeseries key
+ * @return {Array}            Array of array of points.
+ */
+export const newPointsSelector = memoize(tsKey => createSelector(
+    currentTimeSeriesSelector(tsKey),
+    (timeSeries) => {
+        return timeSeries.map(series => series.points);
     }
 ));
 
@@ -195,54 +211,55 @@ export const pointsTableDataSelector = memoize(tsDataKey => createSelector(
 
 /**
  * Factory function creates a function that:
- * Returns all points in a timeseries grouped into line segments.
+ * Returns all points in a timeseries grouped into line segments, for each time series.
  * @param  {Object} state     Redux store
  * @param  {String} tsDataKey Timeseries key
- * @return {Array}            Array of points.
+ * @return {Array}            Array of array of points.
  */
 export const lineSegmentsSelector = memoize(tsDataKey => createSelector(
-    pointsSelector(tsDataKey),
-    (points) => {
-        // Accumulate data into line groups, splitting on the estimated and
-        // approval status.
-        let lines = [];
+    newPointsSelector(tsDataKey),
+    (tsPoints) => {
+        const linePoints = [];
+        for (const points of tsPoints) {
+            // Accumulate data into line groups, splitting on the estimated and
+            // approval status.
+            const lines = [];
+            let lastClasses = {};
+            const masks = new Set(Object.keys(MASK_DESC));
 
-        let lastClasses = {};
-        const masks = new Set(Object.keys(MASK_DESC));
+            for (let pt of points) {
+                // Classes to put on the line with this point.
+                let lineClasses = {
+                    ...classesForPoint(pt),
+                    dataMask: null
+                };
+                if (pt.value === null) {
+                    let qualifiers = new Set(pt.qualifiers.map(q => q.toLowerCase()));
+                    // current business rules specify that a particular data point
+                    // will only have at most one masking qualifier
+                    let maskIntersection = new Set([...masks].filter(x => qualifiers.has(x)));
+                    lineClasses.dataMask = [...maskIntersection][0];
+                }
+                // If this point doesn't have the same classes as the last point,
+                // create a new line for it.
+                if (lastClasses.approved !== lineClasses.approved ||
+                        lastClasses.estimated !== lineClasses.estimated ||
+                        lastClasses.dataMask !== lineClasses.dataMask) {
+                    lines.push({
+                        classes: lineClasses,
+                        points: []
+                    });
+                }
 
-        for (let pt of points) {
-            // Classes to put on the line with this point.
-            let lineClasses = {
-                approved: pt.approved,
-                estimated: pt.estimated,
-                dataMask: null
-            };
-            if (pt.value === null) {
-                let qualifiers = new Set(pt.qualifiers.map(q => q.toLowerCase()));
-                // current business rules specify that a particular data point
-                // will only have at most one masking qualifier
-                let maskIntersection = new Set([...masks].filter(x => qualifiers.has(x)));
-                lineClasses.dataMask = [...maskIntersection][0];
+                // Add this point to the current line.
+                lines[lines.length - 1].points.push(pt);
+
+                // Cache the classes for the next loop iteration.
+                lastClasses = lineClasses;
             }
-            // If this point doesn't have the same classes as the last point,
-            // create a new line for it.
-            if (lastClasses.approved !== lineClasses.approved ||
-                    lastClasses.estimated !== lineClasses.estimated ||
-                    lastClasses.dataMask !== lineClasses.dataMask) {
-                lines.push({
-                    classes: lineClasses,
-                    points: []
-                });
-            }
-
-            // Add this point to the current line.
-            lines[lines.length - 1].points.push(pt);
-
-            // Cache the classes for the next loop iteration.
-            lastClasses = lineClasses;
+            linePoints.push(lines);
         }
-
-        return lines;
+        return linePoints;
     }
 ));
 

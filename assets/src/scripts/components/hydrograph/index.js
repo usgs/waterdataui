@@ -38,10 +38,6 @@ const drawMessage = function (elem, message) {
 
 
 const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}) {
-    const elemId = 'ts-' + tsDataKey;
-    elem.selectAll(`#${elemId}`).remove();
-    elem.selectAll(`.${tsDataKey}-mask-group`).remove();
-
     if (!visible) {
         return;
     }
@@ -57,8 +53,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                 .classed('line', true)
                 .classed('approved', line.classes.approved)
                 .classed('estimated', line.classes.estimated)
-                .attr('data-title', tsDataKey)
-                .attr('id', `ts-${tsDataKey}`)
+                .classed(`ts-${tsDataKey}`, true)
                 .attr('d', tsLine);
         } else {
             const maskCode = line.classes.dataMask.toLowerCase();
@@ -86,6 +81,21 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                 .attr('height', Math.abs(yScale(yRangeEnd) - yScale(yRangeStart)))
                 .attr('fill', patternId);
         }
+    }
+};
+
+
+const plotDataLines = function (elem, {visible, tsLines, tsDataKey, xScale, yScale}) {
+    const elemId = `ts-${tsDataKey}-group`;
+
+    elem.selectAll(`#${elemId}`).remove();
+    const tsLineGroup = elem
+        .append('g')
+        .attr('id', elemId)
+        .classed('tsDataKey', true);
+
+    for (const lines of tsLines) {
+        plotDataLine(tsLineGroup, {visible, lines, tsDataKey, xScale, yScale});
     }
 };
 
@@ -201,16 +211,16 @@ const timeSeriesGraph = function (elem) {
             .append('g')
                 .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
                 .call(link(appendAxes, axesSelector))
-                .call(link(plotDataLine, createStructuredSelector({
+                .call(link(plotDataLines, createStructuredSelector({
                     visible: isVisibleSelector('current'),
-                    lines: lineSegmentsSelector('current'),
+                    tsLines: lineSegmentsSelector('current'),
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
                     tsDataKey: () => 'current'
                 })))
-                .call(link(plotDataLine, createStructuredSelector({
+                .call(link(plotDataLines, createStructuredSelector({
                     visible: isVisibleSelector('compare'),
-                    lines: lineSegmentsSelector('compare'),
+                    tsLines: lineSegmentsSelector('compare'),
                     xScale: xScaleSelector('compare'),
                     yScale: yScaleSelector,
                     tsDataKey: () => 'compare'

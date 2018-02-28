@@ -26,12 +26,12 @@ export const availableTimeseriesSelector = createSelector(
                 variableID: variable.oid,
                 description: variable.variableDescription,
                 selected: currentVariableID === variableID,
-                currentYear: Boolean(seriesList.find(
-                    ts => ts.tsKey === 'current' && ts.variable === variableID)),
-                previousYear: Boolean(seriesList.find(
-                    ts => ts.tsKey === 'compare' && ts.variable === variableID)),
-                medianData: Boolean(seriesList.find(
-                    ts => ts.tsKey === 'median' && ts.variable === variableID))
+                currentYear: seriesList.filter(
+                    ts => ts.tsKey === 'current' && ts.variable === variableID).length,
+                previousYear: seriesList.filter(
+                    ts => ts.tsKey === 'compare' && ts.variable === variableID).length,
+                medianData: seriesList.filter(
+                    ts => ts.tsKey === 'median' && ts.variable === variableID).length
             };
         }
         let sorted = [];
@@ -88,10 +88,19 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
                 tr.append('td')
                     .text(parm => parm[1].description);
                 tr.append('td')
-                    .html(parm => parm[1].currentYear ? '<i class="fa fa-check" aria-label="Current year data available"></i>' : '');
+                    .html(parm => {
+                        const subScript = parm[1].currentYear > 1 ? `<sub>${parm[1].currentYear}</sub>` : '';
+                        return parm[1].currentYear ? `<i class="fa fa-check" aria-label="Current year data available"></i>${subScript}` : '';
+                    });
                 tr.append('td')
-                    .html(parm => parm[1].previousYear ? '<i class="fa fa-check" aria-label="Previous year data available"></i>' : '');
+                    .html(parm => {
+                        const subScript = parm[1].previousYear > 1 ? `<sub>${parm[1].previousYear}</sub>` : '';
+                        return parm[1].previousYear ? `<i class="fa fa-check" aria-label="Previous year data available"></i>${subScript}` : '';
+                    });
                 tr.append('td')
-                    .html(parm => parm[1].medianData ? '<i class="fa fa-check" aria-label="Median data available"></i>' : '');
+                    .html(parm => {
+                        const subScript = parm[1].medianData > 1 ? `<sub>${parm[1].medianData}</sub>` : '';
+                        return parm[1].medianData ? `<i class="fa fa-check" aria-label="Median data available"></i>${subScript}` : '';
+                    });
             });
 };
