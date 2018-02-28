@@ -37,7 +37,7 @@ table#select-timeseries {
 
     svg {
         font-size: 0.7em;
-        @include media($small-screen) {
+        @include media($medium-screen) {
             font-size: 1em;
         }
 
@@ -119,6 +119,12 @@ table#select-timeseries {
                 }
             }
         }
+        .legend {
+            font-size: 12px;
+            @include media($medium-screen) {
+                font-size: 16px;
+            }
+        }
         #median-points {
             .median-data-series {
                 cursor: pointer;
@@ -130,7 +136,7 @@ table#select-timeseries {
         .mask {
             opacity: 0.2;
         }
-        .ice-mask {
+        .ice-affected-mask {
             fill: #33daff;
         }
         .flood-mask {
