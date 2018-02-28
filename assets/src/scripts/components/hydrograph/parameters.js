@@ -3,6 +3,7 @@ const { line } = require('d3-shape');
 const { select } = require('d3-selection');
 
 const { Actions } = require('./store');
+const { dataSelector } = require('./timeseries');
 const { createXScale, simplifiedYScale } = require('./scales');
 const { dispatch, link } = require('../../lib/redux');
 
@@ -119,14 +120,8 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
     tableSvgs.each(function(d) {
         let selection = select(this);
         let parmCd = d[0];
-        const dataSelector = createSelector(
-            state => state.tsData['current'][parmCd],
-            (parmCdData) => {
-                return parmCdData || {};
-            }
-        );
         selection.call(link(sparkLines,createStructuredSelector(
-            {tsData: dataSelector}
+            {tsData: dataSelector(parmCd)}
         )));
     });
 };

@@ -169,8 +169,16 @@ const descriptionSelector = createSelector(
         formatTime(series.endTime)
 );
 
+const dataSelector = memoize(parmCd => createSelector(
+    state => state.tsData['current'][parmCd],
+    (parmCdData) => {
+        return parmCdData || {};
+    }
+));
+
 
 module.exports = {
     pointsSelector, lineSegmentsSelector, isVisibleSelector, yLabelSelector,
-    pointsTableDataSelector, titleSelector, descriptionSelector, MASK_DESC, HASH_ID
+    pointsTableDataSelector, titleSelector, descriptionSelector, MASK_DESC, HASH_ID,
+    dataSelector
 };
