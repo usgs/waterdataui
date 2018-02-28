@@ -7,7 +7,7 @@ const { createSelector } = require('reselect');
 const formatTime = timeFormat('%c %Z');
 
 const MASK_DESC = {
-    ice: 'Ice',
+    ice: 'Ice Affected',
     fld: 'Flood',
     bkw: 'Backwater',
     zfl: 'Zeroflow',
@@ -21,6 +21,11 @@ const MASK_DESC = {
     tst: 'Test',
     pmp: 'Pump',
     '***': 'Unavailable'
+};
+
+const HASH_ID = {
+    current: 'hash-45',
+    compare: 'hash-135'
 };
 
 /**
@@ -167,5 +172,5 @@ const descriptionSelector = createSelector(
 
 module.exports = {
     pointsSelector, lineSegmentsSelector, isVisibleSelector, yLabelSelector,
-    pointsTableDataSelector, titleSelector, descriptionSelector, MASK_DESC
+    pointsTableDataSelector, titleSelector, descriptionSelector, MASK_DESC, HASH_ID
 };
