@@ -1,11 +1,9 @@
 const { createSelector, createStructuredSelector } = require('reselect');
-const { scaleLinear } = require('d3-scale');
 const { line } = require('d3-shape');
 const { select } = require('d3-selection');
 
 const { Actions } = require('./store');
 const { createXScale, simplifiedYScale } = require('./scales');
-const { pointsTableDataSelector } = require('./timeseries');
 const { dispatch, link } = require('../../lib/redux');
 
 
