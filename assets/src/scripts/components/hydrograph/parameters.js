@@ -56,10 +56,10 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
     const sparkLineSvgWidth = 50;
     const sparkLineSvgHeight = 30;
     const sparkLines = function(selection, {tsData}) {
-        const tsDataVals = tsData.values;
-        if (tsDataVals) {
-            let x = createXScale(tsDataVals, sparkLineSvgWidth);
-            let y = simplifiedYScale(tsDataVals, sparkLineSvgHeight);
+        const { parmData, lines } = tsData;
+        if (parmData && lines) {
+            let x = createXScale(parmData, sparkLineSvgWidth);
+            let y = simplifiedYScale(parmData, sparkLineSvgHeight);
             let spark = line()
                 .x(function(d) {
                     return x(d.time);
@@ -67,10 +67,12 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
                 .y(function(d) {
                     return y(d.value);
                 });
-            selection.append('g')
-                .append('path')
-                .attr('d', spark(tsDataVals))
-                .attr('class', 'spark-line');
+            for (let lineSegment of lines) {
+                selection.append('g')
+                    .append('path')
+                    .attr('d', spark(lineSegment.points))
+                    .attr('class', 'spark-line');
+            }
         }
     };
 

@@ -34,12 +34,13 @@ const HASH_ID = {
  * @param  {String} tsDataKey Timeseries key
  * @return {Array}            Array of points.
  */
-const pointsSelector = memoize(tsDataKey => createSelector(
+const pointsSelector = memoize((tsDataKey, forceParmCd) => createSelector(
     state => state.tsData,
     state => state.currentParameterCode,
     (tsData, parmCd) => {
-        if (tsData[tsDataKey] && tsData[tsDataKey][parmCd]) {
-            return tsData[tsDataKey][parmCd].values;
+        const parameterCode = forceParmCd ? forceParmCd : parmCd;
+        if (tsData[tsDataKey] && tsData[tsDataKey][parameterCode]) {
+            return tsData[tsDataKey][parameterCode].values;
         } else {
             return [];
         }
@@ -91,8 +92,8 @@ const pointsTableDataSelector = memoize(tsDataKey => createSelector(
  * @param  {String} tsDataKey Timeseries key
  * @return {Array}            Array of points.
  */
-const lineSegmentsSelector = memoize(tsDataKey => createSelector(
-    pointsSelector(tsDataKey),
+const lineSegmentsSelector = memoize((tsDataKey, forceParmCd) => createSelector(
+    pointsSelector(tsDataKey, forceParmCd),
     (points) => {
         // Accumulate data into line groups, splitting on the estimated and
         // approval status.
@@ -132,7 +133,6 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
             // Cache the classes for the next loop iteration.
             lastClasses = lineClasses;
         }
-
         return lines;
     }
 ));
@@ -171,8 +171,13 @@ const descriptionSelector = createSelector(
 
 const dataSelector = memoize(parmCd => createSelector(
     state => state.tsData['current'][parmCd],
-    (parmCdData) => {
-        return parmCdData || {};
+    lineSegmentsSelector('current', parmCd),
+    (data, lineSegments) => {
+        if ( data && data.hasOwnProperty('values') ) {
+            return {parmData: data.values, lines: lineSegments};
+        } else {
+            return {parmData: null, lines: lineSegments};
+        }
     }
 ));
 
