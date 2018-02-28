@@ -107,7 +107,9 @@ const updateTooltipText = function(text, {datum, qualifiers, unitCode}) {
         if (!qualifiers) {
             return;
         }
-        const qualifierStr = Object.keys(qualifiers).map(key => qualifiers[key].qualifierDescription).join(', ');
+        const qualifierStr = Object.keys(qualifiers).filter(
+            key => datum.qualifiers.indexOf(key) > -1).map(
+                key => qualifiers[key].qualifierDescription).join(', ');
         const valueStr = `${datum.value || ''} ${datum.value ? unitCode : ''}`;
         label = `${valueStr} - ${formatTime(datum.dateTime)} (${qualifierStr})`;
         classes = classesForPoint(datum);

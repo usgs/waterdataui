@@ -40,14 +40,8 @@ export const Actions = {
                 const endTime = new Date(Math.max.apply(null,
                     tsArray.filter(ts => ts.endTime).map(ts => ts.endTime)));
 
-                /*const units = collection.timeSeries.reduce((units, series) => {
-                    units[series.code] = series.unit;
-                    return units;
-                }, {});*/
-                // FIXME: UNITS
-                const units = {};
-                let [plotableStats, newPlottableStats] = parseMedianData(stats, startTime, endTime, units);
-                dispatch(Actions.setMedianStatistics(plotableStats));
+                let medianCollection = parseMedianData(stats, startTime, endTime, collection.variables);
+                dispatch(Actions.addSeriesCollection('median', medianCollection));
             });
         };
     },
@@ -81,12 +75,6 @@ export const Actions = {
         return {
             type: 'RESET_TIMESERIES',
             key
-        };
-    },
-    setMedianStatistics(medianStatistics) {
-        return {
-            type: 'SET_MEDIAN_STATISTICS',
-            medianStatistics
         };
     },
     showMedianStatsLabel(show) {
@@ -183,19 +171,6 @@ export const timeSeriesReducer = function (state={}, action) {
             delete newState.series.request[action.key];
             return newState;
 
-        case 'SET_MEDIAN_STATISTICS':
-            return {
-                ...state,
-                medianStatistics: {
-                    ...state.tsData['medianStatistics'],
-                    ...action.medianStatistics
-                },
-                showSeries: {
-                    ...state.showSeries,
-                    medianStatistics: true
-                }
-            };
-
         case 'SHOW_MEDIAN_STATS_LABEL':
             return {
                 ...state,
@@ -236,13 +211,10 @@ const MIDDLEWARES = [thunk];
 
 export const configureStore = function (initialState) {
     initialState = {
-        series: {},
         tsData: {
-            current: {
-            },
-            compare: {},
             medianStatistics: {}
         },
+        series: {},
         statisticalMetaData: {
             beginYear: '',
             endYear: ''
@@ -250,7 +222,7 @@ export const configureStore = function (initialState) {
         showSeries: {
             current: true,
             compare: false,
-            medianStatistics: false
+            median: false
         },
         currentParameterCode: null,
         currentVariableID: null,

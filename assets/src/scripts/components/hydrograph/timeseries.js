@@ -51,6 +51,9 @@ export const currentVariableSelector = createSelector(
 );
 
 
+export const methodsSelector = state => state.series.methods;
+
+
 /**
  * Returns a selector that, for a given tsKey:
  * Selects all time series.
@@ -67,7 +70,7 @@ export const timeSeriesSelector = memoize((tsKey, hasPoints=true) => createSelec
             const colSeries = collection.timeSeries.map(sID => timeSeries[sID]);
             Array.prototype.push.apply(seriesList, colSeries);
             return seriesList;
-        }, {});
+        }, []);
         if (hasPoints) {
             return series.filter(ts => ts.points.length > 0);
         } else {

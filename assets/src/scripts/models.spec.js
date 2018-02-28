@@ -1,6 +1,6 @@
 let proxyquire = require('proxyquireify')(require);
 
-const { parseRDB, parseMedianTimeseries, isLeapYear } = require('./models');
+const { isLeapYear, mergeMedianTimeseries, parseRDB } = require('./models');
 
 
 describe('Models module', () => {
@@ -152,15 +152,98 @@ describe('Models module', () => {
         const leapEndDate = new Date(2016, 2, 14);
 
         it('parseMedian data successfully constructs data for plotting', () => {
-            let result = parseMedianTimeseries(MOCK_MEDIAN_DATA, startDate, endDate, unit);
-            expect(result.values.length).toEqual(3);
-            expect(result.values[0]).toEqual({time: new Date(2017, 7, 5), value: 15, label: '15 ft3/s'});
+            const collection = mergeMedianTimeseries({}, MOCK_MEDIAN_DATA, startDate, endDate, MOCK_MEDIAN_VARIABLES);
+            expect(collection).toEqual({
+                timeSeries: {
+                    '00060:153885:median': {
+                        points: [{
+                            dateTime: new Date('Sat Aug 05 2017 00:00:00 GMT-0500 (CDT)'),
+                            value: 15
+                        }, {
+                            dateTime: new Date('Mon Jan 01 2018 00:00:00 GMT-0600 (CST)'),
+                            value: 16
+                        }, {
+                            dateTime: new Date('Sat Jan 13 2018 00:00:00 GMT-0600 (CST)'),
+                            value: 15
+                        }],
+                        startTime: new Date('Wed Jan 10 2018 00:00:00 GMT-0600 (CST)'),
+                        endTime: new Date('Sat Jan 13 2018 00:00:00 GMT-0600 (CST)'),
+                        tsKey: 'median',
+                        method: '00060:153885:median',
+                        variable: 'varID'
+                    }
+                },
+                timeSeriesCollections: {
+                    '05370000:00060:median': {
+                        sourceInfo: '05370000',
+                        variable: 'varID',
+                        name: '05370000:00060:median',
+                        timeSeries: [
+                            '00060:153885:median'
+                        ]
+                    }
+                },
+                methods: {
+                    '00060:153885:median': {
+                        methodDescription: '',
+                        methodID: '00060:153885:median'
+                    }
+                },
+                requests: {
+                    median: {
+                        timeSeriesCollections: ['05370000:00060:median']
+                    }
+                }
+            });
         });
 
         it('parseMedian data includes leap year when appropriate', () => {
-            let result = parseMedianTimeseries(MOCK_MEDIAN_DATA, leapStartDate, leapEndDate, unit);
-            expect(result.values.length).toEqual(4);
-            expect(result.values[3]).toEqual({time: new Date(2016, 1, 29), value: 13, label: '13 ft3/s'});
+            const collection = mergeMedianTimeseries({}, MOCK_MEDIAN_DATA, leapStartDate, leapEndDate, MOCK_MEDIAN_VARIABLES);
+            expect(collection).toEqual({
+                timeSeries: {
+                    '00060:153885:median': {
+                        points: [{
+                            dateTime: new Date('Wed Aug 05 2015 00:00:00 GMT-0500 (CDT)'),
+                            value: 15
+                        }, {
+                            dateTime: new Date('Fri Jan 01 2016 00:00:00 GMT-0600 (CST)'),
+                            value: 16
+                        }, {
+                            dateTime: new Date('Wed Jan 13 2016 00:00:00 GMT-0600 (CST)'),
+                            value: 15
+                        }, {
+                            dateTime: new Date('Mon Feb 29 2016 00:00:00 GMT-0600 (CST)'),
+                            value: 13
+                        }],
+                        startTime: new Date('Sun Jan 10 2016 00:00:00 GMT-0600 (CST)'),
+                        endTime: new Date('Mon Mar 14 2016 00:00:00 GMT-0500 (CDT)'),
+                        tsKey: 'median',
+                        method: '00060:153885:median',
+                        variable: 'varID'
+                    }
+                },
+                timeSeriesCollections: {
+                    '05370000:00060:median': {
+                        sourceInfo: '05370000',
+                        variable: 'varID',
+                        name: '05370000:00060:median',
+                        timeSeries: [
+                            '00060:153885:median'
+                        ]
+                    }
+                },
+                methods: {
+                    '00060:153885:median': {
+                        methodDescription: '',
+                        methodID: '00060:153885:median'
+                    }
+                },
+                requests: {
+                    median: {
+                        timeSeriesCollections: ['05370000:00060:median']
+                    }
+                }
+            });
         })
     });
 
@@ -3284,3 +3367,8 @@ const MOCK_MEDIAN_DATA = [
     {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '8', day_nu: '5', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '15'},
     {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '2', day_nu: '29', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '13'}
 ];
+const MOCK_MEDIAN_VARIABLES = {
+    '00060': {
+        oid: 'varID'
+    }
+}

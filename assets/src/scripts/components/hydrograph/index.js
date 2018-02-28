@@ -13,7 +13,7 @@ const { appendAxes, axesSelector } = require('./axes');
 const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
-const { pointsSelector, lineSegmentsSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC } = require('./timeseries');
+const { currentVariableSelector, pointsSelector, lineSegmentsSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC } = require('./timeseries');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
@@ -142,7 +142,7 @@ const plotLegend = function(elem, {displayItems, width, currentSegments, compare
 };
 
 
-const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsData, showLabel}) {
+const plotMedianPoints = function (elem, {visible, xscale, yscale, points, showLabel, variable}) {
     elem.select('#median-points').remove();
 
     if (!visible) {
@@ -154,7 +154,7 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
             .attr('id', 'median-points');
 
     container.selectAll('medianPoint')
-        .data(medianStatsData)
+        .data(points)
         .enter()
         .append('circle')
             .attr('class', 'median-data-series')
@@ -171,11 +171,11 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, medianStatsDa
 
     if (showLabel) {
         container.selectAll('medianPointText')
-            .data(medianStatsData)
+            .data(points)
             .enter()
             .append('text')
                 .text(function(d) {
-                    return d.label;
+                    return `${d.value} ${variable.unit.unitCode}`;
                 })
                 .attr('x', function(d) {
                     return xscale(d.dateTime) + 5;
@@ -231,10 +231,11 @@ const timeSeriesGraph = function (elem) {
                     isCompareVisible: isVisibleSelector('compare')
                 })))
                 .call(link(plotMedianPoints, createStructuredSelector({
-                    visible: isVisibleSelector('medianStatistics'),
+                    visible: isVisibleSelector('median'),
                     xscale: xScaleSelector('current'),
                     yscale: yScaleSelector,
-                    medianStatsData: pointsSelector('medianStatistics'),
+                    points: pointsSelector('median'),
+                    variable: currentVariableSelector,
                     showLabel: (state) => state.showMedianStatsLabel
                 })));
 
@@ -265,7 +266,7 @@ const timeSeriesGraph = function (elem) {
                 (title) => [`Median ${title}`, 'Time']
             ),
             data: createSelector(
-                pointsSelector('medianStatistics'),
+                pointsSelector('median'),
                 points => points.map((value) => {
                     return [value.value, value.dateTime];
                 })

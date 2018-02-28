@@ -25,6 +25,14 @@ const TEST_STATE = {
                     value: 10,
                     qualifiers: ['P']
                 }]
+            },
+            '00060:median': {
+                startTime: new Date('2018-01-02T15:00:00.000-06:00'),
+                endTime: new Date('2018-01-02T15:00:00.000-06:00'),
+                points: [{
+                    dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
+                    value: 10
+                }]
             }
         },
         timeSeriesCollections: {
@@ -35,6 +43,10 @@ const TEST_STATE = {
             'coll2': {
                 variable: 45807197,
                 timeSeries: ['00060:compare']
+            },
+            'coll3': {
+                variable: 45807197,
+                timeSeries: ['00060:median']
             }
         },
         requests: {
@@ -43,6 +55,9 @@ const TEST_STATE = {
             },
             compare: {
                 timeSeriesCollections: ['coll2']
+            },
+            median: {
+                timeSeriesCollections: ['coll3']
             }
         },
         variables: {
@@ -58,7 +73,8 @@ const TEST_STATE = {
     currentVariableID: '45807197',
     showSeries: {
         current: true,
-        compare: true
+        compare: true,
+        median: true
     },
     width: 400
 };
@@ -172,20 +188,19 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('g.current-mask-group').size()).toBe(1);
         });
 
-        xit('should have a point for the median stat data with a label', () => {
+        it('should have a point for the median stat data with a label', () => {
             expect(selectAll('svg #median-points circle.median-data-series').size()).toBe(1);
             expect(selectAll('svg #median-points text').size()).toBe(0);
         });
 
-        xit('should have a legend with two markers', () => {
-           expect(selectAll('g.legend-marker').size()).toBe(4);
+        it('should have a legend with six markers', () => {
+            // Current year, Current Mask, Last Year, Compare Mask, Median, Flood
+            expect(selectAll('g.legend-marker').size()).toBe(6);
         });
 
-        xit('show the labels for the median stat data showMedianStatsLabel is true', () => {
+        it('show the labels for the median stat data showMedianStatsLabel is true', () => {
             store.dispatch(Actions.showMedianStatsLabel(true));
-
             expect(selectAll('svg #median-points text').size()).toBe(1);
-
         });
     });
 
@@ -203,7 +218,7 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg path.line').size()).toBe(2);
         });
 
-        xit('Should have three legend markers', () => {
+        it('Should have three legend markers', () => {
             expect(selectAll('g.legend-marker').size()).toBe(5);
         });
 
@@ -212,7 +227,7 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg path.line').size()).toBe(1);
         });
 
-        xit('Should have two legend markers after the compare time series is removed', () => {
+        it('Should have two legend markers after the compare time series is removed', () => {
             store.dispatch(Actions.toggleTimeseries('compare', false));
             expect(selectAll('g.legend-marker').size()).toBe(3);
         });

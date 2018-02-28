@@ -71,7 +71,7 @@ describe('Legend module', () => {
 
         it('should return markers for display', () => {
             let result = createLegendMarkers({
-                dataItems: ['current', 'medianStatistics'],
+                dataItems: ['current', 'median'],
                 metadata: {
                     statistics: {
                         beginYear: 2010,
@@ -109,7 +109,7 @@ describe('Legend module', () => {
 
         it('should line segment markers for display', () => {
             let result = createLegendMarkers({
-                dataItems: ['current', 'medianStatistics'],
+                dataItems: ['current', 'median'],
                 metadata: {
                     statistics: {
                         beginYear: 2010,
@@ -185,7 +185,7 @@ describe('Legend module', () => {
 
         it('should still work if stat begin and end years are absent', () => {
             let result = createLegendMarkers({
-                dataItems: ['medianStatistics'],
+                dataItems: ['median'],
                 metadata: {
                     statistics: {
                         beginYear: undefined,
@@ -201,42 +201,55 @@ describe('Legend module', () => {
 
         it('should return a marker if a time series is shown', () => {
             let result = legendDisplaySelector({
-                tsData: {
-                    medianStatistics: {
-                        '00060': {
-                            medianMetadata: {
-                                beginYear: 2010,
-                                endYear: 2012
-                            }
+                series: {
+                    timeSeries: {
+                        medianTS: {
+                            startTime: new Date('2010-10-10'),
+                            endTime: new Date('2012-10-10'),
+                            method: 'methodID',
+                            points: [1, 2, 3]
+                        }
+                    },
+                    methods: {
+                        methodID: {
+                            methodDescription: 'method description'
+                        }
+                    },
+                    timeSeriesCollections: {
+                        collectionID: {
+                            timeSeries: ['medianTS']
+                        }
+                    },
+                    requests: {
+                        median: {
+                            timeSeriesCollections: ['collectionID']
                         }
                     }
                 },
                 showSeries: {
                     current: true,
                     compare: false,
-                    medianStatistics: true
+                    median: true
                 },
                 currentParameterCode: '00060'
             });
             expect(result).toEqual({
-                dataItems: ['current', 'medianStatistics'],
+                dataItems: ['current', 'median'],
                 metadata: {
                     statistics: {
                         beginYear: 2010,
                         endYear: 2012,
-                        description: ''
+                        description: 'method description'
                     }
                 }
             });
         });
 
-        it('should not choke if statisticalMetadata years are absent', () => {
+        it('should not choke if median time series is absent', () => {
             let result = legendDisplaySelector({
-                tsData: {
-                    medianStatistics: {}
-                },
+                series: {},
                 showSeries: {
-                    medianStatistics: true
+                    median: true
                 }
             });
             expect(result.metadata.statistics).toEqual({

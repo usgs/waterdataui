@@ -31,13 +31,6 @@ describe('Redux store', () => {
             });
         });
 
-        it('should create an action to reset a timeseries', () => {
-            expect(Actions.setMedianStatistics('statsData')).toEqual({
-                type: 'SET_MEDIAN_STATISTICS',
-                medianStatistics: 'statsData'
-            });
-        });
-
         it('should create an action to show the median stats label', () => {
             expect(Actions.showMedianStatsLabel(true)).toEqual({
                 type: 'SHOW_MEDIAN_STATS_LABEL',
@@ -121,18 +114,6 @@ describe('Redux store', () => {
                 },
                 series: {
                     request: {}
-                }
-            });
-        });
-
-        xit('should handle SET_MEDIAN_STATISTICS', () => {
-            expect(timeSeriesReducer({series: {}}, {
-                type: 'SET_MEDIAN_STATISTICS',
-                medianStatistics: {medianData: 'here'}
-            })).toEqual({
-                medianStatistics: {medianData: 'here'},
-                showSeries: {
-                    medianStatistics: true
                 }
             });
         });

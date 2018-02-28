@@ -2,7 +2,7 @@
 const { createSelector } = require('reselect');
 const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
 const { CIRCLE_RADIUS } = require('./layout');
-const { MASK_DESC } = require('./timeseries');
+const { methodsSelector, timeSeriesSelector, MASK_DESC } = require('./timeseries');
 
 
 /**
@@ -118,7 +118,7 @@ const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
                 text = 'Current Year';
             }
             marker = defineLineMarker(domId, 'line', text, svgGroup);
-        } else if (dataItem === 'medianStatistics') {
+        } else if (dataItem === 'median') {
             text = 'Median';
             if (dataPlotElements.metadata.statistics.description) {
                 text = `${text} ${dataPlotElements.metadata.statistics.description}`;
@@ -157,30 +157,22 @@ const createLegendMarkers = function(dataPlotElements, lineSegments=[]) {
  */
 const legendDisplaySelector = createSelector(
     (state) => state.showSeries,
-    (state) => state.tsData,
-    (state) => state.currentParameterCode,
-    (showSeries, tsData, currentParameterCode) => {
-        const medianTS = tsData.medianStatistics[currentParameterCode] || {};
-        const statisticalMetaData = medianTS.medianMetadata || {};
-        let shownSeries = [];
-        let dataPlotElements = {};
-        for (let key in showSeries) {
-            if (showSeries.hasOwnProperty(key)) {
-                if (showSeries[key]) {
-                    shownSeries.push(key);
+    timeSeriesSelector('median'),
+    methodsSelector,
+    (showSeries, medianTSs, methods) => {
+        // FIXME: handle more than just the first median time series
+        const medianTS = medianTSs[0];
+        return {
+            dataItems: Object.keys(showSeries).filter(
+                key => showSeries.hasOwnProperty(key) && showSeries[key]),
+            metadata: {
+                statistics: {
+                    beginYear: medianTS ? medianTS.startTime.getFullYear() : undefined,
+                    endYear: medianTS ? medianTS.endTime.getFullYear() : undefined,
+                    description: medianTS && medianTS.method ? methods[medianTS.method].methodDescription : ''
                 }
             }
-        }
-
-        dataPlotElements.dataItems = shownSeries;
-        dataPlotElements.metadata = {
-            statistics: {
-                beginYear: statisticalMetaData.beginYear ? statisticalMetaData.beginYear : undefined,
-                endYear: statisticalMetaData.endYear ? statisticalMetaData.endYear : undefined,
-                description: medianTS.description || ''
-            }
         };
-        return dataPlotElements;
     }
 );
 
