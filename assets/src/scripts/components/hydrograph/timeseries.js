@@ -7,7 +7,7 @@ const { createSelector } = require('reselect');
 const formatTime = timeFormat('%c %Z');
 
 export const MASK_DESC = {
-    ice: 'Ice',
+    ice: 'Ice Affected',
     fld: 'Flood',
     bkw: 'Backwater',
     zfl: 'Zeroflow',
@@ -100,6 +100,10 @@ export const currentTimeSeriesSelector = memoize(tsKey => createSelector(
     }
 ));
 
+export const HASH_ID = {
+    current: 'hash-45',
+    compare: 'hash-135'
+};
 
 /**
  * Returns the points for a given timeseries.
@@ -161,6 +165,32 @@ export const visiblePointsSelector = createSelector(
 export const isVisibleSelector = memoize(tsDataKey => (state) => {
     return state.showSeries[tsDataKey];
 });
+
+/**
+ * Factory function creates a function that:
+ * Returns all point data as an array of [value, time, qualifiers] if the data is visible.
+ * Otherwise an empty array is returned.
+ * @param {Object} state - Redux store
+ * @param {String} tsDataKey - timeseries key
+ * @param {Array of Array} for each point returns [value, time, qualifiers] or empty array.
+ */
+export const pointsTableDataSelector = memoize(tsDataKey => createSelector(
+    pointsSelector(tsDataKey),
+    isVisibleSelector(tsDataKey),
+    (points, isVisible) => {
+        if (isVisible) {
+            return points.map((value) => {
+                return [
+                    value.value || '',
+                    value.time || '',
+                    value.qualifiers && value.qualifiers.length > 0 ? value.qualifiers.join(', ') : ''
+                ];
+            });
+        } else {
+            return [];
+        }
+    }
+));
 
 
 /**

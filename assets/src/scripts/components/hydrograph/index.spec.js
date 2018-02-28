@@ -87,7 +87,7 @@ describe('Hydrograph charting module', () => {
         select('body')
             .append('div')
             .attr('id', 'hydrograph');
-        graphNode = document.getElementById('hydrograph')
+        graphNode = document.getElementById('hydrograph');
     });
 
     afterEach(() => {
@@ -123,9 +123,8 @@ describe('Hydrograph charting module', () => {
         it('title and desc attributes are present', function() {
             expect(svg.attr('title'), 'My Title');
             expect(svg.attr('desc'), 'My Description');
-            let labelledBy = svg.attr('aria-labelledby');
-            expect(labelledBy).toContain('title');
-            expect(labelledBy).toContain('desc');
+            expect(svg.attr('aria-labelledby')).toContain('title');
+            expect(svg.attr('aria-describedby')).toContain('desc');
         });
 
         it('svg should be focusable', function() {
@@ -134,7 +133,7 @@ describe('Hydrograph charting module', () => {
     });
 
     describe('SVG contains the expected elements', () => {
-        /* eslint no-use-before-define: "ignore" */
+        /* eslint no-use-before-define: 0 */
         let store;
         beforeEach(() => {
             store = configureStore({
@@ -193,9 +192,8 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg #median-points text').size()).toBe(0);
         });
 
-        it('should have a legend with six markers', () => {
-            // Current year, Current Mask, Last Year, Compare Mask, Median, Flood
-            expect(selectAll('g.legend-marker').size()).toBe(6);
+        it('should have a legend with four markers', () => {
+           expect(selectAll('g.legend-marker').size()).toBe(4);
         });
 
         it('show the labels for the median stat data showMedianStatsLabel is true', () => {
@@ -205,7 +203,6 @@ describe('Hydrograph charting module', () => {
     });
 
     describe('Adding and removing compare time series', () => {
-        /* eslint no-use-before-define: "ignore" */
         let store;
         beforeEach(() => {
             store = configureStore(TEST_STATE);
@@ -219,7 +216,7 @@ describe('Hydrograph charting module', () => {
         });
 
         it('Should have three legend markers', () => {
-            expect(selectAll('g.legend-marker').size()).toBe(5);
+            expect(selectAll('g.legend-marker').size()).toBe(3);
         });
 
         it('Should remove one of the lines when removing the compare time series', () => {
@@ -229,19 +226,10 @@ describe('Hydrograph charting module', () => {
 
         it('Should have two legend markers after the compare time series is removed', () => {
             store.dispatch(Actions.toggleTimeseries('compare', false));
-            expect(selectAll('g.legend-marker').size()).toBe(3);
+            expect(selectAll('g.legend-marker').size()).toBe(2);
         });
 
         //TODO: Consider adding a test which checks that the y axis is rescaled by
         // examining the contents of the text labels.
     });
 });
-
-
-const MOCK_MEDIAN_STAT_DATA = [
-    {
-        "label": "18 ft3/s",
-        "time": "2017-01-03T00:00:00.000Z",
-        "value": 18
-    }
-];

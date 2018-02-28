@@ -1,5 +1,5 @@
 const { collectionsSelector, lineSegmentsSelector, pointsSelector, requestSelector,
-    currentTimeSeriesSelector } = require('./timeseries');
+    currentTimeSeriesSelector, pointsTableDataSelector } = require('./timeseries');
 
 
 const TEST_DATA = {
@@ -367,6 +367,89 @@ describe('Timeseries module', () => {
                 },
                 currentVariableID: '45807197'
             })).toEqual(['ptOne', 'ptTwo', 'ptThree']);
+        });
+    });
+
+    describe('pointsTableDataSelect', () => {
+        it('Return an empty array if series is not visible', () => {
+            expect(pointsTableDataSelector('current')({
+                series: {
+                    requests: {
+                        current: {
+                            timeSeriesCollections: ['coll1']
+                        }
+                    },
+                    timeSeriesCollections: {
+                        'coll1': {
+                            variable: 45807197,
+                            timeSeries: ['one']
+                        }
+                    },
+                    timeSeries: {
+                        one: {
+                            points: ['ptOne', 'ptTwo', 'ptThree']
+                        }
+                    },
+                    variables: {
+                        '45807197': {
+                            variableCode: '00060',
+                            oid: 45807197
+                        }
+                    }
+                },
+                currentVariableID: '45807197',
+                showSeries: {
+                    current: false
+                }
+            })).toEqual([]);
+        });
+
+        it('Return an array of arrays if series is visible', () => {
+            expect(pointsTableDataSelector('current')({
+                series: {
+                    requests: {
+                        current: {
+                            timeSeriesCollections: ['coll1']
+                        }
+                    },
+                    timeSeriesCollections: {
+                        'coll1': {
+                            variable: 45807197,
+                            timeSeries: ['one']
+                        }
+                    },
+                    timeSeries: {
+                        one: {
+                            points: [{
+                                time: '2018-01-01',
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: 15,
+                                approved: false,
+                                estimated: true
+                            }, {
+                                value: 10,
+                                time: '2018-01-03',
+                                qualifiers: ['P', 'Ice'],
+                                approved: false,
+                                estimated: true
+                            }]
+                        }
+                    },
+                    variables: {
+                        '45807197': {
+                            variableCode: '00060',
+                            oid: 45807197
+                        }
+                    }
+                },
+                currentVariableID: '45807197',
+                showSeries: {
+                    current: true
+                }
+            })).toEqual([['', '2018-01-01', 'P'], [15, '', ''], [10, '2018-01-03', 'P, Ice']]);
         });
     });
 });

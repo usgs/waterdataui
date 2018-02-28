@@ -27,9 +27,8 @@ describe('svgAccessibility tests', () => {
             expect(desc.size()).toBe(1);
             expect(title.html()).toEqual('This is a title');
             expect(desc.html()).toEqual('This is a description');
-            const labelledBy = svg.attr('aria-labelledby');
-            expect(labelledBy).toContain('title');
-            expect(labelledBy).toContain('desc');
+            expect(svg.attr('aria-labelledby')).toContain('title');
+            expect(svg.attr('aria-describedby')).toContain('desc');
         });
 
         it('Should remove the previous title and desc tags when called again', () => {
@@ -125,6 +124,17 @@ describe('svgAccessibility tests', () => {
                    expect(cell).toBe(data[rindex][cindex]);
                });
            });
+       });
+       it('Table should be removed if recreated with no data', () => {
+           addSROnlyTable(select(document.getElementById('test-div')), {
+               columnNames: columnNames,
+               data: [],
+               describeById: describeById,
+               describeByText: describeByText
+           });
+
+           expect(container.select('table').size()).toBe(0);
+           expect(container.select('div').size()).toBe(0);
        });
 
     });

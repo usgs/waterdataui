@@ -13,7 +13,8 @@ function addSVGAccessibility(svg, {title, description, isInteractive}) {
         .html(description);
     svg.insert('title', ':first-child')
         .html(title);
-    svg.attr('aria-labelledby', 'title desc');
+    svg.attr('aria-labelledby', 'title');
+    svg.attr('aria-describedby', 'desc');
     if (isInteractive) {
         svg.attr('tabindex', 0);
     }
@@ -25,49 +26,51 @@ function addSVGAccessibility(svg, {title, description, isInteractive}) {
  * of the data array.
  * @param {String} container - Can be a selector string or d3 selection
  * @param {Array} columnNames - array of strings
- * @param {Array} data - array of array of strings
+ * @param {Array} data - array of array of strings representing the table rows
  * @param {String} describeById - Optional id string of the element that describes this table
  * @param {String} describeByText - Optional text that describes this table
  */
 function addSROnlyTable(container, {columnNames, data, describeById=null, describeByText=null}) {
     container.selectAll('table.usa-sr-only').remove();
+    container.selectAll('div.usa-sr-only').remove();
 
-    const table = container
-        .append('table')
-        .attr('class', 'usa-sr-only');
+    if (data.length > 0) {
+        const table = container
+            .append('table')
+                .attr('class', 'usa-sr-only');
 
-    if (describeById && describeByText) {
-        container.select(`div#${describeById}`).remove();
-        table.attr('aria-describedby', describeById);
-        container.append('div')
-            .attr('id', describeById)
-            .attr('class', 'usa-sr-only')
-            .text(describeByText);
+        if (describeById && describeByText) {
+            table.attr('aria-describedby', describeById);
+            container.append('div')
+                .attr('id', describeById)
+                .attr('class', 'usa-sr-only')
+                .text(describeByText);
+        }
+
+        table.append('thead')
+            .append('tr')
+                .selectAll('th')
+                    .data(columnNames)
+                    .enter().append('th')
+                        .attr('scope', 'col')
+                        .text(function (d) {
+                            return d;
+                        });
+
+        const data_rows = table.append('tbody')
+            .selectAll('tr')
+                .data(data)
+                .enter().append('tr');
+
+        data_rows.selectAll('td')
+            .data(function (d) {
+                return d;
+            })
+            .enter().append('td')
+                .text(function (d) {
+                    return d;
+                });
     }
-
-    table.append('thead')
-        .append('tr')
-        .selectAll('th')
-        .data(columnNames)
-        .enter().append('th')
-            .attr('scope', 'col')
-            .text(function(d) {
-                return d;
-            });
-
-    const data_rows = table.append('tbody')
-        .selectAll('tr')
-        .data(data)
-        .enter().append('tr');
-
-    data_rows.selectAll('td')
-        .data(function(d) {
-            return d;
-        })
-        .enter().append('td')
-            .text(function(d) {
-                return d;
-            });
 
 }
 
