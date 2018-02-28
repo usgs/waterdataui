@@ -103,11 +103,11 @@ const createLegendMarkers = function(displayItems) {
     };
 
     if (displayItems.current) {
-        legendMarkers.current.push(defineLineMarker(null, 'line', 'Current Year', 'current-year-line-marker'));
+        legendMarkers.current.push(defineLineMarker('ts-legend-current', 'line', 'Current Year', 'current-year-line-marker'));
         legendMarkers.current.push(...tsMaskMarkers('current', displayItems.current.masks));
     }
     if (displayItems.compare) {
-        legendMarkers.compare.push(defineLineMarker(null, 'line', 'Last Year', 'compare-year-line-marker'));
+        legendMarkers.compare.push(defineLineMarker('ts-legend-compare', 'line', 'Last Year', 'compare-year-line-marker'));
         legendMarkers.compare.push(...tsMaskMarkers('compare', displayItems.compare.masks));
     }
 
