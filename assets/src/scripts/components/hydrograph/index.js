@@ -231,7 +231,8 @@ const timeSeriesGraph = function (elem) {
                 })));
 
     elem.call(link(plotSeriesSelectTable, createStructuredSelector({
-        availableTimeseries: availableTimeseriesSelector
+        availableTimeseries: availableTimeseriesSelector,
+        layout: layoutSelector
     })));
 
     elem.append('div')
