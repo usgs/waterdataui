@@ -47,6 +47,7 @@ export const availableTimeseriesSelector = createSelector(
  * @param tsData
  */
 const addSparkLine = function(svgSelection, {tsData}) {
+    console.log(tsData);
     const { parmData, lines } = tsData;
     if (parmData && lines) {
         let x = createXScale(parmData, sparkLineDim.width);
@@ -59,9 +60,11 @@ const addSparkLine = function(svgSelection, {tsData}) {
                 return y(d.value);
             });
         for (let lineSegment of lines) {
-            svgSelection.append('path')
-                .attr('d', spark(lineSegment.points))
-                .attr('class', 'spark-line');
+            if (lineSegment.classes.dataMask === null) {
+                 svgSelection.append('path')
+                    .attr('d', spark(lineSegment.points))
+                    .attr('class', 'spark-line');
+            }
         }
     }
 };
