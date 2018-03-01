@@ -46,8 +46,7 @@ export const availableTimeseriesSelector = createSelector(
  * @param svgSelection
  * @param tsData
  */
-const addSparkLine = function(svgSelection, {tsData}) {
-    console.log(tsData);
+export const addSparkLine = function(svgSelection, {tsData}) {
     const { parmData, lines } = tsData;
     if (parmData && lines) {
         let x = createXScale(parmData, sparkLineDim.width);
