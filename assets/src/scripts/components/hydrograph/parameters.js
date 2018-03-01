@@ -91,7 +91,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
                 .attr('scope', 'col')
                 .text(d => d);
 
-    let tBody = table.append('tbody')
+    table.append('tbody')
         .selectAll('tr')
         .data(availableTimeseries)
         .enter().append('tr')
@@ -122,7 +122,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
                     .attr('height', sparkLineDim.height.toString());
             });
 
-    tBody.selectAll('svg').each(function(d) {
+    table.selectAll('tbody svg').each(function(d) {
         let selection = select(this);
         let parmCd = d[0];
         selection.call(link(addSparkLine, createStructuredSelector(
