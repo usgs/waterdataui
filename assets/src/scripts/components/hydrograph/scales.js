@@ -85,7 +85,7 @@ function createYScale(tsData, parmCd, showSeries, ySize) {
     }
     if (scaleDomains) {
         const flatDomains = [].concat(...scaleDomains);
-        yExtent = Math.min(flatDomains) && Math.max(flatDomains) ? [Math.min(flatDomains), Math.max(flatDomains)] : undefined;
+        yExtent = Math.min(...flatDomains) && Math.max(...flatDomains) ? [Math.min(...flatDomains), Math.max(...flatDomains)] : undefined;
     }
     // Add padding to the extent and handle empty data sets.
     if (yExtent) {
@@ -93,7 +93,6 @@ function createYScale(tsData, parmCd, showSeries, ySize) {
     } else {
         yExtent = [0, 1];
     }
-
     return scaleSymlog()
         .domain(yExtent)
         .range([ySize, 0]);
