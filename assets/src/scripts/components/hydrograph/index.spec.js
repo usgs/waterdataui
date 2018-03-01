@@ -63,7 +63,7 @@ describe('Hydrograph charting module', () => {
             .call(provide(store))
             .call(timeSeriesGraph);
         let svgNodes = graphNode.getElementsByTagName('svg');
-        expect(svgNodes.length).toBe(1);
+        expect(svgNodes.length).toBe(2);
         expect(svgNodes[0].getAttribute('viewBox')).toContain('400 200');
         expect(graphNode.innerHTML).toContain('hydrograph-container');
     });
@@ -176,7 +176,7 @@ describe('Hydrograph charting module', () => {
         });
 
         it('should render an svg node', () => {
-            expect(selectAll('svg').size()).toBe(1);
+            expect(selectAll('svg').size()).toBe(2);
         });
 
         it('should have a defs node', () => {
