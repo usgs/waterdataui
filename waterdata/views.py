@@ -91,21 +91,27 @@ def monitoring_location(site_no):
                 app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
                 app.config['HUC_LOOKUP']
             )
+
             questions_link = None
             try:
-                district_abbrev = location_with_values['district_cd']['abbreviation']
+                site_owner_state = (
+                    location_with_values['district_cd']['abbreviation']
+                    if location_with_values['district_cd']['abbreviation']
+                    else location_with_values['state_cd']['abbreviation']
+                )
             except KeyError:
-                pass
-            else:
+                site_owner_state = None
+            if site_owner_state is not None:
                 questions_link_params = {
-                    'pemail': 'gs-w-{}_NWISWeb_Data_Inquiries'.format(district_abbrev.lower()),
+                    'pemail': 'gs-w-{}_NWISWeb_Data_Inquiries'.format(site_owner_state.lower()),
                     'subject': 'Site Number: {}'.format(site_no),
                     'viewnote': (
                         '<H1>USGS NWIS Feedback Request</H1><p><b>Please enter a subject in the form '
                         'below that briefly summarizes your request</b></p>'
                     )
                 }
-                questions_link = construct_url('https://water.usgs.gov', 'contact/gsanswer', questions_link_params)
+                questions_link = construct_url('https://water.usgs.gov', 'contact/gsanswers', questions_link_params)
+
             context = {
                 'status_code': status,
                 'stations': data_list,
