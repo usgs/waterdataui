@@ -43,14 +43,6 @@ $usgs-blue: #02274B;
     margin: 130px auto;
 }
 
-.map-container {
-  .slider-wrapper {
-    display: inline-block;
-  }
-  .wdfn-component {
-    display: inline-block;
-  }
-}
 .wdfn-component {
     &[data-component='hydrograph'] {
         @import './components/hydrograph';
