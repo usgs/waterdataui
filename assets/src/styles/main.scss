@@ -13,6 +13,64 @@ $usgs-blue: #02274B;
 @import './partials/social_share';
 @import './partials/tooltip';
 
+.wdfn-slider {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: transparent!important
+}
+.wdfn-slider, .wdfn-slider:focus {
+    outline: none !important;
+}
+.wdfn-slider::-webkit-slider-runnable-track {
+    background: $color-gray-lighter;
+    border: none;
+    border-radius: 5px;
+}
+.wdfn-slider::-moz-range-track {
+    background: $color-gray-lighter;
+    border: none;
+    border-radius: 5px;
+}
+.wdfn-slider::-ms-track {
+    background: $color-gray-lighter;
+    border: none;
+    border-radius: 5px;
+}
+.wdfn-slider::-ms-fill-lower {
+    backgroud: $color-gray-lighter;
+    border: none;
+    border-radius: 5px;
+}
+.wdfn-slider::-ms-fill-upper {
+    backgroud: $color-gray-lighter;
+    border: none;
+    border-radius: 5px;
+}
+
+.wdfn-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background: $color-blue;
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -8px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+}
+.wdfn-slider::-moz-range-thumb {
+    background: $color-blue;
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.wdfn-slider::-ms-thumb {
+    background: $color-blue;
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
 
 .wdfn-component {
     &[data-component='hydrograph'] {

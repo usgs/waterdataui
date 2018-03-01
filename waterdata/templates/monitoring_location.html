@@ -52,7 +52,15 @@
                         <label for="show-last-year-input">Show last year</label>
                     </div>
                 </div>
-                {% if stations[0].dec_lat_va and stations[0].dec_long_va %}<div class="wdfn-component" data-component="map" data-latitude="{{ stations[0].dec_lat_va }}" data-longitude="{{ stations[0].dec_long_va }}" data-zoom=8></div>{% endif %}
+                {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
+                    <div class="map-container">
+                        <div class="slider-wrapper">
+                            <input type="range" class="wdfn-slider" min="6" max="15" step="1" />
+                        </div>
+                        <div class="wdfn-component" data-component="map" data-latitude="{{ stations[0].dec_lat_va }}" data-longitude="{{ stations[0].dec_long_va }}" data-zoom=8>
+                        </div>
+                    </div>
+                {% endif %}
 
                 {% if site_dataseries %}
                     <ul class="usa-accordion">
