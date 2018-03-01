@@ -53,9 +53,9 @@
                     </div>
                 </div>
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
-                    <div class="map-container">
-                        <div class="slider-wrapper">
-                            <input type="range" class="wdfn-slider" min="6" max="15" step="1" />
+                    <div class="map-container usa-grid">
+                        <div class="usa-width-one-twelfth slider-wrapper">
+                            <input type="range" class="wdfn-slider vertical-slider" min="6" max="15" step="1" />
                         </div>
                         <div class="wdfn-component" data-component="map" data-latitude="{{ stations[0].dec_lat_va }}" data-longitude="{{ stations[0].dec_long_va }}" data-zoom=8>
                         </div>
