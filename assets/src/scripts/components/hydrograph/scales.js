@@ -43,27 +43,17 @@ function createXScale(values, xSize) {
         .domain(xExtent);
 }
 
-function simplifiedYScale(tsData, ySize) {
-    let yExtent;
+
+/**
+ * Create a yScale for the plots where you only have a single array of data
+ *
+ * @param tsData - array of data points with time and value keys
+ * @param ySize - range of the scale
+ * * @return {Object} d3 scale for value.
+ */
+function singleSeriesYScale(tsData, ySize) {
     let points = tsData.filter(pt => pt.value !== null);
-
-    const thisExtent = extent(points, d => d.value);
-        if (yExtent !== undefined) {
-            yExtent = [
-                Math.min(thisExtent[0], yExtent[0]),
-                Math.max(thisExtent[1], yExtent[1])
-            ];
-        } else {
-            yExtent = thisExtent;
-        }
-
-    // Add padding to the extent and handle empty data sets.
-    if (yExtent) {
-        yExtent = extendDomain(yExtent);
-    } else {
-        yExtent = [0, 1];
-    }
-
+    let yExtent = extent(points, d => d.value);
     return scaleSymlog()
         .domain(yExtent)
         .range([ySize, 0]);
@@ -75,10 +65,11 @@ function simplifiedYScale(tsData, ySize) {
  * @param {Array} tsData - where xScale are Array contains {value, ...}
  * @param {Object} showSeries  - keys match keys in tsData and values are Boolean
  * @param {Number} ySize - range of scale
- * @eturn {Object} d3 scale for value.
+ * @return {Object} d3 scale for value.
  */
 function createYScale(tsData, parmCd, showSeries, ySize) {
     let yExtent;
+    let scaleDomains = [];
 
     // Calculate max and min for data
     for (let key of Object.keys(tsData)) {
@@ -90,18 +81,12 @@ function createYScale(tsData, parmCd, showSeries, ySize) {
         if (!showSeries[key] || points.length === 0) {
             continue;
         }
-
-        const thisExtent = extent(points, d => d.value);
-        if (yExtent !== undefined) {
-            yExtent = [
-                Math.min(thisExtent[0], yExtent[0]),
-                Math.max(thisExtent[1], yExtent[1])
-            ];
-        } else {
-            yExtent = thisExtent;
-        }
+        scaleDomains.push(singleSeriesYScale(points, ySize).domain());
     }
-
+    if (scaleDomains) {
+        const flatDomains = [].concat(...scaleDomains);
+        yExtent = Math.min(flatDomains) && Math.max(flatDomains) ? [Math.min(flatDomains), Math.max(flatDomains)] : undefined;
+    }
     // Add padding to the extent and handle empty data sets.
     if (yExtent) {
         yExtent = extendDomain(yExtent);
@@ -145,4 +130,4 @@ const yScaleSelector = createSelector(
 );
 
 
-module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, simplifiedYScale};
+module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, singleSeriesYScale};

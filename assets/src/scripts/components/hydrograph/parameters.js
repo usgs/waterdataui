@@ -5,7 +5,7 @@ const { select } = require('d3-selection');
 const { Actions } = require('./store');
 const { dataSelector } = require('./timeseries');
 const { sparkLineDim } = require('./layout');
-const { createXScale, simplifiedYScale } = require('./scales');
+const { createXScale, singleSeriesYScale } = require('./scales');
 const { dispatch, link } = require('../../lib/redux');
 
 
@@ -50,7 +50,7 @@ export const addSparkLine = function(svgSelection, {tsData}) {
     const { parmData, lines } = tsData;
     if (parmData && lines) {
         let x = createXScale(parmData, sparkLineDim.width);
-        let y = simplifiedYScale(parmData, sparkLineDim.height);
+        let y = singleSeriesYScale(parmData, sparkLineDim.height);
         let spark = line()
             .x(function(d) {
                 return x(d.time);
