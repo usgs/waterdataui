@@ -178,7 +178,7 @@ class GetDisambiguatedValuesTestCase(TestCase):
         expected_location = {
             'site_no': {'name': '12345678', 'code': '12345678'},
             'country_cd': {'name': 'US', 'code': 'US'},
-            'state_cd': {'name': 'Alabama', 'code': '01'},
+            'state_cd': {'name': 'Alabama', 'abbreviation': 'AL', 'code': '01'},
             'district_cd': {'name': 'Alaska', 'abbreviation': 'AK', 'code': '02'},
             'county_cd': {'name': 'Baldwin County', 'code': '002'}
         }
@@ -197,7 +197,7 @@ class GetDisambiguatedValuesTestCase(TestCase):
         expected_location = {
             'site_no': {'name': '12345678', 'code': '12345678'},
             'country_cd': {'name': 'US', 'code': 'US'},
-            'state_cd': {'name': 'Alabama', 'code': '01'},
+            'state_cd': {'name': 'Alabama', 'abbreviation': 'AL', 'code': '01'},
             'county_cd': {'name': '004', 'code': '004'}
         }
         self.assertEqual(
@@ -214,7 +214,7 @@ class GetDisambiguatedValuesTestCase(TestCase):
         expected_location = {
             'site_no': {'name': '12345678', 'code': '12345678'},
             'country_cd': {'name': 'CA', 'code': 'CA'},
-            'state_cd': {'name': 'Alberta', 'code': '01'},
+            'state_cd': {'name': 'Alberta', 'abbreviation': None, 'code': '01'},
             'county_cd': {'name': '004', 'code': '004'}
         }
         self.assertEqual(
@@ -233,7 +233,7 @@ class GetDisambiguatedValuesTestCase(TestCase):
         expected_location = {
             'site_no': {'name': '12345678', 'code': '12345678'},
             'country_cd': {'name': 'US', 'code': 'US'},
-            'state_cd': {'name': '10', 'code': '10'},
+            'state_cd': {'name': '10', 'abbreviation': None, 'code': '10'},
             'district_cd': {'name': '11', 'abbreviation': None, 'code': '11'},
             'county_cd': {'name': '004', 'code': '004'}
         }
@@ -255,7 +255,7 @@ class GetDisambiguatedValuesTestCase(TestCase):
         expected_location = {
             'site_no': {'name': '12345678', 'code': '12345678'},
             'country_cd': {'name': 'MX', 'code': 'MX'},
-            'state_cd': {'name': '10', 'code': '10'},
+            'state_cd': {'name': '10', 'abbreviation': None, 'code': '10'},
             'county_cd': {'name': '004', 'code': '004'}
         }
         self.assertEqual(
@@ -304,7 +304,7 @@ class GetDisambiguatedValuesTestCase(TestCase):
         expected_location = {
             'site_no': {'name': '12345678', 'code': '12345678'},
             'country_cd': {'name': 'US', 'code': 'US'},
-            'state_cd': {'name': 'Alabama', 'code': '01'},
+            'state_cd': {'name': 'Alabama', 'abbreviation': 'AL', 'code': '01'},
         }
         self.assertEqual(
             get_disambiguated_values(test_location, self.test_code_lookups, self.test_country_state_county_lookup, {}),
