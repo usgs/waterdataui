@@ -144,7 +144,8 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, layou
                 .append('i')
                     .attr('class', 'fa fa-info-circle');
             let tooltipContent = selection.append('div').attr('class', 'tooltip');
-            let tooltipTable = tooltipContent.append('table');
+            let tooltipTable = tooltipContent.append('table')
+                .attr('class', 'tooltip-table');
             tooltipTable.append('caption').text('Available Data');
             tooltipTable.append('thead')
                 .append('tr')

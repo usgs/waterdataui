@@ -209,9 +209,16 @@ describe('Hydrograph charting module', () => {
 
         it('show the labels for the median stat data showMedianStatsLabel is true', () => {
             store.dispatch(Actions.showMedianStatsLabel(true));
-
             expect(selectAll('svg #median-points text').size()).toBe(1);
+        });
 
+        it('should have tooltips for the select series table', () => {
+            expect(selectAll('table .tooltip-table').size()).toBe(1);
+        });
+
+        it('should not have tooltips for the select series table when the screen is large', () => {
+            store.dispatch(Actions.resizeTimeseriesPlot(800));
+            expect(selectAll('table .tooltip-table').size()).toBe(0);
         });
     });
 
