@@ -1,7 +1,7 @@
 const { select, selectAll } = require('d3-selection');
 const { provide } = require('../../lib/redux');
 
-const { attachToNode, timeSeriesGraph } = require('./index');
+const { attachToNode, timeSeriesGraph, timeSeriesLegend } = require('./index');
 const { Actions, configureStore } = require('./store');
 
 
@@ -32,7 +32,11 @@ const TEST_STATE = {
                 points: [{
                     dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
                     value: 10
-                }]
+                }],
+                metadata: {
+                    beginYear: '2010',
+                    endYear: '2015'
+                }
             }
         },
         timeSeriesCollections: {
@@ -192,10 +196,6 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg #median-points text').size()).toBe(0);
         });
 
-        it('should have a legend with four markers', () => {
-           expect(selectAll('g.legend-marker').size()).toBe(4);
-        });
-
         it('show the labels for the median stat data showMedianStatsLabel is true', () => {
             store.dispatch(Actions.showMedianStatsLabel(true));
             expect(selectAll('svg #median-points text').size()).toBe(1);
@@ -215,13 +215,26 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('svg path.line').size()).toBe(2);
         });
 
-        it('Should have three legend markers', () => {
-            expect(selectAll('g.legend-marker').size()).toBe(3);
-        });
-
         it('Should remove one of the lines when removing the compare time series', () => {
             store.dispatch(Actions.toggleTimeseries('compare', false));
             expect(selectAll('svg path.line').size()).toBe(1);
+        });
+
+        //TODO: Consider adding a test which checks that the y axis is rescaled by
+        // examining the contents of the text labels.
+    });
+
+    describe('legends should render', () => {
+        let store;
+        beforeEach(() => {
+            store = configureStore(TEST_STATE);
+            select(graphNode)
+                .call(provide(store))
+                .call(timeSeriesLegend);
+        });
+
+        it('Should have three legend markers', () => {
+            expect(selectAll('g.legend-marker').size()).toBe(3);
         });
 
         it('Should have two legend markers after the compare time series is removed', () => {
@@ -229,7 +242,10 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('g.legend-marker').size()).toBe(2);
         });
 
-        //TODO: Consider adding a test which checks that the y axis is rescaled by
-        // examining the contents of the text labels.
+        it('Should have one legend marker after the compare and median time series are removed', () => {
+            store.dispatch(Actions.toggleTimeseries('compare', false));
+            store.dispatch(Actions.toggleTimeseries('median', false));
+            expect(selectAll('g.legend-marker').size()).toBe(1);
+        });
     });
 });

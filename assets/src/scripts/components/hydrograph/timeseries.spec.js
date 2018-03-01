@@ -1,5 +1,5 @@
 const { collectionsSelector, lineSegmentsSelector, pointsSelector, requestSelector,
-    currentTimeSeriesSelector, pointsTableDataSelector } = require('./timeseries');
+    timeSeriesSelector, pointsTableDataSelector } = require('./timeseries');
 
 
 const TEST_DATA = {
@@ -218,9 +218,9 @@ describe('Timeseries module', () => {
         });
     });
 
-    describe('currentTimeSeriesSelector', () => {
+    describe('timeSeriesSelector', () => {
         it('works', () => {
-            expect(currentTimeSeriesSelector('current')({
+            expect(timeSeriesSelector('current')({
                 series: {
                     requests: {
                         current: {

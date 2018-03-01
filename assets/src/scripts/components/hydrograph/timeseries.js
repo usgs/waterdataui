@@ -56,45 +56,18 @@ export const methodsSelector = state => state.series.methods;
 
 /**
  * Returns a selector that, for a given tsKey:
- * Selects all time series.
- * @param  {String} tsKey       Time-series key
- * @param  {String} hasPoints   Only return time series that have point data
- * @param  {Object} state       Redux state
- * @return {Object}             Time-series data
- */
-export const timeSeriesSelector = memoize((tsKey, hasPoints=true) => createSelector(
-    state => state.series.timeSeries,
-    collectionsSelector(tsKey),
-    (timeSeries, collections) => {
-        const series = collections.reduce((seriesList, collection) => {
-            const colSeries = collection.timeSeries.map(sID => timeSeries[sID]);
-            Array.prototype.push.apply(seriesList, colSeries);
-            return seriesList;
-        }, []);
-        if (hasPoints) {
-            return series.filter(ts => ts.points.length > 0);
-        } else {
-            return series;
-        }
-    }
-));
-
-
-/**
- * Returns a selector that, for a given tsKey:
  * Selects all time series for the current time series variable.
  * @param  {String} tsKey   Time-series key
  * @param  {Object} state   Redux state
  * @return {Object}         Time-series data
  */
-export const currentTimeSeriesSelector = memoize(tsKey => createSelector(
+export const timeSeriesSelector = memoize(tsKey => createSelector(
     state => state.series.timeSeries,
     collectionsSelector(tsKey),
     currentVariableSelector,
     (timeSeries, collections, variable) => {
         return collections.filter(c => c.variable === variable.oid).reduce((seriesList, collection) => {
-            const colSeries = collection.timeSeries.map(sID => timeSeries[sID]);
-            Array.prototype.push.apply(seriesList, colSeries);
+            seriesList.push(...collection.timeSeries.map(sID => timeSeries[sID]));
             return seriesList;
         }, []);
     }
@@ -113,7 +86,7 @@ export const HASH_ID = {
  * @return {Array}            Array of points.
  */
 export const pointsSelector = memoize(tsKey => createSelector(
-    currentTimeSeriesSelector(tsKey),
+    timeSeriesSelector(tsKey),
     (timeSeries) => {
         // FIXME: Return all points, not just those from the first time series.
         const pointsList = timeSeries.map(series => series.points);
@@ -130,7 +103,7 @@ export const pointsSelector = memoize(tsKey => createSelector(
  * @return {Array}            Array of array of points.
  */
 export const newPointsSelector = memoize(tsKey => createSelector(
-    currentTimeSeriesSelector(tsKey),
+    timeSeriesSelector(tsKey),
     (timeSeries) => {
         return timeSeries.map(series => series.points);
     }
@@ -151,20 +124,20 @@ export const classesForPoint = point => {
  * @return {Array}            Array of point arrays.
  */
 export const visiblePointsSelector = createSelector(
-    pointsSelector('current'),
-    pointsSelector('compare'),
-    pointsSelector('median'),
+    newPointsSelector('current'),
+    newPointsSelector('compare'),
+    newPointsSelector('median'),
     (state) => state.showSeries,
     (current, compare, median, showSeries) => {
         const pointArray = [];
         if (showSeries['current']) {
-            pointArray.push(current);
+            Array.prototype.push.apply(pointArray, current);
         }
         if (showSeries['compare']) {
-            pointArray.push(compare);
+            Array.prototype.push.apply(pointArray, compare);
         }
         if (showSeries['median']) {
-            pointArray.push(median);
+            Array.prototype.push.apply(pointArray, median);
         }
         return pointArray;
     }
@@ -278,7 +251,7 @@ export const titleSelector = createSelector(
 
 export const descriptionSelector = createSelector(
     currentVariableSelector,
-    currentTimeSeriesSelector('current'),
+    timeSeriesSelector('current'),
     (variable, timeSeriesList) => {
         const desc = variable ? variable.variableDescription : '';
         const startTime = Math.max.apply(timeSeriesList.map(ts => ts.startTime));

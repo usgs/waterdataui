@@ -4,38 +4,95 @@ const { createSelector } = require('reselect');
 
 const { CIRCLE_RADIUS, MARGIN } = require('./layout');
 const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
-const { lineSegmentsSelector, methodsSelector, timeSeriesSelector, HASH_ID, MASK_DESC } = require('./timeseries');
+const { timeSeriesSelector, lineSegmentsSelector, methodsSelector, HASH_ID, MASK_DESC } = require('./timeseries');
 
+
+const tsMaskMarkers = function(tsKey, masks) {
+    return [...masks].map((mask) => {
+        const maskName = MASK_DESC[mask];
+        const tsClass = `${maskName.replace(' ', '-').toLowerCase()}-mask`;
+        const fill = `url(#${HASH_ID[tsKey]})`;
+        return defineRectangleMarker(null, `mask ${tsClass}`, maskName, null, fill);
+    });
+};
+
+/**
+ * create elements for the legend in the svg
+ *
+ * @param {Object} displayItems - Object containing keys for each ts. The current and compare will contain an
+ *                 object that has a masks property containing the Set of masks that are currently displayed.
+ *                 The median property will contain the metadata for the median statistics
+ * @return {Object} - Each key respresnts a ts and contains an array of markers to show.
+ */
+const createLegendMarkers = function(displayItems) {
+    const legendMarkers = [];
+
+    if (displayItems.current) {
+        legendMarkers.push([
+            defineLineMarker('ts-legend-current', 'line', 'Current Year', 'current-year-line-marker'),
+            ...tsMaskMarkers('current', displayItems.current.masks)
+        ]);
+    }
+    if (displayItems.compare) {
+        legendMarkers.push([
+            defineLineMarker('ts-legend-compare', 'line', 'Last Year', 'compare-year-line-marker'),
+            ...tsMaskMarkers('compare', displayItems.compare.masks)
+        ]);
+    }
+
+    if (displayItems.median) {
+        for (const [index, stats] of displayItems.median.entries()) {
+            // Get the unique non-null years, in chronological order
+            const years = [];
+            if (stats.beginYear) {
+                years.push(stats.beginYear);
+            }
+            if (stats.endYear && stats.beginYear !== stats.endYear) {
+                years.push(stats.endYear);
+            }
+            const dateText = years.join(' - ');
+
+            const descriptionText = stats.description  ? `${stats.description} ` : '';
+            const classes = `median-data-series median-modulo-${index % 6}`;
+            const label = `Median ${descriptionText}${dateText}`;
+
+            legendMarkers.push([defineCircleMarker(CIRCLE_RADIUS, null, classes, label)]);
+        }
+    }
+
+    return legendMarkers;
+};
 
 /**
  * Create a simple legend
  *
  * @param {Object} svg - d3 selector
- * @param {Object} legendMarkers - property for each ts key containing the markers to draw
+ * @param {Object} legendMarkerRows - Array of rows. Each row should be an array of legend markers.
  * @param {Object} layout - width and height of svg.
  */
-function drawSimpleLegend(svg,
-                          legendMarkers,
-                          layout) {
+function drawSimpleLegend(svg, {legendMarkerRows, layout}) {
+    svg.selectAll('.legend').remove();
+
+    if (!legendMarkerRows || !layout) {
+        return;
+    }
+
     const markerYPosition = -4;
     const markerGroupXOffset = 40;
     const verticalRowOffset = 18;
     const markerTextXOffset = 10;
 
-    let rowCounter = 0;
     let legend = svg
         .append('g')
             .attr('class', 'legend')
-            .attr('transform', `translate(${MARGIN.left}, ${layout.height - MARGIN.bottom + 20})`);
+            .attr('transform', `translate(${MARGIN.left}, 0)`);
 
-    for (let tsKey in legendMarkers) {
+    for (const [index, legendMarkerRow] of legendMarkerRows.entries()) {
+        const rowCount = index + 1;
         let xPosition = 0;
         let previousMarkerGroup;
-        if (legendMarkers[tsKey].length > 0) {
-            rowCounter += 1;
-        }
 
-        for (let legendMarker of legendMarkers[tsKey]) {
+        for (let legendMarker of legendMarkerRow) {
             if (previousMarkerGroup) {
                 let previousMarkerGroupBox = previousMarkerGroup.node().getBBox();
                 xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupXOffset;
@@ -48,9 +105,9 @@ function drawSimpleLegend(svg,
             let markerType = legendMarker.type;
             let yPosition;
             if (markerType === rectangleMarker) {
-                yPosition = markerYPosition * 2.5 + verticalRowOffset * rowCounter;
+                yPosition = markerYPosition * 2.5 + verticalRowOffset * rowCount;
             } else {
-                yPosition = markerYPosition + verticalRowOffset * rowCounter;
+                yPosition = markerYPosition + verticalRowOffset * rowCount;
             }
             let markerArgs = {
                 r: legendMarker.r ? legendMarker.r : null,
@@ -71,56 +128,16 @@ function drawSimpleLegend(svg,
             let detachedMarkerBBox = detachedMarker.node().getBBox();
             legendGroup.append('text')
                 .attr('x', detachedMarkerBBox.x + detachedMarkerBBox.width + markerTextXOffset)
-                .attr('y', verticalRowOffset * rowCounter)
+                .attr('y', verticalRowOffset * rowCount)
                 .text(legendMarker.text);
             previousMarkerGroup = legendGroup;
         }
     }
+
+    // Set the size of the containing svg node to the size of the legend.
+    const bBox = legend.node().getBBox();
+    svg.attr('viewBox', `0 0 ${layout.width} ${bBox.height + 10}`);
 }
-
-const tsMaskMarkers = function(tsKey, masks) {
-    return [...masks].map((mask) => {
-        const maskName = MASK_DESC[mask];
-        const tsClass = `${maskName.replace(' ', '-').toLowerCase()}-mask`;
-        const fill = `url(#${HASH_ID[tsKey]})`;
-        return defineRectangleMarker(null, `mask ${tsClass}`, maskName, null, fill);
-    });
-};
-
-/**
- * create elements for the legend in the svg
- *
- * @param {Object} displayItems - Object containing keys for each ts. The current and compare will contain an
- *                 object that has a masks property containing the Set of masks that are currently displayed.
- *                 The median property will contain the metadata for the median statistics
- * @return {Object} - Each key respresnts a ts and contains an array of markers to show.
- */
-const createLegendMarkers = function(displayItems) {
-    let legendMarkers = {
-        current: [],
-        compare: [],
-        median: []
-    };
-
-    if (displayItems.current) {
-        legendMarkers.current.push(defineLineMarker(null, 'line', 'Current Year', 'current-year-line-marker'));
-        legendMarkers.current.push(...tsMaskMarkers('current', displayItems.current.masks));
-    }
-    if (displayItems.compare) {
-        legendMarkers.compare.push(defineLineMarker(null, 'line', 'Last Year', 'compare-year-line-marker'));
-        legendMarkers.compare.push(...tsMaskMarkers('compare', displayItems.compare.masks));
-    }
-
-    if (displayItems.median) {
-        const stats = displayItems.median;
-        const descriptionText = stats.description  ? `${stats.description} ` : '';
-        const dateText = stats.beginYear && stats.endYear ? `${stats.beginYear} - ${stats.endYear}` : '';
-        legendMarkers.median.push(
-            defineCircleMarker(CIRCLE_RADIUS, null, 'median-data-series', `Median ${descriptionText}${dateText}`));
-    }
-
-    return legendMarkers;
-};
 
 const uniqueMasksSelector = memoize(tsDataKey => createSelector(
     lineSegmentsSelector(tsDataKey),
@@ -131,6 +148,7 @@ const uniqueMasksSelector = memoize(tsDataKey => createSelector(
         }, []).filter(x => x !== null));
     }
 ));
+
 /**
  * Select attributes from the state useful for legend creation
  */
@@ -141,18 +159,24 @@ const legendDisplaySelector = createSelector(
     uniqueMasksSelector('current'),
     uniqueMasksSelector('compare'),
     (showSeries, medianTSs, methods, currentMasks, compareMasks) => {
-        // FIXME: handle more than just the first median time series
-        const medianTS = medianTSs[0];
         return {
             current: showSeries.current ? {masks: currentMasks} : undefined,
             compare: showSeries.compare ? {masks: compareMasks} : undefined,
-            median: {
-                beginYear: medianTS ? medianTS.startTime.getFullYear() : undefined,
-                endYear: medianTS ? medianTS.endTime.getFullYear() : undefined,
-                description: medianTS && medianTS.method ? methods[medianTS.method].methodDescription : ''
-            }
+            median: showSeries.median ? medianTSs.map(medianTS => {
+                return {
+                    beginYear: medianTS ? medianTS.metadata.beginYear : undefined,
+                    endYear: medianTS ? medianTS.metadata.endYear : undefined,
+                    description: medianTS && medianTS.method ? methods[medianTS.method].methodDescription : ''
+                };
+            }) : undefined
         };
     }
 );
 
-module.exports = {drawSimpleLegend, createLegendMarkers, legendDisplaySelector};
+
+const legendMarkerRowsSelector = createSelector(
+    legendDisplaySelector,
+    displayItems => createLegendMarkers(displayItems)
+);
+
+module.exports = {drawSimpleLegend, createLegendMarkers, legendDisplaySelector, legendMarkerRowsSelector};

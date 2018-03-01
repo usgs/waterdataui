@@ -10,12 +10,12 @@ const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
 
 const { appendAxes, axesSelector } = require('./axes');
-const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
-const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
+const { MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
+const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
-const { currentVariableSelector, pointsSelector, lineSegmentsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC, HASH_ID } = require('./timeseries');
+const { currentVariableSelector, pointsSelector, newPointsSelector, lineSegmentsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC, HASH_ID } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
 
@@ -140,29 +140,34 @@ const plotSvgDefs = function(elem) {
 };
 
 
-const plotLegend = function(elem, {displayItems, layout}) {
-    elem.select('.legend').remove();
-    let plotMarkers = createLegendMarkers(displayItems);
-    drawSimpleLegend(elem, plotMarkers, layout);
+const timeSeriesLegend = function(elem) {
+    elem.append('div')
+        .attr('class', 'hydrograph-container')
+        .append('svg')
+            .call(link(drawSimpleLegend, createStructuredSelector({
+                legendMarkerRows: legendMarkerRowsSelector,
+                layout: layoutSelector
+            })));
 };
 
 
-const plotMedianPoints = function (elem, {visible, xscale, yscale, points, showLabel, variable}) {
-    elem.select('#median-points').remove();
-
-    if (!visible) {
-        return;
-    }
-
-    const container = elem
-        .append('g')
-            .attr('id', 'median-points');
-
-    container.selectAll('medianPoint')
+/**
+ * Plots the median points for a single median time series.
+ * @param  {Object} elem
+ * @param  {Function} options.xscale
+ * @param  {Function} options.yscale
+ * @param  {Number} options.modulo
+ * @param  {Array} options.points
+ * @param  {Boolean} options.showLabel
+ * @param  {Object} options.variable
+ */
+const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLabel, variable}) {
+    elem.selectAll('medianPoint')
         .data(points)
         .enter()
         .append('circle')
-            .attr('class', 'median-data-series')
+            .classed('median-data-series', true)
+            .classed(`median-modulo-${modulo}`, true)
             .attr('r', CIRCLE_RADIUS)
             .attr('cx', function(d) {
                 return xscale(d.dateTime);
@@ -175,7 +180,7 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, points, showL
             }));
 
     if (showLabel) {
-        container.selectAll('medianPointText')
+        elem.selectAll('medianPointText')
             .data(points)
             .enter()
             .append('text')
@@ -191,10 +196,34 @@ const plotMedianPoints = function (elem, {visible, xscale, yscale, points, showL
     }
 };
 
+/**
+ * Plots the median points for all median time series for the current variable.
+ * @param  {Object} elem
+ * @param  {Boolean} options.visible
+ * @param  {Function} options.xscale
+ * @param  {Function} options.yscale
+ * @param  {Array} options.pointsList
+ * @param  {Boolean} options.showLabel
+ * @param  {Object} options.variable
+ */
+const plotAllMedianPoints = function (elem, {visible, xscale, yscale, pointsList, showLabel, variable}) {
+    elem.select('#median-points').remove();
+
+    if (!visible) {
+        return;
+    }
+    const container = elem
+        .append('g')
+            .attr('id', 'median-points');
+
+    for (const [index, points] of pointsList.entries()) {
+        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points, showLabel, variable});
+    }
+};
+
 const timeSeriesGraph = function (elem) {
     elem.append('div')
         .attr('class', 'hydrograph-container')
-        .style('padding-bottom', ASPECT_RATIO_PERCENT)
         .append('svg')
             .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({
@@ -204,10 +233,6 @@ const timeSeriesGraph = function (elem) {
             })))
             .call(createTooltipText)
             .call(plotSvgDefs)
-            .call(link(plotLegend, createStructuredSelector({
-                displayItems: legendDisplaySelector,
-                layout: layoutSelector
-            })))
             .append('g')
                 .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
                 .call(link(appendAxes, axesSelector))
@@ -233,11 +258,11 @@ const timeSeriesGraph = function (elem) {
                     compareTsData: pointsSelector('compare'),
                     isCompareVisible: isVisibleSelector('compare')
                 })))
-                .call(link(plotMedianPoints, createStructuredSelector({
+                .call(link(plotAllMedianPoints, createStructuredSelector({
                     visible: isVisibleSelector('median'),
                     xscale: xScaleSelector('current'),
                     yscale: yScaleSelector,
-                    points: pointsSelector('median'),
+                    pointsList: newPointsSelector('median'),
                     variable: currentVariableSelector,
                     showLabel: (state) => state.showMedianStatsLabel
                 })));
@@ -292,6 +317,7 @@ const attachToNode = function (node, {siteno} = {}) {
     select(node)
         .call(provide(store))
         .call(timeSeriesGraph)
+        .call(timeSeriesLegend)
         .select('.hydrograph-last-year-input')
             .on('change', dispatch(function () {
                 return Actions.toggleTimeseries('compare', this.checked);
@@ -304,4 +330,4 @@ const attachToNode = function (node, {siteno} = {}) {
 };
 
 
-module.exports = {attachToNode, timeSeriesGraph};
+module.exports = {attachToNode, timeSeriesLegend, timeSeriesGraph};

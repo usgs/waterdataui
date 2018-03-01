@@ -14,7 +14,7 @@ describe('Models module', () => {
 
 
         beforeEach(() => {
-            /* eslint no-use-before-define: "ignore" */
+            /* eslint no-use-before-define: 0 */
             let getPromise = Promise.resolve(MOCK_DATA);
 
             ajaxMock = {
@@ -74,7 +74,9 @@ describe('Models module', () => {
             expect(ajaxMock.get.calls.mostRecent().args[0]).toContain('https://nwis.waterservices.usgs.gov/nwis');
         });
     });
-
+jasmine.pp = function (obj) {
+    return JSON.stringify(obj, undefined, 4);
+};
     describe('getPreviousYearTimeseries', () => {
         let ajaxMock;
         let models;
@@ -86,7 +88,7 @@ describe('Models module', () => {
         const endDate = new Date('2018-01-02T16:45:00.000-06:00');
 
         beforeEach(() => {
-            /* eslint no-use-before-define: "ignore" */
+            /* eslint no-use-before-define: 0 */
             let getPromise = Promise.resolve(MOCK_LAST_YEAR_DATA);
 
             ajaxMock = {
@@ -107,20 +109,13 @@ describe('Models module', () => {
         });
 
         it('Parses valid data', () => {
-            models.getPreviousYearTimeseries({site: siteID, startTime: startDate, endTime: endDate}).then(([series, newSeries]) => {
-                expect(series.length).toBe(1);
-                expect(series[0].code).toBe(paramCode);
-                expect(series[0].name).toBe('Streamflow, ft³/s');
-                expect(series[0].description).
-                    toBe('Discharge, cubic feet per second');
-                expect(series[0].startTime).
-                    toEqual(new Date('1/2/2017, 3:00:00 PM -0600'));
-                expect(series[0].endTime).
-                    toEqual(new Date('1/2/2017, 4:45:00 PM -0600'));
-                expect(series[0].values.length).toBe(8);
+            models.getPreviousYearTimeseries({site: siteID, startTime: startDate, endTime: endDate}).then((series) => {
+                // This returns the JSON version of the mocked response, so
+                // just do a sanity check on an attribute.
+                expect(series.name).toBe('ns1:timeSeriesResponseType');
                 done();
             });
-        })
+        });
     });
 
     describe('parseRDB', () => {
@@ -143,8 +138,6 @@ describe('Models module', () => {
     });
 
     describe('parseMedianTimeseries', () => {
-
-        const unit = 'ft3/s';
 
         const startDate = new Date(2018, 0, 10);
         const endDate = new Date(2018, 0, 13);
@@ -170,7 +163,11 @@ describe('Models module', () => {
                         endTime: new Date('Sat Jan 13 2018 00:00:00 GMT-0600 (CST)'),
                         tsKey: 'median',
                         method: '00060:153885:median',
-                        variable: 'varID'
+                        variable: 'varID',
+                        metadata: {
+                            'beginYear': '1969',
+                            'endYear': '2017'
+                        }
                     }
                 },
                 timeSeriesCollections: {
@@ -219,7 +216,11 @@ describe('Models module', () => {
                         endTime: new Date('Mon Mar 14 2016 00:00:00 GMT-0500 (CDT)'),
                         tsKey: 'median',
                         method: '00060:153885:median',
-                        variable: 'varID'
+                        variable: 'varID',
+                        metadata: {
+                            'beginYear': '1969',
+                            'endYear': '2017'
+                        }
                     }
                 },
                 timeSeriesCollections: {
@@ -244,7 +245,7 @@ describe('Models module', () => {
                     }
                 }
             });
-        })
+        });
     });
 
     describe('getSiteStatistics', () => {
@@ -3371,4 +3372,4 @@ const MOCK_MEDIAN_VARIABLES = {
     '00060': {
         oid: 'varID'
     }
-}
+};

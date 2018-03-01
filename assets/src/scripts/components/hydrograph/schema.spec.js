@@ -3,7 +3,7 @@ const { normalize } = require('./schema');
 
 describe('Normalizr schema', () => {
     it('works', () => {
-        /* eslint no-use-before-define: "ignore" */
+        /* eslint no-use-before-define: 0 */
         const data = normalize(JSON.parse(MOCK_DATA), 'current');
         expect(data.queryInfo).toEqual({
             'current': {

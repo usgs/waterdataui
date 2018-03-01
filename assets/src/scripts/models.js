@@ -1,3 +1,4 @@
+const { set } = require('d3-collection');
 const { utcFormat } = require('d3-time-format');
 
 const { get } = require('./ajax');
@@ -107,6 +108,14 @@ export function isLeapYear(year) {
  * @returns {object}
  */
 export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, varsByCode) {
+    // We only have data for the variables returned from the IV service. If this
+    // series doesn't correspond with an IV series, skip it.
+    const variable = varsByCode[medianData[0].parameter_cd];
+    if (!variable) {
+        console.info(`(Median statistics) Variable data not available for ${medianData[0].parameter_cd} - skipping`);
+        return collection;
+    }
+
     let values = [];
 
     let yearPresent = timeSeriesEndDateTime.getFullYear();
@@ -138,6 +147,15 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
     const tsId = `${medianData[0].parameter_cd}:${medianData[0].ts_id}:median`;
     const tsCollectionId = `${medianData[0].site_no}:${medianData[0].parameter_cd}:median`;
 
+    let collectionSet;
+    if (collection.requests && collection.requests.median &&
+            collection.requests.median.timeSeriesCollections) {
+        collectionSet = set(collection.requests.median.timeSeriesCollections);
+    } else {
+        collectionSet = set();
+    }
+    collectionSet.add(tsCollectionId);
+
     // Normalize the median data into a structure comparable to how the
     // IV service data is normalized.
     return {
@@ -152,7 +170,11 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
                 endTime: timeSeriesEndDateTime,
                 tsKey: 'median',
                 method: tsId,
-                variable: varsByCode[medianData[0].parameter_cd].oid
+                variable: varsByCode[medianData[0].parameter_cd].oid,
+                metadata: {
+                    beginYear: medianData[0].begin_yr,
+                    endYear: medianData[0].end_yr
+                }
             }
         },
         timeSeriesCollections: {
@@ -177,10 +199,7 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
         requests: {
             ...collection.requests || {},
             median: {
-                timeSeriesCollections: [
-                    ...((collection.requests || {}).median || {}).timeSeriesCollections || [],
-                    tsCollectionId
-                ]
+                timeSeriesCollections: collectionSet ? collectionSet.values() : []
             }
         }
     };

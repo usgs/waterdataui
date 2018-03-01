@@ -22,22 +22,14 @@ table#select-timeseries {
 }
 
 .hydrograph-container {
-    display: inline-block;
-    position: relative;
     width: 100%;
     vertical-align: top;
-    overflow: hidden;
 
     svg {
         font-size: 0.7em;
         @include media($medium-screen) {
             font-size: 1em;
         }
-
-        display: inline-block;
-        position: absolute;
-        top: 0;
-        left: 0;
 
         .overlay {
             fill: none;
@@ -122,9 +114,26 @@ table#select-timeseries {
             .median-data-series {
                 cursor: pointer;
             }
-         }
+        }
         .median-data-series {
-            fill: #f96713;
+            &.median-modulo-0 {
+                fill: #f96713;
+            }
+            &.median-modulo-1 {
+                fill: #0c7d40;
+            }
+            &.median-modulo-2 {
+                fill: #0557fc;
+            }
+            &.median-modulo-3 {
+                fill: #f4f727;
+            }
+            &.median-modulo-4 {
+                fill: #01fab6;
+            }
+            &.median-modulo-5 {
+                fill: #9a9b77;
+            }
         }
         .mask {
             opacity: 0.2;

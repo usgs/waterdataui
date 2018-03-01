@@ -2,15 +2,17 @@ const { select } = require('d3-selection');
 
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 const { lineMarker, circleMarker, rectangleMarker } = require('./markers');
-
+jasmine.pp = function (obj) {
+    return JSON.stringify(obj, undefined, 4);
+};
 describe('Legend module', () => {
 
     describe('drawSimpleLegend', () => {
 
         let svgNode;
 
-        let legendMarkers = {
-            current: [{
+        let legendMarkerRows = [
+            [{
                 type: lineMarker,
                 length: 20,
                 domId: 'some-id',
@@ -24,14 +26,14 @@ describe('Legend module', () => {
                 text: 'Rectangle Marker',
                 groupId: 'rectangle-marker-group'
             }],
-            median: [{
+            [{
                 type: circleMarker,
                 r: 4,
                 domId: null,
                 domClass: 'some-other-class',
                 text: 'Circle Text'
             }]
-        };
+        ];
 
         beforeEach(() => {
             svgNode = select('body').append('svg')
@@ -46,7 +48,7 @@ describe('Legend module', () => {
         });
 
         it('Adds a legend when width is provided', () => {
-            drawSimpleLegend(svgNode, legendMarkers, {width: 100, height: 100});
+            drawSimpleLegend(svgNode, {legendMarkerRows, layout: {width: 100, height: 100}});
 
             expect(svgNode.selectAll('.legend').size()).toBe(1);
             expect(svgNode.selectAll('line').size()).toBe(1);
@@ -68,57 +70,61 @@ describe('Legend module', () => {
         it('should return markers for display', () => {
             let result = createLegendMarkers({
                 current: {masks: ['ice']},
-                median: {
+                median: [{
                     beginYear: 2010,
                     endYear: 2012
-                }
+                }]
             });
-            expect(result).toEqual({
-                current: [
-                    {
-                        type: lineMarker,
-                        domId: null,
-                        domClass: 'line',
-                        text: 'Current Year',
-                        groupId: 'current-year-line-marker'
-                    },
-                    {
-                        type: rectangleMarker,
-                        domId: null,
-                        domClass: 'mask ice-affected-mask',
-                        text: 'Ice Affected',
-                        groupId: null,
-                        fill: 'url(#hash-45)'
-                    }],
-                compare: [],
-                median: [{
+            expect(result).toEqual([
+                [{
+                    type: lineMarker,
+                    domId: 'ts-legend-current',
+                    domClass: 'line',
+                    text: 'Current Year',
+                    groupId: 'current-year-line-marker'
+                }, {
+                    type: rectangleMarker,
+                    domId: null,
+                    domClass: 'mask ice-affected-mask',
+                    text: 'Ice Affected',
+                    groupId: null,
+                    fill: 'url(#hash-45)'
+                }], [{
                     type: circleMarker,
                     r: 4,
                     domId: null,
-                    domClass: 'median-data-series',
+                    domClass: 'median-data-series median-modulo-0',
                     groupId: null,
                     text: 'Median 2010 - 2012',
                     fill: null
                 }]
-            });
+            ]);
         });
 
         it('should return an object with no markers', () => {
             let result = createLegendMarkers({});
-            expect(result.current.length).toEqual(0);
-            expect(result.compare.length).toEqual(0);
-            expect(result.median.length).toEqual(0);
+            expect(result.length).toEqual(0);
 
         });
 
         it('should still work if stat begin and end years are absent', () => {
             let result = createLegendMarkers({
-                median: {
+                median: [{
                     beginYear: undefined,
                     endYear: undefined
-                }
+                }]
             });
-            expect(result.median[0].text).toEqual('Median ');
+            expect(result).toEqual([
+                [{
+                    type: circleMarker,
+                    r: 4,
+                    domId: null,
+                    domClass: 'median-data-series median-modulo-0',
+                    groupId: null,
+                    text: 'Median ',
+                    fill: null
+                }]
+            ]);
         });
     });
 
@@ -132,7 +138,11 @@ describe('Legend module', () => {
                             startTime: new Date('2010-10-10'),
                             endTime: new Date('2012-10-10'),
                             method: 'methodID',
-                            points: [1, 2, 3]
+                            points: [1, 2, 3],
+                            metadata: {
+                                beginYear: '2010',
+                                endYear: '2012'
+                            }
                         }
                     },
                     methods: {
@@ -142,12 +152,21 @@ describe('Legend module', () => {
                     },
                     timeSeriesCollections: {
                         collectionID: {
+                            variable: '00060ID',
                             timeSeries: ['medianTS']
                         }
                     },
                     requests: {
                         median: {
                             timeSeriesCollections: ['collectionID']
+                        }
+                    },
+                    variables: {
+                        '00060ID': {
+                            oid: '00060ID',
+                            parameterCode: {
+                                value: '00060'
+                            }
                         }
                     }
                 },
@@ -156,16 +175,16 @@ describe('Legend module', () => {
                     compare: false,
                     median: true
                 },
-                currentParameterCode: '00060'
+                currentVariableID: '00060ID'
             });
             expect(result).toEqual({
                 current: {masks: new Set()},
                 compare: undefined,
-                median: {
-                    beginYear: 2010,
-                    endYear: 2012,
+                median: [{
+                    beginYear: '2010',
+                    endYear: '2012',
                     description: 'method description'
-                }
+                }]
             });
         });
 
@@ -176,11 +195,7 @@ describe('Legend module', () => {
                     median: true
                 }
             });
-            expect(result.median).toEqual({
-                beginYear: undefined,
-                endYear: undefined,
-                description: ''
-            });
+            expect(result.median).toEqual([]);
         });
     });
 });
