@@ -86,7 +86,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
     table.append('thead')
         .append('tr')
             .selectAll('th')
-            .data(['Parameter Code', 'Description', 'Now', 'Last Year', 'Median', 'Graph'])
+            .data(['Parameter Code', 'Description', 'Graph'])
             .enter().append('th')
                 .attr('scope', 'col')
                 .text(d => d);
@@ -106,25 +106,48 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries}) {
             }))
             .call(tr => {
                 tr.append('td')
-                    .attr('scope', 'row')
-                    .text(parm => parm[0]);
+                        .attr('scope', 'row')
+                        .text(parm => parm[0])
+                        .append('div')
+                            .attr('class', 'tooltip-item');
                 tr.append('td')
                     .text(parm => parm[1].description);
-                tr.append('td')
-                    .html(parm => parm[1].currentYear ? '<i class="fa fa-check" aria-label="Current year data available"></i>' : '');
-                tr.append('td')
-                    .html(parm => parm[1].previousYear ? '<i class="fa fa-check" aria-label="Previous year data available"></i>' : '');
-                tr.append('td')
-                    .html(parm => parm[1].medianData ? '<i class="fa fa-check" aria-label="Median data available"></i>' : '');
                 tr.append('td')
                     .append('svg')
                     .attr('width', sparkLineDim.width.toString())
                     .attr('height', sparkLineDim.height.toString());
             });
 
+
+    table.selectAll('div.tooltip-item').each(function() {
+        let selection = select(this);
+        selection.append('sup')
+            .append('i')
+                .attr('class', 'fa fa-info-circle');
+        let tooltipContent = selection.append('div').attr('class', 'tooltip');
+        let tooltipTable = tooltipContent.append('table');
+        tooltipTable.append('caption').text('Available Data');
+        tooltipTable.append('thead')
+            .append('tr')
+                .selectAll('th')
+                .data(['Now', 'Last Year', 'Median'])
+                .enter()
+                .append('th')
+                    .attr('scope', 'col')
+                    .text(d => d);
+
+        let tableRow = tooltipTable.append('tr');
+        tableRow.append('td')
+            .html(d => d[1].currentYear ? '<i class="fa fa-check" aria-label="Current year data available"></i>' : '');
+        tableRow.append('td')
+            .html(d => d[1].previousYear ? '<i class="fa fa-check" aria-label="Previous year data available"></i>' : '');
+        tableRow.append('td')
+            .html(d => d[1].medianData ? '<i class="fa fa-check" aria-label="Median data available"></i>' : '');
+
+    });
     table.selectAll('tbody svg').each(function(d) {
         let selection = select(this);
-        let parmCd = d[0];
+        const parmCd = d[0];
         selection.call(link(addSparkLine, createStructuredSelector(
             {tsData: dataSelector(parmCd)}
         )));
