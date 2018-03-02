@@ -15,7 +15,7 @@ const CIRCLE_RADIUS = 4;
 const SPARK_LINE_DIM = {
     width: 50,
     height: 30
-}
+};
 
 const SMALL_SCREEN_WIDTH = 481; // size of a small screen as defined in uswds style sheets
 
