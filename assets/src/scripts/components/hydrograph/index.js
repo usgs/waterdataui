@@ -37,7 +37,7 @@ const drawMessage = function (elem, message) {
 };
 
 
-const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}) {
+const plotDataLine = function (elem, {visible, lines, tsKey, xScale, yScale}) {
     if (!visible) {
         return;
     }
@@ -53,7 +53,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                 .classed('line', true)
                 .classed('approved', line.classes.approved)
                 .classed('estimated', line.classes.estimated)
-                .classed(`ts-${tsDataKey}`, true)
+                .classed(`ts-${tsKey}`, true)
                 .attr('d', tsLine);
         } else {
             const maskCode = line.classes.dataMask.toLowerCase();
@@ -61,7 +61,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
             const [xDomainStart, xDomainEnd] = extent(line.points, d => d.dateTime);
             const [yRangeStart, yRangeEnd] = yScale.domain();
             let maskGroup = elem.append('g')
-                .attr('class', `${tsDataKey}-mask-group`);
+                .attr('class', `${tsKey}-mask-group`);
             const xSpan = xScale(xDomainEnd) - xScale(xDomainStart);
             const rectWidth = xSpan > 0 ? xSpan : 1;
 
@@ -72,7 +72,7 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
                 .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
                 .attr('class', `mask ${maskDisplayName}-mask`);
 
-            const patternId = HASH_ID[tsDataKey] ? `url(#${HASH_ID[tsDataKey]})` : '';
+            const patternId = HASH_ID[tsKey] ? `url(#${HASH_ID[tsKey]})` : '';
 
             maskGroup.append('rect')
                 .attr('x', xScale(xDomainStart))
@@ -85,17 +85,17 @@ const plotDataLine = function (elem, {visible, lines, tsDataKey, xScale, yScale}
 };
 
 
-const plotDataLines = function (elem, {visible, tsLines, tsDataKey, xScale, yScale}) {
-    const elemId = `ts-${tsDataKey}-group`;
+const plotDataLines = function (elem, {visible, tsLines, tsKey, xScale, yScale}) {
+    const elemId = `ts-${tsKey}-group`;
 
     elem.selectAll(`#${elemId}`).remove();
     const tsLineGroup = elem
         .append('g')
         .attr('id', elemId)
-        .classed('tsDataKey', true);
+        .classed('tsKey', true);
 
     for (const lines of tsLines) {
-        plotDataLine(tsLineGroup, {visible, lines, tsDataKey, xScale, yScale});
+        plotDataLine(tsLineGroup, {visible, lines, tsKey, xScale, yScale});
     }
 };
 
@@ -241,14 +241,14 @@ const timeSeriesGraph = function (elem) {
                     tsLines: lineSegmentsSelector('current'),
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
-                    tsDataKey: () => 'current'
+                    tsKey: () => 'current'
                 })))
                 .call(link(plotDataLines, createStructuredSelector({
                     visible: isVisibleSelector('compare'),
                     tsLines: lineSegmentsSelector('compare'),
                     xScale: xScaleSelector('compare'),
                     yScale: yScaleSelector,
-                    tsDataKey: () => 'compare'
+                    tsKey: () => 'compare'
                 })))
                 .call(link(createTooltipFocus, createStructuredSelector({
                     xScale: xScaleSelector('current'),

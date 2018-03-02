@@ -211,9 +211,6 @@ const MIDDLEWARES = [thunk];
 
 export const configureStore = function (initialState) {
     initialState = {
-        tsData: {
-            median: {}
-        },
         series: {},
         statisticalMetaData: {
             beginYear: '',

@@ -74,23 +74,23 @@ const getNearestTime = function(data, time) {
 /*
  * Returns a function that returns the tooltipFocus time for a given timeseries
  * @param {Object} state - Redux store
- * @param {String} tsDataKey - Timeseries key
+ * @param {String} tsKey - Timeseries key
  * @return {Date}
  */
-const tooltipFocusTimeSelector = memoize(tsDataKey => createSelector(
+const tooltipFocusTimeSelector = memoize(tsKey => createSelector(
     state => state.tooltipFocusTime,
-    tooltipFocusTime => tooltipFocusTime[tsDataKey]
+    tooltipFocusTime => tooltipFocusTime[tsKey]
 ));
 
 /*
  * Returns a function that the time series data point nearest the tooltip focus time for the given timeseries
  * @param {Object} state - Redux store
- * @param String} tsDataKey - Timeseries key
+ * @param String} tsKey - Timeseries key
  * @return {Object}
  */
-const tsDatumSelector = memoize(tsDataKey => createSelector(
-    pointsSelector(tsDataKey),
-    tooltipFocusTimeSelector(tsDataKey),
+const tsDatumSelector = memoize(tsKey => createSelector(
+    pointsSelector(tsKey),
+    tooltipFocusTimeSelector(tsKey),
     (points, tooltipFocusTime) => {
         if (tooltipFocusTime && points && points.length) {
             return getNearestTime(points, tooltipFocusTime).datum;

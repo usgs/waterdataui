@@ -171,10 +171,6 @@ describe('Hydrograph tooltip module', () => {
 
         it('Creates two text elements with empty text', () => {
             let store = configureStore({
-                tsData: {
-                    current: data,
-                    compare: data
-                },
                 tooltipFocusTime: {
                     current: null,
                     compare: null

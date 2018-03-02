@@ -148,11 +148,11 @@ export const visiblePointsSelector = createSelector(
  * Factory function creates a function that:
  * Returns the current show state of a timeseries.
  * @param  {Object}  state     Redux store
- * @param  {String}  tsDataKey Timeseries key
+ * @param  {String}  tsKey Timeseries key
  * @return {Boolean}           Show state of the timeseries
  */
-export const isVisibleSelector = memoize(tsDataKey => (state) => {
-    return state.showSeries[tsDataKey];
+export const isVisibleSelector = memoize(tsKey => (state) => {
+    return state.showSeries[tsKey];
 });
 
 /**
@@ -160,12 +160,12 @@ export const isVisibleSelector = memoize(tsDataKey => (state) => {
  * Returns all point data as an array of [value, time, qualifiers] if the data is visible.
  * Otherwise an empty array is returned.
  * @param {Object} state - Redux store
- * @param {String} tsDataKey - timeseries key
+ * @param {String} tsKey - timeseries key
  * @param {Array of Array} for each point returns [value, time, qualifiers] or empty array.
  */
-export const pointsTableDataSelector = memoize(tsDataKey => createSelector(
-    pointsSelector(tsDataKey),
-    isVisibleSelector(tsDataKey),
+export const pointsTableDataSelector = memoize(tsKey => createSelector(
+    pointsSelector(tsKey),
+    isVisibleSelector(tsKey),
     (points, isVisible) => {
         if (isVisible) {
             return points.map((value) => {
@@ -186,11 +186,11 @@ export const pointsTableDataSelector = memoize(tsDataKey => createSelector(
  * Factory function creates a function that:
  * Returns all points in a timeseries grouped into line segments, for each time series.
  * @param  {Object} state     Redux store
- * @param  {String} tsDataKey Timeseries key
+ * @param  {String} tsKey Timeseries key
  * @return {Array}            Array of array of points.
  */
-export const lineSegmentsSelector = memoize(tsDataKey => createSelector(
-    newPointsSelector(tsDataKey),
+export const lineSegmentsSelector = memoize(tsKey => createSelector(
+    newPointsSelector(tsKey),
     (tsPoints) => {
         const linePoints = [];
         for (const points of tsPoints) {

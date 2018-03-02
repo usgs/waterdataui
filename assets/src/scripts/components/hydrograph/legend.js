@@ -139,8 +139,8 @@ function drawSimpleLegend(svg, {legendMarkerRows, layout}) {
     svg.attr('viewBox', `0 0 ${layout.width} ${bBox.height + 10}`);
 }
 
-const uniqueMasksSelector = memoize(tsDataKey => createSelector(
-    lineSegmentsSelector(tsDataKey),
+const uniqueMasksSelector = memoize(tsKey => createSelector(
+    lineSegmentsSelector(tsKey),
     (tsLineSegments) => {
         return new Set(tsLineSegments.reduce((masks, lineSegments) => {
             Array.prototype.push.apply(masks, lineSegments.map((segment) => segment.classes.dataMask));

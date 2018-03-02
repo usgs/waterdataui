@@ -45,8 +45,7 @@ function createXScale(values, xSize) {
 
 /**
  * Create an yscale oriented on the bottom
- * @param {Array} tsData - where xScale are Array contains {value, ...}
- * @param {Object} showSeries  - keys match keys in tsData and values are Boolean
+ * @param {Object} pointArrays - Time series points: [[point, point], ...]
  * @param {Number} ySize - range of scale
  * @eturn {Object} d3 scale for value.
  */
@@ -87,12 +86,12 @@ function createYScale(pointArrays, ySize) {
  * Factory function creates a function that is:
  * Selector for x-scale
  * @param  {Object} state       Redux store
- * @param  {String} tsDataKey   Timeseries key
+ * @param  {String} tsKey   Timeseries key
  * @return {Function}           D3 scale function
  */
-const xScaleSelector = memoize(tsDataKey => createSelector(
+const xScaleSelector = memoize(tsKey => createSelector(
     layoutSelector,
-    pointsSelector(tsDataKey),
+    pointsSelector(tsKey),
     (layout, points) => {
         return createXScale(points, layout.width - MARGIN.right);
     }
