@@ -284,8 +284,8 @@ describe('Hydrograph tooltip module', () => {
                     xScale,
                     yScale,
                     compareXScale,
-                    currentTsData,
-                    compareTsData,
+                    currentTsData: [currentTsData],
+                    compareTsData: [compareTsData],
                     isCompareVisible
                 });
 
@@ -322,8 +322,8 @@ describe('Hydrograph tooltip module', () => {
                     xScale,
                     yScale,
                     compareXScale,
-                    currentTsData,
-                    compareTsData,
+                    currentTsData: [currentTsData],
+                    compareTsData: [compareTsData],
                     isCompareVisible
                 });
 

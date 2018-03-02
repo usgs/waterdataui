@@ -85,7 +85,7 @@ export const HASH_ID = {
  * @param  {String} tsKey     Timeseries key
  * @return {Array}            Array of points.
  */
-export const pointsSelector = memoize(tsKey => createSelector(
+export const oldPointsSelector = memoize(tsKey => createSelector(
     timeSeriesSelector(tsKey),
     (timeSeries) => {
         // FIXME: Return all points, not just those from the first time series.
@@ -102,11 +102,26 @@ export const pointsSelector = memoize(tsKey => createSelector(
  * @param  {String} tsKey     Timeseries key
  * @return {Array}            Array of array of points.
  */
-export const newPointsSelector = memoize(tsKey => createSelector(
+export const pointsSelector = memoize((tsKey) => createSelector(
     timeSeriesSelector(tsKey),
     (timeSeries) => {
         return timeSeries.map(series => series.points);
     }
+));
+
+
+/**
+ * Factory function that returns a selector for a given tsKey, that:
+ * Returns a single array of all points.
+ * @param  {Object} state       Redux state
+ * @return {Array}              Array of points.
+ */
+export const flatPointsSelector = memoize(tsKey => createSelector(
+    pointsSelector(tsKey),
+    tsPointsList => tsPointsList.reduce((finalPoints, points) => {
+        Array.prototype.push.apply(finalPoints, points);
+        return finalPoints;
+    }, [])
 ));
 
 
@@ -124,9 +139,9 @@ export const classesForPoint = point => {
  * @return {Array}            Array of point arrays.
  */
 export const visiblePointsSelector = createSelector(
-    newPointsSelector('current'),
-    newPointsSelector('compare'),
-    newPointsSelector('median'),
+    pointsSelector('current'),
+    pointsSelector('compare'),
+    pointsSelector('median'),
     (state) => state.showSeries,
     (current, compare, median, showSeries) => {
         const pointArray = [];
@@ -166,7 +181,10 @@ export const isVisibleSelector = memoize(tsKey => (state) => {
 export const pointsTableDataSelector = memoize(tsKey => createSelector(
     pointsSelector(tsKey),
     isVisibleSelector(tsKey),
-    (points, isVisible) => {
+    (tsPointsList, isVisible) => {
+        // FIXME: Rather than handling a single arbitrary series, handle them all.
+        const points = tsPointsList[0] || [];
+
         if (isVisible) {
             return points.map((value) => {
                 return [
@@ -190,7 +208,7 @@ export const pointsTableDataSelector = memoize(tsKey => createSelector(
  * @return {Array}            Array of array of points.
  */
 export const lineSegmentsSelector = memoize(tsKey => createSelector(
-    newPointsSelector(tsKey),
+    pointsSelector(tsKey),
     (tsPoints) => {
         const linePoints = [];
         for (const points of tsPoints) {

@@ -7,7 +7,7 @@ const { createSelector, createStructuredSelector } = require('reselect');
 
 const { dispatch, link } = require('../../lib/redux');
 
-const { classesForPoint, currentVariableSelector, pointsSelector } = require('./timeseries');
+const { classesForPoint, currentVariableSelector, oldPointsSelector } = require('./timeseries');
 const { Actions } = require('./store');
 
 const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');
@@ -89,7 +89,7 @@ const tooltipFocusTimeSelector = memoize(tsKey => createSelector(
  * @return {Object}
  */
 const tsDatumSelector = memoize(tsKey => createSelector(
-    pointsSelector(tsKey),
+    oldPointsSelector(tsKey),
     tooltipFocusTimeSelector(tsKey),
     (points, tooltipFocusTime) => {
         if (tooltipFocusTime && points && points.length) {
@@ -188,6 +188,10 @@ const createTooltipFocus = function(elem, {xScale, yScale, compareXScale, curren
     elem.selectAll('.focus').remove();
     elem.select('.tooltip-text-group').remove();
     elem.select('.overlay').remove();
+
+    // FIXME: Rather than handling a single arbitrary series, handle them all.
+    currentTsData = currentTsData[0];
+    compareTsData = compareTsData[0];
 
     if (!currentTsData) {
         return;

@@ -15,7 +15,9 @@ const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
-const { currentVariableSelector, pointsSelector, newPointsSelector, lineSegmentsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC, HASH_ID } = require('./timeseries');
+const { currentVariableSelector, pointsSelector, lineSegmentsSelector,
+    pointsTableDataSelector, isVisibleSelector, titleSelector, descriptionSelector,
+    MASK_DESC, HASH_ID } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
 
@@ -262,7 +264,7 @@ const timeSeriesGraph = function (elem) {
                     visible: isVisibleSelector('median'),
                     xscale: xScaleSelector('current'),
                     yscale: yScaleSelector,
-                    pointsList: newPointsSelector('median'),
+                    pointsList: pointsSelector('median'),
                     variable: currentVariableSelector,
                     showLabel: (state) => state.showMedianStatsLabel
                 })));

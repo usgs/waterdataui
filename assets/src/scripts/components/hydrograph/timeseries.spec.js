@@ -302,7 +302,7 @@ describe('Timeseries module', () => {
     });
 
     describe('pointsSelector', () => {
-        it('works with a single collection and one time series', () => {
+        it('works with a single collection and two time series', () => {
             expect(pointsSelector('current')({
                 series: {
                     requests: {
@@ -313,12 +313,15 @@ describe('Timeseries module', () => {
                     timeSeriesCollections: {
                         'coll1': {
                             variable: 45807197,
-                            timeSeries: ['one']
+                            timeSeries: ['one', 'two']
                         }
                     },
                     timeSeries: {
                         one: {
                             points: ['ptOne', 'ptTwo', 'ptThree']
+                        },
+                        two: {
+                            points: ['ptOne2', 'ptTwo2', 'ptThree2']
                         }
                     },
                     variables: {
@@ -329,7 +332,7 @@ describe('Timeseries module', () => {
                     }
                 },
                 currentVariableID: '45807197'
-            })).toEqual(['ptOne', 'ptTwo', 'ptThree']);
+            })).toEqual([['ptOne', 'ptTwo', 'ptThree'], ['ptOne2', 'ptTwo2', 'ptThree2']]);
         });
     });
 

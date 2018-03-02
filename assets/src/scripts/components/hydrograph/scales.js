@@ -5,7 +5,7 @@ const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { layoutSelector, MARGIN } = require('./layout');
-const { pointsSelector, visiblePointsSelector } = require('./timeseries');
+const { flatPointsSelector, visiblePointsSelector } = require('./timeseries');
 
 const paddingRatio = 0.2;
 
@@ -83,15 +83,14 @@ function createYScale(pointArrays, ySize) {
 
 
 /**
- * Factory function creates a function that is:
+ * Factory function creates a function that, for a given time series key:
  * Selector for x-scale
  * @param  {Object} state       Redux store
- * @param  {String} tsKey   Timeseries key
  * @return {Function}           D3 scale function
  */
 const xScaleSelector = memoize(tsKey => createSelector(
     layoutSelector,
-    pointsSelector(tsKey),
+    flatPointsSelector(tsKey),
     (layout, points) => {
         return createXScale(points, layout.width - MARGIN.right);
     }
