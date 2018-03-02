@@ -60,6 +60,74 @@ describe('Timeseries module', () => {
             }]);
         });
 
+        it('should get lines for a parameter code if provided', () => {
+            expect(lineSegmentsSelector('current', '00010')({
+                tsData: {
+                    current: {
+                        '00060': {
+                            values: [{
+                                value: 10,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: 10,
+                                qualifiers: ['P'],
+                                approved: true,
+                                estimated: false
+                            }, {
+                                value: 10,
+                                qualifiers: ['P'],
+                                approved: true,
+                                estimated: false
+                            }]
+                        },
+                        '00010': {
+                            values: [{
+                                value: 1.2,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: 3.2,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: 2.6,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }]
+                        }
+                    }
+                },
+                currentParameterCode: '00060'
+            })).toEqual([{
+                classes: {
+                    approved: false,
+                    estimated: false,
+                    dataMask: null
+                },
+                points: [{
+                    value: 1.2,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 3.2,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 2.6,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }]
+            }]);
+        });
+
         it('should separate on estimated', () => {
             expect(lineSegmentsSelector('current')({
                 tsData: {

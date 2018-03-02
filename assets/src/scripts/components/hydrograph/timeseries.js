@@ -32,13 +32,14 @@ const HASH_ID = {
  * Returns the points for a given timeseries.
  * @param  {Object} state     Redux store
  * @param  {String} tsDataKey Timeseries key
+ * @param  {String} altParmCd Optional parameter code for which data will be retrieved; if not specified the state's current parameter code is used
  * @return {Array}            Array of points.
  */
-const pointsSelector = memoize((tsDataKey, forceParmCd) => createSelector(
+const pointsSelector = memoize((tsDataKey, altParmCd) => createSelector(
     state => state.tsData,
     state => state.currentParameterCode,
     (tsData, parmCd) => {
-        const parameterCode = forceParmCd ? forceParmCd : parmCd;
+        const parameterCode = altParmCd ? altParmCd : parmCd;
         if (tsData[tsDataKey] && tsData[tsDataKey][parameterCode]) {
             return tsData[tsDataKey][parameterCode].values;
         } else {
@@ -64,7 +65,7 @@ const isVisibleSelector = memoize(tsDataKey => (state) => {
  * Otherwise an empty array is returned.
  * @param {Object} state - Redux store
  * @param {String} tsDataKey - timeseries key
- * @param {Array of Array} for each point returns [value, time, qualifiers] or empty array.
+ * @param {Array of Arrays} for each point returns [value, time, qualifiers] or empty array.
  */
 const pointsTableDataSelector = memoize(tsDataKey => createSelector(
     pointsSelector(tsDataKey),
@@ -90,10 +91,11 @@ const pointsTableDataSelector = memoize(tsDataKey => createSelector(
  * Returns all points in a timeseries grouped into line segments.
  * @param  {Object} state     Redux store
  * @param  {String} tsDataKey Timeseries key
+ * @param  {String} altParmCd Optional parameter code for which data will be retrieved; if not specified the state's current parameter code is used
  * @return {Array}            Array of points.
  */
-const lineSegmentsSelector = memoize((tsDataKey, forceParmCd) => createSelector(
-    pointsSelector(tsDataKey, forceParmCd),
+const lineSegmentsSelector = memoize((tsDataKey, altParmCd) => createSelector(
+    pointsSelector(tsDataKey, altParmCd),
     (points) => {
         // Accumulate data into line groups, splitting on the estimated and
         // approval status.
