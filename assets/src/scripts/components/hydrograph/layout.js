@@ -12,7 +12,7 @@ const MARGIN = {
 };
 const CIRCLE_RADIUS = 4;
 
-const sparkLineDim = {
+const SPARK_LINE_DIM = {
     width: 50,
     height: 30
 }
@@ -31,6 +31,6 @@ const layoutSelector = createSelector(
     }
 );
 
-module.exports = {ASPECT_RATIO, ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector, sparkLineDim};
+module.exports = {ASPECT_RATIO, ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector, SPARK_LINE_DIM};
 
 

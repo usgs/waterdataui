@@ -4,7 +4,7 @@ const { select } = require('d3-selection');
 
 const { Actions } = require('./store');
 const { currentDataSelector } = require('./timeseries');
-const { sparkLineDim } = require('./layout');
+const { SPARK_LINE_DIM } = require('./layout');
 const { createXScale, singleSeriesYScale } = require('./scales');
 const { dispatch, link } = require('../../lib/redux');
 
@@ -49,8 +49,8 @@ export const availableTimeseriesSelector = createSelector(
 export const addSparkLine = function(svgSelection, {tsData}) {
     const { parmData, lines } = tsData;
     if (parmData && lines) {
-        let x = createXScale(parmData, sparkLineDim.width);
-        let y = singleSeriesYScale(parmData, sparkLineDim.height);
+        let x = createXScale(parmData, SPARK_LINE_DIM.width);
+        let y = singleSeriesYScale(parmData, SPARK_LINE_DIM.height);
         let spark = line()
             .x(function(d) {
                 return x(d.time);
@@ -137,8 +137,8 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, layou
                 }
                 tr.append('td')
                     .append('svg')
-                    .attr('width', sparkLineDim.width.toString())
-                    .attr('height', sparkLineDim.height.toString());
+                    .attr('width', SPARK_LINE_DIM.width.toString())
+                    .attr('height', SPARK_LINE_DIM.height.toString());
             });
 
     // seems to be more straight-forward to access an element's joined
