@@ -62,6 +62,7 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
             state_name = get_state_name(country_code, state_code)
             transformed_value = {
                 'name': state_name or state_code,
+                'abbreviation': get_state_abbreviation(state_name),
                 'code': state_code if state_name != state_code else None
             }
 
