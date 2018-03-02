@@ -79,7 +79,7 @@ export const addSparkLine = function(svgSelection, {tsData}) {
 export const plotSeriesSelectTable = function (elem, {availableTimeseries, layout}) {
     elem.select('#select-timeseries').remove();
 
-    const smallScreenWidth = 481;
+    const smallScreenWidth = 481; // size of a small screen as defined in uswds style sheets
     const screenSizeCheck = layout.width <= smallScreenWidth;
 
     let columnHeaders;
@@ -125,6 +125,8 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, layou
                             .attr('class', 'tooltip-item');
                 tr.append('td')
                     .text(parm => parm[1].description);
+                // if screen size is medium/large, place "Now", "Previous Year", and "Median Data" in the table
+                // under the appropriate column headers
                 if (!screenSizeCheck) {
                     tr.append('td')
                         .html(parm => parm[1].currentYear ? '<i class="fa fa-check" aria-label="Current year data available"></i>' : '');
@@ -139,6 +141,10 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, layou
                     .attr('height', sparkLineDim.height.toString());
             });
 
+    // seems to be more straight-forward to access an element's joined
+    // data by iterating over a selection...
+
+    // if screen size is small, place "Now", "Previous Year", and "Median Data" in a tooltip
     if (screenSizeCheck) {
         table.selectAll('div.tooltip-item').each(function() {
             let selection = select(this);
