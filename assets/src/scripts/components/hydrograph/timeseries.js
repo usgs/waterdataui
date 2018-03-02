@@ -175,7 +175,7 @@ const descriptionSelector = createSelector(
  * Given a parameter, get the parameters data
  * and line segments.
  */
-const dataSelector = memoize(parmCd => createSelector(
+const currentDataSelector = memoize(parmCd => createSelector(
     state => state.tsData['current'][parmCd],
     lineSegmentsSelector('current', parmCd),
     (data, lineSegments) => {
@@ -191,5 +191,5 @@ const dataSelector = memoize(parmCd => createSelector(
 module.exports = {
     pointsSelector, lineSegmentsSelector, isVisibleSelector, yLabelSelector,
     pointsTableDataSelector, titleSelector, descriptionSelector, MASK_DESC, HASH_ID,
-    dataSelector
+    currentDataSelector
 };

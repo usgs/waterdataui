@@ -1,4 +1,4 @@
-const { lineSegmentsSelector, pointsTableDataSelector, dataSelector } = require('./timeseries');
+const { lineSegmentsSelector, pointsTableDataSelector, currentDataSelector } = require('./timeseries');
 
 
 describe('Timeseries module', () => {
@@ -321,7 +321,7 @@ describe('Timeseries module', () => {
     describe('dataSelector', () => {
 
         it('correctly selects the right parameter', () => {
-            let result = dataSelector('00060')({
+            let result = currentDataSelector('00060')({
                 tsData: {
                     current: {
                         '00060': {
@@ -350,7 +350,7 @@ describe('Timeseries module', () => {
         });
 
         it('behaves if there is no timeseries', () => {
-            let result = dataSelector('00060')({
+            let result = currentDataSelector('00060')({
                 tsData: {
                     current: {}
                 }
