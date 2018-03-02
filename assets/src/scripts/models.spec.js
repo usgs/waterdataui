@@ -74,14 +74,11 @@ describe('Models module', () => {
             expect(ajaxMock.get.calls.mostRecent().args[0]).toContain('https://nwis.waterservices.usgs.gov/nwis');
         });
     });
-jasmine.pp = function (obj) {
-    return JSON.stringify(obj, undefined, 4);
-};
+
     describe('getPreviousYearTimeseries', () => {
         let ajaxMock;
         let models;
 
-        const paramCode = '00060';
         const siteID = '05413500';
 
         const startDate = new Date('2018-01-02T15:00:00.000-06:00');
@@ -150,17 +147,17 @@ jasmine.pp = function (obj) {
                 timeSeries: {
                     '00060:153885:median': {
                         points: [{
-                            dateTime: new Date('Sat Aug 05 2017 00:00:00 GMT-0500 (CDT)'),
+                            dateTime: new Date(2017, 7, 5),
                             value: 15
                         }, {
-                            dateTime: new Date('Mon Jan 01 2018 00:00:00 GMT-0600 (CST)'),
+                            dateTime: new Date(2018, 0, 1),
                             value: 16
                         }, {
-                            dateTime: new Date('Sat Jan 13 2018 00:00:00 GMT-0600 (CST)'),
+                            dateTime: new Date(2018, 0, 13),
                             value: 15
                         }],
-                        startTime: new Date('Wed Jan 10 2018 00:00:00 GMT-0600 (CST)'),
-                        endTime: new Date('Sat Jan 13 2018 00:00:00 GMT-0600 (CST)'),
+                        startTime: new Date(2018, 0, 10),
+                        endTime: new Date(2018, 0, 13),
                         tsKey: 'median',
                         method: '00060:153885:median',
                         variable: 'varID',
@@ -200,20 +197,20 @@ jasmine.pp = function (obj) {
                 timeSeries: {
                     '00060:153885:median': {
                         points: [{
-                            dateTime: new Date('Wed Aug 05 2015 00:00:00 GMT-0500 (CDT)'),
+                            dateTime: new Date(2015, 7, 5),
                             value: 15
                         }, {
-                            dateTime: new Date('Fri Jan 01 2016 00:00:00 GMT-0600 (CST)'),
+                            dateTime: new Date(2016, 0, 1),
                             value: 16
                         }, {
-                            dateTime: new Date('Wed Jan 13 2016 00:00:00 GMT-0600 (CST)'),
+                            dateTime: new Date(2016, 0, 13),
                             value: 15
                         }, {
-                            dateTime: new Date('Mon Feb 29 2016 00:00:00 GMT-0600 (CST)'),
+                            dateTime: new Date(2016, 1, 29),
                             value: 13
                         }],
-                        startTime: new Date('Sun Jan 10 2016 00:00:00 GMT-0600 (CST)'),
-                        endTime: new Date('Mon Mar 14 2016 00:00:00 GMT-0500 (CDT)'),
+                        startTime: new Date(2016, 0, 10),
+                        endTime: new Date(2016, 2, 14),
                         tsKey: 'median',
                         method: '00060:153885:median',
                         variable: 'varID',
