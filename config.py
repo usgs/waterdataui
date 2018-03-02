@@ -16,6 +16,8 @@ NWIS_ENDPOINTS = {
     'UV': 'https://waterdata.usgs.gov/nwis/uv'
 }
 
+FIM_ENDPOINT = 'https://gis.wim.usgs.gov/arcgis/rest/services/FIMMapper/floodExtents/MapServer/'
+
 LOGGING_ENABLED = True
 LOGGING_DIRECTORY = None
 LOGGING_LEVEL = logging.DEBUG

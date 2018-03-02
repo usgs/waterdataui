@@ -6,17 +6,13 @@ $fa-font-path: './fonts' !default;
 @import '../../../node_modules/font-awesome/scss/font-awesome';
 @import 'uswds';
 
-input[type=range] {
-  -webkit-appearance: none;
-}
-
 $usgs-blue: #02274B;
 
 @import './partials/footer';
 @import './partials/header';
 @import './partials/social_share';
 @import './partials/tooltip';
-
+/*
 .wdfn-slider {
     appearance: none;
     -webkit-appearance: none;
@@ -42,7 +38,7 @@ $usgs-blue: #02274B;
     padding: 100px;
     margin: 130px auto;
 }
-
+*/
 .wdfn-component {
     &[data-component='hydrograph'] {
         @import './components/hydrograph';
