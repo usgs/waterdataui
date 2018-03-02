@@ -84,9 +84,9 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, layou
 
     let columnHeaders;
     if (screenSizeCheck) {
-        columnHeaders = ['Parameter Code', 'Description', 'Graph'];
+        columnHeaders = ['Parameter Code', 'Description', 'Preview'];
     } else {
-        columnHeaders = ['Parameter Code', 'Description', 'Now', 'Last Year', 'Median'];
+        columnHeaders = ['Parameter Code', 'Description', 'Now', 'Last Year', 'Median', 'Preview'];
     }
 
     const table = elem
