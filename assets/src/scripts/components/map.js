@@ -57,12 +57,14 @@ function attachToNode(node, {siteno, latitude, longitude, zoom}) {
                 url: `${window.FIM_ENDPOINT}`,
                 layers: [0],
                 f: 'image',
+                format: 'png8',
                 layerDefs: `0:USGSID = '${siteno}' AND STAGE = ${stages[0]}`
             });
             floodLayer.addTo(map);
 
             slider.addEventListener('change', function(event) {
                stage.innerHTML = stages[event.target.value];
+               floodLayer.setLayerDefs(`0:USGSID = '${siteno}' AND STAGE = ${stages[event.target.value]}`);
             });
         }
     });
