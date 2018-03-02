@@ -272,12 +272,12 @@ describe('Timeseries module', () => {
                     }
                 },
                 currentVariableID: '45807197'
-            })).toEqual([
-                {item: 'one'},
-                {item: 'two'},
-                {item: 'three'},
-                {item: 'four'}
-            ]);
+            })).toEqual({
+                one: {item: 'one'},
+                two: {item: 'two'},
+                three: {item: 'three'},
+                four: {item: 'four'}
+            });
         });
     });
 
@@ -337,39 +337,6 @@ describe('Timeseries module', () => {
     });
 
     describe('pointsTableDataSelect', () => {
-        it('Return an empty array if series is not visible', () => {
-            expect(pointsTableDataSelector('current')({
-                series: {
-                    requests: {
-                        current: {
-                            timeSeriesCollections: ['coll1']
-                        }
-                    },
-                    timeSeriesCollections: {
-                        'coll1': {
-                            variable: 45807197,
-                            timeSeries: ['one']
-                        }
-                    },
-                    timeSeries: {
-                        one: {
-                            points: ['ptOne', 'ptTwo', 'ptThree']
-                        }
-                    },
-                    variables: {
-                        '45807197': {
-                            variableCode: '00060',
-                            oid: 45807197
-                        }
-                    }
-                },
-                currentVariableID: '45807197',
-                showSeries: {
-                    current: false
-                }
-            })).toEqual([]);
-        });
-
         it('Return an array of arrays if series is visible', () => {
             expect(pointsTableDataSelector('current')({
                 series: {
@@ -386,8 +353,9 @@ describe('Timeseries module', () => {
                     },
                     timeSeries: {
                         one: {
+                            tsKey: 'current',
                             points: [{
-                                time: '2018-01-01',
+                                dateTime: '2018-01-01',
                                 qualifiers: ['P'],
                                 approved: false,
                                 estimated: false
@@ -397,7 +365,7 @@ describe('Timeseries module', () => {
                                 estimated: true
                             }, {
                                 value: 10,
-                                time: '2018-01-03',
+                                dateTime: '2018-01-03',
                                 qualifiers: ['P', 'Ice'],
                                 approved: false,
                                 estimated: true
@@ -415,7 +383,13 @@ describe('Timeseries module', () => {
                 showSeries: {
                     current: true
                 }
-            })).toEqual([['', '2018-01-01', 'P'], [15, '', ''], [10, '2018-01-03', 'P, Ice']]);
+            })).toEqual({
+                one: [
+                    ['', '2018-01-01', 'P'],
+                    [15, '', ''],
+                    [10, '2018-01-03', 'P, Ice']
+                ]
+            });
         });
     });
 });

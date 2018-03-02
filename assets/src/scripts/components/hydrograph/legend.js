@@ -162,7 +162,7 @@ const legendDisplaySelector = createSelector(
         return {
             current: showSeries.current ? {masks: currentMasks} : undefined,
             compare: showSeries.compare ? {masks: compareMasks} : undefined,
-            median: showSeries.median ? medianTSs.map(medianTS => {
+            median: showSeries.median ? Object.values(medianTSs).map(medianTS => {
                 return {
                     beginYear: medianTS ? medianTS.metadata.beginYear : undefined,
                     endYear: medianTS ? medianTS.metadata.endYear : undefined,

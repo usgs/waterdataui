@@ -15,7 +15,9 @@ const TEST_STATE = {
                     dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
                     value: 10,
                     qualifiers: ['P']
-                }]
+                }],
+                method: 'method1',
+                tsKey: 'current'
             },
             '00060:compare': {
                 startTime: new Date('2018-01-02T15:00:00.000-06:00'),
@@ -24,7 +26,9 @@ const TEST_STATE = {
                     dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
                     value: 10,
                     qualifiers: ['P']
-                }]
+                }],
+                method: 'method1',
+                tsKey: 'compare'
             },
             '00060:median': {
                 startTime: new Date('2018-01-02T15:00:00.000-06:00'),
@@ -36,7 +40,9 @@ const TEST_STATE = {
                 metadata: {
                     beginYear: '2010',
                     endYear: '2015'
-                }
+                },
+                method: 'method1',
+                tsKey: 'median'
             }
         },
         timeSeriesCollections: {
@@ -71,6 +77,11 @@ const TEST_STATE = {
                 unit: {
                     unitCode: 'unitCode'
                 }
+            }
+        },
+        methods: {
+            'method1': {
+                methodDescription: 'method description'
             }
         }
     },
@@ -133,6 +144,10 @@ describe('Hydrograph charting module', () => {
 
         it('svg should be focusable', function() {
            expect(svg.attr('tabindex')).toBe('0');
+        });
+
+        it('should have an accessibility table for each time series', function() {
+           expect(selectAll('table.usa-sr-only').size()).toBe(3);
         });
     });
 

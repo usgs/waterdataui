@@ -4,7 +4,7 @@
 const { select } = require('d3-selection');
 const { extent } = require('d3-array');
 const { line } = require('d3-shape');
-const { createSelector, createStructuredSelector } = require('reselect');
+const { createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
@@ -16,8 +16,8 @@ const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parame
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
 const { currentVariableSelector, pointsSelector, lineSegmentsSelector,
-    pointsTableDataSelector, isVisibleSelector, titleSelector, descriptionSelector,
-    MASK_DESC, HASH_ID } = require('./timeseries');
+    methodsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector,
+    descriptionSelector, timeSeriesSelector, MASK_DESC, HASH_ID } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
 
@@ -223,6 +223,35 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, pointsList
     }
 };
 
+const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, dataByTsID, timeSeries}) {
+    elem.selectAll(`sr-only-${tsKey}`).remove();
+
+    if (!visible) {
+        return;
+    }
+
+    const container = elem.append('div')
+        .attr('id', `sr-only-${tsKey}`);
+
+    for (const seriesID of Object.keys(timeSeries)) {
+        const series = timeSeries[seriesID];
+        const method = methods[series.method].methodDescription;
+        let title = variable.variableName;
+        if (method) {
+            title += ` (${method})`;
+        }
+        if (tsKey === 'median') {
+            title = `Median ${title}`;
+        }
+        addSROnlyTable(container, {
+            columnNames: [title, 'Time', 'Qualifiers'],
+            data: dataByTsID[seriesID],
+            describeById: `${seriesID}-time-series-sr-desc`,
+            describeByText: `${seriesID} time series data in tabular format`
+        });
+    }
+};
+
 const timeSeriesGraph = function (elem) {
     elem.append('div')
         .attr('class', 'hydrograph-container')
@@ -274,34 +303,31 @@ const timeSeriesGraph = function (elem) {
     })));
 
     elem.append('div')
-        .call(link(addSROnlyTable, createStructuredSelector({
-            columnNames: createSelector(
-                titleSelector,
-                (title) => [title, 'Time', 'Qualifiers']
-            ),
-            data: pointsTableDataSelector('current'),
-            describeById: () => 'current-time-series-sr-desc',
-            describeByText: () => 'current time series data in tabular format'
+        .call(link(plotSROnlyTable, createStructuredSelector({
+            tsKey: () => 'compare',
+            variable: currentVariableSelector,
+            methods: methodsSelector,
+            visible: isVisibleSelector('compare'),
+            dataByTsID: pointsTableDataSelector('compare'),
+            timeSeries: timeSeriesSelector('compare')
     })));
     elem.append('div')
-        .call(link(addSROnlyTable, createStructuredSelector({
-            columnNames: createSelector(
-                titleSelector,
-                (title) => [title, 'Time', 'Qualifiers']
-            ),
-            data: pointsTableDataSelector('compare'),
-            describeById: () => 'compare-time-series-sr-desc',
-            describeByText: () => 'previous year time series data in tabular format'
+        .call(link(plotSROnlyTable, createStructuredSelector({
+            tsKey: () => 'compare',
+            variable: currentVariableSelector,
+            methods: methodsSelector,
+            visible: isVisibleSelector('compare'),
+            dataByTsID: pointsTableDataSelector('compare'),
+            timeSeries: timeSeriesSelector('compare')
     })));
     elem.append('div')
-        .call(link(addSROnlyTable, createStructuredSelector({
-            columnNames: createSelector(
-                titleSelector,
-                (title) => [`Median ${title}`, 'Time']
-            ),
-            data: pointsTableDataSelector('median'),
-            describeById: () => 'median-statistics-sr-desc',
-            describeByText: () => 'median statistical data in tabular format'
+        .call(link(plotSROnlyTable, createStructuredSelector({
+            tsKey: () => 'median',
+            variable: currentVariableSelector,
+            methods: methodsSelector,
+            visible: isVisibleSelector('median'),
+            dataByTsID: pointsTableDataSelector('median'),
+            timeSeries: timeSeriesSelector('median')
     })));
 };
 

@@ -52,7 +52,7 @@ export const currentVariableSelector = createSelector(
 
 
 export const methodsSelector = state => state.series.methods;
-
+export const allTimeSeriesSelector = state => (state.series ? state.series.timeSeries : {}) || {};
 
 /**
  * Returns a selector that, for a given tsKey:
@@ -62,14 +62,14 @@ export const methodsSelector = state => state.series.methods;
  * @return {Object}         Time-series data
  */
 export const timeSeriesSelector = memoize(tsKey => createSelector(
-    state => state.series.timeSeries,
+    allTimeSeriesSelector,
     collectionsSelector(tsKey),
     currentVariableSelector,
     (timeSeries, collections, variable) => {
-        return collections.filter(c => c.variable === variable.oid).reduce((seriesList, collection) => {
-            seriesList.push(...collection.timeSeries.map(sID => timeSeries[sID]));
-            return seriesList;
-        }, []);
+        return collections.filter(c => c.variable === variable.oid).reduce((series, collection) => {
+            collection.timeSeries.forEach(sID => series[sID] = timeSeries[sID]);
+            return series;
+        }, {});
     }
 ));
 
@@ -89,7 +89,7 @@ export const oldPointsSelector = memoize(tsKey => createSelector(
     timeSeriesSelector(tsKey),
     (timeSeries) => {
         // FIXME: Return all points, not just those from the first time series.
-        const pointsList = timeSeries.map(series => series.points);
+        const pointsList = Object.values(timeSeries).map(series => series.points);
         return pointsList[0] || [];
     }
 ));
@@ -105,7 +105,7 @@ export const oldPointsSelector = memoize(tsKey => createSelector(
 export const pointsSelector = memoize((tsKey) => createSelector(
     timeSeriesSelector(tsKey),
     (timeSeries) => {
-        return timeSeries.map(series => series.points);
+        return Object.values(timeSeries).map(series => series.points);
     }
 ));
 
@@ -170,32 +170,33 @@ export const isVisibleSelector = memoize(tsKey => (state) => {
     return state.showSeries[tsKey];
 });
 
+
 /**
- * Factory function creates a function that:
- * Returns all point data as an array of [value, time, qualifiers] if the data is visible.
- * Otherwise an empty array is returned.
+ * Factory function creates a function that, for a given tsKey:
+ * Returns all point data as an array of [value, time, qualifiers].
  * @param {Object} state - Redux store
  * @param {String} tsKey - timeseries key
  * @param {Array of Array} for each point returns [value, time, qualifiers] or empty array.
  */
 export const pointsTableDataSelector = memoize(tsKey => createSelector(
-    pointsSelector(tsKey),
-    isVisibleSelector(tsKey),
-    (tsPointsList, isVisible) => {
-        // FIXME: Rather than handling a single arbitrary series, handle them all.
-        const points = tsPointsList[0] || [];
+    allTimeSeriesSelector,
+    (timeSeries) => {
+        return Object.keys(timeSeries).reduce((dataByTsID, tsID) => {
+            const series = timeSeries[tsID];
+            if (series.tsKey !== tsKey) {
+                return dataByTsID;
+            }
 
-        if (isVisible) {
-            return points.map((value) => {
+            dataByTsID[tsID] = series.points.map((value) => {
                 return [
                     value.value || '',
-                    value.time || '',
+                    value.dateTime || '',
                     value.qualifiers && value.qualifiers.length > 0 ? value.qualifiers.join(', ') : ''
                 ];
             });
-        } else {
-            return [];
-        }
+
+            return dataByTsID;
+        }, {});
     }
 ));
 
@@ -270,10 +271,11 @@ export const titleSelector = createSelector(
 export const descriptionSelector = createSelector(
     currentVariableSelector,
     timeSeriesSelector('current'),
-    (variable, timeSeriesList) => {
+    (variable, timeSeries) => {
+        const timeSeriesList = Object.values(timeSeries);
         const desc = variable ? variable.variableDescription : '';
-        const startTime = Math.max.apply(timeSeriesList.map(ts => ts.startTime));
-        const endTime = Math.max.apply(timeSeriesList.map(ts => ts.startTime));
+        const startTime = Math.min.apply(timeSeriesList.map(ts => ts.startTime));
+        const endTime = Math.max.apply(timeSeriesList.map(ts => ts.endTime));
         return `${desc} from ${formatTime(startTime)} to ${formatTime(endTime)}`;
     }
 );

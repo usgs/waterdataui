@@ -31,9 +31,6 @@ function addSVGAccessibility(svg, {title, description, isInteractive}) {
  * @param {String} describeByText - Optional text that describes this table
  */
 function addSROnlyTable(container, {columnNames, data, describeById=null, describeByText=null}) {
-    container.selectAll('table.usa-sr-only').remove();
-    container.selectAll('div.usa-sr-only').remove();
-
     if (data.length > 0) {
         const table = container
             .append('table')

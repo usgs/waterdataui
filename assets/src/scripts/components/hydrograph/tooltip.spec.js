@@ -246,8 +246,7 @@ describe('Hydrograph tooltip module', () => {
             currentTsData = data;
             compareTsData = [12, 13, 14, 15, 16].map(hour => {
                 return {
-                    time: new Date(`2017-01-03T${hour}:00:00.000Z`),
-                    label: `label ${hour}`,
+                    dateTime: new Date(`2017-01-03T${hour}:00:00.000Z`),
                     value: hour + 1
                 };
             });
