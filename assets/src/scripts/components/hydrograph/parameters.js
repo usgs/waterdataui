@@ -4,7 +4,7 @@ const { select } = require('d3-selection');
 
 const { Actions } = require('./store');
 const { currentDataSelector } = require('./timeseries');
-const { SPARK_LINE_DIM } = require('./layout');
+const { SPARK_LINE_DIM, SMALL_SCREEN_WIDTH } = require('./layout');
 const { createXScale, singleSeriesYScale } = require('./scales');
 const { dispatch, link } = require('../../lib/redux');
 
@@ -79,8 +79,7 @@ export const addSparkLine = function(svgSelection, {tsData}) {
 export const plotSeriesSelectTable = function (elem, {availableTimeseries, layout}) {
     elem.select('#select-timeseries').remove();
 
-    const smallScreenWidth = 481; // size of a small screen as defined in uswds style sheets
-    const screenSizeCheck = layout.width <= smallScreenWidth;
+    const screenSizeCheck = layout.windowWidth <= SMALL_SCREEN_WIDTH;
 
     let columnHeaders;
     if (screenSizeCheck) {

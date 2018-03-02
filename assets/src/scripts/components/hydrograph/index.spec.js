@@ -167,6 +167,7 @@ describe('Hydrograph charting module', () => {
                 title: 'My Title',
                 desc: 'My Description',
                 showMedianStatsLabel: false,
+                windowWidth: 400,
                 width: 400,
                 currentParameterCode: '00060'
             });
@@ -217,7 +218,7 @@ describe('Hydrograph charting module', () => {
         });
 
         it('should not have tooltips for the select series table when the screen is large', () => {
-            store.dispatch(Actions.resizeTimeseriesPlot(800));
+            store.dispatch(Actions.resizeUI(800, 800));
             expect(selectAll('table .tooltip-table').size()).toBe(0);
         });
     });

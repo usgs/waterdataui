@@ -287,7 +287,7 @@ const attachToNode = function (node, {siteno} = {}) {
             }));
 
     window.onresize = function() {
-        store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
+        store.dispatch(Actions.resizeTimeseriesPlot(window.innerWidth, node.offsetWidth));
     };
     store.dispatch(Actions.retrieveTimeseries(siteno));
 };
