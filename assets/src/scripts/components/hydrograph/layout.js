@@ -12,20 +12,30 @@ const MARGIN = {
 };
 const CIRCLE_RADIUS = 4;
 
+const SPARK_LINE_DIM = {
+    width: 50,
+    height: 30
+};
+
+const SMALL_SCREEN_WIDTH = 481; // size of a small screen as defined in uswds style sheets
+
 /*
  * @param {Object} state - Redux store
  * @return {Object} containing width and height properties.
  */
 const layoutSelector = createSelector(
     (state) => state.width,
-    (width) => {
+    (state) => state.windowWidth,
+    (width, windowWidth) => {
         return {
             width: width,
-            height: width * ASPECT_RATIO
+            height: width * ASPECT_RATIO,
+            windowWidth: windowWidth
         };
     }
 );
 
-module.exports = {ASPECT_RATIO, ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector};
+module.exports = {ASPECT_RATIO, ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector, SPARK_LINE_DIM,
+    SMALL_SCREEN_WIDTH};
 
 

@@ -32,14 +32,16 @@ const HASH_ID = {
  * Returns the points for a given timeseries.
  * @param  {Object} state     Redux store
  * @param  {String} tsDataKey Timeseries key
+ * @param  {String} altParmCd Optional parameter code for which data will be retrieved; if not specified the state's current parameter code is used
  * @return {Array}            Array of points.
  */
-const pointsSelector = memoize(tsDataKey => createSelector(
+const pointsSelector = memoize((tsDataKey, altParmCd) => createSelector(
     state => state.tsData,
     state => state.currentParameterCode,
     (tsData, parmCd) => {
-        if (tsData[tsDataKey] && tsData[tsDataKey][parmCd]) {
-            return tsData[tsDataKey][parmCd].values;
+        const parameterCode = altParmCd ? altParmCd : parmCd;
+        if (tsData[tsDataKey] && tsData[tsDataKey][parameterCode]) {
+            return tsData[tsDataKey][parameterCode].values;
         } else {
             return [];
         }
@@ -63,7 +65,7 @@ const isVisibleSelector = memoize(tsDataKey => (state) => {
  * Otherwise an empty array is returned.
  * @param {Object} state - Redux store
  * @param {String} tsDataKey - timeseries key
- * @param {Array of Array} for each point returns [value, time, qualifiers] or empty array.
+ * @param {Array of Arrays} for each point returns [value, time, qualifiers] or empty array.
  */
 const pointsTableDataSelector = memoize(tsDataKey => createSelector(
     pointsSelector(tsDataKey),
@@ -89,10 +91,11 @@ const pointsTableDataSelector = memoize(tsDataKey => createSelector(
  * Returns all points in a timeseries grouped into line segments.
  * @param  {Object} state     Redux store
  * @param  {String} tsDataKey Timeseries key
+ * @param  {String} altParmCd Optional parameter code for which data will be retrieved; if not specified the state's current parameter code is used
  * @return {Array}            Array of points.
  */
-const lineSegmentsSelector = memoize(tsDataKey => createSelector(
-    pointsSelector(tsDataKey),
+const lineSegmentsSelector = memoize((tsDataKey, altParmCd) => createSelector(
+    pointsSelector(tsDataKey, altParmCd),
     (points) => {
         // Accumulate data into line groups, splitting on the estimated and
         // approval status.
@@ -132,7 +135,6 @@ const lineSegmentsSelector = memoize(tsDataKey => createSelector(
             // Cache the classes for the next loop iteration.
             lastClasses = lineClasses;
         }
-
         return lines;
     }
 ));
@@ -169,8 +171,25 @@ const descriptionSelector = createSelector(
         formatTime(series.endTime)
 );
 
+/**
+ * Given a parameter, get the parameters data
+ * and line segments.
+ */
+const currentDataSelector = memoize(parmCd => createSelector(
+    state => state.tsData['current'][parmCd],
+    lineSegmentsSelector('current', parmCd),
+    (data, lineSegments) => {
+        if ( data && data.hasOwnProperty('values') ) {
+            return {parmData: data.values, lines: lineSegments};
+        } else {
+            return {parmData: null, lines: lineSegments};
+        }
+    }
+));
+
 
 module.exports = {
     pointsSelector, lineSegmentsSelector, isVisibleSelector, yLabelSelector,
-    pointsTableDataSelector, titleSelector, descriptionSelector, MASK_DESC, HASH_ID
+    pointsTableDataSelector, titleSelector, descriptionSelector, MASK_DESC, HASH_ID,
+    currentDataSelector
 };

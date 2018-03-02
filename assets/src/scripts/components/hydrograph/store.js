@@ -86,9 +86,10 @@ export const Actions = {
             compareTime
         };
     },
-    resizeTimeseriesPlot(width) {
+    resizeUI(windowWidth, width) {
         return {
-            type: 'RESIZE_TIMESERIES_PLOT',
+            type: 'RESIZE_UI',
+            windowWidth,
             width
         };
     },
@@ -177,9 +178,10 @@ export const timeSeriesReducer = function (state={}, action) {
                 }
             };
 
-        case 'RESIZE_TIMESERIES_PLOT':
+        case 'RESIZE_UI':
             return {
                 ...state,
+                windowWidth: action.windowWidth,
                 width: action.width
             };
 
@@ -216,6 +218,7 @@ export const configureStore = function (initialState) {
             medianStatistics: false
         },
         currentParameterCode: null,
+        windowWidth: 1024,
         width: 800,
         showMedianStatsLabel: false,
         tooltipFocusTime: {
