@@ -231,7 +231,8 @@ const timeSeriesGraph = function (elem) {
                 })));
 
     elem.call(link(plotSeriesSelectTable, createStructuredSelector({
-        availableTimeseries: availableTimeseriesSelector
+        availableTimeseries: availableTimeseriesSelector,
+        layout: layoutSelector
     })));
 
     elem.append('div')
@@ -286,7 +287,7 @@ const attachToNode = function (node, {siteno} = {}) {
             }));
 
     window.onresize = function() {
-        store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
+        store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     };
     store.dispatch(Actions.retrieveTimeseries(siteno));
 };
