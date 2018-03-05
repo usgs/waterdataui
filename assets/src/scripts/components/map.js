@@ -1,41 +1,20 @@
 const { map: createMap, marker: createMarker } = require('leaflet');
 const { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util } = require('esri-leaflet');
-
-const {get} = require('../ajax');
-
+const { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT, fetchFloodFeatures, fetchFloodExtent } = require('../flood_data');
 
 
 const HYDRO_URL = 'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Esri_Hydro_Reference_Overlay/MapServer';
-const fetchFloodInformation = function(siteno) {
-    const FIM_QUERY = `${window.FIM_ENDPOINT}floodExtents/MapServer/0/query?where=USGSID+%3D+%27${siteno}%27&outFields=USGSID%2C+STAGE&returnGeometry=false&returnTrueCurves=false&returnIdsOnly=false&returnCountOnly=false&returnZ=false&returnM=falsereturnDistinctValues=false&f=json`;
 
-    return get(FIM_QUERY)
-        .then((response) => {
-            const respJson = JSON.parse(response);
-            return respJson.features ? respJson.features : [];
-        })
-        .catch(reason => {
-            console.log(`Unable to get FIM data for ${siteno} with reason: ${reason}`);
-            return [];
-        });
-};
-
-const fetchFloodExtent = function(siteno){
-    const FIM_QUERY = `${window.FIM_ENDPOINT}floodExtents/MapServer/0/query?where=USGSID+%3D+%27${siteno}%27&returnExtentOnly=true&outSR=4326&f=json`;
-    return get(FIM_QUERY)
-        .then((response) => {
-            return JSON.parse(response);
-        })
-        .catch(reason => {
-            console.log(`Unable to get FIM data for ${siteno} with reason: ${reason}`);
-            return [];
-        });
+const getLayerDefs = function(layerNo, {siteno, stage=null}) {
+   const stageQuery = stage ? ' AND STAGE = ${stage}' : '';
+   return `${layerNo}: USGSID = '${siteno}'${stageQuery}`;
 };
 
 function attachToNode(node, {siteno, latitude, longitude, zoom}) {
 
-    let fetchPromise = fetchFloodInformation(siteno);
+    let fetchPromise = fetchFloodFeatures(siteno);
     let fetchFloodExtentPromise = fetchFloodExtent(siteno);
+
     // Create map on node
     const map = createMap('site-map', {
         center: [latitude, longitude],
@@ -67,21 +46,23 @@ function attachToNode(node, {siteno, latitude, longitude, zoom}) {
             sliderContainer.removeAttribute('hidden');
 
             let floodLayer = dynamicMapLayer({
-                url: `${window.FIM_ENDPOINT}floodExtents/MapServer/`,
+                url: FLOOD_EXTENTS_ENDPOINT,
                 layers: [0],
                 f: 'image',
                 format: 'png8',
-                layerDefs: `0:USGSID = '${siteno}' AND STAGE = ${stages[0]}`
+                layerDefs: getLayerDefs(0, {
+                    siteno
+                })`0:USGSID = '${siteno}' AND STAGE = ${stages[0]}`
             });
             let breachLayer = dynamicMapLayer({
-                url: `${window.FIM_ENDPOINT}breach/MapServer/`,
+                url: FLOOD_BREACH_ENDPOINT,
                 layers: [0],
                 f: 'image',
                 format: 'png8',
                 layerDefs: `0:USGSID = '${siteno}' AND STAGE = ${stages[0]}`
             });
-            let supplyLayer = dynamicMapLayer({
-                url: `${window.FIM_ENDPOINT}suppLyrs/MapServer/`,
+            let leveeLayer = dynamicMapLayer({
+                url: FLOOD_LEVEE_ENDPOINT,
                 layers: [0, 1],
                 f: 'image',
                 format: 'png8',
@@ -93,7 +74,7 @@ function attachToNode(node, {siteno, latitude, longitude, zoom}) {
             });
             breachLayer.addTo(map);
             floodLayer.addTo(map);
-            supplyLayer.addTo(map);
+            leveeLayer.addTo(map);
 
             slider.addEventListener('change', function(event) {
                stage.innerHTML = stages[event.target.value];
