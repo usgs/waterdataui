@@ -73,6 +73,24 @@ export const timeSeriesSelector = memoize(tsKey => createSelector(
     }
 ));
 
+/**
+ * Returns a selector that, for a given tsKey:
+ * Selects all time series data.
+ * @param  {String} tsKey   Time-series key
+ * @param  {Object} state   Redux state
+ * @return {Object}         Time-series data
+ */
+export const timeSeriesSelectorNew = memoize(tsKey => createSelector(
+    allTimeSeriesSelector,
+    collectionsSelector(tsKey),
+    (timeSeries, collections) => {
+        return collections.reduce((series, collection) => {
+            collection.timeSeries.forEach(sID => series[sID] = timeSeries[sID]);
+            return series;
+        }, {});
+    }
+));
+
 export const HASH_ID = {
     current: 'hash-45',
     compare: 'hash-135'
@@ -106,6 +124,40 @@ export const pointsSelector = memoize((tsKey) => createSelector(
     timeSeriesSelector(tsKey),
     (timeSeries) => {
         return Object.values(timeSeries).map(series => series.points);
+    }
+));
+
+
+/**
+ * Returns a selector that, for a given tsKey:
+ * Returns an array of time points for all visible time series.
+ * @param  {Object} state     Redux store
+ * @param  {String} tsKey     Timeseries key
+ * @return {Array}            Array of array of points.
+ */
+export const pointsSelectorNew = memoize((tsKey) => createSelector(
+    timeSeriesSelectorNew(tsKey),
+    (timeSeries) => {
+        return Object.values(timeSeries).map(series => series.points);
+    }
+));
+
+
+/**
+ * Returns a selector that, for a given tsKey:
+ * Returns time series for the current variable.
+ * @param  {Object} state     Redux store
+ * @param  {String} tsKey     Timeseries key
+ * @return {Array}            Array of array of points.
+ */
+export const currentVariableTimeseries = memoize((tsKey) => createSelector(
+    timeSeriesSelectorNew(tsKey),
+    currentVariableSelector,
+    (timeSeries, variable) => {
+        return Object.keys(timeSeries).filter(sID => timeSeries[sID].variable === variable.oid).reduce((series, sID) => {
+            series[sID] = timeSeries[sID];
+            return series;
+        }, {});
     }
 ));
 
@@ -159,6 +211,10 @@ export const visiblePointsSelector = createSelector(
 );
 
 
+//export const visibleTimeseriesSelector = createSelector(
+//)
+
+
 /**
  * Factory function creates a function that:
  * Returns the current show state of a timeseries.
@@ -209,10 +265,12 @@ export const pointsTableDataSelector = memoize(tsKey => createSelector(
  * @return {Array}            Array of array of points.
  */
 export const lineSegmentsSelector = memoize(tsKey => createSelector(
-    pointsSelector(tsKey),
-    (tsPoints) => {
-        const linePoints = [];
-        for (const points of tsPoints) {
+    timeSeriesSelector(tsKey),
+    (seriesMap) => {
+        const seriesLines = {};
+        for (const sID of Object.keys(seriesMap)) {
+            const series = seriesMap[sID];
+            const points = series.points;
             // Accumulate data into line groups, splitting on the estimated and
             // approval status.
             const lines = [];
@@ -249,9 +307,34 @@ export const lineSegmentsSelector = memoize(tsKey => createSelector(
                 // Cache the classes for the next loop iteration.
                 lastClasses = lineClasses;
             }
-            linePoints.push(lines);
+            seriesLines[sID] = lines;
         }
-        return linePoints;
+        return seriesLines;
+    }
+));
+
+
+const currentVariableTimeseriesSelector = memoize(tsKey => createSelector(
+    timeSeriesSelectorNew(tsKey),
+    currentVariableSelector,
+    (seriesMap, variable) => {
+        return Object.keys(seriesMap).filter(
+                sID => seriesMap[sID].variable === variable.oid).reduce((curMap, sID) => {
+            curMap[sID] = seriesMap[sID];
+            return curMap;
+        }, {});
+    }
+));
+
+
+export const currentVariableLineSegmentsSelector = memoize(tsKey => createSelector(
+    currentVariableTimeseriesSelector(tsKey),
+    lineSegmentsSelector(tsKey),
+    (seriesMap, linesMap) => {
+        return Object.keys(seriesMap).reduce((visMap, sID) => {
+            visMap[sID] = linesMap[sID];
+            return visMap;
+        }, {});
     }
 ));
 
@@ -270,12 +353,11 @@ export const titleSelector = createSelector(
 
 export const descriptionSelector = createSelector(
     currentVariableSelector,
-    timeSeriesSelector('current'),
+    timeSeriesSelectorNew('current'),
     (variable, timeSeries) => {
-        const timeSeriesList = Object.values(timeSeries);
         const desc = variable ? variable.variableDescription : '';
-        const startTime = Math.min.apply(timeSeriesList.map(ts => ts.startTime));
-        const endTime = Math.max.apply(timeSeriesList.map(ts => ts.endTime));
+        const startTime = new Date(Math.min.apply(null, Object.values(timeSeries).map(ts => ts.startTime)));
+        const endTime = new Date(Math.max.apply(null, Object.values(timeSeries).map(ts => ts.endTime)));
         return `${desc} from ${formatTime(startTime)} to ${formatTime(endTime)}`;
     }
 );

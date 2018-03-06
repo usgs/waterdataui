@@ -15,7 +15,7 @@ const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
-const { currentVariableSelector, pointsSelector, lineSegmentsSelector,
+const { currentVariableLineSegmentsSelector, currentVariableSelector, currentVariableTimeseries, oldPointsSelector,
     methodsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector,
     descriptionSelector, timeSeriesSelector, MASK_DESC, HASH_ID } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
@@ -87,7 +87,7 @@ const plotDataLine = function (elem, {visible, lines, tsKey, xScale, yScale}) {
 };
 
 
-const plotDataLines = function (elem, {visible, tsLines, tsKey, xScale, yScale}) {
+const plotDataLines = function (elem, {visible, tsLinesMap, tsKey, xScale, yScale}) {
     const elemId = `ts-${tsKey}-group`;
 
     elem.selectAll(`#${elemId}`).remove();
@@ -96,7 +96,7 @@ const plotDataLines = function (elem, {visible, tsLines, tsKey, xScale, yScale})
         .attr('id', elemId)
         .classed('tsKey', true);
 
-    for (const lines of tsLines) {
+    for (const lines of Object.values(tsLinesMap)) {
         plotDataLine(tsLineGroup, {visible, lines, tsKey, xScale, yScale});
     }
 };
@@ -208,7 +208,7 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLa
  * @param  {Boolean} options.showLabel
  * @param  {Object} options.variable
  */
-const plotAllMedianPoints = function (elem, {visible, xscale, yscale, pointsList, showLabel, variable}) {
+const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap, showLabel, variable}) {
     elem.select('#median-points').remove();
 
     if (!visible) {
@@ -218,7 +218,8 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, pointsList
         .append('g')
             .attr('id', 'median-points');
 
-    for (const [index, points] of pointsList.entries()) {
+    for (const [index, seriesID] of Object.keys(seriesMap).entries()) {
+        const points = seriesMap[seriesID].points;
         plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points, showLabel, variable});
     }
 };
@@ -269,14 +270,14 @@ const timeSeriesGraph = function (elem) {
                 .call(link(appendAxes, axesSelector))
                 .call(link(plotDataLines, createStructuredSelector({
                     visible: isVisibleSelector('current'),
-                    tsLines: lineSegmentsSelector('current'),
+                    tsLinesMap: currentVariableLineSegmentsSelector('current'),
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
                     tsKey: () => 'current'
                 })))
                 .call(link(plotDataLines, createStructuredSelector({
                     visible: isVisibleSelector('compare'),
-                    tsLines: lineSegmentsSelector('compare'),
+                    tsLinesMap: currentVariableLineSegmentsSelector('compare'),
                     xScale: xScaleSelector('compare'),
                     yScale: yScaleSelector,
                     tsKey: () => 'compare'
@@ -285,15 +286,15 @@ const timeSeriesGraph = function (elem) {
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
                     compareXScale: xScaleSelector('compare'),
-                    currentTsData: pointsSelector('current'),
-                    compareTsData: pointsSelector('compare'),
+                    currentTsData: oldPointsSelector('current'),
+                    compareTsData: oldPointsSelector('compare'),
                     isCompareVisible: isVisibleSelector('compare')
                 })))
                 .call(link(plotAllMedianPoints, createStructuredSelector({
                     visible: isVisibleSelector('median'),
                     xscale: xScaleSelector('current'),
                     yscale: yScaleSelector,
-                    pointsList: pointsSelector('median'),
+                    seriesMap: currentVariableTimeseries('median'),
                     variable: currentVariableSelector,
                     showLabel: (state) => state.showMedianStatsLabel
                 })));

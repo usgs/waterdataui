@@ -189,10 +189,6 @@ const createTooltipFocus = function(elem, {xScale, yScale, compareXScale, curren
     elem.select('.tooltip-text-group').remove();
     elem.select('.overlay').remove();
 
-    // FIXME: Rather than handling a single arbitrary series, handle them all.
-    currentTsData = currentTsData[0];
-    compareTsData = compareTsData[0];
-
     if (!currentTsData) {
         return;
     }

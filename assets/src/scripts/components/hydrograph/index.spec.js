@@ -17,7 +17,8 @@ const TEST_STATE = {
                     qualifiers: ['P']
                 }],
                 method: 'method1',
-                tsKey: 'current'
+                tsKey: 'current',
+                variable: 45807197
             },
             '00060:compare': {
                 startTime: new Date('2018-01-02T15:00:00.000-06:00'),
@@ -28,7 +29,8 @@ const TEST_STATE = {
                     qualifiers: ['P']
                 }],
                 method: 'method1',
-                tsKey: 'compare'
+                tsKey: 'compare',
+                variable: 45807197
             },
             '00060:median': {
                 startTime: new Date('2018-01-02T15:00:00.000-06:00'),
@@ -42,7 +44,8 @@ const TEST_STATE = {
                     endYear: '2015'
                 },
                 method: 'method1',
-                tsKey: 'median'
+                tsKey: 'median',
+                variable: 45807197
             }
         },
         timeSeriesCollections: {

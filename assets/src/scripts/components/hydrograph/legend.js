@@ -142,7 +142,7 @@ function drawSimpleLegend(svg, {legendMarkerRows, layout}) {
 const uniqueMasksSelector = memoize(tsKey => createSelector(
     lineSegmentsSelector(tsKey),
     (tsLineSegments) => {
-        return new Set(tsLineSegments.reduce((masks, lineSegments) => {
+        return new Set(Object.values(tsLineSegments).reduce((masks, lineSegments) => {
             Array.prototype.push.apply(masks, lineSegments.map((segment) => segment.classes.dataMask));
             return masks;
         }, []).filter(x => x !== null));
