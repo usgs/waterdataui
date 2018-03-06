@@ -5,6 +5,7 @@ const { dispatch, link, provide } = require('../lib/redux');
 
 const { map: createMap, marker: createMarker } = require('leaflet');
 const { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util } = require('esri-leaflet');
+
 const { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } = require('../flood_data');
 const { Actions } = require('../store');
 
@@ -21,9 +22,6 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         center: [latitude, longitude],
         zoom: zoom
     });
-    let sliderContainer = node.select('.slider-wrapper');
-    let slider = sliderContainer.select('input');
-    let stage = sliderContainer.select('.range-value');
 
     let floodLayer = dynamicMapLayer({
         url: FLOOD_EXTENTS_ENDPOINT,
@@ -49,8 +47,6 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         if (gageHeight) {
             floodLayer.setLayerDefs(`0:USGSID = '${siteno}' AND STAGE = ${gageHeight}`);
             breachLayer.setLayerDefs(`0:USGSID = '${siteno}' AND STAGE = ${gageHeight}`);
-            stage.html(`${gageHeight} ft`);
-            slider.attr('value', stages.indexOf(gageHeight));
         }
         if (stages.length === 0) {
             if (map.hasLayer(floodLayer)) {
@@ -58,15 +54,8 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
                 map.removeLayer(breachLayer);
                 map.removeLayer(leveeLayer);
             }
-            sliderContainer.property('hidden', true);
-            console.log('Hide slider');
         }
         else {
-            slider.attr('min', 0)
-                .attr('max', stages.length - 1)
-                .attr('step', 1)
-            sliderContainer.property('hidden', false);
-            console.log('Show slider');
             if (!map.hasLayer(floodLayer)) {
                 map.addLayer(floodLayer);
                 map.addLayer(breachLayer);
@@ -89,10 +78,6 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
 
     // Add a marker at the site location
     createMarker([latitude, longitude]).addTo(map);
-
-    slider.on('change', dispatch(function() {
-        return Actions.setGageHeight(this.value);
-    }));
 
     node
         .call(link(updateFloodLayers, createStructuredSelector({

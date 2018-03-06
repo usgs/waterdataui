@@ -8,7 +8,8 @@ const { configureStore } = require('./store');
 
 const COMPONENTS = {
     hydrograph: require('./components/hydrograph').attachToNode,
-    map: require('./components/map').attachToNode
+    map: require('./components/map').attachToNode,
+    floodSlider: require('./components/floodSlider').attachToNode
 };
 
 
@@ -21,7 +22,6 @@ function main() {
         COMPONENTS[node.dataset.component](store, node, node.dataset);
     }
 }
-
 
 if (document.readyState !== 'loading') {
     main();
