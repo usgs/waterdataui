@@ -121,7 +121,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, layou
                         .attr('scope', 'row')
                         .text(parm => parm[0])
                         .append('div')
-                            .attr('class', 'tooltip-item');
+                            .attr('class', 'tooltip-item parameter-tooltip');
                 tr.append('td')
                     .text(parm => parm[1].description);
                 // if screen size is medium/large, place "Now", "Previous Year", and "Median Data" in the table
