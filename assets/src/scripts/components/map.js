@@ -1,7 +1,7 @@
 const { select } = require('d3-selection');
 const { createStructuredSelector } = require('reselect');
 
-const { dispatch, link, provide } = require('../lib/redux');
+const { link, provide } = require('../lib/redux');
 
 const { map: createMap, marker: createMarker } = require('leaflet');
 const { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util } = require('esri-leaflet');
@@ -11,8 +11,8 @@ const { Actions } = require('../store');
 
 const HYDRO_URL = 'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Esri_Hydro_Reference_Overlay/MapServer';
 
-const getLayerDefs = function(layerNo, {siteno, stage=null}) {
-   const stageQuery = stage ? ' AND STAGE = ${stage}' : '';
+const getLayerDefs = function(layerNo, siteno, stage) {
+   const stageQuery = stage ? ` AND STAGE = ${stage}` : '';
    return `${layerNo}: USGSID = '${siteno}'${stageQuery}`;
 };
 
@@ -40,13 +40,14 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         layers: [0, 1],
         f: 'image',
         format: 'png8',
-        layerDefs: `0:USGSID = '${siteno}';1:USGSID = '${siteno}'`
+        layerDefs: `${getLayerDefs(0, siteno)};${getLayerDefs(1, siteno)}`
     });
 
     const updateFloodLayers = function(node, {stages, gageHeight}) {
         if (gageHeight) {
-            floodLayer.setLayerDefs(`0:USGSID = '${siteno}' AND STAGE = ${gageHeight}`);
-            breachLayer.setLayerDefs(`0:USGSID = '${siteno}' AND STAGE = ${gageHeight}`);
+            const layerDefs = getLayerDefs(0, siteno, gageHeight);
+            floodLayer.setLayerDefs(layerDefs);
+            breachLayer.setLayerDefs(layerDefs);
         }
         if (stages.length === 0) {
             if (map.hasLayer(floodLayer)) {
@@ -78,6 +79,12 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
 
     // Add a marker at the site location
     createMarker([latitude, longitude]).addTo(map);
+
+    node.append('a')
+        .attr('href', `${FIM_ENDPOINT}?site_no=${siteno}`)
+        .attr('target', '_blank')
+        .attr('rel', 'noopener')
+        .text('Provisional Flood Information');
 
     node
         .call(link(updateFloodLayers, createStructuredSelector({

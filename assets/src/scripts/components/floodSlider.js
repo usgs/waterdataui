@@ -4,6 +4,8 @@ const { createStructuredSelector } = require('reselect');
 const { dispatch, link, provide } = require('../lib/redux');
 const { Actions } = require('../store');
 
+const FIM_ENDPOINT = window.FIM_ENDPOINT;
+
 const updateSlider = function(node, {stages, gageHeight}) {
     if (stages.length === 0) {
         node.property('hidden', true);
@@ -24,9 +26,9 @@ const updateSlider = function(node, {stages, gageHeight}) {
 };
 
 const floodSlider = function(node) {
-    const SLIDER_ID = 'fim-slider'
+    const SLIDER_ID = 'fim-slider';
     let sliderContainer = node.append('div')
-        .attr('class', '.slider-wrapper')
+        .attr('class', 'slider-wrapper')
         .property('hidden', true);
     sliderContainer.append('label')
         .attr('for', SLIDER_ID)

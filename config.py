@@ -16,7 +16,8 @@ NWIS_ENDPOINTS = {
     'UV': 'https://waterdata.usgs.gov/nwis/uv'
 }
 
-FIM_ENDPOINT = 'https://gis.wim.usgs.gov/arcgis/rest/services/FIMMapper/'
+FIM_GIS_ENDPOINT = 'https://gis.wim.usgs.gov/arcgis/rest/services/FIMMapper/'
+FIM_ENDPOINT = 'https://fim.wim.usgs.gov/fim/'
 
 LOGGING_ENABLED = True
 LOGGING_DIRECTORY = None

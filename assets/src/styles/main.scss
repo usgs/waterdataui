@@ -49,6 +49,7 @@ $usgs-blue: #02274B;
     }
     &[data-component='map'] {
         @import './components/map';
+        margin-bottom: 1em;
     }
 }
 
