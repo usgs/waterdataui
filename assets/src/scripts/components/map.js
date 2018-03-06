@@ -1,7 +1,7 @@
 const { map: createMap, marker: createMarker } = require('leaflet');
 const { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util } = require('esri-leaflet');
 const { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT, fetchFloodFeatures, fetchFloodExtent } = require('../flood_data');
-
+const { Actions } = require('../store');
 
 const HYDRO_URL = 'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Esri_Hydro_Reference_Overlay/MapServer';
 
@@ -10,10 +10,9 @@ const getLayerDefs = function(layerNo, {siteno, stage=null}) {
    return `${layerNo}: USGSID = '${siteno}'${stageQuery}`;
 };
 
-function attachToNode(node, {siteno, latitude, longitude, zoom}) {
+function attachToNode(store, node, {siteno, latitude, longitude, zoom}) {
 
-    let fetchPromise = fetchFloodFeatures(siteno);
-    let fetchFloodExtentPromise = fetchFloodExtent(siteno);
+    store.dispatch(Actions.retrieveFloodData(siteno));
 
     // Create map on node
     const map = createMap('site-map', {
@@ -24,6 +23,30 @@ function attachToNode(node, {siteno, latitude, longitude, zoom}) {
     let slider = sliderContainer.getElementsByTagName('input')[0];
     let stage = sliderContainer.getElementsByClassName('range-value')[0];
 
+    let floodLayer = dynamicMapLayer({
+        url: FLOOD_EXTENTS_ENDPOINT,
+        layers: [0],
+        f: 'image',
+        format: 'png8'
+    });
+
+    let currentData;
+
+    const updateFloodLayers = function() {
+        let previousData = currentData;
+        let state = store.getState();
+        currentData = {
+            floodFeatures: state.floodFeatures;
+            floodExtent: state.floodExtent;
+        };
+        if (previousData != currentData) {
+            if (currentData.floodFeatures.length === 0) {
+
+            }
+            floodLayer.setLayerDefs
+        }
+    }
+
     // Add a gray basemap layer
     map.addLayer(new BasemapLayer('Gray'));
 
@@ -32,6 +55,8 @@ function attachToNode(node, {siteno, latitude, longitude, zoom}) {
 
     // Add a marker at the site location
     createMarker([latitude, longitude]).addTo(map);
+
+    store.subscribe(updateFloodLayers)l
 
     fetchPromise.then((features) => {
         console.log('Got feature count ' + features.length);
@@ -50,9 +75,7 @@ function attachToNode(node, {siteno, latitude, longitude, zoom}) {
                 layers: [0],
                 f: 'image',
                 format: 'png8',
-                layerDefs: getLayerDefs(0, {
-                    siteno
-                })`0:USGSID = '${siteno}' AND STAGE = ${stages[0]}`
+                layerDefs: `0:USGSID = '${siteno}' AND STAGE = ${stages[0]}`
             });
             let breachLayer = dynamicMapLayer({
                 url: FLOOD_BREACH_ENDPOINT,

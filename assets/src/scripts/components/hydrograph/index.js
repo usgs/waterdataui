@@ -14,7 +14,7 @@ const { ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector } = require(
 const { drawSimpleLegend, legendDisplaySelector, createLegendMarkers } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector } = require('./scales');
-const { Actions, configureStore } = require('./store');
+const { Actions } = require('../../store');
 const { pointsSelector, lineSegmentsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector, descriptionSelector, MASK_DESC, HASH_ID } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
@@ -268,16 +268,13 @@ const timeSeriesGraph = function (elem) {
 };
 
 
-const attachToNode = function (node, {siteno} = {}) {
+const attachToNode = function (store, node, {siteno} = {}) {
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
     }
 
-    let store = configureStore({
-        width: node.offsetWidth
-    });
-
+    store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
         .call(provide(store))
         .call(timeSeriesGraph)

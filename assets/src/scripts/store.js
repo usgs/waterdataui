@@ -2,7 +2,8 @@ const { applyMiddleware, createStore, compose } = require('redux');
 const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
-    parseMedianData } = require('../../models');
+    parseMedianData } = require('./models');
+const { fetchFloodFeatures, fetchFloodExtent } = require('./flood_data');
 
 
 export const Actions = {
@@ -40,6 +41,24 @@ export const Actions = {
                 series => dispatch(Actions.addTimeseries('compare', series, false)),
                 () => dispatch(Actions.resetTimeseries('compare'))
             );
+        };
+    },
+    retrieveFloodData(siteno) {
+        return function(displatch) {
+            const floodFeatures = fetchFloodFeatures(siteno);
+            const floodExtent = fetchFloodExtent(siteno);
+            Promise.all(floodFeatures, floodExtent).then((features, extent) => {
+                if (features.length > 0) {
+                    displatch(Actions.setFloodFeature(features, extent));
+                }
+            });
+        };
+    },
+    setFloodFeatures(features, extent) {
+        return {
+            type: 'SET_FLOOD_FEATURES',
+            features,
+            extent
         };
     },
     toggleTimeseries(key, show) {
@@ -104,6 +123,12 @@ export const Actions = {
 
 export const timeSeriesReducer = function (state={}, action) {
     switch (action.type) {
+        case 'SET_FLOOD_FEATURES':
+            return {
+                ...state,
+                floodFeatures: action.floodFeatures,
+                floodExtent: action.floodExtent
+            };
         case 'ADD_TIMESERIES':
             return {
                 ...state,
@@ -191,6 +216,8 @@ export const timeSeriesReducer = function (state={}, action) {
                 currentParameterCode: action.parameterCode
             };
 
+            case 'SET_GAGE_HEIGHT'
+
         default:
             return state;
     }
@@ -225,6 +252,8 @@ export const configureStore = function (initialState) {
             current: null,
             compare: null
         },
+        floodFeatures: [],
+        floodExtent: {},
         ...initialState
     };
 

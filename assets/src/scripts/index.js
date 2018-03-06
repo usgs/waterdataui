@@ -2,6 +2,8 @@
 // Initialize the 18F Web design standards
 require('uswds');
 
+const { configureStore } = require('./store');
+
 
 
 const COMPONENTS = {
@@ -12,8 +14,11 @@ const COMPONENTS = {
 
 function main() {
     let nodes = document.getElementsByClassName('wdfn-component');
+    let store = configureStore({
+        windowWidth: window.innerWidth
+    });
     for (let node of nodes) {
-        COMPONENTS[node.dataset.component](node, node.dataset);
+        COMPONENTS[node.dataset.component](store, node, node.dataset);
     }
 }
 
