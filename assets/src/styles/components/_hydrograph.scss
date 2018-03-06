@@ -23,6 +23,9 @@ table#select-timeseries {
                     background-color: $color-aqua-lightest;
                 }
             }
+            span {
+                padding: 0.25em;
+            }
         }
     }
     svg {
