@@ -7,7 +7,7 @@ const { createSelector, createStructuredSelector } = require('reselect');
 const { dispatch, link } = require('../../lib/redux');
 
 const { pointsSelector } = require('./timeseries');
-const { Actions } = require('./store');
+const { Actions } = require('../../store');
 
 const maxValue = function (data) {
     return max(data.map((datum) => datum.value));

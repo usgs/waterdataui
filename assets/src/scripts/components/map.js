@@ -29,23 +29,71 @@ function attachToNode(store, node, {siteno, latitude, longitude, zoom}) {
         f: 'image',
         format: 'png8'
     });
+    let breachLayer = dynamicMapLayer({
+        url: FLOOD_BREACH_ENDPOINT,
+        layers: [0],
+        f: 'image',
+        format: 'png8'
+    });
+    let leveeLayer = dynamicMapLayer({
+        url: FLOOD_LEVEE_ENDPOINT,
+        layers: [0, 1],
+        f: 'image',
+        format: 'png8',
+        layerDefs: `0:USGSID = '${siteno}';1:USGSID = '${siteno}'`
+    });
 
-    let currentData;
+
+    let currentData = {
+        floodStages: [],
+        floodExtent: {},
+        gageHeight: null
+    };
 
     const updateFloodLayers = function() {
         let previousData = currentData;
         let state = store.getState();
         currentData = {
-            floodFeatures: state.floodFeatures;
-            floodExtent: state.floodExtent;
+            floodStages: state.floodStages,
+            floodExtent: state.floodExtent,
+            gageHeight: state.gageHeight
         };
-        if (previousData != currentData) {
-            if (currentData.floodFeatures.length === 0) {
 
+        if (previousData.floodStages != currentData.floodStages) {
+            if (currentData.floodStages.length === 0) {
+                if (map.hasLayer(floodLayer)) {
+                    map.removeLayer(floodLayer);
+                    map.removeLayer(breachLayer);
+                    map.removeLayer(leveeLayer);
+                }
+            } else {
+                floodLayer.setLayerDefs(`0:USGSID = '${siteno}' AND STAGE = ${currentData.gageHeight}`);
+                breachLayer.setLayerDefs(`0:USGSID = '${siteno}' AND STAGE = ${currentData.gageHeight}`);
+                if (!map.hasLayer(floodLayer)) {
+                    map.addLayer(floodLayer);
+                    map.addLayer(breachLayer);
+                    map.addLayer(leveeLayer);
+
+                    // Also set slider
+                    slider.min = 0;
+                    slider.max = currentData.floodStages.length - 1;
+                    slider.value = 0;
+                    sliderContainer.removeAttribute('hidden');
+                }
+                stage.innerHTML = currentData.gageHeight;
             }
-            floodLayer.setLayerDefs
         }
-    }
+
+        if (Object.keys(currentData.floodExtent).length > 0  && previousData.floodExtent != currentData.floodExtent) {
+            map.fitBounds(Util.extentToBounds(currentData.floodExtent));
+        }
+
+        if (previousData.gageHeight != currentData.gageHeight) {
+            floodLayer.setLayerDefs(`0:USGSID = '${siteno}' AND STAGE = ${currentData.gageHeight}`);
+            breachLayer.setLayerDefs(`0:USGSID = '${siteno}' AND STAGE = ${currentData.gageHeight}`);
+            stage.innerHTML = currentData.gageHeight;
+        }
+    };
 
     // Add a gray basemap layer
     map.addLayer(new BasemapLayer('Gray'));
@@ -56,55 +104,10 @@ function attachToNode(store, node, {siteno, latitude, longitude, zoom}) {
     // Add a marker at the site location
     createMarker([latitude, longitude]).addTo(map);
 
-    store.subscribe(updateFloodLayers)l
+    store.subscribe(updateFloodLayers);
 
-    fetchPromise.then((features) => {
-        console.log('Got feature count ' + features.length);
-        if (features.length > 0) {
-            let stages = features.map((feature) => feature.attributes.STAGE);
-
-            stages.sort((a, b) => a - b);
-            slider.min = 0;
-            slider.max = stages.length - 1;
-            slider.value = 0;
-            stage.innerHTML = stages[0];
-            sliderContainer.removeAttribute('hidden');
-
-            let floodLayer = dynamicMapLayer({
-                url: FLOOD_EXTENTS_ENDPOINT,
-                layers: [0],
-                f: 'image',
-                format: 'png8',
-                layerDefs: `0:USGSID = '${siteno}' AND STAGE = ${stages[0]}`
-            });
-            let breachLayer = dynamicMapLayer({
-                url: FLOOD_BREACH_ENDPOINT,
-                layers: [0],
-                f: 'image',
-                format: 'png8',
-                layerDefs: `0:USGSID = '${siteno}' AND STAGE = ${stages[0]}`
-            });
-            let leveeLayer = dynamicMapLayer({
-                url: FLOOD_LEVEE_ENDPOINT,
-                layers: [0, 1],
-                f: 'image',
-                format: 'png8',
-                layerDefs: `0:USGSID = '${siteno}';1:USGSID = '${siteno}'`
-            });
-
-            fetchFloodExtentPromise.then((resp) => {
-                map.fitBounds(Util.extentToBounds(resp.extent));
-            });
-            breachLayer.addTo(map);
-            floodLayer.addTo(map);
-            leveeLayer.addTo(map);
-
-            slider.addEventListener('change', function(event) {
-               stage.innerHTML = stages[event.target.value];
-               floodLayer.setLayerDefs(`0:USGSID = '${siteno}' AND STAGE = ${stages[event.target.value]}`);
-               breachLayer.setLayerDefs(`0:USGSID = '${siteno}' AND STAGE = ${stages[event.target.value]}`);
-            });
-        }
+    slider.addEventListener('change', function(event) {
+        store.dispatch(Actions.setGageHeight(event.target.value));
     });
 }
 

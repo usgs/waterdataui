@@ -2,7 +2,7 @@ const { select, selectAll } = require('d3-selection');
 const { provide } = require('../../lib/redux');
 
 const { attachToNode, timeSeriesGraph } = require('./index');
-const { Actions, configureStore } = require('./store');
+const { Actions, configureStore } = require('../../store');
 
 
 describe('Hydrograph charting module', () => {

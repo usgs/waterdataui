@@ -2,7 +2,7 @@ const { createSelector, createStructuredSelector } = require('reselect');
 const { line } = require('d3-shape');
 const { select } = require('d3-selection');
 
-const { Actions } = require('./store');
+const { Actions } = require('../../store');
 const { currentDataSelector } = require('./timeseries');
 const { SPARK_LINE_DIM, SMALL_SCREEN_WIDTH } = require('./layout');
 const { createXScale, singleSeriesYScale } = require('./scales');

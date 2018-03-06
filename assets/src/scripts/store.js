@@ -47,17 +47,19 @@ export const Actions = {
         return function(displatch) {
             const floodFeatures = fetchFloodFeatures(siteno);
             const floodExtent = fetchFloodExtent(siteno);
-            Promise.all(floodFeatures, floodExtent).then((features, extent) => {
+            Promise.all([floodFeatures, floodExtent]).then((data) => {
+                const [features, extent] = data;
                 if (features.length > 0) {
-                    displatch(Actions.setFloodFeature(features, extent));
+                    const stages = features.map((feature) => feature.attributes.STAGE).sort(function(a, b) {return a - b;});
+                    displatch(Actions.setFloodFeatures(stages, extent.extent));
                 }
             });
         };
     },
-    setFloodFeatures(features, extent) {
+    setFloodFeatures(stages, extent) {
         return {
             type: 'SET_FLOOD_FEATURES',
-            features,
+            stages,
             extent
         };
     },
@@ -117,6 +119,12 @@ export const Actions = {
             type: 'PARAMETER_CODE_SET',
             parameterCode
         };
+    },
+    setGageHeight(gageHeightIndex) {
+        return {
+            type: 'SET_GAGE_HEIGHT',
+            gageHeightIndex
+        };
     }
 };
 
@@ -126,8 +134,9 @@ export const timeSeriesReducer = function (state={}, action) {
         case 'SET_FLOOD_FEATURES':
             return {
                 ...state,
-                floodFeatures: action.floodFeatures,
-                floodExtent: action.floodExtent
+                floodStages: action.stages,
+                floodExtent: action.extent,
+                gageHeight: action.stages.length > 0 ? action.stages[0] : null
             };
         case 'ADD_TIMESERIES':
             return {
@@ -216,7 +225,11 @@ export const timeSeriesReducer = function (state={}, action) {
                 currentParameterCode: action.parameterCode
             };
 
-            case 'SET_GAGE_HEIGHT'
+        case 'SET_GAGE_HEIGHT':
+            return {
+                ...state,
+                gageHeight: state.floodStages[action.gageHeightIndex]
+            };
 
         default:
             return state;
@@ -252,8 +265,9 @@ export const configureStore = function (initialState) {
             current: null,
             compare: null
         },
-        floodFeatures: [],
+        floodStages: [],
         floodExtent: {},
+        gageHeight: null,
         ...initialState
     };
 
