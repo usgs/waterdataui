@@ -42,6 +42,13 @@ export const collectionsSelector = memoize(tsKey => createSelector(
 ));
 
 
+export const variablesSelector = createSelector(
+    state => state.series.variables,
+    (variables) => variables
+);
+
+
+
 export const currentVariableSelector = createSelector(
     state => state.series.variables,
     state => state.currentVariableID,
@@ -84,10 +91,16 @@ export const timeSeriesSelectorNew = memoize(tsKey => createSelector(
     allTimeSeriesSelector,
     collectionsSelector(tsKey),
     (timeSeries, collections) => {
-        return collections.reduce((series, collection) => {
-            collection.timeSeries.forEach(sID => series[sID] = timeSeries[sID]);
+        const a = collections.reduce((series, collection) => {
+            collection.timeSeries.forEach(sID => {
+                // TODO: WDFN-104 & WDFN-96 - Filter out series with no points.
+                //if (timeSeries[sID].points.length > 0) {
+                    series[sID] = timeSeries[sID];
+                //}
+            });
             return series;
         }, {});
+        return a;
     }
 ));
 
@@ -265,7 +278,7 @@ export const pointsTableDataSelector = memoize(tsKey => createSelector(
  * @return {Array}            Array of array of points.
  */
 export const lineSegmentsSelector = memoize(tsKey => createSelector(
-    timeSeriesSelector(tsKey),
+    timeSeriesSelectorNew(tsKey),
     (seriesMap) => {
         const seriesLines = {};
         for (const sID of Object.keys(seriesMap)) {
@@ -310,6 +323,22 @@ export const lineSegmentsSelector = memoize(tsKey => createSelector(
             seriesLines[sID] = lines;
         }
         return seriesLines;
+    }
+));
+
+// FIXME: use variable ID instead of parmCd
+export const lineSegmentsByParmCdSelector = memoize(tsKey => createSelector(
+    lineSegmentsSelector(tsKey),
+    timeSeriesSelectorNew(tsKey),
+    variablesSelector,
+    (lineSegmentsBySeriesID, timeSeriesMap, variables) => {
+        return Object.keys(lineSegmentsBySeriesID).reduce((byVarID, sID) => {
+            const series = timeSeriesMap[sID];
+            const parmCd = variables[series.variable].variableCode.value;
+            byVarID[parmCd] = byVarID[parmCd] || [];
+            byVarID[parmCd].push(lineSegmentsBySeriesID[sID]);
+            return byVarID;
+        }, {});
     }
 ));
 

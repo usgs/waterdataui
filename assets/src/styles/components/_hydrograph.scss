@@ -19,6 +19,20 @@ table#select-timeseries {
             }
         }
     }
+    svg {
+        .spark-line {
+            stroke: $usgs-blue;
+            stroke-width: 1px;
+            fill: none;
+        }
+    },
+    table.tooltip-table {
+        tbody {
+            tr {
+                background-color: #ffffff;
+            }
+        }
+    }
 }
 
 .hydrograph-container {

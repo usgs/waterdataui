@@ -1,4 +1,7 @@
-const { availableTimeseriesSelector } = require('./parameters');
+const { select } = require('d3-selection');
+const { scaleLinear } = require('d3-scale');
+
+const { addSparkLine, availableTimeseriesSelector } = require('./parameters');
 
 
 describe('Parameters module', () => {
@@ -53,5 +56,87 @@ describe('Parameters module', () => {
             ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentYear: 1, previousYear: 1, medianData: 0}],
             ['00063', {variableID: 'code3', description: 'code3 desc', selected: false, currentYear: 0, previousYear: 1, medianData: 0}]
         ]);
+    });
+
+    describe('addSparkline', () => {
+        let svg;
+        const tsDataSingle = {
+            scales: {
+                x: scaleLinear(0, 100),
+                y: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3))
+            },
+            seriesLineSegments: [
+                {
+                    classes: {approved: false, estimated: false, dataMask: null},
+                    points: [
+                        {dateTime: new Date(2015, 1, 2), value: 16},
+                        {dateTime: new Date(2015, 1, 3), value: 17}
+                    ]
+                }
+            ]
+        };
+        const tsDataMasked = {
+            scales: {
+                x: scaleLinear(0, 100),
+                y: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3))
+            },
+            seriesLineSegments: [
+                {
+                    classes: {approved: false, estimated: false, dataMask: 'ice'},
+                    points: [
+                        {dateTime: new Date(2015, 1, 2), value: null},
+                        {dateTime: new Date(2015, 1, 3), value: null}
+                    ]
+                }
+            ]
+        };
+        const tsDataMixed = {
+            scales: {
+                x: scaleLinear(0, 100),
+                y: scaleLinear(new Date(2015, 1, 13), new Date(2015, 1, 18))
+            },
+            seriesLineSegments: [
+                {
+                    classes: {approved: false, estimated: false, dataMask: null},
+                    points: [
+                        {dateTime: new Date(2015, 1, 13), value: 84},
+                        {dateTime: new Date(2015, 1, 14), value: 91}
+                    ]
+                },
+                {
+                    classes: {approved: false, estimated: false, dataMask: 'ice'},
+                    points: [
+                        {dateTime: new Date(2015, 1, 15), value: null},
+                        {dateTime: new Date(2015, 1, 16), value: null}
+                    ]
+                },
+                {
+                    classes: {approved: false, estimated: false, dataMask: null},
+                    points: [
+                        {dateTime: new Date(2015, 1, 17), value: 77},
+                        {dateTime: new Date(2015, 1, 18), value: 85}
+                    ]
+                }
+            ]
+        };
+
+        beforeEach(() => {
+            svg = select('body').append('svg');
+        });
+
+        it('adds a path for a line', () => {
+            addSparkLine(svg, tsDataSingle);
+            expect(svg.selectAll('path').size()).toEqual(1);
+        });
+
+        it('does not add a path for masked data', () => {
+            addSparkLine(svg, tsDataMasked);
+            expect(svg.selectAll('path').size()).toEqual(0);
+        });
+
+        it('adds multiple paths if there are breaks in the data', () => {
+            addSparkLine(svg, tsDataMixed);
+            expect(svg.selectAll('path').size()).toEqual(2);
+        });
     });
 });

@@ -40,8 +40,9 @@ describe('Redux store', () => {
         });
 
         it('should create an action to resize plot', () => {
-            expect(Actions.resizeTimeseriesPlot(100)).toEqual({
-                type: 'RESIZE_TIMESERIES_PLOT',
+            expect(Actions.resizeUI(800, 100)).toEqual({
+                type: 'RESIZE_UI',
+                windowWidth: 800,
                 width: 100
             });
         });
@@ -87,8 +88,7 @@ describe('Redux store', () => {
                 showSeries: {
                     current: true
                 },
-                currentVariableID: 'varId',
-                currentParameterCode: 1
+                currentVariableID: 'varId'
             });
         });
 
@@ -127,11 +127,13 @@ describe('Redux store', () => {
             });
         });
 
-        it('should handle RESIZE_TIMESERIES_PLOT', () => {
+        it('should handle RESIZE_UI', () => {
             expect(timeSeriesReducer({}, {
-                type: 'RESIZE_TIMESERIES_PLOT',
+                type: 'RESIZE_UI',
+                windowWidth: 800,
                 width: 100
             })).toEqual({
+                windowWidth: 800,
                 width: 100
             });
         });

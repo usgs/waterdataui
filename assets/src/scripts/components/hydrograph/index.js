@@ -10,14 +10,14 @@ const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
 
 const { appendAxes, axesSelector } = require('./axes');
-const { MARGIN, CIRCLE_RADIUS, layoutSelector } = require('./layout');
+const { MARGIN, CIRCLE_RADIUS, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
-const { xScaleSelector, yScaleSelector } = require('./scales');
+const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
 const { currentVariableLineSegmentsSelector, currentVariableSelector, currentVariableTimeseries, oldPointsSelector,
     methodsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector,
-    descriptionSelector, timeSeriesSelector, MASK_DESC, HASH_ID } = require('./timeseries');
+    descriptionSelector, lineSegmentsByParmCdSelector, timeSeriesSelector, MASK_DESC, HASH_ID } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
 
@@ -300,7 +300,10 @@ const timeSeriesGraph = function (elem) {
                 })));
 
     elem.call(link(plotSeriesSelectTable, createStructuredSelector({
-        availableTimeseries: availableTimeseriesSelector
+        availableTimeseries: availableTimeseriesSelector,
+        lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current'),
+        timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current')(SPARK_LINE_DIM),
+        layout: layoutSelector
     })));
 
     elem.append('div')
@@ -353,7 +356,7 @@ const attachToNode = function (node, {siteno} = {}) {
             }));
 
     window.onresize = function() {
-        store.dispatch(Actions.resizeTimeseriesPlot(node.offsetWidth));
+        store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     };
     store.dispatch(Actions.retrieveTimeseries(siteno));
 };

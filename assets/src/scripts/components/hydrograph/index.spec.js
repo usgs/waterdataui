@@ -123,7 +123,7 @@ describe('Hydrograph charting module', () => {
             .call(provide(store))
             .call(timeSeriesGraph);
         let svgNodes = graphNode.getElementsByTagName('svg');
-        expect(svgNodes.length).toBe(1);
+        expect(svgNodes.length).toBe(2);
         expect(svgNodes[0].getAttribute('viewBox')).toContain('400 200');
         expect(graphNode.innerHTML).toContain('hydrograph-container');
     });
@@ -179,7 +179,18 @@ describe('Hydrograph charting module', () => {
                             }]
                         }
                     }
-                }
+                },
+                showSeries: {
+                    current: true,
+                    compare: true,
+                    median: true
+                },
+                title: 'My Title',
+                desc: 'My Description',
+                showMedianStatsLabel: false,
+                windowWidth: 400,
+                width: 400,
+                currentVariableID: '45807197'
             });
             select(graphNode)
                 .call(provide(store))
@@ -187,7 +198,7 @@ describe('Hydrograph charting module', () => {
         });
 
         it('should render an svg node', () => {
-            expect(selectAll('svg').size()).toBe(1);
+            expect(selectAll('svg').size()).toBe(2);
         });
 
         it('should have a defs node', () => {
@@ -217,6 +228,15 @@ describe('Hydrograph charting module', () => {
         it('show the labels for the median stat data showMedianStatsLabel is true', () => {
             store.dispatch(Actions.showMedianStatsLabel(true));
             expect(selectAll('svg #median-points text').size()).toBe(1);
+        });
+
+        it('should have tooltips for the select series table', () => {
+            expect(selectAll('table .tooltip-table').size()).toBe(1);
+        });
+
+        it('should not have tooltips for the select series table when the screen is large', () => {
+            store.dispatch(Actions.resizeUI(800, 800));
+            expect(selectAll('table .tooltip-table').size()).toBe(0);
         });
     });
 

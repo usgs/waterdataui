@@ -5,7 +5,7 @@ const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { layoutSelector, MARGIN } = require('./layout');
-const { flatPointsSelector, visiblePointsSelector } = require('./timeseries');
+const { flatPointsSelector, timeSeriesSelectorNew, variablesSelector, visiblePointsSelector } = require('./timeseries');
 
 const paddingRatio = 0.2;
 
@@ -43,39 +43,50 @@ function createXScale(values, xSize) {
         .domain(xExtent);
 }
 
+
+/**
+ * Create a yScale for the plots where you only have a single array of data
+ *
+ * @param tsData - array of data points with time and value keys
+ * @param ySize - range of the scale
+ * * @return {Object} d3 scale for value.
+ */
+function singleSeriesYScale(tsData, ySize) {
+    let points = tsData.filter(pt => pt.value !== null);
+    let yExtent = extent(points, d => d.value);
+    return scaleSymlog()
+        .domain(yExtent)
+        .range([ySize, 0]);
+}
+
+
 /**
  * Create an yscale oriented on the bottom
  * @param {Object} pointArrays - Time series points: [[point, point], ...]
  * @param {Number} ySize - range of scale
- * @eturn {Object} d3 scale for value.
+ * @return {Object} d3 scale for value.
  */
 function createYScale(pointArrays, ySize) {
     let yExtent;
+    let scaleDomains = [];
 
     // Calculate max and min for data
     for (const points of pointArrays) {
         if (points.length === 0) {
             continue;
         }
-
-        const thisExtent = extent(points, d => d.value);
-        if (yExtent !== undefined) {
-            yExtent = [
-                Math.min(thisExtent[0], yExtent[0]),
-                Math.max(thisExtent[1], yExtent[1])
-            ];
-        } else {
-            yExtent = thisExtent;
-        }
+        scaleDomains.push(singleSeriesYScale(points, ySize).domain());
     }
-
+    if (scaleDomains.length > 0) {
+        const flatDomains = [].concat(...scaleDomains);
+        yExtent = [Math.min(...flatDomains), Math.max(...flatDomains)];
+    }
     // Add padding to the extent and handle empty data sets.
     if (yExtent) {
         yExtent = extendDomain(yExtent);
     } else {
         yExtent = [0, 1];
     }
-
     return scaleSymlog()
         .domain(yExtent)
         .range([ySize, 0]);
@@ -109,4 +120,49 @@ const yScaleSelector = createSelector(
 );
 
 
-module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector};
+/**
+ * For a given tsKey, return a selector that:
+ * Returns lists of time series keyed on parameter code.
+ * @param  {String} tsKey             Time series key
+ * @return {Object}
+ */
+const parmCdTimeSeries = memoize(tsKey => createSelector(
+    timeSeriesSelectorNew(tsKey),
+    variablesSelector,
+    (timeSeries, variables) => {
+        return Object.keys(timeSeries).reduce((byParmCd, sID) => {
+            const series = timeSeries[sID];
+            const parmCd = variables[series.variable].variableCode.value;
+            byParmCd[parmCd] = byParmCd[parmCd] || [];
+            byParmCd[parmCd].push(series);
+            return byParmCd;
+        }, {});
+    }
+));
+
+
+/**
+ * Given a dimension with width/height attributes:
+ * Returns x and y scales for all "current" time series.
+ * @type {Object}   Mapping of parameter code to time series list.
+ */
+const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => createSelector(
+    parmCdTimeSeries(tsKey),
+    (timeSeriesByParmCd) => {
+        return Object.keys(timeSeriesByParmCd).reduce((tsScales, parmCd) => {
+            const seriesList = timeSeriesByParmCd[parmCd];
+            const allPoints = seriesList.reduce((points, series) => {
+                Array.prototype.push.apply(points, series.points);
+                return points;
+            }, []);
+            tsScales[parmCd] = {
+                x: createXScale(allPoints, dimensions.width),
+                y: createYScale(seriesList.map(s => s.points), dimensions.height)
+            };
+            return tsScales;
+        }, {});
+    }
+)));
+
+
+module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, singleSeriesYScale, timeSeriesScalesByParmCdSelector};

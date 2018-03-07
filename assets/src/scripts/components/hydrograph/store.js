@@ -90,9 +90,10 @@ export const Actions = {
             compareTime
         };
     },
-    resizeTimeseriesPlot(width) {
+    resizeUI(windowWidth, width) {
         return {
-            type: 'RESIZE_TIMESERIES_PLOT',
+            type: 'RESIZE_UI',
+            windowWidth,
             width
         };
     },
@@ -117,20 +118,6 @@ export const timeSeriesReducer = function (state={}, action) {
                     ...state.showSeries,
                     [action.key]: action.show
                 },
-                // If there isn't a selected parameter code yet, pick the first
-                // one after sorting by ID.
-                currentParameterCode: state.currentParameterCode || Object.values(
-                    action.data.variables).sort((a, b) => {
-                        const aVal = a.variableCode.value;
-                        const bVal = b.variableCode.value;
-                        if (aVal > bVal) {
-                            return 1;
-                        } else if (aVal < bVal) {
-                            return -1;
-                        } else {
-                            return 0;
-                        }
-                    })[0].variableCode.value,
                 currentVariableID: state.currentVariableID || Object.values(
                     action.data.variables).sort((a, b) => {
                         const aVal = a.variableCode.value;
@@ -187,16 +174,16 @@ export const timeSeriesReducer = function (state={}, action) {
                 }
             };
 
-        case 'RESIZE_TIMESERIES_PLOT':
+        case 'RESIZE_UI':
             return {
                 ...state,
+                windowWidth: action.windowWidth,
                 width: action.width
             };
 
         case 'PARAMETER_CODE_SET':
             return {
                 ...state,
-                currentParameterCode: action.parameterCode,
                 currentVariableID: action.variableID
             };
 
@@ -221,8 +208,8 @@ export const configureStore = function (initialState) {
             compare: false,
             median: false
         },
-        currentParameterCode: null,
         currentVariableID: null,
+        windowWidth: 1024,
         width: 800,
         showMedianStatsLabel: false,
         tooltipFocusTime: {
