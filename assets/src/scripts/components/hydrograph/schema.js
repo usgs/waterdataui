@@ -1,3 +1,4 @@
+const memoize = require('fast-memoize');
 const { normalize: normalizr, schema } = require('normalizr');
 
 const { replaceHtmlEntities } = require('../../utils');
@@ -37,7 +38,7 @@ const variable = new schema.Entity('variables', {
 // timeSeries schema
 const qualifier = new schema.Entity('qualifiers', {}, {idAttribute: 'qualifierCode'});
 const method = new schema.Entity('methods', {}, {idAttribute: 'methodID'});
-const timeSeries = tsKey => new schema.Entity('timeSeries', {
+const timeSeries = memoize(tsKey => new schema.Entity('timeSeries', {
     qualifier: [qualifier],
     method: method,
     variable: variable
@@ -70,11 +71,11 @@ const timeSeries = tsKey => new schema.Entity('timeSeries', {
         delete data.value;
         return data;
     }
-});
+}));
 
 // timeSeriesCollection schema
-const queryInfo = tsKey => new schema.Entity('queryInfo', {}, {idAttribute: () => tsKey});
-const timeSeriesCollection = tsKey => new schema.Entity('timeSeriesCollections', {
+const queryInfo = memoize(tsKey => new schema.Entity('queryInfo', {}, {idAttribute: () => tsKey}));
+const timeSeriesCollection = memoize(tsKey => new schema.Entity('timeSeriesCollections', {
     sourceInfo: sourceInfo,
     timeSeries: [timeSeries(tsKey)],
     variable: variable
@@ -98,10 +99,10 @@ const timeSeriesCollection = tsKey => new schema.Entity('timeSeriesCollections',
         delete collection['values'];
         return collection;
     }
-});
+}));
 
 // Top-level request schema
-const request = tsKey => new schema.Entity('requests', {
+const request = memoize(tsKey => new schema.Entity('requests', {
     queryInfo: queryInfo(tsKey),
     timeSeriesCollections: [timeSeriesCollection(tsKey)]
 }, {
@@ -114,7 +115,7 @@ const request = tsKey => new schema.Entity('requests', {
             timeSeriesCollections: root.value.timeSeries
         };
     }
-});
+}));
 
 /**
  * Flattens an IV service JSON response into a normalized entity mapping.
