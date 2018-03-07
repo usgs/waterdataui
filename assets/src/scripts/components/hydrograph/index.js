@@ -343,6 +343,7 @@ const attachToNode = function (node, {siteno} = {}) {
     }
 
     let store = configureStore({
+        windowWidth: window.innerWidth,
         width: node.offsetWidth
     });
 

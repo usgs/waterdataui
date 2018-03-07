@@ -119,11 +119,12 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
                 }
             }))
             .call(tr => {
-                tr.append('td')
-                        .attr('scope', 'row')
-                        .text(parm => parm[0])
-                        .append('div')
-                            .attr('class', 'tooltip-item');
+                let parmCdCol = tr.append('td')
+                    .attr('scope', 'row');
+                parmCdCol.append('span')
+                        .text(parm => parm[0]);
+                parmCdCol.append('div')
+                        .attr('class', 'tooltip-item parameter-tooltip');
                 tr.append('td')
                     .text(parm => parm[1].description);
                 // if screen size is medium/large, place "Now", "Previous Year", and "Median Data" in the table

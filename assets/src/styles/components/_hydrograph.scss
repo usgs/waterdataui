@@ -10,12 +10,21 @@ table#select-timeseries {
                 td {
                     background-color: $color-gray-lightest;
                 }
+                div.parameter-tooltip {
+                    background-color: $color-gray-lightest;
+                }
             }
             &.selected {
                 cursor: default;
                 td {
                     background-color: $color-aqua-lightest;
                 }
+                div.parameter-tooltip {
+                    background-color: $color-aqua-lightest;
+                }
+            }
+            span {
+                padding: 0.25em;
             }
         }
     }
