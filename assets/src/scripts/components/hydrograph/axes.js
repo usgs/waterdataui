@@ -53,6 +53,10 @@ function createAxes({xScale, yScale}, yTickSize) {
 }
 
 
+/**
+ * Returns data necessary to render the graph axes.
+ * @return {Object}
+ */
 const axesSelector = createSelector(
     xScaleSelector('current'),
     yScaleSelector,
@@ -68,6 +72,9 @@ const axesSelector = createSelector(
 );
 
 
+/**
+ * Add x and y axes to the given svg node.
+ */
 function appendAxes(elem, {xAxis, yAxis, layout, yTitle}) {
     const xLoc = {
         x: 0,

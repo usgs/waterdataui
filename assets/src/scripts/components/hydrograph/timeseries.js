@@ -24,11 +24,21 @@ export const MASK_DESC = {
 };
 
 
+/**
+ * For a given tsKey, returns a selector that:
+ * Returns the top-level IV service request object.
+ * @return {Object}     Top-level IV request data
+ */
 export const requestSelector = memoize(tsKey => state => {
     return state.series.requests && state.series.requests[tsKey] ? state.series.requests[tsKey] : null;
 });
 
 
+/**
+ * For a given tsKey, returns a selector that:
+ * Returns all sets of time series returned by the IV service.
+ * @return {Array}     List of "collections" (collection: list of time series for a given site/parameter combination)
+ */
 export const collectionsSelector = memoize(tsKey => createSelector(
     requestSelector(tsKey),
     state => state.series.timeSeriesCollections,
@@ -42,13 +52,18 @@ export const collectionsSelector = memoize(tsKey => createSelector(
 ));
 
 
+/**
+ * @return {Object}     Mapping of variable IDs to variable details
+ */
 export const variablesSelector = createSelector(
     state => state.series.variables,
     (variables) => variables
 );
 
 
-
+/**
+ * @return {Object}     Variable details for the currently selected variable.
+ */
 export const currentVariableSelector = createSelector(
     state => state.series.variables,
     state => state.currentVariableID,
@@ -58,8 +73,17 @@ export const currentVariableSelector = createSelector(
 );
 
 
+/**
+ * @return {Object}     Mapping of method IDs to method details
+ */
 export const methodsSelector = state => state.series.methods;
+
+
+/**
+ * @return {Object}     Mapping of time series ID to time series details
+ */
 export const allTimeSeriesSelector = state => (state.series ? state.series.timeSeries : {}) || {};
+
 
 /**
  * Returns a selector that, for a given tsKey:
@@ -292,6 +316,10 @@ export const lineSegmentsSelector = memoize(tsKey => createSelector(
 ));
 
 
+/**
+ * Factory function creates a function that, for a given tsKey:
+ * @return {Object}     Mapping of parameter to code list of line segments arrays.
+ */
 export const lineSegmentsByParmCdSelector = memoize(tsKey => createSelector(
     lineSegmentsSelector(tsKey),
     timeSeriesSelector(tsKey),
@@ -308,6 +336,11 @@ export const lineSegmentsByParmCdSelector = memoize(tsKey => createSelector(
 ));
 
 
+/**
+ * Factory function creates a function that, for a given tsKey:
+ * Returns mapping of time series IDs to series for the current variable.
+ * @return {Object}
+ */
 const currentVariableTimeseriesSelector = memoize(tsKey => createSelector(
     timeSeriesSelector(tsKey),
     currentVariableSelector,
@@ -321,6 +354,11 @@ const currentVariableTimeseriesSelector = memoize(tsKey => createSelector(
 ));
 
 
+/**
+ * Factory function creates a function that, for a given tsKey:
+ * Returns mapping of series ID to line segments for the currently selected variable.
+ * @return {Object}
+ */
 export const currentVariableLineSegmentsSelector = memoize(tsKey => createSelector(
     currentVariableTimeseriesSelector(tsKey),
     lineSegmentsSelector(tsKey),
@@ -333,18 +371,28 @@ export const currentVariableLineSegmentsSelector = memoize(tsKey => createSelect
 ));
 
 
+/**
+ * @return {String}     The label for the y-axis
+ */
 export const yLabelSelector = createSelector(
     currentVariableSelector,
     variable => variable ? variable.variableDescription : ''
 );
 
 
+/**
+ * @return {String}     The label for the y-axis, used by addSVGAccessibility
+ */
 export const titleSelector = createSelector(
     currentVariableSelector,
     variable => variable ? variable.variableName : ''
 );
 
 
+/**
+ * @return {String}     Description for the currently display set of time
+ *                      series, used by addSVGAccessibility.
+ */
 export const descriptionSelector = createSelector(
     currentVariableSelector,
     timeSeriesSelector('current'),
