@@ -78,8 +78,10 @@ function createYScale(pointArrays, ySize) {
         scaleDomains.push(singleSeriesYScale(points, ySize).domain());
     }
     if (scaleDomains.length > 0) {
-        const flatDomains = [].concat(...scaleDomains);
-        yExtent = [Math.min(...flatDomains), Math.max(...flatDomains)];
+        const flatDomains = [].concat(...scaleDomains).filter(val => isFinite(val));
+        if (flatDomains.length > 0) {
+            yExtent = [Math.min(...flatDomains), Math.max(...flatDomains)];
+        }
     }
     // Add padding to the extent and handle empty data sets.
     if (yExtent) {
