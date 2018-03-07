@@ -7,7 +7,7 @@ const { createSelector, createStructuredSelector } = require('reselect');
 
 const { dispatch, link } = require('../../lib/redux');
 
-const { classesForPoint, currentVariableSelector, oldPointsSelector } = require('./timeseries');
+const { classesForPoint, currentVariableSelector, pointsSelector } = require('./timeseries');
 const { Actions } = require('./store');
 
 const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');
@@ -89,9 +89,12 @@ const tooltipFocusTimeSelector = memoize(tsKey => createSelector(
  * @return {Object}
  */
 const tsDatumSelector = memoize(tsKey => createSelector(
-    oldPointsSelector(tsKey),
+    pointsSelector(tsKey),
     tooltipFocusTimeSelector(tsKey),
     (points, tooltipFocusTime) => {
+        // FIXME: Handle more than just the first time series in the list
+        points = points[0];
+
         if (tooltipFocusTime && points && points.length) {
             return getNearestTime(points, tooltipFocusTime).datum;
         } else {
@@ -188,6 +191,10 @@ const createTooltipFocus = function(elem, {xScale, yScale, compareXScale, curren
     elem.selectAll('.focus').remove();
     elem.select('.tooltip-text-group').remove();
     elem.select('.overlay').remove();
+
+    // FIXME: Render tooltips for all visible time series, not just the first.
+    currentTsData = currentTsData[0];
+    compareTsData = compareTsData[0];
 
     if (!currentTsData) {
         return;

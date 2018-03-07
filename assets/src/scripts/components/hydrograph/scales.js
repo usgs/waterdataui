@@ -5,7 +5,7 @@ const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { layoutSelector, MARGIN } = require('./layout');
-const { flatPointsSelector, timeSeriesSelectorNew, variablesSelector, visiblePointsSelector } = require('./timeseries');
+const { flatPointsSelector, timeSeriesSelector, variablesSelector, visiblePointsSelector } = require('./timeseries');
 
 const paddingRatio = 0.2;
 
@@ -126,8 +126,8 @@ const yScaleSelector = createSelector(
  * @param  {String} tsKey             Time series key
  * @return {Object}
  */
-const parmCdTimeSeries = memoize(tsKey => createSelector(
-    timeSeriesSelectorNew(tsKey),
+const parmCdTimeSeriesSelector = memoize(tsKey => createSelector(
+    timeSeriesSelector(tsKey),
     variablesSelector,
     (timeSeries, variables) => {
         return Object.keys(timeSeries).reduce((byParmCd, sID) => {
@@ -147,7 +147,7 @@ const parmCdTimeSeries = memoize(tsKey => createSelector(
  * @type {Object}   Mapping of parameter code to time series list.
  */
 const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => createSelector(
-    parmCdTimeSeries(tsKey),
+    parmCdTimeSeriesSelector(tsKey),
     (timeSeriesByParmCd) => {
         return Object.keys(timeSeriesByParmCd).reduce((tsScales, parmCd) => {
             const seriesList = timeSeriesByParmCd[parmCd];

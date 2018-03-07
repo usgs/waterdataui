@@ -4,7 +4,7 @@ const { createSelector } = require('reselect');
 
 const { CIRCLE_RADIUS, MARGIN } = require('./layout');
 const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
-const { timeSeriesSelector, lineSegmentsSelector, methodsSelector, HASH_ID, MASK_DESC } = require('./timeseries');
+const { currentVariableTimeSeriesSelector, lineSegmentsSelector, methodsSelector, HASH_ID, MASK_DESC } = require('./timeseries');
 
 
 const tsMaskMarkers = function(tsKey, masks) {
@@ -154,7 +154,7 @@ const uniqueMasksSelector = memoize(tsKey => createSelector(
  */
 const legendDisplaySelector = createSelector(
     (state) => state.showSeries,
-    timeSeriesSelector('median'),
+    currentVariableTimeSeriesSelector('median'),
     methodsSelector,
     uniqueMasksSelector('current'),
     uniqueMasksSelector('compare'),

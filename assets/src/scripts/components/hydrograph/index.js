@@ -15,9 +15,9 @@ const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
 const { Actions, configureStore } = require('./store');
-const { currentVariableLineSegmentsSelector, currentVariableSelector, currentVariableTimeseries, oldPointsSelector,
+const { currentVariableLineSegmentsSelector, currentVariableSelector, currentVariableTimeseries, pointsSelector,
     methodsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector,
-    descriptionSelector, lineSegmentsByParmCdSelector, timeSeriesSelector, MASK_DESC, HASH_ID } = require('./timeseries');
+    descriptionSelector, lineSegmentsByParmCdSelector, currentVariableTimeSeriesSelector, MASK_DESC, HASH_ID } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
 
@@ -286,8 +286,8 @@ const timeSeriesGraph = function (elem) {
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
                     compareXScale: xScaleSelector('compare'),
-                    currentTsData: oldPointsSelector('current'),
-                    compareTsData: oldPointsSelector('compare'),
+                    currentTsData: pointsSelector('current'),
+                    compareTsData: pointsSelector('compare'),
                     isCompareVisible: isVisibleSelector('compare')
                 })))
                 .call(link(plotAllMedianPoints, createStructuredSelector({
@@ -313,7 +313,7 @@ const timeSeriesGraph = function (elem) {
             methods: methodsSelector,
             visible: isVisibleSelector('compare'),
             dataByTsID: pointsTableDataSelector('compare'),
-            timeSeries: timeSeriesSelector('compare')
+            timeSeries: currentVariableTimeSeriesSelector('compare')
     })));
     elem.append('div')
         .call(link(plotSROnlyTable, createStructuredSelector({
@@ -322,7 +322,7 @@ const timeSeriesGraph = function (elem) {
             methods: methodsSelector,
             visible: isVisibleSelector('compare'),
             dataByTsID: pointsTableDataSelector('compare'),
-            timeSeries: timeSeriesSelector('compare')
+            timeSeries: currentVariableTimeSeriesSelector('compare')
     })));
     elem.append('div')
         .call(link(plotSROnlyTable, createStructuredSelector({
@@ -331,7 +331,7 @@ const timeSeriesGraph = function (elem) {
             methods: methodsSelector,
             visible: isVisibleSelector('median'),
             dataByTsID: pointsTableDataSelector('median'),
-            timeSeries: timeSeriesSelector('median')
+            timeSeries: currentVariableTimeSeriesSelector('median')
     })));
 };
 

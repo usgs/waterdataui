@@ -68,7 +68,7 @@ export const allTimeSeriesSelector = state => (state.series ? state.series.timeS
  * @param  {Object} state   Redux state
  * @return {Object}         Time-series data
  */
-export const timeSeriesSelector = memoize(tsKey => createSelector(
+export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector(
     allTimeSeriesSelector,
     collectionsSelector(tsKey),
     currentVariableSelector,
@@ -87,7 +87,7 @@ export const timeSeriesSelector = memoize(tsKey => createSelector(
  * @param  {Object} state   Redux state
  * @return {Object}         Time-series data
  */
-export const timeSeriesSelectorNew = memoize(tsKey => createSelector(
+export const timeSeriesSelector = memoize(tsKey => createSelector(
     allTimeSeriesSelector,
     collectionsSelector(tsKey),
     (timeSeries, collections) => {
@@ -109,22 +109,6 @@ export const HASH_ID = {
     compare: 'hash-135'
 };
 
-/**
- * Returns a selector that, for a given tsKey:
- * Returns the points for a given timeseries.
- * @param  {Object} state     Redux store
- * @param  {String} tsKey     Timeseries key
- * @return {Array}            Array of points.
- */
-export const oldPointsSelector = memoize(tsKey => createSelector(
-    timeSeriesSelector(tsKey),
-    (timeSeries) => {
-        // FIXME: Return all points, not just those from the first time series.
-        const pointsList = Object.values(timeSeries).map(series => series.points);
-        return pointsList[0] || [];
-    }
-));
-
 
 /**
  * Returns a selector that, for a given tsKey:
@@ -134,22 +118,7 @@ export const oldPointsSelector = memoize(tsKey => createSelector(
  * @return {Array}            Array of array of points.
  */
 export const pointsSelector = memoize((tsKey) => createSelector(
-    timeSeriesSelector(tsKey),
-    (timeSeries) => {
-        return Object.values(timeSeries).map(series => series.points);
-    }
-));
-
-
-/**
- * Returns a selector that, for a given tsKey:
- * Returns an array of time points for all visible time series.
- * @param  {Object} state     Redux store
- * @param  {String} tsKey     Timeseries key
- * @return {Array}            Array of array of points.
- */
-export const pointsSelectorNew = memoize((tsKey) => createSelector(
-    timeSeriesSelectorNew(tsKey),
+    currentVariableTimeSeriesSelector(tsKey),
     (timeSeries) => {
         return Object.values(timeSeries).map(series => series.points);
     }
@@ -164,7 +133,7 @@ export const pointsSelectorNew = memoize((tsKey) => createSelector(
  * @return {Array}            Array of array of points.
  */
 export const currentVariableTimeseries = memoize((tsKey) => createSelector(
-    timeSeriesSelectorNew(tsKey),
+    timeSeriesSelector(tsKey),
     currentVariableSelector,
     (timeSeries, variable) => {
         return Object.keys(timeSeries).filter(sID => timeSeries[sID].variable === variable.oid).reduce((series, sID) => {
@@ -224,10 +193,6 @@ export const visiblePointsSelector = createSelector(
 );
 
 
-//export const visibleTimeseriesSelector = createSelector(
-//)
-
-
 /**
  * Factory function creates a function that:
  * Returns the current show state of a timeseries.
@@ -278,7 +243,7 @@ export const pointsTableDataSelector = memoize(tsKey => createSelector(
  * @return {Array}            Array of array of points.
  */
 export const lineSegmentsSelector = memoize(tsKey => createSelector(
-    timeSeriesSelectorNew(tsKey),
+    timeSeriesSelector(tsKey),
     (seriesMap) => {
         const seriesLines = {};
         for (const sID of Object.keys(seriesMap)) {
@@ -326,10 +291,10 @@ export const lineSegmentsSelector = memoize(tsKey => createSelector(
     }
 ));
 
-// FIXME: use variable ID instead of parmCd
+
 export const lineSegmentsByParmCdSelector = memoize(tsKey => createSelector(
     lineSegmentsSelector(tsKey),
-    timeSeriesSelectorNew(tsKey),
+    timeSeriesSelector(tsKey),
     variablesSelector,
     (lineSegmentsBySeriesID, timeSeriesMap, variables) => {
         return Object.keys(lineSegmentsBySeriesID).reduce((byVarID, sID) => {
@@ -344,7 +309,7 @@ export const lineSegmentsByParmCdSelector = memoize(tsKey => createSelector(
 
 
 const currentVariableTimeseriesSelector = memoize(tsKey => createSelector(
-    timeSeriesSelectorNew(tsKey),
+    timeSeriesSelector(tsKey),
     currentVariableSelector,
     (seriesMap, variable) => {
         return Object.keys(seriesMap).filter(
@@ -382,7 +347,7 @@ export const titleSelector = createSelector(
 
 export const descriptionSelector = createSelector(
     currentVariableSelector,
-    timeSeriesSelectorNew('current'),
+    timeSeriesSelector('current'),
     (variable, timeSeries) => {
         const desc = variable ? variable.variableDescription : '';
         const startTime = new Date(Math.min.apply(null, Object.values(timeSeries).map(ts => ts.startTime)));
