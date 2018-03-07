@@ -23,6 +23,8 @@ export const MASK_DESC = {
     '***': 'Unavailable'
 };
 
+// Lines will be split if the difference exceeds 72 minutes.
+const MAX_LINE_POINT_GAP = 60 * 1000 * 72;
 
 /**
  * For a given tsKey, returns a selector that:
@@ -292,11 +294,23 @@ export const lineSegmentsSelector = memoize(tsKey => createSelector(
                     let maskIntersection = new Set([...masks].filter(x => qualifiers.has(x)));
                     lineClasses.dataMask = [...maskIntersection][0];
                 }
+
+                // Split lines if the gap from the period point exceeds MAX_LINE_POINT_GAP.
+                let maxGapExceeded = false;
+                if (lines.length > 0) {
+                    const lastPoints = lines[lines.length - 1].points;
+                    const lastPtDateTime = lastPoints[lastPoints.length - 1].dateTime;
+                    if (pt.dateTime - lastPtDateTime > MAX_LINE_POINT_GAP) {
+                        maxGapExceeded = true;
+                    }
+                }
+
                 // If this point doesn't have the same classes as the last point,
                 // create a new line for it.
                 if (lastClasses.approved !== lineClasses.approved ||
                         lastClasses.estimated !== lineClasses.estimated ||
-                        lastClasses.dataMask !== lineClasses.dataMask) {
+                        lastClasses.dataMask !== lineClasses.dataMask ||
+                        maxGapExceeded) {
                     lines.push({
                         classes: lineClasses,
                         points: []
