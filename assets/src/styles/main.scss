@@ -6,10 +6,6 @@ $fa-font-path: './fonts' !default;
 @import '../../../node_modules/font-awesome/scss/font-awesome';
 @import 'uswds';
 
-input[type=range] {
-  -webkit-appearance: none;
-}
-
 $usgs-blue: #02274B;
 
 @import './partials/footer';
@@ -17,38 +13,16 @@ $usgs-blue: #02274B;
 @import './partials/social_share';
 @import './partials/tooltip';
 
-.wdfn-slider {
-    appearance: none;
-    -webkit-appearance: none;
-    background-color: transparent!important
-}
-.wdfn-slider, .wdfn-slider:focus {
-    outline: none !important;
-}
-.wdfn-slider::-webkit-slider-runnable-track {
-    border: none;
-    border-radius: 5px;
-}
-.wdfn-slider::-moz-range-track {
-    border: none;
-    border-radius: 5px;
-}
-
-.vertical-slider{
-    -webkit-appearance: none;
-    -webkit-transform: rotate(270deg);
-    transform: rotate(270deg);
-    box-sizing: border-box;
-    padding: 100px;
-    margin: 130px auto;
-}
-
 .wdfn-component {
     &[data-component='hydrograph'] {
         @import './components/hydrograph';
     }
     &[data-component='map'] {
         @import './components/map';
+        margin-bottom: 1em;
+    }
+    &[data-component='floodSlider'] {
+        @import './components/floodSlider';
         margin-bottom: 1em;
     }
 }

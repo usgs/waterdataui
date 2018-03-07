@@ -1,0 +1,11 @@
+.wdfn-slider, .wdfn-slider:focus {
+    outline: none !important;
+}
+.wdfn-slider::-webkit-slider-runnable-track {
+    border: none;
+    border-radius: 5px;
+}
+.wdfn-slider::-moz-range-track {
+    border: none;
+    border-radius: 5px;
+}
