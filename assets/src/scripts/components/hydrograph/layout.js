@@ -11,6 +11,7 @@ const MARGIN = {
     left: 50
 };
 const CIRCLE_RADIUS = 4;
+const CIRCLE_RADIUS_SINGLE_PT = 1;
 
 const SPARK_LINE_DIM = {
     width: 50,
@@ -36,6 +37,6 @@ const layoutSelector = createSelector(
 );
 
 module.exports = {ASPECT_RATIO, ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector, SPARK_LINE_DIM,
-    SMALL_SCREEN_WIDTH};
+    SMALL_SCREEN_WIDTH, CIRCLE_RADIUS_SINGLE_PT};
 
 
