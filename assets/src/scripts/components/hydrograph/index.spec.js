@@ -20,7 +20,7 @@ describe('Hydrograph charting module', () => {
     });
 
     it('empty graph displays warning', () => {
-        attachToNode(graphNode, {});
+        attachToNode({}, graphNode, {});
         expect(graphNode.innerHTML).toContain('No data is available');
     });
 

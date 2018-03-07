@@ -4,7 +4,7 @@ const FLOOD_EXTENTS_ENDPOINT = `${window.FIM_GIS_ENDPOINT}floodExtents/MapServer
 const FLOOD_BREACH_ENDPOINT = `${window.FIM_GIS_ENDPOINT}breach/MapServer/`;
 const FLOOD_LEVEE_ENDPOINT = `${window.FIM_GIS_ENDPOINT}suppLyrs/MapServer/`;
 
-const fetchFloodFeatures= function(siteno) {
+const fetchFloodFeatures = function(siteno) {
     const FIM_QUERY = `${FLOOD_EXTENTS_ENDPOINT}/0/query?where=USGSID+%3D+%27${siteno}%27&outFields=USGSID%2C+STAGE&returnGeometry=false&returnTrueCurves=false&returnIdsOnly=false&returnCountOnly=false&returnZ=false&returnM=falsereturnDistinctValues=false&f=json`;
 
     return get(FIM_QUERY)
@@ -26,7 +26,7 @@ const fetchFloodExtent = function(siteno){
         })
         .catch(reason => {
             console.log(`Unable to get FIM data for ${siteno} with reason: ${reason}`);
-            return [];
+            return {};
         });
 };
 

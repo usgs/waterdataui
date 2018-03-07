@@ -3,7 +3,7 @@ const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData } = require('./models');
-const { fetchFloodFeatures, fetchFloodExtent } = require('./flood_data');
+const { fetchFloodFeatures, fetchFloodExtent } = require('./floodData');
 
 
 export const Actions = {
