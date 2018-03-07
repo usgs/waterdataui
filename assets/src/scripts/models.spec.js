@@ -14,7 +14,7 @@ describe('Models module', () => {
 
 
         beforeEach(() => {
-            /* eslint no-use-before-define: "ignore" */
+            /* eslint no-use-before-define: 0 */
             let getPromise = Promise.resolve(MOCK_DATA);
 
             ajaxMock = {
@@ -117,7 +117,7 @@ describe('Models module', () => {
         const endDate = new Date('2018-01-02T16:45:00.000-06:00');
 
         beforeEach(() => {
-            /* eslint no-use-before-define: "ignore" */
+            /* eslint no-use-before-define: 0 */
             let getPromise = Promise.resolve(MOCK_LAST_YEAR_DATA);
 
             ajaxMock = {
@@ -149,11 +149,8 @@ describe('Models module', () => {
                 expect(series[0].endTime).
                     toEqual(new Date('1/2/2017, 4:45:00 PM -0600'));
                 expect(series[0].values.length).toBe(8);
-                done();
             });
-        })
-
-
+        });
     });
 
     describe('parseRDB', () => {
@@ -170,7 +167,7 @@ describe('Models module', () => {
         });
 
         it('parseRDB handles no headers', () => {
-           let result = parseRDB(`#Some Stuff`);
+           let result = parseRDB('#Some Stuff');
            expect(result.length).toEqual(0);
         });
     });
@@ -194,7 +191,7 @@ describe('Models module', () => {
             let result = parseMedianTimeseries(MOCK_MEDIAN_DATA, leapStartDate, leapEndDate, unit);
             expect(result.values.length).toEqual(4);
             expect(result.values[3]).toEqual({time: new Date(2016, 1, 29), value: 13, label: '13 ft3/s'});
-        })
+        });
     });
 
     describe('getSiteStatistics', () => {
