@@ -39,12 +39,16 @@ function createAxes({xScale, yScale}, yTickSize) {
         .tickSizeOuter(0);
 
     // Create y-axis
+    const tickValues = yTickValues(yScale);
+    // If all ticks are integers, don't display right of the decimal place.
+    // Otherwise, format with two decimal points.
+    const tickFormat = tickValues.filter(t => !Number.isInteger(t)).length ? '.2f' : '.0f';
     const yAxis = axisLeft()
         .scale(yScale)
-        .tickValues(yTickValues(yScale))
-        .tickFormat(format('.2f'))
+        .tickValues(tickValues)
+        .tickFormat(format(tickFormat))
         .tickSizeInner(yTickSize)
-        .tickPadding(14)
+        .tickPadding(3)
         .tickSizeOuter(0);
 
     return {xAxis, yAxis};
