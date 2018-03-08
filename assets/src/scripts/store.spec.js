@@ -1,12 +1,27 @@
 const { Actions, timeSeriesReducer } = require('./store');
 
 
-describe('Redux store', () => {
-    // TODO: Add tests for retrieveTimeseries and retrieveCompareTimeseries
+fdescribe('Redux store', () => {
+    // TODO: Add tests for retrieveTimeseries, retrieveCompareTimeseries, and retrieveFloodData
     describe('asynchronous actions', () => {
     });
 
     describe('synchronous actions', () => {
+        it('should create an action to set flood features state', () => {
+            expect(Actions.setFloodFeatures([9, 10, 11], {xmin: -87, ymin: 42, xmax: -86, ymax: 43})).toEqual({
+                type: 'SET_FLOOD_FEATURES',
+                stages: [9, 10, 11],
+                extent: {xmin: -87, ymin: 42, xmax: -86, ymax: 43}
+            });
+        });
+
+        it('should create an action to update the gage height state', () => {
+            expect(Actions.setGageHeight(1)).toEqual({
+                type: 'SET_GAGE_HEIGHT',
+                gageHeightIndex: 1
+            });
+        });
+
         it('should create an action to toggle timeseries view state', () => {
             expect(Actions.toggleTimeseries('current', true)).toEqual({
                 type: 'TOGGLE_TIMESERIES',
@@ -92,6 +107,18 @@ describe('Redux store', () => {
             });
         });
 
+        it('should handle SET_FLOOD_FEATURES', () => {
+            expect(timeSeriesReducer({}, {
+                type: 'SET_FLOOD_FEATURES',
+                stages: [9, 10, 11],
+                extent: {xmin: -87, ymin: 42, xmax: -86, ymax: 43}
+            })).toEqual({
+                floodStages: [9, 10, 11],
+                floodExtent: {xmin: -87, ymin: 42, xmax: -86, ymax: 43},
+                gageHeight: 9
+            });
+        });
+
         it('should handle TOGGLE_TIMESERIES', () => {
             expect(timeSeriesReducer({}, {
                 type: 'TOGGLE_TIMESERIES',
@@ -149,6 +176,16 @@ describe('Redux store', () => {
                     compare: new Date('2017-01-03')
                 }
             });
+        });
+
+        it('should handle SET_GAGE_HEIGHT', () => {
+           expect(timeSeriesReducer({floodStages: [9, 10, 11], gageHeight: 9}, {
+               type: 'SET_GAGE_HEIGHT',
+               gageHeightIndex: 1
+           })).toEqual({
+               floodStages: [9, 10, 11],
+               gageHeight: 10
+           });
         });
     });
 });
