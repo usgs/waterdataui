@@ -110,7 +110,6 @@ describe('Models module', () => {
                 // This returns the JSON version of the mocked response, so
                 // just do a sanity check on an attribute.
                 expect(series.name).toBe('ns1:timeSeriesResponseType');
-                done();
             });
         });
     });
