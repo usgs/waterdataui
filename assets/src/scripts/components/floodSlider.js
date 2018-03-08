@@ -35,7 +35,7 @@ const floodSlider = function(node) {
         .attr('type', 'range')
         .attr('class', 'wdfn-slider')
         .attr('id', SLIDER_ID)
-        .on('change', dispatch(function() {
+        .on('input', dispatch(function() {
             return Actions.setGageHeight(this.value);
         }));
 

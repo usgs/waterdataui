@@ -78,8 +78,8 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     map.addLayer(new BasemapLayer('Gray'));
 
     // Add the ESRI World Hydro Reference Overlay
-    if (window.HYDRO_URL) {
-        map.addLayer(new TiledMapLayer({url: window.HYDRO_URL}));
+    if (window.HYDRO_ENDPOINT) {
+        map.addLayer(new TiledMapLayer({url: window.HYDRO_ENDPOINT}));
     }
 
     // Add a marker at the site location
