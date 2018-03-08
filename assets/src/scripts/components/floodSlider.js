@@ -4,8 +4,6 @@ const { createStructuredSelector } = require('reselect');
 const { dispatch, link, provide } = require('../lib/redux');
 const { Actions } = require('../store');
 
-const FIM_ENDPOINT = window.FIM_ENDPOINT;
-
 const updateSlider = function(node, {stages, gageHeight}) {
     if (stages.length === 0) {
         node.property('hidden', true);
