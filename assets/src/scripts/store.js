@@ -3,7 +3,7 @@ const { applyMiddleware, createStore, compose } = require('redux');
 const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
-    parseMedianData } = require('../../models');
+    parseMedianData } = require('./models');
 const { normalize } = require('./schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('./floodData');
 

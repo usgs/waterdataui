@@ -1,8 +1,8 @@
 const { select } = require('d3-selection');
 
-const { attachToNode } = require('.map');
+const { attachToNode } = require('./map');
 
-fdescribe('map module', () => {
+describe('map module', () => {
     let mapNode;
 
     beforeEach(() => {
