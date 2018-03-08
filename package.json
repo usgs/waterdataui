@@ -57,6 +57,7 @@
     "karma-coverage": "^1.1.1",
     "karma-firefox-launcher": "^1.1.0",
     "karma-jasmine": "^1.1.1",
+    "karma-jasmine-ajax": "^0.1.13",
     "live-server": "^1.2.0",
     "lodash": "^4.17.5",
     "node-sass": "^4.7.2",
