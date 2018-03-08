@@ -9,8 +9,7 @@ export function unicodeHtmlEntity(someString) {
     let numericValue = parseInt(someString.slice(2, -1), 10);
     if (numericValue) {
         return String.fromCharCode(numericValue);
-    }
-    else {
+    } else {
         return '';
     }
 }
@@ -69,6 +68,8 @@ export function deltaDays(date1, date2) {
  */
 export function setEquality(set1, set2) {
     let sizeEqual = set1.size === set2.size;
-    let itemsEqual = [...set1].every(x => {return set2.has(x)});
+    let itemsEqual = [...set1].every(x => {
+        return set2.has(x);
+    });
     return sizeEqual && itemsEqual;
 }
