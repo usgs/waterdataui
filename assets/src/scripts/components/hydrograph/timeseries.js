@@ -82,7 +82,24 @@ export const methodsSelector = state => state.series.methods;
 /**
  * @return {Object}     Mapping of time series ID to time series details
  */
-export const allTimeSeriesSelector = state => (state.series ? state.series.timeSeries : {}) || {};
+// export const allTimeSeriesSelector = state => (state.series ? state.series.timeSeries : {}) || {};
+
+export const allTimeSeriesSelector = createSelector(
+    state => state.series,
+    (stateSeries) => {
+        let timeSeries = {};
+        if (stateSeries && stateSeries.hasOwnProperty('timeSeries')) {
+            let stateTimeSeries = stateSeries.timeSeries;
+            for (let key of Object.keys(stateTimeSeries)) {
+                const ts = stateTimeSeries[key];
+                if (ts.hasOwnProperty('points') && ts.points.length > 0) {
+                    timeSeries[key] = ts;
+                }
+            }
+        }
+        return timeSeries;
+    }
+);
 
 
 /**
@@ -117,10 +134,9 @@ export const timeSeriesSelector = memoize(tsKey => createSelector(
     (timeSeries, collections) => {
         const a = collections.reduce((series, collection) => {
             collection.timeSeries.forEach(sID => {
-                // TODO: WDFN-104 & WDFN-96 - Filter out series with no points.
-                //if (timeSeries[sID].points.length > 0) {
+                if (Object.keys(timeSeries).indexOf(sID) >= 0) {
                     series[sID] = timeSeries[sID];
-                //}
+                }
             });
             return series;
         }, {});
@@ -144,7 +160,9 @@ export const HASH_ID = {
 export const pointsSelector = memoize((tsKey) => createSelector(
     currentVariableTimeSeriesSelector(tsKey),
     (timeSeries) => {
-        return Object.values(timeSeries).map(series => series.points);
+        return Object.values(timeSeries).map(series => {
+            series.points ? series.points : [];
+        });
     }
 ));
 
