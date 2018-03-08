@@ -7,7 +7,7 @@ const ASPECT_RATIO_PERCENT = `${100 * ASPECT_RATIO}%`;
 const MARGIN = {
     top: 40,
     right: 75,
-    bottom: 80,
+    bottom: 40,
     left: 50
 };
 const CIRCLE_RADIUS = 4;

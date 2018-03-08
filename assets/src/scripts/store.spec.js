@@ -15,12 +15,12 @@ describe('Redux store', () => {
             });
         });
 
-        it('should create an action to add a timeseries', () => {
-            expect(Actions.addTimeseries('current', [{code: 'code1'}, {code: 'code2'}], false)).toEqual({
-                type: 'ADD_TIMESERIES',
+        it('should create an action to add a timeseries collection', () => {
+            expect(Actions.addSeriesCollection('current', 'collection')).toEqual({
+                type: 'ADD_TIMESERIES_COLLECTION',
                 key: 'current',
-                data: {code1: {code: 'code1'}, code2: {code: 'code2'}},
-                show: false
+                show: true,
+                data: 'collection'
             });
         });
 
@@ -28,13 +28,6 @@ describe('Redux store', () => {
             expect(Actions.resetTimeseries('current')).toEqual({
                 type: 'RESET_TIMESERIES',
                 key: 'current'
-            });
-        });
-
-        it('should create an action to reset a timeseries', () => {
-            expect(Actions.setMedianStatistics('statsData')).toEqual({
-                type: 'SET_MEDIAN_STATISTICS',
-                medianStatistics: 'statsData'
             });
         });
 
@@ -64,22 +57,38 @@ describe('Redux store', () => {
     });
 
     describe('reducers', () => {
-        it('should handle ADD_TIMESERIES', () => {
-            expect(timeSeriesReducer({tsData: {}}, {
-                type: 'ADD_TIMESERIES',
-                key: 'current',
-                data: {'00060': {code: '00060'}},
-                show: true
+        it('should handle ADD_TIMESERIES_COLLECTION', () => {
+            expect(timeSeriesReducer({series: {}}, {
+                type: 'ADD_TIMESERIES_COLLECTION',
+                data: {
+                    stateToMerge: {},
+                    variables: {
+                        'varId': {
+                            oid: 'varId',
+                            variableCode: {
+                                value: 1
+                            }
+                        }
+                    }
+                },
+                show: true,
+                key: 'current'
             })).toEqual({
-                tsData: {
-                    current: {
-                        '00060': {code: '00060'}
+                series: {
+                    stateToMerge: {},
+                    variables: {
+                        'varId': {
+                            oid: 'varId',
+                            variableCode: {
+                                value: 1
+                            }
+                        }
                     }
                 },
                 showSeries: {
                     current: true
                 },
-                currentParameterCode: '00060'
+                currentVariableID: 'varId'
             });
         });
 
@@ -100,25 +109,11 @@ describe('Redux store', () => {
                 type: 'RESET_TIMESERIES',
                 key: 'previous'
             })).toEqual({
-                tsData: {
-                    previous: {}
-                },
                 showSeries: {
                     previous: false
-                }
-            });
-        });
-
-        it('should handle SET_MEDIAN_STATISTICS', () => {
-            expect(timeSeriesReducer({tsData: {}}, {
-                type: 'SET_MEDIAN_STATISTICS',
-                medianStatistics: {medianData: 'here'}
-            })).toEqual({
-                tsData: {
-                    medianStatistics: {medianData: 'here'}
                 },
-                showSeries: {
-                    medianStatistics: true
+                series: {
+                    request: {}
                 }
             });
         });

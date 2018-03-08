@@ -1,12 +1,10 @@
-const { createSelector, createStructuredSelector } = require('reselect');
+const { createSelector } = require('reselect');
 const { line } = require('d3-shape');
 const { select } = require('d3-selection');
 
 const { Actions } = require('../../store');
-const { currentDataSelector } = require('./timeseries');
 const { SPARK_LINE_DIM, SMALL_SCREEN_WIDTH } = require('./layout');
-const { createXScale, singleSeriesYScale } = require('./scales');
-const { dispatch, link } = require('../../lib/redux');
+const { dispatch } = require('../../lib/redux');
 
 
 /**
@@ -15,27 +13,35 @@ const { dispatch, link } = require('../../lib/redux');
  * @return {Array}        Sorted array of [code, metadata] pairs.
  */
 export const availableTimeseriesSelector = createSelector(
-    state => state.tsData,
-    state => state.currentParameterCode,
-    (tsData, currentCd) => {
+    state => state.series.variables,
+    state => state.series.timeSeries,
+    state => state.currentVariableID,
+    (variables, timeSeries, currentVariableID) => {
+        if (!variables) {
+            return [];
+        }
+
         const codes = {};
-        for (let key of Object.keys(tsData).sort()) {
-            for (let code of Object.keys(tsData[key])) {
-                codes[code] = codes[code] || {};
-                codes[code] = {
-                    description: codes[code].description || tsData[key][code].description,
-                    type: codes[code].type || tsData[key][code].type,
-                    selected: currentCd === code,
-                    currentYear: key === 'current' || codes[code].currentYear === true,
-                    previousYear: key === 'compare' || codes[code].previousYear === true,
-                    medianData: key === 'medianStatistics' || codes[code].medianData === true
-                };
-            }
+        const seriesList = Object.values(timeSeries);
+        for (const variableID of Object.keys(variables).sort()) {
+            const variable = variables[variableID];
+            codes[variable.variableCode.value] = {
+                variableID: variable.oid,
+                description: variable.variableDescription,
+                selected: currentVariableID === variableID,
+                currentTimeseriesCount: seriesList.filter(
+                    ts => ts.tsKey === 'current' && ts.variable === variableID).length,
+                compareTimeseriesCount: seriesList.filter(
+                    ts => ts.tsKey === 'compare' && ts.variable === variableID).length,
+                medianTimeseriesCount: seriesList.filter(
+                    ts => ts.tsKey === 'median' && ts.variable === variableID).length
+            };
         }
         let sorted = [];
         for (let key of Object.keys(codes).sort()) {
             sorted.push([key, codes[key]]);
         }
+
         return sorted;
     }
 );
@@ -46,24 +52,20 @@ export const availableTimeseriesSelector = createSelector(
  * @param svgSelection
  * @param tsData
  */
-export const addSparkLine = function(svgSelection, {tsData}) {
-    const { parmData, lines } = tsData;
-    if (parmData && lines) {
-        let x = createXScale(parmData, SPARK_LINE_DIM.width);
-        let y = singleSeriesYScale(parmData, SPARK_LINE_DIM.height);
-        let spark = line()
-            .x(function(d) {
-                return x(d.time);
-            })
-            .y(function(d) {
-                return y(d.value);
-            });
-        for (let lineSegment of lines) {
-            if (lineSegment.classes.dataMask === null) {
-                 svgSelection.append('path')
-                    .attr('d', spark(lineSegment.points))
-                    .attr('class', 'spark-line');
-            }
+export const addSparkLine = function(svgSelection, {seriesLineSegments, scales}) {
+    let spark = line()
+        .x(function(d) {
+            return scales.x(d.dateTime);
+        })
+        .y(function(d) {
+            return scales.y(d.value);
+        });
+
+    for (const lineSegment of seriesLineSegments) {
+        if (lineSegment.classes.dataMask === null) {
+            svgSelection.append('path')
+                .attr('d', spark(lineSegment.points))
+                .attr('class', 'spark-line');
         }
     }
 };
@@ -76,7 +78,7 @@ export const addSparkLine = function(svgSelection, {tsData}) {
  * @param  {Object} availableTimeseries Timeseries metadata to display
  * @param  {Object} layout              layout as retrieved from the redux store
  */
-export const plotSeriesSelectTable = function (elem, {availableTimeseries, layout}) {
+export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd, layout}) {
     elem.select('#select-timeseries').remove();
 
     const screenSizeCheck = layout.windowWidth <= SMALL_SCREEN_WIDTH;
@@ -113,7 +115,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, layou
             .classed('selected', parm => parm[1].selected)
             .on('click', dispatch(function (parm) {
                 if (!parm[1].selected) {
-                    return Actions.setCurrentParameterCode(parm[0]);
+                    return Actions.setCurrentParameterCode(parm[0], parm[1].variableID);
                 }
             }))
             .call(tr => {
@@ -129,12 +131,21 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, layou
                 // under the appropriate column headers
                 if (!screenSizeCheck) {
                     tr.append('td')
-                        .html(parm => parm[1].currentYear ? '<i class="fa fa-check" aria-label="Current year data available"></i>' : '');
+                        .html(parm => {
+                            const subScript = parm[1].currentTimeseriesCount > 1 ? `<sub>${parm[1].currentTimeseriesCount}</sub>` : '';
+                            return parm[1].currentTimeseriesCount ? `<i class="fa fa-check" aria-label="Current year data available"></i>${subScript}` : '';
+                        });
                     tr.append('td')
-                        .html(parm => parm[1].previousYear ? '<i class="fa fa-check" aria-label="Previous year data available"></i>' : '');
+                        .html(parm => {
+                            const subScript = parm[1].compareTimeseriesCount > 1 ? `<sub>${parm[1].compareTimeseriesCount}</sub>` : '';
+                            return parm[1].compareTimeseriesCount ? `<i class="fa fa-check" aria-label="Previous year data available"></i>${subScript}` : '';
+                        });
                     tr.append('td')
-                        .html(parm => parm[1].medianData ? '<i class="fa fa-check" aria-label="Median data available"></i>' : '');
-                }
+                        .html(parm => {
+                            const subScript = parm[1].medianTimeseriesCount > 1 ? `<sub>${parm[1].medianTimeseriesCount}</sub>` : '';
+                            return parm[1].medianTimeseriesCount ? `<i class="fa fa-check" aria-label="Median data available"></i>${subScript}` : '';
+                        });
+                    }
                 tr.append('td')
                     .append('svg')
                     .attr('width', SPARK_LINE_DIM.width.toString())
@@ -166,19 +177,22 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, layou
 
             let tableRow = tooltipTable.append('tr');
             tableRow.append('td')
-                .html(d => d[1].currentYear ? '<i class="fa fa-check" aria-label="Current year data available"></i>' : '');
+                .html(d => d[1].currentTimeseriesCount ? '<i class="fa fa-check" aria-label="Current year data available"></i>' : '');
             tableRow.append('td')
-                .html(d => d[1].previousYear ? '<i class="fa fa-check" aria-label="Previous year data available"></i>' : '');
+                .html(d => d[1].compareTimeseriesCount ? '<i class="fa fa-check" aria-label="Previous year data available"></i>' : '');
             tableRow.append('td')
-                .html(d => d[1].medianData ? '<i class="fa fa-check" aria-label="Median data available"></i>' : '');
+                .html(d => d[1].medianTimeseriesCount ? '<i class="fa fa-check" aria-label="Median data available"></i>' : '');
 
         });
     }
     table.selectAll('tbody svg').each(function(d) {
         let selection = select(this);
         const parmCd = d[0];
-        selection.call(link(addSparkLine, createStructuredSelector(
-            {tsData: currentDataSelector(parmCd)}
-        )));
+        for (const seriesLineSegments of lineSegmentsByParmCd[parmCd]) {
+            selection.call(addSparkLine, {
+                seriesLineSegments: seriesLineSegments,
+                scales: timeSeriesScalesByParmCd[parmCd]
+            });
+        }
     });
 };

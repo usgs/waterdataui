@@ -2,18 +2,15 @@ const { createXScale, createYScale, singleSeriesYScale } = require('./scales');
 
 
 describe('Charting scales', () => {
-    let data = Array(23).fill(0).map((_, hour) => {
+    let points = Array(23).fill(0).map((_, hour) => {
         return {
-            time: new Date(2017, 10, 10, hour, 0, 0, 0),
-            label: 'label',
+            dateTime: new Date(2017, 10, 10, hour, 0, 0, 0),
             value: hour
         };
     });
-    let tsData = {current: {'00060': {values: data}}};
-    let showSeries = {current: true};
-    let xScale = createXScale(data, 200);
-    let yScale = createYScale(tsData, '00060', showSeries, 100);
-    let singleYScale = singleSeriesYScale(data, 100);
+    let xScale = createXScale(points, 200);
+    let yScale = createYScale([points], 100);
+    let singleYScale = singleSeriesYScale(points, 100);
 
     it('scales created', () => {
         expect(xScale).toEqual(jasmine.any(Function));
@@ -23,8 +20,8 @@ describe('Charting scales', () => {
 
     it('xScale domain is correct', () => {
         let domain = xScale.domain();
-        expect(domain[0]).toEqual(data[0].time);
-        expect(domain[1]).toEqual(data[22].time);
+        expect(domain[0]).toEqual(points[0].dateTime);
+        expect(domain[1]).toEqual(points[22].dateTime);
     });
 
     it('xScale range is correctly left-oriented', () => {
