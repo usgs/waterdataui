@@ -1,3 +1,4 @@
+const { ticks } = require('d3-array');
 const { axisBottom, axisLeft } = require('d3-axis');
 const { format } = require('d3-format');
 const { timeDay } = require('d3-time');
@@ -8,7 +9,7 @@ const { layoutSelector, MARGIN } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { yLabelSelector } = require('./timeseries');
 
-const yTickCount = 5;
+const Y_TICK_COUNT = 5;
 
 
 /**
@@ -18,10 +19,7 @@ const yTickCount = 5;
  */
 function yTickValues(yScale) {
     const yDomain = yScale.domain();
-    const tickSize = (yDomain[1] - yDomain[0]) / yTickCount;
-    return Array(yTickCount).fill(0).map((_, index) => {
-        return yDomain[0] + index * tickSize;
-    });
+    return ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
 }
 
 
