@@ -5,6 +5,8 @@ const { timeDay } = require('d3-time');
 const { timeFormat } = require('d3-time-format');
 const { createSelector } = require('reselect');
 
+const { wrap } = require('../../utils');
+
 const { layoutSelector, MARGIN } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { yLabelSelector } = require('./timeseries');
@@ -107,7 +109,8 @@ function appendAxes(elem, {xAxis, yAxis, layout, yTitle}) {
             .attr('transform', 'rotate(-90)')
             .attr('x', yLabelLoc.x)
             .attr('y', yLabelLoc.y)
-            .text(yTitle);
+            .text(yTitle)
+                .call(wrap, layout.height - (MARGIN.top + MARGIN.bottom));
 }
 
 
