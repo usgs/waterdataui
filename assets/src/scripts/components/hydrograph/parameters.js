@@ -30,11 +30,11 @@ export const availableTimeseriesSelector = createSelector(
                 description: variable.variableDescription,
                 selected: currentVariableID === variableID,
                 currentTimeseriesCount: seriesList.filter(
-                    ts => ts.tsKey === 'current' && ts.variable === variableID).length,
+                    ts => ts.tsKey === 'current' && ts.variable === variableID && ts.points.length > 0).length,
                 compareTimeseriesCount: seriesList.filter(
-                    ts => ts.tsKey === 'compare' && ts.variable === variableID).length,
+                    ts => ts.tsKey === 'compare' && ts.variable === variableID && ts.points.length > 0).length,
                 medianTimeseriesCount: seriesList.filter(
-                    ts => ts.tsKey === 'median' && ts.variable === variableID).length
+                    ts => ts.tsKey === 'median' && ts.variable === variableID && ts.points.length > 0).length
             };
         }
         let sorted = [];
