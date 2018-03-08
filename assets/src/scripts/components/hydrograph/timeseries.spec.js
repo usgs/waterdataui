@@ -1,298 +1,408 @@
-const { lineSegmentsSelector, pointsTableDataSelector, currentDataSelector } = require('./timeseries');
+const { collectionsSelector, lineSegmentsSelector, pointsSelector, requestSelector,
+    currentVariableTimeSeriesSelector, pointsTableDataSelector } = require('./timeseries');
 
+
+const TEST_DATA = {
+    series: {
+        timeSeries: {
+            '00060': {
+                points: [{
+                    value: 10,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: null,
+                    qualifiers: ['P', 'ICE'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: null,
+                    qualifiers: ['P', 'FLD'],
+                    approved: false,
+                    estimated: false
+                }]
+            }
+        },
+        timeSeriesCollections: {
+            'coll1': {
+                variable: 45807197,
+                timeSeries: ['00060']
+            }
+        },
+        requests: {
+            current: {
+                timeSeriesCollections: ['coll1']
+            }
+        },
+        variables: {
+            '45807197': {
+                variableCode: '00060',
+                oid: 45807197
+            }
+        }
+    },
+    currentVariableID: '45807197'
+};
 
 describe('Timeseries module', () => {
     describe('line segment selector', () => {
         it('should separate on approved', () => {
             expect(lineSegmentsSelector('current')({
-                tsData: {
-                    current: {
+                ...TEST_DATA,
+                series: {
+                    ...TEST_DATA.series,
+                    timeSeries: {
+                        ...TEST_DATA.series.timeSeries,
                         '00060': {
-                            values: [{
+                            points: [{
                                 value: 10,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: false
+                                qualifiers: []
                             }, {
                                 value: 10,
-                                qualifiers: ['P'],
-                                approved: true,
-                                estimated: false
+                                qualifiers: ['A']
                             }, {
                                 value: 10,
-                                qualifiers: ['P'],
-                                approved: true,
-                                estimated: false
+                                qualifiers: ['A']
                             }]
                         }
                     }
-                },
-                currentParameterCode: '00060'
-            })).toEqual([{
-                classes: {
-                    approved: false,
-                    estimated: false,
-                    dataMask: null
-                },
-                points: [{
-                    value: 10,
-                    qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
-                }]
-            }, {
-                classes: {
-                    approved: true,
-                    estimated: false,
-                    dataMask: null
-                },
-                points: [{
-                    value: 10,
-                    qualifiers: ['P'],
-                    approved: true,
-                    estimated: false
-                }, {
-                    value: 10,
-                    qualifiers: ['P'],
-                    approved: true,
-                    estimated: false
-                }]
-            }]);
-        });
-
-        it('should get lines for a parameter code if provided', () => {
-            expect(lineSegmentsSelector('current', '00010')({
-                tsData: {
-                    current: {
-                        '00060': {
-                            values: [{
-                                value: 10,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: false
-                            }, {
-                                value: 10,
-                                qualifiers: ['P'],
-                                approved: true,
-                                estimated: false
-                            }, {
-                                value: 10,
-                                qualifiers: ['P'],
-                                approved: true,
-                                estimated: false
-                            }]
+                }
+            })).toEqual({
+                '00060': [
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': false,
+                            'dataMask': null
                         },
-                        '00010': {
-                            values: [{
-                                value: 1.2,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: false
-                            }, {
-                                value: 3.2,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: false
-                            }, {
-                                value: 2.6,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: false
-                            }]
-                        }
+                        'points': [
+                            {
+                                'value': 10,
+                                'qualifiers': []
+                            }
+                        ]
+                    },
+                    {
+                        'classes': {
+                            'approved': true,
+                            'estimated': false,
+                            'dataMask': null
+                        },
+                        'points': [
+                            {
+                                'value': 10,
+                                'qualifiers': [
+                                    'A'
+                                ]
+                            },
+                            {
+                                'value': 10,
+                                'qualifiers': [
+                                    'A'
+                                ]
+                            }
+                        ]
                     }
-                },
-                currentParameterCode: '00060'
-            })).toEqual([{
-                classes: {
-                    approved: false,
-                    estimated: false,
-                    dataMask: null
-                },
-                points: [{
-                    value: 1.2,
-                    qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
-                }, {
-                    value: 3.2,
-                    qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
-                }, {
-                    value: 2.6,
-                    qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
-                }]
-            }]);
+                ]
+            });
         });
 
         it('should separate on estimated', () => {
             expect(lineSegmentsSelector('current')({
-                tsData: {
-                    current: {
+                ...TEST_DATA,
+                series: {
+                    ...TEST_DATA.series,
+                    timeSeries: {
+                        ...TEST_DATA.series.timeSeries,
                         '00060': {
-                            values: [{
+                            points: [{
                                 value: 10,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: false
+                                qualifiers: ['P']
                             }, {
                                 value: 10,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: true
+                                qualifiers: ['P', 'E']
                             }, {
                                 value: 10,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: true
+                                qualifiers: ['P', 'E']
                             }]
                         }
                     }
-                },
-                currentParameterCode: '00060'
-            })).toEqual([{
-                classes: {
-                    approved: false,
-                    estimated: false,
-                    dataMask: null
-                },
-                points: [{
-                    value: 10,
-                    qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
-                }]
-            }, {
-                classes: {
-                    approved: false,
-                    estimated: true,
-                    dataMask: null
-                },
-                points: [{
-                    value: 10,
-                    qualifiers: ['P'],
-                    approved: false,
-                    estimated: true
-                }, {
-                    value: 10,
-                    qualifiers: ['P'],
-                    approved: false,
-                    estimated: true
-                }]
-            }]);
+                }
+            })).toEqual({
+                '00060': [
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': false,
+                            'dataMask': null
+                        },
+                        'points': [
+                            {
+                                'value': 10,
+                                'qualifiers': [
+                                    'P'
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': true,
+                            'dataMask': null
+                        },
+                        'points': [
+                            {
+                                'value': 10,
+                                'qualifiers': [
+                                    'P',
+                                    'E'
+                                ]
+                            },
+                            {
+                                'value': 10,
+                                'qualifiers': [
+                                    'P',
+                                    'E'
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            });
         });
 
         it('should separate out masked values', () => {
             expect(lineSegmentsSelector('current')({
-                tsData: {
-                    current: {
+                ...TEST_DATA,
+                series: {
+                    ...TEST_DATA.series,
+                    timeSeries: {
+                        ...TEST_DATA.series.timeSeries,
                         '00060': {
-                            values: [{
+                            points: [{
                                 value: 10,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: false
+                                qualifiers: ['P']
                             }, {
                                 value: null,
-                                qualifiers: ['P', 'ICE'],
-                                approved: false,
-                                estimated: false
+                                qualifiers: ['P', 'ICE']
                             }, {
                                 value: null,
-                                qualifiers: ['P', 'FLD'],
-                                approved: false,
-                                estimated: false
+                                qualifiers: ['P', 'FLD']
                             }]
                         }
                     }
-                },
-                currentParameterCode: '00060'
-            })).toEqual([
-                {
-                    classes: {
-                        approved: false,
-                        estimated: false,
-                        dataMask: null
-                    },
-                    points: [{
-                        value: 10,
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
-                    }]
-                },
-                {
-                    classes: {
-                        approved: false,
-                        estimated: false,
-                        dataMask: 'ice'
-                    },
-                    points: [{
-                        value: null,
-                        qualifiers: ['P', 'ICE'],
-                        approved: false,
-                        estimated: false
-                    }]
-                },
-                {
-                    classes: {
-                        approved: false,
-                        estimated: false,
-                        dataMask: 'fld'
-                    },
-                    points: [{
-                        value: null,
-                        qualifiers: ['P', 'FLD'],
-                        approved: false,
-                        estimated: false
-                    }]
                 }
-            ]);
+            })).toEqual({
+                '00060': [
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': false,
+                            'dataMask': null
+                        },
+                        'points': [
+                            {
+                                'value': 10,
+                                'qualifiers': [
+                                    'P'
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': false,
+                            'dataMask': 'ice'
+                        },
+                        'points': [
+                            {
+                                'value': null,
+                                'qualifiers': [
+                                    'P',
+                                    'ICE'
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': false,
+                            'dataMask': 'fld'
+                        },
+                        'points': [
+                            {
+                                'value': null,
+                                'qualifiers': [
+                                    'P',
+                                    'FLD'
+                                ]
+                            }
+                        ]
+                    }
+                ]});
+        });
+    });
+
+    describe('collectionsSelector', () => {
+        it('works', () => {
+            expect(collectionsSelector('current')({
+                series: {
+                    requests: {
+                        current: {
+                            timeSeriesCollections: ['coll1', 'coll2']
+                        }
+                    },
+                    timeSeriesCollections: {
+                        'coll1': 1,
+                        'coll2': 2
+                    }
+                }
+            })).toEqual([1, 2]);
+        });
+    });
+
+    describe('currentVariableTimeSeriesSelector', () => {
+        it('works', () => {
+            expect(currentVariableTimeSeriesSelector('current')({
+                series: {
+                    requests: {
+                        current: {
+                            timeSeriesCollections: ['coll1', 'coll2']
+                        }
+                    },
+                    timeSeriesCollections: {
+                        'coll1': {
+                            timeSeries: ['one', 'two'],
+                            variable: 45807197
+                        },
+                        'coll2': {
+                            timeSeries: ['three', 'four'],
+                            variable: 45807197
+                        },
+                        'coll3': {
+                            timeSeries: ['five', 'six'],
+                            variable: 'do not match'
+                        }
+                    },
+                    timeSeries: {
+                        one: {
+                            item: 'one'
+                        },
+                        two: {
+                            item: 'two'
+                        },
+                        three: {
+                            item: 'three'
+                        },
+                        four: {
+                            item: 'four'
+                        },
+                        five: {
+                            item: 'five'
+                        },
+                        six: {
+                            item: 'six'
+                        }
+                    },
+                    variables: {
+                        '45807197': {
+                            oid: 45807197,
+                            variableCode: {
+                                value: '00060',
+                                variableID: 45807197
+                            }
+                        }
+                    }
+                },
+                currentVariableID: '45807197'
+            })).toEqual({
+                one: {item: 'one'},
+                two: {item: 'two'},
+                three: {item: 'three'},
+                four: {item: 'four'}
+            });
+        });
+    });
+
+    describe('requestSelector', () => {
+        it('works', () => {
+            expect(requestSelector('current')({
+                series: {
+                    requests: {
+                        current: 'current request object'
+                    }
+                }
+            })).toEqual('current request object');
+            expect(requestSelector('current')({series: {}})).toEqual(null);
+            expect(requestSelector('notCurrent')({
+                series: {
+                    requests: {
+                        current: 'current request object'
+                    }
+                }
+            })).toEqual(null);
+        });
+    });
+
+    describe('pointsSelector', () => {
+        it('works with a single collection and two time series', () => {
+            expect(pointsSelector('current')({
+                series: {
+                    requests: {
+                        current: {
+                            timeSeriesCollections: ['coll1']
+                        }
+                    },
+                    timeSeriesCollections: {
+                        'coll1': {
+                            variable: 45807197,
+                            timeSeries: ['one', 'two']
+                        }
+                    },
+                    timeSeries: {
+                        one: {
+                            points: ['ptOne', 'ptTwo', 'ptThree']
+                        },
+                        two: {
+                            points: ['ptOne2', 'ptTwo2', 'ptThree2']
+                        }
+                    },
+                    variables: {
+                        '45807197': {
+                            variableCode: '00060',
+                            oid: 45807197
+                        }
+                    }
+                },
+                currentVariableID: '45807197'
+            })).toEqual([['ptOne', 'ptTwo', 'ptThree'], ['ptOne2', 'ptTwo2', 'ptThree2']]);
         });
     });
 
     describe('pointsTableDataSelect', () => {
-        it('Return an empty array if series is not visible', () => {
-            expect(pointsTableDataSelector('current')({
-                tsData: {
-                    current: {
-                        '00060': {
-                            values: [{
-                                value: 10,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: false
-                            }, {
-                                value: 10,
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: true
-                            }, {
-                                value: 10,
-                                qualifiers: ['P', 'Ice'],
-                                approved: false,
-                                estimated: true
-                            }]
-                        }
-                    }
-                },
-                showSeries: {
-                    current: false
-                },
-                currentParameterCode: '00060'
-            })).toEqual([]);
-        });
-
         it('Return an array of arrays if series is visible', () => {
             expect(pointsTableDataSelector('current')({
-                tsData: {
-                    current: {
-                        '00060': {
-                            values: [{
-                                time: '2018-01-01',
+                series: {
+                    requests: {
+                        current: {
+                            timeSeriesCollections: ['coll1']
+                        }
+                    },
+                    timeSeriesCollections: {
+                        'coll1': {
+                            variable: 45807197,
+                            timeSeries: ['one']
+                        }
+                    },
+                    timeSeries: {
+                        one: {
+                            tsKey: 'current',
+                            points: [{
+                                dateTime: '2018-01-01',
                                 qualifiers: ['P'],
                                 approved: false,
                                 estimated: false
@@ -302,61 +412,31 @@ describe('Timeseries module', () => {
                                 estimated: true
                             }, {
                                 value: 10,
-                                time: '2018-01-03',
+                                dateTime: '2018-01-03',
                                 qualifiers: ['P', 'Ice'],
                                 approved: false,
                                 estimated: true
                             }]
                         }
+                    },
+                    variables: {
+                        '45807197': {
+                            variableCode: '00060',
+                            oid: 45807197
+                        }
                     }
                 },
+                currentVariableID: '45807197',
                 showSeries: {
                     current: true
-                },
-                currentParameterCode: '00060'
-            })).toEqual([['', '2018-01-01', 'P'], [15, '', ''], [10, '2018-01-03', 'P, Ice']]);
-        });
-    });
-
-    describe('dataSelector', () => {
-
-        it('correctly selects the right parameter', () => {
-            let result = currentDataSelector('00060')({
-                tsData: {
-                    current: {
-                        '00060': {
-                            values: [{
-                                time: '2018-01-01',
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: false
-                            }, {
-                                value: 15,
-                                approved: false,
-                                estimated: true
-                            }, {
-                                value: 10,
-                                time: '2018-01-03',
-                                qualifiers: ['P', 'Ice'],
-                                approved: false,
-                                estimated: true
-                            }]
-                        }
-                    }
                 }
+            })).toEqual({
+                one: [
+                    ['', '2018-01-01', 'P'],
+                    [15, '', ''],
+                    [10, '2018-01-03', 'P, Ice']
+                ]
             });
-            expect(result.lines.length).toEqual(2);
-            expect(result.parmData.length).toEqual(3);
-        });
-
-        it('behaves if there is no timeseries', () => {
-            let result = currentDataSelector('00060')({
-                tsData: {
-                    current: {}
-                }
-            });
-            expect(result.lines.length).toEqual(0);
-            expect(result.parmData).toBeNull();
         });
     });
 });

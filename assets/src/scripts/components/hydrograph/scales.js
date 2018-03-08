@@ -5,7 +5,7 @@ const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { layoutSelector, MARGIN } = require('./layout');
-const { pointsSelector } = require('./timeseries');
+const { flatPointsSelector, timeSeriesSelector, variablesSelector, visiblePointsSelector } = require('./timeseries');
 
 const paddingRatio = 0.2;
 
@@ -35,7 +35,7 @@ function extendDomain(domain) {
  */
 function createXScale(values, xSize) {
     // Calculate max and min for values
-    const xExtent = values.length ? extent(values, d => d.time) : [0, 1];
+    const xExtent = values.length ? extent(values, d => d.dateTime) : [0, 1];
 
     // xScale is oriented on the left
     return scaleTime()
@@ -62,30 +62,26 @@ function singleSeriesYScale(tsData, ySize) {
 
 /**
  * Create an yscale oriented on the bottom
- * @param {Array} tsData - where xScale are Array contains {value, ...}
- * @param {Object} showSeries  - keys match keys in tsData and values are Boolean
+ * @param {Object} pointArrays - Time series points: [[point, point], ...]
  * @param {Number} ySize - range of scale
  * @return {Object} d3 scale for value.
  */
-function createYScale(tsData, parmCd, showSeries, ySize) {
+function createYScale(pointArrays, ySize) {
     let yExtent;
     let scaleDomains = [];
 
     // Calculate max and min for data
-    for (let key of Object.keys(tsData)) {
-        if (!tsData[key][parmCd]) {
-            continue;
-        }
-
-        let points = tsData[key][parmCd].values.filter(pt => pt.value !== null);
-        if (!showSeries[key] || points.length === 0) {
+    for (const points of pointArrays) {
+        if (points.length === 0) {
             continue;
         }
         scaleDomains.push(singleSeriesYScale(points, ySize).domain());
     }
     if (scaleDomains.length > 0) {
-        const flatDomains = [].concat(...scaleDomains);
-        yExtent = [Math.min(...flatDomains), Math.max(...flatDomains)];
+        const flatDomains = [].concat(...scaleDomains).filter(val => isFinite(val));
+        if (flatDomains.length > 0) {
+            yExtent = [Math.min(...flatDomains), Math.max(...flatDomains)];
+        }
     }
     // Add padding to the extent and handle empty data sets.
     if (yExtent) {
@@ -100,15 +96,14 @@ function createYScale(tsData, parmCd, showSeries, ySize) {
 
 
 /**
- * Factory function creates a function that is:
+ * Factory function creates a function that, for a given time series key:
  * Selector for x-scale
  * @param  {Object} state       Redux store
- * @param  {String} tsDataKey   Timeseries key
  * @return {Function}           D3 scale function
  */
-const xScaleSelector = memoize(tsDataKey => createSelector(
+const xScaleSelector = memoize(tsKey => createSelector(
     layoutSelector,
-    pointsSelector(tsDataKey),
+    flatPointsSelector(tsKey),
     (layout, points) => {
         return createXScale(points, layout.width - MARGIN.right);
     }
@@ -122,11 +117,54 @@ const xScaleSelector = memoize(tsDataKey => createSelector(
  */
 const yScaleSelector = createSelector(
     layoutSelector,
-    (state) => state.tsData,
-    (state) => state.showSeries,
-    state => state.currentParameterCode,
-    (layout, tsData, showSeries, parmCd) => createYScale(tsData, parmCd, showSeries, layout.height - (MARGIN.top + MARGIN.bottom))
+    visiblePointsSelector,
+    (layout, pointArrays) => createYScale(pointArrays, layout.height - (MARGIN.top + MARGIN.bottom))
 );
 
 
-module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, singleSeriesYScale};
+/**
+ * For a given tsKey, return a selector that:
+ * Returns lists of time series keyed on parameter code.
+ * @param  {String} tsKey             Time series key
+ * @return {Object}
+ */
+const parmCdTimeSeriesSelector = memoize(tsKey => createSelector(
+    timeSeriesSelector(tsKey),
+    variablesSelector,
+    (timeSeries, variables) => {
+        return Object.keys(timeSeries).reduce((byParmCd, sID) => {
+            const series = timeSeries[sID];
+            const parmCd = variables[series.variable].variableCode.value;
+            byParmCd[parmCd] = byParmCd[parmCd] || [];
+            byParmCd[parmCd].push(series);
+            return byParmCd;
+        }, {});
+    }
+));
+
+
+/**
+ * Given a dimension with width/height attributes:
+ * Returns x and y scales for all "current" time series.
+ * @type {Object}   Mapping of parameter code to time series list.
+ */
+const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => createSelector(
+    parmCdTimeSeriesSelector(tsKey),
+    (timeSeriesByParmCd) => {
+        return Object.keys(timeSeriesByParmCd).reduce((tsScales, parmCd) => {
+            const seriesList = timeSeriesByParmCd[parmCd];
+            const allPoints = seriesList.reduce((points, series) => {
+                Array.prototype.push.apply(points, series.points);
+                return points;
+            }, []);
+            tsScales[parmCd] = {
+                x: createXScale(allPoints, dimensions.width),
+                y: createYScale(seriesList.map(s => s.points), dimensions.height)
+            };
+            return tsScales;
+        }, {});
+    }
+)));
+
+
+module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, singleSeriesYScale, timeSeriesScalesByParmCdSelector};

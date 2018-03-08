@@ -1,6 +1,8 @@
-const { timeFormat, utcFormat } = require('d3-time-format');
+const { set } = require('d3-collection');
+const { utcFormat } = require('d3-time-format');
+
 const { get } = require('./ajax');
-const { deltaDays, replaceHtmlEntities } = require('./utils');
+const { deltaDays } = require('./utils');
 
 
 // Define Water Services root URL - use global variable if defined, otherwise
@@ -8,8 +10,6 @@ const { deltaDays, replaceHtmlEntities } = require('./utils');
 const SERVICE_ROOT = window.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
 const PAST_SERVICE_ROOT = window.PAST_SERVICE_ROOT  || 'https://nwis.waterservices.usgs.gov/nwis';
 
-// Create a time formatting function from D3's timeFormat
-const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');
 const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
 function olderThan120Days(date) {
@@ -43,45 +43,7 @@ export function getTimeseries({sites, params=null, startDate=null, endDate=null}
     let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
     let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${paramCds}&${timeParams}&indent=on&siteStatus=all&format=json`;
     return get(url)
-        .then((response) => {
-            let data = JSON.parse(response);
-            return data.value.timeSeries.map(series => {
-                let noDataValue = series.variable.noDataValue;
-                const qualifierMapping = series.values[0].qualifier.reduce((map, qualifier) => {
-                    map[qualifier.qualifierCode] = qualifier.qualifierDescription;
-                    return map;
-                }, {});
-                return {
-                    id: series.name,
-                    code: series.variable.variableCode[0].value,
-                    name: replaceHtmlEntities(series.variable.variableName),
-                    type: series.variable.valueType,
-                    unit: series.variable.unit.unitCode,
-                    startTime: series.values[0].value.length ?
-                        new Date(series.values[0].value[0].dateTime) : null,
-                    endTime: series.values[0].value.length ?
-                        new Date(series.values[0].value.slice(-1)[0].dateTime) : null,
-                    description: series.variable.variableDescription,
-                    values: series.values[0].value.map(datum => {
-                        let date = new Date(datum.dateTime);
-                        let tzAbbrev = date.toString().match(/\(([^)]+)\)/)[1];
-                        let value = parseFloat(datum.value);
-                        if (value === noDataValue) {
-                            value = null;
-                        }
-                        const qualifierDescriptions = datum.qualifiers.map((qualifier) => qualifierMapping[qualifier]);
-                        return {
-                            time: date,
-                            value: value,
-                            qualifiers: datum.qualifiers,
-                            approved: datum.qualifiers.indexOf('A') > -1,
-                            estimated: datum.qualifiers.indexOf('E') > -1,
-                            label: `${formatTime(date)} ${tzAbbrev}\n${value || ''} ${value ? series.variable.unit.unitCode : ''} (${qualifierDescriptions.join(', ')})`
-                        };
-                    })
-                };
-            });
-        })
+        .then(response => JSON.parse(response))
         .catch(reason => {
             console.error(reason);
             return [];
@@ -142,10 +104,18 @@ export function isLeapYear(year) {
  * @param medianData
  * @param timeSeriesStartDateTime
  * @param timeSeriesEndDateTime
- * @param timeSeriesUnit
+ * @param varsByCode
  * @returns {object}
  */
-export function parseMedianTimeseries(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, timeSeriesUnit) {
+export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, varsByCode) {
+    // We only have data for the variables returned from the IV service. If this
+    // series doesn't correspond with an IV series, skip it.
+    const variable = varsByCode[medianData[0].parameter_cd];
+    if (!variable) {
+        console.info(`(Median statistics) Variable data not available for ${medianData[0].parameter_cd} - skipping`);
+        return collection;
+    }
+
     let values = [];
 
     let yearPresent = timeSeriesEndDateTime.getFullYear();
@@ -161,9 +131,8 @@ export function parseMedianTimeseries(medianData, timeSeriesStartDateTime, timeS
             recordDate = new Date(yearPrevious, month, day);
         }
         let median = {
-            time: recordDate,
-            value: parseFloat(medianDatum.p50_va),
-            label: `${medianDatum.p50_va} ${timeSeriesUnit}`
+            dateTime: recordDate,
+            value: parseFloat(medianDatum.p50_va)
         };
         // don't include leap days if it's not a leap year
         if (!isLeapYear(recordDate.getFullYear())) {
@@ -175,22 +144,64 @@ export function parseMedianTimeseries(medianData, timeSeriesStartDateTime, timeS
         }
     }
 
+    const tsId = `${medianData[0].parameter_cd}:${medianData[0].ts_id}:median`;
+    const tsCollectionId = `${medianData[0].site_no}:${medianData[0].parameter_cd}:median`;
+
+    let collectionSet;
+    if (collection.requests && collection.requests.median &&
+            collection.requests.median.timeSeriesCollections) {
+        collectionSet = set(collection.requests.median.timeSeriesCollections);
+    } else {
+        collectionSet = set();
+    }
+    collectionSet.add(tsCollectionId);
+
+    // Normalize the median data into a structure comparable to how the
+    // IV service data is normalized.
     return {
-        id: medianData[0].ts_id,
-        code: medianData[0].parameter_cd,
-        name: medianData[0].loc_web_ds,
-        type: 'Statistic',
-        unit: timeSeriesUnit,
-        startTime: timeSeriesStartDateTime,
-        endTime: timeSeriesEndDateTime,
-        description: medianData[0].loc_web_ds,
-        medianMetadata: {
-            beginYear: medianData[0].begin_yr,
-            endYear: medianData[0].end_yr
+        ...collection,
+        timeSeries: {
+            ...collection.timeSeries || {},
+            [tsId]: {
+                points: values.sort(function (a, b) {
+                    return a.dateTime - b.dateTime;
+                }).slice(values.length - days, values.length),
+                startTime: timeSeriesStartDateTime,
+                endTime: timeSeriesEndDateTime,
+                tsKey: 'median',
+                method: tsId,
+                variable: varsByCode[medianData[0].parameter_cd].oid,
+                metadata: {
+                    beginYear: medianData[0].begin_yr,
+                    endYear: medianData[0].end_yr
+                }
+            }
         },
-        values: values.sort(function(a, b){
-           return a.time - b.time;
-        }).slice(values.length - days, values.length)
+        timeSeriesCollections: {
+            ...collection.timeSeriesCollections || {},
+            [tsCollectionId]: {
+                sourceInfo: medianData[0].site_no,
+                variable: varsByCode[medianData[0].parameter_cd].oid,
+                name: tsCollectionId,
+                timeSeries: [
+                    ...((collection.timeSeriesCollections || {})[tsCollectionId] || []).timeSeries || [],
+                    tsId
+                ]
+            }
+        },
+        methods: {
+            ...collection.methods || {},
+            [tsId]: {
+                methodDescription: medianData[0].loc_web_ds,
+                methodID: tsId
+            }
+        },
+        requests: {
+            ...collection.requests || {},
+            median: {
+                timeSeriesCollections: collectionSet ? collectionSet.values() : []
+            }
+        }
     };
 }
 
@@ -202,7 +213,7 @@ export function parseMedianTimeseries(medianData, timeSeriesStartDateTime, timeS
  * @param timeSeriesUnits
  * @returns {object}
  */
-export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, timeSeriesUnits) {
+export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, variables) {
 
     // Organize median data by parameter code and timeseries id
     const dataByTimeseriesID = medianData.reduce(function (byTimeseriesID, d) {
@@ -211,19 +222,20 @@ export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesE
         return byTimeseriesID;
     }, {});
 
-    const timeSeries = [];
+    const varsByCode = Object.keys(variables).reduce((vars, varId) => {
+        const variable = variables[varId];
+        vars[variable.variableCode.value] = variable;
+        return vars;
+    }, {});
+
+    let collection = {};
     for (let tsID of Object.keys(dataByTimeseriesID)) {
         const rows = dataByTimeseriesID[tsID];
-        const unit = timeSeriesUnits[rows[0].parameter_cd];
-        timeSeries.push(parseMedianTimeseries(rows, timeSeriesStartDateTime, timeSeriesEndDateTime, unit));
+        collection = mergeMedianTimeseries(
+            collection, rows, timeSeriesStartDateTime, timeSeriesEndDateTime, varsByCode);
     }
 
-    // FIXME: For a quick hack, only show a single set of median data per parameter code.
-    // Later, return the complete `timeSeries` list.
-    return timeSeries.reduce(function (acc, series) {
-        acc[series.code] = series;
-        return acc;
-    }, {});
+    return collection;
 }
 
 export function getPreviousYearTimeseries({site, startTime, endTime}) {

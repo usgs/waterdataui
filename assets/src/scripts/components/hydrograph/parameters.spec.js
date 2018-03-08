@@ -1,114 +1,120 @@
 const { select } = require('d3-selection');
-const { availableTimeseriesSelector, addSparkLine } = require('./parameters');
+const { scaleLinear } = require('d3-scale');
+
+const { addSparkLine, availableTimeseriesSelector } = require('./parameters');
 
 
 describe('Parameters module', () => {
-
-    describe('availableTimeseriesSelector', () => {
-
-        it('returns ordered parameters', () => {
-            const available = availableTimeseriesSelector({
-                tsData: {
-                    current: {
-                        '00060': {},
-                        '00061': {},
-                        '00062': {}
-                    }
+    it('availableTimeseriesSelector sets attributes correctly', () => {
+        const available = availableTimeseriesSelector({
+            series: {
+                timeSeries: {
+                    'current:00060': {description: '00060', tsKey: 'current', variable: 'code0'},
+                    'current:00061': {description: '00061', tsKey: 'current', variable: 'code1'},
+                    'current:00062': {description: '00062', tsKey: 'current', variable: 'code2'},
+                    'compare:00061': {description: '00061', tsKey: 'compare', variable: 'code1'},
+                    'compare:00062': {description: '00062', tsKey: 'compare', variable: 'code2'},
+                    'compare:00063': {description: '00063', tsKey: 'compare', variable: 'code3'}
                 },
-                currentParameterCode: '00060'
-            });
-            expect(available.length).toBe(3);
-            expect(available[0][0]).toEqual('00060');
-            expect(available[1][0]).toEqual('00061');
-            expect(available[2][0]).toEqual('00062');
-        });
-
-        it('sets attributes correctly', () => {
-            const available = availableTimeseriesSelector({
-                tsData: {
-                    current: {
-                        '00060': {description: '00060', type: '00060type'},
-                        '00061': {description: '00061', type: '00061type'},
-                        '00062': {description: '00062', type: '00062type'}
+                variables: {
+                    'code0': {
+                        oid: 'code0',
+                        variableDescription: 'code0 desc',
+                        variableCode: {
+                            value: '00060'
+                        }
                     },
-                    compare: {
-                        '00061': {description: '00061', type: '00061type'},
-                        '00062': {description: '00062', type: '00062type'},
-                        '00063': {description: '00063', type: '00063type'}
+                    'code1': {
+                        oid: 'code1',
+                        variableDescription: 'code1 desc',
+                        variableCode: {
+                            value: '00061'
+                        }
+                    },
+                    'code2': {
+                        oid: 'code2',
+                        variableDescription: 'code2 desc',
+                        variableCode: {
+                            value: '00062'
+                        }
+                    },
+                    'code3': {
+                        oid: 'code3',
+                        variableDescription: 'code3 desc',
+                        variableCode: {
+                            value: '00063'
+                        }
                     }
-                },
-                currentParameterCode: '00060'
-            });
-            expect(available).toEqual([
-                ['00060', {description: '00060', type: '00060type', selected: true, currentYear: true, previousYear: false, medianData: false}],
-                ['00061', {description: '00061', type: '00061type', selected: false, currentYear: true, previousYear: true, medianData: false}],
-                ['00062', {description: '00062', type: '00062type', selected: false, currentYear: true, previousYear: true, medianData: false}],
-                ['00063', {description: '00063', type: '00063type', selected: false, currentYear: false, previousYear: true, medianData: false}]
-            ]);
+                }
+            },
+            currentVariableID: 'code0'
         });
+        // Series are ordered by parameter code and have expected values.
+        expect(available).toEqual([
+            ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeseriesCount: 1, compareTimeseriesCount: 0, medianTimeseriesCount: 0}],
+            ['00061', {variableID: 'code1', description: 'code1 desc', selected: false, currentTimeseriesCount: 1, compareTimeseriesCount: 1, medianTimeseriesCount: 0}],
+            ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1, compareTimeseriesCount: 1, medianTimeseriesCount: 0}],
+            ['00063', {variableID: 'code3', description: 'code3 desc', selected: false, currentTimeseriesCount: 0, compareTimeseriesCount: 1, medianTimeseriesCount: 0}]
+        ]);
     });
 
     describe('addSparkline', () => {
         let svg;
         const tsDataSingle = {
-            parmData: [
-                {time: new Date(2015, 1, 2), value: 16},
-                {time: new Date(2015, 1, 3), value: 17}
-            ],
-            lines: [
+            scales: {
+                x: scaleLinear(0, 100),
+                y: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3))
+            },
+            seriesLineSegments: [
                 {
                     classes: {approved: false, estimated: false, dataMask: null},
                     points: [
-                        {time: new Date(2015, 1, 2), value: 16},
-                        {time: new Date(2015, 1, 3), value: 17}
+                        {dateTime: new Date(2015, 1, 2), value: 16},
+                        {dateTime: new Date(2015, 1, 3), value: 17}
                     ]
                 }
             ]
         };
         const tsDataMasked = {
-            parmData: [
-                {time: new Date(2015, 1, 2), value: null},
-                {time: new Date(2015, 1, 3), value: null}
-            ],
-            lines: [
+            scales: {
+                x: scaleLinear(0, 100),
+                y: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3))
+            },
+            seriesLineSegments: [
                 {
                     classes: {approved: false, estimated: false, dataMask: 'ice'},
                     points: [
-                        {time: new Date(2015, 1, 2), value: null},
-                        {time: new Date(2015, 1, 3), value: null}
+                        {dateTime: new Date(2015, 1, 2), value: null},
+                        {dateTime: new Date(2015, 1, 3), value: null}
                     ]
                 }
             ]
         };
         const tsDataMixed = {
-            parmData: [
-                {time: new Date(2015, 1, 13), value: 84},
-                {time: new Date(2015, 1, 14), value: 91},
-                {time: new Date(2015, 1, 15), value: null},
-                {time: new Date(2015, 1, 16), value: null},
-                {time: new Date(2015, 1, 17), value: 77},
-                {time: new Date(2015, 1, 18), value: 85}
-            ],
-            lines: [
+            scales: {
+                x: scaleLinear(0, 100),
+                y: scaleLinear(new Date(2015, 1, 13), new Date(2015, 1, 18))
+            },
+            seriesLineSegments: [
                 {
                     classes: {approved: false, estimated: false, dataMask: null},
                     points: [
-                        {time: new Date(2015, 1, 13), value: 84},
-                        {time: new Date(2015, 1, 14), value: 91}
+                        {dateTime: new Date(2015, 1, 13), value: 84},
+                        {dateTime: new Date(2015, 1, 14), value: 91}
                     ]
                 },
                 {
                     classes: {approved: false, estimated: false, dataMask: 'ice'},
                     points: [
-                        {time: new Date(2015, 1, 15), value: null},
-                        {time: new Date(2015, 1, 16), value: null}
+                        {dateTime: new Date(2015, 1, 15), value: null},
+                        {dateTime: new Date(2015, 1, 16), value: null}
                     ]
                 },
                 {
                     classes: {approved: false, estimated: false, dataMask: null},
                     points: [
-                        {time: new Date(2015, 1, 17), value: 77},
-                        {time: new Date(2015, 1, 18), value: 85}
+                        {dateTime: new Date(2015, 1, 17), value: 77},
+                        {dateTime: new Date(2015, 1, 18), value: 85}
                     ]
                 }
             ]
@@ -119,17 +125,17 @@ describe('Parameters module', () => {
         });
 
         it('adds a path for a line', () => {
-            addSparkLine(svg, {tsData: tsDataSingle});
+            addSparkLine(svg, tsDataSingle);
             expect(svg.selectAll('path').size()).toEqual(1);
         });
 
         it('does not add a path for masked data', () => {
-            addSparkLine(svg, {tsData: tsDataMasked});
+            addSparkLine(svg, tsDataMasked);
             expect(svg.selectAll('path').size()).toEqual(0);
         });
 
         it('adds multiple paths if there are breaks in the data', () => {
-            addSparkLine(svg, {tsData: tsDataMixed});
+            addSparkLine(svg, tsDataMixed);
             expect(svg.selectAll('path').size()).toEqual(2);
         });
     });
