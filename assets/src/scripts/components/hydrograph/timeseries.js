@@ -82,8 +82,6 @@ export const methodsSelector = state => state.series.methods;
 /**
  * @return {Object}     Mapping of time series ID to time series details
  */
-// export const allTimeSeriesSelector = state => (state.series ? state.series.timeSeries : {}) || {};
-
 export const allTimeSeriesSelector = createSelector(
     state => state.series,
     (stateSeries) => {
