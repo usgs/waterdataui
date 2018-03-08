@@ -51,10 +51,10 @@ describe('Parameters module', () => {
         });
         // Series are ordered by parameter code and have expected values.
         expect(available).toEqual([
-            ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentYear: 1, previousYear: 0, medianData: 0}],
-            ['00061', {variableID: 'code1', description: 'code1 desc', selected: false, currentYear: 1, previousYear: 1, medianData: 0}],
-            ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentYear: 1, previousYear: 1, medianData: 0}],
-            ['00063', {variableID: 'code3', description: 'code3 desc', selected: false, currentYear: 0, previousYear: 1, medianData: 0}]
+            ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeseriesCount: 1, compareTimeseriesCount: 0, medianTimeseriesCount: 0}],
+            ['00061', {variableID: 'code1', description: 'code1 desc', selected: false, currentTimeseriesCount: 1, compareTimeseriesCount: 1, medianTimeseriesCount: 0}],
+            ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1, compareTimeseriesCount: 1, medianTimeseriesCount: 0}],
+            ['00063', {variableID: 'code3', description: 'code3 desc', selected: false, currentTimeseriesCount: 0, compareTimeseriesCount: 1, medianTimeseriesCount: 0}]
         ]);
     });
 

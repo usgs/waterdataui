@@ -29,11 +29,11 @@ export const availableTimeseriesSelector = createSelector(
                 variableID: variable.oid,
                 description: variable.variableDescription,
                 selected: currentVariableID === variableID,
-                currentYear: seriesList.filter(
+                currentTimeseriesCount: seriesList.filter(
                     ts => ts.tsKey === 'current' && ts.variable === variableID).length,
-                previousYear: seriesList.filter(
+                compareTimeseriesCount: seriesList.filter(
                     ts => ts.tsKey === 'compare' && ts.variable === variableID).length,
-                medianData: seriesList.filter(
+                medianTimeseriesCount: seriesList.filter(
                     ts => ts.tsKey === 'median' && ts.variable === variableID).length
             };
         }
@@ -132,18 +132,18 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
                 if (!screenSizeCheck) {
                     tr.append('td')
                         .html(parm => {
-                            const subScript = parm[1].currentYear > 1 ? `<sub>${parm[1].currentYear}</sub>` : '';
-                            return parm[1].currentYear ? `<i class="fa fa-check" aria-label="Current year data available"></i>${subScript}` : '';
+                            const subScript = parm[1].currentTimeseriesCount > 1 ? `<sub>${parm[1].currentTimeseriesCount}</sub>` : '';
+                            return parm[1].currentTimeseriesCount ? `<i class="fa fa-check" aria-label="Current year data available"></i>${subScript}` : '';
                         });
                     tr.append('td')
                         .html(parm => {
-                            const subScript = parm[1].previousYear > 1 ? `<sub>${parm[1].previousYear}</sub>` : '';
-                            return parm[1].previousYear ? `<i class="fa fa-check" aria-label="Previous year data available"></i>${subScript}` : '';
+                            const subScript = parm[1].compareTimeseriesCount > 1 ? `<sub>${parm[1].compareTimeseriesCount}</sub>` : '';
+                            return parm[1].compareTimeseriesCount ? `<i class="fa fa-check" aria-label="Previous year data available"></i>${subScript}` : '';
                         });
                     tr.append('td')
                         .html(parm => {
-                            const subScript = parm[1].medianData > 1 ? `<sub>${parm[1].medianData}</sub>` : '';
-                            return parm[1].medianData ? `<i class="fa fa-check" aria-label="Median data available"></i>${subScript}` : '';
+                            const subScript = parm[1].medianTimeseriesCount > 1 ? `<sub>${parm[1].medianTimeseriesCount}</sub>` : '';
+                            return parm[1].medianTimeseriesCount ? `<i class="fa fa-check" aria-label="Median data available"></i>${subScript}` : '';
                         });
                     }
                 tr.append('td')
@@ -177,11 +177,11 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
 
             let tableRow = tooltipTable.append('tr');
             tableRow.append('td')
-                .html(d => d[1].currentYear ? '<i class="fa fa-check" aria-label="Current year data available"></i>' : '');
+                .html(d => d[1].currentTimeseriesCount ? '<i class="fa fa-check" aria-label="Current year data available"></i>' : '');
             tableRow.append('td')
-                .html(d => d[1].previousYear ? '<i class="fa fa-check" aria-label="Previous year data available"></i>' : '');
+                .html(d => d[1].compareTimeseriesCount ? '<i class="fa fa-check" aria-label="Previous year data available"></i>' : '');
             tableRow.append('td')
-                .html(d => d[1].medianData ? '<i class="fa fa-check" aria-label="Median data available"></i>' : '');
+                .html(d => d[1].medianTimeseriesCount ? '<i class="fa fa-check" aria-label="Median data available"></i>' : '');
 
         });
     }
