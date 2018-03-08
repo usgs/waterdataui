@@ -208,12 +208,9 @@ describe('Hydrograph charting module', () => {
         });
 
         it('should render timeseries data as a line', () => {
-            // There is not a good way to validate that <path d="..."/>
-            // has the correct data, but we can validate that tooltips display
-            // at the correct location.
-
-            // First, confirm the chart line exists.
-            expect(selectAll('svg path.line').size()).toBe(2);
+            // There should be one segment per time-series. Each is a single
+            // point, so should be a circle.
+            expect(selectAll('svg .line-segment').size()).toBe(2);
         });
 
         it('should render a rectangle for masked data', () => {
@@ -250,12 +247,12 @@ describe('Hydrograph charting module', () => {
         });
 
         it('Should render two lines', () => {
-            expect(selectAll('svg path.line').size()).toBe(2);
+            expect(selectAll('svg .line-segment').size()).toBe(2);
         });
 
         it('Should remove one of the lines when removing the compare time series', () => {
             store.dispatch(Actions.toggleTimeseries('compare', false));
-            expect(selectAll('svg path.line').size()).toBe(1);
+            expect(selectAll('svg .line-segment').size()).toBe(1);
         });
 
         //TODO: Consider adding a test which checks that the y axis is rescaled by

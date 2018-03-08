@@ -3,14 +3,14 @@
  */
 const { select } = require('d3-selection');
 const { extent } = require('d3-array');
-const { line } = require('d3-shape');
+const { line: d3Line } = require('d3-shape');
 const { createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
 
 const { appendAxes, axesSelector } = require('./axes');
-const { MARGIN, CIRCLE_RADIUS, SPARK_LINE_DIM, layoutSelector } = require('./layout');
+const { MARGIN, CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
@@ -44,19 +44,31 @@ const plotDataLine = function (elem, {visible, lines, tsKey, xScale, yScale}) {
         return;
     }
 
-    const tsLine = line()
-        .x(d => xScale(d.dateTime))
-        .y(d => yScale(d.value));
-
     for (let line of lines) {
         if (line.classes.dataMask === null) {
-            elem.append('path')
-                .datum(line.points)
-                .classed('line', true)
-                .classed('approved', line.classes.approved)
-                .classed('estimated', line.classes.estimated)
-                .classed(`ts-${tsKey}`, true)
-                .attr('d', tsLine);
+            // If this is a single point line, then represent it as a circle.
+            // Otherwise, render as a line.
+            if (line.points.length === 1) {
+                elem.append('circle')
+                    .data(line.points)
+                    .classed('line-segment', true)
+                    .classed('approved', line.classes.approved)
+                    .classed('estimated', line.classes.estimated)
+                    .attr('r', CIRCLE_RADIUS_SINGLE_PT)
+                    .attr('cx', d => xScale(d.dateTime))
+                    .attr('cy', d => yScale(d.value));
+            } else {
+                const tsLine = d3Line()
+                    .x(d => xScale(d.dateTime))
+                    .y(d => yScale(d.value));
+                elem.append('path')
+                    .datum(line.points)
+                    .classed('line-segment', true)
+                    .classed('approved', line.classes.approved)
+                    .classed('estimated', line.classes.estimated)
+                    .classed(`ts-${tsKey}`, true)
+                    .attr('d', tsLine);
+            }
         } else {
             const maskCode = line.classes.dataMask.toLowerCase();
             const maskDisplayName = MASK_DESC[maskCode].replace(' ', '-').toLowerCase();
