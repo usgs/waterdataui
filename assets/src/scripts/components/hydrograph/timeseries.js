@@ -112,7 +112,6 @@ export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector
     collectionsSelector(tsKey),
     currentVariableSelector,
     (timeSeries, collections, variable) => {
-        console.log(timeSeries);
         return collections.filter(c => c.variable === variable.oid).reduce((series, collection) => {
             collection.timeSeries.forEach(sID => series[sID] = timeSeries[sID]);
             return series;
