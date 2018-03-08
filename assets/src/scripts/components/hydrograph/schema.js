@@ -17,10 +17,8 @@ const sourceInfo = new schema.Entity('sourceInfo', {
 }, {idAttribute: value => value.siteCode.map(s => s.value).join(':')});
 
 // variable schema
-//const variableCode = new schema.Entity('variableCodes', {}, {idAttribute: 'value'});
 const option = new schema.Entity('options', {}, {idAttribute: 'optionCode'});
 const variable = new schema.Entity('variables', {
-    //variableCode: variableCode,
     options: [option]
 }, {
     idAttribute: 'oid',
