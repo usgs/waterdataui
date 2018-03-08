@@ -65,7 +65,9 @@ export const Actions = {
             Promise.all([floodFeatures, floodExtent]).then((data) => {
                 const [features, extent] = data;
                 if (features.length > 0) {
-                    const stages = features.map((feature) => feature.attributes.STAGE).sort(function(a, b) {return a - b;});
+                    const stages = features.map((feature) => feature.attributes.STAGE).sort(function(a, b) {
+                        return a - b;
+                    });
                     displatch(Actions.setFloodFeatures(stages, extent.extent));
                 }
             });

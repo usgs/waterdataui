@@ -59,8 +59,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
                 map.removeLayer(breachLayer);
                 map.removeLayer(leveeLayer);
             }
-        }
-        else {
+        } else {
             if (!map.hasLayer(floodLayer)) {
                 map.addLayer(floodLayer);
                 map.addLayer(breachLayer);

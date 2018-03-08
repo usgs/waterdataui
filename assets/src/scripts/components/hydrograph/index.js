@@ -14,7 +14,7 @@ const { MARGIN, CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSe
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
-const { Actions, configureStore } = require('../../store');
+const { Actions } = require('../../store');
 const { currentVariableLineSegmentsSelector, currentVariableSelector, currentVariableTimeseries, pointsSelector,
     methodsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector,
     descriptionSelector, lineSegmentsByParmCdSelector, currentVariableTimeSeriesSelector, MASK_DESC, HASH_ID } = require('./timeseries');
