@@ -158,9 +158,7 @@ export const HASH_ID = {
 export const pointsSelector = memoize((tsKey) => createSelector(
     currentVariableTimeSeriesSelector(tsKey),
     (timeSeries) => {
-        return Object.values(timeSeries).map(series => {
-            return series.points ? series.points : [];
-        });
+        return Object.values(timeSeries).map(series => series.points ? series.points : []);
     }
 ));
 
