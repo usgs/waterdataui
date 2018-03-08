@@ -1,3 +1,5 @@
+import {allTimeSeriesSelector} from "./timeseries";
+
 const { createSelector } = require('reselect');
 const { line } = require('d3-shape');
 const { select } = require('d3-selection');
@@ -14,7 +16,7 @@ const { dispatch } = require('../../lib/redux');
  */
 export const availableTimeseriesSelector = createSelector(
     state => state.series.variables,
-    state => state.series.timeSeries,
+    allTimeSeriesSelector,
     state => state.currentVariableID,
     (variables, timeSeries, currentVariableID) => {
         if (!variables) {
