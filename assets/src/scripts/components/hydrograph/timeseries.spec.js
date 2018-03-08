@@ -290,22 +290,28 @@ describe('Timeseries module', () => {
                     },
                     timeSeries: {
                         one: {
-                            item: 'one'
+                            item: 'one',
+                            points: [1, 2]
                         },
                         two: {
-                            item: 'two'
+                            item: 'two',
+                            points: []
                         },
                         three: {
-                            item: 'three'
+                            item: 'three',
+                            points: [3, 4]
                         },
                         four: {
-                            item: 'four'
+                            item: 'four',
+                            points: [4, 5]
                         },
                         five: {
-                            item: 'five'
+                            item: 'five',
+                            points: [5, 6]
                         },
                         six: {
-                            item: 'six'
+                            item: 'six',
+                            points: [6, 7]
                         }
                     },
                     variables: {
@@ -320,10 +326,10 @@ describe('Timeseries module', () => {
                 },
                 currentVariableID: '45807197'
             })).toEqual({
-                one: {item: 'one'},
-                two: {item: 'two'},
-                three: {item: 'three'},
-                four: {item: 'four'}
+                one: {item: 'one', points: [1, 2]},
+                two: undefined,
+                three: {item: 'three', points: [3, 4]},
+                four: {item: 'four', points: [4, 5]}
             });
         });
     });
