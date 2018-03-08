@@ -44,7 +44,7 @@ function createAxes({xScale, yScale}, yTickSize) {
     const tickValues = yTickValues(yScale);
     // If all ticks are integers, don't display right of the decimal place.
     // Otherwise, format with two decimal points.
-    const tickFormat = tickValues.filter(t => !Number.isInteger(t)).length ? '.2f' : '.0f';
+    const tickFormat = tickValues.filter(t => !Number.isInteger(t)).length ? '.2f' : 'd';
     const yAxis = axisLeft()
         .scale(yScale)
         .tickValues(tickValues)
