@@ -85,7 +85,7 @@ table#select-timeseries {
                 font-weight: normal
             }
         }
-        .line, .point {
+        .line-segment {
             fill: none;
             stroke-width: 3px;
             stroke: $usgs-blue;
