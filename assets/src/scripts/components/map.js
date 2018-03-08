@@ -102,6 +102,15 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         })));
 };
 
+/*
+ * Creates the site map with node and attach it to the Redux store.
+ * @param {Object} store - Redux store
+ * @param {Object} node - DOM element
+ * @param {String} siteno
+ * @param {Number} latitude - latitude of siteno
+ * @param {Number} longitude - longitude of siteno
+ * @param {Number} zoom - zoom level to initially set the map to
+ */
 function attachToNode(store, node, {siteno, latitude, longitude, zoom}) {
 
     store.dispatch(Actions.retrieveFloodData(siteno));
@@ -110,6 +119,5 @@ function attachToNode(store, node, {siteno, latitude, longitude, zoom}) {
         .call(provide(store))
         .call(siteMap, {siteno, latitude, longitude, zoom});
 }
-
 
 module.exports = {attachToNode};

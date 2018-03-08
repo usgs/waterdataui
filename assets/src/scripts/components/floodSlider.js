@@ -45,6 +45,11 @@ const floodSlider = function(node) {
     })));
 };
 
+/*
+ * Creates flood slider within node and attach it to the Redux store
+ * @param {Object} store - Redux store
+ * @param {Object} node - DOM element
+ */
 const attachToNode = function(store, node) {
     select(node)
         .call(provide(store))
