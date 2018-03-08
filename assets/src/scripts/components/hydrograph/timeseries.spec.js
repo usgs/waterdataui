@@ -1,5 +1,5 @@
 const { collectionsSelector, lineSegmentsSelector, pointsSelector, requestSelector,
-    currentVariableTimeSeriesSelector, pointsTableDataSelector } = require('./timeseries');
+    currentVariableTimeSeriesSelector, pointsTableDataSelector, allTimeSeriesSelector } = require('./timeseries');
 
 
 const TEST_DATA = {
@@ -46,6 +46,51 @@ const TEST_DATA = {
 };
 
 describe('Timeseries module', () => {
+
+    describe('all time series selector', () => {
+
+        it('should return all timeseries if they have data points', () => {
+            expect(allTimeSeriesSelector({
+                series: {
+                    timeSeries: {
+                        '00010': {
+                            points: [1, 2, 3, 4]
+                        },
+                        '00095': {
+                            points: [8, 9, 10, 11]
+                        }
+                    }
+                }
+            })).toEqual({
+                '00010': {
+                    points: [1, 2, 3, 4]
+                },
+                '00095': {
+                    points: [8, 9, 10, 11]
+                }
+            });
+        });
+
+        it('should exclude timeseries if they do not have data points', () => {
+            expect(allTimeSeriesSelector({
+                series: {
+                    timeSeries: {
+                        '00010': {
+                            points: [1, 2, 3, 4]
+                        },
+                        '00095': {
+                            points: []
+                        }
+                    }
+                }
+            })).toEqual({
+                '00010': {
+                    points: [1, 2, 3, 4]
+                }
+            });
+        });
+    });
+
     describe('line segment selector', () => {
         it('should separate on approved', () => {
             expect(lineSegmentsSelector('current')({
