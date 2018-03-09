@@ -2,7 +2,7 @@
 Application configuration settings.
 """
 
-#pylint: disable=line-too-long
+# pylint: disable=line-too-long
 
 import logging
 import os
