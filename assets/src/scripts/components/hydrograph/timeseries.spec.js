@@ -1,5 +1,5 @@
 const { collectionsSelector, lineSegmentsSelector, pointsSelector, requestSelector,
-    currentVariableTimeSeriesSelector, pointsTableDataSelector, MAX_LINE_POINT_GAP } = require('./timeseries');
+    currentVariableTimeSeriesSelector, pointsTableDataSelector, allTimeSeriesSelector, MAX_LINE_POINT_GAP } = require('./timeseries');
 
 
 const TEST_DATA = {
@@ -46,6 +46,51 @@ const TEST_DATA = {
 };
 
 describe('Timeseries module', () => {
+
+    describe('all time series selector', () => {
+
+        it('should return all timeseries if they have data points', () => {
+            expect(allTimeSeriesSelector({
+                series: {
+                    timeSeries: {
+                        '00010': {
+                            points: [1, 2, 3, 4]
+                        },
+                        '00095': {
+                            points: [8, 9, 10, 11]
+                        }
+                    }
+                }
+            })).toEqual({
+                '00010': {
+                    points: [1, 2, 3, 4]
+                },
+                '00095': {
+                    points: [8, 9, 10, 11]
+                }
+            });
+        });
+
+        it('should exclude timeseries if they do not have data points', () => {
+            expect(allTimeSeriesSelector({
+                series: {
+                    timeSeries: {
+                        '00010': {
+                            points: [1, 2, 3, 4]
+                        },
+                        '00095': {
+                            points: []
+                        }
+                    }
+                }
+            })).toEqual({
+                '00010': {
+                    points: [1, 2, 3, 4]
+                }
+            });
+        });
+    });
+
     describe('line segment selector', () => {
         it('should separate on approved', () => {
             expect(lineSegmentsSelector('current')({
@@ -422,22 +467,28 @@ describe('Timeseries module', () => {
                     },
                     timeSeries: {
                         one: {
-                            item: 'one'
+                            item: 'one',
+                            points: [1, 2]
                         },
                         two: {
-                            item: 'two'
+                            item: 'two',
+                            points: []
                         },
                         three: {
-                            item: 'three'
+                            item: 'three',
+                            points: [3, 4]
                         },
                         four: {
-                            item: 'four'
+                            item: 'four',
+                            points: [4, 5]
                         },
                         five: {
-                            item: 'five'
+                            item: 'five',
+                            points: [5, 6]
                         },
                         six: {
-                            item: 'six'
+                            item: 'six',
+                            points: [6, 7]
                         }
                     },
                     variables: {
@@ -452,10 +503,10 @@ describe('Timeseries module', () => {
                 },
                 currentVariableID: '45807197'
             })).toEqual({
-                one: {item: 'one'},
-                two: {item: 'two'},
-                three: {item: 'three'},
-                four: {item: 'four'}
+                one: {item: 'one', points: [1, 2]},
+                two: undefined,
+                three: {item: 'three', points: [3, 4]},
+                four: {item: 'four', points: [4, 5]}
             });
         });
     });
