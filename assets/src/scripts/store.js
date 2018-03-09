@@ -59,7 +59,7 @@ export const Actions = {
         };
     },
     retrieveFloodData(siteno) {
-        return function(displatch) {
+        return function(dispatch) {
             const floodFeatures = fetchFloodFeatures(siteno);
             const floodExtent = fetchFloodExtent(siteno);
             Promise.all([floodFeatures, floodExtent]).then((data) => {
@@ -68,7 +68,7 @@ export const Actions = {
                     const stages = features.map((feature) => feature.attributes.STAGE).sort(function(a, b) {
                         return a - b;
                     });
-                    displatch(Actions.setFloodFeatures(stages, extent.extent));
+                    dispatch(Actions.setFloodFeatures(stages, extent.extent));
                 }
             });
         };
