@@ -389,10 +389,14 @@ fdescribe('Timeseries module', () => {
                     },
                     timeSeries: {
                         one: {
-                            points: ['ptOne', 'ptTwo', 'ptThree']
+                            points: ['ptOne', 'ptTwo', 'ptThree'],
+                            tsKey: 'current',
+                            variable: 45807197
                         },
                         two: {
-                            points: ['ptOne2', 'ptTwo2', 'ptThree2']
+                            points: ['ptOne2', 'ptTwo2', 'ptThree2'],
+                            tsKey: 'current',
+                            variable: 45807197
                         }
                     },
                     variables: {
