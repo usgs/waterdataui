@@ -4,12 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
+
+## [0.3.0] - 2018-03-09
 ### Added
 - Sparklines added to "Select a timeseries" table.
-- Link at bottom of monitoring location page to USGS contact form.
+- Ability to show multiple time series for a parameter code.
+- Link to page to provide feedback.
+- For sites that have flood inundation mapping information, show the flood inundation
+layers with a slider to control the gage height.
 
 ### Changed
-- Timeseries select table correctly shows if last year's data is available.
+- Time series graph legend was simplified. Current year, previous year, and median are 
+shown on separate lines and doesn't dynamically shift position as the window is resized.
+- Data gaps of more than 72 minutes are shown.
+- Only IV data is shown in the select a time series list.
 
 ## [0.2.0] - 2018-02-23
 ### Added
@@ -57,6 +65,7 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.2.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.3.0...master
+[0.3.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.2.0...waterdataui-0.3.0
 [0.2.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.1.0...waterdataui-0.2.0
 [0.1.0]: https://github.com/usgs/waterdataui/tree/waterdataui-0.1.0
