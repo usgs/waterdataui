@@ -270,11 +270,13 @@ describe('Hydrograph tooltip module', () => {
                         ...testState.series.timeSeries,
                         '00060:current': {
                             points: currentTsData,
-                            tsKey: 'current'
+                            tsKey: 'current',
+                            variable: '00060id'
                         },
                         '00060:compare': {
                             points: compareTsData,
-                            tsKey: 'compare'
+                            tsKey: 'compare',
+                            variable: '00060id'
                         }
                     }
                 },
