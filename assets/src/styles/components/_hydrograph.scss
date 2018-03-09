@@ -108,7 +108,10 @@ table#select-timeseries {
         .y-axis {
             text {
                 fill: black;
-                text-anchor: middle;
+                text-anchor: left;
+                &.y-axis-label {
+                    text-anchor: middle;
+                }
             }
             .tick {
                 line {

@@ -36,6 +36,10 @@ describe('Chart axes', () => {
 
     it('axes appended', () => {
         // Should be translated
-        expect(svg.select('.y-axis-label').text()).toEqual('Label title');
+        let tspans = [];
+        svg.select('.y-axis-label').selectAll('tspan').each(function () {
+            tspans.push(this.textContent);
+        });
+        expect(tspans.join(' ')).toEqual('Label title');
     });
 });
