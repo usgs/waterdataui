@@ -1,5 +1,5 @@
-const { lineSegmentsSelector, pointsSelector, currentVariableTimeSeriesSelector,
-    pointsTableDataSelector, allTimeSeriesSelector } = require('./timeseries');
+const { lineSegmentsSelector, pointsSelector,
+    currentVariableTimeSeriesSelector, pointsTableDataSelector, allTimeSeriesSelector, MAX_LINE_POINT_GAP } = require('./timeseries');
 
 
 const TEST_DATA = {
@@ -289,6 +289,138 @@ fdescribe('Timeseries module', () => {
                         ]
                     }
                 ]});
+        });
+
+        it('should separate on gaps greater than MAX_LINE_POINT_GAP', () => {
+            const dates = [
+                new Date(0),
+                new Date(MAX_LINE_POINT_GAP - 1),
+                new Date(MAX_LINE_POINT_GAP),
+                new Date(2 * MAX_LINE_POINT_GAP),
+                new Date(3 * MAX_LINE_POINT_GAP + 1),
+                new Date(3 * MAX_LINE_POINT_GAP + 2)
+            ];
+            expect(lineSegmentsSelector('current')({
+                ...TEST_DATA,
+                series: {
+                    ...TEST_DATA.series,
+                    timeSeries: {
+                        ...TEST_DATA.series.timeSeries,
+                        '00060': {
+                            points: dates.map(d => {
+                                return {
+                                    value: 10,
+                                    dateTime: d,
+                                    qualifiers: ['P']
+                                };
+                            })
+                        }
+                    }
+                }
+            })).toEqual({
+                '00060': [{
+                    'classes': {
+                        'approved': false,
+                        'estimated': false,
+                        'dataMask': null
+                    },
+                    'points': [{
+                            'value': 10,
+                            'dateTime': dates[0],
+                            'qualifiers': ['P']
+                        }, {
+                            'value': 10,
+                            'dateTime': dates[1],
+                            'qualifiers': ['P']
+                        }, {
+                            'value': 10,
+                            'dateTime': dates[2],
+                            'qualifiers': ['P']
+                        }, {
+                            'value': 10,
+                            'dateTime': dates[3],
+                            'qualifiers': ['P']
+                        }
+                    ]
+                }, {
+                    'classes': {
+                        'approved': false,
+                        'estimated': false,
+                        'dataMask': null
+                    },
+                    'points': [{
+                        'value': 10,
+                        'dateTime': dates[4],
+                        'qualifiers': ['P']
+                    }, {
+                        'value': 10,
+                        'dateTime': dates[5],
+                        'qualifiers': ['P']
+                    }]
+                }]
+            });
+        });
+
+        it('should not separate on gaps greater than MAX_LINE_POINT_GAP if points masked', () => {
+            const dates = [
+                new Date(0),
+                new Date(MAX_LINE_POINT_GAP - 1),
+                new Date(MAX_LINE_POINT_GAP),
+                new Date(2 * MAX_LINE_POINT_GAP),
+                new Date(3 * MAX_LINE_POINT_GAP + 1),
+                new Date(3 * MAX_LINE_POINT_GAP + 2)
+            ];
+            expect(lineSegmentsSelector('current')({
+                ...TEST_DATA,
+                series: {
+                    ...TEST_DATA.series,
+                    timeSeries: {
+                        ...TEST_DATA.series.timeSeries,
+                        '00060': {
+                            points: dates.map(d => {
+                                return {
+                                    value: null,
+                                    dateTime: d,
+                                    qualifiers: ['Ice']
+                                };
+                            })
+                        }
+                    }
+                }
+            })).toEqual({
+                '00060': [{
+                    'classes': {
+                        'approved': false,
+                        'estimated': false,
+                        'dataMask': 'ice'
+                    },
+                    'points': [{
+                        'value': null,
+                        'dateTime': dates[0],
+                        'qualifiers': ['Ice']
+                    }, {
+                        'value': null,
+                        'dateTime': dates[1],
+                        'qualifiers': ['Ice']
+                    }, {
+                        'value': null,
+                        'dateTime': dates[2],
+                        'qualifiers': ['Ice']
+                    }, {
+                        'value': null,
+                        'dateTime': dates[3],
+                        'qualifiers': ['Ice']
+                    }, {
+                        'value': null,
+                        'dateTime': dates[4],
+                        'qualifiers': ['Ice']
+                    }, {
+                        'value': null,
+                        'dateTime': dates[5],
+                        'qualifiers': ['Ice']
+                    }]
+                }]
+            });
         });
     });
 

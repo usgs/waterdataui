@@ -79,7 +79,7 @@ describe('Legend module', () => {
                 [{
                     type: lineMarker,
                     domId: 'ts-legend-current',
-                    domClass: 'line',
+                    domClass: 'line-segment',
                     text: 'Current Year',
                     groupId: 'current-year-line-marker'
                 }, {

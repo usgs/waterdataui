@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - Sparklines added to "Select a timeseries" table.
+- Link at bottom of monitoring location page to USGS contact form.
+
+### Changed
+- Timeseries select table correctly shows if last year's data is available.
 
 ## [0.2.0] - 2018-02-23
 ### Added
