@@ -21,10 +21,14 @@ describe('Hydrograph tooltip module', () => {
         series: {
             timeSeries: {
                 '00060:current': {
-                    points: data
+                    points: data,
+                    tsKey: 'current',
+                    variable: '00060id'
                 },
                 '00060:compare': {
-                    points: data
+                    points: data,
+                    tsKey: 'compare',
+                    variable: '00060id'
                 }
             },
             timeSeriesCollections: {
@@ -265,10 +269,12 @@ describe('Hydrograph tooltip module', () => {
                     timeSeries: {
                         ...testState.series.timeSeries,
                         '00060:current': {
-                            points: currentTsData
+                            points: currentTsData,
+                            tsKey: 'current'
                         },
                         '00060:compare': {
-                            points: compareTsData
+                            points: compareTsData,
+                            tsKey: 'compare'
                         }
                     }
                 },
@@ -303,10 +309,14 @@ describe('Hydrograph tooltip module', () => {
                     timeSeries: {
                         ...testState.series.timeSeries,
                         '00060:current': {
-                            points: currentTsData
+                            points: currentTsData,
+                            tsKey: 'current',
+                            variable: '00060id'
                         },
                         '00060:compare': {
-                            points: compareTsData
+                            points: compareTsData,
+                            tsKey: 'compare',
+                            variable: '00060id'
                         }
                     }
                 },

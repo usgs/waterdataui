@@ -45,7 +45,7 @@ const TEST_DATA = {
     currentVariableID: '45807197'
 };
 
-fdescribe('Timeseries module', () => {
+describe('Timeseries module', () => {
 
     describe('all time series selector', () => {
 
@@ -109,7 +109,8 @@ fdescribe('Timeseries module', () => {
                             }, {
                                 value: 10,
                                 qualifiers: ['A']
-                            }]
+                            }],
+                            tsKey: 'current'
                         }
                     }
                 }
@@ -170,7 +171,8 @@ fdescribe('Timeseries module', () => {
                             }, {
                                 value: 10,
                                 qualifiers: ['P', 'E']
-                            }]
+                            }],
+                            tsKey: 'current'
                         }
                     }
                 }
@@ -235,7 +237,8 @@ fdescribe('Timeseries module', () => {
                             }, {
                                 value: null,
                                 qualifiers: ['P', 'FLD']
-                            }]
+                            }],
+                            tsKey: 'current'
                         }
                     }
                 }
@@ -313,7 +316,8 @@ fdescribe('Timeseries module', () => {
                                     dateTime: d,
                                     qualifiers: ['P']
                                 };
-                            })
+                            }),
+                            tsKey: 'current'
                         }
                     }
                 }
@@ -383,7 +387,8 @@ fdescribe('Timeseries module', () => {
                                     dateTime: d,
                                     qualifiers: ['Ice']
                                 };
-                            })
+                            }),
+                            tsKey: 'current'
                         }
                     }
                 }
