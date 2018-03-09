@@ -139,6 +139,8 @@ describe('Legend module', () => {
                             endTime: new Date('2012-10-10'),
                             method: 'methodID',
                             points: [1, 2, 3],
+                            tsKey: 'median',
+                            variable: '00060ID',
                             metadata: {
                                 beginYear: '2010',
                                 endYear: '2012'
