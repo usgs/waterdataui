@@ -2,6 +2,7 @@ const { createSelector } = require('reselect');
 const { line } = require('d3-shape');
 const { select } = require('d3-selection');
 
+const { allTimeSeriesSelector } = require('./timeseries');
 const { Actions } = require('../../store');
 const { SPARK_LINE_DIM, SMALL_SCREEN_WIDTH } = require('./layout');
 const { dispatch } = require('../../lib/redux');
@@ -14,7 +15,7 @@ const { dispatch } = require('../../lib/redux');
  */
 export const availableTimeseriesSelector = createSelector(
     state => state.series.variables,
-    state => state.series.timeSeries,
+    allTimeSeriesSelector,
     state => state.currentVariableID,
     (variables, timeSeries, currentVariableID) => {
         if (!variables) {
