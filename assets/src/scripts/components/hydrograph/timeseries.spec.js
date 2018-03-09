@@ -1,5 +1,5 @@
-const { collectionsSelector, lineSegmentsSelector, pointsSelector, requestSelector,
-    currentVariableTimeSeriesSelector, pointsTableDataSelector, allTimeSeriesSelector } = require('./timeseries');
+const { lineSegmentsSelector, pointsSelector, currentVariableTimeSeriesSelector,
+    pointsTableDataSelector, allTimeSeriesSelector } = require('./timeseries');
 
 
 const TEST_DATA = {
@@ -45,7 +45,7 @@ const TEST_DATA = {
     currentVariableID: '45807197'
 };
 
-describe('Timeseries module', () => {
+fdescribe('Timeseries module', () => {
 
     describe('all time series selector', () => {
 
@@ -292,24 +292,6 @@ describe('Timeseries module', () => {
         });
     });
 
-    describe('collectionsSelector', () => {
-        it('works', () => {
-            expect(collectionsSelector('current')({
-                series: {
-                    requests: {
-                        current: {
-                            timeSeriesCollections: ['coll1', 'coll2']
-                        }
-                    },
-                    timeSeriesCollections: {
-                        'coll1': 1,
-                        'coll2': 2
-                    }
-                }
-            })).toEqual([1, 2]);
-        });
-    });
-
     describe('currentVariableTimeSeriesSelector', () => {
         it('works', () => {
             expect(currentVariableTimeSeriesSelector('current')({
@@ -336,27 +318,39 @@ describe('Timeseries module', () => {
                     timeSeries: {
                         one: {
                             item: 'one',
-                            points: [1, 2]
+                            points: [1, 2],
+                            tsKey: 'current',
+                            variable: 45807197
                         },
                         two: {
                             item: 'two',
-                            points: []
+                            points: [],
+                            tsKey: 'current',
+                            variable: 45807197
                         },
                         three: {
                             item: 'three',
-                            points: [3, 4]
+                            points: [3, 4],
+                            tsKey: 'current',
+                            variable: 45807197
                         },
                         four: {
                             item: 'four',
-                            points: [4, 5]
+                            points: [4, 5],
+                            tsKey: 'current',
+                            variable: 45807197
                         },
                         five: {
                             item: 'five',
-                            points: [5, 6]
+                            points: [5, 6],
+                            tsKey: 'compare',
+                            variable: 45807190
                         },
                         six: {
                             item: 'six',
-                            points: [6, 7]
+                            points: [6, 7],
+                            tsKey: 'compare',
+                            variable: 45807190
                         }
                     },
                     variables: {
@@ -371,31 +365,10 @@ describe('Timeseries module', () => {
                 },
                 currentVariableID: '45807197'
             })).toEqual({
-                one: {item: 'one', points: [1, 2]},
-                two: undefined,
-                three: {item: 'three', points: [3, 4]},
-                four: {item: 'four', points: [4, 5]}
+                one: {item: 'one', points: [1, 2], tsKey: 'current', variable: 45807197},
+                three: {item: 'three', points: [3, 4], tsKey: 'current', variable: 45807197},
+                four: {item: 'four', points: [4, 5], tsKey: 'current', variable: 45807197}
             });
-        });
-    });
-
-    describe('requestSelector', () => {
-        it('works', () => {
-            expect(requestSelector('current')({
-                series: {
-                    requests: {
-                        current: 'current request object'
-                    }
-                }
-            })).toEqual('current request object');
-            expect(requestSelector('current')({series: {}})).toEqual(null);
-            expect(requestSelector('notCurrent')({
-                series: {
-                    requests: {
-                        current: 'current request object'
-                    }
-                }
-            })).toEqual(null);
         });
     });
 
