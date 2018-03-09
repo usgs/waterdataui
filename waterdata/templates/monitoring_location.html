@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% import 'macros/components.html' as components %}
+
 {% block page_script %}
     {% if json_ld %}
     <script type="application/ld+json">
@@ -46,12 +48,7 @@
                     <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?cb_00060=on&format=gif_mult_parms&site_no={{ stations[0].site_no }}&period=7" target="_blank">Interactive grapher</a></li>
                     <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?format=img_default&site_no={{ stations[0].site_no }}&period=7" target="_blank">Presentation Charts</a></li>
                 </ul>
-                <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ stations[0].site_no }}">
-                    <div class="compare-container" data-siteno="{{ stations[0].site_no}}">
-                        <input ga-on="click" ga-event-category="TimeseriesGraph" ga-event-action="toggleCompare" id="show-last-year-input" class="hydrograph-last-year-input" type="checkbox" value="show-last_year" />
-                        <label for="show-last-year-input">Show last year</label>
-                    </div>
-                </div>
+                {{ components.TimeseriesComponent(stations[0].site_no) }}
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
                     <div class="wdfn-component" data-component="floodSlider"></div>
                     <div class="wdfn-component" data-component="map" data-siteno="{{ stations[0].site_no }}", data-latitude="{{ stations[0].dec_lat_va }}" data-longitude="{{ stations[0].dec_long_va }}" data-zoom=12>

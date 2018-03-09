@@ -21,6 +21,11 @@ def home():
     return render_template('index.html', version=__version__)
 
 
+@app.route('/monitoring-location/<site_no>/embed', methods=['GET'])
+def monitoring_location_embed(site_no):
+    return render_template('monitoring_location_embed.html', site_no=site_no)
+
+
 @app.route('/monitoring-location/<site_no>', methods=['GET'])
 def monitoring_location(site_no):
     """
