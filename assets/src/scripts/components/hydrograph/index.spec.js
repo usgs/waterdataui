@@ -2,7 +2,7 @@ const { select, selectAll } = require('d3-selection');
 const { provide } = require('../../lib/redux');
 
 const { attachToNode, timeSeriesGraph, timeSeriesLegend } = require('./index');
-const { Actions, configureStore } = require('./store');
+const { Actions, configureStore } = require('../../store');
 
 
 const TEST_STATE = {
@@ -113,7 +113,7 @@ describe('Hydrograph charting module', () => {
     });
 
     it('empty graph displays warning', () => {
-        attachToNode(graphNode, {});
+        attachToNode({}, graphNode, {});
         expect(graphNode.innerHTML).toContain('No data is available');
     });
 

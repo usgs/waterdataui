@@ -1,7 +1,7 @@
 const memoize = require('fast-memoize');
 const { normalize: normalizr, schema } = require('normalizr');
 
-const { replaceHtmlEntities } = require('../../utils');
+const { replaceHtmlEntities } = require('./utils');
 
 
 // sourceInfo schema

@@ -3,7 +3,7 @@ const { line } = require('d3-shape');
 const { select } = require('d3-selection');
 
 const { allTimeSeriesSelector } = require('./timeseries');
-const { Actions } = require('./store');
+const { Actions } = require('../../store');
 const { SPARK_LINE_DIM, SMALL_SCREEN_WIDTH } = require('./layout');
 const { dispatch } = require('../../lib/redux');
 

@@ -3,8 +3,10 @@ const { applyMiddleware, createStore, compose } = require('redux');
 const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
-    parseMedianData } = require('../../models');
+    parseMedianData } = require('./models');
 const { normalize } = require('./schema');
+const { fetchFloodFeatures, fetchFloodExtent } = require('./floodData');
+
 
 
 export const Actions = {
@@ -56,6 +58,28 @@ export const Actions = {
             );
         };
     },
+    retrieveFloodData(siteno) {
+        return function(dispatch) {
+            const floodFeatures = fetchFloodFeatures(siteno);
+            const floodExtent = fetchFloodExtent(siteno);
+            Promise.all([floodFeatures, floodExtent]).then((data) => {
+                const [features, extent] = data;
+                if (features.length > 0) {
+                    const stages = features.map((feature) => feature.attributes.STAGE).sort(function(a, b) {
+                        return a - b;
+                    });
+                    dispatch(Actions.setFloodFeatures(stages, extent.extent));
+                }
+            });
+        };
+    },
+    setFloodFeatures(stages, extent) {
+        return {
+            type: 'SET_FLOOD_FEATURES',
+            stages,
+            extent
+        };
+    },
     toggleTimeseries(key, show) {
         return {
             type: 'TOGGLE_TIMESERIES',
@@ -103,6 +127,12 @@ export const Actions = {
             parameterCode,
             variableID
         };
+    },
+    setGageHeight(gageHeightIndex) {
+        return {
+            type: 'SET_GAGE_HEIGHT',
+            gageHeightIndex
+        };
     }
 };
 
@@ -110,6 +140,13 @@ export const Actions = {
 export const timeSeriesReducer = function (state={}, action) {
     let newState;
     switch (action.type) {
+        case 'SET_FLOOD_FEATURES':
+            return {
+                ...state,
+                floodStages: action.stages,
+                floodExtent: action.extent,
+                gageHeight: action.stages.length > 0 ? action.stages[0] : null
+            };
         case 'ADD_TIMESERIES_COLLECTION':
             return {
                 ...state,
@@ -187,6 +224,12 @@ export const timeSeriesReducer = function (state={}, action) {
                 currentVariableID: action.variableID
             };
 
+        case 'SET_GAGE_HEIGHT':
+            return {
+                ...state,
+                gageHeight: state.floodStages[action.gageHeightIndex]
+            };
+
         default:
             return state;
     }
@@ -216,6 +259,9 @@ export const configureStore = function (initialState) {
             current: null,
             compare: null
         },
+        floodStages: [],
+        floodExtent: {},
+        gageHeight: null,
         ...initialState
     };
 

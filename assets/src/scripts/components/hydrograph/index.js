@@ -14,7 +14,7 @@ const { MARGIN, CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSe
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
-const { Actions, configureStore } = require('./store');
+const { Actions } = require('../../store');
 const { currentVariableLineSegmentsSelector, currentVariableSelector, currentVariableTimeseries, pointsSelector,
     methodsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector,
     descriptionSelector, lineSegmentsByParmCdSelector, currentVariableTimeSeriesSelector, MASK_DESC, HASH_ID } = require('./timeseries');
@@ -348,17 +348,13 @@ const timeSeriesGraph = function (elem) {
 };
 
 
-const attachToNode = function (node, {siteno} = {}) {
+const attachToNode = function (store, node, {siteno} = {}) {
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
     }
 
-    let store = configureStore({
-        windowWidth: window.innerWidth,
-        width: node.offsetWidth
-    });
-
+    store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
         .call(provide(store))
         .call(timeSeriesGraph)

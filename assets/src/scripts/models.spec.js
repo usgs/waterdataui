@@ -110,7 +110,6 @@ describe('Models module', () => {
                 // This returns the JSON version of the mocked response, so
                 // just do a sanity check on an attribute.
                 expect(series.name).toBe('ns1:timeSeriesResponseType');
-                done();
             });
         });
     });
@@ -129,7 +128,7 @@ describe('Models module', () => {
         });
 
         it('parseRDB handles no headers', () => {
-           let result = parseRDB(`#Some Stuff`);
+           let result = parseRDB('#Some Stuff');
            expect(result.length).toEqual(0);
         });
     });
@@ -294,7 +293,6 @@ describe('Models module', () => {
         });
     });
 });
-
 
 const MOCK_LAST_YEAR_DATA = `
 {"name" : "ns1:timeSeriesResponseType",
