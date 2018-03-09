@@ -38,7 +38,7 @@
                 </table>
 
             {% else %}
-                <h1>Station Name: {{ stations[0].station_nm }}</h1>
+                <h1>{{ stations[0].station_nm }}</h1>
                 {% include 'partials/social_share.html' %}
 
                 <ul>
@@ -52,7 +52,11 @@
                         <label for="show-last-year-input">Show last year</label>
                     </div>
                 </div>
-                {% if stations[0].dec_lat_va and stations[0].dec_long_va %}<div class="wdfn-component" data-component="map" data-latitude="{{ stations[0].dec_lat_va }}" data-longitude="{{ stations[0].dec_long_va }}" data-zoom=8></div>{% endif %}
+                {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
+                    <div class="wdfn-component" data-component="floodSlider"></div>
+                    <div class="wdfn-component" data-component="map" data-siteno="{{ stations[0].site_no }}", data-latitude="{{ stations[0].dec_lat_va }}" data-longitude="{{ stations[0].dec_long_va }}" data-zoom=12>
+                    </div>
+                {% endif %}
 
                 {% if site_dataseries %}
                     <ul class="usa-accordion">

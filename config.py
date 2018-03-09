@@ -2,6 +2,8 @@
 Application configuration settings.
 """
 
+# pylint: disable=line-too-long
+
 import logging
 import os
 
@@ -15,6 +17,10 @@ NWIS_ENDPOINTS = {
     'INVENTORY': 'https://waterdata.usgs.gov/nwis/inventory',
     'UV': 'https://waterdata.usgs.gov/nwis/uv'
 }
+
+FIM_GIS_ENDPOINT = 'https://gis.wim.usgs.gov/arcgis/rest/services/FIMMapper/'
+FIM_ENDPOINT = 'https://fim.wim.usgs.gov/fim/'
+HYDRO_ENDPOINT = 'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Esri_Hydro_Reference_Overlay/MapServer'
 
 LOGGING_ENABLED = True
 LOGGING_DIRECTORY = None

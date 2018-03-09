@@ -13,13 +13,17 @@ $usgs-blue: #02274B;
 @import './partials/social_share';
 @import './partials/tooltip';
 
-
 .wdfn-component {
     &[data-component='hydrograph'] {
         @import './components/hydrograph';
     }
     &[data-component='map'] {
         @import './components/map';
+        margin-bottom: 1em;
+    }
+    &[data-component='floodSlider'] {
+        @import './components/floodSlider';
+        margin-bottom: 1em;
     }
 }
 

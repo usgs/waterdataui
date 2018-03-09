@@ -3,7 +3,7 @@ const { select } = require('d3-selection');
 
 const { provide } = require('../../lib/redux');
 
-const { Actions, configureStore } = require('./store');
+const { Actions, configureStore } = require('../../store');
 const { getNearestTime, tooltipFocusTimeSelector, tsDatumSelector,
     createTooltipText, createTooltipFocus } = require('./tooltip');
 
