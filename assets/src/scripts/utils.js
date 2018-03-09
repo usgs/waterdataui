@@ -75,48 +75,67 @@ export function setEquality(set1, set2) {
     return sizeEqual && itemsEqual;
 }
 
+
+const TEXT_WRAP_LINE_HEIGHT = 1.1;  // ems
+const TEXT_WRAP_BREAK_CHARS = ['/', '&', '-'];
+
 /**
  * Wrap long svg text labels into multiple lines.
- * From: https://bl.ocks.org/ericsoco/647db6ebadd4f4756cae
+ * Based on: https://bl.ocks.org/ericsoco/647db6ebadd4f4756cae
  * @param  {String} text
  * @param  {Number} width
  */
 export function wrap(text, width) {
-    text.each(function() {
-        var breakChars = ['/', '&', '-'],
-            text = select(this),
-            textContent = text.text(),
-            spanContent;
+    text.each(function () {
+        const elem = select(this);
 
-        breakChars.forEach(char => {
-            // Add a space after each break char for the function to use to determine line breaks
+        // To determine line breaks, add a space after each break character
+        let textContent = elem.text();
+        TEXT_WRAP_BREAK_CHARS.forEach(char => {
             textContent = textContent.replace(char, char + ' ');
         });
 
-        var words = textContent.split(/\s+/).reverse(),
-            word,
-            line = [],
-            lineNumber = 0,
-            lineHeight = 1.1, // ems
-            x = text.attr('x'),
-            y = text.attr('y'),
-            dy = parseFloat(text.attr('dy') || 0),
-            tspan = text.text(null).append('tspan').attr('x', x).attr('y', y).attr('dy', dy + 'em');
+        let x = elem.attr('x');
+        let y = elem.attr('y');
+        let dy = parseFloat(elem.attr('dy') || 0);
 
-        /* eslint no-cond-assign: 0 */
-        while (word = words.pop()) {
+        let tspan = elem
+            .text(null)
+            .append('tspan')
+                .attr('x', x)
+                .attr('y', y)
+                .attr('dy', dy + 'em');
+
+        // Iteratively add each word to the line until we exceed the maximum width.
+        let line = [];
+        let lineCount = 0;
+        for (const word of textContent.split(/\s+/)) {
+            // Add this word to the line
             line.push(word);
             tspan.text(line.join(' '));
+
+            // If we exceeded the line width, remove the last word from the array
+            // and append this tspan to the DOM node.
             if (tspan.node().getComputedTextLength() > width) {
+                // Remove the last word and put it on the next line.
                 line.pop();
-                spanContent = line.join(' ');
-                breakChars.forEach(char => {
-                    // Remove spaces trailing breakChars that were added above
+                let spanContent = line.join(' ');
+                line = [word];
+
+                // Remove the spaces trailing break characters that were added above
+                TEXT_WRAP_BREAK_CHARS.forEach(char => {
                     spanContent = spanContent.replace(char + ' ', char);
                 });
+
+                // Insert this text as a tspan
+                lineCount++;
                 tspan.text(spanContent);
-                line = [word];
-                tspan = text.append('tspan').attr('x', x).attr('y', y).attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word);
+                tspan = elem
+                    .append('tspan')
+                        .attr('x', x)
+                        .attr('y', y)
+                        .attr('dy', lineCount * TEXT_WRAP_LINE_HEIGHT + dy + 'em')
+                        .text(word);
             }
         }
     });
