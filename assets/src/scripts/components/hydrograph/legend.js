@@ -29,13 +29,13 @@ const createLegendMarkers = function(displayItems) {
 
     if (displayItems.current) {
         legendMarkers.push([
-            defineLineMarker('ts-legend-current', 'line', 'Current Year', 'current-year-line-marker'),
+            defineLineMarker('ts-legend-current', 'line-segment', 'Current Year', 'current-year-line-marker'),
             ...tsMaskMarkers('current', displayItems.current.masks)
         ]);
     }
     if (displayItems.compare) {
         legendMarkers.push([
-            defineLineMarker('ts-legend-compare', 'line', 'Last Year', 'compare-year-line-marker'),
+            defineLineMarker('ts-legend-compare', 'line-segment', 'Last Year', 'compare-year-line-marker'),
             ...tsMaskMarkers('compare', displayItems.compare.masks)
         ]);
     }
