@@ -14,13 +14,14 @@
         <script type="text/javascript">var HYDRO_ENDPOINT = '{{ config.HYDRO_ENDPOINT }}';</script>
         <script type="text/javascript">var FIM_GIS_ENDPOINT = '{{ config.FIM_GIS_ENDPOINT }}';</script>
         <script type="text/javascript">var FIM_ENDPOINT = '{{ config.FIM_ENDPOINT }}';</script>
-         <script async src="{{ config.STATIC_ROOT }}/bundle.js?v={{ config.APP_VERSION }}"></script>
+        <script async src="{{ config.STATIC_ROOT }}/bundle.js?v={{ config.APP_VERSION }}"></script>
         {% block page_script %}{% endblock %}
         <title>
             {% block title %}{% if page_title %}{{ page_title }} - {% endif %}USGS Water Data for the Nation{% endblock %}
         </title>
     </head>
     <body {% if body_id %}id="{{ body_id }}"{% endif %}>
+        <script>document.body.className += ' js';</script>
         {% block body %}{% endblock %}
     </body>
     {% block extra_html %}{% endblock %}

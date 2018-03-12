@@ -21,11 +21,6 @@ def home():
     return render_template('index.html', version=__version__)
 
 
-@app.route('/monitoring-location/<site_no>/embed', methods=['GET'])
-def monitoring_location_embed(site_no):
-    return render_template('monitoring_location_embed.html', site_no=site_no)
-
-
 @app.route('/monitoring-location/<site_no>', methods=['GET'])
 def monitoring_location(site_no):
     """
@@ -194,3 +189,11 @@ def hydrological_unit_locations(huc_cd):
     Returns a HUC page with a list of monitoring locations included.
     """
     return hydrological_unit(huc_cd, show_locations=True)
+
+
+@app.route('/components/time-series/<site_no>', methods=['GET'])
+def time_series_component(site_no):
+    """
+    Returns an unadorned page with the time series component for a site.
+    """
+    return render_template('monitoring_location_embed.html', site_no=site_no)

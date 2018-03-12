@@ -25,6 +25,7 @@ class TestHomeView(TestCase):
 
 
 class TestMonitoringLocationView(TestCase):
+    # pylint: disable=R0902
 
     def setUp(self):
         self.app_client = app.test_client()
@@ -146,6 +147,16 @@ class TestHydrologicalUnitView:
         text = response.data.decode('utf-8')
         # There are eight instances of this site in MOCK_SITE_LIST_2.
         assert text.count('01630500') == 16, 'Expected site 01630500 in output'
+
+
+class TestTimeSeriesComponentView:
+    # pylint: disable=R0201,R0903
+
+    def test_get(self, client):
+        response = client.get('/components/time-series/01646500')
+        assert response.status_code == 200
+        text = response.data.decode('utf-8')
+        assert text.count('class="wdfn-component" data-component="hydrograph"') == 1, 'Component expected'
 
 
 MOCK_SITE_LIST_1 = (

@@ -1,0 +1,16 @@
+& {
+    position: absolute;
+}
+
+fieldset {
+    position: relative;
+    top: -5px;
+    background: $color-white;
+    legend {
+        font-size: .75em;
+    }
+}
+
+a {
+    padding-left: .25em;
+}
