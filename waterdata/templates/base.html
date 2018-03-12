@@ -1,37 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends 'base_plain.html' %}
 
-        {% include 'partials/google_analytics.html' %}
+{% block body %}
+    <div id="skip"><a href="#main-content">Skip to main content</a></div>
+    <header role="banner">
+        {% include 'partials/usa_banner.html' %}
+        {% include 'partials/header.html' %}
+    </header>
+    <main id="main-content" class="usa-grid">
+        {% block content %}{% endblock %}
+    </main>
+    {% include 'partials/footer.html' %}
+    {% block extra_body %}{% endblock %}
+{% endblock %}
 
-        <link rel="shortcut icon" type="image/ico" href="{{ config.STATIC_ROOT }}/img/usgs_favicon.ico">
-        <link rel="stylesheet" href="{{ config.STATIC_ROOT }}/main.css?v={{ config.APP_VERSION }}">
-        <script type="text/javascript">var SERVICE_ROOT = '{{ config.SERVICE_ROOT }}/nwis';</script>
-        <script type="text/javascript">var PAST_SERVICE_ROOT = '{{ config.PAST_SERVICE_ROOT }}/nwis';</script>
-        <script type="text/javascript">var HYDRO_ENDPOINT = '{{ config.HYDRO_ENDPOINT }}';</script>
-        <script type="text/javascript">var FIM_GIS_ENDPOINT = '{{ config.FIM_GIS_ENDPOINT }}';</script>
-        <script type="text/javascript">var FIM_ENDPOINT = '{{ config.FIM_ENDPOINT }}';</script>
-         <script async src="{{ config.STATIC_ROOT }}/bundle.js?v={{ config.APP_VERSION }}"></script>
-        {% block page_script %}{% endblock %}
-        <title>
-            {% block title %}{% if page_title %}{{ page_title }} - {% endif %}USGS Water Data for the Nation{% endblock %}
-        </title>
-    </head>
-    <body {% if body_id %}id="{{ body_id }}"{% endif %}>
-        <div id="skip"><a href="#main-content">Skip to main content</a></div>
-        <header role="banner">
-            {% include 'partials/usa_banner.html' %}
-            {% include 'partials/header.html' %}
-        </header>
-        <main id="main-content" class="usa-grid">
-            {% block content %}{% endblock %}
-        </main>
-        {% include 'partials/footer.html' %}
-        {% block extra_body %}{% endblock %}
-    </body>
+{% block extra_html %}
     {% if config.LIVE_RELOAD_PATH %}
         <script type="text/javascript">
             // <![CDATA[  <-- For SVG support
@@ -62,4 +44,4 @@
             // ]]>
         </script>
     {% endif %}
-</html>
+{% endblock extra_html %}
