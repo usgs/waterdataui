@@ -9,6 +9,10 @@ const { flatPointsSelector, timeSeriesSelector, variablesSelector, visiblePoints
 
 const paddingRatio = 0.2;
 
+// array of parameters that should use
+// a symlog scale instead of a linear scale
+const SYMLOG_PARMS = ['00060'];
+
 
 /**
  *  Return domain padded on both ends by paddingRatio.
@@ -51,8 +55,7 @@ function createXScale(values, xSize) {
  * @param size
  */
 function yScaleByParameter(parmCd, extent, size) {
-    const symlogParams = ['00060'];
-    if (symlogParams.indexOf(parmCd) >= 0) {
+    if (SYMLOG_PARMS.indexOf(parmCd) >= 0) {
         return scaleSymlog()
             .domain(extent)
             .range([size, 0]);
@@ -136,12 +139,7 @@ const yScaleSelector = createSelector(
     visiblePointsSelector,
     currentVariableSelector,
     (layout, pointArrays, currentVar) => {
-        let currentVarParmCd;
-        try {
-            currentVarParmCd = currentVar.variableCode.value;
-        } catch (err) {
-            currentVarParmCd = null;
-        }
+        let currentVarParmCd = currentVar && currentVar.variableCode ? currentVar.variableCode.value : null;
         return createYScale(currentVarParmCd, pointArrays, layout.height - (MARGIN.top + MARGIN.bottom));
     }
 );
