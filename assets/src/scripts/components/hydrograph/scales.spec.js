@@ -1,4 +1,4 @@
-const { createXScale, createYScale, singleSeriesYScale } = require('./scales');
+const { createXScale, createYScale, singleSeriesYScale, yScaleSelector } = require('./scales');
 
 
 describe('Charting scales', () => {
@@ -75,5 +75,39 @@ describe('Charting scales', () => {
 
         expect(linear10 - linear20).toBeCloseTo(linear20 - linear30);
         expect(singleLinear10 - singleLinear20).toBeCloseTo(singleLinear20 - singleLinear30);
+    });
+
+    describe('yScaleSelector', () => {
+
+        it('Creates a scale when there is no initial data', () => {
+            expect(yScaleSelector({
+                series: {},
+                showSeries: false,
+                currentVariableID: null,
+                width: 200,
+                windowWidth: 600
+            }).name).toBe('scale');
+        });
+
+        it('Creates a scale when there is initial data', () => {
+            expect(yScaleSelector({
+                series: {
+                variables: {
+                   '00060ID': {
+                       variableCode: {
+                           value: '00060'
+                       }
+                   }
+                },
+                    timeSeries: {
+                        '00060ID': {}
+                    }
+                },
+                showSeries: false,
+                currentVariableID: '00060ID',
+                width: 200,
+                windowWidth: 600
+            }).name).toBe('scale');
+        });
     });
 });
