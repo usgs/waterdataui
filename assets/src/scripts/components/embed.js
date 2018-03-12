@@ -19,13 +19,6 @@ function attachToNode(store, node) {
         .select('a')
         .append('i')
             .attr('class', 'fa fa-share');
-
-    // With JS enabled, only show the share input on mouseover of the icon
-    const fieldset = select(node).select('fieldset');
-    fieldset.style('display', 'none');
-    select(node)
-        .on('mouseover', () => fieldset.style('display', 'block'))
-        .on('mouseout', () => fieldset.style('display', 'none'));
 }
 
 module.exports = {attachToNode};
