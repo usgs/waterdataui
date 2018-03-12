@@ -320,12 +320,12 @@ const timeSeriesGraph = function (elem) {
 
     elem.append('div')
         .call(link(plotSROnlyTable, createStructuredSelector({
-            tsKey: () => 'compare',
+            tsKey: () => 'current',
             variable: currentVariableSelector,
             methods: methodsSelector,
-            visible: isVisibleSelector('compare'),
-            dataByTsID: pointsTableDataSelector('compare'),
-            timeSeries: currentVariableTimeSeriesSelector('compare')
+            visible: isVisibleSelector('current'),
+            dataByTsID: pointsTableDataSelector('current'),
+            timeSeries: currentVariableTimeSeriesSelector('current')
     })));
     elem.append('div')
         .call(link(plotSROnlyTable, createStructuredSelector({
