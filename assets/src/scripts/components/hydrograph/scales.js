@@ -1,13 +1,17 @@
 const { extent } = require('d3-array');
-const { scaleTime } = require('d3-scale');
+const { scaleTime, scaleLinear } = require('d3-scale');
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { layoutSelector, MARGIN } = require('./layout');
-const { flatPointsSelector, timeSeriesSelector, variablesSelector, visiblePointsSelector } = require('./timeseries');
+const { flatPointsSelector, timeSeriesSelector, variablesSelector, visiblePointsSelector, currentVariableSelector } = require('./timeseries');
 
 const paddingRatio = 0.2;
+
+// array of parameters that should use
+// a symlog scale instead of a linear scale
+const SYMLOG_PARMS = ['00060'];
 
 
 /**
@@ -43,6 +47,25 @@ function createXScale(values, xSize) {
         .domain(xExtent);
 }
 
+/**
+ * Create the scale based on the parameter code
+ *
+ * @param parmCd
+ * @param extent
+ * @param size
+ */
+function yScaleByParameter(parmCd, extent, size) {
+    if (SYMLOG_PARMS.indexOf(parmCd) >= 0) {
+        return scaleSymlog()
+            .domain(extent)
+            .range([size, 0]);
+    } else {
+        return scaleLinear()
+            .domain(extent)
+            .range([size, 0]);
+    }
+}
+
 
 /**
  * Create a yScale for the plots where you only have a single array of data
@@ -51,12 +74,10 @@ function createXScale(values, xSize) {
  * @param ySize - range of the scale
  * * @return {Object} d3 scale for value.
  */
-function singleSeriesYScale(tsData, ySize) {
+function singleSeriesYScale(parmCd, tsData, ySize) {
     let points = tsData.filter(pt => pt.value !== null);
     let yExtent = extent(points, d => d.value);
-    return scaleSymlog()
-        .domain(yExtent)
-        .range([ySize, 0]);
+    return yScaleByParameter(parmCd, yExtent, ySize);
 }
 
 
@@ -66,7 +87,7 @@ function singleSeriesYScale(tsData, ySize) {
  * @param {Number} ySize - range of scale
  * @return {Object} d3 scale for value.
  */
-function createYScale(pointArrays, ySize) {
+function createYScale(parmCd, pointArrays, ySize) {
     let yExtent;
     let scaleDomains = [];
 
@@ -75,7 +96,7 @@ function createYScale(pointArrays, ySize) {
         if (points.length === 0) {
             continue;
         }
-        scaleDomains.push(singleSeriesYScale(points, ySize).domain());
+        scaleDomains.push(singleSeriesYScale(parmCd, points, ySize).domain());
     }
     if (scaleDomains.length > 0) {
         const flatDomains = [].concat(...scaleDomains).filter(val => isFinite(val));
@@ -89,9 +110,7 @@ function createYScale(pointArrays, ySize) {
     } else {
         yExtent = [0, 1];
     }
-    return scaleSymlog()
-        .domain(yExtent)
-        .range([ySize, 0]);
+    return yScaleByParameter(parmCd, yExtent, ySize);
 }
 
 
@@ -118,7 +137,11 @@ const xScaleSelector = memoize(tsKey => createSelector(
 const yScaleSelector = createSelector(
     layoutSelector,
     visiblePointsSelector,
-    (layout, pointArrays) => createYScale(pointArrays, layout.height - (MARGIN.top + MARGIN.bottom))
+    currentVariableSelector,
+    (layout, pointArrays, currentVar) => {
+        let currentVarParmCd = currentVar && currentVar.variableCode ? currentVar.variableCode.value : null;
+        return createYScale(currentVarParmCd, pointArrays, layout.height - (MARGIN.top + MARGIN.bottom));
+    }
 );
 
 
@@ -159,7 +182,7 @@ const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => 
             }, []);
             tsScales[parmCd] = {
                 x: createXScale(allPoints, dimensions.width),
-                y: createYScale(seriesList.map(s => s.points), dimensions.height)
+                y: createYScale(parmCd, seriesList.map(s => s.points), dimensions.height)
             };
             return tsScales;
         }, {});
