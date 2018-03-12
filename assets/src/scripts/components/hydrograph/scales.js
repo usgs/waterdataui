@@ -11,7 +11,10 @@ const paddingRatio = 0.2;
 
 // array of parameters that should use
 // a symlog scale instead of a linear scale
-const SYMLOG_PARMS = ['00060'];
+const SYMLOG_PARMS = [
+    '00060',
+    '72137'
+];
 
 
 /**
