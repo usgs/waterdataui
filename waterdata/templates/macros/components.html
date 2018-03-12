@@ -6,3 +6,24 @@
         </div>
     </div>
 {%- endmacro %}
+
+
+{% macro FloodSliderComponent() -%}
+    <div class="wdfn-component" data-component="floodSlider"></div>
+{%- endmacro %}
+
+
+{% macro MapComponent(site_no, latitude, longitude) -%}
+    <div class="wdfn-component" data-component="map" data-siteno="{{ site_no }}", data-latitude="{{ latitude }}" data-longitude="{{ longitude }}" data-zoom=12>
+    </div>
+{%- endmacro %}
+
+
+{% macro EmbedComponent(site_no, latitude, longitude) -%}
+    <div class="wdfn-component" data-component="embed">
+        <fieldset class="no-script">
+            <legend>Embed Snippet</legend>
+            <input type="text" id="embed-url" value='<iframe src="{{ url_for('time_series_component', _external=True, site_no=site_no) }}" width="600" height="900" frameborder="0" style="border:0" allowfullscreen></iframe>' aria-label="Embed this time-series chart on your own site" readonly>
+        </fieldset>
+    </div>
+{%- endmacro %}

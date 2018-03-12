@@ -1,5 +1,6 @@
-{% with current_url = url_for(request.endpoint, _external=True, **request.view_args) %}
-    {% set share_encoded_url = current_url|urlencode %}
+{% import 'macros/components.html' as components %}
+
+{% with share_encoded_url = url_for(request.endpoint, _external=True, **request.view_args)|urlencode %}
     <div class="social-share">
         <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_encoded_url }}" target="_blank">
             <i class="fa fa-facebook-square" aria-label="Share on Facebook"></i>
@@ -7,11 +8,6 @@
         <a href="https://twitter.com/home?status={{ share_encoded_url }}" target="_blank">
             <i class="fa fa-twitter-square" aria-label="Share on Twitter"></i>
         </a>
-        <span class="wdfn-component" data-component="embed">
-            <fieldset class="no-script">
-                <legend>Embed Snippet</legend>
-                <input type="text" id="embed-url" value='<iframe src="{{ url_for('time_series_component', _external=True, site_no=site_no) }}" width="600" height="900" frameborder="0" style="border:0" allowfullscreen></iframe>' aria-label="Embed this time-series chart on your own site" readonly>
-            </fieldset>
-        </span>
+        {{ components.EmbedComponent() }}
     </div>
 {% endwith %}
