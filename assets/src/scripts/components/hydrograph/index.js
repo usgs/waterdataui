@@ -237,14 +237,15 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap,
 };
 
 const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, dataByTsID, timeSeries}) {
-    elem.selectAll(`sr-only-${tsKey}`).remove();
+    elem.selectAll(`.sr-only-${tsKey}`).remove();
 
     if (!visible) {
         return;
     }
 
     const container = elem.append('div')
-        .attr('id', `sr-only-${tsKey}`);
+        .attr('class', `sr-only-${tsKey}`)
+        .attr('class', 'usa-sr-only');
 
     for (const seriesID of Object.keys(timeSeries)) {
         const series = timeSeries[seriesID];
