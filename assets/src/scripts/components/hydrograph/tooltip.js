@@ -88,7 +88,7 @@ const tooltipFocusTimeSelector = memoize(tsKey => createSelector(
  * @param String} tsKey - Timeseries key
  * @return {Object}
  */
-const tsDatumSelector = memoize(tsKey => createSelector(
+export const tsDatumSelector = memoize(tsKey => createSelector(
     pointsSelector(tsKey),
     tooltipFocusTimeSelector(tsKey),
     (points, tooltipFocusTime) => {

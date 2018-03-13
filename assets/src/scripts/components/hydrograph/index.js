@@ -9,6 +9,7 @@ const { createStructuredSelector } = require('reselect');
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
 
+const { audibleUI } = require('./audible');
 const { appendAxes, axesSelector } = require('./axes');
 const { MARGIN, CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
@@ -357,6 +358,7 @@ const attachToNode = function (store, node, {siteno} = {}) {
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
         .call(provide(store))
+        .call(audibleUI)
         .call(timeSeriesGraph)
         .call(timeSeriesLegend)
         .select('.hydrograph-last-year-input')
