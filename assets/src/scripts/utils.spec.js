@@ -1,4 +1,7 @@
-const { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities, setEquality} = require('./utils');
+const { select } = require('d3-selection');
+
+const { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities, setEquality, wrap} = require('./utils');
+
 
 describe('Utils module', () => {
 
@@ -76,5 +79,58 @@ describe('Utils module', () => {
             expect(setEquality(testSet1, testSet4)).toBe(false);
         });
 
+    });
+
+    describe('wrap() fits long text', () => {
+        const lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+        let elem;
+        let maxWordWidth;
+
+        beforeEach(() => {
+            elem = select('body').append('svg').append('text');
+
+            // Get the width of the single largest word.
+            maxWordWidth = Math.max.apply(null, lorem.split(/\s+/).map(word => {
+                elem.text(word);
+                return elem.node().getComputedTextLength();
+            }));
+
+            // Set the text to a long string.
+            elem.text(lorem);
+        });
+
+        afterEach(() => {
+            select('svg').remove();
+        });
+
+        function testWidth(width) {
+            elem.call(wrap, width);
+            elem.selectAll('tspan').each(function () {
+                expect(this.getComputedTextLength()).toBeLessThanOrEqual(width);
+            });
+        }
+
+        it('in width of maxWordWidth', () => {
+            testWidth(maxWordWidth);
+        });
+
+        it('in width of maxWordWidth * 2', () => {
+            testWidth(maxWordWidth * 2);
+        });
+
+        it('in width of maxWordWidth * 10', () => {
+            testWidth(maxWordWidth * 10);
+        });
+
+        it('and words are in correct order', () => {
+            elem.call(wrap, maxWordWidth * 2);
+
+            let tspans = [];
+            elem.selectAll('tspan').each(function () {
+                tspans.push(this.textContent);
+            });
+
+            expect(tspans.join(' ')).toEqual(lorem);
+        });
     });
 });

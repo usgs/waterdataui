@@ -81,7 +81,6 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  */
 export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd, layout}) {
     elem.select('#select-timeseries').remove();
-
     const screenSizeCheck = layout.windowWidth <= SMALL_SCREEN_WIDTH;
 
     let columnHeaders;

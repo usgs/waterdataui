@@ -146,12 +146,18 @@ describe('Hydrograph charting module', () => {
         });
 
         it('svg should be focusable', function() {
-           expect(svg.attr('tabindex')).toBe('0');
+            expect(svg.attr('tabindex')).toBe('0');
         });
 
         it('should have an accessibility table for each time series', function() {
-           expect(selectAll('table.usa-sr-only').size()).toBe(3);
+            expect(selectAll('table.usa-sr-only').size()).toBe(3);
         });
+
+        it('should have a div for each type of time series', function() {
+            expect(selectAll('div#sr-only-median').size()).toBe(1);
+            expect(selectAll('div#sr-only-compare').size()).toBe(1);
+            expect(selectAll('div#sr-only-current').size()).toBe(1);
+        })
     });
 
     describe('SVG contains the expected elements', () => {

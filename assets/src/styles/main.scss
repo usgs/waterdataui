@@ -10,6 +10,7 @@ $usgs-blue: #02274B;
 
 @import './partials/footer';
 @import './partials/header';
+@import './partials/script';
 @import './partials/social_share';
 @import './partials/tooltip';
 
@@ -23,6 +24,10 @@ $usgs-blue: #02274B;
     }
     &[data-component='floodSlider'] {
         @import './components/floodSlider';
+        margin-bottom: 1em;
+    }
+    &[data-component='embed'] {
+        @import './components/embed';
         margin-bottom: 1em;
     }
 }

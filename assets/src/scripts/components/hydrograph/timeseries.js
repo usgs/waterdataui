@@ -27,34 +27,6 @@ export const MASK_DESC = {
 export const MAX_LINE_POINT_GAP = 60 * 1000 * 72;
 
 /**
- * For a given tsKey, returns a selector that:
- * Returns the top-level IV service request object.
- * @return {Object}     Top-level IV request data
- */
-export const requestSelector = memoize(tsKey => state => {
-    return state.series.requests && state.series.requests[tsKey] ? state.series.requests[tsKey] : null;
-});
-
-
-/**
- * For a given tsKey, returns a selector that:
- * Returns all sets of time series returned by the IV service.
- * @return {Array}     List of "collections" (collection: list of time series for a given site/parameter combination)
- */
-export const collectionsSelector = memoize(tsKey => createSelector(
-    requestSelector(tsKey),
-    state => state.series.timeSeriesCollections,
-    (request, collections) => {
-        if (!request || !request.timeSeriesCollections || !collections) {
-            return [];
-        } else {
-            return request.timeSeriesCollections.map(colID => collections[colID]);
-        }
-    }
-));
-
-
-/**
  * @return {Object}     Mapping of variable IDs to variable details
  */
 export const variablesSelector = createSelector(
@@ -111,13 +83,16 @@ export const allTimeSeriesSelector = createSelector(
  */
 export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector(
     allTimeSeriesSelector,
-    collectionsSelector(tsKey),
     currentVariableSelector,
-    (timeSeries, collections, variable) => {
-        return collections.filter(c => c.variable === variable.oid).reduce((series, collection) => {
-            collection.timeSeries.forEach(sID => series[sID] = timeSeries[sID]);
-            return series;
-        }, {});
+    (timeSeries, variable) => {
+        let ts = {};
+        Object.keys(timeSeries).forEach(key => {
+            const series = timeSeries[key];
+            if (series.tsKey === tsKey && series.variable === variable.oid) {
+                ts[key] = series;
+            }
+        });
+        return ts;
     }
 ));
 
@@ -130,17 +105,15 @@ export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector
  */
 export const timeSeriesSelector = memoize(tsKey => createSelector(
     allTimeSeriesSelector,
-    collectionsSelector(tsKey),
-    (timeSeries, collections) => {
-        const a = collections.reduce((series, collection) => {
-            collection.timeSeries.forEach(sID => {
-                if (Object.keys(timeSeries).indexOf(sID) >= 0) {
-                    series[sID] = timeSeries[sID];
-                }
-            });
-            return series;
-        }, {});
-        return a;
+    (timeSeries) => {
+        let x = {};
+        Object.keys(timeSeries).forEach(key => {
+            const series = timeSeries[key];
+            if (series.tsKey === tsKey) {
+                x[key] = series;
+            }
+        });
+        return x;
     }
 ));
 

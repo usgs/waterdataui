@@ -189,3 +189,11 @@ def hydrological_unit_locations(huc_cd):
     Returns a HUC page with a list of monitoring locations included.
     """
     return hydrological_unit(huc_cd, show_locations=True)
+
+
+@app.route('/components/time-series/<site_no>', methods=['GET'])
+def time_series_component(site_no):
+    """
+    Returns an unadorned page with the time series component for a site.
+    """
+    return render_template('monitoring_location_embed.html', site_no=site_no)

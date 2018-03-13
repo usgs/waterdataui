@@ -1,3 +1,5 @@
+{% import 'macros/components.html' as components %}
+
 {% with share_encoded_url = url_for(request.endpoint, _external=True, **request.view_args)|urlencode %}
     <div class="social-share">
         <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_encoded_url }}" target="_blank">
@@ -6,5 +8,6 @@
         <a href="https://twitter.com/home?status={{ share_encoded_url }}" target="_blank">
             <i class="fa fa-twitter-square" aria-label="Share on Twitter"></i>
         </a>
+        {{ components.EmbedComponent() }}
     </div>
 {% endwith %}

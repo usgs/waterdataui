@@ -1,14 +1,17 @@
+const { ticks } = require('d3-array');
 const { axisBottom, axisLeft } = require('d3-axis');
 const { format } = require('d3-format');
 const { timeDay } = require('d3-time');
 const { timeFormat } = require('d3-time-format');
 const { createSelector } = require('reselect');
 
+const { wrap } = require('../../utils');
+
 const { layoutSelector, MARGIN } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { yLabelSelector } = require('./timeseries');
 
-const yTickCount = 5;
+const Y_TICK_COUNT = 5;
 
 
 /**
@@ -18,10 +21,7 @@ const yTickCount = 5;
  */
 function yTickValues(yScale) {
     const yDomain = yScale.domain();
-    const tickSize = (yDomain[1] - yDomain[0]) / yTickCount;
-    return Array(yTickCount).fill(0).map((_, index) => {
-        return yDomain[0] + index * tickSize;
-    });
+    return ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
 }
 
 
@@ -41,12 +41,16 @@ function createAxes({xScale, yScale}, yTickSize) {
         .tickSizeOuter(0);
 
     // Create y-axis
+    const tickValues = yTickValues(yScale);
+    // If all ticks are integers, don't display right of the decimal place.
+    // Otherwise, format with two decimal points.
+    const tickFormat = tickValues.filter(t => !Number.isInteger(t)).length ? '.2f' : 'd';
     const yAxis = axisLeft()
         .scale(yScale)
-        .tickValues(yTickValues(yScale))
-        .tickFormat(format('.2f'))
+        .tickValues(tickValues)
+        .tickFormat(format(tickFormat))
         .tickSizeInner(yTickSize)
-        .tickPadding(14)
+        .tickPadding(3)
         .tickSizeOuter(0);
 
     return {xAxis, yAxis};
@@ -105,7 +109,8 @@ function appendAxes(elem, {xAxis, yAxis, layout, yTitle}) {
             .attr('transform', 'rotate(-90)')
             .attr('x', yLabelLoc.x)
             .attr('y', yLabelLoc.y)
-            .text(yTitle);
+            .text(yTitle)
+                .call(wrap, layout.height - (MARGIN.top + MARGIN.bottom));
 }
 
 
