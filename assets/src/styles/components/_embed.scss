@@ -1,0 +1,28 @@
+& {
+    position: absolute;
+    display: inline-block;
+
+    a {
+        padding-left: .25em;
+    }
+
+    fieldset {
+        display: none;
+        position: relative;
+        top: -5px;
+        background: $color-white;
+        legend {
+            font-size: .75em;
+        }
+
+        &:hover {
+            display: block;
+        }
+    }
+
+    &:hover {
+        fieldset {
+            display: block;
+        }
+    }
+}

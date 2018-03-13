@@ -1,0 +1,7 @@
+{% extends 'base_plain.html' %}
+
+{% import 'macros/components.html' as components %}
+
+{% block body %}
+    {{ components.TimeseriesComponent(site_no) }}
+{% endblock %}
