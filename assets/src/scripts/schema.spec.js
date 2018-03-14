@@ -2,7 +2,7 @@ const { normalize } = require('./schema');
 
 
 describe('Normalizr schema', () => {
-    it('works', () => {
+    fit('works', () => {
         /* eslint no-use-before-define: 0 */
         const data = normalize(JSON.parse(MOCK_DATA), 'current');
         expect(data.queryInfo).toEqual({
@@ -13,29 +13,16 @@ describe('Normalizr schema', () => {
                     variableParam: '[00060]',
                     parameter: []
                 },
-                note: [{
-                    value: '[ALL:05413500]',
-                    title: 'filter:sites'
-                }, {
-                    value: '[mode=PERIOD, period=P7D, modifiedSince=null]',
-                    title: 'filter:timeRange'
-                }, {
-                    value: 'methodIds=[ALL]',
-                    title: 'filter:methodId'
-                }, {
-                    value: '2017-01-09T20:46:07.542Z',
-                    title: 'requestDT'
-                }, {
-                    value: '1df59e50-f57e-11e7-8ba8-6cae8b663fb6',
-                    title: 'requestId'
-                }, {
-                    value: 'Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.',
-                    title: 'disclaimer'
-                }, {
-                    value: 'vaas01',
-                    title: 'server'
+                notes: {
+                    'filter:sites': '[ALL:05413500]',
+                    'filter:timeRange': '[mode=PERIOD, period=P7D, modifiedSince=null]',
+                    'filter:methodId': 'methodIds=[ALL]',
+                    'requestDT': '2017-01-09T20:46:07.542Z',
+                    'requestId': '1df59e50-f57e-11e7-8ba8-6cae8b663fb6',
+                    'disclaimer': 'Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.',
+                    'server': 'vaas01'
                 }
-            ]}
+            }
         });
         expect(data.siteCodes).toEqual({
             '05413500': {

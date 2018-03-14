@@ -72,7 +72,20 @@ const timeSeries = memoize(tsKey => new schema.Entity('timeSeries', {
 }));
 
 // timeSeriesCollection schema
-const queryInfo = memoize(tsKey => new schema.Entity('queryInfo', {}, {idAttribute: () => tsKey}));
+const queryInfo = memoize(tsKey => new schema.Entity('queryInfo', {}, {
+    idAttribute: () => tsKey,
+    processStrategy: value => {
+        const queryInfo = {
+            ...value,
+            notes: value.note.reduce((notes, note) => {
+                notes[note.title] = note.value;
+                return notes;
+            }, {})
+        };
+        delete queryInfo.note;
+        return queryInfo;
+    }
+}));
 const timeSeriesCollection = memoize(tsKey => new schema.Entity('timeSeriesCollections', {
     sourceInfo: sourceInfo,
     timeSeries: [timeSeries(tsKey)],
