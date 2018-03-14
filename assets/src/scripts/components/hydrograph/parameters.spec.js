@@ -174,8 +174,8 @@ describe('Parameters module', () => {
         let svg;
         const tsDataSingle = {
             scales: {
-                x: scaleLinear(0, 100),
-                y: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3))
+                x: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3)),
+                y: scaleLinear(0, 100)
             },
             seriesLineSegments: [
                 {
@@ -189,8 +189,8 @@ describe('Parameters module', () => {
         };
         const tsDataMasked = {
             scales: {
-                x: scaleLinear(0, 100),
-                y: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3))
+                x: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3)),
+                y: scaleLinear(0, 100)
             },
             seriesLineSegments: [
                 {
@@ -204,8 +204,8 @@ describe('Parameters module', () => {
         };
         const tsDataMixed = {
             scales: {
-                x: scaleLinear(0, 100),
-                y: scaleLinear(new Date(2015, 1, 13), new Date(2015, 1, 18))
+                x: scaleLinear(new Date(2015, 1, 13), new Date(2015, 1, 18)),
+                y: scaleLinear(0, 100)
             },
             seriesLineSegments: [
                 {
