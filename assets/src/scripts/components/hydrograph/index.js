@@ -237,7 +237,7 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap,
 };
 
 const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, dataByTsID, timeSeries}) {
-    elem.selectAll(`sr-only-${tsKey}`).remove();
+    elem.selectAll(`#sr-only-${tsKey}`).remove();
 
     if (!visible) {
         return;
