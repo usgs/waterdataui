@@ -10,13 +10,27 @@ const { getNearestTime, tooltipFocusTimeSelector, tsDatumSelector,
 
 describe('Hydrograph tooltip module', () => {
 
-    const data = [12, 13, 14, 15, 16].map(hour => {
+    let data = [12, 13, 14, 15, 16].map(hour => {
         return {
             dateTime: new Date(`2018-01-03T${hour}:00:00.000Z`),
             qualifiers: ['P'],
             value: hour
         };
     });
+    const maskedData = [
+        {
+            dateTime: new Date('2018-01-03T17:00:00.000Z'),
+            qualifiers: ['Fld', 'P'],
+            value: null
+        },
+        {
+            dateTime: new Date('2018-01-03T18:00:00.000Z'),
+            qualifiers: ['Mnt', 'P'],
+            value: null
+        }
+
+    ];
+    data = data.concat(maskedData);
     const testState = {
         series: {
             timeSeries: {
@@ -65,6 +79,20 @@ describe('Hydrograph tooltip module', () => {
                     qualifierCode: 'P',
                     qualifierDescription: 'Provisional data subject to revision.',
                     qualifierID: 0,
+                    network: 'NWIS',
+                    vocabulary: 'uv_rmk_cd'
+                },
+                'Fld': {
+                    qualifierCode: 'Fld',
+                    qualifierDescription: 'Flood',
+                    qualifierId: 0,
+                    network: 'NWIS',
+                    vocabulary: 'uv_rmk_cd'
+                },
+                'Mnt': {
+                    qualifierCode: 'Mnt',
+                    qualifierDescription: 'Maintenance',
+                    qualifierId: 0,
                     network: 'NWIS',
                     vocabulary: 'uv_rmk_cd'
                 }
@@ -227,6 +255,26 @@ describe('Hydrograph tooltip module', () => {
             let value = svg.select('.current-tooltip-text').html().split(' - ')[0];
             expect(value).toBe('15 ft3/s');
             expect(svg.select('.compare-tooltip-text').html()).toBe('');
+        });
+
+        it('Text handles data masks if focus is near masked data points', () => {
+            let store = configureStore({
+                ...testState,
+                toolTipFocusTime: {
+                    current: new Date('2018-01-03T16:51:00.000Z'),
+                    compare: new Date('2018-01-03T16:50:00.000Z')
+                }
+
+            });
+            svg.call(provide(store))
+                .call(createTooltipText);
+            store.dispatch(Actions.setTooltipTime(new Date('2018-01-03T16:59:00.000Z'), null));
+            let value1 = svg.select('.current-tooltip-text').html().split(' - ')[0];
+            expect(value1).toBe('Flood');
+
+            store.dispatch(Actions.setTooltipTime(new Date('2018-01-03T17:59:00.000Z'), null));
+            let value2 = svg.select('.current-tooltip-text').html().split(' - ')[0];
+            expect(value2).toBe('Maintenance');
         });
     });
 
