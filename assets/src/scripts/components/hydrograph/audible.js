@@ -37,6 +37,11 @@ export const createSound = memoize(/* eslint-disable no-unused-vars */ tsKey => 
     // Start the oscillator
     oscillator.start();
 
+    // Initialize with null values so the first pass of updateSound doesn't
+    // create a transition.
+    oscillator.frequency.setTargetAtTime(null, audioCtx.currentTime, 0);
+    gainNode.gain.setTargetAtTime(null, audioCtx.currentTime, 0);
+
     return {oscillator, gainNode, compressor};
 });
 
