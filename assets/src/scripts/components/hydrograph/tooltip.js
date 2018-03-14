@@ -113,14 +113,14 @@ const updateTooltipText = function(text, {datum, qualifiers, unitCode}) {
         let tzAbbrev = datum.dateTime.toString().match(/\(([^)]+)\)/)[1];
         const maskKeys = new Set(Object.keys(MASK_DESC));
         const qualiferKeysLower = new Set(datum.qualifiers.map(x => x.toLowerCase()));
-        const keyIntersect = new Set([...qualiferKeysLower].filter(x => maskKeys.has(x)));
+        const keyIntersect = [...qualiferKeysLower].filter(x => maskKeys.has(x));
         const qualifierStr = Object.keys(qualifiers).filter(
             key => datum.qualifiers.indexOf(key) > -1 && !maskKeys.has(key.toLowerCase())).map(
                 key => qualifiers[key].qualifierDescription).join(', ');
         let valueStr = `${datum.value || ''} ${datum.value ? unitCode : ''}`;
         if (valueStr.trim().length === 0 && keyIntersect) {
             // a data point will have at most one masking qualifier
-            valueStr = MASK_DESC[[...keyIntersect][0]];
+            valueStr = MASK_DESC[[keyIntersect][0]];
         }
         label = `${valueStr} - ${formatTime(datum.dateTime)} ${tzAbbrev} (${qualifierStr})`;
         classes = classesForPoint(datum);
