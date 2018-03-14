@@ -18,6 +18,6 @@ describe('embed component', () => {
     });
 
     it('should prepend sharing icon', () => {
-        expect(select('.fa-share').size()).toBe(1);
+        expect(select('.fa-code').size()).toBe(1);
     });
 });

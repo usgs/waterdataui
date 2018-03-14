@@ -19,11 +19,11 @@
 {%- endmacro %}
 
 
-{% macro EmbedComponent(site_no, latitude, longitude) -%}
+{% macro EmbedComponent(site_no) -%}
     <div class="wdfn-component" data-component="embed">
         <fieldset class="no-script">
             <legend>Embed Snippet</legend>
-            <input type="text" id="embed-url" aria-label="Embed this time-series chart on your own site" value='<iframe src="{{ url_for('time_series_component', _external=True, site_no=site_no) }}" width="600" height="900" frameborder="0" style="border:0" allowfullscreen></iframe>' readonly>
+            <input type="text" id="embed-url" aria-label="Embed this time-series chart on your own site" value='<iframe src="{{ url_for('time_series_component', site_no=site_no, _external=True) }}" width="600" height="900" frameborder="0" style="border:0" allowfullscreen></iframe>' readonly>
         </fieldset>
     </div>
 {%- endmacro %}
