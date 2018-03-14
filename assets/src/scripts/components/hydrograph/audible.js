@@ -69,9 +69,9 @@ export const audibleInterfaceOnSelector = state => state.audibleInterfaceOn;
 export const audibleScaleSelector = memoize(tsKey => createSelector(
     yScaleSelector,
     (scale) => {
-        const audibleScale = scale.copy();
-        audibleScale.range([80, 1500]);
-        return audibleScale;
+        return scaleLinear()
+            .domain(scale.domain())
+            .range([80, 1500]);
     }
 ));
 
