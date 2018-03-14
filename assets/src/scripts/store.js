@@ -133,6 +133,12 @@ export const Actions = {
             type: 'SET_GAGE_HEIGHT',
             gageHeightIndex
         };
+    },
+    toggleAudibleInterface(audibleInterfaceOn) {
+        return {
+            type: 'AUDIBLE_INTERFACE_TOGGLE',
+            audibleInterfaceOn
+        };
     }
 };
 
@@ -230,6 +236,12 @@ export const timeSeriesReducer = function (state={}, action) {
                 gageHeight: state.floodStages[action.gageHeightIndex]
             };
 
+        case 'AUDIBLE_INTERFACE_TOGGLE':
+            return {
+                ...state,
+                audibleInterfaceOn: action.audibleInterfaceOn
+            };
+
         default:
             return state;
     }
@@ -262,6 +274,7 @@ export const configureStore = function (initialState) {
         floodStages: [],
         floodExtent: {},
         gageHeight: null,
+        audibleInterfaceOn: false,
         ...initialState
     };
 
