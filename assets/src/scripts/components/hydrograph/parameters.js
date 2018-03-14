@@ -188,7 +188,8 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
     table.selectAll('tbody svg').each(function(d) {
         let selection = select(this);
         const parmCd = d[0];
-        for (const seriesLineSegments of lineSegmentsByParmCd[parmCd]) {
+        const lineSegments = lineSegmentsByParmCd[parmCd] ? lineSegmentsByParmCd[parmCd] : [];
+        for (const seriesLineSegments of lineSegments) {
             selection.call(addSparkLine, {
                 seriesLineSegments: seriesLineSegments,
                 scales: timeSeriesScalesByParmCd[parmCd]
