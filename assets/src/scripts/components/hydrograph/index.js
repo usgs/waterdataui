@@ -99,7 +99,7 @@ const plotDataLine = function (elem, {visible, lines, tsKey, xScale, yScale}) {
 };
 
 
-const plotDataLines = function (elem, {visible, tsLinesMap, tsKey, xScale, yScale}) {
+const plotDataLines = function (elem, {visible, tsLinesMap, tsKey, xScale, yScale, parmCd}) {
     const elemId = `ts-${tsKey}-group`;
 
     elem.selectAll(`#${elemId}`).remove();
@@ -109,7 +109,7 @@ const plotDataLines = function (elem, {visible, tsLinesMap, tsKey, xScale, yScal
         .classed('tsKey', true);
 
     for (const lines of Object.values(tsLinesMap)) {
-        plotDataLine(tsLineGroup, {visible, lines, tsKey, xScale, yScale});
+        plotDataLine(tsLineGroup, {visible, lines, tsKey, xScale, yScale, parmCd});
     }
 };
 

@@ -46,6 +46,16 @@ export const currentVariableSelector = createSelector(
     }
 );
 
+/**
+ * Returns currently selected parameter code
+ * @return String or null if none
+ */
+export const currentParmCd = createSelector(
+    currentVariableSelector,
+    (currentVar) => currentVar && currentVar.variableCode ? currentVar.variableCode.value : null
+);
+
+
 
 /**
  * @return {Object}     Mapping of method IDs to method details
@@ -247,6 +257,61 @@ export const pointsTableDataSelector = memoize(tsKey => createSelector(
     }
 ));
 
+const getLineClasses = function(pt) {
+    let dataMask = null;
+    if (pt.value === null) {
+        let qualifiers = new Set(pt.qualifiers.map(q => q.toLowerCase()));
+
+        // current business rules specify that a particular data point
+        // will only have at most one masking qualifier
+        let maskIntersection = Object.keys(MASK_DESC).filter(x => qualifiers.has(x));
+        dataMask = maskIntersection[0];
+    }
+    return {
+        ...classesForPoint(pt),
+        dataMask
+    };
+};
+
+const cumulativeLineSegments = function(series) {
+    const points = series.points;
+    // Accumulate data into line groups, splitting on the estimated and
+    // approval status.
+    const lines = [];
+    let lastClasses = {};
+    let accumulatedValue = 0;
+
+    for (const pt of points) {
+        // Classes to put on the line with this point.
+        let lineClasses = getLineClasses(pt);
+        if (lineClasses.dataMask) {
+            accumulatedValue = 0;
+        }
+        if (pt.value) {
+            accumulatedValue += pt.value;
+        }
+        let newPoint = {...pt, value: accumulatedValue};
+
+        // If this point doesn't have the same classes as the last point,
+        // create a new line for it.
+        if (lastClasses.approved !== lineClasses.approved ||
+            lastClasses.estimated !== lineClasses.estimated ||
+            lastClasses.dataMask !== lineClasses.dataMask) {
+            lines.push({
+                classes: lineClasses,
+                points: []
+            });
+        }
+
+        // Add this point to the current line.
+        lines[lines.length - 1].points.push(newPoint);
+
+        // Cache the classes for the next loop iteration.
+        lastClasses = lineClasses;
+    }
+    return lines;
+};
+
 
 /**
  * Factory function creates a function that:
@@ -257,59 +322,54 @@ export const pointsTableDataSelector = memoize(tsKey => createSelector(
  */
 export const lineSegmentsSelector = memoize(tsKey => createSelector(
     timeSeriesSelector(tsKey),
-    (seriesMap) => {
-        const seriesLines = {};
+    variablesSelector,
+    (seriesMap, variables) => {
+        let seriesLines = {};
         for (const sID of Object.keys(seriesMap)) {
-            const series = seriesMap[sID];
-            const points = series.points;
-            // Accumulate data into line groups, splitting on the estimated and
-            // approval status.
-            const lines = [];
-            let lastClasses = {};
-            const masks = new Set(Object.keys(MASK_DESC));
+            const parmCd = variables[seriesMap[sID].variable].variableCode.value;
+            let lines = [];
+            if (parmCd === '00045') {
+                lines = cumulativeLineSegments(seriesMap[sID]);
+            } else {
+                const series = seriesMap[sID];
+                const points = series.points;
+                // Accumulate data into line groups, splitting on the estimated and
+                // approval status.
+                let lastClasses = {};
 
-            for (let pt of points) {
-                // Classes to put on the line with this point.
-                let lineClasses = {
-                    ...classesForPoint(pt),
-                    dataMask: null
-                };
-                if (pt.value === null) {
-                    let qualifiers = new Set(pt.qualifiers.map(q => q.toLowerCase()));
-                    // current business rules specify that a particular data point
-                    // will only have at most one masking qualifier
-                    let maskIntersection = new Set([...masks].filter(x => qualifiers.has(x)));
-                    lineClasses.dataMask = [...maskIntersection][0];
-                }
+                for (let pt of points) {
+                    // Classes to put on the line with this point.
+                    let lineClasses = getLineClasses(pt);
 
-                // If this is a non-masked data point, split lines if the gap
-                // from the period point exceeds MAX_LINE_POINT_GAP.
-                let splitOnGap = false;
-                if (!lineClasses.dataMask && lines.length > 0) {
-                    const lastPoints = lines[lines.length - 1].points;
-                    const lastPtDateTime = lastPoints[lastPoints.length - 1].dateTime;
-                    if (pt.dateTime - lastPtDateTime > MAX_LINE_POINT_GAP) {
-                        splitOnGap = true;
+                    // If this is a non-masked data point, split lines if the gap
+                    // from the period point exceeds MAX_LINE_POINT_GAP.
+                    let splitOnGap = false;
+                    if (!lineClasses.dataMask && lines.length > 0) {
+                        const lastPoints = lines[lines.length - 1].points;
+                        const lastPtDateTime = lastPoints[lastPoints.length - 1].dateTime;
+                        if (pt.dateTime - lastPtDateTime > MAX_LINE_POINT_GAP) {
+                            splitOnGap = true;
+                        }
                     }
-                }
 
-                // If this point doesn't have the same classes as the last point,
-                // create a new line for it.
-                if (lastClasses.approved !== lineClasses.approved ||
+                    // If this point doesn't have the same classes as the last point,
+                    // create a new line for it.
+                    if (lastClasses.approved !== lineClasses.approved ||
                         lastClasses.estimated !== lineClasses.estimated ||
                         lastClasses.dataMask !== lineClasses.dataMask ||
                         splitOnGap) {
-                    lines.push({
-                        classes: lineClasses,
-                        points: []
-                    });
+                        lines.push({
+                            classes: lineClasses,
+                            points: []
+                        });
+                    }
+
+                    // Add this point to the current line.
+                    lines[lines.length - 1].points.push(pt);
+
+                    // Cache the classes for the next loop iteration.
+                    lastClasses = lineClasses;
                 }
-
-                // Add this point to the current line.
-                lines[lines.length - 1].points.push(pt);
-
-                // Cache the classes for the next loop iteration.
-                lastClasses = lineClasses;
             }
             seriesLines[sID] = lines;
         }
@@ -365,10 +425,12 @@ export const currentVariableLineSegmentsSelector = memoize(tsKey => createSelect
     currentVariableTimeseriesSelector(tsKey),
     lineSegmentsSelector(tsKey),
     (seriesMap, linesMap) => {
-        return Object.keys(seriesMap).reduce((visMap, sID) => {
-            visMap[sID] = linesMap[sID];
-            return visMap;
-        }, {});
+        const result = Object.keys(seriesMap).reduce((visMap, sID) => {
+                visMap[sID] = linesMap[sID];
+                return visMap;
+            }, {});
+        return result;
+
     }
 ));
 
