@@ -358,9 +358,9 @@ const attachToNode = function (store, node, {siteno} = {}) {
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
         .call(provide(store))
-        .call(audibleUI)
         .call(timeSeriesGraph)
         .call(timeSeriesLegend)
+        .call(audibleUI)
         .select('.hydrograph-last-year-input')
             .on('change', dispatch(function () {
                 return Actions.toggleTimeseries('compare', this.checked);

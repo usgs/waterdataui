@@ -1,10 +1,9 @@
-const { max, min } = require('d3-array');
 const { scaleLinear } = require('d3-scale');
 const { select } = require('d3-selection');
 const memoize = require('fast-memoize');
 const { createSelector, createStructuredSelector } = require('reselect');
 
-const { flatPointsSelector } = require('./timeseries');
+const { yScaleSelector } = require('./scales');
 const { tsDatumSelector } = require('./tooltip');
 
 const { dispatch, link } = require('../../lib/redux');
@@ -14,49 +13,25 @@ const { Actions } = require('../../store');
 // Higher tones get lower volume
 const volumeScale = scaleLinear().range([2, .3]);
 
-
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const getAudioContext = memoize(function () {
-    return AudioContext ? new AudioContext() : null;
+    return new AudioContext();
 });
 
-// Create a compressor node, to prevent clipping noises
-const getCompressor = memoize(audioCtx => {
-    const compressor = audioCtx.createDynamicsCompressor();
-    compressor.threshold.setValueAtTime(-50, getAudioContext().currentTime);
-    compressor.knee.setValueAtTime(40, getAudioContext().currentTime);
-    compressor.ratio.setValueAtTime(12, getAudioContext().currentTime);
-    compressor.attack.setValueAtTime(0, getAudioContext().currentTime);
-    compressor.release.setValueAtTime(0.25, getAudioContext().currentTime);
-    return compressor;
-});
-
-const getOscillator = function(audioCtx, value) {
-    const oscillator = audioCtx.createOscillator();
-    //oscillator.type = 'triangle';
-    oscillator.type = 'sine';
-
-    // Set the frequency, in hertz
-    oscillator.frequency.value = value;
-
-    return oscillator;
-};
-
-const getGainNode = function(audioCtx, value) {
-    const gainNode = audioCtx.createGain();
-    gainNode.gain.value = volumeScale(value);
-    gainNode.gain.value = 1;
-
-    return gainNode;
-};
-
-export const createSound = function (value) {
+export const createSound = memoize(/* eslint-disable no-unused-vars */ tsKey => {
     const audioCtx = getAudioContext();
-    const oscillator = getOscillator(audioCtx, value);
-    const gainNode = getGainNode(audioCtx, value);
-    const compressor = getCompressor(audioCtx);
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    const compressor = audioCtx.createDynamicsCompressor();
+
+    compressor.threshold.setValueAtTime(-50, audioCtx.currentTime);
+    compressor.knee.setValueAtTime(40, audioCtx.currentTime);
+    compressor.ratio.setValueAtTime(12, audioCtx.currentTime);
+    compressor.attack.setValueAtTime(0, audioCtx.currentTime);
+    compressor.release.setValueAtTime(0.25, audioCtx.currentTime);
 
     // Connect the oscillator to the gainNode to modulate volume
+    oscillator.type = 'sine';
     oscillator.connect(gainNode);
 
     // Connect the gainNode to the compressor to address clipping
@@ -68,23 +43,35 @@ export const createSound = function (value) {
     // Start the oscillator
     oscillator.start();
 
-    // This rapidly ramps sound down
-    gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, .2);
-};
+    return {oscillator, gainNode, compressor};
+});
 
-const audibleScale = function (domain) {
-    return scaleLinear().domain(domain).range([80, 1500]);
+export const updateSound = function ({enabled, points}) {
+    const audioCtx = getAudioContext();
+    for (const tsKey of Object.keys(points)) {
+        const point = points[tsKey];
+        const {oscillator, gainNode} = createSound(tsKey);
+        oscillator.frequency.setTargetAtTime(
+            enabled && point ? point : null,
+            audioCtx.currentTime,
+            .2
+        );
+        gainNode.gain.setTargetAtTime(
+            enabled && point ? volumeScale(point) : null,
+            audioCtx.currentTime,
+            .2
+        );
+    }
 };
 
 export const audibleInterfaceOnSelector = state => state.audibleInterfaceOn;
 
 export const audibleScaleSelector = memoize(tsKey => createSelector(
-    flatPointsSelector(tsKey),
-    (points) => {
-        return audibleScale([
-            min(points.map((datum) => datum.value)),
-            max(points.map((datum) => datum.value))
-        ]);
+    yScaleSelector,
+    (scale) => {
+        const audibleScale = scale.copy();
+        audibleScale.range([80, 1500]);
+        return audibleScale;
     }
 ));
 
@@ -93,15 +80,6 @@ export const audibleUI = function (elem) {
         console.warn('AudioContext not available');
         return;
     }
-
-    elem.append('audio')
-        .attr('id', 'audible-controls')
-        .attr('controls', true)
-        .attr('muted', true)
-        .style('width', '100%')
-        .on('change', function () {
-            console.log(arguments);
-        });
 
     elem.append('input')
         .attr('type', 'checkbox')
@@ -121,18 +99,21 @@ export const audibleUI = function (elem) {
 
     // Listen for focus changes, and play back the audio representation of
     // the selected points.
-    // FIXME: Handle more than just the first current time series.
-    elem.call(link(function (elem, {datum, enabled, scale}) {
-        if (!enabled) {
-            return;
-        }
-        if (!datum) {
-            return;
-        }
-        createSound(scale(datum.value));
+    // TODO: Handle more than just the first time series of each tsKey. This can
+    // piggyback on work to support multiple tooltip selections.
+    elem.call(link(function (elem, {enabled, datumCurrent, datumCompare, yScaleCurrent, yScaleCompare}) {
+        updateSound({
+            points: {
+                current: datumCurrent ? yScaleCurrent(datumCurrent.value) : null,
+                compare: datumCompare ? yScaleCompare(datumCompare.value) : null
+            },
+            enabled
+        });
     }, createStructuredSelector({
-        datum: tsDatumSelector('current'),
         enabled: audibleInterfaceOnSelector,
-        scale: audibleScaleSelector('current')
+        datumCurrent: tsDatumSelector('current'),
+        datumCompare: tsDatumSelector('compare'),
+        yScaleCurrent: audibleScaleSelector('current'),
+        yScaleCompare: audibleScaleSelector('compare')
     })));
 };
