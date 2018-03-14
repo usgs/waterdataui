@@ -166,6 +166,7 @@ describe('Parameters module', () => {
 
         it('creates a the correct number svg sparklines in a table', () => {
             plotSeriesSelectTable(tableDivSelection, testArgs);
+            expect(tableDivSelection.selectAll('svg').size()).toEqual(3);
             expect(tableDivSelection.selectAll('svg path').size()).toEqual(2);
         });
     });
