@@ -1,5 +1,4 @@
 const { scaleLinear } = require('d3-scale');
-const { select } = require('d3-selection');
 const memoize = require('fast-memoize');
 const { createSelector, createStructuredSelector } = require('reselect');
 
@@ -95,8 +94,8 @@ export const audibleUI = function (elem) {
         .on('click', dispatch(function () {
             return Actions.toggleAudibleInterface(this.checked);
         }))
-        .call(link(function (checked) {
-            select(this).attr('checked', checked);
+        .call(link(function (elem, checked) {
+            elem.property('checked', checked);
         }, audibleInterfaceOnSelector));
 
     elem.append('label')
