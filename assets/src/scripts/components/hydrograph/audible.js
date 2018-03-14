@@ -24,12 +24,6 @@ export const createSound = memoize(/* eslint-disable no-unused-vars */ tsKey => 
     const gainNode = audioCtx.createGain();
     const compressor = audioCtx.createDynamicsCompressor();
 
-    compressor.threshold.setValueAtTime(-50, audioCtx.currentTime);
-    compressor.knee.setValueAtTime(40, audioCtx.currentTime);
-    compressor.ratio.setValueAtTime(12, audioCtx.currentTime);
-    compressor.attack.setValueAtTime(0, audioCtx.currentTime);
-    compressor.release.setValueAtTime(0.25, audioCtx.currentTime);
-
     // Connect the oscillator to the gainNode to modulate volume
     oscillator.type = 'sine';
     oscillator.connect(gainNode);
@@ -50,12 +44,20 @@ export const updateSound = function ({enabled, points}) {
     const audioCtx = getAudioContext();
     for (const tsKey of Object.keys(points)) {
         const point = points[tsKey];
-        const {oscillator, gainNode} = createSound(tsKey);
+        const {compressor, oscillator, gainNode} = createSound(tsKey);
+
+        compressor.threshold.setValueAtTime(-50, audioCtx.currentTime);
+        compressor.knee.setValueAtTime(40, audioCtx.currentTime);
+        compressor.ratio.setValueAtTime(12, audioCtx.currentTime);
+        compressor.attack.setValueAtTime(0, audioCtx.currentTime);
+        compressor.release.setValueAtTime(0.25, audioCtx.currentTime);
+
         oscillator.frequency.setTargetAtTime(
             enabled && point ? point : null,
             audioCtx.currentTime,
             .2
         );
+
         gainNode.gain.setTargetAtTime(
             enabled && point ? volumeScale(point) : null,
             audioCtx.currentTime,
