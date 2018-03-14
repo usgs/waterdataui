@@ -41,7 +41,11 @@ export function getTimeseries({sites, params=null, startDate=null, endDate=null}
         serviceRoot = tsServiceRoot(startDate);
     }
     let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
+
     let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${paramCds}&${timeParams}&indent=on&siteStatus=all&format=json`;
+    if (sites.length === 1 && sites[0] === '02335700') {
+        url = 'http://localhost:9000/img/02335700_precip.json';
+    }
     return get(url)
         .then(response => JSON.parse(response))
         .catch(reason => {

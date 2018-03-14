@@ -5,7 +5,7 @@ const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { layoutSelector, MARGIN } = require('./layout');
-const { flatPointsSelector, timeSeriesSelector, variablesSelector, visiblePointsSelector, currentVariableSelector } = require('./timeseries');
+const { flatPointsSelector, timeSeriesSelector, variablesSelector, visiblePointsSelector, currentVariableSelector, pointsByTsKeySelector } = require('./timeseries');
 
 const paddingRatio = 0.2;
 
@@ -152,17 +152,18 @@ const yScaleSelector = createSelector(
  * For a given tsKey, return a selector that:
  * Returns lists of time series keyed on parameter code.
  * @param  {String} tsKey             Time series key
- * @return {Object}
+ * @return {Object} - keys are parmCd and values are array of array of points
  */
-const parmCdTimeSeriesSelector = memoize(tsKey => createSelector(
+const parmCdPointsSelector = memoize(tsKey => createSelector(
+    pointsByTsKeySelector(tsKey),
     timeSeriesSelector(tsKey),
     variablesSelector,
-    (timeSeries, variables) => {
-        return Object.keys(timeSeries).reduce((byParmCd, sID) => {
-            const series = timeSeries[sID];
-            const parmCd = variables[series.variable].variableCode.value;
+    (tsPoints, timeSeries, variables) => {
+        return Object.keys(tsPoints).reduce((byParmCd, tsID) => {
+            const points = tsPoints[tsID];
+            const parmCd = variables[timeSeries[tsID].variable].variableCode.value;
             byParmCd[parmCd] = byParmCd[parmCd] || [];
-            byParmCd[parmCd].push(series);
+            byParmCd[parmCd].push(points);
             return byParmCd;
         }, {});
     }
@@ -175,17 +176,17 @@ const parmCdTimeSeriesSelector = memoize(tsKey => createSelector(
  * @type {Object}   Mapping of parameter code to time series list.
  */
 const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => createSelector(
-    parmCdTimeSeriesSelector(tsKey),
-    (timeSeriesByParmCd) => {
-        return Object.keys(timeSeriesByParmCd).reduce((tsScales, parmCd) => {
-            const seriesList = timeSeriesByParmCd[parmCd];
-            const allPoints = seriesList.reduce((points, series) => {
-                Array.prototype.push.apply(points, series.points);
-                return points;
+    parmCdPointsSelector(tsKey),
+    (pointsByParmCd) => {
+        return Object.keys(pointsByParmCd).reduce((tsScales, parmCd) => {
+            const tsPoints = pointsByParmCd[parmCd];
+            const allPoints = tsPoints.reduce((parmCdPoints, points) => {
+                Array.prototype.push.apply(parmCdPoints, points);
+                return parmCdPoints;
             }, []);
             tsScales[parmCd] = {
                 x: createXScale(allPoints, dimensions.width),
-                y: createYScale(parmCd, seriesList.map(s => s.points), dimensions.height)
+                y: createYScale(parmCd, tsPoints, dimensions.height)
             };
             return tsScales;
         }, {});

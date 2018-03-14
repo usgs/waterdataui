@@ -15,7 +15,7 @@ const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
 const { Actions } = require('../../store');
-const { currentVariableLineSegmentsSelector, currentVariableSelector, currentVariableTimeseries, pointsSelector,
+const { currentVariableLineSegmentsSelector, currentVariableSelector, pointsByTsKeySelector,
     methodsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector,
     descriptionSelector, lineSegmentsByParmCdSelector, currentVariableTimeSeriesSelector, MASK_DESC, HASH_ID } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
@@ -298,15 +298,15 @@ const timeSeriesGraph = function (elem) {
                     xScale: xScaleSelector('current'),
                     yScale: yScaleSelector,
                     compareXScale: xScaleSelector('compare'),
-                    currentTsData: pointsSelector('current'),
-                    compareTsData: pointsSelector('compare'),
+                    currentTsData: pointsByTsKeySelector('current'),
+                    compareTsData: pointsByTsKeySelector('compare'),
                     isCompareVisible: isVisibleSelector('compare')
                 })))
                 .call(link(plotAllMedianPoints, createStructuredSelector({
                     visible: isVisibleSelector('median'),
                     xscale: xScaleSelector('current'),
                     yscale: yScaleSelector,
-                    seriesMap: currentVariableTimeseries('median'),
+                    seriesMap: currentVariableTimeSeriesSelector('median'),
                     variable: currentVariableSelector,
                     showLabel: (state) => state.showMedianStatsLabel
                 })));

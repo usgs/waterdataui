@@ -39,7 +39,7 @@ export const variablesSelector = createSelector(
  * @return {Object}     Variable details for the currently selected variable.
  */
 export const currentVariableSelector = createSelector(
-    state => state.series.variables,
+    variablesSelector,
     state => state.currentVariableID,
     (variables, variableID) => {
         return variableID ? variables[variableID] : null;
@@ -133,6 +133,73 @@ export const HASH_ID = {
 };
 
 
+/*
+ * @param {Array} points - Array of point objects
+ */
+const transformToCumulative = function(points) {
+    let accumulatedValue = 0;
+    return points.map((point) => {
+        let result = {...point};
+        if (point.value !== null) {
+            accumulatedValue += point.value;
+            result.value = accumulatedValue;
+        } else {
+            accumulatedValue = 0;
+        }
+        return result;
+    });
+};
+
+export const allPointsSelector = createSelector(
+    allTimeSeriesSelector,
+    state => state.series.variables,
+    (timeSeries, variables) => {
+        let allPoints = {};
+        Object.keys(timeSeries).forEach((tsId) => {
+            const ts = timeSeries[tsId];
+            const variableId = ts.variable;
+            const parmCd = variables[variableId].variableCode.value;
+            if (ts.tsKey !== 'median' && parmCd === '00045') {
+                allPoints[tsId] = transformToCumulative(ts.points);
+            } else {
+                allPoints[tsId] = ts.points;
+            }
+        });
+        return allPoints;
+    }
+);
+
+/*
+ * @param {Object} state
+ * @param {String} tsKey
+ * @returns {Object} of keys are tsId, values are Array of points
+ * in tsKey
+ */
+export const pointsByTsKeySelector = memoize(tsKey => createSelector(
+    allPointsSelector,
+    state => state.series.timeSeries,
+    (points, timeSeries) => {
+        let result = {};
+        Object.keys(points).forEach((tsId) => {
+            if (timeSeries[tsId].tsKey === tsKey) {
+                result[tsId] = points[tsId];
+            }
+        });
+        return result;
+    }));
+
+/*
+* @return Array of Array of points
+ */
+export const currentVariablePointsSelector = memoize(tsKey => createSelector(
+    pointsByTsKeySelector(tsKey),
+    currentVariableTimeSeriesSelector(tsKey),
+    (points, timeSeries) => {
+        return Object.keys(timeSeries).map((tsId) => {
+            return points[tsId];
+        });
+    }
+));
 /**
  * Returns a selector that, for a given tsKey:
  * Returns an array of time points for all visible time series.
@@ -140,29 +207,11 @@ export const HASH_ID = {
  * @param  {String} tsKey     Timeseries key
  * @return {Array}            Array of array of points.
  */
+    //TODO: Candidate for removal
 export const pointsSelector = memoize((tsKey) => createSelector(
-    currentVariableTimeSeriesSelector(tsKey),
-    (timeSeries) => {
-        return Object.values(timeSeries).map(series => series.points ? series.points : []);
-    }
-));
-
-
-/**
- * Returns a selector that, for a given tsKey:
- * Returns time series for the current variable.
- * @param  {Object} state     Redux store
- * @param  {String} tsKey     Timeseries key
- * @return {Array}            Array of array of points.
- */
-export const currentVariableTimeseries = memoize((tsKey) => createSelector(
-    timeSeriesSelector(tsKey),
-    currentVariableSelector,
-    (timeSeries, variable) => {
-        return Object.keys(timeSeries).filter(sID => timeSeries[sID].variable === variable.oid).reduce((series, sID) => {
-            series[sID] = timeSeries[sID];
-            return series;
-        }, {});
+    pointsByTsKeySelector(tsKey),
+    (points) => {
+        return Object.values(points);
     }
 ));
 
@@ -196,14 +245,15 @@ export const classesForPoint = point => {
  * @return {Array}            Array of point arrays.
  */
 export const visiblePointsSelector = createSelector(
-    pointsSelector('current'),
-    pointsSelector('compare'),
-    pointsSelector('median'),
+    currentVariablePointsSelector('current'),
+    currentVariablePointsSelector('compare'),
+    currentVariablePointsSelector('median'),
     (state) => state.showSeries,
     (current, compare, median, showSeries) => {
         const pointArray = [];
         if (showSeries['current']) {
             Array.prototype.push.apply(pointArray, current);
+
         }
         if (showSeries['compare']) {
             Array.prototype.push.apply(pointArray, compare);
@@ -235,6 +285,7 @@ export const isVisibleSelector = memoize(tsKey => (state) => {
  * @param {String} tsKey - timeseries key
  * @param {Array of Array} for each point returns [value, time, qualifiers] or empty array.
  */
+    //TODO: This needs to be changes to use point selector since it should be showing the data being displayed
 export const pointsTableDataSelector = memoize(tsKey => createSelector(
     allTimeSeriesSelector,
     (timeSeries) => {
@@ -321,58 +372,52 @@ const cumulativeLineSegments = function(series) {
  * @return {Array}            Array of array of points.
  */
 export const lineSegmentsSelector = memoize(tsKey => createSelector(
-    timeSeriesSelector(tsKey),
-    variablesSelector,
-    (seriesMap, variables) => {
+    pointsByTsKeySelector(tsKey),
+    (tsPoints) => {
         let seriesLines = {};
-        for (const sID of Object.keys(seriesMap)) {
-            const parmCd = variables[seriesMap[sID].variable].variableCode.value;
+        Object.keys(tsPoints).forEach((tsId) => {
+            const points = tsPoints[tsId]
             let lines = [];
-            if (parmCd === '00045') {
-                lines = cumulativeLineSegments(seriesMap[sID]);
-            } else {
-                const series = seriesMap[sID];
-                const points = series.points;
-                // Accumulate data into line groups, splitting on the estimated and
-                // approval status.
-                let lastClasses = {};
 
-                for (let pt of points) {
-                    // Classes to put on the line with this point.
-                    let lineClasses = getLineClasses(pt);
+            // Accumulate data into line groups, splitting on the estimated and
+            // approval status.
+            let lastClasses = {};
 
-                    // If this is a non-masked data point, split lines if the gap
-                    // from the period point exceeds MAX_LINE_POINT_GAP.
-                    let splitOnGap = false;
-                    if (!lineClasses.dataMask && lines.length > 0) {
-                        const lastPoints = lines[lines.length - 1].points;
-                        const lastPtDateTime = lastPoints[lastPoints.length - 1].dateTime;
-                        if (pt.dateTime - lastPtDateTime > MAX_LINE_POINT_GAP) {
-                            splitOnGap = true;
-                        }
+            for (let pt of points) {
+                // Classes to put on the line with this point.
+                let lineClasses = getLineClasses(pt);
+
+                // If this is a non-masked data point, split lines if the gap
+                // from the period point exceeds MAX_LINE_POINT_GAP.
+                let splitOnGap = false;
+                if (!lineClasses.dataMask && lines.length > 0) {
+                    const lastPoints = lines[lines.length - 1].points;
+                    const lastPtDateTime = lastPoints[lastPoints.length - 1].dateTime;
+                    if (pt.dateTime - lastPtDateTime > MAX_LINE_POINT_GAP) {
+                        splitOnGap = true;
                     }
-
-                    // If this point doesn't have the same classes as the last point,
-                    // create a new line for it.
-                    if (lastClasses.approved !== lineClasses.approved ||
-                        lastClasses.estimated !== lineClasses.estimated ||
-                        lastClasses.dataMask !== lineClasses.dataMask ||
-                        splitOnGap) {
-                        lines.push({
-                            classes: lineClasses,
-                            points: []
-                        });
-                    }
-
-                    // Add this point to the current line.
-                    lines[lines.length - 1].points.push(pt);
-
-                    // Cache the classes for the next loop iteration.
-                    lastClasses = lineClasses;
                 }
+
+                // If this point doesn't have the same classes as the last point,
+                // create a new line for it.
+                if (lastClasses.approved !== lineClasses.approved ||
+                    lastClasses.estimated !== lineClasses.estimated ||
+                    lastClasses.dataMask !== lineClasses.dataMask ||
+                    splitOnGap) {
+                    lines.push({
+                        classes: lineClasses,
+                        points: []
+                    });
+                }
+
+                // Add this point to the current line.
+                lines[lines.length - 1].points.push(pt);
+
+                // Cache the classes for the next loop iteration.
+                lastClasses = lineClasses;
             }
-            seriesLines[sID] = lines;
-        }
+            seriesLines[tsId] = lines;
+        });
         return seriesLines;
     }
 ));
