@@ -5,7 +5,7 @@ const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { layoutSelector, MARGIN } = require('./layout');
-const { flatPointsSelector, timeSeriesSelector, variablesSelector, visiblePointsSelector, currentVariableSelector, requestTimeRangeSelector } = require('./timeseries');
+const { timeSeriesSelector, variablesSelector, visiblePointsSelector, currentVariableSelector, requestTimeRangeSelector } = require('./timeseries');
 
 const paddingRatio = 0.2;
 
@@ -179,10 +179,6 @@ const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => 
     (timeSeriesByParmCd, requestTimeRanges) => {
         return Object.keys(timeSeriesByParmCd).reduce((tsScales, parmCd) => {
             const seriesList = timeSeriesByParmCd[parmCd];
-            const allPoints = seriesList.reduce((points, series) => {
-                Array.prototype.push.apply(points, series.points);
-                return points;
-            }, []);
             tsScales[parmCd] = {
                 x: createXScale(requestTimeRanges[tsKey], dimensions.width),
                 y: createYScale(parmCd, seriesList.map(s => s.points), dimensions.height)
