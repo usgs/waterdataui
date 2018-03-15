@@ -144,10 +144,17 @@ describe('Parameters module', () => {
             windowWidth: 1080
         };
 
-        const testArgs = {
+        const testArgsWithData = {
             availableTimeseries: availableTimeseries,
             lineSegmentsByParmCd: lineSegmentsByParmCd,
             timeSeriesScalesByParmCd: timeSeriesScalesByParmCd,
+            layout: layout
+        };
+
+        const testArgsWithoutData = {
+            availableTimeseries: [],
+            lineSegmentsByParmCd: {},
+            timeSeriesScalesByParmCd: {},
             layout: layout
         };
 
@@ -160,14 +167,19 @@ describe('Parameters module', () => {
         });
 
         it('creates a row for each parameter in a table', () => {
-            plotSeriesSelectTable(tableDivSelection, testArgs);
+            plotSeriesSelectTable(tableDivSelection, testArgsWithData);
             expect(tableDivSelection.selectAll('tbody tr').size()).toEqual(3);
         });
 
         it('creates a the correct number svg sparklines in a table', () => {
-            plotSeriesSelectTable(tableDivSelection, testArgs);
+            plotSeriesSelectTable(tableDivSelection, testArgsWithData);
             expect(tableDivSelection.selectAll('svg').size()).toEqual(3);
             expect(tableDivSelection.selectAll('svg path').size()).toEqual(2);
+        });
+
+        it('does not create the table when there are no timeseries', () => {
+            plotSeriesSelectTable(tableDivSelection, testArgsWithoutData);
+            expect(tableDivSelection.selectAll('table').size()).toEqual(0);
         });
     });
 
