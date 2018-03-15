@@ -18,7 +18,7 @@ const TEST_STATE = {
                 }],
                 method: 'method1',
                 tsKey: 'current',
-                variable: 45807197
+                variable: '45807197'
             },
             '00060:compare': {
                 startTime: new Date('2018-01-02T15:00:00.000-06:00'),
@@ -30,7 +30,7 @@ const TEST_STATE = {
                 }],
                 method: 'method1',
                 tsKey: 'compare',
-                variable: 45807197
+                variable: '45807197'
             },
             '00060:median': {
                 startTime: new Date('2018-01-02T15:00:00.000-06:00'),
@@ -45,20 +45,20 @@ const TEST_STATE = {
                 },
                 method: 'method1',
                 tsKey: 'median',
-                variable: 45807197
+                variable: '45807197'
             }
         },
         timeSeriesCollections: {
             'coll1': {
-                variable: 45807197,
+                variable: '45807197',
                 timeSeries: ['00060:current']
             },
             'coll2': {
-                variable: 45807197,
+                variable: '45807197',
                 timeSeries: ['00060:compare']
             },
             'coll3': {
-                variable: 45807197,
+                variable: '45807197',
                 timeSeries: ['00060:median']
             }
         },
@@ -76,7 +76,7 @@ const TEST_STATE = {
         variables: {
             '45807197': {
                 variableCode: '00060',
-                oid: 45807197,
+                oid: '45807197',
                 unit: {
                     unitCode: 'unitCode'
                 }
