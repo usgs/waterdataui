@@ -142,17 +142,48 @@ export const titleSelector = createSelector(
 );
 
 
+const queryInfoSelector = state => state.series.queryInfo || {};
+
+export const requestTimeRangeSelector = createSelector(
+    queryInfoSelector,
+    (queryInfos) => {
+        return Object.keys(queryInfos).reduce((ranges, tsKey) => {
+            const notes = queryInfos[tsKey].notes;
+            // If this is a period-based query (eg, P7D), use the request time
+            // as the end date.
+            if (notes['filter:timeRange'].mode === 'PERIOD') {
+                const start = new Date(notes.requestDT);
+                start.setDate(notes.requestDT.getDate() - notes['filter:timeRange'].periodDays);
+                ranges[tsKey] = {
+                    start: start,
+                    end: notes.requestDT
+                };
+            } else {
+                ranges[tsKey] = {
+                    start: notes['filter:timeRange'].interval.start,
+                    end: notes['filter:timeRange'].interval.end
+                };
+            }
+            return ranges;
+        }, {});
+    }
+);
+
+
 /**
  * @return {String}     Description for the currently display set of time
  *                      series
  */
 export const descriptionSelector = createSelector(
     currentVariableSelector,
-    currentVariableTimeSeriesSelector('current'),
-    (variable, timeSeries) => {
+    requestTimeRangeSelector,
+    (variable, requestTimeRanges) => {
         const desc = variable ? variable.variableDescription : '';
-        const startTime = new Date(Math.min.apply(null, Object.values(timeSeries).map(ts => ts.startTime)));
-        const endTime = new Date(Math.max.apply(null, Object.values(timeSeries).map(ts => ts.endTime)));
-        return `${desc} from ${formatTime(startTime)} to ${formatTime(endTime)}`;
+        const range = requestTimeRanges['current'];
+        if (range) {
+            return `${desc} from ${formatTime(range.start)} to ${formatTime(range.end)}`;
+        } else {
+            return desc;
+        }
     }
 );

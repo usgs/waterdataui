@@ -8,7 +8,11 @@ describe('Charting scales', () => {
             value: hour
         };
     });
-    let xScale = createXScale(points, 200);
+    const xDomain = {
+        start: points[0].dateTime,
+        end: points[points.length - 1].dateTime
+    };
+    let xScale = createXScale(xDomain, 200);
     let yScale = createYScale('00060', [points], 100);
     let yScaleLinear = createYScale('ABCDE', [points], 100);
     let singleYScale = singleSeriesYScale('00060', points, 100);
@@ -22,8 +26,8 @@ describe('Charting scales', () => {
 
     it('xScale domain is correct', () => {
         let domain = xScale.domain();
-        expect(domain[0]).toEqual(points[0].dateTime);
-        expect(domain[1]).toEqual(points[22].dateTime);
+        expect(domain[0]).toEqual(xDomain.start);
+        expect(domain[1]).toEqual(xDomain.end);
     });
 
     it('xScale range is correctly left-oriented', () => {

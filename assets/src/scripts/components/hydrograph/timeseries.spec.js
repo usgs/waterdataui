@@ -1,5 +1,6 @@
-const { variablesSelector, currentVariableSelector, timeSeriesSelector, isVisibleSelector, yLabelSelector,
-    titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, allTimeSeriesSelector } = require('./timeseries');
+const { lineSegmentsSelector, pointsSelector,
+    currentVariableTimeSeriesSelector, pointsTableDataSelector, allTimeSeriesSelector, requestTimeRangeSelector
+    MAX_LINE_POINT_GAP } = require('./timeseries');
 
 
 const TEST_DATA = {
@@ -351,6 +352,61 @@ describe('Timeseries module', () => {
             expect(result).toContain('Discharge, cubic feet per second');
             expect(result).toContain('3/6/2018');
             expect(result).toContain('3/13/2018');
+        });
+    });
+
+    describe('requestTimeRangeSelector', () => {
+        it('should use queryInfo requestDT for period queries', () => {
+            expect(requestTimeRangeSelector({
+                series: {
+                    queryInfo: {
+                        current: {
+                            notes: {
+                                requestDT: new Date('2017-01-09T20:46:07.542Z'),
+                                'filter:timeRange': {
+                                    mode: 'PERIOD',
+                                    periodDays: 7,
+                                    modifiedSince: null
+                                }
+                            }
+                        }
+                    }
+                }
+            })).toEqual({
+                current: {
+                    start: new Date('2017-01-02T20:46:07.542Z'),
+                    end: new Date('2017-01-09T20:46:07.542Z'),
+                }
+            });
+        });
+    });
+
+    describe('requestTimeRangeSelector', () => {
+        it('should use filter:timeRange values for range queries', () => {
+            expect(requestTimeRangeSelector({
+                series: {
+                    queryInfo: {
+                        compare: {
+                            notes: {
+                                requestDT: new Date('2017-01-09T20:46:07.542Z'),
+                                'filter:timeRange': {
+                                    mode: 'RANGE',
+                                    modifiedSince: null,
+                                    interval: {
+                                        start: new Date(2017, 10, 10),
+                                        end: new Date(2017, 10, 20)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            })).toEqual({
+                compare: {
+                    start: new Date(2017, 10, 10),
+                    end: new Date(2017, 10, 20)
+                }
+            });
         });
     });
 });
