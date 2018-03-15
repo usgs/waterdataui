@@ -2,7 +2,7 @@ const { normalize } = require('./schema');
 
 
 describe('Normalizr schema', () => {
-    fit('works', () => {
+    it('works', () => {
         /* eslint no-use-before-define: 0 */
         const data = normalize(JSON.parse(MOCK_DATA), 'current');
         expect(data.queryInfo).toEqual({
@@ -15,9 +15,13 @@ describe('Normalizr schema', () => {
                 },
                 notes: {
                     'filter:sites': '[ALL:05413500]',
-                    'filter:timeRange': '[mode=PERIOD, period=P7D, modifiedSince=null]',
+                    'filter:timeRange': {
+                        mode: 'PERIOD',
+                        periodDays: '7',
+                        modifiedSince: null
+                    },
                     'filter:methodId': 'methodIds=[ALL]',
-                    'requestDT': '2017-01-09T20:46:07.542Z',
+                    'requestDT': new Date('2017-01-09T20:46:07.542Z'),
                     'requestId': '1df59e50-f57e-11e7-8ba8-6cae8b663fb6',
                     'disclaimer': 'Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.',
                     'server': 'vaas01'
@@ -106,8 +110,6 @@ describe('Normalizr schema', () => {
                 censorCode: [],
                 tsKey: 'current',
                 variable: '45807197',
-                startTime: new Date('2017-01-02T15:00:00.000-06:00'),
-                endTime: new Date('2017-01-02T15:15:00.000-06:00'),
                 points: [{
                     value: 302,
                     qualifiers: ['P'],

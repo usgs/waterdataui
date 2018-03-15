@@ -53,10 +53,6 @@ const timeSeries = memoize(tsKey => new schema.Entity('timeSeries', {
             ...ts,
             tsKey,
             method: ts.method[0],
-            startTime: ts.value.length ?
-                new Date(ts.value[0].dateTime) : null,
-            endTime: ts.value.length ?
-                new Date(ts.value.slice(-1)[0].dateTime) : null,
             points: ts.value.map(v => {
                 const value = parseFloat(v.value);
                 return {
@@ -83,6 +79,37 @@ const queryInfo = memoize(tsKey => new schema.Entity('queryInfo', {}, {
             }, {})
         };
         delete queryInfo.note;
+
+        // Extract values out of filter:timeRange
+        // If this is a "period" query (eg, P7D)
+        if (queryInfo.notes['filter:timeRange'].indexOf('PERIOD') > -1) {
+            const regEx = /\[mode=(.+), period=P(.+)D, modifiedSince=(.+)\]/;
+            const parts = regEx.exec(queryInfo.notes['filter:timeRange']);
+            queryInfo.notes['filter:timeRange'] = {
+                mode: parts[1],
+                periodDays: parts[2],
+                modifiedSince: parts[3] === 'null' ? null : parts[3]
+            };
+
+        // If this is a "range" query (start and end times specified)
+        } else if (queryInfo.notes['filter:timeRange'].indexOf('RANGE') > -1) {
+            const regEx = /\[mode=(.+), modifiedSince=(.+)\] interval={INTERVAL\[(.+)\/(.+)\]}/;
+            const parts = regEx.exec(queryInfo.notes['filter:timeRange']);
+            queryInfo.notes['filter:timeRange'] = {
+                mode: parts[1],
+                modifiedSince: parts[2] === 'null' ? null : parts[3],
+                interval: {
+                    start: new Date(parts[3]),
+                    end: new Date(parts[4])
+                }
+            };
+        } else {
+            console.error(`Can't make sense of time range string: ${queryInfo.notes['filter:timeRange']}`);
+        }
+
+        // Store requestDT as a date object
+        queryInfo.notes.requestDT = new Date(queryInfo.notes.requestDT);
+
         return queryInfo;
     }
 }));

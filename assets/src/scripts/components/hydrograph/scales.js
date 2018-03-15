@@ -5,7 +5,7 @@ const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { layoutSelector, MARGIN } = require('./layout');
-const { flatPointsSelector, timeSeriesSelector, variablesSelector, visiblePointsSelector, currentVariableSelector } = require('./timeseries');
+const { flatPointsSelector, timeSeriesSelector, variablesSelector, visiblePointsSelector, currentVariableSelector, requestTimeRangeSelector } = require('./timeseries');
 
 const paddingRatio = 0.2;
 
@@ -40,9 +40,8 @@ function extendDomain(domain) {
  * @param {Number} xSize - range of scale
  * @return {Object} d3 scale for time.
  */
-function createXScale(values, xSize) {
-    // Calculate max and min for values
-    const xExtent = values.length ? extent(values, d => d.dateTime) : [0, 1];
+function createXScale(timeRange, xSize) {
+    const xExtent = timeRange ? [timeRange.start, timeRange.end] : [0, 1];
 
     // xScale is oriented on the left
     return scaleTime()
@@ -125,9 +124,9 @@ function createYScale(parmCd, pointArrays, ySize) {
  */
 const xScaleSelector = memoize(tsKey => createSelector(
     layoutSelector,
-    flatPointsSelector(tsKey),
-    (layout, points) => {
-        return createXScale(points, layout.width - MARGIN.right);
+    requestTimeRangeSelector,
+    (layout, requestTimeRanges) => {
+        return createXScale(requestTimeRanges[tsKey], layout.width - MARGIN.right);
     }
 ));
 
@@ -176,7 +175,8 @@ const parmCdTimeSeriesSelector = memoize(tsKey => createSelector(
  */
 const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => createSelector(
     parmCdTimeSeriesSelector(tsKey),
-    (timeSeriesByParmCd) => {
+    requestTimeRangeSelector,
+    (timeSeriesByParmCd, requestTimeRanges) => {
         return Object.keys(timeSeriesByParmCd).reduce((tsScales, parmCd) => {
             const seriesList = timeSeriesByParmCd[parmCd];
             const allPoints = seriesList.reduce((points, series) => {
@@ -184,7 +184,7 @@ const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => 
                 return points;
             }, []);
             tsScales[parmCd] = {
-                x: createXScale(allPoints, dimensions.width),
+                x: createXScale(requestTimeRanges[tsKey], dimensions.width),
                 y: createYScale(parmCd, seriesList.map(s => s.points), dimensions.height)
             };
             return tsScales;
