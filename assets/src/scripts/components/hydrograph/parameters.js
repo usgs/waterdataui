@@ -83,9 +83,10 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  */
 export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd, layout}) {
     elem.select('#select-timeseries').remove();
-    const screenSizeCheck = layout.windowWidth <= SMALL_SCREEN_WIDTH;
 
-    const buildSelectTable = () => {
+    // only bother to create the table if there are timeseries available
+    if (availableTimeseries.length > 0) {
+        const screenSizeCheck = layout.windowWidth <= SMALL_SCREEN_WIDTH;
         let columnHeaders;
         if (screenSizeCheck) {
             columnHeaders = ['Parameter Code', 'Description', 'Preview'];
@@ -198,9 +199,5 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
                 });
             }
         });
-    };
-
-    if(availableTimeseries.length > 0) {
-        buildSelectTable();
     }
 };
