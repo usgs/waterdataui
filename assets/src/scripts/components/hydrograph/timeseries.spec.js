@@ -1,6 +1,6 @@
-const { lineSegmentsSelector, pointsSelector,
-    currentVariableTimeSeriesSelector, pointsTableDataSelector, allTimeSeriesSelector, requestTimeRangeSelector
-    MAX_LINE_POINT_GAP } = require('./timeseries');
+const { variablesSelector, currentVariableSelector, timeSeriesSelector, isVisibleSelector, yLabelSelector,
+    titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, allTimeSeriesSelector,
+    requestTimeRangeSelector} = require('./timeseries');
 
 
 const TEST_DATA = {
@@ -73,6 +73,18 @@ const TEST_DATA = {
                 variableName: 'Gage Height',
                 variableDescription: 'Gage Height in feet',
                 oid: '45807196'
+            }
+        },
+        queryInfo: {
+            current: {
+                notes: {
+                    requestDT: new Date('2017-01-09T20:46:07.542Z'),
+                    'filter:timeRange': {
+                        mode: 'PERIOD',
+                        periodDays: 7,
+                        modifiedSince: null
+                    }
+                }
             }
         }
     },
@@ -350,8 +362,8 @@ describe('Timeseries module', () => {
             const result = descriptionSelector(TEST_DATA);
 
             expect(result).toContain('Discharge, cubic feet per second');
-            expect(result).toContain('3/6/2018');
-            expect(result).toContain('3/13/2018');
+            expect(result).toContain('1/2/2017');
+            expect(result).toContain('1/9/2017');
         });
     });
 
@@ -375,7 +387,7 @@ describe('Timeseries module', () => {
             })).toEqual({
                 current: {
                     start: new Date('2017-01-02T20:46:07.542Z'),
-                    end: new Date('2017-01-09T20:46:07.542Z'),
+                    end: new Date('2017-01-09T20:46:07.542Z')
                 }
             });
         });
