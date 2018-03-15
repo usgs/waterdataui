@@ -7,7 +7,7 @@ const { dispatch, link } = require('../../lib/redux');
 const SLIDER_STEPS = 1000;
 
 
-export const cursorLocationSelector = state => state.cursorLocation;
+export const cursorLocationSelector = state => state.tooltipFocusTime.current;
 
 export const cursorSlider = function (elem) {
     elem.append('div')
