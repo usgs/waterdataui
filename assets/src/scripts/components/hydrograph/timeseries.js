@@ -148,7 +148,7 @@ export const titleSelector = createSelector(
  */
 export const descriptionSelector = createSelector(
     currentVariableSelector,
-    timeSeriesSelector('current'),
+    currentVariableTimeSeriesSelector('current'),
     (variable, timeSeries) => {
         const desc = variable ? variable.variableDescription : '';
         const startTime = new Date(Math.min.apply(null, Object.values(timeSeries).map(ts => ts.startTime)));

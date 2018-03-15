@@ -1,5 +1,5 @@
-const { variablesSelector, currentVariableSelector, timeSeriesSelector, isVisibleSelector,
-    currentVariableTimeSeriesSelector, allTimeSeriesSelector } = require('./timeseries');
+const { variablesSelector, currentVariableSelector, timeSeriesSelector, isVisibleSelector, yLabelSelector,
+    titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, allTimeSeriesSelector } = require('./timeseries');
 
 
 const TEST_DATA = {
@@ -7,6 +7,9 @@ const TEST_DATA = {
         timeSeries: {
             '00060': {
                 tsKey: 'current',
+                startTime: new Date('2018-03-06T15:45:00.000Z'),
+                endTime: new Date('2018-03-13t13:45:00.000Z'),
+                variable: '45807197',
                 points: [{
                     value: 10,
                     qualifiers: ['P'],
@@ -24,8 +27,11 @@ const TEST_DATA = {
                     estimated: false
                 }]
             },
-            '000010': {
+            '00010': {
                 tsKey: 'compare',
+                startTime: new Date('2017-03-06T15:45:00.000Z'),
+                endTime: new Date('2017-03-13t13:45:00.000Z'),
+                variables: '45807196',
                 points: [{
                     value: 1,
                     qualifiers: ['P'],
@@ -57,14 +63,22 @@ const TEST_DATA = {
         variables: {
             '45807197': {
                 variableCode: '00060',
-                oid: 45807197
+                variableName: 'Streamflow',
+                variableDescription: 'Discharge, cubic feet per second',
+                oid: '45807197'
+            },
+            '45807196': {
+                variableCode: '00010',
+                variableName: 'Gage Height',
+                variableDescription: 'Gage Height in feet',
+                oid: '45807196'
             }
         }
     },
     currentVariableID: '45807197'
 };
 
-fdescribe('Timeseries module', () => {
+describe('Timeseries module', () => {
 
     const TEST_VARIABLES = {
             '45807042': {
@@ -261,6 +275,8 @@ fdescribe('Timeseries module', () => {
             expect(timeSeriesSelector('current')(TEST_DATA)).toEqual({
                 '00060': {
                     tsKey: 'current',
+                    startTime: new Date('2018-03-06T15:45:00.000Z'),
+                    endTime: new Date('2018-03-13t13:45:00.000Z'),
                     points: [{
                         value: 10,
                         qualifiers: ['P'],
@@ -276,7 +292,8 @@ fdescribe('Timeseries module', () => {
                         qualifiers: ['P', 'FLD'],
                         approved: false,
                         estimated: false
-                    }]
+                    }],
+                    variable: '45807197'
                 }
             });
         });
@@ -299,6 +316,41 @@ fdescribe('Timeseries module', () => {
             expect(isVisibleSelector('current')(store)).toBe(true);
             expect(isVisibleSelector('compare')(store)).toBe(false);
             expect(isVisibleSelector('median')(store)).toBe(true);
+        });
+    });
+
+    describe('yLabelSelector', () => {
+        it('Returns string to be used for labeling the y axis', () => {
+            expect(yLabelSelector(TEST_DATA)).toBe('Discharge, cubic feet per second');
+        });
+
+        it('Returns empty string if no variable selected', () => {
+            expect(yLabelSelector({
+                ...TEST_DATA,
+                currentVariableID: null
+            })).toBe('');
+        });
+    });
+
+    describe('titleSelector', () => {
+        it('Returns the string to used for graph title', () => {
+            expect(titleSelector(TEST_DATA)).toBe('Streamflow');
+        });
+        it('Returns empty string if no variable selected', () => {
+            expect(titleSelector({
+                ...TEST_DATA,
+                currentVariableID: null
+            })).toBe('');
+        });
+    });
+
+    describe('descriptionSelector', () => {
+        it('Returns a description with the date for the current times series', () => {
+            const result = descriptionSelector(TEST_DATA);
+
+            expect(result).toContain('Discharge, cubic feet per second');
+            expect(result).toContain('3/6/2018');
+            expect(result).toContain('3/13/2018');
         });
     });
 });

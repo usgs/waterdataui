@@ -1,4 +1,80 @@
+const { lineSegmentsSelector, pointsSelector, pointsTableDataSelector, MAX_LINE_POINT_GAP } = require('./drawingData');
 
+const TEST_DATA = {
+    series: {
+        timeSeries: {
+            '00060': {
+                tsKey: 'current',
+                startTime: new Date('2018-03-06T15:45:00.000Z'),
+                endTime: new Date('2018-03-13t13:45:00.000Z'),
+                variable: '45807197',
+                points: [{
+                    value: 10,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: null,
+                    qualifiers: ['P', 'ICE'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: null,
+                    qualifiers: ['P', 'FLD'],
+                    approved: false,
+                    estimated: false
+                }]
+            },
+            '00010': {
+                tsKey: 'compare',
+                startTime: new Date('2017-03-06T15:45:00.000Z'),
+                endTime: new Date('2017-03-13t13:45:00.000Z'),
+                variable: '45807196',
+                points: [{
+                    value: 1,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 2,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 3,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }]}
+        },
+        timeSeriesCollections: {
+            'coll1': {
+                variable: 45807197,
+                timeSeries: ['00060']
+            }
+        },
+        requests: {
+            current: {
+                timeSeriesCollections: ['coll1']
+            }
+        },
+        variables: {
+            '45807197': {
+                variableCode: {value: '00060'},
+                variableName: 'Streamflow',
+                variableDescription: 'Discharge, cubic feet per second',
+                oid: '45807197'
+            },
+            '45807196': {
+                variableCode: {value: '00010'},
+                variableName: 'Gage Height',
+                variableDescription: 'Gage Height in feet',
+                oid: '45807196'
+            }
+        }
+    },
+    currentVariableID: '45807197'
+};
 describe('drawingData module', () => {
 
     describe('line segment selector', () => {
@@ -10,6 +86,7 @@ describe('drawingData module', () => {
                     timeSeries: {
                         ...TEST_DATA.series.timeSeries,
                         '00060': {
+                            ...TEST_DATA.series.timeSeries['00060'],
                             points: [{
                                 value: 10,
                                 qualifiers: []
@@ -72,6 +149,7 @@ describe('drawingData module', () => {
                     timeSeries: {
                         ...TEST_DATA.series.timeSeries,
                         '00060': {
+                            ...TEST_DATA.series.timeSeries['00060'],
                             points: [{
                                 value: 10,
                                 qualifiers: ['P']
@@ -138,6 +216,7 @@ describe('drawingData module', () => {
                     timeSeries: {
                         ...TEST_DATA.series.timeSeries,
                         '00060': {
+                            ...TEST_DATA.series.timeSeries['00060'],
                             points: [{
                                 value: 10,
                                 qualifiers: ['P']
@@ -220,6 +299,7 @@ describe('drawingData module', () => {
                     timeSeries: {
                         ...TEST_DATA.series.timeSeries,
                         '00060': {
+                            ...TEST_DATA.series.timeSeries['00060'],
                             points: dates.map(d => {
                                 return {
                                     value: 10,
@@ -291,6 +371,7 @@ describe('drawingData module', () => {
                     timeSeries: {
                         ...TEST_DATA.series.timeSeries,
                         '00060': {
+                            ...TEST_DATA.series.timeSeries['00060'],
                             points: dates.map(d => {
                                 return {
                                     value: null,
