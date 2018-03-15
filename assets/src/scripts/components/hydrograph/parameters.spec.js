@@ -1,7 +1,7 @@
 const { select } = require('d3-selection');
 const { scaleLinear } = require('d3-scale');
 
-const { addSparkLine, availableTimeseriesSelector } = require('./parameters');
+const { addSparkLine, availableTimeseriesSelector, plotSeriesSelectTable } = require('./parameters');
 
 
 describe('Parameters module', () => {
@@ -111,12 +111,72 @@ describe('Parameters module', () => {
         ]);
     });
 
+    describe('plotSeriesSelectTable', () => {
+        let tableDivSelection;
+
+        const data = [12, 13, 14, 15, 16].map(day => {
+            return {
+                dateTime: new Date(`2018-01-${day}T00:00:00.000Z`),
+                qualifiers: ['P'],
+                value: day
+            };
+        });
+
+        const availableTimeseries = [
+            ['00010', {variableID: '00010ID', description: 'Temperature', selected: true, currentTimeseriesCount: 1, compareTimeseriesCount: 1}],
+            ['00067', {variableID: '00067ID', description: 'Ruthenium (VI) Fluoride', selected: false, currentTimeseriesCount: 1, compareTimeseriesCount: 1}],
+            ['00093', {variableID: '00093ID', description: 'Uranium (V) Oxide', selected: false, currentTimeseriesCount: 1, compareTimeseriesCount: 1}]
+        ];
+
+        const lineSegmentsByParmCd = {
+            '00010': [[{'classes': {approved: false, estimated: false, dataMask: null}, points: data}]],
+            '00093': [[{'classes': {approved: false, estimated: false, dataMask: null}, points: data}]]
+        };
+
+        const timeSeriesScalesByParmCd = {
+            '00010': {x: scaleLinear(new Date(2018, 0, 12), new Date(2018, 0, 16)), y: scaleLinear(0, 100)},
+            '00093': {x: scaleLinear(new Date(2018, 0, 12), new Date(2018, 0, 16)), y: scaleLinear(0, 100)}
+        };
+
+        const layout = {
+            width: 800,
+            height: 400,
+            windowWidth: 1080
+        };
+
+        const testArgs = {
+            availableTimeseries: availableTimeseries,
+            lineSegmentsByParmCd: lineSegmentsByParmCd,
+            timeSeriesScalesByParmCd: timeSeriesScalesByParmCd,
+            layout: layout
+        };
+
+        beforeEach(() => {
+            tableDivSelection = select('body').append('div');
+        });
+
+        afterEach(() => {
+            select('div').remove();
+        });
+
+        it('creates a row for each parameter in a table', () => {
+            plotSeriesSelectTable(tableDivSelection, testArgs);
+            expect(tableDivSelection.selectAll('tbody tr').size()).toEqual(3);
+        });
+
+        it('creates a the correct number svg sparklines in a table', () => {
+            plotSeriesSelectTable(tableDivSelection, testArgs);
+            expect(tableDivSelection.selectAll('svg').size()).toEqual(3);
+            expect(tableDivSelection.selectAll('svg path').size()).toEqual(2);
+        });
+    });
+
     describe('addSparkline', () => {
         let svg;
         const tsDataSingle = {
             scales: {
-                x: scaleLinear(0, 100),
-                y: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3))
+                x: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3)),
+                y: scaleLinear(0, 100)
             },
             seriesLineSegments: [
                 {
@@ -130,8 +190,8 @@ describe('Parameters module', () => {
         };
         const tsDataMasked = {
             scales: {
-                x: scaleLinear(0, 100),
-                y: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3))
+                x: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3)),
+                y: scaleLinear(0, 100)
             },
             seriesLineSegments: [
                 {
@@ -145,8 +205,8 @@ describe('Parameters module', () => {
         };
         const tsDataMixed = {
             scales: {
-                x: scaleLinear(0, 100),
-                y: scaleLinear(new Date(2015, 1, 13), new Date(2015, 1, 18))
+                x: scaleLinear(new Date(2015, 1, 13), new Date(2015, 1, 18)),
+                y: scaleLinear(0, 100)
             },
             seriesLineSegments: [
                 {

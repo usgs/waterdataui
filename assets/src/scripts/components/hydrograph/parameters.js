@@ -75,9 +75,11 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
 /**
  * Draws a table with clickable rows of timeseries parameter codes. Selecting
  * a row changes the active parameter code.
- * @param  {Object} elem                d3 selection
- * @param  {Object} availableTimeseries Timeseries metadata to display
- * @param  {Object} layout              layout as retrieved from the redux store
+ * @param  {Object} elem                        d3 selection
+ * @param  {Object} availableTimeseries         Timeseries metadata to display
+ * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
+ * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
+ * @param  {Object} layout                      layout as retrieved from the redux store
  */
 export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd, layout}) {
     elem.select('#select-timeseries').remove();
@@ -188,7 +190,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
     table.selectAll('tbody svg').each(function(d) {
         let selection = select(this);
         const parmCd = d[0];
-        const lineSegments = lineSegmentsByParmCd[parmCd] || [];
+        const lineSegments = lineSegmentsByParmCd[parmCd] ? lineSegmentsByParmCd[parmCd] : [];
         for (const seriesLineSegments of lineSegments) {
             selection.call(addSparkLine, {
                 seriesLineSegments: seriesLineSegments,
