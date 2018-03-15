@@ -207,3 +207,15 @@ table#select-timeseries {
 #audible-label {
     padding-left: 2em;
 }
+
+input#cursor-slider {
+    width: 100%;
+    max-width: none;
+    position: relative;
+    opacity: .2;
+    top: -2em;
+    background: none;
+    &.active {
+        opacity: 1;
+    }
+}
