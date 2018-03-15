@@ -1,4 +1,7 @@
-const { lineSegmentsSelector, pointsSelector, pointsTableDataSelector, MAX_LINE_POINT_GAP } = require('./drawingData');
+
+const { lineSegmentsSelector, pointsSelector, pointsTableDataSelector, allPointsSelector, pointsByTsKeySelector,
+    classesForPoint, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
+    currentVariablePointsSelector, visiblePointsSelector, MAX_LINE_POINT_GAP } = require('./drawingData');
 
 const TEST_DATA = {
     series: {
@@ -45,7 +48,30 @@ const TEST_DATA = {
                     qualifiers: ['P'],
                     approved: false,
                     estimated: false
-                }]}
+                }]
+            },
+            '00045': {
+                tsKey: 'current',
+                startTime: new Date('2017-03-06T15:45:00.000Z'),
+                endTime: new Date('2017-03-13t13:45:00.000Z'),
+                variable: '45807140',
+                points: [{
+                    value: 1,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 2,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 3,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }]
+            }
         },
         timeSeriesCollections: {
             'coll1': {
@@ -70,12 +96,68 @@ const TEST_DATA = {
                 variableName: 'Gage Height',
                 variableDescription: 'Gage Height in feet',
                 oid: '45807196'
+            },
+            '45807140': {
+                variableCode: {value: '00045'},
+                variableName: 'Precipitation',
+                variableDescription: 'Precipitation in inches'
             }
         }
     },
     currentVariableID: '45807197'
 };
+
 describe('drawingData module', () => {
+
+    describe('allPointsSelector', () => {
+
+        const result = allPointsSelector(TEST_DATA);
+        it('Return three timeseries', () => {
+            expect(Object.keys(result).length).toBe(3);
+            expect(result['00060']).toBeDefined();
+            expect(result['00010']).toBeDefined();
+            expect(result['00045']).toBeDefined();
+        });
+
+        it('Return the points array for time series with parameter code 00060 without modification', () => {
+            expect(result['00060']).toEqual(TEST_DATA.series.timeSeries['00060'].points);
+        });
+
+        it('Return the points array accumulated for the time series with  parameter code 00045', () => {
+            expect(result['00045'].map((point) => point.value)).toEqual([1, 3, 6]);
+        });
+
+        it('Return the empty object if there are no timeseries', () =>  {
+            expect(allPointsSelector({series: {}})).toEqual({});
+        });
+    });
+
+    describe('pointsByTsKeySelector', () => {
+        it('Return the points array for the ts Key selector', () => {
+            const result = pointsByTsKeySelector('current')(TEST_DATA);
+
+            expect(Object.keys(result).length).toBe(2);
+            expect(result['00060']).toBeDefined();
+            expect(result['00045']).toBeDefined();
+        });
+
+        it('return the empty object if no time series for series', () => {
+            expect(pointsByTsKeySelector('median')(TEST_DATA)).toEqual({});
+        });
+    });
+
+    describe('currentVariablePointsSelector', () => {
+       it('Return the current variable for the tsKey', () => {
+           const result = currentVariablePointsSelector('current')(TEST_DATA);
+
+           expect(result.length).toBe(1);
+           expect(result[0]).toEqual(TEST_DATA.series.timeSeries['00060'].points);
+       });
+
+       it('Return an empty array if the tsKey has no time series with the current variable', () => {
+           expect(currentVariablePointsSelector('compare')(TEST_DATA)).toEqual([]);
+       });
+    });
 
     describe('line segment selector', () => {
         it('should separate on approved', () => {
@@ -98,6 +180,10 @@ describe('drawingData module', () => {
                                 qualifiers: ['A']
                             }],
                             tsKey: 'current'
+                        },
+                        '00045': {
+                            ...TEST_DATA.series.timeSeries['00045'],
+                            tsKey: 'compare'
                         }
                     }
                 }
@@ -161,6 +247,10 @@ describe('drawingData module', () => {
                                 qualifiers: ['P', 'E']
                             }],
                             tsKey: 'current'
+                        },
+                        '00045': {
+                            ...TEST_DATA.series.timeSeries['00045'],
+                            tsKey: 'compare'
                         }
                     }
                 }
@@ -228,6 +318,10 @@ describe('drawingData module', () => {
                                 qualifiers: ['P', 'FLD']
                             }],
                             tsKey: 'current'
+                        },
+                        '00045': {
+                            ...TEST_DATA.series.timeSeries['00045'],
+                            tsKey: 'compare'
                         }
                     }
                 }
@@ -308,6 +402,10 @@ describe('drawingData module', () => {
                                 };
                             }),
                             tsKey: 'current'
+                        },
+                        '00045': {
+                            ...TEST_DATA.series.timeSeries['00045'],
+                            tsKey: 'compare'
                         }
                     }
                 }
@@ -380,6 +478,10 @@ describe('drawingData module', () => {
                                 };
                             }),
                             tsKey: 'current'
+                        },
+                        '00045': {
+                            ...TEST_DATA.series.timeSeries['00045'],
+                            tsKey: 'compare'
                         }
                     }
                 }
@@ -420,7 +522,28 @@ describe('drawingData module', () => {
         });
     });
 
+    describe('lineSegmentsByParmCdSelector', () => {
+        it('Should return two mappings for current time series', () => {
+            const result = lineSegmentsByParmCdSelector('current')(TEST_DATA);
 
+            expect(Object.keys(result).length).toBe(2);
+            expect(result['00060']).toBeDefined();
+            expect(result['00045']).toBeDefined();
+        });
+    });
+
+    describe('currentVariableLineSegmentsSelector', () => {
+        it('Should return a single time series for current', () => {
+            const result = currentVariableLineSegmentsSelector('current')(TEST_DATA);
+
+            expect(Object.keys(result).length).toBe(1);
+            expect(result['00060']).toBeDefined();
+        });
+
+        it('Should return an empty object for the compare time series', () => {
+            expect(currentVariableLineSegmentsSelector('compare')(TEST_DATA)).toEqual({});
+        });
+    });
 
     describe('pointsSelector', () => {
         it('works with a single collection and two time series', () => {
@@ -461,9 +584,91 @@ describe('drawingData module', () => {
         });
     });
 
+    describe('classesforPoint', () => {
+        it('Return expected classes', () => {
+            expect(classesForPoint({qualifiers: ['F', 'G']})).toEqual({
+                approved: false,
+                estimated: false
+            });
+            expect(classesForPoint({qualifiers: ['A', 'G']})).toEqual({
+                approved: true,
+                estimated: false
+            });
+            expect(classesForPoint({qualifiers: ['E','G']})).toEqual({
+                approved: false,
+                estimated: true
+            });
+        });
+    });
+
+    describe('visiblePointsSelector', () => {
+        const testData = {
+            ...TEST_DATA,
+            series: {
+                ...TEST_DATA.series,
+                timeSeries: {
+                    ...TEST_DATA.series.timeSeries,
+                    '00060:median': {
+                        tsKey: 'median',
+                        startTime: new Date('2018-03-06T15:45:00.000Z'),
+                        endTime: new Date('2018-03-13t13:45:00.000Z'),
+                        variable: '45807197',
+                        points: [{
+                            value: 10,
+                            qualifiers: ['P'],
+                            approved: false,
+                            estimated: false
+                        }, {
+                            value: null,
+                            qualifiers: ['P', 'ICE'],
+                            approved: false,
+                            estimated: false
+                        }, {
+                            value: null,
+                            qualifiers: ['P', 'FLD'],
+                            approved: false,
+                            estimated: false
+                        }]
+                    }
+                }
+            },
+            showSeries: {
+                'current': true,
+                'compare': true,
+                'median': true
+            }
+        };
+
+        it('Return two arrays', () => {
+           expect(visiblePointsSelector(testData).length).toBe(2);
+        });
+
+        it('Expects one array if only median is not visible', () => {
+            const newTestData = {
+                ...testData,
+                showSeries: {
+                    'current': true,
+                    'compare': true,
+                    'median': false
+                }
+            };
+
+            expect(visiblePointsSelector(newTestData).length).toBe(1);
+        });
+
+        it('Expects an empty array if no visible series has the current variable', () => {
+            const newTestData = {
+                ...testData,
+                currentVariableID: '11111111'
+            };
+
+            expect(visiblePointsSelector(newTestData).length).toBe(0);
+        });
+    });
+
     describe('pointsTableDataSelect', () => {
         it('Return an array of arrays if series is visible', () => {
-            expect(pointsTableDataSelector('current')({
+            const result = pointsTableDataSelector('current')({
                 series: {
                     requests: {
                         current: {
@@ -494,12 +699,13 @@ describe('drawingData module', () => {
                                 qualifiers: ['P', 'Ice'],
                                 approved: false,
                                 estimated: true
-                            }]
+                            }],
+                            variable: '45807197'
                         }
                     },
                     variables: {
                         '45807197': {
-                            variableCode: '00060',
+                            variableCode: {value: '00060'},
                             oid: 45807197
                         }
                     }
@@ -508,7 +714,8 @@ describe('drawingData module', () => {
                 showSeries: {
                     current: true
                 }
-            })).toEqual({
+            });
+            expect(result).toEqual({
                 one: [
                     ['', '2018-01-01', 'P'],
                     [15, '', ''],

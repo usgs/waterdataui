@@ -6,7 +6,7 @@ const { createSelector } = require('reselect');
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { layoutSelector, MARGIN } = require('./layout');
 const { timeSeriesSelector, variablesSelector, currentVariableSelector, requestTimeRangeSelector } = require('./timeseries');
-const { flatPointsSelector, visiblePointsSelector, pointsByTsKeySelector } = require('./drawingData');
+const { visiblePointsSelector, pointsByTsKeySelector } = require('./drawingData');
 
 const paddingRatio = 0.2;
 

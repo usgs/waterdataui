@@ -1,7 +1,4 @@
-import {
-    allTimeSeriesSelector, currentVariableSelector, currentVariableTimeSeriesSelector, timeSeriesSelector,
-    variablesSelector
-} from './timeseries';
+const {allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector, variablesSelector } = require('./timeseries');
 
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
@@ -49,6 +46,11 @@ const transformToCumulative = function(points) {
     });
 };
 
+/*
+ * @param {Object} state
+ * @return {Object} where the keys are ts ids and the values are an object that can be used to render a
+ * timeseries graph.
+ */
 export const allPointsSelector = createSelector(
     allTimeSeriesSelector,
     state => state.series.variables,
@@ -99,12 +101,11 @@ export const currentVariablePointsSelector = memoize(tsKey => createSelector(
 ));
 /**
  * Returns a selector that, for a given tsKey:
- * Returns an array of time points for all visible time series.
+ * Returns an array of time points for all time series.
  * @param  {Object} state     Redux store
  * @param  {String} tsKey     Timeseries key
  * @return {Array}            Array of array of points.
  */
-    //TODO: Candidate for removal
 export const pointsSelector = memoize((tsKey) => createSelector(
     pointsByTsKeySelector(tsKey),
     (points) => {
@@ -169,27 +170,20 @@ export const visiblePointsSelector = createSelector(
  * Returns all point data as an array of [value, time, qualifiers].
  * @param {Object} state - Redux store
  * @param {String} tsKey - timeseries key
- * @param {Array of Array} for each point returns [value, time, qualifiers] or empty array.
+ * @param {Object of Array} for each point returns [value, time, qualifiers] or empty array.
  */
-    //TODO: This needs to be changes to use point selector since it should be showing the data being displayed
 export const pointsTableDataSelector = memoize(tsKey => createSelector(
-    allTimeSeriesSelector,
-    (timeSeries) => {
-        return Object.keys(timeSeries).reduce((dataByTsID, tsID) => {
-            const series = timeSeries[tsID];
-            if (series.tsKey !== tsKey) {
-                return dataByTsID;
-            }
-
-            dataByTsID[tsID] = series.points.map((value) => {
+    pointsByTsKeySelector(tsKey),
+    (allPoints) => {
+        return Object.keys(allPoints).reduce((databyTsId, tsId) => {
+            databyTsId[tsId] = allPoints[tsId].map((value) => {
                 return [
                     value.value || '',
                     value.dateTime || '',
                     value.qualifiers && value.qualifiers.length > 0 ? value.qualifiers.join(', ') : ''
                 ];
             });
-
-            return dataByTsID;
+            return databyTsId;
         }, {});
     }
 ));
@@ -216,7 +210,7 @@ const getLineClasses = function(pt) {
  * Returns all points in a timeseries grouped into line segments, for each time series.
  * @param  {Object} state     Redux store
  * @param  {String} tsKey Timeseries key
- * @return {Array}            Array of array of points.
+ * @return {Object}  Keys are ts Ids, values are  of array of points.
  */
 export const lineSegmentsSelector = memoize(tsKey => createSelector(
     pointsByTsKeySelector(tsKey),
@@ -292,29 +286,11 @@ export const lineSegmentsByParmCdSelector = memoize(tsKey => createSelector(
 
 /**
  * Factory function creates a function that, for a given tsKey:
- * Returns mapping of time series IDs to series for the current variable.
- * @return {Object}
- */
-const currentVariableTimeseriesSelector = memoize(tsKey => createSelector(
-    timeSeriesSelector(tsKey),
-    currentVariableSelector,
-    (seriesMap, variable) => {
-        return Object.keys(seriesMap).filter(
-                sID => seriesMap[sID].variable === variable.oid).reduce((curMap, sID) => {
-            curMap[sID] = seriesMap[sID];
-            return curMap;
-        }, {});
-    }
-));
-
-
-/**
- * Factory function creates a function that, for a given tsKey:
  * Returns mapping of series ID to line segments for the currently selected variable.
- * @return {Object}
+ * @return {Object} - Keys are time series ids and values are the line segment arrays
  */
 export const currentVariableLineSegmentsSelector = memoize(tsKey => createSelector(
-    currentVariableTimeseriesSelector(tsKey),
+    currentVariableTimeSeriesSelector(tsKey),
     lineSegmentsSelector(tsKey),
     (seriesMap, linesMap) => {
         const result = Object.keys(seriesMap).reduce((visMap, sID) => {
