@@ -28,7 +28,7 @@ export const availableTimeseriesSelector = createSelector(
         for (const variableID of Object.keys(variables).sort()) {
             // start the next iteration if a variable is not a
             // series returned by the allTimeSeriesSelector
-            if (timeSeriesVariables.indexOf(variableID) === -1) {
+            if (!timeSeriesVariables.includes(variableID)) {
                 continue;
             }
             const variable = variables[variableID];
