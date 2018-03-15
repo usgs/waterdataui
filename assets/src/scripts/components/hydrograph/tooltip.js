@@ -7,7 +7,8 @@ const { createSelector, createStructuredSelector } = require('reselect');
 
 const { dispatch, link } = require('../../lib/redux');
 
-const { classesForPoint, currentVariableSelector, currentVariablePointsSelector, MASK_DESC } = require('./timeseries');
+const { classesForPoint, currentVariablePointsSelector, MASK_DESC } = require('./drawingData');
+const { currentVariableSelector } = require('./timeseries');
 const { Actions } = require('../../store');
 
 const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');

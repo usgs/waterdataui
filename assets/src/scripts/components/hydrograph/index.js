@@ -16,9 +16,10 @@ const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
 const { Actions } = require('../../store');
-const { currentVariableLineSegmentsSelector, currentVariableSelector, pointsSelector,
-    methodsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector,
-    descriptionSelector, lineSegmentsByParmCdSelector, currentVariableTimeSeriesSelector, MASK_DESC, HASH_ID } = require('./timeseries');
+const { pointsSelector, pointsTableDataSelector, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
+    MASK_DESC, HASH_ID } = require('./drawingData');
+const { currentVariableSelector, methodsSelector, isVisibleSelector, titleSelector,
+    descriptionSelector,  currentVariableTimeSeriesSelector } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
 

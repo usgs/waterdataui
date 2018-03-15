@@ -1,0 +1,439 @@
+
+describe('drawingData module', () => {
+
+    describe('line segment selector', () => {
+        it('should separate on approved', () => {
+            expect(lineSegmentsSelector('current')({
+                ...TEST_DATA,
+                series: {
+                    ...TEST_DATA.series,
+                    timeSeries: {
+                        ...TEST_DATA.series.timeSeries,
+                        '00060': {
+                            points: [{
+                                value: 10,
+                                qualifiers: []
+                            }, {
+                                value: 10,
+                                qualifiers: ['A']
+                            }, {
+                                value: 10,
+                                qualifiers: ['A']
+                            }],
+                            tsKey: 'current'
+                        }
+                    }
+                }
+            })).toEqual({
+                '00060': [
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': false,
+                            'dataMask': null
+                        },
+                        'points': [
+                            {
+                                'value': 10,
+                                'qualifiers': []
+                            }
+                        ]
+                    },
+                    {
+                        'classes': {
+                            'approved': true,
+                            'estimated': false,
+                            'dataMask': null
+                        },
+                        'points': [
+                            {
+                                'value': 10,
+                                'qualifiers': [
+                                    'A'
+                                ]
+                            },
+                            {
+                                'value': 10,
+                                'qualifiers': [
+                                    'A'
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            });
+        });
+
+        it('should separate on estimated', () => {
+            expect(lineSegmentsSelector('current')({
+                ...TEST_DATA,
+                series: {
+                    ...TEST_DATA.series,
+                    timeSeries: {
+                        ...TEST_DATA.series.timeSeries,
+                        '00060': {
+                            points: [{
+                                value: 10,
+                                qualifiers: ['P']
+                            }, {
+                                value: 10,
+                                qualifiers: ['P', 'E']
+                            }, {
+                                value: 10,
+                                qualifiers: ['P', 'E']
+                            }],
+                            tsKey: 'current'
+                        }
+                    }
+                }
+            })).toEqual({
+                '00060': [
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': false,
+                            'dataMask': null
+                        },
+                        'points': [
+                            {
+                                'value': 10,
+                                'qualifiers': [
+                                    'P'
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': true,
+                            'dataMask': null
+                        },
+                        'points': [
+                            {
+                                'value': 10,
+                                'qualifiers': [
+                                    'P',
+                                    'E'
+                                ]
+                            },
+                            {
+                                'value': 10,
+                                'qualifiers': [
+                                    'P',
+                                    'E'
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            });
+        });
+
+        it('should separate out masked values', () => {
+            expect(lineSegmentsSelector('current')({
+                ...TEST_DATA,
+                series: {
+                    ...TEST_DATA.series,
+                    timeSeries: {
+                        ...TEST_DATA.series.timeSeries,
+                        '00060': {
+                            points: [{
+                                value: 10,
+                                qualifiers: ['P']
+                            }, {
+                                value: null,
+                                qualifiers: ['P', 'ICE']
+                            }, {
+                                value: null,
+                                qualifiers: ['P', 'FLD']
+                            }],
+                            tsKey: 'current'
+                        }
+                    }
+                }
+            })).toEqual({
+                '00060': [
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': false,
+                            'dataMask': null
+                        },
+                        'points': [
+                            {
+                                'value': 10,
+                                'qualifiers': [
+                                    'P'
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': false,
+                            'dataMask': 'ice'
+                        },
+                        'points': [
+                            {
+                                'value': null,
+                                'qualifiers': [
+                                    'P',
+                                    'ICE'
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': false,
+                            'dataMask': 'fld'
+                        },
+                        'points': [
+                            {
+                                'value': null,
+                                'qualifiers': [
+                                    'P',
+                                    'FLD'
+                                ]
+                            }
+                        ]
+                    }
+                ]});
+        });
+
+        it('should separate on gaps greater than MAX_LINE_POINT_GAP', () => {
+            const dates = [
+                new Date(0),
+                new Date(MAX_LINE_POINT_GAP - 1),
+                new Date(MAX_LINE_POINT_GAP),
+                new Date(2 * MAX_LINE_POINT_GAP),
+                new Date(3 * MAX_LINE_POINT_GAP + 1),
+                new Date(3 * MAX_LINE_POINT_GAP + 2)
+            ];
+            expect(lineSegmentsSelector('current')({
+                ...TEST_DATA,
+                series: {
+                    ...TEST_DATA.series,
+                    timeSeries: {
+                        ...TEST_DATA.series.timeSeries,
+                        '00060': {
+                            points: dates.map(d => {
+                                return {
+                                    value: 10,
+                                    dateTime: d,
+                                    qualifiers: ['P']
+                                };
+                            }),
+                            tsKey: 'current'
+                        }
+                    }
+                }
+            })).toEqual({
+                '00060': [{
+                    'classes': {
+                        'approved': false,
+                        'estimated': false,
+                        'dataMask': null
+                    },
+                    'points': [{
+                            'value': 10,
+                            'dateTime': dates[0],
+                            'qualifiers': ['P']
+                        }, {
+                            'value': 10,
+                            'dateTime': dates[1],
+                            'qualifiers': ['P']
+                        }, {
+                            'value': 10,
+                            'dateTime': dates[2],
+                            'qualifiers': ['P']
+                        }, {
+                            'value': 10,
+                            'dateTime': dates[3],
+                            'qualifiers': ['P']
+                        }
+                    ]
+                }, {
+                    'classes': {
+                        'approved': false,
+                        'estimated': false,
+                        'dataMask': null
+                    },
+                    'points': [{
+                        'value': 10,
+                        'dateTime': dates[4],
+                        'qualifiers': ['P']
+                    }, {
+                        'value': 10,
+                        'dateTime': dates[5],
+                        'qualifiers': ['P']
+                    }]
+                }]
+            });
+        });
+
+        it('should not separate on gaps greater than MAX_LINE_POINT_GAP if points masked', () => {
+            const dates = [
+                new Date(0),
+                new Date(MAX_LINE_POINT_GAP - 1),
+                new Date(MAX_LINE_POINT_GAP),
+                new Date(2 * MAX_LINE_POINT_GAP),
+                new Date(3 * MAX_LINE_POINT_GAP + 1),
+                new Date(3 * MAX_LINE_POINT_GAP + 2)
+            ];
+            expect(lineSegmentsSelector('current')({
+                ...TEST_DATA,
+                series: {
+                    ...TEST_DATA.series,
+                    timeSeries: {
+                        ...TEST_DATA.series.timeSeries,
+                        '00060': {
+                            points: dates.map(d => {
+                                return {
+                                    value: null,
+                                    dateTime: d,
+                                    qualifiers: ['Ice']
+                                };
+                            }),
+                            tsKey: 'current'
+                        }
+                    }
+                }
+            })).toEqual({
+                '00060': [{
+                    'classes': {
+                        'approved': false,
+                        'estimated': false,
+                        'dataMask': 'ice'
+                    },
+                    'points': [{
+                        'value': null,
+                        'dateTime': dates[0],
+                        'qualifiers': ['Ice']
+                    }, {
+                        'value': null,
+                        'dateTime': dates[1],
+                        'qualifiers': ['Ice']
+                    }, {
+                        'value': null,
+                        'dateTime': dates[2],
+                        'qualifiers': ['Ice']
+                    }, {
+                        'value': null,
+                        'dateTime': dates[3],
+                        'qualifiers': ['Ice']
+                    }, {
+                        'value': null,
+                        'dateTime': dates[4],
+                        'qualifiers': ['Ice']
+                    }, {
+                        'value': null,
+                        'dateTime': dates[5],
+                        'qualifiers': ['Ice']
+                    }]
+                }]
+            });
+        });
+    });
+
+
+
+    describe('pointsSelector', () => {
+        it('works with a single collection and two time series', () => {
+            expect(pointsSelector('current')({
+                series: {
+                    requests: {
+                        current: {
+                            timeSeriesCollections: ['coll1']
+                        }
+                    },
+                    timeSeriesCollections: {
+                        'coll1': {
+                            variable: 45807197,
+                            timeSeries: ['one', 'two']
+                        }
+                    },
+                    timeSeries: {
+                        one: {
+                            points: ['ptOne', 'ptTwo', 'ptThree'],
+                            tsKey: 'current',
+                            variable: 45807197
+                        },
+                        two: {
+                            points: ['ptOne2', 'ptTwo2', 'ptThree2'],
+                            tsKey: 'current',
+                            variable: 45807197
+                        }
+                    },
+                    variables: {
+                        '45807197': {
+                            variableCode: '00060',
+                            oid: 45807197
+                        }
+                    }
+                },
+                currentVariableID: '45807197'
+            })).toEqual([['ptOne', 'ptTwo', 'ptThree'], ['ptOne2', 'ptTwo2', 'ptThree2']]);
+        });
+    });
+
+    describe('pointsTableDataSelect', () => {
+        it('Return an array of arrays if series is visible', () => {
+            expect(pointsTableDataSelector('current')({
+                series: {
+                    requests: {
+                        current: {
+                            timeSeriesCollections: ['coll1']
+                        }
+                    },
+                    timeSeriesCollections: {
+                        'coll1': {
+                            variable: 45807197,
+                            timeSeries: ['one']
+                        }
+                    },
+                    timeSeries: {
+                        one: {
+                            tsKey: 'current',
+                            points: [{
+                                dateTime: '2018-01-01',
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: 15,
+                                approved: false,
+                                estimated: true
+                            }, {
+                                value: 10,
+                                dateTime: '2018-01-03',
+                                qualifiers: ['P', 'Ice'],
+                                approved: false,
+                                estimated: true
+                            }]
+                        }
+                    },
+                    variables: {
+                        '45807197': {
+                            variableCode: '00060',
+                            oid: 45807197
+                        }
+                    }
+                },
+                currentVariableID: '45807197',
+                showSeries: {
+                    current: true
+                }
+            })).toEqual({
+                one: [
+                    ['', '2018-01-01', 'P'],
+                    [15, '', ''],
+                    [10, '2018-01-03', 'P, Ice']
+                ]
+            });
+        });
+    });
+});
