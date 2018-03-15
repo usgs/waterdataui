@@ -24,7 +24,13 @@ export const availableTimeseriesSelector = createSelector(
 
         const codes = {};
         const seriesList = Object.values(timeSeries);
+        const timeSeriesVariables = seriesList.map(x => x.variable);
         for (const variableID of Object.keys(variables).sort()) {
+            // start the next iteration if a variable is not a
+            // series returned by the allTimeSeriesSelector
+            if (timeSeriesVariables.indexOf(variableID) === -1) {
+                continue;
+            }
             const variable = variables[variableID];
             codes[variable.variableCode.value] = {
                 variableID: variable.oid,
