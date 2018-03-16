@@ -38,10 +38,6 @@ export const availableTimeseriesSelector = createSelector(
                 selected: currentVariableID === variableID,
                 currentTimeseriesCount: seriesList.filter(
                     ts => ts.tsKey === 'current' && ts.variable === variableID).length,
-                compareTimeseriesCount: seriesList.filter(
-                    ts => ts.tsKey === 'compare' && ts.variable === variableID).length,
-                medianTimeseriesCount: seriesList.filter(
-                    ts => ts.tsKey === 'median' && ts.variable === variableID).length
             };
         }
         let sorted = [];
@@ -94,17 +90,13 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
         return;
     }
 
-    // only bother to create the table if there are timeseries available
-    const screenSizeCheck = layout.windowWidth <= SMALL_SCREEN_WIDTH;
-    let columnHeaders;
-    if (screenSizeCheck) {
-        columnHeaders = ['Parameter Code', 'Description', 'Preview'];
-    } else {
-        columnHeaders = ['Parameter Code', 'Description', 'Now', 'Last Year', 'Median', 'Preview'];
-    }
+    const columnHeaders = ['Description', 'Preview', '#'];
+
     const table = elem
         .append('table')
             .attr('id', 'select-timeseries')
+            .attr('tabindex', -1)
+            .attr('role', 'menu')
             .classed('usa-table-borderless', true);
 
     table.append('caption').text('Select a timeseries');
@@ -124,6 +116,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
             .attr('ga-on', 'click')
             .attr('ga-event-category', 'TimeseriesGraph')
             .attr('ga-event-action', 'selectTimeSeries')
+            .attr('role', 'menuitem')
             .classed('selected', parm => parm[1].selected)
             .on('click', dispatch(function (parm) {
                 if (!parm[1].selected) {
@@ -132,36 +125,24 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
             }))
             .call(tr => {
                 let parmCdCol = tr.append('td')
-                    .attr('scope', 'row');
                 parmCdCol.append('span')
-                        .text(parm => parm[0]);
-                parmCdCol.append('div')
-                        .attr('class', 'tooltip-item parameter-tooltip');
+                    .text(parm => parm[1].description);
+                let tooltipIcon = parmCdCol.append('div')
+                    .attr('class', 'tooltip-item parameter-tooltip');
+                tooltipIcon.append('sup')
+                    .append('i')
+
+
                 tr.append('td')
                     .text(parm => parm[1].description);
                 // if screen size is medium/large, place "Now", "Previous Year", and "Median Data" in the table
                 // under the appropriate column headers
-                if (!screenSizeCheck) {
-                    tr.append('td')
-                        .html(parm => {
-                            const subScript = parm[1].currentTimeseriesCount > 1 ? `<sub>${parm[1].currentTimeseriesCount}</sub>` : '';
-                            return parm[1].currentTimeseriesCount ? `<i class="fa fa-check" aria-label="Current year data available"></i>${subScript}` : '';
-                        });
-                    tr.append('td')
-                        .html(parm => {
-                            const subScript = parm[1].compareTimeseriesCount > 1 ? `<sub>${parm[1].compareTimeseriesCount}</sub>` : '';
-                            return parm[1].compareTimeseriesCount ? `<i class="fa fa-check" aria-label="Previous year data available"></i>${subScript}` : '';
-                        });
-                    tr.append('td')
-                        .html(parm => {
-                            const subScript = parm[1].medianTimeseriesCount > 1 ? `<sub>${parm[1].medianTimeseriesCount}</sub>` : '';
-                            return parm[1].medianTimeseriesCount ? `<i class="fa fa-check" aria-label="Median data available"></i>${subScript}` : '';
-                        });
-                    }
                 tr.append('td')
                     .append('svg')
                     .attr('width', SPARK_LINE_DIM.width.toString())
                     .attr('height', SPARK_LINE_DIM.height.toString());
+                tr.append('td')
+                    .text(parm => parm[1].currentTimeSeriesCount);
             });
 
     // seems to be more straight-forward to access an element's joined
