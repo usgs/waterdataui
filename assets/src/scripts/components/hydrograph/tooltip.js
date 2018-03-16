@@ -7,7 +7,8 @@ const { createSelector, createStructuredSelector } = require('reselect');
 
 const { dispatch, link } = require('../../lib/redux');
 
-const { classesForPoint, currentVariableSelector, pointsSelector, MASK_DESC } = require('./timeseries');
+const { classesForPoint, currentVariablePointsSelector, MASK_DESC } = require('./drawingData');
+const { currentVariableSelector } = require('./timeseries');
 const { Actions } = require('../../store');
 
 const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');
@@ -89,7 +90,7 @@ const tooltipFocusTimeSelector = memoize(tsKey => createSelector(
  * @return {Object}
  */
 export const tsDatumSelector = memoize(tsKey => createSelector(
-    pointsSelector(tsKey),
+    currentVariablePointsSelector(tsKey),
     tooltipFocusTimeSelector(tsKey),
     (points, tooltipFocusTime) => {
         // FIXME: Handle more than just the first time series in the list

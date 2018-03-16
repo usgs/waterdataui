@@ -165,10 +165,8 @@ describe('Legend module', () => {
                     },
                     variables: {
                         '00060ID': {
-                            oid: '00060ID',
-                            parameterCode: {
-                                value: '00060'
-                            }
+                            variableCode: {value: '00060'},
+                            oid: '00060ID'
                         }
                     }
                 },
