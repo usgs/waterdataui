@@ -13,29 +13,20 @@ describe('Normalizr schema', () => {
                     variableParam: '[00060]',
                     parameter: []
                 },
-                note: [{
-                    value: '[ALL:05413500]',
-                    title: 'filter:sites'
-                }, {
-                    value: '[mode=PERIOD, period=P7D, modifiedSince=null]',
-                    title: 'filter:timeRange'
-                }, {
-                    value: 'methodIds=[ALL]',
-                    title: 'filter:methodId'
-                }, {
-                    value: '2017-01-09T20:46:07.542Z',
-                    title: 'requestDT'
-                }, {
-                    value: '1df59e50-f57e-11e7-8ba8-6cae8b663fb6',
-                    title: 'requestId'
-                }, {
-                    value: 'Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.',
-                    title: 'disclaimer'
-                }, {
-                    value: 'vaas01',
-                    title: 'server'
+                notes: {
+                    'filter:sites': '[ALL:05413500]',
+                    'filter:timeRange': {
+                        mode: 'PERIOD',
+                        periodDays: '7',
+                        modifiedSince: null
+                    },
+                    'filter:methodId': 'methodIds=[ALL]',
+                    'requestDT': new Date('2017-01-09T20:46:07.542Z'),
+                    'requestId': '1df59e50-f57e-11e7-8ba8-6cae8b663fb6',
+                    'disclaimer': 'Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.',
+                    'server': 'vaas01'
                 }
-            ]}
+            }
         });
         expect(data.siteCodes).toEqual({
             '05413500': {
@@ -119,8 +110,6 @@ describe('Normalizr schema', () => {
                 censorCode: [],
                 tsKey: 'current',
                 variable: '45807197',
-                startTime: new Date('2017-01-02T15:00:00.000-06:00'),
-                endTime: new Date('2017-01-02T15:15:00.000-06:00'),
                 points: [{
                     value: 302,
                     qualifiers: ['P'],

@@ -41,7 +41,7 @@
 
             {% else %}
                 <h1>{{ stations[0].station_nm }}</h1>
-                {% include 'partials/social_share.html' %}
+                {% with site_no=stations[0].site_no %}{% include 'partials/social_share.html' %}{% endwith %}
 
                 <ul>
                     <li><a href="{{ config.NWIS_ENDPOINTS.INVENTORY }}/?site_no={{ stations[0].site_no }}" target="_blank">Site inventory page</a></li>

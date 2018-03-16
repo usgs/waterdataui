@@ -15,33 +15,25 @@ export const Actions = {
             const timeSeries = getTimeseries({sites: [siteno], params, startDate, endDate}).then(
                 series => {
                     const collection = normalize(series, 'current');
-
-                    // Get the start/end times of every time series.
-                    const tsArray = Object.values(collection.timeSeries);
-                    const startTime = new Date(Math.min.apply(null,
-                        tsArray.filter(ts => ts.startTime).map(ts => ts.startTime)));
-                    const endTime = new Date(Math.max.apply(null,
-                        tsArray.filter(ts => ts.endTime).map(ts => ts.endTime)));
-
                     dispatch(Actions.addSeriesCollection('current', collection));
+
+                    // Get the start/end times of this request's range.
+                    const notes = collection.queryInfo['current'].notes;
+                    const endTime = notes.requestDT;
+                    const startTime = new Date(endTime);
+                    startTime.setDate(endTime.getDate() - notes['filter:timeRange'].periodDays);
+
                     // Trigger a call to get last year's data
                     dispatch(Actions.retrieveCompareTimeseries(siteno, startTime, endTime));
 
-                    return collection;
+                    return {collection, startTime, endTime};
                 },
                 () => {
                     dispatch(Actions.resetTimeseries('current'));
                 }
             );
             const medianStatistics = getMedianStatistics({sites: [siteno]});
-            Promise.all([timeSeries, medianStatistics]).then(([collection, stats]) => {
-                // Get the start/end times of every time series.
-                const tsArray = Object.values(collection.timeSeries);
-                const startTime = new Date(Math.min.apply(null,
-                    tsArray.filter(ts => ts.startTime).map(ts => ts.startTime)));
-                const endTime = new Date(Math.max.apply(null,
-                    tsArray.filter(ts => ts.endTime).map(ts => ts.endTime)));
-
+            Promise.all([timeSeries, medianStatistics]).then(([{collection, startTime, endTime}, stats]) => {
                 let medianCollection = parseMedianData(stats, startTime, endTime, collection.variables);
                 dispatch(Actions.addSeriesCollection('median', medianCollection));
             });
@@ -132,6 +124,12 @@ export const Actions = {
         return {
             type: 'SET_GAGE_HEIGHT',
             gageHeightIndex
+        };
+    },
+    toggleAudibleInterface(audibleInterfaceOn) {
+        return {
+            type: 'AUDIBLE_INTERFACE_TOGGLE',
+            audibleInterfaceOn
         };
     }
 };
@@ -230,6 +228,12 @@ export const timeSeriesReducer = function (state={}, action) {
                 gageHeight: state.floodStages[action.gageHeightIndex]
             };
 
+        case 'AUDIBLE_INTERFACE_TOGGLE':
+            return {
+                ...state,
+                audibleInterfaceOn: action.audibleInterfaceOn
+            };
+
         default:
             return state;
     }
@@ -262,6 +266,7 @@ export const configureStore = function (initialState) {
         floodStages: [],
         floodExtent: {},
         gageHeight: null,
+        audibleInterfaceOn: false,
         ...initialState
     };
 

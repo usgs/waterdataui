@@ -24,7 +24,13 @@ export const availableTimeseriesSelector = createSelector(
 
         const codes = {};
         const seriesList = Object.values(timeSeries);
+        const timeSeriesVariables = seriesList.map(x => x.variable);
         for (const variableID of Object.keys(variables).sort()) {
+            // start the next iteration if a variable is not a
+            // series returned by the allTimeSeriesSelector
+            if (!timeSeriesVariables.includes(variableID)) {
+                continue;
+            }
             const variable = variables[variableID];
             codes[variable.variableCode.value] = {
                 variableID: variable.oid,
@@ -75,21 +81,27 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
 /**
  * Draws a table with clickable rows of timeseries parameter codes. Selecting
  * a row changes the active parameter code.
- * @param  {Object} elem                d3 selection
- * @param  {Object} availableTimeseries Timeseries metadata to display
- * @param  {Object} layout              layout as retrieved from the redux store
+ * @param  {Object} elem                        d3 selection
+ * @param  {Object} availableTimeseries         Timeseries metadata to display
+ * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
+ * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
+ * @param  {Object} layout                      layout as retrieved from the redux store
  */
 export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd, layout}) {
     elem.select('#select-timeseries').remove();
-    const screenSizeCheck = layout.windowWidth <= SMALL_SCREEN_WIDTH;
 
+    if (!availableTimeseries.length) {
+        return;
+    }
+
+    // only bother to create the table if there are timeseries available
+    const screenSizeCheck = layout.windowWidth <= SMALL_SCREEN_WIDTH;
     let columnHeaders;
     if (screenSizeCheck) {
         columnHeaders = ['Parameter Code', 'Description', 'Preview'];
     } else {
         columnHeaders = ['Parameter Code', 'Description', 'Now', 'Last Year', 'Median', 'Preview'];
     }
-
     const table = elem
         .append('table')
             .attr('id', 'select-timeseries')
@@ -188,7 +200,8 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
     table.selectAll('tbody svg').each(function(d) {
         let selection = select(this);
         const parmCd = d[0];
-        for (const seriesLineSegments of lineSegmentsByParmCd[parmCd]) {
+        const lineSegments = lineSegmentsByParmCd[parmCd] ? lineSegmentsByParmCd[parmCd] : [];
+        for (const seriesLineSegments of lineSegments) {
             selection.call(addSparkLine, {
                 seriesLineSegments: seriesLineSegments,
                 scales: timeSeriesScalesByParmCd[parmCd]

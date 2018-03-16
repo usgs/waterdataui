@@ -9,6 +9,7 @@ const { createStructuredSelector } = require('reselect');
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { dispatch, link, provide } = require('../../lib/redux');
 
+const { audibleUI } = require('./audible');
 const { appendAxes, axesSelector } = require('./axes');
 const { MARGIN, CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
@@ -237,15 +238,14 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap,
 };
 
 const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, dataByTsID, timeSeries}) {
-    elem.selectAll(`.sr-only-${tsKey}`).remove();
+    elem.selectAll(`#sr-only-${tsKey}`).remove();
 
     if (!visible) {
         return;
     }
 
     const container = elem.append('div')
-        .attr('class', `sr-only-${tsKey}`)
-        .attr('class', 'usa-sr-only');
+        .attr('id', `sr-only-${tsKey}`);
 
     for (const seriesID of Object.keys(timeSeries)) {
         const series = timeSeries[seriesID];
@@ -360,6 +360,7 @@ const attachToNode = function (store, node, {siteno} = {}) {
         .call(provide(store))
         .call(timeSeriesGraph)
         .call(timeSeriesLegend)
+        .call(audibleUI)
         .select('.hydrograph-last-year-input')
             .on('change', dispatch(function () {
                 return Actions.toggleTimeseries('compare', this.checked);

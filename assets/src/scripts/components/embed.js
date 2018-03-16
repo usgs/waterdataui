@@ -18,7 +18,7 @@ function attachToNode(store, node) {
     select(node)
         .select('a')
         .append('i')
-            .attr('class', 'fa fa-share');
+            .attr('class', 'fa fa-code');
 }
 
 module.exports = {attachToNode};
