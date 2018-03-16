@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
 - Disabled zooming the map on scroll wheel unless the map has focus.
+- Precipitation timeseries is now shown as accumulated precipitation over the 7 days.
+
+##Fixed
+- Screen reader only tables are now fully hidden on Firefox
 
 ## [0.3.0] - 2018-03-09
 ### Added

@@ -8,6 +8,7 @@ const { SPARK_LINE_DIM, SMALL_SCREEN_WIDTH } = require('./layout');
 const { dispatch } = require('../../lib/redux');
 
 
+
 /**
  * Returns metadata for each available timeseries.
  * @param  {Object} state Redux state

@@ -1,11 +1,16 @@
-const { lineSegmentsSelector, pointsSelector,
-    currentVariableTimeSeriesSelector, pointsTableDataSelector, allTimeSeriesSelector, requestTimeRangeSelector, MAX_LINE_POINT_GAP } = require('./timeseries');
+const { variablesSelector, currentVariableSelector, timeSeriesSelector, isVisibleSelector, yLabelSelector,
+    titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, allTimeSeriesSelector,
+    requestTimeRangeSelector} = require('./timeseries');
 
 
 const TEST_DATA = {
     series: {
         timeSeries: {
             '00060': {
+                tsKey: 'current',
+                startTime: new Date('2018-03-06T15:45:00.000Z'),
+                endTime: new Date('2018-03-13T13:45:00.000Z'),
+                variable: '45807197',
                 points: [{
                     value: 10,
                     qualifiers: ['P'],
@@ -22,7 +27,28 @@ const TEST_DATA = {
                     approved: false,
                     estimated: false
                 }]
-            }
+            },
+            '00010': {
+                tsKey: 'compare',
+                startTime: new Date('2017-03-06T15:45:00.000Z'),
+                endTime: new Date('2017-03-13t13:45:00.000Z'),
+                variables: '45807196',
+                points: [{
+                    value: 1,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 2,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 3,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }]}
         },
         timeSeriesCollections: {
             'coll1': {
@@ -38,7 +64,27 @@ const TEST_DATA = {
         variables: {
             '45807197': {
                 variableCode: '00060',
-                oid: 45807197
+                variableName: 'Streamflow',
+                variableDescription: 'Discharge, cubic feet per second',
+                oid: '45807197'
+            },
+            '45807196': {
+                variableCode: '00010',
+                variableName: 'Gage Height',
+                variableDescription: 'Gage Height in feet',
+                oid: '45807196'
+            }
+        },
+        queryInfo: {
+            current: {
+                notes: {
+                    requestDT: new Date('2017-01-09T20:46:07.542Z'),
+                    'filter:timeRange': {
+                        mode: 'PERIOD',
+                        periodDays: 7,
+                        modifiedSince: null
+                    }
+                }
             }
         }
     },
@@ -47,7 +93,65 @@ const TEST_DATA = {
 
 describe('Timeseries module', () => {
 
-    describe('all time series selector', () => {
+    const TEST_VARIABLES = {
+            '45807042': {
+                'variableCode': {
+                    value: '00010'
+                },
+                'variableName': 'Temperature'
+            },
+            '45807197': {
+                'variableCode': {
+                    value: '00060'
+                },
+                'variableName': 'Streamflow'
+            }
+        };
+
+    describe('variablesSelector', () => {
+
+        it('should return the variables object', () => {
+            expect(variablesSelector({
+                series: {
+                    variables: TEST_VARIABLES
+                }
+            })).toEqual(TEST_VARIABLES);
+        });
+
+        it('Should return null if no variables are in the state', () => {
+            expect(variablesSelector({
+                series: {}
+            })).toBeNull();
+        });
+    });
+
+    describe('currentVariableSelector', () => {
+
+        it('should return the selected variable information', () => {
+            expect(currentVariableSelector({
+                series: {
+                    variables: TEST_VARIABLES
+                },
+                currentVariableID: '45807197'
+            })).toEqual({
+                'variableCode': {
+                    value: '00060'
+                },
+                'variableName': 'Streamflow'
+            });
+        });
+
+        it('should return null if no currentVariableID set', () => {
+            expect(currentVariableSelector({
+                series: {
+                    variables: TEST_VARIABLES
+                },
+                currentVariableID: null
+            })).toBeNull();
+        });
+    });
+
+    describe('allTimesSeriesSelector', () => {
 
         it('should return all timeseries if they have data points', () => {
             expect(allTimeSeriesSelector({
@@ -87,344 +191,6 @@ describe('Timeseries module', () => {
                 '00010': {
                     points: [1, 2, 3, 4]
                 }
-            });
-        });
-    });
-
-    describe('line segment selector', () => {
-        it('should separate on approved', () => {
-            expect(lineSegmentsSelector('current')({
-                ...TEST_DATA,
-                series: {
-                    ...TEST_DATA.series,
-                    timeSeries: {
-                        ...TEST_DATA.series.timeSeries,
-                        '00060': {
-                            points: [{
-                                value: 10,
-                                qualifiers: []
-                            }, {
-                                value: 10,
-                                qualifiers: ['A']
-                            }, {
-                                value: 10,
-                                qualifiers: ['A']
-                            }],
-                            tsKey: 'current'
-                        }
-                    }
-                }
-            })).toEqual({
-                '00060': [
-                    {
-                        'classes': {
-                            'approved': false,
-                            'estimated': false,
-                            'dataMask': null
-                        },
-                        'points': [
-                            {
-                                'value': 10,
-                                'qualifiers': []
-                            }
-                        ]
-                    },
-                    {
-                        'classes': {
-                            'approved': true,
-                            'estimated': false,
-                            'dataMask': null
-                        },
-                        'points': [
-                            {
-                                'value': 10,
-                                'qualifiers': [
-                                    'A'
-                                ]
-                            },
-                            {
-                                'value': 10,
-                                'qualifiers': [
-                                    'A'
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            });
-        });
-
-        it('should separate on estimated', () => {
-            expect(lineSegmentsSelector('current')({
-                ...TEST_DATA,
-                series: {
-                    ...TEST_DATA.series,
-                    timeSeries: {
-                        ...TEST_DATA.series.timeSeries,
-                        '00060': {
-                            points: [{
-                                value: 10,
-                                qualifiers: ['P']
-                            }, {
-                                value: 10,
-                                qualifiers: ['P', 'E']
-                            }, {
-                                value: 10,
-                                qualifiers: ['P', 'E']
-                            }],
-                            tsKey: 'current'
-                        }
-                    }
-                }
-            })).toEqual({
-                '00060': [
-                    {
-                        'classes': {
-                            'approved': false,
-                            'estimated': false,
-                            'dataMask': null
-                        },
-                        'points': [
-                            {
-                                'value': 10,
-                                'qualifiers': [
-                                    'P'
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        'classes': {
-                            'approved': false,
-                            'estimated': true,
-                            'dataMask': null
-                        },
-                        'points': [
-                            {
-                                'value': 10,
-                                'qualifiers': [
-                                    'P',
-                                    'E'
-                                ]
-                            },
-                            {
-                                'value': 10,
-                                'qualifiers': [
-                                    'P',
-                                    'E'
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            });
-        });
-
-        it('should separate out masked values', () => {
-            expect(lineSegmentsSelector('current')({
-                ...TEST_DATA,
-                series: {
-                    ...TEST_DATA.series,
-                    timeSeries: {
-                        ...TEST_DATA.series.timeSeries,
-                        '00060': {
-                            points: [{
-                                value: 10,
-                                qualifiers: ['P']
-                            }, {
-                                value: null,
-                                qualifiers: ['P', 'ICE']
-                            }, {
-                                value: null,
-                                qualifiers: ['P', 'FLD']
-                            }],
-                            tsKey: 'current'
-                        }
-                    }
-                }
-            })).toEqual({
-                '00060': [
-                    {
-                        'classes': {
-                            'approved': false,
-                            'estimated': false,
-                            'dataMask': null
-                        },
-                        'points': [
-                            {
-                                'value': 10,
-                                'qualifiers': [
-                                    'P'
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        'classes': {
-                            'approved': false,
-                            'estimated': false,
-                            'dataMask': 'ice'
-                        },
-                        'points': [
-                            {
-                                'value': null,
-                                'qualifiers': [
-                                    'P',
-                                    'ICE'
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        'classes': {
-                            'approved': false,
-                            'estimated': false,
-                            'dataMask': 'fld'
-                        },
-                        'points': [
-                            {
-                                'value': null,
-                                'qualifiers': [
-                                    'P',
-                                    'FLD'
-                                ]
-                            }
-                        ]
-                    }
-                ]});
-        });
-
-        it('should separate on gaps greater than MAX_LINE_POINT_GAP', () => {
-            const dates = [
-                new Date(0),
-                new Date(MAX_LINE_POINT_GAP - 1),
-                new Date(MAX_LINE_POINT_GAP),
-                new Date(2 * MAX_LINE_POINT_GAP),
-                new Date(3 * MAX_LINE_POINT_GAP + 1),
-                new Date(3 * MAX_LINE_POINT_GAP + 2)
-            ];
-            expect(lineSegmentsSelector('current')({
-                ...TEST_DATA,
-                series: {
-                    ...TEST_DATA.series,
-                    timeSeries: {
-                        ...TEST_DATA.series.timeSeries,
-                        '00060': {
-                            points: dates.map(d => {
-                                return {
-                                    value: 10,
-                                    dateTime: d,
-                                    qualifiers: ['P']
-                                };
-                            }),
-                            tsKey: 'current'
-                        }
-                    }
-                }
-            })).toEqual({
-                '00060': [{
-                    'classes': {
-                        'approved': false,
-                        'estimated': false,
-                        'dataMask': null
-                    },
-                    'points': [{
-                            'value': 10,
-                            'dateTime': dates[0],
-                            'qualifiers': ['P']
-                        }, {
-                            'value': 10,
-                            'dateTime': dates[1],
-                            'qualifiers': ['P']
-                        }, {
-                            'value': 10,
-                            'dateTime': dates[2],
-                            'qualifiers': ['P']
-                        }, {
-                            'value': 10,
-                            'dateTime': dates[3],
-                            'qualifiers': ['P']
-                        }
-                    ]
-                }, {
-                    'classes': {
-                        'approved': false,
-                        'estimated': false,
-                        'dataMask': null
-                    },
-                    'points': [{
-                        'value': 10,
-                        'dateTime': dates[4],
-                        'qualifiers': ['P']
-                    }, {
-                        'value': 10,
-                        'dateTime': dates[5],
-                        'qualifiers': ['P']
-                    }]
-                }]
-            });
-        });
-
-        it('should not separate on gaps greater than MAX_LINE_POINT_GAP if points masked', () => {
-            const dates = [
-                new Date(0),
-                new Date(MAX_LINE_POINT_GAP - 1),
-                new Date(MAX_LINE_POINT_GAP),
-                new Date(2 * MAX_LINE_POINT_GAP),
-                new Date(3 * MAX_LINE_POINT_GAP + 1),
-                new Date(3 * MAX_LINE_POINT_GAP + 2)
-            ];
-            expect(lineSegmentsSelector('current')({
-                ...TEST_DATA,
-                series: {
-                    ...TEST_DATA.series,
-                    timeSeries: {
-                        ...TEST_DATA.series.timeSeries,
-                        '00060': {
-                            points: dates.map(d => {
-                                return {
-                                    value: null,
-                                    dateTime: d,
-                                    qualifiers: ['Ice']
-                                };
-                            }),
-                            tsKey: 'current'
-                        }
-                    }
-                }
-            })).toEqual({
-                '00060': [{
-                    'classes': {
-                        'approved': false,
-                        'estimated': false,
-                        'dataMask': 'ice'
-                    },
-                    'points': [{
-                        'value': null,
-                        'dateTime': dates[0],
-                        'qualifiers': ['Ice']
-                    }, {
-                        'value': null,
-                        'dateTime': dates[1],
-                        'qualifiers': ['Ice']
-                    }, {
-                        'value': null,
-                        'dateTime': dates[2],
-                        'qualifiers': ['Ice']
-                    }, {
-                        'value': null,
-                        'dateTime': dates[3],
-                        'qualifiers': ['Ice']
-                    }, {
-                        'value': null,
-                        'dateTime': dates[4],
-                        'qualifiers': ['Ice']
-                    }, {
-                        'value': null,
-                        'dateTime': dates[5],
-                        'qualifiers': ['Ice']
-                    }]
-                }]
             });
         });
     });
@@ -507,101 +273,97 @@ describe('Timeseries module', () => {
                 four: {item: 'four', points: [4, 5], tsKey: 'current', variable: 45807197}
             });
         });
-    });
 
-    describe('pointsSelector', () => {
-        it('works with a single collection and two time series', () => {
-            expect(pointsSelector('current')({
-                series: {
-                    requests: {
-                        current: {
-                            timeSeriesCollections: ['coll1']
-                        }
-                    },
-                    timeSeriesCollections: {
-                        'coll1': {
-                            variable: 45807197,
-                            timeSeries: ['one', 'two']
-                        }
-                    },
-                    timeSeries: {
-                        one: {
-                            points: ['ptOne', 'ptTwo', 'ptThree'],
-                            tsKey: 'current',
-                            variable: 45807197
-                        },
-                        two: {
-                            points: ['ptOne2', 'ptTwo2', 'ptThree2'],
-                            tsKey: 'current',
-                            variable: 45807197
-                        }
-                    },
-                    variables: {
-                        '45807197': {
-                            variableCode: '00060',
-                            oid: 45807197
-                        }
-                    }
-                },
-                currentVariableID: '45807197'
-            })).toEqual([['ptOne', 'ptTwo', 'ptThree'], ['ptOne2', 'ptTwo2', 'ptThree2']]);
+        it('returns {} if there is no currentVariableId', () => {
+            expect(currentVariableTimeSeriesSelector('current')({
+                series: {},
+                currentVariableID: null
+            })).toEqual({});
         });
     });
 
-    describe('pointsTableDataSelect', () => {
-        it('Return an array of arrays if series is visible', () => {
-            expect(pointsTableDataSelector('current')({
-                series: {
-                    requests: {
-                        current: {
-                            timeSeriesCollections: ['coll1']
-                        }
-                    },
-                    timeSeriesCollections: {
-                        'coll1': {
-                            variable: 45807197,
-                            timeSeries: ['one']
-                        }
-                    },
-                    timeSeries: {
-                        one: {
-                            tsKey: 'current',
-                            points: [{
-                                dateTime: '2018-01-01',
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: false
-                            }, {
-                                value: 15,
-                                approved: false,
-                                estimated: true
-                            }, {
-                                value: 10,
-                                dateTime: '2018-01-03',
-                                qualifiers: ['P', 'Ice'],
-                                approved: false,
-                                estimated: true
-                            }]
-                        }
-                    },
-                    variables: {
-                        '45807197': {
-                            variableCode: '00060',
-                            oid: 45807197
-                        }
-                    }
-                },
-                currentVariableID: '45807197',
-                showSeries: {
-                    current: true
+    describe('timeSeriesSelector', () => {
+
+        it('should return the selected time series', () => {
+            expect(timeSeriesSelector('current')(TEST_DATA)).toEqual({
+                '00060': {
+                    tsKey: 'current',
+                    startTime: new Date('2018-03-06T15:45:00.000Z'),
+                    endTime: new Date('2018-03-13T13:45:00.000Z'),
+                    points: [{
+                        value: 10,
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: null,
+                        qualifiers: ['P', 'ICE'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: null,
+                        qualifiers: ['P', 'FLD'],
+                        approved: false,
+                        estimated: false
+                    }],
+                    variable: '45807197'
                 }
-            })).toEqual({
-                one: [
-                    ['', '2018-01-01', 'P'],
-                    [15, '', ''],
-                    [10, '2018-01-03', 'P, Ice']
-                ]
             });
+        });
+
+        it('should return null the empty set if no time series for the selected key exist', () => {
+            expect(timeSeriesSelector('median')(TEST_DATA)).toEqual({});
+        });
+    });
+
+    describe('isVisibleSelector', () => {
+        it('Returns whether the time series is visible', () => {
+            const store = {
+                showSeries: {
+                    'current': true,
+                    'compare': false,
+                    'median': true
+                }
+            };
+
+            expect(isVisibleSelector('current')(store)).toBe(true);
+            expect(isVisibleSelector('compare')(store)).toBe(false);
+            expect(isVisibleSelector('median')(store)).toBe(true);
+        });
+    });
+
+    describe('yLabelSelector', () => {
+        it('Returns string to be used for labeling the y axis', () => {
+            expect(yLabelSelector(TEST_DATA)).toBe('Discharge, cubic feet per second');
+        });
+
+        it('Returns empty string if no variable selected', () => {
+            expect(yLabelSelector({
+                ...TEST_DATA,
+                currentVariableID: null
+            })).toBe('');
+        });
+    });
+
+    describe('titleSelector', () => {
+        it('Returns the string to used for graph title', () => {
+            expect(titleSelector(TEST_DATA)).toBe('Streamflow');
+        });
+        it('Returns empty string if no variable selected', () => {
+            expect(titleSelector({
+                ...TEST_DATA,
+                currentVariableID: null
+            })).toBe('');
+        });
+    });
+
+    describe('descriptionSelector', () => {
+        it('Returns a description with the date for the current times series', () => {
+            const result = descriptionSelector(TEST_DATA);
+
+            expect(result).toContain('Discharge, cubic feet per second');
+            expect(result).toContain('1/2/2017');
+            expect(result).toContain('1/9/2017');
         });
     });
 
@@ -625,7 +387,7 @@ describe('Timeseries module', () => {
             })).toEqual({
                 current: {
                     start: new Date('2017-01-02T20:46:07.542Z'),
-                    end: new Date('2017-01-09T20:46:07.542Z'),
+                    end: new Date('2017-01-09T20:46:07.542Z')
                 }
             });
         });

@@ -32,6 +32,13 @@ $usgs-blue: #02274B;
     }
 }
 
+/* This fixes an issue with Firefox not hiding long divs. I opened https://github.com/uswds/uswds/issues/2380 .
+ * If it gets addressed this can be removed.
+ */
+.usa-sr-only {
+    overflow: hidden;
+}
+
 body {
     &#monitoring-location {
         @import './pages/monitoring_location';
