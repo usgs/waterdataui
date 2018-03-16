@@ -29,6 +29,8 @@ export const HASH_ID = {
 // Lines will be split if the difference exceeds 72 minutes.
 export const MAX_LINE_POINT_GAP = 60 * 1000 * 72;
 
+const PARM_CODES_TO_ACCUMULATE = ['00045'];
+
 
 /*
  * @param {Array} points - Array of point objects
@@ -63,7 +65,7 @@ export const allPointsSelector = createSelector(
             const ts = timeSeries[tsId];
             const variableId = ts.variable;
             const parmCd = variables[variableId].variableCode.value;
-            if (ts.tsKey !== 'median' && parmCd === '00045') {
+            if (ts.tsKey !== 'median' && PARM_CODES_TO_ACCUMULATE.includes(parmCd)) {
                 allPoints[tsId] = transformToCumulative(ts.points);
             } else {
                 allPoints[tsId] = ts.points;

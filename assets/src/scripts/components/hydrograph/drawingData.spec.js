@@ -130,6 +130,47 @@ describe('drawingData module', () => {
         it('Return the empty object if there are no timeseries', () =>  {
             expect(allPointsSelector({series: {}})).toEqual({});
         });
+
+        it('Resets the accumulator for precip if null value is encountered', () => {
+            const newTestData = {
+                ...TEST_DATA,
+                series: {
+                    ...TEST_DATA.series,
+                    timeSeries: {
+                        ...TEST_DATA.series.timeSeries,
+                        '00045': {
+                            tsKey: 'current',
+                            startTime: new Date('2017-03-06T15:45:00.000Z'),
+                            endTime: new Date('2017-03-13t13:45:00.000Z'),
+                            variable: '45807140',
+                            points: [{
+                                value: 1,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: 2,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: null,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: 4,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }]
+                        }
+                    }
+                }
+            };
+
+            expect(allPointsSelector(newTestData)['00045'].map((point) => point.value)).toEqual([1, 3, null, 4]);
+        });
     });
 
     describe('pointsByTsKeySelector', () => {

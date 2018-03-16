@@ -304,6 +304,10 @@ describe('Parameters module', () => {
             svg = select('body').append('svg');
         });
 
+        afterEach(() => {
+            select('svg').remove();
+        });
+
         it('adds a path for a line', () => {
             addSparkLine(svg, tsDataSingle);
             expect(svg.selectAll('path').size()).toEqual(1);
