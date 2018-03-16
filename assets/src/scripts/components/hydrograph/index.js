@@ -246,7 +246,9 @@ const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, data
     }
 
     const container = elem.append('div')
-        .attr('id', `sr-only-${tsKey}`);
+        .attr('id', `sr-only-${tsKey}`)
+        .classed('usa-sr-only', true);
+
 
     for (const seriesID of Object.keys(timeSeries)) {
         const series = timeSeries[seriesID];

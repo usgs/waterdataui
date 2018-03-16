@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Precipitation timeseries is now shown as accumulated precipitation over the 7 days.
 
+##Fixed
+- Screen reader only tables are now fully hidden on Firefox
+
 ## [0.3.0] - 2018-03-09
 ### Added
 - Sparklines added to "Select a timeseries" table.
