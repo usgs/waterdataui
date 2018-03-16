@@ -5,7 +5,8 @@ const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { layoutSelector, MARGIN } = require('./layout');
-const { timeSeriesSelector, variablesSelector, visiblePointsSelector, currentVariableSelector, requestTimeRangeSelector } = require('./timeseries');
+const { timeSeriesSelector, variablesSelector, currentVariableSelector, requestTimeRangeSelector } = require('./timeseries');
+const { visiblePointsSelector, pointsByTsKeySelector } = require('./drawingData');
 
 const paddingRatio = 0.2;
 
@@ -36,7 +37,7 @@ function extendDomain(domain) {
 
 /**
  * Create an x-scale oriented on the left
- * @param {Array} values - Array contains {time, ...}
+ * @param {Array} timeRange - Object containing the start and end times.
  * @param {Number} xSize - range of scale
  * @return {Object} d3 scale for time.
  */
@@ -52,9 +53,9 @@ function createXScale(timeRange, xSize) {
 /**
  * Create the scale based on the parameter code
  *
- * @param parmCd
- * @param extent
- * @param size
+ * @param {String} parmCd
+ * @param {Array} extent
+ * @param {Number} size
  */
 function yScaleByParameter(parmCd, extent, size) {
     if (SYMLOG_PARMS.indexOf(parmCd) >= 0) {
@@ -72,8 +73,9 @@ function yScaleByParameter(parmCd, extent, size) {
 /**
  * Create a yScale for the plots where you only have a single array of data
  *
- * @param tsData - array of data points with time and value keys
- * @param ySize - range of the scale
+ * @param {String} parmCd
+ * @param {Array} tsData - array of data points with time and value keys
+ * @param {Number} ySize - range of the scale
  * * @return {Object} d3 scale for value.
  */
 function singleSeriesYScale(parmCd, tsData, ySize) {
@@ -85,6 +87,7 @@ function singleSeriesYScale(parmCd, tsData, ySize) {
 
 /**
  * Create an yscale oriented on the bottom
+ * @param {String} parmCd
  * @param {Object} pointArrays - Time series points: [[point, point], ...]
  * @param {Number} ySize - range of scale
  * @return {Object} d3 scale for value.
@@ -151,17 +154,18 @@ const yScaleSelector = createSelector(
  * For a given tsKey, return a selector that:
  * Returns lists of time series keyed on parameter code.
  * @param  {String} tsKey             Time series key
- * @return {Object}
+ * @return {Object} - keys are parmCd and values are array of array of points
  */
-const parmCdTimeSeriesSelector = memoize(tsKey => createSelector(
+const parmCdPointsSelector = memoize(tsKey => createSelector(
+    pointsByTsKeySelector(tsKey),
     timeSeriesSelector(tsKey),
     variablesSelector,
-    (timeSeries, variables) => {
-        return Object.keys(timeSeries).reduce((byParmCd, sID) => {
-            const series = timeSeries[sID];
-            const parmCd = variables[series.variable].variableCode.value;
+    (tsPoints, timeSeries, variables) => {
+        return Object.keys(tsPoints).reduce((byParmCd, tsID) => {
+            const points = tsPoints[tsID];
+            const parmCd = variables[timeSeries[tsID].variable].variableCode.value;
             byParmCd[parmCd] = byParmCd[parmCd] || [];
-            byParmCd[parmCd].push(series);
+            byParmCd[parmCd].push(points);
             return byParmCd;
         }, {});
     }
@@ -174,14 +178,14 @@ const parmCdTimeSeriesSelector = memoize(tsKey => createSelector(
  * @type {Object}   Mapping of parameter code to time series list.
  */
 const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => createSelector(
-    parmCdTimeSeriesSelector(tsKey),
+    parmCdPointsSelector(tsKey),
     requestTimeRangeSelector,
-    (timeSeriesByParmCd, requestTimeRanges) => {
-        return Object.keys(timeSeriesByParmCd).reduce((tsScales, parmCd) => {
-            const seriesList = timeSeriesByParmCd[parmCd];
+    (pointsByParmCd, requestTimeRanges) => {
+        return Object.keys(pointsByParmCd).reduce((tsScales, parmCd) => {
+            const tsPoints = pointsByParmCd[parmCd];
             tsScales[parmCd] = {
                 x: createXScale(requestTimeRanges[tsKey], dimensions.width),
-                y: createYScale(parmCd, seriesList.map(s => s.points), dimensions.height)
+                y: createYScale(parmCd, tsPoints, dimensions.height)
             };
             return tsScales;
         }, {});

@@ -41,6 +41,7 @@ export function getTimeseries({sites, params=null, startDate=null, endDate=null}
         serviceRoot = tsServiceRoot(startDate);
     }
     let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
+
     let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${paramCds}&${timeParams}&indent=on&siteStatus=all&format=json`;
     return get(url)
         .then(response => JSON.parse(response))

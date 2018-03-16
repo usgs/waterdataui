@@ -16,9 +16,10 @@ const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
 const { Actions } = require('../../store');
-const { currentVariableLineSegmentsSelector, currentVariableSelector, currentVariableTimeseries, pointsSelector,
-    methodsSelector, pointsTableDataSelector, isVisibleSelector, titleSelector,
-    descriptionSelector, lineSegmentsByParmCdSelector, currentVariableTimeSeriesSelector, MASK_DESC, HASH_ID } = require('./timeseries');
+const { pointsSelector, pointsTableDataSelector, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
+    MASK_DESC, HASH_ID } = require('./drawingData');
+const { currentVariableSelector, methodsSelector, isVisibleSelector, titleSelector,
+    descriptionSelector,  currentVariableTimeSeriesSelector } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
 
@@ -169,12 +170,12 @@ const timeSeriesLegend = function(elem) {
 /**
  * Plots the median points for a single median time series.
  * @param  {Object} elem
- * @param  {Function} options.xscale
- * @param  {Function} options.yscale
- * @param  {Number} options.modulo
- * @param  {Array} options.points
- * @param  {Boolean} options.showLabel
- * @param  {Object} options.variable
+ * @param  {Function} xscale
+ * @param  {Function} yscale
+ * @param  {Number} modulo
+ * @param  {Array} points
+ * @param  {Boolean} showLabel
+ * @param  {Object} variable
  */
 const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLabel, variable}) {
     elem.selectAll('medianPoint')
@@ -214,12 +215,12 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLa
 /**
  * Plots the median points for all median time series for the current variable.
  * @param  {Object} elem
- * @param  {Boolean} options.visible
- * @param  {Function} options.xscale
- * @param  {Function} options.yscale
- * @param  {Array} options.pointsList
- * @param  {Boolean} options.showLabel
- * @param  {Object} options.variable
+ * @param  {Boolean} visible
+ * @param  {Function} xscale
+ * @param  {Function} yscale
+ * @param  {Array} pointsList
+ * @param  {Boolean} showLabel
+ * @param  {Object} variable
  */
 const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap, showLabel, variable}) {
     elem.select('#median-points').remove();
@@ -245,7 +246,9 @@ const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, data
     }
 
     const container = elem.append('div')
-        .attr('id', `sr-only-${tsKey}`);
+        .attr('id', `sr-only-${tsKey}`)
+        .classed('usa-sr-only', true);
+
 
     for (const seriesID of Object.keys(timeSeries)) {
         const series = timeSeries[seriesID];
@@ -307,7 +310,7 @@ const timeSeriesGraph = function (elem) {
                     visible: isVisibleSelector('median'),
                     xscale: xScaleSelector('current'),
                     yscale: yScaleSelector,
-                    seriesMap: currentVariableTimeseries('median'),
+                    seriesMap: currentVariableTimeSeriesSelector('median'),
                     variable: currentVariableSelector,
                     showLabel: (state) => state.showMedianStatsLabel
                 })));
