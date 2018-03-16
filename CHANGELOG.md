@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ##Fixed
 - Screen reader only tables are now fully hidden on Firefox
-- Timeseres without any data are not shown the the select timeseries table
+- Timeseries without any data are not shown the the select timeseries table
 - Sparklines will appear to any timeseries with current data
 
 ## [0.3.0] - 2018-03-09
