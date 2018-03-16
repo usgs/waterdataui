@@ -157,7 +157,7 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('div#sr-only-median').size()).toBe(1);
             expect(selectAll('div#sr-only-compare').size()).toBe(1);
             expect(selectAll('div#sr-only-current').size()).toBe(1);
-        })
+        });
     });
 
     describe('SVG contains the expected elements', () => {
