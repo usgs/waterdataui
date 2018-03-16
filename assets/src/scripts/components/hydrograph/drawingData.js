@@ -31,6 +31,8 @@ export const MAX_LINE_POINT_GAP = 60 * 1000 * 72;
 
 /*
  * @param {Array} points - Array of point objects
+ * @return {Array} - Returns the array of points accumulated. If a null value is found,
+ * the accumulator is set back to zero.
  */
 const transformToCumulative = function(points) {
     let accumulatedValue = 0;
@@ -46,10 +48,10 @@ const transformToCumulative = function(points) {
     });
 };
 
-/*
+/* Factory function that returns a function that returns an object where the properties are ts IDs and the values
+ * are array of point objects that can be used to render a time series graph.
  * @param {Object} state
- * @return {Object} where the keys are ts ids and the values are an object that can be used to render a
- * timeseries graph.
+ * @return {Object} where the keys are ts ids and the values are an Array of point Objects.
  */
 export const allPointsSelector = createSelector(
     allTimeSeriesSelector,
@@ -70,11 +72,10 @@ export const allPointsSelector = createSelector(
     }
 );
 
-/*
+/* Factory function that for a given tsKey returns an object with keys that are the tsID and values an array of point objects
  * @param {Object} state
  * @param {String} tsKey
- * @returns {Object} of keys are tsId, values are Array of points
- * in tsKey
+ * @return {Object} of keys are tsId, values are Array of point Objects
  */
 export const pointsByTsKeySelector = memoize(tsKey => createSelector(
     allPointsSelector,
@@ -89,8 +90,10 @@ export const pointsByTsKeySelector = memoize(tsKey => createSelector(
         return result;
     }));
 
-/*
-* @return Array of Array of points
+/* Returns a selector that returns all time series points for the current variable and in the selected series, tsKey.
+ * @param {Object} state
+ * @param {String} tsKey
+ * @return Array of Array of points
  */
 export const currentVariablePointsSelector = memoize(tsKey => createSelector(
     pointsByTsKeySelector(tsKey),
@@ -99,6 +102,8 @@ export const currentVariablePointsSelector = memoize(tsKey => createSelector(
         return timeSeries ? Object.keys(timeSeries).map((tsId) => points[tsId]) : [];
     }
 ));
+
+
 /**
  * Returns a selector that, for a given tsKey:
  * Returns an array of time points for all time series.
@@ -129,6 +134,11 @@ export const flatPointsSelector = memoize(tsKey => createSelector(
 ));
 
 
+/*
+ * Returns an object which identifies which classes to use for the point
+ * @param {Object} point
+ * @return {Object}
+ */
 export const classesForPoint = point => {
     return {
         approved: point.qualifiers.indexOf('A') > -1,
@@ -139,7 +149,8 @@ export const classesForPoint = point => {
 
 
 /**
- * Returns an array of points for each visible timeseries.
+ * Factory function create a function that
+ * returns an array of points for each visible timeseries.
  * @param  {Object} state     Redux store
  * @return {Array}            Array of point arrays.
  */
@@ -170,7 +181,7 @@ export const visiblePointsSelector = createSelector(
  * Returns all point data as an array of [value, time, qualifiers].
  * @param {Object} state - Redux store
  * @param {String} tsKey - timeseries key
- * @param {Object of Array} for each point returns [value, time, qualifiers] or empty array.
+ * @param {Object} - keys are ts id, values are an array of points where each point is an Array as follows:  [value, time, qualifiers].
  */
 export const pointsTableDataSelector = memoize(tsKey => createSelector(
     pointsByTsKeySelector(tsKey),
@@ -210,7 +221,7 @@ const getLineClasses = function(pt) {
  * Returns all points in a timeseries grouped into line segments, for each time series.
  * @param  {Object} state     Redux store
  * @param  {String} tsKey Timeseries key
- * @return {Object}  Keys are ts Ids, values are  of array of points.
+ * @return {Object}  Keys are ts Ids, values are  of array of line segments.
  */
 export const lineSegmentsSelector = memoize(tsKey => createSelector(
     pointsByTsKeySelector(tsKey),
@@ -266,7 +277,7 @@ export const lineSegmentsSelector = memoize(tsKey => createSelector(
 
 /**
  * Factory function creates a function that, for a given tsKey:
- * @return {Object}     Mapping of parameter to code list of line segments arrays.
+ * @return {Object} - Mapping of parameter code Array of line segments.
  */
 export const lineSegmentsByParmCdSelector = memoize(tsKey => createSelector(
     lineSegmentsSelector(tsKey),
@@ -293,11 +304,10 @@ export const currentVariableLineSegmentsSelector = memoize(tsKey => createSelect
     currentVariableTimeSeriesSelector(tsKey),
     lineSegmentsSelector(tsKey),
     (seriesMap, linesMap) => {
-        const result = Object.keys(seriesMap).reduce((visMap, sID) => {
+        return Object.keys(seriesMap).reduce((visMap, sID) => {
                 visMap[sID] = linesMap[sID];
                 return visMap;
             }, {});
-        return result;
 
     }
 ));

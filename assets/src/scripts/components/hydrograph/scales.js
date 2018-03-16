@@ -37,7 +37,7 @@ function extendDomain(domain) {
 
 /**
  * Create an x-scale oriented on the left
- * @param {Array} values - Array contains {time, ...}
+ * @param {Array} timeRange - Object containing the start and end times.
  * @param {Number} xSize - range of scale
  * @return {Object} d3 scale for time.
  */
@@ -53,9 +53,9 @@ function createXScale(timeRange, xSize) {
 /**
  * Create the scale based on the parameter code
  *
- * @param parmCd
- * @param extent
- * @param size
+ * @param {String} parmCd
+ * @param {Array} extent
+ * @param {Number} size
  */
 function yScaleByParameter(parmCd, extent, size) {
     if (SYMLOG_PARMS.indexOf(parmCd) >= 0) {
@@ -73,8 +73,9 @@ function yScaleByParameter(parmCd, extent, size) {
 /**
  * Create a yScale for the plots where you only have a single array of data
  *
- * @param tsData - array of data points with time and value keys
- * @param ySize - range of the scale
+ * @param {String} parmCd
+ * @param {Array} tsData - array of data points with time and value keys
+ * @param {Number} ySize - range of the scale
  * * @return {Object} d3 scale for value.
  */
 function singleSeriesYScale(parmCd, tsData, ySize) {
@@ -86,6 +87,7 @@ function singleSeriesYScale(parmCd, tsData, ySize) {
 
 /**
  * Create an yscale oriented on the bottom
+ * @param {String} parmCd
  * @param {Object} pointArrays - Time series points: [[point, point], ...]
  * @param {Number} ySize - range of scale
  * @return {Object} d3 scale for value.
