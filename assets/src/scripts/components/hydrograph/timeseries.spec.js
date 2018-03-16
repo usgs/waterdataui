@@ -9,7 +9,7 @@ const TEST_DATA = {
             '00060': {
                 tsKey: 'current',
                 startTime: new Date('2018-03-06T15:45:00.000Z'),
-                endTime: new Date('2018-03-13t13:45:00.000Z'),
+                endTime: new Date('2018-03-13T13:45:00.000Z'),
                 variable: '45807197',
                 points: [{
                     value: 10,
@@ -289,7 +289,7 @@ describe('Timeseries module', () => {
                 '00060': {
                     tsKey: 'current',
                     startTime: new Date('2018-03-06T15:45:00.000Z'),
-                    endTime: new Date('2018-03-13t13:45:00.000Z'),
+                    endTime: new Date('2018-03-13T13:45:00.000Z'),
                     points: [{
                         value: 10,
                         qualifiers: ['P'],
