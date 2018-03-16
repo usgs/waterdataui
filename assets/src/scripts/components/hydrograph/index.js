@@ -382,7 +382,6 @@ const attachToNode = function (store, node, {siteno} = {}) {
     }
 
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
-
     select(node)
         .call(provide(store))
         .call(timeSeriesGraph)
