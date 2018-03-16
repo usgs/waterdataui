@@ -266,8 +266,28 @@ const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, data
     }
 };
 
+const controlLastYearSelect = function(elem, {variable, availableTimeseries}) {
+    let checkbox = elem.select('.hydrograph-last-year-input');
+    if (variable === null || !availableTimeseries.length) {
+        return;
+    }
+    const variableParmCd = variable.variableCode.value;
+    const availableVariableTimeseries = availableTimeseries.filter(x => x[0] === variableParmCd); // an array of arrays
+    const variableTimeseries = availableVariableTimeseries.map(x => x.slice(1));
+    const compareTimeseriesCountVals = variableTimeseries.map(x => x.map(y => y.compareTimeseriesCount));
+    if (compareTimeseriesCountVals.reduce((a, b) => Number(a) + Number(b), 0) === 0) {
+        checkbox.property('disabled', true);
+    } else {
+        checkbox.property('disabled', false);
+    }
+};
+
+
 const timeSeriesGraph = function (elem) {
-    elem.append('div')
+    elem.call(link(controlLastYearSelect, createStructuredSelector({
+        variable: currentVariableSelector,
+        availableTimeseries: availableTimeseriesSelector
+    }))).append('div')
         .attr('class', 'hydrograph-container')
         .append('svg')
             .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
