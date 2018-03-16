@@ -24,16 +24,6 @@ export const currentVariableSelector = createSelector(
     }
 );
 
-/**
- * Returns currently selected parameter code
- * @return String or null if none
- */
-    //TODO: see if this is use anywhere before removing.
-export const currentParmCd = createSelector(
-    currentVariableSelector,
-    (currentVar) => currentVar && currentVar.variableCode ? currentVar.variableCode.value : null
-);
-
 
 
 /**
