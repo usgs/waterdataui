@@ -1,7 +1,8 @@
-const {allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector, variablesSelector } = require('./timeseries');
-
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
+
+const {allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector, variablesSelector } = require('./timeseries');
+
 
 export const MASK_DESC = {
     ice: 'Ice Affected',
