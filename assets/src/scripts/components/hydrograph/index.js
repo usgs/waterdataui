@@ -284,7 +284,7 @@ const controlLastYearSelect = function(elem, {variable, availableTimeseries}) {
             .property('checked', false)
             .dispatch('change'); // trigger a change event
     } else {
-        checkbox.property('disabled', false);
+        checkbox.property('disabled', null);
     }
 };
 
