@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Disabled zooming the map on scroll wheel unless the map has focus.
 - Precipitation timeseries is now shown as accumulated precipitation over the 7 days.
+- Show last year checkbox is disabled if a timeseries does not have data from last year.
+- The select timeseries table is not shown if a site has not timeseries data.
+- Tooltips display masked data as the value of the data point.
 
 ##Fixed
 - Screen reader only tables are now fully hidden on Firefox
+- Timeseres without any data are not shown the the select timeseries table
+- Sparklines will appear to any timeseries with current data
 
 ## [0.3.0] - 2018-03-09
 ### Added
