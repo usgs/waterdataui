@@ -276,7 +276,10 @@ const controlLastYearSelect = function(elem, {variable, availableTimeseries}) {
     const variableTimeseries = availableVariableTimeseries.map(x => x.slice(1));
     const compareTimeseriesCountVals = variableTimeseries.map(x => x.map(y => y.compareTimeseriesCount));
     if (compareTimeseriesCountVals.reduce((a, b) => Number(a) + Number(b), 0) === 0) {
-        checkbox.property('disabled', true);
+        checkbox
+            .property('disabled', true)
+            .property('checked', false)
+            .dispatch('change'); // trigger a change event
     } else {
         checkbox.property('disabled', false);
     }
@@ -376,6 +379,7 @@ const attachToNode = function (store, node, {siteno} = {}) {
     }
 
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
+
     select(node)
         .call(provide(store))
         .call(timeSeriesGraph)
