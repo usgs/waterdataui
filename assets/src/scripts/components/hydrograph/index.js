@@ -269,30 +269,29 @@ const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, data
     }
 };
 
-const controlLastYearSelect = function(elem, {variable, availableTimeseries}) {
+/**
+ * Determine if the last year checkbox should be enabled or disabled
+ *
+ * @param elem
+ * @param compareTimeseries
+ */
+const controlLastYearSelect = function(elem, {compareTimeseries}) {
+    const comparePoints = compareTimeseries[Object.keys(compareTimeseries)[0]] ? compareTimeseries[Object.keys(compareTimeseries)[0]].points : [];
     let checkbox = elem.select('.hydrograph-last-year-input');
-    if (variable === null || !availableTimeseries.length) {
-        return;
-    }
-    const variableParmCd = variable.variableCode.value;
-    const availableVariableTimeseries = availableTimeseries.filter(x => x[0] === variableParmCd); // an array of arrays
-    const variableTimeseries = availableVariableTimeseries.map(x => x.slice(1));
-    const compareTimeseriesCountVals = variableTimeseries.map(x => x.map(y => y.compareTimeseriesCount));
-    if (compareTimeseriesCountVals.reduce((a, b) => Number(a) + Number(b), 0) === 0) {
+    if (comparePoints.length > 0) {
+        checkbox.property('disabled', false);
+    } else {
         checkbox
             .property('disabled', true)
             .property('checked', false)
-            .dispatch('change'); // trigger a change event
-    } else {
-        checkbox.property('disabled', null);
+            .dispatch('change');
     }
 };
 
 
 const timeSeriesGraph = function (elem) {
     elem.call(link(controlLastYearSelect, createStructuredSelector({
-        variable: currentVariableSelector,
-        availableTimeseries: availableTimeseriesSelector
+        compareTimeseries: currentVariableTimeSeriesSelector('compare')
     }))).append('div')
         .attr('class', 'hydrograph-container')
         .append('svg')
