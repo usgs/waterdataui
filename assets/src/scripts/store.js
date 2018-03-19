@@ -3,7 +3,7 @@ const { applyMiddleware, createStore, compose } = require('redux');
 const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
-    parseMedianData } = require('./models');
+    parseMedianData, PARAM_PERTINENCE } = require('./models');
 const { normalize } = require('./schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('./floodData');
 
@@ -137,6 +137,13 @@ export const Actions = {
 
 export const timeSeriesReducer = function (state={}, action) {
     let newState;
+
+    let dataVars;
+    let pertinentParmCds;
+    let highPertinenceVars;
+    let lowPertinenceVars;
+    let sorted;
+
     switch (action.type) {
         case 'SET_FLOOD_FEATURES':
             return {
@@ -145,7 +152,31 @@ export const timeSeriesReducer = function (state={}, action) {
                 floodExtent: action.extent,
                 gageHeight: action.stages.length > 0 ? action.stages[0] : null
             };
+
         case 'ADD_TIMESERIES_COLLECTION':
+            dataVars = action.data.variables ? Object.values(action.data.variables) : [];
+            pertinentParmCds = Object.keys(PARAM_PERTINENCE);
+            highPertinenceVars = dataVars.filter(x => pertinentParmCds.includes(x.variableCode.value))
+                .sort((a, b) => {
+                    const aRank = PARAM_PERTINENCE[a.variableCode.value].rank;
+                    const bRank = PARAM_PERTINENCE[b.variableCode.value].rank;
+                    if (aRank < bRank) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                });
+            lowPertinenceVars = dataVars.filter(x => !pertinentParmCds.includes(x.variableCode.value))
+                .sort((a, b) => {
+                    const aDesc = a.variableDescription;
+                    const bDesc = b.variableDescription;
+                    if (aDesc < bDesc) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                });
+            sorted = highPertinenceVars.concat(lowPertinenceVars);
             return {
                 ...state,
                 series: merge({}, state.series, action.data),
@@ -153,18 +184,7 @@ export const timeSeriesReducer = function (state={}, action) {
                     ...state.showSeries,
                     [action.key]: action.show
                 },
-                currentVariableID: state.currentVariableID || Object.values(
-                    action.data.variables).sort((a, b) => {
-                        const aVal = a.variableCode.value;
-                        const bVal = b.variableCode.value;
-                        if (aVal > bVal) {
-                            return 1;
-                        } else if (aVal < bVal) {
-                            return -1;
-                        } else {
-                            return 0;
-                        }
-                    })[0].oid
+                currentVariableID: state.currentVariableID || sorted[0].oid
             };
 
         case 'TOGGLE_TIMESERIES':
