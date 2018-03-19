@@ -1,37 +1,40 @@
 $approved: darkgreen;
 $estimated: black;
+$selected: $color-aqua-lightest;
+$highlight: $color-gray-lightest;
 
 table#select-timeseries {
     tbody {
         tr {
             cursor: pointer;
-            background-color: $color-gray-lightest;
+            background-color: $highlight;
             &:hover {
                 td {
-                    background-color: $color-gray-lightest;
+                    background-color: $highlight;
                 }
-                span {
-                   background-color: $color-gray-lightest;
+                .tooltip-item {
+                    background-color: $highlight;
                 }
             }
             &.selected {
                 cursor: default;
                 td {
-                    background-color: $color-aqua-lightest;
+                    background-color: $selected;
                 }
-                span {
-                   background-color: $color-aqua-lightest;
+                .tooltip-item {
+                    background-color: $selected;
                 }
-            }
-            span {
-                padding: 0.25em;
             }
             .tooltip-item {
+                span {
+                    padding-left: 0.25em;
+                    font-size: 0.8em;
+                }
                 .tooltip {
-                    @include position(absolute, null null 1.5em 1.2em);
+                    @include position(absolute, null null 1.5em -5.5em);
                     text-align: center;
                     width: 11em;
-                    padding: 0.25em;
+                    padding: 0.2em;
                     margin: 0 0;
                 }
             }

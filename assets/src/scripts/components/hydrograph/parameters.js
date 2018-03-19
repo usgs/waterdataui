@@ -134,7 +134,8 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
 
                 tooltip.append('div')
                     .attr('class', 'tooltip parameter-tooltip')
-                    .text(parm => `Parameter code: ${parm[0]}`);
+                    .append('p')
+                        .text(parm => `Parameter code: ${parm[0]}`);
 
                 tr.append('td')
                     .append('svg')
