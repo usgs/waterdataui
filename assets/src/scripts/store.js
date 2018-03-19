@@ -157,7 +157,7 @@ export const timeSeriesReducer = function (state={}, action) {
                     ...state.showSeries,
                     [action.key]: action.show
                 },
-                currentVariableID: state.currentVariableID || sorted[0].oid
+                currentVariableID: state.currentVariableID || sorted.length ? sorted[0].oid : null
             };
 
         case 'TOGGLE_TIMESERIES':
