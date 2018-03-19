@@ -125,7 +125,8 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
                 }
             }))
             .call(tr => {
-                let parmCdCol = tr.append('th');
+                let parmCdCol = tr.append('th')
+                    .attr('scope', 'row');
                 parmCdCol.append('span')
                     .text(parm => parm[1].description);
                 let tooltip = parmCdCol.append('div')
