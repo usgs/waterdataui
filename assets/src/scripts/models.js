@@ -11,9 +11,9 @@ const SERVICE_ROOT = window.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis
 const PAST_SERVICE_ROOT = window.PAST_SERVICE_ROOT  || 'https://nwis.waterservices.usgs.gov/nwis';
 
 export const PARAM_PERTINENCE = {
-    '00060': {'rank': 0},
-    '00065': {'rank': 1},
-    '72019': {'rank': 2}
+    '00060': 0,
+    '00065': 1,
+    '72019': 2
 };
 
 
@@ -270,9 +270,9 @@ export function sortedParameters(variables) {
     const pertinentParmCds = Object.keys(PARAM_PERTINENCE);
     const highPertinenceVars = dataVars.filter(x => pertinentParmCds.includes(x.variableCode.value))
         .sort((a, b) => {
-            const aRank = PARAM_PERTINENCE[a.variableCode.value].rank;
-            const bRank = PARAM_PERTINENCE[b.variableCode.value].rank;
-            if (aRank < bRank) {
+            const aPertinence = PARAM_PERTINENCE[a.variableCode.value];
+            const bPertinence = PARAM_PERTINENCE[b.variableCode.value];
+            if (aPertinence < bPertinence) {
                 return -1;
             } else {
                 return 1;
