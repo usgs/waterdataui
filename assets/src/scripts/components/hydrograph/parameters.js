@@ -4,6 +4,7 @@ const { select } = require('d3-selection');
 
 const { allTimeSeriesSelector } = require('./timeseries');
 const { Actions } = require('../../store');
+const { sortedParameters } = require('../../models');
 const { SPARK_LINE_DIM } = require('./layout');
 const { dispatch } = require('../../lib/redux');
 
@@ -23,28 +24,25 @@ export const availableTimeseriesSelector = createSelector(
             return [];
         }
 
-        const codes = {};
+        let sorted = [];
         const seriesList = Object.values(timeSeries);
         const timeSeriesVariables = seriesList.map(x => x.variable);
-        for (const variableID of Object.keys(variables).sort()) {
+        const sortedVariables = sortedParameters(variables).map(x => x.oid);
+        for (const variableID of sortedVariables) {
             // start the next iteration if a variable is not a
             // series returned by the allTimeSeriesSelector
             if (!timeSeriesVariables.includes(variableID)) {
                 continue;
             }
             const variable = variables[variableID];
-            codes[variable.variableCode.value] = {
+            let varCodes = {
                 variableID: variable.oid,
                 description: variable.variableDescription,
                 selected: currentVariableID === variableID,
                 currentTimeseriesCount: seriesList.filter(ts => ts.tsKey === 'current' && ts.variable === variableID).length
             };
+            sorted.push([variable.variableCode.value, varCodes]);
         }
-        let sorted = [];
-        for (let key of Object.keys(codes).sort()) {
-            sorted.push([key, codes[key]]);
-        }
-
         return sorted;
     }
 );
