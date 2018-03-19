@@ -11,6 +11,7 @@ const { dispatch, link, provide } = require('../../lib/redux');
 
 const { audibleUI } = require('./audible');
 const { appendAxes, axesSelector } = require('./axes');
+const { cursorSlider } = require('./cursor');
 const { MARGIN, CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
@@ -384,6 +385,7 @@ const attachToNode = function (store, node, {siteno} = {}) {
     select(node)
         .call(provide(store))
         .call(timeSeriesGraph)
+        .call(cursorSlider)
         .call(timeSeriesLegend)
         .call(audibleUI)
         .select('.hydrograph-last-year-input')

@@ -106,6 +106,12 @@ export const Actions = {
             compareTime
         };
     },
+    setCursorLocation(xLocation) {
+        return {
+            type: 'SET_CURSOR_LOCATION',
+            xLocation
+        };
+    },
     resizeUI(windowWidth, width) {
         return {
             type: 'RESIZE_UI',
@@ -206,6 +212,14 @@ export const timeSeriesReducer = function (state={}, action) {
                     ...state.tooltipFocusTime,
                     current: action.currentTime,
                     compare: action.compareTime
+                }
+            };
+
+        case 'SET_CURSOR_LOCATION':
+            return {
+                ...state,
+                tooltipFocusTime: {
+                    current: action.xLocation
                 }
             };
 
