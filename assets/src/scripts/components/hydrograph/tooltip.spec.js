@@ -277,7 +277,7 @@ describe('Hydrograph tooltip module', () => {
             expect(value2).toBe('Maintenance');
         });
 
-        fit('Creates the correct text for values of zero', () => {
+        it('Creates the correct text for values of zero', () => {
             const zeroData = [12, 13, 14, 15, 16].map(hour => {
                 return {
                     dateTime: new Date(`2018-01-03T${hour}:00:00.000Z`),
