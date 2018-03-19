@@ -28,7 +28,7 @@ describe('Markers module', () => {
             expect(node.getAttribute('y2')).toBe('0');
             expect(node.getAttribute('class')).toBe(domClass);
             expect(node.getAttribute('id')).toBe(domId);
-        })
+        });
     });
 
     describe('circleMarker', () => {

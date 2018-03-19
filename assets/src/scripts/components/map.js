@@ -24,7 +24,15 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         .attr('id', 'site-map');
     const map = createMap('site-map', {
         center: [latitude, longitude],
-        zoom: zoom
+        zoom: zoom,
+        scrollWheelZoom: false
+    });
+
+    map.on('focus', () => {
+        map.scrollWheelZoom.enable();
+    });
+    map.on('blur', () => {
+        map.scrollWheelZoom.disable();
     });
 
     let floodLayer = dynamicMapLayer({

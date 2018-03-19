@@ -4,7 +4,8 @@ const { createSelector } = require('reselect');
 
 const { CIRCLE_RADIUS, MARGIN } = require('./layout');
 const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
-const { currentVariableTimeSeriesSelector, lineSegmentsSelector, methodsSelector, HASH_ID, MASK_DESC } = require('./timeseries');
+const { lineSegmentsSelector, HASH_ID, MASK_DESC} = require('./drawingData');
+const { currentVariableTimeSeriesSelector, methodsSelector } = require('./timeseries');
 
 
 const tsMaskMarkers = function(tsKey, masks) {

@@ -8,6 +8,7 @@ const { SPARK_LINE_DIM, SMALL_SCREEN_WIDTH } = require('./layout');
 const { dispatch } = require('../../lib/redux');
 
 
+
 /**
  * Returns metadata for each available timeseries.
  * @param  {Object} state Redux state
@@ -24,7 +25,13 @@ export const availableTimeseriesSelector = createSelector(
 
         const codes = {};
         const seriesList = Object.values(timeSeries);
+        const timeSeriesVariables = seriesList.map(x => x.variable);
         for (const variableID of Object.keys(variables).sort()) {
+            // start the next iteration if a variable is not a
+            // series returned by the allTimeSeriesSelector
+            if (!timeSeriesVariables.includes(variableID)) {
+                continue;
+            }
             const variable = variables[variableID];
             codes[variable.variableCode.value] = {
                 variableID: variable.oid,
@@ -83,15 +90,19 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  */
 export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd, layout}) {
     elem.select('#select-timeseries').remove();
-    const screenSizeCheck = layout.windowWidth <= SMALL_SCREEN_WIDTH;
 
+    if (!availableTimeseries.length) {
+        return;
+    }
+
+    // only bother to create the table if there are timeseries available
+    const screenSizeCheck = layout.windowWidth <= SMALL_SCREEN_WIDTH;
     let columnHeaders;
     if (screenSizeCheck) {
         columnHeaders = ['Parameter Code', 'Description', 'Preview'];
     } else {
         columnHeaders = ['Parameter Code', 'Description', 'Now', 'Last Year', 'Median', 'Preview'];
     }
-
     const table = elem
         .append('table')
             .attr('id', 'select-timeseries')
