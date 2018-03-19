@@ -1,0 +1,13 @@
+input[type=range] {
+    &, &:focus {
+        outline: none !important;
+    }
+    &::-webkit-slider-runnable-track {
+        border: none;
+        border-radius: 5px;
+    }
+    &::-moz-range-track {
+        border: none;
+        border-radius: 5px;
+    }
+}
