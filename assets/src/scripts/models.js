@@ -263,3 +263,30 @@ export function getMedianStatistics({sites, params=null}) {
         return error;
     });
 }
+
+
+export function sortedParameters(variables) {
+    const dataVars = variables ? Object.values(variables) : [];
+    const pertinentParmCds = Object.keys(PARAM_PERTINENCE);
+    const highPertinenceVars = dataVars.filter(x => pertinentParmCds.includes(x.variableCode.value))
+        .sort((a, b) => {
+            const aRank = PARAM_PERTINENCE[a.variableCode.value].rank;
+            const bRank = PARAM_PERTINENCE[b.variableCode.value].rank;
+            if (aRank < bRank) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
+    const lowPertinenceVars = dataVars.filter(x => !pertinentParmCds.includes(x.variableCode.value))
+        .sort((a, b) => {
+            const aDesc = a.variableDescription;
+            const bDesc = b.variableDescription;
+            if (aDesc < bDesc) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
+    return highPertinenceVars.concat(lowPertinenceVars);
+}

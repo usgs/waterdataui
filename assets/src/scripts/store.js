@@ -3,7 +3,7 @@ const { applyMiddleware, createStore, compose } = require('redux');
 const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
-    parseMedianData, PARAM_PERTINENCE } = require('./models');
+    parseMedianData, sortedParameters } = require('./models');
 const { normalize } = require('./schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('./floodData');
 
@@ -137,11 +137,6 @@ export const Actions = {
 
 export const timeSeriesReducer = function (state={}, action) {
     let newState;
-
-    let dataVars;
-    let pertinentParmCds;
-    let highPertinenceVars;
-    let lowPertinenceVars;
     let sorted;
 
     switch (action.type) {
@@ -154,29 +149,7 @@ export const timeSeriesReducer = function (state={}, action) {
             };
 
         case 'ADD_TIMESERIES_COLLECTION':
-            dataVars = action.data.variables ? Object.values(action.data.variables) : [];
-            pertinentParmCds = Object.keys(PARAM_PERTINENCE);
-            highPertinenceVars = dataVars.filter(x => pertinentParmCds.includes(x.variableCode.value))
-                .sort((a, b) => {
-                    const aRank = PARAM_PERTINENCE[a.variableCode.value].rank;
-                    const bRank = PARAM_PERTINENCE[b.variableCode.value].rank;
-                    if (aRank < bRank) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                });
-            lowPertinenceVars = dataVars.filter(x => !pertinentParmCds.includes(x.variableCode.value))
-                .sort((a, b) => {
-                    const aDesc = a.variableDescription;
-                    const bDesc = b.variableDescription;
-                    if (aDesc < bDesc) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                });
-            sorted = highPertinenceVars.concat(lowPertinenceVars);
+            sorted = sortedParameters(action.data.variables);
             return {
                 ...state,
                 series: merge({}, state.series, action.data),
