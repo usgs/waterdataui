@@ -4,7 +4,7 @@ const { select } = require('d3-selection');
 
 const { allTimeSeriesSelector } = require('./timeseries');
 const { Actions } = require('../../store');
-const { SPARK_LINE_DIM, SMALL_SCREEN_WIDTH } = require('./layout');
+const { SPARK_LINE_DIM } = require('./layout');
 const { dispatch } = require('../../lib/redux');
 
 
@@ -37,12 +37,7 @@ export const availableTimeseriesSelector = createSelector(
                 variableID: variable.oid,
                 description: variable.variableDescription,
                 selected: currentVariableID === variableID,
-                currentTimeseriesCount: seriesList.filter(
-                    ts => ts.tsKey === 'current' && ts.variable === variableID).length,
-                compareTimeseriesCount: seriesList.filter(
-                    ts => ts.tsKey === 'compare' && ts.variable === variableID).length,
-                medianTimeseriesCount: seriesList.filter(
-                    ts => ts.tsKey === 'median' && ts.variable === variableID).length
+                currentTimeseriesCount: seriesList.filter(ts => ts.tsKey === 'current' && ts.variable === variableID).length
             };
         }
         let sorted = [];
@@ -86,29 +81,25 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  * @param  {Object} availableTimeseries         Timeseries metadata to display
  * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
  * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
- * @param  {Object} layout                      layout as retrieved from the redux store
  */
-export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd, layout}) {
+export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd}) {
     elem.select('#select-timeseries').remove();
 
     if (!availableTimeseries.length) {
         return;
     }
 
-    // only bother to create the table if there are timeseries available
-    const screenSizeCheck = layout.windowWidth <= SMALL_SCREEN_WIDTH;
-    let columnHeaders;
-    if (screenSizeCheck) {
-        columnHeaders = ['Parameter Code', 'Description', 'Preview'];
-    } else {
-        columnHeaders = ['Parameter Code', 'Description', 'Now', 'Last Year', 'Median', 'Preview'];
-    }
-    const table = elem
-        .append('table')
-            .attr('id', 'select-timeseries')
-            .classed('usa-table-borderless', true);
-
-    table.append('caption').text('Select a timeseries');
+    const columnHeaders = ['Parameter', 'Preview', '#'];
+    const tableContainer = elem.append('div')
+        .attr('id', 'select-timeseries');
+    tableContainer.append('label')
+        .attr('id', 'select-timeseries-label')
+        .text('Select a timeseries');
+    const table = tableContainer.append('table')
+        .classed('usa-table-borderless', true)
+        .attr('aria-labelledby', 'select-timeseries-label')
+        .attr('tabindex', 0)
+        .attr('role', 'listbox');
 
     table.append('thead')
         .append('tr')
@@ -123,81 +114,40 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
         .data(availableTimeseries)
         .enter().append('tr')
             .attr('ga-on', 'click')
-            .attr('ga-event-category', 'TimeseriesGraph')
-            .attr('ga-event-action', 'selectTimeSeries')
+            .attr('ga-event-category', 'selectTimeSeries')
+            .attr('ga-event-action', (parm) => `timeseries-parmcd-${parm[0]}`)
+            .attr('role', 'option')
             .classed('selected', parm => parm[1].selected)
+            .attr('aria-selected', parm => parm[1].selected)
             .on('click', dispatch(function (parm) {
                 if (!parm[1].selected) {
                     return Actions.setCurrentParameterCode(parm[0], parm[1].variableID);
                 }
             }))
             .call(tr => {
-                let parmCdCol = tr.append('td')
+                let parmCdCol = tr.append('th')
                     .attr('scope', 'row');
                 parmCdCol.append('span')
-                        .text(parm => parm[0]);
-                parmCdCol.append('div')
-                        .attr('class', 'tooltip-item parameter-tooltip');
-                tr.append('td')
                     .text(parm => parm[1].description);
-                // if screen size is medium/large, place "Now", "Previous Year", and "Median Data" in the table
-                // under the appropriate column headers
-                if (!screenSizeCheck) {
-                    tr.append('td')
-                        .html(parm => {
-                            const subScript = parm[1].currentTimeseriesCount > 1 ? `<sub>${parm[1].currentTimeseriesCount}</sub>` : '';
-                            return parm[1].currentTimeseriesCount ? `<i class="fa fa-check" aria-label="Current year data available"></i>${subScript}` : '';
-                        });
-                    tr.append('td')
-                        .html(parm => {
-                            const subScript = parm[1].compareTimeseriesCount > 1 ? `<sub>${parm[1].compareTimeseriesCount}</sub>` : '';
-                            return parm[1].compareTimeseriesCount ? `<i class="fa fa-check" aria-label="Previous year data available"></i>${subScript}` : '';
-                        });
-                    tr.append('td')
-                        .html(parm => {
-                            const subScript = parm[1].medianTimeseriesCount > 1 ? `<sub>${parm[1].medianTimeseriesCount}</sub>` : '';
-                            return parm[1].medianTimeseriesCount ? `<i class="fa fa-check" aria-label="Median data available"></i>${subScript}` : '';
-                        });
-                    }
+                let tooltip = parmCdCol.append('div')
+                    .attr('class', 'tooltip-item');
+                tooltip.append('span')
+                    .append('i')
+                        .attr('class', 'fa fa-info-circle');
+
+                tooltip.append('div')
+                    .attr('class', 'tooltip parameter-tooltip')
+                    .append('p')
+                        .text(parm => `Parameter code: ${parm[0]}`);
+
                 tr.append('td')
                     .append('svg')
                     .attr('width', SPARK_LINE_DIM.width.toString())
                     .attr('height', SPARK_LINE_DIM.height.toString());
+                tr.append('td')
+                    .text(parm => parm[1].currentTimeseriesCount);
             });
 
-    // seems to be more straight-forward to access an element's joined
-    // data by iterating over a selection...
-
-    // if screen size is small, place "Now", "Previous Year", and "Median Data" in a tooltip
-    if (screenSizeCheck) {
-        table.selectAll('div.tooltip-item').each(function() {
-            let selection = select(this);
-            selection.append('sup')
-                .append('i')
-                    .attr('class', 'fa fa-info-circle');
-            let tooltipContent = selection.append('div').attr('class', 'tooltip');
-            let tooltipTable = tooltipContent.append('table')
-                .attr('class', 'tooltip-table');
-            tooltipTable.append('caption').text('Available Data');
-            tooltipTable.append('thead')
-                .append('tr')
-                    .selectAll('th')
-                    .data(['Now', 'Last Year', 'Median'])
-                    .enter()
-                    .append('th')
-                        .attr('scope', 'col')
-                        .text(d => d);
-
-            let tableRow = tooltipTable.append('tr');
-            tableRow.append('td')
-                .html(d => d[1].currentTimeseriesCount ? '<i class="fa fa-check" aria-label="Current year data available"></i>' : '');
-            tableRow.append('td')
-                .html(d => d[1].compareTimeseriesCount ? '<i class="fa fa-check" aria-label="Previous year data available"></i>' : '');
-            tableRow.append('td')
-                .html(d => d[1].medianTimeseriesCount ? '<i class="fa fa-check" aria-label="Median data available"></i>' : '');
-
-        });
-    }
     table.selectAll('tbody svg').each(function(d) {
         let selection = select(this);
         const parmCd = d[0];
