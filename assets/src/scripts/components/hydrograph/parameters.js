@@ -4,10 +4,16 @@ const { select } = require('d3-selection');
 
 const { allTimeSeriesSelector } = require('./timeseries');
 const { Actions } = require('../../store');
+const { sortObjectArray } = require('../../utils');
 const { SPARK_LINE_DIM, SMALL_SCREEN_WIDTH } = require('./layout');
 const { dispatch } = require('../../lib/redux');
 
 
+const PARAM_PERTINENCE = {
+    '00060': {'rank': 0},
+    '00065': {'rank': 1},
+    '72019': {'rank': 2}
+}
 
 /**
  * Returns metadata for each available timeseries.
@@ -94,7 +100,26 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
     if (!availableTimeseries.length) {
         return;
     }
-
+    let pertinentParms = Object.keys(PARAM_PERTINENCE);
+    let highPertinenceTimeseries = availableTimeseries.filter(x => pertinentParms.includes(x[0])).sort((a, b) => {
+        const rankA = PARAM_PERTINENCE[a[0]].rank;
+        const rankB = PARAM_PERTINENCE[b[0]].rank;
+        if (rankA < rankB) {
+            return -1;
+        } else {
+            return 0;
+        }
+    });
+    let lowPertinenceTimeseries = availableTimeseries.filter(x => !pertinentParms.includes(x[0])).sort((a, b) => {
+        const descA = a[1].description;
+        const descB = b[1].description;
+        if (descA < descB) {
+            return -1;
+        } else {
+            return 0;
+        }
+    });
+    const sortedAvailableTimeseries = highPertinenceTimeseries.concat(lowPertinenceTimeseries);
     // only bother to create the table if there are timeseries available
     const screenSizeCheck = layout.windowWidth <= SMALL_SCREEN_WIDTH;
     let columnHeaders;
@@ -120,7 +145,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
 
     table.append('tbody')
         .selectAll('tr')
-        .data(availableTimeseries)
+        .data(sortedAvailableTimeseries)
         .enter().append('tr')
             .attr('ga-on', 'click')
             .attr('ga-event-category', 'TimeseriesGraph')
