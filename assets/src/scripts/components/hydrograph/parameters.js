@@ -89,7 +89,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
         return;
     }
 
-    const columnHeaders = ['Description', 'Preview', '#'];
+    const columnHeaders = ['Parameter', 'Preview', '#'];
     const tableContainer = elem.append('div')
         .attr('id', 'select-timeseries');
     tableContainer.append('label')
