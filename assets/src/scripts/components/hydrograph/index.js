@@ -269,8 +269,30 @@ const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, data
     }
 };
 
+/**
+ * Determine if the last year checkbox should be enabled or disabled
+ *
+ * @param elem
+ * @param compareTimeseries
+ */
+const controlLastYearSelect = function(elem, {compareTimeseries}) {
+    const comparePoints = compareTimeseries[Object.keys(compareTimeseries)[0]] ? compareTimeseries[Object.keys(compareTimeseries)[0]].points : [];
+    let checkbox = elem.select('.hydrograph-last-year-input');
+    if (comparePoints.length > 0) {
+        checkbox.property('disabled', false);
+    } else {
+        checkbox
+            .property('disabled', true)
+            .property('checked', false)
+            .dispatch('change');
+    }
+};
+
+
 const timeSeriesGraph = function (elem) {
-    elem.append('div')
+    elem.call(link(controlLastYearSelect, createStructuredSelector({
+        compareTimeseries: currentVariableTimeSeriesSelector('compare')
+    }))).append('div')
         .attr('class', 'hydrograph-container')
         .append('svg')
             .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
