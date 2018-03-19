@@ -3,48 +3,71 @@ $estimated: black;
 $selected: $color-aqua-lightest;
 $highlight: $color-gray-lightest;
 
-table#select-timeseries {
-    tbody {
-        tr {
-            cursor: pointer;
-            background-color: $highlight;
-            &:hover {
-                td {
-                    background-color: $highlight;
+#select-timeseries  {
+    label {
+        font-weight: $font-bold;
+    }
+    table {
+        display: block;
+        overflow: auto;
+        height: 200px;
+        margin-top: 0px;
+
+        thead {
+            th {
+                font-size: $small-font-size
+            }
+            th, td {
+                background-color: white;
+            }
+        }
+        tbody {
+            tr {
+                cursor: pointer;
+                background-color: $highlight;
+                th, td {
+                    padding-top: 0.5rem;
+                    padding-bottom: 0.5rem;
+                }
+
+                &:hover {
+                    th, td {
+                        background-color: $highlight;
+                    }
+                    .tooltip-item {
+                        background-color: $highlight;
+                    }
+                }
+                &.selected {
+                    cursor: default;
+                    th, td {
+                        background-color: $selected;
+                    }
+                    .tooltip-item {
+                        background-color: $selected;
+                    }
                 }
                 .tooltip-item {
-                    background-color: $highlight;
-                }
-            }
-            &.selected {
-                cursor: default;
-                td {
-                    background-color: $selected;
-                }
-                .tooltip-item {
-                    background-color: $selected;
-                }
-            }
-            .tooltip-item {
-                span {
-                    padding-left: 0.25em;
-                    font-size: 0.8em;
-                }
-                .tooltip {
-                    @include position(absolute, null null 1.5em -5.5em);
-                    text-align: center;
-                    width: 11em;
-                    padding: 0.2em;
-                    margin: 0 0;
+                    span {
+                        padding-left: 0.25em;
+                        font-size: 0.8em;
+                    }
+                    .tooltip {
+                        @include position(absolute, null null 0 1em);
+                        text-align: center;
+                        width: 11em;
+                        padding: 0.2em;
+                        margin: 0 0;
+                    }
                 }
             }
         }
-    }
-    svg {
-        .spark-line {
-            stroke: $usgs-blue;
-            stroke-width: 1px;
-            fill: none;
+        svg {
+            .spark-line {
+                stroke: $usgs-blue;
+                stroke-width: 1px;
+                fill: none;
+            }
         }
     }
 }

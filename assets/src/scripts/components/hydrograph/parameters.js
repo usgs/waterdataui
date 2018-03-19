@@ -90,15 +90,14 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
     }
 
     const columnHeaders = ['Description', 'Preview', '#'];
-
-    const table = elem
-        .append('table')
-            .attr('id', 'select-timeseries')
-            .attr('tabindex', 0)
-            .attr('role', 'menu')
-            .classed('usa-table-borderless', true);
-
-    table.append('caption').text('Select a timeseries');
+    const tableContainer = elem.append('div')
+        .attr('id', 'select-timeseries');
+    tableContainer.append('label')
+        .text('Select a timeseries');
+    const table = tableContainer.append('table')
+        .classed('usa-table-borderless', true)
+        .attr('tabindex', 0)
+        .attr('role', 'menu');
 
     table.append('thead')
         .append('tr')
@@ -123,7 +122,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
                 }
             }))
             .call(tr => {
-                let parmCdCol = tr.append('td');
+                let parmCdCol = tr.append('th');
                 parmCdCol.append('span')
                     .text(parm => parm[1].description);
                 let tooltip = parmCdCol.append('div')
