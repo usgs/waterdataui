@@ -7,6 +7,7 @@ const { createSelector, createStructuredSelector } = require('reselect');
 
 const { dispatch, link } = require('../../lib/redux');
 
+const { cursorLocationSelector } = require('./cursor');
 const { classesForPoint, currentVariablePointsSelector, MASK_DESC } = require('./drawingData');
 const { currentVariableSelector } = require('./timeseries');
 const { Actions } = require('../../store');
@@ -165,9 +166,9 @@ const createTooltipText = function(elem) {
     }
 };
 
-const updateFocusLine = function(elem, {currentTime, xScale}) {
-    if (currentTime) {
-        let x = xScale(currentTime);
+const updateFocusLine = function(elem, {cursorLocation, xScale}) {
+    if (cursorLocation) {
+        let x = xScale(cursorLocation);
         elem.select('.focus-line').attr('x1', x).attr('x2', x);
         elem.style('display', null);
     } else {
@@ -217,7 +218,7 @@ const createTooltipFocus = function(elem, {xScale, yScale, compareXScale, curren
     let focusCompareCircle = createFocusCircle(elem);
 
     focusLine.call(link(updateFocusLine, createStructuredSelector({
-        currentTime: state => state.tooltipFocusTime['current'],
+        cursorLocation: cursorLocationSelector,
         xScale: () => xScale
     })));
     focusCurrentCircle.call(link(updateFocusCircle, createStructuredSelector({
