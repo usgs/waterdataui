@@ -93,11 +93,13 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
     const tableContainer = elem.append('div')
         .attr('id', 'select-timeseries');
     tableContainer.append('label')
+        .attr('id', 'select-timeseries-label')
         .text('Select a timeseries');
     const table = tableContainer.append('table')
         .classed('usa-table-borderless', true)
+        .attr('aria-labelledby', 'select-timeseries-label')
         .attr('tabindex', 0)
-        .attr('role', 'menu');
+        .attr('role', 'listbox');
 
     table.append('thead')
         .append('tr')
@@ -112,10 +114,11 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
         .data(availableTimeseries)
         .enter().append('tr')
             .attr('ga-on', 'click')
-            .attr('ga-event-category', 'TimeseriesGraph')
-            .attr('ga-event-action', 'selectTimeSeries')
-            .attr('role', 'menuitem')
+            .attr('ga-event-category', 'selectTimeSeries')
+            .attr('ga-event-action', (parm) => `timeseries-parmcd-${parm[0]}`)
+            .attr('role', 'option')
             .classed('selected', parm => parm[1].selected)
+            .attr('aria-selected', parm => parm[1].selected)
             .on('click', dispatch(function (parm) {
                 if (!parm[1].selected) {
                     return Actions.setCurrentParameterCode(parm[0], parm[1].variableID);
