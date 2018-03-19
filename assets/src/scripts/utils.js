@@ -145,8 +145,11 @@ export function wrap(text, width) {
  * Sort an array of objects by some key in the objects
  */
 export function sortObjectArray(someArray, sortKey) {
-    let result = someArray.sort(() => {
-
+    return someArray.sort((a, b) => {
+        if (a[sortKey] > b[sortKey]) {
+            return 1;
+        } else {
+            return 0;
+        }
     });
-    return result;
 }
