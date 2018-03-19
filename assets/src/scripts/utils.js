@@ -140,3 +140,13 @@ export function wrap(text, width) {
         }
     });
 }
+
+/**
+ * Sort an array of objects by some key in the objects
+ */
+export function sortObjectArray(someArray, sortKey) {
+    let result = someArray.sort(() => {
+
+    });
+    return result;
+}
