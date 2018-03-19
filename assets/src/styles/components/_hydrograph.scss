@@ -209,12 +209,13 @@ table#select-timeseries {
 }
 
 input#cursor-slider {
-    width: 100%;
     max-width: none;
     position: relative;
     opacity: .2;
     top: -2em;
     background: none;
+    padding: 0;
+    margin: 0;
     &.active {
         opacity: 1;
     }
