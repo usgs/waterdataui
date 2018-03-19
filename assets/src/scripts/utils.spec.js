@@ -1,7 +1,6 @@
 const { select } = require('d3-selection');
 
-const { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities,
-    setEquality, wrap, sortObjectArray} = require('./utils');
+const { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities, setEquality, wrap} = require('./utils');
 
 
 describe('Utils module', () => {
@@ -132,23 +131,6 @@ describe('Utils module', () => {
             });
 
             expect(tspans.join(' ')).toEqual(lorem);
-        });
-    });
-
-    describe('sortObjectArray', () => {
-        const testArray = [
-            {name: 'Hydrogen', mass: '1.008'},
-            {name: 'Mercury', mass: '200.582'},
-            {name: 'Argon', mass: '39.948'}
-        ];
-
-        it('sorts an array of objects', () => {
-            let expected = [
-                {name: 'Argon', mass: '39.948'},
-                {name: 'Hydrogen', mass: '1.008'},
-                {name: 'Mercury', mass: '200.582'}
-            ];
-            expect(sortObjectArray(testArray, 'name')).toEqual(expected);
         });
     });
 });

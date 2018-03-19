@@ -23,7 +23,7 @@ export const availableTimeseriesSelector = createSelector(
             return [];
         }
 
-        const codes = {};
+        let sorted = [];
         const seriesList = Object.values(timeSeries);
         const timeSeriesVariables = seriesList.map(x => x.variable);
         const sortedVariables = sortedParameters(variables).map(x => x.oid);
@@ -34,7 +34,7 @@ export const availableTimeseriesSelector = createSelector(
                 continue;
             }
             const variable = variables[variableID];
-            codes[variable.variableCode.value] = {
+            let varCodes = {
                 variableID: variable.oid,
                 description: variable.variableDescription,
                 selected: currentVariableID === variableID,
@@ -45,12 +45,8 @@ export const availableTimeseriesSelector = createSelector(
                 medianTimeseriesCount: seriesList.filter(
                     ts => ts.tsKey === 'median' && ts.variable === variableID).length
             };
+            sorted.push([variable.variableCode.value, varCodes]);
         }
-        let sorted = [];
-        for (let key of Object.keys(codes)) {
-            sorted.push([key, codes[key]]);
-        }
-
         return sorted;
     }
 );

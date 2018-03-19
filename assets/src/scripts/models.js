@@ -275,17 +275,17 @@ export function sortedParameters(variables) {
             if (aRank < bRank) {
                 return -1;
             } else {
-                return 0;
+                return 1;
             }
         });
     const lowPertinenceVars = dataVars.filter(x => !pertinentParmCds.includes(x.variableCode.value))
         .sort((a, b) => {
-            const aDesc = a.variableDescription;
-            const bDesc = b.variableDescription;
+            const aDesc = a.variableDescription.toLowerCase();
+            const bDesc = b.variableDescription.toLowerCase();
             if (aDesc < bDesc) {
                 return -1;
             } else {
-                return 0;
+                return 1;
             }
         });
     return highPertinenceVars.concat(lowPertinenceVars);
