@@ -10,8 +10,8 @@ table#select-timeseries {
                 td {
                     background-color: $color-gray-lightest;
                 }
-                div.parameter-tooltip {
-                    background-color: $color-gray-lightest;
+                span {
+                   background-color: $color-gray-lightest;
                 }
             }
             &.selected {
@@ -19,12 +19,21 @@ table#select-timeseries {
                 td {
                     background-color: $color-aqua-lightest;
                 }
-                div.parameter-tooltip {
-                    background-color: $color-aqua-lightest;
+                span {
+                   background-color: $color-aqua-lightest;
                 }
             }
             span {
                 padding: 0.25em;
+            }
+            .tooltip-item {
+                .tooltip {
+                    @include position(absolute, null null 1.5em 1.2em);
+                    text-align: center;
+                    width: 11em;
+                    padding: 0.25em;
+                    margin: 0 0;
+                }
             }
         }
     }
@@ -33,13 +42,6 @@ table#select-timeseries {
             stroke: $usgs-blue;
             stroke-width: 1px;
             fill: none;
-        }
-    }
-    table.tooltip-table {
-        tbody {
-            tr {
-                background-color: #ffffff;
-            }
         }
     }
 }

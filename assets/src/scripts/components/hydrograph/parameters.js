@@ -4,7 +4,7 @@ const { select } = require('d3-selection');
 
 const { allTimeSeriesSelector } = require('./timeseries');
 const { Actions } = require('../../store');
-const { SPARK_LINE_DIM, SMALL_SCREEN_WIDTH } = require('./layout');
+const { SPARK_LINE_DIM } = require('./layout');
 const { dispatch } = require('../../lib/redux');
 
 
@@ -37,8 +37,7 @@ export const availableTimeseriesSelector = createSelector(
                 variableID: variable.oid,
                 description: variable.variableDescription,
                 selected: currentVariableID === variableID,
-                currentTimeseriesCount: seriesList.filter(
-                    ts => ts.tsKey === 'current' && ts.variable === variableID).length,
+                currentTimeseriesCount: seriesList.filter(ts => ts.tsKey === 'current' && ts.variable === variableID).length
             };
         }
         let sorted = [];
@@ -82,9 +81,8 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  * @param  {Object} availableTimeseries         Timeseries metadata to display
  * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
  * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
- * @param  {Object} layout                      layout as retrieved from the redux store
  */
-export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd, layout}) {
+export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd}) {
     elem.select('#select-timeseries').remove();
 
     if (!availableTimeseries.length) {
@@ -96,7 +94,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
     const table = elem
         .append('table')
             .attr('id', 'select-timeseries')
-            .attr('tabindex', -1)
+            .attr('tabindex', 0)
             .attr('role', 'menu')
             .classed('usa-table-borderless', true);
 
@@ -125,60 +123,27 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
                 }
             }))
             .call(tr => {
-                let parmCdCol = tr.append('td')
+                let parmCdCol = tr.append('td');
                 parmCdCol.append('span')
                     .text(parm => parm[1].description);
-                let tooltipIcon = parmCdCol.append('div')
-                    .attr('class', 'tooltip-item parameter-tooltip');
-                tooltipIcon.append('sup')
+                let tooltip = parmCdCol.append('div')
+                    .attr('class', 'tooltip-item');
+                tooltip.append('span')
                     .append('i')
+                        .attr('class', 'fa fa-info-circle');
 
+                tooltip.append('div')
+                    .attr('class', 'tooltip parameter-tooltip')
+                    .text(parm => `Parameter code: ${parm[0]}`);
 
-                tr.append('td')
-                    .text(parm => parm[1].description);
-                // if screen size is medium/large, place "Now", "Previous Year", and "Median Data" in the table
-                // under the appropriate column headers
                 tr.append('td')
                     .append('svg')
                     .attr('width', SPARK_LINE_DIM.width.toString())
                     .attr('height', SPARK_LINE_DIM.height.toString());
                 tr.append('td')
-                    .text(parm => parm[1].currentTimeSeriesCount);
+                    .text(parm => parm[1].currentTimeseriesCount);
             });
 
-    // seems to be more straight-forward to access an element's joined
-    // data by iterating over a selection...
-
-    // if screen size is small, place "Now", "Previous Year", and "Median Data" in a tooltip
-    if (screenSizeCheck) {
-        table.selectAll('div.tooltip-item').each(function() {
-            let selection = select(this);
-            selection.append('sup')
-                .append('i')
-                    .attr('class', 'fa fa-info-circle');
-            let tooltipContent = selection.append('div').attr('class', 'tooltip');
-            let tooltipTable = tooltipContent.append('table')
-                .attr('class', 'tooltip-table');
-            tooltipTable.append('caption').text('Available Data');
-            tooltipTable.append('thead')
-                .append('tr')
-                    .selectAll('th')
-                    .data(['Now', 'Last Year', 'Median'])
-                    .enter()
-                    .append('th')
-                        .attr('scope', 'col')
-                        .text(d => d);
-
-            let tableRow = tooltipTable.append('tr');
-            tableRow.append('td')
-                .html(d => d[1].currentTimeseriesCount ? '<i class="fa fa-check" aria-label="Current year data available"></i>' : '');
-            tableRow.append('td')
-                .html(d => d[1].compareTimeseriesCount ? '<i class="fa fa-check" aria-label="Previous year data available"></i>' : '');
-            tableRow.append('td')
-                .html(d => d[1].medianTimeseriesCount ? '<i class="fa fa-check" aria-label="Median data available"></i>' : '');
-
-        });
-    }
     table.selectAll('tbody svg').each(function(d) {
         let selection = select(this);
         const parmCd = d[0];
