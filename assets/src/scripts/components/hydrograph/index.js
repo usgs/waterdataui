@@ -20,7 +20,7 @@ const { Actions } = require('../../store');
 const { pointsSelector, pointsTableDataSelector, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
     MASK_DESC, HASH_ID } = require('./drawingData');
 const { currentVariableSelector, methodsSelector, isVisibleSelector, titleSelector,
-    descriptionSelector,  currentVariableTimeSeriesSelector } = require('./timeseries');
+    descriptionSelector,  currentVariableTimeSeriesSelector, allTimeSeriesSelector } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
 
