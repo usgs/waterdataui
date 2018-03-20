@@ -344,8 +344,7 @@ const timeSeriesGraph = function (elem) {
                     seriesMap: currentVariableTimeSeriesSelector('median'),
                     variable: currentVariableSelector,
                     showLabel: (state) => state.showMedianStatsLabel
-                })))
-                //.call(createTitle);
+                })));
 
     elem.call(link(plotSeriesSelectTable, createStructuredSelector({
         availableTimeseries: availableTimeseriesSelector,
