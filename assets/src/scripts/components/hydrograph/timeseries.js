@@ -124,7 +124,7 @@ export const yLabelSelector = createSelector(
 
 
 /**
- * @return {String}     The label for the y-axis, used by addSVGAccessibility
+ * @return {String}     The name of the currently selected variable.
  */
 export const titleSelector = createSelector(
     currentVariableSelector,
