@@ -289,12 +289,20 @@ const controlLastYearSelect = function(elem, {compareTimeseries}) {
     }
 };
 
+const createTitle = function(elem) {
+    elem.append('div')
+        .classed('timeseries-graph-title', true)
+        .call(link((elem, title) => {
+            elem.html(title);
+        }, titleSelector));
+};
 
 const timeSeriesGraph = function (elem) {
     elem.call(link(controlLastYearSelect, createStructuredSelector({
         compareTimeseries: currentVariableTimeSeriesSelector('compare')
     }))).append('div')
         .attr('class', 'hydrograph-container')
+        .call(createTitle)
         .append('svg')
             .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({

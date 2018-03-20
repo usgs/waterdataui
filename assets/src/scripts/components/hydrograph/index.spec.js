@@ -95,6 +95,7 @@ const TEST_STATE = {
                     value: '00060'
                 },
                 oid: '45807197',
+                variableName: 'Test title for 00060',
                 unit: {
                     unitCode: 'unitCode'
                 }
@@ -241,6 +242,12 @@ describe('Hydrograph charting module', () => {
         it('should render the correct number svg nodes', () => {
             // one main hydrograph and two sparklines
             expect(selectAll('svg').size()).toBe(3);
+        });
+
+        it('should have a title div', () => {
+            const titleDiv = selectAll('.timeseries-graph-title');
+            expect(titleDiv.size()).toBe(1);
+            expect(titleDiv.text()).toEqual('Test title for 00060');
         });
 
         it('should have a defs node', () => {
