@@ -163,6 +163,40 @@ describe('Hydrograph charting module', () => {
         expect(graphNode.innerHTML).toContain('hydrograph-container');
     });
 
+    describe('container display', () => {
+
+        it('should not have a style tag if there is data', () => {
+            const store = configureStore(TEST_STATE);
+            select(graphNode)
+                .call(provide(store))
+                .call(timeSeriesGraph);
+            expect(select('#hydrograph').attr('style')).toBeNull();
+            expect(select('.compare-container').attr('style')).toBeNull();
+        });
+
+        it('should have a style tag if there is no data', () => {
+            const store = configureStore({series: {timeseries: {}}});
+            select(graphNode)
+                .call(provide(store))
+                .call(timeSeriesGraph);
+            expect(select('#hydrograph').attr('style')).toEqual('display: none;');
+        });
+
+        // describe('handles no timeseries', () => {
+        //
+        //     beforeEach(() => {
+        //         const store = configureStore(TEST_STATE);
+        //         select(graphNode)
+        //             .call(provide(store))
+        //             .call(timeSeriesGraph);
+        //     });
+        //
+        //     it('by surpressing display if there is no data', () => {
+        //         console.log('Skitty');
+        //     });
+        // });
+    });
+
     describe('SVG has been made accessibile', () => {
         let svg;
         beforeEach(() => {
