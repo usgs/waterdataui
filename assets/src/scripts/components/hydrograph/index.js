@@ -289,6 +289,22 @@ const controlLastYearSelect = function(elem, {compareTimeseries}) {
     }
 };
 
+const createTitle = function(elem) {
+    elem.append('text')
+        .classed('timeseries-graph-title', true)
+        .attr('y', 0)
+        .attr('text-anchor', 'middle')
+        .attr('width', '100%')
+        .call(link((elem, {title, layout}) => {
+            console.log('Layout width is ' + layout.width);
+            elem.attr('x', (layout.width - MARGIN.right) / 2)
+                .html(title);
+            }, createStructuredSelector({
+                title: titleSelector,
+                layout: layoutSelector
+            })
+        ));
+};
 
 const timeSeriesGraph = function (elem) {
     elem.call(link(controlLastYearSelect, createStructuredSelector({
@@ -336,7 +352,8 @@ const timeSeriesGraph = function (elem) {
                     seriesMap: currentVariableTimeSeriesSelector('median'),
                     variable: currentVariableSelector,
                     showLabel: (state) => state.showMedianStatsLabel
-                })));
+                })))
+                .call(createTitle);
 
     elem.call(link(plotSeriesSelectTable, createStructuredSelector({
         availableTimeseries: availableTimeseriesSelector,
