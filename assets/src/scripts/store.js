@@ -3,7 +3,7 @@ const { applyMiddleware, createStore, compose } = require('redux');
 const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
-    parseMedianData } = require('./models');
+    parseMedianData, sortedParameters } = require('./models');
 const { normalize } = require('./schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('./floodData');
 
@@ -143,6 +143,8 @@ export const Actions = {
 
 export const timeSeriesReducer = function (state={}, action) {
     let newState;
+    let sorted;
+
     switch (action.type) {
         case 'SET_FLOOD_FEATURES':
             return {
@@ -151,7 +153,9 @@ export const timeSeriesReducer = function (state={}, action) {
                 floodExtent: action.extent,
                 gageHeight: action.stages.length > 0 ? action.stages[0] : null
             };
+
         case 'ADD_TIMESERIES_COLLECTION':
+            sorted = sortedParameters(action.data.variables);
             return {
                 ...state,
                 series: merge({}, state.series, action.data),
@@ -159,18 +163,7 @@ export const timeSeriesReducer = function (state={}, action) {
                     ...state.showSeries,
                     [action.key]: action.show
                 },
-                currentVariableID: state.currentVariableID || Object.values(
-                    action.data.variables).sort((a, b) => {
-                        const aVal = a.variableCode.value;
-                        const bVal = b.variableCode.value;
-                        if (aVal > bVal) {
-                            return 1;
-                        } else if (aVal < bVal) {
-                            return -1;
-                        } else {
-                            return 0;
-                        }
-                    })[0].oid
+                currentVariableID: state.currentVariableID || sorted.length ? sorted[0].oid : null
             };
 
         case 'TOGGLE_TIMESERIES':

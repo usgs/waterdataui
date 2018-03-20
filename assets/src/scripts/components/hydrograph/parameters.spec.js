@@ -53,10 +53,10 @@ describe('Parameters module', () => {
             });
             // Series are ordered by parameter code and have expected values.
             expect(available).toEqual([
-                ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeseriesCount: 1, compareTimeseriesCount: 0, medianTimeseriesCount: 0}],
-                ['00061', {variableID: 'code1', description: 'code1 desc', selected: false, currentTimeseriesCount: 1, compareTimeseriesCount: 1, medianTimeseriesCount: 0}],
-                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1, compareTimeseriesCount: 1, medianTimeseriesCount: 0}],
-                ['00063', {variableID: 'code3', description: 'code3 desc', selected: false, currentTimeseriesCount: 0, compareTimeseriesCount: 1, medianTimeseriesCount: 0}]
+                ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeseriesCount: 1}],
+                ['00061', {variableID: 'code1', description: 'code1 desc', selected: false, currentTimeseriesCount: 1}],
+                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1}],
+                ['00063', {variableID: 'code3', description: 'code3 desc', selected: false, currentTimeseriesCount: 0}]
             ]);
         });
 
@@ -106,10 +106,10 @@ describe('Parameters module', () => {
             });
             // Series are ordered by parameter code and have expected values.
             expect(available).toEqual([
-                ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeseriesCount: 1, compareTimeseriesCount: 0, medianTimeseriesCount: 0}],
-                ['00061', {variableID: 'code1', description: 'code1 desc', selected: false, currentTimeseriesCount: 1, compareTimeseriesCount: 0, medianTimeseriesCount: 0}],
-                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1, compareTimeseriesCount: 1, medianTimeseriesCount: 0}],
-                ['00063', {variableID: 'code3', description: 'code3 desc', selected: false, currentTimeseriesCount: 0, compareTimeseriesCount: 1, medianTimeseriesCount: 0}]
+                ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeseriesCount: 1}],
+                ['00061', {variableID: 'code1', description: 'code1 desc', selected: false, currentTimeseriesCount: 1}],
+                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1}],
+                ['00063', {variableID: 'code3', description: 'code3 desc', selected: false, currentTimeseriesCount: 0}]
             ]);
         });
 
@@ -159,9 +159,9 @@ describe('Parameters module', () => {
             });
             // Series are ordered by parameter code and have expected values.
             expect(available).toEqual([
-                ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeseriesCount: 1, compareTimeseriesCount: 0, medianTimeseriesCount: 0}],
-                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1, compareTimeseriesCount: 1, medianTimeseriesCount: 0}],
-                ['00063', {variableID: 'code3', description: 'code3 desc', selected: false, currentTimeseriesCount: 0, compareTimeseriesCount: 1, medianTimeseriesCount: 0}]
+                ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeseriesCount: 1}],
+                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1}],
+                ['00063', {variableID: 'code3', description: 'code3 desc', selected: false, currentTimeseriesCount: 0}]
             ]);
         });
     });
@@ -178,9 +178,9 @@ describe('Parameters module', () => {
         });
 
         const availableTimeseries = [
-            ['00010', {variableID: '00010ID', description: 'Temperature', selected: true, currentTimeseriesCount: 1, compareTimeseriesCount: 1}],
-            ['00067', {variableID: '00067ID', description: 'Ruthenium (VI) Fluoride', selected: false, currentTimeseriesCount: 1, compareTimeseriesCount: 1}],
-            ['00093', {variableID: '00093ID', description: 'Uranium (V) Oxide', selected: false, currentTimeseriesCount: 1, compareTimeseriesCount: 1}]
+            ['00010', {variableID: '00010ID', description: 'Temperature', selected: true, currentTimeseriesCount: 1}],
+            ['00067', {variableID: '00067ID', description: 'Ruthenium (VI) Fluoride', selected: false, currentTimeseriesCount: 1}],
+            ['00093', {variableID: '00093ID', description: 'Uranium (V) Oxide', selected: false, currentTimeseriesCount: 1}]
         ];
 
         const lineSegmentsByParmCd = {
@@ -193,24 +193,16 @@ describe('Parameters module', () => {
             '00093': {x: scaleLinear(new Date(2018, 0, 12), new Date(2018, 0, 16)), y: scaleLinear(0, 100)}
         };
 
-        const layout = {
-            width: 800,
-            height: 400,
-            windowWidth: 1080
-        };
-
         const testArgsWithData = {
             availableTimeseries: availableTimeseries,
             lineSegmentsByParmCd: lineSegmentsByParmCd,
-            timeSeriesScalesByParmCd: timeSeriesScalesByParmCd,
-            layout: layout
+            timeSeriesScalesByParmCd: timeSeriesScalesByParmCd
         };
 
         const testArgsWithoutData = {
             availableTimeseries: [],
             lineSegmentsByParmCd: {},
-            timeSeriesScalesByParmCd: {},
-            layout: layout
+            timeSeriesScalesByParmCd: {}
         };
 
         beforeEach(() => {

@@ -1,5 +1,6 @@
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
+const { format } = require('d3-format')
 
 const {allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector, variablesSelector } = require('./timeseries');
 
@@ -31,6 +32,8 @@ export const MAX_LINE_POINT_GAP = 60 * 1000 * 72;
 
 const PARM_CODES_TO_ACCUMULATE = ['00045'];
 
+const toNumberString = format('.2f');
+
 
 /*
  * @param {Array} points - Array of point objects
@@ -43,7 +46,7 @@ const transformToCumulative = function(points) {
         let result = {...point};
         if (point.value !== null) {
             accumulatedValue += point.value;
-            result.value = accumulatedValue;
+            result.value = parseFloat(toNumberString(accumulatedValue));
         } else {
             accumulatedValue = 0;
         }
