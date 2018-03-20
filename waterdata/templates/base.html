@@ -7,6 +7,16 @@
         {% include 'partials/header.html' %}
     </header>
     <main id="main-content" class="usa-grid">
+        <div id="beta-alert">
+            <input type="checkbox" id="beta-alert-dismiss" hidden/>
+            <div class="usa-alert usa-alert-info">
+                <label class="close" for="beta-alert-dismiss">Dismiss</label>
+                <div class="usa-alert-body">
+                    <h4 class="usa-alert-heading">Beta release</h4>
+                    <p class="usa-alert-text">Please provide feedback by clicking <a target="_blank" href="https://water.usgs.gov/contact/gsanswers?pemail=gs-w_iidd_wcb&subject=WDFN%20TNG%20Feedback&viewnote=%3CH1%3EUSGS+WDFN+TNG+Feedback%3C/H1%3E">here</a>.</p>
+                </div>
+            </div>
+        </div>
         {% block content %}{% endblock %}
     </main>
     {% include 'partials/footer.html' %}
