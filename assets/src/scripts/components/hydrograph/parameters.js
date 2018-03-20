@@ -81,6 +81,9 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
  */
 export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd}) {
+    // Get the position of the scrolled window before removing it so it can be set to the same value.
+    const lastTable = elem.select('#select-timeseries table');
+    const scrollTop = lastTable.size() ? lastTable.property('scrollTop') : null;
     elem.select('#select-timeseries').remove();
 
     if (!availableTimeseries.length) {
@@ -145,6 +148,8 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
                 tr.append('td')
                     .text(parm => parm[1].currentTimeseriesCount);
             });
+
+    table.property('scrollTop', scrollTop);
 
     table.selectAll('tbody svg').each(function(d) {
         let selection = select(this);
