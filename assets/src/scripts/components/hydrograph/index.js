@@ -291,7 +291,7 @@ const controlLastYearSelect = function(elem, {compareTimeseries}) {
 
 const controlGraphDisplay = function (elem, {allTimeseries}) {
     if (Object.keys(allTimeseries).length === 0) {
-        elem.attr('style', 'display: none;');
+        elem.style('display', 'none');
     } else {
         elem.attr('style', null);
     }
