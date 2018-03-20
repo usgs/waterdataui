@@ -302,7 +302,7 @@ const createTitle = function(elem) {
  * @param elem
  * @param allTimeseries
  */
-const controlGraphDisplay = function (elem, {allTimeseries}) {
+const controlGraphDisplay = function (elem, allTimeseries) {
     const seriesWithPoints = Object.values(allTimeseries).filter(x => x.points.length > 0 && x.tsKey === 'current');
     if (seriesWithPoints.length === 0) {
         elem.style('display', 'none');
@@ -319,9 +319,8 @@ const controlGraphDisplay = function (elem, {allTimeseries}) {
 
 
 const timeSeriesGraph = function (elem) {
-    elem.call(link(controlGraphDisplay, createStructuredSelector({
-        allTimeseries: allTimeSeriesSelector
-    }))).call(link(controlLastYearSelect, createStructuredSelector({
+    elem.call(link(controlGraphDisplay, allTimeSeriesSelector))
+        .call(link(controlLastYearSelect, createStructuredSelector({
         compareTimeseries: currentVariableTimeSeriesSelector('compare')
     }))).append('div')
         .attr('class', 'hydrograph-container')
