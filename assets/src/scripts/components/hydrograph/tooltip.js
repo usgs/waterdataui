@@ -119,7 +119,7 @@ const updateTooltipText = function(text, {datum, qualifiers, unitCode}) {
         const qualifierStr = Object.keys(qualifiers).filter(
             key => datum.qualifiers.indexOf(key) > -1 && !maskKeys.has(key.toLowerCase())).map(
                 key => qualifiers[key].qualifierDescription).join(', ');
-        let valueStr = `${datum.value || ''} ${datum.value ? unitCode : ''}`;
+        let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
         if (valueStr.trim().length === 0 && keyIntersect) {
             // a data point will have at most one masking qualifier
             valueStr = MASK_DESC[[keyIntersect][0]];
