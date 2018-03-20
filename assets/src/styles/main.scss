@@ -46,8 +46,9 @@ body {
   }
   #beta-alert {
     margin-top: 0;
+    background-color: $color-primary-alt-lightest;
 
-    .usa-alert {
+    .banner-alert-body {
        padding-top: 1em;
       padding-bottom: 0.3em;
       padding-right: 1em;
@@ -58,7 +59,7 @@ body {
         cursor: pointer;
         margin: -10px -5px 0px 0px;
       }
-      .usa-alert-body {
+      .div {
         font-size: 0.9em;
         @include media($medium-screen) {
             font-size: 1em;
