@@ -289,9 +289,19 @@ const controlLastYearSelect = function(elem, {compareTimeseries}) {
     }
 };
 
+const controlGraphDisplay = function (elem, {allTimeseries}) {
+    if (Object.keys(allTimeseries).length === 0) {
+        elem.attr('style', 'display: none;');
+    } else {
+        elem.attr('style', null);
+    }
+};
+
 
 const timeSeriesGraph = function (elem) {
-    elem.call(link(controlLastYearSelect, createStructuredSelector({
+    elem.call(link(controlGraphDisplay, createStructuredSelector({
+        allTimeseries: allTimeSeriesSelector
+    }))).call(link(controlLastYearSelect, createStructuredSelector({
         compareTimeseries: currentVariableTimeSeriesSelector('compare')
     }))).append('div')
         .attr('class', 'hydrograph-container')
