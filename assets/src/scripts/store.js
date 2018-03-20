@@ -212,7 +212,8 @@ export const timeSeriesReducer = function (state={}, action) {
                     ...state.tooltipFocusTime,
                     current: action.currentTime,
                     compare: action.compareTime
-                }
+                },
+                cursorLocation: action.currentTime
             };
 
         case 'SET_CURSOR_LOCATION':
@@ -220,7 +221,8 @@ export const timeSeriesReducer = function (state={}, action) {
                 ...state,
                 tooltipFocusTime: {
                     current: action.xLocation
-                }
+                },
+                cursorLocation: action.xLocation
             };
 
         case 'RESIZE_UI':

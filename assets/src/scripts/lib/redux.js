@@ -72,7 +72,6 @@ export function provide(store) {
  * @param  {Object} selector Source selector for options
  * @return {Function}        D3 callback
  */
-
 export function link(func, selector) {
     let currentOptions = null;
     let retval = null;
@@ -84,4 +83,23 @@ export function link(func, selector) {
         }
         return retval;
     });
+}
+
+
+/**
+ * Calls the provided D3 callbacks, delegating either to a create or update
+ * function, depending on if the node exists yet. `createFunc` is expected to
+ * return a selection.
+ * @param  {Function} createFunc (elem, options) => D3 selection
+ * @param  {Function} updateFunc (elem, options)
+ */
+export function createOrUpdate(createFunc, updateFunc) {
+    let node = null;
+    return function (elem, options) {
+        if (node === null) {
+            node = createFunc(elem, options);
+        } else {
+            updateFunc(node, options);
+        }
+    };
 }

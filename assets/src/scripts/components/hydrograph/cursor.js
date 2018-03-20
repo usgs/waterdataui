@@ -5,10 +5,13 @@ const { Actions } = require('../../store');
 const { dispatch, link } = require('../../lib/redux');
 
 const SLIDER_STEPS = 1000;
+
+// This is a bit of a hack to deal with the radius on the slider circle, so
+// the slider is aligned with the graph.
 const SLIDER_OFFSET_PX = 10;
 
 
-export const cursorLocationSelector = state => state.tooltipFocusTime.current;
+export const cursorLocationSelector = state => state.cursorLocation;
 
 export const cursorSlider = function (elem) {
     elem.append('div')
