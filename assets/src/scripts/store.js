@@ -157,7 +157,7 @@ export const timeSeriesReducer = function (state={}, action) {
 
         case 'ADD_TIMESERIES_COLLECTION':
             sorted = sortedParameters(action.data.variables);
-            currentVar = sorted.length > 0 && Object.keys(sorted[0]).includes('oid') ? sorted[0].oid : null;
+            currentVar = sorted.length > 0 ? sorted[0].oid : null;
             return {
                 ...state,
                 series: merge({}, state.series, action.data),
