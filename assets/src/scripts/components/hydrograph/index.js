@@ -289,12 +289,22 @@ const controlLastYearSelect = function(elem, {compareTimeseries}) {
     }
 };
 
+/**
+ * Modify styling to hide or display the plot area.
+ *
+ * @param elem
+ * @param allTimeseries
+ */
 const controlGraphDisplay = function (elem, {allTimeseries}) {
     if (Object.keys(allTimeseries).length === 0) {
         elem.style('display', 'none');
     } else {
-        elem.select('div.compare-container')
-            .attr('style', null);
+        // the div.compare-container is set to not display by default
+        // this prevents the user from seeing the checkbox in the
+        // time between the html loading and the javascript loading
+        // if there are timeseries available, the div.compare-container
+        // should be displayed
+        elem.select('div.compare-container').attr('style', null);
         elem.attr('style', null);
     }
 };
