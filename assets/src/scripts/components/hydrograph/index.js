@@ -303,7 +303,8 @@ const createTitle = function(elem) {
  * @param allTimeseries
  */
 const controlGraphDisplay = function (elem, {allTimeseries}) {
-    if (Object.keys(allTimeseries).length === 0) {
+    const seriesWithPoints = Object.values(allTimeseries).filter(x => x.points.length > 0 && x.tsKey === 'current');
+    if (seriesWithPoints.length === 0) {
         elem.style('display', 'none');
     } else {
         // the div.compare-container is set to not display by default
