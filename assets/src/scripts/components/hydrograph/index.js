@@ -290,20 +290,11 @@ const controlLastYearSelect = function(elem, {compareTimeseries}) {
 };
 
 const createTitle = function(elem) {
-    elem.append('text')
+    elem.append('div')
         .classed('timeseries-graph-title', true)
-        .attr('y', 0)
-        .attr('text-anchor', 'middle')
-        .attr('width', '100%')
-        .call(link((elem, {title, layout}) => {
-            console.log('Layout width is ' + layout.width);
-            elem.attr('x', (layout.width - MARGIN.right) / 2)
-                .html(title);
-            }, createStructuredSelector({
-                title: titleSelector,
-                layout: layoutSelector
-            })
-        ));
+        .call(link((elem, title) => {
+            elem.html(title);
+        }, titleSelector));
 };
 
 const timeSeriesGraph = function (elem) {
@@ -311,6 +302,7 @@ const timeSeriesGraph = function (elem) {
         compareTimeseries: currentVariableTimeSeriesSelector('compare')
     }))).append('div')
         .attr('class', 'hydrograph-container')
+        .call(createTitle)
         .append('svg')
             .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({
@@ -353,7 +345,7 @@ const timeSeriesGraph = function (elem) {
                     variable: currentVariableSelector,
                     showLabel: (state) => state.showMedianStatsLabel
                 })))
-                .call(createTitle);
+                //.call(createTitle);
 
     elem.call(link(plotSeriesSelectTable, createStructuredSelector({
         availableTimeseries: availableTimeseriesSelector,

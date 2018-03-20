@@ -76,18 +76,22 @@ $highlight: $color-gray-lightest;
     width: 100%;
     vertical-align: top;
 
+    .timeseries-graph-title {
+        color: $color-gray;
+        font-size : 1.2em;
+        @include media($medium-screen) {
+            font-size: 2em;
+        }
+        text-align: center;
+    }
+
+
     svg {
         font-size: 0.7em;
         @include media($medium-screen) {
             font-size: 1em;
         }
-        .timeseries-graph-title {
-            fill: $color-gray;
-            font-size : 1.5em;
-            @include media($medium-screen) {
-                font-size: 2em;
-            }
-        }
+
 
         .overlay {
             fill: none;
