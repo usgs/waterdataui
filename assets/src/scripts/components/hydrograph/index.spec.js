@@ -134,6 +134,7 @@ describe('Hydrograph charting module', () => {
             .attr('id', 'hydrograph');
         hydrograph.append('div')
             .attr('class', 'compare-container')
+            .style('display', 'none')
             .append('input')
                 .attr('type', 'checkbox')
                 .attr('class', 'hydrograph-last-year-input');
@@ -180,21 +181,8 @@ describe('Hydrograph charting module', () => {
                 .call(provide(store))
                 .call(timeSeriesGraph);
             expect(select('#hydrograph').attr('style')).toEqual('display: none;');
+            expect(select('.compare-container').attr('style')).toEqual('display: none;');
         });
-
-        // describe('handles no timeseries', () => {
-        //
-        //     beforeEach(() => {
-        //         const store = configureStore(TEST_STATE);
-        //         select(graphNode)
-        //             .call(provide(store))
-        //             .call(timeSeriesGraph);
-        //     });
-        //
-        //     it('by surpressing display if there is no data', () => {
-        //         console.log('Skitty');
-        //     });
-        // });
     });
 
     describe('SVG has been made accessibile', () => {

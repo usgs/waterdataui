@@ -291,10 +291,10 @@ const controlLastYearSelect = function(elem, {compareTimeseries}) {
 
 const controlGraphDisplay = function (elem, {allTimeseries}) {
     if (Object.keys(allTimeseries).length === 0) {
-        elem.select('div.compare-container')
-            .attr('style', null);
         elem.style('display', 'none');
     } else {
+        elem.select('div.compare-container')
+            .attr('style', null);
         elem.attr('style', null);
     }
 };
