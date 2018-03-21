@@ -114,7 +114,7 @@ export function isLeapYear(year) {
  * @param {Date} timeSeriesStartDateTime
  * @param {Date} timeSeriesEndDateTime
  * @param {Object} varsByCode - variable data where properties are parameter codes.
- * @returns {object}
+ * @returns {Object}
  */
 export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, varsByCode) {
     // We only have data for the variables returned from the IV service. If this
