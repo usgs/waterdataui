@@ -81,4 +81,37 @@ describe('map module', () => {
         });
 
     });
+
+    describe('link back to FIM', () => {
+
+        let testFloodData = {
+            floodStages: [13, 14, 15],
+            floodExtent: {
+                xmin: -87.4667,
+                ymin: 39.43439,
+                xmax: -87.408,
+                ymax: 39.51445
+            },
+            gageHeight: 10
+        };
+        const testMapData = {
+                siteno: '1234567',
+                latitude: 39.46,
+                longitude: -87.42,
+                zoom: 5
+        };
+
+        it('should happen if there are flood stages for a site', () => {
+            store = configureStore(testFloodData);
+            attachToNode(store, mapNode, testMapData);
+            expect(select(mapNode).select('a#fim-link').text()).toEqual('Provisional Flood Information');
+        });
+
+        it('should not happen if there are no flood stages for a site', () => {
+            testFloodData['floodStages'] = [];
+            store = configureStore(testFloodData);
+            attachToNode(store, mapNode, testMapData);
+            expect(select(mapNode).select('a#fim-link').node()).toBeNull();
+        });
+    });
 });

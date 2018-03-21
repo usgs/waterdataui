@@ -85,6 +85,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     const addFimLink = function (node, {stages}) {
         if (stages.length > 0) {
             node.append('a')
+                .attr('id', 'fim-link')
                 .attr('href', `${FIM_ENDPOINT}?site_no=${siteno}`)
                 .attr('target', '_blank')
                 .attr('rel', 'noopener')
