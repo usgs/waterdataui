@@ -276,7 +276,7 @@ const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, data
  * @param elem
  * @param compareTimeseries
  */
-const controlLastYearSelect = function(elem, {compareTimeseries}) {
+const controlLastYearSelect = function(elem, compareTimeseries) {
     const comparePoints = compareTimeseries[Object.keys(compareTimeseries)[0]] ? compareTimeseries[Object.keys(compareTimeseries)[0]].points : [];
     let checkbox = elem.select('.hydrograph-last-year-input');
     if (comparePoints.length > 0) {
@@ -320,9 +320,8 @@ const controlGraphDisplay = function (elem, currentTimeseries) {
 
 const timeSeriesGraph = function (elem) {
     elem.call(link(controlGraphDisplay, timeSeriesSelector('current')))
-        .call(link(controlLastYearSelect, createStructuredSelector({
-        compareTimeseries: currentVariableTimeSeriesSelector('compare')
-    }))).append('div')
+        .call(link(controlLastYearSelect, currentVariableTimeSeriesSelector('compare')))
+        .append('div')
         .attr('class', 'hydrograph-container')
         .call(createTitle)
         .append('svg')
