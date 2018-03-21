@@ -305,15 +305,15 @@ const createTitle = function(elem) {
 const controlGraphDisplay = function (elem, allTimeseries) {
     const seriesWithPoints = Object.values(allTimeseries).filter(x => x.points.length > 0 && x.tsKey === 'current');
     if (seriesWithPoints.length === 0) {
-        elem.style('display', 'none');
+        elem.attr('hidden', true);
     } else {
         // the div.compare-container is set to not display by default
         // this prevents the user from seeing the checkbox in the
         // time between the html loading and the javascript loading;
         // if there are timeseries available, the div.compare-container
         // should be displayed
-        elem.select('div.compare-container').attr('style', null);
-        elem.attr('style', null);
+        elem.select('div.compare-container').attr('hidden', null);
+        elem.attr('hidden', null);
     }
 };
 

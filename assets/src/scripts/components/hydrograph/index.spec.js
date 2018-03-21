@@ -135,7 +135,7 @@ describe('Hydrograph charting module', () => {
             .attr('id', 'hydrograph');
         hydrograph.append('div')
             .attr('class', 'compare-container')
-            .style('display', 'none')
+            .attr('hidden', 'true')
             .append('input')
                 .attr('type', 'checkbox')
                 .attr('class', 'hydrograph-last-year-input');
@@ -167,13 +167,13 @@ describe('Hydrograph charting module', () => {
 
     describe('container display', () => {
 
-        it('should not have a style tag if there is data', () => {
+        it('should not be hidden tag if there is data', () => {
             const store = configureStore(TEST_STATE);
             select(graphNode)
                 .call(provide(store))
                 .call(timeSeriesGraph);
-            expect(select('#hydrograph').attr('style')).toBeNull();
-            expect(select('.compare-container').attr('style')).toBeNull();
+            expect(select('#hydrograph').attr('hidden')).toBeNull();
+            expect(select('.compare-container').attr('hidden')).toBeNull();
         });
 
         it('should have a style tag if there is no data', () => {
@@ -181,8 +181,8 @@ describe('Hydrograph charting module', () => {
             select(graphNode)
                 .call(provide(store))
                 .call(timeSeriesGraph);
-            expect(select('#hydrograph').attr('style')).toEqual('display: none;');
-            expect(select('.compare-container').attr('style')).toEqual('display: none;');
+            expect(select('#hydrograph').attr('hidden')).toBeTruthy();
+            expect(select('.compare-container').attr('hidden')).toBeTruthy();
         });
     });
 
