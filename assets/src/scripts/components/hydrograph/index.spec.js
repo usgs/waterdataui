@@ -135,6 +135,7 @@ describe('Hydrograph charting module', () => {
             .attr('id', 'hydrograph');
         hydrograph.append('div')
             .attr('class', 'compare-container')
+            .attr('hidden', 'true')
             .append('input')
                 .attr('type', 'checkbox')
                 .attr('class', 'hydrograph-last-year-input');
@@ -162,6 +163,27 @@ describe('Hydrograph charting module', () => {
         expect(svgNodes.length).toBe(3);
         expect(svgNodes[0].getAttribute('viewBox')).toContain('400 200');
         expect(graphNode.innerHTML).toContain('hydrograph-container');
+    });
+
+    describe('container display', () => {
+
+        it('should not be hidden tag if there is data', () => {
+            const store = configureStore(TEST_STATE);
+            select(graphNode)
+                .call(provide(store))
+                .call(timeSeriesGraph);
+            expect(select('#hydrograph').attr('hidden')).toBeNull();
+            expect(select('.compare-container').attr('hidden')).toBeNull();
+        });
+
+        it('should have a style tag if there is no data', () => {
+            const store = configureStore({series: {timeseries: {}}});
+            select(graphNode)
+                .call(provide(store))
+                .call(timeSeriesGraph);
+            expect(select('#hydrograph').attr('hidden')).toBeTruthy();
+            expect(select('.compare-container').attr('hidden')).toBeTruthy();
+        });
     });
 
     describe('SVG has been made accessibile', () => {
