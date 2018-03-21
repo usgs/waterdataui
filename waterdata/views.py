@@ -21,7 +21,7 @@ def home():
     return render_template('index.html', version=__version__)
 
 
-@app.route('/monitoring-location/<site_no>', methods=['GET'])
+@app.route('/monitoring-location/<site_no>/', methods=['GET'])
 def monitoring_location(site_no):
     """
     Monitoring Location view
@@ -142,8 +142,8 @@ def monitoring_location(site_no):
     return render_template(template, **context), http_code
 
 
-@app.route('/hydrological-unit', defaults={'huc_cd': None}, methods=['GET'])
-@app.route('/hydrological-unit/<huc_cd>', methods=['GET'])
+@app.route('/hydrological-unit/', defaults={'huc_cd': None}, methods=['GET'])
+@app.route('/hydrological-unit/<huc_cd>/', methods=['GET'])
 def hydrological_unit(huc_cd, show_locations=False):
     """
     Hydrological unit view
@@ -183,7 +183,7 @@ def hydrological_unit(huc_cd, show_locations=False):
     ), http_code
 
 
-@app.route('/hydrological-unit/<huc_cd>/monitoring-locations', methods=['GET'])
+@app.route('/hydrological-unit/<huc_cd>/monitoring-locations/', methods=['GET'])
 def hydrological_unit_locations(huc_cd):
     """
     Returns a HUC page with a list of monitoring locations included.
@@ -191,7 +191,7 @@ def hydrological_unit_locations(huc_cd):
     return hydrological_unit(huc_cd, show_locations=True)
 
 
-@app.route('/components/time-series/<site_no>', methods=['GET'])
+@app.route('/components/time-series/<site_no>/', methods=['GET'])
 def time_series_component(site_no):
     """
     Returns an unadorned page with the time series component for a site.
