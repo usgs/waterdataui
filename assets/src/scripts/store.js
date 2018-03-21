@@ -34,7 +34,7 @@ export const Actions = {
             );
             const medianStatistics = getMedianStatistics({sites: [siteno]});
             Promise.all([timeSeries, medianStatistics]).then(([{collection, startTime, endTime}, stats]) => {
-                let medianCollection = parseMedianData(stats, startTime, endTime, collection.variables);
+                let medianCollection = parseMedianData(stats, startTime, endTime, collection.variables ? collection.variables: {});
                 dispatch(Actions.addSeriesCollection('median', medianCollection));
             });
         };
