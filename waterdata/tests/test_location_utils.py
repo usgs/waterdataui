@@ -317,7 +317,7 @@ class GetDisambiguatedValuesTestCase(TestCase):
                 'huc_cd': '01'
             }
             expected_location = {
-                'huc_cd': {'name': 'New England Region', 'code': '01', 'url': '/hydrological-unit/01'}
+                'huc_cd': {'name': 'New England Region', 'code': '01', 'url': '/hydrological-unit/01/'}
             }
             self.assertEqual(
                 get_disambiguated_values(test_location, {}, {}, self.test_huc_lookup),
@@ -330,7 +330,7 @@ class GetDisambiguatedValuesTestCase(TestCase):
                 'huc_cd': '01010001'
             }
             expected_location = {
-                'huc_cd': {'name': 'Upper St. John', 'code': '01010001', 'url': '/hydrological-unit/01010001'}
+                'huc_cd': {'name': 'Upper St. John', 'code': '01010001', 'url': '/hydrological-unit/01010001/'}
             }
             self.assertEqual(
                 get_disambiguated_values(test_location, {}, {}, self.test_huc_lookup),
@@ -343,7 +343,7 @@ class GetDisambiguatedValuesTestCase(TestCase):
                 'huc_cd': '01010002'
             }
             expected_location = {
-                'huc_cd': {'name': None, 'code': '01010002', 'url': '/hydrological-unit/01010002'}
+                'huc_cd': {'name': None, 'code': '01010002', 'url': '/hydrological-unit/01010002/'}
             }
             self.assertEqual(
                 get_disambiguated_values(test_location, {}, {}, self.test_huc_lookup),
