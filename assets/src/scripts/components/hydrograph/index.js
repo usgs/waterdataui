@@ -309,7 +309,7 @@ const controlGraphDisplay = function (elem, allTimeseries) {
     } else {
         // the div.compare-container is set to not display by default
         // this prevents the user from seeing the checkbox in the
-        // time between the html loading and the javascript loading
+        // time between the html loading and the javascript loading;
         // if there are timeseries available, the div.compare-container
         // should be displayed
         elem.select('div.compare-container').attr('style', null);
