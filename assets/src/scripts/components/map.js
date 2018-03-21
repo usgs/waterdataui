@@ -82,6 +82,16 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         }
     };
 
+    const addFimLink = function (node, {stages}) {
+        if (stages.length > 0) {
+            node.append('a')
+                .attr('href', `${FIM_ENDPOINT}?site_no=${siteno}`)
+                .attr('target', '_blank')
+                .attr('rel', 'noopener')
+                .text('Provisional Flood Information');
+        }
+    };
+
     // Add a gray basemap layer
     map.addLayer(new BasemapLayer('Gray'));
 
@@ -93,12 +103,6 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     // Add a marker at the site location
     createMarker([latitude, longitude]).addTo(map);
 
-    node.append('a')
-        .attr('href', `${FIM_ENDPOINT}?site_no=${siteno}`)
-        .attr('target', '_blank')
-        .attr('rel', 'noopener')
-        .text('Provisional Flood Information');
-
     node
         .call(link(updateFloodLayers, createStructuredSelector({
             stages: (state) => state.floodStages,
@@ -106,6 +110,9 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         })))
         .call(link(updateMapExtent, createStructuredSelector({
             extent: (state) => state.floodExtent
+        })))
+        .call(link(addFimLink, createStructuredSelector({
+            stages: (state) => state.floodStages
         })));
 };
 
