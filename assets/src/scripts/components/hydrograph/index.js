@@ -20,7 +20,7 @@ const { Actions } = require('../../store');
 const { pointsSelector, pointsTableDataSelector, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
     MASK_DESC, HASH_ID } = require('./drawingData');
 const { currentVariableSelector, methodsSelector, isVisibleSelector, titleSelector,
-    descriptionSelector,  currentVariableTimeSeriesSelector, allTimeSeriesSelector } = require('./timeseries');
+    descriptionSelector,  currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
 
@@ -300,10 +300,10 @@ const createTitle = function(elem) {
  * Modify styling to hide or display the plot area.
  *
  * @param elem
- * @param allTimeseries
+ * @param currentTimeseries
  */
-const controlGraphDisplay = function (elem, allTimeseries) {
-    const seriesWithPoints = Object.values(allTimeseries).filter(x => x.points.length > 0 && x.tsKey === 'current');
+const controlGraphDisplay = function (elem, currentTimeseries) {
+    const seriesWithPoints = Object.values(currentTimeseries).filter(x => x.points.length > 0);
     if (seriesWithPoints.length === 0) {
         elem.attr('hidden', true);
     } else {
@@ -319,7 +319,7 @@ const controlGraphDisplay = function (elem, allTimeseries) {
 
 
 const timeSeriesGraph = function (elem) {
-    elem.call(link(controlGraphDisplay, allTimeSeriesSelector))
+    elem.call(link(controlGraphDisplay, timeSeriesSelector('current')))
         .call(link(controlLastYearSelect, createStructuredSelector({
         compareTimeseries: currentVariableTimeSeriesSelector('compare')
     }))).append('div')
