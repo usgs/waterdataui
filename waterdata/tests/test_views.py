@@ -48,7 +48,7 @@ class TestMonitoringLocationView(TestCase):
         m_resp_param.iter_lines.return_value = iter(self.parameter_lines)
         r_mock.side_effect = [m_resp, m_resp_param]
 
-        response = self.app_client.get('/monitoring-location/{}?agency_cd=USGS'.format(self.test_site_number))
+        response = self.app_client.get('/monitoring-location/{}/?agency_cd=USGS'.format(self.test_site_number))
         self.assertEqual(response.status_code, 200)
         self.assertIn('Some Random Site', response.data.decode('utf-8'))
         self.assertIn('@context', response.data.decode('utf-8'))
@@ -62,7 +62,7 @@ class TestMonitoringLocationView(TestCase):
         m_resp_param.iter_lines.return_value = iter(self.parameter_lines)
         r_mock.side_effect = [m_resp, m_resp_param]
         json_ld_response = self.app_client.get(
-            '/monitoring-location/{}?agency_cd=USGS'.format(self.test_site_number),
+            '/monitoring-location/{}/?agency_cd=USGS'.format(self.test_site_number),
             headers=self.headers
         )
         self.assertEqual(json_ld_response.status_code, 200)
@@ -75,13 +75,13 @@ class TestMonitoringLocationView(TestCase):
         m_resp.reason = 'Site number is invalid.'
         r_mock.return_value = m_resp
 
-        response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
+        response = self.app_client.get('/monitoring-location/{}/'.format(self.test_site_number))
         self.assertEqual(response.status_code, 200)
         self.assertIn('Site number is invalid.', response.data.decode('utf-8'))
         self.assertNotIn('@context', response.data.decode('utf-8'))
 
         json_ld_response = self.app_client.get(
-            '/monitoring-location/{}'.format(self.test_site_number),
+            '/monitoring-location/{}/'.format(self.test_site_number),
             headers=self.headers
         )
         self.assertEqual(json_ld_response.status_code, 200)
@@ -94,11 +94,11 @@ class TestMonitoringLocationView(TestCase):
         r_mock.return_value = m_resp
 
         r_mock.get(self.test_url, status_code=500)
-        response = self.app_client.get('/monitoring-location/{}'.format(self.test_site_number))
+        response = self.app_client.get('/monitoring-location/{}/'.format(self.test_site_number))
         self.assertEqual(response.status_code, 503)
 
         json_ld_response = self.app_client.get(
-            '/monitoring-location/{}'.format(self.test_site_number),
+            '/monitoring-location/{}/'.format(self.test_site_number),
             headers=self.headers
         )
         self.assertEqual(json_ld_response.status_code, 503)
@@ -107,7 +107,7 @@ class TestMonitoringLocationView(TestCase):
     @mock.patch('waterdata.views.execute_get_request')
     def test_agency_cd(self, r_mock):
         r_mock.return_value.status_code = 500
-        response = self.app_client.get('/monitoring-location/{0}?agency_cd=USGS'.format(self.test_site_number))
+        response = self.app_client.get('/monitoring-location/{0}/?agency_cd=USGS'.format(self.test_site_number))
         r_mock.assert_called_with(app.config['SERVICE_ROOT'],
                                   path='/nwis/site/',
                                   params={'site': self.test_site_number,
@@ -129,20 +129,20 @@ class TestHydrologicalUnitView:
             yield
 
     def test_huc2(self, client):
-        response = client.get('/hydrological-unit')
+        response = client.get('/hydrological-unit/')
         assert response.status_code == 200
 
     def test_some_exist(self, client):
         for huc_cd in list(app.config['HUC_LOOKUP']['hucs'].keys())[:20]:
-            response = client.get('/hydrological-unit/{}'.format(huc_cd))
+            response = client.get('/hydrological-unit/{}/'.format(huc_cd))
             assert response.status_code == 200
 
     def test_404s(self, client):
-        response = client.get('/hydrological-unit/1')
+        response = client.get('/hydrological-unit/1/')
         assert response.status_code == 404
 
     def test_locations_list(self, client):
-        response = client.get('/hydrological-unit/01010001/monitoring-locations')
+        response = client.get('/hydrological-unit/01010001/monitoring-locations/')
         assert response.status_code == 200
         text = response.data.decode('utf-8')
         # There are eight instances of this site in MOCK_SITE_LIST_2.
@@ -153,7 +153,7 @@ class TestTimeSeriesComponentView:
     # pylint: disable=R0201,R0903
 
     def test_get(self, client):
-        response = client.get('/components/time-series/01646500')
+        response = client.get('/components/time-series/01646500/')
         assert response.status_code == 200
         text = response.data.decode('utf-8')
         assert text.count('class="wdfn-component" data-component="hydrograph"') == 1, 'Component expected'
