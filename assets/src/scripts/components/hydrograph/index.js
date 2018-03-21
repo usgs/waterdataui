@@ -20,7 +20,7 @@ const { Actions } = require('../../store');
 const { pointsSelector, pointsTableDataSelector, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
     MASK_DESC, HASH_ID } = require('./drawingData');
 const { currentVariableSelector, methodsSelector, isVisibleSelector, titleSelector,
-    descriptionSelector,  currentVariableTimeSeriesSelector } = require('./timeseries');
+    descriptionSelector,  currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
 
@@ -276,7 +276,7 @@ const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, data
  * @param elem
  * @param compareTimeseries
  */
-const controlLastYearSelect = function(elem, {compareTimeseries}) {
+const controlLastYearSelect = function(elem, compareTimeseries) {
     const comparePoints = compareTimeseries[Object.keys(compareTimeseries)[0]] ? compareTimeseries[Object.keys(compareTimeseries)[0]].points : [];
     let checkbox = elem.select('.hydrograph-last-year-input');
     if (comparePoints.length > 0) {
@@ -289,12 +289,41 @@ const controlLastYearSelect = function(elem, {compareTimeseries}) {
     }
 };
 
+const createTitle = function(elem) {
+    elem.append('div')
+        .classed('timeseries-graph-title', true)
+        .call(link((elem, title) => {
+            elem.html(title);
+        }, titleSelector));
+};
+/**
+ * Modify styling to hide or display the plot area.
+ *
+ * @param elem
+ * @param currentTimeseries
+ */
+const controlGraphDisplay = function (elem, currentTimeseries) {
+    const seriesWithPoints = Object.values(currentTimeseries).filter(x => x.points.length > 0);
+    if (seriesWithPoints.length === 0) {
+        elem.attr('hidden', true);
+    } else {
+        // the div.compare-container is set to not display by default
+        // this prevents the user from seeing the checkbox in the
+        // time between the html loading and the javascript loading;
+        // if there are timeseries available, the div.compare-container
+        // should be displayed
+        elem.select('div.compare-container').attr('hidden', null);
+        elem.attr('hidden', null);
+    }
+};
+
 
 const timeSeriesGraph = function (elem) {
-    elem.call(link(controlLastYearSelect, createStructuredSelector({
-        compareTimeseries: currentVariableTimeSeriesSelector('compare')
-    }))).append('div')
+    elem.call(link(controlGraphDisplay, timeSeriesSelector('current')))
+        .call(link(controlLastYearSelect, currentVariableTimeSeriesSelector('compare')))
+        .append('div')
         .attr('class', 'hydrograph-container')
+        .call(createTitle)
         .append('svg')
             .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({

@@ -11,7 +11,7 @@ $highlight: $color-gray-lightest;
         display: block;
         overflow: auto;
         height: 250px;
-        margin-top: 0px;
+        margin-top: 0;
 
         thead {
             th {
@@ -76,11 +76,22 @@ $highlight: $color-gray-lightest;
     width: 100%;
     vertical-align: top;
 
+    .timeseries-graph-title {
+        color: $color-gray;
+        font-size : 1.2em;
+        @include media($medium-screen) {
+            font-size: 2em;
+        }
+        text-align: center;
+    }
+
+
     svg {
         font-size: 0.7em;
         @include media($medium-screen) {
             font-size: 1em;
         }
+
 
         .overlay {
             fill: none;
