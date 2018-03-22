@@ -108,12 +108,13 @@ export function isLeapYear(year) {
 }
 
 /**
- * Parse one median timeseries dataset.
- * @param medianData
- * @param timeSeriesStartDateTime
- * @param timeSeriesEndDateTime
- * @param varsByCode
- * @returns {object}
+ * Merge medianData timeseries into collection and return.
+ * @param {Object} collection
+ * @param {Object} medianData - median data for each time series, where properties are the ts id.
+ * @param {Date} timeSeriesStartDateTime
+ * @param {Date} timeSeriesEndDateTime
+ * @param {Object} varsByCode - variable data where properties are parameter codes.
+ * @returns {Object}
  */
 export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, varsByCode) {
     // We only have data for the variables returned from the IV service. If this
@@ -144,7 +145,7 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
         };
         // don't include leap days if it's not a leap year
         if (!isLeapYear(recordDate.getFullYear())) {
-            if (!(month == 1 && day == 29)) {
+            if (!(month === 1 && day === 29)) {
                 values.push(median);
             }
         } else {
@@ -214,12 +215,12 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
 }
 
 /**
- * Read median RDB data into something that makes sense.
- * @param medianData
- * @param timeSeriesStartDateTime
- * @param timeSeriesEndDateTime
- * @param timeSeriesUnits
- * @returns {object}
+ * Read median RDB data and save the median data for the month/date for the time series for each variable in variables.
+ * @param {Array} medianData - each object contains the median data for a time series for a month/day
+ * @param {Date} timeSeriesStartDateTime
+ * @param {Date} timeSeriesEndDateTime
+ * @param {Object} variables - The variables which we want to save.
+ * @returns {Object}
  */
 export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, variables) {
 
