@@ -5,7 +5,7 @@ const FLOOD_BREACH_ENDPOINT = `${window.FIM_GIS_ENDPOINT}breach/MapServer/`;
 const FLOOD_LEVEE_ENDPOINT = `${window.FIM_GIS_ENDPOINT}suppLyrs/MapServer/`;
 
 /*
- * Retrive flood features if any for siteno
+ * Retrieve flood features if any for siteno
  * @param {String} siteno
  * @return {Promise} resolves to an array of features for the site
  */
