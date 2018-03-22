@@ -33,7 +33,7 @@ export const Actions = {
                 }
             );
             const medianStatistics = getMedianStatistics({sites: [siteno]});
-            Promise.all([timeSeries, medianStatistics]).then(([{collection, startTime, endTime}, stats]) => {
+            return Promise.all([timeSeries, medianStatistics]).then(([{collection, startTime, endTime}, stats]) => {
                 let medianCollection = parseMedianData(stats, startTime, endTime, collection.variables ? collection.variables: {});
                 dispatch(Actions.addSeriesCollection('median', medianCollection));
             });
@@ -54,14 +54,12 @@ export const Actions = {
         return function(dispatch) {
             const floodFeatures = fetchFloodFeatures(siteno);
             const floodExtent = fetchFloodExtent(siteno);
-            Promise.all([floodFeatures, floodExtent]).then((data) => {
+            return Promise.all([floodFeatures, floodExtent]).then((data) => {
                 const [features, extent] = data;
-                if (features.length > 0) {
-                    const stages = features.map((feature) => feature.attributes.STAGE).sort(function(a, b) {
-                        return a - b;
-                    });
-                    dispatch(Actions.setFloodFeatures(stages, extent.extent));
-                }
+                const stages = features.map((feature) => feature.attributes.STAGE).sort(function(a, b) {
+                    return a - b;
+                });
+                dispatch(Actions.setFloodFeatures(stages, stages.length ? extent.extent : {}));
             });
         };
     },

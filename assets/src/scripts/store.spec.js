@@ -1,9 +1,127 @@
+let proxyquire = require('proxyquireify')(require);
+
 const { Actions, timeSeriesReducer } = require('./store');
 
-
-describe('Redux store', () => {
+fdescribe('Redux store', () => {
     // TODO: Add tests for retrieveTimeseries, retrieveCompareTimeseries, and retrieveFloodData
     describe('asynchronous actions', () => {
+        describe('retrieveFloodData with data', () => {
+            let store;
+            let floodDataMock;
+            let mockDispatch;
+
+            const SITE_NO = '12345678';
+            beforeEach(() => {
+                let getFeaturePromise = Promise.resolve([{
+                    attributes: {
+                        USGSI: '03341500',
+                        STAGE: 30
+                    }
+                }, {
+                    attributes: {
+                        USGSID: '03341500',
+                        STAGE: 29
+                    }
+                }, {
+                    attributes: {
+                        USGSID: '03341500',
+                        STAGE: 28
+                    }
+                }]);
+                let getExtentPromise = Promise.resolve({
+                    extent: {
+                        xmin: -84.35321,
+                        ymin: 34.01666,
+                        xmax: 84.22346,
+                        ymax: 34.1010
+                    },
+                    spatialReference: {
+                        wkid: 4326,
+                        latestWkid: 4326
+                    }
+                });
+
+                floodDataMock = {
+                    fetchFloodFeatures: function () {
+                        return getFeaturePromise;
+                    },
+                    fetchFloodExtent: function () {
+                        return getExtentPromise;
+                    }
+                };
+
+                spyOn(floodDataMock, 'fetchFloodFeatures').and.callThrough();
+                spyOn(floodDataMock, 'fetchFloodExtent').and.callThrough();
+                store = proxyquire('./store', {'./floodData': floodDataMock});
+
+            });
+
+            it('Make fetch call for both features and extent', () => {
+                store.Actions.retrieveFloodData(SITE_NO)(mockDispatch);
+
+                expect(floodDataMock.fetchFloodFeatures).toHaveBeenCalledWith(SITE_NO);
+                expect(floodDataMock.fetchFloodExtent).toHaveBeenCalledWith(SITE_NO);
+            });
+
+            it('dispatches a setFloodFeatures action after promises are resolved', (done) => {
+                let mockDispatch = jasmine.createSpy('mockDispatch');
+                spyOn(store.Actions, 'setFloodFeatures').and.callThrough();
+                let p = store.Actions.retrieveFloodData(SITE_NO)(mockDispatch);
+
+                p.then(() => {
+                    expect(mockDispatch).toHaveBeenCalled();
+                    expect(store.Actions.setFloodFeatures).toHaveBeenCalledWith([28, 29, 30], {
+                        xmin: -84.35321,
+                        ymin: 34.01666,
+                        xmax: 84.22346,
+                        ymax: 34.1010
+                    });
+
+                    done();
+                });
+            });
+        });
+
+        describe('retrieveFloodData with no data', () => {
+            let store;
+            let floodDataMock;
+            let mockDispatch;
+
+            const SITE_NO = '12345678';
+            beforeEach(() => {
+                let getFeaturePromise = Promise.resolve([]);
+                let getExtentPromise = Promise.resolve({
+                    xmin: 'NaN',
+                    ymin: 'NaN',
+                    xmax: 'NaN',
+                    ymax: 'NaN'
+                });
+
+                floodDataMock = {
+                    fetchFloodFeatures: function() { return getFeaturePromise; },
+                    fetchFloodExtent: function() { return getExtentPromise; }
+                };
+
+                spyOn(floodDataMock, 'fetchFloodFeatures').and.callThrough();
+                spyOn(floodDataMock, 'fetchFloodExtent').and.callThrough();
+                store = proxyquire('./store', {'./floodData': floodDataMock});
+
+            });
+
+            it('dispatches a setFloodFeatures action after promises are resolved', (done) => {
+                let mockDispatch = jasmine.createSpy('mockDispatch');
+                spyOn(store.Actions, 'setFloodFeatures').and.callThrough();
+                let p = store.Actions.retrieveFloodData(SITE_NO)(mockDispatch);
+
+                p.then(() => {
+                    expect(mockDispatch).toHaveBeenCalled();
+                    expect(store.Actions.setFloodFeatures).toHaveBeenCalledWith([], {});
+
+
+                    done();
+                });
+            });
+        });
     });
 
     describe('synchronous actions', () => {
