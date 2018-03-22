@@ -9,6 +9,10 @@ import os
 
 from waterdata import __version__ as APP_VERSION
 
+# controls environment specific behavior
+# acceptable values: None, 'local', 'staging', 'production'
+DEPLOYMENT_ENVIRONMENT = None
+
 DEBUG = False
 
 SERVICE_ROOT = 'https://waterservices.usgs.gov'
