@@ -10,7 +10,7 @@ import os
 from waterdata import __version__ as APP_VERSION
 
 # controls environment specific behavior
-# acceptable values: 'local', 'development', 'staging', 'production'
+# acceptable values: 'local', 'development', 'staging', 'prod'
 DEPLOYMENT_ENVIRONMENT = 'development'
 
 DEBUG = False
