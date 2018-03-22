@@ -15,9 +15,15 @@ describe('Redux store', () => {
                 let getTimeseriesPromise = Promise.resolve(JSON.parse(MOCK_DATA));
                 let getMedianStatsPromise = Promise.resolve(MOCK_RDB);
                 modelsMock = {
-                    getTimeseries: function() { return getTimeseriesPromise; },
-                    getMedianStatistics: function() { return getMedianStatsPromise; },
-                    parseMedianData: function() {return MOCK_MEDIAN_DATA; }
+                    getTimeseries: function() {
+                        return getTimeseriesPromise;
+                        },
+                    getMedianStatistics: function() {
+                        return getMedianStatsPromise;
+                        },
+                    parseMedianData: function() {
+                        return MOCK_MEDIAN_DATA;
+                    }
                 };
 
                 spyOn(modelsMock, 'getTimeseries').and.callThrough();
@@ -67,9 +73,15 @@ describe('Redux store', () => {
                 let getTimeseriesPromise = Promise.reject(Error('Bad data'));
                 let getMedianStatsPromise = Promise.resolve(MOCK_RDB);
                 modelsMock = {
-                    getTimeseries: function() { return getTimeseriesPromise; },
-                    getMedianStatistics: function() { return getMedianStatsPromise; },
-                    parseMedianData: function() {return MOCK_MEDIAN_DATA; }
+                    getTimeseries: function() {
+                        return getTimeseriesPromise;
+                        },
+                    getMedianStatistics: function() {
+                        return getMedianStatsPromise;
+                        },
+                    parseMedianData: function() {
+                        return MOCK_MEDIAN_DATA;
+                    }
                 };
 
                 spyOn(modelsMock, 'getTimeseries').and.callThrough();
@@ -266,8 +278,12 @@ describe('Redux store', () => {
                 });
 
                 floodDataMock = {
-                    fetchFloodFeatures: function() { return getFeaturePromise; },
-                    fetchFloodExtent: function() { return getExtentPromise; }
+                    fetchFloodFeatures: function() {
+                        return getFeaturePromise;
+                        },
+                    fetchFloodExtent: function() {
+                        return getExtentPromise;
+                    }
                 };
 
                 spyOn(floodDataMock, 'fetchFloodFeatures').and.callThrough();
