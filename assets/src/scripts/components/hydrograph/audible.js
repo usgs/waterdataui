@@ -2,8 +2,9 @@ const { scaleLinear } = require('d3-scale');
 const memoize = require('fast-memoize');
 const { createSelector, createStructuredSelector } = require('reselect');
 
+const { tsCursorPointsSelector } = require('./cursor');
 const { yScaleSelector } = require('./scales');
-const { tsDatumSelector } = require('./tooltip');
+const { allTimeSeriesSelector } = require('./timeseries');
 
 const { dispatch, link } = require('../../lib/redux');
 const { Actions } = require('../../store');
@@ -74,12 +75,42 @@ export const audibleInterfaceOnSelector = state => state.audibleInterfaceOn;
 
 export const audibleScaleSelector = memoize(tsKey => createSelector(
     yScaleSelector,
-    (scale) => {
+    (yScale) => {
         return scaleLinear()
-            .domain(scale.domain())
+            .domain(yScale.domain())
             .range([80, 1500]);
     }
 ));
+
+const audiblePointsSelector = createSelector(
+    allTimeSeriesSelector,
+    tsCursorPointsSelector('current'),
+    tsCursorPointsSelector('compare'),
+    audibleScaleSelector('current'),
+    audibleScaleSelector('compare'),
+    (allTimeSeries, currentPoints, comparePoints, yScaleCurrent, yScaleCompare) => {
+        // Set null points for all time series, so we can turn audio for those
+        // points off when toggling to other time series.
+        let points = Object.keys(allTimeSeries).reduce((points, tsID) => {
+            points[tsID] = null;
+            return points;
+        }, {});
+
+        // Get the pitches for the current-year points
+        points = Object.keys(currentPoints).reduce((points, tsID) => {
+            const pt = currentPoints[tsID];
+            points[tsID] = yScaleCurrent(pt.value);
+            return points;
+        }, points);
+
+        // Get the pitches for the compare-year points
+        return Object.keys(comparePoints).reduce((points, tsID) => {
+            const pt = comparePoints[tsID];
+            points[tsID] = yScaleCompare(pt.value);
+            return points;
+        }, points);
+    }
+);
 
 export const audibleUI = function (elem) {
     if (!AudioContext) {
@@ -107,19 +138,13 @@ export const audibleUI = function (elem) {
     // the selected points.
     // TODO: Handle more than just the first time series of each tsKey. This can
     // piggyback on work to support multiple tooltip selections.
-    elem.call(link(function (elem, {enabled, datumCurrent, datumCompare, yScaleCurrent, yScaleCompare}) {
+    elem.call(link(function (elem, {enabled, points}) {
         updateSound({
-            points: {
-                current: datumCurrent ? yScaleCurrent(datumCurrent.value) : null,
-                compare: datumCompare ? yScaleCompare(datumCompare.value) : null
-            },
+            points,
             enabled
         });
     }, createStructuredSelector({
         enabled: audibleInterfaceOnSelector,
-        datumCurrent: tsDatumSelector('current'),
-        datumCompare: tsDatumSelector('compare'),
-        yScaleCurrent: audibleScaleSelector('current'),
-        yScaleCompare: audibleScaleSelector('compare')
+        points: audiblePointsSelector
     })));
 };

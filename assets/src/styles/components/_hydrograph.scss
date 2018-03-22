@@ -58,6 +58,10 @@ table#select-timeseries {
             fill: none;
             pointer-events: all;
         }
+        circle.focus {
+            fill: #436BAF;
+            opacity: .6;
+        }
         .focus {
             circle {
                 fill: #436BAF;

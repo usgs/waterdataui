@@ -99,17 +99,10 @@ export const Actions = {
             show
         };
     },
-    setTooltipTime(currentTime, compareTime) {
+    setCursorOffset(cursorOffset) {
         return {
-            type: 'SET_TOOLTIP_TIME',
-            currentTime,
-            compareTime
-        };
-    },
-    setCursorLocation(xLocation) {
-        return {
-            type: 'SET_CURSOR_LOCATION',
-            xLocation
+            type: 'SET_CURSOR_OFFSET',
+            cursorOffset
         };
     },
     resizeUI(windowWidth, width) {
@@ -205,24 +198,10 @@ export const timeSeriesReducer = function (state={}, action) {
                 showMedianStatsLabel : action.show
             };
 
-        case 'SET_TOOLTIP_TIME':
+        case 'SET_CURSOR_OFFSET':
             return {
                 ...state,
-                tooltipFocusTime: {
-                    ...state.tooltipFocusTime,
-                    current: action.currentTime,
-                    compare: action.compareTime
-                },
-                cursorLocation: action.currentTime
-            };
-
-        case 'SET_CURSOR_LOCATION':
-            return {
-                ...state,
-                tooltipFocusTime: {
-                    current: action.xLocation
-                },
-                cursorLocation: action.xLocation
+                cursorOffset: action.cursorOffset
             };
 
         case 'RESIZE_UI':

@@ -72,9 +72,6 @@ describe('Audible interface', () => {
 
     it('does nothing unexpected when playing a sound', () => {
         Actions.toggleAudibleInterface(true);
-        Actions.setTooltipTime(
-            TEST_STATE.series.timeSeries['00060:current'].points[0].dateTime,
-            TEST_STATE.series.timeSeries['00060:compare'].points[0].dateTime
-        );
+        Actions.setCursorOffset(1);
     });
 });
