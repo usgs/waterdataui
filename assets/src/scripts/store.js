@@ -30,11 +30,16 @@ export const Actions = {
                 },
                 () => {
                     dispatch(Actions.resetTimeseries('current'));
+                    return {
+                        collection: null,
+                        startTime: null,
+                        endTime: null
+                    };
                 }
             );
             const medianStatistics = getMedianStatistics({sites: [siteno]});
             return Promise.all([timeSeries, medianStatistics]).then(([{collection, startTime, endTime}, stats]) => {
-                let medianCollection = parseMedianData(stats, startTime, endTime, collection.variables ? collection.variables: {});
+                let medianCollection = parseMedianData(stats, startTime, endTime, collection && collection.variables ? collection.variables: {});
                 dispatch(Actions.addSeriesCollection('median', medianCollection));
             });
         };

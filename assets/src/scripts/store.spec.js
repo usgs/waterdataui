@@ -2,10 +2,98 @@ let proxyquire = require('proxyquireify')(require);
 
 const { Actions, timeSeriesReducer } = require('./store');
 
-fdescribe('Redux store', () => {
-    // TODO: Add tests for retrieveTimeseries, retrieveCompareTimeseries, and retrieveFloodData
+describe('Redux store', () => {
     describe('asynchronous actions', () => {
         const SITE_NO = '12345678';
+
+        describe('retrieveTimeseries with good data', () => {
+            let store;
+            let modelsMock;
+
+            beforeEach(() => {
+                /* eslint no-use-before-define: 0 */
+                let getTimeseriesPromise = Promise.resolve(JSON.parse(MOCK_DATA));
+                let getMedianStatsPromise = Promise.resolve(MOCK_RDB);
+                modelsMock = {
+                    getTimeseries: function() { return getTimeseriesPromise; },
+                    getMedianStatistics: function() { return getMedianStatsPromise; },
+                    parseMedianData: function() {return MOCK_MEDIAN_DATA; }
+                };
+
+                spyOn(modelsMock, 'getTimeseries').and.callThrough();
+                spyOn(modelsMock, 'getMedianStatistics').and.callThrough();
+                store = proxyquire('./store', {'./models': modelsMock});
+            });
+
+            it('Fetches the time series and median statistics data', () => {
+                store.Actions.retrieveTimeseries(SITE_NO)();
+
+                expect(modelsMock.getTimeseries).toHaveBeenCalledWith({
+                    sites: [SITE_NO],
+                    params: null,
+                    startDate: null,
+                    endDate: null
+                });
+                expect(modelsMock.getMedianStatistics).toHaveBeenCalledWith({
+                    sites: [SITE_NO]
+                });
+            });
+
+            it('should fetch the times series, retrieve the compare time series once the timeseries and fetch the statistics', (done) => {
+                let mockDispatch = jasmine.createSpy('mockDispatch');
+                spyOn(store.Actions, 'addSeriesCollection');
+                spyOn(store.Actions, 'retrieveCompareTimeseries');
+                let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch);
+
+                p.then(() => {
+                    expect(mockDispatch.calls.count()).toBe(3);
+                    expect(store.Actions.addSeriesCollection.calls.count()).toBe(2);
+                    expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('current');
+                    expect(store.Actions.addSeriesCollection.calls.argsFor(1)[0]).toBe('median');
+                    expect(store.Actions.retrieveCompareTimeseries.calls.count()).toBe(1);
+                    expect(store.Actions.retrieveCompareTimeseries.calls.argsFor(0)[0]).toBe(SITE_NO);
+
+                    done();
+                });
+            });
+        });
+
+        describe('retrieveTimeseries with bad data', () => {
+            let store;
+            let modelsMock;
+
+            beforeEach(() => {
+                /* eslint no-use-before-define: 0 */
+                let getTimeseriesPromise = Promise.reject(Error('Bad data'));
+                let getMedianStatsPromise = Promise.resolve(MOCK_RDB);
+                modelsMock = {
+                    getTimeseries: function() { return getTimeseriesPromise; },
+                    getMedianStatistics: function() { return getMedianStatsPromise; },
+                    parseMedianData: function() {return MOCK_MEDIAN_DATA; }
+                };
+
+                spyOn(modelsMock, 'getTimeseries').and.callThrough();
+                store = proxyquire('./store', {'./models': modelsMock});
+            });
+
+
+            it('should reset the current time series', (done) => {
+                let mockDispatch = jasmine.createSpy('mockDispatch');
+                spyOn(store.Actions, 'addSeriesCollection');
+                spyOn(store.Actions, 'resetTimeseries');
+                let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch);
+
+                p.then(() => {
+                    expect(mockDispatch.calls.count()).toBe(2);
+                    expect(store.Actions.addSeriesCollection.calls.count()).toBe(1);
+                    expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('median');
+                    expect(store.Actions.resetTimeseries.calls.count()).toBe(1);
+                    expect(store.Actions.resetTimeseries.calls.argsFor(0)[0]).toBe('current');
+
+                    done();
+                });
+            });
+        });
 
         describe('retrieveCompareTimeseries with good data', () => {
             let store;
@@ -3431,42 +3519,6 @@ USGS	05370000	00060	153885		1	12	1969	2017	49	15
 USGS	05370000	00060	153885		1	13	1969	2017	49	15
 `;
 
-const MOCK_RDB_NO_DATA = `#
-#
-# US Geological Survey, Water Resources Data
-# retrieved: 2018-01-25 16:05:49 -05:00	(natwebsdas01)
-#
-# This file contains USGS Daily Statistics
-#
-# Note:The statistics generated are based on approved daily-mean data and may not match those published by the USGS in official publications.
-# The user is responsible for assessment and use of statistics from this site.
-# For more details on why the statistics may not match, visit http://help.waterdata.usgs.gov/faq/about-statistics.
-#
-# Data heading explanations.
-# agency_cd       -- agency code
-# site_no         -- Site identification number
-# parameter_cd    -- Parameter code
-# station_nm      -- Site name
-# loc_web_ds      -- Additional measurement description
-#
-# Data for the following 1 site(s) are contained in this file
-# agency_cd   site_no      parameter_cd   station_nm (loc_web_ds)
-# USGS        05370000     00060          EAU GALLE RIVER AT SPRING VALLEY, WI
-#
-# Explanation of Parameter Codes
-# parameter_cd	Parameter Name
-# 00060         Discharge, cubic feet per second
-#
-# Data heading explanations.
-# month_nu    ... The month for which the statistics apply.
-# day_nu      ... The day for which the statistics apply.
-# begin_yr    ... First water year of data of daily mean values for this day.
-# end_yr      ... Last water year of data of daily mean values for this day.
-# count_nu    ... Number of values used in the calculation.
-# p50_va      ... 50 percentile (median) of daily mean values for this day.
-#
-agency_cd	site_no	parameter_cd	ts_id	loc_web_ds	month_nu	day_nu	begin_yr	end_yr	count_nu	p50_va
-`;
 
 const MOCK_MEDIAN_DATA = [
     {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '1', day_nu: '1', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '16'},
@@ -3474,9 +3526,3 @@ const MOCK_MEDIAN_DATA = [
     {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '8', day_nu: '5', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '15'},
     {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '2', day_nu: '29', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '13'}
 ];
-const MOCK_MEDIAN_VARIABLES = {
-    '00060': {
-        oid: 'varID'
-    }
-};
-
