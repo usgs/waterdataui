@@ -10,6 +10,13 @@ const { deltaDays } = require('./utils');
 const SERVICE_ROOT = window.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
 const PAST_SERVICE_ROOT = window.PAST_SERVICE_ROOT  || 'https://nwis.waterservices.usgs.gov/nwis';
 
+export const PARAM_PERTINENCE = {
+    '00060': 0,
+    '00065': 1,
+    '72019': 2
+};
+
+
 const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
 function olderThan120Days(date) {
@@ -101,12 +108,13 @@ export function isLeapYear(year) {
 }
 
 /**
- * Parse one median timeseries dataset.
- * @param medianData
- * @param timeSeriesStartDateTime
- * @param timeSeriesEndDateTime
- * @param varsByCode
- * @returns {object}
+ * Merge medianData timeseries into collection and return.
+ * @param {Object} collection
+ * @param {Object} medianData - median data for each time series, where properties are the ts id.
+ * @param {Date} timeSeriesStartDateTime
+ * @param {Date} timeSeriesEndDateTime
+ * @param {Object} varsByCode - variable data where properties are parameter codes.
+ * @returns {Object}
  */
 export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, varsByCode) {
     // We only have data for the variables returned from the IV service. If this
@@ -137,7 +145,7 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
         };
         // don't include leap days if it's not a leap year
         if (!isLeapYear(recordDate.getFullYear())) {
-            if (!(month == 1 && day == 29)) {
+            if (!(month === 1 && day === 29)) {
                 values.push(median);
             }
         } else {
@@ -207,12 +215,12 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
 }
 
 /**
- * Read median RDB data into something that makes sense.
- * @param medianData
- * @param timeSeriesStartDateTime
- * @param timeSeriesEndDateTime
- * @param timeSeriesUnits
- * @returns {object}
+ * Read median RDB data and save the median data for the month/date for the time series for each variable in variables.
+ * @param {Array} medianData - each object contains the median data for a time series for a month/day
+ * @param {Date} timeSeriesStartDateTime
+ * @param {Date} timeSeriesEndDateTime
+ * @param {Object} variables - The variables which we want to save.
+ * @returns {Object}
  */
 export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, variables) {
 
@@ -255,4 +263,31 @@ export function getMedianStatistics({sites, params=null}) {
     }, (error) => {
         return error;
     });
+}
+
+
+export function sortedParameters(variables) {
+    const dataVars = variables ? Object.values(variables) : [];
+    const pertinentParmCds = Object.keys(PARAM_PERTINENCE);
+    const highPertinenceVars = dataVars.filter(x => pertinentParmCds.includes(x.variableCode.value))
+        .sort((a, b) => {
+            const aPertinence = PARAM_PERTINENCE[a.variableCode.value];
+            const bPertinence = PARAM_PERTINENCE[b.variableCode.value];
+            if (aPertinence < bPertinence) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+    const lowPertinenceVars = dataVars.filter(x => !pertinentParmCds.includes(x.variableCode.value))
+        .sort((a, b) => {
+            const aDesc = a.variableDescription.toLowerCase();
+            const bDesc = b.variableDescription.toLowerCase();
+            if (aDesc < bDesc) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+    return highPertinenceVars.concat(lowPertinenceVars);
 }

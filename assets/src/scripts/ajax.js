@@ -17,7 +17,7 @@ export function get(url) {
             else {
                 // Otherwise reject with the status text
                 // which will hopefully be a meaningful error
-                reject(Error(req.statusText));
+                reject(Error(`Failed with status ${req.status}: ${req.statusText}`));
             }
         };
 

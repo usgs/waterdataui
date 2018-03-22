@@ -56,17 +56,22 @@ const TEST_DATA = {
                 endTime: new Date('2017-03-13t13:45:00.000Z'),
                 variable: '45807140',
                 points: [{
-                    value: 1,
+                    value: 0,
                     qualifiers: ['P'],
                     approved: false,
                     estimated: false
                 }, {
-                    value: 2,
+                    value: 0.01,
                     qualifiers: ['P'],
                     approved: false,
                     estimated: false
                 }, {
-                    value: 3,
+                    value: 0.02,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 0.03,
                     qualifiers: ['P'],
                     approved: false,
                     estimated: false
@@ -124,7 +129,7 @@ describe('drawingData module', () => {
         });
 
         it('Return the points array accumulated for the time series with  parameter code 00045', () => {
-            expect(result['00045'].map((point) => point.value)).toEqual([1, 3, 6]);
+            expect(result['00045'].map((point) => point.value)).toEqual([0, 0.01, 0.03, 0.06]);
         });
 
         it('Return the empty object if there are no timeseries', () =>  {
@@ -144,12 +149,12 @@ describe('drawingData module', () => {
                             endTime: new Date('2017-03-13t13:45:00.000Z'),
                             variable: '45807140',
                             points: [{
-                                value: 1,
+                                value: 0.01,
                                 qualifiers: ['P'],
                                 approved: false,
                                 estimated: false
                             }, {
-                                value: 2,
+                                value: 0.02,
                                 qualifiers: ['P'],
                                 approved: false,
                                 estimated: false
@@ -159,7 +164,7 @@ describe('drawingData module', () => {
                                 approved: false,
                                 estimated: false
                             }, {
-                                value: 4,
+                                value: 0.04,
                                 qualifiers: ['P'],
                                 approved: false,
                                 estimated: false
@@ -169,7 +174,7 @@ describe('drawingData module', () => {
                 }
             };
 
-            expect(allPointsSelector(newTestData)['00045'].map((point) => point.value)).toEqual([1, 3, null, 4]);
+            expect(allPointsSelector(newTestData)['00045'].map((point) => point.value)).toEqual([0.01, 0.03, null, 0.04]);
         });
     });
 

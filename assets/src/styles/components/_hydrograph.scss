@@ -1,44 +1,72 @@
 $approved: darkgreen;
 $estimated: black;
+$selected: $color-aqua-lightest;
+$highlight: $color-gray-lightest;
 
-table#select-timeseries {
-    tbody {
-        tr {
-            cursor: pointer;
-            background-color: $color-gray-lightest;
-            &:hover {
-                td {
-                    background-color: $color-gray-lightest;
-                }
-                div.parameter-tooltip {
-                    background-color: $color-gray-lightest;
-                }
+#select-timeseries  {
+    label {
+        font-weight: $font-bold;
+    }
+    table {
+        display: block;
+        overflow: auto;
+        height: 250px;
+        margin-top: 0;
+
+        thead {
+            th {
+                font-size: $small-font-size
             }
-            &.selected {
-                cursor: default;
-                td {
-                    background-color: $color-aqua-lightest;
-                }
-                div.parameter-tooltip {
-                    background-color: $color-aqua-lightest;
-                }
-            }
-            span {
-                padding: 0.25em;
+            th, td {
+                background-color: white;
             }
         }
-    }
-    svg {
-        .spark-line {
-            stroke: $usgs-blue;
-            stroke-width: 1px;
-            fill: none;
-        }
-    }
-    table.tooltip-table {
         tbody {
             tr {
-                background-color: #ffffff;
+                cursor: pointer;
+                background-color: $highlight;
+                th, td {
+                    padding-top: 0.5rem;
+                    padding-bottom: 0.5rem;
+                }
+
+                &:hover {
+                    th, td {
+                        background-color: $highlight;
+                    }
+                    .tooltip-item {
+                        background-color: $highlight;
+                    }
+                }
+                &.selected {
+                    cursor: default;
+                    th, td {
+                        background-color: $selected;
+                    }
+                    .tooltip-item {
+                        background-color: $selected;
+                    }
+                }
+                .tooltip-item {
+                    span {
+                        padding-left: 0.25em;
+                        font-size: 0.8em;
+                    }
+                    .tooltip {
+                        @include position(absolute, null null 0 1em);
+                        text-align: center;
+                        width: 11em;
+                        padding: 0.2em;
+                        margin: 0 0;
+                    }
+                }
+            }
+        }
+        svg {
+            .spark-line {
+                stroke: $usgs-blue;
+                stroke-width: 1px;
+                fill: none;
             }
         }
     }
@@ -48,11 +76,22 @@ table#select-timeseries {
     width: 100%;
     vertical-align: top;
 
+    .timeseries-graph-title {
+        color: $color-gray;
+        font-size : 1.2em;
+        @include media($medium-screen) {
+            font-size: 2em;
+        }
+        text-align: center;
+    }
+
+
     svg {
         font-size: 0.7em;
         @include media($medium-screen) {
             font-size: 1em;
         }
+
 
         .overlay {
             fill: none;

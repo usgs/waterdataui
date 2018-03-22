@@ -1,5 +1,5 @@
 const { select, selectAll } = require('d3-selection');
-const { provide } = require('../../lib/redux');
+const { provide, dispatch } = require('../../lib/redux');
 
 const { attachToNode, timeSeriesGraph, timeSeriesLegend } = require('./index');
 const { Actions, configureStore } = require('../../store');
@@ -8,6 +8,18 @@ const { Actions, configureStore } = require('../../store');
 const TEST_STATE = {
     series: {
         timeSeries: {
+            '00010:current': {
+                startTime: new Date('2018-01-02T15:00:00.000-06:00'),
+                endTime: new Date('2018-01-02T15:00:00.000-06:00'),
+                points: [{
+                    dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
+                    value: 4,
+                    qualifiers: ['P']
+                }],
+                method: 'method1',
+                tsKey: 'current',
+                variable: '45807190'
+            },
             '00060:current': {
                 startTime: new Date('2018-01-02T15:00:00.000-06:00'),
                 endTime: new Date('2018-01-02T15:00:00.000-06:00'),
@@ -60,6 +72,10 @@ const TEST_STATE = {
             'coll3': {
                 variable: '45807197',
                 timeSeries: ['00060:median']
+            },
+            'coll4': {
+                variable: '45807190',
+                timeSeries: ['00010:current']
             }
         },
         requests: {
@@ -67,7 +83,7 @@ const TEST_STATE = {
                 timeSeriesCollections: ['coll1']
             },
             compare: {
-                timeSeriesCollections: ['coll2']
+                timeSeriesCollections: ['coll2', 'col4']
             },
             median: {
                 timeSeriesCollections: ['coll3']
@@ -75,8 +91,20 @@ const TEST_STATE = {
         },
         variables: {
             '45807197': {
-                variableCode: '00060',
+                variableCode: {
+                    value: '00060'
+                },
                 oid: '45807197',
+                variableName: 'Test title for 00060',
+                unit: {
+                    unitCode: 'unitCode'
+                }
+            },
+            '45807190': {
+                variableCode: {
+                    value: '00010'
+                },
+                oid: '45807190',
                 unit: {
                     unitCode: 'unitCode'
                 }
@@ -102,13 +130,22 @@ describe('Hydrograph charting module', () => {
     let graphNode;
 
     beforeEach(() => {
-        select('body')
-            .append('div')
+        let body = select('body');
+        let hydrograph = body.append('div')
             .attr('id', 'hydrograph');
+        hydrograph.append('div')
+            .attr('class', 'compare-container')
+            .attr('hidden', 'true')
+            .append('input')
+                .attr('type', 'checkbox')
+                .attr('class', 'hydrograph-last-year-input');
+        hydrograph.append('div')
+            .attr('class', 'hydrograph-container');
         graphNode = document.getElementById('hydrograph');
     });
 
     afterEach(() => {
+        select('.compare-input').remove();
         select('#hydrograph').remove();
     });
 
@@ -123,9 +160,30 @@ describe('Hydrograph charting module', () => {
             .call(provide(store))
             .call(timeSeriesGraph);
         let svgNodes = graphNode.getElementsByTagName('svg');
-        expect(svgNodes.length).toBe(2);
+        expect(svgNodes.length).toBe(3);
         expect(svgNodes[0].getAttribute('viewBox')).toContain('400 200');
         expect(graphNode.innerHTML).toContain('hydrograph-container');
+    });
+
+    describe('container display', () => {
+
+        it('should not be hidden tag if there is data', () => {
+            const store = configureStore(TEST_STATE);
+            select(graphNode)
+                .call(provide(store))
+                .call(timeSeriesGraph);
+            expect(select('#hydrograph').attr('hidden')).toBeNull();
+            expect(select('.compare-container').attr('hidden')).toBeNull();
+        });
+
+        it('should have a style tag if there is no data', () => {
+            const store = configureStore({series: {timeseries: {}}});
+            select(graphNode)
+                .call(provide(store))
+                .call(timeSeriesGraph);
+            expect(select('#hydrograph').attr('hidden')).toBeTruthy();
+            expect(select('.compare-container').attr('hidden')).toBeTruthy();
+        });
     });
 
     describe('SVG has been made accessibile', () => {
@@ -203,8 +261,15 @@ describe('Hydrograph charting module', () => {
                 .call(timeSeriesGraph);
         });
 
-        it('should render an svg node', () => {
-            expect(selectAll('svg').size()).toBe(2);
+        it('should render the correct number svg nodes', () => {
+            // one main hydrograph and two sparklines
+            expect(selectAll('svg').size()).toBe(3);
+        });
+
+        it('should have a title div', () => {
+            const titleDiv = selectAll('.timeseries-graph-title');
+            expect(titleDiv.size()).toBe(1);
+            expect(titleDiv.text()).toEqual('Test title for 00060');
         });
 
         it('should have a defs node', () => {
@@ -234,7 +299,8 @@ describe('Hydrograph charting module', () => {
         });
 
         it('should have tooltips for the select series table', () => {
-            expect(selectAll('table .tooltip-table').size()).toBe(1);
+            // one for each of the two parameters
+            expect(selectAll('table .tooltip-item').size()).toBe(2);
         });
 
         it('should not have tooltips for the select series table when the screen is large', () => {
@@ -287,6 +353,30 @@ describe('Hydrograph charting module', () => {
             store.dispatch(Actions.toggleTimeseries('compare', false));
             store.dispatch(Actions.toggleTimeseries('median', false));
             expect(selectAll('g.legend-marker').size()).toBe(1);
+        });
+    });
+
+    describe('last year checkbox', () => {
+
+        let store;
+        beforeEach(() => {
+            store = configureStore(TEST_STATE);
+            select(graphNode)
+                .call(provide(store))
+                .call(timeSeriesGraph)
+                .select('.hydrograph-last-year-input')
+                    .on('change', dispatch(function () {
+                        return Actions.toggleTimeseries('compare', this.checked);
+                    }));
+        });
+
+        it('should be enabled if there are last year data', () => {
+            expect(select('.hydrograph-last-year-input').property('disabled')).toBeFalsy();
+        });
+
+        it('should be disabled if there are no last year data', () => {
+            store.dispatch(Actions.setCurrentParameterCode('00010', '45807190'));
+            expect(select('.hydrograph-last-year-input').property('disabled')).toBeTruthy();
         });
     });
 });

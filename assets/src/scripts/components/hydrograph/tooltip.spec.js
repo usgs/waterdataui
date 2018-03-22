@@ -241,6 +241,32 @@ describe('Hydrograph tooltip module', () => {
             let value2 = svg.select('.current-tooltip-text').html().split(' - ')[0];
             expect(value2).toBe('Maintenance');
         });
+
+        it('Creates the correct text for values of zero', () => {
+            const zeroData = [12, 13, 14, 15, 16].map(hour => {
+                return {
+                    dateTime: new Date(`2018-01-03T${hour}:00:00.000Z`),
+                    qualifiers: ['P'],
+                    value: 0
+                };
+            });
+            let store = configureStore(Object.assign({}, testState, {
+                series: Object.assign({}, testState.series, {
+                    timeSeries: Object.assign({}, testState.series.timeSeries, {
+                        '00060:current': Object.assign({}, testState.series.timeSeries['00060:current'], {
+                            points: zeroData
+                        })
+                    })
+                }),
+                cursorOffset: 10
+            }));
+            svg.call(provide(store))
+                .call(createTooltipText);
+            store.dispatch(Actions.setCursorOffset(119 * 60 * 1000));
+            let value = svg.select('.current-tooltip-text').html().split(' - ')[0];
+
+            expect(value).toBe('0 ft3/s');
+        });
     });
 
     describe('createTooltipFocus', () => {

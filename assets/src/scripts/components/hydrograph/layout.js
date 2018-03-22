@@ -18,7 +18,6 @@ const SPARK_LINE_DIM = {
     height: 30
 };
 
-const SMALL_SCREEN_WIDTH = 481; // size of a small screen as defined in uswds style sheets
 
 /*
  * @param {Object} state - Redux store
@@ -37,4 +36,4 @@ const layoutSelector = createSelector(
 );
 
 module.exports = {ASPECT_RATIO, ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector, SPARK_LINE_DIM,
-    SMALL_SCREEN_WIDTH, CIRCLE_RADIUS_SINGLE_PT};
+    CIRCLE_RADIUS_SINGLE_PT};

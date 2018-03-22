@@ -1,6 +1,6 @@
 {% macro TimeseriesComponent(site_no) -%}
     <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ site_no }}">
-        <div class="compare-container" data-siteno="{{ site_no }}">
+        <div class="compare-container" hidden data-siteno="{{ site_no }}">
             <input ga-on="click" ga-event-category="TimeseriesGraph" ga-event-action="toggleCompare" id="show-last-year-input" class="hydrograph-last-year-input" type="checkbox" value="show-last_year" aria-labelledby="show-last-year-label" />
             <label id="show-last-year-label" for="show-last-year-input">Show last year</label>
         </div>
