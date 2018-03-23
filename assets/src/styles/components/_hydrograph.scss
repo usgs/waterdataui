@@ -97,11 +97,11 @@ $highlight: $color-gray-lightest;
             fill: none;
             pointer-events: all;
         }
+        circle.focus {
+            fill: #436BAF;
+            opacity: .6;
+        }
         .focus {
-            circle {
-                fill: #436BAF;
-                opacity: .6;
-            }
             line {
                 opacity: .5;
                 stroke: #436BAF;
@@ -248,12 +248,13 @@ $highlight: $color-gray-lightest;
 }
 
 input#cursor-slider {
-    width: 100%;
     max-width: none;
     position: relative;
     opacity: .2;
     top: -2em;
     background: none;
+    padding: 0;
+    margin: 0;
     &.active {
         opacity: 1;
     }

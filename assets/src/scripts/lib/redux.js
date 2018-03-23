@@ -72,16 +72,32 @@ export function provide(store) {
  * @param  {Object} selector Source selector for options
  * @return {Function}        D3 callback
  */
-
 export function link(func, selector) {
     let currentOptions = null;
-    let retval = null;
+    let context = null;
     return connect(function (selection, state) {
         let nextOptions = selector(state);
         if (currentOptions !== nextOptions) {
             currentOptions = nextOptions;
-            retval = func.call(null, selection, currentOptions);
+            context = func.call(null, selection, currentOptions, context);
         }
-        return retval;
+        return context;
     });
+}
+
+
+/**
+ * Calls the provided D3 callbacks, calling an initialization function and
+ * then an update function on state changes.
+ * @param  {Function} initFunc (elem, options) => D3 selection
+ * @param  {Function} updateFunc (elem, options)
+ */
+export function initAndUpdate(initFunc, updateFunc) {
+    let node = null;
+    return function (elem, options) {
+        if (node === null) {
+            node = initFunc(elem, options);
+        }
+        updateFunc(node, options);
+    };
 }

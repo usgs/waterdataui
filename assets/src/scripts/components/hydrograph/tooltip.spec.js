@@ -1,11 +1,9 @@
-const { scaleLinear, scaleTime } = require('d3-scale');
 const { select } = require('d3-selection');
+const proxyquire = require('proxyquireify')(require);
 
 const { provide } = require('../../lib/redux');
-
 const { Actions, configureStore } = require('../../store');
-const { getNearestTime, tooltipFocusTimeSelector, tsDatumSelector,
-    createTooltipText, createTooltipFocus } = require('./tooltip');
+const { createTooltipText, createTooltipFocus } = require('./tooltip');
 
 
 describe('Hydrograph tooltip module', () => {
@@ -74,6 +72,30 @@ describe('Hydrograph tooltip module', () => {
                     timeSeriesCollections: ['compare']
                 }
             },
+            queryInfo: {
+                current: {
+                    notes: {
+                        'filter:timeRange': {
+                            mode: 'RANGE',
+                            interval: {
+                                start: new Date('2018-01-03T12:00:00.000Z'),
+                                end: new Date('2018-01-03T16:00:00.000Z')
+                            }
+                        }
+                    }
+                },
+                compare: {
+                    notes: {
+                        'filter:timeRange': {
+                            mode: 'RANGE',
+                            interval: {
+                                start: new Date('2018-01-03T12:00:00.000Z'),
+                                end: new Date('2018-01-03T16:00:00.000Z')
+                            }
+                        }
+                    }
+                }
+            },
             qualifiers: {
                 'P': {
                     qualifierCode: 'P',
@@ -105,89 +127,38 @@ describe('Hydrograph tooltip module', () => {
         currentVariableID: '00060id'
     };
 
-    describe('getNearestTime', () => {
-        it('Return null if the length of the data array is less than two', function() {
-            expect(getNearestTime([], data[0].dateTime)).toBeNull();
-            expect(getNearestTime([data[1]], data[0].dateTime)).toBeNull();
-        });
-
-        it('return correct data points via getNearestTime' , () => {
-            // Check each date with the given offset against the hourly-spaced
-            // test data.
-            function expectOffset(offset, side) {
-                for (let [index, datum] of data.entries()) {
-                    let expected;
-                    if (side === 'left' || index === data.length - 1) {
-                        expected = {datum, index};
-                    } else {
-                        expected = {datum: data[index + 1], index: index + 1};
-                    }
-                    let time = new Date(datum.dateTime.getTime() + offset);
-                    let returned = getNearestTime(data, time);
-
-                    expect(returned.datum.dateTime).toBe(expected.datum.dateTime);
-                    expect(returned.datum.index).toBe(expected.datum.index);
+    describe('tooltipPointsSelector', () => {
+        let tooltip = proxyquire('./tooltip', {
+            './cursor': {
+                tsCursorPointsSelector: () => () => {
+                    return {
+                        '00060:current': {
+                            dateTime: '1date',
+                            value: 1
+                        },
+                        '00060:compare': {
+                            dateTime: '2date',
+                            value: 2
+                        }
+                    };
                 }
+            },
+            './scales': {
+                xScaleSelector: () => () => (val) => val,
+                yScaleSelector: () => (val) => val
             }
-
-            let hour = 3600000;  // 1 hour in milliseconds
-
-            // Check each date against an offset from itself.
-            expectOffset(0, 'left');
-            expectOffset(1, 'left');
-            expectOffset(hour / 2 - 1, 'left');
-            expectOffset(hour / 2, 'left');
-            expectOffset(hour / 2 + 1, 'right');
-            expectOffset(hour - 1, 'right');
         });
-    });
 
-    describe('tooltipFocusTimeSelector', () => {
         it('should return the requested time series focus time', () => {
-            const currentTime = new Date('2018-02-12');
-            const compareTime = new Date('2017-02-12');
-            const state = {
-                tooltipFocusTime: {
-                    current: currentTime,
-                    compare: compareTime
-                }
-            };
-
-            expect(tooltipFocusTimeSelector('current')(state)).toEqual(currentTime);
-            expect(tooltipFocusTimeSelector('compare')(state)).toEqual(compareTime);
-        });
-    });
-
-    describe('tsDatumSelector', () => {
-        it('Should return null if the focus time for the time series is null', function() {
-            const thisTime = new Date('2018-02-12');
-            let state = {
-                ...testState,
-                tooltipFocusTime: {
-                    current: thisTime,
-                    compare: null
-                }
-            };
-            expect(tsDatumSelector('compare')(state)).toBeNull();
-
-            state.tooltipFocusTime = {
-                current: null,
-                compare: thisTime
-            };
-
-            expect(tsDatumSelector('current')(state)).toBeNull();
-        });
-
-        it('Should return the nearest datum for the selected time series', function() {
-            let state = {
-                ...testState,
-                tooltipFocusTime: {
-                    current: new Date('2018-01-03T14:29:00.000Z'),
-                    compare: new Date('2018-01-03T12:31:00.000Z')
-                }
-            };
-            expect(tsDatumSelector('current')(state).value).toEqual(14);
-            expect(tsDatumSelector('compare')(state).value).toEqual(13);
+            expect(tooltip.tooltipPointsSelector('current')({})).toEqual([{
+                x: '1date',
+                y: 1,
+                tsID: '00060:current'
+            }, {
+                x: '2date',
+                y: 2,
+                tsID: '00060:compare'
+            }]);
         });
     });
 
@@ -203,10 +174,7 @@ describe('Hydrograph tooltip module', () => {
 
         it('Creates two text elements with empty text', () => {
             let store = configureStore({
-                tooltipFocusTime: {
-                    current: null,
-                    compare: null
-                }
+                cursorOffset: null
             });
 
             svg.call(provide(store))
@@ -222,13 +190,9 @@ describe('Hydrograph tooltip module', () => {
         });
 
         it('Creates the text elements with the label for the focus times', () => {
-            let store = configureStore({
-                ...testState,
-                tooltipFocusTime: {
-                    current: new Date('2018-01-03T14:29:00.000Z'),
-                    compare: new Date('2018-01-03T12:39:00.000Z')
-                }
-            });
+            let store = configureStore(Object.assign({}, testState, {
+                cursorOffset: 2 * 60 * 60 * 1000
+            }));
 
             svg.call(provide(store))
                 .call(createTooltipText);
@@ -236,43 +200,44 @@ describe('Hydrograph tooltip module', () => {
             let value = svg.select('.current-tooltip-text').html().split(' - ')[0];
             expect(value).toBe('14 ft3/s');
             value = svg.select('.compare-tooltip-text').html().split(' - ')[0];
-            expect(value).toBe('13 ft3/s');
+            expect(value).toBe('14 ft3/s');
         });
 
         it('Text contents are updated when the store is provided with new focus times', () => {
-            let store = configureStore({
-                ...testState,
-                tooltipFocusTime: {
-                    current: new Date('2018-01-03T14:29:00.000Z'),
-                    compare: new Date('2018-01-03T12:39:00.000Z')
-                }
-            });
+            let store = configureStore(Object.assign({}, testState, {
+                cursorOffset: 1
+            }));
 
             svg.call(provide(store))
                 .call(createTooltipText);
-            store.dispatch(Actions.setTooltipTime(new Date('2018-01-03T14:31:00.000Z'), null));
 
             let value = svg.select('.current-tooltip-text').html().split(' - ')[0];
+            expect(value).toBe('12 ft3/s');
+            store.dispatch(Actions.setCursorOffset(3 * 60 * 60 * 1000));
+
+            value = svg.select('.current-tooltip-text').html().split(' - ')[0];
             expect(value).toBe('15 ft3/s');
-            expect(svg.select('.compare-tooltip-text').html()).toBe('');
+
+            value = svg.select('.compare-tooltip-text').html().split(' - ')[0];
+            expect(value).toBe('15 ft3/s');
         });
 
         it('Text handles data masks if focus is near masked data points', () => {
-            let store = configureStore({
-                ...testState,
+            let store = configureStore(Object.assign({}, testState, {
+                cursorOffset: 1,
                 toolTipFocusTime: {
                     current: new Date('2018-01-03T16:51:00.000Z'),
                     compare: new Date('2018-01-03T16:50:00.000Z')
                 }
+            }));
 
-            });
             svg.call(provide(store))
                 .call(createTooltipText);
-            store.dispatch(Actions.setTooltipTime(new Date('2018-01-03T16:59:00.000Z'), null));
+            store.dispatch(Actions.setCursorOffset(299 * 60 * 1000));  // 2018-01-03T16:59:00.000Z
             let value1 = svg.select('.current-tooltip-text').html().split(' - ')[0];
             expect(value1).toBe('Flood');
 
-            store.dispatch(Actions.setTooltipTime(new Date('2018-01-03T17:59:00.000Z'), null));
+            store.dispatch(Actions.setCursorOffset(359 * 60 * 1000));  // 2018-01-03T17:59:00.000Z
             let value2 = svg.select('.current-tooltip-text').html().split(' - ')[0];
             expect(value2).toBe('Maintenance');
         });
@@ -285,26 +250,19 @@ describe('Hydrograph tooltip module', () => {
                     value: 0
                 };
             });
-            let store = configureStore({
-                ...testState,
-                series: {
-                    ...testState.series,
-                    timeSeries: {
-                        ...testState.series.timeSeries,
-                        '00060:current': {
-                            ...testState.series.timeSeries['00060:current'],
+            let store = configureStore(Object.assign({}, testState, {
+                series: Object.assign({}, testState.series, {
+                    timeSeries: Object.assign({}, testState.series.timeSeries, {
+                        '00060:current': Object.assign({}, testState.series.timeSeries['00060:current'], {
                             points: zeroData
-                        }
-                    }
-                },
-                toolTipFocusTime: {
-                    current: new Date('2018-01-03T14:29:00.000Z'),
-                    compare: new Date('2018-01-03T12:39:00.000Z')
-                }
-            });
+                        })
+                    })
+                }),
+                cursorOffset: 10
+            }));
             svg.call(provide(store))
                 .call(createTooltipText);
-            store.dispatch(Actions.setTooltipTime(new Date('2018-01-03T13:59:00.000Z'), null));
+            store.dispatch(Actions.setCursorOffset(119 * 60 * 1000));
             let value = svg.select('.current-tooltip-text').html().split(' - ')[0];
 
             expect(value).toBe('0 ft3/s');
@@ -312,22 +270,10 @@ describe('Hydrograph tooltip module', () => {
     });
 
     describe('createTooltipFocus', () => {
-        let svg, xScale, yScale, compareXScale, currentTsData, compareTsData,
-            isCompareVisible;
+        let svg, currentTsData, compareTsData;
         beforeEach(() => {
             svg = select('body').append('svg');
 
-            xScale = scaleTime().
-                range([0, 100]).
-                domain([data[0].dateTime, data[4].dateTime]);
-            yScale = scaleLinear().range([0, 100]).domain([12, 16]);
-            let lastYearStart = new Date(data[0].dateTime);
-            let lastYearEnd = new Date(data[4].dateTime);
-            compareXScale = scaleTime().range([0, 100]).domain([
-                    lastYearStart.setFullYear(data[0].dateTime.getFullYear() - 1),
-                    lastYearEnd.setFullYear(data[4].dateTime.getFullYear() - 1)
-                ]
-            );
             currentTsData = data;
             compareTsData = [12, 13, 14, 15, 16].map(hour => {
                 return {
@@ -335,20 +281,16 @@ describe('Hydrograph tooltip module', () => {
                     value: hour + 1
                 };
             });
-            isCompareVisible = false;
         });
 
         afterEach(() => {
             svg.remove();
         });
 
-        it('Creates focus circles and lines that are not displayed', () => {
-            let store = configureStore({
-                ...testState,
-                series: {
-                    ...testState.series,
-                    timeSeries: {
-                        ...testState.series.timeSeries,
+        it('Creates focus lines but has no focus circles when cursor not set', () => {
+            let store = configureStore(Object.assign({}, testState, {
+                series: Object.assign({}, testState.series, {
+                    timeSeries: Object.assign({}, testState.series.timeSeries, {
                         '00060:current': {
                             points: currentTsData,
                             tsKey: 'current',
@@ -359,38 +301,23 @@ describe('Hydrograph tooltip module', () => {
                             tsKey: 'compare',
                             variable: '00060id'
                         }
-                    }
-                },
-                tooltipFocusTime: {
-                    current: null,
-                    compare: null
-                }
-            });
+                    })
+                }),
+                cursorOffset: null
+            }));
 
             svg.call(provide(store)).
-                call(createTooltipFocus, {
-                    xScale,
-                    yScale,
-                    compareXScale,
-                    currentTsData: [currentTsData],
-                    compareTsData: [compareTsData],
-                    isCompareVisible
-                });
+                call(createTooltipFocus);
 
             expect(svg.selectAll('.focus-line').size()).toBe(1);
-            expect(svg.selectAll('circle').size()).toBe(2);
-            expect(svg.select('.focus:first-child').style('display')).toBe('none');
-            expect(svg.select('.focus:nth-child(2)').style('display')).toBe('none');
-            expect(svg.select('.focus:nth-child(3)').style('display')).toBe('none');
+            expect(svg.selectAll('circle').size()).toBe(0);
+            expect(svg.select('.focus').size()).toBe(1);
         });
 
-        it('Focus circles and line are displayed if time is non null', () => {
-            let store = configureStore({
-                ...testState,
-                series: {
-                    ...testState.series,
-                    timeSeries: {
-                        ...testState.series.timeSeries,
+        it('Focus circles and line are displayed if cursor is set', () => {
+            let store = configureStore(Object.assign({}, testState, {
+                series: Object.assign({}, testState.series, {
+                    timeSeries: Object.assign({}, testState.series.timeSeries, {
                         '00060:current': {
                             points: currentTsData,
                             tsKey: 'current',
@@ -401,27 +328,16 @@ describe('Hydrograph tooltip module', () => {
                             tsKey: 'compare',
                             variable: '00060id'
                         }
-                    }
-                },
-                tooltipFocusTime: {
-                    current: new Date('2018-01-03T14:29:00.000Z'),
-                    compare: new Date('2017-01-03T12:39:00.000Z')
-                }
-            });
+                    })
+                }),
+                cursorOffset: 39 * 60 * 1000
+            }));
 
             svg.call(provide(store)).
-                call(createTooltipFocus, {
-                    xScale,
-                    yScale,
-                    compareXScale,
-                    currentTsData: [currentTsData],
-                    compareTsData: [compareTsData],
-                    isCompareVisible
-                });
+                call(createTooltipFocus);
 
             expect(svg.select('.focus:first-child').style('display')).not.toBe('none');
             expect(svg.select('.focus:nth-child(2)').style('display')).not.toBe('none');
-            expect(svg.select('.focus:nth-child(3)').style('display')).not.toBe('none');
         });
     });
 });

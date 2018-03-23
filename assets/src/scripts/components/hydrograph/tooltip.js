@@ -1,114 +1,73 @@
 
-const { max, bisector } = require('d3-array');
 const { mouse } = require('d3-selection');
+const { transition } = require('d3-transition');
 const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
 const { createSelector, createStructuredSelector } = require('reselect');
 
-const { dispatch, link } = require('../../lib/redux');
+const { dispatch, link, initAndUpdate } = require('../../lib/redux');
 
-const { cursorLocationSelector } = require('./cursor');
-const { classesForPoint, currentVariablePointsSelector, MASK_DESC } = require('./drawingData');
+const { cursorTimeSelector, tsCursorPointsSelector } = require('./cursor');
+const { classesForPoint, MASK_DESC } = require('./drawingData');
+const { xScaleSelector, yScaleSelector } = require('./scales');
 const { currentVariableSelector } = require('./timeseries');
 const { Actions } = require('../../store');
 
 const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');
 
 
-const maxValue = function (data) {
-    return max(data.map((datum) => datum.value));
-};
-
-const createFocusLine = function(elem, {yScale, currentTsData, compareTsData=null}) {
+const createFocusLine = function(elem, {yScale}) {
     let focus = elem.append('g')
         .attr('class', 'focus')
         .style('display', 'none');
-    let compareMax = compareTsData ? maxValue(compareTsData) : 0;
-    let yMax = max([maxValue(currentTsData), compareMax]);
 
+    const range = yScale.range();
     focus.append('line')
         .attr('class', 'focus-line')
-        .attr('y1', yScale.range()[0])
-        .attr('y2', yMax ? yScale(yMax) : yScale.range()[1]);
+        .attr('y1', range[0])
+        .attr('y2', range[1]);
+
     return focus;
 };
 
-const createFocusCircle = function(elem) {
-    let focus = elem.append('g')
-        .attr('class', 'focus')
-        .style('display', 'none');
-    focus.append('circle')
-        .attr('r', 5.5);
-    return focus;
-};
-
-
-/*
- * Return the data point nearest to time and its index.
- * @param {Array} data - array of Object where one of the keys is time.
- * @param {Date} time
- * @return {Object} - datum and index
- */
-const getNearestTime = function(data, time) {
-    // Function that returns the left bounding point for a given chart point.
-    if (data.length < 2) {
-        return null;
-    }
-    const bisectDate = bisector(d => d.dateTime).left;
-
-    let index = bisectDate(data, time, 1);
-    let datum;
-    let d0 = data[index - 1];
-    let d1 = data[index];
-
-    if (d0 && d1) {
-        datum = time - d0.dateTime > d1.dateTime - time ? d1 : d0;
+const updateFocusLine = function(elem, {cursorTime, xScale}) {
+    if (cursorTime) {
+        let x = xScale(cursorTime);
+        elem.select('.focus-line').attr('x1', x).attr('x2', x);
+        elem.style('display', null);
     } else {
-        datum = d0 || d1;
+        elem.style('display', 'none');
     }
-
-    // Return the nearest data point and its index.
-    return {
-        datum,
-        index: datum === d0 ? index - 1 : index
-    };
 };
-/*
- * Returns a function that returns the tooltipFocus time for a given timeseries
- * @param {Object} state - Redux store
- * @param {String} tsKey - Timeseries key
- * @return {Date}
- */
-const tooltipFocusTimeSelector = memoize(tsKey => createSelector(
-    state => state.tooltipFocusTime,
-    tooltipFocusTime => tooltipFocusTime[tsKey]
-));
 
 /*
- * Returns a function that the time series data point nearest the tooltip focus time for the given timeseries
+ * Returns a function that returns the time series data point nearest the
+ * tooltip focus time for the given time series key.
  * @param {Object} state - Redux store
  * @param String} tsKey - Timeseries key
  * @return {Object}
  */
-export const tsDatumSelector = memoize(tsKey => createSelector(
-    currentVariablePointsSelector(tsKey),
-    tooltipFocusTimeSelector(tsKey),
-    (points, tooltipFocusTime) => {
-        // FIXME: Handle more than just the first time series in the list
-        points = points[0];
+const tooltipPointsSelector = memoize(tsKey => createSelector(
+    xScaleSelector(tsKey),
+    yScaleSelector,
+    tsCursorPointsSelector(tsKey),
+    (xScale, yScale, cursorPoints) => {
+        return Object.keys(cursorPoints).reduce((tooltipPoints, tsID) => {
+            const cursorPoint = cursorPoints[tsID];
+            tooltipPoints.push({
+                x: xScale(cursorPoint.dateTime),
+                y: yScale(cursorPoint.value),
+                tsID
+            });
+            return tooltipPoints;
+        }, []);
+    }
+));
 
-        if (tooltipFocusTime && points && points.length) {
-            return getNearestTime(points, tooltipFocusTime).datum;
-        } else {
-            return null;
-        }
-    })
-);
-
-const updateTooltipText = function(text, {datum, qualifiers, unitCode}) {
+const updateTooltipText = function(text, {cursorPoints, qualifiers, unitCode}) {
     let label = '';
     let classes = {};
-    if (datum) {
+    for (const datum of Object.values(cursorPoints)) {
         if (!qualifiers) {
             return;
         }
@@ -158,7 +117,7 @@ const createTooltipText = function(elem) {
             .attr('x', 20)
             .attr('y', `${y}em`)
             .call(link(updateTooltipText, createStructuredSelector({
-                datum: tsDatumSelector(tskey),
+                cursorPoints: tsCursorPointsSelector(tskey),
                 qualifiers: qualifiersSelector,
                 unitCode: unitCodeSelector
             })));
@@ -166,24 +125,35 @@ const createTooltipText = function(elem) {
     }
 };
 
-const updateFocusLine = function(elem, {cursorLocation, xScale}) {
-    if (cursorLocation) {
-        let x = xScale(cursorLocation);
-        elem.select('.focus-line').attr('x1', x).attr('x2', x);
-        elem.style('display', null);
-    } else {
-        elem.style('display', 'none');
-    }
-};
+const createFocusCircles = function (elem, tooltipPoints, circleContainer) {
+    // Put the circles in a container so we can keep the their position in the
+    // DOM before rect.overlay, to prevent the circles from receiving mouse
+    // events.
+    circleContainer = circleContainer || elem.append('g');
 
-const updateFocusCircle = function(circleFocus, {tsDatum, xScale, yScale}) {
-    if (tsDatum && tsDatum.value) {
-        circleFocus.style('display', null)
-            .attr('transform',
-                `translate(${xScale(tsDatum.dateTime)}, ${yScale(tsDatum.value)})`);
-    } else {
-        circleFocus.style('display', 'none');
-    }
+    const circles = circleContainer
+        .selectAll('circle.focus')
+        .data(tooltipPoints, d => d.tsID);
+
+    // Remove old circles after fading them out
+    circles.exit()
+        .transition(transition().duration(500))
+            .style('opacity', '0')
+            .remove();
+
+    // Add new focus circles
+    const newCircles = circles.enter()
+        .append('circle')
+            .attr('class', 'focus')
+            .attr('r', 5.5);
+
+    // Update the location of all circles
+    circles.merge(newCircles)
+        .transition(transition().duration(20))
+            .style('opacity', '.6')
+            .attr('transform', (tsDatum) => `translate(${tsDatum.x}, ${tsDatum.y})`);
+
+    return circleContainer;
 };
 
 /*
@@ -196,61 +166,41 @@ const updateFocusCircle = function(circleFocus, {tsDatum, xScale, yScale}) {
  * @param {Array} compareTsData - compare time series points
  * @param {Boolean} isCompareVisible
  */
-const createTooltipFocus = function(elem, {xScale, yScale, compareXScale, currentTsData, compareTsData, isCompareVisible}) {
-    elem.selectAll('.focus').remove();
-    elem.select('.tooltip-text-group').remove();
-    elem.select('.overlay').remove();
-
-    // FIXME: Render tooltips for all visible time series, not just the first.
-    currentTsData = currentTsData[0];
-    compareTsData = compareTsData[0];
-
-    if (!currentTsData) {
-        return;
-    }
-
-    let focusLine = createFocusLine(elem, {
-        yScale: yScale,
-        currentTsData: currentTsData,
-        compareTsData: isCompareVisible && compareTsData ? compareTsData : null
-    });
-    let focusCurrentCircle = createFocusCircle(elem);
-    let focusCompareCircle = createFocusCircle(elem);
-
-    focusLine.call(link(updateFocusLine, createStructuredSelector({
-        cursorLocation: cursorLocationSelector,
-        xScale: () => xScale
-    })));
-    focusCurrentCircle.call(link(updateFocusCircle, createStructuredSelector({
-        tsDatum : tsDatumSelector('current'),
-        xScale: () => xScale,
-        yScale: () => yScale
-    })));
-    focusCompareCircle.call(link(updateFocusCircle, createStructuredSelector({
-        tsDatum: tsDatumSelector('compare'),
-        xScale: () => compareXScale,
-        yScale: () => yScale
+const createTooltipFocus = function(elem) {
+    elem.call(link(initAndUpdate(createFocusLine, updateFocusLine), createStructuredSelector({
+        xScale: xScaleSelector('current'),
+        yScale: yScaleSelector,
+        cursorTime: cursorTimeSelector('current')
     })));
 
-    elem.append('rect')
-        .attr('class', 'overlay')
-        .attr('width', '100%')
-        .attr('height', '100%')
-        .on('mouseover', dispatch(function() {
-            return Actions.setTooltipTime(
-                xScale.invert(mouse(elem.node())[0]),
-                isCompareVisible ? compareXScale.invert(mouse(elem.node())[0]) : null
-            );
-        }))
-        .on('mouseout', dispatch(function() {
-            return Actions.setTooltipTime(null, null);
-        }))
-        .on('mousemove', dispatch(function() {
-            return Actions.setTooltipTime(
-                xScale.invert(mouse(elem.node())[0]),
-                isCompareVisible ? compareXScale.invert(mouse(elem.node())[0]) : null
-            );
-        }));
+    elem.call(link(createFocusCircles, createSelector(
+        tooltipPointsSelector('current'),
+        tooltipPointsSelector('compare'),
+        (current, compare) => {
+            return current.concat(compare);
+        }
+    )));
+
+    elem.call(link(function (elem, xScale) {
+        elem.select('.overlay').remove();
+        elem.append('rect')
+            .attr('class', 'overlay')
+            .attr('width', '100%')
+            .attr('height', '100%')
+            .on('mouseover', dispatch(function() {
+                const selectedTime = xScale.invert(mouse(elem.node())[0]).getTime();
+                const startTime = xScale.domain()[0].getTime();
+                return Actions.setCursorOffset(selectedTime - startTime);
+            }))
+            .on('mouseout', dispatch(function() {
+                return Actions.setCursorOffset(null);
+            }))
+            .on('mousemove', dispatch(function() {
+                const selectedTime = xScale.invert(mouse(elem.node())[0]).getTime();
+                const startTime = xScale.domain()[0].getTime();
+                return Actions.setCursorOffset(selectedTime - startTime);
+            }));
+    }, xScaleSelector('current')));
 };
 
-module.exports = {getNearestTime, tooltipFocusTimeSelector, tsDatumSelector, createTooltipFocus, createTooltipText};
+module.exports = {createTooltipFocus, createTooltipText, tooltipPointsSelector};

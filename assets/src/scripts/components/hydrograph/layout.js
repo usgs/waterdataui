@@ -37,5 +37,3 @@ const layoutSelector = createSelector(
 
 module.exports = {ASPECT_RATIO, ASPECT_RATIO_PERCENT, MARGIN, CIRCLE_RADIUS, layoutSelector, SPARK_LINE_DIM,
     CIRCLE_RADIUS_SINGLE_PT};
-
-
