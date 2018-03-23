@@ -366,7 +366,6 @@ const timeSeriesGraph = function (elem) {
         timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current')(SPARK_LINE_DIM),
         layout: layoutSelector
     })));
-
     elem.append('div')
         .attr('class', 'usa-sr-only')
         .call(link(plotSROnlyTable, createStructuredSelector({

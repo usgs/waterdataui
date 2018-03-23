@@ -246,16 +246,18 @@ $highlight: $color-gray-lightest;
 #audible-label {
     padding-left: 2em;
 }
-
-input#cursor-slider {
-    max-width: none;
-    position: relative;
-    opacity: .2;
-    top: -2em;
-    background: none;
-    padding: 0;
-    margin: 0;
-    &.active {
-        opacity: 1;
+.slider-wrapper {
+    height: 0px;
+    input#cursor-slider {
+        max-width: none;
+        position: relative;
+        opacity: .2;
+        top: -2em;
+        background: none;
+        padding: 0;
+        margin: 0;
+        &.active {
+            opacity: 1;
+        }
     }
 }
