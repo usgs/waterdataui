@@ -4,12 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
+
+### Added
+- Title to timeseries graph
+- Dismissable banner which shows the beta status and feedback link
+
 ### Changed
 - Disabled zooming the map on scroll wheel unless the map has focus.
 - Precipitation timeseries is now shown as accumulated precipitation over the 7 days.
 - Show last year checkbox is disabled if a timeseries does not have data from last year.
 - The select timeseries table is not shown if a site has not timeseries data.
 - Tooltips display masked data as the value of the data point.
+- Select timeseries list no longer contains columns for parameter code or timeseries availability. 
+Parameter codes can be found in the tooltip. A scrollbar will appear for long timeseries lists.
 
 ##Fixed
 - Screen reader only tables are now fully hidden on Firefox
