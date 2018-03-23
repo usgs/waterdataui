@@ -1,5 +1,5 @@
 
-const { mouse } = require('d3-selection');
+const { mouse, select } = require('d3-selection');
 const { transition } = require('d3-transition');
 const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
@@ -132,6 +132,12 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
         .attr('y', (d, i) => `${i + 1}em`)
         .text(datum => {
             return getTooltipText(datum, qualifiers, unitCode);
+        })
+        .each(function (datum) {
+            const classes = classesForPoint(datum);
+            const text = select(this);
+            text.classed('approved', classes.approved);
+            text.classed('estimated', classes.estimated);
         })
         .classed('approved', datum => {
             return classesForPoint(datum).approved;
