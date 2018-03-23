@@ -367,7 +367,6 @@ const timeSeriesGraph = function (elem) {
         layout: layoutSelector
     })));
     elem.append('div')
-        .attr('class', 'usa-sr-only')
         .call(link(plotSROnlyTable, createStructuredSelector({
             tsKey: () => 'current',
             variable: currentVariableSelector,
@@ -377,7 +376,6 @@ const timeSeriesGraph = function (elem) {
             timeSeries: currentVariableTimeSeriesSelector('current')
     })));
     elem.append('div')
-        .attr('class', 'usa-sr-only')
         .call(link(plotSROnlyTable, createStructuredSelector({
             tsKey: () => 'compare',
             variable: currentVariableSelector,
@@ -387,7 +385,6 @@ const timeSeriesGraph = function (elem) {
             timeSeries: currentVariableTimeSeriesSelector('compare')
     })));
     elem.append('div')
-        .attr('class', 'usa-sr-only')
         .call(link(plotSROnlyTable, createStructuredSelector({
             tsKey: () => 'median',
             variable: currentVariableSelector,
