@@ -3,11 +3,12 @@ const { mouse } = require('d3-selection');
 const { transition } = require('d3-transition');
 const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
+const mapValues = require('lodash/mapValues');
 const { createSelector, createStructuredSelector } = require('reselect');
 
 const { dispatch, link, initAndUpdate } = require('../../lib/redux');
 
-const { cursorTimeSelector, tsCursorPointsSelector } = require('./cursor');
+const { cursorTimeSelector, allTsCursorPointsSelector, tsCursorPointsSelector } = require('./cursor');
 const { classesForPoint, MASK_DESC } = require('./drawingData');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { currentVariableSelector } = require('./timeseries');
@@ -64,13 +65,9 @@ const tooltipPointsSelector = memoize(tsKey => createSelector(
     }
 ));
 
-const updateTooltipText = function(text, {cursorPoints, qualifiers, unitCode}) {
+const getTooltipText = function(datum, qualifiers, unitCode) {
     let label = '';
-    let classes = {};
-    for (const datum of Object.values(cursorPoints)) {
-        if (!qualifiers) {
-            return;
-        }
+    if (datum && qualifiers) {
         let tzAbbrev = datum.dateTime.toString().match(/\(([^)]+)\)/)[1];
         const maskKeys = new Set(Object.keys(MASK_DESC));
         const qualiferKeysLower = new Set(datum.qualifiers.map(x => x.toLowerCase()));
@@ -84,12 +81,9 @@ const updateTooltipText = function(text, {cursorPoints, qualifiers, unitCode}) {
             valueStr = MASK_DESC[[keyIntersect][0]];
         }
         label = `${valueStr} - ${formatTime(datum.dateTime)} ${tzAbbrev} (${qualifierStr})`;
-        classes = classesForPoint(datum);
     }
 
-    text.classed('approved', classes.approved)
-        .classed('estimated', classes.estimated);
-    text.text(label);
+    return label;
 };
 
 const qualifiersSelector = state => state.series.qualifiers;
@@ -99,30 +93,81 @@ const unitCodeSelector = createSelector(
     variable => variable ? variable.unit.unitCode : null
 );
 
+const createTooltipTextGroup = function (elem, {cursorPoints, qualifiers, unitCode}, textGroup) {
+    // Put the circles in a container so we can keep the their position in the
+    // DOM before rect.overlay, to prevent the circles from receiving mouse
+    // events.
+    textGroup = textGroup || elem.append('g')
+        .attr('class', 'tooltip-text-group')
+        .style('z-index', '-10000');
+
+    const data = Object.values(mapValues(cursorPoints, (point, tsID) => {
+        return {
+            ...point,
+            tsID
+        };
+    })).sort((a, b) => {
+        // Order by tsID if tsKey is the same on both
+        if (a.tsKey === b.tsKey) {
+            if (a.tsKey < b.tsKey) {
+                return -1;
+            } else if (a.tsKey > b.tsKey) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+        // Current year displayed first
+        if (b.tsKey === 'current') {
+            return 1;
+        } else {
+            return -1;
+        }
+    });
+    const texts = textGroup
+        .selectAll('text')
+        .data(data);
+
+    // Remove old text labels after fading them out
+    texts.exit()
+        .transition(transition().duration(500))
+            .style('opacity', '0')
+            .remove();
+
+    // Add new text labels
+    const newTexts = texts.enter()
+        .append('text')
+            .style('z-index', -100)
+            .attr('class', d => `${d.tsKey}-tooltip-text`)
+            .attr('height', '1em')
+            .attr('x', 20);
+
+    // Update the text and classes of all tooltip labels
+    texts.merge(newTexts)
+        .style('opacity', '1')
+        .attr('y', (d, i) => `${i + 1}em`)
+        .text(datum => {
+            return getTooltipText(datum, qualifiers, unitCode);
+        })
+        .classed('approved', datum => {
+            return classesForPoint(datum).approved;
+        })
+        .classed('estimated', datum => classesForPoint(datum).estimated);
+
+    return textGroup;
+};
+
 
 /*
  * Append a group containing the tooltip text elements to elem
  * @param {Object} elem - D3 selector
  */
-const createTooltipText = function(elem) {
-    const tskeys = ['current', 'compare'];
-    let tooltipTextGroup = elem.append('g')
-        .attr('class', 'tooltip-text-group')
-        .attr('width', '100%')
-        .attr('height', '20%');
-    let y = 1;
-    for (let tskey of tskeys) {
-        tooltipTextGroup.append('text')
-            .attr('class', `${tskey}-tooltip-text`)
-            .attr('x', 20)
-            .attr('y', `${y}em`)
-            .call(link(updateTooltipText, createStructuredSelector({
-                cursorPoints: tsCursorPointsSelector(tskey),
-                qualifiers: qualifiersSelector,
-                unitCode: unitCodeSelector
-            })));
-        y += 1;
-    }
+const createTooltipText = function (elem) {
+    elem.call(link(createTooltipTextGroup, createStructuredSelector({
+        cursorPoints: allTsCursorPointsSelector,
+        qualifiers: qualifiersSelector,
+        unitCode: unitCodeSelector
+    })));
 };
 
 const createFocusCircles = function (elem, tooltipPoints, circleContainer) {

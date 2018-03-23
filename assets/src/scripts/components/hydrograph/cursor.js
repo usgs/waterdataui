@@ -1,5 +1,6 @@
 const { bisector } = require('d3-array');
 const memoize = require('fast-memoize');
+const merge = require('lodash/merge');
 const { createSelector } = require('reselect');
 
 const { layoutSelector, MARGIN } = require('./layout');
@@ -78,10 +79,20 @@ const tsCursorPointsSelector = memoize(tsKey => createSelector(
             return {};
         }
         return Object.keys(timeSeries).reduce((data, tsId) => {
-            data[tsId] = getNearestTime(timeSeries[tsId].points, cursorTime).datum;
+            const datum = getNearestTime(timeSeries[tsId].points, cursorTime).datum;
+            data[tsId] = {
+                ...datum,
+                tsKey: timeSeries[tsId].tsKey
+            };
             return data;
         }, {});
     })
+);
+
+const allTsCursorPointsSelector = createSelector(
+    tsCursorPointsSelector('current'),
+    tsCursorPointsSelector('compare'),
+    (current, compare) => merge({}, current, compare)
 );
 
 const cursorSlider = function (elem) {
@@ -118,4 +129,4 @@ const cursorSlider = function (elem) {
         });
 };
 
-module.exports = {cursorOffsetSelector, cursorTimeSelector, getNearestTime, tsCursorPointsSelector, cursorSlider};
+module.exports = {cursorOffsetSelector, cursorTimeSelector, getNearestTime, tsCursorPointsSelector, allTsCursorPointsSelector, cursorSlider};
