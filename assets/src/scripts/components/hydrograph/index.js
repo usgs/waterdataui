@@ -102,11 +102,12 @@ const plotDataLine = function (elem, {visible, lines, tsKey, xScale, yScale}) {
 };
 
 
-const plotDataLines = function (elem, {visible, tsLinesMap, tsKey, xScale, yScale}) {
-    const elemId = `ts-${tsKey}-group`;
+const plotDataLines = function (elem, {visible, tsLinesMap, tsKey, xScale, yScale}, container) {
+    container = container || elem.append('g');
 
-    elem.selectAll(`#${elemId}`).remove();
-    const tsLineGroup = elem
+    const elemId = `ts-${tsKey}-group`;
+    container.selectAll(`#${elemId}`).remove();
+    const tsLineGroup = container
         .append('g')
         .attr('id', elemId)
         .classed('tsKey', true);
@@ -114,6 +115,8 @@ const plotDataLines = function (elem, {visible, tsLinesMap, tsKey, xScale, yScal
     for (const lines of Object.values(tsLinesMap)) {
         plotDataLine(tsLineGroup, {visible, lines, tsKey, xScale, yScale});
     }
+
+    return container;
 };
 
 
