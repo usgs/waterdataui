@@ -142,13 +142,13 @@ const createFocusCircles = function (elem, tooltipPoints, circleContainer) {
             .remove();
 
     // Add new focus circles
-    const enter = circles.enter()
+    const newCircles = circles.enter()
         .append('circle')
             .attr('class', 'focus')
             .attr('r', 5.5);
 
     // Update the location of all circles
-    circles.merge(enter)
+    circles.merge(newCircles)
         .transition(transition().duration(20))
             .style('opacity', '.6')
             .attr('transform', (tsDatum) => `translate(${tsDatum.x}, ${tsDatum.y})`);
