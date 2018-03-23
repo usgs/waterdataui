@@ -1,6 +1,5 @@
 const { bisector } = require('d3-array');
 const memoize = require('fast-memoize');
-const merge = require('lodash/merge');
 const { createSelector } = require('reselect');
 
 const { layoutSelector, MARGIN } = require('./layout');
@@ -89,12 +88,6 @@ const tsCursorPointsSelector = memoize(tsKey => createSelector(
     })
 );
 
-const allTsCursorPointsSelector = createSelector(
-    tsCursorPointsSelector('current'),
-    tsCursorPointsSelector('compare'),
-    (current, compare) => merge({}, current, compare)
-);
-
 const cursorSlider = function (elem) {
     elem.append('div')
         .attr('class', 'slider-wrapper')
@@ -129,4 +122,4 @@ const cursorSlider = function (elem) {
         });
 };
 
-module.exports = {cursorOffsetSelector, cursorTimeSelector, getNearestTime, tsCursorPointsSelector, allTsCursorPointsSelector, cursorSlider};
+module.exports = {cursorOffsetSelector, cursorTimeSelector, getNearestTime, tsCursorPointsSelector, cursorSlider};

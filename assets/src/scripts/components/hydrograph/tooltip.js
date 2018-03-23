@@ -3,12 +3,11 @@ const { mouse } = require('d3-selection');
 const { transition } = require('d3-transition');
 const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
-const mapValues = require('lodash/mapValues');
 const { createSelector, createStructuredSelector } = require('reselect');
 
 const { dispatch, link, initAndUpdate } = require('../../lib/redux');
 
-const { cursorTimeSelector, allTsCursorPointsSelector, tsCursorPointsSelector } = require('./cursor');
+const { cursorTimeSelector, tsCursorPointsSelector } = require('./cursor');
 const { classesForPoint, MASK_DESC } = require('./drawingData');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { currentVariableSelector } = require('./timeseries');
@@ -93,37 +92,20 @@ const unitCodeSelector = createSelector(
     variable => variable ? variable.unit.unitCode : null
 );
 
-const createTooltipTextGroup = function (elem, {cursorPoints, qualifiers, unitCode}, textGroup) {
+const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode}, textGroup) {
     // Put the circles in a container so we can keep the their position in the
     // DOM before rect.overlay, to prevent the circles from receiving mouse
     // events.
-    textGroup = textGroup || elem.append('g')
-        .attr('class', 'tooltip-text-group')
-        .style('z-index', '-10000');
+    if (!textGroup) {
+        textGroup = elem.append('g')
+            .attr('class', 'tooltip-text-group');
+        textGroup.append('rect')
+            .attr('class', 'tooltip-text-group-background')
+            .attr('x', 0)
+            .attr('y', 0);
+    }
 
-    const data = Object.values(mapValues(cursorPoints, (point, tsID) => {
-        return {
-            ...point,
-            tsID
-        };
-    })).sort((a, b) => {
-        // Order by tsID if tsKey is the same on both
-        if (a.tsKey === b.tsKey) {
-            if (a.tsKey < b.tsKey) {
-                return -1;
-            } else if (a.tsKey > b.tsKey) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-        // Current year displayed first
-        if (b.tsKey === 'current') {
-            return 1;
-        } else {
-            return -1;
-        }
-    });
+    const data = Object.values(currentPoints).concat(Object.values(comparePoints));
     const texts = textGroup
         .selectAll('text')
         .data(data);
@@ -154,6 +136,12 @@ const createTooltipTextGroup = function (elem, {cursorPoints, qualifiers, unitCo
         })
         .classed('estimated', datum => classesForPoint(datum).estimated);
 
+    // Size the background rect to the size of textGroup
+    const bBox = textGroup.node().getBBox();
+    textGroup.select('.tooltip-text-group-background')
+        .attr('width', bBox.width)
+        .attr('height', bBox.height);
+
     return textGroup;
 };
 
@@ -164,7 +152,8 @@ const createTooltipTextGroup = function (elem, {cursorPoints, qualifiers, unitCo
  */
 const createTooltipText = function (elem) {
     elem.call(link(createTooltipTextGroup, createStructuredSelector({
-        cursorPoints: allTsCursorPointsSelector,
+        currentPoints: tsCursorPointsSelector('current'),
+        comparePoints: tsCursorPointsSelector('compare'),
         qualifiers: qualifiersSelector,
         unitCode: unitCodeSelector
     })));

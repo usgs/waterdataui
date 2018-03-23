@@ -334,34 +334,36 @@ const timeSeriesGraph = function (elem) {
                 descriptionSelector,
                 isInteractive: () => true
             })))
-            .call(createTooltipText)
             .call(plotSvgDefs)
-            .append('g')
-                .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
-                .call(link(appendAxes, axesSelector))
-                .call(link(plotDataLines, createStructuredSelector({
-                    visible: isVisibleSelector('current'),
-                    tsLinesMap: currentVariableLineSegmentsSelector('current'),
-                    xScale: xScaleSelector('current'),
-                    yScale: yScaleSelector,
-                    tsKey: () => 'current'
-                })))
-                .call(link(plotDataLines, createStructuredSelector({
-                    visible: isVisibleSelector('compare'),
-                    tsLinesMap: currentVariableLineSegmentsSelector('compare'),
-                    xScale: xScaleSelector('compare'),
-                    yScale: yScaleSelector,
-                    tsKey: () => 'compare'
-                })))
-                .call(createTooltipFocus)
-                .call(link(plotAllMedianPoints, createStructuredSelector({
-                    visible: isVisibleSelector('median'),
-                    xscale: xScaleSelector('current'),
-                    yscale: yScaleSelector,
-                    seriesMap: currentVariableTimeSeriesSelector('median'),
-                    variable: currentVariableSelector,
-                    showLabel: (state) => state.showMedianStatsLabel
-                })));
+            .call(svg => {
+                svg.append('g')
+                    .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
+                    .call(link(appendAxes, axesSelector))
+                    .call(link(plotDataLines, createStructuredSelector({
+                        visible: isVisibleSelector('current'),
+                        tsLinesMap: currentVariableLineSegmentsSelector('current'),
+                        xScale: xScaleSelector('current'),
+                        yScale: yScaleSelector,
+                        tsKey: () => 'current'
+                    })))
+                    .call(link(plotDataLines, createStructuredSelector({
+                        visible: isVisibleSelector('compare'),
+                        tsLinesMap: currentVariableLineSegmentsSelector('compare'),
+                        xScale: xScaleSelector('compare'),
+                        yScale: yScaleSelector,
+                        tsKey: () => 'compare'
+                    })))
+                    .call(createTooltipFocus)
+                    .call(link(plotAllMedianPoints, createStructuredSelector({
+                        visible: isVisibleSelector('median'),
+                        xscale: xScaleSelector('current'),
+                        yscale: yScaleSelector,
+                        seriesMap: currentVariableTimeSeriesSelector('median'),
+                        variable: currentVariableSelector,
+                        showLabel: (state) => state.showMedianStatsLabel
+                    })));
+            })
+            .call(createTooltipText);
 
     elem.call(link(plotSeriesSelectTable, createStructuredSelector({
         availableTimeseries: availableTimeseriesSelector,
