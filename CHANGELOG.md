@@ -21,10 +21,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 Parameter codes can be found in the tooltip. A scrollbar will appear for long timeseries lists.
 
 ##Fixed
-- Screen reader only tables are now fully hidden on Firefox
-- Timeseries without any data are not shown the the select timeseries table
+- Screen reader only tables are now fully hidden on Firefox.
+- Timeseries without any data are not shown the the select timeseries table.
 - Sparklines will appear to any timeseries with current data
-- Graph y axis label now wraps
+- Graph y axis label now wraps.
+- Monitoring locations with no timeseries data no longer show the timeseries graph.
+- Parameters with no data points in current or last year data are omitted from the select table
 
 ## [0.3.0] - 2018-03-09
 ### Added
