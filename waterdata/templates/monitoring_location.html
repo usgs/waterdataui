@@ -66,30 +66,24 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">Parameter</th>
-                                            <th scope="col">Description</th>
                                             <th scope="col">USGS Parameter Code</th>
                                             <th scope="col">Data Type</th>
                                             <th scope="col">Statistic</th>
                                             <th scope="col">Parameter Group</th>
-                                            <th scope="col">SRS ID</th>
                                             <th scope="col">Start Date</th>
                                             <th scope="col">End Date</th>
-                                            <th scope="col">Record Count</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for series in site_dataseries %}
                                             <tr>
                                                 <td scope="row">{% if series.parm_cd.name %}{{ series.parm_cd.name }}{% else %}<sub>n/a</sub>{% endif %}</td>
-                                                <td>{{ series.loc_web_ds.name }}</td>
                                                 <td>{% if series.parm_cd.code %}{{ series.parm_cd.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
                                                 <td>{{ series.data_type_cd.name }}</td>
                                                 <td>{{ series.stat_cd.name }}</td>
                                                 <td>{{ series.parm_grp_cd.name }}</td>
-                                                <td>{{ series.srs_id.name }}</td>
                                                 <td>{{ series.begin_date.name }}</td>
                                                 <td>{{ series.end_date.name }}</td>
-                                                <td>{{ series.count_nu.name }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
