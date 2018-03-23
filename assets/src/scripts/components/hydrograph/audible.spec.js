@@ -71,7 +71,9 @@ describe('Audible interface', () => {
     });
 
     it('does nothing unexpected when playing a sound', () => {
-        Actions.toggleAudibleInterface(true);
-        Actions.setCursorOffset(1);
+        expect(() => {
+            Actions.toggleAudibleInterface(true);
+            Actions.setCursorOffset(1);
+        }).not.toThrow();
     });
 });
