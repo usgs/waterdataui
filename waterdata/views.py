@@ -6,7 +6,7 @@ import json
 from flask import render_template, request, Markup
 
 from . import app, __version__
-from .location_utils import build_linked_data, get_disambiguated_values
+from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, fill_in_missing_parameter_groups
 from .utils import construct_url, execute_get_request, parse_rdb
 
 # Station Fields Mapping to Descriptions
@@ -68,10 +68,16 @@ def monitoring_location(site_no):
                 }
             )
             if parameter_data_resp.status_code == 200:
-                param_data = [param_datum for param_datum in
-                              parse_rdb(parameter_data_resp.iter_lines(decode_unicode=True))]
-                site_dataseries = [get_disambiguated_values(param_datum, app.config['NWIS_CODE_LOOKUP'], {},
-                                                            app.config['HUC_LOOKUP']) for param_datum in param_data]
+                param_data = [
+                    param_datum for param_datum in
+                    parse_rdb(parameter_data_resp.iter_lines(decode_unicode=True))
+                ]
+                site_dataseries = [
+                    get_disambiguated_values(param_datum, app.config['NWIS_CODE_LOOKUP'], {}, app.config['HUC_LOOKUP'])
+                    for param_datum in param_data
+                ]
+                site_dataseries = fill_in_missing_parameter_groups(site_dataseries)
+                grouped_dataseries = rollup_dataseries(site_dataseries)
                 location_capabilities = set(param_datum['parm_cd'] for param_datum in param_data)
             else:
                 site_dataseries = None

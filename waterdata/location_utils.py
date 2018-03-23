@@ -3,8 +3,9 @@ Utility functions and classes for working with
 USGS water services.
 
 """
-from collections import namedtuple
+from collections import defaultdict, namedtuple
 import datetime
+import itertools
 
 from flask import url_for
 
@@ -86,7 +87,14 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
             }
 
         elif key in code_lookups:
-            value_dict = code_lookups.get(key).get(value) or {'name': value}
+            if key == 'parm_grp_cd':
+                value_dict = code_lookups.get(key).get(value)
+                if value_dict is None:
+                    parm_code = location['parm_cd']
+                    parameter_metadata = code_lookups.get('parm_cd').get(parm_code) or {}
+                    value_dict = {'name': parameter_metadata.get('group', value)}
+            else:
+                value_dict = code_lookups.get(key).get(value) or {'name': value}
             transformed_value = dict(code=value, **value_dict)
 
         elif key == 'huc_cd':
@@ -192,3 +200,119 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
             'agency_cd={0}&site_no={1}&parm_cd=00060&period=100'
         ).format(agency_code, location_number)
     return linked_data
+
+
+def _parameter_group_mappings(dataseries):
+    var_to_group_mapping = defaultdict(list)
+    for series in dataseries:
+        parameter_code = series['parm_cd']['code']
+        parameter_group_name = series['parm_grp_cd']['name']
+        parameter_group_code = series['parm_grp_cd']['code']
+        if (parameter_group_name, parameter_group_code) not in var_to_group_mapping[parameter_code] and parameter_group_name:
+            var_to_group_mapping[parameter_code].append((parameter_group_name, parameter_group_code))
+    return var_to_group_mapping
+
+
+def fill_in_missing_parameter_groups(dataseries):
+    updated_dataseries = []
+    mappings = _parameter_group_mappings(dataseries)
+    for series in dataseries:
+        if set(series['parm_grp_cd'].values()) == {''}:
+            series_parm_cd = series['parm_cd']['code']
+            try:
+                grp_name, grp_code = mappings[series_parm_cd][0]
+            except IndexError:
+                pass
+            else:
+                series['parm_grp_cd'] = {'name': grp_name, 'code': grp_code}
+        updated_dataseries.append(series)
+    return updated_dataseries
+
+
+def _collect_rollup_series(grouped_series):
+
+    def parm_cd_sort(x):
+        return x['parm_cd']['code']
+
+    rolled_up_series = {}
+    # for each parameter group grouping...
+    for key, grp in grouped_series:
+        pcode_sort = sorted(grp, key=parm_cd_sort)
+        series_by_pcode = itertools.groupby(pcode_sort, key=parm_cd_sort)
+        # for each parameter code grouping within a parameter group grouping...
+        grp_pcode_series = []
+        for key_pc, pc_grp in series_by_pcode:
+            series_by_pc = list(pc_grp)
+            parameter_name = series_by_pc[0]['parm_cd']['name']
+            # determine the start and end dates of the group
+            start_dates = [
+                datetime.datetime.strptime(series['begin_date']['code'], '%Y-%m-%d') for series in series_by_pc
+            ]
+            end_dates = [
+                datetime.datetime.strptime(series['end_date']['code'], '%Y-%m-%d') for series in series_by_pc
+            ]
+            pc_start_date = min(start_dates).strftime('%Y-%m-%d')
+            pc_end_date = max(end_dates).strftime('%Y-%m-%d')
+            # create data types string
+            data_types = [series['data_type_cd']['name'] for series in series_by_pc]
+            data_type_str = ', '.join(set(data_types))
+            pc_metadata = {
+                'start_date': pc_start_date,
+                'end_date': pc_end_date,
+                'data_types': data_type_str,
+                'parameter_code': key_pc,
+                'parameter_name': parameter_name
+            }
+            grp_pcode_series.append(pc_metadata)
+        rolled_up_series[key] = grp_pcode_series
+    return rolled_up_series
+
+
+def rollup_dataseries(dataseries):
+    # exclude annual reports
+    display_series = list(itertools.filterfalse(lambda x: 'annual' in x['data_type_cd']['name'].lower(), dataseries))
+    series_w_parm_grp_cd = itertools.filterfalse(lambda x: not bool(x['parm_grp_cd']['name']), display_series)
+    series_wo_parm_grp_cd = itertools.filterfalse(lambda x: bool(x['parm_grp_cd']['name']), display_series)
+
+    rolled_up_series = defaultdict(list)
+
+    # handle series with parameter groups
+    def parm_grp_sort(x):
+        return x['parm_grp_cd']['name']
+
+    pg_sorted = sorted(series_w_parm_grp_cd, key=parm_grp_sort)
+    pg_grouped_series = itertools.groupby(pg_sorted, key=parm_grp_sort)
+
+    rollup_by_parameter_grp = _collect_rollup_series(pg_grouped_series)
+    # handle series without parameter groups
+
+    def data_type_sort(x):
+        return x['data_type_cd']['name']
+
+    dt_sorted = sorted(series_wo_parm_grp_cd, key=data_type_sort)
+    dt_grouped_series = itertools.groupby(dt_sorted, key=data_type_sort)
+
+    rollup_by_data_type = _collect_rollup_series(dt_grouped_series)
+
+    for d in (rollup_by_parameter_grp, rollup_by_data_type):
+        for k, v in d.items():
+            rolled_up_series[k].append(v)
+
+    def extract_group_date_range(values):
+        start_dates = [
+            datetime.datetime.strptime(value['start_date'], '%Y-%m-%d') for value in values
+        ]
+        end_dates = [
+            datetime.datetime.strptime(value['end_date'], '%Y-%m-%d') for value in values
+        ]
+        range_start_date = min(start_dates).strftime('%Y-%m-%d')
+        range_end_date = max(end_dates).strftime('%Y-%m-%d')
+        return {
+            'start_date': range_start_date,
+            'end_date': range_end_date,
+            'parameters': values
+        }
+
+    rolled_up_series = {k: extract_group_date_range([y for z in v for y in z]) for (k, v) in rolled_up_series.items()}
+
+    return rolled_up_series

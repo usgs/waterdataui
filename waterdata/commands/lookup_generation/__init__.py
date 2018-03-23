@@ -22,7 +22,7 @@ CODE_LOOKUP_CONFIG = [
     {'code_key': 'site_tp_cd', 'name': 'site_tp_ln', 'desc': 'site_tp_ds', 'urlpath': 'code/site_tp_query',
      'site_key': 'site_tp_cd'},
     {'code_key': 'parm_cd', 'name': 'parm_nm', 'urlpath': 'code/parameter_cd_query', 'params': {'group_cd': '%'},
-     'site_key': 'parm_cd'},
+     'site_key': 'parm_cd', 'group': 'group'},
     {'code_key': 'Code', 'name': 'Description', 'urlpath': 'code/alt_datum_cd_query', 'site_key': 'alt_datum_cd'},
     {'code_key': 'gw_ref_cd', 'name': 'gw_ref_ds', 'urlpath': 'code/alt_meth_cd_query', 'site_key': 'alt_meth_cd'},
     {'code_key': 'Code', 'name': 'Description', 'urlpath': 'code/aqfr_type_cd_query', 'site_key': 'aqfr_type_cd'},
@@ -111,7 +111,8 @@ def generate_lookup_file(datadir, filename='nwis_lookup.json'):
                 code_dict_iter,
                 lookup_config.get('code_key'),
                 lookup_config.get('name'),
-                lookup_config.get('desc', '')
+                group_key=lookup_config.get('group'),
+                desc_key=lookup_config.get('desc', '')
             )
         else:
             logging.error('Could not retrieve NWIS code lookup {0} from host {1}'.format(lookup_config.get('urlpath'),
@@ -125,7 +126,8 @@ def generate_lookup_file(datadir, filename='nwis_lookup.json'):
             lookups[lookup_config.get('site_key')] = translate_codes_by_group(
                 code_dict_iter,
                 lookup_config.get('code_key'),
-                lookup_config.get('name')
+                lookup_config.get('name'),
+                group_key=lookup_config.get('group')
             )
         else:
             logging.error('Unable to retrieve looks for {0}'.format(lookup_config.get('urlpath')))
