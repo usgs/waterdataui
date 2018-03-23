@@ -96,7 +96,9 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     // Put the circles in a container so we can keep the their position in the
     // DOM before rect.overlay, to prevent the circles from receiving mouse
     // events.
+    let resizeBackground = true;
     if (!textGroup) {
+        resizeBackground = false;
         textGroup = elem.append('g')
             .attr('class', 'tooltip-text-group');
         textGroup.append('rect')
@@ -137,10 +139,14 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
         .classed('estimated', datum => classesForPoint(datum).estimated);
 
     // Size the background rect to the size of textGroup
-    const bBox = textGroup.node().getBBox();
-    textGroup.select('.tooltip-text-group-background')
-        .attr('width', bBox.width)
-        .attr('height', bBox.height);
+    // Skip the resize if this is the first time we've been called, because
+    // the node won't be in the DOM yet.
+    if (resizeBackground) {
+        const bBox = textGroup.node().getBBox();
+        textGroup.select('.tooltip-text-group-background')
+            .attr('width', bBox.width)
+            .attr('height', bBox.height);
+    }
 
     return textGroup;
 };
