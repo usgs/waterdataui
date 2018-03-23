@@ -364,11 +364,10 @@ describe('Redux store', () => {
             });
         });
 
-        it('should create an action to set the tooltip time', () => {
-            expect(Actions.setTooltipTime(new Date('2018-01-03'), new Date('2017-01-03'))).toEqual({
-                type: 'SET_TOOLTIP_TIME',
-                currentTime: new Date('2018-01-03'),
-                compareTime: new Date('2017-01-03')
+        it('should create an action to set the cursor offset', () => {
+            expect(Actions.setCursorOffset(10)).toEqual({
+                type: 'SET_CURSOR_OFFSET',
+                cursorOffset: 10
             });
         });
 
@@ -474,16 +473,12 @@ describe('Redux store', () => {
             });
         });
 
-        it('should handle SET_TOOLTIP_TIME', () => {
+        it('should handle SET_CURSOR_OFFSET', () => {
             expect(timeSeriesReducer({}, {
-                type: 'SET_TOOLTIP_TIME',
-                currentTime: new Date('2018-01-03'),
-                compareTime: new Date('2017-01-03')
+                type: 'SET_CURSOR_OFFSET',
+                cursorOffset: 10
             })).toEqual({
-                tooltipFocusTime: {
-                    current: new Date('2018-01-03'),
-                    compare: new Date('2017-01-03')
-                }
+                cursorOffset: 10
             });
         });
 
