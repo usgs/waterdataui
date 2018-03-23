@@ -93,7 +93,6 @@ const cursorSlider = function (elem) {
                 .attr('id', 'cursor-slider')
                 .style('left', MARGIN.left - SLIDER_OFFSET_PX + 'px')
                 .on('input', dispatch(function () {
-                    console.log('input', this.valueAsNumber);
                     return Actions.setCursorOffset(this.valueAsNumber);
                 }))
                 .on('focus', dispatch(function () {
