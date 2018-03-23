@@ -172,21 +172,16 @@ describe('Hydrograph tooltip module', () => {
             svg.remove();
         });
 
-        it('Creates two text elements with empty text', () => {
+        it('Creates the container for tooltips', () => {
             let store = configureStore({
                 cursorOffset: null
             });
 
             svg.call(provide(store))
                 .call(createTooltipText);
-            const currentText = svg.selectAll('.current-tooltip-text');
-            const compareText = svg.selectAll('.compare-tooltip-text');
 
-            expect(svg.selectAll('text').size()).toBe(2);
-            expect(currentText.size()).toBe(1);
-            expect(compareText.size()).toBe(1);
-            expect(currentText.html()).toEqual('');
-            expect(compareText.html()).toEqual('');
+            const textGroup = svg.selectAll('.tooltip-text-group');
+            expect(textGroup.size()).toBe(1);
         });
 
         it('Creates the text elements with the label for the focus times', () => {

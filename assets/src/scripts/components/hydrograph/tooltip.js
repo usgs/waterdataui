@@ -137,13 +137,13 @@ const createTooltipTextGroup = function (elem, {cursorPoints, qualifiers, unitCo
     // Add new text labels
     const newTexts = texts.enter()
         .append('text')
-            .style('z-index', -100)
             .attr('class', d => `${d.tsKey}-tooltip-text`)
             .attr('height', '1em')
             .attr('x', 20);
 
     // Update the text and classes of all tooltip labels
     texts.merge(newTexts)
+        .interrupt()
         .style('opacity', '1')
         .attr('y', (d, i) => `${i + 1}em`)
         .text(datum => {
