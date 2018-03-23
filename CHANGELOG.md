@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Title to timeseries graph
 - Dismissable banner which shows the beta status and feedback link
+- Slider to give time series detail at a specific date
+- Icon to provide iframe for embedding timeseries graph
 
 ### Changed
 - Disabled zooming the map on scroll wheel unless the map has focus.
@@ -22,6 +24,7 @@ Parameter codes can be found in the tooltip. A scrollbar will appear for long ti
 - Screen reader only tables are now fully hidden on Firefox
 - Timeseries without any data are not shown the the select timeseries table
 - Sparklines will appear to any timeseries with current data
+- Graph y axis label now wraps
 
 ## [0.3.0] - 2018-03-09
 ### Added
