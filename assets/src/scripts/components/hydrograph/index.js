@@ -163,7 +163,6 @@ const plotSvgDefs = function(elem) {
 
 const timeSeriesLegend = function(elem) {
     elem.append('div')
-        .classed('timeseries-legend-container', true)
         .classed('hydrograph-container', true)
         .append('svg')
             .call(link(drawSimpleLegend, createStructuredSelector({
