@@ -303,7 +303,7 @@ describe('Hydrograph charting module', () => {
     //TODO: Consider adding a test which checks that the y axis is rescaled by
     // examining the contents of the text labels.
 
-    fdescribe('Adding and removing compare time series', () => {
+    describe('Adding and removing compare time series', () => {
         let store;
         beforeEach(() => {
             store = configureStore(TEST_STATE);
