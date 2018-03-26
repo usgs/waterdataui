@@ -362,6 +362,10 @@ const timeSeriesGraph = function (elem) {
     })));
 };
 
+/*
+ * Create the show last year toggle and the audible toggle for the timeseries graph.
+ * @param {Object} elem - D3 selection
+ */
 const graphControls = function(elem) {
     const graphControlDiv = elem.append('ul')
             .classed('usa-fieldset-inputs', true)
@@ -370,6 +374,7 @@ const graphControls = function(elem) {
 
     graphControlDiv.append('li')
         .call(audibleUI);
+
     const compareControlDiv = graphControlDiv.append('li');
     compareControlDiv.append('input')
         .attr('type', 'checkbox')
@@ -381,6 +386,7 @@ const graphControls = function(elem) {
         .on('click', dispatch(function() {
             return Actions.toggleTimeseries('compare', this.checked);
         }))
+        // Disables the checkbox if no compare time series for the current variable
         .call(link(function(elem, compareTimeseries) {
             const exists = Object.keys(compareTimeseries) ?
                 Object.values(compareTimeseries).filter(tsValues => tsValues.points.length).length > 0 : false;
@@ -391,6 +397,7 @@ const graphControls = function(elem) {
                 });
             }
         }, currentVariableTimeSeriesSelector('compare')))
+        // Sets the state of the toggle
         .call(link(function(elem, checked) {
             elem.property('checked', checked);
         }, isVisibleSelector('compare')));
