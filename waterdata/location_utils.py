@@ -259,7 +259,7 @@ def _collect_rollup_series(grouped_series):
             pc_metadata = {
                 'start_date': pc_start_date,
                 'end_date': pc_end_date,
-                'data_types': data_type_str,
+                'data_types': data_types,
                 'parameter_code': key_pc,
                 'parameter_name': parameter_name
             }
@@ -305,14 +305,14 @@ def rollup_dataseries(dataseries):
         end_dates = [
             datetime.datetime.strptime(value['end_date'], '%Y-%m-%d') for value in values
         ]
+        data_types = set(list(itertools.chain.from_iterable([value['data_types'] for value in values])))
         range_start_date = min(start_dates).strftime('%Y-%m-%d')
         range_end_date = max(end_dates).strftime('%Y-%m-%d')
         return {
             'start_date': range_start_date,
             'end_date': range_end_date,
+            'data_types': ', '.join(data_types),
             'parameters': values
         }
 
-    rolled_up_series = {k: extract_group_date_range([y for z in v for y in z]) for (k, v) in rolled_up_series.items()}
-
-    return rolled_up_series
+    return {k: extract_group_date_range(list(itertools.chain.from_iterable(v))) for k, v in rolled_up_series.items()}
