@@ -42,7 +42,8 @@
             {% else %}
                 <h1>{{ stations[0].station_nm }}</h1>
                 {% with site_no=stations[0].site_no %}{% include 'partials/social_share.html' %}{% endwith %}
-                {%  if config.DEPLOYMENT_ENVIRONMENT not in ['staging', 'prod'] %}
+                <span class="usa-label">Important</span> <a href="https://waterdata.usgs.gov/nwis/uv?site_no={{stations[0].site_no}}" target="_blank">Classic NWIS Web Instantaneous Values page</a>
+                {% if config.DEPLOYMENT_ENVIRONMENT not in ['staging', 'prod'] %}
                     <ul>
                         <li><a href="{{ config.NWIS_ENDPOINTS.INVENTORY }}/?site_no={{ stations[0].site_no }}" target="_blank">Site inventory page</a></li>
                         <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?cb_00060=on&format=gif_mult_parms&site_no={{ stations[0].site_no }}&period=7" target="_blank">Interactive grapher</a></li>
