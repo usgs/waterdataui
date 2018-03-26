@@ -6,9 +6,9 @@ const { tsCursorPointsSelector } = require('./cursor');
 const { yScaleSelector } = require('./scales');
 const { allTimeSeriesSelector } = require('./timeseries');
 
+const { DEPLOYMENT_ENVIRONMENT } = require('../../config');
 const { dispatch, link } = require('../../lib/redux');
 const { Actions } = require('../../store');
-
 
 // Higher tones get lower volume
 const volumeScale = scaleLinear().range([2, .3]);
@@ -113,6 +113,11 @@ const audiblePointsSelector = createSelector(
 );
 
 export const audibleUI = function (elem) {
+    // Only enable the audio interface on dev tiers.
+    if (DEPLOYMENT_ENVIRONMENT === 'staging' || DEPLOYMENT_ENVIRONMENT === 'prod') {
+        return;
+    }
+
     if (!AudioContext) {
         console.warn('AudioContext not available');
         return;
