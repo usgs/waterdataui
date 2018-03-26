@@ -1,6 +1,6 @@
 const { variablesSelector, currentVariableSelector, timeSeriesSelector, isVisibleSelector, yLabelSelector,
-    titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, allTimeSeriesSelector,
-    requestTimeRangeSelector} = require('./timeseries');
+    titleSelector, descriptionSelector, currentVariableTimeSeriesSelector,
+    allTimeSeriesSelector, requestTimeRangeSelector} = require('./timeseries');
 
 
 const TEST_DATA = {

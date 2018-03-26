@@ -1,5 +1,5 @@
 const { select, selectAll } = require('d3-selection');
-const { provide, dispatch } = require('../../lib/redux');
+const { provide } = require('../../lib/redux');
 
 const { attachToNode, timeSeriesGraph, timeSeriesLegend } = require('./index');
 const { Actions, configureStore } = require('../../store');
@@ -134,18 +134,11 @@ describe('Hydrograph charting module', () => {
         let hydrograph = body.append('div')
             .attr('id', 'hydrograph');
         hydrograph.append('div')
-            .attr('class', 'compare-container')
-            .attr('hidden', 'true')
-            .append('input')
-                .attr('type', 'checkbox')
-                .attr('class', 'hydrograph-last-year-input');
-        hydrograph.append('div')
             .attr('class', 'hydrograph-container');
         graphNode = document.getElementById('hydrograph');
     });
 
     afterEach(() => {
-        select('.compare-input').remove();
         select('#hydrograph').remove();
     });
 
@@ -173,7 +166,6 @@ describe('Hydrograph charting module', () => {
                 .call(provide(store))
                 .call(timeSeriesGraph);
             expect(select('#hydrograph').attr('hidden')).toBeNull();
-            expect(select('.compare-container').attr('hidden')).toBeNull();
         });
 
         it('should have a style tag if there is no data', () => {
@@ -181,8 +173,6 @@ describe('Hydrograph charting module', () => {
             select(graphNode)
                 .call(provide(store))
                 .call(timeSeriesGraph);
-            expect(select('#hydrograph').attr('hidden')).toBeTruthy();
-            expect(select('.compare-container').attr('hidden')).toBeTruthy();
         });
     });
 
@@ -309,27 +299,8 @@ describe('Hydrograph charting module', () => {
         });
     });
 
-    describe('Adding and removing compare time series', () => {
-        let store;
-        beforeEach(() => {
-            store = configureStore(TEST_STATE);
-            select(graphNode)
-                .call(provide(store))
-                .call(timeSeriesGraph);
-        });
-
-        it('Should render two lines', () => {
-            expect(selectAll('svg .line-segment').size()).toBe(2);
-        });
-
-        it('Should remove one of the lines when removing the compare time series', () => {
-            store.dispatch(Actions.toggleTimeseries('compare', false));
-            expect(selectAll('svg .line-segment').size()).toBe(1);
-        });
-
-        //TODO: Consider adding a test which checks that the y axis is rescaled by
-        // examining the contents of the text labels.
-    });
+    //TODO: Consider adding a test which checks that the y axis is rescaled by
+    // examining the contents of the text labels.
 
     describe('legends should render', () => {
         let store;
@@ -361,22 +332,38 @@ describe('Hydrograph charting module', () => {
         let store;
         beforeEach(() => {
             store = configureStore(TEST_STATE);
-            select(graphNode)
-                .call(provide(store))
-                .call(timeSeriesGraph)
-                .select('.hydrograph-last-year-input')
-                    .on('change', dispatch(function () {
-                        return Actions.toggleTimeseries('compare', this.checked);
-                    }));
+            attachToNode(store, graphNode, {siteno: '12345678'});
+        });
+
+        it('Should render the compare toggle checked', () => {
+            const checkbox = select('#last-year-checkbox');
+            expect(checkbox.size()).toBe(1);
+            expect(checkbox.property('checked')).toBe(true);
+        });
+
+        it('Should render the compare toggle unchecked', () => {
+            store.dispatch(Actions.toggleTimeseries('compare', false));
+            const checkbox = select('#last-year-checkbox');
+            expect(checkbox.size()).toBe(1);
+            expect(checkbox.property('checked')).toBe(false);
         });
 
         it('should be enabled if there are last year data', () => {
-            expect(select('.hydrograph-last-year-input').property('disabled')).toBeFalsy();
+            expect(select('#last-year-checkbox').property('disabled')).toBeFalsy();
         });
 
         it('should be disabled if there are no last year data', () => {
             store.dispatch(Actions.setCurrentParameterCode('00010', '45807190'));
-            expect(select('.hydrograph-last-year-input').property('disabled')).toBeTruthy();
+            expect(select('#last-year-checkbox').property('disabled')).toBeTruthy();
+        });
+
+        it('Should render one lines', () => {
+            expect(selectAll('#ts-compare-group .line-segment').size()).toBe(1);
+        });
+
+        it('Should remove the lines when removing the compare time series', () => {
+            store.dispatch(Actions.toggleTimeseries('compare', false));
+            expect(selectAll('#ts-compare-group .line-segment').size()).toBe(0);
         });
     });
 });

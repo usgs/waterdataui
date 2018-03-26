@@ -78,6 +78,7 @@ export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector
     }
 ));
 
+
 /**
  * Returns a selector that, for a given tsKey:
  * Selects all time series data.
