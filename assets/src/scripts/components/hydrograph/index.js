@@ -395,6 +395,31 @@ const timeSeriesGraph = function (elem) {
     })));
 };
 
+const graphControls = function(elem) {
+    const graphControlDiv = elem.append('ul')
+            .classed('usa-fieldset-inputs', true)
+            .classed('usa-unstyled-list', true)
+            .classed('graph-controls-container', true);
+
+    graphControlDiv.append('li')
+        .call(audibleUI);
+    const compareControlDiv = graphControlDiv.append('li');
+    compareControlDiv.append('input')
+        .attr('type', 'checkbox')
+        .attr('id', 'last-year-checkbox')
+        .attr('aria-labelledby', 'last-year-label')
+        .attr('ga-on', 'click')
+        .attr('ga-event-category', 'TimeseriesGraph')
+        .attr('ga-event_action', 'toggleCompare')
+        .on('click', dispatch(function() {
+            return Actions.toggleTimeseries('compare', this.checked);
+        }));
+    compareControlDiv.append('label')
+        .attr('id', 'last-year-label')
+        .attr('for', 'last-year-checkbox')
+        .text('Show last year');
+};
+
 
 const attachToNode = function (store, node, {siteno} = {}) {
     if (!siteno) {
@@ -406,13 +431,10 @@ const attachToNode = function (store, node, {siteno} = {}) {
     select(node)
         .call(provide(store))
         .call(timeSeriesGraph)
-        .call(cursorSlider)
+        .call(cursorSlider);
+    select(node).append('div')
         .call(timeSeriesLegend)
-        .call(audibleUI)
-        .select('.hydrograph-last-year-input')
-            .on('change', dispatch(function () {
-                return Actions.toggleTimeseries('compare', this.checked);
-            }));
+        .call(graphControls);
 
     window.onresize = function() {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));

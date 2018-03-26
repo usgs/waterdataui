@@ -243,9 +243,6 @@ $highlight: $color-gray-lightest;
 
 }
 
-#audible-label {
-    padding-left: 2em;
-}
 .slider-wrapper {
     height: 0px;
     input#cursor-slider {
@@ -260,4 +257,11 @@ $highlight: $color-gray-lightest;
             opacity: 1;
         }
     }
+}
+
+.graph-controls-container {
+    position: relative;
+    display: inline-block;
+    bottom: 0px;
+    float: right;
 }
