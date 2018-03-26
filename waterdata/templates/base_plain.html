@@ -13,6 +13,7 @@
         <script type="text/javascript">var CONFIG = {{ config.BUNDLE_CONFIG | tojson }};</script>
         <script async src="{{ config.STATIC_ROOT }}/bundle.js?v={{ config.APP_VERSION }}"></script>
         {% block page_script %}{% endblock %}
+        <!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TKQR8KP');</script>
         <title>
             {% block title %}{% if page_title %}{{ page_title }} - {% endif %}USGS Water Data for the Nation{% endblock %}
         </title>
@@ -22,4 +23,5 @@
         {% block body %}{% endblock %}
     </body>
     {% block extra_html %}{% endblock %}
+    <!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TKQR8KP" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </html>
