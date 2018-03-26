@@ -78,7 +78,11 @@ const tsCursorPointsSelector = memoize(tsKey => createSelector(
             return {};
         }
         return Object.keys(timeSeries).reduce((data, tsId) => {
-            data[tsId] = getNearestTime(timeSeries[tsId].points, cursorTime).datum;
+            const datum = getNearestTime(timeSeries[tsId].points, cursorTime).datum;
+            data[tsId] = {
+                ...datum,
+                tsKey: timeSeries[tsId].tsKey
+            };
             return data;
         }, {});
     })
