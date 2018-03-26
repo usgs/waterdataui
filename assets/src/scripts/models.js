@@ -1,14 +1,15 @@
 const { set } = require('d3-collection');
 const { utcFormat } = require('d3-time-format');
 
+const config = require('./config');
 const { get } = require('./ajax');
 const { deltaDays } = require('./utils');
 
 
 // Define Water Services root URL - use global variable if defined, otherwise
 // use production.
-const SERVICE_ROOT = window.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
-const PAST_SERVICE_ROOT = window.PAST_SERVICE_ROOT  || 'https://nwis.waterservices.usgs.gov/nwis';
+const SERVICE_ROOT = config.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
+const PAST_SERVICE_ROOT = config.PAST_SERVICE_ROOT  || 'https://nwis.waterservices.usgs.gov/nwis';
 
 export const PARAM_PERTINENCE = {
     '00060': 0,
