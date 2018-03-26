@@ -13,6 +13,7 @@
         <script type="text/javascript">var CONFIG = {{ config.BUNDLE_CONFIG | tojson }};</script>
         <script async src="{{ config.STATIC_ROOT }}/bundle.js?v={{ config.APP_VERSION }}"></script>
         {% block page_script %}{% endblock %}
+        <!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TKQR8KP');</script>
         <title>
             {% block title %}{% if page_title %}{{ page_title }} - {% endif %}USGS Water Data for the Nation{% endblock %}
         </title>
@@ -21,5 +22,36 @@
         <script>document.body.className += ' js';</script>
         {% block body %}{% endblock %}
     </body>
+    {% if config.LIVE_RELOAD_PATH %}
+        <script type="text/javascript">
+            // <![CDATA[  <-- For SVG support
+            if ('WebSocket' in window) {
+                (function() {
+                    function refreshCSS() {
+                        var sheets = [].slice.call(document.getElementsByTagName("link"));
+                        var head = document.getElementsByTagName("head")[0];
+                        for (var i = 0; i < sheets.length; ++i) {
+                            var elem = sheets[i];
+                            head.removeChild(elem);
+                            var rel = elem.rel;
+                            if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+                                var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+                                elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+                            }
+                            head.appendChild(elem);
+                        }
+                    }
+                    var socket = new WebSocket('{{ config.LIVE_RELOAD_PATH }}');
+                    socket.onmessage = function(msg) {
+                        if (msg.data == 'reload') window.location.reload();
+                        else if (msg.data == 'refreshcss') refreshCSS();
+                    };
+                    console.log('Live reload enabled.');
+                })();
+            }
+            // ]]>
+        </script>
+    {% endif %}
     {% block extra_html %}{% endblock %}
+    <!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TKQR8KP" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </html>
