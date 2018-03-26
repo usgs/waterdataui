@@ -261,10 +261,18 @@ $highlight: $color-gray-lightest;
         }
     }
 }
-
-.graph-controls-container {
+.ts-legend-controls-container {
     position: relative;
-    display: inline-block;
-    bottom: 0px;
-    float: right;
+
+    .timeseries-legend-container {
+        position: relative;
+        display: inline-block;
+    }
+    .graph-controls-container {
+        position: absolute;
+        display: inline-block;
+        top: 0px;
+        right: 0px;
+        font-size: .8em;
+    }
 }

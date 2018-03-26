@@ -162,7 +162,8 @@ const plotSvgDefs = function(elem) {
 
 const timeSeriesLegend = function(elem) {
     elem.append('div')
-        .attr('class', 'hydrograph-container')
+        .classed('timeseries-legend-container', true)
+        .classed('hydrograph-container', true)
         .append('svg')
             .call(link(drawSimpleLegend, createStructuredSelector({
                 legendMarkerRows: legendMarkerRowsSelector,
@@ -438,8 +439,10 @@ const attachToNode = function (store, node, {siteno} = {}) {
         .call(timeSeriesGraph)
         .call(cursorSlider);
     select(node).append('div')
+        .classed('ts-legend-controls-container', true)
         .call(timeSeriesLegend)
         .call(graphControls);
+
 
     window.onresize = function() {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
