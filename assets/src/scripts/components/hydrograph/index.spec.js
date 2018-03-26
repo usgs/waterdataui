@@ -119,7 +119,7 @@ const TEST_STATE = {
     currentVariableID: '45807197',
     showSeries: {
         current: true,
-        compare: true,
+        compare: false,
         median: true
     },
     width: 400
@@ -134,18 +134,11 @@ describe('Hydrograph charting module', () => {
         let hydrograph = body.append('div')
             .attr('id', 'hydrograph');
         hydrograph.append('div')
-            .attr('class', 'compare-container')
-            .attr('hidden', 'true')
-            .append('input')
-                .attr('type', 'checkbox')
-                .attr('class', 'hydrograph-last-year-input');
-        hydrograph.append('div')
             .attr('class', 'hydrograph-container');
         graphNode = document.getElementById('hydrograph');
     });
 
     afterEach(() => {
-        select('.compare-input').remove();
         select('#hydrograph').remove();
     });
 
@@ -173,7 +166,6 @@ describe('Hydrograph charting module', () => {
                 .call(provide(store))
                 .call(timeSeriesGraph);
             expect(select('#hydrograph').attr('hidden')).toBeNull();
-            expect(select('.compare-container').attr('hidden')).toBeNull();
         });
 
         it('should have a style tag if there is no data', () => {
@@ -182,7 +174,6 @@ describe('Hydrograph charting module', () => {
                 .call(provide(store))
                 .call(timeSeriesGraph);
             expect(select('#hydrograph').attr('hidden')).toBeTruthy();
-            expect(select('.compare-container').attr('hidden')).toBeTruthy();
         });
     });
 
@@ -246,7 +237,7 @@ describe('Hydrograph charting module', () => {
                 },
                 showSeries: {
                     current: true,
-                    compare: true,
+                    compare: false,
                     median: true
                 },
                 title: 'My Title',
@@ -309,26 +300,39 @@ describe('Hydrograph charting module', () => {
         });
     });
 
-    describe('Adding and removing compare time series', () => {
+    //TODO: Consider adding a test which checks that the y axis is rescaled by
+    // examining the contents of the text labels.
+
+    fdescribe('Adding and removing compare time series', () => {
         let store;
         beforeEach(() => {
             store = configureStore(TEST_STATE);
-            select(graphNode)
-                .call(provide(store))
-                .call(timeSeriesGraph);
+            attachToNode(store, graphNode, {siteno: '12345678'});
         });
 
-        it('Should render two lines', () => {
-            expect(selectAll('svg .line-segment').size()).toBe(2);
+        it('Should render the compare toggle unchecked', () => {
+            const checkbox = select('#last-year-checkbox');
+            expect(checkbox.size()).toBe(1);
+            expect(checkbox.property('checked')).toBe(false);
         });
 
-        it('Should remove one of the lines when removing the compare time series', () => {
+        it('Should render the compare toggle checked', () => {
+            store.dispatch(Actions.toggleTimeseries('compare', true));
+            const checkbox = select('#last-year-checkbox');
+            expect(checkbox.size()).toBe(1);
+            expect(checkbox.property('checked')).toBe(true);
+        });
+
+        it('Should render one lines', () => {
+            store.dispatch(Actions.toggleTimeseries('compare', true));
+            expect(selectAll('#ts-compare-group .line-segment').size()).toBe(1);
+        });
+
+        it('Should remove the lines when removing the compare time series', () => {
+            store.dispatch(Actions.toggleTimeseries('compare', true));
             store.dispatch(Actions.toggleTimeseries('compare', false));
-            expect(selectAll('svg .line-segment').size()).toBe(1);
+            expect(selectAll('#ts-compare-group .line-segment').size()).toBe(0);
         });
-
-        //TODO: Consider adding a test which checks that the y axis is rescaled by
-        // examining the contents of the text labels.
     });
 
     describe('legends should render', () => {

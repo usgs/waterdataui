@@ -122,6 +122,9 @@ export const audibleUI = function (elem) {
         .attr('type', 'checkbox')
         .attr('id', 'audible-checkbox')
         .attr('aria-labelledby', 'audible-label')
+        .attr('ga-on', 'click')
+        .attr('ga-event-category', 'TimeseriesGraph')
+        .attr('ga-event-action', 'toggleAudible')
         .on('click', dispatch(function () {
             return Actions.toggleAudibleInterface(this.checked);
         }))

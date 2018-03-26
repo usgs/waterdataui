@@ -416,10 +416,15 @@ const graphControls = function(elem) {
         .attr('aria-labelledby', 'last-year-label')
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'TimeseriesGraph')
-        .attr('ga-event_action', 'toggleCompare')
+        .attr('ga-event-action', 'toggleCompare')
         .on('click', dispatch(function() {
             return Actions.toggleTimeseries('compare', this.checked);
-        }));
+        }))
+        .call(link(function(elem, {checked}) {
+            elem.property('checked', checked);
+        }, createStructuredSelector({
+            checked: isVisibleSelector('compare')
+        })));
     compareControlDiv.append('label')
         .attr('id', 'last-year-label')
         .attr('for', 'last-year-checkbox')
