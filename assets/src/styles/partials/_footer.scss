@@ -1,8 +1,11 @@
-.usgs-footer-nav {
-  text-align: center;
-  .usgs-footer-link {
-    display: inline;
-    padding-left: .5em;
-    padding-right: .5em;
+footer {
+  background-color: $usgs-blue;
+  .usgs-footer-nav {
+    text-align: center;
+    .usgs-footer-link {
+      display: inline;
+      padding-left: .5em;
+      padding-right: .5em;
+    }
   }
 }
