@@ -391,9 +391,8 @@ const graphControls = function(elem) {
                 Object.values(compareTimeseries).filter(tsValues => tsValues.points.length).length > 0 : false;
             elem.property('disabled', !exists);
             if (!exists) {
-                dispatch(function () {
-                    return Actions.toggleTimeseries('compare', false);
-                });
+                elem.property('checked', false);
+                elem.dispatch('click');
             }
         }, currentVariableTimeSeriesSelector('compare')))
         // Sets the state of the toggle
