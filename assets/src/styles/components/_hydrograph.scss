@@ -111,6 +111,9 @@ $highlight: $color-gray-lightest;
 
         }
         .tooltip-text-group {
+            .tooltip-text-group-background {
+                fill: white;
+            }
             .current-tooltip-text {
                 font-weight: bold;
             }
