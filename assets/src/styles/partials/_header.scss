@@ -23,9 +23,19 @@
 
   .usgs-logo {
     display: inline-block;
-    width: 100px;
-    @include media($small-screen) {
-      width: 178px;
+    img {
+      height: 44px;
+      margin: 5%;
+      @include media($small-screen) {
+        height: 51px;
+        margin: 10%;
+      }
+      @include media($medium-screen) {
+        height: 58px;
+      }
+      @include media($large-screen) {
+        height: 65px;
+      }
     }
   }
   .usgs-header-links-container {
