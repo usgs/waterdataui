@@ -87,12 +87,6 @@ $highlight: $color-gray-lightest;
 
 
     svg {
-        font-size: 0.7em;
-        @include media($medium-screen) {
-            font-size: 1em;
-        }
-
-
         .overlay {
             fill: none;
             pointer-events: all;
@@ -111,6 +105,11 @@ $highlight: $color-gray-lightest;
 
         }
         .tooltip-text-group {
+            font-size: 0.7em;
+            @include media($medium-screen) {
+                font-size: 1em;
+            }
+
             .tooltip-text-group-background {
                 fill: white;
             }
@@ -170,12 +169,6 @@ $highlight: $color-gray-lightest;
                     stroke: black;
                     stroke-opacity: 0.7;
                 }
-            }
-        }
-        .legend {
-            font-size: 12px;
-            @include media($medium-screen) {
-                font-size: 16px;
             }
         }
         #median-points {
@@ -264,15 +257,15 @@ $highlight: $color-gray-lightest;
 .ts-legend-controls-container {
     position: relative;
 
-    .timeseries-legend-container {
-        position: relative;
-        display: inline-block;
+    font-size: .7em;
+    @include media($medium-screen) {
+        font-size: 1em;
     }
+
     .graph-controls-container {
         position: absolute;
         display: inline-block;
         top: 0px;
         right: 0px;
-        font-size: .8em;
     }
 }
