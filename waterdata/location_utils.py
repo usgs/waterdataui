@@ -271,7 +271,7 @@ def _extract_group_date_range(dataseries):
     return {
         'start_date': range_start_date,
         'end_date': range_end_date,
-        'data_types': ', '.join(data_types),
+        'data_types': ', '.join(sorted(data_types)),
         'parameters': dataseries
     }
 
