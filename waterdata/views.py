@@ -3,11 +3,11 @@ Main application views.
 """
 import json
 
-from flask import render_template, request, Markup
+from flask import abort, render_template, request, Markup
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values
-from .utils import construct_url, execute_get_request, parse_rdb
+from .utils import construct_url, defined_when, execute_get_request, parse_rdb
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -142,8 +142,13 @@ def monitoring_location(site_no):
     return render_template(template, **context), http_code
 
 
+def return_404(*args, **kwargs):
+    return abort(404)
+
+
 @app.route('/hydrological-unit/', defaults={'huc_cd': None}, methods=['GET'])
 @app.route('/hydrological-unit/<huc_cd>/', methods=['GET'])
+@defined_when(app.config['DEPLOYMENT_ENVIRONMENT'] in ('development', 'local'), return_404)
 def hydrological_unit(huc_cd, show_locations=False):
     """
     Hydrological unit view
@@ -184,6 +189,7 @@ def hydrological_unit(huc_cd, show_locations=False):
 
 
 @app.route('/hydrological-unit/<huc_cd>/monitoring-locations/', methods=['GET'])
+@defined_when(app.config['DEPLOYMENT_ENVIRONMENT'] in ('development', 'local'), return_404)
 def hydrological_unit_locations(huc_cd):
     """
     Returns a HUC page with a list of monitoring locations included.

@@ -2,6 +2,7 @@
 Utility functions
 
 """
+from functools import update_wrapper
 from urllib.parse import urlencode, urljoin
 
 import requests as r
@@ -72,3 +73,22 @@ def construct_url(netloc, path, parameters=()):
     """
     encoded_parameters = urlencode(parameters)
     return urljoin(netloc, '{0}?{1}'.format(path, encoded_parameters))
+
+
+def defined_when(condition, fallback):
+    """
+    Decorator that fallsback to a specified function if `condition` is False.
+    :param bool condition: Decorated function will be called if True, otherwise
+                           fallback will be called
+    :param function fallback Fallback function to be called if condition is False
+    :return: Decorated function
+    :rtype: function
+    """
+    def wrap(f):
+        if condition:
+            func = lambda *args, **kwargs: f(*args, **kwargs)
+        else:
+            func = fallback
+        return update_wrapper(func, f)
+
+    return wrap
