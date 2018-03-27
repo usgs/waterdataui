@@ -10,11 +10,12 @@ def _get_lookup_value(code_lookup, name_key, group_key, desc_key):
     Returns dict with 'name' and optional 'desc' properties derived from code_lookup
     :param code_lookup:
     :param name_key:
+    :param: desc_key: Can be the null string
     :param desc_key: Can be the null string
     :rtype: dict
     """
     if group_key:
-        lookup_value = {'name': code_lookup.get(name_key), 'group': code_lookup[group_key]}
+        lookup_value = {'name': code_lookup.get(name_key), 'group': code_lookup.get(group_key)}
     else:
         lookup_value = {'name': code_lookup.get(name_key)}
 
@@ -30,6 +31,7 @@ def translate_to_lookup(dict_iter, code_key, name_key, group_key, desc_key):
     :param iter dict_iter:
     :param str code_key: Should not be null
     :param str name_key: Should not be null
+    :param str group_key: Can be the null string
     :param str desc_key: Can be the null string
     :rtype: dict
     """
@@ -52,6 +54,7 @@ def translate_codes_by_group(dict_iter, code_key, name_key, group_key):
     :param dict_iter:
     :param str code_key:
     :param str name_key:
+    :param str group_key:
     :return: dict
     """
 
