@@ -235,7 +235,7 @@ def fill_in_missing_parameter_groups(dataseries):
     updated_dataseries = []
     mappings = _parameter_group_mappings(dataseries)
     for series in dataseries:
-        if set(series['parm_grp_cd'].values()) == {''}:
+        if set(series['parm_grp_cd'].values()) == {''} and set(series['parm_cd'].values()) != {''}:
             series_parm_cd = series['parm_cd']['code']
             try:
                 grp_name, grp_code = mappings[series_parm_cd][0]
@@ -318,8 +318,9 @@ def rollup_dataseries(dataseries):
         lambda x: x['data_type_cd']['code'].lower() in excluded_data_type_codes,
         dataseries
     ))
-    series_w_parm_grp_cd = itertools.filterfalse(lambda x: not bool(x['parm_grp_cd']['name']), display_series)
-    series_wo_parm_grp_cd = itertools.filterfalse(lambda x: bool(x['parm_grp_cd']['name']), display_series)
+    # series_w_parm_grp_cd = itertools.filterfalse(lambda x: not bool(x['parm_grp_cd']['name']), display_series)
+    series_w_parm_grp_cd = display_series
+    # series_wo_parm_grp_cd = itertools.filterfalse(lambda x: bool(x['parm_grp_cd']['name']), display_series)
 
     rolled_up_series = defaultdict(list)
 
@@ -332,16 +333,16 @@ def rollup_dataseries(dataseries):
 
     rollup_by_parameter_grp = _collect_rollup_series(pg_grouped_series)
 
-    # handle series without parameter groups
-    def data_type_sort(x):
-        return x['data_type_cd']['name']
-
-    dt_sorted = sorted(series_wo_parm_grp_cd, key=data_type_sort)
-    dt_grouped_series = itertools.groupby(dt_sorted, key=data_type_sort)
-
-    rollup_by_data_type = _collect_rollup_series(dt_grouped_series)
-
-    for d in (rollup_by_parameter_grp, rollup_by_data_type):
+    # handle rare instances of series without parameter groups
+    # def data_type_sort(x):
+    #     return x['data_type_cd']['name']
+    #
+    # dt_sorted = sorted(series_wo_parm_grp_cd, key=data_type_sort)
+    # dt_grouped_series = itertools.groupby(dt_sorted, key=data_type_sort)
+    #
+    # rollup_by_data_type = _collect_rollup_series(dt_grouped_series)
+    #
+    for d in (rollup_by_parameter_grp,):
         for k, v in d.items():
             if k.lower() != 'all':  # don't include the all key -- it's just the amalgamation of the other groups
                 rolled_up_series[k].append(v)
