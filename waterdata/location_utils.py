@@ -202,51 +202,6 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
     return linked_data
 
 
-def _parameter_group_mappings(dataseries):
-    """
-    Generate a mapping of each variable to its data type
-
-    :param list dataseries: list of dataseries available at the site
-    :return: variable to data type mappings
-    :rtype: dict
-
-    """
-    var_to_group_mapping = defaultdict(list)
-    for series in dataseries:
-        parameter_code = series['parm_cd']['code']
-        parameter_group_name = series['parm_grp_cd']['name']
-        parameter_group_code = series['parm_grp_cd']['code']
-        if ((parameter_group_name, parameter_group_code) not in var_to_group_mapping[parameter_code]
-                and parameter_group_name):
-            var_to_group_mapping[parameter_code].append((parameter_group_name, parameter_group_code))
-    return var_to_group_mapping
-
-
-def fill_in_missing_parameter_groups(dataseries):
-    """
-    Infer data types for parameter data series that
-    do not have a data type after disambiguation.
-
-    :param list dataseries: list of dataseries available at the site
-    :return: dataseries with parameter codes filled in as much as possible
-    :rtype: list
-
-    """
-    updated_dataseries = []
-    mappings = _parameter_group_mappings(dataseries)
-    for series in dataseries:
-        if set(series['parm_grp_cd'].values()) == {''} and set(series['parm_cd'].values()) != {''}:
-            series_parm_cd = series['parm_cd']['code']
-            try:
-                grp_name, grp_code = mappings[series_parm_cd][0]
-            except IndexError:
-                pass
-            else:
-                series['parm_grp_cd'] = {'name': grp_name, 'code': grp_code}
-        updated_dataseries.append(series)
-    return updated_dataseries
-
-
 def _collect_rollup_series(grouped_series):
     """
     For each parameter group, take each of its timeseries and
@@ -260,7 +215,6 @@ def _collect_rollup_series(grouped_series):
     :rtype: dict
 
     """
-
     def parm_cd_sort(x):
         return x['parm_cd']['code']
 
@@ -318,34 +272,18 @@ def rollup_dataseries(dataseries):
         lambda x: x['data_type_cd']['code'].lower() in excluded_data_type_codes,
         dataseries
     ))
-    # series_w_parm_grp_cd = itertools.filterfalse(lambda x: not bool(x['parm_grp_cd']['name']), display_series)
-    series_w_parm_grp_cd = display_series
-    # series_wo_parm_grp_cd = itertools.filterfalse(lambda x: bool(x['parm_grp_cd']['name']), display_series)
-
-    rolled_up_series = defaultdict(list)
 
     # handle series with parameter groups
     def parm_grp_sort(x):
         return x['parm_grp_cd']['name']
 
-    pg_sorted = sorted(series_w_parm_grp_cd, key=parm_grp_sort)
+    pg_sorted = sorted(display_series, key=parm_grp_sort)
     pg_grouped_series = itertools.groupby(pg_sorted, key=parm_grp_sort)
 
     rollup_by_parameter_grp = _collect_rollup_series(pg_grouped_series)
-
-    # handle rare instances of series without parameter groups
-    # def data_type_sort(x):
-    #     return x['data_type_cd']['name']
-    #
-    # dt_sorted = sorted(series_wo_parm_grp_cd, key=data_type_sort)
-    # dt_grouped_series = itertools.groupby(dt_sorted, key=data_type_sort)
-    #
-    # rollup_by_data_type = _collect_rollup_series(dt_grouped_series)
-    #
-    for d in (rollup_by_parameter_grp,):
-        for k, v in d.items():
-            if k.lower() != 'all':  # don't include the all key -- it's just the amalgamation of the other groups
-                rolled_up_series[k].append(v)
+    # remove the `ALL` parameter group
+    # it's the amalgamation of the other groups
+    rollup_by_parameter_grp.pop('ALL', None)
 
     def extract_group_date_range(values):
         start_dates = [value['start_date'] for value in values]
@@ -360,4 +298,4 @@ def rollup_dataseries(dataseries):
             'parameters': values
         }
 
-    return {k: extract_group_date_range(list(itertools.chain.from_iterable(v))) for k, v in rolled_up_series.items()}
+    return {k: extract_group_date_range(v) for k, v in rollup_by_parameter_grp.items()}
