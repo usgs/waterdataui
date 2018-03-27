@@ -3,7 +3,7 @@ Utility functions and classes for working with
 USGS water services.
 
 """
-from collections import defaultdict, namedtuple
+from collections import namedtuple
 import datetime
 import itertools
 
