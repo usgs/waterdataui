@@ -111,8 +111,8 @@ def generate_lookup_file(datadir, filename='nwis_lookup.json'):
                 code_dict_iter,
                 lookup_config.get('code_key'),
                 lookup_config.get('name'),
-                group_key=lookup_config.get('group'),
-                desc_key=lookup_config.get('desc', '')
+                lookup_config.get('group'),
+                lookup_config.get('desc', '')
             )
         else:
             logging.error('Could not retrieve NWIS code lookup {0} from host {1}'.format(lookup_config.get('urlpath'),
@@ -127,7 +127,7 @@ def generate_lookup_file(datadir, filename='nwis_lookup.json'):
                 code_dict_iter,
                 lookup_config.get('code_key'),
                 lookup_config.get('name'),
-                group_key=lookup_config.get('group')
+                lookup_config.get('group')
             )
         else:
             logging.error('Unable to retrieve looks for {0}'.format(lookup_config.get('urlpath')))
