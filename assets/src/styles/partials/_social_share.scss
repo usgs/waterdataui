@@ -1,5 +1,6 @@
 .social-share {
-    font-size: 1.5em;
+    position: relative;
+    font-size: 1.25em;
     a {
         text-decoration: none;
         i.facebook {
@@ -8,5 +9,8 @@
         i.twitter {
             color: #32AADE;
         }
+    }
+    .embed-container {
+        display: inline;
     }
 }
