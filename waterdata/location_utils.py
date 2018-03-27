@@ -290,8 +290,8 @@ def rollup_dataseries(dataseries):
     :rtype: dict
 
     """
-    # exclude annual reports and peak value measurements
-    excluded_data_type_codes = ['ad', 'pk']
+    # exclude annual reports, peak value measurements, and site visits
+    excluded_data_type_codes = ['ad', 'pk', 'sv']
     display_series = list(itertools.filterfalse(
         lambda x: x['data_type_cd']['code'].lower() in excluded_data_type_codes,
         dataseries
