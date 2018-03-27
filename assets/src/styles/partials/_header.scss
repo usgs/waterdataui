@@ -24,11 +24,12 @@
   .usgs-logo {
     display: inline-block;
     img {
+      vertical-align: bottom;
       height: 44px;
-      margin: 5%;
+      margin: .5em;
       @include media($small-screen) {
         height: 51px;
-        margin: 10%;
+        margin: 1em;
       }
       @include media($medium-screen) {
         height: 58px;
