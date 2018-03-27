@@ -8,6 +8,8 @@
         <a href="https://twitter.com/home?status={{ share_encoded_url }}" target="_blank">
             <i class="fa fa-twitter-square" aria-label="Share on Twitter"></i>
         </a>
-        {{ components.EmbedComponent(site_no) }}
+        <span class="embed-container">
+            {% if config.DEPLOYMENT_ENVIRONMENT in ('local', 'development') %}{{ components.EmbedComponent(site_no) }}{% endif %}
+        </span>
     </div>
 {% endwith %}

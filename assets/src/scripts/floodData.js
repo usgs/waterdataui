@@ -1,8 +1,10 @@
 const {get} = require('./ajax');
+const {FIM_GIS_ENDPOINT} = require('./config');
 
-const FLOOD_EXTENTS_ENDPOINT = `${window.FIM_GIS_ENDPOINT}floodExtents/MapServer/`;
-const FLOOD_BREACH_ENDPOINT = `${window.FIM_GIS_ENDPOINT}breach/MapServer/`;
-const FLOOD_LEVEE_ENDPOINT = `${window.FIM_GIS_ENDPOINT}suppLyrs/MapServer/`;
+
+const FLOOD_EXTENTS_ENDPOINT = `${FIM_GIS_ENDPOINT}floodExtents/MapServer/`;
+const FLOOD_BREACH_ENDPOINT = `${FIM_GIS_ENDPOINT}breach/MapServer/`;
+const FLOOD_LEVEE_ENDPOINT = `${FIM_GIS_ENDPOINT}suppLyrs/MapServer/`;
 
 /*
  * Retrieve flood features if any for siteno

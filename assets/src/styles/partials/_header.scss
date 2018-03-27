@@ -15,7 +15,7 @@
   }
 }
 .usgs-banner-container {
-  background-color: #000000;
+  background-color: $usgs-blue;
   a {
     color: white;
     text-decoration: none;
@@ -23,9 +23,20 @@
 
   .usgs-logo {
     display: inline-block;
-    width: 100px;
-    @include media($small-screen) {
-      width: 178px;
+    img {
+      vertical-align: bottom;
+      height: 44px;
+      margin: .5em;
+      @include media($small-screen) {
+        height: 51px;
+        margin: 1em;
+      }
+      @include media($medium-screen) {
+        height: 58px;
+      }
+      @include media($large-screen) {
+        height: 65px;
+      }
     }
   }
   .usgs-header-links-container {

@@ -3,10 +3,14 @@
 $font-path: './fonts';
 $image-path: './img';
 $fa-font-path: './fonts' !default;
+
+// Override default of 4rem
+$h1-font-size: 3.25rem !default;
+
 @import '../../../node_modules/font-awesome/scss/font-awesome';
 @import 'uswds';
 
-$usgs-blue: #02274B;
+$usgs-blue: #00264c;
 
 @import './partials/footer';
 @import './partials/header';
@@ -41,6 +45,10 @@ $usgs-blue: #02274B;
 }
 
 body {
+    #main-content {
+        margin: 1em 0;
+        padding: 0 1em;
+    }
     #wdfn-alert-banner input:checked ~ * {
         display: none;
     }

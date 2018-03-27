@@ -87,12 +87,6 @@ $highlight: $color-gray-lightest;
 
 
     svg {
-        font-size: 0.7em;
-        @include media($medium-screen) {
-            font-size: 1em;
-        }
-
-
         .overlay {
             fill: none;
             pointer-events: all;
@@ -111,6 +105,14 @@ $highlight: $color-gray-lightest;
 
         }
         .tooltip-text-group {
+            font-size: 0.7em;
+            @include media($medium-screen) {
+                font-size: 1em;
+            }
+
+            .tooltip-text-group-background {
+                fill: white;
+            }
             .current-tooltip-text {
                 font-weight: bold;
             }
@@ -167,12 +169,6 @@ $highlight: $color-gray-lightest;
                     stroke: black;
                     stroke-opacity: 0.7;
                 }
-            }
-        }
-        .legend {
-            font-size: 12px;
-            @include media($medium-screen) {
-                font-size: 16px;
             }
         }
         #median-points {
@@ -243,19 +239,33 @@ $highlight: $color-gray-lightest;
 
 }
 
-#audible-label {
-    padding-left: 2em;
+.slider-wrapper {
+    height: 0px;
+    input#cursor-slider {
+        max-width: none;
+        position: relative;
+        opacity: .2;
+        top: -2em;
+        background: none;
+        padding: 0;
+        margin: 0;
+        &.active {
+            opacity: 1;
+        }
+    }
 }
-
-input#cursor-slider {
-    max-width: none;
+.ts-legend-controls-container {
     position: relative;
-    opacity: .2;
-    top: -2em;
-    background: none;
-    padding: 0;
-    margin: 0;
-    &.active {
-        opacity: 1;
+
+    font-size: .7em;
+    @include media($medium-screen) {
+        font-size: 1em;
+    }
+
+    .graph-controls-container {
+        position: absolute;
+        display: inline-block;
+        top: 0px;
+        right: 0px;
     }
 }

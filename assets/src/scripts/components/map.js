@@ -6,10 +6,10 @@ const { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util } = require('esri-lea
 
 const { link, provide } = require('../lib/redux');
 
+const { FIM_ENDPOINT, HYDRO_ENDPOINT } = require('../config');
 const { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } = require('../floodData');
 const { Actions } = require('../store');
 
-const FIM_ENDPOINT = window.FIM_ENDPOINT;
 
 const getLayerDefs = function(layerNo, siteno, stage) {
    const stageQuery = stage ? ` AND STAGE = ${stage}` : '';
@@ -97,8 +97,8 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     map.addLayer(new BasemapLayer('Gray'));
 
     // Add the ESRI World Hydro Reference Overlay
-    if (window.HYDRO_ENDPOINT) {
-        map.addLayer(new TiledMapLayer({url: window.HYDRO_ENDPOINT}));
+    if (HYDRO_ENDPOINT) {
+        map.addLayer(new TiledMapLayer({url: HYDRO_ENDPOINT}));
     }
 
     // Add a marker at the site location

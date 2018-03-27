@@ -1,6 +1,7 @@
 /**
  * Hydrograph charting module.
  */
+
 const { select } = require('d3-selection');
 const { extent } = require('d3-array');
 const { line: d3Line } = require('d3-shape');
@@ -102,11 +103,12 @@ const plotDataLine = function (elem, {visible, lines, tsKey, xScale, yScale}) {
 };
 
 
-const plotDataLines = function (elem, {visible, tsLinesMap, tsKey, xScale, yScale}) {
-    const elemId = `ts-${tsKey}-group`;
+const plotDataLines = function (elem, {visible, tsLinesMap, tsKey, xScale, yScale}, container) {
+    container = container || elem.append('g');
 
-    elem.selectAll(`#${elemId}`).remove();
-    const tsLineGroup = elem
+    const elemId = `ts-${tsKey}-group`;
+    container.selectAll(`#${elemId}`).remove();
+    const tsLineGroup = container
         .append('g')
         .attr('id', elemId)
         .classed('tsKey', true);
@@ -114,6 +116,8 @@ const plotDataLines = function (elem, {visible, tsLinesMap, tsKey, xScale, yScal
     for (const lines of Object.values(tsLinesMap)) {
         plotDataLine(tsLineGroup, {visible, lines, tsKey, xScale, yScale});
     }
+
+    return container;
 };
 
 
@@ -159,7 +163,7 @@ const plotSvgDefs = function(elem) {
 
 const timeSeriesLegend = function(elem) {
     elem.append('div')
-        .attr('class', 'hydrograph-container')
+        .classed('hydrograph-container', true)
         .append('svg')
             .call(link(drawSimpleLegend, createStructuredSelector({
                 legendMarkerRows: legendMarkerRowsSelector,
@@ -270,24 +274,6 @@ const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, data
     }
 };
 
-/**
- * Determine if the last year checkbox should be enabled or disabled
- *
- * @param elem
- * @param compareTimeseries
- */
-const controlLastYearSelect = function(elem, compareTimeseries) {
-    const comparePoints = compareTimeseries[Object.keys(compareTimeseries)[0]] ? compareTimeseries[Object.keys(compareTimeseries)[0]].points : [];
-    let checkbox = elem.select('.hydrograph-last-year-input');
-    if (comparePoints.length > 0) {
-        checkbox.property('disabled', false);
-    } else {
-        checkbox
-            .property('disabled', true)
-            .property('checked', false)
-            .dispatch('change');
-    }
-};
 
 const createTitle = function(elem) {
     elem.append('div')
@@ -296,32 +282,10 @@ const createTitle = function(elem) {
             elem.html(title);
         }, titleSelector));
 };
-/**
- * Modify styling to hide or display the plot area.
- *
- * @param elem
- * @param currentTimeseries
- */
-const controlGraphDisplay = function (elem, currentTimeseries) {
-    const seriesWithPoints = Object.values(currentTimeseries).filter(x => x.points.length > 0);
-    if (seriesWithPoints.length === 0) {
-        elem.attr('hidden', true);
-    } else {
-        // the div.compare-container is set to not display by default
-        // this prevents the user from seeing the checkbox in the
-        // time between the html loading and the javascript loading;
-        // if there are timeseries available, the div.compare-container
-        // should be displayed
-        elem.select('div.compare-container').attr('hidden', null);
-        elem.attr('hidden', null);
-    }
-};
 
 
 const timeSeriesGraph = function (elem) {
-    elem.call(link(controlGraphDisplay, timeSeriesSelector('current')))
-        .call(link(controlLastYearSelect, currentVariableTimeSeriesSelector('compare')))
-        .append('div')
+    elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(createTitle)
         .append('svg')
@@ -331,34 +295,36 @@ const timeSeriesGraph = function (elem) {
                 descriptionSelector,
                 isInteractive: () => true
             })))
-            .call(createTooltipText)
             .call(plotSvgDefs)
-            .append('g')
-                .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
-                .call(link(appendAxes, axesSelector))
-                .call(link(plotDataLines, createStructuredSelector({
-                    visible: isVisibleSelector('current'),
-                    tsLinesMap: currentVariableLineSegmentsSelector('current'),
-                    xScale: xScaleSelector('current'),
-                    yScale: yScaleSelector,
-                    tsKey: () => 'current'
-                })))
-                .call(link(plotDataLines, createStructuredSelector({
-                    visible: isVisibleSelector('compare'),
-                    tsLinesMap: currentVariableLineSegmentsSelector('compare'),
-                    xScale: xScaleSelector('compare'),
-                    yScale: yScaleSelector,
-                    tsKey: () => 'compare'
-                })))
-                .call(createTooltipFocus)
-                .call(link(plotAllMedianPoints, createStructuredSelector({
-                    visible: isVisibleSelector('median'),
-                    xscale: xScaleSelector('current'),
-                    yscale: yScaleSelector,
-                    seriesMap: currentVariableTimeSeriesSelector('median'),
-                    variable: currentVariableSelector,
-                    showLabel: (state) => state.showMedianStatsLabel
-                })));
+            .call(svg => {
+                svg.append('g')
+                    .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
+                    .call(link(appendAxes, axesSelector))
+                    .call(link(plotDataLines, createStructuredSelector({
+                        visible: isVisibleSelector('current'),
+                        tsLinesMap: currentVariableLineSegmentsSelector('current'),
+                        xScale: xScaleSelector('current'),
+                        yScale: yScaleSelector,
+                        tsKey: () => 'current'
+                    })))
+                    .call(link(plotDataLines, createStructuredSelector({
+                        visible: isVisibleSelector('compare'),
+                        tsLinesMap: currentVariableLineSegmentsSelector('compare'),
+                        xScale: xScaleSelector('compare'),
+                        yScale: yScaleSelector,
+                        tsKey: () => 'compare'
+                    })))
+                    .call(createTooltipFocus)
+                    .call(link(plotAllMedianPoints, createStructuredSelector({
+                        visible: isVisibleSelector('median'),
+                        xscale: xScaleSelector('current'),
+                        yscale: yScaleSelector,
+                        seriesMap: currentVariableTimeSeriesSelector('median'),
+                        variable: currentVariableSelector,
+                        showLabel: (state) => state.showMedianStatsLabel
+                    })));
+            })
+            .call(createTooltipText);
 
     elem.call(link(plotSeriesSelectTable, createStructuredSelector({
         availableTimeseries: availableTimeseriesSelector,
@@ -366,7 +332,6 @@ const timeSeriesGraph = function (elem) {
         timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current')(SPARK_LINE_DIM),
         layout: layoutSelector
     })));
-
     elem.append('div')
         .call(link(plotSROnlyTable, createStructuredSelector({
             tsKey: () => 'current',
@@ -396,6 +361,62 @@ const timeSeriesGraph = function (elem) {
     })));
 };
 
+/*
+ * Create the show last year toggle and the audible toggle for the timeseries graph.
+ * @param {Object} elem - D3 selection
+ */
+const graphControls = function(elem) {
+    const graphControlDiv = elem.append('ul')
+            .classed('usa-fieldset-inputs', true)
+            .classed('usa-unstyled-list', true)
+            .classed('graph-controls-container', true);
+
+    graphControlDiv.append('li')
+        .call(audibleUI);
+
+    const compareControlDiv = graphControlDiv.append('li');
+    compareControlDiv.append('input')
+        .attr('type', 'checkbox')
+        .attr('id', 'last-year-checkbox')
+        .attr('aria-labelledby', 'last-year-label')
+        .attr('ga-on', 'click')
+        .attr('ga-event-category', 'TimeseriesGraph')
+        .attr('ga-event-action', 'toggleCompare')
+        .on('click', dispatch(function() {
+            return Actions.toggleTimeseries('compare', this.checked);
+        }))
+        // Disables the checkbox if no compare time series for the current variable
+        .call(link(function(elem, compareTimeseries) {
+            const exists = Object.keys(compareTimeseries) ?
+                Object.values(compareTimeseries).filter(tsValues => tsValues.points.length).length > 0 : false;
+            elem.property('disabled', !exists);
+            if (!exists) {
+                elem.property('checked', false);
+                elem.dispatch('click');
+            }
+        }, currentVariableTimeSeriesSelector('compare')))
+        // Sets the state of the toggle
+        .call(link(function(elem, checked) {
+            elem.property('checked', checked);
+        }, isVisibleSelector('compare')));
+    compareControlDiv.append('label')
+        .attr('id', 'last-year-label')
+        .attr('for', 'last-year-checkbox')
+        .text('Show last year');
+};
+
+/**
+ * Modify styling to hide or display the plot area.
+ *
+ * @param elem
+ * @param currentTimeseries
+ */
+const controlGraphDisplay = function (elem, currentTimeseries) {
+    const seriesWithPoints = Object.values(currentTimeseries).filter(x => x.points.length > 0);
+    elem.attr('hidden', seriesWithPoints.length === 0 ? true : null);
+};
+
+
 
 const attachToNode = function (store, node, {siteno} = {}) {
     if (!siteno) {
@@ -406,14 +427,14 @@ const attachToNode = function (store, node, {siteno} = {}) {
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
         .call(provide(store))
+        .call(link(controlGraphDisplay, timeSeriesSelector('current')))
         .call(timeSeriesGraph)
-        .call(cursorSlider)
+        .call(cursorSlider);
+    select(node).append('div')
+        .classed('ts-legend-controls-container', true)
         .call(timeSeriesLegend)
-        .call(audibleUI)
-        .select('.hydrograph-last-year-input')
-            .on('change', dispatch(function () {
-                return Actions.toggleTimeseries('compare', this.checked);
-            }));
+        .call(graphControls);
+
 
     window.onresize = function() {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
