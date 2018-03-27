@@ -76,7 +76,6 @@ def monitoring_location(site_no):
                     get_disambiguated_values(param_datum, app.config['NWIS_CODE_LOOKUP'], {}, app.config['HUC_LOOKUP'])
                     for param_datum in param_data
                 ]
-                # site_dataseries = fill_in_missing_parameter_groups(site_dataseries)
                 grouped_dataseries = rollup_dataseries(site_dataseries)
                 location_capabilities = set(param_datum['parm_cd'] for param_datum in param_data)
             else:

@@ -202,11 +202,11 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
     return linked_data
 
 
-def _collect_rollup_series(grouped_series):
+def _collapse_series_by_parameter_code(grouped_series):
     """
     For each parameter group, take each of its timeseries and
     organize them by parameter code. Group by those parameter codes
-    and extract metadata from them. This intened to help with cases
+    and extract metadata from them. This intended to help with cases
     where there are multiple series for a parameter code (e.g. temperature
     measured at slightly different depths).
 
@@ -252,6 +252,30 @@ def _collect_rollup_series(grouped_series):
     return rolled_up_series
 
 
+def _extract_group_date_range(dataseries):
+    """
+    Given a list of dataseries, determine the earliest
+    start date, latest end date, and create a string
+    of their various data types.
+
+    :param list dataseries: dataseries
+    :return: overall metadata for a bunch of dataseries
+    :rtype: dict
+
+    """
+    start_dates = [series['start_date'] for series in dataseries]
+    end_dates = [series['end_date'] for series in dataseries]
+    data_types = set(list(itertools.chain.from_iterable([series['data_types'] for series in dataseries])))
+    range_start_date = min(start_dates).strftime('%Y-%m-%d')
+    range_end_date = max(end_dates).strftime('%Y-%m-%d')
+    return {
+        'start_date': range_start_date,
+        'end_date': range_end_date,
+        'data_types': ', '.join(data_types),
+        'parameters': dataseries
+    }
+
+
 def rollup_dataseries(dataseries):
     """
     Roll up all of a sites data series by parameter group. Data types
@@ -280,22 +304,9 @@ def rollup_dataseries(dataseries):
     pg_sorted = sorted(display_series, key=parm_grp_sort)
     pg_grouped_series = itertools.groupby(pg_sorted, key=parm_grp_sort)
 
-    rollup_by_parameter_grp = _collect_rollup_series(pg_grouped_series)
+    rollup_by_parameter_grp = _collapse_series_by_parameter_code(pg_grouped_series)
     # remove the `ALL` parameter group
     # it's the amalgamation of the other groups
     rollup_by_parameter_grp.pop('ALL', None)
 
-    def extract_group_date_range(values):
-        start_dates = [value['start_date'] for value in values]
-        end_dates = [value['end_date'] for value in values]
-        data_types = set(list(itertools.chain.from_iterable([value['data_types'] for value in values])))
-        range_start_date = min(start_dates).strftime('%Y-%m-%d')
-        range_end_date = max(end_dates).strftime('%Y-%m-%d')
-        return {
-            'start_date': range_start_date,
-            'end_date': range_end_date,
-            'data_types': ', '.join(data_types),
-            'parameters': values
-        }
-
-    return {k: extract_group_date_range(v) for k, v in rollup_by_parameter_grp.items()}
+    return {k: _extract_group_date_range(v) for k, v in rollup_by_parameter_grp.items()}
