@@ -6,7 +6,7 @@ import json
 from flask import abort, render_template, request, Markup
 
 from . import app, __version__
-from .location_utils import build_linked_data, get_disambiguated_values
+from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries
 from .utils import construct_url, defined_when, execute_get_request, parse_rdb
 
 # Station Fields Mapping to Descriptions
@@ -68,13 +68,18 @@ def monitoring_location(site_no):
                 }
             )
             if parameter_data_resp.status_code == 200:
-                param_data = [param_datum for param_datum in
-                              parse_rdb(parameter_data_resp.iter_lines(decode_unicode=True))]
-                site_dataseries = [get_disambiguated_values(param_datum, app.config['NWIS_CODE_LOOKUP'], {},
-                                                            app.config['HUC_LOOKUP']) for param_datum in param_data]
+                param_data = [
+                    param_datum for param_datum in
+                    parse_rdb(parameter_data_resp.iter_lines(decode_unicode=True))
+                ]
+                site_dataseries = [
+                    get_disambiguated_values(param_datum, app.config['NWIS_CODE_LOOKUP'], {}, app.config['HUC_LOOKUP'])
+                    for param_datum in param_data
+                ]
+                grouped_dataseries = rollup_dataseries(site_dataseries)
                 location_capabilities = set(param_datum['parm_cd'] for param_datum in param_data)
             else:
-                site_dataseries = None
+                grouped_dataseries = None
                 location_capabilities = {}
 
             json_ld = build_linked_data(
@@ -118,7 +123,7 @@ def monitoring_location(site_no):
                 'location_with_values': location_with_values,
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
-                'site_dataseries': site_dataseries,
+                'parm_grp_summary': grouped_dataseries,
                 'questions_link': questions_link
             }
         http_code = 200

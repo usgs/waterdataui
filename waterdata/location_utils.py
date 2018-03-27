@@ -5,6 +5,7 @@ USGS water services.
 """
 from collections import namedtuple
 import datetime
+import itertools
 
 from flask import url_for
 
@@ -86,7 +87,16 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
             }
 
         elif key in code_lookups:
-            value_dict = code_lookups.get(key).get(value) or {'name': value}
+            if key == 'parm_grp_cd':
+                value_dict = code_lookups.get(key).get(value)
+                # if a value can't be found for a parameter group code (usually because there isn't a parameter group),
+                # try looking it up based on the value of the parameter code
+                if value_dict is None:
+                    parm_code = location['parm_cd']
+                    parameter_metadata = code_lookups.get('parm_cd').get(parm_code) or {}
+                    value_dict = {'name': parameter_metadata.get('group', value)}
+            else:
+                value_dict = code_lookups.get(key).get(value) or {'name': value}
             transformed_value = dict(code=value, **value_dict)
 
         elif key == 'huc_cd':
@@ -192,3 +202,113 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
             'agency_cd={0}&site_no={1}&parm_cd=00060&period=100'
         ).format(agency_code, location_number)
     return linked_data
+
+
+def _collapse_series_by_parameter_code(grouped_series):
+    """
+    For each parameter group, take each of its timeseries and
+    organize them by parameter code. Group by those parameter codes
+    and extract metadata from them. This intended to help with cases
+    where there are multiple series for a parameter code (e.g. temperature
+    measured at slightly different depths).
+
+    :param groupby grouped_series: dataseries grouped by some value (e.g. parameter group, data type, etc.)
+    :return: groupings with one entry for each parameter code
+    :rtype: dict
+
+    """
+    def parm_cd_sort(x):
+        return x['parm_cd']['code']
+
+    rolled_up_series = {}
+    # for each parameter group grouping...
+    for key, grp in grouped_series:
+        pcode_sort = sorted(grp, key=parm_cd_sort)
+        series_by_pcode = itertools.groupby(pcode_sort, key=parm_cd_sort)
+        # for each parameter code grouping within a parameter group grouping...
+        grp_pcode_series = []
+        for key_pc, pc_grp in series_by_pcode:
+            series_by_pc = list(pc_grp)
+            parameter_name = series_by_pc[0]['parm_cd']['name']
+            # determine the start and end dates of the group
+            start_dates = [
+                datetime.datetime.strptime(series['begin_date']['code'], '%Y-%m-%d') for series in series_by_pc
+            ]
+            end_dates = [
+                datetime.datetime.strptime(series['end_date']['code'], '%Y-%m-%d') for series in series_by_pc
+            ]
+            pc_start_date = min(start_dates)
+            pc_end_date = max(end_dates)
+            # collect data types
+            data_types = [series['data_type_cd']['name'] for series in series_by_pc]
+
+            pc_metadata = {
+                'start_date': pc_start_date,
+                'end_date': pc_end_date,
+                'data_types': data_types,
+                'parameter_code': key_pc,
+                'parameter_name': parameter_name
+            }
+            grp_pcode_series.append(pc_metadata)
+        rolled_up_series[key] = grp_pcode_series
+    return rolled_up_series
+
+
+def _extract_group_date_range(dataseries):
+    """
+    Given a list of dataseries, determine the earliest
+    start date, latest end date, and create a string
+    of their various data types.
+
+    :param list dataseries: dataseries
+    :return: overall metadata for a bunch of dataseries
+    :rtype: dict
+
+    """
+    start_dates = [series['start_date'] for series in dataseries]
+    end_dates = [series['end_date'] for series in dataseries]
+    data_types = set(list(itertools.chain.from_iterable([series['data_types'] for series in dataseries])))
+    range_start_date = min(start_dates).strftime('%Y-%m-%d')
+    range_end_date = max(end_dates).strftime('%Y-%m-%d')
+    return {
+        'start_date': range_start_date,
+        'end_date': range_end_date,
+        'data_types': ', '.join(sorted(data_types)),
+        'parameters': dataseries
+    }
+
+
+def rollup_dataseries(dataseries):
+    """
+    Roll up all of a sites data series by parameter group. Data types
+    for the parameter group is the join of the data types for each measured
+    parameter code. Similarly, the start and end dates are the earliest and
+    latest date of all the measured parameter codes within a group.
+
+    Data types of annual reports and peak values are excluded from the grouping.
+
+    :param list dataseries: list of data series available at a site
+    :return: dataseries grouped by parameter group code
+    :rtype: dict
+
+    """
+    # exclude annual reports, peak value measurements, and site visits
+    excluded_data_type_codes = ['ad', 'pk', 'sv']
+    display_series = list(itertools.filterfalse(
+        lambda x: x['data_type_cd']['code'].lower() in excluded_data_type_codes,
+        dataseries
+    ))
+
+    # handle series with parameter groups
+    def parm_grp_sort(x):
+        return x['parm_grp_cd']['name']
+
+    pg_sorted = sorted(display_series, key=parm_grp_sort)
+    pg_grouped_series = itertools.groupby(pg_sorted, key=parm_grp_sort)
+
+    rollup_by_parameter_grp = _collapse_series_by_parameter_code(pg_grouped_series)
+    # remove the `ALL` parameter group
+    # it's the amalgamation of the other groups
+    rollup_by_parameter_grp.pop('ALL', None)
+
+    return {k: _extract_group_date_range(v) for k, v in rollup_by_parameter_grp.items()}
