@@ -55,8 +55,7 @@ describe('Parameters module', () => {
             expect(available).toEqual([
                 ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeseriesCount: 1}],
                 ['00061', {variableID: 'code1', description: 'code1 desc', selected: false, currentTimeseriesCount: 1}],
-                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1}],
-                ['00063', {variableID: 'code3', description: 'code3 desc', selected: false, currentTimeseriesCount: 0}]
+                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1}]
             ]);
         });
 
@@ -108,8 +107,7 @@ describe('Parameters module', () => {
             expect(available).toEqual([
                 ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeseriesCount: 1}],
                 ['00061', {variableID: 'code1', description: 'code1 desc', selected: false, currentTimeseriesCount: 1}],
-                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1}],
-                ['00063', {variableID: 'code3', description: 'code3 desc', selected: false, currentTimeseriesCount: 0}]
+                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1}]
             ]);
         });
 
@@ -160,8 +158,7 @@ describe('Parameters module', () => {
             // Series are ordered by parameter code and have expected values.
             expect(available).toEqual([
                 ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeseriesCount: 1}],
-                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1}],
-                ['00063', {variableID: 'code3', description: 'code3 desc', selected: false, currentTimeseriesCount: 0}]
+                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1}]
             ]);
         });
     });
