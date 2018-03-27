@@ -203,17 +203,35 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
 
 
 def _parameter_group_mappings(dataseries):
+    """
+    Generate a mapping of each variable to its data type
+
+    :param list dataseries: list of dataseries available at the site
+    :return: variable to data type mappings
+    :rtype: dict
+
+    """
     var_to_group_mapping = defaultdict(list)
     for series in dataseries:
         parameter_code = series['parm_cd']['code']
         parameter_group_name = series['parm_grp_cd']['name']
         parameter_group_code = series['parm_grp_cd']['code']
-        if (parameter_group_name, parameter_group_code) not in var_to_group_mapping[parameter_code] and parameter_group_name:
+        if ((parameter_group_name, parameter_group_code) not in var_to_group_mapping[parameter_code]
+                and parameter_group_name):
             var_to_group_mapping[parameter_code].append((parameter_group_name, parameter_group_code))
     return var_to_group_mapping
 
 
 def fill_in_missing_parameter_groups(dataseries):
+    """
+    Infer data types for parameter data series that
+    do not have a data type after disambiguation.
+
+    :param list dataseries: list of dataseries available at the site
+    :return: dataseries with parameter codes filled in as much as possible
+    :rtype: list
+
+    """
     updated_dataseries = []
     mappings = _parameter_group_mappings(dataseries)
     for series in dataseries:
@@ -230,6 +248,18 @@ def fill_in_missing_parameter_groups(dataseries):
 
 
 def _collect_rollup_series(grouped_series):
+    """
+    For each parameter group, take each of its timeseries and
+    organize them by parameter code. Group by those parameter codes
+    and extract metadata from them. This intened to help with cases
+    where there are multiple series for a parameter code (e.g. temperature
+    measured at slightly different depths).
+
+    :param groupby grouped_series: dataseries grouped by some value (e.g. parameter group, data type, etc.)
+    :return: groupings with one entry for each parameter code
+    :rtype: dict
+
+    """
 
     def parm_cd_sort(x):
         return x['parm_cd']['code']
@@ -253,9 +283,9 @@ def _collect_rollup_series(grouped_series):
             ]
             pc_start_date = min(start_dates)
             pc_end_date = max(end_dates)
-            # create data types string
+            # collect data types
             data_types = [series['data_type_cd']['name'] for series in series_by_pc]
-            data_type_str = ', '.join(set(data_types))
+
             pc_metadata = {
                 'start_date': pc_start_date,
                 'end_date': pc_end_date,
@@ -269,8 +299,21 @@ def _collect_rollup_series(grouped_series):
 
 
 def rollup_dataseries(dataseries):
-    # exclude annual reports
-    excluded_data_type_codes = ['ad', 'pv']
+    """
+    Roll up all of a sites data series by parameter group. Data types
+    for the parameter group is the join of the data types for each measured
+    parameter code. Similarly, the start and end dates are the earliest and
+    latest date of all the measured parameter codes within a group.
+
+    Data types of annual reports and peak values are excluded from the grouping.
+
+    :param list dataseries: list of data series available at a site
+    :return: dataseries grouped by parameter group code
+    :rtype: dict
+
+    """
+    # exclude annual reports and peak value measurements
+    excluded_data_type_codes = ['ad', 'pk']
     display_series = list(itertools.filterfalse(
         lambda x: x['data_type_cd']['code'].lower() in excluded_data_type_codes,
         dataseries
@@ -278,7 +321,6 @@ def rollup_dataseries(dataseries):
     series_w_parm_grp_cd = itertools.filterfalse(lambda x: not bool(x['parm_grp_cd']['name']), display_series)
     series_wo_parm_grp_cd = itertools.filterfalse(lambda x: bool(x['parm_grp_cd']['name']), display_series)
 
-    rolled_up_series = defaultdict(list)
     rolled_up_series = defaultdict(list)
 
     # handle series with parameter groups
@@ -289,8 +331,8 @@ def rollup_dataseries(dataseries):
     pg_grouped_series = itertools.groupby(pg_sorted, key=parm_grp_sort)
 
     rollup_by_parameter_grp = _collect_rollup_series(pg_grouped_series)
-    # handle series without parameter groups
 
+    # handle series without parameter groups
     def data_type_sort(x):
         return x['data_type_cd']['name']
 
