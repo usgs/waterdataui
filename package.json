@@ -48,6 +48,8 @@
     "browserify-babel-istanbul": "^0.4.0",
     "eslint": "^4.18.0",
     "eslint-plugin-jasmine": "^2.9.2",
+    "gulp": "^3.9.1",
+    "gulp-rev-all": "^0.9.7",
     "isparta": "^4.0.0",
     "jasmine": "^2.8.0",
     "jasmine-ajax": "^3.3.1",
