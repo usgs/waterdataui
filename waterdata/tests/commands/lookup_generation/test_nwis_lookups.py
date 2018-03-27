@@ -15,34 +15,34 @@ class TranslateToLookupTestCase(TestCase):
         ]
 
     def test_empty_dict(self):
-        self.assertEqual(translate_to_lookup([], 'this_cd', 'this_name', ''), {})
+        self.assertEqual(translate_to_lookup([], 'this_cd', 'this_name', '', ''), {})
 
     def test_dict_with_unmatched_code_key(self):
-        self.assertEqual(translate_to_lookup(self.test_dict_iter, 'that_cd', 'this_name', ''), {})
+        self.assertEqual(translate_to_lookup(self.test_dict_iter, 'that_cd', 'this_name', '', ''), {})
 
     def test_dict_matched_code_key(self):
-        self.assertEqual(translate_to_lookup(self.test_dict_iter, 'this_cd', 'this_name', ''),
+        self.assertEqual(translate_to_lookup(self.test_dict_iter, 'this_cd', 'this_name', '', ''),
                          {'value1': {'name': 'Name1'},
                           'value2': {'name': 'Name2'},
                           'value3': {'name': 'Name3'}}
                          )
 
     def test_with_unmatched_name_key(self):
-        self.assertEqual(translate_to_lookup(self.test_dict_iter, 'this_cd', 'that_name', ''),
+        self.assertEqual(translate_to_lookup(self.test_dict_iter, 'this_cd', 'that_name', '', ''),
                          {'value1': {'name': None},
                           'value2': {'name': None},
                           'value3': {'name': None}}
                          )
 
     def test_with_matched_desc_key(self):
-        self.assertEqual(translate_to_lookup(self.test_dict_iter, 'this_cd', 'this_name', 'this_desc'),
+        self.assertEqual(translate_to_lookup(self.test_dict_iter, 'this_cd', 'this_name', '', 'this_desc'),
                          {'value1': {'name': 'Name1', 'desc': 'Description 1'},
                           'value2': {'name': 'Name2', 'desc': 'Description 2'},
                           'value3': {'name': 'Name3', 'desc': 'Description 3'}}
                          )
 
     def test_with_unmatched_desc_key(self):
-        self.assertEqual(translate_to_lookup(self.test_dict_iter, 'this_cd', 'this_name', 'that_desc'),
+        self.assertEqual(translate_to_lookup(self.test_dict_iter, 'this_cd', 'this_name', '', 'that_desc'),
                          {'value1': {'name': 'Name1', 'desc': None},
                           'value2': {'name': 'Name2', 'desc': None},
                           'value3': {'name': 'Name3', 'desc': None}}
@@ -62,20 +62,20 @@ class TranslateCodesByGroupTestCase(TestCase):
         ]
 
     def test_empty_dict(self):
-        self.assertEqual(translate_codes_by_group([], 'this_cd', 'this_name'), {})
+        self.assertEqual(translate_codes_by_group([], 'this_cd', 'this_name', ''), {})
 
     def test_unmatched_code_key(self):
-        self.assertEqual(translate_codes_by_group(self.test_dict_iter, 'that_cd', 'this_name'), {})
+        self.assertEqual(translate_codes_by_group(self.test_dict_iter, 'that_cd', 'this_name', ''), {})
 
     def test_matched_code_key(self):
-        self.assertEqual(translate_codes_by_group(self.test_dict_iter, 'this_cd', 'this_name'),
+        self.assertEqual(translate_codes_by_group(self.test_dict_iter, 'this_cd', 'this_name', ''),
                          {'value1': {'name': 'Name1'},
                           'value2': {'name': 'Name2'},
                           'value3': {'name': 'Name3'}}
                          )
 
     def test_unmatched_name_key(self):
-        self.assertEqual(translate_codes_by_group(self.test_dict_iter, 'this_cd', 'that_name'),
+        self.assertEqual(translate_codes_by_group(self.test_dict_iter, 'this_cd', 'that_name', ''),
                          {'value1': {'name': None},
                           'value2': {'name': None},
                           'value3': {'name': None}}
