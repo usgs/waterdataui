@@ -77,9 +77,11 @@ def construct_url(netloc, path, parameters=()):
 
 def defined_when(condition, fallback):
     """
-    Decorator that undefines the decorated function if `condition` is False.
-    :param bool condition: Decorated function will be defined if True
-    :return: Function or None
+    Decorator that fallsback to a specified function if `condition` is False.
+    :param bool condition: Decorated function will be called if True, otherwise
+                           fallback will be called
+    :param function fallback Fallback function to be called if condition is False
+    :return: Decorated function
     :rtype: function
     """
     def wrap(f):
