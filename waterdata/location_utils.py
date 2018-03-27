@@ -89,6 +89,8 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
         elif key in code_lookups:
             if key == 'parm_grp_cd':
                 value_dict = code_lookups.get(key).get(value)
+                # if a value can't be found for a parameter group code (usually because there isn't a parameter code),
+                # try looking it up based on the value of the parameter code
                 if value_dict is None:
                     parm_code = location['parm_cd']
                     parameter_metadata = code_lookups.get('parm_cd').get(parm_code) or {}

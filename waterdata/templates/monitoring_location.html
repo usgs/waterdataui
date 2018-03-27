@@ -74,7 +74,7 @@
                                     <tbody>
                                         {% for key, value in parm_grp_summary.items() %}
                                             <tr>
-                                                <td scope="row">{%  if key %}{{ key }}{%  else %}<sub>n/a</sub>{%  endif %}</td>
+                                                <td scope="row">{{ key }}</td>
                                                 <td>{{ value.data_types }}</td>
                                                 <td>{{ value.start_date }}</td>
                                                 <td>{{ value.end_date }}</td>
