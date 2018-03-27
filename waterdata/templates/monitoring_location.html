@@ -74,9 +74,6 @@
                                     <tbody>
                                         {% for key, value in parm_grp_summary.items() %}
                                             <tr>
-{#                                                <td scope="row">{% if series.parm_cd.name %}{{ series.parm_cd.name }}{% else %}<sub>n/a</sub>{% endif %}</td>#}
-{#                                                <td>{% if series.parm_cd.code %}{{ series.parm_cd.code }}{% else %}<sub>n/a</sub>{% endif %}</td>#}
-{#                                                <td>{{ series.data_type_cd.name }}</td>#}
                                                 <td scope="row">{{ key }}</td>
                                                 <td>{{ value.data_types }}</td>
                                                 <td>{{ value.start_date }}</td>
@@ -85,6 +82,7 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
+                                <a href="https://waterdata.usgs.gov/nwis/inventory/?site_no={{ stations[0].site_no }}">NWIS Site Inventory</a>
                             </div>
                         </li>
                     </ul>
