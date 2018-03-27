@@ -270,10 +270,15 @@ def _collect_rollup_series(grouped_series):
 
 def rollup_dataseries(dataseries):
     # exclude annual reports
-    display_series = list(itertools.filterfalse(lambda x: 'annual' in x['data_type_cd']['name'].lower(), dataseries))
+    excluded_data_type_codes = ['ad', 'pv']
+    display_series = list(itertools.filterfalse(
+        lambda x: x['data_type_cd']['code'].lower() in excluded_data_type_codes,
+        dataseries
+    ))
     series_w_parm_grp_cd = itertools.filterfalse(lambda x: not bool(x['parm_grp_cd']['name']), display_series)
     series_wo_parm_grp_cd = itertools.filterfalse(lambda x: bool(x['parm_grp_cd']['name']), display_series)
 
+    rolled_up_series = defaultdict(list)
     rolled_up_series = defaultdict(list)
 
     # handle series with parameter groups
@@ -296,7 +301,8 @@ def rollup_dataseries(dataseries):
 
     for d in (rollup_by_parameter_grp, rollup_by_data_type):
         for k, v in d.items():
-            rolled_up_series[k].append(v)
+            if k.lower() != 'all':  # don't include the all key -- it's just the amalgamation of the other groups
+                rolled_up_series[k].append(v)
 
     def extract_group_date_range(values):
         start_dates = [value['start_date'] for value in values]
