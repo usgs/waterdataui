@@ -1,24 +1,17 @@
 & {
-    display: inline-block;
-    vertical-align: top;
-    position: absolute;
-
-    a {
-        padding-left: .25em;
-    }
-
     fieldset {
-        display: none;
-        position: relative;
+        position: absolute;
+        right: 0;
         width: 150px;
         background: $color-white;
         legend {
             font-size: .75em;
         }
+    }
 
-        &:hover {
-            display: block;
-        }
+    .embed-icon {
+        display: inline;
+        color: #3C5A96;
     }
 
     &:hover {

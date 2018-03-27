@@ -12,13 +12,6 @@ function attachToNode(store, node) {
     input.on('focus', function () {
         this.setSelectionRange(0, this.value.length);
     });
-
-    // Prepend a font awesome icon to the beginning of the node
-    select(node).insert('a', 'fieldset');
-    select(node)
-        .select('a')
-        .append('i')
-            .attr('class', 'fa fa-code');
 }
 
 module.exports = {attachToNode};

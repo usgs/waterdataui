@@ -16,10 +16,11 @@
 
 
 {% macro EmbedComponent(site_no) -%}
-    <div class="wdfn-component" data-component="embed">
+    <span class="wdfn-component" data-component="embed">
+        <i class="embed-icon has-script fa fa-code"></i>
         <fieldset class="no-script">
             <legend>Embed Snippet</legend>
-            <input type="text" id="embed-url" aria-label="Embed this time-series chart on your own site" value='<iframe src="{{ url_for('time_series_component', site_no=site_no, _external=True) }}" width="600" height="900" frameborder="0" style="border:0" allowfullscreen></iframe>' readonly>
+            <input type="text" id="embed-url" aria-label="Embed this time-series chart on your own site" value='<iframe src="{{ url_for('time_series_component', site_no=site_no, _external=True) }}" width="600" height="900" frameborder="0" style="border:0" allowfullscreen></iframe>' readonly></input>
         </fieldset>
-    </div>
+    </span>
 {%- endmacro %}
