@@ -80,7 +80,7 @@ def monitoring_location(site_no):
                 grouped_dataseries = rollup_dataseries(site_dataseries)
                 location_capabilities = set(param_datum['parm_cd'] for param_datum in param_data)
             else:
-                site_dataseries = None
+                grouped_dataseries = None
                 location_capabilities = {}
 
             json_ld = build_linked_data(
@@ -124,7 +124,7 @@ def monitoring_location(site_no):
                 'location_with_values': location_with_values,
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
-                'site_dataseries': site_dataseries,
+                'parm_grp_summary': grouped_dataseries,
                 'questions_link': questions_link
             }
         http_code = 200
