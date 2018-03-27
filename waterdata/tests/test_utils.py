@@ -6,7 +6,7 @@ from unittest import TestCase, mock
 
 import requests as r
 
-from ..utils import construct_url, execute_get_request, parse_rdb
+from ..utils import construct_url, defined_when, execute_get_request, parse_rdb
 
 
 class TestConstructUrl(TestCase):
@@ -218,3 +218,26 @@ class TestParseRdb(TestCase):
         result = parse_rdb(iter(self.test_rdb_lines + ['\n', '\n']))
         result_list = list(result)
         self.assertEqual(len(result_list), 2)
+
+
+class TestDefinedWhen(TestCase):
+    def setUp(self):
+        pass
+
+    def test_true(self):
+        @defined_when(True, lambda: 'fallback')
+        def decorated():
+            return 'called'
+        self.assertEqual(decorated(), 'called')
+
+    def test_false(self):
+        @defined_when(False, lambda: 'fallback')
+        def decorated():
+            return 'called'
+        self.assertEqual(decorated(), 'fallback')
+
+    def test_arg_passing(self):
+        @defined_when(True, lambda: 'fallback')
+        def decorated(*args, **kwargs):
+            return ','.join([*args, *kwargs.keys(), *kwargs.values()])
+        self.assertEqual(decorated('1', '2', kw1='3', kw2='4'), '1,2,kw1,kw2,3,4')
