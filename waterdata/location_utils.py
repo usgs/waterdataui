@@ -251,8 +251,8 @@ def _collect_rollup_series(grouped_series):
             end_dates = [
                 datetime.datetime.strptime(series['end_date']['code'], '%Y-%m-%d') for series in series_by_pc
             ]
-            pc_start_date = min(start_dates).strftime('%Y-%m-%d')
-            pc_end_date = max(end_dates).strftime('%Y-%m-%d')
+            pc_start_date = min(start_dates)
+            pc_end_date = max(end_dates)
             # create data types string
             data_types = [series['data_type_cd']['name'] for series in series_by_pc]
             data_type_str = ', '.join(set(data_types))
@@ -299,12 +299,8 @@ def rollup_dataseries(dataseries):
             rolled_up_series[k].append(v)
 
     def extract_group_date_range(values):
-        start_dates = [
-            datetime.datetime.strptime(value['start_date'], '%Y-%m-%d') for value in values
-        ]
-        end_dates = [
-            datetime.datetime.strptime(value['end_date'], '%Y-%m-%d') for value in values
-        ]
+        start_dates = [value['start_date'] for value in values]
+        end_dates = [value['end_date'] for value in values]
         data_types = set(list(itertools.chain.from_iterable([value['data_types'] for value in values])))
         range_start_date = min(start_dates).strftime('%Y-%m-%d')
         range_end_date = max(end_dates).strftime('%Y-%m-%d')
