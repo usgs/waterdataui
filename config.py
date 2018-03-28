@@ -13,7 +13,7 @@ from waterdata import __version__ as APP_VERSION
 # acceptable values: 'local', 'development', 'staging', 'prod'
 DEPLOYMENT_ENVIRONMENT = 'development'
 
-#FEATURE FLAGS
+# FEATURE FLAGS
 TIMESERIES_AUDIO_ENABLED = True
 HYDROLOGIC_PAGES_ENABLED = True
 
