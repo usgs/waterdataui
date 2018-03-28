@@ -293,10 +293,12 @@ def rollup_dataseries(dataseries):
     :rtype: dict
 
     """
-    # exclude annual reports, peak value measurements, and site visits
-    excluded_data_type_codes = ['ad', 'pk', 'sv']
+    # exclude annual reports, peak value measurements, site visits, and active ground water sites
+    # basically everything that doesn't have a parameter code and parameter group
+    # e.g. 'ad', 'pk', 'sv', and 'aw' data type codes all cause various rollup and formatting problems
+    # because of weird date formatting and lack of parameter code
     display_series = list(itertools.filterfalse(
-        lambda x: x['data_type_cd']['code'].lower() in excluded_data_type_codes,
+        lambda x: x['parm_cd']['code'] == '' and x['parm_grp_cd']['code'] == '',
         dataseries
     ))
 
