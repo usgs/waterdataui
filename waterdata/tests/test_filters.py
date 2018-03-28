@@ -1,3 +1,7 @@
+"""
+Unit tests for Jinja2 filters.
+"""
+
 from waterdata import filters
 
 
