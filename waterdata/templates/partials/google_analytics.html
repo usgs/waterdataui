@@ -8,7 +8,7 @@
         ga('require', 'eventTracker');
     </script>
     <script async src="https://www.google-analytics.com/analytics.js"></script>
-    <script async src="{{ config.STATIC_ROOT }}/autotrack.js"></script>
+    <script async src="{{ 'autotrack.js' | asset_url }}></script>
 {% endif %}
 
 {% if config.ENABLE_USGS_GA %}
