@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
+
+### Changed
+- Data series summary table rolls up by parameter group
+
+## [0.4.0] - 2018-03-26
+
+### Added
 - Title to timeseries graph
 - Dismissable banner which shows the beta status and feedback link
 - Slider to give time series detail at a specific date
@@ -20,7 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Select timeseries list no longer contains columns for parameter code or timeseries availability. 
 Parameter codes can be found in the tooltip. A scrollbar will appear for long timeseries lists.
 
-##Fixed
+### Fixed
 - Screen reader only tables are now fully hidden on Firefox.
 - Timeseries without any data are not shown the the select timeseries table.
 - Sparklines will appear to any timeseries with current data
