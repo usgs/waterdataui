@@ -10,10 +10,11 @@ const { DEPLOYMENT_ENVIRONMENT } = require('../../config');
 const { dispatch, link } = require('../../lib/redux');
 const { Actions } = require('../../store');
 
+const AUDIO_FEATURE_ON = DEPLOYMENT_ENVIRONMENT === 'local';
 // Higher tones get lower volume
 const volumeScale = scaleLinear().range([2, .3]);
 
-const AudioContext = window.AudioContext || window.webkitAudioContext;
+const AudioContext = AUDIO_FEATURE_ON ? window.AudioContext || window.webkitAudioContext: null;
 const getAudioContext = memoize(function () {
     return new AudioContext();
 });
@@ -46,28 +47,30 @@ export const createSound = memoize(/* eslint-disable no-unused-vars */ tsKey => 
 });
 
 export const updateSound = function ({enabled, points}) {
-    const audioCtx = getAudioContext();
-    for (const tsKey of Object.keys(points)) {
-        const point = points[tsKey];
-        const {compressor, oscillator, gainNode} = createSound(tsKey);
+    if (enabled) {
+        const audioCtx = getAudioContext();
+        for (const tsKey of Object.keys(points)) {
+            const point = points[tsKey];
+            const {compressor, oscillator, gainNode} = createSound(tsKey);
 
-        compressor.threshold.setValueAtTime(-50, audioCtx.currentTime);
-        compressor.knee.setValueAtTime(40, audioCtx.currentTime);
-        compressor.ratio.setValueAtTime(12, audioCtx.currentTime);
-        compressor.attack.setValueAtTime(0, audioCtx.currentTime);
-        compressor.release.setValueAtTime(0.25, audioCtx.currentTime);
+            compressor.threshold.setValueAtTime(-50, audioCtx.currentTime);
+            compressor.knee.setValueAtTime(40, audioCtx.currentTime);
+            compressor.ratio.setValueAtTime(12, audioCtx.currentTime);
+            compressor.attack.setValueAtTime(0, audioCtx.currentTime);
+            compressor.release.setValueAtTime(0.25, audioCtx.currentTime);
 
-        oscillator.frequency.setTargetAtTime(
-            enabled && point ? point : null,
-            audioCtx.currentTime,
-            .2
-        );
+            oscillator.frequency.setTargetAtTime(
+                enabled && point ? point : null,
+                audioCtx.currentTime,
+                .2
+            );
 
-        gainNode.gain.setTargetAtTime(
-            enabled && point ? volumeScale(point) : null,
-            audioCtx.currentTime,
-            .2
-        );
+            gainNode.gain.setTargetAtTime(
+                enabled && point ? volumeScale(point) : null,
+                audioCtx.currentTime,
+                .2
+            );
+        }
     }
 };
 
@@ -114,7 +117,7 @@ const audiblePointsSelector = createSelector(
 
 export const audibleUI = function (elem) {
     // Only enable the audio interface on dev tiers.
-    if (DEPLOYMENT_ENVIRONMENT === 'staging' || DEPLOYMENT_ENVIRONMENT === 'prod') {
+    if (!AUDIO_FEATURE_ON) {
         return;
     }
 
