@@ -28,20 +28,16 @@ class TestIndefiniteArticleFilter(TestCase):
         self.non_vowel = 'Mango'
         self.vowel = 'Apple'
 
-    def test_assert_indefinite_article_non_vowel(self):
+    def test_non_vowel(self):
         self.assertEqual(filters.use_correct_indefinite_article(self.non_vowel), 'a')
 
-    def test_assert_indefinite_article_vowel(self):
+    def test_article_vowel(self):
         self.assertEqual(filters.use_correct_indefinite_article(self.vowel), 'an')
 
 
 class TestExtendedDescriptionFilter(TestCase):
 
     def setUp(self):
-        self.location_id = '005667129'
-        self.location_type = 'STREAM'
-        self.county = 'DANE COUNTY'
-        self.state = 'WISCONSIN'
         self.grp_with_one_parm = {
             'Inorganic': {
                 'start_date': '1908-01-03',
