@@ -6,15 +6,14 @@ const { tsCursorPointsSelector } = require('./cursor');
 const { yScaleSelector } = require('./scales');
 const { allTimeSeriesSelector } = require('./timeseries');
 
-const { DEPLOYMENT_ENVIRONMENT } = require('../../config');
+const { TIMESERIES_AUDIO_ENABLED } = require('../../config');
 const { dispatch, link } = require('../../lib/redux');
 const { Actions } = require('../../store');
 
-const AUDIO_FEATURE_ON = DEPLOYMENT_ENVIRONMENT === 'local';
 // Higher tones get lower volume
 const volumeScale = scaleLinear().range([2, .3]);
 
-const AudioContext = AUDIO_FEATURE_ON ? window.AudioContext || window.webkitAudioContext: null;
+const AudioContext = TIMESERIES_AUDIO_ENABLED ? window.AudioContext || window.webkitAudioContext: null;
 const getAudioContext = memoize(function () {
     return new AudioContext();
 });
@@ -117,7 +116,7 @@ const audiblePointsSelector = createSelector(
 
 export const audibleUI = function (elem) {
     // Only enable the audio interface on dev tiers.
-    if (!AUDIO_FEATURE_ON) {
+    if (!TIMESERIES_AUDIO_ENABLED) {
         return;
     }
 
