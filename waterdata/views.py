@@ -165,7 +165,7 @@ def return_404(*args, **kwargs):
 
 @app.route('/hydrological-unit/', defaults={'huc_cd': None}, methods=['GET'])
 @app.route('/hydrological-unit/<huc_cd>/', methods=['GET'])
-@defined_when(app.config['DEPLOYMENT_ENVIRONMENT'] in ('development', 'local'), return_404)
+@defined_when(app.config['HYDROLOGIC_PAGES_ENABLED'], return_404)
 def hydrological_unit(huc_cd, show_locations=False):
     """
     Hydrological unit view
@@ -206,7 +206,7 @@ def hydrological_unit(huc_cd, show_locations=False):
 
 
 @app.route('/hydrological-unit/<huc_cd>/monitoring-locations/', methods=['GET'])
-@defined_when(app.config['DEPLOYMENT_ENVIRONMENT'] in ('development', 'local'), return_404)
+@defined_when(app.config['HYDROLOGIC_PAGES_ENABLED'], return_404)
 def hydrological_unit_locations(huc_cd):
     """
     Returns a HUC page with a list of monitoring locations included.
@@ -215,6 +215,7 @@ def hydrological_unit_locations(huc_cd):
 
 
 @app.route('/components/time-series/<site_no>/', methods=['GET'])
+@defined_when(app.config['EMBED_IMAGE_FEATURE_ENABLED'], return_404)
 def time_series_component(site_no):
     """
     Returns an unadorned page with the time series component for a site.
