@@ -7,7 +7,7 @@ from unittest import TestCase
 
 from waterdata import app
 from waterdata.location_utils import Parameter, get_capabilities, get_site_parameter, build_linked_data,\
-    get_disambiguated_values, get_state_abbreviation
+    get_disambiguated_values, get_state_abbreviation, rollup_dataseries
 
 
 class GetDisambiguatedValuesTestCase(TestCase):
@@ -494,3 +494,92 @@ class TestGetStateAbbreviation(TestCase):
 
     def test_state_no_found(self):
         self.assertIsNone(get_state_abbreviation('Tenochtitlan'))
+
+
+class TestRollupDataseries(TestCase):
+
+    def setUp(self):
+        self.test_data = [
+            {
+                'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
+                'site_no': {'name': '04891899', 'code': '04891899'},
+                'data_type_cd': {'code': 'ad', 'name': 'USGS Annual Water Data Reports Site'},
+                'parm_cd': {'code': '', 'name': ''}, 'parm_grp_cd': {'code': '', 'name': ''},
+                'begin_date': {'name': '2006', 'code': '2006'}, 'end_date': {'name': '2016', 'code': '2016'}
+            },
+            {
+                'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
+                'site_no': {'name': '04891899', 'code': '04891899'},
+                'data_type_cd': {'code': 'uv', 'name': 'Unit Values'},
+                'parm_cd': {'code': '00010', 'name': 'Temperature, water, degrees Celsius', 'group': 'Physical'},
+                'parm_grp_cd': {'code': '', 'name': 'Physical'},
+                'begin_date': {'name': '1977-06-20', 'code': '1977-06-20'},
+                'end_date': {'name': '2015-03-26', 'code': '2015-03-26'}
+            },
+            {
+                'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
+                'site_no': {'name': '04891899', 'code': '04891899'},
+                'data_type_cd': {'code': 'uv', 'name': 'Unit Values'},
+                'parm_cd': {'code': '00060', 'name': 'Discharge, ft3/s', 'group': 'Physical'},
+                'parm_grp_cd': {'code': '', 'name': 'Physical'},
+                'begin_date': {'name': '1977-06-20', 'code': '1977-06-20'},
+                'end_date': {'name': '2015-03-26', 'code': '2015-03-26'}
+            },
+            {
+                'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
+                'site_no': {'name': '04891899', 'code': '04891899'},
+                'data_type_cd': {'code': 'dv', 'name': 'Daily Values'},
+                'parm_cd': {'code': '00010', 'name': 'Temperature, water, degrees Celsius', 'group': 'Physical'},
+                'parm_grp_cd': {'code': '', 'name': 'Physical'},
+                'begin_date': {'name': '1978-06-20', 'code': '1978-06-20'},
+                'end_date': {'name': '2017-03-26', 'code': '2017-03-26'}
+            },
+            {
+                'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
+                'site_no': {'name': '04891899', 'code': '04891899'},
+                'data_type_cd': {'code': 'pk', 'name': 'Peak Measurements'}, 'parm_cd': {'code': '', 'name': ''},
+                'parm_grp_cd': {'code': '', 'name': ''}, 'begin_date': {'name': '1942-09-18', 'code': '1942-09-18'},
+                'end_date': {'name': '2016-06-13', 'code': '2016-06-13'}
+            },
+            {
+                'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
+                'site_no': {'name': '04891899', 'code': '04891899'},
+                'data_type_cd': {'code': 'sv', 'name': 'Site Visits'}, 'parm_cd': {'code': '', 'name': ''},
+                'parm_grp_cd': {'code': '', 'name': ''}, 'begin_date': {'name': '1942-09-18', 'code': '1942-09-18'},
+                'end_date': {'name': '2016-06-13', 'code': '2016-06-13'}
+            },
+            {
+                'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
+                'site_no': {'name': '04891899', 'code': '04891899'},
+                'data_type_cd': {'code': 'qw', 'name': 'Water-quality'},
+                'parm_cd': {
+                    'code': '00618',
+                    'name': 'Nitrate, water, filtered, milligrams per liter as nitrogen',
+                    'group': 'Nutrient'
+                },
+                'parm_grp_cd': {'code': 'NUT', 'name': 'Nutrient'},
+                'begin_date': {'name': '1992-05-06', 'code': '1992-05-06'},
+                'end_date': {'name': '1993-09-07', 'code': '1993-09-07'}
+            },
+            {
+                'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
+                'site_no': {'name': '04891899', 'code': '04891899'},
+                'data_type_cd': {'code': 'qw', 'name': 'Water-quality'}, 'parm_cd': {'code': '', 'name': ''},
+                'parm_grp_cd': {'code': 'ALL', 'name': 'ALL'},
+                'begin_date': {'name': '1967-03-28', 'code': '1967-03-28'},
+                'end_date': {'name': '1993-09-07', 'code': '1993-09-07'}
+            }
+        ]
+
+    def test_successful_rollup(self):
+        result = rollup_dataseries(self.test_data)
+        self.assertListEqual(list(result.keys()), ['Nutrient', 'Physical'])
+        self.assertListEqual(
+            list(result['Physical'].keys()),
+            ['start_date', 'end_date', 'data_types', 'parameters']
+        )
+        self.assertEqual(result['Physical']['start_date'], '1977-06-20')
+        self.assertEqual(result['Physical']['end_date'], '2017-03-26')
+        self.assertEqual(result['Physical']['data_types'], 'Daily Values, Unit Values')
+        self.assertEqual(len(result['Physical']['parameters']), 2)
+        self.assertEqual(len(result['Nutrient']['parameters']), 1)

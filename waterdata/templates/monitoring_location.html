@@ -40,61 +40,56 @@
                 </table>
 
             {% else %}
-                <h1>{{ stations[0].station_nm }}</h1>
-                {% with site_no=stations[0].site_no %}{% include 'partials/social_share.html' %}{% endwith %}
-                <span class="usa-label">Important</span> <a href="https://waterdata.usgs.gov/nwis/uv?site_no={{stations[0].site_no}}" target="_blank">Classic NWIS Web Instantaneous Values page</a>
-                {% if config.DEPLOYMENT_ENVIRONMENT not in ['staging', 'prod'] %}
-                    <ul>
-                        <li><a href="{{ config.NWIS_ENDPOINTS.INVENTORY }}/?site_no={{ stations[0].site_no }}" target="_blank">Site inventory page</a></li>
-                        <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?cb_00060=on&format=gif_mult_parms&site_no={{ stations[0].site_no }}&period=7" target="_blank">Interactive grapher</a></li>
-                        <li><a href="{{ config.NWIS_ENDPOINTS.UV }}/?format=img_default&site_no={{ stations[0].site_no }}&period=7" target="_blank">Presentation Charts</a></li>
-                    </ul>
-                {%  endif %}
+                <div class="site-header">
+                    {% with site_no=stations[0].site_no %}{% include 'partials/social_share.html' %}{% endwith %}
+                    <h1>{{ stations[0].station_nm }}</h1>
+                    <div>
+                        <span class="usa-label">Important</span>
+                        <a href="https://waterdata.usgs.gov/nwis/uv?site_no={{stations[0].site_no}}" target="_blank">Classic Page</a>
+                        <div class="tooltip-item">
+                            <sup aria-describedby="tooltip-classic">
+                                <i class="fa fa-question-circle" aria-hidden="true"></i>
+                            </sup>
+                            <div class="tooltip">
+                                <p id="tooltip-classic">View all current conditions values on the classic Water Data for the Nation interface.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {{ components.TimeseriesComponent(stations[0].site_no) }}
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
                     {{ components.FloodSliderComponent() }}
                     {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
                 {% endif %}
 
-                {% if site_dataseries %}
+                {% if parm_grp_summary %}
                     <ul class="usa-accordion">
                         <li>
                             <button class="usa-accordion-button" aria-expanded="false" aria-controls="ts-a1">
-                                Data Series
+                                Summary
                             </button>
                             <div id="ts-a1" class="usa-accordion-content">
-                                <table id="site-dataseries">
+                                <table id="site-data-summary">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Parameter</th>
-                                            <th scope="col">Description</th>
-                                            <th scope="col">USGS Parameter Code</th>
-                                            <th scope="col">Data Type</th>
-                                            <th scope="col">Statistic</th>
-                                            <th scope="col">Parameter Group</th>
-                                            <th scope="col">SRS ID</th>
+                                            <th scope="col">USGS Parameter Group</th>
+                                            <th scope="col">Data Types</th>
                                             <th scope="col">Start Date</th>
                                             <th scope="col">End Date</th>
-                                            <th scope="col">Record Count</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for series in site_dataseries %}
+                                        {% for key, value in parm_grp_summary.items() %}
                                             <tr>
-                                                <td scope="row">{% if series.parm_cd.name %}{{ series.parm_cd.name }}{% else %}<sub>n/a</sub>{% endif %}</td>
-                                                <td>{{ series.loc_web_ds.name }}</td>
-                                                <td>{% if series.parm_cd.code %}{{ series.parm_cd.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
-                                                <td>{{ series.data_type_cd.name }}</td>
-                                                <td>{{ series.stat_cd.name }}</td>
-                                                <td>{{ series.parm_grp_cd.name }}</td>
-                                                <td>{{ series.srs_id.name }}</td>
-                                                <td>{{ series.begin_date.name }}</td>
-                                                <td>{{ series.end_date.name }}</td>
-                                                <td>{{ series.count_nu.name }}</td>
+                                                <td scope="row">{{ key }}</td>
+                                                <td>{{ value.data_types }}</td>
+                                                <td>{{ value.start_date }}</td>
+                                                <td>{{ value.end_date }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
                                 </table>
+                                <a href="https://waterdata.usgs.gov/nwis/inventory/?site_no={{ stations[0].site_no }}">Classic NWIS Web Inventory</a>
                             </div>
                         </li>
                     </ul>

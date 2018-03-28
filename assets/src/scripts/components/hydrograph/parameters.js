@@ -35,13 +35,16 @@ export const availableTimeseriesSelector = createSelector(
                 continue;
             }
             const variable = variables[variableID];
-            let varCodes = {
-                variableID: variable.oid,
-                description: variable.variableDescription,
-                selected: currentVariableID === variableID,
-                currentTimeseriesCount: seriesList.filter(ts => ts.tsKey === 'current' && ts.variable === variableID).length
-            };
-            sorted.push([variable.variableCode.value, varCodes]);
+            const currentTimeseriesCount = seriesList.filter(ts => ts.tsKey === 'current' && ts.variable === variableID).length;
+            if (currentTimeseriesCount > 0) {
+                let varCodes = {
+                    variableID: variable.oid,
+                    description: variable.variableDescription,
+                    selected: currentVariableID === variableID,
+                    currentTimeseriesCount: currentTimeseriesCount
+                };
+                sorted.push([variable.variableCode.value, varCodes]);
+            }
         }
         return sorted;
     }
