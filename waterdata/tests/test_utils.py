@@ -6,8 +6,7 @@ from unittest import TestCase, mock
 
 import requests as r
 
-from ..utils import construct_url, defined_when, execute_get_request, parse_rdb,\
-    use_correct_indefinite_article
+from ..utils import construct_url, defined_when, execute_get_request, parse_rdb
 
 
 class TestConstructUrl(TestCase):
@@ -242,16 +241,3 @@ class TestDefinedWhen(TestCase):
         def decorated(*args, **kwargs):
             return ','.join([*args, *kwargs.keys(), *kwargs.values()])
         self.assertEqual(decorated('1', '2', kw1='3', kw2='4'), '1,2,kw1,kw2,3,4')
-
-
-class TestUseCorrectIndefiniteArticle(TestCase):
-
-    def setUp(self):
-        self.non_vowel_start = 'Mango'
-        self.vowel_start = 'Apple'
-
-    def test_correct_when_non_vowel(self):
-        self.assertEqual(use_correct_indefinite_article(self.non_vowel_start), 'a')
-
-    def test_correct_when_vowel(self):
-        self.assertEqual(use_correct_indefinite_article(self.vowel_start), 'an')

@@ -6,8 +6,7 @@ import json
 from flask import abort, render_template, request, Markup
 
 from . import app, __version__
-from .location_utils import build_linked_data, create_location_desc_meta_tag, get_disambiguated_values, \
-    rollup_dataseries
+from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries
 from .utils import construct_url, defined_when, execute_get_request, parse_rdb
 
 # Station Fields Mapping to Descriptions
@@ -97,16 +96,6 @@ def monitoring_location(site_no):
                 app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
                 app.config['HUC_LOOKUP']
             )
-            try:
-                meta_tag_desc = create_location_desc_meta_tag(
-                    location_id=site_no,
-                    location_type=location_with_values['site_tp_cd']['name'].upper(),
-                    county=location_with_values['county_cd']['name'].upper(),
-                    state=location_with_values['state_cd']['name'].upper(),
-                    rolled_up_dataseries=grouped_dataseries
-                )
-            except KeyError:
-                meta_tag_desc = 'Monitoring location {}.'.format(site_no)
             questions_link = None
             try:
                 site_owner_state = (
