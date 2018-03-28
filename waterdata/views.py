@@ -183,7 +183,7 @@ def hydrological_unit(huc_cd, show_locations=False):
 
         if response.status_code == 200:
             monitoring_locations = parse_rdb(response.iter_lines(decode_unicode=True))
-    print(huc)
+
     http_code = 200 if huc else 404
     return render_template(
         'hydrological_unit.html',
@@ -204,13 +204,14 @@ def political_unit(political_unit_cd, show_locations=False):
 
     :param fips_cd: ID for this unit
     """
-
+    state_cd = ""
+    county_cd = ""
     # Get the data corresponding to this political unit
     if political_unit_cd:
         length_of_political_unit_code = len(str(political_unit_cd))
         if length_of_political_unit_code == 2:
-            list_by_political_boundary = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(political_unit_cd, None)
-
+            political_unit_data = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(political_unit_cd, None)
+            print('this happens when state code is entered ', political_unit_data)
         if length_of_political_unit_code == 5:
             political_unit_cd_string = str(political_unit_cd)
             state_cd = political_unit_cd_string[:2]
@@ -218,39 +219,41 @@ def political_unit(political_unit_cd, show_locations=False):
             print(state_cd)
             print(county_cd)
 
-            list_by_political_boundarys = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(state_cd, None)
-            print(list_by_political_boundarys)
+            political_unit_data = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(state_cd, None)
+            print('this happens when FIPS is entered ', political_unit_data)
 
-            look_up_by_fips = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd']['county_cd'].get(state_cd, None)
-            print(look_up_by_fips)
+           # look_up_by_fips = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd']['county_cd'].get(state_cd, None)
+           # print(look_up_by_fips)
 
     # If no political code is available, display list of states.
     else:
-        list_by_political_boundary = {
+        political_unit_data = {
             'name': 'US',
             'children': app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd']
         }
-        print('this is listed when no code is entered', list_by_political_boundary)
+        print('this is listed when no code is entered', political_unit_data)
 
     # If the search is at the county level, get the monitoring locations within that county.
     monitoring_locations = []
-    if show_locations and list_by_political_boundary:
+    if show_locations and political_unit_data:
         response = execute_get_request(
             SERVICE_ROOT,
             path='/nwis/site/',
-            params={'format': 'rdb', 'list_by_political_boundary': political_unit_cd}
+            params={'format': 'rdb', 'political_unit_data': political_unit_cd}
         )
         print(response.content)
         if response.status_code == 200:
             monitoring_locations = parse_rdb(response.iter_lines(decode_unicode=True))
 
-    http_code = 200 if list_by_political_boundary else 404
+    http_code = 200 if political_unit_data else 404
     return render_template(
         'political_unit.html',
         http_code=http_code,
-        political_unit=political_unit,
+        state_cd=state_cd,
+        county_cd=county_cd,
+        political_unit_data=political_unit_data,
         monitoring_locations=monitoring_locations,
-    #    show_locations_link=not show_locations and huc and huc.get('kind') == 'HUC8'
+        show_locations_link=not show_locations and political_unit_data
     ), http_code
 
 # end of state county crawl section
