@@ -3,7 +3,7 @@
 {% import 'macros/components.html' as components %}
 
 {% block description %}
-    <meta name="description" content="{{ meta_tag_desc }}">
+    {{ components.DescriptionMetaTag(stations[0].site_no, location_with_values, parm_grp_summary) }}
 {% endblock %}
 
 {% block page_script %}
