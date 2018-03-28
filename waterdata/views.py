@@ -7,7 +7,7 @@ import json
 from flask import abort, render_template, request, Markup
 
 from . import app, __version__
-from .location_utils import build_linked_data, create_location_meta_tag_desc, get_disambiguated_values, \
+from .location_utils import build_linked_data, create_location_desc_meta_tag, get_disambiguated_values, \
     rollup_dataseries
 from .utils import construct_url, defined_when, execute_get_request, parse_rdb
 
@@ -98,7 +98,7 @@ def monitoring_location(site_no):
                 app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
                 app.config['HUC_LOOKUP']
             )
-            meta_tag_desc = create_location_meta_tag_desc(
+            meta_tag_desc = create_location_desc_meta_tag(
                 location_id=site_no,
                 site_type=location_with_values['site_tp_cd']['name'].upper(),
                 county=location_with_values['county_cd']['name'].upper(),

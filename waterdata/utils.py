@@ -94,7 +94,16 @@ def defined_when(condition, fallback):
     return wrap
 
 
-def use_correct_indefinite_article_for_a_noun(some_noun):
+def use_correct_indefinite_article(some_noun):
+    """
+    Given a noun determine whether 'a' or 'an'
+    should be used as an indefinite article.
+    There are some exceptions, but this is probably
+    good enough.
+
+    :param some_noun:
+    :return:
+    """
     vowels = ('a', 'e', 'i', 'o', 'u')
     if some_noun.lower()[0] in vowels:
         return 'an'
