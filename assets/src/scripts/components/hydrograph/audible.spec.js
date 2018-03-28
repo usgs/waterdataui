@@ -64,16 +64,4 @@ describe('Audible interface', () => {
     afterEach(() => {
         container.remove();
     });
-
-    it('renders', () => {
-        const checkbox = select('#audible-checkbox');
-        expect(checkbox).toBeTruthy();
-    });
-
-    it('does nothing unexpected when playing a sound', () => {
-        expect(() => {
-            Actions.toggleAudibleInterface(true);
-            Actions.setCursorOffset(1);
-        }).not.toThrow();
-    });
 });

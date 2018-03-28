@@ -69,7 +69,7 @@ export const Actions = {
     },
     startTimeseriesPlay(maxCursorOffset) {
         return function (dispatch, getState) {
-            let state = getState()
+            let state = getState();
             if (!state.cursorOffset || state.cursorOffset >= maxCursorOffset) {
                 dispatch(Actions.setCursorOffset(0));
             }

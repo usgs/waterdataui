@@ -370,13 +370,6 @@ describe('Redux store', () => {
                 cursorOffset: 10
             });
         });
-
-        it('should create an action to toggle audible interface', () => {
-            expect(Actions.toggleAudibleInterface(true)).toEqual({
-                type: 'AUDIBLE_INTERFACE_TOGGLE',
-                audibleInterfaceOn: true
-            });
-        });
     });
 
     describe('reducers', () => {
@@ -489,15 +482,6 @@ describe('Redux store', () => {
            })).toEqual({
                floodStages: [9, 10, 11],
                gageHeight: 10
-           });
-        });
-
-        it('should handle AUDIBLE_INTERFACE_TOGGLE', () => {
-           expect(timeSeriesReducer({audibleInterfaceOn: false}, {
-               type: 'AUDIBLE_INTERFACE_TOGGLE',
-               audibleInterfaceOn: true
-           })).toEqual({
-               audibleInterfaceOn: true
            });
         });
     });
