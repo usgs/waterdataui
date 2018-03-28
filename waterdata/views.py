@@ -203,6 +203,7 @@ def hydrological_unit_locations(huc_cd):
 
 
 @app.route('/components/time-series/<site_no>/', methods=['GET'])
+@defined_when(app.config['EMBED_IMAGE_FEATURE_ENABLED'], return_404)
 def time_series_component(site_no):
     """
     Returns an unadorned page with the time series component for a site.
