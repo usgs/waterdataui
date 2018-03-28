@@ -1,7 +1,6 @@
 """
 Main application views.
 """
-import itertools
 import json
 
 from flask import abort, render_template, request, Markup
