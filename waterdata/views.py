@@ -98,13 +98,16 @@ def monitoring_location(site_no):
                 app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
                 app.config['HUC_LOOKUP']
             )
-            meta_tag_desc = create_location_desc_meta_tag(
-                location_id=site_no,
-                site_type=location_with_values['site_tp_cd']['name'].upper(),
-                county=location_with_values['county_cd']['name'].upper(),
-                state=location_with_values['state_cd']['name'].upper(),
-                rolled_up_dataseries=grouped_dataseries
-            )
+            try:
+                meta_tag_desc = create_location_desc_meta_tag(
+                    location_id=site_no,
+                    site_type=location_with_values['site_tp_cd']['name'].upper(),
+                    county=location_with_values['county_cd']['name'].upper(),
+                    state=location_with_values['state_cd']['name'].upper(),
+                    rolled_up_dataseries=grouped_dataseries
+                )
+            except KeyError:
+                meta_tag_desc = 'Monitoring location {}.'.format(site_no)
             questions_link = None
             try:
                 site_owner_state = (
