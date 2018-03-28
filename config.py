@@ -42,3 +42,6 @@ HUC_LOOKUP_FILENAME = 'huc_lookup.json'
 
 GA_TRACKING_CODE = ''
 ENABLE_USGS_GA = False
+
+# To use hashed assets, set this to the gulp-rev-all rev-manifest.json path
+ASSET_MANIFEST_PATH = None
