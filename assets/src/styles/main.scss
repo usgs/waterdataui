@@ -46,8 +46,14 @@ $usgs-blue: #00264c;
 
 body {
     #main-content {
-        margin: 1em 0;
+        margin-top: 1em;
+        margin-bottom: 1em;
         padding: 0 1em;
+    }
+    .content-container {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: $site-max-width;
     }
     #wdfn-alert-banner input:checked ~ * {
         display: none;
