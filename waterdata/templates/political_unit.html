@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% if huc_cd %}{% set page_title = 'test'%}{% endif %}
+
+{% block content %}
+    <div class="usa-width-one-whole">
+        {% if http_code == 200 %}
+            <h1>Political unit display will start here</h1>
+
+
+        {% else %}
+            <h1>Error: HTTP {{ http_code }} -- HUC not found.</h1>
+        {% endif %}
+    </div>
+{% endblock content %}
