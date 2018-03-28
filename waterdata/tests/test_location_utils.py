@@ -733,7 +733,7 @@ class TestCreateLocationDescMetaTag(TestCase):
         self.assertEqual(result, expected)
 
     def test_single_measured_parameter(self):
-        result = result = create_location_desc_meta_tag(
+        result = create_location_desc_meta_tag(
             self.location_id, self.location_type, self.county, self.state, self.grp_with_one_parm
         )
         expected = (
