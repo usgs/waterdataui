@@ -349,8 +349,8 @@ def create_location_desc_meta_tag(location_id, location_type, county, state, rol
     :param str location_type: the type of monitoring location
     :param str county: country where the monitoring location lives
     :param str state: state where the monitoring location lives
-    :param dict rolled_up_dataseries: data series rolled-up by parameter group with certain groups we don't care about
-        excluded
+    :param rolled_up_dataseries: data series rolled-up by parameter group with certain groups we don't care about
+    :type rolled_up_dataseries: dict or Nonesphy
     :return: description text for a site
     :rtype: str
 

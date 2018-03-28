@@ -587,9 +587,11 @@ class TestRollupDataseries(TestCase):
 
 class TestCreateLocationDescMetaTag(TestCase):
 
+    # pylint: disable=R0902
+
     def setUp(self):
         self.location_id = '005667129'
-        self.site_type = 'STREAM'
+        self.location_type = 'STREAM'
         self.county = 'DANE COUNTY'
         self.state = 'WISCONSIN'
         self.grp_with_one_parm = {
@@ -721,18 +723,18 @@ class TestCreateLocationDescMetaTag(TestCase):
         }
 
     def test_rollup_group_is_none(self):
-        result = create_location_desc_meta_tag(self.location_id, self.site_type, self.county, self.state, None)
+        result = create_location_desc_meta_tag(self.location_id, self.location_type, self.county, self.state, None)
         expected = 'Monitoring location 005667129 is associated with a STREAM in DANE COUNTY, WISCONSIN.'
         self.assertEqual(result, expected)
 
     def test_rollup_group_is_empty(self):
-        result = create_location_desc_meta_tag(self.location_id, self.site_type, self.county, self.state, {})
+        result = create_location_desc_meta_tag(self.location_id, self.location_type, self.county, self.state, {})
         expected = 'Monitoring location 005667129 is associated with a STREAM in DANE COUNTY, WISCONSIN.'
         self.assertEqual(result, expected)
 
     def test_single_measured_parameter(self):
         result = result = create_location_desc_meta_tag(
-            self.location_id, self.site_type, self.county, self.state, self.grp_with_one_parm
+            self.location_id, self.location_type, self.county, self.state, self.grp_with_one_parm
         )
         expected = (
             'Monitoring location 005667129 is associated with a STREAM in DANE COUNTY, WISCONSIN. '
@@ -742,7 +744,7 @@ class TestCreateLocationDescMetaTag(TestCase):
 
     def test_two_measured_parameters(self):
         result = result = create_location_desc_meta_tag(
-            self.location_id, self.site_type, self.county, self.state, self.grp_with_two_parm
+            self.location_id, self.location_type, self.county, self.state, self.grp_with_two_parm
         )
         expected = (
             'Monitoring location 005667129 is associated with a STREAM in DANE COUNTY, WISCONSIN. '
@@ -753,7 +755,7 @@ class TestCreateLocationDescMetaTag(TestCase):
 
     def test_three_measured_parameters(self):
         result = result = create_location_desc_meta_tag(
-            self.location_id, self.site_type, self.county, self.state, self.grp_with_three_parm
+            self.location_id, self.location_type, self.county, self.state, self.grp_with_three_parm
         )
         expected = (
             'Monitoring location 005667129 is associated with a STREAM in DANE COUNTY, WISCONSIN. '
@@ -764,7 +766,7 @@ class TestCreateLocationDescMetaTag(TestCase):
 
     def test_four_measured_parameters(self):
         result = result = create_location_desc_meta_tag(
-            self.location_id, self.site_type, self.county, self.state, self.grp_with_four_parm
+            self.location_id, self.location_type, self.county, self.state, self.grp_with_four_parm
         )
         expected = (
             'Monitoring location 005667129 is associated with a STREAM in DANE COUNTY, WISCONSIN. '
