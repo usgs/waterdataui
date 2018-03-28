@@ -47,7 +47,6 @@ export const createSound = memoize(/* eslint-disable no-unused-vars */ tsKey => 
 });
 
 export const updateSound = function ({enabled, points}) {
-    console.log('Audio is enabled ' + enabled);
     const audioCtx = getAudioContext();
     for (const tsKey of Object.keys(points)) {
         const point = points[tsKey];
@@ -73,9 +72,9 @@ export const updateSound = function ({enabled, points}) {
     }
 };
 
-export const audibleInterfaceOnSelector = state => state.playId !== null;
+const audibleInterfaceOnSelector = state => state.playId !== null;
 
-export const audibleScaleSelector = memoize(tsKey => createSelector(
+const audibleScaleSelector = memoize(tsKey => createSelector(
     yScaleSelector,
     (yScale) => {
         return scaleLinear()

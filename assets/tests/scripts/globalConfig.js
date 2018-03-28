@@ -1,0 +1,3 @@
+var CONFIG = {
+    TIMESERIES_AUDIO_ENABLED: true
+};
