@@ -92,3 +92,10 @@ def defined_when(condition, fallback):
         return update_wrapper(func, f)
 
     return wrap
+
+
+def use_correct_indefinite_article_for_a_noun(some_noun):
+    vowels = ('a', 'e', 'i', 'o', 'u')
+    if some_noun.lower()[0] in vowels:
+        return 'an'
+    return 'a'

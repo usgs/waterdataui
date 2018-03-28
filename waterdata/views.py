@@ -1,12 +1,14 @@
 """
 Main application views.
 """
+import itertools
 import json
 
 from flask import abort, render_template, request, Markup
 
 from . import app, __version__
-from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries
+from .location_utils import build_linked_data, create_location_meta_tag_desc, get_disambiguated_values, \
+    rollup_dataseries
 from .utils import construct_url, defined_when, execute_get_request, parse_rdb
 
 # Station Fields Mapping to Descriptions
@@ -96,7 +98,13 @@ def monitoring_location(site_no):
                 app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
                 app.config['HUC_LOOKUP']
             )
-
+            meta_tag_desc = create_location_meta_tag_desc(
+                location_id=site_no,
+                site_type=location_with_values['site_tp_cd']['name'].upper(),
+                county=location_with_values['county_cd']['name'].upper(),
+                state=location_with_values['state_cd']['name'].upper(),
+                rolled_up_dataseries=grouped_dataseries
+            )
             questions_link = None
             try:
                 site_owner_state = (
@@ -124,6 +132,7 @@ def monitoring_location(site_no):
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'parm_grp_summary': grouped_dataseries,
+                'meta_tag_desc': meta_tag_desc,
                 'questions_link': questions_link
             }
         http_code = 200

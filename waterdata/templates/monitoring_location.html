@@ -2,6 +2,10 @@
 
 {% import 'macros/components.html' as components %}
 
+{% block description %}
+    <meta name="description" content="{{ meta_tag_desc }}">
+{% endblock %}
+
 {% block page_script %}
     {% if json_ld %}
     <script type="application/ld+json">

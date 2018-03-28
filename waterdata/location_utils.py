@@ -10,6 +10,7 @@ import itertools
 from flask import url_for
 
 from .constants import US_STATES
+from .utils import use_correct_indefinite_article_for_a_noun
 
 Parameter = namedtuple('Parameter', ['parameter_cd', 'start_date', 'end_date', 'record_count'])
 
@@ -312,3 +313,48 @@ def rollup_dataseries(dataseries):
     rollup_by_parameter_grp.pop('ALL', None)
 
     return {k: _extract_group_date_range(v) for k, v in rollup_by_parameter_grp.items()}
+
+
+def _summarize_site_collected_data(rolled_up_dataseries):
+    all_parms = list(itertools.chain.from_iterable([x['parameters'] for x in rolled_up_dataseries.values()]))
+    all_start_dates = [parm['start_date'] for parm in all_parms]
+    try:
+        start_year = min(all_start_dates).year
+    except ValueError:
+        start_year = None
+    short_parm_names = set([parm['parameter_name'].split(',')[0].upper() for parm in all_parms])
+    sort_top = ['DISCHARGE', 'GAGE HEIGHT', 'TEMPERATURE']
+    sorted_parm_names = sorted(short_parm_names, key=lambda x: (x not in sort_top, x))
+    return start_year, sorted_parm_names
+
+
+def create_location_meta_tag_desc(location_id, site_type, county, state, rolled_up_dataseries):
+    site_type_article = use_correct_indefinite_article_for_a_noun(site_type)
+    desc = 'Monitoring location {site_no} is associated with {article} {site_type} in {county}, {state}.'.format(
+        site_no=location_id,
+        article=site_type_article,
+        site_type=site_type,
+        county=county,
+        state=state
+    )
+    if rolled_up_dataseries is not None:
+        start_date, rt_parms = _summarize_site_collected_data(rolled_up_dataseries)
+        if rt_parms:
+            if len(rt_parms) > 1:
+                condition = 'conditions'
+                to_be = 'are'
+            else:
+                condition = 'condition'
+                to_be = 'is'
+            if rt_parms == 1:
+                parameters = rt_parms[0]
+            elif 1 < len(rt_parms) < 4:
+                parameters = '{}, and {}'.format(', '.join(rt_parms[:-1]), rt_parms[-1])
+            else:
+                parameters = '{}, and MORE'.format(', '.join(rt_parms[:3]))
+            extended_desc = (
+                'Current {condition} of {parameters} {to_be} available. '
+                'Water data back to {start_date} is available online.'
+            ).format(condition=condition, to_be=to_be, parameters=parameters, start_date=start_date)
+            desc = '{} {}'.format(desc, extended_desc)
+    return desc
