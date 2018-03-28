@@ -1,9 +1,10 @@
 const { scaleLinear } = require('d3-scale');
+const { select } = require('d3-selection');
 const memoize = require('fast-memoize');
 const { createSelector, createStructuredSelector } = require('reselect');
 
 const { tsCursorPointsSelector } = require('./cursor');
-const { yScaleSelector } = require('./scales');
+const { xScaleSelector, yScaleSelector } = require('./scales');
 const { allTimeSeriesSelector } = require('./timeseries');
 
 const { TIMESERIES_AUDIO_ENABLED } = require('../../config');
@@ -124,25 +125,22 @@ export const audibleUI = function (elem) {
         console.warn('AudioContext not available');
         return;
     }
-
-    elem.append('input')
-        .attr('type', 'checkbox')
-        .attr('id', 'audible-checkbox')
-        .attr('aria-labelledby', 'audible-label')
-        .attr('ga-on', 'click')
-        .attr('ga-event-category', 'TimeseriesGraph')
-        .attr('ga-event-action', 'toggleAudible')
-        .on('click', dispatch(function () {
-            return Actions.toggleAudibleInterface(this.checked);
-        }))
-        .call(link(function (elem, checked) {
-            elem.property('checked', checked);
-        }, audibleInterfaceOnSelector));
-
-    elem.append('label')
-        .attr('id', 'audible-label')
-        .attr('for', 'audible-checkbox')
-        .text('Audible Interface');
+    elem.append('button')
+        .attr('title', 'Play')
+        .html('<i class="fa fa-play"></i>')
+        .call(link(function(elem, xScale) {
+            const domain = xScale.domain();
+            elem.attr('data-max-offset', domain[1].getTime() - domain[0].getTime());
+        }, xScaleSelector('current')))
+        .on('click', dispatch(function() {
+            return Actions.startTimeseriesPlay(select(this).attr('data-max-offset'));
+        }));
+    elem.append('button')
+        .attr('title', 'Stop')
+        .html('<i class="fa fa-stop"></i>')
+        .on('click', dispatch(function() {
+            return Actions.stopTimeseriesPlay();
+        }));
 
     // Listen for focus changes, and play back the audio representation of
     // the selected points.

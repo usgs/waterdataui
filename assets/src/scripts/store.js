@@ -8,9 +8,8 @@ const { normalize } = require('./schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('./floodData');
 
 
-
 export const Actions = {
-    retrieveTimeseries(siteno, params=null, startDate=null, endDate=null) {
+    retrieveTimeseries(siteno, params = null, startDate = null, endDate = null) {
         return function (dispatch) {
             const timeSeries = getTimeseries({sites: [siteno], params, startDate, endDate}).then(
                 series => {
@@ -39,7 +38,7 @@ export const Actions = {
             );
             const medianStatistics = getMedianStatistics({sites: [siteno]});
             return Promise.all([timeSeries, medianStatistics]).then(([{collection, startTime, endTime}, stats]) => {
-                let medianCollection = parseMedianData(stats, startTime, endTime, collection && collection.variables ? collection.variables: {});
+                let medianCollection = parseMedianData(stats, startTime, endTime, collection && collection.variables ? collection.variables : {});
                 dispatch(Actions.addSeriesCollection('median', medianCollection));
             });
         };
@@ -56,16 +55,53 @@ export const Actions = {
         };
     },
     retrieveFloodData(siteno) {
-        return function(dispatch) {
+        return function (dispatch) {
             const floodFeatures = fetchFloodFeatures(siteno);
             const floodExtent = fetchFloodExtent(siteno);
             return Promise.all([floodFeatures, floodExtent]).then((data) => {
                 const [features, extent] = data;
-                const stages = features.map((feature) => feature.attributes.STAGE).sort(function(a, b) {
+                const stages = features.map((feature) => feature.attributes.STAGE).sort(function (a, b) {
                     return a - b;
                 });
                 dispatch(Actions.setFloodFeatures(stages, stages.length ? extent.extent : {}));
             });
+        };
+    },
+    startTimeseriesPlay(maxCursorOffset) {
+        return function (dispatch, getState) {
+            let state = getState()
+            if (!state.cursorOffset || state.cursorOffset >= maxCursorOffset) {
+                dispatch(Actions.setCursorOffset(0));
+            }
+            if (!state.playId) {
+                let play = function () {
+                    let newOffset = getState().cursorOffset + 15 * 60 * 1000;
+                    if (newOffset > maxCursorOffset) {
+                        dispatch(Actions.stopTimeseriesPlay());
+                    } else {
+                        dispatch(Actions.setCursorOffset(newOffset));
+                    }
+                };
+                let playId = window.setInterval(play, 10);
+                dispatch(Actions.timeseriesPlayOn(playId));
+            }
+        };
+    },
+    stopTimeseriesPlay() {
+        return function(dispatch, getState) {
+            window.clearInterval(getState().playId);
+            dispatch(Actions.timeseriesPlayStop());
+        };
+    },
+    timeseriesPlayOn(playId) {
+        return {
+            type: 'TIMESERIES_PLAY_ON',
+            playId
+        };
+    },
+    timeseriesPlayStop() {
+        return {
+            type: 'TIMESERIES_PLAY_STOP'
         };
     },
     setFloodFeatures(stages, extent) {
@@ -127,12 +163,6 @@ export const Actions = {
             type: 'SET_GAGE_HEIGHT',
             gageHeightIndex
         };
-    },
-    toggleAudibleInterface(audibleInterfaceOn) {
-        return {
-            type: 'AUDIBLE_INTERFACE_TOGGLE',
-            audibleInterfaceOn
-        };
     }
 };
 
@@ -143,6 +173,20 @@ export const timeSeriesReducer = function (state={}, action) {
     let currentVar;
 
     switch (action.type) {
+        case 'TIMESERIES_PLAY_ON':
+            return {
+                ...state,
+                audibleInterfaceOn: true,
+                playId: action.playId
+            };
+
+        case 'TIMESERIES_PLAY_STOP':
+            return {
+                ...state,
+                playId: null,
+                audibleInterfaceOn: false
+            };
+
         case 'SET_FLOOD_FEATURES':
             return {
                 ...state,
@@ -221,12 +265,6 @@ export const timeSeriesReducer = function (state={}, action) {
                 gageHeight: state.floodStages[action.gageHeightIndex]
             };
 
-        case 'AUDIBLE_INTERFACE_TOGGLE':
-            return {
-                ...state,
-                audibleInterfaceOn: action.audibleInterfaceOn
-            };
-
         default:
             return state;
     }
@@ -259,7 +297,7 @@ export const configureStore = function (initialState) {
         floodStages: [],
         floodExtent: {},
         gageHeight: null,
-        audibleInterfaceOn: false,
+        playId: null,
         ...initialState
     };
 
