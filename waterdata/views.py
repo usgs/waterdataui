@@ -101,7 +101,7 @@ def monitoring_location(site_no):
             try:
                 meta_tag_desc = create_location_desc_meta_tag(
                     location_id=site_no,
-                    site_type=location_with_values['site_tp_cd']['name'].upper(),
+                    location_type=location_with_values['site_tp_cd']['name'].upper(),
                     county=location_with_values['county_cd']['name'].upper(),
                     state=location_with_values['state_cd']['name'].upper(),
                     rolled_up_dataseries=grouped_dataseries

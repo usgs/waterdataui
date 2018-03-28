@@ -316,24 +316,50 @@ def rollup_dataseries(dataseries):
 
 
 def _summarize_site_collected_data(rolled_up_dataseries):
+    """
+    Take dataseries rolled up by parameter group and extract
+    the earliest year that data collection occurred and provide
+    a list of all distinct properties and species being measured.
+
+    :param dict rolled_up_dataseries: data series rolled-up by parameter group with certain groups we don't care about
+        excluded
+    :return: earliest year of data collection, list of distinct things being measured
+    :rtype: tuple
+
+    """
     all_parms = list(itertools.chain.from_iterable([x['parameters'] for x in rolled_up_dataseries.values()]))
     all_start_dates = [parm['start_date'] for parm in all_parms]
     try:
         start_year = min(all_start_dates).year
     except ValueError:
         start_year = None
+    # need to use a set -- there might be multiple variants for a measurements
+    # (e.g. "nitrite, water as N" vs "nitrite, water as NO3-")
     short_parm_names = set([parm['parameter_name'].split(',')[0].upper() for parm in all_parms])
-    sort_top = ['DISCHARGE', 'GAGE HEIGHT', 'TEMPERATURE']
+    sort_top = ('DISCHARGE', 'GAGE HEIGHT', 'TEMPERATURE')
     sorted_parm_names = sorted(short_parm_names, key=lambda x: (x not in sort_top, x))
     return start_year, sorted_parm_names
 
 
-def create_location_desc_meta_tag(location_id, site_type, county, state, rolled_up_dataseries=None):
-    site_type_article = use_correct_indefinite_article(site_type)
-    desc = 'Monitoring location {site_no} is associated with {article} {site_type} in {county}, {state}.'.format(
-        site_no=location_id,
+def create_location_desc_meta_tag(location_id, location_type, county, state, rolled_up_dataseries=None):
+    """
+    Generate text for a description meta tag.
+
+    :param str location_id: monitoring location ID
+    :param str location_type: the type of monitoring location
+    :param str county: country where the monitoring location lives
+    :param str state: state where the monitoring location lives
+    :param dict rolled_up_dataseries: data series rolled-up by parameter group with certain groups we don't care about
+        excluded
+    :return: description text for a site
+    :rtype: str
+
+    """
+    site_type_article = use_correct_indefinite_article(location_type)
+    desc = 'Monitoring location {loc_id} is associated with {article} {loc_type} in {county}, {state}.'.format(
+        loc_id=location_id,
         article=site_type_article,
-        site_type=site_type,
+        loc_type=location_type,
         county=county,
         state=state
     )
