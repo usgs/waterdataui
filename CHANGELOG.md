@@ -4,7 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
+### Added
 
+### Changed
+- Data series summary table rolls up by parameter group
+
+## [0.4.0] - 2018-03-26
 ### Added
 - Title to timeseries graph
 - Dismissable banner which shows the beta status and feedback link
@@ -20,7 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Select timeseries list no longer contains columns for parameter code or timeseries availability. 
 Parameter codes can be found in the tooltip. A scrollbar will appear for long timeseries lists.
 
-##Fixed
+### Fixed
 - Screen reader only tables are now fully hidden on Firefox.
 - Timeseries without any data are not shown the the select timeseries table.
 - Sparklines will appear to any timeseries with current data
@@ -88,7 +93,8 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.3.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.4.0...master
+[0.4.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.3.0...waterdataui-0.4.0
 [0.3.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.2.0...waterdataui-0.3.0
 [0.2.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.1.0...waterdataui-0.2.0
 [0.1.0]: https://github.com/usgs/waterdataui/tree/waterdataui-0.1.0
