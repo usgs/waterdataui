@@ -72,20 +72,19 @@ describe('audibleUI', () => {
     });
 
     it('renders expected audible UI', () => {
-        expect(container.selectAll('button').size()).toBe(2);
+        expect(container.selectAll('button').size()).toBe(1);
         expect(container.selectAll('button[title="Play"]').size()).toBe(1);
-        expect(container.selectAll('button[title="Stop"]').size()).toBe(1);
     });
 
-    it('Expects the store to have a playId if the Play button is clicked', () => {
-        container.select('button[title="Play"]').dispatch('click');
+    it('Expects the store to have a playId if the button is clicked', () => {
+        container.select('button').dispatch('click');
 
         expect(store.getState().playId).not.toBeNull();
     });
 
-    it('Expects the store to have a null playId if the Stop button is clicked after clicking the Play button', () => {
-        container.select('button[title="Play"]').dispatch('click');
-        container.select('button[title="Stop"]').dispatch('click');
+    it('Expects the store to have a null playId if the  button is clicked after clicking the once', () => {
+        container.select('button').dispatch('click');
+        container.select('button').dispatch('click');
 
         expect(store.getState().playId).toBeNull();
     });
