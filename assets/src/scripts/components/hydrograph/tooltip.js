@@ -9,6 +9,7 @@ const { dispatch, link, initAndUpdate } = require('../../lib/redux');
 
 const { cursorTimeSelector, tsCursorPointsSelector } = require('./cursor');
 const { classesForPoint, MASK_DESC } = require('./drawingData');
+const { MARGIN, layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { currentVariableSelector } = require('./timeseries');
 const { Actions } = require('../../store');
@@ -227,12 +228,14 @@ const createTooltipFocus = function(elem) {
         }
     )));
 
-    elem.call(link(function (elem, xScale) {
+    elem.call(link(function (elem, {xScale, layout}) {
         elem.select('.overlay').remove();
         elem.append('rect')
             .attr('class', 'overlay')
-            .attr('width', '100%')
-            .attr('height', '100%')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('width', layout.width - MARGIN.right)
+            .attr('height', layout.height - (MARGIN.top + MARGIN.bottom))
             .on('mouseover', dispatch(function() {
                 const selectedTime = xScale.invert(mouse(elem.node())[0]).getTime();
                 const startTime = xScale.domain()[0].getTime();
@@ -246,7 +249,10 @@ const createTooltipFocus = function(elem) {
                 const startTime = xScale.domain()[0].getTime();
                 return Actions.setCursorOffset(selectedTime - startTime);
             }));
-    }, xScaleSelector('current')));
+    }, createStructuredSelector({
+        xScale: xScaleSelector('current'),
+        layout: layoutSelector
+    })));
 };
 
 module.exports = {createTooltipFocus, createTooltipText, tooltipPointsSelector};
