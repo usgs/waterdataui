@@ -16,7 +16,6 @@ const volumeScale = scaleLinear().range([2, .3]);
 
 const AudioContext = TIMESERIES_AUDIO_ENABLED ? window.AudioContext || window.webkitAudioContext: null;
 const getAudioContext = memoize(function () {
-    console.log('Creating audio context');
     return new AudioContext();
 });
 
