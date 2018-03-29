@@ -474,6 +474,12 @@ describe('Redux store', () => {
                playId: 1
            });
         });
+
+        it('should create an action to unset the playId', () => {
+            expect(Actions.timeseriesPlayStop()).toEqual({
+                type: 'TIMESERIES_PLAY_STOP'
+            });
+        });
     });
 
     describe('reducers', () => {
