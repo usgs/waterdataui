@@ -7,20 +7,20 @@ var mockOscillator = function() {
     var start = function() { return null; };
     var frequency = {
         setTargetAtTime : function() { return null; }
-    }
+    };
     return {
         type: '',
         connect: connect,
         start: start,
         frequency: frequency
     };
-}
+};
 
 var mockGain = function() {
     var connect = function() { return null; };
     var gain = {
         setTargetAtTime: function() { return null; }
-    }
+    };
     return {
         connect: connect,
         gain: gain
@@ -52,7 +52,7 @@ var mockCompressor = function() {
         attack: attack,
         release: release
     };
-}
+};
 
 var MockAudioContext = function() {
     this.createOscillator = mockOscillator;
