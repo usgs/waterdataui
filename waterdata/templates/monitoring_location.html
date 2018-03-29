@@ -5,7 +5,7 @@
 
 {% block extra_head_tags %}
     {% if status_code == 200 %}
-        {{ components.DescriptionMetaTag(stations[0].site_no, location_with_values, pertinent_series) }}
+        <meta name="description" content="{{ components.DescriptionMetaTag(stations[0].site_no, location_with_values, pertinent_series) }}">
     {%  endif %}
 {% endblock %}
 
@@ -49,7 +49,7 @@
             {% else %}
                 <div class="site-header">
                     {% with site_no=stations[0].site_no %}{% include 'partials/social_share.html' %}{% endwith %}
-                    <h1>{{ stations[0].station_nm }}</h1>
+                    <h1 aria-describedby="site-description">{{ stations[0].station_nm }}</h1>
                     <div>
                         <span class="usa-label">Important</span>
                         <a href="https://waterdata.usgs.gov/nwis/uv?site_no={{stations[0].site_no}}" target="_blank">Classic Page</a>
@@ -64,6 +64,9 @@
                     </div>
                 </div>
                 {{ components.TimeseriesComponent(stations[0].site_no) }}
+                <div>
+                    <h4 id="site-description">{{ components.DescriptionMetaTag(stations[0].site_no, location_with_values, pertinent_series) }}</h4>
+                </div>
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
                     {{ components.FloodSliderComponent() }}
                     {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
