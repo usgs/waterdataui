@@ -2,6 +2,13 @@
 
 {% import 'macros/components.html' as components %}
 
+
+{% block extra_head_tags %}
+    {% if status_code == 200 %}
+        {{ components.DescriptionMetaTag(stations[0].site_no, location_with_values, pertinent_series) }}
+    {%  endif %}
+{% endblock %}
+
 {% block page_script %}
     {% if json_ld %}
     <script type="application/ld+json">
