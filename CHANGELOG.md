@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - No longer show parameters that have no data or masks for the last seven days in the 
-Select a timeseries list.
+"Select a timeseries" list.
 
 ## [0.4.0] - 2018-03-26
 ### Added
