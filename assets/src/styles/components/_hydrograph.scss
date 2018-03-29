@@ -147,6 +147,11 @@ $highlight: $color-gray-lightest;
                 fill: none;
             }
         }
+        .tick {
+            text {
+                font-size: 1.2em;
+            }
+        }
         .y-axis {
             text {
                 fill: black;
