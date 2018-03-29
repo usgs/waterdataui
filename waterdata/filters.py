@@ -42,9 +42,8 @@ def use_correct_indefinite_article(some_noun):
 @app.template_filter('data_start_year')
 def data_start_year(series):
     """
-    Take dataseries rolled up by parameter group and extract
-    the earliest year that data collection occurred and provide
-    a list of all distinct properties and species being measured.
+    Determine the earliest year that was collected for a
+    list of parameters.
 
     :param list series: list of data series
     :return: earliest year of data collection, list of distinct things being measured
@@ -62,7 +61,7 @@ def data_start_year(series):
 @app.template_filter('readable_param_list')
 def readable_param_list(series):
     """
-    Generate text for a description meta tag.
+    Generate text for a list of parameters in the description meta tag.
 
     :param list series: list of data series
     :return: human readable string for the parameters in the series

@@ -99,6 +99,7 @@ def monitoring_location(site_no):
                 app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
                 app.config['HUC_LOOKUP']
             )
+
             questions_link = None
             try:
                 site_owner_state = (
