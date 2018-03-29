@@ -378,9 +378,26 @@ describe('Redux store', () => {
             });
         });
 
-        //describe('stopTimeseriesPlay', () => {
-        //    let mockDispatch, mockState;
-        //})
+        describe('stopTimeseriesPlay', () => {
+            let mockDispatch, mockGetState;
+
+            beforeEach(() => {
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState');
+
+                jasmine.clock().install();
+                spyOn(Actions, 'timeseriesPlayStop');
+            });
+
+            it('Expects that timeseriesPlayStop is called', () => {
+                mockGetState.and.returnValues({
+                    playId: 1
+                });
+
+                Actions.stopTimeseriesPlay()(mockDispatch, mockGetState);
+                expect(Actions.timeseriesPlayStop).toHaveBeenCalled();
+            });
+        });
     });
 
     describe('synchronous actions', () => {
