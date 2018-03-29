@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
-###[0.5.0] - 2018-03-30
+### [0.5.0] - 2018-03-30
 ### Added
 - Description metatag and text on page generated from site data
 - Decorator that can be used to return a 404 for views. This is part of the work to add feature flags.
