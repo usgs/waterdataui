@@ -185,6 +185,7 @@ def hydrological_unit(huc_cd, show_locations=False):
             monitoring_locations = parse_rdb(response.iter_lines(decode_unicode=True))
 
     http_code = 200 if huc else 404
+    print('show locations is ', show_locations)
     return render_template(
         'hydrological_unit.html',
         http_code=http_code,
@@ -193,72 +194,66 @@ def hydrological_unit(huc_cd, show_locations=False):
         show_locations_link=not show_locations and huc and huc.get('kind') == 'HUC8'
     ), http_code
 
-# start of state county crawl section
 
-
-@app.route('/political-unit/', defaults={'political_unit_cd': None}, methods=['GET'])
-@app.route('/political-unit/<political_unit_cd>/', methods=['GET'])
-def political_unit(political_unit_cd, show_locations=False):
+@app.route('/states/', defaults={'state_cd': None, 'county_cd': None}, methods=['GET'])
+@app.route('/states/<state_cd>/', defaults={'county_cd': None}, methods=['GET'])
+@app.route('/states/<state_cd>/<county_cd>/', methods=['GET'])
+@defined_when(app.config['STATE_COUNTY_PAGES_ENABLED'], return_404)
+def states_counties(state_cd, county_cd, show_locations=False):
     """
-    Political unit view
+    State unit view
 
-    :param fips_cd: ID for this unit
+    :param state_cd: ID for this political unit - 'state'
+    :param county_cd: ID for this political unit - 'county'
     """
-    state_cd = ""
-    county_cd = ""
-    # Get the data corresponding to this political unit
-    if political_unit_cd:
-        length_of_political_unit_code = len(str(political_unit_cd))
-        if length_of_political_unit_code == 2:
-            political_unit_data = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(political_unit_cd, None)
-            print('this happens when state code is entered ', political_unit_data)
-        if length_of_political_unit_code == 5:
-            political_unit_cd_string = str(political_unit_cd)
-            state_cd = political_unit_cd_string[:2]
-            county_cd = political_unit_cd_string[2:]
-            print(state_cd)
-            print(county_cd)
 
-            political_unit_data = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(state_cd, None)
-            print('this happens when FIPS is entered ', political_unit_data)
+    if state_cd and county_cd:
+        state_county_cd = state_cd + county_cd
+        unit_data = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(state_cd, None)
+        unit_data = unit_data['county_cd'].get(county_cd, None)
 
-           # look_up_by_fips = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd']['county_cd'].get(state_cd, None)
-           # print(look_up_by_fips)
+    # Get the data corresponding to this state
+    if state_cd and not county_cd:
+        unit_data = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(state_cd, None)
 
-    # If no political code is available, display list of states.
-    else:
-        political_unit_data = {
+    # If no state and or state and county code is available, display list of states.
+    if not state_cd and not county_cd:
+        unit_data = {
             'name': 'US',
             'children': app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd']
         }
-        print('this is listed when no code is entered', political_unit_data)
 
     # If the search is at the county level, get the monitoring locations within that county.
     monitoring_locations = []
-    if show_locations and political_unit_data:
+    if show_locations and state_cd and county_cd:
         response = execute_get_request(
             SERVICE_ROOT,
             path='/nwis/site/',
-            params={'format': 'rdb', 'political_unit_data': political_unit_cd}
+            params={'format': 'rdb', 'countyCd': state_county_cd}
         )
-        print(response.content)
         if response.status_code == 200:
             monitoring_locations = parse_rdb(response.iter_lines(decode_unicode=True))
 
-    http_code = 200 if political_unit_data else 404
+    http_code = 200 if unit_data else 404
+
     return render_template(
-        'political_unit.html',
+        'states_counties.html',
         http_code=http_code,
         state_cd=state_cd,
         county_cd=county_cd,
-        political_unit_data=political_unit_data,
+        unit_data=unit_data,
         monitoring_locations=monitoring_locations,
-        show_locations_link=not show_locations and political_unit_data
+        show_locations_link=not show_locations and unit_data and county_cd
     ), http_code
 
-# end of state county crawl section
 
-
+@app.route('/states/<state_cd>/<county_cd>/monitoring-locations/', methods=['GET'])
+@defined_when(app.config['STATE_COUNTY_PAGES_ENABLED'], return_404)
+def county_station_locations(state_cd, county_cd):
+    """
+    Returns a page listing monitoring locations within a county.
+    """
+    return states_counties(state_cd, county_cd, show_locations=True)
 
 
 @app.route('/hydrological-unit/<huc_cd>/monitoring-locations/', methods=['GET'])
