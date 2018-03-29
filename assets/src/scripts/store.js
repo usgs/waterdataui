@@ -83,6 +83,7 @@ export const Actions = {
                     }
                 };
                 let playId = window.setInterval(play, 10);
+                console.log('Start audio play')
                 dispatch(Actions.timeseriesPlayOn(playId));
             }
         };
@@ -90,6 +91,7 @@ export const Actions = {
     stopTimeseriesPlay() {
         return function(dispatch, getState) {
             window.clearInterval(getState().playId);
+            console.log('End audio play');
             dispatch(Actions.timeseriesPlayStop());
         };
     },
