@@ -5,6 +5,7 @@ via the `app.template_filter` decorator.
 from urllib.parse import urljoin
 
 from . import app
+from .constants import SORT_TOP
 
 
 @app.template_filter('asset_url')
@@ -68,7 +69,6 @@ def readable_param_list(series):
     :rtype: str
 
     """
-    SORT_TOP = ('DISCHARGE', 'GAGE HEIGHT', 'TEMPERATURE', 'DEPTH TO WATER LEVEL')
     # need to use a set -- there might be multiple variants for a measurements
     # (e.g. "nitrite, water as N" vs "nitrite, water as NO3-")
     short_names = set([s['parameter_name'].split(',')[0].upper() for s in series])

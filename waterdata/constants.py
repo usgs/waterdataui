@@ -109,3 +109,5 @@ US_STATES = [
     {'name': 'Wisconsin', 'abbreviation': 'WI'},
     {'name': 'Wyoming', 'abbreviation': 'WY'}
 ]
+
+SORT_TOP = ('DISCHARGE', 'GAGE HEIGHT', 'TEMPERATURE', 'DEPTH TO WATER LEVEL')
