@@ -2,8 +2,11 @@
 
 {% import 'macros/components.html' as components %}
 
+
 {% block description %}
-    {{ components.DescriptionMetaTag(stations[0].site_no, location_with_values, pertinent_series) }}
+    {% if status_code == 200 %}
+        {{ components.DescriptionMetaTag(stations[0].site_no, location_with_values, pertinent_series) }}
+    {%  endif %}
 {% endblock %}
 
 {% block page_script %}
