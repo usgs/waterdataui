@@ -594,6 +594,25 @@ describe('Redux store', () => {
                gageHeight: 10
            });
         });
+
+        it('should handle TIMESERIES_PLAY_ON', () => {
+            expect(timeSeriesReducer({}, {
+                type: 'TIMESERIES_PLAY_ON',
+                playId: 1
+            })).toEqual({
+                playId: 1
+            });
+        });
+
+        it('should handle TIMESERIES_PLAY_STOP', () => {
+            expect(timeSeriesReducer({
+                playId: 1
+            }, {
+                type: 'TIMESERIES_PLAY_STOP'
+            })).toEqual({
+                playId: null
+            });
+        });
     });
 });
 

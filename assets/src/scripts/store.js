@@ -176,7 +176,6 @@ export const timeSeriesReducer = function (state={}, action) {
         case 'TIMESERIES_PLAY_ON':
             return {
                 ...state,
-                audibleInterfaceOn: true,
                 playId: action.playId
             };
 
@@ -184,7 +183,6 @@ export const timeSeriesReducer = function (state={}, action) {
             return {
                 ...state,
                 playId: null,
-                audibleInterfaceOn: false
             };
 
         case 'SET_FLOOD_FEATURES':
