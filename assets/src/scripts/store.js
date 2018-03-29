@@ -182,7 +182,7 @@ export const timeSeriesReducer = function (state={}, action) {
         case 'TIMESERIES_PLAY_STOP':
             return {
                 ...state,
-                playId: null,
+                playId: null
             };
 
         case 'SET_FLOOD_FEATURES':

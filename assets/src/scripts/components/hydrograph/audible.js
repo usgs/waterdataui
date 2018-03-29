@@ -14,12 +14,12 @@ const { Actions } = require('../../store');
 // Higher tones get lower volume
 const volumeScale = scaleLinear().range([2, .3]);
 
-const AudioContext = TIMESERIES_AUDIO_ENABLED ? window.AudioContext || window.webkitAudioContext: null;
+const AudioContext = TIMESERIES_AUDIO_ENABLED ? window.AudioContext || window.webkitAudioContext : null;
 const getAudioContext = memoize(function () {
     return new AudioContext();
 });
 
-export const createSound = memoize(/* eslint-disable no-unused-vars */ tsKey => {
+export const createSound = memoize(/* eslint no-unused-vars: off */ tsKey => {
     const audioCtx = getAudioContext();
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
@@ -74,22 +74,21 @@ export const updateSound = function ({enabled, points}) {
 
 const audibleInterfaceOnSelector = state => state.playId !== null;
 
-const audibleScaleSelector = memoize(tsKey => createSelector(
+const audibleScaleSelector = createSelector(
     yScaleSelector,
     (yScale) => {
         return scaleLinear()
             .domain(yScale.domain())
             .range([80, 1500]);
     }
-));
+);
 
 const audiblePointsSelector = createSelector(
     allTimeSeriesSelector,
     tsCursorPointsSelector('current'),
     tsCursorPointsSelector('compare'),
-    audibleScaleSelector('current'),
-    audibleScaleSelector('compare'),
-    (allTimeSeries, currentPoints, comparePoints, yScaleCurrent, yScaleCompare) => {
+    audibleScaleSelector,
+    (allTimeSeries, currentPoints, comparePoints, yScale) => {
         // Set null points for all time series, so we can turn audio for those
         // points off when toggling to other time series.
         let points = Object.keys(allTimeSeries).reduce((points, tsID) => {
@@ -100,14 +99,14 @@ const audiblePointsSelector = createSelector(
         // Get the pitches for the current-year points
         points = Object.keys(currentPoints).reduce((points, tsID) => {
             const pt = currentPoints[tsID];
-            points[tsID] = yScaleCurrent(pt.value);
+            points[tsID] = yScale(pt.value);
             return points;
         }, points);
 
         // Get the pitches for the compare-year points
         return Object.keys(comparePoints).reduce((points, tsID) => {
             const pt = comparePoints[tsID];
-            points[tsID] = yScaleCompare(pt.value);
+            points[tsID] = yScale(pt.value);
             return points;
         }, points);
     }
