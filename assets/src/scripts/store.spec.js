@@ -377,6 +377,10 @@ describe('Redux store', () => {
                 expect(Actions.stopTimeseriesPlay).toHaveBeenCalled();
             });
         });
+
+        //describe('stopTimeseriesPlay', () => {
+        //    let mockDispatch, mockState;
+        //})
     });
 
     describe('synchronous actions', () => {
