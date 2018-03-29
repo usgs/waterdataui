@@ -3,6 +3,10 @@ language: python
 python:
   - "3.6"
 
+addons:
+  firefox: "latest"
+
+
 before_install:
   - nvm install $(python -c "import json; print(json.loads(open('./package.json').read())['engines']['node'])")
 
