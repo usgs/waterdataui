@@ -9,6 +9,7 @@ describe('Redux store', () => {
         describe('retrieveTimeseries with good data', () => {
             let store;
             let modelsMock;
+            let mockDispatch;
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
@@ -28,11 +29,12 @@ describe('Redux store', () => {
 
                 spyOn(modelsMock, 'getTimeseries').and.callThrough();
                 spyOn(modelsMock, 'getMedianStatistics').and.callThrough();
+                mockDispatch = jasmine.createSpy('mockDispatch');
                 store = proxyquire('./store', {'./models': modelsMock});
             });
 
             it('Fetches the time series and median statistics data', () => {
-                store.Actions.retrieveTimeseries(SITE_NO)();
+                store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch);
 
                 expect(modelsMock.getTimeseries).toHaveBeenCalledWith({
                     sites: [SITE_NO],
@@ -46,7 +48,6 @@ describe('Redux store', () => {
             });
 
             it('should fetch the times series, retrieve the compare time series once the timeseries and fetch the statistics', (done) => {
-                let mockDispatch = jasmine.createSpy('mockDispatch');
                 spyOn(store.Actions, 'addSeriesCollection');
                 spyOn(store.Actions, 'retrieveCompareTimeseries');
                 let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch);
@@ -67,6 +68,7 @@ describe('Redux store', () => {
         describe('retrieveTimeseries with bad data', () => {
             let store;
             let modelsMock;
+            let mockDispatch;
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
@@ -85,12 +87,12 @@ describe('Redux store', () => {
                 };
 
                 spyOn(modelsMock, 'getTimeseries').and.callThrough();
+                mockDispatch = jasmine.createSpy('mockDispatch');
                 store = proxyquire('./store', {'./models': modelsMock});
             });
 
 
             it('should reset the current time series', (done) => {
-                let mockDispatch = jasmine.createSpy('mockDispatch');
                 spyOn(store.Actions, 'addSeriesCollection');
                 spyOn(store.Actions, 'resetTimeseries');
                 let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch);
@@ -110,6 +112,7 @@ describe('Redux store', () => {
         describe('retrieveCompareTimeseries with good data', () => {
             let store;
             let modelsMock;
+            let mockDispatch;
 
             const START_DATE = new Date('2017-01-01');
             const END_DATE = new Date('2017-01-08');
@@ -123,12 +126,12 @@ describe('Redux store', () => {
                     }
                 };
                 spyOn(modelsMock, 'getPreviousYearTimeseries').and.callThrough();
-
+                mockDispatch = jasmine.createSpy('mockDispatch');
                 store = proxyquire('./store', {'./models': modelsMock});
             });
 
             it('Fetches the previous year\'s time series', () => {
-                store.Actions.retrieveCompareTimeseries(SITE_NO, START_DATE, END_DATE)();
+                store.Actions.retrieveCompareTimeseries(SITE_NO, START_DATE, END_DATE)(mockDispatch);
 
                 expect(modelsMock.getPreviousYearTimeseries.calls.count()).toBe(1);
                 expect(modelsMock.getPreviousYearTimeseries.calls.argsFor(0)[0]).toEqual({
@@ -139,7 +142,6 @@ describe('Redux store', () => {
             });
 
             it('Dispatches the action to add the compare time series', (done) => {
-                let mockDispatch = jasmine.createSpy('mockDispatch');
                 spyOn(store.Actions, 'addSeriesCollection');
                 let p = store.Actions.retrieveCompareTimeseries(SITE_NO, START_DATE, END_DATE)(mockDispatch);
                 p.then(() => {
@@ -157,6 +159,7 @@ describe('Redux store', () => {
         describe('retrieveCompareTimeseries with bad data', () => {
             let store;
             let modelsMock;
+            let mockDispatch;
 
             const START_DATE = new Date('2017-01-01');
             const END_DATE = new Date('2017-01-08');
@@ -170,12 +173,11 @@ describe('Redux store', () => {
                     }
                 };
                 spyOn(modelsMock, 'getPreviousYearTimeseries').and.callThrough();
-
+                mockDispatch = jasmine.createSpy('mockDispatch');
                 store = proxyquire('./store', {'./models': modelsMock});
             });
 
             it('Dispatches the action to reset the compare time series', (done) => {
-                let mockDispatch = jasmine.createSpy('mockDispatch');
                 spyOn(store.Actions, 'resetTimeseries');
                 let p = store.Actions.retrieveCompareTimeseries(SITE_NO, START_DATE, END_DATE)(mockDispatch);
                 p.then(() => {
@@ -191,6 +193,7 @@ describe('Redux store', () => {
         describe('retrieveFloodData with data', () => {
             let store;
             let floodDataMock;
+            let mockDispatch;
 
             beforeEach(() => {
                 let getFeaturePromise = Promise.resolve([{
@@ -233,19 +236,19 @@ describe('Redux store', () => {
 
                 spyOn(floodDataMock, 'fetchFloodFeatures').and.callThrough();
                 spyOn(floodDataMock, 'fetchFloodExtent').and.callThrough();
+                mockDispatch = jasmine.createSpy('mockDispatch');
                 store = proxyquire('./store', {'./floodData': floodDataMock});
 
             });
 
             it('Make fetch call for both features and extent', () => {
-                store.Actions.retrieveFloodData(SITE_NO)();
+                store.Actions.retrieveFloodData(SITE_NO)(mockDispatch);
 
                 expect(floodDataMock.fetchFloodFeatures).toHaveBeenCalledWith(SITE_NO);
                 expect(floodDataMock.fetchFloodExtent).toHaveBeenCalledWith(SITE_NO);
             });
 
             it('dispatches a setFloodFeatures action after promises are resolved', (done) => {
-                let mockDispatch = jasmine.createSpy('mockDispatch');
                 spyOn(store.Actions, 'setFloodFeatures').and.callThrough();
                 let p = store.Actions.retrieveFloodData(SITE_NO)(mockDispatch);
 
@@ -266,6 +269,7 @@ describe('Redux store', () => {
         describe('retrieveFloodData with no data', () => {
             let store;
             let floodDataMock;
+            let mockDispatch;
 
             const SITE_NO = '12345678';
             beforeEach(() => {
@@ -288,12 +292,12 @@ describe('Redux store', () => {
 
                 spyOn(floodDataMock, 'fetchFloodFeatures').and.callThrough();
                 spyOn(floodDataMock, 'fetchFloodExtent').and.callThrough();
+                mockDispatch = jasmine.createSpy('mockDispatch');
                 store = proxyquire('./store', {'./floodData': floodDataMock});
 
             });
 
             it('dispatches a setFloodFeatures action after promises are resolved', (done) => {
-                let mockDispatch = jasmine.createSpy('mockDispatch');
                 spyOn(store.Actions, 'setFloodFeatures').and.callThrough();
                 let p = store.Actions.retrieveFloodData(SITE_NO)(mockDispatch);
 
@@ -310,6 +314,7 @@ describe('Redux store', () => {
         describe('startTimeseriesPlay', () => {
 
                 let mockDispatch, mockGetState;
+
             beforeEach(() => {
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState');
@@ -461,6 +466,13 @@ describe('Redux store', () => {
                 type: 'SET_CURSOR_OFFSET',
                 cursorOffset: 10
             });
+        });
+
+        it('should create an action to set the playId', () => {
+           expect(Actions.timeseriesPlayOn(1)).toEqual({
+               type: 'TIMESERIES_PLAY_ON',
+               playId: 1
+           });
         });
     });
 
