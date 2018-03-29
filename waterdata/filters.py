@@ -39,61 +39,54 @@ def use_correct_indefinite_article(some_noun):
     return 'a'
 
 
-def _summarize_site_collected_data(rolled_up_dataseries):
+@app.template_filter('data_start_year')
+def data_start_year(series):
     """
     Take dataseries rolled up by parameter group and extract
     the earliest year that data collection occurred and provide
     a list of all distinct properties and species being measured.
 
-    :param dict rolled_up_dataseries: data series rolled-up by parameter group with certain groups we don't care about
-        excluded
+    :param list series: list of data series
     :return: earliest year of data collection, list of distinct things being measured
-    :rtype: tuple
-
-    """
-    all_parms = list(chain.from_iterable([x['parameters'] for x in rolled_up_dataseries.values()]))
-    all_start_dates = [parm['start_date'] for parm in all_parms]
-    try:
-        start_year = min(all_start_dates).year
-    except ValueError:
-        start_year = None
-    # need to use a set -- there might be multiple variants for a measurements
-    # (e.g. "nitrite, water as N" vs "nitrite, water as NO3-")
-    short_parm_names = set([parm['parameter_name'].split(',')[0].upper() for parm in all_parms])
-    sort_top = ('DISCHARGE', 'GAGE HEIGHT', 'TEMPERATURE')
-    sorted_parm_names = sorted(short_parm_names, key=lambda x: (x not in sort_top, x))
-    return start_year, sorted_parm_names
-
-
-@app.template_filter('extended_description')
-def create_extended_desc(rolled_up_dataseries):
-    """
-    Generate text for a description meta tag.
-
-    :param rolled_up_dataseries: data series rolled-up by parameter group with certain groups we don't care about
-    :type rolled_up_dataseries: dict
-    :return: description text for a site
     :rtype: str
 
     """
-    start_date, rt_parms = _summarize_site_collected_data(rolled_up_dataseries)
-    if rt_parms:
-        if len(rt_parms) == 1:
-            parameters = rt_parms[0]
-        elif 1 < len(rt_parms) < 4:
+    all_start_dates = [s['start_date'] for s in series]
+    try:
+        start_year = str(min(all_start_dates).year)
+    except ValueError:
+        start_year = 'unknown'
+    return start_year
+
+
+@app.template_filter('readable_param_list')
+def readable_param_list(series):
+    """
+    Generate text for a description meta tag.
+
+    :param list series: list of data series
+    :return: human readable string for the parameters in the series
+    :rtype: str
+
+    """
+    SORT_TOP = ('DISCHARGE', 'GAGE HEIGHT', 'TEMPERATURE', 'DEPTH TO WATER LEVEL')
+    # need to use a set -- there might be multiple variants for a measurements
+    # (e.g. "nitrite, water as N" vs "nitrite, water as NO3-")
+    short_names = set([s['parameter_name'].split(',')[0].upper() for s in series])
+    sorted_names = sorted(short_names, key=lambda x: (x not in SORT_TOP, x))
+    if sorted_names:
+        if len(sorted_names) == 1:
+            parameters = sorted_names[0]
+        elif 1 < len(sorted_names) < 4:
             # some code to handle the serial comma appropriately
             # some people like it, some people don't....
-            if len(rt_parms) == 2:
+            if len(sorted_names) == 2:
                 serial_comma = ''
             else:
                 serial_comma = ','
-            parameters = '{}{} and {}'.format(', '.join(rt_parms[:-1]), serial_comma, rt_parms[-1])
+            parameters = '{}{} and {}'.format(', '.join(sorted_names[:-1]), serial_comma, sorted_names[-1])
         else:
-            parameters = '{}, and MORE'.format(', '.join(rt_parms[:3]))
-        extended_desc = (
-            'Current conditions of {parameters} are available. '
-            'Water data back to {start_date} are available online.'
-        ).format(parameters=parameters, start_date=start_date)
+            parameters = '{}, and MORE'.format(', '.join(sorted_names[:3]))
     else:
-        extended_desc = ''
-    return extended_desc
+        parameters = 'unknown'
+    return parameters

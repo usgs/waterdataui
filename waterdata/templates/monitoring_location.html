@@ -3,7 +3,7 @@
 {% import 'macros/components.html' as components %}
 
 {% block description %}
-    {{ components.DescriptionMetaTag(stations[0].site_no, location_with_values, parm_grp_summary) }}
+    {{ components.DescriptionMetaTag(stations[0].site_no, location_with_values, pertinent_series) }}
 {% endblock %}
 
 {% block page_script %}

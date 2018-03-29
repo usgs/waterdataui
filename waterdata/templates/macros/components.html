@@ -26,6 +26,6 @@
 {%- endmacro %}
 
 
-{%  macro DescriptionMetaTag(site_no, loc_vals, rolled_up_series) -%}
-    <meta name="description" content="Monitoring location {{ site_no }} is associated with {{ loc_vals.site_tp_cd.name.upper()|indefinite_article }} {{ loc_vals.site_tp_cd.name.upper() }} in {{ loc_vals.county_cd.name.upper() }}, {{ loc_vals.state_cd.name.upper() }}.{% if rolled_up_series %} {{ rolled_up_series|extended_description }}{% endif %}">
+{%  macro DescriptionMetaTag(site_no, loc_vals, pertinent_series) -%}
+    <meta name="description" content="Monitoring location {{ site_no }} is associated with {{ loc_vals.site_tp_cd.name.upper()|indefinite_article }} {{ loc_vals.site_tp_cd.name.upper() }} in {{ loc_vals.county_cd.name.upper() }}, {{ loc_vals.state_cd.name.upper() }}.{% if pertinent_series %} Current conditions of {{ pertinent_series|readable_param_list }} are available. Water data back to {{  pertinent_series|data_start_year }} are available online.{% endif %}">
 {%- endmacro %}
