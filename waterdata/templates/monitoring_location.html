@@ -49,7 +49,7 @@
             {% else %}
                 <div class="site-header">
                     {% with site_no=stations[0].site_no %}{% include 'partials/social_share.html' %}{% endwith %}
-                    <h1 aria-describedby="site-description">{{ stations[0].station_nm }}</h1>
+                    <h1>{{ stations[0].station_nm }}</h1>
                     <div>
                         <span class="usa-label">Important</span>
                         <a href="https://waterdata.usgs.gov/nwis/uv?site_no={{stations[0].site_no}}" target="_blank">Classic Page</a>
