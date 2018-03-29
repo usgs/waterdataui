@@ -122,21 +122,33 @@ export const audibleUI = function (elem) {
         console.warn('AudioContext not available');
         return;
     }
-    elem.append('button')
-        .attr('title', 'Play')
-        .html('<i class="fa fa-play"></i>')
+
+    const button = elem.append('button')
+        .classed('usa-button-secondary', true)
+        .html('Audible&nbsp;');
+    button.append('i')
+        .classed('fa', true);
+    button.call(link(function(elem, audibleOn) {
+            if (audibleOn) {
+                elem.attr('title', 'Stop');
+            } else {
+                elem.attr('title', 'Play');
+            }
+            elem.select('i')
+                .classed('fa-play', !audibleOn)
+                .classed('fa-stop', audibleOn);
+        }, audibleInterfaceOnSelector))
         .call(link(function(elem, xScale) {
             const domain = xScale.domain();
             elem.attr('data-max-offset', domain[1].getTime() - domain[0].getTime());
         }, xScaleSelector('current')))
         .on('click', dispatch(function() {
-            return Actions.startTimeseriesPlay(select(this).attr('data-max-offset'));
-        }));
-    elem.append('button')
-        .attr('title', 'Stop')
-        .html('<i class="fa fa-stop"></i>')
-        .on('click', dispatch(function() {
-            return Actions.stopTimeseriesPlay();
+            var button = select(this);
+            if (button.attr('title') === 'Play') {
+                return Actions.startTimeseriesPlay(button.attr('data-max-offset'));
+            } else {
+                return Actions.stopTimeseriesPlay();
+            }
         }));
 
     // Listen for focus changes, and play back the audio representation of
