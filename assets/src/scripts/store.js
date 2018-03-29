@@ -9,7 +9,7 @@ const { fetchFloodFeatures, fetchFloodExtent } = require('./floodData');
 
 
 export const Actions = {
-    retrieveTimeseries(siteno, params = null, startDate = null, endDate = null) {
+    retrieveTimeseries(siteno, params=null, startDate=null, endDate=null) {
         return function (dispatch) {
             const timeSeries = getTimeseries({sites: [siteno], params, startDate, endDate}).then(
                 series => {
