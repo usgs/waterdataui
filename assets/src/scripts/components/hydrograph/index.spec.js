@@ -9,8 +9,6 @@ const TEST_STATE = {
     series: {
         timeSeries: {
             '00010:current': {
-                startTime: new Date('2018-01-02T15:00:00.000-06:00'),
-                endTime: new Date('2018-01-02T15:00:00.000-06:00'),
                 points: [{
                     dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
                     value: 4,
@@ -21,8 +19,6 @@ const TEST_STATE = {
                 variable: '45807190'
             },
             '00060:current': {
-                startTime: new Date('2018-01-02T15:00:00.000-06:00'),
-                endTime: new Date('2018-01-02T15:00:00.000-06:00'),
                 points: [{
                     dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
                     value: 10,
@@ -33,8 +29,6 @@ const TEST_STATE = {
                 variable: '45807197'
             },
             '00060:compare': {
-                startTime: new Date('2018-01-02T15:00:00.000-06:00'),
-                endTime: new Date('2018-01-02T15:00:00.000-06:00'),
                 points: [{
                     dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
                     value: 10,
@@ -45,8 +39,6 @@ const TEST_STATE = {
                 variable: '45807197'
             },
             '00060:median': {
-                startTime: new Date('2018-01-02T15:00:00.000-06:00'),
-                endTime: new Date('2018-01-02T15:00:00.000-06:00'),
                 points: [{
                     dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
                     value: 10
@@ -96,6 +88,7 @@ const TEST_STATE = {
                 },
                 oid: '45807197',
                 variableName: 'Test title for 00060',
+                variableDescription: 'Test description for 00060',
                 unit: {
                     unitCode: 'unitCode'
                 }
@@ -186,9 +179,9 @@ describe('Hydrograph charting module', () => {
             svg = select('svg');
         });
 
-        it('title and desc attributes are present', function() {
-            expect(svg.attr('title'), 'My Title');
-            expect(svg.attr('desc'), 'My Description');
+        fit('title and desc attributes are present', function() {
+            expect(svg.attr('title')).toEqual('Test title for 00060');
+            expect(svg.attr('desc')).toEqual('Test description for 00060');
             expect(svg.attr('aria-labelledby')).toContain('title');
             expect(svg.attr('aria-describedby')).toContain('desc');
         });
