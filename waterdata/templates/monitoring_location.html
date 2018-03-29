@@ -62,11 +62,9 @@
                             </div>
                         </div>
                     </div>
+                    <p id="site-description">{{ components.DescriptionMetaTag(stations[0].site_no, location_with_values, pertinent_series) }}</p>
                 </div>
                 {{ components.TimeseriesComponent(stations[0].site_no) }}
-                <div>
-                    <h4 id="site-description">{{ components.DescriptionMetaTag(stations[0].site_no, location_with_values, pertinent_series) }}</h4>
-                </div>
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
                     {{ components.FloodSliderComponent() }}
                     {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
