@@ -2,7 +2,6 @@
 Jinja2 filters. Must be imported (via waterdata.__init__) for them to register
 via the `app.template_filter` decorator.
 """
-from itertools import chain
 from urllib.parse import urljoin
 
 from . import app
