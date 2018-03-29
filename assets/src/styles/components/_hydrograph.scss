@@ -153,6 +153,10 @@ $highlight: $color-gray-lightest;
                 text-anchor: left;
                 &.y-axis-label {
                     text-anchor: middle;
+                    display: none;
+                    @include media($medium-screen) {
+                        display: block;
+                    }
                 }
             }
             .tick {
