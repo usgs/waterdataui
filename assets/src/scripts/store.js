@@ -70,7 +70,7 @@ export const Actions = {
     startTimeseriesPlay(maxCursorOffset) {
         return function (dispatch, getState) {
             let state = getState();
-            if (!state.cursorOffset || state.cursorOffset >= maxCursorOffset) {
+            if (state.cursorOffset == null || state.cursorOffset >= maxCursorOffset) {
                 dispatch(Actions.setCursorOffset(0));
             }
             if (!state.playId) {
@@ -290,10 +290,7 @@ export const configureStore = function (initialState) {
         windowWidth: 1024,
         width: 800,
         showMedianStatsLabel: false,
-        tooltipFocusTime: {
-            current: null,
-            compare: null
-        },
+        cursorOffset: null,
         floodStages: [],
         floodExtent: {},
         gageHeight: null,

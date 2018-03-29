@@ -306,6 +306,77 @@ describe('Redux store', () => {
                 });
             });
         });
+
+        describe('startTimeseriesPlay', () => {
+
+                let mockDispatch, mockGetState;
+            beforeEach(() => {
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState');
+
+                jasmine.clock().install();
+                spyOn(Actions, 'setCursorOffset');
+                spyOn(Actions, 'timeseriesPlayOn');
+                spyOn(Actions, 'stopTimeseriesPlay');
+            });
+
+            afterEach(() => {
+                jasmine.clock().uninstall();
+            });
+
+            it('Does not reset the cursor offset when current offset is not null or greater than the max offset ', () => {
+                mockGetState.and.returnValues({
+                    cursorOffset: 0
+                });
+                Actions.startTimeseriesPlay(2700000)(mockDispatch, mockGetState);
+
+                expect(Actions.setCursorOffset).not.toHaveBeenCalled;
+            });
+
+            it('Call the action to start time series play', () => {
+                mockGetState.and.returnValues({
+                    cursorOffset: 0
+                });
+                Actions.startTimeseriesPlay(2700000)(mockDispatch, mockGetState);
+
+                expect(Actions.timeseriesPlayOn).toHaveBeenCalled();
+            });
+
+            it('Expects the cursor to be updated after 10 milliseconds', () => {
+                mockGetState.and.returnValues({
+                    cursorOffset: 0
+                }, {
+                    cursorOffset: 0
+                });
+                Actions.startTimeseriesPlay(2700000)(mockDispatch, mockGetState);
+                jasmine.clock().tick(11);
+
+                expect(Actions.setCursorOffset.calls.count()).toBe(1);
+                expect(Actions.setCursorOffset.calls.argsFor(0)[0]).toBe(900000);
+            });
+
+            it('Expects the cursor to be reset if the cursor offset is greater than the maxCursorOffset', () => {
+                mockGetState.and.returnValues({
+                    cursorOffset: 2700000
+                });
+
+                Actions.startTimeseriesPlay(2700000)(mockDispatch, mockGetState);
+
+                expect(Actions.setCursorOffset).toHaveBeenCalledWith(0);
+            });
+
+            it('Expects the play to be stopped if the cursorOffset exceeds the maxCursorOffset', () => {
+                mockGetState.and.returnValues({
+                    cursorOffset: 2100000
+                }, {
+                    cursorOffset: 2100000
+                });
+                Actions.startTimeseriesPlay(2700000)(mockDispatch, mockGetState);
+                jasmine.clock().tick(11);
+
+                expect(Actions.stopTimeseriesPlay).toHaveBeenCalled();
+            });
+        });
     });
 
     describe('synchronous actions', () => {
