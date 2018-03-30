@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Play/Stop button to play the audible sound for the timeseries graph
 
+### Fixed
+- Timeseries SVG has the correct title and desc tag contents.
+
 
 ## [0.5.0] - 2018-03-30
 ### Added
