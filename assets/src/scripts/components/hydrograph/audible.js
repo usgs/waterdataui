@@ -125,14 +125,18 @@ export const audibleUI = function (elem) {
 
     const button = elem.append('button')
         .classed('usa-button-secondary', true)
+        .attr('ga-on', 'click')
+        .attr('ga-event-category', 'TimeseriesGraph')
         .html('Audible&nbsp;');
     button.append('i')
         .classed('fa', true);
     button.call(link(function(elem, audibleOn) {
             if (audibleOn) {
-                elem.attr('title', 'Stop');
+                elem.attr('title', 'Stop')
+                elem.attr('ga-event-action', 'stopAudible');
             } else {
-                elem.attr('title', 'Play');
+                elem.attr('title', 'Play')
+                elem.attr('ga-event-action', 'playAudible');
             }
             elem.select('i')
                 .classed('fa-play', !audibleOn)
