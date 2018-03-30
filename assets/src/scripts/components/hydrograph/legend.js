@@ -156,7 +156,7 @@ function drawSimpleLegend(svg, {legendMarkerRows, layout}) {
     } catch(error) {
         return;
     }
-    svg.attr('viewBox', `0 0 ${layout.width} ${bBox.height + 10}`);
+    svg.attr('viewBox', `-${CIRCLE_RADIUS} 0 ${layout.width} ${bBox.height + 10}`);
 }
 
 const uniqueMasksSelector = memoize(tsKey => createSelector(
