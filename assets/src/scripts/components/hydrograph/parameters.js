@@ -7,6 +7,7 @@ const { Actions } = require('../../store');
 const { sortedParameters } = require('../../models');
 const { SPARK_LINE_DIM } = require('./layout');
 const { dispatch } = require('../../lib/redux');
+const { MASK_DESC } = require('./drawingData');
 
 
 
@@ -64,12 +65,37 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
         .y(function(d) {
             return scales.y(d.value);
         });
-
-    for (const lineSegment of seriesLineSegments) {
-        if (lineSegment.classes.dataMask === null) {
-            svgSelection.append('path')
-                .attr('d', spark(lineSegment.points))
-                .attr('class', 'spark-line');
+    const seriesDataMasks = seriesLineSegments.map(x => x.classes.dataMask);
+    if (seriesDataMasks.includes(null)) {
+        for (const lineSegment of seriesLineSegments) {
+            if (lineSegment.classes.dataMask === null) {
+                svgSelection.append('path')
+                    .attr('d', spark(lineSegment.points))
+                    .attr('class', 'spark-line');
+            }
+        }
+    } else {
+        let svgText = svgSelection.append('text')
+            .style('font-size', '0.6em');
+        const maskDescs = seriesDataMasks.map(x => MASK_DESC[x.toLowerCase()]);
+        const maskDesc = maskDescs.length === 1 ? maskDescs[0] : 'Data Masked';
+        const maskDescWords = maskDesc.split(' ');
+        if (maskDescWords.length > 1) {
+            for (const val of maskDescWords.entries()) {
+                const yPosition = 15 + val[0]*10;
+                const valText = val[1];
+                let tspan = svgText.append('tspan')
+                    .attr('x', 0)
+                    .attr('y', yPosition)
+                    .text(valText);
+                let tspanWidth = tspan.node().getBBox().width;
+                // center the text
+                let xLocation = (SPARK_LINE_DIM.width - tspanWidth) / 2;
+                tspan.attr('x', xLocation);
+            }
+        } else {
+            svgText.text(maskDesc)
+                .attr('y', '20');
         }
     }
 };
