@@ -68,6 +68,9 @@ $highlight: $color-gray-lightest;
                 stroke-width: 1px;
                 fill: none;
             }
+            text.sparkline-text {
+                font-size: 0.6em;
+            }
         }
     }
 }

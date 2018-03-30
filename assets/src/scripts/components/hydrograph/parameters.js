@@ -76,29 +76,34 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
         }
     } else {
         let svgText = svgSelection.append('text')
-            .style('font-size', '0.6em');
+            .attr('x', 0)
+            .attr('y', 0)
+            .classed('sparkline-text', true);
         const maskDescs = seriesDataMasks.map(x => MASK_DESC[x.toLowerCase()]);
-        const maskDesc = maskDescs.length === 1 ? maskDescs[0] : 'Data Masked';
+        const maskDesc = maskDescs.length === 1 ? maskDescs[0] : 'Masked';
         const maskDescWords = maskDesc.split(' ');
-        const centerText = function (svgTextElement) {
-            const textWidth = svgTextElement.node().getBBox().width;
-            const xLocation = (SPARK_LINE_DIM.width - textWidth) / 2;
-            svgTextElement.attr('x', xLocation);
+
+        const centerElement = function (svgElement) {
+            const elmentWidth = svgElement.node().getBBox().width;
+            const xLocation = (SPARK_LINE_DIM.width - elmentWidth) / 2;
+            svgElement.attr('x', xLocation);
         };
+
         if (maskDescWords.length > 1) {
             for (const val of maskDescWords.entries()) {
-                const yPosition = 15 + val[0]*10;
+                const yPosition = 15 + val[0]*12;
                 const valText = val[1];
                 let tspan = svgText.append('tspan')
                     .attr('x', 0)
                     .attr('y', yPosition)
                     .text(valText);
-                centerText(tspan);
+                centerElement(svgText);
+                centerElement(tspan);
             }
         } else {
             svgText.text(maskDesc)
                 .attr('y', '20');
-            centerText(svgText);
+            centerElement(svgText);
         }
     }
 };
