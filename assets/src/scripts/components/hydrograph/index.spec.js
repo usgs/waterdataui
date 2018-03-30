@@ -70,6 +70,17 @@ const TEST_STATE = {
                 timeSeries: ['00010:current']
             }
         },
+        queryInfo: {
+            current: {
+                notes: {
+                    'filter:timeRange':  {
+                        mode: 'PERIOD',
+                        periodDays: 7
+                    },
+                    requestDT: new Date('2018-03-30 11:00:00')
+                }
+            }
+        },
         requests: {
             current: {
                 timeSeriesCollections: ['coll1']
@@ -124,10 +135,8 @@ describe('Hydrograph charting module', () => {
 
     beforeEach(() => {
         let body = select('body');
-        let hydrograph = body.append('div')
+        body.append('div')
             .attr('id', 'hydrograph');
-        hydrograph.append('div')
-            .attr('class', 'hydrograph-container');
         graphNode = document.getElementById('hydrograph');
     });
 
@@ -179,9 +188,13 @@ describe('Hydrograph charting module', () => {
             svg = select('svg');
         });
 
-        fit('title and desc attributes are present', function() {
-            expect(svg.attr('title')).toEqual('Test title for 00060');
-            expect(svg.attr('desc')).toEqual('Test description for 00060');
+        it('title and desc attributes are present', function() {
+            const descText = svg.select('desc').text();
+
+            expect(svg.select('title').text()).toEqual('Test title for 00060');
+            expect(descText).toContain('Test description for 00060');
+            expect(descText).toContain('3/23/2018');
+            expect(descText).toContain('3/30/2018');
             expect(svg.attr('aria-labelledby')).toContain('title');
             expect(svg.attr('aria-describedby')).toContain('desc');
         });

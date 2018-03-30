@@ -291,8 +291,8 @@ const timeSeriesGraph = function (elem) {
         .append('svg')
             .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({
-                titleSelector,
-                descriptionSelector,
+                title: titleSelector,
+                description: descriptionSelector,
                 isInteractive: () => true
             })))
             .call(plotSvgDefs)
