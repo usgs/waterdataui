@@ -85,13 +85,13 @@ const TEXT_WRAP_BREAK_CHARS = ['/', '&', '-'];
  * @param  {String} text
  * @param  {Number} width
  */
-export function wrap(text, width) {
+export function wrap(text, width, break_chars=['/', '&', '-']) {
     text.each(function () {
         const elem = select(this);
 
         // To determine line breaks, add a space after each break character
         let textContent = elem.text();
-        TEXT_WRAP_BREAK_CHARS.forEach(char => {
+        break_chars.forEach(char => {
             textContent = textContent.replace(char, char + ' ');
         });
 
@@ -123,7 +123,7 @@ export function wrap(text, width) {
                 line = [word];
 
                 // Remove the spaces trailing break characters that were added above
-                TEXT_WRAP_BREAK_CHARS.forEach(char => {
+                break_chars.forEach(char => {
                     spanContent = spanContent.replace(char + ' ', char);
                 });
 
@@ -139,4 +139,17 @@ export function wrap(text, width) {
             }
         }
     });
+}
+
+/**
+ * This will execute the equivalent media query as the USWDS given a minWidth.
+ * For example, this SASS:
+ *     @media($medium-screen)
+ * is equivalent to:
+ *     mediaQuery(mediumScreenPx
+ * @param  {Number} minWidth
+ * @return {Boolean} true if the media query is active at the given width
+ */
+export const mediaQuery = function (minWidth) {
+    return window.matchMedia(`screen and (min-width: ${minWidth}px)`).matches;
 }
