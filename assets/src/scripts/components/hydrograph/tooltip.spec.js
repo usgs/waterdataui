@@ -219,11 +219,7 @@ describe('Hydrograph tooltip module', () => {
 
         it('Text handles data masks if focus is near masked data points', () => {
             let store = configureStore(Object.assign({}, testState, {
-                cursorOffset: 1,
-                toolTipFocusTime: {
-                    current: new Date('2018-01-03T16:51:00.000Z'),
-                    compare: new Date('2018-01-03T16:50:00.000Z')
-                }
+                cursorOffset: 1
             }));
 
             svg.call(provide(store))

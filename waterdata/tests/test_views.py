@@ -173,13 +173,15 @@ MOCK_SITE_LIST_1 = (
     '#  dec_long_va     -- Decimal longitude\n'
     '#  coord_acy_cd    -- Latitude-longitude accuracy\n'
     '#  dec_coord_datum_cd -- Decimal Latitude-longitude datum\n'
+    '#  state_cd      -- State code\n'
+    '#  county_cd     -- County_code\n'
     '#  alt_va          -- Altitude of Gage/land surface\n'
     '#  alt_acy_va      -- Altitude accuracy\n#  alt_datum_cd    -- Altitude datum\n'
     '#  huc_cd          -- Hydrologic unit code\n#\nagency_cd\tsite_no\tstation_nm\t'
-    'site_tp_cd\tdec_lat_va\tdec_long_va\tcoord_acy_cd\tdec_coord_datum_cd\talt_va\t'
-    'alt_acy_va\talt_datum_cd\thuc_cd\n5s\t15s\t50s\t7s\t16s\t16s\t1s\t10s\t8s\t3s\t10s\t'
+    'site_tp_cd\tdec_lat_va\tdec_long_va\tcoord_acy_cd\tdec_coord_datum_cd\tstate_cd\tcounty_cd\talt_va\t'
+    'alt_acy_va\talt_datum_cd\thuc_cd\n5s\t15s\t50s\t7s\t16s\t17s\ts17s\t16s\t1s\t10s\t8s\t3s\t10s\t'
     '16s\nUSGS\t01630500\tSome Random Site\tST\t200.94977778\t-100.12763889\tS\t'
-    'NAD83\t 151.20\t .1\tNAVD88\t02070010'
+    'NAD83\t48\t061\t 151.20\t .1\tNAVD88\t02070010'
 )
 
 MOCK_SITE_LIST_2 = (

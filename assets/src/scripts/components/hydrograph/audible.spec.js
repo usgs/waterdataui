@@ -3,7 +3,8 @@ const { select } = require('d3-selection');
 const { audibleUI } = require('./audible');
 
 const { provide } = require('../../lib/redux');
-const { Actions, configureStore } = require('../../store');
+
+const { configureStore } = require('../../store');
 
 
 const TEST_STATE = {
@@ -48,32 +49,47 @@ const TEST_STATE = {
     showSeries: {
         current: true,
         compare: true
-    }
+    },
+    playId: null
 };
 
 
-describe('Audible interface', () => {
+describe('audibleUI', () => {
     let container;
+    let store;
     beforeEach(() => {
+        store = configureStore(TEST_STATE);
+        jasmine.clock().install();
         container = select('body').append('div');
         container
-            .call(provide(configureStore(TEST_STATE)))
+            .call(provide(store))
             .call(audibleUI);
     });
 
     afterEach(() => {
         container.remove();
+        jasmine.clock().uninstall();
     });
 
-    it('renders', () => {
-        const checkbox = select('#audible-checkbox');
-        expect(checkbox).toBeTruthy();
+    it('renders expected audible UI', () => {
+        expect(container.selectAll('button').size()).toBe(1);
+        expect(container.selectAll('button[title="Play"]').size()).toBe(1);
     });
 
-    it('does nothing unexpected when playing a sound', () => {
-        expect(() => {
-            Actions.toggleAudibleInterface(true);
-            Actions.setCursorOffset(1);
-        }).not.toThrow();
+    it('Expects the store to have a playId if the button is clicked', () => {
+        container.select('button').dispatch('click');
+
+        expect(store.getState().playId).not.toBeNull();
     });
+
+    it('Expects the store to have a null playId if the  button is clicked after clicking the once', () => {
+        container.select('button').dispatch('click');
+        container.select('button').dispatch('click');
+
+        expect(store.getState().playId).toBeNull();
+    });
+
+
+
+
 });
