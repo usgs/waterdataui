@@ -87,7 +87,7 @@ function appendAxes(elem, {xAxis, yAxis, layout, yTitle}) {
     const yLoc = {x: 0, y: 0};
     const yLabelLoc = {
         x: layout.height / -2 + MARGIN.top,
-        y: -35
+        y: -40
     };
 
     // Remove existing axes before adding the new ones.

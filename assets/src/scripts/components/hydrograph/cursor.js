@@ -117,7 +117,7 @@ const cursorSlider = function (elem) {
                         .classed('active', cursorOffset !== null);
                 }, cursorOffsetSelector))
                 .call(link((input, layout) => {
-                    input.style('width', layout.width - MARGIN.right + SLIDER_OFFSET_PX * 2 + 'px');
+                    input.style('width', layout.width - (MARGIN.left + MARGIN.right) + SLIDER_OFFSET_PX * 2 + 'px');
                 }, layoutSelector));
         });
 };

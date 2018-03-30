@@ -289,7 +289,7 @@ const timeSeriesGraph = function (elem) {
         .attr('class', 'hydrograph-container')
         .call(createTitle)
         .append('svg')
-            .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width} ${layout.height}`), layoutSelector))
+            .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width + MARGIN.left + MARGIN.right} ${layout.height + MARGIN.top + MARGIN.bottom}`), layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({
                 titleSelector,
                 descriptionSelector,
