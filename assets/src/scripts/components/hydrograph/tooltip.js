@@ -110,7 +110,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
 
     const data = Object.values(currentPoints).concat(Object.values(comparePoints));
     const texts = textGroup
-        .selectAll('text')
+        .selectAll('.series-text')
         .data(data);
 
     // Remove old text labels after fading them out
@@ -121,16 +121,26 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
 
     // Add new text labels
     const newTexts = texts.enter()
-        .append('text')
-            .attr('class', d => `${d.tsKey}-tooltip-text`)
-            .attr('height', '1em')
-            .attr('x', 20);
+        .append('g')
+            .attr('class', 'series-text')
+            .call(g => {
+                g.append('rect')
+                    .attr('class', 'tooltip-text-background')
+                    .attr('width', 0)
+                    .attr('height', 0)
+                    .attr('x', 20);
+                g.append('text')
+                    .attr('class', d => `${d.tsKey}-tooltip-text`)
+                    .attr('height', '1.1em')
+                    .attr('x', 20);
+            });
 
-    // Update the text and classes of all tooltip labels
-    texts.merge(newTexts)
+    // Update the text and backgrounds of all tooltip labels
+    const merge = texts.merge(newTexts)
         .interrupt()
-        .style('opacity', '1')
-        .attr('y', (d, i) => `${i + 1}em`)
+        .style('opacity', '1');
+    merge.select('text')
+        .attr('y', (d, i) => `${(i + 1) * 1.1}em`)
         .text(datum => {
             return getTooltipText(datum, qualifiers, unitCode);
         })
@@ -144,16 +154,15 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
             return classesForPoint(datum).approved;
         })
         .classed('estimated', datum => classesForPoint(datum).estimated);
-
-    // Size the background rect to the size of textGroup
-    // Skip the resize if this is the first time we've been called, because
-    // the node won't be in the DOM yet.
-    if (resizeBackground) {
-        const bBox = textGroup.node().getBBox();
-        textGroup.select('.tooltip-text-group-background')
-            .attr('width', bBox.width)
-            .attr('height', bBox.height);
-    }
+    merge.select('text')
+        .each(function (text) {
+            const bBox = this.getBBox();
+            select(this.parentNode)
+                .select('.tooltip-text-background')
+                    .attr('y', bBox.y)
+                    .attr('width', bBox.width)
+                    .attr('height', bBox.height);
+        });
 
     return textGroup;
 };
