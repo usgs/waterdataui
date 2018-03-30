@@ -1,6 +1,7 @@
 """
 Main application views.
 """
+from itertools import chain
 import json
 
 from flask import abort, render_template, request, Markup
@@ -77,9 +78,11 @@ def monitoring_location(site_no):
                     for param_datum in param_data
                 ]
                 grouped_dataseries = rollup_dataseries(site_dataseries)
+                pertinent_series = list(chain.from_iterable([x['parameters'] for x in grouped_dataseries.values()]))
                 location_capabilities = set(param_datum['parm_cd'] for param_datum in param_data)
             else:
                 grouped_dataseries = None
+                pertinent_series = None
                 location_capabilities = {}
 
             json_ld = build_linked_data(
@@ -124,6 +127,7 @@ def monitoring_location(site_no):
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'parm_grp_summary': grouped_dataseries,
+                'pertinent_series': pertinent_series,
                 'questions_link': questions_link
             }
         http_code = 200
@@ -266,6 +270,7 @@ def county_station_locations(state_cd, county_cd):
 
 
 @app.route('/components/time-series/<site_no>/', methods=['GET'])
+@defined_when(app.config['EMBED_IMAGE_FEATURE_ENABLED'], return_404)
 def time_series_component(site_no):
     """
     Returns an unadorned page with the time series component for a site.

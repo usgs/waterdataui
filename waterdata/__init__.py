@@ -55,6 +55,12 @@ with open(os.path.join(app.config.get('DATA_DIR'),
                        app.config.get('HUC_LOOKUP_FILENAME')), 'r') as f:
     app.config['HUC_LOOKUP'] = json.loads(f.read())
 
+# Load static assets manifest file, which maps source file names to the
+# corresponding versioned/hashed file name.
+manifest_path = app.config.get('ASSET_MANIFEST_PATH')
+if manifest_path:
+    with open(manifest_path, 'r') as f:
+        app.config['ASSET_MANIFEST'] = json.loads(f.read())
 
 if app.config.get('LOGGING_ENABLED'):
     # pylint: disable=C0103
@@ -69,3 +75,4 @@ if app.config.get('LOGGING_ENABLED'):
 
 
 from . import views  # pylint: disable=C0413
+from . import filters  # pylint: disable=C0413

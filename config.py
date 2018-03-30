@@ -17,6 +17,7 @@ DEPLOYMENT_ENVIRONMENT = 'development'
 TIMESERIES_AUDIO_ENABLED = True
 HYDROLOGIC_PAGES_ENABLED = True
 STATE_COUNTY_PAGES_ENABLED = True
+EMBED_IMAGE_FEATURE_ENABLED = True
 
 DEBUG = False
 
@@ -42,3 +43,6 @@ HUC_LOOKUP_FILENAME = 'huc_lookup.json'
 
 GA_TRACKING_CODE = ''
 ENABLE_USGS_GA = False
+
+# To use hashed assets, set this to the gulp-rev-all rev-manifest.json path
+ASSET_MANIFEST_PATH = None
