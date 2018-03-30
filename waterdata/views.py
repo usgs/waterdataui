@@ -189,7 +189,7 @@ def hydrological_unit(huc_cd, show_locations=False):
             monitoring_locations = parse_rdb(response.iter_lines(decode_unicode=True))
 
     http_code = 200 if huc else 404
-    print('show locations is ', show_locations)
+
     return render_template(
         'hydrological_unit.html',
         http_code=http_code,
