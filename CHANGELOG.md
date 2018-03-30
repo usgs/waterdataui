@@ -4,11 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
+
+## [0.5.0] - 2018-03-30
 ### Added
-- Description metatag generated from site data
+- Description metatag and text on page generated from site data
+- Decorator that can be used to return a 404 for views. This is part of the work to add feature flags.
+- Feature flags for the audio, embed, and hydrologic pages
+- Tooltips appear for all time series shown on the graph
 
 ### Changed
 - Data series summary table rolls up by parameter group
+- Generating hashed asset names when building
+- Header and footer now comply with the latest USGS visual standards
+- Time series graph controls have now been moved next to the legend, beneath the graph.
+
+### Fixed
+- No longer show parameters that have no data or masks for the last seven days in the 
+"Select a timeseries" list.
 
 ## [0.4.0] - 2018-03-26
 ### Added
@@ -94,7 +106,8 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.4.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.5.0...master
+[0.5.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.4.0...waterdataui-0.5.0
 [0.4.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.3.0...waterdataui-0.4.0
 [0.3.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.2.0...waterdataui-0.3.0
 [0.2.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.1.0...waterdataui-0.2.0
