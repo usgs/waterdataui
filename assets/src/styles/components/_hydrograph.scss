@@ -113,6 +113,7 @@ $highlight: $color-gray-lightest;
 
             .tooltip-text-background {
                 fill: white;
+                fill-opacity: .8;
             }
             .current-tooltip-text {
                 font-weight: bold;
@@ -159,7 +160,8 @@ $highlight: $color-gray-lightest;
                 &.y-axis-label {
                     text-anchor: middle;
                     display: none;
-                    @include media($medium-screen) {
+                    font-size: 1.5em;
+                    @include media($site-max-width) {
                         display: block;
                     }
                 }

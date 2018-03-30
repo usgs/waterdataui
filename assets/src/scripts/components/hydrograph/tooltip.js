@@ -6,13 +6,14 @@ const memoize = require('fast-memoize');
 const { createSelector, createStructuredSelector } = require('reselect');
 
 const { dispatch, link, initAndUpdate } = require('../../lib/redux');
+const { Actions } = require('../../store');
+const { wrap } = require('../../utils');
 
 const { cursorTimeSelector, tsCursorPointsSelector } = require('./cursor');
 const { classesForPoint, MASK_DESC } = require('./drawingData');
-const { MARGIN, layoutSelector } = require('./layout');
+const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { currentVariableSelector } = require('./timeseries');
-const { Actions } = require('../../store');
 
 const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');
 
@@ -93,7 +94,9 @@ const unitCodeSelector = createSelector(
     variable => variable ? variable.unit.unitCode : null
 );
 
-const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode}, textGroup) {
+const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, layout}, textGroup) {
+    const tooltipPaddingPx = layout.margin.left / 2;
+
     // Put the circles in a container so we can keep the their position in the
     // DOM before rect.overlay, to prevent the circles from receiving mouse
     // events.
@@ -128,11 +131,11 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
                     .attr('class', 'tooltip-text-background')
                     .attr('width', 0)
                     .attr('height', 0)
-                    .attr('x', 20);
+                    .attr('x', tooltipPaddingPx);
                 g.append('text')
                     .attr('class', d => `${d.tsKey}-tooltip-text`)
                     .attr('height', '1.1em')
-                    .attr('x', 20);
+                    .attr('x', tooltipPaddingPx);
             });
 
     // Update the text and backgrounds of all tooltip labels
@@ -144,6 +147,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
         .text(datum => {
             return getTooltipText(datum, qualifiers, unitCode);
         })
+        .call(wrap, layout.width - (2 * tooltipPaddingPx))
         .each(function (datum) {
             const classes = classesForPoint(datum);
             const text = select(this);
@@ -177,7 +181,8 @@ const createTooltipText = function (elem) {
         currentPoints: tsCursorPointsSelector('current'),
         comparePoints: tsCursorPointsSelector('compare'),
         qualifiers: qualifiersSelector,
-        unitCode: unitCodeSelector
+        unitCode: unitCodeSelector,
+        layout: layoutSelector
     })));
 };
 
@@ -243,8 +248,8 @@ const createTooltipFocus = function(elem) {
             .attr('class', 'overlay')
             .attr('x', 0)
             .attr('y', 0)
-            .attr('width', layout.width - MARGIN.right)
-            .attr('height', layout.height - (MARGIN.top + MARGIN.bottom))
+            .attr('width', layout.width - layout.margin.right)
+            .attr('height', layout.height - (layout.margin.top + layout.margin.bottom))
             .on('mouseover', dispatch(function() {
                 const selectedTime = xScale.invert(mouse(elem.node())[0]).getTime();
                 const startTime = xScale.domain()[0].getTime();

@@ -7,7 +7,7 @@ const { createSelector } = require('reselect');
 
 const { wrap } = require('../../utils');
 
-const { layoutSelector, MARGIN } = require('./layout');
+const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { yLabelSelector } = require('./timeseries');
 
@@ -68,7 +68,7 @@ const axesSelector = createSelector(
     yLabelSelector,
     (xScale, yScale, layout, plotYLabel) => {
         return {
-            ...createAxes({xScale, yScale}, -layout.width + MARGIN.right),
+            ...createAxes({xScale, yScale}, -layout.width + layout.margin.right),
             layout: layout,
             yTitle: plotYLabel
         };
@@ -82,12 +82,12 @@ const axesSelector = createSelector(
 function appendAxes(elem, {xAxis, yAxis, layout, yTitle}) {
     const xLoc = {
         x: 0,
-        y: layout.height - (MARGIN.top + MARGIN.bottom)
+        y: layout.height - (layout.margin.top + layout.margin.bottom)
     };
     const yLoc = {x: 0, y: 0};
     const yLabelLoc = {
-        x: layout.height / -2 + MARGIN.top,
-        y: -40
+        x: layout.height / -2 + layout.margin.top,
+        y: -1 * layout.margin.left + 12
     };
 
     // Remove existing axes before adding the new ones.
@@ -110,7 +110,7 @@ function appendAxes(elem, {xAxis, yAxis, layout, yTitle}) {
             .attr('x', yLabelLoc.x)
             .attr('y', yLabelLoc.y)
             .text(yTitle)
-                .call(wrap, layout.height - (MARGIN.top + MARGIN.bottom));
+                .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
 }
 
 

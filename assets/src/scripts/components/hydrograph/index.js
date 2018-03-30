@@ -13,7 +13,7 @@ const { dispatch, link, provide } = require('../../lib/redux');
 const { audibleUI } = require('./audible');
 const { appendAxes, axesSelector } = require('./axes');
 const { cursorSlider } = require('./cursor');
-const { MARGIN, CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
+const { CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
@@ -289,7 +289,7 @@ const timeSeriesGraph = function (elem) {
         .attr('class', 'hydrograph-container')
         .call(createTitle)
         .append('svg')
-            .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width + MARGIN.left + MARGIN.right} ${layout.height + MARGIN.top + MARGIN.bottom}`), layoutSelector))
+            .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`), layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({
                 titleSelector,
                 descriptionSelector,
@@ -298,7 +298,7 @@ const timeSeriesGraph = function (elem) {
             .call(plotSvgDefs)
             .call(svg => {
                 svg.append('g')
-                    .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`)
+                    .call(link((elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), layoutSelector))
                     .call(link(appendAxes, axesSelector))
                     .call(link(plotDataLines, createStructuredSelector({
                         visible: isVisibleSelector('current'),

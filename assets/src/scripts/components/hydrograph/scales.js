@@ -4,7 +4,7 @@ const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
-const { layoutSelector, MARGIN } = require('./layout');
+const { layoutSelector } = require('./layout');
 const { timeSeriesSelector, variablesSelector, currentVariableSelector, requestTimeRangeSelector } = require('./timeseries');
 const { visiblePointsSelector, pointsByTsKeySelector } = require('./drawingData');
 
@@ -129,7 +129,7 @@ const xScaleSelector = memoize(tsKey => createSelector(
     layoutSelector,
     requestTimeRangeSelector,
     (layout, requestTimeRanges) => {
-        return createXScale(requestTimeRanges[tsKey], layout.width - MARGIN.right);
+        return createXScale(requestTimeRanges[tsKey], layout.width - layout.margin.right);
     }
 ));
 
@@ -145,7 +145,7 @@ const yScaleSelector = createSelector(
     currentVariableSelector,
     (layout, pointArrays, currentVar) => {
         let currentVarParmCd = currentVar && currentVar.variableCode ? currentVar.variableCode.value : null;
-        return createYScale(currentVarParmCd, pointArrays, layout.height - (MARGIN.top + MARGIN.bottom));
+        return createYScale(currentVarParmCd, pointArrays, layout.height - (layout.margin.top + layout.margin.bottom));
     }
 );
 

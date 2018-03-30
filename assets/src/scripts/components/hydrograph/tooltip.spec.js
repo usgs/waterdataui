@@ -192,9 +192,9 @@ describe('Hydrograph tooltip module', () => {
             svg.call(provide(store))
                 .call(createTooltipText);
 
-            let value = svg.select('.current-tooltip-text').html().split(' - ')[0];
+            let value = svg.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('14 ft3/s');
-            value = svg.select('.compare-tooltip-text').html().split(' - ')[0];
+            value = svg.select('.compare-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('14 ft3/s');
         });
 
@@ -206,14 +206,14 @@ describe('Hydrograph tooltip module', () => {
             svg.call(provide(store))
                 .call(createTooltipText);
 
-            let value = svg.select('.current-tooltip-text').html().split(' - ')[0];
+            let value = svg.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('12 ft3/s');
             store.dispatch(Actions.setCursorOffset(3 * 60 * 60 * 1000));
 
-            value = svg.select('.current-tooltip-text').html().split(' - ')[0];
+            value = svg.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('15 ft3/s');
 
-            value = svg.select('.compare-tooltip-text').html().split(' - ')[0];
+            value = svg.select('.compare-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('15 ft3/s');
         });
 
@@ -229,11 +229,11 @@ describe('Hydrograph tooltip module', () => {
             svg.call(provide(store))
                 .call(createTooltipText);
             store.dispatch(Actions.setCursorOffset(299 * 60 * 1000));  // 2018-01-03T16:59:00.000Z
-            let value1 = svg.select('.current-tooltip-text').html().split(' - ')[0];
+            let value1 = svg.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value1).toBe('Flood');
 
             store.dispatch(Actions.setCursorOffset(359 * 60 * 1000));  // 2018-01-03T17:59:00.000Z
-            let value2 = svg.select('.current-tooltip-text').html().split(' - ')[0];
+            let value2 = svg.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value2).toBe('Maintenance');
         });
 
@@ -258,7 +258,7 @@ describe('Hydrograph tooltip module', () => {
             svg.call(provide(store))
                 .call(createTooltipText);
             store.dispatch(Actions.setCursorOffset(119 * 60 * 1000));
-            let value = svg.select('.current-tooltip-text').html().split(' - ')[0];
+            let value = svg.select('.current-tooltip-text').text().split(' - ')[0];
 
             expect(value).toBe('0 ft3/s');
         });

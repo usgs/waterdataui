@@ -2,7 +2,7 @@ const { bisector } = require('d3-array');
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
-const { layoutSelector, MARGIN } = require('./layout');
+const { layoutSelector } = require('./layout');
 const { xScaleSelector } = require('./scales');
 const { currentVariableTimeSeriesSelector, isVisibleSelector } = require('./timeseries');
 
@@ -95,7 +95,6 @@ const cursorSlider = function (elem) {
             wrap.append('input')
                 .attr('type', 'range')
                 .attr('id', 'cursor-slider')
-                .style('left', MARGIN.left - SLIDER_OFFSET_PX + 'px')
                 .on('input', dispatch(function () {
                     return Actions.setCursorOffset(this.valueAsNumber);
                 }))
@@ -117,7 +116,8 @@ const cursorSlider = function (elem) {
                         .classed('active', cursorOffset !== null);
                 }, cursorOffsetSelector))
                 .call(link((input, layout) => {
-                    input.style('width', layout.width - (MARGIN.left + MARGIN.right) + SLIDER_OFFSET_PX * 2 + 'px');
+                    input.style('left', layout.margin.left - SLIDER_OFFSET_PX + 'px');
+                    input.style('width', layout.width - (layout.margin.left + layout.margin.right) + SLIDER_OFFSET_PX * 2 + 'px');
                 }, layoutSelector));
         });
 };

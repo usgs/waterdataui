@@ -77,7 +77,8 @@ export function setEquality(set1, set2) {
 
 
 const TEXT_WRAP_LINE_HEIGHT = 1.1;  // ems
-const TEXT_WRAP_BREAK_CHARS = ['/', '&', '-'];
+//const TEXT_WRAP_BREAK_CHARS = ['/', '&', '-'];
+const TEXT_WRAP_BREAK_CHARS = [];
 
 /**
  * Wrap long svg text labels into multiple lines.
@@ -85,7 +86,7 @@ const TEXT_WRAP_BREAK_CHARS = ['/', '&', '-'];
  * @param  {String} text
  * @param  {Number} width
  */
-export function wrap(text, width, break_chars=['/', '&', '-']) {
+export function wrap(text, width, break_chars=TEXT_WRAP_BREAK_CHARS) {
     text.each(function () {
         const elem = select(this);
 
