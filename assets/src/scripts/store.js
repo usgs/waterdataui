@@ -1,4 +1,6 @@
 const merge = require('lodash/merge');
+const findKey = require('lodash/findKey');
+const last = require('lodash/last');
 const { applyMiddleware, createStore, compose } = require('redux');
 const { default: thunk } = require('redux-thunk');
 
@@ -7,11 +9,23 @@ const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
 const { normalize } = require('./schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('./floodData');
 
+const getLatestValue = function(collection, parmCd) {
+    let parmVar = findKey(collection.variables, (varValue) => {
+        return varValue.variableCode.value === parmCd;
+    });
+    let parmTimeSeries = findKey(collection.timeSeries, (ts) => {
+        return ts.variable === parmVar;
+    });
+    let points = collection.timeSeries[parmTimeSeries].points
+    return points.length ? last(points).value : null;
+};
+
+const GAGE_HEIGHT_CD = '00065';
 
 export const Actions = {
-    retrieveTimeseries(siteno, params=null, startDate=null, endDate=null) {
+    retrieveTimeseries(siteno, params=null) {
         return function (dispatch) {
-            const timeSeries = getTimeseries({sites: [siteno], params, startDate, endDate}).then(
+            const timeSeries = getTimeseries({sites: [siteno], params}).then(
                 series => {
                     const collection = normalize(series, 'current');
                     dispatch(Actions.addSeriesCollection('current', collection));
@@ -24,6 +38,12 @@ export const Actions = {
 
                     // Trigger a call to get last year's data
                     dispatch(Actions.retrieveCompareTimeseries(siteno, startTime, endTime));
+
+                    // Update the gage height if gage height is in the data.
+                    const currentGageHeight = getLatestValue(collection, GAGE_HEIGHT_CD);
+                    if (currentGageHeight) {
+                        dispatch(Actions.setGageHeight(currentGageHeight));
+                    }
 
                     return {collection, startTime, endTime};
                 },
@@ -158,12 +178,35 @@ export const Actions = {
             variableID
         };
     },
-    setGageHeight(gageHeightIndex) {
+    setGageHeightIndex(gageHeightIndex) {
         return {
-            type: 'SET_GAGE_HEIGHT',
+            type: 'SET_GAGE_HEIGHT_INDEX',
             gageHeightIndex
         };
+    },
+    setGageHeight(gageHeight) {
+        return {
+            type: 'SET_GAGE_HEIGHT',
+            gageHeight
+        };
     }
+};
+
+const setGageHeight = function(gageHeight, floodStages) {
+    let result = gageHeight;
+    if (floodStages.length) {
+        // Set gageHeight to the nearest flood stage
+        result = floodStages[0];
+        let diff = Math.abs(gageHeight - result );
+        floodStages.forEach((stage) => {
+            var newDiff = Math.abs(gageHeight - stage);
+            if (newDiff < diff) {
+                diff = newDiff;
+                result = stage;
+            }
+        });
+    }
+    return result;
 };
 
 
@@ -190,7 +233,7 @@ export const timeSeriesReducer = function (state={}, action) {
                 ...state,
                 floodStages: action.stages,
                 floodExtent: action.extent,
-                gageHeight: action.stages.length > 0 ? action.stages[0] : null
+                gageHeight: setGageHeight(state.gageHeight, action.stages)
             };
 
         case 'ADD_TIMESERIES_COLLECTION':
@@ -257,10 +300,16 @@ export const timeSeriesReducer = function (state={}, action) {
                 currentVariableID: action.variableID
             };
 
-        case 'SET_GAGE_HEIGHT':
+        case 'SET_GAGE_HEIGHT_INDEX':
             return {
                 ...state,
                 gageHeight: state.floodStages[action.gageHeightIndex]
+            };
+
+        case 'SET_GAGE_HEIGHT':
+            return {
+                ...state,
+                gageHeight: setGageHeight(action.gageHeight, state.floodStages)
             };
 
         default:

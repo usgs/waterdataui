@@ -38,9 +38,7 @@ describe('Redux store', () => {
 
                 expect(modelsMock.getTimeseries).toHaveBeenCalledWith({
                     sites: [SITE_NO],
-                    params: null,
-                    startDate: null,
-                    endDate: null
+                    params: null
                 });
                 expect(modelsMock.getMedianStatistics).toHaveBeenCalledWith({
                     sites: [SITE_NO]
@@ -415,8 +413,8 @@ describe('Redux store', () => {
         });
 
         it('should create an action to update the gage height state', () => {
-            expect(Actions.setGageHeight(1)).toEqual({
-                type: 'SET_GAGE_HEIGHT',
+            expect(Actions.setGageHeightIndex(1)).toEqual({
+                type: 'SET_GAGE_HEIGHT_INDEX',
                 gageHeightIndex: 1
             });
         });
@@ -585,9 +583,9 @@ describe('Redux store', () => {
             });
         });
 
-        it('should handle SET_GAGE_HEIGHT', () => {
+        it('should handle SET_GAGE_HEIGHT_INDEX', () => {
            expect(timeSeriesReducer({floodStages: [9, 10, 11], gageHeight: 9}, {
-               type: 'SET_GAGE_HEIGHT',
+               type: 'SET_GAGE_HEIGHT_INDEX',
                gageHeightIndex: 1
            })).toEqual({
                floodStages: [9, 10, 11],

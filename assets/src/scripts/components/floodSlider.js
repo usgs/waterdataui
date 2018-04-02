@@ -1,7 +1,7 @@
 const { select } = require('d3-selection');
 const { createStructuredSelector } = require('reselect');
 
-const { dispatch, link, provide } = require('../lib/redux');
+const { dispatch, link, provide} = require('../lib/redux');
 const { Actions } = require('../store');
 
 const updateSlider = function(node, {stages, gageHeight}) {
@@ -35,7 +35,7 @@ const floodSlider = function(node) {
         .attr('type', 'range')
         .attr('id', SLIDER_ID)
         .on('input', dispatch(function() {
-            return Actions.setGageHeight(this.value);
+            return Actions.setGageHeightIndex(this.value);
         }));
 
     sliderContainer.call(link(updateSlider, createStructuredSelector({
