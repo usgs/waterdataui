@@ -192,14 +192,14 @@ export const Actions = {
     }
 };
 
-const setGageHeight = function(gageHeight, floodStages) {
+const getGageHeight = function(gageHeight, floodStages) {
     let result = gageHeight;
     if (floodStages.length) {
         // Set gageHeight to the nearest flood stage
         result = floodStages[0];
         let diff = Math.abs(gageHeight - result );
         floodStages.forEach((stage) => {
-            var newDiff = Math.abs(gageHeight - stage);
+            let newDiff = Math.abs(gageHeight - stage);
             if (newDiff < diff) {
                 diff = newDiff;
                 result = stage;
@@ -233,7 +233,7 @@ export const timeSeriesReducer = function (state={}, action) {
                 ...state,
                 floodStages: action.stages,
                 floodExtent: action.extent,
-                gageHeight: setGageHeight(state.gageHeight, action.stages)
+                gageHeight: getGageHeight(state.gageHeight, action.stages)
             };
 
         case 'ADD_TIMESERIES_COLLECTION':
@@ -309,7 +309,7 @@ export const timeSeriesReducer = function (state={}, action) {
         case 'SET_GAGE_HEIGHT':
             return {
                 ...state,
-                gageHeight: setGageHeight(action.gageHeight, state.floodStages)
+                gageHeight: getGageHeight(action.gageHeight, state.floodStages)
             };
 
         default:
