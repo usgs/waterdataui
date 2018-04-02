@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Play/Stop button to play the audible sound for the timeseries graph
 
 ### Changed
+- Font sizing and responsive layout changes
 - Limit y-axis lower bound to nearest power of 10 on logarithmic scales
 
 ### Fixed

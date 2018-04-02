@@ -8,7 +8,16 @@ describe('Chart axes', () => {
     // xScale is oriented on the left
     const xScale = scaleLinear().range([0, 10]).domain([0, 10]);
     const yScale = scaleLinear().range([0, 10]).domain([0, 10]);
-    const layout = {width: 400, height: 200};
+    const layout = {
+        width: 400,
+        height: 200,
+        margin: {
+            top: 25,
+            right: 0,
+            bottom: 10,
+            left: 65
+        }
+    };
     const {xAxis, yAxis} = createAxes({xScale, yScale}, 100);
     let svg;
 
