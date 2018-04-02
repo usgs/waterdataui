@@ -156,7 +156,6 @@ describe('Hydrograph charting module', () => {
             .call(timeSeriesGraph);
         let svgNodes = graphNode.getElementsByTagName('svg');
         expect(svgNodes.length).toBe(3);
-        expect(svgNodes[0].getAttribute('viewBox')).toContain('480 235');
         expect(graphNode.innerHTML).toContain('hydrograph-container');
     });
 
