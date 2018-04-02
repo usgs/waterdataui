@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Font sizing and responsive layout changes
+- Limit y-axis lower bound to nearest power of 10 on logarithmic scales
 
 ### Fixed
 - Timeseries SVG has the correct title and desc tag contents.
