@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Play/Stop button to play the audible sound for the timeseries graph
 
+### Changed
+- Font sizing and responsive layout changes
+
 ### Fixed
 - Timeseries SVG has the correct title and desc tag contents.
 
@@ -25,7 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Time series graph controls have now been moved next to the legend, beneath the graph.
 
 ### Fixed
-- No longer show parameters that have no data or masks for the last seven days in the 
+- No longer show parameters that have no data or masks for the last seven days in the
 "Select a timeseries" list.
 
 ## [0.4.0] - 2018-03-26
@@ -41,7 +44,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Show last year checkbox is disabled if a timeseries does not have data from last year.
 - The select timeseries table is not shown if a site has not timeseries data.
 - Tooltips display masked data as the value of the data point.
-- Select timeseries list no longer contains columns for parameter code or timeseries availability. 
+- Select timeseries list no longer contains columns for parameter code or timeseries availability.
 Parameter codes can be found in the tooltip. A scrollbar will appear for long timeseries lists.
 
 ### Fixed
@@ -61,7 +64,7 @@ Parameter codes can be found in the tooltip. A scrollbar will appear for long ti
 layers with a slider to control the gage height.
 
 ### Changed
-- Time series graph legend was simplified. Current year, previous year, and median are 
+- Time series graph legend was simplified. Current year, previous year, and median are
 shown on separate lines and doesn't dynamically shift position as the window is resized.
 - Data gaps of more than 72 minutes are shown.
 - Only IV data is shown in the select a time series list.
@@ -80,7 +83,7 @@ shown on separate lines and doesn't dynamically shift position as the window is 
 
 ### Changed
 - Tooltip text is now fixed in the corner and the font style and color match the line style/color
-used for the time series line. 
+used for the time series line.
 - Using new endpoint to get the national aquifer code information and regenerated all data files
 - Using the qualifier description in the tooltip
 - Use log scale for data less than one on the time series graph
