@@ -31,6 +31,7 @@ describe('Redux store', () => {
                 spyOn(modelsMock, 'getMedianStatistics').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 store = proxyquire('./store', {'./models': modelsMock});
+                store.configureStore();
             });
 
             it('Fetches the time series and median statistics data', () => {
@@ -38,9 +39,7 @@ describe('Redux store', () => {
 
                 expect(modelsMock.getTimeseries).toHaveBeenCalledWith({
                     sites: [SITE_NO],
-                    params: null,
-                    startDate: null,
-                    endDate: null
+                    params: null
                 });
                 expect(modelsMock.getMedianStatistics).toHaveBeenCalledWith({
                     sites: [SITE_NO]
@@ -59,6 +58,54 @@ describe('Redux store', () => {
                     expect(store.Actions.addSeriesCollection.calls.argsFor(1)[0]).toBe('median');
                     expect(store.Actions.retrieveCompareTimeseries.calls.count()).toBe(1);
                     expect(store.Actions.retrieveCompareTimeseries.calls.argsFor(0)[0]).toBe(SITE_NO);
+
+                    done();
+                });
+            });
+
+            it('The gage height is not set since there is no gage height data', (done) => {
+                spyOn(store.Actions, 'setGageHeight');
+                let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch);
+                p.then(() => {
+                    expect(store.Actions.setGageHeight).not.toHaveBeenCalled();
+
+                    done();
+                });
+            });
+        });
+
+        describe('retrieveTimeseries with gage height data', () => {
+            let store;
+            let modelsMock;
+            let mockDispatch;
+            beforeEach(() => {
+                /* eslint no-use-before-define: 0 */
+                let getTimeseriesPromise = Promise.resolve(JSON.parse(MOCK_GAGE_DATA));
+                let getMedianStatsPromise = Promise.resolve(MOCK_RDB);
+                modelsMock = {
+                    getTimeseries: function () {
+                        return getTimeseriesPromise;
+                    },
+                    getMedianStatistics: function () {
+                        return getMedianStatsPromise;
+                    },
+                    parseMedianData: function () {
+                        return MOCK_MEDIAN_DATA;
+                    }
+                };
+
+                spyOn(modelsMock, 'getTimeseries').and.callThrough();
+                spyOn(modelsMock, 'getMedianStatistics').and.callThrough();
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                store = proxyquire('./store', {'./models': modelsMock});
+                store.configureStore();
+            });
+
+            it('The gage height is set', (done) => {
+                spyOn(store.Actions, 'setGageHeight');
+                let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch);
+                p.then(() => {
+                    expect(store.Actions.setGageHeight).toHaveBeenCalledWith(20);
 
                     done();
                 });
@@ -414,10 +461,17 @@ describe('Redux store', () => {
             });
         });
 
-        it('should create an action to update the gage height state', () => {
-            expect(Actions.setGageHeight(1)).toEqual({
-                type: 'SET_GAGE_HEIGHT',
+        it('should create an action to update the gage height state from a gage height index', () => {
+            expect(Actions.setGageHeightIndex(1)).toEqual({
+                type: 'SET_GAGE_HEIGHT_INDEX',
                 gageHeightIndex: 1
+            });
+        });
+
+        it('should create an action to update the gage height state', () => {
+            expect(Actions.setGageHeight(10)).toEqual({
+                type: 'SET_GAGE_HEIGHT',
+                gageHeight: 10
             });
         });
 
@@ -518,8 +572,10 @@ describe('Redux store', () => {
             });
         });
 
-        it('should handle SET_FLOOD_FEATURES', () => {
-            expect(timeSeriesReducer({}, {
+        it('should handle SET_FLOOD_FEATURES when gage height is set to zero', () => {
+            expect(timeSeriesReducer({
+                gageHeight: 0
+            }, {
                 type: 'SET_FLOOD_FEATURES',
                 stages: [9, 10, 11],
                 extent: {xmin: -87, ymin: 42, xmax: -86, ymax: 43}
@@ -527,6 +583,20 @@ describe('Redux store', () => {
                 floodStages: [9, 10, 11],
                 floodExtent: {xmin: -87, ymin: 42, xmax: -86, ymax: 43},
                 gageHeight: 9
+            });
+        });
+
+        it('should handle SET_FLOOD_FEATURES when gage height is set to a value in the flood stages', () => {
+            expect(timeSeriesReducer({
+                gageHeight: 10.6
+            }, {
+                type: 'SET_FLOOD_FEATURES',
+                stages: [9, 10, 11],
+                extent: {xmin: -87, ymin: 42, xmax: -86, ymax: 43}
+            })).toEqual({
+                floodStages: [9, 10, 11],
+                floodExtent: {xmin: -87, ymin: 42, xmax: -86, ymax: 43},
+                gageHeight: 11
             });
         });
 
@@ -585,14 +655,38 @@ describe('Redux store', () => {
             });
         });
 
-        it('should handle SET_GAGE_HEIGHT', () => {
+        it('should handle SET_GAGE_HEIGHT_INDEX', () => {
            expect(timeSeriesReducer({floodStages: [9, 10, 11], gageHeight: 9}, {
-               type: 'SET_GAGE_HEIGHT',
+               type: 'SET_GAGE_HEIGHT_INDEX',
                gageHeightIndex: 1
            })).toEqual({
                floodStages: [9, 10, 11],
                gageHeight: 10
            });
+        });
+
+        it('should handle SET_GAGE_HEIGHT when flood stages are not set', () => {
+            expect(timeSeriesReducer({
+                floodStages: []
+            }, {
+                type: 'SET_GAGE_HEIGHT',
+                gageHeight: 8.6
+            })).toEqual({
+                floodStages: [],
+                gageHeight: 8.6
+            });
+        });
+
+        it('should handle SET_GAGE_HEIGHT when flood stages are set', () => {
+            expect(timeSeriesReducer({
+                floodStages: [6, 7, 8, 9, 10, 11]
+            }, {
+                type: 'SET_GAGE_HEIGHT',
+                gageHeight: 8.6
+            })).toEqual({
+                floodStages: [6, 7, 8, 9, 10, 11],
+                gageHeight: 9
+            });
         });
 
         it('should handle TIMESERIES_PLAY_ON', () => {
@@ -751,6 +845,169 @@ const MOCK_LAST_YEAR_DATA = `
         "dateTime" : "2017-01-02T16:30:00.000-06:00"
       }, {
         "value" : "300",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T16:45:00.000-06:00"
+      }],
+      "qualifier" : [ {
+        "qualifierCode" : "P",
+        "qualifierDescription" : "Provisional data subject to revision.",
+        "qualifierID" : 0,
+        "network" : "NWIS",
+        "vocabulary" : "uv_rmk_cd"
+      } ],
+      "qualityControlLevel" : [ ],
+      "method" : [ {
+        "methodDescription" : "",
+        "methodID" : 158049
+      } ],
+      "source" : [ ],
+      "offset" : [ ],
+      "sample" : [ ],
+      "censorCode" : [ ]
+    } ],
+    "name" : "USGS:05413500:00060:00000"
+  } ]
+},
+"nil" : false,
+"globalScope" : true,
+"typeSubstituted" : false
+}`
+;
+
+const MOCK_GAGE_DATA = `
+{"name" : "ns1:timeSeriesResponseType",
+"declaredType" : "org.cuahsi.waterml.TimeSeriesResponseType",
+"scope" : "javax.xml.bind.JAXBElement$GlobalScope",
+"value" : {
+  "queryInfo" : {
+    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=05413500&parameterCd=00065&period=P7D&indent=on&siteStatus=all&format=json",
+    "criteria" : {
+      "locationParam" : "[ALL:05413500]",
+      "variableParam" : "[00065]",
+      "parameter" : [ ]
+    },
+    "note" : [ {
+      "value" : "[ALL:05413500]",
+      "title" : "filter:sites"
+    }, {
+      "value" : "[mode=PERIOD, period=P7D, modifiedSince=null]",
+      "title" : "filter:timeRange"
+    }, {
+      "value" : "methodIds=[ALL]",
+      "title" : "filter:methodId"
+    }, {
+      "value" : "2017-01-09T20:46:07.542Z",
+      "title" : "requestDT"
+    }, {
+      "value" : "1df59e50-f57e-11e7-8ba8-6cae8b663fb6",
+      "title" : "requestId"
+    }, {
+      "value" : "Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.",
+      "title" : "disclaimer"
+    }, {
+      "value" : "vaas01",
+      "title" : "server"
+    } ]
+  },
+  "timeSeries" : [ {
+    "sourceInfo" : {
+      "siteName" : "GRANT RIVER AT BURTON, WI",
+      "siteCode" : [ {
+        "value" : "05413500",
+        "network" : "NWIS",
+        "agencyCode" : "USGS"
+      } ],
+      "timeZoneInfo" : {
+        "defaultTimeZone" : {
+          "zoneOffset" : "-06:00",
+          "zoneAbbreviation" : "CST"
+        },
+        "daylightSavingsTimeZone" : {
+          "zoneOffset" : "-05:00",
+          "zoneAbbreviation" : "CDT"
+        },
+        "siteUsesDaylightSavingsTime" : true
+      },
+      "geoLocation" : {
+        "geogLocation" : {
+          "srs" : "EPSG:4326",
+          "latitude" : 42.72027778,
+          "longitude" : -90.8191667
+        },
+        "localSiteXY" : [ ]
+      },
+      "note" : [ ],
+      "siteType" : [ ],
+      "siteProperty" : [ {
+        "value" : "ST",
+        "name" : "siteTypeCd"
+      }, {
+        "value" : "07060003",
+        "name" : "hucCd"
+      }, {
+        "value" : "55",
+        "name" : "stateCd"
+      }, {
+        "value" : "55043",
+        "name" : "countyCd"
+      } ]
+    },
+    "variable" : {
+      "variableCode" : [ {
+        "value" : "00065",
+        "network" : "NWIS",
+        "vocabulary" : "NWIS:UnitValues",
+        "variableID" : 45807197,
+        "default" : true
+      } ],
+      "variableName" : "Gage Height",
+      "variableDescription" : "Gage Height feet",
+      "valueType" : "Derived Value",
+      "unit" : {
+        "unitCode" : "ft"
+      },
+      "options" : {
+        "option" : [ {
+          "name" : "Statistic",
+          "optionCode" : "00000"
+        } ]
+      },
+      "note" : [ ],
+      "noDataValue" : -999999.0,
+      "variableProperty" : [ ],
+      "oid" : "45807197"
+    },
+    "values" : [ {
+      "value" : [ {
+        "value" : "10",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T15:00:00.000-06:00"
+      }, {
+        "value" : "12",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T15:15:00.000-06:00"
+      }, {
+        "value" : "32",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T15:30:00.000-06:00"
+      }, {
+        "value" : "30",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T15:45:00.000-06:00"
+      }, {
+        "value" : "26",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T16:00:00.000-06:00"
+      }, {
+        "value" : "27",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T16:15:00.000-06:00"
+      }, {
+        "value" : "19",
+        "qualifiers" : [ "P" ],
+        "dateTime" : "2017-01-02T16:30:00.000-06:00"
+      }, {
+        "value" : "20",
         "qualifiers" : [ "P" ],
         "dateTime" : "2017-01-02T16:45:00.000-06:00"
       }],

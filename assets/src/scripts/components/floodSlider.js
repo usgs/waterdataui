@@ -35,7 +35,7 @@ const floodSlider = function(node) {
         .attr('type', 'range')
         .attr('id', SLIDER_ID)
         .on('input', dispatch(function() {
-            return Actions.setGageHeight(this.value);
+            return Actions.setGageHeightIndex(this.value);
         }));
 
     sliderContainer.call(link(updateSlider, createStructuredSelector({
