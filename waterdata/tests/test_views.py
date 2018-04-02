@@ -150,6 +150,8 @@ class TestHydrologicalUnitView:
 
 
 class TestCountryStateCountyView:
+    # pylint: disable=R0201
+
     @pytest.fixture(autouse=True)
     def mock_site_call(self):
         """Return the same mock site list for each call to the site service"""

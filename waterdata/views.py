@@ -223,16 +223,16 @@ def states_counties(state_cd, county_cd, show_locations=False):
     # Get the data associated with this county
     if state_cd and county_cd:
         state_county_cd = state_cd + county_cd
-        unit_data = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(state_cd, None)['county_cd'].get(county_cd, None)
+        political_unit = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(state_cd, None)['county_cd'].get(county_cd, None)
 
     # Get the data corresponding to this state
-    if state_cd and not county_cd:
-        unit_data = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(state_cd, None)
+    elif state_cd and not county_cd:
+        political_unit = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(state_cd, None)
 
     # If no state and or state and county code is available, display list of states.
-    if not state_cd and not county_cd:
-        unit_data = {
-            'name': 'US',
+    elif not state_cd and not county_cd:
+        political_unit = {
+            'name': 'United States',
             'children': app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd']
         }
 
@@ -247,16 +247,16 @@ def states_counties(state_cd, county_cd, show_locations=False):
         if response.status_code == 200:
             monitoring_locations = parse_rdb(response.iter_lines(decode_unicode=True))
 
-    http_code = 200 if unit_data else 404
+    http_code = 200 if political_unit else 404
 
     return render_template(
         'states_counties.html',
         http_code=http_code,
         state_cd=state_cd,
         county_cd=county_cd,
-        unit_data=unit_data,
+        political_unit=political_unit,
         monitoring_locations=monitoring_locations,
-        show_locations_link=not show_locations and unit_data and county_cd
+        show_locations_link=not show_locations and political_unit and county_cd
     ), http_code
 
 
