@@ -20,7 +20,7 @@ const MARGIN_SMALL_DEVICE = {
     top: 25,
     right: 0,
     bottom: 10,
-    left: 0
+    left: 35
 };
 const CIRCLE_RADIUS = 4;
 const CIRCLE_RADIUS_SINGLE_PT = 1;

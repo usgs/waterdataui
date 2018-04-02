@@ -80,11 +80,8 @@ $highlight: $color-gray-lightest;
         @include h4();
         @include media($medium-screen) {
             @include h3();
-            font-weight: normal;
         }
-        color: $color-gray;
         text-align: center;
-        font-weight: normal;
     }
 
     svg {
@@ -107,6 +104,7 @@ $highlight: $color-gray-lightest;
         }
         .tooltip-text-group {
             font-size: 0.7em;
+            pointer-events: none;
             @include media($medium-screen) {
                 font-size: 1em;
             }
@@ -150,7 +148,13 @@ $highlight: $color-gray-lightest;
         }
         .tick {
             text {
-                font-size: 1.2em;
+                font-size: 1.05em;
+                @include media($small-screen) {
+                    font-size: 1.2em;
+                }
+                @include media($medium-screen) {
+                    font-size: 1.4em;
+                }
             }
         }
         .y-axis {
@@ -161,6 +165,7 @@ $highlight: $color-gray-lightest;
                     text-anchor: middle;
                     display: none;
                     font-size: 1.5em;
+                    font-style: italic;
                     @include media($site-max-width) {
                         display: block;
                     }
