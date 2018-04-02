@@ -1,7 +1,7 @@
 const { select } = require('d3-selection');
 const { createStructuredSelector } = require('reselect');
 
-const { dispatch, link, provide} = require('../lib/redux');
+const { dispatch, link, provide } = require('../lib/redux');
 const { Actions } = require('../store');
 
 const updateSlider = function(node, {stages, gageHeight}) {
