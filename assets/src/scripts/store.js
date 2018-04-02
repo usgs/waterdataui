@@ -16,7 +16,7 @@ const getLatestValue = function(collection, parmCd) {
     let parmTimeSeries = findKey(collection.timeSeries, (ts) => {
         return ts.variable === parmVar;
     });
-    let points = collection.timeSeries[parmTimeSeries].points
+    let points = parmTimeSeries ? collection.timeSeries[parmTimeSeries].points : [];
     return points.length ? last(points).value : null;
 };
 
