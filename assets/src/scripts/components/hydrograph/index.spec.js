@@ -9,8 +9,6 @@ const TEST_STATE = {
     series: {
         timeSeries: {
             '00010:current': {
-                startTime: new Date('2018-01-02T15:00:00.000-06:00'),
-                endTime: new Date('2018-01-02T15:00:00.000-06:00'),
                 points: [{
                     dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
                     value: 4,
@@ -21,8 +19,6 @@ const TEST_STATE = {
                 variable: '45807190'
             },
             '00060:current': {
-                startTime: new Date('2018-01-02T15:00:00.000-06:00'),
-                endTime: new Date('2018-01-02T15:00:00.000-06:00'),
                 points: [{
                     dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
                     value: 10,
@@ -33,8 +29,6 @@ const TEST_STATE = {
                 variable: '45807197'
             },
             '00060:compare': {
-                startTime: new Date('2018-01-02T15:00:00.000-06:00'),
-                endTime: new Date('2018-01-02T15:00:00.000-06:00'),
                 points: [{
                     dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
                     value: 10,
@@ -45,8 +39,6 @@ const TEST_STATE = {
                 variable: '45807197'
             },
             '00060:median': {
-                startTime: new Date('2018-01-02T15:00:00.000-06:00'),
-                endTime: new Date('2018-01-02T15:00:00.000-06:00'),
                 points: [{
                     dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
                     value: 10
@@ -78,6 +70,17 @@ const TEST_STATE = {
                 timeSeries: ['00010:current']
             }
         },
+        queryInfo: {
+            current: {
+                notes: {
+                    'filter:timeRange':  {
+                        mode: 'PERIOD',
+                        periodDays: 7
+                    },
+                    requestDT: new Date('2018-03-30 11:00:00')
+                }
+            }
+        },
         requests: {
             current: {
                 timeSeriesCollections: ['coll1']
@@ -96,6 +99,7 @@ const TEST_STATE = {
                 },
                 oid: '45807197',
                 variableName: 'Test title for 00060',
+                variableDescription: 'Test description for 00060',
                 unit: {
                     unitCode: 'unitCode'
                 }
@@ -131,10 +135,8 @@ describe('Hydrograph charting module', () => {
 
     beforeEach(() => {
         let body = select('body');
-        let hydrograph = body.append('div')
+        body.append('div')
             .attr('id', 'hydrograph');
-        hydrograph.append('div')
-            .attr('class', 'hydrograph-container');
         graphNode = document.getElementById('hydrograph');
     });
 
@@ -154,7 +156,6 @@ describe('Hydrograph charting module', () => {
             .call(timeSeriesGraph);
         let svgNodes = graphNode.getElementsByTagName('svg');
         expect(svgNodes.length).toBe(3);
-        expect(svgNodes[0].getAttribute('viewBox')).toContain('400 200');
         expect(graphNode.innerHTML).toContain('hydrograph-container');
     });
 
@@ -187,8 +188,12 @@ describe('Hydrograph charting module', () => {
         });
 
         it('title and desc attributes are present', function() {
-            expect(svg.attr('title'), 'My Title');
-            expect(svg.attr('desc'), 'My Description');
+            const descText = svg.select('desc').text();
+
+            expect(svg.select('title').text()).toEqual('Test title for 00060');
+            expect(descText).toContain('Test description for 00060');
+            expect(descText).toContain('3/23/2018');
+            expect(descText).toContain('3/30/2018');
             expect(svg.attr('aria-labelledby')).toContain('title');
             expect(svg.attr('aria-describedby')).toContain('desc');
         });

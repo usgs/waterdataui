@@ -1,6 +1,6 @@
 const { select } = require('d3-selection');
 
-const { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities, setEquality, wrap} = require('./utils');
+const { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities, setEquality, wrap, mediaQuery } = require('./utils');
 
 
 describe('Utils module', () => {
@@ -132,5 +132,14 @@ describe('Utils module', () => {
 
             expect(tspans.join(' ')).toEqual(lorem);
         });
+    });
+
+    describe('mediaQuery', () => {
+        it('returns a boolean', () => {
+            expect(typeof mediaQuery(-100)).toEqual('boolean');
+            expect(typeof mediaQuery(0)).toEqual('boolean');
+            expect(typeof mediaQuery(100)).toEqual('boolean');
+            expect(typeof mediaQuery(200)).toEqual('boolean');
+        }) ;
     });
 });
