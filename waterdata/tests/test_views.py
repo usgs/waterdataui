@@ -149,6 +149,41 @@ class TestHydrologicalUnitView:
         assert text.count('01630500') == 16, 'Expected site 01630500 in output'
 
 
+class TestCountryStateCountyView:
+    # pylint: disable=R0201
+
+    @pytest.fixture(autouse=True)
+    def mock_site_call(self):
+        """Return the same mock site list for each call to the site service"""
+        with requests_mock.mock() as req:
+            url = re.compile('{host}/nwis/site/.*'.format(host=app.config['SERVICE_ROOT']))
+            req.get(url, text=MOCK_SITE_LIST_2)
+            yield
+
+    def test_country_level_search_us(self, client):
+        response = client.get('/states/')
+        assert response.status_code == 200
+
+    def test_some_counties_exist(self, client):
+        for state_cd in list(app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].keys())[:20]:
+            response = client.get('/states/{}/'.format(state_cd))
+            assert response.status_code == 200
+
+    def test_404s_incorrect_state_code(self, client):
+        response = client.get('/states/1/')
+        assert response.status_code == 404
+
+    def test_404s_incorrect_county_code(self, client):
+        response = client.get('/states/01/counties/1/')
+        assert response.status_code == 404
+
+    def test_locations_list(self, client):
+        response = client.get('/states/23/counties/003/monitoring-locations/')
+        assert response.status_code == 200
+        text = response.data.decode('utf-8')
+        assert text.count('01630500') == 16, 'Expected site 01630500 in output'
+
+
 class TestTimeSeriesComponentView:
     # pylint: disable=R0201,R0903
 

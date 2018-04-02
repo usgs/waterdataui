@@ -4,7 +4,7 @@ const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
-const { layoutSelector, MARGIN } = require('./layout');
+const { layoutSelector } = require('./layout');
 const { timeSeriesSelector, variablesSelector, currentVariableSelector, requestTimeRangeSelector } = require('./timeseries');
 const { visiblePointsSelector, pointsByTsKeySelector } = require('./drawingData');
 
@@ -24,13 +24,29 @@ const SYMLOG_PARMS = [
  *  @param {Array} domain - array of two numbers
  *  @return {Array} - array of two numbers
  */
-function extendDomain(domain) {
-    const padding = paddingRatio * (domain[1] - domain[0]);
+function extendDomain(domain, parmCd) {
     const isPositive = domain[0] >= 0 && domain[1] >= 0;
-    return [
-        // If all values are above zero, make a-axis zero the lower bound
-        isPositive ? Math.max(0, domain[0] - padding) : domain[0] - padding,
+    let extendedDomain;
+
+    // Pad domains on both ends by paddingRatio.
+    const padding = paddingRatio * (domain[1] - domain[0]);
+    extendedDomain = [
+        domain[0] - padding,
         domain[1] + padding
+    ];
+
+    // Log scales lower-bounded by nearest power of 10 (10, 100, 1000, etc)
+    if (SYMLOG_PARMS.indexOf(parmCd) > -1) {
+        extendedDomain = [
+            isPositive ? Math.pow(10, Math.floor(Math.log10(domain[0]))) : domain[0],
+            extendedDomain[1]
+        ];
+    }
+
+    // For positive domains, a zero-lower bound on the y-axis is enforced.
+    return [
+        isPositive ? Math.max(0, extendedDomain[0]) : extendedDomain[0],
+        extendedDomain[1]
     ];
 }
 
@@ -111,7 +127,7 @@ function createYScale(parmCd, pointArrays, ySize) {
     }
     // Add padding to the extent and handle empty data sets.
     if (yExtent) {
-        yExtent = extendDomain(yExtent);
+        yExtent = extendDomain(yExtent, parmCd);
     } else {
         yExtent = [0, 1];
     }
@@ -129,7 +145,7 @@ const xScaleSelector = memoize(tsKey => createSelector(
     layoutSelector,
     requestTimeRangeSelector,
     (layout, requestTimeRanges) => {
-        return createXScale(requestTimeRanges[tsKey], layout.width - MARGIN.right);
+        return createXScale(requestTimeRanges[tsKey], layout.width - layout.margin.right);
     }
 ));
 
@@ -145,7 +161,7 @@ const yScaleSelector = createSelector(
     currentVariableSelector,
     (layout, pointArrays, currentVar) => {
         let currentVarParmCd = currentVar && currentVar.variableCode ? currentVar.variableCode.value : null;
-        return createYScale(currentVarParmCd, pointArrays, layout.height - (MARGIN.top + MARGIN.bottom));
+        return createYScale(currentVarParmCd, pointArrays, layout.height - (layout.margin.top + layout.margin.bottom));
     }
 );
 
@@ -193,4 +209,4 @@ const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => 
 )));
 
 
-module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, singleSeriesYScale, timeSeriesScalesByParmCdSelector};
+module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, singleSeriesYScale, timeSeriesScalesByParmCdSelector, extendDomain};

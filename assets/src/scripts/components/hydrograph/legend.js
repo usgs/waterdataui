@@ -2,7 +2,7 @@
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
-const { CIRCLE_RADIUS, MARGIN } = require('./layout');
+const { CIRCLE_RADIUS } = require('./layout');
 const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
 const { lineSegmentsSelector, HASH_ID, MASK_DESC} = require('./drawingData');
 const { currentVariableTimeSeriesSelector, methodsSelector } = require('./timeseries');
@@ -86,7 +86,7 @@ function drawSimpleLegend(svg, {legendMarkerRows, layout}) {
     let legend = svg
         .append('g')
             .attr('class', 'legend')
-            .attr('transform', `translate(${MARGIN.left}, 0)`);
+            .attr('transform', `translate(${layout.margin.left}, 0)`);
 
     for (const [index, legendMarkerRow] of legendMarkerRows.entries()) {
         const rowCount = index + 1;
@@ -156,7 +156,7 @@ function drawSimpleLegend(svg, {legendMarkerRows, layout}) {
     } catch(error) {
         return;
     }
-    svg.attr('viewBox', `0 0 ${layout.width} ${bBox.height + 10}`);
+    svg.attr('viewBox', `-${CIRCLE_RADIUS} 0 ${layout.width} ${bBox.height + 10}`);
 }
 
 const uniqueMasksSelector = memoize(tsKey => createSelector(

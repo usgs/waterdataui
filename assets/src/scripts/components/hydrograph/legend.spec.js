@@ -48,7 +48,16 @@ describe('Legend module', () => {
         });
 
         it('Adds a legend when width is provided', () => {
-            drawSimpleLegend(svgNode, {legendMarkerRows, layout: {width: 100, height: 100}});
+            drawSimpleLegend(svgNode, {legendMarkerRows, layout: {
+                width: 100,
+                height: 100,
+                margin: {
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0
+                }
+            }});
 
             expect(svgNode.selectAll('.legend').size()).toBe(1);
             expect(svgNode.selectAll('line').size()).toBe(1);

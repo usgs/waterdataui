@@ -184,10 +184,12 @@ def hydrological_unit(huc_cd, show_locations=False):
             path='/nwis/site/',
             params={'format': 'rdb', 'huc': huc_cd}
         )
+
         if response.status_code == 200:
             monitoring_locations = parse_rdb(response.iter_lines(decode_unicode=True))
 
     http_code = 200 if huc else 404
+
     return render_template(
         'hydrological_unit.html',
         http_code=http_code,
@@ -204,6 +206,68 @@ def hydrological_unit_locations(huc_cd):
     Returns a HUC page with a list of monitoring locations included.
     """
     return hydrological_unit(huc_cd, show_locations=True)
+
+
+@app.route('/states/', defaults={'state_cd': None, 'county_cd': None}, methods=['GET'])
+@app.route('/states/<state_cd>/', defaults={'county_cd': None}, methods=['GET'])
+@app.route('/states/<state_cd>/counties/<county_cd>/', methods=['GET'])
+@defined_when(app.config['STATE_COUNTY_PAGES_ENABLED'], return_404)
+def states_counties(state_cd, county_cd, show_locations=False):
+    """
+    State unit view
+
+    :param state_cd: ID for this political unit - 'state'
+    :param county_cd: ID for this political unit - 'county'
+    """
+
+    # Get the data associated with this county
+    if state_cd and county_cd:
+        state_county_cd = state_cd + county_cd
+        political_unit = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(state_cd, None)['county_cd']\
+            .get(county_cd, None)
+
+    # Get the data corresponding to this state
+    elif state_cd and not county_cd:
+        political_unit = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(state_cd, None)
+
+    # If no state and or state and county code is available, display list of states.
+    elif not state_cd and not county_cd:
+        political_unit = {
+            'name': 'United States',
+            'children': app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd']
+        }
+
+    # If the search is at the county level, get the monitoring locations within that county.
+    monitoring_locations = []
+    if show_locations and state_cd and county_cd:
+        response = execute_get_request(
+            SERVICE_ROOT,
+            path='/nwis/site/',
+            params={'format': 'rdb', 'countyCd': state_county_cd}
+        )
+        if response.status_code == 200:
+            monitoring_locations = parse_rdb(response.iter_lines(decode_unicode=True))
+
+    http_code = 200 if political_unit else 404
+
+    return render_template(
+        'states_counties.html',
+        http_code=http_code,
+        state_cd=state_cd,
+        county_cd=county_cd,
+        political_unit=political_unit,
+        monitoring_locations=monitoring_locations,
+        show_locations_link=not show_locations and political_unit and county_cd
+    ), http_code
+
+
+@app.route('/states/<state_cd>/counties/<county_cd>/monitoring-locations/', methods=['GET'])
+@defined_when(app.config['STATE_COUNTY_PAGES_ENABLED'], return_404)
+def county_station_locations(state_cd, county_cd):
+    """
+    Returns a page listing monitoring locations within a county.
+    """
+    return states_counties(state_cd, county_cd, show_locations=True)
 
 
 @app.route('/components/time-series/<site_no>/', methods=['GET'])
