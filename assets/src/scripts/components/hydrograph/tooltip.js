@@ -100,20 +100,14 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     // Put the circles in a container so we can keep the their position in the
     // DOM before rect.overlay, to prevent the circles from receiving mouse
     // events.
-    let resizeBackground = true;
     if (!textGroup) {
-        resizeBackground = false;
-        textGroup = elem.append('g')
+        textGroup = elem.append('div')
             .attr('class', 'tooltip-text-group');
-        textGroup.append('rect')
-            .attr('class', 'tooltip-text-group-background')
-            .attr('x', 0)
-            .attr('y', 0);
     }
 
     const data = Object.values(currentPoints).concat(Object.values(comparePoints));
     const texts = textGroup
-        .selectAll('.series-text')
+        .selectAll('div')
         .data(data);
 
     // Remove old text labels after fading them out
@@ -124,48 +118,20 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
 
     // Add new text labels
     const newTexts = texts.enter()
-        .append('g')
-            .attr('class', 'series-text')
-            .call(g => {
-                g.append('rect')
-                    .attr('class', 'tooltip-text-background')
-                    .attr('width', 0)
-                    .attr('height', 0)
-                    .attr('x', tooltipPaddingPx);
-                g.append('text')
-                    .attr('class', d => `${d.tsKey}-tooltip-text`)
-                    .attr('height', '1.1em')
-                    .attr('x', tooltipPaddingPx);
-            });
+        .append('div')
+            .attr('class', d => `${d.tsKey}-tooltip-text`);
 
     // Update the text and backgrounds of all tooltip labels
     const merge = texts.merge(newTexts)
         .interrupt()
         .style('opacity', '1');
-    merge.select('text')
-        .attr('y', (d, i) => `${(i + 1) * 1.1}em`)
-        .text(datum => {
-            return getTooltipText(datum, qualifiers, unitCode);
-        })
-        .call(wrap, layout.width - (2 * tooltipPaddingPx))
+    merge
+        .text(datum => getTooltipText(datum, qualifiers, unitCode))
         .each(function (datum) {
             const classes = classesForPoint(datum);
             const text = select(this);
             text.classed('approved', classes.approved);
             text.classed('estimated', classes.estimated);
-        })
-        .classed('approved', datum => {
-            return classesForPoint(datum).approved;
-        })
-        .classed('estimated', datum => classesForPoint(datum).estimated);
-    merge.select('text')
-        .each(function (text) {
-            const bBox = this.getBBox();
-            select(this.parentNode)
-                .select('.tooltip-text-background')
-                    .attr('y', bBox.y)
-                    .attr('width', bBox.width)
-                    .attr('height', bBox.height);
         });
 
     return textGroup;

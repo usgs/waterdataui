@@ -84,6 +84,32 @@ $highlight: $color-gray-lightest;
         text-align: center;
     }
 
+    .tooltip-text-group {
+        pointer-events: none;
+        position: absolute;
+        background: rgba(255, 255, 255, 0.8);
+        margin: 0 0 0 40px;
+        font-size: 0.5em;
+        @include media($medium-screen) {
+            font-size: 0.75em;
+        }
+        @include media($site-max-width) {
+            margin-left: 80px;
+        }
+        .current-tooltip-text {
+            font-weight: bold;
+        }
+        .approved {
+            color: $approved;
+        }
+        .estimated {
+            color: $estimated;
+        }
+        .compare-tooltip-text {
+            font-weight: normal
+        }
+    }
+
     svg {
         .overlay {
             fill: none;
@@ -101,30 +127,6 @@ $highlight: $color-gray-lightest;
                 stroke-dasharray: 5, 5
             }
 
-        }
-        .tooltip-text-group {
-            font-size: 0.7em;
-            pointer-events: none;
-            @include media($medium-screen) {
-                font-size: 1em;
-            }
-
-            .tooltip-text-background {
-                fill: white;
-                fill-opacity: .8;
-            }
-            .current-tooltip-text {
-                font-weight: bold;
-            }
-            .approved {
-                fill: $approved;
-            }
-            .estimated {
-                fill: $estimated;
-            }
-            .compare-tooltip-text {
-                font-weight: normal
-            }
         }
         .line-segment {
             fill: none;

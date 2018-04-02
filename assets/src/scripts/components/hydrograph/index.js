@@ -288,6 +288,7 @@ const timeSeriesGraph = function (elem) {
     elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(createTitle)
+        .call(createTooltipText)
         .append('svg')
             .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`), layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({
@@ -323,8 +324,7 @@ const timeSeriesGraph = function (elem) {
                         variable: currentVariableSelector,
                         showLabel: (state) => state.showMedianStatsLabel
                     })));
-            })
-            .call(createTooltipText);
+            });
 
     elem.call(link(plotSeriesSelectTable, createStructuredSelector({
         availableTimeseries: availableTimeseriesSelector,

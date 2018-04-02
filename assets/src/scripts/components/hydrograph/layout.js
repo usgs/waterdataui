@@ -14,7 +14,7 @@ const MARGIN = {
     top: 25,
     right: 0,
     bottom: 10,
-    left: 65
+    left: 80
 };
 const MARGIN_SMALL_DEVICE = {
     top: 25,
