@@ -259,6 +259,44 @@ describe('Parameters module', () => {
                 }
             ]
         };
+
+        const tsDataMasked2 = {
+            scales: {
+                x: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3)),
+                y: scaleLinear(0, 100)
+            },
+            seriesLineSegments: [
+                {
+                    classes: {approved: false, estimated: false, dataMask: 'fld'},
+                    points: [
+                        {dateTime: new Date(2015, 1, 2), value: null},
+                        {dateTime: new Date(2015, 1, 3), value: null}
+                    ]
+                }
+            ]
+        };
+        const tsDataMultipleMasks = {
+            scales: {
+                x: scaleLinear(new Date(2015, 1, 13), new Date(2015, 1, 18)),
+                y: scaleLinear(0, 100)
+            },
+            seriesLineSegments: [
+                {
+                    classes: {approved: false, estimated: false, dataMask: 'fld'},
+                    points: [
+                        {dateTime: new Date(2015, 1, 13), value: null},
+                        {dateTime: new Date(2015, 1, 14), value: null}
+                    ]
+                },
+                {
+                    classes: {approved: false, estimated: false, dataMask: 'ice'},
+                    points: [
+                        {dateTime: new Date(2015, 1, 15), value: null},
+                        {dateTime: new Date(2015, 1, 16), value: null}
+                    ]
+                }
+            ]
+        };
         const tsDataMixed = {
             scales: {
                 x: scaleLinear(new Date(2015, 1, 13), new Date(2015, 1, 18)),
@@ -302,9 +340,22 @@ describe('Parameters module', () => {
             expect(svg.selectAll('path').size()).toEqual(1);
         });
 
-        it('does not add a path for masked data', () => {
+        it('adds multiline text for masked data if the label has more than one word', () => {
             addSparkLine(svg, tsDataMasked);
-            expect(svg.selectAll('path').size()).toEqual(0);
+            expect(svg.selectAll('text.sparkline-text').size()).toEqual(1);
+            expect(svg.selectAll('text.sparkline-text tspan').size()).toEqual(2);
+        });
+
+        it('adds a single line of text if mask label is one word', () => {
+            addSparkLine(svg, tsDataMasked2);
+            expect(svg.selectAll('text.sparkline-text').size()).toEqual(1);
+            expect(svg.selectAll('text.sparkline-text tspan').size()).toEqual(0);
+        });
+
+        it('handles labels if there is more than one mask', () => {
+            addSparkLine(svg, tsDataMultipleMasks);
+            expect(svg.selectAll('text.sparkline-text').size()).toEqual(1);
+            expect(svg.select('text.sparkline-text').text()).toEqual('Masked');
         });
 
         it('adds multiple paths if there are breaks in the data', () => {
