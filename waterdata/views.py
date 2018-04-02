@@ -223,7 +223,8 @@ def states_counties(state_cd, county_cd, show_locations=False):
     # Get the data associated with this county
     if state_cd and county_cd:
         state_county_cd = state_cd + county_cd
-        political_unit = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(state_cd, None)['county_cd'].get(county_cd, None)
+        political_unit = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(state_cd, None)['county_cd']\
+            .get(county_cd, None)
 
     # Get the data corresponding to this state
     elif state_cd and not county_cd:
