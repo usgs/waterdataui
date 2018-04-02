@@ -75,6 +75,11 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
             }
         }
     } else {
+        const centerElement = function (svgElement) {
+            const elementWidth = svgElement.node().getBoundingClientRect().width;
+            const xLocation = (SPARK_LINE_DIM.width - elementWidth) / 2;
+            svgElement.attr('x', xLocation);
+        };
         let svgText = svgSelection.append('text')
             .attr('x', 0)
             .attr('y', 0)
@@ -83,23 +88,17 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
         const maskDesc = maskDescs.length === 1 ? maskDescs[0] : 'Masked';
         const maskDescWords = maskDesc.split(' ');
 
-        const centerElement = function (svgElement) {
-            const elmentWidth = svgElement.node().getBBox().width;
-            const xLocation = (SPARK_LINE_DIM.width - elmentWidth) / 2;
-            svgElement.attr('x', xLocation);
-        };
-
         if (maskDescWords.length > 1) {
-            for (const val of maskDescWords.entries()) {
-                const yPosition = 15 + val[0]*12;
-                const valText = val[1];
+            Array.from(maskDescWords.entries()).forEach(x => {
+                const yPosition = 15 + x[0]*12;
+                const maskText = x[1];
                 let tspan = svgText.append('tspan')
                     .attr('x', 0)
                     .attr('y', yPosition)
-                    .text(valText);
+                    .text(maskText);
                 centerElement(svgText);
                 centerElement(tspan);
-            }
+            });
         } else {
             svgText.text(maskDesc)
                 .attr('y', '20');

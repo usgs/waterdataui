@@ -304,7 +304,8 @@ describe('Parameters module', () => {
 
         it('does not add a path for masked data', () => {
             addSparkLine(svg, tsDataMasked);
-            expect(svg.selectAll('path').size()).toEqual(0);
+            expect(svg.selectAll('text').size()).toEqual(1);
+            expect(svg.selectAll('text tspan').size()).toEqual(2);
         });
 
         it('adds multiple paths if there are breaks in the data', () => {
