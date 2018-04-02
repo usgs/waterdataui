@@ -209,4 +209,4 @@ const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => 
 )));
 
 
-module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, singleSeriesYScale, timeSeriesScalesByParmCdSelector};
+module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, singleSeriesYScale, timeSeriesScalesByParmCdSelector, extendDomain};
