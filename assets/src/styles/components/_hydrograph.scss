@@ -10,8 +10,12 @@ $highlight: $color-gray-lightest;
     table {
         display: block;
         overflow: auto;
-        height: 250px;
         margin-top: 0;
+
+        height: 250px;
+        @include media($site-max-width) {
+            height: auto;
+        }
 
         thead {
             th {
