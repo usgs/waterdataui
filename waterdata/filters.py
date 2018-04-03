@@ -2,6 +2,8 @@
 Jinja2 filters. Must be imported (via waterdata.__init__) for them to register
 via the `app.template_filter` decorator.
 """
+import datetime
+from itertools import chain
 from urllib.parse import urljoin
 
 from . import app
@@ -40,36 +42,44 @@ def use_correct_indefinite_article(some_noun):
 
 
 @app.template_filter('data_start_year')
-def data_start_year(series):
+def data_start_year(parameter_group_series):
     """
     Determine the earliest year that was collected for a
     list of parameters.
 
-    :param list series: list of data series
-    :return: earliest year of data collection, list of distinct things being measured
-    :rtype: str
+    :param dict parameter_group_series: dictionary of parameter series grouped by parameter group
+    :return: earliest year of data collection if available
+    :rtype: str or None
 
     """
+    series = chain.from_iterable([x['parameters'] for x in parameter_group_series.values()])
     all_start_dates = [s['start_date'] for s in series]
     try:
         start_year = str(min(all_start_dates).year)
     except ValueError:
-        start_year = 'unknown'
+        start_year = None
     return start_year
 
 
 @app.template_filter('readable_param_list')
-def readable_param_list(series):
+def readable_param_list(parameter_group_series):
     """
     Generate text for a list of parameters in the description meta tag.
 
-    :param list series: list of data series
-    :return: human readable string for the parameters in the series
-    :rtype: str
+    :param dict parameter_group_series: dictionary of parameter series grouped by parameter group
+    :return: human readable string for the parameters in the series if available
+    :rtype: str or None
 
     """
     # need to use a set -- there might be multiple variants for a measurements
     # (e.g. "nitrite, water as N" vs "nitrite, water as NO3-")
+    series = chain.from_iterable(
+        [
+            x['parameters'] for x in parameter_group_series.values() if
+            'unit values' in x['data_types'].lower() and
+            x['end_date'].date() == datetime.datetime.now().date()
+        ]
+    )
     short_names = set([s['parameter_name'].split(',')[0].upper() for s in series])
     sorted_names = sorted(short_names, key=lambda x: (x not in SORT_TOP, x))
     if sorted_names:
@@ -86,5 +96,18 @@ def readable_param_list(series):
         else:
             parameters = '{}, and MORE'.format(', '.join(sorted_names[:3]))
     else:
-        parameters = 'unknown'
+        parameters = None
     return parameters
+
+
+@app.template_filter('date_to_string')
+def date_to_string(dt):
+    """
+    Given a datetime, provide a string.
+
+    :param datetime.datetime dt: convert datetime to string
+    :return: datetime as a string
+    :rtype: str
+
+    """
+    return dt.strftime('%Y-%m-%d')

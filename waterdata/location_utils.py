@@ -268,8 +268,8 @@ def _extract_group_date_range(dataseries):
     start_dates = [series['start_date'] for series in dataseries]
     end_dates = [series['end_date'] for series in dataseries]
     data_types = set(list(itertools.chain.from_iterable([series['data_types'] for series in dataseries])))
-    range_start_date = min(start_dates).strftime('%Y-%m-%d')
-    range_end_date = max(end_dates).strftime('%Y-%m-%d')
+    range_start_date = min(start_dates)
+    range_end_date = max(end_dates)
     return {
         'start_date': range_start_date,
         'end_date': range_end_date,
