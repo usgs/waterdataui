@@ -1,5 +1,24 @@
 #site-map {
     height: 350px;
     margin: 1em 0;
+
+    .legend {
+        padding: 2px;
+        background-color: white;
+        #site-legend {
+            img {
+                padding-top: 2px;
+                width: 15px;
+                height: 17px;
+            }
+        }
+        #fim-legend-list {
+            img {
+                padding-top: 2px;
+                width: 15px;
+                height: 13px;
+            }
+        }
+    }
 }
 

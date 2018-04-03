@@ -89,7 +89,8 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     legendControl.onAdd = function() {
         let container = DomUtil.create('div', 'legend');
         let legendList = DomUtil.create('ul', 'usa-unstyled-list', container);
-        legendList.innerHTML = `<li>Site <img src="${STATIC_URL}/images/marker-icon.png" width="15" height="25"/></li>`;
+        legendList.id = 'site-legend'
+        legendList.innerHTML = `<li><img src="${STATIC_URL}/images/marker-icon.png" /> Site</li>`;
         return container;
     };
     legendControl.addTo(map);
@@ -144,7 +145,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
                             .classed('fim-legend', true)
                             .html(function(d) {
                                 console.log(d);
-                                return `${d.name} <img src="data:image/png;base64,${d.imageData}" />`;
+                                return `<img src="data:image/png;base64,${d.imageData}"/> ${d.name}`;
                             });
                 });
         } else {
