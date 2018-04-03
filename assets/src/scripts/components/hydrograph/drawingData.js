@@ -1,6 +1,6 @@
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
-const { format } = require('d3-format')
+const { format } = require('d3-format');
 
 const {allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector, variablesSelector } = require('./timeseries');
 
