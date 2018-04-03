@@ -1,20 +1,50 @@
 const { select } = require('d3-selection');
 const { createStructuredSelector } = require('reselect');
 
-const { map: createMap, marker: createMarker } = require('leaflet');
+const { map: createMap, marker: createMarker, control: createControl, DomUtil } = require('leaflet');
 const { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util } = require('esri-leaflet');
 
 const { link, provide } = require('../lib/redux');
 
-const { FIM_ENDPOINT, HYDRO_ENDPOINT } = require('../config');
+const { get } = require('../ajax');
+const { FIM_ENDPOINT, FIM_GIS_ENDPOINT, HYDRO_ENDPOINT, STATIC_URL } = require('../config');
 const { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } = require('../floodData');
 const { Actions } = require('../store');
 
+
+const fimAvailableSelector = state => state.floodStages.length > 0;
 
 const getLayerDefs = function(layerNo, siteno, stage) {
    const stageQuery = stage ? ` AND STAGE = ${stage}` : '';
    return `${layerNo}: USGSID = '${siteno}'${stageQuery}`;
 };
+
+
+const fetchLayerLegend = function(layer, defaultName) {
+    return get(`${FIM_GIS_ENDPOINT}${layer}/MapServer/legend?f=json`)
+        .then((responseText) => {
+            const resp = JSON.parse(responseText);
+            if (resp.error) {
+                console.error(resp.error.message);
+                return [];
+            }
+            return resp.layers.map((layer) => {
+                const legendImages = layer.legend.map((legend) => {
+                    return {
+                        imageData: legend.imageData,
+                        name: layer.layerName && layer.layerName !== '.' ? layer.layerName : defaultName
+                    };
+                });
+                return [].concat(...legendImages);
+            });
+        })
+        .catch(reason => {
+            console.error(reason);
+            return [];
+        });
+};
+
+
 /*
  * Creates a site map
  */
@@ -55,6 +85,16 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         layerDefs: `${getLayerDefs(0, siteno)};${getLayerDefs(1, siteno)}`
     });
 
+    let legendControl = createControl({position: 'bottomright'});
+    legendControl.onAdd = function() {
+        let container = DomUtil.create('div', 'legend');
+        let legendList = DomUtil.create('ul', 'usa-unstyled-list', container);
+        legendList.innerHTML = `<li>Site <img src="${STATIC_URL}/images/marker-icon.png" width="15" height="25"/></li>`;
+        return container;
+    };
+    legendControl.addTo(map);
+
+
     const updateFloodLayers = function (node, {stages, gageHeight}) {
         if (gageHeight) {
             const layerDefs = getLayerDefs(0, siteno, gageHeight);
@@ -82,14 +122,47 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         }
     };
 
-    const addFimLink = function (node, {stages}) {
-        if (stages.length > 0) {
+
+    const createFIMLegend = function(node, isFIMAvailable) {
+        if (isFIMAvailable) {
+            // Fetch the images
+            let fetchFloodExtentLegend = fetchLayerLegend('floodExtents', 'Flood-inundation area');
+            let fetchBreachLegend = fetchLayerLegend('breach', 'Area of uncertainty');
+            let fetchSuppLyrs = fetchLayerLegend('suppLyrs', 'supply layers');
+
+            Promise.all([fetchFloodExtentLegend, fetchBreachLegend, fetchSuppLyrs])
+                .then(([floodExtentLegends, breachLegend, suppLyrsLegend]) => {
+                    const legendContainer = legendControl.getContainer();
+                    const legendImages = [].concat(...floodExtentLegends, ...breachLegend, ...suppLyrsLegend);
+
+                    select(legendContainer).append('ul')
+                        .attr('id', 'fim-legend-list')
+                        .classed('usa-unstyled-list', true)
+                        .selectAll('li')
+                        .data(legendImages)
+                        .enter().append('li')
+                            .classed('fim-legend', true)
+                            .html(function(d) {
+                                console.log(d);
+                                return `${d.name} <img src="data:image/png;base64,${d.imageData}" />`;
+                            });
+                });
+        } else {
+            select(legendControl.getContainer()).select('#fim-legend-list').remove();
+        }
+    };
+
+
+    const addFimLink = function (node, isFIMAvailable) {
+        if (isFIMAvailable) {
             node.append('a')
                 .attr('id', 'fim-link')
                 .attr('href', `${FIM_ENDPOINT}?site_no=${siteno}`)
                 .attr('target', '_blank')
                 .attr('rel', 'noopener')
                 .text('Provisional Flood Information');
+        } else {
+            node.select('#fim-link').remove();
         }
     };
 
@@ -112,9 +185,8 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         .call(link(updateMapExtent, createStructuredSelector({
             extent: (state) => state.floodExtent
         })))
-        .call(link(addFimLink, createStructuredSelector({
-            stages: (state) => state.floodStages
-        })));
+        .call(link(createFIMLegend, fimAvailableSelector))
+        .call(link(addFimLink, fimAvailableSelector));
 };
 
 /*
