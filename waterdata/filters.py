@@ -101,13 +101,13 @@ def readable_param_list(parameter_group_series):
 
 
 @app.template_filter('date_to_string')
-def date_to_string(dt):
+def date_to_string(dt_obj):
     """
     Given a datetime, provide a string.
 
-    :param datetime.datetime dt: convert datetime to string
+    :param datetime.datetime dt_obj: convert datetime to string
     :return: datetime as a string
     :rtype: str
 
     """
-    return dt.strftime('%Y-%m-%d')
+    return dt_obj.strftime('%Y-%m-%d')
