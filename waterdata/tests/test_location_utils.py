@@ -578,8 +578,8 @@ class TestRollupDataseries(TestCase):
             list(result['Physical'].keys()),
             ['start_date', 'end_date', 'data_types', 'parameters']
         )
-        self.assertEqual(result['Physical']['start_date'], '1977-06-20')
-        self.assertEqual(result['Physical']['end_date'], '2017-03-26')
+        self.assertEqual(result['Physical']['start_date'], datetime.datetime(1977, 6, 20))
+        self.assertEqual(result['Physical']['end_date'], datetime.datetime(2017, 3, 26))
         self.assertEqual(result['Physical']['data_types'], 'Daily Values, Unit Values')
         self.assertEqual(len(result['Physical']['parameters']), 2)
         self.assertEqual(len(result['Nutrient']['parameters']), 1)
