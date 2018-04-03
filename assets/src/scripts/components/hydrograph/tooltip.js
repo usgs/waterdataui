@@ -44,7 +44,9 @@ const updateFocusLine = function(elem, {cursorTime, xScale}) {
 
 /*
  * Returns a function that returns the time series data point nearest the
- * tooltip focus time for the given time series key.
+ * tooltip focus time for the given time series key. Only returns those points
+ * where the y-value is finite; no use in making a point if y is Infinity.
+ *
  * @param {Object} state - Redux store
  * @param String} tsKey - Timeseries key
  * @return {Object}
@@ -56,11 +58,13 @@ const tooltipPointsSelector = memoize(tsKey => createSelector(
     (xScale, yScale, cursorPoints) => {
         return Object.keys(cursorPoints).reduce((tooltipPoints, tsID) => {
             const cursorPoint = cursorPoints[tsID];
-            tooltipPoints.push({
-                x: xScale(cursorPoint.dateTime),
-                y: yScale(cursorPoint.value),
-                tsID
-            });
+            if (isFinite(yScale(cursorPoint.value))) {
+                tooltipPoints.push({
+                    x: xScale(cursorPoint.dateTime),
+                    y: yScale(cursorPoint.value),
+                    tsID
+                });
+            }
             return tooltipPoints;
         }, []);
     }
