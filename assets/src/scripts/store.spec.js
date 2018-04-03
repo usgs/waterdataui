@@ -542,6 +542,12 @@ describe('Redux store', () => {
                 type: 'ADD_TIMESERIES_COLLECTION',
                 data: {
                     stateToMerge: {},
+                    timeSeries: {
+                        ts: {
+                            variable: 'varId',
+                            points: [1]
+                        }
+                    },
                     variables: {
                         'varId': {
                             oid: 'varId',
@@ -556,6 +562,12 @@ describe('Redux store', () => {
             })).toEqual({
                 series: {
                     stateToMerge: {},
+                    timeSeries: {
+                        ts: {
+                            variable: 'varId',
+                            points: [1]
+                        }
+                    },
                     variables: {
                         'varId': {
                             oid: 'varId',
@@ -569,6 +581,53 @@ describe('Redux store', () => {
                     current: true
                 },
                 currentVariableID: 'varId'
+            });
+        });
+
+        it('handles ADD_TIMESERIES_COLLECTION and ignores empty series when calculating currentVariableID', () => {
+            expect(timeSeriesReducer({series: {}}, {
+                type: 'ADD_TIMESERIES_COLLECTION',
+                data: {
+                    stateToMerge: {},
+                    timeSeries: {
+                        ts: {
+                            variable: 'varId',
+                            points: []
+                        }
+                    },
+                    variables: {
+                        'varId': {
+                            oid: 'varId',
+                            variableCode: {
+                                value: 1
+                            }
+                        }
+                    }
+                },
+                show: true,
+                key: 'current'
+            })).toEqual({
+                series: {
+                    stateToMerge: {},
+                    timeSeries: {
+                        ts: {
+                            variable: 'varId',
+                            points: []
+                        }
+                    },
+                    variables: {
+                        'varId': {
+                            oid: 'varId',
+                            variableCode: {
+                                value: 1
+                            }
+                        }
+                    }
+                },
+                showSeries: {
+                    current: true
+                },
+                currentVariableID: null
             });
         });
 
