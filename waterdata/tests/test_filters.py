@@ -72,48 +72,81 @@ class TestDataStartYearFilter(TestCase):
 class TestReadableParmListFilter(TestCase):
 
     def setUp(self):
+        self.now = datetime.datetime.now()
+        self.recent = datetime.datetime.now() - datetime.timedelta(days=2)
+        self.long_ago = datetime.datetime.now() - datetime.timedelta(days=10)
         self.physical_series = [
             {
                 'start_date': datetime.datetime(1908, 1, 3),
-                'end_date': datetime.datetime.now(),
-                'data_types': ['Data Types'],
+                'end_date': self.now,
+                'data_types': ['Unit Values'],
                 'parameter_code': '09001',
                 'parameter_name': 'Antimatter, liters'
             },
             {
                 'start_date': datetime.datetime(1908, 1, 3),
-                'end_date': datetime.datetime(2016, 3, 23),
-                'data_types': ['Data Types'],
+                'end_date': self.recent,
+                'data_types': ['Unit Values'],
                 'parameter_code': '09002',
                 'parameter_name': 'Matter, liters'
             },
             {
                 'start_date': datetime.datetime(1908, 1, 19),
-                'end_date': datetime.datetime(2018, 3, 25),
-                'data_types': ['Data Types'],
+                'end_date': self.recent,
+                'data_types': ['Unit Values'],
                 'parameter_code': '00060',
                 'parameter_name': 'Discharge, dm3/s'
             },
             {
                 'start_date': datetime.datetime(1908, 1, 19),
-                'end_date': datetime.datetime(2018, 3, 25),
-                'data_types': ['Data Types'],
+                'end_date': self.recent,
+                'data_types': ['Unit Values'],
                 'parameter_code': '00010',
                 'parameter_name': 'Temperature, K'
+            },
+            {
+                'start_date': datetime.datetime(1908, 1, 19),
+                'end_date': self.recent,
+                'data_types': ['Daily Values'],
+                'parameter_code': '22140',
+                'parameter_name': 'Turbidity'
+            },
+            {
+                'start_date': datetime.datetime(1908, 1, 19),
+                'end_date': self.recent,
+                'data_types': ['Daily Values'],
+                'parameter_code': '22140',
+                'parameter_name': 'Depth'
             }
         ]
         self.inorganic_series = [
             {
                 'start_date': datetime.datetime(1908, 1, 3),
                 'end_date': datetime.datetime.now(),
-                'data_types': ['Data Types'],
+                'data_types': ['Unit Values', 'Daily Values'],
                 'parameter_code': '07242',
                 'parameter_name': 'Lead, g/mL'
             },
             {
                 'start_date': datetime.datetime(1999, 1, 26),
-                'end_date': datetime.datetime(2018, 3, 25),
-                'data_types': ['Data Types'],
+                'end_date': self.recent,
+                'data_types': ['Unit Values', 'Daily Values'],
+                'parameter_code': '02220',
+                'parameter_name': 'Neptunium, ug/mL'
+            }
+        ]
+        self.old_inorganic_series = [
+            {
+                'start_date': datetime.datetime(1908, 1, 3),
+                'end_date': self.long_ago,
+                'data_types': ['Unit Values', 'Daily Values'],
+                'parameter_code': '07242',
+                'parameter_name': 'Lead, g/mL'
+            },
+            {
+                'start_date': datetime.datetime(1999, 1, 26),
+                'end_date': self.long_ago,
+                'data_types': ['Unit Values', 'Daily Values'],
                 'parameter_code': '02220',
                 'parameter_name': 'Neptunium, ug/mL'
             }
@@ -125,18 +158,14 @@ class TestReadableParmListFilter(TestCase):
 
     def test_single_measured_parameter(self):
         result = filters.readable_param_list({'Physical': {
-            'parameters': self.physical_series[:1],
-            'data_types': 'Unit Values, Water Quality',
-            'end_date': datetime.datetime.now()
+            'parameters': self.physical_series[:1]
         }})
         expected = 'ANTIMATTER'
         self.assertEqual(result, expected)
 
     def test_two_measured_parameters(self):
         result = filters.readable_param_list({'Physical': {
-            'parameters': self.physical_series[:2],
-            'data_types': 'Unit Values, Water Quality',
-            'end_date': datetime.datetime.now()
+            'parameters': self.physical_series[:2]
         }})
         expected = 'ANTIMATTER and MATTER'
         self.assertEqual(result, expected)
@@ -159,42 +188,25 @@ class TestReadableParmListFilter(TestCase):
         expected = 'DISCHARGE, TEMPERATURE, ANTIMATTER, and MORE'
         self.assertEqual(result, expected)
 
-    def test_date_range(self):
-        result = filters.readable_param_list({'Physical': {
-            'parameters': self.physical_series,
-            'data_types': 'Unit Values, Water Quality',
-            'end_date': datetime.datetime.now() - datetime.timedelta(days=4)
-        }})
-        expected = 'DISCHARGE, TEMPERATURE, ANTIMATTER, and MORE'
-        self.assertEqual(result, expected)
-
     def test_no_current_data(self):
-        result = filters.readable_param_list({'Physical': {
-            'parameters': self.physical_series[2:],
-            'data_types': 'Unit Values, Water Quality',
-            'end_date': datetime.datetime(2018, 3, 25)
+        result = filters.readable_param_list({'Inorganic': {
+            'parameters': self.old_inorganic_series,
         }})
         self.assertIsNone(result)
 
     def test_no_unit_values(self):
         result = filters.readable_param_list({'Physical': {
-            'parameters': self.physical_series[1:],
-            'data_types': 'Daily Values, Site Visits',
-            'end_date': datetime.datetime.now()
+            'parameters': self.physical_series[-2:]
         }})
         self.assertIsNone(result)
 
     def test_mixed_data_types(self):
         result = filters.readable_param_list({
             'Physical': {
-                'parameters': self.physical_series,
-                'data_types': 'Daily Values, Site Visits',
-                'end_date': datetime.datetime.now()
+                'parameters': self.physical_series[-2:]
             },
             'Inorganic': {
                 'parameters': self.inorganic_series,
-                'data_types': 'Daily Values, Unit Values',
-                'end_date': datetime.datetime.now()
             }
         })
         expected = 'LEAD and NEPTUNIUM'

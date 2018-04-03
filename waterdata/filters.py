@@ -73,15 +73,14 @@ def readable_param_list(parameter_group_series):
     """
     # need to use a set -- there might be multiple variants for a measurements
     # (e.g. "nitrite, water as N" vs "nitrite, water as NO3-")
-    series = chain.from_iterable(
+    series = chain.from_iterable([x['parameters'] for x in parameter_group_series.values()])
+    short_names = set(
         [
-            x['parameters'] for x in parameter_group_series.values() if
-            'unit values' in x['data_types'].lower() and
+            s['parameter_name'].split(',')[0].upper() for s in series if 'Unit Values' in s['data_types'] and
             (datetime.datetime.now().date() - datetime.timedelta(days=8) <=
-             x['end_date'].date() <= datetime.datetime.now().date() + datetime.timedelta(days=1))
+             s['end_date'].date() <= datetime.datetime.now().date() + datetime.timedelta(days=1))
         ]
     )
-    short_names = set([s['parameter_name'].split(',')[0].upper() for s in series])
     sorted_names = sorted(short_names, key=lambda x: (x not in SORT_TOP, x))
     if sorted_names:
         if len(sorted_names) == 1:
