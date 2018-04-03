@@ -5,7 +5,7 @@
 
 {% block extra_head_tags %}
     {% if status_code == 200 %}
-        <meta name="description" content="{{ components.DescriptionMetaTag(stations[0].site_no, location_with_values, pertinent_series) }}">
+        <meta name="description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}">
     {%  endif %}
 {% endblock %}
 
@@ -62,7 +62,7 @@
                             </div>
                         </div>
                     </div>
-                    <p id="site-description">{{ components.DescriptionMetaTag(stations[0].site_no, location_with_values, pertinent_series) }}</p>
+                    <p id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}</p>
                 </div>
                 {{ components.TimeseriesComponent(stations[0].site_no) }}
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
@@ -91,8 +91,8 @@
                                             <tr>
                                                 <td scope="row">{{ key }}</td>
                                                 <td>{{ value.data_types }}</td>
-                                                <td>{{ value.start_date }}</td>
-                                                <td>{{ value.end_date }}</td>
+                                                <td>{{ value.start_date|date_to_string }}</td>
+                                                <td>{{ value.end_date|date_to_string }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
