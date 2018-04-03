@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - Timeseries SVG has the correct title and desc tag contents.
+- Series with no points are not considered when determining the default parameter.
 
 
 ## [0.5.0] - 2018-03-30
