@@ -99,7 +99,6 @@ const unitCodeSelector = createSelector(
 );
 
 const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, layout}, textGroup) {
-    const tooltipPaddingPx = layout.margin.left / 2;
 
     // Put the circles in a container so we can keep the their position in the
     // DOM before rect.overlay, to prevent the circles from receiving mouse
