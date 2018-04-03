@@ -1,27 +1,27 @@
-const { createXScale, createYScale, singleSeriesYScale, yScaleSelector, extendDomain } = require('./scales');
+const { extent } = require('d3-array');
+
+const { createXScale, createYScale, yScaleSelector } = require('./scales');
 
 
 describe('Charting scales', () => {
-    let points = Array(23).fill(0).map((_, hour) => {
+    const points = Array(23).fill(0).map((_, hour) => {
         return {
             dateTime: new Date(2017, 10, 10, hour, 0, 0, 0),
             value: hour
         };
     });
+    const yDomain = extent(points.map(p => p.value));
     const xDomain = {
         start: points[0].dateTime,
         end: points[points.length - 1].dateTime
     };
-    let xScale = createXScale(xDomain, 200);
-    let yScale = createYScale('00060', [points], 100);
-    let yScaleLinear = createYScale('ABCDE', [points], 100);
-    let singleYScale = singleSeriesYScale('00060', points, 100);
-    let singleYScaleLinear = singleSeriesYScale('ABCDE', points, 100);
+    const xScale = createXScale(xDomain, 200);
+    const yScale = createYScale('00060', yDomain, 100);
+    const yScaleLinear = createYScale('ABCDE', yDomain, 100);
 
     it('scales created', () => {
         expect(xScale).toEqual(jasmine.any(Function));
         expect(yScale).toEqual(jasmine.any(Function));
-        expect(singleYScale).toEqual(jasmine.any(Function));
     });
 
     it('xScale domain is correct', () => {
@@ -42,12 +42,6 @@ describe('Charting scales', () => {
         expect(range[1]).toEqual(0);
     });
 
-    it('singleYscale range is correctly right-oriented', () => {
-        let range = singleYScale.range();
-        expect(range[0]).toEqual(100);
-        expect(range[1]).toEqual(0);
-    });
-
     it('WDFN-66: yScale deals with range [0,1] correctly', () => {
         expect(yScale(1)).not.toBeNaN();
         expect(yScale(.5)).not.toBeNaN();
@@ -60,9 +54,9 @@ describe('Charting scales', () => {
         const log100 = yScale(100);
         const log1000 = yScale(1000);
 
-        const singleLog10 = singleYScale(10);
-        const singleLog100 = singleYScale(100);
-        const singleLog1000 = singleYScale(1000);
+        const singleLog10 = yScale(10);
+        const singleLog100 = yScale(100);
+        const singleLog1000 = yScale(1000);
 
         expect(log10 - log100).toBeCloseTo(log100 - log1000);
         expect(singleLog10 - singleLog100).toBeCloseTo(singleLog100 - singleLog1000);
@@ -73,9 +67,9 @@ describe('Charting scales', () => {
         const linear20 = yScaleLinear(20);
         const linear30 = yScaleLinear(30);
 
-        const singleLinear10 = singleYScaleLinear(10);
-        const singleLinear20 = singleYScaleLinear(20);
-        const singleLinear30 = singleYScaleLinear(30);
+        const singleLinear10 = yScaleLinear(10);
+        const singleLinear20 = yScaleLinear(20);
+        const singleLinear30 = yScaleLinear(30);
 
         expect(linear10 - linear20).toBeCloseTo(linear20 - linear30);
         expect(singleLinear10 - singleLinear20).toBeCloseTo(singleLinear20 - singleLinear30);
@@ -112,42 +106,6 @@ describe('Charting scales', () => {
                 width: 200,
                 windowWidth: 600
             }).name).toBe('scale');
-        });
-    });
-
-    describe('extendDomain', () => {
-        it('lower bounds on nearest power of 10 with symlog parameter, upper bound 20%', () => {
-            expect(extendDomain([50, 1000], '00060')).toEqual([10, 1000 + (1000 - 50) * .2]);
-            expect(extendDomain([175, 1000], '00060')).toEqual([100, 1000 + (1000 - 175) * .2]);
-            expect(extendDomain([9000, 10000], '00060')).toEqual([1000, 10000 + (10000 - 9000) * .2]);
-        });
-
-        it('20% padding on linear scales, zero lower bound', () => {
-            let domain = [50, 1000];
-            let padding = (domain[1] - domain[0]) * .2;
-            expect(extendDomain(domain, '00065')).toEqual([0, domain[1] + padding]);
-
-            domain = [175, 1000];
-            padding = (domain[1] - domain[0]) * .2;
-            expect(extendDomain(domain, '00065')).toEqual([domain[0] - padding, domain[1] + padding]);
-
-            domain = [9000, 10000];
-            padding = (domain[1] - domain[0]) * .2;
-            expect(extendDomain(domain, '00065')).toEqual([domain[0] - padding, domain[1] + padding]);
-        });
-
-        it('20% padding on linear scales with negative lower bound', () => {
-            let domain = [-50, 1000];
-            let padding = (domain[1] - domain[0]) * .2;
-            expect(extendDomain(domain, '00065')).toEqual([domain[0] - padding, domain[1] + padding]);
-
-            domain = [-175, 1000];
-            padding = (domain[1] - domain[0]) * .2;
-            expect(extendDomain(domain, '00065')).toEqual([domain[0] - padding, domain[1] + padding]);
-
-            domain = [-9000, 10000];
-            padding = (domain[1] - domain[0]) * .2;
-            expect(extendDomain(domain, '00065')).toEqual([domain[0] - padding, domain[1] + padding]);
         });
     });
 });

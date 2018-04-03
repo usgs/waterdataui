@@ -1,14 +1,13 @@
-const { extent } = require('d3-array');
 const { scaleTime, scaleLinear } = require('d3-scale');
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
+const { getYDomain } = require('./domain');
 const { layoutSelector } = require('./layout');
 const { timeSeriesSelector, variablesSelector, currentVariableSelector, requestTimeRangeSelector } = require('./timeseries');
 const { visiblePointsSelector, pointsByTsKeySelector } = require('./drawingData');
 
-const paddingRatio = 0.2;
 
 // array of parameters that should use
 // a symlog scale instead of a linear scale
@@ -16,39 +15,6 @@ const SYMLOG_PARMS = [
     '00060',
     '72137'
 ];
-
-
-/**
- *  Return domain padded on both ends by paddingRatio.
- *  For positive domains, a zero-lower bound on the y-axis is enforced.
- *  @param {Array} domain - array of two numbers
- *  @return {Array} - array of two numbers
- */
-function extendDomain(domain, parmCd) {
-    const isPositive = domain[0] >= 0 && domain[1] >= 0;
-    let extendedDomain;
-
-    // Pad domains on both ends by paddingRatio.
-    const padding = paddingRatio * (domain[1] - domain[0]);
-    extendedDomain = [
-        domain[0] - padding,
-        domain[1] + padding
-    ];
-
-    // Log scales lower-bounded by nearest power of 10 (10, 100, 1000, etc)
-    if (SYMLOG_PARMS.indexOf(parmCd) > -1) {
-        extendedDomain = [
-            isPositive ? Math.pow(10, Math.floor(Math.log10(domain[0]))) : domain[0],
-            extendedDomain[1]
-        ];
-    }
-
-    // For positive domains, a zero-lower bound on the y-axis is enforced.
-    return [
-        isPositive ? Math.max(0, extendedDomain[0]) : extendedDomain[0],
-        extendedDomain[1]
-    ];
-}
 
 
 /**
@@ -73,7 +39,7 @@ function createXScale(timeRange, xSize) {
  * @param {Array} extent
  * @param {Number} size
  */
-function yScaleByParameter(parmCd, extent, size) {
+function createYScale(parmCd, extent, size) {
     if (SYMLOG_PARMS.indexOf(parmCd) >= 0) {
         return scaleSymlog()
             .domain(extent)
@@ -83,55 +49,6 @@ function yScaleByParameter(parmCd, extent, size) {
             .domain(extent)
             .range([size, 0]);
     }
-}
-
-
-/**
- * Create a yScale for the plots where you only have a single array of data
- *
- * @param {String} parmCd
- * @param {Array} tsData - array of data points with time and value keys
- * @param {Number} ySize - range of the scale
- * * @return {Object} d3 scale for value.
- */
-function singleSeriesYScale(parmCd, tsData, ySize) {
-    let points = tsData.filter(pt => pt.value !== null);
-    let yExtent = extent(points, d => d.value);
-    return yScaleByParameter(parmCd, yExtent, ySize);
-}
-
-
-/**
- * Create an yscale oriented on the bottom
- * @param {String} parmCd
- * @param {Object} pointArrays - Time series points: [[point, point], ...]
- * @param {Number} ySize - range of scale
- * @return {Object} d3 scale for value.
- */
-function createYScale(parmCd, pointArrays, ySize) {
-    let yExtent;
-    let scaleDomains = [];
-
-    // Calculate max and min for data
-    for (const points of pointArrays) {
-        if (points.length === 0) {
-            continue;
-        }
-        scaleDomains.push(singleSeriesYScale(parmCd, points, ySize).domain());
-    }
-    if (scaleDomains.length > 0) {
-        const flatDomains = [].concat(...scaleDomains).filter(val => isFinite(val));
-        if (flatDomains.length > 0) {
-            yExtent = [Math.min(...flatDomains), Math.max(...flatDomains)];
-        }
-    }
-    // Add padding to the extent and handle empty data sets.
-    if (yExtent) {
-        yExtent = extendDomain(yExtent, parmCd);
-    } else {
-        yExtent = [0, 1];
-    }
-    return yScaleByParameter(parmCd, yExtent, ySize);
 }
 
 
@@ -161,7 +78,8 @@ const yScaleSelector = createSelector(
     currentVariableSelector,
     (layout, pointArrays, currentVar) => {
         let currentVarParmCd = currentVar && currentVar.variableCode ? currentVar.variableCode.value : null;
-        return createYScale(currentVarParmCd, pointArrays, layout.height - (layout.margin.top + layout.margin.bottom));
+        const yDomain = getYDomain(pointArrays, currentVar);
+        return createYScale(currentVarParmCd, yDomain, layout.height - (layout.margin.top + layout.margin.bottom));
     }
 );
 
@@ -199,9 +117,10 @@ const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => 
     (pointsByParmCd, requestTimeRanges) => {
         return Object.keys(pointsByParmCd).reduce((tsScales, parmCd) => {
             const tsPoints = pointsByParmCd[parmCd];
+            const yDomain = getYDomain(tsPoints, SYMLOG_PARMS.indexOf(parmCd) >= 0);
             tsScales[parmCd] = {
                 x: createXScale(requestTimeRanges[tsKey], dimensions.width),
-                y: createYScale(parmCd, tsPoints, dimensions.height)
+                y: createYScale(parmCd, yDomain, dimensions.height)
             };
             return tsScales;
         }, {});
@@ -209,4 +128,4 @@ const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => 
 )));
 
 
-module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, singleSeriesYScale, timeSeriesScalesByParmCdSelector, extendDomain};
+module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector};
