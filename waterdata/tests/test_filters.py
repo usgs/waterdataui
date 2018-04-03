@@ -159,6 +159,15 @@ class TestReadableParmListFilter(TestCase):
         expected = 'DISCHARGE, TEMPERATURE, ANTIMATTER, and MORE'
         self.assertEqual(result, expected)
 
+    def test_date_range(self):
+        result = filters.readable_param_list({'Physical': {
+            'parameters': self.physical_series,
+            'data_types': 'Unit Values, Water Quality',
+            'end_date': datetime.datetime.now() - datetime.timedelta(days=4)
+        }})
+        expected = 'DISCHARGE, TEMPERATURE, ANTIMATTER, and MORE'
+        self.assertEqual(result, expected)
+
     def test_no_current_data(self):
         result = filters.readable_param_list({'Physical': {
             'parameters': self.physical_series[2:],

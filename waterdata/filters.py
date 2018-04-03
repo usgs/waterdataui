@@ -77,7 +77,8 @@ def readable_param_list(parameter_group_series):
         [
             x['parameters'] for x in parameter_group_series.values() if
             'unit values' in x['data_types'].lower() and
-            x['end_date'].date() == datetime.datetime.now().date()
+            (datetime.datetime.now().date() - datetime.timedelta(days=8) <=
+             x['end_date'].date() <= datetime.datetime.now().date() + datetime.timedelta(days=1))
         ]
     )
     short_names = set([s['parameter_name'].split(',')[0].upper() for s in series])
