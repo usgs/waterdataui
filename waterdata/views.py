@@ -1,6 +1,7 @@
 """
 Main application views.
 """
+import datetime
 from itertools import chain
 import json
 
@@ -78,7 +79,16 @@ def monitoring_location(site_no):
                     for param_datum in param_data
                 ]
                 grouped_dataseries = rollup_dataseries(site_dataseries)
-                pertinent_series = list(chain.from_iterable([x['parameters'] for x in grouped_dataseries.values()]))
+                date_today = datetime.datetime.now().date()
+                pertinent_series = list(
+                    chain.from_iterable(
+                        [
+                            x['parameters'] for x in grouped_dataseries.values() if
+                            'unit values' in x['data_types'].lower() and
+                            datetime.datetime.strptime(x['end_date'], '%Y-%m-%d') == date_today
+                        ]
+                    )
+                )
                 location_capabilities = set(param_datum['parm_cd'] for param_datum in param_data)
             else:
                 grouped_dataseries = None
