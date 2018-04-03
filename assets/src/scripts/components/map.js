@@ -10,6 +10,7 @@ const { get } = require('../ajax');
 const { FIM_ENDPOINT, FIM_GIS_ENDPOINT, HYDRO_ENDPOINT, STATIC_URL } = require('../config');
 const { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } = require('../floodData');
 const { Actions } = require('../store');
+const { mediaQuery } = require('../utils');
 
 
 const fimAvailableSelector = state => state.floodStages.length > 0;
@@ -90,18 +91,24 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         let container = DomUtil.create('div', 'legend');
         let expandButton = DomUtil.create('button', 'legend-expand usa-button-secondary', container);
         let legendListContainer = DomUtil.create('div', 'legend-list-container', container);
-        legendListContainer.setAttribute('hidden', true);
         let legendList = DomUtil.create('ul', 'usa-unstyled-list', legendListContainer);
         legendList.id = 'site-legend';
         legendList.innerHTML = `<li><img src="${STATIC_URL}/images/marker-icon.png" /> Site</li>`;
-        
-        expandButton.innerHTML ='Legend <i class="fa fa-expand"></i>';
+
+        if (mediaQuery(600)) {
+            expandButton.innerHTML = '<i class="fa fa-compress"></i>';
+            legendListContainer.removeAttribute('hidden');
+        } else {
+            expandButton.innerHTML = 'Legend  <i class="fa fa-expand"></i>';
+            legendListContainer.setAttribute('hidden', true);
+        }
+
         DomEvent.on(expandButton, 'click', function() {
             if (window.getComputedStyle(legendListContainer, 'display').getPropertyValue('display') === 'none') {
                 expandButton.innerHTML = '<i class="fa fa-compress"></i>';
                 legendListContainer.removeAttribute('hidden');
             } else {
-                expandButton.innerHTML = 'Legend <i class="fa fa-expand"></i>';
+                expandButton.innerHTML = 'Legend  <i class="fa fa-expand"></i>';
                 legendListContainer.setAttribute('hidden', true);
             }
         });
