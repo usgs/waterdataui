@@ -5,20 +5,37 @@
     .legend {
         padding: 2px;
         background-color: white;
-        #site-legend {
-            img {
-                padding-top: 2px;
-                width: 15px;
-                height: 17px;
+        .legend-expand {
+            float:right;
+            width: auto;
+            padding: 0;
+            color: black;
+            background-color: $color-gray-lighter;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+        }
+        .legend-list-container {
+            display: none;
+            @include media($medium-screen){
+                display:block;
+            }
+            #site-legend {
+                img {
+                    padding-top: 2px;
+                    width: 15px;
+                    height: 17px;
+                }
+            }
+            #fim-legend-list {
+                img {
+                    padding-top: 2px;
+                    width: 15px;
+                    height: 13px;
+                }
             }
         }
-        #fim-legend-list {
-            img {
-                padding-top: 2px;
-                width: 15px;
-                height: 13px;
-            }
-        }
+
     }
 }
 

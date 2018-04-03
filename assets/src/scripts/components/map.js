@@ -1,7 +1,7 @@
 const { select } = require('d3-selection');
 const { createStructuredSelector } = require('reselect');
 
-const { map: createMap, marker: createMarker, control: createControl, DomUtil } = require('leaflet');
+const { map: createMap, marker: createMarker, control: createControl, DomUtil, DomEvent } = require('leaflet');
 const { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util } = require('esri-leaflet');
 
 const { link, provide } = require('../lib/redux');
@@ -88,9 +88,22 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     let legendControl = createControl({position: 'bottomright'});
     legendControl.onAdd = function() {
         let container = DomUtil.create('div', 'legend');
-        let legendList = DomUtil.create('ul', 'usa-unstyled-list', container);
-        legendList.id = 'site-legend'
+        let expandButton = DomUtil.create('button', 'legend-expand usa-button-secondary', container);
+        let legendListContainer = DomUtil.create('div', 'legend-list-container', container);
+        let legendList = DomUtil.create('ul', 'usa-unstyled-list', legendListContainer);
+        legendList.id = 'site-legend';
         legendList.innerHTML = `<li><img src="${STATIC_URL}/images/marker-icon.png" /> Site</li>`;
+        
+        expandButton.innerHTML ='Legend <i class="fa fa-expand"></i>';
+        DomEvent.on(expandButton, 'click', function() {
+            if (window.getComputedStyle(legendListContainer, 'display').getPropertyValue('display') === 'none') {
+                expandButton.innerHTML = '<i class="fa fa-compress"></i>';
+                legendListContainer.style.display = 'block';
+            } else {
+                expandButton.innerHTML = 'Legend <i class="fa fa-expand"></i>';
+                legendListContainer.style.display = 'none';
+            }
+        });
         return container;
     };
     legendControl.addTo(map);
@@ -136,7 +149,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
                     const legendContainer = legendControl.getContainer();
                     const legendImages = [].concat(...floodExtentLegends, ...breachLegend, ...suppLyrsLegend);
 
-                    select(legendContainer).append('ul')
+                    select(legendContainer).select('.legend-list-container').append('ul')
                         .attr('id', 'fim-legend-list')
                         .classed('usa-unstyled-list', true)
                         .selectAll('li')
