@@ -74,6 +74,7 @@ def readable_param_list(parameter_group_series):
     # need to use a set -- there might be multiple variants for a measurements
     # (e.g. "nitrite, water as N" vs "nitrite, water as NO3-")
     series = chain.from_iterable([x['parameters'] for x in parameter_group_series.values()])
+    # include only real-time parameters that have recent data
     short_names = set(
         [
             s['parameter_name'].split(',')[0].upper() for s in series if 'Unit Values' in s['data_types'] and
