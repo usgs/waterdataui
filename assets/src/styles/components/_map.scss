@@ -16,10 +16,6 @@
             box-shadow: none;
         }
         .legend-list-container {
-            display: none;
-            @include media($medium-screen){
-                display:block;
-            }
             #site-legend {
                 img {
                     padding-top: 2px;

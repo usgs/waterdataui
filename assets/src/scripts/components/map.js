@@ -90,6 +90,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         let container = DomUtil.create('div', 'legend');
         let expandButton = DomUtil.create('button', 'legend-expand usa-button-secondary', container);
         let legendListContainer = DomUtil.create('div', 'legend-list-container', container);
+        legendListContainer.setAttribute('hidden', true);
         let legendList = DomUtil.create('ul', 'usa-unstyled-list', legendListContainer);
         legendList.id = 'site-legend';
         legendList.innerHTML = `<li><img src="${STATIC_URL}/images/marker-icon.png" /> Site</li>`;
@@ -98,10 +99,10 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         DomEvent.on(expandButton, 'click', function() {
             if (window.getComputedStyle(legendListContainer, 'display').getPropertyValue('display') === 'none') {
                 expandButton.innerHTML = '<i class="fa fa-compress"></i>';
-                legendListContainer.style.display = 'block';
+                legendListContainer.removeAttribute('hidden');
             } else {
                 expandButton.innerHTML = 'Legend <i class="fa fa-expand"></i>';
-                legendListContainer.style.display = 'none';
+                legendListContainer.setAttribute('hidden', true);
             }
         });
         return container;
