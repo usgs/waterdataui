@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Timeseries SVG has the correct title and desc tag contents.
 - Remove source maps from CSS build
 - Include only real-time parameters with recent data in a site's description
+- Tooltip points are not created for points containing infinite y-axis value
 
 
 ## [0.5.0] - 2018-03-30
