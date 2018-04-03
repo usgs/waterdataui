@@ -38,27 +38,30 @@ class TestIndefiniteArticleFilter(TestCase):
 class TestDataStartYearFilter(TestCase):
 
     def setUp(self):
-        self.test_series = [
-            {
-                'start_date': datetime.datetime(1889, 2, 28),
-                'end_date': datetime.datetime(2017, 5, 27),
-                'data_types': ['Data Types'],
-                'parameter_code': '00060',
-                'parameter_name': 'Discharge, dm3/s'
-            },
-            {
-                'start_date': datetime.datetime(1890, 12, 1),
-                'end_date': datetime.datetime(2018, 3, 25),
-                'data_types': ['Data Types'],
-                'parameter_code': '00010',
-                'parameter_name': 'Temperature, K'
+        self.test_series = {
+            "Physical": {
+                'parameters': [
+                    {
+                        'start_date': datetime.datetime(1889, 2, 28),
+                        'end_date': datetime.datetime(2017, 5, 27),
+                        'data_types': ['Data Types'],
+                        'parameter_code': '00060',
+                        'parameter_name': 'Discharge, dm3/s'
+                    },
+                    {
+                        'start_date': datetime.datetime(1890, 12, 1),
+                        'end_date': datetime.datetime(2018, 3, 25),
+                        'data_types': ['Data Types'],
+                        'parameter_code': '00010',
+                        'parameter_name': 'Temperature, K'
+                    }
+                ]
             }
-        ]
+        }
 
     def test_series_is_empty(self):
-        result = filters.data_start_year([])
-        expected = 'unknown'
-        self.assertEqual(result, expected)
+        result = filters.data_start_year({})
+        self.assertIsNone(result)
 
     def test_series_has_data(self):
         result = filters.data_start_year(self.test_series)
@@ -72,7 +75,7 @@ class TestReadableParmListFilter(TestCase):
         self.test_series = [
             {
                 'start_date': datetime.datetime(1908, 1, 3),
-                'end_date': datetime.datetime(2016, 3, 23),
+                'end_date': datetime.datetime.now(),
                 'data_types': ['Data Types'],
                 'parameter_code': '09001',
                 'parameter_name': 'Antimatter, liters'
@@ -101,26 +104,49 @@ class TestReadableParmListFilter(TestCase):
         ]
 
     def test_series_is_empty(self):
-        result = filters.readable_param_list([])
-        expected = 'unknown'
-        self.assertEqual(result, expected)
+        result = filters.readable_param_list({})
+        self.assertIsNone(result)
 
     def test_single_measured_parameter(self):
-        result = filters.readable_param_list(self.test_series[:1])
+        result = filters.readable_param_list({'Physical': {
+            'parameters': self.test_series[:1],
+            'data_types': 'Unit Values',
+            'end_date': datetime.datetime.now()
+        }})
         expected = 'ANTIMATTER'
         self.assertEqual(result, expected)
 
     def test_two_measured_parameters(self):
-        result = filters.readable_param_list(self.test_series[:2])
+        result = filters.readable_param_list({'Physical': {
+            'parameters': self.test_series[:2],
+            'data_types': 'Unit Values',
+            'end_date': datetime.datetime.now()
+        }})
         expected = 'ANTIMATTER and MATTER'
         self.assertEqual(result, expected)
 
     def test_three_measured_parameters(self):
-        result = filters.readable_param_list(self.test_series[:3])
+        result = filters.readable_param_list({'Physical': {
+            'parameters': self.test_series[:3],
+            'data_types': 'Unit Values',
+            'end_date': datetime.datetime.now()
+        }})
         expected = 'DISCHARGE, ANTIMATTER, and MATTER'
         self.assertEqual(result, expected)
 
     def test_four_measured_parameters(self):
-        result = filters.readable_param_list(self.test_series)
+        result = filters.readable_param_list({'Physical': {
+            'parameters': self.test_series,
+            'data_types': 'Unit Values',
+            'end_date': datetime.datetime.now()
+        }})
         expected = 'DISCHARGE, TEMPERATURE, ANTIMATTER, and MORE'
         self.assertEqual(result, expected)
+
+    def test_no_current_data(self):
+        result = filters.readable_param_list({'Physical': {
+            'parameters': self.test_series[2:],
+            'data_types': 'Unit Values',
+            'end_date': datetime.datetime(2018, 3, 25)
+        }})
+        self.assertIsNone(result)
