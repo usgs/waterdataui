@@ -124,7 +124,6 @@ def monitoring_location(site_no):
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'parm_grp_summary': grouped_dataseries,
-                # 'pertinent_series': pertinent_series,
                 'questions_link': questions_link
             }
         http_code = 200
