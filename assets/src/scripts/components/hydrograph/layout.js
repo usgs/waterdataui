@@ -4,6 +4,9 @@ const { createSelector } = require('reselect');
 
 const { mediaQuery } = require('../../utils');
 
+const { tickSelector } = require('./domain');
+
+
 // The point at which mobile/desktop layout changes take effect.
 // This is defined as $site-max-width in USWDS.
 const USWDS_SITE_MAX_WIDTH = 1040;
@@ -14,13 +17,13 @@ const MARGIN = {
     top: 25,
     right: 0,
     bottom: 10,
-    left: 80
+    left: 45
 };
 const MARGIN_SMALL_DEVICE = {
     top: 25,
     right: 0,
     bottom: 10,
-    left: 35
+    left: 0
 };
 const CIRCLE_RADIUS = 4;
 const CIRCLE_RADIUS_SINGLE_PT = 1;
@@ -39,12 +42,19 @@ const SPARK_LINE_DIM = {
 const layoutSelector = createSelector(
     (state) => state.width,
     (state) => state.windowWidth,
-    (width, windowWidth) => {
+    tickSelector,
+    (width, windowWidth, tickDetails) => {
+        const margin = mediaQuery(USWDS_SITE_MAX_WIDTH) ? MARGIN : MARGIN_SMALL_DEVICE;
+        const tickLengths = tickDetails.tickValues.map(v => tickDetails.tickFormat(v).length);
+        const approxLabelLength = Math.max(...tickLengths) * 10;
         return {
             width: width,
             height: width * ASPECT_RATIO,
             windowWidth: windowWidth,
-            margin: mediaQuery(USWDS_SITE_MAX_WIDTH) ? MARGIN : MARGIN_SMALL_DEVICE
+            margin: {
+                ...margin,
+                left: margin.left + approxLabelLength
+            }
         };
     }
 );
