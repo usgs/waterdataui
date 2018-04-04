@@ -29,7 +29,7 @@ const CIRCLE_RADIUS = 4;
 const CIRCLE_RADIUS_SINGLE_PT = 1;
 
 const SPARK_LINE_DIM = {
-    width: 50,
+    width: 60,
     height: 30
 };
 
