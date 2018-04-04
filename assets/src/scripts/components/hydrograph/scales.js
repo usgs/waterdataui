@@ -99,11 +99,11 @@ function singleSeriesYScale(parmCd, tsData, ySize) {
     let yExtent;
     // if there is a single point, it's domain is
     // calculated to be [-Infinity, Infinity] which
-    // isn't useful. Instead, create artificial
-    // bounds around the single point.
+    // isn't useful as a domain. Instead, create
+    // artificial bounds around the single point.
     if (points.length === 1) {
         const singleVal = points[0].value;
-        yExtent = [singleVal-1, singleVal+1];
+        yExtent = [singleVal-singleVal/2, singleVal+singleVal/2];
     } else {
         yExtent = extent(points, d => d.value);
     }
