@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - Play/Stop button to play the audible sound for the timeseries graph
+- Legend appears on the map describing the map features
 
 ### Changed
 - Font sizing and responsive layout changes
