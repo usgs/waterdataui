@@ -237,7 +237,17 @@ export const timeSeriesReducer = function (state={}, action) {
             };
 
         case 'ADD_TIMESERIES_COLLECTION':
-            sorted = sortedParameters(action.data.variables);
+            // Get variables sorted, and filtering out those that don't have
+            // points on the corresponding time series.
+            sorted = action.data.variables ? sortedParameters(
+                Object.values(action.data.timeSeries || {})
+                    .filter(ts => ts.points.length)
+                    .map(ts => ts.variable)
+                    .reduce((vars, v) => {
+                        vars[v] = action.data.variables[v];
+                        return vars;
+                    }, {})
+            ) : [];
             currentVar = sorted.length > 0 ? sorted[0].oid : null;
             return {
                 ...state,
