@@ -56,13 +56,13 @@ export const getYDomain = function (pointArrays, currentVar) {
         }
         const finitePts = points.map(pt => pt.value).filter(val => isFinite(val));
         let ptExtent = extent(finitePts);
-        // when both the lower and upper values of
-        // extent are the same, the domain of the
-        // extent is from -Infinity to +Infinity;
-        // this isn't useful for creation of data
-        // points, so add this broadens the extent
-        // a bit for single point series
         if (ptExtent[0] === ptExtent[1]) {
+            // when both the lower and upper values of
+            // extent are the same, the domain of the
+            // extent is from -Infinity to +Infinity;
+            // this isn't useful for creation of data
+            // points, so add this broadens the extent
+            // a bit for single point series
             ptExtent = [ptExtent[0] - ptExtent[0]/2, ptExtent[0] + ptExtent[0]/2];
         }
         scaleDomains.push(ptExtent);

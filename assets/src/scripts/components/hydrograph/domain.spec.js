@@ -73,6 +73,14 @@ describe('domain module', () => {
             const padding = (3 - 1) * .2;
             expect(domain).toEqual([1 - padding, 3 + padding]);
         });
+
+        it('handles single point values', () => {
+            const domain = getYDomain(
+                [pts([100])]
+            );
+            expect(domain[0]).toBeLessThanOrEqual(50);
+            expect(domain[1]).toBeGreaterThanOrEqual(150);
+        });
     });
 
     describe('getYTickDetails', () => {
