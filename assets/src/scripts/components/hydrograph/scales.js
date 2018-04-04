@@ -96,7 +96,17 @@ function yScaleByParameter(parmCd, extent, size) {
  */
 function singleSeriesYScale(parmCd, tsData, ySize) {
     let points = tsData.filter(pt => pt.value !== null);
-    let yExtent = extent(points, d => d.value);
+    let yExtent;
+    // if there is a single point, it's domain is
+    // calculated to be [-Infinity, Infinity] which
+    // isn't useful. Instead, create artificial
+    // bounds around the single point.
+    if (points.length === 1) {
+        const singleVal = points[0].value;
+        yExtent = [singleVal-1, singleVal+1];
+    } else {
+        yExtent = extent(points, d => d.value);
+    }
     return yScaleByParameter(parmCd, yExtent, ySize);
 }
 
