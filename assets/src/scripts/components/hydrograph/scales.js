@@ -40,6 +40,15 @@ function createXScale(timeRange, xSize) {
  * @param {Number} size
  */
 function createYScale(parmCd, extent, size) {
+    if (extent[0] === extent[1]) {
+        // when both the lower and upper values of
+        // extent are the same, the domain of the
+        // extent is from -Infinity to +Infinity;
+        // this isn't useful for creation of data
+        // points, so add this broadens the extent
+        // a bit for single point series
+        extent = [extent[0] - extent[0]/2, extent[0] + extent[0]/2];
+    }
     if (SYMLOG_PARMS.indexOf(parmCd) >= 0) {
         return scaleSymlog()
             .domain(extent)
