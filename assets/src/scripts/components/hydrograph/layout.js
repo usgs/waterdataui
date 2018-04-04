@@ -45,7 +45,7 @@ const layoutSelector = createSelector(
     (width, windowWidth, tickDetails) => {
         const margin = mediaQuery(USWDS_SITE_MAX_WIDTH) ? MARGIN : MARGIN_SMALL_DEVICE;
         const tickLengths = tickDetails.tickValues.map(v => tickDetails.tickFormat(v).length);
-        const approxLabelLength = Math.max.apply(null, tickLengths) * 10;
+        const approxLabelLength = Math.max(...tickLengths) * 10;
         return {
             width: width,
             height: width * ASPECT_RATIO,
