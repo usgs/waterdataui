@@ -2,13 +2,18 @@ const { extent, ticks } = require('d3-array');
 const { format } = require('d3-format');
 const { createSelector } = require('reselect');
 
-const { currentVariableSelector, SYMLOG_PARMS } = require('./timeseries');
+const { currentVariableSelector } = require('./timeseries');
 const { visiblePointsSelector } = require('./drawingData');
 
 
 const PADDING_RATIO = 0.2;
 const Y_TICK_COUNT = 5;
-
+// array of parameters that should use
+// a symlog scale instead of a linear scale
+export const SYMLOG_PARMS = [
+    '00060',
+    '72137'
+];
 
 /**
  *  Return domain padded on both ends by paddingRatio.
