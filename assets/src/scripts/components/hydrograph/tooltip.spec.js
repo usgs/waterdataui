@@ -128,7 +128,7 @@ describe('Hydrograph tooltip module', () => {
     };
 
     describe('tooltipPointsSelector', () => {
-        let tooltip = proxyquire('./tooltip', {
+        const finiteData = {
             './cursor': {
                 tsCursorPointsSelector: () => () => {
                     return {
@@ -147,14 +147,44 @@ describe('Hydrograph tooltip module', () => {
                 xScaleSelector: () => () => (val) => val,
                 yScaleSelector: () => (val) => val
             }
-        });
+        };
+        const infiniteData = {
+            './cursor': {
+                tsCursorPointsSelector: () => () => {
+                    return {
+                        '00060:current': {
+                            dateTime: '1date',
+                            value: Infinity
+                        },
+                        '00060:compare': {
+                            dateTime: '2date',
+                            value: 2
+                        }
+                    };
+                }
+            },
+            './scales': {
+                xScaleSelector: () => () => (val) => val,
+                yScaleSelector: () => (val) => val
+            }
+        };
 
         it('should return the requested time series focus time', () => {
+            let tooltip = proxyquire('./tooltip', finiteData);
             expect(tooltip.tooltipPointsSelector('current')({})).toEqual([{
                 x: '1date',
                 y: 1,
                 tsID: '00060:current'
             }, {
+                x: '2date',
+                y: 2,
+                tsID: '00060:compare'
+            }]);
+        });
+
+        it('should exclude values that are infinite', () => {
+            let tooltip = proxyquire('./tooltip', infiniteData);
+            expect(tooltip.tooltipPointsSelector('current')({})).toEqual([{
                 x: '2date',
                 y: 2,
                 tsID: '00060:compare'
