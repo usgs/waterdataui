@@ -5,7 +5,7 @@ const { select } = require('d3-selection');
 const { allTimeSeriesSelector } = require('./timeseries');
 const { Actions } = require('../../store');
 const { sortedParameters } = require('../../models');
-const { SPARK_LINE_DIM, CIRCLE_RADIUS_SPARK_LINE } = require('./layout');
+const { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } = require('./layout');
 const { dispatch } = require('../../lib/redux');
 const { MASK_DESC } = require('./drawingData');
 
@@ -73,7 +73,7 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
                     svgSelection.append('circle')
                         .data(lineSegment.points)
                         .classed('spark-point', true)
-                        .attr('r', CIRCLE_RADIUS_SPARK_LINE)
+                        .attr('r', CIRCLE_RADIUS_SINGLE_PT/2)
                         .attr('cx', d => scales.x(d.dateTime))
                         .attr('cy', d => scales.y(d.value));
                 } else {
