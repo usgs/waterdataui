@@ -67,7 +67,7 @@ const createLegendMarkers = function(displayItems) {
 /**
  * Create a simple legend
  *
- * @param {Object} svg - d3 selector
+ * @param {Object} div - d3 selector where legend should be created
  * @param {Object} legendMarkerRows - Array of rows. Each row should be an array of legend markers.
  * @param {Object} layout - width and height of svg.
  */
@@ -84,7 +84,7 @@ function drawSimpleLegend(div, {legendMarkerRows, layout}) {
     const markerTextXOffset = 10;
 
     let svg = div.append('svg')
-        .attr('class', 'legend-svg')
+        .attr('class', 'legend-svg');
     let legend = svg
         .append('g')
             .attr('class', 'legend')
