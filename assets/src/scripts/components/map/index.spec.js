@@ -54,6 +54,14 @@ describe('map module', () => {
             expect(select(mapNode).selectAll('.leaflet-overlay-pane img').size()).toBe(0);
         });
 
+        it('Should create a legend control', () => {
+            expect(select(mapNode).selectAll('.legend').size()).toBe(1);
+        });
+
+        it('Should create not create FIM Legend', () => {
+            expect(select(mapNode).select('#fim-legend-list').size()).toBe(0);
+        });
+
     });
 
     describe('Map creation with FIM information', () => {
@@ -80,6 +88,9 @@ describe('map module', () => {
             expect(select(mapNode).selectAll('.leaflet-overlay-pane img').size()).toBe(3);
         });
 
+        it('Should create a FIM Legend', () => {
+            expect(select(mapNode).select('#fim-legend-list').size()).toBe(1);
+        });
     });
 
     describe('link back to FIM', () => {

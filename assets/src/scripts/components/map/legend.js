@@ -105,15 +105,17 @@ export const createFIMLegend = function(legendControl, isFIMAvailable) {
             }
         }
 
+        let legendListContainer = select(legendControl.getContainer()).select('.legend-list-container');
+        let fimLegendList = legendListContainer.append('ul')
+                    .attr('id', 'fim-legend-list')
+                    .classed('usa-unstyled-list', true);
+
+
         Promise.all([fetchFloodExtentLegend, fetchBreachLegend, fetchSuppLyrs])
             .then(([floodExtentLegends, breachLegend, suppLyrsLegend]) => {
-                const legendContainer = legendControl.getContainer();
                 const legendImages = [].concat(...floodExtentLegends, ...breachLegend, ...suppLyrsLegend);
 
-                select(legendContainer).select('.legend-list-container').append('ul')
-                    .attr('id', 'fim-legend-list')
-                    .classed('usa-unstyled-list', true)
-                    .selectAll('li')
+                fimLegendList.selectAll('li')
                     .data(legendImages)
                     .enter().append('li')
                         .classed('fim-legend', true)
