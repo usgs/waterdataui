@@ -60,7 +60,8 @@ export const getYDomain = function (pointArrays, currentVar) {
         if (points.length === 0) {
             continue;
         }
-        scaleDomains.push(extent(points, d => d.value));
+        const finitePts = points.map(pt => pt.value).filter(val => isFinite(val));
+        scaleDomains.push(extent(finitePts));
     }
     if (scaleDomains.length > 0) {
         const flatDomains = [].concat(...scaleDomains).filter(val => isFinite(val));
