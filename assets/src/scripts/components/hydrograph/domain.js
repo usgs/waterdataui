@@ -2,18 +2,12 @@ const { extent, ticks } = require('d3-array');
 const { format } = require('d3-format');
 const { createSelector } = require('reselect');
 
-const { currentVariableSelector } = require('./timeseries');
+const { currentVariableSelector, SYMLOG_PARMS } = require('./timeseries');
 const { visiblePointsSelector } = require('./drawingData');
 
 
 const PADDING_RATIO = 0.2;
 const Y_TICK_COUNT = 5;
-// array of parameters that should use
-// a symlog scale instead of a linear scale
-const SYMLOG_PARMS = [
-    '00060',
-    '72137'
-];
 
 
 /**
@@ -61,7 +55,17 @@ export const getYDomain = function (pointArrays, currentVar) {
             continue;
         }
         const finitePts = points.map(pt => pt.value).filter(val => isFinite(val));
-        scaleDomains.push(extent(finitePts));
+        let ptExtent = extent(finitePts);
+        // when both the lower and upper values of
+        // extent are the same, the domain of the
+        // extent is from -Infinity to +Infinity;
+        // this isn't useful for creation of data
+        // points, so add this broadens the extent
+        // a bit for single point series
+        if (ptExtent[0] === ptExtent[1]) {
+            ptExtent = [ptExtent[0] - ptExtent[0]/2, ptExtent[0] + ptExtent[0]/2];
+        }
+        scaleDomains.push(ptExtent);
     }
     if (scaleDomains.length > 0) {
         const flatDomains = [].concat(...scaleDomains).filter(val => isFinite(val));

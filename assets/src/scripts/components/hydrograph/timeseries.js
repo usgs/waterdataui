@@ -3,6 +3,13 @@ const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
 
+// array of parameters that should use
+// a symlog scale instead of a linear scale
+export const SYMLOG_PARMS = [
+    '00060',
+    '72137'
+];
+
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');
 
