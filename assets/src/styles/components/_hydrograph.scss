@@ -75,6 +75,11 @@ $highlight: $color-gray-lightest;
             text.sparkline-text {
                 font-size: 0.6em;
             }
+            .spark-point {
+                stroke: $usgs-blue;
+                stroke-width: 1px;
+                fill: $usgs-blue;
+            }
         }
     }
 }
