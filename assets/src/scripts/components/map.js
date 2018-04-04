@@ -89,29 +89,34 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     let legendControl = createControl({position: 'bottomright'});
     legendControl.onAdd = function() {
         let container = DomUtil.create('div', 'legend');
-        let expandButton = DomUtil.create('button', 'legend-expand usa-button-secondary', container);
+
+        let buttonContainer = DomUtil.create('div', 'legend-expand-container', container);
+        // Only make the expand button available if FIM legends are added
+        buttonContainer.setAttribute('hidden', true);
+        let buttonLabel = DomUtil.create('span', '', buttonContainer);
+        buttonLabel.innerHTML = 'Legend';
+        let expandButton = DomUtil.create('button', 'legend-expand usa-button-secondary', buttonContainer);
+        expandButton.innerHTML = '<i class="fa fa-compress"></i>';
+        expandButton.title = 'Hide legend';
+
         let legendListContainer = DomUtil.create('div', 'legend-list-container', container);
         let legendList = DomUtil.create('ul', 'usa-unstyled-list', legendListContainer);
-        legendList.id = 'site-legend';
-        legendList.innerHTML = `<li><img src="${STATIC_URL}/images/marker-icon.png" /> Site</li>`;
+        legendList.id = 'site-legend-list';
+        legendList.innerHTML = `<li><img src="${STATIC_URL}/images/marker-icon.png" /><span>Monitoring Location</span> </li>`;
 
-        if (mediaQuery(600)) {
-            expandButton.innerHTML = '<i class="fa fa-compress"></i>';
-            legendListContainer.removeAttribute('hidden');
-        } else {
-            expandButton.innerHTML = 'Legend  <i class="fa fa-expand"></i>';
-            legendListContainer.setAttribute('hidden', true);
-        }
-
+        // Set up click handler for the expandButton
         DomEvent.on(expandButton, 'click', function() {
-            if (window.getComputedStyle(legendListContainer, 'display').getPropertyValue('display') === 'none') {
-                expandButton.innerHTML = '<i class="fa fa-compress"></i>';
-                legendListContainer.removeAttribute('hidden');
-            } else {
-                expandButton.innerHTML = 'Legend  <i class="fa fa-expand"></i>';
+            if (expandButton.title === 'Hide legend') {
+                expandButton.innerHTML = '<i class="fa fa-expand"></i>';
+                expandButton.title = 'Show legend';
                 legendListContainer.setAttribute('hidden', true);
+            } else {
+                expandButton.innerHTML = '<i class="fa fa-compress"></i>';
+                expandButton.title = 'Hide legend';
+                legendListContainer.removeAttribute('hidden');
             }
         });
+
         return container;
     };
     legendControl.addTo(map);
@@ -138,6 +143,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         }
     };
 
+
     const updateMapExtent = function (node, {extent}) {
         if (Object.keys(extent).length > 0) {
             map.fitBounds(Util.extentToBounds(extent));
@@ -152,6 +158,22 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
             let fetchBreachLegend = fetchLayerLegend('breach', 'Area of uncertainty');
             let fetchSuppLyrs = fetchLayerLegend('suppLyrs', 'supply layers');
 
+            const legendContainer = select(legendControl.getContainer());
+            // Make expand button visible
+            legendContainer.select('.legend-expand-container').attr('hidden', null);
+
+            // Set legend to be compressed if on medium or small device, otherwise show.
+            let button = legendContainer.select('.legend-expand');
+            if (mediaQuery(600)) {
+                if (button.attr('title') === 'Show legend') {
+                    button.dispatch('click');
+                }
+            } else {
+                if (button.attr('title') === 'Hide legend') {
+                    button.dispatch('click');
+                }
+            }
+
             Promise.all([fetchFloodExtentLegend, fetchBreachLegend, fetchSuppLyrs])
                 .then(([floodExtentLegends, breachLegend, suppLyrsLegend]) => {
                     const legendContainer = legendControl.getContainer();
@@ -165,8 +187,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
                         .enter().append('li')
                             .classed('fim-legend', true)
                             .html(function(d) {
-                                console.log(d);
-                                return `<img src="data:image/png;base64,${d.imageData}"/> ${d.name}`;
+                                return `<img src="data:image/png;base64,${d.imageData}"/><span>${d.name}</span>`;
                             });
                 });
         } else {

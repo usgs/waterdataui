@@ -5,31 +5,43 @@
     .legend {
         padding: 2px;
         background-color: white;
-        .legend-expand {
-            float:right;
-            width: auto;
-            padding: 0px;
-            margin: 0px;
-            color: black;
-            border: none;
-            border-radius: 0;
-            box-shadow: none;
+        .legend-expand-container {
             font-size: 14px;
             font-weight: bold;
-            i {
-                padding: 2px;
-                background-color: $color-gray-lighter;
+
+            span {
+                padding-right: 2px;
+            }
+
+            .legend-expand {
+                width: auto;
+                float: right;
+                padding: 0px;
+                margin: 0px;
+                color: black;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+                i {
+                    padding: 2px;
+                    background-color: $color-gray-lighter;
+                }
             }
         }
         .legend-list-container {
-            #site-legend {
+            #site-legend-list {
+                span {
+                    margin-left: 2px;
+                }
                 img {
                     padding-top: 2px;
                     width: 15px;
-                    height: 17px;
                 }
             }
             #fim-legend-list {
+                span {
+                    margin-left: 2px;
+                }
                 img {
                     padding-top: 2px;
                     width: 15px;
