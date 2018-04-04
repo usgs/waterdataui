@@ -71,8 +71,8 @@ const createLegendMarkers = function(displayItems) {
  * @param {Object} legendMarkerRows - Array of rows. Each row should be an array of legend markers.
  * @param {Object} layout - width and height of svg.
  */
-function drawSimpleLegend(svg, {legendMarkerRows, layout}) {
-    svg.selectAll('.legend').remove();
+function drawSimpleLegend(div, {legendMarkerRows, layout}) {
+    div.selectAll('.legend-svg').remove();
 
     if (!legendMarkerRows || !layout) {
         return;
@@ -83,6 +83,8 @@ function drawSimpleLegend(svg, {legendMarkerRows, layout}) {
     const verticalRowOffset = 18;
     const markerTextXOffset = 10;
 
+    let svg = div.append('svg')
+        .attr('class', 'legend-svg')
     let legend = svg
         .append('g')
             .attr('class', 'legend')
