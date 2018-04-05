@@ -133,10 +133,10 @@ export const audibleUI = function (elem) {
     button.call(link(function(elem, audibleOn) {
             if (audibleOn) {
                 elem.attr('title', 'Stop')
-                elem.attr('ga-event-action', 'stopAudible');
+                    .attr('ga-event-action', 'stopAudible');
             } else {
                 elem.attr('title', 'Play')
-                elem.attr('ga-event-action', 'playAudible');
+                    .attr('ga-event-action', 'playAudible');
             }
             elem.select('i')
                 .classed('fa-play', !audibleOn)

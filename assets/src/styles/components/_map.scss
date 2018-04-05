@@ -1,5 +1,55 @@
 #site-map {
     height: 350px;
     margin: 1em 0;
+
+    .legend {
+        padding: 2px;
+        background-color: white;
+        .legend-expand-container {
+            font-size: 14px;
+            font-weight: bold;
+
+            span {
+                padding-right: 2px;
+            }
+
+            .legend-expand {
+                width: auto;
+                float: right;
+                padding: 0px;
+                margin: 0px;
+                color: black;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+                i {
+                    padding: 2px;
+                    background-color: $color-gray-lighter;
+                }
+            }
+        }
+        .legend-list-container {
+            #site-legend-list {
+                span {
+                    margin-left: 2px;
+                }
+                img {
+                    padding-top: 2px;
+                    width: 15px;
+                }
+            }
+            #fim-legend-list {
+                span {
+                    margin-left: 2px;
+                }
+                img {
+                    padding-top: 2px;
+                    width: 15px;
+                    height: 13px;
+                }
+            }
+        }
+
+    }
 }
 

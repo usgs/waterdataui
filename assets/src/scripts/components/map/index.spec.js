@@ -1,8 +1,8 @@
 const { select } = require('d3-selection');
 const proxyquire = require('proxyquireify')(require);
 
-const { attachToNode } = require('./map');
-const { configureStore } = require('../store');
+const { attachToNode } = require('./index');
+const { configureStore } = require('../../store');
 
 describe('map module', () => {
     let mapNode;
@@ -23,7 +23,7 @@ describe('map module', () => {
             FLOOD_LEVEE_ENDPOINT: 'http://fake.service.com'
         };
 
-        map = proxyquire('./map', {'../floodData': floodDataMock});
+        map = proxyquire('./index', {'../floodData': floodDataMock});
     });
 
     afterEach(() => {
@@ -54,6 +54,14 @@ describe('map module', () => {
             expect(select(mapNode).selectAll('.leaflet-overlay-pane img').size()).toBe(0);
         });
 
+        it('Should create a legend control', () => {
+            expect(select(mapNode).selectAll('.legend').size()).toBe(1);
+        });
+
+        it('Should create not create FIM Legend', () => {
+            expect(select(mapNode).select('#fim-legend-list').size()).toBe(0);
+        });
+
     });
 
     describe('Map creation with FIM information', () => {
@@ -80,6 +88,9 @@ describe('map module', () => {
             expect(select(mapNode).selectAll('.leaflet-overlay-pane img').size()).toBe(3);
         });
 
+        it('Should create a FIM Legend', () => {
+            expect(select(mapNode).select('#fim-legend-list').size()).toBe(1);
+        });
     });
 
     describe('link back to FIM', () => {
