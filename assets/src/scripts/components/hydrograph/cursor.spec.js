@@ -145,11 +145,30 @@ fdescribe('cursor module', () => {
                 cursorOffset: 16 * 60 * 1000
             };
 
-            let v = tsCursorPointsSelector('current')(newState);
             expect(tsCursorPointsSelector('current')(newState)).toEqual({
-                value: 2,
-                qualifiers: ['P'],
-                dateTime: new Date('2018-03-29T13:15:00')
+                '00010': {
+                    value: 2,
+                    qualifiers: ['P'],
+                    dateTime: new Date('2018-03-29T13:15:00'),
+                    tsKey: 'current'
+                }
+            });
+        });
+
+        it('Selects the nearest point for current variable precipitation', () => {
+            const newState = {
+                ...TEST_DATA,
+                currentVariableID: '45807140',
+                cursorOffset: 29 * 60 * 1000
+            };
+
+            expect(tsCursorPointsSelector('current')(newState)).toEqual({
+                '00045': {
+                    value: 0.03,
+                    qualifiers: ['P'],
+                    dateTime: new Date('2018-03-29T13:30:00'),
+                    tsKey: 'current'
+                }
             });
         });
     });
