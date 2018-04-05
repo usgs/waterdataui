@@ -2,12 +2,16 @@ const { extent, ticks } = require('d3-array');
 const { format } = require('d3-format');
 const { createSelector } = require('reselect');
 
+const { mediaQuery } = require('../../utils');
+const config = require('../../config');
+
 const { currentVariableSelector } = require('./timeseries');
 const { visiblePointsSelector } = require('./drawingData');
 
 
 const PADDING_RATIO = 0.2;
 const Y_TICK_COUNT = 5;
+const Y_TICK_COUNT_SMALL_LOG = 2;
 // array of parameters that should use
 // a symlog scale instead of a linear scale
 export const SYMLOG_PARMS = [
@@ -101,8 +105,23 @@ export const yDomainSelector = createSelector(
  * @param {Object} yScale - d3 scale
  * @returns {Array} of tick values
  */
-export const getYTickDetails = function (yDomain) {
-    const tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
+export const getYTickDetails = function (yDomain, parmCd) {
+    const isSymlog = SYMLOG_PARMS.indexOf(parmCd) > -1;
+    let tickCount = Y_TICK_COUNT;
+    if (isSymlog) {
+        tickCount = Y_TICK_COUNT_SMALL_LOG;
+        if (mediaQuery(config.USWDS_SMALL_SCREEN)) {
+            tickCount++;
+        }
+        if (mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
+            tickCount++;
+        }
+        if (mediaQuery(config.USWDS_LARGE_SCREEN)) {
+            tickCount++;
+        }
+    }
+
+    const tickValues = ticks(yDomain[0], yDomain[1], tickCount);
     // If all ticks are integers, don't display right of the decimal place.
     // Otherwise, format with two decimal points.
     const tickFormat = tickValues.filter(t => !Number.isInteger(t)).length ? '.2f' : 'd';
@@ -118,6 +137,7 @@ export const tickSelector = createSelector(
     currentVariableSelector,
     (pointArrays, currentVariable) => {
         const yDomain = getYDomain(pointArrays, currentVariable);
-        return getYTickDetails(yDomain);
+        const parmCd = currentVariable ? currentVariable.variableCode.value : null;
+        return getYTickDetails(yDomain, parmCd);
     }
 );
