@@ -229,7 +229,21 @@ describe('Parameters module', () => {
 
     describe('addSparkline', () => {
         let svg;
-        const tsDataSingle = {
+        const tsDataSinglePoint = {
+            scales: {
+                x: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3)),
+                y: scaleLinear(0, 100)
+            },
+            seriesLineSegments: [
+                {
+                    classes: {approved: false, estimated: false, dataMask: null},
+                    points: [
+                        {dateTime: new Date(2015, 1, 2), value: 16}
+                    ]
+                }
+            ]
+        };
+        const tsDataSingleLine = {
             scales: {
                 x: scaleLinear(new Date(2015, 1, 2), new Date(2015, 1, 3)),
                 y: scaleLinear(0, 100)
@@ -335,8 +349,13 @@ describe('Parameters module', () => {
             select('svg').remove();
         });
 
+        it('adds a point for a single point of data', () => {
+            addSparkLine(svg, tsDataSinglePoint);
+            expect(svg.selectAll('circle').size()).toEqual(1);
+        });
+
         it('adds a path for a line', () => {
-            addSparkLine(svg, tsDataSingle);
+            addSparkLine(svg, tsDataSingleLine);
             expect(svg.selectAll('path').size()).toEqual(1);
         });
 

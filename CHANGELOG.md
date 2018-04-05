@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Remove source maps from CSS build
 - Include only real-time parameters with recent data in a site's description
 - Tooltip points are not created for points containing infinite y-axis value
+- Single points appear in sparklines
 
 
 ## [0.5.0] - 2018-03-30
