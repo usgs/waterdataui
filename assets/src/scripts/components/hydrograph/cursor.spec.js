@@ -66,6 +66,10 @@ const TEST_DATA = {
                 }]
             }
         },
+        showSeries: {
+            current: true,
+            compare: true
+        },
         timeSeriesCollections: {
             'coll1': {
                 variable: 45807197,
@@ -100,9 +104,24 @@ const TEST_DATA = {
     currentVariableID: '45807197'
 };
 
-describe('cursor module', () => {
+fdescribe('cursor module', () => {
 
     describe('tsCursorPointsSelector', () => {
 
+        it('Selects the nearest point for the current variable streamflow', () => {
+            const newState = {
+                ...TEST_DATA,
+                currentVariableID: '45807196',
+                currentOffset: 16 * 60 * 1000
+            };
+
+            expect(tsCursorPointsSelector('current')(newState)).toEqual({
+                '00060': {
+                    value: 2,
+                    qualifiers: ['P'],
+                    dateTime: new Date('2018-03-29T13:15:00')
+                }
+            });
+        });
     });
 });
