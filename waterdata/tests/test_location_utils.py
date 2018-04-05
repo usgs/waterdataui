@@ -579,7 +579,7 @@ class TestRollupDataseries(TestCase):
             },
         ]
 
-    def test_series_with_no_group_and_code(self):
+    def test_series_no_group_and_code(self):
         result = rollup_dataseries(self.test_data[:3])
         start_dates = set([series_grp['start_date'] for series_grp in result])
         end_dates = set([series_grp['end_date'] for series_grp in result])
@@ -588,7 +588,7 @@ class TestRollupDataseries(TestCase):
         self.assertSetEqual(start_dates, {Pendulum(1942, 9, 18), Pendulum(1980, 1, 1)})
         self.assertSetEqual(end_dates, {Pendulum(2016, 1, 1), Pendulum(2016, 6, 13)})
 
-    def test_series_with_group_and_code(self):
+    def test_series_group_and_code(self):
         result = rollup_dataseries(self.test_data[3:6])
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0]['start_date'], Pendulum(1977, 6, 20))
@@ -600,3 +600,8 @@ class TestRollupDataseries(TestCase):
     def test_successful_rollup(self):
         result = rollup_dataseries(self.test_data)
         self.assertEqual(len(result), 5)
+        self.assertSetEqual(set(result[0].keys()), {'start_date', 'name', 'parameters', 'end_date', 'data_types'})
+        self.assertSetEqual(
+            set(result[0]['parameters'][0].keys()),
+            {'start_date', 'end_date', 'parameter_name', 'data_types', 'parameter_code'}
+        )

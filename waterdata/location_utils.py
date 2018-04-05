@@ -213,20 +213,28 @@ def _collapse_series_by_column(grouped_series, sort_data_col):
     10 years, gets shut down, but is started back up and site visits
     resume).
 
-    :param groupby grouped_series: dataseries grouped by some value (e.g. parameter group, data type, etc.)
+    :param itertools.groupby grouped_series: dataseries grouped by some value (e.g. parameter group, data type, etc.)
+    :param str sort_data_col: value of a key in the time series data
     :return: groupings with one entry for each unique value within a data column/key
     :rtype: dict
 
     """
-    def key_sort(x):
-        return x[sort_data_col]['code']
+    def key_sort(item):
+        """
+        sort by some code
+
+        :param item:
+        :return:
+
+        """
+        return item[sort_data_col]['code']
 
     rolled_up_series = {}
     # for each parameter group grouping...
     for key, grp in grouped_series:
         pcode_sort = sorted(grp, key=key_sort)
         series_by_pcode = itertools.groupby(pcode_sort, key=key_sort)
-        # for each parameter code grouping within a parameter group grouping...
+        # for each grouping within a key grouping...
         grp_pcode_series = []
         for key_pc, pc_grp in series_by_pcode:
             series_by_pc = list(pc_grp)
@@ -306,8 +314,15 @@ def rollup_dataseries(dataseries):
     other_series = [s for s in dataseries if s not in display_series]
 
     # handle series with parameter groups
-    def parm_grp_sort(x):
-        return x['parm_grp_cd']['name']
+    def parm_grp_sort(item):
+        """
+        parameter group name sort function
+
+        :param item:
+        :return:
+
+        """
+        return item['parm_grp_cd']['name']
 
     pg_sorted = sorted(display_series, key=parm_grp_sort)
     pg_grouped_series = itertools.groupby(pg_sorted, key=parm_grp_sort)
@@ -318,8 +333,15 @@ def rollup_dataseries(dataseries):
     parameter_groups = [_extract_group_summary_data(v, k) for k, v in rollup_by_parameter_grp.items()]
 
     # handle series that don't have parameter codes and parameter group codes
-    def data_type_sort(x):
-        return x['data_type_cd']['name']
+    def data_type_sort(item):
+        """
+        data type code name sort function
+
+        :param item:
+        :return:
+
+        """
+        return item['data_type_cd']['name']
 
     dt_sorted = sorted(other_series, key=data_type_sort)
     dt_grouped_series = itertools.groupby(dt_sorted, key=data_type_sort)
