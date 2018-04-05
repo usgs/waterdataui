@@ -1,9 +1,7 @@
-
 // Initialize the 18F Web design standards
 require('uswds');
 
 const { configureStore } = require('./store');
-
 
 
 const COMPONENTS = {
@@ -15,14 +13,28 @@ const COMPONENTS = {
 
 
 function main() {
-    let nodes = document.getElementsByClassName('wdfn-component');
-    let store = configureStore({
-        windowWidth: window.innerWidth
-    });
-    for (let node of nodes) {
-        COMPONENTS[node.dataset.component](store, node, node.dataset);
+    // NOTE: Here we use a try/catch block rather than a global "onerror"
+    // handler, because Babel's polyfills strip some of the exception data out.
+    // This method retains access to the exception object.
+    try {
+        let nodes = document.getElementsByClassName('wdfn-component');
+        let store = configureStore({
+            windowWidth: window.innerWidth
+        });
+        for (let node of nodes) {
+            COMPONENTS[node.dataset.component](store, node, node.dataset);
+        }
+    } catch (err) {
+        // Send exception to Google Analytics.
+        window.ga('send', 'exception', {
+            // exDescription will be truncated at 150 bytes
+            exDescription: err.stack,
+            exFatal: true
+        });
+        throw err;
     }
 }
+
 
 if (document.readyState !== 'loading') {
     main();
