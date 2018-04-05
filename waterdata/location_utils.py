@@ -232,13 +232,11 @@ def _collapse_series_by_column(grouped_series, sort_data_col):
     rolled_up_series = {}
     # for each parameter group grouping...
     for key, grp in grouped_series:
-        pcode_sort = sorted(grp, key=key_sort)
-        series_by_pcode = itertools.groupby(pcode_sort, key=key_sort)
+        series_by_pcode = itertools.groupby(sorted(grp, key=key_sort), key=key_sort)
         # for each grouping within a key grouping...
         grp_pcode_series = []
         for key_pc, pc_grp in series_by_pcode:
             series_by_pc = list(pc_grp)
-            parameter_name = series_by_pc[0]['parm_cd']['name']
             # determine the start and end dates of the group
             start_dates = [
                 pendulum.parse(series['begin_date']['code']) for series in series_by_pc
@@ -254,7 +252,7 @@ def _collapse_series_by_column(grouped_series, sort_data_col):
                 'end_date': max(end_dates),
                 'data_types': data_types,
                 'parameter_code': key_pc,
-                'parameter_name': parameter_name
+                'parameter_name': series_by_pc[0]['parm_cd']['name']
             }
             grp_pcode_series.append(pc_metadata)
         rolled_up_series[key] = grp_pcode_series
