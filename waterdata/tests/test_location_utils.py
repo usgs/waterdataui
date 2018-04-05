@@ -5,6 +5,8 @@ Unit tests for waterdata.waterservices classes and functions.
 import datetime
 from unittest import TestCase
 
+from pendulum import Pendulum
+
 from waterdata import app
 from waterdata.location_utils import Parameter, get_capabilities, get_site_parameter, build_linked_data,\
     get_disambiguated_values, get_state_abbreviation, rollup_dataseries
@@ -510,6 +512,13 @@ class TestRollupDataseries(TestCase):
             {
                 'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
                 'site_no': {'name': '04891899', 'code': '04891899'},
+                'data_type_cd': {'code': 'pk', 'name': 'Peak Measurements'}, 'parm_cd': {'code': '', 'name': ''},
+                'parm_grp_cd': {'code': '', 'name': ''}, 'begin_date': {'name': '1942-09-18', 'code': '1942-09-18'},
+                'end_date': {'name': '2016-06-13', 'code': '2016-06-13'}
+            },
+            {
+                'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
+                'site_no': {'name': '04891899', 'code': '04891899'},
                 'data_type_cd': {'code': 'uv', 'name': 'Unit Values'},
                 'parm_cd': {'code': '00010', 'name': 'Temperature, water, degrees Celsius', 'group': 'Physical'},
                 'parm_grp_cd': {'code': '', 'name': 'Physical'},
@@ -533,13 +542,6 @@ class TestRollupDataseries(TestCase):
                 'parm_grp_cd': {'code': '', 'name': 'Physical'},
                 'begin_date': {'name': '1978-06-20', 'code': '1978-06-20'},
                 'end_date': {'name': '2017-03-26', 'code': '2017-03-26'}
-            },
-            {
-                'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
-                'site_no': {'name': '04891899', 'code': '04891899'},
-                'data_type_cd': {'code': 'pk', 'name': 'Peak Measurements'}, 'parm_cd': {'code': '', 'name': ''},
-                'parm_grp_cd': {'code': '', 'name': ''}, 'begin_date': {'name': '1942-09-18', 'code': '1942-09-18'},
-                'end_date': {'name': '2016-06-13', 'code': '2016-06-13'}
             },
             {
                 'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
@@ -568,18 +570,23 @@ class TestRollupDataseries(TestCase):
                 'parm_grp_cd': {'code': 'ALL', 'name': 'ALL'},
                 'begin_date': {'name': '1967-03-28', 'code': '1967-03-28'},
                 'end_date': {'name': '1993-09-07', 'code': '1993-09-07'}
-            }
+            },
         ]
+
+    def test_series_with_no_group_and_code(self):
+        result = rollup_dataseries(self.test_data[:2])
+        self.assertEqual(len(result), 2)
+        self.assertIsNone(result[0]['name'])
+
+    def test_data_unions(self):
+        result = rollup_dataseries(self.test_data[2:5])
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]['start_date'], Pendulum(1977, 6, 20))
+        self.assertEqual(result[0]['end_date'], Pendulum(2017, 3, 26))
+        self.assertEqual(result[0]['data_types'], 'Daily Values, Unit Values')
+        self.assertEqual(result[0]['name'], 'Physical')
+        self.assertEqual(len(result[0]['parameters']), 2)
 
     def test_successful_rollup(self):
         result = rollup_dataseries(self.test_data)
-        self.assertListEqual(list(result.keys()), ['Nutrient', 'Physical'])
-        self.assertListEqual(
-            list(result['Physical'].keys()),
-            ['start_date', 'end_date', 'data_types', 'parameters']
-        )
-        self.assertEqual(result['Physical']['start_date'], datetime.datetime(1977, 6, 20))
-        self.assertEqual(result['Physical']['end_date'], datetime.datetime(2017, 3, 26))
-        self.assertEqual(result['Physical']['data_types'], 'Daily Values, Unit Values')
-        self.assertEqual(len(result['Physical']['parameters']), 2)
-        self.assertEqual(len(result['Nutrient']['parameters']), 1)
+        self.assertEqual(len(result), 5)

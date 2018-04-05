@@ -38,8 +38,8 @@ class TestIndefiniteArticleFilter(TestCase):
 class TestDataStartYearFilter(TestCase):
 
     def setUp(self):
-        self.test_series = {
-            "Physical": {
+        self.test_series = [
+            {
                 'parameters': [
                     {
                         'start_date': datetime.datetime(1889, 2, 28),
@@ -57,10 +57,10 @@ class TestDataStartYearFilter(TestCase):
                     }
                 ]
             }
-        }
+        ]
 
     def test_series_is_empty(self):
-        result = filters.data_start_year({})
+        result = filters.data_start_year([])
         self.assertIsNone(result)
 
     def test_series_has_data(self):
@@ -153,62 +153,62 @@ class TestReadableParmListFilter(TestCase):
         ]
 
     def test_series_is_empty(self):
-        result = filters.readable_param_list({})
+        result = filters.readable_param_list([])
         self.assertIsNone(result)
 
     def test_single_measured_parameter(self):
-        result = filters.readable_param_list({'Physical': {
+        result = filters.readable_param_list([{
             'parameters': self.physical_series[:1]
-        }})
+        }])
         expected = 'ANTIMATTER'
         self.assertEqual(result, expected)
 
     def test_two_measured_parameters(self):
-        result = filters.readable_param_list({'Physical': {
+        result = filters.readable_param_list([{
             'parameters': self.physical_series[:2]
-        }})
+        }])
         expected = 'ANTIMATTER and MATTER'
         self.assertEqual(result, expected)
 
     def test_three_measured_parameters(self):
-        result = filters.readable_param_list({'Physical': {
+        result = filters.readable_param_list([{
             'parameters': self.physical_series[:3],
             'data_types': 'Unit Values, Water Quality',
             'end_date': datetime.datetime.now()
-        }})
+        }])
         expected = 'DISCHARGE, ANTIMATTER, and MATTER'
         self.assertEqual(result, expected)
 
     def test_four_measured_parameters(self):
-        result = filters.readable_param_list({'Physical': {
+        result = filters.readable_param_list([{
             'parameters': self.physical_series,
             'data_types': 'Unit Values, Water Quality',
             'end_date': datetime.datetime.now()
-        }})
+        }])
         expected = 'DISCHARGE, TEMPERATURE, ANTIMATTER, and MORE'
         self.assertEqual(result, expected)
 
     def test_no_current_data(self):
-        result = filters.readable_param_list({'Inorganic': {
+        result = filters.readable_param_list([{
             'parameters': self.old_inorganic_series,
-        }})
+        }])
         self.assertIsNone(result)
 
     def test_no_unit_values(self):
-        result = filters.readable_param_list({'Physical': {
+        result = filters.readable_param_list([{
             'parameters': self.physical_series[-2:]
-        }})
+        }])
         self.assertIsNone(result)
 
     def test_mixed_data_types(self):
-        result = filters.readable_param_list({
-            'Physical': {
+        result = filters.readable_param_list([
+            {
                 'parameters': self.physical_series[-2:]
             },
-            'Inorganic': {
+            {
                 'parameters': self.inorganic_series,
             }
-        })
+        ])
         expected = 'LEAD and NEPTUNIUM'
         self.assertEqual(result, expected)
 

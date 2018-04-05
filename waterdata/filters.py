@@ -47,7 +47,7 @@ def data_start_year(parameter_group_series):
     Determine the earliest year that was collected for a
     list of parameters.
 
-    :param dict parameter_group_series: dictionary of parameter series grouped by parameter group
+    :param list parameter_group_series: dictionary of parameter series grouped by parameter group
     :return: earliest year of data collection if available
     :rtype: str or None
 
@@ -66,7 +66,7 @@ def readable_param_list(parameter_group_series):
     """
     Generate text for a list of parameters in the description meta tag.
 
-    :param dict parameter_group_series: dictionary of parameter series grouped by parameter group
+    :param list parameter_group_series: list of parameter series grouped by parameter group
     :return: human readable string for the parameters in the series if available
     :rtype: str or None
 
