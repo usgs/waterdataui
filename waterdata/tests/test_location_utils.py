@@ -506,6 +506,13 @@ class TestRollupDataseries(TestCase):
                 'site_no': {'name': '04891899', 'code': '04891899'},
                 'data_type_cd': {'code': 'ad', 'name': 'USGS Annual Water Data Reports Site'},
                 'parm_cd': {'code': '', 'name': ''}, 'parm_grp_cd': {'code': '', 'name': ''},
+                'begin_date': {'name': '1980', 'code': '1980'}, 'end_date': {'name': '1992', 'code': '1992'}
+            },
+            {
+                'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
+                'site_no': {'name': '04891899', 'code': '04891899'},
+                'data_type_cd': {'code': 'ad', 'name': 'USGS Annual Water Data Reports Site'},
+                'parm_cd': {'code': '', 'name': ''}, 'parm_grp_cd': {'code': '', 'name': ''},
                 'begin_date': {'name': '2006', 'code': '2006'}, 'end_date': {'name': '2016', 'code': '2016'}
             },
             {
@@ -573,12 +580,16 @@ class TestRollupDataseries(TestCase):
         ]
 
     def test_series_with_no_group_and_code(self):
-        result = rollup_dataseries(self.test_data[:2])
+        result = rollup_dataseries(self.test_data[:3])
+        start_dates = set([series_grp['start_date'] for series_grp in result])
+        end_dates = set([series_grp['end_date'] for series_grp in result])
         self.assertEqual(len(result), 2)
         self.assertIsNone(result[0]['name'])
+        self.assertSetEqual(start_dates, {Pendulum(1942, 9, 18), Pendulum(1980, 1, 1)})
+        self.assertSetEqual(end_dates, {Pendulum(2016, 1, 1), Pendulum(2016, 6, 13)})
 
-    def test_data_unions(self):
-        result = rollup_dataseries(self.test_data[2:5])
+    def test_series_with_group_and_code(self):
+        result = rollup_dataseries(self.test_data[3:6])
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0]['start_date'], Pendulum(1977, 6, 20))
         self.assertEqual(result[0]['end_date'], Pendulum(2017, 3, 26))
