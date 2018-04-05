@@ -7,7 +7,6 @@ from itertools import chain
 from urllib.parse import urljoin
 
 from . import app
-from .constants import SORT_TOP
 
 
 @app.template_filter('asset_url')
@@ -82,7 +81,7 @@ def readable_param_list(parameter_group_series):
              s['end_date'].date() <= datetime.datetime.now().date() + datetime.timedelta(days=1))
         ]
     )
-    sorted_names = sorted(short_names, key=lambda x: (x not in SORT_TOP, x))
+    sorted_names = sorted(short_names)
     if sorted_names:
         if len(sorted_names) == 1:
             parameters = sorted_names[0]

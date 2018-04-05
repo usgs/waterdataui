@@ -178,7 +178,7 @@ class TestReadableParmListFilter(TestCase):
             'data_types': 'Unit Values, Water Quality',
             'end_date': datetime.datetime.now()
         }])
-        expected = 'DISCHARGE, ANTIMATTER, and MATTER'
+        expected = 'ANTIMATTER, DISCHARGE, and MATTER'
         self.assertEqual(result, expected)
 
     def test_four_measured_parameters(self):
@@ -187,7 +187,7 @@ class TestReadableParmListFilter(TestCase):
             'data_types': 'Unit Values, Water Quality',
             'end_date': datetime.datetime.now()
         }])
-        expected = 'DISCHARGE, TEMPERATURE, ANTIMATTER, and MORE'
+        expected = 'ANTIMATTER, DISCHARGE, MATTER, and MORE'
         self.assertEqual(result, expected)
 
     def test_no_current_data(self):
