@@ -3,18 +3,10 @@ const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
 const { default: scaleSymlog } = require('../../lib/symlog');
-const { getYDomain } = require('./domain');
+const { getYDomain, SYMLOG_PARMS } = require('./domain');
 const { layoutSelector } = require('./layout');
 const { timeSeriesSelector, variablesSelector, currentVariableSelector, requestTimeRangeSelector } = require('./timeseries');
 const { visiblePointsSelector, pointsByTsKeySelector } = require('./drawingData');
-
-
-// array of parameters that should use
-// a symlog scale instead of a linear scale
-const SYMLOG_PARMS = [
-    '00060',
-    '72137'
-];
 
 
 /**
