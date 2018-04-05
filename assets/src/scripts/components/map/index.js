@@ -4,17 +4,23 @@ const { createStructuredSelector } = require('reselect');
 const { map: createMap, marker: createMarker } = require('leaflet');
 const { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util } = require('esri-leaflet');
 
-const { link, provide } = require('../lib/redux');
+const { link, provide } = require('../../lib/redux');
 
-const { FIM_ENDPOINT, HYDRO_ENDPOINT } = require('../config');
-const { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } = require('../floodData');
-const { Actions } = require('../store');
+const { FIM_ENDPOINT, HYDRO_ENDPOINT } = require('../../config');
+const { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } = require('../../floodData');
+const { Actions } = require('../../store');
 
+const { createLegendControl, createFIMLegend } = require('./legend');
+
+
+const fimAvailableSelector = state => state.floodStages.length > 0;
 
 const getLayerDefs = function(layerNo, siteno, stage) {
    const stageQuery = stage ? ` AND STAGE = ${stage}` : '';
    return `${layerNo}: USGSID = '${siteno}'${stageQuery}`;
 };
+
+
 /*
  * Creates a site map
  */
@@ -55,6 +61,12 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         layerDefs: `${getLayerDefs(0, siteno)};${getLayerDefs(1, siteno)}`
     });
 
+    let legendControl = createLegendControl({
+        position: 'bottomright'
+    });
+    legendControl.addTo(map);
+
+
     const updateFloodLayers = function (node, {stages, gageHeight}) {
         if (gageHeight) {
             const layerDefs = getLayerDefs(0, siteno, gageHeight);
@@ -76,20 +88,34 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         }
     };
 
+
     const updateMapExtent = function (node, {extent}) {
         if (Object.keys(extent).length > 0) {
             map.fitBounds(Util.extentToBounds(extent));
         }
     };
 
-    const addFimLink = function (node, {stages}) {
-        if (stages.length > 0) {
+
+    /*
+     * Creates the FIM legend if FIM data is available, otherwise removes the FIM legend if it exists.
+     * @param {HTMLElement} node - element where the map is rendered
+     * @param {Boolean} isFIMAvailable
+     */
+    const addFIMLegend = function(node, isFIMAvailable) {
+        createFIMLegend(legendControl, isFIMAvailable);
+    };
+
+
+    const addFimLink = function (node, isFIMAvailable) {
+        if (isFIMAvailable) {
             node.append('a')
                 .attr('id', 'fim-link')
                 .attr('href', `${FIM_ENDPOINT}?site_no=${siteno}`)
                 .attr('target', '_blank')
                 .attr('rel', 'noopener')
                 .text('Provisional Flood Information');
+        } else {
+            node.select('#fim-link').remove();
         }
     };
 
@@ -112,9 +138,8 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         .call(link(updateMapExtent, createStructuredSelector({
             extent: (state) => state.floodExtent
         })))
-        .call(link(addFimLink, createStructuredSelector({
-            stages: (state) => state.floodStages
-        })));
+        .call(link(addFIMLegend, fimAvailableSelector))
+        .call(link(addFimLink, fimAvailableSelector));
 };
 
 /*

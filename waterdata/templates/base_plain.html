@@ -18,6 +18,7 @@
                 'HYDRO_ENDPOINT': '{{ config.HYDRO_ENDPOINT }}',
                 'FIM_GIS_ENDPOINT': '{{ config.FIM_GIS_ENDPOINT }}',
                 'FIM_ENDPOINT': '{{ config.FIM_ENDPOINT }}',
+                'STATIC_URL': '{{ "" | asset_url }}',
                 'TIMESERIES_AUDIO_ENABLED': '{{ config.TIMESERIES_AUDIO_ENABLED}}' === 'True' ? true : false
             };
         </script>

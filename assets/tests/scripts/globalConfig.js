@@ -1,5 +1,6 @@
 var CONFIG = {
-    TIMESERIES_AUDIO_ENABLED: true
+    TIMESERIES_AUDIO_ENABLED: true,
+    FIM_GIS_ENDPOINT: 'https:/fakelegendservice.com'
 };
 
 var mockOscillator = function() {
