@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Play/Stop button to play the audible sound for the timeseries graph
 - Legend appears on the map describing the map features
+- Initialize the gage height slider with the current value of gage height
 
 ### Changed
 - Font sizing and responsive layout changes
@@ -19,6 +20,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Include only real-time parameters with recent data in a site's description
 - Tooltip points are not created for points containing infinite y-axis value
 - Single points appear in sparklines
+- Map includes the location of the site with flood layers are included
+- Firefox bug where the time series graph legend would resize as things were added to it.
 
 
 ## [0.5.0] - 2018-03-30

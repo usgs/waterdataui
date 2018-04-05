@@ -2,14 +2,12 @@
 // selector function which will return the width/height to use.
 const { createSelector } = require('reselect');
 
+const { USWDS_SITE_MAX_WIDTH } = require('../../config');
 const { mediaQuery } = require('../../utils');
 
 const { tickSelector } = require('./domain');
 
 
-// The point at which mobile/desktop layout changes take effect.
-// This is defined as $site-max-width in USWDS.
-const USWDS_SITE_MAX_WIDTH = 1040;
 
 const ASPECT_RATIO = 1 / 2;
 const ASPECT_RATIO_PERCENT = `${100 * ASPECT_RATIO}%`;
