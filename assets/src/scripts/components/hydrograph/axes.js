@@ -8,7 +8,7 @@ const { wrap } = require('../../utils');
 const { getYTickDetails } = require('./domain');
 const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
-const { yLabelSelector } = require('./timeseries');
+const { currentVariableSelector, yLabelSelector } = require('./timeseries');
 
 
 /**
@@ -18,7 +18,7 @@ const { yLabelSelector } = require('./timeseries');
  * @param  {Number} yTickSize   Size of inner ticks for the y-axis
  * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
-function createAxes({xScale, yScale}, yTickSize) {
+function createAxes({xScale, yScale}, yTickSize, parmCd) {
     // Create x-axis
     const xAxis = axisBottom()
         .scale(xScale)
@@ -27,7 +27,7 @@ function createAxes({xScale, yScale}, yTickSize) {
         .tickSizeOuter(0);
 
     // Create y-axis
-    const tickDetails = getYTickDetails(yScale.domain());
+    const tickDetails = getYTickDetails(yScale.domain(), parmCd);
     const yAxis = axisLeft()
         .scale(yScale)
         .tickValues(tickDetails.tickValues)
@@ -49,9 +49,11 @@ const axesSelector = createSelector(
     yScaleSelector,
     layoutSelector,
     yLabelSelector,
-    (xScale, yScale, layout, plotYLabel) => {
+    currentVariableSelector,
+    (xScale, yScale, layout, plotYLabel, currentVariable) => {
+        const parmCd = currentVariable ? currentVariable.variableCode.value : null;
         return {
-            ...createAxes({xScale, yScale}, -layout.width + layout.margin.right),
+            ...createAxes({xScale, yScale}, -layout.width + layout.margin.right, parmCd),
             layout: layout,
             yTitle: plotYLabel
         };

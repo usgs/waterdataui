@@ -147,10 +147,10 @@ export function wrap(text, width, break_chars=TEXT_WRAP_BREAK_CHARS) {
  * For example, this SASS:
  *     @media($medium-screen)
  * is equivalent to:
- *     mediaQuery(mediumScreenPx
+ *     mediaQuery(mediumScreenPx)
  * @param  {Number} minWidth
  * @return {Boolean} true if the media query is active at the given width
  */
 export const mediaQuery = function (minWidth) {
     return window.matchMedia(`screen and (min-width: ${minWidth}px)`).matches;
-}
+};
