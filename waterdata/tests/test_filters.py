@@ -4,6 +4,8 @@ Unit tests for Jinja2 filters.
 import datetime
 from unittest import TestCase
 
+import pendulum
+
 from waterdata import filters
 
 
@@ -42,15 +44,15 @@ class TestDataStartYearFilter(TestCase):
             {
                 'parameters': [
                     {
-                        'start_date': datetime.datetime(1889, 2, 28),
-                        'end_date': datetime.datetime(2017, 5, 27),
+                        'start_date': pendulum.Pendulum(1889, 2, 28),
+                        'end_date': pendulum.Pendulum(2017, 5, 27),
                         'data_types': ['Data Types'],
                         'parameter_code': '00060',
                         'parameter_name': 'Discharge, dm3/s'
                     },
                     {
-                        'start_date': datetime.datetime(1890, 12, 1),
-                        'end_date': datetime.datetime(2018, 3, 25),
+                        'start_date': pendulum.Pendulum(1890, 12, 1),
+                        'end_date': pendulum.Pendulum(2018, 3, 25),
                         'data_types': ['Data Types'],
                         'parameter_code': '00010',
                         'parameter_name': 'Temperature, K'
@@ -72,47 +74,47 @@ class TestDataStartYearFilter(TestCase):
 class TestReadableParmListFilter(TestCase):
 
     def setUp(self):
-        self.now = datetime.datetime.now()
-        self.recent = datetime.datetime.now() - datetime.timedelta(days=2)
-        self.long_ago = datetime.datetime.now() - datetime.timedelta(days=10)
+        self.now = pendulum.now()
+        self.recent = self.now.subtract_timedelta(datetime.timedelta(days=2))
+        self.long_ago = self.now.subtract_timedelta(datetime.timedelta(days=10))
         self.physical_series = [
             {
-                'start_date': datetime.datetime(1908, 1, 3),
+                'start_date': pendulum.Pendulum(1908, 1, 3),
                 'end_date': self.now,
                 'data_types': ['Unit Values'],
                 'parameter_code': '09001',
                 'parameter_name': 'Antimatter, liters'
             },
             {
-                'start_date': datetime.datetime(1908, 1, 3),
+                'start_date': pendulum.Pendulum(1908, 1, 3),
                 'end_date': self.recent,
                 'data_types': ['Unit Values'],
                 'parameter_code': '09002',
                 'parameter_name': 'Matter, liters'
             },
             {
-                'start_date': datetime.datetime(1908, 1, 19),
+                'start_date': pendulum.Pendulum(1908, 1, 19),
                 'end_date': self.recent,
                 'data_types': ['Unit Values'],
                 'parameter_code': '00060',
                 'parameter_name': 'Discharge, dm3/s'
             },
             {
-                'start_date': datetime.datetime(1908, 1, 19),
+                'start_date': pendulum.Pendulum(1908, 1, 19),
                 'end_date': self.recent,
                 'data_types': ['Unit Values'],
                 'parameter_code': '00010',
                 'parameter_name': 'Temperature, K'
             },
             {
-                'start_date': datetime.datetime(1908, 1, 19),
+                'start_date': pendulum.Pendulum(1908, 1, 19),
                 'end_date': self.recent,
                 'data_types': ['Daily Values'],
                 'parameter_code': '22140',
                 'parameter_name': 'Turbidity'
             },
             {
-                'start_date': datetime.datetime(1908, 1, 19),
+                'start_date': pendulum.Pendulum(1908, 1, 19),
                 'end_date': self.recent,
                 'data_types': ['Daily Values'],
                 'parameter_code': '22140',
@@ -121,14 +123,14 @@ class TestReadableParmListFilter(TestCase):
         ]
         self.inorganic_series = [
             {
-                'start_date': datetime.datetime(1908, 1, 3),
-                'end_date': datetime.datetime.now(),
+                'start_date': pendulum.Pendulum(1908, 1, 3),
+                'end_date': self.now,
                 'data_types': ['Unit Values', 'Daily Values'],
                 'parameter_code': '07242',
                 'parameter_name': 'Lead, g/mL'
             },
             {
-                'start_date': datetime.datetime(1999, 1, 26),
+                'start_date': pendulum.Pendulum(1999, 1, 26),
                 'end_date': self.recent,
                 'data_types': ['Unit Values', 'Daily Values'],
                 'parameter_code': '02220',
@@ -137,14 +139,14 @@ class TestReadableParmListFilter(TestCase):
         ]
         self.old_inorganic_series = [
             {
-                'start_date': datetime.datetime(1908, 1, 3),
+                'start_date': pendulum.Pendulum(1908, 1, 3),
                 'end_date': self.long_ago,
                 'data_types': ['Unit Values', 'Daily Values'],
                 'parameter_code': '07242',
                 'parameter_name': 'Lead, g/mL'
             },
             {
-                'start_date': datetime.datetime(1999, 1, 26),
+                'start_date': pendulum.Pendulum(1999, 1, 26),
                 'end_date': self.long_ago,
                 'data_types': ['Unit Values', 'Daily Values'],
                 'parameter_code': '02220',
@@ -217,7 +219,12 @@ class TestDateToStringFilter(TestCase):
 
     def setUp(self):
         self.test_dt = datetime.datetime(2018, 3, 25)
+        self.test_pen_dt = pendulum.Pendulum(2018, 3, 25)
 
     def test_year_month_day(self):
         result = filters.date_to_string(self.test_dt)
+        self.assertEqual(result, '2018-03-25')
+
+    def test_pendulum_year_month_day(self):
+        result = filters.date_to_string(self.test_pen_dt)
         self.assertEqual(result, '2018-03-25')
