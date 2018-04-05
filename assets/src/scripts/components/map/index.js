@@ -91,7 +91,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
 
     const updateMapExtent = function (node, {extent}) {
         if (Object.keys(extent).length > 0) {
-            map.fitBounds(Util.extentToBounds(extent));
+            map.fitBounds(Util.extentToBounds(extent).extend([latitude, longitude]));
         }
     };
 
