@@ -134,7 +134,7 @@ const TEST_DATA = {
     playId: null
 };
 
-fdescribe('cursor module', () => {
+describe('cursor module', () => {
 
     describe('tsCursorPointsSelector', () => {
 
