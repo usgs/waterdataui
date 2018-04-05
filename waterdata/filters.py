@@ -52,7 +52,7 @@ def data_start_year(parameter_group_series):
     :rtype: str or None
 
     """
-    series = chain.from_iterable([x['parameters'] for x in parameter_group_series.values()])
+    series = chain.from_iterable([x['parameters'] for x in parameter_group_series])
     all_start_dates = [s['start_date'] for s in series]
     try:
         start_year = str(min(all_start_dates).year)
@@ -73,7 +73,7 @@ def readable_param_list(parameter_group_series):
     """
     # need to use a set -- there might be multiple variants for a measurements
     # (e.g. "nitrite, water as N" vs "nitrite, water as NO3-")
-    series = chain.from_iterable([x['parameters'] for x in parameter_group_series.values()])
+    series = chain.from_iterable([x['parameters'] for x in parameter_group_series])
     # include only real-time parameters that have recent data
     short_names = set(
         [

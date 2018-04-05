@@ -8,6 +8,7 @@ import datetime
 import itertools
 
 from flask import url_for
+import pendulum
 
 from .constants import US_STATES
 
@@ -204,7 +205,7 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
     return linked_data
 
 
-def _collapse_series_by_parameter_code(grouped_series):
+def _collapse_series_by_column(grouped_series, sort_data_col):
     """
     For each parameter group, take each of its timeseries and
     organize them by parameter code. Group by those parameter codes
@@ -218,7 +219,7 @@ def _collapse_series_by_parameter_code(grouped_series):
 
     """
     def parm_cd_sort(x):
-        return x['parm_cd']['code']
+        return x[sort_data_col]['code']
 
     rolled_up_series = {}
     # for each parameter group grouping...
@@ -232,10 +233,10 @@ def _collapse_series_by_parameter_code(grouped_series):
             parameter_name = series_by_pc[0]['parm_cd']['name']
             # determine the start and end dates of the group
             start_dates = [
-                datetime.datetime.strptime(series['begin_date']['code'], '%Y-%m-%d') for series in series_by_pc
+                pendulum.parse(series['begin_date']['code']) for series in series_by_pc
             ]
             end_dates = [
-                datetime.datetime.strptime(series['end_date']['code'], '%Y-%m-%d') for series in series_by_pc
+                pendulum.parse(series['end_date']['code']) for series in series_by_pc
             ]
             pc_start_date = min(start_dates)
             pc_end_date = max(end_dates)
@@ -254,7 +255,7 @@ def _collapse_series_by_parameter_code(grouped_series):
     return rolled_up_series
 
 
-def _extract_group_date_range(dataseries):
+def _extract_group_summary_data(name, dataseries):
     """
     Given a list of dataseries, determine the earliest
     start date, latest end date, and create a string
@@ -269,6 +270,7 @@ def _extract_group_date_range(dataseries):
     end_dates = [series['end_date'] for series in dataseries]
     data_types = set(list(itertools.chain.from_iterable([series['data_types'] for series in dataseries])))
     return {
+        'name': name,
         'start_date': min(start_dates),
         'end_date': max(end_dates),
         'data_types': ', '.join(sorted(data_types)),
@@ -285,7 +287,7 @@ def rollup_dataseries(dataseries):
 
     Data types of annual reports and peak values are excluded from the grouping.
 
-    :param list dataseries: list of data series available at a site
+    :param list dataseries: list of data series aa uvailable at a site
     :return: dataseries grouped by parameter group code
     :rtype: dict
 
@@ -298,7 +300,7 @@ def rollup_dataseries(dataseries):
         lambda x: x['parm_cd']['code'] == '' and x['parm_grp_cd']['code'] == '',
         dataseries
     ))
-
+    other_series = [s for s in dataseries if s not in display_series]
     # handle series with parameter groups
     def parm_grp_sort(x):
         return x['parm_grp_cd']['name']
@@ -306,9 +308,18 @@ def rollup_dataseries(dataseries):
     pg_sorted = sorted(display_series, key=parm_grp_sort)
     pg_grouped_series = itertools.groupby(pg_sorted, key=parm_grp_sort)
 
-    rollup_by_parameter_grp = _collapse_series_by_parameter_code(pg_grouped_series)
+    rollup_by_parameter_grp = _collapse_series_by_column(pg_grouped_series, 'parm_cd')
     # remove the `ALL` parameter group
     # it's the amalgamation of the other groups
     rollup_by_parameter_grp.pop('ALL', None)
 
-    return {k: _extract_group_date_range(v) for k, v in rollup_by_parameter_grp.items()}
+    # handle series that don't have parameter codes and parameter group codes
+    def data_type_sort(x):
+        return x['data_type_cd']['name']
+
+    dt_sorted = sorted(other_series, key=data_type_sort)
+    dt_grouped_series = itertools.groupby(dt_sorted, key=data_type_sort)
+    rollup_by_dt_code = _collapse_series_by_column(dt_grouped_series, 'data_type_cd')
+    parameter_groups = [_extract_group_summary_data(k, v) for k, v in rollup_by_parameter_grp.items()]
+    data_type_groups = [_extract_group_summary_data(None, v) for v in rollup_by_dt_code.values()]
+    return parameter_groups + data_type_groups
