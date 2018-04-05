@@ -2,10 +2,9 @@
 Unit tests for waterdata.waterservices classes and functions.
 
 """
-import datetime
 from unittest import TestCase
 
-from pendulum import Pendulum
+from pendulum import Pendulum, date
 
 from waterdata import app
 from waterdata.location_utils import Parameter, get_capabilities, get_site_parameter, build_linked_data,\
@@ -417,8 +416,8 @@ class TestGetSiteParameter(TestCase):
     def test_code_found(self):
         result = get_site_parameter(self.test_rdb_param_data, self.test_code)
         expected = Parameter(parameter_cd=self.test_code,
-                             start_date=datetime.date(2007, 10, 1),
-                             end_date=datetime.date(2018, 1, 10),
+                             start_date=date(2007, 10, 1),
+                             end_date=date(2018, 1, 10),
                              record_count='3754'
                              )
         self.assertEqual(result, expected)

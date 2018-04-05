@@ -4,7 +4,6 @@ USGS water services.
 
 """
 from collections import namedtuple
-import datetime
 import itertools
 
 from flask import url_for
@@ -150,10 +149,8 @@ def get_site_parameter(location_parameter_records, parameter_cd):
     except StopIteration:
         return None
     else:
-        record_start_date = param_series['begin_date']
-        record_end_date = param_series['end_date']
-        start_date = datetime.datetime.strptime(record_start_date, '%Y-%m-%d').date()
-        end_date = datetime.datetime.strptime(record_end_date, '%Y-%m-%d').date()
+        start_date = pendulum.parse(param_series['begin_date']).date()
+        end_date = pendulum.parse(param_series['end_date']).date()
         record_count = param_series['count_nu']
     return Parameter(
         parameter_cd=parameter_cd,
