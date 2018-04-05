@@ -3,6 +3,31 @@ const { tsCursorPointsSelector } = require('./cursor');
 
 const TEST_DATA = {
     series: {
+        queryInfo: {
+            current: {
+                notes: {
+                    'filter:timeRange': {
+                        mode: 'RANGE',
+                        interval: {
+                            start: new Date('2018-03-29T13:00:00'),
+                            end: new Date('2018-03-29T13:45:00')
+
+                        }
+                    }
+                }
+            },
+            compare: {
+                notes: {
+                    'filter:timeRange': {
+                        mode: 'RANGE',
+                        interval: {
+                            start: new Date('2018-03-29T13:00:00'),
+                            end: new Date('2018-03-29T13:45:00')
+                        }
+                    }
+                }
+            }
+        },
         timeSeries: {
             '00060': {
                 tsKey: 'current',
@@ -24,7 +49,7 @@ const TEST_DATA = {
                 }]
             },
             '00010': {
-                tsKey: 'compare',
+                tsKey: 'current',
                 startTime: new Date('2017-03-06T15:45:00.000Z'),
                 endTime: new Date('2017-03-13t13:45:00.000Z'),
                 variable: '45807196',
@@ -66,10 +91,6 @@ const TEST_DATA = {
                 }]
             }
         },
-        showSeries: {
-            current: true,
-            compare: true
-        },
         timeSeriesCollections: {
             'coll1': {
                 variable: 45807197,
@@ -97,11 +118,20 @@ const TEST_DATA = {
             '45807140': {
                 variableCode: {value: '00045'},
                 variableName: 'Precipitation',
-                variableDescription: 'Precipitation in inches'
+                variableDescription: 'Precipitation in inches',
+                oid: '45807140'
             }
         }
     },
-    currentVariableID: '45807197'
+    showSeries: {
+        current: true,
+        compare: false,
+        median: false
+    },
+    currentVariableID: '45807197',
+    windowWidth: 1024,
+    width: 800,
+    playId: null
 };
 
 fdescribe('cursor module', () => {
@@ -112,15 +142,14 @@ fdescribe('cursor module', () => {
             const newState = {
                 ...TEST_DATA,
                 currentVariableID: '45807196',
-                currentOffset: 16 * 60 * 1000
+                cursorOffset: 16 * 60 * 1000
             };
 
+            let v = tsCursorPointsSelector('current')(newState);
             expect(tsCursorPointsSelector('current')(newState)).toEqual({
-                '00060': {
-                    value: 2,
-                    qualifiers: ['P'],
-                    dateTime: new Date('2018-03-29T13:15:00')
-                }
+                value: 2,
+                qualifiers: ['P'],
+                dateTime: new Date('2018-03-29T13:15:00')
             });
         });
     });

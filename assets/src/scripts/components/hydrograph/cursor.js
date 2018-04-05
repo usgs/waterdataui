@@ -2,7 +2,7 @@ const { bisector } = require('d3-array');
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
-const { currentVariablePointsSelector } = require('./drawingData');
+const { currentVariablePointsByTsIdSelector } = require('./drawingData');
 const { layoutSelector } = require('./layout');
 const { xScaleSelector } = require('./scales');
 const { isVisibleSelector } = require('./timeseries');
@@ -71,7 +71,7 @@ const getNearestTime = function(data, time) {
  * @return {Object}
  */
 const tsCursorPointsSelector = memoize(tsKey => createSelector(
-    currentVariablePointsSelector(tsKey),
+    currentVariablePointsByTsIdSelector(tsKey),
     cursorTimeSelector(tsKey),
     isVisibleSelector(tsKey),
     (timeSeries, cursorTime, isVisible) => {
