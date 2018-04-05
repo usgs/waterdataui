@@ -106,7 +106,8 @@ def date_to_string(dt_obj):
     """
     Given a datetime, provide a string.
 
-    :param datetime.datetime dt_obj: convert datetime to string
+    :param dt_obj: convert datetime to string
+    :type: datetime.datetime or pendulum.Pendulum
     :return: datetime as a string
     :rtype: str
 

@@ -285,8 +285,8 @@ def rollup_dataseries(dataseries):
     """
     Rollup dataseries.
 
-    Roll up all of a sites data series by parameter group. Data types
-    for the parameter group is the join of the data types for each measured
+    Roll up a sites data series by parameter group if a series has them. Data
+    types for the parameter group is the join of the data types for each measured
     parameter code. Similarly, the start and end dates are the earliest and
     latest date of all the measured parameter codes within a group.
 
