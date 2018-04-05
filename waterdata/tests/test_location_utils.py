@@ -7,8 +7,9 @@ from unittest import TestCase
 from pendulum import Pendulum, date
 
 from waterdata import app
-from waterdata.location_utils import Parameter, get_capabilities, get_site_parameter, build_linked_data,\
-    get_disambiguated_values, get_state_abbreviation, rollup_dataseries
+from waterdata.location_utils import (
+    build_linked_data,get_disambiguated_values, get_state_abbreviation, rollup_dataseries
+)
 
 
 class GetDisambiguatedValuesTestCase(TestCase):
@@ -350,81 +351,6 @@ class GetDisambiguatedValuesTestCase(TestCase):
                 get_disambiguated_values(test_location, {}, {}, self.test_huc_lookup),
                 expected_location
             )
-
-
-class TestGetCapabilities(TestCase):
-
-    def setUp(self):
-        self.param_00060 = {'parm_cd': '00060',
-                            'begin_date': '1990-07-08',
-                            'end_date': '2001-08-12',
-                            'count_nu': '871'
-                            }
-        self.param_00010 = {'parm_cd': '00010',
-                            'begin_date': '2007-10-01',
-                            'end_date': '2018-01-10',
-                            'count_nu': '3754'
-                            }
-        self.param_00095 = {'parm_cd': '00095',
-                            'begin_date': '2007-10-01',
-                            'end_date': '2018-01-10',
-                            'count_nu': '198'
-                            }
-        self.param_00065 = {'parm_cd': '00065',
-                            'begin_date': '2007-10-01',
-                            'end_date': '2018-01-10',
-                            'count_nu': '800'
-                            }
-        self.test_rdb_param_data = [self.param_00010, self.param_00060, self.param_00065, self.param_00095]
-
-    def test_get_capabilities(self):
-        result = get_capabilities(self.test_rdb_param_data)
-        expected = {'00060', '00010', '00095', '00065'}
-        self.assertSetEqual(result, expected)
-
-    def test_get_empty(self):
-        result = get_capabilities([])
-        self.assertFalse(result)
-
-
-class TestGetSiteParameter(TestCase):
-
-    def setUp(self):
-        self.test_code = '00010'
-        self.param_00060 = {'parm_cd': '00060',
-                            'begin_date': '1990-07-08',
-                            'end_date': '2001-08-12',
-                            'count_nu': '871'
-                            }
-        self.param_00010 = {'parm_cd': '00010',
-                            'begin_date': '2007-10-01',
-                            'end_date': '2018-01-10',
-                            'count_nu': '3754'
-                            }
-        self.param_00095 = {'parm_cd': '00095',
-                            'begin_date': '2007-10-01',
-                            'end_date': '2018-01-10',
-                            'count_nu': '198'
-                            }
-        self.param_00065 = {'parm_cd': '00065',
-                            'begin_date': '2007-10-01',
-                            'end_date': '2018-01-10',
-                            'count_nu': '800'
-                            }
-        self.test_rdb_param_data = [self.param_00010, self.param_00060, self.param_00065, self.param_00095]
-
-    def test_code_found(self):
-        result = get_site_parameter(self.test_rdb_param_data, self.test_code)
-        expected = Parameter(parameter_cd=self.test_code,
-                             start_date=date(2007, 10, 1),
-                             end_date=date(2018, 1, 10),
-                             record_count='3754'
-                             )
-        self.assertEqual(result, expected)
-
-    def test_code_not_found(self):
-        result = get_site_parameter(self.test_rdb_param_data, 'blah')
-        self.assertIsNone(result)
 
 
 class TestBuildLinkedData(TestCase):

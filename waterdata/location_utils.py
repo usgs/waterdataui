@@ -3,15 +3,12 @@ Utility functions and classes for working with
 USGS water services.
 
 """
-from collections import namedtuple
 import itertools
 
 from flask import url_for
 import pendulum
 
 from .constants import US_STATES
-
-Parameter = namedtuple('Parameter', ['parameter_cd', 'start_date', 'end_date', 'record_count'])
 
 
 def get_state_abbreviation(state_full_name):
@@ -115,49 +112,6 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
         transformed_location[key] = transformed_value
 
     return transformed_location
-
-
-def get_capabilities(location_parameter_records):
-    """
-    Determine the parameters measured at the site.
-
-    :param iterable location_parameter_records: an iterable containing location parameters, the location parameters
-        must contain a `parm_cd` key
-    :return: USGS parameter codes measured at a site
-    :rtype: set
-
-    """
-    supported_params = set([parameter_record['parm_cd'] for parameter_record in location_parameter_records])
-    return supported_params
-
-
-def get_site_parameter(location_parameter_records, parameter_cd):
-    """
-    Determine the period of record and number of records for a
-    parameter being measured at this site. If the parameter code
-    value specified is not available at this site, None is returned.
-
-    :param iterable location_parameter_records: an iterable containing of location parameter
-    :param str parameter_cd: the USGS parameter code of interest
-    :return: a parameter's "start_date", "end_date", and "record_count" if available; dates are Python date objects
-    :rtype: waterdata.location_utils.Parameter or None
-
-    """
-    try:
-        param_series = next((parameter_record for parameter_record in location_parameter_records
-                             if parameter_record['parm_cd'] == parameter_cd))
-    except StopIteration:
-        return None
-    else:
-        start_date = pendulum.parse(param_series['begin_date']).date()
-        end_date = pendulum.parse(param_series['end_date']).date()
-        record_count = param_series['count_nu']
-    return Parameter(
-        parameter_cd=parameter_cd,
-        start_date=start_date,
-        end_date=end_date,
-        record_count=record_count
-    )
 
 
 def build_linked_data(location_number, location_name, agency_code, latitude, longitude, location_capabilities):
