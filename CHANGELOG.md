@@ -4,16 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
+
+### Fixed
+- Tooltip is redrawn correctly when changing from portrait to landscape on mobile.
 - Handle tooltips on touch devices
 
+
+## [0.6.0] - 2018-04-06
 ### Added
 - Play/Stop button to play the audible sound for the timeseries graph
 - Legend appears on the map describing the map features
 - Initialize the gage height slider with the current value of gage height
+- Crawable state/County pages that can be used to find the monitor locations for a particular state/county
 
 ### Changed
 - Font sizing and responsive layout changes
 - Limit y-axis lower bound to nearest power of 10 on logarithmic scales
+- Site Summary table includes site visits, peak values, annual data reports, and groundwater network sites
 
 ### Fixed
 - Timeseries SVG has the correct title and desc tag contents.
@@ -24,6 +31,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Single points appear in sparklines
 - Map includes the location of the site with flood layers are included
 - Firefox bug where the time series graph legend would resize as things were added to it.
+- Limit y-axis tick count on small device widths and log scales.
+- Precipitation tooltips now show the correct accumulated values
 
 
 ## [0.5.0] - 2018-03-30
@@ -127,7 +136,8 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.5.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.6.0...master
+[0.6.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.5.0...waterdataui-0.6.0
 [0.5.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.4.0...waterdataui-0.5.0
 [0.4.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.3.0...waterdataui-0.4.0
 [0.3.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.2.0...waterdataui-0.3.0

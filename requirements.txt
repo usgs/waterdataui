@@ -6,6 +6,7 @@ idna==2.6
 itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
+pendulum==1.4.4
 pyfakefs==3.3
 pytest==3.4.1
 pytest-mock==1.7.0

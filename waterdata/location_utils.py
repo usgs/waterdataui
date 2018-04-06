@@ -3,15 +3,12 @@ Utility functions and classes for working with
 USGS water services.
 
 """
-from collections import namedtuple
-import datetime
 import itertools
 
 from flask import url_for
+import pendulum
 
 from .constants import US_STATES
-
-Parameter = namedtuple('Parameter', ['parameter_cd', 'start_date', 'end_date', 'record_count'])
 
 
 def get_state_abbreviation(state_full_name):
@@ -117,51 +114,6 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
     return transformed_location
 
 
-def get_capabilities(location_parameter_records):
-    """
-    Determine the parameters measured at the site.
-
-    :param iterable location_parameter_records: an iterable containing location parameters, the location parameters
-        must contain a `parm_cd` key
-    :return: USGS parameter codes measured at a site
-    :rtype: set
-
-    """
-    supported_params = set([parameter_record['parm_cd'] for parameter_record in location_parameter_records])
-    return supported_params
-
-
-def get_site_parameter(location_parameter_records, parameter_cd):
-    """
-    Determine the period of record and number of records for a
-    parameter being measured at this site. If the parameter code
-    value specified is not available at this site, None is returned.
-
-    :param iterable location_parameter_records: an iterable containing of location parameter
-    :param str parameter_cd: the USGS parameter code of interest
-    :return: a parameter's "start_date", "end_date", and "record_count" if available; dates are Python date objects
-    :rtype: waterdata.location_utils.Parameter or None
-
-    """
-    try:
-        param_series = next((parameter_record for parameter_record in location_parameter_records
-                             if parameter_record['parm_cd'] == parameter_cd))
-    except StopIteration:
-        return None
-    else:
-        record_start_date = param_series['begin_date']
-        record_end_date = param_series['end_date']
-        start_date = datetime.datetime.strptime(record_start_date, '%Y-%m-%d').date()
-        end_date = datetime.datetime.strptime(record_end_date, '%Y-%m-%d').date()
-        record_count = param_series['count_nu']
-    return Parameter(
-        parameter_cd=parameter_cd,
-        start_date=start_date,
-        end_date=end_date,
-        record_count=record_count
-    )
-
-
 def build_linked_data(location_number, location_name, agency_code, latitude, longitude, location_capabilities):
     """
     Given site metadata, construct a dictionary / json-ld for the site.
@@ -204,63 +156,72 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
     return linked_data
 
 
-def _collapse_series_by_parameter_code(grouped_series):
+def _collapse_series_by_column(grouped_series, sort_data_col):
     """
-    For each parameter group, take each of its timeseries and
-    organize them by parameter code. Group by those parameter codes
-    and extract metadata from them. This intended to help with cases
-    where there are multiple series for a parameter code (e.g. temperature
-    measured at slightly different depths).
+    For each grouped series, take each of its timeseries and
+    organize them by a data column/key name. Group by the specified
+    column/key name and extract metadata from them. This intended
+    to help with cases where there are multiple series for a RDB
+    column/key (e.g. temperature measured at slightly different depths
+    for parameter code 00010 or if a location gets site visits for
+    10 years, gets shut down, but is started back up and site visits
+    resume).
 
-    :param groupby grouped_series: dataseries grouped by some value (e.g. parameter group, data type, etc.)
-    :return: groupings with one entry for each parameter code
+    :param itertools.groupby grouped_series: dataseries grouped by some value (e.g. parameter group, data type, etc.)
+    :param str sort_data_col: value of a key in the time series data
+    :return: groupings with one entry for each unique value within a data column/key
     :rtype: dict
 
     """
-    def parm_cd_sort(x):
-        return x['parm_cd']['code']
+    def key_sort(item):
+        """
+        sort by some code
+
+        :param item:
+        :return:
+
+        """
+        return item[sort_data_col]['code']
 
     rolled_up_series = {}
     # for each parameter group grouping...
     for key, grp in grouped_series:
-        pcode_sort = sorted(grp, key=parm_cd_sort)
-        series_by_pcode = itertools.groupby(pcode_sort, key=parm_cd_sort)
-        # for each parameter code grouping within a parameter group grouping...
+        series_by_pcode = itertools.groupby(sorted(grp, key=key_sort), key=key_sort)
+        # for each grouping within a key grouping...
         grp_pcode_series = []
         for key_pc, pc_grp in series_by_pcode:
             series_by_pc = list(pc_grp)
-            parameter_name = series_by_pc[0]['parm_cd']['name']
             # determine the start and end dates of the group
             start_dates = [
-                datetime.datetime.strptime(series['begin_date']['code'], '%Y-%m-%d') for series in series_by_pc
+                pendulum.parse(series['begin_date']['code']) for series in series_by_pc
             ]
             end_dates = [
-                datetime.datetime.strptime(series['end_date']['code'], '%Y-%m-%d') for series in series_by_pc
+                pendulum.parse(series['end_date']['code']) for series in series_by_pc
             ]
-            pc_start_date = min(start_dates)
-            pc_end_date = max(end_dates)
             # collect data types
             data_types = [series['data_type_cd']['name'] for series in series_by_pc]
 
             pc_metadata = {
-                'start_date': pc_start_date,
-                'end_date': pc_end_date,
+                'start_date': min(start_dates),
+                'end_date': max(end_dates),
                 'data_types': data_types,
                 'parameter_code': key_pc,
-                'parameter_name': parameter_name
+                'parameter_name': series_by_pc[0]['parm_cd']['name']
             }
             grp_pcode_series.append(pc_metadata)
         rolled_up_series[key] = grp_pcode_series
     return rolled_up_series
 
 
-def _extract_group_date_range(dataseries):
+def _extract_group_summary_data(dataseries, name=None):
     """
     Given a list of dataseries, determine the earliest
     start date, latest end date, and create a string
     of their various data types.
 
     :param list dataseries: dataseries
+    :param name: display name for the group if desired
+    :type name: str or None
     :return: overall metadata for a bunch of dataseries
     :rtype: dict
 
@@ -269,6 +230,7 @@ def _extract_group_date_range(dataseries):
     end_dates = [series['end_date'] for series in dataseries]
     data_types = set(list(itertools.chain.from_iterable([series['data_types'] for series in dataseries])))
     return {
+        'name': name,
         'start_date': min(start_dates),
         'end_date': max(end_dates),
         'data_types': ', '.join(sorted(data_types)),
@@ -278,37 +240,64 @@ def _extract_group_date_range(dataseries):
 
 def rollup_dataseries(dataseries):
     """
-    Roll up all of a sites data series by parameter group. Data types
-    for the parameter group is the join of the data types for each measured
+    Rollup dataseries.
+
+    Roll up a sites data series by parameter group if a series has them. Data
+    types for the parameter group is the join of the data types for each measured
     parameter code. Similarly, the start and end dates are the earliest and
     latest date of all the measured parameter codes within a group.
 
-    Data types of annual reports and peak values are excluded from the grouping.
+    Data series that do not have a parameter group are rolled up by data type.
+    Any individual series within a data type and the start and end dates are
+    earliest and latest dates among the individual series within the group.
 
-    :param list dataseries: list of data series available at a site
-    :return: dataseries grouped by parameter group code
-    :rtype: dict
+    :param list dataseries: list of data series aa uvailable at a site
+    :return: dataseries grouped by parameter group code and data type code
+    :rtype: list
 
     """
-    # exclude annual reports, peak value measurements, site visits, and active ground water sites
-    # basically everything that doesn't have a parameter code and parameter group
-    # e.g. 'ad', 'pk', 'sv', and 'aw' data type codes all cause various rollup and formatting problems
-    # because of weird date formatting and lack of parameter code
+    # handle annual reports, peak value measurements, site visits, and active ground water sites
+    # basically everything that doesn't have a parameter code and parameter group separate from the
+    # data types that do.
     display_series = list(itertools.filterfalse(
         lambda x: x['parm_cd']['code'] == '' and x['parm_grp_cd']['code'] == '',
         dataseries
     ))
+    other_series = [s for s in dataseries if s not in display_series]
 
     # handle series with parameter groups
-    def parm_grp_sort(x):
-        return x['parm_grp_cd']['name']
+    def parm_grp_sort(item):
+        """
+        parameter group name sort function
+
+        :param item:
+        :return:
+
+        """
+        return item['parm_grp_cd']['name']
 
     pg_sorted = sorted(display_series, key=parm_grp_sort)
     pg_grouped_series = itertools.groupby(pg_sorted, key=parm_grp_sort)
-
-    rollup_by_parameter_grp = _collapse_series_by_parameter_code(pg_grouped_series)
+    rollup_by_parameter_grp = _collapse_series_by_column(pg_grouped_series, 'parm_cd')
     # remove the `ALL` parameter group
     # it's the amalgamation of the other groups
     rollup_by_parameter_grp.pop('ALL', None)
+    parameter_groups = [_extract_group_summary_data(v, k) for k, v in rollup_by_parameter_grp.items()]
 
-    return {k: _extract_group_date_range(v) for k, v in rollup_by_parameter_grp.items()}
+    # handle series that don't have parameter codes and parameter group codes
+    def data_type_sort(item):
+        """
+        data type code name sort function
+
+        :param item:
+        :return:
+
+        """
+        return item['data_type_cd']['name']
+
+    dt_sorted = sorted(other_series, key=data_type_sort)
+    dt_grouped_series = itertools.groupby(dt_sorted, key=data_type_sort)
+    rollup_by_dt_code = _collapse_series_by_column(dt_grouped_series, 'data_type_cd')
+    data_type_groups = [_extract_group_summary_data(v) for v in rollup_by_dt_code.values()]
+
+    return parameter_groups + data_type_groups

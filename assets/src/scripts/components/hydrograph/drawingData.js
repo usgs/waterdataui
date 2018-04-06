@@ -96,6 +96,27 @@ export const pointsByTsKeySelector = memoize(tsKey => createSelector(
         return result;
     }));
 
+/* Returns a select that returns all time series point for the ccurrent variable and in the select series, tsKey
+ * by tsId.
+ * @param {Object} state
+ * @param {String} tsKey
+ * @return Object
+ */
+export const currentVariablePointsByTsIdSelector = memoize(tsKey => createSelector(
+    pointsByTsKeySelector(tsKey),
+    currentVariableTimeSeriesSelector(tsKey),
+    (points, timeSeries) => {
+        let result = {};
+        if (points) {
+            result = Object.keys(timeSeries).reduce((data, tsId) => {
+                data[tsId] = points[tsId];
+                return data;
+            }, {});
+        }
+        return result;
+    }
+));
+
 /* Returns a selector that returns all time series points for the current variable and in the selected series, tsKey.
  * @param {Object} state
  * @param {String} tsKey
