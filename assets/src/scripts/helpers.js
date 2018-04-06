@@ -19,7 +19,8 @@ export const registerTooltips = function () {
 };
 
 /**
- * Toggles tooltips on/off in response to touchstart events.
+ * Unregisters tooltip listener. Intended for use by the test suite.
+ * @param  {Function} handler As returned by registerTooltips
  */
 export const unregisterTooltips = function (handler) {
     document.removeEventListener('touchstart', handler);
