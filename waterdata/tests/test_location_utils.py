@@ -2,12 +2,14 @@
 Unit tests for waterdata.waterservices classes and functions.
 
 """
-import datetime
 from unittest import TestCase
 
+from pendulum import Pendulum
+
 from waterdata import app
-from waterdata.location_utils import Parameter, get_capabilities, get_site_parameter, build_linked_data,\
-    get_disambiguated_values, get_state_abbreviation, rollup_dataseries
+from waterdata.location_utils import (
+    build_linked_data, get_disambiguated_values, get_state_abbreviation, rollup_dataseries
+)
 
 
 class GetDisambiguatedValuesTestCase(TestCase):
@@ -351,81 +353,6 @@ class GetDisambiguatedValuesTestCase(TestCase):
             )
 
 
-class TestGetCapabilities(TestCase):
-
-    def setUp(self):
-        self.param_00060 = {'parm_cd': '00060',
-                            'begin_date': '1990-07-08',
-                            'end_date': '2001-08-12',
-                            'count_nu': '871'
-                            }
-        self.param_00010 = {'parm_cd': '00010',
-                            'begin_date': '2007-10-01',
-                            'end_date': '2018-01-10',
-                            'count_nu': '3754'
-                            }
-        self.param_00095 = {'parm_cd': '00095',
-                            'begin_date': '2007-10-01',
-                            'end_date': '2018-01-10',
-                            'count_nu': '198'
-                            }
-        self.param_00065 = {'parm_cd': '00065',
-                            'begin_date': '2007-10-01',
-                            'end_date': '2018-01-10',
-                            'count_nu': '800'
-                            }
-        self.test_rdb_param_data = [self.param_00010, self.param_00060, self.param_00065, self.param_00095]
-
-    def test_get_capabilities(self):
-        result = get_capabilities(self.test_rdb_param_data)
-        expected = {'00060', '00010', '00095', '00065'}
-        self.assertSetEqual(result, expected)
-
-    def test_get_empty(self):
-        result = get_capabilities([])
-        self.assertFalse(result)
-
-
-class TestGetSiteParameter(TestCase):
-
-    def setUp(self):
-        self.test_code = '00010'
-        self.param_00060 = {'parm_cd': '00060',
-                            'begin_date': '1990-07-08',
-                            'end_date': '2001-08-12',
-                            'count_nu': '871'
-                            }
-        self.param_00010 = {'parm_cd': '00010',
-                            'begin_date': '2007-10-01',
-                            'end_date': '2018-01-10',
-                            'count_nu': '3754'
-                            }
-        self.param_00095 = {'parm_cd': '00095',
-                            'begin_date': '2007-10-01',
-                            'end_date': '2018-01-10',
-                            'count_nu': '198'
-                            }
-        self.param_00065 = {'parm_cd': '00065',
-                            'begin_date': '2007-10-01',
-                            'end_date': '2018-01-10',
-                            'count_nu': '800'
-                            }
-        self.test_rdb_param_data = [self.param_00010, self.param_00060, self.param_00065, self.param_00095]
-
-    def test_code_found(self):
-        result = get_site_parameter(self.test_rdb_param_data, self.test_code)
-        expected = Parameter(parameter_cd=self.test_code,
-                             start_date=datetime.date(2007, 10, 1),
-                             end_date=datetime.date(2018, 1, 10),
-                             record_count='3754'
-                             )
-        self.assertEqual(result, expected)
-
-    def test_code_not_found(self):
-        result = get_site_parameter(self.test_rdb_param_data, 'blah')
-        self.assertIsNone(result)
-
-
 class TestBuildLinkedData(TestCase):
 
     def setUp(self):
@@ -492,7 +419,7 @@ class TestGetStateAbbreviation(TestCase):
     def test_state_found(self):
         self.assertEqual(get_state_abbreviation('California'), 'CA')
 
-    def test_state_no_found(self):
+    def test_state_not_found(self):
         self.assertIsNone(get_state_abbreviation('Tenochtitlan'))
 
 
@@ -505,7 +432,21 @@ class TestRollupDataseries(TestCase):
                 'site_no': {'name': '04891899', 'code': '04891899'},
                 'data_type_cd': {'code': 'ad', 'name': 'USGS Annual Water Data Reports Site'},
                 'parm_cd': {'code': '', 'name': ''}, 'parm_grp_cd': {'code': '', 'name': ''},
+                'begin_date': {'name': '1980', 'code': '1980'}, 'end_date': {'name': '1992', 'code': '1992'}
+            },
+            {
+                'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
+                'site_no': {'name': '04891899', 'code': '04891899'},
+                'data_type_cd': {'code': 'ad', 'name': 'USGS Annual Water Data Reports Site'},
+                'parm_cd': {'code': '', 'name': ''}, 'parm_grp_cd': {'code': '', 'name': ''},
                 'begin_date': {'name': '2006', 'code': '2006'}, 'end_date': {'name': '2016', 'code': '2016'}
+            },
+            {
+                'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
+                'site_no': {'name': '04891899', 'code': '04891899'},
+                'data_type_cd': {'code': 'pk', 'name': 'Peak Measurements'}, 'parm_cd': {'code': '', 'name': ''},
+                'parm_grp_cd': {'code': '', 'name': ''}, 'begin_date': {'name': '1942-09-18', 'code': '1942-09-18'},
+                'end_date': {'name': '2016-06-13', 'code': '2016-06-13'}
             },
             {
                 'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
@@ -537,13 +478,6 @@ class TestRollupDataseries(TestCase):
             {
                 'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
                 'site_no': {'name': '04891899', 'code': '04891899'},
-                'data_type_cd': {'code': 'pk', 'name': 'Peak Measurements'}, 'parm_cd': {'code': '', 'name': ''},
-                'parm_grp_cd': {'code': '', 'name': ''}, 'begin_date': {'name': '1942-09-18', 'code': '1942-09-18'},
-                'end_date': {'name': '2016-06-13', 'code': '2016-06-13'}
-            },
-            {
-                'agency_cd': {'code': 'USGS', 'name': 'U.S. Geological Survey'},
-                'site_no': {'name': '04891899', 'code': '04891899'},
                 'data_type_cd': {'code': 'sv', 'name': 'Site Visits'}, 'parm_cd': {'code': '', 'name': ''},
                 'parm_grp_cd': {'code': '', 'name': ''}, 'begin_date': {'name': '1942-09-18', 'code': '1942-09-18'},
                 'end_date': {'name': '2016-06-13', 'code': '2016-06-13'}
@@ -568,18 +502,32 @@ class TestRollupDataseries(TestCase):
                 'parm_grp_cd': {'code': 'ALL', 'name': 'ALL'},
                 'begin_date': {'name': '1967-03-28', 'code': '1967-03-28'},
                 'end_date': {'name': '1993-09-07', 'code': '1993-09-07'}
-            }
+            },
         ]
+
+    def test_series_no_group_and_code(self):
+        result = rollup_dataseries(self.test_data[:3])
+        start_dates = set([series_grp['start_date'] for series_grp in result])
+        end_dates = set([series_grp['end_date'] for series_grp in result])
+        self.assertEqual(len(result), 2)
+        self.assertIsNone(result[0]['name'])
+        self.assertSetEqual(start_dates, {Pendulum(1942, 9, 18), Pendulum(1980, 1, 1)})
+        self.assertSetEqual(end_dates, {Pendulum(2016, 1, 1), Pendulum(2016, 6, 13)})
+
+    def test_series_group_and_code(self):
+        result = rollup_dataseries(self.test_data[3:6])
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]['start_date'], Pendulum(1977, 6, 20))
+        self.assertEqual(result[0]['end_date'], Pendulum(2017, 3, 26))
+        self.assertEqual(result[0]['data_types'], 'Daily Values, Unit Values')
+        self.assertEqual(result[0]['name'], 'Physical')
+        self.assertEqual(len(result[0]['parameters']), 2)
 
     def test_successful_rollup(self):
         result = rollup_dataseries(self.test_data)
-        self.assertListEqual(list(result.keys()), ['Nutrient', 'Physical'])
-        self.assertListEqual(
-            list(result['Physical'].keys()),
-            ['start_date', 'end_date', 'data_types', 'parameters']
+        self.assertEqual(len(result), 5)
+        self.assertSetEqual(set(result[0].keys()), {'start_date', 'name', 'parameters', 'end_date', 'data_types'})
+        self.assertSetEqual(
+            set(result[0]['parameters'][0].keys()),
+            {'start_date', 'end_date', 'parameter_name', 'data_types', 'parameter_code'}
         )
-        self.assertEqual(result['Physical']['start_date'], datetime.datetime(1977, 6, 20))
-        self.assertEqual(result['Physical']['end_date'], datetime.datetime(2017, 3, 26))
-        self.assertEqual(result['Physical']['data_types'], 'Daily Values, Unit Values')
-        self.assertEqual(len(result['Physical']['parameters']), 2)
-        self.assertEqual(len(result['Nutrient']['parameters']), 1)
