@@ -419,7 +419,7 @@ class TestGetStateAbbreviation(TestCase):
     def test_state_found(self):
         self.assertEqual(get_state_abbreviation('California'), 'CA')
 
-    def test_state_no_found(self):
+    def test_state_not_found(self):
         self.assertIsNone(get_state_abbreviation('Tenochtitlan'))
 
 
