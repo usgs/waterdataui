@@ -15,5 +15,5 @@ reviewing your pull request
 
 After making a pull request
 ---------------------------
-- If appropriate, put the link to the PR in the JIRA ticket
-- Assign someone to review unless the change is trivial
+- [ ] If appropriate, put the link to the PR in the JIRA ticket
+- [ ] Assign someone to review unless the change is trivial
