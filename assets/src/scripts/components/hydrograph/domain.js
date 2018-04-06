@@ -11,7 +11,6 @@ const { visiblePointsSelector } = require('./drawingData');
 
 const PADDING_RATIO = 0.2;
 const Y_TICK_COUNT = 5;
-const Y_TICK_COUNT_SMALL_LOG = 2;
 // array of parameters that should use
 // a symlog scale instead of a linear scale
 export const SYMLOG_PARMS = [
@@ -100,21 +99,14 @@ export const getYDomain = function (pointArrays, currentVar) {
  */
 export const getYTickDetails = function (yDomain, parmCd) {
     const isSymlog = SYMLOG_PARMS.indexOf(parmCd) > -1;
-    let tickCount = Y_TICK_COUNT;
-    if (isSymlog) {
-        tickCount = Y_TICK_COUNT_SMALL_LOG;
-        if (mediaQuery(config.USWDS_SMALL_SCREEN)) {
-            tickCount++;
-        }
-        if (mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
-            tickCount++;
-        }
-        if (mediaQuery(config.USWDS_LARGE_SCREEN)) {
-            tickCount++;
-        }
+
+    let tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
+
+    // On small screens, log scale ticks are too close together, so only use every other one.
+    if (isSymlog && tickValues.length > 3 && !mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
+        tickValues = tickValues.filter((_, index) => index % 2);
     }
 
-    const tickValues = ticks(yDomain[0], yDomain[1], tickCount);
     // If all ticks are integers, don't display right of the decimal place.
     // Otherwise, format with two decimal points.
     const tickFormat = tickValues.filter(t => !Number.isInteger(t)).length ? '.2f' : 'd';
