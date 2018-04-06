@@ -4,11 +4,11 @@ Unit tests for waterdata.waterservices classes and functions.
 """
 from unittest import TestCase
 
-from pendulum import Pendulum, date
+from pendulum import Pendulum
 
 from waterdata import app
 from waterdata.location_utils import (
-    build_linked_data,get_disambiguated_values, get_state_abbreviation, rollup_dataseries
+    build_linked_data, get_disambiguated_values, get_state_abbreviation, rollup_dataseries
 )
 
 
