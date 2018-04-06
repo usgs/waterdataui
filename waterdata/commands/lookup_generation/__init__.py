@@ -10,6 +10,7 @@ import logging
 import os
 
 from waterdata.utils import execute_get_request, parse_rdb
+from .metadata_field_lookups import METADATA_DESCRIPTIONS
 from .nwis_lookups import translate_to_lookup, translate_codes_by_group
 from .wqp_lookups import get_lookup_by_json, get_nwis_state_lookup, get_nwis_county_lookup, \
     is_us_county
@@ -159,3 +160,8 @@ def generate_country_state_county_file(datadir, filename='nwis_country_state_loo
 
     with open(os.path.join(datadir, filename), 'w') as f:
         f.write(json.dumps(lookups, indent=4))
+
+
+def generate_metadata_description_file(datadir, filename='metadata_field_desc_lookup.json'):
+    with open(os.path.join(datadir, filename), 'w') as f:
+        f.write(json.dumps(METADATA_DESCRIPTIONS, indent=4))

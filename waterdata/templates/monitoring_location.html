@@ -114,7 +114,18 @@
                     <tbody>
                         {% for key, value in location_with_values.items() %}
                             <tr>
-                                <th scope="row">{{ STATION_FIELDS_D[key] }}</th>
+                                <th scope="row">{{ STATION_FIELDS_D[key] }}
+                                    {%  if value.description %}
+                                        <div class="tooltip-item">
+                                            <sup aria-describedby="tooltip-{{ key|lower|replace('_', '-') }}">
+                                                <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                            </sup>
+                                            <div class="tooltip">
+                                                <p id="tooltip-{{ key|lower|replace('_', '-') }}">{{ value.description }}</p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </th>
                                 <td class="loc-metadata">
                                     {% if value.url %}
                                         <a href="{{ value.url }}">{{ value.name }}</a>

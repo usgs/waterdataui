@@ -97,6 +97,16 @@ def monitoring_location(site_no):
                 app.config['HUC_LOOKUP']
             )
 
+            def add_description_tooltip(k, v):
+                desc = None
+                try:
+                    desc = app.config.get('METADATA_DESC_LOOKUP', {})[k]
+                except KeyError:
+                    pass
+                v['description'] = desc
+                return v
+
+            location_with_values = {k: add_description_tooltip(k, v) for k, v in location_with_values.items()}
             questions_link = None
             try:
                 site_owner_state = (
