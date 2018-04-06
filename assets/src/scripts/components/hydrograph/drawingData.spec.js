@@ -1,7 +1,7 @@
 
 const { lineSegmentsSelector, pointsSelector, pointsTableDataSelector, allPointsSelector, pointsByTsKeySelector,
     classesForPoint, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
-    currentVariablePointsSelector, visiblePointsSelector, MAX_LINE_POINT_GAP } = require('./drawingData');
+    currentVariablePointsSelector, currentVariablePointsByTsIdSelector, visiblePointsSelector, MAX_LINE_POINT_GAP } = require('./drawingData');
 
 const TEST_DATA = {
     series: {
@@ -190,6 +190,19 @@ describe('drawingData module', () => {
         it('return the empty object if no time series for series', () => {
             expect(pointsByTsKeySelector('median')(TEST_DATA)).toEqual({});
         });
+    });
+
+    describe('currentVariablePointsByTsIdSelector', () => {
+       it('Return the current variable for the tsKey', () => {
+           const result = currentVariablePointsByTsIdSelector('current')(TEST_DATA);
+
+           expect(result['00060']).toBeDefined();
+           expect(result['00060']).toEqual(TEST_DATA.series.timeSeries['00060'].points);
+       });
+
+       it('Return an empty array if the tsKey has no time series with the current variable', () => {
+           expect(currentVariablePointsByTsIdSelector('compare')(TEST_DATA)).toEqual({});
+       });
     });
 
     describe('currentVariablePointsSelector', () => {

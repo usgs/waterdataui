@@ -93,13 +93,6 @@ export const getYDomain = function (pointArrays, currentVar) {
 };
 
 
-export const yDomainSelector = createSelector(
-    visiblePointsSelector,
-    currentVariableSelector,
-    getYDomain
-);
-
-
 /**
  * Helper function which generates y tick values for a scale
  * @param {Object} yScale - d3 scale
