@@ -18,24 +18,27 @@ const { currentVariableSelector } = require('./timeseries');
 const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');
 
 
-const createFocusLine = function(elem, {yScale}) {
+const createFocusLine = function(elem) {
     let focus = elem.append('g')
         .attr('class', 'focus')
         .style('display', 'none');
 
-    const range = yScale.range();
     focus.append('line')
-        .attr('class', 'focus-line')
-        .attr('y1', range[0])
-        .attr('y2', range[1]);
+        .attr('class', 'focus-line');
 
     return focus;
 };
 
-const updateFocusLine = function(elem, {cursorTime, xScale}) {
+const updateFocusLine = function(elem, {cursorTime, yScale, xScale}) {
     if (cursorTime) {
-        let x = xScale(cursorTime);
-        elem.select('.focus-line').attr('x1', x).attr('x2', x);
+        const x = xScale(cursorTime);
+        const range = yScale.range();
+
+        elem.select('.focus-line')
+            .attr('y1', range[0])
+            .attr('y2', range[1])
+            .attr('x1', x)
+            .attr('x2', x);
         elem.style('display', null);
     } else {
         elem.style('display', 'none');
