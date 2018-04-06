@@ -7,7 +7,6 @@ from itertools import chain
 from urllib.parse import urljoin
 
 from . import app
-from .constants import SORT_TOP
 
 
 @app.template_filter('asset_url')
@@ -47,12 +46,12 @@ def data_start_year(parameter_group_series):
     Determine the earliest year that was collected for a
     list of parameters.
 
-    :param dict parameter_group_series: dictionary of parameter series grouped by parameter group
+    :param list parameter_group_series: dictionary of parameter series grouped by parameter group
     :return: earliest year of data collection if available
     :rtype: str or None
 
     """
-    series = chain.from_iterable([x['parameters'] for x in parameter_group_series.values()])
+    series = chain.from_iterable([x['parameters'] for x in parameter_group_series])
     all_start_dates = [s['start_date'] for s in series]
     try:
         start_year = str(min(all_start_dates).year)
@@ -66,14 +65,14 @@ def readable_param_list(parameter_group_series):
     """
     Generate text for a list of parameters in the description meta tag.
 
-    :param dict parameter_group_series: dictionary of parameter series grouped by parameter group
+    :param list parameter_group_series: list of parameter series grouped by parameter group
     :return: human readable string for the parameters in the series if available
     :rtype: str or None
 
     """
     # need to use a set -- there might be multiple variants for a measurements
     # (e.g. "nitrite, water as N" vs "nitrite, water as NO3-")
-    series = chain.from_iterable([x['parameters'] for x in parameter_group_series.values()])
+    series = chain.from_iterable([x['parameters'] for x in parameter_group_series])
     # include only real-time parameters that have recent data
     short_names = set(
         [
@@ -82,7 +81,7 @@ def readable_param_list(parameter_group_series):
              s['end_date'].date() <= datetime.datetime.now().date() + datetime.timedelta(days=1))
         ]
     )
-    sorted_names = sorted(short_names, key=lambda x: (x not in SORT_TOP, x))
+    sorted_names = sorted(short_names)
     if sorted_names:
         if len(sorted_names) == 1:
             parameters = sorted_names[0]
@@ -106,7 +105,8 @@ def date_to_string(dt_obj):
     """
     Given a datetime, provide a string.
 
-    :param datetime.datetime dt_obj: convert datetime to string
+    :param dt_obj: convert datetime to string
+    :type: datetime.datetime or pendulum.Pendulum
     :return: datetime as a string
     :rtype: str
 

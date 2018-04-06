@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Font sizing and responsive layout changes
 - Limit y-axis lower bound to nearest power of 10 on logarithmic scales
+- Site Summary table includes site visits, peak values, annual data reports, and groundwater network sites
 
 ### Fixed
 - Timeseries SVG has the correct title and desc tag contents.
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Map includes the location of the site with flood layers are included
 - Firefox bug where the time series graph legend would resize as things were added to it.
 - Limit y-axis tick count on small device widths and log scales.
+- Precipitation tooltips now show the correct accumulated values
 
 
 ## [0.5.0] - 2018-03-30
