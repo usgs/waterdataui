@@ -1,8 +1,8 @@
 Before making a pull request
 ----------------------------
 
-- Make sure all tests run
-- Update the changelog appropriately
+- [] Make sure all tests run
+- [] Update the changelog appropriately
 
 Title
 -----------
