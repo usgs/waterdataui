@@ -17,10 +17,21 @@
     position: relative;
     text-align: center;
 
-    &:focus,
-    &:hover .tooltip {
-        opacity: 1;
-        visibility: visible;
+    // On pointer devices, use the focus and hover state to indicate visibility.
+    @media (hover: hover) {
+        &:focus,
+        &:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+    // On touch devices, use the show-tooltip class to indicate visibility.
+    // See helpers.js for corresponding Javascript.
+    @media (hover: none) {
+        &.show-tooltip .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
     }
 
     .tooltip {

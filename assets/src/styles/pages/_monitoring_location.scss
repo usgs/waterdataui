@@ -11,7 +11,7 @@
     }
     .tooltip-item {
         .tooltip {
-            @include position(absolute, null null -7.5em -7.5em);
+            @include position(absolute, null null -6.25em -6.25em);
         }
     }
 }
