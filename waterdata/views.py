@@ -10,7 +10,7 @@ from .location_utils import build_linked_data, get_disambiguated_values, rollup_
 from .utils import construct_url, defined_when, execute_get_request, parse_rdb
 
 # Station Fields Mapping to Descriptions
-from .constants import STATION_FIELDS_D, US_STATES
+from .constants import STATION_FIELDS_D
 
 SERVICE_ROOT = app.config['SERVICE_ROOT']
 
