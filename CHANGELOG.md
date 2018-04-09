@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
+
+### Added
+- Tooltips are provided for metadata elements for those that USGS defines on NWIS help pages.
+
 ### Added
 - Play/Stop button to play the audible sound for the timeseries graph
 - Legend appears on the map describing the map features
