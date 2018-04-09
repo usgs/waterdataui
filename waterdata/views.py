@@ -77,8 +77,7 @@ def monitoring_location(site_no):
                         param_datum,
                         app.config['NWIS_CODE_LOOKUP'],
                         {},
-                        app.config['HUC_LOOKUP'],
-                        app.config['METADATA_DESC_LOOKUP']
+                        app.config['HUC_LOOKUP']
                     )
                     for param_datum in param_data
                 ]
@@ -100,8 +99,7 @@ def monitoring_location(site_no):
                 station_record,
                 app.config['NWIS_CODE_LOOKUP'],
                 app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
-                app.config['HUC_LOOKUP'],
-                app.config['METADATA_DESC_LOOKUP']
+                app.config['HUC_LOOKUP']
             )
             questions_link = None
             try:
