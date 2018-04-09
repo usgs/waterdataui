@@ -114,14 +114,14 @@
                     <tbody>
                         {% for key, value in location_with_values.items() %}
                             <tr>
-                                <th scope="row">{{ STATION_FIELDS_D[key] }}
-                                    {%  if value.description %}
+                                <th scope="row">{{ STATION_FIELDS_D[key].name }}
+                                    {%  if STATION_FIELDS_D[key].description %}
                                         <div class="tooltip-item">
                                             <sup aria-describedby="tooltip-{{ key|lower|replace('_', '-') }}">
                                                 <i class="fa fa-question-circle" aria-hidden="true"></i>
                                             </sup>
                                             <div class="tooltip">
-                                                <p id="tooltip-{{ key|lower|replace('_', '-') }}">{{ value.description }}</p>
+                                                <p id="tooltip-{{ key|lower|replace('_', '-') }}">{{ STATION_FIELDS_D[key].description }}</p>
                                             </div>
                                         </div>
                                     {% endif %}
