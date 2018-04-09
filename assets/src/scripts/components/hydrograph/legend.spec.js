@@ -197,6 +197,88 @@ describe('Legend module', () => {
             });
         });
 
+        fit('Should return the masks marker for the selected time series', () => {
+            const TEST_DATA = {
+                series: {
+                    timeSeries: {
+                        '00060': {
+                            tsKey: 'current',
+                            startTime: new Date('2018-03-06T15:45:00.000Z'),
+                            endTime: new Date('2018-03-13t13:45:00.000Z'),
+                            variable: '45807197',
+                            points: [{
+                                value: 10,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: null,
+                                qualifiers: ['P', 'ICE'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: null,
+                                qualifiers: ['P', 'FLD'],
+                                approved: false,
+                                estimated: false
+                            }]
+                        },
+                        '00010': {
+                            tsKey: 'compare',
+                            startTime: new Date('2017-03-06T15:45:00.000Z'),
+                            endTime: new Date('2017-03-13t13:45:00.000Z'),
+                            variable: '45807196',
+                            points: [{
+                                value: 1,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: 2,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: 3,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }]
+                        }
+                    },
+                    variables: {
+                        '45807197': {
+                            variableCode: {value: '00060'},
+                            variableName: 'Streamflow',
+                            variableDescription: 'Discharge, cubic feet per second',
+                            oid: '45807197'
+                        },
+                        '45807196': {
+                            variableCode: {value: '00010'},
+                            variableName: 'Gage Height',
+                            variableDescription: 'Gage Height in feet',
+                            oid: '45807196'
+                        }
+                    }
+                },
+                showSeries: {
+                    current: true
+                }
+            };
+
+            let result = legendDisplaySelector({
+                ...TEST_DATA,
+                currentVariableID: '45807197'
+            });
+            expect([...result.current.masks]).toEqual(['ice', 'fld']);
+
+            result = legendDisplaySelector({
+                ...TEST_DATA,
+                currentVariableID: '45807196'
+            });
+            expect([...result.current.masks]).toEqual([]);
+        });
+
         it('should not choke if median time series is absent', () => {
             let result = legendDisplaySelector({
                 series: {},
