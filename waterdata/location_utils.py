@@ -8,6 +8,7 @@ import itertools
 from flask import url_for
 import pendulum
 
+from . import app
 from .constants import US_STATES
 
 
@@ -27,7 +28,7 @@ def get_state_abbreviation(state_full_name):
     return state_abbrev
 
 
-def get_disambiguated_values(location, code_lookups, country_state_county_lookups, huc_lookups):
+def get_disambiguated_values(location, code_lookups, country_state_county_lookups, huc_lookups, desc_lookups):
     """
     Convert values for keys that contains codes to human readable names using the lookups
     :param dict location:
@@ -108,7 +109,11 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
                 'name': value,
                 'code': value
             }
-
+        try:
+            key_desc = desc_lookups[key]
+        except KeyError:
+            key_desc = None
+        transformed_value['description'] = key_desc
         transformed_location[key] = transformed_value
 
     return transformed_location

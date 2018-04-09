@@ -10,7 +10,7 @@ from .location_utils import build_linked_data, get_disambiguated_values, rollup_
 from .utils import construct_url, defined_when, execute_get_request, parse_rdb
 
 # Station Fields Mapping to Descriptions
-from .constants import STATION_FIELDS_D
+from .constants import STATION_FIELDS_D, US_STATES
 
 SERVICE_ROOT = app.config['SERVICE_ROOT']
 
@@ -73,7 +73,13 @@ def monitoring_location(site_no):
                     parse_rdb(parameter_data_resp.iter_lines(decode_unicode=True))
                 ]
                 site_dataseries = [
-                    get_disambiguated_values(param_datum, app.config['NWIS_CODE_LOOKUP'], {}, app.config['HUC_LOOKUP'])
+                    get_disambiguated_values(
+                        param_datum,
+                        app.config['NWIS_CODE_LOOKUP'],
+                        {},
+                        app.config['HUC_LOOKUP'],
+                        app.config['METADATA_DESC_LOOKUP']
+                    )
                     for param_datum in param_data
                 ]
                 grouped_dataseries = rollup_dataseries(site_dataseries)
@@ -94,19 +100,9 @@ def monitoring_location(site_no):
                 station_record,
                 app.config['NWIS_CODE_LOOKUP'],
                 app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
-                app.config['HUC_LOOKUP']
+                app.config['HUC_LOOKUP'],
+                app.config['METADATA_DESC_LOOKUP']
             )
-
-            def add_description_tooltip(k, v):
-                desc = None
-                try:
-                    desc = app.config.get('METADATA_DESC_LOOKUP', {})[k]
-                except KeyError:
-                    pass
-                v['description'] = desc
-                return v
-
-            location_with_values = {k: add_description_tooltip(k, v) for k, v in location_with_values.items()}
             questions_link = None
             try:
                 site_owner_state = (
