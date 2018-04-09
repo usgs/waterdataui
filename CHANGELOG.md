@@ -8,10 +8,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Tooltips are provided for metadata elements for those that USGS defines on NWIS help pages.
 
+### Fixed
+- Tooltip is redrawn correctly when changing from portrait to landscape on mobile.
+- Handle tooltips on touch devices
+
+
+## [0.6.0] - 2018-04-06
 ### Added
 - Play/Stop button to play the audible sound for the timeseries graph
 - Legend appears on the map describing the map features
 - Initialize the gage height slider with the current value of gage height
+- Crawable state/County pages that can be used to find the monitor locations for a particular state/county
 
 ### Changed
 - Font sizing and responsive layout changes
@@ -132,7 +139,8 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.5.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.6.0...master
+[0.6.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.5.0...waterdataui-0.6.0
 [0.5.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.4.0...waterdataui-0.5.0
 [0.4.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.3.0...waterdataui-0.4.0
 [0.3.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.2.0...waterdataui-0.3.0
