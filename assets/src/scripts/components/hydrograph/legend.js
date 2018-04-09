@@ -4,7 +4,7 @@ const { createSelector } = require('reselect');
 
 const { CIRCLE_RADIUS } = require('./layout');
 const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
-const { lineSegmentsSelector, HASH_ID, MASK_DESC} = require('./drawingData');
+const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} = require('./drawingData');
 const { currentVariableTimeSeriesSelector, methodsSelector } = require('./timeseries');
 
 
@@ -162,7 +162,7 @@ function drawSimpleLegend(div, {legendMarkerRows, layout}) {
 }
 
 const uniqueMasksSelector = memoize(tsKey => createSelector(
-    lineSegmentsSelector(tsKey),
+    currentVariableLineSegmentsSelector(tsKey),
     (tsLineSegments) => {
         return new Set(Object.values(tsLineSegments).reduce((masks, lineSegments) => {
             Array.prototype.push.apply(masks, lineSegments.map((segment) => segment.classes.dataMask));
@@ -170,6 +170,8 @@ const uniqueMasksSelector = memoize(tsKey => createSelector(
         }, []).filter(x => x !== null));
     }
 ));
+
+
 
 /**
  * Select attributes from the state useful for legend creation
