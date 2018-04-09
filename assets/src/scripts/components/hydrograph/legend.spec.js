@@ -197,7 +197,7 @@ describe('Legend module', () => {
             });
         });
 
-        fit('Should return the masks marker for the selected time series', () => {
+        it('Should return the masks marker for the selected time series', () => {
             const TEST_DATA = {
                 series: {
                     timeSeries: {
