@@ -17,6 +17,22 @@ const tsMaskMarkers = function(tsKey, masks) {
     });
 };
 
+const tsLineMarkers = function(tsKey, lineClasses) {
+    const GROUP_ID = `${tsKey}-line-marker`
+    let result = [];
+
+    if (lineClasses.default) {
+        result.push(defineLineMarker(`ts-legend-${tsKey}-default`, 'line-segment', 'Provisional', GROUP_ID));
+    }
+    if (lineClasses.approved) {
+        result.push(defineLineMarker(`ts-legend-${tsKey}-approved`, 'line-segment approved', 'Approved', GROUP_ID));
+    }
+    if (lineClasses.estimated) {
+        result.push(defineLineMarker(`ts-legend-${tsKey}-estinated`, 'line-segment estimated', 'Estimated', GROUP_ID));
+    }
+    return result;
+};
+
 /**
  * create elements for the legend in the svg
  *
@@ -30,14 +46,14 @@ const createLegendMarkers = function(displayItems) {
 
     if (displayItems.current) {
         legendMarkers.push([
-            defineLineMarker('ts-legend-current', 'line-segment', 'Current Year', 'current-year-line-marker'),
-            ...tsMaskMarkers('current', displayItems.current.masks)
+            ...tsLineMarkers('current', displayItems.current),
+            ...tsMaskMarkers('current', displayItems.current.dataMasks)
         ]);
     }
     if (displayItems.compare) {
         legendMarkers.push([
-            defineLineMarker('ts-legend-compare', 'line-segment', 'Last Year', 'compare-year-line-marker'),
-            ...tsMaskMarkers('compare', displayItems.compare.masks)
+            ...tsLineMarkers('compare', displayItems.compare),
+            ...tsMaskMarkers('compare', displayItems.compare.dataMasks)
         ]);
     }
 
@@ -161,13 +177,27 @@ function drawSimpleLegend(div, {legendMarkerRows, layout}) {
     svg.attr('viewBox', `-${CIRCLE_RADIUS} 0 ${layout.width} ${bBox.height + 10}`);
 }
 
-const uniqueMasksSelector = memoize(tsKey => createSelector(
+const uniqueClassesSelector = memoize(tsKey => createSelector(
     currentVariableLineSegmentsSelector(tsKey),
     (tsLineSegments) => {
-        return new Set(Object.values(tsLineSegments).reduce((masks, lineSegments) => {
-            Array.prototype.push.apply(masks, lineSegments.map((segment) => segment.classes.dataMask));
-            return masks;
-        }, []).filter(x => x !== null));
+        let classes = [].concat(...Object.values(tsLineSegments)).map((line) => line.classes);
+        let d = classes.find((cls) => {
+               return !cls.approved && !cls.estimated;
+            });
+        return {
+            default: classes.find((cls) => {
+               return !cls.approved && !cls.estimated;
+            }) ? true : false,
+            approved: classes.find((cls) => {
+                return cls.approved;
+            })? true : false,
+            estimated: classes.find((cls) => {
+                return cls.estimated;
+            }) ? true : false,
+            dataMasks: new Set(classes.map((cls) => cls.dataMask).filter((mask) => {
+                return mask;
+            }))
+        };
     }
 ));
 
@@ -180,12 +210,12 @@ const legendDisplaySelector = createSelector(
     (state) => state.showSeries,
     currentVariableTimeSeriesSelector('median'),
     methodsSelector,
-    uniqueMasksSelector('current'),
-    uniqueMasksSelector('compare'),
-    (showSeries, medianTSs, methods, currentMasks, compareMasks) => {
+    uniqueClassesSelector('current'),
+    uniqueClassesSelector('compare'),
+    (showSeries, medianTSs, methods, currentClasses, compareClasses) => {
         return {
-            current: showSeries.current ? {masks: currentMasks} : undefined,
-            compare: showSeries.compare ? {masks: compareMasks} : undefined,
+            current: showSeries.current ? currentClasses : undefined,
+            compare: showSeries.compare ? compareClasses : undefined,
             median: showSeries.median ? Object.values(medianTSs).map(medianTS => {
                 return {
                     beginYear: medianTS ? medianTS.metadata.beginYear : undefined,
