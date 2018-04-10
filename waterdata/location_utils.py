@@ -108,7 +108,6 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
                 'name': value,
                 'code': value
             }
-
         transformed_location[key] = transformed_value
 
     return transformed_location

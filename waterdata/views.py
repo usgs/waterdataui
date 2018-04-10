@@ -73,7 +73,12 @@ def monitoring_location(site_no):
                     parse_rdb(parameter_data_resp.iter_lines(decode_unicode=True))
                 ]
                 site_dataseries = [
-                    get_disambiguated_values(param_datum, app.config['NWIS_CODE_LOOKUP'], {}, app.config['HUC_LOOKUP'])
+                    get_disambiguated_values(
+                        param_datum,
+                        app.config['NWIS_CODE_LOOKUP'],
+                        {},
+                        app.config['HUC_LOOKUP']
+                    )
                     for param_datum in param_data
                 ]
                 grouped_dataseries = rollup_dataseries(site_dataseries)
@@ -96,7 +101,6 @@ def monitoring_location(site_no):
                 app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
                 app.config['HUC_LOOKUP']
             )
-
             questions_link = None
             try:
                 site_owner_state = (

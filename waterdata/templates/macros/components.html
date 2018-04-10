@@ -33,3 +33,15 @@
         {% if param_grp_series|data_start_year %} Water data back to {{  param_grp_series|data_start_year }} are available online.{% endif %}
     {% endif %}
 {%- endmacro %}
+
+
+{%  macro QuestionTooltip(text_id, content, external_desc) -%}
+    <div class="tooltip-item">
+        <sup {% if not external_desc %}aria-describedby="{{ text_id|tooltip_content_id }}"{% endif %}>
+            <i class="fa fa-question-circle" aria-hidden="true"></i>
+        </sup>
+        <div class="tooltip">
+            <p id="{{ text_id|tooltip_content_id }}">{{ content }}</p>
+        </div>
+    </div>
+{%- endmacro  %}

@@ -228,3 +228,13 @@ class TestDateToStringFilter(TestCase):
     def test_pendulum_year_month_day(self):
         result = filters.date_to_string(self.test_pen_dt)
         self.assertEqual(result, '2018-03-25')
+
+
+class TestTooltipContentIdFilter(TestCase):
+
+    def setUp(self):
+        self.test_string = 'Blah_Name'
+
+    def test_create(self):
+        result = filters.tooltip_content_id(self.test_string)
+        self.assertEqual(result, 'tooltip-blah-name')
