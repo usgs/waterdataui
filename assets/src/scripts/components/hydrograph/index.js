@@ -1,6 +1,7 @@
 /**
  * Hydrograph charting module.
  */
+import {mediaQuery} from '../../utils';
 
 const { select } = require('d3-selection');
 const { extent } = require('d3-array');
@@ -8,6 +9,7 @@ const { line: d3Line } = require('d3-shape');
 const { createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
+const { USWDS_MEDIUM_SCREEN } = require('../../config');
 const { dispatch, link, provide } = require('../../lib/redux');
 
 const { audibleUI } = require('./audible');
@@ -369,6 +371,14 @@ const graphControls = function(elem) {
             .classed('usa-fieldset-inputs', true)
             .classed('usa-unstyled-list', true)
             .classed('graph-controls-container', true);
+
+    graphControlDiv.call(link(function(elem, layout) {
+        if (!mediaQuery(USWDS_MEDIUM_SCREEN)) {
+            elem.style('padding-left', `${layout.margin.left}px`);
+        } else {
+            elem.style('padding-left', null);
+        }
+    }, layoutSelector));
 
     graphControlDiv.append('li')
         .call(audibleUI);
