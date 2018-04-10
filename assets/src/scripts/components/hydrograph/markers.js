@@ -78,6 +78,12 @@ const lineMarker = function({x, y, length, domId=null, domClass=null}) {
     return group;
 };
 
+const textOnlyMarker = function({x, y, domId=null, domClass=null}) {
+   let group = select(document.createElementNS(namespaces.svg, 'g'));
+   // TODO: Refactor so that text is drawn in this package, not in legend since text is associated with each marker.
+    return group;
+};
+
 
 const defineLineMarker = function(domId=null, domClass=null, text=null, groupId=null) {
     return {
@@ -88,6 +94,17 @@ const defineLineMarker = function(domId=null, domClass=null, text=null, groupId=
         groupId: groupId
     };
 };
+
+const defineTextOnlyMarker = function(domId=null, domClass=null, text, groupId=null) {
+    return {
+        type: textOnlyMarker,
+        domId: domId,
+        domClass: domClass,
+        text: text,
+        groupId: groupId
+    };
+};
+
 
 
 const defineRectangleMarker = function(domId=null, domClass=null, text=null, groupId=null, fill=null) {
@@ -114,5 +131,5 @@ const defineCircleMarker = function(radius, domId=null, domClass=null, text=null
 };
 
 
-module.exports = {circleMarker, rectangleMarker, lineMarker,defineLineMarker, defineCircleMarker,
-    defineRectangleMarker};
+module.exports = {circleMarker, rectangleMarker, lineMarker, textOnlyMarker,
+    defineLineMarker, defineCircleMarker, defineRectangleMarker, defineTextOnlyMarker};

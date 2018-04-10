@@ -3,9 +3,15 @@ const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
 const { CIRCLE_RADIUS } = require('./layout');
-const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
+const { defineLineMarker, defineTextOnlyMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
 const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} = require('./drawingData');
 const { currentVariableTimeSeriesSelector, methodsSelector } = require('./timeseries');
+
+const TS_LABEL = {
+    'current': 'Current',
+    'compare': 'Last year',
+    'median': 'Median'
+};
 
 
 const tsMaskMarkers = function(tsKey, masks) {
@@ -18,7 +24,7 @@ const tsMaskMarkers = function(tsKey, masks) {
 };
 
 const tsLineMarkers = function(tsKey, lineClasses) {
-    const GROUP_ID = `${tsKey}-line-marker`
+    const GROUP_ID = `${tsKey}-line-marker`;
     let result = [];
 
     if (lineClasses.default) {
@@ -46,12 +52,14 @@ const createLegendMarkers = function(displayItems) {
 
     if (displayItems.current) {
         legendMarkers.push([
+            defineTextOnlyMarker('ts-legend-current-text', null, TS_LABEL.current),
             ...tsLineMarkers('current', displayItems.current),
             ...tsMaskMarkers('current', displayItems.current.dataMasks)
         ]);
     }
     if (displayItems.compare) {
         legendMarkers.push([
+            defineTextOnlyMarker('ts-legend-compare-text', null, TS_LABEL.compare),
             ...tsLineMarkers('compare', displayItems.compare),
             ...tsMaskMarkers('compare', displayItems.compare.dataMasks)
         ]);
@@ -71,9 +79,9 @@ const createLegendMarkers = function(displayItems) {
 
             const descriptionText = stats.description  ? `${stats.description} ` : '';
             const classes = `median-data-series median-modulo-${index % 6}`;
-            const label = `Median ${descriptionText}${dateText}`;
+            const label = `${descriptionText}${dateText}`;
 
-            legendMarkers.push([defineCircleMarker(CIRCLE_RADIUS, null, classes, label)]);
+            legendMarkers.push([defineTextOnlyMarker(null, null, TS_LABEL.median), defineCircleMarker(CIRCLE_RADIUS, null, classes, label)]);
         }
     }
 
@@ -95,9 +103,9 @@ function drawSimpleLegend(div, {legendMarkerRows, layout}) {
     }
 
     const markerYPosition = -4;
-    const markerGroupXOffset = 40;
+    const markerGroupXOffset = 15;
     const verticalRowOffset = 18;
-    const markerTextXOffset = 10;
+    const markerTextXOffset = 6;
 
     let svg = div.append('svg')
         .attr('class', 'legend-svg');
@@ -181,12 +189,9 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
     currentVariableLineSegmentsSelector(tsKey),
     (tsLineSegments) => {
         let classes = [].concat(...Object.values(tsLineSegments)).map((line) => line.classes);
-        let d = classes.find((cls) => {
-               return !cls.approved && !cls.estimated;
-            });
         return {
             default: classes.find((cls) => {
-               return !cls.approved && !cls.estimated;
+               return !cls.approved && !cls.estimated && !cls.dataMask;
             }) ? true : false,
             approved: classes.find((cls) => {
                 return cls.approved;
