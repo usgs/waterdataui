@@ -28,13 +28,13 @@ const tsLineMarkers = function(tsKey, lineClasses) {
     let result = [];
 
     if (lineClasses.default) {
-        result.push(defineLineMarker(`ts-legend-${tsKey}-default`, 'line-segment', 'Provisional', GROUP_ID));
+        result.push(defineLineMarker(null, `line-segment ts-${tsKey}`, 'Provisional', GROUP_ID));
     }
     if (lineClasses.approved) {
-        result.push(defineLineMarker(`ts-legend-${tsKey}-approved`, 'line-segment approved', 'Approved', GROUP_ID));
+        result.push(defineLineMarker(null, `line-segment approved ts-${tsKey}`, 'Approved', GROUP_ID));
     }
     if (lineClasses.estimated) {
-        result.push(defineLineMarker(`ts-legend-${tsKey}-estinated`, 'line-segment estimated', 'Estimated', GROUP_ID));
+        result.push(defineLineMarker(null, `line-segment estimated ts-${tsKey}`, 'Estimated', GROUP_ID));
     }
     return result;
 };
@@ -114,10 +114,8 @@ function drawSimpleLegend(div, {legendMarkerRows, layout}) {
         return;
     }
 
-    const markerYPosition = -4;
     const markerGroupXOffset = 15;
     const verticalRowOffset = 18;
-    const markerTextXOffset = 6;
 
     let svg = div.append('svg')
         .attr('class', 'legend-svg');
