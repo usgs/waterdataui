@@ -142,6 +142,15 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
             };
             let markerGroup = marker.type(legend, markerArgs);
             let markerGroupBBox;
+            // Long story short, firefox is unable to get the bounding box if
+            // the svg element isn't actually taking up space and visible. Folks on the
+            // internet seem to have gotten around this by setting `visibility:hidden`
+            // to hide things, but that would still mean the elements will take up space.
+            // which we don't want. So, here's some error handling for getBBox failures.
+            // This handling ends up not creating the legend, but that's okay because the
+            // graph is being shown anyway. A more detailed discussion of this can be found at:
+            // https://bugzilla.mozilla.org/show_bug.cgi?id=612118 and
+            // https://stackoverflow.com/questions/28282295/getbbox-of-svg-when-hidden.
             try {
                 markerGroupBBox = markerGroup.node().getBBox();
                 xPosition = markerGroupBBox.x + markerGroupBBox.width + markerGroupXOffset;
