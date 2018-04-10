@@ -8,9 +8,9 @@ const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} = require('./dr
 const { currentVariableTimeSeriesSelector, methodsSelector } = require('./timeseries');
 
 const TS_LABEL = {
-    'current': 'Current',
-    'compare': 'Last year',
-    'median': 'Median'
+    'current': 'Current: ',
+    'compare': 'Last year: ',
+    'median': 'Median: '
 };
 
 
@@ -51,18 +51,28 @@ const createLegendMarkers = function(displayItems) {
     const legendMarkers = [];
 
     if (displayItems.current) {
-        legendMarkers.push([
-            defineTextOnlyMarker('ts-legend-current-text', null, TS_LABEL.current),
+        const currentMarkers = [
             ...tsLineMarkers('current', displayItems.current),
             ...tsMaskMarkers('current', displayItems.current.dataMasks)
-        ]);
+        ];
+        if (currentMarkers.length) {
+            legendMarkers.push([
+                defineTextOnlyMarker('ts-legend-current-text', null, TS_LABEL.current),
+                ...currentMarkers
+            ]);
+        }
     }
     if (displayItems.compare) {
-        legendMarkers.push([
-            defineTextOnlyMarker('ts-legend-compare-text', null, TS_LABEL.compare),
+        const compareMarkers = [
             ...tsLineMarkers('compare', displayItems.compare),
             ...tsMaskMarkers('compare', displayItems.compare.dataMasks)
-        ]);
+        ];
+        if (compareMarkers.length) {
+            legendMarkers.push([
+                defineTextOnlyMarker('ts-legend-compare-text', null, TS_LABEL.compare),
+                ...compareMarkers
+            ]);
+        }
     }
 
     if (displayItems.median) {
@@ -81,7 +91,9 @@ const createLegendMarkers = function(displayItems) {
             const classes = `median-data-series median-modulo-${index % 6}`;
             const label = `${descriptionText}${dateText}`;
 
-            legendMarkers.push([defineTextOnlyMarker(null, null, TS_LABEL.median), defineCircleMarker(CIRCLE_RADIUS, null, classes, label)]);
+            legendMarkers.push([
+                defineTextOnlyMarker(null, null, TS_LABEL.median),
+                defineCircleMarker(CIRCLE_RADIUS, null, classes, label)]);
         }
     }
 
@@ -114,67 +126,37 @@ function drawSimpleLegend(div, {legendMarkerRows, layout}) {
             .attr('class', 'legend')
             .attr('transform', `translate(${layout.margin.left}, 0)`);
 
-    for (const [index, legendMarkerRow] of legendMarkerRows.entries()) {
-        const rowCount = index + 1;
+    legendMarkerRows.forEach((rowMarkers, rowIndex) => {
         let xPosition = 0;
-        let previousMarkerGroup;
+        let yPosition = verticalRowOffset * (rowIndex + 1);
 
-        for (let legendMarker of legendMarkerRow) {
-            if (previousMarkerGroup) {
-                let previousMarkerGroupBox = previousMarkerGroup.node().getBBox();
-                xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupXOffset;
-            }
-            let legendGroup = legend.append('g')
-                .attr('class', 'legend-marker');
-            if (legendMarker.groupId) {
-                legendGroup.attr('id', legendMarker.groupId);
-            }
-            let markerType = legendMarker.type;
-            let yPosition;
-            if (markerType === rectangleMarker) {
-                yPosition = markerYPosition * 2.5 + verticalRowOffset * rowCount;
-            } else {
-                yPosition = markerYPosition + verticalRowOffset * rowCount;
-            }
+        rowMarkers.forEach((marker) => {
             let markerArgs = {
-                r: legendMarker.r ? legendMarker.r : null,
                 x: xPosition,
                 y: yPosition,
+                text: marker.text,
+                domId: marker.domId,
+                domClass: marker.domClass,
                 width: 20,
                 height: 10,
                 length: 20,
-                domId: legendMarker.domId,
-                domClass: legendMarker.domClass,
-                fill: legendMarker.fill
+                r: marker.r ,
+                fill: marker.fill
             };
-
-            // add the marker to the svg
-            let detachedMarker = markerType(markerArgs);
-            legendGroup.node().appendChild(detachedMarker.node());
-            // add text for the legend marker
-            let detachedMarkerBBox;
-            // Long story short, firefox is unable to get the bounding box if
-            // the svg element isn't actually taking up space and visible. Folks on the
-            // internet seem to have gotten around this by setting `visibility:hidden`
-            // to hide things, but that would still mean the elements will take up space.
-            // which we don't want. So, here's some error handling for getBBox failures.
-            // This handling ends up not creating the legend, but that's okay because the
-            // graph is being shown anyway. A more detailed discussion of this can be found at:
-            // https://bugzilla.mozilla.org/show_bug.cgi?id=612118 and
-            // https://stackoverflow.com/questions/28282295/getbbox-of-svg-when-hidden.
+            let markerGroup = marker.type(legend, markerArgs);
+            let markerGroupBBox;
             try {
-                detachedMarkerBBox = detachedMarker.node().getBBox();
-            } catch(error) {
-                continue;
-            }
-            legendGroup.append('text')
-                .attr('x', detachedMarkerBBox.x + detachedMarkerBBox.width + markerTextXOffset)
-                .attr('y', verticalRowOffset * rowCount)
-                .text(legendMarker.text);
-            previousMarkerGroup = legendGroup;
-        }
-    }
+                markerGroupBBox = markerGroup.node().getBBox();
+                xPosition = markerGroupBBox.x + markerGroupBBox.width + markerGroupXOffset;
 
+            } catch(error) {
+                console.log('Group bbox error on ' + marker.text);
+            }
+        });
+    });
+/*
+
+*/
     // Set the size of the containing svg node to the size of the legend.
     let bBox;
     try {
@@ -238,4 +220,4 @@ const legendMarkerRowsSelector = createSelector(
     displayItems => createLegendMarkers(displayItems)
 );
 
-module.exports = {drawSimpleLegend, createLegendMarkers, legendDisplaySelector, legendMarkerRowsSelector};
+module.exports = {drawSimpleLegend, createLegendMarkers, legendDisplaySelector, legendMarkerRowsSelector}
