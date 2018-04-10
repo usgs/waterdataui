@@ -118,17 +118,17 @@ describe('Legend module', () => {
                         variable: '45807202',
                         points: [{
                             value: 1,
-                            qualifiers: ['P'],
+                            qualifiers: ['A'],
                             approved: false,
                             estimated: false
                         }, {
                             value: 2,
-                            qualifiers: ['P'],
+                            qualifiers: ['A'],
                             approved: false,
                             estimated: false
                         }, {
                             value: 3,
-                            qualifiers: ['P'],
+                            qualifiers: ['E'],
                             approved: false,
                             estimated: false
                         }]
@@ -204,9 +204,10 @@ describe('Legend module', () => {
             const result = legendMarkerRowsSelector(newData);
 
             expect(result.length).toBe(2);
-            expect(result[0].length).toBe(2);
+            expect(result[0].length).toBe(3);
             expect(result[0][0].type).toEqual(textOnlyMarker);
             expect(result[0][1].type).toEqual(lineMarker);
+            expect(result[0][2].type).toEqual(lineMarker);
             expect(result[1].length).toBe(2);
             expect(result[1][0].type).toEqual(textOnlyMarker);
             expect(result[1][1].type).toEqual(circleMarker);

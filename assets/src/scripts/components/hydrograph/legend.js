@@ -148,7 +148,7 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
                 xPosition = markerGroupBBox.x + markerGroupBBox.width + markerGroupXOffset;
 
             } catch(error) {
-                console.log('Group bbox error on ' + marker.text);
+                null;
             }
         });
     });
