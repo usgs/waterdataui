@@ -316,19 +316,19 @@ describe('Hydrograph charting module', () => {
                 .call(timeSeriesLegend);
         });
 
-        it('Should have three legend markers', () => {
-            expect(selectAll('g.legend-marker').size()).toBe(3);
+        it('Should have 6 legend markers', () => {
+            expect(selectAll('.legend g').size()).toBe(6);
         });
 
-        it('Should have two legend markers after the compare time series is removed', () => {
+        it('Should have four legend markers after the compare time series is removed', () => {
             store.dispatch(Actions.toggleTimeseries('compare', false));
-            expect(selectAll('g.legend-marker').size()).toBe(2);
+            expect(selectAll('.legend g').size()).toBe(4);
         });
 
-        it('Should have one legend marker after the compare and median time series are removed', () => {
+        it('Should have two legend marker after the compare and median time series are removed', () => {
             store.dispatch(Actions.toggleTimeseries('compare', false));
             store.dispatch(Actions.toggleTimeseries('median', false));
-            expect(selectAll('g.legend-marker').size()).toBe(1);
+            expect(selectAll('.legend g').size()).toBe(2);
         });
     });
 
