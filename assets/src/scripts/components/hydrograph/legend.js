@@ -24,17 +24,16 @@ const tsMaskMarkers = function(tsKey, masks) {
 };
 
 const tsLineMarkers = function(tsKey, lineClasses) {
-    const GROUP_ID = `${tsKey}-line-marker`;
     let result = [];
 
     if (lineClasses.default) {
-        result.push(defineLineMarker(null, `line-segment ts-${tsKey}`, 'Provisional', GROUP_ID));
+        result.push(defineLineMarker(null, `line-segment ts-${tsKey}`, 'Provisional'));
     }
     if (lineClasses.approved) {
-        result.push(defineLineMarker(null, `line-segment approved ts-${tsKey}`, 'Approved', GROUP_ID));
+        result.push(defineLineMarker(null, `line-segment approved ts-${tsKey}`, 'Approved'));
     }
     if (lineClasses.estimated) {
-        result.push(defineLineMarker(null, `line-segment estimated ts-${tsKey}`, 'Estimated', GROUP_ID));
+        result.push(defineLineMarker(null, `line-segment estimated ts-${tsKey}`, 'Estimated'));
     }
     return result;
 };

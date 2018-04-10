@@ -176,7 +176,6 @@ $highlight: $color-gray-lightest;
         .y-axis {
             text {
                 fill: black;
-                text-anchor: left;
                 &.y-axis-label {
                     text-anchor: middle;
                     display: none;
@@ -273,7 +272,7 @@ $highlight: $color-gray-lightest;
 }
 
 .slider-wrapper {
-    height: 0px;
+    height: 0;
     input#cursor-slider {
         max-width: none;
         position: relative;
@@ -302,7 +301,7 @@ $highlight: $color-gray-lightest;
     .graph-controls-container {
         position: absolute;
         display: inline-block;
-        top: 0px;
-        right: 0px;
+        top: 0;
+        right: 0;
     }
 }
