@@ -53,14 +53,7 @@
                     <div>
                         <span class="usa-label">Important</span>
                         <a href="https://waterdata.usgs.gov/nwis/uv?site_no={{stations[0].site_no}}" target="_blank">Classic Page</a>
-                        <div class="tooltip-item">
-                            <sup aria-describedby="tooltip-classic">
-                                <i class="fa fa-question-circle" onclick="void(0)"></i>
-                            </sup>
-                            <div class="tooltip">
-                                <p id="tooltip-classic">View all current conditions values on the classic Water Data for the Nation interface.</p>
-                            </div>
-                        </div>
+                        {{ components.QuestionTooltip('classic', 'View all current conditions values on the classic Water Data for the Nation interface.') }}
                     </div>
                     <p id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}</p>
                 </div>
@@ -116,14 +109,7 @@
                             <tr>
                                 <th scope="row">{{ STATION_FIELDS_D[key].name }}
                                     {%  if STATION_FIELDS_D[key].description %}
-                                        <div class="tooltip-item">
-                                            <sup aria-describedby="tooltip-{{ key|lower|replace('_', '-') }}">
-                                                <i class="fa fa-question-circle" aria-hidden="true"></i>
-                                            </sup>
-                                            <div class="tooltip">
-                                                <p id="tooltip-{{ key|lower|replace('_', '-') }}">{{ STATION_FIELDS_D[key].description }}</p>
-                                            </div>
-                                        </div>
+                                        {{ components.QuestionTooltip(key, STATION_FIELDS_D[key].description) }}
                                     {% endif %}
                                 </th>
                                 <td class="loc-metadata">
@@ -133,14 +119,7 @@
                                         {{ value.name }}
                                     {% endif %}
                                     {% if value.desc %}
-                                        <div class="tooltip-item">
-                                            <sup aria-describedby="tooltip-{{ value.code }}">
-                                                <i class="fa fa-question-circle" aria-hidden="true"></i>
-                                            </sup>
-                                            <div class="tooltip">
-                                                <p id="tooltip-{{ value.code }}">{{ value.desc }}</p>
-                                            </div>
-                                        </div>
+                                        {{ components.QuestionTooltip(value.code, value.desc) }}
                                     {% endif %}
                                 </td>
                                 <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
