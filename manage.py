@@ -25,8 +25,6 @@ cli = FlaskGroup(create_app=lambda script_info: app)
               help='Generate the region lookup file.')
 @click.option('--huc', is_flag=True, default=False,
               help='Generate the HUC lookup file.')
-@click.option('--metadata', is_flag=True, default=False,
-              help='Generate descriptions lookup file for metadata headers.')
 def generate_lookups(datadir, **lookups):
     """
     Creates lookup file(s) from NWIS web services in the specified directory.
