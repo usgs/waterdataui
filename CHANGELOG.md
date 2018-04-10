@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
+### Added
+- Tooltips are provided for metadata elements for those that USGS defines on NWIS help pages.
+
 ### Fixed
 - Tooltip is redrawn correctly when changing from portrait to landscape on mobile.
 - Handle tooltips on touch devices
