@@ -7,7 +7,6 @@ const { createSelector, createStructuredSelector } = require('reselect');
 
 const { dispatch, link, initAndUpdate } = require('../../lib/redux');
 const { Actions } = require('../../store');
-const { wrap } = require('../../utils');
 
 const { cursorTimeSelector, tsCursorPointsSelector } = require('./cursor');
 const { classesForPoint, MASK_DESC } = require('./drawingData');
@@ -76,19 +75,16 @@ const tooltipPointsSelector = memoize(tsKey => createSelector(
 const getTooltipText = function(datum, qualifiers, unitCode) {
     let label = '';
     if (datum && qualifiers) {
-        let tzAbbrev = datum.dateTime.toString().match(/\(([^)]+)\)/)[1];
+        const tzAbbrev = datum.dateTime.toString().match(/\(([^)]+)\)/)[1];
+        const valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
+
         const maskKeys = new Set(Object.keys(MASK_DESC));
         const qualiferKeysLower = new Set(datum.qualifiers.map(x => x.toLowerCase()));
         const keyIntersect = [...qualiferKeysLower].filter(x => maskKeys.has(x));
-        const qualifierStr = Object.keys(qualifiers).filter(
-            key => datum.qualifiers.indexOf(key) > -1 && !maskKeys.has(key.toLowerCase())).map(
-                key => qualifiers[key].qualifierDescription).join(', ');
-        let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
-        if (valueStr.trim().length === 0 && keyIntersect) {
-            // a data point will have at most one masking qualifier
-            valueStr = MASK_DESC[[keyIntersect][0]];
+
+        if (valueStr.trim().length && !keyIntersect.length) {
+            label = `${valueStr} - ${formatTime(datum.dateTime)} ${tzAbbrev}`;
         }
-        label = `${valueStr} - ${formatTime(datum.dateTime)} ${tzAbbrev} (${qualifierStr})`;
     }
 
     return label;
