@@ -1,6 +1,9 @@
 // Initialize the 18F Web design standards
 require('uswds');
 
+// Load misc Javascript helpers for general page interactivity.
+require('./helpers').register();
+
 const { configureStore } = require('./store');
 
 
