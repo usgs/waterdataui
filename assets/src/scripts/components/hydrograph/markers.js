@@ -122,7 +122,7 @@ export const defineLineMarker = function(domId=null, domClass=null, text=null) {
     };
 };
 
-export const defineTextOnlyMarker = function(domId=null, domClass=null, text) {
+export const defineTextOnlyMarker = function(text, domId=null, domClass=null ) {
     return {
         type: textOnlyMarker,
         domId: domId,

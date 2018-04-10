@@ -3,7 +3,7 @@ const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
 const { CIRCLE_RADIUS } = require('./layout');
-const { defineLineMarker, defineTextOnlyMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
+const { defineLineMarker, defineTextOnlyMarker, defineCircleMarker, defineRectangleMarker} = require('./markers');
 const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} = require('./drawingData');
 const { currentVariableTimeSeriesSelector, methodsSelector } = require('./timeseries');
 
@@ -57,7 +57,7 @@ const createLegendMarkers = function(displayItems) {
         ];
         if (currentMarkers.length) {
             legendMarkers.push([
-                defineTextOnlyMarker('ts-legend-current-text', null, TS_LABEL.current),
+                defineTextOnlyMarker(TS_LABEL.current, null, 'ts-legend-current-text'),
                 ...currentMarkers
             ]);
         }
@@ -69,7 +69,7 @@ const createLegendMarkers = function(displayItems) {
         ];
         if (compareMarkers.length) {
             legendMarkers.push([
-                defineTextOnlyMarker('ts-legend-compare-text', null, TS_LABEL.compare),
+                defineTextOnlyMarker(TS_LABEL.compare, null, 'ts-legend-compare-text'),
                 ...compareMarkers
             ]);
         }
@@ -92,7 +92,7 @@ const createLegendMarkers = function(displayItems) {
             const label = `${descriptionText}${dateText}`;
 
             legendMarkers.push([
-                defineTextOnlyMarker(null, null, TS_LABEL.median),
+                defineTextOnlyMarker(TS_LABEL.median),
                 defineCircleMarker(CIRCLE_RADIUS, null, classes, label)]);
         }
     }
@@ -107,10 +107,10 @@ const createLegendMarkers = function(displayItems) {
  * @param {Object} legendMarkerRows - Array of rows. Each row should be an array of legend markers.
  * @param {Object} layout - width and height of svg.
  */
-function drawSimpleLegend(div, {legendMarkerRows, layout}) {
+export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
     div.selectAll('.legend-svg').remove();
 
-    if (!legendMarkerRows || !layout) {
+    if (!legendMarkerRows.length || !layout) {
         return;
     }
 
@@ -152,9 +152,7 @@ function drawSimpleLegend(div, {legendMarkerRows, layout}) {
             }
         });
     });
-/*
 
-*/
     // Set the size of the containing svg node to the size of the legend.
     let bBox;
     try {
@@ -163,7 +161,7 @@ function drawSimpleLegend(div, {legendMarkerRows, layout}) {
         return;
     }
     svg.attr('viewBox', `-${CIRCLE_RADIUS} 0 ${layout.width} ${bBox.height + 10}`);
-}
+};
 
 const uniqueClassesSelector = memoize(tsKey => createSelector(
     currentVariableLineSegmentsSelector(tsKey),
@@ -213,9 +211,13 @@ const legendDisplaySelector = createSelector(
 );
 
 
-const legendMarkerRowsSelector = createSelector(
+/*
+ * Factory function  that returns an array of array of markers to be used for the
+ * timeseries graph legend
+ * @return {Array of Array} of markers
+ */
+export const legendMarkerRowsSelector = createSelector(
     legendDisplaySelector,
     displayItems => createLegendMarkers(displayItems)
 );
 
-module.exports = {drawSimpleLegend, createLegendMarkers, legendDisplaySelector, legendMarkerRowsSelector}
