@@ -52,8 +52,8 @@
                     <h1>{{ stations[0].station_nm }}</h1>
                     <div>
                         <span class="usa-label">Important</span>
-                        <a href="https://waterdata.usgs.gov/nwis/uv?site_no={{stations[0].site_no}}" target="_blank">Classic Page</a>
-                        {{ components.QuestionTooltip('classic', 'View all current conditions values on the classic Water Data for the Nation interface.') }}
+                        <a aria-describedby="{{ 'classic'|tooltip_content_id }}" href="https://waterdata.usgs.gov/nwis/uv?site_no={{stations[0].site_no}}" target="_blank">Classic Page</a>
+                        {{ components.QuestionTooltip('classic', 'View all current conditions values on the classic Water Data for the Nation interface.', True) }}
                     </div>
                     <p id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}</p>
                 </div>
@@ -107,9 +107,9 @@
                     <tbody>
                         {% for key, value in location_with_values.items() %}
                             <tr>
-                                <th scope="row">{{ STATION_FIELDS_D[key].name }}
+                                <th scope="row" {%  if STATION_FIELDS_D[key].description %}aria-describedby="{{ key|tooltip_content_id }}"{% endif %}>{{ STATION_FIELDS_D[key].name }}
                                     {%  if STATION_FIELDS_D[key].description %}
-                                        {{ components.QuestionTooltip(key, STATION_FIELDS_D[key].description) }}
+                                        {{ components.QuestionTooltip(key, STATION_FIELDS_D[key].description, True) }}
                                     {% endif %}
                                 </th>
                                 <td class="loc-metadata">
@@ -119,7 +119,7 @@
                                         {{ value.name }}
                                     {% endif %}
                                     {% if value.desc %}
-                                        {{ components.QuestionTooltip(value.code, value.desc) }}
+                                        {{ components.QuestionTooltip(value.code, value.desc, False) }}
                                     {% endif %}
                                 </td>
                                 <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
@@ -137,6 +137,5 @@
         {% else %}
             <h1>Error: HTTP {{ status_code }} -- {{ reason }}</h1>
         {% endif %}
-
     </div>
 {% endblock content %}

@@ -112,3 +112,15 @@ def date_to_string(dt_obj):
 
     """
     return dt_obj.strftime('%Y-%m-%d')
+
+
+@app.template_filter('tooltip_content_id')
+def tooltip_content_id(some_text):
+    """
+    Generate a tooltip ID.
+
+    :param str some_text: some text for the id suffix
+    :return: tooltip id
+
+    """
+    return 'tooltip-{}'.format(some_text.lower().replace('_', '-'))

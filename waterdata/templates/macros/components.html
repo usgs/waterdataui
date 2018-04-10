@@ -35,13 +35,13 @@
 {%- endmacro %}
 
 
-{%  macro QuestionTooltip(text_id, content) -%}
+{%  macro QuestionTooltip(text_id, content, external_desc) -%}
     <div class="tooltip-item">
-        <sup aria-describedby="tooltip-{{ text_id|lower|replace('_', '-') }}">
+        <sup {% if not external_desc %}aria-describedby="{{ text_id|tooltip_content_id }}"{% endif %}>
             <i class="fa fa-question-circle" aria-hidden="true"></i>
         </sup>
         <div class="tooltip">
-            <p id="tooltip-{{ text_id|lower|replace('_', '-') }}">{{ content }}</p>
+            <p id="{{ text_id|tooltip_content_id }}">{{ content }}</p>
         </div>
     </div>
 {%- endmacro  %}
