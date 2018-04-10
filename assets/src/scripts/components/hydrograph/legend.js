@@ -19,7 +19,7 @@ const tsMaskMarkers = function(tsKey, masks) {
         const maskName = MASK_DESC[mask];
         const tsClass = `${maskName.replace(' ', '-').toLowerCase()}-mask`;
         const fill = `url(#${HASH_ID[tsKey]})`;
-        return defineRectangleMarker(null, `mask ${tsClass}`, maskName, null, fill);
+        return defineRectangleMarker(null, `mask ${tsClass}`, maskName, fill);
     });
 };
 
