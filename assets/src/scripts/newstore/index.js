@@ -1,13 +1,10 @@
-const merge = require('lodash/merge');
 const findKey = require('lodash/findKey');
 const last = require('lodash/last');
-const { applyMiddleware, createStore, compose } = require('redux');
-const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
-    parseMedianData, sortedParameters } = require('./models');
-const { normalize } = require('./schema');
-const { fetchFloodFeatures, fetchFloodExtent } = require('./floodData');
+    parseMedianData } = require('../models');
+const { normalize } = require('../schema');
+const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
 
 const getLatestValue = function(collection, parmCd) {
     let parmVar = findKey(collection.variables, (varValue) => {
@@ -21,6 +18,8 @@ const getLatestValue = function(collection, parmCd) {
 };
 
 const GAGE_HEIGHT_CD = '00065';
+
+
 
 export const Actions = {
     retrieveTimeseries(siteno, params=null) {
@@ -180,7 +179,7 @@ export const Actions = {
     },
     setGageHeightIndex(gageHeightIndex) {
         return {
-            type: 'SET_GAGE_HEIGHT_FROM_STAGE',
+            type: 'SET_GAGE_HEIGHT_INDEX',
             gageHeightIndex
         };
     },
@@ -190,184 +189,4 @@ export const Actions = {
             gageHeight
         };
     }
-};
-
-const getGageHeight = function(gageHeight, floodStages) {
-    let result = gageHeight;
-    if (floodStages.length) {
-        // Set gageHeight to the nearest flood stage
-        result = floodStages[0];
-        let diff = Math.abs(gageHeight - result );
-        floodStages.forEach((stage) => {
-            let newDiff = Math.abs(gageHeight - stage);
-            if (newDiff < diff) {
-                diff = newDiff;
-                result = stage;
-            }
-        });
-    }
-    return result;
-};
-
-
-export const timeSeriesReducer = function (state={}, action) {
-    let newState;
-    let sorted;
-    let currentVar;
-
-    switch (action.type) {
-        case 'TIMESERIES_PLAY_ON':
-            return {
-                ...state,
-                playId: action.playId
-            };
-
-        case 'TIMESERIES_PLAY_STOP':
-            return {
-                ...state,
-                playId: null
-            };
-
-        case 'SET_FLOOD_FEATURES':
-            return {
-                ...state,
-                floodStages: action.stages,
-                floodExtent: action.extent,
-                gageHeight: getGageHeight(state.gageHeight, action.stages)
-            };
-
-        case 'ADD_TIMESERIES_COLLECTION':
-            // Get variables sorted, and filtering out those that don't have
-            // points on the corresponding time series.
-            sorted = action.data.variables ? sortedParameters(
-                Object.values(action.data.timeSeries || {})
-                    .filter(ts => ts.points.length)
-                    .map(ts => ts.variable)
-                    .reduce((vars, v) => {
-                        vars[v] = action.data.variables[v];
-                        return vars;
-                    }, {})
-            ) : [];
-            currentVar = sorted.length > 0 ? sorted[0].oid : null;
-            return {
-                ...state,
-                series: merge({}, state.series, action.data),
-                showSeries: {
-                    ...state.showSeries,
-                    [action.key]: action.show
-                },
-                currentVariableID: state.currentVariableID || currentVar
-            };
-
-        case 'TOGGLE_TIMESERIES':
-            return {
-                ...state,
-                showSeries: {
-                    ...state.showSeries,
-                    [action.key]: action.show
-                }
-            };
-
-        case 'RESET_TIMESERIES':
-            newState = {
-                ...state,
-                showSeries: {
-                    ...state.showSeries,
-                    [action.key]: false
-                },
-                series: {
-                    ...state.series,
-                    request: {
-                        ...(state.series || {}).request
-                    }
-                }
-            };
-            delete newState.series.request[action.key];
-            return newState;
-
-        case 'SHOW_MEDIAN_STATS_LABEL':
-            return {
-                ...state,
-                showMedianStatsLabel : action.show
-            };
-
-        case 'SET_CURSOR_OFFSET':
-            return {
-                ...state,
-                cursorOffset: action.cursorOffset
-            };
-
-        case 'RESIZE_UI':
-            return {
-                ...state,
-                windowWidth: action.windowWidth,
-                width: action.width
-            };
-
-        case 'PARAMETER_CODE_SET':
-            return {
-                ...state,
-                currentVariableID: action.variableID
-            };
-
-        case 'SET_GAGE_HEIGHT_INDEX':
-            return {
-                ...state,
-                gageHeight: state.floodStages[action.gageHeightIndex]
-            };
-
-        case 'SET_GAGE_HEIGHT':
-            return {
-                ...state,
-                gageHeight: getGageHeight(action.gageHeight, state.floodStages)
-            };
-
-        default:
-            return state;
-    }
-};
-
-
-const MIDDLEWARES = [thunk];
-
-
-export const configureStore = function (initialState) {
-    initialState = {
-        series: {},
-        statisticalMetaData: {
-            beginYear: '',
-            endYear: ''
-        },
-        showSeries: {
-            current: true,
-            compare: false,
-            median: false
-        },
-        currentVariableID: null,
-        windowWidth: 1024,
-        width: 800,
-        showMedianStatsLabel: false,
-        cursorOffset: null,
-        floodStages: [],
-        floodExtent: {},
-        gageHeight: null,
-        playId: null,
-        ...initialState
-    };
-
-    let enhancers;
-    if (window.__REDUX_DEVTOOLS_EXTENSION__) {
-        enhancers = compose(
-            applyMiddleware(...MIDDLEWARES),
-            window.__REDUX_DEVTOOLS_EXTENSION__({serialize: true})
-        );
-    } else {
-        enhancers = applyMiddleware(...MIDDLEWARES);
-    }
-
-    return createStore(
-        timeSeriesReducer,
-        initialState,
-        enhancers
-    );
 };
