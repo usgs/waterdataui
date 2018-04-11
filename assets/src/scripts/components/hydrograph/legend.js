@@ -3,9 +3,15 @@ const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
 const { CIRCLE_RADIUS } = require('./layout');
-const { defineLineMarker, defineCircleMarker, defineRectangleMarker, rectangleMarker } = require('./markers');
-const { lineSegmentsSelector, HASH_ID, MASK_DESC} = require('./drawingData');
+const { defineLineMarker, defineTextOnlyMarker, defineCircleMarker, defineRectangleMarker} = require('./markers');
+const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} = require('./drawingData');
 const { currentVariableTimeSeriesSelector, methodsSelector } = require('./timeseries');
+
+const TS_LABEL = {
+    'current': 'Current: ',
+    'compare': 'Last year: ',
+    'median': 'Median: '
+};
 
 
 const tsMaskMarkers = function(tsKey, masks) {
@@ -13,8 +19,23 @@ const tsMaskMarkers = function(tsKey, masks) {
         const maskName = MASK_DESC[mask];
         const tsClass = `${maskName.replace(' ', '-').toLowerCase()}-mask`;
         const fill = `url(#${HASH_ID[tsKey]})`;
-        return defineRectangleMarker(null, `mask ${tsClass}`, maskName, null, fill);
+        return defineRectangleMarker(null, `mask ${tsClass}`, maskName, fill);
     });
+};
+
+const tsLineMarkers = function(tsKey, lineClasses) {
+    let result = [];
+
+    if (lineClasses.default) {
+        result.push(defineLineMarker(null, `line-segment ts-${tsKey}`, 'Provisional'));
+    }
+    if (lineClasses.approved) {
+        result.push(defineLineMarker(null, `line-segment approved ts-${tsKey}`, 'Approved'));
+    }
+    if (lineClasses.estimated) {
+        result.push(defineLineMarker(null, `line-segment estimated ts-${tsKey}`, 'Estimated'));
+    }
+    return result;
 };
 
 /**
@@ -29,16 +50,28 @@ const createLegendMarkers = function(displayItems) {
     const legendMarkers = [];
 
     if (displayItems.current) {
-        legendMarkers.push([
-            defineLineMarker('ts-legend-current', 'line-segment', 'Current Year', 'current-year-line-marker'),
-            ...tsMaskMarkers('current', displayItems.current.masks)
-        ]);
+        const currentMarkers = [
+            ...tsLineMarkers('current', displayItems.current),
+            ...tsMaskMarkers('current', displayItems.current.dataMasks)
+        ];
+        if (currentMarkers.length) {
+            legendMarkers.push([
+                defineTextOnlyMarker(TS_LABEL.current, null, 'ts-legend-current-text'),
+                ...currentMarkers
+            ]);
+        }
     }
     if (displayItems.compare) {
-        legendMarkers.push([
-            defineLineMarker('ts-legend-compare', 'line-segment', 'Last Year', 'compare-year-line-marker'),
-            ...tsMaskMarkers('compare', displayItems.compare.masks)
-        ]);
+        const compareMarkers = [
+            ...tsLineMarkers('compare', displayItems.compare),
+            ...tsMaskMarkers('compare', displayItems.compare.dataMasks)
+        ];
+        if (compareMarkers.length) {
+            legendMarkers.push([
+                defineTextOnlyMarker(TS_LABEL.compare, null, 'ts-legend-compare-text'),
+                ...compareMarkers
+            ]);
+        }
     }
 
     if (displayItems.median) {
@@ -55,9 +88,11 @@ const createLegendMarkers = function(displayItems) {
 
             const descriptionText = stats.description  ? `${stats.description} ` : '';
             const classes = `median-data-series median-modulo-${index % 6}`;
-            const label = `Median ${descriptionText}${dateText}`;
+            const label = `${descriptionText}${dateText}`;
 
-            legendMarkers.push([defineCircleMarker(CIRCLE_RADIUS, null, classes, label)]);
+            legendMarkers.push([
+                defineTextOnlyMarker(TS_LABEL.median),
+                defineCircleMarker(CIRCLE_RADIUS, null, classes, label)]);
         }
     }
 
@@ -71,17 +106,15 @@ const createLegendMarkers = function(displayItems) {
  * @param {Object} legendMarkerRows - Array of rows. Each row should be an array of legend markers.
  * @param {Object} layout - width and height of svg.
  */
-function drawSimpleLegend(div, {legendMarkerRows, layout}) {
+export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
     div.selectAll('.legend-svg').remove();
 
-    if (!legendMarkerRows || !layout) {
+    if (!legendMarkerRows.length || !layout) {
         return;
     }
 
-    const markerYPosition = -4;
-    const markerGroupXOffset = 40;
+    const markerGroupXOffset = 15;
     const verticalRowOffset = 18;
-    const markerTextXOffset = 10;
 
     let svg = div.append('svg')
         .attr('class', 'legend-svg');
@@ -90,45 +123,25 @@ function drawSimpleLegend(div, {legendMarkerRows, layout}) {
             .attr('class', 'legend')
             .attr('transform', `translate(${layout.margin.left}, 0)`);
 
-    for (const [index, legendMarkerRow] of legendMarkerRows.entries()) {
-        const rowCount = index + 1;
+    legendMarkerRows.forEach((rowMarkers, rowIndex) => {
         let xPosition = 0;
-        let previousMarkerGroup;
+        let yPosition = verticalRowOffset * (rowIndex + 1);
 
-        for (let legendMarker of legendMarkerRow) {
-            if (previousMarkerGroup) {
-                let previousMarkerGroupBox = previousMarkerGroup.node().getBBox();
-                xPosition = previousMarkerGroupBox.x + previousMarkerGroupBox.width + markerGroupXOffset;
-            }
-            let legendGroup = legend.append('g')
-                .attr('class', 'legend-marker');
-            if (legendMarker.groupId) {
-                legendGroup.attr('id', legendMarker.groupId);
-            }
-            let markerType = legendMarker.type;
-            let yPosition;
-            if (markerType === rectangleMarker) {
-                yPosition = markerYPosition * 2.5 + verticalRowOffset * rowCount;
-            } else {
-                yPosition = markerYPosition + verticalRowOffset * rowCount;
-            }
+        rowMarkers.forEach((marker) => {
             let markerArgs = {
-                r: legendMarker.r ? legendMarker.r : null,
                 x: xPosition,
                 y: yPosition,
+                text: marker.text,
+                domId: marker.domId,
+                domClass: marker.domClass,
                 width: 20,
                 height: 10,
                 length: 20,
-                domId: legendMarker.domId,
-                domClass: legendMarker.domClass,
-                fill: legendMarker.fill
+                r: marker.r ,
+                fill: marker.fill
             };
-
-            // add the marker to the svg
-            let detachedMarker = markerType(markerArgs);
-            legendGroup.node().appendChild(detachedMarker.node());
-            // add text for the legend marker
-            let detachedMarkerBBox;
+            let markerGroup = marker.type(legend, markerArgs);
+            let markerGroupBBox;
             // Long story short, firefox is unable to get the bounding box if
             // the svg element isn't actually taking up space and visible. Folks on the
             // internet seem to have gotten around this by setting `visibility:hidden`
@@ -139,17 +152,14 @@ function drawSimpleLegend(div, {legendMarkerRows, layout}) {
             // https://bugzilla.mozilla.org/show_bug.cgi?id=612118 and
             // https://stackoverflow.com/questions/28282295/getbbox-of-svg-when-hidden.
             try {
-                detachedMarkerBBox = detachedMarker.node().getBBox();
+                markerGroupBBox = markerGroup.node().getBBox();
+                xPosition = markerGroupBBox.x + markerGroupBBox.width + markerGroupXOffset;
+
             } catch(error) {
-                continue;
+                // See above explanation
             }
-            legendGroup.append('text')
-                .attr('x', detachedMarkerBBox.x + detachedMarkerBBox.width + markerTextXOffset)
-                .attr('y', verticalRowOffset * rowCount)
-                .text(legendMarker.text);
-            previousMarkerGroup = legendGroup;
-        }
-    }
+        });
+    });
 
     // Set the size of the containing svg node to the size of the legend.
     let bBox;
@@ -159,17 +169,24 @@ function drawSimpleLegend(div, {legendMarkerRows, layout}) {
         return;
     }
     svg.attr('viewBox', `-${CIRCLE_RADIUS} 0 ${layout.width} ${bBox.height + 10}`);
-}
+};
 
-const uniqueMasksSelector = memoize(tsKey => createSelector(
-    lineSegmentsSelector(tsKey),
+const uniqueClassesSelector = memoize(tsKey => createSelector(
+    currentVariableLineSegmentsSelector(tsKey),
     (tsLineSegments) => {
-        return new Set(Object.values(tsLineSegments).reduce((masks, lineSegments) => {
-            Array.prototype.push.apply(masks, lineSegments.map((segment) => segment.classes.dataMask));
-            return masks;
-        }, []).filter(x => x !== null));
+        let classes = [].concat(...Object.values(tsLineSegments)).map((line) => line.classes);
+        return {
+            default: classes.some((cls) => !cls.approved && !cls.estimated && !cls.dataMask),
+            approved: classes.some((cls) => cls.approved),
+            estimated: classes.some((cls) => cls.estimated),
+            dataMasks: new Set(classes.map((cls) => cls.dataMask).filter((mask) => {
+                return mask;
+            }))
+        };
     }
 ));
+
+
 
 /**
  * Select attributes from the state useful for legend creation
@@ -178,12 +195,12 @@ const legendDisplaySelector = createSelector(
     (state) => state.showSeries,
     currentVariableTimeSeriesSelector('median'),
     methodsSelector,
-    uniqueMasksSelector('current'),
-    uniqueMasksSelector('compare'),
-    (showSeries, medianTSs, methods, currentMasks, compareMasks) => {
+    uniqueClassesSelector('current'),
+    uniqueClassesSelector('compare'),
+    (showSeries, medianTSs, methods, currentClasses, compareClasses) => {
         return {
-            current: showSeries.current ? {masks: currentMasks} : undefined,
-            compare: showSeries.compare ? {masks: compareMasks} : undefined,
+            current: showSeries.current ? currentClasses : undefined,
+            compare: showSeries.compare ? compareClasses : undefined,
             median: showSeries.median ? Object.values(medianTSs).map(medianTS => {
                 return {
                     beginYear: medianTS ? medianTS.metadata.beginYear : undefined,
@@ -196,9 +213,13 @@ const legendDisplaySelector = createSelector(
 );
 
 
-const legendMarkerRowsSelector = createSelector(
+/*
+ * Factory function  that returns an array of array of markers to be used for the
+ * timeseries graph legend
+ * @return {Array of Array} of markers
+ */
+export const legendMarkerRowsSelector = createSelector(
     legendDisplaySelector,
     displayItems => createLegendMarkers(displayItems)
 );
 
-module.exports = {drawSimpleLegend, createLegendMarkers, legendDisplaySelector, legendMarkerRowsSelector};

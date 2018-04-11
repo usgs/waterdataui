@@ -1,5 +1,6 @@
-$approved: darkgreen;
-$estimated: black;
+$approved-timeseries: #2db92d;
+$estimated-timeseries: black;
+$default-timeseries: blue;
 $selected: $color-aqua-lightest;
 $highlight: $color-gray-lightest;
 
@@ -102,6 +103,7 @@ $highlight: $color-gray-lightest;
         background: rgba(255, 255, 255, 0.8);
         margin: 0 0 0 40px;
         font-size: 0.5em;
+        color: $default-timeseries;
         @include media($medium-screen) {
             font-size: 0.75em;
         }
@@ -112,10 +114,10 @@ $highlight: $color-gray-lightest;
             font-weight: bold;
         }
         .approved {
-            color: $approved;
+            color: $approved-timeseries;
         }
         .estimated {
-            color: $estimated;
+            color: $estimated-timeseries;
         }
         .compare-tooltip-text {
             font-weight: normal
@@ -135,7 +137,7 @@ $highlight: $color-gray-lightest;
             line {
                 opacity: .5;
                 stroke: #436BAF;
-                stroke-width: 1;
+                stroke-width: 1px;
                 stroke-dasharray: 5, 5
             }
 
@@ -143,16 +145,16 @@ $highlight: $color-gray-lightest;
         .line-segment {
             fill: none;
             stroke-width: 3px;
-            stroke: $usgs-blue;
+            stroke: $default-timeseries;
             &.approved {
-                stroke: $approved;
+                stroke: $approved-timeseries;
             }
             &.estimated {
-                stroke: $estimated;
+                stroke: $estimated-timeseries;
                 stroke-dasharray: 1, 3;
             }
         }
-        .ts-compare, #ts-legend-compare {
+        .ts-compare{
             stroke-width: 1px;
         }
         .axis {
@@ -174,7 +176,6 @@ $highlight: $color-gray-lightest;
         .y-axis {
             text {
                 fill: black;
-                text-anchor: left;
                 &.y-axis-label {
                     text-anchor: middle;
                     display: none;
@@ -271,7 +272,7 @@ $highlight: $color-gray-lightest;
 }
 
 .slider-wrapper {
-    height: 0px;
+    height: 0;
     input#cursor-slider {
         max-width: none;
         position: relative;
@@ -300,7 +301,7 @@ $highlight: $color-gray-lightest;
     .graph-controls-container {
         position: absolute;
         display: inline-block;
-        top: 0px;
-        right: 0px;
+        top: 0;
+        right: 0;
     }
 }
