@@ -156,7 +156,7 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
                 xPosition = markerGroupBBox.x + markerGroupBBox.width + markerGroupXOffset;
 
             } catch(error) {
-                null;
+                // See above explanation
             }
         });
     });
@@ -176,15 +176,9 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
     (tsLineSegments) => {
         let classes = [].concat(...Object.values(tsLineSegments)).map((line) => line.classes);
         return {
-            default: classes.find((cls) => {
-               return !cls.approved && !cls.estimated && !cls.dataMask;
-            }) ? true : false,
-            approved: classes.find((cls) => {
-                return cls.approved;
-            })? true : false,
-            estimated: classes.find((cls) => {
-                return cls.estimated;
-            }) ? true : false,
+            default: classes.some((cls) => !cls.approved && !cls.estimated && !cls.dataMask),
+            approved: classes.some((cls) => cls.approved),
+            estimated: classes.some((cls) => cls.estimated),
             dataMasks: new Set(classes.map((cls) => cls.dataMask).filter((mask) => {
                 return mask;
             }))
