@@ -299,9 +299,11 @@ $highlight: $color-gray-lightest;
     }
 
     .graph-controls-container {
-        position: absolute;
         display: inline-block;
-        top: 0;
-        right: 0;
+        @include media($medium-screen) {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
     }
 }

@@ -247,7 +247,7 @@ describe('Hydrograph tooltip module', () => {
             expect(value).toBe('15 ft3/s');
         });
 
-        it('Text handles data masks if focus is near masked data points', () => {
+        it('Does not show text if focus is near masked data points', () => {
             let store = configureStore(Object.assign({}, testState, {
                 cursorOffset: 1
             }));
@@ -255,12 +255,8 @@ describe('Hydrograph tooltip module', () => {
             svg.call(provide(store))
                 .call(createTooltipText);
             store.dispatch(Actions.setCursorOffset(299 * 60 * 1000));  // 2018-01-03T16:59:00.000Z
-            let value1 = svg.select('.current-tooltip-text').text().split(' - ')[0];
-            expect(value1).toBe('Flood');
 
-            store.dispatch(Actions.setCursorOffset(359 * 60 * 1000));  // 2018-01-03T17:59:00.000Z
-            let value2 = svg.select('.current-tooltip-text').text().split(' - ')[0];
-            expect(value2).toBe('Maintenance');
+            expect(svg.select('.current-tooltip-text').text()).toBe('');
         });
 
         it('Creates the correct text for values of zero', () => {
