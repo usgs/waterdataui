@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 - Tooltips are provided for metadata elements for those that USGS defines on NWIS help pages.
+- Information alert for provisional data.
+
+
+### Changed
+- Timeseries graph legend now shows markers with the appropriate colors representing Approved, Estimated, and
+Provisional for the lines that are currently visible on the graph.
+- Audible/Show Last Year controls are shown below the timeseries legend on mobile.
+- Timeseries tooltip no longer shows text when focus is on a masked area.
+
 
 ### Fixed
 - Tooltip is redrawn correctly when changing from portrait to landscape on mobile.
@@ -24,10 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Font sizing and responsive layout changes
 - Limit y-axis lower bound to nearest power of 10 on logarithmic scales
 - Site Summary table includes site visits, peak values, annual data reports, and groundwater network sites
-- Timeseries graph legend now shows markerrs with the appropriate colors representing Approved, Estimated, and
-Provisional for the lines that are currently visible on the graph.
-- Audible/Show Last Year controls are shown below the timeseries legend on mobile.
-- Timeseries tooltip no longer shows text when focus is on a masked area.
+
 
 ### Fixed
 - Timeseries SVG has the correct title and desc tag contents.
