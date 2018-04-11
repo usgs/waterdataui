@@ -1,27 +1,27 @@
 /**
  * Hydrograph charting module.
  */
-import {mediaQuery} from '../../utils';
-
-const { select } = require('d3-selection');
 const { extent } = require('d3-array');
 const { line: d3Line } = require('d3-shape');
+const { select } = require('d3-selection');
+
 const { createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
 const { USWDS_MEDIUM_SCREEN } = require('../../config');
 const { dispatch, link, provide } = require('../../lib/redux');
+const { Actions } = require('../../store');
+const { mediaQuery } = require('../../utils');
 
 const { audibleUI } = require('./audible');
 const { appendAxes, axesSelector } = require('./axes');
 const { cursorSlider } = require('./cursor');
+const { pointsTableDataSelector, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
+    MASK_DESC, HASH_ID } = require('./drawingData');
 const { CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
-const { Actions } = require('../../store');
-const { pointsTableDataSelector, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
-    MASK_DESC, HASH_ID } = require('./drawingData');
 const { currentVariableSelector, methodsSelector, isVisibleSelector, titleSelector,
     descriptionSelector,  currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
