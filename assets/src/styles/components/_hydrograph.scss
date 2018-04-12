@@ -125,6 +125,10 @@ $highlight: $color-gray-lightest;
     }
 
     svg {
+        .watermark {
+            height: 20%;
+            opacity: .2;
+        }
         .overlay {
             fill: none;
             pointer-events: all;

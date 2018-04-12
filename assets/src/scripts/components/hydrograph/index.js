@@ -324,7 +324,13 @@ const timeSeriesGraph = function (elem) {
                         seriesMap: currentVariableTimeSeriesSelector('median'),
                         variable: currentVariableSelector,
                         showLabel: (state) => state.showMedianStatsLabel
-                    })));
+                    })))
+                    .append('svg')
+                    .append('svg:image')
+                    .classed('watermark', true)
+                    .attr('xlink:href', 'https://upload.wikimedia.org/wikipedia/commons/1/1c/USGS_logo_green.svg')
+                    .attr('x', '65%')
+                    .attr('y', '60%');
             });
 
     elem.call(link(plotSeriesSelectTable, createStructuredSelector({
