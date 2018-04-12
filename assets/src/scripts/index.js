@@ -27,6 +27,7 @@ function main() {
         for (let node of nodes) {
             COMPONENTS[node.dataset.component](store, node, node.dataset);
         }
+
     } catch (err) {
         // Send exception to Google Analytics.
         window.ga('send', 'exception', {
