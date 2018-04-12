@@ -1,5 +1,8 @@
+
 const findKey = require('lodash/findKey');
 const last = require('lodash/last');
+const { applyMiddleware, createStore, combineReducers, compose } = require('redux');
+const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData } = require('../models');
@@ -189,4 +192,54 @@ export const Actions = {
             gageHeight
         };
     }
+};
+
+const appReducer = combineReducers({});
+
+const MIDDLEWARES = [thunk];
+
+
+export const configureStore = function (initialState) {
+    initialState = {
+        series: {},
+        floodData: {
+            floodStages: [],
+            floodExtent: {}
+        },
+
+        timeseriesState: {
+            showSeries: {
+                current: true,
+                compare: false,
+                median: false
+            },
+            currentVariableID: null,
+            showMedianStatsLabel: false,
+            cursorOffset: null,
+            audiblePlayId: null,
+        },
+        floodGageHeight: null,
+
+        ui : {
+            windowWidth: 1024,
+            width: 800
+        },
+        ...initialState
+    };
+
+    let enhancers;
+    if (window.__REDUX_DEVTOOLS_EXTENSION__) {
+        enhancers = compose(
+            applyMiddleware(...MIDDLEWARES),
+            window.__REDUX_DEVTOOLS_EXTENSION__({serialize: true})
+        );
+    } else {
+        enhancers = applyMiddleware(...MIDDLEWARES);
+    }
+
+    return createStore(
+        appReducer,
+        initialState,
+        enhancers
+    );
 };
