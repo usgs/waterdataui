@@ -203,8 +203,8 @@ export const configureStore = function (initialState) {
     initialState = {
         series: {},
         floodData: {
-            floodStages: [],
-            floodExtent: {}
+            stages: [],
+            extent: {}
         },
 
         timeseriesState: {
@@ -216,7 +216,7 @@ export const configureStore = function (initialState) {
             currentVariableID: null,
             showMedianStatsLabel: false,
             cursorOffset: null,
-            audiblePlayId: null,
+            audiblePlayId: null
         },
         floodGageHeight: null,
 

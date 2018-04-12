@@ -1,7 +1,9 @@
 const INITIAL_STATE = {
-    floodStages: [],
-    floodExtent: {},
-    gageHeight: null
+    floodData: {
+        stages: [],
+        extent: {}
+    },
+    floodGageHeight: null
 };
 
 /*
@@ -30,38 +32,43 @@ const getGageHeightInStage = function(gageHeight, floodStages) {
 /*
  * Case reducers
  */
-const setFloodFeatures = function(floodState, action) {
+const setFloodFeatures = function(state, action) {
     return {
-        ...floodState,
-        floodStages: action.stages,
-        floodExtent: action.extent,
-        gageHeight: getGageHeightInStage(floodState.gageHeight, action.stages)
+        ...state,
+        floodData: {
+            stages: action.stages,
+            extent: action.extent
+        },
+        floodGageHeight: getGageHeightInStage(state.floodGageHeight, action.stages)
     };
 };
 
-const setGageHeightFromStage = function(floodState, action) {
-    if (action.gageHeightIndex < floodState.floodStages.length) {
+const setGageHeightFromStage = function(state, action) {
+    if (action.gageHeightIndex < state.floodData.stages.length) {
         return {
-            ...floodState,
-            gageHeight: floodState.floodStages[action.gageHeightIndex]
+            ...state,
+            floodGageHeight: state.floodData.stages[action.gageHeightIndex]
         };
     } else {
-        return floodState;
+        return state;
     }
 };
 
-const setGageHeight = function(floodState, action) {
-    return getGageHeightInStage(action.gageHeight, floodState.floodStages);
+const setGageHeight = function(state, action) {
+    return {
+        ...state,
+        floodGageHeight: getGageHeightInStage(action.gageHeight, state.floodData.stages)
+    };
 };
 
 /*
  * Slice reducer
  */
-export const floodDataReducer = function(floodState=INITIAL_STATE, action) {
+export const floodDataReducer = function(state=INITIAL_STATE, action) {
     switch(action.type) {
-        case 'SET_FLOOD_FEATURES': return setFloodFeatures(floodState, action);
-        case 'SET_GAGE_HEIGHT_FROM_STAGE': return setGageHeightFromStage(floodState, action);
-        case 'SET_GAGE_HEIGHT': return setGageHeight(floodState, action);
-        default: return floodState;
+        case 'SET_FLOOD_FEATURES': return setFloodFeatures(state, action);
+        case 'SET_GAGE_HEIGHT_FROM_STAGE': return setGageHeightFromStage(state, action);
+        case 'SET_GAGE_HEIGHT': return setGageHeight(state, action);
+        default: return state;
     }
 };
