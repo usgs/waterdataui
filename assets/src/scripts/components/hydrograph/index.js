@@ -8,7 +8,7 @@ const { select } = require('d3-selection');
 const { createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
-const { USWDS_MEDIUM_SCREEN } = require('../../config');
+const { USWDS_MEDIUM_SCREEN, STATIC_URL } = require('../../config');
 const { dispatch, link, provide } = require('../../lib/redux');
 const { Actions } = require('../../store');
 const { mediaQuery } = require('../../utils');
@@ -325,14 +325,12 @@ const timeSeriesGraph = function (elem) {
                         variable: currentVariableSelector,
                         showLabel: (state) => state.showMedianStatsLabel
                     })))
-                    .append('svg')
                     .append('svg:image')
+                    .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`), layoutSelector))
                     .classed('watermark', true)
-                    //.attr('xlink:href', '/img/USGS_green_logo.svg')
-                    .attr('xlink:href', 'https://upload.wikimedia.org/wikipedia/commons/1/1c/USGS_logo_green.svg');
-                    //.attr('x', '50%')
-                    //.attr('y', '50%');
-
+                    .attr('x', '10')
+                    .attr('y', '10')
+                    .attr('xlink:href', STATIC_URL + '/img/USGS_green_logo.svg');
             });
 
     elem.call(link(plotSeriesSelectTable, createStructuredSelector({
