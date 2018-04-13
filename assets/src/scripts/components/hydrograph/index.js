@@ -22,7 +22,7 @@ const { CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector }
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
-const { currentVariableSelector, methodsSelector, isVisibleSelector, titleSelector,
+const { allTimeSeriesSelector, currentVariableSelector, methodsSelector, isVisibleSelector, titleSelector,
     descriptionSelector,  currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
@@ -291,6 +291,7 @@ const timeSeriesGraph = function (elem) {
         .call(createTitle)
         .call(createTooltipText)
         .append('svg')
+            .classed('hydrograph-svg', true)
             .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`), layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({
                 title: titleSelector,
@@ -326,13 +327,6 @@ const timeSeriesGraph = function (elem) {
                         showLabel: (state) => state.showMedianStatsLabel
                     })));
             });
-
-    elem.call(link(plotSeriesSelectTable, createStructuredSelector({
-        availableTimeseries: availableTimeseriesSelector,
-        lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current'),
-        timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current')(SPARK_LINE_DIM),
-        layout: layoutSelector
-    })));
     elem.append('div')
         .call(link(plotSROnlyTable, createStructuredSelector({
             tsKey: () => 'current',
@@ -435,14 +429,27 @@ const attachToNode = function (store, node, {siteno} = {}) {
 
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
-        .call(provide(store))
+        .call(provide(store));
+    select(node).select('.graph-container')
         .call(link(controlGraphDisplay, timeSeriesSelector('current')))
         .call(timeSeriesGraph)
-        .call(cursorSlider);
-    select(node).append('div')
-        .classed('ts-legend-controls-container', true)
-        .call(timeSeriesLegend)
-        .call(graphControls);
+        .call(cursorSlider)
+        .append('div')
+            .classed('ts-legend-controls-container', true)
+            .call(timeSeriesLegend)
+            .call(graphControls);
+    select(node).select('.select-timeseries-container')
+        .call(link(plotSeriesSelectTable, createStructuredSelector({
+            availableTimeseries: availableTimeseriesSelector,
+            lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current'),
+            timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current')(SPARK_LINE_DIM),
+            layout: layoutSelector
+        })));
+    select(node).select('.provisional-data-alert')
+        .call(link(function(elem, allTimeSeries) {
+            elem.attr('hidden', Object.keys(allTimeSeries).length ? null : true);
+
+        }, allTimeSeriesSelector));
 
 
     window.onresize = function() {

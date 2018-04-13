@@ -70,20 +70,6 @@
                     <p id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}</p>
                 </div>
                 {{ components.TimeseriesComponent(stations[0].site_no) }}
-                <div id="provisional-data-alert" class="usa-alert usa-alert-info" role="alert">
-                    <div class="usa-alert-body"><h3 class="usa-alert-heading">Provisional Data Statement</h3>
-                        <p class="usa-alert-text">
-                            Data are provisional and subject to revision until they have been thoroughly reviewed and received final approval.
-                            Current condition data relayed by satellite or other telemetry are automatically screened to not display improbable
-                            values until they can be verified. Provisional data may be inaccurate due to instrument malfunctions or physical
-                            changes at the measurement site. Subsequent review based on field inspections and measurements may result in
-                            significant revisions to the data. Data users are cautioned to consider carefully the provisional nature of the
-                            information before using it for decisions that concern personal or public safety or the conduct of business that
-                            involves substantial monetary or operational consequences. Information concerning the accuracy and appropriate uses
-                            of these data or concerning other hydrologic data may be obtained from the USGS.
-                        </p>
-                    </div>
-                </div>
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
                     {{ components.FloodSliderComponent() }}
                     {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
