@@ -6,6 +6,18 @@
 {% block extra_head_tags %}
     {% if status_code == 200 %}
         <meta name="description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}">
+                <!-- tags for Facebook Open Graph -->
+        <meta property="og:url" content="{{ url_for('monitoring_location', site_no=site_no, _external=True) }}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="{{ page_title }}" />
+        <meta property="og:description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}" />
+        <meta property="og:image" content="<iframe src='{{ url_for('time_series_component', site_no=site_no, _external=True) }}' width='600' height='900' frameborder='0' style='border:0' allowfullscreen></iframe>" />
+        <!-- tags for Twitter Cards -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@USGS">
+        <meta name="twitter:title" content="{{ page_title }}">
+        <meta name="twitter:description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}">
+        <meta name="twitter:image" content="<iframe src='{{ url_for('time_series_component', site_no=site_no, _external=True) }}' width='600' height='900' frameborder='0' style='border:0' allowfullscreen></iframe>">
     {%  endif %}
 {% endblock %}
 
