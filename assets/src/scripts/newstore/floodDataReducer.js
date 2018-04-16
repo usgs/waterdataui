@@ -8,6 +8,7 @@ const INITIAL_STATE = {
 
 /*
  * Case reducers
+ * Assumes that stages are sorted in ascending order.
  */
 const setFloodFeatures = function(state, action) {
     return {

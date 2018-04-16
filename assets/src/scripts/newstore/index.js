@@ -9,6 +9,9 @@ const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
 
+const { floodDataReducer: floodData } = require('./floodDataReducer');
+const { floodStateReduce: floodState } = require('./floodStateReducer');
+
 const getLatestValue = function(collection, parmCd) {
     let parmVar = findKey(collection.variables, (varValue) => {
         return varValue.variableCode.value === parmCd;
@@ -189,7 +192,8 @@ export const Actions = {
 };
 
 const appReducer = combineReducers({
-
+    floodData,
+    floodState
 });
 
 const MIDDLEWARES = [thunk];

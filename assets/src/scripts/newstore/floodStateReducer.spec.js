@@ -1,6 +1,6 @@
 const { floodStateReducer } = require('./floodStateReducer');
 
-fdescribe('floodStateReducer', () => {
+describe('floodStateReducer', () => {
 
     describe('SET_GAGE_HEIGHT', () => {
         it('Expects that the gage height is changed to the new value', () => {
