@@ -1,8 +1,4 @@
 
-const INITIAL_STATE = {
-    gageHeight: null
-};
-
 /*
  * Case reducers
  */
@@ -16,7 +12,7 @@ const setGageHeight = function(floodState, action) {
 /*
  * Slice reducer
  */
-export const floodStateReducer = function(floodState=INITIAL_STATE, action) {
+export const floodStateReducer = function(floodState={}, action) {
     switch(action.type) {
         case 'SET_GAGE_HEIGHT': return setGageHeight(floodState, action);
         default: return floodState;

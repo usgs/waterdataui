@@ -12,6 +12,8 @@ const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
 const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
 const { seriesReducer: series } = require('./seriesReducer');
+const { timeseriesStateReducer: timeseriesState } = require('./timeseriesStateReducer');
+const { uiReducer: ui } = require('./uiReducer');
 
 const GAGE_HEIGHT_CD = '00065';
 /*
@@ -66,13 +68,13 @@ export const Actions = {
                     dispatch(Actions.setCurrentVariable(
                         getCurrentVariableId(series.timeseries || {}, series.variables || {})
                     ));
-                    dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)))
+                    dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
 
                     return {collection, startTime, endTime};
                 },
                 () => {
                     dispatch(Actions.resetTimeseries('current'));
-                    dispatch(Actions.toggleTimeseries('current', false))
+                    dispatch(Actions.toggleTimeseries('current', false));
                     return {
                         collection: null,
                         startTime: null,
@@ -213,7 +215,9 @@ export const Actions = {
 const appReducer = combineReducers({
     series,
     floodData,
-    floodState
+    timeseriesState,
+    floodState,
+    ui
 });
 
 const MIDDLEWARES = [thunk];

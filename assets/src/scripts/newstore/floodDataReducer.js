@@ -1,8 +1,7 @@
 const INITIAL_STATE = {
-    floodData: {
-        stages: [],
-        extent: {}
-    }
+    stages: [],
+    extent: {}
+
 };
 
 
@@ -10,22 +9,19 @@ const INITIAL_STATE = {
  * Case reducers
  * Assumes that stages are sorted in ascending order.
  */
-const setFloodFeatures = function(state, action) {
+const setFloodFeatures = function(floodData, action) {
     return {
-        ...state,
-        floodData: {
-            stages: action.stages,
-            extent: action.extent
-        }
+        stages: action.stages,
+        extent: action.extent
     };
 };
 
 /*
  * Slice reducer
  */
-export const floodDataReducer = function(state=INITIAL_STATE, action) {
+export const floodDataReducer = function(floodData=INITIAL_STATE, action) {
     switch(action.type) {
-        case 'SET_FLOOD_FEATURES': return setFloodFeatures(state, action);
-        default: return state;
+        case 'SET_FLOOD_FEATURES': return setFloodFeatures(floodData, action);
+        default: return floodData;
     }
 };

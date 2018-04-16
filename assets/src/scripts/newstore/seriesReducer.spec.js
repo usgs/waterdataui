@@ -1,7 +1,7 @@
 
 const { seriesReducer } = require('./seriesReducer');
 
-fdescribe('seriesReducer', () => {
+describe('seriesReducer', () => {
 
     describe('ADD_TIMESERIES_COLLECTION action', () => {
         it('Should add the timeseries collection to the series as is if series is empty', () => {

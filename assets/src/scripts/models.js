@@ -13,6 +13,12 @@ const PAST_SERVICE_ROOT = config.PAST_SERVICE_ROOT  || 'https://nwis.waterservic
 
 const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
+const PARAM_PERTINENCE = {
+    '00060': 0,
+    '00065': 1,
+    '72019': 2
+};
+
 function olderThan120Days(date) {
     return date < new Date() - 120;
 }
