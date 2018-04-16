@@ -11,13 +11,6 @@ const { deltaDays } = require('./utils');
 const SERVICE_ROOT = config.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
 const PAST_SERVICE_ROOT = config.PAST_SERVICE_ROOT  || 'https://nwis.waterservices.usgs.gov/nwis';
 
-export const PARAM_PERTINENCE = {
-    '00060': 0,
-    '00065': 1,
-    '72019': 2
-};
-
-
 const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
 function olderThan120Days(date) {

@@ -138,11 +138,10 @@ export const Actions = {
             show
         };
     },
-    addSeriesCollection(key, data, show=true) {
+    addSeriesCollection(key, data) {
         return {
             type: 'ADD_TIMESERIES_COLLECTION',
             key,
-            show,
             data
         };
     },
@@ -171,7 +170,7 @@ export const Actions = {
             width
         };
     },
-    setCurrentParameterCode(parameterCode, variableID) {
+    setCurrentVariable(parameterCode, variableID) {
         return {
             type: 'PARAMETER_CODE_SET',
             parameterCode,

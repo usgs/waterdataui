@@ -5,13 +5,18 @@ const { applyMiddleware, createStore, combineReducers, compose } = require('redu
 const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
-    parseMedianData } = require('../models');
+    parseMedianData, sortedParameters } = require('../models');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
 
 const { floodDataReducer: floodData } = require('./floodDataReducer');
-const { floodStateReduce: floodState } = require('./floodStateReducer');
+const { floodStateReducer: floodState } = require('./floodStateReducer');
+const { seriesReducer: series } = require('./seriesReducer');
 
+const GAGE_HEIGHT_CD = '00065';
+/*
+ * Helper functions
+ */
 const getLatestValue = function(collection, parmCd) {
     let parmVar = findKey(collection.variables, (varValue) => {
         return varValue.variableCode.value === parmCd;
@@ -23,8 +28,18 @@ const getLatestValue = function(collection, parmCd) {
     return points.length ? last(points).value : null;
 };
 
-const GAGE_HEIGHT_CD = '00065';
 
+/*
+ * @param {Object} timeseries - keys are timeseries id
+ * @param {Object} variables  - keys are the variable id
+ */
+const getCurrentVariableId = function(timeSeries, variables) {
+    const tsVariables = Object.values(timeSeries)
+        .filter((ts) => ts.points.length)
+        .map((ts) => variables[ts.variable]);
+    const sortedVars = sortedParameters(tsVariables);
+    return sortedVars.length ? sortedVars[0].oid : '';
+};
 
 
 export const Actions = {
@@ -33,7 +48,6 @@ export const Actions = {
             const timeSeries = getTimeseries({sites: [siteno], params}).then(
                 series => {
                     const collection = normalize(series, 'current');
-                    dispatch(Actions.addSeriesCollection('current', collection));
 
                     // Get the start/end times of this request's range.
                     const notes = collection.queryInfo['current'].notes;
@@ -44,16 +58,21 @@ export const Actions = {
                     // Trigger a call to get last year's data
                     dispatch(Actions.retrieveCompareTimeseries(siteno, startTime, endTime));
 
-                    // Update the gage height if gage height is in the data.
-                    const currentGageHeight = getLatestValue(collection, GAGE_HEIGHT_CD);
-                    if (currentGageHeight) {
-                        dispatch(Actions.setGageHeight(currentGageHeight));
-                    }
+                    // Update the series data for the 'current' series
+                    dispatch(Actions.addSeriesCollection('current', collection));
+
+                    // Update the application state
+                    dispatch(Actions.toggleTimeseries('current', true));
+                    dispatch(Actions.setCurrentVariable(
+                        getCurrentVariableId(series.timeseries || {}, series.variables || {})
+                    ));
+                    dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)))
 
                     return {collection, startTime, endTime};
                 },
                 () => {
                     dispatch(Actions.resetTimeseries('current'));
+                    dispatch(Actions.toggleTimeseries('current', false))
                     return {
                         collection: null,
                         startTime: null,
@@ -65,6 +84,7 @@ export const Actions = {
             return Promise.all([timeSeries, medianStatistics]).then(([{collection, startTime, endTime}, stats]) => {
                 let medianCollection = parseMedianData(stats, startTime, endTime, collection && collection.variables ? collection.variables : {});
                 dispatch(Actions.addSeriesCollection('median', medianCollection));
+                dispatch(Actions.toggleTimeseries('median', true));
             });
         };
     },
@@ -73,7 +93,8 @@ export const Actions = {
             return getPreviousYearTimeseries({site, startTime, endTime}).then(
                 series => {
                     const collection = normalize(series, 'compare');
-                    dispatch(Actions.addSeriesCollection('compare', collection, false));
+                    dispatch(Actions.addSeriesCollection('compare', collection));
+                    dispatch(Actions.toggleTimeseries('compare', false));
                 },
                 () => dispatch(Actions.resetTimeseries('compare'))
             );
@@ -143,11 +164,10 @@ export const Actions = {
             show
         };
     },
-    addSeriesCollection(key, data, show=true) {
+    addSeriesCollection(key, data) {
         return {
             type: 'ADD_TIMESERIES_COLLECTION',
             key,
-            show,
             data
         };
     },
@@ -176,10 +196,9 @@ export const Actions = {
             width
         };
     },
-    setCurrentParameterCode(parameterCode, variableID) {
+    setCurrentVariable(variableID) {
         return {
-            type: 'PARAMETER_CODE_SET',
-            parameterCode,
+            type: 'SET_CURRENT_VARIABLE',
             variableID
         };
     },
@@ -192,6 +211,7 @@ export const Actions = {
 };
 
 const appReducer = combineReducers({
+    series,
     floodData,
     floodState
 });
