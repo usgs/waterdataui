@@ -135,8 +135,12 @@ describe('Hydrograph charting module', () => {
 
     beforeEach(() => {
         let body = select('body');
-        body.append('div')
+        let component = body.append('div')
             .attr('id', 'hydrograph');
+        component.append('div').attr('class', 'graph-container');
+        component.append('div').attr('class', 'select-timeseries-container');
+        component.append('div').attr('class', 'provisional-data-alert');
+
         graphNode = document.getElementById('hydrograph');
     });
 
@@ -155,7 +159,7 @@ describe('Hydrograph charting module', () => {
             .call(provide(store))
             .call(timeSeriesGraph);
         let svgNodes = graphNode.getElementsByTagName('svg');
-        expect(svgNodes.length).toBe(3);
+        expect(svgNodes.length).toBe(1);
         expect(graphNode.innerHTML).toContain('hydrograph-container');
     });
 
@@ -251,14 +255,13 @@ describe('Hydrograph charting module', () => {
                 width: 400,
                 currentVariableID: '45807197'
             });
-            select(graphNode)
-                .call(provide(store))
-                .call(timeSeriesGraph);
+
+            attachToNode(store, graphNode, {siteno: '123456788'});
         });
 
         it('should render the correct number svg nodes', () => {
-            // one main hydrograph and two sparklines
-            expect(selectAll('svg').size()).toBe(3);
+            // one main hydrograph, legend and two sparklines
+            expect(selectAll('svg').size()).toBe(4);
         });
 
         it('should have a title div', () => {
@@ -276,21 +279,21 @@ describe('Hydrograph charting module', () => {
         it('should render timeseries data as a line', () => {
             // There should be one segment per time-series. Each is a single
             // point, so should be a circle.
-            expect(selectAll('svg .line-segment').size()).toBe(2);
+            expect(selectAll('.hydrograph-svg .line-segment').size()).toBe(2);
         });
 
         it('should render a rectangle for masked data', () => {
-            expect(selectAll('g.current-mask-group').size()).toBe(1);
+            expect(selectAll('.hydrograph-svg g.current-mask-group').size()).toBe(1);
         });
 
         it('should have a point for the median stat data with a label', () => {
-            expect(selectAll('svg #median-points circle.median-data-series').size()).toBe(1);
-            expect(selectAll('svg #median-points text').size()).toBe(0);
+            expect(selectAll('#median-points circle.median-data-series').size()).toBe(1);
+            expect(selectAll('#median-points text').size()).toBe(0);
         });
 
         it('show the labels for the median stat data showMedianStatsLabel is true', () => {
             store.dispatch(Actions.showMedianStatsLabel(true));
-            expect(selectAll('svg #median-points text').size()).toBe(1);
+            expect(selectAll('#median-points text').size()).toBe(1);
         });
 
         it('should have tooltips for the select series table', () => {
@@ -369,6 +372,26 @@ describe('Hydrograph charting module', () => {
         it('Should remove the lines when removing the compare time series', () => {
             store.dispatch(Actions.toggleTimeseries('compare', false));
             expect(selectAll('#ts-compare-group .line-segment').size()).toBe(0);
+        });
+    });
+
+    describe('hiding/show provisional alert', () => {
+        it('Expects the provisional alert to be visible when time series data is provided', () => {
+            let store = configureStore(TEST_STATE);
+            attachToNode(store, graphNode, {siteno: '12345678'});
+
+            expect(select(graphNode).select('.provisional-data-alert').attr('hidden')).toBeNull();
+        });
+
+        it('Expects the provisional alert to be hidden when no time series data is provided', () => {
+            let store = configureStore({
+                ...TEST_STATE,
+                series: {},
+                currentVariableID: ''
+            });
+            attachToNode(store, graphNode, {siteno: '12345678'});
+
+            expect(select(graphNode).select('.provisional-data-alert').attr('hidden')).toBe('true');
         });
     });
 });
