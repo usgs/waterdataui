@@ -285,6 +285,22 @@ const createTitle = function(elem) {
 };
 
 
+// start of watermark const
+
+const watermark = function(elem) {
+       // elem.append('text').text('test');
+    //elem.append('svg:image').attr('xlink:href', 'https://upload.wikimedia.org/wikipedia/commons/1/1c/USGS_logo_green.svg');
+    d3.xml('https://upload.wikimedia.org/wikipedia/commons/1/1c/USGS_logo_green.svg', function(error, documentFragment) {
+        if (error) {console.log(error); return;}
+
+        var svgNode = documentFragment.getElementsByTagName('svg')[0];
+        console.log(svgNode);
+
+    });
+}
+
+// end of watermark const
+
 const timeSeriesGraph = function (elem) {
     elem.append('div')
         .attr('class', 'hydrograph-container')
@@ -326,12 +342,13 @@ const timeSeriesGraph = function (elem) {
                         variable: currentVariableSelector,
                         showLabel: (state) => state.showMedianStatsLabel
                     })))
-                    .append('svg:image')
-                    .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`), layoutSelector))
-                    .classed('watermark', true)
-                    .attr('x', '10')
-                    .attr('y', '10')
-                    .attr('xlink:href', STATIC_URL + '/img/USGS_green_logo.svg');
+                    .call(watermark);
+                 //   .append('svg:image')
+                 //   .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`), layoutSelector))
+                 //   .classed('watermark', true)
+                 //   .attr('x', '10')
+                 //   .attr('y', '10')
+                 //   .attr('xlink:href', STATIC_URL + '/img/USGS_green_logo.svg');
             });
     elem.append('div')
         .call(link(plotSROnlyTable, createStructuredSelector({
