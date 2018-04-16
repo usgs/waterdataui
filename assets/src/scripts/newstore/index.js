@@ -180,12 +180,6 @@ export const Actions = {
             variableID
         };
     },
-    setGageHeightIndex(gageHeightIndex) {
-        return {
-            type: 'SET_GAGE_HEIGHT_INDEX',
-            gageHeightIndex
-        };
-    },
     setGageHeight(gageHeight) {
         return {
             type: 'SET_GAGE_HEIGHT',
@@ -194,7 +188,9 @@ export const Actions = {
     }
 };
 
-const appReducer = combineReducers({});
+const appReducer = combineReducers({
+
+});
 
 const MIDDLEWARES = [thunk];
 
@@ -218,8 +214,9 @@ export const configureStore = function (initialState) {
             cursorOffset: null,
             audiblePlayId: null
         },
-        floodGageHeight: null,
-
+        floodState: {
+            gageHeight: null
+        },
         ui : {
             windowWidth: 1024,
             width: 800
