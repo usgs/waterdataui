@@ -6,16 +6,19 @@
 {% block extra_head_tags %}
     {% if status_code == 200 %}
         <meta name="description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}">
-        <!-- tags for Facebook Open Graph -->
-        <meta property="og:url" content="{{ url_for('monitoring_location', site_no=site_no, _external=True) }}" />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="{{ page_title }}" />
-        <meta property="og:description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}" />
-        <!-- tags for Twitter Cards -->
-        <meta name="twitter:card" content="summary">
-        <meta name="twitter:site" content="@USGS">
-        <meta name="twitter:title" content="{{ page_title }}">
-        <meta name="twitter:description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}">
+        {% if stations|length == 1 %}
+            {% set page_title = stations[0].station_nm %}
+            <!-- tags for Facebook Open Graph -->
+            <meta property="og:url" content="{{ url_for('monitoring_location', site_no=stations[0].site_no, _external=True) }}" />
+            <meta property="og:type" content="website" />
+            <meta property="og:title" content="{{ page_title }}" />
+            <meta property="og:description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}" />
+            <!-- tags for Twitter Cards -->
+            <meta name="twitter:card" content="summary">
+            <meta name="twitter:site" content="@USGS">
+            <meta name="twitter:title" content="{{ page_title }}">
+            <meta name="twitter:description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}">
+        {%  endif %}
     {%  endif %}
 {% endblock %}
 
@@ -28,7 +31,6 @@
 {% endblock page_script %}
 
 {% set body_id = 'monitoring-location' %}
-{% if stations|length == 1 %}{% set page_title = stations[0].station_nm %}{% endif %}
 
 {% block content %}
     <div class="usa-width-one-whole">
