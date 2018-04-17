@@ -2,12 +2,11 @@
 
 {% import 'macros/components.html' as components %}
 
-
 {% block extra_head_tags %}
     {% if status_code == 200 %}
-        <meta name="description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}">
         {% if stations|length == 1 %}
             {% set page_title = stations[0].station_nm %}
+            <meta name="description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}">
             <!-- tags for Facebook Open Graph -->
             <meta property="og:url" content="{{ url_for('monitoring_location', site_no=stations[0].site_no, _external=True) }}" />
             <meta property="og:type" content="website" />
