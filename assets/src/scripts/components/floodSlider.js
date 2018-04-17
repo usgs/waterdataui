@@ -1,6 +1,7 @@
 const { select } = require('d3-selection');
 const { createStructuredSelector } = require('reselect');
 
+const { floodStageHeightSelector } = require('../floodDataSelector');
 const { dispatch, link, provide } = require('../lib/redux');
 const { Actions } = require('../store');
 
@@ -35,12 +36,12 @@ const floodSlider = function(node) {
         .attr('type', 'range')
         .attr('id', SLIDER_ID)
         .on('input', dispatch(function() {
-            return Actions.setGageHeightIndex(this.value);
+            return Actions.setGageHeightFromStageIndex(this.value);
         }));
 
     sliderContainer.call(link(updateSlider, createStructuredSelector({
-        stages: (state)=> state.floodStages,
-        gageHeight: (state) => state.gageHeight
+        stages: state => state.floodData.stages,
+        gageHeight: floodStageHeightSelector
     })));
 };
 

@@ -38,8 +38,12 @@ describe('floodSlider', () => {
     describe('creating slider when there is flood data and gage height', () => {
         beforeEach(() => {
             store = configureStore({
-                floodStages: [9, 10, 11, 12],
-                gageHeight: 10
+                floodData: {
+                    stages: [9, 10, 11, 12]
+                },
+                floodState: {
+                    gageHeight: 10
+                }
             });
             attachToNode(store, sliderNode);
         });

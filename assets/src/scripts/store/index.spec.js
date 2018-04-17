@@ -465,7 +465,7 @@ describe('Redux store', () => {
             it('Expects that timeseriesPlayStop is called', () => {
                 mockGetState.and.returnValues({
                     timeseriesState: {
-                        playId: 1
+                        audiblePlayId: 1
                     }
                 });
 
@@ -489,6 +489,34 @@ describe('Redux store', () => {
                 type: 'SET_GAGE_HEIGHT',
                 gageHeight: 10
             });
+        });
+
+        it('if gageHeight index is in the stages array, dispatch the setGageHeight action', () => {
+            let mockDispatch = jasmine.createSpy('mockDispatch');
+            let mockGetState = jasmine.createSpy('mockGetState');
+            mockGetState.and.returnValues({
+                floodData: {
+                    stages: [9, 10, 11]
+                }
+            });
+            Actions.setGageHeightFromStageIndex(1)(mockDispatch, mockGetState);
+            expect(mockDispatch.calls.count()).toBe(1);
+            expect(mockDispatch.calls.argsFor({
+                type: 'SET_GAGE_HEIGHT',
+                gageHeight: 10
+            }));
+        });
+
+        it('if gageHeight index is outside the boundes of stages array, do not dispatch the action', () => {
+            let mockDispatch = jasmine.createSpy('mockDispatch');
+            let mockGetState = jasmine.createSpy('mockGetState');
+            mockGetState.and.returnValues({
+                floodData: {
+                    stages: [9, 10, 11]
+                }
+            });
+            Actions.setGageHeightFromStageIndex(3)(mockDispatch, mockGetState);
+            expect(mockDispatch).not.toHaveBeenCalled();
         });
 
         it('should create an action to toggle timeseries view state', () => {

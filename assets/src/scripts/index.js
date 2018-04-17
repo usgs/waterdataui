@@ -22,7 +22,9 @@ function main() {
     try {
         let nodes = document.getElementsByClassName('wdfn-component');
         let store = configureStore({
-            windowWidth: window.innerWidth
+            ui: {
+                windowWidth: window.innerWidth
+            }
         });
         for (let node of nodes) {
             COMPONENTS[node.dataset.component](store, node, node.dataset);

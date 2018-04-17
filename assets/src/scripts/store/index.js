@@ -139,7 +139,7 @@ export const Actions = {
     },
     stopTimeseriesPlay() {
         return function(dispatch, getState) {
-            window.clearInterval(getState().timeseriesState.playId);
+            window.clearInterval(getState().timeseriesState.audiblePlayId);
             dispatch(Actions.timeseriesPlayStop());
         };
     },
@@ -204,6 +204,14 @@ export const Actions = {
         return {
             type: 'SET_CURRENT_VARIABLE',
             variableID
+        };
+    },
+    setGageHeightFromStageIndex(index) {
+        return function(dispatch, getState) {
+            const stages = getState().floodData.stages;
+            if (index > -1 && index < stages.length) {
+                dispatch(Actions.setGageHeight(stages[index]));
+            }
         };
     },
     setGageHeight(gageHeight) {
