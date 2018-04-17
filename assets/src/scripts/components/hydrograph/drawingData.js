@@ -185,7 +185,7 @@ export const visiblePointsSelector = createSelector(
     currentVariablePointsSelector('current'),
     currentVariablePointsSelector('compare'),
     currentVariablePointsSelector('median'),
-    (state) => state.showSeries,
+    (state) => state.timeseriesState.showSeries,
     (current, compare, median, showSeries) => {
         const pointArray = [];
         if (showSeries['current']) {

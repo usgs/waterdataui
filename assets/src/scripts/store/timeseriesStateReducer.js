@@ -37,14 +37,14 @@ const setCursorOffset = function(timeseriesState, action) {
 const timeseriesPlayOn = function(timeseriesState, action) {
     return {
         ...timeseriesState,
-        playId: action.playId
+        audiblePlayId: action.playId
     };
 };
 
 const timeseriesPlayStop = function(timeseriesState) {
     return {
         ...timeseriesState,
-        playId: null
+        audiblePlayId: null
     };
 };
 

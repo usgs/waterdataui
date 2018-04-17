@@ -196,7 +196,7 @@ describe('Redux store', () => {
 
             it('Dispatches the action to add the compare time series and to set its visibility to false', (done) => {
                 spyOn(store.Actions, 'addSeriesCollection');
-                spyOn(store.Actions, 'toggleTimeseries')
+                spyOn(store.Actions, 'toggleTimeseries');
                 let p = store.Actions.retrieveCompareTimeseries(SITE_NO, START_DATE, END_DATE)(mockDispatch);
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(2);
@@ -385,7 +385,9 @@ describe('Redux store', () => {
 
             it('Does not reset the cursor offset when current offset is not null or greater than the max offset ', () => {
                 mockGetState.and.returnValues({
-                    cursorOffset: 0
+                    timeseriesState: {
+                        cursorOffset: 0
+                    }
                 });
                 Actions.startTimeseriesPlay(2700000)(mockDispatch, mockGetState);
 
@@ -394,7 +396,9 @@ describe('Redux store', () => {
 
             it('Call the action to start time series play', () => {
                 mockGetState.and.returnValues({
-                    cursorOffset: 0
+                    timeseriesState: {
+                        cursorOffset: 0
+                    }
                 });
                 Actions.startTimeseriesPlay(2700000)(mockDispatch, mockGetState);
 
@@ -403,9 +407,13 @@ describe('Redux store', () => {
 
             it('Expects the cursor to be updated after 10 milliseconds', () => {
                 mockGetState.and.returnValues({
-                    cursorOffset: 0
+                    timeseriesState: {
+                        cursorOffset: 0
+                    }
                 }, {
-                    cursorOffset: 0
+                    timeseriesState: {
+                        cursorOffset: 0
+                    }
                 });
                 Actions.startTimeseriesPlay(2700000)(mockDispatch, mockGetState);
                 jasmine.clock().tick(11);
@@ -416,7 +424,9 @@ describe('Redux store', () => {
 
             it('Expects the cursor to be reset if the cursor offset is greater than the maxCursorOffset', () => {
                 mockGetState.and.returnValues({
-                    cursorOffset: 2700000
+                    timeseriesState: {
+                        cursorOffset: 2700000
+                    }
                 });
 
                 Actions.startTimeseriesPlay(2700000)(mockDispatch, mockGetState);
@@ -426,9 +436,13 @@ describe('Redux store', () => {
 
             it('Expects the play to be stopped if the cursorOffset exceeds the maxCursorOffset', () => {
                 mockGetState.and.returnValues({
-                    cursorOffset: 2100000
+                    timeseriesState: {
+                        cursorOffset: 2100000
+                    }
                 }, {
-                    cursorOffset: 2100000
+                    timeseriesState: {
+                        cursorOffset: 2100000
+                    }
                 });
                 Actions.startTimeseriesPlay(2700000)(mockDispatch, mockGetState);
                 jasmine.clock().tick(11);
@@ -450,7 +464,9 @@ describe('Redux store', () => {
 
             it('Expects that timeseriesPlayStop is called', () => {
                 mockGetState.and.returnValues({
-                    playId: 1
+                    timeseriesState: {
+                        playId: 1
+                    }
                 });
 
                 Actions.stopTimeseriesPlay()(mockDispatch, mockGetState);

@@ -56,22 +56,22 @@ describe('timeseriesStateReducer', () => {
 
     it('should handle TIMESERIES_PLAY_ON', () => {
         expect(timeseriesStateReducer({
-            playId: null
+            audiblePlayId: null
         }, {
             type: 'TIMESERIES_PLAY_ON',
             playId: 12345
         })).toEqual({
-            playId: 12345
+            audiblePlayId: 12345
         });
     });
 
     it('should handle TIMESERIES_PLAY_STOP', () => {
         expect(timeseriesStateReducer({
-            playId: 12345
+            audiblePlayId: 12345
         }, {
             type: 'TIMESERIES_PLAY_STOP'
         })).toEqual({
-            playId: null
+            audiblePlayId: null
         });
     });
 });

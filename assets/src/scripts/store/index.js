@@ -119,13 +119,13 @@ export const Actions = {
     },
     startTimeseriesPlay(maxCursorOffset) {
         return function (dispatch, getState) {
-            let state = getState();
+            let state = getState().timeseriesState;
             if (state.cursorOffset == null || state.cursorOffset >= maxCursorOffset) {
                 dispatch(Actions.setCursorOffset(0));
             }
-            if (!state.playId) {
+            if (!state.audiblePlayId) {
                 let play = function () {
-                    let newOffset = getState().cursorOffset + 15 * 60 * 1000;
+                    let newOffset = getState().timeseriesState.cursorOffset + 15 * 60 * 1000;
                     if (newOffset > maxCursorOffset) {
                         dispatch(Actions.stopTimeseriesPlay());
                     } else {
@@ -139,7 +139,7 @@ export const Actions = {
     },
     stopTimeseriesPlay() {
         return function(dispatch, getState) {
-            window.clearInterval(getState().playId);
+            window.clearInterval(getState().timeseriesState.playId);
             dispatch(Actions.timeseriesPlayStop());
         };
     },
