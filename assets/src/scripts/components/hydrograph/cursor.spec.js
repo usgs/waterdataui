@@ -264,6 +264,10 @@ const TEST_STATE_ONE_VAR = {
         },
         currentVariableID: '00060id',
         cursorOffset: null
+    },
+    ui: {
+        windowWidth: 1024,
+        width: 800
     }
 };
 
