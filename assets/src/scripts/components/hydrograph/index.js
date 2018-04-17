@@ -324,7 +324,7 @@ const timeSeriesGraph = function (elem) {
                         yscale: yScaleSelector,
                         seriesMap: currentVariableTimeSeriesSelector('median'),
                         variable: currentVariableSelector,
-                        showLabel: (state) => state.showMedianStatsLabel
+                        showLabel: (state) => state.timeseriesState.showMedianStatsLabel
                     })));
             });
     elem.append('div')
