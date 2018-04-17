@@ -22,6 +22,7 @@ export const SYMLOG_PARMS = [
  *  Return domain padded on both ends by paddingRatio.
  *  For positive domains, a zero-lower bound on the y-axis is enforced.
  *  @param {Array} domain - array of two numbers
+ *  @param {Boolean} lowerBoundPOW10 - using log scale
  *  @return {Array} - array of two numbers
  */
 export const extendDomain = function (domain, lowerBoundPOW10) {
@@ -94,7 +95,8 @@ export const getYDomain = function (pointArrays, currentVar) {
 
 /**
  * Helper function which generates y tick values for a scale
- * @param {Object} yScale - d3 scale
+ * @param {Array} yDomain - Two element array representing the domain on the yscale.
+ * @param {Array} parmCd - parameter code for time series that is being generated.
  * @returns {Array} of tick values
  */
 export const getYTickDetails = function (yDomain, parmCd) {
