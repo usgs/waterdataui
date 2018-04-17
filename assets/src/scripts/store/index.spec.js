@@ -51,7 +51,6 @@ describe('Redux store', () => {
                 spyOn(store.Actions, 'retrieveCompareTimeseries');
                 spyOn(store.Actions, 'toggleTimeseries');
                 spyOn(store.Actions, 'setCurrentVariable');
-                spyOn(store.Actions, 'setGageHeight');
                 let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch);
 
                 p.then(() => {
@@ -64,6 +63,8 @@ describe('Redux store', () => {
                     expect(store.Actions.toggleTimeseries.calls.count()).toBe(2);
                     expect(store.Actions.toggleTimeseries.calls.argsFor(0)).toEqual(['current', true]);
                     expect(store.Actions.toggleTimeseries.calls.argsFor(1)).toEqual(['median', true]);
+                    expect(store.Actions.setCurrentVariable.calls.count()).toBe(1);
+                    expect(store.Actions.setCurrentVariable.calls.argsFor(0)).toEqual(['45807197']);
 
                     done();
                 });

@@ -168,7 +168,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
             .attr('aria-selected', parm => parm[1].selected)
             .on('click', dispatch(function (parm) {
                 if (!parm[1].selected) {
-                    return Actions.setCurrentParameterCode(parm[0], parm[1].variableID);
+                    return Actions.setCurrentVariable(parm[1].variableID);
                 }
             }))
             .call(tr => {

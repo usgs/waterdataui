@@ -66,7 +66,7 @@ export const Actions = {
                     // Update the application state
                     dispatch(Actions.toggleTimeseries('current', true));
                     dispatch(Actions.setCurrentVariable(
-                        getCurrentVariableId(series.timeseries || {}, series.variables || {})
+                        getCurrentVariableId(collection.timeSeries || {}, collection.variables || {})
                     ));
                     dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
 

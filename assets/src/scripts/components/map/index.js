@@ -67,9 +67,9 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     legendControl.addTo(map);
 
 
-    const updateFloodLayers = function (node, {hasFloodData, stageHeight}) {
-        if (stageHeight) {
-            const layerDefs = getLayerDefs(0, siteno, stageHeight);
+    const updateFloodLayers = function (node, {hasFloodData, floodStageHeight}) {
+        if (floodStageHeight) {
+            const layerDefs = getLayerDefs(0, siteno, floodStageHeight);
             floodLayer.setLayerDefs(layerDefs);
             breachLayer.setLayerDefs(layerDefs);
         }
