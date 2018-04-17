@@ -192,7 +192,7 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
  * Select attributes from the state useful for legend creation
  */
 const legendDisplaySelector = createSelector(
-    (state) => state.showSeries,
+    (state) => state.timeseriesState.showSeries,
     currentVariableTimeSeriesSelector('median'),
     methodsSelector,
     uniqueClassesSelector('current'),
