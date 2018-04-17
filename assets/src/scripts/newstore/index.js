@@ -84,9 +84,11 @@ export const Actions = {
             );
             const medianStatistics = getMedianStatistics({sites: [siteno]});
             return Promise.all([timeSeries, medianStatistics]).then(([{collection, startTime, endTime}, stats]) => {
-                let medianCollection = parseMedianData(stats, startTime, endTime, collection && collection.variables ? collection.variables : {});
-                dispatch(Actions.addSeriesCollection('median', medianCollection));
-                dispatch(Actions.toggleTimeseries('median', true));
+                if (startTime && endTime) {
+                    let medianCollection = parseMedianData(stats, startTime, endTime, collection && collection.variables ? collection.variables : {});
+                    dispatch(Actions.addSeriesCollection('median', medianCollection));
+                    dispatch(Actions.toggleTimeseries('median', true));
+                }
             });
         };
     },
