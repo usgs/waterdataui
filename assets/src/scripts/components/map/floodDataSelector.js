@@ -1,12 +1,17 @@
 const { createSelector } = require('reselect');
 
-export const hasFloodDataSelector = state => state.floodData.stages.length > 0;
-
 export const floodStagesSelector = state => state.floodData.stages;
 
 export const floodExtentSelector = state => state.floodData.extent;
 
 export const floodGageHeightSelector = state => state.floodState.gageHeight;
+
+export const hasFloodDataSelector = createSelector(
+    floodStagesSelector,
+    (stages) => stages.length > 0
+);
+
+
 
 /*
  * Provides a function which returns the stage closest to the gageHeight

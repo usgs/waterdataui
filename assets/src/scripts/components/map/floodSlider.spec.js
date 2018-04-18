@@ -7,7 +7,7 @@ const { floodSlider } = require('./floodSlider');
 const { hasFloodDataSelector } = require('./floodDataSelector');
 
 
-fdescribe('floodSlider', () => {
+describe('floodSlider', () => {
 
     let sliderNode;
     let store;
@@ -31,12 +31,8 @@ fdescribe('floodSlider', () => {
                 .call(floodSlider, hasFloodDataSelector);
         });
 
-        it('The slider is hidden', () => {
-            expect(select(sliderNode).select('.slider-wrapper').property('hidden')).toBeTruthy();
-        });
-
-        it('The slider is created', () => {
-            expect(select(sliderNode).selectAll('input[type="range"]').size()).toBe(1);
+        it('The slider should not be created', () => {
+            expect(select(sliderNode).select('.slider-wrapper').size()).toBe(0);
         });
     });
 
@@ -56,7 +52,7 @@ fdescribe('floodSlider', () => {
         });
 
         it('The slider is not hidden', () => {
-            expect(select(sliderNode).select('.slider-wrapper').property('hidden')).toBeFalsy();
+            expect(select(sliderNode).select('.slider-wrapper').size()).toBe(1);
         });
 
         it('Expects the slider\'s min, max, step, and value set appropriately', () => {
