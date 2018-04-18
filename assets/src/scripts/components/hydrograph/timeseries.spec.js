@@ -88,7 +88,9 @@ const TEST_DATA = {
             }
         }
     },
-    currentVariableID: '45807197'
+    timeseriesState: {
+        currentVariableID: '45807197'
+    }
 };
 
 describe('Timeseries module', () => {
@@ -132,7 +134,9 @@ describe('Timeseries module', () => {
                 series: {
                     variables: TEST_VARIABLES
                 },
-                currentVariableID: '45807197'
+                timeseriesState: {
+                    currentVariableID: '45807197'
+                }
             })).toEqual({
                 'variableCode': {
                     value: '00060'
@@ -146,7 +150,9 @@ describe('Timeseries module', () => {
                 series: {
                     variables: TEST_VARIABLES
                 },
-                currentVariableID: null
+                timeseriesState: {
+                    currentVariableID: null
+                }
             })).toBeNull();
         });
     });
@@ -266,7 +272,9 @@ describe('Timeseries module', () => {
                         }
                     }
                 },
-                currentVariableID: '45807197'
+                timeseriesState: {
+                    currentVariableID: '45807197'
+                }
             })).toEqual({
                 one: {item: 'one', points: [1, 2], tsKey: 'current', variable: 45807197},
                 three: {item: 'three', points: [3, 4], tsKey: 'current', variable: 45807197},
@@ -277,7 +285,9 @@ describe('Timeseries module', () => {
         it('returns {} if there is no currentVariableId', () => {
             expect(currentVariableTimeSeriesSelector('current')({
                 series: {},
-                currentVariableID: null
+                timeseriesState: {
+                    currentVariableID: null
+                }
             })).toEqual({});
         });
     });
@@ -319,10 +329,12 @@ describe('Timeseries module', () => {
     describe('isVisibleSelector', () => {
         it('Returns whether the time series is visible', () => {
             const store = {
-                showSeries: {
-                    'current': true,
-                    'compare': false,
-                    'median': true
+                timeseriesState: {
+                    showSeries: {
+                        'current': true,
+                        'compare': false,
+                        'median': true
+                    }
                 }
             };
 
@@ -340,7 +352,10 @@ describe('Timeseries module', () => {
         it('Returns empty string if no variable selected', () => {
             expect(yLabelSelector({
                 ...TEST_DATA,
-                currentVariableID: null
+                timeseriesState: {
+                    ...TEST_DATA.timeseriesState,
+                    currentVariableID: null
+                }
             })).toBe('');
         });
     });
@@ -352,7 +367,10 @@ describe('Timeseries module', () => {
         it('Returns empty string if no variable selected', () => {
             expect(titleSelector({
                 ...TEST_DATA,
-                currentVariableID: null
+                timeseriesState: {
+                    ...TEST_DATA.timeseriesState,
+                    currentVariableID: null
+                }
             })).toBe('');
         });
     });

@@ -37,8 +37,8 @@ const SPARK_LINE_DIM = {
  * @return {Object} containing width and height properties.
  */
 const layoutSelector = createSelector(
-    (state) => state.width,
-    (state) => state.windowWidth,
+    (state) => state.ui.width,
+    (state) => state.ui.windowWidth,
     tickSelector,
     (width, windowWidth, tickDetails) => {
         const margin = mediaQuery(USWDS_SITE_MAX_WIDTH) ? MARGIN : MARGIN_SMALL_DEVICE;

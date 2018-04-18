@@ -120,13 +120,17 @@ const TEST_STATE = {
             }
         }
     },
-    currentVariableID: '45807197',
-    showSeries: {
-        current: true,
-        compare: true,
-        median: true
+    timeseriesState: {
+        currentVariableID: '45807197',
+        showSeries: {
+            current: true,
+            compare: true,
+            median: true
+        }
     },
-    width: 400
+    ui: {
+        width: 400
+    }
 };
 
 
@@ -243,17 +247,20 @@ describe('Hydrograph charting module', () => {
                         }
                     }
                 },
-                showSeries: {
-                    current: true,
-                    compare: true,
-                    median: true
+                timeseriesState: {
+                    showSeries: {
+                        current: true,
+                        compare: true,
+                        median: true
+                    },
+                    showMedianStatsLabel: false,
+                    currentVariableID: '45807197'
                 },
-                title: 'My Title',
-                desc: 'My Description',
-                showMedianStatsLabel: false,
-                windowWidth: 400,
-                width: 400,
-                currentVariableID: '45807197'
+                ui: {
+                    windowWidth: 400,
+                    width: 400
+                }
+
             });
 
             attachToNode(store, graphNode, {siteno: '123456788'});
@@ -361,7 +368,7 @@ describe('Hydrograph charting module', () => {
         });
 
         it('should be disabled if there are no last year data', () => {
-            store.dispatch(Actions.setCurrentParameterCode('00010', '45807190'));
+            store.dispatch(Actions.setCurrentVariable('45807190'));
             expect(select('#last-year-checkbox').property('disabled')).toBeTruthy();
         });
 
@@ -387,7 +394,10 @@ describe('Hydrograph charting module', () => {
             let store = configureStore({
                 ...TEST_STATE,
                 series: {},
-                currentVariableID: ''
+                timeseriesState: {
+                    ...TEST_STATE.timeseriesState,
+                    currentVariableID: ''
+                }
             });
             attachToNode(store, graphNode, {siteno: '12345678'});
 

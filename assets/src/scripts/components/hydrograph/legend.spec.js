@@ -165,11 +165,13 @@ describe('Legend module', () => {
                     }
                 }
             },
-            currentVariableID: '45807197',
-            showSeries: {
-                current: true,
-                compare: true,
-                median: true
+            timeseriesState: {
+                currentVariableID: '45807197',
+                showSeries: {
+                    current: true,
+                    compare: true,
+                    median: true
+                }
             }
         };
 
@@ -199,7 +201,10 @@ describe('Legend module', () => {
         it('Should return markers for a different selected variable', () => {
             const newData = {
                 ...TEST_DATA,
-                currentVariableID: '45807202'
+                timeseriesState: {
+                    ...TEST_DATA.timeseriesState,
+                    currentVariableID: '45807202'
+                }
             };
             const result = legendMarkerRowsSelector(newData);
 
@@ -216,11 +221,14 @@ describe('Legend module', () => {
         it('Should return markers only for time series shown', () => {
             const newData = {
                 ...TEST_DATA,
-                currentVariableID: '45807202',
-                showSeries: {
-                    'current': true,
-                    'compare': false,
-                    'median': true
+                timeseriesState: {
+                    ...TEST_DATA.timeseriesState,
+                    currentVariableID: '45807202',
+                    showSeries: {
+                        'current': true,
+                        'compare': false,
+                        'median': true
+                    }
                 }
             };
 

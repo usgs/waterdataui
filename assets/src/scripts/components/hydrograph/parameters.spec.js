@@ -49,7 +49,9 @@ describe('Parameters module', () => {
                         }
                     }
                 },
-                currentVariableID: 'code0'
+                timeseriesState: {
+                    currentVariableID: 'code0'
+                }
             });
             // Series are ordered by parameter code and have expected values.
             expect(available).toEqual([
@@ -101,7 +103,9 @@ describe('Parameters module', () => {
                         }
                     }
                 },
-                currentVariableID: 'code0'
+                timeseriesState: {
+                    currentVariableID: 'code0'
+                }
             });
             // Series are ordered by parameter code and have expected values.
             expect(available).toEqual([
@@ -153,7 +157,9 @@ describe('Parameters module', () => {
                         }
                     }
                 },
-                currentVariableID: 'code0'
+                timeseriesState: {
+                    currentVariableID: 'code0'
+                }
             });
             // Series are ordered by parameter code and have expected values.
             expect(available).toEqual([
