@@ -125,6 +125,7 @@ $highlight: $color-gray-lightest;
     }
 
     svg {
+        backgroundColor: rgba(0,0,0,0);
         .watermark {
             fill: #006F41;
             opacity: .08;
