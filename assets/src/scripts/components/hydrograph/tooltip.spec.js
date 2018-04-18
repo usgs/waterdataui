@@ -30,13 +30,7 @@ describe('Hydrograph tooltip module', () => {
 
     ];
     data = data.concat(maskedData);
-    const testTimeseriesState = {
-        showSeries: {
-            current: true,
-            compare: true
-        },
-        currentVariableID: '00060id'
-    };
+
     const testState = {
         series: {
             timeSeries: {
@@ -128,7 +122,13 @@ describe('Hydrograph tooltip module', () => {
                 }
             }
         },
-        timeseriesState: testTimeseriesState
+        timeseriesState: {
+            showSeries: {
+                current: true,
+                compare: true
+            },
+            currentVariableID: '00060id'
+        }
     };
 
     describe('tooltipPointsSelector', () => {
@@ -224,10 +224,10 @@ describe('Hydrograph tooltip module', () => {
         });
 
         it('Creates the text elements with the label for the focus times', () => {
-            let tsState = testTimeseriesState;
-            tsState.cursorOffset = 2 * 60 * 60 * 1000;
             let store = configureStore(Object.assign({}, testState, {
-                timeseriesState: tsState
+                timeseriesState: Object.assign({}, testState.timeseriesState, {
+                    cursorOffset: 2 * 60 * 60 * 1000
+                })
             }));
 
             svg.call(provide(store))
@@ -240,10 +240,10 @@ describe('Hydrograph tooltip module', () => {
         });
 
         it('Text contents are updated when the store is provided with new focus times', () => {
-            let tsState = testTimeseriesState;
-            tsState.cursorOffset = 1;
             let store = configureStore(Object.assign({}, testState, {
-                timeseriesState: tsState
+                timeseriesState: Object.assign({}, testState.timeseriesState, {
+                    cursorOffset: 1
+                })
             }));
 
             svg.call(provide(store))
@@ -261,10 +261,10 @@ describe('Hydrograph tooltip module', () => {
         });
 
         it('Does not show text if focus is near masked data points', () => {
-            let tsState = testTimeseriesState;
-            tsState.cursorOffset = 1;
             let store = configureStore(Object.assign({}, testState, {
-                timeseriesState: tsState
+                timeseriesState: Object.assign({}, testState.timeseriesState, {
+                    cursorOffset: 1
+                })
             }));
 
             svg.call(provide(store))
@@ -282,8 +282,6 @@ describe('Hydrograph tooltip module', () => {
                     value: 0
                 };
             });
-            let tsState = testTimeseriesState;
-            tsState.cursorOffset = 10;
             let store = configureStore(Object.assign({}, testState, {
                 series: Object.assign({}, testState.series, {
                     timeSeries: Object.assign({}, testState.series.timeSeries, {
@@ -292,7 +290,9 @@ describe('Hydrograph tooltip module', () => {
                         })
                     })
                 }),
-                timeseriesState: tsState
+                timeseriesState: Object.assign({}, testState.timeseriesState, {
+                    cursorOffset: 10
+                })
             }));
             svg.call(provide(store))
                 .call(createTooltipText);
@@ -322,8 +322,6 @@ describe('Hydrograph tooltip module', () => {
         });
 
         it('Creates focus lines but has no focus circles when cursor not set', () => {
-            let tsState = testTimeseriesState;
-            tsState.cursorOffset = null;
             let store = configureStore(Object.assign({}, testState, {
                 series: Object.assign({}, testState.series, {
                     timeSeries: Object.assign({}, testState.series.timeSeries, {
@@ -339,7 +337,9 @@ describe('Hydrograph tooltip module', () => {
                         }
                     })
                 }),
-                timeseriesState: tsState
+                timeseriesState: Object.assign({}, testState.timeseriesState, {
+                    cursorOffset: null
+                })
             }));
 
             svg.call(provide(store)).
@@ -351,8 +351,6 @@ describe('Hydrograph tooltip module', () => {
         });
 
         it('Focus circles and line are displayed if cursor is set', () => {
-            let tsState = testTimeseriesState;
-            tsState.cursorOffset = 39 * 60 * 1000;
             let store = configureStore(Object.assign({}, testState, {
                 series: Object.assign({}, testState.series, {
                     timeSeries: Object.assign({}, testState.series.timeSeries, {
@@ -368,7 +366,9 @@ describe('Hydrograph tooltip module', () => {
                         }
                     })
                 }),
-                timeseriesState: testTimeseriesState
+                timeseriesState: Object.assign({}, testState.timeseriesState, {
+                    cursorOffset: 39 * 60 * 1000
+                })
             }));
 
             svg.call(provide(store)).
