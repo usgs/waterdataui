@@ -2,6 +2,8 @@
 
 {% import 'macros/components.html' as components %}
 
+{% if stations|length == 1 %}{% set page_title = stations[0].station_nm %}{% endif %}
+
 {% block extra_head_tags %}
     {% if status_code == 200 %}
         {% if stations|length == 1 %}
@@ -29,8 +31,6 @@
 {% endblock page_script %}
 
 {% set body_id = 'monitoring-location' %}
-
-{% if stations|length == 1 %}{% set page_title = stations[0].station_nm %}{% endif %}
 
 {% block content %}
     <div class="usa-width-one-whole">
