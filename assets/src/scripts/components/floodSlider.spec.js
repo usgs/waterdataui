@@ -79,7 +79,7 @@ describe('floodSlider', () => {
         });
 
         it('Sets the gageHeight when the slider value changes and updates the label', () => {
-            const slider = select(sliderNode).select('input[type="range"]')
+            const slider = select(sliderNode).select('input[type="range"]');
             slider.attr('value', 2)
                 .dispatch('input');
 
