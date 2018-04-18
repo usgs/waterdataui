@@ -10,7 +10,7 @@ const { FIM_ENDPOINT, HYDRO_ENDPOINT } = require('../../config');
 const { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } = require('../../floodData');
 const { Actions } = require('../../store');
 
-const { hasFloodDataSelector, floodStageHeightSelector } = require('./floodDataSelector');
+const { hasFloodDataSelector, floodExtentSelector, floodStageHeightSelector } = require('./floodDataSelector');
 const { floodSlider } = require('./floodSlider');
 const { createLegendControl, createFIMLegend } = require('./legend');
 
@@ -89,7 +89,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     };
 
 
-    const updateMapExtent = function (node, {extent}) {
+    const updateMapExtent = function (node, extent) {
         if (Object.keys(extent).length > 0) {
             map.fitBounds(Util.extentToBounds(extent).extend([latitude, longitude]));
         }
@@ -135,9 +135,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
             hasFloodData: hasFloodDataSelector,
             floodStageHeight: floodStageHeightSelector
         })))
-        .call(link(updateMapExtent, createStructuredSelector({
-            extent: (state) => state.floodData.extent
-        })))
+        .call(link(updateMapExtent, floodExtentSelector))
         .call(link(addFIMLegend, hasFloodDataSelector))
         .call(link(addFimLink, hasFloodDataSelector));
 };
