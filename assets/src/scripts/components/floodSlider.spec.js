@@ -64,4 +64,27 @@ describe('floodSlider', () => {
             expect(select(sliderNode).select('label').html()).toContain('10');
         });
     });
+
+    describe('Handling slider changes', () => {
+        beforeEach(() => {
+            store = configureStore({
+                floodData: {
+                    stages: [9, 10, 11, 12]
+                },
+                floodState: {
+                    gageHeight: 10
+                }
+            });
+            attachToNode(store, sliderNode);
+        });
+
+        it('Sets the gageHeight when the slider value changes and updates the label', () => {
+            const slider = select(sliderNode).select('input[type="range"]')
+            slider.attr('value', 2)
+                .dispatch('input');
+
+            expect(store.getState().floodState.gageHeight).toBe(11);
+            expect(select(sliderNode).select('label').html()).toContain('11');
+        });
+    });
 });
