@@ -1,10 +1,13 @@
 const { select } = require('d3-selection');
 
-const { attachToNode } = require('./floodSlider');
-const { configureStore } = require('../store');
+const { provide } = require('../../lib/redux');
+const { configureStore } = require('../../store');
+
+const { floodSlider } = require('./floodSlider');
+const { hasFloodDataSelector } = require('./floodDataSelector');
 
 
-describe('floodSlider', () => {
+fdescribe('floodSlider', () => {
 
     let sliderNode;
     let store;
@@ -23,7 +26,9 @@ describe('floodSlider', () => {
     describe('creating slider when their are no stages', () => {
         beforeEach(() => {
             store = configureStore();
-            attachToNode(store, sliderNode);
+            select(sliderNode)
+                .call(provide(store))
+                .call(floodSlider, hasFloodDataSelector);
         });
 
         it('The slider is hidden', () => {
@@ -45,7 +50,9 @@ describe('floodSlider', () => {
                     gageHeight: 10
                 }
             });
-            attachToNode(store, sliderNode);
+            select(sliderNode)
+                .call(provide(store))
+                .call(floodSlider);
         });
 
         it('The slider is not hidden', () => {
@@ -75,7 +82,9 @@ describe('floodSlider', () => {
                     gageHeight: 10
                 }
             });
-            attachToNode(store, sliderNode);
+            select(sliderNode)
+                .call(provide(store))
+                .call(floodSlider);
         });
 
         it('Sets the gageHeight when the slider value changes and updates the label', () => {

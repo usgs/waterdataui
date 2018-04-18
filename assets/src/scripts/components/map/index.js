@@ -8,18 +8,17 @@ const { link, provide } = require('../../lib/redux');
 
 const { FIM_ENDPOINT, HYDRO_ENDPOINT } = require('../../config');
 const { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } = require('../../floodData');
-const { hasFloodDataSelector, floodStageHeightSelector } = require('../../floodDataSelector');
 const { Actions } = require('../../store');
 
+const { hasFloodDataSelector, floodStageHeightSelector } = require('./floodDataSelector');
+const { floodSlider } = require('./floodSlider');
 const { createLegendControl, createFIMLegend } = require('./legend');
-
 
 
 const getLayerDefs = function(layerNo, siteno, stage) {
    const stageQuery = stage ? ` AND STAGE = ${stage}` : '';
    return `${layerNo}: USGSID = '${siteno}'${stageQuery}`;
 };
-
 
 /*
  * Creates a site map
@@ -157,7 +156,10 @@ export const attachToNode = function(store, node, {siteno, latitude, longitude, 
     store.dispatch(Actions.retrieveFloodData(siteno));
 
     select(node)
-        .call(provide(store))
+        .call(provide(store));
+    select(node).append('div')
+        .call(floodSlider);
+    select(node)
         .call(siteMap, {siteno, latitude, longitude, zoom});
 };
 

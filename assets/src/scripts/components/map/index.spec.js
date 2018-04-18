@@ -4,7 +4,7 @@ const proxyquire = require('proxyquireify')(require);
 const { attachToNode } = require('./index');
 const { configureStore } = require('../../store');
 
-describe('map module', () => {
+fdescribe('map module', () => {
     let mapNode;
     let store;
     let floodDataMock;
@@ -31,7 +31,7 @@ describe('map module', () => {
         jasmine.Ajax.uninstall();
     });
 
-    describe('Map creation without no FIM maps', () => {
+    describe('Map creation without FIM maps', () => {
         beforeEach(() => {
             store = configureStore();
             map.attachToNode(store, mapNode, {
@@ -60,6 +60,10 @@ describe('map module', () => {
 
         it('Should create not create FIM Legend', () => {
             expect(select(mapNode).select('#fim-legend-list').size()).toBe(0);
+        });
+
+        it('Should not create a FIM slider', () => {
+            expect(select(mapNode).select('input[type="range"]').size()).toBe(0);
         });
 
     });
@@ -94,6 +98,10 @@ describe('map module', () => {
 
         it('Should create a FIM Legend', () => {
             expect(select(mapNode).select('#fim-legend-list').size()).toBe(1);
+        });
+
+        it('Should create the FIM slider', () => {
+            expect(select(mapNode).select('input[type="range"').size()).toBe(1);
         });
     });
 

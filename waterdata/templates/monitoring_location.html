@@ -70,7 +70,6 @@
                 </div>
                 {{ components.TimeseriesComponent(stations[0].site_no) }}
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
-                    {{ components.FloodSliderComponent() }}
                     {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
                 {% endif %}
 
