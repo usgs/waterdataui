@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 Provisional for the lines that are currently visible on the graph.
 - Audible/Show Last Year controls are shown below the timeseries legend on mobile.
 - Timeseries tooltip no longer shows text when focus is on a masked area.
+- Refactored the shape of the state to separate domain data, application state, and ui state and created
+slice reducers for the different parts.
 
 
 ### Fixed
