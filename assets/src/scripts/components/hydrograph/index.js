@@ -8,7 +8,7 @@ const { select } = require('d3-selection');
 const { createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
-const { USWDS_MEDIUM_SCREEN } = require('../../config');
+const { USWDS_MEDIUM_SCREEN, USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
 const { dispatch, link, provide } = require('../../lib/redux');
 const { Actions } = require('../../store');
 const { mediaQuery } = require('../../utils');
@@ -284,8 +284,23 @@ const createTitle = function(elem) {
         }, titleSelector));
 };
 
+const watermark = function (elem) {
+    elem.append('img')
+        .classed('watermark', true)
+        .attr('src', STATIC_URL + '/img/USGS_green_logo.svg')
+        .call(link(function(elem) {
+            if (mediaQuery(USWDS_SMALL_SCREEN)) {
+                elem.style('transform', 'translate(170%, 260%)');
+            } else if (mediaQuery(USWDS_MEDIUM_SCREEN)){
+                elem.style('transform', 'translate(175%, 305%');
+            } else {
+                elem.style('transform', 'translate(85%, 150%');
+            }
+        }, layoutSelector));
+};
 
 const timeSeriesGraph = function (elem) {
+    elem.call(watermark);
     elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(createTitle)
@@ -418,8 +433,6 @@ const controlGraphDisplay = function (elem, currentTimeseries) {
     const seriesWithPoints = Object.values(currentTimeseries).filter(x => x.points.length > 0);
     elem.attr('hidden', seriesWithPoints.length === 0 ? true : null);
 };
-
-
 
 const attachToNode = function (store, node, {siteno} = {}) {
     if (!siteno) {

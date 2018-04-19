@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Tooltips are provided for metadata elements for those that USGS defines on NWIS help pages.
 - Information alert for provisional data.
 - Basic meta tags, title and description, for Twitter card and Open Graph 
+- Rough draft for USGS logo watermark
 
 
 ### Changed
