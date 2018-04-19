@@ -297,7 +297,7 @@ const watermark = function (elem) {
                 elem.style('transform', 'translate(85%, 150%');
             }
         }, layoutSelector));
-}
+};
 
 const timeSeriesGraph = function (elem) {
     elem.call(watermark);
