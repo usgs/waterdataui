@@ -260,7 +260,7 @@ describe('Hydrograph tooltip module', () => {
             expect(value).toBe('15 ft3/s');
         });
 
-        it('Does not show text if focus is near masked data points', () => {
+        it('Shows the qualifier text if focus is near masked data points', () => {
             let store = configureStore(Object.assign({}, testState, {
                 timeseriesState: Object.assign({}, testState.timeseriesState, {
                     cursorOffset: 1
@@ -271,7 +271,7 @@ describe('Hydrograph tooltip module', () => {
                 .call(createTooltipText);
             store.dispatch(Actions.setCursorOffset(299 * 60 * 1000));  // 2018-01-03T16:59:00.000Z
 
-            expect(svg.select('.current-tooltip-text').text()).toBe('');
+            expect(svg.select('.current-tooltip-text').text()).toContain('Flood');
         });
 
         it('Creates the correct text for values of zero', () => {
