@@ -107,37 +107,46 @@
                     </ul>
                 {% endif %}
 
-                <table id="site-summary" summary="Descriptive metadata about this monitoring location">
-                    <thead>
-                        <tr>
-                            <th scope="col">Metadata Element</th>
-                            <th scope="col">Location Metadata</th>
-                            <th scope="col">Metadata Code</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for key, value in location_with_values.items() %}
-                            <tr>
-                                <th scope="row" {%  if STATION_FIELDS_D[key].description %}aria-describedby="{{ key|tooltip_content_id }}"{% endif %}>{{ STATION_FIELDS_D[key].name }}
-                                    {%  if STATION_FIELDS_D[key].description %}
-                                        {{ components.QuestionTooltip(key, STATION_FIELDS_D[key].description, True) }}
-                                    {% endif %}
-                                </th>
-                                <td class="loc-metadata">
-                                    {% if value.url %}
-                                        <a href="{{ value.url }}">{{ value.name }}</a>
-                                    {% else %}
-                                        {{ value.name }}
-                                    {% endif %}
-                                    {% if value.desc %}
-                                        {{ components.QuestionTooltip(value.code, value.desc, False) }}
-                                    {% endif %}
-                                </td>
-                                <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <ul class="usa-accordion">
+                    <li>
+                        <button class="usa-accordion-button" aria-expanded="false" aria-controls="ts-a2">
+                            Location Metadata
+                        </button>
+                        <div id="ts-a2" class="usa-accordion-content">
+                            <table id="site-summary" summary="Descriptive metadata about this monitoring location">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Metadata Element</th>
+                                        <th scope="col">Location Metadata</th>
+                                        <th scope="col">Metadata Code</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for key, value in location_with_values.items() %}
+                                        <tr>
+                                            <th scope="row" {%  if STATION_FIELDS_D[key].description %}aria-describedby="{{ key|tooltip_content_id }}"{% endif %}>{{ STATION_FIELDS_D[key].name }}
+                                                {%  if STATION_FIELDS_D[key].description %}
+                                                    {{ components.QuestionTooltip(key, STATION_FIELDS_D[key].description, True) }}
+                                                {% endif %}
+                                            </th>
+                                            <td class="loc-metadata">
+                                                {% if value.url %}
+                                                    <a href="{{ value.url }}">{{ value.name }}</a>
+                                                {% else %}
+                                                    {{ value.name }}
+                                                {% endif %}
+                                                {% if value.desc %}
+                                                    {{ components.QuestionTooltip(value.code, value.desc, False) }}
+                                                {% endif %}
+                                            </td>
+                                            <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </li>
+                </ul>
                 {% if questions_link %}
                     <div>
                         <a href="{{ questions_link }}">Email USGS questions about this site</a>
