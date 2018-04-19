@@ -125,11 +125,6 @@ $highlight: $color-gray-lightest;
     }
 
     svg {
-        backgroundColor: rgba(0,0,0,0);
-        .watermark {
-            fill: #006F41;
-            opacity: .08;
-        }
         .overlay {
             fill: none;
             pointer-events: all;
@@ -274,6 +269,15 @@ $highlight: $color-gray-lightest;
         }
     }
 
+}
+
+.watermark {
+    position: absolute;
+    opacity: .08;
+    max-width: 20%;
+//    -webkit-transform: translate(-50%, -50%);
+ //   -moz-transform: translate(-50%, -50%);
+  //  transform: translate(-50%, -50%);
 }
 
 .slider-wrapper {
