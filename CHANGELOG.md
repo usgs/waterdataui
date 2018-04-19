@@ -23,6 +23,7 @@ slice reducers for the different parts.
 ### Fixed
 - Tooltip is redrawn correctly when changing from portrait to landscape on mobile.
 - Handle tooltips on touch devices
+- Metadata tooltips are not clipped by their containing div element
 
 
 ## [0.6.0] - 2018-04-06
