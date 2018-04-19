@@ -150,7 +150,6 @@ describe('seriesReducer', () => {
                 type: 'RESET_TIMESERIES',
                 key: 'compare'
             });
-            console.log(result);
             expect(seriesReducer({
                 timeSeries: {
                     ts: {

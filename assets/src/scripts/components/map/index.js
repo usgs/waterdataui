@@ -8,18 +8,17 @@ const { link, provide } = require('../../lib/redux');
 
 const { FIM_ENDPOINT, HYDRO_ENDPOINT } = require('../../config');
 const { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } = require('../../floodData');
-const { hasFloodDataSelector, floodStageHeightSelector } = require('../../floodDataSelector');
 const { Actions } = require('../../store');
 
+const { hasFloodDataSelector, floodExtentSelector, floodStageHeightSelector } = require('./floodDataSelector');
+const { floodSlider } = require('./floodSlider');
 const { createLegendControl, createFIMLegend } = require('./legend');
-
 
 
 const getLayerDefs = function(layerNo, siteno, stage) {
    const stageQuery = stage ? ` AND STAGE = ${stage}` : '';
    return `${layerNo}: USGSID = '${siteno}'${stageQuery}`;
 };
-
 
 /*
  * Creates a site map
@@ -90,7 +89,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     };
 
 
-    const updateMapExtent = function (node, {extent}) {
+    const updateMapExtent = function (node, extent) {
         if (Object.keys(extent).length > 0) {
             map.fitBounds(Util.extentToBounds(extent).extend([latitude, longitude]));
         }
@@ -136,9 +135,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
             hasFloodData: hasFloodDataSelector,
             floodStageHeight: floodStageHeightSelector
         })))
-        .call(link(updateMapExtent, createStructuredSelector({
-            extent: (state) => state.floodData.extent
-        })))
+        .call(link(updateMapExtent, floodExtentSelector))
         .call(link(addFIMLegend, hasFloodDataSelector))
         .call(link(addFimLink, hasFloodDataSelector));
 };
@@ -157,7 +154,10 @@ export const attachToNode = function(store, node, {siteno, latitude, longitude, 
     store.dispatch(Actions.retrieveFloodData(siteno));
 
     select(node)
-        .call(provide(store))
+        .call(provide(store));
+    select(node).append('div')
+        .call(floodSlider);
+    select(node)
         .call(siteMap, {siteno, latitude, longitude, zoom});
 };
 

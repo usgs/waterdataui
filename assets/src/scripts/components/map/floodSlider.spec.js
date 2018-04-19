@@ -1,7 +1,10 @@
 const { select } = require('d3-selection');
 
-const { attachToNode } = require('./floodSlider');
-const { configureStore } = require('../store');
+const { provide } = require('../../lib/redux');
+const { configureStore } = require('../../store');
+
+const { floodSlider } = require('./floodSlider');
+const { hasFloodDataSelector } = require('./floodDataSelector');
 
 
 describe('floodSlider', () => {
@@ -23,15 +26,13 @@ describe('floodSlider', () => {
     describe('creating slider when their are no stages', () => {
         beforeEach(() => {
             store = configureStore();
-            attachToNode(store, sliderNode);
+            select(sliderNode)
+                .call(provide(store))
+                .call(floodSlider, hasFloodDataSelector);
         });
 
-        it('The slider is hidden', () => {
-            expect(select(sliderNode).select('.slider-wrapper').property('hidden')).toBeTruthy();
-        });
-
-        it('The slider is created', () => {
-            expect(select(sliderNode).selectAll('input[type="range"]').size()).toBe(1);
+        it('The slider should not be created', () => {
+            expect(select(sliderNode).select('.slider-wrapper').size()).toBe(0);
         });
     });
 
@@ -45,11 +46,13 @@ describe('floodSlider', () => {
                     gageHeight: 10
                 }
             });
-            attachToNode(store, sliderNode);
+            select(sliderNode)
+                .call(provide(store))
+                .call(floodSlider);
         });
 
         it('The slider is not hidden', () => {
-            expect(select(sliderNode).select('.slider-wrapper').property('hidden')).toBeFalsy();
+            expect(select(sliderNode).select('.slider-wrapper').size()).toBe(1);
         });
 
         it('Expects the slider\'s min, max, step, and value set appropriately', () => {
@@ -75,7 +78,9 @@ describe('floodSlider', () => {
                     gageHeight: 10
                 }
             });
-            attachToNode(store, sliderNode);
+            select(sliderNode)
+                .call(provide(store))
+                .call(floodSlider);
         });
 
         it('Sets the gageHeight when the slider value changes and updates the label', () => {
