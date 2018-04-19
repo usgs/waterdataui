@@ -8,7 +8,7 @@ const { select } = require('d3-selection');
 const { createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
-const { USWDS_LARGE_SCREEN, USWDS_MEDIUM_SCREEN, USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
+const { USWDS_MEDIUM_SCREEN, USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
 const { dispatch, link, provide } = require('../../lib/redux');
 const { Actions } = require('../../store');
 const { mediaQuery } = require('../../utils');
@@ -291,13 +291,9 @@ const watermark = function (elem) {
         .call(link(function(elem) {
             if (mediaQuery(USWDS_SMALL_SCREEN)) {
                 elem.style('transform', 'translate(170%, 260%)');
-            }
-
-            if (mediaQuery(USWDS_MEDIUM_SCREEN)){
+            } else if (mediaQuery(USWDS_MEDIUM_SCREEN)){
                 elem.style('transform', 'translate(175%, 305%');
-            }
-
-            if (mediaQuery(USWDS_LARGE_SCREEN)) {
+            } else {
                 elem.style('transform', 'translate(85%, 150%');
             }
         }, layoutSelector));
