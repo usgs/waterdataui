@@ -31,7 +31,7 @@ describe('map module', () => {
         jasmine.Ajax.uninstall();
     });
 
-    describe('Map creation without no FIM maps', () => {
+    describe('Map creation without FIM maps', () => {
         beforeEach(() => {
             store = configureStore();
             map.attachToNode(store, mapNode, {
@@ -62,19 +62,27 @@ describe('map module', () => {
             expect(select(mapNode).select('#fim-legend-list').size()).toBe(0);
         });
 
+        it('Should not create a FIM slider', () => {
+            expect(select(mapNode).select('input[type="range"]').size()).toBe(0);
+        });
+
     });
 
     describe('Map creation with FIM information', () => {
         beforeEach(() => {
             store = configureStore({
-               floodStages: [9, 10, 11, 12],
-               floodExtent:  {
-                   xmin: -87.4667,
-                   ymin: 39.43439,
-                   xmax: -87.408,
-                   ymax: 39.51445
-               },
-                gageHeight: 10
+                floodData: {
+                    stages: [9, 10, 11, 12],
+                    extent: {
+                        xmin: -87.4667,
+                        ymin: 39.43439,
+                        xmax: -87.408,
+                        ymax: 39.51445
+                    }
+                },
+                floodState: {
+                    gageHeight: 10
+                }
             });
             attachToNode(store, mapNode, {
                 siteno: '1234567',
@@ -91,19 +99,27 @@ describe('map module', () => {
         it('Should create a FIM Legend', () => {
             expect(select(mapNode).select('#fim-legend-list').size()).toBe(1);
         });
+
+        it('Should create the FIM slider', () => {
+            expect(select(mapNode).select('input[type="range"').size()).toBe(1);
+        });
     });
 
     describe('link back to FIM', () => {
 
         let testFloodData = {
-            floodStages: [13, 14, 15],
-            floodExtent: {
-                xmin: -87.4667,
-                ymin: 39.43439,
-                xmax: -87.408,
-                ymax: 39.51445
+            floodData: {
+                stages: [13, 14, 15],
+                extent: {
+                    xmin: -87.4667,
+                    ymin: 39.43439,
+                    xmax: -87.408,
+                    ymax: 39.51445
+                }
             },
-            gageHeight: 10
+            floodState: {
+                gageHeight: 10
+            }
         };
         const testMapData = {
                 siteno: '1234567',
@@ -119,7 +135,7 @@ describe('map module', () => {
         });
 
         it('should not happen if there are no flood stages for a site', () => {
-            testFloodData['floodStages'] = [];
+            testFloodData.floodData.stages = [];
             store = configureStore(testFloodData);
             attachToNode(store, mapNode, testMapData);
             expect(select(mapNode).select('a#fim-link').node()).toBeNull();

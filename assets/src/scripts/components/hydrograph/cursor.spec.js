@@ -151,15 +151,19 @@ const TEST_STATE_THREE_VARS = {
             }
         }
     },
-    showSeries: {
-        current: true,
-        compare: false,
-        median: false
+    timeseriesState: {
+        showSeries: {
+            current: true,
+            compare: false,
+            median: false
+        },
+        currentVariableID: '45807197',
+        audiblePlayId: null
     },
-    currentVariableID: '45807197',
-    windowWidth: 1024,
-    width: 800,
-    playId: null
+    ui: {
+        windowWidth: 1024,
+        width: 800
+    }
 };
 
 const TEST_STATE_ONE_VAR = {
@@ -253,12 +257,18 @@ const TEST_STATE_ONE_VAR = {
             }
         }
     },
-    showSeries: {
-        current: true,
-        compare: true
+    timeseriesState: {
+        showSeries: {
+            current: true,
+            compare: true
+        },
+        currentVariableID: '00060id',
+        cursorOffset: null
     },
-    currentVariableID: '00060id',
-    cursorOffset: null
+    ui: {
+        windowWidth: 1024,
+        width: 800
+    }
 };
 
 describe('Cursor module', () => {
@@ -319,13 +329,13 @@ describe('Cursor module', () => {
             const input = div.select('input');
 
             expect(input.classed('active')).toBe(false);
-            expect(store.getState().cursorOffset).toBe(null);
+            expect(store.getState().timeseriesState.cursorOffset).toBe(null);
             div.select('input').dispatch('focus');
             expect(input.classed('active')).toBe(true);
-            expect(store.getState().cursorOffset).not.toBe(null);
+            expect(store.getState().timeseriesState.cursorOffset).not.toBe(null);
             div.select('input').dispatch('blur');
             expect(input.classed('active')).toBe(false);
-            expect(store.getState().cursorOffset).toBe(null);
+            expect(store.getState().timeseriesState.cursorOffset).toBe(null);
         });
     });
 
@@ -339,7 +349,10 @@ describe('Cursor module', () => {
         it('Should return the nearest datum for the selected time series', function() {
             let state = {
                 ...TEST_STATE_ONE_VAR,
-                cursorOffset: 149 * 60 * 1000
+                timeseriesState: {
+                    ...TEST_STATE_ONE_VAR.timeseriesState,
+                    cursorOffset: 149 * 60 * 1000
+                }
             };
 
             expect(tsCursorPointsSelector('current')(state)['00060:current'].value).toEqual(14);
@@ -349,8 +362,11 @@ describe('Cursor module', () => {
         it('Selects the nearest point for the current variable streamflow', () => {
             const newState = {
                 ...TEST_STATE_THREE_VARS,
-                currentVariableID: '45807196',
-                cursorOffset: 16 * 60 * 1000
+                timeseriesState: {
+                    ...TEST_STATE_THREE_VARS.timeseriesState,
+                    currentVariableID: '45807196',
+                    cursorOffset: 16 * 60 * 1000
+                }
             };
             expect(tsCursorPointsSelector('current')(newState)).toEqual({
                 '00010': {
@@ -365,8 +381,11 @@ describe('Cursor module', () => {
         it('Selects the nearest point for current variable precipitation', () => {
             const newState = {
                 ...TEST_STATE_THREE_VARS,
-                currentVariableID: '45807140',
-                cursorOffset: 29 * 60 * 1000
+                timeseriesState: {
+                    ...TEST_STATE_THREE_VARS.timeseriesState,
+                    currentVariableID: '45807140',
+                    cursorOffset: 29 * 60 * 1000
+                }
             };
 
             expect(tsCursorPointsSelector('current')(newState)).toEqual({

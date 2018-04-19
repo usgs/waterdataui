@@ -17,7 +17,7 @@ const SLIDER_STEPS = 1000;
 const SLIDER_OFFSET_PX = 10;
 
 
-const cursorOffsetSelector = state => state.cursorOffset;
+export const cursorOffsetSelector = state => state.timeseriesState.cursorOffset;
 
 /**
  * Returns a selector that, for a given tsKey:
@@ -25,7 +25,7 @@ const cursorOffsetSelector = state => state.cursorOffset;
  * @param  {String} tsKey
  * @return {Date}
  */
-const cursorTimeSelector = memoize(tsKey => createSelector(
+export const cursorTimeSelector = memoize(tsKey => createSelector(
     cursorOffsetSelector,
     xScaleSelector(tsKey),
     (cursorOffset, xScale) => {
@@ -39,7 +39,7 @@ const cursorTimeSelector = memoize(tsKey => createSelector(
  * @param {Date} time
  * @return {Object} - datum and index
  */
-const getNearestTime = function(data, time) {
+export const getNearestTime = function(data, time) {
     // Function that returns the left bounding point for a given chart point.
     if (data.length < 2) {
         return null;
@@ -70,7 +70,7 @@ const getNearestTime = function(data, time) {
  * @param String} tsKey - Timeseries key
  * @return {Object}
  */
-const tsCursorPointsSelector = memoize(tsKey => createSelector(
+export const tsCursorPointsSelector = memoize(tsKey => createSelector(
     currentVariablePointsByTsIdSelector(tsKey),
     cursorTimeSelector(tsKey),
     isVisibleSelector(tsKey),
@@ -89,7 +89,7 @@ const tsCursorPointsSelector = memoize(tsKey => createSelector(
     })
 );
 
-const cursorSlider = function (elem) {
+export const cursorSlider = function (elem) {
     elem.append('div')
         .attr('class', 'slider-wrapper')
         .call(wrap => {
@@ -123,4 +123,3 @@ const cursorSlider = function (elem) {
         });
 };
 
-module.exports = {cursorOffsetSelector, cursorTimeSelector, getNearestTime, tsCursorPointsSelector, cursorSlider};

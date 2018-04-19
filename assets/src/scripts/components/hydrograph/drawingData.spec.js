@@ -109,7 +109,9 @@ const TEST_DATA = {
             }
         }
     },
-    currentVariableID: '45807197'
+    timeseriesState: {
+        currentVariableID: '45807197'
+    }
 };
 
 describe('drawingData module', () => {
@@ -638,7 +640,9 @@ describe('drawingData module', () => {
                         }
                     }
                 },
-                currentVariableID: '45807197'
+                timeseriesState: {
+                    currentVariableID: '45807197'
+                }
             })).toEqual([['ptOne', 'ptTwo', 'ptThree'], ['ptOne2', 'ptTwo2', 'ptThree2']]);
         });
     });
@@ -691,10 +695,13 @@ describe('drawingData module', () => {
                     }
                 }
             },
-            showSeries: {
-                'current': true,
-                'compare': true,
-                'median': true
+            timeseriesState: {
+                ...TEST_DATA.timeseriesState,
+                showSeries: {
+                    'current': true,
+                    'compare': true,
+                    'median': true
+                }
             }
         };
 
@@ -705,10 +712,13 @@ describe('drawingData module', () => {
         it('Expects one array if only median is not visible', () => {
             const newTestData = {
                 ...testData,
-                showSeries: {
-                    'current': true,
-                    'compare': true,
-                    'median': false
+                timeseriesState: {
+                    ...testData.timeseriesState,
+                    showSeries: {
+                        'current': true,
+                        'compare': true,
+                        'median': false
+                    }
                 }
             };
 
@@ -718,7 +728,10 @@ describe('drawingData module', () => {
         it('Expects an empty array if no visible series has the current variable', () => {
             const newTestData = {
                 ...testData,
-                currentVariableID: '11111111'
+                timeseriesState: {
+                    ...testData.timeseriesState,
+                    currentVariableID: '11111111'
+                }
             };
 
             expect(visiblePointsSelector(newTestData).length).toBe(0);
@@ -769,9 +782,11 @@ describe('drawingData module', () => {
                         }
                     }
                 },
-                currentVariableID: '45807197',
-                showSeries: {
-                    current: true
+                timeseriesState: {
+                    currentVariableID: '45807197',
+                    showSeries: {
+                        current: true
+                    }
                 }
             });
             expect(result).toEqual({

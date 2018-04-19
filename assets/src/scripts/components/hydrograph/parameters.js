@@ -19,7 +19,7 @@ const { MASK_DESC } = require('./drawingData');
 export const availableTimeseriesSelector = createSelector(
     state => state.series.variables,
     allTimeSeriesSelector,
-    state => state.currentVariableID,
+    state => state.timeseriesState.currentVariableID,
     (variables, timeSeries, currentVariableID) => {
         if (!variables) {
             return [];
@@ -54,8 +54,9 @@ export const availableTimeseriesSelector = createSelector(
 /**
  * Draw a sparkline in a selected SVG element
  *
- * @param svgSelection
- * @param tsData
+ * @param {Object} svgSelection
+ * @param {Array} of line segment Objects - seriesLineSegments
+ * @param {Object} scales - has x property for x scale and y property for y scale
  */
 export const addSparkLine = function(svgSelection, {seriesLineSegments, scales}) {
     let spark = line()
@@ -167,7 +168,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
             .attr('aria-selected', parm => parm[1].selected)
             .on('click', dispatch(function (parm) {
                 if (!parm[1].selected) {
-                    return Actions.setCurrentParameterCode(parm[0], parm[1].variableID);
+                    return Actions.setCurrentVariable(parm[1].variableID);
                 }
             }))
             .call(tr => {

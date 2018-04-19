@@ -10,16 +10,15 @@ const { FIM_ENDPOINT, HYDRO_ENDPOINT } = require('../../config');
 const { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } = require('../../floodData');
 const { Actions } = require('../../store');
 
+const { hasFloodDataSelector, floodExtentSelector, floodStageHeightSelector } = require('./floodDataSelector');
+const { floodSlider } = require('./floodSlider');
 const { createLegendControl, createFIMLegend } = require('./legend');
 
-
-const fimAvailableSelector = state => state.floodStages.length > 0;
 
 const getLayerDefs = function(layerNo, siteno, stage) {
    const stageQuery = stage ? ` AND STAGE = ${stage}` : '';
    return `${layerNo}: USGSID = '${siteno}'${stageQuery}`;
 };
-
 
 /*
  * Creates a site map
@@ -67,29 +66,30 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     legendControl.addTo(map);
 
 
-    const updateFloodLayers = function (node, {stages, gageHeight}) {
-        if (gageHeight) {
-            const layerDefs = getLayerDefs(0, siteno, gageHeight);
+    const updateFloodLayers = function (node, {hasFloodData, floodStageHeight}) {
+        if (floodStageHeight) {
+            const layerDefs = getLayerDefs(0, siteno, floodStageHeight);
             floodLayer.setLayerDefs(layerDefs);
             breachLayer.setLayerDefs(layerDefs);
         }
-        if (stages.length === 0) {
-            if (map.hasLayer(floodLayer)) {
-                map.removeLayer(floodLayer);
-                map.removeLayer(breachLayer);
-                map.removeLayer(leveeLayer);
-            }
-        } else {
+        if (hasFloodData) {
             if (!map.hasLayer(floodLayer)) {
                 map.addLayer(floodLayer);
                 map.addLayer(breachLayer);
                 map.addLayer(leveeLayer);
             }
+
+        } else {
+            if (map.hasLayer(floodLayer)) {
+                map.removeLayer(floodLayer);
+                map.removeLayer(breachLayer);
+                map.removeLayer(leveeLayer);
+            }
         }
     };
 
 
-    const updateMapExtent = function (node, {extent}) {
+    const updateMapExtent = function (node, extent) {
         if (Object.keys(extent).length > 0) {
             map.fitBounds(Util.extentToBounds(extent).extend([latitude, longitude]));
         }
@@ -101,13 +101,13 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
      * @param {HTMLElement} node - element where the map is rendered
      * @param {Boolean} isFIMAvailable
      */
-    const addFIMLegend = function(node, isFIMAvailable) {
-        createFIMLegend(legendControl, isFIMAvailable);
+    const addFIMLegend = function(node, hasFloodData) {
+        createFIMLegend(legendControl, hasFloodData);
     };
 
 
-    const addFimLink = function (node, isFIMAvailable) {
-        if (isFIMAvailable) {
+    const addFimLink = function (node, hasFloodData) {
+        if (hasFloodData) {
             node.append('a')
                 .attr('id', 'fim-link')
                 .attr('href', `${FIM_ENDPOINT}?site_no=${siteno}`)
@@ -132,14 +132,12 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
 
     node
         .call(link(updateFloodLayers, createStructuredSelector({
-            stages: (state) => state.floodStages,
-            gageHeight: (state) => state.gageHeight
+            hasFloodData: hasFloodDataSelector,
+            floodStageHeight: floodStageHeightSelector
         })))
-        .call(link(updateMapExtent, createStructuredSelector({
-            extent: (state) => state.floodExtent
-        })))
-        .call(link(addFIMLegend, fimAvailableSelector))
-        .call(link(addFimLink, fimAvailableSelector));
+        .call(link(updateMapExtent, floodExtentSelector))
+        .call(link(addFIMLegend, hasFloodDataSelector))
+        .call(link(addFimLink, hasFloodDataSelector));
 };
 
 /*
@@ -151,13 +149,15 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
  * @param {Number} longitude - longitude of siteno
  * @param {Number} zoom - zoom level to initially set the map to
  */
-function attachToNode(store, node, {siteno, latitude, longitude, zoom}) {
+export const attachToNode = function(store, node, {siteno, latitude, longitude, zoom}) {
 
     store.dispatch(Actions.retrieveFloodData(siteno));
 
     select(node)
-        .call(provide(store))
+        .call(provide(store));
+    select(node).append('div')
+        .call(floodSlider);
+    select(node)
         .call(siteMap, {siteno, latitude, longitude, zoom});
-}
+};
 
-module.exports = {attachToNode};

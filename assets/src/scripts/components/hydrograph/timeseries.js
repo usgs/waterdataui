@@ -18,7 +18,7 @@ export const variablesSelector = state => state.series.variables ? state.series.
  */
 export const currentVariableSelector = createSelector(
     variablesSelector,
-    state => state.currentVariableID,
+    state => state.timeseriesState.currentVariableID,
     (variables, variableID) => {
         return variableID ? variables[variableID] : null;
     }
@@ -110,7 +110,7 @@ export const timeSeriesSelector = memoize(tsKey => createSelector(
  * @return {Boolean}           Show state of the timeseries
  */
 export const isVisibleSelector = memoize(tsKey => (state) => {
-    return state.showSeries[tsKey];
+    return state.timeseriesState.showSeries[tsKey];
 });
 
 

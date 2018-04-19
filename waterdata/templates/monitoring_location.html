@@ -2,11 +2,11 @@
 
 {% import 'macros/components.html' as components %}
 
+{% if stations|length == 1 %}{% set page_title = stations[0].station_nm %}{% endif %}
+
 {% block extra_head_tags %}
     {% if status_code == 200 %}
-
         {% if stations|length == 1 %}
-
             <meta name="description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}">
             <!-- tags for Facebook Open Graph -->
             <meta property="og:url" content="{{ url_for('monitoring_location', site_no=stations[0].site_no, _external=True) }}" />
@@ -71,7 +71,6 @@
                 </div>
                 {{ components.TimeseriesComponent(stations[0].site_no) }}
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
-                    {{ components.FloodSliderComponent() }}
                     {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
                 {% endif %}
 

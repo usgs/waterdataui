@@ -16,9 +16,10 @@ const { currentVariableSelector, yLabelSelector } = require('./timeseries');
  * @param  {Object} xScale      D3 Scale object for the x-axis
  * @param  {Object} yScale      D3 Scale object for the y-axis
  * @param  {Number} yTickSize   Size of inner ticks for the y-axis
+ * @param {String} parmCd - parameter code of timeseries to be shown on the graph.
  * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
-function createAxes({xScale, yScale}, yTickSize, parmCd) {
+export const createAxes = function({xScale, yScale}, yTickSize, parmCd) {
     // Create x-axis
     const xAxis = axisBottom()
         .scale(xScale)
@@ -37,14 +38,14 @@ function createAxes({xScale, yScale}, yTickSize, parmCd) {
         .tickSizeOuter(0);
 
     return {xAxis, yAxis};
-}
+};
 
 
 /**
  * Returns data necessary to render the graph axes.
  * @return {Object}
  */
-const axesSelector = createSelector(
+export const axesSelector = createSelector(
     xScaleSelector('current'),
     yScaleSelector,
     layoutSelector,
@@ -64,7 +65,7 @@ const axesSelector = createSelector(
 /**
  * Add x and y axes to the given svg node.
  */
-function appendAxes(elem, {xAxis, yAxis, layout, yTitle}) {
+export const appendAxes = function(elem, {xAxis, yAxis, layout, yTitle}) {
     const xLoc = {
         x: 0,
         y: layout.height - (layout.margin.top + layout.margin.bottom)
@@ -96,7 +97,4 @@ function appendAxes(elem, {xAxis, yAxis, layout, yTitle}) {
             .attr('y', yLabelLoc.y)
             .text(yTitle)
                 .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
-}
-
-
-module.exports = {createAxes, appendAxes, axesSelector};
+};

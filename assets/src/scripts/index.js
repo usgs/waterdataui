@@ -11,7 +11,6 @@ const COMPONENTS = {
     embed: require('./components/embed').attachToNode,
     hydrograph: require('./components/hydrograph').attachToNode,
     map: require('./components/map').attachToNode,
-    floodSlider: require('./components/floodSlider').attachToNode
 };
 
 
@@ -22,7 +21,9 @@ function main() {
     try {
         let nodes = document.getElementsByClassName('wdfn-component');
         let store = configureStore({
-            windowWidth: window.innerWidth
+            ui: {
+                windowWidth: window.innerWidth
+            }
         });
         for (let node of nodes) {
             COMPONENTS[node.dataset.component](store, node, node.dataset);

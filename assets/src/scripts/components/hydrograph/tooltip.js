@@ -76,15 +76,17 @@ const getTooltipText = function(datum, qualifiers, unitCode) {
     let label = '';
     if (datum && qualifiers) {
         const tzAbbrev = datum.dateTime.toString().match(/\(([^)]+)\)/)[1];
-        const valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
+        let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
 
         const maskKeys = new Set(Object.keys(MASK_DESC));
         const qualiferKeysLower = new Set(datum.qualifiers.map(x => x.toLowerCase()));
-        const keyIntersect = [...qualiferKeysLower].filter(x => maskKeys.has(x));
+        const maskKeyIntersect = [...qualiferKeysLower].filter(x => maskKeys.has(x));
 
-        if (valueStr.trim().length && !keyIntersect.length) {
-            label = `${valueStr} - ${formatTime(datum.dateTime)} ${tzAbbrev}`;
+        if (maskKeyIntersect.length) {
+            // a data point will have at most one masking qualifier
+            valueStr = MASK_DESC[[maskKeyIntersect][0]];
         }
+        label = `${valueStr} - ${formatTime(datum.dateTime)} ${tzAbbrev}`;
     }
 
     return label;

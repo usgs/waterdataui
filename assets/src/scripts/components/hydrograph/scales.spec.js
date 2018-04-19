@@ -80,31 +80,39 @@ describe('Charting scales', () => {
         it('Creates a scale when there is no initial data', () => {
             expect(yScaleSelector({
                 series: {},
-                showSeries: false,
-                currentVariableID: null,
-                width: 200,
-                windowWidth: 600
+                timeseriesState: {
+                    showSeries: false,
+                    currentVariableID: null
+                },
+                ui: {
+                    width: 200,
+                    windowWidth: 600
+                }
             }).name).toBe('scale');
         });
 
         it('Creates a scale when there is initial data', () => {
             expect(yScaleSelector({
                 series: {
-                variables: {
-                   '00060ID': {
-                       variableCode: {
-                           value: '00060'
+                    variables: {
+                       '00060ID': {
+                           variableCode: {
+                               value: '00060'
+                           }
                        }
-                   }
-                },
+                    },
                     timeSeries: {
                         '00060ID': {}
                     }
                 },
-                showSeries: false,
-                currentVariableID: '00060ID',
-                width: 200,
-                windowWidth: 600
+                timeseriesState: {
+                    showSeries: false,
+                    currentVariableID: '00060ID'
+                },
+                ui: {
+                    width: 200,
+                    windowWidth: 600
+                }
             }).name).toBe('scale');
         });
     });
