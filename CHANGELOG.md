@@ -19,6 +19,7 @@ Provisional for the lines that are currently visible on the graph.
 - Timeseries tooltip no longer shows unmasked qualifiers in the tooltip.
 - Refactored the shape of the state to separate domain data, application state, and ui state and created
 slice reducers for the different parts.
+- Location metadata table placed in an accordion
 
 
 ### Fixed
@@ -32,7 +33,7 @@ slice reducers for the different parts.
 - Play/Stop button to play the audible sound for the timeseries graph
 - Legend appears on the map describing the map features
 - Initialize the gage height slider with the current value of gage height
-- Crawable state/County pages that can be used to find the monitor locations for a particular state/county
+- Crawlable state/County pages that can be used to find the monitor locations for a particular state/county
 
 ### Changed
 - Font sizing and responsive layout changes
