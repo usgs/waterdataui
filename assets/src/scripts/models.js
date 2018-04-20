@@ -152,7 +152,26 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
             values.push(median);
         }
     }
+    let sortedValues = values.sort(function (a, b) {
+        return a.dateTime - b.dateTime;
+    });
 
+    let plotValues = sortedValues.slice(values.length - days, values.length);
+
+    let first = sortedValues[values.length - days -1];
+    if (plotValues[0].dateTime > timeSeriesStartDateTime) {
+        plotValues.unshift({
+            dateTime: timeSeriesStartDateTime,
+            value: first.value
+        });
+    }
+    let last = sortedValues[sortedValues.length - 1];
+    if (plotValues[plotValues.length - 1].dateTime < timeSeriesEndDateTime) {
+        plotValues.push({
+            dateTime: timeSeriesEndDateTime,
+            value: last.value
+        });
+    }
     const tsId = `${medianData[0].parameter_cd}:${medianData[0].ts_id}:median`;
     const tsCollectionId = `${medianData[0].site_no}:${medianData[0].parameter_cd}:median`;
 
@@ -172,9 +191,7 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
         timeSeries: {
             ...collection.timeSeries || {},
             [tsId]: {
-                points: values.sort(function (a, b) {
-                    return a.dateTime - b.dateTime;
-                }).slice(values.length - days, values.length),
+                points: plotValues,
                 startTime: timeSeriesStartDateTime,
                 endTime: timeSeriesEndDateTime,
                 tsKey: 'median',

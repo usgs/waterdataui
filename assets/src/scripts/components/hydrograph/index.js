@@ -2,7 +2,7 @@
  * Hydrograph charting module.
  */
 const { extent } = require('d3-array');
-const { line: d3Line } = require('d3-shape');
+const { line: d3Line, curveStepAfter } = require('d3-shape');
 const { select } = require('d3-selection');
 
 const { createStructuredSelector } = require('reselect');
@@ -184,13 +184,40 @@ const timeSeriesLegend = function(elem) {
  * @param  {Object} variable
  */
 const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLabel, variable}) {
-    elem.selectAll('medianPoint')
+    let stepFunction = d3Line()
+        .curve(curveStepAfter)
+        .x(function(d) {
+            return xscale(d.dateTime);
+        })
+        .y(function(d) {
+            return yscale(d.value);
+        });
+    let medianGrp = elem.append('g');
+
+    medianGrp.append('path')
+        .datum(points)
+        .classed('median-data-series', true)
+        .classed(`median-step-${modulo}`, true)
+        .attr('d', stepFunction);
+
+    medianGrp.selectAll('medianPoint')
         .data(points)
         .enter()
         .append('circle')
             .classed('median-data-series', true)
             .classed(`median-modulo-${modulo}`, true)
-            .attr('r', CIRCLE_RADIUS)
+            .attr('r', function(d, i) {
+                if (points[0].dateTime.getDate() < points[1].dateTime.getDate() &&
+                points[points.length - 1].dateTime.getDate() === points[points.length - 2].dateTime.getDate()) {
+                    if (i === 0 || i === points.length - 1) {
+                        return 0;
+                    } else {
+                        return CIRCLE_RADIUS;
+                    }
+                } else {
+                    return CIRCLE_RADIUS;
+                }
+            })
             .attr('cx', function(d) {
                 return xscale(d.dateTime);
             })
@@ -200,7 +227,6 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLa
             .on('click', dispatch(function() {
                 return Actions.showMedianStatsLabel(!showLabel);
             }));
-
     if (showLabel) {
         elem.selectAll('medianPointText')
             .data(points)
