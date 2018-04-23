@@ -323,11 +323,15 @@ const createDaterangeControls = function(elem) {
         .attr('type', 'radio')
         .attr('name', 'ts-daterange-input')
         .attr('id', (d) => d.label)
-        .attr('value', (d) => d.period);
+        .attr('value', (d) => d.period)
+        .on('change', function() {
+            console.log('Clicked on ' + li.select('input:checked').attr('value'));
+        });
     li.append('label')
         .attr('for', (d) => d.label)
         .text((d) => d.name);
     li.select(`#${DATE_RANGE[0].label}`).attr('checked', true);
+
 
 };
 
