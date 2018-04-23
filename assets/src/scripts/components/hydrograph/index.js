@@ -299,8 +299,42 @@ const watermark = function (elem) {
         }, layoutSelector));
 };
 
+const createDaterangeControls = function(elem) {
+    const DATE_RANGE = [{
+        label: 'seven-day',
+        name: '7 days',
+        period: 'P7D'
+    }, {
+        label: 'one-month',
+        name: '1 month',
+        period: 'P1M'
+    }, {
+        label: 'one-year',
+        name: '1 year',
+        period: 'P1Y'
+    }];
+    const container = elem.append('ul')
+        .attr('id', 'ts-daterange-select-container')
+        .attr('class', 'usa-fieldset-inputs usa-unstyled-list');
+    const li = container.selectAll('li')
+        .data(DATE_RANGE)
+        .enter().append('li');
+    li.append('input')
+        .attr('type', 'radio')
+        .attr('name', 'ts-daterange-input')
+        .attr('id', (d) => d.label)
+        .attr('value', (d) => d.period);
+    li.append('label')
+        .attr('for', (d) => d.label)
+        .text((d) => d.name);
+    li.select(`#${DATE_RANGE[0].label}`).attr('checked', true);
+
+};
+
 const timeSeriesGraph = function (elem) {
-    elem.call(watermark);
+    elem.call(watermark)
+            .call(createDaterangeControls);
+
     elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(createTitle)

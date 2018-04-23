@@ -4,6 +4,15 @@ $default-timeseries: blue;
 $selected: $color-aqua-lightest;
 $highlight: $color-gray-lightest;
 
+#ts-daterange-select-container {
+    li {
+        display: inline-block;
+        label {
+            width: 110px;
+        }
+    }
+}
+
 #select-timeseries  {
     label {
         font-weight: $font-bold;
