@@ -288,13 +288,22 @@ const watermark = function (elem) {
     elem.append('img')
         .classed('watermark', true)
         .attr('src', STATIC_URL + '/img/USGS_green_logo.svg')
-        .call(link(function(elem) {
-            if (mediaQuery(USWDS_SMALL_SCREEN)) {
-                elem.style('transform', 'translate(170%, 260%)');
-            } else if (mediaQuery(USWDS_MEDIUM_SCREEN)){
-                elem.style('transform', 'translate(175%, 305%');
+        .call(link(function(elem, layout) {
+            const transformStringSmallScreen = `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025
+                    + layout.margin.left - 50}, ${layout.height * .60})`;
+            const transformStringForAllOtherScreens = `matrix(1, 0, 0, 1, ${(layout.width - layout.margin.left) * .025
+                    + layout.margin.left}, ${(layout.height * .75 - (-1 * layout.height + 503) * .12)})`;
+            if (!mediaQuery(USWDS_SMALL_SCREEN)) {
+                // calculates the watermark position based on current layout dimensions
+                // and a conversion factor minus the area for blank space due to scaling
+                elem.style('transform', transformStringSmallScreen);
+                // adapts code for Safari browser
+                elem.style('-webkit-transform', transformStringSmallScreen);
             } else {
-                elem.style('transform', 'translate(85%, 150%');
+                // calculates the watermark position based on current layout dimensions and a conversion factor
+                elem.style('transform', transformStringForAllOtherScreens);
+                // adapts code for Safari browser
+                elem.style('-webkit-transform', transformStringForAllOtherScreens);
             }
         }, layoutSelector));
 };
