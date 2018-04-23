@@ -289,16 +289,23 @@ const watermark = function (elem) {
         .classed('watermark', true)
         .attr('src', STATIC_URL + '/img/USGS_green_logo.svg')
         .call(link(function(elem, layout) {
+            console.log(layout);
+            console.log('this is the initial position ' + layout.height * .75);
+            console.log('this is the additional amount ' + (-1 * layout.height + 503) * .09);
+            console.log('this is the calc ' + (-1 * layout.height + 503));
+            console.log('this is the height location at .09 ' + (layout.height * .75 + (-1 * layout.height + 503) * .09));
+            console.log('this is the height location at .07 ' + (layout.height * .75 + (-1 * layout.height + 503) * .07));
+            console.log('this is the height location at .12 ' + (layout.height * .75 + (-1 * layout.height + 503) * .12));
             if (!mediaQuery(USWDS_SMALL_SCREEN)) {
                 // calculates the watermark position based on current layout dimensions and a conversion factor minus the area for blank space due to scaling
-                elem.style('transform', `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025 - 30}, ${layout.height * .60})`);
+                elem.style('transform', `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025 + layout.margin.left - 50}, ${layout.height * .60})`);
                 // adapts code for Safari browser
-                elem.style('-webkit-transform', `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025 - 30}, ${layout.height * .60})`);
+                elem.style('transform', `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025 + layout.margin.left - 50}, ${layout.height * .60})`);
             } else {
                 // calculates the watermark position based on current layout dimensions and a conversion factor
-                elem.style('transform', `matrix(1, 0, 0, 1, ${(layout.width - layout.margin.left) * .025 + layout.margin.left}, ${layout.height * .75})`);
+                elem.style('transform', `matrix(1, 0, 0, 1, ${(layout.width - layout.margin.left) * .025 + layout.margin.left}, ${(layout.height * .75 - (-1 * layout.height + 503) * .12)})`);
                 // adapts code for Safari browser
-                elem.style('-webkit-transform', `matrix(1, 0, 0, 1, ${(layout.width - layout.margin.left) * .025 + layout.margin.left}, ${layout.height * .75})`);
+                //elem.style('-webkit-transform', `matrix(1, 0, 0, 1, ${(layout.width - layout.margin.left) * .025 + layout.margin.left}, ${layout.height * .85 + (-1 * layout.height + 503) * .09})`);
             }
         }, layoutSelector));
 };
