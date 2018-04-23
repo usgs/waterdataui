@@ -299,7 +299,7 @@ const watermark = function (elem) {
         }, layoutSelector));
 };
 
-const createDaterangeControls = function(elem) {
+const createDaterangeControls = function(elem, siteno) {
     const DATE_RANGE = [{
         label: 'seven-day',
         name: '7 days',
@@ -324,20 +324,21 @@ const createDaterangeControls = function(elem) {
         .attr('name', 'ts-daterange-input')
         .attr('id', (d) => d.label)
         .attr('value', (d) => d.period)
-        .on('change', function() {
-            console.log('Clicked on ' + li.select('input:checked').attr('value'));
-        });
+        .on('change', dispatch(function() {
+            return Actions.retrieveExtendedTimeseries(
+                siteno,
+                li.select('input:checked').attr('value')
+            );
+        }));
     li.append('label')
         .attr('for', (d) => d.label)
         .text((d) => d.name);
     li.select(`#${DATE_RANGE[0].label}`).attr('checked', true);
-
-
 };
 
-const timeSeriesGraph = function (elem) {
+const timeSeriesGraph = function (elem, siteno) {
     elem.call(watermark)
-            .call(createDaterangeControls);
+            .call(createDaterangeControls, siteno);
 
     elem.append('div')
         .attr('class', 'hydrograph-container')
@@ -483,7 +484,7 @@ const attachToNode = function (store, node, {siteno} = {}) {
         .call(provide(store));
     select(node).select('.graph-container')
         .call(link(controlGraphDisplay, timeSeriesSelector('current')))
-        .call(timeSeriesGraph)
+        .call(timeSeriesGraph, siteno)
         .call(cursorSlider)
         .append('div')
             .classed('ts-legend-controls-container', true)

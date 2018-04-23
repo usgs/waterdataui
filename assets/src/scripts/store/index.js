@@ -8,6 +8,7 @@ const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData, sortedParameters } = require('../models');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
+const { currentParmCdSelector } = require('../selectors/timeseriesSelector');
 
 const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
@@ -101,6 +102,41 @@ export const Actions = {
                     dispatch(Actions.toggleTimeseries('compare', false));
                 },
                 () => dispatch(Actions.resetTimeseries('compare'))
+            );
+        };
+    },
+    retrieveExtendedTimeseries(site, period) {
+        return function(dispatch, getState) {
+            const parmCd = currentParmCdSelector(getState());
+            const endTime = new Date(); //TODO get this from the current data
+            let startTime = new Date(endTime);
+            switch (period) {
+                case 'P1M':
+                    startTime.setDate(startTime.getDate()  - 30);
+                    break;
+
+                case 'P1Y': {
+                    startTime.setFullYear(startTime.getFullYear() - 1);
+                    break;
+                }
+                default:
+                    console.log('No known period specified');
+            }
+            return getTimeseries({
+                sites: [site],
+                params: [parmCd],
+                startDate: startTime,
+                endDate: endTime
+            }).then(
+                series => {
+                    const tsKey = `current:${period}: ${parmCd}`
+                    const collection = normalize(series, tsKey);
+                    dispatch(Actions.addSeriesCollection(tsKey, collection));
+                },
+                () => {
+                    console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
+                    dispatch(Actions.addSeriesCollection(`current:${period}: ${parmCd}`, {}));
+                }
             );
         };
     },
