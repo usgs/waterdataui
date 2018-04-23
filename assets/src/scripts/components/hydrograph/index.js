@@ -8,7 +8,7 @@ const { select } = require('d3-selection');
 const { createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
-const { USWDS_LARGE_SCREEN, USWDS_MEDIUM_SCREEN, USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
+const { USWDS_MEDIUM_SCREEN, USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
 const { dispatch, link, provide } = require('../../lib/redux');
 const { Actions } = require('../../store');
 const { mediaQuery } = require('../../utils');
@@ -289,16 +289,21 @@ const watermark = function (elem) {
         .classed('watermark', true)
         .attr('src', STATIC_URL + '/img/USGS_green_logo.svg')
         .call(link(function(elem, layout) {
+            const transformStringSmallScreen = `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025
+                    + layout.margin.left - 50}, ${layout.height * .60})`;
+            const transformStringForAllOtherScreens = `matrix(1, 0, 0, 1, ${(layout.width - layout.margin.left) * .025
+                    + layout.margin.left}, ${(layout.height * .75 - (-1 * layout.height + 503) * .12)})`;
             if (!mediaQuery(USWDS_SMALL_SCREEN)) {
-                // calculates the watermark position based on current layout dimensions and a conversion factor minus the area for blank space due to scaling
-                elem.style('transform', `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025 + layout.margin.left - 50}, ${layout.height * .60})`);
+                // calculates the watermark position based on current layout dimensions
+                // and a conversion factor minus the area for blank space due to scaling
+                elem.style('transform', transformStringSmallScreen);
                 // adapts code for Safari browser
-                elem.style('transform', `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025 + layout.margin.left - 50}, ${layout.height * .60})`);
+                elem.style('-webkit-transform', transformStringSmallScreen);
             } else {
                 // calculates the watermark position based on current layout dimensions and a conversion factor
-                elem.style('transform', `matrix(1, 0, 0, 1, ${(layout.width - layout.margin.left) * .025 + layout.margin.left}, ${(layout.height * .75 - (-1 * layout.height + 503) * .12)})`);
+                elem.style('transform', transformStringForAllOtherScreens);
                 // adapts code for Safari browser
-                elem.style('-webkit-transform', `matrix(1, 0, 0, 1, ${(layout.width - layout.margin.left) * .025 + layout.margin.left}, ${(layout.height * .75 - (-1 * layout.height + 503) * .12)})`);
+                elem.style('-webkit-transform', transformStringForAllOtherScreens);
             }
         }, layoutSelector));
 };
