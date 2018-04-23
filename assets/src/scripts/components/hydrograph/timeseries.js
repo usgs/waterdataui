@@ -2,6 +2,8 @@ const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
+const { timeseriesRequestKeySelector } = require('../../selectors/timeseriesSelector');
+
 
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');
@@ -61,15 +63,16 @@ export const allTimeSeriesSelector = createSelector(
  * @return {Object}         Time-series data
  */
 export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector(
+    timeseriesRequestKeySelector(tsKey),
     allTimeSeriesSelector,
     currentVariableSelector,
-    (timeSeries, variable) => {
+    (tsRequestKey, timeSeries, variable) => {
         let ts = {};
         if (variable) {
             ts = {};
             Object.keys(timeSeries).forEach(key => {
                 const series = timeSeries[key];
-                if (series.tsKey === tsKey && series.variable === variable.oid) {
+                if (series.tsKey === tsRequestKey && series.variable === variable.oid) {
                     ts[key] = series;
                 }
             });
@@ -87,12 +90,13 @@ export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector
  * @return {Object} - Keys are tsID, values are time-series data
  */
 export const timeSeriesSelector = memoize(tsKey => createSelector(
+    timeseriesRequestKeySelector(tsKey),
     allTimeSeriesSelector,
-    (timeSeries) => {
+    (tsRequestKey, timeSeries) => {
         let x = {};
         Object.keys(timeSeries).forEach(key => {
             const series = timeSeries[key];
-            if (series.tsKey === tsKey) {
+            if (series.tsKey === tsRequestKey) {
                 x[key] = series;
             }
         });

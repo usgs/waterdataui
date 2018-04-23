@@ -8,7 +8,7 @@ const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData, sortedParameters } = require('../models');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
-const { currentParmCdSelector } = require('../selectors/timeseriesSelector');
+const { currentParmCdSelector, hasFetchedTimeseries } = require('../selectors/timeseriesSelector');
 
 const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
@@ -107,37 +107,45 @@ export const Actions = {
     },
     retrieveExtendedTimeseries(site, period) {
         return function(dispatch, getState) {
-            const parmCd = currentParmCdSelector(getState());
-            const endTime = new Date(); //TODO get this from the current data
-            let startTime = new Date(endTime);
-            switch (period) {
-                case 'P1M':
-                    startTime.setDate(startTime.getDate()  - 30);
-                    break;
+            const state = getState();
+            const parmCd = currentParmCdSelector(state);
+            const tsKey = period === 'P7D' ? 'current' : `current:${period}:${parmCd}`;
+            dispatch(Actions.setCurrentDateRange(period));
+            if (!hasFetchedTimeseries(tsKey)(state)) {
+                const endTime = new Date(); //TODO get this from the current data
+                let startTime = new Date(endTime);
 
-                case 'P1Y': {
-                    startTime.setFullYear(startTime.getFullYear() - 1);
-                    break;
+                switch (period) {
+                    case 'P7D':
+                        break;
+                    case 'P1M':
+                        startTime.setDate(startTime.getDate() - 30);
+                        break;
+
+                    case 'P1Y': {
+                        startTime.setFullYear(startTime.getFullYear() - 1);
+                        break;
+                    }
+                    default:
+                        console.log('No known period specified');
                 }
-                default:
-                    console.log('No known period specified');
+                return getTimeseries({
+                    sites: [site],
+                    params: [parmCd],
+                    startDate: startTime,
+                    endDate: endTime
+                }).then(
+                    series => {
+                        const collection = normalize(series, tsKey);
+                        dispatch(Actions.addSeriesCollection(tsKey, collection));
+                        dispatch(Actions.toggleTimeseries(tsKey, true));
+                    },
+                    () => {
+                        console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
+                        dispatch(Actions.addSeriesCollection(`current:${period}: ${parmCd}`, {}));
+                    }
+                );
             }
-            return getTimeseries({
-                sites: [site],
-                params: [parmCd],
-                startDate: startTime,
-                endDate: endTime
-            }).then(
-                series => {
-                    const tsKey = `current:${period}: ${parmCd}`
-                    const collection = normalize(series, tsKey);
-                    dispatch(Actions.addSeriesCollection(tsKey, collection));
-                },
-                () => {
-                    console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
-                    dispatch(Actions.addSeriesCollection(`current:${period}: ${parmCd}`, {}));
-                }
-            );
         };
     },
     retrieveFloodData(siteno) {
@@ -242,6 +250,12 @@ export const Actions = {
             variableID
         };
     },
+    setCurrentDateRange(period) {
+        return {
+            type: 'SET_CURRENT_DATE_RANGE',
+            period
+        };
+    },
     setGageHeightFromStageIndex(index) {
         return function(dispatch, getState) {
             const stages = getState().floodData.stages;
@@ -283,6 +297,7 @@ export const configureStore = function (initialState) {
                 compare: false,
                 median: false
             },
+            currentDateRange: 'P7D',
             currentVariableID: null,
             showMedianStatsLabel: false,
             cursorOffset: null,
