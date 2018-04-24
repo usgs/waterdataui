@@ -127,7 +127,7 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
  * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
  */
-export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd}) {
+export const plotSeriesSelectTable = function (elem, {siteno, availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd}) {
     // Get the position of the scrolled window before removing it so it can be set to the same value.
     const lastTable = elem.select('#select-timeseries table');
     const scrollTop = lastTable.size() ? lastTable.property('scrollTop') : null;
@@ -169,7 +169,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
             .attr('aria-selected', parm => parm[1].selected)
             .on('click', dispatch(function (parm) {
                 if (!parm[1].selected) {
-                    return Actions.setCurrentVariable(parm[1].variableID);
+                    return Actions.updateCurrentVariable(siteno, parm[1].variableID);
                 }
             }))
             .call(tr => {

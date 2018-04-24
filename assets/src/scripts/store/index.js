@@ -8,7 +8,7 @@ const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData, sortedParameters } = require('../models');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
-const { currentParmCdSelector, hasFetchedTimeseries } = require('../selectors/timeseriesSelector');
+const { currentParmCdSelector, currentDateRangeSelector, hasFetchedTimeseries } = require('../selectors/timeseriesSelector');
 
 const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
@@ -159,6 +159,12 @@ export const Actions = {
                 });
                 dispatch(Actions.setFloodFeatures(stages, stages.length ? extent.extent : {}));
             });
+        };
+    },
+    updateCurrentVariable(siteno, variableID) {
+        return function(dispatch, getState) {
+            dispatch(Actions.setCurrentVariable(variableID));
+            dispatch(Actions.retrieveExtendedTimeseries(siteno, currentDateRangeSelector(getState())));
         };
     },
     startTimeseriesPlay(maxCursorOffset) {
