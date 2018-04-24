@@ -1,5 +1,5 @@
 const { axisBottom, axisLeft } = require('d3-axis');
-const { timeDay } = require('d3-time');
+const { timeDay, timeWeek, timeMonth } = require('d3-time');
 const { timeFormat } = require('d3-time-format');
 const { createSelector } = require('reselect');
 
@@ -8,22 +8,29 @@ const { wrap } = require('../../utils');
 const { getYTickDetails } = require('./domain');
 const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
-const { currentVariableSelector, yLabelSelector } = require('./timeseries');
+const { yLabelSelector } = require('./timeseries');
 
+const { currentDateRangeSelector, currentParmCdSelector } = require('../../selectors/timeseriesSelector');
 
+const INTERVAL = {
+    P7D: timeDay,
+    P1M: timeWeek,
+    P1Y: timeMonth
+};
 /**
  * Create an x and y axis for hydrograph
  * @param  {Object} xScale      D3 Scale object for the x-axis
  * @param  {Object} yScale      D3 Scale object for the y-axis
  * @param  {Number} yTickSize   Size of inner ticks for the y-axis
  * @param {String} parmCd - parameter code of timeseries to be shown on the graph.
+ * @param {String} period - ISO duration for date range of the timeseries
  * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
-export const createAxes = function({xScale, yScale}, yTickSize, parmCd) {
+export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period) {
     // Create x-axis
     const xAxis = axisBottom()
         .scale(xScale)
-        .ticks(timeDay)
+        .ticks(INTERVAL[period] ? INTERVAL[period] : timeDay)
         .tickFormat(timeFormat('%b %d'))
         .tickSizeOuter(0);
 
@@ -50,11 +57,11 @@ export const axesSelector = createSelector(
     yScaleSelector,
     layoutSelector,
     yLabelSelector,
-    currentVariableSelector,
-    (xScale, yScale, layout, plotYLabel, currentVariable) => {
-        const parmCd = currentVariable ? currentVariable.variableCode.value : null;
+    currentParmCdSelector,
+    currentDateRangeSelector,
+    (xScale, yScale, layout, plotYLabel, parmCd, currentDateRange) => {
         return {
-            ...createAxes({xScale, yScale}, -layout.width + layout.margin.right, parmCd),
+            ...createAxes({xScale, yScale}, -layout.width + layout.margin.right, parmCd, currentDateRange),
             layout: layout,
             yTitle: plotYLabel
         };

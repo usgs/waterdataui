@@ -4,6 +4,7 @@ const { createSelector } = require('reselect');
 
 export const variablesSelector = state => state.series.variables ? state.series.variables : null;
 
+export const currentDateRangeSelector = state => state.timeseriesState.currentDateRange
 /**
  * @return {Object}     Variable details for the currently selected variable.
  */
@@ -28,7 +29,7 @@ export const hasFetchedTimeseries = memoize((tsKey) => {
 
 export const timeseriesRequestKeySelector = memoize(tsKey => createSelector(
     currentParmCdSelector,
-    state => state.timeseriesState.currentDateRange,
+    currentDateRangeSelector,
     (parmCd, period) => {
         return tsKey === 'median' || period === 'P7D' ? tsKey : `${tsKey}:${period}:${parmCd}`;
     })
