@@ -54,7 +54,7 @@ function createYScale(parmCd, extent, size) {
  */
 const xScaleSelector = memoize(tsKey => createSelector(
     layoutSelector,
-    timeseriesRequestKeySelector(tsKey),
+    timeseriesRequestKeySelector(tsKey)(null),
     requestTimeRangeSelector,
     (layout, tsRequestKey, requestTimeRanges) => {
         return createXScale(requestTimeRanges[tsRequestKey], layout.width - layout.margin.right);
@@ -85,9 +85,9 @@ const yScaleSelector = createSelector(
  * @param  {String} tsKey             Time series key
  * @return {Object} - keys are parmCd and values are array of array of points
  */
-const parmCdPointsSelector = memoize(tsKey => createSelector(
-    pointsByTsKeySelector(tsKey),
-    timeSeriesSelector(tsKey),
+const parmCdPointsSelector = memoize(tsKey => memoize(period => createSelector(
+    pointsByTsKeySelector(tsKey)(period),
+    timeSeriesSelector(tsKey)(period),
     variablesSelector,
     (tsPoints, timeSeries, variables) => {
         return Object.keys(tsPoints).reduce((byParmCd, tsID) => {
@@ -98,7 +98,7 @@ const parmCdPointsSelector = memoize(tsKey => createSelector(
             return byParmCd;
         }, {});
     }
-));
+)));
 
 
 /**
@@ -106,8 +106,8 @@ const parmCdPointsSelector = memoize(tsKey => createSelector(
  * Returns x and y scales for all "current" time series.
  * @type {Object}   Mapping of parameter code to time series list.
  */
-const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => createSelector(
-    parmCdPointsSelector(tsKey),
+const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(period => memoize(dimensions => createSelector(
+    parmCdPointsSelector(tsKey)(period),
     requestTimeRangeSelector,
     (pointsByParmCd, requestTimeRanges) => {
         return Object.keys(pointsByParmCd).reduce((tsScales, parmCd) => {
@@ -120,7 +120,7 @@ const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(dimensions => 
             return tsScales;
         }, {});
     }
-)));
+))));
 
 
 module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector};

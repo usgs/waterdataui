@@ -31,11 +31,13 @@ function main() {
 
     } catch (err) {
         // Send exception to Google Analytics.
-        window.ga('send', 'exception', {
-            // exDescription will be truncated at 150 bytes
-            exDescription: err.stack,
-            exFatal: true
-        });
+        if (window.ga) {
+            window.ga('send', 'exception', {
+                // exDescription will be truncated at 150 bytes
+                exDescription: err.stack,
+                exFatal: true
+            });
+        }
         throw err;
     }
 }

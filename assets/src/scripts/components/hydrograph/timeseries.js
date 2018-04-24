@@ -63,7 +63,7 @@ export const allTimeSeriesSelector = createSelector(
  * @return {Object}         Time-series data
  */
 export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector(
-    timeseriesRequestKeySelector(tsKey),
+    timeseriesRequestKeySelector(tsKey)(),
     allTimeSeriesSelector,
     currentVariableSelector,
     (tsRequestKey, timeSeries, variable) => {
@@ -89,8 +89,8 @@ export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector
  * @param  {Object} state   Redux state
  * @return {Object} - Keys are tsID, values are time-series data
  */
-export const timeSeriesSelector = memoize(tsKey => createSelector(
-    timeseriesRequestKeySelector(tsKey),
+export const timeSeriesSelector = memoize(tsKey => memoize(period => createSelector(
+    timeseriesRequestKeySelector(tsKey)(period),
     allTimeSeriesSelector,
     (tsRequestKey, timeSeries) => {
         let x = {};
@@ -102,7 +102,7 @@ export const timeSeriesSelector = memoize(tsKey => createSelector(
         });
         return x;
     }
-));
+)));
 
 
 

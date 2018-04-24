@@ -4,13 +4,15 @@ const { createSelector } = require('reselect');
 
 export const variablesSelector = state => state.series.variables ? state.series.variables : null;
 
-export const currentDateRangeSelector = state => state.timeseriesState.currentDateRange
+export const currentVariableIDSelector = state => state.timeseriesState.currentVariableID;
+export const currentDateRangeSelector = state => state.timeseriesState.currentDateRange;
+
 /**
  * @return {Object}     Variable details for the currently selected variable.
  */
 export const currentVariableSelector = createSelector(
     variablesSelector,
-    state => state.timeseriesState.currentVariableID,
+    currentVariableIDSelector,
     (variables, variableID) => {
         return variableID ? variables[variableID] : null;
     }
@@ -27,10 +29,11 @@ export const hasFetchedTimeseries = memoize((tsKey) => {
     return state => state.series.requests[tsKey] ? true : false;
 });
 
-export const timeseriesRequestKeySelector = memoize(tsKey => createSelector(
+export const timeseriesRequestKeySelector = memoize(tsKey => memoize(period => createSelector(
     currentParmCdSelector,
     currentDateRangeSelector,
-    (parmCd, period) => {
-        return tsKey === 'median' || period === 'P7D' ? tsKey : `${tsKey}:${period}:${parmCd}`;
+    (parmCd, currentPeriod) => {
+        const periodToUse = period ? period : currentPeriod;
+        return tsKey === 'median' || periodToUse === 'P7D' ? tsKey : `${tsKey}:${periodToUse}:${parmCd}`;
     })
-);
+));

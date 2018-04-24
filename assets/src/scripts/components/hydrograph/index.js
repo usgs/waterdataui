@@ -492,7 +492,7 @@ const attachToNode = function (store, node, {siteno} = {}) {
     select(node)
         .call(provide(store));
     select(node).select('.graph-container')
-        .call(link(controlGraphDisplay, timeSeriesSelector('current')))
+        .call(link(controlGraphDisplay, timeSeriesSelector('current')()))
         .call(timeSeriesGraph, siteno)
         .call(cursorSlider)
         .append('div')
@@ -502,14 +502,13 @@ const attachToNode = function (store, node, {siteno} = {}) {
     select(node).select('.select-timeseries-container')
         .call(link(plotSeriesSelectTable, createStructuredSelector({
             availableTimeseries: availableTimeseriesSelector,
-            lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current'),
-            timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current')(SPARK_LINE_DIM),
+            lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current')('P7D'),
+            timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current')('P7D')(SPARK_LINE_DIM),
             layout: layoutSelector
         })));
     select(node).select('.provisional-data-alert')
         .call(link(function(elem, allTimeSeries) {
             elem.attr('hidden', Object.keys(allTimeSeries).length ? null : true);
-
         }, allTimeSeriesSelector));
 
 
