@@ -3,14 +3,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
 ## [Unreleased]
+### Changed
+- Cursor location / tooltip defaults to last point in the time series.
+
 
 ## [0.7.0] - 2018-04-23
-
 ### Added
 - Tooltips are provided for metadata elements for those that USGS defines on NWIS help pages.
 - Information alert for provisional data.
-- Basic meta tags, title and description, for Twitter card and Open Graph 
+- Basic meta tags, title and description, for Twitter card and Open Graph
 - Rough draft for USGS logo watermark
 
 
