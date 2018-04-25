@@ -162,7 +162,7 @@ describe('Hydrograph charting module', () => {
         const store = configureStore(TEST_STATE);
         select(graphNode)
             .call(provide(store))
-            .call(timeSeriesGraph, '05370000');
+            .call(timeSeriesGraph);
         let svgNodes = graphNode.getElementsByTagName('svg');
         expect(svgNodes.length).toBe(1);
         expect(graphNode.innerHTML).toContain('hydrograph-container');
@@ -174,7 +174,7 @@ describe('Hydrograph charting module', () => {
             const store = configureStore(TEST_STATE);
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph, '05370000');
+                .call(timeSeriesGraph);
             expect(select('#hydrograph').attr('hidden')).toBeNull();
         });
 
@@ -182,7 +182,7 @@ describe('Hydrograph charting module', () => {
             const store = configureStore({series: {timeseries: {}}});
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph, '05370000');
+                .call(timeSeriesGraph);
         });
     });
 
@@ -192,7 +192,7 @@ describe('Hydrograph charting module', () => {
             const store = configureStore(TEST_STATE);
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph, '05370000');
+                .call(timeSeriesGraph);
             svg = select('svg');
         });
 
@@ -397,7 +397,7 @@ describe('Hydrograph charting module', () => {
         });
     });
 
-    fdescribe('Creating date range controls', () => {
+    describe('Creating date range controls', () => {
         let store;
         beforeEach(() => {
             store = configureStore(TEST_STATE);

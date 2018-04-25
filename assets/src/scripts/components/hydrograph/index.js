@@ -310,44 +310,7 @@ const watermark = function (elem) {
         }, layoutSelector));
 };
 
-const createDaterangeControls = function(elem, siteno) {
-    const DATE_RANGE = [{
-        label: 'seven-day',
-        name: '7 days',
-        period: 'P7D'
-    }, {
-        label: 'thirty-days',
-        name: '30 days',
-        period: 'P30D'
-    }, {
-        label: 'one-year',
-        name: '1 year',
-        period: 'P1Y'
-    }];
-    const container = elem.insert('ul', ':first-child')
-        .attr('id', 'ts-daterange-select-container')
-        .attr('class', 'usa-fieldset-inputs usa-unstyled-list');
-    const li = container.selectAll('li')
-        .data(DATE_RANGE)
-        .enter().append('li');
-    li.append('input')
-        .attr('type', 'radio')
-        .attr('name', 'ts-daterange-input')
-        .attr('id', (d) => d.label)
-        .attr('value', (d) => d.period)
-        .on('change', dispatch(function() {
-            return Actions.retrieveExtendedTimeseries(
-                siteno,
-                li.select('input:checked').attr('value')
-            );
-        }));
-    li.append('label')
-        .attr('for', (d) => d.label)
-        .text((d) => d.name);
-    li.select(`#${DATE_RANGE[0].label}`).attr('checked', true);
-};
-
-const timeSeriesGraph = function (elem, siteno) {
+const timeSeriesGraph = function (elem) {
     elem.call(watermark)
         .append('div')
         .attr('class', 'hydrograph-container')
@@ -482,6 +445,44 @@ const graphControls = function(elem) {
 const controlGraphDisplay = function (elem, currentTimeseries) {
     const seriesWithPoints = Object.values(currentTimeseries).filter(x => x.points.length > 0);
     elem.attr('hidden', seriesWithPoints.length === 0 ? true : null);
+};
+
+
+const createDaterangeControls = function(elem, siteno) {
+    const DATE_RANGE = [{
+        label: 'seven-day',
+        name: '7 days',
+        period: 'P7D'
+    }, {
+        label: 'thirty-days',
+        name: '30 days',
+        period: 'P30D'
+    }, {
+        label: 'one-year',
+        name: '1 year',
+        period: 'P1Y'
+    }];
+    const container = elem.insert('ul', ':first-child')
+        .attr('id', 'ts-daterange-select-container')
+        .attr('class', 'usa-fieldset-inputs usa-unstyled-list');
+    const li = container.selectAll('li')
+        .data(DATE_RANGE)
+        .enter().append('li');
+    li.append('input')
+        .attr('type', 'radio')
+        .attr('name', 'ts-daterange-input')
+        .attr('id', (d) => d.label)
+        .attr('value', (d) => d.period)
+        .on('change', dispatch(function() {
+            return Actions.retrieveExtendedTimeseries(
+                siteno,
+                li.select('input:checked').attr('value')
+            );
+        }));
+    li.append('label')
+        .attr('for', (d) => d.label)
+        .text((d) => d.name);
+    li.select(`#${DATE_RANGE[0].label}`).attr('checked', true);
 };
 
 const attachToNode = function (store, node, {siteno} = {}) {
