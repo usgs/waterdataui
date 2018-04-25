@@ -10,7 +10,6 @@ const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { currentVariableSelector, yLabelSelector } = require('./timeseries');
 
-
 /**
  * Create an x and y axis for hydrograph
  * @param  {Object} xScale      D3 Scale object for the x-axis
@@ -20,12 +19,34 @@ const { currentVariableSelector, yLabelSelector } = require('./timeseries');
  * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
 export const createAxes = function({xScale, yScale}, yTickSize, parmCd) {
+      const formatter = function(d) {
+            let formatter = null;
+            if(d.getHours() === 12) {
+                formatter = timeFormat('%b %d');
+                return formatter(d);
+            } else {
+                return null;
+            }
+        };
+console.log('value of formatter ' + formatter);
     // Create x-axis
     const xAxis = axisBottom()
         .scale(xScale)
         .ticks(timeDay)
-        .tickFormat(timeFormat('%b %d'))
+        //.tickFormat(timeFormat('%b %d')) this is an original line
+        .tickFormat('') // changed version of above line
         .tickSizeOuter(0);
+
+// added for WDFN213 start
+    const xAxisWithDateTimeLabels = axisBottom()
+        .scale(xScale)
+        .ticks(timeDay.hour12)
+        .tickPadding(5)
+        .tickSize(0)
+        .tickFormat(formatter)
+
+        ; // move this semicolon when finished testing
+// added for WDFN213 end
 
     // Create y-axis
     const tickDetails = getYTickDetails(yScale.domain(), parmCd);
@@ -37,7 +58,8 @@ export const createAxes = function({xScale, yScale}, yTickSize, parmCd) {
         .tickPadding(3)
         .tickSizeOuter(0);
 
-    return {xAxis, yAxis};
+    // return {xAxis, yAxis}; // original
+     return {xAxis, xAxisWithDateTimeLabels, yAxis};
 };
 
 
@@ -65,7 +87,8 @@ export const axesSelector = createSelector(
 /**
  * Add x and y axes to the given svg node.
  */
-export const appendAxes = function(elem, {xAxis, yAxis, layout, yTitle}) {
+//export const appendAxes = function(elem, {xAxis, yAxis, layout, yTitle}) { // original line
+export const appendAxes = function(elem, {xAxis, xAxisWithDateTimeLabels, yAxis, layout, yTitle}) { // revamped line
     const xLoc = {
         x: 0,
         y: layout.height - (layout.margin.top + layout.margin.bottom)
@@ -77,14 +100,22 @@ export const appendAxes = function(elem, {xAxis, yAxis, layout, yTitle}) {
     };
 
     // Remove existing axes before adding the new ones.
-    elem.selectAll('.x-axis, .y-axis').remove();
+    // elem.selectAll('.x-axis, .y-axis').remove();  this is the original line
+    elem.selectAll('.x-axis, .x-axis-date-time-label, .y-axis').remove(); // added for WDFN213
 
     // Add x-axis
     elem.append('g')
         .attr('class', 'x-axis')
         .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
         .call(xAxis);
-
+// following section added for WDFN213 start
+    // Add a second x-axis, this one with the centered date/time labels
+    elem.append('g')
+        .attr('class', 'x-axis-date-time-label')
+        .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
+        .call(xAxisWithDateTimeLabels)
+    ; // move semicolon when finished
+// WDFN added section end
     // Add y-axis and a text label
     elem.append('g')
         .attr('class', 'y-axis')
