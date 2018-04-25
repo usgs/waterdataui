@@ -118,7 +118,7 @@ export const Actions = {
                 switch (period) {
                     case 'P7D':
                         break;
-                    case 'P1M':
+                    case 'P30D':
                         startTime.setDate(startTime.getDate() - 30);
                         break;
 

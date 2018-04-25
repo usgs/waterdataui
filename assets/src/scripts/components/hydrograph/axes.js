@@ -14,7 +14,7 @@ const { currentDateRangeSelector, currentParmCdSelector } = require('../../selec
 
 const INTERVAL = {
     P7D: timeDay,
-    P1M: timeWeek,
+    P30D: timeWeek,
     P1Y: timeMonth
 };
 /**

@@ -314,9 +314,9 @@ const createDaterangeControls = function(elem, siteno) {
         name: '7 days',
         period: 'P7D'
     }, {
-        label: 'one-month',
-        name: '1 month',
-        period: 'P1M'
+        label: 'thirty-days',
+        name: '30 days',
+        period: 'P30D'
     }, {
         label: 'one-year',
         name: '1 year',
