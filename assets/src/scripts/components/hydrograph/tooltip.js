@@ -12,7 +12,8 @@ const { cursorTimeSelector, tsCursorPointsSelector } = require('./cursor');
 const { classesForPoint, MASK_DESC } = require('./drawingData');
 const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
-const { currentVariableSelector } = require('./timeseries');
+
+const { getCurrentVariable } = require('../../selectors/timeseriesSelector');
 
 const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');
 
@@ -95,7 +96,7 @@ const getTooltipText = function(datum, qualifiers, unitCode) {
 const qualifiersSelector = state => state.series.qualifiers;
 
 const unitCodeSelector = createSelector(
-    currentVariableSelector,
+    getCurrentVariable,
     variable => variable ? variable.unit.unitCode : null
 );
 

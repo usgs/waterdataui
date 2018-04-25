@@ -10,6 +10,10 @@ export const getCurrentVariableID = state => state.timeseriesState.currentVariab
 
 export const getCurrentDateRange = state => state.timeseriesState.currentDateRange;
 
+export const getMethods = state => state.series.methods ? state.series.methods : null;
+
+export const getQueryInfo = state => state.series.queryInfo || {};
+
 /*
  * Selectors the return derived data from the state
  */
@@ -40,8 +44,8 @@ const tsRequestKey = function(tsKey, period, parmCd) {
 };
 /*
  * @param {String} tsKey - current, compare, or median
- * @param {String or null} period - date range of interest specified as an ISO-8601 duration. If null P7D is assumed
- * @param {String or null} parmCD - Only need to specify if period is something other than P7D or null
+ * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null P7D is assumed
+ * @param {String} or null parmCD - Only need to specify if period is something other than P7D or null
  * @return {Boolean} - True if the time series with key, period, and parmCd has already been requested
  *
  */
@@ -53,7 +57,7 @@ export const hasTimeseries = memoize(tsKey => memoize(period => memoize(parmCd =
 
 /*
  * @param {String} tsKey - current, compare, or median
- * @param {String or null} - period to use, otherwise the current date range is used.
+ * @param {String} or null - period to use, otherwise the current date range is used.
  * @return {String} or null - Return the the request key for the request object for the tsKey and period and currently
  * selected variable.
  */

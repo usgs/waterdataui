@@ -5,7 +5,9 @@ const { createSelector } = require('reselect');
 const { CIRCLE_RADIUS } = require('./layout');
 const { defineLineMarker, defineTextOnlyMarker, defineCircleMarker, defineRectangleMarker} = require('./markers');
 const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} = require('./drawingData');
-const { currentVariableTimeSeriesSelector, methodsSelector } = require('./timeseries');
+const { currentVariableTimeSeriesSelector } = require('./timeseries');
+
+const { getMethods } = require('../../selectors/timeseriesSelector');
 
 const TS_LABEL = {
     'current': 'Current: ',
@@ -194,7 +196,7 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
 const legendDisplaySelector = createSelector(
     (state) => state.timeseriesState.showSeries,
     currentVariableTimeSeriesSelector('median'),
-    methodsSelector,
+    getMethods,
     uniqueClassesSelector('current'),
     uniqueClassesSelector('compare'),
     (showSeries, medianTSs, methods, currentClasses, compareClasses) => {

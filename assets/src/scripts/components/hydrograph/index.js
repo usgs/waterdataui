@@ -395,7 +395,7 @@ const timeSeriesGraph = function (elem, siteno) {
         .call(link(plotSROnlyTable, createStructuredSelector({
             tsKey: () => 'current',
             variable: currentVariableSelector,
-            methods: methodsSelector,
+            methods: getMethods,
             visible: isVisibleSelector('current'),
             dataByTsID: pointsTableDataSelector('current'),
             timeSeries: currentVariableTimeSeriesSelector('current')
@@ -404,7 +404,7 @@ const timeSeriesGraph = function (elem, siteno) {
         .call(link(plotSROnlyTable, createStructuredSelector({
             tsKey: () => 'compare',
             variable: currentVariableSelector,
-            methods: methodsSelector,
+            methods: getMethods,
             visible: isVisibleSelector('compare'),
             dataByTsID: pointsTableDataSelector('compare'),
             timeSeries: currentVariableTimeSeriesSelector('compare')
@@ -413,7 +413,7 @@ const timeSeriesGraph = function (elem, siteno) {
         .call(link(plotSROnlyTable, createStructuredSelector({
             tsKey: () => 'median',
             variable: currentVariableSelector,
-            methods: methodsSelector,
+            methods: getMethods,
             visible: isVisibleSelector('median'),
             dataByTsID: pointsTableDataSelector('median'),
             timeSeries: currentVariableTimeSeriesSelector('median')

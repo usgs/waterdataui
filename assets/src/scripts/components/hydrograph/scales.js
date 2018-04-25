@@ -5,10 +5,10 @@ const { createSelector } = require('reselect');
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { getYDomain, SYMLOG_PARMS } = require('./domain');
 const { layoutSelector } = require('./layout');
-const { timeSeriesSelector, variablesSelector, currentVariableSelector, requestTimeRangeSelector } = require('./timeseries');
+const { timeSeriesSelector, requestTimeRangeSelector } = require('./timeseries');
 const { visiblePointsSelector, pointsByTsKeySelector } = require('./drawingData');
 
-const {getCurrentVariableTimeseriesRequestKey } = require('../../selectors/timeseriesSelector');
+const { getVariables, getCurrentParmCd, getCurrentVariableTimeseriesRequestKey } = require('../../selectors/timeseriesSelector');
 
 
 /**
@@ -70,10 +70,9 @@ const xScaleSelector = memoize(tsKey => createSelector(
 const yScaleSelector = createSelector(
     layoutSelector,
     visiblePointsSelector,
-    currentVariableSelector,
-    (layout, pointArrays, currentVar) => {
-        let currentVarParmCd = currentVar && currentVar.variableCode ? currentVar.variableCode.value : null;
-        const yDomain = getYDomain(pointArrays, currentVar);
+    getCurrentParmCd,
+    (layout, pointArrays, currentVarParmCd) => {
+        const yDomain = getYDomain(pointArrays, currentVarParmCd);
         return createYScale(currentVarParmCd, yDomain, layout.height - (layout.margin.top + layout.margin.bottom));
     }
 );
@@ -88,7 +87,7 @@ const yScaleSelector = createSelector(
 const parmCdPointsSelector = memoize(tsKey => memoize(period => createSelector(
     pointsByTsKeySelector(tsKey)(period),
     timeSeriesSelector(tsKey)(period),
-    variablesSelector,
+    getVariables,
     (tsPoints, timeSeries, variables) => {
         return Object.keys(tsPoints).reduce((byParmCd, tsID) => {
             const points = tsPoints[tsID];

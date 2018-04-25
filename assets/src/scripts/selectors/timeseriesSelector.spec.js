@@ -1,5 +1,5 @@
-const { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getCurrentParmCd, hasTimeseries,
-    getCurrentVariableTimeseriesRequestKey } = require('./timeseriesSelector');
+const { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getQueryInfo, getCurrentParmCd,
+    hasTimeseries, getCurrentVariableTimeseriesRequestKey } = require('./timeseriesSelector');
 
 describe('timeseriesSelector', () => {
     const TEST_VARS = {
@@ -28,6 +28,30 @@ describe('timeseriesSelector', () => {
                     variables: TEST_VARS
                 }
             })).toEqual(TEST_VARS);
+        });
+    });
+
+    describe('getQueryInfo', () => {
+        it('Return empty object if series is empty', () => {
+            expect(getQueryInfo({
+                series: {}
+            })).toEqual({});
+        });
+
+        it('Return queryinfo is state', () => {
+            expect(getQueryInfo({
+                series: {
+                    queryInfo: {
+                        current: {
+                            queryURL: 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D'
+                        }
+                    }
+                }
+            })).toEqual({
+                current: {
+                    queryURL: 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D'
+                }
+            });
         });
     });
 

@@ -1,4 +1,4 @@
-const { variablesSelector, currentVariableSelector, timeSeriesSelector, isVisibleSelector, yLabelSelector,
+const { timeSeriesSelector, isVisibleSelector, yLabelSelector,
     titleSelector, descriptionSelector, currentVariableTimeSeriesSelector,
     allTimeSeriesSelector, requestTimeRangeSelector} = require('./timeseries');
 
@@ -48,7 +48,30 @@ const TEST_DATA = {
                     qualifiers: ['P'],
                     approved: false,
                     estimated: false
-                }]}
+                }]
+            },
+            '00060:P30D': {
+                tsKey: 'current:P30D:00060',
+                startTime: new Date('2018-02-06T15:45:00.000Z'),
+                endTime: new Date('2018-02-13T13:45:00.000Z'),
+                variable: '45807197',
+                points: [{
+                    value: 10,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: null,
+                    qualifiers: ['P', 'ICE'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: null,
+                    qualifiers: ['P', 'FLD'],
+                    approved: false,
+                    estimated: false
+                }]
+            }
         },
         timeSeriesCollections: {
             'coll1': {
@@ -63,13 +86,17 @@ const TEST_DATA = {
         },
         variables: {
             '45807197': {
-                variableCode: '00060',
+                variableCode: {
+                    value: '00060'
+                },
                 variableName: 'Streamflow',
                 variableDescription: 'Discharge, cubic feet per second',
                 oid: '45807197'
             },
             '45807196': {
-                variableCode: '00010',
+                variableCode: {
+                    value: '00010'
+                },
                 variableName: 'Gage Height',
                 variableDescription: 'Gage Height in feet',
                 oid: '45807196'
@@ -89,73 +116,12 @@ const TEST_DATA = {
         }
     },
     timeseriesState: {
-        currentVariableID: '45807197'
+        currentVariableID: '45807197',
+        currentDateRange: 'P7D'
     }
 };
 
 describe('Timeseries module', () => {
-
-    const TEST_VARIABLES = {
-            '45807042': {
-                'variableCode': {
-                    value: '00010'
-                },
-                'variableName': 'Temperature'
-            },
-            '45807197': {
-                'variableCode': {
-                    value: '00060'
-                },
-                'variableName': 'Streamflow'
-            }
-        };
-
-    describe('variablesSelector', () => {
-
-        it('should return the variables object', () => {
-            expect(variablesSelector({
-                series: {
-                    variables: TEST_VARIABLES
-                }
-            })).toEqual(TEST_VARIABLES);
-        });
-
-        it('Should return null if no variables are in the state', () => {
-            expect(variablesSelector({
-                series: {}
-            })).toBeNull();
-        });
-    });
-
-    describe('currentVariableSelector', () => {
-
-        it('should return the selected variable information', () => {
-            expect(currentVariableSelector({
-                series: {
-                    variables: TEST_VARIABLES
-                },
-                timeseriesState: {
-                    currentVariableID: '45807197'
-                }
-            })).toEqual({
-                'variableCode': {
-                    value: '00060'
-                },
-                'variableName': 'Streamflow'
-            });
-        });
-
-        it('should return null if no currentVariableID set', () => {
-            expect(currentVariableSelector({
-                series: {
-                    variables: TEST_VARIABLES
-                },
-                timeseriesState: {
-                    currentVariableID: null
-                }
-            })).toBeNull();
-        });
-    });
 
     describe('allTimesSeriesSelector', () => {
 
@@ -273,7 +239,8 @@ describe('Timeseries module', () => {
                     }
                 },
                 timeseriesState: {
-                    currentVariableID: '45807197'
+                    currentVariableID: '45807197',
+                    currentDateRange: 'P7D'
                 }
             })).toEqual({
                 one: {item: 'one', points: [1, 2], tsKey: 'current', variable: 45807197},
@@ -286,7 +253,8 @@ describe('Timeseries module', () => {
             expect(currentVariableTimeSeriesSelector('current')({
                 series: {},
                 timeseriesState: {
-                    currentVariableID: null
+                    currentVariableID: null,
+                    currentDateRange: 'P7D'
                 }
             })).toEqual({});
         });
@@ -295,7 +263,7 @@ describe('Timeseries module', () => {
     describe('timeSeriesSelector', () => {
 
         it('should return the selected time series', () => {
-            expect(timeSeriesSelector('current')(TEST_DATA)).toEqual({
+            expect(timeSeriesSelector('current')()(TEST_DATA)).toEqual({
                 '00060': {
                     tsKey: 'current',
                     startTime: new Date('2018-03-06T15:45:00.000Z'),
@@ -319,10 +287,34 @@ describe('Timeseries module', () => {
                     variable: '45807197'
                 }
             });
+            expect(timeSeriesSelector('current')('P30D')(TEST_DATA)).toEqual({
+                '00060:P30D': {
+                    tsKey: 'current:P30D:00060',
+                    startTime: new Date('2018-02-06T15:45:00.000Z'),
+                    endTime: new Date('2018-02-13T13:45:00.000Z'),
+                    variable: '45807197',
+                    points: [{
+                        value: 10,
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: null,
+                        qualifiers: ['P', 'ICE'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: null,
+                        qualifiers: ['P', 'FLD'],
+                        approved: false,
+                        estimated: false
+                    }]
+                }
+            });
         });
 
         it('should return null the empty set if no time series for the selected key exist', () => {
-            expect(timeSeriesSelector('median')(TEST_DATA)).toEqual({});
+            expect(timeSeriesSelector('median')()(TEST_DATA)).toEqual({});
         });
     });
 
