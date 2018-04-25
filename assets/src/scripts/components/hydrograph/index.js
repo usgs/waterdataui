@@ -390,6 +390,7 @@ const timeSeriesGraph = function (elem, siteno) {
                         showLabel: (state) => state.timeseriesState.showMedianStatsLabel
                     })));
             });
+/*
     elem.append('div')
         .call(link(plotSROnlyTable, createStructuredSelector({
             tsKey: () => 'current',
@@ -417,6 +418,7 @@ const timeSeriesGraph = function (elem, siteno) {
             dataByTsID: pointsTableDataSelector('median'),
             timeSeries: currentVariableTimeSeriesSelector('median')
     })));
+    */
 };
 
 /*
