@@ -17,7 +17,19 @@ const SLIDER_STEPS = 1000;
 const SLIDER_OFFSET_PX = 10;
 
 
-export const cursorOffsetSelector = state => state.timeseriesState.cursorOffset;
+export const cursorOffsetSelector = createSelector(
+    xScaleSelector('current'),
+    state => state.timeseriesState.cursorOffset,
+    (xScale, cursorOffset) => {
+        // If cursorOffset is unset, default to the last offset
+        if (!cursorOffset) {
+            const domain = xScale.domain();
+            return domain[1].getTime() - domain[0].getTime();
+        } else {
+            return cursorOffset;
+        }
+    }
+);
 
 /**
  * Returns a selector that, for a given tsKey:
@@ -41,7 +53,7 @@ export const cursorTimeSelector = memoize(tsKey => createSelector(
  */
 export const getNearestTime = function(data, time) {
     // Function that returns the left bounding point for a given chart point.
-    if (data.length < 2) {
+    if (data.length === 0) {
         return null;
     }
     const bisectDate = bisector(d => d.dateTime).left;
@@ -122,4 +134,3 @@ export const cursorSlider = function (elem) {
                 }, layoutSelector));
         });
 };
-
