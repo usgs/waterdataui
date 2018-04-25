@@ -503,7 +503,7 @@ const attachToNode = function (store, node, {siteno} = {}) {
             .call(graphControls);
     select(node).select('.select-timeseries-container')
         .call(link(plotSeriesSelectTable, createStructuredSelector({
-            siteno: state => siteno,
+            siteno: () => siteno,
             availableTimeseries: availableTimeseriesSelector,
             lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current')('P7D'),
             timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current')('P7D')(SPARK_LINE_DIM),
