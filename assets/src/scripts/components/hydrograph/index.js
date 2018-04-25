@@ -22,9 +22,11 @@ const { CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector }
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
-const { allTimeSeriesSelector, currentVariableSelector, isVisibleSelector, titleSelector,
+const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
     descriptionSelector,  currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
+
+const { getCurrentVariable } = require('../../selectors/timeseriesSelector');
 
 
 const drawMessage = function (elem, message) {
@@ -347,7 +349,7 @@ const createDaterangeControls = function(elem, siteno) {
 
 const timeSeriesGraph = function (elem, siteno) {
     elem.call(watermark)
-            .call(createDaterangeControls, siteno);
+        .call(createDaterangeControls, siteno);
 
     elem.append('div')
         .attr('class', 'hydrograph-container')
@@ -386,7 +388,7 @@ const timeSeriesGraph = function (elem, siteno) {
                         xscale: xScaleSelector('current'),
                         yscale: yScaleSelector,
                         seriesMap: currentVariableTimeSeriesSelector('median'),
-                        variable: currentVariableSelector,
+                        variable: getCurrentVariable,
                         showLabel: (state) => state.timeseriesState.showMedianStatsLabel
                     })));
             });

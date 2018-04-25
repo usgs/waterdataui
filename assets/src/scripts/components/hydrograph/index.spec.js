@@ -122,6 +122,7 @@ const TEST_STATE = {
     },
     timeseriesState: {
         currentVariableID: '45807197',
+        currentDateRange: 'P7D',
         showSeries: {
             current: true,
             compare: true,
@@ -161,7 +162,7 @@ describe('Hydrograph charting module', () => {
         const store = configureStore(TEST_STATE);
         select(graphNode)
             .call(provide(store))
-            .call(timeSeriesGraph);
+            .call(timeSeriesGraph, '05370000');
         let svgNodes = graphNode.getElementsByTagName('svg');
         expect(svgNodes.length).toBe(1);
         expect(graphNode.innerHTML).toContain('hydrograph-container');
@@ -173,7 +174,7 @@ describe('Hydrograph charting module', () => {
             const store = configureStore(TEST_STATE);
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph);
+                .call(timeSeriesGraph, '05370000');
             expect(select('#hydrograph').attr('hidden')).toBeNull();
         });
 
@@ -181,7 +182,7 @@ describe('Hydrograph charting module', () => {
             const store = configureStore({series: {timeseries: {}}});
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph);
+                .call(timeSeriesGraph, '05370000');
         });
     });
 
@@ -191,7 +192,7 @@ describe('Hydrograph charting module', () => {
             const store = configureStore(TEST_STATE);
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph);
+                .call(timeSeriesGraph, '05370000');
             svg = select('svg');
         });
 
@@ -208,16 +209,6 @@ describe('Hydrograph charting module', () => {
 
         it('svg should be focusable', function() {
             expect(svg.attr('tabindex')).toBe('0');
-        });
-
-        it('should have an accessibility table for each time series', function() {
-            expect(selectAll('table.usa-sr-only').size()).toBe(3);
-        });
-
-        it('should have a div for each type of time series', function() {
-            expect(selectAll('div#sr-only-median').size()).toBe(1);
-            expect(selectAll('div#sr-only-compare').size()).toBe(1);
-            expect(selectAll('div#sr-only-current').size()).toBe(1);
         });
     });
 
@@ -254,7 +245,8 @@ describe('Hydrograph charting module', () => {
                         median: true
                     },
                     showMedianStatsLabel: false,
-                    currentVariableID: '45807197'
+                    currentVariableID: '45807197',
+                    currentDateRange: 'P7D'
                 },
                 ui: {
                     windowWidth: 400,

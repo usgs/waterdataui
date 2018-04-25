@@ -2,9 +2,9 @@ const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 const { format } = require('d3-format');
 
-const {allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector, variablesSelector } = require('./timeseries');
+const {allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeseries');
 
-const { getCurrentVariableTimeseriesRequestKey } = require('../../selectors/timeseriesSelector');
+const { getVariables, getCurrentVariableTimeseriesRequestKey } = require('../../selectors/timeseriesSelector');
 
 export const MASK_DESC = {
     ice: 'Ice Affected',
@@ -311,7 +311,7 @@ export const lineSegmentsSelector = memoize(tsKey => memoize(period => createSel
 export const lineSegmentsByParmCdSelector = memoize(tsKey => memoize(period => createSelector(
     lineSegmentsSelector(tsKey)(period),
     timeSeriesSelector(tsKey)(period),
-    variablesSelector,
+    getVariables,
     (lineSegmentsBySeriesID, timeSeriesMap, variables) => {
         return Object.keys(lineSegmentsBySeriesID).reduce((byVarID, sID) => {
             const series = timeSeriesMap[sID];
