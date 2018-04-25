@@ -110,7 +110,8 @@ const TEST_DATA = {
         }
     },
     timeseriesState: {
-        currentVariableID: '45807197'
+        currentVariableID: '45807197',
+        currentDateRange: 'P7D'
     }
 };
 
@@ -182,7 +183,7 @@ describe('drawingData module', () => {
 
     describe('pointsByTsKeySelector', () => {
         it('Return the points array for the ts Key selector', () => {
-            const result = pointsByTsKeySelector('current')(TEST_DATA);
+            const result = pointsByTsKeySelector('current')()(TEST_DATA);
 
             expect(Object.keys(result).length).toBe(2);
             expect(result['00060']).toBeDefined();
@@ -190,7 +191,7 @@ describe('drawingData module', () => {
         });
 
         it('return the empty object if no time series for series', () => {
-            expect(pointsByTsKeySelector('median')(TEST_DATA)).toEqual({});
+            expect(pointsByTsKeySelector('median')()(TEST_DATA)).toEqual({});
         });
     });
 
@@ -222,7 +223,7 @@ describe('drawingData module', () => {
 
     describe('line segment selector', () => {
         it('should separate on approved', () => {
-            expect(lineSegmentsSelector('current')({
+            expect(lineSegmentsSelector('current')()({
                 ...TEST_DATA,
                 series: {
                     ...TEST_DATA.series,
@@ -289,7 +290,7 @@ describe('drawingData module', () => {
         });
 
         it('should separate on estimated', () => {
-            expect(lineSegmentsSelector('current')({
+            expect(lineSegmentsSelector('current')()({
                 ...TEST_DATA,
                 series: {
                     ...TEST_DATA.series,
@@ -360,7 +361,7 @@ describe('drawingData module', () => {
         });
 
         it('should separate out masked values', () => {
-            expect(lineSegmentsSelector('current')({
+            expect(lineSegmentsSelector('current')()({
                 ...TEST_DATA,
                 series: {
                     ...TEST_DATA.series,
@@ -447,7 +448,7 @@ describe('drawingData module', () => {
                 new Date(3 * MAX_LINE_POINT_GAP + 1),
                 new Date(3 * MAX_LINE_POINT_GAP + 2)
             ];
-            expect(lineSegmentsSelector('current')({
+            expect(lineSegmentsSelector('current')()({
                 ...TEST_DATA,
                 series: {
                     ...TEST_DATA.series,
@@ -523,7 +524,7 @@ describe('drawingData module', () => {
                 new Date(3 * MAX_LINE_POINT_GAP + 1),
                 new Date(3 * MAX_LINE_POINT_GAP + 2)
             ];
-            expect(lineSegmentsSelector('current')({
+            expect(lineSegmentsSelector('current')()({
                 ...TEST_DATA,
                 series: {
                     ...TEST_DATA.series,
@@ -585,7 +586,7 @@ describe('drawingData module', () => {
 
     describe('lineSegmentsByParmCdSelector', () => {
         it('Should return two mappings for current time series', () => {
-            const result = lineSegmentsByParmCdSelector('current')(TEST_DATA);
+            const result = lineSegmentsByParmCdSelector('current')()(TEST_DATA);
 
             expect(Object.keys(result).length).toBe(2);
             expect(result['00060']).toBeDefined();
@@ -635,13 +636,16 @@ describe('drawingData module', () => {
                     },
                     variables: {
                         '45807197': {
-                            variableCode: '00060',
+                            variableCode: {
+                                value: '00060'
+                            },
                             oid: 45807197
                         }
                     }
                 },
                 timeseriesState: {
-                    currentVariableID: '45807197'
+                    currentVariableID: '45807197',
+                    currentDateRange: 'P7D'
                 }
             })).toEqual([['ptOne', 'ptTwo', 'ptThree'], ['ptOne2', 'ptTwo2', 'ptThree2']]);
         });
@@ -784,6 +788,7 @@ describe('drawingData module', () => {
                 },
                 timeseriesState: {
                     currentVariableID: '45807197',
+                    currentDateRange: 'P7D',
                     showSeries: {
                         current: true
                     }
