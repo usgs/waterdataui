@@ -246,6 +246,7 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap,
     }
 };
 
+/* TODO: Please remove after WDFN-250 is implemented
 const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, dataByTsID, timeSeries}) {
     elem.selectAll(`#sr-only-${tsKey}`).remove();
 
@@ -276,7 +277,7 @@ const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, data
         });
     }
 };
-
+*/
 
 const createTitle = function(elem) {
     elem.append('div')
