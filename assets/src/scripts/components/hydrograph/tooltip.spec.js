@@ -7,7 +7,7 @@ const { Actions, configureStore } = require('../../store');
 const { createTooltipText, createTooltipFocus } = require('./tooltip');
 
 
-fdescribe('Hydrograph tooltip module', () => {
+describe('Hydrograph tooltip module', () => {
 
     let data = [12, 13, 14, 15, 16].map(hour => {
         return {
