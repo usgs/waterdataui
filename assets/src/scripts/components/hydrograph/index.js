@@ -16,13 +16,13 @@ const { mediaQuery } = require('../../utils');
 const { audibleUI } = require('./audible');
 const { appendAxes, axesSelector } = require('./axes');
 const { cursorSlider } = require('./cursor');
-const { pointsTableDataSelector, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
+const { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
     MASK_DESC, HASH_ID } = require('./drawingData');
 const { CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
-const { allTimeSeriesSelector, currentVariableSelector, methodsSelector, isVisibleSelector, titleSelector,
+const { allTimeSeriesSelector, currentVariableSelector, isVisibleSelector, titleSelector,
     descriptionSelector,  currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeseries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
