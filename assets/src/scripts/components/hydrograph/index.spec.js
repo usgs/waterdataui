@@ -396,4 +396,29 @@ describe('Hydrograph charting module', () => {
             expect(select(graphNode).select('.provisional-data-alert').attr('hidden')).toBe('true');
         });
     });
+
+    fdescribe('Creating date range controls', () => {
+        let store;
+        beforeEach(() => {
+            store = configureStore(TEST_STATE);
+            attachToNode(store, graphNode, {siteno: '12345678'});
+
+        });
+
+        it('Expects the date range controls to be created', () => {
+            let dateRangeContainer = select(graphNode).select('#ts-daterange-select-container');
+
+            expect(dateRangeContainer.size()).toBe(1);
+            expect(dateRangeContainer.selectAll('input[type=radio]').size()).toBe(3);
+        });
+
+        it('Expects to retrieve the extended timeseries when the radio buttons are change', () => {
+            spyOn(Actions, 'retrieveExtendedTimeseries');
+            let lastRadio = select(graphNode).select('#one-year');
+            lastRadio.attr('checked', true);
+            lastRadio.dispatch('change');
+
+            expect(Actions.retrieveExtendedTimeseries).toHaveBeenCalledWith('12345678', 'P1Y');
+        });
+    });
 });

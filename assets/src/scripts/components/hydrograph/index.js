@@ -324,7 +324,7 @@ const createDaterangeControls = function(elem, siteno) {
         name: '1 year',
         period: 'P1Y'
     }];
-    const container = elem.append('ul')
+    const container = elem.insert('ul', ':first-child')
         .attr('id', 'ts-daterange-select-container')
         .attr('class', 'usa-fieldset-inputs usa-unstyled-list');
     const li = container.selectAll('li')
@@ -349,9 +349,7 @@ const createDaterangeControls = function(elem, siteno) {
 
 const timeSeriesGraph = function (elem, siteno) {
     elem.call(watermark)
-        .call(createDaterangeControls, siteno);
-
-    elem.append('div')
+        .append('div')
         .attr('class', 'hydrograph-container')
         .call(createTitle)
         .call(createTooltipText)
@@ -494,7 +492,9 @@ const attachToNode = function (store, node, {siteno} = {}) {
 
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
-        .call(provide(store));
+        .call(provide(store))
+        .call(createDaterangeControls, siteno);
+
     select(node).select('.graph-container')
         .call(link(controlGraphDisplay, timeSeriesSelector('current')()))
         .call(timeSeriesGraph, siteno)

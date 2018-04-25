@@ -8,7 +8,7 @@ const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData, sortedParameters } = require('../models');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
-const { currentParmCdSelector, currentDateRangeSelector, hasFetchedTimeseries } = require('../selectors/timeseriesSelector');
+const { getCurrentParmCd, getCurrentDateRange, hasTimeseries } = require('../selectors/timeseriesSelector');
 
 const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
@@ -108,10 +108,10 @@ export const Actions = {
     retrieveExtendedTimeseries(site, period) {
         return function(dispatch, getState) {
             const state = getState();
-            const parmCd = currentParmCdSelector(state);
+            const parmCd = getCurrentParmCd(state);
             const tsKey = period === 'P7D' ? 'current' : `current:${period}:${parmCd}`;
             dispatch(Actions.setCurrentDateRange(period));
-            if (!hasFetchedTimeseries(tsKey)(state)) {
+            if (!hasTimeseries(tsKey)()()(state)) {
                 const endTime = new Date(); //TODO get this from the current data
                 let startTime = new Date(endTime);
 
@@ -164,7 +164,7 @@ export const Actions = {
     updateCurrentVariable(siteno, variableID) {
         return function(dispatch, getState) {
             dispatch(Actions.setCurrentVariable(variableID));
-            dispatch(Actions.retrieveExtendedTimeseries(siteno, currentDateRangeSelector(getState())));
+            dispatch(Actions.retrieveExtendedTimeseries(siteno, getCurrentDateRange(getState())));
         };
     },
     startTimeseriesPlay(maxCursorOffset) {
