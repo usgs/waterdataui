@@ -9,7 +9,7 @@ const { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } = require('./layout');
 const { dispatch } = require('../../lib/redux');
 const { MASK_DESC } = require('./drawingData');
 
-const { variablesSelector, currentVariableIDSelector } = require('../../selectors/timeseriesSelector');
+const { getVariables, getCurrentVariableID } = require('../../selectors/timeseriesSelector');
 
 
 /**
@@ -18,9 +18,9 @@ const { variablesSelector, currentVariableIDSelector } = require('../../selector
  * @return {Array}        Sorted array of [code, metadata] pairs.
  */
 export const availableTimeseriesSelector = createSelector(
-    variablesSelector,
+    getVariables,
     allTimeSeriesSelector,
-    currentVariableIDSelector,
+    getCurrentVariableID,
     (variables, timeSeries, currentVariableID) => {
         if (!variables) {
             return [];

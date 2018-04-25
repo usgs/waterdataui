@@ -4,7 +4,7 @@ const { format } = require('d3-format');
 
 const {allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector, variablesSelector } = require('./timeseries');
 
-const { timeseriesRequestKeySelector } = require('../../selectors/timeseriesSelector');
+const { getCurrentVariableTimeseriesRequestKey } = require('../../selectors/timeseriesSelector');
 
 export const MASK_DESC = {
     ice: 'Ice Affected',
@@ -85,7 +85,7 @@ export const allPointsSelector = createSelector(
  * @return {Object} of keys are tsId, values are Array of point Objects
  */
 export const pointsByTsKeySelector = memoize(tsKey => memoize(period => createSelector(
-    timeseriesRequestKeySelector(tsKey)(period),
+    getCurrentVariableTimeseriesRequestKey(tsKey)(period),
     allPointsSelector,
     state => state.series.timeSeries,
     (tsRequestKey, points, timeSeries) => {

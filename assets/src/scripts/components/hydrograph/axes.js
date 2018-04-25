@@ -10,7 +10,7 @@ const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { yLabelSelector } = require('./timeseries');
 
-const { currentDateRangeSelector, currentParmCdSelector } = require('../../selectors/timeseriesSelector');
+const { getCurrentDateRange, getCurrentParmCd } = require('../../selectors/timeseriesSelector');
 
 const INTERVAL = {
     P7D: timeDay,
@@ -57,8 +57,8 @@ export const axesSelector = createSelector(
     yScaleSelector,
     layoutSelector,
     yLabelSelector,
-    currentParmCdSelector,
-    currentDateRangeSelector,
+    getCurrentParmCd,
+    getCurrentDateRange,
     (xScale, yScale, layout, plotYLabel, parmCd, currentDateRange) => {
         return {
             ...createAxes({xScale, yScale}, -layout.width + layout.margin.right, parmCd, currentDateRange),

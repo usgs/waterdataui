@@ -8,7 +8,7 @@ const { layoutSelector } = require('./layout');
 const { timeSeriesSelector, variablesSelector, currentVariableSelector, requestTimeRangeSelector } = require('./timeseries');
 const { visiblePointsSelector, pointsByTsKeySelector } = require('./drawingData');
 
-const {timeseriesRequestKeySelector } = require('../../selectors/timeseriesSelector');
+const {getCurrentVariableTimeseriesRequestKey } = require('../../selectors/timeseriesSelector');
 
 
 /**
@@ -54,7 +54,7 @@ function createYScale(parmCd, extent, size) {
  */
 const xScaleSelector = memoize(tsKey => createSelector(
     layoutSelector,
-    timeseriesRequestKeySelector(tsKey)(null),
+    getCurrentVariableTimeseriesRequestKey(tsKey)(null),
     requestTimeRangeSelector,
     (layout, tsRequestKey, requestTimeRanges) => {
         return createXScale(requestTimeRanges[tsRequestKey], layout.width - layout.margin.right);

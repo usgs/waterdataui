@@ -25,7 +25,7 @@ const setCurrentDateRange = function(timeseriesState, action) {
         ...timeseriesState,
         currentDateRange: action.period
     };
-}
+};
 
 const showMedianStatsLabel = function(timeseriesState, action) {
     return {
