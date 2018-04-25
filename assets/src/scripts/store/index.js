@@ -138,11 +138,10 @@ export const Actions = {
                     series => {
                         const collection = normalize(series, tsKey);
                         dispatch(Actions.addSeriesCollection(tsKey, collection));
-                        dispatch(Actions.toggleTimeseries(tsKey, true));
                     },
                     () => {
                         console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
-                        dispatch(Actions.addSeriesCollection(`current:${period}: ${parmCd}`, {}));
+                        dispatch(Actions.addSeriesCollection(tsKey, {}));
                     }
                 );
             }

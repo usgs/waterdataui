@@ -220,7 +220,6 @@ describe('Redux store', () => {
             const END_DATE = new Date('2017-01-08');
 
             beforeEach(() => {
-                /* eslint no-use-before-define: 0 */
                 let getPreviousTSPromise = Promise.reject(Error('Bad data'));
                 modelsMock = {
                     getPreviousYearTimeseries: function () {
@@ -243,6 +242,157 @@ describe('Redux store', () => {
                     done();
                 });
             });
+        });
+
+        describe('retrieveExtendedTimeseries with data', () => {
+            let store;
+            let modelsMock;
+            let mockDispatch;
+            let mockGetState;
+            const TEST_STATE = {
+                series: {
+                    requests: {
+                        'current': {}
+                    },
+                    variables: {
+                        '45807042': {
+                            variableCode: {
+                                'value': '00060'
+                            }
+                        },
+                        '450807142': {
+                            variableCode: {
+                                'value': '00010'
+                            }
+                        }
+                    }
+                },
+                timeseriesState: {
+                    currentVariableID: '45807042',
+                    currentDateRange: 'P7D'
+                }
+            };
+
+            beforeEach(() => {
+                let getTimeseriesPromise = Promise.resolve(JSON.parse(MOCK_DATA));
+                modelsMock = {
+                    getTimeseries: function() {
+                        return getTimeseriesPromise;
+                    }
+                };
+                spyOn(modelsMock, 'getTimeseries').and.callThrough();
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState');
+
+                store = proxyquire('./index', {'../models': modelsMock});
+            });
+
+            it('Should dispatch the action to set the current date range', () => {
+                mockGetState.and.returnValue(TEST_STATE);
+                store.Actions.retrieveExtendedTimeseries('12345678', 'P30D')(mockDispatch, mockGetState);
+                expect(mockDispatch).toHaveBeenCalledWith({
+                    type: 'SET_CURRENT_DATE_RANGE',
+                    period: 'P30D'
+                });
+            });
+
+            it('Should call getTimeseries with the appropriate parameters', () => {
+                mockGetState.and.returnValue(TEST_STATE);
+                store.Actions.retrieveExtendedTimeseries('12345678', 'P30D')(mockDispatch, mockGetState);
+
+                expect(modelsMock.getTimeseries).toHaveBeenCalled();
+                const args = modelsMock.getTimeseries.calls.argsFor(0)[0];
+                expect(args.sites).toEqual(['12345678']);
+                expect(args.params).toEqual(['00060']);
+                expect(args.startDate.getTime()).toEqual(args.endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+            });
+
+            it('Should dispatch add series collection', (done) => {
+                mockGetState.and.returnValue(TEST_STATE);
+                let p = store.Actions.retrieveExtendedTimeseries('12345678', 'P30D')(mockDispatch, mockGetState);
+                p.then(() => {
+                    expect(mockDispatch.calls.count()).toBe(2);
+                    let arg = mockDispatch.calls.argsFor(1)[0]
+                    expect(arg.type).toBe('ADD_TIMESERIES_COLLECTION');
+                    expect(arg.key).toBe('current:P30D:00060');
+
+                    done();
+                });
+            });
+
+            it('Should not retrieve the timeseries if it has already been retrieved', () => {
+                mockGetState.and.returnValue(Object.assign({}, TEST_STATE, {
+                    series: Object.assign({}, TEST_STATE.series, {
+                        requests: Object.assign({}, TEST_STATE.series.requests, {
+                            'current:P30D:00060': {}
+                        })
+                    })
+                }));
+                store.Actions.retrieveExtendedTimeseries('12345678', 'P30D')(mockDispatch, mockGetState);
+                expect(modelsMock.getTimeseries).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('retrieveExtendedTimeseries with bad data', () => {
+            let store;
+            let modelsMock;
+            let mockDispatch;
+            let mockGetState;
+            const TEST_STATE = {
+                series: {
+                    requests: {
+                        'current': {}
+                    },
+                    variables: {
+                        '45807042': {
+                            variableCode: {
+                                'value': '00060'
+                            }
+                        },
+                        '450807142': {
+                            variableCode: {
+                                'value': '00010'
+                            }
+                        }
+                    }
+                },
+                timeseriesState: {
+                    currentVariableID: '45807042',
+                    currentDateRange: 'P7D'
+                }
+            };
+
+
+            beforeEach(() => {
+               let getTimeseriesPromise = Promise.reject(Error('Bad data'));
+               modelsMock = {
+                   getTimeseries: function() {
+                       return getTimeseriesPromise;
+                   }
+               };
+
+               spyOn(modelsMock, 'getTimeseries').and.callThrough();
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState');
+                mockGetState.and.returnValue(TEST_STATE);
+
+                store = proxyquire('./index', {'../models': modelsMock});
+            });
+
+            it('Should add the series with an empty collection', (done) => {
+                let p = store.Actions.retrieveExtendedTimeseries('12345678', 'P30D')(mockDispatch, mockGetState);
+
+                p.then(() => {
+                    expect(mockDispatch.calls.count()).toBe(2);
+                    let arg = mockDispatch.calls.argsFor(1)[0]
+                    expect(arg.type).toBe('ADD_TIMESERIES_COLLECTION');
+                    expect(arg.key).toBe('current:P30D:00060');
+                    expect(arg.data).toEqual({});
+
+                    done();
+                });
+            });
+
         });
 
         describe('retrieveFloodData with data', () => {
