@@ -53,7 +53,7 @@ export const createAxes = function({xScale, yScale}, yTickSize, parmCd) {
         .tickPadding(3)
         .tickSizeOuter(0);
 
-     return {xAxis, xAxisWithDateTimeLabels, yAxis};
+    return {xAxis, xAxisWithDateTimeLabels, yAxis};
 };
 
 
@@ -81,8 +81,7 @@ export const axesSelector = createSelector(
 /**
  * Add x and y axes to the given svg node.
  */
-//export const appendAxes = function(elem, {xAxis, yAxis, layout, yTitle}) { // original line
-export const appendAxes = function(elem, {xAxis, xAxisWithDateTimeLabels, yAxis, layout, yTitle}) { // revamped line
+export const appendAxes = function(elem, {xAxis, xAxisWithDateTimeLabels, yAxis, layout, yTitle}) {
     const xLoc = {
         x: 0,
         y: layout.height - (layout.margin.top + layout.margin.bottom)
@@ -102,7 +101,7 @@ export const appendAxes = function(elem, {xAxis, xAxisWithDateTimeLabels, yAxis,
         .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
         .call(xAxis);
 
-    // Add the second x-axis -- the one with the centered date/time labels
+    // Add the second x-axis, the one with the centered date/time labels, on top of the first x-axis
     elem.append('g')
         .attr('class', 'x-axis-date-time-label')
         .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
