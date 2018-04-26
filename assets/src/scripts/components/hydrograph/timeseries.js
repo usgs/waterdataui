@@ -1,6 +1,7 @@
 const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
+const { coerceStatisticalSeries } = require('./statistics');
 
 
 // Create a time formatting function from D3's timeFormat
@@ -70,7 +71,12 @@ export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector
             Object.keys(timeSeries).forEach(key => {
                 const series = timeSeries[key];
                 if (series.tsKey === tsKey && series.variable === variable.oid) {
-                    ts[key] = series;
+                    if (tsKey === 'median') {
+                        series.points = coerceStatisticalSeries(series);
+                        ts[key] = series;
+                    } else {
+                        ts[key] = series;
+                    }
                 }
             });
         }

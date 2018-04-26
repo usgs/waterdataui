@@ -141,6 +141,8 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
         }
         let median = {
             dateTime: recordDate,
+            month: month,
+            day: day,
             value: parseFloat(medianDatum.p50_va)
         };
         // don't include leap days if it's not a leap year
@@ -191,7 +193,7 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
         timeSeries: {
             ...collection.timeSeries || {},
             [tsId]: {
-                points: plotValues,
+                points: values,
                 startTime: timeSeriesStartDateTime,
                 endTime: timeSeriesEndDateTime,
                 tsKey: 'median',
