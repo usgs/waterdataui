@@ -2,12 +2,13 @@ const { createSelector } = require('reselect');
 const { line } = require('d3-shape');
 const { select } = require('d3-selection');
 
+const { MASK_DESC } = require('./drawingData');
+const { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } = require('./layout');
 const { allTimeSeriesSelector } = require('./timeseries');
+
 const { Actions } = require('../../store');
 const { sortedParameters } = require('../../models');
-const { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } = require('./layout');
 const { dispatch } = require('../../lib/redux');
-const { MASK_DESC } = require('./drawingData');
 
 const { getVariables, getCurrentVariableID } = require('../../selectors/timeseriesSelector');
 

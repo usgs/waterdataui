@@ -197,6 +197,7 @@ describe('Parameters module', () => {
         };
 
         const testArgsWithData = {
+            siteno: '12345678',
             availableTimeseries: availableTimeseries,
             lineSegmentsByParmCd: lineSegmentsByParmCd,
             timeSeriesScalesByParmCd: timeSeriesScalesByParmCd
@@ -232,6 +233,8 @@ describe('Parameters module', () => {
             expect(tableDivSelection.selectAll('table').size()).toEqual(0);
         });
     });
+
+
 
     describe('addSparkline', () => {
         let svg;
