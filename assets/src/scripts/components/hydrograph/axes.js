@@ -29,17 +29,17 @@ export const createAxes = function({xScale, yScale}, yTickSize, parmCd) {
         }
     };
 
-    // Create x-axis
+    // Create x-axis with ticks at midnight but no visible date/time labels
     const xAxis = axisBottom()
         .scale(xScale)
         .ticks(timeDay)
         .tickFormat('')
         .tickSizeOuter(0);
-
-    // Create a second x-axis to hold date/time labels
+    // Create a second x-axis. This x-axis will overlay the first x-axis and have labels every 12 hours but no ticks.
+    // Labels not on the 12 hour points are removed with formatting.
     const xAxisWithDateTimeLabels = axisBottom()
         .scale(xScale)
-        .ticks(timeDay.hour12)
+        .ticks(timeDay.hour)
         .tickPadding(5)
         .tickSize(0)
         .tickFormat(formatter);
