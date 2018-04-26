@@ -131,7 +131,7 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
     let yearPrevious = yearPresent - 1;
 
     // calculate the number of days to display
-    let days = deltaDays(timeSeriesStartDateTime, timeSeriesEndDateTime);
+    //let days = deltaDays(timeSeriesStartDateTime, timeSeriesEndDateTime);
     for (let medianDatum of medianData) {
         let month = medianDatum.month_nu - 1;
         let day = medianDatum.day_nu;
@@ -140,39 +140,12 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
             recordDate = new Date(yearPrevious, month, day);
         }
         let median = {
-            dateTime: recordDate,
+            dateTime: null,
             month: month,
             day: day,
             value: parseFloat(medianDatum.p50_va)
         };
-        // don't include leap days if it's not a leap year
-        if (!isLeapYear(recordDate.getFullYear())) {
-            if (!(month === 1 && day === 29)) {
-                values.push(median);
-            }
-        } else {
-            values.push(median);
-        }
-    }
-    let sortedValues = values.sort(function (a, b) {
-        return a.dateTime - b.dateTime;
-    });
-
-    let plotValues = sortedValues.slice(values.length - days, values.length);
-
-    let first = sortedValues[values.length - days -1];
-    if (plotValues[0].dateTime > timeSeriesStartDateTime) {
-        plotValues.unshift({
-            dateTime: timeSeriesStartDateTime,
-            value: first.value
-        });
-    }
-    let last = sortedValues[sortedValues.length - 1];
-    if (plotValues[plotValues.length - 1].dateTime < timeSeriesEndDateTime) {
-        plotValues.push({
-            dateTime: timeSeriesEndDateTime,
-            value: last.value
-        });
+        values.push(median);
     }
     const tsId = `${medianData[0].parameter_cd}:${medianData[0].ts_id}:median`;
     const tsCollectionId = `${medianData[0].site_no}:${medianData[0].parameter_cd}:median`;

@@ -193,13 +193,11 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLa
             return yscale(d.value);
         });
     let medianGrp = elem.append('g');
-
     medianGrp.append('path')
         .datum(points)
         .classed('median-data-series', true)
         .classed(`median-step-${modulo}`, true)
         .attr('d', stepFunction);
-    console.log(points);
     medianGrp.selectAll('medianPoint')
         .data(points)
         .enter()
@@ -252,7 +250,7 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLa
  * @param  {Function} yscale
  * @param  {Array} pointsList
  * @param  {Boolean} showLabel
- * @param  {Object} variable
+ * @param  {Object} variablecoerceStatisticalSeries
  */
 const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap, showLabel, variable}) {
     elem.select('#median-points').remove();
