@@ -322,35 +322,6 @@ const timeSeriesGraph = function (elem) {
                         showLabel: (state) => state.timeseriesState.showMedianStatsLabel
                     })));
             });
-/*
-    elem.append('div')
-        .call(link(plotSROnlyTable, createStructuredSelector({
-            tsKey: () => 'current',
-            variable: currentVariableSelector,
-            methods: getMethods,
-            visible: isVisibleSelector('current'),
-            dataByTsID: pointsTableDataSelector('current'),
-            timeSeries: currentVariableTimeSeriesSelector('current')
-    })));
-    elem.append('div')
-        .call(link(plotSROnlyTable, createStructuredSelector({
-            tsKey: () => 'compare',
-            variable: currentVariableSelector,
-            methods: getMethods,
-            visible: isVisibleSelector('compare'),
-            dataByTsID: pointsTableDataSelector('compare'),
-            timeSeries: currentVariableTimeSeriesSelector('compare')
-    })));
-    elem.append('div')
-        .call(link(plotSROnlyTable, createStructuredSelector({
-            tsKey: () => 'median',
-            variable: currentVariableSelector,
-            methods: getMethods,
-            visible: isVisibleSelector('median'),
-            dataByTsID: pointsTableDataSelector('median'),
-            timeSeries: currentVariableTimeSeriesSelector('median')
-    })));
-    */
 };
 
 /*
