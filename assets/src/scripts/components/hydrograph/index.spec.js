@@ -43,6 +43,8 @@ const TEST_STATE = {
                     dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
                     value: 10
                 }],
+                startTime: new Date('2018-01-02T15:00:00.000-06:00'),
+                endTime: new Date('2018-01-02T15:00:00.000-06:00'),
                 metadata: {
                     beginYear: '2010',
                     endYear: '2015'

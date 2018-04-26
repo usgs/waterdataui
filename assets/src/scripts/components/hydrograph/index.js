@@ -205,12 +205,14 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLa
             .classed('median-data-series', true)
             .classed(`median-modulo-${modulo}`, true)
             .attr('r', function(d, i) {
-                if (points[0].dateTime.getDate() < points[1].dateTime.getDate() &&
-                points[points.length - 1].dateTime.getDate() === points[points.length - 2].dateTime.getDate()) {
-                    if (i === 0 || i === points.length - 1) {
-                        return 0;
-                    } else {
-                        return CIRCLE_RADIUS;
+                if (points.length > 1) {
+                    if (points[0].dateTime.getDate() < points[1].dateTime.getDate() &&
+                    points[points.length - 1].dateTime.getDate() === points[points.length - 2].dateTime.getDate()) {
+                        if (i === 0 || i === points.length - 1) {
+                            return 0;
+                        } else {
+                            return CIRCLE_RADIUS;
+                        }
                     }
                 } else {
                     return CIRCLE_RADIUS;
@@ -250,7 +252,7 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLa
  * @param  {Function} yscale
  * @param  {Array} pointsList
  * @param  {Boolean} showLabel
- * @param  {Object} variablecoerceStatisticalSeries
+ * @param  {Object} variable
  */
 const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap, showLabel, variable}) {
     elem.select('#median-points').remove();
