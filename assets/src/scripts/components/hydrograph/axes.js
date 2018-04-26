@@ -1,5 +1,5 @@
 const { axisBottom, axisLeft } = require('d3-axis');
-const { timeDay } = require('d3-time');
+const { timeDay, timeWeek, timeMonth } = require('d3-time');
 const { timeFormat } = require('d3-time-format');
 const { createSelector } = require('reselect');
 
@@ -12,7 +12,14 @@ const { yLabelSelector } = require('./timeSeries');
 
 const { getCurrentDateRange, getCurrentParmCd } = require('../../selectors/timeSeriesSelector');
 
+const INTERVAL = {
+    P7D: timeDay,
+    P30D: timeWeek,
+    P1Y: timeMonth
+};
+
 const dateFormatter = timeFormat('%b %d');
+
 /**
  * Create an x and y axis for hydrograph
  * @param  {Object} xScale      D3 Scale object for the x-axis
@@ -34,16 +41,20 @@ export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period) 
     const xAxis = axisBottom()
         .scale(xScale)
         .ticks(INTERVAL[period] ? INTERVAL[period] : timeDay)
-        .tickFormat(timeFormat('%b %d'))
         .tickSizeOuter(0);
-    // Create a second x-axis. This x-axis will overlay the first x-axis and have labels every 12 hours but no ticks.
-    // Labels not on the 12 hour points are removed with formatting.
-    const xAxisWithDateTimeLabels = axisBottom()
-        .scale(xScale)
-        .ticks(timeDay.hour)
-        .tickPadding(5)
-        .tickSize(0)
-        .tickFormat(formatter);
+    let xAxisWithDateTimeLabels;
+    if (period === 'P7D') {
+        // Only show tick marks on xAxis
+        // Create a second x-axis. This x-axis will overlay the first x-axis and have labels every 12 hours but no ticks.
+        // Labels not on the 12 hour points are removed with formatting.
+        xAxis.tickFormat('');
+        xAxisWithDateTimeLabels = axisBottom()
+            .scale(xScale)
+            .ticks(timeDay.hour)
+            .tickPadding(5)
+            .tickSize(0)
+            .tickFormat(formatter);
+    }
     // Create y-axis
     const tickDetails = getYTickDetails(yScale.domain(), parmCd);
     const yAxis = axisLeft()
@@ -102,11 +113,13 @@ export const appendAxes = function(elem, {xAxis, xAxisWithDateTimeLabels, yAxis,
         .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
         .call(xAxis);
 
-    // Add the second x-axis, the one with the centered date/time labels, on top of the first x-axis
-    elem.append('g')
-        .attr('class', 'x-axis-date-time-label')
-        .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
-        .call(xAxisWithDateTimeLabels);
+    if (xAxisWithDateTimeLabels) {
+        // Add the second x-axis, the one with the centered date/time labels, on top of the first x-axis
+        elem.append('g')
+            .attr('class', 'x-axis-date-time-label')
+            .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
+            .call(xAxisWithDateTimeLabels);
+    }
 
     // Add y-axis and a text label
     elem.append('g')
