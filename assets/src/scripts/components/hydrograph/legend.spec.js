@@ -91,7 +91,7 @@ describe('Legend module', () => {
                     '00060:current': {
                         tsKey: 'current',
                         startTime: new Date('2018-03-06T15:45:00.000Z'),
-                        endTime: new Date('2018-03-13t13:45:00.000Z'),
+                        endTime: new Date('2018-03-13T13:45:00.000Z'),
                         variable: '45807197',
                         points: [{
                             value: 10,
@@ -114,7 +114,7 @@ describe('Legend module', () => {
                     '00065:compare': {
                         tsKey: 'compare',
                         startTime: new Date('2017-03-06T15:45:00.000Z'),
-                        endTime: new Date('2017-03-13t13:45:00.000Z'),
+                        endTime: new Date('2017-03-13T13:45:00.000Z'),
                         variable: '45807202',
                         points: [{
                             value: 1,
@@ -136,14 +136,20 @@ describe('Legend module', () => {
                     '00065:median': {
                         tsKey: 'median',
                         startTime: new Date('2007-03-06T15:45:00.000Z'),
-                        endTime: new Date('2017-03-13t13:45:00.000Z'),
+                        endTime: new Date('2017-03-13T13:45:00.000Z'),
                         variable: '45807202',
                         points: [{
-                            value: 1
+                            value: 1,
+                            month: 2,
+                            day: 6
                         }, {
-                            value: 2
+                            value: 2,
+                            month: 2,
+                            day: 7
                         }, {
-                            value: 3
+                            value: 3,
+                            month: 2,
+                            day: 7
                         }],
                         metadata: {
                             beginYear: '1931',
