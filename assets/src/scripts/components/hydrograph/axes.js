@@ -10,6 +10,7 @@ const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { currentVariableSelector, yLabelSelector } = require('./timeseries');
 
+const dateFormatter = timeFormat('%b %d');
 
 /**
  * Create an x and y axis for hydrograph
@@ -20,13 +21,28 @@ const { currentVariableSelector, yLabelSelector } = require('./timeseries');
  * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
 export const createAxes = function({xScale, yScale}, yTickSize, parmCd) {
-    // Create x-axis
+    const formatter = function(d) {
+        if(d.getHours() === 12) {
+            return dateFormatter(d);
+        } else {
+            return null;
+        }
+    };
+
+    // Create x-axis with ticks at midnight but no visible date/time labels
     const xAxis = axisBottom()
         .scale(xScale)
         .ticks(timeDay)
-        .tickFormat(timeFormat('%b %d'))
+        .tickFormat('')
         .tickSizeOuter(0);
-
+    // Create a second x-axis. This x-axis will overlay the first x-axis and have labels every 12 hours but no ticks.
+    // Labels not on the 12 hour points are removed with formatting.
+    const xAxisWithDateTimeLabels = axisBottom()
+        .scale(xScale)
+        .ticks(timeDay.hour)
+        .tickPadding(5)
+        .tickSize(0)
+        .tickFormat(formatter);
     // Create y-axis
     const tickDetails = getYTickDetails(yScale.domain(), parmCd);
     const yAxis = axisLeft()
@@ -37,7 +53,7 @@ export const createAxes = function({xScale, yScale}, yTickSize, parmCd) {
         .tickPadding(3)
         .tickSizeOuter(0);
 
-    return {xAxis, yAxis};
+    return {xAxis, xAxisWithDateTimeLabels, yAxis};
 };
 
 
@@ -65,7 +81,7 @@ export const axesSelector = createSelector(
 /**
  * Add x and y axes to the given svg node.
  */
-export const appendAxes = function(elem, {xAxis, yAxis, layout, yTitle}) {
+export const appendAxes = function(elem, {xAxis, xAxisWithDateTimeLabels, yAxis, layout, yTitle}) {
     const xLoc = {
         x: 0,
         y: layout.height - (layout.margin.top + layout.margin.bottom)
@@ -77,13 +93,19 @@ export const appendAxes = function(elem, {xAxis, yAxis, layout, yTitle}) {
     };
 
     // Remove existing axes before adding the new ones.
-    elem.selectAll('.x-axis, .y-axis').remove();
+    elem.selectAll('.x-axis, .x-axis-date-time-label, .y-axis').remove();
 
     // Add x-axis
     elem.append('g')
         .attr('class', 'x-axis')
         .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
         .call(xAxis);
+
+    // Add the second x-axis, the one with the centered date/time labels, on top of the first x-axis
+    elem.append('g')
+        .attr('class', 'x-axis-date-time-label')
+        .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
+        .call(xAxisWithDateTimeLabels);
 
     // Add y-axis and a text label
     elem.append('g')

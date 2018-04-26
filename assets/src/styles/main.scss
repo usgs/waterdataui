@@ -1,20 +1,9 @@
 @import 'leaflet';
 
-$font-path: './fonts';
-$image-path: './img';
+@import './common';
+
 $fa-font-path: './fonts' !default;
-
-// Layout
-// NOTE: If you change this, also change DESKTOP_BREAKPOINT_PX in layout.js!
-$desktop-screen: 800px !default;
-
-// Override default of 4rem
-$h1-font-size: 3.25rem !default;
-
 @import '../../../node_modules/font-awesome/scss/font-awesome';
-@import 'uswds';
-
-$usgs-blue: #00264c;
 
 @import './partials/footer';
 @import './partials/header';
@@ -25,7 +14,7 @@ $usgs-blue: #00264c;
 
 .wdfn-component {
     &[data-component='hydrograph'] {
-        @import './components/hydrograph';
+        @import './components/hydrograph/app';
     }
     &[data-component='map'] {
         @import './components/map';

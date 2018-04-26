@@ -1,8 +1,8 @@
-$approved-timeseries: #2db92d;
-$estimated-timeseries: black;
-$default-timeseries: blue;
-$selected: $color-aqua-lightest;
-$highlight: $color-gray-lightest;
+/**
+ * Hydrograph component SCSS to be used in front-end application.
+ */
+
+@import './graph';
 
 #select-timeseries  {
     label {

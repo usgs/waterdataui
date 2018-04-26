@@ -1,4 +1,4 @@
-const { scaleLinear } = require('d3-scale');
+const { scaleLinear, scaleTime } = require('d3-scale');
 const { select } = require('d3-selection');
 
 const { createAxes, appendAxes } = require('./axes');
@@ -6,7 +6,7 @@ const { createAxes, appendAxes } = require('./axes');
 
 describe('Chart axes', () => {
     // xScale is oriented on the left
-    const xScale = scaleLinear().range([0, 10]).domain([0, 10]);
+    const xScale = scaleTime().range([0, 10]).domain([new Date('2011-10-10'), new Date('2012-10-10')]);
     const yScale = scaleLinear().range([0, 10]).domain([0, 10]);
     const layout = {
         width: 400,
@@ -18,13 +18,14 @@ describe('Chart axes', () => {
             left: 65
         }
     };
-    const {xAxis, yAxis} = createAxes({xScale, yScale}, 100);
+    const {xAxis, xAxisWithDateTimeLabels, yAxis} = createAxes({xScale, yScale}, 100);
     let svg;
 
     beforeEach(() => {
         svg = select(document.body).append('svg');
         appendAxes(svg, {
             xAxis,
+            xAxisWithDateTimeLabels,
             yAxis,
             layout,
             yTitle: 'Label title'
@@ -37,6 +38,7 @@ describe('Chart axes', () => {
 
     it('axes created', () => {
         expect(xAxis).toEqual(jasmine.any(Function));
+        expect(xAxisWithDateTimeLabels).toEqual(jasmine.any(Function));
         expect(yAxis).toEqual(jasmine.any(Function));
         expect(yAxis.tickSizeInner()).toBe(100);
         expect(xAxis.scale()).toBe(xScale);
