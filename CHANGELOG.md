@@ -3,12 +3,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
-## [Unreleased]
 
+## [Unreleased]
+### Changed
+- Cursor location / tooltip defaults to last point in the time series.
+
+
+## [0.7.0] - 2018-04-23
 ### Added
 - Tooltips are provided for metadata elements for those that USGS defines on NWIS help pages.
 - Information alert for provisional data.
-- Basic meta tags, title and description, for Twitter card and Open Graph 
+- Basic meta tags, title and description, for Twitter card and Open Graph
 - Rough draft for USGS logo watermark
 
 
@@ -155,7 +160,8 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.6.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.7.0...master
+[0.7.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.6.0...waterdataui-0.7.0
 [0.6.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.5.0...waterdataui-0.6.0
 [0.5.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.4.0...waterdataui-0.5.0
 [0.4.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.3.0...waterdataui-0.4.0
