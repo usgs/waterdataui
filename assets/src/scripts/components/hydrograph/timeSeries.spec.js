@@ -1,6 +1,6 @@
 const { timeSeriesSelector, isVisibleSelector, yLabelSelector,
     titleSelector, descriptionSelector, currentVariableTimeSeriesSelector,
-    allTimeSeriesSelector, requestTimeRangeSelector} = require('./timeseries');
+    allTimeSeriesSelector, requestTimeRangeSelector} = require('./timeSeries');
 
 
 const TEST_DATA = {
@@ -121,11 +121,11 @@ const TEST_DATA = {
     }
 };
 
-describe('Timeseries module', () => {
+describe('TimeSeries module', () => {
 
     describe('allTimesSeriesSelector', () => {
 
-        it('should return all timeseries if they have data points', () => {
+        it('should return all time series if they have data points', () => {
             expect(allTimeSeriesSelector({
                 series: {
                     timeSeries: {
@@ -147,7 +147,7 @@ describe('Timeseries module', () => {
             });
         });
 
-        it('should exclude timeseries if they do not have data points', () => {
+        it('should exclude time series if they do not have data points', () => {
             expect(allTimeSeriesSelector({
                 series: {
                     timeSeries: {
@@ -263,7 +263,7 @@ describe('Timeseries module', () => {
     describe('timeSeriesSelector', () => {
 
         it('should return the selected time series', () => {
-            expect(timeSeriesSelector('current')()(TEST_DATA)).toEqual({
+            expect(timeSeriesSelector('current')(TEST_DATA)).toEqual({
                 '00060': {
                     tsKey: 'current',
                     startTime: new Date('2018-03-06T15:45:00.000Z'),
@@ -287,7 +287,7 @@ describe('Timeseries module', () => {
                     variable: '45807197'
                 }
             });
-            expect(timeSeriesSelector('current')('P30D')(TEST_DATA)).toEqual({
+            expect(timeSeriesSelector('current','P30D')(TEST_DATA)).toEqual({
                 '00060:P30D': {
                     tsKey: 'current:P30D:00060',
                     startTime: new Date('2018-02-06T15:45:00.000Z'),
@@ -314,7 +314,7 @@ describe('Timeseries module', () => {
         });
 
         it('should return null the empty set if no time series for the selected key exist', () => {
-            expect(timeSeriesSelector('median')()(TEST_DATA)).toEqual({});
+            expect(timeSeriesSelector('median')(TEST_DATA)).toEqual({});
         });
     });
 

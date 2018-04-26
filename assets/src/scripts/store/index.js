@@ -8,7 +8,7 @@ const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData, sortedParameters } = require('../models');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
-const { getCurrentParmCd, getCurrentDateRange, hasTimeseries } = require('../selectors/timeseriesSelector');
+const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries } = require('../selectors/timeSeriesSelector');
 
 const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
@@ -111,7 +111,7 @@ export const Actions = {
             const parmCd = getCurrentParmCd(state);
             const tsKey = period === 'P7D' ? 'current' : `current:${period}:${parmCd}`;
             dispatch(Actions.setCurrentDateRange(period));
-            if (!hasTimeseries(tsKey)()()(state)) {
+            if (!hasTimeSeries(tsKey)(state)) {
                 const endTime = new Date(); //TODO get this from the current data
                 let startTime = new Date(endTime);
 

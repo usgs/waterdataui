@@ -8,9 +8,9 @@ const { wrap } = require('../../utils');
 const { getYTickDetails } = require('./domain');
 const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
-const { yLabelSelector } = require('./timeseries');
+const { yLabelSelector } = require('./timeSeries');
 
-const { getCurrentDateRange, getCurrentParmCd } = require('../../selectors/timeseriesSelector');
+const { getCurrentDateRange, getCurrentParmCd } = require('../../selectors/timeSeriesSelector');
 
 const INTERVAL = {
     P7D: timeDay,

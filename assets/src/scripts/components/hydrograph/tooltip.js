@@ -13,7 +13,7 @@ const { classesForPoint, MASK_DESC } = require('./drawingData');
 const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 
-const { getCurrentVariable } = require('../../selectors/timeseriesSelector');
+const { getCurrentVariable } = require('../../selectors/timeSeriesSelector');
 
 const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');
 

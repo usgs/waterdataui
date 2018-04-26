@@ -23,10 +23,10 @@ const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
 const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
-    descriptionSelector,  currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeseries');
+    descriptionSelector,  currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeSeries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
-const { getCurrentVariable } = require('../../selectors/timeseriesSelector');
+const { getCurrentVariable } = require('../../selectors/timeSeriesSelector');
 
 
 const drawMessage = function (elem, message) {
@@ -437,7 +437,7 @@ const attachToNode = function (store, node, {siteno} = {}) {
         .call(createDaterangeControls, siteno);
 
     select(node).select('.graph-container')
-        .call(link(controlGraphDisplay, timeSeriesSelector('current')()))
+        .call(link(controlGraphDisplay, timeSeriesSelector('current')))
         .call(timeSeriesGraph, siteno)
         .call(cursorSlider)
         .append('div')
@@ -448,8 +448,8 @@ const attachToNode = function (store, node, {siteno} = {}) {
         .call(link(plotSeriesSelectTable, createStructuredSelector({
             siteno: () => siteno,
             availableTimeseries: availableTimeseriesSelector,
-            lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current')('P7D'),
-            timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current')('P7D')(SPARK_LINE_DIM),
+            lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current','P7D'),
+            timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM),
             layout: layoutSelector
         })));
     select(node).select('.provisional-data-alert')

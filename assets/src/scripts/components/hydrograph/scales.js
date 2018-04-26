@@ -5,10 +5,10 @@ const { createSelector } = require('reselect');
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { getYDomain, SYMLOG_PARMS } = require('./domain');
 const { layoutSelector } = require('./layout');
-const { timeSeriesSelector, requestTimeRangeSelector } = require('./timeseries');
+const { timeSeriesSelector, requestTimeRangeSelector } = require('./timeSeries');
 const { visiblePointsSelector, pointsByTsKeySelector } = require('./drawingData');
 
-const { getVariables, getCurrentParmCd, getCurrentVariableTimeseriesRequestKey } = require('../../selectors/timeseriesSelector');
+const { getVariables, getCurrentParmCd, getCurrentVariableTimeSeriesRequestKey } = require('../../selectors/timeSeriesSelector');
 
 
 /**
@@ -54,7 +54,7 @@ function createYScale(parmCd, extent, size) {
  */
 const xScaleSelector = memoize(tsKey => createSelector(
     layoutSelector,
-    getCurrentVariableTimeseriesRequestKey(tsKey)(null),
+    getCurrentVariableTimeSeriesRequestKey(tsKey),
     requestTimeRangeSelector,
     (layout, tsRequestKey, requestTimeRanges) => {
         return createXScale(requestTimeRanges[tsRequestKey], layout.width - layout.margin.right);
@@ -84,9 +84,9 @@ const yScaleSelector = createSelector(
  * @param  {String} tsKey             Time series key
  * @return {Object} - keys are parmCd and values are array of array of points
  */
-const parmCdPointsSelector = memoize(tsKey => memoize(period => createSelector(
-    pointsByTsKeySelector(tsKey)(period),
-    timeSeriesSelector(tsKey)(period),
+const parmCdPointsSelector = memoize((tsKey, period) => createSelector(
+    pointsByTsKeySelector(tsKey, period),
+    timeSeriesSelector(tsKey, period),
     getVariables,
     (tsPoints, timeSeries, variables) => {
         return Object.keys(tsPoints).reduce((byParmCd, tsID) => {
@@ -97,7 +97,7 @@ const parmCdPointsSelector = memoize(tsKey => memoize(period => createSelector(
             return byParmCd;
         }, {});
     }
-)));
+));
 
 
 /**
@@ -105,8 +105,8 @@ const parmCdPointsSelector = memoize(tsKey => memoize(period => createSelector(
  * Returns x and y scales for all "current" time series.
  * @type {Object}   Mapping of parameter code to time series list.
  */
-const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(period => memoize(dimensions => createSelector(
-    parmCdPointsSelector(tsKey)(period),
+const timeSeriesScalesByParmCdSelector = memoize((tsKey, period, dimensions) => createSelector(
+    parmCdPointsSelector(tsKey, period),
     requestTimeRangeSelector,
     (pointsByParmCd, requestTimeRanges) => {
         return Object.keys(pointsByParmCd).reduce((tsScales, parmCd) => {
@@ -119,7 +119,7 @@ const timeSeriesScalesByParmCdSelector = memoize(tsKey => memoize(period => memo
             return tsScales;
         }, {});
     }
-))));
+));
 
 
 module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector};

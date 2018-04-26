@@ -5,9 +5,9 @@ const { createSelector } = require('reselect');
 const { CIRCLE_RADIUS } = require('./layout');
 const { defineLineMarker, defineTextOnlyMarker, defineCircleMarker, defineRectangleMarker} = require('./markers');
 const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} = require('./drawingData');
-const { currentVariableTimeSeriesSelector } = require('./timeseries');
+const { currentVariableTimeSeriesSelector } = require('./timeSeries');
 
-const { getMethods } = require('../../selectors/timeseriesSelector');
+const { getMethods } = require('../../selectors/timeSeriesSelector');
 
 const TS_LABEL = {
     'current': 'Current: ',

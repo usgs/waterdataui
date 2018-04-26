@@ -5,7 +5,7 @@ const { createSelector, createStructuredSelector } = require('reselect');
 
 const { tsCursorPointsSelector } = require('./cursor');
 const { xScaleSelector, yScaleSelector } = require('./scales');
-const { allTimeSeriesSelector } = require('./timeseries');
+const { allTimeSeriesSelector } = require('./timeSeries');
 
 const { TIMESERIES_AUDIO_ENABLED } = require('../../config');
 const { dispatch, link } = require('../../lib/redux');

@@ -7,7 +7,7 @@ const config = require('../../config');
 
 const { visiblePointsSelector } = require('./drawingData');
 
-const { getCurrentParmCd } = require('../../selectors/timeseriesSelector');
+const { getCurrentParmCd } = require('../../selectors/timeSeriesSelector');
 
 
 

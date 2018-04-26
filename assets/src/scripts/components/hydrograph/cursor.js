@@ -5,7 +5,7 @@ const { createSelector } = require('reselect');
 const { currentVariablePointsByTsIdSelector } = require('./drawingData');
 const { layoutSelector } = require('./layout');
 const { xScaleSelector } = require('./scales');
-const { isVisibleSelector } = require('./timeseries');
+const { isVisibleSelector } = require('./timeSeries');
 
 const { Actions } = require('../../store');
 const { dispatch, link } = require('../../lib/redux');

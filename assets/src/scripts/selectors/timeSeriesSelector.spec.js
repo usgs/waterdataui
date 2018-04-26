@@ -1,7 +1,7 @@
 const { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getQueryInfo, getCurrentParmCd,
-    hasTimeseries, getCurrentVariableTimeseriesRequestKey } = require('./timeseriesSelector');
+    hasTimeSeries, getCurrentVariableTimeSeriesRequestKey } = require('./timeSeriesSelector');
 
-describe('timeseriesSelector', () => {
+describe('timeSeriesSelector', () => {
     const TEST_VARS = {
         '45807042': {
             variableCode: {
@@ -149,7 +149,7 @@ describe('timeseriesSelector', () => {
         });
     });
 
-    describe('hasTimeseries', () => {
+    describe('hasTimeSeries', () => {
         const TEST_STATE = {
             series: {
                 requests : {
@@ -161,20 +161,20 @@ describe('timeseriesSelector', () => {
         };
 
         it('Return false if no requests in series', () => {
-            expect(hasTimeseries('current')('P7D')('00060')({
+            expect(hasTimeSeries('current', 'P7D', '00060')({
                 series: {}
             })).toBe(false);
         });
 
         it('Return false if request is not in state', () => {
-            expect(hasTimeseries('compare')()()(TEST_STATE)).toBe(false);
-            expect(hasTimeseries('current')('P1Y')('00060')(TEST_STATE)).toBe(false);
-            expect(hasTimeseries('current')('P30D')('00010')(TEST_STATE)).toBe(false);
+            expect(hasTimeSeries('compare')(TEST_STATE)).toBe(false);
+            expect(hasTimeSeries('current', 'P1Y', '00060')(TEST_STATE)).toBe(false);
+            expect(hasTimeSeries('current', 'P30D', '00010')(TEST_STATE)).toBe(false);
         });
 
         it('Return true if request is in state', () => {
-            expect(hasTimeseries('current')()()(TEST_STATE)).toBe(true);
-            expect(hasTimeseries('current')('P30D')('00060')(TEST_STATE)).toBe(true);
+            expect(hasTimeSeries('current')(TEST_STATE)).toBe(true);
+            expect(hasTimeSeries('current', 'P30D', '00060')(TEST_STATE)).toBe(true);
         });
     });
 
@@ -195,7 +195,7 @@ describe('timeseriesSelector', () => {
         };
 
         it('Return null if currentVariableID', () => {
-            expect(getCurrentVariableTimeseriesRequestKey('current')('P30D')({
+            expect(getCurrentVariableTimeSeriesRequestKey('current', 'P30D')({
                 ...TEST_STATE,
                 timeseriesState: {
                     ...TEST_STATE.timeseriesState,
@@ -204,7 +204,7 @@ describe('timeseriesSelector', () => {
             })).toBeNull();
         });
         it('Return null if period is not specified and current date range is not set', () => {
-            expect(getCurrentVariableTimeseriesRequestKey('current')()({
+            expect(getCurrentVariableTimeSeriesRequestKey('current')({
                 ...TEST_STATE,
                 timeseriesState: {
                     ...TEST_STATE.timeseriesState,
@@ -214,8 +214,8 @@ describe('timeseriesSelector', () => {
         });
 
         it('Return the ts request key to use for the currently selected variable and date range', () => {
-            expect(getCurrentVariableTimeseriesRequestKey('current')()(TEST_STATE)).toEqual('current');
-            expect(getCurrentVariableTimeseriesRequestKey('current')()({
+            expect(getCurrentVariableTimeSeriesRequestKey('current')(TEST_STATE)).toEqual('current');
+            expect(getCurrentVariableTimeSeriesRequestKey('current')({
                 ...TEST_STATE,
                 timeseriesState: {
                     ...TEST_STATE.timeseriesState,

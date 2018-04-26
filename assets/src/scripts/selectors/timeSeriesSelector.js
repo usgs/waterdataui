@@ -49,11 +49,11 @@ const tsRequestKey = function(tsKey, period, parmCd) {
  * @return {Boolean} - True if the time series with key, period, and parmCd has already been requested
  *
  */
-export const hasTimeseries = memoize(tsKey => memoize(period => memoize(parmCd => {
+export const hasTimeSeries = memoize((tsKey, period, parmCd) => {
     const periodToUse = period ? period : 'P7D';
     const requestKey = tsRequestKey(tsKey, periodToUse, parmCd);
     return state => state.series && state.series.requests && state.series.requests[requestKey] ? true : false;
-})));
+});
 
 /*
  * @param {String} tsKey - current, compare, or median
@@ -61,7 +61,7 @@ export const hasTimeseries = memoize(tsKey => memoize(period => memoize(parmCd =
  * @return {String} or null - Return the the request key for the request object for the tsKey and period and currently
  * selected variable.
  */
-export const getCurrentVariableTimeseriesRequestKey = memoize(tsKey => memoize(period => createSelector(
+export const getCurrentVariableTimeSeriesRequestKey = memoize((tsKey, period )=> createSelector(
     getCurrentParmCd,
     getCurrentDateRange,
     (parmCd, currentPeriod) => {
@@ -72,4 +72,4 @@ export const getCurrentVariableTimeseriesRequestKey = memoize(tsKey => memoize(p
             return null;
         }
     })
-));
+);
