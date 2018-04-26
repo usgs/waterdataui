@@ -19,35 +19,30 @@ const { currentVariableSelector, yLabelSelector } = require('./timeseries');
  * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
 export const createAxes = function({xScale, yScale}, yTickSize, parmCd) {
-      const formatter = function(d) {
-            let formatter = null;
-            if(d.getHours() === 12) {
-                formatter = timeFormat('%b %d');
-                return formatter(d);
-            } else {
-                return null;
-            }
-        };
-console.log('value of formatter ' + formatter);
+    const formatter = function(d) {
+        let formatter = null;
+        if(d.getHours() === 12) {
+            formatter = timeFormat('%b %d');
+            return formatter(d);
+        } else {
+            return null;
+        }
+    };
+
     // Create x-axis
     const xAxis = axisBottom()
         .scale(xScale)
         .ticks(timeDay)
-        //.tickFormat(timeFormat('%b %d')) this is an original line
-        .tickFormat('') // changed version of above line
+        .tickFormat('')
         .tickSizeOuter(0);
 
-// added for WDFN213 start
+    // Create a second x-axis to hold date/time labels
     const xAxisWithDateTimeLabels = axisBottom()
         .scale(xScale)
         .ticks(timeDay.hour12)
         .tickPadding(5)
         .tickSize(0)
-        .tickFormat(formatter)
-
-        ; // move this semicolon when finished testing
-// added for WDFN213 end
-
+        .tickFormat(formatter);
     // Create y-axis
     const tickDetails = getYTickDetails(yScale.domain(), parmCd);
     const yAxis = axisLeft()
@@ -58,7 +53,6 @@ console.log('value of formatter ' + formatter);
         .tickPadding(3)
         .tickSizeOuter(0);
 
-    // return {xAxis, yAxis}; // original
      return {xAxis, xAxisWithDateTimeLabels, yAxis};
 };
 
@@ -100,22 +94,20 @@ export const appendAxes = function(elem, {xAxis, xAxisWithDateTimeLabels, yAxis,
     };
 
     // Remove existing axes before adding the new ones.
-    // elem.selectAll('.x-axis, .y-axis').remove();  this is the original line
-    elem.selectAll('.x-axis, .x-axis-date-time-label, .y-axis').remove(); // added for WDFN213
+    elem.selectAll('.x-axis, .x-axis-date-time-label, .y-axis').remove();
 
     // Add x-axis
     elem.append('g')
         .attr('class', 'x-axis')
         .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
         .call(xAxis);
-// following section added for WDFN213 start
-    // Add a second x-axis, this one with the centered date/time labels
+
+    // Add the second x-axis -- the one with the centered date/time labels
     elem.append('g')
         .attr('class', 'x-axis-date-time-label')
         .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
-        .call(xAxisWithDateTimeLabels)
-    ; // move semicolon when finished
-// WDFN added section end
+        .call(xAxisWithDateTimeLabels);
+
     // Add y-axis and a text label
     elem.append('g')
         .attr('class', 'y-axis')
