@@ -246,38 +246,6 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap,
     }
 };
 
-/* TODO: Please remove after WDFN-250 is implemented
-const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, dataByTsID, timeSeries}) {
-    elem.selectAll(`#sr-only-${tsKey}`).remove();
-
-    if (!visible) {
-        return;
-    }
-
-    const container = elem.append('div')
-        .attr('id', `sr-only-${tsKey}`)
-        .classed('usa-sr-only', true);
-
-
-    for (const seriesID of Object.keys(timeSeries)) {
-        const series = timeSeries[seriesID];
-        const method = methods[series.method].methodDescription;
-        let title = variable.variableName;
-        if (method) {
-            title += ` (${method})`;
-        }
-        if (tsKey === 'median') {
-            title = `Median ${title}`;
-        }
-        addSROnlyTable(container, {
-            columnNames: [title, 'Time', 'Qualifiers'],
-            data: dataByTsID[seriesID],
-            describeById: `${seriesID}-time-series-sr-desc`,
-            describeByText: `${seriesID} time series data in tabular format`
-        });
-    }
-};
-*/
 
 const createTitle = function(elem) {
     elem.append('div')
