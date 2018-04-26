@@ -147,7 +147,7 @@ export const audibleUI = function (elem) {
             elem.attr('data-max-offset', domain[1].getTime() - domain[0].getTime());
         }, xScaleSelector('current')))
         .on('click', dispatch(function() {
-            var button = select(this);
+            const button = select(this);
             if (button.attr('title') === 'Play') {
                 return Actions.startTimeseriesPlay(button.attr('data-max-offset'));
             } else {

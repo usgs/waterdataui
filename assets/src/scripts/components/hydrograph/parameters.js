@@ -123,6 +123,7 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  * Draws a table with clickable rows of timeseries parameter codes. Selecting
  * a row changes the active parameter code.
  * @param  {Object} elem                        d3 selection
+ * @param  {String} siteno
  * @param  {Object} availableTimeseries         Timeseries metadata to display
  * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
  * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
