@@ -321,7 +321,7 @@ describe('Hydrograph tooltip module', () => {
             svg.remove();
         });
 
-        it('Creates focus lines but has no focus circles when cursor not set', () => {
+        it('Creates focus lines and focus circles when cursor not set', () => {
             let store = configureStore(Object.assign({}, testState, {
                 series: Object.assign({}, testState.series, {
                     timeSeries: Object.assign({}, testState.series.timeSeries, {
@@ -346,7 +346,7 @@ describe('Hydrograph tooltip module', () => {
                 call(createTooltipFocus);
 
             expect(svg.selectAll('.focus-line').size()).toBe(1);
-            expect(svg.selectAll('circle').size()).toBe(0);
+            expect(svg.selectAll('circle').size()).toBe(2);
             expect(svg.select('.focus').size()).toBe(1);
         });
 

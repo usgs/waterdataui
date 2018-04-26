@@ -273,9 +273,8 @@ const TEST_STATE_ONE_VAR = {
 
 describe('Cursor module', () => {
     describe('getNearestTime', () => {
-        it('Return null if the length of the DATA array is less than two', function() {
+        it('Return null if the DATA array is empty', function() {
             expect(getNearestTime([], DATA[0].dateTime)).toBeNull();
-            expect(getNearestTime([DATA[1]], DATA[0].dateTime)).toBeNull();
         });
 
         it('return correct DATA points via getNearestTime' , () => {
@@ -325,25 +324,39 @@ describe('Cursor module', () => {
             div.remove();
         });
 
-        it('becomes active on focus', () => {
+        it('is active irrespective of focus', () => {
             const input = div.select('input');
 
-            expect(input.classed('active')).toBe(false);
+            expect(input.classed('active')).toBe(true);
             expect(store.getState().timeseriesState.cursorOffset).toBe(null);
             div.select('input').dispatch('focus');
             expect(input.classed('active')).toBe(true);
             expect(store.getState().timeseriesState.cursorOffset).not.toBe(null);
             div.select('input').dispatch('blur');
-            expect(input.classed('active')).toBe(false);
+            expect(input.classed('active')).toBe(true);
             expect(store.getState().timeseriesState.cursorOffset).toBe(null);
         });
     });
 
     describe('tsCursorPointsSelector', () => {
 
-        it('Should return empty object if the focus time for the time series is null', function() {
-            expect(tsCursorPointsSelector('compare')(TEST_STATE_ONE_VAR)).toEqual({});
-            expect(tsCursorPointsSelector('current')(TEST_STATE_ONE_VAR)).toEqual({});
+        it('Should return last time with non-masked value if the cursor offset is null', function() {
+            expect(tsCursorPointsSelector('compare')(TEST_STATE_ONE_VAR)).toEqual({
+                '00060:compare': {
+                    dateTime: new Date('2018-01-03T16:00:00.000Z'),
+                    qualifiers: ['P'],
+                    value: 16,
+                    tsKey: 'compare'
+                }
+            });
+            expect(tsCursorPointsSelector('current')(TEST_STATE_ONE_VAR)).toEqual({
+                '00060:current': {
+                    dateTime: new Date('2018-01-03T16:00:00.000Z'),
+                    qualifiers: ['P'],
+                    value: 16,
+                    tsKey: 'current'
+                }
+            });
         });
 
         it('Should return the nearest datum for the selected time series', function() {
