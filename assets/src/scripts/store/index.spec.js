@@ -312,7 +312,7 @@ describe('Redux store', () => {
                 let p = store.Actions.retrieveExtendedTimeseries('12345678', 'P30D')(mockDispatch, mockGetState);
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(2);
-                    let arg = mockDispatch.calls.argsFor(1)[0]
+                    let arg = mockDispatch.calls.argsFor(1)[0];
                     expect(arg.type).toBe('ADD_TIMESERIES_COLLECTION');
                     expect(arg.key).toBe('current:P30D:00060');
 
@@ -384,7 +384,7 @@ describe('Redux store', () => {
 
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(2);
-                    let arg = mockDispatch.calls.argsFor(1)[0]
+                    let arg = mockDispatch.calls.argsFor(1)[0];
                     expect(arg.type).toBe('ADD_TIMESERIES_COLLECTION');
                     expect(arg.key).toBe('current:P30D:00060');
                     expect(arg.data).toEqual({});
