@@ -1,0 +1,13 @@
+$font-path: './fonts';
+$image-path: './img';
+
+// Layout
+// NOTE: If you change this, also change DESKTOP_BREAKPOINT_PX in layout.js!
+$desktop-screen: 800px !default;
+
+// Override default of 4rem
+$h1-font-size: 3.25rem !default;
+
+@import 'uswds';
+
+$usgs-blue: #00264c;
