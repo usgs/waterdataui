@@ -10,6 +10,8 @@ const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { currentVariableSelector, yLabelSelector } = require('./timeseries');
 
+const dateFormatter = timeFormat('%b %d');
+
 /**
  * Create an x and y axis for hydrograph
  * @param  {Object} xScale      D3 Scale object for the x-axis
@@ -20,10 +22,8 @@ const { currentVariableSelector, yLabelSelector } = require('./timeseries');
  */
 export const createAxes = function({xScale, yScale}, yTickSize, parmCd) {
     const formatter = function(d) {
-        let formatter = null;
         if(d.getHours() === 12) {
-            formatter = timeFormat('%b %d');
-            return formatter(d);
+            return dateFormatter(d);
         } else {
             return null;
         }
