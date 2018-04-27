@@ -56,7 +56,7 @@ describe('Redux store', () => {
                 spyOn(modelsMock, 'getTimeseries').and.callThrough();
                 spyOn(modelsMock, 'getMedianStatistics').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
-                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE)
+                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
                 store = proxyquire('./index', {'../models': modelsMock});
                 store.configureStore();
             });
