@@ -12,8 +12,6 @@ before_install:
 
 install:
   - make env
-  - pip install coverage
-  - pip install coveralls
   - gem install coveralls-lcov
 
 before_script:
@@ -21,7 +19,8 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 
 script:
-  - coverage run --omit=wdfn-server/waterdata/tests/*.py,/home/travis/virtualenv/* -m make test
+  - wdfn-server/env/bin/coverage run --omit=wdfn-server/waterdata/tests/*.py,/home/travis/virtualenv/* -m pytest wdfn-server/waterdata
+  - cd assets && npm run test
 
 after_success:
   - find coverage/ -mindepth 2 -iname '*.info' -exec cp -t coverage/ '{}' +
