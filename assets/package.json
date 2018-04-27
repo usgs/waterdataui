@@ -19,7 +19,7 @@
     "build:autotrack": "cp -r node_modules/autotrack/autotrack.js dist",
     "hash-assets": "gulp --gulpfile ./gulpfile.js revall",
     "serve:static": "live-server --port=9000 --cors --no-browser dist",
-    "serve:python": "../env/bin/python ../run.py",
+    "serve:python": "../wdfn-server/env/bin/python ../wdfn-server/run.py",
     "start": "run-p watch serve:python",
     "watch": "run-p watch:* serve:static",
     "watch:css": "nodemon -w src/styles -e scss -x \"npm run build:css\"",
