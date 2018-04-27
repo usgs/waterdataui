@@ -1,5 +1,5 @@
 const { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getQueryInfo, getCurrentParmCd,
-    hasTimeSeries, getCurrentVariableTimeSeriesRequestKey, tsRequestKey } = require('./timeSeriesSelector');
+    hasTimeSeries, getTsRequestKey } = require('./timeSeriesSelector');
 
 describe('timeSeriesSelector', () => {
     const TEST_VARS = {
@@ -152,99 +152,67 @@ describe('timeSeriesSelector', () => {
     describe('hasTimeSeries', () => {
         const TEST_STATE = {
             series: {
+                variables: TEST_VARS,
                 requests : {
                     'current:P7D': {},
                     'median' : {},
                     'current:P30D:00060': {}
                 }
+            },
+            timeseriesState: {
+                currentDateRange: 'P7D',
+                currentVariableID: '45807042'
             }
         };
 
         it('Return false if no requests in series', () => {
             expect(hasTimeSeries('current', 'P7D', '00060')({
-                series: {}
+                series: {},
+                timeseriesState: {
+                    currentDateRange: 'P7D',
+                    currentVariableID: '45807042'
+                }
             })).toBe(false);
         });
 
         it('Return false if request is not in state', () => {
-            expect(hasTimeSeries('compare:P7D')(TEST_STATE)).toBe(false);
-            expect(hasTimeSeries('current:P1Y:00060')(TEST_STATE)).toBe(false);
-            expect(hasTimeSeries('current:P30D:00010')(TEST_STATE)).toBe(false);
+            expect(hasTimeSeries('current', 'P30D', '00010')(TEST_STATE)).toBe(false);
+            expect(hasTimeSeries('current', 'P1Y')(TEST_STATE)).toBe(false);
         });
 
         it('Return true if request is in state', () => {
-            expect(hasTimeSeries('current:P7D')(TEST_STATE)).toBe(true);
-            expect(hasTimeSeries('current:P30D:00060')(TEST_STATE)).toBe(true);
+            expect(hasTimeSeries('current')(TEST_STATE)).toBe(true);
+            expect(hasTimeSeries('median')(TEST_STATE)).toBe(true);
+            expect(hasTimeSeries('current', 'P30D', '00060')(TEST_STATE)).toBe(true);
         });
     });
 
-    describe('getCurrentVariableTimeseriesRequestKey', () => {
+    describe('getTsRequestKey', () => {
         const TEST_STATE = {
             series: {
-                requests : {
-                    'current:P7D': {},
-                    'median' : {},
-                    'current:P30D:00060': {}
-                },
                 variables: TEST_VARS
             },
             timeseriesState: {
-                currentVariableID: '45807042',
-                currentDateRange: 'P7D'
+                currentDateRange: 'P7D',
+                currentVariableID: '45807042'
             }
         };
-
-        it('Return null if currentVariableID', () => {
-            expect(getCurrentVariableTimeSeriesRequestKey('current', 'P30D')({
-                ...TEST_STATE,
-                timeseriesState: {
-                    ...TEST_STATE.timeseriesState,
-                    currentVariableID: null
-                }
-            })).toBeNull();
-        });
-        it('Return null if period is not specified and current date range is not set', () => {
-            expect(getCurrentVariableTimeSeriesRequestKey('current')({
-                ...TEST_STATE,
-                timeseriesState: {
-                    ...TEST_STATE.timeseriesState,
-                    currentDateRange: null
-                }
-            })).toBeNull();
-        });
-
-        it('Return the ts request key to use for the currently selected variable and date range', () => {
-            expect(getCurrentVariableTimeSeriesRequestKey('current')(TEST_STATE)).toEqual('current:P7D');
-            expect(getCurrentVariableTimeSeriesRequestKey('current')({
-                ...TEST_STATE,
-                timeseriesState: {
-                    ...TEST_STATE.timeseriesState,
-                    currentDateRange: 'P30D'
-                }
-            })).toEqual('current:P30D:00060');
-        });
-    });
-
-    describe('tsRequestKey', () => {
         it('Return the expected request key if period and parmCd are not specified', () => {
-            expect(tsRequestKey('current')).toBe('current:P7D');
-            expect(tsRequestKey('compare')).toBe('compare:P7D');
-            expect(tsRequestKey('median')).toBe('median');
+            expect(getTsRequestKey('current')(TEST_STATE)).toBe('current:P7D');
+            expect(getTsRequestKey('compare')(TEST_STATE)).toBe('compare:P7D');
+            expect(getTsRequestKey('median')(TEST_STATE)).toBe('median');
         });
 
         it('Return the expected request key if parmCd is not specified', () => {
-            expect(tsRequestKey('current', 'P7D')).toBe('current:P7D');
-            expect(tsRequestKey('compare', 'P7D')).toBe('compare:P7D');
-            expect(tsRequestKey('median', 'P7D')).toBe('median');
+            expect(getTsRequestKey('current', 'P30D')(TEST_STATE)).toBe('current:P30D:00060');
+            expect(getTsRequestKey('compare', 'P30D')(TEST_STATE)).toBe('compare:P30D:00060');
+            expect(getTsRequestKey('median', 'P7D')(TEST_STATE)).toBe('median');
         });
 
         it('Return the expected request key if all parameters are specified', () => {
-            expect(tsRequestKey('current', 'P7D', '00060')).toBe('current:P7D');
-            expect(tsRequestKey('compare', 'P7D', '00060')).toBe('compare:P7D');
-            expect(tsRequestKey('median', 'P7D', '00060')).toBe('median');
-            expect(tsRequestKey('current', 'P30D', '00060')).toBe('current:P30D:00060');
-            expect(tsRequestKey('compare', 'P30D', '00060')).toBe('compare:P30D:00060');
-            expect(tsRequestKey('median', 'P30D', '00060')).toBe('median');
+            expect(getTsRequestKey('current', 'P30D', '00010')(TEST_STATE)).toBe('current:P30D:00010');
+            expect(getTsRequestKey('compare', 'P30D', '00010')(TEST_STATE)).toBe('compare:P30D:00010');
+            expect(getTsRequestKey('median', 'P30D', '00010')(TEST_STATE)).toBe('median');
         });
     });
 });

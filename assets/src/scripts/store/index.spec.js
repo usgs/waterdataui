@@ -3,13 +3,39 @@ let proxyquire = require('proxyquireify')(require);
 const { Actions } = require('./index');
 
 describe('Redux store', () => {
+
     describe('asynchronous actions', () => {
         const SITE_NO = '12345678';
+
+        const TEST_STATE = {
+            series: {
+                requests: {
+                    'current:P7D': {}
+                },
+                variables: {
+                    '45807042': {
+                        variableCode: {
+                            'value': '00060'
+                        }
+                    },
+                    '450807142': {
+                        variableCode: {
+                            'value': '00010'
+                        }
+                    }
+                }
+            },
+            timeseriesState: {
+                currentVariableID: '45807042',
+                currentDateRange: 'P7D'
+            }
+        };
 
         describe('retrieveTimeseries with good data', () => {
             let store;
             let modelsMock;
             let mockDispatch;
+            let mockGetState;
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
@@ -30,12 +56,13 @@ describe('Redux store', () => {
                 spyOn(modelsMock, 'getTimeseries').and.callThrough();
                 spyOn(modelsMock, 'getMedianStatistics').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE)
                 store = proxyquire('./index', {'../models': modelsMock});
                 store.configureStore();
             });
 
             it('Fetches the time series and median statistics data', () => {
-                store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch);
+                store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch, mockGetState);
 
                 expect(modelsMock.getTimeseries).toHaveBeenCalledWith({
                     sites: [SITE_NO],
@@ -51,7 +78,7 @@ describe('Redux store', () => {
                 spyOn(store.Actions, 'retrieveCompareTimeseries');
                 spyOn(store.Actions, 'toggleTimeseries');
                 spyOn(store.Actions, 'setCurrentVariable');
-                let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch);
+                let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch, mockGetState);
 
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(7);
@@ -72,7 +99,7 @@ describe('Redux store', () => {
 
             it('The gage height is not set since there is no gage height data', (done) => {
                 spyOn(store.Actions, 'setGageHeight');
-                let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch);
+                let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch, mockGetState);
                 p.then(() => {
                     expect(store.Actions.setGageHeight).toHaveBeenCalledWith(null);
 
@@ -85,6 +112,7 @@ describe('Redux store', () => {
             let store;
             let modelsMock;
             let mockDispatch;
+            let mockGetState;
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
                 let getTimeseriesPromise = Promise.resolve(JSON.parse(MOCK_GAGE_DATA));
@@ -104,13 +132,14 @@ describe('Redux store', () => {
                 spyOn(modelsMock, 'getTimeseries').and.callThrough();
                 spyOn(modelsMock, 'getMedianStatistics').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
                 store = proxyquire('./index', {'../models': modelsMock});
                 store.configureStore();
             });
 
             it('The gage height is set', (done) => {
                 spyOn(store.Actions, 'setGageHeight');
-                let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch);
+                let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch, mockGetState);
                 p.then(() => {
                     expect(store.Actions.setGageHeight).toHaveBeenCalledWith(20);
 
@@ -123,6 +152,7 @@ describe('Redux store', () => {
             let store;
             let modelsMock;
             let mockDispatch;
+            let mockGetState;
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
@@ -142,6 +172,7 @@ describe('Redux store', () => {
 
                 spyOn(modelsMock, 'getTimeseries').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
                 store = proxyquire('./index', {'../models': modelsMock});
             });
 
@@ -149,7 +180,7 @@ describe('Redux store', () => {
             it('should reset the current time series', (done) => {
                 spyOn(store.Actions, 'resetTimeseries');
                 spyOn(store.Actions, 'toggleTimeseries');
-                let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch);
+                let p = store.Actions.retrieveTimeseries(SITE_NO)(mockDispatch, mockGetState);
 
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(2);
@@ -167,6 +198,7 @@ describe('Redux store', () => {
             let store;
             let modelsMock;
             let mockDispatch;
+            let mockGetState;
 
             const START_DATE = new Date('2017-01-01');
             const END_DATE = new Date('2017-01-08');
@@ -181,11 +213,12 @@ describe('Redux store', () => {
                 };
                 spyOn(modelsMock, 'getPreviousYearTimeseries').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
                 store = proxyquire('./index', {'../models': modelsMock});
             });
 
             it('Fetches the previous year\'s time series', () => {
-                store.Actions.retrieveCompareTimeseries(SITE_NO, START_DATE, END_DATE)(mockDispatch);
+                store.Actions.retrieveCompareTimeseries(SITE_NO, START_DATE, END_DATE)(mockDispatch, mockGetState);
 
                 expect(modelsMock.getPreviousYearTimeseries.calls.count()).toBe(1);
                 expect(modelsMock.getPreviousYearTimeseries.calls.argsFor(0)[0]).toEqual({
@@ -198,7 +231,7 @@ describe('Redux store', () => {
             it('Dispatches the action to add the compare time series and to set its visibility to false', (done) => {
                 spyOn(store.Actions, 'addSeriesCollection');
                 spyOn(store.Actions, 'toggleTimeseries');
-                let p = store.Actions.retrieveCompareTimeseries(SITE_NO, START_DATE, END_DATE)(mockDispatch);
+                let p = store.Actions.retrieveCompareTimeseries(SITE_NO, START_DATE, END_DATE)(mockDispatch, mockGetState);
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(2);
                     expect(store.Actions.addSeriesCollection.calls.count()).toBe(1);
@@ -215,6 +248,7 @@ describe('Redux store', () => {
             let store;
             let modelsMock;
             let mockDispatch;
+            let mockGetState;
 
             const START_DATE = new Date('2017-01-01');
             const END_DATE = new Date('2017-01-08');
@@ -228,12 +262,13 @@ describe('Redux store', () => {
                 };
                 spyOn(modelsMock, 'getPreviousYearTimeseries').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
                 store = proxyquire('./index', {'../models': modelsMock});
             });
 
             it('Dispatches the action to reset the compare time series', (done) => {
                 spyOn(store.Actions, 'resetTimeseries');
-                let p = store.Actions.retrieveCompareTimeseries(SITE_NO, START_DATE, END_DATE)(mockDispatch);
+                let p = store.Actions.retrieveCompareTimeseries(SITE_NO, START_DATE, END_DATE)(mockDispatch, mockGetState);
                 p.then(() => {
                     expect(mockDispatch).toHaveBeenCalled();
                     expect(store.Actions.resetTimeseries.calls.count()).toBe(1);
@@ -249,29 +284,6 @@ describe('Redux store', () => {
             let modelsMock;
             let mockDispatch;
             let mockGetState;
-            const TEST_STATE = {
-                series: {
-                    requests: {
-                        'current:P7D': {}
-                    },
-                    variables: {
-                        '45807042': {
-                            variableCode: {
-                                'value': '00060'
-                            }
-                        },
-                        '450807142': {
-                            variableCode: {
-                                'value': '00010'
-                            }
-                        }
-                    }
-                },
-                timeseriesState: {
-                    currentVariableID: '45807042',
-                    currentDateRange: 'P7D'
-                }
-            };
 
             beforeEach(() => {
                 let getTimeseriesPromise = Promise.resolve(JSON.parse(MOCK_DATA));

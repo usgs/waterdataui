@@ -8,7 +8,7 @@ const { layoutSelector } = require('./layout');
 const { timeSeriesSelector, requestTimeRangeSelector } = require('./timeSeries');
 const { visiblePointsSelector, pointsByTsKeySelector } = require('./drawingData');
 
-const { getVariables, getCurrentParmCd, getCurrentVariableTimeSeriesRequestKey } = require('../../selectors/timeSeriesSelector');
+const { getVariables, getCurrentParmCd, getTsRequestKey } = require('../../selectors/timeSeriesSelector');
 
 
 /**
@@ -54,7 +54,7 @@ function createYScale(parmCd, extent, size) {
  */
 const xScaleSelector = memoize(tsKey => createSelector(
     layoutSelector,
-    getCurrentVariableTimeSeriesRequestKey(tsKey),
+    getTsRequestKey(tsKey),
     requestTimeRangeSelector,
     (layout, tsRequestKey, requestTimeRanges) => {
         return createXScale(requestTimeRanges[tsRequestKey], layout.width - layout.margin.right);
@@ -106,14 +106,15 @@ const parmCdPointsSelector = memoize((tsKey, period) => createSelector(
  * @type {Object}   Mapping of parameter code to time series list.
  */
 const timeSeriesScalesByParmCdSelector = memoize((tsKey, period, dimensions) => createSelector(
+    getTsRequestKey(tsKey, period),
     parmCdPointsSelector(tsKey, period),
     requestTimeRangeSelector,
-    (pointsByParmCd, requestTimeRanges) => {
+    (requestKey, pointsByParmCd, requestTimeRanges) => {
         return Object.keys(pointsByParmCd).reduce((tsScales, parmCd) => {
             const tsPoints = pointsByParmCd[parmCd];
             const yDomain = getYDomain(tsPoints, SYMLOG_PARMS.indexOf(parmCd) >= 0);
             tsScales[parmCd] = {
-                x: createXScale(requestTimeRanges[tsKey], dimensions.width),
+                x: createXScale(requestTimeRanges[requestKey], dimensions.width),
                 y: createYScale(parmCd, yDomain, dimensions.height)
             };
             return tsScales;
