@@ -42,13 +42,13 @@ describe('timeSeriesSelector', () => {
             expect(getQueryInfo({
                 series: {
                     queryInfo: {
-                        current: {
+                        'current:P7D': {
                             queryURL: 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D'
                         }
                     }
                 }
             })).toEqual({
-                current: {
+                'current:P7D': {
                     queryURL: 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D'
                 }
             });
@@ -153,7 +153,7 @@ describe('timeSeriesSelector', () => {
         const TEST_STATE = {
             series: {
                 requests : {
-                    'current': {},
+                    'current:P7D': {},
                     'median' : {},
                     'current:P30D:00060': {}
                 }
@@ -167,14 +167,14 @@ describe('timeSeriesSelector', () => {
         });
 
         it('Return false if request is not in state', () => {
-            expect(hasTimeSeries('compare')(TEST_STATE)).toBe(false);
-            expect(hasTimeSeries('current', 'P1Y', '00060')(TEST_STATE)).toBe(false);
-            expect(hasTimeSeries('current', 'P30D', '00010')(TEST_STATE)).toBe(false);
+            expect(hasTimeSeries('compare:P7D')(TEST_STATE)).toBe(false);
+            expect(hasTimeSeries('current:P1Y:00060')(TEST_STATE)).toBe(false);
+            expect(hasTimeSeries('current:P30D:00010')(TEST_STATE)).toBe(false);
         });
 
         it('Return true if request is in state', () => {
-            expect(hasTimeSeries('current')(TEST_STATE)).toBe(true);
-            expect(hasTimeSeries('current', 'P30D', '00060')(TEST_STATE)).toBe(true);
+            expect(hasTimeSeries('current:P7D')(TEST_STATE)).toBe(true);
+            expect(hasTimeSeries('current:P30D:00060')(TEST_STATE)).toBe(true);
         });
     });
 
@@ -182,7 +182,7 @@ describe('timeSeriesSelector', () => {
         const TEST_STATE = {
             series: {
                 requests : {
-                    'current': {},
+                    'current:P7D': {},
                     'median' : {},
                     'current:P30D:00060': {}
                 },
@@ -214,7 +214,7 @@ describe('timeSeriesSelector', () => {
         });
 
         it('Return the ts request key to use for the currently selected variable and date range', () => {
-            expect(getCurrentVariableTimeSeriesRequestKey('current')(TEST_STATE)).toEqual('current');
+            expect(getCurrentVariableTimeSeriesRequestKey('current')(TEST_STATE)).toEqual('current:P7D');
             expect(getCurrentVariableTimeSeriesRequestKey('current')({
                 ...TEST_STATE,
                 timeseriesState: {
