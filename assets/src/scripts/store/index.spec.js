@@ -154,7 +154,7 @@ describe('Redux store', () => {
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(2);
                     expect(store.Actions.resetTimeseries.calls.count()).toBe(1);
-                    expect(store.Actions.resetTimeseries.calls.argsFor(0)[0]).toBe('current');
+                    expect(store.Actions.resetTimeseries.calls.argsFor(0)[0]).toBe('current:P7D');
                     expect(store.Actions.toggleTimeseries.calls.count()).toBe(1);
                     expect(store.Actions.toggleTimeseries.calls.argsFor(0)).toEqual(['current', false]);
 
@@ -202,7 +202,7 @@ describe('Redux store', () => {
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(2);
                     expect(store.Actions.addSeriesCollection.calls.count()).toBe(1);
-                    expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('compare');
+                    expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('compare:P7D');
                     expect(store.Actions.toggleTimeseries.calls.count()).toBe(1);
                     expect(store.Actions.toggleTimeseries.calls.argsFor(0)).toEqual(['compare', false]);
 
@@ -237,7 +237,7 @@ describe('Redux store', () => {
                 p.then(() => {
                     expect(mockDispatch).toHaveBeenCalled();
                     expect(store.Actions.resetTimeseries.calls.count()).toBe(1);
-                    expect(store.Actions.resetTimeseries.calls.argsFor(0)[0]).toBe('compare');
+                    expect(store.Actions.resetTimeseries.calls.argsFor(0)[0]).toBe('compare:P7D');
 
                     done();
                 });
@@ -252,7 +252,7 @@ describe('Redux store', () => {
             const TEST_STATE = {
                 series: {
                     requests: {
-                        'current': {}
+                        'current:P7D': {}
                     },
                     variables: {
                         '45807042': {
@@ -341,7 +341,7 @@ describe('Redux store', () => {
             const TEST_STATE = {
                 series: {
                     requests: {
-                        'current': {}
+                        'current:P7D': {}
                     },
                     variables: {
                         '45807042': {
@@ -542,7 +542,7 @@ describe('Redux store', () => {
                 });
                 Actions.startTimeseriesPlay(2700000)(mockDispatch, mockGetState);
 
-                expect(Actions.setCursorOffset).not.toHaveBeenCalled;
+                expect(Actions.setCursorOffset).not.toHaveBeenCalled();
             });
 
             it('Call the action to start time series play', () => {

@@ -34,8 +34,9 @@ const getLatestValue = function(collection, parmCd) {
 const tsRequestKey = function(tsKey, period, parmCd) {
     let result =`${tsKey}`;
     if (tsKey !== 'median') {
-        result += `:${period}`;
-        if (period !== 'P7D') {
+        const periodToUse = period ? period : 'P7D';
+        result += `:${periodToUse}`;
+        if (periodToUse !== 'P7D') {
             result += `:${parmCd}`;
         }
     }
