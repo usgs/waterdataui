@@ -12,13 +12,20 @@ const { yLabelSelector } = require('./timeSeries');
 
 const { getCurrentDateRange, getCurrentParmCd } = require('../../selectors/timeSeriesSelector');
 
+const dateFormatter = timeFormat('%b %d');
+
 const INTERVAL = {
     P7D: timeDay,
     P30D: timeWeek,
     P1Y: timeMonth
 };
 
-const dateFormatter = timeFormat('%b %d');
+const FORMAT = {
+    P7D: dateFormatter,
+    P30D: dateFormatter,
+    P1Y: timeFormat('%b %Y')
+};
+
 
 /**
  * Create an x and y axis for hydrograph
@@ -54,6 +61,8 @@ export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period) 
             .tickPadding(5)
             .tickSize(0)
             .tickFormat(formatter);
+    } else {
+        xAxis.tickFormat(FORMAT[period]);
     }
     // Create y-axis
     const tickDetails = getYTickDetails(yScale.domain(), parmCd);
