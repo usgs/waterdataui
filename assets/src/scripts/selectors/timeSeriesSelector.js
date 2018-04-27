@@ -39,11 +39,17 @@ export const getCurrentParmCd = createSelector(
     }
 );
 
+/*
+ * @param {String} - time series key: current, compre or median
+ * @param {String} or null period = date range of interst as an ISO-8601 duration. If null P7D is used
+ * @param {String} or null parmCD - Only need if period is something other than P7D or null
+ */
 export const tsRequestKey = function(tsKey, period, parmCd) {
     let result =`${tsKey}`;
     if (tsKey !== 'median') {
-        result += `:${period}`;
-        if (period !== 'P7D') {
+        const periodToUse = period ? period : 'P7D';
+        result += `:${periodToUse}`;
+        if (periodToUse !== 'P7D') {
             result += `:${parmCd}`;
         }
     }

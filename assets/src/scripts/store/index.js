@@ -8,7 +8,7 @@ const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData, sortedParameters } = require('../models');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
-const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries} = require('../selectors/timeSeriesSelector');
+const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, tsRequestKey} = require('../selectors/timeSeriesSelector');
 
 const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
@@ -29,19 +29,6 @@ const getLatestValue = function(collection, parmCd) {
     });
     let points = parmTimeSeries ? collection.timeSeries[parmTimeSeries].points : [];
     return points.length ? last(points).value : null;
-};
-
-const tsRequestKey = function(tsKey, period, parmCd) {
-    let result =`${tsKey}`;
-    if (tsKey !== 'median') {
-        const periodToUse = period ? period : 'P7D';
-        result += `:${periodToUse}`;
-        if (periodToUse !== 'P7D') {
-            result += `:${parmCd}`;
-        }
-    }
-
-    return result;
 };
 
 

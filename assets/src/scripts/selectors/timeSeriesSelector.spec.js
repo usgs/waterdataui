@@ -1,5 +1,5 @@
 const { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getQueryInfo, getCurrentParmCd,
-    hasTimeSeries, getCurrentVariableTimeSeriesRequestKey } = require('./timeSeriesSelector');
+    hasTimeSeries, getCurrentVariableTimeSeriesRequestKey, tsRequestKey } = require('./timeSeriesSelector');
 
 describe('timeSeriesSelector', () => {
     const TEST_VARS = {
@@ -222,6 +222,29 @@ describe('timeSeriesSelector', () => {
                     currentDateRange: 'P30D'
                 }
             })).toEqual('current:P30D:00060');
+        });
+    });
+
+    describe('tsRequestKey', () => {
+        it('Return the expected request key if period and parmCd are not specified', () => {
+            expect(tsRequestKey('current')).toBe('current:P7D');
+            expect(tsRequestKey('compare')).toBe('compare:P7D');
+            expect(tsRequestKey('median')).toBe('median');
+        });
+
+        it('Return the expected request key if parmCd is not specified', () => {
+            expect(tsRequestKey('current', 'P7D')).toBe('current:P7D');
+            expect(tsRequestKey('compare', 'P7D')).toBe('compare:P7D');
+            expect(tsRequestKey('median', 'P7D')).toBe('median');
+        });
+
+        it('Return the expected request key if all parameters are specified', () => {
+            expect(tsRequestKey('current', 'P7D', '00060')).toBe('current:P7D');
+            expect(tsRequestKey('compare', 'P7D', '00060')).toBe('compare:P7D');
+            expect(tsRequestKey('median', 'P7D', '00060')).toBe('median');
+            expect(tsRequestKey('current', 'P30D', '00060')).toBe('current:P30D:00060');
+            expect(tsRequestKey('compare', 'P30D', '00060')).toBe('compare:P30D:00060');
+            expect(tsRequestKey('median', 'P30D', '00060')).toBe('median');
         });
     });
 });
