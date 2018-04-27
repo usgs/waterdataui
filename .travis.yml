@@ -11,10 +11,7 @@ before_install:
   - nvm install $(python -c "import json; print(json.loads(open('./assets/package.json').read())['engines']['node'])")
 
 install:
-  - pip install -r wdfn-server/requirements.txt
-  - pip install coverage
-  - pip install coveralls
-  - cd assets && npm install & cd ..
+  - make env
   - gem install coveralls-lcov
 
 before_script:
@@ -22,8 +19,7 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 
 script:
-  - coverage run --omit=wdfn-server/waterdata/tests/*.py,/home/travis/virtualenv/* -m pytest wdfn-server/waterdata
-  - npm run test
+  - coverage run --omit=wdfn-server/waterdata/tests/*.py,/home/travis/virtualenv/* -m make test
 
 after_success:
   - find coverage/ -mindepth 2 -iname '*.info' -exec cp -t coverage/ '{}' +

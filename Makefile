@@ -11,7 +11,7 @@ help:
 	@echo  '  clean - Remove all build artifacts'
 	@echo  '  cleanenv - Remove all environment artifacts'
 
-env: env-assets env-graph-server env-wdfn test
+env: env-assets env-graph-server env-wdfn
 test: test-assets test-graph-server test-wdfn
 clean: clean-assets clean-graph-server clean-wdfn
 cleanenv: cleanenv-assets cleanenv-graph-server cleanenv-wdfn
