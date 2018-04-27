@@ -19,7 +19,7 @@ wdfn-env-requirements:
 
 wdfn-server/instance/config.py:
 	@echo "Creating wdfn-server/instance/config.py..."
-	cp wdfn-server/instance/config.py.sample wdfn-server/instance/config.py
+	cp wdfn-server/config.py.sample wdfn-server/instance/config.py
 
 clean-wdfn:
 	@echo "Cleaning wdfn-server..."
