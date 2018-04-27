@@ -1,8 +1,7 @@
 /**
  * Hydrograph component SCSS to be used in front-end application.
  */
-
-@import './graph';
+@import './variables';
 
 #select-timeseries  {
     label {
@@ -88,6 +87,9 @@
 .hydrograph-container {
     width: 100%;
     vertical-align: top;
+
+    // Import the SVG styles for the graph
+    @import './graph';
 
     .timeseries-graph-title {
         @include h4();
