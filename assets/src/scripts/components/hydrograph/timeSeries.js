@@ -149,7 +149,7 @@ export const descriptionSelector = createSelector(
     requestTimeRangeSelector,
     (variable, requestTimeRanges) => {
         const desc = variable ? variable.variableDescription : '';
-        const range = requestTimeRanges['current'];
+        const range = requestTimeRanges['current:P7D'];
         if (range) {
             return `${desc} from ${formatTime(range.start)} to ${formatTime(range.end)}`;
         } else {

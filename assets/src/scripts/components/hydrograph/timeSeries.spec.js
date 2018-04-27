@@ -7,7 +7,7 @@ const TEST_DATA = {
     series: {
         timeSeries: {
             '00060': {
-                tsKey: 'current',
+                tsKey: 'current:P7D',
                 startTime: new Date('2018-03-06T15:45:00.000Z'),
                 endTime: new Date('2018-03-13T13:45:00.000Z'),
                 variable: '45807197',
@@ -29,7 +29,7 @@ const TEST_DATA = {
                 }]
             },
             '00010': {
-                tsKey: 'compare',
+                tsKey: 'compare:P7D',
                 startTime: new Date('2017-03-06T15:45:00.000Z'),
                 endTime: new Date('2017-03-13t13:45:00.000Z'),
                 variables: '45807196',
@@ -80,9 +80,10 @@ const TEST_DATA = {
             }
         },
         requests: {
-            current: {
+            'current:P7D': {
                 timeSeriesCollections: ['coll1']
-            }
+            },
+            'current:P30D:00060': {}
         },
         variables: {
             '45807197': {
@@ -103,12 +104,25 @@ const TEST_DATA = {
             }
         },
         queryInfo: {
-            current: {
+            'current:P7D': {
                 notes: {
                     requestDT: new Date('2017-01-09T20:46:07.542Z'),
                     'filter:timeRange': {
                         mode: 'PERIOD',
                         periodDays: 7,
+                        modifiedSince: null
+                    }
+                }
+            },
+            'current:P30D:00060': {
+                notes: {
+                    requestDT: new Date('2017-01-09T20:46:07.542Z'),
+                    'filter:timeRange': {
+                        mode: 'RANGE',
+                        interval: {
+                            start: new Date('2017-01-09'),
+                            end: new Date('2017-02-08')
+                        },
                         modifiedSince: null
                     }
                 }
@@ -172,7 +186,7 @@ describe('TimeSeries module', () => {
             expect(currentVariableTimeSeriesSelector('current')({
                 series: {
                     requests: {
-                        current: {
+                        'current:P7D': {
                             timeSeriesCollections: ['coll1', 'coll2']
                         }
                     },
@@ -194,37 +208,37 @@ describe('TimeSeries module', () => {
                         one: {
                             item: 'one',
                             points: [1, 2],
-                            tsKey: 'current',
+                            tsKey: 'current:P7D',
                             variable: 45807197
                         },
                         two: {
                             item: 'two',
                             points: [],
-                            tsKey: 'current',
+                            tsKey: 'current:P7D',
                             variable: 45807197
                         },
                         three: {
                             item: 'three',
                             points: [3, 4],
-                            tsKey: 'current',
+                            tsKey: 'current:P7D',
                             variable: 45807197
                         },
                         four: {
                             item: 'four',
                             points: [4, 5],
-                            tsKey: 'current',
+                            tsKey: 'current:P7D',
                             variable: 45807197
                         },
                         five: {
                             item: 'five',
                             points: [5, 6],
-                            tsKey: 'compare',
+                            tsKey: 'compare:P7D',
                             variable: 45807190
                         },
                         six: {
                             item: 'six',
                             points: [6, 7],
-                            tsKey: 'compare',
+                            tsKey: 'compare:P7D',
                             variable: 45807190
                         }
                     },
@@ -243,9 +257,9 @@ describe('TimeSeries module', () => {
                     currentDateRange: 'P7D'
                 }
             })).toEqual({
-                one: {item: 'one', points: [1, 2], tsKey: 'current', variable: 45807197},
-                three: {item: 'three', points: [3, 4], tsKey: 'current', variable: 45807197},
-                four: {item: 'four', points: [4, 5], tsKey: 'current', variable: 45807197}
+                one: {item: 'one', points: [1, 2], tsKey: 'current:P7D', variable: 45807197},
+                three: {item: 'three', points: [3, 4], tsKey: 'current:P7D', variable: 45807197},
+                four: {item: 'four', points: [4, 5], tsKey: 'current:P7D', variable: 45807197}
             });
         });
 
@@ -265,7 +279,7 @@ describe('TimeSeries module', () => {
         it('should return the selected time series', () => {
             expect(timeSeriesSelector('current')(TEST_DATA)).toEqual({
                 '00060': {
-                    tsKey: 'current',
+                    tsKey: 'current:P7D',
                     startTime: new Date('2018-03-06T15:45:00.000Z'),
                     endTime: new Date('2018-03-13T13:45:00.000Z'),
                     points: [{
@@ -382,7 +396,7 @@ describe('TimeSeries module', () => {
             expect(requestTimeRangeSelector({
                 series: {
                     queryInfo: {
-                        current: {
+                        'current:P7D': {
                             notes: {
                                 requestDT: new Date('2017-01-09T20:46:07.542Z'),
                                 'filter:timeRange': {
@@ -395,7 +409,7 @@ describe('TimeSeries module', () => {
                     }
                 }
             })).toEqual({
-                current: {
+                'current:P7D': {
                     start: new Date('2017-01-02T20:46:07.542Z'),
                     end: new Date('2017-01-09T20:46:07.542Z')
                 }
@@ -408,7 +422,7 @@ describe('TimeSeries module', () => {
             expect(requestTimeRangeSelector({
                 series: {
                     queryInfo: {
-                        compare: {
+                        'compare:P7D': {
                             notes: {
                                 requestDT: new Date('2017-01-09T20:46:07.542Z'),
                                 'filter:timeRange': {
@@ -424,7 +438,7 @@ describe('TimeSeries module', () => {
                     }
                 }
             })).toEqual({
-                compare: {
+                'compare:P7D': {
                     start: new Date(2017, 10, 10),
                     end: new Date(2017, 10, 20)
                 }
