@@ -8,7 +8,7 @@ const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData, sortedParameters } = require('../models');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
-const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries } = require('../selectors/timeSeriesSelector');
+const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries} = require('../selectors/timeSeriesSelector');
 
 const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
@@ -31,6 +31,18 @@ const getLatestValue = function(collection, parmCd) {
     return points.length ? last(points).value : null;
 };
 
+const tsRequestKey = function(tsKey, period, parmCd) {
+    let result =`${tsKey}`;
+    if (tsKey !== 'median') {
+        result += `:${period}`;
+        if (period !== 'P7D') {
+            result += `:${parmCd}`;
+        }
+    }
+
+    return result;
+};
+
 
 /*
  * @param {Object} timeseries - keys are timeseries id
@@ -50,10 +62,11 @@ export const Actions = {
         return function (dispatch) {
             const timeSeries = getTimeseries({sites: [siteno], params}).then(
                 series => {
-                    const collection = normalize(series, 'current');
+                    const requestKey = tsRequestKey('current', 'P7D');
+                    const collection = normalize(series, requestKey);
 
                     // Get the start/end times of this request's range.
-                    const notes = collection.queryInfo['current'].notes;
+                    const notes = collection.queryInfo[requestKey].notes;
                     const endTime = notes.requestDT;
                     const startTime = new Date(endTime);
                     startTime.setDate(endTime.getDate() - notes['filter:timeRange'].periodDays);
@@ -74,7 +87,7 @@ export const Actions = {
                     return {collection, startTime, endTime};
                 },
                 () => {
-                    dispatch(Actions.resetTimeseries('current'));
+                    dispatch(Actions.resetTimeseries(tsRequestKey('current')));
                     dispatch(Actions.toggleTimeseries('current', false));
                     return {
                         collection: null,
@@ -87,7 +100,7 @@ export const Actions = {
             return Promise.all([timeSeries, medianStatistics]).then(([{collection, startTime, endTime}, stats]) => {
                 if (startTime && endTime) {
                     let medianCollection = parseMedianData(stats, startTime, endTime, collection && collection.variables ? collection.variables : {});
-                    dispatch(Actions.addSeriesCollection('median', medianCollection));
+                    dispatch(Actions.addSeriesCollection(tsRequestKey('median'), medianCollection));
                     dispatch(Actions.toggleTimeseries('median', true));
                 }
             });
@@ -97,11 +110,12 @@ export const Actions = {
         return function (dispatch) {
             return getPreviousYearTimeseries({site, startTime, endTime}).then(
                 series => {
-                    const collection = normalize(series, 'compare');
-                    dispatch(Actions.addSeriesCollection('compare', collection));
+                    const requestKey = tsRequestKey('compare', 'P7D');
+                    const collection = normalize(series, requestKey);
+                    dispatch(Actions.addSeriesCollection(requestKey, collection));
                     dispatch(Actions.toggleTimeseries('compare', false));
                 },
-                () => dispatch(Actions.resetTimeseries('compare'))
+                () => dispatch(Actions.resetTimeseries(tsRequestKey('compare', 'P7D')))
             );
         };
     },
@@ -109,9 +123,9 @@ export const Actions = {
         return function(dispatch, getState) {
             const state = getState();
             const parmCd = getCurrentParmCd(state);
-            const tsKey = period === 'P7D' ? 'current' : `current:${period}:${parmCd}`;
+            const requestKey = tsRequestKey ('current', period, parmCd);
             dispatch(Actions.setCurrentDateRange(period));
-            if (!hasTimeSeries(tsKey)(state)) {
+            if (!hasTimeSeries(requestKey)(state)) {
                 const endTime = new Date(); //TODO get this from the current data
                 let startTime = new Date(endTime);
 
@@ -136,12 +150,12 @@ export const Actions = {
                     endDate: endTime
                 }).then(
                     series => {
-                        const collection = normalize(series, tsKey);
-                        dispatch(Actions.addSeriesCollection(tsKey, collection));
+                        const collection = normalize(series, requestKey);
+                        dispatch(Actions.addSeriesCollection(requestKey, collection));
                     },
                     () => {
                         console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
-                        dispatch(Actions.addSeriesCollection(tsKey, {}));
+                        dispatch(Actions.addSeriesCollection(requestKey, {}));
                     }
                 );
             }

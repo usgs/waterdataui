@@ -39,20 +39,27 @@ export const getCurrentParmCd = createSelector(
     }
 );
 
-const tsRequestKey = function(tsKey, period, parmCd) {
-    return tsKey === 'median' || period === 'P7D' ? tsKey : `${tsKey}:${period}:${parmCd}`;
+export const tsRequestKey = function(tsKey, period, parmCd) {
+    let result =`${tsKey}`;
+    if (tsKey !== 'median') {
+        result += `:${period}`;
+        if (period !== 'P7D') {
+            result += `:${parmCd}`;
+        }
+    }
+
+    return result;
 };
 /*
  * @param {String} tsKey - current, compare, or median
- * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null P7D is assumed
+ * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
  * @param {String} or null parmCD - Only need to specify if period is something other than P7D or null
  * @return {Boolean} - True if the time series with key, period, and parmCd has already been requested
  *
  */
-export const hasTimeSeries = memoize((tsKey, period, parmCd) => {
-    const periodToUse = period ? period : 'P7D';
-    const requestKey = tsRequestKey(tsKey, periodToUse, parmCd);
-    return state => state.series && state.series.requests && state.series.requests[requestKey] ? true : false;
+export const hasTimeSeries = memoize(tsRequestKey => {
+
+    return state => state.series && state.series.requests && state.series.requests[tsRequestKey] ? true : false;
 });
 
 /*
