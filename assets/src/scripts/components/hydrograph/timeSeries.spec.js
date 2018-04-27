@@ -1,4 +1,4 @@
-const { timeSeriesSelector, isVisibleSelector, yLabelSelector,
+const { timeSeriesSelector, hasTimeSeriesWithPoints, isVisibleSelector, yLabelSelector,
     titleSelector, descriptionSelector, currentVariableTimeSeriesSelector,
     allTimeSeriesSelector, requestTimeRangeSelector} = require('./timeSeries');
 
@@ -329,6 +329,40 @@ describe('TimeSeries module', () => {
 
         it('should return null the empty set if no time series for the selected key exist', () => {
             expect(timeSeriesSelector('median')(TEST_DATA)).toEqual({});
+        });
+    });
+
+    describe('hasTimeSeriesWithPoints', () => {
+        it('Returns true if the time series for tsKey and period have non zero points', () => {
+            expect(hasTimeSeriesWithPoints('current')(TEST_DATA)).toBe(true);
+            expect(hasTimeSeriesWithPoints('current', 'P30D')(TEST_DATA)).toBe(true);
+        });
+        it('Returns false if the times series for tsKey and period have zero points', () => {
+            const newTestData = {
+                ...TEST_DATA,
+                series: {
+                    ...TEST_DATA.series,
+                    timeSeries: {
+                        ...TEST_DATA.series.timeSeries,
+                        '00060': {
+                            tsKey: 'current:P7D',
+                            startTime: new Date('2018-03-06T15:45:00.000Z'),
+                            endTime: new Date('2018-03-13T13:45:00.000Z'),
+                            variable: '45807197',
+                            points: []
+                        },
+                        '00060:P30D': {
+                            tsKey: 'current:P30D:00060',
+                            startTime: new Date('2018-02-06T15:45:00.000Z'),
+                            endTime: new Date('2018-02-13T13:45:00.000Z'),
+                            variable: '45807197',
+                            points: []
+                        }
+                    }
+                }
+            };
+            expect(hasTimeSeriesWithPoints('current')(newTestData)).toBe(false);
+            expect(hasTimeSeriesWithPoints('current', 'P30D')(newTestData)).toBe(false);
         });
     });
 

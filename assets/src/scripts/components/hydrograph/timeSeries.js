@@ -81,7 +81,12 @@ export const timeSeriesSelector = memoize((tsKey, period) => createSelector(
     }
 ));
 
-
+export const hasTimeSeriesWithPoints = memoize((tsKey, period) => createSelector(
+    timeSeriesSelector(tsKey, period),
+    (timeSeries) => {
+        const seriesWithPoints = Object.values(timeSeries).filter(x => x.points.length > 0);
+        return seriesWithPoints.length > 0;
+}));
 
 /**
  * Factory function creates a function that:
