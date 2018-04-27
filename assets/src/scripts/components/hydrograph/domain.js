@@ -5,8 +5,10 @@ const { createSelector } = require('reselect');
 const { mediaQuery } = require('../../utils');
 const config = require('../../config');
 
-const { currentVariableSelector } = require('./timeseries');
 const { visiblePointsSelector } = require('./drawingData');
+
+const { getCurrentParmCd } = require('../../selectors/timeSeriesSelector');
+
 
 
 const PADDING_RATIO = 0.2;
@@ -52,11 +54,9 @@ export const extendDomain = function (domain, lowerBoundPOW10) {
 };
 
 
-export const getYDomain = function (pointArrays, currentVar) {
+export const getYDomain = function (pointArrays, currentVarParmCd) {
     let yExtent;
     let scaleDomains = [];
-
-    let currentVarParmCd = currentVar && currentVar.variableCode ? currentVar.variableCode.value : null;
 
     // Calculate max and min for data
     for (const points of pointArrays) {
@@ -121,10 +121,9 @@ export const getYTickDetails = function (yDomain, parmCd) {
 
 export const tickSelector = createSelector(
     visiblePointsSelector,
-    currentVariableSelector,
-    (pointArrays, currentVariable) => {
-        const yDomain = getYDomain(pointArrays, currentVariable);
-        const parmCd = currentVariable ? currentVariable.variableCode.value : null;
-        return getYTickDetails(yDomain, parmCd);
+    getCurrentParmCd,
+    (pointArrays, currentParmCd) => {
+        const yDomain = getYDomain(pointArrays, currentParmCd);
+        return getYTickDetails(yDomain, currentParmCd);
     }
 );

@@ -2,8 +2,9 @@ const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 const { format } = require('d3-format');
 
-const {allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector, variablesSelector } = require('./timeseries');
+const {allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeSeries');
 
+const { getVariables, getCurrentVariableTimeSeriesRequestKey } = require('../../selectors/timeSeriesSelector');
 
 export const MASK_DESC = {
     ice: 'Ice Affected',
@@ -83,13 +84,14 @@ export const allPointsSelector = createSelector(
  * @param {String} tsKey
  * @return {Object} of keys are tsId, values are Array of point Objects
  */
-export const pointsByTsKeySelector = memoize(tsKey => createSelector(
+export const pointsByTsKeySelector = memoize((tsKey, period) => createSelector(
+    getCurrentVariableTimeSeriesRequestKey(tsKey, period),
     allPointsSelector,
     state => state.series.timeSeries,
-    (points, timeSeries) => {
+    (tsRequestKey, points, timeSeries) => {
         let result = {};
         Object.keys(points).forEach((tsId) => {
-            if (timeSeries[tsId].tsKey === tsKey) {
+            if (timeSeries[tsId].tsKey === tsRequestKey) {
                 result[tsId] = points[tsId];
             }
         });
@@ -250,8 +252,8 @@ const getLineClasses = function(pt) {
  * @param  {String} tsKey Timeseries key
  * @return {Object}  Keys are ts Ids, values are  of array of line segments.
  */
-export const lineSegmentsSelector = memoize(tsKey => createSelector(
-    pointsByTsKeySelector(tsKey),
+export const lineSegmentsSelector = memoize((tsKey, period) => createSelector(
+    pointsByTsKeySelector(tsKey, period),
     (tsPoints) => {
         let seriesLines = {};
         Object.keys(tsPoints).forEach((tsId) => {
@@ -306,10 +308,10 @@ export const lineSegmentsSelector = memoize(tsKey => createSelector(
  * Factory function creates a function that, for a given tsKey:
  * @return {Object} - Mapping of parameter code Array of line segments.
  */
-export const lineSegmentsByParmCdSelector = memoize(tsKey => createSelector(
-    lineSegmentsSelector(tsKey),
-    timeSeriesSelector(tsKey),
-    variablesSelector,
+export const lineSegmentsByParmCdSelector = memoize((tsKey, period) => createSelector(
+    lineSegmentsSelector(tsKey, period),
+    timeSeriesSelector(tsKey, period),
+    getVariables,
     (lineSegmentsBySeriesID, timeSeriesMap, variables) => {
         return Object.keys(lineSegmentsBySeriesID).reduce((byVarID, sID) => {
             const series = timeSeriesMap[sID];

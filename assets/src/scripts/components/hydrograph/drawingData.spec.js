@@ -110,7 +110,8 @@ const TEST_DATA = {
         }
     },
     timeseriesState: {
-        currentVariableID: '45807197'
+        currentVariableID: '45807197',
+        currentDateRange: 'P7D'
     }
 };
 
@@ -635,13 +636,16 @@ describe('drawingData module', () => {
                     },
                     variables: {
                         '45807197': {
-                            variableCode: '00060',
+                            variableCode: {
+                                value: '00060'
+                            },
                             oid: 45807197
                         }
                     }
                 },
                 timeseriesState: {
-                    currentVariableID: '45807197'
+                    currentVariableID: '45807197',
+                    currentDateRange: 'P7D'
                 }
             })).toEqual([['ptOne', 'ptTwo', 'ptThree'], ['ptOne2', 'ptTwo2', 'ptThree2']]);
         });
@@ -784,6 +788,7 @@ describe('drawingData module', () => {
                 },
                 timeseriesState: {
                     currentVariableID: '45807197',
+                    currentDateRange: 'P7D',
                     showSeries: {
                         current: true
                     }

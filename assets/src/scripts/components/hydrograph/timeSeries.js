@@ -2,38 +2,16 @@ const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
+const { getQueryInfo, getCurrentVariable, getCurrentVariableTimeSeriesRequestKey } = require('../../selectors/timeSeriesSelector');
+
 
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');
 
 
-/**
- * @return {Object}     Mapping of variable IDs to variable details
- */
-export const variablesSelector = state => state.series.variables ? state.series.variables : null;
-
 
 /**
- * @return {Object}     Variable details for the currently selected variable.
- */
-export const currentVariableSelector = createSelector(
-    variablesSelector,
-    state => state.timeseriesState.currentVariableID,
-    (variables, variableID) => {
-        return variableID ? variables[variableID] : null;
-    }
-);
-
-
-
-/**
- * @return {Object}     Mapping of method IDs to method details
- */
-export const methodsSelector = state => state.series.methods;
-
-
-/**
- * @return {Object}     Mapping of time series ID to time series details
+ * @return {Object} Mapping of time series ID to time series details. Only timeseries with non zero points are returned
  */
 export const allTimeSeriesSelector = createSelector(
     state => state.series,
@@ -55,21 +33,22 @@ export const allTimeSeriesSelector = createSelector(
 
 /**
  * Returns a selector that, for a given tsKey:
- * Selects all time series for the current time series variable.
+ * Selects all time series for the current time series variable and current date range.
  * @param  {String} tsKey   Time-series key
  * @param  {Object} state   Redux state
  * @return {Object}         Time-series data
  */
 export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector(
+    getCurrentVariableTimeSeriesRequestKey(tsKey),
     allTimeSeriesSelector,
-    currentVariableSelector,
-    (timeSeries, variable) => {
+    getCurrentVariable,
+    (tsRequestKey, timeSeries, variable) => {
         let ts = {};
         if (variable) {
             ts = {};
             Object.keys(timeSeries).forEach(key => {
                 const series = timeSeries[key];
-                if (series.tsKey === tsKey && series.variable === variable.oid) {
+                if (series.tsKey === tsRequestKey && series.variable === variable.oid) {
                     ts[key] = series;
                 }
             });
@@ -80,19 +59,21 @@ export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector
 
 
 /**
- * Returns a selector that, for a given tsKey:
- * Selects all time series data.
+ * Returns a selector that, for a given tsKey and period:
+ * Selects all time series data. If period is null then, the currentDateRange is used
  * @param  {String} tsKey   Time-series key
+ * @param {String} or null date range using ISO-8601 duration
  * @param  {Object} state   Redux state
  * @return {Object} - Keys are tsID, values are time-series data
  */
-export const timeSeriesSelector = memoize(tsKey => createSelector(
+export const timeSeriesSelector = memoize((tsKey, period) => createSelector(
+    getCurrentVariableTimeSeriesRequestKey(tsKey, period),
     allTimeSeriesSelector,
-    (timeSeries) => {
+    (tsRequestKey, timeSeries) => {
         let x = {};
         Object.keys(timeSeries).forEach(key => {
             const series = timeSeries[key];
-            if (series.tsKey === tsKey) {
+            if (series.tsKey === tsRequestKey) {
                 x[key] = series;
             }
         });
@@ -119,7 +100,7 @@ export const isVisibleSelector = memoize(tsKey => (state) => {
  * @return {String}     The label for the y-axis
  */
 export const yLabelSelector = createSelector(
-    currentVariableSelector,
+    getCurrentVariable,
     variable => variable ? variable.variableDescription : ''
 );
 
@@ -128,15 +109,13 @@ export const yLabelSelector = createSelector(
  * @return {String}     The name of the currently selected variable.
  */
 export const titleSelector = createSelector(
-    currentVariableSelector,
+    getCurrentVariable,
     variable => variable ? variable.variableName : ''
 );
 
 
-const queryInfoSelector = state => state.series.queryInfo || {};
-
 export const requestTimeRangeSelector = createSelector(
-    queryInfoSelector,
+    getQueryInfo,
     (queryInfos) => {
         return Object.keys(queryInfos).reduce((ranges, tsKey) => {
             const notes = queryInfos[tsKey].notes;
@@ -166,7 +145,7 @@ export const requestTimeRangeSelector = createSelector(
  *                      series
  */
 export const descriptionSelector = createSelector(
-    currentVariableSelector,
+    getCurrentVariable,
     requestTimeRangeSelector,
     (variable, requestTimeRanges) => {
         const desc = variable ? variable.variableDescription : '';

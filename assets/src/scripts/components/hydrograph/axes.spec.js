@@ -18,7 +18,7 @@ describe('Chart axes', () => {
             left: 65
         }
     };
-    const {xAxis, xAxisWithDateTimeLabels, yAxis} = createAxes({xScale, yScale}, 100);
+    const {xAxis, xAxisWithDateTimeLabels, yAxis} = createAxes({xScale, yScale}, 100, '00060', 'P7D');
     let svg;
 
     beforeEach(() => {
@@ -53,4 +53,6 @@ describe('Chart axes', () => {
         });
         expect(tspans.join(' ')).toEqual('Label title');
     });
+
+    //TODO: Add tests to make sure the second axis doesn't render.
 });
