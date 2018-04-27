@@ -30,3 +30,7 @@ clean-assets:
 cleanenv-assets: clean-assets
 	@echo 'Cleaning assets environment...'
 	rm -rf assets/node_modules
+
+build-assets:
+	@echo 'Building assets...'
+	cd assets && npm run build

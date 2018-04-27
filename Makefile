@@ -1,8 +1,8 @@
-include assets/Makefile
-include graph-server/Makefile
-include wdfn-server/Makefile
+#
+# Entrypoint Makefile for Water Data For The Nation
+#
 
-.PHONY: help env test clean cleanenv
+default: build
 
 help:
 	@echo  'Water Data For The Nation Makefile targets:'
@@ -11,7 +11,14 @@ help:
 	@echo  '  clean - Remove all build artifacts'
 	@echo  '  cleanenv - Remove all environment artifacts'
 
+include assets/Makefile
+include graph-server/Makefile
+include wdfn-server/Makefile
+
+.PHONY: help env test clean cleanenv
+
 env: env-assets env-graph-server env-wdfn
 test: test-assets test-graph-server test-wdfn
 clean: clean-assets clean-graph-server clean-wdfn
 cleanenv: cleanenv-assets cleanenv-graph-server cleanenv-wdfn
+build: env build-assets build-wdfn
