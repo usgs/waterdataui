@@ -12,6 +12,8 @@ before_install:
 
 install:
   - make env
+  - pip install coverage
+  - pip install coveralls
   - gem install coveralls-lcov
 
 before_script:
