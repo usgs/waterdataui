@@ -73,7 +73,7 @@ export const hasTimeSeries = memoize((tsKey, period, parmCd) => createSelector(
     getTsRequestKey(tsKey, period, parmCd),
     state => state.series,
     (tsRequestKey, series) => {
-        return series && series.requests && series.requests[tsRequestKey] ? true : false;
+        return Boolean(series && series.requests && series.requests[tsRequestKey]);
 }));
 
 /*
