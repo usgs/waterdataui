@@ -2,13 +2,15 @@ const { createSelector } = require('reselect');
 const { line } = require('d3-shape');
 const { select } = require('d3-selection');
 
-const { allTimeSeriesSelector } = require('./timeseries');
+const { MASK_DESC } = require('./drawingData');
+const { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } = require('./layout');
+const { allTimeSeriesSelector } = require('./timeSeries');
+
 const { Actions } = require('../../store');
 const { sortedParameters } = require('../../models');
-const { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } = require('./layout');
 const { dispatch } = require('../../lib/redux');
-const { MASK_DESC } = require('./drawingData');
 
+const { getVariables, getCurrentVariableID } = require('../../selectors/timeSeriesSelector');
 
 
 /**
@@ -17,9 +19,9 @@ const { MASK_DESC } = require('./drawingData');
  * @return {Array}        Sorted array of [code, metadata] pairs.
  */
 export const availableTimeseriesSelector = createSelector(
-    state => state.series.variables,
+    getVariables,
     allTimeSeriesSelector,
-    state => state.timeseriesState.currentVariableID,
+    getCurrentVariableID,
     (variables, timeSeries, currentVariableID) => {
         if (!variables) {
             return [];
@@ -122,11 +124,12 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  * Draws a table with clickable rows of timeseries parameter codes. Selecting
  * a row changes the active parameter code.
  * @param  {Object} elem                        d3 selection
+ * @param  {String} siteno
  * @param  {Object} availableTimeseries         Timeseries metadata to display
  * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
  * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
  */
-export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd}) {
+export const plotSeriesSelectTable = function (elem, {siteno, availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd}) {
     // Get the position of the scrolled window before removing it so it can be set to the same value.
     const lastTable = elem.select('#select-timeseries table');
     const scrollTop = lastTable.size() ? lastTable.property('scrollTop') : null;
@@ -168,7 +171,7 @@ export const plotSeriesSelectTable = function (elem, {availableTimeseries, lineS
             .attr('aria-selected', parm => parm[1].selected)
             .on('click', dispatch(function (parm) {
                 if (!parm[1].selected) {
-                    return Actions.setCurrentVariable(parm[1].variableID);
+                    return Actions.updateCurrentVariable(siteno, parm[1].variableID);
                 }
             }))
             .call(tr => {

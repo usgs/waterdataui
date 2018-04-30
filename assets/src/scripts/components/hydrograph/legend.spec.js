@@ -173,6 +173,7 @@ describe('Legend module', () => {
             },
             timeseriesState: {
                 currentVariableID: '45807197',
+                currentDateRange: 'P7D',
                 showSeries: {
                     current: true,
                     compare: true,

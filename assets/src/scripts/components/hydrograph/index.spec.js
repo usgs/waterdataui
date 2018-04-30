@@ -124,6 +124,7 @@ const TEST_STATE = {
     },
     timeseriesState: {
         currentVariableID: '45807197',
+        currentDateRange: 'P7D',
         showSeries: {
             current: true,
             compare: true,
@@ -211,16 +212,6 @@ describe('Hydrograph charting module', () => {
         it('svg should be focusable', function() {
             expect(svg.attr('tabindex')).toBe('0');
         });
-
-        it('should have an accessibility table for each time series', function() {
-            expect(selectAll('table.usa-sr-only').size()).toBe(3);
-        });
-
-        it('should have a div for each type of time series', function() {
-            expect(selectAll('div#sr-only-median').size()).toBe(1);
-            expect(selectAll('div#sr-only-compare').size()).toBe(1);
-            expect(selectAll('div#sr-only-current').size()).toBe(1);
-        });
     });
 
     describe('SVG contains the expected elements', () => {
@@ -256,7 +247,8 @@ describe('Hydrograph charting module', () => {
                         median: true
                     },
                     showMedianStatsLabel: false,
-                    currentVariableID: '45807197'
+                    currentVariableID: '45807197',
+                    currentDateRange: 'P7D'
                 },
                 ui: {
                     windowWidth: 400,
@@ -404,6 +396,31 @@ describe('Hydrograph charting module', () => {
             attachToNode(store, graphNode, {siteno: '12345678'});
 
             expect(select(graphNode).select('.provisional-data-alert').attr('hidden')).toBe('true');
+        });
+    });
+
+    describe('Creating date range controls', () => {
+        let store;
+        beforeEach(() => {
+            store = configureStore(TEST_STATE);
+            attachToNode(store, graphNode, {siteno: '12345678'});
+
+        });
+
+        it('Expects the date range controls to be created', () => {
+            let dateRangeContainer = select(graphNode).select('#ts-daterange-select-container');
+
+            expect(dateRangeContainer.size()).toBe(1);
+            expect(dateRangeContainer.selectAll('input[type=radio]').size()).toBe(3);
+        });
+
+        it('Expects to retrieve the extended timeseries when the radio buttons are change', () => {
+            spyOn(Actions, 'retrieveExtendedTimeseries');
+            let lastRadio = select(graphNode).select('#one-year');
+            lastRadio.attr('checked', true);
+            lastRadio.dispatch('change');
+
+            expect(Actions.retrieveExtendedTimeseries).toHaveBeenCalledWith('12345678', 'P1Y');
         });
     });
 });

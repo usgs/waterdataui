@@ -158,6 +158,7 @@ const TEST_STATE_THREE_VARS = {
             median: false
         },
         currentVariableID: '45807197',
+        currentDateRange: 'P7D',
         audiblePlayId: null
     },
     ui: {
@@ -263,6 +264,7 @@ const TEST_STATE_ONE_VAR = {
             compare: true
         },
         currentVariableID: '00060id',
+        currentDateRange: 'P7D',
         cursorOffset: null
     },
     ui: {

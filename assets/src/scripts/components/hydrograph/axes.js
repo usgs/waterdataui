@@ -1,5 +1,5 @@
 const { axisBottom, axisLeft } = require('d3-axis');
-const { timeDay } = require('d3-time');
+const { timeDay, timeWeek, timeMonth } = require('d3-time');
 const { timeFormat } = require('d3-time-format');
 const { createSelector } = require('reselect');
 
@@ -8,7 +8,15 @@ const { wrap } = require('../../utils');
 const { getYTickDetails } = require('./domain');
 const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
-const { currentVariableSelector, yLabelSelector } = require('./timeseries');
+const { yLabelSelector } = require('./timeSeries');
+
+const { getCurrentDateRange, getCurrentParmCd } = require('../../selectors/timeSeriesSelector');
+
+const INTERVAL = {
+    P7D: timeDay,
+    P30D: timeWeek,
+    P1Y: timeMonth
+};
 
 const dateFormatter = timeFormat('%b %d');
 
@@ -18,9 +26,10 @@ const dateFormatter = timeFormat('%b %d');
  * @param  {Object} yScale      D3 Scale object for the y-axis
  * @param  {Number} yTickSize   Size of inner ticks for the y-axis
  * @param {String} parmCd - parameter code of timeseries to be shown on the graph.
+ * * @param {String} period - ISO duration for date range of the timeseries
  * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
-export const createAxes = function({xScale, yScale}, yTickSize, parmCd) {
+export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period) {
     const formatter = function(d) {
         if(d.getHours() === 12) {
             return dateFormatter(d);
@@ -28,21 +37,24 @@ export const createAxes = function({xScale, yScale}, yTickSize, parmCd) {
             return null;
         }
     };
-
-    // Create x-axis with ticks at midnight but no visible date/time labels
+    // Create x-axis
     const xAxis = axisBottom()
         .scale(xScale)
-        .ticks(timeDay)
-        .tickFormat('')
+        .ticks(INTERVAL[period] ? INTERVAL[period] : timeDay)
         .tickSizeOuter(0);
-    // Create a second x-axis. This x-axis will overlay the first x-axis and have labels every 12 hours but no ticks.
-    // Labels not on the 12 hour points are removed with formatting.
-    const xAxisWithDateTimeLabels = axisBottom()
-        .scale(xScale)
-        .ticks(timeDay.hour)
-        .tickPadding(5)
-        .tickSize(0)
-        .tickFormat(formatter);
+    let xAxisWithDateTimeLabels;
+    if (period === 'P7D') {
+        // Only show tick marks on xAxis
+        // Create a second x-axis. This x-axis will overlay the first x-axis and have labels every 12 hours but no ticks.
+        // Labels not on the 12 hour points are removed with formatting.
+        xAxis.tickFormat('');
+        xAxisWithDateTimeLabels = axisBottom()
+            .scale(xScale)
+            .ticks(timeDay.hour)
+            .tickPadding(5)
+            .tickSize(0)
+            .tickFormat(formatter);
+    }
     // Create y-axis
     const tickDetails = getYTickDetails(yScale.domain(), parmCd);
     const yAxis = axisLeft()
@@ -66,11 +78,11 @@ export const axesSelector = createSelector(
     yScaleSelector,
     layoutSelector,
     yLabelSelector,
-    currentVariableSelector,
-    (xScale, yScale, layout, plotYLabel, currentVariable) => {
-        const parmCd = currentVariable ? currentVariable.variableCode.value : null;
+    getCurrentParmCd,
+    getCurrentDateRange,
+    (xScale, yScale, layout, plotYLabel, parmCd, currentDateRange) => {
         return {
-            ...createAxes({xScale, yScale}, -layout.width + layout.margin.right, parmCd),
+            ...createAxes({xScale, yScale}, -layout.width + layout.margin.right, parmCd, currentDateRange),
             layout: layout,
             yTitle: plotYLabel
         };
@@ -101,11 +113,13 @@ export const appendAxes = function(elem, {xAxis, xAxisWithDateTimeLabels, yAxis,
         .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
         .call(xAxis);
 
-    // Add the second x-axis, the one with the centered date/time labels, on top of the first x-axis
-    elem.append('g')
-        .attr('class', 'x-axis-date-time-label')
-        .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
-        .call(xAxisWithDateTimeLabels);
+    if (xAxisWithDateTimeLabels) {
+        // Add the second x-axis, the one with the centered date/time labels, on top of the first x-axis
+        elem.append('g')
+            .attr('class', 'x-axis-date-time-label')
+            .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
+            .call(xAxisWithDateTimeLabels);
+    }
 
     // Add y-axis and a text label
     elem.append('g')

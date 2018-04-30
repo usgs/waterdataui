@@ -7,7 +7,7 @@ const { select } = require('d3-selection');
 
 const { createStructuredSelector } = require('reselect');
 
-const { addSVGAccessibility, addSROnlyTable } = require('../../accessibility');
+const { addSVGAccessibility } = require('../../accessibility');
 const { USWDS_MEDIUM_SCREEN, USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
 const { dispatch, link, provide } = require('../../lib/redux');
 const { Actions } = require('../../store');
@@ -16,15 +16,17 @@ const { mediaQuery } = require('../../utils');
 const { audibleUI } = require('./audible');
 const { appendAxes, axesSelector } = require('./axes');
 const { cursorSlider } = require('./cursor');
-const { pointsTableDataSelector, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
+const { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
     MASK_DESC, HASH_ID } = require('./drawingData');
 const { CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
-const { allTimeSeriesSelector, currentVariableSelector, methodsSelector, isVisibleSelector, titleSelector,
-    descriptionSelector,  currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeseries');
+const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
+    descriptionSelector,  currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeSeries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
+
+const { getCurrentVariable } = require('../../selectors/timeSeriesSelector');
 
 
 const drawMessage = function (elem, message) {
@@ -270,37 +272,6 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap,
     }
 };
 
-const plotSROnlyTable = function (elem, {tsKey, variable, methods, visible, dataByTsID, timeSeries}) {
-    elem.selectAll(`#sr-only-${tsKey}`).remove();
-
-    if (!visible) {
-        return;
-    }
-
-    const container = elem.append('div')
-        .attr('id', `sr-only-${tsKey}`)
-        .classed('usa-sr-only', true);
-
-
-    for (const seriesID of Object.keys(timeSeries)) {
-        const series = timeSeries[seriesID];
-        const method = methods[series.method].methodDescription;
-        let title = variable.variableName;
-        if (method) {
-            title += ` (${method})`;
-        }
-        if (tsKey === 'median') {
-            title = `Median ${title}`;
-        }
-        addSROnlyTable(container, {
-            columnNames: [title, 'Time', 'Qualifiers'],
-            data: dataByTsID[seriesID],
-            describeById: `${seriesID}-time-series-sr-desc`,
-            describeByText: `${seriesID} time series data in tabular format`
-        });
-    }
-};
-
 
 const createTitle = function(elem) {
     elem.append('div')
@@ -335,8 +306,8 @@ const watermark = function (elem) {
 };
 
 const timeSeriesGraph = function (elem) {
-    elem.call(watermark);
-    elem.append('div')
+    elem.call(watermark)
+        .append('div')
         .attr('class', 'hydrograph-container')
         .call(createTitle)
         .call(createTooltipText)
@@ -373,37 +344,10 @@ const timeSeriesGraph = function (elem) {
                         xscale: xScaleSelector('current'),
                         yscale: yScaleSelector,
                         seriesMap: currentVariableTimeSeriesSelector('median'),
-                        variable: currentVariableSelector,
+                        variable: getCurrentVariable,
                         showLabel: (state) => state.timeseriesState.showMedianStatsLabel
                     })));
             });
-    elem.append('div')
-        .call(link(plotSROnlyTable, createStructuredSelector({
-            tsKey: () => 'current',
-            variable: currentVariableSelector,
-            methods: methodsSelector,
-            visible: isVisibleSelector('current'),
-            dataByTsID: pointsTableDataSelector('current'),
-            timeSeries: currentVariableTimeSeriesSelector('current')
-    })));
-    elem.append('div')
-        .call(link(plotSROnlyTable, createStructuredSelector({
-            tsKey: () => 'compare',
-            variable: currentVariableSelector,
-            methods: methodsSelector,
-            visible: isVisibleSelector('compare'),
-            dataByTsID: pointsTableDataSelector('compare'),
-            timeSeries: currentVariableTimeSeriesSelector('compare')
-    })));
-    elem.append('div')
-        .call(link(plotSROnlyTable, createStructuredSelector({
-            tsKey: () => 'median',
-            variable: currentVariableSelector,
-            methods: methodsSelector,
-            visible: isVisibleSelector('median'),
-            dataByTsID: pointsTableDataSelector('median'),
-            timeSeries: currentVariableTimeSeriesSelector('median')
-    })));
 };
 
 /*
@@ -469,6 +413,44 @@ const controlGraphDisplay = function (elem, currentTimeseries) {
     elem.attr('hidden', seriesWithPoints.length === 0 ? true : null);
 };
 
+
+const createDaterangeControls = function(elem, siteno) {
+    const DATE_RANGE = [{
+        label: 'seven-day',
+        name: '7 days',
+        period: 'P7D'
+    }, {
+        label: 'thirty-days',
+        name: '30 days',
+        period: 'P30D'
+    }, {
+        label: 'one-year',
+        name: '1 year',
+        period: 'P1Y'
+    }];
+    const container = elem.insert('ul', ':first-child')
+        .attr('id', 'ts-daterange-select-container')
+        .attr('class', 'usa-fieldset-inputs usa-unstyled-list');
+    const li = container.selectAll('li')
+        .data(DATE_RANGE)
+        .enter().append('li');
+    li.append('input')
+        .attr('type', 'radio')
+        .attr('name', 'ts-daterange-input')
+        .attr('id', (d) => d.label)
+        .attr('value', (d) => d.period)
+        .on('change', dispatch(function() {
+            return Actions.retrieveExtendedTimeseries(
+                siteno,
+                li.select('input:checked').attr('value')
+            );
+        }));
+    li.append('label')
+        .attr('for', (d) => d.label)
+        .text((d) => d.name);
+    li.select(`#${DATE_RANGE[0].label}`).attr('checked', true);
+};
+
 const attachToNode = function (store, node, {siteno} = {}) {
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
@@ -477,10 +459,12 @@ const attachToNode = function (store, node, {siteno} = {}) {
 
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
-        .call(provide(store));
+        .call(provide(store))
+        .call(createDaterangeControls, siteno);
+
     select(node).select('.graph-container')
         .call(link(controlGraphDisplay, timeSeriesSelector('current')))
-        .call(timeSeriesGraph)
+        .call(timeSeriesGraph, siteno)
         .call(cursorSlider)
         .append('div')
             .classed('ts-legend-controls-container', true)
@@ -488,15 +472,15 @@ const attachToNode = function (store, node, {siteno} = {}) {
             .call(graphControls);
     select(node).select('.select-timeseries-container')
         .call(link(plotSeriesSelectTable, createStructuredSelector({
+            siteno: () => siteno,
             availableTimeseries: availableTimeseriesSelector,
-            lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current'),
-            timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current')(SPARK_LINE_DIM),
+            lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current','P7D'),
+            timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM),
             layout: layoutSelector
         })));
     select(node).select('.provisional-data-alert')
         .call(link(function(elem, allTimeSeries) {
             elem.attr('hidden', Object.keys(allTimeSeries).length ? null : true);
-
         }, allTimeSeriesSelector));
 
 

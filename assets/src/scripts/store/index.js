@@ -8,6 +8,7 @@ const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData, sortedParameters } = require('../models');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
+const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries } = require('../selectors/timeSeriesSelector');
 
 const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
@@ -104,6 +105,48 @@ export const Actions = {
             );
         };
     },
+    retrieveExtendedTimeseries(site, period) {
+        return function(dispatch, getState) {
+            const state = getState();
+            const parmCd = getCurrentParmCd(state);
+            const tsKey = period === 'P7D' ? 'current' : `current:${period}:${parmCd}`;
+            dispatch(Actions.setCurrentDateRange(period));
+            if (!hasTimeSeries(tsKey)(state)) {
+                const endTime = new Date(); //TODO get this from the current data
+                let startTime = new Date(endTime);
+
+                switch (period) {
+                    case 'P7D':
+                        break;
+                    case 'P30D':
+                        startTime.setDate(startTime.getDate() - 30);
+                        break;
+
+                    case 'P1Y': {
+                        startTime.setFullYear(startTime.getFullYear() - 1);
+                        break;
+                    }
+                    default:
+                        console.log('No known period specified');
+                }
+                return getTimeseries({
+                    sites: [site],
+                    params: [parmCd],
+                    startDate: startTime,
+                    endDate: endTime
+                }).then(
+                    series => {
+                        const collection = normalize(series, tsKey);
+                        dispatch(Actions.addSeriesCollection(tsKey, collection));
+                    },
+                    () => {
+                        console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
+                        dispatch(Actions.addSeriesCollection(tsKey, {}));
+                    }
+                );
+            }
+        };
+    },
     retrieveFloodData(siteno) {
         return function (dispatch) {
             const floodFeatures = fetchFloodFeatures(siteno);
@@ -115,6 +158,12 @@ export const Actions = {
                 });
                 dispatch(Actions.setFloodFeatures(stages, stages.length ? extent.extent : {}));
             });
+        };
+    },
+    updateCurrentVariable(siteno, variableID) {
+        return function(dispatch, getState) {
+            dispatch(Actions.setCurrentVariable(variableID));
+            dispatch(Actions.retrieveExtendedTimeseries(siteno, getCurrentDateRange(getState())));
         };
     },
     startTimeseriesPlay(maxCursorOffset) {
@@ -206,6 +255,12 @@ export const Actions = {
             variableID
         };
     },
+    setCurrentDateRange(period) {
+        return {
+            type: 'SET_CURRENT_DATE_RANGE',
+            period
+        };
+    },
     setGageHeightFromStageIndex(index) {
         return function(dispatch, getState) {
             const stages = getState().floodData.stages;
@@ -247,6 +302,7 @@ export const configureStore = function (initialState) {
                 compare: false,
                 median: false
             },
+            currentDateRange: 'P7D',
             currentVariableID: null,
             showMedianStatsLabel: false,
             cursorOffset: null,

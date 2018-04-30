@@ -127,7 +127,8 @@ describe('Hydrograph tooltip module', () => {
                 current: true,
                 compare: true
             },
-            currentVariableID: '00060id'
+            currentVariableID: '00060id',
+            currentDateRange: 'P7D'
         }
     };
 
