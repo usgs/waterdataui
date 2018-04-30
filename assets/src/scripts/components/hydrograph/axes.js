@@ -10,15 +10,11 @@ const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { yLabelSelector } = require('./timeSeries');
 
+const { USWDS_LARGE_SCREEN } = require('../../config');
 const { getCurrentDateRange, getCurrentParmCd } = require('../../selectors/timeSeriesSelector');
+const { mediaQuery } = require('../../utils');
 
 const dateFormatter = timeFormat('%b %d');
-
-const INTERVAL = {
-    P7D: timeDay,
-    P30D: timeWeek,
-    P1Y: timeMonth
-};
 
 const FORMAT = {
     P7D: dateFormatter,
@@ -26,6 +22,22 @@ const FORMAT = {
     P1Y: timeFormat('%b %Y')
 };
 
+const tickInterval = function(period) {
+    switch (period) {
+        case 'P7D':
+            return timeDay;
+        case 'P30D':
+            return timeWeek;
+        case 'P1Y':
+            if (mediaQuery(USWDS_LARGE_SCREEN)) {
+                return timeMonth;
+            } else {
+                return timeMonth.every(2);
+            }
+        default:
+            return timeDay;
+    }
+};
 
 /**
  * Create an x and y axis for hydrograph
@@ -37,17 +49,10 @@ const FORMAT = {
  * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
 export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period) {
-    const formatter = function(d) {
-        if(d.getHours() === 12) {
-            return dateFormatter(d);
-        } else {
-            return null;
-        }
-    };
     // Create x-axis
     const xAxis = axisBottom()
         .scale(xScale)
-        .ticks(INTERVAL[period] ? INTERVAL[period] : timeDay)
+        .ticks(tickInterval(period))
         .tickSizeOuter(0)
         .tickFormat(FORMAT[period] ? FORMAT[period] : dateFormatter);
 
