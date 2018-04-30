@@ -18,14 +18,13 @@ describe('Chart axes', () => {
             left: 65
         }
     };
-    const {xAxis, xAxisWithDateTimeLabels, yAxis} = createAxes({xScale, yScale}, 100, '00060', 'P7D');
+    const {xAxis, yAxis} = createAxes({xScale, yScale}, 100, '00060', 'P7D');
     let svg;
 
     beforeEach(() => {
         svg = select(document.body).append('svg');
         appendAxes(svg, {
             xAxis,
-            xAxisWithDateTimeLabels,
             yAxis,
             layout,
             yTitle: 'Label title'
@@ -38,7 +37,6 @@ describe('Chart axes', () => {
 
     it('axes created', () => {
         expect(xAxis).toEqual(jasmine.any(Function));
-        expect(xAxisWithDateTimeLabels).toEqual(jasmine.any(Function));
         expect(yAxis).toEqual(jasmine.any(Function));
         expect(yAxis.tickSizeInner()).toBe(100);
         expect(xAxis.scale()).toBe(xScale);
