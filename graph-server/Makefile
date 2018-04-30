@@ -1,20 +1,25 @@
 NODE_VERSION=$(shell python3 -c "import json; print(json.loads(open('graph-server/package.json').read())['engines']['node'])")
 
-.PHONY: env-graph-server clean-graph-server cleanenv-graph-server
+.PHONY: env-graph-server clean-graph-server cleanenv-graph-server watch-graph-server
 
 clean-graph-server:
 	@echo "Cleaning graph-server..."
 	#cd graph-server && npm run clean
 
+
+#
+# Development targets
+#
 test-graph-server:
 	@echo 'Running graph-server tests...'
 	#cd graph-server && npm test
 
+watch-graph-server:
+	cd graph-server && npx nodemon ./index.js
 
 #
 # Environment configuration targets
 #
-
 env-graph-server: assert-graph-node graph-server/node_modules
 
 # Assert that we're using the proper node.js version

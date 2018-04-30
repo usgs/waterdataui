@@ -1,6 +1,6 @@
 NODE_VERSION=$(shell python3 -c "import json; print(json.loads(open('assets/package.json').read())['engines']['node'])")
 
-.PHONY: env-assets test-assets clean-assets cleanenv-assets
+.PHONY: env-assets test-assets clean-assets cleanenv-assets watch-assets
 
 build-assets:
 	@echo 'Building assets...'
@@ -10,15 +10,21 @@ clean-assets:
 	@echo 'Cleaning assets...'
 	rm -rf assets/dist
 
+
+#
+# Development targets
+#
 test-assets:
 	@echo 'Running assets tests...'
 	cd assets && npm run test
+
+watch-assets:
+	cd assets && npm run watch
 
 #
 # Environment configuration targets
 #
 env-assets: assert-assets-node assets/node_modules
-	@echo 'Created assets environment!'
 
 # Assert that we're using the proper node.js version
 assert-assets-node:

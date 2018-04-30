@@ -1,14 +1,11 @@
 PYTHON := wdfn-server/env/bin/python
 PIP := wdfn-server/env/bin/pip
 
-.PHONY: env-wdfn test-wdfn clean-wdfn cleanenv-wdfn
+.PHONY: env-wdfn test-wdfn clean-wdfn cleanenv-wdfn watch-wdfn
 
 build-wdfn: build-assets
 	@echo 'Building wdfn-server...'
 	cd wdfn-server && ./env/bin/python setup.py bdist_wheel
-
-test-wdfn:
-	$(PYTHON) -m pytest wdfn-server/waterdata
 
 clean-wdfn:
 	@echo 'Cleaning wdfn-server...'
@@ -17,10 +14,19 @@ clean-wdfn:
 
 
 #
+# Development targets
+#
+test-wdfn:
+	$(PYTHON) -m pytest wdfn-server/waterdata
+
+watch-wdfn:
+	$(PYTHON) wdfn-server/run.py
+
+
+#
 # Environment configuration targets
 #
 env-wdfn: wdfn-server/env wdfn-server/instance/config.py wdfn-env-requirements
-	@echo 'Creating wdfn-server environment...'
 
 wdfn-server/env:
 	@echo 'Creating the virtualenv env'

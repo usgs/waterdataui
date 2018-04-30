@@ -17,8 +17,15 @@ include wdfn-server/Makefile
 
 .PHONY: help env test clean cleanenv
 
+MAKEPID:= $(shell echo $$PPID)
+
 env: env-assets env-graph-server env-wdfn
 test: test-assets test-graph-server test-wdfn
 clean: clean-assets clean-graph-server clean-wdfn
 cleanenv: cleanenv-assets cleanenv-graph-server cleanenv-wdfn
 build: env build-assets build-wdfn
+watch:
+	(make watch-wdfn & \
+	 make watch-assets & \
+	 make watch-graph-server & \
+	 wait) || kill -TERM $(MAKEPID)
