@@ -12,6 +12,7 @@ the selected timeseries.
 
 ### Changed
 - Cursor location / tooltip defaults to last point in the time series.
+- Upgraded to Font Awesome 5.1
 
 
 ## [0.7.0] - 2018-04-23
