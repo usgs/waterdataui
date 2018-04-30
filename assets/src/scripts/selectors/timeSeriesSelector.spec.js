@@ -1,5 +1,5 @@
 const { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getQueryInfo, getCurrentParmCd,
-    hasTimeSeries, getTsRequestKey } = require('./timeSeriesSelector');
+    hasTimeSeries, getTsRequestKey, getRequestTimeRange } = require('./timeSeriesSelector');
 
 describe('timeSeriesSelector', () => {
     const TEST_VARS = {
@@ -213,6 +213,69 @@ describe('timeSeriesSelector', () => {
             expect(getTsRequestKey('current', 'P30D', '00010')(TEST_STATE)).toBe('current:P30D:00010');
             expect(getTsRequestKey('compare', 'P30D', '00010')(TEST_STATE)).toBe('compare:P30D:00010');
             expect(getTsRequestKey('median', 'P30D', '00010')(TEST_STATE)).toBe('median');
+        });
+    });
+
+    fdescribe('requestTimeRangeSelector', () => {
+        const TEST_DATA = {
+            series: {
+                queryInfo: {
+                    'current:P7D': {
+                        notes: {
+                            requestDT: new Date('2017-03-31'),
+                            'filter:timeRange': {
+                                mode: 'PERIOD',
+                                periodDays: 7,
+                                modifiedSince: null
+                            }
+                        }
+                    },
+                    'current:P30D:00060': {
+                        notes: {
+                            requestDT: new Date('2017-03-31'),
+                            'filter:timeRange': {
+                                mode: 'RANGE',
+                                interval: {
+                                    start: new Date('2017-03-01'),
+                                    end: new Date('2017-03-29')
+                                }
+                            }
+                        }
+                    }
+                },
+                variables: TEST_VARS
+            },
+            timeseriesState: {
+                currentDateRange: 'P7D',
+                currentVariableID: '45807042'
+            }
+        };
+
+        it('should return null if there is no series data', () => {
+            const newTestData = {
+                ...TEST_DATA,
+                series: {}
+            };
+            expect(getRequestTimeRange('current')(newTestData)).toBeNull();
+        });
+
+        it('should return null if the data has not been requests', () => {
+            expect(getRequestTimeRange('compare')(TEST_DATA)).toBeNull();
+            expect(getRequestTimeRange('current', 'P30D', '00010')(TEST_DATA)).toBeNull();
+        });
+
+        it('should use the requestDT for requests with mode PERIOD', () => {
+            expect(getRequestTimeRange('current')(TEST_DATA)).toEqual({
+                start: new Date('2017-03-24'),
+                end: new Date('2017-03-31')
+            });
+        });
+
+        it('should use the interval for request with mode RANGE', () => {
+            expect(getRequestTimeRange('current', 'P30D', '00060')(TEST_DATA)).toEqual({
+                start: new Date('2017-03-01'),
+                end: new Date('2017-03-29')
+            });
         });
     });
 });

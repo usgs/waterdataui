@@ -76,3 +76,38 @@ export const hasTimeSeries = memoize((tsKey, period, parmCd) => createSelector(
         return series && series.requests && series.requests[tsRequestKey] ? true : false;
 }));
 
+/*
+ * @param {String} tsKey - current, compare, or median
+ * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
+ * @param {String} or null parmCD - Only need to specify if period is something other than P7D or null
+ * @return {Object} with start and end {Date} properties that contain the range of the data requested or null
+ *      if the store does not contain a query for the tsKey request
+ * */
+export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSelector(
+    getQueryInfo,
+    getTsRequestKey(tsKey, period, parmCd),
+    (queryInfos, tsRequestKey) => {
+        const notes = queryInfos[tsRequestKey] && queryInfos[tsRequestKey].notes ? queryInfos[tsRequestKey].notes : null;
+        if (!notes) {
+            return null;
+        }
+        let result;
+        // If this is a period-based query (eg, P7D), use the request time
+        // as the end date.
+        if (notes['filter:timeRange'].mode === 'PERIOD') {
+            const start = new Date(notes.requestDT);
+            start.setDate(notes.requestDT.getDate() - notes['filter:timeRange'].periodDays);
+            result = {
+                start: start,
+                end: notes.requestDT
+            };
+        } else {
+            result = {
+                start: notes['filter:timeRange'].interval.start,
+                end: notes['filter:timeRange'].interval.end
+            };
+        }
+        return result;
+    }
+));
+
