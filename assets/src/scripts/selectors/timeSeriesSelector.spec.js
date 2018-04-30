@@ -216,7 +216,7 @@ describe('timeSeriesSelector', () => {
         });
     });
 
-    fdescribe('requestTimeRangeSelector', () => {
+    describe('getRequestTimeRange', () => {
         const TEST_DATA = {
             series: {
                 queryInfo: {
