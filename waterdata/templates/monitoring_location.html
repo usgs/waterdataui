@@ -153,13 +153,12 @@
                     </div>
                 {% endif %}
 
-                <!-- added for WDFN 234 start -->
                 {% if sifta_data %}
                     <div>
                         <p>Funding provided by</p>
                         {% for customers, customer_data in sifta_data.items() %}
                             {% for customer in customer_data %}
-                                <figure>
+                                <figure class="cooperator_logo">
                                     <a href="{{ customer.URL }}">
                                         <img src="{{ customer.IconURL }}" alt="logo for {{ customer.Name }}  }}" height = "50" >
                                     </a>
@@ -169,7 +168,6 @@
                         {% endfor %}
                     </div>
                 {% endif %}
-                <!-- added for WDFN 234 end -->
 
             {% endif %}
 
