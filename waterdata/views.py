@@ -57,13 +57,15 @@ def monitoring_location(site_no):
         }
         station_record = data_list[0]
 
-# start section for WDFN234
+        # call the web service to gather information about funding partners for monitoring location
         # this is a temporary url for testing until the new SIFTA lookup web service is operational
-        url_for_cooperator_lookup = 'https://sifta.water.usgs.gov/Services/REST/Site/CustomerFunding.ashx?SiteNumber=' + site_no + '&StartDate=10/1/2017&EndDate=09/30/2018'
+        url_for_cooperator_lookup = 'https://sifta.water.usgs.gov/Services/REST/Site/CustomerFunding.ashx?SiteNumber=' \
+                                    + site_no + '&StartDate=10/1/2017&EndDate=09/30/2018'
         response = requests.get(url_for_cooperator_lookup)
         sifta_data = response.json()
-
-# end section for WDFN234
+        length = len(sifta_data['Customers'])
+        if len(sifta_data['Customers']) < 1:
+            sifta_data = None
 
         if len(data_list) == 1:
             parameter_data_resp = execute_get_request(
