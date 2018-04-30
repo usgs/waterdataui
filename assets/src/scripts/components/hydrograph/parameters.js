@@ -38,7 +38,7 @@ export const availableTimeseriesSelector = createSelector(
                 continue;
             }
             const variable = variables[variableID];
-            const currentTimeseriesCount = seriesList.filter(ts => ts.tsKey === 'current' && ts.variable === variableID).length;
+            const currentTimeseriesCount = seriesList.filter(ts => ts.tsKey === 'current:P7D' && ts.variable === variableID).length;
             if (currentTimeseriesCount > 0) {
                 let varCodes = {
                     variableID: variable.oid,

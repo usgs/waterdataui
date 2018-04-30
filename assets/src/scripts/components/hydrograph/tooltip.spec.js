@@ -36,21 +36,21 @@ describe('Hydrograph tooltip module', () => {
             timeSeries: {
                 '00060:current': {
                     points: data,
-                    tsKey: 'current',
+                    tsKey: 'current:P7D',
                     variable: '00060id'
                 },
                 '00060:compare': {
                     points: data,
-                    tsKey: 'compare',
+                    tsKey: 'compare:P7D',
                     variable: '00060id'
                 }
             },
             timeSeriesCollections: {
-                'current': {
+                'current:P7D': {
                     variable: '00060id',
                     timeSeries: ['00060:current']
                 },
-                'compare': {
+                'compare:P7D': {
                     variable: '00060id',
                     timeSeries: ['00060:compare']
                 }
@@ -67,15 +67,15 @@ describe('Hydrograph tooltip module', () => {
                 }
             },
             requests: {
-                'current': {
+                'current:P7D': {
                     timeSeriesCollections: ['current']
                 },
-                'compare': {
+                'compare:P7D': {
                     timeSeriesCollections: ['compare']
                 }
             },
             queryInfo: {
-                current: {
+                'current:P7D': {
                     notes: {
                         'filter:timeRange': {
                             mode: 'RANGE',
@@ -86,7 +86,7 @@ describe('Hydrograph tooltip module', () => {
                         }
                     }
                 },
-                compare: {
+                'compare:P7D': {
                     notes: {
                         'filter:timeRange': {
                             mode: 'RANGE',
@@ -328,12 +328,12 @@ describe('Hydrograph tooltip module', () => {
                     timeSeries: Object.assign({}, testState.series.timeSeries, {
                         '00060:current': {
                             points: currentTsData,
-                            tsKey: 'current',
+                            tsKey: 'current:P7D',
                             variable: '00060id'
                         },
                         '00060:compare': {
                             points: compareTsData,
-                            tsKey: 'compare',
+                            tsKey: 'compare:P7D',
                             variable: '00060id'
                         }
                     })
@@ -357,12 +357,12 @@ describe('Hydrograph tooltip module', () => {
                     timeSeries: Object.assign({}, testState.series.timeSeries, {
                         '00060:current': {
                             points: currentTsData,
-                            tsKey: 'current',
+                            tsKey: 'current:P7D',
                             variable: '00060id'
                         },
                         '00060:compare': {
                             points: compareTsData,
-                            tsKey: 'compare',
+                            tsKey: 'compare:P7D',
                             variable: '00060id'
                         }
                     })
