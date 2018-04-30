@@ -138,6 +138,7 @@ export const Actions = {
                     series => {
                         const collection = normalize(series, tsKey);
                         dispatch(Actions.addSeriesCollection(tsKey, collection));
+                        dispatch(Actions.updateStartTime(startTime));
                     },
                     () => {
                         console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
@@ -273,6 +274,12 @@ export const Actions = {
         return {
             type: 'SET_GAGE_HEIGHT',
             gageHeight
+        };
+    },
+    updateStartTime(startTime) {
+        return {
+            type: 'UPDATE_START_TIME',
+            startTime
         };
     }
 };

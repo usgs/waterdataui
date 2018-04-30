@@ -51,5 +51,6 @@ export const coerceStatisticalSeries = function (series) {
         rightVal.dateTime = series.endTime;
         filtered.push(rightVal);
     }
+    console.log(filtered);
     return filtered;
 };
