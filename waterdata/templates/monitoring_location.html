@@ -152,6 +152,25 @@
                         <a href="{{ questions_link }}">Email USGS questions about this site</a>
                     </div>
                 {% endif %}
+
+                <!-- added for WDFN 234 start -->
+                {% if sifta_data %}
+                    <div>
+                        <p>Funding provided by</p>
+                        {% for customers, customer_data in sifta_data.items() %}
+                            {% for customer in customer_data %}
+                                <figure>
+                                    <a href="{{ customer.URL }}">
+                                        <img src="{{ customer.IconURL }}" alt="logo for {{ customer.Name }}  }}" height = "50" >
+                                    </a>
+                                    <figcaption><a href="{{ customer.URL }}">{{ customer.Name }}</a></figcaption>
+                                </figure>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <!-- added for WDFN 234 end -->
+
             {% endif %}
 
         {% else %}

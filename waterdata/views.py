@@ -2,6 +2,7 @@
 Main application views.
 """
 import json
+import requests  # added for WDFN234
 
 from flask import abort, render_template, request, Markup
 
@@ -55,6 +56,15 @@ def monitoring_location(site_no):
             'STATION_FIELDS_D': STATION_FIELDS_D
         }
         station_record = data_list[0]
+
+# start section for WDFN234
+        # this is a temporary url for testing until the new SIFTA lookup web service is operational
+        url_for_cooperator_lookup = 'https://sifta.water.usgs.gov/Services/REST/Site/CustomerFunding.ashx?SiteNumber=' + site_no + '&StartDate=10/1/2017&EndDate=09/30/2018'
+        response = requests.get(url_for_cooperator_lookup)
+        sifta_data = response.json()
+
+# end section for WDFN234
+
         if len(data_list) == 1:
             parameter_data_resp = execute_get_request(
                 SERVICE_ROOT,
@@ -128,7 +138,8 @@ def monitoring_location(site_no):
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'parm_grp_summary': grouped_dataseries,
-                'questions_link': questions_link
+                'questions_link': questions_link,
+                'sifta_data' : sifta_data  # added for WDFN234
             }
         http_code = 200
     elif 400 <= status < 500:
