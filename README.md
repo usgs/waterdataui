@@ -31,7 +31,15 @@ To run all development servers in a watch mode at the same time, use the make ta
 make watch
 ```
 
-To run components in isolation, see the specific project READMEs.
+... and to run each dev server individually:
+
+```bash
+make watch-wdfn
+make watch-assets
+make watch-graph-server
+```
+
+See the specific project READMEs for additional information.
 
 ## Run tests
 
@@ -40,3 +48,18 @@ To run all project tests:
 ```bash
 make test
 ```
+
+## Production build
+
+```bash
+make build
+```
+
+## Clean targets
+
+```bash
+make clean      ; clean build artifacts
+make cleanenv   ; clean environment configuration and build artifacts
+```
+
+`make` supports chaining targets, so you could also `make clean watch`, etc.
