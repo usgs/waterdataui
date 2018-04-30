@@ -6,7 +6,9 @@ default: build
 
 help:
 	@echo  'Water Data For The Nation Makefile targets:'
+	@echo  '  build (default) - Produce the build artifact for each project'
 	@echo  '  env - Create a local development environment'
+	@echo  '  watch - Run local development servers'
 	@echo  '  test - Run all project tests'
 	@echo  '  clean - Remove all build artifacts'
 	@echo  '  cleanenv - Remove all environment artifacts'
