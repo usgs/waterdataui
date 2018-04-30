@@ -10,7 +10,7 @@ const { configureStore } = require('./store');
 const COMPONENTS = {
     embed: require('./components/embed').attachToNode,
     hydrograph: require('./components/hydrograph').attachToNode,
-    map: require('./components/map').attachToNode,
+    map: require('./components/map').attachToNode
 };
 
 

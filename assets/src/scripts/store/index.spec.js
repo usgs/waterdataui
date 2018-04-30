@@ -23,6 +23,30 @@ describe('Redux store', () => {
                             'value': '00010'
                         }
                     }
+                },
+                queryInfo: {
+                    'current:P7D': {
+                        notes: {
+                            requestDT: new Date('2017-03-31'),
+                            'filter:timeRange': {
+                                mode: 'PERIOD',
+                                periodDays: 7,
+                                modifiedSince: null
+                            }
+                        }
+                    },
+                    'current:P30D:00060': {
+                        notes: {
+                            requestDT: new Date('2017-03-31'),
+                            'filter:timeRange': {
+                                mode: 'RANGE',
+                                interval: {
+                                    start: new Date('2017-03-01'),
+                                    end: new Date('2017-03-31')
+                                }
+                            }
+                        }
+                    }
                 }
             },
             timeseriesState: {
@@ -316,7 +340,7 @@ describe('Redux store', () => {
                 const args = modelsMock.getTimeseries.calls.argsFor(0)[0];
                 expect(args.sites).toEqual(['12345678']);
                 expect(args.params).toEqual(['00060']);
-                expect(args.startDate.getTime()).toEqual(args.endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+                expect(args.endDate).toEqual(new Date('2017-03-31'));
             });
 
             it('Should dispatch add series collection', (done) => {
@@ -366,6 +390,30 @@ describe('Redux store', () => {
                                 'value': '00010'
                             }
                         }
+                    },
+                    queryInfo: {
+                        'current:P7D': {
+                            notes: {
+                                requestDT: new Date('2017-03-31'),
+                                'filter:timeRange': {
+                                    mode: 'PERIOD',
+                                    periodDays: 7,
+                                    modifiedSince: null
+                                }
+                            }
+                        },
+                        'current:P30D:00060': {
+                            notes: {
+                                requestDT: new Date('2017-03-31'),
+                                'filter:timeRange': {
+                                    mode: 'RANGE',
+                                    interval: {
+                                        start: new Date('2017-03-01'),
+                                        end: new Date('2017-03-31')
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 timeseriesState: {
@@ -386,7 +434,12 @@ describe('Redux store', () => {
                spyOn(modelsMock, 'getTimeseries').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState');
-                mockGetState.and.returnValue(TEST_STATE);
+
+                mockGetState.and.returnValue(Object.assign({}, TEST_STATE, {
+                    timeseriesState : Object.assign({}, TEST_STATE.timeseriesState, {
+                        currentDateRange: 'P30D'
+                    })
+                }));
 
                 store = proxyquire('./index', {'../models': modelsMock});
             });
