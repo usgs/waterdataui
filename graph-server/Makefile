@@ -2,6 +2,21 @@ NODE_VERSION=$(shell python3 -c "import json; print(json.loads(open('graph-serve
 
 .PHONY: env-graph-server clean-graph-server cleanenv-graph-server
 
+clean-graph-server:
+	@echo "Cleaning graph-server..."
+	#cd graph-server && npm run clean
+
+test-graph-server:
+	@echo 'Running graph-server tests...'
+	#cd graph-server && npm test
+
+
+#
+# Environment configuration targets
+#
+
+env-graph-server: assert-graph-node graph-server/node_modules
+
 # Assert that we're using the proper node.js version
 assert-graph-node:
 ifeq ($(shell node --version), v$(NODE_VERSION))
@@ -12,18 +27,8 @@ else
 	@exit 1
 endif
 
-env-graph-server: assert-graph-node graph-server/node_modules
-
 graph-server/node_modules:
 	cd graph-server && npm install
-
-test-graph-server:
-	@echo 'Running graph-server tests...'
-	#cd graph-server && npm test
-
-clean-graph-server:
-	@echo "Cleaning graph-server..."
-	#cd graph-server && npm run clean
 
 cleanenv-graph-server: clean-graph-server
 	@echo "Cleaning graph-server environment..."

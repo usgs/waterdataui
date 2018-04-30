@@ -2,6 +2,24 @@ NODE_VERSION=$(shell python3 -c "import json; print(json.loads(open('assets/pack
 
 .PHONY: env-assets test-assets clean-assets cleanenv-assets
 
+build-assets:
+	@echo 'Building assets...'
+	cd assets && npm run build
+
+clean-assets:
+	@echo 'Cleaning assets...'
+	rm -rf assets/dist
+
+test-assets:
+	@echo 'Running assets tests...'
+	cd assets && npm run test
+
+#
+# Environment configuration targets
+#
+env-assets: assert-assets-node assets/node_modules
+	@echo 'Created assets environment!'
+
 # Assert that we're using the proper node.js version
 assert-assets-node:
 ifeq ($(shell node --version), v$(NODE_VERSION))
@@ -12,25 +30,10 @@ else
 	@exit 1
 endif
 
-env-assets: assert-assets-node assets/node_modules
-	@echo 'Created assets environment!'
-
 assets/node_modules:
 	@echo 'Installing assets dependencies...'
 	cd assets && npm install
 
-test-assets:
-	@echo 'Running assets tests...'
-	cd assets && npm run test
-
-clean-assets:
-	@echo 'Cleaning assets...'
-	rm -rf assets/dist
-
 cleanenv-assets: clean-assets
 	@echo 'Cleaning assets environment...'
 	rm -rf assets/node_modules
-
-build-assets:
-	@echo 'Building assets...'
-	cd assets && npm run build

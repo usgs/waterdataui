@@ -3,9 +3,22 @@ PIP := wdfn-server/env/bin/pip
 
 .PHONY: env-wdfn test-wdfn clean-wdfn cleanenv-wdfn
 
+build-wdfn: build-assets
+	@echo 'Building wdfn-server...'
+	cd wdfn-server && ./env/bin/python setup.py bdist_wheel
+
 test-wdfn:
 	$(PYTHON) -m pytest wdfn-server/waterdata
 
+clean-wdfn:
+	@echo 'Cleaning wdfn-server...'
+	rm -rf wdfn-server/dist
+	rm -rf wdfn-server/build
+
+
+#
+# Environment configuration targets
+#
 env-wdfn: wdfn-server/env wdfn-server/instance/config.py wdfn-env-requirements
 	@echo 'Creating wdfn-server environment...'
 
@@ -22,15 +35,6 @@ wdfn-server/instance/config.py:
 	mkdir -p wdfn-server/instance
 	cp wdfn-server/config.py.sample wdfn-server/instance/config.py
 
-clean-wdfn:
-	@echo 'Cleaning wdfn-server...'
-	rm -rf wdfn-server/dist
-	rm -rf wdfn-server/build
-
 cleanenv-wdfn: clean-wdfn
 	@echo 'Cleaning graph-server environment...'
 	rm -rf wdfn-server/env
-
-build-wdfn: build-assets
-	@echo 'Building wdfn-server...'
-	cd wdfn-server && ./env/bin/python setup.py bdist_wheel
