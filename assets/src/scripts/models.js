@@ -142,7 +142,7 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
         let median = {
             dateTime: null,
             month: month,
-            day: day,
+            day: parseInt(day),
             value: parseFloat(medianDatum.p50_va)
         };
         values.push(median);

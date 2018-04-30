@@ -145,71 +145,31 @@ describe('Models module', () => {
             expect(collection).toEqual({
                 timeSeries: {
                     '00060:153885:median': {
-                        points: [{
-                            dateTime: new Date(2017, 7, 5),
-                            value: 15
-                        }, {
-                            dateTime: new Date(2018, 0, 1),
-                            value: 16
-                        }, {
-                            dateTime: new Date(2018, 0, 13),
-                            value: 15
-                        }],
+                        points: [
+                            {
+                                dateTime: null,
+                                month: 0,
+                                day: 1,
+                                value: 16
+                            }, {
+                                dateTime: null,
+                                month: 0,
+                                day: 13,
+                                value: 15
+                            }, {
+                                dateTime: null,
+                                month: 7,
+                                day: 5,
+                                value: 15
+                            }, {
+                                dateTime: null,
+                                month: 1,
+                                day: 29,
+                                value: 13
+                            }
+                        ],
                         startTime: new Date(2018, 0, 10),
                         endTime: new Date(2018, 0, 13),
-                        tsKey: 'median',
-                        method: '00060:153885:median',
-                        variable: 'varID',
-                        metadata: {
-                            'beginYear': '1969',
-                            'endYear': '2017'
-                        }
-                    }
-                },
-                timeSeriesCollections: {
-                    '05370000:00060:median': {
-                        sourceInfo: '05370000',
-                        variable: 'varID',
-                        name: '05370000:00060:median',
-                        timeSeries: [
-                            '00060:153885:median'
-                        ]
-                    }
-                },
-                methods: {
-                    '00060:153885:median': {
-                        methodDescription: '',
-                        methodID: '00060:153885:median'
-                    }
-                },
-                requests: {
-                    median: {
-                        timeSeriesCollections: ['05370000:00060:median']
-                    }
-                }
-            });
-        });
-
-        it('parseMedian data includes leap year when appropriate', () => {
-            const collection = mergeMedianTimeseries({}, MOCK_MEDIAN_DATA, leapStartDate, leapEndDate, MOCK_MEDIAN_VARIABLES);
-            expect(collection).toEqual({
-                timeSeries: {
-                    '00060:153885:median': {
-                        points: [{
-                            dateTime: new Date(2015, 7, 5),
-                            value: 15
-                        }, {
-                            dateTime: new Date(2016, 0, 1),
-                            value: 16
-                        }, {
-                            dateTime: new Date(2016, 0, 13),
-                            value: 15
-                        }, {
-                            dateTime: new Date(2016, 1, 29),
-                            value: 13
-                        }],
-                        startTime: new Date(2016, 0, 10),
-                        endTime: new Date(2016, 2, 14),
                         tsKey: 'median',
                         method: '00060:153885:median',
                         variable: 'varID',
