@@ -25,6 +25,7 @@ const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = req
 const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
     descriptionSelector,  currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeSeries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
+const { coerceStatisticalSeries } = require('./statistics');
 
 const { getCurrentVariable } = require('../../selectors/timeSeriesSelector');
 
@@ -267,7 +268,7 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap,
             .attr('id', 'median-points');
 
     for (const [index, seriesID] of Object.keys(seriesMap).entries()) {
-        const points = seriesMap[seriesID].points;
+        const points = coerceStatisticalSeries(seriesMap[seriesID]);
         plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points, showLabel, variable});
     }
 };

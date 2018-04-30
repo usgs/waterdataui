@@ -1,7 +1,6 @@
 const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
-const { coerceStatisticalSeries } = require('./statistics');
 
 const { getQueryInfo, getCurrentVariable, getCurrentVariableTimeSeriesRequestKey } = require('../../selectors/timeSeriesSelector');
 
@@ -50,18 +49,14 @@ export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector
             Object.keys(timeSeries).forEach(key => {
                 const series = timeSeries[key];
                 if (series.tsKey === tsRequestKey && series.variable === variable.oid) {
-                    if (tsRequestKey === 'median') {
-                        series.points = coerceStatisticalSeries(series);
-                        ts[key] = series;
-                    } else {
-                        ts[key] = series;
-                    }
+                    ts[key] = series;
                 }
             });
         }
         return ts;
     }
 ));
+
 
 
 /**
