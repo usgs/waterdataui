@@ -144,7 +144,7 @@ export const plotSeriesSelectTable = function (elem, {siteno, availableTimeSerie
         .attr('id', 'select-time-series');
     tableContainer.append('label')
         .attr('id', 'select-time-series-label')
-        .text('Select a timeseries');
+        .text('Select a time series');
     const table = tableContainer.append('table')
         .classed('usa-table-borderless', true)
         .attr('aria-labelledby', 'select-time-series-label')
