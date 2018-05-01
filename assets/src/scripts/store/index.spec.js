@@ -698,7 +698,7 @@ describe('Redux store', () => {
             });
         });
 
-        it('should create an action to reset a timeseries', () => {
+        it('should create an action to reset a time series', () => {
             expect(Actions.resetTimeSeries('current')).toEqual({
                 type: 'RESET_TIMESERIES',
                 key: 'current'

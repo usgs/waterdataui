@@ -77,7 +77,7 @@ export const getNearestTime = function(data, time) {
 
 
 /*
- * Returns a function that the time series data point nearest the tooltip focus time for the given timeseries
+ * Returns a function that the time series data point nearest the tooltip focus time for the given time series
  * @param {Object} state - Redux store
  * @param String} tsKey - Time series key
  * @return {Object}

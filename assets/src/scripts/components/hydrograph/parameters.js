@@ -14,7 +14,7 @@ const { getVariables, getCurrentVariableID } = require('../../selectors/timeSeri
 
 
 /**
- * Returns metadata for each available timeseries.
+ * Returns metadata for each available time series.
  * @param  {Object} state Redux state
  * @return {Array}        Sorted array of [code, metadata] pairs.
  */

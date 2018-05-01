@@ -90,10 +90,10 @@ export const hasTimeSeriesWithPoints = memoize((tsKey, period) => createSelector
 
 /**
  * Factory function creates a function that:
- * Returns the current show state of a timeseries.
+ * Returns the current show state of a time series.
  * @param  {Object}  state     Redux store
  * @param  {String}  tsKey Time series key
- * @return {Boolean}           Show state of the timeseries
+ * @return {Boolean}           Show state of the time series
  */
 export const isVisibleSelector = memoize(tsKey => (state) => {
     return state.timeSeriesState.showSeries[tsKey];

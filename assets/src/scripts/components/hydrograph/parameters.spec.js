@@ -115,7 +115,7 @@ describe('Parameters module', () => {
             ]);
         });
 
-        it('timeseries without data points are considered unavailable', () => {
+        it('time series without data points are considered unavailable', () => {
             const available = availableTimeSeriesSelector({
                 series: {
                     timeSeries: {
@@ -228,7 +228,7 @@ describe('Parameters module', () => {
             expect(tableDivSelection.selectAll('svg path').size()).toEqual(2);
         });
 
-        it('does not create the table when there are no timeseries', () => {
+        it('does not create the table when there are no time series', () => {
             plotSeriesSelectTable(tableDivSelection, testArgsWithoutData);
             expect(tableDivSelection.selectAll('table').size()).toEqual(0);
         });

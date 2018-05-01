@@ -179,7 +179,7 @@ export const classesForPoint = point => {
 
 /**
  * Factory function create a function that
- * returns an array of points for each visible timeseries.
+ * returns an array of points for each visible time series.
  * @param  {Object} state     Redux store
  * @return {Array}            Array of point arrays.
  */
