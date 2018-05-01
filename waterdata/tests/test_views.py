@@ -251,3 +251,10 @@ MOCK_SITE_LIST_2 = (
     'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00095\t\t69943\tFrom multiparameter sonde\t'
     'wat\t\t1646694\t0\t2013-11-23\t2018-01-10\t1509'
 )
+
+
+MOCK_SIFTA_JSON = {"Customers":[{"Name":"New Jersey Department of Environmental Protection","URL":"http://www.nj.gov/dep/ec/","IconURL":"http://water.usgs.gov/customer/icons/1275.gif
+http://water.usgs.gov/customer/icons/1275.gif
+"},{"Name":"USGS - National Groundwater Monitoring Network","URL":"http://www.usgs.gov/","IconURL":"http://water.usgs.gov/customer/icons/9326.gif
+http://water.usgs.gov/customer/icons/9326.gif
+"}]}
