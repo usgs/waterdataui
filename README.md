@@ -1,135 +1,65 @@
-# Water Data for the Nation UI
+# Water Data For The Nation UI
 
 [![Build Status](https://travis-ci.org/usgs/waterdataui.svg?branch=master)](https://travis-ci.org/usgs/waterdataui)
 [![Coverage Status](https://coveralls.io/repos/github/usgs/waterdataui/badge.svg?branch=master)](https://coveralls.io/github/usgs/waterdataui?branch=master)
 [![Dependency Status](https://gemnasium.com/badges/github.com/usgs/waterdataui.svg)](https://gemnasium.com/github.com/usgs/waterdataui)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/05497ebda0d2450bb11eba0e436f4360)](https://www.codacy.com/app/ayan/waterdataui?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=usgs/waterdataui&amp;utm_campaign=Badge_Grade)
 
-This repo contains a Flask web application that is used to create pages for
-USGS water data. The application has been developed using Python 3.6 and
-Node.js 8.9.3. This is a work in progress.
+This repo contains the components of Water Data For The Nation:
 
-## Local config module
+- [`wdfn-server`](wdfn-server): A Flask web application that is used to create server-rendered pages for USGS water data
+- [`assets`](assets): Client-side Javascript, CSS, images, etc.
+- [`graph-server`](graph-server): A node.js server-renderer for charts, serving up SVG and images.
 
-You will need to create an `instance/config.py` file. For local development,
-it should contain the following:
-
-```python
-DEBUG = True
-
-# The root location of static assets (Javascript, CSS, Images)
-STATIC_ROOT = 'http://localhost:9000'
-
-# If this is not set, live reload will be disabled.
-LIVE_RELOAD_PATH = 'ws://localhost:9000/ws'
-```
+The application has been developed using Python 3.6 and Node.js 8.9.3. This is a work in progress.
 
 ## Install dependencies
 
-The repo contains a bash shell script that can be used to install the dependencies, as well as build the application and run the tests.
+The repository contains a make target to configure a local development environment:
 
 ```bash
-./dev_install.sh
+make env
 ```
 
-Below are the installation instructions if not using the bash script.
-
-### Python dependencies
-
-1. Create a virtualenv and install the project Python requirements.
-
-```bash
-virtualenv --python=python3.6 env
-env/bin/pip install -r requirements.txt
-```
-
-2. To override any Flask configuration parameters, modify `instance/config.py`.
-These will override any values in the project's `config.py`.
-
-### Node.js dependencies
-
-Javascript and SASS assets are built with Node.js v8.9.3. Usage of
-[nvm](https://github.com/creationix/nvm) is a convenient way to use a specific
-version of Node.js:
-
-```bash
-nvm use v8.9.3
-```
-
-Node.js dependencies are installed via:
-
-```bash
-npm install
-```
+To manually configure your environment, please see the READMEs of each separate project.
 
 ## Development server
 
-### One-step way
-
-To run both the Python and Node.js servers in one step, you may use the `start`
-script. This will run Flask on port 5050 and a node.js live-server on port
-9000. Note: this step assumes you have a virtualenv installed in `./env`.
+To run all development servers in a watch mode at the same time, use the make target:
 
 ```bash
-npm start
+make watch
 ```
 
-### Two-step way
-
-Run the node.js development server at
-[http://localhost:9000](http://localhost:9000):
+... and to run each dev server individually:
 
 ```bash
-npm run watch
+make watch-wdfn
+make watch-assets
+make watch-graph-server
 ```
 
-Run the Flask development server at
-[http://localhost:5050](http://localhost:5050):
+See the specific project READMEs for additional information.
+
+## Run tests
+
+To run all project tests:
 
 ```bash
-env/bin/python run.py
+make test
 ```
 
-### Test the production static assets build locally
-
-To build the complete production package, built to `./dist`:
+## Production build
 
 ```bash
-npm run build
+make build
 ```
 
-Rather than using the `watch` task, you can serve the manually built assets.
-To locally serve the production build without recompiling on filesystem
-changes:
+## Clean targets
 
 ```bash
-npm run serve:static
+make clean      ; clean build artifacts
+make cleanenv   ; clean environment configuration and build artifacts
 ```
 
-## Running tests
-
-### Python tests
-
-The Python tests can be run as follows:
-
-```bash
-env/bin/python -m pytest waterdata
-```
-
-### Javascript tests
-
-The Javascript tests may be run via node.js or in a browser.
-
-To run tests in Chrome via Karma, these are equivalent:
-
-```bash
-npm test
-npm run test
-```
-
-To watch Javascript files for changes and re-run tests with Karma on change,
-run:
-
-```bash
-npm run test:watch
-```
+`make` supports chaining targets, so you could also `make clean watch`, etc.

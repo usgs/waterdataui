@@ -1,6 +1,8 @@
-#Pycharm/IDE specific files
+# Pycharm/IDE specific files
 .idea/
 .sublimelinterrc
+*.sublime-project
+*.sublime-workspace
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -90,6 +92,7 @@ celerybeat-schedule
 # Environments
 .env
 .venv
+env
 env/
 venv/
 ENV/

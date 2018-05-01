@@ -21,28 +21,28 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'assets/tests/scripts/globalConfig.js',
-            'assets/src/scripts/**/*.js'
+            'tests/scripts/globalConfig.js',
+            'src/scripts/**/*.js'
         ],
 
 
         // list of files / patterns to exclude
         exclude: [
-            'assets/src/scripts/index.js'
+            'src/scripts/index.js'
         ],
 
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'assets/src/scripts/**/*.js': ['browserify']
+            'src/scripts/**/*.js': ['browserify']
         },
         browserify: {
             debug: true,
             configure: function (bundle) {
                 bundle
                     .plugin(proxyquire.plugin)
-                    .require(require.resolve('./assets/src/scripts'), {entry: true});
+                    .require(require.resolve('./src/scripts'), {entry: true});
             }
         },
 
@@ -97,7 +97,7 @@ module.exports = function (config) {
                 configure: function (bundle) {
                     bundle
                         .plugin(proxyquire.plugin)
-                        .require(require.resolve('./assets/src/scripts'), {entry: true});
+                        .require(require.resolve('./src/scripts'), {entry: true});
                 }
             }
         });
@@ -107,7 +107,7 @@ module.exports = function (config) {
                 configure: function (bundle) {
                     bundle
                         .plugin(proxyquire.plugin)
-                        .require(require.resolve('./assets/src/scripts'), {entry: true});
+                        .require(require.resolve('./src/scripts'), {entry: true});
                 },
                 transform: [browserifyBabalIstanbul({
                     instrumenter: isparta,
