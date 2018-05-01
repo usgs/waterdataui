@@ -72,7 +72,7 @@ export const updateSound = function ({enabled, points}) {
     }
 };
 
-const audibleInterfaceOnSelector = state => state.timeseriesState.audiblePlayId !== null;
+const audibleInterfaceOnSelector = state => state.timeSeriesState.audiblePlayId !== null;
 
 const audibleScaleSelector = createSelector(
     yScaleSelector,
@@ -126,7 +126,7 @@ export const audibleUI = function (elem) {
     const button = elem.append('button')
         .classed('usa-button-secondary', true)
         .attr('ga-on', 'click')
-        .attr('ga-event-category', 'TimeseriesGraph')
+        .attr('ga-event-category', 'TimeSeriesGraph')
         .html('Audible&nbsp;');
     button.append('i')
         .classed('fa', true);
@@ -149,9 +149,9 @@ export const audibleUI = function (elem) {
         .on('click', dispatch(function() {
             const button = select(this);
             if (button.attr('title') === 'Play') {
-                return Actions.startTimeseriesPlay(button.attr('data-max-offset'));
+                return Actions.startTimeSeriesPlay(button.attr('data-max-offset'));
             } else {
-                return Actions.stopTimeseriesPlay();
+                return Actions.stopTimeSeriesPlay();
             }
         }));
 
