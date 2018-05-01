@@ -193,10 +193,6 @@ class TestTimeSeriesComponentView:
         text = response.data.decode('utf-8')
         assert text.count('class="wdfn-component" data-component="hydrograph"') == 1, 'Component expected'
 
-class TestCallCooperatorSiteService:
-
-    def mock_call_cooperator_site_service(self):
-        assert 0 == 0
 
 
 MOCK_SITE_LIST_1 = (
@@ -258,7 +254,7 @@ MOCK_SITE_LIST_2 = (
 )
 
 
-MOCK_SIFTA_JSON = '{"Customers":[{"Name":"New Jersey Department of Environmental Protection",' \
+MOCK_COOPERATOR_LOOKUP_DATA  = '{"Customers":[{"Name":"New Jersey Department of Environmental Protection",' \
                   '"URL":"http://www.nj.gov/dep/ec/","IconURL":"http://water.usgs.gov/customer/icons/1275.gif"},' \
                   '{"Name":"USGS - National Groundwater Monitoring Network",' \
                   '"URL":"http://www.usgs.gov/","IconURL":"http://water.usgs.gov/customer/icons/9326.gif"}]}'
