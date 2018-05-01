@@ -44,8 +44,8 @@ const tickInterval = function(period) {
  * @param  {Object} xScale      D3 Scale object for the x-axis
  * @param  {Object} yScale      D3 Scale object for the y-axis
  * @param  {Number} yTickSize   Size of inner ticks for the y-axis
- * @param {String} parmCd - parameter code of timeseries to be shown on the graph.
- * * @param {String} period - ISO duration for date range of the timeseries
+ * @param {String} parmCd - parameter code of time series to be shown on the graph.
+ * * @param {String} period - ISO duration for date range of the time series
  * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
 export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period) {

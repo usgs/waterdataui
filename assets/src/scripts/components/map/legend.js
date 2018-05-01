@@ -50,7 +50,7 @@ export const createLegendControl = function(options) {
         let buttonLabel = DomUtil.create('span', '', buttonContainer);
         buttonLabel.innerHTML = 'Legend';
         let expandButton = DomUtil.create('button', 'legend-expand usa-button-secondary', buttonContainer);
-        expandButton.innerHTML = '<i class="fa fa-compress"></i>';
+        expandButton.innerHTML = '<i class="fas fa-compress"></i>';
         expandButton.title = 'Hide legend';
 
         let legendListContainer = DomUtil.create('div', 'legend-list-container', container);
@@ -61,11 +61,11 @@ export const createLegendControl = function(options) {
         // Set up click handler for the expandButton
         DomEvent.on(expandButton, 'click', function() {
             if (expandButton.title === 'Hide legend') {
-                expandButton.innerHTML = '<i class="fa fa-expand"></i>';
+                expandButton.innerHTML = '<i class="fas fa-expand"></i>';
                 expandButton.title = 'Show legend';
                 legendListContainer.setAttribute('hidden', true);
             } else {
-                expandButton.innerHTML = '<i class="fa fa-compress"></i>';
+                expandButton.innerHTML = '<i class="fas fa-compress"></i>';
                 expandButton.title = 'Hide legend';
                 legendListContainer.removeAttribute('hidden');
             }

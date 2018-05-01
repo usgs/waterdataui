@@ -129,7 +129,7 @@ const TEST_DATA = {
             }
         }
     },
-    timeseriesState: {
+    timeSeriesState: {
         currentVariableID: '45807197',
         currentDateRange: 'P7D'
     }
@@ -252,7 +252,7 @@ describe('TimeSeries module', () => {
                         }
                     }
                 },
-                timeseriesState: {
+                timeSeriesState: {
                     currentVariableID: '45807197',
                     currentDateRange: 'P7D'
                 }
@@ -266,7 +266,7 @@ describe('TimeSeries module', () => {
         it('returns {} if there is no currentVariableId', () => {
             expect(currentVariableTimeSeriesSelector('current')({
                 series: {},
-                timeseriesState: {
+                timeSeriesState: {
                     currentVariableID: null,
                     currentDateRange: 'P7D'
                 }
@@ -369,7 +369,7 @@ describe('TimeSeries module', () => {
     describe('isVisibleSelector', () => {
         it('Returns whether the time series is visible', () => {
             const store = {
-                timeseriesState: {
+                timeSeriesState: {
                     showSeries: {
                         'current': true,
                         'compare': false,
@@ -392,8 +392,8 @@ describe('TimeSeries module', () => {
         it('Returns empty string if no variable selected', () => {
             expect(yLabelSelector({
                 ...TEST_DATA,
-                timeseriesState: {
-                    ...TEST_DATA.timeseriesState,
+                timeSeriesState: {
+                    ...TEST_DATA.timeSeriesState,
                     currentVariableID: null
                 }
             })).toBe('');
@@ -407,8 +407,8 @@ describe('TimeSeries module', () => {
         it('Returns empty string if no variable selected', () => {
             expect(titleSelector({
                 ...TEST_DATA,
-                timeseriesState: {
-                    ...TEST_DATA.timeseriesState,
+                timeSeriesState: {
+                    ...TEST_DATA.timeSeriesState,
                     currentVariableID: null
                 }
             })).toBe('');

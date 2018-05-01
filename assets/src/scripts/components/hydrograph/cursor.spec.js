@@ -151,7 +151,7 @@ const TEST_STATE_THREE_VARS = {
             }
         }
     },
-    timeseriesState: {
+    timeSeriesState: {
         showSeries: {
             current: true,
             compare: false,
@@ -258,7 +258,7 @@ const TEST_STATE_ONE_VAR = {
             }
         }
     },
-    timeseriesState: {
+    timeSeriesState: {
         showSeries: {
             current: true,
             compare: true
@@ -330,13 +330,13 @@ describe('Cursor module', () => {
             const input = div.select('input');
 
             expect(input.classed('active')).toBe(true);
-            expect(store.getState().timeseriesState.cursorOffset).toBe(null);
+            expect(store.getState().timeSeriesState.cursorOffset).toBe(null);
             div.select('input').dispatch('focus');
             expect(input.classed('active')).toBe(true);
-            expect(store.getState().timeseriesState.cursorOffset).not.toBe(null);
+            expect(store.getState().timeSeriesState.cursorOffset).not.toBe(null);
             div.select('input').dispatch('blur');
             expect(input.classed('active')).toBe(true);
-            expect(store.getState().timeseriesState.cursorOffset).toBe(null);
+            expect(store.getState().timeSeriesState.cursorOffset).toBe(null);
         });
     });
 
@@ -364,8 +364,8 @@ describe('Cursor module', () => {
         it('Should return the nearest datum for the selected time series', function() {
             let state = {
                 ...TEST_STATE_ONE_VAR,
-                timeseriesState: {
-                    ...TEST_STATE_ONE_VAR.timeseriesState,
+                timeSeriesState: {
+                    ...TEST_STATE_ONE_VAR.timeSeriesState,
                     cursorOffset: 149 * 60 * 1000
                 }
             };
@@ -377,8 +377,8 @@ describe('Cursor module', () => {
         it('Selects the nearest point for the current variable streamflow', () => {
             const newState = {
                 ...TEST_STATE_THREE_VARS,
-                timeseriesState: {
-                    ...TEST_STATE_THREE_VARS.timeseriesState,
+                timeSeriesState: {
+                    ...TEST_STATE_THREE_VARS.timeSeriesState,
                     currentVariableID: '45807196',
                     cursorOffset: 16 * 60 * 1000
                 }
@@ -396,8 +396,8 @@ describe('Cursor module', () => {
         it('Selects the nearest point for current variable precipitation', () => {
             const newState = {
                 ...TEST_STATE_THREE_VARS,
-                timeseriesState: {
-                    ...TEST_STATE_THREE_VARS.timeseriesState,
+                timeSeriesState: {
+                    ...TEST_STATE_THREE_VARS.timeSeriesState,
                     currentVariableID: '45807140',
                     cursorOffset: 29 * 60 * 1000
                 }

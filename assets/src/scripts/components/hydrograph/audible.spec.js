@@ -45,7 +45,7 @@ const TEST_STATE = {
             }
         }
     },
-    timeseriesState: {
+    timeSeriesState: {
         currentVariableID: '45807197',
         showSeries: {
             current: true,
@@ -81,14 +81,14 @@ describe('audibleUI', () => {
     it('Expects the store to have a playId if the button is clicked', () => {
         container.select('button').dispatch('click');
 
-        expect(store.getState().timeseriesState.audiblePlayId).not.toBeNull();
+        expect(store.getState().timeSeriesState.audiblePlayId).not.toBeNull();
     });
 
     it('Expects the store to have a null playId if the  button is clicked after clicking the once', () => {
         container.select('button').dispatch('click');
         container.select('button').dispatch('click');
 
-        expect(store.getState().timeseriesState.audiblePlayId).toBeNull();
+        expect(store.getState().timeSeriesState.audiblePlayId).toBeNull();
     });
 
 
