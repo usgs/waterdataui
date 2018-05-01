@@ -4,7 +4,7 @@ const { seriesReducer } = require('./seriesReducer');
 describe('seriesReducer', () => {
 
     describe('ADD_TIMESERIES_COLLECTION action', () => {
-        it('Should add the timeseries collection to the series as is if series is empty', () => {
+        it('Should add the time series collection to the series as is if series is empty', () => {
             expect(seriesReducer({}, {
                 type: 'ADD_TIMESERIES_COLLECTION',
                 data : {
@@ -124,7 +124,7 @@ describe('seriesReducer', () => {
             });
         });
 
-        it('If series contains a timeseries the series with the key is reset', () => {
+        it('If series contains a time series the series with the key is reset', () => {
             const result = seriesReducer({
                 timeSeries: {
                     ts: {

@@ -120,7 +120,7 @@ const TEST_STATE = {
             }
         }
     },
-    timeseriesState: {
+    timeSeriesState: {
         currentVariableID: '45807197',
         currentDateRange: 'P7D',
         showSeries: {
@@ -143,7 +143,7 @@ describe('Hydrograph charting module', () => {
         let component = body.append('div')
             .attr('id', 'hydrograph');
         component.append('div').attr('class', 'graph-container');
-        component.append('div').attr('class', 'select-timeseries-container');
+        component.append('div').attr('class', 'select-time-series-container');
         component.append('div').attr('class', 'provisional-data-alert');
 
         graphNode = document.getElementById('hydrograph');
@@ -179,7 +179,7 @@ describe('Hydrograph charting module', () => {
         });
 
         it('should have a style tag if there is no data', () => {
-            const store = configureStore({series: {timeseries: {}}});
+            const store = configureStore({series: {timeSeries: {}}});
             select(graphNode)
                 .call(provide(store))
                 .call(timeSeriesGraph);
@@ -238,7 +238,7 @@ describe('Hydrograph charting module', () => {
                         }
                     }
                 },
-                timeseriesState: {
+                timeSeriesState: {
                     showSeries: {
                         current: true,
                         compare: true,
@@ -264,7 +264,7 @@ describe('Hydrograph charting module', () => {
         });
 
         it('should have a title div', () => {
-            const titleDiv = selectAll('.timeseries-graph-title');
+            const titleDiv = selectAll('.time-series-graph-title');
             expect(titleDiv.size()).toBe(1);
             expect(titleDiv.text()).toEqual('Test title for 00060');
         });
@@ -275,7 +275,7 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('defs pattern').size()).toBe(2);
         });
 
-        it('should render timeseries data as a line', () => {
+        it('should render time series data as a line', () => {
             // There should be one segment per time-series. Each is a single
             // point, so should be a circle.
             expect(selectAll('.hydrograph-svg .line-segment').size()).toBe(2);
@@ -323,13 +323,13 @@ describe('Hydrograph charting module', () => {
         });
 
         it('Should have four legend markers after the compare time series is removed', () => {
-            store.dispatch(Actions.toggleTimeseries('compare', false));
+            store.dispatch(Actions.toggleTimeSeries('compare', false));
             expect(selectAll('.legend g').size()).toBe(4);
         });
 
         it('Should have two legend marker after the compare and median time series are removed', () => {
-            store.dispatch(Actions.toggleTimeseries('compare', false));
-            store.dispatch(Actions.toggleTimeseries('median', false));
+            store.dispatch(Actions.toggleTimeSeries('compare', false));
+            store.dispatch(Actions.toggleTimeSeries('median', false));
             expect(selectAll('.legend g').size()).toBe(2);
         });
     });
@@ -349,7 +349,7 @@ describe('Hydrograph charting module', () => {
         });
 
         it('Should render the compare toggle unchecked', () => {
-            store.dispatch(Actions.toggleTimeseries('compare', false));
+            store.dispatch(Actions.toggleTimeSeries('compare', false));
             const checkbox = select('#last-year-checkbox');
             expect(checkbox.size()).toBe(1);
             expect(checkbox.property('checked')).toBe(false);
@@ -369,7 +369,7 @@ describe('Hydrograph charting module', () => {
         });
 
         it('Should remove the lines when removing the compare time series', () => {
-            store.dispatch(Actions.toggleTimeseries('compare', false));
+            store.dispatch(Actions.toggleTimeSeries('compare', false));
             expect(selectAll('#ts-compare-group .line-segment').size()).toBe(0);
         });
     });
@@ -386,8 +386,8 @@ describe('Hydrograph charting module', () => {
             let store = configureStore({
                 ...TEST_STATE,
                 series: {},
-                timeseriesState: {
-                    ...TEST_STATE.timeseriesState,
+                timeSeriesState: {
+                    ...TEST_STATE.timeSeriesState,
                     currentVariableID: ''
                 }
             });
@@ -412,13 +412,13 @@ describe('Hydrograph charting module', () => {
             expect(dateRangeContainer.selectAll('input[type=radio]').size()).toBe(3);
         });
 
-        it('Expects to retrieve the extended timeseries when the radio buttons are change', () => {
-            spyOn(Actions, 'retrieveExtendedTimeseries');
+        it('Expects to retrieve the extended time series when the radio buttons are change', () => {
+            spyOn(Actions, 'retrieveExtendedTimeSeries');
             let lastRadio = select(graphNode).select('#one-year');
             lastRadio.attr('checked', true);
             lastRadio.dispatch('change');
 
-            expect(Actions.retrieveExtendedTimeseries).toHaveBeenCalledWith('12345678', 'P1Y');
+            expect(Actions.retrieveExtendedTimeSeries).toHaveBeenCalledWith('12345678', 'P1Y');
         });
     });
 });

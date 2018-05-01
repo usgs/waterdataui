@@ -80,7 +80,7 @@ describe('Charting scales', () => {
         it('Creates a scale when there is no initial data', () => {
             expect(yScaleSelector({
                 series: {},
-                timeseriesState: {
+                timeSeriesState: {
                     showSeries: false,
                     currentVariableID: null
                 },
@@ -105,7 +105,7 @@ describe('Charting scales', () => {
                         '00060ID': {}
                     }
                 },
-                timeseriesState: {
+                timeSeriesState: {
                     showSeries: false,
                     currentVariableID: '00060ID'
                 },

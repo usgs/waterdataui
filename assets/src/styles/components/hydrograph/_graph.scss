@@ -25,12 +25,12 @@ svg {
     .line-segment {
         fill: none;
         stroke-width: 3px;
-        stroke: $default-timeseries;
+        stroke: $default-time-series;
         &.approved {
-            stroke: $approved-timeseries;
+            stroke: $approved-time-series;
         }
         &.estimated {
-            stroke: $estimated-timeseries;
+            stroke: $estimated-time-series;
             stroke-dasharray: 1, 3;
         }
     }
