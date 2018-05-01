@@ -304,10 +304,10 @@ describe('drawingData module', () => {
                                 qualifiers: ['P']
                             }, {
                                 value: 10,
-                                qualifiers: ['P', 'E']
+                                qualifiers: ['P', 'e']
                             }, {
                                 value: 10,
-                                qualifiers: ['P', 'E']
+                                qualifiers: ['P', 'e']
                             }],
                             tsKey: 'current:P7D'
                         },
@@ -345,14 +345,14 @@ describe('drawingData module', () => {
                                 'value': 10,
                                 'qualifiers': [
                                     'P',
-                                    'E'
+                                    'e'
                                 ]
                             },
                             {
                                 'value': 10,
                                 'qualifiers': [
                                     'P',
-                                    'E'
+                                    'e'
                                 ]
                             }
                         ]
@@ -662,7 +662,7 @@ describe('drawingData module', () => {
                 approved: true,
                 estimated: false
             });
-            expect(classesForPoint({qualifiers: ['E','G']})).toEqual({
+            expect(classesForPoint({qualifiers: ['e','G']})).toEqual({
                 approved: false,
                 estimated: true
             });
