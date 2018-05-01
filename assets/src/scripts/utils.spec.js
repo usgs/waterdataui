@@ -1,6 +1,7 @@
 const { select } = require('d3-selection');
 
-const { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities, setEquality, wrap, mediaQuery } = require('./utils');
+const { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities,
+    setEquality, wrap, mediaQuery, calcStartTime } = require('./utils');
 
 
 describe('Utils module', () => {
@@ -141,5 +142,22 @@ describe('Utils module', () => {
             expect(typeof mediaQuery(100)).toEqual('boolean');
             expect(typeof mediaQuery(200)).toEqual('boolean');
         }) ;
+    });
+
+    describe('calcStartTime', () => {
+
+        const someDate = new Date(2017, 2, 26, 16, 15, 0);
+
+        it('correctly handles a seven day interval', () => {
+            expect(calcStartTime('P7D', someDate)).toEqual(new Date(2017, 2, 19, 16, 15, 0));
+        });
+
+        it('correctly handles a 30 day interval', () => {
+            expect(calcStartTime('P30D', someDate)).toEqual(new Date(2017, 1, 24, 16, 15, 0));
+        });
+
+        it('correctly handles a year interval', () => {
+            expect(calcStartTime('P1Y', someDate)).toEqual(new Date(2016, 2, 26, 16, 15, 0));
+        });
     });
 });
