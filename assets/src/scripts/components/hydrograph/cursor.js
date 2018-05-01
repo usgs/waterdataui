@@ -79,7 +79,7 @@ export const getNearestTime = function(data, time) {
 /*
  * Returns a function that the time series data point nearest the tooltip focus time for the given timeseries
  * @param {Object} state - Redux store
- * @param String} tsKey - TimeSeries key
+ * @param String} tsKey - Time series key
  * @return {Object}
  */
 export const tsCursorPointsSelector = memoize(tsKey => createSelector(

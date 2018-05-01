@@ -51,7 +51,7 @@ const updateFocusLine = function(elem, {cursorTime, yScale, xScale}) {
  * where the y-value is finite; no use in making a point if y is Infinity.
  *
  * @param {Object} state - Redux store
- * @param String} tsKey - TimeSeries key
+ * @param String} tsKey - Time series key
  * @return {Object}
  */
 const tooltipPointsSelector = memoize(tsKey => createSelector(

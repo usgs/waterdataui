@@ -137,7 +137,7 @@ export const currentVariablePointsSelector = memoize(tsKey => createSelector(
  * Returns a selector that, for a given tsKey:
  * Returns an array of time points for all time series.
  * @param  {Object} state     Redux store
- * @param  {String} tsKey     TimeSeries key
+ * @param  {String} tsKey     Time series key
  * @return {Array}            Array of array of points.
  */
 export const pointsSelector = memoize((tsKey) => createSelector(
@@ -209,7 +209,7 @@ export const visiblePointsSelector = createSelector(
  * Factory function creates a function that, for a given tsKey:
  * Returns all point data as an array of [value, time, qualifiers].
  * @param {Object} state - Redux store
- * @param {String} tsKey - time series key
+ * @param {String} tsKey - Time series key
  * @param {Object} - keys are ts id, values are an array of points where each point is an Array as follows:  [value, time, qualifiers].
  */
 export const pointsTableDataSelector = memoize(tsKey => createSelector(
@@ -249,7 +249,7 @@ const getLineClasses = function(pt) {
  * Factory function creates a function that:
  * Returns all points in a time series grouped into line segments, for each time series.
  * @param  {Object} state     Redux store
- * @param  {String} tsKey TimeSeries key
+ * @param  {String} tsKey Time series key
  * @return {Object}  Keys are ts Ids, values are  of array of line segments.
  */
 export const lineSegmentsSelector = memoize((tsKey, period) => createSelector(

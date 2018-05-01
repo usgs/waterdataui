@@ -40,7 +40,7 @@ export const getCurrentParmCd = createSelector(
 );
 
 /*
- * @param {String} - time series key: current, compre or median
+ * @param {String} - Time series key: current, compre or median
  * @param {String} or null period = date range of interest as an ISO-8601 duration. If null the currentDateRange is used
  * @param {String} or null parmCD - if null the parmCd of the current variable is used.
  * @return {String} or null - Return the the request key for the request object
