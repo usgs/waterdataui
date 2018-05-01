@@ -27,7 +27,7 @@ const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 const { coerceStatisticalSeries } = require('./statistics');
 
-const { getCurrentVariable } = require('../../selectors/timeSeriesSelector');
+const { getCurrentVariable, getCurrentDateRange } = require('../../selectors/timeSeriesSelector');
 
 
 const drawMessage = function (elem, message) {
@@ -257,19 +257,16 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLa
  * @param  {Boolean} showLabel
  * @param  {Object} variable
  */
-const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap, showLabel, variable}) {
+const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap, showLabel, variable, dateRange}) {
     elem.select('#median-points').remove();
-
     if (!visible) {
         return;
     }
     const container = elem
         .append('g')
             .attr('id', 'median-points');
-    console.log(seriesMap);
     for (const [index, seriesID] of Object.keys(seriesMap).entries()) {
-        console.log(seriesMap[seriesID]);
-        const points = coerceStatisticalSeries(seriesMap[seriesID]);
+        const points = coerceStatisticalSeries(seriesMap[seriesID], dateRange);
         plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points, showLabel, variable});
     }
 };
@@ -347,6 +344,7 @@ const timeSeriesGraph = function (elem) {
                         yscale: yScaleSelector,
                         seriesMap: currentVariableTimeSeriesSelector('median'),
                         variable: getCurrentVariable,
+                        dateRange: getCurrentDateRange,
                         showLabel: (state) => state.timeseriesState.showMedianStatsLabel
                     })));
             });

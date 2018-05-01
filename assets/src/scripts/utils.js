@@ -154,3 +154,28 @@ export function wrap(text, width, break_chars=TEXT_WRAP_BREAK_CHARS) {
 export const mediaQuery = function (minWidth) {
     return window.matchMedia(`screen and (min-width: ${minWidth}px)`).matches;
 };
+
+/**
+ * Calculate the start time of a time range based on a time-delta string and the end time
+ *
+ * @param period -- an NWIS time-delta string (e.g. P7D)
+ * @param endTime -- the end time
+ * @returns {Date}
+ */
+export const calcStartTime = function (period, endTime) {
+    let startTime = new Date(endTime);
+    switch (period) {
+        case 'P7D':
+            startTime.setDate(startTime.getDate() - 7);
+            break;
+        case 'P30D':
+            startTime.setDate(startTime.getDate() - 30);
+            break;
+        case 'P1Y':
+            startTime.setFullYear(startTime.getFullYear() - 1);
+            break;
+        default:
+            console.log('No known period specified');
+    }
+    return startTime;
+};

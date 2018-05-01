@@ -1,5 +1,6 @@
 const { range } = require('lodash');
 const { isLeapYear } = require('../../models');
+const { calcStartTime } = require('../../utils');
 
 /**
  * Make statisical data look like a timeseries for plotting purposes
@@ -7,8 +8,9 @@ const { isLeapYear } = require('../../models');
  * @param series -- an object with the following keys: points, startTime, and endTime at a minimum. Each point should have a javascript month and day
  * @returns {*[]}
  */
-export const coerceStatisticalSeries = function (series) {
-    const startYear = series.startTime.getFullYear();
+export const coerceStatisticalSeries = function (series, period) {
+    const startTime = calcStartTime(period, series.endTime);
+    const startYear = startTime.getFullYear();
     const endYear = series.endTime.getFullYear();
     const yearRange = range(startYear, endYear + 1);
     let points = series.points;
@@ -31,11 +33,9 @@ export const coerceStatisticalSeries = function (series) {
     let sortedPoints = plotablePoints.sort(function(a, b) {
         return a.dateTime - b.dateTime;
     });
-    console.log(series.startTime);
-    console.log(series.endTime);
-    let filtered = sortedPoints.filter(x => series.startTime <= x.dateTime && x.dateTime <= series.endTime);
+    let filtered = sortedPoints.filter(x => startTime <= x.dateTime && x.dateTime <= series.endTime);
     let first = filtered[0];
-    if (first.dateTime > series.startTime) {
+    if (first.dateTime > startTime) {
         let previousIndex;
         if (sortedPoints.indexOf(first) === 0) {
             previousIndex = sortedPoints.length - 1;
@@ -44,7 +44,7 @@ export const coerceStatisticalSeries = function (series) {
         }
         const previousVal = sortedPoints[previousIndex];
         let leftVal = Object.assign({}, previousVal);
-        leftVal.dateTime = series.startTime;
+        leftVal.dateTime = startTime;
         filtered.unshift(leftVal);
     }
     let last = filtered[filtered.length - 1];
@@ -53,6 +53,5 @@ export const coerceStatisticalSeries = function (series) {
         rightVal.dateTime = series.endTime;
         filtered.push(rightVal);
     }
-    console.log(filtered);
     return filtered;
 };

@@ -6,6 +6,7 @@ const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
     parseMedianData, sortedParameters } = require('../models');
+const { calcStartTime } = require('../utils');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
 const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey} = require('../selectors/timeSeriesSelector');
@@ -116,22 +117,8 @@ export const Actions = {
             dispatch(Actions.setCurrentDateRange(period));
             if (!hasTimeSeries('current', period, parmCd)(state)) {
                 const endTime = new Date(); //TODO get this from the current data
-                let startTime = new Date(endTime);
+                let startTime = calcStartTime(period, endTime);
 
-                switch (period) {
-                    case 'P7D':
-                        break;
-                    case 'P30D':
-                        startTime.setDate(startTime.getDate() - 30);
-                        break;
-
-                    case 'P1Y': {
-                        startTime.setFullYear(startTime.getFullYear() - 1);
-                        break;
-                    }
-                    default:
-                        console.log('No known period specified');
-                }
                 return getTimeseries({
                     sites: [site],
                     params: [parmCd],
