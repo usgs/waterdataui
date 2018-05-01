@@ -6,9 +6,9 @@ const { createSelector } = require('reselect');
  */
 export const getVariables = state => state.series.variables ? state.series.variables : null;
 
-export const getCurrentVariableID = state => state.timeseriesState.currentVariableID;
+export const getCurrentVariableID = state => state.timeSeriesState.currentVariableID;
 
-export const getCurrentDateRange = state => state.timeseriesState.currentDateRange;
+export const getCurrentDateRange = state => state.timeSeriesState.currentDateRange;
 
 export const getMethods = state => state.series.methods ? state.series.methods : null;
 

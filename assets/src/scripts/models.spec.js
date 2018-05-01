@@ -1,6 +1,6 @@
 let proxyquire = require('proxyquireify')(require);
 
-const { isLeapYear, mergeMedianTimeseries, parseRDB, sortedParameters } = require('./models');
+const { isLeapYear, mergeMedianTimeSeries, parseRDB, sortedParameters } = require('./models');
 
 
 describe('Models module', () => {
@@ -27,20 +27,20 @@ describe('Models module', () => {
         });
 
         it('Get url includes paramCds and sites', () => {
-            models.getTimeseries({sites: [siteID], params: [paramCode]});
+            models.getTimeSeries({sites: [siteID], params: [paramCode]});
             expect(ajaxMock.get).toHaveBeenCalled();
             let ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
             expect(ajaxUrl).toContain('sites=' + siteID);
             expect(ajaxUrl).toContain('parameterCd=' + paramCode);
 
-            models.getTimeseries({sites: [siteID, '12345678'], params: [paramCode, '00080']});
+            models.getTimeSeries({sites: [siteID, '12345678'], params: [paramCode, '00080']});
             ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
             expect(ajaxUrl).toContain('sites=' + siteID + ',12345678');
             expect(ajaxUrl).toContain('parameterCd=' + paramCode + ',00080');
         });
 
         it('Get url includes has the default time period if startDate and endDate are null', () => {
-            models.getTimeseries({sites: [siteID], params: [paramCode]});
+            models.getTimeSeries({sites: [siteID], params: [paramCode]});
             let ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
             expect(ajaxUrl).toContain('period=P7D');
             expect(ajaxUrl).not.toContain('startDT');
@@ -50,7 +50,7 @@ describe('Models module', () => {
         it('Get url includes startDT and endDT when startDate and endDate are non-null', () =>{
             const startDate = new Date('2018-01-02T15:00:00.000-06:00');
             const endDate = new Date('2018-01-02T16:45:00.000-06:00');
-            models.getTimeseries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
+            models.getTimeSeries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
             let ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
             expect(ajaxUrl).not.toContain('period=P7D');
             expect(ajaxUrl).toContain('startDT=2018-01-02T21:00');
@@ -58,24 +58,24 @@ describe('Models module', () => {
         });
 
         it('Uses current data service root if data requested is less than 120 days old', () => {
-            models.getTimeseries({sites: [siteID], params: [paramCode]});
+            models.getTimeSeries({sites: [siteID], params: [paramCode]});
             expect(ajaxMock.get.calls.mostRecent().args[0]).toContain('https://waterservices.usgs.gov/nwis');
 
             const startDate = new Date() - 110;
             const endDate = new Date() - 10;
-            models.getTimeseries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
+            models.getTimeSeries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
             expect(ajaxMock.get.calls.mostRecent().args[0]).toContain('https://waterservices.usgs.gov/nwis');
         });
 
         it('Uses nwis data service root if data requested is more than 120 days old', () => {
             const startDate = new Date() - 121;
             const endDate = new Date() - 10;
-            models.getTimeseries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
+            models.getTimeSeries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
             expect(ajaxMock.get.calls.mostRecent().args[0]).toContain('https://nwis.waterservices.usgs.gov/nwis');
         });
     });
 
-    describe('getPreviousYearTimeseries', () => {
+    describe('getPreviousYearTimeSeries', () => {
         let ajaxMock;
         let models;
 
@@ -98,7 +98,7 @@ describe('Models module', () => {
         });
 
         it('Retrieves data using the startDT and endDT parameters', () => {
-            models.getPreviousYearTimeseries({site: siteID, startTime: startDate, endTime: endDate});
+            models.getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate});
             expect(ajaxMock.get).toHaveBeenCalled();
             const ajaxArg = ajaxMock.get.calls.mostRecent().args[0];
             expect(ajaxArg).toContain('startDT=2017-01-02T21:00');
@@ -106,7 +106,7 @@ describe('Models module', () => {
         });
 
         it('Parses valid data', () => {
-            models.getPreviousYearTimeseries({site: siteID, startTime: startDate, endTime: endDate}).then((series) => {
+            models.getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate}).then((series) => {
                 // This returns the JSON version of the mocked response, so
                 // just do a sanity check on an attribute.
                 expect(series.name).toBe('ns1:timeSeriesResponseType');
@@ -133,7 +133,7 @@ describe('Models module', () => {
         });
     });
 
-    describe('parseMedianTimeseries', () => {
+    describe('parseMedianTimeSeries', () => {
 
         const startDate = new Date(2018, 0, 10);
         const endDate = new Date(2018, 0, 13);
@@ -141,7 +141,7 @@ describe('Models module', () => {
         const leapEndDate = new Date(2016, 2, 14);
 
         it('parseMedian data successfully constructs data for plotting', () => {
-            const collection = mergeMedianTimeseries({}, MOCK_MEDIAN_DATA, startDate, endDate, MOCK_MEDIAN_VARIABLES);
+            const collection = mergeMedianTimeSeries({}, MOCK_MEDIAN_DATA, startDate, endDate, MOCK_MEDIAN_VARIABLES);
             expect(collection).toEqual({
                 timeSeries: {
                     '00060:153885:median': {
@@ -191,7 +191,7 @@ describe('Models module', () => {
         });
 
         it('parseMedian data includes leap year when appropriate', () => {
-            const collection = mergeMedianTimeseries({}, MOCK_MEDIAN_DATA, leapStartDate, leapEndDate, MOCK_MEDIAN_VARIABLES);
+            const collection = mergeMedianTimeSeries({}, MOCK_MEDIAN_DATA, leapStartDate, leapEndDate, MOCK_MEDIAN_VARIABLES);
             expect(collection).toEqual({
                 timeSeries: {
                     '00060:153885:median': {

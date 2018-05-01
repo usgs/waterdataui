@@ -1,14 +1,14 @@
 const { select } = require('d3-selection');
 const { scaleLinear } = require('d3-scale');
 
-const { addSparkLine, availableTimeseriesSelector, plotSeriesSelectTable } = require('./parameters');
+const { addSparkLine, availableTimeSeriesSelector, plotSeriesSelectTable } = require('./parameters');
 
 
 describe('Parameters module', () => {
 
-    describe('availableTimeseriesSelector', () => {
+    describe('availableTimeSeriesSelector', () => {
         it('sets attributes correctly when all series have data points', () => {
-            const available = availableTimeseriesSelector({
+            const available = availableTimeSeriesSelector({
                 series: {
                     timeSeries: {
                         'current:00060': {description: '00060', tsKey: 'current:P7D', variable: 'code0', points: [{x: 1, y: 2}]},
@@ -49,20 +49,20 @@ describe('Parameters module', () => {
                         }
                     }
                 },
-                timeseriesState: {
+                timeSeriesState: {
                     currentVariableID: 'code0'
                 }
             });
             // Series are ordered by parameter code and have expected values.
             expect(available).toEqual([
-                ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeseriesCount: 1}],
-                ['00061', {variableID: 'code1', description: 'code1 desc', selected: false, currentTimeseriesCount: 1}],
-                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1}]
+                ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeSeriesCount: 1}],
+                ['00061', {variableID: 'code1', description: 'code1 desc', selected: false, currentTimeSeriesCount: 1}],
+                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeSeriesCount: 1}]
             ]);
         });
 
         it('sets attributes correctly when not all series have data points', () => {
-            const available = availableTimeseriesSelector({
+            const available = availableTimeSeriesSelector({
                 series: {
                     timeSeries: {
                         'current:00060': {description: '00060', tsKey: 'current:P7D', variable: 'code0', points: [{x: 1, y: 2}]},
@@ -103,20 +103,20 @@ describe('Parameters module', () => {
                         }
                     }
                 },
-                timeseriesState: {
+                timeSeriesState: {
                     currentVariableID: 'code0'
                 }
             });
             // Series are ordered by parameter code and have expected values.
             expect(available).toEqual([
-                ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeseriesCount: 1}],
-                ['00061', {variableID: 'code1', description: 'code1 desc', selected: false, currentTimeseriesCount: 1}],
-                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1}]
+                ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeSeriesCount: 1}],
+                ['00061', {variableID: 'code1', description: 'code1 desc', selected: false, currentTimeSeriesCount: 1}],
+                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeSeriesCount: 1}]
             ]);
         });
 
         it('timeseries without data points are considered unavailable', () => {
-            const available = availableTimeseriesSelector({
+            const available = availableTimeSeriesSelector({
                 series: {
                     timeSeries: {
                         'current:00060': {description: '00060', tsKey: 'current:P7D', variable: 'code0', points: [{x: 1, y: 2}]},
@@ -157,14 +157,14 @@ describe('Parameters module', () => {
                         }
                     }
                 },
-                timeseriesState: {
+                timeSeriesState: {
                     currentVariableID: 'code0'
                 }
             });
             // Series are ordered by parameter code and have expected values.
             expect(available).toEqual([
-                ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeseriesCount: 1}],
-                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeseriesCount: 1}]
+                ['00060', {variableID: 'code0', description: 'code0 desc', selected: true, currentTimeSeriesCount: 1}],
+                ['00062', {variableID: 'code2', description: 'code2 desc', selected: false, currentTimeSeriesCount: 1}]
             ]);
         });
     });
@@ -180,10 +180,10 @@ describe('Parameters module', () => {
             };
         });
 
-        const availableTimeseries = [
-            ['00010', {variableID: '00010ID', description: 'Temperature', selected: true, currentTimeseriesCount: 1}],
-            ['00067', {variableID: '00067ID', description: 'Ruthenium (VI) Fluoride', selected: false, currentTimeseriesCount: 1}],
-            ['00093', {variableID: '00093ID', description: 'Uranium (V) Oxide', selected: false, currentTimeseriesCount: 1}]
+        const availableTimeSeries = [
+            ['00010', {variableID: '00010ID', description: 'Temperature', selected: true, currentTimeSeriesCount: 1}],
+            ['00067', {variableID: '00067ID', description: 'Ruthenium (VI) Fluoride', selected: false, currentTimeSeriesCount: 1}],
+            ['00093', {variableID: '00093ID', description: 'Uranium (V) Oxide', selected: false, currentTimeSeriesCount: 1}]
         ];
 
         const lineSegmentsByParmCd = {
@@ -198,13 +198,13 @@ describe('Parameters module', () => {
 
         const testArgsWithData = {
             siteno: '12345678',
-            availableTimeseries: availableTimeseries,
+            availableTimeSeries: availableTimeSeries,
             lineSegmentsByParmCd: lineSegmentsByParmCd,
             timeSeriesScalesByParmCd: timeSeriesScalesByParmCd
         };
 
         const testArgsWithoutData = {
-            availableTimeseries: [],
+            availableTimeSeries: [],
             lineSegmentsByParmCd: {},
             timeSeriesScalesByParmCd: {}
         };

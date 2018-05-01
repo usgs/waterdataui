@@ -3,54 +3,54 @@
  * Case reducers
  */
 
-const toggleTimeseries = function(timeseriesState, action) {
+const toggleTimeSeries = function(timeSeriesState, action) {
     return {
-        ...timeseriesState,
+        ...timeSeriesState,
         showSeries: {
-            ...timeseriesState.showSeries,
+            ...timeSeriesState.showSeries,
             [action.key]: action.show
         }
     };
 };
 
-const setCurrentVariable = function(timeseriesState, action) {
+const setCurrentVariable = function(timeSeriesState, action) {
     return {
-        ...timeseriesState,
+        ...timeSeriesState,
         currentVariableID: action.variableID
     };
 };
 
-const setCurrentDateRange = function(timeseriesState, action) {
+const setCurrentDateRange = function(timeSeriesState, action) {
     return {
-        ...timeseriesState,
+        ...timeSeriesState,
         currentDateRange: action.period
     };
 };
 
-const showMedianStatsLabel = function(timeseriesState, action) {
+const showMedianStatsLabel = function(timeSeriesState, action) {
     return {
-        ...timeseriesState,
+        ...timeSeriesState,
         showMedianStatsLabel: action.show
     };
 };
 
-const setCursorOffset = function(timeseriesState, action) {
+const setCursorOffset = function(timeSeriesState, action) {
     return {
-        ...timeseriesState,
+        ...timeSeriesState,
         cursorOffset: action.cursorOffset
     };
 };
 
-const timeseriesPlayOn = function(timeseriesState, action) {
+const timeSeriesPlayOn = function(timeSeriesState, action) {
     return {
-        ...timeseriesState,
+        ...timeSeriesState,
         audiblePlayId: action.playId
     };
 };
 
-const timeseriesPlayStop = function(timeseriesState) {
+const timeSeriesPlayStop = function(timeSeriesState) {
     return {
-        ...timeseriesState,
+        ...timeSeriesState,
         audiblePlayId: null
     };
 };
@@ -58,15 +58,15 @@ const timeseriesPlayStop = function(timeseriesState) {
 /*
  * Slice reducer
  */
-export const timeseriesStateReducer = function(timeseriesState={}, action) {
+export const timeSeriesStateReducer = function(timeSeriesState={}, action) {
     switch (action.type) {
-        case 'TOGGLE_TIMESERIES' : return toggleTimeseries(timeseriesState, action);
-        case 'SET_CURRENT_VARIABLE': return setCurrentVariable(timeseriesState, action);
-        case 'SET_CURRENT_DATE_RANGE': return setCurrentDateRange(timeseriesState, action);
-        case 'SHOW_MEDIAN_STATS_LABEL': return showMedianStatsLabel(timeseriesState, action);
-        case 'SET_CURSOR_OFFSET': return setCursorOffset(timeseriesState, action);
-        case 'TIMESERIES_PLAY_ON': return timeseriesPlayOn(timeseriesState, action);
-        case 'TIMESERIES_PLAY_STOP': return timeseriesPlayStop(timeseriesState, action);
-        default: return timeseriesState;
+        case 'TOGGLE_TIMESERIES' : return toggleTimeSeries(timeSeriesState, action);
+        case 'SET_CURRENT_VARIABLE': return setCurrentVariable(timeSeriesState, action);
+        case 'SET_CURRENT_DATE_RANGE': return setCurrentDateRange(timeSeriesState, action);
+        case 'SHOW_MEDIAN_STATS_LABEL': return showMedianStatsLabel(timeSeriesState, action);
+        case 'SET_CURSOR_OFFSET': return setCursorOffset(timeSeriesState, action);
+        case 'TIMESERIES_PLAY_ON': return timeSeriesPlayOn(timeSeriesState, action);
+        case 'TIMESERIES_PLAY_STOP': return timeSeriesPlayStop(timeSeriesState, action);
+        default: return timeSeriesState;
     }
 };

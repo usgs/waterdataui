@@ -110,7 +110,7 @@ const TEST_DATA = {
             }
         }
     },
-    timeseriesState: {
+    timeSeriesState: {
         currentVariableID: '45807197',
         currentDateRange: 'P7D'
     }
@@ -644,7 +644,7 @@ describe('drawingData module', () => {
                         }
                     }
                 },
-                timeseriesState: {
+                timeSeriesState: {
                     currentVariableID: '45807197',
                     currentDateRange: 'P7D'
                 }
@@ -700,8 +700,8 @@ describe('drawingData module', () => {
                     }
                 }
             },
-            timeseriesState: {
-                ...TEST_DATA.timeseriesState,
+            timeSeriesState: {
+                ...TEST_DATA.timeSeriesState,
                 showSeries: {
                     'current': true,
                     'compare': true,
@@ -717,8 +717,8 @@ describe('drawingData module', () => {
         it('Expects one array if only median is not visible', () => {
             const newTestData = {
                 ...testData,
-                timeseriesState: {
-                    ...testData.timeseriesState,
+                timeSeriesState: {
+                    ...testData.timeSeriesState,
                     showSeries: {
                         'current': true,
                         'compare': true,
@@ -733,8 +733,8 @@ describe('drawingData module', () => {
         it('Expects an empty array if no visible series has the current variable', () => {
             const newTestData = {
                 ...testData,
-                timeseriesState: {
-                    ...testData.timeseriesState,
+                timeSeriesState: {
+                    ...testData.timeSeriesState,
                     currentVariableID: '11111111'
                 }
             };
@@ -787,7 +787,7 @@ describe('drawingData module', () => {
                         }
                     }
                 },
-                timeseriesState: {
+                timeSeriesState: {
                     currentVariableID: '45807197',
                     currentDateRange: 'P7D',
                     showSeries: {
