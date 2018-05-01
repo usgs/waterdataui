@@ -17,12 +17,14 @@ install:
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
+  - mkdir coverage
 
 script:
-  - wdfn-server/env/bin/coverage run --omit=wdfn-server/waterdata/tests/*.py,/home/travis/virtualenv/* -m pytest wdfn-server/waterdata
+  - wdfn-server/env/bin/coverage run --omit=wdfn-server/waterdata/tests/*.py,wdfn-server/env/* -m pytest wdfn-server/waterdata
   - cd assets && npm run test
 
 after_success:
-  - find coverage/ -mindepth 2 -iname '*.info' -exec cp -t coverage/ '{}' +
+  - cd ../
+  - find assets/coverage/ -mindepth 2 -iname '*.info' -exec cp -t coverage/ '{}' +
   - coveralls-lcov -v -n coverage/lcov.info > coverage/coverage.json
-  - coveralls --merge=coverage/coverage.json
+  - wdfn-server/env/bin/coveralls --merge=coverage/coverage.json

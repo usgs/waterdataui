@@ -8,7 +8,7 @@ const { getMedianStatistics, getPreviousYearTimeSeries, getTimeSeries,
     parseMedianData, sortedParameters } = require('../models');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
-const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey} = require('../selectors/timeSeriesSelector');
+const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange } = require('../selectors/timeSeriesSelector');
 
 const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
@@ -61,7 +61,7 @@ export const Actions = {
                     startTime.setDate(endTime.getDate() - notes['filter:timeRange'].periodDays);
 
                     // Trigger a call to get last year's data
-                    dispatch(Actions.retrieveCompareTimeSeries(siteno, startTime, endTime));
+                    dispatch(Actions.retrieveCompareTimeSeries(siteno, 'P7D', startTime, endTime));
 
                     // Update the series data for the 'current' series
                     dispatch(Actions.addSeriesCollection('current', collection));
@@ -95,16 +95,15 @@ export const Actions = {
             });
         };
     },
-    retrieveCompareTimeSeries(site, startTime, endTime) {
+    retrieveCompareTimeSeries(site, period, startTime, endTime) {
         return function (dispatch, getState) {
             return getPreviousYearTimeSeries({site, startTime, endTime}).then(
                 series => {
-                    const requestKey = getTsRequestKey('compare', 'P7D')(getState());
+                    const requestKey = getTsRequestKey('compare', period)(getState());
                     const collection = normalize(series, requestKey);
                     dispatch(Actions.addSeriesCollection(requestKey, collection));
-                    dispatch(Actions.toggleTimeSeries('compare', false));
                 },
-                () => dispatch(Actions.resetTimeSeries(getTsRequestKey('compare', 'P7D')(getState())))
+                () => dispatch(Actions.resetTimeSeries(getTsRequestKey('compare', period)(getState())))
             );
         };
     },
@@ -115,7 +114,7 @@ export const Actions = {
             const requestKey = getTsRequestKey ('current', period, parmCd)(state);
             dispatch(Actions.setCurrentDateRange(period));
             if (!hasTimeSeries('current', period, parmCd)(state)) {
-                const endTime = new Date(); //TODO get this from the current data
+                const endTime = new Date(getRequestTimeRange('current', 'P7D')(state).end);
                 let startTime = new Date(endTime);
 
                 switch (period) {
@@ -141,6 +140,7 @@ export const Actions = {
                     series => {
                         const collection = normalize(series, requestKey);
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
+                        dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
                     },
                     () => {
                         console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);

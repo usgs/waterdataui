@@ -23,6 +23,30 @@ describe('Redux store', () => {
                             'value': '00010'
                         }
                     }
+                },
+                queryInfo: {
+                    'current:P7D': {
+                        notes: {
+                            requestDT: new Date('2017-03-31'),
+                            'filter:timeRange': {
+                                mode: 'PERIOD',
+                                periodDays: 7,
+                                modifiedSince: null
+                            }
+                        }
+                    },
+                    'current:P30D:00060': {
+                        notes: {
+                            requestDT: new Date('2017-03-31'),
+                            'filter:timeRange': {
+                                mode: 'RANGE',
+                                interval: {
+                                    start: new Date('2017-03-01'),
+                                    end: new Date('2017-03-31')
+                                }
+                            }
+                        }
+                    }
                 }
             },
             timeSeriesState: {
@@ -218,7 +242,7 @@ describe('Redux store', () => {
             });
 
             it('Fetches the previous year\'s time series', () => {
-                store.Actions.retrieveCompareTimeSeries(SITE_NO, START_DATE, END_DATE)(mockDispatch, mockGetState);
+                store.Actions.retrieveCompareTimeSeries(SITE_NO, 'P7D', START_DATE, END_DATE)(mockDispatch, mockGetState);
 
                 expect(modelsMock.getPreviousYearTimeSeries.calls.count()).toBe(1);
                 expect(modelsMock.getPreviousYearTimeSeries.calls.argsFor(0)[0]).toEqual({
@@ -231,13 +255,11 @@ describe('Redux store', () => {
             it('Dispatches the action to add the compare time series and to set its visibility to false', (done) => {
                 spyOn(store.Actions, 'addSeriesCollection');
                 spyOn(store.Actions, 'toggleTimeSeries');
-                let p = store.Actions.retrieveCompareTimeSeries(SITE_NO, START_DATE, END_DATE)(mockDispatch, mockGetState);
+                let p = store.Actions.retrieveCompareTimeSeries(SITE_NO, 'P7D', START_DATE, END_DATE)(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(2);
+                    expect(mockDispatch.calls.count()).toBe(1);
                     expect(store.Actions.addSeriesCollection.calls.count()).toBe(1);
                     expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('compare:P7D');
-                    expect(store.Actions.toggleTimeSeries.calls.count()).toBe(1);
-                    expect(store.Actions.toggleTimeSeries.calls.argsFor(0)).toEqual(['compare', false]);
 
                     done();
                 });
@@ -268,7 +290,7 @@ describe('Redux store', () => {
 
             it('Dispatches the action to reset the compare time series', (done) => {
                 spyOn(store.Actions, 'resetTimeSeries');
-                let p = store.Actions.retrieveCompareTimeSeries(SITE_NO, START_DATE, END_DATE)(mockDispatch, mockGetState);
+                let p = store.Actions.retrieveCompareTimeSeries(SITE_NO, 'P7D', START_DATE, END_DATE)(mockDispatch, mockGetState);
                 p.then(() => {
                     expect(mockDispatch).toHaveBeenCalled();
                     expect(store.Actions.resetTimeSeries.calls.count()).toBe(1);
@@ -316,18 +338,21 @@ describe('Redux store', () => {
                 const args = modelsMock.getTimeSeries.calls.argsFor(0)[0];
                 expect(args.sites).toEqual(['12345678']);
                 expect(args.params).toEqual(['00060']);
-                expect(args.startDate.getTime()).toEqual(args.endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+                expect(args.endDate).toEqual(new Date('2017-03-31'));
             });
 
-            it('Should dispatch add series collection', (done) => {
+            it('Should dispatch add series collection and retrieveCompareTimeSeries', (done) => {
                 mockGetState.and.returnValue(TEST_STATE);
+                spyOn(store.Actions, 'retrieveCompareTimeSeries');
                 let p = store.Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(2);
+                    expect(mockDispatch.calls.count()).toBe(3);
                     let arg = mockDispatch.calls.argsFor(1)[0];
                     expect(arg.type).toBe('ADD_TIMESERIES_COLLECTION');
                     expect(arg.key).toBe('current:P30D:00060');
 
+                    expect(store.Actions.retrieveCompareTimeSeries).toHaveBeenCalled();
+                    expect(store.Actions.retrieveCompareTimeSeries.calls.argsFor(0)[1]).toEqual('P30D');
                     done();
                 });
             });
@@ -366,6 +391,30 @@ describe('Redux store', () => {
                                 'value': '00010'
                             }
                         }
+                    },
+                    queryInfo: {
+                        'current:P7D': {
+                            notes: {
+                                requestDT: new Date('2017-03-31'),
+                                'filter:timeRange': {
+                                    mode: 'PERIOD',
+                                    periodDays: 7,
+                                    modifiedSince: null
+                                }
+                            }
+                        },
+                        'current:P30D:00060': {
+                            notes: {
+                                requestDT: new Date('2017-03-31'),
+                                'filter:timeRange': {
+                                    mode: 'RANGE',
+                                    interval: {
+                                        start: new Date('2017-03-01'),
+                                        end: new Date('2017-03-31')
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 timeSeriesState: {
@@ -386,7 +435,12 @@ describe('Redux store', () => {
                spyOn(modelsMock, 'getTimeSeries').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState');
-                mockGetState.and.returnValue(TEST_STATE);
+
+                mockGetState.and.returnValue(Object.assign({}, TEST_STATE, {
+                    timeSeriesState : Object.assign({}, TEST_STATE.timeSeriesState, {
+                        currentDateRange: 'P30D'
+                    })
+                }));
 
                 store = proxyquire('./index', {'../models': modelsMock});
             });
