@@ -63,7 +63,6 @@ def monitoring_location(site_no):
                                     + site_no + '&StartDate=10/1/2017&EndDate=09/30/2018'
         response = requests.get(url_for_cooperator_lookup)
         sifta_data = response.json()
-        length = len(sifta_data['Customers'])
         if len(sifta_data['Customers']) < 1:
             sifta_data = None
 
