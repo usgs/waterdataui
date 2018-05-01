@@ -89,7 +89,7 @@ describe('Legend module', () => {
             series: {
                 timeSeries: {
                     '00060:current': {
-                        tsKey: 'current',
+                        tsKey: 'current:P7D',
                         startTime: new Date('2018-03-06T15:45:00.000Z'),
                         endTime: new Date('2018-03-13T13:45:00.000Z'),
                         variable: '45807197',
@@ -112,7 +112,7 @@ describe('Legend module', () => {
                     },
 
                     '00065:compare': {
-                        tsKey: 'compare',
+                        tsKey: 'compare:P7D',
                         startTime: new Date('2017-03-06T15:45:00.000Z'),
                         endTime: new Date('2017-03-13T13:45:00.000Z'),
                         variable: '45807202',

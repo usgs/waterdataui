@@ -32,7 +32,7 @@ DATA = DATA.concat([
 const TEST_STATE_THREE_VARS = {
     series: {
         queryInfo: {
-            current: {
+            'current:P7D': {
                 notes: {
                     'filter:timeRange': {
                         mode: 'RANGE',
@@ -44,7 +44,7 @@ const TEST_STATE_THREE_VARS = {
                     }
                 }
             },
-            compare: {
+            'compare:P7D': {
                 notes: {
                     'filter:timeRange': {
                         mode: 'RANGE',
@@ -58,7 +58,7 @@ const TEST_STATE_THREE_VARS = {
         },
         timeSeries: {
             '00060': {
-                tsKey: 'current',
+                tsKey: 'current:P7D',
                 startTime: new Date('2018-03-06T15:45:00.000Z'),
                 endTime: new Date('2018-03-13t13:45:00.000Z'),
                 variable: '45807197',
@@ -77,7 +77,7 @@ const TEST_STATE_THREE_VARS = {
                 }]
             },
             '00010': {
-                tsKey: 'current',
+                tsKey: 'current:P7D',
                 startTime: new Date('2017-03-06T15:45:00.000Z'),
                 endTime: new Date('2017-03-13t13:45:00.000Z'),
                 variable: '45807196',
@@ -96,7 +96,7 @@ const TEST_STATE_THREE_VARS = {
                 }]
             },
             '00045': {
-                tsKey: 'current',
+                tsKey: 'current:P7D',
                 startTime: new Date('2017-03-06T15:45:00.000Z'),
                 endTime: new Date('2017-03-13t13:45:00.000Z'),
                 variable: '45807140',
@@ -126,7 +126,7 @@ const TEST_STATE_THREE_VARS = {
             }
         },
         requests: {
-            current: {
+            'current:P7D': {
                 timeSeriesCollections: ['coll1']
             }
         },
@@ -172,21 +172,21 @@ const TEST_STATE_ONE_VAR = {
         timeSeries: {
             '00060:current': {
                 points: DATA,
-                tsKey: 'current',
+                tsKey: 'current:P7D',
                 variable: '00060id'
             },
             '00060:compare': {
                 points: DATA,
-                tsKey: 'compare',
+                tsKey: 'compare:P7D',
                 variable: '00060id'
             }
         },
         timeSeriesCollections: {
-            'current': {
+            'current:P7D': {
                 variable: '00060id',
                 timeSeries: ['00060:current']
             },
-            'compare': {
+            'compare:P7D': {
                 variable: '00060id',
                 timeSeries: ['00060:compare']
             }
@@ -203,15 +203,15 @@ const TEST_STATE_ONE_VAR = {
             }
         },
         requests: {
-            'current': {
+            'current:P7D': {
                 timeSeriesCollections: ['current']
             },
-            'compare': {
+            'compare:P7D': {
                 timeSeriesCollections: ['compare']
             }
         },
         queryInfo: {
-            current: {
+            'current:P7D': {
                 notes: {
                     'filter:timeRange': {
                         mode: 'RANGE',
@@ -222,7 +222,7 @@ const TEST_STATE_ONE_VAR = {
                     }
                 }
             },
-            compare: {
+            'compare:P7D': {
                 notes: {
                     'filter:timeRange': {
                         mode: 'RANGE',

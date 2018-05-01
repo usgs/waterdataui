@@ -10,12 +10,33 @@ const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
 const { yLabelSelector } = require('./timeSeries');
 
+const { USWDS_LARGE_SCREEN } = require('../../config');
 const { getCurrentDateRange, getCurrentParmCd } = require('../../selectors/timeSeriesSelector');
+const { mediaQuery } = require('../../utils');
 
-const INTERVAL = {
-    P7D: timeDay,
-    P30D: timeWeek,
-    P1Y: timeMonth
+const dateFormatter = timeFormat('%b %d');
+
+const FORMAT = {
+    P7D: dateFormatter,
+    P30D: dateFormatter,
+    P1Y: timeFormat('%b %Y')
+};
+
+const tickInterval = function(period) {
+    switch (period) {
+        case 'P7D':
+            return timeDay;
+        case 'P30D':
+            return timeWeek;
+        case 'P1Y':
+            if (mediaQuery(USWDS_LARGE_SCREEN)) {
+                return timeMonth;
+            } else {
+                return timeMonth.every(2);
+            }
+        default:
+            return timeDay;
+    }
 };
 
 /**
@@ -31,9 +52,10 @@ export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period) 
     // Create x-axis
     const xAxis = axisBottom()
         .scale(xScale)
-        .ticks(INTERVAL[period] ? INTERVAL[period] : timeDay)
+        .ticks(tickInterval(period))
         .tickSizeOuter(0)
-        .tickFormat(timeFormat('%b %d'));
+        .tickFormat(FORMAT[period] ? FORMAT[period] : dateFormatter);
+
     // Create y-axis
     const tickDetails = getYTickDetails(yScale.domain(), parmCd);
     const yAxis = axisLeft()

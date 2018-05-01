@@ -5,10 +5,10 @@ const { createSelector } = require('reselect');
 const { default: scaleSymlog } = require('../../lib/symlog');
 const { getYDomain, SYMLOG_PARMS } = require('./domain');
 const { layoutSelector } = require('./layout');
-const { timeSeriesSelector, requestTimeRangeSelector } = require('./timeSeries');
+const { timeSeriesSelector} = require('./timeSeries');
 const { visiblePointsSelector, pointsByTsKeySelector } = require('./drawingData');
 
-const { getVariables, getCurrentParmCd, getCurrentVariableTimeSeriesRequestKey } = require('../../selectors/timeSeriesSelector');
+const { getVariables, getCurrentParmCd, getRequestTimeRange } = require('../../selectors/timeSeriesSelector');
 
 
 /**
@@ -54,10 +54,9 @@ function createYScale(parmCd, extent, size) {
  */
 const xScaleSelector = memoize(tsKey => createSelector(
     layoutSelector,
-    getCurrentVariableTimeSeriesRequestKey(tsKey),
-    requestTimeRangeSelector,
-    (layout, tsRequestKey, requestTimeRanges) => {
-        return createXScale(requestTimeRanges[tsRequestKey], layout.width - layout.margin.right);
+    getRequestTimeRange(tsKey),
+    (layout, requestTimeRange) => {
+        return createXScale(requestTimeRange, layout.width - layout.margin.right);
     }
 ));
 
@@ -107,13 +106,13 @@ const parmCdPointsSelector = memoize((tsKey, period) => createSelector(
  */
 const timeSeriesScalesByParmCdSelector = memoize((tsKey, period, dimensions) => createSelector(
     parmCdPointsSelector(tsKey, period),
-    requestTimeRangeSelector,
-    (pointsByParmCd, requestTimeRanges) => {
+    getRequestTimeRange(tsKey, period),
+    (pointsByParmCd, requestTimeRange) => {
         return Object.keys(pointsByParmCd).reduce((tsScales, parmCd) => {
             const tsPoints = pointsByParmCd[parmCd];
             const yDomain = getYDomain(tsPoints, SYMLOG_PARMS.indexOf(parmCd) >= 0);
             tsScales[parmCd] = {
-                x: createXScale(requestTimeRanges[tsKey], dimensions.width),
+                x: createXScale(requestTimeRange, dimensions.width),
                 y: createYScale(parmCd, yDomain, dimensions.height)
             };
             return tsScales;

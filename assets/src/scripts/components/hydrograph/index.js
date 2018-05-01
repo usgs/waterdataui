@@ -23,7 +23,7 @@ const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
 const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
-    descriptionSelector,  currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeSeries');
+    descriptionSelector,  currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } = require('./timeSeries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 const { coerceStatisticalSeries } = require('./statistics');
 
@@ -405,18 +405,17 @@ const graphControls = function(elem) {
 };
 
 /**
- * Modify styling to hide or display the plot area.
+ * Modify styling to hide or display the elem.
  *
  * @param elem
  * @param currentTimeseries
  */
-const controlGraphDisplay = function (elem, currentTimeseries) {
-    const seriesWithPoints = Object.values(currentTimeseries).filter(x => x.points.length > 0);
-    elem.attr('hidden', seriesWithPoints.length === 0 ? true : null);
+const controlDisplay = function (elem, hasSeriesWithPoints) {
+    elem.attr('hidden', hasSeriesWithPoints ? null : true);
 };
 
 
-const createDaterangeControls = function(elem, siteno) {
+const createDaterangeControls = function(elem, {siteno, hasTimeSeriesWithPoints}) {
     const DATE_RANGE = [{
         label: 'seven-day',
         name: '7 days',
@@ -430,27 +429,30 @@ const createDaterangeControls = function(elem, siteno) {
         name: '1 year',
         period: 'P1Y'
     }];
-    const container = elem.insert('ul', ':first-child')
-        .attr('id', 'ts-daterange-select-container')
-        .attr('class', 'usa-fieldset-inputs usa-unstyled-list');
-    const li = container.selectAll('li')
-        .data(DATE_RANGE)
-        .enter().append('li');
-    li.append('input')
-        .attr('type', 'radio')
-        .attr('name', 'ts-daterange-input')
-        .attr('id', (d) => d.label)
-        .attr('value', (d) => d.period)
-        .on('change', dispatch(function() {
-            return Actions.retrieveExtendedTimeseries(
-                siteno,
-                li.select('input:checked').attr('value')
-            );
-        }));
-    li.append('label')
-        .attr('for', (d) => d.label)
-        .text((d) => d.name);
-    li.select(`#${DATE_RANGE[0].label}`).attr('checked', true);
+    elem.select('#ts-daterange-select-container').remove();
+    if (hasTimeSeriesWithPoints) {
+        const container = elem.insert('ul', ':first-child')
+            .attr('id', 'ts-daterange-select-container')
+            .attr('class', 'usa-fieldset-inputs usa-unstyled-list');
+        const li = container.selectAll('li')
+            .data(DATE_RANGE)
+            .enter().append('li');
+        li.append('input')
+            .attr('type', 'radio')
+            .attr('name', 'ts-daterange-input')
+            .attr('id', (d) => d.label)
+            .attr('value', (d) => d.period)
+            .on('change', dispatch(function () {
+                return Actions.retrieveExtendedTimeseries(
+                    siteno,
+                    li.select('input:checked').attr('value')
+                );
+            }));
+        li.append('label')
+            .attr('for', (d) => d.label)
+            .text((d) => d.name);
+        li.select(`#${DATE_RANGE[0].label}`).attr('checked', true);
+    }
 };
 
 const attachToNode = function (store, node, {siteno} = {}) {
@@ -462,10 +464,13 @@ const attachToNode = function (store, node, {siteno} = {}) {
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
         .call(provide(store))
-        .call(createDaterangeControls, siteno);
+        .call(link(createDaterangeControls, createStructuredSelector({
+            siteno: () => siteno,
+            hasTimeSeriesWithPoints: hasTimeSeriesWithPoints('current', 'P7D')
+        })));
 
     select(node).select('.graph-container')
-        .call(link(controlGraphDisplay, timeSeriesSelector('current')))
+        .call(link(controlDisplay, hasTimeSeriesWithPoints('current', 'P7D')))
         .call(timeSeriesGraph, siteno)
         .call(cursorSlider)
         .append('div')
