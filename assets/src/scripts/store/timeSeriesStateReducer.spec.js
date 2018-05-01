@@ -1,10 +1,10 @@
 
-const { timeseriesStateReducer } = require('./timeseriesStateReducer');
+const { timeSeriesStateReducer } = require('./timeSeriesStateReducer');
 
-describe('timeseriesStateReducer', () => {
+describe('timeSeriesStateReducer', () => {
 
     it('should handle TOGGLE_TIMESERIES', () => {
-            expect(timeseriesStateReducer({
+            expect(timeSeriesStateReducer({
                 showSeries: {
                     current: false,
                     compare: false
@@ -22,7 +22,7 @@ describe('timeseriesStateReducer', () => {
         });
 
     it('should handle SET_CURRENT_VARIABLE', () => {
-        expect(timeseriesStateReducer({
+        expect(timeSeriesStateReducer({
             currentVariableID: '2'
         }, {
             type: 'SET_CURRENT_VARIABLE',
@@ -33,7 +33,7 @@ describe('timeseriesStateReducer', () => {
     });
 
     it('should handle SHOW_MEDIAN_STATS_LABEL', () => {
-        expect(timeseriesStateReducer({
+        expect(timeSeriesStateReducer({
             showMedianStatsLabel: true
         }, {
             type: 'SHOW_MEDIAN_STATS_LABEL',
@@ -44,7 +44,7 @@ describe('timeseriesStateReducer', () => {
     });
 
     it('should handle SET_CURSOR_OFFSET', () => {
-        expect(timeseriesStateReducer({
+        expect(timeSeriesStateReducer({
             cursorOffset: '12345'
         }, {
             type: 'SET_CURSOR_OFFSET',
@@ -55,7 +55,7 @@ describe('timeseriesStateReducer', () => {
     });
 
     it('should handle TIMESERIES_PLAY_ON', () => {
-        expect(timeseriesStateReducer({
+        expect(timeSeriesStateReducer({
             audiblePlayId: null
         }, {
             type: 'TIMESERIES_PLAY_ON',
@@ -66,7 +66,7 @@ describe('timeseriesStateReducer', () => {
     });
 
     it('should handle TIMESERIES_PLAY_STOP', () => {
-        expect(timeseriesStateReducer({
+        expect(timeSeriesStateReducer({
             audiblePlayId: 12345
         }, {
             type: 'TIMESERIES_PLAY_STOP'

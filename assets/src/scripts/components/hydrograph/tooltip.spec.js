@@ -122,7 +122,7 @@ describe('Hydrograph tooltip module', () => {
                 }
             }
         },
-        timeseriesState: {
+        timeSeriesState: {
             showSeries: {
                 current: true,
                 compare: true
@@ -209,7 +209,7 @@ describe('Hydrograph tooltip module', () => {
 
         it('Creates the container for tooltips', () => {
             let store = configureStore({
-                timeseriesState: {
+                timeSeriesState: {
                     cursorOffset: null,
                     showSeries: {
                         current: true
@@ -226,7 +226,7 @@ describe('Hydrograph tooltip module', () => {
 
         it('Creates the text elements with the label for the focus times', () => {
             let store = configureStore(Object.assign({}, testState, {
-                timeseriesState: Object.assign({}, testState.timeseriesState, {
+                timeSeriesState: Object.assign({}, testState.timeSeriesState, {
                     cursorOffset: 2 * 60 * 60 * 1000
                 })
             }));
@@ -242,7 +242,7 @@ describe('Hydrograph tooltip module', () => {
 
         it('Text contents are updated when the store is provided with new focus times', () => {
             let store = configureStore(Object.assign({}, testState, {
-                timeseriesState: Object.assign({}, testState.timeseriesState, {
+                timeSeriesState: Object.assign({}, testState.timeSeriesState, {
                     cursorOffset: 1
                 })
             }));
@@ -263,7 +263,7 @@ describe('Hydrograph tooltip module', () => {
 
         it('Shows the qualifier text if focus is near masked data points', () => {
             let store = configureStore(Object.assign({}, testState, {
-                timeseriesState: Object.assign({}, testState.timeseriesState, {
+                timeSeriesState: Object.assign({}, testState.timeSeriesState, {
                     cursorOffset: 1
                 })
             }));
@@ -291,7 +291,7 @@ describe('Hydrograph tooltip module', () => {
                         })
                     })
                 }),
-                timeseriesState: Object.assign({}, testState.timeseriesState, {
+                timeSeriesState: Object.assign({}, testState.timeSeriesState, {
                     cursorOffset: 10
                 })
             }));
@@ -338,7 +338,7 @@ describe('Hydrograph tooltip module', () => {
                         }
                     })
                 }),
-                timeseriesState: Object.assign({}, testState.timeseriesState, {
+                timeSeriesState: Object.assign({}, testState.timeSeriesState, {
                     cursorOffset: null
                 })
             }));
@@ -367,7 +367,7 @@ describe('Hydrograph tooltip module', () => {
                         }
                     })
                 }),
-                timeseriesState: Object.assign({}, testState.timeseriesState, {
+                timeSeriesState: Object.assign({}, testState.timeSeriesState, {
                     cursorOffset: 39 * 60 * 1000
                 })
             }));

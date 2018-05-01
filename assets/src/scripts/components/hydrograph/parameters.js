@@ -14,11 +14,11 @@ const { getVariables, getCurrentVariableID } = require('../../selectors/timeSeri
 
 
 /**
- * Returns metadata for each available timeseries.
+ * Returns metadata for each available time series.
  * @param  {Object} state Redux state
  * @return {Array}        Sorted array of [code, metadata] pairs.
  */
-export const availableTimeseriesSelector = createSelector(
+export const availableTimeSeriesSelector = createSelector(
     getVariables,
     allTimeSeriesSelector,
     getCurrentVariableID,
@@ -38,13 +38,13 @@ export const availableTimeseriesSelector = createSelector(
                 continue;
             }
             const variable = variables[variableID];
-            const currentTimeseriesCount = seriesList.filter(ts => ts.tsKey === 'current:P7D' && ts.variable === variableID).length;
-            if (currentTimeseriesCount > 0) {
+            const currentTimeSeriesCount = seriesList.filter(ts => ts.tsKey === 'current:P7D' && ts.variable === variableID).length;
+            if (currentTimeSeriesCount > 0) {
                 let varCodes = {
                     variableID: variable.oid,
                     description: variable.variableDescription,
                     selected: currentVariableID === variableID,
-                    currentTimeseriesCount: currentTimeseriesCount
+                    currentTimeSeriesCount: currentTimeSeriesCount
                 };
                 sorted.push([variable.variableCode.value, varCodes]);
             }
@@ -121,33 +121,33 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
 
 
 /**
- * Draws a table with clickable rows of timeseries parameter codes. Selecting
+ * Draws a table with clickable rows of time series parameter codes. Selecting
  * a row changes the active parameter code.
  * @param  {Object} elem                        d3 selection
  * @param  {String} siteno
- * @param  {Object} availableTimeseries         Timeseries metadata to display
+ * @param  {Object} availableTimeSeries         Time series metadata to display
  * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
  * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
  */
-export const plotSeriesSelectTable = function (elem, {siteno, availableTimeseries, lineSegmentsByParmCd, timeSeriesScalesByParmCd}) {
+export const plotSeriesSelectTable = function (elem, {siteno, availableTimeSeries, lineSegmentsByParmCd, timeSeriesScalesByParmCd}) {
     // Get the position of the scrolled window before removing it so it can be set to the same value.
-    const lastTable = elem.select('#select-timeseries table');
+    const lastTable = elem.select('#select-time-series table');
     const scrollTop = lastTable.size() ? lastTable.property('scrollTop') : null;
-    elem.select('#select-timeseries').remove();
+    elem.select('#select-time-series').remove();
 
-    if (!availableTimeseries.length) {
+    if (!availableTimeSeries.length) {
         return;
     }
 
     const columnHeaders = ['Parameter', 'Preview', '#'];
     const tableContainer = elem.append('div')
-        .attr('id', 'select-timeseries');
+        .attr('id', 'select-time-series');
     tableContainer.append('label')
-        .attr('id', 'select-timeseries-label')
-        .text('Select a timeseries');
+        .attr('id', 'select-time-series-label')
+        .text('Select a time series');
     const table = tableContainer.append('table')
         .classed('usa-table-borderless', true)
-        .attr('aria-labelledby', 'select-timeseries-label')
+        .attr('aria-labelledby', 'select-time-series-label')
         .attr('tabindex', 0)
         .attr('role', 'listbox');
 
@@ -161,11 +161,11 @@ export const plotSeriesSelectTable = function (elem, {siteno, availableTimeserie
 
     table.append('tbody')
         .selectAll('tr')
-        .data(availableTimeseries)
+        .data(availableTimeSeries)
         .enter().append('tr')
             .attr('ga-on', 'click')
             .attr('ga-event-category', 'selectTimeSeries')
-            .attr('ga-event-action', (parm) => `timeseries-parmcd-${parm[0]}`)
+            .attr('ga-event-action', (parm) => `time-series-parmcd-${parm[0]}`)
             .attr('role', 'option')
             .classed('selected', parm => parm[1].selected)
             .attr('aria-selected', parm => parm[1].selected)
@@ -195,7 +195,7 @@ export const plotSeriesSelectTable = function (elem, {siteno, availableTimeserie
                     .attr('width', SPARK_LINE_DIM.width.toString())
                     .attr('height', SPARK_LINE_DIM.height.toString());
                 tr.append('td')
-                    .text(parm => parm[1].currentTimeseriesCount);
+                    .text(parm => parm[1].currentTimeSeriesCount);
             });
 
     table.property('scrollTop', scrollTop);

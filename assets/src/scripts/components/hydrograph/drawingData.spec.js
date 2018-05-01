@@ -110,7 +110,7 @@ const TEST_DATA = {
             }
         }
     },
-    timeseriesState: {
+    timeSeriesState: {
         currentVariableID: '45807197',
         currentDateRange: 'P7D'
     }
@@ -121,7 +121,7 @@ describe('drawingData module', () => {
     describe('allPointsSelector', () => {
 
         const result = allPointsSelector(TEST_DATA);
-        it('Return three timeseries', () => {
+        it('Return three time series', () => {
             expect(Object.keys(result).length).toBe(3);
             expect(result['00060']).toBeDefined();
             expect(result['00010']).toBeDefined();
@@ -136,7 +136,7 @@ describe('drawingData module', () => {
             expect(result['00045'].map((point) => point.value)).toEqual([0, 0.01, 0.03, 0.06]);
         });
 
-        it('Return the empty object if there are no timeseries', () =>  {
+        it('Return the empty object if there are no time series', () =>  {
             expect(allPointsSelector({series: {}})).toEqual({});
         });
 
@@ -644,7 +644,7 @@ describe('drawingData module', () => {
                         }
                     }
                 },
-                timeseriesState: {
+                timeSeriesState: {
                     currentVariableID: '45807197',
                     currentDateRange: 'P7D'
                 }
@@ -700,8 +700,8 @@ describe('drawingData module', () => {
                     }
                 }
             },
-            timeseriesState: {
-                ...TEST_DATA.timeseriesState,
+            timeSeriesState: {
+                ...TEST_DATA.timeSeriesState,
                 showSeries: {
                     'current': true,
                     'compare': true,
@@ -717,8 +717,8 @@ describe('drawingData module', () => {
         it('Expects one array if only median is not visible', () => {
             const newTestData = {
                 ...testData,
-                timeseriesState: {
-                    ...testData.timeseriesState,
+                timeSeriesState: {
+                    ...testData.timeSeriesState,
                     showSeries: {
                         'current': true,
                         'compare': true,
@@ -733,8 +733,8 @@ describe('drawingData module', () => {
         it('Expects an empty array if no visible series has the current variable', () => {
             const newTestData = {
                 ...testData,
-                timeseriesState: {
-                    ...testData.timeseriesState,
+                timeSeriesState: {
+                    ...testData.timeSeriesState,
                     currentVariableID: '11111111'
                 }
             };
@@ -787,7 +787,7 @@ describe('drawingData module', () => {
                         }
                     }
                 },
-                timeseriesState: {
+                timeSeriesState: {
                     currentVariableID: '45807197',
                     currentDateRange: 'P7D',
                     showSeries: {

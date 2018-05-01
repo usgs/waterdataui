@@ -19,7 +19,7 @@ const SLIDER_OFFSET_PX = 10;
 
 export const cursorOffsetSelector = createSelector(
     xScaleSelector('current'),
-    state => state.timeseriesState.cursorOffset,
+    state => state.timeSeriesState.cursorOffset,
     (xScale, cursorOffset) => {
         // If cursorOffset is unset, default to the last offset
         if (!cursorOffset) {
@@ -77,9 +77,9 @@ export const getNearestTime = function(data, time) {
 
 
 /*
- * Returns a function that the time series data point nearest the tooltip focus time for the given timeseries
+ * Returns a function that the time series data point nearest the tooltip focus time for the given time series
  * @param {Object} state - Redux store
- * @param String} tsKey - Timeseries key
+ * @param String} tsKey - Time series key
  * @return {Object}
  */
 export const tsCursorPointsSelector = memoize(tsKey => createSelector(
