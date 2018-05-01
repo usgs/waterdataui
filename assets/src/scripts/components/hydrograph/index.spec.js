@@ -15,7 +15,7 @@ const TEST_STATE = {
                     qualifiers: ['P']
                 }],
                 method: 'method1',
-                tsKey: 'current',
+                tsKey: 'current:P7D',
                 variable: '45807190'
             },
             '00060:current': {
@@ -25,7 +25,7 @@ const TEST_STATE = {
                     qualifiers: ['P']
                 }],
                 method: 'method1',
-                tsKey: 'current',
+                tsKey: 'current:P7D',
                 variable: '45807197'
             },
             '00060:compare': {
@@ -35,7 +35,7 @@ const TEST_STATE = {
                     qualifiers: ['P']
                 }],
                 method: 'method1',
-                tsKey: 'compare',
+                tsKey: 'compare:P7D',
                 variable: '45807197'
             },
             '00060:median': {
@@ -71,7 +71,7 @@ const TEST_STATE = {
             }
         },
         queryInfo: {
-            current: {
+            'current:P7D': {
                 notes: {
                     'filter:timeRange':  {
                         mode: 'PERIOD',
@@ -82,10 +82,10 @@ const TEST_STATE = {
             }
         },
         requests: {
-            current: {
+            'current:P7D': {
                 timeSeriesCollections: ['coll1']
             },
-            compare: {
+            'compare:P7D': {
                 timeSeriesCollections: ['coll2', 'col4']
             },
             median: {

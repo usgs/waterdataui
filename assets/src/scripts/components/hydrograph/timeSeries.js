@@ -2,7 +2,7 @@ const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
-const { getQueryInfo, getCurrentVariable, getCurrentVariableTimeSeriesRequestKey } = require('../../selectors/timeSeriesSelector');
+const { getRequestTimeRange, getCurrentVariable, getTsRequestKey } = require('../../selectors/timeSeriesSelector');
 
 
 // Create a time formatting function from D3's timeFormat
@@ -39,7 +39,7 @@ export const allTimeSeriesSelector = createSelector(
  * @return {Object}         Time-series data
  */
 export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector(
-    getCurrentVariableTimeSeriesRequestKey(tsKey),
+    getTsRequestKey(tsKey),
     allTimeSeriesSelector,
     getCurrentVariable,
     (tsRequestKey, timeSeries, variable) => {
@@ -67,7 +67,7 @@ export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector
  * @return {Object} - Keys are tsID, values are time-series data
  */
 export const timeSeriesSelector = memoize((tsKey, period) => createSelector(
-    getCurrentVariableTimeSeriesRequestKey(tsKey, period),
+    getTsRequestKey(tsKey, period),
     allTimeSeriesSelector,
     (tsRequestKey, timeSeries) => {
         let x = {};
@@ -81,7 +81,12 @@ export const timeSeriesSelector = memoize((tsKey, period) => createSelector(
     }
 ));
 
-
+export const hasTimeSeriesWithPoints = memoize((tsKey, period) => createSelector(
+    timeSeriesSelector(tsKey, period),
+    (timeSeries) => {
+        const seriesWithPoints = Object.values(timeSeries).filter(x => x.points.length > 0);
+        return seriesWithPoints.length > 0;
+}));
 
 /**
  * Factory function creates a function that:
@@ -114,44 +119,17 @@ export const titleSelector = createSelector(
 );
 
 
-export const requestTimeRangeSelector = createSelector(
-    getQueryInfo,
-    (queryInfos) => {
-        return Object.keys(queryInfos).reduce((ranges, tsKey) => {
-            const notes = queryInfos[tsKey].notes;
-            // If this is a period-based query (eg, P7D), use the request time
-            // as the end date.
-            if (notes['filter:timeRange'].mode === 'PERIOD') {
-                const start = new Date(notes.requestDT);
-                start.setDate(notes.requestDT.getDate() - notes['filter:timeRange'].periodDays);
-                ranges[tsKey] = {
-                    start: start,
-                    end: notes.requestDT
-                };
-            } else {
-                ranges[tsKey] = {
-                    start: notes['filter:timeRange'].interval.start,
-                    end: notes['filter:timeRange'].interval.end
-                };
-            }
-            return ranges;
-        }, {});
-    }
-);
-
-
 /**
  * @return {String}     Description for the currently display set of time
  *                      series
  */
 export const descriptionSelector = createSelector(
     getCurrentVariable,
-    requestTimeRangeSelector,
-    (variable, requestTimeRanges) => {
+    getRequestTimeRange('current', 'P7D'),
+    (variable, requestTimeRange) => {
         const desc = variable ? variable.variableDescription : '';
-        const range = requestTimeRanges['current'];
-        if (range) {
-            return `${desc} from ${formatTime(range.start)} to ${formatTime(range.end)}`;
+        if (requestTimeRange) {
+            return `${desc} from ${formatTime(requestTimeRange.start)} to ${formatTime(requestTimeRange.end)}`;
         } else {
             return desc;
         }
