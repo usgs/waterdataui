@@ -11,12 +11,12 @@ describe('Parameters module', () => {
             const available = availableTimeseriesSelector({
                 series: {
                     timeSeries: {
-                        'current:00060': {description: '00060', tsKey: 'current', variable: 'code0', points: [{x: 1, y: 2}]},
-                        'current:00061': {description: '00061', tsKey: 'current', variable: 'code1', points: [{x: 2, y: 3}]},
-                        'current:00062': {description: '00062', tsKey: 'current', variable: 'code2', points: [{x: 3, y: 4}]},
-                        'compare:00061': {description: '00061', tsKey: 'compare', variable: 'code1', points: [{x: 1, y: 17}]},
-                        'compare:00062': {description: '00062', tsKey: 'compare', variable: 'code2', points: [{x: 2, y: 18}]},
-                        'compare:00063': {description: '00063', tsKey: 'compare', variable: 'code3', points: [{x: 3, y: 46}]}
+                        'current:00060': {description: '00060', tsKey: 'current:P7D', variable: 'code0', points: [{x: 1, y: 2}]},
+                        'current:00061': {description: '00061', tsKey: 'current:P7D', variable: 'code1', points: [{x: 2, y: 3}]},
+                        'current:00062': {description: '00062', tsKey: 'current:P7D', variable: 'code2', points: [{x: 3, y: 4}]},
+                        'compare:00061': {description: '00061', tsKey: 'compare:P7D', variable: 'code1', points: [{x: 1, y: 17}]},
+                        'compare:00062': {description: '00062', tsKey: 'compare:P7D', variable: 'code2', points: [{x: 2, y: 18}]},
+                        'compare:00063': {description: '00063', tsKey: 'compare:P7D', variable: 'code3', points: [{x: 3, y: 46}]}
                     },
                     variables: {
                         'code0': {
@@ -65,12 +65,12 @@ describe('Parameters module', () => {
             const available = availableTimeseriesSelector({
                 series: {
                     timeSeries: {
-                        'current:00060': {description: '00060', tsKey: 'current', variable: 'code0', points: [{x: 1, y: 2}]},
-                        'current:00061': {description: '00061', tsKey: 'current', variable: 'code1', points: [{x: 2, y: 3}]},
-                        'current:00062': {description: '00062', tsKey: 'current', variable: 'code2', points: [{x: 3, y: 4}]},
-                        'compare:00061': {description: '00061', tsKey: 'compare', variable: 'code1', points: []},
-                        'compare:00062': {description: '00062', tsKey: 'compare', variable: 'code2', points: [{x: 2, y: 18}]},
-                        'compare:00063': {description: '00063', tsKey: 'compare', variable: 'code3', points: [{x: 3, y: 46}]}
+                        'current:00060': {description: '00060', tsKey: 'current:P7D', variable: 'code0', points: [{x: 1, y: 2}]},
+                        'current:00061': {description: '00061', tsKey: 'current:P7D', variable: 'code1', points: [{x: 2, y: 3}]},
+                        'current:00062': {description: '00062', tsKey: 'current:P7D', variable: 'code2', points: [{x: 3, y: 4}]},
+                        'compare:00061': {description: '00061', tsKey: 'compare:P7D', variable: 'code1', points: []},
+                        'compare:00062': {description: '00062', tsKey: 'compare:P7D', variable: 'code2', points: [{x: 2, y: 18}]},
+                        'compare:00063': {description: '00063', tsKey: 'compare:P7D', variable: 'code3', points: [{x: 3, y: 46}]}
                     },
                     variables: {
                         'code0': {
@@ -119,12 +119,12 @@ describe('Parameters module', () => {
             const available = availableTimeseriesSelector({
                 series: {
                     timeSeries: {
-                        'current:00060': {description: '00060', tsKey: 'current', variable: 'code0', points: [{x: 1, y: 2}]},
-                        'current:00061': {description: '00061', tsKey: 'current', variable: 'code1', points: []},
-                        'current:00062': {description: '00062', tsKey: 'current', variable: 'code2', points: [{x: 3, y: 4}]},
-                        'compare:00061': {description: '00061', tsKey: 'compare', variable: 'code1', points: []},
-                        'compare:00062': {description: '00062', tsKey: 'compare', variable: 'code2', points: [{x: 2, y: 18}]},
-                        'compare:00063': {description: '00063', tsKey: 'compare', variable: 'code3', points: [{x: 3, y: 46}]}
+                        'current:00060': {description: '00060', tsKey: 'current:P7D', variable: 'code0', points: [{x: 1, y: 2}]},
+                        'current:00061': {description: '00061', tsKey: 'current:P7D', variable: 'code1', points: []},
+                        'current:00062': {description: '00062', tsKey: 'current:P7D', variable: 'code2', points: [{x: 3, y: 4}]},
+                        'compare:00061': {description: '00061', tsKey: 'compare:P7D', variable: 'code1', points: []},
+                        'compare:00062': {description: '00062', tsKey: 'compare:P7D', variable: 'code2', points: [{x: 2, y: 18}]},
+                        'compare:00063': {description: '00063', tsKey: 'compare:P7D', variable: 'code3', points: [{x: 3, y: 46}]}
                     },
                     variables: {
                         'code0': {

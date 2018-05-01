@@ -7,7 +7,7 @@ const TEST_DATA = {
     series: {
         timeSeries: {
             '00060': {
-                tsKey: 'current',
+                tsKey: 'current:P7D',
                 startTime: new Date('2018-03-06T15:45:00.000Z'),
                 endTime: new Date('2018-03-13t13:45:00.000Z'),
                 variable: '45807197',
@@ -29,7 +29,7 @@ const TEST_DATA = {
                 }]
             },
             '00010': {
-                tsKey: 'compare',
+                tsKey: 'compare:P7D',
                 startTime: new Date('2017-03-06T15:45:00.000Z'),
                 endTime: new Date('2017-03-13t13:45:00.000Z'),
                 variable: '45807196',
@@ -51,7 +51,7 @@ const TEST_DATA = {
                 }]
             },
             '00045': {
-                tsKey: 'current',
+                tsKey: 'current:P7D',
                 startTime: new Date('2017-03-06T15:45:00.000Z'),
                 endTime: new Date('2017-03-13t13:45:00.000Z'),
                 variable: '45807140',
@@ -85,9 +85,10 @@ const TEST_DATA = {
             }
         },
         requests: {
-            current: {
+            'current:P7D': {
                 timeSeriesCollections: ['coll1']
-            }
+            },
+            'compare:P7D': {}
         },
         variables: {
             '45807197': {
@@ -241,11 +242,11 @@ describe('drawingData module', () => {
                                 value: 10,
                                 qualifiers: ['A']
                             }],
-                            tsKey: 'current'
+                            tsKey: 'current:P7D'
                         },
                         '00045': {
                             ...TEST_DATA.series.timeSeries['00045'],
-                            tsKey: 'compare'
+                            tsKey: 'compare:P7D'
                         }
                     }
                 }
@@ -308,11 +309,11 @@ describe('drawingData module', () => {
                                 value: 10,
                                 qualifiers: ['P', 'E']
                             }],
-                            tsKey: 'current'
+                            tsKey: 'current:P7D'
                         },
                         '00045': {
                             ...TEST_DATA.series.timeSeries['00045'],
-                            tsKey: 'compare'
+                            tsKey: 'compare:P7D'
                         }
                     }
                 }
@@ -379,11 +380,11 @@ describe('drawingData module', () => {
                                 value: null,
                                 qualifiers: ['P', 'FLD']
                             }],
-                            tsKey: 'current'
+                            tsKey: 'current:P7D'
                         },
                         '00045': {
                             ...TEST_DATA.series.timeSeries['00045'],
-                            tsKey: 'compare'
+                            tsKey: 'compare:P7D'
                         }
                     }
                 }
@@ -463,11 +464,11 @@ describe('drawingData module', () => {
                                     qualifiers: ['P']
                                 };
                             }),
-                            tsKey: 'current'
+                            tsKey: 'current:P7D'
                         },
                         '00045': {
                             ...TEST_DATA.series.timeSeries['00045'],
-                            tsKey: 'compare'
+                            tsKey: 'compare:P7D'
                         }
                     }
                 }
@@ -539,11 +540,11 @@ describe('drawingData module', () => {
                                     qualifiers: ['Ice']
                                 };
                             }),
-                            tsKey: 'current'
+                            tsKey: 'current:P7D'
                         },
                         '00045': {
                             ...TEST_DATA.series.timeSeries['00045'],
-                            tsKey: 'compare'
+                            tsKey: 'compare:P7D'
                         }
                     }
                 }
@@ -625,12 +626,12 @@ describe('drawingData module', () => {
                     timeSeries: {
                         one: {
                             points: ['ptOne', 'ptTwo', 'ptThree'],
-                            tsKey: 'current',
+                            tsKey: 'current:P7D',
                             variable: 45807197
                         },
                         two: {
                             points: ['ptOne2', 'ptTwo2', 'ptThree2'],
-                            tsKey: 'current',
+                            tsKey: 'current:P7D',
                             variable: 45807197
                         }
                     },
@@ -747,7 +748,7 @@ describe('drawingData module', () => {
             const result = pointsTableDataSelector('current')({
                 series: {
                     requests: {
-                        current: {
+                        'current:P7D': {
                             timeSeriesCollections: ['coll1']
                         }
                     },
@@ -759,7 +760,7 @@ describe('drawingData module', () => {
                     },
                     timeSeries: {
                         one: {
-                            tsKey: 'current',
+                            tsKey: 'current:P7D',
                             points: [{
                                 dateTime: '2018-01-01',
                                 qualifiers: ['P'],
