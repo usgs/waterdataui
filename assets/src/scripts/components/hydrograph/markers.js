@@ -97,6 +97,21 @@ export const lineMarker = function(elem, {x, y, length, text=null, domId=null, d
     return group;
 };
 
+
+export const medianMarker = function (elem, {r, x, y, text=null, domId=null, domClass=null, fill=null}) {
+    let group = circleMarker(elem, {r: r, x: x, y: y, text: text, domId, domClass: domClass, fill: fill});
+    let line = group.append('line')
+        .attr('x1', x - 2.5*r)
+        .attr('x2', x + 2.5*r)
+        .attr('y1', y + Y_OFFSET)
+        .attr('y2', y + Y_OFFSET);
+    if (domClass !== null) {
+        let lineClasses = domClass.replace('modulo', 'step');
+        line.attr('class', lineClasses);
+    }
+    return group;
+};
+
 export const textOnlyMarker = function(elem, {x, y, text, domId=null, domClass=null}) {
     const group = elem.append('g');
     let markerText = group.append('text')
@@ -122,6 +137,7 @@ export const defineLineMarker = function(domId=null, domClass=null, text=null) {
     };
 };
 
+
 export const defineTextOnlyMarker = function(text, domId=null, domClass=null ) {
     return {
         type: textOnlyMarker,
@@ -130,7 +146,6 @@ export const defineTextOnlyMarker = function(text, domId=null, domClass=null ) {
         text: text
     };
 };
-
 
 
 export const defineRectangleMarker = function(domId=null, domClass=null, text=null, fill=null) {
@@ -143,9 +158,10 @@ export const defineRectangleMarker = function(domId=null, domClass=null, text=nu
     };
 };
 
-export const defineCircleMarker = function(radius, domId=null, domClass=null, text=null, fill=null) {
+
+export const defineMedianMarker = function(radius, domId=null, domClass=null, text=null, fill=null) {
     return {
-        type: circleMarker,
+        type: medianMarker,
         r: radius,
         domId: domId,
         domClass: domClass,

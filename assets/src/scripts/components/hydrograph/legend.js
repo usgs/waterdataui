@@ -3,7 +3,7 @@ const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
 const { CIRCLE_RADIUS } = require('./layout');
-const { defineLineMarker, defineTextOnlyMarker, defineCircleMarker, defineRectangleMarker} = require('./markers');
+const { defineLineMarker, defineTextOnlyMarker, defineMedianMarker, defineRectangleMarker} = require('./markers');
 const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} = require('./drawingData');
 const { currentVariableTimeSeriesSelector } = require('./timeSeries');
 
@@ -90,11 +90,12 @@ const createLegendMarkers = function(displayItems) {
 
             const descriptionText = stats.description  ? `${stats.description} ` : '';
             const classes = `median-data-series median-modulo-${index % 6}`;
+            const classesLine = `median-data-series median-step-${index % 6}`;
             const label = `${descriptionText}${dateText}`;
 
             legendMarkers.push([
                 defineTextOnlyMarker(TS_LABEL.median),
-                defineCircleMarker(CIRCLE_RADIUS, null, classes, label)]);
+                defineMedianMarker(CIRCLE_RADIUS, null, classes, label)]);
         }
     }
 
