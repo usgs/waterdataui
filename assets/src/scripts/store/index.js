@@ -137,8 +137,8 @@ export const Actions = {
                 }).then(
                     series => {
                         const collection = normalize(series, tsKey);
-                        dispatch(Actions.addSeriesCollection(tsKey, collection));
                         dispatch(Actions.updateStartTime(startTime));
+                        dispatch(Actions.addSeriesCollection(tsKey, collection));
                     },
                     () => {
                         console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);

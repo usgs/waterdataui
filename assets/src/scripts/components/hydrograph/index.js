@@ -266,8 +266,9 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap,
     const container = elem
         .append('g')
             .attr('id', 'median-points');
-
+    console.log(seriesMap);
     for (const [index, seriesID] of Object.keys(seriesMap).entries()) {
+        console.log(seriesMap[seriesID]);
         const points = coerceStatisticalSeries(seriesMap[seriesID]);
         plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points, showLabel, variable});
     }

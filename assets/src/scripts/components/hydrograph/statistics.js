@@ -31,6 +31,8 @@ export const coerceStatisticalSeries = function (series) {
     let sortedPoints = plotablePoints.sort(function(a, b) {
         return a.dateTime - b.dateTime;
     });
+    console.log(series.startTime);
+    console.log(series.endTime);
     let filtered = sortedPoints.filter(x => series.startTime <= x.dateTime && x.dateTime <= series.endTime);
     let first = filtered[0];
     if (first.dateTime > series.startTime) {
