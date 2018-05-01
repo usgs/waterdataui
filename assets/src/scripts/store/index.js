@@ -140,7 +140,7 @@ export const Actions = {
                     series => {
                         const collection = normalize(series, requestKey);
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
-                        dispatch(Actions.retrieveCompareTimeseries(site, period, startTime, endTime));
+                        dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
                     },
                     () => {
                         console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
