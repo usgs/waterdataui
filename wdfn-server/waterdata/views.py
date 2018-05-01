@@ -4,6 +4,8 @@ Main application views.
 import json
 import requests  # added for WDFN234
 
+from config.py import HYDROLOGIC_PAGES_ENABLED
+
 from flask import abort, render_template, request, Markup
 
 from . import app, __version__
@@ -57,14 +59,15 @@ def monitoring_location(site_no):
         }
         station_record = data_list[0]
 
-        # call the web service to gather information about funding partners for monitoring location
-        # this is a temporary url for testing until the new SIFTA lookup web service is operational
-        url_for_cooperator_lookup = 'https://sifta.water.usgs.gov/Services/REST/Site/CustomerFunding.ashx?SiteNumber=' \
-                                    + site_no + '&StartDate=10/1/2017&EndDate=09/30/2018'
-        response = requests.get(url_for_cooperator_lookup)
-        cooperator_lookup_data = response.json()
-        if len(cooperator_lookup_data['Customers']) < 1:
-            cooperator_lookup_data = None
+        if HYDROLOGIC_PAGES_ENABLED:
+            # call the web service to gather information about funding partners for monitoring location
+            # this is a temporary url for testing until the new SIFTA lookup web service is operational
+            url_for_cooperator_lookup = 'https://sifta.water.usgs.gov/Services/REST/Site/CustomerFunding.ashx?SiteNumber=' \
+                                        + site_no + '&StartDate=10/1/2017&EndDate=09/30/2018'
+            response = requests.get(url_for_cooperator_lookup)
+            cooperator_lookup_data = response.json()
+            if len(cooperator_lookup_data['Customers']) < 1:
+                cooperator_lookup_data = None
 
         if len(data_list) == 1:
             parameter_data_resp = execute_get_request(
@@ -140,7 +143,7 @@ def monitoring_location(site_no):
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'parm_grp_summary': grouped_dataseries,
                 'questions_link': questions_link,
-                'cooperator_lookup_data' : cooperator_lookup_data  # added for WDFN234
+                'cooperator_lookup_data': cooperator_lookup_data  # added for WDFN234
             }
         http_code = 200
     elif 400 <= status < 500:
@@ -165,7 +168,6 @@ def monitoring_location(site_no):
 
 def return_404(*args, **kwargs):
     return abort(404)
-
 
 @app.route('/hydrological-unit/', defaults={'huc_cd': None}, methods=['GET'])
 @app.route('/hydrological-unit/<huc_cd>/', methods=['GET'])

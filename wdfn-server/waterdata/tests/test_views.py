@@ -195,7 +195,7 @@ class TestTimeSeriesComponentView:
 
 class TestCallCooperatorSiteService:
 
-    def test_get(self):
+    def mock_call_cooperator_site_service(self):
         assert 0 == 0
 
 
