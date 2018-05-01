@@ -242,7 +242,7 @@ describe('Redux store', () => {
             });
 
             it('Fetches the previous year\'s time series', () => {
-                store.Actions.retrieveCompareTimeseries(SITE_NO, START_DATE, END_DATE)(mockDispatch, mockGetState);
+                store.Actions.retrieveCompareTimeseries(SITE_NO, 'P7D', START_DATE, END_DATE)(mockDispatch, mockGetState);
 
                 expect(modelsMock.getPreviousYearTimeseries.calls.count()).toBe(1);
                 expect(modelsMock.getPreviousYearTimeseries.calls.argsFor(0)[0]).toEqual({
@@ -255,13 +255,11 @@ describe('Redux store', () => {
             it('Dispatches the action to add the compare time series and to set its visibility to false', (done) => {
                 spyOn(store.Actions, 'addSeriesCollection');
                 spyOn(store.Actions, 'toggleTimeseries');
-                let p = store.Actions.retrieveCompareTimeseries(SITE_NO, START_DATE, END_DATE)(mockDispatch, mockGetState);
+                let p = store.Actions.retrieveCompareTimeseries(SITE_NO, 'P7D', START_DATE, END_DATE)(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(2);
+                    expect(mockDispatch.calls.count()).toBe(1);
                     expect(store.Actions.addSeriesCollection.calls.count()).toBe(1);
                     expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('compare:P7D');
-                    expect(store.Actions.toggleTimeseries.calls.count()).toBe(1);
-                    expect(store.Actions.toggleTimeseries.calls.argsFor(0)).toEqual(['compare', false]);
 
                     done();
                 });
@@ -292,7 +290,7 @@ describe('Redux store', () => {
 
             it('Dispatches the action to reset the compare time series', (done) => {
                 spyOn(store.Actions, 'resetTimeseries');
-                let p = store.Actions.retrieveCompareTimeseries(SITE_NO, START_DATE, END_DATE)(mockDispatch, mockGetState);
+                let p = store.Actions.retrieveCompareTimeseries(SITE_NO, 'P7D', START_DATE, END_DATE)(mockDispatch, mockGetState);
                 p.then(() => {
                     expect(mockDispatch).toHaveBeenCalled();
                     expect(store.Actions.resetTimeseries.calls.count()).toBe(1);
@@ -343,15 +341,18 @@ describe('Redux store', () => {
                 expect(args.endDate).toEqual(new Date('2017-03-31'));
             });
 
-            it('Should dispatch add series collection', (done) => {
+            it('Should dispatch add series collection and retrieveCompareTimeseries', (done) => {
                 mockGetState.and.returnValue(TEST_STATE);
+                spyOn(store.Actions, 'retrieveCompareTimeseries');
                 let p = store.Actions.retrieveExtendedTimeseries('12345678', 'P30D')(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(2);
+                    expect(mockDispatch.calls.count()).toBe(3);
                     let arg = mockDispatch.calls.argsFor(1)[0];
                     expect(arg.type).toBe('ADD_TIMESERIES_COLLECTION');
                     expect(arg.key).toBe('current:P30D:00060');
 
+                    expect(store.Actions.retrieveCompareTimeseries).toHaveBeenCalled();
+                    expect(store.Actions.retrieveCompareTimeseries.calls.argsFor(0)[1]).toEqual('P30D');
                     done();
                 });
             });

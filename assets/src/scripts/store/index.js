@@ -61,7 +61,7 @@ export const Actions = {
                     startTime.setDate(endTime.getDate() - notes['filter:timeRange'].periodDays);
 
                     // Trigger a call to get last year's data
-                    dispatch(Actions.retrieveCompareTimeseries(siteno, startTime, endTime));
+                    dispatch(Actions.retrieveCompareTimeseries(siteno, 'P7D', startTime, endTime));
 
                     // Update the series data for the 'current' series
                     dispatch(Actions.addSeriesCollection('current', collection));
@@ -95,16 +95,15 @@ export const Actions = {
             });
         };
     },
-    retrieveCompareTimeseries(site, startTime, endTime) {
+    retrieveCompareTimeseries(site, period, startTime, endTime) {
         return function (dispatch, getState) {
             return getPreviousYearTimeseries({site, startTime, endTime}).then(
                 series => {
-                    const requestKey = getTsRequestKey('compare', 'P7D')(getState());
+                    const requestKey = getTsRequestKey('compare', period)(getState());
                     const collection = normalize(series, requestKey);
                     dispatch(Actions.addSeriesCollection(requestKey, collection));
-                    dispatch(Actions.toggleTimeseries('compare', false));
                 },
-                () => dispatch(Actions.resetTimeseries(getTsRequestKey('compare', 'P7D')(getState())))
+                () => dispatch(Actions.resetTimeseries(getTsRequestKey('compare', period)(getState())))
             );
         };
     },
@@ -141,6 +140,7 @@ export const Actions = {
                     series => {
                         const collection = normalize(series, requestKey);
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
+                        dispatch(Actions.retrieveCompareTimeseries(site, period, startTime, endTime));
                     },
                     () => {
                         console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
