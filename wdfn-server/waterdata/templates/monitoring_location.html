@@ -153,10 +153,10 @@
                     </div>
                 {% endif %}
 
-                {% if sifta_data %}
+                {% if cooperator_lookup_data %}
                     <div>
                         <p>Funding provided by</p>
-                        {% for customers, customer_data in sifta_data.items() %}
+                        {% for customers, customer_data in cooperator_lookup_data.items() %}
                             {% for customer in customer_data %}
                                 <figure class="cooperator_logo">
                                     <a href="{{ customer.URL }}">

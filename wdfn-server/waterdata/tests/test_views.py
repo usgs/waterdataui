@@ -193,6 +193,11 @@ class TestTimeSeriesComponentView:
         text = response.data.decode('utf-8')
         assert text.count('class="wdfn-component" data-component="hydrograph"') == 1, 'Component expected'
 
+class TestCallCooperatorSiteService:
+
+    def test_get(self):
+        assert 0 == 0
+
 
 MOCK_SITE_LIST_1 = (
     '#\n#\n# US Geological Survey\n# retrieved: 2018-01-02 09:31:20 -05:00\t(caas01)\n#\n# '
@@ -253,8 +258,7 @@ MOCK_SITE_LIST_2 = (
 )
 
 
-MOCK_SIFTA_JSON = {"Customers":[{"Name":"New Jersey Department of Environmental Protection","URL":"http://www.nj.gov/dep/ec/","IconURL":"http://water.usgs.gov/customer/icons/1275.gif
-http://water.usgs.gov/customer/icons/1275.gif
-"},{"Name":"USGS - National Groundwater Monitoring Network","URL":"http://www.usgs.gov/","IconURL":"http://water.usgs.gov/customer/icons/9326.gif
-http://water.usgs.gov/customer/icons/9326.gif
-"}]}
+MOCK_SIFTA_JSON = '{"Customers":[{"Name":"New Jersey Department of Environmental Protection",' \
+                  '"URL":"http://www.nj.gov/dep/ec/","IconURL":"http://water.usgs.gov/customer/icons/1275.gif"},' \
+                  '{"Name":"USGS - National Groundwater Monitoring Network",' \
+                  '"URL":"http://www.usgs.gov/","IconURL":"http://water.usgs.gov/customer/icons/9326.gif"}]}'

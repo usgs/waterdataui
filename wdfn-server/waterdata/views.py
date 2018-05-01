@@ -62,9 +62,9 @@ def monitoring_location(site_no):
         url_for_cooperator_lookup = 'https://sifta.water.usgs.gov/Services/REST/Site/CustomerFunding.ashx?SiteNumber=' \
                                     + site_no + '&StartDate=10/1/2017&EndDate=09/30/2018'
         response = requests.get(url_for_cooperator_lookup)
-        sifta_data = response.json()
-        if len(sifta_data['Customers']) < 1:
-            sifta_data = None
+        cooperator_lookup_data = response.json()
+        if len(cooperator_lookup_data['Customers']) < 1:
+            cooperator_lookup_data = None
 
         if len(data_list) == 1:
             parameter_data_resp = execute_get_request(
@@ -140,7 +140,7 @@ def monitoring_location(site_no):
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'parm_grp_summary': grouped_dataseries,
                 'questions_link': questions_link,
-                'sifta_data' : sifta_data  # added for WDFN234
+                'cooperator_lookup_data' : cooperator_lookup_data  # added for WDFN234
             }
         http_code = 200
     elif 400 <= status < 500:
