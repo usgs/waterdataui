@@ -31,7 +31,6 @@ svg {
         }
         &.estimated {
             stroke: $estimated-time-series;
-            stroke-dasharray: 1, 3;
         }
     }
     .ts-compare {
