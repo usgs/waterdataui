@@ -1,0 +1,16 @@
+DEBUG = True
+
+# The root location of static assets (Javascript, CSS, Images)
+STATIC_ROOT = 'http://localhost:9000'
+
+# If this is not set, live reload will be disabled.
+LIVE_RELOAD_PATH = 'ws://localhost:9000/ws'
+
+#SERVICE_ROOT = 'https://test.waterservices.usgs.gov'
+#PAST_SERVICE_ROOT = 'https://testnwis.waterservices.usgs.gov'
+
+# controls environment specific behavior
+# acceptable values: 'local', 'development', 'staging', 'prod'
+DEPLOYMENT_ENVIRONMENT = 'development'
+
+#ASSET_MANIFEST_PATH = '/Users/dnaab/src/waterdataui/assets/dist/rev-manifest.json'
