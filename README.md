@@ -1,7 +1,7 @@
 # Water Data For The Nation UI
 
 [![Build Status](https://travis-ci.org/usgs/waterdataui.svg?branch=master)](https://travis-ci.org/usgs/waterdataui)
-[![Coverage Status](https://coveralls.io/repos/github/u`wdfn-server`sgs/waterdataui/badge.svg?branch=master)](https://coveralls.io/github/usgs/waterdataui?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/usgs/waterdataui/badge.svg?branch=master)](https://coveralls.io/github/usgs/waterdataui?branch=master)
 [![Dependency Status](https://gemnasium.com/badges/github.com/usgs/waterdataui.svg)](https://gemnasium.com/github.com/usgs/waterdataui)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/05497ebda0d2450bb11eba0e436f4360)](https://www.codacy.com/app/ayan/waterdataui?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=usgs/waterdataui&amp;utm_campaign=Badge_Grade)
 
