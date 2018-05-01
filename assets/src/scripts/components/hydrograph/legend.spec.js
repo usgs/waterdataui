@@ -165,7 +165,7 @@ describe('Legend module', () => {
                     }
                 }
             },
-            timeseriesState: {
+            timeSeriesState: {
                 currentVariableID: '45807197',
                 currentDateRange: 'P7D',
                 showSeries: {
@@ -176,7 +176,7 @@ describe('Legend module', () => {
             }
         };
 
-        it('Should return no markers if no timeseries to show', () => {
+        it('Should return no markers if no time series to show', () => {
             let newData = {
                 ...TEST_DATA,
                 series: {
@@ -202,8 +202,8 @@ describe('Legend module', () => {
         it('Should return markers for a different selected variable', () => {
             const newData = {
                 ...TEST_DATA,
-                timeseriesState: {
-                    ...TEST_DATA.timeseriesState,
+                timeSeriesState: {
+                    ...TEST_DATA.timeSeriesState,
                     currentVariableID: '45807202'
                 }
             };
@@ -222,8 +222,8 @@ describe('Legend module', () => {
         it('Should return markers only for time series shown', () => {
             const newData = {
                 ...TEST_DATA,
-                timeseriesState: {
-                    ...TEST_DATA.timeseriesState,
+                timeSeriesState: {
+                    ...TEST_DATA.timeSeriesState,
                     currentVariableID: '45807202',
                     showSeries: {
                         'current': true,

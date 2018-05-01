@@ -7,14 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - Hydrograph can now show either last 7 days, last 30 days, or the last year of data for
-the selected timeseries.
+the selected timeseries. The Show last year feature also works for the three date ranges.
 - The beginnings of a node.js-based graph server was added.
 
 
 ### Changed
 - Cursor location / tooltip defaults to last point in the time series.
+- Upgraded to Font Awesome 5.1
 - Date labels moved to and centered in areas between midnight tick marks
 - Projects were isolated in separate directories with Makefiles binding them together.
+- Change incorrect spelling "timeseries" to "time series"
 
 
 ## [0.7.0] - 2018-04-23
