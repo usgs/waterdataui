@@ -15,6 +15,7 @@ the selected timeseries.
 - Cursor location / tooltip defaults to last point in the time series.
 - Date labels moved to and centered in areas between midnight tick marks
 - Projects were isolated in separate directories with Makefiles binding them together.
+- Change incorrect spelling "timeseries" to "time series"
 
 
 ## [0.7.0] - 2018-04-23
