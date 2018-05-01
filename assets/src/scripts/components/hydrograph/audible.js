@@ -129,7 +129,7 @@ export const audibleUI = function (elem) {
         .attr('ga-event-category', 'TimeseriesGraph')
         .html('Audible&nbsp;');
     button.append('i')
-        .classed('fa', true);
+        .classed('fas', true);
     button.call(link(function(elem, audibleOn) {
             if (audibleOn) {
                 elem.attr('title', 'Stop')
