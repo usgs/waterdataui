@@ -31,7 +31,7 @@ export const circleMarker = function(elem, {r, x, y, text=null, domId=null, domC
         // is an SVG pattern because there is not a way to
         // specify an SVG pattern with a background color.
         // The desired background color then comes from the
-        // overlayed circle.
+        // overlaid circle.
         group.append('circle')
             .attr('r', r)
             .attr('cx', x)
@@ -64,7 +64,7 @@ export const rectangleMarker = function(elem, {x, y, width, height, text=null, d
         // is an SVG pattern because there is not a way to
         // specify an SVG pattern with a background color.
         // The desired background color then comes from the
-        // overlayed rectangle.
+        // overlaid rectangle.
         group.append('rect')
             .attr('x', x)
             .attr('y', rectangleY)
