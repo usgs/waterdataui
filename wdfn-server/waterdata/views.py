@@ -3,8 +3,8 @@ Main application views.
 """
 import json
 import requests  # added for WDFN234
-
-from config.py import HYDROLOGIC_PAGES_ENABLED
+COOPERATOR_LOOKUP_ENABLED = True  #temp line
+#from ..config import COOPERATOR_LOOKUP_ENABLED  # added for WDFN234
 
 from flask import abort, render_template, request, Markup
 
@@ -59,7 +59,7 @@ def monitoring_location(site_no):
         }
         station_record = data_list[0]
 
-        if HYDROLOGIC_PAGES_ENABLED:
+        if COOPERATOR_LOOKUP_ENABLED:  # feature toggle for stopping use on production
             # call the web service to gather information about funding partners for monitoring location
             # this is a temporary url for testing until the new SIFTA lookup web service is operational
             url_for_cooperator_lookup = 'https://sifta.water.usgs.gov/Services/REST/Site/CustomerFunding.ashx?SiteNumber=' \
@@ -68,6 +68,8 @@ def monitoring_location(site_no):
             cooperator_lookup_data = response.json()
             if len(cooperator_lookup_data['Customers']) < 1:
                 cooperator_lookup_data = None
+        else:  # feature toggle for stopping use on production remove when new lookup service is working
+            cooperator_lookup_data = None
 
         if len(data_list) == 1:
             parameter_data_resp = execute_get_request(
