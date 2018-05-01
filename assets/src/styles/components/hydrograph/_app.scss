@@ -12,7 +12,7 @@
     }
 }
 
-#select-timeseries  {
+#select-time-series  {
     label {
         font-weight: $font-bold;
     }
@@ -100,7 +100,7 @@
     // Import the SVG styles for the graph
     @import './graph';
 
-    .timeseries-graph-title {
+    .time-series-graph-title {
         @include h4();
         @include media($medium-screen) {
             @include h3();
@@ -114,7 +114,7 @@
         background: rgba(255, 255, 255, 0.8);
         margin: 0 0 0 40px;
         font-size: 0.5em;
-        color: $default-timeseries;
+        color: $default-time-series;
         @include media($medium-screen) {
             font-size: 0.75em;
         }
@@ -125,10 +125,10 @@
             font-weight: bold;
         }
         .approved {
-            color: $approved-timeseries;
+            color: $approved-time-series;
         }
         .estimated {
-            color: $estimated-timeseries;
+            color: $estimated-time-series;
         }
         .compare-tooltip-text {
             font-weight: normal

@@ -20,7 +20,7 @@ const { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
     MASK_DESC, HASH_ID } = require('./drawingData');
 const { CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
-const { plotSeriesSelectTable, availableTimeseriesSelector } = require('./parameters');
+const { plotSeriesSelectTable, availableTimeSeriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
 const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
     descriptionSelector,  currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } = require('./timeSeries');
@@ -86,7 +86,7 @@ const plotDataLine = function (elem, {visible, lines, tsKey, xScale, yScale}) {
             let maskGroup = elem.append('g')
                 .attr('class', `${tsKey}-mask-group`);
             const xSpan = xScale(xDomainEnd) - xScale(xDomainStart);
-            const rectWidth = xSpan > 0 ? xSpan : 1;
+            const rectWidth = xSpan > 1 ? xSpan : 1;
 
             maskGroup.append('rect')
                 .attr('x', xScale(xDomainStart))
@@ -230,6 +230,7 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLa
             .on('click', dispatch(function() {
                 return Actions.showMedianStatsLabel(!showLabel);
             }));
+
     if (showLabel) {
         elem.selectAll('medianPointText')
             .data(points)
@@ -274,7 +275,7 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap,
 
 const createTitle = function(elem) {
     elem.append('div')
-        .classed('timeseries-graph-title', true)
+        .classed('time-series-graph-title', true)
         .call(link((elem, title) => {
             elem.html(title);
         }, titleSelector));
@@ -345,13 +346,13 @@ const timeSeriesGraph = function (elem) {
                         seriesMap: currentVariableTimeSeriesSelector('median'),
                         variable: getCurrentVariable,
                         dateRange: getCurrentDateRange,
-                        showLabel: (state) => state.timeseriesState.showMedianStatsLabel
+                        showLabel: (state) => state.timeSeriesState.showMedianStatsLabel
                     })));
             });
 };
 
 /*
- * Create the show last year toggle and the audible toggle for the timeseries graph.
+ * Create the show last year toggle and the audible toggle for the time series graph.
  * @param {Object} elem - D3 selection
  */
 const graphControls = function(elem) {
@@ -377,15 +378,15 @@ const graphControls = function(elem) {
         .attr('id', 'last-year-checkbox')
         .attr('aria-labelledby', 'last-year-label')
         .attr('ga-on', 'click')
-        .attr('ga-event-category', 'TimeseriesGraph')
+        .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', 'toggleCompare')
         .on('click', dispatch(function() {
-            return Actions.toggleTimeseries('compare', this.checked);
+            return Actions.toggleTimeSeries('compare', this.checked);
         }))
         // Disables the checkbox if no compare time series for the current variable
-        .call(link(function(elem, compareTimeseries) {
-            const exists = Object.keys(compareTimeseries) ?
-                Object.values(compareTimeseries).filter(tsValues => tsValues.points.length).length > 0 : false;
+        .call(link(function(elem, compareTimeSeries) {
+            const exists = Object.keys(compareTimeSeries) ?
+                Object.values(compareTimeSeries).filter(tsValues => tsValues.points.length).length > 0 : false;
             elem.property('disabled', !exists);
             if (!exists) {
                 elem.property('checked', false);
@@ -406,14 +407,14 @@ const graphControls = function(elem) {
  * Modify styling to hide or display the elem.
  *
  * @param elem
- * @param currentTimeseries
+ * @param {Boolean} showElem
  */
-const controlDisplay = function (elem, hasSeriesWithPoints) {
-    elem.attr('hidden', hasSeriesWithPoints ? null : true);
+const controlDisplay = function (elem, showElem) {
+    elem.attr('hidden', showElem ? null : true);
 };
 
 
-const createDaterangeControls = function(elem, {siteno, hasTimeSeriesWithPoints}) {
+const createDaterangeControls = function(elem, {siteno, showControls}) {
     const DATE_RANGE = [{
         label: 'seven-day',
         name: '7 days',
@@ -428,7 +429,7 @@ const createDaterangeControls = function(elem, {siteno, hasTimeSeriesWithPoints}
         period: 'P1Y'
     }];
     elem.select('#ts-daterange-select-container').remove();
-    if (hasTimeSeriesWithPoints) {
+    if (showControls) {
         const container = elem.insert('ul', ':first-child')
             .attr('id', 'ts-daterange-select-container')
             .attr('class', 'usa-fieldset-inputs usa-unstyled-list');
@@ -441,7 +442,7 @@ const createDaterangeControls = function(elem, {siteno, hasTimeSeriesWithPoints}
             .attr('id', (d) => d.label)
             .attr('value', (d) => d.period)
             .on('change', dispatch(function () {
-                return Actions.retrieveExtendedTimeseries(
+                return Actions.retrieveExtendedTimeSeries(
                     siteno,
                     li.select('input:checked').attr('value')
                 );
@@ -464,7 +465,7 @@ const attachToNode = function (store, node, {siteno} = {}) {
         .call(provide(store))
         .call(link(createDaterangeControls, createStructuredSelector({
             siteno: () => siteno,
-            hasTimeSeriesWithPoints: hasTimeSeriesWithPoints('current', 'P7D')
+            showControls: hasTimeSeriesWithPoints('current', 'P7D')
         })));
 
     select(node).select('.graph-container')
@@ -475,10 +476,10 @@ const attachToNode = function (store, node, {siteno} = {}) {
             .classed('ts-legend-controls-container', true)
             .call(timeSeriesLegend)
             .call(graphControls);
-    select(node).select('.select-timeseries-container')
+    select(node).select('.select-time-series-container')
         .call(link(plotSeriesSelectTable, createStructuredSelector({
             siteno: () => siteno,
-            availableTimeseries: availableTimeseriesSelector,
+            availableTimeSeries: availableTimeSeriesSelector,
             lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current','P7D'),
             timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM),
             layout: layoutSelector
@@ -492,7 +493,7 @@ const attachToNode = function (store, node, {siteno} = {}) {
     window.onresize = function() {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     };
-    store.dispatch(Actions.retrieveTimeseries(siteno));
+    store.dispatch(Actions.retrieveTimeSeries(siteno));
 };
 
 

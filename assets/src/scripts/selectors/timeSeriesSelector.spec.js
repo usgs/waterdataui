@@ -58,7 +58,7 @@ describe('timeSeriesSelector', () => {
     describe('getCurrentVariableID', () => {
         it('Return the current variable ID', () => {
             expect(getCurrentVariableID({
-                timeseriesState: {
+                timeSeriesState: {
                     currentVariableID: '00060'
                 }
             })).toEqual('00060');
@@ -68,7 +68,7 @@ describe('timeSeriesSelector', () => {
     describe('getCurrentDateRange', () => {
        it('Return the current date range', () => {
            expect(getCurrentDateRange({
-               timeseriesState: {
+               timeSeriesState: {
                    currentDateRange: 'P30D'
                }
            })).toEqual('P30D');
@@ -80,7 +80,7 @@ describe('timeSeriesSelector', () => {
             series: {
                 variables: TEST_VARS
             },
-            timeseriesState: {
+            timeSeriesState: {
                 currentVariableID: '45807042'
             }
         };
@@ -88,7 +88,7 @@ describe('timeSeriesSelector', () => {
         it('Return null if no variable is selected', () => {
             expect(getCurrentVariable({
                 ...TEST_STATE,
-                timeseriesState: {
+                timeSeriesState: {
                     currentVariableID: null
                 }
             })).toBeNull();
@@ -117,7 +117,7 @@ describe('timeSeriesSelector', () => {
             series: {
                 variables: TEST_VARS
             },
-            timeseriesState: {
+            timeSeriesState: {
                 currentVariableID: '45807042'
             }
         };
@@ -125,7 +125,7 @@ describe('timeSeriesSelector', () => {
         it('Return null if no variable is selected', () => {
             expect(getCurrentParmCd({
                 ...TEST_STATE,
-                timeseriesState: {
+                timeSeriesState: {
                     currentVariableID: null
                 }
             })).toBeNull();
@@ -159,7 +159,7 @@ describe('timeSeriesSelector', () => {
                     'current:P30D:00060': {}
                 }
             },
-            timeseriesState: {
+            timeSeriesState: {
                 currentDateRange: 'P7D',
                 currentVariableID: '45807042'
             }
@@ -168,7 +168,7 @@ describe('timeSeriesSelector', () => {
         it('Return false if no requests in series', () => {
             expect(hasTimeSeries('current', 'P7D', '00060')({
                 series: {},
-                timeseriesState: {
+                timeSeriesState: {
                     currentDateRange: 'P7D',
                     currentVariableID: '45807042'
                 }
@@ -192,7 +192,7 @@ describe('timeSeriesSelector', () => {
             series: {
                 variables: TEST_VARS
             },
-            timeseriesState: {
+            timeSeriesState: {
                 currentDateRange: 'P7D',
                 currentVariableID: '45807042'
             }
@@ -245,7 +245,7 @@ describe('timeSeriesSelector', () => {
                 },
                 variables: TEST_VARS
             },
-            timeseriesState: {
+            timeSeriesState: {
                 currentDateRange: 'P7D',
                 currentVariableID: '45807042'
             }

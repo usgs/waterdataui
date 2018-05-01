@@ -11,7 +11,7 @@ const formatTime = timeFormat('%c %Z');
 
 
 /**
- * @return {Object} Mapping of time series ID to time series details. Only timeseries with non zero points are returned
+ * @return {Object} Mapping of time series ID to time series details. Only time series with non zero points are returned
  */
 export const allTimeSeriesSelector = createSelector(
     state => state.series,
@@ -91,13 +91,13 @@ export const hasTimeSeriesWithPoints = memoize((tsKey, period) => createSelector
 
 /**
  * Factory function creates a function that:
- * Returns the current show state of a timeseries.
+ * Returns the current show state of a time series.
  * @param  {Object}  state     Redux store
- * @param  {String}  tsKey Timeseries key
- * @return {Boolean}           Show state of the timeseries
+ * @param  {String}  tsKey Time series key
+ * @return {Boolean}           Show state of the time series
  */
 export const isVisibleSelector = memoize(tsKey => (state) => {
-    return state.timeseriesState.showSeries[tsKey];
+    return state.timeSeriesState.showSeries[tsKey];
 });
 
 

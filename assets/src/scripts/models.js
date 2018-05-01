@@ -28,14 +28,14 @@ function tsServiceRoot(date) {
 }
 
 /**
- * Get a given timeseries dataset from Water Services.
+ * Get a given time series dataset from Water Services.
  * @param  {Array}    sites  Array of site IDs to retrieve.
  * @param  {Array}    params Optional array of parameter codes
  * @param {Date} startDate
  * @param {Date} endData
- * @return {Promise} resolves to an array of timeseries model object, rejects to an error
+ * @return {Promise} resolves to an array of time series model object, rejects to an error
  */
-export function getTimeseries({sites, params=null, startDate=null, endDate=null}) {
+export function getTimeSeries({sites, params=null, startDate=null, endDate=null}) {
     let timeParams;
     let serviceRoot;
     if (!startDate && !endDate) {
@@ -49,7 +49,7 @@ export function getTimeseries({sites, params=null, startDate=null, endDate=null}
     }
     let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
 
-    let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${paramCds}&${timeParams}&indent=on&siteStatus=all&format=json`;
+    let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${paramCds}&${timeParams}&siteStatus=all&format=json`;
     return get(url)
         .then(response => JSON.parse(response))
         .catch(reason => {
@@ -108,7 +108,7 @@ export function isLeapYear(year) {
 }
 
 /**
- * Merge medianData timeseries into collection and return.
+ * Merge medianData time series into collection and return.
  * @param {Object} collection
  * @param {Object} medianData - median data for each time series, where properties are the ts id.
  * @param {Date} timeSeriesStartDateTime
@@ -116,7 +116,7 @@ export function isLeapYear(year) {
  * @param {Object} varsByCode - variable data where properties are parameter codes.
  * @returns {Object}
  */
-export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, varsByCode) {
+export function mergeMedianTimeSeries(collection, medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, varsByCode) {
     // We only have data for the variables returned from the IV service. If this
     // series doesn't correspond with an IV series, skip it.
     const variable = varsByCode[medianData[0].parameter_cd];
@@ -216,11 +216,11 @@ export function mergeMedianTimeseries(collection, medianData, timeSeriesStartDat
  */
 export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, variables) {
 
-    // Organize median data by parameter code and timeseries id
-    const dataByTimeseriesID = medianData.reduce(function (byTimeseriesID, d) {
-        byTimeseriesID[d.ts_id] = byTimeseriesID[d.ts_id] || [];
-        byTimeseriesID[d.ts_id].push(d);
-        return byTimeseriesID;
+    // Organize median data by parameter code and time series id
+    const dataByTimeSeriesID = medianData.reduce(function (byTimeSeriesID, d) {
+        byTimeSeriesID[d.ts_id] = byTimeSeriesID[d.ts_id] || [];
+        byTimeSeriesID[d.ts_id].push(d);
+        return byTimeSeriesID;
     }, {});
 
     const varsByCode = Object.keys(variables).reduce((vars, varId) => {
@@ -230,22 +230,22 @@ export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesE
     }, {});
 
     let collection = {};
-    for (let tsID of Object.keys(dataByTimeseriesID)) {
-        const rows = dataByTimeseriesID[tsID];
-        collection = mergeMedianTimeseries(
+    for (let tsID of Object.keys(dataByTimeSeriesID)) {
+        const rows = dataByTimeSeriesID[tsID];
+        collection = mergeMedianTimeSeries(
             collection, rows, timeSeriesStartDateTime, timeSeriesEndDateTime, varsByCode);
     }
 
     return collection;
 }
 
-export function getPreviousYearTimeseries({site, startTime, endTime}) {
+export function getPreviousYearTimeSeries({site, startTime, endTime}) {
     let lastYearStartTime = new Date(startTime.getTime());
     let lastYearEndTime = new Date(endTime.getTime());
 
     lastYearStartTime.setFullYear(startTime.getFullYear() - 1);
     lastYearEndTime.setFullYear(endTime.getFullYear() - 1);
-    return getTimeseries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
+    return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
 }
 
 export function getMedianStatistics({sites, params=null}) {

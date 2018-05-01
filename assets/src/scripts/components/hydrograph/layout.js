@@ -1,4 +1,4 @@
-// Define constants for the timeseries graph's aspect ratio and margins as well as a
+// Define constants for the time series graph's aspect ratio and margins as well as a
 // selector function which will return the width/height to use.
 const { createSelector } = require('reselect');
 

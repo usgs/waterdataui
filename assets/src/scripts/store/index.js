@@ -4,17 +4,17 @@ const last = require('lodash/last');
 const { applyMiddleware, createStore, combineReducers, compose } = require('redux');
 const { default: thunk } = require('redux-thunk');
 
-const { getMedianStatistics, getPreviousYearTimeseries, getTimeseries,
+const { getMedianStatistics, getPreviousYearTimeSeries, getTimeSeries,
     parseMedianData, sortedParameters } = require('../models');
 const { calcStartTime } = require('../utils');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
-const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey} = require('../selectors/timeSeriesSelector');
+const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange } = require('../selectors/timeSeriesSelector');
 
 const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
 const { seriesReducer: series } = require('./seriesReducer');
-const { timeseriesStateReducer: timeseriesState } = require('./timeseriesStateReducer');
+const { timeSeriesStateReducer: timeSeriesState } = require('./timeSeriesStateReducer');
 const { uiReducer: ui } = require('./uiReducer');
 
 const GAGE_HEIGHT_CD = '00065';
@@ -34,7 +34,7 @@ const getLatestValue = function(collection, parmCd) {
 
 
 /*
- * @param {Object} timeseries - keys are timeseries id
+ * @param {Object} timeSeries - keys are time series id
  * @param {Object} variables  - keys are the variable id
  */
 const getCurrentVariableId = function(timeSeries, variables) {
@@ -47,10 +47,10 @@ const getCurrentVariableId = function(timeSeries, variables) {
 
 
 export const Actions = {
-    retrieveTimeseries(siteno, params=null) {
+    retrieveTimeSeries(siteno, params=null) {
         return function (dispatch, getState) {
             const currentState = getState();
-            const timeSeries = getTimeseries({sites: [siteno], params}).then(
+            const timeSeries = getTimeSeries({sites: [siteno], params}).then(
                 series => {
                     const requestKey = getTsRequestKey('current', 'P7D')(currentState);
                     const collection = normalize(series, requestKey);
@@ -62,13 +62,13 @@ export const Actions = {
                     startTime.setDate(endTime.getDate() - notes['filter:timeRange'].periodDays);
 
                     // Trigger a call to get last year's data
-                    dispatch(Actions.retrieveCompareTimeseries(siteno, startTime, endTime));
+                    dispatch(Actions.retrieveCompareTimeSeries(siteno, 'P7D', startTime, endTime));
 
                     // Update the series data for the 'current' series
                     dispatch(Actions.addSeriesCollection('current', collection));
 
                     // Update the application state
-                    dispatch(Actions.toggleTimeseries('current', true));
+                    dispatch(Actions.toggleTimeSeries('current', true));
                     dispatch(Actions.setCurrentVariable(
                         getCurrentVariableId(collection.timeSeries || {}, collection.variables || {})
                     ));
@@ -77,8 +77,8 @@ export const Actions = {
                     return {collection, startTime, endTime};
                 },
                 () => {
-                    dispatch(Actions.resetTimeseries(getTsRequestKey('current', 'P7D')(currentState)));
-                    dispatch(Actions.toggleTimeseries('current', false));
+                    dispatch(Actions.resetTimeSeries(getTsRequestKey('current', 'P7D')(currentState)));
+                    dispatch(Actions.toggleTimeSeries('current', false));
                     return {
                         collection: null,
                         startTime: null,
@@ -91,35 +91,34 @@ export const Actions = {
                 if (startTime && endTime) {
                     let medianCollection = parseMedianData(stats, startTime, endTime, collection && collection.variables ? collection.variables : {});
                     dispatch(Actions.addSeriesCollection(getTsRequestKey('median')(currentState), medianCollection));
-                    dispatch(Actions.toggleTimeseries('median', true));
+                    dispatch(Actions.toggleTimeSeries('median', true));
                 }
             });
         };
     },
-    retrieveCompareTimeseries(site, startTime, endTime) {
+    retrieveCompareTimeSeries(site, period, startTime, endTime) {
         return function (dispatch, getState) {
-            return getPreviousYearTimeseries({site, startTime, endTime}).then(
+            return getPreviousYearTimeSeries({site, startTime, endTime}).then(
                 series => {
-                    const requestKey = getTsRequestKey('compare', 'P7D')(getState());
+                    const requestKey = getTsRequestKey('compare', period)(getState());
                     const collection = normalize(series, requestKey);
                     dispatch(Actions.addSeriesCollection(requestKey, collection));
-                    dispatch(Actions.toggleTimeseries('compare', false));
                 },
-                () => dispatch(Actions.resetTimeseries(getTsRequestKey('compare', 'P7D')(getState())))
+                () => dispatch(Actions.resetTimeSeries(getTsRequestKey('compare', period)(getState())))
             );
         };
     },
-    retrieveExtendedTimeseries(site, period) {
+    retrieveExtendedTimeSeries(site, period) {
         return function(dispatch, getState) {
             const state = getState();
             const parmCd = getCurrentParmCd(state);
             const requestKey = getTsRequestKey ('current', period, parmCd)(state);
             dispatch(Actions.setCurrentDateRange(period));
             if (!hasTimeSeries('current', period, parmCd)(state)) {
-                const endTime = new Date(); //TODO get this from the current data
+                const endTime = new Date(getRequestTimeRange('current', 'P7D')(state).end);
                 let startTime = calcStartTime(period, endTime);
 
-                return getTimeseries({
+                return getTimeSeries({
                     sites: [site],
                     params: [parmCd],
                     startDate: startTime,
@@ -129,6 +128,7 @@ export const Actions = {
                         const collection = normalize(series, requestKey);
                         dispatch(Actions.updateStartTime(startTime));
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
+                        dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
                     },
                     () => {
                         console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
@@ -154,42 +154,42 @@ export const Actions = {
     updateCurrentVariable(siteno, variableID) {
         return function(dispatch, getState) {
             dispatch(Actions.setCurrentVariable(variableID));
-            dispatch(Actions.retrieveExtendedTimeseries(siteno, getCurrentDateRange(getState())));
+            dispatch(Actions.retrieveExtendedTimeSeries(siteno, getCurrentDateRange(getState())));
         };
     },
-    startTimeseriesPlay(maxCursorOffset) {
+    startTimeSeriesPlay(maxCursorOffset) {
         return function (dispatch, getState) {
-            let state = getState().timeseriesState;
+            let state = getState().timeSeriesState;
             if (state.cursorOffset == null || state.cursorOffset >= maxCursorOffset) {
                 dispatch(Actions.setCursorOffset(0));
             }
             if (!state.audiblePlayId) {
                 let play = function () {
-                    let newOffset = getState().timeseriesState.cursorOffset + 15 * 60 * 1000;
+                    let newOffset = getState().timeSeriesState.cursorOffset + 15 * 60 * 1000;
                     if (newOffset > maxCursorOffset) {
-                        dispatch(Actions.stopTimeseriesPlay());
+                        dispatch(Actions.stopTimeSeriesPlay());
                     } else {
                         dispatch(Actions.setCursorOffset(newOffset));
                     }
                 };
                 let playId = window.setInterval(play, 10);
-                dispatch(Actions.timeseriesPlayOn(playId));
+                dispatch(Actions.timeSeriesPlayOn(playId));
             }
         };
     },
-    stopTimeseriesPlay() {
+    stopTimeSeriesPlay() {
         return function(dispatch, getState) {
-            window.clearInterval(getState().timeseriesState.audiblePlayId);
-            dispatch(Actions.timeseriesPlayStop());
+            window.clearInterval(getState().timeSeriesState.audiblePlayId);
+            dispatch(Actions.timeSeriesPlayStop());
         };
     },
-    timeseriesPlayOn(playId) {
+    timeSeriesPlayOn(playId) {
         return {
             type: 'TIMESERIES_PLAY_ON',
             playId
         };
     },
-    timeseriesPlayStop() {
+    timeSeriesPlayStop() {
         return {
             type: 'TIMESERIES_PLAY_STOP'
         };
@@ -201,7 +201,7 @@ export const Actions = {
             extent
         };
     },
-    toggleTimeseries(key, show) {
+    toggleTimeSeries(key, show) {
         return {
             type: 'TOGGLE_TIMESERIES',
             key,
@@ -215,7 +215,7 @@ export const Actions = {
             data
         };
     },
-    resetTimeseries(key) {
+    resetTimeSeries(key) {
         return {
             type: 'RESET_TIMESERIES',
             key
@@ -277,7 +277,7 @@ export const Actions = {
 const appReducer = combineReducers({
     series,
     floodData,
-    timeseriesState,
+    timeSeriesState,
     floodState,
     ui
 });
@@ -293,7 +293,7 @@ export const configureStore = function (initialState) {
             extent: {}
         },
 
-        timeseriesState: {
+        timeSeriesState: {
             showSeries: {
                 current: true,
                 compare: false,

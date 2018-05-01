@@ -195,7 +195,7 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
  * Select attributes from the state useful for legend creation
  */
 const legendDisplaySelector = createSelector(
-    (state) => state.timeseriesState.showSeries,
+    (state) => state.timeSeriesState.showSeries,
     currentVariableTimeSeriesSelector('median'),
     getMethods,
     uniqueClassesSelector('current'),
@@ -218,7 +218,7 @@ const legendDisplaySelector = createSelector(
 
 /*
  * Factory function  that returns an array of array of markers to be used for the
- * timeseries graph legend
+ * time series graph legend
  * @return {Array of Array} of markers
  */
 export const legendMarkerRowsSelector = createSelector(

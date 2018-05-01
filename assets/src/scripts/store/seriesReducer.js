@@ -5,11 +5,11 @@ const omitBy = require('lodash/omitBy');
  * Case reducers
  */
 
-const addTimeseriesCollection = function(series, action) {
+const addTimeSeriesCollection = function(series, action) {
     return merge({}, series, action.data);
 };
 
-const resetTimeseries = function(series, action) {
+const resetTimeSeries = function(series, action) {
     return {
         ...series,
         timeSeries: omitBy(series.timeSeries, (tsValue) => tsValue.tsKey === action.key),
@@ -38,9 +38,8 @@ const updateStatisticalStartTimes = function(series, action) {
 
 export const seriesReducer = function(series={}, action) {
     switch (action.type) {
-        case 'ADD_TIMESERIES_COLLECTION': return addTimeseriesCollection(series, action);
-        case 'RESET_TIMESERIES': return resetTimeseries(series, action);
-        case 'UPDATE_START_TIME': return updateStatisticalStartTimes(series, action);
+        case 'ADD_TIMESERIES_COLLECTION': return addTimeSeriesCollection(series, action);
+        case 'RESET_TIMESERIES': return resetTimeSeries(series, action);
         default: return series;
     }
 };
