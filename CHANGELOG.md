@@ -13,6 +13,7 @@ the selected timeseries. The Show last year feature also works for the three dat
 
 ### Changed
 - Cursor location / tooltip defaults to last point in the time series.
+- Upgraded to Font Awesome 5.1
 - Date labels moved to and centered in areas between midnight tick marks
 - Projects were isolated in separate directories with Makefiles binding them together.
 - Change incorrect spelling "timeseries" to "time series"

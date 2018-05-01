@@ -183,7 +183,7 @@ export const plotSeriesSelectTable = function (elem, {siteno, availableTimeSerie
                     .attr('class', 'tooltip-item');
                 tooltip.append('span')
                     .append('i')
-                        .attr('class', 'fa fa-info-circle');
+                        .attr('class', 'fas fa-info-circle');
 
                 tooltip.append('div')
                     .attr('class', 'tooltip parameter-tooltip')
