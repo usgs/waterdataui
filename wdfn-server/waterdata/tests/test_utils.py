@@ -6,7 +6,7 @@ from unittest import TestCase, mock
 
 import requests as r
 
-from ..utils import construct_url, defined_when, execute_get_request, parse_rdb
+from ..utils import construct_url, defined_when, execute_get_request, parse_rdb, execute_lookup_request
 
 
 class TestConstructUrl(TestCase):
@@ -241,3 +241,18 @@ class TestDefinedWhen(TestCase):
         def decorated(*args, **kwargs):
             return ','.join([*args, *kwargs.keys(), *kwargs.values()])
         self.assertEqual(decorated('1', '2', kw1='3', kw2='4'), '1,2,kw1,kw2,3,4')
+
+
+class TestCooperatorLookup:
+    @mock.patch('waterdata.utils.r.get')
+    def test_request_response_cooperator_lookup(self, r_mock):
+        r_mock.return_value.mock_cooperator_lookup_data = MOCK_COOPERATOR_LOOKUP_DATA
+        result = execute_lookup_request
+
+        self.assertEqual(result.mock_cooperator_lookup_data, None)
+
+
+MOCK_COOPERATOR_LOOKUP_DATA = '{"Customers":[{"Name":"New Jersey Department of Environmental Protection",' \
+                  '"URL":"http://www.nj.gov/dep/ec/","IconURL":"http://water.usgs.gov/customer/icons/1275.gif"},' \
+                  '{"Name":"USGS - National Groundwater Monitoring Network",' \
+                  '"URL":"http://www.usgs.gov/","IconURL":"http://water.usgs.gov/customer/icons/9326.gif"}]}'
