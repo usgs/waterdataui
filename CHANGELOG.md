@@ -17,6 +17,7 @@ the selected timeseries. The Show last year feature also works for the three dat
 - Date labels moved to and centered in areas between midnight tick marks
 - Projects were isolated in separate directories with Makefiles binding them together.
 - Change incorrect spelling "timeseries" to "time series"
+- Label change on toggle from "Show last year" to "Compare to last year"
 
 
 ### Fixed
