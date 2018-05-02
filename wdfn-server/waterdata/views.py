@@ -8,7 +8,7 @@ from flask import abort, render_template, request, Markup
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries
-from .utils import construct_url, defined_when, execute_get_request, parse_rdb
+from .utils import construct_url, defined_when, execute_get_request, parse_rdb, execute_lookup_request
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -57,20 +57,10 @@ def monitoring_location(site_no):
         }
         station_record = data_list[0]
 
+        # get the cooperator data from service
         if app.config['COOPERATOR_LOOKUP_ENABLED']:  # feature toggle for stopping use on production
-            # call the web service to gather information about funding partners for monitoring location
-            # this is a temporary url for testing until the new SIFTA lookup web service is operational
-            url_for_cooperator_lookup = 'https://sifta.water.usgs.gov/Services/REST/Site/CustomerFunding.ashx?SiteNumber=' \
-                                        + site_no + '&StartDate=10/1/2017&EndDate=09/30/2018'
-            try:
-                response = requests.get(url_for_cooperator_lookup)
-                cooperator_lookup_data = response.json()
-                if len(cooperator_lookup_data['Customers']) < 1:
-                    cooperator_lookup_data = None
-            except:
-                cooperator_lookup_data = None
-
-        else:  # feature toggle for stopping use on production; remove when new lookup service is working
+            cooperator_lookup_data = execute_lookup_request(app.config['URL_ROOT_COOPERATOR_LOOKUP'], site_no, app.config['URL_PARAMS_COOPERATOR_LOOKUP'])
+        else:
             cooperator_lookup_data = None
 
         if len(data_list) == 1:

@@ -47,3 +47,8 @@ ENABLE_USGS_GA = False
 
 # To use hashed assets, set this to the gulp-rev-all rev-manifest.json path
 ASSET_MANIFEST_PATH = None
+
+
+URL_ROOT_COOPERATOR_LOOKUP = 'https://sifta.water.usgs.gov/Services/REST/Site/CustomerFunding.ashx?SiteNumber='
+
+URL_PARAMS_COOPERATOR_LOOKUP = '&StartDate=10/1/2017&EndDate=09/30/2018'

@@ -92,3 +92,18 @@ def defined_when(condition, fallback):
         return update_wrapper(func, f)
 
     return wrap
+
+
+def execute_lookup_request(url_root_cooperator_lookup, site_no, params):
+    try:
+        resp = r.get(url_root_cooperator_lookup + site_no + params)
+        cooperator_lookup_data = resp.json()
+        print('this is data ', cooperator_lookup_data)
+        if len(cooperator_lookup_data['Customers']) < 1:
+            cooperator_lookup_data = None
+
+        return cooperator_lookup_data
+    except:
+        cooperator_lookup_data = None
+
+        return cooperator_lookup_data
