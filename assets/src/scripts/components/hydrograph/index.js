@@ -27,7 +27,7 @@ const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 const { coerceStatisticalSeries } = require('./statistics');
 
-const { getCurrentVariable, getCurrentDateRange } = require('../../selectors/timeSeriesSelector');
+const { getCurrentDateRange } = require('../../selectors/timeSeriesSelector');
 
 
 const drawMessage = function (elem, message) {
@@ -183,10 +183,8 @@ const timeSeriesLegend = function(elem) {
  * @param  {Function} yscale
  * @param  {Number} modulo
  * @param  {Array} points
- * @param  {Boolean} showLabel
- * @param  {Object} variable
  */
-const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLabel, variable}) {
+const plotMedianPoints = function (elem, {xscale, yscale, modulo, points}) {
     let stepFunction = d3Line()
         .curve(curveStepAfter)
         .x(function(d) {
@@ -228,22 +226,6 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLa
             .attr('cy', function(d) {
                 return yscale(d.value);
             });
-
-    if (showLabel) {
-        elem.selectAll('medianPointText')
-            .data(points)
-            .enter()
-            .append('text')
-                .text(function(d) {
-                    return `${d.value} ${variable.unit.unitCode}`;
-                })
-                .attr('x', function(d) {
-                    return xscale(d.dateTime) + 5;
-                })
-                .attr('y', function(d) {
-                    return yscale(d.value);
-                });
-    }
 };
 
 /**
@@ -253,10 +235,8 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLa
  * @param  {Function} xscale
  * @param  {Function} yscale
  * @param  {Array} pointsList
- * @param  {Boolean} showLabel
- * @param  {Object} variable
  */
-const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap, showLabel, variable, dateRange}) {
+const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap, dateRange}) {
     elem.select('#median-points').remove();
     if (!visible) {
         return;
@@ -266,7 +246,7 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap,
             .attr('id', 'median-points');
     for (const [index, seriesID] of Object.keys(seriesMap).entries()) {
         const points = coerceStatisticalSeries(seriesMap[seriesID], dateRange);
-        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points, showLabel, variable});
+        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points});
     }
 };
 
@@ -342,9 +322,7 @@ const timeSeriesGraph = function (elem) {
                         xscale: xScaleSelector('current'),
                         yscale: yScaleSelector,
                         seriesMap: currentVariableTimeSeriesSelector('median'),
-                        variable: getCurrentVariable,
-                        dateRange: getCurrentDateRange,
-                        showLabel: (state) => state.timeSeriesState.showMedianStatsLabel
+                        dateRange: getCurrentDateRange
                     })));
             });
 };
