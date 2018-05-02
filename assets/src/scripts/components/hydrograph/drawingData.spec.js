@@ -307,7 +307,7 @@ describe('drawingData module', () => {
                                 qualifiers: ['P', 'e']
                             }, {
                                 value: 10,
-                                qualifiers: ['P', 'e']
+                                qualifiers: ['P', 'E']
                             }],
                             tsKey: 'current:P7D'
                         },
@@ -352,7 +352,7 @@ describe('drawingData module', () => {
                                 'value': 10,
                                 'qualifiers': [
                                     'P',
-                                    'e'
+                                    'E'
                                 ]
                             }
                         ]

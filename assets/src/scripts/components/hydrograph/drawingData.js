@@ -171,7 +171,7 @@ export const flatPointsSelector = memoize(tsKey => createSelector(
 export const classesForPoint = point => {
     return {
         approved: point.qualifiers.indexOf('A') > -1,
-        estimated: point.qualifiers.indexOf('e') > -1
+        estimated: point.qualifiers.indexOf('e') > -1 || point.qualifiers.indexOf('E') > -1
     };
 };
 
