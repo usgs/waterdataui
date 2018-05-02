@@ -218,50 +218,42 @@
             &.median-modulo-0 {
                 fill: #f96713;
             }
-            &.median-step-0 {
-                fill: none;
-                stroke: #f96713;
-                stroke-width: 2px;
-            }
             &.median-modulo-1 {
                 fill: #0c7d40;
-            }
-            &.median-step-1 {
-                fill: none;
-                stroke: #0c7d40;
-                stroke-width: 2px;
             }
             &.median-modulo-2 {
                 fill: #0557fc;
             }
-            &.median-step-2 {
-                fill: none;
-                stroke: #0557fc;
-                stroke-width: 2px;
-            }
             &.median-modulo-3 {
                 fill: #f4f727;
-            }
-            &.median-step-3 {
-                fill: none;
-                stroke: #f4f727;
-                stroke-width: 2px;
             }
             &.median-modulo-4 {
                 fill: #01fab6;
             }
-            &.median-step-4 {
-                fill: none;
-                stroke: #01fab6;
-                stroke-width: 2px;
-            }
             &.median-modulo-5 {
                 fill: #9a9b77;
             }
-            &.median-step-5 {
+            &.median-step {
                 fill: none;
-                stroke: #9a9b77;
                 stroke-width: 2px;
+                &.median-step-0 {
+                    stroke: #f96713;
+                }
+                &.median-step-1 {
+                    stroke: #0c7d40;
+                }
+                &.median-step-2 {
+                    stroke: #0557fc;
+                }
+                &.median-step-3 {
+                    stroke: #f4f727;
+                }
+                &.median-step-4 {
+                    stroke: #01fab6;
+                }
+                &.median-step-5 {
+                    stroke: #9a9b77;
+                }
             }
         }
         .mask {

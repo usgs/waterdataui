@@ -199,6 +199,7 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLa
     medianGrp.append('path')
         .datum(points)
         .classed('median-data-series', true)
+        .classed('median-step', true)
         .classed(`median-step-${modulo}`, true)
         .attr('d', stepFunction);
     medianGrp.selectAll('medianPoint')
