@@ -107,7 +107,7 @@ export const medianMarker = function (elem, {r, x, y, text=null, domId=null, dom
         .attr('y2', y + Y_OFFSET);
     if (domClass !== null) {
         let lineClasses = domClass.replace('modulo', 'step').split(' ');
-        lineClasses.splice(1, 0, 'median-step');
+        lineClasses.splice(lineClasses.length - 1, 0, 'median-step');
         lineClasses.forEach(cls => line.classed(cls, true));
     }
     return group;

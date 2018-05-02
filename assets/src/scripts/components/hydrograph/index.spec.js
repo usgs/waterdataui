@@ -319,6 +319,7 @@ describe('Hydrograph charting module', () => {
 
         it('Should have 6 legend markers', () => {
             expect(selectAll('.legend g').size()).toBe(6);
+            expect(selectAll('.legend g line.median-step').size()).toBe(1);
         });
 
         it('Should have four legend markers after the compare time series is removed', () => {
