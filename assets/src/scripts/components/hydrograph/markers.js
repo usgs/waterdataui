@@ -98,21 +98,6 @@ export const lineMarker = function(elem, {x, y, length, text=null, domId=null, d
 };
 
 
-export const medianMarker = function (elem, {r, x, y, text=null, domId=null, domClass=null, fill=null}) {
-    let group = circleMarker(elem, {r: r, x: x, y: y, text: text, domId, domClass: domClass, fill: fill});
-    let line = group.append('line')
-        .attr('x1', x - 2.5*r)
-        .attr('x2', x + 2.5*r)
-        .attr('y1', y + Y_OFFSET)
-        .attr('y2', y + Y_OFFSET);
-    if (domClass !== null) {
-        let lineClasses = domClass.replace('modulo', 'step').split(' ');
-        lineClasses.splice(lineClasses.length - 1, 0, 'median-step');
-        lineClasses.forEach(cls => line.classed(cls, true));
-    }
-    return group;
-};
-
 export const textOnlyMarker = function(elem, {x, y, text, domId=null, domClass=null}) {
     const group = elem.append('g');
     let markerText = group.append('text')
@@ -152,18 +137,6 @@ export const defineTextOnlyMarker = function(text, domId=null, domClass=null ) {
 export const defineRectangleMarker = function(domId=null, domClass=null, text=null, fill=null) {
     return {
         type: rectangleMarker,
-        domId: domId,
-        domClass: domClass,
-        text: text,
-        fill: fill
-    };
-};
-
-
-export const defineMedianMarker = function(radius, domId=null, domClass=null, text=null, fill=null) {
-    return {
-        type: medianMarker,
-        r: radius,
         domId: domId,
         domClass: domClass,
         text: text,

@@ -200,32 +200,6 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points}) {
         .classed('median-step', true)
         .classed(`median-step-${modulo}`, true)
         .attr('d', stepFunction);
-    medianGrp.selectAll('medianPoint')
-        .data(points)
-        .enter()
-        .append('circle')
-            .classed('median-data-series', true)
-            .classed(`median-modulo-${modulo}`, true)
-            .attr('r', function(d, i) {
-                if (points.length > 1) {
-                    if (points[0].dateTime.getDate() < points[1].dateTime.getDate() &&
-                    points[points.length - 1].dateTime.getDate() === points[points.length - 2].dateTime.getDate()) {
-                        if (i === 0 || i === points.length - 1) {
-                            return 0;
-                        } else {
-                            return CIRCLE_RADIUS;
-                        }
-                    }
-                } else {
-                    return CIRCLE_RADIUS;
-                }
-            })
-            .attr('cx', function(d) {
-                return xscale(d.dateTime);
-            })
-            .attr('cy', function(d) {
-                return yscale(d.value);
-            });
 };
 
 /**

@@ -1,6 +1,6 @@
 const { select } = require('d3-selection');
 
-const { lineMarker, circleMarker, rectangleMarker, textOnlyMarker, medianMarker } = require('./markers');
+const { lineMarker, circleMarker, rectangleMarker, textOnlyMarker } = require('./markers');
 
 describe('Markers module', () => {
 
@@ -168,33 +168,6 @@ describe('Markers module', () => {
 
             expect(markerText.attr('class')).toBe(domClass);
             expect(markerText.attr('id')).toBe(domId);
-        });
-    });
-
-    describe('medianMarker', () => {
-        let r = 10;
-        let x = 2;
-        let y = 9;
-        let domId = 'marker-id';
-        let domClass = 'median-modulo-13';
-
-        it('returns elements with correct attributes', () => {
-            let marker = medianMarker(svg, {r: r, x: x, y: y, domId: domId, domClass: domClass});
-            let circleNode = marker.select('circle').node();
-            let lineNode = marker.select('line').node();
-
-            expect(circleNode.nodeName).toBe('circle');
-            expect(circleNode.getAttribute('r')).toBe('10');
-            expect(circleNode.getAttribute('cx')).toBe('2');
-            expect(circleNode.getAttribute('cy')).toBe('5');
-
-            expect(lineNode.nodeName).toBe('line');
-            expect(lineNode.getAttribute('x1')).toBe('-23');
-            expect(lineNode.getAttribute('x2')).toBe('27');
-            expect(lineNode.getAttribute('y1')).toBe('5');
-            expect(lineNode.getAttribute('y2')).toBe('5');
-
-            expect(lineNode.getAttribute('class')).toBe('median-step median-step-13');
         });
     });
 });

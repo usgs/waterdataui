@@ -215,27 +215,10 @@
             }
         }
         .median-data-series {
-            &.median-modulo-0 {
-                fill: #f96713;
-            }
-            &.median-modulo-1 {
-                fill: #0c7d40;
-            }
-            &.median-modulo-2 {
-                fill: #0557fc;
-            }
-            &.median-modulo-3 {
-                fill: #f4f727;
-            }
-            &.median-modulo-4 {
-                fill: #01fab6;
-            }
-            &.median-modulo-5 {
-                fill: #9a9b77;
-            }
             &.median-step {
                 fill: none;
-                stroke-width: 2px;
+                stroke-width: 1px;
+                stroke-dasharray: 4, 4;
                 &.median-step-0 {
                     stroke: #f96713;
                 }

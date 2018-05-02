@@ -289,7 +289,6 @@ describe('Hydrograph charting module', () => {
         });
 
         it('should have a point for the median stat data with a label', () => {
-            expect(selectAll('#median-points circle.median-data-series').size()).toBe(3);
             expect(selectAll('#median-points path').size()).toBe(1);
             expect(selectAll('#median-points text').size()).toBe(0);
         });
