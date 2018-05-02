@@ -135,13 +135,10 @@ describe('Models module', () => {
 
     describe('parseMedianTimeSeries', () => {
 
-        const startDate = new Date(2018, 0, 10);
         const endDate = new Date(2018, 0, 13);
-        const leapStartDate = new Date(2016, 0, 10);
-        const leapEndDate = new Date(2016, 2, 14);
 
         it('parseMedian data successfully constructs data for plotting', () => {
-            const collection = mergeMedianTimeSeries({}, MOCK_MEDIAN_DATA, startDate, endDate, MOCK_MEDIAN_VARIABLES);
+            const collection = mergeMedianTimeSeries({}, MOCK_MEDIAN_DATA, endDate, MOCK_MEDIAN_VARIABLES);
             expect(collection).toEqual({
                 timeSeries: {
                     '00060:153885:median': {
@@ -168,7 +165,6 @@ describe('Models module', () => {
                                 value: 13
                             }
                         ],
-                        startTime: new Date(2018, 0, 10),
                         endTime: new Date(2018, 0, 13),
                         tsKey: 'median',
                         method: '00060:153885:median',

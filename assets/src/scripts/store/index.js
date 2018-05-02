@@ -87,9 +87,9 @@ export const Actions = {
                 }
             );
             const medianStatistics = getMedianStatistics({sites: [siteno]});
-            return Promise.all([timeSeries, medianStatistics]).then(([{collection, startTime, endTime}, stats]) => {
-                if (startTime && endTime) {
-                    let medianCollection = parseMedianData(stats, startTime, endTime, collection && collection.variables ? collection.variables : {});
+            return Promise.all([timeSeries, medianStatistics]).then(([{collection, endTime}, stats]) => {
+                if (endTime) {
+                    let medianCollection = parseMedianData(stats, endTime, collection && collection.variables ? collection.variables : {});
                     dispatch(Actions.addSeriesCollection(getTsRequestKey('median')(currentState), medianCollection));
                     dispatch(Actions.toggleTimeSeries('median', true));
                 }

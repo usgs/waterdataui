@@ -111,12 +111,11 @@ export function isLeapYear(year) {
  * Merge medianData time series into collection and return.
  * @param {Object} collection
  * @param {Object} medianData - median data for each time series, where properties are the ts id.
- * @param {Date} timeSeriesStartDateTime
  * @param {Date} timeSeriesEndDateTime
  * @param {Object} varsByCode - variable data where properties are parameter codes.
  * @returns {Object}
  */
-export function mergeMedianTimeSeries(collection, medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, varsByCode) {
+export function mergeMedianTimeSeries(collection, medianData, timeSeriesEndDateTime, varsByCode) {
     // We only have data for the variables returned from the IV service. If this
     // series doesn't correspond with an IV series, skip it.
     const variable = varsByCode[medianData[0].parameter_cd];
@@ -167,7 +166,6 @@ export function mergeMedianTimeSeries(collection, medianData, timeSeriesStartDat
             ...collection.timeSeries || {},
             [tsId]: {
                 points: values,
-                startTime: timeSeriesStartDateTime,
                 endTime: timeSeriesEndDateTime,
                 tsKey: 'median',
                 method: tsId,
@@ -209,12 +207,11 @@ export function mergeMedianTimeSeries(collection, medianData, timeSeriesStartDat
 /**
  * Read median RDB data and save the median data for the month/date for the time series for each variable in variables.
  * @param {Array} medianData - each object contains the median data for a time series for a month/day
- * @param {Date} timeSeriesStartDateTime
  * @param {Date} timeSeriesEndDateTime
  * @param {Object} variables - The variables which we want to save.
  * @returns {Object}
  */
-export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesEndDateTime, variables) {
+export function parseMedianData(medianData, timeSeriesEndDateTime, variables) {
 
     // Organize median data by parameter code and time series id
     const dataByTimeSeriesID = medianData.reduce(function (byTimeSeriesID, d) {
@@ -233,7 +230,7 @@ export function parseMedianData(medianData, timeSeriesStartDateTime, timeSeriesE
     for (let tsID of Object.keys(dataByTimeSeriesID)) {
         const rows = dataByTimeSeriesID[tsID];
         collection = mergeMedianTimeSeries(
-            collection, rows, timeSeriesStartDateTime, timeSeriesEndDateTime, varsByCode);
+            collection, rows, timeSeriesEndDateTime, varsByCode);
     }
 
     return collection;
