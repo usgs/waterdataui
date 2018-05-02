@@ -32,7 +32,6 @@ the selected timeseries. The Show last year feature also works for the three dat
 - Basic meta tags, title and description, for Twitter card and Open Graph
 - Rough draft for USGS logo watermark
 
-
 ### Changed
 - Timeseries graph legend now shows markers with the appropriate colors representing Approved, Estimated, and
 Provisional for the lines that are currently visible on the graph.
@@ -41,7 +40,6 @@ Provisional for the lines that are currently visible on the graph.
 - Refactored the shape of the state to separate domain data, application state, and ui state and created
 slice reducers for the different parts.
 - Location metadata table placed in an accordion
-
 
 ### Fixed
 - Tooltip is redrawn correctly when changing from portrait to landscape on mobile.
@@ -60,7 +58,6 @@ slice reducers for the different parts.
 - Font sizing and responsive layout changes
 - Limit y-axis lower bound to nearest power of 10 on logarithmic scales
 - Site Summary table includes site visits, peak values, annual data reports, and groundwater network sites
-
 
 ### Fixed
 - Timeseries SVG has the correct title and desc tag contents.
