@@ -90,7 +90,6 @@ const createLegendMarkers = function(displayItems) {
 
             const descriptionText = stats.description  ? `${stats.description} ` : '';
             const classes = `median-data-series median-modulo-${index % 6}`;
-            const classesLine = `median-data-series median-step-${index % 6}`;
             const label = `${descriptionText}${dateText}`;
 
             legendMarkers.push([
