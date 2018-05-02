@@ -376,7 +376,7 @@ const graphControls = function(elem) {
     compareControlDiv.append('label')
         .attr('id', 'last-year-label')
         .attr('for', 'last-year-checkbox')
-        .text('Show last year');
+        .text('Compare to last year');
 };
 
 /**
