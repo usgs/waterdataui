@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Hydrograph can now show either last 7 days, last 30 days, or the last year of data for
 the selected timeseries. The Show last year feature also works for the three date ranges.
 - The beginnings of a node.js-based graph server was added.
+- Content group tag wdfn_tng to the google analytics script.
 
 
 ### Changed
