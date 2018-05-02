@@ -19,10 +19,11 @@ the selected timeseries. The Show last year feature also works for the three dat
 - Projects were isolated in separate directories with Makefiles binding them together.
 - Change incorrect spelling "timeseries" to "time series"
 - Label change on toggle from "Show last year" to "Compare to last year"
+- New colors for provisional, approved, and estimated time series
 
 
 ### Fixed
-- Estimated time series points are now shown with a red line.
+- Estimated time series points are now shown.
 
 
 ## [0.7.0] - 2018-04-23
