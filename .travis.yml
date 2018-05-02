@@ -28,3 +28,4 @@ after_success:
   - find assets/coverage/ -mindepth 2 -iname '*.info' -exec cp -t coverage/ '{}' +
   - coveralls-lcov -v -n coverage/lcov.info > coverage/coverage.json
   - wdfn-server/env/bin/coveralls --merge=coverage/coverage.json
+

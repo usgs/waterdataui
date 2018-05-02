@@ -85,7 +85,7 @@ const plotDataLine = function (elem, {visible, lines, tsKey, xScale, yScale}) {
             let maskGroup = elem.append('g')
                 .attr('class', `${tsKey}-mask-group`);
             const xSpan = xScale(xDomainEnd) - xScale(xDomainStart);
-            const rectWidth = xSpan > 0 ? xSpan : 1;
+            const rectWidth = xSpan > 1 ? xSpan : 1;
 
             maskGroup.append('rect')
                 .attr('x', xScale(xDomainStart))
@@ -334,14 +334,6 @@ const graphControls = function(elem) {
             .classed('usa-unstyled-list', true)
             .classed('graph-controls-container', true);
 
-    graphControlDiv.call(link(function(elem, layout) {
-        if (!mediaQuery(USWDS_MEDIUM_SCREEN)) {
-            elem.style('padding-left', `${layout.margin.left}px`);
-        } else {
-            elem.style('padding-left', null);
-        }
-    }, layoutSelector));
-
     graphControlDiv.append('li')
         .call(audibleUI);
 
@@ -373,21 +365,21 @@ const graphControls = function(elem) {
     compareControlDiv.append('label')
         .attr('id', 'last-year-label')
         .attr('for', 'last-year-checkbox')
-        .text('Show last year');
+        .text('Compare to last year');
 };
 
 /**
  * Modify styling to hide or display the elem.
  *
  * @param elem
- * @param currentTimeSeries
+ * @param {Boolean} showElem
  */
-const controlDisplay = function (elem, hasSeriesWithPoints) {
-    elem.attr('hidden', hasSeriesWithPoints ? null : true);
+const controlDisplay = function (elem, showElem) {
+    elem.attr('hidden', showElem ? null : true);
 };
 
 
-const createDaterangeControls = function(elem, {siteno, hasTimeSeriesWithPoints}) {
+const createDaterangeControls = function(elem, {siteno, showControls}) {
     const DATE_RANGE = [{
         label: 'seven-day',
         name: '7 days',
@@ -402,7 +394,7 @@ const createDaterangeControls = function(elem, {siteno, hasTimeSeriesWithPoints}
         period: 'P1Y'
     }];
     elem.select('#ts-daterange-select-container').remove();
-    if (hasTimeSeriesWithPoints) {
+    if (showControls) {
         const container = elem.insert('ul', ':first-child')
             .attr('id', 'ts-daterange-select-container')
             .attr('class', 'usa-fieldset-inputs usa-unstyled-list');
@@ -438,7 +430,7 @@ const attachToNode = function (store, node, {siteno} = {}) {
         .call(provide(store))
         .call(link(createDaterangeControls, createStructuredSelector({
             siteno: () => siteno,
-            hasTimeSeriesWithPoints: hasTimeSeriesWithPoints('current', 'P7D')
+            showControls: hasTimeSeriesWithPoints('current', 'P7D')
         })));
 
     select(node).select('.graph-container')

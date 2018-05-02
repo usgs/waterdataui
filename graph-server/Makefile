@@ -12,7 +12,7 @@ clean-graph-server:
 #
 test-graph-server:
 	@echo 'Running graph-server tests...'
-	#cd graph-server && npm test
+	cd graph-server && npm test
 
 watch-graph-server:
 	cd graph-server && npx nodemon ./index.js

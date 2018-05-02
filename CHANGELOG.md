@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Hydrograph can now show either last 7 days, last 30 days, or the last year of data for
 the selected timeseries. The Show last year feature also works for the three date ranges.
 - The beginnings of a node.js-based graph server was added.
+- Content group tag wdfn_tng to the google analytics script.
 
 
 ### Changed
@@ -17,6 +18,12 @@ the selected timeseries. The Show last year feature also works for the three dat
 - Date labels moved to and centered in areas between midnight tick marks
 - Projects were isolated in separate directories with Makefiles binding them together.
 - Change incorrect spelling "timeseries" to "time series"
+- Label change on toggle from "Show last year" to "Compare to last year"
+- New colors for provisional, approved, and estimated time series
+
+
+### Fixed
+- Estimated time series points are now shown.
 
 
 ## [0.7.0] - 2018-04-23
@@ -26,7 +33,6 @@ the selected timeseries. The Show last year feature also works for the three dat
 - Basic meta tags, title and description, for Twitter card and Open Graph
 - Rough draft for USGS logo watermark
 
-
 ### Changed
 - Timeseries graph legend now shows markers with the appropriate colors representing Approved, Estimated, and
 Provisional for the lines that are currently visible on the graph.
@@ -35,7 +41,6 @@ Provisional for the lines that are currently visible on the graph.
 - Refactored the shape of the state to separate domain data, application state, and ui state and created
 slice reducers for the different parts.
 - Location metadata table placed in an accordion
-
 
 ### Fixed
 - Tooltip is redrawn correctly when changing from portrait to landscape on mobile.
@@ -54,7 +59,6 @@ slice reducers for the different parts.
 - Font sizing and responsive layout changes
 - Limit y-axis lower bound to nearest power of 10 on logarithmic scales
 - Site Summary table includes site visits, peak values, annual data reports, and groundwater network sites
-
 
 ### Fixed
 - Timeseries SVG has the correct title and desc tag contents.
