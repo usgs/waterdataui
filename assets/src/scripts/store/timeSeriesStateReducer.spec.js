@@ -32,17 +32,6 @@ describe('timeSeriesStateReducer', () => {
         });
     });
 
-    it('should handle SHOW_MEDIAN_STATS_LABEL', () => {
-        expect(timeSeriesStateReducer({
-            showMedianStatsLabel: true
-        }, {
-            type: 'SHOW_MEDIAN_STATS_LABEL',
-            show: false
-        })).toEqual({
-            showMedianStatsLabel: false
-        });
-    });
-
     it('should handle SET_CURSOR_OFFSET', () => {
         expect(timeSeriesStateReducer({
             cursorOffset: '12345'

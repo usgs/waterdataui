@@ -248,7 +248,6 @@ describe('Hydrograph charting module', () => {
                         compare: true,
                         median: true
                     },
-                    showMedianStatsLabel: false,
                     currentVariableID: '45807197',
                     currentDateRange: 'P7D'
                 },
@@ -293,11 +292,6 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('#median-points circle.median-data-series').size()).toBe(3);
             expect(selectAll('#median-points path').size()).toBe(1);
             expect(selectAll('#median-points text').size()).toBe(0);
-        });
-
-        it('show the labels for the median stat data showMedianStatsLabel is true', () => {
-            store.dispatch(Actions.showMedianStatsLabel(true));
-            expect(selectAll('#median-points text').size()).toBe(3);
         });
 
         it('should have tooltips for the select series table', () => {

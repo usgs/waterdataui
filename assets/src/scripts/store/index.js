@@ -220,12 +220,6 @@ export const Actions = {
             key
         };
     },
-    showMedianStatsLabel(show) {
-        return {
-            type: 'SHOW_MEDIAN_STATS_LABEL',
-            show
-        };
-    },
     setCursorOffset(cursorOffset) {
         return {
             type: 'SET_CURSOR_OFFSET',
@@ -300,7 +294,6 @@ export const configureStore = function (initialState) {
             },
             currentDateRange: 'P7D',
             currentVariableID: null,
-            showMedianStatsLabel: false,
             cursorOffset: null,
             audiblePlayId: null
         },

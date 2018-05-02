@@ -226,10 +226,7 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLa
             })
             .attr('cy', function(d) {
                 return yscale(d.value);
-            })
-            .on('click', dispatch(function() {
-                return Actions.showMedianStatsLabel(!showLabel);
-            }));
+            });
 
     if (showLabel) {
         elem.selectAll('medianPointText')
