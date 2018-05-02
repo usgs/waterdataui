@@ -30,6 +30,7 @@
     "console": true,
     "document": true,
     "Math": true,
+    "process": true,
     "XMLHttpRequest": true,
     "window": true
   }

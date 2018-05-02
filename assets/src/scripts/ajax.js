@@ -13,8 +13,7 @@ export function get(url) {
             if (req.status == 200) {
                 // Resolve the promise with the response text
                 resolve(req.response);
-            }
-            else {
+            } else {
                 // Otherwise reject with the status text
                 // which will hopefully be a meaningful error
                 reject(Error(`Failed with status ${req.status}: ${req.statusText}`));
@@ -30,3 +29,5 @@ export function get(url) {
         req.send();
     });
 }
+
+window.testGet = get;

@@ -15,7 +15,7 @@ test-graph-server:
 	cd graph-server && npm test
 
 watch-graph-server:
-	cd graph-server && npx nodemon ./index.js
+	cd graph-server && npm run watch
 
 #
 # Environment configuration targets

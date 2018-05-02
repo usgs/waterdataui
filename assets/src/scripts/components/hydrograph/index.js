@@ -399,7 +399,7 @@ const createDaterangeControls = function(elem, {siteno, showControls}) {
     }
 };
 
-const attachToNode = function (store, node, {siteno} = {}) {
+const attachToNode = function (store, node, {siteno, parameter} = {}) {
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
@@ -438,7 +438,7 @@ const attachToNode = function (store, node, {siteno} = {}) {
     window.onresize = function() {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     };
-    store.dispatch(Actions.retrieveTimeSeries(siteno));
+    store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null));
 };
 
 
