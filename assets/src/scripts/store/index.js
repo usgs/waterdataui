@@ -126,7 +126,6 @@ export const Actions = {
                 }).then(
                     series => {
                         const collection = normalize(series, requestKey);
-                        dispatch(Actions.updateStartTime(startTime));
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
                         dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
                     },

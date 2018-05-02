@@ -1,7 +1,7 @@
 const { select } = require('d3-selection');
 
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
-const { lineMarker, circleMarker, rectangleMarker, textOnlyMarker } = require('./markers');
+const { lineMarker, rectangleMarker, textOnlyMarker, medianMarker } = require('./markers');
 
 describe('Legend module', () => {
 
@@ -28,7 +28,7 @@ describe('Legend module', () => {
                 domClass: 'text-class',
                 text: 'Label'
             }, {
-                type: circleMarker,
+                type: medianMarker,
                 r: 4,
                 domId: null,
                 domClass: 'some-other-class',
@@ -76,7 +76,7 @@ describe('Legend module', () => {
             drawSimpleLegend(container, {legendMarkerRows, layout});
 
             expect(container.select('svg').size()).toBe(1);
-            expect(container.selectAll('line').size()).toBe(1);
+            expect(container.selectAll('line').size()).toBe(2);
             expect(container.selectAll('circle').size()).toBe(1);
             expect(container.selectAll('rect').size()).toBe(1);
             expect(container.selectAll('text').size()).toBe(4);
@@ -222,7 +222,7 @@ describe('Legend module', () => {
             expect(result[0][2].type).toEqual(lineMarker);
             expect(result[1].length).toBe(2);
             expect(result[1][0].type).toEqual(textOnlyMarker);
-            expect(result[1][1].type).toEqual(circleMarker);
+            expect(result[1][1].type).toEqual(medianMarker);
         });
 
         it('Should return markers only for time series shown', () => {
@@ -244,7 +244,7 @@ describe('Legend module', () => {
             expect(result.length).toBe(1);
             expect(result[0].length).toBe(2);
             expect(result[0][0].type).toEqual(textOnlyMarker);
-            expect(result[0][1].type).toEqual(circleMarker);
+            expect(result[0][1].type).toEqual(medianMarker);
         });
     });
 });
