@@ -19,6 +19,10 @@ the selected timeseries. The Show last year feature also works for the three dat
 - Change incorrect spelling "timeseries" to "time series"
 
 
+### Fixed
+- Estimated time series points are now shown with a red line.
+
+
 ## [0.7.0] - 2018-04-23
 ### Added
 - Tooltips are provided for metadata elements for those that USGS defines on NWIS help pages.
