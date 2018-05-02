@@ -21,8 +21,8 @@ describe('Statistics module', () => {
 
         const dates = time.map(t => new Date(t));
         const points = dates.map(dt => {
-            let month = dt.getMonth();
-            let day = dt.getDate();
+            const month = dt.getMonth();
+            const day = dt.getDate();
             return {
                 dateTime: null,
                 month: month,

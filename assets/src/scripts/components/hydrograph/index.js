@@ -18,7 +18,7 @@ const { appendAxes, axesSelector } = require('./axes');
 const { cursorSlider } = require('./cursor');
 const { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
     MASK_DESC, HASH_ID } = require('./drawingData');
-const { CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
+const { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeSeriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
@@ -185,7 +185,7 @@ const timeSeriesLegend = function(elem) {
  * @param  {Array} points
  */
 const plotMedianPoints = function (elem, {xscale, yscale, modulo, points}) {
-    let stepFunction = d3Line()
+    const stepFunction = d3Line()
         .curve(curveStepAfter)
         .x(function(d) {
             return xscale(d.dateTime);

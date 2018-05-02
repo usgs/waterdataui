@@ -10,16 +10,18 @@ const { calcStartTime } = require('../../utils');
  * @returns {*[]}
  */
 export const coerceStatisticalSeries = function (series, period) {
-    const startTime = calcStartTime(period, series.endTime);
+    const startTime = calcStartTime(period, series.endTime); // calculate when the start time based on the period
     const startYear = startTime.getFullYear();
     const endYear = series.endTime.getFullYear();
     const yearRange = range(startYear, endYear + 1);
-    let points = series.points;
+    const points = series.points;
     let plotablePoints = [];
+    // for each year in the time range, coerce each median value to the appropriate date in that year
+    // exclude February 29th if the year is not a leap year
     yearRange.forEach(year => {
         points.forEach(point => {
-            let month = point.month;
-            let day = point.day;
+            const month = point.month;
+            const day = point.day;
             let dataPoint = Object.assign({}, point);
             dataPoint.dateTime = dataPoint.dateTime ? dataPoint.dateTime : new Date(year, month, day);
             if (!isLeapYear(year)) {
@@ -31,12 +33,19 @@ export const coerceStatisticalSeries = function (series, period) {
             }
         });
     });
-    let sortedPoints = plotablePoints.sort(function(a, b) {
+    // sort the points by date in ascending order
+    const sortedPoints = plotablePoints.sort(function(a, b) {
         return a.dateTime - b.dateTime;
     });
+    // include median points that fall within the hydrograph's start and end datetime
     let filtered = sortedPoints.filter(x => startTime <= x.dateTime && x.dateTime <= series.endTime);
-    let first = filtered[0];
+    // handle the far left and far right ends of the graph
+    const first = filtered[0];
     if (first.dateTime > startTime) {
+        // if the hydrograph's start time doesn't line with the first median point, grab
+        // the value of the previous median date's value and create a new point using the
+        // start time as its x-value, so that the median step function extends to the left
+        // terminus of the graph
         let previousIndex;
         if (sortedPoints.indexOf(first) === 0) {
             previousIndex = sortedPoints.length - 1;
@@ -48,8 +57,12 @@ export const coerceStatisticalSeries = function (series, period) {
         leftVal.dateTime = startTime;
         filtered.unshift(leftVal);
     }
-    let last = filtered[filtered.length - 1];
+    const last = filtered[filtered.length - 1];
     if (last.dateTime < series.endTime) {
+        // if the hydrograph's end time doesn't line with the last median point, create
+        // an additional data point with it's x-value as the graph's end time and its value
+        // as the last median point's value, so that the median step function extends to the
+        // far right terminus of the graph
         let rightVal = Object.assign({}, last);
         rightVal.dateTime = series.endTime;
         filtered.push(rightVal);
