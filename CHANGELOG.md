@@ -19,6 +19,7 @@ the selected timeseries. The Show last year feature also works for the three dat
 - Projects were isolated in separate directories with Makefiles binding them together.
 - Change incorrect spelling "timeseries" to "time series"
 - Label change on toggle from "Show last year" to "Compare to last year"
+- Median data is show using a step function in addition to individual points
 
 
 ### Fixed
