@@ -130,7 +130,6 @@ export function mergeMedianTimeSeries(collection, medianData, timeSeriesEndDateT
     let yearPrevious = yearPresent - 1;
 
     // calculate the number of days to display
-    //let days = deltaDays(timeSeriesStartDateTime, timeSeriesEndDateTime);
     for (let medianDatum of medianData) {
         let month = medianDatum.month_nu - 1;
         let day = medianDatum.day_nu;

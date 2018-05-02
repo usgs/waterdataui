@@ -20,18 +20,6 @@ const resetTimeSeries = function(series, action) {
     };
 };
 
-const updateStatisticalStartTimes = function(series, action) {
-    let timeSeries = series.timeSeries;
-    Object.keys(timeSeries).forEach(k => {
-        let v = timeSeries[k];
-        if (v.startTime) {
-            v.startTime = action.startTime;
-        }
-        timeSeries[k] = v;
-    });
-    return series;
-};
-
 /*
  * Slice reducer
  */

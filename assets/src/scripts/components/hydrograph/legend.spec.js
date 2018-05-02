@@ -135,7 +135,6 @@ describe('Legend module', () => {
                     },
                     '00065:median': {
                         tsKey: 'median',
-                        startTime: new Date('2007-03-06T15:45:00.000Z'),
                         endTime: new Date('2017-03-13T13:45:00.000Z'),
                         variable: '45807202',
                         points: [{
