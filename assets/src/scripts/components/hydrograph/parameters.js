@@ -6,9 +6,10 @@ const { MASK_DESC } = require('./drawingData');
 const { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } = require('./layout');
 const { allTimeSeriesSelector } = require('./timeSeries');
 
-const { Actions } = require('../../store');
-const { sortedParameters } = require('../../models');
 const { dispatch } = require('../../lib/redux');
+const { sortedParameters } = require('../../models');
+const { Actions } = require('../../store');
+const { createTooltip } = require('../../utils');
 
 const { getVariables, getCurrentVariableID } = require('../../selectors/timeSeriesSelector');
 
@@ -179,16 +180,9 @@ export const plotSeriesSelectTable = function (elem, {siteno, availableTimeSerie
                     .attr('scope', 'row');
                 parmCdCol.append('span')
                     .text(parm => parm[1].description);
-                let tooltip = parmCdCol.append('div')
-                    .attr('class', 'tooltip-item');
-                tooltip.append('span')
-                    .append('i')
-                        .attr('class', 'fas fa-info-circle');
 
-                tooltip.append('div')
-                    .attr('class', 'tooltip parameter-tooltip')
-                    .append('p')
-                        .text(parm => `Parameter code: ${parm[0]}`);
+                let tooltipText = createTooltip(parmCdCol);
+                tooltipText.text(parm => `Parameter code: ${parm[0]}`);
 
                 tr.append('td')
                     .append('svg')
