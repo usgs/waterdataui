@@ -258,12 +258,6 @@ export const Actions = {
             type: 'SET_GAGE_HEIGHT',
             gageHeight
         };
-    },
-    updateStartTime(startTime) {
-        return {
-            type: 'UPDATE_START_TIME',
-            startTime
-        };
     }
 };
 
