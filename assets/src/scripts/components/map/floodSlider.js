@@ -1,9 +1,11 @@
 const { createStructuredSelector } = require('reselect');
 
 const { dispatch, link } = require('../../lib/redux');
+const { getFloodStages, getFloodStageHeight, getFloodGageHeightStageIndex,
+    hasFloodData} = require('../../selectors/floodDataSelector');
 const { Actions } = require('../../store');
+const { appendTooltip } = require('../../tooltips');
 
-const { floodStagesSelector, floodStageHeightSelector, floodGageHeightStageIndexSelector } = require('./floodDataSelector');
 
 
 const createSlider = function(elem, stages) {
@@ -38,11 +40,23 @@ const updateSlider = function(elem, {stageHeight, gageHeightStageIndex}) {
     elem.select('.range-value').text(stageHeight);
 };
 
+export const createSliderHelp = function(elem, hasFloodData) {
+    elem.select('#fim-tooltip-container').remove();
+    if (hasFloodData) {
+        elem.append('div')
+            .attr('id', 'fim-tooltip-container')
+            .attr('class', 'label-tooltip-container')
+            .html('Flood Visualization Control')
+            .call(appendTooltip, 'Move the slider to see flood inundation at different gage heights');
+    }
+};
+
 export const floodSlider = function(elem) {
     elem
-        .call(link(createSlider, floodStagesSelector))
+        .call(link(createSliderHelp, hasFloodData))
+        .call(link(createSlider, getFloodStages))
         .call(link(updateSlider, createStructuredSelector({
-            stageHeight: floodStageHeightSelector,
-            gageHeightStageIndex: floodGageHeightStageIndexSelector
+            stageHeight: getFloodStageHeight,
+            gageHeightStageIndex: getFloodGageHeightStageIndex
         })));
 };
