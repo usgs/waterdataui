@@ -58,6 +58,7 @@ export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector
 ));
 
 
+
 /**
  * Returns a selector that, for a given tsKey and period:
  * Selects all time series data. If period is null then, the currentDateRange is used

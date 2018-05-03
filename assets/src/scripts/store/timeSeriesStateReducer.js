@@ -27,13 +27,6 @@ const setCurrentDateRange = function(timeSeriesState, action) {
     };
 };
 
-const showMedianStatsLabel = function(timeSeriesState, action) {
-    return {
-        ...timeSeriesState,
-        showMedianStatsLabel: action.show
-    };
-};
-
 const setCursorOffset = function(timeSeriesState, action) {
     return {
         ...timeSeriesState,
@@ -63,7 +56,6 @@ export const timeSeriesStateReducer = function(timeSeriesState={}, action) {
         case 'TOGGLE_TIMESERIES' : return toggleTimeSeries(timeSeriesState, action);
         case 'SET_CURRENT_VARIABLE': return setCurrentVariable(timeSeriesState, action);
         case 'SET_CURRENT_DATE_RANGE': return setCurrentDateRange(timeSeriesState, action);
-        case 'SHOW_MEDIAN_STATS_LABEL': return showMedianStatsLabel(timeSeriesState, action);
         case 'SET_CURSOR_OFFSET': return setCursorOffset(timeSeriesState, action);
         case 'TIMESERIES_PLAY_ON': return timeSeriesPlayOn(timeSeriesState, action);
         case 'TIMESERIES_PLAY_STOP': return timeSeriesPlayStop(timeSeriesState, action);

@@ -20,6 +20,7 @@ the selected timeseries. The Show last year feature also works for the three dat
 - Change incorrect spelling "timeseries" to "time series"
 - Label change on toggle from "Show last year" to "Compare to last year"
 - New colors for provisional, approved, and estimated time series
+- Median data is shown using a step function
 
 
 ### Fixed

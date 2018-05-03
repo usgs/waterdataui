@@ -2,7 +2,7 @@
  * Hydrograph charting module.
  */
 const { extent } = require('d3-array');
-const { line: d3Line } = require('d3-shape');
+const { line: d3Line, curveStepAfter } = require('d3-shape');
 const { select } = require('d3-selection');
 
 const { createStructuredSelector } = require('reselect');
@@ -18,15 +18,16 @@ const { appendAxes, axesSelector } = require('./axes');
 const { cursorSlider } = require('./cursor');
 const { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
     MASK_DESC, HASH_ID } = require('./drawingData');
-const { CIRCLE_RADIUS, CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
+const { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeSeriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
 const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
     descriptionSelector,  currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } = require('./timeSeries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
+const { coerceStatisticalSeries } = require('./statistics');
 
-const { getCurrentVariable } = require('../../selectors/timeSeriesSelector');
+const { getCurrentDateRange } = require('../../selectors/timeSeriesSelector');
 
 
 const drawMessage = function (elem, message) {
@@ -182,42 +183,23 @@ const timeSeriesLegend = function(elem) {
  * @param  {Function} yscale
  * @param  {Number} modulo
  * @param  {Array} points
- * @param  {Boolean} showLabel
- * @param  {Object} variable
  */
-const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLabel, variable}) {
-    elem.selectAll('medianPoint')
-        .data(points)
-        .enter()
-        .append('circle')
-            .classed('median-data-series', true)
-            .classed(`median-modulo-${modulo}`, true)
-            .attr('r', CIRCLE_RADIUS)
-            .attr('cx', function(d) {
-                return xscale(d.dateTime);
-            })
-            .attr('cy', function(d) {
-                return yscale(d.value);
-            })
-            .on('click', dispatch(function() {
-                return Actions.showMedianStatsLabel(!showLabel);
-            }));
-
-    if (showLabel) {
-        elem.selectAll('medianPointText')
-            .data(points)
-            .enter()
-            .append('text')
-                .text(function(d) {
-                    return `${d.value} ${variable.unit.unitCode}`;
-                })
-                .attr('x', function(d) {
-                    return xscale(d.dateTime) + 5;
-                })
-                .attr('y', function(d) {
-                    return yscale(d.value);
-                });
-    }
+const plotMedianPoints = function (elem, {xscale, yscale, modulo, points}) {
+    const stepFunction = d3Line()
+        .curve(curveStepAfter)
+        .x(function(d) {
+            return xscale(d.dateTime);
+        })
+        .y(function(d) {
+            return yscale(d.value);
+        });
+    let medianGrp = elem.append('g');
+    medianGrp.append('path')
+        .datum(points)
+        .classed('median-data-series', true)
+        .classed('median-step', true)
+        .classed(`median-step-${modulo}`, true)
+        .attr('d', stepFunction);
 };
 
 /**
@@ -227,22 +209,18 @@ const plotMedianPoints = function (elem, {xscale, yscale, modulo, points, showLa
  * @param  {Function} xscale
  * @param  {Function} yscale
  * @param  {Array} pointsList
- * @param  {Boolean} showLabel
- * @param  {Object} variable
  */
-const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap, showLabel, variable}) {
+const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap, dateRange}) {
     elem.select('#median-points').remove();
-
     if (!visible) {
         return;
     }
     const container = elem
         .append('g')
             .attr('id', 'median-points');
-
     for (const [index, seriesID] of Object.keys(seriesMap).entries()) {
-        const points = seriesMap[seriesID].points;
-        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points, showLabel, variable});
+        const points = coerceStatisticalSeries(seriesMap[seriesID], dateRange);
+        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points});
     }
 };
 
@@ -318,8 +296,7 @@ const timeSeriesGraph = function (elem) {
                         xscale: xScaleSelector('current'),
                         yscale: yScaleSelector,
                         seriesMap: currentVariableTimeSeriesSelector('median'),
-                        variable: getCurrentVariable,
-                        showLabel: (state) => state.timeSeriesState.showMedianStatsLabel
+                        dateRange: getCurrentDateRange
                     })));
             });
 };
