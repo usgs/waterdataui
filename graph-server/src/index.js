@@ -3,6 +3,7 @@ const express = require('express');
 const expressValidator = require('express-validator');
 const { checkSchema } = require('express-validator/check');
 
+const { processSvg } = require('./image-util');
 const { getSvg } = require('./impl/puppeteer');
 
 let BUNDLES;
@@ -38,13 +39,13 @@ app.get('/monitoring-location/:siteID/', checkSchema({
                 max: 5
             }
         }
-    },
-    compare: {
+    }
+    /*compare: {
         in: ['query'],
         optional: true,
         isBoolean: true,
         toBoolean: true
-    }/*,
+    },
     startDate: {
         // TODO
     },
@@ -72,10 +73,13 @@ app.get('/monitoring-location/:siteID/', checkSchema({
         compare: req.query.compare,
         serviceRoot: 'https://waterservices.usgs.gov/nwis',
         pastServiceRoot: 'https://nwis.waterservices.usgs.gov/nwis',
-    }).then(svgStr => {
+    })
+    .then(processSvg.bind(null, BUNDLES.styles))
+    .then((svgStr) => {
         res.setHeader('Content-Type', 'image/svg+xml');
         res.send(svgStr);
-    }).catch(error => {
+    })
+    .catch(error => {
         console.log(error);
         res.status(500);
         res.send(error);

@@ -40,7 +40,7 @@ async function getSvg(bundles, options) {
     // Set the origin header for outgoing requests - this is to avoid waterservices
     // returning a 403 on a null origin.
     page.setExtraHTTPHeaders({
-        origin: 'http://wdfn-image-server'
+        origin: 'http://wdfn-graph-server'
     });
 
     // Set the page content from the pre-built bundle.
