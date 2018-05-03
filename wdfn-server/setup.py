@@ -58,7 +58,7 @@ def identify_data_files(data_dirs, exclusions=('.gitignore', '.webassets-cache')
 
     """
     directory_data_files = []
-    for installation_directory, directory_name in data_dirs:
+    for directory_name in data_dirs:
         for root, _, files in os.walk(directory_name):
             pathnames = [
                 os.path.abspath(os.path.join(root, filename))
