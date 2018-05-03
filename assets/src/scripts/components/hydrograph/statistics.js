@@ -3,7 +3,7 @@ const { isLeapYear } = require('../../models');
 const { calcStartTime } = require('../../utils');
 
 /**
- * Make statisical data look like a timeseries for plotting purposes
+ * Make statistical data look like a timeseries for plotting purposes
  *
  * @param series -- an object with the following keys: points, startTime, and endTime at a minimum. Each point should have a javascript month and day
  * @param period -- NWIS time period string (e.g. 'P7D') denoted the period of time to display
