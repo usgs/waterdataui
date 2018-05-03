@@ -6,6 +6,9 @@ from unittest import TestCase, mock
 
 import requests as r
 
+import pytest
+import requests_mock
+
 from ..utils import construct_url, defined_when, execute_get_request, parse_rdb, execute_lookup_request
 
 
@@ -243,16 +246,35 @@ class TestDefinedWhen(TestCase):
         self.assertEqual(decorated('1', '2', kw1='3', kw2='4'), '1,2,kw1,kw2,3,4')
 
 
-class TestCooperatorLookup:
-    @mock.patch('waterdata.utils.r.get')
-    def test_request_response_cooperator_lookup(self, r_mock):
-        r_mock.return_value.mock_cooperator_lookup_data = MOCK_COOPERATOR_LOOKUP_DATA
-        result = execute_lookup_request
+class TestCooperatorLookup(TestCase):
 
-        self.assertEqual(result.mock_cooperator_lookup_data, None)
+    @pytest.fixture(autouse=True)
+    def test_execute_lookup_request_with_data(self):
+        fake_url = 'https://fake.sifta.water.usgs.gov/'
+        fake_url_root_cooperator_lookup = 'https://fake.sifta.water.usgs.gov/Services/REST/Site/CustomerFunding.ashx?SiteNumber='
+        fake_site_no = '05370000'
+        fake_params = '&StartDate=10/1/2017&EndDate=09/30/2018'
+        with requests_mock.mock() as req:
+            req.get(fake_url, json=MOCK_COOPERATOR_LOOKUP_DATA)
+            cooperator_lookup_data = execute_lookup_request(fake_url_root_cooperator_lookup, fake_site_no, fake_params)
+            assert MOCK_COOPERATOR_LOOKUP_DATA == cooperator_lookup_data
+
+    @pytest.fixture(autouse=True)
+    def test_execute_lookup_request_no_data(self):
+        fake_url = 'https://fake.sifta.water.usgs.gov/'
+        fake_url_root_cooperator_lookup = 'https://fake.sifta.water.usgs.gov/Services/REST/Site/CustomerFunding.ashx?SiteNumber='
+        fake_site_no = '05370000'
+        fake_params = '&StartDate=10/1/2017&EndDate=09/30/2018'
+        with requests_mock.mock() as req:
+            req.get(fake_url, json=MOCK_COOPERATOR_LOOKUP_EMPTY)
+            cooperator_lookup_data = execute_lookup_request(fake_url_root_cooperator_lookup, fake_site_no, fake_params)
+            assert None is cooperator_lookup_data
 
 
 MOCK_COOPERATOR_LOOKUP_DATA = '{"Customers":[{"Name":"New Jersey Department of Environmental Protection",' \
                   '"URL":"http://www.nj.gov/dep/ec/","IconURL":"http://water.usgs.gov/customer/icons/1275.gif"},' \
                   '{"Name":"USGS - National Groundwater Monitoring Network",' \
                   '"URL":"http://www.usgs.gov/","IconURL":"http://water.usgs.gov/customer/icons/9326.gif"}]}'
+
+MOCK_COOPERATOR_LOOKUP_EMPTY = '{"Customers":[]}'
+

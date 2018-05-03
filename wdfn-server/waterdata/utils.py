@@ -6,7 +6,7 @@ from functools import update_wrapper
 from urllib.parse import urlencode, urljoin
 
 import requests as r
-
+import json  # added for WDFN234 logos
 from . import app
 
 
@@ -98,12 +98,11 @@ def execute_lookup_request(url_root_cooperator_lookup, site_no, params):
     try:
         resp = r.get(url_root_cooperator_lookup + site_no + params)
         cooperator_lookup_data = resp.json()
-        print('this is data ', cooperator_lookup_data)
         if len(cooperator_lookup_data['Customers']) < 1:
             cooperator_lookup_data = None
 
-        return cooperator_lookup_data
     except:
         cooperator_lookup_data = None
 
-        return cooperator_lookup_data
+    return cooperator_lookup_data
+
