@@ -1,10 +1,10 @@
 const { select } = require('d3-selection');
 
 const { provide } = require('../../lib/redux');
+const { hasFloodDataSelector } = require('../../selectors/floodDataSelector');
 const { configureStore } = require('../../store');
 
 const { floodSlider } = require('./floodSlider');
-const { hasFloodDataSelector } = require('./floodDataSelector');
 
 
 describe('floodSlider', () => {
