@@ -381,8 +381,11 @@ const createDaterangeControls = function(elem, {siteno, showControls}) {
         li.append('input')
             .attr('type', 'radio')
             .attr('name', 'ts-daterange-input')
-            .attr('id', (d) => d.label)
-            .attr('value', (d) => d.period)
+            .attr('id', d => d.label)
+            .attr('value', d => d.period)
+            .attr('ga-on', 'click')
+            .attr('ga-event-category', 'TimeSeriesGraph')
+            .attr('ga-event-action', d => `changeDateRangeTo${d.period}`)
             .on('change', dispatch(function () {
                 return Actions.retrieveExtendedTimeSeries(
                     siteno,
