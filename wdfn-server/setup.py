@@ -61,7 +61,7 @@ def identify_data_files(data_dirs, exclusions=('.gitignore', '.webassets-cache')
     for installation_directory, directory_name in data_dirs:
         for root, _, files in os.walk(directory_name):
             pathnames = [
-                os.path.abspath(os.path.join(root, filename))
+                os.path.relpath(os.path.abspath(os.path.join(root, filename)))
                 for filename in files
                 if not any(ex in os.path.join(root, filename)
                            for ex in exclusions)
@@ -92,7 +92,7 @@ setup(
     # they will appear in the root of the virtualenv upon dist installation
     data_files=identify_data_files(
         [
-            ('assets', '../assets/dist'),
+            ('assets/dist', '../assets/dist'),
             ('data', 'data')
         ]
     )
