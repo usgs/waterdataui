@@ -76,7 +76,7 @@ setup(
     name='usgs_waterdata_ui',
     version='0.8.0dev',
     description='USGS Water Data',
-    author='Mary Bucknell, Andrew Yan, Dan Naab, Janell Fry',
+    author='Mary Bucknell, Andrew Yan, Dan Naab, Janell Fry, Aaron Briggs',
     author_email='mbucknell@usgs.gov',
     packages=find_packages(),
     include_package_data=True,
