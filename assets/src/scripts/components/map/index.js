@@ -8,9 +8,9 @@ const { link, provide } = require('../../lib/redux');
 
 const { FIM_ENDPOINT, HYDRO_ENDPOINT } = require('../../config');
 const { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } = require('../../floodData');
+const { hasFloodData, getFloodExtent, getFloodStageHeight } = require('../../selectors/floodDataSelector');
 const { Actions } = require('../../store');
 
-const { hasFloodDataSelector, floodExtentSelector, floodStageHeightSelector } = require('./floodDataSelector');
 const { floodSlider } = require('./floodSlider');
 const { createLegendControl, createFIMLegend } = require('./legend');
 
@@ -132,12 +132,12 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
 
     node
         .call(link(updateFloodLayers, createStructuredSelector({
-            hasFloodData: hasFloodDataSelector,
-            floodStageHeight: floodStageHeightSelector
+            hasFloodData: hasFloodData,
+            floodStageHeight: getFloodStageHeight
         })))
-        .call(link(updateMapExtent, floodExtentSelector))
-        .call(link(addFIMLegend, hasFloodDataSelector))
-        .call(link(addFimLink, hasFloodDataSelector));
+        .call(link(updateMapExtent, getFloodExtent))
+        .call(link(addFIMLegend, hasFloodData))
+        .call(link(addFimLink, hasFloodData));
 };
 
 /*
@@ -156,6 +156,7 @@ export const attachToNode = function(store, node, {siteno, latitude, longitude, 
     select(node)
         .call(provide(store));
     select(node).append('div')
+        .attr('id', 'flood-layer-control-container')
         .call(floodSlider);
     select(node)
         .call(siteMap, {siteno, latitude, longitude, zoom});
