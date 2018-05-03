@@ -1,10 +1,10 @@
 const { select } = require('d3-selection');
 
 const { provide } = require('../../lib/redux');
+const { hasFloodDataSelector } = require('../../selectors/floodDataSelector');
 const { configureStore } = require('../../store');
 
 const { floodSlider } = require('./floodSlider');
-const { hasFloodDataSelector } = require('./floodDataSelector');
 
 
 describe('floodSlider', () => {
@@ -32,6 +32,7 @@ describe('floodSlider', () => {
         });
 
         it('The slider should not be created', () => {
+            expect(select(sliderNode).select('#fim-tooltip-container').size()).toBe(0);
             expect(select(sliderNode).select('.slider-wrapper').size()).toBe(0);
         });
     });
@@ -52,6 +53,7 @@ describe('floodSlider', () => {
         });
 
         it('The slider is not hidden', () => {
+            expect(select(sliderNode).select('#fim-tooltip-container').size()).toBe(1);
             expect(select(sliderNode).select('.slider-wrapper').size()).toBe(1);
         });
 

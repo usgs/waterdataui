@@ -1,12 +1,11 @@
-const { floodStageHeightSelector, hasFloodDataSelector,
-    floodGageHeightStageIndexSelector } = require('./floodDataSelector');
+const { getFloodStageHeight, hasFloodData, getFloodGageHeightStageIndex} = require('./floodDataSelector');
 
 describe('floodDataSelector', () => {
 
-    describe('floodStageHeightSelector', () => {
+    describe('getFloodStageHeight', () => {
 
         it('If stages is empty,null is returned', () => {
-            expect(floodStageHeightSelector({
+            expect(getFloodStageHeight({
                 floodData: {
                     stages: []
                 },
@@ -26,7 +25,7 @@ describe('floodDataSelector', () => {
                 }
             };
 
-            expect(floodStageHeightSelector(state)).toBe(9);
+            expect(getFloodStageHeight(state)).toBe(9);
 
             state = {
                 ...state,
@@ -35,11 +34,11 @@ describe('floodDataSelector', () => {
                 }
             };
 
-            expect(floodStageHeightSelector(state)).toBe(10);
+            expect(getFloodStageHeight(state)).toBe(10);
         });
 
         it('If gageHeight is less than any on the stages then return the lowest stage', () => {
-            expect(floodStageHeightSelector({
+            expect(getFloodStageHeight({
                 floodData: {
                     stages: [9, 10, 11]
                 },
@@ -50,7 +49,7 @@ describe('floodDataSelector', () => {
         });
 
         it('If gageHeight is greater than any on the stages then return the highest stage', () => {
-            expect(floodStageHeightSelector({
+            expect(getFloodStageHeight({
                 floodData: {
                     stages: [9, 10, 11]
                 },
@@ -61,9 +60,9 @@ describe('floodDataSelector', () => {
         });
     });
 
-    describe('hasFloodDataSelector', () => {
+    describe('hasFloodData', () => {
         it('Return false if no flood stages are available', () =>{
-            expect(hasFloodDataSelector({
+            expect(hasFloodData({
                 floodData: {
                     stages: []
                 }
@@ -71,7 +70,7 @@ describe('floodDataSelector', () => {
         });
 
         it('return true if flood stages are available', () => {
-            expect(hasFloodDataSelector({
+            expect(hasFloodData({
                 floodData: {
                     stages: [9, 10, 11]
                 }
@@ -79,9 +78,9 @@ describe('floodDataSelector', () => {
         });
     });
 
-    describe('floodGageHeightStageIndexSelector', () => {
+    describe('getFloodGageHeightStageIndex', () => {
         it('If stages is empty,null is returned', () => {
-            expect(floodGageHeightStageIndexSelector({
+            expect(getFloodGageHeightStageIndex({
                 floodData: {
                     stages: []
                 },
@@ -101,7 +100,7 @@ describe('floodDataSelector', () => {
                 }
             };
 
-            expect(floodGageHeightStageIndexSelector(state)).toBe(0);
+            expect(getFloodGageHeightStageIndex(state)).toBe(0);
 
             state = {
                 ...state,
@@ -110,11 +109,11 @@ describe('floodDataSelector', () => {
                 }
             };
 
-            expect(floodGageHeightStageIndexSelector(state)).toBe(1);
+            expect(getFloodGageHeightStageIndex(state)).toBe(1);
         });
 
         it('If gageHeight is less than any on the stages then return the 0', () => {
-            expect(floodGageHeightStageIndexSelector({
+            expect(getFloodGageHeightStageIndex({
                 floodData: {
                     stages: [9, 10, 11]
                 },
@@ -125,7 +124,7 @@ describe('floodDataSelector', () => {
         });
 
         it('If gageHeight is greater than any on the stages then return the highest stage', () => {
-            expect(floodGageHeightStageIndexSelector({
+            expect(getFloodGageHeightStageIndex({
                 floodData: {
                     stages: [9, 10, 11]
                 },
