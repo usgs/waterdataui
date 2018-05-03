@@ -40,9 +40,13 @@ const TEST_STATE = {
             },
             '00060:median': {
                 points: [{
-                    dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
+                    dateTime: null,
+                    month: 0,
+                    day: 2,
                     value: 10
                 }],
+                startTime: new Date('2018-01-02T15:00:00.000-06:00'),
+                endTime: new Date('2018-01-02T15:00:00.000-06:00'),
                 metadata: {
                     beginYear: '2010',
                     endYear: '2015'
@@ -244,7 +248,6 @@ describe('Hydrograph charting module', () => {
                         compare: true,
                         median: true
                     },
-                    showMedianStatsLabel: false,
                     currentVariableID: '45807197',
                     currentDateRange: 'P7D'
                 },
@@ -286,13 +289,8 @@ describe('Hydrograph charting module', () => {
         });
 
         it('should have a point for the median stat data with a label', () => {
-            expect(selectAll('#median-points circle.median-data-series').size()).toBe(1);
+            expect(selectAll('#median-points path').size()).toBe(1);
             expect(selectAll('#median-points text').size()).toBe(0);
-        });
-
-        it('show the labels for the median stat data showMedianStatsLabel is true', () => {
-            store.dispatch(Actions.showMedianStatsLabel(true));
-            expect(selectAll('#median-points text').size()).toBe(1);
         });
 
         it('should have tooltips for the select series table', () => {
@@ -320,6 +318,7 @@ describe('Hydrograph charting module', () => {
 
         it('Should have 6 legend markers', () => {
             expect(selectAll('.legend g').size()).toBe(6);
+            expect(selectAll('.legend g line.median-step').size()).toBe(1);
         });
 
         it('Should have four legend markers after the compare time series is removed', () => {

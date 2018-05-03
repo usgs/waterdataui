@@ -1,7 +1,7 @@
 const { select } = require('d3-selection');
 
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
-const { lineMarker, circleMarker, rectangleMarker, textOnlyMarker } = require('./markers');
+const { lineMarker, rectangleMarker, textOnlyMarker } = require('./markers');
 
 describe('Legend module', () => {
 
@@ -28,11 +28,10 @@ describe('Legend module', () => {
                 domClass: 'text-class',
                 text: 'Label'
             }, {
-                type: circleMarker,
-                r: 4,
+                type: lineMarker,
                 domId: null,
                 domClass: 'some-other-class',
-                text: 'Circle Text'
+                text: 'Median Label'
             }]
         ];
         const layout = {
@@ -76,8 +75,7 @@ describe('Legend module', () => {
             drawSimpleLegend(container, {legendMarkerRows, layout});
 
             expect(container.select('svg').size()).toBe(1);
-            expect(container.selectAll('line').size()).toBe(1);
-            expect(container.selectAll('circle').size()).toBe(1);
+            expect(container.selectAll('line').size()).toBe(2);
             expect(container.selectAll('rect').size()).toBe(1);
             expect(container.selectAll('text').size()).toBe(4);
         });
@@ -91,7 +89,7 @@ describe('Legend module', () => {
                     '00060:current': {
                         tsKey: 'current:P7D',
                         startTime: new Date('2018-03-06T15:45:00.000Z'),
-                        endTime: new Date('2018-03-13t13:45:00.000Z'),
+                        endTime: new Date('2018-03-13T13:45:00.000Z'),
                         variable: '45807197',
                         points: [{
                             value: 10,
@@ -114,7 +112,7 @@ describe('Legend module', () => {
                     '00065:compare': {
                         tsKey: 'compare:P7D',
                         startTime: new Date('2017-03-06T15:45:00.000Z'),
-                        endTime: new Date('2017-03-13t13:45:00.000Z'),
+                        endTime: new Date('2017-03-13T13:45:00.000Z'),
                         variable: '45807202',
                         points: [{
                             value: 1,
@@ -135,15 +133,20 @@ describe('Legend module', () => {
                     },
                     '00065:median': {
                         tsKey: 'median',
-                        startTime: new Date('2007-03-06T15:45:00.000Z'),
-                        endTime: new Date('2017-03-13t13:45:00.000Z'),
+                        endTime: new Date('2017-03-13T13:45:00.000Z'),
                         variable: '45807202',
                         points: [{
-                            value: 1
+                            value: 1,
+                            month: 2,
+                            day: 6
                         }, {
-                            value: 2
+                            value: 2,
+                            month: 2,
+                            day: 7
                         }, {
-                            value: 3
+                            value: 3,
+                            month: 2,
+                            day: 7
                         }],
                         metadata: {
                             beginYear: '1931',
@@ -216,7 +219,7 @@ describe('Legend module', () => {
             expect(result[0][2].type).toEqual(lineMarker);
             expect(result[1].length).toBe(2);
             expect(result[1][0].type).toEqual(textOnlyMarker);
-            expect(result[1][1].type).toEqual(circleMarker);
+            expect(result[1][1].type).toEqual(lineMarker);
         });
 
         it('Should return markers only for time series shown', () => {
@@ -238,7 +241,7 @@ describe('Legend module', () => {
             expect(result.length).toBe(1);
             expect(result[0].length).toBe(2);
             expect(result[0][0].type).toEqual(textOnlyMarker);
-            expect(result[0][1].type).toEqual(circleMarker);
+            expect(result[0][1].type).toEqual(lineMarker);
         });
     });
 });

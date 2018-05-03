@@ -170,5 +170,4 @@ describe('Markers module', () => {
             expect(markerText.attr('id')).toBe(domId);
         });
     });
-
 });
