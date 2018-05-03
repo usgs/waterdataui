@@ -9,7 +9,7 @@ import requests as r
 import pytest
 import requests_mock
 
-from ..utils import construct_url, defined_when, execute_get_request, parse_rdb, execute_lookup_request
+from ..utils import construct_url, defined_when, execute_get_request, parse_rdb, execute_lookup_request, execute_lookup_request_exp
 
 
 class TestConstructUrl(TestCase):
@@ -247,28 +247,23 @@ class TestDefinedWhen(TestCase):
 
 
 class TestCooperatorLookup(TestCase):
+    @mock.patch('waterdata.utils.r.get')
+    def test_get_valid_return(self, mock_get):
+        mock_response = mock.Mock()
+        mock_response.json.return_value = MOCK_COOPERATOR_LOOKUP_DATA
+        mock_get.return_value = mock_response
+        url = 'http://test.com'
+        response_dict = r.get(url=url)
+        self.assertEquals(response_dict.json(), MOCK_COOPERATOR_LOOKUP_DATA)
 
-    @pytest.fixture(autouse=True)
-    def test_execute_lookup_request_with_data(self):
-        fake_url = 'https://fake.sifta.water.usgs.gov/'
-        fake_url_root_cooperator_lookup = 'https://fake.sifta.water.usgs.gov/Services/REST/Site/CustomerFunding.ashx?SiteNumber='
-        fake_site_no = '05370000'
-        fake_params = '&StartDate=10/1/2017&EndDate=09/30/2018'
-        with requests_mock.mock() as req:
-            req.get(fake_url, json=MOCK_COOPERATOR_LOOKUP_DATA)
-            cooperator_lookup_data = execute_lookup_request(fake_url_root_cooperator_lookup, fake_site_no, fake_params)
-            assert MOCK_COOPERATOR_LOOKUP_DATA == cooperator_lookup_data
-
-    @pytest.fixture(autouse=True)
-    def test_execute_lookup_request_no_data(self):
-        fake_url = 'https://fake.sifta.water.usgs.gov/'
-        fake_url_root_cooperator_lookup = 'https://fake.sifta.water.usgs.gov/Services/REST/Site/CustomerFunding.ashx?SiteNumber='
-        fake_site_no = '05370000'
-        fake_params = '&StartDate=10/1/2017&EndDate=09/30/2018'
-        with requests_mock.mock() as req:
-            req.get(fake_url, json=MOCK_COOPERATOR_LOOKUP_EMPTY)
-            cooperator_lookup_data = execute_lookup_request(fake_url_root_cooperator_lookup, fake_site_no, fake_params)
-            assert None is cooperator_lookup_data
+    @mock.patch('waterdata.utils.r.get')
+    def test_get_empty_return(self, mock_get):
+        mock_response = mock.Mock()
+        mock_response.json.return_value = MOCK_COOPERATOR_LOOKUP_EMPTY
+        mock_get.return_value = mock_response
+        url = 'http://test.com'
+        response = execute_lookup_request_exp(url)
+        self.assertEquals(response, None)
 
 
 MOCK_COOPERATOR_LOOKUP_DATA = '{"Customers":[{"Name":"New Jersey Department of Environmental Protection",' \
