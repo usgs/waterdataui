@@ -56,9 +56,7 @@ async function getSvg(bundles, options) {
     ]);
 
     // Wait until we have a line drawn
-    // FIXME: line-segment isn't getting created
-    //await page.waitForSelector('.line-segment');
-    await page.waitForSelector('svg');
+    await page.waitForSelector('.line-segment');
 
     // Get the SVG string
     const svgHandle = await page.$('.hydrograph-container svg');

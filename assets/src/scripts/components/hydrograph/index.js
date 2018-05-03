@@ -401,7 +401,6 @@ const createDaterangeControls = function(elem, {siteno, showControls}) {
 };
 
 const attachToNode = function (store, node, {siteno, parameter, compare} = {}) {
-    console.log(siteno, parameter, compare);
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;

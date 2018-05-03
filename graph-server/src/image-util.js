@@ -3,6 +3,8 @@ const SVGO = require('svgo');
 // Create an SVGO config
 // SVGO loads most of these plugins by default, but we duplicate all of them here
 // for reference purposes.
+// Comments above the plugins note application-specific things.
+// Comments to the right of the line are from the SVGO documentation.
 // These plugins are up-to-date as of SVGO 1.0.5
 const svgo = new SVGO({
     plugins: [
@@ -39,7 +41,8 @@ const svgo = new SVGO({
         {collapseGroups: true},  // collapse useless groups
         {removeRasterImages: false},  // remove raster images (disabled by default)
         {mergePaths: true},  // merge multiple Paths into one
-        {convertShapeToPath: true},  // convert some basic shapes to <path>
+        // This causes axis lines to not be styled properly:
+        {convertShapeToPath: false},  // convert some basic shapes to <path>
         {sortAttrs: true},  // sort element attributes for epic readability (disabled by default)
         {removeDimensions: true},  // remove width/height attributes if viewBox is present (opposite to removeViewBox, disable it first) (disabled by default)
         {removeAttrs: false},  // remove attributes by pattern (disabled by default)
