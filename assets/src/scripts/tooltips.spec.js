@@ -3,7 +3,7 @@ const { select } = require('d3-selection');
 const { appendTooltip } = require('./tooltips');
 
 
-fdescribe('tooltips', () => {
+describe('tooltips', () => {
 
     let testDiv;
     beforeEach(() => {
