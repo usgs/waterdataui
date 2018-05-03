@@ -40,8 +40,8 @@ const updateSlider = function(elem, {stageHeight, gageHeightStageIndex}) {
 };
 
 export const floodSlider = function(elem) {
-    let labelContainer = elem.append('div');
-    labelContainer.append('label')
+    let labelContainer = elem.append('div')
+        .attr('class', 'label-tooltip-container')
         .html('Flood Visualization Control');
     let tooltipText = createTooltip(labelContainer);
     tooltipText.text('Move the slider to see flood inundation at different gage heights');

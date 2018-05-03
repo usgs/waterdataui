@@ -1,6 +1,16 @@
-#flood-slider-container {
-    label {
-        margin-top: 5px;
+#flood-layer-control-container {
+    .label-tooltip-container {
+        margin-top: 1em;
+        font-weight: $font-bold;
+        .tooltip-item {
+            font-weight: $font-normal;
+            margin-left: 0.5em;
+        }
+    }
+    #flood-slider-container {
+        label {
+            margin-top: 5px;
+        }
     }
 }
 #site-map {

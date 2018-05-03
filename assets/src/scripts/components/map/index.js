@@ -156,6 +156,7 @@ export const attachToNode = function(store, node, {siteno, latitude, longitude, 
     select(node)
         .call(provide(store));
     select(node).append('div')
+        .attr('id', 'flood-layer-control-container')
         .call(floodSlider);
     select(node)
         .call(siteMap, {siteno, latitude, longitude, zoom});
