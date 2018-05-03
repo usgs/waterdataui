@@ -31,7 +31,7 @@ export const circleMarker = function(elem, {r, x, y, text=null, domId=null, domC
         // is an SVG pattern because there is not a way to
         // specify an SVG pattern with a background color.
         // The desired background color then comes from the
-        // overlayed circle.
+        // overlaid circle.
         group.append('circle')
             .attr('r', r)
             .attr('cx', x)
@@ -64,7 +64,7 @@ export const rectangleMarker = function(elem, {x, y, width, height, text=null, d
         // is an SVG pattern because there is not a way to
         // specify an SVG pattern with a background color.
         // The desired background color then comes from the
-        // overlayed rectangle.
+        // overlaid rectangle.
         group.append('rect')
             .attr('x', x)
             .attr('y', rectangleY)
@@ -97,6 +97,7 @@ export const lineMarker = function(elem, {x, y, length, text=null, domId=null, d
     return group;
 };
 
+
 export const textOnlyMarker = function(elem, {x, y, text, domId=null, domClass=null}) {
     const group = elem.append('g');
     let markerText = group.append('text')
@@ -122,6 +123,7 @@ export const defineLineMarker = function(domId=null, domClass=null, text=null) {
     };
 };
 
+
 export const defineTextOnlyMarker = function(text, domId=null, domClass=null ) {
     return {
         type: textOnlyMarker,
@@ -132,21 +134,9 @@ export const defineTextOnlyMarker = function(text, domId=null, domClass=null ) {
 };
 
 
-
 export const defineRectangleMarker = function(domId=null, domClass=null, text=null, fill=null) {
     return {
         type: rectangleMarker,
-        domId: domId,
-        domClass: domClass,
-        text: text,
-        fill: fill
-    };
-};
-
-export const defineCircleMarker = function(radius, domId=null, domClass=null, text=null, fill=null) {
-    return {
-        type: circleMarker,
-        r: radius,
         domId: domId,
         domClass: domClass,
         text: text,

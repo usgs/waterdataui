@@ -24,7 +24,7 @@ watch-assets:
 #
 # Environment configuration targets
 #
-env-assets: assert-assets-node assets/node_modules
+env-assets: assert-assets-node assets-node-modules
 
 # Assert that we're using the proper node.js version
 assert-assets-node:
@@ -36,7 +36,7 @@ else
 	@exit 1
 endif
 
-assets/node_modules:
+assets-node-modules:
 	@echo 'Installing assets dependencies...'
 	cd assets && npm install
 

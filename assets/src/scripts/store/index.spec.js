@@ -759,14 +759,6 @@ describe('Redux store', () => {
             });
         });
 
-        it('should create an action to show the median stats label', () => {
-            expect(Actions.showMedianStatsLabel(true)).toEqual({
-                type: 'SHOW_MEDIAN_STATS_LABEL',
-                show: true
-            });
-
-        });
-
         it('should create an action to resize plot', () => {
             expect(Actions.resizeUI(800, 100)).toEqual({
                 type: 'RESIZE_UI',

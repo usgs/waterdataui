@@ -6,6 +6,7 @@ const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeSeries, getTimeSeries,
     parseMedianData, sortedParameters } = require('../models');
+const { calcStartTime } = require('../utils');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
 const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange } = require('../selectors/timeSeriesSelector');
@@ -86,9 +87,9 @@ export const Actions = {
                 }
             );
             const medianStatistics = getMedianStatistics({sites: [siteno]});
-            return Promise.all([timeSeries, medianStatistics]).then(([{collection, startTime, endTime}, stats]) => {
-                if (startTime && endTime) {
-                    let medianCollection = parseMedianData(stats, startTime, endTime, collection && collection.variables ? collection.variables : {});
+            return Promise.all([timeSeries, medianStatistics]).then(([{collection, endTime}, stats]) => {
+                if (endTime) {
+                    let medianCollection = parseMedianData(stats, endTime, collection && collection.variables ? collection.variables : {});
                     dispatch(Actions.addSeriesCollection(getTsRequestKey('median')(currentState), medianCollection));
                     dispatch(Actions.toggleTimeSeries('median', true));
                 }
@@ -115,22 +116,8 @@ export const Actions = {
             dispatch(Actions.setCurrentDateRange(period));
             if (!hasTimeSeries('current', period, parmCd)(state)) {
                 const endTime = new Date(getRequestTimeRange('current', 'P7D')(state).end);
-                let startTime = new Date(endTime);
+                let startTime = calcStartTime(period, endTime);
 
-                switch (period) {
-                    case 'P7D':
-                        break;
-                    case 'P30D':
-                        startTime.setDate(startTime.getDate() - 30);
-                        break;
-
-                    case 'P1Y': {
-                        startTime.setFullYear(startTime.getFullYear() - 1);
-                        break;
-                    }
-                    default:
-                        console.log('No known period specified');
-                }
                 return getTimeSeries({
                     sites: [site],
                     params: [parmCd],
@@ -233,12 +220,6 @@ export const Actions = {
             key
         };
     },
-    showMedianStatsLabel(show) {
-        return {
-            type: 'SHOW_MEDIAN_STATS_LABEL',
-            show
-        };
-    },
     setCursorOffset(cursorOffset) {
         return {
             type: 'SET_CURSOR_OFFSET',
@@ -307,7 +288,6 @@ export const configureStore = function (initialState) {
             },
             currentDateRange: 'P7D',
             currentVariableID: null,
-            showMedianStatsLabel: false,
             cursorOffset: null,
             audiblePlayId: null
         },
