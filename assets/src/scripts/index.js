@@ -28,7 +28,10 @@ function main() {
             }
         });
         for (let node of nodes) {
-            COMPONENTS[node.dataset.component](store, node, node.dataset);
+            // If options is specified on the node, expect it to be a JSON string.
+            // Otherwise, use the dataset attributes as the component options.
+            const options = node.dataset.options ? JSON.parse(node.dataset.options) : node.dataset;
+            COMPONENTS[node.dataset.component](store, node, options);
         }
 
     } catch (err) {

@@ -39,13 +39,13 @@ app.get('/monitoring-location/:siteID/', checkSchema({
                 max: 5
             }
         }
-    }
-    /*compare: {
+    },
+    compare: {
         in: ['query'],
         optional: true,
         isBoolean: true,
         toBoolean: true
-    },
+    }/*,
     startDate: {
         // TODO
     },
@@ -72,7 +72,7 @@ app.get('/monitoring-location/:siteID/', checkSchema({
         parameterCode: req.query.parameterCode,
         compare: req.query.compare,
         serviceRoot: 'https://waterservices.usgs.gov/nwis',
-        pastServiceRoot: 'https://nwis.waterservices.usgs.gov/nwis',
+        pastServiceRoot: 'https://nwis.waterservices.usgs.gov/nwis'
     })
     .then(processSvg.bind(null, BUNDLES.styles))
     .then((svgStr) => {

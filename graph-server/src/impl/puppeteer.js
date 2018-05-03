@@ -10,8 +10,14 @@ async function getSvg(bundles, options) {
     const browser = await puppeteer.launch({headless: false});
 
     // Initialize an empty page with the appropriate wdfn-component
+    // TODO: Call the rendering function directly rather than rely on wdfn-component?
     // TODO: Update rendering code to render directly to an SVG?
     const page = await browser.newPage();
+    const componentOptions = {
+        siteno: options.siteID,
+        parameter: options.parameterCode,
+        compare: options.compare
+    };
     await page.setContent(`
         <!DOCTYPE html>
         <html lang="en">
@@ -24,7 +30,7 @@ async function getSvg(bundles, options) {
                 </script>
             </head>
             <body>
-                <div class="wdfn-component" data-component="hydrograph" data-siteno="${options.siteID}" data-parameter="${options.parameterCode}">
+                <div class="wdfn-component" data-component="hydrograph" data-options=${JSON.stringify(componentOptions)}>
                     <div class="graph-container"></div>
                 </div>
             </body>
