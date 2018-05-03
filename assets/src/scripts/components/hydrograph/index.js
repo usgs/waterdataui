@@ -311,14 +311,6 @@ const graphControls = function(elem) {
             .classed('usa-unstyled-list', true)
             .classed('graph-controls-container', true);
 
-    graphControlDiv.call(link(function(elem, layout) {
-        if (!mediaQuery(USWDS_MEDIUM_SCREEN)) {
-            elem.style('padding-left', `${layout.margin.left}px`);
-        } else {
-            elem.style('padding-left', null);
-        }
-    }, layoutSelector));
-
     graphControlDiv.append('li')
         .call(audibleUI);
 

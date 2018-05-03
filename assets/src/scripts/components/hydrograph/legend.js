@@ -7,7 +7,9 @@ const { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker} = require
 const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} = require('./drawingData');
 const { currentVariableTimeSeriesSelector } = require('./timeSeries');
 
+const { USWDS_MEDIUM_SCREEN } = require('../../config');
 const { getMethods } = require('../../selectors/timeSeriesSelector');
+const { mediaQuery } = require('../../utils');
 
 const TS_LABEL = {
     'current': 'Current: ',
@@ -123,7 +125,7 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
     let legend = svg
         .append('g')
             .attr('class', 'legend')
-            .attr('transform', `translate(${layout.margin.left}, 0)`);
+            .attr('transform', `translate(${mediaQuery(USWDS_MEDIUM_SCREEN) ? layout.margin.left : 0}, 0)`);
 
     legendMarkerRows.forEach((rowMarkers, rowIndex) => {
         let xPosition = 0;
