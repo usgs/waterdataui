@@ -142,17 +142,6 @@ export function wrap(text, width, break_chars=TEXT_WRAP_BREAK_CHARS) {
     });
 }
 
-export const createTooltip = function(elem) {
-    let tooltip = elem.append('div')
-        .attr('class', 'tooltip-item');
-    tooltip.append('span')
-        .append('i')
-            .attr('class', 'fas fa-info-circle');
-    return tooltip.append('div')
-        .attr('class', 'tooltip')
-        .append('p');
-};
-
 /**
  * This will execute the equivalent media query as the USWDS given a minWidth.
  * For example, this SASS:

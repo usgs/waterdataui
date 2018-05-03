@@ -9,7 +9,7 @@ const { allTimeSeriesSelector } = require('./timeSeries');
 const { dispatch } = require('../../lib/redux');
 const { sortedParameters } = require('../../models');
 const { Actions } = require('../../store');
-const { createTooltip } = require('../../utils');
+const { appendTooltip } = require('../../tooltips');
 
 const { getVariables, getCurrentVariableID } = require('../../selectors/timeSeriesSelector');
 
@@ -179,10 +179,8 @@ export const plotSeriesSelectTable = function (elem, {siteno, availableTimeSerie
                 let parmCdCol = tr.append('th')
                     .attr('scope', 'row');
                 parmCdCol.append('span')
-                    .text(parm => parm[1].description);
-
-                let tooltipText = createTooltip(parmCdCol);
-                tooltipText.text(parm => `Parameter code: ${parm[0]}`);
+                    .text(parm => parm[1].description)
+                    .call(appendTooltip, parm => `Parameter code: ${parm[0]}`);
 
                 tr.append('td')
                     .append('svg')
