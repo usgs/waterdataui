@@ -22,7 +22,7 @@ EMBED_IMAGE_FEATURE_ENABLED = True
 DEBUG = False
 
 SERVER_SERVICE_ROOT = 'https://waterservices.usgs.gov' # Used for webserver calls to waterservices. Allows us to use a private url.
-SERVICE_ROOT = 'https://waterservices.usgs.gov' # Use for client side calls to waterservices. Most be a public url.
+SERVICE_ROOT = 'https://waterservices.usgs.gov'  # Use for client side calls to waterservices. Most be a public url.
 PAST_SERVICE_ROOT = 'https://nwis.waterservices.usgs.gov'
 NWIS_ENDPOINTS = {
     'INVENTORY': 'https://waterdata.usgs.gov/nwis/inventory',
