@@ -172,24 +172,3 @@ svg {
         fill: #3498db;
     }
 }
-
-.watermark {
-    position: absolute;
-    opacity: .08;
-}
-
-.slider-wrapper {
-    height: 0;
-    input#cursor-slider {
-        max-width: none;
-        position: relative;
-        opacity: .2;
-        top: -2em;
-        background: none;
-        padding: 0;
-        margin: 0;
-        &.active {
-            opacity: 1;
-        }
-    }
-}
