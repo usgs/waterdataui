@@ -37,13 +37,13 @@ const renderToRespone = function (res, {siteID, parameterCode, compare, renderer
                             SERVICE_ROOT: '${SERVICE_ROOT}',
                             PAST_SERVICE_ROOT: '${PAST_SERVICE_ROOT}'
                         };
-                        ${BUNDLES.script}
                     </script>
                 </head>
                 <body>
                     <div class="wdfn-component" data-component="hydrograph" data-options=${JSON.stringify(componentOptions)}>
                         <div class="graph-container"></div>
                     </div>
+                    <script>
                 </body>
             </html>`,
         viewportSize: {

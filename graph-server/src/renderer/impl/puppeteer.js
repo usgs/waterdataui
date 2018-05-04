@@ -30,7 +30,8 @@ async function getSvg(bundles, {pageContent, viewportSize, componentOptions}) {
 
     // Set the page content from the pre-built bundle.
     await Promise.all([
-        page.addStyleTag({content: bundles.styles})
+        page.addStyleTag({content: bundles.styles}),
+        page.addScriptTag({content: bundles.script})
     ]);
 
     // If the page should have a comparison series, wait for it. Otherwise,
