@@ -69,7 +69,7 @@ def identify_data_files(data_dirs, exclusions=('.gitignore', '.webassets-cache')
             ]
             if pathnames:
                 data_install_path = (
-                    os.path.relpath(root).strip('../') if installation_directory is None else installation_directory
+                    installation_directory if installation_directory else os.path.relpath(root).strip('../')
                 )
                 data_file_element = (data_install_path, pathnames)
                 directory_data_files.append(data_file_element)
