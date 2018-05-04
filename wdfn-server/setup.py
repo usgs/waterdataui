@@ -52,7 +52,8 @@ def identify_data_files(data_dirs, exclusions=('.gitignore', '.webassets-cache')
     going to be in the distributable.
 
     :param list data_dirs: list of tuples each of the form: (`installation directory`, `source directory`)
-        the installation directory can be None to preserve the source directory's structure
+        the installation directory can be None to preserve the source directory's structure in the wheel's data
+        directory
     :param tuple exclusions: tuple of all the files or directories NOT to include as a data file
     :return: all contents of the directories as a list of tuples
     :rtype: list
