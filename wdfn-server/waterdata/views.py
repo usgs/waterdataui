@@ -2,7 +2,6 @@
 Main application views.
 """
 import json
-import requests  # added for WDFN234
 
 from flask import abort, render_template, request, Markup
 
@@ -58,7 +57,8 @@ def monitoring_location(site_no):
         station_record = data_list[0]
 
         # get the cooperator data from service
-        if app.config['COOPERATOR_LOOKUP_ENABLED']:  # feature toggle; remove 'if/else' when new lookup service is implemented
+        # feature toggle; remove 'if/else' when new lookup service is implemented
+        if app.config['COOPERATOR_LOOKUP_ENABLED']:
             cooperator_lookup_data = execute_lookup_request(app.config['URL_ROOT_COOPERATOR_LOOKUP'],
                                                             site_no, app.config['URL_PARAMS_COOPERATOR_LOOKUP'])
         else:

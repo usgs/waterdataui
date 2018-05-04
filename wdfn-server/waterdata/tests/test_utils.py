@@ -255,7 +255,7 @@ class TestCooperatorLookup(TestCase):
         mock_response.json.return_value = MOCK_COOPERATOR_LOOKUP_DATA
         mock_get.return_value = mock_response
         response_dict = r.get(self.fake_url_root_cooperator_lookup)
-        self.assertEquals(response_dict.json(), MOCK_COOPERATOR_LOOKUP_DATA)
+        self.assertEqual(response_dict.json(), MOCK_COOPERATOR_LOOKUP_DATA)
 
     @mock.patch('waterdata.utils.r.get')
     def test_get_empty_return(self, mock_get):
@@ -263,7 +263,7 @@ class TestCooperatorLookup(TestCase):
         mock_response.json.return_value = MOCK_COOPERATOR_LOOKUP_EMPTY
         mock_get.return_value = mock_response
         response = execute_lookup_request(self.fake_url_root_cooperator_lookup, self.fake_site_no, self.fake_params)
-        self.assertEquals(response, None)
+        self.assertEqual(response, None)
 
 
 MOCK_COOPERATOR_LOOKUP_DATA = '{"Customers":[{"Name":"New Jersey Department of Environmental Protection",' \
@@ -272,4 +272,3 @@ MOCK_COOPERATOR_LOOKUP_DATA = '{"Customers":[{"Name":"New Jersey Department of E
                   '"URL":"http://www.usgs.gov/","IconURL":"http://water.usgs.gov/customer/icons/9326.gif"}]}'
 
 MOCK_COOPERATOR_LOOKUP_EMPTY = '{"Customers":[]}'
-
