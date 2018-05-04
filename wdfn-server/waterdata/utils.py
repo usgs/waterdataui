@@ -108,6 +108,7 @@ def execute_lookup_request(url_root_cooperator_lookup, site_no, params):
         cooperator_lookup_data = resp.json()
         if len(cooperator_lookup_data['Customers']) < 1:
             cooperator_lookup_data = None
-    except:
+    except (r.exceptions.Timeout, r.exceptions.ConnectionError) as err:
+        app.logger.debug(repr(err))
         cooperator_lookup_data = None
     return cooperator_lookup_data
