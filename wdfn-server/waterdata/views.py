@@ -12,7 +12,7 @@ from .utils import construct_url, defined_when, execute_get_request, parse_rdb
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
 
-SERVICE_ROOT = app.config['SERVICE_ROOT']
+SERVICE_ROOT = app.config['SERVER_SERVICE_ROOT']
 
 
 @app.route('/')

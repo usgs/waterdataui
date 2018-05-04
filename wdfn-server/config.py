@@ -21,6 +21,7 @@ EMBED_IMAGE_FEATURE_ENABLED = True
 
 DEBUG = False
 
+SERVER_SERVICE_ROOT = 'https://waterservices.usgs.gov'
 SERVICE_ROOT = 'https://waterservices.usgs.gov'
 PAST_SERVICE_ROOT = 'https://nwis.waterservices.usgs.gov'
 NWIS_ENDPOINTS = {
