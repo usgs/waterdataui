@@ -100,11 +100,12 @@ def execute_lookup_request(url_root_cooperator_lookup, url_path_cooperator_looku
     if resp.ok:
         try:
             cooperator_lookup_data = resp.json()
-            if len(cooperator_lookup_data['Customers']) < 1:
-                cooperator_lookup_data = None
         except ValueError as err:
             app.logger.debug(repr(err))
             cooperator_lookup_data = None
+        else:
+            if len(cooperator_lookup_data.get('Customers')) < 1:
+                cooperator_lookup_data = None
     else:
         cooperator_lookup_data = None
     return cooperator_lookup_data

@@ -245,30 +245,38 @@ class TestDefinedWhen(TestCase):
 
 class TestCooperatorLookup(TestCase):
     def setUp(self):
-        self.fake_url_root_cooperator_lookup = 'http://test.com'
-        self.fake_site_no = '000001'
-        self.fake_params = 'test'
+        self.fake_url_root_cooperator_lookup = 'https://fake.sifta.water.usgs.gov/'
+        self.fake_url_path_cooperator_lookup = 'Services/CustomerFunding.ashx'
+        self.fake_params = 'SiteNumber=390156074533401&StartDate=10/1/2017&EndDate=09/30/2018'
 
     @mock.patch('waterdata.utils.r.get')
     def test_get_valid_return(self, mock_get):
         mock_response = mock.Mock()
         mock_response.json.return_value = MOCK_COOPERATOR_LOOKUP_DATA
         mock_get.return_value = mock_response
-        response_dict = r.get(self.fake_url_root_cooperator_lookup)
-        self.assertEqual(response_dict.json(), MOCK_COOPERATOR_LOOKUP_DATA)
+        response = execute_lookup_request(self.fake_url_root_cooperator_lookup,
+                                               self.fake_url_path_cooperator_lookup,
+                                               self.fake_params)
+
+        self.assertEqual(response, MOCK_COOPERATOR_LOOKUP_DATA)
+
 
     @mock.patch('waterdata.utils.r.get')
     def test_get_empty_return(self, mock_get):
         mock_response = mock.Mock()
         mock_response.json.return_value = MOCK_COOPERATOR_LOOKUP_EMPTY
         mock_get.return_value = mock_response
-        response = execute_lookup_request(self.fake_url_root_cooperator_lookup, self.fake_site_no, self.fake_params)
+        response = execute_lookup_request(self.fake_url_root_cooperator_lookup,
+                                           self.fake_url_path_cooperator_lookup,
+                                           self.fake_params)
         self.assertEqual(response, None)
 
 
-MOCK_COOPERATOR_LOOKUP_DATA = '{"Customers":[{"Name":"New Jersey Department of Environmental Protection",' \
-                  '"URL":"http://www.nj.gov/dep/ec/","IconURL":"http://water.usgs.gov/customer/icons/1275.gif"},' \
-                  '{"Name":"USGS - National Groundwater Monitoring Network",' \
-                  '"URL":"http://www.usgs.gov/","IconURL":"http://water.usgs.gov/customer/icons/9326.gif"}]}'
+MOCK_COOPERATOR_LOOKUP_DATA = {"Customers": [{"Name": "New Jersey Department of Environmental Protection",
+                                             "URL": "http://www.nj.gov/dep/ec/",
+                                             "IconURL": "http://water.usgs.gov/customer/icons/1275.gif"},
+                                            {"Name": "USGS - National Groundwater Monitoring Network",
+                                             "URL": "http://www.usgs.gov/",
+                                             "IconURL": "http://water.usgs.gov/customer/icons/9326.gif"}]}
 
-MOCK_COOPERATOR_LOOKUP_EMPTY = '{"Customers":[]}'
+MOCK_COOPERATOR_LOOKUP_EMPTY = {"Customers": []}
