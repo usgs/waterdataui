@@ -1,0 +1,75 @@
+const { processSvg } = require('./image-util');
+
+const getSvgImpl = {
+    puppeteer: require('./impl/puppeteer'),
+    phantomjs: require('./impl/phantomjs')
+};
+const DEFAULT_IMPLEMENTATION = 'puppeteer';
+
+
+// Load the JS and CSS assets from the file system
+let BUNDLES;
+require('../assets')().then(function (bundles) {
+    BUNDLES = bundles;
+}).catch(function (error) {
+    console.error(error);
+});
+
+
+const SERVICE_ROOT = 'https://waterservices.usgs.gov/nwis';
+const PAST_SERVICE_ROOT = 'https://nwis.waterservices.usgs.gov/nwis';
+
+
+const renderToRespone = function (res, {siteID, parameterCode, compare, renderer}) {
+    const getSvg = getSvgImpl[renderer] || getSvgImpl[DEFAULT_IMPLEMENTATION];
+    const componentOptions = {
+        siteno: siteID,
+        parameter: parameterCode,
+        compare: compare
+    };
+    getSvg(BUNDLES, {
+        pageURL: 'http://wdfn-graph-server',
+        pageContent: `<!DOCTYPE html>
+            <html lang="en">
+                <head>
+                    <script type="text/javascript">
+                        var CONFIG = {
+                            SERVICE_ROOT: '${SERVICE_ROOT}',
+                            PAST_SERVICE_ROOT: '${PAST_SERVICE_ROOT}'
+                        };
+                        ${BUNDLES.script}
+                    </script>
+                </head>
+                <body>
+                    <div class="wdfn-component" data-component="hydrograph" data-options=${JSON.stringify(componentOptions)}>
+                        <div class="graph-container"></div>
+                    </div>
+                </body>
+            </html>`,
+        viewportSize: {
+            width: 1200,
+            height: 1200
+        },
+        componentOptions
+    })
+    .then(processSvg.bind(null, BUNDLES.styles))
+    .then((svgStr) => {
+        res.setHeader('Content-Type', 'image/svg+xml');
+        res.send(svgStr);
+
+        /* to write a screenshot:
+        const buffer = await page.screenshot();
+        res.setHeader('Content-Type', 'image/png');
+        res.write(buffer, 'binary');
+        res.end(null, 'binary');
+        */
+    })
+    .catch(error => {
+        console.log(error);
+        res.status(500);
+        res.send(error);
+    });
+};
+
+
+module.exports = renderToRespone;

@@ -3,17 +3,7 @@ const express = require('express');
 const expressValidator = require('express-validator');
 const { checkSchema } = require('express-validator/check');
 
-const { processSvg } = require('./image-util');
-const { getSvg } = require('./impl/puppeteer');
-
-let BUNDLES;
-
-// Load the JS and CSS assets from the file system
-require('./assets')().then(function (bundles) {
-    BUNDLES = bundles;
-}).catch(function (error) {
-    console.error(error);
-});
+const renderToRespone = require('./renderer');
 
 
 const PORT = process.env.NODE_PORT || 2929;
@@ -27,6 +17,8 @@ app.listen(PORT, () => {
 
 
 app.get('/monitoring-location/:siteID/', checkSchema({
+    renderer: {
+    },
     parameterCode: {
         in: ['query'],
         errorMessage: 'parameterCode (5 digit integer) is required',
@@ -60,28 +52,10 @@ app.get('/monitoring-location/:siteID/', checkSchema({
         return;
     }
 
-    /* to write a screenshot:
-    const buffer = await page.screenshot();
-    res.setHeader('Content-Type', 'image/png');
-    res.write(buffer, 'binary');
-    res.end(null, 'binary');
-    */
-
-    getSvg(BUNDLES, {
+    renderToRespone(res, {
+        renderer: req.query.renderer,
         siteID: req.params.siteID,
         parameterCode: req.query.parameterCode,
-        compare: req.query.compare,
-        serviceRoot: 'https://waterservices.usgs.gov/nwis',
-        pastServiceRoot: 'https://nwis.waterservices.usgs.gov/nwis'
-    })
-    .then(processSvg.bind(null, BUNDLES.styles))
-    .then((svgStr) => {
-        res.setHeader('Content-Type', 'image/svg+xml');
-        res.send(svgStr);
-    })
-    .catch(error => {
-        console.log(error);
-        res.status(500);
-        res.send(error);
+        compare: req.query.compare
     });
 });
