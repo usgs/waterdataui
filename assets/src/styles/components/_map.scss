@@ -1,3 +1,18 @@
+#flood-layer-control-container {
+    .label-tooltip-container {
+        margin-top: 1em;
+        font-weight: $font-bold;
+        .tooltip-item {
+            font-weight: $font-normal;
+            margin-left: 0.5em;
+        }
+    }
+    #flood-slider-container {
+        label {
+            margin-top: 5px;
+        }
+    }
+}
 #site-map {
     height: 350px;
     margin: 1em 0;
@@ -16,8 +31,8 @@
             .legend-expand {
                 width: auto;
                 float: right;
-                padding: 0px;
-                margin: 0px;
+                padding: 0;
+                margin: 0;
                 color: black;
                 border: none;
                 border-radius: 0;
@@ -52,4 +67,5 @@
 
     }
 }
+
 

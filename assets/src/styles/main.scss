@@ -22,10 +22,6 @@ $fa-font-path: './fonts' !default;
         @import './components/map';
         margin-bottom: 1em;
     }
-    &[data-component='floodSlider'] {
-        @import './components/floodSlider';
-        margin-bottom: 1em;
-    }
     &[data-component='embed'] {
         @import './components/embed';
         margin-bottom: 1em;
