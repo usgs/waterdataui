@@ -59,8 +59,9 @@ def monitoring_location(site_no):
         # get the cooperator data from service
         # feature toggle; remove 'if/else' when new lookup service is implemented
         if app.config['COOPERATOR_LOOKUP_ENABLED']:
-            cooperator_lookup_data = execute_lookup_request(app.config['URL_ROOT_COOPERATOR_LOOKUP'],
-                                                            site_no, app.config['URL_PARAMS_COOPERATOR_LOOKUP'])
+            params = 'SiteNumber=' + site_no + app.config['URL_PARAMS_COOPERATOR_LOOKUP']
+            cooperator_lookup_data = execute_lookup_request(app.config['SERVICE_ROOT_COOPERATOR_LOOKUP'],
+                                                            app.config['URL_PATH_COOPERATOR_LOOKUP'], params)
         else:
             cooperator_lookup_data = None
 

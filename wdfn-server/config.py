@@ -49,5 +49,8 @@ ENABLE_USGS_GA = False
 ASSET_MANIFEST_PATH = None
 
 # For cooperator site service, current lookup service is temporary, constants may need reconfiguring for the new service
-URL_ROOT_COOPERATOR_LOOKUP = 'https://sifta.water.usgs.gov/Services/REST/Site/CustomerFunding.ashx?SiteNumber='
+SERVICE_ROOT_COOPERATOR_LOOKUP = 'https://sifta.water.usgs.gov/'
+URL_PATH_COOPERATOR_LOOKUP = 'Services/REST/Site/CustomerFunding.ashx'
 URL_PARAMS_COOPERATOR_LOOKUP = '&StartDate=10/1/2017&EndDate=09/30/2018'
+
+

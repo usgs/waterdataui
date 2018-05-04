@@ -94,21 +94,17 @@ def defined_when(condition, fallback):
     return wrap
 
 
-def execute_lookup_request(url_root_cooperator_lookup, site_no, params):
-    """
-    Accesses a web-service that returns cooperator information
-    :param url_root_cooperator_lookup: url is based on current, temporary site service
-    :param site_no: the monitoring location site code
-    :param params: currently, these are start and dates, may not be required for non-temp service
-    :return: either the cooperator information as a dict, or None if service fail to return a 'Customer' list
-    """
-    url = url_root_cooperator_lookup + site_no + params
-    try:
-        resp = r.get(url)
-        cooperator_lookup_data = resp.json()
-        if len(cooperator_lookup_data['Customers']) < 1:
+def execute_lookup_request(url_root_cooperator_lookup, url_path_cooperator_lookup, params):
+
+    resp = execute_get_request(url_root_cooperator_lookup, url_path_cooperator_lookup, params)
+    if resp.ok:
+        try:
+            cooperator_lookup_data = resp.json()
+            if len(cooperator_lookup_data['Customers']) < 1:
+                cooperator_lookup_data = None
+        except ValueError as err:
+            app.logger.debug(repr(err))
             cooperator_lookup_data = None
-    except (r.exceptions.Timeout, r.exceptions.ConnectionError) as err:
-        app.logger.debug(repr(err))
+    else:
         cooperator_lookup_data = None
     return cooperator_lookup_data
