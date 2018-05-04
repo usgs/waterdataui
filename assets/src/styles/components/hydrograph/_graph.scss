@@ -83,6 +83,7 @@ svg {
         }
     }
     .median-data-series {
+        stroke-dasharray: 1, 3;
         &.median-modulo-0 {
             fill: #f96713;
         }
