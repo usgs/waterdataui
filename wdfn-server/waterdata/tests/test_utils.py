@@ -6,10 +6,7 @@ from unittest import TestCase, mock
 
 import requests as r
 
-import pytest
-import requests_mock
-
-from ..utils import construct_url, defined_when, execute_get_request, parse_rdb, execute_lookup_request, execute_lookup_request_exp
+from ..utils import construct_url, defined_when, execute_get_request, parse_rdb, execute_lookup_request
 
 
 class TestConstructUrl(TestCase):
@@ -247,13 +244,17 @@ class TestDefinedWhen(TestCase):
 
 
 class TestCooperatorLookup(TestCase):
+    def setUp(self):
+        self.fake_url_root_cooperator_lookup = 'http://test.com'
+        self.fake_site_no = '000001'
+        self.fake_params = 'test'
+
     @mock.patch('waterdata.utils.r.get')
     def test_get_valid_return(self, mock_get):
         mock_response = mock.Mock()
         mock_response.json.return_value = MOCK_COOPERATOR_LOOKUP_DATA
         mock_get.return_value = mock_response
-        url = 'http://test.com'
-        response_dict = r.get(url=url)
+        response_dict = r.get(self.fake_url_root_cooperator_lookup)
         self.assertEquals(response_dict.json(), MOCK_COOPERATOR_LOOKUP_DATA)
 
     @mock.patch('waterdata.utils.r.get')
@@ -261,8 +262,7 @@ class TestCooperatorLookup(TestCase):
         mock_response = mock.Mock()
         mock_response.json.return_value = MOCK_COOPERATOR_LOOKUP_EMPTY
         mock_get.return_value = mock_response
-        url = 'http://test.com'
-        response = execute_lookup_request_exp(url)
+        response = execute_lookup_request(self.fake_url_root_cooperator_lookup, self.fake_site_no, self.fake_params)
         self.assertEquals(response, None)
 
 

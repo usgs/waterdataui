@@ -95,20 +95,9 @@ def defined_when(condition, fallback):
 
 
 def execute_lookup_request(url_root_cooperator_lookup, site_no, params):
+    url = url_root_cooperator_lookup + site_no + params
     try:
-        resp = r.get(url_root_cooperator_lookup + site_no + params)
-        cooperator_lookup_data = resp.json()
-        if len(cooperator_lookup_data['Customers']) < 1:
-            cooperator_lookup_data = None
-
-    except:
-        cooperator_lookup_data = None
-
-    return cooperator_lookup_data
-
-def execute_lookup_request_exp(url):
-    try:
-        resp = r.get(url=url)
+        resp = r.get(url)
         cooperator_lookup_data = resp.json()
         if len(cooperator_lookup_data['Customers']) < 1:
             cooperator_lookup_data = None
