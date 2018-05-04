@@ -95,7 +95,13 @@ def defined_when(condition, fallback):
 
 
 def execute_lookup_request(url_root_cooperator_lookup, url_path_cooperator_lookup, params):
-
+    """
+    Makes call to web service to gather cooperating partner information
+    :param url_root_cooperator_lookup:  the root path for the cooperating partner lookup service
+    :param url_path_cooperator_lookup:  the sub path for the cooperating partner lookup service
+    :param params: the query parameter required to complete call, includes monitoring location site number
+    :return: a dict of cooperating partner information, logo-url, name, link to partner's website
+    """
     resp = execute_get_request(url_root_cooperator_lookup, url_path_cooperator_lookup, params)
     if resp.ok:
         try:

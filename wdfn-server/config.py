@@ -53,5 +53,3 @@ ASSET_MANIFEST_PATH = None
 SERVICE_ROOT_COOPERATOR_LOOKUP = 'https://sifta.water.usgs.gov/'
 URL_PATH_COOPERATOR_LOOKUP = 'Services/REST/Site/CustomerFunding.ashx'
 URL_PARAMS_COOPERATOR_LOOKUP = '&StartDate=10/1/2017&EndDate=09/30/2018'
-
-
