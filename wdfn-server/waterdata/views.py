@@ -7,7 +7,7 @@ from flask import abort, render_template, request, Markup
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries
-from .utils import construct_url, defined_when, execute_get_request, parse_rdb
+from .utils import construct_url, defined_when, execute_get_request, parse_rdb, get_site_timezone_offset
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -55,6 +55,14 @@ def monitoring_location(site_no):
             'STATION_FIELDS_D': STATION_FIELDS_D
         }
         station_record = data_list[0]
+        latitude = station_record['dec_lat_va']
+        longitude = station_record['dec_long_va']
+        dst_observed = station_record['local_time_fg']
+        location_tz = get_site_timezone_offset(latitude, longitude)
+        if dst_observed.lower() == 'n':
+            location_tz['dst_observed'] = False
+        else:
+            location_tz['dst_observed'] = True
         if len(data_list) == 1:
             parameter_data_resp = execute_get_request(
                 SERVICE_ROOT,
@@ -128,7 +136,8 @@ def monitoring_location(site_no):
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'parm_grp_summary': grouped_dataseries,
-                'questions_link': questions_link
+                'questions_link': questions_link,
+                'timezone_metadata': location_tz
             }
         http_code = 200
     elif 400 <= status < 500:
