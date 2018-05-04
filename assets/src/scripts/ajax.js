@@ -16,6 +16,9 @@ export function get(url) {
             } else {
                 // Otherwise reject with the status text
                 // which will hopefully be a meaningful error
+                if (window.ga) {
+                    window.ga('send', 'event', 'serviceFailure', req.status, url);
+                }
                 reject(Error(`Failed with status ${req.status}: ${req.statusText}`));
             }
         };
