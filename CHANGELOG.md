@@ -23,6 +23,7 @@ the selected timeseries. The Show last year feature also works for the three dat
 - Label change on toggle from "Show last year" to "Compare to last year"
 - New colors for provisional, approved, and estimated time series
 - Median data is shown using a step function
+- Use paths relative to setup.py for data files during wheel builds
 
 
 ### Fixed

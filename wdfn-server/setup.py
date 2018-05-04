@@ -52,41 +52,53 @@ def identify_data_files(data_dirs, exclusions=('.gitignore', '.webassets-cache')
     going to be in the distributable.
 
     :param list data_dirs: list of tuples each of the form: (`installation directory`, `source directory`)
+        the installation directory can be None to preserve the source directory's structure in the wheel's data
+        directory
     :param tuple exclusions: tuple of all the files or directories NOT to include as a data file
     :return: all contents of the directories as a list of tuples
     :rtype: list
 
     """
     directory_data_files = []
-    for directory_name in data_dirs:
+    for installation_directory, directory_name in data_dirs:
         for root, _, files in os.walk(directory_name):
             pathnames = [
-                os.path.abspath(os.path.join(root, filename))
+                os.path.relpath(os.path.join(root, filename))
                 for filename in files
                 if not any(ex in os.path.join(root, filename)
                            for ex in exclusions)
             ]
             if pathnames:
-                data_file_element = (root, pathnames)
+                data_install_path = (
+                    installation_directory if installation_directory else os.path.relpath(root).strip('../')
+                )
+                data_file_element = (data_install_path, pathnames)
                 directory_data_files.append(data_file_element)
     return directory_data_files
 
 
-setup(name='usgs_waterdata_ui',
-      version='0.8.0dev',
-      description='USGS Water Data',
-      author='Mary Bucknell, Andrew Yan, Dan Naab, Janell Fry',
-      author_email='mbucknell@usgs.gov',
-      packages=find_packages(),
-      include_package_data=True,
-      long_description=read('README.md'),
-      install_requires=read_requirements()['install_requires'],
-      platforms='any',
-      test_suite='unittest:TestLoader',
-      zip_safe=False,
-      # include the tier agnostic configuration file in the distributable
-      # the file gets placed in site-packages upon dist installation
-      py_modules=['config'],
-      # include static files in the distributable
-      # they will appear in the root of the virtualenv upon dist installation
-      data_files=identify_data_files(['assets/dist', 'data']))
+setup(
+    name='usgs_waterdata_ui',
+    version='0.8.0dev',
+    description='USGS Water Data',
+    author='Mary Bucknell, Andrew Yan, Dan Naab, Janell Fry, Aaron Briggs',
+    author_email='mbucknell@usgs.gov',
+    packages=find_packages(),
+    include_package_data=True,
+    long_description=read('README.md'),
+    install_requires=read_requirements()['install_requires'],
+    platforms='any',
+    test_suite='unittest:TestLoader',
+    zip_safe=False,
+    # include the tier agnostic configuration file in the distributable
+    # the file gets placed in site-packages upon dist installation
+    py_modules=['config'],
+    # include static files in the distributable
+    # they will appear in the root of the virtualenv upon dist installation
+    data_files=identify_data_files(
+        [
+            (None, '../assets/dist'),
+            ('data', 'data')
+        ]
+    )
+)

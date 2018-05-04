@@ -69,7 +69,7 @@
                     </div>
                     <p id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}</p>
                 </div>
-                {{ components.TimeseriesComponent(stations[0].site_no) }}
+                {{ components.TimeSeriesComponent(stations[0].site_no) }}
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
                     {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
                 {% endif %}
