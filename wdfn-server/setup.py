@@ -52,6 +52,7 @@ def identify_data_files(data_dirs, exclusions=('.gitignore', '.webassets-cache')
     going to be in the distributable.
 
     :param list data_dirs: list of tuples each of the form: (`installation directory`, `source directory`)
+        the installation directory can be None to preserve the source directory's structure
     :param tuple exclusions: tuple of all the files or directories NOT to include as a data file
     :return: all contents of the directories as a list of tuples
     :rtype: list
@@ -67,7 +68,10 @@ def identify_data_files(data_dirs, exclusions=('.gitignore', '.webassets-cache')
                            for ex in exclusions)
             ]
             if pathnames:
-                data_file_element = (installation_directory, pathnames)
+                data_install_path = (
+                    os.path.relpath(root).strip('../') if installation_directory is None else installation_directory
+                )
+                data_file_element = (data_install_path, pathnames)
                 directory_data_files.append(data_file_element)
     return directory_data_files
 
@@ -92,7 +96,7 @@ setup(
     # they will appear in the root of the virtualenv upon dist installation
     data_files=identify_data_files(
         [
-            ('assets/dist', '../assets/dist'),
+            (None, '../assets/dist'),
             ('data', 'data')
         ]
     )
