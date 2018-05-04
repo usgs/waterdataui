@@ -138,7 +138,7 @@ def monitoring_location(site_no):
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'parm_grp_summary': grouped_dataseries,
                 'questions_link': questions_link,
-                'cooperator_lookup_data': cooperator_lookup_data  # added for WDFN234
+                'cooperator_lookup_data': cooperator_lookup_data
             }
         http_code = 200
     elif 400 <= status < 500:
