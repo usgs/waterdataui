@@ -4,7 +4,7 @@ const proxyquire = require('proxyquireify')(require);
 const { attachToNode } = require('./index');
 const { configureStore } = require('../../store');
 
-describe('map module', () => {
+fdescribe('map module', () => {
     let mapNode;
     let store;
     let floodDataMock;
@@ -12,9 +12,11 @@ describe('map module', () => {
 
     beforeEach(() => {
         jasmine.Ajax.install();
-        select('body')
+        let mapContainer = select('body')
             .append('div')
                 .attr('id', 'map');
+        mapContainer.append('div').attr('id', 'flood-layer-control-container');
+        mapContainer.append('div').attr('id', 'site-map');
         mapNode = document.getElementById('map');
 
         floodDataMock = {
