@@ -76,7 +76,7 @@ class TestMonitoringLocationView(TestCase):
         self.assertEqual(json_ld_response.status_code, 200)
         self.assertIsInstance(json.loads(json_ld_response.data), dict)
         # see if call to Cooperator Lookup Service returns expected response
-        self.assertEquals(m_resp_lookup.status_code, 200)
+        self.assertEqual(m_resp_lookup.status_code, 200)
 
     @mock.patch('waterdata.views.execute_get_request')
     def test_4xx_from_water_services(self, r_mock):
