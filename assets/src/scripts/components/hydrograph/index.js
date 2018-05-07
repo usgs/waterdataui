@@ -400,7 +400,7 @@ const createDaterangeControls = function(elem, {siteno, showControls}) {
     }
 };
 
-const attachToNode = function (store, node, {siteno, parameter, compare} = {}) {
+const attachToNode = function (store, node, {siteno, parameter, compare, cursorOffset} = {}) {
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
@@ -417,6 +417,11 @@ const attachToNode = function (store, node, {siteno, parameter, compare} = {}) {
     // If specified, turn the visibility of the comparison time series on.
     if (compare) {
         store.dispatch(Actions.toggleTimeSeries('compare', true));
+    }
+
+    // If specified, initialize the cursorOffset
+    if (cursorOffset !== undefined) {
+        store.dispatch(Actions.setCursorOffset(cursorOffset));
     }
 
     select(node).select('.graph-container')

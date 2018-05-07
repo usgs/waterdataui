@@ -25,7 +25,8 @@ const renderToRespone = function (res, {siteID, parameterCode, compare, renderer
     const componentOptions = {
         siteno: siteID,
         parameter: parameterCode,
-        compare: compare
+        compare: compare,
+        cursorOffset: false
     };
     getSvg(BUNDLES, {
         pageURL: 'http://wdfn-graph-server',
