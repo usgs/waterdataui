@@ -52,8 +52,8 @@ class TestMonitoringLocationView(TestCase):
         m_resp_lookup = mock.Mock()
         m_resp_lookup.status_code = 200
         m_resp_lookup.return_value = {'Customers': [{'Name': 'mock_cooperator',
-                                                           'URL': 'http://www.fake.gov',
-                                                           'IconURL': 'http://www.fake.gov'}]}
+                                                     'URL': 'http://www.fake.gov',
+                                                     'IconURL': 'http://www.fake.gov'}]}
         r_mock_lookup.return_value.json = m_resp_lookup
 
         response = self.app_client.get('/monitoring-location/{}/?agency_cd=USGS'.format(self.test_site_number))
@@ -260,5 +260,3 @@ MOCK_SITE_LIST_2 = (
     'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00095\t\t69943\tFrom multiparameter sonde\t'
     'wat\t\t1646694\t0\t2013-11-23\t2018-01-10\t1509'
 )
-
-
