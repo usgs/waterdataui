@@ -1,4 +1,5 @@
 const { range } = require('lodash');
+const moment = require('moment-timezone');
 const { isLeapYear } = require('../../models');
 const { calcStartTime } = require('../../utils');
 
@@ -23,7 +24,8 @@ export const coerceStatisticalSeries = function (series, period) {
             const month = point.month;
             const day = point.day;
             let dataPoint = Object.assign({}, point);
-            dataPoint.dateTime = dataPoint.dateTime ? dataPoint.dateTime : new Date(year, month, day);
+            // dataPoint.dateTime = dataPoint.dateTime ? dataPoint.dateTime : new Date(year, month, day);
+            dataPoint.dateTime = dataPoint.dateTime ? dataPoint.dateTime: moment.tz([year, month, day], TIMEZONE.NAME).valueOf();
             if (!isLeapYear(year)) {
                 if(!(month === 1 && day === 29)) {
                     plotablePoints.push(dataPoint);

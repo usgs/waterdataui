@@ -1,5 +1,6 @@
 const { set } = require('d3-collection');
 const { utcFormat } = require('d3-time-format');
+const moment = require('moment-timezone');
 
 const config = require('./config');
 const { get } = require('./ajax');
@@ -133,10 +134,6 @@ export function mergeMedianTimeSeries(collection, medianData, timeSeriesEndDateT
     for (let medianDatum of medianData) {
         let month = medianDatum.month_nu - 1;
         let day = medianDatum.day_nu;
-        let recordDate = new Date(yearPresent, month, day);
-        if (!(new Date(yearPresent, 0, 1) <= recordDate && recordDate <= timeSeriesEndDateTime)) {
-            recordDate = new Date(yearPrevious, month, day);
-        }
         let median = {
             dateTime: null,
             month: month,
