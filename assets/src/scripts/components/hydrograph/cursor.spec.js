@@ -414,7 +414,7 @@ describe('Cursor module', () => {
         });
     });
 
-    fdescribe('cursorOffsetSelector', () => {
+    describe('cursorOffsetSelector', () => {
         let store;
         beforeEach(() => {
             store = configureStore(TEST_STATE_ONE_VAR);

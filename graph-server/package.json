@@ -2,7 +2,7 @@
   "name": "graph-server",
   "version": "0.8.0",
   "description": "Water Data For The Nation graph server renderer",
-  "main": "server.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "jasmine",
     "watch": "nodemon src"
@@ -29,7 +29,9 @@
     "svgo": "^1.0.5"
   },
   "devDependencies": {
+    "decache": "^4.4.0",
     "jasmine": "^3.1.0",
-    "nodemon": "^1.17.3"
+    "nodemon": "^1.17.3",
+    "supertest": "^3.0.0"
   }
 }

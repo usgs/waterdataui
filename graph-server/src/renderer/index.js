@@ -1,19 +1,12 @@
 const { processSvg } = require('./image-util');
+const BUNDLES = require('../assets');
+
 
 const getSvgImpl = {
     puppeteer: require('./impl/puppeteer'),
     phantomjs: require('./impl/phantomjs')
 };
 const DEFAULT_IMPLEMENTATION = 'puppeteer';
-
-
-// Load the JS and CSS assets from the file system
-let BUNDLES;
-require('../assets')().then(function (bundles) {
-    BUNDLES = bundles;
-}).catch(function (error) {
-    console.error(error);
-});
 
 
 const SERVICE_ROOT = 'https://waterservices.usgs.gov/nwis';

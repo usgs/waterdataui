@@ -11,7 +11,8 @@ const PORT = process.env.NODE_PORT || 2929;
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator());
-app.listen(PORT, () => {
+
+const server = app.listen(PORT, () => {
     console.log(`Graph server running on port ${PORT}`);
 });
 
@@ -59,3 +60,6 @@ app.get('/monitoring-location/:siteID/', checkSchema({
         compare: req.query.compare
     });
 });
+
+
+module.exports = server;
