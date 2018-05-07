@@ -30,7 +30,7 @@ class TestMonitoringLocationView(TestCase):
     def setUp(self):
         self.app_client = app.test_client()
         self.test_site_number = '01630500'
-        self.test_url = '{0}/nwis/site/?site={1}'.format(app.config['SERVICE_ROOT'], self.test_site_number)
+        self.test_url = '{0}/nwis/site/?site={1}'.format(app.config['SERVER_SERVICE_ROOT'], self.test_site_number)
         self.test_rdb_text = MOCK_SITE_LIST_1
         self.test_rdb_lines = self.test_rdb_text.split('\n')
         self.test_param_rdb = MOCK_SITE_LIST_2
@@ -108,7 +108,7 @@ class TestMonitoringLocationView(TestCase):
     def test_agency_cd(self, r_mock):
         r_mock.return_value.status_code = 500
         response = self.app_client.get('/monitoring-location/{0}/?agency_cd=USGS'.format(self.test_site_number))
-        r_mock.assert_called_with(app.config['SERVICE_ROOT'],
+        r_mock.assert_called_with(app.config['SERVER_SERVICE_ROOT'],
                                   path='/nwis/site/',
                                   params={'site': self.test_site_number,
                                           'agencyCd': 'USGS',
@@ -124,7 +124,7 @@ class TestHydrologicalUnitView:
     def mock_site_call(self):
         """Return the same mock site list for each call to the site service"""
         with requests_mock.mock() as req:
-            url = re.compile('{host}/nwis/site/.*'.format(host=app.config['SERVICE_ROOT']))
+            url = re.compile('{host}/nwis/site/.*'.format(host=app.config['SERVER_SERVICE_ROOT']))
             req.get(url, text=MOCK_SITE_LIST_2)
             yield
 
@@ -156,7 +156,7 @@ class TestCountryStateCountyView:
     def mock_site_call(self):
         """Return the same mock site list for each call to the site service"""
         with requests_mock.mock() as req:
-            url = re.compile('{host}/nwis/site/.*'.format(host=app.config['SERVICE_ROOT']))
+            url = re.compile('{host}/nwis/site/.*'.format(host=app.config['SERVER_SERVICE_ROOT']))
             req.get(url, text=MOCK_SITE_LIST_2)
             yield
 
