@@ -26,6 +26,8 @@ const svgo = new SVGO({
         {cleanupEnableBackground: true},  // remove or cleanup enable-background attribute when possible
         {minifyStyles: true},  // minify <style> elements content with CSSO
         {convertStyleToAttrs: true},  // convert styles into attributes
+        // This causes the y-axis label to be removed:
+        {inlineStyles: false},  // Moves + merges styles from style elements to element styles
         {convertColors: true},  // convert colors (from rgb() to #rrggbb, from #rrggbb to #rgb)
         {convertPathData: true},  // convert Path data to relative or absolute (whichever is shorter), convert one segment to another, trim useless delimiters, smart rounding, and much more
         {convertTransform: true},  // collapse multiple transforms into one, convert matrices to the short aliases, and much more
@@ -67,10 +69,9 @@ const processSvg = async function (cssStr, svgString) {
     const svgWithCSS = `${svgString.substr(0, index)}<style>${cssStr}</style>${svgString.substr(index)}`;
 
     // skip svgo for now, because it's removing the y-axis label
-    return svgWithCSS;
-    /*return svgo.optimize(svgWithCSS).then(result => {
+    return svgo.optimize(svgWithCSS).then(result => {
         return result.data;
-    });*/
+    });
 };
 
 
