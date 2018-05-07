@@ -9,8 +9,9 @@ const getSvgImpl = {
 const DEFAULT_IMPLEMENTATION = 'puppeteer';
 
 
-const SERVICE_ROOT = 'https://waterservices.usgs.gov/nwis';
-const PAST_SERVICE_ROOT = 'https://nwis.waterservices.usgs.gov/nwis';
+const SERVICE_ROOT = process.env.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
+const PAST_SERVICE_ROOT = process.env.PAST_SERVICE_ROOT || 'https://nwis.waterservices.usgs.gov/nwis';
+const STATIC_ROOT = process.env.STATIC_ROOT || 'https://waterdata.usgs.gov/nwisweb/wsgi/static';
 
 
 const renderToRespone = function (res, {siteID, parameterCode, compare, renderer}) {
@@ -29,7 +30,8 @@ const renderToRespone = function (res, {siteID, parameterCode, compare, renderer
                     <script type="text/javascript">
                         var CONFIG = {
                             SERVICE_ROOT: '${SERVICE_ROOT}',
-                            PAST_SERVICE_ROOT: '${PAST_SERVICE_ROOT}'
+                            PAST_SERVICE_ROOT: '${PAST_SERVICE_ROOT}',
+                            STATIC_URL: '${STATIC_ROOT}'
                         };
                     </script>
                 </head>

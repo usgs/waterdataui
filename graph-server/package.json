@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "jasmine",
-    "watch": "nodemon src"
+    "watch": "STATIC_ROOT=http://localhost:9000 nodemon src"
   },
   "engines": {
     "node": "8.9.3"

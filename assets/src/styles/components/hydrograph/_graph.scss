@@ -172,4 +172,8 @@ svg {
     .pump-mask {
         fill: #3498db;
     }
+    .watermark {
+        position: absolute;
+        opacity: .08;
+    }
 }
