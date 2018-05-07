@@ -335,10 +335,6 @@ const graphControls = function(elem) {
             const exists = Object.keys(compareTimeSeries) ?
                 Object.values(compareTimeSeries).filter(tsValues => tsValues.points.length).length > 0 : false;
             elem.property('disabled', !exists);
-            if (!exists) {
-                elem.property('checked', false);
-                elem.dispatch('click');
-            }
         }, currentVariableTimeSeriesSelector('compare')))
         // Sets the state of the toggle
         .call(link(function(elem, checked) {
