@@ -5,7 +5,7 @@ The Nation graphs.
 
 ## Running the server
 
-The entrypoint is `server.js`, which accepts the following environment
+The entrypoint is `src/index.js`, which accepts the following environment
 variables as arguments:
 
 - NODE_PORT: Port to run http server on. Default 2929.
