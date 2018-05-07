@@ -40,7 +40,7 @@ const renderToRespone = function (res, {siteID, parameterCode, compare, renderer
                     </script>
                 </head>
                 <body>
-                    <div class="wdfn-component" data-component="hydrograph" data-options=${JSON.stringify(componentOptions)}>
+                    <div class="wdfn-component" data-component="hydrograph" data-options='${JSON.stringify(componentOptions)}'>
                         <div class="graph-container"></div>
                     </div>
                     <script>

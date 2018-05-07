@@ -266,7 +266,11 @@ const timeSeriesGraph = function (elem) {
         .append('svg')
             .attr('xmlns', 'http://www.w3.org/2000/svg')
             .classed('hydrograph-svg', true)
-            .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`), layoutSelector))
+            .call(link((elem, layout) => {
+                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`);
+                elem.attr('width', layout.width);
+                elem.attr('height', layout.height);
+            }, layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({
                 title: titleSelector,
                 description: descriptionSelector,
