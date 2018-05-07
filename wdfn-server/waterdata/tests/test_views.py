@@ -37,7 +37,7 @@ class TestMonitoringLocationView(TestCase):
         self.parameter_lines = self.test_param_rdb.split('\n')
         self.headers = {'Accept': 'application/ld+json'}
 
-    @mock.patch('waterdata.views.execute_lookup_request')
+    @mock.patch('waterdata.views.execute_cooperator_lookup_request')
     @mock.patch('waterdata.views.execute_get_request')
     def test_everything_okay(self, r_mock, r_mock_lookup):
         m_resp = mock.Mock()

@@ -261,7 +261,8 @@ class TestCooperatorLookup(TestCase):
         mock_r = mock.Mock()
         mock_r.json.return_value = self.mock_cooperator_lookup_data
         mock_get.return_value = mock_r
-        response = execute_cooperator_lookup_request(self.fake_url_root_cooperator_lookup, self.fake_url_path_cooperator_lookup,
+        response = execute_cooperator_lookup_request(self.fake_url_root_cooperator_lookup,
+                                                     self.fake_url_path_cooperator_lookup,
                                                      self.fake_params)
 
         self.assertEqual(response, self.mock_cooperator_lookup_data)
