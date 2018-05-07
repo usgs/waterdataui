@@ -94,7 +94,7 @@ def defined_when(condition, fallback):
     return wrap
 
 
-def execute_lookup_request(url_root_cooperator_lookup, url_path_cooperator_lookup, params):
+def execute_cooperator_lookup_request(url_root_cooperator_lookup, url_path_cooperator_lookup, params):
     """
     Makes call to web service to gather cooperating partner information
     :param url_root_cooperator_lookup:  the root path for the cooperating partner lookup service
@@ -110,7 +110,7 @@ def execute_lookup_request(url_root_cooperator_lookup, url_path_cooperator_looku
             app.logger.debug(repr(err))
             cooperator_lookup_data = None
         else:
-            if len(cooperator_lookup_data.get('Customers')) < 1:
+            if len(cooperator_lookup_data.get('Customers', [])) < 1:
                 cooperator_lookup_data = None
     else:
         cooperator_lookup_data = None

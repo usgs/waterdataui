@@ -49,12 +49,9 @@ class TestMonitoringLocationView(TestCase):
         m_resp_param.iter_lines.return_value = iter(self.parameter_lines)
         r_mock.side_effect = [m_resp, m_resp_param]
 
-        m_resp_lookup = mock.Mock()
-        m_resp_lookup.status_code = 200
-        m_resp_lookup.return_value = {'Customers': [{'Name': 'mock_cooperator',
+        r_mock_lookup.return_value = {'Customers': [{'Name': 'mock_cooperator',
                                                      'URL': 'http://www.fake.gov',
                                                      'IconURL': 'http://www.fake.gov'}]}
-        r_mock_lookup.return_value.json = m_resp_lookup
 
         response = self.app_client.get('/monitoring-location/{}/?agency_cd=USGS'.format(self.test_site_number))
         self.assertEqual(response.status_code, 200)
@@ -75,8 +72,6 @@ class TestMonitoringLocationView(TestCase):
         )
         self.assertEqual(json_ld_response.status_code, 200)
         self.assertIsInstance(json.loads(json_ld_response.data), dict)
-        # see if call to Cooperator Lookup Service returns expected response
-        self.assertEqual(m_resp_lookup.status_code, 200)
 
     @mock.patch('waterdata.views.execute_get_request')
     def test_4xx_from_water_services(self, r_mock):
