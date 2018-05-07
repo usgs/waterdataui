@@ -2,6 +2,7 @@ const { axisBottom, axisLeft } = require('d3-axis');
 const { timeDay, timeWeek, timeMonth } = require('d3-time');
 const { timeFormat } = require('d3-time-format');
 const { createSelector } = require('reselect');
+const moment = require('moment-timezone');
 
 const { wrap } = require('../../utils');
 
@@ -16,10 +17,16 @@ const { mediaQuery } = require('../../utils');
 
 const dateFormatter = timeFormat('%b %d');
 
+// const FORMAT = {
+//     P7D: dateFormatter,
+//     P30D: dateFormatter,
+//     P1Y: timeFormat('%b %Y')
+// };
+
 const FORMAT = {
-    P7D: dateFormatter,
-    P30D: dateFormatter,
-    P1Y: timeFormat('%b %Y')
+    P7D: 'MMM DD',
+    P30D: 'MMM DD',
+    P1Y: 'MMM YYYY'
 };
 
 const tickInterval = function(period) {
@@ -54,7 +61,10 @@ export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period) 
         .scale(xScale)
         .ticks(tickInterval(period))
         .tickSizeOuter(0)
-        .tickFormat(FORMAT[period] ? FORMAT[period] : dateFormatter);
+        .tickFormat(d => {
+            return moment(d).tz(TIMEZONE.NAME).format(FORMAT[period]);
+        });
+        //.tickFormat(FORMAT[period] ? FORMAT[period] : dateFormatter);
 
     // Create y-axis
     const tickDetails = getYTickDetails(yScale.domain(), parmCd);

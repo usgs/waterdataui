@@ -5,6 +5,8 @@ const { extent } = require('d3-array');
 const { line: d3Line, curveStepAfter } = require('d3-shape');
 const { select } = require('d3-selection');
 
+const moment = require('moment-timezone');
+
 const { createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility } = require('../../accessibility');
@@ -52,7 +54,6 @@ const plotDataLine = function (elem, {visible, lines, tsKey, xScale, yScale}) {
     if (!visible) {
         return;
     }
-
     for (let line of lines) {
         if (line.classes.dataMask === null) {
             // If this is a single point line, then represent it as a circle.
