@@ -10,7 +10,7 @@ clean-graph-server:
 #
 # Development targets
 #
-test-graph-server:
+test-graph-server: build-assets
 	@echo 'Running graph-server tests...'
 	cd graph-server && npm test
 
