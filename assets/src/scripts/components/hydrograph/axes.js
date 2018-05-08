@@ -46,6 +46,28 @@ const tickInterval = function(period) {
     }
 };
 
+
+const generateDateRange = function(startDate, endDate, period) {
+    const startEpoch = startDate.valueOf();
+    const endEpoch = endDate.valueOf();
+    let dates = [];
+    let date = moment.tz([startDate.year(), startDate.month(), startDate.date()], TIMEZONE.NAME);
+    while (date < endEpoch) {
+        // date = date.add(1, 'days');
+        if (period === 'P7D') {
+            date = date.add(1, 'days');
+        } else if (period === 'P30D') {
+            date = date.add(1, 'week');
+        } else if (period === 'P1Y') {
+            date = date.add(1, 'month');
+        }
+        if (startEpoch <= date.valueOf() && date.valueOf() <= endEpoch) {
+            dates.push(date.valueOf());
+        }
+    }
+    return dates
+};
+
 /**
  * Create an x and y axis for hydrograph
  * @param  {Object} xScale      D3 Scale object for the x-axis
@@ -57,9 +79,12 @@ const tickInterval = function(period) {
  */
 export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period) {
     // Create x-axis
+    const [tzStartDate, tzEndDate] = xScale.domain().map(dt => moment(dt, TIMEZONE.NAME));
+    const tickDates = generateDateRange(tzStartDate, tzEndDate, period);
     const xAxis = axisBottom()
         .scale(xScale)
-        .ticks(tickInterval(period))
+        //.ticks(tickInterval(period))
+        .tickValues(tickDates)
         .tickSizeOuter(0)
         .tickFormat(d => {
             return moment(d).tz(TIMEZONE.NAME).format(FORMAT[period]);
