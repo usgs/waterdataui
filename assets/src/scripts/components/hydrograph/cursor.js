@@ -21,8 +21,11 @@ export const cursorOffsetSelector = createSelector(
     xScaleSelector('current'),
     state => state.timeSeriesState.cursorOffset,
     (xScale, cursorOffset) => {
-        // If cursorOffset is unset, default to the last offset
-        if (!cursorOffset) {
+        // If cursorOffset is false, don't show it
+        if (cursorOffset === false) {
+            return null;
+        // If cursorOffset is otherwise unset, default to the last offset
+        } else if (!cursorOffset) {
             const domain = xScale.domain();
             return domain[1].getTime() - domain[0].getTime();
         } else {
