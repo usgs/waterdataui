@@ -24,8 +24,6 @@ export const coerceStatisticalSeries = function (series, period) {
             const month = point.month;
             const day = point.day;
             let dataPoint = Object.assign({}, point);
-            // dataPoint.dateTime = dataPoint.dateTime ? dataPoint.dateTime : new Date(year, month, day);
-            //dataPoint.dateTime = dataPoint.dateTime ? dataPoint.dateTime: moment.tz([year, month, day], TIMEZONE.NAME).valueOf();
             dataPoint.dateTime = dataPoint.dateTime ? dataPoint.dateTime : DateTime.fromObject({
                 year: year,
                 day: day,
