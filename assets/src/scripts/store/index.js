@@ -47,6 +47,15 @@ const getCurrentVariableId = function(timeSeries, variables) {
 
 
 export const Actions = {
+    retrieveLocationTimeZone(latitude, longitude) {
+        return function(dispatch, getState) {
+            return queryWeatherService(latitude, longitude).then(
+                resp => {
+                    const tzIANA = resp.properties.timeZone;
+                }
+            );
+        }
+    },
     retrieveTimeSeries(siteno, params=null) {
         return function (dispatch, getState) {
             const currentState = getState();
