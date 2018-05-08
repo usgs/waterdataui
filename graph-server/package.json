@@ -1,6 +1,6 @@
 {
-  "name": "graph-server",
-  "version": "0.8.0",
+  "name": "waterdataui-graph-server",
+  "version": "0.9.0dev",
   "description": "Water Data For The Nation graph server renderer",
   "main": "index.js",
   "scripts": {
