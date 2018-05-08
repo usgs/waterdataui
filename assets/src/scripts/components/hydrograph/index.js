@@ -414,6 +414,15 @@ const createDaterangeControls = function(elem, {siteno, showControls}) {
     }
 };
 
+const updateDateRangeLoadingIndicator = function(elem, {showLoadingIndicator, sizeClass}) {
+    const container = elem.select('.loading-indicator-container');
+    if (container.size()) {
+        loadingIndicator(container, {showLoadingIndicator, sizeClass});
+    }
+};
+
+
+
 const noDataAlert = function(elem, tsCollections) {
     elem.select('#no-data-message').remove();
     if (tsCollections && tsCollections.length === 0) {
@@ -439,15 +448,14 @@ const attachToNode = function(store, node, {siteno, parameter, compare, cursorOf
         .call(provide(store));
     select(node)
         .call(link(noDataAlert, getTimeSeriesCollections('current', 'P7D')));
-    select(node).select('.loading-indicator-container')
-        .call(link(loadingIndicator, createStructuredSelector({
-            showLoadingIndicator: isLoadingTS('current', 'P7D'),
-            sizeClass: () =>'fa-3x'
-        })));
     select(node)
         .call(link(createDaterangeControls, createStructuredSelector({
             siteno: () => siteno,
-            showControls: hasTimeSeriesWithPoints('current', 'P7D')
+            showControls: hasTimeSeriesWithPoints('current', 'P7D'),
+        })))
+        .call(link(updateDateRangeLoadingIndicator, createStructuredSelector({
+            showLoadingIndicator: isLoadingTS('current', 'P7D'),
+            sizeClass: () =>'fa-3x'
         })));
 
     // If specified, turn the visibility of the comparison time series on.
