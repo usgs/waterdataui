@@ -451,7 +451,7 @@ const attachToNode = function(store, node, {siteno, parameter, compare, cursorOf
     select(node)
         .call(link(createDaterangeControls, createStructuredSelector({
             siteno: () => siteno,
-            showControls: hasTimeSeriesWithPoints('current', 'P7D'),
+            showControls: hasTimeSeriesWithPoints('current', 'P7D')
         })))
         .call(link(updateDateRangeLoadingIndicator, createStructuredSelector({
             showLoadingIndicator: isLoadingTS('current', 'P7D'),
