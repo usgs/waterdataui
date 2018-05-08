@@ -67,8 +67,6 @@ const svgo = new SVGO({
 const processSvg = async function (cssStr, svgString) {
     const index = svgString.indexOf('</svg>');
     const svgWithCSS = `${svgString.substr(0, index)}<style>${cssStr}</style>${svgString.substr(index)}`;
-
-    // skip svgo for now, because it's removing the y-axis label
     return svgo.optimize(svgWithCSS).then(result => {
         return result.data;
     });

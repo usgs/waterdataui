@@ -24,7 +24,6 @@ app.get('/monitoring-location/:siteID/', checkSchema({
         in: ['query'],
         errorMessage: 'parameterCode (5 digit integer) is required',
         isInt: true,
-        //toInt: true,
         isLength: {
             errorMessage: 'parameterCode should be 5 digits',
             options: {
