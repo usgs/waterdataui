@@ -5,7 +5,7 @@ const { applyMiddleware, createStore, combineReducers, compose } = require('redu
 const { default: thunk } = require('redux-thunk');
 
 const { getMedianStatistics, getPreviousYearTimeSeries, getTimeSeries,
-    parseMedianData, sortedParameters } = require('../models');
+    parseMedianData, sortedParameters, queryWeatherService } = require('../models');
 const { calcStartTime } = require('../utils');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');

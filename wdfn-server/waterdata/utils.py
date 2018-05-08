@@ -124,16 +124,4 @@ def get_site_timezone_offset(latitude, longitude):
     target = urljoin(weather_service_api, 'points/{},{}'.format(latitude, longitude))
     resp = r.get(target).json()
     tz_name = resp['properties']['timeZone']
-    tz = timezone(tz_name)
-    current_year = datetime.datetime.now().year
-    # daylight standard
-    standard = tz.localize(datetime.datetime(current_year, 12, 21))
-    standard_offset = standard.utcoffset().total_seconds() / 60 / 60
-    # daylight savings
-    daylight_savings = tz.localize(datetime.datetime(current_year, 6, 21))
-    daylight_savings_offset = daylight_savings.utcoffset().total_seconds() / 60 / 60
-    return {
-        'timezone': tz_name,
-        'standard_offset': standard_offset,
-        'daylight_offset': daylight_savings_offset
-    }
+    return tz_name

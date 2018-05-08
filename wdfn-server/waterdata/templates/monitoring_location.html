@@ -30,11 +30,12 @@
     {% endif %}
     <script type="text/javascript">
         const TIMEZONE = {
-            NAME: '{{ timezone_metadata.timezone }}',
-            UTC_STANDARD_OFFSET: {{ timezone_metadata.standard_offset }},
-            UTC_DAYLIGHT_OFFSET: {{ timezone_metadata.daylight_offset }},
-            DST_OBSERVED: '{{ timezone_metadata.dst_observed }}' !== 'False'
-        }
+            NAME: '{{ timezone_metadata }}',
+        };
+        const LOCATION = {
+            latitude: {{ location_with_values.dec_lat_va.code }},
+            longitude: {{ location_with_values.dec_long_va.code }}
+        };
     </script>
 {% endblock page_script %}
 

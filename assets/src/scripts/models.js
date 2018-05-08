@@ -10,6 +10,7 @@ const { deltaDays } = require('./utils');
 // use production.
 const SERVICE_ROOT = config.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
 const PAST_SERVICE_ROOT = config.PAST_SERVICE_ROOT  || 'https://nwis.waterservices.usgs.gov/nwis';
+const WEATHER_SERVICE_ROOT = config.WEATHER_SERVICE_ROOT || 'https://api.weather.gov';
 
 const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
@@ -274,4 +275,10 @@ export function sortedParameters(variables) {
             }
         });
     return highPertinenceVars.concat(lowPertinenceVars);
+}
+
+
+export function queryWeatherService(latitude, longitude) {
+    const url = `${WEATHER_SERVICE_ROOT}/points/${latitude},${longitude}`;
+    return get(url);
 }
