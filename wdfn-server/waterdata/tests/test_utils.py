@@ -6,7 +6,7 @@ from unittest import TestCase, mock
 
 import requests as r
 
-from ..utils import construct_url, defined_when, execute_get_request, parse_rdb
+from ..utils import construct_url, defined_when, execute_get_request, parse_rdb, execute_cooperator_lookup_request
 
 
 class TestConstructUrl(TestCase):
@@ -241,3 +241,38 @@ class TestDefinedWhen(TestCase):
         def decorated(*args, **kwargs):
             return ','.join([*args, *kwargs.keys(), *kwargs.values()])
         self.assertEqual(decorated('1', '2', kw1='3', kw2='4'), '1,2,kw1,kw2,3,4')
+
+
+class TestCooperatorLookup(TestCase):
+    def setUp(self):
+        self.fake_url_root_cooperator_lookup = 'https://fake.sifta.water.usgs.gov/'
+        self.fake_url_path_cooperator_lookup = 'Services/CustomerFunding.ashx'
+        self.fake_params = 'SiteNumber=390156074533401&StartDate=10/1/2017&EndDate=09/30/2018'
+        self.mock_cooperator_lookup_empty = {'Customers': []}
+        self.mock_cooperator_lookup_data = {'Customers': [{'Name': 'New Jersey Department of Environmental Protection',
+                                                           'URL': 'http://www.nj.gov/dep/ec/',
+                                                           'IconURL': 'http://water.usgs.gov/customer/icons/1275.gif'},
+                                                          {'Name': 'USGS - National Groundwater Monitoring Network',
+                                                           'URL': 'http://www.usgs.gov/',
+                                                           'IconURL': 'http://water.usgs.gov/customer/icons/9326.gif'}]}
+
+    @mock.patch('waterdata.utils.r.get')
+    def test_get_valid_return(self, mock_get):
+        mock_r = mock.Mock()
+        mock_r.json.return_value = self.mock_cooperator_lookup_data
+        mock_get.return_value = mock_r
+        response = execute_cooperator_lookup_request(self.fake_url_root_cooperator_lookup,
+                                                     self.fake_url_path_cooperator_lookup,
+                                                     self.fake_params)
+
+        self.assertEqual(response, self.mock_cooperator_lookup_data)
+
+    @mock.patch('waterdata.utils.r.get')
+    def test_get_empty_return(self, mock_get):
+        mock_r = mock.Mock()
+        mock_r.json.return_value = self.mock_cooperator_lookup_empty
+        mock_get.return_value = mock_r
+        response = execute_cooperator_lookup_request(self.fake_url_root_cooperator_lookup,
+                                                     self.fake_url_path_cooperator_lookup,
+                                                     self.fake_params)
+        self.assertEqual(response, None)

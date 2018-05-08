@@ -1,9 +1,9 @@
 const { select } = require('d3-selection');
 
-const { configureStore } = require('../../store');
+const { Actions, configureStore } = require('../../store');
 const { provide } = require('../../lib/redux');
 
-const { cursorSlider, getNearestTime, tsCursorPointsSelector } = require('./cursor');
+const { cursorSlider, getNearestTime, tsCursorPointsSelector, cursorOffsetSelector } = require('./cursor');
 
 
 
@@ -411,6 +411,24 @@ describe('Cursor module', () => {
                     tsKey: 'current'
                 }
             });
+        });
+    });
+
+    describe('cursorOffsetSelector', () => {
+        let store;
+        beforeEach(() => {
+            store = configureStore(TEST_STATE_ONE_VAR);
+        });
+
+        it('returns null when false', () => {
+            store.dispatch(Actions.setCursorOffset(false));
+            expect(cursorOffsetSelector(store.getState())).toBe(null);
+        });
+
+        it('returns last point when null', () => {
+            store.dispatch(Actions.setCursorOffset(null));
+            const cursorRange = DATA[4].dateTime.getTime() - DATA[0].dateTime.getTime();
+            expect(cursorOffsetSelector(store.getState())).toBe(cursorRange);
         });
     });
 });

@@ -18,6 +18,7 @@ TIMESERIES_AUDIO_ENABLED = True
 HYDROLOGIC_PAGES_ENABLED = True
 STATE_COUNTY_PAGES_ENABLED = True
 EMBED_IMAGE_FEATURE_ENABLED = True
+COOPERATOR_LOOKUP_ENABLED = True
 
 DEBUG = False
 
@@ -47,3 +48,8 @@ ENABLE_USGS_GA = False
 
 # To use hashed assets, set this to the gulp-rev-all rev-manifest.json path
 ASSET_MANIFEST_PATH = None
+
+# For cooperator site service, current lookup service is temporary, constants may need reconfiguring for the new service
+SERVICE_ROOT_COOPERATOR_LOOKUP = 'https://sifta.water.usgs.gov/'
+URL_PATH_COOPERATOR_LOOKUP = 'Services/REST/Site/CustomerFunding.ashx'
+URL_PARAMS_COOPERATOR_LOOKUP = '&StartDate=10/1/2017&EndDate=09/30/2018'

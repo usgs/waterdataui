@@ -10,12 +10,12 @@ clean-graph-server:
 #
 # Development targets
 #
-test-graph-server:
+test-graph-server: build-assets
 	@echo 'Running graph-server tests...'
 	cd graph-server && npm test
 
 watch-graph-server:
-	cd graph-server && npx nodemon ./index.js
+	cd graph-server && npm run watch
 
 #
 # Environment configuration targets

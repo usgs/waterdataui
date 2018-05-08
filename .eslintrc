@@ -27,9 +27,11 @@
     "semi": ["error", "always"]
   },
   "globals": {
+    "__dirname": true,
     "console": true,
     "document": true,
     "Math": true,
+    "process": true,
     "XMLHttpRequest": true,
     "window": true
   }

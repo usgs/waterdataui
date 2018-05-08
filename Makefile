@@ -22,7 +22,7 @@ include wdfn-server/Makefile
 MAKEPID:= $(shell echo $$PPID)
 
 env: env-assets env-graph-server env-wdfn
-test: test-assets test-graph-server test-wdfn
+test: test-assets test-wdfn # test-graph-server
 clean: clean-assets clean-graph-server clean-wdfn
 cleanenv: cleanenv-assets cleanenv-graph-server cleanenv-wdfn
 build: env build-assets build-wdfn
