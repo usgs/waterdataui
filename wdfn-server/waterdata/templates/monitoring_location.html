@@ -160,6 +160,23 @@
                         <a href="{{ questions_link }}">Email USGS questions about this site</a>
                     </div>
                 {% endif %}
+
+                {% if cooperator_lookup_data %}
+                    <div>
+                        <p>Operated in cooperation with</p>
+                        {% for customers, customer_data in cooperator_lookup_data.items() %}
+                            {% for customer in customer_data %}
+                                <figure class="cooperator_logo">
+                                    <a href="{{ customer.URL }}">
+                                        <img src="{{ customer.IconURL }}" alt="logo for {{ customer.Name }}  }}" height = "50" >
+                                    </a>
+                                    <figcaption><a href="{{ customer.URL }}">{{ customer.Name }}</a></figcaption>
+                                </figure>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
             {% endif %}
 
         {% else %}

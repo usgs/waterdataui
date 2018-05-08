@@ -11,6 +11,7 @@ the selected timeseries. The Show last year feature also works for the three dat
 - The beginnings of a node.js-based graph server was added.
 - Content group tag wdfn_tng to the google analytics script.
 - Added a descriptive label and tooltip to the flood slider control.
+- Cooperator logos
 
 
 ### Changed

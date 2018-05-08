@@ -7,7 +7,7 @@ from flask import abort, render_template, request, Markup
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries
-from .utils import construct_url, defined_when, execute_get_request, parse_rdb, get_site_timezone_offset
+from .utils import construct_url, defined_when, execute_get_request, parse_rdb, execute_cooperator_lookup_request, get_site_timezone_offset
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -63,6 +63,16 @@ def monitoring_location(site_no):
             location_tz['dst_observed'] = False
         else:
             location_tz['dst_observed'] = True
+
+        # get the cooperator data from service
+        # feature toggle; remove 'if/else' when new lookup service is implemented
+        if app.config['COOPERATOR_LOOKUP_ENABLED']:
+            params = 'SiteNumber=' + site_no + app.config['URL_PARAMS_COOPERATOR_LOOKUP']
+            cooperator_lookup_data = execute_cooperator_lookup_request(app.config['SERVICE_ROOT_COOPERATOR_LOOKUP'],
+                                                                       app.config['URL_PATH_COOPERATOR_LOOKUP'], params)
+        else:
+            cooperator_lookup_data = None
+
         if len(data_list) == 1:
             parameter_data_resp = execute_get_request(
                 SERVICE_ROOT,
@@ -137,6 +147,7 @@ def monitoring_location(site_no):
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'parm_grp_summary': grouped_dataseries,
                 'questions_link': questions_link,
+                'cooperator_lookup_data': cooperator_lookup_data,
                 'timezone_metadata': location_tz
             }
         http_code = 200
