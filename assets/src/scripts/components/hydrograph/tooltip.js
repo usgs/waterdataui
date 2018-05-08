@@ -139,6 +139,17 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
             text.classed('estimated', classes.estimated);
         });
 
+    // Adjust font size based on number of tool tips showing
+    var tooltipTotal = Number(document.querySelectorAll('.tooltip-text-group .current-tooltip-text').length)
+        + Number(document.querySelectorAll('.tooltip-text-group .compare-tooltip-text').length);
+    if (tooltipTotal <= 2) {
+        textGroup.style('font-size', '1.5em');
+    } else if (tooltipTotal <= 4) {
+        textGroup.style('font-size', '1em');
+    } else {
+        textGroup.style('font-size', '.75em');
+    }
+
     return textGroup;
 };
 
