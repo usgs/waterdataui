@@ -137,7 +137,7 @@ export const Actions = {
                 let startTime = calcStartTime(period, endTime);
 
                 dispatch(Actions.addTimeSeriesLoading([requestKey]));
-                const currentTimeSeries = getTimeSeries({
+                return getTimeSeries({
                     sites: [site],
                     params: [parmCd],
                     startDate: startTime,
@@ -145,6 +145,7 @@ export const Actions = {
                 }).then(
                     series => {
                         const collection = normalize(series, requestKey);
+                        dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     },
@@ -154,8 +155,6 @@ export const Actions = {
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     }
                 );
-                dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
-                return currentTimeSeries;
             }
         };
     },
