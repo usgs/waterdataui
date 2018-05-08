@@ -5,8 +5,6 @@ const { extent } = require('d3-array');
 const { line: d3Line, curveStepAfter } = require('d3-shape');
 const { select } = require('d3-selection');
 
-const moment = require('moment-timezone');
-
 const { createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility } = require('../../accessibility');

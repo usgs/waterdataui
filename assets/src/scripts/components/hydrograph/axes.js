@@ -2,7 +2,7 @@ const { axisBottom, axisLeft } = require('d3-axis');
 const { timeDay, timeWeek, timeMonth } = require('d3-time');
 const { timeFormat } = require('d3-time-format');
 const { createSelector } = require('reselect');
-const moment = require('moment-timezone');
+const { DateTime } = require('luxon');
 
 const { wrap } = require('../../utils');
 
@@ -15,10 +15,11 @@ const { USWDS_LARGE_SCREEN } = require('../../config');
 const { getCurrentDateRange, getCurrentParmCd } = require('../../selectors/timeSeriesSelector');
 const { mediaQuery } = require('../../utils');
 
+
 const FORMAT = {
-    P7D: 'MMM DD',
-    P30D: 'MMM DD',
-    P1Y: 'MMM YYYY'
+    P7D: 'MMM dd',
+    P30D: 'MMM dd',
+    P1Y: 'MMM yyyy'
 };
 
 const tickInterval = function(period) {
@@ -48,19 +49,19 @@ const generateDateTicks = function(startDate, endDate, period) {
     let interval;
     switch (period) {
         case 'P7D':
-            date = moment.tz([startDate.year(), startDate.month(), startDate.date()], TIMEZONE.NAME);
+            date = startDate.startOf('day');
             timePeriod = 'days';
             interval = 1;
             break;
         case 'P30D':
-            const startDateDay= startDate.day();
-            const weekStartDate = startDate.subtract(startDateDay, 'days');
-            date = moment.tz([weekStartDate.year(), weekStartDate.month(), weekStartDate.date()], TIMEZONE.NAME);
+            const startDateDay= startDate.weekday;
+            const weekStartDate = startDate.minus({days: startDateDay});
+            date = weekStartDate.startOf('day');
             timePeriod = 'weeks';
             interval = 1;
             break;
         case 'P1Y':
-            date = moment.tz([startDate.year(), startDate.month(), 1], TIMEZONE.NAME);
+            date = startDate.startOf('month');
             timePeriod = 'months';
             if (mediaQuery(USWDS_LARGE_SCREEN)) {
                 interval = 1;
@@ -69,12 +70,12 @@ const generateDateTicks = function(startDate, endDate, period) {
             }
             break;
         default:
-            date = moment.tz([startDate.year(), startDate.month(), startDate.date()], TIMEZONE.NAME);
+            date = startDate.startOf('day');
             timePeriod = 'days';
             interval = 1;
     }
-    while (date < endEpoch) {
-        date = date.add(interval, timePeriod);
+    while (date.valueOf() < endEpoch) {
+        date = date.plus({[timePeriod]: interval});
         if (startEpoch <= date.valueOf() && date.valueOf() <= endEpoch) {
             dates.push(date.valueOf());
         }
@@ -93,14 +94,15 @@ const generateDateTicks = function(startDate, endDate, period) {
  */
 export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period) {
     // Create x-axis
-    const [tzStartDate, tzEndDate] = xScale.domain().map(dt => moment(dt, TIMEZONE.NAME));
+    //const [tzStartDate, tzEndDate] = xScale.domain().map(dt => moment(dt, TIMEZONE.NAME));
+    const [tzStartDate, tzEndDate] = xScale.domain().map(dt => DateTime.fromJSDate(dt, {zone: TIMEZONE.NAME}));
     const tickDates = generateDateTicks(tzStartDate, tzEndDate, period);
     const xAxis = axisBottom()
         .scale(xScale)
         .tickValues(tickDates)
         .tickSizeOuter(0)
         .tickFormat(d => {
-            return moment(d).tz(TIMEZONE.NAME).format(FORMAT[period]);
+            return DateTime.fromMillis(d, {zone: TIMEZONE.NAME}).toFormat(FORMAT[period]);
         });
 
     // Create y-axis

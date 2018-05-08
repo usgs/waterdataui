@@ -1,6 +1,5 @@
 const { set } = require('d3-collection');
 const { utcFormat } = require('d3-time-format');
-const moment = require('moment-timezone');
 
 const config = require('./config');
 const { get } = require('./ajax');

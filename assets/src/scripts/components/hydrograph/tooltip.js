@@ -4,7 +4,7 @@ const { transition } = require('d3-transition');
 const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
 const { createSelector, createStructuredSelector } = require('reselect');
-const moment = require('moment-timezone');
+const { DateTime } = require('luxon');
 
 const { dispatch, link, initAndUpdate } = require('../../lib/redux');
 const { Actions } = require('../../store');
@@ -88,8 +88,10 @@ const getTooltipText = function(datum, qualifiers, unitCode) {
             // a data point will have at most one masking qualifier
             valueStr = MASK_DESC[[maskKeyIntersect][0]];
         }
-        const timeLabel = moment.tz(datum.dateTime, TIMEZONE.NAME).format('MMMM DD YYYY hh:mm:ss a z');
-        //label = `${valueStr} - ${formatTime(datum.dateTime)} ${tzAbbrev}`;
+        const timeLabel = DateTime.fromJSDate(
+            datum.dateTime,
+            {zone: TIMEZONE.NAME}
+        ).toFormat('MMM dd, yyyy hh:mm:ss a ZZZZ');
         label = `${valueStr} - ${timeLabel}`;
     }
 
