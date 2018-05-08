@@ -7,7 +7,6 @@ Application configuration settings.
 import logging
 import os
 
-from waterdata import __version__ as APP_VERSION
 
 # controls environment specific behavior
 # acceptable values: 'local', 'development', 'staging', 'prod'
