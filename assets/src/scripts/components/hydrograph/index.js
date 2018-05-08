@@ -355,6 +355,13 @@ const controlDisplay = function (elem, showElem) {
     elem.attr('hidden', showElem ? null : true);
 };
 
+const loadingIndicator = function(elem, {showLoadingIndicator, sizeClass}) {
+    elem.select('.loading-indicator').remove();
+    if (showLoadingIndicator) {
+        elem.append('i')
+            .attr('class', `loading-indicator fas ${sizeClass} fa-spin fa-spinner`);
+    }
+};
 
 const createDaterangeControls = function(elem, {siteno, showControls}) {
     const DATE_RANGE = [{
@@ -372,10 +379,17 @@ const createDaterangeControls = function(elem, {siteno, showControls}) {
     }];
     elem.select('#ts-daterange-select-container').remove();
     if (showControls) {
-        const container = elem.insert('ul', ':first-child')
-            .attr('id', 'ts-daterange-select-container')
+        const container = elem.insert('div', ':nth-child(2)')
+            .attr('id', 'ts-daterange-select-container');
+        const listContainer = container.append('ul')
             .attr('class', 'usa-fieldset-inputs usa-unstyled-list');
-        const li = container.selectAll('li')
+        container.append('div')
+            .attr('class', 'loading-indicator-container')
+            .call(link(loadingIndicator, createStructuredSelector({
+                showLoadingIndicator: isLoadingTS('current'),
+                sizeClass:() => 'fa-lg'
+            })));
+        const li = listContainer.selectAll('li')
             .data(DATE_RANGE)
             .enter().append('li');
         li.append('input')
@@ -408,14 +422,11 @@ const attachToNode = function (store, node, {siteno} = {}) {
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
         .call(provide(store));
-    select(node)
-        .call(link(function(elem, isLoadingCurrentTS) {
-            elem.select('.loading-indicator').remove();
-            if (isLoadingCurrentTS) {
-                select(elem).append('i')
-                    .attr('class', 'fas fa-spinner fa-spin');
-            }
-        }, isLoadingTS('current:P7D')));
+    select(node).select('.loading-indicator-container')
+        .call(link(loadingIndicator, createStructuredSelector({
+            showLoadingIndicator: isLoadingTS('current', 'P7D'),
+            sizeClass: () =>'fa-3x'
+        })));
     select(node)
         .call(link(createDaterangeControls, createStructuredSelector({
             siteno: () => siteno,

@@ -55,7 +55,6 @@ export const Actions = {
 
             const timeSeries = getTimeSeries({sites: [siteno], params}).then(
                 series => {
-                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     const collection = normalize(series, requestKey);
 
                     // Get the start/end times of this request's range.
@@ -69,6 +68,8 @@ export const Actions = {
 
                     // Update the series data for the 'current' series
                     dispatch(Actions.addSeriesCollection('current', collection));
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+
 
                     // Update the application state
                     dispatch(Actions.toggleTimeSeries('current', true));
@@ -80,8 +81,9 @@ export const Actions = {
                     return {collection, startTime, endTime};
                 },
                 () => {
-                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     dispatch(Actions.resetTimeSeries(getTsRequestKey('current', 'P7D')(currentState)));
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+
                     dispatch(Actions.toggleTimeSeries('current', false));
                     return {
                         collection: null,
@@ -90,7 +92,14 @@ export const Actions = {
                     };
                 }
             );
+
+            const medianRequestKey = getTsRequestKey('median')(currentState);
+            dispatch(Actions.addTimeSeriesLoading([medianRequestKey]));
             const medianStatistics = getMedianStatistics({sites: [siteno]});
+            medianStatistics.finally(() => {
+                dispatch(Actions.removeTimeSeriesLoading([medianRequestKey]));
+            });
+
             return Promise.all([timeSeries, medianStatistics]).then(([{collection, endTime}, stats]) => {
                 if (endTime) {
                     let medianCollection = parseMedianData(stats, endTime, collection && collection.variables ? collection.variables : {});
@@ -102,13 +111,18 @@ export const Actions = {
     },
     retrieveCompareTimeSeries(site, period, startTime, endTime) {
         return function (dispatch, getState) {
+            const requestKey = getTsRequestKey('compare', period)(getState());
+            dispatch(Actions.addTimeSeriesLoading([requestKey]));
             return getPreviousYearTimeSeries({site, startTime, endTime}).then(
                 series => {
-                    const requestKey = getTsRequestKey('compare', period)(getState());
                     const collection = normalize(series, requestKey);
                     dispatch(Actions.addSeriesCollection(requestKey, collection));
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                 },
-                () => dispatch(Actions.resetTimeSeries(getTsRequestKey('compare', period)(getState())))
+                () => {
+                    dispatch(Actions.resetTimeSeries(getTsRequestKey('compare', period)(getState())));
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+                }
             );
         };
     },
@@ -122,7 +136,8 @@ export const Actions = {
                 const endTime = new Date(getRequestTimeRange('current', 'P7D')(state).end);
                 let startTime = calcStartTime(period, endTime);
 
-                return getTimeSeries({
+                dispatch(Actions.addTimeSeriesLoading([requestKey]));
+                const currentTimeSeries = getTimeSeries({
                     sites: [site],
                     params: [parmCd],
                     startDate: startTime,
@@ -131,13 +146,16 @@ export const Actions = {
                     series => {
                         const collection = normalize(series, requestKey);
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
-                        dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
+                        dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     },
                     () => {
                         console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
                         dispatch(Actions.addSeriesCollection(requestKey, {}));
+                        dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     }
                 );
+                dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
+                return currentTimeSeries;
             }
         };
     },

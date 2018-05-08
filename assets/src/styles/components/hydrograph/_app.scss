@@ -4,10 +4,16 @@
 @import './variables';
 
 #ts-daterange-select-container {
-    li {
+    .loading-indicator-container {
         display: inline-block;
-        label {
-            width: 110px;
+    }
+    ul {
+        display: inline-block;
+        li {
+            display: inline-block;
+            label {
+                width: 110px;
+            }
         }
     }
 }
@@ -136,6 +142,14 @@
     }
 }
 
+.loading-indicator-container {
+    i {
+        text-align: center;
+        vertical: middle;
+        width: 100%;
+    }
+}
+
 .watermark {
     position: absolute;
     opacity: .08;
@@ -167,7 +181,6 @@
     button {
         font-size: 1em;
     }
-
     .graph-controls-container {
         display: inline-block;
         @include media($medium-screen) {

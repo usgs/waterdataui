@@ -51,14 +51,14 @@ const timeSeriesPlayStop = function(timeSeriesState) {
 const addLoadingTimeSeries = function(timeSeriesState, action) {
     return {
         ...timeSeriesState,
-        loadingTSKeys: timeSeriesState.loadingTSKeys.concat([action.tsKeys])
+        loadingTSKeys: timeSeriesState.loadingTSKeys.concat(action.tsKeys)
     };
 };
 
 const removeLoadingTimeSeries = function(timeSeriesState, action) {
     return {
         ...timeSeriesState,
-        loadingTSKeys: timeSeriesState.loadingTSKeys.filter((tsKey) => action.tsKeys.includes(tsKey))
+        loadingTSKeys: timeSeriesState.loadingTSKeys.filter((tsKey) => !action.tsKeys.includes(tsKey))
     };
 };
 

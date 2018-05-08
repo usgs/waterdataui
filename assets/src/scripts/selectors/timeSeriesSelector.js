@@ -115,7 +115,8 @@ export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSele
     }
 ));
 
-export const isLoadingTS = memoize(tsKey => createSelector(
+export const isLoadingTS = memoize((tsKey, period, parmCd) => createSelector(
     getLoadingTsKeys,
-    (loadingTSKeys) => loadingTSKeys.includes(tsKey)
+    getTsRequestKey(tsKey, period, parmCd),
+    (loadingTSKeys, tsRequestKey) => loadingTSKeys.includes(tsRequestKey)
 ));
