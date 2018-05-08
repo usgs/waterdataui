@@ -37,8 +37,9 @@ class TestMonitoringLocationView(TestCase):
         self.parameter_lines = self.test_param_rdb.split('\n')
         self.headers = {'Accept': 'application/ld+json'}
 
+    @mock.patch('waterdata.views.execute_cooperator_lookup_request')
     @mock.patch('waterdata.views.execute_get_request')
-    def test_everything_okay(self, r_mock):
+    def test_everything_okay(self, r_mock, r_mock_lookup):
         m_resp = mock.Mock()
         m_resp.status_code = 200
         m_resp.text = self.test_rdb_text
@@ -47,6 +48,10 @@ class TestMonitoringLocationView(TestCase):
         m_resp_param.status_code = 200
         m_resp_param.iter_lines.return_value = iter(self.parameter_lines)
         r_mock.side_effect = [m_resp, m_resp_param]
+
+        r_mock_lookup.return_value = {'Customers': [{'Name': 'mock_cooperator',
+                                                     'URL': 'http://www.fake.gov',
+                                                     'IconURL': 'http://www.fake.gov'}]}
 
         response = self.app_client.get('/monitoring-location/{}/?agency_cd=USGS'.format(self.test_site_number))
         self.assertEqual(response.status_code, 200)

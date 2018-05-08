@@ -7,7 +7,7 @@ from flask import abort, render_template, request, Markup
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries
-from .utils import construct_url, defined_when, execute_get_request, parse_rdb
+from .utils import construct_url, defined_when, execute_get_request, parse_rdb, execute_cooperator_lookup_request
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -55,6 +55,16 @@ def monitoring_location(site_no):
             'STATION_FIELDS_D': STATION_FIELDS_D
         }
         station_record = data_list[0]
+
+        # get the cooperator data from service
+        # feature toggle; remove 'if/else' when new lookup service is implemented
+        if app.config['COOPERATOR_LOOKUP_ENABLED']:
+            params = 'SiteNumber=' + site_no + app.config['URL_PARAMS_COOPERATOR_LOOKUP']
+            cooperator_lookup_data = execute_cooperator_lookup_request(app.config['SERVICE_ROOT_COOPERATOR_LOOKUP'],
+                                                                       app.config['URL_PATH_COOPERATOR_LOOKUP'], params)
+        else:
+            cooperator_lookup_data = None
+
         if len(data_list) == 1:
             parameter_data_resp = execute_get_request(
                 SERVICE_ROOT,
@@ -128,7 +138,8 @@ def monitoring_location(site_no):
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'parm_grp_summary': grouped_dataseries,
-                'questions_link': questions_link
+                'questions_link': questions_link,
+                'cooperator_lookup_data': cooperator_lookup_data
             }
         http_code = 200
     elif 400 <= status < 500:
@@ -153,7 +164,6 @@ def monitoring_location(site_no):
 
 def return_404(*args, **kwargs):
     return abort(404)
-
 
 @app.route('/hydrological-unit/', defaults={'huc_cd': None}, methods=['GET'])
 @app.route('/hydrological-unit/<huc_cd>/', methods=['GET'])
