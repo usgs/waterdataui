@@ -120,3 +120,15 @@ export const isLoadingTS = memoize((tsKey, period, parmCd) => createSelector(
     getTsRequestKey(tsKey, period, parmCd),
     (loadingTSKeys, tsRequestKey) => loadingTSKeys.includes(tsRequestKey)
 ));
+
+export const getTimeSeriesCollections = memoize((tsKey, period, parmCd) => createSelector(
+    getTsRequestKey(tsKey, period, parmCd),
+    state => state.series,
+    (tsRequestKey, series) => {
+        if (series && series.requests && series.requests[tsRequestKey]) {
+            return series.requests[tsRequestKey].timeSeriesCollections;
+        } else {
+            return null;
+        }
+    }
+))

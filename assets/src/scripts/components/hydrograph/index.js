@@ -27,7 +27,7 @@ const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 const { coerceStatisticalSeries } = require('./statistics');
 
-const { getCurrentDateRange, isLoadingTS } = require('../../selectors/timeSeriesSelector');
+const { getCurrentDateRange, getTimeSeriesCollections, isLoadingTS } = require('../../selectors/timeSeriesSelector');
 
 
 const drawMessage = function (elem, message) {
@@ -413,7 +413,21 @@ const createDaterangeControls = function(elem, {siteno, showControls}) {
     }
 };
 
-const attachToNode = function (store, node, {siteno} = {}) {
+const noDataAlert = function(elem, tsCollections) {
+    elem.select('#no-data-message').remove();
+    if (tsCollections && tsCollections.length === 0) {
+        elem.append('div')
+            .attr('id', 'no-data-message')
+            .attr('class', 'usa-alert usa-alert-info')
+                .append('div')
+                .attr('class', 'usa-alert-body')
+                    .append('p')
+                        .attr('class', 'usa-alert-text')
+                        .text('No current time series data available for this site');
+    }
+};
+
+const attachToNode = function(store, node, {siteno} = {}) {
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
@@ -422,6 +436,8 @@ const attachToNode = function (store, node, {siteno} = {}) {
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
         .call(provide(store));
+    select(node)
+        .call(link(noDataAlert, getTimeSeriesCollections('current', 'P7D')));
     select(node).select('.loading-indicator-container')
         .call(link(loadingIndicator, createStructuredSelector({
             showLoadingIndicator: isLoadingTS('current', 'P7D'),
@@ -459,6 +475,7 @@ const attachToNode = function (store, node, {siteno} = {}) {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     };
     store.dispatch(Actions.retrieveTimeSeries(siteno));
+
 };
 
 
