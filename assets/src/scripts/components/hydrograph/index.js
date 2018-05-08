@@ -8,7 +8,7 @@ const { select } = require('d3-selection');
 const { createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility } = require('../../accessibility');
-const { USWDS_MEDIUM_SCREEN, USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
+const { USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
 const { dispatch, link, provide } = require('../../lib/redux');
 const { Actions } = require('../../store');
 const { mediaQuery } = require('../../utils');

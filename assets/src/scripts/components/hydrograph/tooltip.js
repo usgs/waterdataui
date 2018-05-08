@@ -17,6 +17,8 @@ const { getCurrentVariable } = require('../../selectors/timeSeriesSelector');
 
 const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');
 
+const { USWDS_SMALL_SCREEN, USWDS_MEDIUM_SCREEN } = require('../../config'); // added for WDFN259
+const { mediaQuery } = require('../../utils'); // added for WDFN259
 
 const createFocusLine = function(elem) {
     let focus = elem.append('g')
@@ -100,6 +102,14 @@ const unitCodeSelector = createSelector(
     variable => variable ? variable.unit.unitCode : null
 );
 
+// start added for WDFN259
+const adjustToolTipTextGroupMargin = function (elem) {
+    elem.call(link(function(elem, layout) {
+        console.log('here');
+    }, layoutSelector));
+};
+
+// end added for WDFN259
 const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode}, textGroup) {
 
     // Put the circles in a container so we can keep the their position in the
@@ -107,7 +117,9 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     // events.
     if (!textGroup) {
         textGroup = elem.append('div')
-            .attr('class', 'tooltip-text-group');
+       //     .attr('class', 'tooltip-text-group'); original line
+            .attr('class', 'tooltip-text-group') //added for WDFN259
+            .call(adjustToolTipTextGroupMargin); //added for WDFN259
     }
 
     const data = Object.values(currentPoints).concat(Object.values(comparePoints));
@@ -126,6 +138,29 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
         .append('div')
             .attr('class', d => `${d.tsKey}-tooltip-text`);
 
+    // Adjust font size based on number of tool tips showing
+    const tooltipTotal = Number(document.querySelectorAll('.tooltip-text-group .current-tooltip-text').length)
+        + Number(document.querySelectorAll('.tooltip-text-group .compare-tooltip-text').length);
+    if (mediaQuery(USWDS_MEDIUM_SCREEN)) {
+        if (tooltipTotal <= 2) {
+            textGroup.style('font-size', '1.5em');
+        } else if (tooltipTotal <= 4) {
+            textGroup.style('font-size', '1em');
+        } else {
+            textGroup.style('font-size', '0.75em');
+        }
+    } else if (mediaQuery(USWDS_SMALL_SCREEN)) {
+        if (tooltipTotal <= 2) {
+            textGroup.style('font-size', '1em');
+        } else if (tooltipTotal <= 4) {
+            textGroup.style('font-size', '0.75em');
+        } else {
+            textGroup.style('font-size', '0.5em');
+        }
+    } else {
+        textGroup.style('font-size', '0.5em');
+    }
+
     // Update the text and backgrounds of all tooltip labels
     const merge = texts.merge(newTexts)
         .interrupt()
@@ -138,17 +173,6 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
             text.classed('approved', classes.approved);
             text.classed('estimated', classes.estimated);
         });
-
-    // Adjust font size based on number of tool tips showing
-    var tooltipTotal = Number(document.querySelectorAll('.tooltip-text-group .current-tooltip-text').length)
-        + Number(document.querySelectorAll('.tooltip-text-group .compare-tooltip-text').length);
-    if (tooltipTotal <= 2) {
-        textGroup.style('font-size', '1.5em');
-    } else if (tooltipTotal <= 4) {
-        textGroup.style('font-size', '1em');
-    } else {
-        textGroup.style('font-size', '.75em');
-    }
 
     return textGroup;
 };
