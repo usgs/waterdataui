@@ -1,4 +1,4 @@
-const { range } = require('lodash');
+const range = require('lodash/range');
 const { DateTime } = require('luxon');
 const { isLeapYear } = require('../../models');
 const { calcStartTime } = require('../../utils');

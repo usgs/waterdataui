@@ -263,8 +263,13 @@ const timeSeriesGraph = function (elem) {
         .call(createTitle)
         .call(createTooltipText)
         .append('svg')
+            .attr('xmlns', 'http://www.w3.org/2000/svg')
             .classed('hydrograph-svg', true)
-            .call(link((elem, layout) => elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`), layoutSelector))
+            .call(link((elem, layout) => {
+                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`);
+                elem.attr('width', layout.width);
+                elem.attr('height', layout.height);
+            }, layoutSelector))
             .call(link(addSVGAccessibility, createStructuredSelector({
                 title: titleSelector,
                 description: descriptionSelector,
@@ -329,10 +334,6 @@ const graphControls = function(elem) {
             const exists = Object.keys(compareTimeSeries) ?
                 Object.values(compareTimeSeries).filter(tsValues => tsValues.points.length).length > 0 : false;
             elem.property('disabled', !exists);
-            if (!exists) {
-                elem.property('checked', false);
-                elem.dispatch('click');
-            }
         }, currentVariableTimeSeriesSelector('compare')))
         // Sets the state of the toggle
         .call(link(function(elem, checked) {
@@ -398,7 +399,7 @@ const createDaterangeControls = function(elem, {siteno, showControls}) {
     }
 };
 
-const attachToNode = function (store, node, {siteno} = {}) {
+const attachToNode = function (store, node, {siteno, parameter, compare, cursorOffset} = {}) {
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
@@ -411,6 +412,16 @@ const attachToNode = function (store, node, {siteno} = {}) {
             siteno: () => siteno,
             showControls: hasTimeSeriesWithPoints('current', 'P7D')
         })));
+
+    // If specified, turn the visibility of the comparison time series on.
+    if (compare) {
+        store.dispatch(Actions.toggleTimeSeries('compare', true));
+    }
+
+    // If specified, initialize the cursorOffset
+    if (cursorOffset !== undefined) {
+        store.dispatch(Actions.setCursorOffset(cursorOffset));
+    }
 
     select(node).select('.graph-container')
         .call(link(controlDisplay, hasTimeSeriesWithPoints('current', 'P7D')))
@@ -437,7 +448,7 @@ const attachToNode = function (store, node, {siteno} = {}) {
     window.onresize = function() {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     };
-    store.dispatch(Actions.retrieveTimeSeries(siteno));
+    store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null));
 };
 
 
