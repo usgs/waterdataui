@@ -8,7 +8,7 @@ const { select } = require('d3-selection');
 const { createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility } = require('../../accessibility');
-const { USWDS_MEDIUM_SCREEN, USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
+const { USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
 const { dispatch, link, provide } = require('../../lib/redux');
 const { Actions } = require('../../store');
 const { mediaQuery } = require('../../utils');
@@ -27,7 +27,7 @@ const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 const { coerceStatisticalSeries } = require('./statistics');
 
-const { getCurrentDateRange } = require('../../selectors/timeSeriesSelector');
+const { getCurrentDateRange, isLoadingTS } = require('../../selectors/timeSeriesSelector');
 
 
 const drawMessage = function (elem, message) {
@@ -407,7 +407,16 @@ const attachToNode = function (store, node, {siteno} = {}) {
 
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
-        .call(provide(store))
+        .call(provide(store));
+    select(node)
+        .call(link(function(elem, isLoadingCurrentTS) {
+            elem.select('.loading-indicator').remove();
+            if (isLoadingCurrentTS) {
+                select(elem).append('i')
+                    .attr('class', 'fas fa-spinner fa-spin');
+            }
+        }, isLoadingTS('current:P7D')));
+    select(node)
         .call(link(createDaterangeControls, createStructuredSelector({
             siteno: () => siteno,
             showControls: hasTimeSeriesWithPoints('current', 'P7D')

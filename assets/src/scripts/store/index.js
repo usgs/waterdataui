@@ -50,9 +50,12 @@ export const Actions = {
     retrieveTimeSeries(siteno, params=null) {
         return function (dispatch, getState) {
             const currentState = getState();
+            const requestKey = getTsRequestKey('current', 'P7D')(currentState);
+            dispatch(Actions.addTimeSeriesLoading([requestKey]));
+
             const timeSeries = getTimeSeries({sites: [siteno], params}).then(
                 series => {
-                    const requestKey = getTsRequestKey('current', 'P7D')(currentState);
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     const collection = normalize(series, requestKey);
 
                     // Get the start/end times of this request's range.
@@ -77,6 +80,7 @@ export const Actions = {
                     return {collection, startTime, endTime};
                 },
                 () => {
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     dispatch(Actions.resetTimeSeries(getTsRequestKey('current', 'P7D')(currentState)));
                     dispatch(Actions.toggleTimeSeries('current', false));
                     return {
@@ -193,6 +197,18 @@ export const Actions = {
             type: 'TIMESERIES_PLAY_STOP'
         };
     },
+    addTimeSeriesLoading(tsKeys) {
+        return {
+            type: 'TIMESERIES_LOADING_ADD',
+            tsKeys
+        };
+    },
+    removeTimeSeriesLoading(tsKeys) {
+        return {
+            type: 'TIMESERIES_LOADING_REMOVE',
+            tsKeys
+        };
+    },
     setFloodFeatures(stages, extent) {
         return {
             type: 'SET_FLOOD_FEATURES',
@@ -289,7 +305,8 @@ export const configureStore = function (initialState) {
             currentDateRange: 'P7D',
             currentVariableID: null,
             cursorOffset: null,
-            audiblePlayId: null
+            audiblePlayId: null,
+            loadingTSKeys: []
         },
         floodState: {
             gageHeight: null

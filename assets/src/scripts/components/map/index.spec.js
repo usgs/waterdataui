@@ -4,7 +4,7 @@ const proxyquire = require('proxyquireify')(require);
 const { attachToNode } = require('./index');
 const { configureStore } = require('../../store');
 
-fdescribe('map module', () => {
+describe('map module', () => {
     let mapNode;
     let store;
     let floodDataMock;

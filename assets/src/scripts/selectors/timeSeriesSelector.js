@@ -6,13 +6,17 @@ const { createSelector } = require('reselect');
  */
 export const getVariables = state => state.series.variables ? state.series.variables : null;
 
+export const getMethods = state => state.series.methods ? state.series.methods : null;
+
+export const getQueryInfo = state => state.series.queryInfo || {};
+
+
 export const getCurrentVariableID = state => state.timeSeriesState.currentVariableID;
 
 export const getCurrentDateRange = state => state.timeSeriesState.currentDateRange;
 
-export const getMethods = state => state.series.methods ? state.series.methods : null;
+export const getLoadingTsKeys = state => state.timeSeriesState.loadingTSKeys;
 
-export const getQueryInfo = state => state.series.queryInfo || {};
 
 /*
  * Selectors the return derived data from the state
@@ -111,3 +115,7 @@ export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSele
     }
 ));
 
+export const isLoadingTS = memoize(tsKey => createSelector(
+    getLoadingTsKeys,
+    (loadingTSKeys) => loadingTSKeys.includes(tsKey)
+));

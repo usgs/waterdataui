@@ -48,6 +48,20 @@ const timeSeriesPlayStop = function(timeSeriesState) {
     };
 };
 
+const addLoadingTimeSeries = function(timeSeriesState, action) {
+    return {
+        ...timeSeriesState,
+        loadingTSKeys: timeSeriesState.loadingTSKeys.concat([action.tsKeys])
+    };
+};
+
+const removeLoadingTimeSeries = function(timeSeriesState, action) {
+    return {
+        ...timeSeriesState,
+        loadingTSKeys: timeSeriesState.loadingTSKeys.filter((tsKey) => action.tsKeys.includes(tsKey))
+    };
+};
+
 /*
  * Slice reducer
  */
@@ -59,6 +73,8 @@ export const timeSeriesStateReducer = function(timeSeriesState={}, action) {
         case 'SET_CURSOR_OFFSET': return setCursorOffset(timeSeriesState, action);
         case 'TIMESERIES_PLAY_ON': return timeSeriesPlayOn(timeSeriesState, action);
         case 'TIMESERIES_PLAY_STOP': return timeSeriesPlayStop(timeSeriesState, action);
+        case 'TIMESERIES_LOADING_ADD': return addLoadingTimeSeries(timeSeriesState, action);
+        case 'TIMESERIES_LOADING_REMOVE': return removeLoadingTimeSeries(timeSeriesState, action);
         default: return timeSeriesState;
     }
 };
