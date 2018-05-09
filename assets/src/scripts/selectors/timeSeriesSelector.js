@@ -18,6 +18,7 @@ export const getCurrentDateRange = state => state.timeSeriesState.currentDateRan
 export const getLoadingTsKeys = state => state.timeSeriesState.loadingTSKeys;
 
 
+
 /*
  * Selectors the return derived data from the state
  */
@@ -84,14 +85,26 @@ export const hasTimeSeries = memoize((tsKey, period, parmCd) => createSelector(
  * @param {String} tsKey - current, compare, or median
  * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
  * @param {String} or null parmCD - Only need to specify if period is something other than P7D or null
+ * @return {Object} containing the queryInfo for a specific timeseries request or the empty object if that request
+ *      is not in the state
+ * */
+export const getTsQueryInfo  = memoize((tsKey, period, parmCd) => createSelector(
+    getQueryInfo,
+    getTsRequestKey(tsKey, period, parmCd),
+    (queryInfos, tsRequestKey) => queryInfos[tsRequestKey] ? queryInfos[tsRequestKey] : {}
+));
+
+/*
+ * @param {String} tsKey - current, compare, or median
+ * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
+ * @param {String} or null parmCD - Only need to specify if period is something other than P7D or null
  * @return {Object} with start and end {Date} properties that contain the range of the data requested or null
  *      if the store does not contain a query for the tsKey request
  * */
 export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSelector(
-    getQueryInfo,
-    getTsRequestKey(tsKey, period, parmCd),
-    (queryInfos, tsRequestKey) => {
-        const notes = queryInfos[tsRequestKey] && queryInfos[tsRequestKey].notes ? queryInfos[tsRequestKey].notes : null;
+    getTsQueryInfo(tsKey, period, parmCd),
+    (tsQueryInfo) => {
+        const notes = tsQueryInfo.notes ? tsQueryInfo.notes : null;
         if (!notes) {
             return null;
         }
