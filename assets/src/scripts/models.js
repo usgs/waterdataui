@@ -132,11 +132,11 @@ export function mergeMedianTimeSeries(collection, medianData, timeSeriesEndDateT
 
     // calculate the number of days to display
     for (let medianDatum of medianData) {
-        let month = medianDatum.month_nu - 1;
+        let month = medianDatum.month_nu;
         let day = medianDatum.day_nu;
         let median = {
             dateTime: null,
-            month: month,
+            month: parseInt(month),
             day: parseInt(day),
             value: parseFloat(medianDatum.p50_va)
         };
@@ -162,7 +162,7 @@ export function mergeMedianTimeSeries(collection, medianData, timeSeriesEndDateT
             ...collection.timeSeries || {},
             [tsId]: {
                 points: values,
-                endTime: timeSeriesEndDateTime,
+                endTime: timeSeriesEndDateTime.getTime(),
                 tsKey: 'median',
                 method: tsId,
                 variable: varsByCode[medianData[0].parameter_cd].oid,

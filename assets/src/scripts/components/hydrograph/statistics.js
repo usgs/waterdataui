@@ -12,8 +12,8 @@ const { calcStartTime } = require('../../utils');
  */
 export const coerceStatisticalSeries = function (series, period, ianaTimeZone) {
     const startTime = calcStartTime(period, series.endTime); // calculate when the start time based on the period
-    const startYear = startTime.getFullYear();
-    const endYear = series.endTime.getFullYear();
+    const startYear = DateTime.fromMillis(startTime, {zone: ianaTimeZone}).year;
+    const endYear = DateTime.fromMillis(series.endTime, {zone: ianaTimeZone}).year;
     const yearRange = range(startYear, endYear + 1);
     const points = series.points;
     let plotablePoints = [];

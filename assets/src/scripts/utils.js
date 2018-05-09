@@ -177,5 +177,5 @@ export const calcStartTime = function (period, endTime) {
         default:
             console.log('No known period specified');
     }
-    return startTime;
+    return startTime.getTime();
 };
