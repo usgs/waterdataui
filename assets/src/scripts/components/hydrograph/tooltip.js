@@ -103,6 +103,7 @@ const unitCodeSelector = createSelector(
 );
 
 // start added for WDFN259
+
 // set number of pixels to bump the tooltips away from y-axis
 let baseMarginOffsetTextGroup = 5;
 let marginAdjustment = baseMarginOffsetTextGroup + 0;
@@ -113,7 +114,36 @@ const findWidthYAxisAndMargin = function (elem) {
         }, layoutSelector));
 };
 
+/*
+ * Adjust font size of tooltips based on number of tooltips showing
+ * @param {elem} Object - D3 selector
+ */
+const adjustTooltipFontSize = function(elem) {
+    console.log('here');
+    const tooltipTotal = Number(document.querySelectorAll('.tooltip-text-group .current-tooltip-text').length)
+        + Number(document.querySelectorAll('.tooltip-text-group .compare-tooltip-text').length);
+    if (mediaQuery(USWDS_MEDIUM_SCREEN)) {
+        if (tooltipTotal <= 2) {
+            elem.style('font-size', '2rem');
+        } else if (tooltipTotal <= 4) {
+            elem.style('font-size', '1.75rem');
+        } else {
+            elem.style('font-size', '1.25rem');
+        }
+    } else if (mediaQuery(USWDS_SMALL_SCREEN)) {
+        if (tooltipTotal <= 2) {
+            elem.style('font-size', '1.75rem');
+        } else if (tooltipTotal <= 4) {
+            elem.style('font-size', '1.25rem');
+        } else {
+            elem.style('font-size', '1rem');
+        }
+    } else {
+        elem.style('font-size', '1rem');
+    }
+}
 // end added for WDFN259
+
 const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode}, textGroup) {
 
     // Put the circles in a container so we can keep the their position in the
@@ -121,7 +151,9 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     // events.
     if (!textGroup) {
         textGroup = elem.append('div')
-            .attr('class', 'tooltip-text-group');
+      // original line      .attr('class', 'tooltip-text-group')
+     // moved       .attr('class', d => `${d.tsKey}-tooltip-text`);
+            .attr('class', 'tooltip-text-group'); // modified for WDFN259
     }
 
     const data = Object.values(currentPoints).concat(Object.values(comparePoints));
@@ -140,42 +172,20 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     const newTexts = texts.enter()
         .append('div');
 
-    // Adjust font size based on number of tool tips showing
-    const tooltipTotal = Number(document.querySelectorAll('.tooltip-text-group .current-tooltip-text').length)
-        + Number(document.querySelectorAll('.tooltip-text-group .compare-tooltip-text').length);
-    if (mediaQuery(USWDS_MEDIUM_SCREEN)) {
-        if (tooltipTotal <= 2) {
-            textGroup.style('font-size', '2rem');
-        } else if (tooltipTotal <= 4) {
-            textGroup.style('font-size', '1.75rem');
-        } else {
-            textGroup.style('font-size', '1.25rem');
-        }
-    } else if (mediaQuery(USWDS_SMALL_SCREEN)) {
-        if (tooltipTotal <= 2) {
-            textGroup.style('font-size', '1.75rem');
-        } else if (tooltipTotal <= 4) {
-            textGroup.style('font-size', '1.25rem');
-        } else {
-            textGroup.style('font-size', '1rem');
-        }
-    } else {
-        textGroup.style('font-size', '1rem');
-    }
-
     // Update the text and backgrounds of all tooltip labels
     const merge = texts.merge(newTexts)
         .interrupt()
         .style('opacity', '1')
-        .call(findWidthYAxisAndMargin)
-        .style('margin-left', marginAdjustment + 'px');
+        .call(findWidthYAxisAndMargin)  // added for WDFN259
+        .call(adjustTooltipFontSize)  // added for WDFN259
+        .style('margin-left', marginAdjustment + 'px'); // added for WDFN259
 
     merge
         .text(datum => getTooltipText(datum, qualifiers, unitCode))
         .each(function (datum) {
             const classes = classesForPoint(datum);
             const text = select(this);
-            text.attr('class', d => `${d.tsKey}-tooltip-text`); // test line
+            text.attr('class', d => `${d.tsKey}-tooltip-text`); // moved for WFDN259
             text.classed('approved', classes.approved);
             text.classed('estimated', classes.estimated);
         });
