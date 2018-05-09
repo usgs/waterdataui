@@ -448,6 +448,9 @@ const attachToNode = function (store, node, {siteno, parameter, compare, cursorO
     window.onresize = function() {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     };
+    const latitude = node.dataset.latitude;
+    const longitude = node.dataset.longitude;
+    store.dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
     store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null));
 };
 

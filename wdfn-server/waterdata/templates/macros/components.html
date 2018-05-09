@@ -1,5 +1,5 @@
-{% macro TimeSeriesComponent(site_no) -%}
-    <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ site_no }}">
+{% macro TimeSeriesComponent(site_no, latitude, longitude) -%}
+    <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ site_no }}", data-latitude="{{ latitude }}", data-longitude="{{ longitude }}">
         <div class="graph-container"></div>
         <div class="select-time-series-container"></div>
         <div class="usa-alert usa-alert-info provisional-data-alert" role="alert" hidden>

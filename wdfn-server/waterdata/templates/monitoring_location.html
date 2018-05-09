@@ -32,10 +32,6 @@
         const TIMEZONE = {
             NAME: '{{ timezone_metadata }}',
         };
-        const LOCATION = {
-            latitude: {{ location_with_values.dec_lat_va.code }},
-            longitude: {{ location_with_values.dec_long_va.code }}
-        };
     </script>
 {% endblock page_script %}
 
@@ -78,7 +74,7 @@
                     </div>
                     <p id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}</p>
                 </div>
-                {{ components.TimeSeriesComponent(stations[0].site_no) }}
+                {{ components.TimeSeriesComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
                     {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
                 {% endif %}
