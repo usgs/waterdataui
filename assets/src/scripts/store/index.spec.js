@@ -323,10 +323,11 @@ describe('Redux store', () => {
 
             it('Should dispatch the action to set the current date range', () => {
                 mockGetState.and.returnValue(TEST_STATE);
-                store.Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
-                expect(mockDispatch).toHaveBeenCalledWith({
-                    type: 'SET_CURRENT_DATE_RANGE',
-                    period: 'P30D'
+                store.Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState).then(() => {
+                    expect(mockDispatch).toHaveBeenCalledWith({
+                        type: 'SET_CURRENT_DATE_RANGE',
+                        period: 'P30D'
+                    });
                 });
             });
 
@@ -347,7 +348,7 @@ describe('Redux store', () => {
                 let p = store.Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(3);
-                    let arg = mockDispatch.calls.argsFor(1)[0];
+                    let arg = mockDispatch.calls.argsFor(0)[0];
                     expect(arg.type).toBe('ADD_TIMESERIES_COLLECTION');
                     expect(arg.key).toBe('current:P30D:00060');
 
@@ -450,7 +451,7 @@ describe('Redux store', () => {
 
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(2);
-                    let arg = mockDispatch.calls.argsFor(1)[0];
+                    let arg = mockDispatch.calls.argsFor(0)[0];
                     expect(arg.type).toBe('ADD_TIMESERIES_COLLECTION');
                     expect(arg.key).toBe('current:P30D:00060');
                     expect(arg.data).toEqual({});
