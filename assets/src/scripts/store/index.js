@@ -52,6 +52,7 @@ export const Actions = {
             return queryWeatherService(latitude, longitude).then(
                 resp => {
                     const tzIANA = JSON.parse(resp).properties.timeZone;
+                    dispatch(Actions.setLocationIANATimeZone(tzIANA));
                 }
             );
         }
@@ -267,6 +268,12 @@ export const Actions = {
             type: 'SET_GAGE_HEIGHT',
             gageHeight
         };
+    },
+    setLocationIANATimeZone(ianaTimeZone) {
+        return {
+            type: 'SET_LOCATION_IANA_TIME_ZONE',
+            ianaTimeZone
+        }
     }
 };
 
