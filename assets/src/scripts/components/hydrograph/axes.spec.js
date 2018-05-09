@@ -1,7 +1,7 @@
 const { scaleLinear, scaleTime } = require('d3-scale');
 const { select } = require('d3-selection');
 
-const { createAxes, appendAxes } = require('./axes');
+const { createAxes, appendAxes, generateDateTicks } = require('./axes');
 
 
 describe('Chart axes', () => {
@@ -18,39 +18,90 @@ describe('Chart axes', () => {
             left: 65
         }
     };
-    const {xAxis, yAxis} = createAxes({xScale, yScale}, 100, '00060', 'P7D');
+    const timeZone = 'America/Los_Angeles';
+    const {xAxis, yAxis} = createAxes({xScale, yScale}, 100, '00060', 'P7D', timeZone);
     let svg;
 
-    beforeEach(() => {
-        svg = select(document.body).append('svg');
-        appendAxes(svg, {
-            xAxis,
-            yAxis,
-            layout,
-            yTitle: 'Label title'
+    describe('appendAxes', () => {
+        beforeEach(() => {
+            svg = select(document.body).append('svg');
+            appendAxes(svg, {
+                xAxis,
+                yAxis,
+                layout,
+                yTitle: 'Label title'
+            });
+        });
+
+        afterEach(() => {
+            select('svg').remove();
+        });
+
+        it('axes created', () => {
+            expect(xAxis).toEqual(jasmine.any(Function));
+            expect(yAxis).toEqual(jasmine.any(Function));
+            expect(yAxis.tickSizeInner()).toBe(100);
+            expect(xAxis.scale()).toBe(xScale);
+            expect(yAxis.scale()).toBe(yScale);
+        });
+
+        it('axes appended', () => {
+            // Should be translated
+            let tspans = [];
+            svg.select('.y-axis-label').selectAll('tspan').each(function () {
+                tspans.push(this.textContent);
+            });
+            expect(tspans.join(' ')).toEqual('Label title');
+        });
+        // TODO: Add tests to make sure the second axis doesn't render.
+    });
+
+    describe('generateDateTicks', () => {
+
+        const endDate = 1504215240000;
+        const startP7D = 1503610440000;
+        const startP30D = 1501623240000;
+        const startP1Y = 1472679240000;
+
+        it('creates tick marks for a 7 day period', () => {
+            const result = generateDateTicks(startP7D, endDate, 'P7D', timeZone);
+            expect(result).toEqual([
+                1503644400000,
+                1503730800000,
+                1503817200000,
+                1503903600000,
+                1503990000000,
+                1504076400000,
+                1504162800000
+            ]);
+        });
+
+        it('creates tick marks for a 30 day period', () => {
+            const result = generateDateTicks(startP30D, endDate, 'P30D', timeZone);
+            expect(result).toEqual([
+                1502002800000,
+                1502607600000,
+                1503212400000,
+                1503817200000
+            ]);
+        });
+
+        it('creates tick marks for a 1 year period', () => {
+            const result = generateDateTicks(startP1Y, endDate, 'P1Y', timeZone);
+            expect(result).toEqual([
+                1472713200000,
+                1475305200000,
+                1477983600000,
+                1480579200000,
+                1483257600000,
+                1485936000000,
+                1488355200000,
+                1491030000000,
+                1493622000000,
+                1496300400000,
+                1498892400000,
+                1501570800000
+            ]);
         });
     });
-
-    afterEach(() => {
-        select('svg').remove();
-    });
-
-    it('axes created', () => {
-        expect(xAxis).toEqual(jasmine.any(Function));
-        expect(yAxis).toEqual(jasmine.any(Function));
-        expect(yAxis.tickSizeInner()).toBe(100);
-        expect(xAxis.scale()).toBe(xScale);
-        expect(yAxis.scale()).toBe(yScale);
-    });
-
-    it('axes appended', () => {
-        // Should be translated
-        let tspans = [];
-        svg.select('.y-axis-label').selectAll('tspan').each(function () {
-            tspans.push(this.textContent);
-        });
-        expect(tspans.join(' ')).toEqual('Label title');
-    });
-
-    //TODO: Add tests to make sure the second axis doesn't render.
 });

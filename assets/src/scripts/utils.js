@@ -160,7 +160,7 @@ export const mediaQuery = function (minWidth) {
  *
  * @param period -- an NWIS time-delta string (e.g. P7D)
  * @param endTime -- the end time
- * @returns {Date}
+ * @returns {int}
  */
 export const calcStartTime = function (period, endTime) {
     let startTime = new Date(endTime);

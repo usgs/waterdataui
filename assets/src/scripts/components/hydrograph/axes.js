@@ -40,28 +40,27 @@ const tickInterval = function(period) {
 };
 
 
-const generateDateTicks = function(startDate, endDate, period) {
-    const startEpoch = startDate.valueOf();
-    const endEpoch = endDate.valueOf();
+export const generateDateTicks = function(startDate, endDate, period, ianaTimeZone) {
+    const tzStartDate = DateTime.fromMillis(startDate, {zone: ianaTimeZone});
     let dates = [];
     let date;
     let timePeriod;
     let interval;
     switch (period) {
         case 'P7D':
-            date = startDate.startOf('day');
+            date = tzStartDate.startOf('day');
             timePeriod = 'days';
             interval = 1;
             break;
         case 'P30D':
-            const startDateDay= startDate.weekday;
-            const weekStartDate = startDate.minus({days: startDateDay});
+            const startDateDay= tzStartDate.weekday;
+            const weekStartDate = tzStartDate.minus({days: startDateDay});
             date = weekStartDate.startOf('day');
             timePeriod = 'weeks';
             interval = 1;
             break;
         case 'P1Y':
-            date = startDate.startOf('month');
+            date = tzStartDate.startOf('month');
             timePeriod = 'months';
             if (mediaQuery(USWDS_LARGE_SCREEN)) {
                 interval = 1;
@@ -70,13 +69,13 @@ const generateDateTicks = function(startDate, endDate, period) {
             }
             break;
         default:
-            date = startDate.startOf('day');
+            date = tzStartDate.startOf('day');
             timePeriod = 'days';
             interval = 1;
     }
-    while (date.valueOf() < endEpoch) {
+    while (date.valueOf() <= endDate) {
         date = date.plus({[timePeriod]: interval});
-        if (startEpoch <= date.valueOf() && date.valueOf() <= endEpoch) {
+        if (startDate <= date.valueOf() && date.valueOf() <= endDate) {
             dates.push(date.valueOf());
         }
     }
@@ -94,8 +93,8 @@ const generateDateTicks = function(startDate, endDate, period) {
  */
 export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period, ianaTimeZone) {
     // Create x-axis
-    const [tzStartDate, tzEndDate] = xScale.domain().map(dt => DateTime.fromJSDate(dt, {zone: ianaTimeZone}));
-    const tickDates = generateDateTicks(tzStartDate, tzEndDate, period);
+    const [startDate, endDate] = xScale.domain();
+    const tickDates = generateDateTicks(startDate.getTime(), endDate.getTime(), period, ianaTimeZone);
     const xAxis = axisBottom()
         .scale(xScale)
         .tickValues(tickDates)

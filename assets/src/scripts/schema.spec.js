@@ -113,11 +113,11 @@ describe('Normalizr schema', () => {
                 points: [{
                     value: 302,
                     qualifiers: ['P'],
-                    dateTime: new Date('2017-01-02T15:00:00.000-06:00')
+                    dateTime: 1483390800000
                 }, {
                     value: 301,
                     qualifiers: ['P'],
-                    dateTime: new Date('2017-01-02T15:15:00.000-06:00')
+                    dateTime: 1483391700000
                 }]
             }
         });

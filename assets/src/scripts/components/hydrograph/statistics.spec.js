@@ -3,7 +3,7 @@ const { coerceStatisticalSeries } = require('./statistics');
 const { DateTime } = require('luxon');
 
 
-fdescribe('Statistics module', () => {
+describe('Statistics module', () => {
 
     describe('coerceStatisticalSeries', () => {
         // generate a year's worth of fake median data
@@ -33,17 +33,17 @@ fdescribe('Statistics module', () => {
         });
         const series1 = {
             points: points,
-            endTime: new Date(2015, 2, 3)
+            endTime: 1425362400000
         };
 
         const series2 = {
             points: points,
-            endTime: new Date(2016, 2, 3)
+            endTime: 1456984800000
         };
 
         const series3 = {
             points: points,
-            endTime: new Date(2018, 2, 6, 19, 26)
+            endTime: 1520385960000
         };
 
         const timeZone = 'America/Chicago';
@@ -83,20 +83,21 @@ fdescribe('Statistics module', () => {
         });
 
         it('handles a leap year period', () => {
-            let result = coerceStatisticalSeries(series2, 'P1Y');
-            let years = result.map(x => x.dateTime.getFullYear());
-            expect(result.length).toEqual(366);
+            const result = coerceStatisticalSeries(series2, 'P1Y', timeZone);
+            const dates = result.map(x => DateTime.fromMillis(x.dateTime, {zone: timeZone}));
+            const years = dates.map(x => x.year);
+            expect(result.length).toEqual(367);
             expect(years.includes(2016)).toBe(true);
             expect(years.includes(2015)).toBe(true);
         });
 
         it('handles times in the middle of the day', () => {
-            let result =  coerceStatisticalSeries(series3, 'P7D');
+            const result =  coerceStatisticalSeries(series3, 'P7D');
             expect(result.length).toEqual(9);
-            expect(result[0].dateTime.getTime()).toEqual(new Date(2018, 1, 27, 19, 26).getTime());
-            expect(result[1].dateTime.getTime()).toEqual(new Date(2018, 1, 28).getTime());
-            expect(result[result.length - 2].dateTime.getTime()).toEqual(new Date(2018, 2, 6).getTime());
-            expect(result[result.length - 1].dateTime.getTime()).toEqual(new Date(2018, 2, 6, 19, 26).getTime());
+            expect(result[0].dateTime).toEqual(1519781160000);
+            expect(result[1].dateTime).toEqual(1519797600000);
+            expect(result[result.length - 2].dateTime).toEqual(1520316000000);
+            expect(result[result.length - 1].dateTime).toEqual(1520385960000);
         });
     });
 });

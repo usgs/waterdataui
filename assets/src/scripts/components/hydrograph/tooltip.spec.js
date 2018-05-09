@@ -11,19 +11,19 @@ describe('Hydrograph tooltip module', () => {
 
     let data = [12, 13, 14, 15, 16].map(hour => {
         return {
-            dateTime: new Date(`2018-01-03T${hour}:00:00.000Z`),
+            dateTime: new Date(`2018-01-03T${hour}:00:00.000Z`).getTime(),
             qualifiers: ['P'],
             value: hour
         };
     });
     const maskedData = [
         {
-            dateTime: new Date('2018-01-03T17:00:00.000Z'),
+            dateTime: new Date('2018-01-03T17:00:00.000Z').getTime(),
             qualifiers: ['Fld', 'P'],
             value: null
         },
         {
-            dateTime: new Date('2018-01-03T18:00:00.000Z'),
+            dateTime: new Date('2018-01-03T18:00:00.000Z').getTime(),
             qualifiers: ['Mnt', 'P'],
             value: null
         }
@@ -80,8 +80,8 @@ describe('Hydrograph tooltip module', () => {
                         'filter:timeRange': {
                             mode: 'RANGE',
                             interval: {
-                                start: new Date('2018-01-03T12:00:00.000Z'),
-                                end: new Date('2018-01-03T16:00:00.000Z')
+                                start: new Date('2018-01-03T12:00:00.000Z').getTime(),
+                                end: new Date('2018-01-03T16:00:00.000Z').getTime()
                             }
                         }
                     }
@@ -91,8 +91,8 @@ describe('Hydrograph tooltip module', () => {
                         'filter:timeRange': {
                             mode: 'RANGE',
                             interval: {
-                                start: new Date('2018-01-03T12:00:00.000Z'),
-                                end: new Date('2018-01-03T16:00:00.000Z')
+                                start: new Date('2018-01-03T12:00:00.000Z').getTime(),
+                                end: new Date('2018-01-03T16:00:00.000Z').getTime()
                             }
                         }
                     }
@@ -278,7 +278,7 @@ describe('Hydrograph tooltip module', () => {
         it('Creates the correct text for values of zero', () => {
             const zeroData = [12, 13, 14, 15, 16].map(hour => {
                 return {
-                    dateTime: new Date(`2018-01-03T${hour}:00:00.000Z`),
+                    dateTime: new Date(`2018-01-03T${hour}:00:00.000Z`).getTime(),
                     qualifiers: ['P'],
                     value: 0
                 };
@@ -312,7 +312,7 @@ describe('Hydrograph tooltip module', () => {
             currentTsData = data;
             compareTsData = [12, 13, 14, 15, 16].map(hour => {
                 return {
-                    dateTime: new Date(`2017-01-03T${hour}:00:00.000Z`),
+                    dateTime: new Date(`2017-01-03T${hour}:00:00.000Z`).getTime(),
                     value: hour + 1
                 };
             });

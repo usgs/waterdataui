@@ -146,18 +146,18 @@ describe('Utils module', () => {
 
     describe('calcStartTime', () => {
 
-        const someDate = new Date(2017, 2, 26, 16, 15, 0);
+        const someDate = 1490562900000;
 
         it('correctly handles a seven day interval', () => {
-            expect(calcStartTime('P7D', someDate)).toEqual(new Date(2017, 2, 19, 16, 15, 0));
+            expect(calcStartTime('P7D', someDate)).toEqual(1489958100000);
         });
 
         it('correctly handles a 30 day interval', () => {
-            expect(calcStartTime('P30D', someDate)).toEqual(new Date(2017, 1, 24, 16, 15, 0));
+            expect(calcStartTime('P30D', someDate)).toEqual(1487974500000);
         });
 
         it('correctly handles a year interval', () => {
-            expect(calcStartTime('P1Y', someDate)).toEqual(new Date(2016, 2, 26, 16, 15, 0));
+            expect(calcStartTime('P1Y', someDate)).toEqual(1459026900000);
         });
     });
 });

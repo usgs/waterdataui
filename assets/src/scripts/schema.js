@@ -57,7 +57,7 @@ const timeSeries = memoize(tsKey => new schema.Entity('timeSeries', {
                 const value = parseFloat(v.value);
                 return {
                     ...v,
-                    dateTime: new Date(v.dateTime),
+                    dateTime: new Date(v.dateTime).getTime(),
                     value: value === parent.variable.noDataValue ? null : value
                 };
             })
