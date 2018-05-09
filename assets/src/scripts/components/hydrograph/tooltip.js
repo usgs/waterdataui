@@ -103,11 +103,11 @@ const unitCodeSelector = createSelector(
 );
 
 // start added for WDFN259
-// bumps the tooltips off the y-axis
-let marginOffsetTextGroup = 5;
-let marginAdjustment = marginOffsetTextGroup + 0;
+// set number of pixels to bump the tooltips away from y-axis
+let baseMarginOffsetTextGroup = 5;
+let marginAdjustment = baseMarginOffsetTextGroup + 0;
 // Find the with of the between the y-axis and margin
-const adjustToolTipTextGroupMargin = function (elem) {
+const findWidthYAxisAndMargin = function (elem) {
     elem.call(link(function(elem, layout) {
         return marginAdjustment =  layout.margin.left;
         }, layoutSelector));
@@ -125,6 +125,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     }
 
     const data = Object.values(currentPoints).concat(Object.values(comparePoints));
+
     const texts = textGroup
         .selectAll('div')
         .data(data);
@@ -137,46 +138,44 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
 
     // Add new text labels
     const newTexts = texts.enter()
-        .append('div')
-            .attr('class', d => `${d.tsKey}-tooltip-text`);
+        .append('div');
 
     // Adjust font size based on number of tool tips showing
     const tooltipTotal = Number(document.querySelectorAll('.tooltip-text-group .current-tooltip-text').length)
         + Number(document.querySelectorAll('.tooltip-text-group .compare-tooltip-text').length);
     if (mediaQuery(USWDS_MEDIUM_SCREEN)) {
         if (tooltipTotal <= 2) {
-            textGroup.style('font-size', '1.5em');
+            textGroup.style('font-size', '2rem');
         } else if (tooltipTotal <= 4) {
-            textGroup.style('font-size', '1em');
+            textGroup.style('font-size', '1.75rem');
         } else {
-            textGroup.style('font-size', '0.75em');
+            textGroup.style('font-size', '1.25rem');
         }
     } else if (mediaQuery(USWDS_SMALL_SCREEN)) {
         if (tooltipTotal <= 2) {
-            textGroup.style('font-size', '1em');
+            textGroup.style('font-size', '1.75rem');
         } else if (tooltipTotal <= 4) {
-            textGroup.style('font-size', '0.75em');
+            textGroup.style('font-size', '1.25rem');
         } else {
-            textGroup.style('font-size', '0.5em');
+            textGroup.style('font-size', '1rem');
         }
     } else {
-        textGroup.style('font-size', '0.5em');
+        textGroup.style('font-size', '1rem');
     }
 
     // Update the text and backgrounds of all tooltip labels
     const merge = texts.merge(newTexts)
         .interrupt()
-    // original line    .style('opacity', '1');
-        .style('opacity', '1') // added for wdfn259
-        .call(adjustToolTipTextGroupMargin)  // added for wdfn259
-        .style('margin-left', marginAdjustment + 'px');  // added for  wdfn259
-
+        .style('opacity', '1')
+        .call(findWidthYAxisAndMargin)
+        .style('margin-left', marginAdjustment + 'px');
 
     merge
         .text(datum => getTooltipText(datum, qualifiers, unitCode))
         .each(function (datum) {
             const classes = classesForPoint(datum);
             const text = select(this);
+            text.attr('class', d => `${d.tsKey}-tooltip-text`); // test line
             text.classed('approved', classes.approved);
             text.classed('estimated', classes.estimated);
         });
