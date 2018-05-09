@@ -1,5 +1,5 @@
 const { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getQueryInfo, getCurrentParmCd,
-    hasTimeSeries, getTsRequestKey, getRequestTimeRange } = require('./timeSeriesSelector');
+    hasTimeSeries, getTsRequestKey, getTsQueryInfo, getRequestTimeRange } = require('./timeSeriesSelector');
 
 describe('timeSeriesSelector', () => {
     const TEST_VARS = {
@@ -215,6 +215,54 @@ describe('timeSeriesSelector', () => {
             expect(getTsRequestKey('median', 'P30D', '00010')(TEST_STATE)).toBe('median');
         });
     });
+
+    fdescribe('getTsQueryInfo', () => {
+        const TEST_DATA = {
+            series: {
+                queryInfo: {
+                    'current:P7D': {
+                        notes: {
+                            requestDT: new Date('2017-03-31'),
+                            'filter:timeRange': {
+                                mode: 'PERIOD',
+                                periodDays: 7,
+                                modifiedSince: null
+                            }
+                        }
+                    },
+                    'current:P30D:00060': {
+                        notes: {
+                            requestDT: new Date('2017-03-31'),
+                            'filter:timeRange': {
+                                mode: 'RANGE',
+                                interval: {
+                                    start: new Date('2017-03-01'),
+                                    end: new Date('2017-03-29')
+                                }
+                            }
+                        }
+                    }
+                },
+                variables: TEST_VARS
+            },
+            timeSeriesState: {
+                currentDateRange: 'P7D',
+                currentVariableID: '45807042'
+            }
+        };
+
+        it('Return the query info requested by tsKey using current date range', () => {
+            expect(getTsQueryInfo('current')(TEST_DATA)).toEqual(TEST_DATA.series.queryInfo['current:P7D']);
+            expect(getTsQueryInfo('compare')(TEST_DATA)).toEqual({});
+        });
+
+        it('Return the query info request by tsKey and period and parmCd', () => {
+            expect(getTsQueryInfo('current', 'P1Y')(TEST_DATA)).toEqual({});
+            expect(getTsQueryInfo('current', 'P30D')(TEST_DATA)).toEqual(TEST_DATA.series.queryInfo['current:P30D:00060']);
+            expect(getTsQueryInfo('current', 'P30D', '00010')(TEST_DATA)).toEqual({});
+        });
+    });
+
 
     describe('getRequestTimeRange', () => {
         const TEST_DATA = {
