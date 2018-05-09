@@ -126,15 +126,14 @@ export const Actions = {
                     series => {
                         const collection = normalize(series, requestKey);
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
+                        dispatch(Actions.setCurrentDateRange(period));
                         dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
                     },
                     () => {
                         console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
                         dispatch(Actions.addSeriesCollection(requestKey, {}));
                     }
-                ).then(() => {
-                    dispatch(Actions.setCurrentDateRange(period));
-                });
+                );
             } else {
                 dispatch(Actions.setCurrentDateRange(period));
             }
