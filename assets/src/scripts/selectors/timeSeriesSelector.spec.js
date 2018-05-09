@@ -216,7 +216,7 @@ describe('timeSeriesSelector', () => {
         });
     });
 
-    fdescribe('getTsQueryInfo', () => {
+    describe('getTsQueryInfo', () => {
         const TEST_DATA = {
             series: {
                 queryInfo: {
