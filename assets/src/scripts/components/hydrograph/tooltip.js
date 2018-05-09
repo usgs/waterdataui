@@ -103,10 +103,14 @@ const unitCodeSelector = createSelector(
 );
 
 // start added for WDFN259
+// bumps the tooltips off the y-axis
+let marginOffsetTextGroup = 5;
+let marginAdjustment = marginOffsetTextGroup + 0;
+// Find the with of the between the y-axis and margin
 const adjustToolTipTextGroupMargin = function (elem) {
     elem.call(link(function(elem, layout) {
-        console.log('here');
-    }, layoutSelector));
+        return marginAdjustment =  layout.margin.left;
+        }, layoutSelector));
 };
 
 // end added for WDFN259
@@ -117,9 +121,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     // events.
     if (!textGroup) {
         textGroup = elem.append('div')
-       //     .attr('class', 'tooltip-text-group'); original line
-            .attr('class', 'tooltip-text-group') //added for WDFN259
-            .call(adjustToolTipTextGroupMargin); //added for WDFN259
+            .attr('class', 'tooltip-text-group');
     }
 
     const data = Object.values(currentPoints).concat(Object.values(comparePoints));
@@ -164,7 +166,12 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     // Update the text and backgrounds of all tooltip labels
     const merge = texts.merge(newTexts)
         .interrupt()
-        .style('opacity', '1');
+    // original line    .style('opacity', '1');
+        .style('opacity', '1') // added for wdfn259
+        .call(adjustToolTipTextGroupMargin)  // added for wdfn259
+        .style('margin-left', marginAdjustment + 'px');  // added for  wdfn259
+
+
     merge
         .text(datum => getTooltipText(datum, qualifiers, unitCode))
         .each(function (datum) {
