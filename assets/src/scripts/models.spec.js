@@ -135,7 +135,7 @@ describe('Models module', () => {
 
     describe('parseMedianTimeSeries', () => {
 
-        const endDate = new Date(2018, 0, 13);
+        const endDate = 1515823200000; // 2018-01-13 00:00 America/Chicago
 
         it('parseMedian data successfully constructs data for plotting', () => {
             const collection = mergeMedianTimeSeries({}, MOCK_MEDIAN_DATA, endDate, MOCK_MEDIAN_VARIABLES);
@@ -145,27 +145,27 @@ describe('Models module', () => {
                         points: [
                             {
                                 dateTime: null,
-                                month: 0,
+                                month: 1,
                                 day: 1,
                                 value: 16
                             }, {
                                 dateTime: null,
-                                month: 0,
+                                month: 1,
                                 day: 13,
                                 value: 15
                             }, {
                                 dateTime: null,
-                                month: 7,
+                                month: 8,
                                 day: 5,
                                 value: 15
                             }, {
                                 dateTime: null,
-                                month: 1,
+                                month: 2,
                                 day: 29,
                                 value: 13
                             }
                         ],
-                        endTime: new Date(2018, 0, 13),
+                        endTime: 1515823200000,
                         tsKey: 'median',
                         method: '00060:153885:median',
                         variable: 'varID',

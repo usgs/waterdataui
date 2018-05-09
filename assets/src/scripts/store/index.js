@@ -84,7 +84,7 @@ export const Actions = {
                     ));
                     dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
 
-                    return {collection, startTime, endTime};
+                    return {collection, startTime: startTime.getTime(), endTime: endTime.getTime()};
                 },
                 () => {
                     dispatch(Actions.resetTimeSeries(getTsRequestKey('current', 'P7D')(currentState)));
