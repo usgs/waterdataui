@@ -13,6 +13,7 @@ const { cursorTimeSelector, tsCursorPointsSelector } = require('./cursor');
 const { classesForPoint, MASK_DESC } = require('./drawingData');
 const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
+const { tsTimeZoneSelector } = require('./timeSeries');
 
 const { getCurrentVariable } = require('../../selectors/timeSeriesSelector');
 
@@ -74,7 +75,7 @@ const tooltipPointsSelector = memoize(tsKey => createSelector(
     }
 ));
 
-const getTooltipText = function(datum, qualifiers, unitCode) {
+const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone) {
     let label = '';
     if (datum && qualifiers) {
         const tzAbbrev = datum.dateTime.toString().match(/\(([^)]+)\)/)[1];
@@ -90,7 +91,7 @@ const getTooltipText = function(datum, qualifiers, unitCode) {
         }
         const timeLabel = DateTime.fromJSDate(
             datum.dateTime,
-            {zone: TIMEZONE.NAME}
+            {zone: ianaTimeZone}
         ).toFormat('MMM dd, yyyy hh:mm:ss a ZZZZ');
         label = `${valueStr} - ${timeLabel}`;
     }
@@ -105,7 +106,7 @@ const unitCodeSelector = createSelector(
     variable => variable ? variable.unit.unitCode : null
 );
 
-const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode}, textGroup) {
+const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone}, textGroup) {
 
     // Put the circles in a container so we can keep the their position in the
     // DOM before rect.overlay, to prevent the circles from receiving mouse
@@ -136,7 +137,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
         .interrupt()
         .style('opacity', '1');
     merge
-        .text(datum => getTooltipText(datum, qualifiers, unitCode))
+        .text(datum => getTooltipText(datum, qualifiers, unitCode, ianaTimeZone))
         .each(function (datum) {
             const classes = classesForPoint(datum);
             const text = select(this);
@@ -158,7 +159,8 @@ const createTooltipText = function (elem) {
         comparePoints: tsCursorPointsSelector('compare'),
         qualifiers: qualifiersSelector,
         unitCode: unitCodeSelector,
-        layout: layoutSelector
+        layout: layoutSelector,
+        ianaTimeZone: tsTimeZoneSelector
     })));
 };
 

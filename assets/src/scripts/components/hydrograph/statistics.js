@@ -10,7 +10,7 @@ const { calcStartTime } = require('../../utils');
  * @param period -- NWIS time period string (e.g. 'P7D') denoted the period of time to display
  * @returns {*[]}
  */
-export const coerceStatisticalSeries = function (series, period) {
+export const coerceStatisticalSeries = function (series, period, ianaTimeZone) {
     const startTime = calcStartTime(period, series.endTime); // calculate when the start time based on the period
     const startYear = startTime.getFullYear();
     const endYear = series.endTime.getFullYear();
@@ -28,7 +28,7 @@ export const coerceStatisticalSeries = function (series, period) {
                 year: year,
                 day: day,
                 month: month,
-                zone: TIMEZONE.NAME
+                zone: ianaTimeZone
             }).valueOf();
             if (!isLeapYear(year)) {
                 if(!(month === 1 && day === 29)) {

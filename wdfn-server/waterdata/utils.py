@@ -117,11 +117,3 @@ def execute_cooperator_lookup_request(url_root_cooperator_lookup, url_path_coope
     else:
         cooperator_lookup_data = None
     return cooperator_lookup_data
-
-
-def get_site_timezone_offset(latitude, longitude):
-    weather_service_api = 'https://api.weather.gov'
-    target = urljoin(weather_service_api, 'points/{},{}'.format(latitude, longitude))
-    resp = r.get(target).json()
-    tz_name = resp['properties']['timeZone']
-    return tz_name

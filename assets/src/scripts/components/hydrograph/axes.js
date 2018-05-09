@@ -9,7 +9,7 @@ const { wrap } = require('../../utils');
 const { getYTickDetails } = require('./domain');
 const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
-const { yLabelSelector } = require('./timeSeries');
+const { yLabelSelector, tsTimeZoneSelector } = require('./timeSeries');
 
 const { USWDS_LARGE_SCREEN } = require('../../config');
 const { getCurrentDateRange, getCurrentParmCd } = require('../../selectors/timeSeriesSelector');
@@ -92,17 +92,17 @@ const generateDateTicks = function(startDate, endDate, period) {
  * * @param {String} period - ISO duration for date range of the time series
  * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
-export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period) {
+export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period, ianaTimeZone) {
     // Create x-axis
     //const [tzStartDate, tzEndDate] = xScale.domain().map(dt => moment(dt, TIMEZONE.NAME));
-    const [tzStartDate, tzEndDate] = xScale.domain().map(dt => DateTime.fromJSDate(dt, {zone: TIMEZONE.NAME}));
+    const [tzStartDate, tzEndDate] = xScale.domain().map(dt => DateTime.fromJSDate(dt, {zone: ianaTimeZone}));
     const tickDates = generateDateTicks(tzStartDate, tzEndDate, period);
     const xAxis = axisBottom()
         .scale(xScale)
         .tickValues(tickDates)
         .tickSizeOuter(0)
         .tickFormat(d => {
-            return DateTime.fromMillis(d, {zone: TIMEZONE.NAME}).toFormat(FORMAT[period]);
+            return DateTime.fromMillis(d, {zone: ianaTimeZone}).toFormat(FORMAT[period]);
         });
 
     // Create y-axis
@@ -128,11 +128,12 @@ export const axesSelector = createSelector(
     yScaleSelector,
     layoutSelector,
     yLabelSelector,
+    tsTimeZoneSelector,
     getCurrentParmCd,
     getCurrentDateRange,
-    (xScale, yScale, layout, plotYLabel, parmCd, currentDateRange) => {
+    (xScale, yScale, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange) => {
         return {
-            ...createAxes({xScale, yScale}, -layout.width + layout.margin.right, parmCd, currentDateRange),
+            ...createAxes({xScale, yScale}, -layout.width + layout.margin.right, parmCd, currentDateRange, ianaTimeZone),
             layout: layout,
             yTitle: plotYLabel
         };

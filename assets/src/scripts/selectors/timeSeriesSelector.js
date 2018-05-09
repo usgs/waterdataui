@@ -1,6 +1,7 @@
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
+
 /*
  * Selectors that return properties from the state
  */
@@ -14,6 +15,9 @@ export const getMethods = state => state.series.methods ? state.series.methods :
 
 export const getQueryInfo = state => state.series.queryInfo || {};
 
+export const getIanaTimeZone = state => state.series.ianaTimeZone ? state.series.ianaTimeZone : null;
+
+export const getNwisTimeZone = state => state.series.timeZones ? state.series.timeZones : {};
 /*
  * Selectors the return derived data from the state
  */
@@ -110,4 +114,3 @@ export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSele
         return result;
     }
 ));
-

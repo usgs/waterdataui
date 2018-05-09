@@ -1,8 +1,9 @@
 const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
+const { DateTime } = require('luxon');
 
-const { getRequestTimeRange, getCurrentVariable, getTsRequestKey } = require('../../selectors/timeSeriesSelector');
+const { getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone, getNwisTimeZone } = require('../../selectors/timeSeriesSelector');
 
 
 // Create a time formatting function from D3's timeFormat
@@ -133,6 +134,21 @@ export const descriptionSelector = createSelector(
             return `${desc} from ${formatTime(requestTimeRange.start)} to ${formatTime(requestTimeRange.end)}`;
         } else {
             return desc;
+        }
+    }
+);
+
+export const tsTimeZoneSelector = createSelector(
+    getIanaTimeZone,
+    getNwisTimeZone,
+    (ianaTimeZone, nwisTimeZone) => {
+        const tz = DateTime.fromObject({zone: ianaTimeZone});
+        const tzShortName = tz.offsetNameShort.toUpperCase();
+        const nwisShortNames = Object.values(nwisTimeZone).map(tz => tz.zoneAbbreviation.toUpperCase());
+        if (nwisShortNames.includes(tzShortName)) {
+            return ianaTimeZone;
+        } else {
+            return 'UTC';
         }
     }
 );

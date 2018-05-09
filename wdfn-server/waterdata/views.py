@@ -7,7 +7,7 @@ from flask import abort, render_template, request, Markup
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries
-from .utils import construct_url, defined_when, execute_get_request, parse_rdb, execute_cooperator_lookup_request, get_site_timezone_offset
+from .utils import construct_url, defined_when, execute_get_request, parse_rdb, execute_cooperator_lookup_request
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -55,9 +55,6 @@ def monitoring_location(site_no):
             'STATION_FIELDS_D': STATION_FIELDS_D
         }
         station_record = data_list[0]
-        latitude = station_record['dec_lat_va']
-        longitude = station_record['dec_long_va']
-        location_tz = get_site_timezone_offset(latitude, longitude)
         # get the cooperator data from service
         # feature toggle; remove 'if/else' when new lookup service is implemented
         if app.config['COOPERATOR_LOOKUP_ENABLED']:
@@ -142,8 +139,7 @@ def monitoring_location(site_no):
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'parm_grp_summary': grouped_dataseries,
                 'questions_link': questions_link,
-                'cooperator_lookup_data': cooperator_lookup_data,
-                'timezone_metadata': location_tz
+                'cooperator_lookup_data': cooperator_lookup_data
             }
         http_code = 200
     elif 400 <= status < 500:
