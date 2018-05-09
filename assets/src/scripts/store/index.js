@@ -113,7 +113,6 @@ export const Actions = {
             const state = getState();
             const parmCd = getCurrentParmCd(state);
             const requestKey = getTsRequestKey ('current', period, parmCd)(state);
-            dispatch(Actions.setCurrentDateRange(period));
             if (!hasTimeSeries('current', period, parmCd)(state)) {
                 const endTime = new Date(getRequestTimeRange('current', 'P7D')(state).end);
                 let startTime = calcStartTime(period, endTime);
@@ -127,6 +126,7 @@ export const Actions = {
                     series => {
                         const collection = normalize(series, requestKey);
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
+                        dispatch(Actions.setCurrentDateRange(period));
                         dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
                     },
                     () => {
@@ -134,6 +134,8 @@ export const Actions = {
                         dispatch(Actions.addSeriesCollection(requestKey, {}));
                     }
                 );
+            } else {
+                dispatch(Actions.setCurrentDateRange(period));
             }
         };
     },
