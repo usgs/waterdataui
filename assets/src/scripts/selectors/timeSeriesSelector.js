@@ -17,7 +17,8 @@ export const getQueryInfo = state => state.series.queryInfo || {};
 
 export const getIanaTimeZone = state => state.series.ianaTimeZone ? state.series.ianaTimeZone : null;
 
-export const getNwisTimeZone = state => state.series.timeZones ? state.series.timeZones : {};
+export const getNwisTimeZone = state => state.series.timeZones || {};
+
 /*
  * Selectors the return derived data from the state
  */
