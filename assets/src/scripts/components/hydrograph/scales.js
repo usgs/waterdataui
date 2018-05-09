@@ -18,14 +18,12 @@ const { getVariables, getCurrentParmCd, getRequestTimeRange } = require('../../s
  * @return {Object} d3 scale for time.
  */
 function createXScale(timeRange, xSize) {
-    //const xExtent = timeRange ? [timeRange.start, timeRange.end] : [0, 1];
-
+    // xScale is oriented on the left
     let scale = scaleTime()
         .range([0, xSize]);
     if (timeRange) {
         scale.domain([timeRange.start, timeRange.end]);
     }
-    // xScale is oriented on the left
     return scale;
 }
 
