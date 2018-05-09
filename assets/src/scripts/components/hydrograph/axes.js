@@ -94,7 +94,6 @@ const generateDateTicks = function(startDate, endDate, period) {
  */
 export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period, ianaTimeZone) {
     // Create x-axis
-    //const [tzStartDate, tzEndDate] = xScale.domain().map(dt => moment(dt, TIMEZONE.NAME));
     const [tzStartDate, tzEndDate] = xScale.domain().map(dt => DateTime.fromJSDate(dt, {zone: ianaTimeZone}));
     const tickDates = generateDateTicks(tzStartDate, tzEndDate, period);
     const xAxis = axisBottom()
