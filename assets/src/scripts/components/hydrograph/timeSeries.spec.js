@@ -1,6 +1,6 @@
 const { timeSeriesSelector, hasTimeSeriesWithPoints, isVisibleSelector, yLabelSelector,
     titleSelector, descriptionSelector, currentVariableTimeSeriesSelector,
-    allTimeSeriesSelector, requestTimeRangeSelector} = require('./timeSeries');
+    allTimeSeriesSelector, requestTimeRangeSelector, tsTimeZoneSelector} = require('./timeSeries');
 
 
 const TEST_DATA = {
@@ -423,5 +423,41 @@ describe('TimeSeries module', () => {
             expect(result).toContain('1/2/2017');
             expect(result).toContain('1/9/2017');
         });
+    });
+
+    describe('tsTimeZoneSelector', () => {
+
+        it('Returns UTC if series is empty', () => {
+            const result = tsTimeZoneSelector({
+                series: {}
+            });
+            expect(result).toEqual('UTC');
+        });
+
+        it('Returns UTC if NWIS and IANA time zones do not agree', () => {
+            const result = tsTimeZoneSelector({
+                series: {
+                    ianaTimeZone: 'America/Juneau',
+                    timeZones: {
+                        'CDT': {'zoneAbbreviation': 'CDT'},
+                        'CST': {'zoneAbbreviation': 'CST'}
+                    }
+                }
+            });
+            expect(result).toEqual('UTC');
+        });
+
+        it('Returns the IANA timezone NWIS and IANA agree', () => {
+            const result = tsTimeZoneSelector({
+                series: {
+                    ianaTimeZone: 'America/New_York',
+                    timeZones: {
+                        'EDT': {'zoneAbbreviation': 'EDT'},
+                        'EST': {'zoneAbbreviation': 'EST'}
+                    }
+                }
+            });
+            expect(result).toEqual('America/New_York');
+        })
     });
 });
