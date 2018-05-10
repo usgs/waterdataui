@@ -35,16 +35,16 @@ const drawMessage = function (elem, message) {
     elem.innerHTML = '';
     const alertBox = elem
         .append('div')
-        .attr('class', 'usa-alert usa-alert-warning')
-        .append('div')
-        .attr('class', 'usa-alert-body');
+            .attr('class', 'usa-alert usa-alert-warning')
+            .append('div')
+                .attr('class', 'usa-alert-body');
     alertBox
         .append('h3')
-        .attr('class', 'usa-alert-heading')
-        .html('Hydrograph Alert');
+            .attr('class', 'usa-alert-heading')
+            .html('Hydrograph Alert');
     alertBox
         .append('p')
-        .html(message);
+            .html(message);
 };
 
 
@@ -115,8 +115,8 @@ const plotDataLines = function (elem, {visible, tsLinesMap, tsKey, xScale, yScal
     container.selectAll(`#${elemId}`).remove();
     const tsLineGroup = container
         .append('g')
-        .attr('id', elemId)
-        .classed('tsKey', true);
+            .attr('id', elemId)
+            .classed('tsKey', true);
 
     for (const lines of Object.values(tsLinesMap)) {
         plotDataLine(tsLineGroup, {visible, lines, tsKey, xScale, yScale});
@@ -134,11 +134,11 @@ const plotSvgDefs = function (elem) {
         .attr('id', 'display-mask')
         .attr('maskUnits', 'userSpaceOnUse')
         .append('rect')
-        .attr('x', '0')
-        .attr('y', '0')
-        .attr('width', '100%')
-        .attr('height', '100%')
-        .attr('fill', '#0000ff');
+            .attr('x', '0')
+            .attr('y', '0')
+            .attr('width', '100%')
+            .attr('height', '100%')
+            .attr('fill', '#0000ff');
 
     defs.append('pattern')
         .attr('id', HASH_ID.current)
@@ -147,10 +147,10 @@ const plotSvgDefs = function (elem) {
         .attr('patternUnits', 'userSpaceOnUse')
         .attr('patternTransform', 'rotate(45)')
         .append('rect')
-        .attr('width', '4')
-        .attr('height', '8')
-        .attr('transform', 'translate(0, 0)')
-        .attr('mask', 'url(#display-mask)');
+            .attr('width', '4')
+            .attr('height', '8')
+            .attr('transform', 'translate(0, 0)')
+            .attr('mask', 'url(#display-mask)');
 
     defs.append('pattern')
         .attr('id', HASH_ID.compare)
@@ -159,10 +159,10 @@ const plotSvgDefs = function (elem) {
         .attr('patternUnits', 'userSpaceOnUse')
         .attr('patternTransform', 'rotate(135)')
         .append('rect')
-        .attr('width', '4')
-        .attr('height', '8')
-        .attr('transform', 'translate(0, 0)')
-        .attr('mask', 'url(#display-mask)');
+            .attr('width', '4')
+            .attr('height', '8')
+            .attr('transform', 'translate(0, 0)')
+            .attr('mask', 'url(#display-mask)');
 };
 
 
@@ -217,7 +217,7 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap,
     }
     const container = elem
         .append('g')
-        .attr('id', 'median-points');
+            .attr('id', 'median-points');
     for (const [index, seriesID] of Object.keys(seriesMap).entries()) {
         const points = coerceStatisticalSeries(seriesMap[seriesID], dateRange);
         plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points});
@@ -260,49 +260,49 @@ const watermark = function (elem) {
 const timeSeriesGraph = function (elem) {
     elem.call(watermark)
         .append('div')
-        .attr('class', 'hydrograph-container')
-        .call(createTitle)
-        .call(createTooltipText)
-        .append('svg')
-        .attr('xmlns', 'http://www.w3.org/2000/svg')
-        .classed('hydrograph-svg', true)
-        .call(link((elem, layout) => {
-            elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`);
-            elem.attr('width', layout.width);
-            elem.attr('height', layout.height);
-        }, layoutSelector))
-        .call(link(addSVGAccessibility, createStructuredSelector({
-            title: titleSelector,
-            description: descriptionSelector,
-            isInteractive: () => true
-        })))
-        .call(plotSvgDefs)
-        .call(svg => {
-            svg.append('g')
-                .call(link((elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), layoutSelector))
-                .call(link(appendAxes, axesSelector))
-                .call(link(plotDataLines, createStructuredSelector({
-                    visible: isVisibleSelector('current'),
-                    tsLinesMap: currentVariableLineSegmentsSelector('current'),
-                    xScale: xScaleSelector('current'),
-                    yScale: yScaleSelector,
-                    tsKey: () => 'current'
+            .attr('class', 'hydrograph-container')
+            .call(createTitle)
+            .call(createTooltipText)
+            .append('svg')
+                .attr('xmlns', 'http://www.w3.org/2000/svg')
+                .classed('hydrograph-svg', true)
+                .call(link((elem, layout) => {
+                    elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`);
+                    elem.attr('width', layout.width);
+                    elem.attr('height', layout.height);
+                }, layoutSelector))
+                .call(link(addSVGAccessibility, createStructuredSelector({
+                    title: titleSelector,
+                    description: descriptionSelector,
+                    isInteractive: () => true
                 })))
-                .call(link(plotDataLines, createStructuredSelector({
-                    visible: isVisibleSelector('compare'),
-                    tsLinesMap: currentVariableLineSegmentsSelector('compare'),
-                    xScale: xScaleSelector('compare'),
-                    yScale: yScaleSelector,
-                    tsKey: () => 'compare'
-                })))
-                .call(createTooltipFocus)
-                .call(link(plotAllMedianPoints, createStructuredSelector({
-                    visible: isVisibleSelector('median'),
-                    xscale: xScaleSelector('current'),
-                    yscale: yScaleSelector,
-                    seriesMap: currentVariableTimeSeriesSelector('median'),
-                    dateRange: getCurrentDateRange
-                })));
+                .call(plotSvgDefs)
+                .call(svg => {
+                    svg.append('g')
+                        .call(link((elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), layoutSelector))
+                        .call(link(appendAxes, axesSelector))
+                        .call(link(plotDataLines, createStructuredSelector({
+                            visible: isVisibleSelector('current'),
+                            tsLinesMap: currentVariableLineSegmentsSelector('current'),
+                            xScale: xScaleSelector('current'),
+                            yScale: yScaleSelector,
+                            tsKey: () => 'current'
+                        })))
+                        .call(link(plotDataLines, createStructuredSelector({
+                            visible: isVisibleSelector('compare'),
+                            tsLinesMap: currentVariableLineSegmentsSelector('compare'),
+                            xScale: xScaleSelector('compare'),
+                            yScale: yScaleSelector,
+                            tsKey: () => 'compare'
+                        })))
+                        .call(createTooltipFocus)
+                        .call(link(plotAllMedianPoints, createStructuredSelector({
+                            visible: isVisibleSelector('median'),
+                            xscale: xScaleSelector('current'),
+                            yscale: yScaleSelector,
+                            seriesMap: currentVariableTimeSeriesSelector('median'),
+                            dateRange: getCurrentDateRange
+                        })));
         });
 };
 
@@ -422,10 +422,10 @@ const noDataAlert = function (elem, tsCollectionIds) {
             .attr('id', 'no-data-message')
             .attr('class', 'usa-alert usa-alert-info')
             .append('div')
-            .attr('class', 'usa-alert-body')
-            .append('p')
-            .attr('class', 'usa-alert-text')
-            .text('No current time series data available for this site');
+                .attr('class', 'usa-alert-body')
+                .append('p')
+                    .attr('class', 'usa-alert-text')
+                    .text('No current time series data available for this site');
     }
 };
 
@@ -463,9 +463,9 @@ const attachToNode = function (store, node, {siteno, parameter, compare, cursorO
         .call(timeSeriesGraph, siteno)
         .call(cursorSlider)
         .append('div')
-        .classed('ts-legend-controls-container', true)
-        .call(timeSeriesLegend)
-        .call(graphControls);
+            .classed('ts-legend-controls-container', true)
+            .call(timeSeriesLegend)
+            .call(graphControls);
     select(node).select('.select-time-series-container')
         .call(link(plotSeriesSelectTable, createStructuredSelector({
             siteno: () => siteno,
