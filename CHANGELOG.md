@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Loading indicators for initial time series load and for loading extended data
 - Added no data alert for sites with no time series data.
 
+### Fixed
+- Remove sourcemap reference from autotrack.js (Analytics script)
+
 
 ## [0.9.0] - 2018-05-10
 ### Fixed
