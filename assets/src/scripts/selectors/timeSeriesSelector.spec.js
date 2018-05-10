@@ -1,7 +1,8 @@
-const { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getQueryInfo, getCurrentParmCd,
-    hasTimeSeries, getTsRequestKey, getTsQueryInfo, getRequestTimeRange } = require('./timeSeriesSelector');
+const { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getQueryInfo, getRequests,
+    getCurrentParmCd, hasTimeSeries, getTsRequestKey, getTsQueryInfo, getRequestTimeRange, isLoadingTs, getTsRequest,
+    getTimeSeriesCollection } = require('./timeSeriesSelector');
 
-describe('timeSeriesSelector', () => {
+fdescribe('timeSeriesSelector', () => {
     const TEST_VARS = {
         '45807042': {
             variableCode: {
@@ -53,6 +54,18 @@ describe('timeSeriesSelector', () => {
                 }
             });
         });
+    });
+
+    describe('getRequests', () => {
+        it('Empty object if series is empty', () => {
+            expect(getRequests({
+                series: {}
+            })).toEqual({});
+        });
+
+        it('Requests object if in state', () => {
+
+        })
     });
 
     describe('getCurrentVariableID', () => {

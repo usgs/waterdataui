@@ -31,7 +31,7 @@ const {
 const {createTooltipFocus, createTooltipText} = require('./tooltip');
 const {coerceStatisticalSeries} = require('./statistics');
 
-const {getCurrentDateRange, getTimeSeriesCollections, isLoadingTS} = require('../../selectors/timeSeriesSelector');
+const {getCurrentDateRange, getTimeSeriesCollection, isLoadingTS} = require('../../selectors/timeSeriesSelector');
 
 
 const drawMessage = function (elem, message) {
@@ -385,9 +385,8 @@ const dateRangeControls = function (elem, siteno) {
 
     const container = elem.insert('div', ':nth-child(2)')
         .attr('id', 'ts-daterange-select-container')
-        .attr('hidden', true)
-        .call(link(function(div, showControls) {
-            div.attr('hidden', showControls ? null : true);
+        .call(link(function(container, showControls) {
+            container.attr('hidden', showControls ? null : true);
         }, hasTimeSeriesWithPoints('current', 'P7D')));
     const listContainer = container.append('ul')
         .attr('class', 'usa-fieldset-inputs usa-unstyled-list');
@@ -444,7 +443,7 @@ const attachToNode = function (store, node, {siteno, parameter, compare, cursorO
     select(node)
         .call(provide(store));
     select(node)
-        .call(link(noDataAlert, getTimeSeriesCollections('current', 'P7D')));
+        .call(link(noDataAlert, getTimeSeriesCollection('current', 'P7D')));
     select(node).select('.loading-indicator-container')
         .call(link(loadingIndicator, createStructuredSelector({
             showLoadingIndicator: isLoadingTS('current', 'P7D'),

@@ -10,6 +10,8 @@ export const getMethods = state => state.series.methods ? state.series.methods :
 
 export const getQueryInfo = state => state.series.queryInfo || {};
 
+export const getRequests = state => state.series.requests || {};
+
 
 export const getCurrentVariableID = state => state.timeSeriesState.currentVariableID;
 
@@ -47,7 +49,7 @@ export const getCurrentParmCd = createSelector(
 /*
  * @param {String} - Time series key: current, compre or median
  * @param {String} or null period = date range of interest as an ISO-8601 duration. If null the currentDateRange is used
- * @param {String} or null parmCD - if null the parmCd of the current variable is used.
+ * @param {String} or null parmCd - if null the parmCd of the current variable is used.
  * @return {String} or null - Return the the request key for the request object
  * selected variable.
  */
@@ -70,7 +72,7 @@ export const getTsRequestKey = memoize((tsKey, period, parmCd) => createSelector
 /*
  * @param {String} tsKey - current, compare, or median
  * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
- * @param {String} or null parmCD - Only need to specify if period is something other than P7D or null
+ * @param {String} or null parmCd - Only need to specify if period is something other than P7D or null
  * @return {Boolean} - True if the time series with key, period, and parmCd has already been requested
  *
  */
@@ -84,7 +86,7 @@ export const hasTimeSeries = memoize((tsKey, period, parmCd) => createSelector(
 /*
  * @param {String} tsKey - current, compare, or median
  * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
- * @param {String} or null parmCD - Only need to specify if period is something other than P7D or null
+ * @param {String} or null parmCd - Only need to specify if period is something other than P7D or null
  * @return {Object} containing the queryInfo for a specific timeseries request or the empty object if that request
  *      is not in the state
  * */
@@ -97,7 +99,7 @@ export const getTsQueryInfo  = memoize((tsKey, period, parmCd) => createSelector
 /*
  * @param {String} tsKey - current, compare, or median
  * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
- * @param {String} or null parmCD - Only need to specify if period is something other than P7D or null
+ * @param {String} or null parmCd - Only need to specify if period is something other than P7D or null
  * @return {Object} with start and end {Date} properties that contain the range of the data requested or null
  *      if the store does not contain a query for the tsKey request
  * */
@@ -128,20 +130,40 @@ export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSele
     }
 ));
 
+/*
+ * @param {String} tsKey - current, compare, or median
+ * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
+ * @param {String} or null parmCd - Only need to specify if period is something other than P7D or null
+ * @return {Boolean} - True if the tsRequestKey for tsKey, period, and parmCD is being loaded.
+ * */
 export const isLoadingTS = memoize((tsKey, period, parmCd) => createSelector(
     getLoadingTsKeys,
     getTsRequestKey(tsKey, period, parmCd),
     (loadingTSKeys, tsRequestKey) => loadingTSKeys.includes(tsRequestKey)
 ));
 
-export const getTimeSeriesCollections = memoize((tsKey, period, parmCd) => createSelector(
+
+/*
+ * @param {String} tsKey - current, compare, or median
+ * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
+ * @param {String} or null parmCd - Only need to specify if period is something other than P7D or null
+ * @return {Object} the requests object for the time series identified by tsKey, period, and parmCd or the empty object
+ *      if none exists
+ */
+export const getTsRequest = memoize((tsKey, period, parmCd) => createSelector(
+    getRequests,
     getTsRequestKey(tsKey, period, parmCd),
-    state => state.series,
-    (tsRequestKey, series) => {
-        if (series && series.requests && series.requests[tsRequestKey]) {
-            return series.requests[tsRequestKey].timeSeriesCollections;
-        } else {
-            return null;
-        }
-    }
-))
+    (requests, tsRequestKey) => requests[tsRequestKey] || {}
+));
+
+/*
+ * @param {String} tsKey - current, compare, or median
+ * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
+ * @param {String} or null parmCd - Only need to specify if period is something other than P7D or null
+ * @return {Object} the timeSeriesCollection for the time series identified by tsKey, period, and parmCd or null if
+ *      none exists
+ */
+export const getTimeSeriesCollection = memoize((tsKey, period, parmCd) => createSelector(
+    getTsRequest(tsKey, period, parmCd),
+    (tsRequest) => tsRequest.timeSeriesCollection || null
+));
