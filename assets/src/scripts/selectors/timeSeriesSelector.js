@@ -150,7 +150,7 @@ export const isLoadingTS = memoize((tsKey, period, parmCd) => createSelector(
  * @return {Object} the requests object for the time series identified by tsKey, period, and parmCd or the empty object
  *      if none exists
  */
-export const getTsRequest = memoize((tsKey, period, parmCd) => createSelector(
+export const getTSRequest = memoize((tsKey, period, parmCd) => createSelector(
     getRequests,
     getTsRequestKey(tsKey, period, parmCd),
     (requests, tsRequestKey) => requests[tsRequestKey] || {}
@@ -163,7 +163,7 @@ export const getTsRequest = memoize((tsKey, period, parmCd) => createSelector(
  * @return {Object} the timeSeriesCollection for the time series identified by tsKey, period, and parmCd or null if
  *      none exists
  */
-export const getTimeSeriesCollection = memoize((tsKey, period, parmCd) => createSelector(
-    getTsRequest(tsKey, period, parmCd),
-    (tsRequest) => tsRequest.timeSeriesCollection || null
+export const getTimeSeriesCollectionIds = memoize((tsKey, period, parmCd) => createSelector(
+    getTSRequest(tsKey, period, parmCd),
+    (tsRequest) => tsRequest.timeSeriesCollections || null
 ));
