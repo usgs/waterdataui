@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - A bug with the graph watermark intercepting mouseover events driving the tooltips was fixed.
+- Remove sourcemap reference from autotrack.js (Analytics script)
+
+
+## [0.9.0] - 2018-05-10
+### Fixed
+- Safari only bug where extended time range graphs with median data would crash the browser.
 
 
 ## [0.8.0] - 2018-05-08
@@ -186,7 +192,8 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.8.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.9.0...master
+[0.9.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.8.0...waterdataui-0.9.0
 [0.8.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.7.0...waterdataui-0.8.0
 [0.7.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.6.0...waterdataui-0.7.0
 [0.6.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.5.0...waterdataui-0.6.0

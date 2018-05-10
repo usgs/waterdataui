@@ -113,6 +113,7 @@ export const Actions = {
             const state = getState();
             const parmCd = getCurrentParmCd(state);
             const requestKey = getTsRequestKey ('current', period, parmCd)(state);
+            dispatch(Actions.setCurrentDateRange(period));
             if (!hasTimeSeries('current', period, parmCd)(state)) {
                 const endTime = new Date(getRequestTimeRange('current', 'P7D')(state).end);
                 let startTime = calcStartTime(period, endTime);
@@ -132,11 +133,7 @@ export const Actions = {
                         console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
                         dispatch(Actions.addSeriesCollection(requestKey, {}));
                     }
-                ).then(() => {
-                    dispatch(Actions.setCurrentDateRange(period));
-                });
-            } else {
-                dispatch(Actions.setCurrentDateRange(period));
+                );
             }
         };
     },
