@@ -5,13 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- The node.js-based graph server was updated to render PNGs rather than SVGs
 
 
 ## [0.8.0] - 2018-05-08
 ### Added
 - Hydrograph can now show either last 7 days, last 30 days, or the last year of data for
 the selected timeseries. The Show last year feature also works for the three date ranges.
-- The beginnings of a node.js-based graph server was added, which returns a PNG image.
+- The beginnings of a node.js-based graph server was added, which returns an SVG image.
 - Content group tag wdfn_tng to the google analytics script.
 - Added a descriptive label and tooltip to the flood slider control.
 - Cooperator logos
