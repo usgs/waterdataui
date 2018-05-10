@@ -96,7 +96,10 @@ export const Actions = {
             const medianRequestKey = getTsRequestKey('median')(currentState);
             dispatch(Actions.addTimeSeriesLoading([medianRequestKey]));
             const medianStatistics = getMedianStatistics({sites: [siteno]});
-            medianStatistics.finally(() => {
+            medianStatistics.then(() => {
+                dispatch(Actions.removeTimeSeriesLoading([medianRequestKey]));
+            },
+            () => {
                 dispatch(Actions.removeTimeSeriesLoading([medianRequestKey]));
             });
 
