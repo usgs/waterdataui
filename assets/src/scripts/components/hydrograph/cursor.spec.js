@@ -10,19 +10,19 @@ const { cursorSlider, getNearestTime, tsCursorPointsSelector, cursorOffsetSelect
 
 let DATA = [12, 13, 14, 15, 16].map(hour => {
     return {
-        dateTime: new Date(`2018-01-03T${hour}:00:00.000Z`),
+        dateTime: new Date(`2018-01-03T${hour}:00:00.000Z`).getTime(),
         qualifiers: ['P'],
         value: hour
     };
 });
 DATA = DATA.concat([
     {
-        dateTime: new Date('2018-01-03T17:00:00.000Z'),
+        dateTime: 1514998800000, // new Date('2018-01-03T17:00:00.000Z'),
         qualifiers: ['Fld', 'P'],
         value: null
     },
     {
-        dateTime: new Date('2018-01-03T18:00:00.000Z'),
+        dateTime: 1515002400000, // new Date('2018-01-03T18:00:00.000Z'),
         qualifiers: ['Mnt', 'P'],
         value: null
     }
@@ -37,8 +37,8 @@ const TEST_STATE_THREE_VARS = {
                     'filter:timeRange': {
                         mode: 'RANGE',
                         interval: {
-                            start: new Date('2018-03-29T13:00:00'),
-                            end: new Date('2018-03-29T13:45:00')
+                            start: 1522346400000, // new Date('2018-03-29T13:00:00'),
+                            end: 1522349100000 // new Date('2018-03-29T13:45:00')
 
                         }
                     }
@@ -49,8 +49,8 @@ const TEST_STATE_THREE_VARS = {
                     'filter:timeRange': {
                         mode: 'RANGE',
                         interval: {
-                            start: new Date('2018-03-29T13:00:00'),
-                            end: new Date('2018-03-29T13:45:00')
+                            start: 1522346400000, // new Date('2018-03-29T13:00:00'),
+                            end: 1522349100000 // new Date('2018-03-29T13:45:00')
                         }
                     }
                 }
@@ -59,63 +59,63 @@ const TEST_STATE_THREE_VARS = {
         timeSeries: {
             '00060': {
                 tsKey: 'current:P7D',
-                startTime: new Date('2018-03-06T15:45:00.000Z'),
-                endTime: new Date('2018-03-13t13:45:00.000Z'),
+                startTime: 1520351100000, // new Date('2018-03-06T15:45:00.000Z'),
+                endTime: 1520955900000, // new Date('2018-03-13t13:45:00.000Z'),
                 variable: '45807197',
                 points: [{
                     value: 10,
                     qualifiers: ['P'],
-                    dateTime: new Date('2018-03-29T13:00:00')
+                    dateTime: 1522346400000 // new Date('2018-03-29T13:00:00')
                 }, {
                     value: null,
                     qualifiers: ['P', 'ICE'],
-                    dateTime: new Date('2018-03-29T13:15:00')
+                    dateTime: 1522347300000 // new Date('2018-03-29T13:15:00')
                 }, {
                     value: null,
                     qualifiers: ['P', 'FLD'],
-                    dateTime: new Date('2018-03-29T13:30:00')
+                    dateTime: 1522348200000 // new Date('2018-03-29T13:30:00')
                 }]
             },
             '00010': {
                 tsKey: 'current:P7D',
-                startTime: new Date('2017-03-06T15:45:00.000Z'),
-                endTime: new Date('2017-03-13t13:45:00.000Z'),
+                startTime: 1520351100000, // new Date('2017-03-06T15:45:00.000Z'),
+                endTime: 1520955900000, // new Date('2017-03-13t13:45:00.000Z'),
                 variable: '45807196',
                 points: [{
                     value: 1,
                     qualifiers: ['P'],
-                    dateTime: new Date('2018-03-29T13:00:00')
+                    dateTime: 1522346400000 // new Date('2018-03-29T13:00:00')
                 }, {
                     value: 2,
                     qualifiers: ['P'],
-                    dateTime: new Date('2018-03-29T13:15:00')
+                    dateTime: 1522347300000 // new Date('2018-03-29T13:15:00')
                 }, {
                     value: 3,
                     qualifiers: ['P'],
-                    dateTime: new Date('2018-03-29T13:30:00')
+                    dateTime: 1522348200000 // new Date('2018-03-29T13:30:00')
                 }]
             },
             '00045': {
                 tsKey: 'current:P7D',
-                startTime: new Date('2017-03-06T15:45:00.000Z'),
-                endTime: new Date('2017-03-13t13:45:00.000Z'),
+                startTime: 1488815100000, // new Date('2017-03-06T15:45:00.000Z'),
+                endTime: 1489419900000, // new Date('2017-03-13t13:45:00.000Z'),
                 variable: '45807140',
                 points: [{
                     value: 0,
                     qualifiers: ['P'],
-                    dateTime: new Date('2018-03-29T13:00:00')
+                    dateTime: 1522346400000 // new Date('2018-03-29T13:00:00')
                 }, {
                     value: 0.01,
                     qualifiers: ['P'],
-                    dateTime: new Date('2018-03-29T13:15:00')
+                    dateTime: 1522347300000 // new Date('2018-03-29T13:15:00')
                 }, {
                     value: 0.02,
                     qualifiers: ['P'],
-                    dateTime: new Date('2018-03-29T13:30:00')
+                    dateTime: 1522348200000 // new Date('2018-03-29T13:30:00')
                 }, {
                     value: 0.03,
                     qualifiers: ['P'],
-                    dateTime: new Date('2018-03-29T13:45:00')
+                    dateTime: 1522349100000 // new Date('2018-03-29T13:45:00')
                 }]
             }
         },
@@ -216,8 +216,8 @@ const TEST_STATE_ONE_VAR = {
                     'filter:timeRange': {
                         mode: 'RANGE',
                         interval: {
-                            start: new Date('2018-01-03T12:00:00.000Z'),
-                            end: new Date('2018-01-03T16:00:00.000Z')
+                            start: 1514980800000, // new Date('2018-01-03T12:00:00.000Z'),
+                            end: 1514995200000 // new Date('2018-01-03T16:00:00.000Z')
                         }
                     }
                 }
@@ -227,8 +227,8 @@ const TEST_STATE_ONE_VAR = {
                     'filter:timeRange': {
                         mode: 'RANGE',
                         interval: {
-                            start: new Date('2018-01-03T12:00:00.000Z'),
-                            end: new Date('2018-01-03T16:00:00.000Z')
+                            start: 1514980800000, // new Date('2018-01-03T12:00:00.000Z'),
+                            end: 1514995200000 // new Date('2018-01-03T16:00:00.000Z')
                         }
                     }
                 }
@@ -290,7 +290,7 @@ describe('Cursor module', () => {
                     } else {
                         expected = {datum: DATA[index + 1], index: index + 1};
                     }
-                    let time = new Date(datum.dateTime.getTime() + offset);
+                    let time = new Date(datum.dateTime + offset);
                     let returned = getNearestTime(DATA, time);
 
                     expect(returned.datum.dateTime).toBe(expected.datum.dateTime);
@@ -345,7 +345,7 @@ describe('Cursor module', () => {
         it('Should return last time with non-masked value if the cursor offset is null', function() {
             expect(tsCursorPointsSelector('compare')(TEST_STATE_ONE_VAR)).toEqual({
                 '00060:compare': {
-                    dateTime: new Date('2018-01-03T16:00:00.000Z'),
+                    dateTime: 1514995200000, //new Date('2018-01-03T16:00:00.000Z'),
                     qualifiers: ['P'],
                     value: 16,
                     tsKey: 'compare'
@@ -353,7 +353,7 @@ describe('Cursor module', () => {
             });
             expect(tsCursorPointsSelector('current')(TEST_STATE_ONE_VAR)).toEqual({
                 '00060:current': {
-                    dateTime: new Date('2018-01-03T16:00:00.000Z'),
+                    dateTime: 1514995200000, // new Date('2018-01-03T16:00:00.000Z'),
                     qualifiers: ['P'],
                     value: 16,
                     tsKey: 'current'
@@ -387,7 +387,7 @@ describe('Cursor module', () => {
                 '00010': {
                     value: 2,
                     qualifiers: ['P'],
-                    dateTime: new Date('2018-03-29T13:15:00'),
+                    dateTime: 1522347300000, // new Date('2018-03-29T13:15:00'),
                     tsKey: 'current'
                 }
             });
@@ -407,7 +407,7 @@ describe('Cursor module', () => {
                 '00045': {
                     value: 0.03,
                     qualifiers: ['P'],
-                    dateTime: new Date('2018-03-29T13:30:00'),
+                    dateTime: 1522348200000, // new Date('2018-03-29T13:30:00'),
                     tsKey: 'current'
                 }
             });
@@ -427,7 +427,7 @@ describe('Cursor module', () => {
 
         it('returns last point when null', () => {
             store.dispatch(Actions.setCursorOffset(null));
-            const cursorRange = DATA[4].dateTime.getTime() - DATA[0].dateTime.getTime();
+            const cursorRange = DATA[4].dateTime - DATA[0].dateTime;
             expect(cursorOffsetSelector(store.getState())).toBe(cursorRange);
         });
     });

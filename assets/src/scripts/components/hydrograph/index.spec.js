@@ -10,7 +10,7 @@ const TEST_STATE = {
         timeSeries: {
             '00010:current': {
                 points: [{
-                    dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
+                    dateTime: 1514926800000, // new Date('2018-01-02T15:00:00.000-06:00')
                     value: 4,
                     qualifiers: ['P']
                 }],
@@ -20,7 +20,7 @@ const TEST_STATE = {
             },
             '00060:current': {
                 points: [{
-                    dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
+                    dateTime: 1514926800000, // new Date('2018-01-02T15:00:00.000-06:00')
                     value: 10,
                     qualifiers: ['P']
                 }],
@@ -30,7 +30,7 @@ const TEST_STATE = {
             },
             '00060:compare': {
                 points: [{
-                    dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
+                    dateTime: 1514926800000, // new Date('2018-01-02T15:00:00.000-06:00')
                     value: 10,
                     qualifiers: ['P']
                 }],
@@ -41,12 +41,12 @@ const TEST_STATE = {
             '00060:median': {
                 points: [{
                     dateTime: null,
-                    month: 0,
+                    month: 1,
                     day: 2,
                     value: 10
                 }],
-                startTime: new Date('2018-01-02T15:00:00.000-06:00'),
-                endTime: new Date('2018-01-02T15:00:00.000-06:00'),
+                startTime: 1514926800000, // new Date('2018-01-02T15:00:00.000-06:00')
+                endTime: 1514926800000, // new Date('2018-01-02T15:00:00.000-06:00')
                 metadata: {
                     beginYear: '2010',
                     endYear: '2015'
@@ -81,7 +81,7 @@ const TEST_STATE = {
                         mode: 'PERIOD',
                         periodDays: 7
                     },
-                    requestDT: new Date('2018-03-30 11:00:00')
+                    requestDT: 1522425600000 // new Date('2018-03-30 11:00:00')
                 }
             }
         },
@@ -228,14 +228,14 @@ describe('Hydrograph charting module', () => {
                         ...TEST_STATE.series.timeSeries,
                         '00060:current': {
                             ...TEST_STATE.series.timeSeries['00060:current'],
-                            startTime: new Date('2018-01-02T15:00:00.000-06:00'),
-                            endTime: new Date('2018-01-02T16:00:00.000-06:00'),
+                            startTime: 1514926800000, // new Date('2018-01-02T15:00:00.000-06:00')
+                            endTime: 1514930400000, // new Date('2018-01-02T16:00:00.000-06:00'),
                             points: [{
-                                dateTime: new Date('2018-01-02T15:00:00.000-06:00'),
+                                dateTime: 1514926800000, // new Date('2018-01-02T15:00:00.000-06:00')
                                 value: 10,
                                 qualifiers: ['P']
                             }, {
-                                dateTime: new Date('2018-01-02T16:00:00.000-06:00'),
+                                dateTime: 1514930400000, // new Date('2018-01-02T16:00:00.000-06:00'),
                                 value: null,
                                 qualifiers: ['P', 'FLD']
                             }]

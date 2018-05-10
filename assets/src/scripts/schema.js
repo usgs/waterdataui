@@ -99,8 +99,8 @@ const queryInfo = memoize(tsKey => new schema.Entity('queryInfo', {}, {
                 mode: parts[1],
                 modifiedSince: parts[2] === 'null' ? null : parts[3],
                 interval: {
-                    start: new Date(parts[3]),
-                    end: new Date(parts[4])
+                    start: new Date(parts[3]).getTime(),
+                    end: new Date(parts[4]).getTime()
                 }
             };
         } else {
