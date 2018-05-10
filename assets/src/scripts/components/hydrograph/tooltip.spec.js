@@ -6,6 +6,8 @@ const { provide } = require('../../lib/redux');
 const { Actions, configureStore } = require('../../store');
 const { createTooltipText, createTooltipFocus } = require('./tooltip');
 
+const { helloWorld, adjustTooltipFontSize } = require('./tooltip'); // added for WDFN259
+
 
 describe('Hydrograph tooltip module', () => {
 
@@ -379,4 +381,14 @@ describe('Hydrograph tooltip module', () => {
             expect(svg.select('.focus:nth-child(2)').style('display')).not.toBe('none');
         });
     });
+});
+
+describe('Hello world', function() {
+    it('says hello', function() {
+        expect(helloWorld()).toEqual('hello world!');
+    });
+});
+
+describe('adjustTooltipFontSize', function() {
+   it('r')
 });

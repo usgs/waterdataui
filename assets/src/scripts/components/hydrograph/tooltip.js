@@ -102,24 +102,28 @@ const unitCodeSelector = createSelector(
     variable => variable ? variable.unit.unitCode : null
 );
 
-// start added for WDFN259
-
 // set number of pixels to bump the tooltips away from y-axis
-let baseMarginOffsetTextGroup = 5;
-let marginAdjustment = baseMarginOffsetTextGroup + 0;
+const baseMarginOffsetTextGroup = 5;
+let marginAdjustment =  0;
 // Find the with of the between the y-axis and margin
 const findWidthYAxisAndMargin = function (elem) {
     elem.call(link(function(elem, layout) {
-        return marginAdjustment =  layout.margin.left;
+        console.log('this is layout ' + JSON.stringify(layout))
+        return marginAdjustment =  layout.margin.left + baseMarginOffsetTextGroup;
         }, layoutSelector));
 };
+
+// for testing
+function helloWorld() {
+    return 'hello world!';
+}
+
 
 /*
  * Adjust font size of tooltips based on number of tooltips showing
  * @param {elem} Object - D3 selector
  */
 const adjustTooltipFontSize = function(elem) {
-    console.log('here');
     const tooltipTotal = Number(document.querySelectorAll('.tooltip-text-group .current-tooltip-text').length)
         + Number(document.querySelectorAll('.tooltip-text-group .compare-tooltip-text').length);
     if (mediaQuery(USWDS_MEDIUM_SCREEN)) {
@@ -142,7 +146,6 @@ const adjustTooltipFontSize = function(elem) {
         elem.style('font-size', '1rem');
     }
 }
-// end added for WDFN259
 
 const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode}, textGroup) {
 
@@ -291,4 +294,5 @@ const createTooltipFocus = function(elem) {
     })));
 };
 
-module.exports = {createTooltipFocus, createTooltipText, tooltipPointsSelector};
+// original line module.exports = {createTooltipFocus, createTooltipText, tooltipPointsSelector};
+module.exports = {createTooltipFocus, createTooltipText, tooltipPointsSelector, adjustTooltipFontSize, helloWorld}; // added for testing
