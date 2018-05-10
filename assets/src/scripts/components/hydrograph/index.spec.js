@@ -131,7 +131,8 @@ const TEST_STATE = {
             current: true,
             compare: true,
             median: true
-        }
+        },
+        loadingTSKeys: []
     },
     ui: {
         width: 400
@@ -146,6 +147,7 @@ describe('Hydrograph charting module', () => {
         let body = select('body');
         let component = body.append('div')
             .attr('id', 'hydrograph');
+        component.append('div').attr('class', 'loading-indicator-container');
         component.append('div').attr('class', 'graph-container');
         component.append('div').attr('class', 'select-time-series-container');
         component.append('div').attr('class', 'provisional-data-alert');
@@ -249,7 +251,8 @@ describe('Hydrograph charting module', () => {
                         median: true
                     },
                     currentVariableID: '45807197',
-                    currentDateRange: 'P7D'
+                    currentDateRange: 'P7D',
+                    loadingTSKeys: []
                 },
                 ui: {
                     windowWidth: 400,
@@ -401,7 +404,6 @@ describe('Hydrograph charting module', () => {
         beforeEach(() => {
             store = configureStore(TEST_STATE);
             attachToNode(store, graphNode, {siteno: '12345678'});
-
         });
 
         it('Expects the date range controls to be created', () => {
@@ -418,6 +420,88 @@ describe('Hydrograph charting module', () => {
             lastRadio.dispatch('change');
 
             expect(Actions.retrieveExtendedTimeSeries).toHaveBeenCalledWith('12345678', 'P1Y');
+        });
+    });
+
+    describe('Tests for loading indicators', () => {
+
+        it('Expects the graph loading indicator to be visible if the current 7 day data is being loaded', () => {
+            const newTestState = {
+                ...TEST_STATE,
+                timeSeriesState: {
+                    ...TEST_STATE.timeSeriesState,
+                    currentDateRange: 'P7D',
+                    loadingTSKeys: ['current:P7D']
+                }
+            };
+            let store = configureStore(newTestState);
+            spyOn(store, 'dispatch');
+            attachToNode(store, graphNode, {siteno: '12345678'});
+
+            expect(select(graphNode).select('.loading-indicator-container').select('.loading-indicator').size()).toBe(1);
+        });
+
+        it('Expects the graph loading indicator to not be visible if the current 7 day data is not being loaded', () => {
+            let store = configureStore(TEST_STATE);
+            spyOn(store, 'dispatch');
+            attachToNode(store, graphNode, {siteno: '12345678'});
+
+            expect(select(graphNode).select('.loading-indicator-container').select('.loading-indicator').size()).toBe(0);
+        });
+
+        it('Expects the date range control loading indicator to be visible if loading is in progress for the selected date range', () => {
+            const newTestState = {
+                ...TEST_STATE,
+                timeSeriesState: {
+                    ...TEST_STATE.timeSeriesState,
+                    currentDateRange: 'P30D',
+                    loadingTSKeys: ['current:P30D:00060']
+                }
+            };
+            let store = configureStore(newTestState);
+            attachToNode(store, graphNode, {siteno: '12345678'});
+
+            expect(select(graphNode).select('#ts-daterange-select-container').select('.loading-indicator').size()).toBe(1);
+        });
+
+        it('Expects the date range control loading indicator to notbe visible if not loading for the selected date range', () => {
+            const newTestState = {
+                ...TEST_STATE,
+                timeSeriesState: {
+                    ...TEST_STATE.timeSeriesState,
+                    currentDateRange: 'P30D',
+                    loadingTSKeys: ['compare:P30D:00060']
+                }
+            };
+            let store = configureStore(newTestState);
+            attachToNode(store, graphNode, {siteno: '12345678'});
+
+            expect(select(graphNode).select('#ts-daterange-select-container').select('.loading-indicator').size()).toBe(0);
+        });
+
+        it('Expects that the no data alert will not be shown if there is data', () => {
+            let store = configureStore(TEST_STATE);
+            attachToNode(store, graphNode, {siteno: '12345678'});
+
+            expect(select(graphNode).select('#no-data-message').size()).toBe(0);
+        });
+
+        it('Expects the no data alert to be shown if there is no data', () => {
+            let newTestState = {
+                ...TEST_STATE,
+                series: {
+                    ...TEST_STATE.series,
+                    requests: {
+                        'current:P7D': {
+                            timeSeriesCollections: []
+                        }
+                    }
+                }
+            };
+            let store = configureStore(newTestState);
+            attachToNode(store, graphNode, {siteno: '12345678'});
+
+            expect(select(graphNode).select('#no-data-message').size()).toBe(1);
         });
     });
 });
