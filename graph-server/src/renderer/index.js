@@ -1,8 +1,7 @@
-const { processSvg } = require('./image-util');
 const BUNDLES = require('../assets');
 
 
-const getSvgImpl = {
+const getPNGImpl = {
     puppeteer: require('./impl/puppeteer'),
     phantomjs: require('./impl/phantomjs')
 };
@@ -15,14 +14,14 @@ const STATIC_ROOT = process.env.STATIC_ROOT || 'https://waterdata.usgs.gov/nwisw
 
 
 const renderToRespone = function (res, {siteID, parameterCode, compare, renderer}) {
-    const getSvg = getSvgImpl[renderer] || getSvgImpl[DEFAULT_IMPLEMENTATION];
+    const getPNG = getPNGImpl[renderer] || getPNGImpl[DEFAULT_IMPLEMENTATION];
     const componentOptions = {
         siteno: siteID,
         parameter: parameterCode,
         compare: compare,
         cursorOffset: false
     };
-    getSvg(BUNDLES, {
+    getPNG(BUNDLES, {
         pageURL: 'http://wdfn-graph-server',
         pageContent: `<!DOCTYPE html>
             <html lang="en">
@@ -48,17 +47,10 @@ const renderToRespone = function (res, {siteID, parameterCode, compare, renderer
         },
         componentOptions
     })
-    .then(processSvg.bind(null, BUNDLES.styles))
-    .then((svgStr) => {
-        res.setHeader('Content-Type', 'image/svg+xml');
-        res.send(svgStr);
-
-        /* to write a screenshot:
-        const buffer = await page.screenshot();
+    .then((buffer) => {
         res.setHeader('Content-Type', 'image/png');
         res.write(buffer, 'binary');
         res.end(null, 'binary');
-        */
     })
     .catch(error => {
         console.log(error);
