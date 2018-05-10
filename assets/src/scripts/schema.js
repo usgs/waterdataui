@@ -108,7 +108,7 @@ const queryInfo = memoize(tsKey => new schema.Entity('queryInfo', {}, {
         }
 
         // Store requestDT as a date object
-        queryInfo.notes.requestDT = new Date(queryInfo.notes.requestDT);
+        queryInfo.notes.requestDT = new Date(queryInfo.notes.requestDT).getTime();
 
         return queryInfo;
     }

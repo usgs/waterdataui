@@ -67,7 +67,7 @@ export const Actions = {
 
                     // Get the start/end times of this request's range.
                     const notes = collection.queryInfo[requestKey].notes;
-                    const endTime = notes.requestDT;
+                    const endTime = new Date(notes.requestDT);
                     const startTime = new Date(endTime);
                     startTime.setDate(endTime.getDate() - notes['filter:timeRange'].periodDays);
 

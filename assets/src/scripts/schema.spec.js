@@ -21,7 +21,7 @@ describe('Normalizr schema', () => {
                         modifiedSince: null
                     },
                     'filter:methodId': 'methodIds=[ALL]',
-                    'requestDT': new Date('2017-01-09T20:46:07.542Z'),
+                    'requestDT': new Date('2017-01-09T20:46:07.542Z').getTime(),
                     'requestId': '1df59e50-f57e-11e7-8ba8-6cae8b663fb6',
                     'disclaimer': 'Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.',
                     'server': 'vaas01'

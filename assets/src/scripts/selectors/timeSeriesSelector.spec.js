@@ -223,7 +223,7 @@ describe('timeSeriesSelector', () => {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
-                            requestDT: new Date('2017-03-31'),
+                            requestDT: 1490936400000, // new Date('2017-03-31'),
                             'filter:timeRange': {
                                 mode: 'PERIOD',
                                 periodDays: 7,
@@ -233,12 +233,12 @@ describe('timeSeriesSelector', () => {
                     },
                     'current:P30D:00060': {
                         notes: {
-                            requestDT: new Date('2017-03-31'),
+                            requestDT: 1490936400000, // new Date('2017-03-31'),
                             'filter:timeRange': {
                                 mode: 'RANGE',
                                 interval: {
-                                    start: new Date('2017-03-01'),
-                                    end: new Date('2017-03-29')
+                                    start: 1488348000000, // new Date('2017-03-01'),
+                                    end: 1490763600000 // new Date('2017-03-29')
                                 }
                             }
                         }
@@ -271,7 +271,7 @@ describe('timeSeriesSelector', () => {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
-                            requestDT: new Date('2017-03-31'),
+                            requestDT: 1490936400000, // new Date('2017-03-31'),
                             'filter:timeRange': {
                                 mode: 'PERIOD',
                                 periodDays: 7,
@@ -281,12 +281,12 @@ describe('timeSeriesSelector', () => {
                     },
                     'current:P30D:00060': {
                         notes: {
-                            requestDT: new Date('2017-03-31'),
+                            requestDT: 1490936400000, // new Date('2017-03-31'),
                             'filter:timeRange': {
                                 mode: 'RANGE',
                                 interval: {
-                                    start: new Date('2017-03-01'),
-                                    end: new Date('2017-03-29')
+                                    start: 1488348000000, // new Date('2017-03-01'),
+                                    end: 1490763600000 // new Date('2017-03-29')
                                 }
                             }
                         }
@@ -315,15 +315,15 @@ describe('timeSeriesSelector', () => {
 
         it('should use the requestDT for requests with mode PERIOD', () => {
             expect(getRequestTimeRange('current')(TEST_DATA)).toEqual({
-                start: new Date('2017-03-24'),
-                end: new Date('2017-03-31')
+                start: 1490331600000, // new Date('2017-03-24'),
+                end: 1490936400000 // new Date('2017-03-31')
             });
         });
 
         it('should use the interval for request with mode RANGE', () => {
             expect(getRequestTimeRange('current', 'P30D', '00060')(TEST_DATA)).toEqual({
-                start: new Date('2017-03-01'),
-                end: new Date('2017-03-29')
+                start: 1488348000000,  // new Date('2017-03-01'),
+                end: 1490763600000 // new Date('2017-03-29')
             });
         });
     });
