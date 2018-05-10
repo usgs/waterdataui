@@ -1,37 +1,33 @@
 /**
  * Hydrograph charting module.
  */
-const {extent} = require('d3-array');
-const {line: d3Line, curveStepAfter} = require('d3-shape');
-const {select} = require('d3-selection');
+const { extent } = require('d3-array');
+const { line: d3Line, curveStepAfter } = require('d3-shape');
+const { select } = require('d3-selection');
 
-const {createStructuredSelector} = require('reselect');
+const { createStructuredSelector } = require('reselect');
 
-const {addSVGAccessibility} = require('../../accessibility');
-const {USWDS_SMALL_SCREEN, STATIC_URL} = require('../../config');
-const {dispatch, link, provide} = require('../../lib/redux');
-const {Actions} = require('../../store');
-const {mediaQuery} = require('../../utils');
+const { addSVGAccessibility } = require('../../accessibility');
+const { USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
+const { dispatch, link, provide } = require('../../lib/redux');
+const { Actions } = require('../../store');
+const { mediaQuery } = require('../../utils');
 
-const {audibleUI} = require('./audible');
-const {appendAxes, axesSelector} = require('./axes');
-const {cursorSlider} = require('./cursor');
-const {
-    lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
-    MASK_DESC, HASH_ID
+const { audibleUI } = require('./audible');
+const { appendAxes, axesSelector } = require('./axes');
+const { cursorSlider } = require('./cursor');
+const {lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID
 } = require('./drawingData');
-const {CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector} = require('./layout');
-const {drawSimpleLegend, legendMarkerRowsSelector} = require('./legend');
-const {plotSeriesSelectTable, availableTimeSeriesSelector} = require('./parameters');
-const {xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector} = require('./scales');
-const {
-    allTimeSeriesSelector, isVisibleSelector, titleSelector,
-    descriptionSelector, currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints
-} = require('./timeSeries');
-const {createTooltipFocus, createTooltipText} = require('./tooltip');
-const {coerceStatisticalSeries} = require('./statistics');
+const { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
+const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
+const { plotSeriesSelectTable, availableTimeSeriesSelector } = require('./parameters');
+const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
+const { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector,
+    currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } = require('./timeSeries');
+const { createTooltipFocus, createTooltipText } = require('./tooltip');
+const { coerceStatisticalSeries } = require('./statistics');
 
-const {getCurrentDateRange, getTimeSeriesCollectionIds, isLoadingTS} = require('../../selectors/timeSeriesSelector');
+const { getCurrentDateRange, getTimeSeriesCollectionIds, isLoadingTS } = require('../../selectors/timeSeriesSelector');
 
 
 const drawMessage = function (elem, message) {
