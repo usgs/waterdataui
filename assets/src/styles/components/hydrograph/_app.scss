@@ -100,14 +100,6 @@
     // Import the SVG styles for the graph
     @import './graph';
 
-    .time-series-graph-title {
-        @include h4();
-        @include media($medium-screen) {
-            @include h3();
-        }
-        text-align: center;
-    }
-
     .tooltip-text-group {
         pointer-events: none;
         position: absolute;
@@ -134,11 +126,6 @@
             font-weight: normal
         }
     }
-}
-
-.watermark {
-    position: absolute;
-    opacity: .08;
 }
 
 .slider-wrapper {
