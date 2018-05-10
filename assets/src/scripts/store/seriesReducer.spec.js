@@ -3,10 +3,10 @@ const { seriesReducer } = require('./seriesReducer');
 
 describe('seriesReducer', () => {
 
-    describe('ADD_TIMESERIES_COLLECTION action', () => {
+    describe('ADD_TIME_SERIES_COLLECTION action', () => {
         it('Should add the time series collection to the series as is if series is empty', () => {
             expect(seriesReducer({}, {
-                type: 'ADD_TIMESERIES_COLLECTION',
+                type: 'ADD_TIME_SERIES_COLLECTION',
                 data : {
                     stateToMerge: {},
                     timeSeries: {
@@ -61,7 +61,7 @@ describe('seriesReducer', () => {
                         }
                     }
                 }, {
-                    type: 'ADD_TIMESERIES_COLLECTION',
+                    type: 'ADD_TIME_SERIES_COLLECTION',
                     data: {
                         stateToMerge: {},
                         timeSeries: {
@@ -111,10 +111,10 @@ describe('seriesReducer', () => {
         });
     });
 
-    describe('RESET_TIMESERIES', () => {
+    describe('RESET_TIME_SERIES', () => {
         it('If series is already empty will return an object with a requests object the key set to the empty object and an empty timeSeries property', () => {
             expect(seriesReducer({}, {
-                type: 'RESET_TIMESERIES',
+                type: 'RESET_TIME_SERIES',
                 key: 'previous'
             })).toEqual({
                 timeSeries: {},
@@ -125,31 +125,6 @@ describe('seriesReducer', () => {
         });
 
         it('If series contains a time series the series with the key is reset', () => {
-            const result = seriesReducer({
-                timeSeries: {
-                    ts: {
-                        variable: 'varId',
-                        tsKey: 'current',
-                        points: [1]
-                    },
-                    ts1: {
-                        variable: 'varId2',
-                        tsKey: 'compare',
-                        points: [1, 2]
-                    }
-                },
-                requests: {
-                    current: {
-                        queryInfo: 'current'
-                    },
-                    compare: {
-                        queryInfo: 'compare'
-                    }
-                }
-            }, {
-                type: 'RESET_TIMESERIES',
-                key: 'compare'
-            });
             expect(seriesReducer({
                 timeSeries: {
                     ts: {
@@ -172,7 +147,7 @@ describe('seriesReducer', () => {
                     }
                 }
             }, {
-                type: 'RESET_TIMESERIES',
+                type: 'RESET_TIME_SERIES',
                 key: 'compare'
             })).toEqual({
                 timeSeries: {

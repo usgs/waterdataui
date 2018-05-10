@@ -205,24 +205,24 @@ export const Actions = {
     },
     timeSeriesPlayOn(playId) {
         return {
-            type: 'TIMESERIES_PLAY_ON',
+            type: 'TIME_SERIES_PLAY_ON',
             playId
         };
     },
     timeSeriesPlayStop() {
         return {
-            type: 'TIMESERIES_PLAY_STOP'
+            type: 'TIME_SERIES_PLAY_STOP'
         };
     },
     addTimeSeriesLoading(tsKeys) {
         return {
-            type: 'TIMESERIES_LOADING_ADD',
+            type: 'TIME_SERIES_LOADING_ADD',
             tsKeys
         };
     },
     removeTimeSeriesLoading(tsKeys) {
         return {
-            type: 'TIMESERIES_LOADING_REMOVE',
+            type: 'TIME_SERIES_LOADING_REMOVE',
             tsKeys
         };
     },
@@ -235,21 +235,21 @@ export const Actions = {
     },
     toggleTimeSeries(key, show) {
         return {
-            type: 'TOGGLE_TIMESERIES',
+            type: 'TOGGLE_TIME_SERIES',
             key,
             show
         };
     },
     addSeriesCollection(key, data) {
         return {
-            type: 'ADD_TIMESERIES_COLLECTION',
+            type: 'ADD_TIME_SERIES_COLLECTION',
             key,
             data
         };
     },
     resetTimeSeries(key) {
         return {
-            type: 'RESET_TIMESERIES',
+            type: 'RESET_TIME_SERIES',
             key
         };
     },
