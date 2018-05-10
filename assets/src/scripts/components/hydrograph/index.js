@@ -239,9 +239,9 @@ const watermark = function(elem) {
         .attr('src', STATIC_URL + '/img/USGS_green_logo.svg')
         .call(link(function(elem, layout) {
             const transformStringSmallScreen = `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025
-            + layout.margin.left - 50}, ${layout.height * .60})`;
+                + layout.margin.left - 50}, ${layout.height * .60})`;
             const transformStringForAllOtherScreens = `matrix(1, 0, 0, 1, ${(layout.width - layout.margin.left) * .025
-            + layout.margin.left}, ${(layout.height * .75 - (-1 * layout.height + 503) * .12)})`;
+                + layout.margin.left}, ${(layout.height * .75 - (-1 * layout.height + 503) * .12)})`;
             if (!mediaQuery(USWDS_SMALL_SCREEN)) {
                 // calculates the watermark position based on current layout dimensions
                 // and a conversion factor minus the area for blank space due to scaling
