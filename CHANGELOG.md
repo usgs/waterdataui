@@ -5,10 +5,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Remove sourcemap reference from autotrack.js (Analytics script)
+
+
+## [0.9.0] - 2018-05-10
+### Fixed
+- Safari only bug where extended time range graphs with median data would crash the browser.
+
+
+## [0.8.0] - 2018-05-08
 ### Added
 - Hydrograph can now show either last 7 days, last 30 days, or the last year of data for
 the selected timeseries. The Show last year feature also works for the three date ranges.
-- The beginnings of a node.js-based graph server was added.
+- The beginnings of a node.js-based graph server was added, which returns an SVG image.
 - Content group tag wdfn_tng to the google analytics script.
 - Added a descriptive label and tooltip to the flood slider control.
 - Cooperator logos
@@ -178,7 +187,9 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.7.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.9.0...master
+[0.9.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.8.0...waterdataui-0.9.0
+[0.8.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.7.0...waterdataui-0.8.0
 [0.7.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.6.0...waterdataui-0.7.0
 [0.6.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.5.0...waterdataui-0.6.0
 [0.5.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.4.0...waterdataui-0.5.0

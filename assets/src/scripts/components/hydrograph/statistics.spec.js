@@ -1,4 +1,4 @@
-const { range } = require('lodash');
+const range = require('lodash/range');
 const { coerceStatisticalSeries } = require('./statistics');
 
 
