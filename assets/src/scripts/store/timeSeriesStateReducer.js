@@ -67,14 +67,14 @@ const removeLoadingTimeSeries = function(timeSeriesState, action) {
  */
 export const timeSeriesStateReducer = function(timeSeriesState={}, action) {
     switch (action.type) {
-        case 'TOGGLE_TIMESERIES' : return toggleTimeSeries(timeSeriesState, action);
+        case 'TOGGLE_TIME_SERIES' : return toggleTimeSeries(timeSeriesState, action);
         case 'SET_CURRENT_VARIABLE': return setCurrentVariable(timeSeriesState, action);
         case 'SET_CURRENT_DATE_RANGE': return setCurrentDateRange(timeSeriesState, action);
         case 'SET_CURSOR_OFFSET': return setCursorOffset(timeSeriesState, action);
-        case 'TIMESERIES_PLAY_ON': return timeSeriesPlayOn(timeSeriesState, action);
-        case 'TIMESERIES_PLAY_STOP': return timeSeriesPlayStop(timeSeriesState, action);
-        case 'TIMESERIES_LOADING_ADD': return addLoadingTimeSeries(timeSeriesState, action);
-        case 'TIMESERIES_LOADING_REMOVE': return removeLoadingTimeSeries(timeSeriesState, action);
+        case 'TIME_SERIES_PLAY_ON': return timeSeriesPlayOn(timeSeriesState, action);
+        case 'TIME_SERIES_PLAY_STOP': return timeSeriesPlayStop(timeSeriesState, action);
+        case 'TIME_SERIES_LOADING_ADD': return addLoadingTimeSeries(timeSeriesState, action);
+        case 'TIME_SERIES_LOADING_REMOVE': return removeLoadingTimeSeries(timeSeriesState, action);
         default: return timeSeriesState;
     }
 };
