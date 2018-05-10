@@ -463,5 +463,5 @@ describe('timeSeriesSelector', () => {
             expect(getTimeSeriesCollectionIds('compare', 'P7D')(TEST_DATA)).toBeNull();
             expect(getTimeSeriesCollectionIds('current', 'P1Y', '00010')(TEST_DATA)).toBeNull({});
         });
-    })
+    });
 });
