@@ -11,7 +11,6 @@ const { calcStartTime } = require('../../utils');
  * @returns {*[]}
  */
 export const coerceStatisticalSeries = function (series, period, ianaTimeZone) {
-    // console.log('coerceStatisticalSeries:');
     const startTime = calcStartTime(period, series.endTime); // calculate when the start time based on the period
     const startYear = DateTime.fromMillis(startTime, {zone: ianaTimeZone}).year;
     const endYear = DateTime.fromMillis(series.endTime, {zone: ianaTimeZone}).year;
@@ -44,10 +43,8 @@ export const coerceStatisticalSeries = function (series, period, ianaTimeZone) {
     const sortedPoints = plotablePoints.sort(function(a, b) {
         return a.dateTime - b.dateTime;
     });
-    // console.log(sortedPoints);
     // include median points that fall within the hydrograph's start and end datetime
     let filtered = sortedPoints.filter(x => startTime <= x.dateTime && x.dateTime <= series.endTime);
-    // console.log(filtered);
     // handle the far left and far right ends of the graph
     const first = filtered[0];
     if (first.dateTime > startTime) {

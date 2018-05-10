@@ -109,7 +109,6 @@ export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSele
             return null;
         }
         let result;
-        console.log(notes);
         // If this is a period-based query (eg, P7D), use the request time
         // as the end date.
         if (notes['filter:timeRange'].mode === 'PERIOD') {
@@ -126,7 +125,6 @@ export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSele
                 end: notes['filter:timeRange'].interval.end
             };
         }
-        // console.log(result);
         return result;
     }
 ));
