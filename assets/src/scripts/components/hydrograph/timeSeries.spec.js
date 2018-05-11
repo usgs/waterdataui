@@ -8,8 +8,8 @@ const TEST_DATA = {
         timeSeries: {
             '00060': {
                 tsKey: 'current:P7D',
-                startTime: new Date('2018-03-06T15:45:00.000Z'),
-                endTime: new Date('2018-03-13T13:45:00.000Z'),
+                startTime: 1520351100000,
+                endTime: 1520948700000,
                 variable: '45807197',
                 points: [{
                     value: 10,
@@ -30,8 +30,8 @@ const TEST_DATA = {
             },
             '00010': {
                 tsKey: 'compare:P7D',
-                startTime: new Date('2017-03-06T15:45:00.000Z'),
-                endTime: new Date('2017-03-13t13:45:00.000Z'),
+                startTime: 1520351100000,
+                endTime: 1520948700000,
                 variables: '45807196',
                 points: [{
                     value: 1,
@@ -52,8 +52,8 @@ const TEST_DATA = {
             },
             '00060:P30D': {
                 tsKey: 'current:P30D:00060',
-                startTime: new Date('2018-02-06T15:45:00.000Z'),
-                endTime: new Date('2018-02-13T13:45:00.000Z'),
+                startTime: 1520351100000,
+                endTime: 1520948700000,
                 variable: '45807197',
                 points: [{
                     value: 10,
@@ -106,7 +106,7 @@ const TEST_DATA = {
         queryInfo: {
             'current:P7D': {
                 notes: {
-                    requestDT: new Date('2017-01-09T20:46:07.542Z'),
+                    requestDT: 1483994767572,
                     'filter:timeRange': {
                         mode: 'PERIOD',
                         periodDays: 7,
@@ -116,12 +116,12 @@ const TEST_DATA = {
             },
             'current:P30D:00060': {
                 notes: {
-                    requestDT: new Date('2017-01-09T20:46:07.542Z'),
+                    requestDT: 1483994767572,
                     'filter:timeRange': {
                         mode: 'RANGE',
                         interval: {
-                            start: new Date('2017-01-09'),
-                            end: new Date('2017-02-08')
+                            start: 1483941600000,
+                            end: 1486533600000
                         },
                         modifiedSince: null
                     }
@@ -280,8 +280,8 @@ describe('TimeSeries module', () => {
             expect(timeSeriesSelector('current')(TEST_DATA)).toEqual({
                 '00060': {
                     tsKey: 'current:P7D',
-                    startTime: new Date('2018-03-06T15:45:00.000Z'),
-                    endTime: new Date('2018-03-13T13:45:00.000Z'),
+                    startTime: 1520351100000,
+                    endTime: 1520948700000,
                     points: [{
                         value: 10,
                         qualifiers: ['P'],
@@ -304,8 +304,8 @@ describe('TimeSeries module', () => {
             expect(timeSeriesSelector('current','P30D')(TEST_DATA)).toEqual({
                 '00060:P30D': {
                     tsKey: 'current:P30D:00060',
-                    startTime: new Date('2018-02-06T15:45:00.000Z'),
-                    endTime: new Date('2018-02-13T13:45:00.000Z'),
+                    startTime: 1520351100000,
+                    endTime: 1520948700000,
                     variable: '45807197',
                     points: [{
                         value: 10,
@@ -346,15 +346,15 @@ describe('TimeSeries module', () => {
                         ...TEST_DATA.series.timeSeries,
                         '00060': {
                             tsKey: 'current:P7D',
-                            startTime: new Date('2018-03-06T15:45:00.000Z'),
-                            endTime: new Date('2018-03-13T13:45:00.000Z'),
+                            startTime: 1520351100000,
+                            endTime: 1520948700000,
                             variable: '45807197',
                             points: []
                         },
                         '00060:P30D': {
                             tsKey: 'current:P30D:00060',
-                            startTime: new Date('2018-02-06T15:45:00.000Z'),
-                            endTime: new Date('2018-02-13T13:45:00.000Z'),
+                            startTime: 1520351100000,
+                            endTime: 1520948700000,
                             variable: '45807197',
                             points: []
                         }
