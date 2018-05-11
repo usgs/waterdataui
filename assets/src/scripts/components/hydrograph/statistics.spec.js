@@ -5,25 +5,31 @@ const { DateTime } = require('luxon');
 
 describe('Statistics module', () => {
 
+    const timeZone = 'America/Chicago';
+
     describe('coerceStatisticalSeries', () => {
         // generate a year's worth of fake median data
-        const MONTHS = range(0, 12);
+        const MONTHS = range(1, 13);
         const DAYS = range(1, 32);
         const YEAR = 2016;
         let time = [];
         MONTHS.forEach(month => {
             DAYS.forEach(day => {
-                let someDay = new Date(YEAR, month, day).getTime();
-                if (!time.includes(someDay)) {
+                let someDay = DateTime.fromObject({
+                    year: YEAR,
+                    month: month,
+                    day: day,
+                    zone: timeZone
+                }).valueOf();
+                if (!time.includes(someDay) && !isNaN(someDay)) {
                     time.push(someDay);
                 }
             });
         });
-
-        const dates = time.map(t => new Date(t));
+        const dates = time.map(t => new DateTime.fromMillis(t, {zone: timeZone}));
         const points = dates.map(dt => {
-            const month = dt.getMonth() + 1;
-            const day = dt.getDate();
+            const month = dt.month;
+            const day = dt.day;
             return {
                 dateTime: null,
                 month: month,
@@ -45,8 +51,6 @@ describe('Statistics module', () => {
             points: points,
             endTime: 1520385960000
         };
-
-        const timeZone = 'America/Chicago';
 
         it('handles coercion to a single year of data without a leap day', () => {
             const result = coerceStatisticalSeries(series1, 'P7D', timeZone);
