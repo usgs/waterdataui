@@ -25,8 +25,6 @@ const getLayerDefs = function(layerNo, siteno, stage) {
  */
 const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     // Create map on node
-    node.append('div')
-        .attr('id', 'site-map');
     const map = createMap('site-map', {
         center: [latitude, longitude],
         zoom: zoom,
@@ -155,8 +153,7 @@ export const attachToNode = function(store, node, {siteno, latitude, longitude, 
 
     select(node)
         .call(provide(store));
-    select(node).append('div')
-        .attr('id', 'flood-layer-control-container')
+    select(node).select('#flood-layer-control-container')
         .call(floodSlider);
     select(node)
         .call(siteMap, {siteno, latitude, longitude, zoom});

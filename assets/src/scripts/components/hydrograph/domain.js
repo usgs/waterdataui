@@ -119,11 +119,15 @@ export const getYTickDetails = function (yDomain, parmCd) {
 };
 
 
-export const tickSelector = createSelector(
+const yDomainSelector = createSelector(
     visiblePointsSelector,
     getCurrentParmCd,
-    (pointArrays, currentParmCd) => {
-        const yDomain = getYDomain(pointArrays, currentParmCd);
-        return getYTickDetails(yDomain, currentParmCd);
-    }
+    getYDomain
+);
+
+
+export const tickSelector = createSelector(
+    yDomainSelector,
+    getCurrentParmCd,
+    getYTickDetails
 );

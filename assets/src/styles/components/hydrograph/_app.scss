@@ -4,10 +4,16 @@
 @import './variables';
 
 #ts-daterange-select-container {
-    li {
+    .loading-indicator-container {
         display: inline-block;
-        label {
-            width: 110px;
+    }
+    ul {
+        display: inline-block;
+        li {
+            display: inline-block;
+            label {
+                width: 110px;
+            }
         }
     }
 }
@@ -100,14 +106,6 @@
     // Import the SVG styles for the graph
     @import './graph';
 
-    .time-series-graph-title {
-        @include h4();
-        @include media($medium-screen) {
-            @include h3();
-        }
-        text-align: center;
-    }
-
     .tooltip-text-group {
         pointer-events: none;
         position: absolute;
@@ -128,9 +126,12 @@
     }
 }
 
-.watermark {
-    position: absolute;
-    opacity: .08;
+.loading-indicator-container {
+    i {
+        text-align: center;
+        vertical: middle;
+        width: 100%;
+    }
 }
 
 .slider-wrapper {
