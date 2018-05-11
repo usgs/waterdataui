@@ -1,4 +1,5 @@
 const { select } = require('d3-selection');
+const { DateTime } = require('luxon');
 
 /**
  * Determine the unicode variant of an HTML decimal entity
@@ -158,26 +159,27 @@ export const mediaQuery = function (minWidth) {
 /**
  * Calculate the start time of a time range based on a time-delta string and the end time
  *
- * @param period -- an NWIS time-delta string (e.g. P7D)
+ * @param period -- ISO duration for date range of the time series
  * @param endTime -- the end time
+ * @param ianaTimeZone -- Internet Assigned Numbers Authority designation for a time zone
  * @returns {int}
  */
-export const calcStartTime = function (period, endTime) {
-    let startTime = new Date(endTime);
+export const calcStartTime = function (period, endTime, ianaTimeZone) {
+    let startTime = new DateTime.fromMillis(endTime, {zone: ianaTimeZone});
     switch (period) {
         case 'P7D':
-            startTime.setDate(startTime.getDate() - 7);
+            startTime = startTime.minus({days: 7});
             break;
         case 'P30D':
-            startTime.setDate(startTime.getDate() - 30);
+            startTime = startTime.minus({days: 30});
             break;
         case 'P1Y':
-            startTime.setFullYear(startTime.getFullYear() - 1);
+            startTime = startTime.minus({years: 1});
             break;
         default:
             console.log('No known period specified');
     }
-    return startTime.getTime();
+    return startTime.valueOf();
 };
 
 /**
