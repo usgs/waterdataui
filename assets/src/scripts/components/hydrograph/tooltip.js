@@ -116,7 +116,31 @@ const findWidthYAxisAndMargin = function (elem) {
 /*
  * Adjust font size of tooltips based on number of tooltips showing
  * @param {elem} Object - D3 selector
- */
+
+const adjustTooltipFontSize = function(elem) {
+    const tooltipTotal = Number(document.querySelectorAll('.tooltip-text-group .current-tooltip-text').length)
+        + Number(document.querySelectorAll('.tooltip-text-group .compare-tooltip-text').length);
+    if (mediaQuery(USWDS_MEDIUM_SCREEN)) {
+        if (tooltipTotal <= 2) {
+            elem.style('font-size', '2rem');
+        } else if (tooltipTotal <= 4) {
+            elem.style('font-size', '1.75rem');
+        } else {
+            elem.style('font-size', '1.25rem');
+        }
+    } else if (mediaQuery(USWDS_SMALL_SCREEN)) {
+        if (tooltipTotal <= 2) {
+            elem.style('font-size', '1.75rem');
+        } else if (tooltipTotal <= 4) {
+            elem.style('font-size', '1.25rem');
+        } else {
+            elem.style('font-size', '1rem');
+        }
+    } else {
+        elem.style('font-size', '1rem');
+    }
+}
+*/
 const adjustTooltipFontSize = function(elem) {
     const tooltipTotal = Number(document.querySelectorAll('.tooltip-text-group .current-tooltip-text').length)
         + Number(document.querySelectorAll('.tooltip-text-group .compare-tooltip-text').length);
@@ -155,7 +179,8 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     }
 
     const data = Object.values(currentPoints).concat(Object.values(comparePoints));
-console.log('this is data ' + JSON.stringify(data));
+console.log('this is current ' + Object.values(currentPoints).length);
+console.log('this is compare ' + Object.values(comparePoints).length);
     const texts = textGroup
         .selectAll('div')
         .data(data);
@@ -175,7 +200,7 @@ console.log('this is data ' + JSON.stringify(data));
         .interrupt()
         .style('opacity', '1')
         .call(findWidthYAxisAndMargin)  // added for WDFN259
-        .call(adjustTooltipFontSize)  // added for WDFN259
+        .call(adjustTooltipFontSize) //added for WDFN259
         .style('margin-left', marginAdjustment + 'px'); // added for WDFN259
 
     merge
