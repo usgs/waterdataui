@@ -4,10 +4,16 @@
 @import './variables';
 
 #ts-daterange-select-container {
-    li {
+    .loading-indicator-container {
         display: inline-block;
-        label {
-            width: 110px;
+    }
+    ul {
+        display: inline-block;
+        li {
+            display: inline-block;
+            label {
+                width: 110px;
+            }
         }
     }
 }
@@ -125,6 +131,14 @@
         .compare-tooltip-text {
             font-weight: normal
         }
+    }
+}
+
+.loading-indicator-container {
+    i {
+        text-align: center;
+        vertical: middle;
+        width: 100%;
     }
 }
 
