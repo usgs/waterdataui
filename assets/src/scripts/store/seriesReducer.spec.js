@@ -191,4 +191,16 @@ describe('seriesReducer', () => {
             });
         });
     });
+
+    describe('SET_LOCATION_IANA_TIME_ZONE', () => {
+
+        it('should add the time zome', () => {
+            expect(seriesReducer({}, {
+                type: 'SET_LOCATION_IANA_TIME_ZONE',
+                ianaTimeZone: 'America/Juneau'
+            })).toEqual({
+                ianaTimeZone: 'America/Juneau'
+            });
+        });
+    });
 });
