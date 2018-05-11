@@ -8,6 +8,7 @@ const { calcStartTime } = require('../../utils');
  *
  * @param series -- an object with the following keys: points, startTime, and endTime at a minimum. Each point should have a javascript month and day
  * @param period -- NWIS time period string (e.g. 'P7D') denoted the period of time to display
+ * @param ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
  * @returns {*[]}
  */
 export const coerceStatisticalSeries = function (series, period, ianaTimeZone) {
