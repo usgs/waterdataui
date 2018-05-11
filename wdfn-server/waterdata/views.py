@@ -56,15 +56,6 @@ def monitoring_location(site_no):
         }
         station_record = data_list[0]
 
-        # get the cooperator data from service
-        # feature toggle; remove 'if/else' when new lookup service is implemented
-        if app.config['COOPERATOR_LOOKUP_ENABLED']:
-            params = 'SiteNumber=' + site_no + app.config['URL_PARAMS_COOPERATOR_LOOKUP']
-            cooperator_lookup_data = execute_cooperator_lookup_request(app.config['SERVICE_ROOT_COOPERATOR_LOOKUP'],
-                                                                       app.config['URL_PATH_COOPERATOR_LOOKUP'], params)
-        else:
-            cooperator_lookup_data = None
-
         if len(data_list) == 1:
             parameter_data_resp = execute_get_request(
                 SERVICE_ROOT,
@@ -120,6 +111,19 @@ def monitoring_location(site_no):
                 )
             except KeyError:
                 site_owner_state = None
+
+            # get the cooperator data from service
+            # feature toggle; remove 'if/else' when new lookup service is implemented
+            # for now, limit to district codes 20 and 51
+            if app.config['COOPERATOR_LOOKUP_ENABLED'] and (
+                    app.config['COOPERATOR_LOOKUP_ENABLED'] is True or
+                    location_with_values.get('district_cd', {}).get('code') in app.config['COOPERATOR_LOOKUP_ENABLED']):
+                params = 'SiteNumber=' + site_no + app.config['URL_PARAMS_COOPERATOR_LOOKUP']
+                cooperator_lookup_data = execute_cooperator_lookup_request(app.config['SERVICE_ROOT_COOPERATOR_LOOKUP'],
+                                                                           app.config['URL_PATH_COOPERATOR_LOOKUP'], params)
+            else:
+                cooperator_lookup_data = None
+
             if site_owner_state is not None:
                 questions_link_params = {
                     'pemail': 'gs-w-{}_NWISWeb_Data_Inquiries'.format(site_owner_state.lower()),
