@@ -234,14 +234,14 @@ const createTitle = function(elem) {
 };
 
 const watermark = function(elem) {
-    elem.append('img')
+    elem.append('image')
         .classed('watermark', true)
-        .attr('src', STATIC_URL + '/img/USGS_green_logo.svg')
+        .attr('href', STATIC_URL + '/img/USGS_green_logo.svg')
         .call(link(function(elem, layout) {
             const transformStringSmallScreen = `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025
-                + layout.margin.left - 50}, ${layout.height * .60})`;
+                    + layout.margin.left}, ${layout.height * .60})`;
             const transformStringForAllOtherScreens = `matrix(1, 0, 0, 1, ${(layout.width - layout.margin.left) * .025
-                + layout.margin.left}, ${(layout.height * .75 - (-1 * layout.height + 503) * .12)})`;
+                    + layout.margin.left}, ${(layout.height * .75 - (-1 * layout.height + 503) * .12)})`;
             if (!mediaQuery(USWDS_SMALL_SCREEN)) {
                 // calculates the watermark position based on current layout dimensions
                 // and a conversion factor minus the area for blank space due to scaling
@@ -258,51 +258,51 @@ const watermark = function(elem) {
 };
 
 const timeSeriesGraph = function(elem) {
-    elem.call(watermark)
-        .append('div')
-            .attr('class', 'hydrograph-container')
-            .call(createTitle)
-            .call(createTooltipText)
-            .append('svg')
-                .attr('xmlns', 'http://www.w3.org/2000/svg')
-                .classed('hydrograph-svg', true)
-                .call(link((elem, layout) => {
-                    elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`);
-                    elem.attr('width', layout.width);
-                    elem.attr('height', layout.height);
-                }, layoutSelector))
-                .call(link(addSVGAccessibility, createStructuredSelector({
-                    title: titleSelector,
-                    description: descriptionSelector,
-                    isInteractive: () => true
-                })))
-                .call(plotSvgDefs)
-                .call(svg => {
-                    svg.append('g')
-                        .call(link((elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), layoutSelector))
-                        .call(link(appendAxes, axesSelector))
-                        .call(link(plotDataLines, createStructuredSelector({
-                            visible: isVisibleSelector('current'),
-                            tsLinesMap: currentVariableLineSegmentsSelector('current'),
-                            xScale: xScaleSelector('current'),
-                            yScale: yScaleSelector,
-                            tsKey: () => 'current'
-                        })))
-                        .call(link(plotDataLines, createStructuredSelector({
-                            visible: isVisibleSelector('compare'),
-                            tsLinesMap: currentVariableLineSegmentsSelector('compare'),
-                            xScale: xScaleSelector('compare'),
-                            yScale: yScaleSelector,
-                            tsKey: () => 'compare'
-                        })))
-                        .call(createTooltipFocus)
-                        .call(link(plotAllMedianPoints, createStructuredSelector({
-                            visible: isVisibleSelector('median'),
-                            xscale: xScaleSelector('current'),
-                            yscale: yScaleSelector,
-                            seriesMap: currentVariableTimeSeriesSelector('median'),
-                            dateRange: getCurrentDateRange
-                        })));
+    elem.append('div')
+        .attr('class', 'hydrograph-container')
+        .call(createTitle)
+        .call(createTooltipText)
+        .append('svg')
+            .attr('xmlns', 'http://www.w3.org/2000/svg')
+            .classed('hydrograph-svg', true)
+            .call(link((elem, layout) => {
+                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`);
+                elem.attr('width', layout.width);
+                elem.attr('height', layout.height);
+            }, layoutSelector))
+            .call(link(addSVGAccessibility, createStructuredSelector({
+                title: titleSelector,
+                description: descriptionSelector,
+                isInteractive: () => true
+            })))
+            .call(plotSvgDefs)
+            .call(watermark)
+            .call(svg => {
+                svg.append('g')
+                    .call(link((elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), layoutSelector))
+                    .call(link(appendAxes, axesSelector))
+                    .call(link(plotDataLines, createStructuredSelector({
+                        visible: isVisibleSelector('current'),
+                        tsLinesMap: currentVariableLineSegmentsSelector('current'),
+                        xScale: xScaleSelector('current'),
+                        yScale: yScaleSelector,
+                        tsKey: () => 'current'
+                    })))
+                    .call(link(plotDataLines, createStructuredSelector({
+                        visible: isVisibleSelector('compare'),
+                        tsLinesMap: currentVariableLineSegmentsSelector('compare'),
+                        xScale: xScaleSelector('compare'),
+                        yScale: yScaleSelector,
+                        tsKey: () => 'compare'
+                    })))
+                    .call(createTooltipFocus)
+                    .call(link(plotAllMedianPoints, createStructuredSelector({
+                        visible: isVisibleSelector('median'),
+                        xscale: xScaleSelector('current'),
+                        yscale: yScaleSelector,
+                        seriesMap: currentVariableTimeSeriesSelector('median'),
+                        dateRange: getCurrentDateRange
+                    })));
         });
 };
 

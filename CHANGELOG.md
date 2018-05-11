@@ -9,7 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Loading indicators for initial time series load and for loading extended data
 - Added no data alert for sites with no time series data.
 
+
+### Changed
+- The node.js-based graph server was updated to render PNGs rather than SVGs
+
+
 ### Fixed
+- A bug with the graph watermark intercepting mouseover events driving the tooltips was fixed.
 - Remove sourcemap reference from autotrack.js (Analytics script)
 
 

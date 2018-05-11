@@ -1,27 +1,27 @@
-const { processSvg } = require('./image-util');
 const BUNDLES = require('../assets');
 
 
-const getSvgImpl = {
+const getPNGImpl = {
     puppeteer: require('./impl/puppeteer'),
     phantomjs: require('./impl/phantomjs')
 };
 const DEFAULT_IMPLEMENTATION = 'puppeteer';
 
 
-const SERVICE_ROOT = 'https://waterservices.usgs.gov/nwis';
-const PAST_SERVICE_ROOT = 'https://nwis.waterservices.usgs.gov/nwis';
+const SERVICE_ROOT = process.env.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
+const PAST_SERVICE_ROOT = process.env.PAST_SERVICE_ROOT || 'https://nwis.waterservices.usgs.gov/nwis';
+const STATIC_ROOT = process.env.STATIC_ROOT || 'https://waterdata.usgs.gov/nwisweb/wsgi/static';
 
 
 const renderToRespone = function (res, {siteID, parameterCode, compare, renderer}) {
-    const getSvg = getSvgImpl[renderer] || getSvgImpl[DEFAULT_IMPLEMENTATION];
+    const getPNG = getPNGImpl[renderer] || getPNGImpl[DEFAULT_IMPLEMENTATION];
     const componentOptions = {
         siteno: siteID,
         parameter: parameterCode,
         compare: compare,
         cursorOffset: false
     };
-    getSvg(BUNDLES, {
+    getPNG(BUNDLES, {
         pageURL: 'http://wdfn-graph-server',
         pageContent: `<!DOCTYPE html>
             <html lang="en">
@@ -29,7 +29,8 @@ const renderToRespone = function (res, {siteID, parameterCode, compare, renderer
                     <script type="text/javascript">
                         var CONFIG = {
                             SERVICE_ROOT: '${SERVICE_ROOT}',
-                            PAST_SERVICE_ROOT: '${PAST_SERVICE_ROOT}'
+                            PAST_SERVICE_ROOT: '${PAST_SERVICE_ROOT}',
+                            STATIC_URL: '${STATIC_ROOT}'
                         };
                     </script>
                 </head>
@@ -46,17 +47,10 @@ const renderToRespone = function (res, {siteID, parameterCode, compare, renderer
         },
         componentOptions
     })
-    .then(processSvg.bind(null, BUNDLES.styles))
-    .then((svgStr) => {
-        res.setHeader('Content-Type', 'image/svg+xml');
-        res.send(svgStr);
-
-        /* to write a screenshot:
-        const buffer = await page.screenshot();
+    .then((buffer) => {
         res.setHeader('Content-Type', 'image/png');
         res.write(buffer, 'binary');
         res.end(null, 'binary');
-        */
     })
     .catch(error => {
         console.log(error);
