@@ -5,6 +5,10 @@ python:
 
 addons:
   firefox: "latest"
+  browserstack:
+    username: "danielnaab3"
+    access_key:
+      secure: "f4cjLVC5ORAFkpK4kv/1fHP916vVC/y4EvakM1o25vrwb0/BDWNkxAgsGWVMS6XBDGd4XFtfcrY9seagRw3yUJ0lZU4PCIwxd7vDnORZBjIWRd/XzsRFBLIMajePLpGfyM+l4eyCE/AeE2qLKZgOqGMIjPHpesP6vF6gIwTxJjvhypt3bLYZJMdaN/+xFjnOpFS/wNQKBTnP8w6ZDh82JD1YNKCmLJ5ET4KCHnj0VzcJ9NP9HAzoPzgaAX6euR1iVN3KlmvSfiaWgVGLhcn6wbvQ3TdmFIFsXRt8GPv6ExhKDcFZak1J7QWjq2xIQqWD58rH06rs+sMuwjnZaOSi7Kiiv6t52z48nH8zbOywiVal6PhVsN62X2uquFhuEyFFdlwRgb/DuGeEC4yYj+yeAn1YOO8YtjZRjEY2VkgpHLGPQqIDt7RqYjssHwfr/yodOyLeDmex5pV2sP8zWZbqKaT6SvmnSQhEHaCHzTGbKgXA7E6zSQ2oafizk5jiOJ8QEdVoHUqnWT+LdxJsFeMXGXg/5WfYA7hbneq2PJ5UTTkGvoU0ZbcB8t4rwjVaRd+dWPsn3H2AAD0egCj+nef7PgkTHdb8jGzNB27e6HXSPfLRgSeYplSQix+71G2OCYzHStN46x7aPxUIdAs3RPPCuvjil8kzfcIdVFKiK3eCHiI="
 
 
 before_install:
