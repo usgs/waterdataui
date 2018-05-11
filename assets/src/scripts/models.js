@@ -230,11 +230,11 @@ export function parseMedianData(medianData, timeSeriesEndDateTime, variables) {
 }
 
 export function getPreviousYearTimeSeries({site, startTime, endTime}) {
-    let lastYearStartTime = new Date(startTime.getTime());
-    let lastYearEndTime = new Date(endTime.getTime());
+    let lastYearStartTime = new Date(startTime);
+    let lastYearEndTime = new Date(endTime);
 
-    lastYearStartTime.setFullYear(startTime.getFullYear() - 1);
-    lastYearEndTime.setFullYear(endTime.getFullYear() - 1);
+    lastYearStartTime.setFullYear(lastYearStartTime.getFullYear() - 1);
+    lastYearEndTime.setFullYear(lastYearEndTime.getFullYear() - 1);
     return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
 }
 

@@ -62,7 +62,6 @@ export const Actions = {
             const currentState = getState();
             const requestKey = getTsRequestKey('current', 'P7D')(currentState);
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
-
             const timeSeries = getTimeSeries({sites: [siteno], params}).then(
                 series => {
                     const collection = normalize(series, requestKey);
@@ -146,9 +145,8 @@ export const Actions = {
             const requestKey = getTsRequestKey ('current', period, parmCd)(state);
             dispatch(Actions.setCurrentDateRange(period));
             if (!hasTimeSeries('current', period, parmCd)(state)) {
-                const endTime = new Date(getRequestTimeRange('current', 'P7D')(state).end);
+                const endTime = getRequestTimeRange('current', 'P7D')(state).end;
                 let startTime = calcStartTime(period, endTime);
-
                 dispatch(Actions.addTimeSeriesLoading([requestKey]));
                 return getTimeSeries({
                     sites: [site],
