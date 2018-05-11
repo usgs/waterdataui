@@ -31,7 +31,7 @@ describe('Redux store', () => {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
-                            requestDT: new Date(1490936400000), // new Date('2017-03-31'),
+                            requestDT: new Date(1490936400000),
                             'filter:timeRange': {
                                 mode: 'PERIOD',
                                 periodDays: 7,
@@ -876,9 +876,7 @@ describe('Redux store', () => {
     });
 });
 
-// const MOCK_WEATHER_SERVICE_DATA = '{"@id": "https://api.weather.gov/points/44.8528,-92.2383", "@type": "wx:Point", "cwa": "MPX", "forecastOffice": "https://api.weather.gov/offices/MPX", "gridX": 142, "gridY": 66, "forecast": "https://api.weather.gov/gridpoints/MPX/142,66/forecast", "forecastHourly": "https://api.weather.gov/gridpoints/MPX/142,66/forecast/hourly", "forecastGridData": "https://api.weather.gov/gridpoints/MPX/142,66", "observationStations": "https://api.weather.gov/gridpoints/MPX/142,66/stations", "relativeLocation": {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-92.243062, 44.852265]}, "properties": {"city": "Spring Valley", "state": "WI", "distance": {"value": 380.06784988443, "unitCode": "unit:m"}, "bearing": {"value": 80, "unitCode": "unit:degrees_true"}}}, "forecastZone": "https://api.weather.gov/zones/forecast/WIZ024", "county": "https://api.weather.gov/zones/county/WIC093", "fireWeatherZone": "https://api.weather.gov/zones/fire/WIZ024", "timeZone": "America/Chicago", "radarStation": "KMPX"}';
-// const MOCK_WEATHER_SERVICE_DATA = {'@id': 'https://api.weather.gov/points/44.8528,-92.2383', '@type': 'wx:Point', 'cwa': 'MPX', 'forecastOffice': 'https://api.weather.gov/offices/MPX', 'gridX': 142, 'gridY': 66, 'forecast': 'https://api.weather.gov/gridpoints/MPX/142,66/forecast', 'forecastHourly': 'https://api.weather.gov/gridpoints/MPX/142,66/forecast/hourly', 'forecastGridData': 'https://api.weather.gov/gridpoints/MPX/142,66', 'observationStations': 'https://api.weather.gov/gridpoints/MPX/142,66/stations', 'relativeLocation': {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [-92.243062, 44.852265]}, 'properties': {'city': 'Spring Valley', 'state': 'WI', 'distance': {'value': 380.06784988443, 'unitCode': 'unit:m'}, 'bearing': {'value': 80, 'unitCode': 'unit:degrees_true'}}}, 'forecastZone': 'https://api.weather.gov/zones/forecast/WIZ024', 'county': 'https://api.weather.gov/zones/county/WIC093', 'fireWeatherZone': 'https://api.weather.gov/zones/fire/WIZ024', 'timeZone': 'America/Chicago', 'radarStation': 'KMPX'};
-const MOCK_WEATHER_SERVICE_DATA = `{"properties" : {"timeZone" : "America/Chicago"}}`;
+const MOCK_WEATHER_SERVICE_DATA = '{"properties" : {"timeZone" : "America/Chicago"}}';
 
 const MOCK_LAST_YEAR_DATA = `
 {"name" : "ns1:timeSeriesResponseType",
