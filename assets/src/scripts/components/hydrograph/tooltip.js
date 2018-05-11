@@ -102,72 +102,8 @@ const unitCodeSelector = createSelector(
     variable => variable ? variable.unit.unitCode : null
 );
 
-// set number of pixels to bump the tooltips away from y-axis
-const baseMarginOffsetTextGroup = 5;
-let marginAdjustment =  0;
-// Find the with of the between the y-axis and margin
-const findWidthYAxisAndMargin = function (elem) {
-    elem.call(link(function(elem, layout) {
-       // console.log('this is layout ' + JSON.stringify(layout))
-        return marginAdjustment =  layout.margin.left + baseMarginOffsetTextGroup;
-        }, layoutSelector));
-};
-
-/*
- * Adjust font size of tooltips based on number of tooltips showing
- * @param {elem} Object - D3 selector
-
-const adjustTooltipFontSize = function(elem) {
-    const tooltipTotal = Number(document.querySelectorAll('.tooltip-text-group .current-tooltip-text').length)
-        + Number(document.querySelectorAll('.tooltip-text-group .compare-tooltip-text').length);
-    if (mediaQuery(USWDS_MEDIUM_SCREEN)) {
-        if (tooltipTotal <= 2) {
-            elem.style('font-size', '2rem');
-        } else if (tooltipTotal <= 4) {
-            elem.style('font-size', '1.75rem');
-        } else {
-            elem.style('font-size', '1.25rem');
-        }
-    } else if (mediaQuery(USWDS_SMALL_SCREEN)) {
-        if (tooltipTotal <= 2) {
-            elem.style('font-size', '1.75rem');
-        } else if (tooltipTotal <= 4) {
-            elem.style('font-size', '1.25rem');
-        } else {
-            elem.style('font-size', '1rem');
-        }
-    } else {
-        elem.style('font-size', '1rem');
-    }
-}
-*/
-const adjustTooltipFontSize = function(elem) {
-    const tooltipTotal = Number(document.querySelectorAll('.tooltip-text-group .current-tooltip-text').length)
-        + Number(document.querySelectorAll('.tooltip-text-group .compare-tooltip-text').length);
-    if (mediaQuery(USWDS_MEDIUM_SCREEN)) {
-        if (tooltipTotal <= 2) {
-            elem.style('font-size', '2rem');
-        } else if (tooltipTotal <= 4) {
-            elem.style('font-size', '1.75rem');
-        } else {
-            elem.style('font-size', '1.25rem');
-        }
-    } else if (mediaQuery(USWDS_SMALL_SCREEN)) {
-        if (tooltipTotal <= 2) {
-            elem.style('font-size', '1.75rem');
-        } else if (tooltipTotal <= 4) {
-            elem.style('font-size', '1.25rem');
-        } else {
-            elem.style('font-size', '1rem');
-        }
-    } else {
-        elem.style('font-size', '1rem');
-    }
-}
 
 const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode}, textGroup) {
-//console.log('this is currentPoints ' + JSON.stringify(currentPoints));
-
     // Put the circles in a container so we can keep the their position in the
     // DOM before rect.overlay, to prevent the circles from receiving mouse
     // events.
@@ -179,8 +115,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     }
 
     const data = Object.values(currentPoints).concat(Object.values(comparePoints));
-console.log('this is current ' + Object.values(currentPoints).length);
-console.log('this is compare ' + Object.values(comparePoints).length);
+
     const texts = textGroup
         .selectAll('div')
         .data(data);
@@ -195,13 +130,55 @@ console.log('this is compare ' + Object.values(comparePoints).length);
     const newTexts = texts.enter()
         .append('div');
 
+// start --  section added for WDFN259
+
+    // Find the with of the between the y-axis and margin
+    const adjustMarginOfTooltips = function (elem) {
+        const baseMarginOffsetTextGroup = 20; // set a base number of pixels to bump the tooltips away from y-axis
+        let marginAdjustment =  0;
+        elem.call(link(function(elem, layout) {
+            console.log('this is layout ' + JSON.stringify(layout))
+            return marginAdjustment = layout.margin.left + baseMarginOffsetTextGroup;
+            }, layoutSelector));
+        if (marginAdjustment < 50) {
+            marginAdjustment = 50; // don't let the margin be smaller than 50 pixels
+        }
+        elem.style('margin-left', marginAdjustment + 'px');
+    };
+
+    // find how many tooltips are showing and adjust the font size larger if there are few, smaller if there are many
+    const adjustTooltipFontSize = function() {
+        const totalTooltipsShowing = Object.values(currentPoints).length + Object.values(comparePoints).length;
+        let tooltipFontSize = 0;
+        if (mediaQuery(USWDS_MEDIUM_SCREEN)) {
+            if (totalTooltipsShowing <= 2) {
+                tooltipFontSize = 2;
+            } else if (totalTooltipsShowing <= 4) {
+                tooltipFontSize = 1.75;
+            } else {
+               tooltipFontSize = 1.25;
+            }
+        } else if (mediaQuery(USWDS_SMALL_SCREEN)) {
+            if (totalTooltipsShowing <= 2) {
+                tooltipFontSize = 1.75;
+            } else if (totalTooltipsShowing <= 4) {
+                tooltipFontSize = 1.25;
+            } else {
+                tooltipFontSize = 1;
+            }
+        } else {
+            tooltipFontSize = 1;
+        }
+        elem.style('font-size', tooltipFontSize + 'rem');
+    };
+// end --  section added for WDFN259
+
     // Update the text and backgrounds of all tooltip labels
     const merge = texts.merge(newTexts)
         .interrupt()
         .style('opacity', '1')
-        .call(findWidthYAxisAndMargin)  // added for WDFN259
-        .call(adjustTooltipFontSize) //added for WDFN259
-        .style('margin-left', marginAdjustment + 'px'); // added for WDFN259
+        .call(adjustMarginOfTooltips)  // added for WDFN259
+        .call(adjustTooltipFontSize);  // added for WDFN259
 
     merge
         .text(datum => getTooltipText(datum, qualifiers, unitCode))
