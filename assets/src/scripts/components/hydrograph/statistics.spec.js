@@ -96,7 +96,7 @@ describe('Statistics module', () => {
         });
 
         it('handles times in the middle of the day', () => {
-            const result =  coerceStatisticalSeries(series3, 'P7D');
+            const result =  coerceStatisticalSeries(series3, 'P7D', timeZone);
             expect(result.length).toEqual(9);
             expect(result[0].dateTime).toEqual(1519781160000);
             expect(result[1].dateTime).toEqual(1519797600000);
