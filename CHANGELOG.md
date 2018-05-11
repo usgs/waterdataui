@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - The node.js-based graph server was updated to render PNGs rather than SVGs
+- Cooperator logos may be activated on a per-district basis
 
 
 ### Fixed
