@@ -117,7 +117,7 @@ def monitoring_location(site_no):
             # for now, limit to district codes 20 and 51
             if app.config['COOPERATOR_LOOKUP_ENABLED'] and (
                     app.config['COOPERATOR_LOOKUP_ENABLED'] is True or
-                    location_with_values['district_cd']['code'] in app.config['COOPERATOR_LOOKUP_ENABLED']):
+                    location_with_values.get('district_cd', {}).get('code') in app.config['COOPERATOR_LOOKUP_ENABLED']):
                 params = 'SiteNumber=' + site_no + app.config['URL_PARAMS_COOPERATOR_LOOKUP']
                 cooperator_lookup_data = execute_cooperator_lookup_request(app.config['SERVICE_ROOT_COOPERATOR_LOOKUP'],
                                                                            app.config['URL_PATH_COOPERATOR_LOOKUP'], params)

@@ -3,14 +3,14 @@ const { timeSeriesStateReducer } = require('./timeSeriesStateReducer');
 
 describe('timeSeriesStateReducer', () => {
 
-    it('should handle TOGGLE_TIMESERIES', () => {
+    it('should handle TOGGLE_TIME_SERIES', () => {
             expect(timeSeriesStateReducer({
                 showSeries: {
                     current: false,
                     compare: false
                 }
             }, {
-                type: 'TOGGLE_TIMESERIES',
+                type: 'TOGGLE_TIME_SERIES',
                 key: 'current',
                 show: true
             })).toEqual({
@@ -43,24 +43,46 @@ describe('timeSeriesStateReducer', () => {
         });
     });
 
-    it('should handle TIMESERIES_PLAY_ON', () => {
+    it('should handle TIME_SERIES_PLAY_ON', () => {
         expect(timeSeriesStateReducer({
             audiblePlayId: null
         }, {
-            type: 'TIMESERIES_PLAY_ON',
+            type: 'TIME_SERIES_PLAY_ON',
             playId: 12345
         })).toEqual({
             audiblePlayId: 12345
         });
     });
 
-    it('should handle TIMESERIES_PLAY_STOP', () => {
+    it('should handle TIME_SERIES_PLAY_STOP', () => {
         expect(timeSeriesStateReducer({
             audiblePlayId: 12345
         }, {
-            type: 'TIMESERIES_PLAY_STOP'
+            type: 'TIME_SERIES_PLAY_STOP'
         })).toEqual({
             audiblePlayId: null
+        });
+    });
+
+    it('should handle TIME_SERIES_LOADING_ADD', () => {
+        expect(timeSeriesStateReducer({
+            loadingTSKeys: ['1']
+        }, {
+            type: 'TIME_SERIES_LOADING_ADD',
+            tsKeys: ['2', '3']
+        })).toEqual({
+            loadingTSKeys: ['1', '2', '3']
+        });
+    });
+
+    it('should handle TIME_SERIES_LOADING_REMOVE', () => {
+        expect(timeSeriesStateReducer({
+            loadingTSKeys: ['1', '2', '3']
+        }, {
+            type: 'TIME_SERIES_LOADING_REMOVE',
+            tsKeys: ['2', '3', '4']
+        })).toEqual({
+            loadingTSKeys: ['1']
         });
     });
 });

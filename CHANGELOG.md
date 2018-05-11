@@ -5,8 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Loading indicators for initial time series load and for loading extended data
+- Added no data alert for sites with no time series data.
+
+
 ### Changed
 - The node.js-based graph server was updated to render PNGs rather than SVGs
+- Cooperator logos may be activated on a per-district basis
+
 
 ### Fixed
 - A bug with the graph watermark intercepting mouseover events driving the tooltips was fixed.
