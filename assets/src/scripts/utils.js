@@ -179,3 +179,27 @@ export const calcStartTime = function (period, endTime) {
     }
     return startTime;
 };
+
+/**
+ * Function to parse RDB to Objects
+ * @ returns {Array of Objects} - one for each data line in the RDB.
+ */
+export const parseRDB = function(rdbData) {
+    const rdbLines = rdbData.split('\n');
+    let dataLines = rdbLines.filter(rdbLine => rdbLine[0] !== '#').filter(rdbLine => rdbLine.length > 0);
+    // remove the useless row
+    dataLines.splice(1, 1);
+    let recordData = [];
+    if (dataLines.length > 0) {
+        let headers = dataLines.shift().split('\t');
+        for (let dataLine of dataLines) {
+            let data = dataLine.split('\t');
+            let dataObject = {};
+            for (let i=0; i < headers.length; i++) {
+                dataObject[headers[i]] = data[i];
+            }
+            recordData.push(dataObject);
+        }
+    }
+    return recordData;
+}

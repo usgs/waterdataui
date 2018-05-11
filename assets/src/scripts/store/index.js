@@ -4,16 +4,18 @@ const last = require('lodash/last');
 const { applyMiddleware, createStore, combineReducers, compose } = require('redux');
 const { default: thunk } = require('redux-thunk');
 
-const { getMedianStatistics, getPreviousYearTimeSeries, getTimeSeries,
+const { getStatistics, getPreviousYearTimeSeries, getTimeSeries,
     parseMedianData, sortedParameters } = require('../models');
 const { calcStartTime } = require('../utils');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
-const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange } = require('../selectors/timeSeriesSelector');
+const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
+    getVariables } = require('../selectors/timeSeriesSelector');
 
 const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
 const { seriesReducer: series } = require('./seriesReducer');
+const { statisticsDataReducer: statisticsData } = require('./statisticsDataReducer');
 const { timeSeriesStateReducer: timeSeriesState } = require('./timeSeriesStateReducer');
 const { uiReducer: ui } = require('./uiReducer');
 
@@ -78,7 +80,7 @@ export const Actions = {
                     ));
                     dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
 
-                    return {collection, startTime, endTime};
+                    return {collection, startTime, endTime}; // TODO: Do we need to return collection
                 },
                 () => {
                     dispatch(Actions.resetTimeSeries(getTsRequestKey('current', 'P7D')(currentState)));
@@ -95,7 +97,7 @@ export const Actions = {
 
             const medianRequestKey = getTsRequestKey('median')(currentState);
             dispatch(Actions.addTimeSeriesLoading([medianRequestKey]));
-            const medianStatistics = getMedianStatistics({sites: [siteno]});
+            const medianStatistics = getStatistics({sites: [siteno], statType: 'median'});
             medianStatistics.then(() => {
                 dispatch(Actions.removeTimeSeriesLoading([medianRequestKey]));
             },
@@ -103,9 +105,9 @@ export const Actions = {
                 dispatch(Actions.removeTimeSeriesLoading([medianRequestKey]));
             });
 
-            return Promise.all([timeSeries, medianStatistics]).then(([{collection, endTime}, stats]) => {
+            return Promise.all([timeSeries, medianStatistics]).then(([{endTime}, stats]) => {
                 if (endTime) {
-                    let medianCollection = parseMedianData(stats, endTime, collection && collection.variables ? collection.variables : {});
+                    let medianCollection = parseMedianData(stats, endTime, getVariables(getState()));
                     dispatch(Actions.addSeriesCollection(getTsRequestKey('median')(currentState), medianCollection));
                     dispatch(Actions.toggleTimeSeries('median', true));
                 }
@@ -299,6 +301,7 @@ export const Actions = {
 
 const appReducer = combineReducers({
     series,
+    statisticsData,
     floodData,
     timeSeriesState,
     floodState,
@@ -315,6 +318,8 @@ export const configureStore = function (initialState) {
             stages: [],
             extent: {}
         },
+
+        statisticsData: {},
 
         timeSeriesState: {
             showSeries: {

@@ -3,7 +3,6 @@ const { utcFormat } = require('d3-time-format');
 
 const config = require('./config');
 const { get } = require('./ajax');
-const { deltaDays } = require('./utils');
 
 
 // Define Water Services root URL - use global variable if defined, otherwise
@@ -118,11 +117,11 @@ export function isLeapYear(year) {
 export function mergeMedianTimeSeries(collection, medianData, timeSeriesEndDateTime, varsByCode) {
     // We only have data for the variables returned from the IV service. If this
     // series doesn't correspond with an IV series, skip it.
-    const variable = varsByCode[medianData[0].parameter_cd];
-    if (!variable) {
-        console.info(`(Median statistics) Variable data not available for ${medianData[0].parameter_cd} - skipping`);
-        return collection;
-    }
+    //const variable = varsByCode[medianData[0].parameter_cd];
+    //if (!variable) {
+    //    console.info(`(Median statistics) Variable data not available for ${medianData[0].parameter_cd} - skipping`);
+    //    return collection;
+    //}
 
     let values = [];
 
@@ -219,7 +218,7 @@ export function parseMedianData(medianData, timeSeriesEndDateTime, variables) {
         return byTimeSeriesID;
     }, {});
 
-    const varsByCode = Object.keys(variables).reduce((vars, varId) => {
+    const varsByCode = Object.keys(variables ? variables : {}).reduce((vars, varId) => {
         const variable = variables[varId];
         vars[variable.variableCode.value] = variable;
         return vars;
@@ -244,8 +243,8 @@ export function getPreviousYearTimeSeries({site, startTime, endTime}) {
     return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
 }
 
-export function getMedianStatistics({sites, params=null}) {
-    let medianRDB = getSiteStatistics({sites: sites, statType: 'median', params: params});
+export function getStatistics({sites, statType, params=null}) {
+    let medianRDB = getSiteStatistics({sites: sites, statType: statType, params: params});
     return medianRDB.then((response) => {
         return parseRDB(response);
     }, (error) => {

@@ -37,6 +37,7 @@ export const coerceStatisticalSeries = function (series, period) {
     const sortedPoints = plotablePoints.sort(function(a, b) {
         return a.dateTime - b.dateTime;
     });
+
     // include median points that fall within the hydrograph's start and end datetime
     let filtered = sortedPoints.filter(x => startTime <= x.dateTime && x.dateTime <= series.endTime);
     // handle the far left and far right ends of the graph
