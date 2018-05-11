@@ -1,6 +1,6 @@
-const { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getQueryInfo,getCurrentParmCd,
-    hasTimeSeries, getTsRequestKey, getTsQueryInfo, getRequestTimeRange, getIanaTimeZone,
-    getNwisTimeZone } = require('./timeSeriesSelector');
+const { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getQueryInfo, getRequests,
+    getCurrentParmCd, hasTimeSeries, getTsRequestKey, getTsQueryInfo, getRequestTimeRange, isLoadingTS, getTSRequest,
+    getTimeSeriesCollectionIds, getIanaTimeZone, getNwisTimeZone} = require('./timeSeriesSelector');
 
 describe('timeSeriesSelector', () => {
     const TEST_VARS = {
@@ -51,6 +51,42 @@ describe('timeSeriesSelector', () => {
             })).toEqual({
                 'current:P7D': {
                     queryURL: 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D'
+                }
+            });
+        });
+    });
+
+    describe('getRequests', () => {
+        it('Empty object if series is empty', () => {
+            expect(getRequests({
+                series: {}
+            })).toEqual({});
+        });
+
+        it('Requests object if in state', () => {
+            expect(getRequests({
+                series: {
+                    requests : {
+                        'current:P7D': {
+                            timeSeriesCollections: ['1', '2']
+                        },
+                        'compare:P30D:00010': {
+                            timeSeriesCollections: ['3']
+                        },
+                        'current:P30D:00060': {
+                            timeSeriesCollections: ['4']
+                        }
+                    }
+                }
+            })).toEqual({
+                'current:P7D': {
+                    timeSeriesCollections: ['1', '2']
+                },
+                'compare:P30D:00010': {
+                    timeSeriesCollections: ['3']
+                },
+                'current:P30D:00060': {
+                    timeSeriesCollections: ['4']
                 }
             });
         });
@@ -373,6 +409,107 @@ describe('timeSeriesSelector', () => {
                     content: 'y'
                 }
             });
+        });
+    });
+
+    describe('isLoadingTS', () => {
+        const TEST_DATA = {
+            series: {
+                variables: TEST_VARS
+            },
+            timeSeriesState: {
+                currentDateRange: 'P30D',
+                currentVariableID: '45807042',
+                loadingTSKeys: ['compare:P7D', 'median', 'current:P30D:00060']
+            }
+        };
+
+        it('true for ts requests that are loading', () => {
+            expect(isLoadingTS('current')(TEST_DATA)).toBe(true);
+            expect(isLoadingTS('median')(TEST_DATA)).toBe(true);
+            expect(isLoadingTS('compare', 'P7D')(TEST_DATA)).toBe(true);
+        });
+
+        it('false for ts requests that are not loading', () => {
+            expect(isLoadingTS('compare')(TEST_DATA)).toBe(false);
+            expect(isLoadingTS('current', 'P30D', '00010')(TEST_DATA)).toBe(false);
+            expect(isLoadingTS('current', 'P7D')(TEST_DATA)).toBe(false);
+        });
+    });
+
+    describe('getTSRequest', () => {
+        const TEST_DATA = {
+            series: {
+                requests: {
+                    'current:P7D': {
+                        timeSeriesCollections: ['1', '2']
+                    },
+                    'compare:P30D:00010': {
+                        timeSeriesCollections: []
+                    },
+                    'current:P30D:00060': {
+                        timeSeriesCollections: ['4']
+                    }
+                },
+                variables: TEST_VARS
+            },
+            timeSeriesState: {
+                currentDateRange: 'P30D',
+                currentVariableID: '45807042'
+            }
+        };
+
+        it('Expects to retrieve requested requests', () => {
+            expect(getTSRequest('current', 'P7D')(TEST_DATA)).toEqual({
+                timeSeriesCollections: ['1', '2']
+            });
+            expect(getTSRequest('current')(TEST_DATA)).toEqual({
+                timeSeriesCollections: ['4']
+            });
+            expect(getTSRequest('compare', 'P30D', '00010')(TEST_DATA)).toEqual({
+                timeSeriesCollections: []
+            });
+        });
+
+        it('Return the empty object if the request does not contain the request key', () => {
+            expect(getTSRequest('compare')(TEST_DATA)).toEqual({});
+            expect(getTSRequest('compare', 'P7D')(TEST_DATA)).toEqual({});
+            expect(getTSRequest('current', 'P1Y', '00010')(TEST_DATA)).toEqual({});
+        });
+    });
+
+    describe('getTimeSeriesCollectionIds', () => {
+        const TEST_DATA = {
+            series: {
+                requests: {
+                    'current:P7D': {
+                        timeSeriesCollections: ['1', '2']
+                    },
+                    'compare:P30D:00010': {
+                        timeSeriesCollections: []
+                    },
+                    'current:P30D:00060': {
+                        timeSeriesCollections: ['4']
+                    }
+                },
+                variables: TEST_VARS
+            },
+            timeSeriesState: {
+                currentDateRange: 'P30D',
+                currentVariableID: '45807042'
+            }
+        };
+
+        it('Expects to retrieve requested timeSeriesCollections', () => {
+            expect(getTimeSeriesCollectionIds('current', 'P7D')(TEST_DATA)).toEqual(['1', '2']);
+            expect(getTimeSeriesCollectionIds('current')(TEST_DATA)).toEqual(['4']);
+            expect(getTimeSeriesCollectionIds('compare', 'P30D', '00010')(TEST_DATA)).toEqual([]);
+        });
+
+        it('Return null if the request does not contain the request key', () => {
+            expect(getTimeSeriesCollectionIds('compare')(TEST_DATA)).toBeNull();
+            expect(getTimeSeriesCollectionIds('compare', 'P7D')(TEST_DATA)).toBeNull();
+            expect(getTimeSeriesCollectionIds('current', 'P1Y', '00010')(TEST_DATA)).toBeNull({});
         });
     });
 });

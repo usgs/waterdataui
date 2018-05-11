@@ -60,9 +60,11 @@ export const Actions = {
     retrieveTimeSeries(siteno, params=null) {
         return function (dispatch, getState) {
             const currentState = getState();
+            const requestKey = getTsRequestKey('current', 'P7D')(currentState);
+            dispatch(Actions.addTimeSeriesLoading([requestKey]));
+
             const timeSeries = getTimeSeries({sites: [siteno], params}).then(
                 series => {
-                    const requestKey = getTsRequestKey('current', 'P7D')(currentState);
                     const collection = normalize(series, requestKey);
 
                     // Get the start/end times of this request's range.
@@ -76,6 +78,8 @@ export const Actions = {
 
                     // Update the series data for the 'current' series
                     dispatch(Actions.addSeriesCollection('current', collection));
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+
 
                     // Update the application state
                     dispatch(Actions.toggleTimeSeries('current', true));
@@ -88,6 +92,8 @@ export const Actions = {
                 },
                 () => {
                     dispatch(Actions.resetTimeSeries(getTsRequestKey('current', 'P7D')(currentState)));
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+
                     dispatch(Actions.toggleTimeSeries('current', false));
                     return {
                         collection: null,
@@ -96,7 +102,17 @@ export const Actions = {
                     };
                 }
             );
+
+            const medianRequestKey = getTsRequestKey('median')(currentState);
+            dispatch(Actions.addTimeSeriesLoading([medianRequestKey]));
             const medianStatistics = getMedianStatistics({sites: [siteno]});
+            medianStatistics.then(() => {
+                dispatch(Actions.removeTimeSeriesLoading([medianRequestKey]));
+            },
+            () => {
+                dispatch(Actions.removeTimeSeriesLoading([medianRequestKey]));
+            });
+
             return Promise.all([timeSeries, medianStatistics]).then(([{collection, endTime}, stats]) => {
                 if (endTime) {
                     let medianCollection = parseMedianData(stats, endTime, collection && collection.variables ? collection.variables : {});
@@ -108,13 +124,18 @@ export const Actions = {
     },
     retrieveCompareTimeSeries(site, period, startTime, endTime) {
         return function (dispatch, getState) {
+            const requestKey = getTsRequestKey('compare', period)(getState());
+            dispatch(Actions.addTimeSeriesLoading([requestKey]));
             return getPreviousYearTimeSeries({site, startTime, endTime}).then(
                 series => {
-                    const requestKey = getTsRequestKey('compare', period)(getState());
                     const collection = normalize(series, requestKey);
                     dispatch(Actions.addSeriesCollection(requestKey, collection));
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                 },
-                () => dispatch(Actions.resetTimeSeries(getTsRequestKey('compare', period)(getState())))
+                () => {
+                    dispatch(Actions.resetTimeSeries(getTsRequestKey('compare', period)(getState())));
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+                }
             );
         };
     },
@@ -128,6 +149,7 @@ export const Actions = {
                 const endTime = new Date(getRequestTimeRange('current', 'P7D')(state).end);
                 let startTime = calcStartTime(period, endTime);
 
+                dispatch(Actions.addTimeSeriesLoading([requestKey]));
                 return getTimeSeries({
                     sites: [site],
                     params: [parmCd],
@@ -136,12 +158,14 @@ export const Actions = {
                 }).then(
                     series => {
                         const collection = normalize(series, requestKey);
-                        dispatch(Actions.addSeriesCollection(requestKey, collection));
                         dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
+                        dispatch(Actions.addSeriesCollection(requestKey, collection));
+                        dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     },
                     () => {
                         console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
                         dispatch(Actions.addSeriesCollection(requestKey, {}));
+                        dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     }
                 );
             }
@@ -194,13 +218,25 @@ export const Actions = {
     },
     timeSeriesPlayOn(playId) {
         return {
-            type: 'TIMESERIES_PLAY_ON',
+            type: 'TIME_SERIES_PLAY_ON',
             playId
         };
     },
     timeSeriesPlayStop() {
         return {
-            type: 'TIMESERIES_PLAY_STOP'
+            type: 'TIME_SERIES_PLAY_STOP'
+        };
+    },
+    addTimeSeriesLoading(tsKeys) {
+        return {
+            type: 'TIME_SERIES_LOADING_ADD',
+            tsKeys
+        };
+    },
+    removeTimeSeriesLoading(tsKeys) {
+        return {
+            type: 'TIME_SERIES_LOADING_REMOVE',
+            tsKeys
         };
     },
     setFloodFeatures(stages, extent) {
@@ -212,21 +248,21 @@ export const Actions = {
     },
     toggleTimeSeries(key, show) {
         return {
-            type: 'TOGGLE_TIMESERIES',
+            type: 'TOGGLE_TIME_SERIES',
             key,
             show
         };
     },
     addSeriesCollection(key, data) {
         return {
-            type: 'ADD_TIMESERIES_COLLECTION',
+            type: 'ADD_TIME_SERIES_COLLECTION',
             key,
             data
         };
     },
     resetTimeSeries(key) {
         return {
-            type: 'RESET_TIMESERIES',
+            type: 'RESET_TIME_SERIES',
             key
         };
     },
@@ -305,7 +341,8 @@ export const configureStore = function (initialState) {
             currentDateRange: 'P7D',
             currentVariableID: null,
             cursorOffset: null,
-            audiblePlayId: null
+            audiblePlayId: null,
+            loadingTSKeys: []
         },
         floodState: {
             gageHeight: null

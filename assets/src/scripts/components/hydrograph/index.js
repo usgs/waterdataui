@@ -8,7 +8,7 @@ const { select } = require('d3-selection');
 const { createStructuredSelector } = require('reselect');
 
 const { addSVGAccessibility } = require('../../accessibility');
-const { USWDS_MEDIUM_SCREEN, USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
+const { USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
 const { dispatch, link, provide } = require('../../lib/redux');
 const { Actions } = require('../../store');
 const { mediaQuery } = require('../../utils');
@@ -16,8 +16,8 @@ const { mediaQuery } = require('../../utils');
 const { audibleUI } = require('./audible');
 const { appendAxes, axesSelector } = require('./axes');
 const { cursorSlider } = require('./cursor');
-const { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
-    MASK_DESC, HASH_ID } = require('./drawingData');
+const {lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID
+} = require('./drawingData');
 const { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeSeriesSelector } = require('./parameters');
@@ -27,10 +27,10 @@ const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 const { coerceStatisticalSeries } = require('./statistics');
 
-const { getCurrentDateRange } = require('../../selectors/timeSeriesSelector');
+const { getCurrentDateRange, getTimeSeriesCollectionIds, isLoadingTS } = require('../../selectors/timeSeriesSelector');
 
 
-const drawMessage = function (elem, message) {
+const drawMessage = function(elem, message) {
     // Set up parent element and SVG
     elem.innerHTML = '';
     const alertBox = elem
@@ -48,10 +48,11 @@ const drawMessage = function (elem, message) {
 };
 
 
-const plotDataLine = function (elem, {visible, lines, tsKey, xScale, yScale}) {
+const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
     if (!visible) {
         return;
     }
+
     for (let line of lines) {
         if (line.classes.dataMask === null) {
             // If this is a single point line, then represent it as a circle.
@@ -91,7 +92,7 @@ const plotDataLine = function (elem, {visible, lines, tsKey, xScale, yScale}) {
                 .attr('x', xScale(xDomainStart))
                 .attr('y', yScale(yRangeEnd))
                 .attr('width', rectWidth)
-                .attr('height', Math.abs(yScale(yRangeEnd)- yScale(yRangeStart)))
+                .attr('height', Math.abs(yScale(yRangeEnd) - yScale(yRangeStart)))
                 .attr('class', `mask ${maskDisplayName}-mask`);
 
             const patternId = HASH_ID[tsKey] ? `url(#${HASH_ID[tsKey]})` : '';
@@ -107,15 +108,15 @@ const plotDataLine = function (elem, {visible, lines, tsKey, xScale, yScale}) {
 };
 
 
-const plotDataLines = function (elem, {visible, tsLinesMap, tsKey, xScale, yScale}, container) {
+const plotDataLines = function(elem, {visible, tsLinesMap, tsKey, xScale, yScale}, container) {
     container = container || elem.append('g');
 
     const elemId = `ts-${tsKey}-group`;
     container.selectAll(`#${elemId}`).remove();
     const tsLineGroup = container
         .append('g')
-        .attr('id', elemId)
-        .classed('tsKey', true);
+            .attr('id', elemId)
+            .classed('tsKey', true);
 
     for (const lines of Object.values(tsLinesMap)) {
         plotDataLine(tsLineGroup, {visible, lines, tsKey, xScale, yScale});
@@ -183,7 +184,7 @@ const timeSeriesLegend = function(elem) {
  * @param  {Number} modulo
  * @param  {Array} points
  */
-const plotMedianPoints = function (elem, {xscale, yscale, modulo, points}) {
+const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
     const stepFunction = d3Line()
         .curve(curveStepAfter)
         .x(function(d) {
@@ -232,7 +233,7 @@ const createTitle = function(elem) {
         }, titleSelector));
 };
 
-const watermark = function (elem) {
+const watermark = function(elem) {
     elem.append('image')
         .classed('watermark', true)
         .attr('href', STATIC_URL + '/img/USGS_green_logo.svg')
@@ -256,7 +257,7 @@ const watermark = function (elem) {
         }, layoutSelector));
 };
 
-const timeSeriesGraph = function (elem) {
+const timeSeriesGraph = function(elem) {
     elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(createTitle)
@@ -303,7 +304,7 @@ const timeSeriesGraph = function (elem) {
                         dateRange: getCurrentDateRange,
                         ianaTimeZone: tsTimeZoneSelector
                     })));
-            });
+        });
 };
 
 /*
@@ -312,9 +313,9 @@ const timeSeriesGraph = function (elem) {
  */
 const graphControls = function(elem) {
     const graphControlDiv = elem.append('ul')
-            .classed('usa-fieldset-inputs', true)
-            .classed('usa-unstyled-list', true)
-            .classed('graph-controls-container', true);
+        .classed('usa-fieldset-inputs', true)
+        .classed('usa-unstyled-list', true)
+        .classed('graph-controls-container', true);
 
     graphControlDiv.append('li')
         .call(audibleUI);
@@ -352,12 +353,19 @@ const graphControls = function(elem) {
  * @param elem
  * @param {Boolean} showElem
  */
-const controlDisplay = function (elem, showElem) {
+const controlDisplay = function(elem, showElem) {
     elem.attr('hidden', showElem ? null : true);
 };
 
+const loadingIndicator = function(elem, {showLoadingIndicator, sizeClass}) {
+    elem.select('.loading-indicator').remove();
+    if (showLoadingIndicator) {
+        elem.append('i')
+            .attr('class', `loading-indicator fas ${sizeClass} fa-spin fa-spinner`);
+    }
+};
 
-const createDaterangeControls = function(elem, {siteno, showControls}) {
+const dateRangeControls = function(elem, siteno) {
     const DATE_RANGE = [{
         label: 'seven-day',
         name: '7 days',
@@ -371,36 +379,58 @@ const createDaterangeControls = function(elem, {siteno, showControls}) {
         name: '1 year',
         period: 'P1Y'
     }];
-    elem.select('#ts-daterange-select-container').remove();
-    if (showControls) {
-        const container = elem.insert('ul', ':first-child')
-            .attr('id', 'ts-daterange-select-container')
-            .attr('class', 'usa-fieldset-inputs usa-unstyled-list');
-        const li = container.selectAll('li')
-            .data(DATE_RANGE)
-            .enter().append('li');
-        li.append('input')
-            .attr('type', 'radio')
-            .attr('name', 'ts-daterange-input')
-            .attr('id', d => d.label)
-            .attr('value', d => d.period)
-            .attr('ga-on', 'click')
-            .attr('ga-event-category', 'TimeSeriesGraph')
-            .attr('ga-event-action', d => `changeDateRangeTo${d.period}`)
-            .on('change', dispatch(function () {
-                return Actions.retrieveExtendedTimeSeries(
-                    siteno,
-                    li.select('input:checked').attr('value')
-                );
-            }));
-        li.append('label')
-            .attr('for', (d) => d.label)
-            .text((d) => d.name);
-        li.select(`#${DATE_RANGE[0].label}`).attr('checked', true);
+
+    const container = elem.insert('div', ':nth-child(2)')
+        .attr('id', 'ts-daterange-select-container')
+        .call(link(function(container, showControls) {
+            container.attr('hidden', showControls ? null : true);
+        }, hasTimeSeriesWithPoints('current', 'P7D')));
+    const listContainer = container.append('ul')
+        .attr('class', 'usa-fieldset-inputs usa-unstyled-list');
+    const li = listContainer.selectAll('li')
+        .data(DATE_RANGE)
+        .enter().append('li');
+    listContainer.call(link(loadingIndicator, createStructuredSelector({
+        showLoadingIndicator: isLoadingTS('current'),
+        sizeClass: () => 'fa-lg'
+    })));
+
+    li.append('input')
+        .attr('type', 'radio')
+        .attr('name', 'ts-daterange-input')
+        .attr('id', d => d.label)
+        .attr('value', d => d.period)
+        .attr('ga-on', 'click')
+        .attr('ga-event-category', 'TimeSeriesGraph')
+        .attr('ga-event-action', d => `changeDateRangeTo${d.period}`)
+        .on('change', dispatch(function() {
+            return Actions.retrieveExtendedTimeSeries(
+                siteno,
+                li.select('input:checked').attr('value')
+            );
+        }));
+    li.append('label')
+        .attr('for', (d) => d.label)
+        .text((d) => d.name);
+    li.select(`#${DATE_RANGE[0].label}`).attr('checked', true);
+};
+
+
+const noDataAlert = function(elem, tsCollectionIds) {
+    elem.select('#no-data-message').remove();
+    if (tsCollectionIds && tsCollectionIds.length === 0) {
+        elem.append('div')
+            .attr('id', 'no-data-message')
+            .attr('class', 'usa-alert usa-alert-info')
+            .append('div')
+                .attr('class', 'usa-alert-body')
+                .append('p')
+                    .attr('class', 'usa-alert-text')
+                    .text('No current time series data available for this site');
     }
 };
 
-const attachToNode = function (store, node, {siteno, parameter, compare, cursorOffset} = {}) {
+const attachToNode = function(store, node, {siteno, parameter, compare, cursorOffset} = {}) {
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
@@ -408,11 +438,16 @@ const attachToNode = function (store, node, {siteno, parameter, compare, cursorO
 
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
-        .call(provide(store))
-        .call(link(createDaterangeControls, createStructuredSelector({
-            siteno: () => siteno,
-            showControls: hasTimeSeriesWithPoints('current', 'P7D')
+        .call(provide(store));
+    select(node)
+        .call(link(noDataAlert, getTimeSeriesCollectionIds('current', 'P7D')));
+    select(node).select('.loading-indicator-container')
+        .call(link(loadingIndicator, createStructuredSelector({
+            showLoadingIndicator: isLoadingTS('current', 'P7D'),
+            sizeClass: () => 'fa-3x'
         })));
+    select(node)
+        .call(dateRangeControls, siteno);
 
     // If specified, turn the visibility of the comparison time series on.
     if (compare) {
@@ -436,7 +471,7 @@ const attachToNode = function (store, node, {siteno, parameter, compare, cursorO
         .call(link(plotSeriesSelectTable, createStructuredSelector({
             siteno: () => siteno,
             availableTimeSeries: availableTimeSeriesSelector,
-            lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current','P7D'),
+            lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current', 'P7D'),
             timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM),
             layout: layoutSelector
         })));

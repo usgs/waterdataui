@@ -123,6 +123,9 @@ describe('Redux store', () => {
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
                 store = proxyquire('./index', {'../models': modelsMock});
                 store.configureStore();
+
+                spyOn(store.Actions, 'addTimeSeriesLoading');
+                spyOn(store.Actions, 'removeTimeSeriesLoading');
             });
 
             it('Fetches the time series and median statistics data', () => {
@@ -135,9 +138,12 @@ describe('Redux store', () => {
                 expect(modelsMock.getMedianStatistics).toHaveBeenCalledWith({
                     sites: [SITE_NO]
                 });
+                expect(store.Actions.addTimeSeriesLoading.calls.count()).toBe(2);
+                expect(store.Actions.addTimeSeriesLoading.calls.argsFor(0)[0]).toEqual(['current:P7D']);
+                expect(store.Actions.addTimeSeriesLoading.calls.argsFor(1)[0]).toEqual(['median']);
             });
 
-            it('should fetch the times series, retrieve the compare time series once the time series and fetch the statistics', (done) => {
+            it('should fetch the times series, retrieve the compare time series once the time series is fetched and fetch the statistics', (done) => {
                 spyOn(store.Actions, 'addSeriesCollection');
                 spyOn(store.Actions, 'retrieveCompareTimeSeries');
                 spyOn(store.Actions, 'toggleTimeSeries');
@@ -145,10 +151,13 @@ describe('Redux store', () => {
                 let p = store.Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
 
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(7);
+                    expect(mockDispatch.calls.count()).toBe(11);
                     expect(store.Actions.addSeriesCollection.calls.count()).toBe(2);
                     expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('current');
                     expect(store.Actions.addSeriesCollection.calls.argsFor(1)[0]).toBe('median');
+                    expect(store.Actions.removeTimeSeriesLoading.calls.count()).toBe(2);
+                    expect(store.Actions.removeTimeSeriesLoading.calls.argsFor(0)[0]).toEqual(['current:P7D']);
+                    expect(store.Actions.removeTimeSeriesLoading.calls.argsFor(1)[0]).toEqual(['median']);
                     expect(store.Actions.retrieveCompareTimeSeries.calls.count()).toBe(1);
                     expect(store.Actions.retrieveCompareTimeSeries.calls.argsFor(0)[0]).toBe(SITE_NO);
                     expect(store.Actions.toggleTimeSeries.calls.count()).toBe(2);
@@ -238,6 +247,9 @@ describe('Redux store', () => {
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
                 store = proxyquire('./index', {'../models': modelsMock});
+
+                spyOn(store.Actions, 'addTimeSeriesLoading');
+                spyOn(store.Actions, 'removeTimeSeriesLoading');
             });
 
 
@@ -246,12 +258,15 @@ describe('Redux store', () => {
                 spyOn(store.Actions, 'toggleTimeSeries');
                 let p = store.Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
 
+                expect(store.Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P7D']);
+
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(2);
+                    expect(mockDispatch.calls.count()).toBe(6);
                     expect(store.Actions.resetTimeSeries.calls.count()).toBe(1);
                     expect(store.Actions.resetTimeSeries.calls.argsFor(0)[0]).toBe('current:P7D');
                     expect(store.Actions.toggleTimeSeries.calls.count()).toBe(1);
                     expect(store.Actions.toggleTimeSeries.calls.argsFor(0)).toEqual(['current', false]);
+                    expect(store.Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P7D']);
 
                     done();
                 });
@@ -279,11 +294,14 @@ describe('Redux store', () => {
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
                 store = proxyquire('./index', {'../models': modelsMock});
+                spyOn(store.Actions, 'addTimeSeriesLoading');
+                spyOn(store.Actions, 'removeTimeSeriesLoading');
             });
 
             it('Fetches the previous year\'s time series', () => {
                 store.Actions.retrieveCompareTimeSeries(SITE_NO, 'P7D', START_DATE, END_DATE)(mockDispatch, mockGetState);
 
+                expect(store.Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['compare:P7D']);
                 expect(modelsMock.getPreviousYearTimeSeries.calls.count()).toBe(1);
                 expect(modelsMock.getPreviousYearTimeSeries.calls.argsFor(0)[0]).toEqual({
                     site: SITE_NO,
@@ -297,9 +315,10 @@ describe('Redux store', () => {
                 spyOn(store.Actions, 'toggleTimeSeries');
                 let p = store.Actions.retrieveCompareTimeSeries(SITE_NO, 'P7D', START_DATE, END_DATE)(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(1);
+                    expect(mockDispatch.calls.count()).toBe(3);
                     expect(store.Actions.addSeriesCollection.calls.count()).toBe(1);
                     expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('compare:P7D');
+                    expect(store.Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['compare:P7D']);
 
                     done();
                 });
@@ -326,15 +345,21 @@ describe('Redux store', () => {
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
                 store = proxyquire('./index', {'../models': modelsMock});
+
+                spyOn(store.Actions, 'addTimeSeriesLoading');
+                spyOn(store.Actions, 'removeTimeSeriesLoading');
             });
 
             it('Dispatches the action to reset the compare time series', (done) => {
                 spyOn(store.Actions, 'resetTimeSeries');
                 let p = store.Actions.retrieveCompareTimeSeries(SITE_NO, 'P7D', START_DATE, END_DATE)(mockDispatch, mockGetState);
+
+                expect(store.Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['compare:P7D']);
                 p.then(() => {
-                    expect(mockDispatch).toHaveBeenCalled();
+                    expect(mockDispatch.calls.count()).toBe(3);
                     expect(store.Actions.resetTimeSeries.calls.count()).toBe(1);
                     expect(store.Actions.resetTimeSeries.calls.argsFor(0)[0]).toBe('compare:P7D');
+                    expect(store.Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['compare:P7D']);
 
                     done();
                 });
@@ -359,6 +384,8 @@ describe('Redux store', () => {
                 mockGetState = jasmine.createSpy('mockGetState');
 
                 store = proxyquire('./index', {'../models': modelsMock});
+                spyOn(store.Actions, 'addTimeSeriesLoading');
+                spyOn(store.Actions, 'removeTimeSeriesLoading');
             });
 
             it('Should dispatch the action to set the current date range', () => {
@@ -368,6 +395,7 @@ describe('Redux store', () => {
                     type: 'SET_CURRENT_DATE_RANGE',
                     period: 'P30D'
                 });
+                expect(store.Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
             });
 
             it('Should call getTimeSeries with the appropriate parameters', () => {
@@ -384,15 +412,15 @@ describe('Redux store', () => {
             it('Should dispatch add series collection and retrieveCompareTimeSeries', (done) => {
                 mockGetState.and.returnValue(TEST_STATE);
                 spyOn(store.Actions, 'retrieveCompareTimeSeries');
+                spyOn(store.Actions, 'addSeriesCollection');
                 let p = store.Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(3);
-                    let arg = mockDispatch.calls.argsFor(1)[0];
-                    expect(arg.type).toBe('ADD_TIMESERIES_COLLECTION');
-                    expect(arg.key).toBe('current:P30D:00060');
-
+                    expect(mockDispatch.calls.count()).toBe(5);
+                    expect(store.Actions.addSeriesCollection).toHaveBeenCalled();
+                    expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toEqual('current:P30D:00060');
                     expect(store.Actions.retrieveCompareTimeSeries).toHaveBeenCalled();
                     expect(store.Actions.retrieveCompareTimeSeries.calls.argsFor(0)[1]).toEqual('P30D');
+                    expect(store.Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
                     done();
                 });
             });
@@ -407,6 +435,8 @@ describe('Redux store', () => {
                 }));
                 store.Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
                 expect(modelsMock.getTimeSeries).not.toHaveBeenCalled();
+                expect(store.Actions.addTimeSeriesLoading).not.toHaveBeenCalled();
+                expect(store.Actions.removeTimeSeriesLoading).not.toHaveBeenCalled();
             });
         });
 
@@ -465,14 +495,14 @@ describe('Redux store', () => {
 
 
             beforeEach(() => {
-               let getTimeSeriesPromise = Promise.reject(Error('Bad data'));
-               modelsMock = {
+                let getTimeSeriesPromise = Promise.reject(Error('Bad data'));
+                modelsMock = {
                    getTimeSeries: function() {
                        return getTimeSeriesPromise;
                    }
-               };
+                };
 
-               spyOn(modelsMock, 'getTimeSeries').and.callThrough();
+                spyOn(modelsMock, 'getTimeSeries').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState');
 
@@ -483,17 +513,22 @@ describe('Redux store', () => {
                 }));
 
                 store = proxyquire('./index', {'../models': modelsMock});
+                spyOn(store.Actions, 'addTimeSeriesLoading');
+                spyOn(store.Actions, 'removeTimeSeriesLoading');
             });
 
             it('Should add the series with an empty collection', (done) => {
                 let p = store.Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
 
+                expect(store.Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(2);
-                    let arg = mockDispatch.calls.argsFor(1)[0];
-                    expect(arg.type).toBe('ADD_TIMESERIES_COLLECTION');
+                    expect(mockDispatch.calls.count()).toBe(4);
+                    let arg = mockDispatch.calls.argsFor(2)[0];
+                    expect(arg.type).toBe('ADD_TIME_SERIES_COLLECTION');
                     expect(arg.key).toBe('current:P30D:00060');
                     expect(arg.data).toEqual({});
+                    expect(store.Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
+
 
                     done();
                 });
@@ -733,6 +768,18 @@ describe('Redux store', () => {
     });
 
     describe('synchronous actions', () => {
+        it('should create an action to add the time series loading keys', () => {
+            expect(Actions.addTimeSeriesLoading(['current', 'compare'])).toEqual({
+                type: 'TIME_SERIES_LOADING_ADD',
+                tsKeys: ['current', 'compare']
+            });
+        });
+        it('should create an action to remove the time series loading keys', () => {
+            expect(Actions.removeTimeSeriesLoading(['current', 'compare'])).toEqual({
+                type: 'TIME_SERIES_LOADING_REMOVE',
+                tsKeys: ['current', 'compare']
+            });
+        });
         it('should create an action to set flood features state', () => {
             expect(Actions.setFloodFeatures([9, 10, 11], {xmin: -87, ymin: 42, xmax: -86, ymax: 43})).toEqual({
                 type: 'SET_FLOOD_FEATURES',
@@ -778,7 +825,7 @@ describe('Redux store', () => {
 
         it('should create an action to toggle time series view state', () => {
             expect(Actions.toggleTimeSeries('current', true)).toEqual({
-                type: 'TOGGLE_TIMESERIES',
+                type: 'TOGGLE_TIME_SERIES',
                 key: 'current',
                 show: true
             });
@@ -786,7 +833,7 @@ describe('Redux store', () => {
 
         it('should create an action to add a time series collection', () => {
             expect(Actions.addSeriesCollection('current', 'collection')).toEqual({
-                type: 'ADD_TIMESERIES_COLLECTION',
+                type: 'ADD_TIME_SERIES_COLLECTION',
                 key: 'current',
                 data: 'collection'
             });
@@ -794,7 +841,7 @@ describe('Redux store', () => {
 
         it('should create an action to reset a time series', () => {
             expect(Actions.resetTimeSeries('current')).toEqual({
-                type: 'RESET_TIMESERIES',
+                type: 'RESET_TIME_SERIES',
                 key: 'current'
             });
         });
@@ -816,14 +863,14 @@ describe('Redux store', () => {
 
         it('should create an action to set the playId', () => {
             expect(Actions.timeSeriesPlayOn(1)).toEqual({
-                type: 'TIMESERIES_PLAY_ON',
+                type: 'TIME_SERIES_PLAY_ON',
                 playId: 1
             });
         });
 
         it('should create an action to unset the playId', () => {
             expect(Actions.timeSeriesPlayStop()).toEqual({
-                type: 'TIMESERIES_PLAY_STOP'
+                type: 'TIME_SERIES_PLAY_STOP'
             });
         });
     });
