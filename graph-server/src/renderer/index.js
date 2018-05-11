@@ -19,7 +19,8 @@ const renderToRespone = function (res, {siteID, parameterCode, compare, renderer
         siteno: siteID,
         parameter: parameterCode,
         compare: compare,
-        cursorOffset: false
+        cursorOffset: false,
+        interactive: false
     };
     getPNG(BUNDLES, {
         pageURL: 'http://wdfn-graph-server',

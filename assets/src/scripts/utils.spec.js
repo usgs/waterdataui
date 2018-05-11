@@ -1,7 +1,7 @@
 const { select } = require('d3-selection');
 
 const { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities,
-    setEquality, wrap, mediaQuery, calcStartTime } = require('./utils');
+    setEquality, wrap, mediaQuery, calcStartTime, callIf } = require('./utils');
 
 
 describe('Utils module', () => {
@@ -158,6 +158,31 @@ describe('Utils module', () => {
 
         it('correctly handles a year interval', () => {
             expect(calcStartTime('P1Y', someDate)).toEqual(1459026900000);
+        });
+    });
+
+    describe('callIf', () => {
+        let spy;
+
+        beforeEach(() => {
+            spy = jasmine.createSpy('callIf');
+        });
+
+        it('calls on true', () => {
+            callIf(true, spy)();
+            expect(spy).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalledWith();
+        });
+
+        it('calls on true with arguments', () => {
+            callIf(true, spy)(1, 2, 3);
+            expect(spy).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalledWith(1, 2, 3);
+        });
+
+        it('no-ops on false', () => {
+            callIf(false, spy)();
+            expect(spy).not.toHaveBeenCalled();
         });
     });
 });

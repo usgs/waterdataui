@@ -11,7 +11,7 @@ const { addSVGAccessibility } = require('../../accessibility');
 const { USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
 const { dispatch, link, provide } = require('../../lib/redux');
 const { Actions } = require('../../store');
-const { mediaQuery } = require('../../utils');
+const { callIf, mediaQuery } = require('../../utils');
 
 const { audibleUI } = require('./audible');
 const { appendAxes, axesSelector } = require('./axes');
@@ -233,13 +233,13 @@ const createTitle = function(elem) {
         }, titleSelector));
 };
 
-const watermark = function(elem) {
-    elem.append('image')
+const watermark = function (elem) {
+    elem.append('img')
         .classed('watermark', true)
-        .attr('href', STATIC_URL + '/img/USGS_green_logo.svg')
+        .attr('src', STATIC_URL + '/img/USGS_green_logo.svg')
         .call(link(function(elem, layout) {
             const transformStringSmallScreen = `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025
-                    + layout.margin.left}, ${layout.height * .60})`;
+                    + layout.margin.left - 50}, ${layout.height * .60})`;
             const transformStringForAllOtherScreens = `matrix(1, 0, 0, 1, ${(layout.width - layout.margin.left) * .025
                     + layout.margin.left}, ${(layout.height * .75 - (-1 * layout.height + 503) * .12)})`;
             if (!mediaQuery(USWDS_SMALL_SCREEN)) {
@@ -260,6 +260,7 @@ const watermark = function(elem) {
 const timeSeriesGraph = function(elem) {
     elem.append('div')
         .attr('class', 'hydrograph-container')
+        .call(watermark)
         .call(createTitle)
         .call(createTooltipText)
         .append('svg')
@@ -276,7 +277,6 @@ const timeSeriesGraph = function(elem) {
                 isInteractive: () => true
             })))
             .call(plotSvgDefs)
-            .call(watermark)
             .call(svg => {
                 svg.append('g')
                     .call(link((elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), layoutSelector))
@@ -430,7 +430,7 @@ const noDataAlert = function(elem, tsCollectionIds) {
     }
 };
 
-const attachToNode = function(store, node, {siteno, parameter, compare, cursorOffset} = {}) {
+const attachToNode = function (store, node, {siteno, parameter, compare, cursorOffset, interactive = true} = {}) {
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
@@ -438,16 +438,14 @@ const attachToNode = function(store, node, {siteno, parameter, compare, cursorOf
 
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
-        .call(provide(store));
-    select(node)
-        .call(link(noDataAlert, getTimeSeriesCollectionIds('current', 'P7D')));
-    select(node).select('.loading-indicator-container')
-        .call(link(loadingIndicator, createStructuredSelector({
-            showLoadingIndicator: isLoadingTS('current', 'P7D'),
-            sizeClass: () => 'fa-3x'
-        })));
-    select(node)
-        .call(dateRangeControls, siteno);
+        .call(provide(store))
+        .call(link(noDataAlert, getTimeSeriesCollectionIds('current', 'P7D')))
+        .call(callIf(interactive, dateRangeControls), siteno)
+        .select('.loading-indicator-container')
+            .call(link(loadingIndicator, createStructuredSelector({
+                showLoadingIndicator: isLoadingTS('current', 'P7D'),
+                sizeClass: () => 'fa-3x'
+            })));
 
     // If specified, turn the visibility of the comparison time series on.
     if (compare) {
@@ -462,24 +460,26 @@ const attachToNode = function(store, node, {siteno, parameter, compare, cursorOf
     select(node).select('.graph-container')
         .call(link(controlDisplay, hasTimeSeriesWithPoints('current', 'P7D')))
         .call(timeSeriesGraph, siteno)
-        .call(cursorSlider)
+        .call(callIf(interactive, cursorSlider))
         .append('div')
             .classed('ts-legend-controls-container', true)
             .call(timeSeriesLegend)
-            .call(graphControls);
-    select(node).select('.select-time-series-container')
-        .call(link(plotSeriesSelectTable, createStructuredSelector({
-            siteno: () => siteno,
-            availableTimeSeries: availableTimeSeriesSelector,
-            lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current', 'P7D'),
-            timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM),
-            layout: layoutSelector
-        })));
-    select(node).select('.provisional-data-alert')
-        .call(link(function(elem, allTimeSeries) {
-            elem.attr('hidden', Object.keys(allTimeSeries).length ? null : true);
-        }, allTimeSeriesSelector));
+            .call(callIf(interactive, graphControls));
 
+    if (interactive) {
+        select(node).select('.select-time-series-container')
+            .call(link(plotSeriesSelectTable, createStructuredSelector({
+                siteno: () => siteno,
+                availableTimeSeries: availableTimeSeriesSelector,
+                lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current', 'P7D'),
+                timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM),
+                layout: layoutSelector
+            })));
+        select(node).select('.provisional-data-alert')
+            .call(link(function(elem, allTimeSeries) {
+                elem.attr('hidden', Object.keys(allTimeSeries).length ? null : true);
+            }, allTimeSeriesSelector));
+    }
 
     window.onresize = function() {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));

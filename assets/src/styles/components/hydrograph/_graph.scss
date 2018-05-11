@@ -13,6 +13,12 @@
     text-align: center;
 }
 
+.watermark {
+    position: absolute;
+    opacity: .08;
+    pointer-events: none;
+}
+
 svg {
     .overlay {
         fill: none;
@@ -179,9 +185,5 @@ svg {
     }
     .pump-mask {
         fill: #3498db;
-    }
-    .watermark {
-        position: absolute;
-        opacity: .08;
     }
 }
