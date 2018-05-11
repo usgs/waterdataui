@@ -6,6 +6,10 @@ describe('Redux store', () => {
 
     describe('asynchronous actions', () => {
         const SITE_NO = '12345678';
+        const LOCATION = {
+            latitude: 44.8528,
+            longitude: -92.2383
+        };
 
         const TEST_STATE = {
             series: {
@@ -54,6 +58,42 @@ describe('Redux store', () => {
                 currentDateRange: 'P7D'
             }
         };
+
+        describe('retrieveLocationTimeZone with good data', () => {
+            let store;
+            let modelsMock;
+            let mockDispatch;
+            let mockGetState;
+
+            beforeEach(() => {
+                let getWeatherServicePromise = Promise.resolve(JSON.parse(MOCK_WEATHER_SERVICE_DATA));
+                modelsMock = {
+                    queryWeatherService: function () {
+                        return getWeatherServicePromise;
+                    }
+                };
+
+                spyOn(modelsMock, 'queryWeatherService').and.callThrough();
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
+                store = proxyquire('./index', {'../models': modelsMock});
+                store.configureStore();
+            });
+
+            it('fetches data from the weather service', () => {
+                store.Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
+                expect(modelsMock.queryWeatherService).toHaveBeenCalledWith(LOCATION.latitude, LOCATION.longitude);
+            });
+
+            it('gets the data and sets the timezone', (done) => {
+                spyOn(store.Actions, 'setLocationIANATimeZone');
+                let p = store.Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
+                p.then(() => {
+                    expect(store.Actions.setLocationIANATimeZone.calls.count()).toBe(1);
+                    done();
+                });
+            });
+        });
 
         describe('retrieveTimeSeries with good data', () => {
             let store;
@@ -788,6 +828,10 @@ describe('Redux store', () => {
         });
     });
 });
+
+// const MOCK_WEATHER_SERVICE_DATA = '{"@id": "https://api.weather.gov/points/44.8528,-92.2383", "@type": "wx:Point", "cwa": "MPX", "forecastOffice": "https://api.weather.gov/offices/MPX", "gridX": 142, "gridY": 66, "forecast": "https://api.weather.gov/gridpoints/MPX/142,66/forecast", "forecastHourly": "https://api.weather.gov/gridpoints/MPX/142,66/forecast/hourly", "forecastGridData": "https://api.weather.gov/gridpoints/MPX/142,66", "observationStations": "https://api.weather.gov/gridpoints/MPX/142,66/stations", "relativeLocation": {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-92.243062, 44.852265]}, "properties": {"city": "Spring Valley", "state": "WI", "distance": {"value": 380.06784988443, "unitCode": "unit:m"}, "bearing": {"value": 80, "unitCode": "unit:degrees_true"}}}, "forecastZone": "https://api.weather.gov/zones/forecast/WIZ024", "county": "https://api.weather.gov/zones/county/WIC093", "fireWeatherZone": "https://api.weather.gov/zones/fire/WIZ024", "timeZone": "America/Chicago", "radarStation": "KMPX"}';
+// const MOCK_WEATHER_SERVICE_DATA = {'@id': 'https://api.weather.gov/points/44.8528,-92.2383', '@type': 'wx:Point', 'cwa': 'MPX', 'forecastOffice': 'https://api.weather.gov/offices/MPX', 'gridX': 142, 'gridY': 66, 'forecast': 'https://api.weather.gov/gridpoints/MPX/142,66/forecast', 'forecastHourly': 'https://api.weather.gov/gridpoints/MPX/142,66/forecast/hourly', 'forecastGridData': 'https://api.weather.gov/gridpoints/MPX/142,66', 'observationStations': 'https://api.weather.gov/gridpoints/MPX/142,66/stations', 'relativeLocation': {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [-92.243062, 44.852265]}, 'properties': {'city': 'Spring Valley', 'state': 'WI', 'distance': {'value': 380.06784988443, 'unitCode': 'unit:m'}, 'bearing': {'value': 80, 'unitCode': 'unit:degrees_true'}}}, 'forecastZone': 'https://api.weather.gov/zones/forecast/WIZ024', 'county': 'https://api.weather.gov/zones/county/WIC093', 'fireWeatherZone': 'https://api.weather.gov/zones/fire/WIZ024', 'timeZone': 'America/Chicago', 'radarStation': 'KMPX'};
+const MOCK_WEATHER_SERVICE_DATA = `{"properties" : {"timeZone" : "America/Chicago"}}`;
 
 const MOCK_LAST_YEAR_DATA = `
 {"name" : "ns1:timeSeriesResponseType",

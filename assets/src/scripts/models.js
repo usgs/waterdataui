@@ -277,5 +277,10 @@ export function sortedParameters(variables) {
 
 export function queryWeatherService(latitude, longitude) {
     const url = `${WEATHER_SERVICE_ROOT}/points/${latitude},${longitude}`;
-    return get(url);
+    return get(url)
+        .then(response => JSON.parse(response))
+        .catch(reason => {
+            console.error(reason);
+            return {};
+        });
 }

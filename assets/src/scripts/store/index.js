@@ -51,7 +51,7 @@ export const Actions = {
         return function(dispatch, getState) {
             return queryWeatherService(latitude, longitude).then(
                 resp => {
-                    const tzIANA = JSON.parse(resp).properties.timeZone;
+                    const tzIANA = resp.properties.timeZone || 'local'; // set to local timezone if unavailable
                     dispatch(Actions.setLocationIANATimeZone(tzIANA));
                 }
             );

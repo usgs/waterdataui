@@ -1,5 +1,4 @@
 const { axisBottom, axisLeft } = require('d3-axis');
-const { timeDay, timeWeek, timeMonth } = require('d3-time');
 const { timeFormat } = require('d3-time-format');
 const { createSelector } = require('reselect');
 const { DateTime } = require('luxon');
@@ -22,24 +21,15 @@ const FORMAT = {
     P1Y: 'MMM yyyy'
 };
 
-const tickInterval = function(period) {
-    switch (period) {
-        case 'P7D':
-            return timeDay;
-        case 'P30D':
-            return timeWeek;
-        case 'P1Y':
-            if (mediaQuery(USWDS_LARGE_SCREEN)) {
-                return timeMonth;
-            } else {
-                return timeMonth.every(2);
-            }
-        default:
-            return timeDay;
-    }
-};
-
-
+/**
+ * Generate the values for ticks to place on a hydrograph.
+ *
+ * @param startDate - start datetime in the form of milliseconds since 1970-01-01 UTC
+ * @param endDate - end datetime in the form of milliseconds since 1970-01-01 UTC
+ * @param period - ISO duration for date range of the time series
+ * @param ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
+ * @returns {Array}
+ */
 export const generateDateTicks = function(startDate, endDate, period, ianaTimeZone) {
     const tzStartDate = DateTime.fromMillis(startDate, {zone: ianaTimeZone});
     let dates = [];
@@ -88,7 +78,8 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
  * @param  {Object} yScale      D3 Scale object for the y-axis
  * @param  {Number} yTickSize   Size of inner ticks for the y-axis
  * @param {String} parmCd - parameter code of time series to be shown on the graph.
- * * @param {String} period - ISO duration for date range of the time series
+ * @param {String} period - ISO duration for date range of the time series
+ * @param {String} ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
  * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
 export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period, ianaTimeZone) {
