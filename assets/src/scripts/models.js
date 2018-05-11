@@ -281,6 +281,6 @@ export function queryWeatherService(latitude, longitude) {
         .then(response => JSON.parse(response))
         .catch(reason => {
             console.error(reason);
-            return {};
+            return {properties: {}};
         });
 }
