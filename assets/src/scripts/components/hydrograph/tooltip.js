@@ -108,16 +108,10 @@ let marginAdjustment =  0;
 // Find the with of the between the y-axis and margin
 const findWidthYAxisAndMargin = function (elem) {
     elem.call(link(function(elem, layout) {
-        console.log('this is layout ' + JSON.stringify(layout))
+       // console.log('this is layout ' + JSON.stringify(layout))
         return marginAdjustment =  layout.margin.left + baseMarginOffsetTextGroup;
         }, layoutSelector));
 };
-
-// for testing
-function helloWorld() {
-    return 'hello world!';
-}
-
 
 /*
  * Adjust font size of tooltips based on number of tooltips showing
@@ -148,6 +142,7 @@ const adjustTooltipFontSize = function(elem) {
 }
 
 const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode}, textGroup) {
+//console.log('this is currentPoints ' + JSON.stringify(currentPoints));
 
     // Put the circles in a container so we can keep the their position in the
     // DOM before rect.overlay, to prevent the circles from receiving mouse
@@ -160,7 +155,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     }
 
     const data = Object.values(currentPoints).concat(Object.values(comparePoints));
-
+console.log('this is data ' + JSON.stringify(data));
     const texts = textGroup
         .selectAll('div')
         .data(data);
@@ -294,5 +289,4 @@ const createTooltipFocus = function(elem) {
     })));
 };
 
-// original line module.exports = {createTooltipFocus, createTooltipText, tooltipPointsSelector};
-module.exports = {createTooltipFocus, createTooltipText, tooltipPointsSelector, adjustTooltipFontSize, helloWorld}; // added for testing
+    module.exports = {createTooltipFocus, createTooltipText, tooltipPointsSelector};
