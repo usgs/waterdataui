@@ -27,7 +27,7 @@ describe('Redux store', () => {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
-                            requestDT: new Date('2017-03-31'),
+                            requestDT: new Date(1490936400000), // new Date('2017-03-31'),
                             'filter:timeRange': {
                                 mode: 'PERIOD',
                                 periodDays: 7,
@@ -37,12 +37,12 @@ describe('Redux store', () => {
                     },
                     'current:P30D:00060': {
                         notes: {
-                            requestDT: new Date('2017-03-31'),
+                            requestDT: new Date(1490936400000), // new Date('2017-03-31'),
                             'filter:timeRange': {
                                 mode: 'RANGE',
                                 interval: {
-                                    start: new Date('2017-03-01'),
-                                    end: new Date('2017-03-31')
+                                    start: new Date(1488348000000), // new Date('2017-03-01'),
+                                    end: new Date(1490936400000) // new Date('2017-03-31')
                                 }
                             }
                         }
@@ -224,8 +224,8 @@ describe('Redux store', () => {
             let mockDispatch;
             let mockGetState;
 
-            const START_DATE = new Date('2017-01-01');
-            const END_DATE = new Date('2017-01-08');
+            const START_DATE = new Date(1483250400000); // new Date('2017-01-01');
+            const END_DATE = new Date(1483855200000); // new Date('2017-01-08');
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
@@ -272,8 +272,8 @@ describe('Redux store', () => {
             let mockDispatch;
             let mockGetState;
 
-            const START_DATE = new Date('2017-01-01');
-            const END_DATE = new Date('2017-01-08');
+            const START_DATE = new Date(1483250400000); // new Date('2017-01-01');
+            const END_DATE = new Date(1483855200000); // new Date('2017-01-08');
 
             beforeEach(() => {
                 let getPreviousTSPromise = Promise.reject(Error('Bad data'));
@@ -338,7 +338,7 @@ describe('Redux store', () => {
                 const args = modelsMock.getTimeSeries.calls.argsFor(0)[0];
                 expect(args.sites).toEqual(['12345678']);
                 expect(args.params).toEqual(['00060']);
-                expect(args.endDate).toEqual(new Date('2017-03-31'));
+                expect(args.endDate).toEqual(new Date(1490936400000));
             });
 
             it('Should dispatch add series collection and retrieveCompareTimeSeries', (done) => {
@@ -395,7 +395,7 @@ describe('Redux store', () => {
                     queryInfo: {
                         'current:P7D': {
                             notes: {
-                                requestDT: new Date('2017-03-31'),
+                                requestDT: new Date(1490936400000), // new Date('2017-03-31'),
                                 'filter:timeRange': {
                                     mode: 'PERIOD',
                                     periodDays: 7,
@@ -405,12 +405,12 @@ describe('Redux store', () => {
                         },
                         'current:P30D:00060': {
                             notes: {
-                                requestDT: new Date('2017-03-31'),
+                                requestDT: new Date(1490936400000), //new Date('2017-03-31'),
                                 'filter:timeRange': {
                                     mode: 'RANGE',
                                     interval: {
-                                        start: new Date('2017-03-01'),
-                                        end: new Date('2017-03-31')
+                                        start: new Date(1488348000000), // new Date('2017-03-01'),
+                                        end: new Date(149093640000) // new Date('2017-03-31')
                                     }
                                 }
                             }
