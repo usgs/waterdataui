@@ -103,7 +103,7 @@ describe('map module', () => {
         });
 
         it('Should create the FIM slider', () => {
-            expect(select(mapNode).select('input[type="range"').size()).toBe(1);
+            expect(select(mapNode).select('input[type="range"]').size()).toBe(1);
         });
     });
 
