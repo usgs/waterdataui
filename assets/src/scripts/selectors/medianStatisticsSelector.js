@@ -1,4 +1,5 @@
 const memoize = require('fast-memoize');
+const find = require('lodash/find');
 const { createSelector } = require('reselect');
 
 const { getCurrentParmCd, getRequestTimeRange } = require('./timeSeriesSelector');
@@ -22,23 +23,31 @@ export const getCurrentVariableMedianStatistics = createSelector(
     (parmCd, stats) => stats[parmCd] || null
 );
 
-//TODO: worry about timezone later after Andrew's changes.
-export const getCurrentVariableMedianStatisticsInDateRange = createSelector(
+export const getCurrentVariableMedianStatPointsInDateRange = createSelector(
     getCurrentVariableMedianStatistics,
     getRequestTimeRange('current'),
     (stats, timeRange) => {
-        const start = {
-            month: timeRange.start.getMonth(),
-            day: timeRange.start.getDate()
-        };
-        const end = {
-            month: timeRange.end.getMonth(),
-            day: timeRange.end.getDate()
-        };
-
-        return stats.filter((stat) => {
-            return stat.month_nu >= start.month && stat.day_nu >= start.day &&
-                stat.month_nu <= end.month && stat.day_nu <= end.day;
+        if (!stats) {
+            return [];
+        }
+        const startDate = new Date(timeRange.start).setFullYear(timeRange.start.getFullYear(), timeRange.start.getMonth(), timeRange.start.getDate());
+        const endDate = new Date(timeRange.end).setFullYear(timeRange.end.getFullYear(), timeRange.end.getMonth(), timeRange.end.getDate());
+        let nextDate = new Date(startDate);
+        let datesOfInterest = [];
+        while (nextDate <= endDate) {
+            datesOfInterest.push({
+                year: nextDate.getFullYear(),
+                month: (nextDate.getMonth() + 1).toString(),
+                day: nextDate.getDate().toString()
+            });
+            nextDate.setDate(nextDate.getDate() + 1);
+        }
+        return datesOfInterest.map((date) => {
+            let stat = find(stats, {'month_nu': date.month, 'day_nu': date.day});
+            return {
+                value: stat.p50_va,
+                date: new Date(parseInt(date.year), parseInt(date.month) - 1, parseInt(date.day))
+            };
         });
     }
 );
