@@ -117,11 +117,11 @@ export function isLeapYear(year) {
 export function mergeMedianTimeSeries(collection, medianData, timeSeriesEndDateTime, varsByCode) {
     // We only have data for the variables returned from the IV service. If this
     // series doesn't correspond with an IV series, skip it.
-    //const variable = varsByCode[medianData[0].parameter_cd];
-    //if (!variable) {
-    //    console.info(`(Median statistics) Variable data not available for ${medianData[0].parameter_cd} - skipping`);
-    //    return collection;
-    //}
+    const variable = varsByCode[medianData[0].parameter_cd];
+    if (!variable) {
+        console.info(`(Median statistics) Variable data not available for ${medianData[0].parameter_cd} - skipping`);
+        return collection;
+    }
 
     let values = [];
 

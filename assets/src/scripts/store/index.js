@@ -9,6 +9,7 @@ const { getStatistics, getPreviousYearTimeSeries, getTimeSeries,
 const { calcStartTime } = require('../utils');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
+const { fetchSiteMedianStatistics } = require('../statisticsData');
 const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
     getVariables } = require('../selectors/timeSeriesSelector');
 
@@ -54,6 +55,7 @@ export const Actions = {
             const currentState = getState();
             const requestKey = getTsRequestKey('current', 'P7D')(currentState);
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
+            dispatch(Actions.retrieveMedianStatistics(siteno));
 
             const timeSeries = getTimeSeries({sites: [siteno], params}).then(
                 series => {
@@ -127,6 +129,16 @@ export const Actions = {
                 () => {
                     dispatch(Actions.resetTimeSeries(getTsRequestKey('compare', period)(getState())));
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+                }
+            );
+        };
+    },
+    retrieveMedianStatistics(site) {
+        //TODO: Consider whether we need a loading key. Should be specific to statistics I think.
+        return function(dispatch) {
+            return fetchSiteMedianStatistics({site}).then(
+                stats => {
+                    dispatch(Actions.addMedianStats(stats));
                 }
             );
         };
@@ -256,6 +268,12 @@ export const Actions = {
         return {
             type: 'RESET_TIME_SERIES',
             key
+        };
+    },
+    addMedianStats(data) {
+        return {
+            type: 'MEDIAN_STATS_ADD',
+            data
         };
     },
     setCursorOffset(cursorOffset) {

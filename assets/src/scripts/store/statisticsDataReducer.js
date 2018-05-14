@@ -1,13 +1,21 @@
 const merge = require('lodash/merge');
 
-/* Case reducers */
-const addStatsCollection = function(statisticsData, action) {
-    return merge({}, statisticsData, action.data);
+const INITIAL_STATE = {
+    median: {}
 };
 
-export const statisticsDataReducer = function(statisticsData={}, action) {
+/* Case reducers */
+const addMedianStats = function(statisticsData, action) {
+    //TODO: Make sure stats are sorted in store.js
+    return {
+        ...statisticsData,
+        median: merge({}, statisticsData.median, action.data)
+    };
+};
+
+export const statisticsDataReducer = function(statisticsData=INITIAL_STATE, action) {
     switch(action.type) {
-        case 'STATS_COLLECTION_ADD': return addStatsCollection(statisticsData, action);
+        case 'MEDIAN_STATS_ADD': return addMedianStats(statisticsData, action);
         default: return statisticsData;
     }
 };
