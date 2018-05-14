@@ -139,23 +139,14 @@ export const descriptionSelector = createSelector(
 );
 
 /**
- * Select the time zone and do a quick sanity check to make sure that the IANA time zone from
- * the weather service is consistent with the NWISWeb time zone. If not, use UTC.
+ * Select the time zone. If the time zone is null, use `local` as the time zone
  *
  * @ return {String} - IANA time zone
  *
  */
 export const tsTimeZoneSelector = createSelector(
     getIanaTimeZone,
-    getNwisTimeZone,
-    (ianaTimeZone, nwisTimeZone) => {
-        const tz = DateTime.fromObject({zone: ianaTimeZone});
-        const tzShortName = tz.offsetNameShort.toUpperCase();
-        const nwisShortNames = Object.values(nwisTimeZone).map(tz => tz.zoneAbbreviation.toUpperCase());
-        if (nwisShortNames.includes(tzShortName)) {
-            return ianaTimeZone;
-        } else {
-            return 'UTC';
-        }
+    ianaTimeZone => {
+        return ianaTimeZone !== null ? ianaTimeZone : 'local';
     }
 );

@@ -427,34 +427,26 @@ describe('TimeSeries module', () => {
 
     describe('tsTimeZoneSelector', () => {
 
-        it('Returns UTC if series is empty', () => {
+        it('Returns local if series is empty', () => {
             const result = tsTimeZoneSelector({
                 series: {}
             });
-            expect(result).toEqual('UTC');
+            expect(result).toEqual('local');
         });
 
-        it('Returns UTC if NWIS and IANA time zones do not agree', () => {
+        it('Returns local if timezone is null', () => {
             const result = tsTimeZoneSelector({
                 series: {
-                    ianaTimeZone: 'America/Juneau',
-                    timeZones: {
-                        'CDT': {'zoneAbbreviation': 'CDT'},
-                        'CST': {'zoneAbbreviation': 'CST'}
-                    }
+                    ianaTimeZone: null
                 }
             });
-            expect(result).toEqual('UTC');
+            expect(result).toEqual('local');
         });
 
         it('Returns the IANA timezone NWIS and IANA agree', () => {
             const result = tsTimeZoneSelector({
                 series: {
                     ianaTimeZone: 'America/New_York',
-                    timeZones: {
-                        'EDT': {'zoneAbbreviation': 'EDT'},
-                        'EST': {'zoneAbbreviation': 'EST'}
-                    }
                 }
             });
             expect(result).toEqual('America/New_York');
