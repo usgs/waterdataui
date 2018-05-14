@@ -6,6 +6,10 @@ python:
 addons:
   firefox: "latest"
 
+env:
+  global:
+  - secure: "Q0B17ffX76zmYC76nsd3HZqXtNVF1UZATsmgI7q/AUr7QdVqmft/p807ekZfWDs1NBsZyMWyrjzKCVbrl7RxvAPIAzm1d62MxCK67lPGvMWJ1vMXjeQ9Oq1wOu48k3HGYvVMP/rtwRv6cEfaVINZ/IvsgA5XaYyukAgmea3OBRY3zUKtV3TBGXxgRkC5fVXIdO13n3XS60b94rPFy7ENV84Rcis2tJrpnreWf4khVqnWXMhgRRt5dzCpJT8K78MraANqUb9dfHq5mBrYjEdlywWjMdcE0zFvCKs3Q62tuIvB+FAOkfiYJ0AmeFzkVHvNQ4ZYeZlofqnGK8b9AMdtCMu30jhiXIrkhAIQrq75HG0UISllL0ZhrYGH4VrIKzqlyg+Lfz/YhifrnsX824tie8QMsooKgn41rGUDyPLklM+i9q67FAPzLjl3h+D2yxsIiGkz0keuHwkDCAVm7TW/H+UgS9DlmIe8snYU31R67f9pI10hRYgL6DAuGnq7hPn7I9Df8DGdly3S4SWDur7mPjs8n0/1llBnBej4iLmFue+8dya1MCFOTTDL8RmMZkAMoE+n5urrCYm78ICQpTzhTaT4bCmhRsurTB6AAmiw4nG3csvOKkMocFAZI3PycK3GCmgnKcZQkDjrhu/f7D9JQZMJgS0hVDL/Vub2fPFv/Qo="
+  - secure: "aVqKYPqkzAD+Gfs/Nmw5+XvkxynbAd61/vKyeUKBJEn8wU8k4JdzPw8PWv5Y1Lgw6Ve+PLkWfe5HEARyQNZep8hRvOcoV1sHm1NXE5en6NBiA5lzhgpdZ/l0goIpuzrJMe/gnSZxNZiBkKbhoLpQR18GPDhWzdkCEXoNbxhQLdegnYYXVdt/cla/p9lcR7go4eAL4Rr7aonm1mkC7FepsLlYb1bG9UPDmgIwMf640Fwb9tChIF91QpsXhqqqGd/uPZdcXpmmbi2VjGtxv8Gu+3AYtHhJiVrK6FDSfFEwb6eJq3vS/UXLhgqf+09R+V1PjRNOyQyqDW98DTGvBTz9uuiHPnuH5AjFl2KNceGz1qCu6re5YQZzPghw6hggMRjYL3pfWU+2xSzG1oq6qGmemqpP2EOWBi7MMmrxZsW42P1CqV3vhgsfHZqyMZaKJTluJL7O8zuxIua/l65ThV76eXr+rkHYW6o6OLpx86t5t80djqY9vCYjxOc0V/yqvr3o14bkbfskz/9BxGj5olOXeKPnqkypHfT5ggj3eAkpLAPuioqyH10JD/oZJfX+OyphB55YWZ3dn6rWT8X9FWCRV6B6FvzheCLX5CTZ1MVRHIxojfBE2UrVNLZbWuYvxqGjc3kx8CHk2N4wKFivC6FiSdy2rxJYG4pzZUo2XJ8o55w="
 
 before_install:
   - nvm install $(python -c "import json; print(json.loads(open('./assets/package.json').read())['engines']['node'])")
@@ -21,11 +25,10 @@ before_script:
 
 script:
   - wdfn-server/env/bin/coverage run --omit=wdfn-server/waterdata/tests/*.py,wdfn-server/env/* -m pytest wdfn-server/waterdata
-  - cd assets && npm run test
+  - cd assets && KARMA_BROWSERSTACK=1 npx karma start
 
 after_success:
   - cd ../
   - find assets/coverage/ -mindepth 2 -iname '*.info' -exec cp -t coverage/ '{}' +
   - coveralls-lcov -v -n coverage/lcov.info > coverage/coverage.json
   - wdfn-server/env/bin/coveralls --merge=coverage/coverage.json
-

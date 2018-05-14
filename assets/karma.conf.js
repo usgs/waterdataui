@@ -10,7 +10,7 @@ function isDebug(argument) {
 
 
 module.exports = function (config) {
-    config.set({
+    let karmaConfig = {
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
@@ -21,6 +21,7 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
+            //'node_modules/babel-polyfill/dist/polyfill.min.js',
             'tests/scripts/globalConfig.js',
             'src/scripts/**/*.js'
         ],
@@ -75,11 +76,9 @@ module.exports = function (config) {
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: false,
 
-
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: ['Firefox'],
-
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
@@ -88,7 +87,80 @@ module.exports = function (config) {
         // Concurrency level
         // how many browser should be started simultaneous
         concurrency: Infinity
-    });
+    };
+
+    // Add BrowserStack-specific settings
+    if (process.env.KARMA_BROWSERSTACK && process.env.BROWSER_STACK_USERNAME) {
+        karmaConfig = {
+            ...karmaConfig,
+            browserStack: {
+                project: 'Water Data For The Nation'
+            },
+            customLaunchers: {
+                // Windows browsers
+                bs_ie11_windows10: {
+                    base: 'BrowserStack',
+                    browser: 'ie',
+                    browser_version: '11',
+                    os: 'windows',
+                    os_version: '10'
+                },
+                bs_ie9_windows7: {
+                    base: 'BrowserStack',
+                    browser: 'ie',
+                    browser_version: '9',
+                    os: 'windows',
+                    os_version: '7'
+                },
+                bs_firefox_windows10: {
+                    base: 'BrowserStack',
+                    browser: 'firefox',
+                    browser_version: '48.0',
+                    os: 'Windows',
+                    os_version: '10'
+                },
+
+                // OS X Browsers
+                bs_firefox_mac: {
+                    base: 'BrowserStack',
+                    browser: 'firefox',
+                    browser_version: '48.0',
+                    os: 'OS X',
+                    os_version: 'Mountain Lion'
+                },
+                bs_safari8_mac: {
+                    base: 'BrowserStack',
+                    browser: 'safari',
+                    browser_version: '10.2',
+                    os: 'OS X',
+                    os_version: 'Yosemite'
+                },
+
+                // iOS browsers
+                bs_iphone5: {
+                    base: 'BrowserStack',
+                    device: 'iPhone 5',
+                    os: 'ios',
+                    os_version: '6.0'
+                },
+
+                // Android browsers
+                'bs_galaxys5_44': {
+                    base: 'BrowserStack',
+                    browser_version: 'latest',
+                    os: 'android',
+                    os_version: '4.4',
+                    device: 'Samsung Galaxy S5'
+                }
+            },
+            concurrency: 2,
+            browsers: ['bs_firefox_mac']
+        };
+    } else {
+        console.log('Skipping BrowserStack configuration...');
+    }
+
+    config.set(karmaConfig);
 
     if (process.argv.some(isDebug)) {
         config.set({
@@ -118,4 +190,3 @@ module.exports = function (config) {
         });
     }
 };
-
