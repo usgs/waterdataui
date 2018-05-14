@@ -6,6 +6,10 @@ python:
 addons:
   firefox: "latest"
 
+env:
+  global:
+    secure: "AQlOLfO/rht0w2rKrlm8ntE32MH0a99hHB7wbc1kQZAh5AQsWGEC73yciQ7Rfunpf0//yX88kfuYQMvbzbfB+lljiy6LWzaGcixplNHOjilmnqhpjP3bFw2rHqPyCwNuzluAIecZHi6smQ77SiSZxPD6lbvOjDUihS8VdjvURRjNV4GZZl1NLi1iz/7rWbq7TY9m2cMmtORzGmWc116nuNAvNwNuEcka4G4K6lT/BOUi95gCeMoK9x6iTQP2PrLSbOEdaAN60fA7JopcGunxUUNRux8eJ23MyOyLxZpCGa0jjIQKZuJ2XBs2XPGOgRw1adnxzokSiGgkElIBKeQE09o6w1dxLfyEB916Eo6TZ8bT4yynb+rGJkcExntjniOG1ZaAGjQq0+PXvMGaPyZQfYxzlmg2MC3+CPIhSVrkOuEAyWedtwjzM/UNxAzI2lQT8ug4uW5l5sXAv1eyE0NIyXrQ4ttFiNGekKz8whoGzhbXYS7Ljf+ciSGmjreBgnwI+LdrGl9EvM/S9Q7usqoIhgLBOaTRDXvImIYWhJY+40317IuFLDVVpTpJmZUBbLKDpZYIqQpT0Rysl1uN7Ehn2RG6Pg0qPLFTQ5y/jKz3yyBXtkUrx+O9jgmI34WrGul4fiJHFrV99Os6KqpN6XT0mNkkhEMuIjjVt/2ry6gmyZA="
+    secure: "m3i0uXVn5LgRLv3fMAJIHhAijhFuDgKx1rehiA8EmcWSDJwYjHVwCSxzp5FEqIlbV8RBMQh48KkmPCHU6QfzYR3SpAbYsr9KPnaFizhych+J14CePwmdxMi7tu+OLFUUgGJ7E4jCPPPqbtorZ0qL8W/fsSZFF90VoX8FfhRxpkDbdpJ+Ti4JCLN5Lj2mT0zXRpIKMoMUxVyssXgjoVjsbz3p5RswJb6dJ3Vw7nFw9H1j3oSeCTM0JMO1r6VlSI4hEvX8GTsMv7PAGqEd+t4FtsIuLUBMTFZtNQoNkjKtET65xavErGD90Arr7MJjZiVTkciQqTI/mf/IonSwYUOt8Pt09b34hmWc2eT1/O/Xt0EATBhfe3ibffgwWSUdfUWbA3MzudZyKh5wj5gdmGuu8kCC8uSYp+94tCo6sajMHamAoqEV3t20OzqDgZd8Be/fOdSEix/UlYxSkxZqFid2XM7ky4UZ3Fqh2WUideDzdW+eotzgUcmRQ6CSZCmAmEjrXeeDDVLXfxhQ4n5UAbfu3IaD07qy16skqD9P+DjTsClGeg8yGJyAKkV/Q/pIuADvjza4Kr3EHgHg7M7vWAvyzhtfDkrLJWu1mM+0KE6WlmNicSICu1zNjjWbKCE4MYckLc6j/dvk39p1cL4bHPhGyEbSa1S3GAotxwTPMF18qT0="
 
 before_install:
   - nvm install $(python -c "import json; print(json.loads(open('./assets/package.json').read())['engines']['node'])")
@@ -21,11 +25,10 @@ before_script:
 
 script:
   - wdfn-server/env/bin/coverage run --omit=wdfn-server/waterdata/tests/*.py,wdfn-server/env/* -m pytest wdfn-server/waterdata
-  - cd assets && npm run test
+  - cd assets && KARMA_BROWSERSTACK=1 npm run test
 
 after_success:
   - cd ../
   - find assets/coverage/ -mindepth 2 -iname '*.info' -exec cp -t coverage/ '{}' +
   - coveralls-lcov -v -n coverage/lcov.info > coverage/coverage.json
   - wdfn-server/env/bin/coveralls --merge=coverage/coverage.json
-
