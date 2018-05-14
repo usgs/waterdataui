@@ -103,32 +103,35 @@ describe('map module', () => {
         });
 
         it('Should create the FIM slider', () => {
-            expect(select(mapNode).select('input[type="range"').size()).toBe(1);
+            expect(select(mapNode).select('input[type="range"]').size()).toBe(1);
         });
     });
 
     describe('link back to FIM', () => {
-
-        let testFloodData = {
-            floodData: {
-                stages: [13, 14, 15],
-                extent: {
-                    xmin: -87.4667,
-                    ymin: 39.43439,
-                    xmax: -87.408,
-                    ymax: 39.51445
-                }
-            },
-            floodState: {
-                gageHeight: 10
-            }
-        };
+        let testFloodData;
         const testMapData = {
-                siteno: '1234567',
-                latitude: 39.46,
-                longitude: -87.42,
-                zoom: 5
+            siteno: '1234567',
+            latitude: 39.46,
+            longitude: -87.42,
+            zoom: 5
         };
+
+        beforeEach(() => {
+            testFloodData = {
+                floodData: {
+                    stages: [13, 14, 15],
+                    extent: {
+                        xmin: -87.4667,
+                        ymin: 39.43439,
+                        xmax: -87.408,
+                        ymax: 39.51445
+                    }
+                },
+                floodState: {
+                    gageHeight: 10
+                }
+            };
+        });
 
         it('should happen if there are flood stages for a site', () => {
             store = configureStore(testFloodData);
