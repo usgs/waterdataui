@@ -21,6 +21,7 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
+            'node_modules/babel-polyfill/dist/polyfill.min.js',
             'tests/scripts/globalConfig.js',
             'src/scripts/**/*.js'
         ],
@@ -104,6 +105,13 @@ module.exports = function (config) {
                     os: 'windows',
                     os_version: '10'
                 },
+                bs_ie9_windows7: {
+                    base: 'BrowserStack',
+                    browser: 'ie',
+                    browser_version: '9',
+                    os: 'windows',
+                    os_version: '7'
+                },
                 bs_firefox_windows10: {
                     base: 'BrowserStack',
                     browser: 'firefox',
@@ -146,7 +154,7 @@ module.exports = function (config) {
                 }
             },
             concurrency: 2,
-            browsers: ['bs_ie11_windows10']
+            browsers: ['bs_ie9_windows7']
         };
     }
 
