@@ -89,6 +89,10 @@ describe('Chart axes', () => {
         it('creates tick marks for a 1 year period', () => {
             const result = generateDateTicks(startP1Y, endDate, 'P1Y', timeZone);
             expect(result.length).toBeGreaterThanOrEqual(6);
+            expect(result.includes(1472713200000)).toBe(true);
+            expect(result.includes(1477983600000)).toBe(true);
+            expect(result.includes(1493622000000)).toBe(true);
+            expect(result.includes(1498892400000)).toBe(true);
         });
     });
 });
