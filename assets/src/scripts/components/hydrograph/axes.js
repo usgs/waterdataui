@@ -69,7 +69,7 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
             dates.push(date.valueOf());
         }
     }
-    return dates
+    return dates;
 };
 
 /**

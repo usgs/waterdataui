@@ -458,6 +458,6 @@ describe('TimeSeries module', () => {
                 }
             });
             expect(result).toEqual('America/New_York');
-        })
+        });
     });
 });

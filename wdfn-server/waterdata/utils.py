@@ -2,12 +2,10 @@
 Utility functions
 
 """
-import datetime
 from functools import update_wrapper
 from urllib.parse import urlencode, urljoin
 
 import requests as r
-from pytz import timezone
 
 from . import app
 

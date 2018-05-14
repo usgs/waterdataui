@@ -48,14 +48,14 @@ const getCurrentVariableId = function(timeSeries, variables) {
 
 export const Actions = {
     retrieveLocationTimeZone(latitude, longitude) {
-        return function(dispatch, getState) {
+        return function(dispatch) {
             return queryWeatherService(latitude, longitude).then(
                 resp => {
                     const tzIANA = resp.properties.timeZone || 'local'; // set to local timezone if unavailable
                     dispatch(Actions.setLocationIANATimeZone(tzIANA));
                 }
             );
-        }
+        };
     },
     retrieveTimeSeries(siteno, params=null) {
         return function (dispatch, getState) {
@@ -307,7 +307,7 @@ export const Actions = {
         return {
             type: 'SET_LOCATION_IANA_TIME_ZONE',
             ianaTimeZone
-        }
+        };
     }
 };
 

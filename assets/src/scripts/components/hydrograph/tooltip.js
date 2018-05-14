@@ -78,8 +78,6 @@ const tooltipPointsSelector = memoize(tsKey => createSelector(
 const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone) {
     let label = '';
     if (datum && qualifiers) {
-        //const tzAbbrev = datum.dateTime.toString().match(/\(([^)]+)\)/)[1];
-        const tzAbbrev = DateTime.fromObject({zone: ianaTimeZone}).offsetNameShort;
         let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
 
         const maskKeys = new Set(Object.keys(MASK_DESC));
