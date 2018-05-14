@@ -135,7 +135,7 @@ describe('Models module', () => {
 
     describe('parseMedianTimeSeries', () => {
 
-        const endDate = 1515823200000; // 2018-01-13 00:00 America/Chicago
+        const endDate = 1515823200000;
 
         it('parseMedian data successfully constructs data for plotting', () => {
             const collection = mergeMedianTimeSeries({}, MOCK_MEDIAN_DATA, endDate, MOCK_MEDIAN_VARIABLES);
