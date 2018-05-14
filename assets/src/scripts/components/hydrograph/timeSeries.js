@@ -138,6 +138,13 @@ export const descriptionSelector = createSelector(
     }
 );
 
+/**
+ * Select the time zone and do a quick sanity check to make sure that the IANA time zone from
+ * the weather service is consistent with the NWISWeb time zone. If not, use UTC.
+ *
+ * @ return {String} - IANA time zone
+ *
+ */
 export const tsTimeZoneSelector = createSelector(
     getIanaTimeZone,
     getNwisTimeZone,
