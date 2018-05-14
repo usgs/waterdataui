@@ -154,7 +154,7 @@ module.exports = function (config) {
                 }
             },
             concurrency: 2,
-            browsers: ['bs_ie9_windows7']
+            browsers: ['bs_firefox_mac']
         };
     }
 

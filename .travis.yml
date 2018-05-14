@@ -25,11 +25,10 @@ before_script:
 
 script:
   - wdfn-server/env/bin/coverage run --omit=wdfn-server/waterdata/tests/*.py,wdfn-server/env/* -m pytest wdfn-server/waterdata
-  - cd assets && npm run test
+  - cd assets && KARMA_BROWSERSTACK=1 npm run test
 
 after_success:
   - cd ../
   - find assets/coverage/ -mindepth 2 -iname '*.info' -exec cp -t coverage/ '{}' +
   - coveralls-lcov -v -n coverage/lcov.info > coverage/coverage.json
   - wdfn-server/env/bin/coveralls --merge=coverage/coverage.json
-
