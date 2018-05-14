@@ -25,7 +25,7 @@ before_script:
 
 script:
   - wdfn-server/env/bin/coverage run --omit=wdfn-server/waterdata/tests/*.py,wdfn-server/env/* -m pytest wdfn-server/waterdata
-  - cd assets && KARMA_BROWSERSTACK=1 npx karma start
+  - cd assets && KARMA_BROWSERSTACK=1 npm run test
 
 after_success:
   - cd ../
