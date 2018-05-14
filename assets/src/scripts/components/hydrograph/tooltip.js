@@ -17,8 +17,8 @@ const { getCurrentVariable } = require('../../selectors/timeSeriesSelector');
 
 const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');
 
-const { USWDS_SMALL_SCREEN, USWDS_MEDIUM_SCREEN } = require('../../config'); // added for WDFN259
-const { mediaQuery } = require('../../utils'); // added for WDFN259
+const { USWDS_SMALL_SCREEN, USWDS_MEDIUM_SCREEN } = require('../../config');
+const { mediaQuery } = require('../../utils');
 
 const createFocusLine = function(elem) {
     let focus = elem.append('g')
@@ -130,20 +130,15 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     const newTexts = texts.enter()
         .append('div');
 
-// start --  section added for WDFN259
-
     // Find the with of the between the y-axis and margin
     const adjustMarginOfTooltips = function (elem) {
-        const baseMarginOffsetTextGroup = 20; // set a base number of pixels to bump the tooltips away from y-axis
-        let marginAdjustment =  0;
-        elem.call(link(function(elem, layout) {
-            console.log('this is layout ' + JSON.stringify(layout))
-            return marginAdjustment = layout.margin.left + baseMarginOffsetTextGroup;
+        // set a base number of pixels to bump the tooltips away from y-axis and compensate for under reporting of
+        // margin width by layout selector on time series with single or double digits on y-axis
+        const baseMarginOffsetTextGroup = 27;
+            elem.call(link(function(elem, layout) {
+            let marginAdjustment = layout.margin.left + baseMarginOffsetTextGroup;
+            elem.style('margin-left', marginAdjustment + 'px');
             }, layoutSelector));
-        if (marginAdjustment < 50) {
-            marginAdjustment = 50; // don't let the margin be smaller than 50 pixels
-        }
-        elem.style('margin-left', marginAdjustment + 'px');
     };
 
     // find how many tooltips are showing and adjust the font size larger if there are few, smaller if there are many
@@ -171,21 +166,20 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
         }
         elem.style('font-size', tooltipFontSize + 'rem');
     };
-// end --  section added for WDFN259
 
     // Update the text and backgrounds of all tooltip labels
     const merge = texts.merge(newTexts)
         .interrupt()
         .style('opacity', '1')
-        .call(adjustMarginOfTooltips)  // added for WDFN259
-        .call(adjustTooltipFontSize);  // added for WDFN259
+        .call(adjustMarginOfTooltips)
+        .call(adjustTooltipFontSize);
 
     merge
         .text(datum => getTooltipText(datum, qualifiers, unitCode))
         .each(function (datum) {
             const classes = classesForPoint(datum);
             const text = select(this);
-            text.attr('class', d => `${d.tsKey}-tooltip-text`); // moved for WFDN259
+            text.attr('class', d => `${d.tsKey}-tooltip-text`);
             text.classed('approved', classes.approved);
             text.classed('estimated', classes.estimated);
         });
