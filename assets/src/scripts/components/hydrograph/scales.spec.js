@@ -1,12 +1,20 @@
 const { extent } = require('d3-array');
+const { DateTime } = require('luxon');
 
 const { createXScale, createYScale, yScaleSelector } = require('./scales');
 
 
 describe('Charting scales', () => {
+    const timeZone = 'America/Los_Angeles';
     const points = Array(23).fill(0).map((_, hour) => {
         return {
-            dateTime: new Date(2017, 10, 10, hour, 0, 0, 0),
+            dateTime: DateTime.fromObject({
+                year: 2017,
+                month: 10,
+                day: 10,
+                hour: hour,
+                zone: timeZone
+            }).valueOf(),
             value: hour
         };
     });

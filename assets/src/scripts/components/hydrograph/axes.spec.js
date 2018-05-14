@@ -1,4 +1,4 @@
-const { scaleLinear, scaleTime } = require('d3-scale');
+const { scaleLinear } = require('d3-scale');
 const { select } = require('d3-selection');
 
 const { createAxes, appendAxes, generateDateTicks } = require('./axes');
@@ -6,7 +6,7 @@ const { createAxes, appendAxes, generateDateTicks } = require('./axes');
 
 describe('Chart axes', () => {
     // xScale is oriented on the left
-    const xScale = scaleTime().range([0, 10]).domain([new Date('2011-10-10'), new Date('2012-10-10')]);
+    const xScale = scaleLinear().range([0, 10]).domain([1318230000000, 1318230000000]);
     const yScale = scaleLinear().range([0, 10]).domain([0, 10]);
     const layout = {
         width: 400,

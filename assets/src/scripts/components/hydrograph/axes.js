@@ -85,7 +85,7 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
 export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period, ianaTimeZone) {
     // Create x-axis
     const [startDate, endDate] = xScale.domain();
-    const tickDates = generateDateTicks(startDate.getTime(), endDate.getTime(), period, ianaTimeZone);
+    const tickDates = generateDateTicks(startDate, endDate, period, ianaTimeZone);
     const xAxis = axisBottom()
         .scale(xScale)
         .tickValues(tickDates)
