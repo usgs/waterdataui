@@ -90,7 +90,7 @@ module.exports = function (config) {
     };
 
     // Add BrowserStack-specific settings
-    if (process.env.KARMA_BROWSERSTACK) {
+    if (process.env.KARMA_BROWSERSTACK && process.env.BROWSER_STACK_USERNAME) {
         karmaConfig = {
             ...karmaConfig,
             browserStack: {
@@ -156,6 +156,8 @@ module.exports = function (config) {
             concurrency: 2,
             browsers: ['bs_firefox_mac']
         };
+    } else {
+        console.log('Skipping BrowserStack configuration...');
     }
 
     config.set(karmaConfig);
