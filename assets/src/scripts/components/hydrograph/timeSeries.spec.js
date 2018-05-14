@@ -1,6 +1,6 @@
 const { timeSeriesSelector, hasTimeSeriesWithPoints, isVisibleSelector, yLabelSelector,
     titleSelector, descriptionSelector, currentVariableTimeSeriesSelector,
-    allTimeSeriesSelector, requestTimeRangeSelector, tsTimeZoneSelector} = require('./timeSeries');
+    allTimeSeriesSelector, tsTimeZoneSelector} = require('./timeSeries');
 
 
 const TEST_DATA = {
