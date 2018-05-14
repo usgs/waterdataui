@@ -49,10 +49,14 @@ const getCurrentVariableId = function(timeSeries, variables) {
 export const Actions = {
     retrieveLocationTimeZone(latitude, longitude) {
         return function(dispatch) {
+            const result = queryWeatherService(latitude, longitude);
             return queryWeatherService(latitude, longitude).then(
                 resp => {
-                    const tzIANA = resp.properties.timeZone || 'local'; // set to local timezone if unavailable
+                    const tzIANA = resp.properties.timeZone || null; // set to time zone to null if unavailable
                     dispatch(Actions.setLocationIANATimeZone(tzIANA));
+                },
+                () => {
+                    dispatch(Actions.setLocationIANATimeZone(null));
                 }
             );
         };

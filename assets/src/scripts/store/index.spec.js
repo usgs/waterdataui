@@ -65,6 +65,8 @@ describe('Redux store', () => {
             let mockDispatch;
             let mockGetState;
 
+            const MOCK_WEATHER_SERVICE_DATA = '{"properties" : {"timeZone" : "America/Chicago"}}';
+
             beforeEach(() => {
                 let getWeatherServicePromise = Promise.resolve(JSON.parse(MOCK_WEATHER_SERVICE_DATA));
                 modelsMock = {
@@ -90,6 +92,40 @@ describe('Redux store', () => {
                 let p = store.Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
                 p.then(() => {
                     expect(store.Actions.setLocationIANATimeZone.calls.count()).toBe(1);
+                    expect(store.Actions.setLocationIANATimeZone).toHaveBeenCalledWith('America/Chicago');
+                    done();
+                });
+            });
+        });
+
+        describe('retrieveLocationTimeZone with bad data', () => {
+            let store;
+            let modelsMock;
+            let mockDispatch;
+            let mockGetState;
+
+            beforeEach(() => {
+                /* eslint no-use-before-define: 0 */
+                let getWeatherServicePromise = Promise.reject(Error('Bad data'));
+                modelsMock = {
+                    queryWeatherService: function () {
+                        return getWeatherServicePromise;
+                    }
+                };
+
+                spyOn(modelsMock, 'queryWeatherService').and.callThrough();
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
+                store = proxyquire('./index', {'../models': modelsMock});
+                store.configureStore();
+            });
+
+            it('gets the data and sets the timezone to something', (done) => {
+                spyOn(store.Actions, 'setLocationIANATimeZone');
+                let p = store.Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
+                p.then(() => {
+                    expect(store.Actions.setLocationIANATimeZone.calls.count()).toBe(1);
+                    expect(store.Actions.setLocationIANATimeZone).toHaveBeenCalledWith(null);
                     done();
                 });
             });
@@ -876,7 +912,6 @@ describe('Redux store', () => {
     });
 });
 
-const MOCK_WEATHER_SERVICE_DATA = '{"properties" : {"timeZone" : "America/Chicago"}}';
 
 const MOCK_LAST_YEAR_DATA = `
 {"name" : "ns1:timeSeriesResponseType",
