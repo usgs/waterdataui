@@ -1,7 +1,7 @@
 const { getMedianStatistics, getMedianStatisticsByParmCd, getCurrentVariableMedianStatistics,
     getCurrentVariableMedianStatPointsInDateRange} = require('./medianStatisticsSelector');
 
-fdescribe('medianStatisticsSelector', () => {
+describe('medianStatisticsSelector', () => {
     describe('getMedianStatistics', () => {
         it('Return empty object if median is not in the statisticsData in the state', () => {
             expect(getMedianStatistics({
@@ -107,7 +107,7 @@ fdescribe('medianStatisticsSelector', () => {
         });
     });
 
-    fdescribe('getCurrentVariableMedianStatsPointInDateRange', () => {
+    describe('getCurrentVariableMedianStatsPointInDateRange', () => {
         const TEST_VARS = {
             '45807042': {
                 variableCode: {
