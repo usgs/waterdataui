@@ -7,7 +7,6 @@ Application configuration settings.
 import logging
 import os
 
-from waterdata import __version__ as APP_VERSION
 
 # controls environment specific behavior
 # acceptable values: 'local', 'development', 'staging', 'prod'
@@ -29,6 +28,7 @@ NWIS_ENDPOINTS = {
     'INVENTORY': 'https://waterdata.usgs.gov/nwis/inventory',
     'UV': 'https://waterdata.usgs.gov/nwis/uv'
 }
+WEATHER_SERVICE_ROOT = 'https://api.weather.gov'
 
 FIM_GIS_ENDPOINT = 'https://gis.wim.usgs.gov/arcgis/rest/services/FIMMapper/'
 FIM_ENDPOINT = 'https://fim.wim.usgs.gov/fim/'

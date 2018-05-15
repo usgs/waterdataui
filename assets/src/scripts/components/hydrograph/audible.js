@@ -144,7 +144,7 @@ export const audibleUI = function (elem) {
         }, audibleInterfaceOnSelector))
         .call(link(function(elem, xScale) {
             const domain = xScale.domain();
-            elem.attr('data-max-offset', domain[1].getTime() - domain[0].getTime());
+            elem.attr('data-max-offset', domain[1] - domain[0]);
         }, xScaleSelector('current')))
         .on('click', dispatch(function() {
             const button = select(this);

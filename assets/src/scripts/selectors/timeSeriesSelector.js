@@ -12,13 +12,15 @@ export const getQueryInfo = state => state.series.queryInfo || {};
 
 export const getRequests = state => state.series.requests || {};
 
-
 export const getCurrentVariableID = state => state.timeSeriesState.currentVariableID;
 
 export const getCurrentDateRange = state => state.timeSeriesState.currentDateRange;
 
 export const getLoadingTsKeys = state => state.timeSeriesState.loadingTSKeys;
 
+export const getIanaTimeZone = state => state.series.ianaTimeZone ? state.series.ianaTimeZone : null;
+
+export const getNwisTimeZone = state => state.series.timeZones || {};
 
 
 /*
@@ -115,9 +117,9 @@ export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSele
         // as the end date.
         if (notes['filter:timeRange'].mode === 'PERIOD') {
             const start = new Date(notes.requestDT);
-            start.setDate(notes.requestDT.getDate() - notes['filter:timeRange'].periodDays);
+            start.setDate(start.getDate() - notes['filter:timeRange'].periodDays);
             result = {
-                start: start,
+                start: start.getTime(),
                 end: notes.requestDT
             };
         } else {

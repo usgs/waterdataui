@@ -4,6 +4,7 @@ const { transition } = require('d3-transition');
 const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
 const { createSelector, createStructuredSelector } = require('reselect');
+const { DateTime } = require('luxon');
 
 const { dispatch, link, initAndUpdate } = require('../../lib/redux');
 const { Actions } = require('../../store');
@@ -12,6 +13,7 @@ const { cursorTimeSelector, tsCursorPointsSelector } = require('./cursor');
 const { classesForPoint, MASK_DESC } = require('./drawingData');
 const { layoutSelector } = require('./layout');
 const { xScaleSelector, yScaleSelector } = require('./scales');
+const { tsTimeZoneSelector } = require('./timeSeries');
 
 const { getCurrentVariable } = require('../../selectors/timeSeriesSelector');
 
@@ -75,10 +77,9 @@ const tooltipPointsSelector = memoize(tsKey => createSelector(
     }
 ));
 
-const getTooltipText = function(datum, qualifiers, unitCode) {
+const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone) {
     let label = '';
     if (datum && qualifiers) {
-        const tzAbbrev = datum.dateTime.toString().match(/\(([^)]+)\)/)[1];
         let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
 
         const maskKeys = new Set(Object.keys(MASK_DESC));
@@ -89,7 +90,11 @@ const getTooltipText = function(datum, qualifiers, unitCode) {
             // a data point will have at most one masking qualifier
             valueStr = MASK_DESC[[maskKeyIntersect][0]];
         }
-        label = `${valueStr} - ${formatTime(datum.dateTime)} ${tzAbbrev}`;
+        const timeLabel = DateTime.fromMillis(
+            datum.dateTime,
+            {zone: ianaTimeZone}
+        ).toFormat('MMM dd, yyyy hh:mm:ss a ZZZZ');
+        label = `${valueStr} - ${timeLabel}`;
     }
 
     return label;
@@ -102,8 +107,8 @@ const unitCodeSelector = createSelector(
     variable => variable ? variable.unit.unitCode : null
 );
 
+const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone}, textGroup) {
 
-const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode}, textGroup) {
     // Put the circles in a container so we can keep the their position in the
     // DOM before rect.overlay, to prevent the circles from receiving mouse
     // events.
@@ -113,7 +118,6 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     }
 
     const data = Object.values(currentPoints).concat(Object.values(comparePoints));
-
     const texts = textGroup
         .selectAll('div')
         .data(data);
@@ -173,7 +177,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
         .call(adjustTooltipFontSize);
 
     merge
-        .text(datum => getTooltipText(datum, qualifiers, unitCode))
+        .text(datum => getTooltipText(datum, qualifiers, unitCode, ianaTimeZone))
         .each(function (datum) {
             const classes = classesForPoint(datum);
             const text = select(this);
@@ -196,7 +200,8 @@ const createTooltipText = function (elem) {
         comparePoints: tsCursorPointsSelector('compare'),
         qualifiers: qualifiersSelector,
         unitCode: unitCodeSelector,
-        layout: layoutSelector
+        layout: layoutSelector,
+        ianaTimeZone: tsTimeZoneSelector
     })));
 };
 
@@ -265,16 +270,16 @@ const createTooltipFocus = function(elem) {
             .attr('width', layout.width - layout.margin.right)
             .attr('height', layout.height - (layout.margin.top + layout.margin.bottom))
             .on('mouseover', dispatch(function() {
-                const selectedTime = xScale.invert(mouse(elem.node())[0]).getTime();
-                const startTime = xScale.domain()[0].getTime();
+                const selectedTime = xScale.invert(mouse(elem.node())[0]);
+                const startTime = xScale.domain()[0];
                 return Actions.setCursorOffset(selectedTime - startTime);
             }))
             .on('mouseout', dispatch(function() {
                 return Actions.setCursorOffset(null);
             }))
             .on('mousemove', dispatch(function() {
-                const selectedTime = xScale.invert(mouse(elem.node())[0]).getTime();
-                const startTime = xScale.domain()[0].getTime();
+                const selectedTime = xScale.invert(mouse(elem.node())[0]);
+                const startTime = xScale.domain()[0];
                 return Actions.setCursorOffset(selectedTime - startTime);
             }));
     }, createStructuredSelector({
