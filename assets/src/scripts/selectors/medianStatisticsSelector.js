@@ -41,34 +41,40 @@ export const getCurrentVariableMedianStatPointsInDateRange = createSelector(
             return {};
         }
 
-        let nextDateTime = DateTime.fromMillis(timeRange.start, {zone: ianaTimeZone}).startOf('day');
-        const endTime = DateTime.fromMillis(timeRange.end, {zone: ianaTimeZone}).endOf('day').valueOf();
         let datesOfInterest = [];
-        while (nextDateTime.valueOf() <= endTime) {
-            datesOfInterest.push({
-                year: nextDateTime.year,
-                month: nextDateTime.month.toString(),
-                day: nextDateTime.day.toString()
-            });
-            nextDateTime = nextDateTime.plus({days: 1});
-        }
+
+        let nextDateTime = DateTime.fromMillis(timeRange.start, {zone: ianaTimeZone});
         datesOfInterest.push({
             year: nextDateTime.year,
             month: nextDateTime.month.toString(),
-            day: nextDateTime.day.toString()
+            day: nextDateTime.day.toString(),
+            utcDate: timeRange.start
         });
+        nextDateTime = nextDateTime.startOf('day').plus({days: 1});
+        while (nextDateTime.valueOf() <= timeRange.end) {
+            datesOfInterest.push({
+                year: nextDateTime.year,
+                month: nextDateTime.month.toString(),
+                day: nextDateTime.day.toString(),
+                utcDate: nextDateTime.valueOf()
+            });
+            nextDateTime = nextDateTime.plus({days: 1});
+        }
+        nextDateTime = DateTime.fromMillis(timeRange.end, {zone: ianaTimeZone});
+        datesOfInterest.push({
+            year: nextDateTime.year,
+            month: nextDateTime.month.toString(),
+            day: nextDateTime.day.toString(),
+            utcDate: timeRange.end
+        });
+
         return reduce(stats, function (result, tsData, tsId) {
             result[tsId] = datesOfInterest
                 .map((date) => {
                     let stat = find(tsData, {'month_nu': date.month, 'day_nu': date.day});
                     return {
                         value: stat ? stat.p50_va: null,
-                        date: DateTime.fromObject({
-                            year: date.year,
-                            month: parseInt(date.month),
-                            day: parseInt(date.day),
-                            zone: ianaTimeZone
-                        }).startOf('day').valueOf()
+                        date: date.utcDate
                     };
                 })
                 .filter((point) => {

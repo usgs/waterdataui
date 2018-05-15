@@ -23,12 +23,11 @@ const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeSeriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
 const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
-    descriptionSelector,  currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints, tsTimeZoneSelector } = require('./timeSeries');
+    descriptionSelector,  currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } = require('./timeSeries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
-const { coerceStatisticalSeries } = require('./statistics');
 
 const { getCurrentVariableMedianStatPointsInDateRange } = require('../../selectors/medianStatisticsSelector');
-const { getCurrentDateRange, getTimeSeriesCollectionIds, isLoadingTS } = require('../../selectors/timeSeriesSelector');
+const { getTimeSeriesCollectionIds, isLoadingTS } = require('../../selectors/timeSeriesSelector');
 
 
 const drawMessage = function(elem, message) {
@@ -212,7 +211,7 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
  * @param  {Function} yscale
  * @param  {Array} pointsList
  */
-const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap, dateRange, ianaTimeZone}) {
+const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap}) {
     elem.select('#median-points').remove();
     if (!visible) {
         return;
@@ -221,8 +220,7 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap,
         .append('g')
             .attr('id', 'median-points');
     for (const [index, seriesID] of Object.keys(seriesMap).entries()) {
-        //const points = coerceStatisticalSeries(seriesMap[seriesID], dateRange, ianaTimeZone);
-        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points: seriesMap[seriesID]});//points});
+        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points: seriesMap[seriesID]});
     }
 };
 
@@ -302,9 +300,7 @@ const timeSeriesGraph = function(elem) {
                         visible: isVisibleSelector('median'),
                         xscale: xScaleSelector('current'),
                         yscale: yScaleSelector,
-                        seriesMap: getCurrentVariableMedianStatPointsInDateRange,
-                        dateRange: getCurrentDateRange,
-                        anaTimeZone: tsTimeZoneSelector
+                        seriesMap: getCurrentVariableMedianStatPointsInDateRange
                     })));
         });
 };
