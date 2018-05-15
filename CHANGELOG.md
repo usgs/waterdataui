@@ -15,12 +15,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Cooperator logos may be activated on a per-district basis
 - A BrowserStack Karma test runner was added, and some browser-specific bugs fixed.
 - Hydrograph shows data in the location's local timezone as determined by the weather service
-
+- Font size of tooltips; larger size when fewer tips are present, smaller when more tip present
 
 ### Fixed
 - A bug with the graph watermark intercepting mouseover events driving the tooltips was fixed.
 - Remove sourcemap reference from autotrack.js (Analytics script)
-
+- Added dynamic left margin for tooltip text to prevent overlap with y-axis labels
+- Bug that caused incorrect font styling on tooltips
 
 ## [0.9.0] - 2018-05-10
 ### Fixed
