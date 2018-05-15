@@ -107,7 +107,7 @@ const unitCodeSelector = createSelector(
     variable => variable ? variable.unit.unitCode : null
 );
 
-const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone}, textGroup) {
+const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone, layout}, textGroup) {
 
     // Put the circles in a container so we can keep the their position in the
     // DOM before rect.overlay, to prevent the circles from receiving mouse
@@ -132,15 +132,14 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     const newTexts = texts.enter()
         .append('div');
 
-    // Find the with of the between the y-axis and margin and set the tooltip margin based on that number
+    // Find the width of the between the y-axis and margin and set the tooltip margin based on that number
     const adjustMarginOfTooltips = function (elem) {
         // set a base number of pixels to bump the tooltips away from y-axis and compensate for under reporting of
         // margin width by layout selector on time series with single or double digits on y-axis
         const baseMarginOffsetTextGroup = 27;
-        elem.call(link(function (elem, layout) {
-            let marginAdjustment = layout.margin.left + baseMarginOffsetTextGroup;
-            elem.style('margin-left', marginAdjustment + 'px');
-        }, layoutSelector));
+        let marginAdjustment = layout.margin.left + baseMarginOffsetTextGroup;
+        elem.style('margin-left', marginAdjustment + 'px');
+
     };
 
     // find how many tooltips are showing and adjust the font size larger if there are few, smaller if there are many

@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - A bug with the graph watermark intercepting mouseover events driving the tooltips was fixed.
 - Remove sourcemap reference from autotrack.js (Analytics script)
 - Added dynamic left margin for tooltip text to prevent overlap with y-axis labels
-- bug that caused incorrect font styling on tooltips
+- Bug that caused incorrect font styling on tooltips
 
 ## [0.9.0] - 2018-05-10
 ### Fixed
