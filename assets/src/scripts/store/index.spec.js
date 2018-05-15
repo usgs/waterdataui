@@ -88,11 +88,11 @@ describe('Redux store', () => {
             });
 
             it('gets the data and sets the timezone', (done) => {
-                spyOn(store.Actions, 'setLocationIANATimeZone');
+                spyOn(store.Actions, 'LOCATION_IANA_TIME_ZONE_SET');
                 let p = store.Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(store.Actions.setLocationIANATimeZone.calls.count()).toBe(1);
-                    expect(store.Actions.setLocationIANATimeZone).toHaveBeenCalledWith('America/Chicago');
+                    expect(store.Actions.LOCATION_IANA_TIME_ZONE_SET.calls.count()).toBe(1);
+                    expect(store.Actions.LOCATION_IANA_TIME_ZONE_SET).toHaveBeenCalledWith('America/Chicago');
                     done();
                 });
             });
@@ -121,11 +121,11 @@ describe('Redux store', () => {
             });
 
             it('gets the data and sets the timezone to something', (done) => {
-                spyOn(store.Actions, 'setLocationIANATimeZone');
+                spyOn(store.Actions, 'LOCATION_IANA_TIME_ZONE_SET');
                 let p = store.Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(store.Actions.setLocationIANATimeZone.calls.count()).toBe(1);
-                    expect(store.Actions.setLocationIANATimeZone).toHaveBeenCalledWith(null);
+                    expect(store.Actions.LOCATION_IANA_TIME_ZONE_SET.calls.count()).toBe(1);
+                    expect(store.Actions.LOCATION_IANA_TIME_ZONE_SET).toHaveBeenCalledWith(null);
                     done();
                 });
             });

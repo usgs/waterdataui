@@ -53,10 +53,10 @@ export const Actions = {
             return queryWeatherService(latitude, longitude).then(
                 resp => {
                     const tzIANA = resp.properties.timeZone || null; // set to time zone to null if unavailable
-                    dispatch(Actions.setLocationIANATimeZone(tzIANA));
+                    dispatch(Actions.LOCATION_IANA_TIME_ZONE_SET(tzIANA));
                 },
                 () => {
-                    dispatch(Actions.setLocationIANATimeZone(null));
+                    dispatch(Actions.LOCATION_IANA_TIME_ZONE_SET(null));
                 }
             );
         };
@@ -306,9 +306,9 @@ export const Actions = {
             gageHeight
         };
     },
-    setLocationIANATimeZone(ianaTimeZone) {
+    LOCATION_IANA_TIME_ZONE_SET(ianaTimeZone) {
         return {
-            type: 'SET_LOCATION_IANA_TIME_ZONE',
+            type: 'LOCATION_IANA_TIME_ZONE_SET',
             ianaTimeZone
         };
     }

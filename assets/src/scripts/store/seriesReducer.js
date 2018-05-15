@@ -35,7 +35,7 @@ export const seriesReducer = function(series={}, action) {
     switch (action.type) {
         case 'ADD_TIME_SERIES_COLLECTION': return addTimeSeriesCollection(series, action);
         case 'RESET_TIME_SERIES': return resetTimeSeries(series, action);
-        case 'SET_LOCATION_IANA_TIME_ZONE': return addIanaTimeZone(series, action);
+        case 'LOCATION_IANA_TIME_ZONE_SET': return addIanaTimeZone(series, action);
         default: return series;
     }
 };

@@ -167,11 +167,11 @@ describe('seriesReducer', () => {
         });
     });
 
-    describe('SET_LOCATION_IANA_TIME_ZONE', () => {
+    describe('LOCATION_IANA_TIME_ZONE_SET', () => {
 
         it('should add the time zome', () => {
             expect(seriesReducer({}, {
-                type: 'SET_LOCATION_IANA_TIME_ZONE',
+                type: 'LOCATION_IANA_TIME_ZONE_SET',
                 ianaTimeZone: 'America/Juneau'
             })).toEqual({
                 ianaTimeZone: 'America/Juneau'
