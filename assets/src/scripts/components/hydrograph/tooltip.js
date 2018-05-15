@@ -109,9 +109,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     // events.
     if (!textGroup) {
         textGroup = elem.append('div')
-      // original line      .attr('class', 'tooltip-text-group')
-     // moved       .attr('class', d => `${d.tsKey}-tooltip-text`);
-            .attr('class', 'tooltip-text-group'); // modified for WDFN259
+            .attr('class', 'tooltip-text-group');
     }
 
     const data = Object.values(currentPoints).concat(Object.values(comparePoints));
@@ -130,15 +128,15 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     const newTexts = texts.enter()
         .append('div');
 
-    // Find the with of the between the y-axis and margin
+    // Find the with of the between the y-axis and margin and set the tooltip margin based on that number
     const adjustMarginOfTooltips = function (elem) {
         // set a base number of pixels to bump the tooltips away from y-axis and compensate for under reporting of
         // margin width by layout selector on time series with single or double digits on y-axis
         const baseMarginOffsetTextGroup = 27;
-            elem.call(link(function(elem, layout) {
+        elem.call(link(function (elem, layout) {
             let marginAdjustment = layout.margin.left + baseMarginOffsetTextGroup;
             elem.style('margin-left', marginAdjustment + 'px');
-            }, layoutSelector));
+        }, layoutSelector));
     };
 
     // find how many tooltips are showing and adjust the font size larger if there are few, smaller if there are many
