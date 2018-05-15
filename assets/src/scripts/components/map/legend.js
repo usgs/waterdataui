@@ -56,7 +56,7 @@ export const createLegendControl = function(options) {
         let legendListContainer = DomUtil.create('div', 'legend-list-container', container);
         let legendList = DomUtil.create('ul', 'usa-unstyled-list', legendListContainer);
         legendList.id = 'site-legend-list';
-        legendList.innerHTML = `<li><img src="${STATIC_URL}/images/marker-icon.png" /><span>Monitoring Location</span> </li>`;
+        legendList.innerHTML = `<li><img src="${STATIC_URL}/images/marker-icon.png" alt="Map marker"/><span>Monitoring Location</span> </li>`;
 
         // Set up click handler for the expandButton
         DomEvent.on(expandButton, 'click', function() {
