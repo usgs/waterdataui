@@ -159,10 +159,10 @@ export const mediaQuery = function (minWidth) {
 /**
  * Calculate the start time of a time range based on a time-delta string and the end time
  *
- * @param period -- ISO duration for date range of the time series
- * @param endTime -- the end time
- * @param ianaTimeZone -- Internet Assigned Numbers Authority designation for a time zone
- * @returns {int}
+ * @param {String} period -- ISO duration for date range of the time series
+ * @param {Number} endTime -- the end time as universal time
+ * @param {String} ianaTimeZone -- Internet Assigned Numbers Authority designation for a time zone
+ * @returns {Number} the start time as universal time
  */
 export const calcStartTime = function (period, endTime, ianaTimeZone) {
     let startTime = new DateTime.fromMillis(endTime, {zone: ianaTimeZone});
@@ -218,4 +218,4 @@ export const parseRDB = function(rdbData) {
         }
     }
     return recordData;
-}
+};

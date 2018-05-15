@@ -1,7 +1,7 @@
 const { getMedianStatistics, getMedianStatisticsByParmCd, getCurrentVariableMedianStatistics,
     getCurrentVariableMedianStatPointsInDateRange} = require('./medianStatisticsSelector');
 
-describe('medianStatisticsSelector', () => {
+fdescribe('medianStatisticsSelector', () => {
     describe('getMedianStatistics', () => {
         it('Return empty object if median is not in the statisticsData in the state', () => {
             expect(getMedianStatistics({
@@ -107,7 +107,7 @@ describe('medianStatisticsSelector', () => {
         });
     });
 
-    fdescribe('getCurrentVariableMedianStatsPointInDateRange', () => {
+    describe('getCurrentVariableMedianStatsPointInDateRange', () => {
         const TEST_VARS = {
             '45807042': {
                 variableCode: {
@@ -126,7 +126,7 @@ describe('medianStatisticsSelector', () => {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
-                            requestDT: new Date('2017-03-01 11:15'),
+                            requestDT: new Date('2017-03-01 11:15').getTime(),
                             'filter:timeRange': {
                                 mode: 'PERIOD',
                                 periodDays: 7,
@@ -197,14 +197,14 @@ describe('medianStatisticsSelector', () => {
 
         it('Return the expected data points', () =>  {
             let result = getCurrentVariableMedianStatPointsInDateRange(TEST_STATE);
-            expect(result['1234'].length).toBe(8);
+            expect(result['1234'].length).toBe(9);
             expect(result['1234'][0]).toEqual({
                 value: '42',
-                date: new Date('2017-02-22 00:00')
+                date: new Date('2017-02-22 00:00').getTime()
             });
             expect(result['1234'][7]).toEqual({
                 value: '39',
-                date: new Date('2017-03-01 00:00')
+                date: new Date('2017-03-01 00:00').getTime()
             });
         });
 
