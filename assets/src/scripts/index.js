@@ -1,4 +1,5 @@
 require('babel-polyfill');
+require('matchmedia-polyfill');
 
 // Initialize the 18F Web design standards
 require('uswds');
