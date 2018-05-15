@@ -104,6 +104,13 @@ module.exports = function (config) {
                     os: 'windows',
                     os_version: '10'
                 },
+                bs_ie11_windows81: {
+                    base: 'BrowserStack',
+                    browser: 'ie',
+                    browser_version: '11',
+                    os: 'windows',
+                    os_version: '8.1'
+                },
                 bs_ie9_windows7: {
                     base: 'BrowserStack',
                     browser: 'ie',
@@ -153,7 +160,7 @@ module.exports = function (config) {
                 }
             },
             concurrency: 2,
-            browsers: ['bs_firefox_mac']
+            browsers: ['bs_ie11_windows10']
         };
     } else {
         console.log('Skipping BrowserStack configuration...');
