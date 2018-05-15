@@ -228,16 +228,16 @@ const createTooltipFocus = function(elem) {
             .attr('width', layout.width - layout.margin.right)
             .attr('height', layout.height - (layout.margin.top + layout.margin.bottom))
             .on('mouseover', dispatch(function() {
-                const selectedTime = xScale.invert(mouse(elem.node())[0]).getTime();
-                const startTime = xScale.domain()[0].getTime();
+                const selectedTime = xScale.invert(mouse(elem.node())[0]);
+                const startTime = xScale.domain()[0];
                 return Actions.setCursorOffset(selectedTime - startTime);
             }))
             .on('mouseout', dispatch(function() {
                 return Actions.setCursorOffset(null);
             }))
             .on('mousemove', dispatch(function() {
-                const selectedTime = xScale.invert(mouse(elem.node())[0]).getTime();
-                const startTime = xScale.domain()[0].getTime();
+                const selectedTime = xScale.invert(mouse(elem.node())[0]);
+                const startTime = xScale.domain()[0];
                 return Actions.setCursorOffset(selectedTime - startTime);
             }));
     }, createStructuredSelector({
