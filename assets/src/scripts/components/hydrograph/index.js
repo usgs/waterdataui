@@ -384,6 +384,8 @@ const dateRangeControls = function(elem, siteno) {
 
     const container = elem.insert('div', ':nth-child(2)')
         .attr('id', 'ts-daterange-select-container')
+        .attr('role', 'radiogroup')
+        .attr('aria-label', 'Time interval select')
         .call(link(function(container, showControls) {
             container.attr('hidden', showControls ? null : true);
         }, hasTimeSeriesWithPoints('current', 'P7D')));
