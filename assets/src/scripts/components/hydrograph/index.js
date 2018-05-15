@@ -236,6 +236,7 @@ const createTitle = function(elem) {
 const watermark = function (elem) {
     elem.append('img')
         .classed('watermark', true)
+        .attr('alt', 'USGS logo')
         .attr('src', STATIC_URL + '/img/USGS_green_logo.svg')
         .call(link(function(elem, layout) {
             const transformStringSmallScreen = `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025
