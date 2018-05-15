@@ -274,7 +274,8 @@ const timeSeriesGraph = function(elem) {
             .call(link(addSVGAccessibility, createStructuredSelector({
                 title: titleSelector,
                 description: descriptionSelector,
-                isInteractive: () => true
+                isInteractive: () => true,
+                idPrefix: () => 'hydrograph'
             })))
             .call(plotSvgDefs)
             .call(svg => {
