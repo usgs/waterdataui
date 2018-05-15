@@ -134,8 +134,8 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
 
     // Find the width of the between the y-axis and margin and set the tooltip margin based on that number
     const adjustMarginOfTooltips = function (elem) {
-        // set a base number of pixels to bump the tooltips away from y-axis and compensate for under reporting of
-        // margin width by layout selector on time series with single or double digits on y-axis
+        // set a base number of pixels to bump the tooltips away from y-axis and compensate for slight under reporting
+        // of margin width by layout selector on time series with single or double digits on y-axis
         const baseMarginOffsetTextGroup = 27;
         let marginAdjustment = layout.margin.left + baseMarginOffsetTextGroup;
         elem.style('margin-left', marginAdjustment + 'px');
