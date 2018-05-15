@@ -283,4 +283,4 @@ const createTooltipFocus = function(elem) {
     })));
 };
 
-    module.exports = {createTooltipFocus, createTooltipText, tooltipPointsSelector};
+module.exports = {createTooltipFocus, createTooltipText, tooltipPointsSelector};
