@@ -28,7 +28,7 @@ export const getCurrentVariableMedianStatPointsInDateRange = createSelector(
     getCurrentVariableMedianStatistics,
     getRequestTimeRange('current'),
     (stats, timeRange) => {
-        if (!stats) {
+        if (!stats || !timeRange) {
             return {};
         }
         const startDate = new Date(timeRange.start).setFullYear(timeRange.start.getFullYear(), timeRange.start.getMonth(), timeRange.start.getDate());
@@ -43,14 +43,23 @@ export const getCurrentVariableMedianStatPointsInDateRange = createSelector(
             });
             nextDate.setDate(nextDate.getDate() + 1);
         }
+        datesOfInterest.push({
+            year: nextDate.getFullYear(),
+            month: (nextDate.getMonth() + 1).toString(),
+            day: nextDate.getDate().toString()
+        });
         return reduce(stats, function (result, tsData, tsId) {
-            result[tsId] = datesOfInterest.map((date) => {
-                let stat = find(tsData, {'month_nu': date.month, 'day_nu': date.day});
-                return {
-                    value: stat.p50_va,
-                    date: new Date(parseInt(date.year), parseInt(date.month) - 1, parseInt(date.day))
-                };
-            });
+            result[tsId] = datesOfInterest
+                .map((date) => {
+                    let stat = find(tsData, {'month_nu': date.month, 'day_nu': date.day});
+                    return {
+                        value: stat ? stat.p50_va: null,
+                        date: new Date(parseInt(date.year), parseInt(date.month) - 1, parseInt(date.day))
+                    };
+                })
+                .filter((point) => {
+                    return point.value;
+                });
             return result;
         }, {});
     }
