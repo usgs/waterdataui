@@ -93,8 +93,11 @@ module.exports = function (config) {
         karmaConfig = {
             ...karmaConfig,
             browserStack: {
-                project: 'Water Data For The Nation'
+                project: 'Water Data For The Nation',
+                timeout: 600
             },
+            // See:
+            // https://api.browserstack.com/automate/browsers.json
             customLaunchers: {
                 // Windows browsers
                 bs_ie11_windows10: {
@@ -118,10 +121,66 @@ module.exports = function (config) {
                     os: 'windows',
                     os_version: '7'
                 },
-                bs_firefox_windows10: {
+                bs_firefox48_windows10: {
                     base: 'BrowserStack',
                     browser: 'firefox',
                     browser_version: '48.0',
+                    os: 'Windows',
+                    os_version: '10'
+                },
+                bs_firefox52_windows10: {
+                    base: 'BrowserStack',
+                    browser: 'firefox',
+                    browser_version: '52.0',
+                    os: 'Windows',
+                    os_version: '10'
+                },
+                bs_firefox51_windows10: {
+                    base: 'BrowserStack',
+                    browser: 'firefox',
+                    browser_version: '51.0',
+                    os: 'Windows',
+                    os_version: '10'
+                },
+                bs_chrome59_windows10: {
+                    base: 'BrowserStack',
+                    browser: 'firefox',
+                    browser_version: '59.0',
+                    os: 'Windows',
+                    os_version: '10'
+                },
+                bs_chrome58_windows10: {
+                    base: 'BrowserStack',
+                    browser: 'firefox',
+                    browser_version: '58.0',
+                    os: 'Windows',
+                    os_version: '10'
+                },
+                bs_chrome55_windows10: {
+                    base: 'BrowserStack',
+                    browser: 'firefox',
+                    browser_version: '55.0',
+                    os: 'Windows',
+                    os_version: '10'
+                },
+                bs_chrome52_windows10: {
+                    base: 'BrowserStack',
+                    browser: 'firefox',
+                    browser_version: '52.0',
+                    os: 'Windows',
+                    os_version: '10'
+                },
+                bs_chrome51_windows10: {
+                    base: 'BrowserStack',
+                    browser: 'firefox',
+                    browser_version: '51.0',
+                    os: 'Windows',
+                    os_version: '10'
+                },
+                bs_chrome50_windows10: {
+                    base: 'BrowserStack',
+                    browser: 'firefox',
+                    browser_version: '50.0',
                     os: 'Windows',
                     os_version: '10'
                 },
@@ -137,30 +196,79 @@ module.exports = function (config) {
                 bs_safari8_mac: {
                     base: 'BrowserStack',
                     browser: 'safari',
-                    browser_version: '10.2',
+                    browser_version: '8',
                     os: 'OS X',
                     os_version: 'Yosemite'
                 },
+                bs_safari9_mac: {
+                    base: 'BrowserStack',
+                    browser: 'safari',
+                    browser_version: '9.1',
+                    os: 'OS X',
+                    os_version: 'El Capitan'
+                },
+                bs_safari10_mac: {
+                    base: 'BrowserStack',
+                    browser: 'safari',
+                    browser_version: '10.0',
+                    os: 'OS X',
+                    os_version: 'Sierra'
+                },
+                bs_safari11_mac: {
+                    base: 'BrowserStack',
+                    browser: 'safari',
+                    browser_version: '11.1',
+                    os: 'OS X',
+                    os_version: 'High Sierra'
+                },
 
                 // iOS browsers
+                bs_safari10_iphone7: {
+                    base: 'BrowserStack',
+                    browser: 'safari',
+                    browser_version: '10.0',
+                    device: 'iPhone 7',
+                    os: 'ios',
+                    os_version: '10.0'
+                },
+                bs_iphone5s: {
+                    base: 'BrowserStack',
+                    browser: 'safari',
+                    device: 'iPhone 5S',
+                    os: 'ios',
+                    os_version: '7.0'
+                },
                 bs_iphone5: {
                     base: 'BrowserStack',
+                    browser: 'safari',
                     device: 'iPhone 5',
                     os: 'ios',
                     os_version: '6.0'
                 },
 
                 // Android browsers
-                'bs_galaxys5_44': {
+                'bs_galaxys8_chrome52': {
                     base: 'BrowserStack',
-                    browser_version: 'latest',
+                    browser: 'chrome',
+                    browser_version: '52',
+                    device: 'Samsung Galaxy S8',
                     os: 'android',
-                    os_version: '4.4',
-                    device: 'Samsung Galaxy S5'
+                    os_version: '7.0',
+                    real_mobile: true
                 }
             },
             concurrency: 2,
-            browsers: ['bs_ie11_windows10']
+            // These default browsers are chosen to prevent loss of browser
+            // compatibility. As of May 15, 2018 they are the current oldest
+            // supported.
+            // Haven't looking into the Android browser
+            browsers: [
+                'bs_safari10_mac',
+                'bs_safari10_iphone7',
+                'bs_chrome52_windows10',
+                'bs_firefox52_windows10',
+                'bs_galaxys8_chrome52'
+            ]
         };
     } else {
         console.log('Skipping BrowserStack configuration...');
