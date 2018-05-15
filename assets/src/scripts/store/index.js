@@ -72,9 +72,8 @@ export const Actions = {
 
                     // Get the start/end times of this request's range.
                     const notes = collection.queryInfo[requestKey].notes;
-                    const endTime = new Date(notes.requestDT);
-                    const startTime = new Date(endTime);
-                    startTime.setDate(endTime.getDate() - notes['filter:timeRange'].periodDays);
+                    const endTime = notes.requestDT;
+                    const startTime = calcStartTime('P7D', endTime, 'local');
 
                     // Trigger a call to get last year's data
                     dispatch(Actions.retrieveCompareTimeSeries(siteno, 'P7D', startTime, endTime));
@@ -91,7 +90,7 @@ export const Actions = {
                     ));
                     dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
 
-                    return {collection, startTime: startTime.getTime(), endTime: endTime.getTime()};
+                    return {collection, startTime: startTime, endTime: endTime};
                 },
                 () => {
                     dispatch(Actions.resetTimeSeries(getTsRequestKey('current', 'P7D')(currentState)));
