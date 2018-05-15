@@ -107,7 +107,7 @@ describe('medianStatisticsSelector', () => {
         });
     });
 
-    describe('getCurrentVariableMedianStatsPointInDateRange', () => {
+    fdescribe('getCurrentVariableMedianStatsPointInDateRange', () => {
         const TEST_VARS = {
             '45807042': {
                 variableCode: {
@@ -139,12 +139,13 @@ describe('medianStatisticsSelector', () => {
             },
             statisticsData : {
                 median: {
-                    '00010': [
-                        {
-                            month_nu: '2',
-                            day_nu: '20',
-                            p50_va: '40'
-                        }, {
+                    '00010': {
+                        '1234': [
+                            {
+                                month_nu: '2',
+                                day_nu: '20',
+                                p50_va: '40'
+                            }, {
                             month_nu: '2',
                             day_nu: '21',
                             p50_va: '41'
@@ -185,7 +186,7 @@ describe('medianStatisticsSelector', () => {
                             day_nu: '2',
                             p50_va: '38'
                         }
-                    ]
+                    ]}
                 }
             },
             timeSeriesState: {
@@ -196,12 +197,12 @@ describe('medianStatisticsSelector', () => {
 
         it('Return the expected data points', () =>  {
             let result = getCurrentVariableMedianStatPointsInDateRange(TEST_STATE);
-            expect(result.length).toBe(8);
-            expect(result[0]).toEqual({
+            expect(result['1234'].length).toBe(8);
+            expect(result['1234'][0]).toEqual({
                 value: '42',
                 date: new Date('2017-02-22 00:00')
             });
-            expect(result[7]).toEqual({
+            expect(result['1234'][7]).toEqual({
                 value: '39',
                 date: new Date('2017-03-01 00:00')
             });
@@ -215,7 +216,7 @@ describe('medianStatisticsSelector', () => {
                     currentVariableID: '45807042'
                 }
             };
-            expect(getCurrentVariableMedianStatPointsInDateRange(newTestState)).toEqual([]);
+            expect(getCurrentVariableMedianStatPointsInDateRange(newTestState)).toEqual({});
         });
     });
 });

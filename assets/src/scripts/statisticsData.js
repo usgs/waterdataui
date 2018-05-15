@@ -23,8 +23,10 @@ export const fetchSiteMedianStatistics = function({site, params=null}) {
     return medianRDB.then((response) => {
         const statsData = parseRDB(response);
         return statsData.reduce((finalResult, dataLine) => {
-            finalResult[dataLine.parameter_cd] = finalResult[dataLine.parameter_cd] || [];
-            finalResult[dataLine.parameter_cd].push(dataLine);
+            finalResult[dataLine.parameter_cd] = finalResult[dataLine.parameter_cd] || {};
+            finalResult[dataLine.parameter_cd][dataLine.ts_id] =
+                finalResult[dataLine.parameter_cd][dataLine.ts_id]|| []
+            finalResult[dataLine.parameter_cd][dataLine.ts_id].push(dataLine);
             return finalResult;
         }, {});
     }, (error) => {

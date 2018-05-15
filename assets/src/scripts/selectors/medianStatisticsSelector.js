@@ -1,5 +1,6 @@
 const memoize = require('fast-memoize');
 const find = require('lodash/find');
+const reduce = require('lodash/reduce')
 const { createSelector } = require('reselect');
 
 const { getCurrentParmCd, getRequestTimeRange } = require('./timeSeriesSelector');
@@ -28,7 +29,7 @@ export const getCurrentVariableMedianStatPointsInDateRange = createSelector(
     getRequestTimeRange('current'),
     (stats, timeRange) => {
         if (!stats) {
-            return [];
+            return {};
         }
         const startDate = new Date(timeRange.start).setFullYear(timeRange.start.getFullYear(), timeRange.start.getMonth(), timeRange.start.getDate());
         const endDate = new Date(timeRange.end).setFullYear(timeRange.end.getFullYear(), timeRange.end.getMonth(), timeRange.end.getDate());
@@ -42,12 +43,15 @@ export const getCurrentVariableMedianStatPointsInDateRange = createSelector(
             });
             nextDate.setDate(nextDate.getDate() + 1);
         }
-        return datesOfInterest.map((date) => {
-            let stat = find(stats, {'month_nu': date.month, 'day_nu': date.day});
-            return {
-                value: stat.p50_va,
-                date: new Date(parseInt(date.year), parseInt(date.month) - 1, parseInt(date.day))
-            };
-        });
+        return reduce(stats, function (result, tsData, tsId) {
+            result[tsId] = datesOfInterest.map((date) => {
+                let stat = find(tsData, {'month_nu': date.month, 'day_nu': date.day});
+                return {
+                    value: stat.p50_va,
+                    date: new Date(parseInt(date.year), parseInt(date.month) - 1, parseInt(date.day))
+                };
+            });
+            return result;
+        }, {});
     }
 );

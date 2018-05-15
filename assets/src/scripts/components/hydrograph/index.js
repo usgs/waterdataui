@@ -188,7 +188,8 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
     const stepFunction = d3Line()
         .curve(curveStepAfter)
         .x(function(d) {
-            return xscale(d.dateTime);
+            return xscale(d.date)
+            //return xscale(d.dateTime);
         })
         .y(function(d) {
             return yscale(d.value);
@@ -218,9 +219,10 @@ const plotAllMedianPoints = function(elem, {visible, xscale, yscale, seriesMap, 
     const container = elem
         .append('g')
             .attr('id', 'median-points');
+    //TODO: pick up here
     for (const [index, seriesID] of Object.keys(seriesMap).entries()) {
-        const points = coerceStatisticalSeries(seriesMap[seriesID], dateRange);
-        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points});
+        //const points = coerceStatisticalSeries(seriesMap[seriesID], dateRange);
+        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, seriesMap[seriesId]});//points});
     }
 };
 
