@@ -10,6 +10,7 @@ const { deltaDays } = require('./utils');
 // use production.
 const SERVICE_ROOT = config.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
 const PAST_SERVICE_ROOT = config.PAST_SERVICE_ROOT  || 'https://nwis.waterservices.usgs.gov/nwis';
+const WEATHER_SERVICE_ROOT = config.WEATHER_SERVICE_ROOT || 'https://api.weather.gov';
 
 const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
@@ -126,20 +127,13 @@ export function mergeMedianTimeSeries(collection, medianData, timeSeriesEndDateT
 
     let values = [];
 
-    let yearPresent = timeSeriesEndDateTime.getFullYear();
-    let yearPrevious = yearPresent - 1;
-
     // calculate the number of days to display
     for (let medianDatum of medianData) {
-        let month = medianDatum.month_nu - 1;
+        let month = medianDatum.month_nu;
         let day = medianDatum.day_nu;
-        let recordDate = new Date(yearPresent, month, day);
-        if (!(new Date(yearPresent, 0, 1) <= recordDate && recordDate <= timeSeriesEndDateTime)) {
-            recordDate = new Date(yearPrevious, month, day);
-        }
         let median = {
             dateTime: null,
-            month: month,
+            month: parseInt(month),
             day: parseInt(day),
             value: parseFloat(medianDatum.p50_va)
         };
@@ -236,11 +230,11 @@ export function parseMedianData(medianData, timeSeriesEndDateTime, variables) {
 }
 
 export function getPreviousYearTimeSeries({site, startTime, endTime}) {
-    let lastYearStartTime = new Date(startTime.getTime());
-    let lastYearEndTime = new Date(endTime.getTime());
+    let lastYearStartTime = new Date(startTime);
+    let lastYearEndTime = new Date(endTime);
 
-    lastYearStartTime.setFullYear(startTime.getFullYear() - 1);
-    lastYearEndTime.setFullYear(endTime.getFullYear() - 1);
+    lastYearStartTime.setFullYear(lastYearStartTime.getFullYear() - 1);
+    lastYearEndTime.setFullYear(lastYearEndTime.getFullYear() - 1);
     return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
 }
 
@@ -278,4 +272,15 @@ export function sortedParameters(variables) {
             }
         });
     return highPertinenceVars.concat(lowPertinenceVars);
+}
+
+
+export function queryWeatherService(latitude, longitude) {
+    const url = `${WEATHER_SERVICE_ROOT}/points/${latitude},${longitude}`;
+    return get(url)
+        .then(response => JSON.parse(response))
+        .catch(reason => {
+            console.error(reason);
+            return {properties: {}};
+        });
 }

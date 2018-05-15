@@ -22,8 +22,8 @@ const { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./l
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeSeriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
-const { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector,
-    currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } = require('./timeSeries');
+const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
+    descriptionSelector,  currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints, tsTimeZoneSelector } = require('./timeSeries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 const { coerceStatisticalSeries } = require('./statistics');
 
@@ -210,7 +210,7 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
  * @param  {Function} yscale
  * @param  {Array} pointsList
  */
-const plotAllMedianPoints = function(elem, {visible, xscale, yscale, seriesMap, dateRange}) {
+const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap, dateRange, ianaTimeZone}) {
     elem.select('#median-points').remove();
     if (!visible) {
         return;
@@ -219,7 +219,7 @@ const plotAllMedianPoints = function(elem, {visible, xscale, yscale, seriesMap, 
         .append('g')
             .attr('id', 'median-points');
     for (const [index, seriesID] of Object.keys(seriesMap).entries()) {
-        const points = coerceStatisticalSeries(seriesMap[seriesID], dateRange);
+        const points = coerceStatisticalSeries(seriesMap[seriesID], dateRange, ianaTimeZone);
         plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points});
     }
 };
@@ -301,7 +301,8 @@ const timeSeriesGraph = function(elem) {
                         xscale: xScaleSelector('current'),
                         yscale: yScaleSelector,
                         seriesMap: currentVariableTimeSeriesSelector('median'),
-                        dateRange: getCurrentDateRange
+                        dateRange: getCurrentDateRange,
+                        ianaTimeZone: tsTimeZoneSelector
                     })));
         });
 };
@@ -483,6 +484,9 @@ const attachToNode = function (store, node, {siteno, parameter, compare, cursorO
     window.onresize = function() {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     };
+    const latitude = node.dataset.latitude;
+    const longitude = node.dataset.longitude;
+    store.dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
     store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null));
 };
 

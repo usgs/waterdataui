@@ -169,6 +169,7 @@ def monitoring_location(site_no):
 def return_404(*args, **kwargs):
     return abort(404)
 
+
 @app.route('/hydrological-unit/', defaults={'huc_cd': None}, methods=['GET'])
 @app.route('/hydrological-unit/<huc_cd>/', methods=['GET'])
 @defined_when(app.config['HYDROLOGIC_PAGES_ENABLED'], return_404)

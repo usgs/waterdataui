@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - The node.js-based graph server was updated to render PNGs rather than SVGs
 - Cooperator logos may be activated on a per-district basis
 - A BrowserStack Karma test runner was added, and some browser-specific bugs fixed.
+- Hydrograph shows data in the location's local timezone as determined by the weather service
 
 
 ### Fixed
