@@ -6,6 +6,10 @@ describe('Redux store', () => {
 
     describe('asynchronous actions', () => {
         const SITE_NO = '12345678';
+        const LOCATION = {
+            latitude: 44.8528,
+            longitude: -92.2383
+        };
 
         const TEST_STATE = {
             series: {
@@ -27,7 +31,7 @@ describe('Redux store', () => {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
-                            requestDT: new Date('2017-03-31'),
+                            requestDT: new Date(1490936400000),
                             'filter:timeRange': {
                                 mode: 'PERIOD',
                                 periodDays: 7,
@@ -37,12 +41,12 @@ describe('Redux store', () => {
                     },
                     'current:P30D:00060': {
                         notes: {
-                            requestDT: new Date('2017-03-31'),
+                            requestDT: new Date(1490936400000),
                             'filter:timeRange': {
                                 mode: 'RANGE',
                                 interval: {
-                                    start: new Date('2017-03-01'),
-                                    end: new Date('2017-03-31')
+                                    start: new Date(1488348000000),
+                                    end: new Date(1490936400000)
                                 }
                             }
                         }
@@ -54,6 +58,78 @@ describe('Redux store', () => {
                 currentDateRange: 'P7D'
             }
         };
+
+        describe('retrieveLocationTimeZone with good data', () => {
+            let store;
+            let modelsMock;
+            let mockDispatch;
+            let mockGetState;
+
+            const MOCK_WEATHER_SERVICE_DATA = '{"properties" : {"timeZone" : "America/Chicago"}}';
+
+            beforeEach(() => {
+                let getWeatherServicePromise = Promise.resolve(JSON.parse(MOCK_WEATHER_SERVICE_DATA));
+                modelsMock = {
+                    queryWeatherService: function () {
+                        return getWeatherServicePromise;
+                    }
+                };
+
+                spyOn(modelsMock, 'queryWeatherService').and.callThrough();
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
+                store = proxyquire('./index', {'../models': modelsMock});
+                store.configureStore();
+            });
+
+            it('fetches data from the weather service', () => {
+                store.Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
+                expect(modelsMock.queryWeatherService).toHaveBeenCalledWith(LOCATION.latitude, LOCATION.longitude);
+            });
+
+            it('gets the data and sets the timezone', (done) => {
+                spyOn(store.Actions, 'LOCATION_IANA_TIME_ZONE_SET');
+                let p = store.Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
+                p.then(() => {
+                    expect(store.Actions.LOCATION_IANA_TIME_ZONE_SET.calls.count()).toBe(1);
+                    expect(store.Actions.LOCATION_IANA_TIME_ZONE_SET).toHaveBeenCalledWith('America/Chicago');
+                    done();
+                });
+            });
+        });
+
+        describe('retrieveLocationTimeZone with bad data', () => {
+            let store;
+            let modelsMock;
+            let mockDispatch;
+            let mockGetState;
+
+            beforeEach(() => {
+                /* eslint no-use-before-define: 0 */
+                let getWeatherServicePromise = Promise.reject(Error('Bad data'));
+                modelsMock = {
+                    queryWeatherService: function () {
+                        return getWeatherServicePromise;
+                    }
+                };
+
+                spyOn(modelsMock, 'queryWeatherService').and.callThrough();
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
+                store = proxyquire('./index', {'../models': modelsMock});
+                store.configureStore();
+            });
+
+            it('gets the data and sets the timezone to something', (done) => {
+                spyOn(store.Actions, 'LOCATION_IANA_TIME_ZONE_SET');
+                let p = store.Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
+                p.then(() => {
+                    expect(store.Actions.LOCATION_IANA_TIME_ZONE_SET.calls.count()).toBe(1);
+                    expect(store.Actions.LOCATION_IANA_TIME_ZONE_SET).toHaveBeenCalledWith(null);
+                    done();
+                });
+            });
+        });
 
         describe('retrieveTimeSeries with good data', () => {
             let store;
@@ -239,8 +315,8 @@ describe('Redux store', () => {
             let mockDispatch;
             let mockGetState;
 
-            const START_DATE = new Date('2017-01-01');
-            const END_DATE = new Date('2017-01-08');
+            const START_DATE = new Date(1483250400000);
+            const END_DATE = new Date(1483855200000);
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
@@ -291,8 +367,8 @@ describe('Redux store', () => {
             let mockDispatch;
             let mockGetState;
 
-            const START_DATE = new Date('2017-01-01');
-            const END_DATE = new Date('2017-01-08');
+            const START_DATE = new Date(1483250400000);
+            const END_DATE = new Date(1483855200000);
 
             beforeEach(() => {
                 let getPreviousTSPromise = Promise.reject(Error('Bad data'));
@@ -366,7 +442,7 @@ describe('Redux store', () => {
                 const args = modelsMock.getTimeSeries.calls.argsFor(0)[0];
                 expect(args.sites).toEqual(['12345678']);
                 expect(args.params).toEqual(['00060']);
-                expect(args.endDate).toEqual(new Date('2017-03-31'));
+                expect(args.endDate).toEqual(new Date(1490936400000));
             });
 
             it('Should dispatch add series collection and retrieveCompareTimeSeries', (done) => {
@@ -425,7 +501,7 @@ describe('Redux store', () => {
                     queryInfo: {
                         'current:P7D': {
                             notes: {
-                                requestDT: new Date('2017-03-31'),
+                                requestDT: new Date(1490936400000),
                                 'filter:timeRange': {
                                     mode: 'PERIOD',
                                     periodDays: 7,
@@ -435,12 +511,12 @@ describe('Redux store', () => {
                         },
                         'current:P30D:00060': {
                             notes: {
-                                requestDT: new Date('2017-03-31'),
+                                requestDT: new Date(1490936400000),
                                 'filter:timeRange': {
                                     mode: 'RANGE',
                                     interval: {
-                                        start: new Date('2017-03-01'),
-                                        end: new Date('2017-03-31')
+                                        start: new Date(1488348000000),
+                                        end: new Date(149093640000)
                                     }
                                 }
                             }
@@ -835,6 +911,7 @@ describe('Redux store', () => {
         });
     });
 });
+
 
 const MOCK_LAST_YEAR_DATA = `
 {"name" : "ns1:timeSeriesResponseType",

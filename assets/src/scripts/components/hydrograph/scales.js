@@ -1,4 +1,4 @@
-const { scaleTime, scaleLinear } = require('d3-scale');
+const { scaleLinear } = require('d3-scale');
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 
@@ -19,7 +19,7 @@ const { getVariables, getCurrentParmCd, getRequestTimeRange } = require('../../s
  */
 function createXScale(timeRange, xSize) {
     // xScale is oriented on the left
-    let scale = scaleTime()
+    let scale = scaleLinear()
         .range([0, xSize]);
     if (timeRange) {
         scale.domain([timeRange.start, timeRange.end]);

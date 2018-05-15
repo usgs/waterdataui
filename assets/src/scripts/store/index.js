@@ -5,7 +5,7 @@ const { applyMiddleware, createStore, combineReducers, compose } = require('redu
 const { default: thunk } = require('redux-thunk');
 
 const { getStatistics, getPreviousYearTimeSeries, getTimeSeries,
-    parseMedianData, sortedParameters } = require('../models');
+    parseMedianData, sortedParameters, queryWeatherService } = require('../models');
 const { calcStartTime } = require('../utils');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
@@ -50,6 +50,20 @@ const getCurrentVariableId = function(timeSeries, variables) {
 
 
 export const Actions = {
+    retrieveLocationTimeZone(latitude, longitude) {
+        return function(dispatch) {
+            const result = queryWeatherService(latitude, longitude);
+            return queryWeatherService(latitude, longitude).then(
+                resp => {
+                    const tzIANA = resp.properties.timeZone || null; // set to time zone to null if unavailable
+                    dispatch(Actions.LOCATION_IANA_TIME_ZONE_SET(tzIANA));
+                },
+                () => {
+                    dispatch(Actions.LOCATION_IANA_TIME_ZONE_SET(null));
+                }
+            );
+        };
+    },
     retrieveTimeSeries(siteno, params=null) {
         return function (dispatch, getState) {
             const currentState = getState();
@@ -64,8 +78,7 @@ export const Actions = {
                     // Get the start/end times of this request's range.
                     const notes = collection.queryInfo[requestKey].notes;
                     const endTime = notes.requestDT;
-                    const startTime = new Date(endTime);
-                    startTime.setDate(endTime.getDate() - notes['filter:timeRange'].periodDays);
+                    const startTime = calcStartTime('P7D', endTime, 'local');
 
                     // Trigger a call to get last year's data
                     dispatch(Actions.retrieveCompareTimeSeries(siteno, 'P7D', startTime, endTime));
@@ -150,9 +163,8 @@ export const Actions = {
             const requestKey = getTsRequestKey ('current', period, parmCd)(state);
             dispatch(Actions.setCurrentDateRange(period));
             if (!hasTimeSeries('current', period, parmCd)(state)) {
-                const endTime = new Date(getRequestTimeRange('current', 'P7D')(state).end);
+                const endTime = getRequestTimeRange('current', 'P7D')(state).end;
                 let startTime = calcStartTime(period, endTime);
-
                 dispatch(Actions.addTimeSeriesLoading([requestKey]));
                 return getTimeSeries({
                     sites: [site],
@@ -313,6 +325,12 @@ export const Actions = {
         return {
             type: 'SET_GAGE_HEIGHT',
             gageHeight
+        };
+    },
+    LOCATION_IANA_TIME_ZONE_SET(ianaTimeZone) {
+        return {
+            type: 'LOCATION_IANA_TIME_ZONE_SET',
+            ianaTimeZone
         };
     }
 };

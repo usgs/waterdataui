@@ -27,7 +27,7 @@ export const cursorOffsetSelector = createSelector(
         // If cursorOffset is otherwise unset, default to the last offset
         } else if (!cursorOffset) {
             const domain = xScale.domain();
-            return domain[1].getTime() - domain[0].getTime();
+            return domain[1] - domain[0];
         } else {
             return cursorOffset;
         }
@@ -44,7 +44,7 @@ export const cursorTimeSelector = memoize(tsKey => createSelector(
     cursorOffsetSelector,
     xScaleSelector(tsKey),
     (cursorOffset, xScale) => {
-        return cursorOffset ? new Date(xScale.domain()[0].getTime() + cursorOffset) : null;
+        return cursorOffset ? new Date(xScale.domain()[0] + cursorOffset) : null;
     }
 ));
 
@@ -122,7 +122,7 @@ export const cursorSlider = function (elem) {
                 }))
                 .call(link((input, xScale) => {
                     const domain = xScale.domain();
-                    const timeScale = domain[1].getTime() - domain[0].getTime();
+                    const timeScale = domain[1] - domain[0];
                     input.attr('min', 0)
                         .attr('max', timeScale)
                         .attr('step', timeScale / SLIDER_STEPS);

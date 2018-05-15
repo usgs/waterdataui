@@ -1,4 +1,5 @@
 const range = require('lodash/range');
+const { DateTime } = require('luxon');
 const { isLeapYear } = require('../../models');
 const { calcStartTime } = require('../../utils');
 
@@ -6,13 +7,14 @@ const { calcStartTime } = require('../../utils');
  * Make statistical data look like a timeseries for plotting purposes
  *
  * @param series -- an object with the following keys: points, startTime, and endTime at a minimum. Each point should have a javascript month and day
- * @param period -- NWIS time period string (e.g. 'P7D') denoted the period of time to display
+ * @param period -- ISO duration for date range of the time series
+ * @param ianaTimeZone -- Internet Assigned Numbers Authority designation for a time zone
  * @returns {*[]}
  */
-export const coerceStatisticalSeries = function (series, period) {
-    const startTime = calcStartTime(period, series.endTime); // calculate when the start time based on the period
-    const startYear = startTime.getFullYear();
-    const endYear = series.endTime.getFullYear();
+export const coerceStatisticalSeries = function (series, period, ianaTimeZone) {
+    const startTime = calcStartTime(period, series.endTime, ianaTimeZone); // calculate when the start time based on the period
+    const startYear = DateTime.fromMillis(startTime, {zone: ianaTimeZone}).year;
+    const endYear = DateTime.fromMillis(series.endTime, {zone: ianaTimeZone}).year;
     const yearRange = range(startYear, endYear + 1);
     const points = series.points;
     let plotablePoints = [];
@@ -23,7 +25,12 @@ export const coerceStatisticalSeries = function (series, period) {
             const month = point.month;
             const day = point.day;
             let dataPoint = Object.assign({}, point);
-            dataPoint.dateTime = dataPoint.dateTime ? dataPoint.dateTime : new Date(year, month, day);
+            dataPoint.dateTime = dataPoint.dateTime ? dataPoint.dateTime : DateTime.fromObject({
+                year: year,
+                day: day,
+                month: month,
+                zone: ianaTimeZone
+            }).valueOf();
             if (!isLeapYear(year)) {
                 if(!(month === 1 && day === 29)) {
                     plotablePoints.push(dataPoint);

@@ -1,8 +1,9 @@
 const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
+const { DateTime } = require('luxon');
 
-const { getRequestTimeRange, getCurrentVariable, getTsRequestKey } = require('../../selectors/timeSeriesSelector');
+const { getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone, getNwisTimeZone } = require('../../selectors/timeSeriesSelector');
 
 
 // Create a time formatting function from D3's timeFormat
@@ -134,5 +135,18 @@ export const descriptionSelector = createSelector(
         } else {
             return desc;
         }
+    }
+);
+
+/**
+ * Select the time zone. If the time zone is null, use `local` as the time zone
+ *
+ * @ return {String} - IANA time zone
+ *
+ */
+export const tsTimeZoneSelector = createSelector(
+    getIanaTimeZone,
+    ianaTimeZone => {
+        return ianaTimeZone !== null ? ianaTimeZone : 'local';
     }
 );
