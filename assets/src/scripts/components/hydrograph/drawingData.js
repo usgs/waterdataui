@@ -178,6 +178,61 @@ export const classesForPoint = point => {
     };
 };
 
+/*
+ * @ return {Array of Arrays of Objects} where the properties are date (universal), class,  and value
+*/
+export const getCurrentVariableMedianStatPoints = createSelector(
+    getCurrentVariableMedianStatistics,
+    getRequestTimeRange('current'),
+    getIanaTimeZone,
+    (stats, timeRange, ianaTimeZone) => {
+        if (!stats || !timeRange) {
+            return [];
+        }
+
+        // From the time range and time zone, determine the dates that we need to create the points arrays.
+        // Note that the first and last dates should match the time range's start and end time
+        let datesOfInterest = [];
+        let nextDateTime = DateTime.fromMillis(timeRange.start, {zone: ianaTimeZone});
+        datesOfInterest.push({
+            year: nextDateTime.year,
+            month: nextDateTime.month.toString(),
+            day: nextDateTime.day.toString(),
+            utcDate: timeRange.start
+        });
+        nextDateTime = nextDateTime.startOf('day').plus({days: 1});
+        while (nextDateTime.valueOf() <= timeRange.end) {
+            datesOfInterest.push({
+                year: nextDateTime.year,
+                month: nextDateTime.month.toString(),
+                day: nextDateTime.day.toString(),
+                utcDate: nextDateTime.valueOf()
+            });
+            nextDateTime = nextDateTime.plus({days: 1});
+        }
+        nextDateTime = DateTime.fromMillis(timeRange.end, {zone: ianaTimeZone});
+        datesOfInterest.push({
+            year: nextDateTime.year,
+            month: nextDateTime.month.toString(),
+            day: nextDateTime.day.toString(),
+            utcDate: timeRange.end
+        });
+
+        // Retrieve the median data matching the datesOfInterest and then create points arrays suitable for plotting.
+        return Object.values(stats).map((seriesStats) => {
+            return datesOfInterest
+                .map((date) => {
+                    let stat = find(seriesStats, {'month_nu': date.month, 'day_nu': date.day});
+                    return {
+                        value: stat ? stat.p50_va : null,
+                        date: date.utcDate
+                    };
+                })
+                .filter((point) => {
+                    return point.value;
+                });
+        });
+    });
 
 
 /**
@@ -189,7 +244,7 @@ export const classesForPoint = point => {
 export const visiblePointsSelector = createSelector(
     currentVariablePointsSelector('current'),
     currentVariablePointsSelector('compare'),
-    currentVariablePointsSelector('median'),
+    getCurrentVariableMedianStatPoints,
     (state) => state.timeSeriesState.showSeries,
     (current, compare, median, showSeries) => {
         const pointArray = [];
@@ -344,60 +399,5 @@ export const currentVariableLineSegmentsSelector = memoize(tsKey => createSelect
     }
 ));
 
-/*
- * @ return {Array of Arrays of Objects} where the properties are date (universal), class,  and value
-*/
-export const getCurrentVariableMedianStatPoints = createSelector(
-    getCurrentVariableMedianStatistics,
-    getRequestTimeRange('current'),
-    getIanaTimeZone,
-    (stats, timeRange, ianaTimeZone) => {
-        if (!stats || !timeRange) {
-            return [];
-        }
-
-        // From the time range and time zone, determine the dates that we need to create the points arrays.
-        // Note that the first and last dates should match the time range's start and end time
-        let datesOfInterest = [];
-        let nextDateTime = DateTime.fromMillis(timeRange.start, {zone: ianaTimeZone});
-        datesOfInterest.push({
-            year: nextDateTime.year,
-            month: nextDateTime.month.toString(),
-            day: nextDateTime.day.toString(),
-            utcDate: timeRange.start
-        });
-        nextDateTime = nextDateTime.startOf('day').plus({days: 1});
-        while (nextDateTime.valueOf() <= timeRange.end) {
-            datesOfInterest.push({
-                year: nextDateTime.year,
-                month: nextDateTime.month.toString(),
-                day: nextDateTime.day.toString(),
-                utcDate: nextDateTime.valueOf()
-            });
-            nextDateTime = nextDateTime.plus({days: 1});
-        }
-        nextDateTime = DateTime.fromMillis(timeRange.end, {zone: ianaTimeZone});
-        datesOfInterest.push({
-            year: nextDateTime.year,
-            month: nextDateTime.month.toString(),
-            day: nextDateTime.day.toString(),
-            utcDate: timeRange.end
-        });
-
-        // Retrieve the median data matching the datesOfInterest and then create points arrays suitable for plotting.
-        return Object.values(stats).map((seriesStats) => {
-            return datesOfInterest
-                .map((date) => {
-                    let stat = find(seriesStats, {'month_nu': date.month, 'day_nu': date.day});
-                    return {
-                        value: stat ? stat.p50_va : null,
-                        date: date.utcDate
-                    };
-                })
-                .filter((point) => {
-                    return point.value;
-                });
-        });
-    });
 
 

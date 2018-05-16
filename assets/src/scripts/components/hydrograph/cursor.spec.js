@@ -151,6 +151,7 @@ const TEST_STATE_THREE_VARS = {
             }
         }
     },
+    statisticsData: {},
     timeSeriesState: {
         showSeries: {
             current: true,
@@ -258,6 +259,7 @@ const TEST_STATE_ONE_VAR = {
             }
         }
     },
+    statisticsData: {},
     timeSeriesState: {
         showSeries: {
             current: true,
