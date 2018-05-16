@@ -356,8 +356,9 @@ export const getCurrentVariableMedianStatPoints = createSelector(
             return [];
         }
 
+        // From the time range and time zone, determine the dates that we need to create the points arrays.
+        // Note that the first and last dates should match the time range's start and end time
         let datesOfInterest = [];
-
         let nextDateTime = DateTime.fromMillis(timeRange.start, {zone: ianaTimeZone});
         datesOfInterest.push({
             year: nextDateTime.year,
@@ -383,6 +384,7 @@ export const getCurrentVariableMedianStatPoints = createSelector(
             utcDate: timeRange.end
         });
 
+        // Retrieve the median data matching the datesOfInterest and then create points arrays suitable for plotting.
         return Object.values(stats).map((seriesStats) => {
             return datesOfInterest
                 .map((date) => {
