@@ -17,7 +17,8 @@ describe('svgAccessibility tests', () => {
             addSVGAccessibility(svg, {
                 title: 'This is a title',
                 description: 'This is a description',
-                isInteractive: false
+                isInteractive: false,
+                idPrefix: 'prefix'
             });
 
             const title = svg.selectAll('title');
@@ -27,8 +28,8 @@ describe('svgAccessibility tests', () => {
             expect(desc.size()).toBe(1);
             expect(title.html()).toEqual('This is a title');
             expect(desc.html()).toEqual('This is a description');
-            expect(svg.attr('aria-labelledby')).toContain('title');
-            expect(svg.attr('aria-describedby')).toContain('desc');
+            expect(svg.attr('aria-labelledby')).toContain('prefix-title');
+            expect(svg.attr('aria-describedby')).toContain('prefix-desc');
         });
 
         it('Should remove the previous title and desc tags when called again', () => {

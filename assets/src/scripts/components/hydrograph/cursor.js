@@ -111,6 +111,7 @@ export const cursorSlider = function (elem) {
             wrap.append('input')
                 .attr('type', 'range')
                 .attr('id', 'cursor-slider')
+                .attr('aria-label', 'Hydrograph cursor slider')
                 .on('input', dispatch(function () {
                     return Actions.setCursorOffset(this.valueAsNumber);
                 }))

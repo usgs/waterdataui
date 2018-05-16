@@ -236,6 +236,7 @@ const createTitle = function(elem) {
 const watermark = function (elem) {
     elem.append('img')
         .classed('watermark', true)
+        .attr('alt', 'USGS - science for a changing world')
         .attr('src', STATIC_URL + '/img/USGS_green_logo.svg')
         .call(link(function(elem, layout) {
             const transformStringSmallScreen = `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025
@@ -274,7 +275,8 @@ const timeSeriesGraph = function(elem) {
             .call(link(addSVGAccessibility, createStructuredSelector({
                 title: titleSelector,
                 description: descriptionSelector,
-                isInteractive: () => true
+                isInteractive: () => true,
+                idPrefix: () => 'hydrograph'
             })))
             .call(plotSvgDefs)
             .call(svg => {
@@ -382,6 +384,8 @@ const dateRangeControls = function(elem, siteno) {
 
     const container = elem.insert('div', ':nth-child(2)')
         .attr('id', 'ts-daterange-select-container')
+        .attr('role', 'radiogroup')
+        .attr('aria-label', 'Time interval select')
         .call(link(function(container, showControls) {
             container.attr('hidden', showControls ? null : true);
         }, hasTimeSeriesWithPoints('current', 'P7D')));

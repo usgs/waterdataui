@@ -98,7 +98,7 @@ export const pointsByTsKeySelector = memoize((tsKey, period) => createSelector(
         return result;
     }));
 
-/* Returns a select that returns all time series point for the ccurrent variable and in the select series, tsKey
+/* Returns a select that returns all time series points for the current variable and in the select series, tsKey
  * by tsId.
  * @param {Object} state
  * @param {String} tsKey

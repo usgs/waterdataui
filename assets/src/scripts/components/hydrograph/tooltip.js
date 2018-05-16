@@ -16,6 +16,9 @@ const { tsTimeZoneSelector } = require('./timeSeries');
 
 const { getCurrentVariable } = require('../../selectors/timeSeriesSelector');
 
+const { USWDS_SMALL_SCREEN, USWDS_MEDIUM_SCREEN } = require('../../config');
+const { mediaQuery } = require('../../utils');
+
 
 const createFocusLine = function(elem) {
     let focus = elem.append('g')
@@ -102,7 +105,7 @@ const unitCodeSelector = createSelector(
     variable => variable ? variable.unit.unitCode : null
 );
 
-const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone}, textGroup) {
+const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone, layout}, textGroup) {
 
     // Put the circles in a container so we can keep the their position in the
     // DOM before rect.overlay, to prevent the circles from receiving mouse
@@ -125,18 +128,57 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
 
     // Add new text labels
     const newTexts = texts.enter()
-        .append('div')
-            .attr('class', d => `${d.tsKey}-tooltip-text`);
+        .append('div');
+
+    // Find the width of the between the y-axis and margin and set the tooltip margin based on that number
+    const adjustMarginOfTooltips = function (elem) {
+        // set a base number of pixels to bump the tooltips away from y-axis and compensate for slight under reporting
+        // of margin width by layout selector on time series with single or double digits on y-axis
+        const baseMarginOffsetTextGroup = 27;
+        let marginAdjustment = layout.margin.left + baseMarginOffsetTextGroup;
+        elem.style('margin-left', marginAdjustment + 'px');
+
+    };
+
+    // find how many tooltips are showing and adjust the font size larger if there are few, smaller if there are many
+    const adjustTooltipFontSize = function() {
+        const totalTooltipsShowing = Object.values(currentPoints).length + Object.values(comparePoints).length;
+        let tooltipFontSize = 0;
+        if (mediaQuery(USWDS_MEDIUM_SCREEN)) {
+            if (totalTooltipsShowing <= 2) {
+                tooltipFontSize = 2;
+            } else if (totalTooltipsShowing <= 4) {
+                tooltipFontSize = 1.75;
+            } else {
+               tooltipFontSize = 1.25;
+            }
+        } else if (mediaQuery(USWDS_SMALL_SCREEN)) {
+            if (totalTooltipsShowing <= 2) {
+                tooltipFontSize = 1.75;
+            } else if (totalTooltipsShowing <= 4) {
+                tooltipFontSize = 1.25;
+            } else {
+                tooltipFontSize = 1;
+            }
+        } else {
+            tooltipFontSize = 1;
+        }
+        elem.style('font-size', tooltipFontSize + 'rem');
+    };
 
     // Update the text and backgrounds of all tooltip labels
     const merge = texts.merge(newTexts)
         .interrupt()
-        .style('opacity', '1');
+        .style('opacity', '1')
+        .call(adjustMarginOfTooltips)
+        .call(adjustTooltipFontSize);
+
     merge
         .text(datum => getTooltipText(datum, qualifiers, unitCode, ianaTimeZone))
         .each(function (datum) {
             const classes = classesForPoint(datum);
             const text = select(this);
+            text.attr('class', d => `${d.tsKey}-tooltip-text`);
             text.classed('approved', classes.approved);
             text.classed('estimated', classes.estimated);
         });
