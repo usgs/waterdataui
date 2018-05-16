@@ -4,14 +4,13 @@ const last = require('lodash/last');
 const { applyMiddleware, createStore, combineReducers, compose } = require('redux');
 const { default: thunk } = require('redux-thunk');
 
-const { getStatistics, getPreviousYearTimeSeries, getTimeSeries,
-    parseMedianData, sortedParameters, queryWeatherService } = require('../models');
+const { getPreviousYearTimeSeries, getTimeSeries, sortedParameters, queryWeatherService } = require('../models');
 const { calcStartTime } = require('../utils');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
-const { fetchSiteMedianStatistics } = require('../statisticsData');
-const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
-    getVariables } = require('../selectors/timeSeriesSelector');
+const { fetchSiteStatistics } = require('../statisticsData');
+const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange
+    } = require('../selectors/timeSeriesSelector');
 
 const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
@@ -52,7 +51,6 @@ const getCurrentVariableId = function(timeSeries, variables) {
 export const Actions = {
     retrieveLocationTimeZone(latitude, longitude) {
         return function(dispatch) {
-            const result = queryWeatherService(latitude, longitude);
             return queryWeatherService(latitude, longitude).then(
                 resp => {
                     const tzIANA = resp.properties.timeZone || null; // set to time zone to null if unavailable
@@ -69,9 +67,8 @@ export const Actions = {
             const currentState = getState();
             const requestKey = getTsRequestKey('current', 'P7D')(currentState);
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
-            dispatch(Actions.retrieveMedianStatistics(siteno));
 
-            const timeSeries = getTimeSeries({sites: [siteno], params}).then(
+            return getTimeSeries({sites: [siteno], params}).then(
                 series => {
                     const collection = normalize(series, requestKey);
 
@@ -109,24 +106,6 @@ export const Actions = {
                     };
                 }
             );
-
-            const medianRequestKey = getTsRequestKey('median')(currentState);
-            dispatch(Actions.addTimeSeriesLoading([medianRequestKey]));
-            const medianStatistics = getStatistics({sites: [siteno], statType: 'median'});
-            medianStatistics.then(() => {
-                dispatch(Actions.removeTimeSeriesLoading([medianRequestKey]));
-            },
-            () => {
-                dispatch(Actions.removeTimeSeriesLoading([medianRequestKey]));
-            });
-
-            return Promise.all([timeSeries, medianStatistics]).then(([{endTime}, stats]) => {
-                if (endTime) {
-                    let medianCollection = parseMedianData(stats, endTime, getVariables(getState()));
-                    dispatch(Actions.addSeriesCollection(getTsRequestKey('median')(currentState), medianCollection));
-                    dispatch(Actions.toggleTimeSeries('median', true));
-                }
-            });
         };
     },
     retrieveCompareTimeSeries(site, period, startTime, endTime) {
@@ -147,11 +126,11 @@ export const Actions = {
         };
     },
     retrieveMedianStatistics(site) {
-        //TODO: Consider whether we need a loading key. Should be specific to statistics I think.
         return function(dispatch) {
-            return fetchSiteMedianStatistics({site}).then(
+            return fetchSiteStatistics({site, statType: 'median'}).then(
                 stats => {
                     dispatch(Actions.addMedianStats(stats));
+                    dispatch(Actions.toggleTimeSeries('median', true));
                 }
             );
         };

@@ -18,14 +18,14 @@ export const fetchSitesStatisticsRDB = function({sites, statType, params=null}) 
 /*
  * @returns {Promise}. If resolved, {Object} is returned. If rejected, the error status is passed
  */
-export const fetchSiteMedianStatistics = function({site, params=null}) {
-    let medianRDB = fetchSitesStatisticsRDB({sites: [site], statType: 'median', params: params});
+export const fetchSiteStatistics = function({site, statType, params=null}) {
+    let medianRDB = fetchSitesStatisticsRDB({sites: [site], statType, params: params});
     return medianRDB.then((response) => {
         const statsData = parseRDB(response);
         return statsData.reduce((finalResult, dataLine) => {
             finalResult[dataLine.parameter_cd] = finalResult[dataLine.parameter_cd] || {};
             finalResult[dataLine.parameter_cd][dataLine.ts_id] =
-                finalResult[dataLine.parameter_cd][dataLine.ts_id]|| []
+                finalResult[dataLine.parameter_cd][dataLine.ts_id]|| [];
             finalResult[dataLine.parameter_cd][dataLine.ts_id].push(dataLine);
             return finalResult;
         }, {});

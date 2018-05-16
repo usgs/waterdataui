@@ -353,7 +353,7 @@ export const getCurrentVariableMedianStatPoints = createSelector(
     getIanaTimeZone,
     (stats, timeRange, ianaTimeZone) => {
         if (!stats || !timeRange) {
-            return {};
+            return [];
         }
 
         let datesOfInterest = [];
