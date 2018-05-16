@@ -286,7 +286,7 @@ module.exports = function (config) {
                 'bs_chrome52_windows10',
                 'bs_firefox52_windows10',
                 // Galaxy browser times out trying to connect
-                'bs_galaxys8_chrome52',
+                //'bs_galaxys8_chrome52',
                 'bs_pixel_android'
             ]
         };
