@@ -94,12 +94,19 @@ module.exports = function (config) {
             ...karmaConfig,
             browserStack: {
                 project: 'Water Data For The Nation',
-                timeout: 600
+                timeout: 1800
             },
             // See:
             // https://api.browserstack.com/automate/browsers.json
             customLaunchers: {
                 // Windows browsers
+                bs_edge16_windows10: {
+                    base: 'BrowserStack',
+                    browser: 'edge',
+                    browser_version: '16.0',
+                    os: 'Windows',
+                    os_version: '10'
+                },
                 bs_ie11_windows10: {
                     base: 'BrowserStack',
                     browser: 'ie',
@@ -255,19 +262,32 @@ module.exports = function (config) {
                     os: 'android',
                     os_version: '7.0',
                     real_mobile: true
+                },
+                bs_pixel_android: {
+                    base: 'BrowserStack',
+                    browser: 'android',
+                    browser_version: null,
+                    device: 'Google Pixel',
+                    os: 'android',
+                    os_version: '8.0',
+                    real_mobile: true
                 }
             },
             concurrency: 2,
             // These default browsers are chosen to prevent loss of browser
             // compatibility. As of May 15, 2018 they are the current oldest
             // supported.
-            // Haven't looking into the Android browser
             browsers: [
                 'bs_safari10_mac',
                 'bs_safari10_iphone7',
+                'bs_edge16_windows10',
+                // IE 11 failing with timezone issues
+                //'bs_ie11_windows10',
                 'bs_chrome52_windows10',
                 'bs_firefox52_windows10',
-                'bs_galaxys8_chrome52'
+                // Galaxy browser times out trying to connect
+                'bs_galaxys8_chrome52',
+                'bs_pixel_android'
             ]
         };
     } else {
