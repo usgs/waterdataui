@@ -1,4 +1,5 @@
 
+const { DateTime } = require('luxon');
 const { lineSegmentsSelector, pointsSelector, pointsTableDataSelector, allPointsSelector, pointsByTsKeySelector,
     classesForPoint, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
     currentVariablePointsSelector, currentVariablePointsByTsIdSelector, visiblePointsSelector,
@@ -786,7 +787,8 @@ describe('drawingData module', () => {
                             variableCode: {value: '00060'},
                             oid: 45807197
                         }
-                    }
+                    },
+                    ianaTimeZone: 'Pacific/Honolulu'
                 },
                 timeSeriesState: {
                     currentVariableID: '45807197',
@@ -896,14 +898,29 @@ describe('drawingData module', () => {
 
         it('Return the expected data points', () =>  {
             let result = getCurrentVariableMedianStatPoints(TEST_STATE);
-            expect(result['1234'].length).toBe(9);
-            expect(result['1234'][0]).toEqual({
+            expect(result.length).toBe(1);
+            expect(result[0].length).toBe(9);
+            expect(result[0][0]).toEqual({
                 value: '42',
-                date: new Date('2017-02-22 00:00').getTime()
+                date: DateTime.fromObject({
+                    year: 2017,
+                    month: 2,
+                    day: 22,
+                    hour: 11,
+                    minute: 15,
+                    second: 0
+                }).valueOf()
             });
-            expect(result['1234'][7]).toEqual({
+            expect(result[0][8]).toEqual({
                 value: '39',
-                date: new Date('2017-03-01 00:00').getTime()
+                date: DateTime.fromObject({
+                    year: 2017,
+                    month: 3,
+                    day: 1,
+                    hour: 11,
+                    minute: 15,
+                    second: 0
+                }).valueOf()
             });
         });
 
@@ -915,7 +932,7 @@ describe('drawingData module', () => {
                     currentVariableID: '45807042'
                 }
             };
-            expect(getCurrentVariableMedianStatPoints(newTestState)).toEqual({});
+            expect(getCurrentVariableMedianStatPoints(newTestState)).toEqual([]);
         });
     });
 });
