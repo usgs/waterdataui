@@ -7,7 +7,12 @@ const { parseRDB } = require('./utils');
 const SERVICE_ROOT = config.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
 
 /*
- * @ returns {Promise} with response string if successful or rejected with error status
+ * Fetches statistics information in the RDB format for the statType. If params is not specified all parameters for the
+ * sites are fetched.
+ * @param {Array of String} sites
+ * @param {String} statType
+ * @param {Array of String} params
+ * @returns {Promise} with response string if successful or rejected with error status
  */
 export const fetchSitesStatisticsRDB = function({sites, statType, params=null}) {
     let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
@@ -16,6 +21,10 @@ export const fetchSitesStatisticsRDB = function({sites, statType, params=null}) 
 };
 
 /*
+ * Fetches the median statistics for the site and the parameters. If params is null all parameters are fetched.
+ * @param {String} site
+ * @param {String} statType
+ * @param {Array of String} params
  * @returns {Promise}. If resolved, {Object} is returned. If rejected, the error status is passed
  */
 export const fetchSiteStatistics = function({site, statType, params=null}) {
