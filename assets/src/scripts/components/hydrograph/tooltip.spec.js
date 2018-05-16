@@ -198,13 +198,13 @@ describe('Hydrograph tooltip module', () => {
     });
 
     describe('createTooltipText', () => {
-        let svg;
+        let div;
         beforeEach(() => {
-            svg = select('body').append('svg');
+            div = select('body').append('div');
         });
 
         afterEach(() => {
-            svg.remove();
+            div.remove();
         });
 
         it('Creates the container for tooltips', () => {
@@ -217,10 +217,10 @@ describe('Hydrograph tooltip module', () => {
                 }
             });
 
-            svg.call(provide(store))
+            div.call(provide(store))
                 .call(createTooltipText);
 
-            const textGroup = svg.selectAll('.tooltip-text-group');
+            const textGroup = div.selectAll('.tooltip-text-group');
             expect(textGroup.size()).toBe(1);
         });
 
@@ -231,12 +231,12 @@ describe('Hydrograph tooltip module', () => {
                 })
             }));
 
-            svg.call(provide(store))
+            div.call(provide(store))
                 .call(createTooltipText);
 
-            let value = svg.select('.current-tooltip-text').text().split(' - ')[0];
+            let value = div.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('14 ft3/s');
-            value = svg.select('.compare-tooltip-text').text().split(' - ')[0];
+            value = div.select('.compare-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('14 ft3/s');
         });
 
@@ -247,17 +247,17 @@ describe('Hydrograph tooltip module', () => {
                 })
             }));
 
-            svg.call(provide(store))
+            div.call(provide(store))
                 .call(createTooltipText);
 
-            let value = svg.select('.current-tooltip-text').text().split(' - ')[0];
+            let value = div.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('12 ft3/s');
             store.dispatch(Actions.setCursorOffset(3 * 60 * 60 * 1000));
 
-            value = svg.select('.current-tooltip-text').text().split(' - ')[0];
+            value = div.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('15 ft3/s');
 
-            value = svg.select('.compare-tooltip-text').text().split(' - ')[0];
+            value = div.select('.compare-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('15 ft3/s');
         });
 
@@ -268,11 +268,11 @@ describe('Hydrograph tooltip module', () => {
                 })
             }));
 
-            svg.call(provide(store))
+            div.call(provide(store))
                 .call(createTooltipText);
             store.dispatch(Actions.setCursorOffset(299 * 60 * 1000));  // 2018-01-03T16:59:00.000Z
 
-            expect(svg.select('.current-tooltip-text').text()).toContain('Flood');
+            expect(div.select('.current-tooltip-text').text()).toContain('Flood');
         });
 
         it('Creates the correct text for values of zero', () => {
@@ -295,10 +295,10 @@ describe('Hydrograph tooltip module', () => {
                     cursorOffset: 10
                 })
             }));
-            svg.call(provide(store))
+            div.call(provide(store))
                 .call(createTooltipText);
             store.dispatch(Actions.setCursorOffset(119 * 60 * 1000));
-            let value = svg.select('.current-tooltip-text').text().split(' - ')[0];
+            let value = div.select('.current-tooltip-text').text().split(' - ')[0];
 
             expect(value).toBe('0 ft3/s');
         });

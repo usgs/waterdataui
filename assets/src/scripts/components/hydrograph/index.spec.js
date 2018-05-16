@@ -203,9 +203,9 @@ describe('Hydrograph charting module', () => {
         });
 
         it('title and desc attributes are present', function() {
-            const descText = svg.select('desc').text();
+            const descText = svg.select('desc').html();
 
-            expect(svg.select('title').text()).toEqual('Test title for 00060');
+            expect(svg.select('title').html()).toEqual('Test title for 00060');
             expect(descText).toContain('Test description for 00060');
             expect(descText).toContain('3/23/2018');
             expect(descText).toContain('3/30/2018');
