@@ -1,10 +1,13 @@
 const memoize = require('fast-memoize');
+const find = require('lodash/find');
+const { DateTime } = require('luxon');
 const { createSelector } = require('reselect');
 const { format } = require('d3-format');
 
-const {allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeSeries');
+const { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeSeries');
 
-const { getVariables, getTsRequestKey } = require('../../selectors/timeSeriesSelector');
+const { getVariables, getTsRequestKey, getRequestTimeRange, getIanaTimeZone } = require('../../selectors/timeSeriesSelector');
+const { getCurrentVariableMedianStatistics } = require('../../selectors/medianStatisticsSelector');
 
 export const MASK_DESC = {
     ice: 'Ice Affected',
@@ -340,4 +343,59 @@ export const currentVariableLineSegmentsSelector = memoize(tsKey => createSelect
 
     }
 ));
+
+/*
+ * @ return {Array of Arrays of Objects} where the properties are date (universal), class,  and value
+*/
+export const getCurrentVariableMedianStatPoints = createSelector(
+    getCurrentVariableMedianStatistics,
+    getRequestTimeRange('current'),
+    getIanaTimeZone,
+    (stats, timeRange, ianaTimeZone) => {
+        if (!stats || !timeRange) {
+            return {};
+        }
+
+        let datesOfInterest = [];
+
+        let nextDateTime = DateTime.fromMillis(timeRange.start, {zone: ianaTimeZone});
+        datesOfInterest.push({
+            year: nextDateTime.year,
+            month: nextDateTime.month.toString(),
+            day: nextDateTime.day.toString(),
+            utcDate: timeRange.start
+        });
+        nextDateTime = nextDateTime.startOf('day').plus({days: 1});
+        while (nextDateTime.valueOf() <= timeRange.end) {
+            datesOfInterest.push({
+                year: nextDateTime.year,
+                month: nextDateTime.month.toString(),
+                day: nextDateTime.day.toString(),
+                utcDate: nextDateTime.valueOf()
+            });
+            nextDateTime = nextDateTime.plus({days: 1});
+        }
+        nextDateTime = DateTime.fromMillis(timeRange.end, {zone: ianaTimeZone});
+        datesOfInterest.push({
+            year: nextDateTime.year,
+            month: nextDateTime.month.toString(),
+            day: nextDateTime.day.toString(),
+            utcDate: timeRange.end
+        });
+
+        return Object.values(stats).map((seriesStats) => {
+            return datesOfInterest
+                .map((date) => {
+                    let stat = find(seriesStats, {'month_nu': date.month, 'day_nu': date.day});
+                    return {
+                        value: stat ? stat.p50_va : null,
+                        date: date.utcDate
+                    };
+                })
+                .filter((point) => {
+                    return point.value;
+                });
+        });
+    });
+
 

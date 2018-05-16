@@ -16,8 +16,8 @@ const { callIf, mediaQuery } = require('../../utils');
 const { audibleUI } = require('./audible');
 const { appendAxes, axesSelector } = require('./axes');
 const { cursorSlider } = require('./cursor');
-const {lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID
-} = require('./drawingData');
+const {lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID,
+    getCurrentVariableMedianStatPoints } = require('./drawingData');
 const { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeSeriesSelector } = require('./parameters');
@@ -26,7 +26,6 @@ const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
     descriptionSelector,  currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } = require('./timeSeries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
 
-const { getCurrentVariableMedianStatPointsInDateRange } = require('../../selectors/medianStatisticsSelector');
 const { getTimeSeriesCollectionIds, isLoadingTS } = require('../../selectors/timeSeriesSelector');
 
 
@@ -189,7 +188,6 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
         .curve(curveStepAfter)
         .x(function(d) {
             return xscale(d.date);
-            //return xscale(d.dateTime);
         })
         .y(function(d) {
             return yscale(d.value);
@@ -211,7 +209,7 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
  * @param  {Function} yscale
  * @param  {Array} pointsList
  */
-const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap}) {
+const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoints}) {
     elem.select('#median-points').remove();
     if (!visible) {
         return;
@@ -219,9 +217,9 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap}
     const container = elem
         .append('g')
             .attr('id', 'median-points');
-    for (const [index, seriesID] of Object.keys(seriesMap).entries()) {
-        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points: seriesMap[seriesID]});
-    }
+    seriesPoints.forEach((points, index) => {
+        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points: points});
+    });
 };
 
 
@@ -300,7 +298,7 @@ const timeSeriesGraph = function(elem) {
                         visible: isVisibleSelector('median'),
                         xscale: xScaleSelector('current'),
                         yscale: yScaleSelector,
-                        seriesMap: getCurrentVariableMedianStatPointsInDateRange
+                        seriesPoints: getCurrentVariableMedianStatPoints
                     })));
         });
 };
