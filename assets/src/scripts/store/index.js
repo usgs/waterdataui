@@ -91,19 +91,12 @@ export const Actions = {
                         getCurrentVariableId(collection.timeSeries || {}, collection.variables || {})
                     ));
                     dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
-
-                    return {collection, startTime, endTime}; // TODO: Do we need to return collection
                 },
                 () => {
                     dispatch(Actions.resetTimeSeries(getTsRequestKey('current', 'P7D')(currentState)));
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
 
                     dispatch(Actions.toggleTimeSeries('current', false));
-                    return {
-                        collection: null,
-                        startTime: null,
-                        endTime: null
-                    };
                 }
             );
         };
