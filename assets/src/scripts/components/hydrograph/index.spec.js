@@ -106,7 +106,7 @@ const TEST_STATE = {
     },
     statisticsData : {
         median: {
-            '00010': {
+            '00060': {
                 '1234': [
                     {
                         month_nu: '2',
