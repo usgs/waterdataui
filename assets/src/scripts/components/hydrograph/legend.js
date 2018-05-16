@@ -4,7 +4,7 @@ const { createSelector } = require('reselect');
 
 const { CIRCLE_RADIUS } = require('./layout');
 const { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker} = require('./markers');
-const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC, getCurrentVariableMedianStatPoints } = require('./drawingData');
+const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } = require('./drawingData');
 
 const { USWDS_MEDIUM_SCREEN } = require('../../config');
 const { getMethods } = require('../../selectors/timeSeriesSelector');
