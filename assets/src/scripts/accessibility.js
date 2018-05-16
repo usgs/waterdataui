@@ -5,16 +5,18 @@
  * @param {String} title
  * @param {String} description
  * @param {Boolean} isInteractive
+ * @param {String} idPrefix
  */
-function addSVGAccessibility(svg, {title, description, isInteractive}) {
+function addSVGAccessibility(svg, {title, description, isInteractive, idPrefix}) {
     svg.selectAll('title, desc').remove();
-
-    svg.insert('desc', ':first-child')
+    let descElement = svg.insert('desc', ':first-child')
         .html(description);
-    svg.insert('title', ':first-child')
+    descElement.attr('id', `${idPrefix}-desc`);
+    let titleElement = svg.insert('title', ':first-child')
         .html(title);
-    svg.attr('aria-labelledby', 'title');
-    svg.attr('aria-describedby', 'desc');
+    titleElement.attr('id', `${idPrefix}-title`);
+    svg.attr('aria-labelledby', `${idPrefix}-title`);
+    svg.attr('aria-describedby', `${idPrefix}-desc`);
     if (isInteractive) {
         svg.attr('tabindex', 0);
     }
