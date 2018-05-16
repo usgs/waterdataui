@@ -1,7 +1,6 @@
 
 const { mouse, select } = require('d3-selection');
 const { transition } = require('d3-transition');
-const { timeFormat } = require('d3-time-format');
 const memoize = require('fast-memoize');
 const { createSelector, createStructuredSelector } = require('reselect');
 const { DateTime } = require('luxon');
@@ -16,8 +15,6 @@ const { xScaleSelector, yScaleSelector } = require('./scales');
 const { tsTimeZoneSelector } = require('./timeSeries');
 
 const { getCurrentVariable } = require('../../selectors/timeSeriesSelector');
-
-const formatTime = timeFormat('%b %-d, %Y, %-I:%M:%S %p');
 
 
 const createFocusLine = function(elem) {
