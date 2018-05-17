@@ -22,7 +22,7 @@ env:
 matrix:
   fast_finish: true
   allow_failures:
-    - env: KARMA_SAUCE_LABS=1
+    - env: KARMA_SAUCE_LABS=1 TEST_TARGET=test-assets
 
 before_install:
   - nvm install $(python -c "import json; print(json.loads(open('./assets/package.json').read())['engines']['node'])")
