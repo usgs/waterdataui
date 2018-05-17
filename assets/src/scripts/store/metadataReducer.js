@@ -9,7 +9,7 @@ const addMonitoringLocationId = function(metadata, action) {
     return {
         ...metadata,
         identifier: action.identifier
-    }
+    };
 };
 
 export const metadataReducer = function(metadata={}, action) {

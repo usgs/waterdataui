@@ -1,6 +1,6 @@
 const { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getQueryInfo, getRequests,
     getCurrentParmCd, hasTimeSeries, getTsRequestKey, getTsQueryInfo, getRequestTimeRange, isLoadingTS, getTSRequest,
-    getTimeSeriesCollectionIds, getNwisTimeZone} = require('./timeSeriesSelector');
+    getTimeSeriesCollectionIds} = require('./timeSeriesSelector');
 
 describe('timeSeriesSelector', () => {
     const TEST_VARS = {
