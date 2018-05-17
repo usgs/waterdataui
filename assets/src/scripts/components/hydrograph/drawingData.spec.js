@@ -882,12 +882,11 @@ describe('drawingData module', () => {
             statisticsData : {
                 median: {
                     '00010': {
-                        '1234': [
-                            {
-                                month_nu: '2',
-                                day_nu: '20',
-                                p50_va: '40'
-                            }, {
+                        '1234': [{
+                            month_nu: '2',
+                            day_nu: '20',
+                            p50_va: '40'
+                        }, {
                             month_nu: '2',
                             day_nu: '21',
                             p50_va: '41'
@@ -919,6 +918,10 @@ describe('drawingData module', () => {
                             month_nu: '2',
                             day_nu: '28',
                             p50_va: '40'
+                        }, {
+                            month_nu: '2',
+                            day_nu: '29',
+                            p50_va: '41'
                         }, {
                             month_nu: '3',
                             day_nu: '1',

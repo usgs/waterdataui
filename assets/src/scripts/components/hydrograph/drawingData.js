@@ -224,12 +224,12 @@ export const getCurrentVariableMedianStatPoints = createSelector(
                 .map((date) => {
                     let stat = find(seriesStats, {'month_nu': date.month, 'day_nu': date.day});
                     return {
-                        value: stat ? parseFloat(stat.p50_va) : null,
+                        value: stat && stat.p50_va ? parseFloat(stat.p50_va) : null,
                         date: date.utcDate
                     };
                 })
                 .filter((point) => {
-                    return point.value;
+                    return point.value !== null;
                 });
         });
     });
