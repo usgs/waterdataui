@@ -24,6 +24,7 @@ not have to be coerced into a time series.
 - Remove sourcemap reference from autotrack.js (Analytics script)
 - Added dynamic left margin for tooltip text to prevent overlap with y-axis labels
 - Bug that caused incorrect font styling on tooltips
+- Various accessibility violations
 
 ## [0.9.0] - 2018-05-10
 ### Fixed
