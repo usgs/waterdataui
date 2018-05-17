@@ -99,6 +99,13 @@ describe('medianStatisticsSelector', () => {
                             end_yr: '2017',
                             loc_web_ds: 'This method'
                         }, {
+                            month_nu: '2',
+                            day_nu: '29',
+                            p50_va: '41',
+                            begin_yr: '1970',
+                            end_yr: '2017',
+                            loc_web_ds: 'This method'
+                        }, {
                             month_nu: '3',
                             day_nu: '1',
                             p50_va: '39',
