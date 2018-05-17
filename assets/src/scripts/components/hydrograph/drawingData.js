@@ -224,7 +224,7 @@ export const getCurrentVariableMedianStatPoints = createSelector(
                 .map((date) => {
                     let stat = find(seriesStats, {'month_nu': date.month, 'day_nu': date.day});
                     return {
-                        value: stat ? stat.p50_va : null,
+                        value: stat ? parseFloat(stat.p50_va) : null,
                         date: date.utcDate
                     };
                 })
@@ -256,7 +256,7 @@ export const visiblePointsSelector = createSelector(
             Array.prototype.push.apply(pointArray, compare);
         }
         if (showSeries['median']) {
-            Array.prototype.push.apply(pointArray, median);
+            Array.prototype.push.apply(pointArray, Object.keys(median).map(tsId => median[tsId] ?  median[tsId] : []));
         }
         return pointArray;
     }

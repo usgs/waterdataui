@@ -942,7 +942,7 @@ describe('drawingData module', () => {
             expect(result.length).toBe(1);
             expect(result[0].length).toBe(9);
             expect(result[0][0]).toEqual({
-                value: '42',
+                value: 42,
                 date: DateTime.fromObject({
                     year: 2017,
                     month: 2,
@@ -953,7 +953,7 @@ describe('drawingData module', () => {
                 }).valueOf()
             });
             expect(result[0][8]).toEqual({
-                value: '39',
+                value: 39,
                 date: DateTime.fromObject({
                     year: 2017,
                     month: 3,
