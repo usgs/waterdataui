@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - The node.js-based graph server was updated to render PNGs rather than SVGs
 - Cooperator logos may be activated on a per-district basis
-- A BrowserStack Karma test runner was added, and some browser-specific bugs fixed.
+- BrowserStack and SauceLabs Karma test runners were added, and some browser-specific bugs fixed.
 - Hydrograph shows data in the location's local timezone as determined by the weather service
 - Font size of tooltips; larger size when fewer tips are present, smaller when more tip present
 - Refactor the Redux state to put the median statistics in its own property so that the data does

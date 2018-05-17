@@ -5,6 +5,8 @@
 [![Dependency Status](https://gemnasium.com/badges/github.com/usgs/waterdataui.svg)](https://gemnasium.com/github.com/usgs/waterdataui)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/05497ebda0d2450bb11eba0e436f4360)](https://www.codacy.com/app/ayan/waterdataui?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=usgs/waterdataui&amp;utm_campaign=Badge_Grade)
 
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/danielnaab.svg)](https://saucelabs.com/u/danielnaab)
+
 This repo contains the components of Water Data For The Nation:
 
 - [`wdfn-server`](wdfn-server): A Flask web application that is used to create server-rendered pages for USGS water data

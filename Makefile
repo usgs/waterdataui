@@ -17,7 +17,7 @@ include assets/Makefile
 include graph-server/Makefile
 include wdfn-server/Makefile
 
-.PHONY: help env test clean cleanenv
+.PHONY: help env test clean cleanenv coverage
 
 MAKEPID:= $(shell echo $$PPID)
 
@@ -31,3 +31,8 @@ watch:
 	 make watch-assets & \
 	 make watch-graph-server & \
 	 wait) || kill -TERM $(MAKEPID)
+coverage:
+	mkdir -p ./coverage
+	find assets/coverage/ -mindepth 2 -iname '*.info' -exec cp {} ./coverage \;
+	coveralls-lcov -v -n coverage/lcov.info > coverage/coverage.json
+	wdfn-server/env/bin/coveralls --merge=coverage/coverage.json
