@@ -123,7 +123,7 @@ module.exports = function (config) {
                 project: 'Water Data For The Nation',
                 timeout: 1800
             },
-            concurrency: 5,
+            concurrency: 2,
             // These default browsers are chosen to prevent loss of browser
             // compatibility. As of May 15, 2018 they are the current oldest
             // supported.
