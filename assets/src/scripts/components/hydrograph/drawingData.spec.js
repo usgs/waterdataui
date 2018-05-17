@@ -868,16 +868,17 @@ describe('drawingData module', () => {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
-                            requestDT: new Date('2017-03-01 11:15').getTime(),
+                            requestDT: (new Date(2017, 2, 1, 11, 15, 0, 0)).getTime(),
                             'filter:timeRange': {
                                 mode: 'PERIOD',
-                                periodDays: 7,
+                                periodDays: '7',
                                 modifiedSince: null
                             }
                         }
                     }
                 },
-                variables: TEST_VARS
+                variables: TEST_VARS,
+                ianaTimeZone: 'America/Chicago'
             },
             statisticsData : {
                 median: {
@@ -941,6 +942,7 @@ describe('drawingData module', () => {
         };
 
         it('Return the expected data points', () =>  {
+            console.log('requestDT is ' + TEST_STATE.series.queryInfo['current:P7D'].notes.requestDT);
             let result = getCurrentVariableMedianStatPoints(TEST_STATE);
             expect(result.length).toBe(1);
             expect(result[0].length).toBe(9);
