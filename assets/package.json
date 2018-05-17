@@ -66,6 +66,7 @@
     "karma-firefox-launcher": "^1.1.0",
     "karma-jasmine": "^1.1.2",
     "karma-jasmine-ajax": "^0.1.13",
+    "karma-sauce-launcher": "^1.2.0",
     "live-server": "^1.2.0",
     "matchmedia-polyfill": "^0.3.0",
     "node-sass": "^4.9.0",
