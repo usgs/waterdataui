@@ -72,7 +72,7 @@ export const allPointsSelector = createSelector(
             const ts = timeSeries[tsId];
             const variableId = ts.variable;
             const parmCd = variables[variableId].variableCode.value;
-            if (ts.tsKey !== 'median' && PARM_CODES_TO_ACCUMULATE.includes(parmCd)) {
+            if (PARM_CODES_TO_ACCUMULATE.includes(parmCd)) {
                 allPoints[tsId] = transformToCumulative(ts.points);
             } else {
                 allPoints[tsId] = ts.points;
