@@ -130,28 +130,6 @@ describe('Legend module', () => {
                             approved: false,
                             estimated: false
                         }]
-                    },
-                    '00065:median': {
-                        tsKey: 'median',
-                        endTime: new Date('2017-03-13T13:45:00.000Z'),
-                        variable: '45807202',
-                        points: [{
-                            value: 1,
-                            month: 2,
-                            day: 6
-                        }, {
-                            value: 2,
-                            month: 2,
-                            day: 7
-                        }, {
-                            value: 3,
-                            month: 2,
-                            day: 7
-                        }],
-                        metadata: {
-                            beginYear: '1931',
-                            endYear: '2017'
-                        }
                     }
                 },
                 variables: {
@@ -165,6 +143,20 @@ describe('Legend module', () => {
                         variableCode: {value: '00065'},
                         variableName: 'Gage height',
                         oid: '45807202'
+                    }
+                }
+            },
+            statisticsData: {
+                median: {
+                    '00060': {
+                        '1': [{
+                            month_nu: '2',
+                            day_nu: '25',
+                            p50_va: '43',
+                            begin_yr: '1970',
+                            end_yr: '2017',
+                            loc_web_ds: 'This method'
+                        }]
                     }
                 }
             },
@@ -185,7 +177,8 @@ describe('Legend module', () => {
                 series: {
                     ...TEST_DATA.series,
                     timeSeries: {}
-                }
+                },
+                statisticsData: {}
             };
 
             expect(legendMarkerRowsSelector(newData)).toEqual([]);
@@ -194,12 +187,15 @@ describe('Legend module', () => {
         it('Should return markers for the selected variable', () => {
             const result = legendMarkerRowsSelector(TEST_DATA);
 
-            expect(result.length).toBe(1);
+            expect(result.length).toBe(2);
             expect(result[0].length).toBe(4);
             expect(result[0][0].type).toEqual(textOnlyMarker);
             expect(result[0][1].type).toEqual(lineMarker);
             expect(result[0][2].type).toEqual(rectangleMarker);
             expect(result[0][3].type).toEqual(rectangleMarker);
+            expect(result[1].length).toBe(2);
+            expect(result[1][0].type).toEqual(textOnlyMarker);
+            expect(result[1][1].type).toEqual(lineMarker);
         });
 
         it('Should return markers for a different selected variable', () => {
@@ -212,14 +208,11 @@ describe('Legend module', () => {
             };
             const result = legendMarkerRowsSelector(newData);
 
-            expect(result.length).toBe(2);
+            expect(result.length).toBe(1);
             expect(result[0].length).toBe(3);
             expect(result[0][0].type).toEqual(textOnlyMarker);
             expect(result[0][1].type).toEqual(lineMarker);
             expect(result[0][2].type).toEqual(lineMarker);
-            expect(result[1].length).toBe(2);
-            expect(result[1][0].type).toEqual(textOnlyMarker);
-            expect(result[1][1].type).toEqual(lineMarker);
         });
 
         it('Should return markers only for time series shown', () => {
@@ -227,11 +220,10 @@ describe('Legend module', () => {
                 ...TEST_DATA,
                 timeSeriesState: {
                     ...TEST_DATA.timeSeriesState,
-                    currentVariableID: '45807202',
                     showSeries: {
                         'current': true,
                         'compare': false,
-                        'median': true
+                        'median': false
                     }
                 }
             };
@@ -239,9 +231,11 @@ describe('Legend module', () => {
             const result = legendMarkerRowsSelector(newData);
 
             expect(result.length).toBe(1);
-            expect(result[0].length).toBe(2);
+            expect(result[0].length).toBe(4);
             expect(result[0][0].type).toEqual(textOnlyMarker);
             expect(result[0][1].type).toEqual(lineMarker);
+            expect(result[0][2].type).toEqual(rectangleMarker);
+            expect(result[0][3].type).toEqual(rectangleMarker);
         });
     });
 });

@@ -159,10 +159,10 @@ export const mediaQuery = function (minWidth) {
 /**
  * Calculate the start time of a time range based on a time-delta string and the end time
  *
- * @param period -- ISO duration for date range of the time series
- * @param endTime -- the end time
- * @param ianaTimeZone -- Internet Assigned Numbers Authority designation for a time zone
- * @returns {int}
+ * @param {String} period -- ISO duration for date range of the time series
+ * @param {Number} endTime -- the end time as universal time
+ * @param {String} ianaTimeZone -- Internet Assigned Numbers Authority designation for a time zone
+ * @returns {Number} the start time as universal time
  */
 export const calcStartTime = function (period, endTime, ianaTimeZone) {
     let startTime = new DateTime.fromMillis(endTime, {zone: ianaTimeZone});
@@ -194,4 +194,29 @@ export const callIf = function (condition, func) {
             func(...args);
         }
     };
+};
+
+/**
+ * Function to parse RDB to Objects
+ * @param {String} - containing RDB data
+ * @returns {Array of Objects} - one for each data line in the RDB.
+ */
+export const parseRDB = function(rdbData) {
+    const rdbLines = rdbData.split('\n');
+    let dataLines = rdbLines.filter(rdbLine => rdbLine[0] !== '#').filter(rdbLine => rdbLine.length > 0);
+    // remove the useless row
+    dataLines.splice(1, 1);
+    let recordData = [];
+    if (dataLines.length > 0) {
+        let headers = dataLines.shift().split('\t');
+        for (let dataLine of dataLines) {
+            let data = dataLine.split('\t');
+            let dataObject = {};
+            for (let i=0; i < headers.length; i++) {
+                dataObject[headers[i]] = data[i];
+            }
+            recordData.push(dataObject);
+        }
+    }
+    return recordData;
 };

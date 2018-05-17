@@ -1,10 +1,24 @@
 
+const { DateTime } = require('luxon');
 const { lineSegmentsSelector, pointsSelector, pointsTableDataSelector, allPointsSelector, pointsByTsKeySelector,
     classesForPoint, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
-    currentVariablePointsSelector, currentVariablePointsByTsIdSelector, visiblePointsSelector, MAX_LINE_POINT_GAP } = require('./drawingData');
+    currentVariablePointsSelector, currentVariablePointsByTsIdSelector, visiblePointsSelector,
+    getCurrentVariableMedianStatPoints, MAX_LINE_POINT_GAP } = require('./drawingData');
 
 const TEST_DATA = {
     series: {
+        queryInfo: {
+            'current:P7D': {
+                notes: {
+                    requestDT: new Date('2017-03-01 11:15').getTime(),
+                    'filter:timeRange': {
+                        mode: 'PERIOD',
+                        periodDays: 7,
+                        modifiedSince: null
+                    }
+                }
+            }
+        },
         timeSeries: {
             '00060': {
                 tsKey: 'current:P7D',
@@ -110,6 +124,63 @@ const TEST_DATA = {
             }
         }
     },
+    statisticsData : {
+        median: {
+            '00060': {
+                '1234': [
+                    {
+                        month_nu: '2',
+                        day_nu: '20',
+                        p50_va: '40'
+                    }, {
+                        month_nu: '2',
+                        day_nu: '21',
+                        p50_va: '41'
+                    }, {
+                        month_nu: '2',
+                        day_nu: '22',
+                        p50_va: '42'
+                    }, {
+                        month_nu: '2',
+                        day_nu: '23',
+                        p50_va: '43'
+                    }, {
+                        month_nu: '2',
+                        day_nu: '24',
+                        p50_va: '44'
+                    }, {
+                        month_nu: '2',
+                        day_nu: '25',
+                        p50_va: '43'
+                    }, {
+                        month_nu: '2',
+                        day_nu: '26',
+                        p50_va: '42'
+                    }, {
+                        month_nu: '2',
+                        day_nu: '27',
+                        p50_va: '41'
+                    }, {
+                        month_nu: '2',
+                        day_nu: '28',
+                        p50_va: '40'
+                    }, {
+                        month_nu: '2',
+                        day_nu: '29',
+                        p50_va: '40'
+                    }, {
+                        month_nu: '3',
+                        day_nu: '1',
+                        p50_va: '39'
+                    }, {
+                        month_nu: '3',
+                        day_nu: '2',
+                        p50_va: '38'
+                    }
+                ]
+            }
+        }
+    },
     timeSeriesState: {
         currentVariableID: '45807197',
         currentDateRange: 'P7D'
@@ -148,7 +219,7 @@ describe('drawingData module', () => {
                     timeSeries: {
                         ...TEST_DATA.series.timeSeries,
                         '00045': {
-                            tsKey: 'current',
+                            tsKey: 'current:P7D',
                             startTime: new Date('2017-03-06T15:45:00.000Z'),
                             endTime: new Date('2017-03-13t13:45:00.000Z'),
                             variable: '45807140',
@@ -192,7 +263,7 @@ describe('drawingData module', () => {
         });
 
         it('return the empty object if no time series for series', () => {
-            expect(pointsByTsKeySelector('median')(TEST_DATA)).toEqual({});
+            expect(pointsByTsKeySelector('current:P30D:00010')(TEST_DATA)).toEqual({});
         });
     });
 
@@ -672,34 +743,6 @@ describe('drawingData module', () => {
     describe('visiblePointsSelector', () => {
         const testData = {
             ...TEST_DATA,
-            series: {
-                ...TEST_DATA.series,
-                timeSeries: {
-                    ...TEST_DATA.series.timeSeries,
-                    '00060:median': {
-                        tsKey: 'median',
-                        startTime: new Date('2018-03-06T15:45:00.000Z'),
-                        endTime: new Date('2018-03-13t13:45:00.000Z'),
-                        variable: '45807197',
-                        points: [{
-                            value: 10,
-                            qualifiers: ['P'],
-                            approved: false,
-                            estimated: false
-                        }, {
-                            value: null,
-                            qualifiers: ['P', 'ICE'],
-                            approved: false,
-                            estimated: false
-                        }, {
-                            value: null,
-                            qualifiers: ['P', 'FLD'],
-                            approved: false,
-                            estimated: false
-                        }]
-                    }
-                }
-            },
             timeSeriesState: {
                 ...TEST_DATA.timeSeriesState,
                 showSeries: {
@@ -785,7 +828,8 @@ describe('drawingData module', () => {
                             variableCode: {value: '00060'},
                             oid: 45807197
                         }
-                    }
+                    },
+                    ianaTimeZone: 'Pacific/Honolulu'
                 },
                 timeSeriesState: {
                     currentVariableID: '45807197',
@@ -802,6 +846,134 @@ describe('drawingData module', () => {
                     [10, '2018-01-03', 'P, Ice']
                 ]
             });
+        });
+    });
+
+    describe('getCurrentVariableMedianStatPoints', () => {
+        const TEST_VARS = {
+            '45807042': {
+                variableCode: {
+                    'value': '00060'
+                }
+            },
+            '45807142': {
+                variableCode: {
+                    'value': '00010'
+                }
+            }
+        };
+
+        const TEST_STATE = {
+            series: {
+                queryInfo: {
+                    'current:P7D': {
+                        notes: {
+                            requestDT: new Date('2017-03-01 11:15').getTime(),
+                            'filter:timeRange': {
+                                mode: 'PERIOD',
+                                periodDays: 7,
+                                modifiedSince: null
+                            }
+                        }
+                    }
+                },
+                variables: TEST_VARS
+            },
+            statisticsData : {
+                median: {
+                    '00010': {
+                        '1234': [
+                            {
+                                month_nu: '2',
+                                day_nu: '20',
+                                p50_va: '40'
+                            }, {
+                            month_nu: '2',
+                            day_nu: '21',
+                            p50_va: '41'
+                        }, {
+                            month_nu: '2',
+                            day_nu: '22',
+                            p50_va: '42'
+                        }, {
+                            month_nu: '2',
+                            day_nu: '23',
+                            p50_va: '43'
+                        }, {
+                            month_nu: '2',
+                            day_nu: '24',
+                            p50_va: '44'
+                        }, {
+                            month_nu: '2',
+                            day_nu: '25',
+                            p50_va: '43'
+                        }, {
+                            month_nu: '2',
+                            day_nu: '26',
+                            p50_va: '42'
+                        }, {
+                            month_nu: '2',
+                            day_nu: '27',
+                            p50_va: '41'
+                        }, {
+                            month_nu: '2',
+                            day_nu: '28',
+                            p50_va: '40'
+                        }, {
+                            month_nu: '3',
+                            day_nu: '1',
+                            p50_va: '39'
+                        }, {
+                            month_nu: '3',
+                            day_nu: '2',
+                            p50_va: '38'
+                        }
+                    ]}
+                }
+            },
+            timeSeriesState: {
+                currentVariableID: '45807142',
+                currentDateRange: 'P7D'
+            }
+        };
+
+        it('Return the expected data points', () =>  {
+            let result = getCurrentVariableMedianStatPoints(TEST_STATE);
+            expect(result.length).toBe(1);
+            expect(result[0].length).toBe(9);
+            expect(result[0][0]).toEqual({
+                value: 42,
+                date: DateTime.fromObject({
+                    year: 2017,
+                    month: 2,
+                    day: 22,
+                    hour: 11,
+                    minute: 15,
+                    second: 0
+                }).valueOf()
+            });
+            expect(result[0][8]).toEqual({
+                value: 39,
+                date: DateTime.fromObject({
+                    year: 2017,
+                    month: 3,
+                    day: 1,
+                    hour: 11,
+                    minute: 15,
+                    second: 0
+                }).valueOf()
+            });
+        });
+
+        it('Return empty array of no median data for the selected current variable exists', () => {
+            const newTestState = {
+                ...TEST_STATE,
+                timeSeriesState: {
+                    ...TEST_STATE.timeSeriesState,
+                    currentVariableID: '45807042'
+                }
+            };
+            expect(getCurrentVariableMedianStatPoints(newTestState)).toEqual([]);
         });
     });
 });

@@ -4,7 +4,7 @@ const { DateTime } = require('luxon');
 const { createXScale, createYScale, yScaleSelector } = require('./scales');
 
 
-describe('Charting scales', () => {
+describe('scales', () => {
     const timeZone = 'America/Los_Angeles';
     const points = Array(23).fill(0).map((_, hour) => {
         return {
@@ -88,8 +88,13 @@ describe('Charting scales', () => {
         it('Creates a scale when there is no initial data', () => {
             expect(yScaleSelector({
                 series: {},
+                statisticsData: {},
                 timeSeriesState: {
-                    showSeries: false,
+                    showSeries: {
+                        current: true,
+                        compare: false,
+                        median: false
+                    },
                     currentVariableID: null
                 },
                 ui: {
@@ -113,8 +118,12 @@ describe('Charting scales', () => {
                         '00060ID': {}
                     }
                 },
+                statisticsData: {},
                 timeSeriesState: {
-                    showSeries: false,
+                    showSeries: {
+                        current: true,
+                        compare: false
+                    },
                     currentVariableID: '00060ID'
                 },
                 ui: {

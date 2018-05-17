@@ -16,18 +16,17 @@ const { callIf, mediaQuery } = require('../../utils');
 const { audibleUI } = require('./audible');
 const { appendAxes, axesSelector } = require('./axes');
 const { cursorSlider } = require('./cursor');
-const {lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID
-} = require('./drawingData');
+const {lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID,
+    getCurrentVariableMedianStatPoints } = require('./drawingData');
 const { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
 const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
 const { plotSeriesSelectTable, availableTimeSeriesSelector } = require('./parameters');
 const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
 const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
-    descriptionSelector,  currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints, tsTimeZoneSelector } = require('./timeSeries');
+    descriptionSelector,  currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } = require('./timeSeries');
 const { createTooltipFocus, createTooltipText } = require('./tooltip');
-const { coerceStatisticalSeries } = require('./statistics');
 
-const { getCurrentDateRange, getTimeSeriesCollectionIds, isLoadingTS } = require('../../selectors/timeSeriesSelector');
+const { getTimeSeriesCollectionIds, isLoadingTS } = require('../../selectors/timeSeriesSelector');
 
 
 const drawMessage = function(elem, message) {
@@ -188,7 +187,7 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
     const stepFunction = d3Line()
         .curve(curveStepAfter)
         .x(function(d) {
-            return xscale(d.dateTime);
+            return xscale(d.date);
         })
         .y(function(d) {
             return yscale(d.value);
@@ -210,7 +209,7 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
  * @param  {Function} yscale
  * @param  {Array} pointsList
  */
-const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap, dateRange, ianaTimeZone}) {
+const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoints}) {
     elem.select('#median-points').remove();
     if (!visible) {
         return;
@@ -218,10 +217,9 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesMap,
     const container = elem
         .append('g')
             .attr('id', 'median-points');
-    for (const [index, seriesID] of Object.keys(seriesMap).entries()) {
-        const points = coerceStatisticalSeries(seriesMap[seriesID], dateRange, ianaTimeZone);
-        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points});
-    }
+    seriesPoints.forEach((points, index) => {
+        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points: points});
+    });
 };
 
 
@@ -302,9 +300,7 @@ const timeSeriesGraph = function(elem) {
                         visible: isVisibleSelector('median'),
                         xscale: xScaleSelector('current'),
                         yscale: yScaleSelector,
-                        seriesMap: currentVariableTimeSeriesSelector('median'),
-                        dateRange: getCurrentDateRange,
-                        ianaTimeZone: tsTimeZoneSelector
+                        seriesPoints: getCurrentVariableMedianStatPoints
                     })));
         });
 };
@@ -492,6 +488,7 @@ const attachToNode = function (store, node, {siteno, parameter, compare, cursorO
     const longitude = node.dataset.longitude;
     store.dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
     store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null));
+    store.dispatch(Actions.retrieveMedianStatistics(siteno));
 };
 
 

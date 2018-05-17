@@ -37,23 +37,6 @@ const TEST_STATE = {
                 method: 'method1',
                 tsKey: 'compare:P7D',
                 variable: '45807197'
-            },
-            '00060:median': {
-                points: [{
-                    dateTime: null,
-                    month: 1,
-                    day: 2,
-                    value: 10
-                }],
-                startTime: 1514926800000,
-                endTime: 1514926800000,
-                metadata: {
-                    beginYear: '2010',
-                    endYear: '2015'
-                },
-                method: 'method1',
-                tsKey: 'median',
-                variable: '45807197'
             }
         },
         timeSeriesCollections: {
@@ -91,9 +74,6 @@ const TEST_STATE = {
             },
             'compare:P7D': {
                 timeSeriesCollections: ['coll2', 'col4']
-            },
-            median: {
-                timeSeriesCollections: ['coll3']
             }
         },
         variables: {
@@ -121,6 +101,36 @@ const TEST_STATE = {
         methods: {
             'method1': {
                 methodDescription: 'method description'
+            }
+        }
+    },
+    statisticsData : {
+        median: {
+            '00060': {
+                '1234': [
+                    {
+                        month_nu: '2',
+                        day_nu: '20',
+                        p50_va: '40',
+                        begin_yr: '1970',
+                        end_yr: '2017',
+                        loc_web_ds: 'This method'
+                    }, {
+                        month_nu: '2',
+                        day_nu: '21',
+                        p50_va: '41',
+                        begin_yr: '1970',
+                        end_yr: '2017',
+                        loc_web_ds: 'This method'
+                    }, {
+                        month_nu: '2',
+                        day_nu: '22',
+                        p50_va: '42',
+                        begin_yr: '1970',
+                        end_yr: '2017',
+                        loc_web_ds: 'This method'
+                    }
+                ]
             }
         }
     },
