@@ -18,8 +18,6 @@ export const getCurrentDateRange = state => state.timeSeriesState.currentDateRan
 
 export const getLoadingTsKeys = state => state.timeSeriesState.loadingTSKeys;
 
-export const getIanaTimeZone = state => state.series.ianaTimeZone ? state.series.ianaTimeZone : null;
-
 
 /*
  * Selectors the return derived data from the state

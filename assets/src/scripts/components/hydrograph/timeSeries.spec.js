@@ -429,27 +429,18 @@ describe('TimeSeries module', () => {
 
         it('Returns local if series is empty', () => {
             const result = tsTimeZoneSelector({
-                series: {}
+                metadata: {}
             });
             expect(result).toEqual('local');
         });
 
         it('Returns local if timezone is null', () => {
             const result = tsTimeZoneSelector({
-                series: {
+                metadata: {
                     ianaTimeZone: null
                 }
             });
             expect(result).toEqual('local');
-        });
-
-        it('Returns the IANA timezone NWIS and IANA agree', () => {
-            const result = tsTimeZoneSelector({
-                series: {
-                    ianaTimeZone: 'America/New_York',
-                }
-            });
-            expect(result).toEqual('America/New_York');
         });
     });
 });

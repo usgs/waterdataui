@@ -20,12 +20,6 @@ const resetTimeSeries = function(series, action) {
     };
 };
 
-const addIanaTimeZone = function(series, action) {
-    return {
-        ...series,
-        ianaTimeZone: action.ianaTimeZone
-    };
-};
 
 /*
  * Slice reducer
@@ -35,7 +29,6 @@ export const seriesReducer = function(series={}, action) {
     switch (action.type) {
         case 'ADD_TIME_SERIES_COLLECTION': return addTimeSeriesCollection(series, action);
         case 'RESET_TIME_SERIES': return resetTimeSeries(series, action);
-        case 'LOCATION_IANA_TIME_ZONE_SET': return addIanaTimeZone(series, action);
         default: return series;
     }
 };

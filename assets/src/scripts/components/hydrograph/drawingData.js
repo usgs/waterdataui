@@ -6,7 +6,8 @@ const { format } = require('d3-format');
 
 const { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeSeries');
 
-const { getVariables, getTsRequestKey, getRequestTimeRange, getIanaTimeZone } = require('../../selectors/timeSeriesSelector');
+const { getVariables, getTsRequestKey, getRequestTimeRange } = require('../../selectors/timeSeriesSelector');
+const { getIanaTimeZone } = require('../../selectors/metadataSelector')
 const { getCurrentVariableMedianStatistics } = require('../../selectors/medianStatisticsSelector');
 
 export const MASK_DESC = {
