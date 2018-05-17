@@ -5,6 +5,7 @@ python:
 
 addons:
   firefox: "latest"
+  sauce_connect: true
 
 env:
   global:
