@@ -168,6 +168,18 @@ module.exports = function (config) {
             concurrency: 5,
             startConnect: false
         };
+
+        // TravisCI handles starting the SauceConnect daemon for us
+        if (process.env.TRAVIS_JOB_NUMBER) {
+            karmaConfig = {
+                ...karmaConfig,
+                sauceLabs: {
+                    ...karmaConfig.sauceLabs,
+                    startConnect: false,
+                    tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER
+                }
+            };
+        }
     }
 
     // If no browsers configured yet, default to Firefox.
