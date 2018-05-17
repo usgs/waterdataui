@@ -165,6 +165,10 @@ const TEST_DATA = {
                         day_nu: '28',
                         p50_va: '40'
                     }, {
+                        month_nu: '2',
+                        day_nu: '29',
+                        p50_va: '40'
+                    }, {
                         month_nu: '3',
                         day_nu: '1',
                         p50_va: '39'
@@ -215,7 +219,7 @@ describe('drawingData module', () => {
                     timeSeries: {
                         ...TEST_DATA.series.timeSeries,
                         '00045': {
-                            tsKey: 'current',
+                            tsKey: 'current:P7D',
                             startTime: new Date('2017-03-06T15:45:00.000Z'),
                             endTime: new Date('2017-03-13t13:45:00.000Z'),
                             variable: '45807140',
@@ -259,7 +263,7 @@ describe('drawingData module', () => {
         });
 
         it('return the empty object if no time series for series', () => {
-            expect(pointsByTsKeySelector('median')(TEST_DATA)).toEqual({});
+            expect(pointsByTsKeySelector('current:P30D:00010')(TEST_DATA)).toEqual({});
         });
     });
 
