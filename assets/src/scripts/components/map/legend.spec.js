@@ -1,7 +1,7 @@
-const proxyquire = require('proxyquireify')(require);
-
-const { select } = require('d3-selection');
-const { map: createMap } = require('leaflet');
+import proxyquireFactory from 'proxyquireify';
+const proxyquire = proxyquireFactory(require);
+import { select } from 'd3-selection';
+import { map as createMap } from 'leaflet';
 
 
 describe('component/map/legend module', () => {

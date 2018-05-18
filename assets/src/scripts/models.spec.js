@@ -1,6 +1,6 @@
-let proxyquire = require('proxyquireify')(require);
-
-const { sortedParameters } = require('./models');
+import proxyquireFactory from 'proxyquireify';
+const proxyquire = proxyquireFactory(require);
+import { sortedParameters } from './models';
 
 
 describe('Models module', () => {

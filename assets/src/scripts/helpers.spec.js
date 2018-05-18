@@ -1,6 +1,5 @@
-const { select } = require('d3-selection');
-
-const { registerTooltips, unregisterTooltips } = require('./helpers');
+import { select } from 'd3-selection';
+import { registerTooltips, unregisterTooltips } from './helpers';
 
 
 /**

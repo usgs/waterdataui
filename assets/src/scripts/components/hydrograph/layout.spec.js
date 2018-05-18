@@ -1,7 +1,7 @@
-const proxyquire = require('proxyquireify')(require);
-const { format } = require('d3-format');
-
-const { ASPECT_RATIO } = require('./layout');
+import proxyquireFactory from 'proxyquireify';
+const proxyquire = proxyquireFactory(require);
+import { format } from 'd3-format';
+import { ASPECT_RATIO } from './layout';
 
 describe('points module', () => {
     let layoutMock = proxyquire('./layout', {

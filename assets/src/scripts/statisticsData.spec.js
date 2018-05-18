@@ -1,4 +1,5 @@
-let proxyquire = require('proxyquireify')(require);
+import proxyquireFactory from 'proxyquireify';
+const proxyquire = proxyquireFactory(require);
 
 
 describe('statisticsData', () => {

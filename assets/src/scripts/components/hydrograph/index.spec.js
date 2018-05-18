@@ -1,8 +1,7 @@
-const { select, selectAll } = require('d3-selection');
-const { provide } = require('../../lib/redux');
-
-const { attachToNode, timeSeriesGraph, timeSeriesLegend } = require('./index');
-const { Actions, configureStore } = require('../../store');
+import { select, selectAll } from 'd3-selection';
+import { provide } from '../../lib/redux';
+import { attachToNode, timeSeriesGraph, timeSeriesLegend } from './index';
+import { Actions, configureStore } from '../../store';
 
 
 const TEST_STATE = {

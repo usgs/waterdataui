@@ -1,16 +1,16 @@
 // Creates a Leaflet legend control. If the legend contains FIM information than the expand/collapse control
 // will be visible
 
-const { select } = require('d3-selection');
-const { control: createControl, DomUtil, DomEvent } = require('leaflet');
+import { select } from 'd3-selection';
 
-const { get } = require('../../ajax');
-const { FIM_GIS_ENDPOINT, STATIC_URL, USWDS_MEDIUM_SCREEN } = require('../../config');
-const { mediaQuery } = require('../../utils');
+import { control as createControl, DomUtil, DomEvent } from 'leaflet';
+import { get } from '../../ajax';
+import config from '../../config';
+import { mediaQuery } from '../../utils';
 
 
 const fetchLayerLegend = function(layer, defaultName) {
-    return get(`${FIM_GIS_ENDPOINT}${layer}/MapServer/legend?f=json`)
+    return get(`${config.FIM_GIS_ENDPOINT}${layer}/MapServer/legend?f=json`)
         .then((responseText) => {
             const resp = JSON.parse(responseText);
             if (resp.error) {
@@ -56,7 +56,7 @@ export const createLegendControl = function(options) {
         let legendListContainer = DomUtil.create('div', 'legend-list-container', container);
         let legendList = DomUtil.create('ul', 'usa-unstyled-list', legendListContainer);
         legendList.id = 'site-legend-list';
-        legendList.innerHTML = `<li><img src="${STATIC_URL}/images/marker-icon.png" alt="Map marker"/><span>Monitoring Location</span> </li>`;
+        legendList.innerHTML = `<li><img src="${config.STATIC_URL}/images/marker-icon.png" alt="Map marker"/><span>Monitoring Location</span> </li>`;
 
         // Set up click handler for the expandButton
         DomEvent.on(expandButton, 'click', function() {
@@ -95,7 +95,7 @@ export const createFIMLegend = function(legendControl, isFIMAvailable) {
 
         // Set legend to be compressed if on medium or small device, otherwise show.
         let button = legendContainer.select('.legend-expand');
-        if (mediaQuery(USWDS_MEDIUM_SCREEN)) {
+        if (mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
             if (button.attr('title') === 'Show legend') {
                 button.dispatch('click');
             }

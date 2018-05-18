@@ -1,13 +1,10 @@
-const { extent, ticks } = require('d3-array');
-const { format } = require('d3-format');
-const { createSelector } = require('reselect');
-
-const { mediaQuery } = require('../../utils');
-const config = require('../../config');
-
-const { visiblePointsSelector } = require('./drawingData');
-
-const { getCurrentParmCd } = require('../../selectors/timeSeriesSelector');
+import { extent, ticks } from 'd3-array';
+import { format } from 'd3-format';
+import { createSelector } from 'reselect';
+import { mediaQuery } from '../../utils';
+import config from '../../config';
+import { visiblePointsSelector } from './drawingData';
+import { getCurrentParmCd } from '../../selectors/timeSeriesSelector';
 
 
 

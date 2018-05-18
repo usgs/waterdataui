@@ -1,13 +1,11 @@
-const memoize = require('fast-memoize');
-const find = require('lodash/find');
-const { DateTime } = require('luxon');
-const { createSelector } = require('reselect');
-const { format } = require('d3-format');
-
-const { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeSeries');
-
-const { getVariables, getTsRequestKey, getRequestTimeRange, getIanaTimeZone } = require('../../selectors/timeSeriesSelector');
-const { getCurrentVariableMedianStatistics } = require('../../selectors/medianStatisticsSelector');
+import memoize from 'fast-memoize';
+import find from 'lodash/find';
+import { DateTime } from 'luxon';
+import { createSelector } from 'reselect';
+import { format } from 'd3-format';
+import { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } from './timeSeries';
+import { getVariables, getTsRequestKey, getRequestTimeRange, getIanaTimeZone } from '../../selectors/timeSeriesSelector';
+import { getCurrentVariableMedianStatistics } from '../../selectors/medianStatisticsSelector';
 
 export const MASK_DESC = {
     ice: 'Ice Affected',

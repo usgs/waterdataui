@@ -1,15 +1,14 @@
 // functions to facilitate legend creation for a d3 plot
-const memoize = require('fast-memoize');
-const { createSelector } = require('reselect');
+import memoize from 'fast-memoize';
 
-const { CIRCLE_RADIUS } = require('./layout');
-const { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker} = require('./markers');
-const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } = require('./drawingData');
-
-const { USWDS_MEDIUM_SCREEN } = require('../../config');
-const { getMethods } = require('../../selectors/timeSeriesSelector');
-const { getCurrentVariableMedianMetadata} = require('../../selectors/medianStatisticsSelector');
-const { mediaQuery } = require('../../utils');
+import { createSelector } from 'reselect';
+import { CIRCLE_RADIUS } from './layout';
+import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from './markers';
+import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from './drawingData';
+import config from '../../config';
+import { getMethods } from '../../selectors/timeSeriesSelector';
+import { getCurrentVariableMedianMetadata } from '../../selectors/medianStatisticsSelector';
+import { mediaQuery } from '../../utils';
 
 const TS_LABEL = {
     'current': 'Current: ',
@@ -125,7 +124,7 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
     let legend = svg
         .append('g')
             .attr('class', 'legend')
-            .attr('transform', `translate(${mediaQuery(USWDS_MEDIUM_SCREEN) ? layout.margin.left : 0}, 0)`);
+            .attr('transform', `translate(${mediaQuery(config.USWDS_MEDIUM_SCREEN) ? layout.margin.left : 0}, 0)`);
 
     legendMarkerRows.forEach((rowMarkers, rowIndex) => {
         let xPosition = 0;

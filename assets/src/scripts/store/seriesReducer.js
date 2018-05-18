@@ -1,5 +1,5 @@
-const merge = require('lodash/merge');
-const omitBy = require('lodash/omitBy');
+import merge from 'lodash/merge';
+import omitBy from 'lodash/omitBy';
 
 /*
  * Case reducers

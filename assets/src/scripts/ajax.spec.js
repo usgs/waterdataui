@@ -1,4 +1,4 @@
-const { get } = require('./ajax');
+import { get } from './ajax';
 
 describe('ajax module', () => {
     describe('get', () => {
