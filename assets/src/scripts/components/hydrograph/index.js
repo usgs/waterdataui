@@ -486,6 +486,8 @@ const attachToNode = function (store, node, {siteno, parameter, compare, cursorO
     };
     const latitude = node.dataset.latitude;
     const longitude = node.dataset.longitude;
+    const locationNumber = node.dataset.siteno;
+    store.dispatch(Actions.setMonitoringLocationIdentifier(locationNumber));
     store.dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
     store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null));
     store.dispatch(Actions.retrieveMedianStatistics(siteno));

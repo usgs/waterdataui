@@ -3,7 +3,8 @@ const memoize = require('fast-memoize');
 const { createSelector } = require('reselect');
 const { DateTime } = require('luxon');
 
-const { getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone, getNwisTimeZone } = require('../../selectors/timeSeriesSelector');
+const { getRequestTimeRange, getCurrentVariable, getTsRequestKey } = require('../../selectors/timeSeriesSelector');
+const { getIanaTimeZone } = require('../../selectors/metadataSelector');
 
 
 // Create a time formatting function from D3's timeFormat

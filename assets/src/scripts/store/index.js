@@ -16,6 +16,7 @@ const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
 const { seriesReducer: series } = require('./seriesReducer');
 const { statisticsDataReducer: statisticsData } = require('./statisticsDataReducer');
+const { metadataReducer: metadata } = require('./metadataReducer');
 const { timeSeriesStateReducer: timeSeriesState } = require('./timeSeriesStateReducer');
 const { uiReducer: ui } = require('./uiReducer');
 
@@ -304,12 +305,19 @@ export const Actions = {
             type: 'LOCATION_IANA_TIME_ZONE_SET',
             ianaTimeZone
         };
+    },
+    setMonitoringLocationIdentifier(identifier) {
+        return {
+            type: 'MONITORING_LOCATION_IDENTIFIER_SET',
+            identifier
+        };
     }
 };
 
 const appReducer = combineReducers({
     series,
     statisticsData,
+    metadata,
     floodData,
     timeSeriesState,
     floodState,
@@ -321,6 +329,7 @@ const MIDDLEWARES = [thunk];
 
 export const configureStore = function (initialState) {
     initialState = {
+        metadata: {},
         series: {},
         floodData: {
             stages: [],

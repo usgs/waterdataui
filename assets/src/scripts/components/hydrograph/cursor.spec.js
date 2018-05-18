@@ -30,6 +30,9 @@ DATA = DATA.concat([
 ]);
 
 const TEST_STATE_THREE_VARS = {
+    metadata: {
+        identifier: '0008'
+    },
     series: {
         queryInfo: {
             'current:P7D': {
@@ -169,6 +172,9 @@ const TEST_STATE_THREE_VARS = {
 };
 
 const TEST_STATE_ONE_VAR = {
+    metadata: {
+        identifier: '0001'
+    },
     series: {
         timeSeries: {
             '00060:current': {

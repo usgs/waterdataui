@@ -6,6 +6,9 @@ const { lineSegmentsSelector, pointsSelector, pointsTableDataSelector, allPoints
     getCurrentVariableMedianStatPoints, MAX_LINE_POINT_GAP } = require('./drawingData');
 
 const TEST_DATA = {
+    metadata: {
+        ianaTimeZone: 'UTC'
+    },
     series: {
         queryInfo: {
             'current:P7D': {
@@ -789,6 +792,9 @@ describe('drawingData module', () => {
     describe('pointsTableDataSelect', () => {
         it('Return an array of arrays if series is visible', () => {
             const result = pointsTableDataSelector('current')({
+                metadata: {
+                    ianaTimeZone: 'Pacific/Honolulu'
+                },
                 series: {
                     requests: {
                         'current:P7D': {
@@ -828,8 +834,7 @@ describe('drawingData module', () => {
                             variableCode: {value: '00060'},
                             oid: 45807197
                         }
-                    },
-                    ianaTimeZone: 'Pacific/Honolulu'
+                    }
                 },
                 timeSeriesState: {
                     currentVariableID: '45807197',
@@ -864,6 +869,9 @@ describe('drawingData module', () => {
         };
 
         const TEST_STATE = {
+            metadata: {
+                ianaTimeZone: 'America/Chicago'
+            },
             series: {
                 queryInfo: {
                     'current:P7D': {
@@ -877,8 +885,7 @@ describe('drawingData module', () => {
                         }
                     }
                 },
-                variables: TEST_VARS,
-                ianaTimeZone: 'America/Chicago'
+                variables: TEST_VARS
             },
             statisticsData : {
                 median: {

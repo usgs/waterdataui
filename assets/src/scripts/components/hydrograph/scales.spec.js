@@ -87,6 +87,7 @@ describe('scales', () => {
 
         it('Creates a scale when there is no initial data', () => {
             expect(yScaleSelector({
+                metadata: {},
                 series: {},
                 statisticsData: {},
                 timeSeriesState: {
@@ -106,6 +107,10 @@ describe('scales', () => {
 
         it('Creates a scale when there is initial data', () => {
             expect(yScaleSelector({
+                metadata: {
+                    ianaTimeZone: 'America/Los_Angeles',
+                    identifier: '0849131'
+                },
                 series: {
                     variables: {
                        '00060ID': {
