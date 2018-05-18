@@ -1,6 +1,6 @@
-let proxyquire = require('proxyquireify')(require);
-
-const { Actions } = require('./index');
+import proxyquireFactory from 'proxyquireify';
+const proxyquire = proxyquireFactory(require);
+import { Actions } from './index';
 
 describe('Redux store', () => {
 

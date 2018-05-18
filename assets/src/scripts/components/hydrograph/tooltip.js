@@ -1,23 +1,19 @@
 
-const { mouse, select } = require('d3-selection');
-const { transition } = require('d3-transition');
-const memoize = require('fast-memoize');
-const { createSelector, createStructuredSelector } = require('reselect');
-const { DateTime } = require('luxon');
-
-const { dispatch, link, initAndUpdate } = require('../../lib/redux');
-const { Actions } = require('../../store');
-
-const { cursorTimeSelector, tsCursorPointsSelector } = require('./cursor');
-const { classesForPoint, MASK_DESC } = require('./drawingData');
-const { layoutSelector } = require('./layout');
-const { xScaleSelector, yScaleSelector } = require('./scales');
-const { tsTimeZoneSelector } = require('./timeSeries');
-
-const { getCurrentVariable } = require('../../selectors/timeSeriesSelector');
-
-const { USWDS_SMALL_SCREEN, USWDS_MEDIUM_SCREEN } = require('../../config');
-const { mediaQuery } = require('../../utils');
+import { mouse, select } from 'd3-selection';
+import { transition } from 'd3-transition';
+import memoize from 'fast-memoize';
+import { createSelector, createStructuredSelector } from 'reselect';
+import { DateTime } from 'luxon';
+import { dispatch, link, initAndUpdate } from '../../lib/redux';
+import { Actions } from '../../store';
+import { cursorTimeSelector, tsCursorPointsSelector } from './cursor';
+import { classesForPoint, MASK_DESC } from './drawingData';
+import { layoutSelector } from './layout';
+import { xScaleSelector, yScaleSelector } from './scales';
+import { tsTimeZoneSelector } from './timeSeries';
+import { getCurrentVariable } from '../../selectors/timeSeriesSelector';
+import config from '../../config';
+import { mediaQuery } from '../../utils';
 
 
 const createFocusLine = function(elem) {
@@ -56,7 +52,7 @@ const updateFocusLine = function(elem, {cursorTime, yScale, xScale}) {
  * @param String} tsKey - Time series key
  * @return {Object}
  */
-const tooltipPointsSelector = memoize(tsKey => createSelector(
+export const tooltipPointsSelector = memoize(tsKey => createSelector(
     xScaleSelector(tsKey),
     yScaleSelector,
     tsCursorPointsSelector(tsKey),
@@ -144,7 +140,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     const adjustTooltipFontSize = function() {
         const totalTooltipsShowing = Object.values(currentPoints).length + Object.values(comparePoints).length;
         let tooltipFontSize = 0;
-        if (mediaQuery(USWDS_MEDIUM_SCREEN)) {
+        if (mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
             if (totalTooltipsShowing <= 2) {
                 tooltipFontSize = 2;
             } else if (totalTooltipsShowing <= 4) {
@@ -152,7 +148,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
             } else {
                tooltipFontSize = 1.25;
             }
-        } else if (mediaQuery(USWDS_SMALL_SCREEN)) {
+        } else if (mediaQuery(config.USWDS_SMALL_SCREEN)) {
             if (totalTooltipsShowing <= 2) {
                 tooltipFontSize = 1.75;
             } else if (totalTooltipsShowing <= 4) {
@@ -191,7 +187,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
  * Append a group containing the tooltip text elements to elem
  * @param {Object} elem - D3 selector
  */
-const createTooltipText = function (elem) {
+export const createTooltipText = function (elem) {
     elem.call(link(createTooltipTextGroup, createStructuredSelector({
         currentPoints: tsCursorPointsSelector('current'),
         comparePoints: tsCursorPointsSelector('compare'),
@@ -243,7 +239,7 @@ const createFocusCircles = function (elem, tooltipPoints, circleContainer) {
  * @param {Array} compareTsData - compare time series points
  * @param {Boolean} isCompareVisible
  */
-const createTooltipFocus = function(elem) {
+export const createTooltipFocus = function(elem) {
     elem.call(link(initAndUpdate(createFocusLine, updateFocusLine), createStructuredSelector({
         xScale: xScaleSelector('current'),
         yScale: yScaleSelector,
@@ -284,5 +280,3 @@ const createTooltipFocus = function(elem) {
         layout: layoutSelector
     })));
 };
-
-module.exports = {createTooltipFocus, createTooltipText, tooltipPointsSelector};

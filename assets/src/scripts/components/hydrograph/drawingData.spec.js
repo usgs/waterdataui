@@ -1,9 +1,6 @@
 
-const { DateTime } = require('luxon');
-const { lineSegmentsSelector, pointsSelector, pointsTableDataSelector, allPointsSelector, pointsByTsKeySelector,
-    classesForPoint, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector,
-    currentVariablePointsSelector, currentVariablePointsByTsIdSelector, visiblePointsSelector,
-    getCurrentVariableMedianStatPoints, MAX_LINE_POINT_GAP } = require('./drawingData');
+import { DateTime } from 'luxon';
+import { lineSegmentsSelector, pointsSelector, pointsTableDataSelector, allPointsSelector, pointsByTsKeySelector, classesForPoint, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, currentVariablePointsSelector, currentVariablePointsByTsIdSelector, visiblePointsSelector, getCurrentVariableMedianStatPoints, MAX_LINE_POINT_GAP } from './drawingData';
 
 const TEST_DATA = {
     series: {

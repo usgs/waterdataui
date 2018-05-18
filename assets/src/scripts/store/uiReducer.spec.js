@@ -1,4 +1,4 @@
-const { uiReducer } = require('./uiReducer');
+import { uiReducer } from './uiReducer';
 
 describe('uiReducer', () => {
 

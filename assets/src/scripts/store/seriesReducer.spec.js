@@ -1,5 +1,5 @@
 
-const { seriesReducer } = require('./seriesReducer');
+import { seriesReducer } from './seriesReducer';
 
 describe('seriesReducer', () => {
 

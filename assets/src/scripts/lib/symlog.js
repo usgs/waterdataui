@@ -1,5 +1,5 @@
-const { default: compound } = require('./compound');
-const { scaleLinear: linear, scaleLog: log } = require('d3-scale');
+import { default as compound } from './compound';
+import { scaleLinear as linear, scaleLog as log } from 'd3-scale';
 
 function intersection(r1, r2) {
   var reverse = r1[0] > r1[1];

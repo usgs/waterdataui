@@ -1,14 +1,12 @@
-const { scaleLinear } = require('d3-scale');
-const memoize = require('fast-memoize');
-const { createSelector } = require('reselect');
-
-const { default: scaleSymlog } = require('../../lib/symlog');
-const { getYDomain, SYMLOG_PARMS } = require('./domain');
-const { layoutSelector } = require('./layout');
-const { timeSeriesSelector} = require('./timeSeries');
-const { visiblePointsSelector, pointsByTsKeySelector } = require('./drawingData');
-
-const { getVariables, getCurrentParmCd, getRequestTimeRange } = require('../../selectors/timeSeriesSelector');
+import { scaleLinear } from 'd3-scale';
+import memoize from 'fast-memoize';
+import { createSelector } from 'reselect';
+import { default as scaleSymlog } from '../../lib/symlog';
+import { getYDomain, SYMLOG_PARMS } from './domain';
+import { layoutSelector } from './layout';
+import { timeSeriesSelector } from './timeSeries';
+import { visiblePointsSelector, pointsByTsKeySelector } from './drawingData';
+import { getVariables, getCurrentParmCd, getRequestTimeRange } from '../../selectors/timeSeriesSelector';
 
 
 /**
@@ -17,7 +15,7 @@ const { getVariables, getCurrentParmCd, getRequestTimeRange } = require('../../s
  * @param {Number} xSize - range of scale
  * @return {Object} d3 scale for time.
  */
-function createXScale(timeRange, xSize) {
+export const createXScale = function (timeRange, xSize) {
     // xScale is oriented on the left
     let scale = scaleLinear()
         .range([0, xSize]);
@@ -25,7 +23,7 @@ function createXScale(timeRange, xSize) {
         scale.domain([timeRange.start, timeRange.end]);
     }
     return scale;
-}
+};
 
 /**
  * Create the scale based on the parameter code
@@ -34,7 +32,7 @@ function createXScale(timeRange, xSize) {
  * @param {Array} extent
  * @param {Number} size
  */
-function createYScale(parmCd, extent, size) {
+export const createYScale = function (parmCd, extent, size) {
     if (SYMLOG_PARMS.indexOf(parmCd) >= 0) {
         return scaleSymlog()
             .domain(extent)
@@ -44,7 +42,7 @@ function createYScale(parmCd, extent, size) {
             .domain(extent)
             .range([size, 0]);
     }
-}
+};
 
 
 /**
@@ -53,7 +51,7 @@ function createYScale(parmCd, extent, size) {
  * @param  {Object} state       Redux store
  * @return {Function}           D3 scale function
  */
-const xScaleSelector = memoize(tsKey => createSelector(
+export const xScaleSelector = memoize(tsKey => createSelector(
     layoutSelector,
     getRequestTimeRange(tsKey),
     (layout, requestTimeRange) => {
@@ -67,7 +65,7 @@ const xScaleSelector = memoize(tsKey => createSelector(
  * @param  {Object} state   Redux store
  * @return {Function}       D3 scale function
  */
-const yScaleSelector = createSelector(
+export const yScaleSelector = createSelector(
     layoutSelector,
     visiblePointsSelector,
     getCurrentParmCd,
@@ -105,7 +103,7 @@ const parmCdPointsSelector = memoize((tsKey, period) => createSelector(
  * Returns x and y scales for all "current" time series.
  * @type {Object}   Mapping of parameter code to time series list.
  */
-const timeSeriesScalesByParmCdSelector = memoize((tsKey, period, dimensions) => createSelector(
+export const timeSeriesScalesByParmCdSelector = memoize((tsKey, period, dimensions) => createSelector(
     parmCdPointsSelector(tsKey, period),
     getRequestTimeRange(tsKey, period),
     (pointsByParmCd, requestTimeRange) => {
@@ -120,6 +118,3 @@ const timeSeriesScalesByParmCdSelector = memoize((tsKey, period, dimensions) => 
         }, {});
     }
 ));
-
-
-module.exports = {createXScale, createYScale, xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector};

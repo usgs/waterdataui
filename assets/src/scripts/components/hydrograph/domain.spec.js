@@ -1,4 +1,4 @@
-const { extendDomain, getYDomain, getYTickDetails } = require('./domain');
+import { extendDomain, getYDomain, getYTickDetails } from './domain';
 
 
 describe('domain module', () => {

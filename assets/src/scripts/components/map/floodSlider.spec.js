@@ -1,10 +1,8 @@
-const { select } = require('d3-selection');
-
-const { provide } = require('../../lib/redux');
-const { hasFloodDataSelector } = require('../../selectors/floodDataSelector');
-const { configureStore } = require('../../store');
-
-const { floodSlider } = require('./floodSlider');
+import { select } from 'd3-selection';
+import { provide } from '../../lib/redux';
+import { hasFloodDataSelector } from '../../selectors/floodDataSelector';
+import { configureStore } from '../../store';
+import { floodSlider } from './floodSlider';
 
 
 describe('floodSlider', () => {

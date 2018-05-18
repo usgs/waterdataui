@@ -1,10 +1,10 @@
 
-const { select } = require('d3-selection');
-const proxyquire = require('proxyquireify')(require);
-
-const { provide } = require('../../lib/redux');
-const { Actions, configureStore } = require('../../store');
-const { createTooltipText, createTooltipFocus } = require('./tooltip');
+import { select } from 'd3-selection';
+import proxyquireFactory from 'proxyquireify';
+const proxyquire = proxyquireFactory(require);
+import { provide } from '../../lib/redux';
+import { Actions, configureStore } from '../../store';
+import { createTooltipText, createTooltipFocus } from './tooltip';
 
 
 describe('Hydrograph tooltip module', () => {

@@ -1,7 +1,6 @@
-const { utcFormat } = require('d3-time-format');
-
-const config = require('./config');
-const { get } = require('./ajax');
+import { utcFormat } from 'd3-time-format';
+import config from './config';
+import { get } from './ajax';
 
 
 // Define Water Services root URL - use global variable if defined, otherwise
@@ -34,7 +33,7 @@ function tsServiceRoot(date) {
  * @param {Date} endData
  * @return {Promise} resolves to an array of time series model object, rejects to an error
  */
-export function getTimeSeries({sites, params=null, startDate=null, endDate=null}) {
+export const getTimeSeries = function ({sites, params=null, startDate=null, endDate=null}) {
     let timeParams;
     let serviceRoot;
     if (!startDate && !endDate) {
@@ -55,19 +54,18 @@ export function getTimeSeries({sites, params=null, startDate=null, endDate=null}
             console.error(reason);
             return [];
         });
-}
+};
 
-export function getPreviousYearTimeSeries({site, startTime, endTime}) {
+export const getPreviousYearTimeSeries = function ({site, startTime, endTime}) {
     let lastYearStartTime = new Date(startTime);
     let lastYearEndTime = new Date(endTime);
 
     lastYearStartTime.setFullYear(lastYearStartTime.getFullYear() - 1);
     lastYearEndTime.setFullYear(lastYearEndTime.getFullYear() - 1);
     return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
-}
+};
 
-
-export function sortedParameters(variables) {
+export const sortedParameters = function (variables) {
     const dataVars = variables ? Object.values(variables) : [];
     const pertinentParmCds = Object.keys(PARAM_PERTINENCE);
     const highPertinenceVars = dataVars.filter(x => pertinentParmCds.includes(x.variableCode.value))
@@ -91,10 +89,9 @@ export function sortedParameters(variables) {
             }
         });
     return highPertinenceVars.concat(lowPertinenceVars);
-}
+};
 
-
-export function queryWeatherService(latitude, longitude) {
+export const queryWeatherService = function (latitude, longitude) {
     const url = `${WEATHER_SERVICE_ROOT}/points/${latitude},${longitude}`;
     return get(url)
         .then(response => JSON.parse(response))
@@ -102,4 +99,4 @@ export function queryWeatherService(latitude, longitude) {
             console.error(reason);
             return {properties: {}};
         });
-}
+};

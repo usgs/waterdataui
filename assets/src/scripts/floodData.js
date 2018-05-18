@@ -1,17 +1,17 @@
-const {get} = require('./ajax');
-const {FIM_GIS_ENDPOINT} = require('./config');
+import { get } from './ajax';
+import config from './config';
 
 
-const FLOOD_EXTENTS_ENDPOINT = `${FIM_GIS_ENDPOINT}floodExtents/MapServer/`;
-const FLOOD_BREACH_ENDPOINT = `${FIM_GIS_ENDPOINT}breach/MapServer/`;
-const FLOOD_LEVEE_ENDPOINT = `${FIM_GIS_ENDPOINT}suppLyrs/MapServer/`;
+export const FLOOD_EXTENTS_ENDPOINT = `${config.FIM_GIS_ENDPOINT}floodExtents/MapServer/`;
+export const FLOOD_BREACH_ENDPOINT = `${config.FIM_GIS_ENDPOINT}breach/MapServer/`;
+export const FLOOD_LEVEE_ENDPOINT = `${config.FIM_GIS_ENDPOINT}suppLyrs/MapServer/`;
 
 /*
  * Retrieve flood features if any for siteno
  * @param {String} siteno
  * @return {Promise} resolves to an array of features for the site
  */
-const fetchFloodFeatures = function(siteno) {
+export const fetchFloodFeatures = function(siteno) {
     const FIM_QUERY = `${FLOOD_EXTENTS_ENDPOINT}/0/query?where=USGSID+%3D+%27${siteno}%27&outFields=USGSID%2C+STAGE&returnGeometry=false&returnTrueCurves=false&returnIdsOnly=false&returnCountOnly=false&returnZ=false&returnM=falsereturnDistinctValues=false&f=json`;
 
     return get(FIM_QUERY)
@@ -30,7 +30,7 @@ const fetchFloodFeatures = function(siteno) {
  * @param {String} siteno
  * @return {Promise} resolves to the extent Object or the empty object if an errors
  */
-const fetchFloodExtent = function(siteno){
+export const fetchFloodExtent = function(siteno){
     const FIM_QUERY = `${FLOOD_EXTENTS_ENDPOINT}/0/query?where=USGSID+%3D+%27${siteno}%27&returnExtentOnly=true&outSR=4326&f=json`;
     return get(FIM_QUERY)
         .then((response) => {
@@ -40,9 +40,4 @@ const fetchFloodExtent = function(siteno){
             console.log(`Unable to get FIM data for ${siteno} with reason: ${reason}`);
             return {};
         });
-};
-
-
-module.exports = {
-    FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT, fetchFloodFeatures, fetchFloodExtent
 };
