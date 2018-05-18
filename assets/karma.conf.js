@@ -123,6 +123,7 @@ module.exports = function (config) {
                 project: 'Water Data For The Nation',
                 timeout: 1800
             },
+            browserNoActivityTimeout: 120000,
             concurrency: 2,
             // These default browsers are chosen to prevent loss of browser
             // compatibility. As of May 15, 2018 they are the current oldest
@@ -152,11 +153,14 @@ module.exports = function (config) {
                 recordScreenshots: false,
                 captureTimeout: 120000
             },
+            browserNoActivityTimeout: 120000,
             reporters: [
                 ...karmaConfig.reporters,
                 'saucelabs'
             ],
             browsers: [
+                ...karmaConfig.browsers,
+
                 'sl_safari10_mac',
                 'sl_safari10_iphone7',  // two tests failing
                 'sl_edge16_windows10',
