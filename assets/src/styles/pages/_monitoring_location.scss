@@ -24,15 +24,6 @@ table#site-summary {
         word-wrap: break-word;
     }
 }
-.provisional-data-alert {
-    p {
-        height: 6em;
-        overflow-y: scroll;
-        @include media($small-screen) {
-            height: 4em;
-        }
-    }
-}
 
 .usa-accordion {
     .usa-accordion-content {

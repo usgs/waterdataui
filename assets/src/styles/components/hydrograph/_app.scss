@@ -170,3 +170,13 @@
         }
     }
 }
+
+.provisional-data-alert {
+    p {
+        height: 6em;
+        overflow-y: scroll;
+        @include media($small-screen) {
+            height: 4em;
+        }
+    }
+}
