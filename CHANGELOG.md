@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Refactor the Redux state to put the median statistics in its own property so that the data does
 not have to be coerced into a time series.
 - Embedded hydrograph is time zone aware.
+- Scrolling added to the 'provisional statement' in IFrame embed
 
 ### Fixed
 - A bug with the graph watermark intercepting mouseover events driving the tooltips was fixed.
