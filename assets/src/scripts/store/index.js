@@ -81,7 +81,10 @@ export const Actions = {
                     const notes = collection.queryInfo[requestKey].notes;
                     const endTime = notes.requestDT;
                     const startTime = calcStartTime('P7D', endTime, 'local');
-                    dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
+
+                    if (latitude !== null && longitude !== null) {
+                        dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
+                    }
                     // Trigger a call to get last year's data
                     dispatch(Actions.retrieveCompareTimeSeries(siteno, 'P7D', startTime, endTime));
 
