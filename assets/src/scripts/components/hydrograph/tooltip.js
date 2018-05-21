@@ -136,7 +136,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
         // of margin width by layout selector on time series with single or double digits on y-axis
         const baseMarginOffsetTextGroup = 27;
         let marginAdjustment = layout.margin.left + baseMarginOffsetTextGroup;
-        elem.style('margin-left', marginAdjustment + 'px')
+        elem.style('margin-left', marginAdjustment + 'px');
         elem.style('background', 'rgba(255, 255, 255, 0.8');
     };
 
