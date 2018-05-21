@@ -42,11 +42,11 @@ const TEST_STATE = {
         timeSeriesCollections: {
             'coll1': {
                 variable: '45807197',
-                timeSeries: ['00060:current'],
+                timeSeries: ['00060:current']
             },
             'coll2': {
                 variable: '45807197',
-                timeSeries: ['00060:compare'],
+                timeSeries: ['00060:compare']
             },
             'coll3': {
                 variable: '45807197',
