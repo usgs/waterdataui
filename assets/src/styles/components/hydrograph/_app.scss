@@ -109,6 +109,7 @@
     .tooltip-text-group {
         pointer-events: none;
         position: absolute;
+        background: rgba(255, 255, 255, 0.8);
         color: $default-time-series;
         .current-tooltip-text {
             font-weight: bold;
