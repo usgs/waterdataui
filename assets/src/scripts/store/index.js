@@ -73,7 +73,7 @@ export const Actions = {
                     const collection = normalize(series, requestKey);
 
                     // get the lat/lon of the site
-                    const location = collection.sourceInfo[siteno].geoLocation.geogLocation;
+                    const location = collection.sourceInfo ? collection.sourceInfo[siteno].geoLocation.geogLocation : {};
                     const latitude = location.latitude || null;
                     const longitude = location.longitude || null;
 

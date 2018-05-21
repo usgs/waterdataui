@@ -2,7 +2,7 @@ let proxyquire = require('proxyquireify')(require);
 
 const { Actions } = require('./index');
 
-fdescribe('Redux store', () => {
+describe('Redux store', () => {
 
     describe('asynchronous actions', () => {
         const SITE_NO = '12345678';
@@ -170,15 +170,18 @@ fdescribe('Redux store', () => {
 
             it('should fetch the times series, retrieve the compare time series once the time series is fetched and fetch the statistics', (done) => {
                 spyOn(store.Actions, 'addSeriesCollection');
+                spyOn(store.Actions, 'retrieveLocationTimeZone');
                 spyOn(store.Actions, 'retrieveCompareTimeSeries');
                 spyOn(store.Actions, 'toggleTimeSeries');
                 spyOn(store.Actions, 'setCurrentVariable');
                 let p = store.Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
 
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(7);
+                    expect(mockDispatch.calls.count()).toBe(8);
                     expect(store.Actions.addSeriesCollection.calls.count()).toBe(1);
                     expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('current');
+                    expect(store.Actions.retrieveLocationTimeZone.calls.count()).toBe(1);
+                    expect(store.Actions.retrieveLocationTimeZone.calls.argsFor(0)).toEqual([42.72027778, -90.8191667]);
                     expect(store.Actions.removeTimeSeriesLoading.calls.count()).toBe(1);
                     expect(store.Actions.removeTimeSeriesLoading.calls.argsFor(0)[0]).toEqual(['current:P7D']);
                     expect(store.Actions.retrieveCompareTimeSeries.calls.count()).toBe(1);
