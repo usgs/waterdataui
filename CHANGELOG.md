@@ -26,6 +26,7 @@ not have to be coerced into a time series.
 - Added dynamic left margin for tooltip text to prevent overlap with y-axis labels
 - Bug that caused incorrect font styling on tooltips
 - Various accessibility violations
+- Tooltips that were hard to read when they overlapped graph lines 
 
 ## [0.9.0] - 2018-05-10
 ### Fixed
