@@ -1,5 +1,4 @@
-import proxyquireFactory from 'proxyquireify';
-const proxyquire = proxyquireFactory(require);
+const ModelsInjector = require('inject-loader!./models');
 import { sortedParameters } from './models';
 
 
@@ -23,7 +22,7 @@ describe('Models module', () => {
                 }
             };
             spyOn(ajaxMock, 'get').and.callThrough();
-            models = proxyquire('./models', {'./ajax': ajaxMock});
+            models = ModelsInjector({'./ajax': ajaxMock});
         });
 
         it('Get url includes paramCds and sites', () => {
@@ -94,7 +93,7 @@ describe('Models module', () => {
                 }
             };
             spyOn(ajaxMock, 'get').and.callThrough();
-            models = proxyquire('./models', {'./ajax': ajaxMock});
+            models = ModelsInjector({'./ajax': ajaxMock});
         });
 
         it('Retrieves data using the startDT and endDT parameters', () => {

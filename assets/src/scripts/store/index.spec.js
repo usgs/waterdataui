@@ -1,6 +1,8 @@
-import proxyquireFactory from 'proxyquireify';
-const proxyquire = proxyquireFactory(require);
 import { Actions } from './index';
+const { sortedParameters } = require('../models');
+
+const StoreInjector = require('inject-loader!./index');
+
 
 describe('Redux store', () => {
 
@@ -78,7 +80,7 @@ describe('Redux store', () => {
                 spyOn(modelsMock, 'queryWeatherService').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                store = proxyquire('./index', {'../models': modelsMock});
+                store = StoreInjector({'../models': modelsMock});
                 store.configureStore();
             });
 
@@ -116,7 +118,7 @@ describe('Redux store', () => {
                 spyOn(modelsMock, 'queryWeatherService').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                store = proxyquire('./index', {'../models': modelsMock});
+                store = StoreInjector({'../models': modelsMock});
                 store.configureStore();
             });
 
@@ -143,13 +145,14 @@ describe('Redux store', () => {
                 modelsMock = {
                     getTimeSeries: function () {
                         return getTimeSeriesPromise;
-                    }
+                    },
+                    sortedParameters
                 };
 
                 spyOn(modelsMock, 'getTimeSeries').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                store = proxyquire('./index', {'../models': modelsMock});
+                store = StoreInjector({'../models': modelsMock});
                 store.configureStore();
 
                 spyOn(store.Actions, 'addTimeSeriesLoading');
@@ -214,13 +217,14 @@ describe('Redux store', () => {
                 modelsMock = {
                     getTimeSeries: function () {
                         return getTimeSeriesPromise;
-                    }
+                    },
+                    sortedParameters
                 };
 
                 spyOn(modelsMock, 'getTimeSeries').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                store = proxyquire('./index', {'../models': modelsMock});
+                store = StoreInjector({'../models': modelsMock});
                 store.configureStore();
             });
 
@@ -253,7 +257,7 @@ describe('Redux store', () => {
                 spyOn(modelsMock, 'getTimeSeries').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                store = proxyquire('./index', {'../models': modelsMock});
+                store = StoreInjector({'../models': modelsMock});
 
                 spyOn(store.Actions, 'addTimeSeriesLoading');
                 spyOn(store.Actions, 'removeTimeSeriesLoading');
@@ -300,7 +304,7 @@ describe('Redux store', () => {
                 spyOn(modelsMock, 'getPreviousYearTimeSeries').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                store = proxyquire('./index', {'../models': modelsMock});
+                store = StoreInjector({'../models': modelsMock});
                 spyOn(store.Actions, 'addTimeSeriesLoading');
                 spyOn(store.Actions, 'removeTimeSeriesLoading');
             });
@@ -351,7 +355,7 @@ describe('Redux store', () => {
                 spyOn(modelsMock, 'getPreviousYearTimeSeries').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                store = proxyquire('./index', {'../models': modelsMock});
+                store = StoreInjector({'../models': modelsMock});
 
                 spyOn(store.Actions, 'addTimeSeriesLoading');
                 spyOn(store.Actions, 'removeTimeSeriesLoading');
@@ -394,7 +398,7 @@ describe('Redux store', () => {
                 };
                 spyOn(statisticsDataMock, 'fetchSiteStatistics').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
-                store = proxyquire('./index',{'../statisticsData': statisticsDataMock});
+                store = StoreInjector({'../statisticsData': statisticsDataMock});
                 store.configureStore();
                 spyOn(store.Actions, 'addMedianStats');
                 spyOn(store.Actions, 'toggleTimeSeries');
@@ -433,7 +437,7 @@ describe('Redux store', () => {
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState');
 
-                store = proxyquire('./index', {'../models': modelsMock});
+                store = StoreInjector({'../models': modelsMock});
                 spyOn(store.Actions, 'addTimeSeriesLoading');
                 spyOn(store.Actions, 'removeTimeSeriesLoading');
             });
@@ -562,7 +566,7 @@ describe('Redux store', () => {
                     })
                 }));
 
-                store = proxyquire('./index', {'../models': modelsMock});
+                store = StoreInjector({'../models': modelsMock});
                 spyOn(store.Actions, 'addTimeSeriesLoading');
                 spyOn(store.Actions, 'removeTimeSeriesLoading');
             });
@@ -633,7 +637,7 @@ describe('Redux store', () => {
                 spyOn(floodDataMock, 'fetchFloodFeatures').and.callThrough();
                 spyOn(floodDataMock, 'fetchFloodExtent').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
-                store = proxyquire('./index', {'../floodData': floodDataMock});
+                store = StoreInjector({'../floodData': floodDataMock});
 
             });
 
@@ -689,7 +693,7 @@ describe('Redux store', () => {
                 spyOn(floodDataMock, 'fetchFloodFeatures').and.callThrough();
                 spyOn(floodDataMock, 'fetchFloodExtent').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
-                store = proxyquire('./index', {'../floodData': floodDataMock});
+                store = StoreInjector({'../floodData': floodDataMock});
 
             });
 

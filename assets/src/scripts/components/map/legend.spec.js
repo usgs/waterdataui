@@ -1,7 +1,7 @@
-import proxyquireFactory from 'proxyquireify';
-const proxyquire = proxyquireFactory(require);
 import { select } from 'd3-selection';
 import { map as createMap } from 'leaflet';
+
+const LegendInjector = require('inject-loader!./legend');
 
 
 describe('component/map/legend module', () => {
@@ -26,7 +26,7 @@ describe('component/map/legend module', () => {
     describe('createLegendControl', () => {
         let legendContainer, containerSelect;
         beforeEach(() => {
-            legend = proxyquire('./legend', {});
+            legend = LegendInjector({});
 
             legendControl = legend.createLegendControl({});
             legendControl.addTo(map);
@@ -105,7 +105,7 @@ describe('component/map/legend module', () => {
                 }
             };
             spyOn(ajaxMock, 'get').and.callThrough();
-            legend = proxyquire('./legend', {'../../ajax': ajaxMock});
+            legend = LegendInjector({'../../ajax': ajaxMock});
 
             legendControl = legend.createLegendControl({});
             legendControl.addTo(map);

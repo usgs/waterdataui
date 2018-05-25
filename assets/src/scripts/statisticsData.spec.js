@@ -1,5 +1,4 @@
-import proxyquireFactory from 'proxyquireify';
-const proxyquire = proxyquireFactory(require);
+const StatisicsDataInjector = require('inject-loader!./statisticsData');
 
 
 describe('statisticsData', () => {
@@ -22,7 +21,7 @@ describe('statisticsData', () => {
                 }
             };
             spyOn(ajaxMock, 'get').and.callThrough();
-            statisticsData = proxyquire('./statisticsData', {'./ajax': ajaxMock});
+            statisticsData = StatisicsDataInjector({'./ajax': ajaxMock});
         });
 
         it('Gets a full year of statistical data', () => {
@@ -52,7 +51,7 @@ describe('statisticsData', () => {
                 }
             };
             spyOn(ajaxMock, 'get').and.callThrough();
-            statisticsData = proxyquire('./statisticsData', {'./ajax': ajaxMock});
+            statisticsData = StatisicsDataInjector({'./ajax': ajaxMock});
         });
 
         it('Gets a full year of statistical data', () => {

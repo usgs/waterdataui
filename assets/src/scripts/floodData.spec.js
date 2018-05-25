@@ -1,5 +1,4 @@
-import proxyquireFactory from 'proxyquireify';
-const proxyquire = proxyquireFactory(require);
+const FloodDataInjector = require('inject-loader!./floodData');
 
 describe('flood_data module', () => {
 
@@ -20,7 +19,7 @@ describe('flood_data module', () => {
                     }
                 };
                 spyOn(ajaxMock, 'get').and.callThrough();
-                floodData = proxyquire('./floodData', {'./ajax': ajaxMock});
+                floodData = FloodDataInjector({'./ajax': ajaxMock});
             });
 
             it('url contains the siteno', () => {
@@ -48,7 +47,7 @@ describe('flood_data module', () => {
                         return getPromise;
                     }
                 };
-                floodData = proxyquire('./floodData', {'./ajax': ajaxMock});
+                floodData = FloodDataInjector({'./ajax': ajaxMock});
             });
 
             it('On failed response return an empty feature list', () => {
@@ -76,7 +75,7 @@ describe('flood_data module', () => {
                     }
                 };
                 spyOn(ajaxMock, 'get').and.callThrough();
-                floodData = proxyquire('./floodData', {'./ajax': ajaxMock});
+                floodData = FloodDataInjector({'./ajax': ajaxMock});
             });
 
             it('url contains the siteno', () => {
@@ -105,7 +104,7 @@ describe('flood_data module', () => {
                         return getPromise;
                     }
                 };
-                floodData = proxyquire('./floodData', {'./ajax': ajaxMock});
+                floodData = FloodDataInjector({'./ajax': ajaxMock});
             });
 
             it('On failed response return an empty feature list', () => {

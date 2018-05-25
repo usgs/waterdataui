@@ -1,10 +1,9 @@
-
 import { select } from 'd3-selection';
-import proxyquireFactory from 'proxyquireify';
-const proxyquire = proxyquireFactory(require);
 import { provide } from '../../lib/redux';
 import { Actions, configureStore } from '../../store';
 import { createTooltipText, createTooltipFocus } from './tooltip';
+
+const TooltipInjector = require('inject-loader!./tooltip');
 
 
 describe('Hydrograph tooltip module', () => {
@@ -175,7 +174,7 @@ describe('Hydrograph tooltip module', () => {
         };
 
         it('should return the requested time series focus time', () => {
-            let tooltip = proxyquire('./tooltip', finiteData);
+            let tooltip = TooltipInjector(finiteData);
             expect(tooltip.tooltipPointsSelector('current')({})).toEqual([{
                 x: '1date',
                 y: 1,
@@ -188,7 +187,7 @@ describe('Hydrograph tooltip module', () => {
         });
 
         it('should exclude values that are infinite', () => {
-            let tooltip = proxyquire('./tooltip', infiniteData);
+            let tooltip = TooltipInjector(infiniteData);
             expect(tooltip.tooltipPointsSelector('current')({})).toEqual([{
                 x: '2date',
                 y: 2,

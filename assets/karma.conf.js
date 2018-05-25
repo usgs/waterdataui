@@ -1,3 +1,4 @@
+
 /**
  * Karma configuration for WDFN assets
  */
@@ -18,6 +19,7 @@ module.exports = function (config) {
         files: [
             'tests/scripts/globalConfig.js',
             'src/scripts/**/*.js'
+            //'src/scripts/store/index.spec.js'
         ],
 
         // list of files / patterns to exclude
@@ -28,19 +30,16 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/scripts/**/*.js': ['webpack']
+            'src/scripts/**/*.js': ['webpack', 'sourcemap']
         },
 
         webpack: {
-            // karma watches the test entry points
-            // (you don't need to specify the entry option)
-            // webpack watches dependencies
-
-            // webpack configuration
+            ...require('./webpack.config'),
+            mode: 'development',
+            devtool: 'inline-source-map'
         },
         webpackMiddleware: {
             // webpack-dev-middleware configuration
-            // i. e.
             stats: 'errors-only'
         },
 
@@ -82,8 +81,8 @@ module.exports = function (config) {
         karmaConfig = {
             ...karmaConfig,
             reporters: [
-                ...karmaConfig.reporters,
-                'coverage'
+                ...karmaConfig.reporters
+                //'coverage'
             ],
 
             coverageReporter: {
