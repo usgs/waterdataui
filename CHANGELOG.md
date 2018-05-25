@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Font size of tooltips; larger size when fewer tips are present, smaller when more tip present
 - Refactor the Redux state to put the median statistics in its own property so that the data does
 not have to be coerced into a time series.
+- The Browserify build tooling was replaced with Webpack.
 
 ### Fixed
 - A bug with the graph watermark intercepting mouseover events driving the tooltips was fixed.
