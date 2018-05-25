@@ -5,11 +5,5 @@
     ],
     "presets": [
       ["@babel/env", {"useBuiltIns": "entry"}]
-    ],
-    "env": {
-        "development": {
-            "plugins": [
-            ]
-        }
-    }
+    ]
 }
