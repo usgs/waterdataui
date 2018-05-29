@@ -1,26 +1,23 @@
-import '@babel/polyfill';
 import 'matchmedia-polyfill';
 
 // Initialize the 18F Web design standards
 import 'uswds';
 
 // Load misc Javascript helpers for general page interactivity.
-import { register as registerHelpers } from './helpers';
-registerHelpers();
+import { register } from './helpers';
+register();
 
 import { configureStore } from './store';
 
 import { attachToNode as EmbedComponent } from './components/embed';
 import { attachToNode as HydrographComponent } from './components/hydrograph';
-import { attachToNode as MapComponent } from './components/map';
-
+import { attachToNode as MapComponent } from './components/embed';
 
 const COMPONENTS = {
     embed: EmbedComponent,
     hydrograph: HydrographComponent,
     map: MapComponent
 };
-
 
 function main() {
     // NOTE: Here we use a try/catch block rather than a global "onerror"

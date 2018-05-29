@@ -4,6 +4,9 @@
       "istanbul"
     ],
     "presets": [
-      ["@babel/env", {"useBuiltIns": "entry"}]
+      ["@babel/env", {
+        "useBuiltIns": "entry",
+        "modules": false
+      }]
     ]
 }
