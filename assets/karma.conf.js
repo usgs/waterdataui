@@ -18,8 +18,11 @@ module.exports = function (config) {
         // list of files / patterns to load in the browser
         files: [
             'tests/scripts/globalConfig.js',
-            'src/scripts/**/*.js'
-            //'src/scripts/store/index.spec.js'
+            {
+                //pattern: 'src/scripts/components/hydrograph/index.spec.js',
+                pattern: 'src/scripts/**/*.spec.js',
+                watched: false
+            }
         ],
 
         // list of files / patterns to exclude
@@ -30,17 +33,15 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/scripts/**/*.js': ['webpack', 'sourcemap']
+            'src/scripts/**/*.js': ['rollup']
         },
 
-        webpack: {
-            ...require('./webpack.config'),
-            mode: 'development',
-            devtool: 'inline-source-map'
-        },
-        webpackMiddleware: {
-            // webpack-dev-middleware configuration
-            stats: 'errors-only'
+        rollupPreprocessor: {
+            /**
+             * This is just a normal Rollup config object,
+             * except that `input` is handled for you.
+             */
+            ...require('./rollup.config')
         },
 
         // test results reporter to use

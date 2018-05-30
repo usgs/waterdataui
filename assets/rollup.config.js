@@ -1,14 +1,40 @@
-import buble from 'rollup-plugin-buble';
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
-import replace from 'rollup-plugin-replace';
-import uglify from 'rollup-plugin-uglify';
+/**
+ * Rollup configuration.
+ * NOTE: This is a CommonJS module so it can be imported by Karma.
+ */
+const buble = require('rollup-plugin-buble');
+const commonjs = require('rollup-plugin-commonjs');
+const json = require('rollup-plugin-json');
+const resolve = require('rollup-plugin-node-resolve');
+const replace = require('rollup-plugin-replace');
+const { uglify } = require('rollup-plugin-uglify');
 
 
-export default {
+const env = process.env.NODE_ENV || 'development';
+
+module.exports = {
     input: 'src/scripts/index.js',
     plugins: [
-        resolve(),
+        resolve({
+            // use "module" field for ES6 module if possible
+            module: true, // Default: true
+
+            // use "jsnext:main" if possible
+            // – see https://github.com/rollup/rollup/wiki/jsnext:main
+            jsnext: true,
+
+            // use "main" field or index.js, even if it's not an ES6 module
+            // (needs to be converted from CommonJS to ES6
+            // – see https://github.com/rollup/rollup-plugin-commonjs
+            main: true,  // Default: true
+
+            // some package.json files have a `browser` field which
+            // specifies alternative files to load for people bundling
+            // for the browser. If that's you, use this option, otherwise
+            // pkg.browser will be ignored
+            browser: false  // Default: false
+        }),
+        json(),
         commonjs(),
         buble({
             objectAssign: 'Object.assign',
@@ -17,14 +43,20 @@ export default {
             }
         }),
         replace({
-          'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+          'process.env.NODE_ENV': JSON.stringify(env)
         }),
-        !process.env.ROLLUP_WATCH && uglify
+        env === 'production' && uglify({
+            compress: {
+                dead_code: true,
+                drop_console: true
+            }
+        })
     ],
     output: {
+        name: 'wdfn',
         file: 'dist/bundle.js',
         format: 'iife',
-        sourcemap: process.env.ROLLUP_WATCH
+        sourcemap: env !== 'production'
     },
-    treeshake: !process.env.ROLLUP_WATCH
+    treeshake: env === 'production'
 };

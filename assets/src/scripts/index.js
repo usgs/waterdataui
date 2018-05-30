@@ -11,7 +11,7 @@ import { configureStore } from './store';
 
 import { attachToNode as EmbedComponent } from './components/embed';
 import { attachToNode as HydrographComponent } from './components/hydrograph';
-import { attachToNode as MapComponent } from './components/embed';
+import { attachToNode as MapComponent } from './components/map';
 
 const COMPONENTS = {
     embed: EmbedComponent,
@@ -56,3 +56,7 @@ if (document.readyState !== 'loading') {
 } else {
     document.addEventListener('DOMContentLoaded', main, false);
 }
+
+// Leaflet expects an exports global to exist - so although we don't use this,
+// just set it to something so it's not undefined.
+export var dummy = true;

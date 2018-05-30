@@ -1,5 +1,5 @@
 import { Actions } from './index';
-const { sortedParameters } = require('../models');
+import { sortedParameters } from '../models';
 
 const StoreInjector = require('inject-loader!./index');
 
