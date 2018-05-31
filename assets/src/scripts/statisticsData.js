@@ -14,10 +14,10 @@ const SERVICE_ROOT = config.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis
  * @param {Array of String} params
  * @returns {Promise} with response string if successful or rejected with error status
  */
-export const fetchSitesStatisticsRDB = function({sites, statType, params=null}) {
+export const fetchSitesStatisticsRDB = function({sites, statType, params=null}, getImpl = get) {
     let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
     let url = `${SERVICE_ROOT}/stat/?format=rdb&sites=${sites.join(',')}&statReportType=daily&statTypeCd=${statType}${paramCds}`;
-    return get(url);
+    return getImpl(url);
 };
 
 /*
@@ -27,8 +27,8 @@ export const fetchSitesStatisticsRDB = function({sites, statType, params=null}) 
  * @param {Array of String} params
  * @returns {Promise}. If resolved, {Object} is returned. If rejected, the error status is passed
  */
-export const fetchSiteStatistics = function({site, statType, params=null}) {
-    let medianRDB = fetchSitesStatisticsRDB({sites: [site], statType, params: params});
+export const fetchSiteStatistics = function({site, statType, params=null}, getImpl = get) {
+    let medianRDB = fetchSitesStatisticsRDB({sites: [site], statType, params: params}, getImpl);
     return medianRDB.then((response) => {
         const statsData = parseRDB(response);
         return statsData.reduce((finalResult, dataLine) => {

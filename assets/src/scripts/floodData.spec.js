@@ -1,9 +1,10 @@
-const FloodDataInjector = require('inject-loader!./floodData');
+import { fetchFloodExtent, fetchFloodFeatures } from './floodData';
+
 
 describe('flood_data module', () => {
 
     describe('fetchFloodFeatures', () => {
-        let ajaxMock;
+        let mockGet;
         let floodData;
 
         const siteno = '12345678';
@@ -11,26 +12,20 @@ describe('flood_data module', () => {
         describe('with valid response', () => {
 
             beforeEach(() => {
-                /* eslint no-use-before-define: 0 */
-                let getPromise = Promise.resolve(MOCK_FLOOD_FEATURE);
-                ajaxMock = {
-                    get: function () {
-                        return getPromise;
-                    }
-                };
-                spyOn(ajaxMock, 'get').and.callThrough();
-                floodData = FloodDataInjector({'./ajax': ajaxMock});
+                mockGet = jasmine.createSpy('get').and.returnValue(
+                    Promise.resolve(MOCK_FLOOD_FEATURE)
+                );
             });
 
             it('url contains the siteno', () => {
-                floodData.fetchFloodFeatures(siteno);
+                fetchFloodFeatures(siteno, mockGet);
 
-                expect(ajaxMock.get).toHaveBeenCalled();
-                expect(ajaxMock.get.calls.mostRecent().args[0]).toContain(siteno);
+                expect(mockGet).toHaveBeenCalled();
+                expect(mockGet.calls.mostRecent().args[0]).toContain(siteno);
             });
 
             it('expected response is json object with the stages', () => {
-                floodData.fetchFloodFeatures(siteno).then((resp) => {
+                fetchFloodFeatures(siteno, mockGet).then((resp) => {
                     expect(resp.length).toBe(3);
                     expect(resp[0].attributes.STAGE).toBe(30);
                     expect(resp[1].attributes.STAGE).toBe(29);
@@ -41,17 +36,13 @@ describe('flood_data module', () => {
 
         describe('with error response', () =>{
             beforeEach(() => {
-                let getPromise = Promise.reject(new Error('fail'));
-                ajaxMock = {
-                    get: function () {
-                        return getPromise;
-                    }
-                };
-                floodData = FloodDataInjector({'./ajax': ajaxMock});
+                mockGet = jasmine.createSpy('get').and.returnValue(
+                    Promise.reject(new Error('fail'))
+                );
             });
 
             it('On failed response return an empty feature list', () => {
-               floodData.fetchFloodFeatures(siteno).then((resp) => {
+               fetchFloodFeatures(siteno, mockGet).then((resp) => {
                    expect(resp.length).toBe(0);
                });
             });
@@ -59,8 +50,7 @@ describe('flood_data module', () => {
     });
 
     describe('fetchFloodExtent', () => {
-        let ajaxMock;
-        let floodData;
+        let mockGet;
 
         const siteno = '12345678';
 
@@ -68,25 +58,20 @@ describe('flood_data module', () => {
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
-                let getPromise = Promise.resolve(MOCK_FLOOD_EXTENT);
-                ajaxMock = {
-                    get: function () {
-                        return getPromise;
-                    }
-                };
-                spyOn(ajaxMock, 'get').and.callThrough();
-                floodData = FloodDataInjector({'./ajax': ajaxMock});
+                mockGet = jasmine.createSpy('get').and.returnValue(
+                    Promise.resolve(MOCK_FLOOD_EXTENT)
+                );
             });
 
             it('url contains the siteno', () => {
-                floodData.fetchFloodExtent(siteno);
+                fetchFloodExtent(siteno, mockGet);
 
-                expect(ajaxMock.get).toHaveBeenCalled();
-                expect(ajaxMock.get.calls.mostRecent().args[0]).toContain(siteno);
+                expect(mockGet).toHaveBeenCalled();
+                expect(mockGet.calls.mostRecent().args[0]).toContain(siteno);
             });
 
             it('expected response is json object with the extent', () => {
-                floodData.fetchFloodExtent(siteno).then((resp) => {
+                fetchFloodExtent(siteno, mockGet).then((resp) => {
                     expect(resp.extent).toBeDefined();
                     expect(resp.extent.xmin).toBe(-84.353211731250525);
                     expect(resp.extent.xmax).toBe(-84.223456338038901);
@@ -98,17 +83,13 @@ describe('flood_data module', () => {
 
         describe('with error response', () =>{
             beforeEach(() => {
-                let getPromise = Promise.reject(new Error('fail'));
-                ajaxMock = {
-                    get: function () {
-                        return getPromise;
-                    }
-                };
-                floodData = FloodDataInjector({'./ajax': ajaxMock});
+                mockGet = jasmine.createSpy('get').and.returnValue(
+                    Promise.reject(new Error('fail'))
+                );
             });
 
             it('On failed response return an empty feature list', () => {
-               floodData.fetchFloodExtent(siteno).then((resp) => {
+               fetchFloodExtent(siteno, mockGet).then((resp) => {
                    expect(resp).toEqual({});
                });
             });

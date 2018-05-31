@@ -19,8 +19,9 @@ module.exports = function (config) {
         files: [
             'tests/scripts/globalConfig.js',
             {
-                //pattern: 'src/scripts/components/hydrograph/index.spec.js',
-                pattern: 'src/scripts/**/*.spec.js',
+                pattern: 'src/scripts/components/hydrograph/legend.spec.js',
+                //pattern: 'src/scripts/components/hydrograph/tooltip.spec.js',
+                //pattern: 'src/scripts/**/*.spec.js',
                 watched: false
             }
         ],
@@ -33,7 +34,7 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/scripts/**/*.js': ['rollup']
+            'src/scripts/**/*.js': ['rollup', 'sourcemap']
         },
 
         rollupPreprocessor: {

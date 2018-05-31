@@ -1,9 +1,7 @@
 import { select } from 'd3-selection';
 import { provide } from '../../lib/redux';
 import { Actions, configureStore } from '../../store';
-import { createTooltipText, createTooltipFocus } from './tooltip';
-
-const TooltipInjector = require('inject-loader!./tooltip');
+import { createTooltipText, createTooltipFocus, tooltipPointsSelectorFactory } from './tooltip';
 
 
 describe('Hydrograph tooltip module', () => {
@@ -132,9 +130,14 @@ describe('Hydrograph tooltip module', () => {
     };
 
     describe('tooltipPointsSelector', () => {
-        const finiteData = {
-            './cursor': {
-                tsCursorPointsSelector: () => () => {
+        const xScaleSelector = () => (val) => val;
+        const yScaleSelector = () => (val) => val;
+
+        it('should return the requested time series focus time', () => {
+            const tooltipPointsSelector = tooltipPointsSelectorFactory(
+                xScaleSelector,
+                yScaleSelector,
+                () => {
                     return {
                         '00060:current': {
                             dateTime: '1date',
@@ -146,36 +149,8 @@ describe('Hydrograph tooltip module', () => {
                         }
                     };
                 }
-            },
-            './scales': {
-                xScaleSelector: () => () => (val) => val,
-                yScaleSelector: () => (val) => val
-            }
-        };
-        const infiniteData = {
-            './cursor': {
-                tsCursorPointsSelector: () => () => {
-                    return {
-                        '00060:current': {
-                            dateTime: '1date',
-                            value: Infinity
-                        },
-                        '00060:compare': {
-                            dateTime: '2date',
-                            value: 2
-                        }
-                    };
-                }
-            },
-            './scales': {
-                xScaleSelector: () => () => (val) => val,
-                yScaleSelector: () => (val) => val
-            }
-        };
-
-        it('should return the requested time series focus time', () => {
-            let tooltip = TooltipInjector(finiteData);
-            expect(tooltip.tooltipPointsSelector('current')({})).toEqual([{
+            );
+            expect(tooltipPointsSelector('current')({})).toEqual([{
                 x: '1date',
                 y: 1,
                 tsID: '00060:current'
@@ -187,8 +162,23 @@ describe('Hydrograph tooltip module', () => {
         });
 
         it('should exclude values that are infinite', () => {
-            let tooltip = TooltipInjector(infiniteData);
-            expect(tooltip.tooltipPointsSelector('current')({})).toEqual([{
+            const tooltipPointsSelector = tooltipPointsSelectorFactory(
+                xScaleSelector,
+                yScaleSelector,
+                () => {
+                    return {
+                        '00060:current': {
+                            dateTime: '1date',
+                            value: Infinity
+                        },
+                        '00060:compare': {
+                            dateTime: '2date',
+                            value: 2
+                        }
+                    };
+                }
+            );
+            expect(tooltipPointsSelector('current')({})).toEqual([{
                 x: '2date',
                 y: 2,
                 tsID: '00060:compare'

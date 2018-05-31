@@ -183,9 +183,8 @@ describe('Legend module', () => {
             expect(legendMarkerRowsSelector(newData)).toEqual([]);
         });
 
-        it('Should return markers for the selected variable', () => {
+        fit('Should return markers for the selected variable', () => {
             const result = legendMarkerRowsSelector(TEST_DATA);
-
             expect(result.length).toBe(2);
             expect(result[0].length).toBe(4);
             expect(result[0][0].type).toEqual(textOnlyMarker);

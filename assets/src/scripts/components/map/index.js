@@ -19,7 +19,7 @@ const getLayerDefs = function(layerNo, siteno, stage) {
 /*
  * Creates a site map
  */
-const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
+const siteMap = function(node, {siteno, latitude, longitude, zoom}, endpoints) {
     // Create map on node
     const map = createMap('site-map', {
         center: [latitude, longitude],
@@ -35,19 +35,19 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     });
 
     let floodLayer = dynamicMapLayer({
-        url: FLOOD_EXTENTS_ENDPOINT,
+        url: endpoints.FLOOD_EXTENTS_ENDPOINT,
         layers: [0],
         f: 'image',
         format: 'png8'
     });
     let breachLayer = dynamicMapLayer({
-        url: FLOOD_BREACH_ENDPOINT,
+        url: endpoints.FLOOD_BREACH_ENDPOINT,
         layers: [0],
         f: 'image',
         format: 'png8'
     });
     let leveeLayer = dynamicMapLayer({
-        url: FLOOD_LEVEE_ENDPOINT,
+        url: endpoints.FLOOD_LEVEE_ENDPOINT,
         layers: [0, 1],
         f: 'image',
         format: 'png8',
@@ -143,7 +143,12 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
  * @param {Number} longitude - longitude of siteno
  * @param {Number} zoom - zoom level to initially set the map to
  */
-export const attachToNode = function(store, node, {siteno, latitude, longitude, zoom}) {
+export const attachToNode = function(
+        store,
+        node,
+        {siteno, latitude, longitude, zoom},
+        endpoints = { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT }
+    ) {
 
     store.dispatch(Actions.retrieveFloodData(siteno));
 
@@ -152,6 +157,6 @@ export const attachToNode = function(store, node, {siteno, latitude, longitude, 
     select(node).select('#flood-layer-control-container')
         .call(floodSlider);
     select(node)
-        .call(siteMap, {siteno, latitude, longitude, zoom});
+        .call(siteMap, {siteno, latitude, longitude, zoom}, endpoints);
 };
 

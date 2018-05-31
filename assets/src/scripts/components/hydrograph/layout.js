@@ -32,25 +32,32 @@ export const SPARK_LINE_DIM = {
 
 
 /*
+ * layoutSelector supporting injection of tickSelector
+ */
+export const layoutSelectorFactory = function (tickSelectorImpl) {
+    return createSelector(
+        (state) => state.ui.width,
+        (state) => state.ui.windowWidth,
+        tickSelectorImpl,
+        (width, windowWidth, tickDetails) => {
+            const margin = mediaQuery(config.USWDS_SITE_MAX_WIDTH) ? MARGIN : MARGIN_SMALL_DEVICE;
+            const tickLengths = tickDetails.tickValues.map(v => tickDetails.tickFormat(v).length);
+            const approxLabelLength = Math.max(...tickLengths) * 10;
+            return {
+                width: width,
+                height: width * ASPECT_RATIO,
+                windowWidth: windowWidth,
+                margin: {
+                    ...margin,
+                    left: margin.left + approxLabelLength
+                }
+            };
+        }
+    );
+};
+
+/*
  * @param {Object} state - Redux store
  * @return {Object} containing width and height properties.
  */
-export const layoutSelector = createSelector(
-    (state) => state.ui.width,
-    (state) => state.ui.windowWidth,
-    tickSelector,
-    (width, windowWidth, tickDetails) => {
-        const margin = mediaQuery(config.USWDS_SITE_MAX_WIDTH) ? MARGIN : MARGIN_SMALL_DEVICE;
-        const tickLengths = tickDetails.tickValues.map(v => tickDetails.tickFormat(v).length);
-        const approxLabelLength = Math.max(...tickLengths) * 10;
-        return {
-            width: width,
-            height: width * ASPECT_RATIO,
-            windowWidth: windowWidth,
-            margin: {
-                ...margin,
-                left: margin.left + approxLabelLength
-            }
-        };
-    }
-);
+export const layoutSelector = layoutSelectorFactory(tickSelector);

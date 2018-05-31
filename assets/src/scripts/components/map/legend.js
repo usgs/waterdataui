@@ -9,8 +9,8 @@ import config from '../../config';
 import { mediaQuery } from '../../utils';
 
 
-const fetchLayerLegend = function(layer, defaultName) {
-    return get(`${config.FIM_GIS_ENDPOINT}${layer}/MapServer/legend?f=json`)
+const fetchLayerLegend = function(layer, defaultName, getImpl) {
+    return getImpl(`${config.FIM_GIS_ENDPOINT}${layer}/MapServer/legend?f=json`)
         .then((responseText) => {
             const resp = JSON.parse(responseText);
             if (resp.error) {
@@ -82,12 +82,12 @@ export const createLegendControl = function(options) {
  * @param {L.Control} legendControl - Leaflet legend control
  * @param {Boolean} isFIMAvailable
  */
-export const createFIMLegend = function(legendControl, isFIMAvailable) {
+export const createFIMLegend = function(legendControl, isFIMAvailable, getImpl = get) {
     if (isFIMAvailable) {
         // Fetch the images
-        let fetchFloodExtentLegend = fetchLayerLegend('floodExtents', 'Flood-inundation area');
-        let fetchBreachLegend = fetchLayerLegend('breach', 'Area of uncertainty');
-        let fetchSuppLyrs = fetchLayerLegend('suppLyrs', 'supply layers');
+        let fetchFloodExtentLegend = fetchLayerLegend('floodExtents', 'Flood-inundation area', getImpl);
+        let fetchBreachLegend = fetchLayerLegend('breach', 'Area of uncertainty', getImpl);
+        let fetchSuppLyrs = fetchLayerLegend('suppLyrs', 'supply layers', getImpl);
 
         const legendContainer = select(legendControl.getContainer());
         // Make expand button visible

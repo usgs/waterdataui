@@ -1,11 +1,10 @@
-const StatisicsDataInjector = require('inject-loader!./statisticsData');
+import { fetchSiteStatistics, fetchSitesStatisticsRDB } from './statisticsData';
 
 
 describe('statisticsData', () => {
 
     describe('fetchSiteStatisticsRDB', () => {
-        let ajaxMock;
-        let statisticsData;
+        let mockGet;
 
         const sites = ['05370000'];
         const statType = 'median';
@@ -13,21 +12,13 @@ describe('statisticsData', () => {
 
         beforeEach(() => {
             /* eslint no-use-before-define: 0 */
-            let getPromise = Promise.resolve(MOCK_RDB);
-
-            ajaxMock = {
-                get: function () {
-                    return getPromise;
-                }
-            };
-            spyOn(ajaxMock, 'get').and.callThrough();
-            statisticsData = StatisicsDataInjector({'./ajax': ajaxMock});
+            mockGet = jasmine.createSpy('get').and.returnValue(Promise.resolve(MOCK_RDB));
         });
 
         it('Gets a full year of statistical data', () => {
-            statisticsData.fetchSitesStatisticsRDB({sites: sites, statType: statType, params: params});
-            expect(ajaxMock.get).toHaveBeenCalled();
-            let ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
+            fetchSitesStatisticsRDB({sites: sites, statType: statType, params: params}, mockGet);
+            expect(mockGet).toHaveBeenCalled();
+            let ajaxUrl = mockGet.calls.mostRecent().args[0];
             expect(ajaxUrl).toContain('statTypeCd=median');
             expect(ajaxUrl).toContain('parameterCd=00060');
             expect(ajaxUrl).toContain('sites=05370000');
@@ -35,36 +26,27 @@ describe('statisticsData', () => {
     });
 
     describe('fetchSiteStatistics', () => {
-        let ajaxMock;
-        let statisticsData;
+        let mockGet;
 
         const site = '05370000';
         const statType = 'median';
         const params = ['00060'];
 
         beforeEach(() => {
-            let getPromise = Promise.resolve(MOCK_RDB);
-
-            ajaxMock = {
-                get: function() {
-                    return getPromise;
-                }
-            };
-            spyOn(ajaxMock, 'get').and.callThrough();
-            statisticsData = StatisicsDataInjector({'./ajax': ajaxMock});
+            mockGet = jasmine.createSpy('get').and.returnValue(Promise.resolve(MOCK_RDB));
         });
 
         it('Gets a full year of statistical data', () => {
-            statisticsData.fetchSiteStatistics({site, statType, params});
-            expect(ajaxMock.get).toHaveBeenCalled();
-            let ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
+            fetchSiteStatistics({site, statType, params}, mockGet);
+            expect(mockGet).toHaveBeenCalled();
+            let ajaxUrl = mockGet.calls.mostRecent().args[0];
             expect(ajaxUrl).toContain('statTypeCd=median');
             expect(ajaxUrl).toContain('parameterCd=00060');
             expect(ajaxUrl).toContain('sites=05370000');
         });
 
         it('Parses the data as expected', (done) => {
-            statisticsData.fetchSiteStatistics({site, statType, params}).then((resp) => {
+            fetchSiteStatistics({site, statType, params}, mockGet).then((resp) => {
                 expect(resp).toEqual({
                     '00060': {
                         '153885': [{

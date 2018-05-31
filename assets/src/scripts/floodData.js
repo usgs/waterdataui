@@ -11,10 +11,10 @@ export const FLOOD_LEVEE_ENDPOINT = `${config.FIM_GIS_ENDPOINT}suppLyrs/MapServe
  * @param {String} siteno
  * @return {Promise} resolves to an array of features for the site
  */
-export const fetchFloodFeatures = function(siteno) {
+export const fetchFloodFeatures = function(siteno, getImpl = get) {
     const FIM_QUERY = `${FLOOD_EXTENTS_ENDPOINT}/0/query?where=USGSID+%3D+%27${siteno}%27&outFields=USGSID%2C+STAGE&returnGeometry=false&returnTrueCurves=false&returnIdsOnly=false&returnCountOnly=false&returnZ=false&returnM=falsereturnDistinctValues=false&f=json`;
 
-    return get(FIM_QUERY)
+    return getImpl(FIM_QUERY)
         .then((response) => {
             const respJson = JSON.parse(response);
             return respJson.features ? respJson.features : [];
@@ -30,9 +30,9 @@ export const fetchFloodFeatures = function(siteno) {
  * @param {String} siteno
  * @return {Promise} resolves to the extent Object or the empty object if an errors
  */
-export const fetchFloodExtent = function(siteno){
+export const fetchFloodExtent = function(siteno, getImpl = get){
     const FIM_QUERY = `${FLOOD_EXTENTS_ENDPOINT}/0/query?where=USGSID+%3D+%27${siteno}%27&returnExtentOnly=true&outSR=4326&f=json`;
-    return get(FIM_QUERY)
+    return getImpl(FIM_QUERY)
         .then((response) => {
             return JSON.parse(response);
         })

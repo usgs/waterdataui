@@ -33,7 +33,7 @@ function tsServiceRoot(date) {
  * @param {Date} endData
  * @return {Promise} resolves to an array of time series model object, rejects to an error
  */
-export function getTimeSeries({sites, params=null, startDate=null, endDate=null}) {
+export function getTimeSeries({sites, params=null, startDate=null, endDate=null}, getImpl = get) {
     let timeParams;
     let serviceRoot;
     if (!startDate && !endDate) {
@@ -48,7 +48,7 @@ export function getTimeSeries({sites, params=null, startDate=null, endDate=null}
     let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
 
     let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${paramCds}&${timeParams}&siteStatus=all&format=json`;
-    return get(url)
+    return getImpl(url)
         .then(response => JSON.parse(response))
         .catch(reason => {
             console.error(reason);
@@ -56,13 +56,13 @@ export function getTimeSeries({sites, params=null, startDate=null, endDate=null}
         });
 }
 
-export function getPreviousYearTimeSeries({site, startTime, endTime}) {
+export function getPreviousYearTimeSeries({site, startTime, endTime}, getImpl = get) {
     let lastYearStartTime = new Date(startTime);
     let lastYearEndTime = new Date(endTime);
 
     lastYearStartTime.setFullYear(lastYearStartTime.getFullYear() - 1);
     lastYearEndTime.setFullYear(lastYearEndTime.getFullYear() - 1);
-    return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
+    return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime}, getImpl);
 }
 
 

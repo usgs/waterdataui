@@ -46,9 +46,9 @@ const getCurrentVariableId = function(timeSeries, variables) {
 
 
 export const Actions = {
-    retrieveLocationTimeZone(latitude, longitude) {
+    retrieveLocationTimeZone(latitude, longitude, queryWeatherServiceImpl = queryWeatherService) {
         return function(dispatch) {
-            return queryWeatherService(latitude, longitude).then(
+            return queryWeatherServiceImpl(latitude, longitude).then(
                 resp => {
                     const tzIANA = resp.properties.timeZone || null; // set to time zone to null if unavailable
                     dispatch(Actions.setLocationIanaTimeZone(tzIANA));
@@ -59,13 +59,13 @@ export const Actions = {
             );
         };
     },
-    retrieveTimeSeries(siteno, params=null) {
+    retrieveTimeSeries(siteno, params = null, getTimeSeriesImpl = getTimeSeries) {
         return function (dispatch, getState) {
             const currentState = getState();
             const requestKey = getTsRequestKey('current', 'P7D')(currentState);
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
 
-            return getTimeSeries({sites: [siteno], params}).then(
+            return getTimeSeriesImpl({sites: [siteno], params}).then(
                 series => {
                     const collection = normalize(series, requestKey);
 
@@ -105,11 +105,11 @@ export const Actions = {
             );
         };
     },
-    retrieveCompareTimeSeries(site, period, startTime, endTime) {
+    retrieveCompareTimeSeries(site, period, startTime, endTime, getPreviousYearTimeSeriesImpl = getPreviousYearTimeSeries) {
         return function (dispatch, getState) {
             const requestKey = getTsRequestKey('compare', period)(getState());
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
-            return getPreviousYearTimeSeries({site, startTime, endTime}).then(
+            return getPreviousYearTimeSeriesImpl({site, startTime, endTime}).then(
                 series => {
                     const collection = normalize(series, requestKey);
                     dispatch(Actions.addSeriesCollection(requestKey, collection));
@@ -122,9 +122,9 @@ export const Actions = {
             );
         };
     },
-    retrieveMedianStatistics(site) {
+    retrieveMedianStatistics(site, fetchSiteStatisticsImpl = fetchSiteStatistics) {
         return function(dispatch) {
-            return fetchSiteStatistics({site, statType: 'median'}).then(
+            return fetchSiteStatisticsImpl({site, statType: 'median'}).then(
                 stats => {
                     dispatch(Actions.addMedianStats(stats));
                     dispatch(Actions.toggleTimeSeries('median', true));
@@ -132,7 +132,7 @@ export const Actions = {
             );
         };
     },
-    retrieveExtendedTimeSeries(site, period) {
+    retrieveExtendedTimeSeries(site, period, getTimeSeriesImpl = getTimeSeries) {
         return function(dispatch, getState) {
             const state = getState();
             const parmCd = getCurrentParmCd(state);
@@ -142,7 +142,7 @@ export const Actions = {
                 const endTime = getRequestTimeRange('current', 'P7D')(state).end;
                 let startTime = calcStartTime(period, endTime);
                 dispatch(Actions.addTimeSeriesLoading([requestKey]));
-                return getTimeSeries({
+                return getTimeSeriesImpl({
                     sites: [site],
                     params: [parmCd],
                     startDate: startTime,
@@ -163,10 +163,10 @@ export const Actions = {
             }
         };
     },
-    retrieveFloodData(siteno) {
+    retrieveFloodData(siteno, fetchFloodFeaturesImpl = fetchFloodFeatures, fetchFloodExtentImpl = fetchFloodExtent) {
         return function (dispatch) {
-            const floodFeatures = fetchFloodFeatures(siteno);
-            const floodExtent = fetchFloodExtent(siteno);
+            const floodFeatures = fetchFloodFeaturesImpl(siteno);
+            const floodExtent = fetchFloodExtentImpl(siteno);
             return Promise.all([floodFeatures, floodExtent]).then((data) => {
                 const [features, extent] = data;
                 const stages = features.map((feature) => feature.attributes.STAGE).sort(function (a, b) {

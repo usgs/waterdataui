@@ -56,7 +56,7 @@ module.exports = {
         name: 'wdfn',
         file: 'dist/bundle.js',
         format: 'iife',
-        sourcemap: env !== 'production'
+        sourcemap: env !== 'production' ? 'inline' : false
     },
     treeshake: env === 'production'
 };

@@ -2,14 +2,19 @@ import { select } from 'd3-selection';
 import { attachToNode } from './index';
 import { configureStore } from '../../store';
 
-const MapInjector = require('inject-loader!./index');
+// Leaflet expects an exports global to exist - so although we don't use this,
+// just set it to something so it's not undefined.
+export var dummy = true;
 
 
 describe('map module', () => {
     let mapNode;
     let store;
-    let floodDataMock;
-    let map;
+    let floodDataEndpoints = {
+        FLOOD_EXTENTS_ENDPOINT: 'http://fake.service.com',
+        FLOOD_BREACH_ENDPOINT: 'http://fake.service.com',
+        FLOOD_LEVEE_ENDPOINT: 'http://fake.service.com'
+    };
 
     beforeEach(() => {
         jasmine.Ajax.install();
@@ -19,14 +24,6 @@ describe('map module', () => {
         mapContainer.append('div').attr('id', 'flood-layer-control-container');
         mapContainer.append('div').attr('id', 'site-map');
         mapNode = document.getElementById('map');
-
-        floodDataMock = {
-            FLOOD_EXTENTS_ENDPOINT: 'http://fake.service.com',
-            FLOOD_BREACH_ENDPOINT: 'http://fake.service.com',
-            FLOOD_LEVEE_ENDPOINT: 'http://fake.service.com'
-        };
-
-        map = MapInjector({'../../floodData': floodDataMock});
     });
 
     afterEach(() => {
@@ -37,12 +34,12 @@ describe('map module', () => {
     describe('Map creation without FIM maps', () => {
         beforeEach(() => {
             store = configureStore();
-            map.attachToNode(store, mapNode, {
+            attachToNode(store, mapNode, {
                 siteno: '12345677',
                 latitude: 43.0,
                 longitude: -100.0,
                 zoom: 5
-            });
+            }, floodDataEndpoints);
         });
 
         it('Should create a leaflet map within the mapNode with', () => {
@@ -92,7 +89,7 @@ describe('map module', () => {
                 latitude: 39.46,
                 longitude: -87.42,
                 zoom: 5
-            });
+            }, floodDataEndpoints);
         });
 
         it('Should create FIM layers', () => {
@@ -136,14 +133,14 @@ describe('map module', () => {
 
         it('should happen if there are flood stages for a site', () => {
             store = configureStore(testFloodData);
-            attachToNode(store, mapNode, testMapData);
+            attachToNode(store, mapNode, testMapData, floodDataEndpoints);
             expect(select(mapNode).select('a#fim-link').text()).toEqual('Provisional Flood Information');
         });
 
         it('should not happen if there are no flood stages for a site', () => {
             testFloodData.floodData.stages = [];
             store = configureStore(testFloodData);
-            attachToNode(store, mapNode, testMapData);
+            attachToNode(store, mapNode, testMapData, floodDataEndpoints);
             expect(select(mapNode).select('a#fim-link').node()).toBeNull();
         });
     });

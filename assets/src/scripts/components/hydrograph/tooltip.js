@@ -44,6 +44,30 @@ const updateFocusLine = function(elem, {cursorTime, yScale, xScale}) {
 };
 
 /*
+ * Factory for tooltipPointsSelector, allowing injection of dependent selectors.
+ */
+export const tooltipPointsSelectorFactory = function (getXScale, getYScale, getCursorPoints) {
+    return memoize(tsKey => createSelector(
+        getXScale || xScaleSelector(tsKey),
+        getYScale || yScaleSelector,
+        getCursorPoints || tsCursorPointsSelector(tsKey),
+        (xScale, yScale, cursorPoints) => {
+            return Object.keys(cursorPoints).reduce((tooltipPoints, tsID) => {
+                const cursorPoint = cursorPoints[tsID];
+                if (isFinite(yScale(cursorPoint.value))) {
+                    tooltipPoints.push({
+                        x: xScale(cursorPoint.dateTime),
+                        y: yScale(cursorPoint.value),
+                        tsID
+                    });
+                }
+                return tooltipPoints;
+            }, []);
+        }
+    ));
+};
+
+/*
  * Returns a function that returns the time series data point nearest the
  * tooltip focus time for the given time series key. Only returns those points
  * where the y-value is finite; no use in making a point if y is Infinity.
@@ -52,24 +76,7 @@ const updateFocusLine = function(elem, {cursorTime, yScale, xScale}) {
  * @param String} tsKey - Time series key
  * @return {Object}
  */
-export const tooltipPointsSelector = memoize(tsKey => createSelector(
-    xScaleSelector(tsKey),
-    yScaleSelector,
-    tsCursorPointsSelector(tsKey),
-    (xScale, yScale, cursorPoints) => {
-        return Object.keys(cursorPoints).reduce((tooltipPoints, tsID) => {
-            const cursorPoint = cursorPoints[tsID];
-            if (isFinite(yScale(cursorPoint.value))) {
-                tooltipPoints.push({
-                    x: xScale(cursorPoint.dateTime),
-                    y: yScale(cursorPoint.value),
-                    tsID
-                });
-            }
-            return tooltipPoints;
-        }, []);
-    }
-));
+export const tooltipPointsSelector = tooltipPointsSelectorFactory();
 
 const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone) {
     let label = '';

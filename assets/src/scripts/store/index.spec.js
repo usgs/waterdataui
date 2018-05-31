@@ -1,7 +1,4 @@
-import { Actions } from './index';
-import { sortedParameters } from '../models';
-
-const StoreInjector = require('inject-loader!./index');
+import { configureStore, Actions } from './index';
 
 
 describe('Redux store', () => {
@@ -62,147 +59,132 @@ describe('Redux store', () => {
         };
 
         describe('retrieveLocationTimeZone with good data', () => {
-            let store;
-            let modelsMock;
+            let mockRetrieveLocationTimeZone;
             let mockDispatch;
             let mockGetState;
 
-            const MOCK_WEATHER_SERVICE_DATA = '{"properties" : {"timeZone" : "America/Chicago"}}';
-
             beforeEach(() => {
-                let getWeatherServicePromise = Promise.resolve(JSON.parse(MOCK_WEATHER_SERVICE_DATA));
-                modelsMock = {
-                    queryWeatherService: function () {
-                        return getWeatherServicePromise;
-                    }
-                };
-
-                spyOn(modelsMock, 'queryWeatherService').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                store = StoreInjector({'../models': modelsMock});
-                store.configureStore();
+                mockRetrieveLocationTimeZone = jasmine.createSpy('get').and.returnValue(
+                    Promise.resolve({
+                        'properties': {'timeZone': 'America/Chicago'}
+                    })
+                );
+                configureStore();
             });
 
             it('fetches data from the weather service', () => {
-                store.Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
-                expect(modelsMock.queryWeatherService).toHaveBeenCalledWith(LOCATION.latitude, LOCATION.longitude);
+                Actions.retrieveLocationTimeZone(
+                    LOCATION.latitude, LOCATION.longitude, mockRetrieveLocationTimeZone
+                )(mockDispatch, mockGetState);
+                expect(mockRetrieveLocationTimeZone).toHaveBeenCalledWith(LOCATION.latitude, LOCATION.longitude);
             });
 
             it('gets the data and sets the timezone', (done) => {
-                spyOn(store.Actions, 'setLocationIanaTimeZone');
-                let p = store.Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
+                spyOn(Actions, 'setLocationIanaTimeZone');
+                let p = Actions.retrieveLocationTimeZone(
+                    LOCATION.latitude, LOCATION.longitude, mockRetrieveLocationTimeZone
+                )(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(store.Actions.setLocationIanaTimeZone.calls.count()).toBe(1);
-                    expect(store.Actions.setLocationIanaTimeZone).toHaveBeenCalledWith('America/Chicago');
+                    expect(Actions.setLocationIanaTimeZone.calls.count()).toBe(1);
+                    expect(Actions.setLocationIanaTimeZone).toHaveBeenCalledWith('America/Chicago');
                     done();
                 });
             });
         });
 
         describe('retrieveLocationTimeZone with bad data', () => {
-            let store;
-            let modelsMock;
+            let mockQueryWeatherService;
             let mockDispatch;
             let mockGetState;
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
-                let getWeatherServicePromise = Promise.reject(Error('Bad data'));
-                modelsMock = {
-                    queryWeatherService: function () {
-                        return getWeatherServicePromise;
-                    }
-                };
-
-                spyOn(modelsMock, 'queryWeatherService').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                store = StoreInjector({'../models': modelsMock});
-                store.configureStore();
+                mockQueryWeatherService = jasmine.createSpy('get').and.returnValue(
+                    Promise.reject(Error('Bad data'))
+                );
+                configureStore();
             });
 
             it('gets the data and sets the timezone to something', (done) => {
-                spyOn(store.Actions, 'setLocationIanaTimeZone');
-                let p = store.Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
+                spyOn(Actions, 'setLocationIanaTimeZone');
+                let p = Actions.retrieveLocationTimeZone(
+                    LOCATION.latitude, LOCATION.longitude, mockQueryWeatherService
+                )(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(store.Actions.setLocationIanaTimeZone.calls.count()).toBe(1);
-                    expect(store.Actions.setLocationIanaTimeZone).toHaveBeenCalledWith(null);
+                    expect(Actions.setLocationIanaTimeZone.calls.count()).toBe(1);
+                    expect(Actions.setLocationIanaTimeZone).toHaveBeenCalledWith(null);
                     done();
                 });
             });
         });
 
         describe('retrieveTimeSeries with good data', () => {
-            let store;
-            let modelsMock;
+            let mockGetTimeSeries;
             let mockDispatch;
             let mockGetState;
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
-                let getTimeSeriesPromise = Promise.resolve(JSON.parse(MOCK_DATA));
-                modelsMock = {
-                    getTimeSeries: function () {
-                        return getTimeSeriesPromise;
-                    },
-                    sortedParameters
-                };
-
-                spyOn(modelsMock, 'getTimeSeries').and.callThrough();
+                mockGetTimeSeries = jasmine.createSpy('get').and.returnValue(
+                    Promise.resolve(JSON.parse(MOCK_DATA))
+                );
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                store = StoreInjector({'../models': modelsMock});
-                store.configureStore();
 
-                spyOn(store.Actions, 'addTimeSeriesLoading');
-                spyOn(store.Actions, 'removeTimeSeriesLoading');
+                configureStore();
+
+                spyOn(Actions, 'addTimeSeriesLoading');
+                spyOn(Actions, 'removeTimeSeriesLoading');
             });
 
             it('Fetches the time series data', () => {
-                store.Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
+                Actions.retrieveTimeSeries(SITE_NO, null, mockGetTimeSeries)(mockDispatch, mockGetState);
 
-                expect(modelsMock.getTimeSeries).toHaveBeenCalledWith({
+                expect(mockGetTimeSeries).toHaveBeenCalledWith({
                     sites: [SITE_NO],
                     params: null
                 });
 
-                expect(store.Actions.addTimeSeriesLoading.calls.count()).toBe(1);
-                expect(store.Actions.addTimeSeriesLoading.calls.argsFor(0)[0]).toEqual(['current:P7D']);
+                expect(Actions.addTimeSeriesLoading.calls.count()).toBe(1);
+                expect(Actions.addTimeSeriesLoading.calls.argsFor(0)[0]).toEqual(['current:P7D']);
             });
 
             it('should fetch the times series, retrieve the compare time series once the time series is fetched and fetch the statistics', (done) => {
-                spyOn(store.Actions, 'addSeriesCollection');
-                spyOn(store.Actions, 'retrieveLocationTimeZone');
-                spyOn(store.Actions, 'retrieveCompareTimeSeries');
-                spyOn(store.Actions, 'toggleTimeSeries');
-                spyOn(store.Actions, 'setCurrentVariable');
-                let p = store.Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
+                spyOn(Actions, 'addSeriesCollection');
+                spyOn(Actions, 'retrieveLocationTimeZone');
+                spyOn(Actions, 'retrieveCompareTimeSeries');
+                spyOn(Actions, 'toggleTimeSeries');
+                spyOn(Actions, 'setCurrentVariable');
+                let p = Actions.retrieveTimeSeries(SITE_NO, null, mockGetTimeSeries)(mockDispatch, mockGetState);
 
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(8);
-                    expect(store.Actions.addSeriesCollection.calls.count()).toBe(1);
-                    expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('current');
-                    expect(store.Actions.retrieveLocationTimeZone.calls.count()).toBe(1);
-                    expect(store.Actions.retrieveLocationTimeZone.calls.argsFor(0)).toEqual([42.72027778, -90.8191667]);
-                    expect(store.Actions.removeTimeSeriesLoading.calls.count()).toBe(1);
-                    expect(store.Actions.removeTimeSeriesLoading.calls.argsFor(0)[0]).toEqual(['current:P7D']);
-                    expect(store.Actions.retrieveCompareTimeSeries.calls.count()).toBe(1);
-                    expect(store.Actions.retrieveCompareTimeSeries.calls.argsFor(0)[0]).toBe(SITE_NO);
-                    expect(store.Actions.toggleTimeSeries.calls.count()).toBe(1);
-                    expect(store.Actions.toggleTimeSeries.calls.argsFor(0)).toEqual(['current', true]);
-                    expect(store.Actions.setCurrentVariable.calls.count()).toBe(1);
-                    expect(store.Actions.setCurrentVariable.calls.argsFor(0)).toEqual(['45807197']);
+                    expect(Actions.addSeriesCollection.calls.count()).toBe(1);
+                    expect(Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('current');
+                    expect(Actions.retrieveLocationTimeZone.calls.count()).toBe(1);
+                    expect(Actions.retrieveLocationTimeZone.calls.argsFor(0)).toEqual([42.72027778, -90.8191667]);
+                    expect(Actions.removeTimeSeriesLoading.calls.count()).toBe(1);
+                    expect(Actions.removeTimeSeriesLoading.calls.argsFor(0)[0]).toEqual(['current:P7D']);
+                    expect(Actions.retrieveCompareTimeSeries.calls.count()).toBe(1);
+                    expect(Actions.retrieveCompareTimeSeries.calls.argsFor(0)[0]).toBe(SITE_NO);
+                    expect(Actions.toggleTimeSeries.calls.count()).toBe(1);
+                    expect(Actions.toggleTimeSeries.calls.argsFor(0)).toEqual(['current', true]);
+                    expect(Actions.setCurrentVariable.calls.count()).toBe(1);
+                    expect(Actions.setCurrentVariable.calls.argsFor(0)).toEqual(['45807197']);
 
                     done();
                 });
             });
 
             it('The gage height is not set since there is no gage height data', (done) => {
-                spyOn(store.Actions, 'setGageHeight');
-                let p = store.Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
+                spyOn(Actions, 'setGageHeight');
+                let p = Actions.retrieveTimeSeries(SITE_NO, null, mockGetTimeSeries)(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(store.Actions.setGageHeight).toHaveBeenCalledWith(null);
+                    expect(Actions.setGageHeight).toHaveBeenCalledWith(null);
 
                     done();
                 });
@@ -210,32 +192,24 @@ describe('Redux store', () => {
         });
 
         describe('retrieveTimeSeries with gage height data', () => {
-            let store;
-            let modelsMock;
+            let mockGetTimeSeries;
             let mockDispatch;
             let mockGetState;
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
-                let getTimeSeriesPromise = Promise.resolve(JSON.parse(MOCK_GAGE_DATA));
-                modelsMock = {
-                    getTimeSeries: function () {
-                        return getTimeSeriesPromise;
-                    },
-                    sortedParameters
-                };
-
-                spyOn(modelsMock, 'getTimeSeries').and.callThrough();
+                mockGetTimeSeries = jasmine.createSpy('getTimeSeries').and.returnValue(
+                    Promise.resolve(JSON.parse(MOCK_GAGE_DATA))
+                );
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                store = StoreInjector({'../models': modelsMock});
-                store.configureStore();
+                configureStore();
             });
 
             it('The gage height is set', (done) => {
-                spyOn(store.Actions, 'setGageHeight');
-                let p = store.Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
+                spyOn(Actions, 'setGageHeight');
+                let p = Actions.retrieveTimeSeries(SITE_NO, null, mockGetTimeSeries)(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(store.Actions.setGageHeight).toHaveBeenCalledWith(20);
+                    expect(Actions.setGageHeight).toHaveBeenCalledWith(20);
 
                     done();
                 });
@@ -243,44 +217,37 @@ describe('Redux store', () => {
         });
 
         describe('retrieveTimeSeries with bad data', () => {
-            let store;
-            let modelsMock;
+            let mockGetTimeSeries;
             let mockDispatch;
             let mockGetState;
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
-                let getTimeSeriesPromise = Promise.reject(Error('Bad data'));
-                modelsMock = {
-                    getTimeSeries: function () {
-                        return getTimeSeriesPromise;
-                    }
-                };
-
-                spyOn(modelsMock, 'getTimeSeries').and.callThrough();
+                mockGetTimeSeries = jasmine.createSpy('getTimeSeries').and.returnValue(
+                    Promise.reject(Error('Bad data'))
+                );
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                store = StoreInjector({'../models': modelsMock});
 
-                spyOn(store.Actions, 'addTimeSeriesLoading');
-                spyOn(store.Actions, 'removeTimeSeriesLoading');
+                spyOn(Actions, 'addTimeSeriesLoading');
+                spyOn(Actions, 'removeTimeSeriesLoading');
             });
 
 
             it('should reset the current time series', (done) => {
-                spyOn(store.Actions, 'resetTimeSeries');
-                spyOn(store.Actions, 'toggleTimeSeries');
-                let p = store.Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
+                spyOn(Actions, 'resetTimeSeries');
+                spyOn(Actions, 'toggleTimeSeries');
+                let p = Actions.retrieveTimeSeries(SITE_NO, null, mockGetTimeSeries)(mockDispatch, mockGetState);
 
-                expect(store.Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P7D']);
+                expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P7D']);
 
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(4);
-                    expect(store.Actions.resetTimeSeries.calls.count()).toBe(1);
-                    expect(store.Actions.resetTimeSeries.calls.argsFor(0)[0]).toBe('current:P7D');
-                    expect(store.Actions.toggleTimeSeries.calls.count()).toBe(1);
-                    expect(store.Actions.toggleTimeSeries.calls.argsFor(0)).toEqual(['current', false]);
-                    expect(store.Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P7D']);
+                    expect(Actions.resetTimeSeries.calls.count()).toBe(1);
+                    expect(Actions.resetTimeSeries.calls.argsFor(0)[0]).toBe('current:P7D');
+                    expect(Actions.toggleTimeSeries.calls.count()).toBe(1);
+                    expect(Actions.toggleTimeSeries.calls.argsFor(0)).toEqual(['current', false]);
+                    expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P7D']);
 
                     done();
                 });
@@ -288,8 +255,7 @@ describe('Redux store', () => {
         });
 
         describe('retrieveCompareTimeSeries with good data', () => {
-            let store;
-            let modelsMock;
+            let mockGetPreviousYearTimeSeries;
             let mockDispatch;
             let mockGetState;
 
@@ -298,26 +264,23 @@ describe('Redux store', () => {
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
-                let getPreviousTSPromise = Promise.resolve(JSON.parse(MOCK_LAST_YEAR_DATA));
-                modelsMock = {
-                    getPreviousYearTimeSeries: function () {
-                        return getPreviousTSPromise;
-                    }
-                };
-                spyOn(modelsMock, 'getPreviousYearTimeSeries').and.callThrough();
+                mockGetPreviousYearTimeSeries = jasmine.createSpy('getPreviousYearTimeSeries').and.returnValue(
+                    Promise.resolve(JSON.parse(MOCK_LAST_YEAR_DATA))
+                );
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                store = StoreInjector({'../models': modelsMock});
-                spyOn(store.Actions, 'addTimeSeriesLoading');
-                spyOn(store.Actions, 'removeTimeSeriesLoading');
+                spyOn(Actions, 'addTimeSeriesLoading');
+                spyOn(Actions, 'removeTimeSeriesLoading');
             });
 
             it('Fetches the previous year\'s time series', () => {
-                store.Actions.retrieveCompareTimeSeries(SITE_NO, 'P7D', START_DATE, END_DATE)(mockDispatch, mockGetState);
+                Actions.retrieveCompareTimeSeries(
+                    SITE_NO, 'P7D', START_DATE, END_DATE, mockGetPreviousYearTimeSeries
+                )(mockDispatch, mockGetState);
 
-                expect(store.Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['compare:P7D']);
-                expect(modelsMock.getPreviousYearTimeSeries.calls.count()).toBe(1);
-                expect(modelsMock.getPreviousYearTimeSeries.calls.argsFor(0)[0]).toEqual({
+                expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['compare:P7D']);
+                expect(mockGetPreviousYearTimeSeries.calls.count()).toBe(1);
+                expect(mockGetPreviousYearTimeSeries.calls.argsFor(0)[0]).toEqual({
                     site: SITE_NO,
                     startTime: START_DATE,
                     endTime: END_DATE
@@ -325,14 +288,14 @@ describe('Redux store', () => {
             });
 
             it('Dispatches the action to add the compare time series and to set its visibility to false', (done) => {
-                spyOn(store.Actions, 'addSeriesCollection');
-                spyOn(store.Actions, 'toggleTimeSeries');
-                let p = store.Actions.retrieveCompareTimeSeries(SITE_NO, 'P7D', START_DATE, END_DATE)(mockDispatch, mockGetState);
+                spyOn(Actions, 'addSeriesCollection');
+                spyOn(Actions, 'toggleTimeSeries');
+                let p = Actions.retrieveCompareTimeSeries(SITE_NO, 'P7D', START_DATE, END_DATE)(mockDispatch, mockGetState);
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(3);
-                    expect(store.Actions.addSeriesCollection.calls.count()).toBe(1);
-                    expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('compare:P7D');
-                    expect(store.Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['compare:P7D']);
+                    expect(Actions.addSeriesCollection.calls.count()).toBe(1);
+                    expect(Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('compare:P7D');
+                    expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['compare:P7D']);
 
                     done();
                 });
@@ -340,8 +303,7 @@ describe('Redux store', () => {
         });
 
         describe('retrieveCompareTimeSeries with bad data', () => {
-            let store;
-            let modelsMock;
+            let mockGetPreviousYearTimeSeries;
             let mockDispatch;
             let mockGetState;
 
@@ -349,31 +311,28 @@ describe('Redux store', () => {
             const END_DATE = new Date(1483855200000);
 
             beforeEach(() => {
-                let getPreviousTSPromise = Promise.reject(Error('Bad data'));
-                modelsMock = {
-                    getPreviousYearTimeSeries: function () {
-                        return getPreviousTSPromise;
-                    }
-                };
-                spyOn(modelsMock, 'getPreviousYearTimeSeries').and.callThrough();
+                mockGetPreviousYearTimeSeries = jasmine.createSpy('getPreviousYearTimeSeries').and.returnValue(
+                    Promise.reject(Error('Bad data'))
+                );
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                store = StoreInjector({'../models': modelsMock});
 
-                spyOn(store.Actions, 'addTimeSeriesLoading');
-                spyOn(store.Actions, 'removeTimeSeriesLoading');
+                spyOn(Actions, 'addTimeSeriesLoading');
+                spyOn(Actions, 'removeTimeSeriesLoading');
             });
 
             it('Dispatches the action to reset the compare time series', (done) => {
-                spyOn(store.Actions, 'resetTimeSeries');
-                let p = store.Actions.retrieveCompareTimeSeries(SITE_NO, 'P7D', START_DATE, END_DATE)(mockDispatch, mockGetState);
+                spyOn(Actions, 'resetTimeSeries');
+                let p = Actions.retrieveCompareTimeSeries(
+                    SITE_NO, 'P7D', START_DATE, END_DATE, mockGetPreviousYearTimeSeries
+                )(mockDispatch, mockGetState);
 
-                expect(store.Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['compare:P7D']);
+                expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['compare:P7D']);
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(3);
-                    expect(store.Actions.resetTimeSeries.calls.count()).toBe(1);
-                    expect(store.Actions.resetTimeSeries.calls.argsFor(0)[0]).toBe('compare:P7D');
-                    expect(store.Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['compare:P7D']);
+                    expect(Actions.resetTimeSeries.calls.count()).toBe(1);
+                    expect(Actions.resetTimeSeries.calls.argsFor(0)[0]).toBe('compare:P7D');
+                    expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['compare:P7D']);
 
                     done();
                 });
@@ -381,86 +340,78 @@ describe('Redux store', () => {
         });
 
         describe('retrieveMedianStatistics with data', () => {
-            let store;
-            let statisticsDataMock;
+            let mockFetchSiteStatistics;
             let mockDispatch;
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
-                let fetchSiteStatisticsPromise = Promise.resolve({
-                    '00010': {
-                        '12': [{
-                            month_nu: '3'
-                        }]
-                    }
-                });
-                statisticsDataMock = {
-                    fetchSiteStatistics : function() {
-                        return fetchSiteStatisticsPromise;
-                    }
-                };
-                spyOn(statisticsDataMock, 'fetchSiteStatistics').and.callThrough();
+                mockFetchSiteStatistics = jasmine.createSpy('fetchSiteStatistics').and.returnValue(
+                    Promise.resolve({
+                        '00010': {
+                            '12': [{
+                                month_nu: '3'
+                            }]
+                        }
+                    })
+                );
                 mockDispatch = jasmine.createSpy('mockDispatch');
-                store = StoreInjector({'../statisticsData': statisticsDataMock});
-                store.configureStore();
-                spyOn(store.Actions, 'addMedianStats');
-                spyOn(store.Actions, 'toggleTimeSeries');
+                configureStore();
+                spyOn(Actions, 'addMedianStats');
+                spyOn(Actions, 'toggleTimeSeries');
 
                 mockDispatch = jasmine.createSpy('mockDispatch');
             });
 
             it('should fetch the site statistics and call the appropriate actions', (done) => {
-                store.Actions.retrieveMedianStatistics('12345678')(mockDispatch).then(() => {
-                    expect(statisticsDataMock.fetchSiteStatistics).toHaveBeenCalledWith({
+                Actions.retrieveMedianStatistics('12345678', mockFetchSiteStatistics)(mockDispatch).then(() => {
+                    expect(mockFetchSiteStatistics).toHaveBeenCalledWith({
                         site: '12345678',
                         statType: 'median'
                     });
                     expect(mockDispatch.calls.count()).toBe(2);
-                    expect(store.Actions.addMedianStats).toHaveBeenCalled();
-                    expect(store.Actions.toggleTimeSeries).toHaveBeenCalledWith('median', true);
+                    expect(Actions.addMedianStats).toHaveBeenCalled();
+                    expect(Actions.toggleTimeSeries).toHaveBeenCalledWith('median', true);
                     done();
                 });
             });
         });
 
         describe('retrieveExtendedTimeSeries with data', () => {
-            let store;
-            let modelsMock;
+            let mockGetTimeSeries;
             let mockDispatch;
             let mockGetState;
 
             beforeEach(() => {
-                let getTimeSeriesPromise = Promise.resolve(JSON.parse(MOCK_DATA));
-                modelsMock = {
-                    getTimeSeries: function() {
-                        return getTimeSeriesPromise;
-                    }
-                };
-                spyOn(modelsMock, 'getTimeSeries').and.callThrough();
+                mockGetTimeSeries = jasmine.createSpy('getTimeSeries').and.returnValue(
+                    Promise.resolve(JSON.parse(MOCK_DATA))
+                );
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState');
 
-                store = StoreInjector({'../models': modelsMock});
-                spyOn(store.Actions, 'addTimeSeriesLoading');
-                spyOn(store.Actions, 'removeTimeSeriesLoading');
+                spyOn(Actions, 'addTimeSeriesLoading');
+                spyOn(Actions, 'removeTimeSeriesLoading');
             });
 
             it('Should dispatch the action to set the current date range', () => {
                 mockGetState.and.returnValue(TEST_STATE);
-                store.Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
+                Actions.retrieveExtendedTimeSeries(
+                    '12345678', 'P30D', mockGetTimeSeries
+                )(mockDispatch, mockGetState);
                 expect(mockDispatch).toHaveBeenCalledWith({
                     type: 'SET_CURRENT_DATE_RANGE',
                     period: 'P30D'
                 });
-                expect(store.Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
+                expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
             });
 
             it('Should call getTimeSeries with the appropriate parameters', () => {
                 mockGetState.and.returnValue(TEST_STATE);
-                store.Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
+                Actions.retrieveExtendedTimeSeries(
+                    '12345678', 'P30D', mockGetTimeSeries
+                )(mockDispatch, mockGetState);
 
-                expect(modelsMock.getTimeSeries).toHaveBeenCalled();
-                const args = modelsMock.getTimeSeries.calls.argsFor(0)[0];
+                expect(mockGetTimeSeries).toHaveBeenCalled();
+                const args = mockGetTimeSeries.calls.argsFor(0)[0];
                 expect(args.sites).toEqual(['12345678']);
                 expect(args.params).toEqual(['00060']);
                 expect(args.endDate).toEqual(new Date(1490936400000));
@@ -468,16 +419,18 @@ describe('Redux store', () => {
 
             it('Should dispatch add series collection and retrieveCompareTimeSeries', (done) => {
                 mockGetState.and.returnValue(TEST_STATE);
-                spyOn(store.Actions, 'retrieveCompareTimeSeries');
-                spyOn(store.Actions, 'addSeriesCollection');
-                let p = store.Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
+                spyOn(Actions, 'retrieveCompareTimeSeries');
+                spyOn(Actions, 'addSeriesCollection');
+                let p = Actions.retrieveExtendedTimeSeries(
+                    '12345678', 'P30D', mockGetTimeSeries
+                )(mockDispatch, mockGetState);
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(5);
-                    expect(store.Actions.addSeriesCollection).toHaveBeenCalled();
-                    expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toEqual('current:P30D:00060');
-                    expect(store.Actions.retrieveCompareTimeSeries).toHaveBeenCalled();
-                    expect(store.Actions.retrieveCompareTimeSeries.calls.argsFor(0)[1]).toEqual('P30D');
-                    expect(store.Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
+                    expect(Actions.addSeriesCollection).toHaveBeenCalled();
+                    expect(Actions.addSeriesCollection.calls.argsFor(0)[0]).toEqual('current:P30D:00060');
+                    expect(Actions.retrieveCompareTimeSeries).toHaveBeenCalled();
+                    expect(Actions.retrieveCompareTimeSeries.calls.argsFor(0)[1]).toEqual('P30D');
+                    expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
                     done();
                 });
             });
@@ -490,16 +443,15 @@ describe('Redux store', () => {
                         })
                     })
                 }));
-                store.Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
-                expect(modelsMock.getTimeSeries).not.toHaveBeenCalled();
-                expect(store.Actions.addTimeSeriesLoading).not.toHaveBeenCalled();
-                expect(store.Actions.removeTimeSeriesLoading).not.toHaveBeenCalled();
+                Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
+                expect(mockGetTimeSeries).not.toHaveBeenCalled();
+                expect(Actions.addTimeSeriesLoading).not.toHaveBeenCalled();
+                expect(Actions.removeTimeSeriesLoading).not.toHaveBeenCalled();
             });
         });
 
         describe('retrieveExtendedTimeSeries with bad data', () => {
-            let store;
-            let modelsMock;
+            let mockGetTimeSeries;
             let mockDispatch;
             let mockGetState;
             const TEST_STATE = {
@@ -552,14 +504,9 @@ describe('Redux store', () => {
 
 
             beforeEach(() => {
-                let getTimeSeriesPromise = Promise.reject(Error('Bad data'));
-                modelsMock = {
-                   getTimeSeries: function() {
-                       return getTimeSeriesPromise;
-                   }
-                };
-
-                spyOn(modelsMock, 'getTimeSeries').and.callThrough();
+                mockGetTimeSeries = jasmine.createSpy('getTimeSeries').and.returnValue(
+                    Promise.reject(Error('Bad data'))
+                );
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState');
 
@@ -569,22 +516,23 @@ describe('Redux store', () => {
                     })
                 }));
 
-                store = StoreInjector({'../models': modelsMock});
-                spyOn(store.Actions, 'addTimeSeriesLoading');
-                spyOn(store.Actions, 'removeTimeSeriesLoading');
+                spyOn(Actions, 'addTimeSeriesLoading');
+                spyOn(Actions, 'removeTimeSeriesLoading');
             });
 
             it('Should add the series with an empty collection', (done) => {
-                let p = store.Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
+                let p = Actions.retrieveExtendedTimeSeries(
+                    '12345678', 'P30D', mockGetTimeSeries
+                )(mockDispatch, mockGetState);
 
-                expect(store.Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
+                expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(4);
                     let arg = mockDispatch.calls.argsFor(2)[0];
                     expect(arg.type).toBe('ADD_TIME_SERIES_COLLECTION');
                     expect(arg.key).toBe('current:P30D:00060');
                     expect(arg.data).toEqual({});
-                    expect(store.Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
+                    expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
 
 
                     done();
@@ -594,70 +542,64 @@ describe('Redux store', () => {
         });
 
         describe('retrieveFloodData with data', () => {
-            let store;
-            let floodDataMock;
+            let mockFetchFloodFeatures;
+            let mockFetchFloodExtent;
             let mockDispatch;
 
             beforeEach(() => {
-                let getFeaturePromise = Promise.resolve([{
-                    attributes: {
-                        USGSI: '03341500',
-                        STAGE: 30
-                    }
-                }, {
-                    attributes: {
-                        USGSID: '03341500',
-                        STAGE: 29
-                    }
-                }, {
-                    attributes: {
-                        USGSID: '03341500',
-                        STAGE: 28
-                    }
-                }]);
-                let getExtentPromise = Promise.resolve({
-                    extent: {
-                        xmin: -84.35321,
-                        ymin: 34.01666,
-                        xmax: 84.22346,
-                        ymax: 34.1010
-                    },
-                    spatialReference: {
-                        wkid: 4326,
-                        latestWkid: 4326
-                    }
-                });
-
-                floodDataMock = {
-                    fetchFloodFeatures: function () {
-                        return getFeaturePromise;
-                    },
-                    fetchFloodExtent: function () {
-                        return getExtentPromise;
-                    }
-                };
-
-                spyOn(floodDataMock, 'fetchFloodFeatures').and.callThrough();
-                spyOn(floodDataMock, 'fetchFloodExtent').and.callThrough();
+                mockFetchFloodFeatures = jasmine.createSpy('fetchFloodFeatures').and.returnValue(
+                    Promise.resolve([{
+                        attributes: {
+                            USGSI: '03341500',
+                            STAGE: 30
+                        }
+                    }, {
+                        attributes: {
+                            USGSID: '03341500',
+                            STAGE: 29
+                        }
+                    }, {
+                        attributes: {
+                            USGSID: '03341500',
+                            STAGE: 28
+                        }
+                    }])
+                );
+                mockFetchFloodExtent = jasmine.createSpy('fetchFloodExtent').and.returnValue(
+                    Promise.resolve({
+                        extent: {
+                            xmin: -84.35321,
+                            ymin: 34.01666,
+                            xmax: 84.22346,
+                            ymax: 34.1010
+                        },
+                        spatialReference: {
+                            wkid: 4326,
+                            latestWkid: 4326
+                        }
+                    })
+                );
                 mockDispatch = jasmine.createSpy('mockDispatch');
-                store = StoreInjector({'../floodData': floodDataMock});
-
             });
 
             it('Make fetch call for both features and extent', () => {
-                store.Actions.retrieveFloodData(SITE_NO)(mockDispatch);
+                Actions.retrieveFloodData(
+                    SITE_NO, mockFetchFloodFeatures, mockFetchFloodExtent
+                )(mockDispatch);
 
-                expect(floodDataMock.fetchFloodFeatures).toHaveBeenCalledWith(SITE_NO);
-                expect(floodDataMock.fetchFloodExtent).toHaveBeenCalledWith(SITE_NO);
+                expect(mockFetchFloodFeatures).toHaveBeenCalledWith(SITE_NO);
+                expect(mockFetchFloodExtent).toHaveBeenCalledWith(SITE_NO);
             });
 
             it('dispatches a setFloodFeatures action after promises are resolved', (done) => {
-                spyOn(store.Actions, 'setFloodFeatures').and.callThrough();
-                let p = store.Actions.retrieveFloodData(SITE_NO)(mockDispatch);
+                spyOn(Actions, 'setFloodFeatures').and.callThrough();
+                let p = Actions.retrieveFloodData(
+                    SITE_NO, mockFetchFloodFeatures, mockFetchFloodExtent
+                )(mockDispatch);
 
                 p.then(() => {
                     expect(mockDispatch).toHaveBeenCalled();
-                    expect(store.Actions.setFloodFeatures).toHaveBeenCalledWith([28, 29, 30], {
+                    expect(Actions.setFloodFeatures).toHaveBeenCalledWith([28, 29, 30], {
                         xmin: -84.35321,
                         ymin: 34.01666,
                         xmax: 84.22346,
@@ -670,43 +612,36 @@ describe('Redux store', () => {
         });
 
         describe('retrieveFloodData with no data', () => {
-            let store;
-            let floodDataMock;
+            let mockFetchFloodFeatures;
+            let mockFetchFloodExtent;
             let mockDispatch;
 
             const SITE_NO = '12345678';
             beforeEach(() => {
-                let getFeaturePromise = Promise.resolve([]);
-                let getExtentPromise = Promise.resolve({
-                    xmin: 'NaN',
-                    ymin: 'NaN',
-                    xmax: 'NaN',
-                    ymax: 'NaN'
-                });
-
-                floodDataMock = {
-                    fetchFloodFeatures: function () {
-                        return getFeaturePromise;
-                    },
-                    fetchFloodExtent: function () {
-                        return getExtentPromise;
-                    }
-                };
-
-                spyOn(floodDataMock, 'fetchFloodFeatures').and.callThrough();
-                spyOn(floodDataMock, 'fetchFloodExtent').and.callThrough();
+                mockFetchFloodFeatures = jasmine.createSpy('fetchFloodFeatures').and.returnValue(
+                    Promise.resolve([])
+                );
+                mockFetchFloodExtent = jasmine.createSpy('fetchFloodExtent').and.returnValue(
+                    Promise.resolve({
+                        xmin: 'NaN',
+                        ymin: 'NaN',
+                        xmax: 'NaN',
+                        ymax: 'NaN'
+                    })
+                );
                 mockDispatch = jasmine.createSpy('mockDispatch');
-                store = StoreInjector({'../floodData': floodDataMock});
 
             });
 
             it('dispatches a setFloodFeatures action after promises are resolved', (done) => {
-                spyOn(store.Actions, 'setFloodFeatures').and.callThrough();
-                let p = store.Actions.retrieveFloodData(SITE_NO)(mockDispatch);
+                spyOn(Actions, 'setFloodFeatures').and.callThrough();
+                let p = Actions.retrieveFloodData(
+                    SITE_NO, mockFetchFloodFeatures, mockFetchFloodExtent
+                )(mockDispatch);
 
                 p.then(() => {
                     expect(mockDispatch).toHaveBeenCalled();
-                    expect(store.Actions.setFloodFeatures).toHaveBeenCalledWith([], {});
+                    expect(Actions.setFloodFeatures).toHaveBeenCalledWith([], {});
 
 
                     done();
