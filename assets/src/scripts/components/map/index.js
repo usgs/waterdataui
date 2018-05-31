@@ -1,6 +1,6 @@
 import { select } from 'd3-selection';
 import { createStructuredSelector } from 'reselect';
-import { map as createMap, marker as createMarker } from 'leaflet/src/Leaflet';
+import { map as createMap, marker as createMarker } from 'leaflet';
 import { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util } from 'esri-leaflet/src/EsriLeaflet';
 import { link, provide } from '../../lib/redux';
 import config from '../../config';

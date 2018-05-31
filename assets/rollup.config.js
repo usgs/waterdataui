@@ -2,6 +2,7 @@
  * Rollup configuration.
  * NOTE: This is a CommonJS module so it can be imported by Karma.
  */
+
 const buble = require('rollup-plugin-buble');
 const commonjs = require('rollup-plugin-commonjs');
 const json = require('rollup-plugin-json');
@@ -10,7 +11,7 @@ const replace = require('rollup-plugin-replace');
 const { uglify } = require('rollup-plugin-uglify');
 
 
-const env = process.env.NODE_ENV || 'development';
+const ENV = process.env.NODE_ENV || 'development';
 
 module.exports = {
     input: 'src/scripts/index.js',
@@ -21,12 +22,12 @@ module.exports = {
 
             // use "jsnext:main" if possible
             // – see https://github.com/rollup/rollup/wiki/jsnext:main
-            jsnext: true,
+            jsnext: false,
 
             // use "main" field or index.js, even if it's not an ES6 module
             // (needs to be converted from CommonJS to ES6
             // – see https://github.com/rollup/rollup-plugin-commonjs
-            main: true,  // Default: true
+            main: false,  // Default: true
 
             // some package.json files have a `browser` field which
             // specifies alternative files to load for people bundling
@@ -43,9 +44,9 @@ module.exports = {
             }
         }),
         replace({
-          'process.env.NODE_ENV': JSON.stringify(env)
+          'process.env.NODE_ENV': JSON.stringify(ENV)
         }),
-        env === 'production' && uglify({
+        ENV === 'production' && uglify({
             compress: {
                 dead_code: true,
                 drop_console: true
@@ -56,7 +57,7 @@ module.exports = {
         name: 'wdfn',
         file: 'dist/bundle.js',
         format: 'iife',
-        sourcemap: env !== 'production' ? 'inline' : false
+        sourcemap: ENV !== 'production' ? 'inline' : false
     },
-    treeshake: env === 'production'
+    treeshake: ENV === 'production'
 };
