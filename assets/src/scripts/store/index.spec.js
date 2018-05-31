@@ -506,7 +506,6 @@ describe('Redux store', () => {
                 }
             };
 
-
             beforeEach(() => {
                 mockGetTimeSeries = jasmine.createSpy('getTimeSeries').and.returnValue(
                     Promise.reject(Error('Bad data'))
