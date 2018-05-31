@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 not have to be coerced into a time series.
 - Embedded hydrograph is time zone aware.
 - Scrolling added to the 'provisional statement' in IFrame embed
-- The Browserify build tooling was replaced with Webpack.
+- The Browserify/Babel build tooling was replaced with Rollup/Bublé.
 
 ### Fixed
 - A bug with the graph watermark intercepting mouseover events driving the tooltips was fixed.
@@ -28,7 +28,7 @@ not have to be coerced into a time series.
 - Added dynamic left margin for tooltip text to prevent overlap with y-axis labels
 - Bug that caused incorrect font styling on tooltips
 - Various accessibility violations
-- Tooltips that were hard to read when they overlapped graph lines 
+- Tooltips that were hard to read when they overlapped graph lines
 
 ## [0.9.0] - 2018-05-10
 ### Fixed
