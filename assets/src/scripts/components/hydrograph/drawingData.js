@@ -1,3 +1,4 @@
+import { set } from 'd3-collection';
 import memoize from 'fast-memoize';
 import find from 'lodash/find';
 import { DateTime } from 'luxon';
@@ -287,7 +288,7 @@ export const pointsTableDataSelector = memoize(tsKey => createSelector(
 const getLineClasses = function(pt) {
     let dataMask = null;
     if (pt.value === null) {
-        let qualifiers = new Set(pt.qualifiers.map(q => q.toLowerCase()));
+        let qualifiers = set(pt.qualifiers.map(q => q.toLowerCase()));
 
         // current business rules specify that a particular data point
         // will only have at most one masking qualifier

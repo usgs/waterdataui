@@ -1,4 +1,4 @@
-
+import { set } from 'd3-collection';
 import { mouse, select } from 'd3-selection';
 import { transition } from 'd3-transition';
 import memoize from 'fast-memoize';
@@ -75,11 +75,9 @@ const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone) {
     let label = '';
     if (datum && qualifiers) {
         let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
-
-        const maskKeys = new Set(Object.keys(MASK_DESC));
-        const qualiferKeysLower = new Set(datum.qualifiers.map(x => x.toLowerCase()));
-        const maskKeyIntersect = [...qualiferKeysLower].filter(x => maskKeys.has(x));
-
+        const maskKeys = set(Object.keys(MASK_DESC));
+        const qualiferKeysLower = set(datum.qualifiers.map(x => x.toLowerCase()));
+        const maskKeyIntersect = [...qualiferKeysLower.values()].filter(x => maskKeys.has(x));
         if (maskKeyIntersect.length) {
             // a data point will have at most one masking qualifier
             valueStr = MASK_DESC[[maskKeyIntersect][0]];
