@@ -20,7 +20,7 @@ module.exports = function (config) {
             'tests/scripts/globalConfig.js',
             {
                 //pattern: 'src/scripts/components/hydrograph/legend.spec.js',
-                //pattern: 'src/scripts/components/hydrograph/cursor.spec.js',
+                //pattern: 'src/scripts/utils.spec.js',
                 pattern: 'src/scripts/**/*.spec.js',
                 watched: false
             }

@@ -1,7 +1,8 @@
 // functions to facilitate legend creation for a d3 plot
+import { set } from 'd3-collection';
 import memoize from 'fast-memoize';
-
 import { createSelector } from 'reselect';
+
 import { CIRCLE_RADIUS } from './layout';
 import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from './markers';
 import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from './drawingData';
@@ -185,7 +186,7 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
             default: classes.some((cls) => !cls.approved && !cls.estimated && !cls.dataMask),
             approved: classes.some((cls) => cls.approved),
             estimated: classes.some((cls) => cls.estimated),
-            dataMasks: new Set(classes.map((cls) => cls.dataMask).filter((mask) => {
+            dataMasks: set(classes.map((cls) => cls.dataMask).filter((mask) => {
                 return mask;
             }))
         };
