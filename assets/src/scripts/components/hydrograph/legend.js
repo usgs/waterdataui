@@ -19,7 +19,7 @@ const TS_LABEL = {
 
 
 const tsMaskMarkers = function(tsKey, masks) {
-    return Array.from(masks.entries()).map((mask) => {
+    return Array.from(masks.values()).map((mask) => {
         const maskName = MASK_DESC[mask];
         const tsClass = `${maskName.replace(' ', '-').toLowerCase()}-mask`;
         const fill = `url(#${HASH_ID[tsKey]})`;
