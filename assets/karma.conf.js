@@ -1,3 +1,5 @@
+var istanbul = require('rollup-plugin-istanbul');
+
 
 /**
  * Karma configuration for WDFN assets
@@ -77,14 +79,20 @@ module.exports = function (config) {
     if (!process.env.KARMA_SAUCE_LABS) {
         karmaConfig = {
             ...karmaConfig,
+            rollupPreprocessor: {
+                ...karmaConfig.rollupPreprocessor,
+                plugins: [
+                    ...karmaConfig.rollupPreprocessor.plugins,
+                    istanbul()
+                ]
+            },
             reporters: [
-                ...karmaConfig.reporters
-                //'coverage'
+                ...karmaConfig.reporters,
+                'coverage'
             ],
-
             coverageReporter: {
                 reporters: [
-                    {type: 'html', dir: 'coverage/'},
+                    //{type: 'html', dir: 'coverage/'},
                     {type: 'cobertura', dir: 'coverage/'},
                     {type: 'lcovonly', dir: 'coverage/'}
                 ]
