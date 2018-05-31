@@ -7,6 +7,8 @@
  * time, and `karma --watch` tasks are very fast.
  */
 
+import './polyfills';
+
 import './accessibility.spec';
 import './ajax.spec';
 import './components/embed.spec';

@@ -1,4 +1,4 @@
-import 'matchmedia-polyfill';
+import './polyfills';
 
 // Initialize the 18F Web design standards
 import 'uswds';
@@ -21,7 +21,8 @@ const COMPONENTS = {
 
 function main() {
     // NOTE: Here we use a try/catch block rather than a global "onerror"
-    // handler, because Babel's polyfills strip some of the exception data out.
+    // handler, to avoid the exception data from getting stripped out by
+    // anything in the build tooling.
     // This method retains access to the exception object.
     try {
         let nodes = document.getElementsByClassName('wdfn-component');
