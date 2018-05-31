@@ -283,7 +283,8 @@ describe('Cursor module', () => {
             // Check each date with the given offset against the hourly-spaced
             // test DATA.
             function expectOffset(offset, side) {
-                for (let [index, datum] of DATA.entries()) {
+                for (let index = 0; index < DATA.length; index++) {
+                    const datum = DATA[index];
                     let expected;
                     if (side === 'left' || index === DATA.length - 1) {
                         expected = {datum, index};

@@ -99,16 +99,16 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
         const maskDescWords = maskDesc.split(' ');
 
         if (maskDescWords.length > 1) {
-            Array.from(maskDescWords.entries()).forEach(x => {
-                const yPosition = 15 + x[0]*12;
-                const maskText = x[1];
+            for (let i = 0; i < maskDescWords.length; i++) {
+                const yPosition = 15 + i * 12;
+                const maskText = maskDescWords[i];
                 let tspan = svgText.append('tspan')
                     .attr('x', 0)
                     .attr('y', yPosition)
                     .text(maskText);
                 centerElement(svgText);
                 centerElement(tspan);
-            });
+            }
         } else {
             svgText.text(maskDesc)
                 .attr('y', '20');

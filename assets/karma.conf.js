@@ -19,9 +19,9 @@ module.exports = function (config) {
         files: [
             'tests/scripts/globalConfig.js',
             {
-                pattern: 'src/scripts/components/hydrograph/legend.spec.js',
-                //pattern: 'src/scripts/components/hydrograph/tooltip.spec.js',
-                //pattern: 'src/scripts/**/*.spec.js',
+                //pattern: 'src/scripts/components/hydrograph/legend.spec.js',
+                //pattern: 'src/scripts/components/hydrograph/cursor.spec.js',
+                pattern: 'src/scripts/**/*.spec.js',
                 watched: false
             }
         ],
