@@ -290,7 +290,9 @@ describe('Redux store', () => {
             it('Dispatches the action to add the compare time series and to set its visibility to false', (done) => {
                 spyOn(Actions, 'addSeriesCollection');
                 spyOn(Actions, 'toggleTimeSeries');
-                let p = Actions.retrieveCompareTimeSeries(SITE_NO, 'P7D', START_DATE, END_DATE)(mockDispatch, mockGetState);
+                let p = Actions.retrieveCompareTimeSeries(
+                    SITE_NO, 'P7D', START_DATE, END_DATE, mockGetPreviousYearTimeSeries
+                )(mockDispatch, mockGetState);
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(3);
                     expect(Actions.addSeriesCollection.calls.count()).toBe(1);
@@ -443,7 +445,9 @@ describe('Redux store', () => {
                         })
                     })
                 }));
-                Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
+                Actions.retrieveExtendedTimeSeries(
+                    '12345678', 'P30D', mockGetTimeSeries
+                )(mockDispatch, mockGetState);
                 expect(mockGetTimeSeries).not.toHaveBeenCalled();
                 expect(Actions.addTimeSeriesLoading).not.toHaveBeenCalled();
                 expect(Actions.removeTimeSeriesLoading).not.toHaveBeenCalled();
