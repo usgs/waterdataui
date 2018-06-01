@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.10.0] - 2018-06-01
 ### Added
 - Loading indicators for initial time series load and for loading extended data
 - Added no data alert for sites with no time series data.
@@ -208,7 +210,8 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.9.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.10.0...master
+[0.10.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.9.0...waterdataui-0.10.0
 [0.9.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.8.0...waterdataui-0.9.0
 [0.8.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.7.0...waterdataui-0.8.0
 [0.7.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.6.0...waterdataui-0.7.0
