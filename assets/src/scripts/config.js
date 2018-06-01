@@ -1,8 +1,9 @@
 /**
  * Export runtime configuration settings stored in the global CONFIG variable.
  */
+const config = window.CONFIG || {};
 export default {
-    ...(window.CONFIG || {}),
+    ...config,
 
     // These are the screen size breakpoints in the USWDS style sheet
     USWDS_SMALL_SCREEN: 481,
