@@ -121,7 +121,6 @@ class TestMonitoringLocationView(TestCase):
                                           'format': 'rdb'})
         self.assertEqual(response.status_code, 503)
 
-
 class TestHydrologicalUnitView:
     # pylint: disable=R0201
 
@@ -255,4 +254,36 @@ MOCK_SITE_LIST_2 = (
     'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\tS\t'
     'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00095\t\t69943\tFrom multiparameter sonde\t'
     'wat\t\t1646694\t0\t2013-11-23\t2018-01-10\t1509'
+)
+
+MOCK_COOPERATOR_JSON = (
+    {"80": {
+        "06814000": 0,
+        "06847900": {
+            "Customers": [
+                {
+                    "IconURL": "http://water.usgs.gov/customer/icons/6737.gif",
+                    "Name": "Mock Water Office",
+                    "URL": "http://www.kwo.org/"
+                },
+                {
+                    "IconURL": "http://water.usgs.gov/customer/icons/usgsIcon.gif",
+                    "Name": "Mock USGS - Cooperative Matching Funds",
+                    "URL": "http://water.usgs.gov/coop/"
+                }
+            ]
+        },
+        "06848500": 0,
+        "06853500": 0,
+        "06854000": {
+            "Customers": [
+                {
+                    "IconURL": "http://water.usgs.gov/customer/icons/7064.gif",
+                    "Name": "Mock US Bureau of Reclamation - NE/KS Area Office",
+                    "URL": "http://www.usbr.gov/gp/"
+                }
+            ]
+        },
+    }
+    }
 )

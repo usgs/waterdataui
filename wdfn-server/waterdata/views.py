@@ -102,6 +102,7 @@ def monitoring_location(site_no):
                 app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
                 app.config['HUC_LOOKUP']
             )
+            print('location with values ', location_with_values['district_cd']['code'])
             questions_link = None
             try:
                 site_owner_state = (
@@ -112,17 +113,21 @@ def monitoring_location(site_no):
             except KeyError:
                 site_owner_state = None
 
-            # get the cooperator data from service
-            # feature toggle; remove 'if/else' when new lookup service is implemented
+            # get the cooperator data from json file
+            # feature toggle;
             # for now, limit to district codes 20 and 51
             if app.config['COOPERATOR_LOOKUP_ENABLED'] and (
                     app.config['COOPERATOR_LOOKUP_ENABLED'] is True or
                     location_with_values.get('district_cd', {}).get('code') in app.config['COOPERATOR_LOOKUP_ENABLED']):
-                params = 'SiteNumber=' + site_no + app.config['URL_PARAMS_COOPERATOR_LOOKUP']
-                cooperator_lookup_data = execute_cooperator_lookup_request(app.config['SERVICE_ROOT_COOPERATOR_LOOKUP'],
-                                                                           app.config['URL_PATH_COOPERATOR_LOOKUP'], params)
+                try:
+                    cooperator_lookup_data = app.config['COOPERATOR_DATA'][location_with_values['district_cd']['code']][site_no]
+                    print('cooperator lookup ', cooperator_lookup_data)
+                except KeyError:
+                    cooperator_lookup_data = None
+                    print('cooperator lookup ', cooperator_lookup_data)
             else:
                 cooperator_lookup_data = None
+                print('conditions are wrong for lookup')
 
             if site_owner_state is not None:
                 questions_link_params = {
