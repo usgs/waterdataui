@@ -10,7 +10,7 @@ import pytest
 import requests_mock
 
 from .. import app
-from ..views import __version__
+from ..views import __version__, get_cooperator_data
 
 
 class TestHomeView(TestCase):
@@ -37,9 +37,8 @@ class TestMonitoringLocationView(TestCase):
         self.parameter_lines = self.test_param_rdb.split('\n')
         self.headers = {'Accept': 'application/ld+json'}
 
-    @mock.patch('waterdata.views.execute_cooperator_lookup_request')
     @mock.patch('waterdata.views.execute_get_request')
-    def test_everything_okay(self, r_mock, r_mock_lookup):
+    def test_everything_okay(self, r_mock):
         m_resp = mock.Mock()
         m_resp.status_code = 200
         m_resp.text = self.test_rdb_text
@@ -48,10 +47,6 @@ class TestMonitoringLocationView(TestCase):
         m_resp_param.status_code = 200
         m_resp_param.iter_lines.return_value = iter(self.parameter_lines)
         r_mock.side_effect = [m_resp, m_resp_param]
-
-        r_mock_lookup.return_value = {'Customers': [{'Name': 'mock_cooperator',
-                                                     'URL': 'http://www.fake.gov',
-                                                     'IconURL': 'http://www.fake.gov'}]}
 
         response = self.app_client.get('/monitoring-location/{}/?agency_cd=USGS'.format(self.test_site_number))
         self.assertEqual(response.status_code, 200)
@@ -120,6 +115,36 @@ class TestMonitoringLocationView(TestCase):
                                           'siteOutput': 'expanded',
                                           'format': 'rdb'})
         self.assertEqual(response.status_code, 503)
+
+
+class TestGetCooperatorData(TestCase):
+    def setUp(self):
+        self.app_client = app.test_client()
+        self.location_with_values_valid = {'district_cd': {'name': 'Valid', 'abbreviation': 'TS', 'code': '20'}}
+        self.location_with_values_invalid = {'district_cd': {'name': 'Invalid', 'abbreviation': 'IS',
+                                                             'code': '1241232'}}
+        self.site_with_cooperators = '06864000'
+        self.site_without_cooperators = '06846500'
+
+    def test_get_cooperator_data(self):
+        reference_cooperator_json = {"Customers": [{
+                "IconURL": "http://water.usgs.gov/customer/icons/6737.gif",
+                "Name": "Kansas Water Office",
+                "URL": "http://www.kwo.org/"
+            },
+            {
+                "IconURL": "http://water.usgs.gov/customer/icons/usgsIcon.gif",
+                "Name": "USGS - Cooperative Matching Funds",
+                "URL": "http://water.usgs.gov/coop/"
+            }]
+        }
+        self.assertEqual(get_cooperator_data(self.location_with_values_valid, self.site_with_cooperators),
+                         reference_cooperator_json)
+        self.assertEqual(get_cooperator_data(self.location_with_values_valid, self.site_without_cooperators),
+                         None)
+        self.assertEqual(get_cooperator_data(self.location_with_values_invalid, self.site_with_cooperators),
+                         None)
+
 
 class TestHydrologicalUnitView:
     # pylint: disable=R0201
@@ -254,36 +279,4 @@ MOCK_SITE_LIST_2 = (
     'POTOMAC RIVER NEAR WASH, DC LITTLE FALLS PUMP STA\tST\t38.94977778\t-77.12763889\tS\t'
     'NAD83\t 37.20\t .1\tNAVD88\t02070008\tuv\t00095\t\t69943\tFrom multiparameter sonde\t'
     'wat\t\t1646694\t0\t2013-11-23\t2018-01-10\t1509'
-)
-
-MOCK_COOPERATOR_JSON = (
-    {"80": {
-        "06814000": 0,
-        "06847900": {
-            "Customers": [
-                {
-                    "IconURL": "http://water.usgs.gov/customer/icons/6737.gif",
-                    "Name": "Mock Water Office",
-                    "URL": "http://www.kwo.org/"
-                },
-                {
-                    "IconURL": "http://water.usgs.gov/customer/icons/usgsIcon.gif",
-                    "Name": "Mock USGS - Cooperative Matching Funds",
-                    "URL": "http://water.usgs.gov/coop/"
-                }
-            ]
-        },
-        "06848500": 0,
-        "06853500": 0,
-        "06854000": {
-            "Customers": [
-                {
-                    "IconURL": "http://water.usgs.gov/customer/icons/7064.gif",
-                    "Name": "Mock US Bureau of Reclamation - NE/KS Area Office",
-                    "URL": "http://www.usbr.gov/gp/"
-                }
-            ]
-        },
-    }
-    }
 )
