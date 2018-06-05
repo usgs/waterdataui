@@ -245,9 +245,8 @@ class TestDefinedWhen(TestCase):
 
 class TestGetCooperatorData(TestCase):
     def setUp(self):
-        self.location_with_values_valid = {'district_cd': {'name': 'Valid', 'abbreviation': 'TS', 'code': '20'}}
-        self.location_with_values_invalid = {'district_cd': {'name': 'Invalid', 'abbreviation': 'IS',
-                                                             'code': '1241232'}}
+        self.location_with_values_valid = '20'
+        self.location_with_values_invalid = '1241232'
         self.site_with_cooperators = '06864000'
         self.site_without_cooperators = '06846500'
 

@@ -110,4 +110,5 @@ def get_cooperator_data(district_cd, site_no):
             cooperator_lookup_data = None
     else:
         cooperator_lookup_data = None
+
     return cooperator_lookup_data
