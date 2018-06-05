@@ -255,13 +255,11 @@ class TestGetCooperatorData(TestCase):
             "IconURL": "http://water.usgs.gov/customer/icons/6737.gif",
             "Name": "Kansas Water Office",
             "URL": "http://www.kwo.org/"
-        },
-            {
-                "IconURL": "http://water.usgs.gov/customer/icons/usgsIcon.gif",
-                "Name": "USGS - Cooperative Matching Funds",
-                "URL": "http://water.usgs.gov/coop/"
-            }]
-        }
+        }, {
+            "IconURL": "http://water.usgs.gov/customer/icons/usgsIcon.gif",
+            "Name": "USGS - Cooperative Matching Funds",
+            "URL": "http://water.usgs.gov/coop/"
+        }]}
         self.assertEqual(get_cooperator_data(self.location_with_values_valid, self.site_with_cooperators),
                          reference_cooperator_json)
         self.assertEqual(get_cooperator_data(self.location_with_values_valid, self.site_without_cooperators),
