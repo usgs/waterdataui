@@ -94,24 +94,21 @@ def defined_when(condition, fallback):
     return wrap
 
 
-def execute_cooperator_lookup_request(url_root_cooperator_lookup, url_path_cooperator_lookup, params):
+def get_cooperator_data(district_cd, site_no):
     """
-    Makes call to web service to gather cooperating partner information
-    :param url_root_cooperator_lookup:  the root path for the cooperating partner lookup service
-    :param url_path_cooperator_lookup:  the sub path for the cooperating partner lookup service
-    :param params: the query parameter required to complete call, includes monitoring location site number
-    :return: a dict of cooperating partner information, logo-url, name, link to partner's website
+    Gets the cooperator data from a json file, currently a feature toggle, and limited to district codes 20 and 51
+
+    :param site_no: USGS site number
+    :param district_cd: the district code of the monitoring location
     """
-    resp = execute_get_request(url_root_cooperator_lookup, url_path_cooperator_lookup, params)
-    if resp.ok:
+    if app.config['COOPERATOR_LOOKUP_ENABLED'] and (
+            app.config['COOPERATOR_LOOKUP_ENABLED'] is True or
+            district_cd in app.config['COOPERATOR_LOOKUP_ENABLED']):
         try:
-            cooperator_lookup_data = resp.json()
-        except ValueError as err:
-            app.logger.debug(repr(err))
+            cooperator_lookup_data = app.config['COOPERATOR_DATA'][district_cd][site_no]
+        except KeyError:
             cooperator_lookup_data = None
-        else:
-            if len(cooperator_lookup_data.get('Customers', [])) < 1:
-                cooperator_lookup_data = None
     else:
         cooperator_lookup_data = None
+
     return cooperator_lookup_data
