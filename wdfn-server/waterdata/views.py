@@ -111,7 +111,9 @@ def monitoring_location(site_no):
             except KeyError:
                 site_owner_state = None
 
-            cooperator_lookup_data = get_cooperator_data(location_with_values, site_no)
+            # grab the cooperator information from json file so that the logos are added to page, if available
+            cooperator_lookup_data = get_cooperator_data(location_with_values.get('district_cd', {}).get('code'),
+                                                         site_no)
 
             if site_owner_state is not None:
                 questions_link_params = {
