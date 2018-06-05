@@ -14,6 +14,7 @@ from .constants import STATION_FIELDS_D
 
 SERVICE_ROOT = app.config['SERVER_SERVICE_ROOT']
 
+
 @app.route('/')
 def home():
     """Render the home page."""

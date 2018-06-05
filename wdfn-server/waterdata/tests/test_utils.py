@@ -252,10 +252,10 @@ class TestGetCooperatorData(TestCase):
 
     def test_get_cooperator_data(self):
         reference_cooperator_json = {"Customers": [{
-                "IconURL": "http://water.usgs.gov/customer/icons/6737.gif",
-                "Name": "Kansas Water Office",
-                "URL": "http://www.kwo.org/"
-            },
+            "IconURL": "http://water.usgs.gov/customer/icons/6737.gif",
+            "Name": "Kansas Water Office",
+            "URL": "http://www.kwo.org/"
+        },
             {
                 "IconURL": "http://water.usgs.gov/customer/icons/usgsIcon.gif",
                 "Name": "USGS - Cooperative Matching Funds",
