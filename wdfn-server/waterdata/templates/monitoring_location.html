@@ -69,7 +69,7 @@
                     </div>
                     <p id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}</p>
                 </div>
-                {{ components.TimeSeriesComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
+                {{ components.TimeSeriesComponent(stations[0].site_no) }}
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
                     {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
                 {% endif %}
@@ -93,7 +93,7 @@
                                     <tbody>
                                         {% for grp in parm_grp_summary %}
                                             <tr>
-                                                <td scope="row">{% if grp.name %}{{ grp.name }}{% else %}<sub>n/a</sub>{% endif %}</td>
+                                                <th scope="row">{% if grp.name %}{{ grp.name }}{% else %}<sub>n/a</sub>{% endif %}</th>
                                                 <td>{{ grp.data_types }}</td>
                                                 <td>{{ grp.start_date|date_to_string }}</td>
                                                 <td>{{ grp.end_date|date_to_string }}</td>

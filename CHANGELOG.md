@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.10.0] - 2018-06-01
 ### Added
 - Loading indicators for initial time series load and for loading extended data
 - Added no data alert for sites with no time series data.
@@ -13,15 +15,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - The node.js-based graph server was updated to render PNGs rather than SVGs
 - Cooperator logos may be activated on a per-district basis
-- A BrowserStack Karma test runner was added, and some browser-specific bugs fixed.
+- BrowserStack and SauceLabs Karma test runners were added, and some browser-specific bugs fixed.
 - Hydrograph shows data in the location's local timezone as determined by the weather service
 - Font size of tooltips; larger size when fewer tips are present, smaller when more tip present
+- Refactor the Redux state to put the median statistics in its own property so that the data does
+not have to be coerced into a time series.
+- Embedded hydrograph is time zone aware.
+- Scrolling added to the 'provisional statement' in IFrame embed
 
 ### Fixed
 - A bug with the graph watermark intercepting mouseover events driving the tooltips was fixed.
 - Remove sourcemap reference from autotrack.js (Analytics script)
 - Added dynamic left margin for tooltip text to prevent overlap with y-axis labels
 - Bug that caused incorrect font styling on tooltips
+- Various accessibility violations
+- Tooltips that were hard to read when they overlapped graph lines 
 
 ## [0.9.0] - 2018-05-10
 ### Fixed
@@ -202,7 +210,8 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.9.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.10.0...master
+[0.10.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.9.0...waterdataui-0.10.0
 [0.9.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.8.0...waterdataui-0.9.0
 [0.8.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.7.0...waterdataui-0.8.0
 [0.7.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.6.0...waterdataui-0.7.0

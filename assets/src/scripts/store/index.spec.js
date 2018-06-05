@@ -88,11 +88,11 @@ describe('Redux store', () => {
             });
 
             it('gets the data and sets the timezone', (done) => {
-                spyOn(store.Actions, 'LOCATION_IANA_TIME_ZONE_SET');
+                spyOn(store.Actions, 'setLocationIanaTimeZone');
                 let p = store.Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(store.Actions.LOCATION_IANA_TIME_ZONE_SET.calls.count()).toBe(1);
-                    expect(store.Actions.LOCATION_IANA_TIME_ZONE_SET).toHaveBeenCalledWith('America/Chicago');
+                    expect(store.Actions.setLocationIanaTimeZone.calls.count()).toBe(1);
+                    expect(store.Actions.setLocationIanaTimeZone).toHaveBeenCalledWith('America/Chicago');
                     done();
                 });
             });
@@ -121,11 +121,11 @@ describe('Redux store', () => {
             });
 
             it('gets the data and sets the timezone to something', (done) => {
-                spyOn(store.Actions, 'LOCATION_IANA_TIME_ZONE_SET');
+                spyOn(store.Actions, 'setLocationIanaTimeZone');
                 let p = store.Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(store.Actions.LOCATION_IANA_TIME_ZONE_SET.calls.count()).toBe(1);
-                    expect(store.Actions.LOCATION_IANA_TIME_ZONE_SET).toHaveBeenCalledWith(null);
+                    expect(store.Actions.setLocationIanaTimeZone.calls.count()).toBe(1);
+                    expect(store.Actions.setLocationIanaTimeZone).toHaveBeenCalledWith(null);
                     done();
                 });
             });
@@ -140,21 +140,13 @@ describe('Redux store', () => {
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
                 let getTimeSeriesPromise = Promise.resolve(JSON.parse(MOCK_DATA));
-                let getMedianStatsPromise = Promise.resolve(MOCK_RDB);
                 modelsMock = {
                     getTimeSeries: function () {
                         return getTimeSeriesPromise;
-                    },
-                    getMedianStatistics: function () {
-                        return getMedianStatsPromise;
-                    },
-                    parseMedianData: function () {
-                        return MOCK_MEDIAN_DATA;
                     }
                 };
 
                 spyOn(modelsMock, 'getTimeSeries').and.callThrough();
-                spyOn(modelsMock, 'getMedianStatistics').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
                 store = proxyquire('./index', {'../models': modelsMock});
@@ -164,41 +156,38 @@ describe('Redux store', () => {
                 spyOn(store.Actions, 'removeTimeSeriesLoading');
             });
 
-            it('Fetches the time series and median statistics data', () => {
+            it('Fetches the time series data', () => {
                 store.Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
 
                 expect(modelsMock.getTimeSeries).toHaveBeenCalledWith({
                     sites: [SITE_NO],
                     params: null
                 });
-                expect(modelsMock.getMedianStatistics).toHaveBeenCalledWith({
-                    sites: [SITE_NO]
-                });
-                expect(store.Actions.addTimeSeriesLoading.calls.count()).toBe(2);
+
+                expect(store.Actions.addTimeSeriesLoading.calls.count()).toBe(1);
                 expect(store.Actions.addTimeSeriesLoading.calls.argsFor(0)[0]).toEqual(['current:P7D']);
-                expect(store.Actions.addTimeSeriesLoading.calls.argsFor(1)[0]).toEqual(['median']);
             });
 
             it('should fetch the times series, retrieve the compare time series once the time series is fetched and fetch the statistics', (done) => {
                 spyOn(store.Actions, 'addSeriesCollection');
+                spyOn(store.Actions, 'retrieveLocationTimeZone');
                 spyOn(store.Actions, 'retrieveCompareTimeSeries');
                 spyOn(store.Actions, 'toggleTimeSeries');
                 spyOn(store.Actions, 'setCurrentVariable');
                 let p = store.Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
 
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(11);
-                    expect(store.Actions.addSeriesCollection.calls.count()).toBe(2);
+                    expect(mockDispatch.calls.count()).toBe(8);
+                    expect(store.Actions.addSeriesCollection.calls.count()).toBe(1);
                     expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('current');
-                    expect(store.Actions.addSeriesCollection.calls.argsFor(1)[0]).toBe('median');
-                    expect(store.Actions.removeTimeSeriesLoading.calls.count()).toBe(2);
+                    expect(store.Actions.retrieveLocationTimeZone.calls.count()).toBe(1);
+                    expect(store.Actions.retrieveLocationTimeZone.calls.argsFor(0)).toEqual([42.72027778, -90.8191667]);
+                    expect(store.Actions.removeTimeSeriesLoading.calls.count()).toBe(1);
                     expect(store.Actions.removeTimeSeriesLoading.calls.argsFor(0)[0]).toEqual(['current:P7D']);
-                    expect(store.Actions.removeTimeSeriesLoading.calls.argsFor(1)[0]).toEqual(['median']);
                     expect(store.Actions.retrieveCompareTimeSeries.calls.count()).toBe(1);
                     expect(store.Actions.retrieveCompareTimeSeries.calls.argsFor(0)[0]).toBe(SITE_NO);
-                    expect(store.Actions.toggleTimeSeries.calls.count()).toBe(2);
+                    expect(store.Actions.toggleTimeSeries.calls.count()).toBe(1);
                     expect(store.Actions.toggleTimeSeries.calls.argsFor(0)).toEqual(['current', true]);
-                    expect(store.Actions.toggleTimeSeries.calls.argsFor(1)).toEqual(['median', true]);
                     expect(store.Actions.setCurrentVariable.calls.count()).toBe(1);
                     expect(store.Actions.setCurrentVariable.calls.argsFor(0)).toEqual(['45807197']);
 
@@ -225,21 +214,13 @@ describe('Redux store', () => {
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
                 let getTimeSeriesPromise = Promise.resolve(JSON.parse(MOCK_GAGE_DATA));
-                let getMedianStatsPromise = Promise.resolve(MOCK_RDB);
                 modelsMock = {
                     getTimeSeries: function () {
                         return getTimeSeriesPromise;
-                    },
-                    getMedianStatistics: function () {
-                        return getMedianStatsPromise;
-                    },
-                    parseMedianData: function () {
-                        return MOCK_MEDIAN_DATA;
                     }
                 };
 
                 spyOn(modelsMock, 'getTimeSeries').and.callThrough();
-                spyOn(modelsMock, 'getMedianStatistics').and.callThrough();
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
                 store = proxyquire('./index', {'../models': modelsMock});
@@ -266,16 +247,9 @@ describe('Redux store', () => {
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
                 let getTimeSeriesPromise = Promise.reject(Error('Bad data'));
-                let getMedianStatsPromise = Promise.resolve(MOCK_RDB);
                 modelsMock = {
                     getTimeSeries: function () {
                         return getTimeSeriesPromise;
-                    },
-                    getMedianStatistics: function () {
-                        return getMedianStatsPromise;
-                    },
-                    parseMedianData: function () {
-                        return MOCK_MEDIAN_DATA;
                     }
                 };
 
@@ -297,7 +271,7 @@ describe('Redux store', () => {
                 expect(store.Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P7D']);
 
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(6);
+                    expect(mockDispatch.calls.count()).toBe(4);
                     expect(store.Actions.resetTimeSeries.calls.count()).toBe(1);
                     expect(store.Actions.resetTimeSeries.calls.argsFor(0)[0]).toBe('current:P7D');
                     expect(store.Actions.toggleTimeSeries.calls.count()).toBe(1);
@@ -397,6 +371,49 @@ describe('Redux store', () => {
                     expect(store.Actions.resetTimeSeries.calls.argsFor(0)[0]).toBe('compare:P7D');
                     expect(store.Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['compare:P7D']);
 
+                    done();
+                });
+            });
+        });
+
+        describe('retrieveMedianStatistics with data', () => {
+            let store;
+            let statisticsDataMock;
+            let mockDispatch;
+
+            beforeEach(() => {
+                /* eslint no-use-before-define: 0 */
+                let fetchSiteStatisticsPromise = Promise.resolve({
+                    '00010': {
+                        '12': [{
+                            month_nu: '3'
+                        }]
+                    }
+                });
+                statisticsDataMock = {
+                    fetchSiteStatistics : function() {
+                        return fetchSiteStatisticsPromise;
+                    }
+                };
+                spyOn(statisticsDataMock, 'fetchSiteStatistics').and.callThrough();
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                store = proxyquire('./index',{'../statisticsData': statisticsDataMock});
+                store.configureStore();
+                spyOn(store.Actions, 'addMedianStats');
+                spyOn(store.Actions, 'toggleTimeSeries');
+
+                mockDispatch = jasmine.createSpy('mockDispatch');
+            });
+
+            it('should fetch the site statistics and call the appropriate actions', (done) => {
+                store.Actions.retrieveMedianStatistics('12345678')(mockDispatch).then(() => {
+                    expect(statisticsDataMock.fetchSiteStatistics).toHaveBeenCalledWith({
+                        site: '12345678',
+                        statType: 'median'
+                    });
+                    expect(mockDispatch.calls.count()).toBe(2);
+                    expect(store.Actions.addMedianStats).toHaveBeenCalled();
+                    expect(store.Actions.toggleTimeSeries).toHaveBeenCalledWith('median', true);
                     done();
                 });
             });
@@ -882,6 +899,17 @@ describe('Redux store', () => {
             });
         });
 
+        it('should create an actions to set the median stats', () => {
+            expect(Actions.addMedianStats({
+                '00010': 'some data'
+            })).toEqual({
+                type: 'MEDIAN_STATS_ADD',
+                data: {
+                    '00010': 'some data'
+                }
+            });
+        });
+
         it('should create an action to resize plot', () => {
             expect(Actions.resizeUI(800, 100)).toEqual({
                 type: 'RESIZE_UI',
@@ -909,6 +937,13 @@ describe('Redux store', () => {
                 type: 'TIME_SERIES_PLAY_STOP'
             });
         });
+
+        it('should create an action to set the location IANA time zone', () => {
+            expect(Actions.setLocationIanaTimeZone('America/Chicago')).toEqual({
+                type: 'LOCATION_IANA_TIME_ZONE_SET',
+                ianaTimeZone: 'America/Chicago'
+            });
+        });
     });
 });
 
@@ -919,14 +954,14 @@ const MOCK_LAST_YEAR_DATA = `
 "scope" : "javax.xml.bind.JAXBElement$GlobalScope",
 "value" : {
   "queryInfo" : {
-    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=05413500&parameterCd=00060&period=P7D&indent=on&siteStatus=all&format=json",
+    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=12345678&parameterCd=00060&period=P7D&indent=on&siteStatus=all&format=json",
     "criteria" : {
-      "locationParam" : "[ALL:05413500]",
+      "locationParam" : "[ALL:12345678]",
       "variableParam" : "[00060]",
       "parameter" : [ ]
     },
     "note" : [ {
-      "value" : "[ALL:05413500]",
+      "value" : "[ALL:12345678]",
       "title" : "filter:sites"
     }, {
       "value" : "[mode=PERIOD, period=P7D, modifiedSince=null]",
@@ -952,7 +987,7 @@ const MOCK_LAST_YEAR_DATA = `
     "sourceInfo" : {
       "siteName" : "GRANT RIVER AT BURTON, WI",
       "siteCode" : [ {
-        "value" : "05413500",
+        "value" : "12345678",
         "network" : "NWIS",
         "agencyCode" : "USGS"
       } ],
@@ -1067,7 +1102,7 @@ const MOCK_LAST_YEAR_DATA = `
       "sample" : [ ],
       "censorCode" : [ ]
     } ],
-    "name" : "USGS:05413500:00060:00000"
+    "name" : "USGS:12345678:00060:00000"
   } ]
 },
 "nil" : false,
@@ -1082,14 +1117,14 @@ const MOCK_GAGE_DATA = `
 "scope" : "javax.xml.bind.JAXBElement$GlobalScope",
 "value" : {
   "queryInfo" : {
-    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=05413500&parameterCd=00065&period=P7D&indent=on&siteStatus=all&format=json",
+    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=12345678&parameterCd=00065&period=P7D&indent=on&siteStatus=all&format=json",
     "criteria" : {
-      "locationParam" : "[ALL:05413500]",
+      "locationParam" : "[ALL:12345678]",
       "variableParam" : "[00065]",
       "parameter" : [ ]
     },
     "note" : [ {
-      "value" : "[ALL:05413500]",
+      "value" : "[ALL:12345678]",
       "title" : "filter:sites"
     }, {
       "value" : "[mode=PERIOD, period=P7D, modifiedSince=null]",
@@ -1115,7 +1150,7 @@ const MOCK_GAGE_DATA = `
     "sourceInfo" : {
       "siteName" : "GRANT RIVER AT BURTON, WI",
       "siteCode" : [ {
-        "value" : "05413500",
+        "value" : "12345678",
         "network" : "NWIS",
         "agencyCode" : "USGS"
       } ],
@@ -1230,7 +1265,7 @@ const MOCK_GAGE_DATA = `
       "sample" : [ ],
       "censorCode" : [ ]
     } ],
-    "name" : "USGS:05413500:00060:00000"
+    "name" : "USGS:12345678:00060:00000"
   } ]
 },
 "nil" : false,
@@ -1245,14 +1280,14 @@ const MOCK_DATA = `
 "scope" : "javax.xml.bind.JAXBElement$GlobalScope",
 "value" : {
   "queryInfo" : {
-    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=05413500&parameterCd=00060&period=P7D&indent=on&siteStatus=all&format=json",
+    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=12345678&parameterCd=00060&period=P7D&indent=on&siteStatus=all&format=json",
     "criteria" : {
-      "locationParam" : "[ALL:05413500]",
+      "locationParam" : "[ALL:12345678]",
       "variableParam" : "[00060]",
       "parameter" : [ ]
     },
     "note" : [ {
-      "value" : "[ALL:05413500]",
+      "value" : "[ALL:12345678]",
       "title" : "filter:sites"
     }, {
       "value" : "[mode=PERIOD, period=P7D, modifiedSince=null]",
@@ -1278,7 +1313,7 @@ const MOCK_DATA = `
     "sourceInfo" : {
       "siteName" : "GRANT RIVER AT BURTON, WI",
       "siteCode" : [ {
-        "value" : "05413500",
+        "value" : "12345678",
         "network" : "NWIS",
         "agencyCode" : "USGS"
       } ],
@@ -4041,7 +4076,7 @@ const MOCK_DATA = `
       "sample" : [ ],
       "censorCode" : [ ]
     } ],
-    "name" : "USGS:05413500:00060:00000"
+    "name" : "USGS:12345678:00060:00000"
   } ]
 },
 "nil" : false,
@@ -4049,63 +4084,3 @@ const MOCK_DATA = `
 "typeSubstituted" : false
 }
 `;
-
-
-const MOCK_RDB = `#
-#
-# US Geological Survey, Water Resources Data
-# retrieved: 2018-01-25 16:05:49 -05:00	(natwebsdas01)
-#
-# This file contains USGS Daily Statistics
-#
-# Note:The statistics generated are based on approved daily-mean data and may not match those published by the USGS in official publications.
-# The user is responsible for assessment and use of statistics from this site.
-# For more details on why the statistics may not match, visit http://help.waterdata.usgs.gov/faq/about-statistics.
-#
-# Data heading explanations.
-# agency_cd       -- agency code
-# site_no         -- Site identification number
-# parameter_cd    -- Parameter code
-# station_nm      -- Site name
-# loc_web_ds      -- Additional measurement description
-#
-# Data for the following 1 site(s) are contained in this file
-# agency_cd   site_no      parameter_cd   station_nm (loc_web_ds)
-# USGS        05370000     00060          EAU GALLE RIVER AT SPRING VALLEY, WI
-#
-# Explanation of Parameter Codes
-# parameter_cd	Parameter Name
-# 00060         Discharge, cubic feet per second
-#
-# Data heading explanations.
-# month_nu    ... The month for which the statistics apply.
-# day_nu      ... The day for which the statistics apply.
-# begin_yr    ... First water year of data of daily mean values for this day.
-# end_yr      ... Last water year of data of daily mean values for this day.
-# count_nu    ... Number of values used in the calculation.
-# p50_va      ... 50 percentile (median) of daily mean values for this day.
-#
-agency_cd	site_no	parameter_cd	ts_id	loc_web_ds	month_nu	day_nu	begin_yr	end_yr	count_nu	p50_va
-5s	15s	5s	10n	15s	3n	3n	6n	6n	8n	12s
-USGS	05370000	00060	153885		1	1	1969	2017	49	16
-USGS	05370000	00060	153885		1	2	1969	2017	49	16
-USGS	05370000	00060	153885		1	3	1969	2017	49	16
-USGS	05370000	00060	153885		1	4	1969	2017	49	15
-USGS	05370000	00060	153885		1	5	1969	2017	49	15
-USGS	05370000	00060	153885		1	6	1969	2017	49	15
-USGS	05370000	00060	153885		1	7	1969	2017	49	15
-USGS	05370000	00060	153885		1	8	1969	2017	49	15
-USGS	05370000	00060	153885		1	9	1969	2017	49	15
-USGS	05370000	00060	153885		1	10	1969	2017	49	15
-USGS	05370000	00060	153885		1	11	1969	2017	49	15
-USGS	05370000	00060	153885		1	12	1969	2017	49	15
-USGS	05370000	00060	153885		1	13	1969	2017	49	15
-`;
-
-
-const MOCK_MEDIAN_DATA = [
-    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '1', day_nu: '1', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '16'},
-    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '1', day_nu: '13', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '15'},
-    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '8', day_nu: '5', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '15'},
-    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '2', day_nu: '29', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '13'}
-];

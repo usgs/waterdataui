@@ -328,7 +328,7 @@ describe('TimeSeries module', () => {
         });
 
         it('should return null the empty set if no time series for the selected key exist', () => {
-            expect(timeSeriesSelector('median')(TEST_DATA)).toEqual({});
+            expect(timeSeriesSelector('compare:P7D')(TEST_DATA)).toEqual({});
         });
     });
 

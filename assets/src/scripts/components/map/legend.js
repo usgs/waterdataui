@@ -114,13 +114,12 @@ export const createFIMLegend = function(legendControl, isFIMAvailable) {
         Promise.all([fetchFloodExtentLegend, fetchBreachLegend, fetchSuppLyrs])
             .then(([floodExtentLegends, breachLegend, suppLyrsLegend]) => {
                 const legendImages = [].concat(...floodExtentLegends, ...breachLegend, ...suppLyrsLegend);
-
                 fimLegendList.selectAll('li')
                     .data(legendImages)
                     .enter().append('li')
                         .classed('fim-legend', true)
                         .html(function(d) {
-                            return `<img src="data:image/png;base64,${d.imageData}"/><span>${d.name}</span>`;
+                            return `<img src="data:image/png;base64,${d.imageData}" alt="Legend icon - ${d.name}"/><span>${d.name}</span>`;
                         });
             });
     } else {

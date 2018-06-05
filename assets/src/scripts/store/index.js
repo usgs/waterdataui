@@ -4,16 +4,18 @@ const last = require('lodash/last');
 const { applyMiddleware, createStore, combineReducers, compose } = require('redux');
 const { default: thunk } = require('redux-thunk');
 
-const { getMedianStatistics, getPreviousYearTimeSeries, getTimeSeries,
-    parseMedianData, sortedParameters, queryWeatherService } = require('../models');
+const { getPreviousYearTimeSeries, getTimeSeries, sortedParameters, queryWeatherService } = require('../models');
 const { calcStartTime } = require('../utils');
 const { normalize } = require('../schema');
 const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
-const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange } = require('../selectors/timeSeriesSelector');
+const { fetchSiteStatistics } = require('../statisticsData');
+const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange
+    } = require('../selectors/timeSeriesSelector');
 
 const { floodDataReducer: floodData } = require('./floodDataReducer');
 const { floodStateReducer: floodState } = require('./floodStateReducer');
 const { seriesReducer: series } = require('./seriesReducer');
+const { statisticsDataReducer: statisticsData } = require('./statisticsDataReducer');
 const { timeSeriesStateReducer: timeSeriesState } = require('./timeSeriesStateReducer');
 const { uiReducer: ui } = require('./uiReducer');
 
@@ -49,14 +51,13 @@ const getCurrentVariableId = function(timeSeries, variables) {
 export const Actions = {
     retrieveLocationTimeZone(latitude, longitude) {
         return function(dispatch) {
-            const result = queryWeatherService(latitude, longitude);
             return queryWeatherService(latitude, longitude).then(
                 resp => {
                     const tzIANA = resp.properties.timeZone || null; // set to time zone to null if unavailable
-                    dispatch(Actions.LOCATION_IANA_TIME_ZONE_SET(tzIANA));
+                    dispatch(Actions.setLocationIanaTimeZone(tzIANA));
                 },
                 () => {
-                    dispatch(Actions.LOCATION_IANA_TIME_ZONE_SET(null));
+                    dispatch(Actions.setLocationIanaTimeZone(null));
                 }
             );
         };
@@ -66,15 +67,24 @@ export const Actions = {
             const currentState = getState();
             const requestKey = getTsRequestKey('current', 'P7D')(currentState);
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
-            const timeSeries = getTimeSeries({sites: [siteno], params}).then(
+
+            return getTimeSeries({sites: [siteno], params}).then(
                 series => {
                     const collection = normalize(series, requestKey);
+
+                    // get the lat/lon of the site
+                    const location = collection.sourceInfo ? collection.sourceInfo[siteno].geoLocation.geogLocation : {};
+                    const latitude = location.latitude || null;
+                    const longitude = location.longitude || null;
 
                     // Get the start/end times of this request's range.
                     const notes = collection.queryInfo[requestKey].notes;
                     const endTime = notes.requestDT;
                     const startTime = calcStartTime('P7D', endTime, 'local');
 
+                    if (latitude !== null && longitude !== null) {
+                        dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
+                    }
                     // Trigger a call to get last year's data
                     dispatch(Actions.retrieveCompareTimeSeries(siteno, 'P7D', startTime, endTime));
 
@@ -89,39 +99,14 @@ export const Actions = {
                         getCurrentVariableId(collection.timeSeries || {}, collection.variables || {})
                     ));
                     dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
-
-                    return {collection, startTime: startTime, endTime: endTime};
                 },
                 () => {
                     dispatch(Actions.resetTimeSeries(getTsRequestKey('current', 'P7D')(currentState)));
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
 
                     dispatch(Actions.toggleTimeSeries('current', false));
-                    return {
-                        collection: null,
-                        startTime: null,
-                        endTime: null
-                    };
                 }
             );
-
-            const medianRequestKey = getTsRequestKey('median')(currentState);
-            dispatch(Actions.addTimeSeriesLoading([medianRequestKey]));
-            const medianStatistics = getMedianStatistics({sites: [siteno]});
-            medianStatistics.then(() => {
-                dispatch(Actions.removeTimeSeriesLoading([medianRequestKey]));
-            },
-            () => {
-                dispatch(Actions.removeTimeSeriesLoading([medianRequestKey]));
-            });
-
-            return Promise.all([timeSeries, medianStatistics]).then(([{collection, endTime}, stats]) => {
-                if (endTime) {
-                    let medianCollection = parseMedianData(stats, endTime, collection && collection.variables ? collection.variables : {});
-                    dispatch(Actions.addSeriesCollection(getTsRequestKey('median')(currentState), medianCollection));
-                    dispatch(Actions.toggleTimeSeries('median', true));
-                }
-            });
         };
     },
     retrieveCompareTimeSeries(site, period, startTime, endTime) {
@@ -137,6 +122,16 @@ export const Actions = {
                 () => {
                     dispatch(Actions.resetTimeSeries(getTsRequestKey('compare', period)(getState())));
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+                }
+            );
+        };
+    },
+    retrieveMedianStatistics(site) {
+        return function(dispatch) {
+            return fetchSiteStatistics({site, statType: 'median'}).then(
+                stats => {
+                    dispatch(Actions.addMedianStats(stats));
+                    dispatch(Actions.toggleTimeSeries('median', true));
                 }
             );
         };
@@ -267,6 +262,12 @@ export const Actions = {
             key
         };
     },
+    addMedianStats(data) {
+        return {
+            type: 'MEDIAN_STATS_ADD',
+            data
+        };
+    },
     setCursorOffset(cursorOffset) {
         return {
             type: 'SET_CURSOR_OFFSET',
@@ -306,7 +307,7 @@ export const Actions = {
             gageHeight
         };
     },
-    LOCATION_IANA_TIME_ZONE_SET(ianaTimeZone) {
+    setLocationIanaTimeZone(ianaTimeZone) {
         return {
             type: 'LOCATION_IANA_TIME_ZONE_SET',
             ianaTimeZone
@@ -316,6 +317,7 @@ export const Actions = {
 
 const appReducer = combineReducers({
     series,
+    statisticsData,
     floodData,
     timeSeriesState,
     floodState,
@@ -332,6 +334,8 @@ export const configureStore = function (initialState) {
             stages: [],
             extent: {}
         },
+
+        statisticsData: {},
 
         timeSeriesState: {
             showSeries: {

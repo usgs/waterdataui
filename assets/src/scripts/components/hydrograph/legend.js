@@ -4,11 +4,11 @@ const { createSelector } = require('reselect');
 
 const { CIRCLE_RADIUS } = require('./layout');
 const { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker} = require('./markers');
-const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} = require('./drawingData');
-const { currentVariableTimeSeriesSelector } = require('./timeSeries');
+const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } = require('./drawingData');
 
 const { USWDS_MEDIUM_SCREEN } = require('../../config');
 const { getMethods } = require('../../selectors/timeSeriesSelector');
+const { getCurrentVariableMedianMetadata} = require('../../selectors/medianStatisticsSelector');
 const { mediaQuery } = require('../../utils');
 
 const TS_LABEL = {
@@ -79,7 +79,7 @@ const createLegendMarkers = function(displayItems) {
     }
 
     if (displayItems.median) {
-        for (const [index, stats] of displayItems.median.entries()) {
+        for (const [index, stats] of Object.values(displayItems.median).entries()) {
             // Get the unique non-null years, in chronological order
             const years = [];
             if (stats.beginYear) {
@@ -90,7 +90,7 @@ const createLegendMarkers = function(displayItems) {
             }
             const dateText = years.join(' - ');
 
-            const descriptionText = stats.description  ? `${stats.description} ` : '';
+            const descriptionText = stats.methodDescription ? `${stats.methodDescription} ` : '';
             const classes = `median-data-series median-step median-step-${index % 6}`;
             const label = `${descriptionText}${dateText}`;
 
@@ -197,21 +197,15 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
  */
 const legendDisplaySelector = createSelector(
     (state) => state.timeSeriesState.showSeries,
-    currentVariableTimeSeriesSelector('median'),
+    getCurrentVariableMedianMetadata,
     getMethods,
     uniqueClassesSelector('current'),
     uniqueClassesSelector('compare'),
-    (showSeries, medianTSs, methods, currentClasses, compareClasses) => {
+    (showSeries, medianSeries, methods, currentClasses, compareClasses) => {
         return {
             current: showSeries.current ? currentClasses : undefined,
             compare: showSeries.compare ? compareClasses : undefined,
-            median: showSeries.median ? Object.values(medianTSs).map(medianTS => {
-                return {
-                    beginYear: medianTS ? medianTS.metadata.beginYear : undefined,
-                    endYear: medianTS ? medianTS.metadata.endYear : undefined,
-                    description: medianTS && medianTS.method ? methods[medianTS.method].methodDescription : ''
-                };
-            }) : undefined
+            median: showSeries.median ? medianSeries : undefined
         };
     }
 );

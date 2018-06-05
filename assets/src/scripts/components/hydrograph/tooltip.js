@@ -106,13 +106,22 @@ const unitCodeSelector = createSelector(
 );
 
 const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone, layout}, textGroup) {
+    // Find the width of the between the y-axis and margin and set the tooltip margin based on that number
+    const adjustMarginOfTooltips = function (elem) {
+        // set a base number of pixels to bump the tooltips away from y-axis and compensate for slight under reporting
+        // of margin width by layout selector on time series with single or double digits on y-axis
+        const baseMarginOffsetTextGroup = 27;
+        let marginAdjustment = layout.margin.left + baseMarginOffsetTextGroup;
+        elem.style('margin-left', marginAdjustment + 'px');
+    };
 
     // Put the circles in a container so we can keep the their position in the
     // DOM before rect.overlay, to prevent the circles from receiving mouse
     // events.
     if (!textGroup) {
         textGroup = elem.append('div')
-            .attr('class', 'tooltip-text-group');
+            .attr('class', 'tooltip-text-group')
+            .call(adjustMarginOfTooltips);
     }
 
     const data = Object.values(currentPoints).concat(Object.values(comparePoints));
@@ -129,16 +138,6 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     // Add new text labels
     const newTexts = texts.enter()
         .append('div');
-
-    // Find the width of the between the y-axis and margin and set the tooltip margin based on that number
-    const adjustMarginOfTooltips = function (elem) {
-        // set a base number of pixels to bump the tooltips away from y-axis and compensate for slight under reporting
-        // of margin width by layout selector on time series with single or double digits on y-axis
-        const baseMarginOffsetTextGroup = 27;
-        let marginAdjustment = layout.margin.left + baseMarginOffsetTextGroup;
-        elem.style('margin-left', marginAdjustment + 'px');
-
-    };
 
     // find how many tooltips are showing and adjust the font size larger if there are few, smaller if there are many
     const adjustTooltipFontSize = function() {
@@ -170,7 +169,6 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     const merge = texts.merge(newTexts)
         .interrupt()
         .style('opacity', '1')
-        .call(adjustMarginOfTooltips)
         .call(adjustTooltipFontSize);
 
     merge

@@ -192,7 +192,6 @@ describe('timeSeriesSelector', () => {
                 variables: TEST_VARS,
                 requests : {
                     'current:P7D': {},
-                    'median' : {},
                     'current:P30D:00060': {}
                 }
             },
@@ -219,7 +218,6 @@ describe('timeSeriesSelector', () => {
 
         it('Return true if request is in state', () => {
             expect(hasTimeSeries('current')(TEST_STATE)).toBe(true);
-            expect(hasTimeSeries('median')(TEST_STATE)).toBe(true);
             expect(hasTimeSeries('current', 'P30D', '00060')(TEST_STATE)).toBe(true);
         });
     });
@@ -237,19 +235,16 @@ describe('timeSeriesSelector', () => {
         it('Return the expected request key if period and parmCd are not specified', () => {
             expect(getTsRequestKey('current')(TEST_STATE)).toBe('current:P7D');
             expect(getTsRequestKey('compare')(TEST_STATE)).toBe('compare:P7D');
-            expect(getTsRequestKey('median')(TEST_STATE)).toBe('median');
         });
 
         it('Return the expected request key if parmCd is not specified', () => {
             expect(getTsRequestKey('current', 'P30D')(TEST_STATE)).toBe('current:P30D:00060');
             expect(getTsRequestKey('compare', 'P30D')(TEST_STATE)).toBe('compare:P30D:00060');
-            expect(getTsRequestKey('median', 'P7D')(TEST_STATE)).toBe('median');
         });
 
         it('Return the expected request key if all parameters are specified', () => {
             expect(getTsRequestKey('current', 'P30D', '00010')(TEST_STATE)).toBe('current:P30D:00010');
             expect(getTsRequestKey('compare', 'P30D', '00010')(TEST_STATE)).toBe('compare:P30D:00010');
-            expect(getTsRequestKey('median', 'P30D', '00010')(TEST_STATE)).toBe('median');
         });
     });
 
@@ -420,13 +415,12 @@ describe('timeSeriesSelector', () => {
             timeSeriesState: {
                 currentDateRange: 'P30D',
                 currentVariableID: '45807042',
-                loadingTSKeys: ['compare:P7D', 'median', 'current:P30D:00060']
+                loadingTSKeys: ['compare:P7D', 'current:P30D:00060']
             }
         };
 
         it('true for ts requests that are loading', () => {
             expect(isLoadingTS('current')(TEST_DATA)).toBe(true);
-            expect(isLoadingTS('median')(TEST_DATA)).toBe(true);
             expect(isLoadingTS('compare', 'P7D')(TEST_DATA)).toBe(true);
         });
 

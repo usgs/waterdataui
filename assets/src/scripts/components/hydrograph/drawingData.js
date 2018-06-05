@@ -1,10 +1,13 @@
 const memoize = require('fast-memoize');
+const find = require('lodash/find');
+const { DateTime } = require('luxon');
 const { createSelector } = require('reselect');
 const { format } = require('d3-format');
 
-const {allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeSeries');
+const { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeSeries');
 
-const { getVariables, getTsRequestKey } = require('../../selectors/timeSeriesSelector');
+const { getVariables, getTsRequestKey, getRequestTimeRange, getIanaTimeZone } = require('../../selectors/timeSeriesSelector');
+const { getCurrentVariableMedianStatistics } = require('../../selectors/medianStatisticsSelector');
 
 export const MASK_DESC = {
     ice: 'Ice Affected',
@@ -69,7 +72,7 @@ export const allPointsSelector = createSelector(
             const ts = timeSeries[tsId];
             const variableId = ts.variable;
             const parmCd = variables[variableId].variableCode.value;
-            if (ts.tsKey !== 'median' && PARM_CODES_TO_ACCUMULATE.includes(parmCd)) {
+            if (PARM_CODES_TO_ACCUMULATE.includes(parmCd)) {
                 allPoints[tsId] = transformToCumulative(ts.points);
             } else {
                 allPoints[tsId] = ts.points;
@@ -175,6 +178,61 @@ export const classesForPoint = point => {
     };
 };
 
+/*
+ * @ return {Array of Arrays of Objects} where the properties are date (universal), class,  and value
+*/
+export const getCurrentVariableMedianStatPoints = createSelector(
+    getCurrentVariableMedianStatistics,
+    getRequestTimeRange('current'),
+    getIanaTimeZone,
+    (stats, timeRange, ianaTimeZone) => {
+        if (!stats || !timeRange) {
+            return [];
+        }
+
+        // From the time range and time zone, determine the dates that we need to create the points arrays.
+        // Note that the first and last dates should match the time range's start and end time
+        let datesOfInterest = [];
+        let nextDateTime = DateTime.fromMillis(timeRange.start, {zone: ianaTimeZone});
+        datesOfInterest.push({
+            year: nextDateTime.year,
+            month: nextDateTime.month.toString(),
+            day: nextDateTime.day.toString(),
+            utcDate: timeRange.start
+        });
+        nextDateTime = nextDateTime.startOf('day').plus({days: 1});
+        while (nextDateTime.valueOf() <= timeRange.end) {
+            datesOfInterest.push({
+                year: nextDateTime.year,
+                month: nextDateTime.month.toString(),
+                day: nextDateTime.day.toString(),
+                utcDate: nextDateTime.valueOf()
+            });
+            nextDateTime = nextDateTime.plus({days: 1});
+        }
+        nextDateTime = DateTime.fromMillis(timeRange.end, {zone: ianaTimeZone});
+        datesOfInterest.push({
+            year: nextDateTime.year,
+            month: nextDateTime.month.toString(),
+            day: nextDateTime.day.toString(),
+            utcDate: timeRange.end
+        });
+
+        // Retrieve the median data matching the datesOfInterest and then create points arrays suitable for plotting.
+        return Object.values(stats).map((seriesStats) => {
+            return datesOfInterest
+                .map((date) => {
+                    let stat = find(seriesStats, {'month_nu': date.month, 'day_nu': date.day});
+                    return {
+                        value: stat && stat.p50_va ? parseFloat(stat.p50_va) : null,
+                        date: date.utcDate
+                    };
+                })
+                .filter((point) => {
+                    return point.value !== null;
+                });
+        });
+    });
 
 
 /**
@@ -186,7 +244,7 @@ export const classesForPoint = point => {
 export const visiblePointsSelector = createSelector(
     currentVariablePointsSelector('current'),
     currentVariablePointsSelector('compare'),
-    currentVariablePointsSelector('median'),
+    getCurrentVariableMedianStatPoints,
     (state) => state.timeSeriesState.showSeries,
     (current, compare, median, showSeries) => {
         const pointArray = [];
@@ -198,7 +256,7 @@ export const visiblePointsSelector = createSelector(
             Array.prototype.push.apply(pointArray, compare);
         }
         if (showSeries['median']) {
-            Array.prototype.push.apply(pointArray, median);
+            Array.prototype.push.apply(pointArray, Object.keys(median).map(tsId => median[tsId] ?  median[tsId] : []));
         }
         return pointArray;
     }
@@ -340,4 +398,6 @@ export const currentVariableLineSegmentsSelector = memoize(tsKey => createSelect
 
     }
 ));
+
+
 
