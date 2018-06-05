@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Cooperator logos lookup changed from the SIFTA site service to json file
 
 ## [0.10.0] - 2018-06-01
 ### Added
@@ -22,7 +24,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 not have to be coerced into a time series.
 - Embedded hydrograph is time zone aware.
 - Scrolling added to the 'provisional statement' in IFrame embed
-- Cooperator logos lookup changed from the SIFTA site service to json file
 
 ### Fixed
 - A bug with the graph watermark intercepting mouseover events driving the tooltips was fixed.
