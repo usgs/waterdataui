@@ -10,7 +10,7 @@ import pytest
 import requests_mock
 
 from .. import app
-from ..views import __version__, get_cooperator_data
+from ..views import __version__
 
 
 class TestHomeView(TestCase):
@@ -115,35 +115,6 @@ class TestMonitoringLocationView(TestCase):
                                           'siteOutput': 'expanded',
                                           'format': 'rdb'})
         self.assertEqual(response.status_code, 503)
-
-
-class TestGetCooperatorData(TestCase):
-    def setUp(self):
-        self.app_client = app.test_client()
-        self.location_with_values_valid = {'district_cd': {'name': 'Valid', 'abbreviation': 'TS', 'code': '20'}}
-        self.location_with_values_invalid = {'district_cd': {'name': 'Invalid', 'abbreviation': 'IS',
-                                                             'code': '1241232'}}
-        self.site_with_cooperators = '06864000'
-        self.site_without_cooperators = '06846500'
-
-    def test_get_cooperator_data(self):
-        reference_cooperator_json = {"Customers": [{
-                "IconURL": "http://water.usgs.gov/customer/icons/6737.gif",
-                "Name": "Kansas Water Office",
-                "URL": "http://www.kwo.org/"
-            },
-            {
-                "IconURL": "http://water.usgs.gov/customer/icons/usgsIcon.gif",
-                "Name": "USGS - Cooperative Matching Funds",
-                "URL": "http://water.usgs.gov/coop/"
-            }]
-        }
-        self.assertEqual(get_cooperator_data(self.location_with_values_valid, self.site_with_cooperators),
-                         reference_cooperator_json)
-        self.assertEqual(get_cooperator_data(self.location_with_values_valid, self.site_without_cooperators),
-                         None)
-        self.assertEqual(get_cooperator_data(self.location_with_values_invalid, self.site_with_cooperators),
-                         None)
 
 
 class TestHydrologicalUnitView:

@@ -7,7 +7,7 @@ from flask import abort, render_template, request, Markup
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries
-from .utils import construct_url, defined_when, execute_get_request, parse_rdb
+from .utils import construct_url, defined_when, execute_get_request, parse_rdb, get_cooperator_data
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -124,8 +124,6 @@ def monitoring_location(site_no):
                 }
                 questions_link = construct_url('https://water.usgs.gov', 'contact/gsanswers', questions_link_params)
 
-
-
             context = {
                 'status_code': status,
                 'stations': data_list,
@@ -159,26 +157,6 @@ def monitoring_location(site_no):
 
 def return_404(*args, **kwargs):
     return abort(404)
-
-
-def get_cooperator_data(location_with_values, site_no):
-    """
-    Gets the cooperator data from a json file, currently a feature toggle, and limited to district codes 20 and 51
-
-    :param site_no: USGS site number
-    :param location_with_values: monitoring location data including district code
-    """
-    if app.config['COOPERATOR_LOOKUP_ENABLED'] and (
-            app.config['COOPERATOR_LOOKUP_ENABLED'] is True or
-            location_with_values.get('district_cd', {}).get('code') in app.config['COOPERATOR_LOOKUP_ENABLED']):
-        try:
-            cooperator_lookup_data = app.config['COOPERATOR_DATA'][
-                location_with_values['district_cd']['code']][site_no]
-        except KeyError:
-            cooperator_lookup_data = None
-    else:
-        cooperator_lookup_data = None
-    return cooperator_lookup_data
 
 
 @app.route('/hydrological-unit/', defaults={'huc_cd': None}, methods=['GET'])

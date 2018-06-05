@@ -92,3 +92,23 @@ def defined_when(condition, fallback):
         return update_wrapper(func, f)
 
     return wrap
+
+
+def get_cooperator_data(location_with_values, site_no):
+    """
+    Gets the cooperator data from a json file, currently a feature toggle, and limited to district codes 20 and 51
+
+    :param site_no: USGS site number
+    :param location_with_values: monitoring location data including district code
+    """
+    if app.config['COOPERATOR_LOOKUP_ENABLED'] and (
+            app.config['COOPERATOR_LOOKUP_ENABLED'] is True or
+            location_with_values.get('district_cd', {}).get('code') in app.config['COOPERATOR_LOOKUP_ENABLED']):
+        try:
+            cooperator_lookup_data = app.config['COOPERATOR_DATA'][
+                location_with_values['district_cd']['code']][site_no]
+        except KeyError:
+            cooperator_lookup_data = None
+    else:
+        cooperator_lookup_data = None
+    return cooperator_lookup_data
