@@ -1,6 +1,5 @@
-const { select } = require('d3-selection');
-
-const { attachToNode } = require('./embed');
+import { select } from 'd3-selection';
+import { attachToNode } from './embed';
 
 
 describe('embed component', () => {

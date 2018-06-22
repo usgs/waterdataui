@@ -1,5 +1,5 @@
-const { select } = require('d3-selection');
-const { DateTime } = require('luxon');
+import { select } from 'd3-selection';
+import { DateTime } from 'luxon';
 
 /**
  * Determine the unicode variant of an HTML decimal entity
@@ -70,7 +70,7 @@ export function deltaDays(date1, date2) {
  */
 export function setEquality(set1, set2) {
     let sizeEqual = set1.size === set2.size;
-    let itemsEqual = [...set1].every(x => {
+    let itemsEqual = Array.from(set1).every(x => {
         return set2.has(x);
     });
     return sizeEqual && itemsEqual;

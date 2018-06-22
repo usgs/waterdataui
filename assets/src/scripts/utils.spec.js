@@ -1,7 +1,5 @@
-const { select } = require('d3-selection');
-
-const { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities, setEquality, wrap, mediaQuery,
-    calcStartTime, callIf, parseRDB } = require('./utils');
+import { select } from 'd3-selection';
+import { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities, setEquality, wrap, mediaQuery, calcStartTime, callIf, parseRDB } from './utils';
 
 
 describe('Utils module', () => {

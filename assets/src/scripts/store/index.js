@@ -1,23 +1,20 @@
 
-const findKey = require('lodash/findKey');
-const last = require('lodash/last');
-const { applyMiddleware, createStore, combineReducers, compose } = require('redux');
-const { default: thunk } = require('redux-thunk');
-
-const { getPreviousYearTimeSeries, getTimeSeries, sortedParameters, queryWeatherService } = require('../models');
-const { calcStartTime } = require('../utils');
-const { normalize } = require('../schema');
-const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
-const { fetchSiteStatistics } = require('../statisticsData');
-const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange
-    } = require('../selectors/timeSeriesSelector');
-
-const { floodDataReducer: floodData } = require('./floodDataReducer');
-const { floodStateReducer: floodState } = require('./floodStateReducer');
-const { seriesReducer: series } = require('./seriesReducer');
-const { statisticsDataReducer: statisticsData } = require('./statisticsDataReducer');
-const { timeSeriesStateReducer: timeSeriesState } = require('./timeSeriesStateReducer');
-const { uiReducer: ui } = require('./uiReducer');
+import findKey from 'lodash/findKey';
+import last from 'lodash/last';
+import { applyMiddleware, createStore, combineReducers, compose } from 'redux';
+import { default as thunk } from 'redux-thunk';
+import { getPreviousYearTimeSeries, getTimeSeries, sortedParameters, queryWeatherService } from '../models';
+import { calcStartTime } from '../utils';
+import { normalize } from '../schema';
+import { fetchFloodFeatures, fetchFloodExtent } from '../floodData';
+import { fetchSiteStatistics } from '../statisticsData';
+import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange } from '../selectors/timeSeriesSelector';
+import { floodDataReducer as floodData } from './floodDataReducer';
+import { floodStateReducer as floodState } from './floodStateReducer';
+import { seriesReducer as series } from './seriesReducer';
+import { statisticsDataReducer as statisticsData } from './statisticsDataReducer';
+import { timeSeriesStateReducer as timeSeriesState } from './timeSeriesStateReducer';
+import { uiReducer as ui } from './uiReducer';
 
 const GAGE_HEIGHT_CD = '00065';
 /*
@@ -49,9 +46,9 @@ const getCurrentVariableId = function(timeSeries, variables) {
 
 
 export const Actions = {
-    retrieveLocationTimeZone(latitude, longitude) {
+    retrieveLocationTimeZone(latitude, longitude, queryWeatherServiceImpl = queryWeatherService) {
         return function(dispatch) {
-            return queryWeatherService(latitude, longitude).then(
+            return queryWeatherServiceImpl(latitude, longitude).then(
                 resp => {
                     const tzIANA = resp.properties.timeZone || null; // set to time zone to null if unavailable
                     dispatch(Actions.setLocationIanaTimeZone(tzIANA));
@@ -62,13 +59,13 @@ export const Actions = {
             );
         };
     },
-    retrieveTimeSeries(siteno, params=null) {
+    retrieveTimeSeries(siteno, params = null, getTimeSeriesImpl = getTimeSeries) {
         return function (dispatch, getState) {
             const currentState = getState();
             const requestKey = getTsRequestKey('current', 'P7D')(currentState);
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
 
-            return getTimeSeries({sites: [siteno], params}).then(
+            return getTimeSeriesImpl({sites: [siteno], params}).then(
                 series => {
                     const collection = normalize(series, requestKey);
 
@@ -92,12 +89,11 @@ export const Actions = {
                     dispatch(Actions.addSeriesCollection('current', collection));
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
 
-
                     // Update the application state
                     dispatch(Actions.toggleTimeSeries('current', true));
-                    dispatch(Actions.setCurrentVariable(
-                        getCurrentVariableId(collection.timeSeries || {}, collection.variables || {})
-                    ));
+                    const variable = getCurrentVariableId(collection.timeSeries || {}, collection.variables || {});
+                    const action = Actions.setCurrentVariable(variable);
+                    dispatch(action);
                     dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
                 },
                 () => {
@@ -109,11 +105,11 @@ export const Actions = {
             );
         };
     },
-    retrieveCompareTimeSeries(site, period, startTime, endTime) {
+    retrieveCompareTimeSeries(site, period, startTime, endTime, getPreviousYearTimeSeriesImpl = getPreviousYearTimeSeries) {
         return function (dispatch, getState) {
             const requestKey = getTsRequestKey('compare', period)(getState());
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
-            return getPreviousYearTimeSeries({site, startTime, endTime}).then(
+            return getPreviousYearTimeSeriesImpl({site, startTime, endTime}).then(
                 series => {
                     const collection = normalize(series, requestKey);
                     dispatch(Actions.addSeriesCollection(requestKey, collection));
@@ -126,9 +122,9 @@ export const Actions = {
             );
         };
     },
-    retrieveMedianStatistics(site) {
+    retrieveMedianStatistics(site, fetchSiteStatisticsImpl = fetchSiteStatistics) {
         return function(dispatch) {
-            return fetchSiteStatistics({site, statType: 'median'}).then(
+            return fetchSiteStatisticsImpl({site, statType: 'median'}).then(
                 stats => {
                     dispatch(Actions.addMedianStats(stats));
                     dispatch(Actions.toggleTimeSeries('median', true));
@@ -136,7 +132,7 @@ export const Actions = {
             );
         };
     },
-    retrieveExtendedTimeSeries(site, period) {
+    retrieveExtendedTimeSeries(site, period, getTimeSeriesImpl = getTimeSeries) {
         return function(dispatch, getState) {
             const state = getState();
             const parmCd = getCurrentParmCd(state);
@@ -146,7 +142,7 @@ export const Actions = {
                 const endTime = getRequestTimeRange('current', 'P7D')(state).end;
                 let startTime = calcStartTime(period, endTime);
                 dispatch(Actions.addTimeSeriesLoading([requestKey]));
-                return getTimeSeries({
+                return getTimeSeriesImpl({
                     sites: [site],
                     params: [parmCd],
                     startDate: startTime,
@@ -167,10 +163,10 @@ export const Actions = {
             }
         };
     },
-    retrieveFloodData(siteno) {
+    retrieveFloodData(siteno, fetchFloodFeaturesImpl = fetchFloodFeatures, fetchFloodExtentImpl = fetchFloodExtent) {
         return function (dispatch) {
-            const floodFeatures = fetchFloodFeatures(siteno);
-            const floodExtent = fetchFloodExtent(siteno);
+            const floodFeatures = fetchFloodFeaturesImpl(siteno);
+            const floodExtent = fetchFloodExtentImpl(siteno);
             return Promise.all([floodFeatures, floodExtent]).then((data) => {
                 const [features, extent] = data;
                 const stages = features.map((feature) => feature.attributes.STAGE).sort(function (a, b) {

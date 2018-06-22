@@ -1,15 +1,15 @@
 // functions to facilitate legend creation for a d3 plot
-const memoize = require('fast-memoize');
-const { createSelector } = require('reselect');
+import { set } from 'd3-collection';
+import memoize from 'fast-memoize';
+import { createSelector } from 'reselect';
 
-const { CIRCLE_RADIUS } = require('./layout');
-const { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker} = require('./markers');
-const { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } = require('./drawingData');
-
-const { USWDS_MEDIUM_SCREEN } = require('../../config');
-const { getMethods } = require('../../selectors/timeSeriesSelector');
-const { getCurrentVariableMedianMetadata} = require('../../selectors/medianStatisticsSelector');
-const { mediaQuery } = require('../../utils');
+import { CIRCLE_RADIUS } from './layout';
+import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from './markers';
+import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from './drawingData';
+import config from '../../config';
+import { getMethods } from '../../selectors/timeSeriesSelector';
+import { getCurrentVariableMedianMetadata } from '../../selectors/medianStatisticsSelector';
+import { mediaQuery } from '../../utils';
 
 const TS_LABEL = {
     'current': 'Current: ',
@@ -19,7 +19,8 @@ const TS_LABEL = {
 
 
 const tsMaskMarkers = function(tsKey, masks) {
-    return [...masks].map((mask) => {
+    //return [...masks].map((mask) => {
+    return Array.from(masks.values()).map((mask) => {
         const maskName = MASK_DESC[mask];
         const tsClass = `${maskName.replace(' ', '-').toLowerCase()}-mask`;
         const fill = `url(#${HASH_ID[tsKey]})`;
@@ -79,7 +80,9 @@ const createLegendMarkers = function(displayItems) {
     }
 
     if (displayItems.median) {
-        for (const [index, stats] of Object.values(displayItems.median).entries()) {
+        const medians = Object.values(displayItems.median);
+        for (let index = 0; index < medians.length; index++) {
+            const stats = medians[index];
             // Get the unique non-null years, in chronological order
             const years = [];
             if (stats.beginYear) {
@@ -125,7 +128,7 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
     let legend = svg
         .append('g')
             .attr('class', 'legend')
-            .attr('transform', `translate(${mediaQuery(USWDS_MEDIUM_SCREEN) ? layout.margin.left : 0}, 0)`);
+            .attr('transform', `translate(${mediaQuery(config.USWDS_MEDIUM_SCREEN) ? layout.margin.left : 0}, 0)`);
 
     legendMarkerRows.forEach((rowMarkers, rowIndex) => {
         let xPosition = 0;
@@ -183,7 +186,7 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
             default: classes.some((cls) => !cls.approved && !cls.estimated && !cls.dataMask),
             approved: classes.some((cls) => cls.approved),
             estimated: classes.some((cls) => cls.estimated),
-            dataMasks: new Set(classes.map((cls) => cls.dataMask).filter((mask) => {
+            dataMasks: set(classes.map((cls) => cls.dataMask).filter((mask) => {
                 return mask;
             }))
         };

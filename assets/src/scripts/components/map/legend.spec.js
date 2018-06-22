@@ -1,12 +1,16 @@
-const proxyquire = require('proxyquireify')(require);
+import { select } from 'd3-selection';
+import { map as createMap } from 'leaflet';
 
-const { select } = require('d3-selection');
-const { map: createMap } = require('leaflet');
+import { createFIMLegend, createLegendControl } from './legend';
+
+
+// Leaflet expects an exports global to exist - so although we don't use this,
+// just set it to something so it's not undefined.
+export var dummy = true;
 
 
 describe('component/map/legend module', () => {
 
-    let legend;
     let legendControl;
     let map;
 
@@ -26,9 +30,7 @@ describe('component/map/legend module', () => {
     describe('createLegendControl', () => {
         let legendContainer, containerSelect;
         beforeEach(() => {
-            legend = proxyquire('./legend', {});
-
-            legendControl = legend.createLegendControl({});
+            legendControl = createLegendControl({});
             legendControl.addTo(map);
 
             legendContainer = legendControl.getContainer();
@@ -66,8 +68,7 @@ describe('component/map/legend module', () => {
     });
 
     describe('createFIMLegend', () => {
-        let ajaxMock;
-        let getPromise;
+        let mockGet;
         const MOCK_RESP =
             `{"layers": [{
                 "layerId":0,
@@ -98,23 +99,18 @@ describe('component/map/legend module', () => {
                     ]}`;
 
         beforeEach(() => {
-            getPromise = Promise.resolve(MOCK_RESP);
-            ajaxMock = {
-                get: function() {
-                    return getPromise;
-                }
-            };
-            spyOn(ajaxMock, 'get').and.callThrough();
-            legend = proxyquire('./legend', {'../../ajax': ajaxMock});
+            mockGet = jasmine.createSpy('get').and.returnValue(
+                Promise.resolve(MOCK_RESP)
+            );
 
-            legendControl = legend.createLegendControl({});
+            legendControl = createLegendControl({});
             legendControl.addTo(map);
 
-            legend.createFIMLegend(legendControl, true);
+            createFIMLegend(legendControl, true, mockGet);
         });
 
         it('createFIMLegend with FIM available true fetches the three sets of legend info', () => {
-            expect(ajaxMock.get.calls.count()).toBe(3);
+            expect(mockGet.calls.count()).toBe(3);
         });
 
         it('createFIMLegend with FIM available true makes the expand button visible', () =>  {
@@ -126,7 +122,7 @@ describe('component/map/legend module', () => {
         });
 
         it('Calling createFIMLegend a second time with available set to false cause the fim legend list to be removed', () => {
-            legend.createFIMLegend(legendControl, false);
+            createFIMLegend(legendControl, false);
 
             expect(select(legendControl.getContainer()).select('#fim-legend-list').size()).toBe(0);
         });

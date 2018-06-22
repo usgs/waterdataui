@@ -7,7 +7,7 @@
  * @param {Boolean} isInteractive
  * @param {String} idPrefix
  */
-function addSVGAccessibility(svg, {title, description, isInteractive, idPrefix}) {
+export function addSVGAccessibility(svg, {title, description, isInteractive, idPrefix}) {
     svg.selectAll('title, desc').remove();
     let descElement = svg.insert('desc', ':first-child')
         .html(description);
@@ -32,7 +32,7 @@ function addSVGAccessibility(svg, {title, description, isInteractive, idPrefix})
  * @param {String} describeById - Optional id string of the element that describes this table
  * @param {String} describeByText - Optional text that describes this table
  */
-function addSROnlyTable(container, {columnNames, data, describeById=null, describeByText=null}) {
+export function addSROnlyTable(container, {columnNames, data, describeById=null, describeByText=null}) {
     if (data.length > 0) {
         const table = container
             .append('table')
@@ -72,5 +72,3 @@ function addSROnlyTable(container, {columnNames, data, describeById=null, descri
     }
 
 }
-
-module.exports = {addSVGAccessibility, addSROnlyTable};

@@ -1,4 +1,4 @@
-const { normalize } = require('./schema');
+import { normalize } from './schema';
 
 
 describe('Normalizr schema', () => {

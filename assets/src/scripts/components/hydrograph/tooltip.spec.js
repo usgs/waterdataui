@@ -1,10 +1,7 @@
-
-const { select } = require('d3-selection');
-const proxyquire = require('proxyquireify')(require);
-
-const { provide } = require('../../lib/redux');
-const { Actions, configureStore } = require('../../store');
-const { createTooltipText, createTooltipFocus } = require('./tooltip');
+import { select } from 'd3-selection';
+import { provide } from '../../lib/redux';
+import { Actions, configureStore } from '../../store';
+import { createTooltipText, createTooltipFocus, tooltipPointsSelectorFactory } from './tooltip';
 
 
 describe('Hydrograph tooltip module', () => {
@@ -133,9 +130,14 @@ describe('Hydrograph tooltip module', () => {
     };
 
     describe('tooltipPointsSelector', () => {
-        const finiteData = {
-            './cursor': {
-                tsCursorPointsSelector: () => () => {
+        const xScaleSelector = () => (val) => val;
+        const yScaleSelector = () => (val) => val;
+
+        it('should return the requested time series focus time', () => {
+            const tooltipPointsSelector = tooltipPointsSelectorFactory(
+                xScaleSelector,
+                yScaleSelector,
+                () => {
                     return {
                         '00060:current': {
                             dateTime: '1date',
@@ -147,36 +149,8 @@ describe('Hydrograph tooltip module', () => {
                         }
                     };
                 }
-            },
-            './scales': {
-                xScaleSelector: () => () => (val) => val,
-                yScaleSelector: () => (val) => val
-            }
-        };
-        const infiniteData = {
-            './cursor': {
-                tsCursorPointsSelector: () => () => {
-                    return {
-                        '00060:current': {
-                            dateTime: '1date',
-                            value: Infinity
-                        },
-                        '00060:compare': {
-                            dateTime: '2date',
-                            value: 2
-                        }
-                    };
-                }
-            },
-            './scales': {
-                xScaleSelector: () => () => (val) => val,
-                yScaleSelector: () => (val) => val
-            }
-        };
-
-        it('should return the requested time series focus time', () => {
-            let tooltip = proxyquire('./tooltip', finiteData);
-            expect(tooltip.tooltipPointsSelector('current')({})).toEqual([{
+            );
+            expect(tooltipPointsSelector('current')({})).toEqual([{
                 x: '1date',
                 y: 1,
                 tsID: '00060:current'
@@ -188,8 +162,23 @@ describe('Hydrograph tooltip module', () => {
         });
 
         it('should exclude values that are infinite', () => {
-            let tooltip = proxyquire('./tooltip', infiniteData);
-            expect(tooltip.tooltipPointsSelector('current')({})).toEqual([{
+            const tooltipPointsSelector = tooltipPointsSelectorFactory(
+                xScaleSelector,
+                yScaleSelector,
+                () => {
+                    return {
+                        '00060:current': {
+                            dateTime: '1date',
+                            value: Infinity
+                        },
+                        '00060:compare': {
+                            dateTime: '2date',
+                            value: 2
+                        }
+                    };
+                }
+            );
+            expect(tooltipPointsSelector('current')({})).toEqual([{
                 x: '2date',
                 y: 2,
                 tsID: '00060:compare'

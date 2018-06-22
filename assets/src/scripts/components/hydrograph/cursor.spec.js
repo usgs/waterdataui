@@ -1,9 +1,7 @@
-const { select } = require('d3-selection');
-
-const { Actions, configureStore } = require('../../store');
-const { provide } = require('../../lib/redux');
-
-const { cursorSlider, getNearestTime, tsCursorPointsSelector, cursorOffsetSelector } = require('./cursor');
+import { select } from 'd3-selection';
+import { Actions, configureStore } from '../../store';
+import { provide } from '../../lib/redux';
+import { cursorSlider, getNearestTime, tsCursorPointsSelector, cursorOffsetSelector } from './cursor';
 
 
 
@@ -285,7 +283,8 @@ describe('Cursor module', () => {
             // Check each date with the given offset against the hourly-spaced
             // test DATA.
             function expectOffset(offset, side) {
-                for (let [index, datum] of DATA.entries()) {
+                for (let index = 0; index < DATA.length; index++) {
+                    const datum = DATA[index];
                     let expected;
                     if (side === 'left' || index === DATA.length - 1) {
                         expected = {datum, index};

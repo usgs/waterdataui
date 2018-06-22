@@ -1,7 +1,6 @@
-const { select } = require('d3-selection');
-
-const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
-const { lineMarker, rectangleMarker, textOnlyMarker } = require('./markers');
+import { select } from 'd3-selection';
+import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
+import { lineMarker, rectangleMarker, textOnlyMarker } from './markers';
 
 describe('Legend module', () => {
 
@@ -186,7 +185,6 @@ describe('Legend module', () => {
 
         it('Should return markers for the selected variable', () => {
             const result = legendMarkerRowsSelector(TEST_DATA);
-
             expect(result.length).toBe(2);
             expect(result[0].length).toBe(4);
             expect(result[0][0].type).toEqual(textOnlyMarker);

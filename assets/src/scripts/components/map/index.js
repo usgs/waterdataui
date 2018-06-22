@@ -1,18 +1,14 @@
-const { select } = require('d3-selection');
-const { createStructuredSelector } = require('reselect');
-
-const { map: createMap, marker: createMarker } = require('leaflet');
-const { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util } = require('esri-leaflet');
-
-const { link, provide } = require('../../lib/redux');
-
-const { FIM_ENDPOINT, HYDRO_ENDPOINT } = require('../../config');
-const { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } = require('../../floodData');
-const { hasFloodData, getFloodExtent, getFloodStageHeight } = require('../../selectors/floodDataSelector');
-const { Actions } = require('../../store');
-
-const { floodSlider } = require('./floodSlider');
-const { createLegendControl, createFIMLegend } = require('./legend');
+import { select } from 'd3-selection';
+import { createStructuredSelector } from 'reselect';
+import { map as createMap, marker as createMarker } from 'leaflet';
+import { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util } from 'esri-leaflet/src/EsriLeaflet';
+import { link, provide } from '../../lib/redux';
+import config from '../../config';
+import { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } from '../../floodData';
+import { hasFloodData, getFloodExtent, getFloodStageHeight } from '../../selectors/floodDataSelector';
+import { Actions } from '../../store';
+import { floodSlider } from './floodSlider';
+import { createLegendControl, createFIMLegend } from './legend';
 
 
 const getLayerDefs = function(layerNo, siteno, stage) {
@@ -23,7 +19,7 @@ const getLayerDefs = function(layerNo, siteno, stage) {
 /*
  * Creates a site map
  */
-const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
+const siteMap = function(node, {siteno, latitude, longitude, zoom}, endpoints) {
     // Create map on node
     const map = createMap('site-map', {
         center: [latitude, longitude],
@@ -39,19 +35,19 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     });
 
     let floodLayer = dynamicMapLayer({
-        url: FLOOD_EXTENTS_ENDPOINT,
+        url: endpoints.FLOOD_EXTENTS_ENDPOINT,
         layers: [0],
         f: 'image',
         format: 'png8'
     });
     let breachLayer = dynamicMapLayer({
-        url: FLOOD_BREACH_ENDPOINT,
+        url: endpoints.FLOOD_BREACH_ENDPOINT,
         layers: [0],
         f: 'image',
         format: 'png8'
     });
     let leveeLayer = dynamicMapLayer({
-        url: FLOOD_LEVEE_ENDPOINT,
+        url: endpoints.FLOOD_LEVEE_ENDPOINT,
         layers: [0, 1],
         f: 'image',
         format: 'png8',
@@ -108,7 +104,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         if (hasFloodData) {
             node.append('a')
                 .attr('id', 'fim-link')
-                .attr('href', `${FIM_ENDPOINT}?site_no=${siteno}`)
+                .attr('href', `${config.FIM_ENDPOINT}?site_no=${siteno}`)
                 .attr('target', '_blank')
                 .attr('rel', 'noopener')
                 .text('Provisional Flood Information');
@@ -121,8 +117,8 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     map.addLayer(new BasemapLayer('Gray'));
 
     // Add the ESRI World Hydro Reference Overlay
-    if (HYDRO_ENDPOINT) {
-        map.addLayer(new TiledMapLayer({url: HYDRO_ENDPOINT}));
+    if (config.HYDRO_ENDPOINT) {
+        map.addLayer(new TiledMapLayer({url: config.HYDRO_ENDPOINT}));
     }
 
     // Add a marker at the site location
@@ -147,7 +143,12 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
  * @param {Number} longitude - longitude of siteno
  * @param {Number} zoom - zoom level to initially set the map to
  */
-export const attachToNode = function(store, node, {siteno, latitude, longitude, zoom}) {
+export const attachToNode = function(
+        store,
+        node,
+        {siteno, latitude, longitude, zoom},
+        endpoints = { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT }
+    ) {
 
     store.dispatch(Actions.retrieveFloodData(siteno));
 
@@ -156,6 +157,6 @@ export const attachToNode = function(store, node, {siteno, latitude, longitude, 
     select(node).select('#flood-layer-control-container')
         .call(floodSlider);
     select(node)
-        .call(siteMap, {siteno, latitude, longitude, zoom});
+        .call(siteMap, {siteno, latitude, longitude, zoom}, endpoints);
 };
 

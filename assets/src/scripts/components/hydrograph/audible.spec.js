@@ -1,10 +1,7 @@
-const { select } = require('d3-selection');
-
-const { audibleUI } = require('./audible');
-
-const { provide } = require('../../lib/redux');
-
-const { configureStore } = require('../../store');
+import { select } from 'd3-selection';
+import { audibleUI } from './audible';
+import { provide } from '../../lib/redux';
+import { configureStore } from '../../store';
 
 
 const TEST_STATE = {

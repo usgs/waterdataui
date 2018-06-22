@@ -1,16 +1,15 @@
 // Define constants for the time series graph's aspect ratio and margins as well as a
 // selector function which will return the width/height to use.
-const { createSelector } = require('reselect');
+import { createSelector } from 'reselect';
 
-const { USWDS_SITE_MAX_WIDTH } = require('../../config');
-const { mediaQuery } = require('../../utils');
-
-const { tickSelector } = require('./domain');
-
+import config from '../../config';
+import { mediaQuery } from '../../utils';
+import { tickSelector } from './domain';
 
 
-const ASPECT_RATIO = 1 / 2;
-const ASPECT_RATIO_PERCENT = `${100 * ASPECT_RATIO}%`;
+
+export const ASPECT_RATIO = 1 / 2;
+export const ASPECT_RATIO_PERCENT = `${100 * ASPECT_RATIO}%`;
 const MARGIN = {
     top: 25,
     right: 0,
@@ -23,38 +22,42 @@ const MARGIN_SMALL_DEVICE = {
     bottom: 10,
     left: 0
 };
-const CIRCLE_RADIUS = 4;
-const CIRCLE_RADIUS_SINGLE_PT = 1;
+export const CIRCLE_RADIUS = 4;
+export const CIRCLE_RADIUS_SINGLE_PT = 1;
 
-const SPARK_LINE_DIM = {
+export const SPARK_LINE_DIM = {
     width: 60,
     height: 30
 };
 
 
 /*
+ * layoutSelector supporting injection of tickSelector
+ */
+export const layoutSelectorFactory = function (tickSelectorImpl) {
+    return createSelector(
+        (state) => state.ui.width,
+        (state) => state.ui.windowWidth,
+        tickSelectorImpl,
+        (width, windowWidth, tickDetails) => {
+            const margin = mediaQuery(config.USWDS_SITE_MAX_WIDTH) ? MARGIN : MARGIN_SMALL_DEVICE;
+            const tickLengths = tickDetails.tickValues.map(v => tickDetails.tickFormat(v).length);
+            const approxLabelLength = Math.max(...tickLengths) * 10;
+            return {
+                width: width,
+                height: width * ASPECT_RATIO,
+                windowWidth: windowWidth,
+                margin: {
+                    ...margin,
+                    left: margin.left + approxLabelLength
+                }
+            };
+        }
+    );
+};
+
+/*
  * @param {Object} state - Redux store
  * @return {Object} containing width and height properties.
  */
-const layoutSelector = createSelector(
-    (state) => state.ui.width,
-    (state) => state.ui.windowWidth,
-    tickSelector,
-    (width, windowWidth, tickDetails) => {
-        const margin = mediaQuery(USWDS_SITE_MAX_WIDTH) ? MARGIN : MARGIN_SMALL_DEVICE;
-        const tickLengths = tickDetails.tickValues.map(v => tickDetails.tickFormat(v).length);
-        const approxLabelLength = Math.max(...tickLengths) * 10;
-        return {
-            width: width,
-            height: width * ASPECT_RATIO,
-            windowWidth: windowWidth,
-            margin: {
-                ...margin,
-                left: margin.left + approxLabelLength
-            }
-        };
-    }
-);
-
-module.exports = {ASPECT_RATIO, ASPECT_RATIO_PERCENT, CIRCLE_RADIUS, layoutSelector, SPARK_LINE_DIM,
-    CIRCLE_RADIUS_SINGLE_PT};
+export const layoutSelector = layoutSelectorFactory(tickSelector);

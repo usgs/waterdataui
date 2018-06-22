@@ -1,6 +1,5 @@
-const { select } = require('d3-selection');
-
-const { lineMarker, circleMarker, rectangleMarker, textOnlyMarker } = require('./markers');
+import { select } from 'd3-selection';
+import { lineMarker, circleMarker, rectangleMarker, textOnlyMarker } from './markers';
 
 describe('Markers module', () => {
 

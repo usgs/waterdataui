@@ -1,32 +1,27 @@
 /**
  * Hydrograph charting module.
  */
-const { extent } = require('d3-array');
-const { line: d3Line, curveStepAfter } = require('d3-shape');
-const { select } = require('d3-selection');
+import { extent } from 'd3-array';
 
-const { createStructuredSelector } = require('reselect');
-
-const { addSVGAccessibility } = require('../../accessibility');
-const { USWDS_SMALL_SCREEN, STATIC_URL } = require('../../config');
-const { dispatch, link, provide } = require('../../lib/redux');
-const { Actions } = require('../../store');
-const { callIf, mediaQuery } = require('../../utils');
-
-const { audibleUI } = require('./audible');
-const { appendAxes, axesSelector } = require('./axes');
-const { cursorSlider } = require('./cursor');
-const {lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID,
-    getCurrentVariableMedianStatPoints } = require('./drawingData');
-const { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } = require('./layout');
-const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
-const { plotSeriesSelectTable, availableTimeSeriesSelector } = require('./parameters');
-const { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } = require('./scales');
-const { allTimeSeriesSelector,  isVisibleSelector, titleSelector,
-    descriptionSelector,  currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } = require('./timeSeries');
-const { createTooltipFocus, createTooltipText } = require('./tooltip');
-
-const { getTimeSeriesCollectionIds, isLoadingTS } = require('../../selectors/timeSeriesSelector');
+import { line as d3Line, curveStepAfter } from 'd3-shape';
+import { select } from 'd3-selection';
+import { createStructuredSelector } from 'reselect';
+import { addSVGAccessibility } from '../../accessibility';
+import config from '../../config';
+import { dispatch, link, provide } from '../../lib/redux';
+import { Actions } from '../../store';
+import { callIf, mediaQuery } from '../../utils';
+import { audibleUI } from './audible';
+import { appendAxes, axesSelector } from './axes';
+import { cursorSlider } from './cursor';
+import { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID, getCurrentVariableMedianStatPoints } from './drawingData';
+import { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } from './layout';
+import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
+import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
+import { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } from './scales';
+import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } from './timeSeries';
+import { createTooltipFocus, createTooltipText } from './tooltip';
+import { getTimeSeriesCollectionIds, isLoadingTS } from '../../selectors/timeSeriesSelector';
 
 
 const drawMessage = function(elem, message) {
@@ -165,7 +160,7 @@ const plotSvgDefs = function(elem) {
 };
 
 
-const timeSeriesLegend = function(elem) {
+export const timeSeriesLegend = function(elem) {
     elem.append('div')
         .classed('hydrograph-container', true)
         .call(link(drawSimpleLegend, createStructuredSelector({
@@ -235,13 +230,13 @@ const watermark = function (elem) {
     elem.append('img')
         .classed('watermark', true)
         .attr('alt', 'USGS - science for a changing world')
-        .attr('src', STATIC_URL + '/img/USGS_green_logo.svg')
+        .attr('src', config.STATIC_URL + '/img/USGS_green_logo.svg')
         .call(link(function(elem, layout) {
             const transformStringSmallScreen = `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025
                     + layout.margin.left - 50}, ${layout.height * .60})`;
             const transformStringForAllOtherScreens = `matrix(1, 0, 0, 1, ${(layout.width - layout.margin.left) * .025
                     + layout.margin.left}, ${(layout.height * .75 - (-1 * layout.height + 503) * .12)})`;
-            if (!mediaQuery(USWDS_SMALL_SCREEN)) {
+            if (!mediaQuery(config.USWDS_SMALL_SCREEN)) {
                 // calculates the watermark position based on current layout dimensions
                 // and a conversion factor minus the area for blank space due to scaling
                 elem.style('transform', transformStringSmallScreen);
@@ -256,7 +251,7 @@ const watermark = function (elem) {
         }, layoutSelector));
 };
 
-const timeSeriesGraph = function(elem) {
+export const timeSeriesGraph = function(elem) {
     elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(watermark)
@@ -430,7 +425,7 @@ const noDataAlert = function(elem, tsCollectionIds) {
     }
 };
 
-const attachToNode = function (store, node, {siteno, parameter, compare, cursorOffset, interactive = true} = {}) {
+export const attachToNode = function (store, node, {siteno, parameter, compare, cursorOffset, interactive = true} = {}) {
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
@@ -487,6 +482,3 @@ const attachToNode = function (store, node, {siteno, parameter, compare, cursorO
     store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null));
     store.dispatch(Actions.retrieveMedianStatistics(siteno));
 };
-
-
-module.exports = {attachToNode, timeSeriesLegend, timeSeriesGraph};
