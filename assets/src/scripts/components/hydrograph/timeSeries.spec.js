@@ -1,6 +1,4 @@
-const { timeSeriesSelector, hasTimeSeriesWithPoints, isVisibleSelector, yLabelSelector,
-    titleSelector, descriptionSelector, currentVariableTimeSeriesSelector,
-    allTimeSeriesSelector, tsTimeZoneSelector} = require('./timeSeries');
+import { timeSeriesSelector, hasTimeSeriesWithPoints, isVisibleSelector, yLabelSelector, titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, allTimeSeriesSelector, tsTimeZoneSelector } from './timeSeries';
 
 
 const TEST_DATA = {

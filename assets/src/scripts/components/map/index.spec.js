@@ -1,8 +1,9 @@
-const { select } = require('d3-selection');
-const proxyquire = require('proxyquireify')(require);
+import { select } from 'd3-selection';
+import { attachToNode } from './index';
+import { configureStore } from '../../store';
 
-const { attachToNode } = require('./index');
-const { configureStore } = require('../../store');
+const MapInjector = require('inject-loader!./index');
+
 
 describe('map module', () => {
     let mapNode;
@@ -25,7 +26,7 @@ describe('map module', () => {
             FLOOD_LEVEE_ENDPOINT: 'http://fake.service.com'
         };
 
-        map = proxyquire('./index', {'../floodData': floodDataMock});
+        map = MapInjector({'../../floodData': floodDataMock});
     });
 
     afterEach(() => {

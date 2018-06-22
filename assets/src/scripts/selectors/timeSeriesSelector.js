@@ -1,5 +1,5 @@
-const memoize = require('fast-memoize');
-const { createSelector } = require('reselect');
+import memoize from 'fast-memoize';
+import { createSelector } from 'reselect';
 
 /*
  * Selectors that return properties from the state

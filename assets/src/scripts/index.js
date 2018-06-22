@@ -1,19 +1,24 @@
-require('babel-polyfill');
-require('matchmedia-polyfill');
+import '@babel/polyfill';
+import 'matchmedia-polyfill';
 
 // Initialize the 18F Web design standards
-require('uswds');
+import 'uswds';
 
 // Load misc Javascript helpers for general page interactivity.
-require('./helpers').register();
+import { register as registerHelpers } from './helpers';
+registerHelpers();
 
-const { configureStore } = require('./store');
+import { configureStore } from './store';
+
+import { attachToNode as EmbedComponent } from './components/embed';
+import { attachToNode as HydrographComponent } from './components/hydrograph';
+import { attachToNode as MapComponent } from './components/map';
 
 
 const COMPONENTS = {
-    embed: require('./components/embed').attachToNode,
-    hydrograph: require('./components/hydrograph').attachToNode,
-    map: require('./components/map').attachToNode
+    embed: EmbedComponent,
+    hydrograph: HydrographComponent,
+    map: MapComponent
 };
 
 

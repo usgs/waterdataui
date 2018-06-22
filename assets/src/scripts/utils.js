@@ -1,5 +1,5 @@
-const { select } = require('d3-selection');
-const { DateTime } = require('luxon');
+import { select } from 'd3-selection';
+import { DateTime } from 'luxon';
 
 /**
  * Determine the unicode variant of an HTML decimal entity

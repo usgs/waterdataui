@@ -1,7 +1,6 @@
-const { utcFormat } = require('d3-time-format');
-
-const config = require('./config');
-const { get } = require('./ajax');
+import { utcFormat } from 'd3-time-format';
+import config from './config';
+import { get } from './ajax';
 
 
 // Define Water Services root URL - use global variable if defined, otherwise

@@ -1,6 +1,6 @@
-const { get } = require('./ajax');
-const config = require('./config');
-const { parseRDB } = require('./utils');
+import { get } from './ajax';
+import config from './config';
+import { parseRDB } from './utils';
 
 
 

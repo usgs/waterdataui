@@ -1,7 +1,9 @@
 {
-  "plugins": ["transform-object-rest-spread"],
-  "presets": [
-    ["env", {
-      "useBuiltIns": true
-    }]]
+    "plugins": [
+      "@babel/plugin-proposal-object-rest-spread",
+      "istanbul"
+    ],
+    "presets": [
+      ["@babel/env", {"useBuiltIns": "entry"}]
+    ]
 }

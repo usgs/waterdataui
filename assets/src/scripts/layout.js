@@ -1,4 +1,4 @@
-const { local } = require('d3-selection');
+import { local } from 'd3-selection';
 
 const layoutLocal = local();
 

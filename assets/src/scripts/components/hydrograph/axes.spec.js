@@ -1,7 +1,6 @@
-const { scaleLinear } = require('d3-scale');
-const { select } = require('d3-selection');
-
-const { createAxes, appendAxes, generateDateTicks } = require('./axes');
+import { scaleLinear } from 'd3-scale';
+import { select } from 'd3-selection';
+import { createAxes, appendAxes, generateDateTicks } from './axes';
 
 
 describe('Chart axes', () => {

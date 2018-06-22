@@ -1,7 +1,7 @@
 // This code is derived from d3-redux: https://github.com/couchand/d3-redux
 // Copyright (c) 2017 Andrew Couch, MIT licensed.
 
-const { local } = require('d3-selection');
+import { local } from 'd3-selection';
 
 const storeLocal = local();
 
