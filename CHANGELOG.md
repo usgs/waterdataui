@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Cooperator logos lookup changed from static json file to SIFTA site service
 
 ## [0.11.0] - 2018-06-06
 ### Changed
@@ -33,7 +34,7 @@ not have to be coerced into a time series.
 - Added dynamic left margin for tooltip text to prevent overlap with y-axis labels
 - Bug that caused incorrect font styling on tooltips
 - Various accessibility violations
-- Tooltips that were hard to read when they overlapped graph lines 
+- Tooltips that were hard to read when they overlapped graph lines
 
 ## [0.9.0] - 2018-05-10
 ### Fixed

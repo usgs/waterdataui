@@ -7,7 +7,8 @@ from flask import abort, render_template, request, Markup
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries
-from .utils import construct_url, defined_when, execute_get_request, parse_rdb, get_cooperator_data
+from .utils import construct_url, defined_when, execute_get_request, parse_rdb
+from .services import sifta
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -113,9 +114,7 @@ def monitoring_location(site_no):
                 site_owner_state = None
 
             # grab the cooperator information from json file so that the logos are added to page, if available
-            cooperator_lookup_data = get_cooperator_data(location_with_values.get('district_cd', {}).get('code'),
-                                                         site_no)
-
+            cooperators = sifta.get_cooperators(site_no, location_with_values.get('district_cd', {}).get('code'))
             if site_owner_state is not None:
                 questions_link_params = {
                     'pemail': 'gs-w-{}_NWISWeb_Data_Inquiries'.format(site_owner_state.lower()),
@@ -135,7 +134,7 @@ def monitoring_location(site_no):
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'parm_grp_summary': grouped_dataseries,
                 'questions_link': questions_link,
-                'cooperator_lookup_data': cooperator_lookup_data
+                'cooperators': cooperators
             }
         http_code = 200
     elif 400 <= status < 500:

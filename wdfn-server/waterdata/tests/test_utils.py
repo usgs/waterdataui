@@ -6,7 +6,7 @@ from unittest import TestCase, mock
 
 import requests as r
 
-from ..utils import construct_url, defined_when, execute_get_request, parse_rdb, get_cooperator_data
+from ..utils import construct_url, defined_when, execute_get_request, parse_rdb
 
 
 class TestConstructUrl(TestCase):
@@ -241,28 +241,3 @@ class TestDefinedWhen(TestCase):
         def decorated(*args, **kwargs):
             return ','.join([*args, *kwargs.keys(), *kwargs.values()])
         self.assertEqual(decorated('1', '2', kw1='3', kw2='4'), '1,2,kw1,kw2,3,4')
-
-
-class TestGetCooperatorData(TestCase):
-    def setUp(self):
-        self.location_with_values_valid = '20'
-        self.location_with_values_invalid = '1241232'
-        self.site_with_cooperators = '06864000'
-        self.site_without_cooperators = '06846500'
-
-    def test_get_cooperator_data(self):
-        reference_cooperator_json = {"Customers": [{
-            "IconURL": "http://water.usgs.gov/customer/icons/6737.gif",
-            "Name": "Kansas Water Office",
-            "URL": "http://www.kwo.org/"
-        }, {
-            "IconURL": "http://water.usgs.gov/customer/icons/usgsIcon.gif",
-            "Name": "USGS - Cooperative Matching Funds",
-            "URL": "http://water.usgs.gov/coop/"
-        }]}
-        self.assertEqual(get_cooperator_data(self.location_with_values_valid, self.site_with_cooperators),
-                         reference_cooperator_json)
-        self.assertEqual(get_cooperator_data(self.location_with_values_valid, self.site_without_cooperators),
-                         None)
-        self.assertEqual(get_cooperator_data(self.location_with_values_invalid, self.site_with_cooperators),
-                         None)
