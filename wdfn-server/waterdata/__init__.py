@@ -55,10 +55,6 @@ with open(os.path.join(app.config.get('DATA_DIR'),
                        app.config.get('HUC_LOOKUP_FILENAME')), 'r') as f:
     app.config['HUC_LOOKUP'] = json.loads(f.read())
 
-with open(os.path.join(app.config.get('DATA_DIR'),
-                       app.config.get('COOPERATOR_DATA_FILENAME')), 'r') as f:
-    app.config['COOPERATOR_DATA'] = json.loads(f.read())
-
 # Load static assets manifest file, which maps source file names to the
 # corresponding versioned/hashed file name.
 manifest_path = app.config.get('ASSET_MANIFEST_PATH')

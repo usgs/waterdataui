@@ -42,7 +42,6 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 NWIS_CODE_LOOKUP_FILENAME = 'nwis_lookup.json'
 COUNTRY_STATE_COUNTY_LOOKUP_FILENAME = 'nwis_country_state_lookup.json'
 HUC_LOOKUP_FILENAME = 'huc_lookup.json'
-COOPERATOR_DATA_FILENAME = 'cooperator_data.json'
 
 GA_TRACKING_CODE = ''
 ENABLE_USGS_GA = False
@@ -51,6 +50,4 @@ ENABLE_USGS_GA = False
 ASSET_MANIFEST_PATH = None
 
 # For cooperator site service, current lookup service is temporary, constants may need reconfiguring for the new service
-SERVICE_ROOT_COOPERATOR_LOOKUP = 'https://sifta.water.usgs.gov/'
-URL_PATH_COOPERATOR_LOOKUP = 'Services/REST/Site/CustomerFunding.ashx'
-URL_PARAMS_COOPERATOR_LOOKUP = '&StartDate=10/1/2017&EndDate=09/30/2018'
+COOPERATOR_SERVICE_PATTERN = 'https://water.usgs.gov/customer/stories/{site_no}/approved.json'
