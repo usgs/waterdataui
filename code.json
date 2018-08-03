@@ -3,7 +3,7 @@
     "name": "Water Data UI",
     "organization": "U.S. Geological Survey",
     "description": "Water Data for the Nation - contains a page for each NWIS site",
-    "version": "0.12.0dev",
+    "version": "0.12.0",
     "status": "Development",
 
     "permissions": {
