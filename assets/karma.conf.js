@@ -132,7 +132,8 @@ module.exports = function (config) {
                 ...karmaConfig.browsers,
 
                 'bs_safari10_mac',
-                'bs_safari10_iphone7',
+                // iOS Safari no longer working from VMs
+                //'bs_safari10_iphone7',
                 'bs_edge16_windows10',
                 // IE 11 failing with timezone issues
                 //'bs_ie11_windows10',
