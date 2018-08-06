@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ## [0.12.0] - 2018-08-03
-- Cooperator logos lookup changed from static json file to SIFTA site service
+- Cooperator logos lookup changed from static json file to external, SIFTA-based service
 
 ## [0.11.0] - 2018-06-06
 ### Changed
