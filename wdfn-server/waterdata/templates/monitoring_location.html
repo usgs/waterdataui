@@ -158,8 +158,8 @@
                         <p>Operated in cooperation with:</p>
                         {% for cooperator in cooperators | sort(attribute='Name') %}
                             <figure class="cooperator_logo">
-                                <a href="{{ cooperators.URL }}">
-                                    <img src="{{ cooperator.IconURL }}" alt="logo for {{ cooperator.Name }}  }}" height = "50" >
+                                <a href="{{ cooperator.URL }}">
+                                    <img src="{{ cooperator.IconURL | https_url }}" alt="logo for {{ cooperator.Name }}" height="50">
                                 </a>
                                 <figcaption><a href="{{ cooperator.URL }}">{{ cooperator.Name }}</a></figcaption>
                             </figure>
