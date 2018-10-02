@@ -135,4 +135,6 @@ def https_url(url):
     :return: URL, with the protocol set as HTTPS
     """
     parsed = urlparse(url)
+    if not parsed.netloc:
+        parsed = urlparse(f'//{url}')
     return ParseResult('https', parsed.netloc, parsed.path, *parsed[3:]).geturl()

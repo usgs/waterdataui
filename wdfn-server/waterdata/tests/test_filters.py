@@ -240,10 +240,10 @@ class TestTooltipContentIdFilter(TestCase):
         self.assertEqual(result, 'tooltip-blah-name')
 
 
-def https_url(app):
+def test_https_url(app):
     with app.test_request_context('http://abc.com/mypage'):
         url = filters.https_url('https://page.com/image.png')
-        assert url == 'https://abc.com://page.com/image.png'
+        assert url == 'https://page.com/image.png'
     with app.test_request_context('https://abc.com/mypage'):
         url = filters.https_url('https://page.com/image.png')
         assert url == 'https://page.com/image.png'
