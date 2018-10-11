@@ -39,9 +39,7 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
             interval = 1;
             break;
         case 'P30D':
-            const startDateDay= tzStartDate.weekday;
-            const weekStartDate = tzStartDate.minus({days: startDateDay});
-            date = weekStartDate.startOf('day');
+            date = tzStartDate.minus({days: tzStartDate.weekday}).startOf('day');
             timePeriod = 'weeks';
             interval = 1;
             break;

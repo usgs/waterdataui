@@ -12,4 +12,4 @@ export const attachToNode = function (store, node) {
     input.on('focus', function () {
         this.setSelectionRange(0, this.value.length);
     });
-}
+};

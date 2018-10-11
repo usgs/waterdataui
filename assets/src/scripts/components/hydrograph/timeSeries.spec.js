@@ -444,7 +444,7 @@ describe('TimeSeries module', () => {
         it('Returns the IANA timezone NWIS and IANA agree', () => {
             const result = tsTimeZoneSelector({
                 series: {
-                    ianaTimeZone: 'America/New_York',
+                    ianaTimeZone: 'America/New_York'
                 }
             });
             expect(result).toEqual('America/New_York');

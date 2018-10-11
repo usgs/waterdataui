@@ -1,5 +1,4 @@
 import { Actions, configureStore } from './index';
-import { getPreviousYearTimeSeries, getTimeSeries, isoFormatTime } from '../models';
 import { MOCK_RDB as MOCK_STATS_DATA } from '../statisticsData.spec.js';
 
 describe('Redux store', () => {

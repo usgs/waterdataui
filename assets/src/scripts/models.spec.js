@@ -2,6 +2,8 @@ import { getPreviousYearTimeSeries, getTimeSeries, sortedParameters } from './mo
 
 
 describe('Models module', () => {
+    /* eslint no-use-before-define: 0 */
+
     beforeEach(() => {
         jasmine.Ajax.install();
     });
@@ -11,6 +13,7 @@ describe('Models module', () => {
     });
 
     describe('getTimeSeries function', () => {
+
         const paramCode = '00060';
         const siteID = '05413500';
 
