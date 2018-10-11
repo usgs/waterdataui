@@ -238,3 +238,18 @@ class TestTooltipContentIdFilter(TestCase):
     def test_create(self):
         result = filters.tooltip_content_id(self.test_string)
         self.assertEqual(result, 'tooltip-blah-name')
+
+
+def test_https_url(app):
+    with app.test_request_context('http://abc.com/mypage'):
+        url = filters.https_url('https://page.com/image.png')
+        assert url == 'https://page.com/image.png'
+    with app.test_request_context('https://abc.com/mypage'):
+        url = filters.https_url('https://page.com/image.png')
+        assert url == 'https://page.com/image.png'
+    with app.test_request_context('https://abc.com/mypage'):
+        url = filters.https_url('page.com/image.png')
+        assert url == 'https://page.com/image.png'
+    with app.test_request_context('http://abc.com/mypage'):
+        url = filters.https_url('page.com/image.png')
+        assert url == 'https://page.com/image.png'

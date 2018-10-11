@@ -50,6 +50,4 @@ ENABLE_USGS_GA = False
 ASSET_MANIFEST_PATH = None
 
 # For cooperator site service, current lookup service is temporary, constants may need reconfiguring for the new service
-SERVICE_ROOT_COOPERATOR_LOOKUP = 'https://sifta.water.usgs.gov/'
-URL_PATH_COOPERATOR_LOOKUP = 'Services/REST/Site/CustomerFunding.ashx'
-URL_PARAMS_COOPERATOR_LOOKUP = '&StartDate=10/1/2017&EndDate=09/30/2018'
+COOPERATOR_SERVICE_PATTERN = 'https://water.usgs.gov/customer/stories/{site_no}/approved.json'

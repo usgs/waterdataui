@@ -4,7 +4,7 @@ via the `app.template_filter` decorator.
 """
 import datetime
 from itertools import chain
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse, ParseResult
 
 from . import app
 
@@ -124,3 +124,17 @@ def tooltip_content_id(some_text):
 
     """
     return 'tooltip-{}'.format(some_text.lower().replace('_', '-'))
+
+
+@app.template_filter('https_url')
+def https_url(url):
+    """
+    Returns the HTTPS version of a URL.
+
+    :param str url: absolute URL
+    :return: URL, with the protocol set as HTTPS
+    """
+    parsed = urlparse(url)
+    if not parsed.netloc:
+        parsed = urlparse(f'//{url}')
+    return ParseResult('https', parsed.netloc, parsed.path, *parsed[3:]).geturl()

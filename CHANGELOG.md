@@ -5,6 +5,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- The Browserify/Babel build tooling was replaced with Rollup/Bublé.
+
+## [0.13.0] - 2018-09-11
+### Changed
+- Cooperator logos are always loaded via https
+
+## [0.12.0] - 2018-08-03
+### Changed
+- Cooperator logos lookup changed from static json file to external, SIFTA-based service
+
+## [0.11.0] - 2018-06-06
+### Changed
+- Cooperator logos lookup changed from the SIFTA site service to json file
+
+## [0.10.0] - 2018-06-01
 ### Added
 - Loading indicators for initial time series load and for loading extended data
 - Added no data alert for sites with no time series data.
@@ -18,7 +34,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Font size of tooltips; larger size when fewer tips are present, smaller when more tip present
 - Refactor the Redux state to put the median statistics in its own property so that the data does
 not have to be coerced into a time series.
-- The Browserify/Babel build tooling was replaced with Rollup/Bublé.
+- Embedded hydrograph is time zone aware.
+- Scrolling added to the 'provisional statement' in IFrame embed
 
 ### Fixed
 - A bug with the graph watermark intercepting mouseover events driving the tooltips was fixed.
@@ -26,6 +43,7 @@ not have to be coerced into a time series.
 - Added dynamic left margin for tooltip text to prevent overlap with y-axis labels
 - Bug that caused incorrect font styling on tooltips
 - Various accessibility violations
+- Tooltips that were hard to read when they overlapped graph lines
 
 ## [0.9.0] - 2018-05-10
 ### Fixed
@@ -206,7 +224,10 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.9.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.12.0...master
+[0.12.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.11.0...waterdataui-0.12.0
+[0.11.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.10.0...waterdataui-0.11.0
+[0.10.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.9.0...waterdataui-0.10.0
 [0.9.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.8.0...waterdataui-0.9.0
 [0.8.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.7.0...waterdataui-0.8.0
 [0.7.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.6.0...waterdataui-0.7.0
