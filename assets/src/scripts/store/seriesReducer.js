@@ -15,7 +15,7 @@ const resetTimeSeries = function(series, action) {
         timeSeries: omitBy(series.timeSeries, (tsValue) => tsValue.tsKey === action.key),
         requests: {
             ...(series || {}).requests,
-            [action.key]: {}
+            ...{[action.key]: {}}
         }
     };
 };

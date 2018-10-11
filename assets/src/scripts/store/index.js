@@ -69,11 +69,19 @@ export const Actions = {
                 series => {
                     const collection = normalize(series, requestKey);
 
+                    // get the lat/lon of the site
+                    const location = collection.sourceInfo ? collection.sourceInfo[siteno].geoLocation.geogLocation : {};
+                    const latitude = location.latitude || null;
+                    const longitude = location.longitude || null;
+
                     // Get the start/end times of this request's range.
                     const notes = collection.queryInfo[requestKey].notes;
                     const endTime = notes.requestDT;
                     const startTime = calcStartTime('P7D', endTime, 'local');
 
+                    if (latitude !== null && longitude !== null) {
+                        dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
+                    }
                     // Trigger a call to get last year's data
                     dispatch(Actions.retrieveCompareTimeSeries(siteno, 'P7D', startTime, endTime));
 

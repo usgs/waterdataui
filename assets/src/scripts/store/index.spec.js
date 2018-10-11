@@ -2,6 +2,7 @@ import proxyquireFactory from 'proxyquireify';
 const proxyquire = proxyquireFactory(require);
 import { Actions } from './index';
 
+
 describe('Redux store', () => {
 
     describe('asynchronous actions', () => {
@@ -170,15 +171,18 @@ describe('Redux store', () => {
 
             it('should fetch the times series, retrieve the compare time series once the time series is fetched and fetch the statistics', (done) => {
                 spyOn(store.Actions, 'addSeriesCollection');
+                spyOn(store.Actions, 'retrieveLocationTimeZone');
                 spyOn(store.Actions, 'retrieveCompareTimeSeries');
                 spyOn(store.Actions, 'toggleTimeSeries');
                 spyOn(store.Actions, 'setCurrentVariable');
                 let p = store.Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
 
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(7);
+                    expect(mockDispatch.calls.count()).toBe(8);
                     expect(store.Actions.addSeriesCollection.calls.count()).toBe(1);
                     expect(store.Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('current');
+                    expect(store.Actions.retrieveLocationTimeZone.calls.count()).toBe(1);
+                    expect(store.Actions.retrieveLocationTimeZone.calls.argsFor(0)).toEqual([42.72027778, -90.8191667]);
                     expect(store.Actions.removeTimeSeriesLoading.calls.count()).toBe(1);
                     expect(store.Actions.removeTimeSeriesLoading.calls.argsFor(0)[0]).toEqual(['current:P7D']);
                     expect(store.Actions.retrieveCompareTimeSeries.calls.count()).toBe(1);
@@ -951,14 +955,14 @@ const MOCK_LAST_YEAR_DATA = `
 "scope" : "javax.xml.bind.JAXBElement$GlobalScope",
 "value" : {
   "queryInfo" : {
-    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=05413500&parameterCd=00060&period=P7D&indent=on&siteStatus=all&format=json",
+    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=12345678&parameterCd=00060&period=P7D&indent=on&siteStatus=all&format=json",
     "criteria" : {
-      "locationParam" : "[ALL:05413500]",
+      "locationParam" : "[ALL:12345678]",
       "variableParam" : "[00060]",
       "parameter" : [ ]
     },
     "note" : [ {
-      "value" : "[ALL:05413500]",
+      "value" : "[ALL:12345678]",
       "title" : "filter:sites"
     }, {
       "value" : "[mode=PERIOD, period=P7D, modifiedSince=null]",
@@ -984,7 +988,7 @@ const MOCK_LAST_YEAR_DATA = `
     "sourceInfo" : {
       "siteName" : "GRANT RIVER AT BURTON, WI",
       "siteCode" : [ {
-        "value" : "05413500",
+        "value" : "12345678",
         "network" : "NWIS",
         "agencyCode" : "USGS"
       } ],
@@ -1099,7 +1103,7 @@ const MOCK_LAST_YEAR_DATA = `
       "sample" : [ ],
       "censorCode" : [ ]
     } ],
-    "name" : "USGS:05413500:00060:00000"
+    "name" : "USGS:12345678:00060:00000"
   } ]
 },
 "nil" : false,
@@ -1114,14 +1118,14 @@ const MOCK_GAGE_DATA = `
 "scope" : "javax.xml.bind.JAXBElement$GlobalScope",
 "value" : {
   "queryInfo" : {
-    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=05413500&parameterCd=00065&period=P7D&indent=on&siteStatus=all&format=json",
+    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=12345678&parameterCd=00065&period=P7D&indent=on&siteStatus=all&format=json",
     "criteria" : {
-      "locationParam" : "[ALL:05413500]",
+      "locationParam" : "[ALL:12345678]",
       "variableParam" : "[00065]",
       "parameter" : [ ]
     },
     "note" : [ {
-      "value" : "[ALL:05413500]",
+      "value" : "[ALL:12345678]",
       "title" : "filter:sites"
     }, {
       "value" : "[mode=PERIOD, period=P7D, modifiedSince=null]",
@@ -1147,7 +1151,7 @@ const MOCK_GAGE_DATA = `
     "sourceInfo" : {
       "siteName" : "GRANT RIVER AT BURTON, WI",
       "siteCode" : [ {
-        "value" : "05413500",
+        "value" : "12345678",
         "network" : "NWIS",
         "agencyCode" : "USGS"
       } ],
@@ -1262,7 +1266,7 @@ const MOCK_GAGE_DATA = `
       "sample" : [ ],
       "censorCode" : [ ]
     } ],
-    "name" : "USGS:05413500:00060:00000"
+    "name" : "USGS:12345678:00060:00000"
   } ]
 },
 "nil" : false,
@@ -1277,14 +1281,14 @@ const MOCK_DATA = `
 "scope" : "javax.xml.bind.JAXBElement$GlobalScope",
 "value" : {
   "queryInfo" : {
-    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=05413500&parameterCd=00060&period=P7D&indent=on&siteStatus=all&format=json",
+    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=12345678&parameterCd=00060&period=P7D&indent=on&siteStatus=all&format=json",
     "criteria" : {
-      "locationParam" : "[ALL:05413500]",
+      "locationParam" : "[ALL:12345678]",
       "variableParam" : "[00060]",
       "parameter" : [ ]
     },
     "note" : [ {
-      "value" : "[ALL:05413500]",
+      "value" : "[ALL:12345678]",
       "title" : "filter:sites"
     }, {
       "value" : "[mode=PERIOD, period=P7D, modifiedSince=null]",
@@ -1310,7 +1314,7 @@ const MOCK_DATA = `
     "sourceInfo" : {
       "siteName" : "GRANT RIVER AT BURTON, WI",
       "siteCode" : [ {
-        "value" : "05413500",
+        "value" : "12345678",
         "network" : "NWIS",
         "agencyCode" : "USGS"
       } ],
@@ -4073,7 +4077,7 @@ const MOCK_DATA = `
       "sample" : [ ],
       "censorCode" : [ ]
     } ],
-    "name" : "USGS:05413500:00060:00000"
+    "name" : "USGS:12345678:00060:00000"
   } ]
 },
 "nil" : false,

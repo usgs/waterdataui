@@ -5,8 +5,8 @@ import 'matchmedia-polyfill';
 import 'uswds';
 
 // Load misc Javascript helpers for general page interactivity.
-import { register as registerHelpers } from './helpers';
-registerHelpers();
+import { register } from './helpers';
+register();
 
 import { configureStore } from './store';
 
@@ -14,13 +14,11 @@ import { attachToNode as EmbedComponent } from './components/embed';
 import { attachToNode as HydrographComponent } from './components/hydrograph';
 import { attachToNode as MapComponent } from './components/map';
 
-
 const COMPONENTS = {
     embed: EmbedComponent,
     hydrograph: HydrographComponent,
     map: MapComponent
 };
-
 
 function main() {
     // NOTE: Here we use a try/catch block rather than a global "onerror"
@@ -59,3 +57,7 @@ if (document.readyState !== 'loading') {
 } else {
     document.addEventListener('DOMContentLoaded', main, false);
 }
+
+// Leaflet expects an exports global to exist - so although we don't use this,
+// just set it to something so it's not undefined.
+export var dummy = true;

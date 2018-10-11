@@ -109,7 +109,7 @@
     .tooltip-text-group {
         pointer-events: none;
         position: absolute;
-        background: rgba(255, 255, 255, 0);
+        background: rgba(255, 255, 255, 0.8);
         color: $default-time-series;
         .current-tooltip-text {
             font-weight: bold;
@@ -167,6 +167,16 @@
             position: absolute;
             top: 0;
             right: 0;
+        }
+    }
+}
+
+.provisional-data-alert {
+    p {
+        height: 6em;
+        overflow-y: scroll;
+        @include media($small-screen) {
+            height: 4em;
         }
     }
 }

@@ -273,7 +273,7 @@ describe('Hydrograph charting module', () => {
             attachToNode(store, graphNode, {siteno: '123456788'});
         });
 
-        it('should render the correct number svg nodes', () => {
+        it('should render the correct number of svg nodes', () => {
             // one main hydrograph, legend and two sparklines
             expect(selectAll('svg').size()).toBe(4);
         });
