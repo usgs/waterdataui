@@ -75,7 +75,7 @@
     "postcss-cli": "^5.0.0",
     "proxyquireify": "^3.2.1",
     "tinyify": "^2.4.0",
-    "uglify-js": "^3.3.23",
+    "uglify-js": "^3.4.9",
     "uglifycss": "0.0.29",
     "watchify": "^3.11.0"
   },
