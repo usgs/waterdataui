@@ -6,10 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.13.0] - 2018-09-11
 ### Changed
 - Cooperator logos are always loaded via https
 
 ## [0.12.0] - 2018-08-03
+### Changed
 - Cooperator logos lookup changed from static json file to external, SIFTA-based service
 
 ## [0.11.0] - 2018-06-06
