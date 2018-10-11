@@ -2,6 +2,9 @@
  * Rollup configuration.
  * NOTE: This is a CommonJS module so it can be imported by Karma.
  */
+const path = require('path');
+
+const alias = require('rollup-plugin-alias');
 const buble = require('rollup-plugin-buble');
 const commonjs = require('rollup-plugin-commonjs');
 const json = require('rollup-plugin-json');
@@ -15,6 +18,9 @@ const env = process.env.NODE_ENV || 'development';
 module.exports = {
     input: 'src/scripts/index.js',
     plugins: [
+        alias({
+            leaflet: path.resolve(__dirname, 'node_modules/leaflet/dist/leaflet-src.esm.js')
+        }),
         resolve({
             // use "module" field for ES6 module if possible
             module: true, // Default: true

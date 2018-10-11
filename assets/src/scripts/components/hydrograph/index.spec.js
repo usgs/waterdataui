@@ -321,6 +321,7 @@ describe('Hydrograph charting module', () => {
 
     describe('legends should render', () => {
         let store;
+
         beforeEach(() => {
             store = configureStore(TEST_STATE);
             select(graphNode)

@@ -1,14 +1,9 @@
-// Karma configuration
-// Generated on Wed Dec 27 2017 10:17:29 GMT-0600 (CST)
-var proxyquire = require('proxyquireify');
-var browserifyBabalIstanbul = require('browserify-babel-istanbul');
-var isparta = require('isparta');
-
-function isDebug(argument) {
-    return argument === '--debug';
-}
+var istanbul = require('rollup-plugin-istanbul');
 
 
+/**
+ * Karma configuration for WDFN assets
+ */
 
 module.exports = function (config) {
     /**
@@ -20,12 +15,12 @@ module.exports = function (config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['browserify', 'jasmine-ajax', 'jasmine'],
+        frameworks: ['jasmine-ajax', 'jasmine'],
 
         // list of files / patterns to load in the browser
         files: [
             'tests/scripts/globalConfig.js',
-            'src/scripts/**/*.js'
+            'src/scripts/index.spec.js'
         ],
 
         // list of files / patterns to exclude
@@ -36,16 +31,15 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/scripts/**/*.js': ['browserify']
+            'src/scripts/**/*.js': ['rollup']
         },
 
-        browserify: {
-            debug: process.argv.some(isDebug),
-            configure: function (bundle) {
-                bundle
-                    .plugin(proxyquire.plugin)
-                    .require(require.resolve('./src/scripts'), {entry: true});
-            }
+        rollupPreprocessor: {
+            /**
+             * This is just a normal Rollup config object,
+             * except that `input` is handled for you.
+             */
+            ...require('./rollup.config')
         },
 
         // test results reporter to use
@@ -85,26 +79,23 @@ module.exports = function (config) {
     if (!process.env.KARMA_SAUCE_LABS) {
         karmaConfig = {
             ...karmaConfig,
+            rollupPreprocessor: {
+                ...karmaConfig.rollupPreprocessor,
+                plugins: [
+                    ...karmaConfig.rollupPreprocessor.plugins,
+                    istanbul()
+                ]
+            },
             reporters: [
                 ...karmaConfig.reporters,
                 'coverage'
             ],
-
             coverageReporter: {
                 reporters: [
-                    {type: 'html', dir: 'coverage/'},
+                    //{type: 'html', dir: 'coverage/'},
                     {type: 'cobertura', dir: 'coverage/'},
                     {type: 'lcovonly', dir: 'coverage/'}
                 ]
-            },
-
-            browserify: {
-                ...karmaConfig.browserify,
-                transform: [browserifyBabalIstanbul({
-                    instrumenter: isparta,
-                    instrumenterConfig: {babel: {presets: ['env']}},
-                    ignore: ['**/lib/**', '**/*.spec.js']
-                })]
             }
         };
     } else {
@@ -132,12 +123,13 @@ module.exports = function (config) {
                 ...karmaConfig.browsers,
 
                 'bs_safari10_mac',
-                'bs_safari10_iphone7',
+                // iOS Safari no longer working from VMs
+                //'bs_safari10_iphone7',
                 'bs_edge16_windows10',
                 // IE 11 failing with timezone issues
                 //'bs_ie11_windows10',
                 'bs_chrome52_windows10',
-                'bs_firefox52_windows10',
+                'bs_firefox52_windows10'
                 // Galaxy browser times out trying to connect
                 //'bs_galaxys8_chrome52'
             ]

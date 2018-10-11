@@ -78,7 +78,9 @@ const createLegendMarkers = function(displayItems) {
     }
 
     if (displayItems.median) {
-        for (const [index, stats] of Object.values(displayItems.median).entries()) {
+        const medians = Object.values(displayItems.median);
+        for (let index = 0; index < medians.length; index++) {
+            const stats = medians[index];
             // Get the unique non-null years, in chronological order
             const years = [];
             if (stats.beginYear) {

@@ -89,12 +89,11 @@ export const Actions = {
                     dispatch(Actions.addSeriesCollection('current', collection));
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
 
-
                     // Update the application state
                     dispatch(Actions.toggleTimeSeries('current', true));
-                    dispatch(Actions.setCurrentVariable(
-                        getCurrentVariableId(collection.timeSeries || {}, collection.variables || {})
-                    ));
+                    const variable = getCurrentVariableId(collection.timeSeries || {}, collection.variables || {});
+                    const action = Actions.setCurrentVariable(variable);
+                    dispatch(action);
                     dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
                 },
                 () => {

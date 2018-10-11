@@ -1,4 +1,4 @@
-import 'babel-polyfill';
+import '@babel/polyfill';
 import 'matchmedia-polyfill';
 
 // Initialize the 18F Web design standards

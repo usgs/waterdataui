@@ -1,37 +1,33 @@
-import proxyquireFactory from 'proxyquireify';
-const proxyquire = proxyquireFactory(require);
+import { fetchFloodExtent, fetchFloodFeatures } from './floodData';
+
 
 describe('flood_data module', () => {
+    beforeEach(() => {
+        jasmine.Ajax.install();
+    });
+
+    afterEach(() => {
+        jasmine.Ajax.uninstall();
+    });
 
     describe('fetchFloodFeatures', () => {
-        let ajaxMock;
-        let floodData;
-
         const siteno = '12345678';
 
         describe('with valid response', () => {
+            let promise;
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
-                let getPromise = Promise.resolve(MOCK_FLOOD_FEATURE);
-                ajaxMock = {
-                    get: function () {
-                        return getPromise;
-                    }
-                };
-                spyOn(ajaxMock, 'get').and.callThrough();
-                floodData = proxyquire('./floodData', {'./ajax': ajaxMock});
-            });
-
-            it('url contains the siteno', () => {
-                floodData.fetchFloodFeatures(siteno);
-
-                expect(ajaxMock.get).toHaveBeenCalled();
-                expect(ajaxMock.get.calls.mostRecent().args[0]).toContain(siteno);
+                promise = fetchFloodFeatures(siteno);
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 200,
+                    responseText: MOCK_FLOOD_FEATURE,
+                    contentType: 'application/json'
+                });
             });
 
             it('expected response is json object with the stages', () => {
-                floodData.fetchFloodFeatures(siteno).then((resp) => {
+                promise.then((resp) => {
                     expect(resp.length).toBe(3);
                     expect(resp[0].attributes.STAGE).toBe(30);
                     expect(resp[1].attributes.STAGE).toBe(29);
@@ -40,54 +36,36 @@ describe('flood_data module', () => {
             });
         });
 
-        describe('with error response', () =>{
-            beforeEach(() => {
-                let getPromise = Promise.reject(new Error('fail'));
-                ajaxMock = {
-                    get: function () {
-                        return getPromise;
-                    }
-                };
-                floodData = proxyquire('./floodData', {'./ajax': ajaxMock});
-            });
-
+        describe('with error response', () => {
             it('On failed response return an empty feature list', () => {
-               floodData.fetchFloodFeatures(siteno).then((resp) => {
+                fetchFloodFeatures(siteno).then((resp) => {
                    expect(resp.length).toBe(0);
-               });
+                });
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 500
+                });
             });
         });
     });
 
     describe('fetchFloodExtent', () => {
-        let ajaxMock;
-        let floodData;
-
+        let promise;
         const siteno = '12345678';
 
         describe('with valid response', () => {
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
-                let getPromise = Promise.resolve(MOCK_FLOOD_EXTENT);
-                ajaxMock = {
-                    get: function () {
-                        return getPromise;
-                    }
-                };
-                spyOn(ajaxMock, 'get').and.callThrough();
-                floodData = proxyquire('./floodData', {'./ajax': ajaxMock});
-            });
-
-            it('url contains the siteno', () => {
-                floodData.fetchFloodExtent(siteno);
-
-                expect(ajaxMock.get).toHaveBeenCalled();
-                expect(ajaxMock.get.calls.mostRecent().args[0]).toContain(siteno);
+                promise = fetchFloodExtent(siteno);
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 200,
+                    responseText: MOCK_FLOOD_EXTENT,
+                    contentType: 'application/json'
+                });
             });
 
             it('expected response is json object with the extent', () => {
-                floodData.fetchFloodExtent(siteno).then((resp) => {
+                promise.then((resp) => {
                     expect(resp.extent).toBeDefined();
                     expect(resp.extent.xmin).toBe(-84.353211731250525);
                     expect(resp.extent.xmax).toBe(-84.223456338038901);
@@ -97,25 +75,24 @@ describe('flood_data module', () => {
             });
         });
 
-        describe('with error response', () =>{
+        describe('with error response', () => {
             beforeEach(() => {
-                let getPromise = Promise.reject(new Error('fail'));
-                ajaxMock = {
-                    get: function () {
-                        return getPromise;
-                    }
-                };
-                floodData = proxyquire('./floodData', {'./ajax': ajaxMock});
+                /* eslint no-use-before-define: 0 */
+                promise = fetchFloodExtent(siteno);
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 500
+                });
             });
 
             it('On failed response return an empty feature list', () => {
-               floodData.fetchFloodExtent(siteno).then((resp) => {
+               promise.then((resp) => {
                    expect(resp).toEqual({});
                });
             });
         });
     });
 });
+
 const MOCK_FLOOD_FEATURE = `
 {
 	"displayFieldName": "USGSID",

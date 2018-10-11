@@ -3,7 +3,7 @@
 
 import { select } from 'd3-selection';
 
-import { control as createControl, DomUtil, DomEvent } from 'leaflet/src/Leaflet';
+import { control as createControl, DomUtil, DomEvent } from 'leaflet';
 import { get } from '../../ajax';
 import config from '../../config';
 import { mediaQuery } from '../../utils';

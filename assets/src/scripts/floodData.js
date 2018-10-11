@@ -16,6 +16,7 @@ export const fetchFloodFeatures = function(siteno) {
 
     return get(FIM_QUERY)
         .then((response) => {
+            console.log(response);
             const respJson = JSON.parse(response);
             return respJson.features ? respJson.features : [];
         })

@@ -9,7 +9,7 @@ const SERVICE_ROOT = config.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis
 const PAST_SERVICE_ROOT = config.PAST_SERVICE_ROOT  || 'https://nwis.waterservices.usgs.gov/nwis';
 const WEATHER_SERVICE_ROOT = config.WEATHER_SERVICE_ROOT || 'https://api.weather.gov';
 
-const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
+export const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
 const PARAM_PERTINENCE = {
     '00060': 0,
@@ -52,7 +52,7 @@ export const getTimeSeries = function ({sites, params=null, startDate=null, endD
         .then(response => JSON.parse(response))
         .catch(reason => {
             console.error(reason);
-            return [];
+            throw reason;
         });
 };
 

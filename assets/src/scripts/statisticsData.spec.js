@@ -1,71 +1,61 @@
-import proxyquireFactory from 'proxyquireify';
-const proxyquire = proxyquireFactory(require);
+import { fetchSiteStatistics, fetchSitesStatisticsRDB } from './statisticsData';
 
 
 describe('statisticsData', () => {
 
+    beforeEach(() => {
+        jasmine.Ajax.install();
+    });
+
+    afterEach(() => {
+        jasmine.Ajax.uninstall();
+    });
+
     describe('fetchSiteStatisticsRDB', () => {
-        let ajaxMock;
-        let statisticsData;
 
         const sites = ['05370000'];
         const statType = 'median';
         const params = ['00060'];
 
-        beforeEach(() => {
-            /* eslint no-use-before-define: 0 */
-            let getPromise = Promise.resolve(MOCK_RDB);
-
-            ajaxMock = {
-                get: function () {
-                    return getPromise;
-                }
-            };
-            spyOn(ajaxMock, 'get').and.callThrough();
-            statisticsData = proxyquire('./statisticsData', {'./ajax': ajaxMock});
-        });
-
         it('Gets a full year of statistical data', () => {
-            statisticsData.fetchSitesStatisticsRDB({sites: sites, statType: statType, params: params});
-            expect(ajaxMock.get).toHaveBeenCalled();
-            let ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
-            expect(ajaxUrl).toContain('statTypeCd=median');
-            expect(ajaxUrl).toContain('parameterCd=00060');
-            expect(ajaxUrl).toContain('sites=05370000');
+            /* eslint no-use-before-define: 0 */
+            fetchSitesStatisticsRDB({sites: sites, statType: statType, params: params});
+            const request = jasmine.Ajax.requests.mostRecent();
+            request.respondWith({
+                response: MOCK_RDB,
+                status: 200
+            });
+            expect(request.url).toContain('statTypeCd=median');
+            expect(request.url).toContain('parameterCd=00060');
+            expect(request.url).toContain('sites=05370000');
         });
     });
 
     describe('fetchSiteStatistics', () => {
-        let ajaxMock;
-        let statisticsData;
+        let request;
+        let promise;
 
         const site = '05370000';
         const statType = 'median';
         const params = ['00060'];
 
         beforeEach(() => {
-            let getPromise = Promise.resolve(MOCK_RDB);
-
-            ajaxMock = {
-                get: function() {
-                    return getPromise;
-                }
-            };
-            spyOn(ajaxMock, 'get').and.callThrough();
-            statisticsData = proxyquire('./statisticsData', {'./ajax': ajaxMock});
+            promise = fetchSiteStatistics({site, statType, params});
+            request = jasmine.Ajax.requests.mostRecent();
+            request.respondWith({
+                response: MOCK_RDB,
+                status: 200
+            });
         });
 
         it('Gets a full year of statistical data', () => {
-            statisticsData.fetchSiteStatistics({site, statType, params});
-            expect(ajaxMock.get).toHaveBeenCalled();
-            let ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
-            expect(ajaxUrl).toContain('statTypeCd=median');
-            expect(ajaxUrl).toContain('parameterCd=00060');
-            expect(ajaxUrl).toContain('sites=05370000');
+            expect(request.url).toContain('statTypeCd=median');
+            expect(request.url).toContain('parameterCd=00060');
+            expect(request.url).toContain('sites=05370000');
         });
 
         it('Parses the data as expected', (done) => {
-            statisticsData.fetchSiteStatistics({site, statType, params}).then((resp) => {
+            promise.then((resp) => {
                 expect(resp).toEqual({
                     '00060': {
                         '153885': [{
@@ -233,7 +223,7 @@ describe('statisticsData', () => {
     });
 });
 
-const MOCK_RDB = `#
+export const MOCK_RDB = `#
 #
 # US Geological Survey, Water Resources Data
 # retrieved: 2018-01-25 16:05:49 -05:00	(natwebsdas01)
