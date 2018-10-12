@@ -1,6 +1,10 @@
 var istanbul = require('rollup-plugin-istanbul');
 
 
+function isDebug(argument) {
+    return argument === '--debug';
+}
+
 /**
  * Karma configuration for WDFN assets
  */
@@ -74,16 +78,20 @@ module.exports = function (config) {
 
     /**
      * Produce a code coverage report
-     * This interferes with karma-sauce-launcher
      */
-    if (!process.env.KARMA_SAUCE_LABS) {
+    if (!process.env.KARMA_SAUCE_LABS && !process.argv.some(isDebug)) {
         karmaConfig = {
             ...karmaConfig,
             rollupPreprocessor: {
                 ...karmaConfig.rollupPreprocessor,
                 plugins: [
                     ...karmaConfig.rollupPreprocessor.plugins,
-                    istanbul()
+                    istanbul({
+                        exclude: [
+                            'tests/**/*.js',
+                            'node_modules/**/*.js'
+                        ]
+                    })
                 ]
             },
             reporters: [
@@ -101,6 +109,7 @@ module.exports = function (config) {
     } else {
         console.log('Skipping code coverage report...');
     }
+
 
 
     /**
