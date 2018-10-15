@@ -1,4 +1,4 @@
-const { local } = require('d3-selection');
+import { local } from 'd3-selection';
 
 const layoutLocal = local();
 
@@ -19,7 +19,7 @@ const layoutLocal = local();
  * @param  {Function} layoutFunction
  * @return {Function}
  */
-export function layout(layoutFunction) {
+export const layout = function (layoutFunction) {
     return function (selection) {
         selection.each(function () {
             layoutLocal.set(this, {
@@ -28,7 +28,7 @@ export function layout(layoutFunction) {
             });
         });
     };
-}
+};
 
 
 /**

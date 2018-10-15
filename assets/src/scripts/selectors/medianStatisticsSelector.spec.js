@@ -1,5 +1,4 @@
-const { getMedianStatistics, getMedianStatisticsByParmCd, getCurrentVariableMedianStatistics,
-    getCurrentVariableMedianMetadata} = require('./medianStatisticsSelector');
+import { getMedianStatistics, getMedianStatisticsByParmCd, getCurrentVariableMedianStatistics, getCurrentVariableMedianMetadata } from './medianStatisticsSelector';
 
 describe('medianStatisticsSelector', () => {
     const TEST_VARS = {

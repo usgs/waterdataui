@@ -7,7 +7,7 @@
  * @param {Boolean} isInteractive
  * @param {String} idPrefix
  */
-function addSVGAccessibility(svg, {title, description, isInteractive, idPrefix}) {
+export const addSVGAccessibility = function (svg, {title, description, isInteractive, idPrefix}) {
     svg.selectAll('title, desc').remove();
     let descElement = svg.insert('desc', ':first-child')
         .html(description);
@@ -20,7 +20,7 @@ function addSVGAccessibility(svg, {title, description, isInteractive, idPrefix})
     if (isInteractive) {
         svg.attr('tabindex', 0);
     }
-}
+};
 
 /**
  * Appends a table for screen readers only containing the data. The number
@@ -32,7 +32,7 @@ function addSVGAccessibility(svg, {title, description, isInteractive, idPrefix})
  * @param {String} describeById - Optional id string of the element that describes this table
  * @param {String} describeByText - Optional text that describes this table
  */
-function addSROnlyTable(container, {columnNames, data, describeById=null, describeByText=null}) {
+export const addSROnlyTable = function (container, {columnNames, data, describeById=null, describeByText=null}) {
     if (data.length > 0) {
         const table = container
             .append('table')
@@ -70,7 +70,4 @@ function addSROnlyTable(container, {columnNames, data, describeById=null, descri
                     return d;
                 });
     }
-
-}
-
-module.exports = {addSVGAccessibility, addSROnlyTable};
+};

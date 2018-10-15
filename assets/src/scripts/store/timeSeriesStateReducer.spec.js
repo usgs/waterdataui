@@ -1,5 +1,5 @@
 
-const { timeSeriesStateReducer } = require('./timeSeriesStateReducer');
+import { timeSeriesStateReducer } from './timeSeriesStateReducer';
 
 describe('timeSeriesStateReducer', () => {
 

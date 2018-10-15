@@ -1,7 +1,6 @@
-const memoize = require('fast-memoize');
-const { normalize: normalizr, schema } = require('normalizr');
-
-const { replaceHtmlEntities } = require('./utils');
+import memoize from 'fast-memoize';
+import { normalize as normalizr, schema } from 'normalizr';
+import { replaceHtmlEntities } from './utils';
 
 
 // sourceInfo schema
@@ -161,9 +160,6 @@ const request = memoize(tsKey => new schema.Entity('requests', {
  * @param  {String} tsKey  Time series key. eg, "current"
  * @return {Object}        Normalized entities
  */
-const normalize = function (ivData, tsKey) {
+export const normalize = function (ivData, tsKey) {
     return normalizr(ivData, request(tsKey)).entities;
 };
-
-
-module.exports = {normalize};

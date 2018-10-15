@@ -1,10 +1,7 @@
-const { select } = require('d3-selection');
-
-const { provide } = require('../../lib/redux');
-const { hasFloodDataSelector } = require('../../selectors/floodDataSelector');
-const { configureStore } = require('../../store');
-
-const { floodSlider } = require('./floodSlider');
+import { select } from 'd3-selection';
+import { provide } from '../../lib/redux';
+import { configureStore } from '../../store';
+import { floodSlider } from './floodSlider';
 
 
 describe('floodSlider', () => {
@@ -28,7 +25,7 @@ describe('floodSlider', () => {
             store = configureStore();
             select(sliderNode)
                 .call(provide(store))
-                .call(floodSlider, hasFloodDataSelector);
+                .call(floodSlider);
         });
 
         it('The slider should not be created', () => {

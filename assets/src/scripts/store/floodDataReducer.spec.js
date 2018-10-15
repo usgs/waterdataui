@@ -1,4 +1,4 @@
-const { floodDataReducer } = require('./floodDataReducer');
+import { floodDataReducer } from './floodDataReducer';
 
 describe('floodDataReducer', () => {
 

@@ -1,7 +1,6 @@
-const { select } = require('d3-selection');
-
-const { drawSimpleLegend, legendMarkerRowsSelector } = require('./legend');
-const { lineMarker, rectangleMarker, textOnlyMarker } = require('./markers');
+import { select } from 'd3-selection';
+import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
+import { lineMarker, rectangleMarker, textOnlyMarker } from './markers';
 
 describe('Legend module', () => {
 

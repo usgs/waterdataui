@@ -1,17 +1,14 @@
-const { createSelector } = require('reselect');
-const { line } = require('d3-shape');
-const { select } = require('d3-selection');
-
-const { MASK_DESC } = require('./drawingData');
-const { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } = require('./layout');
-const { allTimeSeriesSelector } = require('./timeSeries');
-
-const { dispatch } = require('../../lib/redux');
-const { sortedParameters } = require('../../models');
-const { Actions } = require('../../store');
-const { appendTooltip } = require('../../tooltips');
-
-const { getVariables, getCurrentVariableID } = require('../../selectors/timeSeriesSelector');
+import { createSelector } from 'reselect';
+import { line } from 'd3-shape';
+import { select } from 'd3-selection';
+import { MASK_DESC } from './drawingData';
+import { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } from './layout';
+import { allTimeSeriesSelector } from './timeSeries';
+import { dispatch } from '../../lib/redux';
+import { sortedParameters } from '../../models';
+import { Actions } from '../../store';
+import { appendTooltip } from '../../tooltips';
+import { getVariables, getCurrentVariableID } from '../../selectors/timeSeriesSelector';
 
 
 /**

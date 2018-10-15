@@ -15,9 +15,8 @@
     "build:css:graph": "node-sass --include-path node_modules/uswds/src/stylesheets src/styles/graph.scss dist/graph.css && uglifycss --output dist/graph.css dist/graph.css && postcss dist/graph.css --no-map --use autoprefixer -o dist/graph.css",
     "build:fonts": "mkdir -p dist/fonts && cp node_modules/uswds/src/fonts/* dist/fonts && cp node_modules/@fortawesome/fontawesome-free/webfonts/* dist/fonts",
     "build:images": "mkdir -p dist/img && mkdir -p dist/images && cp -r node_modules/uswds/src/img/* dist/img && cp -r node_modules/leaflet/dist/images/* dist/images && cp -r src/img/* dist/img",
-    "build:js": "browserify -p tinyify src/scripts/index.js > dist/bundle.js && uglifyjs -c drop_console=true --output dist/bundle.js dist/bundle.js",
+    "build:js": "rollup -c --environment NODE_ENV:production && uglifyjs -c --output dist/bundle.js dist/bundle.js",
     "build:autotrack": "uglifyjs --output dist/autotrack.js node_modules/autotrack/autotrack.js",
-    "discify": "browserify --full-paths -p tinyify src/scripts/index.js | discify --open dist/disc.html",
     "hash-assets": "gulp --gulpfile ./gulpfile.js revall",
     "serve:static": "live-server --port=9000 --cors --no-browser dist",
     "serve:python": "../wdfn-server/env/bin/python ../wdfn-server/run.py",
@@ -26,7 +25,7 @@
     "watch:css": "nodemon -w src/styles -e scss -x \"npm run build:css\"",
     "watch:fonts": "nodemon -w node_modules/uswds/src/fonts -x \"npm run build:fonts\"",
     "watch:images": "nodemon -w src/img -x \"npm run build:images\"",
-    "watch:js": "watchify src/scripts/index.js -o dist/bundle.js -dv"
+    "watch:js": "rollup -c --watch"
   },
   "engines": {
     "node": "8.9.3"
@@ -44,66 +43,56 @@
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.1.0-4",
     "autoprefixer": "^8.4.1",
-    "babel-core": "^6.26.3",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "babelify": "^8.0.0",
-    "browserify": "^16.2.0",
-    "browserify-babel-istanbul": "^0.4.0",
     "eslint": "^4.19.1",
     "eslint-plugin-jasmine": "^2.9.2",
     "gulp": "^3.9.1",
     "gulp-rev-all": "^0.9.7",
     "isparta": "^4.0.0",
     "jasmine": "^2.99.0",
-    "jasmine-ajax": "^3.3.1",
+    "jasmine-ajax": "^3.4.0",
     "karma": "^2.0.2",
-    "karma-browserify": "^5.2.0",
     "karma-browserstack-launcher": "^1.3.0",
     "karma-chrome-launcher": "^2.2.0",
-    "karma-coverage": "^1.1.1",
+    "karma-coverage": "^1.1.2",
     "karma-firefox-launcher": "^1.1.0",
     "karma-jasmine": "^1.1.2",
     "karma-jasmine-ajax": "^0.1.13",
+    "karma-rollup-preprocessor": "^6.0.1",
     "karma-sauce-launcher": "^1.2.0",
+    "karma-sourcemap-loader": "^0.3.7",
     "live-server": "^1.2.0",
-    "matchmedia-polyfill": "^0.3.0",
     "node-sass": "^4.9.0",
     "nodemon": "^1.17.3",
     "npm-run-all": "^4.1.2",
     "postcss-cli": "^5.0.0",
     "proxyquireify": "^3.2.1",
-    "tinyify": "^2.4.0",
-    "uglify-js": "^3.3.23",
+    "rollup": "^0.66.6",
+    "rollup-plugin-alias": "^1.4.0",
+    "rollup-plugin-buble": "^0.19.4",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-istanbul": "^2.0.1",
+    "rollup-plugin-json": "^3.1.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-replace": "^2.1.0",
+    "rollup-plugin-uglify": "^6.0.0",
+    "uglify-js": "^3.4.9",
     "uglifycss": "0.0.29",
-    "watchify": "^3.11.0"
+    "uswds": "^1.6.8"
   },
   "dependencies": {
     "autotrack": "^2.4.1",
+    "core-js": "^2.5.7",
     "d3": "^5.1.0",
-    "disc": "^1.3.3",
+    "element-closest": "^2.0.2",
     "esri-leaflet": "^2.1.4",
     "fast-memoize": "^2.3.2",
-    "leaflet": "^1.3.1",
+    "leaflet": "^1.3.4",
     "lodash": "^4.17.10",
     "luxon": "^1.2.0",
+    "matchmedia-polyfill": "^0.3.0",
     "normalizr": "^3.2.4",
     "redux": "^4.0.0",
     "redux-thunk": "^2.2.0",
-    "reselect": "^3.0.1",
-    "uswds": "^1.6.2"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "presets": [
-            "env"
-          ]
-        }
-      ]
-    ]
+    "reselect": "^3.0.1"
   }
 }

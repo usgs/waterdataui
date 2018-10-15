@@ -1,16 +1,15 @@
-const proxyquire = require('proxyquireify')(require);
+import { select } from 'd3-selection';
+import { map as createMap } from 'leaflet';
 
-const { select } = require('d3-selection');
-const { map: createMap } = require('leaflet');
+import { createLegendControl, createFIMLegend } from './legend';
 
 
 describe('component/map/legend module', () => {
-
-    let legend;
     let legendControl;
     let map;
 
     beforeEach(() => {
+        jasmine.Ajax.install();
         select('body').append('div')
             .attr('id', 'map');
         map = createMap('map', {
@@ -21,14 +20,13 @@ describe('component/map/legend module', () => {
 
     afterEach(() => {
        select('#map').remove();
+        jasmine.Ajax.uninstall();
     });
 
     describe('createLegendControl', () => {
         let legendContainer, containerSelect;
         beforeEach(() => {
-            legend = proxyquire('./legend', {});
-
-            legendControl = legend.createLegendControl({});
+            legendControl = createLegendControl({});
             legendControl.addTo(map);
 
             legendContainer = legendControl.getContainer();
@@ -66,8 +64,6 @@ describe('component/map/legend module', () => {
     });
 
     describe('createFIMLegend', () => {
-        let ajaxMock;
-        let getPromise;
         const MOCK_RESP =
             `{"layers": [{
                 "layerId":0,
@@ -98,23 +94,21 @@ describe('component/map/legend module', () => {
                     ]}`;
 
         beforeEach(() => {
-            getPromise = Promise.resolve(MOCK_RESP);
-            ajaxMock = {
-                get: function() {
-                    return getPromise;
-                }
-            };
-            spyOn(ajaxMock, 'get').and.callThrough();
-            legend = proxyquire('./legend', {'../../ajax': ajaxMock});
-
-            legendControl = legend.createLegendControl({});
+            legendControl = createLegendControl({});
             legendControl.addTo(map);
 
-            legend.createFIMLegend(legendControl, true);
+            createFIMLegend(legendControl, true);
+
+            // Return the same responce on all requests
+            jasmine.Ajax.stubRequest(/(.*?)/).andReturn({
+                status: 200,
+                responseText: MOCK_RESP,
+                contentType: 'application/json'
+            });
         });
 
         it('createFIMLegend with FIM available true fetches the three sets of legend info', () => {
-            expect(ajaxMock.get.calls.count()).toBe(3);
+            expect(jasmine.Ajax.requests.count()).toBe(3);
         });
 
         it('createFIMLegend with FIM available true makes the expand button visible', () =>  {
@@ -126,7 +120,7 @@ describe('component/map/legend module', () => {
         });
 
         it('Calling createFIMLegend a second time with available set to false cause the fim legend list to be removed', () => {
-            legend.createFIMLegend(legendControl, false);
+            createFIMLegend(legendControl, false);
 
             expect(select(legendControl.getContainer()).select('#fim-legend-list').size()).toBe(0);
         });

@@ -1,18 +1,14 @@
-const { axisBottom, axisLeft } = require('d3-axis');
-const { timeFormat } = require('d3-time-format');
-const { createSelector } = require('reselect');
-const { DateTime } = require('luxon');
-
-const { wrap } = require('../../utils');
-
-const { getYTickDetails } = require('./domain');
-const { layoutSelector } = require('./layout');
-const { xScaleSelector, yScaleSelector } = require('./scales');
-const { yLabelSelector, tsTimeZoneSelector } = require('./timeSeries');
-
-const { USWDS_LARGE_SCREEN } = require('../../config');
-const { getCurrentDateRange, getCurrentParmCd } = require('../../selectors/timeSeriesSelector');
-const { mediaQuery } = require('../../utils');
+import { axisBottom, axisLeft } from 'd3-axis';
+import { createSelector } from 'reselect';
+import { DateTime } from 'luxon';
+import { wrap } from '../../utils';
+import { getYTickDetails } from './domain';
+import { layoutSelector } from './layout';
+import { xScaleSelector, yScaleSelector } from './scales';
+import { yLabelSelector, tsTimeZoneSelector } from './timeSeries';
+import config from '../../config';
+import { getCurrentDateRange, getCurrentParmCd } from '../../selectors/timeSeriesSelector';
+import { mediaQuery } from '../../utils';
 
 
 const FORMAT = {
@@ -43,16 +39,14 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
             interval = 1;
             break;
         case 'P30D':
-            const startDateDay= tzStartDate.weekday;
-            const weekStartDate = tzStartDate.minus({days: startDateDay});
-            date = weekStartDate.startOf('day');
+            date = tzStartDate.minus({days: tzStartDate.weekday}).startOf('day');
             timePeriod = 'weeks';
             interval = 1;
             break;
         case 'P1Y':
             date = tzStartDate.startOf('month');
             timePeriod = 'months';
-            if (mediaQuery(USWDS_LARGE_SCREEN)) {
+            if (mediaQuery(config.USWDS_LARGE_SCREEN)) {
                 interval = 1;
             } else {
                 interval = 2;
