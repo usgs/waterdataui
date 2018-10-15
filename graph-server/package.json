@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "decache": "^4.4.0",
-    "jasmine": "^3.1.0",
+    "jasmine": "^3.2.0",
     "nodemon": "^1.17.3",
     "supertest": "^3.0.0"
   }
