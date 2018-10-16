@@ -1,4 +1,4 @@
-const merge = require('lodash/merge');
+import merge from 'lodash/merge';
 
 const INITIAL_STATE = {
     median: {}

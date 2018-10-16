@@ -1,7 +1,6 @@
-const { extent } = require('d3-array');
-const { DateTime } = require('luxon');
-
-const { createXScale, createYScale, yScaleSelector } = require('./scales');
+import { extent } from 'd3-array';
+import { DateTime } from 'luxon';
+import { createXScale, createYScale, yScaleSelector } from './scales';
 
 
 describe('scales', () => {

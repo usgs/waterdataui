@@ -1,4 +1,4 @@
-const { getFloodStageHeight, hasFloodData, getFloodGageHeightStageIndex} = require('./floodDataSelector');
+import { getFloodStageHeight, hasFloodData, getFloodGageHeightStageIndex } from './floodDataSelector';
 
 describe('floodDataSelector', () => {
 

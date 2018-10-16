@@ -8,7 +8,7 @@ const toggleTimeSeries = function(timeSeriesState, action) {
         ...timeSeriesState,
         showSeries: {
             ...timeSeriesState.showSeries,
-            [action.key]: action.show
+            ...{[action.key]: action.show}
         }
     };
 };

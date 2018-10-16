@@ -1,5 +1,5 @@
-const { select } = require('d3-selection');
-const { DateTime } = require('luxon');
+import { select } from 'd3-selection';
+import { DateTime } from 'luxon';
 
 /**
  * Determine the unicode variant of an HTML decimal entity
@@ -7,14 +7,14 @@ const { DateTime } = require('luxon');
  * @param someString
  * @returns {string}
  */
-export function unicodeHtmlEntity(someString) {
+export const unicodeHtmlEntity = function (someString) {
     let numericValue = parseInt(someString.slice(2, -1), 10);
     if (numericValue) {
         return String.fromCharCode(numericValue);
     } else {
         return '';
     }
-}
+};
 
 /**
  * Determine if a string contains an HTML decimal entity
@@ -22,10 +22,10 @@ export function unicodeHtmlEntity(someString) {
  * @param someString
  * @returns {array} or {null}
  */
-export function getHtmlFromString(someString) {
+export const getHtmlFromString = function (someString) {
     let re = /&(?:[a-z]+|#\d+);/g;
     return someString.match(re);
-}
+};
 
 /**
  * Replace html entities with unicode entities
@@ -33,7 +33,7 @@ export function getHtmlFromString(someString) {
  * @param someString
  * @returns {*}
  */
-export function replaceHtmlEntities(someString) {
+export const replaceHtmlEntities = function (someString) {
     let entities = getHtmlFromString(someString);
     if (entities) {
         for (let entity of entities) {
@@ -42,7 +42,7 @@ export function replaceHtmlEntities(someString) {
         }
     }
     return someString;
-}
+};
 
 /**
  * Calculate the difference in days between two Date objects
@@ -51,7 +51,7 @@ export function replaceHtmlEntities(someString) {
  * @param date2
  * @returns {number}
  */
-export function deltaDays(date1, date2) {
+export const deltaDays = function (date1, date2) {
     let one_day_ms = 24*60*60*1000;
     let date1_ms = date1.getTime();
     let date2_ms = date2.getTime();
@@ -59,7 +59,7 @@ export function deltaDays(date1, date2) {
     let delta_ms = date2_ms - date1_ms;
 
     return Math.round(delta_ms/one_day_ms);
-}
+};
 
 /**
  * Determine if two sets are equal
@@ -68,13 +68,13 @@ export function deltaDays(date1, date2) {
  * @param set2
  * @returns {boolean}
  */
-export function setEquality(set1, set2) {
+export const setEquality = function (set1, set2) {
     let sizeEqual = set1.size === set2.size;
-    let itemsEqual = [...set1].every(x => {
+    let itemsEqual = Array.from(set1).every(x => {
         return set2.has(x);
     });
     return sizeEqual && itemsEqual;
-}
+};
 
 
 const TEXT_WRAP_LINE_HEIGHT = 1.1;  // ems
@@ -87,7 +87,7 @@ const TEXT_WRAP_BREAK_CHARS = [];
  * @param  {String} text
  * @param  {Number} width
  */
-export function wrap(text, width, break_chars=TEXT_WRAP_BREAK_CHARS) {
+export const wrap = function (text, width, break_chars=TEXT_WRAP_BREAK_CHARS) {
     text.each(function () {
         const elem = select(this);
 
@@ -141,7 +141,7 @@ export function wrap(text, width, break_chars=TEXT_WRAP_BREAK_CHARS) {
             }
         }
     });
-}
+};
 
 /**
  * This will execute the equivalent media query as the USWDS given a minWidth.

@@ -1,5 +1,5 @@
-const merge = require('lodash/merge');
-const omitBy = require('lodash/omitBy');
+import merge from 'lodash/merge';
+import omitBy from 'lodash/omitBy';
 
 /*
  * Case reducers
@@ -15,7 +15,7 @@ const resetTimeSeries = function(series, action) {
         timeSeries: omitBy(series.timeSeries, (tsValue) => tsValue.tsKey === action.key),
         requests: {
             ...(series || {}).requests,
-            [action.key]: {}
+            ...{[action.key]: {}}
         }
     };
 };

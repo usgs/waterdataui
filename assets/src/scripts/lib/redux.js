@@ -1,12 +1,12 @@
 // This code is derived from d3-redux: https://github.com/couchand/d3-redux
 // Copyright (c) 2017 Andrew Couch, MIT licensed.
 
-const { local } = require('d3-selection');
+import { local } from 'd3-selection';
 
 const storeLocal = local();
 
 
-export function subscribe(store, callback, args) {
+export const subscribe = function (store, callback, args) {
     let currentState = store.getState();
 
     function handleUpdate() {
@@ -19,10 +19,9 @@ export function subscribe(store, callback, args) {
     }
 
     store.subscribe(handleUpdate);
-}
+};
 
-
-export function connect(callback) {
+export const connect = function (callback) {
     return function(selection) {
         let args = [selection].concat([].slice.call(arguments, 1));
 
@@ -37,10 +36,9 @@ export function connect(callback) {
             callback.apply(null, args.concat([stores[i].getState()]));
         }
     };
-}
+};
 
-
-export function dispatch(handler) {
+export const dispatch = function (handler) {
     return function (d, i, g) {
         let action = handler.call(this, d, i, g);
         if (action) {
@@ -48,23 +46,20 @@ export function dispatch(handler) {
             store.dispatch(action);
         }
     };
-}
+};
 
-
-export function fromState(selector) {
+export const fromState = function (selector) {
     return function () {
         let store = storeLocal.get(this);
         return selector.call(this, store.getState(), ...arguments);
     };
-}
+};
 
-
-export function provide(store) {
+export const provide = function (store) {
     return function (selection) {
         selection.property(storeLocal, store);
     };
-}
-
+};
 
 /**
  * Calls the provided D3 callback with provided state when updated.
@@ -72,7 +67,7 @@ export function provide(store) {
  * @param  {Object} selector Source selector for options
  * @return {Function}        D3 callback
  */
-export function link(func, selector) {
+export const link = function (func, selector) {
     let currentOptions = null;
     let context = null;
     return connect(function (selection, state) {
@@ -83,8 +78,7 @@ export function link(func, selector) {
         }
         return context;
     });
-}
-
+};
 
 /**
  * Calls the provided D3 callbacks, calling an initialization function and
@@ -92,7 +86,7 @@ export function link(func, selector) {
  * @param  {Function} initFunc (elem, options) => D3 selection
  * @param  {Function} updateFunc (elem, options)
  */
-export function initAndUpdate(initFunc, updateFunc) {
+export const initAndUpdate = function (initFunc, updateFunc) {
     let node = null;
     return function (elem, options) {
         if (node === null) {
@@ -100,4 +94,4 @@ export function initAndUpdate(initFunc, updateFunc) {
         }
         updateFunc(node, options);
     };
-}
+};

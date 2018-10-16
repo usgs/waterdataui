@@ -1,6 +1,5 @@
-const { select } = require('d3-selection');
-
-const { layout, invalidate } = require('./layout');
+import { select } from 'd3-selection';
+import { layout, invalidate } from './layout';
 
 
 describe('layout', () => {

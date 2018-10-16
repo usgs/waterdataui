@@ -1,7 +1,6 @@
-const { select } = require('d3-selection');
-const { scaleLinear } = require('d3-scale');
-
-const { addSparkLine, availableTimeSeriesSelector, plotSeriesSelectTable } = require('./parameters');
+import { select } from 'd3-selection';
+import { scaleLinear } from 'd3-scale';
+import { addSparkLine, availableTimeSeriesSelector, plotSeriesSelectTable } from './parameters';
 
 
 describe('Parameters module', () => {

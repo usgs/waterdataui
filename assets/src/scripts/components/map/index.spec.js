@@ -1,14 +1,10 @@
-const { select } = require('d3-selection');
-const proxyquire = require('proxyquireify')(require);
-
-const { attachToNode } = require('./index');
-const { configureStore } = require('../../store');
+import { select } from 'd3-selection';
+import { attachToNode } from './index';
+import { configureStore } from '../../store';
 
 describe('map module', () => {
     let mapNode;
     let store;
-    let floodDataMock;
-    let map;
 
     beforeEach(() => {
         jasmine.Ajax.install();
@@ -18,14 +14,6 @@ describe('map module', () => {
         mapContainer.append('div').attr('id', 'flood-layer-control-container');
         mapContainer.append('div').attr('id', 'site-map');
         mapNode = document.getElementById('map');
-
-        floodDataMock = {
-            FLOOD_EXTENTS_ENDPOINT: 'http://fake.service.com',
-            FLOOD_BREACH_ENDPOINT: 'http://fake.service.com',
-            FLOOD_LEVEE_ENDPOINT: 'http://fake.service.com'
-        };
-
-        map = proxyquire('./index', {'../floodData': floodDataMock});
     });
 
     afterEach(() => {
@@ -36,7 +24,7 @@ describe('map module', () => {
     describe('Map creation without FIM maps', () => {
         beforeEach(() => {
             store = configureStore();
-            map.attachToNode(store, mapNode, {
+            attachToNode(store, mapNode, {
                 siteno: '12345677',
                 latitude: 43.0,
                 longitude: -100.0,
