@@ -13,6 +13,8 @@ const { getCurrentParmCd } = require('../../selectors/timeSeriesSelector');
 
 const PADDING_RATIO = 0.2;
 const Y_TICK_COUNT = 5;
+const Y_TICK_COUNT_SECOND_YAXIS = 5; // added for testing
+
 // array of parameters that should use
 // a symlog scale instead of a linear scale
 export const SYMLOG_PARMS = [
@@ -104,6 +106,8 @@ export const getYTickDetails = function (yDomain, parmCd) {
 
     let tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
 
+    let tickValuesSecondYAxis = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT_SECOND_YAXIS);
+
     // On small screens, log scale ticks are too close together, so only use every other one.
     if (isSymlog && tickValues.length > 3 && !mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
         tickValues = tickValues.filter((_, index) => index % 2);
@@ -112,9 +116,15 @@ export const getYTickDetails = function (yDomain, parmCd) {
     // If all ticks are integers, don't display right of the decimal place.
     // Otherwise, format with two decimal points.
     const tickFormat = tickValues.filter(t => !Number.isInteger(t)).length ? '.2f' : 'd';
+
+// added following line for testing
+    const tickFormatSecondYAxis = tickValues.filter(t => !Number.isInteger(t)).length ? '.2f' : 'd';
+
     return {
         tickValues,
-        tickFormat: format(tickFormat)
+        tickValuesSecondYAxis,
+        tickFormat: format(tickFormat),
+        tickFormatSecondYAxis: format(tickFormatSecondYAxis)
     };
 };
 
