@@ -103,11 +103,21 @@ export const getYTickDetails = function (yDomain, parmCd) {
 
     let tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
 
+
     let tickValuesSecondYAxis = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT_SECOND_YAXIS);
+// console.log("this is tickValuesSecondYAxis " + JSON.stringify(tickValuesSecondYAxis));
 
     // On small screens, log scale ticks are too close together, so only use every other one.
     if (isSymlog && tickValues.length > 3 && !mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
+console.log("tick values before " + JSON.stringify(tickValues))
         tickValues = tickValues.filter((_, index) => index % 2);
+console.log("tick values after " + JSON.stringify(tickValues))
+// this works tickValues = tickValues.map(x => x * 2);
+// tickValues = tickValues.splice(4, 1, 'May')
+let testArray = [1, 5, 50];
+tickValues = testArray.concat(tickValues);
+console.log("is array? " + Array.isArray(tickValues))
+console.log("tick values after push " + JSON.stringify(tickValues))
     }
 
     // If all ticks are integers, don't display right of the decimal place.
