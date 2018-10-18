@@ -10,8 +10,6 @@ import { getCurrentParmCd } from '../../selectors/timeSeriesSelector';
 
 const PADDING_RATIO = 0.2;
 const Y_TICK_COUNT = 5;
-const Y_TICK_COUNT_SECOND_YAXIS = 5; // added for testing
-
 // array of parameters that should use
 // a symlog scale instead of a linear scale
 export const SYMLOG_PARMS = [
@@ -102,36 +100,57 @@ export const getYTickDetails = function (yDomain, parmCd) {
     const isSymlog = SYMLOG_PARMS.indexOf(parmCd) > -1;
 
     let tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
+let additionalTicksForLogScale = [];
+let additionalTicksForNegativeLogScale = [];
+console.log("this is the type of tickValue " + typeof(tickValues[0]))
+
+let testValueArray = [];
+let testValueArrayWithNegativeValues = [];
+let testValueIntial = tickValues[0];
+let testValue = tickValues[0];
+
+console.log("this is the starting value " + testValue)
+    if (testValueIntial.isInteger) {
+        while (Math.abs(testValue) > 2) {
+            testValue = testValue / 2;
+            testValueArray.push(testValue);
+            console.log("this is the array " + JSON.stringify(testValueArray))
+        }
+    } else {
+        while (Math.abs(testValue) > 2) {
+            testValue = Math.ceil(testValue / 2);
+            testValueArray.push(testValue);
+            console.log("this is the array " + JSON.stringify(testValueArray))
+        }
+    }
+
+    if (testValueIntial < 0) {
+        testValueArrayWithNegativeValues = testValueArray.map(x => x * -1);
+console.log("this is the neg array " + JSON.stringify(testValueArrayWithNegativeValues))
+        testValueArray = testValueArrayWithNegativeValues.concat(testValueArray);
+console.log("this it the new concat array " + JSON.stringify(testValueArray))
+    }
 
 
-    let tickValuesSecondYAxis = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT_SECOND_YAXIS);
-// console.log("this is tickValuesSecondYAxis " + JSON.stringify(tickValuesSecondYAxis));
+// additionalTicksForLogScale = [2, 3, 5, 10, 25, 50, 100, 250, 500];
+// if (tickValues[0] < 0) {
+//     additionalTicksForNegativeLogScale = [-2, -3, -5, -10, -25, -50, -100, -250, -500];
+//     additionalTicksForLogScale = additionalTicksForNegativeLogScale.concat(additionalTicksForLogScale);
+// }
+tickValues = testValueArray.concat(tickValues);
 
     // On small screens, log scale ticks are too close together, so only use every other one.
     if (isSymlog && tickValues.length > 3 && !mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
-console.log("tick values before " + JSON.stringify(tickValues))
         tickValues = tickValues.filter((_, index) => index % 2);
-console.log("tick values after " + JSON.stringify(tickValues))
-// this works tickValues = tickValues.map(x => x * 2);
-// tickValues = tickValues.splice(4, 1, 'May')
-let testArray = [1, 5, 50];
-tickValues = testArray.concat(tickValues);
-console.log("is array? " + Array.isArray(tickValues))
-console.log("tick values after push " + JSON.stringify(tickValues))
     }
+
 
     // If all ticks are integers, don't display right of the decimal place.
     // Otherwise, format with two decimal points.
     const tickFormat = tickValues.filter(t => !Number.isInteger(t)).length ? '.2f' : 'd';
-
-// added following line for testing
-    const tickFormatSecondYAxis = tickValues.filter(t => !Number.isInteger(t)).length ? '.2f' : 'd';
-
     return {
         tickValues,
-        tickValuesSecondYAxis,
-        tickFormat: format(tickFormat),
-        tickFormatSecondYAxis: format(tickFormatSecondYAxis)
+        tickFormat: format(tickFormat)
     };
 };
 

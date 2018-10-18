@@ -98,17 +98,7 @@ export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period, 
         .tickPadding(3)
         .tickSizeOuter(0);
 
- // ADDED FOR TESTING
-        const yAxisSupplemental = axisLeft()
-        .scale(yScale)
-        .tickValues(tickDetails.tickValuesSecondYAxis)
-        .tickFormat(tickDetails.tickFormatSecondYAxis)
-        .tickSizeInner(yTickSize)
-        .tickPadding(3)
-        .tickSizeOuter(0);
-
-    // original line -- return {xAxis, yAxis};
-    return {xAxis, yAxis, yAxisSupplemental}; // modified for testing
+    return {xAxis, yAxis};
 };
 
 
@@ -137,42 +127,7 @@ export const axesSelector = createSelector(
 /**
  * Add x and y axes to the given svg node.
  */
-// export const appendAxes = function(elem, {xAxis, yAxis, layout, yTitle}) {
-//     const xLoc = {
-//         x: 0,
-//         y: layout.height - (layout.margin.top + layout.margin.bottom)
-//     };
-//     const yLoc = {x: 0, y: 0};
-//     const yLabelLoc = {
-//         x: layout.height / -2 + layout.margin.top,
-//         y: -1 * layout.margin.left + 12
-//     };
-//
-//     // Remove existing axes before adding the new ones.
-//     elem.selectAll('.x-axis, .y-axis').remove();
-//
-//     // Add x-axis
-//     elem.append('g')
-//         .attr('class', 'x-axis')
-//         .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
-//         .call(xAxis);
-//
-//     // Add y-axis and a text label
-//     elem.append('g')
-//         .attr('class', 'y-axis')
-//         .attr('transform', `translate(${yLoc.x}, ${yLoc.y})`)
-//         .call(yAxis)
-//         .append('text')
-//             .attr('class', 'y-axis-label')
-//             .attr('transform', 'rotate(-90)')
-//             .attr('x', yLabelLoc.x)
-//             .attr('y', yLabelLoc.y)
-//             .text(yTitle)
-//                 .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
-// };
-
-// Modified from above for testing
-export const appendAxes = function(elem, {xAxis, yAxis, yAxisSupplemental, layout, yTitle}) {
+export const appendAxes = function(elem, {xAxis, yAxis, layout, yTitle}) {
     const xLoc = {
         x: 0,
         y: layout.height - (layout.margin.top + layout.margin.bottom)
@@ -204,18 +159,4 @@ export const appendAxes = function(elem, {xAxis, yAxis, yAxisSupplemental, layou
             .attr('y', yLabelLoc.y)
             .text(yTitle)
                 .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
- //start added
-    // Add the second y-axis as an overlay
-        elem.append('g')
-        .attr('class', 'y-axis')
-        .attr('transform', `translate(${yLoc.x}, ${yLoc.y})`)
-        .call(yAxisSupplemental)
-        .append('text')
-            .attr('class', 'y-axis-label')
-            .attr('transform', 'rotate(-90)')
-            .attr('x', yLabelLoc.x)
-            .attr('y', yLabelLoc.y)
-            .text(yTitle)
-                .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
-//end added
 };
