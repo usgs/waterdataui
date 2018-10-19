@@ -103,7 +103,7 @@ export const getYTickDetails = function (yDomain, parmCd) {
 
     // add additional ticks and labels to log scales as needed
     if (isSymlog) {
-      tickValues = addAdditionalTicksForLogScales(tickValues);
+      tickValues = getArrayOfAdditionalTickMarks(tickValues);
     }
 
     // On small screens, log scale ticks are too close together, so only use every other one.
@@ -121,41 +121,25 @@ export const getYTickDetails = function (yDomain, parmCd) {
 };
 
 /**
- * Function adds additional tick marks with labels to fill gaps in tick labels in log scales caused by data
- * sets with variance
- * @param tickValues
- * @returns {array} 
- */
-export const addAdditionalTicksForLogScales = function(tickValues) {
-    let lowestAbsoluteValueOfTicks;
-    
-    // check if tickValues has any negative numbers
-    let doesTickValuesHaveNegatives = tickValues.some(value => value < 0);
-
-    // if tickValues have negative numbers, pull them out and test them to find the (largest negative) smallest absolute value
-    if (doesTickValuesHaveNegatives) {
-        lowestAbsoluteValueOfTicks = getLowestAbsoluteValueOfNegativeTickValues(tickValues);
-    }
-
-    // create the new set of tick values that will fill in gaps in log scale ticks, then combine this new set with the
-    // original set of tick marks.
-    tickValues = getFullArrayOfTickMarks(tickValues, lowestAbsoluteValueOfTicks, doesTickValuesHaveNegatives);
-
-    return tickValues;
-};
-
-/**
  * Function finds highest negative value in array of tick values, then returns that number's absolute value
  * @param {array} tickValues
  * @returns {number} the lowest absolute value (of negative numbers) of the tick values
  */
-export const getLowestAbsoluteValueOfNegativeTickValues= function(tickValues) {
+export const getLowestAbsoluteValueOfTickValues = function(tickValues) {
     let negativeTickValues = tickValues.filter(value => value < 0);
-    let highestNegativeValueOfTicks = Math.max(...negativeTickValues);
-    let lowestAbsoluteValueOfNegativeTicks = Math.abs(highestNegativeValueOfTicks);
+    let lowestAbsoluteValueOfTicks;
 
-    return lowestAbsoluteValueOfNegativeTicks;
+    // if tickValues have negative numbers, pull them out and test them to find the (largest negative) smallest absolute value
+    if (tickValues.some(value => value < 0)) {
+        let highestNegativeValueOfTicks = Math.max(...negativeTickValues);
+        lowestAbsoluteValueOfTicks = Math.abs(highestNegativeValueOfTicks);
+    } else {
+        lowestAbsoluteValueOfTicks = Math.min(...tickValues);
+    }
+
+    return lowestAbsoluteValueOfTicks;
 };
+
 
 /**
  * Function creates a new set of tick values that will fill in gaps in log scale ticks, then combines this new set with the
@@ -163,36 +147,26 @@ export const getLowestAbsoluteValueOfNegativeTickValues= function(tickValues) {
  * @param {array} tickValues
  * @returns {array} fullArrayOfTickMarks, the new full array of tick marks for log scales
  */
-export const getFullArrayOfTickMarks = function(tickValues, lowestAbsoluteValueOfTicks, doesTickValuesHaveNegatives) {
-    let testValueArray = [];
-    let testValueArrayWithNegativeValues = [];
+export const getArrayOfAdditionalTickMarks = function(tickValues) {
 
-    let testValue = tickValues[0];
-    let fullArrayOfTickMarks;
+    let additionalTickValues = [];
+    let lowestTickValueOfLogScale = getLowestAbsoluteValueOfTickValues(tickValues);
 
-    // check if lowest tick value is integer
-    if (lowestAbsoluteValueOfTicks.isInteger) {
-        while (Math.abs(testValue) > 2) {
-            testValue = testValue / 2;
-            testValueArray.push(testValue);
-        }
-    } else {
-        while (Math.abs(testValue) > 2) {
-            testValue = Math.ceil(testValue / 2);
-            testValueArray.push(testValue);
-        }
-    }
-    // check if the log scale has negative values, if so add additional negative ticks with negative lables
-    if (doesTickValuesHaveNegatives) {
-        testValueArrayWithNegativeValues = testValueArray.map(x => x * -1);
-        testValueArray = testValueArrayWithNegativeValues.concat(testValueArray);
+    // Make a set of tick values that when graphed will have equal spacing on the y axis
+    while (lowestTickValueOfLogScale > 2) {
+        lowestTickValueOfLogScale = Math.ceil(lowestTickValueOfLogScale / 2);
+        additionalTickValues.push(lowestTickValueOfLogScale);
     }
 
-    fullArrayOfTickMarks = testValueArray.concat(tickValues);
 
-   return fullArrayOfTickMarks;
+    // if the log scale has negative values, add additional negative ticks with negative labels
+    if (tickValues.some(value => value < 0)) {
+        let tickValueArrayWithNegatives = additionalTickValues.map(x => x * -1);
+        additionalTickValues = tickValueArrayWithNegatives.concat(additionalTickValues);
+    }
+
+   return additionalTickValues.concat(tickValues);
 };
-
 
 
 const yDomainSelector = createSelector(
