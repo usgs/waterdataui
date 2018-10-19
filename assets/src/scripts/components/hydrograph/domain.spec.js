@@ -1,4 +1,4 @@
-import { extendDomain, getYDomain, getYTickDetails } from './domain';
+import { extendDomain, getYDomain, getYTickDetails, addAdditionalTicksForLogScales, getLowestAbsoluteValueOfNegativeTickValues, getFullArrayOfTickMarks} from './domain';
 
 
 describe('domain module', () => {
@@ -91,4 +91,18 @@ describe('domain module', () => {
             expect(tickDetails.tickFormat(1)).toEqual(jasmine.any(String));
         });
     });
+
+    describe('addAdditionalTicksForLogScales', () => {
+
+    });
+
+    describe('getLowestAbsoluteValueOfNegativeTickValues', () => {
+
+    });
+
+    describe('getFullArrayOfTickMarks', () => {
+
+    });
+
+
 });

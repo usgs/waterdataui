@@ -100,50 +100,16 @@ export const getYTickDetails = function (yDomain, parmCd) {
     const isSymlog = SYMLOG_PARMS.indexOf(parmCd) > -1;
 
     let tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
-let additionalTicksForLogScale = [];
-let additionalTicksForNegativeLogScale = [];
-console.log("this is the type of tickValue " + typeof(tickValues[0]))
 
-let testValueArray = [];
-let testValueArrayWithNegativeValues = [];
-let testValueIntial = tickValues[0];
-let testValue = tickValues[0];
-
-console.log("this is the starting value " + testValue)
-    if (testValueIntial.isInteger) {
-        while (Math.abs(testValue) > 2) {
-            testValue = testValue / 2;
-            testValueArray.push(testValue);
-            console.log("this is the array " + JSON.stringify(testValueArray))
-        }
-    } else {
-        while (Math.abs(testValue) > 2) {
-            testValue = Math.ceil(testValue / 2);
-            testValueArray.push(testValue);
-            console.log("this is the array " + JSON.stringify(testValueArray))
-        }
+    // add additional ticks and labels to log scales as needed
+    if (isSymlog) {
+      tickValues = addAdditionalTicksForLogScales(tickValues);
     }
-
-    if (testValueIntial < 0) {
-        testValueArrayWithNegativeValues = testValueArray.map(x => x * -1);
-console.log("this is the neg array " + JSON.stringify(testValueArrayWithNegativeValues))
-        testValueArray = testValueArrayWithNegativeValues.concat(testValueArray);
-console.log("this it the new concat array " + JSON.stringify(testValueArray))
-    }
-
-
-// additionalTicksForLogScale = [2, 3, 5, 10, 25, 50, 100, 250, 500];
-// if (tickValues[0] < 0) {
-//     additionalTicksForNegativeLogScale = [-2, -3, -5, -10, -25, -50, -100, -250, -500];
-//     additionalTicksForLogScale = additionalTicksForNegativeLogScale.concat(additionalTicksForLogScale);
-// }
-tickValues = testValueArray.concat(tickValues);
 
     // On small screens, log scale ticks are too close together, so only use every other one.
     if (isSymlog && tickValues.length > 3 && !mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
         tickValues = tickValues.filter((_, index) => index % 2);
     }
-
 
     // If all ticks are integers, don't display right of the decimal place.
     // Otherwise, format with two decimal points.
@@ -153,6 +119,80 @@ tickValues = testValueArray.concat(tickValues);
         tickFormat: format(tickFormat)
     };
 };
+
+/**
+ * Function adds additional tick marks with labels to fill gaps in tick labels in log scales caused by data
+ * sets with variance
+ * @param tickValues
+ * @returns {array} 
+ */
+export const addAdditionalTicksForLogScales = function(tickValues) {
+    let lowestAbsoluteValueOfTicks;
+    
+    // check if tickValues has any negative numbers
+    let doesTickValuesHaveNegatives = tickValues.some(value => value < 0);
+
+    // if tickValues have negative numbers, pull them out and test them to find the (largest negative) smallest absolute value
+    if (doesTickValuesHaveNegatives) {
+        lowestAbsoluteValueOfTicks = getLowestAbsoluteValueOfNegativeTickValues(tickValues);
+    }
+
+    // create the new set of tick values that will fill in gaps in log scale ticks, then combine this new set with the
+    // original set of tick marks.
+    tickValues = getFullArrayOfTickMarks(tickValues, lowestAbsoluteValueOfTicks, doesTickValuesHaveNegatives);
+
+    return tickValues;
+};
+
+/**
+ * Function finds highest negative value in array of tick values, then returns that number's absolute value
+ * @param {array} tickValues
+ * @returns {number} the lowest absolute value (of negative numbers) of the tick values
+ */
+export const getLowestAbsoluteValueOfNegativeTickValues= function(tickValues) {
+    let negativeTickValues = tickValues.filter(value => value < 0);
+    let highestNegativeValueOfTicks = Math.max(...negativeTickValues);
+    let lowestAbsoluteValueOfNegativeTicks = Math.abs(highestNegativeValueOfTicks);
+
+    return lowestAbsoluteValueOfNegativeTicks;
+};
+
+/**
+ * Function creates a new set of tick values that will fill in gaps in log scale ticks, then combines this new set with the
+ * original set of tick marks.
+ * @param {array} tickValues
+ * @returns {array} fullArrayOfTickMarks, the new full array of tick marks for log scales
+ */
+export const getFullArrayOfTickMarks = function(tickValues, lowestAbsoluteValueOfTicks, doesTickValuesHaveNegatives) {
+    let testValueArray = [];
+    let testValueArrayWithNegativeValues = [];
+
+    let testValue = tickValues[0];
+    let fullArrayOfTickMarks;
+
+    // check if lowest tick value is integer
+    if (lowestAbsoluteValueOfTicks.isInteger) {
+        while (Math.abs(testValue) > 2) {
+            testValue = testValue / 2;
+            testValueArray.push(testValue);
+        }
+    } else {
+        while (Math.abs(testValue) > 2) {
+            testValue = Math.ceil(testValue / 2);
+            testValueArray.push(testValue);
+        }
+    }
+    // check if the log scale has negative values, if so add additional negative ticks with negative lables
+    if (doesTickValuesHaveNegatives) {
+        testValueArrayWithNegativeValues = testValueArray.map(x => x * -1);
+        testValueArray = testValueArrayWithNegativeValues.concat(testValueArray);
+    }
+
+    fullArrayOfTickMarks = testValueArray.concat(tickValues);
+
+   return fullArrayOfTickMarks;
+};
+
 
 
 const yDomainSelector = createSelector(
