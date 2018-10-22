@@ -97,11 +97,11 @@ export const getYDomain = function (pointArrays, currentVarParmCd) {
  * @returns {number} the lowest absolute value of the tick values
  */
 export const getLowestAbsoluteValueOfTickValues = function(tickValues) {
-    let negativeTickValues = tickValues.filter(value => value < 0);
     let lowestAbsoluteValueOfTicks;
 
     // if tickValues have negative numbers, pull them out and test them to find the (largest negative) smallest absolute value
     if (tickValues.some(value => value < 0)) {
+        let negativeTickValues = tickValues.filter(value => value < 0);
         let highestNegativeValueOfTicks = Math.max(...negativeTickValues);
         lowestAbsoluteValueOfTicks = Math.abs(highestNegativeValueOfTicks);
     } else {
