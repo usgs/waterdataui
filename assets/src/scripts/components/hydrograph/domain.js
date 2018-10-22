@@ -91,37 +91,8 @@ export const getYDomain = function (pointArrays, currentVarParmCd) {
 
 
 /**
- * Helper function which generates y tick values for a scale
- * @param {Array} yDomain - Two element array representing the domain on the yscale.
- * @param {Array} parmCd - parameter code for time series that is being generated.
- * @returns {Array} of tick values
- */
-export const getYTickDetails = function (yDomain, parmCd) {
-    const isSymlog = SYMLOG_PARMS.indexOf(parmCd) > -1;
-
-    let tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
-
-    // add additional ticks and labels to log scales as needed
-    if (isSymlog) {
-      tickValues = getArrayOfAdditionalTickMarks(tickValues);
-    }
-
-    // On small screens, log scale ticks are too close together, so only use every other one.
-    if (isSymlog && tickValues.length > 3 && !mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
-        tickValues = tickValues.filter((_, index) => index % 2);
-    }
-
-    // If all ticks are integers, don't display right of the decimal place.
-    // Otherwise, format with two decimal points.
-    const tickFormat = tickValues.filter(t => !Number.isInteger(t)).length ? '.2f' : 'd';
-    return {
-        tickValues,
-        tickFormat: format(tickFormat)
-    };
-};
-
-/**
- * Function finds highest negative value in array of tick values, then returns that number's absolute value
+ * Function finds highest negative value (or lowest positive value) in array of tick values, then returns that number's
+ * absolute value
  * @param {array} tickValues
  * @returns {number} the lowest absolute value (of negative numbers) of the tick values
  */
@@ -166,6 +137,37 @@ export const getArrayOfAdditionalTickMarks = function(tickValues) {
     }
 
    return additionalTickValues.concat(tickValues);
+};
+
+
+/**
+ * Helper function which generates y tick values for a scale
+ * @param {Array} yDomain - Two element array representing the domain on the yscale.
+ * @param {Array} parmCd - parameter code for time series that is being generated.
+ * @returns {Array} of tick values
+ */
+export const getYTickDetails = function (yDomain, parmCd) {
+    const isSymlog = SYMLOG_PARMS.indexOf(parmCd) > -1;
+
+    let tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
+
+    // add additional ticks and labels to log scales as needed
+    if (isSymlog) {
+      tickValues = getArrayOfAdditionalTickMarks(tickValues);
+    }
+
+    // On small screens, log scale ticks are too close together, so only use every other one.
+    if (isSymlog && tickValues.length > 3 && !mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
+        tickValues = tickValues.filter((_, index) => index % 2);
+    }
+
+    // If all ticks are integers, don't display right of the decimal place.
+    // Otherwise, format with two decimal points.
+    const tickFormat = tickValues.filter(t => !Number.isInteger(t)).length ? '.2f' : 'd';
+    return {
+        tickValues,
+        tickFormat: format(tickFormat)
+    };
 };
 
 
