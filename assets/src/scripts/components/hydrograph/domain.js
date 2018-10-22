@@ -119,7 +119,6 @@ export const getLowestAbsoluteValueOfTickValues = function(tickValues) {
  * @returns {array} fullArrayOfTickMarks, the new full array of tick marks for log scales
  */
 export const getArrayOfAdditionalTickMarks = function(tickValues) {
-
     let additionalTickValues = [];
     let lowestTickValueOfLogScale = getLowestAbsoluteValueOfTickValues(tickValues);
 
