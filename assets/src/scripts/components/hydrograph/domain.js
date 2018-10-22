@@ -93,8 +93,8 @@ export const getYDomain = function (pointArrays, currentVarParmCd) {
 /**
  * Function finds highest negative value (or lowest positive value) in array of tick values, then returns that number's
  * absolute value
- * @param {array} tickValues
- * @returns {number} the lowest absolute value of the tick values
+ * @param {array} tickValues, the list of y-axis tick values
+ * @returns {number} lowestAbsoluteValueOfTicks, the lowest absolute value of the tick values
  */
 export const getLowestAbsoluteValueOfTickValues = function(tickValues) {
     let lowestAbsoluteValueOfTicks;
@@ -115,7 +115,7 @@ export const getLowestAbsoluteValueOfTickValues = function(tickValues) {
 /**
  * Function creates a new set of tick values that will fill in gaps in log scale ticks, then combines this new set with the
  * original set of tick marks.
- * @param {array} tickValues
+ * @param {array} tickValues, the list of y-axis tick values
  * @returns {array} fullArrayOfTickMarks, the new full array of tick marks for log scales
  */
 export const getArrayOfAdditionalTickMarks = function(tickValues) {
