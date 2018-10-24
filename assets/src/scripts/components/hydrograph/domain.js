@@ -134,6 +134,9 @@ export const getArrayOfAdditionalTickMarks = function(tickValues) {
         additionalTickValues = tickValueArrayWithNegatives.concat(additionalTickValues);
     }
 
+    // make the values a multiple of five.
+    additionalTickValues = additionalTickValues.map(value => Math.ceil(value/5)*5);
+
    return additionalTickValues.concat(tickValues);
 };
 
