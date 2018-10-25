@@ -3,8 +3,7 @@ import {
     getYDomain,
     getYTickDetails,
     getArrayOfAdditionalTickMarks,
-    getLowestAbsoluteValueOfTickValues,
-    roundValuesToNearestMultipleOf
+    getLowestAbsoluteValueOfTickValues
 } from './domain';
 
 

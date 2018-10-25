@@ -153,7 +153,7 @@ export const getYTickDetails = function (yDomain, parmCd) {
 
     // add additional ticks and labels to log scales as needed
     if (isSymlog) {
-        tickValues = getArrayOfAdditionalTickMarks(tickValues, MULTIPLE_TO_ROUND_TO);
+        tickValues = getArrayOfAdditionalTickMarks(tickValues);
     }
 
     // On small screens, log scale ticks are too close together, so only use every other one.
