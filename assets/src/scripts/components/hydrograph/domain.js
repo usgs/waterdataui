@@ -7,7 +7,7 @@ import { visiblePointsSelector } from './drawingData';
 import { getCurrentParmCd } from '../../selectors/timeSeriesSelector';
 
 
-
+const MULTIPLE_TO_ROUND_TO = 5;
 const PADDING_RATIO = 0.2;
 const Y_TICK_COUNT = 5;
 // array of parameters that should use
@@ -111,7 +111,6 @@ export const getLowestAbsoluteValueOfTickValues = function(tickValues) {
     return lowestAbsoluteValueOfTicks;
 };
 
-
 /**
  * Function creates a new set of tick values that will fill in gaps in log scale ticks, then combines this new set with the
  * original set of tick marks.
@@ -134,8 +133,8 @@ export const getArrayOfAdditionalTickMarks = function(tickValues) {
         additionalTickValues = tickValueArrayWithNegatives.concat(additionalTickValues);
     }
 
-    // make the values a multiple of five.
-    additionalTickValues = additionalTickValues.map(value => Math.ceil(value/5)*5);
+    // round the values to a chosen multiple of a number such as 5
+    additionalTickValues = additionalTickValues.map(value => Math.ceil(value/MULTIPLE_TO_ROUND_TO)*MULTIPLE_TO_ROUND_TO);
 
    return additionalTickValues.concat(tickValues);
 };
@@ -154,7 +153,7 @@ export const getYTickDetails = function (yDomain, parmCd) {
 
     // add additional ticks and labels to log scales as needed
     if (isSymlog) {
-      tickValues = getArrayOfAdditionalTickMarks(tickValues);
+        tickValues = getArrayOfAdditionalTickMarks(tickValues, MULTIPLE_TO_ROUND_TO);
     }
 
     // On small screens, log scale ticks are too close together, so only use every other one.
