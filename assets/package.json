@@ -82,7 +82,7 @@
   "dependencies": {
     "autotrack": "^2.4.1",
     "core-js": "^2.5.7",
-    "d3": "^5.1.0",
+    "d3": "^5.7.0",
     "element-closest": "^2.0.2",
     "esri-leaflet": "^2.2.3",
     "fast-memoize": "^2.3.2",
