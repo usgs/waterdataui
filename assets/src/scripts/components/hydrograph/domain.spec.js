@@ -1,4 +1,10 @@
-import { extendDomain, getYDomain, getYTickDetails } from './domain';
+import {
+    extendDomain,
+    getYDomain,
+    getYTickDetails,
+    getArrayOfAdditionalTickMarks,
+    getLowestAbsoluteValueOfTickValues
+} from './domain';
 
 
 describe('domain module', () => {
@@ -91,4 +97,25 @@ describe('domain module', () => {
             expect(tickDetails.tickFormat(1)).toEqual(jasmine.any(String));
         });
     });
+
+    describe('getArrayOfAdditionalTickMarks', () => {
+        it('return the complete array of tick values to compensate for gaps in log scale display', () => {
+            const tickValues1 = [-1000, -100, -50, 50, 100, 1000];
+            const tickValues2 = [100, 200, 500, 1000];
+            const expectedReturnedArray1 = [-25,-10,-5,-0,-0,25,15,10,5,5,-1000,-100,-50,50,100,1000];
+            const expectedReturnedArray2 = [50,25,15,10,5,5,100,200,500,1000];
+            expect(getArrayOfAdditionalTickMarks(tickValues1)).toEqual(expectedReturnedArray1);
+            expect(getArrayOfAdditionalTickMarks(tickValues2)).toEqual(expectedReturnedArray2);
+        });
+    });
+
+    describe('getLowestAbsoluteValueOfTickValues', () => {
+        it('returns the lowest number, or lowest absolute value of negative numbers found in the array', () => {
+            const testTickValues1 = [-2123, -200, -50, 50, 200, 2123];
+            const testTickValues2 = [200, 2000, 4000, 8000];
+            expect(getLowestAbsoluteValueOfTickValues(testTickValues1)).toEqual(50);
+            expect(getLowestAbsoluteValueOfTickValues(testTickValues2)).toEqual(200);
+        });
+    });
+
 });

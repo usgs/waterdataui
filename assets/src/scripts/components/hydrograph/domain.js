@@ -7,7 +7,7 @@ import { visiblePointsSelector } from './drawingData';
 import { getCurrentParmCd } from '../../selectors/timeSeriesSelector';
 
 
-
+const MULTIPLE_TO_ROUND_TO = 5;
 const PADDING_RATIO = 0.2;
 const Y_TICK_COUNT = 5;
 // array of parameters that should use
@@ -91,6 +91,56 @@ export const getYDomain = function (pointArrays, currentVarParmCd) {
 
 
 /**
+ * Function finds highest negative value (or lowest positive value) in array of tick values, then returns that number's
+ * absolute value
+ * @param {array} tickValues, the list of y-axis tick values
+ * @returns {number} lowestAbsoluteValueOfTicks, the lowest absolute value of the tick values
+ */
+export const getLowestAbsoluteValueOfTickValues = function(tickValues) {
+    let lowestAbsoluteValueOfTicks;
+
+    // if tickValues have negative numbers, pull them out and test them to find the (largest negative) smallest absolute value
+    if (tickValues.some(value => value < 0)) {
+        let negativeTickValues = tickValues.filter(value => value < 0);
+        let highestNegativeValueOfTicks = Math.max(...negativeTickValues);
+        lowestAbsoluteValueOfTicks = Math.abs(highestNegativeValueOfTicks);
+    } else {
+        lowestAbsoluteValueOfTicks = Math.min(...tickValues);
+    }
+
+    return lowestAbsoluteValueOfTicks;
+};
+
+/**
+ * Function creates a new set of tick values that will fill in gaps in log scale ticks, then combines this new set with the
+ * original set of tick marks.
+ * @param {array} tickValues, the list of y-axis tick values
+ * @returns {array} fullArrayOfTickMarks, the new full array of tick marks for log scales
+ */
+export const getArrayOfAdditionalTickMarks = function(tickValues) {
+    let additionalTickValues = [];
+    let lowestTickValueOfLogScale = getLowestAbsoluteValueOfTickValues(tickValues);
+
+    // Make a set of tick values that when graphed will have equal spacing on the y axis
+    while (lowestTickValueOfLogScale > 2) {
+        lowestTickValueOfLogScale = Math.ceil(lowestTickValueOfLogScale / 2);
+        additionalTickValues.push(lowestTickValueOfLogScale);
+    }
+
+    // if the log scale has negative values, add additional negative ticks with negative labels
+    if (tickValues.some(value => value < 0)) {
+        let tickValueArrayWithNegatives = additionalTickValues.map(x => x * -1);
+        additionalTickValues = tickValueArrayWithNegatives.concat(additionalTickValues);
+    }
+
+    // round the values to a chosen multiple of a number such as 5
+    additionalTickValues = additionalTickValues.map(value => Math.ceil(value/MULTIPLE_TO_ROUND_TO)*MULTIPLE_TO_ROUND_TO);
+
+   return additionalTickValues.concat(tickValues);
+};
+
+
+/**
  * Helper function which generates y tick values for a scale
  * @param {Array} yDomain - Two element array representing the domain on the yscale.
  * @param {Array} parmCd - parameter code for time series that is being generated.
@@ -100,6 +150,11 @@ export const getYTickDetails = function (yDomain, parmCd) {
     const isSymlog = SYMLOG_PARMS.indexOf(parmCd) > -1;
 
     let tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
+
+    // add additional ticks and labels to log scales as needed
+    if (isSymlog) {
+        tickValues = getArrayOfAdditionalTickMarks(tickValues);
+    }
 
     // On small screens, log scale ticks are too close together, so only use every other one.
     if (isSymlog && tickValues.length > 3 && !mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
