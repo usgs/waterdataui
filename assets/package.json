@@ -2,7 +2,7 @@
   "name": "waterdataui-assets",
   "version": "0.14.0dev",
   "description": "Compiled static assets for Water Data For The Nation",
-  "main": "src/index.js",
+  "main": "src/scripts/index.js",
   "scripts": {
     "test": "karma start",
     "test:chrome": "karma start --browsers Chrome",
@@ -15,7 +15,7 @@
     "build:css:graph": "node-sass --include-path node_modules/uswds/src/stylesheets src/styles/graph.scss dist/graph.css && uglifycss --output dist/graph.css dist/graph.css && postcss dist/graph.css --no-map --use autoprefixer -o dist/graph.css",
     "build:fonts": "mkdir -p dist/fonts && cp node_modules/uswds/src/fonts/* dist/fonts && cp node_modules/@fortawesome/fontawesome-free/webfonts/* dist/fonts",
     "build:images": "mkdir -p dist/img && mkdir -p dist/images && cp -r node_modules/uswds/src/img/* dist/img && cp -r node_modules/leaflet/dist/images/* dist/images && cp -r src/img/* dist/img",
-    "build:js": "rollup -c --environment NODE_ENV:production && uglifyjs -c --output dist/bundle.js dist/bundle.js",
+    "build:js": "rollup -c --environment NODE_ENV:production",
     "build:autotrack": "uglifyjs --output dist/autotrack.js node_modules/autotrack/autotrack.js",
     "hash-assets": "gulp --gulpfile ./gulpfile.js revall",
     "serve:static": "live-server --port=9000 --cors --no-browser dist",
