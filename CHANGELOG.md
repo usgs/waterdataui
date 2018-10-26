@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - The Browserify/Babel build tooling was replaced with Rollup/Bublé.
 - Added additional ticks and labels to fill in gaps on graphs with log plots
+- Using Firefox headless to run tests for travis and default.
 
 ## [0.13.0] - 2018-09-11
 ### Changed
