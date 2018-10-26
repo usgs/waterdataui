@@ -64,8 +64,9 @@ module.exports = function (config) {
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: false,
 
+        browsers: ['FirefoxHeadless'],
         customLaunchers: getCustomLaunchers(),  /* eslint no-use-before-define: 0 */
-        browsers: [],
+
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
@@ -202,6 +203,10 @@ module.exports = function (config) {
 
 function getCustomLaunchers() {
     return {
+        FirefoxHeadless: {
+            base: 'Firefox',
+            flags: ['-headless']
+        },
         /**
          * BrowserStack browsers
          * https://api.browserstack.com/automate/browsers.json
