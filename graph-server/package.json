@@ -29,7 +29,7 @@
     "svgo": "^1.0.5"
   },
   "devDependencies": {
-    "decache": "^4.4.0",
+    "decache": "^4.4.1",
     "jasmine": "^3.1.0",
     "nodemon": "^1.17.3",
     "supertest": "^3.0.0"
