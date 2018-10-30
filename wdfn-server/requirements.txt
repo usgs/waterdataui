@@ -8,7 +8,7 @@ Jinja2==2.10
 MarkupSafe==1.0
 pendulum==1.4.4
 pyfakefs==3.4.1
-pytest==3.8.2
+pytest==3.9.3
 pytest-mock==1.10.0
 requests==2.20.0
 pytest-flask==0.13.0
