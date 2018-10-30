@@ -7,7 +7,7 @@ itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
 pendulum==1.4.4
-pyfakefs==3.4.1
+pyfakefs==3.5
 pytest==3.8.2
 pytest-mock==1.10.0
 requests==2.20.0
