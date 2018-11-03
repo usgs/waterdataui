@@ -7,7 +7,6 @@ import { visiblePointsSelector } from './drawingData';
 import { getCurrentParmCd } from '../../selectors/timeSeriesSelector';
 
 
-const MULTIPLE_TO_ROUND_TO = 5;
 const PADDING_RATIO = 0.2;
 const Y_TICK_COUNT = 5;
 // array of parameters that should use
@@ -111,6 +110,35 @@ export const getLowestAbsoluteValueOfTickValues = function(tickValues) {
     return lowestAbsoluteValueOfTicks;
 };
 
+
+/**
+ * Helper function that rounds numerical values in an array based on the numerical value of the individual array item
+ * and a somewhat arbitrary numeric value, a multiple of which the targeted array item's value is rounded.
+ * @param {array} additionalTickValues, numerical values for y-axis ticks
+ * @returns {array} roundedTickValues, numerical values for y-axis ticks rounded to a multiple of a given number
+ */
+const getRoundedTickValues = function(additionalTickValues) {
+    let roundedTickValues = [];
+    // round the values based on an arbitrary breakpoints and rounding targets (may result in duplicate array values)
+    additionalTickValues.forEach(function(value) {
+        if (value > 1000) {
+            value = Math.ceil(value/1000)*1000;
+            roundedTickValues.push(value);
+        } if (value > 100) {
+            value = Math.ceil(value/100)*100;
+            roundedTickValues.push(value);
+        } else {
+            value = Math.ceil(value/5)*5;
+            roundedTickValues.push(value);
+        }
+    });
+
+    // remove values that are duplicates
+    roundedTickValues = Array.from(new Set(roundedTickValues));
+
+    return roundedTickValues;
+};
+
 /**
  * Function creates a new set of tick values that will fill in gaps in log scale ticks, then combines this new set with the
  * original set of tick marks.
@@ -127,14 +155,14 @@ export const getArrayOfAdditionalTickMarks = function(tickValues) {
         additionalTickValues.push(lowestTickValueOfLogScale);
     }
 
+    // round the values to a chosen multiple of a number
+    additionalTickValues = getRoundedTickValues(additionalTickValues);
+
     // if the log scale has negative values, add additional negative ticks with negative labels
     if (tickValues.some(value => value < 0)) {
         let tickValueArrayWithNegatives = additionalTickValues.map(x => x * -1);
         additionalTickValues = tickValueArrayWithNegatives.concat(additionalTickValues);
     }
-
-    // round the values to a chosen multiple of a number such as 5
-    additionalTickValues = additionalTickValues.map(value => Math.ceil(value/MULTIPLE_TO_ROUND_TO)*MULTIPLE_TO_ROUND_TO);
 
    return additionalTickValues.concat(tickValues);
 };
