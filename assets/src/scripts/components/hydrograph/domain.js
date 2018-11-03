@@ -41,7 +41,8 @@ export const extendDomain = function (domain, lowerBoundPOW10) {
             extendedDomain[1]
         ];
     }
-
+console.log("this is extended domain 0 " + JSON.stringify(extendedDomain[0]))
+ console.log("this is extended domain 1 " + JSON.stringify(extendedDomain[1]))   
     // For positive domains, a zero-lower bound on the y-axis is enforced.
     return [
         isPositive ? Math.max(0, extendedDomain[0]) : extendedDomain[0],
