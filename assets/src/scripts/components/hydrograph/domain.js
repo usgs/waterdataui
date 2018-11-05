@@ -41,8 +41,7 @@ export const extendDomain = function (domain, lowerBoundPOW10) {
             extendedDomain[1]
         ];
     }
-console.log("this is extended domain 0 " + JSON.stringify(extendedDomain[0]))
- console.log("this is extended domain 1 " + JSON.stringify(extendedDomain[1]))   
+
     // For positive domains, a zero-lower bound on the y-axis is enforced.
     return [
         isPositive ? Math.max(0, extendedDomain[0]) : extendedDomain[0],
@@ -91,8 +90,8 @@ export const getYDomain = function (pointArrays, currentVarParmCd) {
 
 
 /**
- * Function finds highest negative value (or lowest positive value) in array of tick values, then returns that number's
- * absolute value
+ * Helper function that finds highest negative value (or lowest positive value) in array of tick values, then returns
+ * that number's absolute value
  * @param {array} tickValues, the list of y-axis tick values
  * @returns {number} lowestAbsoluteValueOfTicks, the lowest absolute value of the tick values
  */
@@ -111,6 +110,21 @@ export const getLowestAbsoluteValueOfTickValues = function(tickValues) {
     return lowestAbsoluteValueOfTicks;
 };
 
+/**
+ * Helper function that generates roughly equally spaced tick values by taking the previous value and dividing it by 2
+ * to produce the next lower value
+ * @param {number}lowestTickValueOfLogScale, lowest numerical value of positive y-axis values, or lowest absolute
+ * value of negative y-axis values
+ * @returns {array} additionalTickValues, set of new y-axis tick values that will fill tick mark gaps on log scale graphs
+ */
+export const generateAdditionalTickValues = function(lowestTickValueOfLogScale) {
+    let additionalTickValues = [];
+    while (lowestTickValueOfLogScale > 2) {
+        lowestTickValueOfLogScale = Math.ceil(lowestTickValueOfLogScale / 2);
+        additionalTickValues.push(lowestTickValueOfLogScale);
+    }
+    return additionalTickValues;
+};
 
 /**
  * Helper function that rounds numerical values in an array based on the numerical value of the individual array item
@@ -118,7 +132,7 @@ export const getLowestAbsoluteValueOfTickValues = function(tickValues) {
  * @param {array} additionalTickValues, numerical values for y-axis ticks
  * @returns {array} roundedTickValues, numerical values for y-axis ticks rounded to a multiple of a given number
  */
-const getRoundedTickValues = function(additionalTickValues) {
+export const getRoundedTickValues = function(additionalTickValues) {
     let roundedTickValues = [];
     // round the values based on an arbitrary breakpoints and rounding targets (may result in duplicate array values)
     additionalTickValues.forEach(function(value) {
@@ -140,30 +154,65 @@ const getRoundedTickValues = function(additionalTickValues) {
     return roundedTickValues;
 };
 
+
+/**
+ * Helper function that checks where the x-axis intersects the y-axis and then keeps any additional tick marks with
+ * values above the point of intersection.
+ * @param {array} additionalTickValues, numerical values for y-axis ticks
+ * @param {array} yDomain, an array of two points, the lower and upper extent of the y-axis
+ * @returns {array} tickValuesAboveXaxis, numerical values for y-axis ticks with any value below the y-axis removed
+ */
+export const removeTickValuesBelowXaxis = function(additionalTickValues, yDomain) {
+    let tickValuesAboveXaxis = [];
+
+    for (let value of additionalTickValues) {
+        if (value > yDomain[0]) {
+           tickValuesAboveXaxis.push(value)
+        }
+    }
+
+    return tickValuesAboveXaxis;
+};
+
+
+/**
+ *  Helper function that, when negative values are present on the y-axis, adds additional negative values to the set of
+ *  tick values used to fill tick mark value gaps on the y-axis on some log scale graphs
+ * @param {array} additionalTickValues, a set of tick mark values
+ * @returns {array} additionalTickValues, a set of tick mark values with (when needed) additional negative values
+ */
+export const generateNegativeTicks = function(tickValues, additionalTickValues) {
+    if (tickValues.some(value => value < 0)) {
+        let tickValueArrayWithNegatives = additionalTickValues.map(x => x * -1);
+        additionalTickValues = tickValueArrayWithNegatives.concat(additionalTickValues);
+    }
+
+    return additionalTickValues;
+};
+
+
 /**
  * Function creates a new set of tick values that will fill in gaps in log scale ticks, then combines this new set with the
  * original set of tick marks.
  * @param {array} tickValues, the list of y-axis tick values
  * @returns {array} fullArrayOfTickMarks, the new full array of tick marks for log scales
  */
-export const getArrayOfAdditionalTickMarks = function(tickValues) {
+export const getArrayOfAdditionalTickMarks = function(tickValues, yDomain) {
     let additionalTickValues = [];
+    // get the lowest value of generated tick mark set to use as a starting point for the additional ticks
     let lowestTickValueOfLogScale = getLowestAbsoluteValueOfTickValues(tickValues);
 
     // Make a set of tick values that when graphed will have equal spacing on the y axis
-    while (lowestTickValueOfLogScale > 2) {
-        lowestTickValueOfLogScale = Math.ceil(lowestTickValueOfLogScale / 2);
-        additionalTickValues.push(lowestTickValueOfLogScale);
-    }
+    additionalTickValues = generateAdditionalTickValues(lowestTickValueOfLogScale);
 
     // round the values to a chosen multiple of a number
     additionalTickValues = getRoundedTickValues(additionalTickValues);
 
+    // remove any tick values that would be below the y-axis
+    additionalTickValues = removeTickValuesBelowXaxis(additionalTickValues, yDomain);
+
     // if the log scale has negative values, add additional negative ticks with negative labels
-    if (tickValues.some(value => value < 0)) {
-        let tickValueArrayWithNegatives = additionalTickValues.map(x => x * -1);
-        additionalTickValues = tickValueArrayWithNegatives.concat(additionalTickValues);
-    }
+    additionalTickValues = generateNegativeTicks(tickValues, additionalTickValues);
 
    return additionalTickValues.concat(tickValues);
 };
@@ -182,7 +231,7 @@ export const getYTickDetails = function (yDomain, parmCd) {
 
     // add additional ticks and labels to log scales as needed
     if (isSymlog) {
-        tickValues = getArrayOfAdditionalTickMarks(tickValues);
+        tickValues = getArrayOfAdditionalTickMarks(tickValues, yDomain);
     }
 
     // On small screens, log scale ticks are too close together, so only use every other one.
