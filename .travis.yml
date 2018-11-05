@@ -32,8 +32,6 @@ install:
   - gem install coveralls-lcov
 
 before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
   - mkdir coverage
 
 script:
