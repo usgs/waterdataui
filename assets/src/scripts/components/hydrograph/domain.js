@@ -153,6 +153,7 @@ export const getRoundedTickValues = function(additionalTickValues, yDomain) {
                 roundingFactor = 5;
             }
         value = Math.ceil(value / roundingFactor) * roundingFactor;
+
         roundedTickValues.push(value);
         }
     });

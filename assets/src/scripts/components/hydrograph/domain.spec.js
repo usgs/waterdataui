@@ -5,7 +5,7 @@ import {
     getFullArrayOfAdditionalTickMarks,
     getLowestAbsoluteValueOfTickValues,
     getRoundedTickValues,
-    removeTickValuesBelowXaxis, generateNegativeTicks
+    generateNegativeTicks
 } from './domain';
 
 
