@@ -2,8 +2,10 @@ import {
     extendDomain,
     getYDomain,
     getYTickDetails,
-    getArrayOfAdditionalTickMarks,
-    getLowestAbsoluteValueOfTickValues
+    getFullArrayOfAdditionalTickMarks,
+    getLowestAbsoluteValueOfTickValues,
+    getRoundedTickValues,
+    generateNegativeTicks
 } from './domain';
 
 
@@ -98,14 +100,15 @@ describe('domain module', () => {
         });
     });
 
-    describe('getArrayOfAdditionalTickMarks', () => {
+    describe('getFullArrayOfAdditionalTickMarks', () => {
         it('return the complete array of tick values to compensate for gaps in log scale display', () => {
+            const yDomain = [-75, 15000];
             const tickValues1 = [-1000, -100, -50, 50, 100, 1000];
             const tickValues2 = [100, 200, 500, 1000];
-            const expectedReturnedArray1 = [-25,-10,-5,-0,-0,25,15,10,5,5,-1000,-100,-50,50,100,1000];
-            const expectedReturnedArray2 = [50,25,15,10,5,5,100,200,500,1000];
-            expect(getArrayOfAdditionalTickMarks(tickValues1)).toEqual(expectedReturnedArray1);
-            expect(getArrayOfAdditionalTickMarks(tickValues2)).toEqual(expectedReturnedArray2);
+            const expectedReturnedArray1 = [-30,-15,-10,-4,-2,30,15,10,4,2,-1000,-100,-50,50,100,1000];
+            const expectedReturnedArray2 = [50,30,15,10,4,2,100,200,500,1000];
+            expect(getFullArrayOfAdditionalTickMarks(tickValues1, yDomain)).toEqual(expectedReturnedArray1);
+            expect(getFullArrayOfAdditionalTickMarks(tickValues2, yDomain)).toEqual(expectedReturnedArray2);
         });
     });
 
@@ -118,4 +121,37 @@ describe('domain module', () => {
         });
     });
 
+    describe('getRoundedTickValues', () => {
+        it('returns a set of numbers rounded to the multiple of a desired  number', () => {
+            const yDomain_0 = [-75, 15000];
+            const yDomain_1 = [75, 15000];
+            const yDomain_2 = [3000, 15000];
+            const testTickValues_1 = [3, 35, 210, 490, 780];
+            const testTickValues_2 = [54, 201, 2120, 99345, 234222];
+            const expectedReturnedArray_1_1 = [3,40,300,500,800];
+            const expectedReturnedArray_1_2 = [300,500,800];
+            const expectedReturnedArray_1_3 = [];
+            const expectedReturnedArray_2_1 = [60,300,3000,100000,240000];
+            const expectedReturnedArray_2_2 = [300,3000,100000,240000];
+            const expectedReturnedArray_2_3 = [100000,240000];
+            expect(getRoundedTickValues(testTickValues_1, yDomain_0)).toEqual(expectedReturnedArray_1_1);
+            expect(getRoundedTickValues(testTickValues_1, yDomain_1)).toEqual(expectedReturnedArray_1_2);
+            expect(getRoundedTickValues(testTickValues_1, yDomain_2)).toEqual(expectedReturnedArray_1_3);
+            expect(getRoundedTickValues(testTickValues_2, yDomain_0)).toEqual(expectedReturnedArray_2_1);
+            expect(getRoundedTickValues(testTickValues_2, yDomain_1)).toEqual(expectedReturnedArray_2_2);
+            expect(getRoundedTickValues(testTickValues_2, yDomain_2)).toEqual(expectedReturnedArray_2_3);
+        });
+    });
+
+    describe('generateNegativeTicks', () => {
+        it('returns a set of numbers with additional negative values when needed', () => {
+            const testTickValues_1 = [100, 500, 1000, 2000];
+            const testTickValues_2 = [-500, 100, 500, 1000, 2000];
+            const additionalTickValues = [15, 25, 50];
+            const expectedReturnedArrayNoNegatives = [15, 25, 50];
+            const expectedReturnedArrayWithNegatives = [-15, -25, -50, 15, 25, 50];
+            expect(generateNegativeTicks(testTickValues_1, additionalTickValues)).toEqual(expectedReturnedArrayNoNegatives);
+            expect(generateNegativeTicks(testTickValues_2, additionalTickValues)).toEqual(expectedReturnedArrayWithNegatives);
+        });
+    });
 });
