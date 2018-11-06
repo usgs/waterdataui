@@ -131,48 +131,33 @@ export const generateAdditionalTickValues = function(lowestTickValueOfLogScale) 
  * and a somewhat arbitrary numeric (rounding) value. The value in the array is then rounded to a multiple of the
  * arbitrary numeric rounding value.
  * @param {array} additionalTickValues, numerical values for y-axis ticks
+ * @param {array} yDomain, an array of two values, the lower and upper extent of the y-axis
  * @returns {array} roundedTickValues, numerical values for y-axis ticks rounded to a multiple of a given number
  */
-export const getRoundedTickValues = function(additionalTickValues) {
+export const getRoundedTickValues = function(additionalTickValues, yDomain) {
     let roundedTickValues = [];
     // round the values based on an arbitrary breakpoints and rounding targets (may result in duplicate array values)
     additionalTickValues.forEach(function(value) {
-        if (value > 1000) {
-            value = Math.ceil(value/1000)*1000;
-            roundedTickValues.push(value);
-        } if (value > 100) {
-            value = Math.ceil(value/100)*100;
-            roundedTickValues.push(value);
-        } else {
-            value = Math.ceil(value/5)*5;
-            roundedTickValues.push(value);
+        let roundingFactor = 1;
+        // first check that the value is greater than the position where the x-axis intersects the y-axis, then round
+        if (value > yDomain[0]) {
+            if (value > 10000) {
+               roundingFactor = 10000;
+            } else if (value > 1000) {
+                roundingFactor = 1000;
+            } else if (value > 100) {
+                roundingFactor = 100;
+            } else if (value > 20) {
+                roundingFactor = 10;
+            } else if (value > 5) {
+                roundingFactor = 5;
+            }
+        value = Math.ceil(value / roundingFactor) * roundingFactor;
+        roundedTickValues.push(value);
         }
     });
-
-    // remove values that are duplicates
-    roundedTickValues = Array.from(new Set(roundedTickValues));
-
+console.log("this is it " + JSON.stringify(roundedTickValues))
     return roundedTickValues;
-};
-
-
-/**
- * Helper function that checks where the x-axis intersects the y-axis, keeps any additional tick marks with
- * values above the point of intersection and ignores the rest.
- * @param {array} additionalTickValues, numerical values for y-axis ticks
- * @param {array} yDomain, an array of two points, the lower and upper extent of the y-axis
- * @returns {array} tickValuesAboveXaxis, numerical values for y-axis ticks with any value below the y-axis removed
- */
-export const removeTickValuesBelowXaxis = function(additionalTickValues, yDomain) {
-    let tickValuesAboveXaxis = [];
-
-    for (let value of additionalTickValues) {
-        if (value > yDomain[0]) {
-           tickValuesAboveXaxis.push(value);
-        }
-    }
-
-    return tickValuesAboveXaxis;
 };
 
 
@@ -196,26 +181,26 @@ export const generateNegativeTicks = function(tickValues, additionalTickValues) 
  * Function creates a new set of tick values that will fill in gaps in log scale ticks, then combines this new set with the
  * original set of tick marks.
  * @param {array} tickValues, the list of y-axis tick values
- * @returns {array} fullArrayOfTickMarks, the new full array of tick marks for log scales
+ * @param {array} yDomain, an array of two values, the lower and upper extent of the y-axis
+ * @returns {array} fullArrayOfTickMarks, the new full set of tick marks for log scales
  */
-export const getArrayOfAdditionalTickMarks = function(tickValues, yDomain) {
-    let additionalTickValues = [];
-    // get the lowest value of generated tick mark set to use as a starting point for the additional ticks
+export const getFullArrayOfAdditionalTickMarks = function(tickValues, yDomain) {
+     // get the lowest value of generated tick mark set to use as a starting point for the additional ticks
     let lowestTickValueOfLogScale = getLowestAbsoluteValueOfTickValues(tickValues);
 
     // Make a set of tick values that when graphed will have equal spacing on the y axis
-    additionalTickValues = generateAdditionalTickValues(lowestTickValueOfLogScale);
+    let additionalTickValues = generateAdditionalTickValues(lowestTickValueOfLogScale);
 
     // round the values to a chosen multiple of a number
-    additionalTickValues = getRoundedTickValues(additionalTickValues);
-
-    // remove any tick values that would be below the y-axis
-    additionalTickValues = removeTickValuesBelowXaxis(additionalTickValues, yDomain);
+    additionalTickValues = getRoundedTickValues(additionalTickValues, yDomain);
 
     // if the log scale has negative values, add additional negative ticks with negative labels
     additionalTickValues = generateNegativeTicks(tickValues, additionalTickValues);
 
-   return additionalTickValues.concat(tickValues);
+    // add the new set of tick values to the original and remove any values that are duplicates
+    let fullArrayOfTickMarks = Array.from(new Set(additionalTickValues.concat(tickValues)));
+
+   return fullArrayOfTickMarks;
 };
 
 
@@ -232,7 +217,7 @@ export const getYTickDetails = function (yDomain, parmCd) {
 
     // add additional ticks and labels to log scales as needed
     if (isSymlog) {
-        tickValues = getArrayOfAdditionalTickMarks(tickValues, yDomain);
+        tickValues = getFullArrayOfAdditionalTickMarks(tickValues, yDomain);
     }
 
     // On small screens, log scale ticks are too close together, so only use every other one.
