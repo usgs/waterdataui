@@ -107,7 +107,7 @@ describe('domain module', () => {
             const tickValues2 = [100, 200, 500, 1000];
             const expectedReturnedArray1 = [-25,-15,-10,-5,25,15,10,5,-1000,-100,-50,50,100,1000];
             const expectedReturnedArray2 = [50,25,15,10,5,100,200,500,1000];
-            // expect(getArrayOfAdditionalTickMarks(tickValues1, yDomain)).toEqual(expectedReturnedArray1);
+            expect(getArrayOfAdditionalTickMarks(tickValues1, yDomain)).toEqual(expectedReturnedArray1);
             expect(getArrayOfAdditionalTickMarks(tickValues2, yDomain)).toEqual(expectedReturnedArray2);
         });
     });

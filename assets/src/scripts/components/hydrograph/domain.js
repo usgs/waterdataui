@@ -128,7 +128,8 @@ export const generateAdditionalTickValues = function(lowestTickValueOfLogScale) 
 
 /**
  * Helper function that rounds numerical values in an array based on the numerical value of the individual array item
- * and a somewhat arbitrary numeric value, a multiple of which the targeted array item's value is rounded.
+ * and a somewhat arbitrary numeric (rounding) value. The value in the array is then rounded to a multiple of the
+ * arbitrary numeric rounding value.
  * @param {array} additionalTickValues, numerical values for y-axis ticks
  * @returns {array} roundedTickValues, numerical values for y-axis ticks rounded to a multiple of a given number
  */
@@ -156,8 +157,8 @@ export const getRoundedTickValues = function(additionalTickValues) {
 
 
 /**
- * Helper function that checks where the x-axis intersects the y-axis and then keeps any additional tick marks with
- * values above the point of intersection.
+ * Helper function that checks where the x-axis intersects the y-axis, keeps any additional tick marks with
+ * values above the point of intersection and ignores the rest.
  * @param {array} additionalTickValues, numerical values for y-axis ticks
  * @param {array} yDomain, an array of two points, the lower and upper extent of the y-axis
  * @returns {array} tickValuesAboveXaxis, numerical values for y-axis ticks with any value below the y-axis removed
@@ -167,7 +168,7 @@ export const removeTickValuesBelowXaxis = function(additionalTickValues, yDomain
 
     for (let value of additionalTickValues) {
         if (value > yDomain[0]) {
-           tickValuesAboveXaxis.push(value)
+           tickValuesAboveXaxis.push(value);
         }
     }
 
