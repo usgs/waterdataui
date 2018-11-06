@@ -156,7 +156,7 @@ export const getRoundedTickValues = function(additionalTickValues, yDomain) {
         roundedTickValues.push(value);
         }
     });
-console.log("this is it " + JSON.stringify(roundedTickValues))
+
     return roundedTickValues;
 };
 
