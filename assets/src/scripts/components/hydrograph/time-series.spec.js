@@ -1,4 +1,4 @@
-import { timeSeriesSelector, hasTimeSeriesWithPoints, isVisibleSelector, yLabelSelector, titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, allTimeSeriesSelector, tsTimeZoneSelector } from './timeSeries';
+import { timeSeriesSelector, hasTimeSeriesWithPoints, isVisibleSelector, yLabelSelector, titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, allTimeSeriesSelector, tsTimeZoneSelector } from './time-series';
 
 
 const TEST_DATA = {

@@ -1,4 +1,4 @@
-import { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getQueryInfo, getRequests, getCurrentParmCd, hasTimeSeries, getTsRequestKey, getTsQueryInfo, getRequestTimeRange, isLoadingTS, getTSRequest, getTimeSeriesCollectionIds, getIanaTimeZone, getNwisTimeZone } from './timeSeriesSelector';
+import { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getQueryInfo, getRequests, getCurrentParmCd, hasTimeSeries, getTsRequestKey, getTsQueryInfo, getRequestTimeRange, isLoadingTS, getTSRequest, getTimeSeriesCollectionIds, getIanaTimeZone, getNwisTimeZone } from './time-series-selector';
 
 describe('timeSeriesSelector', () => {
     const TEST_VARS = {

@@ -7,11 +7,11 @@ import { DateTime } from 'luxon';
 import { dispatch, link, initAndUpdate } from '../../lib/redux';
 import { Actions } from '../../store';
 import { cursorTimeSelector, tsCursorPointsSelector } from './cursor';
-import { classesForPoint, MASK_DESC } from './drawingData';
+import { classesForPoint, MASK_DESC } from './drawing-data';
 import { layoutSelector } from './layout';
 import { xScaleSelector, yScaleSelector } from './scales';
-import { tsTimeZoneSelector } from './timeSeries';
-import { getCurrentVariable } from '../../selectors/timeSeriesSelector';
+import { tsTimeZoneSelector } from './time-series';
+import { getCurrentVariable } from '../../selectors/time-series-selector';
 import config from '../../config';
 import { mediaQuery } from '../../utils';
 

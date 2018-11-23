@@ -6,15 +6,15 @@ import { default as thunk } from 'redux-thunk';
 import { getPreviousYearTimeSeries, getTimeSeries, sortedParameters, queryWeatherService } from '../models';
 import { calcStartTime } from '../utils';
 import { normalize } from '../schema';
-import { fetchFloodFeatures, fetchFloodExtent } from '../floodData';
-import { fetchSiteStatistics } from '../statisticsData';
-import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange } from '../selectors/timeSeriesSelector';
-import { floodDataReducer as floodData } from './floodDataReducer';
-import { floodStateReducer as floodState } from './floodStateReducer';
-import { seriesReducer as series } from './seriesReducer';
-import { statisticsDataReducer as statisticsData } from './statisticsDataReducer';
-import { timeSeriesStateReducer as timeSeriesState } from './timeSeriesStateReducer';
-import { uiReducer as ui } from './uiReducer';
+import { fetchFloodFeatures, fetchFloodExtent } from '../flood-data';
+import { fetchSiteStatistics } from '../statistics-data';
+import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange } from '../selectors/time-series-selector';
+import { floodDataReducer as floodData } from './flood-data-reducer';
+import { floodStateReducer as floodState } from './flood-state-reducer';
+import { seriesReducer as series } from './series-reducer';
+import { statisticsDataReducer as statisticsData } from './statistics-data-reducer';
+import { timeSeriesStateReducer as timeSeriesState } from './time-series-state-reducer';
+import { uiReducer as ui } from './ui-reducer';
 
 const GAGE_HEIGHT_CD = '00065';
 /*

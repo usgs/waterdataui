@@ -1,4 +1,4 @@
-import { uiReducer } from './uiReducer';
+import { uiReducer } from './ui-reducer';
 
 describe('uiReducer', () => {
 

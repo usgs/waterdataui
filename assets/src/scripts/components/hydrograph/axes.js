@@ -5,9 +5,9 @@ import { wrap } from '../../utils';
 import { getYTickDetails } from './domain';
 import { layoutSelector } from './layout';
 import { xScaleSelector, yScaleSelector } from './scales';
-import { yLabelSelector, tsTimeZoneSelector } from './timeSeries';
+import { yLabelSelector, tsTimeZoneSelector } from './time-series';
 import config from '../../config';
-import { getCurrentDateRange, getCurrentParmCd } from '../../selectors/timeSeriesSelector';
+import { getCurrentDateRange, getCurrentParmCd } from '../../selectors/time-series-selector';
 import { mediaQuery } from '../../utils';
 
 

@@ -1,6 +1,6 @@
 
 import { DateTime } from 'luxon';
-import { lineSegmentsSelector, pointsSelector, pointsTableDataSelector, allPointsSelector, pointsByTsKeySelector, classesForPoint, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, currentVariablePointsSelector, currentVariablePointsByTsIdSelector, visiblePointsSelector, getCurrentVariableMedianStatPoints, MAX_LINE_POINT_GAP } from './drawingData';
+import { lineSegmentsSelector, pointsSelector, pointsTableDataSelector, allPointsSelector, pointsByTsKeySelector, classesForPoint, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, currentVariablePointsSelector, currentVariablePointsByTsIdSelector, visiblePointsSelector, getCurrentVariableMedianStatPoints, MAX_LINE_POINT_GAP } from './drawing-data';
 
 const TEST_DATA = {
     series: {

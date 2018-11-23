@@ -1,7 +1,7 @@
 import { timeFormat } from 'd3-time-format';
 import memoize from 'fast-memoize';
 import { createSelector } from 'reselect';
-import { getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone } from '../../selectors/timeSeriesSelector';
+import { getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone } from '../../selectors/time-series-selector';
 
 
 // Create a time formatting function from D3's timeFormat

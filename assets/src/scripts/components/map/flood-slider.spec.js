@@ -1,7 +1,7 @@
 import { select } from 'd3-selection';
 import { provide } from '../../lib/redux';
 import { configureStore } from '../../store';
-import { floodSlider } from './floodSlider';
+import { floodSlider } from './flood-slider';
 
 
 describe('floodSlider', () => {

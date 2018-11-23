@@ -4,9 +4,9 @@ import { createSelector } from 'reselect';
 import { default as scaleSymlog } from '../../lib/symlog';
 import { getYDomain, SYMLOG_PARMS } from './domain';
 import { layoutSelector } from './layout';
-import { timeSeriesSelector } from './timeSeries';
-import { visiblePointsSelector, pointsByTsKeySelector } from './drawingData';
-import { getVariables, getCurrentParmCd, getRequestTimeRange } from '../../selectors/timeSeriesSelector';
+import { timeSeriesSelector } from './time-series';
+import { visiblePointsSelector, pointsByTsKeySelector } from './drawing-data';
+import { getVariables, getCurrentParmCd, getRequestTimeRange } from '../../selectors/time-series-selector';
 
 
 /**

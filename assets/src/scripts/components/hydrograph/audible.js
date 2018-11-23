@@ -4,7 +4,7 @@ import memoize from 'fast-memoize';
 import { createSelector, createStructuredSelector } from 'reselect';
 import { tsCursorPointsSelector } from './cursor';
 import { xScaleSelector, yScaleSelector } from './scales';
-import { allTimeSeriesSelector } from './timeSeries';
+import { allTimeSeriesSelector } from './time-series';
 import config from '../../config';
 import { dispatch, link } from '../../lib/redux';
 import { Actions } from '../../store';

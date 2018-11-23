@@ -1,6 +1,6 @@
-import { getFloodStageHeight, hasFloodData, getFloodGageHeightStageIndex } from './floodDataSelector';
+import { getFloodStageHeight, hasFloodData, getFloodGageHeightStageIndex } from './flood-data-selector';
 
-describe('floodDataSelector', () => {
+describe('flood-data-selector', () => {
 
     describe('getFloodStageHeight', () => {
 

@@ -1,10 +1,10 @@
 import { bisector } from 'd3-array';
 import memoize from 'fast-memoize';
 import { createSelector } from 'reselect';
-import { currentVariablePointsByTsIdSelector } from './drawingData';
+import { currentVariablePointsByTsIdSelector } from './drawing-data';
 import { layoutSelector } from './layout';
 import { xScaleSelector } from './scales';
-import { isVisibleSelector } from './timeSeries';
+import { isVisibleSelector } from './time-series';
 import { Actions } from '../../store';
 import { dispatch, link } from '../../lib/redux';
 
