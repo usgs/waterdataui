@@ -1,7 +1,7 @@
 
-import { timeSeriesStateReducer } from './timeSeriesStateReducer';
+import { timeSeriesStateReducer } from './time-series-state-reducer';
 
-describe('timeSeriesStateReducer', () => {
+describe('time-series-state-reducer', () => {
 
     it('should handle TOGGLE_TIME_SERIES', () => {
             expect(timeSeriesStateReducer({

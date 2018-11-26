@@ -1,6 +1,6 @@
 import { createStructuredSelector } from 'reselect';
 import { dispatch, link } from '../../lib/redux';
-import { getFloodStages, getFloodStageHeight, getFloodGageHeightStageIndex, hasFloodData } from '../../selectors/floodDataSelector';
+import { getFloodStages, getFloodStageHeight, getFloodGageHeightStageIndex, hasFloodData } from '../../selectors/flood-data-selector';
 import { Actions } from '../../store';
 import { appendTooltip } from '../../tooltips';
 

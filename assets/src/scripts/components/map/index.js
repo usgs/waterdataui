@@ -4,10 +4,10 @@ import { map as createMap, marker as createMarker } from 'leaflet';
 import { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util } from 'esri-leaflet/src/EsriLeaflet';
 import { link, provide } from '../../lib/redux';
 import config from '../../config';
-import { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } from '../../floodData';
-import { hasFloodData, getFloodExtent, getFloodStageHeight } from '../../selectors/floodDataSelector';
+import { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } from '../../flood-data';
+import { hasFloodData, getFloodExtent, getFloodStageHeight } from '../../selectors/flood-data-selector';
 import { Actions } from '../../store';
-import { floodSlider } from './floodSlider';
+import { floodSlider } from './flood-slider';
 import { createLegendControl, createFIMLegend } from './legend';
 
 

@@ -4,9 +4,9 @@ import find from 'lodash/find';
 import { DateTime } from 'luxon';
 import { createSelector } from 'reselect';
 import { format } from 'd3-format';
-import { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } from './timeSeries';
-import { getVariables, getTsRequestKey, getRequestTimeRange, getIanaTimeZone } from '../../selectors/timeSeriesSelector';
-import { getCurrentVariableMedianStatistics } from '../../selectors/medianStatisticsSelector';
+import { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } from './time-series';
+import { getVariables, getTsRequestKey, getRequestTimeRange, getIanaTimeZone } from '../../selectors/time-series-selector';
+import { getCurrentVariableMedianStatistics } from '../../selectors/median-statistics-selector';
 
 export const MASK_DESC = {
     ice: 'Ice Affected',

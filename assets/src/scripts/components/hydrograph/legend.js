@@ -5,10 +5,10 @@ import { createSelector } from 'reselect';
 
 import { CIRCLE_RADIUS } from './layout';
 import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from './markers';
-import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from './drawingData';
+import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from './drawing-data';
 import config from '../../config';
-import { getMethods } from '../../selectors/timeSeriesSelector';
-import { getCurrentVariableMedianMetadata } from '../../selectors/medianStatisticsSelector';
+import { getMethods } from '../../selectors/time-series-selector';
+import { getCurrentVariableMedianMetadata } from '../../selectors/median-statistics-selector';
 import { mediaQuery } from '../../utils';
 
 const TS_LABEL = {

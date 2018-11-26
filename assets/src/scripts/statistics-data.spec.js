@@ -1,7 +1,7 @@
-import { fetchSiteStatistics, fetchSitesStatisticsRDB } from './statisticsData';
+import { fetchSiteStatistics, fetchSitesStatisticsRDB } from './statistics-data';
 
 
-describe('statisticsData', () => {
+describe('statistics-data', () => {
 
     beforeEach(() => {
         jasmine.Ajax.install();

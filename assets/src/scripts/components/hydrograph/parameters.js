@@ -1,14 +1,14 @@
 import { createSelector } from 'reselect';
 import { line } from 'd3-shape';
 import { select } from 'd3-selection';
-import { MASK_DESC } from './drawingData';
+import { MASK_DESC } from './drawing-data';
 import { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } from './layout';
-import { allTimeSeriesSelector } from './timeSeries';
+import { allTimeSeriesSelector } from './time-series';
 import { dispatch } from '../../lib/redux';
 import { sortedParameters } from '../../models';
 import { Actions } from '../../store';
 import { appendTooltip } from '../../tooltips';
-import { getVariables, getCurrentVariableID } from '../../selectors/timeSeriesSelector';
+import { getVariables, getCurrentVariableID } from '../../selectors/time-series-selector';
 
 
 /**

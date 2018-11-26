@@ -11,7 +11,7 @@ $fa-font-path: './fonts' !default;
 @import './partials/header';
 @import './partials/script';
 @import './partials/slider';
-@import './partials/social_share';
+@import './partials/social-share';
 @import './partials/tooltip';
 
 .wdfn-component {
@@ -75,6 +75,6 @@ body {
 
     }
     &#monitoring-location {
-        @import './pages/monitoring_location';
+        @import './pages/monitoring-location';
     }
 }

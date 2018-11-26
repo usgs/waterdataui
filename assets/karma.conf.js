@@ -23,7 +23,7 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'tests/scripts/globalConfig.js',
+            'tests/scripts/global-config.js',
             'src/scripts/index.spec.js'
         ],
 

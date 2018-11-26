@@ -14,14 +14,14 @@ import { callIf, mediaQuery } from '../../utils';
 import { audibleUI } from './audible';
 import { appendAxes, axesSelector } from './axes';
 import { cursorSlider } from './cursor';
-import { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID, getCurrentVariableMedianStatPoints } from './drawingData';
+import { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID, getCurrentVariableMedianStatPoints } from './drawing-data';
 import { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } from './layout';
 import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
 import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
 import { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } from './scales';
-import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } from './timeSeries';
+import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } from './time-series';
 import { createTooltipFocus, createTooltipText } from './tooltip';
-import { getTimeSeriesCollectionIds, isLoadingTS } from '../../selectors/timeSeriesSelector';
+import { getTimeSeriesCollectionIds, isLoadingTS } from '../../selectors/time-series-selector';
 
 
 const drawMessage = function(elem, message) {

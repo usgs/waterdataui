@@ -3,8 +3,8 @@ import { format } from 'd3-format';
 import { createSelector } from 'reselect';
 import { mediaQuery } from '../../utils';
 import config from '../../config';
-import { visiblePointsSelector } from './drawingData';
-import { getCurrentParmCd } from '../../selectors/timeSeriesSelector';
+import { visiblePointsSelector } from './drawing-data';
+import { getCurrentParmCd } from '../../selectors/time-series-selector';
 
 
 const PADDING_RATIO = 0.2;

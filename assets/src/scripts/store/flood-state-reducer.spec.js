@@ -1,6 +1,6 @@
-import { floodStateReducer } from './floodStateReducer';
+import { floodStateReducer } from './flood-state-reducer';
 
-describe('floodStateReducer', () => {
+describe('flood-state-reducer', () => {
 
     describe('SET_GAGE_HEIGHT', () => {
         it('Expects that the gage height is changed to the new value', () => {
