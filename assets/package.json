@@ -60,9 +60,9 @@
     "karma-rollup-preprocessor": "^6.0.1",
     "karma-sauce-launcher": "^1.2.0",
     "karma-sourcemap-loader": "^0.3.7",
-    "live-server": "^1.2.0",
-    "node-sass": "^4.9.0",
-    "nodemon": "^1.17.3",
+    "live-server": "^1.2.1",
+    "node-sass": "^4.11.0",
+    "nodemon": "^1.18.9",
     "npm-run-all": "^4.1.2",
     "postcss-cli": "^5.0.0",
     "proxyquireify": "^3.2.1",
@@ -77,7 +77,7 @@
     "rollup-plugin-uglify": "^6.0.0",
     "uglify-js": "^3.4.9",
     "uglifycss": "0.0.29",
-    "uswds": "^1.6.8"
+    "uswds": "^1.6.9"
   },
   "dependencies": {
     "autotrack": "^2.4.1",
