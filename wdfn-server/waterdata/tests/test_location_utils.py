@@ -4,10 +4,10 @@ Unit tests for waterdata.waterservices classes and functions.
 """
 from unittest import TestCase
 
-from pendulum import Pendulum
+from pendulum import datetime
 
-from waterdata import app
-from waterdata.location_utils import (
+from .. import app
+from ..location_utils import (
     build_linked_data, get_disambiguated_values, get_state_abbreviation, rollup_dataseries
 )
 
@@ -511,14 +511,14 @@ class TestRollupDataseries(TestCase):
         end_dates = set([series_grp['end_date'] for series_grp in result])
         self.assertEqual(len(result), 2)
         self.assertIsNone(result[0]['name'])
-        self.assertSetEqual(start_dates, {Pendulum(1942, 9, 18), Pendulum(1980, 1, 1)})
-        self.assertSetEqual(end_dates, {Pendulum(2016, 1, 1), Pendulum(2016, 6, 13)})
+        self.assertSetEqual(start_dates, {datetime(1942, 9, 18), datetime(1980, 1, 1)})
+        self.assertSetEqual(end_dates, {datetime(2016, 1, 1), datetime(2016, 6, 13)})
 
     def test_series_group_and_code(self):
         result = rollup_dataseries(self.test_data[3:6])
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0]['start_date'], Pendulum(1977, 6, 20))
-        self.assertEqual(result[0]['end_date'], Pendulum(2017, 3, 26))
+        self.assertEqual(result[0]['start_date'], datetime(1977, 6, 20))
+        self.assertEqual(result[0]['end_date'], datetime(2017, 3, 26))
         self.assertEqual(result[0]['data_types'], 'Daily Values, Unit Values')
         self.assertEqual(result[0]['name'], 'Physical')
         self.assertEqual(len(result[0]['parameters']), 2)

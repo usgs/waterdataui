@@ -17,35 +17,34 @@ DATA_DIR = os.path.join(os.path.dirname(manage.__file__), 'data')
 
 def test_help():
     runner = CliRunner()
-    result = runner.invoke(manage.cli, ['generate_lookups', '--help'])
+    result = runner.invoke(manage.cli, ['generate-lookups', '--help'])
     assert result.exit_code == 0
 
 
 def test_nwis(app, fs, nwis_mock):
-    fs.CreateDirectory(DATA_DIR)
+    fs.create_dir(DATA_DIR)
 
     runner = CliRunner()
-    result = runner.invoke(manage.cli, ['generate_lookups', '--nwis'])
-
+    result = runner.invoke(manage.cli, ['generate-lookups', '--nwis'])
     assert result.exit_code == 0
     assert os.path.exists(os.path.join(app.config['DATA_DIR'], 'nwis_lookup.json'))
 
 
 def test_regions(app, fs, regions_mock):
-    fs.CreateDirectory(DATA_DIR)
+    fs.create_dir(DATA_DIR)
 
     runner = CliRunner()
-    result = runner.invoke(manage.cli, ['generate_lookups', '--regions'])
+    result = runner.invoke(manage.cli, ['generate-lookups', '--regions'])
 
     assert result.exit_code == 0
     assert os.path.exists(os.path.join(app.config['DATA_DIR'], 'nwis_country_state_lookup.json'))
 
 
 def test_huc(app, fs, huc_mock):
-    fs.CreateDirectory(DATA_DIR)
+    fs.create_dir(DATA_DIR)
 
     runner = CliRunner()
-    result = runner.invoke(manage.cli, ['generate_lookups', '--huc'])
+    result = runner.invoke(manage.cli, ['generate-lookups', '--huc'])
 
     assert result.exit_code == 0
     assert os.path.exists(os.path.join(app.config['DATA_DIR'], 'huc_lookup.json'))
