@@ -36,7 +36,7 @@ before_script:
 
 script:
   - make test
-#   - make "$TEST_TARGET"
+  - make "$TEST_TARGET"
 
 after_success:
   - "[[ -n $COVERAGE ]] && make coverage"
