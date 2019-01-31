@@ -1,10 +1,8 @@
-const { createStructuredSelector } = require('reselect');
-
-const { dispatch, link } = require('../../lib/redux');
-const { getFloodStages, getFloodStageHeight, getFloodGageHeightStageIndex,
-    hasFloodData} = require('../../selectors/floodDataSelector');
-const { Actions } = require('../../store');
-const { appendTooltip } = require('../../tooltips');
+import { createStructuredSelector } from 'reselect';
+import { dispatch, link } from '../../lib/redux';
+import { getFloodStages, getFloodStageHeight, getFloodGageHeightStageIndex, hasFloodData } from '../../selectors/flood-data-selector';
+import { Actions } from '../../store';
+import { appendTooltip } from '../../tooltips';
 
 
 

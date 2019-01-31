@@ -1,25 +1,28 @@
-require('babel-polyfill');
-require('matchmedia-polyfill');
+import './polyfills';
 
 // Initialize the 18F Web design standards
-require('uswds');
+import 'uswds';
 
 // Load misc Javascript helpers for general page interactivity.
-require('./helpers').register();
+import { register } from './helpers';
+register();
 
-const { configureStore } = require('./store');
+import { configureStore } from './store';
 
+import { attachToNode as EmbedComponent } from './components/embed';
+import { attachToNode as HydrographComponent } from './components/hydrograph';
+import { attachToNode as MapComponent } from './components/map';
 
 const COMPONENTS = {
-    embed: require('./components/embed').attachToNode,
-    hydrograph: require('./components/hydrograph').attachToNode,
-    map: require('./components/map').attachToNode
+    embed: EmbedComponent,
+    hydrograph: HydrographComponent,
+    map: MapComponent
 };
-
 
 function main() {
     // NOTE: Here we use a try/catch block rather than a global "onerror"
-    // handler, because Babel's polyfills strip some of the exception data out.
+    // handler, to avoid the exception data from getting stripped out by
+    // anything in the build tooling.
     // This method retains access to the exception object.
     try {
         let nodes = document.getElementsByClassName('wdfn-component');
@@ -54,3 +57,7 @@ if (document.readyState !== 'loading') {
 } else {
     document.addEventListener('DOMContentLoaded', main, false);
 }
+
+// Leaflet expects an exports global to exist - so although we don't use this,
+// just set it to something so it's not undefined.
+export var dummy = true;

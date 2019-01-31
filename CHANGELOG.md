@@ -6,10 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.14.0] - 2018-12-04
+### Changed
+- The Browserify/Babel build tooling was replaced with Rollup/Bublé.
+- Added additional ticks and labels to fill in gaps on graphs with log plots
+- Using Firefox headless to run tests for travis and default.
+- Renamed Javascript modules to follow dash-case rather than camelCase
+
+## [0.13.0] - 2018-09-11
 ### Changed
 - Cooperator logos are always loaded via https
 
 ## [0.12.0] - 2018-08-03
+### Changed
 - Cooperator logos lookup changed from static json file to external, SIFTA-based service
 
 ## [0.11.0] - 2018-06-06
@@ -220,7 +229,9 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.12.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.14.0...master
+[0.14.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.13.0...waterdataui-0.14.0
+[0.13.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.12.0...waterdataui-0.13.0
 [0.12.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.11.0...waterdataui-0.12.0
 [0.11.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.10.0...waterdataui-0.11.0
 [0.10.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.9.0...waterdataui-0.10.0

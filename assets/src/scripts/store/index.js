@@ -1,23 +1,20 @@
 
-const findKey = require('lodash/findKey');
-const last = require('lodash/last');
-const { applyMiddleware, createStore, combineReducers, compose } = require('redux');
-const { default: thunk } = require('redux-thunk');
-
-const { getPreviousYearTimeSeries, getTimeSeries, sortedParameters, queryWeatherService } = require('../models');
-const { calcStartTime } = require('../utils');
-const { normalize } = require('../schema');
-const { fetchFloodFeatures, fetchFloodExtent } = require('../floodData');
-const { fetchSiteStatistics } = require('../statisticsData');
-const { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange
-    } = require('../selectors/timeSeriesSelector');
-
-const { floodDataReducer: floodData } = require('./floodDataReducer');
-const { floodStateReducer: floodState } = require('./floodStateReducer');
-const { seriesReducer: series } = require('./seriesReducer');
-const { statisticsDataReducer: statisticsData } = require('./statisticsDataReducer');
-const { timeSeriesStateReducer: timeSeriesState } = require('./timeSeriesStateReducer');
-const { uiReducer: ui } = require('./uiReducer');
+import findKey from 'lodash/findKey';
+import last from 'lodash/last';
+import { applyMiddleware, createStore, combineReducers, compose } from 'redux';
+import { default as thunk } from 'redux-thunk';
+import { getPreviousYearTimeSeries, getTimeSeries, sortedParameters, queryWeatherService } from '../models';
+import { calcStartTime } from '../utils';
+import { normalize } from '../schema';
+import { fetchFloodFeatures, fetchFloodExtent } from '../flood-data';
+import { fetchSiteStatistics } from '../statistics-data';
+import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange } from '../selectors/time-series-selector';
+import { floodDataReducer as floodData } from './flood-data-reducer';
+import { floodStateReducer as floodState } from './flood-state-reducer';
+import { seriesReducer as series } from './series-reducer';
+import { statisticsDataReducer as statisticsData } from './statistics-data-reducer';
+import { timeSeriesStateReducer as timeSeriesState } from './time-series-state-reducer';
+import { uiReducer as ui } from './ui-reducer';
 
 const GAGE_HEIGHT_CD = '00065';
 /*
@@ -92,12 +89,11 @@ export const Actions = {
                     dispatch(Actions.addSeriesCollection('current', collection));
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
 
-
                     // Update the application state
                     dispatch(Actions.toggleTimeSeries('current', true));
-                    dispatch(Actions.setCurrentVariable(
-                        getCurrentVariableId(collection.timeSeries || {}, collection.variables || {})
-                    ));
+                    const variable = getCurrentVariableId(collection.timeSeries || {}, collection.variables || {});
+                    const action = Actions.setCurrentVariable(variable);
+                    dispatch(action);
                     dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
                 },
                 () => {
@@ -144,7 +140,7 @@ export const Actions = {
             dispatch(Actions.setCurrentDateRange(period));
             if (!hasTimeSeries('current', period, parmCd)(state)) {
                 const endTime = getRequestTimeRange('current', 'P7D')(state).end;
-                let startTime = calcStartTime(period, endTime);
+                let startTime = calcStartTime(period, endTime.getTime());
                 dispatch(Actions.addTimeSeriesLoading([requestKey]));
                 return getTimeSeries({
                     sites: [site],

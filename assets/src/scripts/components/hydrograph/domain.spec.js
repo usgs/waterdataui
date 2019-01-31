@@ -1,4 +1,12 @@
-const { extendDomain, getYDomain, getYTickDetails } = require('./domain');
+import {
+    extendDomain,
+    getYDomain,
+    getYTickDetails,
+    getFullArrayOfAdditionalTickMarks,
+    getLowestAbsoluteValueOfTickValues,
+    getRoundedTickValues,
+    generateNegativeTicks
+} from './domain';
 
 
 describe('domain module', () => {
@@ -89,6 +97,61 @@ describe('domain module', () => {
             expect(tickDetails.tickValues).toEqual(jasmine.any(Array));
             expect(tickDetails.tickFormat).toEqual(jasmine.any(Function));
             expect(tickDetails.tickFormat(1)).toEqual(jasmine.any(String));
+        });
+    });
+
+    describe('getFullArrayOfAdditionalTickMarks', () => {
+        it('return the complete array of tick values to compensate for gaps in log scale display', () => {
+            const yDomain = [-75, 15000];
+            const tickValues1 = [-1000, -100, -50, 50, 100, 1000];
+            const tickValues2 = [100, 200, 500, 1000];
+            const expectedReturnedArray1 = [-30,-15,-10,-4,-2,30,15,10,4,2,-1000,-100,-50,50,100,1000];
+            const expectedReturnedArray2 = [50,30,15,10,4,2,100,200,500,1000];
+            expect(getFullArrayOfAdditionalTickMarks(tickValues1, yDomain)).toEqual(expectedReturnedArray1);
+            expect(getFullArrayOfAdditionalTickMarks(tickValues2, yDomain)).toEqual(expectedReturnedArray2);
+        });
+    });
+
+    describe('getLowestAbsoluteValueOfTickValues', () => {
+        it('returns the lowest number, or lowest absolute value of negative numbers found in the array', () => {
+            const testTickValues1 = [-2123, -200, -50, 50, 200, 2123];
+            const testTickValues2 = [200, 2000, 4000, 8000];
+            expect(getLowestAbsoluteValueOfTickValues(testTickValues1)).toEqual(50);
+            expect(getLowestAbsoluteValueOfTickValues(testTickValues2)).toEqual(200);
+        });
+    });
+
+    describe('getRoundedTickValues', () => {
+        it('returns a set of numbers rounded to the multiple of a desired  number', () => {
+            const yDomain_0 = [-75, 15000];
+            const yDomain_1 = [75, 15000];
+            const yDomain_2 = [3000, 15000];
+            const testTickValues_1 = [3, 35, 210, 490, 780];
+            const testTickValues_2 = [54, 201, 2120, 99345, 234222];
+            const expectedReturnedArray_1_1 = [3,40,300,500,800];
+            const expectedReturnedArray_1_2 = [300,500,800];
+            const expectedReturnedArray_1_3 = [];
+            const expectedReturnedArray_2_1 = [60,300,3000,100000,240000];
+            const expectedReturnedArray_2_2 = [300,3000,100000,240000];
+            const expectedReturnedArray_2_3 = [100000,240000];
+            expect(getRoundedTickValues(testTickValues_1, yDomain_0)).toEqual(expectedReturnedArray_1_1);
+            expect(getRoundedTickValues(testTickValues_1, yDomain_1)).toEqual(expectedReturnedArray_1_2);
+            expect(getRoundedTickValues(testTickValues_1, yDomain_2)).toEqual(expectedReturnedArray_1_3);
+            expect(getRoundedTickValues(testTickValues_2, yDomain_0)).toEqual(expectedReturnedArray_2_1);
+            expect(getRoundedTickValues(testTickValues_2, yDomain_1)).toEqual(expectedReturnedArray_2_2);
+            expect(getRoundedTickValues(testTickValues_2, yDomain_2)).toEqual(expectedReturnedArray_2_3);
+        });
+    });
+
+    describe('generateNegativeTicks', () => {
+        it('returns a set of numbers with additional negative values when needed', () => {
+            const testTickValues_1 = [100, 500, 1000, 2000];
+            const testTickValues_2 = [-500, 100, 500, 1000, 2000];
+            const additionalTickValues = [15, 25, 50];
+            const expectedReturnedArrayNoNegatives = [15, 25, 50];
+            const expectedReturnedArrayWithNegatives = [-15, -25, -50, 15, 25, 50];
+            expect(generateNegativeTicks(testTickValues_1, additionalTickValues)).toEqual(expectedReturnedArrayNoNegatives);
+            expect(generateNegativeTicks(testTickValues_2, additionalTickValues)).toEqual(expectedReturnedArrayWithNegatives);
         });
     });
 });

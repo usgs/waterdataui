@@ -1,7 +1,7 @@
 
-const { seriesReducer } = require('./seriesReducer');
+import { seriesReducer } from './series-reducer';
 
-describe('seriesReducer', () => {
+describe('series-reducer', () => {
 
     describe('ADD_TIME_SERIES_COLLECTION action', () => {
         it('Should add the time series collection to the series as is if series is empty', () => {

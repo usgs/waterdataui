@@ -1,13 +1,12 @@
-const memoize = require('fast-memoize');
-const find = require('lodash/find');
-const { DateTime } = require('luxon');
-const { createSelector } = require('reselect');
-const { format } = require('d3-format');
-
-const { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } = require('./timeSeries');
-
-const { getVariables, getTsRequestKey, getRequestTimeRange, getIanaTimeZone } = require('../../selectors/timeSeriesSelector');
-const { getCurrentVariableMedianStatistics } = require('../../selectors/medianStatisticsSelector');
+import { set } from 'd3-collection';
+import memoize from 'fast-memoize';
+import find from 'lodash/find';
+import { DateTime } from 'luxon';
+import { createSelector } from 'reselect';
+import { format } from 'd3-format';
+import { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } from './time-series';
+import { getVariables, getTsRequestKey, getRequestTimeRange, getIanaTimeZone } from '../../selectors/time-series-selector';
+import { getCurrentVariableMedianStatistics } from '../../selectors/median-statistics-selector';
 
 export const MASK_DESC = {
     ice: 'Ice Affected',
@@ -289,7 +288,7 @@ export const pointsTableDataSelector = memoize(tsKey => createSelector(
 const getLineClasses = function(pt) {
     let dataMask = null;
     if (pt.value === null) {
-        let qualifiers = new Set(pt.qualifiers.map(q => q.toLowerCase()));
+        let qualifiers = set(pt.qualifiers.map(q => q.toLowerCase()));
 
         // current business rules specify that a particular data point
         // will only have at most one masking qualifier

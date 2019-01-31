@@ -1,112 +1,98 @@
-let proxyquire = require('proxyquireify')(require);
-
-const { sortedParameters } = require('./models');
+import { getPreviousYearTimeSeries, getTimeSeries, sortedParameters } from './models';
 
 
 describe('Models module', () => {
+    /* eslint no-use-before-define: 0 */
+
+    beforeEach(() => {
+        jasmine.Ajax.install();
+    });
+
+    afterEach(() => {
+        jasmine.Ajax.uninstall();
+    });
 
     describe('getTimeSeries function', () => {
-        let ajaxMock;
-        let models;
 
         const paramCode = '00060';
         const siteID = '05413500';
 
-
-        beforeEach(() => {
-            /* eslint no-use-before-define: 0 */
-            let getPromise = Promise.resolve(MOCK_DATA);
-
-            ajaxMock = {
-                get: function() {
-                    return getPromise;
-                }
-            };
-            spyOn(ajaxMock, 'get').and.callThrough();
-            models = proxyquire('./models', {'./ajax': ajaxMock});
-        });
-
         it('Get url includes paramCds and sites', () => {
-            models.getTimeSeries({sites: [siteID], params: [paramCode]});
-            expect(ajaxMock.get).toHaveBeenCalled();
-            let ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
-            expect(ajaxUrl).toContain('sites=' + siteID);
-            expect(ajaxUrl).toContain('parameterCd=' + paramCode);
+            getTimeSeries({sites: [siteID], params: [paramCode]});
+            let request = jasmine.Ajax.requests.mostRecent();
+            request.respondWith({
+                status: 200,
+                responseText: MOCK_DATA,
+                contentType: 'application/json'
+            });
+            expect(request.url).toContain('sites=' + siteID);
+            expect(request.url).toContain('parameterCd=' + paramCode);
 
-            models.getTimeSeries({sites: [siteID, '12345678'], params: [paramCode, '00080']});
-            ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
-            expect(ajaxUrl).toContain('sites=' + siteID + ',12345678');
-            expect(ajaxUrl).toContain('parameterCd=' + paramCode + ',00080');
+            getTimeSeries({sites: [siteID, '12345678'], params: [paramCode, '00080']});
+            request = jasmine.Ajax.requests.mostRecent();
+            request.respondWith({
+                status: 200,
+                responseText: MOCK_DATA,
+                contentType: 'application/json'
+            });
+            expect(request.url).toContain('sites=' + siteID + ',12345678');
+            expect(request.url).toContain('parameterCd=' + paramCode + ',00080');
         });
 
         it('Get url includes has the default time period if startDate and endDate are null', () => {
-            models.getTimeSeries({sites: [siteID], params: [paramCode]});
-            let ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
-            expect(ajaxUrl).toContain('period=P7D');
-            expect(ajaxUrl).not.toContain('startDT');
-            expect(ajaxUrl).not.toContain('endDT');
+            getTimeSeries({sites: [siteID], params: [paramCode]});
+            const request = jasmine.Ajax.requests.mostRecent();
+            expect(request.url).toContain('period=P7D');
+            expect(request.url).not.toContain('startDT');
+            expect(request.url).not.toContain('endDT');
         });
 
         it('Get url includes startDT and endDT when startDate and endDate are non-null', () =>{
             const startDate = new Date('2018-01-02T15:00:00.000-06:00');
             const endDate = new Date('2018-01-02T16:45:00.000-06:00');
-            models.getTimeSeries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
-            let ajaxUrl = ajaxMock.get.calls.mostRecent().args[0];
-            expect(ajaxUrl).not.toContain('period=P7D');
-            expect(ajaxUrl).toContain('startDT=2018-01-02T21:00');
-            expect(ajaxUrl).toContain('endDT=2018-01-02T22:45');
+            getTimeSeries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
+            const request = jasmine.Ajax.requests.mostRecent();
+            expect(request.url).not.toContain('period=P7D');
+            expect(request.url).toContain('startDT=2018-01-02T21:00');
+            expect(request.url).toContain('endDT=2018-01-02T22:45');
         });
 
         it('Uses current data service root if data requested is less than 120 days old', () => {
-            models.getTimeSeries({sites: [siteID], params: [paramCode]});
-            expect(ajaxMock.get.calls.mostRecent().args[0]).toContain('https://waterservices.usgs.gov/nwis');
+            getTimeSeries({sites: [siteID], params: [paramCode]});
+            let request = jasmine.Ajax.requests.mostRecent();
+            expect(request.url).toContain('https://waterservices.usgs.gov/nwis');
 
             const startDate = new Date() - 110;
             const endDate = new Date() - 10;
-            models.getTimeSeries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
-            expect(ajaxMock.get.calls.mostRecent().args[0]).toContain('https://waterservices.usgs.gov/nwis');
+            getTimeSeries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
+            request = jasmine.Ajax.requests.mostRecent();
+            expect(request.url).toContain('https://waterservices.usgs.gov/nwis');
         });
 
         it('Uses nwis data service root if data requested is more than 120 days old', () => {
             const startDate = new Date() - 121;
             const endDate = new Date() - 10;
-            models.getTimeSeries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
-            expect(ajaxMock.get.calls.mostRecent().args[0]).toContain('https://nwis.waterservices.usgs.gov/nwis');
+            getTimeSeries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
+            let request = jasmine.Ajax.requests.mostRecent();
+            expect(request.url).toContain('https://nwis.waterservices.usgs.gov/nwis');
         });
     });
 
     describe('getPreviousYearTimeSeries', () => {
-        let ajaxMock;
-        let models;
-
         const siteID = '05413500';
 
         const startDate = new Date('2018-01-02T15:00:00.000-06:00');
         const endDate = new Date('2018-01-02T16:45:00.000-06:00');
 
-        beforeEach(() => {
-            /* eslint no-use-before-define: 0 */
-            let getPromise = Promise.resolve(MOCK_LAST_YEAR_DATA);
-
-            ajaxMock = {
-                get: function() {
-                    return getPromise;
-                }
-            };
-            spyOn(ajaxMock, 'get').and.callThrough();
-            models = proxyquire('./models', {'./ajax': ajaxMock});
-        });
-
         it('Retrieves data using the startDT and endDT parameters', () => {
-            models.getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate});
-            expect(ajaxMock.get).toHaveBeenCalled();
-            const ajaxArg = ajaxMock.get.calls.mostRecent().args[0];
-            expect(ajaxArg).toContain('startDT=2017-01-02T21:00');
-            expect(ajaxArg).toContain('endDT=2017-01-02T22:45');
+            getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate});
+            let request = jasmine.Ajax.requests.mostRecent();
+            expect(request.url).toContain('startDT=2017-01-02T21:00');
+            expect(request.url).toContain('endDT=2017-01-02T22:45');
         });
 
         it('Parses valid data', () => {
-            models.getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate}).then((series) => {
+            getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate}).then((series) => {
                 // This returns the JSON version of the mocked response, so
                 // just do a sanity check on an attribute.
                 expect(series.name).toBe('ns1:timeSeriesResponseType');

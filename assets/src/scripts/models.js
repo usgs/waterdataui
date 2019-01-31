@@ -1,7 +1,6 @@
-const { utcFormat } = require('d3-time-format');
-
-const config = require('./config');
-const { get } = require('./ajax');
+import { utcFormat } from 'd3-time-format';
+import config from './config';
+import { get } from './ajax';
 
 
 // Define Water Services root URL - use global variable if defined, otherwise
@@ -10,7 +9,7 @@ const SERVICE_ROOT = config.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis
 const PAST_SERVICE_ROOT = config.PAST_SERVICE_ROOT  || 'https://nwis.waterservices.usgs.gov/nwis';
 const WEATHER_SERVICE_ROOT = config.WEATHER_SERVICE_ROOT || 'https://api.weather.gov';
 
-const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
+export const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
 const PARAM_PERTINENCE = {
     '00060': 0,
@@ -34,7 +33,7 @@ function tsServiceRoot(date) {
  * @param {Date} endData
  * @return {Promise} resolves to an array of time series model object, rejects to an error
  */
-export function getTimeSeries({sites, params=null, startDate=null, endDate=null}) {
+export const getTimeSeries = function ({sites, params=null, startDate=null, endDate=null}) {
     let timeParams;
     let serviceRoot;
     if (!startDate && !endDate) {
@@ -53,21 +52,20 @@ export function getTimeSeries({sites, params=null, startDate=null, endDate=null}
         .then(response => JSON.parse(response))
         .catch(reason => {
             console.error(reason);
-            return [];
+            throw reason;
         });
-}
+};
 
-export function getPreviousYearTimeSeries({site, startTime, endTime}) {
+export const getPreviousYearTimeSeries = function ({site, startTime, endTime}) {
     let lastYearStartTime = new Date(startTime);
     let lastYearEndTime = new Date(endTime);
 
     lastYearStartTime.setFullYear(lastYearStartTime.getFullYear() - 1);
     lastYearEndTime.setFullYear(lastYearEndTime.getFullYear() - 1);
     return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
-}
+};
 
-
-export function sortedParameters(variables) {
+export const sortedParameters = function (variables) {
     const dataVars = variables ? Object.values(variables) : [];
     const pertinentParmCds = Object.keys(PARAM_PERTINENCE);
     const highPertinenceVars = dataVars.filter(x => pertinentParmCds.includes(x.variableCode.value))
@@ -91,10 +89,9 @@ export function sortedParameters(variables) {
             }
         });
     return highPertinenceVars.concat(lowPertinenceVars);
-}
+};
 
-
-export function queryWeatherService(latitude, longitude) {
+export const queryWeatherService = function (latitude, longitude) {
     const url = `${WEATHER_SERVICE_ROOT}/points/${latitude},${longitude}`;
     return get(url)
         .then(response => JSON.parse(response))
@@ -102,4 +99,4 @@ export function queryWeatherService(latitude, longitude) {
             console.error(reason);
             return {properties: {}};
         });
-}
+};

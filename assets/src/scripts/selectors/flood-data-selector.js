@@ -1,4 +1,4 @@
-const { createSelector } = require('reselect');
+import { createSelector } from 'reselect';
 
 
 export const getFloodStages = state => state.floodData.stages;

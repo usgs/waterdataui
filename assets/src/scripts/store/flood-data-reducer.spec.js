@@ -1,6 +1,6 @@
-const { floodDataReducer } = require('./floodDataReducer');
+import { floodDataReducer } from './flood-data-reducer';
 
-describe('floodDataReducer', () => {
+describe('flood-data-reducer', () => {
 
     describe('SET_FLOOD_FEATURES', () => {
         it('should handle setting the floodData', () => {

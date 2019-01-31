@@ -1,14 +1,12 @@
-const { bisector } = require('d3-array');
-const memoize = require('fast-memoize');
-const { createSelector } = require('reselect');
-
-const { currentVariablePointsByTsIdSelector } = require('./drawingData');
-const { layoutSelector } = require('./layout');
-const { xScaleSelector } = require('./scales');
-const { isVisibleSelector } = require('./timeSeries');
-
-const { Actions } = require('../../store');
-const { dispatch, link } = require('../../lib/redux');
+import { bisector } from 'd3-array';
+import memoize from 'fast-memoize';
+import { createSelector } from 'reselect';
+import { currentVariablePointsByTsIdSelector } from './drawing-data';
+import { layoutSelector } from './layout';
+import { xScaleSelector } from './scales';
+import { isVisibleSelector } from './time-series';
+import { Actions } from '../../store';
+import { dispatch, link } from '../../lib/redux';
 
 const SLIDER_STEPS = 1000;
 

@@ -1,5 +1,5 @@
-const { addSVGAccessibility, addSROnlyTable } = require('./accessibility');
-const { select } = require('d3-selection');
+import { addSVGAccessibility, addSROnlyTable } from './accessibility';
+import { select } from 'd3-selection';
 
 describe('svgAccessibility tests', () => {
     describe('addAccessibility tests', () => {

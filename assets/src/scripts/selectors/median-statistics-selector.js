@@ -1,9 +1,8 @@
 
-const memoize = require('fast-memoize');
-const reduce = require('lodash/reduce');
-const { createSelector } = require('reselect');
-
-const { getCurrentParmCd } = require('./timeSeriesSelector');
+import memoize from 'fast-memoize';
+import reduce from 'lodash/reduce';
+import { createSelector } from 'reselect';
+import { getCurrentParmCd } from './time-series-selector';
 
 /*
  * Selectors that return properties from the state

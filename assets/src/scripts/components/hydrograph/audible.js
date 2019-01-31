@@ -1,20 +1,18 @@
-const { scaleLinear } = require('d3-scale');
-const { select } = require('d3-selection');
-const memoize = require('fast-memoize');
-const { createSelector, createStructuredSelector } = require('reselect');
-
-const { tsCursorPointsSelector } = require('./cursor');
-const { xScaleSelector, yScaleSelector } = require('./scales');
-const { allTimeSeriesSelector } = require('./timeSeries');
-
-const { TIMESERIES_AUDIO_ENABLED } = require('../../config');
-const { dispatch, link } = require('../../lib/redux');
-const { Actions } = require('../../store');
+import { scaleLinear } from 'd3-scale';
+import { select } from 'd3-selection';
+import memoize from 'fast-memoize';
+import { createSelector, createStructuredSelector } from 'reselect';
+import { tsCursorPointsSelector } from './cursor';
+import { xScaleSelector, yScaleSelector } from './scales';
+import { allTimeSeriesSelector } from './time-series';
+import config from '../../config';
+import { dispatch, link } from '../../lib/redux';
+import { Actions } from '../../store';
 
 // Higher tones get lower volume
 const volumeScale = scaleLinear().range([2, .3]);
 
-const AudioContext = TIMESERIES_AUDIO_ENABLED ? window.AudioContext || window.webkitAudioContext : null;
+const AudioContext = config.TIMESERIES_AUDIO_ENABLED ? window.AudioContext || window.webkitAudioContext : null;
 const getAudioContext = memoize(function () {
     return new AudioContext();
 });
@@ -114,7 +112,7 @@ const audiblePointsSelector = createSelector(
 
 export const audibleUI = function (elem) {
     // Only enable the audio interface on dev tiers.
-    if (!TIMESERIES_AUDIO_ENABLED) {
+    if (!config.TIMESERIES_AUDIO_ENABLED) {
         return;
     }
 
