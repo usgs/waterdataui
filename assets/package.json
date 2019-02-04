@@ -43,7 +43,7 @@
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.7.0",
     "autoprefixer": "^9.4.7",
-    "eslint": "^5.12.1",
+    "eslint": "^5.13.0",
     "eslint-plugin-jasmine": "^2.10.1",
     "gulp": "^4.0.0",
     "gulp-rev-all": "^1.0.0",
