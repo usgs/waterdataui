@@ -788,6 +788,10 @@ describe('Redux store', () => {
                 spyOn(Actions, 'timeSeriesPlayStop');
             });
 
+            afterEach(() => {
+                jasmine.clock().uninstall();
+            });
+
             it('Expects that timeSeriesPlayStop is called', () => {
                 mockGetState.and.returnValues({
                     timeSeriesState: {
