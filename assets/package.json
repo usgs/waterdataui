@@ -83,7 +83,7 @@
     "autotrack": "^2.4.1",
     "core-js": "^2.6.3",
     "d3": "^5.9.1",
-    "element-closest": "^3.0.0",
+    "element-closest": "^3.0.1",
     "esri-leaflet": "^2.2.3",
     "fast-memoize": "^2.5.1",
     "leaflet": "^1.4.0",
