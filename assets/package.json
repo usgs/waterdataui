@@ -81,7 +81,7 @@
   },
   "dependencies": {
     "autotrack": "^2.4.1",
-    "core-js": "^2.6.3",
+    "core-js": "^2.6.5",
     "d3": "^5.9.1",
     "element-closest": "^3.0.0",
     "esri-leaflet": "^2.2.3",
