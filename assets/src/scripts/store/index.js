@@ -134,6 +134,7 @@ export const Actions = {
     },
     retrieveExtendedTimeSeries(site, period) {
         return function(dispatch, getState) {
+            console.log('In retrieveExtendedTimeSeries')
             const state = getState();
             const parmCd = getCurrentParmCd(state);
             const requestKey = getTsRequestKey ('current', period, parmCd)(state);

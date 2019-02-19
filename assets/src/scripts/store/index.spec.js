@@ -563,7 +563,11 @@ import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
                     jasmine.Ajax.stubRequest(/.*waterservices.usgs.gov\/nwis\/iv\/.*/).andReturn({
                         status: 500
                     });
-                    p = Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
+                    try {
+                        p = Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
+                    } catch(e) {
+                        console.log("Error thrown while retrieving extended time series");
+                    }
 
                     expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
                     p.then(() => {
