@@ -550,6 +550,7 @@ import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
                 });
                 mockGetState.and.returnValue(newTestState);
 
+                spyOn(Actions, 'setCurrentDateRange');
                 spyOn(Actions, 'addTimeSeriesLoading');
                 spyOn(Actions, 'removeTimeSeriesLoading');
             });
@@ -569,7 +570,7 @@ import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
                     } catch(e) {
                         console.log("Error thrown while retrieving extended time series" + e.message);
                     }
-
+                    expect(Actions.setCurrentDateRange).toHaveBeenCalledWith('P30D');
                     expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
                     p.then(() => {
                         expect(mockDispatch.calls.count()).toBe(4);
