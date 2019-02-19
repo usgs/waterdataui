@@ -134,21 +134,15 @@ export const Actions = {
     },
     retrieveExtendedTimeSeries(site, period) {
         return function(dispatch, getState) {
-            console.log('In retrieveExtendedTimeSeries')
             const state = getState();
             const parmCd = getCurrentParmCd(state);
             const requestKey = getTsRequestKey ('current', period, parmCd)(state);
-            console.log('Before setCurrentDateRange')
             dispatch(Actions.setCurrentDateRange(period));
-            console.log('After setCurrentDateRange');
             const hasTs = hasTimeSeries('current', period, parmCd)(state);
-            console.log('After hasTimeSeries');
             if (!hasTimeSeries('current', period, parmCd)(state)) {
                 const endTime = getRequestTimeRange('current', 'P7D')(state).end;
                 let startTime = calcStartTime(period, endTime);
-                console.log('Before addTimeSeriesLoading');
                 dispatch(Actions.addTimeSeriesLoading([requestKey]));
-                console.log('After addTimeSeriesLoading');
                 return (getTimeSeries({
                     sites: [site],
                     params: [parmCd],
@@ -162,14 +156,11 @@ export const Actions = {
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     },
                     () => {
-                        console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
+                        console.(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
                         dispatch(Actions.addSeriesCollection(requestKey, {}));
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     }
                 ));
-            }
-            else {
-                console.log('period ' + period + ' parmCd ' + parmCd);
             }
         };
     },
