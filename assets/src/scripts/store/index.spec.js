@@ -558,22 +558,26 @@ import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
             });
 
             it('Should add the series with an empty collection', (done) => {
-                let p = Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
-                jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 500
-                });
-                expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
-                p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(4);
-                    let arg = mockDispatch.calls.argsFor(2)[0];
-                    expect(arg.type).toBe('ADD_TIME_SERIES_COLLECTION');
-                    expect(arg.key).toBe('current:P30D:00060');
-                    expect(arg.data).toEqual({});
-                    expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
+                try {
+                    let p = Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
+                    jasmine.Ajax.requests.mostRecent().respondWith({
+                        status: 500
+                    });
+                    expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
+                    p.then(() => {
+                        expect(mockDispatch.calls.count()).toBe(4);
+                        let arg = mockDispatch.calls.argsFor(2)[0];
+                        expect(arg.type).toBe('ADD_TIME_SERIES_COLLECTION');
+                        expect(arg.key).toBe('current:P30D:00060');
+                        expect(arg.data).toEqual({});
+                        expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
 
-
-                    done();
-                });
+                        done();
+                    });
+                }
+                catch(e) {
+                    console.log(e.message);
+                }
             });
         });
 
