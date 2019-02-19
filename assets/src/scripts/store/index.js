@@ -141,6 +141,8 @@ export const Actions = {
             console.log('Before setCurrentDateRange')
             dispatch(Actions.setCurrentDateRange(period));
             console.log('After setCurrentDateRange');
+            const hasTs = hasTimeSeries('current', period, parmCd)(state);
+            console.log('After hasTimeSeries');
             if (!hasTimeSeries('current', period, parmCd)(state)) {
                 const endTime = getRequestTimeRange('current', 'P7D')(state).end;
                 let startTime = calcStartTime(period, endTime);

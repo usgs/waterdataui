@@ -543,11 +543,12 @@ import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState');
 
-                mockGetState.and.returnValue(Object.assign({}, TEST_STATE, {
-                    timeSeriesState : Object.assign({}, TEST_STATE.timeSeriesState, {
+                const newTestState = Object.assign({}, TEST_STATE, {
+                    timeSeriesState: Object.assign({}, TEST_STATE.timeSeriesState, {
                         currentDateRange: 'P30D'
                     })
-                }));
+                });
+                mockGetState.and.returnValue(newTestState);
 
                 spyOn(Actions, 'addTimeSeriesLoading');
                 spyOn(Actions, 'removeTimeSeriesLoading');
@@ -566,7 +567,7 @@ import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
                     try {
                         p = Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
                     } catch(e) {
-                        console.log("Error thrown while retrieving extended time series" + e);
+                        console.log("Error thrown while retrieving extended time series" + e.message);
                     }
 
                     expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
