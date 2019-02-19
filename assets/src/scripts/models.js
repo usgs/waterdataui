@@ -48,6 +48,7 @@ export const getTimeSeries = function ({sites, params=null, startDate=null, endD
     let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
 
     let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${paramCds}&${timeParams}&siteStatus=all&format=json`;
+    console.log('getTimeSeries url ' + url);
     return get(url)
         .then(response => JSON.parse(response))
         .catch(reason => {
