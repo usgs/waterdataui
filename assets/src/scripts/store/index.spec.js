@@ -558,11 +558,13 @@ import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
             });
 
             it('Should add the series with an empty collection', (done) => {
+                let p;
                 try {
-                    let p = Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
-                    jasmine.Ajax.requests.mostRecent().respondWith({
+                    jasmine.Ajax.stubRequest(/.*waterservices.usgs.gov\/nwis\/iv\/.*/).andReturn({
                         status: 500
                     });
+                    p = Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
+
                     expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
                     p.then(() => {
                         expect(mockDispatch.calls.count()).toBe(4);
@@ -580,7 +582,7 @@ import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
                     });
                 }
                 catch(e) {
-                    console.log(p);
+                    console.log("Promise state is " + p);
                     console.log(e.message);
                 }
             });
