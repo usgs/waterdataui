@@ -1,7 +1,7 @@
 import { Actions, configureStore } from './index';
 import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
 
-describe('Redux store', () => {
+ describe('Redux store', () => {
 
     describe('asynchronous actions', () => {
         const SITE_NO = '12345678';
