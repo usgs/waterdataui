@@ -550,9 +550,9 @@ import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
                 });
                 mockGetState.and.returnValue(newTestState);
 
-                spyOn(Actions, 'setCurrentDateRange');
-                spyOn(Actions, 'addTimeSeriesLoading');
-                spyOn(Actions, 'removeTimeSeriesLoading');
+                spyOn(Actions, 'setCurrentDateRange').and.returnValue({});
+                spyOn(Actions, 'addTimeSeriesLoading').and.returnValue({});
+                spyOn(Actions, 'removeTimeSeriesLoading').and.returnValue({});
             });
 
             afterEach(() => {
