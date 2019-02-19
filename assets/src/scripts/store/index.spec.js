@@ -30,7 +30,7 @@ describe('Redux store', () => {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
-                            requestDT: new Date(1490936400000),
+                            requestDT: 1490936400000,
                             'filter:timeRange': {
                                 mode: 'PERIOD',
                                 periodDays: 7,
@@ -40,12 +40,12 @@ describe('Redux store', () => {
                     },
                     'current:P30D:00060': {
                         notes: {
-                            requestDT: new Date(1490936400000),
+                            requestDT: 1490936400000,
                             'filter:timeRange': {
                                 mode: 'RANGE',
                                 interval: {
-                                    start: new Date(1488348000000),
-                                    end: new Date(1490936400000)
+                                    start: 1488348000000,
+                                    end: 1490936400000
                                 }
                             }
                         }
@@ -434,7 +434,7 @@ describe('Redux store', () => {
                 expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
             });
 
-            it('Should call getTimeSeries with the appropriate parameters', () => {
+            fit('Should call getTimeSeries with the appropriate parameters', () => {
                 mockGetState.and.returnValue(TEST_STATE);
                 Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
                 request = jasmine.Ajax.requests.mostRecent();
@@ -445,7 +445,8 @@ describe('Redux store', () => {
 
                 expect(request.url).toContain(['12345678']);
                 expect(request.url).toContain('00060');
-                expect(request.url).toContain('2017-03-31T05:00Z');
+                expect(request.url).toContain('startDT=2017-03-01T06:00Z');
+                expect(request.url).toContain('endDT=2017-03-31T05:00Z');
             });
 
             it('Should dispatch add series collection and retrieveCompareTimeSeries', (done) => {
