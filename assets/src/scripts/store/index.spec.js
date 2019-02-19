@@ -566,7 +566,7 @@ import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
                     try {
                         p = Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
                     } catch(e) {
-                        console.log("Error thrown while retrieving extended time series");
+                        console.log("Error thrown while retrieving extended time series" + e);
                     }
 
                     expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);

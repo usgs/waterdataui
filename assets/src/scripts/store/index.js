@@ -138,6 +138,7 @@ export const Actions = {
             const state = getState();
             const parmCd = getCurrentParmCd(state);
             const requestKey = getTsRequestKey ('current', period, parmCd)(state);
+            console.log('Before setCurrentDateRange')
             dispatch(Actions.setCurrentDateRange(period));
             if (!hasTimeSeries('current', period, parmCd)(state)) {
                 const endTime = getRequestTimeRange('current', 'P7D')(state).end;
