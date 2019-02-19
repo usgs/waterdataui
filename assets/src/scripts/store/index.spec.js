@@ -580,6 +580,7 @@ import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
                     });
                 }
                 catch(e) {
+                    console.log(p);
                     console.log(e.message);
                 }
             });
