@@ -1,7 +1,7 @@
 import { Actions, configureStore } from './index';
 import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
 
- describe('Redux store', () => {
+describe('Redux store', () => {
 
     describe('asynchronous actions', () => {
         const SITE_NO = '12345678';
@@ -495,16 +495,14 @@ import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState');
 
-                const newTestState = Object.assign({}, TEST_STATE, {
-                    timeSeriesState: Object.assign({}, TEST_STATE.timeSeriesState, {
+                mockGetState.and.returnValue(Object.assign({}, TEST_STATE, {
+                    timeSeriesState : Object.assign({}, TEST_STATE.timeSeriesState, {
                         currentDateRange: 'P30D'
                     })
-                });
-                mockGetState.and.returnValue(newTestState);
+                }));
 
-                spyOn(Actions, 'setCurrentDateRange').and.returnValue({});
-                spyOn(Actions, 'addTimeSeriesLoading').and.returnValue({});
-                spyOn(Actions, 'removeTimeSeriesLoading').and.returnValue({});
+                spyOn(Actions, 'addTimeSeriesLoading');
+                spyOn(Actions, 'removeTimeSeriesLoading');
             });
 
             afterEach(() => {
@@ -512,37 +510,22 @@ import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
             });
 
             it('Should add the series with an empty collection', (done) => {
-                let p;
-                try {
-                    jasmine.Ajax.stubRequest(/.*waterservices.usgs.gov\/nwis\/iv\/.*/).andReturn({
-                        status: 500
-                    });
-                    try {
-                        p = Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
-                    } catch(e) {
-                        console.log("Error thrown while retrieving extended time series" + e.message);
-                    }
-                    expect(Actions.setCurrentDateRange).toHaveBeenCalledWith('P30D');
-                    expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
-                    p.then(() => {
-                        expect(mockDispatch.calls.count()).toBe(4);
-                        let arg = mockDispatch.calls.argsFor(2)[0];
-                        expect(arg.type).toBe('ADD_TIME_SERIES_COLLECTION');
-                        expect(arg.key).toBe('current:P30D:00060');
-                        expect(arg.data).toEqual({});
-                        expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
+                let p = Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 500
+                });
+                expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
+                p.then(() => {
+                    expect(mockDispatch.calls.count()).toBe(4);
+                    let arg = mockDispatch.calls.argsFor(2)[0];
+                    expect(arg.type).toBe('ADD_TIME_SERIES_COLLECTION');
+                    expect(arg.key).toBe('current:P30D:00060');
+                    expect(arg.data).toEqual({});
+                    expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
 
-                        done();
-                    }).
-                    catch(() => {
-                        console.log('RetrieveExtendedTimeSeries rejected');
-                        done();
-                    });
-                }
-                catch(e) {
-                    console.log("Promise state is " + p);
-                    console.log(e.message);
-                }
+
+                    done();
+                });
             });
         });
 
