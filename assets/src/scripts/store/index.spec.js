@@ -573,6 +573,10 @@ import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
                         expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
 
                         done();
+                    }).
+                    catch(() => {
+                        console.log('RetrieveExtendedTimeSeries rejected');
+                        done();
                     });
                 }
                 catch(e) {

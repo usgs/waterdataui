@@ -142,7 +142,7 @@ export const Actions = {
                 const endTime = getRequestTimeRange('current', 'P7D')(state).end;
                 let startTime = calcStartTime(period, endTime);
                 dispatch(Actions.addTimeSeriesLoading([requestKey]));
-                return getTimeSeries({
+                return (getTimeSeries({
                     sites: [site],
                     params: [parmCd],
                     startDate: startTime,
@@ -159,7 +159,7 @@ export const Actions = {
                         dispatch(Actions.addSeriesCollection(requestKey, {}));
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     }
-                );
+                ));
             }
         };
     },
