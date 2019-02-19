@@ -446,7 +446,7 @@ describe('Redux store', () => {
                 expect(request.url).toContain(['12345678']);
                 expect(request.url).toContain('00060');
                 expect(request.url).toContain('startDT=2017-03-01');
-                expect(request.url).toContain('endDT=2017-03-31T');
+                expect(request.url).toContain('endDT=2017-03-31');
             });
 
             it('Should dispatch add series collection and retrieveCompareTimeSeries', (done) => {
