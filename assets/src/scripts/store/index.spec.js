@@ -434,7 +434,7 @@ describe('Redux store', () => {
                 expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
             });
 
-            fit('Should call getTimeSeries with the appropriate parameters', () => {
+            it('Should call getTimeSeries with the appropriate parameters', () => {
                 mockGetState.and.returnValue(TEST_STATE);
                 Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
                 request = jasmine.Ajax.requests.mostRecent();
