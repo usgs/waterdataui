@@ -30,7 +30,7 @@ describe('Redux store', () => {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
-                            requestDT: new Date(1490936400000),
+                            requestDT: 1490936400000,
                             'filter:timeRange': {
                                 mode: 'PERIOD',
                                 periodDays: 7,
@@ -40,12 +40,12 @@ describe('Redux store', () => {
                     },
                     'current:P30D:00060': {
                         notes: {
-                            requestDT: new Date(1490936400000),
+                            requestDT: 1490936400000,
                             'filter:timeRange': {
                                 mode: 'RANGE',
                                 interval: {
-                                    start: new Date(1488348000000),
-                                    end: new Date(1490936400000)
+                                    start: 1488348000000,
+                                    end: 1490936400000
                                 }
                             }
                         }
@@ -445,7 +445,8 @@ describe('Redux store', () => {
 
                 expect(request.url).toContain(['12345678']);
                 expect(request.url).toContain('00060');
-                expect(request.url).toContain('2017-03-31T05:00Z');
+                expect(request.url).toContain('startDT=2017-03-01');
+                expect(request.url).toContain('endDT=2017-03-31');
             });
 
             it('Should dispatch add series collection and retrieveCompareTimeSeries', (done) => {
@@ -487,54 +488,6 @@ describe('Redux store', () => {
         describe('retrieveExtendedTimeSeries with bad data', () => {
             let mockDispatch;
             let mockGetState;
-            const TEST_STATE = {
-                series: {
-                    requests: {
-                        'current:P7D': {}
-                    },
-                    variables: {
-                        '45807042': {
-                            variableCode: {
-                                'value': '00060'
-                            }
-                        },
-                        '450807142': {
-                            variableCode: {
-                                'value': '00010'
-                            }
-                        }
-                    },
-                    queryInfo: {
-                        'current:P7D': {
-                            notes: {
-                                requestDT: new Date(1490936400000),
-                                'filter:timeRange': {
-                                    mode: 'PERIOD',
-                                    periodDays: 7,
-                                    modifiedSince: null
-                                }
-                            }
-                        },
-                        'current:P30D:00060': {
-                            notes: {
-                                requestDT: new Date(1490936400000),
-                                'filter:timeRange': {
-                                    mode: 'RANGE',
-                                    interval: {
-                                        start: new Date(1488348000000),
-                                        end: new Date(149093640000)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                timeSeriesState: {
-                    currentVariableID: '45807042',
-                    currentDateRange: 'P7D'
-                }
-            };
-
 
             beforeEach(() => {
                 jasmine.Ajax.install();
