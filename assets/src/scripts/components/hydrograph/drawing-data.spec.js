@@ -939,7 +939,6 @@ describe('drawingData module', () => {
         };
 
         it('Return the expected data points', () =>  {
-            console.log('requestDT is ' + TEST_STATE.series.queryInfo['current:P7D'].notes.requestDT);
             let result = getCurrentVariableMedianStatPoints(TEST_STATE);
             expect(result.length).toBe(1);
             expect(result[0].length).toBe(9);
