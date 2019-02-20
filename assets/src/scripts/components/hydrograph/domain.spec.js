@@ -90,7 +90,7 @@ describe('domain module', () => {
             expect(domain[1]).toBeGreaterThanOrEqual(150);
         });
 
-        fit('handles single point values of 0', () => {
+        it('handles single point values of 0', () => {
             const domainSymlog = getYDomain([pts([0, 0, 0])], {variableCode: {value: '00060'}});
             expect(domainSymlog[0]).toBeLessThanOrEqual(0);
             expect(domainSymlog[1]).toBeGreaterThanOrEqual(1);
