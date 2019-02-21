@@ -68,7 +68,11 @@ export const getYDomain = function (pointArrays, currentVarParmCd) {
             // this isn't useful for creation of data
             // points, so add this broadens the extent
             // a bit for single point series
-            ptExtent = [ptExtent[0] - ptExtent[0]/2, ptExtent[0] + ptExtent[0]/2];
+            if (ptExtent[0]) {
+                ptExtent = [ptExtent[0] - ptExtent[0] / 2, ptExtent[0] + ptExtent[0] / 2];
+            } else { // ptExtent of 0 so just set to a constant
+                ptExtent = [0, 1];
+            }
         }
         scaleDomains.push(ptExtent);
     }
