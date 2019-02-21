@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Fixed
+- Fixed the issue causing hydrograph date/time not to display on Internet Explorer
 - Fixed the issue that was causing the extended time series fetch to fail.
 
 ## [0.14.0] - 2018-12-04
