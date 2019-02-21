@@ -19,7 +19,7 @@ describe('component/map/legend module', () => {
     });
 
     afterEach(() => {
-       select('#map').remove();
+        select('#map').remove();
         jasmine.Ajax.uninstall();
     });
 
