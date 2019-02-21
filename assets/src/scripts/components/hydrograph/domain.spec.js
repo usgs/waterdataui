@@ -98,7 +98,7 @@ describe('domain module', () => {
             const domainLinear = getYDomain([pts([0, 0, 0])], {variableCode: {value: '00045'}});
             expect(domainLinear[0]).toBeLessThanOrEqual(0);
             expect(domainLinear[1]).toBeGreaterThanOrEqual(1);
-        })
+        });
     });
 
     describe('getYTickDetails', () => {
