@@ -28,7 +28,7 @@
         <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Intl.~locale.en"></script>
         <script type="text/javascript">
             if (!!document.documentMode) {
-                document.write("<script src=" + ${CONFIG.DATE_TIME_FORMAT_TIMEZONE} + "><\/script>");
+                document.write('<script src="{{ "scripts/date-time-format-timezone-complete-min.js" | asset_url }}"><\/script>');
             }
         </script>
 
