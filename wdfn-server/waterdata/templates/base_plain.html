@@ -21,7 +21,6 @@
                 'STATIC_URL': '{{ config.STATIC_ROOT }}',
                 'TIMESERIES_AUDIO_ENABLED': '{{ config.TIMESERIES_AUDIO_ENABLED}}' === 'True' ? true : false,
                 'WEATHER_SERVICE_ROOT': '{{ config.WEATHER_SERVICE_ROOT }}',
-                'DATE_TIME_FORMAT_TIMEZONE': "{{ 'scripts/date-time-format-timezone-complete-min.js' | asset_url }}"
             };
         </script>
         <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
