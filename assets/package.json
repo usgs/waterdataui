@@ -64,7 +64,7 @@
     "node-sass": "^4.11.0",
     "nodemon": "^1.18.10",
     "npm-run-all": "^4.1.5",
-    "postcss-cli": "^6.1.1",
+    "postcss-cli": "^6.1.2",
     "proxyquireify": "^3.2.1",
     "rollup": "^1.2.2",
     "rollup-plugin-alias": "^1.5.1",
