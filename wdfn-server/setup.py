@@ -79,7 +79,7 @@ def identify_data_files(data_dirs, exclusions=('.gitignore', '.webassets-cache')
 
 setup(
     name='usgs_waterdata_ui',
-    version='0.15.0dev',
+    version='0.16.0dev',
     description='USGS Water Data',
     author='Mary Bucknell, Andrew Yan, Dan Naab, Janell Fry, Aaron Briggs',
     author_email='mbucknell@usgs.gov',

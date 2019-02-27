@@ -3,7 +3,9 @@ import 'matchmedia-polyfill';
 
 import 'core-js/modules/es6.array.fill';
 import 'core-js/modules/es6.array.from';
+import 'core-js/modules/es6.array.iterator';
 import 'core-js/modules/es6.math.log10';
+import 'core-js/modules/es6.math.sign';
 import 'core-js/modules/es6.math.trunc';
 import 'core-js/modules/es6.number.is-integer';
 import 'core-js/modules/es6.number.is-nan';

@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+
+## [0.15.0] - 2019-02-26
+### Fixed
+- Fixed the issue causing hydrograph date/time not to display on Internet Explorer
+- Fixed the issue that was causing the extended time series fetch to fail.
+- Page now renders when data values for the initial time series is all zeros.
+
 ## [0.14.0] - 2018-12-04
 ### Changed
 - The Browserify/Babel build tooling was replaced with Rollup/Bublé.

@@ -45,7 +45,3 @@ import './store/time-series-state-reducer.spec';
 import './store/ui-reducer.spec';
 import './tooltips.spec';
 import './utils.spec';
-
-// Leaflet expects an exports global to exist - so although we don't use this,
-// just set it to something so it's not undefined.
-export var dummy = true;

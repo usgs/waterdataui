@@ -21,6 +21,12 @@ module.exports = function (config) {
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
         frameworks: ['jasmine-ajax', 'jasmine'],
 
+        client: {
+          jasmine: {
+            random: false
+          }
+        },
+
         // list of files / patterns to load in the browser
         files: [
             'tests/scripts/global-config.js',
@@ -35,7 +41,7 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/scripts/**/*.js': ['rollup']
+            'src/scripts/index.spec.js': ['rollup']
         },
 
         rollupPreprocessor: {
@@ -90,6 +96,7 @@ module.exports = function (config) {
                     istanbul({
                         exclude: [
                             'tests/**/*.js',
+                            'src/scripts/**/*.spec.js',
                             'node_modules/**/*.js'
                         ]
                     })

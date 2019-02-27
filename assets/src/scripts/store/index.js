@@ -140,7 +140,7 @@ export const Actions = {
             dispatch(Actions.setCurrentDateRange(period));
             if (!hasTimeSeries('current', period, parmCd)(state)) {
                 const endTime = getRequestTimeRange('current', 'P7D')(state).end;
-                let startTime = calcStartTime(period, endTime.getTime());
+                let startTime = calcStartTime(period, endTime);
                 dispatch(Actions.addTimeSeriesLoading([requestKey]));
                 return getTimeSeries({
                     sites: [site],

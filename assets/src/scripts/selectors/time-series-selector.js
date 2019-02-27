@@ -101,7 +101,7 @@ export const getTsQueryInfo  = memoize((tsKey, period, parmCd) => createSelector
  * @param {String} tsKey - current or compare
  * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
  * @param {String} or null parmCd - Only need to specify if period is something other than P7D or null
- * @return {Object} with start and end {Date} properties that contain the range of the data requested or null
+ * @return {Object} with start and end {Number} properties that contain the range of the data requested in universal time or null
  *      if the store does not contain a query for the tsKey request
  * */
 export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSelector(
