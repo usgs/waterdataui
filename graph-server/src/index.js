@@ -12,7 +12,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator());
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, function () {
     console.log(`Graph server running on port ${PORT}`);
 });
 
@@ -37,14 +37,8 @@ app.get('/monitoring-location/:siteID/', checkSchema({
         optional: true,
         isBoolean: true,
         toBoolean: true
-    }/*,
-    startDate: {
-        // TODO
-    },
-    endDate: {
-        // TODO
-    }*/
-}), (req, res) => {
+    }
+}), function (req, res) {
     const errors = req.validationErrors();
     if (errors) {
         res.status(400);
@@ -53,7 +47,6 @@ app.get('/monitoring-location/:siteID/', checkSchema({
     }
 
     renderToRespone(res, {
-        renderer: req.query.renderer,
         siteID: req.params.siteID,
         parameterCode: req.query.parameterCode,
         compare: req.query.compare

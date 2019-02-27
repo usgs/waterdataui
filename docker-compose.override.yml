@@ -1,0 +1,22 @@
+# These overrides are useful for local development purposes and will be loaded
+# by default when executing `docker-compose up`.
+# Put custom config in local.env.
+
+version: "3"
+
+services:
+  assets:
+    command: npm run watch
+    volumes:
+      - ./assets:/assets
+  graph_server:
+    volumes:
+      - ./graph-server/src:/graph-server/src
+      - ./assets/dist:/assets
+    command: npm run watch
+  # wdfn_server:
+  #   volumes:
+  #     - ./wdfn-server:/wdfn-server
+  #   command: python run.py --host 0.0.0.0
+  #   env_file:
+  #     - local.env
