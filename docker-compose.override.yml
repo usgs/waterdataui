@@ -9,10 +9,12 @@ services:
     command: npm run watch
     volumes:
       - ./assets:/assets
+      - ./volumes/assets/node_modules:/assets/node_modules
   graph_server:
     volumes:
       - ./graph-server/src:/graph-server/src
       - ./assets/dist:/assets
+      - ./volumes/graph-server/node_modules:/graph-server/node_modules
     command: npm run watch
   # wdfn_server:
   #   volumes:

@@ -1,3 +1,5 @@
+volumes/
+
 # Pycharm/IDE specific files
 .idea/
 .sublimelinterrc

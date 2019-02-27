@@ -6,7 +6,7 @@
   "scripts": {
     "test": "nyc jasmine",
     "start": "node src/index.js",
-    "watch": "STATIC_ROOT=http://localhost:9000 nodemon src"
+    "watch": "STATIC_ROOT=http://localhost:9000nodemon src"
   },
   "engines": {
     "node": "10.15.1"

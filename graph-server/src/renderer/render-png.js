@@ -31,7 +31,7 @@ const pool = createPuppeteerPool({
 
     // Arguments to pass on to Puppeteer
     puppeteerArgs: {
-        headless: false,
+        headless: true,
         executablePath: process.env.CHROME_BIN,
         args: [
             // Ignore CORS issues
