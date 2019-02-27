@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser');
 const express = require('express');
+var cache = require('express-cache-headers');
 const expressValidator = require('express-validator');
 const { checkSchema } = require('express-validator/check');
 
@@ -7,17 +8,29 @@ const renderToRespone = require('./renderer');
 
 
 const PORT = process.env.NODE_PORT || 2929;
+const CACHE_TIMEOUT = 15 * 60;  // 15 minutes
 
+
+// Create the Express app
 const app = express();
-app.use(bodyParser.urlencoded({ extended: false }));
+
+// Use to parse incoming request bodies
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+
+// Use for query parameter validation
 app.use(expressValidator());
 
+// Start the server
 const server = app.listen(PORT, function () {
     console.log(`Graph server running on port ${PORT}`);
 });
 
-
-app.get('/monitoring-location/:siteID/', checkSchema({
+/**
+ * Render hydrograph PNGs
+ */
+app.get('/monitoring-location/:siteID/', cache({ttl: CACHE_TIMEOUT}), checkSchema({
     renderer: {
     },
     parameterCode: {
