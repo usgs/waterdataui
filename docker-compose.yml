@@ -18,11 +18,3 @@ services:
       - assets
     ports:
       - "2929:2929"
-  # Python WSGI server
-  # wdfn_server:
-  #   build: ./wdfn-server
-  #   image: wdfn_graph_server
-  #   depends_on:
-  #     - assets
-  #   ports:
-  #     - "5050:5050"
