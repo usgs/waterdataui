@@ -1,7 +1,3 @@
-# Build the static assets in the node.js container.
-FROM wdfn_assets as assets
-RUN npm run build
-
 # Use LTS release
 FROM node:10.15-alpine
 
@@ -29,8 +25,9 @@ RUN npm ci
 # Add the server source code
 COPY ./src ./src
 
-# Copy static files from the assets image to this one
-COPY --from=assets /assets/dist /assets
+# Add customer entrypoing that will help us set environment variables in ECS
+COPY ./bin/docker-entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["docker-entrypoint.sh"]
 
 # Add user so we don't need the --no-sandbox Chrome option
 RUN addgroup -S grapher && adduser -S -g grapher grapher \
@@ -42,3 +39,4 @@ USER grapher
 EXPOSE 2929
 
 CMD npm start
+#HEALTHCHECK CMD curl --fail http://127.0.0.1:2929/status || exit 1

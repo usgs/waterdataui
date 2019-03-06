@@ -1,0 +1,22 @@
+@Library(value='PipelineLibs@0.6.3', changelog=false) _
+
+pipeline {
+    agent {
+        node {
+            label 'project:any'
+        }
+    }
+    parameters {
+        choice(choices: ['snapshots', 'releases'], description: 'type of build', name: 'BUILD_TYPE')
+    }
+    triggers {
+        pollSCM('H/5 * * * *')
+    }
+    stages {
+        stage('build artifact') {
+            steps {
+                dockerPipeline()
+            }
+        }
+    }
+}

@@ -1,0 +1,16 @@
+@Library(value='PipelineLibs@0.6.1', changelog=false) _
+
+pipeline {
+    agent {
+        node {
+            label 'project:any'
+        }
+    }
+    stages {
+        stage('build artifact') {
+            steps {
+                serviceDeployPipeline()
+            }
+        }
+    }
+}

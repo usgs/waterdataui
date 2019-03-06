@@ -4,6 +4,7 @@ var cache = require('express-cache-headers');
 const expressValidator = require('express-validator');
 const { checkSchema } = require('express-validator/check');
 
+const { version } = require('../package.json');
 const renderToRespone = require('./renderer');
 
 
@@ -66,5 +67,11 @@ app.get('/monitoring-location/:siteID/', cache({ttl: CACHE_TIMEOUT}), checkSchem
     });
 });
 
+app.get('/status', function (req, res) {
+    res.status(200);
+    res.send({
+        version: version
+    });
+});
 
 module.exports = server;
