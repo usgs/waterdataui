@@ -1,6 +1,6 @@
 # This base config defines the production containers.
 
-version: "3"
+version: "3.7"
 
 services:
   # Node-based static asset build tooling

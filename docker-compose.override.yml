@@ -2,7 +2,7 @@
 # by default when executing `docker-compose up`.
 # Put custom config in local.env.
 
-version: "3"
+version: "3.7"
 
 services:
   assets:
