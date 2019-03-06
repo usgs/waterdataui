@@ -16,9 +16,3 @@ services:
       - ./assets/dist:/assets
       - ./volumes/graph-server/node_modules:/graph-server/node_modules
     command: npm run watch
-  # wdfn_server:
-  #   volumes:
-  #     - ./wdfn-server:/wdfn-server
-  #   command: python run.py --host 0.0.0.0
-  #   env_file:
-  #     - local.env
