@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "nyc jasmine",
-    "start": "node src/index.js",
+    "start": "DEBUG=express:* node src/index.js",
     "watch": "STATIC_ROOT=http://localhost:9000 nodemon src"
   },
   "engines": {

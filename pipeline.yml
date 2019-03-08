@@ -24,4 +24,4 @@ rulePriority: 503
 # string parameter specifying a path that ALB should use to verify that your application is alive
 healthCheck: "/status"
 # string parameter that tells the ALB how to route requests to the containers (e.g. /my-app/*); this forms a listener rule for the load balancer
-contextPath: "/graphs/*"
+contextPath: "/*"
