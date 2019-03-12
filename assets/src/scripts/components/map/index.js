@@ -1,7 +1,7 @@
 import { select } from 'd3-selection';
 import { createStructuredSelector } from 'reselect';
-import { map as createMap, marker as createMarker } from 'leaflet';
-import { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util } from 'esri-leaflet/src/EsriLeaflet';
+import { map as createMap, marker as createMarker, control, layerGroup } from 'leaflet';
+import { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util, basemapLayer, featureLayer } from 'esri-leaflet/src/EsriLeaflet';
 import { link, provide } from '../../lib/redux';
 import config from '../../config';
 import { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } from '../../flood-data';
@@ -20,11 +20,23 @@ const getLayerDefs = function(layerNo, siteno, stage) {
  * Creates a site map
  */
 const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
+
+    var gray = layerGroup();
+    basemapLayer('Gray').addTo(gray);
+
+    var cities = featureLayer({
+        url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Major_Cities/FeatureServer/0",
+        style: function (feature) {
+            return {color: '#bada55', weight: 2 };
+        }
+    });
+
     // Create map on node
     const map = createMap('site-map', {
         center: [latitude, longitude],
         zoom: zoom,
-        scrollWheelZoom: false
+        scrollWheelZoom: false,
+        layers: [gray, cities]
     });
 
     map.on('focus', () => {
@@ -113,8 +125,19 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         }
     };
 
-    // Add a gray basemap layer
-    map.addLayer(new BasemapLayer('Gray'));
+    //add additional baselayer and overlay
+    var baseLayers = {
+        "Grayscale": gray,
+        "Satellite": basemapLayer("Physical")
+    };
+
+    var overlays = {
+        "U.S. Cities": cities
+    };
+
+    //add layer control
+    control.layers(baseLayers, overlays).addTo(map);
+
 
     // Add the ESRI World Hydro Reference Overlay
     if (config.HYDRO_ENDPOINT) {
