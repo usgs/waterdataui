@@ -1,6 +1,6 @@
 import { select } from 'd3-selection';
 import { createStructuredSelector } from 'reselect';
-import { map as createMap, marker as createMarker, control, layerGroup } from 'leaflet';
+import { map as createMap, marker as createMarker, control, layerGroup, marker, divIcon, icon } from 'leaflet';
 import { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util, basemapLayer, featureLayer } from 'esri-leaflet/src/EsriLeaflet';
 import { link, provide } from '../../lib/redux';
 import config from '../../config';
@@ -24,11 +24,15 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     var gray = layerGroup();
     basemapLayer('Gray').addTo(gray);
 
+    var greenIcon = icon({iconUrl: 'http://leafletjs.com/examples/custom-icons/leaf-green.png'})
+
     var cities = featureLayer({
         url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Major_Cities/FeatureServer/0",
-        style: function (feature) {
-            return {color: '#bada55', weight: 2 };
-        }
+        pointToLayer: function (geojson, latlng) {
+            return createMarker(latlng, {
+              icon: greenIcon
+            });
+          },
     });
 
     // Create map on node
@@ -128,15 +132,22 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     //add additional baselayer and overlay
     var baseLayers = {
         "Grayscale": gray,
-        "Satellite": basemapLayer("Physical")
+        "Satellite": basemapLayer("ImageryFirefly")
     };
 
     var overlays = {
         "U.S. Cities": cities
     };
 
+    var options = {
+        // exclusiveGroups: [gray],
+        groupCheckboxes: true
+      };
+
     //add layer control
-    control.layers(baseLayers, overlays).addTo(map);
+    control.layers(baseLayers, overlays, options).addTo(map);
+
+    
 
 
     // Add the ESRI World Hydro Reference Overlay
