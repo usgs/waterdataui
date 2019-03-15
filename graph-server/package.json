@@ -4,11 +4,12 @@
   "description": "Water Data For The Nation graph server renderer",
   "main": "src/index.js",
   "scripts": {
-    "test": "jasmine",
+    "test": "nyc jasmine",
+    "start": "DEBUG=express:* node src/index.js",
     "watch": "STATIC_ROOT=http://localhost:9000 nodemon src"
   },
   "engines": {
-    "node": "8.9.3"
+    "node": "10.15.1"
   },
   "repository": {
     "type": "git",
@@ -23,15 +24,16 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "express-cache-headers": "^0.1.4",
     "express-validator": "^5.1.3",
-    "phantom": "^6.0.3",
-    "puppeteer": "^1.12.2",
-    "svgo": "^1.1.1"
+    "generic-pool": "^3.6.1",
+    "puppeteer": "^1.12.2"
   },
   "devDependencies": {
     "decache": "^4.5.1",
     "jasmine": "^3.3.1",
     "nodemon": "^1.18.10",
+    "nyc": "^13.3.0",
     "supertest": "^3.4.2"
   }
 }
