@@ -56,6 +56,10 @@ describe('map module', () => {
             expect(select(mapNode).select('input[type="range"]').size()).toBe(0);
         });
 
+        it('Should create a leaf-control-layers class', () => {
+            expect(select(mapNode).selectAll('.leaflet-control-layers').size()).toBe(1);
+        });
+
     });
 
     describe('Map creation with FIM information', () => {

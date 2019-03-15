@@ -25,7 +25,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     basemapLayer('Gray').addTo(gray);
 
     var cityIcon = icon({
-        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-black.png'
+        iconUrl: config.STATIC_URL + '/img/marker-icon-black.png'
     });
 
     var cities = featureLayer({
