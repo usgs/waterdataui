@@ -1,7 +1,7 @@
 import { select } from 'd3-selection';
 import { createStructuredSelector } from 'reselect';
-import { map as createMap, marker as createMarker, control, layerGroup, marker, divIcon, icon } from 'leaflet';
-import { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util, basemapLayer, featureLayer } from 'esri-leaflet/src/EsriLeaflet';
+import { map as createMap, marker as createMarker, control, layerGroup, icon } from 'leaflet';
+import { TiledMapLayer, dynamicMapLayer, Util, basemapLayer, featureLayer } from 'esri-leaflet/src/EsriLeaflet';
 import { link, provide } from '../../lib/redux';
 import config from '../../config';
 import { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } from '../../flood-data';
@@ -24,13 +24,15 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     var gray = layerGroup();
     basemapLayer('Gray').addTo(gray);
 
-    var greenIcon = icon({iconUrl: 'http://leafletjs.com/examples/custom-icons/leaf-green.png'})
+    var cityIcon = icon({
+        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-black.png'
+    });
 
     var cities = featureLayer({
         url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Major_Cities/FeatureServer/0",
         pointToLayer: function (geojson, latlng) {
             return createMarker(latlng, {
-              icon: greenIcon
+              icon: cityIcon
             });
           },
     });
@@ -139,16 +141,8 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         "U.S. Cities": cities
     };
 
-    var options = {
-        // exclusiveGroups: [gray],
-        groupCheckboxes: true
-      };
-
     //add layer control
-    control.layers(baseLayers, overlays, options).addTo(map);
-
-    
-
+    control.layers(baseLayers, overlays).addTo(map);
 
     // Add the ESRI World Hydro Reference Overlay
     if (config.HYDRO_ENDPOINT) {
