@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Add Docker config for server-rendering PNGs
 - Use a Puppeteer/Chrome process pool for server rendering
+- Map now contains Leaflet layer control to toggle satellite and city layers
 
 ### Changed
 - Links in monitoring-location now use configurable endpoints.
