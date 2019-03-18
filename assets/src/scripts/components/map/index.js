@@ -21,15 +21,15 @@ const getLayerDefs = function(layerNo, siteno, stage) {
  */
 const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
 
-    var gray = layerGroup();
+    let gray = layerGroup();
     basemapLayer('Gray').addTo(gray);
 
-    var cityIcon = icon({
+    const cityIcon = icon({
         iconUrl: config.STATIC_URL + '/img/marker-icon-black.png'
     });
 
-    var cities = featureLayer({
-        url: 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Major_Cities/FeatureServer/0',
+    const cities = featureLayer({
+        url: `${config.CITIES_ENDPOINT}`,
         pointToLayer: function (geojson, latlng) {
             return createMarker(latlng, {
               icon: cityIcon
