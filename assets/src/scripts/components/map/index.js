@@ -1,7 +1,7 @@
 import { select } from 'd3-selection';
 import { createStructuredSelector } from 'reselect';
-import { map as createMap, marker as createMarker } from 'leaflet';
-import { BasemapLayer, TiledMapLayer, dynamicMapLayer, Util } from 'esri-leaflet/src/EsriLeaflet';
+import { map as createMap, marker as createMarker, control, layerGroup, icon } from 'leaflet';
+import { TiledMapLayer, dynamicMapLayer, Util, basemapLayer, featureLayer } from 'esri-leaflet/src/EsriLeaflet';
 import { link, provide } from '../../lib/redux';
 import config from '../../config';
 import { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } from '../../flood-data';
@@ -20,11 +20,29 @@ const getLayerDefs = function(layerNo, siteno, stage) {
  * Creates a site map
  */
 const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
+
+    let gray = layerGroup();
+    basemapLayer('Gray').addTo(gray);
+
+    const cityIcon = icon({
+        iconUrl: config.STATIC_URL + '/img/marker-icon-black.png'
+    });
+
+    const cities = featureLayer({
+        url: `${config.CITIES_ENDPOINT}`,
+        pointToLayer: function (geojson, latlng) {
+            return createMarker(latlng, {
+              icon: cityIcon
+            });
+          }
+    });
+
     // Create map on node
     const map = createMap('site-map', {
         center: [latitude, longitude],
         zoom: zoom,
-        scrollWheelZoom: false
+        scrollWheelZoom: false,
+        layers: [gray, cities]
     });
 
     map.on('focus', () => {
@@ -113,8 +131,18 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         }
     };
 
-    // Add a gray basemap layer
-    map.addLayer(new BasemapLayer('Gray'));
+    //add additional baselayer and overlay
+    var baseLayers = {
+        'Grayscale': gray,
+        'Satellite': basemapLayer('ImageryFirefly')
+    };
+
+    var overlays = {
+        'U.S. Cities': cities
+    };
+
+    //add layer control
+    control.layers(baseLayers, overlays).addTo(map);
 
     // Add the ESRI World Hydro Reference Overlay
     if (config.HYDRO_ENDPOINT) {

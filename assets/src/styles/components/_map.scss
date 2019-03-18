@@ -66,6 +66,26 @@
         }
 
     }
+
+    .leaflet-control-layers-selector {
+        left: 0em;
+        position: relative;
+        display: inline;
+        height: auto;
+        width: auto;
+    }
+
+    input[type=checkbox] {
+        -webkit-appearance: checkbox;
+    }
+
+    input[type=radio] {
+        -webkit-appearance: radio;
+    }
+
+    label {
+        margin: auto;
+    }
 }
 
 
