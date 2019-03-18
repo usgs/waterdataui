@@ -29,12 +29,12 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     });
 
     var cities = featureLayer({
-        url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Major_Cities/FeatureServer/0",
+        url: 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Major_Cities/FeatureServer/0',
         pointToLayer: function (geojson, latlng) {
             return createMarker(latlng, {
               icon: cityIcon
             });
-          },
+          }
     });
 
     // Create map on node
@@ -133,12 +133,12 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
 
     //add additional baselayer and overlay
     var baseLayers = {
-        "Grayscale": gray,
-        "Satellite": basemapLayer("ImageryFirefly")
+        'Grayscale': gray,
+        'Satellite': basemapLayer('ImageryFirefly')
     };
 
     var overlays = {
-        "U.S. Cities": cities
+        'U.S. Cities': cities
     };
 
     //add layer control
