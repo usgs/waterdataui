@@ -24,25 +24,16 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     let gray = layerGroup();
     basemapLayer('Gray').addTo(gray);
 
-    const cityIcon = icon({
-        iconUrl: config.STATIC_URL + '/img/marker-icon-black.png'
-    });
-
-    const cities = featureLayer({
-        url: `${config.CITIES_ENDPOINT}`,
-        pointToLayer: function (geojson, latlng) {
-            return createMarker(latlng, {
-              icon: cityIcon
-            });
-          }
-    });
+    if (config.HYDRO_ENDPOINT) {
+        gray.addLayer(new TiledMapLayer({url: config.HYDRO_ENDPOINT}));
+    }
 
     // Create map on node
     const map = createMap('site-map', {
         center: [latitude, longitude],
         zoom: zoom,
         scrollWheelZoom: false,
-        layers: [gray, cities]
+        layers: gray
     });
 
     map.on('focus', () => {
@@ -131,18 +122,14 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         }
     };
 
-    //add additional baselayer and overlay
+    //add additional baselayer
     var baseLayers = {
         'Grayscale': gray,
         'Satellite': basemapLayer('ImageryFirefly')
     };
 
-    var overlays = {
-        'U.S. Cities': cities
-    };
-
     //add layer control
-    control.layers(baseLayers, overlays).addTo(map);
+    control.layers(baseLayers).addTo(map);
 
     // Add the ESRI World Hydro Reference Overlay
     if (config.HYDRO_ENDPOINT) {
