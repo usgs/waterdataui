@@ -65,7 +65,7 @@ describe('scales', () => {
         const singleLog100 = yScale(100);
         const singleLog1000 = yScale(1000);
 
-        // The distance between successive increases in order of magnitude in a log scale
+        // The difference between successive increases in order of magnitude in a log scale
         // should be the same. Use this to test that a log scale is used.
         // Add a '-1' for the precision of the test, meaning 'match to one place before the decimal point'
         expect(log10 - log100).toBeCloseTo(log100 - log1000, -1);
