@@ -56,7 +56,7 @@ describe('scales', () => {
         expect(yScale(0)).not.toBeNaN();
     });
 
-    fit('Expect parameter code for discharge (00060) to use a symlog scale', () => {
+    it('Expect parameter code for discharge (00060) to use a symlog scale', () => {
         const log10 = yScale(10);
         const log100 = yScale(100);
         const log1000 = yScale(1000);
@@ -65,8 +65,11 @@ describe('scales', () => {
         const singleLog100 = yScale(100);
         const singleLog1000 = yScale(1000);
 
-        expect(log10 - log100).toBeCloseTo(log100 - log1000);
-        expect(singleLog10 - singleLog100).toBeCloseTo(singleLog100 - singleLog1000);
+        // The distance between successive increases in order of magnitude in a log scale
+        // should be the same. Use this to test that a log scale is used.
+        // Add a '-1' for the precision of the test, meaning 'match to one place before the decimal point'
+        expect(log10 - log100).toBeCloseTo(log100 - log1000, -1);
+        expect(singleLog10 - singleLog100).toBeCloseTo(singleLog100 - singleLog1000, -1);
     });
 
     it('Expect parameter code for not discharge to use a linear scale', () => {

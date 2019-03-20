@@ -33,12 +33,10 @@ export const createXScale = function (timeRange, xSize) {
  */
 export const createYScale = function (parmCd, extent, size) {
     if (SYMLOG_PARMS.indexOf(parmCd) >= 0) {
-        console.log('in if for symlog')
         return scaleSymlog()
             .domain(extent)
             .range([size, 0]);
     } else {
-        console.log('not in if for symlog')
         return scaleLinear()
             .domain(extent)
             .range([size, 0]);
