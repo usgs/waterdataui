@@ -1,7 +1,6 @@
-import { scaleLinear } from 'd3-scale';
+import { scaleLinear, scaleSymlog } from 'd3-scale';
 import memoize from 'fast-memoize';
 import { createSelector } from 'reselect';
-import { default as scaleSymlog } from '../../lib/symlog';
 import { getYDomain, SYMLOG_PARMS } from './domain';
 import { layoutSelector } from './layout';
 import { timeSeriesSelector } from './time-series';
@@ -34,10 +33,12 @@ export const createXScale = function (timeRange, xSize) {
  */
 export const createYScale = function (parmCd, extent, size) {
     if (SYMLOG_PARMS.indexOf(parmCd) >= 0) {
+        console.log('in if for symlog')
         return scaleSymlog()
             .domain(extent)
             .range([size, 0]);
     } else {
+        console.log('not in if for symlog')
         return scaleLinear()
             .domain(extent)
             .range([size, 0]);

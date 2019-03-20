@@ -56,7 +56,7 @@ describe('scales', () => {
         expect(yScale(0)).not.toBeNaN();
     });
 
-    it('Expect parameter code for discharge (00060) to use a symlog scale', () => {
+    fit('Expect parameter code for discharge (00060) to use a symlog scale', () => {
         const log10 = yScale(10);
         const log100 = yScale(100);
         const log1000 = yScale(1000);
