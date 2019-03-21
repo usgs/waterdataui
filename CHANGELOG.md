@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Links in monitoring-location now use configurable endpoints.
+- Uses symlog scale now included in D3 rather than our proprietary version
 
 ## [0.15.0] - 2019-02-26
 ### Fixed
