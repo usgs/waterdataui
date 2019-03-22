@@ -60,6 +60,9 @@ module.exports = {
             numWorkers: Math.max(1, os.cpus().length - 1)
         })
     ],
+    watch: {
+        chokidar: false
+    },
     output: {
         name: 'wdfn',
         file: 'dist/bundle.js',
