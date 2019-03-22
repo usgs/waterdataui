@@ -225,6 +225,12 @@ export const getYTickDetails = function (yDomain, parmCd) {
         tickValues = getFullArrayOfAdditionalTickMarks(tickValues, yDomain);
     }
 
+    // When there are too many log scale ticks they will overlap, so only use every other one.
+    if (isSymlog && tickValues.length > 30 && mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
+        tickValues = tickValues.sort((a, b) => a - b).filter((_, index) => {
+            return !(index % Math.round(tickValues.length/10));
+        });
+    }
     // On small screens, log scale ticks are too close together, so only use every other one.
     if (isSymlog && tickValues.length > 3 && !mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
         tickValues = tickValues.filter((_, index) => index % 2);
