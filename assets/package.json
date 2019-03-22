@@ -82,7 +82,7 @@
   "dependencies": {
     "autotrack": "^2.4.1",
     "core-js": "^2.6.5",
-    "d3": "^5.9.1",
+    "d3": "^5.9.2",
     "date-time-format-timezone": "^1.0.21",
     "element-closest": "^3.0.1",
     "esri-leaflet": "^2.2.3",
