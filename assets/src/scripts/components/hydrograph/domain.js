@@ -220,22 +220,24 @@ export const getYTickDetails = function (yDomain, parmCd) {
 
     let tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
 
-    // add additional ticks and labels to log scales as needed
-    if (isSymlog) {
-        tickValues = getFullArrayOfAdditionalTickMarks(tickValues, yDomain);
-    }
-
     // When there are too many log scale ticks they will overlap--reduce the number in proportion to the number of ticks
     // For example, if there are 37 tick marks, every 4 ticks will be used... if there are 31 tick marks, every 3 ticks
-    // will be used.
-    if (isSymlog && tickValues.length > 20 && mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
-        tickValues = tickValues.sort((a, b) => a - b).filter((_, index) => {
-            return !(index % Math.round(tickValues.length/10));
-        });
-    }
-    // On small screens, log scale ticks are too close together, so only use every other one.
-    if (isSymlog && tickValues.length > 3 && !mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
-        tickValues = tickValues.filter((_, index) => index % 2);
+    // will be used. Screens smaller than the USWDS defined medium screen will use fewer tick marks than larger screens.
+    if (isSymlog) {
+        // add additional ticks and labels to log scales as needed
+        tickValues = getFullArrayOfAdditionalTickMarks(tickValues, yDomain);
+        // remove ticks if there are too many of them
+        let lengthLimit = 20;
+        let divisor = 10;
+        if (!mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
+            lengthLimit = 3;
+            divisor = 5;
+        }
+        if (tickValues.length > lengthLimit) {
+            tickValues = tickValues.sort((a, b) => a - b).filter((_, index) => {
+                return !(index % Math.round(tickValues.length/divisor));
+            });
+        }
     }
 
     // If all ticks are integers, don't display right of the decimal place.
