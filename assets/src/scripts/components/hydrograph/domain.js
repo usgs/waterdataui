@@ -230,7 +230,7 @@ export const getYTickDetails = function (yDomain, parmCd) {
         let lengthLimit = 20;
         let divisor = 10;
         if (!mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
-            lengthLimit = 3;
+            lengthLimit = 10;
             divisor = 5;
         }
         if (tickValues.length > lengthLimit) {
