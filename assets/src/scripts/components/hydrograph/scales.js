@@ -1,7 +1,6 @@
-import { scaleLinear } from 'd3-scale';
+import { scaleLinear, scaleSymlog } from 'd3-scale';
 import memoize from 'fast-memoize';
 import { createSelector } from 'reselect';
-import { default as scaleSymlog } from '../../lib/symlog';
 import { getYDomain, SYMLOG_PARMS } from './domain';
 import { layoutSelector } from './layout';
 import { timeSeriesSelector } from './time-series';
