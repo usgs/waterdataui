@@ -1,5 +1,6 @@
 """
-Functions for calling NWIS services
+Classes and functions for calling NWIS services and working with
+the returned data.
 
 """
 from ..utils import execute_get_request
