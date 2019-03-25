@@ -34,16 +34,57 @@ def parse_rdb(rdb_iter_lines):
         yield dict(zip(headers, record_values))
 
 
-def get_nwis_site(service_root, site_no, agency_cd, format='rdb'):
-    resp = execute_get_request(
-        service_root,
-        path='/nwis/site/',
-        params={
-            'site': site_no,
-            'agencyCd': agency_cd,
-            'siteOutput': 'expanded',
-            'format': format
-        }
-    )
-    return resp
+class NwisWebServices:
 
+    def __init__(self, service_root, path='/nwis/site/'):
+        self.service_root = service_root
+        self.path = path
+
+    def get_site(self, site_no, agency_cd, data_format='rdb'):
+        resp = execute_get_request(
+            self.service_root,
+            path=self.path,
+            params={
+                'site': site_no,
+                'agency_cd': agency_cd,
+                'siteOutput': 'expanded',
+                'format': data_format
+            }
+        )
+        return resp
+
+    def get_site_parameters(self, site_no, agency_cd, data_format='rdb'):
+        resp = execute_get_request(
+            self.service_root,
+            path=self.path,
+            params={
+                'sites': site_no,
+                'format': data_format,
+                'seriesCatalogOutput': True,
+                'siteStatus': 'all',
+                'agencyCd': agency_cd
+            }
+        )
+        return resp
+
+    def get_huc_sites(self, huc_cd, data_format='rdb'):
+        resp = execute_get_request(
+            self.service_root,
+            path='/nwis/site/',
+            params={
+                'format': data_format,
+                'huc': huc_cd
+            }
+        )
+        return resp
+
+    def get_county_sites(self, state_county_cd, data_format='rdb'):
+        resp = execute_get_request(
+            self.service_root,
+            path=self.path,
+            params={
+                'format': data_format,
+                'countyCd': state_county_cd
+            }
+        )
+        return resp
