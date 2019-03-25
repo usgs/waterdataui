@@ -70,7 +70,7 @@ class NwisWebServices:
     def get_huc_sites(self, huc_cd, data_format='rdb'):
         resp = execute_get_request(
             self.service_root,
-            path='/nwis/site/',
+            path=self.path,
             params={
                 'format': data_format,
                 'huc': huc_cd

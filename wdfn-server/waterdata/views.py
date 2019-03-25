@@ -7,13 +7,15 @@ from flask import abort, render_template, request, Markup
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries
-from .utils import construct_url, defined_when, execute_get_request, parse_rdb
+from .utils import construct_url, defined_when
 from .services import sifta
+from .services.nwis import NwisWebServices, parse_rdb
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
 
 SERVICE_ROOT = app.config['SERVER_SERVICE_ROOT']
+nwis = NwisWebServices(SERVICE_ROOT)
 
 
 @app.route('/')
@@ -31,16 +33,7 @@ def monitoring_location(site_no):
 
     """
     agency_cd = request.args.get('agency_cd')
-    resp = execute_get_request(
-        SERVICE_ROOT,
-        path='/nwis/site/',
-        params={
-            'site': site_no,
-            'agencyCd': agency_cd,
-            'siteOutput': 'expanded',
-            'format': 'rdb'
-        }
-    )
+    resp = nwis.get_site(site_no, agency_cd)
     status = resp.status_code
     json_ld = None
     if status == 200:
@@ -58,17 +51,7 @@ def monitoring_location(site_no):
         station_record = data_list[0]
 
         if len(data_list) == 1:
-            parameter_data_resp = execute_get_request(
-                SERVICE_ROOT,
-                path='/nwis/site/',
-                params={
-                    'format': 'rdb',
-                    'sites': site_no,
-                    'seriesCatalogOutput': True,
-                    'siteStatus': 'all',
-                    'agencyCd': agency_cd
-                }
-            )
+            parameter_data_resp = nwis.get_site_parameters(site_no, agency_cd)
             if parameter_data_resp.status_code == 200:
                 param_data = [
                     param_datum for param_datum in
@@ -185,12 +168,7 @@ def hydrological_unit(huc_cd, show_locations=False):
     # If this is a HUC8 site, get the monitoring locations within it.
     monitoring_locations = []
     if show_locations and huc:
-        response = execute_get_request(
-            SERVICE_ROOT,
-            path='/nwis/site/',
-            params={'format': 'rdb', 'huc': huc_cd}
-        )
-
+        response = nwis.get_huc_sites(huc_cd)
         if response.status_code == 200:
             monitoring_locations = parse_rdb(response.iter_lines(decode_unicode=True))
 
@@ -246,11 +224,7 @@ def states_counties(state_cd, county_cd, show_locations=False):
     # If the search is at the county level, get the monitoring locations within that county.
     monitoring_locations = []
     if show_locations and state_cd and county_cd:
-        response = execute_get_request(
-            SERVICE_ROOT,
-            path='/nwis/site/',
-            params={'format': 'rdb', 'countyCd': state_county_cd}
-        )
+        response = nwis.get_county_sites(state_county_cd)
         if response.status_code == 200:
             monitoring_locations = parse_rdb(response.iter_lines(decode_unicode=True))
 
