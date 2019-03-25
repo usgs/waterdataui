@@ -48,7 +48,7 @@ class NwisWebServices:
 
         :param str service_root: the scheme and host of the NWISWeb service
         :param str path: the service path to be queried, defaults to `/nwis/site/`
-        :param str data_format: the data format to be returned from the service call
+        :param str data_format: the data format to be returned from the service call, defaults to `rdb`
 
         """
         self.service_root = service_root
