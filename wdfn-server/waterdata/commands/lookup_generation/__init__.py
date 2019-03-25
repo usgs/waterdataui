@@ -9,7 +9,8 @@ import json
 import logging
 import os
 
-from waterdata.utils import execute_get_request, parse_rdb
+from waterdata.utils import execute_get_request
+from waterdata.services.nwis import parse_rdb
 from .nwis_lookups import translate_to_lookup, translate_codes_by_group
 from .wqp_lookups import get_lookup_by_json, get_nwis_state_lookup, get_nwis_county_lookup, \
     is_us_county

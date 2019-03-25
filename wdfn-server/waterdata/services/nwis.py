@@ -36,11 +36,12 @@ def parse_rdb(rdb_iter_lines):
 
 class NwisWebServices:
 
-    def __init__(self, service_root, path='/nwis/site/'):
+    def __init__(self, service_root, path='/nwis/site/', data_format='rdb'):
         self.service_root = service_root
         self.path = path
+        self.data_format = data_format
 
-    def get_site(self, site_no, agency_cd, data_format='rdb'):
+    def get_site(self, site_no, agency_cd):
         resp = execute_get_request(
             self.service_root,
             path=self.path,
@@ -48,18 +49,18 @@ class NwisWebServices:
                 'site': site_no,
                 'agency_cd': agency_cd,
                 'siteOutput': 'expanded',
-                'format': data_format
+                'format': self.data_format
             }
         )
         return resp
 
-    def get_site_parameters(self, site_no, agency_cd, data_format='rdb'):
+    def get_site_parameters(self, site_no, agency_cd):
         resp = execute_get_request(
             self.service_root,
             path=self.path,
             params={
                 'sites': site_no,
-                'format': data_format,
+                'format': self.data_format,
                 'seriesCatalogOutput': True,
                 'siteStatus': 'all',
                 'agencyCd': agency_cd
@@ -67,23 +68,23 @@ class NwisWebServices:
         )
         return resp
 
-    def get_huc_sites(self, huc_cd, data_format='rdb'):
+    def get_huc_sites(self, huc_cd):
         resp = execute_get_request(
             self.service_root,
             path=self.path,
             params={
-                'format': data_format,
+                'format': self.data_format,
                 'huc': huc_cd
             }
         )
         return resp
 
-    def get_county_sites(self, state_county_cd, data_format='rdb'):
+    def get_county_sites(self, state_county_cd):
         resp = execute_get_request(
             self.service_root,
             path=self.path,
             params={
-                'format': data_format,
+                'format': self.data_format,
                 'countyCd': state_county_cd
             }
         )
