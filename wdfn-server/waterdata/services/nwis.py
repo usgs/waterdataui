@@ -3,7 +3,7 @@ Classes and functions for calling NWIS services and working with
 the returned data.
 
 """
-from ..utils import execute_get_request
+from ..utils import execute_get_request, parse_rdb
 
 
 class NwisWebServices:
@@ -69,7 +69,11 @@ class NwisWebServices:
                 'agencyCd': agency_cd
             }
         )
-        return resp
+        status_code = resp.status_code
+        data = []
+        if status_code == 200:
+            data = [datum for datum in parse_rdb(resp.iter_lines(decode_unicode=True))]
+        return data
 
     def get_huc_sites(self, huc_cd):
         """
@@ -89,7 +93,10 @@ class NwisWebServices:
                 'huc': huc_cd
             }
         )
-        return resp
+        monitoring_locations = []
+        if resp.status_code == 200:
+            monitoring_locations = parse_rdb(resp.iter_lines(decode_unicode=True))
+        return monitoring_locations
 
     def get_county_sites(self, state_county_cd):
         """
@@ -108,4 +115,7 @@ class NwisWebServices:
                 'countyCd': state_county_cd
             }
         )
-        return resp
+        monitoring_locations = []
+        if resp.status_code == 200:
+            monitoring_locations = parse_rdb(resp.iter_lines(decode_unicode=True))
+        return monitoring_locations

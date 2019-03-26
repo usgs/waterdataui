@@ -51,12 +51,8 @@ def monitoring_location(site_no):
         station_record = data_list[0]
 
         if len(data_list) == 1:
-            parameter_data_resp = nwis.get_site_parameters(site_no, agency_cd)
-            if parameter_data_resp.status_code == 200:
-                param_data = [
-                    param_datum for param_datum in
-                    parse_rdb(parameter_data_resp.iter_lines(decode_unicode=True))
-                ]
+            parameter_data = nwis.get_site_parameters(site_no, agency_cd)
+            if parameter_data:
                 site_dataseries = [
                     get_disambiguated_values(
                         param_datum,
@@ -64,10 +60,10 @@ def monitoring_location(site_no):
                         {},
                         app.config['HUC_LOOKUP']
                     )
-                    for param_datum in param_data
+                    for param_datum in parameter_data
                 ]
                 grouped_dataseries = rollup_dataseries(site_dataseries)
-                location_capabilities = set(param_datum['parm_cd'] for param_datum in param_data)
+                location_capabilities = set(param_datum['parm_cd'] for param_datum in parameter_data)
             else:
                 grouped_dataseries = None
                 location_capabilities = {}
@@ -168,9 +164,7 @@ def hydrological_unit(huc_cd, show_locations=False):
     # If this is a HUC8 site, get the monitoring locations within it.
     monitoring_locations = []
     if show_locations and huc:
-        response = nwis.get_huc_sites(huc_cd)
-        if response.status_code == 200:
-            monitoring_locations = parse_rdb(response.iter_lines(decode_unicode=True))
+        monitoring_locations = nwis.get_huc_sites(huc_cd)
 
     http_code = 200 if huc else 404
 
@@ -224,9 +218,7 @@ def states_counties(state_cd, county_cd, show_locations=False):
     # If the search is at the county level, get the monitoring locations within that county.
     monitoring_locations = []
     if show_locations and state_cd and county_cd:
-        response = nwis.get_county_sites(state_county_cd)
-        if response.status_code == 200:
-            monitoring_locations = parse_rdb(response.iter_lines(decode_unicode=True))
+        monitoring_locations = nwis.get_county_sites(state_county_cd)
 
     http_code = 200 if political_unit else 404
 
