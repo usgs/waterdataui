@@ -7,9 +7,9 @@ from flask import abort, render_template, request, Markup
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries
-from .utils import construct_url, defined_when
+from .utils import construct_url, defined_when, parse_rdb
 from .services import sifta
-from .services.nwis import NwisWebServices, parse_rdb
+from .services.nwis import NwisWebServices
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D

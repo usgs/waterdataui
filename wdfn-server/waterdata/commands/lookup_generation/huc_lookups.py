@@ -12,7 +12,7 @@ import os
 
 import requests
 
-from waterdata.services.nwis import parse_rdb
+from waterdata.utils import parse_rdb
 
 
 SOURCE_URL = 'https://help.waterdata.usgs.gov/code/hucs_query?fmt=rdb'
