@@ -10,11 +10,11 @@ from waterdata.services.nwis import NwisWebServices, parse_rdb
 class TestNwisWebServices(TestCase):
 
     def setUp(self):
-        self.service_root = 'https://fake.nwis.url.gov',
+        self.service_root = 'https://fake.nwis.url.gov'
         self.path = '/some/path/'
         self.site_no = '029055631'
         self.agency_cd = 'ABYZ'
-        self.huc_cd = '77771111',
+        self.huc_cd = '77771111'
         self.county_code = '055:213'
 
     def test_default_path(self):
@@ -38,8 +38,8 @@ class TestNwisWebServices(TestCase):
 
     @mock.patch('waterdata.services.nwis.execute_get_request')
     def test_get_site_parameters(self, r_mock):
-        ns = NwisWebServices(self.service_root, self.path)
-        ns.get_site_parameters(self.site_no, self.agency_cd)
+        nwis = NwisWebServices(self.service_root, self.path)
+        nwis.get_site_parameters(self.site_no, self.agency_cd)
         r_mock.assert_called_with(
             self.service_root,
             path=self.path,
@@ -54,8 +54,8 @@ class TestNwisWebServices(TestCase):
 
     @mock.patch('waterdata.services.nwis.execute_get_request')
     def test_get_huc_sites(self, r_mock):
-        ns = NwisWebServices(self.service_root, self.path)
-        ns.get_huc_sites(self.huc_cd)
+        nwis = NwisWebServices(self.service_root, self.path)
+        nwis.get_huc_sites(self.huc_cd)
         r_mock.assert_called_with(
             self.service_root,
             path=self.path,
@@ -67,8 +67,8 @@ class TestNwisWebServices(TestCase):
 
     @mock.patch('waterdata.services.nwis.execute_get_request')
     def test_get_county_sites(self, r_mock):
-        ns = NwisWebServices(self.service_root, self.path)
-        ns.get_county_sites(self.county_code)
+        nwis = NwisWebServices(self.service_root, self.path)
+        nwis.get_county_sites(self.county_code)
         r_mock.assert_called_with(
             self.service_root,
             path=self.path,
@@ -82,44 +82,45 @@ class TestNwisWebServices(TestCase):
 class TestParseRdb(TestCase):
 
     def setUp(self):
-        self.test_rdb_lines = ['#',
-                               '#',
-                               '# US Geological Survey',
-                               '# retrieved: 2018-01-02 09:31:20 -05:00	(caas01)',
-                               '#',
-                               '# The Site File stores location and general information about groundwater,',
-                               '# surface water, and meteorological sites',
-                               '# for sites in USA.',
-                               '#',
-                               ('# File-format description:  '
-                                'http://help.waterdata.usgs.gov/faq/about-tab-delimited-output'),
-                               '# Automated-retrieval info: http://waterservices.usgs.gov/rest/Site-Service.html',
-                               '#',
-                               '# Contact:   gs-w_support_nwisweb@usgs.gov',
-                               '#',
-                               '# The following selected fields are included in this output:',
-                               '#',
-                               '#  agency_cd       -- Agency',
-                               '#  site_no         -- Site identification number',
-                               '#  station_nm      -- Site name',
-                               '#  site_tp_cd      -- Site type',
-                               '#  dec_lat_va      -- Decimal latitude',
-                               '#  dec_long_va     -- Decimal longitude',
-                               '#  coord_acy_cd    -- Latitude-longitude accuracy',
-                               '#  dec_coord_datum_cd -- Decimal Latitude-longitude datum',
-                               '#  alt_va          -- Altitude of Gage/land surface',
-                               '#  alt_acy_va      -- Altitude accuracy',
-                               '#  alt_datum_cd    -- Altitude datum',
-                               '#  huc_cd          -- Hydrologic unit code',
-                               '#',
-                               ('agency_cd	site_no	station_nm	site_tp_cd	dec_lat_va	dec_long_va	coord_acy_cd	'
-                                'dec_coord_datum_cd	alt_va	alt_acy_va	alt_datum_cd	huc_cd'),
-                               '5s	15s	50s	7s	16s	16s	1s	10s	8s	3s	10s	16s',
-                               ('USGS	345670	Some Random Site	ST	200.94977778	-100.12763889	S	NAD83	 '
-                                '151.20	 .1	NAVD88	02070010'),
-                               ('USGS	345671	Some Random Site 1	ST	201.94977778	-101.12763889	S	NAD83	 '
-                                '151.20	 .1	NAVD88	02070010')
-                              ]
+        self.test_rdb_lines = [
+            '#',
+            '#',
+            '# US Geological Survey',
+            '# retrieved: 2018-01-02 09:31:20 -05:00	(caas01)',
+            '#',
+            '# The Site File stores location and general information about groundwater,',
+            '# surface water, and meteorological sites',
+            '# for sites in USA.',
+            '#',
+            ('# File-format description:  '
+            'http://help.waterdata.usgs.gov/faq/about-tab-delimited-output'),
+            '# Automated-retrieval info: http://waterservices.usgs.gov/rest/Site-Service.html',
+            '#',
+            '# Contact:   gs-w_support_nwisweb@usgs.gov',
+            '#',
+            '# The following selected fields are included in this output:',
+            '#',
+            '#  agency_cd       -- Agency',
+            '#  site_no         -- Site identification number',
+            '#  station_nm      -- Site name',
+            '#  site_tp_cd      -- Site type',
+            '#  dec_lat_va      -- Decimal latitude',
+            '#  dec_long_va     -- Decimal longitude',
+            '#  coord_acy_cd    -- Latitude-longitude accuracy',
+            '#  dec_coord_datum_cd -- Decimal Latitude-longitude datum',
+            '#  alt_va          -- Altitude of Gage/land surface',
+            '#  alt_acy_va      -- Altitude accuracy',
+            '#  alt_datum_cd    -- Altitude datum',
+            '#  huc_cd          -- Hydrologic unit code',
+            '#',
+            ('agency_cd	site_no	station_nm	site_tp_cd	dec_lat_va	dec_long_va	coord_acy_cd	'
+             'dec_coord_datum_cd	alt_va	alt_acy_va	alt_datum_cd	huc_cd'),
+            '5s	15s	50s	7s	16s	16s	1s	10s	8s	3s	10s	16s',
+            ('USGS	345670	Some Random Site	ST	200.94977778	-100.12763889	S	NAD83	 '
+             '151.20	 .1	NAVD88	02070010'),
+            ('USGS	345671	Some Random Site 1	ST	201.94977778	-101.12763889	S	NAD83	 '
+             '151.20	 .1	NAVD88	02070010')
+        ]
 
     def test_parse(self):
         result = parse_rdb(iter(self.test_rdb_lines))
