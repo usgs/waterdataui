@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Links in monitoring-location now use configurable endpoints.
 - Uses symlog scale now included in D3 rather than our proprietary version
+- Reduce the number of ticks on the discharge hydrographs if there are too many to fit on a screen without overlapping
 
 ## [0.15.0] - 2019-02-26
 ### Fixed
@@ -243,7 +244,8 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.14.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.15.0...master
+[0.15.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.14.0...waterdataui-0.15.0
 [0.14.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.13.0...waterdataui-0.14.0
 [0.13.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.12.0...waterdataui-0.13.0
 [0.12.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.11.0...waterdataui-0.12.0
