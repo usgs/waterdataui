@@ -62,7 +62,7 @@ class TestNwisWebServices(TestCase):
         self.assertEqual(len(data), 8)
 
     @mock.patch('waterdata.services.nwis.execute_get_request')
-    def test_get_site_parameters_not_okay(self, r_mock):
+    def test_get_site_parameters_bad(self, r_mock):
         mock_resp = mock.Mock()
         mock_resp.status_code = 503
         r_mock.return_value = mock_resp
@@ -104,7 +104,7 @@ class TestNwisWebServices(TestCase):
         self.assertEqual(len(list(data)), 1)
 
     @mock.patch('waterdata.services.nwis.execute_get_request')
-    def test_get_huc_sites_not_okay(self, r_mock):
+    def test_get_huc_sites_bad(self, r_mock):
         mock_resp = mock.Mock()
         mock_resp.status_code = 404
         r_mock.return_value = mock_resp
@@ -143,7 +143,7 @@ class TestNwisWebServices(TestCase):
         self.assertEqual(len(list(data)), 1)
 
     @mock.patch('waterdata.services.nwis.execute_get_request')
-    def test_get_county_sites_not_okay(self, r_mock):
+    def test_get_county_sites_bad(self, r_mock):
         mock_resp = mock.Mock()
         mock_resp.status_code = 500
         r_mock.return_value = mock_resp

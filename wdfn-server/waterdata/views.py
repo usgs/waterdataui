@@ -15,7 +15,7 @@ from .services.nwis import NwisWebServices
 from .constants import STATION_FIELDS_D
 
 SERVICE_ROOT = app.config['SERVER_SERVICE_ROOT']
-nwis = NwisWebServices(SERVICE_ROOT)
+NWIS = NwisWebServices(SERVICE_ROOT)
 
 
 @app.route('/')
@@ -33,7 +33,7 @@ def monitoring_location(site_no):
 
     """
     agency_cd = request.args.get('agency_cd')
-    resp = nwis.get_site(site_no, agency_cd)
+    resp = NWIS.get_site(site_no, agency_cd)
     status = resp.status_code
     json_ld = None
     if status == 200:
@@ -51,7 +51,7 @@ def monitoring_location(site_no):
         station_record = data_list[0]
 
         if len(data_list) == 1:
-            parameter_data = nwis.get_site_parameters(site_no, agency_cd)
+            parameter_data = NWIS.get_site_parameters(site_no, agency_cd)
             if parameter_data:
                 site_dataseries = [
                     get_disambiguated_values(
@@ -164,7 +164,7 @@ def hydrological_unit(huc_cd, show_locations=False):
     # If this is a HUC8 site, get the monitoring locations within it.
     monitoring_locations = []
     if show_locations and huc:
-        monitoring_locations = nwis.get_huc_sites(huc_cd)
+        monitoring_locations = NWIS.get_huc_sites(huc_cd)
 
     http_code = 200 if huc else 404
 
@@ -218,7 +218,7 @@ def states_counties(state_cd, county_cd, show_locations=False):
     # If the search is at the county level, get the monitoring locations within that county.
     monitoring_locations = []
     if show_locations and state_cd and county_cd:
-        monitoring_locations = nwis.get_county_sites(state_county_cd)
+        monitoring_locations = NWIS.get_county_sites(state_county_cd)
 
     http_code = 200 if political_unit else 404
 

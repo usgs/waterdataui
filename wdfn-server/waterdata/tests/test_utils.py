@@ -146,6 +146,7 @@ class TestDefinedWhen(TestCase):
             return ','.join([*args, *kwargs.keys(), *kwargs.values()])
         self.assertEqual(decorated('1', '2', kw1='3', kw2='4'), '1,2,kw1,kw2,3,4')
 
+
 class TestParseRdb(TestCase):
 
     def setUp(self):
@@ -160,7 +161,7 @@ class TestParseRdb(TestCase):
             '# for sites in USA.',
             '#',
             ('# File-format description:  '
-            'http://help.waterdata.usgs.gov/faq/about-tab-delimited-output'),
+             'http://help.waterdata.usgs.gov/faq/about-tab-delimited-output'),
             '# Automated-retrieval info: http://waterservices.usgs.gov/rest/Site-Service.html',
             '#',
             '# Contact:   gs-w_support_nwisweb@usgs.gov',
