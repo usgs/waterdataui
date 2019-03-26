@@ -1,4 +1,4 @@
-certifi==2018.11.29
+certifi==2019.3.9
 chardet==3.0.4
 click==7.0
 Flask==1.0.2
@@ -7,13 +7,13 @@ itsdangerous==1.1.0
 Jinja2==2.10
 MarkupSafe==1.1.1
 pendulum==2.0.4
-pyfakefs==3.5.7
-pytest==4.3.0
-pytest-mock==1.10.1
+pyfakefs==3.5.8
+pytest==4.3.1
+pytest-mock==1.10.2
 requests==2.21.0
 pytest-flask==0.14.0
 requests-mock==1.5.2
 six==1.12.0
 urllib3==1.24.1
 SaltPyLint==2019.1.11
-Werkzeug==0.14.1
+Werkzeug==0.15.1
