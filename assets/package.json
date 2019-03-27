@@ -41,7 +41,7 @@
   },
   "homepage": "https://github.com/usgs/waterdataui#readme",
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.7.2",
+    "@fortawesome/fontawesome-free": "^5.8.1",
     "autoprefixer": "^9.5.0",
     "eslint": "^5.15.3",
     "eslint-plugin-jasmine": "^2.10.1",
