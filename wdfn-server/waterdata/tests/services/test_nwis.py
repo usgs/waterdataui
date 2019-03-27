@@ -19,9 +19,10 @@ class TestNwisWebServices(TestCase):
         self.huc_cd = '77771111'
         self.county_code = '055:213'
 
-    def test_default_path(self):
+    def test_default_attributes(self):
         nwis = NwisWebServices(self.service_root)
         self.assertEqual(nwis.path, '/nwis/site/')
+        self.assertEqual(nwis.data_format, 'rdb')
 
     @mock.patch('waterdata.services.nwis.execute_get_request')
     def test_get_site(self, r_mock):
