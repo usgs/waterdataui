@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Links in monitoring-location now use configurable endpoints.
 - Uses symlog scale now included in D3 rather than our proprietary version
 - Reduce the number of ticks on the discharge hydrographs if there are too many to fit on a screen without overlapping
+- Simplify calls to NWISWeb
 
 ## [0.15.0] - 2019-02-26
 ### Fixed
