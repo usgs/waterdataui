@@ -55,7 +55,7 @@ class NwisWebServices:
         :param str site_no: site identifier
         :param str agency_cd: identifier for the agency that owns the site:
         :return: parameters that have been measured at a site
-        :rtype: requests.Response
+        :rtype: list
 
         """
         resp = execute_get_request(
@@ -82,7 +82,7 @@ class NwisWebServices:
 
         :param str huc_cd: hydrologic unit code
         :return: all sites in the specified HUC
-        :rtype: requests.Response
+        :rtype: iterator, either a list or generator
 
         """
         resp = execute_get_request(
@@ -104,7 +104,7 @@ class NwisWebServices:
 
         :param str state_county_cd: FIPS ID for a county
         :return: all sites within the specified county
-        :rtype: requests.Response
+        :rtype: iterator, either a list or generator
 
         """
         resp = execute_get_request(
