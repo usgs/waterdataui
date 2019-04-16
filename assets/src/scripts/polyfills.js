@@ -1,17 +1,19 @@
 import 'element-closest';
 import 'matchmedia-polyfill';
 
-import 'core-js/modules/es6.array.fill';
-import 'core-js/modules/es6.array.from';
-import 'core-js/modules/es6.array.iterator';
-import 'core-js/modules/es6.math.log10';
-import 'core-js/modules/es6.math.sign';
-import 'core-js/modules/es6.math.trunc';
-import 'core-js/modules/es6.number.is-integer';
-import 'core-js/modules/es6.number.is-nan';
-import 'core-js/modules/es6.promise';
-import 'core-js/modules/es6.string.repeat';
-import 'core-js/modules/es6.string.starts-with';
+import 'core-js/features/array/fill';
+import 'core-js/features/array/from';
+import 'core-js/features/array/iterator';
+import 'core-js/features/array/includes';
+import 'core-js/features/math/log10';
+import 'core-js/features/math/sign';
+import 'core-js/features/math/trunc';
+import 'core-js/features/number/is-integer';
+import 'core-js/features/number/is-nan';
+import 'core-js/features/object/values';
+import 'core-js/features/promise';
+import 'core-js/features/string/repeat';
+import 'core-js/features/string/starts-with';
 
-import 'core-js/modules/es7.array.includes';
-import 'core-js/modules/es7.object.values';
+
+
