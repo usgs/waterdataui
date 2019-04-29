@@ -12,7 +12,7 @@ pytest==4.4.0
 pytest-mock==1.10.3
 requests==2.21.0
 pytest-flask==0.14.0
-requests-mock==1.5.2
+requests-mock==1.6.0
 six==1.12.0
 urllib3==1.24.1
 SaltPyLint==2019.1.11
