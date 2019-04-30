@@ -4,7 +4,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/usgs/waterdataui/badge.svg?branch=master)](https://coveralls.io/github/usgs/waterdataui?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/05497ebda0d2450bb11eba0e436f4360)](https://www.codacy.com/app/ayan/waterdataui?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=usgs/waterdataui&amp;utm_campaign=Badge_Grade)
 
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/danielnaab.svg)](https://saucelabs.com/u/danielnaab)
 
 This repo contains the components of Water Data For The Nation:
 
@@ -12,7 +11,7 @@ This repo contains the components of Water Data For The Nation:
 - [`assets`](assets): Client-side Javascript, CSS, images, etc.
 - [`graph-server`](graph-server): A node.js server-renderer for charts, serving up SVG and images.
 
-The application has been developed using Python 3.6 and Node.js 8.9.3. This is a work in progress.
+The application has been developed using Python 3.6 and Node.js 10.15.1. This is a work in progress.
 
 ## Install dependencies
 
