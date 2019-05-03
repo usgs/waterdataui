@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/usgs/waterdataui.svg?branch=master)](https://travis-ci.org/usgs/waterdataui)
 [![Coverage Status](https://coveralls.io/repos/github/usgs/waterdataui/badge.svg?branch=master)](https://coveralls.io/github/usgs/waterdataui?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/05497ebda0d2450bb11eba0e436f4360)](https://www.codacy.com/app/ayan/waterdataui?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=usgs/waterdataui&amp;utm_campaign=Badge_Grade)
-
+[![BrowserStack Status](https://www.browserstack.com/automate/badge.svg?badge_key=bU1RYk13cEdnTUdmQkd0bzhyODFKNXVIbFdTa216WjdkYkM5UGVlaWNNYz0tLWtnR1ZwZC8rM0diajZXbXVTd1dlRmc9PQ==--0da980361af7531683a3e7245b74bd8bbb7875bc)](https://www.browserstack.com/automate/public-build/bU1RYk13cEdnTUdmQkd0bzhyODFKNXVIbFdTa216WjdkYkM5UGVlaWNNYz0tLWtnR1ZwZC8rM0diajZXbXVTd1dlRmc9PQ==--0da980361af7531683a3e7245b74bd8bbb7875bc)
 
 This repo contains the components of Water Data For The Nation:
 
