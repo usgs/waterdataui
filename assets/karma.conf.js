@@ -145,54 +145,12 @@ module.exports = function (config) {
                 'bs_edge16_windows10',
                 // IE 11 failing with timezone issues
                 //'bs_ie11_windows10',
-                'bs_chrome52_windows10',
-                'bs_firefox52_windows10'
+                'bs_chromelatest_windows10',
+                'bs_firefoxlatest_windows10'
                 // Galaxy browser times out trying to connect
                 //'bs_galaxys8_chrome52'
             ]
         };
-    }
-
-    if (process.env.KARMA_SAUCE_LABS) {
-        console.log('Using Open Sauce configuration...');
-        karmaConfig = {
-            ...karmaConfig,
-            sauceLabs: {
-                testName: 'WDFN Unit Tests',
-                recordScreenshots: false,
-                captureTimeout: 120000
-            },
-            browserNoActivityTimeout: 120000,
-            reporters: [
-                ...karmaConfig.reporters,
-                'saucelabs'
-            ],
-            browsers: [
-                ...karmaConfig.browsers,
-
-                'sl_safari10_mac',
-                'sl_safari10_iphone7',  // two tests failing
-                'sl_edge16_windows10',
-                'sl_ie11_windows10',  // IE 11 failing with timezone issues
-                'sl_chrome52_windows10',
-                'sl_firefox52_windows10',
-                'sl_galaxys3_android'
-            ],
-            concurrency: 5,
-            startConnect: false
-        };
-
-        // TravisCI handles starting the SauceConnect daemon for us
-        if (process.env.TRAVIS_JOB_NUMBER) {
-            karmaConfig = {
-                ...karmaConfig,
-                sauceLabs: {
-                    ...karmaConfig.sauceLabs,
-                    startConnect: false,
-                    tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER
-                }
-            };
-        }
     }
 
     // If no browsers configured yet, default to Firefox.
@@ -254,10 +212,10 @@ function getCustomLaunchers() {
             os: 'Windows',
             os_version: '10'
         },
-        bs_firefox52_windows10: {
+        bs_firefoxlatest_windows10: {
             base: 'BrowserStack',
             browser: 'firefox',
-            browser_version: '52.0',
+            browser_version: 'latest',
             os: 'Windows',
             os_version: '10'
         },
@@ -268,10 +226,10 @@ function getCustomLaunchers() {
             os: 'Windows',
             os_version: '10'
         },
-        bs_chrome59_windows10: {
+        bs_chromelatest_windows10: {
             base: 'BrowserStack',
             browser: 'chrome',
-            browser_version: '59.0',
+            browser_version: 'latest',
             os: 'Windows',
             os_version: '10'
         },
@@ -390,65 +348,6 @@ function getCustomLaunchers() {
             os: 'android',
             os_version: '8.0',
             real_mobile: true
-        },
-
-
-        /**
-         * SauceLabs browserse
-         */
-        // OS X Browsers
-        sl_safari10_mac: {
-            base: 'SauceLabs',
-            platform: 'OS X 10.12',
-            browserName: 'Safari',
-            version: '10.1'
-        },
-
-        // Windows Browseres
-        sl_chrome52_windows10: {
-            base: 'SauceLabs',
-            platform: 'Windows 10',
-            browserName: 'chrome',
-            version: '52.0'
-        },
-        sl_edge16_windows10: {
-            base: 'SauceLabs',
-            platform: 'Windows 10',
-            browserName: 'MicrosoftEdge',
-            version: '16.16299'
-        },
-        sl_ie11_windows10: {
-            base: 'SauceLabs',
-            platform: 'Windows 10',
-            browserName: 'internet explorer',
-            version: '11.103'
-        },
-        sl_firefox52_windows10: {
-            base: 'SauceLabs',
-            platform: 'Windows 10',
-            browserName: 'firefox',
-            version: '52.0'
-        },
-
-        // iOS browsers
-        sl_safari10_iphone7: {
-            base: 'SauceLabs',
-            appiumVersion: '1.8.0',
-            deviceName: 'iPhone 7 Simulator',
-            deviceOrientation: 'portrait',
-            platformVersion: '10.0',
-            platformName: 'iOS',
-            browserName: 'Safari'
-        },
-
-        // Android browsers
-        sl_galaxys3_android: {
-            base: 'SauceLabs',
-            browserName: 'Browser',
-            platform: 'Android',
-            version: '4.4',
-            deviceName: 'Samsung Galaxy S3 Emulator',
-            deviceOrientation: 'portrait'
         }
     };
 }
