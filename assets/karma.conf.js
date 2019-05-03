@@ -139,10 +139,10 @@ module.exports = function (config) {
             browsers: [
                 ...karmaConfig.browsers,
 
-                'bs_safari10_mac',
+                'bs_safarilatest_mac',
                 // iOS Safari no longer working from VMs
                 //'bs_safari10_iphone7',
-                'bs_edge16_windows10',
+                'bs_edgelatest_windows10',
                 // IE 11 failing with timezone issues
                 //'bs_ie11_windows10',
                 'bs_chromelatest_windows10',
@@ -177,10 +177,10 @@ function getCustomLaunchers() {
          * https://api.browserstack.com/automate/browsers.json
          */
         // Windows browsers
-        bs_edge16_windows10: {
+        bs_edgelatest_windows10: {
             base: 'BrowserStack',
             browser: 'edge',
-            browser_version: '16.0',
+            browser_version: 'latest',
             os: 'Windows',
             os_version: '10'
         },
@@ -298,10 +298,10 @@ function getCustomLaunchers() {
             os: 'OS X',
             os_version: 'Sierra'
         },
-        bs_safari11_mac: {
+        bs_safarilatest_mac: {
             base: 'BrowserStack',
             browser: 'safari',
-            browser_version: '11.1',
+            browser_version: 'latest',
             os: 'OS X',
             os_version: 'High Sierra'
         },
