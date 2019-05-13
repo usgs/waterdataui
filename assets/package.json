@@ -45,7 +45,7 @@
     "autoprefixer": "^9.5.1",
     "eslint": "^5.16.0",
     "eslint-plugin-jasmine": "^2.10.1",
-    "gulp": "^4.0.1",
+    "gulp": "^4.0.2",
     "gulp-rev-all": "^1.0.0",
     "isparta": "^4.1.1",
     "jasmine": "3.4.0",
