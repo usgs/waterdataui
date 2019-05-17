@@ -7,7 +7,7 @@
 
 .time-series-graph-title {
     @include h4();
-    @include media($medium-screen) {
+    @include at-media('tablet') {
         @include h3();
     }
     text-align: center;
@@ -58,10 +58,10 @@ svg {
     .tick {
         text {
             font-size: 1.05em;
-            @include media($small-screen) {
+            @include at-media('mobile-lg') {
                 font-size: 1.2em;
             }
-            @include media($medium-screen) {
+            @include at-media('tablet') {
                 font-size: 1.4em;
             }
         }
@@ -74,7 +74,7 @@ svg {
                 display: none;
                 font-size: 1.5em;
                 font-style: italic;
-                @include media($site-max-width) {
+                @include at-media($theme-site-max-width) {
                     display: block;
                 }
             }

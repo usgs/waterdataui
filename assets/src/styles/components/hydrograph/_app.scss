@@ -20,7 +20,7 @@
 
 #select-time-series  {
     label {
-        font-weight: $font-bold;
+        font-weight: weight('bold');
     }
     table {
         display: block;
@@ -28,13 +28,13 @@
         margin-top: 0;
 
         height: 250px;
-        @include media($site-max-width) {
+        @include at-media($theme-site-max-width) {
             height: auto;
         }
 
         thead {
             th {
-                font-size: $small-font-size
+                font-size: size('body', 'sm')
             }
             th, td {
                 background-color: white;
@@ -72,7 +72,8 @@
                         font-size: 0.8em;
                     }
                     .tooltip {
-                        @include position(absolute, null null 0 1em);
+                        position: absolute;
+                        left: 1em;
                         text-align: center;
                         width: 11em;
                         padding: 0.2em;
@@ -153,7 +154,7 @@
     position: relative;
 
     font-size: .7em;
-    @include media($medium-screen) {
+    @include at-media('tablet') {
         font-size: 1em;
     }
 
@@ -163,7 +164,7 @@
 
     .graph-controls-container {
         display: inline-block;
-        @include media($medium-screen) {
+        @include at-media('tablet') {
             position: absolute;
             top: 0;
             right: 0;
@@ -175,7 +176,7 @@
     p {
         height: 6em;
         overflow-y: scroll;
-        @include media($small-screen) {
+        @include at-media('mobile-lg') {
             height: 4em;
         }
     }

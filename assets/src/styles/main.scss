@@ -7,8 +7,6 @@ $fa-font-path: './fonts' !default;
 @import '../../node_modules/@fortawesome/fontawesome-free/scss/brands.scss';
 @import '../../node_modules/@fortawesome/fontawesome-free/scss/solid.scss';
 
-@import './partials/footer';
-@import './partials/header';
 @import './partials/script';
 @import './partials/slider';
 @import './partials/social-share';
@@ -44,13 +42,13 @@ body {
     .content-container {
         margin-left: auto;
         margin-right: auto;
-        max-width: $site-max-width;
+        @include u-maxw('desktop');
     }
     #wdfn-alert-banner input:checked ~ * {
         display: none;
     }
     #wdfn-alert-banner {
-        background-color: $color-primary-alt-lightest;
+        background-color: color('accent-cool-lighter');
 
         .wdfn-alert-body {
             padding-top: 0.5em;
@@ -66,7 +64,7 @@ body {
             }
             .div {
                 font-size: 0.9em;
-                @include media($medium-screen) {
+                @include at-media('tablet') {
                     font-size: 1em;
                 }
                 padding-left: 1em;

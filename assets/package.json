@@ -11,10 +11,10 @@
     "clean": "rm -rf dist && mkdir dist",
     "build": "npm run clean && run-p build:* && npm run hash-assets",
     "build:css": "run-p build:css:*",
-    "build:css:main": "node-sass --include-path node_modules/leaflet/dist --include-path node_modules/uswds/src/stylesheets src/styles/main.scss dist/main.css && uglifycss --output dist/main.css dist/main.css && postcss dist/main.css --no-map --use autoprefixer -o dist/main.css",
-    "build:css:graph": "node-sass --include-path node_modules/uswds/src/stylesheets src/styles/graph.scss dist/graph.css && uglifycss --output dist/graph.css dist/graph.css && postcss dist/graph.css --no-map --use autoprefixer -o dist/graph.css",
-    "build:fonts": "mkdir -p dist/fonts && cp node_modules/uswds/src/fonts/* dist/fonts && cp node_modules/@fortawesome/fontawesome-free/webfonts/* dist/fonts",
-    "build:images": "mkdir -p dist/img && mkdir -p dist/images && cp -r node_modules/uswds/src/img/* dist/img && cp -r node_modules/leaflet/dist/images/* dist/images && cp -r src/img/* dist/img",
+    "build:css:main": "node-sass --include-path node_modules/leaflet/dist --include-path node_modules/wdfn-viz/src/stylesheets --include-path node_modules/uswds/src/stylesheets src/styles/main.scss dist/main.css && uglifycss --output dist/main.css dist/main.css && postcss dist/main.css --no-map --use autoprefixer -o dist/main.css",
+    "build:css:graph": "node-sass --include-path node_modules/wdfn-viz/src/stylesheets --include-path node_modules/uswds/src/stylesheets src/styles/graph.scss dist/graph.css && uglifycss --output dist/graph.css dist/graph.css && postcss dist/graph.css --no-map --use autoprefixer -o dist/graph.css",
+    "build:fonts": "mkdir -p dist/fonts && cp -r node_modules/uswds/src/fonts/* dist/fonts && cp node_modules/@fortawesome/fontawesome-free/webfonts/* dist/fonts",
+    "build:images": "mkdir -p dist/img && mkdir -p dist/images && cp -r node_modules/uswds/src/img/* dist/img && cp -r node_modules/wdfn-viz/src/img/* dist/img && cp -r node_modules/leaflet/dist/images/* dist/images && cp -r src/img/* dist/img",
     "build:js": "rollup -c --environment NODE_ENV:production && mkdir -p dist/scripts && cp node_modules/date-time-format-timezone/build/browserified/date-time-format-timezone-complete-min.js dist/scripts",
     "build:autotrack": "uglifyjs --output dist/autotrack.js node_modules/autotrack/autotrack.js",
     "hash-assets": "gulp --gulpfile ./gulpfile.js revall",
@@ -77,7 +77,7 @@
     "rollup-plugin-uglify": "^6.0.2",
     "uglify-js": "^3.5.12",
     "uglifycss": "0.0.29",
-    "uswds": "^1.6.9"
+    "wdfn-viz": "^1.0.0"
   },
   "dependencies": {
     "autotrack": "^2.4.1",

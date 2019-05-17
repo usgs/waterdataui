@@ -36,7 +36,8 @@
 
     .tooltip {
         word-wrap: normal;
-        @include position(absolute, null 0 $tooltip-distance-from-item 0);
+        position: absolute;
+        right: $tooltip-distance-from-item;
         background-color: $tooltip-background;
         background: #fff;
         border-radius: $base-border-radius;

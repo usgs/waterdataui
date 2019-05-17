@@ -1,24 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="usa-width-one-whole">
+    <div>
         <h3>Version: {{ version }}</h3>
         <ul>
-            <li><a href="{{ url_for('hydrological_unit') }}">Hydrological Units</a></li>
+            <li><a class="usa-link" href="{{ url_for('hydrological_unit') }}">Hydrological Units</a></li>
         </ul>
-        <h5>Example site pages</h5>
-        <ul>
-            <li><a href="{{ url_for('monitoring_location', site_no='05370000') }}">05370000 - Eau Galle River at Spring Valley, WI</a></li>
-            <li><a href="{{ url_for('monitoring_location', site_no='05413500') }}">05413500 - Grant River at Burton, WI</a></li>
-            <li><a href="{{ url_for('monitoring_location', site_no='03341500') }}">03341500 - Wabash River at Terre Haute, IN</a></li>
-            <li><a href="{{ url_for('monitoring_location', site_no='01646500') }}">01646500 - Potomac River Near Wash, DC Little Falls Pump Sta</a></li>
-            <li><a href="{{ url_for('monitoring_location', site_no='08279500') }}">08279500 - Rio Grande at Embudo, NM</a></li>
-            <li><a href="{{ url_for('monitoring_location', site_no='07144100') }}">07144100 - Little Arkansas River Near Sedgwick, KS</a></li>
-            <li><a href="{{ url_for('monitoring_location', site_no='08470400', agency_cd='USIBW') }}">08470400 - USIBW Arroyo Colorado at Harlingen, TX</a></li>
-            <li><a href="{{ url_for('monitoring_location', site_no='08470400', agency_cd='USGS') }}">08470400 - Arroyo Colorado at Harlingen, TX</a></li>
-            <li><a href="{{ url_for('monitoring_location', site_no='251549080251200') }}">251549080251200 - Manatee Bay Creek Near Homestead, Fl - Tidal Stream</a></li>
-            <li><a href="{{ url_for('monitoring_location', site_no='01010500') }}">01010500 - St. John River at Dickey, Maine (single points once per day)</a></li>
-            <li><a href="{{ url_for('monitoring_location', site_no='08470400') }}">08470400 - Multiple sites</a></li>
+        <h4>Example site pages</h4>
+        <ul class="usa-list">
+            <li><a class="usa-link" href="{{ url_for('monitoring_location', site_no='05370000') }}">05370000 - Eau Galle River at Spring Valley, WI</a></li>
+            <li><a class="usa-link" href="{{ url_for('monitoring_location', site_no='05413500') }}">05413500 - Grant River at Burton, WI</a></li>
+            <li><a class="usa-link" href="{{ url_for('monitoring_location', site_no='03341500') }}">03341500 - Wabash River at Terre Haute, IN</a></li>
+            <li><a class="usa-link" href="{{ url_for('monitoring_location', site_no='01646500') }}">01646500 - Potomac River Near Wash, DC Little Falls Pump Sta</a></li>
+            <li><a class="usa-link" href="{{ url_for('monitoring_location', site_no='08279500') }}">08279500 - Rio Grande at Embudo, NM</a></li>
+            <li><a class="usa-link" href="{{ url_for('monitoring_location', site_no='07144100') }}">07144100 - Little Arkansas River Near Sedgwick, KS</a></li>
+            <li><a class="usa-link" href="{{ url_for('monitoring_location', site_no='08470400', agency_cd='USIBW') }}">08470400 - USIBW Arroyo Colorado at Harlingen, TX</a></li>
+            <li><a class="usa-link" href="{{ url_for('monitoring_location', site_no='08470400', agency_cd='USGS') }}">08470400 - Arroyo Colorado at Harlingen, TX</a></li>
+            <li><a class="usa-link" href="{{ url_for('monitoring_location', site_no='251549080251200') }}">251549080251200 - Manatee Bay Creek Near Homestead, Fl - Tidal Stream</a></li>
+            <li><a class="usa-link" href="{{ url_for('monitoring_location', site_no='01010500') }}">01010500 - St. John River at Dickey, Maine (single points once per day)</a></li>
+            <li><a class="usa-link" href="{{ url_for('monitoring_location', site_no='08470400') }}">08470400 - Multiple sites</a></li>
         </ul>
     </div>
 {% endblock content %}
