@@ -9,7 +9,7 @@
 
             {% if political_unit.name == 'United States' %}
                 <p>Select water monitoring location</p>
-                <table>
+                <table class="usa-table">
                     <thead>
                         <tr>
                             <th scope="col">FIPS Code</th>
@@ -19,7 +19,7 @@
                     <tbody>
                         {% for state_cd in political_unit.children %}
                             <tr>
-                                <th scope="row"><a href="{{ url_for('states_counties', state_cd=state_cd) }}">{{ state_cd }}</a></th>
+                                <th scope="row"><a class="usa-link" href="{{ url_for('states_counties', state_cd=state_cd) }}">{{ state_cd }}</a></th>
                                 <td> {{ config.COUNTRY_STATE_COUNTY_LOOKUP.US.state_cd[state_cd].name }}</td>
                             </tr>
                         {% endfor %}
@@ -30,7 +30,7 @@
             {% if political_unit.name != 'US' %}
                 {% if political_unit.county_cd %}
                     <p>Select water monitoring location</p>
-                    <table>
+                    <table class="usa-table">
                         <thead>
                             <tr>
                                 <th scope="col">FIPS Code</th>
@@ -40,7 +40,7 @@
                         <tbody>
                             {% for county_cd in political_unit.county_cd %}
                                 <tr>
-                                    <th scope="row"><a href="{{ url_for('states_counties', state_cd=state_cd, county_cd=county_cd) }}">{{ county_cd }}</a></th>
+                                    <th scope="row"><a class="usa-link" href="{{ url_for('states_counties', state_cd=state_cd, county_cd=county_cd) }}">{{ county_cd }}</a></th>
                                     <td> {{ config.COUNTRY_STATE_COUNTY_LOOKUP.US.state_cd[state_cd].county_cd[county_cd].name }}</td>
                                 </tr>
                             {% endfor %}
@@ -50,11 +50,11 @@
             {% endif %}
 
             {% if show_locations_link %}
-                 <a href="{{ url_for('county_station_locations', state_cd=state_cd, county_cd=county_cd) }}">Monitoring Locations</a>
+                 <a class="usa-link" href="{{ url_for('county_station_locations', state_cd=state_cd, county_cd=county_cd) }}">Monitoring Locations</a>
             {% endif %}
 
             {% if monitoring_locations %}
-                <table>
+                <table class="usa-table">
                     <caption>Monitoring Locations</caption>
                     <thead>
                         <tr>
@@ -66,7 +66,7 @@
                     <tbody>
                         {% for location in monitoring_locations %}
                             <tr>
-                                <th scope="row"><a href="{{ url_for('monitoring_location', site_no=location.site_no) }}">{{ location.site_no }}</a></th>
+                                <th scope="row"><a class="usa-link" href="{{ url_for('monitoring_location', site_no=location.site_no) }}">{{ location.site_no }}</a></th>
                                 <td>{{ location.station_nm }}</td>
                                 <td>{{ config.NWIS_CODE_LOOKUP.site_tp_cd[location.site_tp_cd].name }}</td>
                             </tr>
