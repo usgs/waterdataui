@@ -33,29 +33,29 @@
 {% set body_id = 'monitoring-location' %}
 
 {% block content %}
-    <div class="usa-width-one-whole">
+    <div>
         {% if status_code == 200 %}
             {% if stations|length > 1 %}
 
                 <h1>Multiple sites found</h1>
                 <h3>Please pick a site:</h3>
-                <table class="usa-table-borderless">
-                <thead>
-                    <tr>
-                        <th scope="col">Agency</th>
-                        <th scope="col">Site number</th>
-                        <th scope="col">Site name</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for site in stations %}
-                    <tr>
-                        <td><a href="{{ url_for('monitoring_location', site_no=site.site_no, agency_cd=site.agency_cd) }}">{{ site.agency_cd }}</a></td>
-                        <td> {{ site.site_no }} </td>
-                        <td> {{ site.station_nm }} </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
+                <table class="usa-table usa-table--borderless">
+                    <thead>
+                        <tr>
+                            <th scope="col">Agency</th>
+                            <th scope="col">Site number</th>
+                            <th scope="col">Site name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for site in stations %}
+                        <tr>
+                            <td><a href="{{ url_for('monitoring_location', site_no=site.site_no, agency_cd=site.agency_cd) }}">{{ site.agency_cd }}</a></td>
+                            <td> {{ site.site_no }} </td>
+                            <td> {{ site.station_nm }} </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
                 </table>
 
             {% else %}
@@ -64,7 +64,7 @@
                     <h1>{{ stations[0].station_nm }}</h1>
                     <div>
                         <span class="usa-label">Important</span>
-                        <a aria-describedby="{{ 'classic'|tooltip_content_id }}" href="{{ config.NWIS_ENDPOINTS.UV}}?site_no={{stations[0].site_no}}" target="_blank">Classic Page</a>
+                        <a class="usa-link" aria-describedby="{{ 'classic'|tooltip_content_id }}" href="{{ config.NWIS_ENDPOINTS.UV}}?site_no={{stations[0].site_no}}" target="_blank">Classic Page</a>
                         {{ components.QuestionTooltip('classic', 'View all current conditions values on the classic Water Data for the Nation interface.', True) }}
                     </div>
                     <p id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}</p>
@@ -75,81 +75,79 @@
                 {% endif %}
 
                 {% if parm_grp_summary %}
-                    <ul class="usa-accordion">
-                        <li>
-                            <button class="usa-accordion-button" aria-expanded="false" aria-controls="ts-a1">
-                                Summary
-                            </button>
-                            <div id="ts-a1" class="usa-accordion-content">
-                                <table id="site-data-summary">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">USGS Parameter Group</th>
-                                            <th scope="col">Data Types</th>
-                                            <th scope="col">Start Date</th>
-                                            <th scope="col">End Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for grp in parm_grp_summary %}
-                                            <tr>
-                                                <th scope="row">{% if grp.name %}{{ grp.name }}{% else %}<sub>n/a</sub>{% endif %}</th>
-                                                <td>{{ grp.data_types }}</td>
-                                                <td>{{ grp.start_date|date_to_string }}</td>
-                                                <td>{{ grp.end_date|date_to_string }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                                <a href="{{ config.NWIS_ENDPOINTS.INVENTORY}}?site_no={{ stations[0].site_no }}" target="_blank">Classic Water Data for the Nation Inventory</a>
-                            </div>
-                        </li>
-                    </ul>
-                {% endif %}
-
-                <ul class="usa-accordion">
-                    <li>
-                        <button class="usa-accordion-button" aria-expanded="false" aria-controls="ts-a2">
-                            Location Metadata
-                        </button>
-                        <div id="ts-a2" class="usa-accordion-content">
-                            <table id="site-summary" summary="Descriptive metadata about this monitoring location">
+                    <div class="usa-accordion">
+                        <h2 class="usa-accordion__heading">
+                            <button class="usa-accordion__button" aria-expanded="false" aria-controls="ts-a1">Summary</button>
+                        </h2>
+                        <div id="ts-a1" class="usa-accordion__content">
+                            <table class="usa-table" id="site-data-summary">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Metadata Element</th>
-                                        <th scope="col">Location Metadata</th>
-                                        <th scope="col">Metadata Code</th>
+                                        <th scope="col">USGS Parameter Group</th>
+                                        <th scope="col">Data Types</th>
+                                        <th scope="col">Start Date</th>
+                                        <th scope="col">End Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for key, value in location_with_values.items() %}
+                                    {% for grp in parm_grp_summary %}
                                         <tr>
-                                            <th scope="row" {%  if STATION_FIELDS_D[key].description %}aria-describedby="{{ key|tooltip_content_id }}"{% endif %}>{{ STATION_FIELDS_D[key].name }}
-                                                {%  if STATION_FIELDS_D[key].description %}
-                                                    {{ components.QuestionTooltip(key, STATION_FIELDS_D[key].description, True) }}
-                                                {% endif %}
-                                            </th>
-                                            <td class="loc-metadata">
-                                                {% if value.url %}
-                                                    <a href="{{ value.url }}">{{ value.name }}</a>
-                                                {% else %}
-                                                    {{ value.name }}
-                                                {% endif %}
-                                                {% if value.desc %}
-                                                    {{ components.QuestionTooltip(value.code, value.desc, False) }}
-                                                {% endif %}
-                                            </td>
-                                            <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
+                                            <th scope="row">{% if grp.name %}{{ grp.name }}{% else %}<sub>n/a</sub>{% endif %}</th>
+                                            <td>{{ grp.data_types }}</td>
+                                            <td>{{ grp.start_date|date_to_string }}</td>
+                                            <td>{{ grp.end_date|date_to_string }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
+                            <a class="usa-link" href="{{ config.NWIS_ENDPOINTS.INVENTORY}}?site_no={{ stations[0].site_no }}" target="_blank">Classic Water Data for the Nation Inventory</a>
                         </div>
-                    </li>
-                </ul>
+                    </div>
+                {% endif %}
+
+                <div class="usa-accordion">
+                    <h2 class="usa-accordion__heading">
+                        <button class="usa-accordion__button" aria-expanded="false" aria-controls="ts-a2">
+                            Location Metadata
+                        </button>
+                    </h2>
+                    <div id="ts-a2" class="usa-accordion__content">
+                        <table class="usa-table" id="site-summary" summary="Descriptive metadata about this monitoring location">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Metadata Element</th>
+                                    <th scope="col">Location Metadata</th>
+                                    <th scope="col">Metadata Code</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key, value in location_with_values.items() %}
+                                    <tr>
+                                        <th scope="row" {%  if STATION_FIELDS_D[key].description %}aria-describedby="{{ key|tooltip_content_id }}"{% endif %}>{{ STATION_FIELDS_D[key].name }}
+                                            {%  if STATION_FIELDS_D[key].description %}
+                                                {{ components.QuestionTooltip(key, STATION_FIELDS_D[key].description, True) }}
+                                            {% endif %}
+                                        </th>
+                                        <td class="loc-metadata">
+                                            {% if value.url %}
+                                                <a href="{{ value.url }}">{{ value.name }}</a>
+                                            {% else %}
+                                                {{ value.name }}
+                                            {% endif %}
+                                            {% if value.desc %}
+                                                {{ components.QuestionTooltip(value.code, value.desc, False) }}
+                                            {% endif %}
+                                        </td>
+                                        <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 {% if questions_link %}
                     <div>
-                        <a href="{{ questions_link }}">Email USGS questions about this site</a>
+                        <a class="usa-link" href="{{ questions_link }}">Email USGS questions about this site</a>
                     </div>
                 {% endif %}
 
@@ -158,10 +156,10 @@
                         <p>Operated in cooperation with:</p>
                         {% for cooperator in cooperators | sort(attribute='Name') %}
                             <figure class="cooperator_logo">
-                                <a href="{{ cooperator.URL }}">
+                                <a class="usa-class" href="{{ cooperator.URL }}">
                                     <img src="{{ cooperator.IconURL | https_url }}" alt="logo for {{ cooperator.Name }}" height="50">
                                 </a>
-                                <figcaption><a href="{{ cooperator.URL }}">{{ cooperator.Name }}</a></figcaption>
+                                <figcaption><a class="usa-class"href="{{ cooperator.URL }}">{{ cooperator.Name }}</a></figcaption>
                             </figure>
                         {% endfor %}
                     </div>
