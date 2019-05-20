@@ -54,7 +54,7 @@ export const createLegendControl = function(options) {
         expandButton.title = 'Hide legend';
 
         let legendListContainer = DomUtil.create('div', 'legend-list-container', container);
-        let legendList = DomUtil.create('ul', 'usa-unstyled-list', legendListContainer);
+        let legendList = DomUtil.create('ul', 'usa-list--unstyled', legendListContainer);
         legendList.id = 'site-legend-list';
         legendList.innerHTML = `<li><img src="${config.STATIC_URL}/images/marker-icon.png" alt="Map marker"/><span>Monitoring Location</span> </li>`;
 
@@ -108,7 +108,7 @@ export const createFIMLegend = function(legendControl, isFIMAvailable) {
         let legendListContainer = select(legendControl.getContainer()).select('.legend-list-container');
         let fimLegendList = legendListContainer.append('ul')
                     .attr('id', 'fim-legend-list')
-                    .classed('usa-unstyled-list', true);
+                    .classed('usa-list--unstyled', true);
 
 
         Promise.all([fetchFloodExtentLegend, fetchBreachLegend, fetchSuppLyrs])

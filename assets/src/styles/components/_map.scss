@@ -1,9 +1,9 @@
 #flood-layer-control-container {
     .label-tooltip-container {
         margin-top: 1em;
-        font-weight: weight('body', 'bold');
+        @include u-text('bold');
         .tooltip-item {
-            font-weight: weight('body', 'normal');
+            @include u-text('normal');
             margin-left: 0.5em;
         }
     }
@@ -73,14 +73,8 @@
         display: inline;
         height: auto;
         width: auto;
-    }
-
-    input[type=checkbox] {
-        -webkit-appearance: checkbox;
-    }
-
-    input[type=radio] {
-        -webkit-appearance: radio;
+        color: red;
+        outline-style: none;
     }
 
     label {
