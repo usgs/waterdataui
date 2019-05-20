@@ -104,7 +104,9 @@
 .hydrograph-container {
     width: 100%;
     vertical-align: top;
-    min-height: 85px;
+    @include at-media('tablet') {
+        min-height: 85px;
+    }
 
     // Import the SVG styles for the graph
     @import './graph';
