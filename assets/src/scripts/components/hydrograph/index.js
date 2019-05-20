@@ -384,7 +384,7 @@ const dateRangeControls = function(elem, siteno) {
             container.attr('hidden', showControls ? null : true);
         }, hasTimeSeriesWithPoints('current', 'P7D')));
     const listContainer = container.append('ul')
-        .attr('class', 'usa-fieldset usa-unstyled-list');
+        .attr('class', 'usa-fieldset usa-list--unstyled');
     const li = listContainer.selectAll('li')
         .attr('class', 'usa-fieldset')
         .data(DATE_RANGE)
