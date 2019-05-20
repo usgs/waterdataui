@@ -20,7 +20,7 @@
 
 #select-time-series  {
     label {
-        font-weight: weight('bold');
+        @include u-text( 'bold' );
     }
     table {
         display: block;
@@ -73,6 +73,7 @@
                     }
                     .tooltip {
                         position: absolute;
+                        bottom: 0;
                         left: 1em;
                         text-align: center;
                         width: 11em;
@@ -103,6 +104,7 @@
 .hydrograph-container {
     width: 100%;
     vertical-align: top;
+    min-height: 85px;
 
     // Import the SVG styles for the graph
     @import './graph';
@@ -164,6 +166,9 @@
 
     .graph-controls-container {
         display: inline-block;
+        li {
+            margin-bottom: 10px;
+        }
         @include at-media('tablet') {
             position: absolute;
             top: 0;

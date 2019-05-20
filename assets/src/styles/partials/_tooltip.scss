@@ -9,7 +9,7 @@
     $tooltip-color: $base-font-color;
     $tooltip-width: 16em;
     $tooltip-shadow: 0 2px 2px silver;
-    $tooltip-distance-from-item: 3em;
+    $tooltip-distance-from-item: 1em;
 
     background: $tooltip-background;
     border-radius: $base-border-radius;
@@ -37,7 +37,7 @@
     .tooltip {
         word-wrap: normal;
         position: absolute;
-        right: $tooltip-distance-from-item;
+        left: $tooltip-distance-from-item;
         background-color: $tooltip-background;
         background: #fff;
         border-radius: $base-border-radius;

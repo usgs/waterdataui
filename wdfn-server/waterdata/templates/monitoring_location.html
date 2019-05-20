@@ -36,7 +36,6 @@
     <div>
         {% if status_code == 200 %}
             {% if stations|length > 1 %}
-
                 <h1>Multiple sites found</h1>
                 <h3>Please pick a site:</h3>
                 <table class="usa-table usa-table--borderless">
@@ -63,7 +62,7 @@
                     {% with site_no=stations[0].site_no %}{% include 'partials/social_share.html' %}{% endwith %}
                     <h1>{{ stations[0].station_nm }}</h1>
                     <div>
-                        <span class="usa-label">Important</span>
+                        <span class="usa-tag">Important</span>
                         <a class="usa-link" aria-describedby="{{ 'classic'|tooltip_content_id }}" href="{{ config.NWIS_ENDPOINTS.UV}}?site_no={{stations[0].site_no}}" target="_blank">Classic Page</a>
                         {{ components.QuestionTooltip('classic', 'View all current conditions values on the classic Water Data for the Nation interface.', True) }}
                     </div>
