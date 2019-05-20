@@ -139,22 +139,22 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
         let tooltipFontSize = 0;
         if (mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
             if (totalTooltipsShowing <= 2) {
-                tooltipFontSize = 2;
+                tooltipFontSize = 1.25;
             } else if (totalTooltipsShowing <= 4) {
-                tooltipFontSize = 1.75;
+                tooltipFontSize = 1;
             } else {
-               tooltipFontSize = 1.25;
+               tooltipFontSize = 0.8;
             }
         } else if (mediaQuery(config.USWDS_SMALL_SCREEN)) {
             if (totalTooltipsShowing <= 2) {
-                tooltipFontSize = 1.75;
-            } else if (totalTooltipsShowing <= 4) {
-                tooltipFontSize = 1.25;
-            } else {
                 tooltipFontSize = 1;
+            } else if (totalTooltipsShowing <= 4) {
+                tooltipFontSize = .8;
+            } else {
+                tooltipFontSize = 0.6;
             }
         } else {
-            tooltipFontSize = 1;
+            tooltipFontSize = 0.6;
         }
         elem.style('font-size', tooltipFontSize + 'rem');
     };

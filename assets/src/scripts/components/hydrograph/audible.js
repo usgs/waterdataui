@@ -122,7 +122,8 @@ export const audibleUI = function (elem) {
     }
 
     const button = elem.append('button')
-        .classed('usa-button-secondary', true)
+        .classed('usa-button', true)
+        .classed('usa-button--outline', true)
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'TimeSeriesGraph')
         .html('Audible&nbsp;');

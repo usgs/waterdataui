@@ -1,9 +1,9 @@
 #flood-layer-control-container {
     .label-tooltip-container {
         margin-top: 1em;
-        font-weight: $font-bold;
+        @include u-text('bold');
         .tooltip-item {
-            font-weight: $font-normal;
+            @include u-text('normal');
             margin-left: 0.5em;
         }
     }
@@ -39,7 +39,7 @@
                 box-shadow: none;
                 i {
                     padding: 2px;
-                    background-color: $color-gray-lighter;
+                    background-color: color('base-lighter');
                 }
             }
         }
@@ -73,14 +73,7 @@
         display: inline;
         height: auto;
         width: auto;
-    }
-
-    input[type=checkbox] {
-        -webkit-appearance: checkbox;
-    }
-
-    input[type=radio] {
-        -webkit-appearance: radio;
+        outline-style: none;
     }
 
     label {

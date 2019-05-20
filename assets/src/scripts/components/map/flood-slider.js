@@ -14,10 +14,12 @@ const createSlider = function(elem, stages) {
             .attr('id', 'flood-slider-container')
             .attr('class', 'slider-wrapper');
         sliderContainer.append('label')
+            .classed('usa-label', true)
             .attr('for', SLIDER_ID)
             .html(`Gage Height: <output class="range-value" for="${SLIDER_ID}"></output> ft`);
         sliderContainer.append('input')
             .attr('type', 'range')
+            .classed('usa-range', true)
             .attr('id', SLIDER_ID)
             .attr('min', 0)
             .attr('max', stages.length - 1)

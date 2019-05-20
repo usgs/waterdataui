@@ -306,15 +306,17 @@ export const timeSeriesGraph = function(elem) {
  */
 const graphControls = function(elem) {
     const graphControlDiv = elem.append('ul')
-        .classed('usa-fieldset-inputs', true)
-        .classed('usa-unstyled-list', true)
+        .classed('usa-fieldset', true)
+        .classed('usa-list--unstyled', true)
         .classed('graph-controls-container', true);
 
     graphControlDiv.append('li')
         .call(audibleUI);
 
-    const compareControlDiv = graphControlDiv.append('li');
+    const compareControlDiv = graphControlDiv.append('li')
+        .classed('usa-checkbox', true);
     compareControlDiv.append('input')
+        .classed('usa-checkbox__input', true)
         .attr('type', 'checkbox')
         .attr('id', 'last-year-checkbox')
         .attr('aria-labelledby', 'last-year-label')
@@ -335,6 +337,7 @@ const graphControls = function(elem) {
             elem.property('checked', checked);
         }, isVisibleSelector('compare')));
     compareControlDiv.append('label')
+        .classed('usa-checkbox__label', true)
         .attr('id', 'last-year-label')
         .attr('for', 'last-year-checkbox')
         .text('Compare to last year');
@@ -381,8 +384,9 @@ const dateRangeControls = function(elem, siteno) {
             container.attr('hidden', showControls ? null : true);
         }, hasTimeSeriesWithPoints('current', 'P7D')));
     const listContainer = container.append('ul')
-        .attr('class', 'usa-fieldset-inputs usa-unstyled-list');
+        .attr('class', 'usa-fieldset usa-list--unstyled');
     const li = listContainer.selectAll('li')
+        .attr('class', 'usa-fieldset')
         .data(DATE_RANGE)
         .enter().append('li');
     listContainer.call(link(loadingIndicator, createStructuredSelector({
@@ -394,6 +398,7 @@ const dateRangeControls = function(elem, siteno) {
         .attr('type', 'radio')
         .attr('name', 'ts-daterange-input')
         .attr('id', d => d.label)
+        .attr('class', 'usa-radio__input')
         .attr('value', d => d.period)
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'TimeSeriesGraph')
@@ -405,6 +410,7 @@ const dateRangeControls = function(elem, siteno) {
             );
         }));
     li.append('label')
+        .attr('class', 'usa-radio__label')
         .attr('for', (d) => d.label)
         .text((d) => d.name);
     li.select(`#${DATE_RANGE[0].label}`).attr('checked', true);

@@ -41,7 +41,7 @@ class NwisWebServices:
             path=self.path,
             params={
                 'site': site_no,
-                'agency_cd': agency_cd,
+                'agencyCd': agency_cd,
                 'siteOutput': 'expanded',
                 'format': self.data_format
             }

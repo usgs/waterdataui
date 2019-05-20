@@ -113,6 +113,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         if (hasFloodData) {
             node.append('a')
                 .attr('id', 'fim-link')
+                .classed('usa-link', true)
                 .attr('href', `${config.FIM_ENDPOINT}?site_no=${siteno}`)
                 .attr('target', '_blank')
                 .attr('rel', 'noopener')

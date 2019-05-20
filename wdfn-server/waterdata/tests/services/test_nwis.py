@@ -33,7 +33,7 @@ class TestNwisWebServices(TestCase):
             path=self.path,
             params={
                 'site': self.site_no,
-                'agency_cd': self.agency_cd,
+                'agencyCd': self.agency_cd,
                 'siteOutput': 'expanded',
                 'format': 'rdb'
             }
