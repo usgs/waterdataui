@@ -49,7 +49,7 @@
                     <tbody>
                     {% for site in stations %}
                         <tr>
-                            <td><a href="{{ url_for('monitoring_location', site_no=site.site_no, agency_cd=site.agency_cd) }}">{{ site.agency_cd }}</a></td>
+                            <td><a class="usa-link" href="{{ url_for('monitoring_location', site_no=site.site_no, agency_cd=site.agency_cd) }}">{{ site.agency_cd }}</a></td>
                             <td> {{ site.site_no }} </td>
                             <td> {{ site.station_nm }} </td>
                         </tr>
