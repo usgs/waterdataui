@@ -1,6 +1,5 @@
 import './polyfills';
 
-// Initialize the 18F Web design standards
 import wdfnviz from 'wdfn-viz';
 
 // Load misc Javascript helpers for general page interactivity.
