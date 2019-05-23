@@ -234,9 +234,11 @@ export const getYTickDetails = function (yDomain, parmCd) {
             divisor = 5;
         }
         if (tickValues.length > lengthLimit) {
-            tickValues = tickValues.sort((a, b) => a - b).filter((_, index) => {
-                return !(index % Math.round(tickValues.length/divisor));
-            });
+            tickValues = tickValues
+                .sort((a, b) => a - b)
+                .filter((_, index) => {
+                    return !(index % Math.round(tickValues.length/divisor));
+                });
         }
     }
 
