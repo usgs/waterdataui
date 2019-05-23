@@ -9,14 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add Docker config for server-rendering PNGs
 - Use a Puppeteer/Chrome process pool for server rendering
 - Map now contains Leaflet layer control to toggle satellite and gray with hydro layers
-- Project uses wdfn-viz npm package to provide USGS visual identification. This required updating 
-the project styles to use USWDS 2.0.x
+
 
 ### Changed
 - Links in monitoring-location now use configurable endpoints.
 - Uses symlog scale now included in D3 rather than our proprietary version
 - Reduce the number of ticks on the discharge hydrographs if there are too many to fit on a screen without overlapping
 - Simplify calls to NWISWeb
+- Project uses wdfn-viz npm package to provide USGS visual identification. This required updating 
+the project styles to use USWDS 2.0.x
+- Moved the USGS watermark to the center of the hydrograph.
 
 ## [0.15.0] - 2019-02-26
 ### Fixed

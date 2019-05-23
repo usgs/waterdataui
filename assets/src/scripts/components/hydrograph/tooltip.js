@@ -147,14 +147,14 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
             }
         } else if (mediaQuery(config.USWDS_SMALL_SCREEN)) {
             if (totalTooltipsShowing <= 2) {
-                tooltipFontSize = 1;
+                tooltipFontSize = 1.1;
             } else if (totalTooltipsShowing <= 4) {
-                tooltipFontSize = .8;
+                tooltipFontSize = .9;
             } else {
-                tooltipFontSize = 0.6;
+                tooltipFontSize = 0.8;
             }
         } else {
-            tooltipFontSize = 0.6;
+            tooltipFontSize = 0.8;
         }
         elem.style('font-size', tooltipFontSize + 'rem');
     };

@@ -227,27 +227,25 @@ const createTitle = function(elem) {
 };
 
 const watermark = function (elem) {
+    // These constants will need to change if the watermark svg is updated
+    const watermarkHalfHeight = 87 / 2;
+    const watermarkHalfWidth = 235 / 2;
     elem.append('img')
         .classed('watermark', true)
         .attr('alt', 'USGS - science for a changing world')
         .attr('src', config.STATIC_URL + '/img/USGS_green_logo.svg')
         .call(link(function(elem, layout) {
-            const transformStringSmallScreen = `matrix(0.5, 0, 0, 0.5, ${(layout.width - layout.margin.left) * .025
-                    + layout.margin.left - 50}, ${layout.height * .60})`;
-            const transformStringForAllOtherScreens = `matrix(1, 0, 0, 1, ${(layout.width - layout.margin.left) * .025
-                    + layout.margin.left}, ${(layout.height * .75 - (-1 * layout.height + 503) * .12)})`;
-            if (!mediaQuery(config.USWDS_SMALL_SCREEN)) {
-                // calculates the watermark position based on current layout dimensions
-                // and a conversion factor minus the area for blank space due to scaling
-                elem.style('transform', transformStringSmallScreen);
-                // adapts code for Safari browser
-                elem.style('-webkit-transform', transformStringSmallScreen);
-            } else {
-                // calculates the watermark position based on current layout dimensions and a conversion factor
-                elem.style('transform', transformStringForAllOtherScreens);
-                // adapts code for Safari browser
-                elem.style('-webkit-transform', transformStringForAllOtherScreens);
-            }
+            const centerX = layout.margin.left + (layout.width - layout.margin.right - layout.margin.left) / 2;
+            const centerY = layout.margin.top + (layout.height - layout.margin.bottom - layout.margin.top) / 2;
+            const scale = !mediaQuery(config.USWDS_MEDIUM_SCREEN) ? 0.5 : 1;
+            const translateX = centerX - watermarkHalfWidth;
+            const translateY = centerY - watermarkHalfHeight;
+            const transform = `matrix(${scale}, 0, 0, ${scale}, ${translateX}, ${translateY})`;
+
+            elem.style('transform', transform);
+            // for Safari browser
+            elem.style('-webkit-transform', transform);
+
         }, layoutSelector));
 };
 
