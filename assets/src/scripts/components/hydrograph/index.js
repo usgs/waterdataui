@@ -240,7 +240,6 @@ const watermark = function (elem) {
             const scale = !mediaQuery(config.USWDS_MEDIUM_SCREEN) ? 0.5 : 1;
             const translateX = centerX - watermarkHalfWidth;
             const translateY = centerY - watermarkHalfHeight;
-            console.log(`translateX is ${translateX} and translate Y is ${translateY}`);
             const transform = `matrix(${scale}, 0, 0, ${scale}, ${translateX}, ${translateY})`;
 
             elem.style('transform', transform);
