@@ -65,7 +65,7 @@ def monitoring_location(site_no):
                 grouped_dataseries = rollup_dataseries(site_dataseries)
                 location_capabilities = set(param_datum['parm_cd'] for param_datum in parameter_data)
             else:
-                grouped_dataseries = None
+                grouped_dataseries = []
                 location_capabilities = {}
 
             json_ld = build_linked_data(
