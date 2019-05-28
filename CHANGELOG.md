@@ -6,21 +6,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [0.16.0] - 2019-05-28
+## [0.17.0] - 2019-05-28
+### Added
+- Map now contains Leaflet layer control to toggle satellite and gray with hydro layers
+
+### Changed
+
+## [0.16.0] - 2019-03-06
 ### Added
 - Add Docker config for server-rendering PNGs
 - Use a Puppeteer/Chrome process pool for server rendering
-- Map now contains Leaflet layer control to toggle satellite and gray with hydro layers
-
 
 ### Changed
-- Links in monitoring-location now use configurable endpoints.
 - Uses symlog scale now included in D3 rather than our proprietary version
 - Reduce the number of ticks on the discharge hydrographs if there are too many to fit on a screen without overlapping
 - Simplify calls to NWISWeb
 - Project uses wdfn-viz npm package to provide USGS visual identification. This required updating 
 the project styles to use USWDS 2.0.x
 - Moved the USGS watermark to the center of the hydrograph.
+
+
+### Changed
+- Links in monitoring-location now use configurable endpoints.
+
 
 ## [0.15.0] - 2019-02-26
 ### Fixed
@@ -251,7 +259,9 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.15.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.17.0...master
+[0.17.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.16.0...waterdataui-0.17.0
+[0.16.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.15.0...waterdataui-0.16.0
 [0.15.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.14.0...waterdataui-0.15.0
 [0.14.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.13.0...waterdataui-0.14.0
 [0.13.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.12.0...waterdataui-0.13.0
