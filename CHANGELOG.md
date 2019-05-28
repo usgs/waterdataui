@@ -259,7 +259,8 @@ a column for qualifier.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
 
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.16.0...master
+[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.17.0...master
+[0.17.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.16.0...waterdataui-0.16.0
 [0.16.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.15.0...waterdataui-0.16.0
 [0.15.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.14.0...waterdataui-0.15.0
 [0.14.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.13.0...waterdataui-0.14.0
