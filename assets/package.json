@@ -91,7 +91,7 @@
     "lodash": "^4.17.11",
     "luxon": "^1.15.0",
     "matchmedia-polyfill": "^0.3.2",
-    "normalizr": "^3.3.0",
+    "normalizr": "^3.4.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0"
