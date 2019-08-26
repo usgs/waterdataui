@@ -1,5 +1,5 @@
 # name of the project
-projectName: "waterdataui"
+projectName: "iow-allegemein"
 # name of the application or service
 applicationName: "graph-server"
 # name of the docker image
