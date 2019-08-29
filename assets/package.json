@@ -28,7 +28,7 @@
     "watch:js": "mkdir -p dist/scripts && cp node_modules/date-time-format-timezone/build/browserified/date-time-format-timezone-complete-min.js dist/scripts && rollup -c --watch"
   },
   "engines": {
-    "node": "10.15.3"
+    "node": "10.16.3"
   },
   "repository": {
     "type": "git",
@@ -41,12 +41,12 @@
   },
   "homepage": "https://github.com/usgs/waterdataui#readme",
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.8.2",
-    "autoprefixer": "^9.5.1",
+    "@fortawesome/fontawesome-free": "^5.10.2",
+    "autoprefixer": "^9.6.1",
     "eslint": "^5.16.0",
     "eslint-plugin-jasmine": "^2.10.1",
     "gulp": "^4.0.2",
-    "gulp-rev-all": "^1.0.0",
+    "gulp-rev-all": "^2.0.2",
     "isparta": "^4.1.1",
     "jasmine": "3.4.0",
     "jasmine-ajax": "^4.0.0",
@@ -66,16 +66,16 @@
     "npm-run-all": "^4.1.5",
     "postcss-cli": "^6.1.2",
     "proxyquireify": "^3.2.1",
-    "rollup": "^1.12.4",
-    "rollup-plugin-alias": "^1.5.1",
+    "rollup": "^1.20.2",
+    "rollup-plugin-alias": "^1.5.2",
     "rollup-plugin-buble": "^0.19.6",
     "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-istanbul": "^2.0.1",
     "rollup-plugin-json": "^4.0.0",
-    "rollup-plugin-node-resolve": "^4.2.4",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-uglify": "^6.0.2",
-    "uglify-js": "^3.5.15",
+    "uglify-js": "^3.6.0",
     "uglifycss": "0.0.29",
     "wdfn-viz": "^1.0.0"
   },
@@ -88,10 +88,10 @@
     "esri-leaflet": "^2.2.4",
     "fast-memoize": "^2.5.1",
     "leaflet": "^1.5.1",
-    "lodash": "^4.17.11",
-    "luxon": "^1.15.0",
+    "lodash": "^4.17.15",
+    "luxon": "^1.17.2",
     "matchmedia-polyfill": "^0.3.2",
-    "normalizr": "^3.3.0",
+    "normalizr": "^3.4.1",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0"

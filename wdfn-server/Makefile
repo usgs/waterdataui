@@ -31,7 +31,7 @@ env-wdfn: wdfn-server/env wdfn-server/instance/config.py wdfn-env-requirements
 
 wdfn-server/env:
 	@echo 'Creating the virtualenv env'
-	virtualenv --python=python3.6 --no-download wdfn-server/env
+	virtualenv --python=python3 --no-download wdfn-server/env
 
 wdfn-env-requirements:
 	@echo 'Installing requirements.txt'

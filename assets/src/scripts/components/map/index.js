@@ -1,7 +1,7 @@
 import { select } from 'd3-selection';
 import { createStructuredSelector } from 'reselect';
 import { map as createMap, marker as createMarker, control, layerGroup, icon } from 'leaflet';
-import { TiledMapLayer, dynamicMapLayer, Util, basemapLayer, featureLayer } from 'esri-leaflet/src/EsriLeaflet';
+import { TiledMapLayer, dynamicMapLayer, Util, basemapLayer, featureLayer } from 'esri-leaflet';
 import { link, provide } from '../../lib/redux';
 import config from '../../config';
 import { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } from '../../flood-data';
