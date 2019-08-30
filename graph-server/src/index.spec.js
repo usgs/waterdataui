@@ -14,9 +14,9 @@ xdescribe('Graph server', function () {
         decache('../src');
     });
 
-    it('returns PNG at /monitoring-location/<site-id>/', function (done) {
+    it('returns PNG at /api/graph-images/monitoring-location/<site-id>/', function (done) {
         request(server)
-            .get('/monitoring-location/05370000/?parameterCode=00060')
+            .get('/api/graph-images/monitoring-location/05370000/?parameterCode=00060')
             .expect('Content-Type', 'image/png')
             .expect(200, done);
     });
