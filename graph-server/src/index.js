@@ -10,7 +10,7 @@ const renderToRespone = require('./renderer');
 
 const PORT = process.env.NODE_PORT || 2929;
 const CACHE_TIMEOUT = 15 * 60;  // 15 minutes
-const PATH_CONTEXT = process.env.NODE_PORT || '/api/graph-images';
+const PATH_CONTEXT = process.env.PATH_CONTEXT || '/api/graph-images';
 
 
 // Create the Express app
