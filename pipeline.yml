@@ -22,6 +22,6 @@ memory: 1024
 # set to a low priority; services are given higher priority.
 rulePriority: 503
 # string parameter specifying a path that ALB should use to verify that your application is alive
-healthCheck: "/api/graph-images/status"
+healthCheck: "/api/graph-images/status/"
 # string parameter that tells the ALB how to route requests to the containers (e.g. /my-app/*); this forms a listener rule for the load balancer
-contextPath: "/api/graph-images"
+contextPath: "/api/graph-images/*"
