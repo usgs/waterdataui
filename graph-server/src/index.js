@@ -8,8 +8,9 @@ const { version } = require('../package.json');
 const renderToRespone = require('./renderer');
 
 
-const PORT = process.env.NODE_PORT || 2929;
+const PORT = process.env.NODE_PORT || 2928;
 const CACHE_TIMEOUT = 15 * 60;  // 15 minutes
+const PATH_CONTEXT = process.env.NODE_PORT || '/api/graph-images';
 
 
 // Create the Express app
@@ -31,7 +32,7 @@ const server = app.listen(PORT, function () {
 /**
  * Render hydrograph PNGs
  */
-app.get('/monitoring-location/:siteID/', cache({ttl: CACHE_TIMEOUT}), checkSchema({
+app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOUT}), checkSchema({
     renderer: {
     },
     parameterCode: {
@@ -67,7 +68,7 @@ app.get('/monitoring-location/:siteID/', cache({ttl: CACHE_TIMEOUT}), checkSchem
     });
 });
 
-app.get('/status', function (req, res) {
+app.get(`${PATH_CONTEXT}/status`, function (req, res) {
     res.status(200);
     res.send({
         version: version
