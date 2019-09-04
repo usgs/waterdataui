@@ -32,7 +32,7 @@
   "devDependencies": {
     "decache": "^4.5.1",
     "jasmine": "^3.4.0",
-    "nodemon": "^1.19.1",
+    "nodemon": "^1.19.2",
     "nyc": "^14.1.1",
     "supertest": "^4.0.2"
   }
