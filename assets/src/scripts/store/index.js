@@ -132,6 +132,27 @@ export const Actions = {
             );
         };
     },
+    retrieveCustomTimeSeries(site, startDate=null, endDate=null) {
+        return function(dispatch, getState) {
+            const state = getState();
+            const parmCd = getCurrentParmCd(state);
+            const requestKey = getTsRequestKey('current', 'custom', parmCd)(state);
+            dispatch(Actions.setCurrentDateRange('custom'));
+            dispatch(Actions.addTimeSeriesLoading([requestKey]));
+            return getTimeSeries({
+                sites: [site],
+                params: [parmCd],
+                startDate: startDate,
+                endDate: endDate
+            }).then(
+                series => {
+                    const collection = normalize(series, requestKey);
+                    dispatch(Actions.addSeriesCollection(requestKey, collection));
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+                }
+            );
+        };
+    },
     retrieveExtendedTimeSeries(site, period) {
         return function(dispatch, getState) {
             const state = getState();

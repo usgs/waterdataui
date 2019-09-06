@@ -1,7 +1,7 @@
 import { axisBottom, axisLeft } from 'd3-axis';
 import { createSelector } from 'reselect';
 import { DateTime } from 'luxon';
-import { wrap } from '../../utils';
+import { wrap, deltaDays } from '../../utils';
 import { getYTickDetails } from './domain';
 import { layoutSelector } from './layout';
 import { xScaleSelector, yScaleSelector } from './scales';
@@ -14,7 +14,8 @@ import { mediaQuery } from '../../utils';
 const FORMAT = {
     P7D: 'MMM dd',
     P30D: 'MMM dd',
-    P1Y: 'MMM yyyy'
+    P1Y: 'MMM yyyy',
+    custom: null
 };
 
 /**
@@ -32,6 +33,7 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
     let date;
     let timePeriod;
     let interval;
+    let dateDiff;
     switch (period) {
         case 'P7D':
             date = tzStartDate.startOf('day');
@@ -50,6 +52,34 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
                 interval = 1;
             } else {
                 interval = 2;
+            }
+            break;
+        case 'custom':
+            dateDiff = deltaDays(new Date(startDate), new Date(endDate));
+            if (dateDiff <= 7) {
+                date = tzStartDate.startOf('day');
+                timePeriod = 'days';
+                interval = 1;
+                FORMAT.custom = 'MMM dd';
+            } else if (7 < dateDiff && dateDiff <= 30) {
+                date = tzStartDate.minus({days: tzStartDate.weekday}).startOf('day');
+                timePeriod = 'weeks';
+                interval = 1;
+                FORMAT.custom = 'MMM dd';
+            } else if (30 < dateDiff && dateDiff <= 365) {
+                date = tzStartDate.startOf('month');
+                timePeriod = 'months';
+                if (mediaQuery(config.USWDS_LARGE_SCREEN)) {
+                    interval = 1;
+                } else {
+                    interval = 2;
+                }
+                FORMAT.custom = 'MMM yyyy';
+            } else {
+                date = tzStartDate.startOf('month');
+                timePeriod = 'months';
+                interval = Math.ceil(dateDiff/365.25);
+                FORMAT.custom = 'MMM yyyy';
             }
             break;
         default:

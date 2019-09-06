@@ -34,6 +34,8 @@ function tsServiceRoot(date) {
  * @return {Promise} resolves to an array of time series model object, rejects to an error
  */
 export const getTimeSeries = function ({sites, params=null, startDate=null, endDate=null}) {
+    console.log(startDate);
+    console.log(endDate);
     let timeParams;
     let serviceRoot;
     if (!startDate && !endDate) {
@@ -48,6 +50,7 @@ export const getTimeSeries = function ({sites, params=null, startDate=null, endD
     let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
 
     let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${paramCds}&${timeParams}&siteStatus=all&format=json`;
+    console.log(url);
     return get(url)
         .then(response => JSON.parse(response))
         .catch(reason => {
@@ -57,6 +60,8 @@ export const getTimeSeries = function ({sites, params=null, startDate=null, endD
 };
 
 export const getPreviousYearTimeSeries = function ({site, startTime, endTime}) {
+    console.log(startTime);
+    console.log(endTime);
     let lastYearStartTime = new Date(startTime);
     let lastYearEndTime = new Date(endTime);
 

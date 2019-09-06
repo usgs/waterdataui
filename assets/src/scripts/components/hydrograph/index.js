@@ -374,6 +374,30 @@ const dateRangeControls = function(elem, siteno) {
         period: 'P1Y'
     }];
 
+    const CUSTOM_DATE_RANGE = {
+        start: [{
+            label: 'start-month',
+            name: 'month'
+        }, {
+            label: 'start-day',
+            name: 'day'
+        }, {
+            label: 'start-year',
+            name: 'year'
+        }],
+        end: [{
+            label: 'end-month',
+            name: 'Month'
+        }, {
+            label: 'end-day',
+            name: 'Day'
+        }, {
+            label: 'end-year',
+            name: 'Year'
+        }]
+    };
+
+
     const container = elem.insert('div', ':nth-child(2)')
         .attr('id', 'ts-daterange-select-container')
         .attr('role', 'radiogroup')
@@ -381,6 +405,43 @@ const dateRangeControls = function(elem, siteno) {
         .call(link(function(container, showControls) {
             container.attr('hidden', showControls ? null : true);
         }, hasTimeSeriesWithPoints('current', 'P7D')));
+
+    const customDateContainer = elem.insert('div', ':nth-child(3)')
+        .attr('id', 'ts-customdaterange-select-container')
+        .attr('role', 'customdate')
+        .attr('aria-label', 'Custom date specification');
+
+    const customStartDateContainer = customDateContainer.append('div')
+        .attr('class', 'specify-date');
+
+    const customEndDateContainer = customDateContainer.append('div')
+        .attr('class', 'specify-date');
+
+    const submitContainer = customDateContainer.append('div')
+        .attr('class', 'submit-button');
+
+    customStartDateContainer.selectAll('input')
+        .attr('class', 'usa-input usa-input--inline')
+        .data(CUSTOM_DATE_RANGE.start)
+        .enter().append('input');
+
+
+    customEndDateContainer.selectAll('input')
+        .attr('class', 'usa-input usa-input--inline')
+        .data(CUSTOM_DATE_RANGE.end)
+        .enter().append('input');
+
+    submitContainer.append('button')
+        .attr('class', 'usa-button')
+        .text('Submit')
+        .on('click', dispatch( function() {
+            return Actions.retrieveCustomTimeSeries(
+                siteno,
+                new Date(2012, 3, 14),
+                new Date(2019, 5, 17)
+            );
+        }));
+
     const listContainer = container.append('ul')
         .attr('class', 'usa-fieldset usa-list--unstyled');
     const li = listContainer.selectAll('li')
