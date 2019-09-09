@@ -374,28 +374,28 @@ const dateRangeControls = function(elem, siteno) {
         period: 'P1Y'
     }];
 
-    const CUSTOM_DATE_RANGE = {
-        start: [{
-            label: 'start-month',
-            name: 'month'
-        }, {
-            label: 'start-day',
-            name: 'day'
-        }, {
-            label: 'start-year',
-            name: 'year'
-        }],
-        end: [{
-            label: 'end-month',
-            name: 'Month'
-        }, {
-            label: 'end-day',
-            name: 'Day'
-        }, {
-            label: 'end-year',
-            name: 'Year'
-        }]
-    };
+    // const CUSTOM_DATE_RANGE = {
+    //     start: [{
+    //         label: 'start-month',
+    //         name: 'month'
+    //     }, {
+    //         label: 'start-day',
+    //         name: 'day'
+    //     }, {
+    //         label: 'start-year',
+    //         name: 'year'
+    //     }],
+    //     end: [{
+    //         label: 'end-month',
+    //         name: 'Month'
+    //     }, {
+    //         label: 'end-day',
+    //         name: 'Day'
+    //     }, {
+    //         label: 'end-year',
+    //         name: 'Year'
+    //     }]
+    // };
 
 
     const container = elem.insert('div', ':nth-child(2)')
@@ -411,34 +411,49 @@ const dateRangeControls = function(elem, siteno) {
         .attr('role', 'customdate')
         .attr('aria-label', 'Custom date specification');
 
-    const customStartDateContainer = customDateContainer.append('div')
-        .attr('class', 'specify-date');
+    const customStartDate = customDateContainer.append('input')
+        .attr('class', 'custom-date')
+        .attr('id', 'custom-start-date')
+        .attr('type', 'date');
 
-    const customEndDateContainer = customDateContainer.append('div')
-        .attr('class', 'specify-date');
+    const customEndDate = customDateContainer.append('input')
+        .attr('class', 'custom-date')
+        .attr('id', 'custom-end-date')
+        .attr('type', 'date');
 
+    // const startDate = datepicker('.start', {id: 1});
+
+    //
+    // const customStartDateContainer = customDateContainer.append('div')
+    //     .attr('class', 'specify-date');
+    //
+    // const customEndDateContainer = customDateContainer.append('div')
+    //     .attr('class', 'specify-date');
+    //
     const submitContainer = customDateContainer.append('div')
         .attr('class', 'submit-button');
+    //
+    // customStartDateContainer.selectAll('input')
+    //     .attr('class', 'usa-input usa-input--inline')
+    //     .data(CUSTOM_DATE_RANGE.start)
+    //     .enter().append('input');
 
-    customStartDateContainer.selectAll('input')
-        .attr('class', 'usa-input usa-input--inline')
-        .data(CUSTOM_DATE_RANGE.start)
-        .enter().append('input');
 
-
-    customEndDateContainer.selectAll('input')
-        .attr('class', 'usa-input usa-input--inline')
-        .data(CUSTOM_DATE_RANGE.end)
-        .enter().append('input');
-
+    // customEndDateContainer.selectAll('input')
+    //     .attr('class', 'usa-input usa-input--inline')
+    //     .data(CUSTOM_DATE_RANGE.end)
+    //     .enter().append('input');
+    //
     submitContainer.append('button')
         .attr('class', 'usa-button')
         .text('Submit')
         .on('click', dispatch( function() {
+            const userSpecifiedStart = customStartDate.node().value;
+            const userSpecifiedEnd = customEndDate.node().value;
             return Actions.retrieveCustomTimeSeries(
                 siteno,
-                new Date(2012, 3, 14),
-                new Date(2019, 5, 17)
+                new Date(userSpecifiedStart),
+                new Date(userSpecifiedEnd)
             );
         }));
 
