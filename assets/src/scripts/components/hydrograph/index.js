@@ -406,10 +406,10 @@ const dateRangeControls = function(elem, siteno) {
         .on('click', dispatch( function() {
             const userSpecifiedStart = customStartDate.node().value;
             const userSpecifiedEnd = customEndDate.node().value;
-            return Actions.retrieveCustomTimeSeries(
+            return Actions.getUserRequestedDataForDateRange(
                 siteno,
-                new Date(userSpecifiedStart).getTime(),
-                new Date(userSpecifiedEnd).getTime()
+                userSpecifiedStart,
+                userSpecifiedEnd
             );
         }));
 
