@@ -19,7 +19,7 @@ import { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } from './layou
 import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
 import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
 import { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } from './scales';
-import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } from './time-series';
+import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints, tsTimeZoneSelector } from './time-series';
 import { createTooltipFocus, createTooltipText } from './tooltip';
 import { getTimeSeriesCollectionIds, isLoadingTS } from '../../selectors/time-series-selector';
 
@@ -374,30 +374,6 @@ const dateRangeControls = function(elem, siteno) {
         period: 'P1Y'
     }];
 
-    // const CUSTOM_DATE_RANGE = {
-    //     start: [{
-    //         label: 'start-month',
-    //         name: 'month'
-    //     }, {
-    //         label: 'start-day',
-    //         name: 'day'
-    //     }, {
-    //         label: 'start-year',
-    //         name: 'year'
-    //     }],
-    //     end: [{
-    //         label: 'end-month',
-    //         name: 'Month'
-    //     }, {
-    //         label: 'end-day',
-    //         name: 'Day'
-    //     }, {
-    //         label: 'end-year',
-    //         name: 'Year'
-    //     }]
-    // };
-
-
     const container = elem.insert('div', ':nth-child(2)')
         .attr('id', 'ts-daterange-select-container')
         .attr('role', 'radiogroup')
@@ -421,29 +397,9 @@ const dateRangeControls = function(elem, siteno) {
         .attr('id', 'custom-end-date')
         .attr('type', 'date');
 
-    // const startDate = datepicker('.start', {id: 1});
-
-    //
-    // const customStartDateContainer = customDateContainer.append('div')
-    //     .attr('class', 'specify-date');
-    //
-    // const customEndDateContainer = customDateContainer.append('div')
-    //     .attr('class', 'specify-date');
-    //
     const submitContainer = customDateContainer.append('div')
         .attr('class', 'submit-button');
-    //
-    // customStartDateContainer.selectAll('input')
-    //     .attr('class', 'usa-input usa-input--inline')
-    //     .data(CUSTOM_DATE_RANGE.start)
-    //     .enter().append('input');
 
-
-    // customEndDateContainer.selectAll('input')
-    //     .attr('class', 'usa-input usa-input--inline')
-    //     .data(CUSTOM_DATE_RANGE.end)
-    //     .enter().append('input');
-    //
     submitContainer.append('button')
         .attr('class', 'usa-button')
         .text('Submit')
