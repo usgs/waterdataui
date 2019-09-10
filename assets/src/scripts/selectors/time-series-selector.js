@@ -22,6 +22,10 @@ export const getIanaTimeZone = state => state.series.ianaTimeZone ? state.series
 
 export const getNwisTimeZone = state => state.series.timeZones || {};
 
+export const getTimeRangeMode = state => state.timeSeriesState.timeRangeMode;
+
+export const getRequestedTimeRange = state => state.timeSeriesState.requestedTimeRange;
+
 
 /*
  * Selectors the return derived data from the state

@@ -19,7 +19,7 @@ import { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } from './layou
 import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
 import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
 import { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } from './scales';
-import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints, tsTimeZoneSelector } from './time-series';
+import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } from './time-series';
 import { createTooltipFocus, createTooltipText } from './tooltip';
 import { getTimeSeriesCollectionIds, isLoadingTS } from '../../selectors/time-series-selector';
 

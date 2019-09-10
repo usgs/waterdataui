@@ -69,10 +69,10 @@ const hydrographTimeRangeMode = function(timeSeriesState, action) {
     };
 };
 
-const requestedDateRange = function(timeSeriesState, action) {
+const requestedTimeRange = function(timeSeriesState, action) {
     return {
         ...timeSeriesState,
-        requestedDateRange: {startDT: action.startTime, endDT: action.endTime}
+        requestedTimeRange: {startDT: action.startTime, endDT: action.endTime}
     };
 };
 
@@ -90,7 +90,7 @@ export const timeSeriesStateReducer = function(timeSeriesState={}, action) {
         case 'TIME_SERIES_LOADING_ADD': return addLoadingTimeSeries(timeSeriesState, action);
         case 'TIME_SERIES_LOADING_REMOVE': return removeLoadingTimeSeries(timeSeriesState, action);
         case 'TIME_RANGE_MODE': return hydrographTimeRangeMode(timeSeriesState, action);
-        case 'SET_REQUESTED_DATES': return requestedDateRange(timeSeriesState, action);
+        case 'SET_REQUESTED_DATES': return requestedTimeRange(timeSeriesState, action);
         default: return timeSeriesState;
     }
 };

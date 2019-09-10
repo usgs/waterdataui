@@ -8,7 +8,7 @@ import { calcStartTime } from '../utils';
 import { normalize } from '../schema';
 import { fetchFloodFeatures, fetchFloodExtent } from '../flood-data';
 import { fetchSiteStatistics } from '../statistics-data';
-import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange } from '../selectors/time-series-selector';
+import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange, getRequestedTimeRange } from '../selectors/time-series-selector';
 import { floodDataReducer as floodData } from './flood-data-reducer';
 import { floodStateReducer as floodState } from './flood-state-reducer';
 import { seriesReducer as series } from './series-reducer';
@@ -202,7 +202,14 @@ export const Actions = {
     updateCurrentVariable(siteno, variableID) {
         return function(dispatch, getState) {
             dispatch(Actions.setCurrentVariable(variableID));
-            dispatch(Actions.retrieveExtendedTimeSeries(siteno, getCurrentDateRange(getState())));
+            const currentDateRange = getCurrentDateRange(getState());
+            if (currentDateRange === 'custom') {
+                const customTimeRange = getRequestedTimeRange(getState());
+                dispatch(Actions.retrieveCustomTimeSeries(siteno, customTimeRange.startDT, customTimeRange.endDT));
+            } else {
+                dispatch(Actions.retrieveExtendedTimeSeries(siteno, currentDateRange));
+
+            }
         };
     },
     startTimeSeriesPlay(maxCursorOffset) {
@@ -378,7 +385,7 @@ export const configureStore = function (initialState) {
             },
             timeRangeMode: 'predefined',
             currentDateRange: 'P7D',
-            requestedDateRange: null,
+            requestedTimeRange: null,
             currentVariableID: null,
             cursorOffset: null,
             audiblePlayId: null,
