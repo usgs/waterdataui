@@ -78,7 +78,7 @@ export const Actions = {
                     const notes = collection.queryInfo[requestKey].notes;
                     const endTime = notes.requestDT;
                     const startTime = calcStartTime('P7D', endTime, 'local');
-
+                    dispatch(Actions.setRequestedDates(startTime, endTime));
                     if (latitude !== null && longitude !== null) {
                         dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
                     }
@@ -132,18 +132,19 @@ export const Actions = {
             );
         };
     },
-    retrieveCustomTimeSeries(site, startDate=null, endDate=null) {
+    retrieveCustomTimeSeries(site, startTime=null, endTime=null) {
         return function(dispatch, getState) {
             const state = getState();
             const parmCd = getCurrentParmCd(state);
             const requestKey = getTsRequestKey('current', 'custom', parmCd)(state);
             dispatch(Actions.setCurrentDateRange('custom'));
+            dispatch(Actions.setRequestedDates(startTime, endTime));
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
             return getTimeSeries({
                 sites: [site],
                 params: [parmCd],
-                startDate: startDate,
-                endDate: endDate
+                startDate: new Date(startTime),
+                endDate: new Date(endTime)
             }).then(
                 series => {
                     const collection = normalize(series, requestKey);
@@ -162,6 +163,7 @@ export const Actions = {
             if (!hasTimeSeries('current', period, parmCd)(state)) {
                 const endTime = getRequestTimeRange('current', 'P7D')(state).end;
                 let startTime = calcStartTime(period, endTime);
+                dispatch(Actions.setRequestedDates(startTime, endTime));
                 dispatch(Actions.addTimeSeriesLoading([requestKey]));
                 return getTimeSeries({
                     sites: [site],
@@ -266,6 +268,13 @@ export const Actions = {
             show
         };
     },
+    timeRangeMode(key, show) {
+        return {
+            type: 'TIME_RANGE_MODE',
+            key,
+            show
+        };
+    },
     addSeriesCollection(key, data) {
         return {
             type: 'ADD_TIME_SERIES_COLLECTION',
@@ -308,6 +317,13 @@ export const Actions = {
         return {
             type: 'SET_CURRENT_DATE_RANGE',
             period
+        };
+    },
+    setRequestedDates(startTime, endTime) {
+        return {
+            type: 'SET_REQUESTED_DATES',
+            startTime,
+            endTime
         };
     },
     setGageHeightFromStageIndex(index) {
@@ -360,7 +376,9 @@ export const configureStore = function (initialState) {
                 compare: false,
                 median: false
             },
+            timeRangeMode: 'predefined',
             currentDateRange: 'P7D',
+            requestedDateRange: null,
             currentVariableID: null,
             cursorOffset: null,
             audiblePlayId: null,

@@ -408,8 +408,8 @@ const dateRangeControls = function(elem, siteno) {
             const userSpecifiedEnd = customEndDate.node().value;
             return Actions.retrieveCustomTimeSeries(
                 siteno,
-                new Date(userSpecifiedStart),
-                new Date(userSpecifiedEnd)
+                new Date(userSpecifiedStart).getTime(),
+                new Date(userSpecifiedEnd).getTime()
             );
         }));
 
