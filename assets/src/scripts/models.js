@@ -40,9 +40,19 @@ export const getTimeSeries = function ({sites, params=null, startDate=null, endD
         timeParams = 'period=P7D';
         serviceRoot = SERVICE_ROOT;
     } else {
-        let startString = startDate ? isoFormatTime(startDate) : '';
-        let endString = endDate ? isoFormatTime(endDate) : '';
-        timeParams = `startDT=${startString}&endDT=${endString}`;
+        let dateParams = [];
+        if (startDate !== null) {
+            const startString = startDate ? isoFormatTime(startDate) : '';
+            dateParams.push(`startDT=${startString}`);
+        }
+        if (endDate !== null) {
+            const endString = endDate ? isoFormatTime(endDate) : '';
+            dateParams.push(`endDT=${endString}`);
+        }
+        // let startString = startDate ? isoFormatTime(startDate) : '';
+        // let endString = endDate ? isoFormatTime(endDate) : '';
+        // timeParams = `startDT=${startString}&endDT=${endString}`;
+        timeParams = dateParams !== null ? dateParams.join('&') : '';
         serviceRoot = tsServiceRoot(startDate);
     }
     let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';

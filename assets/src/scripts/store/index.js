@@ -77,7 +77,6 @@ export const Actions = {
             return getTimeSeries({sites: [siteno], params}).then(
                 series => {
                     const collection = normalize(series, requestKey);
-
                     // get the lat/lon of the site
                     const location = collection.sourceInfo ? collection.sourceInfo[siteno].geoLocation.geogLocation : {};
                     const latitude = location.latitude || null;
@@ -145,18 +144,15 @@ export const Actions = {
         return function(dispatch, getState) {
             const state = getState();
             const parmCd = getCurrentParmCd(state);
-            const locationIanaTimeZone = getIanaTimeZone(state);
             const requestedTimeRange = getRequestedTimeRange(state);
-            const startTime = new DateTime.fromMillis(requestedTimeRange.startDT,{zone: locationIanaTimeZone});
-            const endTime = new DateTime.fromMillis(requestedTimeRange.endDT, {zone: locationIanaTimeZone});
             const requestKey = getTsRequestKey('current', 'custom', parmCd)(state);
             dispatch(Actions.setCurrentDateRange('custom'));
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
             return getTimeSeries({
                 sites: [site],
                 params: [parmCd],
-                startDate: startTime,
-                endDate: endTime
+                startDate: requestedTimeRange.startDT,
+                endDate: requestedTimeRange.endDT
             }).then(
                 series => {
                     const collection = normalize(series, requestKey);
@@ -347,9 +343,9 @@ export const Actions = {
         return function(dispatch, getState) {
             const state = getState();
             const locationIanaTimeZone = getIanaTimeZone(state);
-            const startTime = new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone});
-            const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone});
-            dispatch(Actions.setRequestedDates(startTime.toMillis(), endTime.toMillis()));
+            const startTime = startTimeStr || startTimeStr.length > 0 ? new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis() : null;
+            const endTime = endTimeStr || endTimeStr.length > 0 ? new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis() : null;
+            dispatch(Actions.setRequestedDates(startTime, endTime));
             dispatch(Actions.retrieveCustomTimeSeries(siteno));
         };
     },

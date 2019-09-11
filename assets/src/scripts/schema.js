@@ -92,14 +92,37 @@ const queryInfo = memoize(tsKey => new schema.Entity('queryInfo', {}, {
 
         // If this is a "range" query (start and end times specified)
         } else if (queryInfo.notes['filter:timeRange'].indexOf('RANGE') > -1) {
-            const regEx = /\[mode=(.+), modifiedSince=(.+)\] interval={INTERVAL\[(.+)\/(.+)\]}/;
-            const parts = regEx.exec(queryInfo.notes['filter:timeRange']);
+            let regEx;
+            let parts;
+            let startTime;
+            let endTime;
+            if (queryInfo.notes['filter:timeRange'].indexOf('INTERVAL') > -1) {
+                regEx = /\[mode=(.+), modifiedSince=(.+)\] interval={INTERVAL\[(.+)\/(.+)\]}/;
+                parts = regEx.exec(queryInfo.notes['filter:timeRange']);
+                startTime = parts[3];
+                endTime = parts[4];
+            } else if (queryInfo.notes['filter:timeRange'].indexOf('startDT') > -1) {
+                regEx = /\[mode=(.+), modifiedSince=(.+)\] startDT={(.+)}/;
+                parts = regEx.exec(queryInfo.notes['filter:timeRange']);
+                startTime = parts[3];
+                endTime = null;
+            } else if (queryInfo.notes['filter:timeRange'].indexOf('endDT') > -1) {
+                regEx = /\[mode=(.+), modifiedSince=(.+)\] endDT={(.+)}/;
+                parts = regEx.exec(queryInfo.notes['filter:timeRange']);
+                startTime = null;
+                endTime = parts[3];
+            } else {
+                regEx = /\[mode=(.+), modifiedSince=(.+)\]/;
+                parts = regEx.exec(queryInfo.notes['filter:timeRange']);
+                startTime = null;
+                endTime = null;
+            }
             queryInfo.notes['filter:timeRange'] = {
                 mode: parts[1],
                 modifiedSince: parts[2] === 'null' ? null : parts[3],
                 interval: {
-                    start: new Date(parts[3]).getTime(),
-                    end: new Date(parts[4]).getTime()
+                    start: startTime !== null ? new Date(startTime).getTime() : startTime,
+                    end: endTime !== null ? new Date(endTime).getTime() : endTime
                 }
             };
         } else {

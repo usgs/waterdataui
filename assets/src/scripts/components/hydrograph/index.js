@@ -372,6 +372,10 @@ const dateRangeControls = function(elem, siteno) {
         label: 'one-year',
         name: '1 year',
         period: 'P1Y'
+    }, {
+        label: 'custom',
+        name: 'Custom',
+        period: 'custom'
     }];
 
     const container = elem.insert('div', ':nth-child(2)')
@@ -434,10 +438,16 @@ const dateRangeControls = function(elem, siteno) {
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', d => `changeDateRangeTo${d.period}`)
         .on('change', dispatch(function() {
-            return Actions.retrieveExtendedTimeSeries(
-                siteno,
-                li.select('input:checked').attr('value')
-            );
+            const selectedVal = li.select('input:checked').attr('value');
+            if (selectedVal === 'custom') {
+                null;
+            } else {
+                customDateContainer.attr('hidden', true);
+                return Actions.retrieveExtendedTimeSeries(
+                    siteno,
+                    li.select('input:checked').attr('value')
+                );
+            }
         }));
     li.append('label')
         .attr('class', 'usa-radio__label')
