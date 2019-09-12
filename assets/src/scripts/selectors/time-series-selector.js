@@ -132,11 +132,8 @@ export const getTimeSeriesCollectionIds = memoize((tsKey, period, parmCd) => cre
  *      if the store does not contain a query for the tsKey request
  * */
 export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSelector(
-    state => state.series,
-    getTimeSeriesCollectionIds(tsKey, period, parmCd),
-    getTsRequestKey(tsKey, period, parmCd),
     getTsQueryInfo(tsKey, period, parmCd),
-    (series, collectionIds, tsRequestKey, tsQueryInfo) => {
+    (tsQueryInfo) => {
         const notes = tsQueryInfo.notes ? tsQueryInfo.notes : null;
         if (!notes) {
             return null;

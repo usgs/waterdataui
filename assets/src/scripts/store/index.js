@@ -343,8 +343,8 @@ export const Actions = {
         return function(dispatch, getState) {
             const state = getState();
             const locationIanaTimeZone = getIanaTimeZone(state);
-            const startTime = startTimeStr || startTimeStr.length > 0 ? new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis() : null;
-            const endTime = endTimeStr || endTimeStr.length > 0 ? new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis() : null;
+            const startTime = new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis();
+            const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis();
             dispatch(Actions.setRequestedDates(startTime, endTime));
             dispatch(Actions.retrieveCustomTimeSeries(siteno));
         };
