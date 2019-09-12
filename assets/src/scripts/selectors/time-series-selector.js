@@ -156,23 +156,6 @@ export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSele
         } else {
             let intervalStart = notes['filter:timeRange'].interval.start;
             let intervalEnd = notes['filter:timeRange'].interval.end;
-            if (intervalStart === null || intervalEnd === null) {
-                if (collectionIds.length >= 1) {
-                    const collectionId = collectionIds[0];
-                    const timeSeriesId = series.timeSeriesCollections[collectionId].timeSeries[0];
-                    const selectedSeries = series.timeSeries[timeSeriesId];
-                    const dataPoints = selectedSeries.points;
-                    const dataPointDates = dataPoints.map(x => x.dateTime);
-                    if (intervalStart === null) {
-                        intervalStart = Math.min(...dataPointDates);
-                    }
-                    if (intervalEnd === null) {
-                        intervalEnd = Math.max(...dataPointDates);
-                    }
-                } else {
-                    console.error('Unable to determine a start or end date for requested time series.');
-                }
-            }
             result = {
                 start: intervalStart,
                 end: intervalEnd
