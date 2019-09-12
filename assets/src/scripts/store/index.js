@@ -399,7 +399,6 @@ export const configureStore = function (initialState) {
                 compare: false,
                 median: false
             },
-            timeRangeMode: 'predefined',
             currentDateRange: 'P7D',
             requestedTimeRange: null,
             currentVariableID: null,
