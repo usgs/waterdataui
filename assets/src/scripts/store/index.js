@@ -9,15 +9,8 @@ import { calcStartTime } from '../utils';
 import { normalize } from '../schema';
 import { fetchFloodFeatures, fetchFloodExtent } from '../flood-data';
 import { fetchSiteStatistics } from '../statistics-data';
-import {
-    getCurrentParmCd,
-    getCurrentDateRange,
-    hasTimeSeries,
-    getTsRequestKey,
-    getRequestTimeRange,
-    getRequestedTimeRange,
-    getIanaTimeZone
-} from '../selectors/time-series-selector';
+import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
+    getRequestedTimeRange, getIanaTimeZone } from '../selectors/time-series-selector';
 import { floodDataReducer as floodData } from './flood-data-reducer';
 import { floodStateReducer as floodState } from './flood-state-reducer';
 import { seriesReducer as series } from './series-reducer';
@@ -279,13 +272,6 @@ export const Actions = {
     toggleTimeSeries(key, show) {
         return {
             type: 'TOGGLE_TIME_SERIES',
-            key,
-            show
-        };
-    },
-    timeRangeMode(key, show) {
-        return {
-            type: 'TIME_RANGE_MODE',
             key,
             show
         };

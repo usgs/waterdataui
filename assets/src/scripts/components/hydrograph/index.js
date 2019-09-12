@@ -393,7 +393,7 @@ const dateRangeControls = function(elem, siteno) {
         .attr('hidden', true);
 
     const customDateValidationContainer = customDateContainer.append('div')
-        .attr('class', 'usa-alert usa-alert--info usa-alert--validation')
+        .attr('class', 'usa-alert usa-alert--warning usa-alert--validation')
         .attr('hidden', true);
 
     const dateAlertBody = customDateValidationContainer.append('div')
@@ -408,6 +408,7 @@ const dateRangeControls = function(elem, siteno) {
 
     customDateContainer.append('label')
         .attr('for', 'date-input')
+        .attr('class', 'usa-label')
         .text('Enter Dates');
 
     const dateInputContainer = customDateContainer.append('div')
