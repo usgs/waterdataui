@@ -389,7 +389,8 @@ const dateRangeControls = function(elem, siteno) {
     const customDateContainer = elem.insert('div', ':nth-child(3)')
         .attr('id', 'ts-customdaterange-select-container')
         .attr('role', 'customdate')
-        .attr('aria-label', 'Custom date specification');
+        .attr('aria-label', 'Custom date specification')
+        .attr('hidden', true);
 
     const customStartDate = customDateContainer.append('input')
         .attr('class', 'custom-date')
@@ -440,7 +441,7 @@ const dateRangeControls = function(elem, siteno) {
         .on('change', dispatch(function() {
             const selectedVal = li.select('input:checked').attr('value');
             if (selectedVal === 'custom') {
-                null;
+                customDateContainer.attr('hidden', null);
             } else {
                 customDateContainer.attr('hidden', true);
                 return Actions.retrieveExtendedTimeSeries(
