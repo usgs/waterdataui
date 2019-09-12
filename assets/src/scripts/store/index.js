@@ -148,6 +148,7 @@ export const Actions = {
             const requestKey = getTsRequestKey('current', 'custom', parmCd)(state);
             dispatch(Actions.setCurrentDateRange('custom'));
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
+            dispatch(Actions.toggleTimeSeries('median', false));
             return getTimeSeries({
                 sites: [site],
                 params: [parmCd],
@@ -168,6 +169,7 @@ export const Actions = {
             const parmCd = getCurrentParmCd(state);
             const requestKey = getTsRequestKey ('current', period, parmCd)(state);
             dispatch(Actions.setCurrentDateRange(period));
+            dispatch(Actions.toggleTimeSeries('median', true));
             if (!hasTimeSeries('current', period, parmCd)(state)) {
                 const endTime = getRequestTimeRange('current', 'P7D')(state).end;
                 let startTime = calcStartTime(period, endTime);
