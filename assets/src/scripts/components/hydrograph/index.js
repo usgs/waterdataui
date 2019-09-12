@@ -373,7 +373,7 @@ const dateRangeControls = function(elem, siteno) {
         name: '1 year',
         period: 'P1Y'
     }, {
-        label: 'custom',
+        label: 'custom-date-range',
         name: 'Custom',
         period: 'custom'
     }];
@@ -392,12 +392,33 @@ const dateRangeControls = function(elem, siteno) {
         .attr('aria-label', 'Custom date specification')
         .attr('hidden', true);
 
-    const customStartDate = customDateContainer.append('input')
+    const customDateValidationContainer = customDateContainer.append('div')
+        .attr('class', 'usa-alert usa-alert--info usa-alert--validation')
+        .attr('hidden', true);
+
+    const dateAlertBody = customDateValidationContainer.append('div')
+        .attr('class', 'usa-alert__body');
+
+    dateAlertBody.append('h3')
+        .attr('class', 'usa-alert__heading')
+        .text('Date requirements');
+
+    dateAlertBody.append('p')
+        .text('Both start and end dates must be specified.');
+
+    customDateContainer.append('label')
+        .attr('for', 'date-input')
+        .text('Enter Dates');
+
+    const dateInputContainer = customDateContainer.append('div')
+        .attr('id', 'date-input');
+
+    const customStartDate = dateInputContainer.append('input')
         .attr('class', 'custom-date')
         .attr('id', 'custom-start-date')
         .attr('type', 'date');
 
-    const customEndDate = customDateContainer.append('input')
+    const customEndDate = dateInputContainer.append('input')
         .attr('class', 'custom-date')
         .attr('id', 'custom-end-date')
         .attr('type', 'date');
@@ -411,11 +432,16 @@ const dateRangeControls = function(elem, siteno) {
         .on('click', dispatch( function() {
             const userSpecifiedStart = customStartDate.node().value;
             const userSpecifiedEnd = customEndDate.node().value;
-            return Actions.getUserRequestedDataForDateRange(
-                siteno,
-                userSpecifiedStart,
-                userSpecifiedEnd
-            );
+            if (userSpecifiedStart.length === 0 || userSpecifiedEnd.length === 0) {
+                customDateValidationContainer.attr('hidden', null);
+            } else {
+                customDateValidationContainer.attr('hidden', true);
+                return Actions.getUserRequestedDataForDateRange(
+                    siteno,
+                    userSpecifiedStart,
+                    userSpecifiedEnd
+                );
+            }
         }));
 
     const listContainer = container.append('ul')
