@@ -152,6 +152,11 @@ export const Actions = {
                     const collection = normalize(series, requestKey);
                     dispatch(Actions.addSeriesCollection(requestKey, collection));
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+                },
+                () => {
+                    console.log(`Unable to fetch data for between ${requestedTimeRange.startDT} and ${requestedTimeRange.endDT} and parameter code ${parmCd}`);
+                    dispatch(Actions.addSeriesCollection(requestKey, {}));
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                 }
             );
         };
