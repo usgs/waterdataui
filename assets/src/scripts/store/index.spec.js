@@ -55,7 +55,7 @@ describe('Redux store', () => {
             timeSeriesState: {
                 currentVariableID: '45807042',
                 currentDateRange: 'P7D',
-                requestedTimeRange: null
+                requestedTimeRange: {startDT: 1488348000000, endDT: 1490936400000}
             }
         };
 
@@ -402,6 +402,39 @@ describe('Redux store', () => {
             });
         });
 
+        fdescribe('retrieveCustomTimeSeries with good data', () => {
+            let mockDispatch;
+            let mockGetState;
+            let request;
+
+            beforeEach(() => {
+                jasmine.Ajax.install();
+
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
+
+                spyOn(Actions, 'addTimeSeriesLoading');
+            });
+
+            afterEach(() => {
+                jasmine.Ajax.uninstall();
+            });
+
+            it('Should dispatch an action to set the current date range', () => {
+                Actions.retrieveCustomTimeSeries('9876543')(mockDispatch, mockGetState);
+                request = jasmine.Ajax.requests.mostRecent();
+                request.respondWith({
+                    responseText: MOCK_DATA,
+                    status: 200
+                });
+                expect(mockDispatch).toHaveBeenCalledWith({
+                    type: 'SET_CURRENT_DATE_RANGE',
+                    period: 'custom'
+                });
+                expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:custom:00060']);
+            });
+        });
+
         describe('retrieveExtendedTimeSeries with data', () => {
             let mockDispatch;
             let mockGetState;
@@ -414,6 +447,8 @@ describe('Redux store', () => {
 
                 spyOn(Actions, 'addTimeSeriesLoading');
                 spyOn(Actions, 'removeTimeSeriesLoading');
+                spyOn(Actions, 'setRequestedDates');
+                spyOn(Actions, 'toggleTimeSeries');
             });
 
             afterEach(() => {
@@ -467,6 +502,8 @@ describe('Redux store', () => {
                     expect(Actions.retrieveCompareTimeSeries).toHaveBeenCalled();
                     expect(Actions.retrieveCompareTimeSeries.calls.argsFor(0)[1]).toEqual('P30D');
                     expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
+                    expect(Actions.setRequestedDates).toHaveBeenCalled();
+                    expect(Actions.toggleTimeSeries).toHaveBeenCalledWith('median', true);
                     done();
                 });
             });
