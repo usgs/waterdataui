@@ -54,7 +54,8 @@ describe('Redux store', () => {
             },
             timeSeriesState: {
                 currentVariableID: '45807042',
-                currentDateRange: 'P7D'
+                currentDateRange: 'P7D',
+                requestedTimeRange: null
             }
         };
 
@@ -169,7 +170,7 @@ describe('Redux store', () => {
                 let p = Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
 
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(8);
+                    expect(mockDispatch.calls.count()).toBe(9);
                     expect(Actions.addSeriesCollection.calls.count()).toBe(1);
                     expect(Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('current');
                     expect(Actions.retrieveLocationTimeZone.calls.count()).toBe(1);
@@ -460,7 +461,7 @@ describe('Redux store', () => {
                     status: 200
                 });
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(5);
+                    expect(mockDispatch.calls.count()).toBe(7);
                     expect(Actions.addSeriesCollection).toHaveBeenCalled();
                     expect(Actions.addSeriesCollection.calls.argsFor(0)[0]).toEqual('current:P30D:00060');
                     expect(Actions.retrieveCompareTimeSeries).toHaveBeenCalled();
@@ -486,6 +487,7 @@ describe('Redux store', () => {
         });
 
         describe('retrieveExtendedTimeSeries with bad data', () => {
+            let originalTimeout;
             let mockDispatch;
             let mockGetState;
 
@@ -494,6 +496,9 @@ describe('Redux store', () => {
 
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState');
+
+                originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+                jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
                 mockGetState.and.returnValue(Object.assign({}, TEST_STATE, {
                     timeSeriesState : Object.assign({}, TEST_STATE.timeSeriesState, {
@@ -506,6 +511,7 @@ describe('Redux store', () => {
             });
 
             afterEach(() => {
+                jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
                 jasmine.Ajax.uninstall();
             });
 
@@ -522,8 +528,6 @@ describe('Redux store', () => {
                     expect(arg.key).toBe('current:P30D:00060');
                     expect(arg.data).toEqual({});
                     expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
-
-
                     done();
                 });
             });

@@ -420,7 +420,7 @@ describe('Hydrograph charting module', () => {
             let dateRangeContainer = select(graphNode).select('#ts-daterange-select-container');
 
             expect(dateRangeContainer.size()).toBe(1);
-            expect(dateRangeContainer.selectAll('input[type=radio]').size()).toBe(3);
+            expect(dateRangeContainer.selectAll('input[type=radio]').size()).toBe(4);
         });
 
         it('Expects to retrieve the extended time series when the radio buttons are change', () => {

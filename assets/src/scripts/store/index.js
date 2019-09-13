@@ -162,12 +162,10 @@ export const Actions = {
             const parmCd = getCurrentParmCd(state);
             const requestKey = getTsRequestKey ('current', period, parmCd)(state);
             dispatch(Actions.setCurrentDateRange(period));
-            dispatch(Actions.toggleTimeSeries('median', true));
             if (!hasTimeSeries('current', period, parmCd)(state)) {
-                const endTime = getRequestTimeRange('current', 'P7D')(state).end;
-                let startTime = calcStartTime(period, endTime);
-                dispatch(Actions.setRequestedDates(startTime, endTime));
                 dispatch(Actions.addTimeSeriesLoading([requestKey]));
+                const endTime = getRequestTimeRange('current', 'P7D')(state).end;
+                const startTime = calcStartTime(period, endTime);
                 return getTimeSeries({
                     sites: [site],
                     params: [parmCd],
@@ -179,6 +177,8 @@ export const Actions = {
                         dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+                        dispatch(Actions.setRequestedDates(startTime, endTime));
+                        dispatch(Actions.toggleTimeSeries('median', true));
                     },
                     () => {
                         console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
