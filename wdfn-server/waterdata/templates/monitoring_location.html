@@ -77,31 +77,20 @@
                     </h2>
                     <div id="ts-a1a" class="usa-accordion__content">
                         <div style="float:left">
-                            <a href="{{ monitoring_camera.video  }}" alt="click image to open full-size video" target="_blank">
-                            <!-- <a href="https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos/05428500_idx132_Yahara_Main_timelapse_1920x1080at10fps_qmax42.webm" target="_blank">
-                            -->    
+                            <a href="{{ monitoring_camera.video  }}" title="click image to open full-size video" alt="lastest camera image thumbnail" target="_blank">
                                 <img width="200" src="{{ monitoring_camera.thumb }}">
-                                <!-- <img width="200" src="https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos/idx132_last_frame_in_current_timelapse.jpg">
-                                -->
                             </a>
                         </div>
                         <div style="float:right">
+			    <div><b>Frames Gallery: </b>
+                                <a href="{{ monitoring_camera.frame_gallery }}" target="_blank">
+                                    Last 99 Frames
+                                </a>
+                            </div>
                             <div><b>Video Folder: </b>
                                 <a href="{{ monitoring_camera.video_index }}" target="_blank">
                                     Index of videos and images
                                 </a>
-                                <!-- <a href="https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos/" target="_blank">
-                                    Index of videos and images
-                                </a>
-                                -->
-                            </div><div><b>Frames Gallery: </b>
-                                <a href="{{ monitoring_camera.frame_gallery }}" target="_blank">
-                                    Last 99 Frames
-                                </a>
-                                <!-- <a href="https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos/frame_gallery/" target="_blank">
-                                    Last 99 Frames
-                                </a>
-                                -->
                             </div>
                         </div>
                     </div>
