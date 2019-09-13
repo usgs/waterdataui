@@ -1,5 +1,7 @@
 import camera
 
+camera.JSON_CAMERA_FILE = "../data/monitoring_camera_data_test.json"
+
 json_raw = camera.get_json_camera_data()
 # print(json_raw)
 cameras = camera.json_raw_to_dictionary(json_raw)
