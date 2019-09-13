@@ -53,3 +53,5 @@ ASSET_MANIFEST_PATH = None
 
 # For cooperator site service, current lookup service is temporary, constants may need reconfiguring for the new service
 COOPERATOR_SERVICE_PATTERN = 'https://water.usgs.gov/customer/stories/{site_no}/approved.json'
+
+NLDI_SERVICES_ENDPOINT = 'https://cida.usgs.gov/nldi'

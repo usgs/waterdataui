@@ -1,7 +1,7 @@
 import { select } from 'd3-selection';
 import { createStructuredSelector } from 'reselect';
-import { map as createMap, marker as createMarker, control, layerGroup, icon } from 'leaflet';
-import { TiledMapLayer, dynamicMapLayer, Util, basemapLayer, featureLayer } from 'esri-leaflet/src/EsriLeaflet';
+import { map as createMap, marker as createMarker, control, layerGroup } from 'leaflet';
+import { TiledMapLayer, dynamicMapLayer, Util, basemapLayer } from 'esri-leaflet/src/EsriLeaflet';
 import { link, provide } from '../../lib/redux';
 import config from '../../config';
 import { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } from '../../flood-data';
@@ -9,6 +9,7 @@ import { hasFloodData, getFloodExtent, getFloodStageHeight } from '../../selecto
 import { Actions } from '../../store';
 import { floodSlider } from './flood-slider';
 import { createLegendControl, createFIMLegend } from './legend';
+import { addNldi } from './nldiMapping';
 
 
 const getLayerDefs = function(layerNo, siteno, stage) {
@@ -139,6 +140,9 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
 
     // Add a marker at the site location
     createMarker([latitude, longitude]).addTo(map);
+
+    //add nldi layers
+    addNldi(map, legendControl, siteno);
 
     node
         .call(link(updateFloodLayers, createStructuredSelector({
