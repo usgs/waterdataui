@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Site Page now contains a Monitoring Camera section with proof of concept implementation.
+
 ### Changed
 - Graph server now serves routes from /api/graph-images
 
