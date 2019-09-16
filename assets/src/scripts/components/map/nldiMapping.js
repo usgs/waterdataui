@@ -20,7 +20,7 @@ export const addNldi = function(map, legendControl, siteno) {
     const upstreamNavigation = 'UM';
     const downstreamNavigation = 'DM';
     const featureId = 'USGS-' + siteno;
-    const distanceParam = '?distance=322';
+    const distanceParam = `?distance=${config.NLDI_SERVICES_DISTANCE}`;
     const markerFillColor = '#ff7800';
     const markerFillOpacity = 0.8;
     const downStreamColor = '#41b6c4';
@@ -57,12 +57,11 @@ export const addNldi = function(map, legendControl, siteno) {
     };
 
     const onEachPointFeatureAddPopUp = function(feature, layer) {
-        const uri = feature.properties.uri;
-        const popupText = 'Data Source: ' + feature.properties.source +
-            '<br>Data Source Name: ' + feature.properties.sourceName +
-            '<br>Station Name: ' + feature.properties.name +
-            '<br>Station ID: ' + feature.properties.identifier +
-            '<br>More Station Data: ' + '<a href="' + uri + '">Go to site page</a>';
+        const popupText = `Data Source: ${feature.properties.source}
+            <br>Data Source Name: ${feature.properties.sourceName}
+            <br>Station Name: ${feature.properties.name}
+            <br>Station ID: ${feature.properties.identifier}
+            <br>More Station Data: <a href="${feature.properties.uri}">Go to site page</a>`;
         layer.bindPopup(popupText);
     };
 
@@ -78,8 +77,8 @@ export const addNldi = function(map, legendControl, siteno) {
     };
 
     const onEachLineFeatureAddPopUp = function(feature, layer) {
-        const popupText = 'Data Source: NHD+' +
-            '<br>Reach ComID: ' + feature.properties.nhdplus_comid;
+        const popupText = `Data Source: NHD+
+            <br>Reach ComID: ${feature.properties.nhdplus_comid}`;
         layer.bindPopup(popupText);
     };
 
@@ -93,7 +92,6 @@ export const addNldi = function(map, legendControl, siteno) {
         features.forEach(function(feature) {
             allExtents.features.push(feature);
         });
-//        map.fitBounds(geoJson(allExtents).getBounds());
     };
 
     const addNldiLinesToMap = function(endpointUrl, style) {
@@ -142,11 +140,18 @@ export const addNldi = function(map, legendControl, siteno) {
     const legendListContainer = select(legendControl.getContainer()).select('.legend-list-container');
     const nldiLegendList = legendListContainer.append('ul')
                 .attr('id', 'nldi-legend-list')
-                .classed('usa-list--unstyled', true);
+                .attr('class', 'usa-list--unstyled');
 
-    nldiLegendList.append('li')
-                .classed('nldi-legend', true)
-                .html('<li><i style="background:' + upstreamColor + '; width: 16px; height: 16px; float: left; opacity: ' + flowLineOpacity + '; margin-right: 2px;"></i><span>Upstream Flowline</span> </li>'
-                            + '<li><i style="background:' + downStreamColor + '; width: 16px; height: 16px; float: left; opacity: ' + flowLineOpacity + '; margin-right: 2px;"></i><span>Downstream Flowline</span> </li>'
-                            + '<li><i class="fas fa-circle" style="color:' + markerFillColor + '; width: 16px; height: 16px; float: left; opacity: ' + markerFillOpacity + '; margin-right: 2px;"></i><span>Additional Monitoring Locations</span> </li>');
+    const nldiUpstream = nldiLegendList.append('li');
+    nldiUpstream.append('span').attr('style', `background: ${upstreamColor}; width: 16px; height: 16px; float: left; opacity: ${flowLineOpacity}; margin-right: 2px;`);
+    nldiUpstream.append('span').text('Upstream Flowline');
+
+    const nldiDownstream = nldiLegendList.append('li');
+    nldiDownstream.append('span').attr('style', `background: ${downStreamColor}; width: 16px; height: 16px; float: left; opacity: ${flowLineOpacity}; margin-right: 2px;`);
+    nldiDownstream.append('span').text('Downstream Flowline');
+
+    const nldiMarker = nldiLegendList.append('li');
+    nldiMarker.append('span').attr('style', `color: ${markerFillColor}; width: 16px; height: 16px; float: left; opacity: ${markerFillOpacity}; margin-right: 2px;`)
+        .attr('class', 'fas fa-circle');
+    nldiMarker.append('span').text('Additional Monitoring Locations');
 };

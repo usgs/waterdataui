@@ -6,12 +6,12 @@ produced by this project are dependencies of both [`wdfn-server`](../wdfn-server
 
 ## Install dependencies
 
-Javascript and SASS assets are built with Node.js v8.9.3. Usage of
+Javascript and SASS assets are built with Node.js v10.15.3. Usage of
 [nvm](https://github.com/creationix/nvm) is a convenient way to use a specific
 version of Node.js:
 
 ```bash
-nvm use v8.9.3
+nvm use v10.15.3
 ```
 
 Node.js dependencies are installed via:

@@ -55,3 +55,4 @@ ASSET_MANIFEST_PATH = None
 COOPERATOR_SERVICE_PATTERN = 'https://water.usgs.gov/customer/stories/{site_no}/approved.json'
 
 NLDI_SERVICES_ENDPOINT = 'https://cida.usgs.gov/nldi'
+NLDI_SERVICES_DISTANCE = '322'

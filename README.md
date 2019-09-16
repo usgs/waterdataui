@@ -11,7 +11,7 @@ This repo contains the components of Water Data For The Nation:
 - [`assets`](assets): Client-side Javascript, CSS, images, etc.
 - [`graph-server`](graph-server): A node.js server-renderer for charts, serving up SVG and images.
 
-The application has been developed using Python 3.6 and Node.js 10.15.1. This is a work in progress.
+The application has been developed using Python 3.6 and Node.js 10.15.3. This is a work in progress.
 
 ## Install dependencies
 
