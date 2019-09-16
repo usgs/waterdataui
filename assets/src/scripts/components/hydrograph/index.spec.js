@@ -136,6 +136,7 @@ const TEST_STATE = {
     timeSeriesState: {
         currentVariableID: '45807197',
         currentDateRange: 'P7D',
+        requestedTimeRange: null,
         showSeries: {
             current: true,
             compare: true,

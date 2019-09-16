@@ -6,6 +6,7 @@ import { extent } from 'd3-array';
 import { line as d3Line, curveStepAfter } from 'd3-shape';
 import { select } from 'd3-selection';
 import { createStructuredSelector } from 'reselect';
+import { DateTime } from 'luxon';
 import { addSVGAccessibility } from '../../accessibility';
 import config from '../../config';
 import { dispatch, link, provide } from '../../lib/redux';
@@ -403,9 +404,6 @@ const dateRangeControls = function(elem, siteno) {
         .attr('class', 'usa-alert__heading')
         .text('Date requirements');
 
-    dateAlertBody.append('p')
-        .text('Both start and end dates must be specified.');
-
     customDateContainer.append('label')
         .attr('for', 'date-input')
         .attr('class', 'usa-label')
@@ -434,7 +432,14 @@ const dateRangeControls = function(elem, siteno) {
             const userSpecifiedStart = customStartDate.node().value;
             const userSpecifiedEnd = customEndDate.node().value;
             if (userSpecifiedStart.length === 0 || userSpecifiedEnd.length === 0) {
+                dateAlertBody.selectAll('p').remove();
+                dateAlertBody.append('p')
+                    .text('Both start and end dates must be specified.');
                 customDateValidationContainer.attr('hidden', null);
+            } else if (DateTime.fromISO(userSpecifiedEnd) < DateTime.fromISO(userSpecifiedStart)) {
+                dateAlertBody.selectAll('p').remove();
+                dateAlertBody.append('p')
+                    .text('The start date must precede the end date.');
             } else {
                 customDateValidationContainer.attr('hidden', true);
                 return Actions.getUserRequestedDataForDateRange(
