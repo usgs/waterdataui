@@ -18,6 +18,12 @@
     }
 }
 
+#ts-customdaterange-select-container {
+    label {
+        @include u-text( 'bold' );
+    }
+}
+
 #select-time-series  {
     label {
         @include u-text( 'bold' );

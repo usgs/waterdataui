@@ -376,7 +376,8 @@ const dateRangeControls = function(elem, siteno) {
     }, {
         label: 'custom-date-range',
         name: 'Custom',
-        period: 'custom'
+        period: 'custom',
+        ariaExpanded: false
     }];
 
     const container = elem.insert('div', ':nth-child(2)')
@@ -393,6 +394,10 @@ const dateRangeControls = function(elem, siteno) {
         .attr('aria-label', 'Custom date specification')
         .attr('hidden', true);
 
+    customDateContainer.append('label')
+        .attr('for', 'date-input')
+        .text('Enter Dates');
+
     const customDateValidationContainer = customDateContainer.append('div')
         .attr('class', 'usa-alert usa-alert--warning usa-alert--validation')
         .attr('hidden', true);
@@ -404,23 +409,39 @@ const dateRangeControls = function(elem, siteno) {
         .attr('class', 'usa-alert__heading')
         .text('Date requirements');
 
-    customDateContainer.append('label')
-        .attr('for', 'date-input')
+    const startDateContainer = customDateContainer.append('div')
+        .attr('id', 'start-date-input');
+
+    const endDateContainer = customDateContainer.append('div')
+        .attr('id', 'end-date-input');
+
+    startDateContainer.append('label')
         .attr('class', 'usa-label')
-        .text('Enter Dates');
+        .attr('id', 'custom-start-date-label')
+        .attr('for', 'custom-start-date')
+        .text('Start Date');
 
-    const dateInputContainer = customDateContainer.append('div')
-        .attr('id', 'date-input');
-
-    const customStartDate = dateInputContainer.append('input')
-        .attr('class', 'custom-date')
+    const customStartDate = startDateContainer.append('input')
+        .attr('class', 'usa-input')
         .attr('id', 'custom-start-date')
+        .attr('name', 'user-specified-start-date')
+        .attr('aria-labelledby', 'custom-start-date-label')
         .attr('type', 'date');
 
-    const customEndDate = dateInputContainer.append('input')
-        .attr('class', 'custom-date')
+    endDateContainer.append('label')
+        .attr('class', 'usa-label')
+        .attr('id', 'custom-end-date-label')
+        .attr('for', 'custom-end-date')
+        .text('End Date');
+
+    const customEndDate = endDateContainer.append('input')
+        .attr('class', 'usa-input')
         .attr('id', 'custom-end-date')
+        .attr('name', 'user-specified-end-date')
+        .attr('aria-labelledby', 'custom-end-date-label')
         .attr('type', 'date');
+
+    customDateContainer.append('br');
 
     const submitContainer = customDateContainer.append('div')
         .attr('class', 'submit-button');
@@ -468,13 +489,17 @@ const dateRangeControls = function(elem, siteno) {
         .attr('class', 'usa-radio__input')
         .attr('value', d => d.period)
         .attr('ga-on', 'click')
+        .attr('aria-expanded', d => d.ariaExpanded)
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', d => `changeDateRangeTo${d.period}`)
         .on('change', dispatch(function() {
-            const selectedVal = li.select('input:checked').attr('value');
+            const selected = li.select('input:checked');
+            const selectedVal = selected.attr('value');
             if (selectedVal === 'custom') {
                 customDateContainer.attr('hidden', null);
+                selected.attr('aria-expanded', true);
             } else {
+                li.select('input#custom-date-range').attr('aria-expanded', false);
                 customDateContainer.attr('hidden', true);
                 return Actions.retrieveExtendedTimeSeries(
                     siteno,
