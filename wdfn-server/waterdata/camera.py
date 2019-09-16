@@ -1,3 +1,14 @@
+"""
+Proof of concent to disaply site camera data on WDFN.
+The JSON data file is currently included in the codebase and should
+eventually be some sort of service or s3_bucket dir.
+It should also be loaded into memory into a dictionary.
+The current data file was fulled from the prior WIM proof of concept.
+
+Usage:
+get_monitoring_camera_data(site_id) should be called to fetch camera metadata.
+{'exists': False} will be returned if there is no camera data for the given site.
+"""
 import json
 import os
 
@@ -9,7 +20,7 @@ JSON_CAMERA_FILE = os.getcwd()+"/data/monitoring_camera_data.json"
 def get_json_camera_data():
     """Helper method to fetch the JSON data, later it might be a service"""
     with open(JSON_CAMERA_FILE, 'r') as json_file:
-        json_raw = json_file.read() 
+        json_raw = json_file.read()
     return json_raw
 
 
