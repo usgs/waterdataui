@@ -118,8 +118,7 @@ def monitoring_location(site_no):
             }
 
             monitoring_camera = get_monitoring_camera_data(site_no)
-            if monitoring_camera:
-                context['monitoring_camera'] = monitoring_camera
+            context['monitoring_camera'] = monitoring_camera
 
         http_code = 200
     elif 400 <= status < 500:
