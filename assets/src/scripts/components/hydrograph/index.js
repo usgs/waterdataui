@@ -400,20 +400,22 @@ const dateRangeControls = function(elem, siteno) {
 
     const customDateValidationContainer = customDateContainer.append('div')
         .attr('class', 'usa-alert usa-alert--warning usa-alert--validation')
+        .attr('id', 'custom-date-alert-container')
         .attr('hidden', true);
 
     const dateAlertBody = customDateValidationContainer.append('div')
-        .attr('class', 'usa-alert__body');
+        .attr('class', 'usa-alert__body')
+        .attr('id', 'custom-date-alert');
 
     dateAlertBody.append('h3')
         .attr('class', 'usa-alert__heading')
         .text('Date requirements');
 
     const startDateContainer = customDateContainer.append('div')
-        .attr('id', 'start-date-input');
+        .attr('id', 'start-date-input-container');
 
     const endDateContainer = customDateContainer.append('div')
-        .attr('id', 'end-date-input');
+        .attr('id', 'end-date-input-container');
 
     startDateContainer.append('label')
         .attr('class', 'usa-label')
@@ -448,6 +450,7 @@ const dateRangeControls = function(elem, siteno) {
 
     submitContainer.append('button')
         .attr('class', 'usa-button')
+        .attr('id', 'custom-date-submit')
         .text('Submit')
         .on('click', dispatch( function() {
             const userSpecifiedStart = customStartDate.node().value;
@@ -461,6 +464,7 @@ const dateRangeControls = function(elem, siteno) {
                 dateAlertBody.selectAll('p').remove();
                 dateAlertBody.append('p')
                     .text('The start date must precede the end date.');
+                customDateValidationContainer.attr('hidden', null);
             } else {
                 customDateValidationContainer.attr('hidden', true);
                 return Actions.getUserRequestedDataForDateRange(
