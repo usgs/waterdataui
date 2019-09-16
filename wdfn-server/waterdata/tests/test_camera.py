@@ -1,10 +1,9 @@
 from unittest import TestCase
 import sys
-sys.path.append("..")
-import camera
-# from .. import camera
+from .. import camera
 
-camera.JSON_CAMERA_FILE = "../../data/monitoring_camera_data_test.json"
+camera.JSON_CAMERA_FILE = "wdfn-server/data/monitoring_camera_data_test.json"
+
 
 class TestCamera(TestCase):
     def test_loading_json_file(self):
