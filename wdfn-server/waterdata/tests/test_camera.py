@@ -11,7 +11,6 @@ camera.JSON_CAMERA_FILE = "wdfn-server/data/monitoring_camera_data_test.json"
 class TestCamera(TestCase):
     def test_loading_json_file(self):
         json_raw = camera.get_json_camera_data()
-        # print(json_raw)
         # the test data file should not be and empty string
         self.assertTrue(len(json_raw) > 2000)
         self.assertTrue(len(json_raw) < 3000)
@@ -22,7 +21,6 @@ class TestCamera(TestCase):
     def test_all_camera_dictionary_list(self):
         json_raw = camera.get_json_camera_data()
         cameras = camera.json_raw_to_dictionary(json_raw)
-        # print(len(cameras))
         self.assertEqual(len(cameras), 3)
         self.assertEqual("12345", cameras[1]['SiteId'])
 
@@ -30,7 +28,6 @@ class TestCamera(TestCase):
         json_raw = camera.get_json_camera_data()
         cameras = camera.json_raw_to_dictionary(json_raw)
         camera_data = camera.find_site_in_cameras('12345', cameras)
-        # print(camera_data)
         self.assertEqual("12345", camera_data['SiteId'])
 
     def test_get_site_camera_dictionary_by_id(self):
@@ -38,16 +35,12 @@ class TestCamera(TestCase):
         cameras = camera.json_raw_to_dictionary(json_raw)
         camera_data1 = camera.find_site_in_cameras('12345', cameras)
         camera_data2 = camera.get_site_camera_data('12345')
-        # print(camera_data1['SiteId'])
-        # print(camera_data2['SiteId'])
-        # print(camera_data1['SiteId'] == camera_data2['SiteId'])
         self.assertEqual("12345", camera_data1['SiteId'])
         self.assertEqual("12345", camera_data2['SiteId'])
         self.assertEqual(camera_data2, camera_data1)
 
     def test_get_site_monitoring_camera_data(self):
         monitoring_camera = camera.get_monitoring_camera_data('12345')
-        # print(monitoring_camera)
         self.assertTrue("exists" in monitoring_camera)
         self.assertEqual(monitoring_camera["exists"], True)
         self.assertTrue("thumb" in monitoring_camera)
@@ -57,7 +50,6 @@ class TestCamera(TestCase):
 
     def test_get_site_monitoring_camera_data_for_missing(self):
         monitoring_camera = camera.get_monitoring_camera_data('54321')
-        # print(monitoring_camera)
         self.assertTrue("exists" in monitoring_camera)
         self.assertEqual(monitoring_camera["exists"], False)
         self.assertFalse("thumb" in monitoring_camera)
@@ -72,7 +64,6 @@ class TestCamera(TestCase):
         monitoring_camera = camera.get_monitoring_camera_data('12345')
         if monitoring_camera:
             context['monitoring_camera'] = monitoring_camera
-        # print(context)
         self.assertTrue("exists" in context['monitoring_camera'])
         self.assertEqual(context['monitoring_camera']["exists"], True)
         self.assertTrue("thumb" in context['monitoring_camera'])
@@ -87,7 +78,6 @@ class TestCamera(TestCase):
         missing_camera = camera.get_monitoring_camera_data('missing')
         if missing_camera:
             context['monitoring_camera'] = missing_camera
-        # print(context)
         self.assertTrue("exists" in context['monitoring_camera'])
         self.assertEqual(context['monitoring_camera']["exists"], False)
         self.assertFalse("thumb" in context['monitoring_camera'])
