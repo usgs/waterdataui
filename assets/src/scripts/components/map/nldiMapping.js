@@ -57,11 +57,8 @@ export const addNldi = function(map, legendControl, siteno) {
     };
 
     const onEachPointFeatureAddPopUp = function(feature, layer) {
-        const popupText = `Data Source: ${feature.properties.source}
-            <br>Data Source Name: ${feature.properties.sourceName}
-            <br>Station Name: ${feature.properties.name}
-            <br>Station ID: ${feature.properties.identifier}
-            <br>More Station Data: <a href="${feature.properties.uri}">Go to site page</a>`;
+        const popupText = `Monitoring Location: <a href="${feature.properties.uri}">${feature.properties.name}</a>
+            <br>ID: ${feature.properties.identifier}`;
         layer.bindPopup(popupText);
     };
 
