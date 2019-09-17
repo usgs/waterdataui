@@ -167,7 +167,7 @@ describe('Redux store', () => {
                 spyOn(Actions, 'retrieveCompareTimeSeries');
                 spyOn(Actions, 'toggleTimeSeries');
                 spyOn(Actions, 'setCurrentVariable');
-                spyOn(Actions, 'setRequestedDates');
+                spyOn(Actions, 'setCustomDateRange');
                 let p = Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
 
                 p.then(() => {
@@ -184,7 +184,7 @@ describe('Redux store', () => {
                     expect(Actions.toggleTimeSeries.calls.argsFor(0)).toEqual(['current', true]);
                     expect(Actions.setCurrentVariable.calls.count()).toBe(1);
                     expect(Actions.setCurrentVariable.calls.argsFor(0)).toEqual(['45807197']);
-                    expect(Actions.setRequestedDates.calls.count()).toBe(1);
+                    expect(Actions.setCustomDateRange.calls.count()).toBe(1);
 
                     done();
                 });
@@ -534,7 +534,7 @@ describe('Redux store', () => {
 
                 spyOn(Actions, 'addTimeSeriesLoading');
                 spyOn(Actions, 'removeTimeSeriesLoading');
-                spyOn(Actions, 'setRequestedDates');
+                spyOn(Actions, 'setCustomDateRange');
                 spyOn(Actions, 'toggleTimeSeries');
             });
 
@@ -589,7 +589,7 @@ describe('Redux store', () => {
                     expect(Actions.retrieveCompareTimeSeries).toHaveBeenCalled();
                     expect(Actions.retrieveCompareTimeSeries.calls.argsFor(0)[1]).toEqual('P30D');
                     expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
-                    expect(Actions.setRequestedDates).toHaveBeenCalled();
+                    expect(Actions.setCustomDateRange).toHaveBeenCalled();
                     expect(Actions.toggleTimeSeries).toHaveBeenCalledWith('median', true);
                     done();
                 });

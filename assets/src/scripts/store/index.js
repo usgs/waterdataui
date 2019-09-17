@@ -79,7 +79,7 @@ export const Actions = {
                     const notes = collection.queryInfo[requestKey].notes;
                     const endTime = notes.requestDT;
                     const startTime = calcStartTime('P7D', endTime, 'local');
-                    dispatch(Actions.setRequestedDates(startTime, endTime));
+                    dispatch(Actions.setCustomDateRange(startTime, endTime));
                     if (latitude !== null && longitude !== null) {
                         dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
                     }
@@ -182,7 +182,7 @@ export const Actions = {
                         dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
-                        dispatch(Actions.setRequestedDates(startTime, endTime));
+                        dispatch(Actions.setCustomDateRange(startTime, endTime));
                         dispatch(Actions.toggleTimeSeries('median', true));
                     },
                     () => {
@@ -325,9 +325,9 @@ export const Actions = {
             period
         };
     },
-    setRequestedDates(startTime, endTime) {
+    setCustomDateRange(startTime, endTime) {
         return {
-            type: 'SET_REQUESTED_DATES',
+            type: 'SET_CUSTOM_DATE_RANGE',
             startTime,
             endTime
         };
@@ -338,7 +338,7 @@ export const Actions = {
             const locationIanaTimeZone = getIanaTimeZone(state);
             const startTime = new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis();
             const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis();
-            dispatch(Actions.setRequestedDates(startTime, endTime));
+            dispatch(Actions.setCustomDateRange(startTime, endTime));
             dispatch(Actions.retrieveCustomTimeSeries(siteno));
         };
     },

@@ -86,11 +86,11 @@ describe('time-series-state-reducer', () => {
         });
     });
 
-    it('should handle SET_REQUESTED_DATES', () => {
+    it('should handle SET_CUSTOM_DATE_RANGE', () => {
         expect(timeSeriesStateReducer({
             requestedTimeRange: null
         }, {
-            type: 'SET_REQUESTED_DATES',
+            type: 'SET_CUSTOM_DATE_RANGE',
             startTime: 1551420000000,
             endTime: 1552197600000
         })).toEqual({
