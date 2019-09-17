@@ -16,6 +16,10 @@ export const SYMLOG_PARMS = [
     '72137'
 ];
 
+export const REVERSE_AXIS_PARMS = [
+    '72019'
+]
+
 /**
  *  Return domain padded on both ends by paddingRatio.
  *  For positive domains, a zero-lower bound on the y-axis is enforced.

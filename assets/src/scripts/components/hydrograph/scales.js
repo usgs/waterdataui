@@ -1,7 +1,7 @@
 import { scaleLinear, scaleSymlog } from 'd3-scale';
 import memoize from 'fast-memoize';
 import { createSelector } from 'reselect';
-import { getYDomain, SYMLOG_PARMS } from './domain';
+import { getYDomain, SYMLOG_PARMS, REVERSE_AXIS_PARMS } from './domain';
 import { layoutSelector } from './layout';
 import { timeSeriesSelector } from './time-series';
 import { visiblePointsSelector, pointsByTsKeySelector } from './drawing-data';
@@ -36,6 +36,10 @@ export const createYScale = function (parmCd, extent, size) {
         return scaleSymlog()
             .domain(extent)
             .range([size, 0]);
+    } else if (REVERSE_AXIS_PARMS.indexOf(parmCd) >= 0) {
+        return scaleLinear()
+            .domain(extent)
+            .range([0, size]);
     } else {
         return scaleLinear()
             .domain(extent)
