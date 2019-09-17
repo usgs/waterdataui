@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
 - Graph server now serves routes from /api/graph-images
+
+### Added
 - Added support for user specified date ranges
 
 ## [0.17.0] - 2019-05-28
