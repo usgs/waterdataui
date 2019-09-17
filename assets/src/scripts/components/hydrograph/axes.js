@@ -18,6 +18,12 @@ const FORMAT = {
     custom: null
 };
 
+const setP7D = () => {
+    let date = tzStartDate.startOf('day');
+    let timePeriod = 'days';
+    let interval = 1;
+}
+
 /**
  * Generate the values for ticks to place on a hydrograph.
  *
@@ -34,46 +40,46 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
     let timePeriod;
     let interval;
     let dateDiff;
+
+    const setP7D = () => {
+        date = tzStartDate.startOf('day');
+        timePeriod = 'days';
+        interval = 1;
+    };
+    const setP30D = () => {
+        date = tzStartDate.minus({days: tzStartDate.weekday}).startOf('day');
+        timePeriod = 'weeks';
+        interval = 1;
+    };
+    const setP1Y = () => {
+        date = tzStartDate.startOf('month');
+        timePeriod = 'months';
+        if (mediaQuery(config.USWDS_LARGE_SCREEN)) {
+            interval = 1;
+        } else {
+            interval = 2;
+        }
+    };
     switch (period) {
         case 'P7D':
-            date = tzStartDate.startOf('day');
-            timePeriod = 'days';
-            interval = 1;
+            setP7D();
             break;
         case 'P30D':
-            date = tzStartDate.minus({days: tzStartDate.weekday}).startOf('day');
-            timePeriod = 'weeks';
-            interval = 1;
+            setP30D();
             break;
         case 'P1Y':
-            date = tzStartDate.startOf('month');
-            timePeriod = 'months';
-            if (mediaQuery(config.USWDS_LARGE_SCREEN)) {
-                interval = 1;
-            } else {
-                interval = 2;
-            }
+            setP1Y();
             break;
         case 'custom':
             dateDiff = deltaDays(new Date(startDate), new Date(endDate));
             if (dateDiff <= 7) {
-                date = tzStartDate.startOf('day');
-                timePeriod = 'days';
-                interval = 1;
+                setP7D();
                 FORMAT.custom = 'MMM dd';
             } else if (7 < dateDiff && dateDiff <= 30) {
-                date = tzStartDate.minus({days: tzStartDate.weekday}).startOf('day');
-                timePeriod = 'weeks';
-                interval = 1;
+                setP30D();
                 FORMAT.custom = 'MMM dd';
             } else if (30 < dateDiff && dateDiff <= 365) {
-                date = tzStartDate.startOf('month');
-                timePeriod = 'months';
-                if (mediaQuery(config.USWDS_LARGE_SCREEN)) {
-                    interval = 1;
-                } else {
-                    interval = 2;
-                }
+                setP1Y();
                 FORMAT.custom = 'MMM yyyy';
             } else {
                 date = tzStartDate.startOf('month');
