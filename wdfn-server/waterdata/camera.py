@@ -53,7 +53,7 @@ def get_monitoring_camera_data(site_no):
     The exists key will be false if there is no camera data found for the site.
     """
     camera_data = get_site_camera_data(site_no)
-    if 'lastFrame' not in camera_data:
+    if 'lastFrame' not in camera_data or not app.config['MONITORING_CAMERA_ENABLED']:
         return {'exists': False}
     monitoring_camera = {
         'exists': True,
