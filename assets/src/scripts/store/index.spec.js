@@ -54,7 +54,8 @@ describe('Redux store', () => {
             },
             timeSeriesState: {
                 currentVariableID: '45807042',
-                currentDateRange: 'P7D'
+                currentDateRange: 'P7D',
+                requestedTimeRange: {startDT: 1488348000000, endDT: 1490936400000}
             }
         };
 
@@ -166,10 +167,11 @@ describe('Redux store', () => {
                 spyOn(Actions, 'retrieveCompareTimeSeries');
                 spyOn(Actions, 'toggleTimeSeries');
                 spyOn(Actions, 'setCurrentVariable');
+                spyOn(Actions, 'setCustomDateRange');
                 let p = Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
 
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(8);
+                    expect(mockDispatch.calls.count()).toBe(9);
                     expect(Actions.addSeriesCollection.calls.count()).toBe(1);
                     expect(Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('current');
                     expect(Actions.retrieveLocationTimeZone.calls.count()).toBe(1);
@@ -182,6 +184,7 @@ describe('Redux store', () => {
                     expect(Actions.toggleTimeSeries.calls.argsFor(0)).toEqual(['current', true]);
                     expect(Actions.setCurrentVariable.calls.count()).toBe(1);
                     expect(Actions.setCurrentVariable.calls.argsFor(0)).toEqual(['45807197']);
+                    expect(Actions.setCustomDateRange.calls.count()).toBe(1);
 
                     done();
                 });
@@ -401,6 +404,124 @@ describe('Redux store', () => {
             });
         });
 
+        describe('retrieveCustomTimeSeries with good data', () => {
+            let mockDispatch;
+            let mockGetState;
+            let request;
+
+            beforeEach(() => {
+                jasmine.Ajax.install();
+
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
+
+                spyOn(Actions, 'addTimeSeriesLoading');
+            });
+
+            afterEach(() => {
+                jasmine.Ajax.uninstall();
+            });
+
+            it('Should dispatch an action to set the current date range', () => {
+                Actions.retrieveCustomTimeSeries('9876543')(mockDispatch, mockGetState);
+                request = jasmine.Ajax.requests.mostRecent();
+                request.respondWith({
+                    responseText: MOCK_DATA,
+                    status: 200
+                });
+                expect(mockDispatch).toHaveBeenCalledWith({
+                    type: 'SET_CURRENT_DATE_RANGE',
+                    period: 'custom'
+                });
+                expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:custom:00060']);
+            });
+
+            it('Should call getTimeSeries with the correct parameters', () => {
+                mockGetState.and.returnValue(Object.assign({}, TEST_STATE, {
+                    timeSeriesState: Object.assign({}, TEST_STATE.timeSeriesState, {
+                        currentDateRange: 'custom',
+                        requestedTimeRange: {startDT: 2942805600000, endDT: 2942978400000}
+                    })
+                }));
+                Actions.retrieveCustomTimeSeries('490129388')(mockDispatch, mockGetState);
+                request = jasmine.Ajax.requests.mostRecent();
+                request.respondWith({
+                    responseText: MOCK_DATA,
+                    status: 200
+                });
+
+                expect(request.url).toContain(['490129388']);
+                expect(request.url).toContain('00060');
+                expect(request.url).toContain('startDT=2063-04-03');
+                expect(request.url).toContain('endDT=2063-04-05');
+            });
+
+            it('Should dispatch add series collection and hide median series', (done) => {
+                mockGetState.and.returnValue(TEST_STATE);
+                spyOn(Actions, 'addSeriesCollection');
+                spyOn(Actions, 'retrieveCompareTimeSeries');
+                spyOn(Actions, 'toggleTimeSeries');
+                let p = Actions.retrieveCustomTimeSeries('490129388')(mockDispatch, mockGetState);
+                request = jasmine.Ajax.requests.mostRecent();
+                request.respondWith({
+                    responseText: MOCK_DATA,
+                    status: 200
+                });
+                p.then(() => {
+                    expect(mockDispatch.calls.count()).toBe(5);
+                    expect(Actions.addSeriesCollection).toHaveBeenCalled();
+                    expect(Actions.addSeriesCollection.calls.argsFor(0)[0]).toEqual('current:custom:00060');
+                    expect(Actions.retrieveCompareTimeSeries).not.toHaveBeenCalled();
+                    expect(Actions.toggleTimeSeries).toHaveBeenCalled();
+                    expect(Actions.toggleTimeSeries.calls.argsFor(0)).toEqual(['median', false]);
+                    done();
+                });
+            });
+        });
+
+        describe('retrieveCustomTimeSeries with bad data', () => {
+            let mockDispatch;
+            let mockGetState;
+
+            beforeEach(() => {
+                jasmine.Ajax.install();
+
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockState');
+
+                mockGetState.and.returnValue(Object.assign({}, TEST_STATE, {
+                    timeSeriesState: Object.assign({}, TEST_STATE.timeSeriesState, {
+                        currentDateRange: 'custom',
+                        requestedTimeRange: {startDT: 2942805600000, endDT: 2942978400000}
+                    })
+                }));
+
+                spyOn(Actions, 'addTimeSeriesLoading');
+                spyOn(Actions, 'removeTimeSeriesLoading');
+            });
+
+            afterEach(() => {
+                jasmine.Ajax.uninstall();
+            });
+
+            it('Should add a series with an empty collection when it is bad data', (done) => {
+                let p = Actions.retrieveCustomTimeSeries('9876543')(mockDispatch, mockGetState);
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 500
+                });
+                expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:custom:00060']);
+                p.then(() => {
+                    expect(mockDispatch.calls.count()).toBe(5);
+                    let arg = mockDispatch.calls.argsFor(3)[0];
+                    expect(arg.type).toBe('ADD_TIME_SERIES_COLLECTION');
+                    expect(arg.key).toBe('current:custom:00060');
+                    expect(arg.data).toEqual({});
+                    expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:custom:00060']);
+                    done();
+                });
+            });
+        });
+
         describe('retrieveExtendedTimeSeries with data', () => {
             let mockDispatch;
             let mockGetState;
@@ -413,6 +534,8 @@ describe('Redux store', () => {
 
                 spyOn(Actions, 'addTimeSeriesLoading');
                 spyOn(Actions, 'removeTimeSeriesLoading');
+                spyOn(Actions, 'setCustomDateRange');
+                spyOn(Actions, 'toggleTimeSeries');
             });
 
             afterEach(() => {
@@ -460,12 +583,14 @@ describe('Redux store', () => {
                     status: 200
                 });
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(5);
+                    expect(mockDispatch.calls.count()).toBe(7);
                     expect(Actions.addSeriesCollection).toHaveBeenCalled();
                     expect(Actions.addSeriesCollection.calls.argsFor(0)[0]).toEqual('current:P30D:00060');
                     expect(Actions.retrieveCompareTimeSeries).toHaveBeenCalled();
                     expect(Actions.retrieveCompareTimeSeries.calls.argsFor(0)[1]).toEqual('P30D');
                     expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
+                    expect(Actions.setCustomDateRange).toHaveBeenCalled();
+                    expect(Actions.toggleTimeSeries).toHaveBeenCalledWith('median', true);
                     done();
                 });
             });
@@ -522,8 +647,6 @@ describe('Redux store', () => {
                     expect(arg.key).toBe('current:P30D:00060');
                     expect(arg.data).toEqual({});
                     expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
-
-
                     done();
                 });
             });

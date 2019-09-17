@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Graph server now serves routes from /api/graph-images
 - NLDI navigation results
 
+### Added
+- Added support for user specified date ranges
+
 ## [0.17.0] - 2019-05-28
 ### Added
 - Map now contains Leaflet layer control to toggle satellite and gray with hydro layers

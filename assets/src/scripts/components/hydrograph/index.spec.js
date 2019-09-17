@@ -136,6 +136,7 @@ const TEST_STATE = {
     timeSeriesState: {
         currentVariableID: '45807197',
         currentDateRange: 'P7D',
+        requestedTimeRange: null,
         showSeries: {
             current: true,
             compare: true,
@@ -418,9 +419,11 @@ describe('Hydrograph charting module', () => {
 
         it('Expects the date range controls to be created', () => {
             let dateRangeContainer = select(graphNode).select('#ts-daterange-select-container');
+            let customDateDiv = select(graphNode).select('div#ts-customdaterange-select-container');
 
             expect(dateRangeContainer.size()).toBe(1);
-            expect(dateRangeContainer.selectAll('input[type=radio]').size()).toBe(3);
+            expect(dateRangeContainer.selectAll('input[type=radio]').size()).toBe(4);
+            expect(customDateDiv.attr('hidden')).toBe('true');
         });
 
         it('Expects to retrieve the extended time series when the radio buttons are change', () => {
@@ -430,6 +433,54 @@ describe('Hydrograph charting module', () => {
             lastRadio.dispatch('change');
 
             expect(Actions.retrieveExtendedTimeSeries).toHaveBeenCalledWith('12345678', 'P1Y');
+        });
+
+        it('Expects to show the date range from when the Custom radio is selected', () => {
+            let customRadio = select(graphNode).select('#custom-date-range');
+            customRadio.attr('checked', true);
+            customRadio.dispatch('change');
+
+            let customDateDiv = select(graphNode).select('div#ts-customdaterange-select-container');
+            expect(customDateDiv.attr('hidden')).toBeNull();
+
+            let customDateAlertDiv = select(graphNode).select('#custom-date-alert-container');
+            expect(customDateAlertDiv.attr('hidden')).toBe('true');
+        });
+
+        it('Expects an alert to be thrown if custom dates are not provided.', () => {
+             let submitButton = select(graphNode).select('#custom-date-submit');
+             submitButton.dispatch('click');
+
+             let customDateAlertDiv = select(graphNode).select('#custom-date-alert');
+             expect(customDateAlertDiv.attr('hidden')).toBeNull();
+             expect(customDateAlertDiv.select('p').text()).toEqual('Both start and end dates must be specified.');
+        });
+
+        it('Expects and alert to be thrown if the end date is earier than the start date.', () => {
+            select(graphNode).select('#custom-start-date').property('value', '2063-04-05');
+            select(graphNode).select('#custom-end-date').property('value', '2063-04-03');
+
+            select(graphNode).select('#custom-date-submit').dispatch('click');
+
+            let customDateAlertDiv = select(graphNode).select('#custom-date-alert-container');
+            expect(customDateAlertDiv.attr('hidden')).toBeNull();
+            expect(customDateAlertDiv.select('p').text()).toEqual('The start date must precede the end date.');
+        });
+
+        it('Expects data to be retrieved if both custom start and end dates are provided', () => {
+            spyOn(Actions, 'getUserRequestedDataForDateRange');
+
+            select(graphNode).select('#custom-start-date').property('value', '2063-04-03');
+            select(graphNode).select('#custom-end-date').property('value', '2063-04-05');
+
+            select(graphNode).select('#custom-date-submit').dispatch('click');
+
+            let customDateAlertDiv = select(graphNode).select('#custom-date-alert-container');
+            expect(customDateAlertDiv.attr('hidden')).toBe('true');
+
+            expect(Actions.getUserRequestedDataForDateRange).toHaveBeenCalledWith(
+                '12345678', '2063-04-03', '2063-04-05'
+            );
         });
     });
 

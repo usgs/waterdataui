@@ -1,6 +1,7 @@
 
 import findKey from 'lodash/findKey';
 import last from 'lodash/last';
+import { DateTime } from 'luxon';
 import { applyMiddleware, createStore, combineReducers, compose } from 'redux';
 import { default as thunk } from 'redux-thunk';
 import { getPreviousYearTimeSeries, getTimeSeries, sortedParameters, queryWeatherService } from '../models';
@@ -8,7 +9,8 @@ import { calcStartTime } from '../utils';
 import { normalize } from '../schema';
 import { fetchFloodFeatures, fetchFloodExtent } from '../flood-data';
 import { fetchSiteStatistics } from '../statistics-data';
-import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange } from '../selectors/time-series-selector';
+import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
+    getRequestedTimeRange, getIanaTimeZone } from '../selectors/time-series-selector';
 import { floodDataReducer as floodData } from './flood-data-reducer';
 import { floodStateReducer as floodState } from './flood-state-reducer';
 import { seriesReducer as series } from './series-reducer';
@@ -68,7 +70,6 @@ export const Actions = {
             return getTimeSeries({sites: [siteno], params}).then(
                 series => {
                     const collection = normalize(series, requestKey);
-
                     // get the lat/lon of the site
                     const location = collection.sourceInfo ? collection.sourceInfo[siteno].geoLocation.geogLocation : {};
                     const latitude = location.latitude || null;
@@ -78,7 +79,7 @@ export const Actions = {
                     const notes = collection.queryInfo[requestKey].notes;
                     const endTime = notes.requestDT;
                     const startTime = calcStartTime('P7D', endTime, 'local');
-
+                    dispatch(Actions.setCustomDateRange(startTime, endTime));
                     if (latitude !== null && longitude !== null) {
                         dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
                     }
@@ -132,6 +133,34 @@ export const Actions = {
             );
         };
     },
+    retrieveCustomTimeSeries(site) {
+        return function(dispatch, getState) {
+            const state = getState();
+            const parmCd = getCurrentParmCd(state);
+            const requestedTimeRange = getRequestedTimeRange(state);
+            const requestKey = getTsRequestKey('current', 'custom', parmCd)(state);
+            dispatch(Actions.setCurrentDateRange('custom'));
+            dispatch(Actions.addTimeSeriesLoading([requestKey]));
+            dispatch(Actions.toggleTimeSeries('median', false));
+            return getTimeSeries({
+                sites: [site],
+                params: [parmCd],
+                startDate: requestedTimeRange.startDT,
+                endDate: requestedTimeRange.endDT
+            }).then(
+                series => {
+                    const collection = normalize(series, requestKey);
+                    dispatch(Actions.addSeriesCollection(requestKey, collection));
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+                },
+                () => {
+                    console.log(`Unable to fetch data for between ${requestedTimeRange.startDT} and ${requestedTimeRange.endDT} and parameter code ${parmCd}`);
+                    dispatch(Actions.addSeriesCollection(requestKey, {}));
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+                }
+            );
+        };
+    },
     retrieveExtendedTimeSeries(site, period) {
         return function(dispatch, getState) {
             const state = getState();
@@ -139,9 +168,9 @@ export const Actions = {
             const requestKey = getTsRequestKey ('current', period, parmCd)(state);
             dispatch(Actions.setCurrentDateRange(period));
             if (!hasTimeSeries('current', period, parmCd)(state)) {
-                const endTime = getRequestTimeRange('current', 'P7D')(state).end;
-                let startTime = calcStartTime(period, endTime);
                 dispatch(Actions.addTimeSeriesLoading([requestKey]));
+                const endTime = getRequestTimeRange('current', 'P7D')(state).end;
+                const startTime = calcStartTime(period, endTime);
                 return getTimeSeries({
                     sites: [site],
                     params: [parmCd],
@@ -153,6 +182,8 @@ export const Actions = {
                         dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+                        dispatch(Actions.setCustomDateRange(startTime, endTime));
+                        dispatch(Actions.toggleTimeSeries('median', true));
                     },
                     () => {
                         console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
@@ -179,7 +210,12 @@ export const Actions = {
     updateCurrentVariable(siteno, variableID) {
         return function(dispatch, getState) {
             dispatch(Actions.setCurrentVariable(variableID));
-            dispatch(Actions.retrieveExtendedTimeSeries(siteno, getCurrentDateRange(getState())));
+            const currentDateRange = getCurrentDateRange(getState());
+            if (currentDateRange === 'custom') {
+                dispatch(Actions.retrieveCustomTimeSeries(siteno));
+            } else {
+                dispatch(Actions.retrieveExtendedTimeSeries(siteno, currentDateRange));
+            }
         };
     },
     startTimeSeriesPlay(maxCursorOffset) {
@@ -289,6 +325,23 @@ export const Actions = {
             period
         };
     },
+    setCustomDateRange(startTime, endTime) {
+        return {
+            type: 'SET_CUSTOM_DATE_RANGE',
+            startTime,
+            endTime
+        };
+    },
+    getUserRequestedDataForDateRange(siteno, startTimeStr, endTimeStr) {
+        return function(dispatch, getState) {
+            const state = getState();
+            const locationIanaTimeZone = getIanaTimeZone(state);
+            const startTime = new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis();
+            const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis();
+            dispatch(Actions.setCustomDateRange(startTime, endTime));
+            dispatch(Actions.retrieveCustomTimeSeries(siteno));
+        };
+    },
     setGageHeightFromStageIndex(index) {
         return function(dispatch, getState) {
             const stages = getState().floodData.stages;
@@ -340,6 +393,7 @@ export const configureStore = function (initialState) {
                 median: false
             },
             currentDateRange: 'P7D',
+            requestedTimeRange: null,
             currentVariableID: null,
             cursorOffset: null,
             audiblePlayId: null,
