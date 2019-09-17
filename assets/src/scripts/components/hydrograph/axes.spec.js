@@ -128,7 +128,7 @@ describe('Chart axes', () => {
             expect(result.includes(1501570800000)).toBe(true);
         });
 
-        it('custom ticks are correctly generated for dates under one date', () => {
+        it('custom ticks are correctly generated for dates under one decade', () => {
             const result = generateDateTicks(startCustomUnderOneDecade, endDate, 'custom', timeZone);
             expect(result).toEqual([
                 1293868800000,
