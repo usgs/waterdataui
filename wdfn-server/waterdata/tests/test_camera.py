@@ -4,7 +4,9 @@ Tests for camera.py module
 from unittest import TestCase
 from .. import camera
 
-camera.JSON_CAMERA_FILE = "wdfn-server/data/monitoring_camera_data_test.json"
+JSON_CAMERA_TEST_FILE = "wdfn-server/data/monitoring_camera_data_test.json"
+with open(JSON_CAMERA_TEST_FILE, 'r') as json_file:
+     camera.MONITORING_CAMERA_RAW = json_file.read()
 
 
 class TestCamera(TestCase):

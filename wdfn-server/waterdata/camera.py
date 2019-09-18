@@ -13,16 +13,13 @@ import json
 import os
 
 from waterdata import app
-
 # proof of concept. should call service to get
-JSON_CAMERA_FILE = os.getcwd()+"/data/monitoring_camera_data.json"
+MONITORING_CAMERA_RAW = app.config['MONITORING_CAMERA_LOOKUP'];
 
 
 def get_json_camera_data():
     """Helper method to fetch the JSON data, later it might be a service"""
-    with open(JSON_CAMERA_FILE, 'r') as json_file:
-        json_raw = json_file.read()
-    return json_raw
+    return MONITORING_CAMERA_RAW
 
 
 def json_raw_to_dictionary(json_raw):

@@ -19,6 +19,7 @@ STATE_COUNTY_PAGES_ENABLED = True
 EMBED_IMAGE_FEATURE_ENABLED = True
 COOPERATOR_LOOKUP_ENABLED = True  # may also be set to a list of district codes
 MONITORING_CAMERA_ENABLED = True
+MONITORING_CAMERA_PATH    = 'wdfn-server/data/monitoring_camera_data.json'
 
 DEBUG = False
 
