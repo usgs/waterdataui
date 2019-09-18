@@ -55,6 +55,10 @@ with open(os.path.join(app.config.get('DATA_DIR'),
                        app.config.get('HUC_LOOKUP_FILENAME')), 'r') as f:
     app.config['HUC_LOOKUP'] = json.loads(f.read())
 
+with open(app.config.get('MONITORING_CAMERA_PATH'), 'r') as json_file:
+    app.config['MONITORING_CAMERA_LOOKUP'] = json_file.read()
+
+
 # Load static assets manifest file, which maps source file names to the
 # corresponding versioned/hashed file name.
 manifest_path = app.config.get('ASSET_MANIFEST_PATH')

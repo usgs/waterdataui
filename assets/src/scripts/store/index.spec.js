@@ -477,6 +477,28 @@ describe('Redux store', () => {
                     done();
                 });
             });
+
+            it('Should reset the time series if it already exists', (done) => {
+                mockGetState.and.returnValue(Object.assign({}, TEST_STATE, {
+                    series: Object.assign({}, TEST_STATE.series, {
+                        requests: {'current:custom:00060': {
+                                timeSeriesCollections: [7, 8]
+                            }}
+                    })
+                }));
+                spyOn(Actions, 'resetTimeSeries');
+                let p = Actions.retrieveCustomTimeSeries('490129388')(mockDispatch, mockGetState);
+                request = jasmine.Ajax.requests.mostRecent();
+                request.respondWith({
+                    responseText: MOCK_DATA,
+                    status: 200
+                });
+                p.then(() => {
+                    expect(mockDispatch.calls.count()).toBe(6);
+                    expect(Actions.resetTimeSeries).toHaveBeenCalled();
+                    done();
+                });
+            });
         });
 
         describe('retrieveCustomTimeSeries with bad data', () => {

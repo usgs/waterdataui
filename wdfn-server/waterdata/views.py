@@ -13,6 +13,7 @@ from .services.nwis import NwisWebServices
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
+from .camera import get_monitoring_camera_data
 
 SERVICE_ROOT = app.config['SERVER_SERVICE_ROOT']
 NWIS = NwisWebServices(SERVICE_ROOT)
@@ -115,6 +116,10 @@ def monitoring_location(site_no):
                 'questions_link': questions_link,
                 'cooperators': cooperators
             }
+
+            monitoring_camera = get_monitoring_camera_data(site_no)
+            context['monitoring_camera'] = monitoring_camera
+
         http_code = 200
     elif 400 <= status < 500:
         template = 'monitoring_location.html'
