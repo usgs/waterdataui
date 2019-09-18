@@ -18,12 +18,6 @@ const FORMAT = {
     custom: null
 };
 
-const setP7D = () => {
-    let date = tzStartDate.startOf('day');
-    let timePeriod = 'days';
-    let interval = 1;
-}
-
 /**
  * Generate the values for ticks to place on a hydrograph.
  *

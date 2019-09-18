@@ -10,7 +10,7 @@ import { normalize } from '../schema';
 import { fetchFloodFeatures, fetchFloodExtent } from '../flood-data';
 import { fetchSiteStatistics } from '../statistics-data';
 import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
-    getRequestedTimeRange, getIanaTimeZone } from '../selectors/time-series-selector';
+    getRequestedTimeRange, getIanaTimeZone, getTimeSeriesCollectionIds } from '../selectors/time-series-selector';
 import { floodDataReducer as floodData } from './flood-data-reducer';
 import { floodStateReducer as floodState } from './flood-state-reducer';
 import { seriesReducer as series } from './series-reducer';
@@ -139,6 +139,10 @@ export const Actions = {
             const parmCd = getCurrentParmCd(state);
             const requestedTimeRange = getRequestedTimeRange(state);
             const requestKey = getTsRequestKey('current', 'custom', parmCd)(state);
+            const currentTsIds = getTimeSeriesCollectionIds('current', 'custom', parmCd)(state) || [];
+            if (currentTsIds.length > 0) {
+                dispatch(Actions.resetTimeSeries(requestKey));
+            }
             dispatch(Actions.setCurrentDateRange('custom'));
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
             dispatch(Actions.toggleTimeSeries('median', false));
