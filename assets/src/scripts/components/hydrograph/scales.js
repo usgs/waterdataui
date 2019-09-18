@@ -1,12 +1,21 @@
 import { scaleLinear, scaleSymlog } from 'd3-scale';
 import memoize from 'fast-memoize';
 import { createSelector } from 'reselect';
-import { getYDomain, SYMLOG_PARMS, REVERSE_AXIS_PARMS } from './domain';
+import { getYDomain, SYMLOG_PARMS } from './domain';
 import { layoutSelector } from './layout';
 import { timeSeriesSelector } from './time-series';
 import { visiblePointsSelector, pointsByTsKeySelector } from './drawing-data';
 import { getVariables, getCurrentParmCd, getRequestTimeRange } from '../../selectors/time-series-selector';
 
+const REVERSE_AXIS_PARMS = [
+    '72019',
+    '61055',
+    '99268',
+    '99269',
+    '72001',
+    '72147',
+    '72148'
+]
 
 /**
  * Create an x-scale oriented on the left
