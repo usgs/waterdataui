@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Graph server now serves routes from /api/graph-images
 - NLDI navigation results
+- A selected set of parameter codes show the Y axis reversed
+
 
 ### Added
 - Added support for user specified date ranges
