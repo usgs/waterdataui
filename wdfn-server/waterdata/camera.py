@@ -12,8 +12,9 @@ get_monitoring_camera_data(site_id) should be called to fetch camera metadata.
 import json
 import os
 
-# proof of concept. should call service to get
+from waterdata import app
 
+# proof of concept. should call service to get
 JSON_CAMERA_FILE = os.getcwd()+"/data/monitoring_camera_data.json"
 
 
