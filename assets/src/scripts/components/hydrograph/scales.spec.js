@@ -72,6 +72,20 @@ describe('scales', () => {
         expect(singleLog10 - singleLog100).toBeCloseTo(singleLog100 - singleLog1000, -1);
     });
 
+    it('Expect yscale\'s for parameter code that should be reversed, are reversed', () => {
+        const yScale72019 = createYScale('72109', [0, 20], 100);
+        const yScale61055 = createYScale('61055', [0, 20], 100);
+        const yScale99268 = createYScale('99268', [0, 20], 100);
+        const yScale99269 = createYScale('99269', [0, 20], 100);
+        const yScale72001 = createYScale('72001', [0, 20], 100);
+
+        expect(yScale72019(5), 75);
+        expect(yScale61055(10), 50);
+        expect(yScale99268(15), 25);
+        expect(yScale99269(0), 100);
+        expect(yScale72001(100), 0);
+    });
+
     it('Expect parameter code for not discharge to use a linear scale', () => {
         const linear10 = yScaleLinear(10);
         const linear20 = yScaleLinear(20);

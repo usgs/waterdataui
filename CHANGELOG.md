@@ -6,14 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- Added support for user specified date ranges
 - Site Page now contains a Monitoring Camera section with proof of concept implementation.
+- Added NLDI navigation results
 
 ### Changed
 - Graph server now serves routes from /api/graph-images
-- NLDI navigation results
-
-### Added
-- Added support for user specified date ranges
+- A selected set of parameter codes show the Y axis reversed
 
 ## [0.17.0] - 2019-05-28
 ### Added
