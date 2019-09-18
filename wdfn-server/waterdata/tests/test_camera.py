@@ -2,7 +2,6 @@
 Tests for camera.py module
 """
 from unittest import TestCase
-import sys
 from .. import camera
 
 camera.JSON_CAMERA_FILE = "wdfn-server/data/monitoring_camera_data_test.json"
