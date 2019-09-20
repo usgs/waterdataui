@@ -4,8 +4,8 @@ import { DateTime } from 'luxon';
 import { wrap, deltaDays } from '../../utils';
 import { getYTickDetails } from './domain';
 import { layoutSelector } from './layout';
-import { xScaleSelector, yScaleSelector, secondaryYScaleSelector, TEMPERATURE_PARAMETERS } from './scales';
-import { yLabelSelector, tsTimeZoneSelector } from './time-series';
+import { xScaleSelector, yScaleSelector, secondaryYScaleSelector } from './scales';
+import { yLabelSelector, secondaryYLabelSelector, tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
 import config from '../../config';
 import { getCurrentDateRange, getCurrentParmCd } from '../../selectors/time-series-selector';
 import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius, mediaQuery } from '../../utils';
@@ -167,7 +167,8 @@ export const axesSelector = createSelector(
     tsTimeZoneSelector,
     getCurrentParmCd,
     getCurrentDateRange,
-    (xScale, yScale, secondaryYScale, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange) => {
+    secondaryYLabelSelector,
+    (xScale, yScale, secondaryYScale, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange, plotSecondayYLabel) => {
         return {
             ...createAxes(
                 {xScale, yScale, secondaryYScale},
@@ -177,7 +178,8 @@ export const axesSelector = createSelector(
                 ianaTimeZone
             ),
             layout: layout,
-            yTitle: plotYLabel
+            yTitle: plotYLabel,
+            secondaryYTitle: plotSecondayYLabel
         };
     }
 );
@@ -186,7 +188,7 @@ export const axesSelector = createSelector(
 /**
  * Add x and y axes to the given svg node.
  */
-export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, yTitle}) {
+export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, yTitle, secondaryYTitle}) {
 
     const xLoc = {
         x: 0,
@@ -220,11 +222,11 @@ export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, 
             .text(yTitle)
                 .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
 
-    if (secondaryYAxis !== null) {
+    if (secondaryYAxis !== null && secondaryYTitle !== null) {
         const maxXScaleRange = xAxis.scale().range()[1];
         const secondaryYLabelLoc = {
             x: (layout.height / -2 + layout.margin.top) * -1,
-            y: (layout.width - maxXScaleRange) * -2.2
+            y: (layout.width - maxXScaleRange) * -1.5
         };
         elem.append('g')
             .attr('class', 'y-axis')
@@ -235,6 +237,6 @@ export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, 
                 .attr('transform', 'rotate(90)')
                 .attr('x', secondaryYLabelLoc.x)
                 .attr('y', secondaryYLabelLoc.y)
-                .text('Some Text');
+                .text(secondaryYTitle);
     }
 };

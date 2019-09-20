@@ -1,7 +1,32 @@
 import { timeFormat } from 'd3-time-format';
 import memoize from 'fast-memoize';
 import { createSelector } from 'reselect';
-import { getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone } from '../../selectors/time-series-selector';
+import { getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone, getCurrentParmCd } from '../../selectors/time-series-selector';
+
+
+export const TEMPERATURE_PARAMETERS = {
+    celsius: [
+        '00010',
+        '00020',
+        '45587',
+        '45589',
+        '50011',
+        '72176',
+        '72282',
+        '72283',
+        '72329',
+        '81027',
+        '81029',
+        '85583',
+        '99229',
+        '99230'
+    ],
+    fahrenheit: [
+        '00011',
+        '00021',
+        '45590'
+    ]
+};
 
 
 // Create a time formatting function from D3's timeFormat
@@ -107,6 +132,20 @@ export const isVisibleSelector = memoize(tsKey => (state) => {
 export const yLabelSelector = createSelector(
     getCurrentVariable,
     variable => variable ? variable.variableDescription : ''
+);
+
+
+export const secondaryYLabelSelector = createSelector(
+    getCurrentParmCd,
+    parmCd => {
+        let secondaryYLabel = null;
+        if (TEMPERATURE_PARAMETERS.celsius.includes(parmCd)) {
+            secondaryYLabel = 'degrees Fahrenheit';
+        } else if(TEMPERATURE_PARAMETERS.fahrenheit.includes(parmCd)) {
+            secondaryYLabel = 'degrees Celsius';
+        }
+        return secondaryYLabel;
+    }
 );
 
 
