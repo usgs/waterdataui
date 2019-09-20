@@ -225,8 +225,8 @@ export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, 
     if (secondaryYAxis !== null && secondaryYTitle !== null) {
         const maxXScaleRange = xAxis.scale().range()[1];
         const secondaryYLabelLoc = {
-            x: (layout.height / -2 + layout.margin.top) * -1,
-            y: (layout.width - maxXScaleRange) * -1.5
+            x: layout.height / -2 + layout.margin.top,
+            y: (layout.width - maxXScaleRange) * 1.5
         };
         elem.append('g')
             .attr('class', 'y-axis')
@@ -234,9 +234,9 @@ export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, 
             .call(secondaryYAxis)
             .append('text')
                 .attr('class', 'y-axis-label')
-                .attr('transform', 'rotate(90)')
-                .attr('x', secondaryYLabelLoc.x)
-                .attr('y', secondaryYLabelLoc.y)
+                .attr('transform', 'rotate(-90)')
+                .attr('x', secondaryYLabelLoc.x )
+                .attr('y', secondaryYLabelLoc.y )
                 .text(secondaryYTitle);
     }
 };
