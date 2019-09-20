@@ -12,7 +12,7 @@ export const ASPECT_RATIO = 1 / 2;
 export const ASPECT_RATIO_PERCENT = `${100 * ASPECT_RATIO}%`;
 const MARGIN = {
     top: 25,
-    right: 10,
+    right: 25,
     bottom: 10,
     left: 45
 };
