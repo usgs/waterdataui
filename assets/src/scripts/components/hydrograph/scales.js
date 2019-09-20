@@ -3,7 +3,7 @@ import memoize from 'fast-memoize';
 import { createSelector } from 'reselect';
 import { getYDomain, SYMLOG_PARMS } from './domain';
 import { layoutSelector } from './layout';
-import { timeSeriesSelector } from './time-series';
+import { timeSeriesSelector, TEMPERATURE_PARAMETERS } from './time-series';
 import { visiblePointsSelector, pointsByTsKeySelector } from './drawing-data';
 import { getVariables, getCurrentParmCd, getRequestTimeRange } from '../../selectors/time-series-selector';
 import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius } from '../../utils';
@@ -17,30 +17,6 @@ const REVERSE_AXIS_PARMS = [
     '72147',
     '72148'
 ];
-
-export const TEMPERATURE_PARAMETERS = {
-    celsius: [
-        '00010',
-        '00020',
-        '45587',
-        '45589',
-        '50011',
-        '72176',
-        '72282',
-        '72283',
-        '72329',
-        '81027',
-        '81029',
-        '85583',
-        '99229',
-        '99230'
-    ],
-    fahrenheit: [
-        '00011',
-        '00021',
-        '45590'
-    ]
-};
 
 /**
  * Create an x-scale oriented on the left
