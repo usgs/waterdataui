@@ -27,8 +27,10 @@ describe('Chart axes', () => {
             appendAxes(svg, {
                 xAxis,
                 yAxis,
-                layout,
-                yTitle: 'Label title'
+                secondaryYAxis: null,
+                layout: layout,
+                yTitle: 'Label title',
+                secondaryYTitle: null
             });
         });
 
