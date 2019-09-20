@@ -1,14 +1,14 @@
-import { axisBottom, axisLeft } from 'd3-axis';
+import { axisBottom, axisLeft, axisRight } from 'd3-axis';
 import { createSelector } from 'reselect';
 import { DateTime } from 'luxon';
 import { wrap, deltaDays } from '../../utils';
 import { getYTickDetails } from './domain';
 import { layoutSelector } from './layout';
-import { xScaleSelector, yScaleSelector } from './scales';
+import { xScaleSelector, yScaleSelector, secondaryYScaleSelector, TEMPERATURE_PARAMETERS } from './scales';
 import { yLabelSelector, tsTimeZoneSelector } from './time-series';
 import config from '../../config';
 import { getCurrentDateRange, getCurrentParmCd } from '../../selectors/time-series-selector';
-import { mediaQuery } from '../../utils';
+import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius, mediaQuery } from '../../utils';
 
 
 const FORMAT = {
@@ -106,7 +106,7 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
  * @param {String} ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
  * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
-export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period, ianaTimeZone) {
+export const createAxes = function({xScale, yScale, secondaryYScale}, yTickSize, parmCd, period, ianaTimeZone) {
     // Create x-axis
     const [startDate, endDate] = xScale.domain();
     const tickDates = generateDateTicks(startDate, endDate, period, ianaTimeZone);
@@ -128,7 +128,29 @@ export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period, 
         .tickPadding(3)
         .tickSizeOuter(0);
 
-    return {xAxis, yAxis};
+    let secondaryYAxis = null;
+
+    const createSecondaryYAxis = function(tickValues, scale) {
+        return axisRight()
+            .scale(scale)
+            .tickValues(tickValues)
+            .tickFormat(t => t.toFixed(1))
+            .tickSizeInner(yTickSize)
+            .tickPadding(3)
+            .tickSizeOuter(0);
+    };
+
+    if (secondaryYScale !== null) {
+        let secondaryAxisTicks;
+        const primaryAxisTicks = tickDetails.tickValues;
+        if (TEMPERATURE_PARAMETERS.celsius.includes(parmCd)) {
+            secondaryAxisTicks = primaryAxisTicks.map(celsius => convertCelsiusToFahrenheit(celsius));
+        } else if (TEMPERATURE_PARAMETERS.fahrenheit.includes(parmCd)) {
+            secondaryAxisTicks = primaryAxisTicks.map(fahrenheit => convertFahrenheitToCelsius(fahrenheit));
+        }
+        secondaryYAxis = createSecondaryYAxis(secondaryAxisTicks, secondaryYScale);
+    }
+    return {xAxis, yAxis, secondaryYAxis};
 };
 
 
@@ -139,14 +161,21 @@ export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period, 
 export const axesSelector = createSelector(
     xScaleSelector('current'),
     yScaleSelector,
+    secondaryYScaleSelector,
     layoutSelector,
     yLabelSelector,
     tsTimeZoneSelector,
     getCurrentParmCd,
     getCurrentDateRange,
-    (xScale, yScale, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange) => {
+    (xScale, yScale, secondaryYScale, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange) => {
         return {
-            ...createAxes({xScale, yScale}, -layout.width + layout.margin.right, parmCd, currentDateRange, ianaTimeZone),
+            ...createAxes(
+                {xScale, yScale, secondaryYScale},
+                -layout.width + layout.margin.right,
+                parmCd,
+                currentDateRange,
+                ianaTimeZone
+            ),
             layout: layout,
             yTitle: plotYLabel
         };
@@ -157,7 +186,8 @@ export const axesSelector = createSelector(
 /**
  * Add x and y axes to the given svg node.
  */
-export const appendAxes = function(elem, {xAxis, yAxis, layout, yTitle}) {
+export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, yTitle}) {
+
     const xLoc = {
         x: 0,
         y: layout.height - (layout.margin.top + layout.margin.bottom)
@@ -189,4 +219,15 @@ export const appendAxes = function(elem, {xAxis, yAxis, layout, yTitle}) {
             .attr('y', yLabelLoc.y)
             .text(yTitle)
                 .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
+
+    if (secondaryYAxis !== null) {
+        elem.append('g')
+            .attr('class', 'y-axis')
+            .attr('transform', `translate(${layout.width}, ${yLoc.y})`)
+            .call(secondaryYAxis)
+            .append('text')
+                .attr('class', 'y-axis-label')
+                .attr('transform', 'rotate(90)')
+                .text('Some Text');
+    }
 };

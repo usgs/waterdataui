@@ -6,6 +6,7 @@ import { layoutSelector } from './layout';
 import { timeSeriesSelector } from './time-series';
 import { visiblePointsSelector, pointsByTsKeySelector } from './drawing-data';
 import { getVariables, getCurrentParmCd, getRequestTimeRange } from '../../selectors/time-series-selector';
+import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius } from '../../utils';
 
 const REVERSE_AXIS_PARMS = [
     '72019',
@@ -15,7 +16,31 @@ const REVERSE_AXIS_PARMS = [
     '72001',
     '72147',
     '72148'
-]
+];
+
+export const TEMPERATURE_PARAMETERS = {
+    celsius: [
+        '00010',
+        '00020',
+        '45587',
+        '45589',
+        '50011',
+        '72176',
+        '72282',
+        '72283',
+        '72329',
+        '81027',
+        '81029',
+        '85583',
+        '99229',
+        '99230'
+    ],
+    fahrenheit: [
+        '00011',
+        '00021',
+        '45590'
+    ]
+};
 
 /**
  * Create an x-scale oriented on the left
@@ -84,6 +109,26 @@ export const yScaleSelector = createSelector(
     (layout, pointArrays, currentVarParmCd) => {
         const yDomain = getYDomain(pointArrays, currentVarParmCd);
         return createYScale(currentVarParmCd, yDomain, layout.height - (layout.margin.top + layout.margin.bottom));
+    }
+);
+
+export const secondaryYScaleSelector = createSelector(
+    layoutSelector,
+    visiblePointsSelector,
+    getCurrentParmCd,
+    (layout, pointArrays, currentVarParmCd) => {
+        const yDomain = getYDomain(pointArrays, currentVarParmCd);
+        let convertedYDomain = [0, 1];
+        if (TEMPERATURE_PARAMETERS.celsius.includes(currentVarParmCd)) {
+            convertedYDomain = yDomain.map(celsius => convertCelsiusToFahrenheit(celsius));
+        } else if (TEMPERATURE_PARAMETERS.fahrenheit.includes(currentVarParmCd)) {
+            convertedYDomain = yDomain.map(fahrenheit => convertFahrenheitToCelsius(fahrenheit));
+        } else {
+            return null;
+        }
+        return createYScale(
+            currentVarParmCd, convertedYDomain, layout.height - (layout.margin.top + layout.margin.bottom)
+        );
     }
 );
 
