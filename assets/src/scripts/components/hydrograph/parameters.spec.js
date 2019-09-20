@@ -213,7 +213,7 @@ describe('Parameters module', () => {
         });
 
         afterEach(() => {
-            tableDivSelection.remove()
+            tableDivSelection.remove();
         });
 
         it('creates a row for each parameter in a table', () => {

@@ -237,6 +237,7 @@ export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, 
                 .attr('transform', 'rotate(-90)')
                 .attr('x', secondaryYLabelLoc.x )
                 .attr('y', secondaryYLabelLoc.y )
-                .text(secondaryYTitle);
+                .text(secondaryYTitle)
+                    .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
     }
 };
