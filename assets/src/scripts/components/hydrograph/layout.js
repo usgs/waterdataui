@@ -49,7 +49,8 @@ export const layoutSelector = createSelector(
             windowWidth: windowWidth,
             margin: {
                 ...margin,
-                left: margin.left + approxLabelLength
+                left: margin.left + approxLabelLength,
+                right: margin.right + approxLabelLength
             }
         };
     }

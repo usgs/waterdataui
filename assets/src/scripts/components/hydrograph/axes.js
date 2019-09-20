@@ -221,13 +221,20 @@ export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, 
                 .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
 
     if (secondaryYAxis !== null) {
+        const maxXScaleRange = xAxis.scale().range()[1];
+        const secondaryYLabelLoc = {
+            x: (layout.height / -2 + layout.margin.top) * -1,
+            y: (layout.width - maxXScaleRange) * -2.2
+        };
         elem.append('g')
             .attr('class', 'y-axis')
-            .attr('transform', `translate(${layout.width}, ${yLoc.y})`)
+            .attr('transform', `translate(${maxXScaleRange}, ${yLoc.y})`)
             .call(secondaryYAxis)
             .append('text')
                 .attr('class', 'y-axis-label')
                 .attr('transform', 'rotate(90)')
+                .attr('x', secondaryYLabelLoc.x)
+                .attr('y', secondaryYLabelLoc.y)
                 .text('Some Text');
     }
 };
