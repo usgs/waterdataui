@@ -4,9 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.18.0...master)
+## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.19.0...master)
+### Added
+- Added a second Y-axis for temperature parameters.
 
-## [0.18.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.17.0...waterdataui-0.18.0) - 2019-09-20
+## [0.19.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.18.0...waterdataui-0.19.0) - 2019-09-20
 ### Added
 - Added support for user specified date ranges
 - Site Page now contains a Monitoring Camera section with proof of concept implementation.
@@ -16,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Graph server now serves routes from /api/graph-images
 - A selected set of parameter codes show the Y axis reversed
 
-## [0.17.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.16.0...waterdataui-0.17.0) - 2019-05-28
+## [0.18.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.17.0...waterdataui-0.18.0) - 2019-05-28
 ### Added
 - Map now contains Leaflet layer control to toggle satellite and gray with hydro layers
 
@@ -28,7 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 the project styles to use USWDS 2.0.x
 - Moved the USGS watermark to the center of the hydrograph.
 
-## [0.16.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.15.0...waterdataui-0.16.0) - 2019-03-06
+## [0.17.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.16.0...waterdataui-0.17.0) - 2019-03-06
 ### Added
 - Add Docker config for server-rendering PNGs
 - Use a Puppeteer/Chrome process pool for server rendering
@@ -36,6 +38,9 @@ the project styles to use USWDS 2.0.x
 ### Changed
 - Links in monitoring-location now use configurable endpoints.
 
+## [0.16.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.15.0...waterdataui-0.16.0)
+### Added
+- A server to generate graph images.
 
 ## [0.15.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.14.0...waterdataui-0.15.0) - 2019-02-26
 ### Fixed
