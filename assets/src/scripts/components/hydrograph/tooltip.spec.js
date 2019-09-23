@@ -40,6 +40,16 @@ describe('Hydrograph tooltip module', () => {
                     points: data,
                     tsKey: 'compare:P7D',
                     variable: '00060id'
+                },
+                '00010:current': {
+                    points: data,
+                    tsKey: 'current:P7D',
+                    variable: '00010id'
+                },
+                '00010:compare': {
+                    points: data,
+                    tsKey: 'compare:P7D',
+                    variable: '00010id'
                 }
             },
             timeSeriesCollections: {
@@ -60,6 +70,15 @@ describe('Hydrograph tooltip module', () => {
                     },
                     unit: {
                         unitCode: 'ft3/s'
+                    }
+                },
+                '00010id': {
+                    oid: '00010id',
+                    variableCode: {
+                        value: '00010'
+                    },
+                    unit: {
+                        unitCode: 'deg C'
                     }
                 }
             },
@@ -212,6 +231,23 @@ describe('Hydrograph tooltip module', () => {
             expect(value).toBe('14 ft3/s');
             value = div.select('.compare-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('14 ft3/s');
+        });
+
+        it('Creates the text elements with the label for the focus times when there is a second axis', () => {
+            let store = configureStore(Object.assign({}, testState, {
+                timeSeriesState: Object.assign({}, testState.timeSeriesState, {
+                    cursorOffset: 2 * 60 * 60 * 1000,
+                    currentVariableID: '00010id'
+                })
+            }));
+
+            div.call(provide(store))
+                .call(createTooltipText);
+
+            let value = div.select('.current-tooltip-text').text().split(' - ')[0];
+            expect(value).toBe('14 deg C (57.2 deg F)');
+            value = div.select('.compare-tooltip-text').text().split(' - ')[0];
+            expect(value).toBe('14 deg C (57.2 deg F)');
         });
 
         it('Text contents are updated when the store is provided with new focus times', () => {
