@@ -10,10 +10,10 @@ import { cursorTimeSelector, tsCursorPointsSelector } from './cursor';
 import { classesForPoint, MASK_DESC } from './drawing-data';
 import { layoutSelector } from './layout';
 import { xScaleSelector, yScaleSelector } from './scales';
-import { tsTimeZoneSelector } from './time-series';
-import { getCurrentVariable } from '../../selectors/time-series-selector';
+import { tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
+import { getCurrentVariable, getCurrentParmCd } from '../../selectors/time-series-selector';
 import config from '../../config';
-import { mediaQuery } from '../../utils';
+import { mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius } from '../../utils';
 
 
 const createFocusLine = function(elem) {
@@ -71,13 +71,29 @@ export const tooltipPointsSelector = memoize(tsKey => createSelector(
     }
 ));
 
-const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone) {
+const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd) {
     let label = '';
     if (datum && qualifiers) {
         let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
         const maskKeys = set(Object.keys(MASK_DESC));
         const qualiferKeysLower = set(datum.qualifiers.map(x => x.toLowerCase()));
         const maskKeyIntersect = [...qualiferKeysLower.values()].filter(x => maskKeys.has(x));
+        let convertedValue;
+        let convertedUnit;
+        let secondaryAxisValue = '';
+        if (valueStr !== ' ') {
+            if (TEMPERATURE_PARAMETERS.celsius.includes(currentParmCd)) {
+                convertedValue = convertCelsiusToFahrenheit(datum.value);
+                convertedUnit = 'deg F';
+            } else if (TEMPERATURE_PARAMETERS.fahrenheit.includes(currentParmCd)) {
+                convertedValue = convertFahrenheitToCelsius(datum.value);
+                convertedUnit = 'deg C';
+            }
+            if (convertedValue) {
+                secondaryAxisValue = `${convertedValue.toFixed(1)} ${convertedUnit}`;
+            }
+        }
+        valueStr += ` (${secondaryAxisValue})`;
         if (maskKeyIntersect.length) {
             // a data point will have at most one masking qualifier
             valueStr = MASK_DESC[[maskKeyIntersect][0]];
@@ -99,7 +115,7 @@ const unitCodeSelector = createSelector(
     variable => variable ? variable.unit.unitCode : null
 );
 
-const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone, layout}, textGroup) {
+const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone, layout, currentParmCd}, textGroup) {
     // Find the width of the between the y-axis and margin and set the tooltip margin based on that number
     const adjustMarginOfTooltips = function (elem) {
         // set a base number of pixels to bump the tooltips away from y-axis and compensate for slight under reporting
@@ -166,7 +182,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
         .call(adjustTooltipFontSize);
 
     merge
-        .text(datum => getTooltipText(datum, qualifiers, unitCode, ianaTimeZone))
+        .text(datum => getTooltipText(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd))
         .each(function (datum) {
             const classes = classesForPoint(datum);
             const text = select(this);
@@ -190,7 +206,8 @@ export const createTooltipText = function (elem) {
         qualifiers: qualifiersSelector,
         unitCode: unitCodeSelector,
         layout: layoutSelector,
-        ianaTimeZone: tsTimeZoneSelector
+        ianaTimeZone: tsTimeZoneSelector,
+        currentParmCd: getCurrentParmCd
     })));
 };
 
