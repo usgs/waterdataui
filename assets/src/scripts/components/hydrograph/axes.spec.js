@@ -7,6 +7,8 @@ describe('Chart axes', () => {
     // xScale is oriented on the left
     const xScale = scaleLinear().range([0, 10]).domain([1318230000000, 1318230000000]);
     const yScale = scaleLinear().range([0, 10]).domain([0, 10]);
+    let secondaryYScale;
+
     const layout = {
         width: 400,
         height: 200,
@@ -17,17 +19,23 @@ describe('Chart axes', () => {
             left: 65
         }
     };
+
     const timeZone = 'America/Los_Angeles';
-    const {xAxis, yAxis} = createAxes({xScale, yScale}, 100, '00060', 'P7D', timeZone);
     let svg;
 
     describe('appendAxes', () => {
+        secondaryYScale = null;
+        let {xAxis, yAxis, secondaryYAxis} = createAxes(
+            {xScale, yScale, secondaryYScale},
+            100, '00060', 'P7D', timeZone
+        );
+
         beforeEach(() => {
             svg = select(document.body).append('svg');
             appendAxes(svg, {
                 xAxis,
                 yAxis,
-                secondaryYAxis: null,
+                secondaryYAxis: secondaryYAxis,
                 layout: layout,
                 yTitle: 'Label title',
                 secondaryYTitle: null
@@ -41,6 +49,7 @@ describe('Chart axes', () => {
         it('axes created', () => {
             expect(xAxis).toEqual(jasmine.any(Function));
             expect(yAxis).toEqual(jasmine.any(Function));
+            expect(secondaryYAxis).toBeNull();
             expect(yAxis.tickSizeInner()).toBe(100);
             expect(xAxis.scale()).toBe(xScale);
             expect(yAxis.scale()).toBe(yScale);
@@ -54,7 +63,72 @@ describe('Chart axes', () => {
             });
             expect(tspans.join(' ')).toEqual('Label title');
         });
-        // TODO: Add tests to make sure the second axis doesn't render.
+
+        it('there is only one y-axis', () => {
+            const yAxes = svg.selectAll('g.y-axis');
+            expect(yAxes.size()).toEqual(1);
+        });
+    });
+
+    describe('appendAxes with a secondary y-axis', () => {
+        secondaryYScale = scaleLinear().range([0, 10]).domain([30, 40]);
+        let {xAxis, yAxis, secondaryYAxis} = createAxes(
+            {xScale, yScale, secondaryYScale},
+            100, '00060', 'P7D', timeZone
+        );
+
+        beforeEach(() => {
+            svg = select(document.body).append('svg');
+            appendAxes(svg, {
+                xAxis,
+                yAxis,
+                secondaryYAxis: secondaryYAxis,
+                layout: layout,
+                yTitle: 'Label title',
+                secondaryYTitle: 'Second label title'
+            });
+        });
+
+        afterEach(() => {
+            select('svg').remove();
+        });
+
+        it('creates all axes', () => {
+            expect(xAxis).toEqual(jasmine.any(Function));
+            expect(yAxis).toEqual(jasmine.any(Function));
+            expect(secondaryYAxis).toEqual(jasmine.any(Function));
+            expect(yAxis.tickSizeInner()).toBe(100);
+            expect(secondaryYAxis.tickSizeInner()).toBe(100);
+            expect(xAxis.scale()).toBe(xScale);
+            expect(yAxis.scale()).toBe(yScale);
+            expect(secondaryYAxis.scale()).toBe(secondaryYScale);
+        });
+
+        it('there is are two y-axes that are properly translated', () => {
+            const yAxes = svg.selectAll('g.y-axis');
+            expect(yAxes.size()).toEqual(2);
+
+            let translations = [];
+            svg.selectAll('.y-axis').each(function () {
+                let y = select(this);
+                translations.push(y.attr('transform'));
+            });
+
+            expect(translations[0]).toEqual('translate(0, 0)');
+            expect(translations[1]).toEqual('translate(10, 0)');
+        });
+
+        it('two labels are appended', () => {
+            let tspans = [];
+            svg.selectAll('.y-axis-label').each(function () {
+                let y = select(this);
+                y.selectAll('tspan').each(function () {
+                   tspans.push(this.textContent);
+                });
+            });
+            expect(tspans[0]).toEqual('Label title');
+            expect(tspans[1]).toEqual('Second label title');
+        });
     });
 
     describe('generateDateTicks', () => {
