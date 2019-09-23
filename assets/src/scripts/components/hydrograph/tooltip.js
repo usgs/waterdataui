@@ -71,7 +71,7 @@ export const tooltipPointsSelector = memoize(tsKey => createSelector(
     }
 ));
 
-export const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd) {
+const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd) {
     let label = '';
     if (datum && qualifiers) {
         let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
