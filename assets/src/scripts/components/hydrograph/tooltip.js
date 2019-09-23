@@ -71,7 +71,7 @@ export const tooltipPointsSelector = memoize(tsKey => createSelector(
     }
 ));
 
-const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd) {
+export const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd) {
     let label = '';
     if (datum && qualifiers) {
         let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
@@ -91,9 +91,9 @@ const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, curre
             }
             if (convertedValue) {
                 secondaryAxisValue = `${convertedValue.toFixed(1)} ${convertedUnit}`;
+                valueStr += ` (${secondaryAxisValue})`;
             }
         }
-        valueStr += ` (${secondaryAxisValue})`;
         if (maskKeyIntersect.length) {
             // a data point will have at most one masking qualifier
             valueStr = MASK_DESC[[maskKeyIntersect][0]];
