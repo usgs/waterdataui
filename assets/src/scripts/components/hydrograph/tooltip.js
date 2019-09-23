@@ -78,10 +78,9 @@ const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, curre
         const maskKeys = set(Object.keys(MASK_DESC));
         const qualiferKeysLower = set(datum.qualifiers.map(x => x.toLowerCase()));
         const maskKeyIntersect = [...qualiferKeysLower.values()].filter(x => maskKeys.has(x));
-        let convertedValue;
-        let convertedUnit;
-        let secondaryAxisValue = '';
         if (valueStr !== ' ') {
+            let convertedValue;
+            let convertedUnit;
             if (TEMPERATURE_PARAMETERS.celsius.includes(currentParmCd)) {
                 convertedValue = convertCelsiusToFahrenheit(datum.value);
                 convertedUnit = 'deg F';
@@ -90,7 +89,7 @@ const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, curre
                 convertedUnit = 'deg C';
             }
             if (convertedValue) {
-                secondaryAxisValue = `${convertedValue.toFixed(1)} ${convertedUnit}`;
+                const secondaryAxisValue = `${convertedValue.toFixed(1)} ${convertedUnit}`;
                 valueStr += ` (${secondaryAxisValue})`;
             }
         }
