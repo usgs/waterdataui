@@ -1,6 +1,6 @@
 import { bisector } from 'd3-array';
 import memoize from 'fast-memoize';
-import { createSelector } from 'reselect';
+import { createSelector, createStructuredSelector } from 'reselect';
 import { currentVariablePointsByTsIdSelector } from './drawing-data';
 import { layoutSelector } from './layout';
 import { xScaleSelector } from './scales';
@@ -131,9 +131,14 @@ export const cursorSlider = function (elem) {
                     input.property('value', cursorOffset || input.attr('max'))
                         .classed('active', cursorOffset !== null);
                 }, cursorOffsetSelector))
-                .call(link((input, layout) => {
+                .call(link((input, {layout, xScale}) => {
+                    const maxXScaleRange = xScale.range()[1];
                     input.style('left', layout.margin.left - SLIDER_OFFSET_PX + 'px');
-                    input.style('width', layout.width - (layout.margin.left + layout.margin.right) + SLIDER_OFFSET_PX * 2 + 'px');
-                }, layoutSelector));
+                    input.style('right', layout.margin.right - SLIDER_OFFSET_PX + 'px');
+                    input.style('width', maxXScaleRange - (layout.margin.left + layout.margin.right) + SLIDER_OFFSET_PX * 2 + 'px');
+                }, createStructuredSelector( {
+                    layout: layoutSelector,
+                    xScale: xScaleSelector('current')
+                })));
         });
 };

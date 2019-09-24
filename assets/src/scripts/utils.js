@@ -220,3 +220,21 @@ export const parseRDB = function(rdbData) {
     }
     return recordData;
 };
+
+/*
+ * Convert a temperature measurement in fahrenheit to celsius.
+ * @param {Number} fahrenheit
+ * @returns {Number} measurement in celsius
+ */
+export const convertFahrenheitToCelsius = function(fahrenheit) {
+    return (fahrenheit - 32) * 5/9;
+};
+
+/*
+ * Convert a temperature measurement in celsius to fahrenheit.
+ * @param {Number} celsius
+ * @returns {Number} measurement in fahrenheit
+ */
+export const convertCelsiusToFahrenheit = function(celsius) {
+    return celsius * 9/5 + 32;
+};
