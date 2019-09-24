@@ -168,7 +168,7 @@ export const axesSelector = createSelector(
     getCurrentParmCd,
     getCurrentDateRange,
     secondaryYLabelSelector,
-    (xScale, yScale, secondaryYScale, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange, plotSecondayYLabel) => {
+    (xScale, yScale, secondaryYScale, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange, plotSecondaryYLabel) => {
         return {
             ...createAxes(
                 {xScale, yScale, secondaryYScale},
@@ -179,7 +179,7 @@ export const axesSelector = createSelector(
             ),
             layout: layout,
             yTitle: plotYLabel,
-            secondaryYTitle: plotSecondayYLabel
+            secondaryYTitle: plotSecondaryYLabel
         };
     }
 );
