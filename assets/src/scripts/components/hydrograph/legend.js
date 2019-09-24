@@ -200,10 +200,9 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
 const legendDisplaySelector = createSelector(
     (state) => state.timeSeriesState.showSeries,
     getCurrentVariableMedianMetadata,
-    getMethods,
     uniqueClassesSelector('current'),
     uniqueClassesSelector('compare'),
-    (showSeries, medianSeries, methods, currentClasses, compareClasses) => {
+    (showSeries, medianSeries, currentClasses, compareClasses) => {
         return {
             current: showSeries.current ? currentClasses : undefined,
             compare: showSeries.compare ? compareClasses : undefined,
