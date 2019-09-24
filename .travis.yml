@@ -15,7 +15,7 @@ env:
     - COVERAGE=1 TEST_TARGET=test
   matrix:
     - if: branch = master
-      KARMA_BROWSERSTACK=1
+      env: KARMA_BROWSERSTACK=1
 
 matrix:
   fast_finish: true
