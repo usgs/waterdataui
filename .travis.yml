@@ -14,8 +14,9 @@ env:
     - secure: "drSHA/Rg252t/f/c12uaJs0zmsJaNECzS1Cl+hWcxkJzk3Ojucryl4kShrCGkxUcegquYmIpOo6r3rS+noKlmQhsvJJSIZLTYud9TlGjdpViNIluaYzHj4JoKMk3f2lV7n+lrYMGGLFSTeIriWj5IK2kydJMbMCuvrKrFm83Jm1ITlvD5tJEy+EHBBkCHAE83+lmVFC3USPEGAO0YthDn+NdZy+JADDAvmfQ1bTCJRfPUUNGjiEGy+cmteWmbHARzeaaIyySky8bzVd2ILQqgz2dO9tLWSvnLC8AxYddRrhaMQQttVQTr+0tmVeCeOcl7GLsX7BaH/jDPKARP0ZkuK1WgpSlgVvkSx0HePGU+f1U+iFd+YnavNYIYNim+SCCEbqcarUJQJU43urlRuNoEriJdq/qc64snf+nxp+BUgmhB/GBtoGbAhDYb8WPd9Hu9ZmCnGhGsO03o5ttgVyRebEJYLsrUu2Qhk7NHTDaDx3R/Ttdtn1t6l9XDUpjB+VFks8b6SyrBuF7tNSE6Ly6bBDoWCxK6J2Llb//VgSFx+27uTPfy8vAkS9T2MW9jarQauhRHI2LkSRTYJHq8odbIfdCBH+Ucb/nGHxRbldoSZBkuBpUmg5xwr9uC0ezuZcV0Zmm7gqZKQoMS/RxOUjx3+emJpIRz4PNm1MeVWbcdeI="
     - COVERAGE=1 TEST_TARGET=test
   matrix:
-    - if: branch = master
-      env: KARMA_BROWSERSTACK=1
+    - include:
+        if: branch = master
+        env: KARMA_BROWSERSTACK=1
 
 matrix:
   fast_finish: true
