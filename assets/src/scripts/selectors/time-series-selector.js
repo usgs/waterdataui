@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 import memoize from 'fast-memoize';
 import { createSelector } from 'reselect';
 
@@ -142,10 +144,10 @@ export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSele
         // If this is a period-based query (eg, P7D), use the request time
         // as the end date.
         if (notes['filter:timeRange'].mode === 'PERIOD') {
-            const start = new Date(notes.requestDT);
-            start.setDate(start.getDate() - notes['filter:timeRange'].periodDays);
+            const endTime = DateTime.fromMillis(notes.requestDT);
+            const startTime = endTime.minus({days: notes['filter:timeRange'].periodDays});
             result = {
-                start: start.getTime(),
+                start: startTime.toMillis(),
                 end: notes.requestDT
             };
         } else {
