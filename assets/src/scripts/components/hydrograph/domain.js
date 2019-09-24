@@ -88,7 +88,6 @@ export const getYDomain = function (pointArrays, currentVarParmCd) {
     } else {
         yExtent = [0, 1];
     }
-
     return yExtent;
 };
 

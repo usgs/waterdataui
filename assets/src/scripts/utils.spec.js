@@ -1,5 +1,8 @@
 import { select } from 'd3-selection';
-import { unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities, setEquality, wrap, mediaQuery, calcStartTime, callIf, parseRDB } from './utils';
+import {
+    unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities, setEquality,
+    wrap, mediaQuery, calcStartTime, callIf, parseRDB, convertFahrenheitToCelsius,
+    convertCelsiusToFahrenheit } from './utils';
 
 
 describe('Utils module', () => {
@@ -204,7 +207,24 @@ describe('Utils module', () => {
            expect(result.length).toEqual(0);
         });
     });
+
+    describe('convertFahrenheitToCelsius', () => {
+        it('converts from degrees F to degrees C correctly', () => {
+            expect(convertFahrenheitToCelsius(212)).toEqual(100);
+            expect(convertFahrenheitToCelsius(32)).toEqual(0);
+            expect(convertFahrenheitToCelsius(-40)).toEqual(-40);
+        });
+    });
+
+    describe('convertCelsiusToFahrenheit', () => {
+        it('converts from degrees C to degrees F correctly', () => {
+            expect(convertCelsiusToFahrenheit(100)).toEqual(212);
+            expect(convertCelsiusToFahrenheit(0)).toEqual(32);
+            expect(convertCelsiusToFahrenheit(-40)).toEqual(-40);
+        });
+    });
 });
+
 const MOCK_RDB = `#
 #
 # US Geological Survey, Water Resources Data

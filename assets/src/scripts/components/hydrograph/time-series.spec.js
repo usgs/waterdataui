@@ -1,4 +1,7 @@
-import { timeSeriesSelector, hasTimeSeriesWithPoints, isVisibleSelector, yLabelSelector, titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, allTimeSeriesSelector, tsTimeZoneSelector } from './time-series';
+import {
+    timeSeriesSelector, hasTimeSeriesWithPoints, isVisibleSelector, yLabelSelector, titleSelector,
+    descriptionSelector, currentVariableTimeSeriesSelector, allTimeSeriesSelector, tsTimeZoneSelector,
+    secondaryYLabelSelector} from './time-series';
 
 
 const TEST_DATA = {
@@ -43,6 +46,28 @@ const TEST_DATA = {
                     estimated: false
                 }, {
                     value: 3,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }]
+            },
+            '00011': {
+                tsKey: 'compare:P7D',
+                startTime: 1520351100000,
+                endTime: 1520948700000,
+                variables: '45807195',
+                points: [{
+                    value: 68,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 70,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 77,
                     qualifiers: ['P'],
                     approved: false,
                     estimated: false
@@ -96,9 +121,17 @@ const TEST_DATA = {
                 variableCode: {
                     value: '00010'
                 },
-                variableName: 'Gage Height',
-                variableDescription: 'Gage Height in feet',
+                variableName: 'Temperature, water, degrees Celsius',
+                variableDescription: 'Water Temperature in Celsius',
                 oid: '45807196'
+            },
+            '45807195': {
+                variableCode: {
+                    value: '00011'
+                },
+                variableName: 'Temperature, water, degrees Fahrenheit',
+                variableDescription: 'Water Temperature in Fahrenheit',
+                oid: '45807195'
             }
         },
         queryInfo: {
@@ -395,6 +428,32 @@ describe('TimeSeries module', () => {
                     currentVariableID: null
                 }
             })).toBe('');
+        });
+    });
+
+    describe('secondaryYLabelSelector', () => {
+        it('returns a secondary label when a celsius parameter is selected', () => {
+             expect(secondaryYLabelSelector({
+                 ...TEST_DATA,
+                 timeSeriesState: {
+                     ...TEST_DATA.timeSeriesState,
+                     currentVariableID: '45807196'
+                 }
+             })).toEqual('degrees Fahrenheit');
+        });
+
+        it('returns a secondary label when a fahrenheit parameter is selected', () => {
+             expect(secondaryYLabelSelector({
+                 ...TEST_DATA,
+                 timeSeriesState: {
+                     ...TEST_DATA.timeSeriesState,
+                     currentVariableID: '45807195'
+                 }
+             })).toEqual('degrees Celsius');
+        });
+
+        it('does not return a secondary when a parameter when a non-temperature parameter is selected', () => {
+             expect(secondaryYLabelSelector(TEST_DATA)).toBeNull();
         });
     });
 

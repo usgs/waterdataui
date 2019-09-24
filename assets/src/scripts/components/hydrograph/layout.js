@@ -12,7 +12,7 @@ export const ASPECT_RATIO = 1 / 2;
 export const ASPECT_RATIO_PERCENT = `${100 * ASPECT_RATIO}%`;
 const MARGIN = {
     top: 25,
-    right: 0,
+    right: 25,
     bottom: 10,
     left: 45
 };
@@ -49,7 +49,8 @@ export const layoutSelector = createSelector(
             windowWidth: windowWidth,
             margin: {
                 ...margin,
-                left: margin.left + approxLabelLength
+                left: margin.left + approxLabelLength,
+                right: margin.right + approxLabelLength
             }
         };
     }
