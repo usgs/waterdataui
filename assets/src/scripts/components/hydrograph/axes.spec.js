@@ -114,8 +114,8 @@ describe('Chart axes', () => {
                 translations.push(y.attr('transform'));
             });
 
-            expect(translations[0]).toEqual('translate(0, 0)');
-            expect(translations[1]).toEqual('translate(10, 0)');
+            expect(translations[0]).toContain('translate(0');
+            expect(translations[1]).toContain('translate(10');
         });
 
         it('two labels are appended', () => {
