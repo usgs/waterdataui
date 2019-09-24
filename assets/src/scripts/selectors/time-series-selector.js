@@ -135,7 +135,8 @@ export const getTimeSeriesCollectionIds = memoize((tsKey, period, parmCd) => cre
  * */
 export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSelector(
     getTsQueryInfo(tsKey, period, parmCd),
-    (tsQueryInfo) => {
+    getIanaTimeZone,
+    (tsQueryInfo, ianaTimeZone) => {
         const notes = tsQueryInfo.notes ? tsQueryInfo.notes : null;
         if (!notes) {
             return null;
@@ -144,8 +145,8 @@ export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSele
         // If this is a period-based query (eg, P7D), use the request time
         // as the end date.
         if (notes['filter:timeRange'].mode === 'PERIOD') {
-            const endTime = DateTime.fromMillis(notes.requestDT);
-            const startTime = endTime.minus({hours: notes['filter:timeRange'].periodDays * 24});
+            const endTime = DateTime.fromMillis(notes.requestDT, {zone: ianaTimeZone});
+            const startTime = endTime.minus({days: notes['filter:timeRange'].periodDays});
             result = {
                 start: startTime.toMillis(),
                 end: notes.requestDT

@@ -297,6 +297,7 @@ describe('timeSeriesSelector', () => {
     describe('getRequestTimeRange', () => {
         const TEST_DATA = {
             series: {
+                ianaTimeZone: 'America/Chicago',
                 queryInfo: {
                     'current:P7D': {
                         notes: {
