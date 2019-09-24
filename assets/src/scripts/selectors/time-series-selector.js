@@ -145,7 +145,7 @@ export const getRequestTimeRange = memoize((tsKey, period, parmCd) => createSele
         // as the end date.
         if (notes['filter:timeRange'].mode === 'PERIOD') {
             const endTime = DateTime.fromMillis(notes.requestDT);
-            const startTime = endTime.minus({days: notes['filter:timeRange'].periodDays});
+            const startTime = endTime.minus({hours: notes['filter:timeRange'].periodDays * 24});
             result = {
                 start: startTime.toMillis(),
                 end: notes.requestDT
