@@ -20,7 +20,9 @@ module.exports = {
     input: 'src/scripts/index.js',
     plugins: [
         alias({
-            leaflet: path.resolve(__dirname, 'node_modules/leaflet/dist/leaflet-src.esm.js')
+            entries: [
+                {find: 'leaflet', replacement: path.resolve(__dirname, 'node_modules/leaflet/dist/leaflet-src.esm.js')}
+            ]
         }),
         resolve({
             mainFields: ['module', 'jsnext', 'main']
