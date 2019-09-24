@@ -17,7 +17,7 @@ env:
 matrix:
   fast_finish: true
   include:
-    - if: branch = master
+    - branch: master
       env: KARMA_BROWSERSTACK=1
 
 
