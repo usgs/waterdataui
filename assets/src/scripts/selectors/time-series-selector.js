@@ -112,7 +112,7 @@ export const getTSRequest = memoize((tsKey, period, parmCd) => createSelector(
     (requests, tsRequestKey) => requests[tsRequestKey] || {}
 ));
 
-/*
+ /*
  * @param {String} tsKey - current or compare
  * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
  * @param {String} or null parmCd - Only need to specify if period is something other than P7D or null
