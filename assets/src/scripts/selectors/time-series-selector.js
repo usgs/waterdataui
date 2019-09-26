@@ -6,7 +6,7 @@ import { createSelector } from 'reselect';
  */
 export const getVariables = state => state.series.variables ? state.series.variables : null;
 
-export const getMethods = state => state.series.methods ? state.series.methods : null;
+export const getMethods = state => state.series.methods ? state.series.methods : {};
 
 export const getQueryInfo = state => state.series.queryInfo || {};
 

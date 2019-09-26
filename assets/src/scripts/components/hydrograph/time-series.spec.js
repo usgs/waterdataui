@@ -171,15 +171,15 @@ const TEST_DATA = {
         methods: {
             69329: {
                 methodDescription: '',
-                methodId: 69928
+                methodID: 69928
             },
             69330: {
                 methodDescription: '4.1 ft from riverbed (middle)',
-                methodId: 69930
+                methodID: 69930
             },
             69331: {
                 methodDescription: '1.0 ft from riverbed (bottom)',
-                methodId: 69931
+                methodID: 69931
             }
         },
         queryInfo: {
@@ -214,7 +214,7 @@ const TEST_DATA = {
     }
 };
 
-fdescribe('TimeSeries module', () => {
+describe('TimeSeries module', () => {
 
     describe('allTimesSeriesSelector', () => {
 
@@ -355,6 +355,15 @@ fdescribe('TimeSeries module', () => {
 
     describe('getAllTimeSeriesForCurrentVariable', () => {
 
+        it('Expect no time series if the current variable is not set', () => {
+            const newTestData = {
+                ...TEST_DATA,
+                timeSeriesState: {
+                }
+            };
+            expect(getAllTimeSeriesForCurrentVariable(newTestData)).toEqual({});
+        });
+
         it('Expect no time series if the current variable does not have any timeSeries', () => {
             const newTestData = {
                 ...TEST_DATA,
@@ -478,11 +487,11 @@ fdescribe('TimeSeries module', () => {
             expect(result.length).toEqual(2);
             expect(result).toContain({
                 methodDescription: '4.1 ft from riverbed (middle)',
-                methodId: 69930
+                methodID: 69930
             });
             expect(result).toContain({
                 methodDescription: '1.0 ft from riverbed (bottom)',
-                methodId: 69931
+                methodID: 69931
             });
         });
     });

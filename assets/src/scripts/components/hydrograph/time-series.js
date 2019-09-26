@@ -93,12 +93,14 @@ export const getAllTimeSeriesForCurrentVariable = createSelector(
     allTimeSeriesSelector,
     (variable, timeSeries) => {
         let ts = {};
-        Object.keys(timeSeries).forEach(key => {
-            const series= timeSeries[key];
-            if (series.variable === variable.oid) {
-                ts[key] = series;
-            }
-        });
+        if (variable) {
+            Object.keys(timeSeries).forEach(key => {
+                const series = timeSeries[key];
+                if (series.variable === variable.oid) {
+                    ts[key] = series;
+                }
+            });
+        }
         return ts;
     }
 );
@@ -117,7 +119,7 @@ export const getAllMethodsForCurrentVariable = createSelector(
         const currentMethodIds = uniq(Object.values(timeSeries).map((ts) => ts.method));
 
         return allMethods.filter((method) => {
-            return _includes(currentMethodIds, method.methodId);
+            return _includes(currentMethodIds, method.methodID);
         });
     }
 );

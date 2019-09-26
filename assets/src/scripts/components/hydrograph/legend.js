@@ -7,7 +7,6 @@ import { CIRCLE_RADIUS } from './layout';
 import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from './markers';
 import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from './drawing-data';
 import config from '../../config';
-import { getMethods } from '../../selectors/time-series-selector';
 import { getCurrentVariableMedianMetadata } from '../../selectors/median-statistics-selector';
 import { mediaQuery } from '../../utils';
 
