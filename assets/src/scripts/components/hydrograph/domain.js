@@ -24,7 +24,7 @@ export const SYMLOG_PARMS = [
  *  @return {Array} - array of two numbers
  */
 export const extendDomain = function (domain, lowerBoundPOW10) {
-    const isPositive = domain[0] >= 0 && domain[1] >= 0;
+    const isPositive = domain[0] > 0 && domain[1] > 0;
     let extendedDomain;
 
     // Pad domains on both ends by PADDING_RATIO.
