@@ -23,6 +23,10 @@ describe('domain module', () => {
             const highValDomain = extendDomain([9000, 10000], true);
             expect(highValDomain[0]).toBeCloseTo(8109.35, 2);
             expect(highValDomain[1]).toEqual(10000 + (10000 - 9000) * .2);
+
+            const decimalValDomain = extendDomain([0.2, 10], true);
+            expect(decimalValDomain[0]).toBeCloseTo(0.12, 2);
+            expect(decimalValDomain[1]).toEqual(10 + (10 - 0.2) * .2);
         });
 
         it('20% padding on linear scales, zero lower bound', () => {

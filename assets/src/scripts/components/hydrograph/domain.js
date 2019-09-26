@@ -36,8 +36,9 @@ export const extendDomain = function (domain, lowerBoundPOW10) {
 
     // Log scales lower-bounded based on the order of magnitude of the domain minimum.
     if (lowerBoundPOW10) {
+        const absLog10 = Math.abs(Math.log(domain[0]));
         extendedDomain = [
-            isPositive ? domain[0] * Math.log(domain[0])/(Math.log(domain[0]) + 1) : domain[0],
+            isPositive ? domain[0] * absLog10/(absLog10 + 1) : domain[0],
             extendedDomain[1]
         ];
     }
