@@ -5,7 +5,7 @@ applicationName: "graph-server"
 # name of the docker image
 dockerImageName: "wdfn_graph_server"
 # location of the Dockerfile
-dockerFileDirectory: "./graph-server"
+buildContext: "./graph-server"
 # port that is exposed by your container
 containerPort: 2929
 # docker image path in artifactory
