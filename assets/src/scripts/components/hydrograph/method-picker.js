@@ -20,7 +20,6 @@ export const drawMethodPicker = function(elem) {
         .attr('class', 'usa-select')
         .attr('id', 'method-picker')
         .on('change', dispatch(function() {
-            console.log('Setting current method id ' + select(this).property('value'));
             return Actions.setCurrentMethodID(parseInt(select(this).property('value')));
         }))
         .call(link(function(elem, methods) {
@@ -31,7 +30,6 @@ export const drawMethodPicker = function(elem) {
                     .node().value = method.methodID;
             });
             if (methods.length) {
-                console.log('setting select value to ' + methods[0].methodID);
                 elem.dispatch('change');
             }
         }, getAllMethodsForCurrentVariable));
