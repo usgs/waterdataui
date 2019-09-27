@@ -2,8 +2,10 @@
  * Pick list for methods module
  */
 
-import{ link } from '../../lib/redux';
+import { select } from 'd3-selection';
 
+import{ dispatch, link } from '../../lib/redux';
+import { Actions } from '../../store';
 import { getAllMethodsForCurrentVariable } from './time-series';
 
 export const drawMethodPicker = function(elem) {
@@ -17,13 +19,21 @@ export const drawMethodPicker = function(elem) {
     pickerContainer.append('select')
         .attr('class', 'usa-select')
         .attr('id', 'method-picker')
+        .on('change', dispatch(function() {
+            console.log('Setting current method id ' + select(this).property('value'));
+            return Actions.setCurrentMethodID(parseInt(select(this).property('value')));
+        }))
         .call(link(function(elem, methods) {
             elem.selectAll('option').remove();
             methods.forEach((method) => {
                 elem.append('option')
-                    .attr('value', method.methodId)
-                    .text(method.methodDescription ? `${method.methodDescription} (${method.methodID})` : method.methodID);
+                    .text(method.methodDescription ? `${method.methodDescription} (${method.methodID})` : method.methodID)
+                    .node().value = method.methodID;
             });
+            if (methods.length) {
+                console.log('setting select value to ' + methods[0].methodID);
+                elem.dispatch('change');
+            }
         }, getAllMethodsForCurrentVariable));
 };
 

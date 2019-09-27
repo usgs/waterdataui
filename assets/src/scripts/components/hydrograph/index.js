@@ -22,7 +22,7 @@ import { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK
     getCurrentVariableMedianStatPoints } from './drawing-data';
 import { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } from './layout';
 import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
-import { drawMethodPicker } from './method-picker'
+import { drawMethodPicker } from './method-picker';
 import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
 import { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } from './scales';
 import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector,

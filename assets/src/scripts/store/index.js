@@ -323,6 +323,12 @@ export const Actions = {
             variableID
         };
     },
+    setCurrentMethodID(methodID) {
+        return {
+            type: 'SET_CURRENT_METHOD_ID',
+            methodID
+        };
+    },
     setCurrentDateRange(period) {
         return {
             type: 'SET_CURRENT_DATE_RANGE',

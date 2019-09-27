@@ -14,6 +14,8 @@ export const getRequests = state => state.series.requests || {};
 
 export const getCurrentVariableID = state => state.timeSeriesState.currentVariableID;
 
+export const getCurrentMethodID = state => state.timeSeriesState.currentMethodID;
+
 export const getCurrentDateRange = state => state.timeSeriesState.currentDateRange;
 
 export const getLoadingTsKeys = state => state.timeSeriesState.loadingTSKeys;
