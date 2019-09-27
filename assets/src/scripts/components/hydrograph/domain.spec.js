@@ -11,7 +11,7 @@ import {
 
 describe('domain module', () => {
     describe('extendDomain', () => {
-        it('lower bounds on nearest power of 10 with symlog parameter, upper bound 20%', () => {
+        it('lower bounds are calculated based on order of magnitude with the parameter, upper bound 20%', () => {
             const lowValDomain = extendDomain([50, 1000], true);
             expect(lowValDomain[0]).toBeCloseTo(39.82, 2);
             expect(lowValDomain[1]).toEqual(1000 + (1000 - 50) * .2);

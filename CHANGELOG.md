@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added a second Y-axis for temperature parameters
 
 ### Changed
-- Changed how the lower bound on symlog scales are calculated to be closer the minimum y-value on the plot
+- Changed how the lower bound on symlog scales are calculated to be closer to the minimum y-value on the plot
 
 ## [0.19.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.18.0...waterdataui-0.19.0) - 2019-09-20
 ### Added
