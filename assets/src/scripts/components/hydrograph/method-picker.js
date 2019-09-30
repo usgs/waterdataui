@@ -15,7 +15,7 @@ export const drawMethodPicker = function(elem) {
     pickerContainer.append('label')
         .attr('class', 'usa-label')
         .attr('for', 'method-picker')
-        .text('Available Methods');
+        .text('Description');
     pickerContainer.append('select')
         .attr('class', 'usa-select')
         .attr('id', 'method-picker')

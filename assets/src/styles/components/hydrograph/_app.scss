@@ -23,6 +23,9 @@
         @include u-text( 'bold' );
     }
 }
+#ts-method-select-container {
+    @include u-margin-bottom(2);
+}
 
 #select-time-series  {
     label {
