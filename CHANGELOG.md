@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added support for user specified date ranges
 - Site Page now contains a Monitoring Camera section with proof of concept implementation.
 - Added NLDI navigation results
+- Added picker to pick a method description that will be highlighted in the hydrograph.
 
 ### Changed
 - Graph server now serves routes from /api/graph-images
