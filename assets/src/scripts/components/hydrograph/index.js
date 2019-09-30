@@ -63,6 +63,7 @@ const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
                     .classed('line-segment', true)
                     .classed('approved', line.classes.approved)
                     .classed('estimated', line.classes.estimated)
+                    .classed('not-current-method', !line.classes.currentMethod)
                     .attr('r', CIRCLE_RADIUS_SINGLE_PT)
                     .attr('cx', d => xScale(d.dateTime))
                     .attr('cy', d => yScale(d.value));
@@ -75,6 +76,7 @@ const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
                     .classed('line-segment', true)
                     .classed('approved', line.classes.approved)
                     .classed('estimated', line.classes.estimated)
+                    .classed('not-current-method', !line.classes.currentMethod)
                     .classed(`ts-${tsKey}`, true)
                     .attr('d', tsLine);
             }
