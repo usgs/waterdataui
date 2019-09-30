@@ -675,6 +675,94 @@ describe('drawingData module', () => {
                 }]
             });
         });
+
+        it('Should not set currentMethod to true if method is selected', () => {
+            expect(lineSegmentsSelector('current')({
+                ...TEST_DATA,
+                timeSeriesState : {
+                    ...TEST_DATA.timeSeriesState,
+                    currentMethodID: 69929
+                }
+            })).toEqual({
+                '69928:00060': [
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': false,
+                            'currentMethod': false,
+                            'dataMask': null
+                        },
+                        'points': [{
+                                'approved': false,
+                                'estimated': false,
+                                'value': 10,
+                                'qualifiers': ['P']
+                        }]
+                    },
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': false,
+                            'currentMethod': false,
+                            'dataMask': 'ice'
+                        },
+                        'points': [{
+                                'approved': false,
+                                'estimated': false,
+                                'value': null,
+                                'qualifiers': ['P', 'ICE']
+                        }]
+                    },
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': false,
+                            'currentMethod': false,
+                            'dataMask': 'fld'
+                        },
+                        'points': [{
+                                'approved': false,
+                                'estimated': false,
+                                'value': null,
+                                'qualifiers': ['P', 'FLD']
+                        }]
+                    }
+                ],
+                '69928:00045': [
+                    {
+                        'classes': {
+                            'approved': false,
+                            'estimated': false,
+                            'currentMethod': false,
+                            'dataMask': null
+                        },
+                        'points': [
+                            {
+                                'approved': false,
+                                'estimated': false,
+                                'value': 0,
+                                'qualifiers': ['P']
+                            }, {
+
+                                'approved': false,
+                                'estimated': false,
+                                'value': 0.01,
+                                'qualifiers': ['P']
+                            }, {
+                                'approved': false,
+                                'estimated': false,
+                                'value': 0.03,
+                                'qualifiers': ['P']
+                            }, {
+                                'approved': false,
+                                'estimated': false,
+                                'value': 0.06,
+                                'qualifiers': ['P']
+                            }
+                        ]
+                    }
+                ]});
+        });
     });
 
     describe('lineSegmentsByParmCdSelector', () => {
