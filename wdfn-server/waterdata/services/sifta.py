@@ -2,6 +2,8 @@
 Helpers to retrieve SIFTA cooperator data.
 """
 
+import json
+
 from waterdata import app
 from waterdata.utils import execute_get_request
 
@@ -24,5 +26,9 @@ def get_cooperators(site_no, district_cd):
     response = execute_get_request(url)
     if response.status_code != 200:
         return []
-
-    return response.json().get('Customers', [])
+    try:
+        resp_json = response.json()
+    except json.JSONDecodeError:
+        return []
+    else:
+        return resp_json.get('Customers', [])

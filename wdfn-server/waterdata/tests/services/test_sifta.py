@@ -16,7 +16,7 @@ MOCK_RESPONSE = """
 MOCK_CUSTOMER_LIST = json.loads(MOCK_RESPONSE)['Customers']
 
 
-@pytest.fixture(scope='module', autouse=True)
+@pytest.fixture(scope='module')
 def mock_request():
     """Return mock response on all GET requests"""
     with requests_mock.mock() as req:
@@ -24,25 +24,46 @@ def mock_request():
         yield
 
 
+@pytest.fixture(scope='module')
+def mock_bad_request():
+    """
+    Mock response with invalid JSON.
+
+    """
+    with requests_mock.mock() as req:
+        req.get(requests_mock.ANY, exc=json.JSONDecodeError)
+
+
+@pytest.mark.usefixtures('mock_request')
 def test_sifta_response(config):
     config['COOPERATOR_LOOKUP_ENABLED'] = True
     cooperators = sifta.get_cooperators('12345', 'district code ignored')
     assert cooperators == MOCK_CUSTOMER_LIST, 'Expected response'
 
 
+@pytest.mark.usefixtures('mock_request')
 def test_sifta_disabled(config):
     config['COOPERATOR_LOOKUP_ENABLED'] = False
     cooperators = sifta.get_cooperators('12345', 'district code ignored')
     assert cooperators == [], 'Expected empty response'
 
 
+@pytest.mark.usefixtures('mock_request')
 def test_sifta_district_enabled(config):
     config['COOPERATOR_LOOKUP_ENABLED'] = ['10', '15']
     cooperators = sifta.get_cooperators('12345', '10')
     assert cooperators == MOCK_CUSTOMER_LIST, 'Expected response'
 
 
+@pytest.mark.usefixtures('mock_request')
 def test_sifta_district_disabled(config):
+    config['COOPERATOR_LOOKUP_ENABLED'] = ['10', '15']
+    cooperators = sifta.get_cooperators('12345', '20')
+    assert cooperators == [], 'Expected empty response'
+
+
+@pytest.mark.usefixtures('mock_bad_request')
+def test_unparsable_json(config):
     config['COOPERATOR_LOOKUP_ENABLED'] = ['10', '15']
     cooperators = sifta.get_cooperators('12345', '20')
     assert cooperators == [], 'Expected empty response'

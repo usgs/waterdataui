@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Changed how the lower bound on symlog scales are calculated to be closer to the minimum y-value on the plot
 
+### Fixed
+- Fixed issue where invalid cooperator data would cause the a monitoring location page to error
+
 ## [0.19.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.18.0...waterdataui-0.19.0) - 2019-09-20
 ### Added
 - Added support for user specified date ranges
