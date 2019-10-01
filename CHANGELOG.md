@@ -7,13 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.19.0...master)
 ### Added
 - Added a second Y-axis for temperature parameters.
+- Added picker to pick a method description that will be highlighted in the hydrograph.
 
 ## [0.19.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.18.0...waterdataui-0.19.0) - 2019-09-20
 ### Added
 - Added support for user specified date ranges
 - Site Page now contains a Monitoring Camera section with proof of concept implementation.
 - Added NLDI navigation results
-- Added picker to pick a method description that will be highlighted in the hydrograph.
 
 ### Changed
 - Graph server now serves routes from /api/graph-images
