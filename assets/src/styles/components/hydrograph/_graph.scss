@@ -46,6 +46,9 @@ svg {
         &.estimated {
             stroke: $estimated-time-series;
         }
+        &.not-current-method {
+            opacity: $not-current_method-opacity;
+        }
     }
     .ts-compare {
         stroke-width: 1px;

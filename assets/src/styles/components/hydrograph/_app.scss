@@ -23,6 +23,9 @@
         @include u-text( 'bold' );
     }
 }
+#ts-method-select-container {
+    @include u-margin-bottom(2);
+}
 
 #select-time-series  {
     label {
@@ -122,6 +125,7 @@
         position: absolute;
         background: rgba(255, 255, 255, 0.8);
         color: $default-time-series;
+        opacity: 1.0;
         .current-tooltip-text {
             font-weight: bold;
         }
@@ -133,6 +137,9 @@
         }
         .compare-tooltip-text {
             font-weight: normal
+        }
+        .not-current-method {
+            opacity: $not-current-method-opacity;
         }
     }
 }

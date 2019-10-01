@@ -2,27 +2,32 @@
  * Hydrograph charting module.
  */
 import { extent } from 'd3-array';
-
 import { line as d3Line, curveStepAfter } from 'd3-shape';
 import { select } from 'd3-selection';
-import { createStructuredSelector } from 'reselect';
+
 import { DateTime } from 'luxon';
+import { createStructuredSelector } from 'reselect';
+
 import { addSVGAccessibility } from '../../accessibility';
 import config from '../../config';
 import { dispatch, link, provide } from '../../lib/redux';
+import { getTimeSeriesCollectionIds, isLoadingTS } from '../../selectors/time-series-selector';
 import { Actions } from '../../store';
 import { callIf, mediaQuery } from '../../utils';
+
 import { audibleUI } from './audible';
 import { appendAxes, axesSelector } from './axes';
 import { cursorSlider } from './cursor';
-import { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID, getCurrentVariableMedianStatPoints } from './drawing-data';
+import { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID,
+    getCurrentVariableMedianStatPoints } from './drawing-data';
 import { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } from './layout';
 import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
+import { drawMethodPicker } from './method-picker';
 import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
 import { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } from './scales';
-import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector, currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } from './time-series';
+import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector,
+    currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } from './time-series';
 import { createTooltipFocus, createTooltipText } from './tooltip';
-import { getTimeSeriesCollectionIds, isLoadingTS } from '../../selectors/time-series-selector';
 
 
 const drawMessage = function(elem, message) {
@@ -58,6 +63,7 @@ const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
                     .classed('line-segment', true)
                     .classed('approved', line.classes.approved)
                     .classed('estimated', line.classes.estimated)
+                    .classed('not-current-method', !line.classes.currentMethod)
                     .attr('r', CIRCLE_RADIUS_SINGLE_PT)
                     .attr('cx', d => xScale(d.dateTime))
                     .attr('cy', d => yScale(d.value));
@@ -70,6 +76,7 @@ const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
                     .classed('line-segment', true)
                     .classed('approved', line.classes.approved)
                     .classed('estimated', line.classes.estimated)
+                    .classed('not-current-method', !line.classes.currentMethod)
                     .classed(`ts-${tsKey}`, true)
                     .attr('d', tsLine);
             }
@@ -314,6 +321,7 @@ const graphControls = function(elem) {
 
     const compareControlDiv = graphControlDiv.append('li')
         .classed('usa-checkbox', true);
+
     compareControlDiv.append('input')
         .classed('usa-checkbox__input', true)
         .attr('type', 'checkbox')
@@ -543,6 +551,7 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
     select(node)
         .call(provide(store))
         .call(link(noDataAlert, getTimeSeriesCollectionIds('current', 'P7D')))
+        .call(callIf(interactive, drawMethodPicker))
         .call(callIf(interactive, dateRangeControls), siteno)
         .select('.loading-indicator-container')
             .call(link(loadingIndicator, createStructuredSelector({
