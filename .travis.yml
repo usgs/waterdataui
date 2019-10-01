@@ -14,7 +14,6 @@ env:
     # BrowserStack credentials - Need to create encrypted BROWSER_STACK_USERNAME and BROWSER_STACK_ACCESS_KEY environment variables.
     - secure: "BCJ5xZpOHV+EU8AZiU/Vc7jW8AGACsXKE/XGbb3KVbXj4BPQPTACrjxRaga2kDFk/quUPpiIe26V4v2kVnrpLsgrWxlDzMsBCdn+iRoPDKO9mdN1t6WElh/kOeWcW/mEuK1gGh7eYuSq24EdJUfsPy2m31WifccMTDlSaCryY1sXjUd96dFo/fk+Db+9XKcxI3j9Dqr+18UZHjzQF7GJMIp4afhtImoGi69DgdHZDf/panF/YRLUT8vxT06dMNYE08iCm7ONaVNZK1KtpFSBflKlCw0VPTBksiLgT70K/lBzmOe6IBKRl4pCX2Hkd4Uq/P0uFG0aeuOB4RkTuvTx3oNyUyaEk+xEiCkQH/GjDNHurNA6A50UTcbuuyOEncdmkf9T09B7RlrOTGPwaTLtBnqU2yK3eN5ESmsewxrhq+tFtAngUmm45rm5b1CFoS2gmzXX8EFvvGFgXGT+po6jXCKElBIsiNGdDEYTcDfH2C6Cftvj+xnsm61U/GSNBhopt6kF/fusYGejv5aH4YH6jN0FDValVApl7VerO1ZSW/SrEr6UdHQH2JdklqzyyXNcklIF/I3D8UH+2eoRWVMQ9h6Q0dTMxGtAAXiNrt4DSQgjd6W20l0FLJC2TIFazERVvdgYQw4XGbcliq49R+vMz3KJCy6hibAznGLWNy60tFo="
     - secure: "drSHA/Rg252t/f/c12uaJs0zmsJaNECzS1Cl+hWcxkJzk3Ojucryl4kShrCGkxUcegquYmIpOo6r3rS+noKlmQhsvJJSIZLTYud9TlGjdpViNIluaYzHj4JoKMk3f2lV7n+lrYMGGLFSTeIriWj5IK2kydJMbMCuvrKrFm83Jm1ITlvD5tJEy+EHBBkCHAE83+lmVFC3USPEGAO0YthDn+NdZy+JADDAvmfQ1bTCJRfPUUNGjiEGy+cmteWmbHARzeaaIyySky8bzVd2ILQqgz2dO9tLWSvnLC8AxYddRrhaMQQttVQTr+0tmVeCeOcl7GLsX7BaH/jDPKARP0ZkuK1WgpSlgVvkSx0HePGU+f1U+iFd+YnavNYIYNim+SCCEbqcarUJQJU43urlRuNoEriJdq/qc64snf+nxp+BUgmhB/GBtoGbAhDYb8WPd9Hu9ZmCnGhGsO03o5ttgVyRebEJYLsrUu2Qhk7NHTDaDx3R/Ttdtn1t6l9XDUpjB+VFks8b6SyrBuF7tNSE6Ly6bBDoWCxK6J2Llb//VgSFx+27uTPfy8vAkS9T2MW9jarQauhRHI2LkSRTYJHq8odbIfdCBH+Ucb/nGHxRbldoSZBkuBpUmg5xwr9uC0ezuZcV0Zmm7gqZKQoMS/RxOUjx3+emJpIRz4PNm1MeVWbcdeI="
-    - COVERAGE=1 TEST_TARGET=test
   matrix:
     - KARMA_BROWSERSTACK=1
 
@@ -28,7 +27,7 @@ install:
   - make env
 
 script:
-  - make "$TEST_TARGET"
+  - make test
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
