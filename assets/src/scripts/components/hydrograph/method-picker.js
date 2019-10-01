@@ -5,10 +5,14 @@
 import { select } from 'd3-selection';
 
 import{ dispatch, link } from '../../lib/redux';
+import config from '../../config';
 import { Actions } from '../../store';
 import { getAllMethodsForCurrentVariable } from './time-series';
 
 export const drawMethodPicker = function(elem) {
+    if (!config.MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED) {
+        return;
+    }
     const pickerContainer = elem.insert('div', ':nth-child(2)')
         .attr('id', 'ts-method-select-container');
 

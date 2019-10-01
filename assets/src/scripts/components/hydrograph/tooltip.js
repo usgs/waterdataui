@@ -4,6 +4,7 @@ import { transition } from 'd3-transition';
 import memoize from 'fast-memoize';
 import { createSelector, createStructuredSelector } from 'reselect';
 import { DateTime } from 'luxon';
+
 import { dispatch, link, initAndUpdate } from '../../lib/redux';
 import { Actions } from '../../store';
 import { cursorTimeSelector, tsCursorPointsSelector } from './cursor';
@@ -201,7 +202,9 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, cu
             text.attr('class', d => `${d.tsKey}-tooltip-text`);
             text.classed('approved', classes.approved);
             text.classed('estimated', classes.estimated);
-            text.classed('not-current-method', currentMethodID !== parseInt(datum.methodID));
+            if (config.MULTIPLE_TIME_SERIES_METADAT_SELECTOR_ENABLED) {
+                text.classed('not-current-method', currentMethodID !== parseInt(datum.methodID));
+            }
         });
 
     return textGroup;
