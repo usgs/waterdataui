@@ -12,11 +12,5 @@ describe('points module', () => {
         expect(layout.width).toEqual(200);
         expect(layout.height).toEqual(200 * ASPECT_RATIO);
         expect(layout.windowWidth).toEqual(600);
-        expect(layout.margin).toEqual({
-            top: 25,
-            right: 45,
-            bottom: 10,
-            left: 65
-        });
     });
 });

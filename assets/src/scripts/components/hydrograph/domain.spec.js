@@ -11,10 +11,22 @@ import {
 
 describe('domain module', () => {
     describe('extendDomain', () => {
-        it('lower bounds on nearest power of 10 with symlog parameter, upper bound 20%', () => {
-            expect(extendDomain([50, 1000], true)).toEqual([10, 1000 + (1000 - 50) * .2]);
-            expect(extendDomain([175, 1000], true)).toEqual([100, 1000 + (1000 - 175) * .2]);
-            expect(extendDomain([9000, 10000], true)).toEqual([1000, 10000 + (10000 - 9000) * .2]);
+        it('lower bounds are calculated based on order of magnitude with the parameter, upper bound 20%', () => {
+            const lowValDomain = extendDomain([50, 1000], true);
+            expect(lowValDomain[0]).toBeCloseTo(39.82, 2);
+            expect(lowValDomain[1]).toEqual(1000 + (1000 - 50) * .2);
+
+            const medValDomain = extendDomain([175, 1000], true);
+            expect(medValDomain[0]).toBeCloseTo(146.61, 2);
+            expect(medValDomain[1]).toEqual(1000 + (1000 - 175) * .2);
+
+            const highValDomain = extendDomain([9000, 10000], true);
+            expect(highValDomain[0]).toBeCloseTo(8109.35, 2);
+            expect(highValDomain[1]).toEqual(10000 + (10000 - 9000) * .2);
+
+            const decimalValDomain = extendDomain([0.2, 10], true);
+            expect(decimalValDomain[0]).toBeCloseTo(0.12, 2);
+            expect(decimalValDomain[1]).toEqual(10 + (10 - 0.2) * .2);
         });
 
         it('20% padding on linear scales, zero lower bound', () => {
