@@ -26,10 +26,6 @@ before_install:
 
 install:
   - make env
-  - gem install coveralls-lcov
-
-before_script:
-  - mkdir coverage
 
 script:
   - make "$TEST_TARGET"
