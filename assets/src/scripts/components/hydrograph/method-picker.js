@@ -26,7 +26,7 @@ export const drawMethodPicker = function(elem) {
             elem.selectAll('option').remove();
             methods.forEach((method) => {
                 elem.append('option')
-                    .text(method.methodDescription ? `${method.methodDescription} (${method.methodID})` : method.methodID)
+                    .text(method.methodDescription ? `${method.methodDescription}` : 'None')
                     .node().value = method.methodID;
             });
             if (methods.length) {
