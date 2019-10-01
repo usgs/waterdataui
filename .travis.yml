@@ -35,4 +35,4 @@ script:
   - make "$TEST_TARGET"
 
 after_success:
-  - "[[ -n $COVERAGE ]] && make coverage"
+  - bash <(curl -s https://codecov.io/bash)
