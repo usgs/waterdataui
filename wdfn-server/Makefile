@@ -17,8 +17,8 @@ clean-wdfn:
 # Development targets
 #
 test-wdfn:
-	#$(PYTHON) -m pytest wdfn-server/waterdata
 	wdfn-server/env/bin/coverage run --omit=wdfn-server/waterdata/tests/*.py,wdfn-server/env/* -m pytest wdfn-server/waterdata
+	wdfn-server/env/bin/coverage xml
 
 watch-wdfn:
 	$(PYTHON) wdfn-server/run.py
