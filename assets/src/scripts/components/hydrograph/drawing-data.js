@@ -4,10 +4,14 @@ import find from 'lodash/find';
 import { DateTime } from 'luxon';
 import { createSelector } from 'reselect';
 import { format } from 'd3-format';
-import { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } from './time-series';
+
+import config from '../../config';
 import { getVariables, getCurrentMethodID, getTsRequestKey, getRequestTimeRange, getIanaTimeZone }
     from '../../selectors/time-series-selector';
 import { getCurrentVariableMedianStatistics } from '../../selectors/median-statistics-selector';
+
+import { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } from './time-series';
+
 
 export const MASK_DESC = {
     ice: 'Ice Affected',
@@ -327,7 +331,7 @@ export const lineSegmentsSelector = memoize((tsKey, period) => createSelector(
 
             for (let pt of points) {
                 // Classes to put on the line with this point.
-                let lineClasses = getLineClasses(pt, currentMethodID === parseInt(methodID));
+                let lineClasses = getLineClasses(pt, !config.MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED || currentMethodID === parseInt(methodID));
 
                 // If this is a non-masked data point, split lines if the gap
                 // from the period point exceeds MAX_LINE_POINT_GAP.
