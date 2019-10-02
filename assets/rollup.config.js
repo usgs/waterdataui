@@ -42,8 +42,7 @@ module.exports = {
             compress: {
                 dead_code: true,
                 drop_console: true
-            },
-            numWorkers: Math.max(1, os.cpus().length - 1)
+            }
         })
     ],
     watch: {
