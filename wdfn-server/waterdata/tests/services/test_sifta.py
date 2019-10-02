@@ -3,9 +3,7 @@ Tests for the cooperator service calls.
 """
 
 import json
-
-import pytest
-import requests_mock
+from unittest import mock
 
 from waterdata.services import sifta
 
@@ -16,54 +14,69 @@ MOCK_RESPONSE = """
 MOCK_CUSTOMER_LIST = json.loads(MOCK_RESPONSE)['Customers']
 
 
-@pytest.fixture(scope='module')
-def mock_request():
-    """Return mock response on all GET requests"""
-    with requests_mock.mock() as req:
-        req.get(requests_mock.ANY, text=MOCK_RESPONSE)
-        yield
-
-
-@pytest.fixture(scope='module')
-def mock_bad_request():
-    """
-    Mock response with invalid JSON.
-
-    """
-    with requests_mock.mock() as req:
-        req.get(requests_mock.ANY, exc=json.JSONDecodeError)
-
-
-@pytest.mark.usefixtures('mock_request')
 def test_sifta_response(config):
-    config['COOPERATOR_LOOKUP_ENABLED'] = True
-    cooperators = sifta.get_cooperators('12345', 'district code ignored')
-    assert cooperators == MOCK_CUSTOMER_LIST, 'Expected response'
+    with mock.patch('waterdata.services.sifta.execute_get_request') as r_mock:
+        response = mock.Mock()
+        response.status_code = 200
+        response.text = MOCK_RESPONSE
+        response.json.return_value = json.loads(MOCK_RESPONSE)
+        r_mock.return_value = response
+
+        config['COOPERATOR_LOOKUP_ENABLED'] = True
+        cooperators = sifta.get_cooperators('12345', 'district code ignored')
+        assert cooperators == MOCK_CUSTOMER_LIST, 'Expected response'
 
 
-@pytest.mark.usefixtures('mock_request')
 def test_sifta_disabled(config):
     config['COOPERATOR_LOOKUP_ENABLED'] = False
     cooperators = sifta.get_cooperators('12345', 'district code ignored')
     assert cooperators == [], 'Expected empty response'
 
 
-@pytest.mark.usefixtures('mock_request')
 def test_sifta_district_enabled(config):
-    config['COOPERATOR_LOOKUP_ENABLED'] = ['10', '15']
-    cooperators = sifta.get_cooperators('12345', '10')
-    assert cooperators == MOCK_CUSTOMER_LIST, 'Expected response'
+    with mock.patch('waterdata.services.sifta.execute_get_request') as r_mock:
+        response = mock.Mock()
+        response.status_code = 200
+        response.text = MOCK_RESPONSE
+        response.json.return_value = json.loads(MOCK_RESPONSE)
+        r_mock.return_value = response
+
+        config['COOPERATOR_LOOKUP_ENABLED'] = ['10', '15']
+        cooperators = sifta.get_cooperators('12345', '10')
+        assert cooperators == MOCK_CUSTOMER_LIST, 'Expected response'
 
 
-@pytest.mark.usefixtures('mock_request')
 def test_sifta_district_disabled(config):
-    config['COOPERATOR_LOOKUP_ENABLED'] = ['10', '15']
-    cooperators = sifta.get_cooperators('12345', '20')
-    assert cooperators == [], 'Expected empty response'
+    with mock.patch('waterdata.services.sifta.execute_get_request') as r_mock:
+        response = mock.Mock()
+        response.status_code = 200
+        response.text = MOCK_RESPONSE
+        response.json.return_value = json.loads(MOCK_RESPONSE)
+        r_mock.return_value = response
+
+        config['COOPERATOR_LOOKUP_ENABLED'] = ['10', '15']
+        cooperators = sifta.get_cooperators('12345', '20')
+        assert cooperators == [], 'Expected empty response'
 
 
-@pytest.mark.usefixtures('mock_bad_request')
+def test_sifta_handling_bad_status_code(config):
+    with mock.patch('waterdata.services.sifta.execute_get_request') as r_mock:
+        response = mock.Mock()
+        response.status_code = 500
+        r_mock.return_value = response
+
+        config['COOPERATOR_LOOKUP_ENABLED'] = ['10', '15']
+        cooperators = sifta.get_cooperators('12345', '10')
+        assert cooperators == [], 'Expected response'
+
+
 def test_unparsable_json(config):
-    config['COOPERATOR_LOOKUP_ENABLED'] = ['10', '15']
-    cooperators = sifta.get_cooperators('12345', '20')
-    assert cooperators == [], 'Expected empty response'
+    with mock.patch('waterdata.services.sifta.execute_get_request') as r_mock:
+        mock_resp = mock.Mock()
+        mock_resp.status_code = 200
+        mock_resp.json.side_effect = json.JSONDecodeError('mock message', '{"x", "A",}', 2)
+        r_mock.return_value = mock_resp
+
+        config['COOPERATOR_LOOKUP_ENABLED'] = ['10', '15']
+        cooperators = sifta.get_cooperators('12345', '20')
+        assert cooperators == [], 'Expected empty response'
