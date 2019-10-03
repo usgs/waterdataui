@@ -2,6 +2,8 @@
 Helpers to retrieve SIFTA cooperator data.
 """
 
+import json
+
 from waterdata import app
 from waterdata.utils import execute_get_request
 
@@ -13,7 +15,6 @@ def get_cooperators(site_no, district_cd):
     :param site_no: USGS site number
     :param district_cd: the district code of the monitoring location
     """
-
     # Handle feature flag for cooperator data
     if not app.config['COOPERATOR_LOOKUP_ENABLED'] or (
             app.config['COOPERATOR_LOOKUP_ENABLED'] is not True and
@@ -24,5 +25,9 @@ def get_cooperators(site_no, district_cd):
     response = execute_get_request(url)
     if response.status_code != 200:
         return []
-
-    return response.json().get('Customers', [])
+    try:
+        resp_json = response.json()
+    except json.JSONDecodeError:
+        return []
+    else:
+        return resp_json.get('Customers', [])
