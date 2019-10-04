@@ -79,9 +79,7 @@ body {
 
   }
 
-  & {
-    #monitoring-location {
-      @import './pages/monitoring-location';
-    }
+  &#monitoring-location {
+    @import './pages/monitoring-location';
   }
 }

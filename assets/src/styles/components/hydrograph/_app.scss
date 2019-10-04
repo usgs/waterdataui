@@ -40,7 +40,6 @@
     display: block;
     overflow: auto;
     margin-top: 0;
-
     height: 250px;
     @include at-media($theme-site-max-width) {
       height: auto;
@@ -76,15 +75,15 @@
           }
         }
 
-        & {
-          .selected {
-            cursor: default;
-            th, td {
-              background-color: $selected;
-            }
-            .tooltip-item {
-              background-color: $selected;
-            }
+        &.selected {
+          cursor: default;
+
+          th, td {
+            background-color: $selected;
+          }
+
+          .tooltip-item {
+            background-color: $selected;
           }
         }
 
@@ -179,20 +178,16 @@
 .slider-wrapper {
   height: 0;
 
-  input {
-    #cursor-slider {
-      max-width: none;
-      position: relative;
-      opacity: .2;
-      top: -2em;
-      background: none;
-      padding: 0;
-      margin: 0;
-      & {
-        .active {
-          opacity: 1;
-        }
-      }
+  input#cursor-slider {
+    max-width: none;
+    position: relative;
+    opacity: .2;
+    top: -2em;
+    background: none;
+    padding: 0;
+    margin: 0;
+    &.active {
+      opacity: 1;
     }
   }
 }
