@@ -1,4 +1,15 @@
-body .has-script { display: none; }
-body .no-script { display: block; }
-body.js .has-script { display: block; }
-body.js .no-script { display: none; }
+body .has-script {
+  display: none;
+}
+
+body .no-script {
+  display: block;
+}
+
+body.js .has-script {
+  display: block;
+}
+
+body.js .no-script {
+  display: none;
+}

@@ -1,5 +1,4 @@
 @import 'leaflet';
-
 @import './common';
 
 $fa-font-path: './fonts' !default;
@@ -13,66 +12,76 @@ $fa-font-path: './fonts' !default;
 @import './partials/tooltip';
 
 .wdfn-component {
-    &[data-component='hydrograph'] {
-        @import './components/hydrograph/app';
-    }
-    &[data-component='map'] {
-        @import './components/map';
-        margin-bottom: 1em;
-    }
-    &[data-component='embed'] {
-        @import './components/embed';
-        margin-bottom: 1em;
-    }
+  &[data-component='hydrograph'] {
+    @import './components/hydrograph/app';
+  }
+
+  &[data-component='map'] {
+    @import './components/map';
+    margin-bottom: 1em;
+  }
+
+  &[data-component='embed'] {
+    @import './components/embed';
+    margin-bottom: 1em;
+  }
 }
 
 /* This fixes an issue with Firefox not hiding long divs. I opened https://github.com/uswds/uswds/issues/2380 .
  * If it gets addressed this can be removed.
  */
 .usa-sr-only {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 body {
-    #main-content {
-        margin-top: 1em;
-        margin-bottom: 1em;
-        padding: 0 1em;
-    }
-    .content-container {
-        margin-left: auto;
-        margin-right: auto;
-        @include u-maxw('desktop');
-    }
-    #wdfn-alert-banner input:checked ~ * {
-        display: none;
-    }
-    #wdfn-alert-banner {
-        background-color: color('accent-cool-lighter');
+  #main-content {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 0 1em;
+  }
 
-        .wdfn-alert-body {
-            padding-top: 0.5em;
-            padding-bottom: 0.5em;
-            padding-right: 1em;
-            padding-left: 1em;
-            margin-top: 0;
-            .close {
-                float: right;
-                cursor: pointer;
-                margin-top: -5px;
-                margin-right: -10px;
-            }
-            .div {
-                font-size: 0.9em;
-                @include at-media('tablet') {
-                    font-size: 1em;
-                }
-                padding-left: 1em;
-            }
+  .content-container {
+    margin-left: auto;
+    margin-right: auto;
+    @include u-maxw('desktop');
+  }
+
+  #wdfn-alert-banner input:checked ~ * {
+    display: none;
+  }
+
+  #wdfn-alert-banner {
+    background-color: color('accent-cool-lighter');
+
+    .wdfn-alert-body {
+      padding-top: 0.5em;
+      padding-bottom: 0.5em;
+      padding-right: 1em;
+      padding-left: 1em;
+      margin-top: 0;
+
+      .close {
+        float: right;
+        cursor: pointer;
+        margin-top: -5px;
+        margin-right: -10px;
+      }
+
+      .div {
+        font-size: 0.9em;
+        @include at-media('tablet') {
+          font-size: 1em;
         }
+        padding-left: 1em;
+      }
+    }
 
+  }
+
+  & {
+    #monitoring-location {
+      @import './pages/monitoring-location';
     }
-    &#monitoring-location {
-        @import './pages/monitoring-location';
-    }
+  }
 }
