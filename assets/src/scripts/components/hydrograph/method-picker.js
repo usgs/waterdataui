@@ -33,6 +33,11 @@ export const drawMethodPicker = function(elem) {
                     .text(method.methodDescription ? `${method.methodDescription}` : 'None')
                     .node().value = method.methodID;
             });
+            if (methods.length > 1) {
+                pickerContainer.property('hidden', false);
+            } else {
+                pickerContainer.property('hidden', true);
+            }
             if (methods.length) {
                 elem.dispatch('change');
             }
