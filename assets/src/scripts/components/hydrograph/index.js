@@ -333,6 +333,7 @@ const graphControls = function(elem) {
         .on('click', dispatch(function() {
             return Actions.toggleTimeSeries('compare', this.checked);
         }))
+
         // Disables the checkbox if no compare time series for the current variable
         .call(link(function(elem, compareTimeSeries) {
             const exists = Object.keys(compareTimeSeries) ?
@@ -348,7 +349,52 @@ const graphControls = function(elem) {
         .attr('id', 'last-year-label')
         .attr('for', 'last-year-checkbox')
         .text('Compare to last year');
+
+
+
+
+
+    const medianControlDiv = graphControlDiv.append('li')
+        .classed('usa-checkbox', true);
+
+    medianControlDiv.append('input')
+        .classed('usa-checkbox__input', true)
+        .attr('type', 'checkbox')
+        .attr('id', 'median-checkbox')
+        .attr('aria-labelledby', 'median-label')
+        .attr('ga-on', 'click')
+        .attr('ga-event-category', 'TimeSeriesGraph')
+        .attr('ga-event-action', 'toggleMedian')
+        .on('click', dispatch(function() {
+            return Actions.toggleTimeSeries('median', this.checked);
+        }))
+        // Disables the checkbox if no median time series for the current variable
+        .call(link(function(elem, compareTimeSeries) {
+            const exists = Object.keys(compareTimeSeries) ?
+                Object.values(compareTimeSeries).filter(tsValues => tsValues.points.length).length > 0 : false;
+            elem.property('disabled', !exists);
+        }, currentVariableTimeSeriesSelector('median')))
+        // Sets the state of the toggle
+        .call(link(function(elem, checked) {
+            elem.property('checked', checked);
+        }, isVisibleSelector('median')));
+
+    medianControlDiv.append('label')
+        .classed('usa-checkbox__label', true)
+        .attr('id', 'median-label')
+        .attr('for', 'median-checkbox')
+        .text('Toggle median');
 };
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Modify styling to hide or display the elem.
