@@ -129,6 +129,4 @@ describe('method-picker', () => {
             expect(store.getState().timeSeriesState.currentMethodID).toEqual(69930);
         });
     });
-
-
 });
