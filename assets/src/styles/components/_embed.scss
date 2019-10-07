@@ -1,23 +1,24 @@
 & {
+  fieldset {
+    position: absolute;
+    right: 0;
+    width: 150px;
+    background: color('white');
+
+    legend {
+      font-size: .75em;
+    }
+  }
+
+  .embed-icon {
+    display: inline;
+    color: #3c5a96;
+  }
+
+  &:hover {
     fieldset {
-        position: absolute;
-        right: 0;
-        width: 150px;
-        background: color('white');
-        legend {
-            font-size: .75em;
-        }
+      display: block;
+      z-index: 2000;
     }
-
-    .embed-icon {
-        display: inline;
-        color: #3C5A96;
-    }
-
-    &:hover {
-        fieldset {
-            display: block;
-            z-index: 2000;
-        }
-    }
+  }
 }

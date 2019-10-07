@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.20.0...master)
+### Changed
+- Updated to use wdfn-viz which updates the USWDS version to 2.2.1
 
 ## [0.20.0]((https://github.com/usgs/waterdataui/compare/waterdataui-0.19.0...waterdataui-0.20.0) - 2019-10-04
 ### Added
