@@ -44,7 +44,7 @@
     "autoprefixer": "^9.6.1",
     "css-mqpacker": "^7.0.0",
     "cssnano": "^4.1.10",
-    "eslint": "^5.16.0",
+    "eslint": "^6.5.1",
     "eslint-plugin-jasmine": "^2.10.1",
     "gulp": "^4.0.2",
     "gulp-rev-all": "^2.0.2",
