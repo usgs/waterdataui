@@ -1,13 +1,16 @@
 .social-share {
-    position: relative;
-    font-size: 1.25em;
-    a {
-        text-decoration: none;
-        i.fa-facebook-square {
-            color: #3C5A96;
-        }
-        i.fa-twitter-square {
-            color: #32AADE;
-        }
+  position: relative;
+  font-size: 1.25em;
+
+  a {
+    text-decoration: none;
+
+    .fa-facebook-square {
+      color: #3c5a96;
     }
+
+    .fa-twitter-square {
+      color: #32aade;
+    }
+  }
 }
