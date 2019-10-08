@@ -128,7 +128,6 @@ export const Actions = {
             return fetchSiteStatistics({site, statType: 'median'}).then(
                 stats => {
                     dispatch(Actions.addMedianStats(stats));
-                    dispatch(Actions.toggleTimeSeries('median', true));
                 }
             );
         };

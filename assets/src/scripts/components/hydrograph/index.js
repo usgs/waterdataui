@@ -22,6 +22,7 @@ import { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK
     getCurrentVariableMedianStatPoints } from './drawing-data';
 import { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } from './layout';
 import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
+import { getCurrentVariableMedianStatistics } from '../../selectors/median-statistics-selector';
 import { drawMethodPicker } from './method-picker';
 import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
 import { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } from './scales';
@@ -333,7 +334,6 @@ const graphControls = function(elem) {
         .on('click', dispatch(function() {
             return Actions.toggleTimeSeries('compare', this.checked);
         }))
-
         // Disables the checkbox if no compare time series for the current variable
         .call(link(function(elem, compareTimeSeries) {
             const exists = Object.keys(compareTimeSeries) ?
@@ -350,10 +350,6 @@ const graphControls = function(elem) {
         .attr('for', 'last-year-checkbox')
         .text('Compare to last year');
 
-
-
-
-
     const medianControlDiv = graphControlDiv.append('li')
         .classed('usa-checkbox', true);
 
@@ -368,12 +364,10 @@ const graphControls = function(elem) {
         .on('click', dispatch(function() {
             return Actions.toggleTimeSeries('median', this.checked);
         }))
-        // Disables the checkbox if no median time series for the current variable
-        .call(link(function(elem, compareTimeSeries) {
-            const exists = Object.keys(compareTimeSeries) ?
-                Object.values(compareTimeSeries).filter(tsValues => tsValues.points.length).length > 0 : false;
-            elem.property('disabled', !exists);
-        }, currentVariableTimeSeriesSelector('median')))
+        // Disables the checkbox if no median data for the current variable
+        .call(link(function(elem, medianData) {
+            elem.property('disabled', medianData === null);
+        }, getCurrentVariableMedianStatistics))
         // Sets the state of the toggle
         .call(link(function(elem, checked) {
             elem.property('checked', checked);
@@ -385,16 +379,6 @@ const graphControls = function(elem) {
         .attr('for', 'median-checkbox')
         .text('Toggle median');
 };
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Modify styling to hide or display the elem.
