@@ -68,14 +68,37 @@ describe('method-picker', () => {
             div.remove();
         });
 
-        let store = configureStore(TEST_STATE);
-
         it('Creates a picker and sets the currentMethodID', () => {
+            let store = configureStore(TEST_STATE);
             div.call(provide(store))
                 .call(drawMethodPicker);
 
+            expect(div.select('div').property('hidden')).toEqual(false);
             expect(div.select('select').property('value')).toEqual('69930');
             expect(store.getState().timeSeriesState.currentMethodID).toEqual(69930);
+        });
+
+        it('Creates a picker and sets the hidden property based on the number of methods', () => {
+            let TEST_STATE_ONE_METHOD = {
+                ...TEST_STATE,
+                series: {
+                    ...TEST_STATE.series,
+                    timeSeries: {
+                        ...TEST_STATE.series.timeSeries,
+                        '00010:compare': {
+                            ...TEST_STATE.series.timeSeries['00010:compare'],
+                            method: 69930
+                        }
+                    }
+                }
+            };
+            let storeWithOneMethod = configureStore(TEST_STATE_ONE_METHOD);
+            div.call(provide(storeWithOneMethod))
+                .call(drawMethodPicker);
+
+            expect(div.select('div').property('hidden')).toEqual(true);
+            expect(div.select('select').property('value')).toEqual('69930');
+            expect(storeWithOneMethod.getState().timeSeriesState.currentMethodID).toEqual(69930);
         });
     });
 });
