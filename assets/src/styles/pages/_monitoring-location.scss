@@ -1,40 +1,48 @@
 .site-header {
-    margin-bottom: 2em;
-    .usa-label {
-        margin-right: 1em;
+  margin-bottom: 2em;
+
+  .usa-label {
+    margin-right: 1em;
+  }
+
+  h1 {
+    display: inline;
+  }
+
+  .social-share {
+    float: right;
+  }
+
+  .tooltip-item {
+    .tooltip {
+      position: absolute;
+      bottom: -6.25em;
+      left: -6.25em;
     }
-    h1 {
-        display: inline;
-    }
-    .social-share {
-        float: right;
-    }
-    .tooltip-item {
-        .tooltip {
-            position: absolute;
-            bottom: -6.25em;
-            left: -6.25em;
-        }
-    }
+  }
 }
 
-table#site-summary {
+table {
+  #site-summary {
     table-layout: fixed;
     width: 100%;
-    overflow: visible;  /* Prevent extra scrollbar space */
-    td.loc-metadata {
+    overflow: visible; /* Prevent extra scrollbar space */
+    td {
+      .loc-metadata {
         word-wrap: break-word;
+      }
     }
+  }
 }
 
 .usa-accordion {
-    .usa-accordion-content {
-        overflow: visible;
-    }
+  .usa-accordion-content {
+    overflow: visible;
+  }
 }
 
 .cooperator_logo {
-    display: inline-block;
-    margin-left: 0px;
-    margin-top: 0px;
+  display: inline-block;
+  margin-left: 0;
+  margin-top: 0;
 }

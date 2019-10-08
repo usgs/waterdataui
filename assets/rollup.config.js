@@ -2,7 +2,6 @@
  * Rollup configuration.
  * NOTE: This is a CommonJS module so it can be imported by Karma.
  */
-const os = require('os');
 const path = require('path');
 
 const alias = require('rollup-plugin-alias');
