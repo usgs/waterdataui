@@ -396,9 +396,8 @@ describe('Redux store', () => {
                 });
                 promise.then(() => {
                     expect(request.url).toContain('https://waterservices.usgs.gov/nwis/stat');
-                    expect(mockDispatch.calls.count()).toBe(2);
+                    expect(mockDispatch.calls.count()).toBe(1);
                     expect(Actions.addMedianStats).toHaveBeenCalled();
-                    expect(Actions.toggleTimeSeries).toHaveBeenCalledWith('median', true);
                     done();
                 });
             });
