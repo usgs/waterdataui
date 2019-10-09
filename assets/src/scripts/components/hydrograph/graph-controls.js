@@ -8,7 +8,7 @@ import { getCurrentVariableMedianStatistics } from '../../selectors/median-stati
 import { isVisibleSelector, currentVariableTimeSeriesSelector } from './time-series';
 
 /*
- * Create the show last year toggle and the audible toggle for the time series graph.
+ * Create the show audible toggle, last year toggle, and median toggle for the time series graph.
  * @param {Object} elem - D3 selection
  */
 export const graphControls = function(elem) {
