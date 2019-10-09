@@ -151,11 +151,10 @@ describe('graph-controls', () => {
     };
 
     let graphNode;
-    let component;
 
     beforeEach(() => {
         let body = select('body');
-        component = body.append('div')
+        let component = body.append('div')
             .attr('id', 'hydrograph');
         component.append('div').attr('class', 'loading-indicator-container');
         component.append('div').attr('class', 'graph-container');
@@ -233,7 +232,6 @@ describe('graph-controls', () => {
         });
 
         it('Should render one lines', () => {
-            console.log(graphNode);
             expect(selectAll('#median-points .median-data-series').size()).toBe(1);
         });
 
