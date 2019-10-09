@@ -12,6 +12,7 @@ import { isVisibleSelector, currentVariableTimeSeriesSelector } from './time-ser
  * @param {Object} elem - D3 selection
  */
 export const graphControls = function(elem) {
+
     const graphControlDiv = elem.append('ul')
         .classed('usa-fieldset', true)
         .classed('usa-list--unstyled', true)

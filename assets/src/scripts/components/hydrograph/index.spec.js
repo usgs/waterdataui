@@ -347,46 +347,6 @@ describe('Hydrograph charting module', () => {
         });
     });
 
-    describe('last year checkbox', () => {
-
-        let store;
-        beforeEach(() => {
-            store = configureStore(TEST_STATE);
-            attachToNode(store, graphNode, {siteno: '12345678'});
-        });
-
-        it('Should render the compare toggle checked', () => {
-            const checkbox = select('#last-year-checkbox');
-            expect(checkbox.size()).toBe(1);
-            expect(checkbox.property('checked')).toBe(true);
-        });
-
-        it('Should render the compare toggle unchecked', () => {
-            store.dispatch(Actions.toggleTimeSeries('compare', false));
-            const checkbox = select('#last-year-checkbox');
-            expect(checkbox.size()).toBe(1);
-            expect(checkbox.property('checked')).toBe(false);
-        });
-
-        it('should be enabled if there are last year data', () => {
-            expect(select('#last-year-checkbox').property('disabled')).toBeFalsy();
-        });
-
-        it('should be disabled if there are no last year data', () => {
-            store.dispatch(Actions.setCurrentVariable('45807190'));
-            expect(select('#last-year-checkbox').property('disabled')).toBeTruthy();
-        });
-
-        it('Should render one lines', () => {
-            expect(selectAll('#ts-compare-group .line-segment').size()).toBe(1);
-        });
-
-        it('Should remove the lines when removing the compare time series', () => {
-            store.dispatch(Actions.toggleTimeSeries('compare', false));
-            expect(selectAll('#ts-compare-group .line-segment').size()).toBe(0);
-        });
-    });
-
     describe('hiding/show provisional alert', () => {
         it('Expects the provisional alert to be visible when time series data is provided', () => {
             let store = configureStore(TEST_STATE);
