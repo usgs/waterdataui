@@ -14,19 +14,18 @@ import { dispatch, link, provide } from '../../lib/redux';
 import { getTimeSeriesCollectionIds, isLoadingTS } from '../../selectors/time-series-selector';
 import { Actions } from '../../store';
 import { callIf, mediaQuery } from '../../utils';
-
-import { audibleUI } from './audible';
 import { appendAxes, axesSelector } from './axes';
 import { cursorSlider } from './cursor';
 import { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID,
     getCurrentVariableMedianStatPoints } from './drawing-data';
+import { drawGraphControls } from './graph-controls';
 import { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } from './layout';
 import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
 import { drawMethodPicker } from './method-picker';
 import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
 import { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } from './scales';
 import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector,
-    currentVariableTimeSeriesSelector, hasTimeSeriesWithPoints } from './time-series';
+    hasTimeSeriesWithPoints } from './time-series';
 import { createTooltipFocus, createTooltipText } from './tooltip';
 
 
@@ -306,50 +305,6 @@ export const timeSeriesGraph = function(elem) {
         });
 };
 
-/*
- * Create the show last year toggle and the audible toggle for the time series graph.
- * @param {Object} elem - D3 selection
- */
-const graphControls = function(elem) {
-    const graphControlDiv = elem.append('ul')
-        .classed('usa-fieldset', true)
-        .classed('usa-list--unstyled', true)
-        .classed('graph-controls-container', true);
-
-    graphControlDiv.append('li')
-        .call(audibleUI);
-
-    const compareControlDiv = graphControlDiv.append('li')
-        .classed('usa-checkbox', true);
-
-    compareControlDiv.append('input')
-        .classed('usa-checkbox__input', true)
-        .attr('type', 'checkbox')
-        .attr('id', 'last-year-checkbox')
-        .attr('aria-labelledby', 'last-year-label')
-        .attr('ga-on', 'click')
-        .attr('ga-event-category', 'TimeSeriesGraph')
-        .attr('ga-event-action', 'toggleCompare')
-        .on('click', dispatch(function() {
-            return Actions.toggleTimeSeries('compare', this.checked);
-        }))
-        // Disables the checkbox if no compare time series for the current variable
-        .call(link(function(elem, compareTimeSeries) {
-            const exists = Object.keys(compareTimeSeries) ?
-                Object.values(compareTimeSeries).filter(tsValues => tsValues.points.length).length > 0 : false;
-            elem.property('disabled', !exists);
-        }, currentVariableTimeSeriesSelector('compare')))
-        // Sets the state of the toggle
-        .call(link(function(elem, checked) {
-            elem.property('checked', checked);
-        }, isVisibleSelector('compare')));
-    compareControlDiv.append('label')
-        .classed('usa-checkbox__label', true)
-        .attr('id', 'last-year-label')
-        .attr('for', 'last-year-checkbox')
-        .text('Compare to last year');
-};
-
 /**
  * Modify styling to hide or display the elem.
  *
@@ -576,7 +531,7 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
         .append('div')
             .classed('ts-legend-controls-container', true)
             .call(timeSeriesLegend)
-            .call(callIf(interactive, graphControls));
+            .call(callIf(interactive, drawGraphControls));
 
     if (interactive) {
         select(node).select('.select-time-series-container')
