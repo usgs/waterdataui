@@ -1,6 +1,7 @@
 import {Actions, configureStore} from '../../store';
-import {attachToNode} from './index';
-import { select, selectAll } from 'd3-selection';
+import { select } from 'd3-selection';
+import { provide } from '../../lib/redux';
+import { drawGraphControls } from './graph-controls';
 
 // Tests for the graph-controls module
 describe('graph-controls', () => {
@@ -150,30 +151,20 @@ describe('graph-controls', () => {
         }
     };
 
-    let graphNode;
+    describe('drawGraphControls', () => {
 
-    beforeEach(() => {
-        let body = select('body');
-        let component = body.append('div')
-            .attr('id', 'hydrograph');
-        component.append('div').attr('class', 'loading-indicator-container');
-        component.append('div').attr('class', 'graph-container');
-        component.append('div').attr('class', 'select-time-series-container');
-        component.append('div').attr('class', 'provisional-data-alert');
-
-        graphNode = document.getElementById('hydrograph');
-    });
-
-    afterEach(() => {
-        select('#hydrograph').remove();
-    });
-
-    describe('graphControls', () => {
-
+        let div;
         let store;
+
         beforeEach(() => {
+            div = select('body').append('div');
             store = configureStore(TEST_STATE);
-            attachToNode(store, graphNode, {siteno: '12345678'});
+            div.call(provide(store))
+                .call(drawGraphControls);
+        });
+
+        afterEach(() => {
+            div.remove();
         });
 
         // last year checkbox tests
@@ -199,15 +190,6 @@ describe('graph-controls', () => {
             expect(select('#last-year-checkbox').property('disabled')).toBeTruthy();
         });
 
-        it('Should render one lines', () => {
-            expect(selectAll('#ts-compare-group .line-segment').size()).toBe(1);
-        });
-
-        it('Should remove the lines when removing the compare time series', () => {
-            store.dispatch(Actions.toggleTimeSeries('compare', false));
-            expect(selectAll('#ts-compare-group .line-segment').size()).toBe(0);
-        });
-
         // median checkbox tests
         it('Should render the median toggle checked', () => {
             const checkbox = select('#median-checkbox');
@@ -229,15 +211,6 @@ describe('graph-controls', () => {
         it('should be disabled if there are no median statistics data', () => {
             store.dispatch(Actions.setCurrentVariable('45807190'));
             expect(select('#median-checkbox').property('disabled')).toBeTruthy();
-        });
-
-        it('Should render one lines', () => {
-            expect(selectAll('#median-points .median-data-series').size()).toBe(1);
-        });
-
-        it('Should remove the lines when removing the median statistics data', () => {
-            store.dispatch(Actions.toggleTimeSeries('median', false));
-            expect(selectAll('#median-points .median-data-series').size()).toBe(0);
         });
     });
 });

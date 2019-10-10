@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.20.0...master)
 ### Added
-- Added a feature toggle to enable/disable median line on hydrograph 
+- Added a checkbox to enable/disable median line on hydrograph 
 
 ### Changed
 - Conditionally displayed the method description based on the number of methods.

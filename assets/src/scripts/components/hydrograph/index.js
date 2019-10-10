@@ -18,7 +18,7 @@ import { appendAxes, axesSelector } from './axes';
 import { cursorSlider } from './cursor';
 import { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID,
     getCurrentVariableMedianStatPoints } from './drawing-data';
-import { graphControls } from './graph-controls';
+import { drawGraphControls } from './graph-controls';
 import { CIRCLE_RADIUS_SINGLE_PT, SPARK_LINE_DIM, layoutSelector } from './layout';
 import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
 import { drawMethodPicker } from './method-picker';
@@ -531,7 +531,7 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
         .append('div')
             .classed('ts-legend-controls-container', true)
             .call(timeSeriesLegend)
-            .call(callIf(interactive, graphControls));
+            .call(callIf(interactive, drawGraphControls));
 
     if (interactive) {
         select(node).select('.select-time-series-container')

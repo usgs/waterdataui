@@ -347,6 +347,41 @@ describe('Hydrograph charting module', () => {
         });
     });
 
+    describe('compare line', () => {
+
+        let store;
+        beforeEach(() => {
+            store = configureStore(TEST_STATE);
+            attachToNode(store, graphNode, {siteno: '12345678'});
+        });
+
+        it('Should render one lines', () => {
+            expect(selectAll('#ts-compare-group .line-segment').size()).toBe(1);
+        });
+
+        it('Should remove the lines when removing the compare time series', () => {
+            store.dispatch(Actions.toggleTimeSeries('compare', false));
+            expect(selectAll('#ts-compare-group .line-segment').size()).toBe(0);
+        });
+    });
+
+    describe('median lines', () => {
+        let store;
+        beforeEach(() => {
+            store = configureStore(TEST_STATE);
+            attachToNode(store, graphNode, {siteno: '12345678'});
+        });
+
+        it('Should render one lines', () => {
+            expect(selectAll('#median-points .median-data-series').size()).toBe(1);
+        });
+
+        it('Should remove the lines when removing the median statistics data', () => {
+            store.dispatch(Actions.toggleTimeSeries('median', false));
+            expect(selectAll('#median-points .median-data-series').size()).toBe(0);
+        });
+    });
+
     describe('hiding/show provisional alert', () => {
         it('Expects the provisional alert to be visible when time series data is provided', () => {
             let store = configureStore(TEST_STATE);

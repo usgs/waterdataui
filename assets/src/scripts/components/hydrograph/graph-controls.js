@@ -11,7 +11,7 @@ import { isVisibleSelector, currentVariableTimeSeriesSelector } from './time-ser
  * Create the show audible toggle, last year toggle, and median toggle for the time series graph.
  * @param {Object} elem - D3 selection
  */
-export const graphControls = function(elem) {
+export const drawGraphControls = function(elem) {
 
     const graphControlDiv = elem.append('ul')
         .classed('usa-fieldset', true)
