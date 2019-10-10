@@ -83,16 +83,13 @@ svg {
   .y-axis {
     text {
       fill: black;
-
-      & {
-        .y-axis-label {
-          text-anchor: middle;
-          display: none;
-          font-size: 1.5em;
-          font-style: italic;
-          @include at-media($theme-site-max-width) {
-            display: block;
-          }
+      &.y-axis-label {
+        text-anchor: middle;
+        display: none;
+        font-size: 1.5em;
+        font-style: italic;
+        @include at-media($theme-site-max-width) {
+          display: block;
         }
       }
     }
