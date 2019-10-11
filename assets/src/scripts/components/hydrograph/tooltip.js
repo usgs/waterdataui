@@ -202,9 +202,6 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, cu
             text.attr('class', d => `${d.tsKey}-tooltip-text`);
             text.classed('approved', classes.approved);
             text.classed('estimated', classes.estimated);
-            if (config.MULTIPLE_TIME_SERIES_METADAT_SELECTOR_ENABLED) {
-                text.classed('not-current-method', currentMethodID !== parseInt(datum.methodID));
-            }
         });
 
     return textGroup;
