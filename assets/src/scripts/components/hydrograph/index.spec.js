@@ -479,7 +479,7 @@ describe('Hydrograph charting module', () => {
         });
     });
 
-    describe('Tests for loading indicators', () => {
+    xdescribe('Tests for loading indicators', () => {
 
         it('Expects the graph loading indicator to be visible if the current 7 day data is being loaded', () => {
             const newTestState = {
