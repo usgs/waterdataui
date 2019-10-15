@@ -4,7 +4,7 @@ import { Actions, configureStore } from '../../store';
 import { createTooltipText, createTooltipFocus, tooltipPointsSelector } from './tooltip';
 
 
-xdescribe('Hydrograph tooltip module', () => {
+describe('Hydrograph tooltip module', () => {
 
     let data = [12, 13, 14, 15, 16].map(hour => {
         return {

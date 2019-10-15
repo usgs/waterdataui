@@ -332,7 +332,7 @@ const TEST_STATE_ONE_VAR = {
     }
 };
 
-xdescribe('Cursor module', () => {
+describe('Cursor module', () => {
     describe('getNearestTime', () => {
         it('Return null if the DATA array is empty', function() {
             expect(getNearestTime([], DATA[0].dateTime)).toBeNull();
