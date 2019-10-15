@@ -12,7 +12,7 @@ import { classesForPoint, MASK_DESC } from './drawing-data';
 import { layoutSelector } from './layout';
 import { xScaleSelector, yScaleSelector } from './scales';
 import { tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
-import { getCurrentVariable, getCurrentParmCd, getCurrentMethodID } from '../../selectors/time-series-selector';
+import { getCurrentVariable, getCurrentParmCd } from '../../selectors/time-series-selector';
 import config from '../../config';
 import { mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius } from '../../utils';
 
@@ -115,7 +115,7 @@ const unitCodeSelector = createSelector(
     variable => variable ? variable.unit.unitCode : null
 );
 
-const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, currentMethodID, qualifiers, unitCode, ianaTimeZone, layout, currentParmCd}, textGroup) {
+const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone, layout, currentParmCd}, textGroup) {
     // Find the width of the between the y-axis and margin and set the tooltip margin based on that number
     const adjustMarginOfTooltips = function (elem) {
         // set a base number of pixels to bump the tooltips away from y-axis and compensate for slight under reporting
@@ -216,7 +216,6 @@ export const createTooltipText = function (elem) {
     elem.call(link(createTooltipTextGroup, createStructuredSelector({
         currentPoints: tsCursorPointsSelector('current'),
         comparePoints: tsCursorPointsSelector('compare'),
-        currentMethodID: getCurrentMethodID,
         qualifiers: qualifiersSelector,
         unitCode: unitCodeSelector,
         layout: layoutSelector,

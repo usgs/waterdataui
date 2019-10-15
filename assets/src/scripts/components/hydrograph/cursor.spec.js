@@ -54,12 +54,27 @@ const TEST_STATE_THREE_VARS = {
                 }
             }
         },
+        methods: {
+            69928: {
+                methodDescription: '',
+                methodID: 69928
+            },
+            69929: {
+                methodDescription: '',
+                methodID: 69929
+            },
+            69930: {
+                methodDescription: '',
+                methodID: 69930
+            }
+        },
         timeSeries: {
-            '00060': {
+            '69928:current:P7D': {
                 tsKey: 'current:P7D',
                 startTime: 1520351100000,
                 endTime: 1520955900000,
                 variable: '45807197',
+                method: 69928,
                 points: [{
                     value: 10,
                     qualifiers: ['P'],
@@ -74,11 +89,12 @@ const TEST_STATE_THREE_VARS = {
                     dateTime: 1522348200000
                 }]
             },
-            '00010': {
+            '69929:current:P7D': {
                 tsKey: 'current:P7D',
                 startTime: 1520351100000,
                 endTime: 1520955900000,
                 variable: '45807196',
+                method: 69929,
                 points: [{
                     value: 1,
                     qualifiers: ['P'],
@@ -93,10 +109,11 @@ const TEST_STATE_THREE_VARS = {
                     dateTime: 1522348200000
                 }]
             },
-            '00045': {
+            '69930:current:P7D': {
                 tsKey: 'current:P7D',
                 startTime: 1488815100000,
                 endTime: 1489419900000,
+                method: 69930,
                 variable: '45807140',
                 points: [{
                     value: 0,
@@ -157,6 +174,7 @@ const TEST_STATE_THREE_VARS = {
             median: false
         },
         currentVariableID: '45807197',
+        currentMethodID: 69928,
         currentDateRange: 'P7D',
         audiblePlayId: null
     },
@@ -169,15 +187,17 @@ const TEST_STATE_THREE_VARS = {
 const TEST_STATE_ONE_VAR = {
     series: {
         timeSeries: {
-            '00060:current': {
+            '69928:current:P7D': {
                 points: DATA,
                 tsKey: 'current:P7D',
-                variable: '00060id'
+                variable: '00060id',
+                methodID: 69928
             },
-            '00060:compare': {
+            '69928:compare:P7D': {
                 points: DATA,
                 tsKey: 'compare:P7D',
-                variable: '00060id'
+                variable: '00060id',
+                methodID: 69928
             }
         },
         timeSeriesCollections: {
@@ -188,6 +208,20 @@ const TEST_STATE_ONE_VAR = {
             'compare:P7D': {
                 variable: '00060id',
                 timeSeries: ['00060:compare']
+            }
+        },
+        methods: {
+            69928: {
+                methodDescription: '',
+                methodID: 69928
+            },
+            69929: {
+                methodDescription: '',
+                methodID: 69929
+            },
+            69930: {
+                methodDescription: '',
+                methodID: 69930
             }
         },
         variables: {
@@ -264,6 +298,7 @@ const TEST_STATE_ONE_VAR = {
             compare: true
         },
         currentVariableID: '00060id',
+        currentMethodID: 69928,
         currentDateRange: 'P7D',
         cursorOffset: null
     },
@@ -344,7 +379,7 @@ describe('Cursor module', () => {
 
         it('Should return last time with non-masked value if the cursor offset is null', function() {
             expect(tsCursorPointsSelector('compare')(TEST_STATE_ONE_VAR)).toEqual({
-                '00060:compare': {
+                '69928:compare:P7D': {
                     dateTime: 1514995200000,
                     qualifiers: ['P'],
                     value: 16,
@@ -352,7 +387,7 @@ describe('Cursor module', () => {
                 }
             });
             expect(tsCursorPointsSelector('current')(TEST_STATE_ONE_VAR)).toEqual({
-                '00060:current': {
+                '69928:current:P7D': {
                     dateTime: 1514995200000,
                     qualifiers: ['P'],
                     value: 16,
@@ -370,8 +405,8 @@ describe('Cursor module', () => {
                 }
             };
 
-            expect(tsCursorPointsSelector('current')(state)['00060:current'].value).toEqual(14);
-            expect(tsCursorPointsSelector('compare')(state)['00060:compare'].value).toEqual(14);
+            expect(tsCursorPointsSelector('current')(state)['69928:current:P7D'].value).toEqual(14);
+            expect(tsCursorPointsSelector('compare')(state)['69928:compare:P7D'].value).toEqual(14);
         });
 
         it('Selects the nearest point for the current variable streamflow', () => {
@@ -380,11 +415,12 @@ describe('Cursor module', () => {
                 timeSeriesState: {
                     ...TEST_STATE_THREE_VARS.timeSeriesState,
                     currentVariableID: '45807196',
+                    currentMethodID: 69929,
                     cursorOffset: 16 * 60 * 1000
                 }
             };
             expect(tsCursorPointsSelector('current')(newState)).toEqual({
-                '00010': {
+                '69929:current:P7D': {
                     value: 2,
                     qualifiers: ['P'],
                     dateTime: 1522347300000,
@@ -399,12 +435,13 @@ describe('Cursor module', () => {
                 timeSeriesState: {
                     ...TEST_STATE_THREE_VARS.timeSeriesState,
                     currentVariableID: '45807140',
+                    currentMethodID: 69930,
                     cursorOffset: 29 * 60 * 1000
                 }
             };
 
             expect(tsCursorPointsSelector('current')(newState)).toEqual({
-                '00045': {
+                '69930:current:P7D': {
                     value: 0.03,
                     qualifiers: ['P'],
                     dateTime: 1522348200000,
