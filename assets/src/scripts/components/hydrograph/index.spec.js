@@ -150,7 +150,7 @@ const TEST_STATE = {
 };
 
 
-xdescribe('Hydrograph charting module', () => {
+describe('Hydrograph charting module', () => {
     let graphNode;
 
     beforeEach(() => {
@@ -228,7 +228,7 @@ xdescribe('Hydrograph charting module', () => {
         });
     });
 
-    describe('SVG contains the expected elements', () => {
+    xdescribe('SVG contains the expected elements', () => {
         /* eslint no-use-before-define: 0 */
         let store;
         beforeEach(() => {
