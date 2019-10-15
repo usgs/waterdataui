@@ -228,7 +228,7 @@ describe('Hydrograph charting module', () => {
         });
     });
 
-    xdescribe('SVG contains the expected elements', () => {
+    describe('SVG contains the expected elements', () => {
         /* eslint no-use-before-define: 0 */
         let store;
         beforeEach(() => {
@@ -311,7 +311,7 @@ describe('Hydrograph charting module', () => {
             expect(selectAll('table .tooltip-item').size()).toBe(2);
         });
 
-        xit('should not have tooltips for the select series table when the screen is large', () => {
+        it('should not have tooltips for the select series table when the screen is large', () => {
             store.dispatch(Actions.resizeUI(800, 800));
             expect(selectAll('table .tooltip-table').size()).toBe(0);
         });
@@ -320,7 +320,7 @@ describe('Hydrograph charting module', () => {
     //TODO: Consider adding a test which checks that the y axis is rescaled by
     // examining the contents of the text labels.
 
-    xdescribe('legends should render', () => {
+    describe('legends should render', () => {
         let store;
 
         beforeEach(() => {
@@ -382,7 +382,7 @@ describe('Hydrograph charting module', () => {
         });
     });
 
-    xdescribe('hiding/show provisional alert', () => {
+    describe('hiding/show provisional alert', () => {
 
         it('Expects the provisional alert to be visible when time series data is provided', () => {
             let store = configureStore(TEST_STATE);
@@ -406,7 +406,7 @@ describe('Hydrograph charting module', () => {
         });
     });
 
-    xdescribe('Creating date range controls', () => {
+    describe('Creating date range controls', () => {
         let store;
         beforeEach(() => {
             store = configureStore(TEST_STATE);
@@ -480,7 +480,7 @@ describe('Hydrograph charting module', () => {
         });
     });
 
-    xdescribe('Tests for loading indicators', () => {
+    describe('Tests for loading indicators', () => {
 
         it('Expects the graph loading indicator to be visible if the current 7 day data is being loaded', () => {
             const newTestState = {
