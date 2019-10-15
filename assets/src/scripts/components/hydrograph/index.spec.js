@@ -150,7 +150,7 @@ const TEST_STATE = {
 };
 
 
-describe('Hydrograph charting module', () => {
+xdescribe('Hydrograph charting module', () => {
     let graphNode;
 
     beforeEach(() => {
