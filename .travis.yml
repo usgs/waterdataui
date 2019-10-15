@@ -4,7 +4,7 @@ python:
   - "3.6.5"
 
 addons:
-  firefox: "68.0.2"
+  firefox: "latest"
   # sauce_connect: true
 branches:
   only:
