@@ -7,7 +7,6 @@ import { CIRCLE_RADIUS } from './layout';
 import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from './markers';
 import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from './drawing-data';
 import config from '../../config';
-import { getMethods } from '../../selectors/time-series-selector';
 import { getCurrentVariableMedianMetadata } from '../../selectors/median-statistics-selector';
 import { mediaQuery } from '../../utils';
 
@@ -200,10 +199,9 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
 const legendDisplaySelector = createSelector(
     (state) => state.timeSeriesState.showSeries,
     getCurrentVariableMedianMetadata,
-    getMethods,
     uniqueClassesSelector('current'),
     uniqueClassesSelector('compare'),
-    (showSeries, medianSeries, methods, currentClasses, compareClasses) => {
+    (showSeries, medianSeries, currentClasses, compareClasses) => {
         return {
             current: showSeries.current ? currentClasses : undefined,
             compare: showSeries.compare ? compareClasses : undefined,

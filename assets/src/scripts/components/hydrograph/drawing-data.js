@@ -4,9 +4,14 @@ import find from 'lodash/find';
 import { DateTime } from 'luxon';
 import { createSelector } from 'reselect';
 import { format } from 'd3-format';
-import { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } from './time-series';
-import { getVariables, getTsRequestKey, getRequestTimeRange, getIanaTimeZone } from '../../selectors/time-series-selector';
+
+import config from '../../config';
+import { getVariables, getCurrentMethodID, getTsRequestKey, getRequestTimeRange, getIanaTimeZone }
+    from '../../selectors/time-series-selector';
 import { getCurrentVariableMedianStatistics } from '../../selectors/median-statistics-selector';
+
+import { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } from './time-series';
+
 
 export const MASK_DESC = {
     ice: 'Ice Affected',
@@ -285,7 +290,7 @@ export const pointsTableDataSelector = memoize(tsKey => createSelector(
     }
 ));
 
-const getLineClasses = function(pt) {
+const getLineClasses = function(pt, isCurrentMethod) {
     let dataMask = null;
     if (pt.value === null) {
         let qualifiers = set(pt.qualifiers.map(q => q.toLowerCase()));
@@ -297,6 +302,7 @@ const getLineClasses = function(pt) {
     }
     return {
         ...classesForPoint(pt),
+        currentMethod: isCurrentMethod,
         dataMask
     };
 };
@@ -311,9 +317,11 @@ const getLineClasses = function(pt) {
  */
 export const lineSegmentsSelector = memoize((tsKey, period) => createSelector(
     pointsByTsKeySelector(tsKey, period),
-    (tsPoints) => {
+    getCurrentMethodID,
+    (tsPoints, currentMethodID) => {
         let seriesLines = {};
         Object.keys(tsPoints).forEach((tsId) => {
+            const methodID = tsId.split(':')[0];
             const points = tsPoints[tsId];
             let lines = [];
 
@@ -323,7 +331,7 @@ export const lineSegmentsSelector = memoize((tsKey, period) => createSelector(
 
             for (let pt of points) {
                 // Classes to put on the line with this point.
-                let lineClasses = getLineClasses(pt);
+                let lineClasses = getLineClasses(pt, !config.MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED || currentMethodID === parseInt(methodID));
 
                 // If this is a non-masked data point, split lines if the gap
                 // from the period point exceeds MAX_LINE_POINT_GAP.
@@ -340,6 +348,7 @@ export const lineSegmentsSelector = memoize((tsKey, period) => createSelector(
                 // create a new line for it.
                 if (lastClasses.approved !== lineClasses.approved ||
                     lastClasses.estimated !== lineClasses.estimated ||
+                    lastClasses.currentMethod !== lineClasses.currentMethod ||
                     lastClasses.dataMask !== lineClasses.dataMask ||
                     splitOnGap) {
                     lines.push({

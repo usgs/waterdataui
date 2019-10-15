@@ -2,7 +2,6 @@
  * Rollup configuration.
  * NOTE: This is a CommonJS module so it can be imported by Karma.
  */
-const os = require('os');
 const path = require('path');
 
 const alias = require('rollup-plugin-alias');
@@ -20,7 +19,9 @@ module.exports = {
     input: 'src/scripts/index.js',
     plugins: [
         alias({
-            leaflet: path.resolve(__dirname, 'node_modules/leaflet/dist/leaflet-src.esm.js')
+            entries: [
+                {find: 'leaflet', replacement: path.resolve(__dirname, 'node_modules/leaflet/dist/leaflet-src.esm.js')}
+            ]
         }),
         resolve({
             mainFields: ['module', 'jsnext', 'main']
@@ -40,8 +41,7 @@ module.exports = {
             compress: {
                 dead_code: true,
                 drop_console: true
-            },
-            numWorkers: Math.max(1, os.cpus().length - 1)
+            }
         })
     ],
     watch: {

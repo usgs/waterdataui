@@ -4,187 +4,227 @@
 @import './variables';
 
 #ts-daterange-select-container {
-    .loading-indicator-container {
-        display: inline-block;
+  .loading-indicator-container {
+    display: inline-block;
+  }
+
+  ul {
+    display: inline-block;
+
+    li {
+      display: inline-block;
+
+      label {
+        width: 110px;
+      }
     }
-    ul {
-        display: inline-block;
-        li {
-            display: inline-block;
-            label {
-                width: 110px;
-            }
-        }
-    }
+  }
 }
 
-#select-time-series  {
-    label {
-        @include u-text( 'bold' );
+#ts-customdaterange-select-container {
+  label {
+    @include u-text('bold');
+  }
+}
+
+#ts-method-select-container {
+  @include u-margin-bottom(2);
+}
+
+#select-time-series {
+  label {
+    @include u-text('bold');
+  }
+
+  table {
+    display: block;
+    overflow: auto;
+    margin-top: 0;
+    height: 250px;
+    @include at-media($theme-site-max-width) {
+      height: auto;
     }
-    table {
-        display: block;
-        overflow: auto;
-        margin-top: 0;
 
-        height: 250px;
-        @include at-media($theme-site-max-width) {
-            height: auto;
-        }
+    thead {
+      th {
+        font-size: size('body', 'sm');
+      }
 
-        thead {
-            th {
-                font-size: size('body', 'sm')
-            }
-            th, td {
-                background-color: white;
-            }
-        }
-        tbody {
-            tr {
-                cursor: pointer;
-                background-color: $highlight;
-                th, td {
-                    padding-top: 0.5rem;
-                    padding-bottom: 0.5rem;
-                }
-
-                &:hover {
-                    th, td {
-                        background-color: $highlight;
-                    }
-                    .tooltip-item {
-                        background-color: $highlight;
-                    }
-                }
-                &.selected {
-                    cursor: default;
-                    th, td {
-                        background-color: $selected;
-                    }
-                    .tooltip-item {
-                        background-color: $selected;
-                    }
-                }
-                .tooltip-item {
-                    span {
-                        padding-left: 0.25em;
-                        font-size: 0.8em;
-                    }
-                    .tooltip {
-                        position: absolute;
-                        bottom: 0;
-                        left: 1em;
-                        text-align: center;
-                        width: 11em;
-                        padding: 0.2em;
-                        margin: 0 0;
-                    }
-                }
-            }
-        }
-        svg {
-            .spark-line {
-                stroke: $usgs-blue;
-                stroke-width: 1px;
-                fill: none;
-            }
-            text.sparkline-text {
-                font-size: 0.6em;
-            }
-            .spark-point {
-                stroke: $usgs-blue;
-                stroke-width: 1px;
-                fill: $usgs-blue;
-            }
-        }
+      th, td {
+        background-color: white;
+      }
     }
+
+    tbody {
+      tr {
+        cursor: pointer;
+        background-color: $highlight;
+
+        th, td {
+          padding-top: 0.5rem;
+          padding-bottom: 0.5rem;
+        }
+
+        &:hover {
+          th, td {
+            background-color: $highlight;
+          }
+
+          .tooltip-item {
+            background-color: $highlight;
+          }
+        }
+
+        &.selected {
+          cursor: default;
+
+          th, td {
+            background-color: $selected;
+          }
+
+          .tooltip-item {
+            background-color: $selected;
+          }
+        }
+
+        .tooltip-item {
+          span {
+            padding-left: 0.25em;
+            font-size: 0.8em;
+          }
+
+          .tooltip {
+            position: absolute;
+            bottom: 0;
+            left: 1em;
+            text-align: center;
+            width: 11em;
+            padding: 0.2em;
+            margin: 0 0;
+          }
+        }
+      }
+    }
+
+    svg {
+      .spark-line {
+        stroke: $usgs-blue;
+        stroke-width: 1px;
+        fill: none;
+      }
+
+      text {
+        .sparkline-text {
+          font-size: 0.6em;
+        }
+      }
+
+      .spark-point {
+        stroke: $usgs-blue;
+        stroke-width: 1px;
+        fill: $usgs-blue;
+      }
+    }
+  }
 }
 
 .hydrograph-container {
-    width: 100%;
-    vertical-align: top;
-    @include at-media('tablet') {
-        min-height: 85px;
+  width: 100%;
+  vertical-align: top;
+  @include at-media('tablet') {
+    min-height: 85px;
+  }
+
+  // Import the SVG styles for the graph
+  @import './graph';
+
+  .tooltip-text-group {
+    pointer-events: none;
+    position: absolute;
+    background: rgba(255, 255, 255, 0.8);
+    color: $default-time-series;
+    opacity: 1;
+
+    .current-tooltip-text {
+      font-weight: bold;
     }
 
-    // Import the SVG styles for the graph
-    @import './graph';
-
-    .tooltip-text-group {
-        pointer-events: none;
-        position: absolute;
-        background: rgba(255, 255, 255, 0.8);
-        color: $default-time-series;
-        .current-tooltip-text {
-            font-weight: bold;
-        }
-        .approved {
-            color: $approved-time-series;
-        }
-        .estimated {
-            color: $estimated-time-series;
-        }
-        .compare-tooltip-text {
-            font-weight: normal
-        }
+    .approved {
+      color: $approved-time-series;
     }
+
+    .estimated {
+      color: $estimated-time-series;
+    }
+
+    .compare-tooltip-text {
+      font-weight: normal;
+    }
+
+    .not-current-method {
+      opacity: $not-current-method-opacity;
+    }
+  }
 }
 
 .loading-indicator-container {
-    i {
-        text-align: center;
-        vertical: middle;
-        width: 100%;
-    }
+  i {
+    text-align: center;
+    vertical: middle;
+    width: 100%;
+  }
 }
 
 .slider-wrapper {
-    height: 0;
-    input#cursor-slider {
-        max-width: none;
-        position: relative;
-        opacity: .2;
-        top: -2em;
-        background: none;
-        padding: 0;
-        margin: 0;
-        &.active {
-            opacity: 1;
-        }
-    }
-}
-.ts-legend-controls-container {
+  height: 0;
+
+  input#cursor-slider {
+    max-width: none;
     position: relative;
+    opacity: .2;
+    top: -2em;
+    background: none;
+    padding: 0;
+    margin: 0;
+    &.active {
+      opacity: 1;
+    }
+  }
+}
 
-    font-size: .7em;
+.ts-legend-controls-container {
+  position: relative;
+
+  font-size: .7em;
+  @include at-media('tablet') {
+    font-size: 1em;
+  }
+
+  button {
+    font-size: 1em;
+  }
+
+  .graph-controls-container {
+    display: inline-block;
+
+    li {
+      margin-bottom: 10px;
+    }
+
     @include at-media('tablet') {
-        font-size: 1em;
+      position: absolute;
+      top: 0;
+      right: 0;
     }
-
-    button {
-        font-size: 1em;
-    }
-
-    .graph-controls-container {
-        display: inline-block;
-        li {
-            margin-bottom: 10px;
-        }
-        @include at-media('tablet') {
-            position: absolute;
-            top: 0;
-            right: 0;
-        }
-    }
+  }
 }
 
 .provisional-data-alert {
-    p {
-        height: 6em;
-        overflow-y: scroll;
-        @include at-media('mobile-lg') {
-            height: 4em;
-        }
+  p {
+    height: 6em;
+    overflow-y: scroll;
+    @include at-media('mobile-lg') {
+      height: 4em;
     }
+  }
 }

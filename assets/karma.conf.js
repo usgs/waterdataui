@@ -97,7 +97,7 @@ module.exports = function (config) {
                         exclude: [
                             'tests/**/*.js',
                             'src/scripts/**/*.spec.js',
-                            'node_modules/**/*.js'
+                            'node_modules/**/*'
                         ]
                     })
                 ]

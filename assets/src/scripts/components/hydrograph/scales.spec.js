@@ -1,6 +1,6 @@
 import { extent } from 'd3-array';
 import { DateTime } from 'luxon';
-import { createXScale, createYScale, yScaleSelector } from './scales';
+import { createXScale, createYScale, yScaleSelector, secondaryYScaleSelector } from './scales';
 
 
 describe('scales', () => {
@@ -72,6 +72,20 @@ describe('scales', () => {
         expect(singleLog10 - singleLog100).toBeCloseTo(singleLog100 - singleLog1000, -1);
     });
 
+    it('Expect yscale\'s for parameter code that should be reversed, are reversed', () => {
+        const yScale72019 = createYScale('72109', [0, 20], 100);
+        const yScale61055 = createYScale('61055', [0, 20], 100);
+        const yScale99268 = createYScale('99268', [0, 20], 100);
+        const yScale99269 = createYScale('99269', [0, 20], 100);
+        const yScale72001 = createYScale('72001', [0, 20], 100);
+
+        expect(yScale72019(5), 75);
+        expect(yScale61055(10), 50);
+        expect(yScale99268(15), 25);
+        expect(yScale99269(0), 100);
+        expect(yScale72001(100), 0);
+    });
+
     it('Expect parameter code for not discharge to use a linear scale', () => {
         const linear10 = yScaleLinear(10);
         const linear20 = yScaleLinear(20);
@@ -133,6 +147,97 @@ describe('scales', () => {
                     windowWidth: 600
                 }
             }).name).toBe('scale');
+        });
+    });
+
+    describe('secondaryYScaleSelector', () => {
+        it('Returns null if a non-temperature parameter is selected', () => {
+            expect(secondaryYScaleSelector({
+                series: {
+                    variables: {
+                       '00060ID': {
+                           variableCode: {
+                               value: '00060'
+                           }
+                       }
+                    },
+                    timeSeries: {
+                        '00060ID': {}
+                    }
+                },
+                statisticsData: {},
+                timeSeriesState: {
+                    showSeries: {
+                        current: true,
+                        compare: false
+                    },
+                    currentVariableID: '00060ID'
+                },
+                ui: {
+                    width: 200,
+                    windowWidth: 600
+                }
+            })).toBeNull();
+        });
+
+        it('Returns a scale if a celsius temperature parameter is selected', () => {
+            const secondaryYScale = secondaryYScaleSelector({
+                series: {
+                    variables: {
+                       '00010ID': {
+                           variableCode: {
+                               value: '00010'
+                           }
+                       }
+                    },
+                    timeSeries: {
+                        '00010ID': {}
+                    }
+                },
+                statisticsData: {},
+                timeSeriesState: {
+                    showSeries: {
+                        current: true,
+                        compare: false
+                    },
+                    currentVariableID: '00010ID'
+                },
+                ui: {
+                    width: 200,
+                    windowWidth: 600
+                }
+            });
+            expect(secondaryYScale.name).toBe('scale');
+        });
+
+        it('Returns a scale if a fahrenheit temperature parameter is selected', () => {
+            const secondaryYScale = secondaryYScaleSelector({
+                series: {
+                    variables: {
+                       '00011ID': {
+                           variableCode: {
+                               value: '00011'
+                           }
+                       }
+                    },
+                    timeSeries: {
+                        '00011ID': {}
+                    }
+                },
+                statisticsData: {},
+                timeSeriesState: {
+                    showSeries: {
+                        current: true,
+                        compare: false
+                    },
+                    currentVariableID: '00011ID'
+                },
+                ui: {
+                    width: 200,
+                    windowWidth: 600
+                }
+            });
+            expect(secondaryYScale.name).toBe('scale');
         });
     });
 });

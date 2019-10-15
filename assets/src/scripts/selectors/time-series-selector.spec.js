@@ -297,6 +297,7 @@ describe('timeSeriesSelector', () => {
     describe('getRequestTimeRange', () => {
         const TEST_DATA = {
             series: {
+                ianaTimeZone: 'America/Chicago',
                 queryInfo: {
                     'current:P7D': {
                         notes: {
@@ -316,6 +317,18 @@ describe('timeSeriesSelector', () => {
                                 interval: {
                                     start: 1488348000000,
                                     end: 1490763600000
+                                }
+                            }
+                        }
+                    },
+                    'current:custom:00095': {
+                        notes: {
+                            requestDT: 1568729153803,
+                            'filter:timeRange': {
+                                mode: 'RANGE',
+                                interval: {
+                                    start: 1454738400000,
+                                    end: 1557896400000
                                 }
                             }
                         }
@@ -353,6 +366,13 @@ describe('timeSeriesSelector', () => {
             expect(getRequestTimeRange('current', 'P30D', '00060')(TEST_DATA)).toEqual({
                 start: 1488348000000,
                 end: 1490763600000
+            });
+        });
+
+        it('should use the interval for a request with a custom RANGE', () => {
+            expect(getRequestTimeRange('current', 'custom', '00095')(TEST_DATA)).toEqual({
+                start: 1454738400000,
+                end: 1557896400000
             });
         });
     });

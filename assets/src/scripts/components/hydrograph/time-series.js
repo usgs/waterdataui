@@ -1,7 +1,36 @@
 import { timeFormat } from 'd3-time-format';
 import memoize from 'fast-memoize';
+import _includes from 'lodash/includes';
+import uniq from 'lodash/uniq';
 import { createSelector } from 'reselect';
-import { getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone } from '../../selectors/time-series-selector';
+
+import { getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone, getCurrentParmCd,
+    getMethods } from '../../selectors/time-series-selector';
+
+
+export const TEMPERATURE_PARAMETERS = {
+    celsius: [
+        '00010',
+        '00020',
+        '45587',
+        '45589',
+        '50011',
+        '72176',
+        '72282',
+        '72283',
+        '72329',
+        '81027',
+        '81029',
+        '85583',
+        '99229',
+        '99230'
+    ],
+    fahrenheit: [
+        '00011',
+        '00021',
+        '45590'
+    ]
+};
 
 
 // Create a time formatting function from D3's timeFormat
@@ -44,7 +73,6 @@ export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector
     (tsRequestKey, timeSeries, variable) => {
         let ts = {};
         if (variable) {
-            ts = {};
             Object.keys(timeSeries).forEach(key => {
                 const series = timeSeries[key];
                 if (series.tsKey === tsRequestKey && series.variable === variable.oid) {
@@ -56,13 +84,51 @@ export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector
     }
 ));
 
+/*
+ * Return all times series for the current variable.
+ * @ return {Object} time series data
+ */
+export const getAllTimeSeriesForCurrentVariable = createSelector(
+    getCurrentVariable,
+    allTimeSeriesSelector,
+    (variable, timeSeries) => {
+        let ts = {};
+        if (variable) {
+            Object.keys(timeSeries).forEach(key => {
+                const series = timeSeries[key];
+                if (series.variable === variable.oid) {
+                    ts[key] = series;
+                }
+            });
+        }
+        return ts;
+    }
+);
 
+/*
+ * @param {String} tsKey - current or compare
+ * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
+ * @param {String} or null parmCd - Only need to specify if period is something other than P7D or null
+ * return {Array} an object containing method_id and method_description properties
+ */
+export const getAllMethodsForCurrentVariable = createSelector(
+    getMethods,
+    getAllTimeSeriesForCurrentVariable,
+    (methods, timeSeries) => {
+        const allMethods = Object.values(methods);
+        const currentMethodIds = uniq(Object.values(timeSeries).map((ts) => ts.method));
+
+        return allMethods.filter((method) => {
+            return _includes(currentMethodIds, method.methodID);
+        });
+    }
+);
 
 /**
  * Returns a selector that, for a given tsKey and period:
  * Selects all time series data. If period is null then, the currentDateRange is used
  * @param  {String} tsKey   Time-series key
- * @param {String} or null date range using ISO-8601 duration
+ * @param {String} or null date range using ISO-8601 duration;
  * @param  {Object} state   Redux state
  * @return {Object} - Keys are tsID, values are time-series data
  */
@@ -107,6 +173,20 @@ export const isVisibleSelector = memoize(tsKey => (state) => {
 export const yLabelSelector = createSelector(
     getCurrentVariable,
     variable => variable ? variable.variableDescription : ''
+);
+
+
+export const secondaryYLabelSelector = createSelector(
+    getCurrentParmCd,
+    parmCd => {
+        let secondaryYLabel = null;
+        if (TEMPERATURE_PARAMETERS.celsius.includes(parmCd)) {
+            secondaryYLabel = 'degrees Fahrenheit';
+        } else if(TEMPERATURE_PARAMETERS.fahrenheit.includes(parmCd)) {
+            secondaryYLabel = 'degrees Celsius';
+        }
+        return secondaryYLabel;
+    }
 );
 
 

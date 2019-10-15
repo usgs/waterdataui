@@ -1,0 +1,38 @@
+[
+{
+"SiteId": "11111",
+"idUri": "11111,https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_11111/",
+"timelapseFolder": "https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_11111/",
+"timelapseRoot": "https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_11111/11111_idx132_Yahara_Main",
+"timelapseSmall": "_timelapse_0480x0270at10fps_qmax42.webm",
+"timelapseLarge": "_timelapse_1920x1080at10fps_qmax42.webm",
+"thumbnail": "https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_11111/idx132_thumbnail.gif",
+"lastFrame": "https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_11111/idx132_last_frame_in_current_timelapse.jpg",
+"siteDesc": "11111 WI-Yahara River at East Main Street at Madison, WI",
+"SiteType2": "stream"
+},
+{
+"SiteId": "12345",
+"idUri": "12345,https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_12345/",
+"timelapseFolder": "https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_12345/",
+"timelapseRoot": "https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_12345/_12345_idx132_Yahara_Main",
+"timelapseSmall": "_timelapse_0480x0270at10fps_qmax42.webm",
+"timelapseLarge": "_timelapse_1920x1080at10fps_qmax42.webm",
+"thumbnail": "https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_12345/idx132_thumbnail.gif",
+"lastFrame": "https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_12345/idx132_last_frame_in_current_timelapse.jpg",
+"siteDesc": "12345 WI-Yahara River at East Main Street at Madison, WI",
+"SiteType2": "stream"
+},
+{
+"SiteId": "22222",
+"idUri": "22222,https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_22222/",
+"timelapseFolder": "https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_22222/",
+"timelapseRoot": "https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_22222/_22222_idx132_Yahara_Main",
+"timelapseSmall": "_timelapse_0480x0270at10fps_qmax42.webm",
+"timelapseLarge": "_timelapse_1920x1080at10fps_qmax42.webm",
+"thumbnail": "https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_22222/idx132_thumbnail.gif",
+"lastFrame": "https://cida.usgs.gov/stormsummary/timelapse/BasicData/WIWSC/SWO/Yahara_Main_timelapse_videos_22222/idx132_last_frame_in_current_timelapse.jpg",
+"siteDesc": "22222 WI-Yahara River at East Main Street at Madison, WI",
+"SiteType2": "stream"
+}
+]

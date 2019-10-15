@@ -4,12 +4,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.20.0...master)
+### Added
+- Added a checkbox to enable/disable median line on hydrograph 
+
+### Changed
+- Conditionally displayed the method description based on the number of methods.
+- Updated to use wdfn-viz which updates the USWDS version to 2.2.1
+
+## [0.20.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.19.0...waterdataui-0.20.0) - 2019-10-04
+### Added
+- Added a second Y-axis for temperature parameters
+- Added picker to pick a method description that will be highlighted in the hydrograph.
+- Added feature toggle to enable/disable picker for method description
+
+### Changed
+- Changed how the lower bound on symlog scales are calculated to be closer to the minimum y-value on the plot
+
+### Fixed
+- Fixed issue where invalid cooperator data would cause the a monitoring location page to error
+
+## [0.19.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.18.0...waterdataui-0.19.0) - 2019-09-20
+### Added
+- Added support for user specified date ranges
+- Site Page now contains a Monitoring Camera section with proof of concept implementation.
+- Added NLDI navigation results
+
 ### Changed
 - Graph server now serves routes from /api/graph-images
-- NLDI navigation results
+- A selected set of parameter codes show the Y axis reversed
 
-## [0.17.0] - 2019-05-28
+## [0.18.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.17.0...waterdataui-0.18.0) - 2019-05-28
 ### Added
 - Map now contains Leaflet layer control to toggle satellite and gray with hydro layers
 
@@ -21,7 +46,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 the project styles to use USWDS 2.0.x
 - Moved the USGS watermark to the center of the hydrograph.
 
-## [0.16.0] - 2019-03-06
+## [0.17.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.16.0...waterdataui-0.17.0) - 2019-03-06
 ### Added
 - Add Docker config for server-rendering PNGs
 - Use a Puppeteer/Chrome process pool for server rendering
@@ -29,33 +54,36 @@ the project styles to use USWDS 2.0.x
 ### Changed
 - Links in monitoring-location now use configurable endpoints.
 
+## [0.16.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.15.0...waterdataui-0.16.0)
+### Added
+- A server to generate graph images.
 
-## [0.15.0] - 2019-02-26
+## [0.15.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.14.0...waterdataui-0.15.0) - 2019-02-26
 ### Fixed
 - Fixed the issue causing hydrograph date/time not to display on Internet Explorer
 - Fixed the issue that was causing the extended time series fetch to fail.
 - Page now renders when data values for the initial time series is all zeros.
 
-## [0.14.0] - 2018-12-04
+## [0.14.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.13.0...waterdataui-0.14.0) - 2018-12-04
 ### Changed
 - The Browserify/Babel build tooling was replaced with Rollup/Bublé.
 - Added additional ticks and labels to fill in gaps on graphs with log plots
 - Using Firefox headless to run tests for travis and default.
 - Renamed Javascript modules to follow dash-case rather than camelCase
 
-## [0.13.0] - 2018-09-11
+## [0.13.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.12.0...waterdataui-0.13.0) - 2018-09-11
 ### Changed
 - Cooperator logos are always loaded via https
 
-## [0.12.0] - 2018-08-03
+## [0.12.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.11.0...waterdataui-0.12.0) - 2018-08-03
 ### Changed
 - Cooperator logos lookup changed from static json file to external, SIFTA-based service
 
-## [0.11.0] - 2018-06-06
+## [0.11.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.10.0...waterdataui-0.11.0) - 2018-06-06
 ### Changed
 - Cooperator logos lookup changed from the SIFTA site service to json file
 
-## [0.10.0] - 2018-06-01
+## [0.10.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.9.0...waterdataui-0.10.0) - 2018-06-01
 ### Added
 - Loading indicators for initial time series load and for loading extended data
 - Added no data alert for sites with no time series data.
@@ -80,12 +108,12 @@ not have to be coerced into a time series.
 - Various accessibility violations
 - Tooltips that were hard to read when they overlapped graph lines
 
-## [0.9.0] - 2018-05-10
+## [0.9.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.8.0...waterdataui-0.9.0) - 2018-05-10
 ### Fixed
 - Safari only bug where extended time range graphs with median data would crash the browser.
 
 
-## [0.8.0] - 2018-05-08
+## [0.8.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.7.0...waterdataui-0.8.0) - 2018-05-08
 ### Added
 - Hydrograph can now show either last 7 days, last 30 days, or the last year of data for
 the selected timeseries. The Show last year feature also works for the three date ranges.
@@ -111,7 +139,7 @@ the selected timeseries. The Show last year feature also works for the three dat
 - Estimated time series points are now shown.
 
 
-## [0.7.0] - 2018-04-23
+## [0.7.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.6.0...waterdataui-0.7.0) - 2018-04-23
 ### Added
 - Tooltips are provided for metadata elements for those that USGS defines on NWIS help pages.
 - Information alert for provisional data.
@@ -133,7 +161,7 @@ slice reducers for the different parts.
 - Metadata tooltips are not clipped by their containing div element
 
 
-## [0.6.0] - 2018-04-06
+## [0.6.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.5.0...waterdataui-0.6.0) - 2018-04-06
 ### Added
 - Play/Stop button to play the audible sound for the timeseries graph
 - Legend appears on the map describing the map features
@@ -158,7 +186,7 @@ slice reducers for the different parts.
 - Precipitation tooltips now show the correct accumulated values
 
 
-## [0.5.0] - 2018-03-30
+## [0.5.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.4.0...waterdataui-0.5.0) - 2018-03-30
 ### Added
 - Description metatag and text on page generated from site data
 - Decorator that can be used to return a 404 for views. This is part of the work to add feature flags.
@@ -175,7 +203,7 @@ slice reducers for the different parts.
 - No longer show parameters that have no data or masks for the last seven days in the
 "Select a timeseries" list.
 
-## [0.4.0] - 2018-03-26
+## [0.4.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.3.0...waterdataui-0.4.0) - 2018-03-26
 ### Added
 - Title to timeseries graph
 - Dismissable banner which shows the beta status and feedback link
@@ -199,7 +227,7 @@ Parameter codes can be found in the tooltip. A scrollbar will appear for long ti
 - Monitoring locations with no timeseries data no longer show the timeseries graph.
 - Parameters with no data points in current or last year data are omitted from the select table
 
-## [0.3.0] - 2018-03-09
+## [0.3.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.2.0...waterdataui-0.3.0)  - 2018-03-09
 ### Added
 - Sparklines added to "Select a timeseries" table.
 - Ability to show multiple time series for a parameter code.
@@ -213,7 +241,7 @@ shown on separate lines and doesn't dynamically shift position as the window is 
 - Data gaps of more than 72 minutes are shown.
 - Only IV data is shown in the select a time series list.
 
-## [0.2.0] - 2018-02-23
+## [0.2.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.1.0...waterdataui-0.2.0) - 2018-02-23
 ### Added
 - Previous year value is added to the tooltip when shown.
 - Tooltip uses a focus line in addition to the focus circle to show location on the time series line.
@@ -236,7 +264,7 @@ used for the time series line.
 a column for qualifier.
 
 
-## [0.1.0] - 2018-02-13
+## [0.1.0](https://github.com/usgs/waterdataui/tree/waterdataui-0.1.0) - 2018-02-13
 ### Added
 - Initial repo set up with metadata files.
 - Monitoring-location/{siteno} pages with the following features:
@@ -258,22 +286,3 @@ a column for qualifier.
 {huc}. For huc8, the page containsa link to a page containing the monitoring locations for that huc 8.
 - Hydrological-unit/{huc}/monitoring-locations pages which in addition to the huc information, shows a table of
 links to the monitoring-locations that are within {huc}.
-
-[Unreleased]: https://github.com/usgs/waterdataui/compare/waterdataui-0.17.0...master
-[0.17.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.16.0...waterdataui-0.17.0
-[0.16.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.15.0...waterdataui-0.16.0
-[0.15.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.14.0...waterdataui-0.15.0
-[0.14.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.13.0...waterdataui-0.14.0
-[0.13.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.12.0...waterdataui-0.13.0
-[0.12.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.11.0...waterdataui-0.12.0
-[0.11.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.10.0...waterdataui-0.11.0
-[0.10.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.9.0...waterdataui-0.10.0
-[0.9.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.8.0...waterdataui-0.9.0
-[0.8.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.7.0...waterdataui-0.8.0
-[0.7.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.6.0...waterdataui-0.7.0
-[0.6.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.5.0...waterdataui-0.6.0
-[0.5.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.4.0...waterdataui-0.5.0
-[0.4.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.3.0...waterdataui-0.4.0
-[0.3.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.2.0...waterdataui-0.3.0
-[0.2.0]: https://github.com/usgs/waterdataui/compare/waterdataui-0.1.0...waterdataui-0.2.0
-[0.1.0]: https://github.com/usgs/waterdataui/tree/waterdataui-0.1.0

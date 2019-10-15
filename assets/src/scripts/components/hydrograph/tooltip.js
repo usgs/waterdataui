@@ -4,16 +4,17 @@ import { transition } from 'd3-transition';
 import memoize from 'fast-memoize';
 import { createSelector, createStructuredSelector } from 'reselect';
 import { DateTime } from 'luxon';
+
 import { dispatch, link, initAndUpdate } from '../../lib/redux';
 import { Actions } from '../../store';
 import { cursorTimeSelector, tsCursorPointsSelector } from './cursor';
 import { classesForPoint, MASK_DESC } from './drawing-data';
 import { layoutSelector } from './layout';
 import { xScaleSelector, yScaleSelector } from './scales';
-import { tsTimeZoneSelector } from './time-series';
-import { getCurrentVariable } from '../../selectors/time-series-selector';
+import { tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
+import { getCurrentVariable, getCurrentParmCd, getCurrentMethodID } from '../../selectors/time-series-selector';
 import config from '../../config';
-import { mediaQuery } from '../../utils';
+import { mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius } from '../../utils';
 
 
 const createFocusLine = function(elem) {
@@ -71,13 +72,28 @@ export const tooltipPointsSelector = memoize(tsKey => createSelector(
     }
 ));
 
-const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone) {
+const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd) {
     let label = '';
     if (datum && qualifiers) {
         let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
         const maskKeys = set(Object.keys(MASK_DESC));
         const qualiferKeysLower = set(datum.qualifiers.map(x => x.toLowerCase()));
         const maskKeyIntersect = [...qualiferKeysLower.values()].filter(x => maskKeys.has(x));
+        if (valueStr !== ' ') {
+            let convertedValue;
+            let convertedUnit;
+            if (TEMPERATURE_PARAMETERS.celsius.includes(currentParmCd)) {
+                convertedValue = convertCelsiusToFahrenheit(datum.value);
+                convertedUnit = 'deg F';
+            } else if (TEMPERATURE_PARAMETERS.fahrenheit.includes(currentParmCd)) {
+                convertedValue = convertFahrenheitToCelsius(datum.value);
+                convertedUnit = 'deg C';
+            }
+            if (convertedValue) {
+                const secondaryAxisValue = `${convertedValue.toFixed(1)} ${convertedUnit}`;
+                valueStr += ` (${secondaryAxisValue})`;
+            }
+        }
         if (maskKeyIntersect.length) {
             // a data point will have at most one masking qualifier
             valueStr = MASK_DESC[[maskKeyIntersect][0]];
@@ -99,7 +115,7 @@ const unitCodeSelector = createSelector(
     variable => variable ? variable.unit.unitCode : null
 );
 
-const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone, layout}, textGroup) {
+const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, currentMethodID, qualifiers, unitCode, ianaTimeZone, layout, currentParmCd}, textGroup) {
     // Find the width of the between the y-axis and margin and set the tooltip margin based on that number
     const adjustMarginOfTooltips = function (elem) {
         // set a base number of pixels to bump the tooltips away from y-axis and compensate for slight under reporting
@@ -108,6 +124,20 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
         let marginAdjustment = layout.margin.left + baseMarginOffsetTextGroup;
         elem.style('margin-left', marginAdjustment + 'px');
     };
+    const currentPointsWithMethod = Object.keys(currentPoints).map((tsKey) => {
+        const methodID = tsKey.split(':')[0];
+        return {
+            ...currentPoints[tsKey],
+            methodID: methodID
+        };
+    });
+    const comparePointsWithMethod = Object.keys(comparePoints).map((tsKey) => {
+        const methodID = tsKey.split(':')[0];
+        return {
+            ...comparePoints[tsKey],
+            methodID: methodID
+        };
+    });
 
     // Put the circles in a container so we can keep the their position in the
     // DOM before rect.overlay, to prevent the circles from receiving mouse
@@ -118,7 +148,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
             .call(adjustMarginOfTooltips);
     }
 
-    const data = Object.values(currentPoints).concat(Object.values(comparePoints));
+    const data = Object.values(currentPointsWithMethod).concat(Object.values(comparePointsWithMethod));
     const texts = textGroup
         .selectAll('div')
         .data(data);
@@ -162,17 +192,19 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     // Update the text and backgrounds of all tooltip labels
     const merge = texts.merge(newTexts)
         .interrupt()
-        .style('opacity', '1')
         .call(adjustTooltipFontSize);
 
     merge
-        .text(datum => getTooltipText(datum, qualifiers, unitCode, ianaTimeZone))
+        .text(datum => getTooltipText(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd))
         .each(function (datum) {
             const classes = classesForPoint(datum);
             const text = select(this);
             text.attr('class', d => `${d.tsKey}-tooltip-text`);
             text.classed('approved', classes.approved);
             text.classed('estimated', classes.estimated);
+            if (config.MULTIPLE_TIME_SERIES_METADAT_SELECTOR_ENABLED) {
+                text.classed('not-current-method', currentMethodID !== parseInt(datum.methodID));
+            }
         });
 
     return textGroup;
@@ -187,10 +219,12 @@ export const createTooltipText = function (elem) {
     elem.call(link(createTooltipTextGroup, createStructuredSelector({
         currentPoints: tsCursorPointsSelector('current'),
         comparePoints: tsCursorPointsSelector('compare'),
+        currentMethodID: getCurrentMethodID,
         qualifiers: qualifiersSelector,
         unitCode: unitCodeSelector,
         layout: layoutSelector,
-        ianaTimeZone: tsTimeZoneSelector
+        ianaTimeZone: tsTimeZoneSelector,
+        currentParmCd: getCurrentParmCd
     })));
 };
 

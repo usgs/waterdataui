@@ -1,20 +1,21 @@
-import { axisBottom, axisLeft } from 'd3-axis';
+import { axisBottom, axisLeft, axisRight } from 'd3-axis';
 import { createSelector } from 'reselect';
 import { DateTime } from 'luxon';
-import { wrap } from '../../utils';
+import { wrap, deltaDays } from '../../utils';
 import { getYTickDetails } from './domain';
 import { layoutSelector } from './layout';
-import { xScaleSelector, yScaleSelector } from './scales';
-import { yLabelSelector, tsTimeZoneSelector } from './time-series';
+import { xScaleSelector, yScaleSelector, secondaryYScaleSelector } from './scales';
+import { yLabelSelector, secondaryYLabelSelector, tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
 import config from '../../config';
 import { getCurrentDateRange, getCurrentParmCd } from '../../selectors/time-series-selector';
-import { mediaQuery } from '../../utils';
+import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius, mediaQuery } from '../../utils';
 
 
 const FORMAT = {
     P7D: 'MMM dd',
     P30D: 'MMM dd',
-    P1Y: 'MMM yyyy'
+    P1Y: 'MMM yyyy',
+    custom: null
 };
 
 /**
@@ -32,24 +33,53 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
     let date;
     let timePeriod;
     let interval;
+    let dateDiff;
+
+    const setP7D = () => {
+        date = tzStartDate.startOf('day');
+        timePeriod = 'days';
+        interval = 1;
+    };
+    const setP30D = () => {
+        date = tzStartDate.minus({days: tzStartDate.weekday}).startOf('day');
+        timePeriod = 'weeks';
+        interval = 1;
+    };
+    const setP1Y = () => {
+        date = tzStartDate.startOf('month');
+        timePeriod = 'months';
+        if (mediaQuery(config.USWDS_LARGE_SCREEN)) {
+            interval = 1;
+        } else {
+            interval = 2;
+        }
+    };
     switch (period) {
         case 'P7D':
-            date = tzStartDate.startOf('day');
-            timePeriod = 'days';
-            interval = 1;
+            setP7D();
             break;
         case 'P30D':
-            date = tzStartDate.minus({days: tzStartDate.weekday}).startOf('day');
-            timePeriod = 'weeks';
-            interval = 1;
+            setP30D();
             break;
         case 'P1Y':
-            date = tzStartDate.startOf('month');
-            timePeriod = 'months';
-            if (mediaQuery(config.USWDS_LARGE_SCREEN)) {
-                interval = 1;
+            setP1Y();
+            break;
+        case 'custom':
+            dateDiff = deltaDays(new Date(startDate), new Date(endDate));
+            if (dateDiff <= 7) {
+                setP7D();
+                FORMAT.custom = 'MMM dd';
+            } else if (7 < dateDiff && dateDiff <= 30) {
+                setP30D();
+                FORMAT.custom = 'MMM dd';
+            } else if (30 < dateDiff && dateDiff <= 365) {
+                setP1Y();
+                FORMAT.custom = 'MMM yyyy';
             } else {
-                interval = 2;
+                date = tzStartDate.startOf('month');
+                timePeriod = 'months';
+                interval = Math.ceil(dateDiff/365.25);
+                FORMAT.custom = 'MMM yyyy';
             }
             break;
         default:
@@ -76,7 +106,7 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
  * @param {String} ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
  * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
-export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period, ianaTimeZone) {
+export const createAxes = function({xScale, yScale, secondaryYScale}, yTickSize, parmCd, period, ianaTimeZone) {
     // Create x-axis
     const [startDate, endDate] = xScale.domain();
     const tickDates = generateDateTicks(startDate, endDate, period, ianaTimeZone);
@@ -98,7 +128,29 @@ export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period, 
         .tickPadding(3)
         .tickSizeOuter(0);
 
-    return {xAxis, yAxis};
+    let secondaryYAxis = null;
+
+    const createSecondaryYAxis = function(tickValues, scale) {
+        return axisRight()
+            .scale(scale)
+            .tickValues(tickValues)
+            .tickFormat(t => t.toFixed(1))
+            .tickSizeInner(yTickSize)
+            .tickPadding(3)
+            .tickSizeOuter(0);
+    };
+
+    if (secondaryYScale !== null) {
+        let secondaryAxisTicks;
+        const primaryAxisTicks = tickDetails.tickValues;
+        if (TEMPERATURE_PARAMETERS.celsius.includes(parmCd)) {
+            secondaryAxisTicks = primaryAxisTicks.map(celsius => convertCelsiusToFahrenheit(celsius));
+        } else if (TEMPERATURE_PARAMETERS.fahrenheit.includes(parmCd)) {
+            secondaryAxisTicks = primaryAxisTicks.map(fahrenheit => convertFahrenheitToCelsius(fahrenheit));
+        }
+        secondaryYAxis = createSecondaryYAxis(secondaryAxisTicks, secondaryYScale);
+    }
+    return {xAxis, yAxis, secondaryYAxis};
 };
 
 
@@ -109,16 +161,25 @@ export const createAxes = function({xScale, yScale}, yTickSize, parmCd, period, 
 export const axesSelector = createSelector(
     xScaleSelector('current'),
     yScaleSelector,
+    secondaryYScaleSelector,
     layoutSelector,
     yLabelSelector,
     tsTimeZoneSelector,
     getCurrentParmCd,
     getCurrentDateRange,
-    (xScale, yScale, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange) => {
+    secondaryYLabelSelector,
+    (xScale, yScale, secondaryYScale, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange, plotSecondaryYLabel) => {
         return {
-            ...createAxes({xScale, yScale}, -layout.width + layout.margin.right, parmCd, currentDateRange, ianaTimeZone),
+            ...createAxes(
+                {xScale, yScale, secondaryYScale},
+                -layout.width + layout.margin.right,
+                parmCd,
+                currentDateRange,
+                ianaTimeZone
+            ),
             layout: layout,
-            yTitle: plotYLabel
+            yTitle: plotYLabel,
+            secondaryYTitle: plotSecondaryYLabel
         };
     }
 );
@@ -127,7 +188,8 @@ export const axesSelector = createSelector(
 /**
  * Add x and y axes to the given svg node.
  */
-export const appendAxes = function(elem, {xAxis, yAxis, layout, yTitle}) {
+export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, yTitle, secondaryYTitle}) {
+
     const xLoc = {
         x: 0,
         y: layout.height - (layout.margin.top + layout.margin.bottom)
@@ -159,4 +221,23 @@ export const appendAxes = function(elem, {xAxis, yAxis, layout, yTitle}) {
             .attr('y', yLabelLoc.y)
             .text(yTitle)
                 .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
+
+    if (secondaryYAxis !== null && secondaryYTitle !== null) {
+        const maxXScaleRange = xAxis.scale().range()[1];
+        const secondaryYLabelLoc = {
+            x: layout.height / -2 + layout.margin.top,
+            y: (layout.width - maxXScaleRange) * 1.5
+        };
+        elem.append('g')
+            .attr('class', 'y-axis')
+            .attr('transform', `translate(${maxXScaleRange}, ${yLoc.y})`)
+            .call(secondaryYAxis)
+            .append('text')
+                .attr('class', 'y-axis-label')
+                .attr('transform', 'rotate(-90)')
+                .attr('x', secondaryYLabelLoc.x )
+                .attr('y', secondaryYLabelLoc.y )
+                .text(secondaryYTitle)
+                    .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
+    }
 };

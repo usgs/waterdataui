@@ -7,6 +7,7 @@ Application configuration settings.
 import logging
 import os
 
+PROJECT_HOME = os.path.dirname(__file__)
 
 # controls environment specific behavior
 # acceptable values: 'local', 'development', 'staging', 'prod'
@@ -18,6 +19,9 @@ HYDROLOGIC_PAGES_ENABLED = True
 STATE_COUNTY_PAGES_ENABLED = True
 EMBED_IMAGE_FEATURE_ENABLED = True
 COOPERATOR_LOOKUP_ENABLED = True  # may also be set to a list of district codes
+MONITORING_CAMERA_ENABLED = True
+MONITORING_CAMERA_PATH = os.path.join(PROJECT_HOME, 'data/monitoring_camera_data.json')
+MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED = True
 
 DEBUG = False
 

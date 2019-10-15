@@ -85,4 +85,16 @@ describe('time-series-state-reducer', () => {
             loadingTSKeys: ['1']
         });
     });
+
+    it('should handle SET_CUSTOM_DATE_RANGE', () => {
+        expect(timeSeriesStateReducer({
+            requestedTimeRange: null
+        }, {
+            type: 'SET_CUSTOM_DATE_RANGE',
+            startTime: 1551420000000,
+            endTime: 1552197600000
+        })).toEqual({
+            requestedTimeRange: {startDT: 1551420000000, endDT: 1552197600000}
+        });
+    });
 });

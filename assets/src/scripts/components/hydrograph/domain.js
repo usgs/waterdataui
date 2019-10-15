@@ -24,7 +24,7 @@ export const SYMLOG_PARMS = [
  *  @return {Array} - array of two numbers
  */
 export const extendDomain = function (domain, lowerBoundPOW10) {
-    const isPositive = domain[0] >= 0 && domain[1] >= 0;
+    const isPositive = domain[0] > 0 && domain[1] > 0;
     let extendedDomain;
 
     // Pad domains on both ends by PADDING_RATIO.
@@ -34,10 +34,11 @@ export const extendDomain = function (domain, lowerBoundPOW10) {
         domain[1] + padding
     ];
 
-    // Log scales lower-bounded by nearest power of 10 (10, 100, 1000, etc)
+    // Log scales lower-bounded based on the order of magnitude of the domain minimum.
     if (lowerBoundPOW10) {
+        const absLog10 = Math.abs(Math.log(domain[0]));
         extendedDomain = [
-            isPositive ? Math.pow(10, Math.floor(Math.log10(domain[0]))) : domain[0],
+            isPositive ? domain[0] * absLog10/(absLog10 + 1) : domain[0],
             extendedDomain[1]
         ];
     }
@@ -82,13 +83,13 @@ export const getYDomain = function (pointArrays, currentVarParmCd) {
             yExtent = [Math.min(...flatDomains), Math.max(...flatDomains)];
         }
     }
+
     // Add padding to the extent and handle empty data sets.
     if (yExtent) {
         yExtent = extendDomain(yExtent, SYMLOG_PARMS.indexOf(currentVarParmCd) > -1);
     } else {
         yExtent = [0, 1];
     }
-
     return yExtent;
 };
 

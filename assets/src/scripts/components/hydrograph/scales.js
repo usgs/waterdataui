@@ -3,10 +3,20 @@ import memoize from 'fast-memoize';
 import { createSelector } from 'reselect';
 import { getYDomain, SYMLOG_PARMS } from './domain';
 import { layoutSelector } from './layout';
-import { timeSeriesSelector } from './time-series';
+import { timeSeriesSelector, TEMPERATURE_PARAMETERS } from './time-series';
 import { visiblePointsSelector, pointsByTsKeySelector } from './drawing-data';
 import { getVariables, getCurrentParmCd, getRequestTimeRange } from '../../selectors/time-series-selector';
+import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius } from '../../utils';
 
+const REVERSE_AXIS_PARMS = [
+    '72019',
+    '61055',
+    '99268',
+    '99269',
+    '72001',
+    '72147',
+    '72148'
+];
 
 /**
  * Create an x-scale oriented on the left
@@ -36,6 +46,10 @@ export const createYScale = function (parmCd, extent, size) {
         return scaleSymlog()
             .domain(extent)
             .range([size, 0]);
+    } else if (REVERSE_AXIS_PARMS.indexOf(parmCd) >= 0) {
+        return scaleLinear()
+            .domain(extent)
+            .range([0, size]);
     } else {
         return scaleLinear()
             .domain(extent)
@@ -71,6 +85,26 @@ export const yScaleSelector = createSelector(
     (layout, pointArrays, currentVarParmCd) => {
         const yDomain = getYDomain(pointArrays, currentVarParmCd);
         return createYScale(currentVarParmCd, yDomain, layout.height - (layout.margin.top + layout.margin.bottom));
+    }
+);
+
+export const secondaryYScaleSelector = createSelector(
+    layoutSelector,
+    visiblePointsSelector,
+    getCurrentParmCd,
+    (layout, pointArrays, currentVarParmCd) => {
+        const yDomain = getYDomain(pointArrays, currentVarParmCd);
+        let convertedYDomain = [0, 1];
+        if (TEMPERATURE_PARAMETERS.celsius.includes(currentVarParmCd)) {
+            convertedYDomain = yDomain.map(celsius => convertCelsiusToFahrenheit(celsius));
+        } else if (TEMPERATURE_PARAMETERS.fahrenheit.includes(currentVarParmCd)) {
+            convertedYDomain = yDomain.map(fahrenheit => convertFahrenheitToCelsius(fahrenheit));
+        } else {
+            return null;
+        }
+        return createYScale(
+            currentVarParmCd, convertedYDomain, layout.height - (layout.margin.top + layout.margin.bottom)
+        );
     }
 );
 
