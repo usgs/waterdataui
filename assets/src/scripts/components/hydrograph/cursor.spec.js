@@ -55,6 +55,10 @@ const TEST_STATE_THREE_VARS = {
             }
         },
         methods: {
+            69927: {
+                methodDescription: '',
+                methodID: 69927
+            },
             69928: {
                 methodDescription: '',
                 methodID: 69928
@@ -85,6 +89,26 @@ const TEST_STATE_THREE_VARS = {
                     dateTime: 1522347300000
                 }, {
                     value: null,
+                    qualifiers: ['P', 'FLD'],
+                    dateTime: 1522348200000
+                }]
+            },
+            '69927:current:P7D': {
+                tsKey: 'current:P7D',
+                startTime: 1520351100000,
+                endTime: 1520955900000,
+                variable: '45807196',
+                method: 69927,
+                points: [{
+                    value: 10,
+                    qualifiers: ['P'],
+                    dateTime: 1522346400000
+                }, {
+                    value: 11,
+                    qualifiers: ['P', 'ICE'],
+                    dateTime: 1522347300000
+                }, {
+                    value: 12,
                     qualifiers: ['P', 'FLD'],
                     dateTime: 1522348200000
                 }]
