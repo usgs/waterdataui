@@ -87,6 +87,7 @@
     "element-closest": "3.0.1",
     "esri-leaflet": "2.3.0",
     "fast-memoize": "2.5.1",
+    "karma-spec-reporter": "0.0.32",
     "leaflet": "1.5.1",
     "lodash": "4.17.15",
     "luxon": "1.17.3",
