@@ -320,7 +320,7 @@ describe('Hydrograph charting module', () => {
     //TODO: Consider adding a test which checks that the y axis is rescaled by
     // examining the contents of the text labels.
 
-    describe('legends should render', () => {
+    xdescribe('legends should render', () => {
         let store;
 
         beforeEach(() => {
