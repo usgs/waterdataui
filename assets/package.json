@@ -93,7 +93,7 @@
     "luxon": "1.17.3",
     "matchmedia-polyfill": "0.3.2",
     "normalizr": "3.4.1",
-    "redux": "4.0.1",
+    "redux": "4.0.4",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
     "wdfn-viz": "1.1.0"
