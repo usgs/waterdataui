@@ -27,14 +27,6 @@ export const addNldi = function(map, legendControl, siteno) {
     const upstreamColor = '#253494';
     const flowLineOpacity = 0.65;
 
-    const allExtents = {
-        'features': [],
-        'properties': {
-            'title': 'all nldi extents'
-        },
-        'type': 'FeatureCollection'
-    };
-
     const geojsonMarkerOptions = {
         radius: 6,
         fillColor: markerFillColor,
@@ -73,22 +65,11 @@ export const addNldi = function(map, legendControl, siteno) {
         map.addLayer(pointLayer);
     };
 
-    const onEachLineFeatureAddPopUp = function(feature, layer) {
-        const popupText = `Data Source: NHD+
-            <br>Reach ComID: ${feature.properties.nhdplus_comid}`;
-        layer.bindPopup(popupText);
-    };
-
     const addLineDataToMap = function(data, style) {
         const lineLayer = geoJson(data, {
-            onEachFeature: onEachLineFeatureAddPopUp,
             style: style
             });
         lineLayer.addTo(map);
-        const features = data.features;
-        features.forEach(function(feature) {
-            allExtents.features.push(feature);
-        });
     };
 
     const addNldiLinesToMap = function(endpointUrl, style) {
