@@ -31,25 +31,29 @@ describe('Hydrograph tooltip module', () => {
     const testState = {
         series: {
             timeSeries: {
-                '00060:current': {
+                '69928:current:P7D': {
                     points: data,
                     tsKey: 'current:P7D',
-                    variable: '00060id'
+                    variable: '00060id',
+                    methodID: 69928
                 },
-                '00060:compare': {
+                '69928:compare:P7D': {
                     points: data,
                     tsKey: 'compare:P7D',
-                    variable: '00060id'
+                    variable: '00060id',
+                    methodID: 69928
                 },
-                '00010:current': {
+                '69929:current:P7D': {
                     points: data,
                     tsKey: 'current:P7D',
-                    variable: '00010id'
+                    variable: '00010id',
+                    methodID: 69929
                 },
-                '00010:compare': {
+                '69929:compare:P7D': {
                     points: data,
                     tsKey: 'compare:P7D',
-                    variable: '00010id'
+                    variable: '00010id',
+                    methodID: 69929
                 }
             },
             timeSeriesCollections: {
@@ -60,6 +64,16 @@ describe('Hydrograph tooltip module', () => {
                 'compare:P7D': {
                     variable: '00060id',
                     timeSeries: ['00060:compare']
+                }
+            },
+            methods: {
+                69928: {
+                    methodDescription: '',
+                    methodID: 69928
+                },
+                69929: {
+                    methodDescription: '',
+                    methodID: 69929
                 }
             },
             variables: {
@@ -144,6 +158,7 @@ describe('Hydrograph tooltip module', () => {
                 compare: true
             },
             currentVariableID: '00060id',
+            currentMethodID: 69928,
             currentDateRange: 'P7D'
         }
     };
@@ -237,7 +252,8 @@ describe('Hydrograph tooltip module', () => {
             let store = configureStore(Object.assign({}, testState, {
                 timeSeriesState: Object.assign({}, testState.timeSeriesState, {
                     cursorOffset: 2 * 60 * 60 * 1000,
-                    currentVariableID: '00010id'
+                    currentVariableID: '00010id',
+                    currentMethodID: 69929
                 })
             }));
 
@@ -296,7 +312,7 @@ describe('Hydrograph tooltip module', () => {
             let store = configureStore(Object.assign({}, testState, {
                 series: Object.assign({}, testState.series, {
                     timeSeries: Object.assign({}, testState.series.timeSeries, {
-                        '00060:current': Object.assign({}, testState.series.timeSeries['00060:current'], {
+                        '69928:current:P7D': Object.assign({}, testState.series.timeSeries['69928:current:P7D'], {
                             points: zeroData
                         })
                     })
@@ -336,15 +352,17 @@ describe('Hydrograph tooltip module', () => {
             let store = configureStore(Object.assign({}, testState, {
                 series: Object.assign({}, testState.series, {
                     timeSeries: Object.assign({}, testState.series.timeSeries, {
-                        '00060:current': {
+                        '69928:current:P7D': {
                             points: currentTsData,
                             tsKey: 'current:P7D',
-                            variable: '00060id'
+                            variable: '00060id',
+                            methodID: 69928
                         },
-                        '00060:compare': {
+                        '69928:compare:P7D': {
                             points: compareTsData,
                             tsKey: 'compare:P7D',
-                            variable: '00060id'
+                            variable: '00060id',
+                            methodID: 69928
                         }
                     })
                 }),
@@ -365,15 +383,17 @@ describe('Hydrograph tooltip module', () => {
             let store = configureStore(Object.assign({}, testState, {
                 series: Object.assign({}, testState.series, {
                     timeSeries: Object.assign({}, testState.series.timeSeries, {
-                        '00060:current': {
+                        '69928:current:P7D': {
                             points: currentTsData,
                             tsKey: 'current:P7D',
-                            variable: '00060id'
+                            variable: '00060id',
+                            methodID: 69928
                         },
-                        '00060:compare': {
+                        '69928:compare:P7D': {
                             points: compareTsData,
                             tsKey: 'compare:P7D',
-                            variable: '00060id'
+                            variable: '00060id',
+                            methodID: 69928
                         }
                     })
                 }),

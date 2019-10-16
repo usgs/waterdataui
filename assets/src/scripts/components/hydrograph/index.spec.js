@@ -383,6 +383,7 @@ describe('Hydrograph charting module', () => {
     });
 
     describe('hiding/show provisional alert', () => {
+
         it('Expects the provisional alert to be visible when time series data is provided', () => {
             let store = configureStore(TEST_STATE);
             attachToNode(store, graphNode, {siteno: '12345678'});

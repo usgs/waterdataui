@@ -58,6 +58,7 @@
     "karma-firefox-launcher": "^1.2.0",
     "karma-jasmine": "^2.0.1",
     "karma-jasmine-ajax": "^0.1.13",
+    "karma-spec-reporter": "0.0.32",
     "karma-rollup-preprocessor": "^7.0.2",
     "karma-sauce-launcher": "^2.0.2",
     "live-server": "^1.2.1",

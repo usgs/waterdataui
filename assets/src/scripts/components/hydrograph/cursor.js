@@ -1,12 +1,17 @@
 import { bisector } from 'd3-array';
 import memoize from 'fast-memoize';
 import { createSelector, createStructuredSelector } from 'reselect';
+
+import config from '../../config';
+import { Actions } from '../../store';
+import { dispatch, link } from '../../lib/redux';
+import {getCurrentMethodID} from '../../selectors/time-series-selector';
+
 import { currentVariablePointsByTsIdSelector } from './drawing-data';
 import { layoutSelector } from './layout';
 import { xScaleSelector } from './scales';
 import { isVisibleSelector } from './time-series';
-import { Actions } from '../../store';
-import { dispatch, link } from '../../lib/redux';
+
 
 const SLIDER_STEPS = 1000;
 
@@ -79,24 +84,28 @@ export const getNearestTime = function(data, time) {
 
 /*
  * Returns a function that the time series data point nearest the tooltip focus time for the given time series
+ * with the current variable and current method
  * @param {Object} state - Redux store
  * @param String} tsKey - Time series key
  * @return {Object}
  */
 export const tsCursorPointsSelector = memoize(tsKey => createSelector(
     currentVariablePointsByTsIdSelector(tsKey),
+    getCurrentMethodID,
     cursorTimeSelector(tsKey),
     isVisibleSelector(tsKey),
-    (timeSeries, cursorTime, isVisible) => {
+    (timeSeries, currentMethodId, cursorTime, isVisible) => {
         if (!cursorTime || !isVisible) {
             return {};
         }
         return Object.keys(timeSeries).reduce((data, tsId) => {
-            const datum = getNearestTime(timeSeries[tsId], cursorTime).datum;
-            data[tsId] = {
-                ...datum,
-                tsKey: tsKey
-            };
+            if (!config.MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED || parseInt(tsId.split(':')[0]) === currentMethodId) {
+                const datum = getNearestTime(timeSeries[tsId], cursorTime).datum;
+                data[tsId] = {
+                    ...datum,
+                    tsKey: tsKey
+                };
+            }
             return data;
         }, {});
     })
