@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Conditionally displayed the method description based on the number of methods.
 - Updated to use wdfn-viz which updates the USWDS version to 2.2.1
 - Only selected description's time series will now appear in the hydrograph's tooltip.
+- Include the selected method's description, if defined, in the hydrograph title.
 
 ## [0.20.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.19.0...waterdataui-0.20.0) - 2019-10-04
 ### Added
