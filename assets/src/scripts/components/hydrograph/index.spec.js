@@ -262,6 +262,7 @@ describe('Hydrograph charting module', () => {
                     },
                     currentVariableID: '45807197',
                     currentDateRange: 'P7D',
+                    currentMethodID: 'method1',
                     loadingTSKeys: []
                 },
                 ui: {
@@ -282,7 +283,7 @@ describe('Hydrograph charting module', () => {
         it('should have a title div', () => {
             const titleDiv = selectAll('.time-series-graph-title');
             expect(titleDiv.size()).toBe(1);
-            expect(titleDiv.text()).toEqual('Test title for 00060');
+            expect(titleDiv.text()).toEqual('Test title for 00060, method description');
         });
 
         it('should have a defs node', () => {

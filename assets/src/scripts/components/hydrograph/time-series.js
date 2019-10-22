@@ -4,7 +4,7 @@ import _includes from 'lodash/includes';
 import uniq from 'lodash/uniq';
 import { createSelector } from 'reselect';
 
-import { getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone, getCurrentParmCd,
+import { getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone, getCurrentParmCd, getCurrentMethodID,
     getMethods } from '../../selectors/time-series-selector';
 
 
@@ -191,11 +191,15 @@ export const secondaryYLabelSelector = createSelector(
 
 
 /**
- * @return {String}     The name of the currently selected variable.
+ * @return {String}     The title to include in the hyrdograph, will include method description if defined.
  */
 export const titleSelector = createSelector(
     getCurrentVariable,
-    variable => variable ? variable.variableName : ''
+    getCurrentMethodID,
+    getMethods,
+    (variable, methodId, methods) => variable ? variable.variableName +
+        (methodId && methods && methods[methodId].methodDescription
+              ? ', ' + methods[methodId].methodDescription : '') : ''
 );
 
 
