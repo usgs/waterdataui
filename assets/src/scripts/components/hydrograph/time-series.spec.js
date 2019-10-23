@@ -657,9 +657,6 @@ describe('TimeSeries module', () => {
         it('Returns the title string with the method description appended', () => {
             expect(titleSelector({
                 ...TEST_DATA,
-                timeSeries: {
-                    ...TEST_DATA.series.timeSeries
-                },
                 timeSeriesState: {
                     ...TEST_DATA.timeSeriesState,
                     currentMethodID: 69330
