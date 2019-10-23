@@ -54,7 +54,7 @@ export const addNldi = function(map, legendControl, siteno) {
         layer.bindPopup(popupText);
     };
 
-    const addPointDataToMap = function(data, markerOptions) {
+    const getPointDataLayer = function(data, markerOptions) {
         return geoJson(data, {
             onEachFeature: onEachPointFeatureAddPopUp,
             pointToLayer: function (feature, latlng) {
@@ -63,26 +63,26 @@ export const addNldi = function(map, legendControl, siteno) {
         });
     };
 
-    const addLineDataToMap = function(data, style) {
+    const getLineDataLayer = function(data, style) {
         return geoJson(data, {
             style: style
         });
     };
 
-    const addNldiLinesToMap = function(endpointUrl, style) {
+    const fetchNldiLinesLayer = function(endpointUrl, style) {
         return get(endpointUrl)
             .then((responseText) => {
-                return addLineDataToMap(JSON.parse(responseText), style);
+                return getLineDataLayer(JSON.parse(responseText), style);
             })
             .catch(reason => {
                 console.error(reason);
             });
     };
 
-    const addNldiPointsToMap = function(endpointUrl, style) {
+    const fetchNldiPointsLayer = function(endpointUrl, style) {
         return get(endpointUrl)
             .then((responseText) => {
-                return addPointDataToMap(JSON.parse(responseText), style);
+                return getPointDataLayer(JSON.parse(responseText), style);
             })
             .catch(reason => {
                 console.error(reason);
@@ -94,15 +94,10 @@ export const addNldi = function(map, legendControl, siteno) {
     const upStreamFlow = nldiUrl + '/'+ featureSource + '/' + featureId + '/navigate/' + upstreamNavigation + distanceParam;
     const downStreamFlow = nldiUrl + '/'+ featureSource + '/' + featureId + '/navigate/' + downstreamNavigation + distanceParam;
 
-    const nldiUpStreamLines = {url : upStreamFlow, style : upstreamLineStyle};
-    const nldiDownStreamLines = {url : downStreamFlow, style : downstreamLineStyle};
-    const nldiUpStreamPoints = {url : upStreamSites, style : geojsonMarkerOptions};
-    const nldiDownStreamPoints = {url : downStreamSites, style : geojsonMarkerOptions};
-
-    const nldiUpstreamLinesPromise = addNldiLinesToMap(nldiUpStreamLines.url, nldiUpStreamLines.style);
-    const nldiDownStreamLinesPromise = addNldiLinesToMap(nldiDownStreamLines.url, nldiDownStreamLines.style);
-    const nldiUpStreamPointsPromise = addNldiPointsToMap(nldiUpStreamPoints.url, nldiUpStreamPoints.style);
-    const nldiDownStreamPointsPromise = addNldiPointsToMap(nldiDownStreamPoints.url, nldiDownStreamPoints.style);
+    const nldiUpstreamLinesPromise = fetchNldiLinesLayer(upStreamFlow, upstreamLineStyle);
+    const nldiDownStreamLinesPromise = fetchNldiLinesLayer(downStreamFlow, downstreamLineStyle);
+    const nldiUpStreamPointsPromise = fetchNldiPointsLayer(upStreamSites, geojsonMarkerOptions);
+    const nldiDownStreamPointsPromise = fetchNldiPointsLayer(downStreamSites, geojsonMarkerOptions);
 
     Promise.all([
         nldiUpstreamLinesPromise, nldiDownStreamLinesPromise, nldiUpStreamPointsPromise, nldiDownStreamPointsPromise
