@@ -197,9 +197,13 @@ export const titleSelector = createSelector(
     getCurrentVariable,
     getCurrentMethodID,
     getMethods,
-    (variable, methodId, methods) => variable ? variable.variableName +
-        (methodId && methods && methods[methodId].methodDescription
-              ? ', ' + methods[methodId].methodDescription : '') : ''
+    (variable, methodId, methods) => {
+        let title = variable ? variable.variableName : '';
+        if(methodId && methods && methods[methodId].methodDescription) {
+                title = `${title}, ${methods[methodId].methodDescription}`;
+        }
+        return title;
+    }
 );
 
 

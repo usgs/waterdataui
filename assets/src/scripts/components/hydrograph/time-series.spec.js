@@ -654,6 +654,18 @@ describe('TimeSeries module', () => {
         it('Returns the string to used for graph title', () => {
             expect(titleSelector(TEST_DATA)).toBe('Streamflow');
         });
+        it('Returns the title string with the method description appended', () => {
+            expect(titleSelector({
+                ...TEST_DATA,
+                timeSeries: {
+                    ...TEST_DATA.series.timeSeries
+                },
+                timeSeriesState: {
+                    ...TEST_DATA.timeSeriesState,
+                    currentMethodID: 69330
+                }
+            })).toBe('Streamflow' + ', ' + '4.1 ft from riverbed (middle)');
+        });
         it('Returns empty string if no variable selected', () => {
             expect(titleSelector({
                 ...TEST_DATA,
