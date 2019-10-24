@@ -9799,6 +9799,12 @@
             "69": {
                 "name": "Northern Mariana Islands",
                 "county_cd": {
+                    "000": {
+                        "name": "Unspecified"
+                    },
+                    "085": {
+                        "name": "Northern Islands Municipality"
+                    },
                     "100": {
                         "name": "Rota Municipality"
                     },
@@ -10102,6 +10108,9 @@
             },
             "90": {
                 "name": "New Brunswick"
+            },
+            "91": {
+                "name": "Quebec"
             },
             "92": {
                 "name": "Ontario"
