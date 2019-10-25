@@ -27,7 +27,7 @@
     "express-cache-headers": "0.1.4",
     "express-validator": "6.2.0",
     "generic-pool": "3.7.1",
-    "puppeteer": "1.20.0"
+    "puppeteer": "2.0.0"
   },
   "devDependencies": {
     "decache": "^4.5.1",
