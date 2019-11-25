@@ -41,6 +41,7 @@ import './selectors/median-statistics-selector.spec';
 import './selectors/time-series-selector.spec';
 import './statistics-data.spec';
 import './store/flood-data-reducer.spec';
+import './store/nldi-data-reducer.spec';
 import './store/flood-state-reducer.spec';
 import './store/index.spec';
 import './store/series-reducer.spec';

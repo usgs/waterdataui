@@ -13,7 +13,7 @@ import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, 
     getRequestedTimeRange, getIanaTimeZone, getTimeSeriesCollectionIds } from '../selectors/time-series-selector';
 import { floodDataReducer as floodData } from './flood-data-reducer';
 import { floodStateReducer as floodState } from './flood-state-reducer';
-import { nldiDataReducer as nldiData } from './nlid-data-reducer';
+import { nldiDataReducer as nldiData } from './nldi-data-reducer';
 import { fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow } from '../nldi-data';
 import { seriesReducer as series } from './series-reducer';
 import { statisticsDataReducer as statisticsData } from './statistics-data-reducer';
