@@ -49,34 +49,158 @@ describe('nldi-data module', () => {
             });
         });
     });
+
+    describe('fetchNldiDownstreamSites', () => {
+        const siteno = '12345678';
+
+        describe('with valid response', () => {
+
+            let downstreamSitePromise;
+
+            beforeEach(() => {
+                /* eslint no-use-before-define: 0 */
+
+                downstreamSitePromise = fetchNldiDownstreamSites(siteno);
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 200,
+                    responseText: MOCK_NLDI_DOWNSTREAM_SITES_FEATURE,
+                    contentType: 'application/json'
+                });
+            });
+
+            it('expected response is json object with the downstream sites', () => {
+                downstreamSitePromise.then((resp) => {
+                    console.log(resp);
+                    expect(resp.length).toBe(2);
+                    expect(resp[0].properties.comid).toBe('18508614');
+                    expect(resp[1].properties.comid).toBe('18508640');
+                });
+            });
+        });
+
+        describe('with error response', () => {
+            it('On failed response return an empty feature list', () => {
+                fetchNldiDownstreamSites(siteno).then((resp) => {
+                   expect(resp.length).toBe(0);
+                });
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 500
+                });
+            });
+        });
+    });
+
+    describe('fetchNldiUpstreamFlow', () => {
+        const siteno = '12345678';
+
+        describe('with valid response', () => {
+
+            let upstreamFlowPromise;
+
+            beforeEach(() => {
+                /* eslint no-use-before-define: 0 */
+
+                upstreamFlowPromise = fetchNldiUpstreamFlow(siteno);
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 200,
+                    responseText: MOCK_NLDI_UPSTREAM_FLOW_FEATURE,
+                    contentType: 'application/json'
+                });
+            });
+
+            it('expected response is json object with the upstream flow', () => {
+                upstreamFlowPromise.then((resp) => {
+                    console.log(resp);
+                    expect(resp.length).toBe(2);
+                    expect(resp[0].properties.nhdplus_comid).toBe('10286212');
+                    expect(resp[1].properties.nhdplus_comid).toBe('10286442');
+                });
+            });
+        });
+
+        describe('with error response', () => {
+            it('On failed response return an empty feature list', () => {
+                fetchNldiUpstreamFlow(siteno).then((resp) => {
+                   expect(resp.length).toBe(0);
+                });
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 500
+                });
+            });
+        });
+    });
+
+    describe('fetchNldiDownstreamFlow', () => {
+        const siteno = '12345678';
+
+        describe('with valid response', () => {
+
+            let downstreamFlowPromise;
+
+            beforeEach(() => {
+                /* eslint no-use-before-define: 0 */
+
+                downstreamFlowPromise = fetchNldiDownstreamFlow(siteno);
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 200,
+                    responseText: MOCK_NLDI_DOWNSTREAM_FLOW_FEATURE,
+                    contentType: 'application/json'
+                });
+            });
+
+            it('expected response is json object with the downstream flow', () => {
+                downstreamFlowPromise.then((resp) => {
+                    console.log(resp);
+                    expect(resp.length).toBe(2);
+                    expect(resp[0].properties.nhdplus_comid).toBe('10286213');
+                    expect(resp[1].properties.nhdplus_comid).toBe('10286443');
+                });
+            });
+        });
+
+        describe('with error response', () => {
+            it('On failed response return an empty feature list', () => {
+                fetchNldiDownstreamFlow(siteno).then((resp) => {
+                   expect(resp.length).toBe(0);
+                });
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 500
+                });
+            });
+        });
+    });
+
 });
 
 const MOCK_NLDI_UPSTREAM_FLOW_FEATURE = `
-[{
-    "type": "Feature",
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [
-            [-87.4336489066482, 39.4954827949405],
-            [-87.4337763041258, 39.4952046945691]
-        ]
-    },
-    "properties": {
-        "nhdplus_comid": "10286212"
-    }
-}, {
-    "type": "Feature",
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [
-            [-87.4476554021239, 39.4393114000559],
-            [-87.4480373039842, 39.4390688985586]
-        ]
-    },
-    "properties": {
-        "nhdplus_comid": "10286442"
-    }
-}]
+{
+    "type": "FeatureCollection",
+    "features": [{
+        "type": "Feature",
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [-87.4336489066482, 39.4954827949405],
+                [-87.4337763041258, 39.4952046945691]
+            ]
+        },
+        "properties": {
+            "nhdplus_comid": "10286212"
+        }
+    }, {
+        "type": "Feature",
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [-87.4476554021239, 39.4393114000559],
+                [-87.4480373039842, 39.4390688985586]
+            ]
+        },
+        "properties": {
+            "nhdplus_comid": "10286442"
+        }
+    }]
+}
 `;
 
 const MOCK_NLDI_UPSTREAM_SITES_FEATURE = `
@@ -117,31 +241,34 @@ const MOCK_NLDI_UPSTREAM_SITES_FEATURE = `
 `;
 
 const MOCK_NLDI_DOWNSTREAM_FLOW_FEATURE = `
-[{
-    "type": "Feature",
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [
-            [-87.4336489066483, 39.4954827949406],
-            [-87.4337763041259, 39.4952046945692]
-        ]
-    },
-    "properties": {
-        "nhdplus_comid": "10286213"
-    }
-}, {
-    "type": "Feature",
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [
-            [-87.4476554021240, 39.4393114000560],
-            [-87.4480373039843, 39.4390688985587]
-        ]
-    },
-    "properties": {
-        "nhdplus_comid": "10286443"
-    }
-}]
+{
+    "type": "FeatureCollection",
+    "features": [{
+        "type": "Feature",
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [-87.4336489066483, 39.4954827949406],
+                [-87.4337763041259, 39.4952046945692]
+            ]
+        },
+        "properties": {
+            "nhdplus_comid": "10286213"
+        }
+    }, {
+        "type": "Feature",
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [-87.4476554021240, 39.4393114000560],
+                [-87.4480373039843, 39.4390688985587]
+            ]
+        },
+        "properties": {
+            "nhdplus_comid": "10286443"
+        }
+    }]
+}
 `;
 
 
