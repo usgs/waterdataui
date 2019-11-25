@@ -1,6 +1,5 @@
 import { fetchNldiUpstreamSites, fetchNldiUpstreamFlow, fetchNldiDownstreamSites, fetchNldiDownstreamFlow} from './nldi-data';
 
-
 describe('nldi-data module', () => {
     beforeEach(() => {
         jasmine.Ajax.install();
@@ -270,8 +269,6 @@ const MOCK_NLDI_DOWNSTREAM_FLOW_FEATURE = `
     }]
 }
 `;
-
-
 
 const MOCK_NLDI_DOWNSTREAM_SITES_FEATURE = `
 {
