@@ -13,6 +13,8 @@ import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, 
     getRequestedTimeRange, getIanaTimeZone, getTimeSeriesCollectionIds } from '../selectors/time-series-selector';
 import { floodDataReducer as floodData } from './flood-data-reducer';
 import { floodStateReducer as floodState } from './flood-state-reducer';
+import { nldiDataReducer as nldiData } from './nlid-data-reducer';
+import { fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow } from '../nldi-data';
 import { seriesReducer as series } from './series-reducer';
 import { statisticsDataReducer as statisticsData } from './statistics-data-reducer';
 import { timeSeriesStateReducer as timeSeriesState } from './time-series-state-reducer';
@@ -210,6 +212,21 @@ export const Actions = {
             });
         };
     },
+    retrieveNldiData(siteno) {
+        return function (dispatch) {
+            const upstreamFlow = fetchNldiUpstreamFlow(siteno);
+            const downstreamFlow = fetchNldiDownstreamFlow(siteno);
+            const upstreamSites = fetchNldiUpstreamSites(siteno);
+            const downstreamSites = fetchNldiDownstreamSites(siteno);
+
+            return Promise.all([
+                upstreamFlow, downstreamFlow, upstreamSites, downstreamSites
+            ]).then(function(data) {
+               const [upStreamLines, downStreamLines, upStreamPoints, downStreamPoints] = data;
+               dispatch(Actions.setNldiFeatures(upStreamLines, downStreamLines, upStreamPoints, downStreamPoints));
+    });
+        };
+    },
     updateCurrentVariable(siteno, variableID) {
         return function(dispatch, getState) {
             dispatch(Actions.setCurrentVariable(variableID));
@@ -275,6 +292,15 @@ export const Actions = {
             type: 'SET_FLOOD_FEATURES',
             stages,
             extent
+        };
+    },
+    setNldiFeatures(upstreamFlows, downstreamFlows, upstreamSites, downstreamSites) {
+        return {
+            type: 'SET_NLDI_FEATURES',
+            upstreamFlows,
+            downstreamFlows,
+            upstreamSites,
+            downstreamSites
         };
     },
     toggleTimeSeries(key, show) {
@@ -377,6 +403,7 @@ const appReducer = combineReducers({
     series,
     statisticsData,
     floodData,
+    nldiData,
     timeSeriesState,
     floodState,
     ui
@@ -391,6 +418,12 @@ export const configureStore = function (initialState) {
         floodData: {
             stages: [],
             extent: {}
+        },
+        nldiData: {
+            upstreamFlows: [],
+            downstreamFlows: [],
+            upstreamSites: [],
+            downstreamSites: []
         },
 
         statisticsData: {},

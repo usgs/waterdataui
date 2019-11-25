@@ -61,10 +61,12 @@ export const createLegendControl = function(options) {
         // Set up click handler for the expandButton
         DomEvent.on(expandButton, 'click', function() {
             if (expandButton.title === 'Hide legend') {
+                // hide the legend if it's currently shown
                 expandButton.innerHTML = '<i class="fas fa-expand"></i>';
                 expandButton.title = 'Show legend';
                 legendListContainer.setAttribute('hidden', true);
             } else {
+                // show the legend if it is currently hidden
                 expandButton.innerHTML = '<i class="fas fa-compress"></i>';
                 expandButton.title = 'Hide legend';
                 legendListContainer.removeAttribute('hidden');

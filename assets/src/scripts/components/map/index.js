@@ -166,6 +166,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
 export const attachToNode = function(store, node, {siteno, latitude, longitude, zoom}) {
 
     store.dispatch(Actions.retrieveFloodData(siteno));
+    store.dispatch(Actions.retrieveNldiData(siteno));
 
     select(node)
         .call(provide(store));
