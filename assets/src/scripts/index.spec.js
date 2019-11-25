@@ -31,6 +31,7 @@ import './components/map/flood-slider.spec';
 import './components/map/index.spec';
 import './components/map/legend.spec';
 import './flood-data.spec';
+import './nldi-data.spec';
 import './helpers.spec';
 import './layout.spec';
 import './models.spec';

@@ -19,6 +19,7 @@ const fetchNldiData = function(nldiQuery, siteno) {
     return get(nldiQuery)
         .then((responseText) => {
             const responseJson = JSON.parse(responseText);
+            console.log(JSON.stringify(JSON.parse(responseText)));
             return responseJson.features ? responseJson.features : [];
         })
         .catch(reason => {
