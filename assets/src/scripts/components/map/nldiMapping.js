@@ -2,6 +2,8 @@ import { geoJson, circleMarker } from 'leaflet';
 import { get } from '../../ajax';
 import config from '../../config';
 import { select } from 'd3-selection';
+import { getNldiUpstreamSites, getNldiUpstreamFlows, getNldiDownstreamSites, getNldiDownstreamFlows } from '../../selectors/nldi-data-selector';
+import {link} from "../../lib/redux";
 
 /**
  * Add NLDI layer overlays to a leaflet map. An overlay is added for the flowlines
@@ -69,45 +71,60 @@ export const addNldi = function(map, legendControl, siteno) {
         });
     };
 
-    const fetchNldiLinesLayer = function(endpointUrl, style) {
-        return get(endpointUrl)
-            .then((responseText) => {
-                return getLineDataLayer(JSON.parse(responseText), style);
-            })
-            .catch(reason => {
-                console.error(reason);
-            });
+    // const fetchNldiLinesLayer = function(endpointUrl, style) {
+    //     return get(endpointUrl)
+    //         .then((responseText) => {
+    //             return getLineDataLayer(JSON.parse(responseText), style);
+    //         })
+    //         .catch(reason => {
+    //             console.error(reason);
+    //         });
+    // };
+
+
+
+    // const fetchNldiPointsLayer = function(endpointUrl, style) {
+    //     return get(endpointUrl)
+    //         .then((responseText) => {
+    //             return getPointDataLayer(JSON.parse(responseText), style);
+    //         })
+    //         .catch(reason => {
+    //             console.error(reason);
+    //         });
+    // };
+
+    const fetchNldiLinesLayer = function(nldiData, style) {
+        return getLineDataLayer(nldiData, style);
     };
 
-    const fetchNldiPointsLayer = function(endpointUrl, style) {
-        return get(endpointUrl)
-            .then((responseText) => {
-                return getPointDataLayer(JSON.parse(responseText), style);
-            })
-            .catch(reason => {
-                console.error(reason);
-            });
+    const fetchNldiPointsLayer = function(nldiData, style) {
+        return getPointDataLayer(nldiData, style);
     };
 
-    const upStreamSites = nldiUrl + '/'+ featureSource + '/' + featureId + '/navigate/' + upstreamNavigation + '/' + dataSource + distanceParam;
-    const downStreamSites = nldiUrl + '/'+ featureSource + '/' + featureId + '/navigate/' + downstreamNavigation + '/' + dataSource + distanceParam;
-    const upStreamFlow = nldiUrl + '/'+ featureSource + '/' + featureId + '/navigate/' + upstreamNavigation + distanceParam;
-    const downStreamFlow = nldiUrl + '/'+ featureSource + '/' + featureId + '/navigate/' + downstreamNavigation + distanceParam;
+    // const upStreamSites = nldiUrl + '/'+ featureSource + '/' + featureId + '/navigate/' + upstreamNavigation + '/' + dataSource + distanceParam;
+    // const downStreamSites = nldiUrl + '/'+ featureSource + '/' + featureId + '/navigate/' + downstreamNavigation + '/' + dataSource + distanceParam;
+    // const upStreamFlow = nldiUrl + '/'+ featureSource + '/' + featureId + '/navigate/' + upstreamNavigation + distanceParam;
+    // const downStreamFlow = nldiUrl + '/'+ featureSource + '/' + featureId + '/navigate/' + downstreamNavigation + distanceParam;
+    //
+    // const nldiUpstreamLinesPromise = fetchNldiLinesLayer(upStreamFlow, upstreamLineStyle);
+    // const nldiDownStreamLinesPromise = fetchNldiLinesLayer(downStreamFlow, downstreamLineStyle);
+    // const nldiUpStreamPointsPromise = fetchNldiPointsLayer(upStreamSites, geojsonMarkerOptions);
+    // const nldiDownStreamPointsPromise = fetchNldiPointsLayer(downStreamSites, geojsonMarkerOptions);
 
-    const nldiUpstreamLinesPromise = fetchNldiLinesLayer(upStreamFlow, upstreamLineStyle);
-    const nldiDownStreamLinesPromise = fetchNldiLinesLayer(downStreamFlow, downstreamLineStyle);
-    const nldiUpStreamPointsPromise = fetchNldiPointsLayer(upStreamSites, geojsonMarkerOptions);
-    const nldiDownStreamPointsPromise = fetchNldiPointsLayer(downStreamSites, geojsonMarkerOptions);
+    // Promise.all([
+    //     nldiUpstreamLinesPromise, nldiDownStreamLinesPromise, nldiUpStreamPointsPromise, nldiDownStreamPointsPromise
+    // ]).then(function(layers) {
+    //    const [upStreamLines, downStreamLines, upStreamPoints, downStreamPoints] = layers;
+    //    map.addLayer(upStreamLines);
+    //    map.addLayer(downStreamLines);
+    //    map.addLayer(upStreamPoints);
+    //    map.addLayer(downStreamPoints);
+    // });
 
-    Promise.all([
-        nldiUpstreamLinesPromise, nldiDownStreamLinesPromise, nldiUpStreamPointsPromise, nldiDownStreamPointsPromise
-    ]).then(function(layers) {
-       const [upStreamLines, downStreamLines, upStreamPoints, downStreamPoints] = layers;
-       map.addLayer(upStreamLines);
-       map.addLayer(downStreamLines);
-       map.addLayer(upStreamPoints);
-       map.addLayer(downStreamPoints);
-    });
+    map.addLayer(fetchNldiLinesLayer(getNldiUpstreamFlows(), upstreamLineStyle));
+    map.addLayer(fetchNldiLinesLayer(getNldiDownstreamFlows(), downstreamLineStyle));
+    map.addLayer(fetchNldiPointsLayer(getNldiUpstreamSites(), geojsonMarkerOptions));
+    map.addLayer(fetchNldiPointsLayer(getNldiDownstreamSites(), geojsonMarkerOptions));
 
     const legendListContainer = select(legendControl.getContainer()).select('.legend-list-container');
     const nldiLegendList = legendListContainer.append('ul')

@@ -29,7 +29,6 @@ describe('nldi-data module', () => {
 
             it('expected response is json object with the upstream sites', () => {
                 upstreamSitePromise.then((resp) => {
-                    console.log(resp);
                     expect(resp.length).toBe(2);
                     expect(resp[0].properties.comid).toBe('10286212');
                     expect(resp[1].properties.comid).toBe('10288896');
@@ -69,7 +68,6 @@ describe('nldi-data module', () => {
 
             it('expected response is json object with the downstream sites', () => {
                 downstreamSitePromise.then((resp) => {
-                    console.log(resp);
                     expect(resp.length).toBe(2);
                     expect(resp[0].properties.comid).toBe('18508614');
                     expect(resp[1].properties.comid).toBe('18508640');
@@ -109,7 +107,6 @@ describe('nldi-data module', () => {
 
             it('expected response is json object with the upstream flow', () => {
                 upstreamFlowPromise.then((resp) => {
-                    console.log(resp);
                     expect(resp.length).toBe(2);
                     expect(resp[0].properties.nhdplus_comid).toBe('10286212');
                     expect(resp[1].properties.nhdplus_comid).toBe('10286442');
@@ -149,7 +146,6 @@ describe('nldi-data module', () => {
 
             it('expected response is json object with the downstream flow', () => {
                 downstreamFlowPromise.then((resp) => {
-                    console.log(resp);
                     expect(resp.length).toBe(2);
                     expect(resp[0].properties.nhdplus_comid).toBe('10286213');
                     expect(resp[1].properties.nhdplus_comid).toBe('10286443');
