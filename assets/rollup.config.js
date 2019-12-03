@@ -4,12 +4,12 @@
  */
 const path = require('path');
 
-const alias = require('rollup-plugin-alias');
+const alias = require('@rollup/plugin-alias');
 const buble = require('rollup-plugin-buble');
 const commonjs = require('rollup-plugin-commonjs');
-const json = require('rollup-plugin-json');
-const resolve = require('rollup-plugin-node-resolve');
-const replace = require('rollup-plugin-replace');
+const json = require('@rollup/plugin-json');
+const resolve = require('@rollup/plugin-node-resolve');
+const replace = require('@rollup/plugin-replace');
 const { uglify } = require('rollup-plugin-uglify');
 
 
