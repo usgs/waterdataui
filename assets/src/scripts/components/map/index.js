@@ -9,7 +9,13 @@ import { hasFloodData, getFloodExtent, getFloodStageHeight } from '../../selecto
 import { Actions } from '../../store';
 import { floodSlider } from './flood-slider';
 import { createLegendControl, createFIMLegend } from './legend';
-import { addNldi } from './nldiMapping';
+import {addNldi, addNldiLayers} from './nldiMapping';
+import {
+    getNldiDownstreamFlows,
+    getNldiDownstreamSites,
+    getNldiUpstreamFlows,
+    getNldiUpstreamSites
+} from '../../selectors/nldi-data-selector';
 
 
 const getLayerDefs = function(layerNo, siteno, stage) {
@@ -93,6 +99,11 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     };
 
 
+    const updateNldiLayers = function (node, {upstreamFlows, downstreamFlows, upstreamSites, downstreamSites}) {
+        addNldiLayers(map, upstreamFlows, downstreamFlows, upstreamSites, downstreamSites);
+    };
+
+
     const updateMapExtent = function (node, extent) {
         if (Object.keys(extent).length > 0) {
             map.fitBounds(Util.extentToBounds(extent).extend([latitude, longitude]));
@@ -142,7 +153,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     createMarker([latitude, longitude]).addTo(map);
 
     //add nldi layers
-    addNldi(map, legendControl, siteno);
+    addNldi(map, legendControl);
 
     node
         .call(link(updateFloodLayers, createStructuredSelector({
@@ -151,7 +162,13 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         })))
         .call(link(updateMapExtent, getFloodExtent))
         .call(link(addFIMLegend, hasFloodData))
-        .call(link(addFimLink, hasFloodData));
+        .call(link(addFimLink, hasFloodData))
+        .call(link(updateNldiLayers, createStructuredSelector({
+            upstreamFlows: getNldiUpstreamFlows,
+            downstreamFlows: getNldiDownstreamFlows,
+            upstreamSites: getNldiUpstreamSites,
+            downstreamSites: getNldiDownstreamSites
+        })));
 };
 
 /*
@@ -166,6 +183,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
 export const attachToNode = function(store, node, {siteno, latitude, longitude, zoom}) {
 
     store.dispatch(Actions.retrieveFloodData(siteno));
+    // hydrates the store with nldi data
     store.dispatch(Actions.retrieveNldiData(siteno));
 
     select(node)

@@ -224,7 +224,7 @@ export const Actions = {
             ]).then(function(data) {
                const [upStreamLines, downStreamLines, upStreamPoints, downStreamPoints] = data;
                dispatch(Actions.setNldiFeatures(upStreamLines, downStreamLines, upStreamPoints, downStreamPoints));
-    });
+            });
         };
     },
     updateCurrentVariable(siteno, variableID) {
