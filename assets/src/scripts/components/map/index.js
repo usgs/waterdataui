@@ -9,8 +9,9 @@ import { hasFloodData, getFloodExtent, getFloodStageHeight } from '../../selecto
 import { Actions } from '../../store';
 import { floodSlider } from './flood-slider';
 import { createLegendControl, createFIMLegend } from './legend';
-import {addNldi, addNldiLayers} from './nldiMapping';
+import {createNldiLegend, addNldiLayers} from './nldiMapping';
 import {
+    hasNldiData,
     getNldiDownstreamFlows,
     getNldiDownstreamSites,
     getNldiUpstreamFlows,
@@ -152,8 +153,11 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     // Add a marker at the site location
     createMarker([latitude, longitude]).addTo(map);
 
-    //add nldi layers
-    addNldi(map, legendControl);
+    //add nldi legend
+    // addNldiLegend(map, legendControl);
+    const addNldiLegend = function(node, hasNldiData) {
+        createNldiLegend(legendControl, hasNldiData);
+    };
 
     node
         .call(link(updateFloodLayers, createStructuredSelector({
@@ -163,6 +167,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
         .call(link(updateMapExtent, getFloodExtent))
         .call(link(addFIMLegend, hasFloodData))
         .call(link(addFimLink, hasFloodData))
+        .call(link(addNldiLegend, hasNldiData))
         .call(link(updateNldiLayers, createStructuredSelector({
             upstreamFlows: getNldiUpstreamFlows,
             downstreamFlows: getNldiDownstreamFlows,
