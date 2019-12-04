@@ -9,16 +9,6 @@ const downStreamColor = '#41b6c4';
 const upstreamColor = '#253494';
 const flowLineOpacity = 0.65;
 
-/**
- * Add NLDI layer overlays to a leaflet map. An overlay is added for the flowlines
- * upstream and downstream of a site; another overlay is added to upstream and
- * downstream NWIS sites. Pop-ups are created for each feature in the overlay
- * layers.
- *
- * @param {L.map} map The leaflet map to which the overlay should be added
- * @param {L.Control} legendControl The map's legend control
- * @param {String} sitno The starting site for navigation
- */
 export const createNldiLegend = function(legendControl, hasNldiData) {
     if (hasNldiData) {
         const legendListContainer = select(legendControl.getContainer()).select('.legend-list-container');
@@ -61,6 +51,19 @@ export const createNldiLegend = function(legendControl, hasNldiData) {
     }
 };
 
+
+/**
+ * Add NLDI layer overlays to a leaflet map. An overlay is added for the flowlines
+ * upstream and downstream of a site; another overlay is added to upstream and
+ * downstream NWIS sites. Pop-ups are created for each feature in the overlay
+ * layers.
+ *
+ * @param {L.map} map The leaflet map to which the overlay should be added
+ * @param upstreamFlows nldi upstream flow geojson data
+ * @param downstreamFlows nldi downstream flow geojson data
+ * @param upstreamSites nldi upstream sites geojson data
+ * @param downstreamSites nldi downstream site geojson data
+ */
 export const addNldiLayers = function (map, upstreamFlows, downstreamFlows, upstreamSites, downstreamSites) {
     const geojsonMarkerOptions = {
         radius: 6,

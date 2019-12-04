@@ -154,7 +154,6 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     createMarker([latitude, longitude]).addTo(map);
 
     //add nldi legend
-    // addNldiLegend(map, legendControl);
     const addNldiLegend = function(node, hasNldiData) {
         createNldiLegend(legendControl, hasNldiData);
     };
