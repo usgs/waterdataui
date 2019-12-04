@@ -13,7 +13,7 @@ const pool = createPuppeteerPool({
     max: POOL_SIZE,
 
     // How long a resource can stay idle in pool before being removed
-    idleTimeoutMillis: 30000,
+    idleTimeoutMillis: 60000,
 
     // Maximum number of times an individual resource can be reused before being
     // destroyed; set to 0 to disable
