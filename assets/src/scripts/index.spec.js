@@ -37,6 +37,7 @@ import './layout.spec';
 import './models.spec';
 import './schema.spec';
 import './selectors/flood-data-selector.spec';
+import './selectors/nldi-data-selector.spec';
 import './selectors/median-statistics-selector.spec';
 import './selectors/time-series-selector.spec';
 import './statistics-data.spec';
