@@ -8,8 +8,8 @@ import { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } f
 import { hasFloodData, getFloodExtent, getFloodStageHeight } from '../../selectors/flood-data-selector';
 import { Actions } from '../../store';
 import { floodSlider } from './flood-slider';
-import { createLegendControl, createFIMLegend } from './legend';
-import {createNldiLegend, addNldiLayers} from './nldiMapping';
+import { createLegendControl, createFIMLegend, createNldiLegend } from './legend';
+import { addNldiLayers} from './nldiMapping';
 import {
     hasNldiData,
     getNldiDownstreamFlows,

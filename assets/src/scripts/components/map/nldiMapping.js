@@ -1,55 +1,11 @@
 import { geoJson, circleMarker } from 'leaflet';
-import { select } from 'd3-selection';
-import config from '../../config';
-import { mediaQuery } from '../../utils';
-
-const markerFillColor = '#ff7800';
-const markerFillOpacity = 0.8;
-const downStreamColor = '#41b6c4';
-const upstreamColor = '#253494';
-const flowLineOpacity = 0.65;
-
-export const createNldiLegend = function(legendControl, hasNldiData) {
-    if (hasNldiData) {
-        const legendListContainer = select(legendControl.getContainer()).select('.legend-list-container');
-        const nldiLegendList = legendListContainer.append('ul')
-                    .attr('id', 'nldi-legend-list')
-                    .attr('class', 'usa-list--unstyled');
-
-        const nldiUpstream = nldiLegendList.append('li');
-        nldiUpstream.append('span').attr('style', `background: ${upstreamColor}; width: 16px; height: 16px; float: left; opacity: ${flowLineOpacity}; margin-right: 2px;`);
-        nldiUpstream.append('span').text('Upstream Flowline');
-
-        const nldiDownstream = nldiLegendList.append('li');
-        nldiDownstream.append('span').attr('style', `background: ${downStreamColor}; width: 16px; height: 16px; float: left; opacity: ${flowLineOpacity}; margin-right: 2px;`);
-        nldiDownstream.append('span').text('Downstream Flowline');
-
-        const nldiMarker = nldiLegendList.append('li');
-        nldiMarker.append('span').attr('style', `color: ${markerFillColor}; width: 16px; height: 16px; float: left; opacity: ${markerFillOpacity}; margin-right: 2px;`)
-            .attr('class', 'fas fa-circle');
-        nldiMarker.append('span').text('Additional Monitoring Locations');
-
-
-        const legendContainer = select(legendControl.getContainer());
-        // Make expand button visible
-        legendContainer.select('.legend-expand-container').attr('hidden', null);
-
-        // Set legend to be compressed if on medium or small device, otherwise show.
-        let button = legendContainer.select('.legend-expand');
-        if (mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
-            if (button.attr('title') === 'Show legend') {
-                button.dispatch('click');
-            }
-        } else {
-            if (button.attr('title') === 'Hide legend') {
-                button.dispatch('click');
-            }
-        }
-
-    } else {
-        select(legendControl.getContainer()).select('#nldi-legend-list').remove();
-    }
-};
+import {
+    markerFillColor,
+    markerFillOpacity,
+    downStreamColor,
+    upstreamColor,
+    flowLineOpacity
+} from './legend';
 
 
 /**

@@ -8,6 +8,12 @@ import { get } from '../../ajax';
 import config from '../../config';
 import { mediaQuery } from '../../utils';
 
+export const markerFillColor = '#ff7800';
+export const markerFillOpacity = 0.8;
+export const downStreamColor = '#41b6c4';
+export const upstreamColor = '#253494';
+export const flowLineOpacity = 0.65;
+
 
 const fetchLayerLegend = function(layer, defaultName) {
     return get(`${config.FIM_GIS_ENDPOINT}${layer}/MapServer/legend?f=json`)
@@ -77,6 +83,26 @@ export const createLegendControl = function(options) {
     return legendControl;
 };
 
+
+const compressLegendOnSmallDevices = function(legendControl) {
+    const legendContainer = select(legendControl.getContainer());
+    // Make expand button visible
+    legendContainer.select('.legend-expand-container').attr('hidden', null);
+
+    // Set legend to be compressed if on medium or small device, otherwise show.
+    let button = legendContainer.select('.legend-expand');
+    if (mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
+        if (button.attr('title') === 'Show legend') {
+            button.dispatch('click');
+        }
+    } else {
+        if (button.attr('title') === 'Hide legend') {
+            button.dispatch('click');
+        }
+    }
+};
+
+
 /*
  * Creates the FIM legend if FIM data is available, otherwise removes the FIM legend if it exists.
  * @param {L.Control} legendControl - Leaflet legend control
@@ -89,21 +115,7 @@ export const createFIMLegend = function(legendControl, isFIMAvailable) {
         let fetchBreachLegend = fetchLayerLegend('breach', 'Area of uncertainty');
         let fetchSuppLyrs = fetchLayerLegend('suppLyrs', 'supply layers');
 
-        const legendContainer = select(legendControl.getContainer());
-        // Make expand button visible
-        legendContainer.select('.legend-expand-container').attr('hidden', null);
-
-        // Set legend to be compressed if on medium or small device, otherwise show.
-        let button = legendContainer.select('.legend-expand');
-        if (mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
-            if (button.attr('title') === 'Show legend') {
-                button.dispatch('click');
-            }
-        } else {
-            if (button.attr('title') === 'Hide legend') {
-                button.dispatch('click');
-            }
-        }
+        compressLegendOnSmallDevices(legendControl);
 
         let legendListContainer = select(legendControl.getContainer()).select('.legend-list-container');
         let fimLegendList = legendListContainer.append('ul')
@@ -124,5 +136,33 @@ export const createFIMLegend = function(legendControl, isFIMAvailable) {
             });
     } else {
         select(legendControl.getContainer()).select('#fim-legend-list').remove();
+    }
+};
+
+
+export const createNldiLegend = function(legendControl, isNldiAvailable) {
+    if (isNldiAvailable) {
+        const legendListContainer = select(legendControl.getContainer()).select('.legend-list-container');
+        const nldiLegendList = legendListContainer.append('ul')
+                    .attr('id', 'nldi-legend-list')
+                    .attr('class', 'usa-list--unstyled');
+
+        const nldiUpstream = nldiLegendList.append('li');
+        nldiUpstream.append('span').attr('style', `background: ${upstreamColor}; width: 16px; height: 16px; float: left; opacity: ${flowLineOpacity}; margin-right: 2px;`);
+        nldiUpstream.append('span').text('Upstream Flowline');
+
+        const nldiDownstream = nldiLegendList.append('li');
+        nldiDownstream.append('span').attr('style', `background: ${downStreamColor}; width: 16px; height: 16px; float: left; opacity: ${flowLineOpacity}; margin-right: 2px;`);
+        nldiDownstream.append('span').text('Downstream Flowline');
+
+        const nldiMarker = nldiLegendList.append('li');
+        nldiMarker.append('span').attr('style', `color: ${markerFillColor}; width: 16px; height: 16px; float: left; opacity: ${markerFillOpacity}; margin-right: 2px;`)
+            .attr('class', 'fas fa-circle');
+        nldiMarker.append('span').text('Additional Monitoring Locations');
+
+        compressLegendOnSmallDevices(legendControl);
+
+    } else {
+        select(legendControl.getContainer()).select('#nldi-legend-list').remove();
     }
 };
