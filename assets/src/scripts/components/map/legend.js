@@ -8,12 +8,12 @@ import { get } from '../../ajax';
 import config from '../../config';
 import { mediaQuery } from '../../utils';
 
+
 export const markerFillColor = '#ff7800';
 export const markerFillOpacity = 0.8;
 export const downStreamColor = '#41b6c4';
 export const upstreamColor = '#253494';
 export const flowLineOpacity = 0.65;
-
 
 const fetchLayerLegend = function(layer, defaultName) {
     return get(`${config.FIM_GIS_ENDPOINT}${layer}/MapServer/legend?f=json`)
@@ -84,6 +84,10 @@ export const createLegendControl = function(options) {
 };
 
 
+/**
+ * Compresses the legend on smaller devices like phones
+ * @param {L.Control} legendControl - Leaflet legend control
+ */
 const compressLegendOnSmallDevices = function(legendControl) {
     const legendContainer = select(legendControl.getContainer());
     // Make expand button visible
@@ -140,6 +144,11 @@ export const createFIMLegend = function(legendControl, isFIMAvailable) {
 };
 
 
+/**
+ * Creates the NLDI legend if NLDI data is available, otherwise removes the NLDI legend if it exists.
+ * @param {L.Control} legendControl - Leaflet legend control
+ * @param {Boolean} is NLDI available
+ */
 export const createNldiLegend = function(legendControl, isNldiAvailable) {
     if (isNldiAvailable) {
         const legendListContainer = select(legendControl.getContainer()).select('.legend-list-container');

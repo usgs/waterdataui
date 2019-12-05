@@ -1,7 +1,7 @@
 import { select } from 'd3-selection';
 import { map as createMap } from 'leaflet';
 
-import { createLegendControl, createFIMLegend } from './legend';
+import { createLegendControl, createFIMLegend, createNldiLegend } from './legend';
 
 
 describe('component/map/legend module', () => {
@@ -99,7 +99,7 @@ describe('component/map/legend module', () => {
 
             createFIMLegend(legendControl, true);
 
-            // Return the same responce on all requests
+            // Return the same response on all requests
             jasmine.Ajax.stubRequest(/(.*?)/).andReturn({
                 status: 200,
                 responseText: MOCK_RESP,
@@ -123,6 +123,28 @@ describe('component/map/legend module', () => {
             createFIMLegend(legendControl, false);
 
             expect(select(legendControl.getContainer()).select('#fim-legend-list').size()).toBe(0);
+        });
+    });
+
+    describe('createNldiLegend', () => {
+        beforeEach(() => {
+            legendControl = createLegendControl({});
+            legendControl.addTo(map);
+
+            createNldiLegend(legendControl, true);
+        });
+
+        it('createNldiLegend with NLDI available true makes the expand button visible', () =>  {
+            expect(select(legendControl.getContainer()).select('.legend-expand-container').attr('hidden')).toBeNull();
+        });
+
+        it('createNldiLegend with NLDI available add the NLDI legend list to the control', () => {
+            expect(select(legendControl.getContainer()).select('#nldi-legend-list').size()).toBe(1);
+        });
+
+        it('Calling createNldiLegend a second time with available set to false cause the NLDI legend list to be removed', () => {
+            createNldiLegend(legendControl, false);
+            expect(select(legendControl.getContainer()).select('#nldi-legend-list').size()).toBe(0);
         });
     });
 });

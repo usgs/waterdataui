@@ -153,9 +153,13 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     // Add a marker at the site location
     createMarker([latitude, longitude]).addTo(map);
 
-    //add nldi legend
-    const addNldiLegend = function(node, hasNldiData) {
-        createNldiLegend(legendControl, hasNldiData);
+    /*
+     * Creates the NLDI legend if NLDI data is available, otherwise removes the NLDI legend if it exists.
+     * @param {HTMLElement} node - element where the map is rendered
+     * @param {Boolean} isNldiAvailable
+     */
+    const addNldiLegend = function(node, isNldiAvailable) {
+        createNldiLegend(legendControl, isNldiAvailable);
     };
 
     node
