@@ -22,6 +22,7 @@ const renderToRespone = function (res, {siteID, parameterCode, compare}) {
                         var CONFIG = {
                             SERVICE_ROOT: '${SERVICE_ROOT}',
                             PAST_SERVICE_ROOT: '${PAST_SERVICE_ROOT}',
+                            MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED: false,
                             STATIC_URL: '${STATIC_ROOT}'
                         };
                     </script>
