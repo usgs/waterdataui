@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 
-const STYLES_PATH = path.join(__dirname, '../../../assets/graph.css');
-const SCRIPT_PATH = path.join(__dirname, '../../../assets/bundle.js');
+const STYLES_PATH = path.join(__dirname, '../../../asset/graph.css');
+const SCRIPT_PATH = path.join(__dirname, '../../../asset/bundle.js');
 
 
 module.exports = {
