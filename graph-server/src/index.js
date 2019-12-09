@@ -1,7 +1,8 @@
 const bodyParser = require('body-parser');
 const express = require('express');
-const cache = require('express-cache-headers');
-const { checkSchema, validationResult } = require('express-validator');
+var cache = require('express-cache-headers');
+const expressValidator = require('express-validator');
+const { checkSchema } = require('express-validator/check');
 
 const { version } = require('../package.json');
 const renderToRespone = require('./renderer');
@@ -19,6 +20,9 @@ const app = express();
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+
+// Use for query parameter validation
+app.use(expressValidator());
 
 // Start the server
 const server = app.listen(PORT, function () {
@@ -50,8 +54,8 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
         toBoolean: true
     }
 }), function (req, res) {
-    const errors = validationResult(req).array();
-    if (errors.length > 0) {
+    const errors = req.validationErrors();
+    if (errors) {
         res.status(400);
         res.send(errors);
         return;
