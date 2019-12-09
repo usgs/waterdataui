@@ -45,7 +45,7 @@ async function renderToPage(renderFunc) {
     return await pool.use(async browser => {
         // Create a page to render to
         const page = await browser.newPage();
-
+        page.on('console', msg => console.log('PAGE LOG:', msg.text()));
         try {
             return await renderFunc(page);
         }
