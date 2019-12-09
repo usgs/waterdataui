@@ -88,7 +88,7 @@
     "element-closest": "3.0.1",
     "esri-leaflet": "2.3.2",
     "fast-memoize": "2.5.1",
-    "leaflet": "1.5.1",
+    "leaflet": "1.6.0",
     "lodash": "4.17.15",
     "luxon": "1.21.3",
     "matchmedia-polyfill": "0.3.2",
