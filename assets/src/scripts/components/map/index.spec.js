@@ -160,7 +160,7 @@ describe('map module', () => {
             expect(select(mapNode).selectAll('.leaflet-marker-pane img').size()).toBe(1);
         });
 
-        it('Should not create NLDI layers', () => {
+        it('Should not create an overlay layer', () => {
             expect(select(mapNode).selectAll('.leaflet-overlay-pane img').size()).toBe(0);
         });
 

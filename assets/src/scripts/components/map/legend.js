@@ -2,18 +2,12 @@
 // will be visible
 
 import { select } from 'd3-selection';
-
 import { control as createControl, DomUtil, DomEvent } from 'leaflet';
 import { get } from '../../ajax';
 import config from '../../config';
 import { mediaQuery } from '../../utils';
+import { markerFillColor, markerFillOpacity, downStreamColor, upstreamColor, flowLineOpacity } from './nldiMapping';
 
-
-export const markerFillColor = '#ff7800';
-export const markerFillOpacity = 0.8;
-export const downStreamColor = '#41b6c4';
-export const upstreamColor = '#253494';
-export const flowLineOpacity = 0.65;
 
 const fetchLayerLegend = function(layer, defaultName) {
     return get(`${config.FIM_GIS_ENDPOINT}${layer}/MapServer/legend?f=json`)

@@ -10,13 +10,8 @@ import { Actions } from '../../store';
 import { floodSlider } from './flood-slider';
 import { createLegendControl, createFIMLegend, createNldiLegend } from './legend';
 import { addNldiLayers} from './nldiMapping';
-import {
-    hasNldiData,
-    getNldiDownstreamFlows,
-    getNldiDownstreamSites,
-    getNldiUpstreamFlows,
-    getNldiUpstreamSites
-} from '../../selectors/nldi-data-selector';
+import { hasNldiData, getNldiDownstreamFlows, getNldiDownstreamSites, getNldiUpstreamFlows, getNldiUpstreamSites}
+    from '../../selectors/nldi-data-selector';
 
 
 const getLayerDefs = function(layerNo, siteno, stage) {

@@ -1,12 +1,11 @@
 import { geoJson, circleMarker } from 'leaflet';
-import {
-    markerFillColor,
-    markerFillOpacity,
-    downStreamColor,
-    upstreamColor,
-    flowLineOpacity
-} from './legend';
 
+
+export const markerFillColor = '#ff7800';
+export const markerFillOpacity = 0.8;
+export const downStreamColor = '#41b6c4';
+export const upstreamColor = '#253494';
+export const flowLineOpacity = 0.65;
 
 /**
  * Add NLDI layer overlays to a leaflet map. An overlay is added for the flowlines
