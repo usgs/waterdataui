@@ -9,7 +9,7 @@
     "watch": "STATIC_ROOT=http://localhost:9000 nodemon src"
   },
   "engines": {
-    "node": "10.16.3"
+    "node": "10.17.0"
   },
   "repository": {
     "type": "git",
