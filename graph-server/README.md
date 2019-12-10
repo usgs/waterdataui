@@ -16,7 +16,12 @@ variables as arguments:
 For example:
 
 ```bash
-NODE_PORT=80 node server.js
+% NODE_PORT=80 node src/index.js
+```
+
+Alternatively, if you want to use defaults as well as add DEBUG just use
+```bash
+% npm run start
 ```
 
 ## Development server
@@ -24,5 +29,14 @@ NODE_PORT=80 node server.js
 There is a run task to start a server in watch mode:
 
 ```bash
-npm run watch
+% npm run watch
+```
+
+## Docker
+
+For deployment, a docker image is built and then deployed. To mimic the same thing locally execute the following
+from the root level of this repo:
+```bash
+% docker build -t wdfn_graph_server graph-server/
+% docker run -p 2929:2929 --privileged wdfn_graph_server
 ```
