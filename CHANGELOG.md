@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Legend expand/collapse is available when nldi data is present
 - Legend is initially collapsed on small devices when nldi data or flood data is present
 
+### Fixed
+- The latest version of Docker did not work with the graph-server image. It now uses a 
+debian image and it also uses the Chromimum that is downloaded with puppeteer.
+
 ## [0.21.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.20.0...waterdataui-0.21.0) - 2019-10-24
 ### Added
 - Added a checkbox to enable/disable median line on hydrograph 
