@@ -35,7 +35,8 @@ const pool = createPuppeteerPool({
         executablePath: process.env.CHROME_BIN,
         args: [
             // Ignore CORS issues
-            '--disable-web-security'
+            '--disable-web-security',
+            '--no-sandbox'
         ]
     }
 });
