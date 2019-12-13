@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.22.0...master)
+### Changed
+- Assets generation and the graph-server now use npm 12.x.x
 
 ## [0.22.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.21.0...waterdataui-0.22.0) - 2019-12-12
 ### Changed
