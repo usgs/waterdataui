@@ -14,7 +14,7 @@ Returns a png containing a hydrograph for parameterCode(xxxxxx) for the NWIS sit
 last seven days. The query parameter parameterCode is required and should be a valid NWIS parameter code (see 
 https://help.waterdata.usgs.gov/parameter_cd?group_cd=% )
 #### Optional query parameters
-- compare - Boolean. By default this is false if not specified. If true, the graph will render two lines,
+- **compare** - Boolean. By default this is false if not specified. If true, the graph will render two lines,
 one representing the time period specified and the second representing the same time period one year ago.
 
 ## Running the server
