@@ -1,5 +1,5 @@
 # Use LTS release
-FROM node:10.17.0-slim
+FROM node:12.13.1-slim
 
 RUN  apt-get update \
      # Install latest chrome dev package, which installs the necessary libs to
