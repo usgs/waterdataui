@@ -4,10 +4,12 @@ This project includes a node.js server-side rendering agent for Water Data For
 The Nation graphs.
 
 ## API
-### Status service - /api/graph-images/status
+### Status service
+#### api/graph-images/status
 Returns json object containing the  version of the running service
 
-### Monitoring Location service - /api/graph-images/monitoring-location/\<siteid\>/?parameterCode=xxxxx
+### Monitoring Location service  
+####/api/graph-images/monitoring-location/\<siteid\>/?parameterCode=xxxxx
 Returns a png containing a hydrograph for parameterCode(xxxxxx) for the site(siteid) for the
 last seven days. The query parameter parameterCode is required and should be a valid NWIS parameter code (see 
 https://help.waterdata.usgs.gov/parameter_cd?group_cd=% )
