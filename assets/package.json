@@ -82,7 +82,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.11.2",
     "autotrack": "2.4.1",
-    "core-js": "3.4.8",
+    "core-js": "3.5.0",
     "d3": "5.14.2",
     "date-time-format-timezone": "1.0.21",
     "element-closest": "3.0.2",
