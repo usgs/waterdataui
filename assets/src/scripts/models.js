@@ -31,13 +31,16 @@ function tsServiceRoot(date) {
  * @param  {Array}    params Optional array of parameter codes
  * @param {Date} startDate
  * @param {Date} endData
+ * @param {String} period
  * @return {Promise} resolves to an array of time series model object, rejects to an error
  */
-export const getTimeSeries = function ({sites, params=null, startDate=null, endDate=null}) {
+export const getTimeSeries = function ({sites, params=null, startDate=null, endDate=null, period=null}) {
     let timeParams;
     let serviceRoot;
+
     if (!startDate && !endDate) {
-        timeParams = 'period=P7D';
+        const timePeriod = period || 'P7D';
+        timeParams = `period=${timePeriod}`;
         serviceRoot = SERVICE_ROOT;
     } else {
         let startString = startDate ? isoFormatTime(startDate) : '';

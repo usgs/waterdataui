@@ -496,7 +496,7 @@ const noDataAlert = function(elem, tsCollectionIds) {
     }
 };
 
-export const attachToNode = function (store, node, {siteno, parameter, compare, cursorOffset, interactive = true} = {}) {
+export const attachToNode = function (store, node, {siteno, parameter, compare, period = 'P15D', cursorOffset, interactive = true} = {}) {
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
@@ -551,6 +551,13 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
     window.onresize = function() {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     };
-    store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null));
+    store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null))
+        .then(() => {
+            if (period) {
+                store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, period));
+            }
+        });
     store.dispatch(Actions.retrieveMedianStatistics(siteno));
+    if (period) {
+    }
 };

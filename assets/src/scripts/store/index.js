@@ -4,13 +4,14 @@ import last from 'lodash/last';
 import { DateTime } from 'luxon';
 import { applyMiddleware, createStore, combineReducers, compose } from 'redux';
 import { default as thunk } from 'redux-thunk';
+
 import { getPreviousYearTimeSeries, getTimeSeries, sortedParameters, queryWeatherService } from '../models';
 import { calcStartTime } from '../utils';
 import { normalize } from '../schema';
 import { fetchFloodFeatures, fetchFloodExtent } from '../flood-data';
 import { fetchSiteStatistics } from '../statistics-data';
 import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
-    getCustomTimeRange, getIanaTimeZone, getTimeSeriesCollectionIds } from '../selectors/time-series-selector';
+    getCustomTimeRange, getIanaTimeZone } from '../selectors/time-series-selector';
 import { floodDataReducer as floodData } from './flood-data-reducer';
 import { floodStateReducer as floodState } from './flood-state-reducer';
 import { nldiDataReducer as nldiData } from './nldi-data-reducer';
@@ -134,15 +135,32 @@ export const Actions = {
         };
     },
 
+    retrieveCustomTimePeriodTimeSeries(site, period) {
+        return function(dispatch, getState) {
+            const state = getState();
+            const parmCd = getCurrentParmCd(state);
+            const requestKey = getTsRequestKey('current', 'custom', parmCd)(state);
+            dispatch(Actions.setCurrentDateRange('custom'));
+            dispatch(Actions.addTimeSeriesLoading([requestKey]));
+            return getTimeSeries({sites: [site], params: [parmCd], period: period}).then(
+                series => {
+                    const collection = normalize(series, requestKey);
+                    dispatch(Actions.addSeriesCollection(requestKey, collection));
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+                },
+                () => {
+                    console.log('Unable to fetch data for perior $');
+                }
+            );
+        };
+    },
+
     retrieveCustomTimeSeries(site, startTime, endTime) {
         return function(dispatch, getState) {
             const state = getState();
             const parmCd = getCurrentParmCd(state);
             const requestKey = getTsRequestKey('current', 'custom', parmCd)(state);
-            //const currentTsIds = getTimeSeriesCollectionIds('current', 'custom', parmCd)(state) || [];
-            //if (currentTsIds.length > 0) {
-            dispatch(Actions.resetTimeSeries(requestKey));
-            //}
+
             dispatch(Actions.setCustomDateRange(startTime, endTime));
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
             dispatch(Actions.toggleTimeSeries('median', false));
@@ -160,9 +178,7 @@ export const Actions = {
                 () => {
                     console.log(`Unable to fetch data for between ${startTime} and ${endTime} and parameter code ${parmCd}`);
                     dispatch(Actions.addSeriesCollection(requestKey, {}));
-                    console.log('After addSeriesCollection');
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
-                    console.log('After remoteTimeSeriesLoadking');
                 }
             );
         };
