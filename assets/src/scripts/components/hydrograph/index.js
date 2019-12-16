@@ -502,15 +502,6 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
         return;
     }
 
-    if (compare) {
-        store.dispatch(Actions.toggleTimeSeries('compare', true));
-    }
-
-    // If specified, initialize the cursorOffset
-    if (cursorOffset !== undefined) {
-        store.dispatch(Actions.setCursorOffset(cursorOffset));
-    }
-
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     select(node)
         .call(provide(store))
@@ -522,6 +513,16 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
                 showLoadingIndicator: isLoadingTS('current', 'P7D'),
                 sizeClass: () => 'fa-3x'
             })));
+
+    // If specified, turn the visibility of the comparison time series on.
+    if (compare) {
+        store.dispatch(Actions.toggleTimeSeries('compare', true));
+    }
+
+    // If specified, initialize the cursorOffset
+    if (cursorOffset !== undefined) {
+        store.dispatch(Actions.setCursorOffset(cursorOffset));
+    }
 
     select(node).select('.graph-container')
         .call(link(controlDisplay, hasTimeSeriesWithPoints('current', 'P7D')))

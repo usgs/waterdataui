@@ -69,7 +69,7 @@ const removeLoadingTimeSeries = function(timeSeriesState, action) {
     };
 };
 
-const setRequestedTimeRange = function(timeSeriesState, action) {
+const requestedTimeRange = function(timeSeriesState, action) {
     return {
         ...timeSeriesState,
         requestedTimeRange: {startDT: action.startTime, endDT: action.endTime}
@@ -90,7 +90,7 @@ export const timeSeriesStateReducer = function(timeSeriesState={}, action) {
         case 'TIME_SERIES_PLAY_STOP': return timeSeriesPlayStop(timeSeriesState, action);
         case 'TIME_SERIES_LOADING_ADD': return addLoadingTimeSeries(timeSeriesState, action);
         case 'TIME_SERIES_LOADING_REMOVE': return removeLoadingTimeSeries(timeSeriesState, action);
-        case 'SET_CUSTOM_DATE_RANGE': return setRequestedTimeRange(timeSeriesState, action);
+        case 'SET_CUSTOM_DATE_RANGE': return requestedTimeRange(timeSeriesState, action);
         default: return timeSeriesState;
     }
 };
