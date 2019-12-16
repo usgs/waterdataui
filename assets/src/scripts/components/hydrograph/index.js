@@ -430,7 +430,7 @@ const dateRangeControls = function(elem, siteno) {
                 customDateValidationContainer.attr('hidden', null);
             } else {
                 customDateValidationContainer.attr('hidden', true);
-                return Actions.getUserRequestedDataForDateRange(
+                return Actions.retrieveUserRequestedDataForDateRange(
                     siteno,
                     userSpecifiedStart,
                     userSpecifiedEnd

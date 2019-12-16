@@ -465,7 +465,7 @@ describe('Hydrograph charting module', () => {
         });
 
         it('Expects data to be retrieved if both custom start and end dates are provided', () => {
-            spyOn(Actions, 'getUserRequestedDataForDateRange');
+            spyOn(Actions, 'retrieveUserRequestedDataForDateRange');
 
             select(graphNode).select('#custom-start-date').property('value', '2063-04-03');
             select(graphNode).select('#custom-end-date').property('value', '2063-04-05');
@@ -475,7 +475,7 @@ describe('Hydrograph charting module', () => {
             let customDateAlertDiv = select(graphNode).select('#custom-date-alert-container');
             expect(customDateAlertDiv.attr('hidden')).toBe('true');
 
-            expect(Actions.getUserRequestedDataForDateRange).toHaveBeenCalledWith(
+            expect(Actions.retrieveUserRequestedDataForDateRange).toHaveBeenCalledWith(
                 '12345678', '2063-04-03', '2063-04-05'
             );
         });

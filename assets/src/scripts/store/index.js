@@ -10,7 +10,7 @@ import { normalize } from '../schema';
 import { fetchFloodFeatures, fetchFloodExtent } from '../flood-data';
 import { fetchSiteStatistics } from '../statistics-data';
 import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
-    getRequestedTimeRange, getIanaTimeZone, getTimeSeriesCollectionIds } from '../selectors/time-series-selector';
+    getCustomTimeRange, getIanaTimeZone, getTimeSeriesCollectionIds } from '../selectors/time-series-selector';
 import { floodDataReducer as floodData } from './flood-data-reducer';
 import { floodStateReducer as floodState } from './flood-state-reducer';
 import { nldiDataReducer as nldiData } from './nldi-data-reducer';
@@ -81,7 +81,6 @@ export const Actions = {
                     const notes = collection.queryInfo[requestKey].notes;
                     const endTime = notes.requestDT;
                     const startTime = calcStartTime('P7D', endTime, 'local');
-                    dispatch(Actions.setCustomDateRange(startTime, endTime));
                     if (latitude !== null && longitude !== null) {
                         dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
                     }
@@ -134,24 +133,24 @@ export const Actions = {
             );
         };
     },
-    retrieveCustomTimeSeries(site) {
+
+    retrieveCustomTimeSeries(site, startTime, endTime) {
         return function(dispatch, getState) {
             const state = getState();
             const parmCd = getCurrentParmCd(state);
-            const requestedTimeRange = getRequestedTimeRange(state);
             const requestKey = getTsRequestKey('current', 'custom', parmCd)(state);
-            const currentTsIds = getTimeSeriesCollectionIds('current', 'custom', parmCd)(state) || [];
-            if (currentTsIds.length > 0) {
-                dispatch(Actions.resetTimeSeries(requestKey));
-            }
-            dispatch(Actions.setCurrentDateRange('custom'));
+            //const currentTsIds = getTimeSeriesCollectionIds('current', 'custom', parmCd)(state) || [];
+            //if (currentTsIds.length > 0) {
+            dispatch(Actions.resetTimeSeries(requestKey));
+            //}
+            dispatch(Actions.setCustomDateRange(startTime, endTime));
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
             dispatch(Actions.toggleTimeSeries('median', false));
             return getTimeSeries({
                 sites: [site],
                 params: [parmCd],
-                startDate: requestedTimeRange.startDT,
-                endDate: requestedTimeRange.endDT
+                startDate: startTime,
+                endDate: endTime
             }).then(
                 series => {
                     const collection = normalize(series, requestKey);
@@ -159,9 +158,11 @@ export const Actions = {
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                 },
                 () => {
-                    console.log(`Unable to fetch data for between ${requestedTimeRange.startDT} and ${requestedTimeRange.endDT} and parameter code ${parmCd}`);
+                    console.log(`Unable to fetch data for between ${startTime} and ${endTime} and parameter code ${parmCd}`);
                     dispatch(Actions.addSeriesCollection(requestKey, {}));
+                    console.log('After addSeriesCollection');
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
+                    console.log('After remoteTimeSeriesLoadking');
                 }
             );
         };
@@ -187,7 +188,6 @@ export const Actions = {
                         dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
-                        dispatch(Actions.setCustomDateRange(startTime, endTime));
                         dispatch(Actions.toggleTimeSeries('median', true));
                     },
                     () => {
@@ -230,9 +230,12 @@ export const Actions = {
     updateCurrentVariable(siteno, variableID) {
         return function(dispatch, getState) {
             dispatch(Actions.setCurrentVariable(variableID));
-            const currentDateRange = getCurrentDateRange(getState());
+            const state = getState();
+            const currentDateRange = getCurrentDateRange(state);
             if (currentDateRange === 'custom') {
-                dispatch(Actions.retrieveCustomTimeSeries(siteno));
+                const timeRange = getCustomTimeRange(state);
+                dispatch(
+                    Actions.retrieveCustomTimeSeries(siteno, timeRange.startDT, timeRange.endDT));
             } else {
                 dispatch(Actions.retrieveExtendedTimeSeries(siteno, currentDateRange));
             }
@@ -367,14 +370,13 @@ export const Actions = {
             endTime
         };
     },
-    getUserRequestedDataForDateRange(siteno, startTimeStr, endTimeStr) {
+    retrieveUserRequestedDataForDateRange(siteno, startTimeStr, endTimeStr) {
         return function(dispatch, getState) {
             const state = getState();
             const locationIanaTimeZone = getIanaTimeZone(state);
             const startTime = new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis();
             const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis();
-            dispatch(Actions.setCustomDateRange(startTime, endTime));
-            dispatch(Actions.retrieveCustomTimeSeries(siteno));
+            dispatch(Actions.retrieveCustomTimeSeries(siteno, startTime, endTime));
         };
     },
     setGageHeightFromStageIndex(index) {
@@ -435,7 +437,7 @@ export const configureStore = function (initialState) {
                 median: false
             },
             currentDateRange: 'P7D',
-            requestedTimeRange: null,
+            customTimeRange: null,
             currentVariableID: null,
             cursorOffset: null,
             audiblePlayId: null,
