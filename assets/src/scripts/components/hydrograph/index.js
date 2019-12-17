@@ -8,12 +8,14 @@ import { select } from 'd3-selection';
 import { DateTime } from 'luxon';
 import { createStructuredSelector } from 'reselect';
 
+import { dispatch, link, provide } from '../../lib/redux';
+
 import { addSVGAccessibility } from '../../accessibility';
 import config from '../../config';
-import { dispatch, link, provide } from '../../lib/redux';
-import { getTimeSeriesCollectionIds, isLoadingTS, hasAnyTimeSeries } from '../../selectors/time-series-selector';
+import { isLoadingTS, hasAnyTimeSeries } from '../../selectors/time-series-selector';
 import { Actions } from '../../store';
 import { callIf, mediaQuery } from '../../utils';
+
 import { appendAxes, axesSelector } from './axes';
 import { cursorSlider } from './cursor';
 import { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID,
@@ -24,8 +26,7 @@ import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
 import { drawMethodPicker } from './method-picker';
 import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
 import { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } from './scales';
-import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector,
-    hasTimeSeriesWithPoints } from './time-series';
+import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector } from './time-series';
 import { createTooltipFocus, createTooltipText } from './tooltip';
 
 
@@ -52,7 +53,7 @@ const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
         return;
     }
 
-    const tsKeyClass = `ts-${tsKey}`
+    const tsKeyClass = `ts-${tsKey}`;
 
     for (let line of lines) {
         if (line.classes.dataMask === null) {
@@ -500,26 +501,17 @@ const dataLoadingAlert = function(elem, message) {
     }
 };
 
-const noDataAlert = function(elem, tsCollectionIds) {
-    const message =
-        tsCollectionIds && tsCollectionIds.length === 0 ? 'Nocurrent time series data available for this site' : '';
-    dataLoadingAlert(elem, message);
-};
-
-export const attachToNode =
-    function (store, node, {siteno, parameter, compare, period, cursorOffset, showOnlyGraph = false} = {}) {
+export const attachToNode = function (store, node, {siteno, parameter, compare, period, cursorOffset, showOnlyGraph = false} = {}) {
+    const nodeElem = select(node);
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
     }
 
+    // Initialize hydrograph by showing the loading indicator
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
-
-    select(node)
+    nodeElem
         .call(provide(store))
-        .call(link(noDataAlert, getTimeSeriesCollectionIds('current', 'P7D')))
-        .call(callIf(!showOnlyGraph, drawMethodPicker))
-        .call(callIf(!showOnlyGraph, dateRangeControls), siteno)
         .select('.loading-indicator-container')
             .call(link(loadingIndicator, createStructuredSelector({
                 showLoadingIndicator: isLoadingTS('current', 'P7D'),
@@ -536,17 +528,34 @@ export const attachToNode =
         store.dispatch(Actions.setCursorOffset(cursorOffset));
     }
 
-    select(node).select('.graph-container')
+    // Fetch the time series data
+    if (period) {
+        store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, '00060', period))
+            .catch((message) => dataLoadingAlert(select(node), message ? message : 'No data returned'));
+    } else {
+        store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null))
+            .catch(() => dataLoadingAlert((select(node), 'No current time series data available for this site')));
+    }
+    store.dispatch(Actions.retrieveMedianStatistics(siteno));
+
+    // Set up rendering functions
+    nodeElem.select('.graph-container')
         .call(link(controlDisplay, hasAnyTimeSeries))
         .call(timeSeriesGraph, siteno)
         .call(callIf(!showOnlyGraph, cursorSlider))
         .append('div')
             .classed('ts-legend-controls-container', true)
-            .call(timeSeriesLegend)
-            .call(callIf(!showOnlyGraph, drawGraphControls));
+            .call(timeSeriesLegend);
 
     if (!showOnlyGraph) {
-        select(node).select('.select-time-series-container')
+        nodeElem
+            .call(drawMethodPicker)
+            .call(dateRangeControls, siteno);
+
+        nodeElem.select('.ts-legend-controls-container')
+            .call(drawGraphControls);
+
+        nodeElem.select('.select-time-series-container')
             .call(link(plotSeriesSelectTable, createStructuredSelector({
                 siteno: () => siteno,
                 availableTimeSeries: availableTimeSeriesSelector,
@@ -554,7 +563,7 @@ export const attachToNode =
                 timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM),
                 layout: layoutSelector
             })));
-        select(node).select('.provisional-data-alert')
+        nodeElem.select('.provisional-data-alert')
             .call(link(function(elem, allTimeSeries) {
                 elem.attr('hidden', Object.keys(allTimeSeries).length ? null : true);
             }, allTimeSeriesSelector));
@@ -563,14 +572,4 @@ export const attachToNode =
     window.onresize = function() {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     };
-    if (period) {
-        store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, '00060', period))
-            .then(() => {console.log('Loading complete');})
-            .catch(function(message) {
-                        dataLoadingAlert(select(node), message ? message : 'No data returned');
-                    });
-    } else {
-        store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null));
-    }
-    store.dispatch(Actions.retrieveMedianStatistics(siteno));
 };
