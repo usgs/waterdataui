@@ -1,4 +1,5 @@
 
+import find from 'lodash/find';
 import findKey from 'lodash/findKey';
 import last from 'lodash/last';
 import { DateTime } from 'luxon';
@@ -135,21 +136,27 @@ export const Actions = {
         };
     },
 
-    retrieveCustomTimePeriodTimeSeries(site, period) {
+    retrieveCustomTimePeriodTimeSeries(site, parameterCd, period) {
         return function(dispatch, getState) {
             const state = getState();
-            const parmCd = getCurrentParmCd(state);
+            const parmCd = parameterCd;
             const requestKey = getTsRequestKey('current', 'custom', parmCd)(state);
             dispatch(Actions.setCurrentDateRange('custom'));
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
             return getTimeSeries({sites: [site], params: [parmCd], period: period}).then(
                 series => {
                     const collection = normalize(series, requestKey);
+                    const variables = Object.values(collection.variables);
+                    const variableToDraw = find(variables, v =>  v.variableCode.value === parameterCd);
+                    dispatch(Actions.setCurrentVariable(variableToDraw.variableCode.variableID));
                     dispatch(Actions.addSeriesCollection(requestKey, collection));
+
+
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                 },
-                () => {
-                    console.log('Unable to fetch data for perior $');
+                (reason) => {
+                    console.log(`Unable to fetch data for period ${period}`);
+                    throw reason;
                 }
             );
         };

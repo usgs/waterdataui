@@ -11,7 +11,7 @@ import { createStructuredSelector } from 'reselect';
 import { addSVGAccessibility } from '../../accessibility';
 import config from '../../config';
 import { dispatch, link, provide } from '../../lib/redux';
-import { getTimeSeriesCollectionIds, isLoadingTS } from '../../selectors/time-series-selector';
+import { getTimeSeriesCollectionIds, isLoadingTS, hasAnyTimeSeries } from '../../selectors/time-series-selector';
 import { Actions } from '../../store';
 import { callIf, mediaQuery } from '../../utils';
 import { appendAxes, axesSelector } from './axes';
@@ -349,7 +349,7 @@ const dateRangeControls = function(elem, siteno) {
         .attr('aria-label', 'Time interval select')
         .call(link(function(container, showControls) {
             container.attr('hidden', showControls ? null : true);
-        }, hasTimeSeriesWithPoints('current', 'P7D')));
+        }, hasAnyTimeSeries));
 
     const customDateContainer = elem.insert('div', ':nth-child(3)')
         .attr('id', 'ts-customdaterange-select-container')
@@ -481,33 +481,40 @@ const dateRangeControls = function(elem, siteno) {
     li.select(`#${DATE_RANGE[0].label}`).attr('checked', true);
 };
 
-
-const noDataAlert = function(elem, tsCollectionIds) {
+const dataLoadingAlert = function(elem, message) {
     elem.select('#no-data-message').remove();
-    if (tsCollectionIds && tsCollectionIds.length === 0) {
+    if (message) {
         elem.append('div')
             .attr('id', 'no-data-message')
             .attr('class', 'usa-alert usa-alert-info')
             .append('div')
-                .attr('class', 'usa-alert-body')
-                .append('p')
-                    .attr('class', 'usa-alert-text')
-                    .text('No current time series data available for this site');
+            .attr('class', 'usa-alert-body')
+            .append('p')
+            .attr('class', 'usa-alert-text')
+            .text(message);
     }
 };
 
-export const attachToNode = function (store, node, {siteno, parameter, compare, period = 'P15D', cursorOffset, interactive = true} = {}) {
+const noDataAlert = function(elem, tsCollectionIds) {
+    const message =
+        tsCollectionIds && tsCollectionIds.length === 0 ? 'Nocurrent time series data available for this site' : '';
+    dataLoadingAlert(elem, message);
+};
+
+export const attachToNode =
+    function (store, node, {siteno, parameter, compare, period = 'P20M', cursorOffset, showOnlyGraph = false} = {}) {
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
     }
 
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
+
     select(node)
         .call(provide(store))
         .call(link(noDataAlert, getTimeSeriesCollectionIds('current', 'P7D')))
-        .call(callIf(interactive, drawMethodPicker))
-        .call(callIf(interactive, dateRangeControls), siteno)
+        .call(callIf(!showOnlyGraph, drawMethodPicker))
+        .call(callIf(!showOnlyGraph, dateRangeControls), siteno)
         .select('.loading-indicator-container')
             .call(link(loadingIndicator, createStructuredSelector({
                 showLoadingIndicator: isLoadingTS('current', 'P7D'),
@@ -525,15 +532,15 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
     }
 
     select(node).select('.graph-container')
-        .call(link(controlDisplay, hasTimeSeriesWithPoints('current', 'P7D')))
+        .call(link(controlDisplay, hasAnyTimeSeries))
         .call(timeSeriesGraph, siteno)
-        .call(callIf(interactive, cursorSlider))
+        .call(callIf(!showOnlyGraph, cursorSlider))
         .append('div')
             .classed('ts-legend-controls-container', true)
             .call(timeSeriesLegend)
-            .call(callIf(interactive, drawGraphControls));
+            .call(callIf(!showOnlyGraph, drawGraphControls));
 
-    if (interactive) {
+    if (!showOnlyGraph) {
         select(node).select('.select-time-series-container')
             .call(link(plotSeriesSelectTable, createStructuredSelector({
                 siteno: () => siteno,
@@ -551,13 +558,14 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
     window.onresize = function() {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     };
-    store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null))
-        .then(() => {
-            if (period) {
-                store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, period));
-            }
-        });
-    store.dispatch(Actions.retrieveMedianStatistics(siteno));
     if (period) {
+        store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, '00060', period))
+            .then(() => {console.log('Loading complete');})
+            .catch(function(message) {
+                        dataLoadingAlert(select(node), message ? message : 'No data returned');
+                    });
+    } else {
+        store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null));
     }
+    store.dispatch(Actions.retrieveMedianStatistics(siteno));
 };

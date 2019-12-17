@@ -60,7 +60,8 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
     renderToRespone(res, {
         siteID: req.params.siteID,
         parameterCode: req.query.parameterCode,
-        compare: req.query.compare
+        compare: req.query.compare,
+        period: req.query.period
     });
 });
 

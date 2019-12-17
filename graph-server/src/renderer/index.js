@@ -5,11 +5,12 @@ const PAST_SERVICE_ROOT = process.env.PAST_SERVICE_ROOT || 'https://nwis.waterse
 const STATIC_ROOT = process.env.STATIC_ROOT || 'https://waterdata.usgs.gov/nwisweb/wsgi/static';
 
 
-const renderToRespone = function (res, {siteID, parameterCode, compare}) {
+const renderToRespone = function (res, {siteID, parameterCode, compare, period}) {
     const componentOptions = {
         siteno: siteID,
         parameter: parameterCode,
         compare: compare,
+        period: period,
         cursorOffset: false,
         interactive: false
     };

@@ -28,7 +28,7 @@ export const getNwisTimeZone = state => state.series.timeZones || {};
 
 export const getCustomTimeRange = state => state.timeSeriesState.customTimeRange;
 
-
+export const hasAnyTimeSeries = state => state.series && state.series.timeSeries && state.series.timeSeries != {};
 /*
  * Selectors the return derived data from the state
  */
