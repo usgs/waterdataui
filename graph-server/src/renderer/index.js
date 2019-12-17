@@ -12,7 +12,7 @@ const renderToRespone = function (res, {siteID, parameterCode, compare, period})
         compare: compare,
         period: period,
         cursorOffset: false,
-        interactive: false
+        showOnlyGraph : true
     };
     renderPNG({
         pageURL: 'http://wdfn-graph-server',

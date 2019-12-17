@@ -52,6 +52,8 @@ const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
         return;
     }
 
+    const tsKeyClass = `ts-${tsKey}`
+
     for (let line of lines) {
         if (line.classes.dataMask === null) {
             // If this is a single point line, then represent it as a circle.
@@ -63,6 +65,7 @@ const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
                     .classed('approved', line.classes.approved)
                     .classed('estimated', line.classes.estimated)
                     .classed('not-current-method', !line.classes.currentMethod)
+                    .classed(tsKeyClass, true)
                     .attr('r', CIRCLE_RADIUS_SINGLE_PT)
                     .attr('cx', d => xScale(d.dateTime))
                     .attr('cy', d => yScale(d.value));
@@ -94,7 +97,9 @@ const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
                 .attr('y', yScale(yRangeEnd))
                 .attr('width', rectWidth)
                 .attr('height', Math.abs(yScale(yRangeEnd) - yScale(yRangeStart)))
-                .attr('class', `mask ${maskDisplayName}-mask`);
+                .attr('class', `mask ${maskDisplayName}-mask`)
+                .classed(`ts-${tsKey}`, true);
+
 
             const patternId = HASH_ID[tsKey] ? `url(#${HASH_ID[tsKey]})` : '';
 
@@ -502,7 +507,7 @@ const noDataAlert = function(elem, tsCollectionIds) {
 };
 
 export const attachToNode =
-    function (store, node, {siteno, parameter, compare, period = 'P20M', cursorOffset, showOnlyGraph = false} = {}) {
+    function (store, node, {siteno, parameter, compare, period, cursorOffset, showOnlyGraph = false} = {}) {
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
