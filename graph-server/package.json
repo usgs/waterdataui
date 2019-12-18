@@ -9,7 +9,7 @@
     "watch": "DEBUG=express:* STATIC_ROOT=http://localhost:9000 nodemon src"
   },
   "engines": {
-    "node": "12.13.1"
+    "node": "10.18.0"
   },
   "repository": {
     "type": "git",

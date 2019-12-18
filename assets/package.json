@@ -28,7 +28,7 @@
     "watch:js": "mkdir -p dist/scripts && cp node_modules/date-time-format-timezone/build/browserified/date-time-format-timezone-complete-min.js dist/scripts && rollup -c --watch"
   },
   "engines": {
-    "node": "12.13.1"
+    "node": "10.18.0"
   },
   "repository": {
     "type": "git",
