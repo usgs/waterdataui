@@ -508,7 +508,7 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
         return;
     }
 
-    // Initialize hydrograph by showing the loading indicator
+    // Initialize hydrograph with the store and show the loading indicator
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     nodeElem
         .call(provide(store))
@@ -538,7 +538,7 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
     }
     store.dispatch(Actions.retrieveMedianStatistics(siteno));
 
-    // Set up rendering functions
+    // Set up rendering functions for the graph-container
     nodeElem.select('.graph-container')
         .call(link(controlDisplay, hasAnyTimeSeries))
         .call(timeSeriesGraph, siteno)
@@ -547,6 +547,7 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
             .classed('ts-legend-controls-container', true)
             .call(timeSeriesLegend);
 
+    // Add UI interactive elements and the provisional data alert.
     if (!showOnlyGraph) {
         nodeElem
             .call(drawMethodPicker)

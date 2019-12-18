@@ -462,34 +462,12 @@ describe('Redux store', () => {
                     status: 200
                 });
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(6);
+                    expect(mockDispatch.calls.count()).toBe(5);
                     expect(Actions.addSeriesCollection).toHaveBeenCalled();
                     expect(Actions.addSeriesCollection.calls.argsFor(0)[0]).toEqual('current:custom:00060');
                     expect(Actions.retrieveCompareTimeSeries).not.toHaveBeenCalled();
                     expect(Actions.toggleTimeSeries).toHaveBeenCalled();
                     expect(Actions.toggleTimeSeries.calls.argsFor(0)).toEqual(['median', false]);
-                    done();
-                });
-            });
-
-            it('Should reset the time series if it already exists', (done) => {
-                mockGetState.and.returnValue(Object.assign({}, TEST_STATE, {
-                    series: Object.assign({}, TEST_STATE.series, {
-                        requests: {'current:custom:00060': {
-                                timeSeriesCollections: [7, 8]
-                            }}
-                    })
-                }));
-                spyOn(Actions, 'resetTimeSeries');
-                let p = Actions.retrieveCustomTimeSeries('490129388', 1488348000000, 1490936400000)(mockDispatch, mockGetState);
-                request = jasmine.Ajax.requests.mostRecent();
-                request.respondWith({
-                    responseText: MOCK_DATA,
-                    status: 200
-                });
-                p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(6);
-                    expect(Actions.resetTimeSeries).toHaveBeenCalled();
                     done();
                 });
             });
@@ -528,8 +506,8 @@ describe('Redux store', () => {
                 });
                 expect(Actions.addTimeSeriesLoading).toHaveBeenCalledWith(['current:custom:00060']);
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(6);
-                    let arg = mockDispatch.calls.argsFor(4)[0];
+                    expect(mockDispatch.calls.count()).toBe(5);
+                    let arg = mockDispatch.calls.argsFor(3)[0];
                     expect(arg.type).toBe('ADD_TIME_SERIES_COLLECTION');
                     expect(arg.key).toBe('current:custom:00060');
                     expect(arg.data).toEqual({});

@@ -163,9 +163,12 @@ describe('Hydrograph charting module', () => {
         component.append('div').attr('class', 'provisional-data-alert');
 
         graphNode = document.getElementById('hydrograph');
+
+        jasmine.Ajax.install();
     });
 
     afterEach(() => {
+        jasmine.Ajax.uninstall();
         select('#hydrograph').remove();
     });
 
@@ -493,16 +496,24 @@ describe('Hydrograph charting module', () => {
                 }
             };
             let store = configureStore(newTestState);
-            spyOn(store, 'dispatch');
+            spyOn(store, 'dispatch').and.callThrough();
             attachToNode(store, graphNode, {siteno: '12345678'});
 
             expect(select(graphNode).select('.loading-indicator-container').select('.loading-indicator').size()).toBe(1);
         });
 
         it('Expects the graph loading indicator to not be visible if the current 7 day data is not being loaded', () => {
-            let store = configureStore(TEST_STATE);
-            spyOn(store, 'dispatch');
+            const newTestState = {
+                ...TEST_STATE,
+                timeSeriesState: {
+                    ...TEST_STATE.timeSeriesState,
+                    currentDateRange: 'P7D'
+                }
+            };
+            let store = configureStore(newTestState);
+            spyOn(store, 'dispatch').and.callThrough();
             attachToNode(store, graphNode, {siteno: '12345678'});
+            store.dispatch(Actions.removeTimeSeriesLoading(['current:P7D']));
 
             expect(select(graphNode).select('.loading-indicator-container').select('.loading-indicator').size()).toBe(0);
         });
@@ -542,24 +553,6 @@ describe('Hydrograph charting module', () => {
             attachToNode(store, graphNode, {siteno: '12345678'});
 
             expect(select(graphNode).select('#no-data-message').size()).toBe(0);
-        });
-
-        it('Expects the no data alert to be shown if there is no data', () => {
-            let newTestState = {
-                ...TEST_STATE,
-                series: {
-                    ...TEST_STATE.series,
-                    requests: {
-                        'current:P7D': {
-                            timeSeriesCollections: []
-                        }
-                    }
-                }
-            };
-            let store = configureStore(newTestState);
-            attachToNode(store, graphNode, {siteno: '12345678'});
-
-            expect(select(graphNode).select('#no-data-message').size()).toBe(1);
         });
     });
 });
