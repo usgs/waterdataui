@@ -150,13 +150,12 @@ export const Actions = {
                     const variableToDraw = find(variables, v =>  v.variableCode.value === parameterCd);
                     dispatch(Actions.setCurrentVariable(variableToDraw.variableCode.variableID));
                     dispatch(Actions.addSeriesCollection(requestKey, collection));
-
-
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                 },
-                (reason) => {
-                    console.log(`Unable to fetch data for period ${period}`);
-                    throw reason;
+                () => {
+                    console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
+                    dispatch(Actions.addSeriesCollection(requestKey, {}));
+                    dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                 }
             );
         };
