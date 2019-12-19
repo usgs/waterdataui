@@ -39,7 +39,7 @@ describe('Models module', () => {
             expect(request.url).toContain('parameterCd=' + paramCode + ',00080');
         });
 
-        it('Get url includes has the default time period if startDate and endDate are null', () => {
+        it('Get url includes has the default time period if startDate, endDate and period are null', () => {
             getTimeSeries({sites: [siteID], params: [paramCode]});
             const request = jasmine.Ajax.requests.mostRecent();
             expect(request.url).toContain('period=P7D');
@@ -47,7 +47,7 @@ describe('Models module', () => {
             expect(request.url).not.toContain('endDT');
         });
 
-        it('Get url includes startDT and endDT when startDate and endDate are non-null', () =>{
+        it('Get url includes startDT and endDT when startDate and endDate are non-null', () => {
             const startDate = new Date('2018-01-02T15:00:00.000-06:00');
             const endDate = new Date('2018-01-02T16:45:00.000-06:00');
             getTimeSeries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
@@ -55,6 +55,18 @@ describe('Models module', () => {
             expect(request.url).not.toContain('period=P7D');
             expect(request.url).toContain('startDT=2018-01-02T21:00');
             expect(request.url).toContain('endDT=2018-01-02T22:45');
+        });
+
+        it('Get url includes period when available and startDT and endDT are null', () => {
+            getTimeSeries({
+                sites: [siteID],
+                params: [paramCode],
+                period: '14D'
+            });
+            const request = jasmine.Ajax.requests.nostRecent();
+            expect(request.url).toContain('period=P14D');
+            expect(request.url).not.toContain('startDT');
+            expect(request.url).not.toContain('endDT');
         });
 
         it('Uses current data service root if data requested is less than 120 days old', () => {
@@ -154,169 +166,6 @@ describe('Models module', () => {
         });
     });
 });
-
-const MOCK_LAST_YEAR_DATA = `
-{"name" : "ns1:timeSeriesResponseType",
-"declaredType" : "org.cuahsi.waterml.TimeSeriesResponseType",
-"scope" : "javax.xml.bind.JAXBElement$GlobalScope",
-"value" : {
-  "queryInfo" : {
-    "queryURL" : "http://waterservices.usgs.gov/nwis/iv/sites=05413500&parameterCd=00060&period=P7D&indent=on&siteStatus=all&format=json",
-    "criteria" : {
-      "locationParam" : "[ALL:05413500]",
-      "variableParam" : "[00060]",
-      "parameter" : [ ]
-    },
-    "note" : [ {
-      "value" : "[ALL:05413500]",
-      "title" : "filter:sites"
-    }, {
-      "value" : "[mode=PERIOD, period=P7D, modifiedSince=null]",
-      "title" : "filter:timeRange"
-    }, {
-      "value" : "methodIds=[ALL]",
-      "title" : "filter:methodId"
-    }, {
-      "value" : "2017-01-09T20:46:07.542Z",
-      "title" : "requestDT"
-    }, {
-      "value" : "1df59e50-f57e-11e7-8ba8-6cae8b663fb6",
-      "title" : "requestId"
-    }, {
-      "value" : "Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.",
-      "title" : "disclaimer"
-    }, {
-      "value" : "vaas01",
-      "title" : "server"
-    } ]
-  },
-  "timeSeries" : [ {
-    "sourceInfo" : {
-      "siteName" : "GRANT RIVER AT BURTON, WI",
-      "siteCode" : [ {
-        "value" : "05413500",
-        "network" : "NWIS",
-        "agencyCode" : "USGS"
-      } ],
-      "timeZoneInfo" : {
-        "defaultTimeZone" : {
-          "zoneOffset" : "-06:00",
-          "zoneAbbreviation" : "CST"
-        },
-        "daylightSavingsTimeZone" : {
-          "zoneOffset" : "-05:00",
-          "zoneAbbreviation" : "CDT"
-        },
-        "siteUsesDaylightSavingsTime" : true
-      },
-      "geoLocation" : {
-        "geogLocation" : {
-          "srs" : "EPSG:4326",
-          "latitude" : 42.72027778,
-          "longitude" : -90.8191667
-        },
-        "localSiteXY" : [ ]
-      },
-      "note" : [ ],
-      "siteType" : [ ],
-      "siteProperty" : [ {
-        "value" : "ST",
-        "name" : "siteTypeCd"
-      }, {
-        "value" : "07060003",
-        "name" : "hucCd"
-      }, {
-        "value" : "55",
-        "name" : "stateCd"
-      }, {
-        "value" : "55043",
-        "name" : "countyCd"
-      } ]
-    },
-    "variable" : {
-      "variableCode" : [ {
-        "value" : "00060",
-        "network" : "NWIS",
-        "vocabulary" : "NWIS:UnitValues",
-        "variableID" : 45807197,
-        "default" : true
-      } ],
-      "variableName" : "Streamflow, ft&#179;/s",
-      "variableDescription" : "Discharge, cubic feet per second",
-      "valueType" : "Derived Value",
-      "unit" : {
-        "unitCode" : "ft3/s"
-      },
-      "options" : {
-        "option" : [ {
-          "name" : "Statistic",
-          "optionCode" : "00000"
-        } ]
-      },
-      "note" : [ ],
-      "noDataValue" : -999999.0,
-      "variableProperty" : [ ],
-      "oid" : "45807197"
-    },
-    "values" : [ {
-      "value" : [ {
-        "value" : "302",
-        "qualifiers" : [ "P" ],
-        "dateTime" : "2017-01-02T15:00:00.000-06:00"
-      }, {
-        "value" : "301",
-        "qualifiers" : [ "P" ],
-        "dateTime" : "2017-01-02T15:15:00.000-06:00"
-      }, {
-        "value" : "302",
-        "qualifiers" : [ "P" ],
-        "dateTime" : "2017-01-02T15:30:00.000-06:00"
-      }, {
-        "value" : "301",
-        "qualifiers" : [ "P" ],
-        "dateTime" : "2017-01-02T15:45:00.000-06:00"
-      }, {
-        "value" : "300",
-        "qualifiers" : [ "P" ],
-        "dateTime" : "2017-01-02T16:00:00.000-06:00"
-      }, {
-        "value" : "302",
-        "qualifiers" : [ "P" ],
-        "dateTime" : "2017-01-02T16:15:00.000-06:00"
-      }, {
-        "value" : "300",
-        "qualifiers" : [ "P" ],
-        "dateTime" : "2017-01-02T16:30:00.000-06:00"
-      }, {
-        "value" : "300",
-        "qualifiers" : [ "P" ],
-        "dateTime" : "2017-01-02T16:45:00.000-06:00"
-      }],
-      "qualifier" : [ {
-        "qualifierCode" : "P",
-        "qualifierDescription" : "Provisional data subject to revision.",
-        "qualifierID" : 0,
-        "network" : "NWIS",
-        "vocabulary" : "uv_rmk_cd"
-      } ],
-      "qualityControlLevel" : [ ],
-      "method" : [ {
-        "methodDescription" : "",
-        "methodID" : 158049
-      } ],
-      "source" : [ ],
-      "offset" : [ ],
-      "sample" : [ ],
-      "censorCode" : [ ]
-    } ],
-    "name" : "USGS:05413500:00060:00000"
-  } ]
-},
-"nil" : false,
-"globalScope" : true,
-"typeSubstituted" : false
-}`
-;
 
 const MOCK_DATA = `
 {"name" : "ns1:timeSeriesResponseType",
@@ -3128,15 +2977,3 @@ const MOCK_DATA = `
 "typeSubstituted" : false
 }
 `;
-
-const MOCK_MEDIAN_DATA = [
-    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '1', day_nu: '1', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '16'},
-    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '1', day_nu: '13', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '15'},
-    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '8', day_nu: '5', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '15'},
-    {agency_cd: 'USGS', site_no: '05370000', parameter_cd: '00060', ts_id: '153885', loc_web_ds: '', month_nu: '2', day_nu: '29', begin_yr: '1969', end_yr: '2017', count_nu: '49', p50_va: '13'}
-];
-const MOCK_MEDIAN_VARIABLES = {
-    '00060': {
-        oid: 'varID'
-    }
-};
