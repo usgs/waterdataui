@@ -88,13 +88,15 @@ describe('time-series-state-reducer', () => {
 
     it('should handle SET_CUSTOM_DATE_RANGE', () => {
         expect(timeSeriesStateReducer({
-            requestedTimeRange: null
+            customTimeRange: null,
+            currentDateRange: 'P7D'
         }, {
             type: 'SET_CUSTOM_DATE_RANGE',
             startTime: 1551420000000,
             endTime: 1552197600000
         })).toEqual({
-            requestedTimeRange: {startDT: 1551420000000, endDT: 1552197600000}
+            customTimeRange: {startDT: 1551420000000, endDT: 1552197600000},
+            currentDateRange: 'custom'
         });
     });
 });

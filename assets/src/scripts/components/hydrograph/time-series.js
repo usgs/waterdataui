@@ -4,8 +4,10 @@ import _includes from 'lodash/includes';
 import uniq from 'lodash/uniq';
 import { createSelector } from 'reselect';
 
-import { getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone, getCurrentParmCd, getCurrentMethodID,
-    getMethods } from '../../selectors/time-series-selector';
+import {
+    getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone, getCurrentParmCd, getCurrentMethodID,
+    getMethods
+} from '../../selectors/time-series-selector';
 
 
 export const TEMPERATURE_PARAMETERS = {
@@ -153,6 +155,7 @@ export const hasTimeSeriesWithPoints = memoize((tsKey, period) => createSelector
         const seriesWithPoints = Object.values(timeSeries).filter(x => x.points.length > 0);
         return seriesWithPoints.length > 0;
 }));
+
 
 /**
  * Factory function creates a function that:

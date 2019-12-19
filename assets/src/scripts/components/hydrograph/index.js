@@ -8,12 +8,14 @@ import { select } from 'd3-selection';
 import { DateTime } from 'luxon';
 import { createStructuredSelector } from 'reselect';
 
+import { dispatch, link, provide } from '../../lib/redux';
+
 import { addSVGAccessibility } from '../../accessibility';
 import config from '../../config';
-import { dispatch, link, provide } from '../../lib/redux';
-import { getTimeSeriesCollectionIds, isLoadingTS } from '../../selectors/time-series-selector';
+import { isLoadingTS, hasAnyTimeSeries } from '../../selectors/time-series-selector';
 import { Actions } from '../../store';
 import { callIf, mediaQuery } from '../../utils';
+
 import { appendAxes, axesSelector } from './axes';
 import { cursorSlider } from './cursor';
 import { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID,
@@ -24,8 +26,7 @@ import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
 import { drawMethodPicker } from './method-picker';
 import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
 import { xScaleSelector, yScaleSelector, timeSeriesScalesByParmCdSelector } from './scales';
-import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector,
-    hasTimeSeriesWithPoints } from './time-series';
+import { allTimeSeriesSelector, isVisibleSelector, titleSelector, descriptionSelector } from './time-series';
 import { createTooltipFocus, createTooltipText } from './tooltip';
 
 
@@ -52,6 +53,8 @@ const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
         return;
     }
 
+    const tsKeyClass = `ts-${tsKey}`;
+
     for (let line of lines) {
         if (line.classes.dataMask === null) {
             // If this is a single point line, then represent it as a circle.
@@ -63,6 +66,7 @@ const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
                     .classed('approved', line.classes.approved)
                     .classed('estimated', line.classes.estimated)
                     .classed('not-current-method', !line.classes.currentMethod)
+                    .classed(tsKeyClass, true)
                     .attr('r', CIRCLE_RADIUS_SINGLE_PT)
                     .attr('cx', d => xScale(d.dateTime))
                     .attr('cy', d => yScale(d.value));
@@ -94,7 +98,9 @@ const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
                 .attr('y', yScale(yRangeEnd))
                 .attr('width', rectWidth)
                 .attr('height', Math.abs(yScale(yRangeEnd) - yScale(yRangeStart)))
-                .attr('class', `mask ${maskDisplayName}-mask`);
+                .attr('class', `mask ${maskDisplayName}-mask`)
+                .classed(`ts-${tsKey}`, true);
+
 
             const patternId = HASH_ID[tsKey] ? `url(#${HASH_ID[tsKey]})` : '';
 
@@ -349,7 +355,7 @@ const dateRangeControls = function(elem, siteno) {
         .attr('aria-label', 'Time interval select')
         .call(link(function(container, showControls) {
             container.attr('hidden', showControls ? null : true);
-        }, hasTimeSeriesWithPoints('current', 'P7D')));
+        }, hasAnyTimeSeries));
 
     const customDateContainer = elem.insert('div', ':nth-child(3)')
         .attr('id', 'ts-customdaterange-select-container')
@@ -430,7 +436,7 @@ const dateRangeControls = function(elem, siteno) {
                 customDateValidationContainer.attr('hidden', null);
             } else {
                 customDateValidationContainer.attr('hidden', true);
-                return Actions.getUserRequestedDataForDateRange(
+                return Actions.retrieveUserRequestedDataForDateRange(
                     siteno,
                     userSpecifiedStart,
                     userSpecifiedEnd
@@ -481,33 +487,31 @@ const dateRangeControls = function(elem, siteno) {
     li.select(`#${DATE_RANGE[0].label}`).attr('checked', true);
 };
 
-
-const noDataAlert = function(elem, tsCollectionIds) {
+const dataLoadingAlert = function(elem, message) {
     elem.select('#no-data-message').remove();
-    if (tsCollectionIds && tsCollectionIds.length === 0) {
+    if (message) {
         elem.append('div')
             .attr('id', 'no-data-message')
             .attr('class', 'usa-alert usa-alert-info')
             .append('div')
-                .attr('class', 'usa-alert-body')
-                .append('p')
-                    .attr('class', 'usa-alert-text')
-                    .text('No current time series data available for this site');
+            .attr('class', 'usa-alert-body')
+            .append('p')
+            .attr('class', 'usa-alert-text')
+            .text(message);
     }
 };
 
-export const attachToNode = function (store, node, {siteno, parameter, compare, cursorOffset, interactive = true} = {}) {
+export const attachToNode = function (store, node, {siteno, parameter, compare, period, cursorOffset, showOnlyGraph = false} = {}) {
+    const nodeElem = select(node);
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
     }
 
+    // Initialize hydrograph with the store and show the loading indicator
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
-    select(node)
+    nodeElem
         .call(provide(store))
-        .call(link(noDataAlert, getTimeSeriesCollectionIds('current', 'P7D')))
-        .call(callIf(interactive, drawMethodPicker))
-        .call(callIf(interactive, dateRangeControls), siteno)
         .select('.loading-indicator-container')
             .call(link(loadingIndicator, createStructuredSelector({
                 showLoadingIndicator: isLoadingTS('current', 'P7D'),
@@ -524,17 +528,35 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
         store.dispatch(Actions.setCursorOffset(cursorOffset));
     }
 
-    select(node).select('.graph-container')
-        .call(link(controlDisplay, hasTimeSeriesWithPoints('current', 'P7D')))
+    // Fetch the time series data
+    if (period) {
+        store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, '00060', period))
+            .catch((message) => dataLoadingAlert(select(node), message ? message : 'No data returned'));
+    } else {
+        store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null))
+            .catch(() => dataLoadingAlert((select(node), 'No current time series data available for this site')));
+    }
+    store.dispatch(Actions.retrieveMedianStatistics(siteno));
+
+    // Set up rendering functions for the graph-container
+    nodeElem.select('.graph-container')
+        .call(link(controlDisplay, hasAnyTimeSeries))
         .call(timeSeriesGraph, siteno)
-        .call(callIf(interactive, cursorSlider))
+        .call(callIf(!showOnlyGraph, cursorSlider))
         .append('div')
             .classed('ts-legend-controls-container', true)
-            .call(timeSeriesLegend)
-            .call(callIf(interactive, drawGraphControls));
+            .call(timeSeriesLegend);
 
-    if (interactive) {
-        select(node).select('.select-time-series-container')
+    // Add UI interactive elements and the provisional data alert.
+    if (!showOnlyGraph) {
+        nodeElem
+            .call(drawMethodPicker)
+            .call(dateRangeControls, siteno);
+
+        nodeElem.select('.ts-legend-controls-container')
+            .call(drawGraphControls);
+
+        nodeElem.select('.select-time-series-container')
             .call(link(plotSeriesSelectTable, createStructuredSelector({
                 siteno: () => siteno,
                 availableTimeSeries: availableTimeSeriesSelector,
@@ -542,7 +564,7 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
                 timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM),
                 layout: layoutSelector
             })));
-        select(node).select('.provisional-data-alert')
+        nodeElem.select('.provisional-data-alert')
             .call(link(function(elem, allTimeSeries) {
                 elem.attr('hidden', Object.keys(allTimeSeries).length ? null : true);
             }, allTimeSeriesSelector));
@@ -551,6 +573,4 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
     window.onresize = function() {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     };
-    store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null));
-    store.dispatch(Actions.retrieveMedianStatistics(siteno));
 };
