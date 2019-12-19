@@ -61,9 +61,9 @@ describe('Models module', () => {
             getTimeSeries({
                 sites: [siteID],
                 params: [paramCode],
-                period: '14D'
+                period: 'P14D'
             });
-            const request = jasmine.Ajax.requests.nostRecent();
+            const request = jasmine.Ajax.requests.mostRecent();
             expect(request.url).toContain('period=P14D');
             expect(request.url).not.toContain('startDT');
             expect(request.url).not.toContain('endDT');
