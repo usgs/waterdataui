@@ -5,7 +5,8 @@ const PAST_SERVICE_ROOT = process.env.PAST_SERVICE_ROOT || 'https://nwis.waterse
 const STATIC_ROOT = process.env.STATIC_ROOT || 'https://waterdata.usgs.gov/nwisweb/wsgi/static';
 
 
-const renderToRespone = function (res, {siteID, parameterCode, compare, period}) {
+const renderToResponse = function (res, {siteID, parameterCode, compare, period}) {
+    console.log(`Using static root ${STATIC_ROOT}`);
     const componentOptions = {
         siteno: siteID,
         parameter: parameterCode,
@@ -55,4 +56,4 @@ const renderToRespone = function (res, {siteID, parameterCode, compare, period})
 };
 
 
-module.exports = renderToRespone;
+module.exports = renderToResponse;

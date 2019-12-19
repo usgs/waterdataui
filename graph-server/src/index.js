@@ -4,7 +4,7 @@ const cache = require('express-cache-headers');
 const { checkSchema, validationResult } = require('express-validator');
 
 const { version } = require('../package.json');
-const renderToRespone = require('./renderer');
+const renderToResponse = require('./renderer');
 
 
 const PORT = process.env.NODE_PORT || 2929;
@@ -57,7 +57,7 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
         return;
     }
 
-    renderToRespone(res, {
+    renderToResponse(res, {
         siteID: req.params.siteID,
         parameterCode: req.query.parameterCode,
         compare: req.query.compare,
