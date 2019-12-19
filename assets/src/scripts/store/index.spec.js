@@ -452,7 +452,7 @@ describe('Redux store', () => {
                 });
             });
 
-            it('Should clear the data for and remote the time series loader for bad data', (done) => {
+            it('Should clear the data for and remove the time series loader for bad data', (done) => {
                 let p = Actions.retrieveCustomTimePeriodTimeSeries('12345678', '00060', 'P10D')(mockDispatch, mockGetState);
                 let request = jasmine.Ajax.requests.mostRecent();
                 request.respondWith({
