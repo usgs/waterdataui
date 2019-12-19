@@ -1,4 +1,7 @@
-import { getVariables, getCurrentVariableID, getCurrentDateRange, getCurrentVariable, getQueryInfo, getRequests, getCurrentParmCd, hasTimeSeries, getTsRequestKey, getTsQueryInfo, getRequestTimeRange, isLoadingTS, getTSRequest, getTimeSeriesCollectionIds, getIanaTimeZone, getNwisTimeZone } from './time-series-selector';
+import { getVariables, getSourceInfo, getSiteCodes, getCurrentVariableID, getCurrentDateRange,
+    getMonitoringLocationName, getAgencyCode, getCurrentVariable, getQueryInfo, getRequests, getCurrentParmCd,
+    hasTimeSeries, getTsRequestKey, getTsQueryInfo, getRequestTimeRange, isLoadingTS, getTSRequest,
+    getTimeSeriesCollectionIds, getIanaTimeZone, getNwisTimeZone } from './time-series-selector';
 
 describe('timeSeriesSelector', () => {
     const TEST_VARS = {
@@ -27,6 +30,54 @@ describe('timeSeriesSelector', () => {
                     variables: TEST_VARS
                 }
             })).toEqual(TEST_VARS);
+        });
+    });
+
+    describe('getSourceInfo', () => {
+        it('Return an empty object if series is empty', () => {
+            expect(getSourceInfo({
+                series: {}
+            })).toEqual({});
+        });
+
+        it('Return the sourceInfo if in series', () => {
+            expect(getSourceInfo({
+                series: {
+                    sourceInfo: {
+                        '0537000': {
+                            siteName: 'Site Name'
+                        }
+                    }
+                }
+            })).toEqual({
+                '0537000': {
+                    siteName: 'Site Name'
+                }
+            });
+        });
+    });
+
+    describe('getSiteCodes', () => {
+        it('Return an empty object if series is empty', () => {
+            expect(getSiteCodes({
+                series: {}
+            })).toEqual({});
+        });
+
+        it('Return the siteCodes if in series', () => {
+            expect(getSiteCodes({
+                series: {
+                    siteCodes: {
+                        '0537000': {
+                            agencyCode: 'USGS'
+                        }
+                    }
+                }
+            })).toEqual({
+                '0537000': {
+                    agencyCode: 'USGS'
+                }
+            });
         });
     });
 
@@ -87,6 +138,56 @@ describe('timeSeriesSelector', () => {
                     timeSeriesCollections: ['4']
                 }
             });
+        });
+    });
+
+    describe('getMonitoringLocationName', () => {
+        const TEST_INFO = {
+            series: {
+                sourceInfo: {
+                    '01010101': {
+                        'siteName': 'My Site Name'
+                    }
+                }
+            }
+        };
+        it('Returns empty string if state has no sourceInfo', () => {
+           expect(getMonitoringLocationName('12345678')({
+               series: {}
+           })).toBe('');
+        });
+
+        it('Returns empty string if siteNo is not in sourceInfo', () => {
+            expect(getMonitoringLocationName('12345678')(TEST_INFO)).toBe('');
+        });
+
+        it('Returns the monitoring location name for the site', () => {
+            expect(getMonitoringLocationName('01010101')(TEST_INFO)).toBe('My Site Name');
+        });
+    });
+
+    describe('getAgencyCode', () => {
+        const TEST_SITE_CODES = {
+            series: {
+                siteCodes: {
+                    '01010101': {
+                        'agencyCode': 'USGS'
+                    }
+                }
+            }
+        };
+        it('Returns empty string if state has no siteCodes ', () => {
+           expect(getAgencyCode('12345678')({
+               series: {}
+           })).toBe('');
+        });
+
+        it('Returns empty string if siteNo is not in siteCodes', () => {
+            expect(getAgencyCode('12345678')(TEST_SITE_CODES)).toBe('');
+        });
+
+        it('Returns the agency code  for the site', () => {
+            expect(getAgencyCode('01010101')(TEST_SITE_CODES)).toBe('USGS');
         });
     });
 

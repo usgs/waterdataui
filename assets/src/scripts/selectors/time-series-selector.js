@@ -8,6 +8,10 @@ import { createSelector } from 'reselect';
  */
 export const getVariables = state => state.series.variables ? state.series.variables : null;
 
+export const getSourceInfo = state => state.series.sourceInfo || {};
+
+export const getSiteCodes = state => state.series.siteCodes || {};
+
 export const getMethods = state => state.series.methods ? state.series.methods : {};
 
 export const getQueryInfo = state => state.series.queryInfo || {};
@@ -33,6 +37,24 @@ export const hasAnyTimeSeries = state => state.series && state.series.timeSeries
  * Selectors the return derived data from the state
  */
 
+/*
+ * @param {String} siteno
+ * @return {String} monitoring loation name. Returns empty string if state does not contain siteNo.
+ */
+export const getMonitoringLocationName = memoize((siteNo) => createSelector(
+    getSourceInfo,
+    (sourceInfo) => siteNo in sourceInfo ? sourceInfo[siteNo].siteName || '' : ''
+));
+
+/*
+ *
+ * @param {String} siteno
+ * @return {String} agency code for siteno
+ */
+export const getAgencyCode = memoize((siteNo) => createSelector(
+    getSiteCodes,
+    (siteCodes) => siteNo in siteCodes ? siteCodes[siteNo].agencyCode || '' : ''
+));
 /*
  * @return {Object}     Variable details for the currently selected variable or null.
  */

@@ -12,7 +12,8 @@ const renderToRespone = function (res, {siteID, parameterCode, compare, period})
         compare: compare,
         period: period,
         cursorOffset: false,
-        showOnlyGraph : true
+        showOnlyGraph : true,
+        showMLName: true
     };
     renderPNG({
         pageURL: 'http://wdfn-graph-server',
