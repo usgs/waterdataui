@@ -1,5 +1,5 @@
 # Use LTS release
-FROM node:12.13.1-slim
+FROM node:10.18.0-slim
 
 RUN  apt-get update \
      # Install latest chrome dev package, which installs the necessary libs to
@@ -21,10 +21,8 @@ RUN npm ci
 # Add the server source code
 COPY ./src ./src
 
-# Add customer entrypoing that will help us set environment variables in ECS
-COPY ./bin/docker-entrypoint.sh /usr/local/bin/
-ENTRYPOINT ["docker-entrypoint.sh"]
-
+ENV STATIC_URL https://waterdata.usgs.gov/nwisweb/wsgi/static
+ENV DEBUG express:*
 # Add user so we don't need the --no-sandbox Chrome option
 RUN groupadd grapher && useradd -g grapher grapher \
     && mkdir -p /home/grapher/Downloads \
@@ -34,4 +32,4 @@ USER grapher
 
 EXPOSE 2929
 
-CMD npm start
+CMD DEBUG=${DEBUG} STATIC_ROOT=${STATIC_URL} node src/index.js
