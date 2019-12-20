@@ -27,3 +27,5 @@ healthCheck: "/api/graph-images/status/"
 contextPath: "/api/graph-images/*"
 # name of the deploy job to trigger
 deployJobName: "wdfn-graph-server-deploy"
+configRepoPath: "wma/docker/waterdataui/wdfn_graph_server"
+configCredentialsId: "wma-eto-eb-rsa"
