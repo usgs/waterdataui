@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Image server now accepts the period parameter which should be a ISO-8601 duration format. 
 However please note that NWIS only accepts periods using xxD.
+- Image server shows site name and number above the graph
 
 ## [0.22.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.21.0...waterdataui-0.22.0) - 2019-12-12
 ### Changed
