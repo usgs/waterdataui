@@ -47,7 +47,6 @@ export const getMonitoringLocationName = memoize((siteNo) => createSelector(
 ));
 
 /*
- *
  * @param {String} siteno
  * @return {String} agency code for siteno
  */
