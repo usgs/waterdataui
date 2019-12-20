@@ -12,7 +12,8 @@ import { dispatch, link, provide } from '../../lib/redux';
 
 import { addSVGAccessibility } from '../../accessibility';
 import config from '../../config';
-import { isLoadingTS, hasAnyTimeSeries } from '../../selectors/time-series-selector';
+import {isLoadingTS, hasAnyTimeSeries, getMonitoringLocationName,
+    getAgencyCode} from '../../selectors/time-series-selector';
 import { Actions } from '../../store';
 import { callIf, mediaQuery } from '../../utils';
 
@@ -231,9 +232,20 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoin
 };
 
 
-const createTitle = function(elem) {
-    elem.append('div')
-        .classed('time-series-graph-title', true)
+const createTitle = function(elem, siteNo, showMLName) {
+    let titleDiv = elem.append('div')
+        .classed('time-series-graph-title', true);
+
+    if (showMLName) {
+        titleDiv.append('div')
+            .call(link((elem, {mlName, agencyCode}) => {
+                elem.html(`${mlName}, ${agencyCode} ${siteNo}`);
+            }, createStructuredSelector({
+                mlName: getMonitoringLocationName(siteNo),
+                agencyCode: getAgencyCode(siteNo)
+            })));
+    }
+    titleDiv.append('div')
         .call(link((elem, title) => {
             elem.html(title);
         }, titleSelector));
@@ -262,11 +274,11 @@ const watermark = function (elem) {
         }, layoutSelector));
 };
 
-export const timeSeriesGraph = function(elem) {
+export const timeSeriesGraph = function(elem, siteNo, showMLName) {
     elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(watermark)
-        .call(createTitle)
+        .call(createTitle, siteNo, showMLName)
         .call(createTooltipText)
         .append('svg')
             .attr('xmlns', 'http://www.w3.org/2000/svg')
@@ -501,7 +513,17 @@ const dataLoadingAlert = function(elem, message) {
     }
 };
 
-export const attachToNode = function (store, node, {siteno, parameter, compare, period, cursorOffset, showOnlyGraph = false} = {}) {
+export const attachToNode = function (store,
+                                      node,
+                                      {
+                                          siteno,
+                                          parameter,
+                                          compare,
+                                          period,
+                                          cursorOffset,
+                                          showOnlyGraph = false,
+                                          showMLName = false
+                                      } = {}) {
     const nodeElem = select(node);
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
@@ -541,7 +563,7 @@ export const attachToNode = function (store, node, {siteno, parameter, compare, 
     // Set up rendering functions for the graph-container
     nodeElem.select('.graph-container')
         .call(link(controlDisplay, hasAnyTimeSeries))
-        .call(timeSeriesGraph, siteno)
+        .call(timeSeriesGraph, siteno, showMLName)
         .call(callIf(!showOnlyGraph, cursorSlider))
         .append('div')
             .classed('ts-legend-controls-container', true)
