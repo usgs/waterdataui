@@ -18,7 +18,7 @@ import { callIf, mediaQuery } from '../../utils';
 
 import { appendAxes, axesSelector } from './axes';
 import { cursorSlider } from './cursor';
-import { drawDateRangeControls } from './date-controls';
+import { drawDateRangeControls, drawLoadingIndicator } from './date-controls';
 import { lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, MASK_DESC, HASH_ID,
     getCurrentVariableMedianStatPoints } from './drawing-data';
 import { drawGraphControls } from './graph-controls';
@@ -333,14 +333,6 @@ const controlDisplay = function(elem, showElem) {
     elem.attr('hidden', showElem ? null : true);
 };
 
-export const loadingIndicator = function(elem, {showLoadingIndicator, sizeClass}) {
-    elem.select('.loading-indicator').remove();
-    if (showLoadingIndicator) {
-        elem.append('i')
-            .attr('class', `loading-indicator fas ${sizeClass} fa-spin fa-spinner`);
-    }
-};
-
 const dataLoadingAlert = function(elem, message) {
     elem.select('#no-data-message').remove();
     if (message) {
@@ -377,7 +369,7 @@ export const attachToNode = function (store,
     nodeElem
         .call(provide(store))
         .select('.loading-indicator-container')
-            .call(link(loadingIndicator, createStructuredSelector({
+            .call(link(drawLoadingIndicator, createStructuredSelector({
                 showLoadingIndicator: isLoadingTS('current', 'P7D'),
                 sizeClass: () => 'fa-3x'
             })));
