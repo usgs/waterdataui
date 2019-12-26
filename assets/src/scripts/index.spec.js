@@ -15,6 +15,7 @@ import './components/embed.spec';
 import './components/hydrograph/audible.spec';
 import './components/hydrograph/axes.spec';
 import './components/hydrograph/cursor.spec';
+import './components/hydrograph/date-controls.spec';
 import './components/hydrograph/domain.spec';
 import './components/hydrograph/drawing-data.spec';
 import './components/hydrograph/graph-controls.spec';
