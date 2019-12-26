@@ -3,14 +3,8 @@ import {hasAnyTimeSeries, isLoadingTS} from '../../selectors/time-series-selecto
 import {DateTime} from 'luxon';
 import {Actions} from '../../store';
 import {createStructuredSelector} from 'reselect';
+import { loadingIndicator } from './index';
 
-export const drawLoadingIndicator = function(elem, {showLoadingIndicator, sizeClass}) {
-    elem.select('.loading-indicator').remove();
-    if (showLoadingIndicator) {
-        elem.append('i')
-            .attr('class', `loading-indicator fas ${sizeClass} fa-spin fa-spinner`);
-    }
-};
 
 export const drawDateRangeControls = function(elem, siteno) {
     const DATE_RANGE = [{
@@ -133,7 +127,7 @@ export const drawDateRangeControls = function(elem, siteno) {
         .attr('class', 'usa-fieldset')
         .data(DATE_RANGE)
         .enter().append('li');
-    listContainer.call(link(drawLoadingIndicator, createStructuredSelector({
+    listContainer.call(link(loadingIndicator, createStructuredSelector({
         showLoadingIndicator: isLoadingTS('current'),
         sizeClass: () => 'fa-lg'
     })));
