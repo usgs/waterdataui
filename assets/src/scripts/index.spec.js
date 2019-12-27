@@ -27,6 +27,7 @@ import './components/hydrograph/method-picker.spec';
 import './components/hydrograph/parameters.spec';
 import './components/hydrograph/scales.spec';
 import './components/hydrograph/time-series.spec';
+import './components/hydrograph/time-series-graph.spec';
 import './components/hydrograph/tooltip.spec';
 import './components/map/flood-slider.spec';
 import './components/map/index.spec';
