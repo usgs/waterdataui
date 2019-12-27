@@ -1,6 +1,7 @@
 import { select, selectAll } from 'd3-selection';
 import { provide } from '../../lib/redux';
-import { attachToNode, timeSeriesGraph, timeSeriesLegend } from './index';
+import { attachToNode, timeSeriesLegend } from './index';
+import { drawTimeSeriesGraph } from './time-series-graph';
 import { Actions, configureStore } from '../../store';
 
 
@@ -181,7 +182,7 @@ describe('Hydrograph charting module', () => {
         const store = configureStore(TEST_STATE);
         select(graphNode)
             .call(provide(store))
-            .call(timeSeriesGraph);
+            .call(drawTimeSeriesGraph);
         let svgNodes = graphNode.getElementsByTagName('svg');
         expect(svgNodes.length).toBe(1);
         expect(graphNode.innerHTML).toContain('hydrograph-container');
@@ -193,7 +194,7 @@ describe('Hydrograph charting module', () => {
             const store = configureStore(TEST_STATE);
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph);
+                .call(drawTimeSeriesGraph);
             expect(select('#hydrograph').attr('hidden')).toBeNull();
         });
 
@@ -201,7 +202,7 @@ describe('Hydrograph charting module', () => {
             const store = configureStore({series: {timeSeries: {}}});
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph);
+                .call(drawTimeSeriesGraph);
         });
     });
 
@@ -211,7 +212,7 @@ describe('Hydrograph charting module', () => {
             const store = configureStore(TEST_STATE);
             select(graphNode)
                 .call(provide(store))
-                .call(timeSeriesGraph);
+                .call(drawTimeSeriesGraph);
             svg = select('svg');
         });
 
