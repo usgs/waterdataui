@@ -3,6 +3,9 @@ import { select } from 'd3-selection';
 import { Actions, configureStore } from '../../store';
 
 import { attachToNode } from './index';
+import {provide} from "../../lib/redux";
+import {drawGraphControls} from "./graph-controls";
+import {drawDateRangeControls} from "./date-controls";
 
 const TEST_STATE = {
     series: {
@@ -151,37 +154,24 @@ const TEST_STATE = {
 
 
 describe('date-controls', () => {
+    
+    let div;
+        let store;
 
-    let graphNode;
+        beforeEach(() => {
+            div = select('body').append('div');
+            store = configureStore(TEST_STATE);
+            div.call(provide(store))
+                .call(drawDateRangeControls, '12345678');
+        });
 
-    beforeEach(() => {
-        let body = select('body');
-        let component = body.append('div')
-            .attr('id', 'hydrograph');
-        component.append('div').attr('class', 'loading-indicator-container');
-        component.append('div').attr('class', 'graph-container');
-        component.append('div').attr('class', 'select-time-series-container');
-        component.append('div').attr('class', 'provisional-data-alert');
-
-        graphNode = document.getElementById('hydrograph');
-
-        jasmine.Ajax.install();
-    });
-
-    afterEach(() => {
-        jasmine.Ajax.uninstall();
-        select('#hydrograph').remove();
-    });
-
-    let store;
-    beforeEach(() => {
-        store = configureStore(TEST_STATE);
-        attachToNode(store, graphNode, {siteno: '12345678'});
-    });
+        afterEach(() => {
+            div.remove();
+        });
 
     it('Expects the date range controls to be created', () => {
-        let dateRangeContainer = select(graphNode).select('#ts-daterange-select-container');
-        let customDateDiv = select(graphNode).select('div#ts-customdaterange-select-container');
+        let dateRangeContainer = select('#ts-daterange-select-container');
+        let customDateDiv = select('div#ts-customdaterange-select-container');
 
         expect(dateRangeContainer.size()).toBe(1);
         expect(dateRangeContainer.selectAll('input[type=radio]').size()).toBe(4);
@@ -190,7 +180,7 @@ describe('date-controls', () => {
 
     it('Expects to retrieve the extended time series when the radio buttons are change', () => {
         spyOn(Actions, 'retrieveExtendedTimeSeries');
-        let lastRadio = select(graphNode).select('#one-year');
+        let lastRadio = select('#one-year');
         lastRadio.attr('checked', true);
         lastRadio.dispatch('change');
 
@@ -198,33 +188,33 @@ describe('date-controls', () => {
     });
 
     it('Expects to show the date range from when the Custom radio is selected', () => {
-        let customRadio = select(graphNode).select('#custom-date-range');
+        let customRadio = select('#custom-date-range');
         customRadio.attr('checked', true);
         customRadio.dispatch('change');
 
-        let customDateDiv = select(graphNode).select('div#ts-customdaterange-select-container');
+        let customDateDiv = select('div#ts-customdaterange-select-container');
         expect(customDateDiv.attr('hidden')).toBeNull();
 
-        let customDateAlertDiv = select(graphNode).select('#custom-date-alert-container');
+        let customDateAlertDiv = select('#custom-date-alert-container');
         expect(customDateAlertDiv.attr('hidden')).toBe('true');
     });
 
     it('Expects an alert to be thrown if custom dates are not provided.', () => {
-         let submitButton = select(graphNode).select('#custom-date-submit');
+         let submitButton = select('#custom-date-submit');
          submitButton.dispatch('click');
 
-         let customDateAlertDiv = select(graphNode).select('#custom-date-alert');
+         let customDateAlertDiv = select('#custom-date-alert');
          expect(customDateAlertDiv.attr('hidden')).toBeNull();
          expect(customDateAlertDiv.select('p').text()).toEqual('Both start and end dates must be specified.');
     });
 
     it('Expects and alert to be thrown if the end date is earier than the start date.', () => {
-        select(graphNode).select('#custom-start-date').property('value', '2063-04-05');
-        select(graphNode).select('#custom-end-date').property('value', '2063-04-03');
+        select('#custom-start-date').property('value', '2063-04-05');
+        select('#custom-end-date').property('value', '2063-04-03');
 
-        select(graphNode).select('#custom-date-submit').dispatch('click');
+        select('#custom-date-submit').dispatch('click');
 
-        let customDateAlertDiv = select(graphNode).select('#custom-date-alert-container');
+        let customDateAlertDiv = select('#custom-date-alert-container');
         expect(customDateAlertDiv.attr('hidden')).toBeNull();
         expect(customDateAlertDiv.select('p').text()).toEqual('The start date must precede the end date.');
     });
@@ -232,12 +222,12 @@ describe('date-controls', () => {
     it('Expects data to be retrieved if both custom start and end dates are provided', () => {
         spyOn(Actions, 'retrieveUserRequestedDataForDateRange');
 
-        select(graphNode).select('#custom-start-date').property('value', '2063-04-03');
-        select(graphNode).select('#custom-end-date').property('value', '2063-04-05');
+        select('#custom-start-date').property('value', '2063-04-03');
+        select('#custom-end-date').property('value', '2063-04-05');
 
-        select(graphNode).select('#custom-date-submit').dispatch('click');
+        select('#custom-date-submit').dispatch('click');
 
-        let customDateAlertDiv = select(graphNode).select('#custom-date-alert-container');
+        let customDateAlertDiv = select('#custom-date-alert-container');
         expect(customDateAlertDiv.attr('hidden')).toBe('true');
 
         expect(Actions.retrieveUserRequestedDataForDateRange).toHaveBeenCalledWith(
