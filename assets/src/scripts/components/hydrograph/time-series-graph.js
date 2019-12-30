@@ -1,22 +1,24 @@
 import { extent } from 'd3-array';
 import { line as d3Line, curveStepAfter } from 'd3-shape';
-import {createTooltipFocus, createTooltipText} from './tooltip';
+
 import {link} from '../../lib/redux';
-import {CIRCLE_RADIUS_SINGLE_PT, layoutSelector} from './layout';
+
 import {addSVGAccessibility} from '../../accessibility';
-import {createStructuredSelector} from 'reselect';
-import {descriptionSelector, isVisibleSelector, titleSelector} from './time-series';
 import {appendAxes, axesSelector} from './axes';
+import config from '../../config';
 import {
     currentVariableLineSegmentsSelector,
     getCurrentVariableMedianStatPoints,
     HASH_ID,
     MASK_DESC
 } from './drawing-data';
+import {CIRCLE_RADIUS_SINGLE_PT, layoutSelector} from './layout';
+import {createStructuredSelector} from 'reselect';
 import {xScaleSelector, yScaleSelector} from './scales';
-import config from '../../config';
-import {mediaQuery} from '../../utils';
+import {descriptionSelector, isVisibleSelector, titleSelector} from './time-series';
 import {getAgencyCode, getMonitoringLocationName} from '../../selectors/time-series-selector';
+import {createTooltipFocus, createTooltipText} from './tooltip';
+import {mediaQuery} from '../../utils';
 
 
 const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {

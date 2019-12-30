@@ -1,9 +1,11 @@
-import {dispatch, link} from '../../lib/redux';
-import {hasAnyTimeSeries, isLoadingTS} from '../../selectors/time-series-selector';
-import {DateTime} from 'luxon';
-import {Actions} from '../../store';
-import {createStructuredSelector} from 'reselect';
+import { DateTime } from 'luxon';
+import { createStructuredSelector } from 'reselect';
+
+import { dispatch, link } from '../../lib/redux';
+
 import { loadingIndicator } from './index';
+import { isLoadingTS, hasAnyTimeSeries } from '../../selectors/time-series-selector';
+import { Actions } from '../../store';
 
 
 export const drawDateRangeControls = function(elem, siteno) {

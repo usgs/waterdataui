@@ -1,8 +1,98 @@
-import { select } from 'd3-selection';
-import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
+import { select, selectAll } from 'd3-selection';
+import { drawSimpleLegend, legendMarkerRowsSelector, drawTimeSeriesLegend } from './legend';
 import { lineMarker, rectangleMarker, textOnlyMarker } from './markers';
+import {Actions, configureStore} from '../../store';
+import {provide} from '../../lib/redux';
 
 describe('Legend module', () => {
+
+    const TEST_DATA = {
+        series: {
+            timeSeries: {
+                '00060:current': {
+                    tsKey: 'current:P7D',
+                    startTime: new Date('2018-03-06T15:45:00.000Z'),
+                    endTime: new Date('2018-03-13T13:45:00.000Z'),
+                    variable: '45807197',
+                    points: [{
+                        value: 10,
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: null,
+                        qualifiers: ['P', 'ICE'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: null,
+                        qualifiers: ['P', 'FLD'],
+                        approved: false,
+                        estimated: false
+                    }]
+                },
+
+                '00065:compare': {
+                    tsKey: 'compare:P7D',
+                    startTime: new Date('2017-03-06T15:45:00.000Z'),
+                    endTime: new Date('2017-03-13T13:45:00.000Z'),
+                    variable: '45807202',
+                    points: [{
+                        value: 1,
+                        qualifiers: ['A'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: 2,
+                        qualifiers: ['A'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: 3,
+                        qualifiers: ['E'],
+                        approved: false,
+                        estimated: false
+                    }]
+                }
+            },
+            variables: {
+                '45807197': {
+                    variableCode: {value: '00060'},
+                    variableName: 'Streamflow',
+                    variableDescription: 'Discharge, cubic feet per second',
+                    oid: '45807197'
+                },
+                '45807202': {
+                    variableCode: {value: '00065'},
+                    variableName: 'Gage height',
+                    oid: '45807202'
+                }
+            }
+        },
+        statisticsData: {
+            median: {
+                '00060': {
+                    '1': [{
+                        month_nu: '2',
+                        day_nu: '25',
+                        p50_va: '43',
+                        begin_yr: '1970',
+                        end_yr: '2017',
+                        loc_web_ds: 'This method'
+                    }]
+                }
+            }
+        },
+        timeSeriesState: {
+            currentVariableID: '45807197',
+            currentDateRange: 'P7D',
+            showSeries: {
+                current: true,
+                compare: true,
+                median: true
+            }
+        }
+    };
 
     describe('drawSimpleLegend', () => {
 
@@ -82,94 +172,6 @@ describe('Legend module', () => {
 
     describe('legendMarkerRowSelector', () => {
 
-        const TEST_DATA = {
-            series: {
-                timeSeries: {
-                    '00060:current': {
-                        tsKey: 'current:P7D',
-                        startTime: new Date('2018-03-06T15:45:00.000Z'),
-                        endTime: new Date('2018-03-13T13:45:00.000Z'),
-                        variable: '45807197',
-                        points: [{
-                            value: 10,
-                            qualifiers: ['P'],
-                            approved: false,
-                            estimated: false
-                        }, {
-                            value: null,
-                            qualifiers: ['P', 'ICE'],
-                            approved: false,
-                            estimated: false
-                        }, {
-                            value: null,
-                            qualifiers: ['P', 'FLD'],
-                            approved: false,
-                            estimated: false
-                        }]
-                    },
-
-                    '00065:compare': {
-                        tsKey: 'compare:P7D',
-                        startTime: new Date('2017-03-06T15:45:00.000Z'),
-                        endTime: new Date('2017-03-13T13:45:00.000Z'),
-                        variable: '45807202',
-                        points: [{
-                            value: 1,
-                            qualifiers: ['A'],
-                            approved: false,
-                            estimated: false
-                        }, {
-                            value: 2,
-                            qualifiers: ['A'],
-                            approved: false,
-                            estimated: false
-                        }, {
-                            value: 3,
-                            qualifiers: ['E'],
-                            approved: false,
-                            estimated: false
-                        }]
-                    }
-                },
-                variables: {
-                    '45807197': {
-                        variableCode: {value: '00060'},
-                        variableName: 'Streamflow',
-                        variableDescription: 'Discharge, cubic feet per second',
-                        oid: '45807197'
-                    },
-                    '45807202': {
-                        variableCode: {value: '00065'},
-                        variableName: 'Gage height',
-                        oid: '45807202'
-                    }
-                }
-            },
-            statisticsData: {
-                median: {
-                    '00060': {
-                        '1': [{
-                            month_nu: '2',
-                            day_nu: '25',
-                            p50_va: '43',
-                            begin_yr: '1970',
-                            end_yr: '2017',
-                            loc_web_ds: 'This method'
-                        }]
-                    }
-                }
-            },
-            timeSeriesState: {
-                currentVariableID: '45807197',
-                currentDateRange: 'P7D',
-                showSeries: {
-                    current: true,
-                    compare: true,
-                    median: true
-                }
-            }
-        };
-
         it('Should return no markers if no time series to show', () => {
             let newData = {
                 ...TEST_DATA,
@@ -235,6 +237,55 @@ describe('Legend module', () => {
             expect(result[0][1].type).toEqual(lineMarker);
             expect(result[0][2].type).toEqual(rectangleMarker);
             expect(result[0][3].type).toEqual(rectangleMarker);
+        });
+    });
+
+    describe('legends should render', () => {
+
+        let graphNode;
+
+        beforeEach(() => {
+            let body = select('body');
+            let component = body.append('div')
+                .attr('id', 'hydrograph');
+            component.append('div').attr('class', 'loading-indicator-container');
+            component.append('div').attr('class', 'graph-container');
+            component.append('div').attr('class', 'select-time-series-container');
+            component.append('div').attr('class', 'provisional-data-alert');
+
+            graphNode = document.getElementById('hydrograph');
+
+            jasmine.Ajax.install();
+        });
+
+        afterEach(() => {
+            jasmine.Ajax.uninstall();
+            select('#hydrograph').remove();
+        });
+
+        let store;
+
+        beforeEach(() => {
+            store = configureStore(TEST_DATA);
+            select(graphNode)
+                .call(provide(store))
+                .call(drawTimeSeriesLegend);
+        });
+
+        it('Should have 6 legend markers', () => {
+            expect(selectAll('.legend g').size()).toBe(6);
+            expect(selectAll('.legend g line.median-step').size()).toBe(1);
+        });
+
+        it('Should have 6 legend markers after the compare time series is removed', () => {
+            store.dispatch(Actions.toggleTimeSeries('compare', false));
+            expect(selectAll('.legend g').size()).toBe(6);
+        });
+
+        it('Should have 4 legend marker after the compare and median time series are removed', () => {
+            store.dispatch(Actions.toggleTimeSeries('compare', false));
+            store.dispatch(Actions.toggleTimeSeries('median', false));
+            expect(selectAll('.legend g').size()).toBe(4);
         });
     });
 });

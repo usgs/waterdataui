@@ -171,6 +171,11 @@ describe('Loading indicators and data alerts', () => {
         select('#hydrograph').remove();
     });
 
+    it('empty graph displays warning', () => {
+        attachToNode({}, graphNode, {});
+        expect(graphNode.innerHTML).toContain('No data is available');
+    });
+
     describe('hiding/showing provisional alert', () => {
 
         it('Expects the provisional alert to be visible when time series data is provided', () => {

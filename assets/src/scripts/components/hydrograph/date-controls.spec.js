@@ -1,7 +1,8 @@
 import { select } from 'd3-selection';
-import {Actions, configureStore} from '../../store';
-import {attachToNode} from './index';
 
+import { Actions, configureStore } from '../../store';
+
+import { attachToNode } from './index';
 
 const TEST_STATE = {
     series: {

@@ -16,7 +16,7 @@ import { drawDateRangeControls } from './date-controls';
 import { lineSegmentsByParmCdSelector } from './drawing-data';
 import { drawGraphControls } from './graph-controls';
 import { SPARK_LINE_DIM, layoutSelector } from './layout';
-import { drawSimpleLegend, legendMarkerRowsSelector } from './legend';
+import { drawTimeSeriesLegend } from './legend';
 import { drawMethodPicker } from './method-picker';
 import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
 import { timeSeriesScalesByParmCdSelector } from './scales';
@@ -40,17 +40,6 @@ const drawMessage = function(elem, message) {
         .append('p')
             .html(message);
 };
-
-
-export const timeSeriesLegend = function(elem) {
-    elem.append('div')
-        .classed('hydrograph-container', true)
-        .call(link(drawSimpleLegend, createStructuredSelector({
-            legendMarkerRows: legendMarkerRowsSelector,
-            layout: layoutSelector
-        })));
-};
-
 
 /**
  * Modify styling to hide or display the elem.
@@ -138,7 +127,7 @@ export const attachToNode = function (store,
         .call(callIf(!showOnlyGraph, cursorSlider))
         .append('div')
             .classed('ts-legend-controls-container', true)
-            .call(timeSeriesLegend);
+            .call(drawTimeSeriesLegend);
 
     // Add UI interactive elements and the provisional data alert.
     if (!showOnlyGraph) {

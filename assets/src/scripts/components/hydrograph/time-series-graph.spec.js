@@ -1,5 +1,5 @@
 import { select, selectAll } from 'd3-selection';
-import {attachToNode, timeSeriesLegend} from './index';
+import { attachToNode } from './index';
 import {Actions, configureStore} from '../../store';
 import {provide} from '../../lib/redux';
 import {drawTimeSeriesGraph} from './time-series-graph';
@@ -172,11 +172,6 @@ describe('time series graph', () => {
         select('#hydrograph').remove();
     });
 
-    it('empty graph displays warning', () => {
-        attachToNode({}, graphNode, {});
-        expect(graphNode.innerHTML).toContain('No data is available');
-    });
-
     it('single data point renders', () => {
         const store = configureStore(TEST_STATE);
         select(graphNode)
@@ -323,33 +318,6 @@ describe('time series graph', () => {
 
     //TODO: Consider adding a test which checks that the y axis is rescaled by
     // examining the contents of the text labels.
-
-    describe('legends should render', () => {
-        let store;
-
-        beforeEach(() => {
-            store = configureStore(TEST_STATE);
-            select(graphNode)
-                .call(provide(store))
-                .call(timeSeriesLegend);
-        });
-
-        it('Should have 6 legend markers', () => {
-            expect(selectAll('.legend g').size()).toBe(6);
-            expect(selectAll('.legend g line.median-step').size()).toBe(1);
-        });
-
-        it('Should have four legend markers after the compare time series is removed', () => {
-            store.dispatch(Actions.toggleTimeSeries('compare', false));
-            expect(selectAll('.legend g').size()).toBe(4);
-        });
-
-        it('Should have two legend marker after the compare and median time series are removed', () => {
-            store.dispatch(Actions.toggleTimeSeries('compare', false));
-            store.dispatch(Actions.toggleTimeSeries('median', false));
-            expect(selectAll('.legend g').size()).toBe(2);
-        });
-    });
 
     describe('compare line', () => {
 
