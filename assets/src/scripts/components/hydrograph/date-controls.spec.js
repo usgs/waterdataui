@@ -1,11 +1,9 @@
 import { select } from 'd3-selection';
 
+import {provide} from '../../lib/redux';
 import { Actions, configureStore } from '../../store';
 
-import { attachToNode } from './index';
-import {provide} from "../../lib/redux";
-import {drawGraphControls} from "./graph-controls";
-import {drawDateRangeControls} from "./date-controls";
+import {drawDateRangeControls} from './date-controls';
 
 const TEST_STATE = {
     series: {
@@ -154,20 +152,20 @@ const TEST_STATE = {
 
 
 describe('date-controls', () => {
-    
+
     let div;
-        let store;
+    let store;
 
-        beforeEach(() => {
-            div = select('body').append('div');
-            store = configureStore(TEST_STATE);
-            div.call(provide(store))
-                .call(drawDateRangeControls, '12345678');
-        });
+    beforeEach(() => {
+        div = select('body').append('div');
+        store = configureStore(TEST_STATE);
+        div.call(provide(store))
+            .call(drawDateRangeControls, '12345678');
+    });
 
-        afterEach(() => {
-            div.remove();
-        });
+    afterEach(() => {
+        div.remove();
+    });
 
     it('Expects the date range controls to be created', () => {
         let dateRangeContainer = select('#ts-daterange-select-container');

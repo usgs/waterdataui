@@ -1,4 +1,4 @@
-import { select } from 'd3-selection';
+import { select, selectAll } from 'd3-selection';
 import { attachToNode } from './index';
 import { Actions, configureStore } from '../../store';
 
@@ -149,7 +149,7 @@ const TEST_STATE = {
 };
 
 
-describe('Loading indicators and data alerts', () => {
+describe('Hydrograph charting and Loading indicators and data alerts', () => {
     let graphNode;
 
     beforeEach(() => {
@@ -174,6 +174,96 @@ describe('Loading indicators and data alerts', () => {
     it('empty graph displays warning', () => {
         attachToNode({}, graphNode, {});
         expect(graphNode.innerHTML).toContain('No data is available');
+    });
+
+    describe('SVG contains the expected elements', () => {
+        /* eslint no-use-before-define: 0 */
+        let store;
+        beforeEach(() => {
+            store = configureStore({
+                ...TEST_STATE,
+                series: {
+                    ...TEST_STATE.series,
+                    timeSeries: {
+                        ...TEST_STATE.series.timeSeries,
+                        '00060:current': {
+                            ...TEST_STATE.series.timeSeries['00060:current'],
+                            startTime: 1514926800000,
+                            endTime: 1514930400000,
+                            points: [{
+                                dateTime: 1514926800000,
+                                value: 10,
+                                qualifiers: ['P']
+                            }, {
+                                dateTime: 1514930400000,
+                                value: null,
+                                qualifiers: ['P', 'FLD']
+                            }]
+                        }
+                    }
+                },
+                timeSeriesState: {
+                    showSeries: {
+                        current: true,
+                        compare: true,
+                        median: true
+                    },
+                    currentVariableID: '45807197',
+                    currentDateRange: 'P7D',
+                    currentMethodID: 'method1',
+                    loadingTSKeys: []
+                },
+                ui: {
+                    windowWidth: 400,
+                    width: 400
+                }
+
+            });
+
+            attachToNode(store, graphNode, {siteno: '123456788'});
+        });
+
+        it('should render the correct number of svg nodes', () => {
+            // one main hydrograph, legend and two sparklines
+            expect(selectAll('svg').size()).toBe(4);
+        });
+
+        it('should have a title div', () => {
+            const titleDiv = selectAll('.time-series-graph-title');
+            expect(titleDiv.size()).toBe(1);
+            expect(titleDiv.text()).toEqual('Test title for 00060, method description');
+        });
+
+        it('should have a defs node', () => {
+            expect(selectAll('defs').size()).toBe(1);
+            expect(selectAll('defs mask').size()).toBe(1);
+            expect(selectAll('defs pattern').size()).toBe(2);
+        });
+
+        it('should render time series data as a line', () => {
+            // There should be one segment per time-series. Each is a single
+            // point, so should be a circle.
+            expect(selectAll('.hydrograph-svg .line-segment').size()).toBe(2);
+        });
+
+        it('should render a rectangle for masked data', () => {
+            expect(selectAll('.hydrograph-svg g.current-mask-group').size()).toBe(1);
+        });
+
+        it('should have a point for the median stat data with a label', () => {
+            expect(selectAll('#median-points path').size()).toBe(1);
+            expect(selectAll('#median-points text').size()).toBe(0);
+        });
+
+        it('should have tooltips for the select series table', () => {
+            // one for each of the two parameters
+            expect(selectAll('table .tooltip-item').size()).toBe(2);
+        });
+
+        it('should not have tooltips for the select series table when the screen is large', () => {
+            store.dispatch(Actions.resizeUI(800, 800));
+            expect(selectAll('table .tooltip-table').size()).toBe(0);
+        });
     });
 
     describe('hiding/showing provisional alert', () => {
