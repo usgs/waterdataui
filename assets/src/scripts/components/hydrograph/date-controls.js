@@ -3,7 +3,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { dispatch, link } from '../../lib/redux';
 
-import { loadingIndicator } from './index';
+import { loadingIndicator } from './loadingIndicator';
 import { isLoadingTS, hasAnyTimeSeries } from '../../selectors/time-series-selector';
 import { Actions } from '../../store';
 

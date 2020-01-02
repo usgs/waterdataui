@@ -17,6 +17,7 @@ import { lineSegmentsByParmCdSelector } from './drawing-data';
 import { drawGraphControls } from './graph-controls';
 import { SPARK_LINE_DIM, layoutSelector } from './layout';
 import { drawTimeSeriesLegend } from './legend';
+import { loadingIndicator } from './loadingIndicator';
 import { drawMethodPicker } from './method-picker';
 import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
 import { timeSeriesScalesByParmCdSelector } from './scales';
@@ -49,14 +50,6 @@ const drawMessage = function(elem, message) {
  */
 const controlDisplay = function(elem, showElem) {
     elem.attr('hidden', showElem ? null : true);
-};
-
-export const loadingIndicator = function(elem, {showLoadingIndicator, sizeClass}) {
-    elem.select('.loading-indicator').remove();
-    if (showLoadingIndicator) {
-        elem.append('i')
-            .attr('class', `loading-indicator fas ${sizeClass} fa-spin fa-spinner`);
-    }
 };
 
 const dataLoadingAlert = function(elem, message) {
