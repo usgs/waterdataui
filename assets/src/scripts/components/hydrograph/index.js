@@ -17,7 +17,7 @@ import { lineSegmentsByParmCdSelector } from './drawing-data';
 import { drawGraphControls } from './graph-controls';
 import { SPARK_LINE_DIM, layoutSelector } from './layout';
 import { drawTimeSeriesLegend } from './legend';
-import { loadingIndicator } from './loadingIndicator';
+import { loadingIndicator } from '../loadingIndicator';
 import { drawMethodPicker } from './method-picker';
 import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
 import { timeSeriesScalesByParmCdSelector } from './scales';
