@@ -552,7 +552,7 @@ export const attachToNode = function (store,
 
     // Fetch the time series data
     if (period) {
-        store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, '00060', period))
+        store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, parameter ? [parameter] : null, period))
             .catch((message) => dataLoadingAlert(select(node), message ? message : 'No data returned'));
     } else {
         store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null))
