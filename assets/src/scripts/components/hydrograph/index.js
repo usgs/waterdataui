@@ -17,7 +17,7 @@ import { lineSegmentsByParmCdSelector } from './drawing-data';
 import { drawGraphControls } from './graph-controls';
 import { SPARK_LINE_DIM, layoutSelector } from './layout';
 import { drawTimeSeriesLegend } from './legend';
-import { loadingIndicator } from '../loadingIndicator';
+import { drawLoadingIndicator } from '../loading-indicator';
 import { drawMethodPicker } from './method-picker';
 import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
 import { timeSeriesScalesByParmCdSelector } from './scales';
@@ -88,7 +88,7 @@ export const attachToNode = function (store,
     nodeElem
         .call(provide(store))
         .select('.loading-indicator-container')
-            .call(link(loadingIndicator, createStructuredSelector({
+            .call(link(drawLoadingIndicator, createStructuredSelector({
                 showLoadingIndicator: isLoadingTS('current', 'P7D'),
                 sizeClass: () => 'fa-3x'
             })));

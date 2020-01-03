@@ -12,7 +12,7 @@ import './polyfills';
 import './accessibility.spec';
 import './ajax.spec';
 import './components/embed.spec';
-import './components/loadingIndicator.spec';
+import './components/loading-indicator.spec';
 import './components/hydrograph/audible.spec';
 import './components/hydrograph/axes.spec';
 import './components/hydrograph/cursor.spec';

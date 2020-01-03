@@ -3,7 +3,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { dispatch, link } from '../../lib/redux';
 
-import { loadingIndicator } from '../loadingIndicator';
+import { drawLoadingIndicator } from '../loading-indicator';
 import { isLoadingTS, hasAnyTimeSeries } from '../../selectors/time-series-selector';
 import { Actions } from '../../store';
 
@@ -129,7 +129,7 @@ export const drawDateRangeControls = function(elem, siteno) {
         .attr('class', 'usa-fieldset')
         .data(DATE_RANGE)
         .enter().append('li');
-    listContainer.call(link(loadingIndicator, createStructuredSelector({
+    listContainer.call(link(drawLoadingIndicator, createStructuredSelector({
         showLoadingIndicator: isLoadingTS('current'),
         sizeClass: () => 'fa-lg'
     })));

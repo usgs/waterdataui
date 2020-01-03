@@ -1,4 +1,4 @@
-export const loadingIndicator = function(elem, {showLoadingIndicator, sizeClass}) {
+export const drawLoadingIndicator = function(elem, {showLoadingIndicator, sizeClass}) {
     elem.select('.loading-indicator').remove();
     if (showLoadingIndicator) {
         elem.append('i')

@@ -206,7 +206,7 @@ describe('date-controls', () => {
          expect(customDateAlertDiv.select('p').text()).toEqual('Both start and end dates must be specified.');
     });
 
-    it('Expects and alert to be thrown if the end date is earier than the start date.', () => {
+    it('Expects an alert to be thrown if the end date is earier than the start date.', () => {
         select('#custom-start-date').property('value', '2063-04-05');
         select('#custom-end-date').property('value', '2063-04-03');
 
