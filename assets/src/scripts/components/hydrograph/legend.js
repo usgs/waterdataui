@@ -1,14 +1,15 @@
 // functions to facilitate legend creation for a d3 plot
 import { set } from 'd3-collection';
 import memoize from 'fast-memoize';
-import { createSelector } from 'reselect';
+import {createSelector, createStructuredSelector} from 'reselect';
 
-import { CIRCLE_RADIUS } from './layout';
+import {CIRCLE_RADIUS, layoutSelector} from './layout';
 import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from './markers';
 import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from './drawing-data';
 import config from '../../config';
 import { getCurrentVariableMedianMetadata } from '../../selectors/median-statistics-selector';
 import { mediaQuery } from '../../utils';
+import {link} from '../../lib/redux';
 
 const TS_LABEL = {
     'current': 'Current: ',
@@ -220,4 +221,14 @@ export const legendMarkerRowsSelector = createSelector(
     legendDisplaySelector,
     displayItems => createLegendMarkers(displayItems)
 );
+
+
+export const drawTimeSeriesLegend = function(elem) {
+    elem.append('div')
+        .classed('hydrograph-container', true)
+        .call(link(drawSimpleLegend, createStructuredSelector({
+            legendMarkerRows: legendMarkerRowsSelector,
+            layout: layoutSelector
+        })));
+};
 

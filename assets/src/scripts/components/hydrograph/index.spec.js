@@ -1,6 +1,5 @@
 import { select, selectAll } from 'd3-selection';
-import { provide } from '../../lib/redux';
-import { attachToNode, timeSeriesGraph, timeSeriesLegend } from './index';
+import { attachToNode } from './index';
 import { Actions, configureStore } from '../../store';
 
 
@@ -150,7 +149,7 @@ const TEST_STATE = {
 };
 
 
-describe('Hydrograph charting module', () => {
+describe('Hydrograph charting and Loading indicators and data alerts', () => {
     let graphNode;
 
     beforeEach(() => {
@@ -175,60 +174,6 @@ describe('Hydrograph charting module', () => {
     it('empty graph displays warning', () => {
         attachToNode({}, graphNode, {});
         expect(graphNode.innerHTML).toContain('No data is available');
-    });
-
-    it('single data point renders', () => {
-        const store = configureStore(TEST_STATE);
-        select(graphNode)
-            .call(provide(store))
-            .call(timeSeriesGraph);
-        let svgNodes = graphNode.getElementsByTagName('svg');
-        expect(svgNodes.length).toBe(1);
-        expect(graphNode.innerHTML).toContain('hydrograph-container');
-    });
-
-    describe('container display', () => {
-
-        it('should not be hidden tag if there is data', () => {
-            const store = configureStore(TEST_STATE);
-            select(graphNode)
-                .call(provide(store))
-                .call(timeSeriesGraph);
-            expect(select('#hydrograph').attr('hidden')).toBeNull();
-        });
-
-        it('should have a style tag if there is no data', () => {
-            const store = configureStore({series: {timeSeries: {}}});
-            select(graphNode)
-                .call(provide(store))
-                .call(timeSeriesGraph);
-        });
-    });
-
-    describe('SVG has been made accessibile', () => {
-        let svg;
-        beforeEach(() => {
-            const store = configureStore(TEST_STATE);
-            select(graphNode)
-                .call(provide(store))
-                .call(timeSeriesGraph);
-            svg = select('svg');
-        });
-
-        it('title and desc attributes are present', function() {
-            const descText = svg.select('desc').html();
-
-            expect(svg.select('title').html()).toEqual('Test title for 00060');
-            expect(descText).toContain('Test description for 00060');
-            expect(descText).toContain('3/23/2018');
-            expect(descText).toContain('3/30/2018');
-            expect(svg.attr('aria-labelledby')).toContain('title');
-            expect(svg.attr('aria-describedby')).toContain('desc');
-        });
-
-        it('svg should be focusable', function() {
-            expect(svg.attr('tabindex')).toBe('0');
-        });
     });
 
     describe('SVG contains the expected elements', () => {
@@ -321,72 +266,7 @@ describe('Hydrograph charting module', () => {
         });
     });
 
-    //TODO: Consider adding a test which checks that the y axis is rescaled by
-    // examining the contents of the text labels.
-
-    describe('legends should render', () => {
-        let store;
-
-        beforeEach(() => {
-            store = configureStore(TEST_STATE);
-            select(graphNode)
-                .call(provide(store))
-                .call(timeSeriesLegend);
-        });
-
-        it('Should have 6 legend markers', () => {
-            expect(selectAll('.legend g').size()).toBe(6);
-            expect(selectAll('.legend g line.median-step').size()).toBe(1);
-        });
-
-        it('Should have four legend markers after the compare time series is removed', () => {
-            store.dispatch(Actions.toggleTimeSeries('compare', false));
-            expect(selectAll('.legend g').size()).toBe(4);
-        });
-
-        it('Should have two legend marker after the compare and median time series are removed', () => {
-            store.dispatch(Actions.toggleTimeSeries('compare', false));
-            store.dispatch(Actions.toggleTimeSeries('median', false));
-            expect(selectAll('.legend g').size()).toBe(2);
-        });
-    });
-
-    describe('compare line', () => {
-
-        let store;
-        beforeEach(() => {
-            store = configureStore(TEST_STATE);
-            attachToNode(store, graphNode, {siteno: '12345678'});
-        });
-
-        it('Should render one lines', () => {
-            expect(selectAll('#ts-compare-group .line-segment').size()).toBe(1);
-        });
-
-        it('Should remove the lines when removing the compare time series', () => {
-            store.dispatch(Actions.toggleTimeSeries('compare', false));
-            expect(selectAll('#ts-compare-group .line-segment').size()).toBe(0);
-        });
-    });
-
-    describe('median lines', () => {
-        let store;
-        beforeEach(() => {
-            store = configureStore(TEST_STATE);
-            attachToNode(store, graphNode, {siteno: '12345678'});
-        });
-
-        it('Should render one lines', () => {
-            expect(selectAll('#median-points .median-data-series').size()).toBe(1);
-        });
-
-        it('Should remove the lines when removing the median statistics data', () => {
-            store.dispatch(Actions.toggleTimeSeries('median', false));
-            expect(selectAll('#median-points .median-data-series').size()).toBe(0);
-        });
-    });
-
-    describe('hiding/show provisional alert', () => {
+    describe('hiding/showing provisional alert', () => {
 
         it('Expects the provisional alert to be visible when time series data is provided', () => {
             let store = configureStore(TEST_STATE);
@@ -407,80 +287,6 @@ describe('Hydrograph charting module', () => {
             attachToNode(store, graphNode, {siteno: '12345678'});
 
             expect(select(graphNode).select('.provisional-data-alert').attr('hidden')).toBe('true');
-        });
-    });
-
-    describe('Creating date range controls', () => {
-        let store;
-        beforeEach(() => {
-            store = configureStore(TEST_STATE);
-            attachToNode(store, graphNode, {siteno: '12345678'});
-        });
-
-        it('Expects the date range controls to be created', () => {
-            let dateRangeContainer = select(graphNode).select('#ts-daterange-select-container');
-            let customDateDiv = select(graphNode).select('div#ts-customdaterange-select-container');
-
-            expect(dateRangeContainer.size()).toBe(1);
-            expect(dateRangeContainer.selectAll('input[type=radio]').size()).toBe(4);
-            expect(customDateDiv.attr('hidden')).toBe('true');
-        });
-
-        it('Expects to retrieve the extended time series when the radio buttons are change', () => {
-            spyOn(Actions, 'retrieveExtendedTimeSeries');
-            let lastRadio = select(graphNode).select('#one-year');
-            lastRadio.attr('checked', true);
-            lastRadio.dispatch('change');
-
-            expect(Actions.retrieveExtendedTimeSeries).toHaveBeenCalledWith('12345678', 'P1Y');
-        });
-
-        it('Expects to show the date range from when the Custom radio is selected', () => {
-            let customRadio = select(graphNode).select('#custom-date-range');
-            customRadio.attr('checked', true);
-            customRadio.dispatch('change');
-
-            let customDateDiv = select(graphNode).select('div#ts-customdaterange-select-container');
-            expect(customDateDiv.attr('hidden')).toBeNull();
-
-            let customDateAlertDiv = select(graphNode).select('#custom-date-alert-container');
-            expect(customDateAlertDiv.attr('hidden')).toBe('true');
-        });
-
-        it('Expects an alert to be thrown if custom dates are not provided.', () => {
-             let submitButton = select(graphNode).select('#custom-date-submit');
-             submitButton.dispatch('click');
-
-             let customDateAlertDiv = select(graphNode).select('#custom-date-alert');
-             expect(customDateAlertDiv.attr('hidden')).toBeNull();
-             expect(customDateAlertDiv.select('p').text()).toEqual('Both start and end dates must be specified.');
-        });
-
-        it('Expects and alert to be thrown if the end date is earier than the start date.', () => {
-            select(graphNode).select('#custom-start-date').property('value', '2063-04-05');
-            select(graphNode).select('#custom-end-date').property('value', '2063-04-03');
-
-            select(graphNode).select('#custom-date-submit').dispatch('click');
-
-            let customDateAlertDiv = select(graphNode).select('#custom-date-alert-container');
-            expect(customDateAlertDiv.attr('hidden')).toBeNull();
-            expect(customDateAlertDiv.select('p').text()).toEqual('The start date must precede the end date.');
-        });
-
-        it('Expects data to be retrieved if both custom start and end dates are provided', () => {
-            spyOn(Actions, 'retrieveUserRequestedDataForDateRange');
-
-            select(graphNode).select('#custom-start-date').property('value', '2063-04-03');
-            select(graphNode).select('#custom-end-date').property('value', '2063-04-05');
-
-            select(graphNode).select('#custom-date-submit').dispatch('click');
-
-            let customDateAlertDiv = select(graphNode).select('#custom-date-alert-container');
-            expect(customDateAlertDiv.attr('hidden')).toBe('true');
-
-            expect(Actions.retrieveUserRequestedDataForDateRange).toHaveBeenCalledWith(
-                '12345678', '2063-04-03', '2063-04-05'
-            );
         });
     });
 
