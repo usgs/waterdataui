@@ -61,7 +61,8 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
         siteID: req.params.siteID,
         parameterCode: req.query.parameterCode,
         compare: req.query.compare,
-        period: req.query.period
+        period: req.query.period,
+        showMLName: req.query.title === 'true'
     });
 });
 

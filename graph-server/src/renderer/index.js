@@ -5,7 +5,7 @@ const PAST_SERVICE_ROOT = process.env.PAST_SERVICE_ROOT || 'https://nwis.waterse
 const STATIC_ROOT = process.env.STATIC_ROOT || 'https://waterdata.usgs.gov/nwisweb/wsgi/static';
 
 
-const renderToResponse = function (res, {siteID, parameterCode, compare, period}) {
+const renderToResponse = function (res, {siteID, parameterCode, compare, period, showMLName}) {
     console.log(`Using static root ${STATIC_ROOT}`);
     const componentOptions = {
         siteno: siteID,
@@ -14,7 +14,7 @@ const renderToResponse = function (res, {siteID, parameterCode, compare, period}
         period: period,
         cursorOffset: false,
         showOnlyGraph : true,
-        showMLName: true
+        showMLName: showMLName
     };
     renderPNG({
         pageURL: 'http://wdfn-graph-server',
