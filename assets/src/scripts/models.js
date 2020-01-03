@@ -25,6 +25,15 @@ function tsServiceRoot(date) {
     return olderThan120Days(date) ? PAST_SERVICE_ROOT : SERVICE_ROOT;
 }
 
+function getNumberOfDays(period) {
+    const days = period.match(/\d+/);
+    if (days.length === 1) {
+        return parseInt(days[0]);
+    } else {
+        return null;
+    }
+}
+
 /**
  * Get a given time series dataset from Water Services.
  * @param  {Array}    sites  Array of site IDs to retrieve.
@@ -40,8 +49,9 @@ export const getTimeSeries = function ({sites, params=null, startDate=null, endD
 
     if (!startDate && !endDate) {
         const timePeriod = period || 'P7D';
+        const dayCount = getNumberOfDays(timePeriod);
         timeParams = `period=${timePeriod}`;
-        serviceRoot = SERVICE_ROOT;
+        serviceRoot = dayCount && dayCount < 120 ? SERVICE_ROOT : PAST_SERVICE_ROOT;
     } else {
         let startString = startDate ? isoFormatTime(startDate) : '';
         let endString = endDate ? isoFormatTime(endDate) : '';
