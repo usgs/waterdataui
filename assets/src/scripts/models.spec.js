@@ -88,6 +88,18 @@ describe('Models module', () => {
             let request = jasmine.Ajax.requests.mostRecent();
             expect(request.url).toContain('https://nwis.waterservices.usgs.gov/nwis');
         });
+
+        it('Uses current data service root if period requested is less than P120D', () => {
+            getTimeSeries({sites: [siteID], params: [paramCode], period: 'P14D'});
+            let request = jasmine.Ajax.requests.mostRecent();
+            expect(request.url).toContain('https://waterservices.usgs.gov/nwis');
+        });
+
+        it('Uses past data service root if period requested is greater than P120D', () => {
+            getTimeSeries({sites: [siteID], params: [paramCode], period: 'P140D'});
+            let request = jasmine.Ajax.requests.mostRecent();
+            expect(request.url).toContain('https://nwis.waterservices.usgs.gov/nwis');
+        });
     });
 
     describe('getPreviousYearTimeSeries', () => {
