@@ -10,14 +10,16 @@ const addTimeSeriesCollection = function(series, action) {
 };
 
 const resetTimeSeries = function(series, action) {
-    return {
+    let newSeries = {
         ...series,
         timeSeries: omitBy(series.timeSeries, (tsValue) => tsValue.tsKey === action.key),
         requests: {
-            ...(series || {}).requests,
-            ...{[action.key]: {}}
+            ...(series || {}).requests
         }
     };
+    newSeries.requests[action.key] = {};
+
+    return newSeries;
 };
 
 const addIanaTimeZone = function(series, action) {

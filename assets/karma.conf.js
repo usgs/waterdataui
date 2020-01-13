@@ -30,7 +30,8 @@ module.exports = function (config) {
         // list of files / patterns to load in the browser
         files: [
             'tests/scripts/global-config.js',
-            'src/scripts/index.spec.js'
+            {pattern: 'src/scripts/index.spec.js', watched: false}
+
         ],
 
         // list of files / patterns to exclude
