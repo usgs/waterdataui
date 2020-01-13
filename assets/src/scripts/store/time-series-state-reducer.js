@@ -4,13 +4,12 @@
  */
 
 const toggleTimeSeries = function(timeSeriesState, action) {
-    return {
-        ...timeSeriesState,
-        showSeries: {
-            ...timeSeriesState.showSeries,
-            ...{[action.key]: action.show}
-        }
-    };
+    let newAction = {};
+    newAction[action.key] = action.show;
+
+    return Object.assign({}, timeSeriesState, {
+        showSeries: Object.assign({}, timeSeriesState.showSeries, newAction)
+    });
 };
 
 const setCurrentVariable = function(timeSeriesState, action) {
