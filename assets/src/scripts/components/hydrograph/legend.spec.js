@@ -32,10 +32,10 @@ describe('Legend module', () => {
                     }]
                 },
 
-                '00065:compare': {
+                '00060:compare': {
                     tsKey: 'compare:P7D',
-                    startTime: new Date('2017-03-06T15:45:00.000Z'),
-                    endTime: new Date('2017-03-13T13:45:00.000Z'),
+                    startTime: new Date('2018-03-06T15:45:00.000Z'),
+                    endTime: new Date('2018-03-06T15:45:00.000Z'),
                     variable: '45807202',
                     points: [{
                         value: 1,
@@ -243,6 +243,7 @@ describe('Legend module', () => {
     describe('legends should render', () => {
 
         let graphNode;
+        let store;
 
         beforeEach(() => {
             let body = select('body');
@@ -255,6 +256,11 @@ describe('Legend module', () => {
 
             graphNode = document.getElementById('hydrograph');
 
+            store = configureStore(TEST_DATA);
+            select(graphNode)
+                .call(provide(store))
+                .call(drawTimeSeriesLegend);
+
             jasmine.Ajax.install();
         });
 
@@ -263,27 +269,13 @@ describe('Legend module', () => {
             select('#hydrograph').remove();
         });
 
-        let store;
-
-        beforeEach(() => {
-            store = configureStore(TEST_DATA);
-            select(graphNode)
-                .call(provide(store))
-                .call(drawTimeSeriesLegend);
-        });
 
         it('Should have 6 legend markers', () => {
             expect(selectAll('.legend g').size()).toBe(6);
             expect(selectAll('.legend g line.median-step').size()).toBe(1);
         });
 
-        it('Should have 6 legend markers after the compare time series is removed', () => {
-            store.dispatch(Actions.toggleTimeSeries('compare', false));
-            expect(selectAll('.legend g').size()).toBe(6);
-        });
-
-        it('Should have 4 legend marker after the compare and median time series are removed', () => {
-            store.dispatch(Actions.toggleTimeSeries('compare', false));
+        it('Should have 4 legend marker after the median time series are removed', () => {
             store.dispatch(Actions.toggleTimeSeries('median', false));
             expect(selectAll('.legend g').size()).toBe(4);
         });
