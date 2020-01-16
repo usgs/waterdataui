@@ -3,7 +3,7 @@ import { select } from 'd3-selection';
 import memoize from 'fast-memoize';
 import { createSelector, createStructuredSelector } from 'reselect';
 import { tsCursorPointsSelector } from './cursor';
-import { xScaleSelector, yScaleSelector } from './scales';
+import { xScaleSelector, getYScale } from './scales';
 import { allTimeSeriesSelector } from './time-series';
 import config from '../../config';
 import { dispatch, link } from '../../lib/redux';
@@ -73,7 +73,7 @@ export const updateSound = function ({enabled, points}) {
 const audibleInterfaceOnSelector = state => state.timeSeriesState.audiblePlayId !== null;
 
 const audibleScaleSelector = createSelector(
-    yScaleSelector,
+    getYScale(),
     (yScale) => {
         return scaleLinear()
             .domain(yScale.domain())

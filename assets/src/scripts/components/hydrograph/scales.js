@@ -2,7 +2,7 @@ import { scaleLinear, scaleSymlog } from 'd3-scale';
 import memoize from 'fast-memoize';
 import { createSelector } from 'reselect';
 import { getYDomain, SYMLOG_PARMS } from './domain';
-import { layoutSelector } from './layout';
+import { getLayout, getMainLayout } from './layout';
 import { timeSeriesSelector, TEMPERATURE_PARAMETERS } from './time-series';
 import { visiblePointsSelector, pointsByTsKeySelector } from './drawing-data';
 import { getVariables, getCurrentParmCd, getRequestTimeRange } from '../../selectors/time-series-selector';
@@ -65,7 +65,7 @@ export const createYScale = function (parmCd, extent, size) {
  * @return {Function}           D3 scale function
  */
 export const xScaleSelector = memoize(tsKey => createSelector(
-    layoutSelector,
+    getMainLayout,
     getRequestTimeRange(tsKey),
     (layout, requestTimeRange) => {
         return createXScale(requestTimeRange, layout.width - layout.margin.right);
@@ -78,18 +78,18 @@ export const xScaleSelector = memoize(tsKey => createSelector(
  * @param  {Object} state   Redux store
  * @return {Function}       D3 scale function
  */
-export const yScaleSelector = createSelector(
-    layoutSelector,
+export const getYScale = memoize(kind => createSelector(
+    getLayout(kind),
     visiblePointsSelector,
     getCurrentParmCd,
     (layout, pointArrays, currentVarParmCd) => {
         const yDomain = getYDomain(pointArrays, currentVarParmCd);
         return createYScale(currentVarParmCd, yDomain, layout.height - (layout.margin.top + layout.margin.bottom));
     }
-);
+));
 
-export const secondaryYScaleSelector = createSelector(
-    layoutSelector,
+export const getSecondaryYScale = memoize(kind => createSelector(
+    getLayout(kind),
     visiblePointsSelector,
     getCurrentParmCd,
     (layout, pointArrays, currentVarParmCd) => {
@@ -106,7 +106,7 @@ export const secondaryYScaleSelector = createSelector(
             currentVarParmCd, convertedYDomain, layout.height - (layout.margin.top + layout.margin.bottom)
         );
     }
-);
+));
 
 
 /**

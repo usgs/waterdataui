@@ -4,7 +4,7 @@ import { line as d3Line, curveStepAfter } from 'd3-shape';
 import {link} from '../../lib/redux';
 
 import {addSVGAccessibility} from '../../accessibility';
-import {appendAxes, axesSelector} from './axes';
+import {appendAxes, getAxes} from './axes';
 import config from '../../config';
 import {
     currentVariableLineSegmentsSelector,
@@ -12,14 +12,13 @@ import {
     HASH_ID,
     MASK_DESC
 } from './drawing-data';
-import {CIRCLE_RADIUS_SINGLE_PT, layoutSelector} from './layout';
+import {CIRCLE_RADIUS_SINGLE_PT, getMainLayout, getZoomLayout} from './layout';
 import {createStructuredSelector} from 'reselect';
-import {xScaleSelector, yScaleSelector} from './scales';
+import {xScaleSelector, getYScale} from './scales';
 import {descriptionSelector, isVisibleSelector, titleSelector} from './time-series';
 import {getAgencyCode, getMonitoringLocationName} from '../../selectors/time-series-selector';
 import {createTooltipFocus, createTooltipText} from './tooltip';
 import {mediaQuery} from '../../utils';
-
 
 const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
     if (!visible) {
@@ -229,54 +228,71 @@ const watermark = function (elem) {
             // for Safari browser
             elem.style('-webkit-transform', transform);
 
-        }, layoutSelector));
+        }, getMainLayout));
 };
 
-export const drawTimeSeriesGraph = function(elem, siteNo, showMLName) {
-    elem.append('div')
+export const drawTimeSeriesGraph = function(elem, brushZoomElem, siteNo, showMLName) {
+    const graphDiv = elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(watermark)
         .call(createTitle, siteNo, showMLName)
-        .call(createTooltipText)
-        .append('svg')
-            .attr('xmlns', 'http://www.w3.org/2000/svg')
-            .classed('hydrograph-svg', true)
-            .call(link((elem, layout) => {
+        .call(createTooltipText);
+    graphDiv.append('svg')
+        .attr('xmlns', 'http://www.w3.org/2000/svg')
+        .classed('hydrograph-svg', true)
+        .call(link((elem, layout) => {
+            elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`);
+            elem.attr('width', layout.width);
+            elem.attr('height', layout.height);
+        }, getMainLayout))
+        .call(link(addSVGAccessibility, createStructuredSelector({
+            title: titleSelector,
+            description: descriptionSelector,
+            isInteractive: () => true,
+            idPrefix: () => 'hydrograph'
+        })))
+        .call(plotSvgDefs)
+        .call(svg => {
+            svg.append('g')
+                .call(link((elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), getMainLayout))
+                .call(link(appendAxes, getAxes()))
+                .call(link(plotDataLines, createStructuredSelector({
+                    visible: isVisibleSelector('current'),
+                    tsLinesMap: currentVariableLineSegmentsSelector('current'),
+                    xScale: xScaleSelector('current'),
+                    yScale: getYScale(),
+                    tsKey: () => 'current'
+                })))
+                .call(link(plotDataLines, createStructuredSelector({
+                    visible: isVisibleSelector('compare'),
+                    tsLinesMap: currentVariableLineSegmentsSelector('compare'),
+                    xScale: xScaleSelector('compare'),
+                    yScale: getYScale(),
+                    tsKey: () => 'compare'
+                })))
+                .call(createTooltipFocus)
+                .call(link(plotAllMedianPoints, createStructuredSelector({
+                    visible: isVisibleSelector('median'),
+                    xscale: xScaleSelector('current'),
+                    yscale: getYScale(),
+                    seriesPoints: getCurrentVariableMedianStatPoints
+                })));
+        });
+
+    //Create brush/zoom context
+    graphDiv.append('svg')
+        .attr('xmlns', 'http://www.w3.org/2000/svg')
+        .call(link((elem, layout) => {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`);
                 elem.attr('width', layout.width);
                 elem.attr('height', layout.height);
-            }, layoutSelector))
-            .call(link(addSVGAccessibility, createStructuredSelector({
-                title: titleSelector,
-                description: descriptionSelector,
-                isInteractive: () => true,
-                idPrefix: () => 'hydrograph'
-            })))
-            .call(plotSvgDefs)
-            .call(svg => {
-                svg.append('g')
-                    .call(link((elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), layoutSelector))
-                    .call(link(appendAxes, axesSelector))
-                    .call(link(plotDataLines, createStructuredSelector({
-                        visible: isVisibleSelector('current'),
-                        tsLinesMap: currentVariableLineSegmentsSelector('current'),
-                        xScale: xScaleSelector('current'),
-                        yScale: yScaleSelector,
-                        tsKey: () => 'current'
-                    })))
-                    .call(link(plotDataLines, createStructuredSelector({
-                        visible: isVisibleSelector('compare'),
-                        tsLinesMap: currentVariableLineSegmentsSelector('compare'),
-                        xScale: xScaleSelector('compare'),
-                        yScale: yScaleSelector,
-                        tsKey: () => 'compare'
-                    })))
-                    .call(createTooltipFocus)
-                    .call(link(plotAllMedianPoints, createStructuredSelector({
-                        visible: isVisibleSelector('median'),
-                        xscale: xScaleSelector('current'),
-                        yscale: yScaleSelector,
-                        seriesPoints: getCurrentVariableMedianStatPoints
-                    })));
-            });
+            }, getZoomLayout
+            ))
+        .call(svg => {
+            svg.append('g')
+                .call(link((elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`),
+                                getZoomLayout
+                ))
+                .call(link(appendAxes, getAxes('ZOOM')));
+        });
 };
