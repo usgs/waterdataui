@@ -9,8 +9,8 @@ import { dispatch, link, initAndUpdate } from '../../lib/redux';
 import { Actions } from '../../store';
 import { cursorTimeSelector, tsCursorPointsSelector } from './cursor';
 import { classesForPoint, MASK_DESC } from './drawing-data';
-import { getMainLayout } from './layout';
-import { xScaleSelector, getYScale } from './scales';
+import { layoutSelector } from './layout';
+import { xScaleSelector, yScaleSelector } from './scales';
 import { tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
 import { getCurrentVariable, getCurrentParmCd } from '../../selectors/time-series-selector';
 import config from '../../config';
@@ -55,7 +55,7 @@ const updateFocusLine = function(elem, {cursorTime, yScale, xScale}) {
  */
 export const tooltipPointsSelector = memoize(tsKey => createSelector(
     xScaleSelector(tsKey),
-    getYScale(),
+    yScaleSelector,
     tsCursorPointsSelector(tsKey),
     (xScale, yScale, cursorPoints) => {
         return Object.keys(cursorPoints).reduce((tooltipPoints, tsID) => {
@@ -218,7 +218,7 @@ export const createTooltipText = function (elem) {
         comparePoints: tsCursorPointsSelector('compare'),
         qualifiers: qualifiersSelector,
         unitCode: unitCodeSelector,
-        layout: getMainLayout,
+        layout: layoutSelector,
         ianaTimeZone: tsTimeZoneSelector,
         currentParmCd: getCurrentParmCd
     })));
@@ -268,7 +268,7 @@ const createFocusCircles = function (elem, tooltipPoints, circleContainer) {
 export const createTooltipFocus = function(elem) {
     elem.call(link(initAndUpdate(createFocusLine, updateFocusLine), createStructuredSelector({
         xScale: xScaleSelector('current'),
-        yScale: getYScale(),
+        yScale: yScaleSelector,
         cursorTime: cursorTimeSelector('current')
     })));
 
@@ -303,6 +303,6 @@ export const createTooltipFocus = function(elem) {
             }));
     }, createStructuredSelector({
         xScale: xScaleSelector('current'),
-        layout: getMainLayout
+        layout: layoutSelector
     })));
 };
