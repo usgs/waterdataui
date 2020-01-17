@@ -8,7 +8,7 @@ import { getCurrentDateRange, getCurrentParmCd } from '../../selectors/time-seri
 import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius, mediaQuery, wrap, deltaDays } from '../../utils';
 
 import { getYTickDetails } from './domain';
-import { getLayout } from './layout';
+import {getLayout} from './layout';
 import { xScaleSelector, getYScale, getSecondaryYScale } from './scales';
 import { yLabelSelector, secondaryYLabelSelector, tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
 
@@ -108,17 +108,22 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
  * @param {String} ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
  * @return {Object} {xAxis, yAxis, secondardYaxis} - D3 Axis
  */
-export const createAxes = function({xScale, yScale, secondaryYScale}, yTickSize, parmCd, period, ianaTimeZone) {
-    // Create x-axis
+
+const createXAxis = function(xScale,  period, ianaTimeZone) {
     const [startDate, endDate] = xScale.domain();
     const tickDates = generateDateTicks(startDate, endDate, period, ianaTimeZone);
-    const xAxis = axisBottom()
+    return axisBottom()
         .scale(xScale)
         .tickValues(tickDates)
         .tickSizeOuter(0)
         .tickFormat(d => {
             return DateTime.fromMillis(d, {zone: ianaTimeZone}).toFormat(FORMAT[period]);
         });
+};
+
+export const createAxes = function(xScale, yScale, secondaryYScale, yTickSize, parmCd, period, ianaTimeZone) {
+    // Create x-axis
+    const xAxis = createXAxis(xScale, period, ianaTimeZone);
 
     // Create y-axis
     const tickDetails = getYTickDetails(yScale.domain(), parmCd);
@@ -155,6 +160,15 @@ export const createAxes = function({xScale, yScale, secondaryYScale}, yTickSize,
     return {xAxis, yAxis, secondaryYAxis};
 };
 
+/**
+ *
+ */
+export const getZoomXAxis = createSelector(
+    xScaleSelector('current'),
+    tsTimeZoneSelector,
+    getCurrentDateRange,
+    (xScale, ianaTimeZone, period) => createXAxis(xScale, period, ianaTimeZone)
+);
 
 /**
  * Returns data necessary to render the graph axes.
@@ -173,7 +187,9 @@ export const getAxes = memoize(kind => createSelector(
     (xScale, yScale, secondaryYScale, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange, plotSecondaryYLabel) => {
         return {
             ...createAxes(
-                {xScale, yScale, secondaryYScale},
+                xScale,
+                yScale,
+                secondaryYScale,
                 -layout.width + layout.margin.right,
                 parmCd,
                 currentDateRange,
@@ -186,30 +202,33 @@ export const getAxes = memoize(kind => createSelector(
     }
 ));
 
+export const appendXAxis = function(elem, {xAxis, layout}) {
+    const xLoc = {
+        x: 0,
+        y: layout.height - (layout.margin.top + layout.margin.bottom)
+    };
+    elem.selectAll('.x-axis').remove();
+    elem.append('g')
+        .attr('class', 'x-axis')
+        .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
+        .call(xAxis);
+};
 
 /**
  * Add x and y axes to the given svg node.
  */
 export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, yTitle, secondaryYTitle}) {
 
-    const xLoc = {
-        x: 0,
-        y: layout.height - (layout.margin.top + layout.margin.bottom)
-    };
     const yLoc = {x: 0, y: 0};
     const yLabelLoc = {
         x: layout.height / -2 + layout.margin.top,
         y: -1 * layout.margin.left + 12
     };
 
-    // Remove existing axes before adding the new ones.
-    elem.selectAll('.x-axis, .y-axis').remove();
+    appendXAxis(elem, {xAxis, layout});
 
-    // Add x-axis
-    elem.append('g')
-        .attr('class', 'x-axis')
-        .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
-        .call(xAxis);
+    // Remove existing axes before adding the new ones.
+    elem.selectAll('.y-axis').remove();
 
     // Add y-axis and a text label
     elem.append('g')

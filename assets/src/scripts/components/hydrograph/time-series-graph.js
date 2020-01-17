@@ -4,7 +4,7 @@ import { line as d3Line, curveStepAfter } from 'd3-shape';
 import {link} from '../../lib/redux';
 
 import {addSVGAccessibility} from '../../accessibility';
-import {appendAxes, getAxes} from './axes';
+import {appendAxes, appendXAxis, getAxes, getZoomXAxis} from './axes';
 import config from '../../config';
 import {
     currentVariableLineSegmentsSelector,
@@ -14,7 +14,7 @@ import {
 } from './drawing-data';
 import {CIRCLE_RADIUS_SINGLE_PT, getMainLayout, getZoomLayout} from './layout';
 import {createStructuredSelector} from 'reselect';
-import {xScaleSelector, getYScale} from './scales';
+import {xScaleSelector, getYScale, getZoomYScale} from './scales';
 import {descriptionSelector, isVisibleSelector, titleSelector} from './time-series';
 import {getAgencyCode, getMonitoringLocationName} from '../../selectors/time-series-selector';
 import {createTooltipFocus, createTooltipText} from './tooltip';
@@ -231,7 +231,7 @@ const watermark = function (elem) {
         }, getMainLayout));
 };
 
-export const drawTimeSeriesGraph = function(elem, brushZoomElem, siteNo, showMLName) {
+export const drawTimeSeriesGraph = function(elem, siteNo, showMLName) {
     const graphDiv = elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(watermark)
@@ -283,7 +283,7 @@ export const drawTimeSeriesGraph = function(elem, brushZoomElem, siteNo, showMLN
     graphDiv.append('svg')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .call(link((elem, layout) => {
-                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`);
+                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.bottom}`);
                 elem.attr('width', layout.width);
                 elem.attr('height', layout.height);
             }, getZoomLayout
@@ -293,6 +293,16 @@ export const drawTimeSeriesGraph = function(elem, brushZoomElem, siteNo, showMLN
                 .call(link((elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`),
                                 getZoomLayout
                 ))
-                .call(link(appendAxes, getAxes('ZOOM')));
+                .call(link(appendXAxis, createStructuredSelector({
+                    xAxis: getZoomXAxis,
+                    layout: getZoomLayout
+                })))
+                .call(link(plotDataLines, createStructuredSelector({
+                    visible: isVisibleSelector('current'),
+                    tsLinesMap: currentVariableLineSegmentsSelector('current'),
+                    xScale: xScaleSelector('current'),
+                    yScale: getZoomYScale,
+                    tsKey: () => 'compare'
+                })));
         });
 };

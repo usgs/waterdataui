@@ -106,10 +106,10 @@ export const attachToNode = function (store,
     // Fetch the time series data
     if (period) {
         store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, parameter ? parameter : '00060', period))
-            .catch((message) => dataLoadingAlert(select(node), message ? message : 'No data returned'));
+            .catch((message) => dataLoadingAlert(nodeElem, message ? message : 'No data returned'));
     } else {
         store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null))
-            .catch(() => dataLoadingAlert((select(node), 'No current time series data available for this site')));
+            .catch(() => dataLoadingAlert((nodeElem, 'No current time series data available for this site')));
     }
     store.dispatch(Actions.retrieveMedianStatistics(siteno));
 
