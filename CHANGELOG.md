@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.22.0...master)
+## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.23.0...master)
+
+## [0.23.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.22.0...waterdataui-0.23.0)
 ### Added
 - Image server now accepts the period parameter which should be a ISO-8601 duration format. 
 However please note that NWIS only accepts periods using xxD.
