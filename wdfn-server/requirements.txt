@@ -13,6 +13,6 @@ pytest-mock==2.0.0
 pytest-flask==0.15.0
 requests==2.22.0
 requests-mock==1.7.0
-six==1.13.0
+six==1.14.0
 SaltPyLint==2019.11.14
 Werkzeug==0.16.0
