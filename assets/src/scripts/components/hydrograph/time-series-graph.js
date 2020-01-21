@@ -1,5 +1,7 @@
 import { extent } from 'd3-array';
+import { brushX } from 'd3-brush';
 import { line as d3Line, curveStepAfter } from 'd3-shape';
+import { event } from 'd3-selection';
 
 import {link} from '../../lib/redux';
 
@@ -237,6 +239,7 @@ export const drawTimeSeriesGraph = function(elem, siteNo, showMLName) {
         .call(watermark)
         .call(createTitle, siteNo, showMLName)
         .call(createTooltipText);
+
     graphDiv.append('svg')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .classed('hydrograph-svg', true)
@@ -305,4 +308,18 @@ export const drawTimeSeriesGraph = function(elem, siteNo, showMLName) {
                     tsKey: () => 'compare'
                 })));
         });
+
+    const brushed = function() {
+        if (event.sourceEvent && event.sourceEvent.type === 'zoom') {
+            return;
+        }
+        const brush_scale = event.selection || xScaleSelector
+
+    }
+
+    //const brush = brushX()
+    //    .call(link((brushElem, layout) => {
+    //        brushElem.extent([0, 0], [layout.width, layout.height])
+    //    }, getZoomLayout))
+    //    .on('brush end', brushed);
 };
