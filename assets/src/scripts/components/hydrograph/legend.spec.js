@@ -2,7 +2,6 @@ import { select, selectAll } from 'd3-selection';
 import { drawSimpleLegend, legendMarkerRowsSelector, drawTimeSeriesLegend } from './legend';
 import { lineMarker, rectangleMarker, textOnlyMarker } from './markers';
 import {Actions, configureStore} from '../../store';
-import {provide} from '../../lib/redux';
 
 describe('Legend module', () => {
 
@@ -258,8 +257,7 @@ describe('Legend module', () => {
 
             store = configureStore(TEST_DATA);
             select(graphNode)
-                .call(provide(store))
-                .call(drawTimeSeriesLegend);
+                .call(drawTimeSeriesLegend, store);
 
             jasmine.Ajax.install();
         });
@@ -275,9 +273,12 @@ describe('Legend module', () => {
             expect(selectAll('.legend g line.median-step').size()).toBe(1);
         });
 
-        it('Should have 4 legend marker after the median time series are removed', () => {
+        it('Should have 4 legend marker after the median time series are removed', (done) => {
             store.dispatch(Actions.toggleTimeSeries('median', false));
-            expect(selectAll('.legend g').size()).toBe(4);
+            window.requestAnimationFrame(() => {
+                expect(selectAll('.legend g').size()).toBe(4);
+                done();
+            });
         });
     });
 });

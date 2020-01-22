@@ -1,14 +1,14 @@
 import { DateTime } from 'luxon';
 import { createStructuredSelector } from 'reselect';
 
-import { dispatch, link } from '../../lib/redux';
+import { link } from '../../lib/d3-redux';
 
 import { drawLoadingIndicator } from '../loading-indicator';
 import { isLoadingTS, hasAnyTimeSeries } from '../../selectors/time-series-selector';
 import { Actions } from '../../store';
 
 
-export const drawDateRangeControls = function(elem, siteno) {
+export const drawDateRangeControls = function(elem, store, siteno) {
     const DATE_RANGE = [{
         label: 'seven-day',
         name: '7 days',
@@ -32,7 +32,7 @@ export const drawDateRangeControls = function(elem, siteno) {
         .attr('id', 'ts-daterange-select-container')
         .attr('role', 'radiogroup')
         .attr('aria-label', 'Time interval select')
-        .call(link(function(container, showControls) {
+        .call(link(store,function(container, showControls) {
             container.attr('hidden', showControls ? null : true);
         }, hasAnyTimeSeries));
 
@@ -100,7 +100,7 @@ export const drawDateRangeControls = function(elem, siteno) {
         .attr('class', 'usa-button')
         .attr('id', 'custom-date-submit')
         .text('Submit')
-        .on('click', dispatch( function() {
+        .on('click', function() {
             const userSpecifiedStart = customStartDate.node().value;
             const userSpecifiedEnd = customEndDate.node().value;
             if (userSpecifiedStart.length === 0 || userSpecifiedEnd.length === 0) {
@@ -115,13 +115,13 @@ export const drawDateRangeControls = function(elem, siteno) {
                 customDateValidationContainer.attr('hidden', null);
             } else {
                 customDateValidationContainer.attr('hidden', true);
-                return Actions.retrieveUserRequestedDataForDateRange(
+                store.dispatch(Actions.retrieveUserRequestedDataForDateRange(
                     siteno,
                     userSpecifiedStart,
                     userSpecifiedEnd
-                );
+                ));
             }
-        }));
+        });
 
     const listContainer = container.append('ul')
         .attr('class', 'usa-fieldset usa-list--unstyled');
@@ -129,7 +129,7 @@ export const drawDateRangeControls = function(elem, siteno) {
         .attr('class', 'usa-fieldset')
         .data(DATE_RANGE)
         .enter().append('li');
-    listContainer.call(link(drawLoadingIndicator, createStructuredSelector({
+    listContainer.call(link(store, drawLoadingIndicator, createStructuredSelector({
         showLoadingIndicator: isLoadingTS('current'),
         sizeClass: () => 'fa-lg'
     })));
@@ -144,7 +144,7 @@ export const drawDateRangeControls = function(elem, siteno) {
         .attr('aria-expanded', d => d.ariaExpanded)
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', d => `changeDateRangeTo${d.period}`)
-        .on('change', dispatch(function() {
+        .on('change', function() {
             const selected = li.select('input:checked');
             const selectedVal = selected.attr('value');
             if (selectedVal === 'custom') {
@@ -153,12 +153,12 @@ export const drawDateRangeControls = function(elem, siteno) {
             } else {
                 li.select('input#custom-date-range').attr('aria-expanded', false);
                 customDateContainer.attr('hidden', true);
-                return Actions.retrieveExtendedTimeSeries(
+                store.dispatch(Actions.retrieveExtendedTimeSeries(
                     siteno,
                     li.select('input:checked').attr('value')
-                );
+                ));
             }
-        }));
+        });
     li.append('label')
         .attr('class', 'usa-radio__label')
         .attr('for', (d) => d.label)

@@ -38,6 +38,9 @@ import './components/map/legend.spec';
 import './flood-data.spec';
 import './nldi-data.spec';
 import './helpers.spec';
+
+import './lib/d3-redux.spec';
+
 import './models.spec';
 import './schema.spec';
 

@@ -67,5 +67,5 @@ export const getZoomLayout = getLayout('ZOOM');
 
 export const layoutZoomSelector = createSelector(
     (state) => state.ui.width,
-    (state) => state.ui.windowWidth,
-)
+    (state) => state.ui.windowWidth
+);

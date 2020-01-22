@@ -1,6 +1,5 @@
 import { select } from 'd3-selection';
 
-import { provide } from '../../lib/redux';
 import { configureStore } from '../../store';
 
 import { drawMethodPicker } from './method-picker';
@@ -70,8 +69,7 @@ describe('method-picker', () => {
 
         it('Creates a picker and sets the currentMethodID', () => {
             let store = configureStore(TEST_STATE);
-            div.call(provide(store))
-                .call(drawMethodPicker);
+            div.call(drawMethodPicker, store);
 
             expect(div.select('div').property('hidden')).toEqual(false);
             expect(div.select('select').property('value')).toEqual('69930');
@@ -93,8 +91,7 @@ describe('method-picker', () => {
                 }
             };
             let storeWithOneMethod = configureStore(TEST_STATE_ONE_METHOD);
-            div.call(provide(storeWithOneMethod))
-                .call(drawMethodPicker);
+            div.call(drawMethodPicker, storeWithOneMethod);
 
             expect(div.select('div').property('hidden')).toEqual(true);
             expect(div.select('select').property('value')).toEqual('69930');
