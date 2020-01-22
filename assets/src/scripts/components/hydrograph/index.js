@@ -112,17 +112,18 @@ export const attachToNode = function (store,
     store.dispatch(Actions.retrieveMedianStatistics(siteno));
 
     // Set up rendering functions for the graph-container
-    nodeElem.select('.graph-container')
+    let graphContainer = nodeElem.select('.graph-container')
         .call(link(store, controlDisplay, hasAnyTimeSeries))
-        .call(drawTimeSeriesGraph, store, siteno, showMLName)
-        .append('div')
-            .classed('ts-legend-controls-container', true)
-            .call(drawTimeSeriesLegend, store);
+        .call(drawTimeSeriesGraph, store, siteno, showMLName);
+    if (!showOnlyGraph) {
+        graphContainer.call(cursorSlider, store);
+    }
+    graphContainer.append('div')
+        .classed('ts-legend-controls-container', true)
+        .call(drawTimeSeriesLegend, store);
 
     // Add UI interactive elements and the provisional data alert.
     if (!showOnlyGraph) {
-        nodeElem.select('.graph-container')
-            .call(cursorSlider, store);
         nodeElem
             .call(drawMethodPicker, store)
             .call(drawDateRangeControls, store, siteno);
