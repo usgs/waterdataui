@@ -1,7 +1,5 @@
 // Define constants for the time series graph's aspect ratio and margins as well as a
 // selector function which will return the width/height to use.
-
-import memoize from 'fast-memoize';
 import { createSelector } from 'reselect';
 
 import config from '../../config';

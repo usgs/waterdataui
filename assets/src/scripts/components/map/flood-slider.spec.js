@@ -86,7 +86,7 @@ describe('floodSlider', () => {
                 expect(store.getState().floodState.gageHeight).toBe(11);
                 expect(select(sliderNode).select('label').html()).toContain('11');
                 done();
-            })
+            });
 
         });
     });

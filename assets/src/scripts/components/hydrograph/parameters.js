@@ -1,17 +1,15 @@
-import {createSelector, createStructuredSelector} from 'reselect';
+import { createSelector } from 'reselect';
 import { line } from 'd3-shape';
 import { select } from 'd3-selection';
 
-import {lineSegmentsByParmCdSelector, MASK_DESC} from './drawing-data';
+import { MASK_DESC } from './drawing-data';
 import { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } from './layout';
 import { allTimeSeriesSelector } from './time-series';
 
-import { link } from '../../lib/d3-redux';
 import { sortedParameters } from '../../models';
 import { getVariables, getCurrentVariableID } from '../../selectors/time-series-selector';
 import { Actions } from '../../store';
 import { appendTooltip } from '../../tooltips';
-import {timeSeriesScalesByParmCdSelector} from './scales';
 
 
 /**
