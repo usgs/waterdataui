@@ -1,16 +1,14 @@
 import { axisBottom, axisLeft, axisRight } from 'd3-axis';
-import memoize from 'fast-memoize';
-import { DateTime } from 'luxon';
 import { createSelector } from 'reselect';
-
+import { DateTime } from 'luxon';
+import { wrap, deltaDays } from '../../utils';
+import { getYTickDetails } from './domain';
+import { layoutSelector } from './layout';
+import { xScaleSelector, yScaleSelector, secondaryYScaleSelector } from './scales';
+import { yLabelSelector, secondaryYLabelSelector, tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
 import config from '../../config';
 import { getCurrentDateRange, getCurrentParmCd } from '../../selectors/time-series-selector';
-import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius, mediaQuery, wrap, deltaDays } from '../../utils';
-
-import { getYTickDetails } from './domain';
-import { getLayout } from './layout';
-import { xScaleSelector, getYScale, getSecondaryYScale } from './scales';
-import { yLabelSelector, secondaryYLabelSelector, tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
+import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius, mediaQuery } from '../../utils';
 
 
 const FORMAT = {
@@ -106,7 +104,7 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
  * @param {String} parmCd - parameter code of time series to be shown on the graph.
  * @param {String} period - ISO duration for date range of the time series
  * @param {String} ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
- * @return {Object} {xAxis, yAxis, secondardYaxis} - D3 Axis
+ * @return {Object}             {xAxis, yAxis} - D3 Axis
  */
 export const createAxes = function({xScale, yScale, secondaryYScale}, yTickSize, parmCd, period, ianaTimeZone) {
     // Create x-axis
@@ -160,11 +158,11 @@ export const createAxes = function({xScale, yScale, secondaryYScale}, yTickSize,
  * Returns data necessary to render the graph axes.
  * @return {Object}
  */
-export const getAxes = memoize(kind => createSelector(
+export const axesSelector = createSelector(
     xScaleSelector('current'),
-    getYScale(kind),
-    getSecondaryYScale(kind),
-    getLayout(kind),
+    yScaleSelector,
+    secondaryYScaleSelector,
+    layoutSelector,
     yLabelSelector,
     tsTimeZoneSelector,
     getCurrentParmCd,
@@ -184,7 +182,7 @@ export const getAxes = memoize(kind => createSelector(
             secondaryYTitle: plotSecondaryYLabel
         };
     }
-));
+);
 
 
 /**

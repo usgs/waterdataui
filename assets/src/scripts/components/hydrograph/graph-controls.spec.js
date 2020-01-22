@@ -1,6 +1,5 @@
 import {Actions, configureStore} from '../../store';
 import { select } from 'd3-selection';
-import { provide } from '../../lib/redux';
 import { drawGraphControls } from './graph-controls';
 
 // Tests for the graph-controls module
@@ -159,8 +158,7 @@ describe('graph-controls', () => {
         beforeEach(() => {
             div = select('body').append('div');
             store = configureStore(TEST_STATE);
-            div.call(provide(store))
-                .call(drawGraphControls);
+            div.call(drawGraphControls, store);
         });
 
         afterEach(() => {
@@ -174,20 +172,26 @@ describe('graph-controls', () => {
             expect(checkbox.property('checked')).toBe(true);
         });
 
-        it('Should render the compare toggle unchecked', () => {
+        it('Should render the compare toggle unchecked', (done) => {
             store.dispatch(Actions.toggleTimeSeries('compare', false));
-            const checkbox = select('#last-year-checkbox');
-            expect(checkbox.size()).toBe(1);
-            expect(checkbox.property('checked')).toBe(false);
+            window.requestAnimationFrame(() => {
+                const checkbox = select('#last-year-checkbox');
+                expect(checkbox.size()).toBe(1);
+                expect(checkbox.property('checked')).toBe(false);
+                done();
+            });
         });
 
         it('should be enabled if there are last year data', () => {
             expect(select('#last-year-checkbox').property('disabled')).toBeFalsy();
         });
 
-        it('should be disabled if there are no last year data', () => {
+        it('should be disabled if there are no last year data', (done) => {
             store.dispatch(Actions.setCurrentVariable('45807190'));
-            expect(select('#last-year-checkbox').property('disabled')).toBeTruthy();
+            window.requestAnimationFrame(() => {
+                expect(select('#last-year-checkbox').property('disabled')).toBeTruthy();
+                done();
+            });
         });
 
         // median checkbox tests
@@ -197,20 +201,26 @@ describe('graph-controls', () => {
             expect(checkbox.property('checked')).toBe(true);
         });
 
-        it('Should render the median toggle unchecked', () => {
+        it('Should render the median toggle unchecked', (done) => {
             store.dispatch(Actions.toggleTimeSeries('median', false));
-            const checkbox = select('#median-checkbox');
-            expect(checkbox.size()).toBe(1);
-            expect(checkbox.property('checked')).toBe(false);
+            window.requestAnimationFrame(() => {
+                const checkbox = select('#median-checkbox');
+                expect(checkbox.size()).toBe(1);
+                expect(checkbox.property('checked')).toBe(false);
+                done();
+            });
         });
 
         it('should be enabled if there are median statistics data', () => {
             expect(select('#median-checkbox').property('disabled')).toBeFalsy();
         });
 
-        it('should be disabled if there are no median statistics data', () => {
+        it('should be disabled if there are no median statistics data', (done) => {
             store.dispatch(Actions.setCurrentVariable('45807190'));
-            expect(select('#median-checkbox').property('disabled')).toBeTruthy();
+            window.requestAnimationFrame(() => {
+                expect(select('#median-checkbox').property('disabled')).toBeTruthy();
+                done();
+            });
         });
     });
 });

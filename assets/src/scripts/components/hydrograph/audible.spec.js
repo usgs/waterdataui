@@ -1,6 +1,5 @@
 import { select } from 'd3-selection';
 import { audibleUI } from './audible';
-import { provide } from '../../lib/redux';
 import { configureStore } from '../../store';
 
 
@@ -60,9 +59,7 @@ describe('audibleUI', () => {
         store = configureStore(TEST_STATE);
         jasmine.clock().install();
         container = select('body').append('div');
-        container
-            .call(provide(store))
-            .call(audibleUI);
+        container.call(audibleUI, store);
     });
 
     afterEach(() => {
@@ -81,11 +78,13 @@ describe('audibleUI', () => {
         expect(store.getState().timeSeriesState.audiblePlayId).not.toBeNull();
     });
 
-    it('Expects the store to have a null playId if the  button is clicked after clicking the once', () => {
+    it('Expects the store to have a null playId if the  button is clicked after clicking the once', (done) => {
         container.select('button').dispatch('click');
-        container.select('button').dispatch('click');
-
-        expect(store.getState().timeSeriesState.audiblePlayId).toBeNull();
+        window.requestAnimationFrame(() => {
+            container.select('button').dispatch('click');
+            expect(store.getState().timeSeriesState.audiblePlayId).toBeNull();
+            done();
+        });
     });
 
 

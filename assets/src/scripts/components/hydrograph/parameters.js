@@ -1,14 +1,17 @@
-import { createSelector } from 'reselect';
+import {createSelector, createStructuredSelector} from 'reselect';
 import { line } from 'd3-shape';
 import { select } from 'd3-selection';
-import { MASK_DESC } from './drawing-data';
+
+import {lineSegmentsByParmCdSelector, MASK_DESC} from './drawing-data';
 import { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } from './layout';
 import { allTimeSeriesSelector } from './time-series';
-import { dispatch } from '../../lib/redux';
+
+import { link } from '../../lib/d3-redux';
 import { sortedParameters } from '../../models';
+import { getVariables, getCurrentVariableID } from '../../selectors/time-series-selector';
 import { Actions } from '../../store';
 import { appendTooltip } from '../../tooltips';
-import { getVariables, getCurrentVariableID } from '../../selectors/time-series-selector';
+import {timeSeriesScalesByParmCdSelector} from './scales';
 
 
 /**
@@ -127,7 +130,22 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
  * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
  */
-export const plotSeriesSelectTable = function (elem, {siteno, availableTimeSeries, lineSegmentsByParmCd, timeSeriesScalesByParmCd}) {
+/**
+ * Draws a table with clickable rows of time series parameter codes. Selecting
+ * a row changes the active parameter code.
+ * @param  {Object} elem                        d3 selection
+ * @param  {String} siteno
+ * @param  {Object} availableTimeSeries         Time series metadata to display
+ * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
+ * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
+ */
+export const plotSeriesSelectTable = function (elem,
+   {
+        siteno,
+        availableTimeSeries,
+        lineSegmentsByParmCd,
+        timeSeriesScalesByParmCd
+   }, store ){
     // Get the position of the scrolled window before removing it so it can be set to the same value.
     const lastTable = elem.select('#select-time-series table');
     const scrollTop = lastTable.size() ? lastTable.property('scrollTop') : null;
@@ -170,11 +188,11 @@ export const plotSeriesSelectTable = function (elem, {siteno, availableTimeSerie
             .attr('role', 'option')
             .classed('selected', parm => parm[1].selected)
             .attr('aria-selected', parm => parm[1].selected)
-            .on('click', dispatch(function (parm) {
+            .on('click', function (parm) {
                 if (!parm[1].selected) {
-                    return Actions.updateCurrentVariable(siteno, parm[1].variableID);
+                    store.dispatch(Actions.updateCurrentVariable(siteno, parm[1].variableID));
                 }
-            }))
+            })
             .call(tr => {
                 let parmCdCol = tr.append('th')
                     .attr('scope', 'row');

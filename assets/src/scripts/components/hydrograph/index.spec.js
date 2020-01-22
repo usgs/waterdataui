@@ -260,9 +260,12 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             expect(selectAll('table .tooltip-item').size()).toBe(2);
         });
 
-        it('should not have tooltips for the select series table when the screen is large', () => {
+        it('should not have tooltips for the select series table when the screen is large', (done) => {
             store.dispatch(Actions.resizeUI(800, 800));
-            expect(selectAll('table .tooltip-table').size()).toBe(0);
+            window.requestAnimationFrame(() => {
+                expect(selectAll('table .tooltip-table').size()).toBe(0);
+                done();
+            });
         });
     });
 

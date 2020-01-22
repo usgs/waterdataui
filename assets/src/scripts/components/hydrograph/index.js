@@ -5,17 +5,16 @@ import { select } from 'd3-selection';
 
 import { createStructuredSelector } from 'reselect';
 
-import { link, provide } from '../../lib/redux';
+import { link } from '../../lib/d3-redux';
 
 import {isLoadingTS, hasAnyTimeSeries } from '../../selectors/time-series-selector';
 import { Actions } from '../../store';
-import { callIf } from '../../utils';
 
 import { cursorSlider } from './cursor';
 import { drawDateRangeControls } from './date-controls';
 import { lineSegmentsByParmCdSelector } from './drawing-data';
 import { drawGraphControls } from './graph-controls';
-import { SPARK_LINE_DIM } from './layout';
+import { SPARK_LINE_DIM, layoutSelector } from './layout';
 import { drawTimeSeriesLegend } from './legend';
 import { drawLoadingIndicator } from '../loading-indicator';
 import { drawMethodPicker } from './method-picker';
@@ -86,9 +85,8 @@ export const attachToNode = function (store,
     // Initialize hydrograph with the store and show the loading indicator
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     nodeElem
-        .call(provide(store))
         .select('.loading-indicator-container')
-            .call(link(drawLoadingIndicator, createStructuredSelector({
+            .call(link(store, drawLoadingIndicator, createStructuredSelector({
                 showLoadingIndicator: isLoadingTS('current', 'P7D'),
                 sizeClass: () => 'fa-3x'
             })));
@@ -115,31 +113,33 @@ export const attachToNode = function (store,
 
     // Set up rendering functions for the graph-container
     nodeElem.select('.graph-container')
-        .call(link(controlDisplay, hasAnyTimeSeries))
-        .call(drawTimeSeriesGraph, siteno, showMLName)
-        .call(callIf(!showOnlyGraph, cursorSlider))
+        .call(link(store, controlDisplay, hasAnyTimeSeries))
+        .call(drawTimeSeriesGraph, store, siteno, showMLName)
         .append('div')
             .classed('ts-legend-controls-container', true)
-            .call(drawTimeSeriesLegend);
+            .call(drawTimeSeriesLegend, store);
 
     // Add UI interactive elements and the provisional data alert.
     if (!showOnlyGraph) {
+        nodeElem.select('.graph-container')
+            .call(cursorSlider, store);
         nodeElem
-            .call(drawMethodPicker)
-            .call(drawDateRangeControls, siteno);
+            .call(drawMethodPicker, store)
+            .call(drawDateRangeControls, store, siteno);
 
         nodeElem.select('.ts-legend-controls-container')
-            .call(drawGraphControls);
+            .call(drawGraphControls, store);
 
         nodeElem.select('.select-time-series-container')
-            .call(link(plotSeriesSelectTable, createStructuredSelector({
+            .call(link(store, plotSeriesSelectTable, createStructuredSelector({
                 siteno: () => siteno,
                 availableTimeSeries: availableTimeSeriesSelector,
                 lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current', 'P7D'),
-                timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM)
-            })));
+                timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM),
+                layout: layoutSelector
+            }), store));
         nodeElem.select('.provisional-data-alert')
-            .call(link(function(elem, allTimeSeries) {
+            .call(link(store, function(elem, allTimeSeries) {
                 elem.attr('hidden', Object.keys(allTimeSeries).length ? null : true);
             }, allTimeSeriesSelector));
     }
