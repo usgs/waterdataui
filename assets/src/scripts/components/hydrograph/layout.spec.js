@@ -1,10 +1,10 @@
 import { format } from 'd3-format';
 
-import { layoutSelector, ASPECT_RATIO } from './layout';
+import { getMainLayout, ASPECT_RATIO } from './layout';
 
 describe('points module', () => {
     it('Should return the width and height with the predefined ASPECT_RATIO', () => {
-        const layout = layoutSelector.resultFunc(200, 600, {
+        const layout = getMainLayout.resultFunc(200, 600, {
             tickValues: [5, 10, 15],
             tickFormat: format('d')
         });

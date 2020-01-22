@@ -8,7 +8,7 @@ import { link } from '../../lib/d3-redux';
 import {getCurrentMethodID} from '../../selectors/time-series-selector';
 
 import { currentVariablePointsByTsIdSelector } from './drawing-data';
-import { layoutSelector } from './layout';
+import { getMainLayout } from './layout';
 import { xScaleSelector } from './scales';
 import { isVisibleSelector } from './time-series';
 
@@ -146,7 +146,7 @@ export const cursorSlider = function (elem, store) {
                     input.style('right', layout.margin.right - SLIDER_OFFSET_PX + 'px');
                     input.style('width', maxXScaleRange - (layout.margin.left + layout.margin.right) + SLIDER_OFFSET_PX * 2 + 'px');
                 }, createStructuredSelector( {
-                    layout: layoutSelector,
+                    layout: getMainLayout,
                     xScale: xScaleSelector('current')
                 })));
         });

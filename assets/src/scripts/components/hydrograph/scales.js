@@ -88,6 +88,7 @@ export const getYScale = memoize(kind => createSelector(
     }
 ));
 
+export const getMainYScale = getYScale();
 export const getZoomYScale = getYScale('ZOOM');
 
 export const getSecondaryYScale = memoize(kind => createSelector(

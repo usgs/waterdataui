@@ -14,7 +14,7 @@ import { cursorSlider } from './cursor';
 import { drawDateRangeControls } from './date-controls';
 import { lineSegmentsByParmCdSelector } from './drawing-data';
 import { drawGraphControls } from './graph-controls';
-import { SPARK_LINE_DIM, layoutSelector } from './layout';
+import { SPARK_LINE_DIM } from './layout';
 import { drawTimeSeriesLegend } from './legend';
 import { drawLoadingIndicator } from '../loading-indicator';
 import { drawMethodPicker } from './method-picker';
@@ -137,7 +137,6 @@ export const attachToNode = function (store,
                 availableTimeSeries: availableTimeSeriesSelector,
                 lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current', 'P7D'),
                 timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM),
-                layout: layoutSelector
             }), store));
         nodeElem.select('.provisional-data-alert')
             .call(link(store, function(elem, allTimeSeries) {
