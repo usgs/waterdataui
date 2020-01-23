@@ -9,7 +9,7 @@ import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius, mediaQuery, wra
 
 import { getYTickDetails } from './domain';
 import {getLayout} from './layout';
-import { xScaleSelector, getYScale, getSecondaryYScale } from './scales';
+import { getXScale, getZoomXScale, getYScale, getSecondaryYScale } from './scales';
 import { yLabelSelector, secondaryYLabelSelector, tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
 
 
@@ -164,7 +164,7 @@ export const createAxes = function(xScale, yScale, secondaryYScale, yTickSize, p
  *
  */
 export const getZoomXAxis = createSelector(
-    xScaleSelector('current'),
+    getZoomXScale('current'),
     tsTimeZoneSelector,
     getCurrentDateRange,
     (xScale, ianaTimeZone, period) => createXAxis(xScale, period, ianaTimeZone)
@@ -175,7 +175,7 @@ export const getZoomXAxis = createSelector(
  * @return {Object}
  */
 export const getAxes = memoize(kind => createSelector(
-    xScaleSelector('current'),
+    getXScale(kind, 'current'),
     getYScale(kind),
     getSecondaryYScale(kind),
     getLayout(kind),

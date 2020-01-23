@@ -369,6 +369,12 @@ export const Actions = {
             width
         };
     },
+    setHydrographXRange(hydrographXRange) {
+        return {
+            type: 'SET_HYDROGRAPH_X_RANGE',
+            hydrographXRange
+        };
+    },
     setCurrentVariable(variableID) {
         return {
             type: 'SET_CURRENT_VARIABLE',

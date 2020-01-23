@@ -3,24 +3,26 @@ import { brushX } from 'd3-brush';
 import { line as d3Line, curveStepAfter } from 'd3-shape';
 import { event } from 'd3-selection';
 
-import {link} from '../../lib/d3-redux';
+import { link, listen } from '../../lib/d3-redux';
 
-import {addSVGAccessibility} from '../../accessibility';
-import {appendAxes, appendXAxis, getAxes, getZoomXAxis} from './axes';
+import { addSVGAccessibility } from '../../accessibility';
 import config from '../../config';
+import { getAgencyCode, getMonitoringLocationName } from '../../selectors/time-series-selector';
+import { Actions } from '../../store';
+
+import { appendAxes, appendXAxis, getAxes, getZoomXAxis}  from './axes';
 import {
     currentVariableLineSegmentsSelector,
     getCurrentVariableMedianStatPoints,
     HASH_ID,
     MASK_DESC
 } from './drawing-data';
-import {CIRCLE_RADIUS_SINGLE_PT, getMainLayout, getZoomLayout} from './layout';
-import {createStructuredSelector} from 'reselect';
-import {xScaleSelector, getYScale, getZoomYScale} from './scales';
-import {descriptionSelector, isVisibleSelector, titleSelector} from './time-series';
-import {getAgencyCode, getMonitoringLocationName} from '../../selectors/time-series-selector';
-import {createTooltipFocus, createTooltipText} from './tooltip';
-import {mediaQuery} from '../../utils';
+import { CIRCLE_RADIUS_SINGLE_PT, getMainLayout, getZoomLayout } from './layout';
+import { createStructuredSelector } from 'reselect';
+import { getMainXScale, getZoomXScale, getMainYScale, getZoomYScale } from './scales';
+import { descriptionSelector, isVisibleSelector, titleSelector } from './time-series';
+import { createTooltipFocus, createTooltipText}  from './tooltip';
+import { mediaQuery}  from '../../utils';
 
 const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
     if (!visible) {
@@ -234,7 +236,26 @@ const watermark = function (elem, store) {
 };
 
 export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
-    const graphDiv = elem.append('div')
+    let graphBrush, graphDiv;
+
+    const brushed = function() {
+        console.log(`Brushed event type ${event.sourceEvent? event.sourceEvent.type: 'No event'}`);
+        if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
+            return;
+        }
+        const xScale = getZoomXScale('current')(store.getState());
+        const brushRange = event.selection || xScale.range();
+        store.dispatch(Actions.setHydrographXRange(brushRange.map(xScale.invert, xScale)));
+    };
+
+
+    graphBrush = brushX()
+        .on('brush end', brushed)
+    listen(store, getZoomLayout, (layout) => {
+        graphBrush.extent([[layout.margin.left, 0], [layout.margin.left + layout.width, layout.height]]);
+    });
+
+    graphDiv = elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(watermark, store)
         .call(createTitle, store, siteNo, showMLName)
@@ -261,29 +282,31 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
                     .call(link(store, plotDataLines, createStructuredSelector({
                         visible: isVisibleSelector('current'),
                         tsLinesMap: currentVariableLineSegmentsSelector('current'),
-                        xScale: xScaleSelector('current'),
-                        yScale: getYScale(),
+                        xScale: getMainXScale('current'),
+                        yScale: getMainYScale,
                         tsKey: () => 'current'
                     })))
                     .call(link(store, plotDataLines, createStructuredSelector({
                         visible: isVisibleSelector('compare'),
                         tsLinesMap: currentVariableLineSegmentsSelector('compare'),
-                        xScale: xScaleSelector('compare'),
-                        yScale: getYScale(),
+                        xScale: getMainXScale('compare'),
+                        yScale: getMainYScale,
                         tsKey: () => 'compare'
                     })))
                     .call(createTooltipFocus, store)
                     .call(link(store, plotAllMedianPoints, createStructuredSelector({
                         visible: isVisibleSelector('median'),
-                        xscale: xScaleSelector('current'),
-                        yscale: getYScale,
+                        xscale: getMainXScale('current'),
+                        yscale: getMainYScale,
                         seriesPoints: getCurrentVariableMedianStatPoints
                     })));
             });
-    //Create brush/zoom context
+
+    //Create brush context
     graphDiv.append('svg')
+        .classed('zoom-brush-svg', true)
         .attr('xmlns', 'http://www.w3.org/2000/svg')
-        .call(link((elem, layout) => {
+        .call(link(store,(elem, layout) => {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.bottom}`);
                 elem.attr('width', layout.width);
                 elem.attr('height', layout.height);
@@ -291,33 +314,25 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
             ))
         .call(svg => {
             svg.append('g')
-                .call(link((elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`),
+                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`),
                                 getZoomLayout
                 ))
-                .call(link(appendXAxis, createStructuredSelector({
+                .call(link(store, appendXAxis, createStructuredSelector({
                     xAxis: getZoomXAxis,
                     layout: getZoomLayout
                 })))
-                .call(link(plotDataLines, createStructuredSelector({
+                .call(link(store, plotDataLines, createStructuredSelector({
                     visible: isVisibleSelector('current'),
                     tsLinesMap: currentVariableLineSegmentsSelector('current'),
-                    xScale: xScaleSelector('current'),
+                    xScale: getZoomXScale('current'),
                     yScale: getZoomYScale,
                     tsKey: () => 'compare'
                 })));
-        });
-
-    //const brushed = function() {
-    //    if (event.sourceEvent && event.sourceEvent.type === 'zoom') {
-    //        return;
-    //    }
-    //    const brush_scale = event.selection || xScaleSelector
-
-    //}
-
-    //const brush = brushX()
-    //    .call(link((brushElem, layout) => {
-    //        brushElem.extent([0, 0], [layout.width, layout.height])
-    //    }, getZoomLayout))
-    //    .on('brush end', brushed);
+        })
+        .append('g').attr('class', 'brush')
+            .call(graphBrush)
+            .call(link(store, (elem, layout) => {
+                elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
+                graphBrush.move(elem, [0, layout.width - layout.margin.right]);
+            }, getZoomLayout));
 };

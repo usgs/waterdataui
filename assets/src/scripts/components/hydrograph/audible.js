@@ -3,7 +3,7 @@ import { select } from 'd3-selection';
 import memoize from 'fast-memoize';
 import { createSelector, createStructuredSelector } from 'reselect';
 import { tsCursorPointsSelector } from './cursor';
-import { xScaleSelector, getMainYScale } from './scales';
+import { getMainXScale, getMainYScale } from './scales';
 import { allTimeSeriesSelector } from './time-series';
 import config from '../../config';
 import { link } from '../../lib/d3-redux';
@@ -144,7 +144,7 @@ export const audibleUI = function (elem, store) {
         .call(link(store, function(elem, xScale) {
             const domain = xScale.domain();
             elem.attr('data-max-offset', domain[1] - domain[0]);
-        }, xScaleSelector('current')))
+        }, getMainXScale('current')))
         .on('click', () =>  {
             if (button.attr('title') === 'Play') {
                 store.dispatch(Actions.startTimeSeriesPlay(button.attr('data-max-offset')));

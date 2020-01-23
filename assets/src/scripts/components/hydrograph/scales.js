@@ -64,13 +64,24 @@ export const createYScale = function (parmCd, extent, size) {
  * @param  {Object} state       Redux store
  * @return {Function}           D3 scale function
  */
-export const xScaleSelector = memoize(tsKey => createSelector(
-    getMainLayout,
+export const getXScale = memoize((kind, tsKey) => createSelector(
+    getLayout(kind),
     getRequestTimeRange(tsKey),
-    (layout, requestTimeRange) => {
-        return createXScale(requestTimeRange, layout.width - layout.margin.right);
+        state => state.ui.hydrographXRange,
+    (layout, requestTimeRange, hydrographXRange) => {
+        let timeRange;
+        if (kind === 'ZOOM') {
+            timeRange = requestTimeRange;
+        } else {
+            timeRange = hydrographXRange || requestTimeRange;
+        }
+        return createXScale(timeRange, layout.width - layout.margin.right);
     }
 ));
+
+export const getMainXScale = (tsKey) => getXScale('MAIN', tsKey);
+export const getZoomXScale = (tsKey) => getXScale('ZOOM', tsKey);
+
 
 
 /**

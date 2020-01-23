@@ -9,7 +9,7 @@ import {getCurrentMethodID} from '../../selectors/time-series-selector';
 
 import { currentVariablePointsByTsIdSelector } from './drawing-data';
 import { getMainLayout } from './layout';
-import { xScaleSelector } from './scales';
+import { getMainXScale } from './scales';
 import { isVisibleSelector } from './time-series';
 
 
@@ -21,7 +21,7 @@ const SLIDER_OFFSET_PX = 10;
 
 
 export const cursorOffsetSelector = createSelector(
-    xScaleSelector('current'),
+    getMainXScale('current'),
     state => state.timeSeriesState.cursorOffset,
     (xScale, cursorOffset) => {
         // If cursorOffset is false, don't show it
@@ -45,7 +45,7 @@ export const cursorOffsetSelector = createSelector(
  */
 export const cursorTimeSelector = memoize(tsKey => createSelector(
     cursorOffsetSelector,
-    xScaleSelector(tsKey),
+    getMainXScale(tsKey),
     (cursorOffset, xScale) => {
         return cursorOffset ? new Date(xScale.domain()[0] + cursorOffset) : null;
     }
@@ -135,7 +135,7 @@ export const cursorSlider = function (elem, store) {
                     input.attr('min', 0)
                         .attr('max', timeScale)
                         .attr('step', timeScale / SLIDER_STEPS);
-                }, xScaleSelector('current')))
+                }, getMainXScale('current')))
                 .call(link(store,(input, cursorOffset) => {
                     input.property('value', cursorOffset || input.attr('max'))
                         .classed('active', cursorOffset !== null);
@@ -147,7 +147,7 @@ export const cursorSlider = function (elem, store) {
                     input.style('width', maxXScaleRange - (layout.margin.left + layout.margin.right) + SLIDER_OFFSET_PX * 2 + 'px');
                 }, createStructuredSelector( {
                     layout: getMainLayout,
-                    xScale: xScaleSelector('current')
+                    xScale: getMainXScale('current')
                 })));
         });
 };
