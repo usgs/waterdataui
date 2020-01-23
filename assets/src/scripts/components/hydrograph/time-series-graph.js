@@ -90,7 +90,7 @@ const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
     }
 };
 
-const plotDataLines = function(elem, {visible, tsLinesMap, tsKey, xScale, yScale}, container) {
+const plotDataLines = function(elem, {visible, tsLinesMap, tsKey, xScale, yScale, layout, enableClip}, container) {
     container = container || elem.append('g');
 
     const elemId = `ts-${tsKey}-group`;
@@ -98,7 +98,14 @@ const plotDataLines = function(elem, {visible, tsLinesMap, tsKey, xScale, yScale
     const tsLineGroup = container
         .append('g')
             .attr('id', elemId)
+            .attr('x', layout.margin.left)
+            .attr('y', layout.margin.top)
+            .attr('width', layout.width - layout.margin.right)
+            .attr('height', layout.height - layout.margin.bottom)
             .classed('tsKey', true);
+    if (enableClip) {
+        container.select(`#${elemId}`).attr('clip-path', 'url(#graph-clip)');
+    }
 
     for (const lines of Object.values(tsLinesMap)) {
         plotDataLine(tsLineGroup, {visible, lines, tsKey, xScale, yScale});
@@ -163,7 +170,8 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
         .y(function(d) {
             return yscale(d.value);
         });
-    let medianGrp = elem.append('g');
+    const medianGrp = elem.append('g')
+        .attr('clip-path', 'url(#graph-clip');
     medianGrp.append('path')
         .datum(points)
         .classed('median-data-series', true)
@@ -277,32 +285,44 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
             idPrefix: () => 'hydrograph'
         })))
         .call(plotSvgDefs)
-            .call(svg => {
-                svg.append('g')
-                    .call(link(store, (elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), getMainLayout))
-                    .call(link(store, appendAxes, getAxes()))
-                    .call(link(store, plotDataLines, createStructuredSelector({
-                        visible: isVisibleSelector('current'),
-                        tsLinesMap: currentVariableLineSegmentsSelector('current'),
-                        xScale: getMainXScale('current'),
-                        yScale: getMainYScale,
-                        tsKey: () => 'current'
-                    })))
-                    .call(link(store, plotDataLines, createStructuredSelector({
-                        visible: isVisibleSelector('compare'),
-                        tsLinesMap: currentVariableLineSegmentsSelector('compare'),
-                        xScale: getMainXScale('compare'),
-                        yScale: getMainYScale,
-                        tsKey: () => 'compare'
-                    })))
-                    .call(createTooltipFocus, store)
-                    .call(link(store, plotAllMedianPoints, createStructuredSelector({
-                        visible: isVisibleSelector('median'),
-                        xscale: getMainXScale('current'),
-                        yscale: getMainYScale,
-                        seriesPoints: getCurrentVariableMedianStatPoints
-                    })));
-            });
+        .call(link(store, (svg, layout) => {
+            svg.select('#graph-clip').remove();
+            svg.append('clipPath')
+                .attr('id', 'graph-clip')
+                .append('rect')
+                    .attr('x', 0)
+                    .attr('y', 0)
+                    .attr('width', layout.width - layout.margin.right)
+                    .attr('height', layout.height - layout.margin.bottom);
+            svg.append('g')
+                .call(link(store, (elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), getMainLayout))
+                .call(link(store, appendAxes, getAxes()))
+                .call(link(store, plotDataLines, createStructuredSelector({
+                    visible: isVisibleSelector('current'),
+                    tsLinesMap: currentVariableLineSegmentsSelector('current'),
+                    xScale: getMainXScale('current'),
+                    yScale: getMainYScale,
+                    tsKey: () => 'current',
+                    layout: getMainLayout,
+                    enableClip: () => true
+                })))
+                .call(link(store, plotDataLines, createStructuredSelector({
+                    visible: isVisibleSelector('compare'),
+                    tsLinesMap: currentVariableLineSegmentsSelector('compare'),
+                    xScale: getMainXScale('compare'),
+                    yScale: getMainYScale,
+                    tsKey: () => 'compare',
+                    layout: getMainLayout,
+                    enableClip: () => true
+                })))
+                .call(createTooltipFocus, store)
+                .call(link(store, plotAllMedianPoints, createStructuredSelector({
+                    visible: isVisibleSelector('median'),
+                    xscale: getMainXScale('current'),
+                    yscale: getMainYScale,
+                    seriesPoints: getCurrentVariableMedianStatPoints
+                })));
+        }, getMainLayout));
 
     //Create brush context
     graphDiv.append('svg')
@@ -328,7 +348,9 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
                     tsLinesMap: currentVariableLineSegmentsSelector('current'),
                     xScale: getZoomXScale('current'),
                     yScale: getZoomYScale,
-                    tsKey: () => 'compare'
+                    tsKey: () => 'compare',
+                    layout: getZoomLayout,
+                    enableClip: () => false
                 })));
         })
         .append('g').attr('class', 'brush')
