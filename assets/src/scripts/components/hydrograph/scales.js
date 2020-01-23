@@ -2,7 +2,7 @@ import { scaleLinear, scaleSymlog } from 'd3-scale';
 import memoize from 'fast-memoize';
 import { createSelector } from 'reselect';
 import { getYDomain, SYMLOG_PARMS } from './domain';
-import { getLayout, getMainLayout } from './layout';
+import { getLayout } from './layout';
 import { timeSeriesSelector, TEMPERATURE_PARAMETERS } from './time-series';
 import { visiblePointsSelector, pointsByTsKeySelector } from './drawing-data';
 import { getVariables, getCurrentParmCd, getRequestTimeRange } from '../../selectors/time-series-selector';
@@ -73,7 +73,7 @@ export const getXScale = memoize((kind, tsKey) => createSelector(
         if (kind === 'ZOOM') {
             timeRange = requestTimeRange;
         } else {
-            timeRange = hydrographXRange || requestTimeRange;
+            timeRange = hydrographXRange ? hydrographXRange : requestTimeRange;
         }
         return createXScale(timeRange, layout.width - layout.margin.right);
     }

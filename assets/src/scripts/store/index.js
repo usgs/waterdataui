@@ -375,6 +375,11 @@ export const Actions = {
             hydrographXRange
         };
     },
+    clearHydrographXRange() {
+        return {
+            type: 'CLEAR_HYDROGRAPH_X_RANGE'
+        }
+    },
     setCurrentVariable(variableID) {
         return {
             type: 'SET_CURRENT_VARIABLE',
@@ -478,7 +483,8 @@ export const configureStore = function (initialState) {
         },
         ui : {
             windowWidth: 1024,
-            width: 800
+            width: 800,
+            hydrographXRange: {}
         },
         ...initialState
     };

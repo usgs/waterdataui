@@ -239,18 +239,20 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
     let graphBrush, graphDiv;
 
     const brushed = function() {
-        console.log(`Brushed event type ${event.sourceEvent? event.sourceEvent.type: 'No event'}`);
+        console.log(`Brushed event type ${event.sourceEvent ? event.sourceEvent.type : 'No event'}`);
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
             return;
         }
         const xScale = getZoomXScale('current')(store.getState());
         const brushRange = event.selection || xScale.range();
-        store.dispatch(Actions.setHydrographXRange(brushRange.map(xScale.invert, xScale)));
+        // Only about the main hydrograph when user is done adjusting the time range.
+        if (event.sourceEvent.type === 'mouseup') {
+            store.dispatch(Actions.setHydrographXRange(brushRange.map(xScale.invert, xScale)));
+        }
     };
 
-
     graphBrush = brushX()
-        .on('brush end', brushed)
+        .on('brush end', brushed);
     listen(store, getZoomLayout, (layout) => {
         graphBrush.extent([[layout.margin.left, 0], [layout.margin.left + layout.width, layout.height]]);
     });
