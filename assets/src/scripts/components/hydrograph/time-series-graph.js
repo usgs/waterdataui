@@ -164,14 +164,13 @@ const plotSvgDefs = function(elem) {
 const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
     const stepFunction = d3Line()
         .curve(curveStepAfter)
-        .x(function(d) {
+        .x(function (d) {
             return xscale(d.date);
         })
-        .y(function(d) {
+        .y(function (d) {
             return yscale(d.value);
         });
-    const medianGrp = elem.append('g')
-        .attr('clip-path', 'url(#graph-clip');
+    const medianGrp = elem.append('g');
     medianGrp.append('path')
         .datum(points)
         .classed('median-data-series', true)
@@ -188,7 +187,7 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
  * @param  {Function} yscale
  * @param  {Array} pointsList
  */
-const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoints}) {
+const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
     elem.select('#median-points').remove();
     if (!visible) {
         return;
@@ -196,6 +195,9 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoin
     const container = elem
         .append('g')
             .attr('id', 'median-points');
+    if (enableClip) {
+        container.attr('clip-path', 'url(#graph-clip');
+    }
     seriesPoints.forEach((points, index) => {
         plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points: points});
     });
@@ -247,7 +249,6 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
     let graphBrush, graphDiv;
 
     const brushed = function() {
-        console.log(`Brushed event type ${event.sourceEvent ? event.sourceEvent.type : 'No event'}`);
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
             return;
         }
@@ -255,15 +256,16 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
         const brushRange = event.selection || xScale.range();
         // Only about the main hydrograph when user is done adjusting the time range.
         if (event.sourceEvent.type === 'mouseup') {
+            console.log('Updating main scale');
             store.dispatch(Actions.setHydrographXRange(brushRange.map(xScale.invert, xScale)));
         }
     };
 
     graphBrush = brushX()
         .on('brush end', brushed);
-    listen(store, getZoomLayout, (layout) => {
-        graphBrush.extent([[layout.margin.left, 0], [layout.margin.left + layout.width, layout.height]]);
-    });
+    //listen(store, getZoomLayout, (layout) => {
+    //    graphBrush.extent([[layout.margin.left, 0], [layout.margin.left + layout.width, layout.height]]);
+    //});
 
     graphDiv = elem.append('div')
         .attr('class', 'hydrograph-container')
@@ -295,6 +297,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
                     .attr('width', layout.width - layout.margin.right)
                     .attr('height', layout.height - layout.margin.bottom);
             svg.append('g')
+                .attr('class', 'plot-data-lines-group')
                 .call(link(store, (elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), getMainLayout))
                 .call(link(store, appendAxes, getAxes()))
                 .call(link(store, plotDataLines, createStructuredSelector({
@@ -320,15 +323,17 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
                     visible: isVisibleSelector('median'),
                     xscale: getMainXScale('current'),
                     yscale: getMainYScale,
-                    seriesPoints: getCurrentVariableMedianStatPoints
+                    seriesPoints: getCurrentVariableMedianStatPoints,
+                    enableClip: () => true
                 })));
         }, getMainLayout));
 
     //Create brush context
     graphDiv.append('svg')
-        .classed('zoom-brush-svg', true)
+        .classed('brush-svg', true)
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .call(link(store,(elem, layout) => {
+                console.log(`brush-svg viewBox ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.bottom}\``)
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.bottom}`);
                 elem.attr('width', layout.width);
                 elem.attr('height', layout.height);
@@ -348,15 +353,18 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
                     tsLinesMap: currentVariableLineSegmentsSelector('current'),
                     xScale: getZoomXScale('current'),
                     yScale: getZoomYScale,
-                    tsKey: () => 'compare',
+                    tsKey: () => 'current',
                     layout: getZoomLayout,
                     enableClip: () => false
                 })));
         })
-        .append('g').attr('class', 'brush')
-            .call(graphBrush)
-            .call(link(store, (elem, layout) => {
-                elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
-                graphBrush.move(elem, [0, layout.width - layout.margin.right]);
-            }, getZoomLayout));
+        .call(link(store, (svg, layout) => {
+            svg.select('.brush').remove();
+            const group = svg.append('g').attr('class', 'brush')
+                .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
+            console.log(`Setting graphBrush extent to ${layout.margin.right}, ${layout.width}`);
+            graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height]]);
+            group.call(graphBrush);
+            graphBrush.move(group, [0, layout.width - layout.margin.right]);
+        }, getZoomLayout));
 };

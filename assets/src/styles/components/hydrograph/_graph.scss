@@ -19,7 +19,7 @@
 }
 
 svg {
-  .overlay {
+  .focus-overlay {
     fill: none;
     pointer-events: all;
   }
@@ -38,6 +38,12 @@ svg {
       stroke-width: 1px;
       stroke-dasharray: 5, 5;
     }
+  }
+
+  .zoom {
+    cursor: move;
+    fill: none;
+    pointer-events: all;
   }
 
   .line-segment {
