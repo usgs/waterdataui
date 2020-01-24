@@ -7,7 +7,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { link, provide } from '../../lib/redux';
 
-import {isLoadingTS, hasAnyTimeSeries } from '../../selectors/time-series-selector';
+import {isLoadingTS, hasAnyTimeSeries, getIanaTimeZone} from '../../selectors/time-series-selector';
 import { Actions } from '../../store';
 import { callIf } from '../../utils';
 
@@ -23,6 +23,7 @@ import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters
 import { timeSeriesScalesByParmCdSelector } from './scales';
 import { allTimeSeriesSelector } from './time-series';
 import { drawTimeSeriesGraph } from './time-series-graph';
+import {DateTime} from "luxon";
 
 
 const drawMessage = function(elem, message) {
@@ -69,15 +70,18 @@ const dataLoadingAlert = function(elem, message) {
 export const attachToNode = function (store,
                                       node,
                                       {
-                                          siteno,
-                                          parameter,
-                                          compare,
-                                          period,
-                                          cursorOffset,
-                                          showOnlyGraph = false,
-                                          showMLName = false
-                                      } = {}) {
+     siteno,
+     parameter,
+     compare,
+     period,
+     startDT,
+     endDT,
+     cursorOffset,
+     showOnlyGraph = false,
+     showMLName = false
+ } = {}, locationIanaTimeZone = null) {
     const nodeElem = select(node);
+
     if (!siteno) {
         select(node).call(drawMessage, 'No data is available.');
         return;
@@ -101,6 +105,10 @@ export const attachToNode = function (store,
     // If specified, initialize the cursorOffset
     if (cursorOffset !== undefined) {
         store.dispatch(Actions.setCursorOffset(cursorOffset));
+    }
+
+    if (startDT !==undefined && endDT !== undefined) {
+        store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, parameter));
     }
 
     // Fetch the time series data

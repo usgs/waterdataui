@@ -48,6 +48,20 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
         optional: true,
         isBoolean: true,
         toBoolean: true
+    },
+    startDT: {
+        in: ['query'],
+        optional: true,
+        toDate: true,
+        isISO8601: true,
+        errorMessage: "The startDT must be a date"
+    },
+    endDT: {
+        in: ['query'],
+        optional: true,
+        toDate: true,
+        isISO8601: true,
+        errorMessage: "The endDT must be a date and must be after the startDT"
     }
 }), function (req, res) {
     const errors = validationResult(req).array();
@@ -62,6 +76,8 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
         parameterCode: req.query.parameterCode,
         compare: req.query.compare,
         period: req.query.period,
+        startDT: req.query.startDT,
+        endDT: req.query.endDT,
         showMLName: req.query.title === 'true'
     });
 });

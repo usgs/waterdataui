@@ -967,6 +967,36 @@ describe('Redux store', () => {
                 expect(Actions.retrieveCustomTimeSeries.calls.argsFor(0)[2]).toEqual(1267423200000);
             });
         });
+
+        describe('retrieveDataForDateRange', () => {
+            let mockDispatch;
+            let mockGetState;
+
+            beforeEach(() => {
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState').and.returnValue({
+                    series: {
+                        ianaTimeZone: 'America/Chicago'
+                    }
+                });
+
+                spyOn(Actions, 'retrieveCustomTimeSeries');
+                jasmine.Ajax.install();
+            });
+
+            afterEach(() => {
+                jasmine.Ajax.uninstall();
+            });
+
+            it('Converts time strings to javascript date/time objects correctly and takes a parmCd', () => {
+                Actions.retrieveDataForDateRange('12345678', '2010-01-01', '2010-03-01', '00060')(mockDispatch, mockGetState);
+                expect(Actions.retrieveCustomTimeSeries).toHaveBeenCalled();
+                expect(Actions.retrieveCustomTimeSeries.calls.argsFor(0)[0]).toEqual('12345678');
+                expect(Actions.retrieveCustomTimeSeries.calls.argsFor(0)[1]).toEqual(1262325600000);
+                expect(Actions.retrieveCustomTimeSeries.calls.argsFor(0)[2]).toEqual(1267423200000);
+                expect(Actions.retrieveCustomTimeSeries.calls.argsFor(0)[3]).toEqual('00060');
+            });
+        });
     });
 
     describe('synchronous actions', () => {
