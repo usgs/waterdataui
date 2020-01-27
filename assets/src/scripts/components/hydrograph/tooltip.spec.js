@@ -158,7 +158,13 @@ describe('Hydrograph tooltip module', () => {
             },
             currentVariableID: '00060id',
             currentMethodID: 69928,
-            currentDateRange: 'P7D'
+            currentDateRange: 'P7D',
+            customTimeRange: null
+        },
+        ui: {
+            windowWidth: 1300,
+            width: 990,
+            hydrographXRange: undefined
         }
     };
 

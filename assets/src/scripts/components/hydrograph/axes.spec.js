@@ -26,7 +26,7 @@ describe('Chart axes', () => {
     describe('appendAxes', () => {
         secondaryYScale = null;
         let {xAxis, yAxis, secondaryYAxis} = createAxes(
-            {xScale, yScale, secondaryYScale},
+            xScale, yScale, secondaryYScale,
             100, '00060', 'P7D', timeZone
         );
 
@@ -73,8 +73,7 @@ describe('Chart axes', () => {
     describe('appendAxes with a secondary y-axis', () => {
         secondaryYScale = scaleLinear().range([0, 10]).domain([30, 40]);
         let {xAxis, yAxis, secondaryYAxis} = createAxes(
-            {xScale, yScale, secondaryYScale},
-            100, '00060', 'P7D', timeZone
+            xScale, yScale, secondaryYScale, 100, '00060', 'P7D', timeZone
         );
 
         beforeEach(() => {

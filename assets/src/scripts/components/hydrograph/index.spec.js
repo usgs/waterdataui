@@ -224,8 +224,8 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         });
 
         it('should render the correct number of svg nodes', () => {
-            // one main hydrograph, legend and two sparklines
-            expect(selectAll('svg').size()).toBe(4);
+            // one main hydrograph, brush, legend and two sparklines
+            expect(selectAll('svg').size()).toBe(5);
         });
 
         it('should have a title div', () => {

@@ -411,7 +411,7 @@ export const Actions = {
             const locationIanaTimeZone = getIanaTimeZone(state);
             const startTime = new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis();
             const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis();
-            dispatch(Actions.retrieveCustomTimeSeries(siteno, startTime, endTime));
+            return dispatch(Actions.retrieveCustomTimeSeries(siteno, startTime, endTime));
         };
     },
     setGageHeightFromStageIndex(index) {

@@ -152,7 +152,7 @@ describe('scales', () => {
 
     describe('getSecondaryYScale', () => {
         it('Returns null if a non-temperature parameter is selected', () => {
-            expect(getSecondaryYScale({
+            expect(getSecondaryYScale()({
                 series: {
                     variables: {
                        '00060ID': {
@@ -181,7 +181,7 @@ describe('scales', () => {
         });
 
         it('Returns a scale if a celsius temperature parameter is selected', () => {
-            const secondaryYScale = getSecondaryYScale({
+            const secondaryYScale = getSecondaryYScale()({
                 series: {
                     variables: {
                        '00010ID': {
@@ -211,7 +211,7 @@ describe('scales', () => {
         });
 
         it('Returns a scale if a fahrenheit temperature parameter is selected', () => {
-            const secondaryYScale = getSecondaryYScale({
+            const secondaryYScale = getSecondaryYScale()({
                 series: {
                     variables: {
                        '00011ID': {
