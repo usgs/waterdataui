@@ -1,118 +1,23 @@
-import { extent } from 'd3-array';
-import { brushX } from 'd3-brush';
-import { line as d3Line, curveStepAfter } from 'd3-shape';
-import { event } from 'd3-selection';
+import {line as d3Line, curveStepAfter} from 'd3-shape';
 
-import { link, listen } from '../../lib/d3-redux';
-
-import { addSVGAccessibility } from '../../accessibility';
+import {addSVGAccessibility} from '../../accessibility';
 import config from '../../config';
-import { getAgencyCode, getMonitoringLocationName } from '../../selectors/time-series-selector';
-import { Actions } from '../../store';
+import {link} from '../../lib/d3-redux';
+import {getAgencyCode, getMonitoringLocationName} from '../../selectors/time-series-selector';
 
-import { appendAxes, appendXAxis, getAxes, getZoomXAxis}  from './axes';
+import {appendAxes, getAxes}  from './axes';
 import {
     currentVariableLineSegmentsSelector,
     getCurrentVariableMedianStatPoints,
-    HASH_ID,
-    MASK_DESC
+    HASH_ID
 } from './drawing-data';
-import { CIRCLE_RADIUS_SINGLE_PT, getMainLayout, getZoomLayout } from './layout';
-import { createStructuredSelector } from 'reselect';
-import { getMainXScale, getZoomXScale, getMainYScale, getZoomYScale } from './scales';
-import { descriptionSelector, isVisibleSelector, titleSelector } from './time-series';
-import { createTooltipFocus, createTooltipText}  from './tooltip';
-import { mediaQuery}  from '../../utils';
-
-const plotDataLine = function(elem, {visible, lines, tsKey, xScale, yScale}) {
-    if (!visible) {
-        return;
-    }
-
-    const tsKeyClass = `ts-${tsKey}`;
-
-    for (let line of lines) {
-        if (line.classes.dataMask === null) {
-            // If this is a single point line, then represent it as a circle.
-            // Otherwise, render as a line.
-            if (line.points.length === 1) {
-                elem.append('circle')
-                    .data(line.points)
-                    .classed('line-segment', true)
-                    .classed('approved', line.classes.approved)
-                    .classed('estimated', line.classes.estimated)
-                    .classed('not-current-method', !line.classes.currentMethod)
-                    .classed(tsKeyClass, true)
-                    .attr('r', CIRCLE_RADIUS_SINGLE_PT)
-                    .attr('cx', d => xScale(d.dateTime))
-                    .attr('cy', d => yScale(d.value));
-            } else {
-                const tsLine = d3Line()
-                    .x(d => xScale(d.dateTime))
-                    .y(d => yScale(d.value));
-                elem.append('path')
-                    .datum(line.points)
-                    .classed('line-segment', true)
-                    .classed('approved', line.classes.approved)
-                    .classed('estimated', line.classes.estimated)
-                    .classed('not-current-method', !line.classes.currentMethod)
-                    .classed(`ts-${tsKey}`, true)
-                    .attr('d', tsLine);
-            }
-        } else {
-            const maskCode = line.classes.dataMask.toLowerCase();
-            const maskDisplayName = MASK_DESC[maskCode].replace(' ', '-').toLowerCase();
-            const [xDomainStart, xDomainEnd] = extent(line.points, d => d.dateTime);
-            const [yRangeStart, yRangeEnd] = yScale.domain();
-            let maskGroup = elem.append('g')
-                .attr('class', `${tsKey}-mask-group`);
-            const xSpan = xScale(xDomainEnd) - xScale(xDomainStart);
-            const rectWidth = xSpan > 1 ? xSpan : 1;
-
-            maskGroup.append('rect')
-                .attr('x', xScale(xDomainStart))
-                .attr('y', yScale(yRangeEnd))
-                .attr('width', rectWidth)
-                .attr('height', Math.abs(yScale(yRangeEnd) - yScale(yRangeStart)))
-                .attr('class', `mask ${maskDisplayName}-mask`)
-                .classed(`ts-${tsKey}`, true);
-
-
-            const patternId = HASH_ID[tsKey] ? `url(#${HASH_ID[tsKey]})` : '';
-
-            maskGroup.append('rect')
-                .attr('x', xScale(xDomainStart))
-                .attr('y', yScale(yRangeEnd))
-                .attr('width', rectWidth)
-                .attr('height', Math.abs(yScale(yRangeEnd) - yScale(yRangeStart)))
-                .attr('fill', patternId);
-        }
-    }
-};
-
-const plotDataLines = function(elem, {visible, tsLinesMap, tsKey, xScale, yScale, layout, enableClip}, container) {
-    container = container || elem.append('g');
-
-    const elemId = `ts-${tsKey}-group`;
-    container.selectAll(`#${elemId}`).remove();
-    const tsLineGroup = container
-        .append('g')
-            .attr('id', elemId)
-            .attr('x', layout.margin.left)
-            .attr('y', layout.margin.top)
-            .attr('width', layout.width - layout.margin.right)
-            .attr('height', layout.height - layout.margin.bottom)
-            .classed('tsKey', true);
-    if (enableClip) {
-        container.select(`#${elemId}`).attr('clip-path', 'url(#graph-clip)');
-    }
-
-    for (const lines of Object.values(tsLinesMap)) {
-        plotDataLine(tsLineGroup, {visible, lines, tsKey, xScale, yScale});
-    }
-
-    return container;
-};
+import {getMainLayout} from './layout';
+import {createStructuredSelector} from 'reselect';
+import {getMainXScale, getMainYScale} from './scales';
+import {descriptionSelector, isVisibleSelector, titleSelector} from './time-series';
+import {drawDataLines} from './time-series-data';
+import {createTooltipFocus, createTooltipText}  from './tooltip';
+import {mediaQuery}  from '../../utils';
 
 const plotSvgDefs = function(elem) {
 
@@ -246,26 +151,7 @@ const watermark = function (elem, store) {
 };
 
 export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
-    let graphBrush, graphDiv;
-
-    const brushed = function() {
-        if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
-            return;
-        }
-        const xScale = getZoomXScale('current')(store.getState());
-        const brushRange = event.selection || xScale.range();
-        // Only about the main hydrograph when user is done adjusting the time range.
-        if (event.sourceEvent.type === 'mouseup') {
-            console.log('Updating main scale');
-            store.dispatch(Actions.setHydrographXRange(brushRange.map(xScale.invert, xScale)));
-        }
-    };
-
-    graphBrush = brushX()
-        .on('brush end', brushed);
-    //listen(store, getZoomLayout, (layout) => {
-    //    graphBrush.extent([[layout.margin.left, 0], [layout.margin.left + layout.width, layout.height]]);
-    //});
+    let graphDiv;
 
     graphDiv = elem.append('div')
         .attr('class', 'hydrograph-container')
@@ -300,7 +186,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
                 .attr('class', 'plot-data-lines-group')
                 .call(link(store, (elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), getMainLayout))
                 .call(link(store, appendAxes, getAxes()))
-                .call(link(store, plotDataLines, createStructuredSelector({
+                .call(link(store, drawDataLines, createStructuredSelector({
                     visible: isVisibleSelector('current'),
                     tsLinesMap: currentVariableLineSegmentsSelector('current'),
                     xScale: getMainXScale('current'),
@@ -309,7 +195,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
                     layout: getMainLayout,
                     enableClip: () => true
                 })))
-                .call(link(store, plotDataLines, createStructuredSelector({
+                .call(link(store, drawDataLines, createStructuredSelector({
                     visible: isVisibleSelector('compare'),
                     tsLinesMap: currentVariableLineSegmentsSelector('compare'),
                     xScale: getMainXScale('compare'),
@@ -327,44 +213,4 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
                     enableClip: () => true
                 })));
         }, getMainLayout));
-
-    //Create brush context
-    graphDiv.append('svg')
-        .classed('brush-svg', true)
-        .attr('xmlns', 'http://www.w3.org/2000/svg')
-        .call(link(store,(elem, layout) => {
-                console.log(`brush-svg viewBox ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.bottom}\``)
-                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.bottom}`);
-                elem.attr('width', layout.width);
-                elem.attr('height', layout.height);
-            }, getZoomLayout
-            ))
-        .call(svg => {
-            svg.append('g')
-                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`),
-                                getZoomLayout
-                ))
-                .call(link(store, appendXAxis, createStructuredSelector({
-                    xAxis: getZoomXAxis,
-                    layout: getZoomLayout
-                })))
-                .call(link(store, plotDataLines, createStructuredSelector({
-                    visible: isVisibleSelector('current'),
-                    tsLinesMap: currentVariableLineSegmentsSelector('current'),
-                    xScale: getZoomXScale('current'),
-                    yScale: getZoomYScale,
-                    tsKey: () => 'current',
-                    layout: getZoomLayout,
-                    enableClip: () => false
-                })));
-        })
-        .call(link(store, (svg, layout) => {
-            svg.select('.brush').remove();
-            const group = svg.append('g').attr('class', 'brush')
-                .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
-            console.log(`Setting graphBrush extent to ${layout.margin.right}, ${layout.width}`);
-            graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height]]);
-            group.call(graphBrush);
-            graphBrush.move(group, [0, layout.width - layout.margin.right]);
-        }, getZoomLayout));
 };

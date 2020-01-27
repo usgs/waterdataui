@@ -120,7 +120,7 @@ export const cursorSlider = function (elem, store) {
                 .attr('id', 'cursor-slider')
                 .attr('class', 'usa-range')
                 .attr('aria-label', 'Hydrograph cursor slider')
-                .on('input', () => {
+                .on('input', function() {
                     store.dispatch(Actions.setCursorOffset(this.valueAsNumber));
                 })
                 .on('focus', function () {

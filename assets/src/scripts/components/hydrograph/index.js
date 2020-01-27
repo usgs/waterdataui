@@ -1,27 +1,27 @@
 /**
  * Hydrograph charting module.
  */
-import { select } from 'd3-selection';
+import {select} from 'd3-selection';
 
-import { createStructuredSelector } from 'reselect';
+import {createStructuredSelector} from 'reselect';
 
-import { link } from '../../lib/d3-redux';
+import {link} from '../../lib/d3-redux';
+import {isLoadingTS, hasAnyTimeSeries} from '../../selectors/time-series-selector';
+import {Actions} from '../../store';
 
-import {isLoadingTS, hasAnyTimeSeries } from '../../selectors/time-series-selector';
-import { Actions } from '../../store';
-
-import { cursorSlider } from './cursor';
-import { drawDateRangeControls } from './date-controls';
-import { lineSegmentsByParmCdSelector } from './drawing-data';
-import { drawGraphControls } from './graph-controls';
-import { SPARK_LINE_DIM } from './layout';
-import { drawTimeSeriesLegend } from './legend';
-import { drawLoadingIndicator } from '../loading-indicator';
-import { drawMethodPicker } from './method-picker';
-import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
-import { timeSeriesScalesByParmCdSelector } from './scales';
-import { allTimeSeriesSelector } from './time-series';
-import { drawTimeSeriesGraph } from './time-series-graph';
+import {cursorSlider} from './cursor';
+import {drawDateRangeControls} from './date-controls';
+import {lineSegmentsByParmCdSelector} from './drawing-data';
+import {drawGraphBrush} from './graph-brush';
+import {drawGraphControls} from './graph-controls';
+import {SPARK_LINE_DIM}  from './layout';
+import {drawTimeSeriesLegend} from './legend';
+import {drawLoadingIndicator} from '../loading-indicator';
+import {drawMethodPicker} from './method-picker';
+import {plotSeriesSelectTable, availableTimeSeriesSelector} from './parameters';
+import {timeSeriesScalesByParmCdSelector} from './scales';
+import {allTimeSeriesSelector} from './time-series';
+import {drawTimeSeriesGraph} from './time-series-graph';
 
 
 const drawMessage = function(elem, message) {
@@ -118,6 +118,7 @@ export const attachToNode = function (store,
     if (!showOnlyGraph) {
         graphContainer.call(cursorSlider, store);
     }
+    graphContainer.call(drawGraphBrush, store);
     graphContainer.append('div')
         .classed('ts-legend-controls-container', true)
         .call(drawTimeSeriesLegend, store);
@@ -136,7 +137,7 @@ export const attachToNode = function (store,
                 siteno: () => siteno,
                 availableTimeSeries: availableTimeSeriesSelector,
                 lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current', 'P7D'),
-                timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM),
+                timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM)
             }), store));
         nodeElem.select('.provisional-data-alert')
             .call(link(store, function(elem, allTimeSeries) {

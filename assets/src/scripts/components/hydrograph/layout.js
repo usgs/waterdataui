@@ -55,6 +55,7 @@ export const getLayout = memoize(kind => createSelector(
             windowWidth: windowWidth,
             margin: {
                 ...margin,
+                top: kind === 'ZOOM' ? 0 : margin.top,
                 left: margin.left + approxLabelLength,
                 right: margin.right + approxLabelLength
             }

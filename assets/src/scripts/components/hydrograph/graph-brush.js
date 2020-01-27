@@ -1,0 +1,72 @@
+import {brushX} from 'd3-brush';
+import { event } from 'd3-selection';
+import {createStructuredSelector} from 'reselect';
+
+import {link} from '../../lib/d3-redux';
+
+import {Actions} from '../../store';
+
+import {appendXAxis, getZoomXAxis} from './axes';
+import {currentVariableLineSegmentsSelector} from './drawing-data';
+import {getZoomLayout} from './layout';
+import {getZoomXScale, getZoomYScale} from './scales';
+import {isVisibleSelector} from './time-series';
+import {drawDataLines} from './time-series-data';
+
+export const drawGraphBrush = function(container, store) {
+
+    const brushed = function() {
+        if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
+            return;
+        }
+        const xScale = getZoomXScale('current')(store.getState());
+        const brushRange = event.selection || xScale.range();
+        // Only about the main hydrograph when user is done adjusting the time range.
+        if (event.sourceEvent.type === 'mouseup') {
+            console.log('Updating main scale');
+            store.dispatch(Actions.setHydrographXRange(brushRange.map(xScale.invert, xScale)));
+        }
+    };
+
+    const graphBrush = brushX()
+        .on('brush end', brushed);
+
+    const div = container.append('div')
+        .attr('class', 'hydrograph-container');
+    div.append('svg')
+        .classed('brush-svg', true)
+        .attr('xmlns', 'http://www.w3.org/2000/svg')
+        .call(link(store,(elem, layout) => {
+                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.bottom}`);
+                elem.attr('width', layout.width);
+                elem.attr('height', layout.height);
+            }, getZoomLayout
+            ))
+        .call(svg => {
+            svg.append('g')
+                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`),
+                                getZoomLayout
+                ))
+                .call(link(store, appendXAxis, createStructuredSelector({
+                    xAxis: getZoomXAxis,
+                    layout: getZoomLayout
+                })))
+                .call(link(store, drawDataLines, createStructuredSelector({
+                    visible: isVisibleSelector('current'),
+                    tsLinesMap: currentVariableLineSegmentsSelector('current'),
+                    xScale: getZoomXScale('current'),
+                    yScale: getZoomYScale,
+                    tsKey: () => 'current',
+                    layout: getZoomLayout,
+                    enableClip: () => false
+                })));
+        })
+        .call(link(store, (svg, layout) => {
+            svg.select('.brush').remove();
+            const group = svg.append('g').attr('class', 'brush')
+                .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
+            graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom]]);
+            group.call(graphBrush);
+            graphBrush.move(group, [0, layout.width - layout.margin.right]);
+        }, getZoomLayout));
+};
