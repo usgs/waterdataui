@@ -6,10 +6,10 @@ import {link} from '../../lib/d3-redux';
 
 import {Actions} from '../../store';
 
-import {appendXAxis, getZoomXAxis} from './axes';
+import {appendXAxis, getBrushXAxis} from './axes';
 import {currentVariableLineSegmentsSelector} from './drawing-data';
-import {getZoomLayout} from './layout';
-import {getZoomXScale, getZoomYScale} from './scales';
+import {getBrushLayout} from './layout';
+import {getBrushXScale, getBrushYScale} from './scales';
 import {isVisibleSelector} from './time-series';
 import {drawDataLines} from './time-series-data';
 
@@ -19,7 +19,7 @@ export const drawGraphBrush = function(container, store) {
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
             return;
         }
-        const xScale = getZoomXScale('current')(store.getState());
+        const xScale = getBrushXScale('current')(store.getState());
         const brushRange = event.selection || xScale.range();
         // Only about the main hydrograph when user is done adjusting the time range.
         if (event.sourceEvent.type === 'mouseup') {
@@ -40,24 +40,24 @@ export const drawGraphBrush = function(container, store) {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.bottom}`);
                 elem.attr('width', layout.width);
                 elem.attr('height', layout.height);
-            }, getZoomLayout
+            }, getBrushLayout
             ))
         .call(svg => {
             svg.append('g')
                 .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`),
-                                getZoomLayout
+                                getBrushLayout
                 ))
                 .call(link(store, appendXAxis, createStructuredSelector({
-                    xAxis: getZoomXAxis,
-                    layout: getZoomLayout
+                    xAxis: getBrushXAxis,
+                    layout: getBrushLayout
                 })))
                 .call(link(store, drawDataLines, createStructuredSelector({
                     visible: isVisibleSelector('current'),
                     tsLinesMap: currentVariableLineSegmentsSelector('current'),
-                    xScale: getZoomXScale('current'),
-                    yScale: getZoomYScale,
+                    xScale: getBrushXScale('current'),
+                    yScale: getBrushYScale,
                     tsKey: () => 'current',
-                    layout: getZoomLayout,
+                    layout: getBrushLayout,
                     enableClip: () => false
                 })));
         })
@@ -68,5 +68,5 @@ export const drawGraphBrush = function(container, store) {
             graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom]]);
             group.call(graphBrush);
             graphBrush.move(group, [0, layout.width - layout.margin.right]);
-        }, getZoomLayout));
+        }, getBrushLayout));
 };

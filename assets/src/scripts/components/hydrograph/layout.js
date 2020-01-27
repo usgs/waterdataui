@@ -27,7 +27,7 @@ const MARGIN_SMALL_DEVICE = {
 export const CIRCLE_RADIUS = 4;
 export const CIRCLE_RADIUS_SINGLE_PT = 1;
 
-const BRUSH_ZOOM_HEIGHT = 100;
+const BRUSH_HEIGHT = 100;
 
 
 export const SPARK_LINE_DIM = {
@@ -45,7 +45,7 @@ export const getLayout = memoize(kind => createSelector(
     (state) => state.ui.windowWidth,
     tickSelector,
     (width, windowWidth, tickDetails) => {
-        const height = kind === 'ZOOM' ? BRUSH_ZOOM_HEIGHT : width * ASPECT_RATIO;
+        const height = kind === 'BRUSH' ? BRUSH_HEIGHT : width * ASPECT_RATIO;
         const margin = mediaQuery(config.USWDS_SITE_MAX_WIDTH) ? MARGIN : MARGIN_SMALL_DEVICE;
         const tickLengths = tickDetails.tickValues.map(v => tickDetails.tickFormat(v).length);
         const approxLabelLength = Math.max(...tickLengths) * 10;
@@ -55,7 +55,7 @@ export const getLayout = memoize(kind => createSelector(
             windowWidth: windowWidth,
             margin: {
                 ...margin,
-                top: kind === 'ZOOM' ? 0 : margin.top,
+                top: kind === 'BRUSH' ? 0 : margin.top,
                 left: margin.left + approxLabelLength,
                 right: margin.right + approxLabelLength
             }
@@ -64,9 +64,9 @@ export const getLayout = memoize(kind => createSelector(
 ));
 
 export const getMainLayout = getLayout();
-export const getZoomLayout = getLayout('ZOOM');
+export const getBrushLayout = getLayout('BRUSH');
 
-export const layoutZoomSelector = createSelector(
+export const layoutBrushSelector = createSelector(
     (state) => state.ui.width,
     (state) => state.ui.windowWidth
 );

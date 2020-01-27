@@ -215,7 +215,8 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                 },
                 ui: {
                     windowWidth: 400,
-                    width: 400
+                    width: 400,
+                    hydrographXRange: undefined
                 }
 
             });

@@ -9,7 +9,7 @@ import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius, mediaQuery, wra
 
 import { getYTickDetails } from './domain';
 import {getLayout} from './layout';
-import { getXScale, getZoomXScale, getYScale, getSecondaryYScale } from './scales';
+import { getXScale, getBrushXScale, getYScale, getSecondaryYScale } from './scales';
 import { yLabelSelector, secondaryYLabelSelector, tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
 
 
@@ -98,16 +98,7 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
     return dates;
 };
 
-/**
- * Create an x and y axis for hydrograph
- * @param  {Object} xScale      D3 Scale object for the x-axis
- * @param  {Object} yScale      D3 Scale object for the y-axis
- * @param  {Number} yTickSize   Size of inner ticks for the y-axis
- * @param {String} parmCd - parameter code of time series to be shown on the graph.
- * @param {String} period - ISO duration for date range of the time series
- * @param {String} ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
- * @return {Object} {xAxis, yAxis, secondardYaxis} - D3 Axis
- */
+
 
 const createXAxis = function(xScale,  period, ianaTimeZone) {
     const [startDate, endDate] = xScale.domain();
@@ -121,6 +112,17 @@ const createXAxis = function(xScale,  period, ianaTimeZone) {
         });
 };
 
+/**
+ * Create an x and y axis for hydrograph
+ * @param {Object} xScale      D3 Scale object for the x-axis
+ * @param {Object} yScale      D3 Scale object for the y-axis
+ * @param {Object} secondaryYscale - D3 Scale object for the secondary y-axis
+ * @param {Number} yTickSize   Size of inner ticks for the y-axis
+ * @param {String} parmCd - parameter code of time series to be shown on the graph.
+ * @param {String} period - ISO duration for date range of the time series
+ * @param {String} ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
+ * @return {Object} {xAxis, yAxis, secondardYaxis} - D3 Axis
+ */
 export const createAxes = function(xScale, yScale, secondaryYScale, yTickSize, parmCd, period, ianaTimeZone) {
     // Create x-axis
     const xAxis = createXAxis(xScale, period, ianaTimeZone);
@@ -161,10 +163,10 @@ export const createAxes = function(xScale, yScale, secondaryYScale, yTickSize, p
 };
 
 /**
- *
+ * Selector that returns the zo
  */
-export const getZoomXAxis = createSelector(
-    getZoomXScale('current'),
+export const getBrushXAxis = createSelector(
+    getBrushXScale('current'),
     tsTimeZoneSelector,
     getCurrentDateRange,
     (xScale, ianaTimeZone, period) => createXAxis(xScale, period, ianaTimeZone)

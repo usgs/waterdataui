@@ -70,7 +70,7 @@ export const getXScale = memoize((kind, tsKey) => createSelector(
         state => state.ui.hydrographXRange,
     (layout, requestTimeRange, hydrographXRange) => {
         let timeRange;
-        if (kind === 'ZOOM') {
+        if (kind === 'BRUSH') {
             timeRange = requestTimeRange;
         } else {
             timeRange = hydrographXRange ? hydrographXRange : requestTimeRange;
@@ -80,7 +80,7 @@ export const getXScale = memoize((kind, tsKey) => createSelector(
 ));
 
 export const getMainXScale = (tsKey) => getXScale('MAIN', tsKey);
-export const getZoomXScale = (tsKey) => getXScale('ZOOM', tsKey);
+export const getBrushXScale = (tsKey) => getXScale('BRUSH', tsKey);
 
 
 
@@ -100,7 +100,7 @@ export const getYScale = memoize(kind => createSelector(
 ));
 
 export const getMainYScale = getYScale();
-export const getZoomYScale = getYScale('ZOOM');
+export const getBrushYScale = getYScale('BRUSH');
 
 export const getSecondaryYScale = memoize(kind => createSelector(
     getLayout(kind),
