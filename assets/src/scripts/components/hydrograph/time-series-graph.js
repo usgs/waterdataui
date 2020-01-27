@@ -1,7 +1,7 @@
 import { extent } from 'd3-array';
 import { line as d3Line, curveStepAfter } from 'd3-shape';
 
-import {link} from '../../lib/redux';
+import {link} from '../../lib/d3-redux';
 
 import {addSVGAccessibility} from '../../accessibility';
 import {appendAxes, axesSelector} from './axes';
@@ -190,13 +190,13 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoin
     });
 };
 
-const createTitle = function(elem, siteNo, showMLName) {
+const createTitle = function(elem, store, siteNo, showMLName) {
     let titleDiv = elem.append('div')
         .classed('time-series-graph-title', true);
 
     if (showMLName) {
         titleDiv.append('div')
-            .call(link((elem, {mlName, agencyCode}) => {
+            .call(link(store,(elem, {mlName, agencyCode}) => {
                 elem.html(`${mlName}, ${agencyCode} ${siteNo}`);
             }, createStructuredSelector({
                 mlName: getMonitoringLocationName(siteNo),
@@ -204,12 +204,12 @@ const createTitle = function(elem, siteNo, showMLName) {
             })));
     }
     titleDiv.append('div')
-        .call(link((elem, title) => {
+        .call(link(store,(elem, title) => {
             elem.html(title);
         }, titleSelector));
 };
 
-const watermark = function (elem) {
+const watermark = function (elem, store) {
     // These constants will need to change if the watermark svg is updated
     const watermarkHalfHeight = 87 / 2;
     const watermarkHalfWidth = 235 / 2;
@@ -217,7 +217,7 @@ const watermark = function (elem) {
         .classed('watermark', true)
         .attr('alt', 'USGS - science for a changing world')
         .attr('src', config.STATIC_URL + '/img/USGS_green_logo.svg')
-        .call(link(function(elem, layout) {
+        .call(link(store,function(elem, layout) {
             const centerX = layout.margin.left + (layout.width - layout.margin.right - layout.margin.left) / 2;
             const centerY = layout.margin.top + (layout.height - layout.margin.bottom - layout.margin.top) / 2;
             const scale = !mediaQuery(config.USWDS_MEDIUM_SCREEN) ? 0.5 : 1;
@@ -232,21 +232,21 @@ const watermark = function (elem) {
         }, layoutSelector));
 };
 
-export const drawTimeSeriesGraph = function(elem, siteNo, showMLName) {
+export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
     elem.append('div')
         .attr('class', 'hydrograph-container')
-        .call(watermark)
-        .call(createTitle, siteNo, showMLName)
-        .call(createTooltipText)
+        .call(watermark, store)
+        .call(createTitle, store, siteNo, showMLName)
+        .call(createTooltipText, store)
         .append('svg')
             .attr('xmlns', 'http://www.w3.org/2000/svg')
             .classed('hydrograph-svg', true)
-            .call(link((elem, layout) => {
+            .call(link(store,(elem, layout) => {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`);
                 elem.attr('width', layout.width);
                 elem.attr('height', layout.height);
             }, layoutSelector))
-            .call(link(addSVGAccessibility, createStructuredSelector({
+            .call(link(store, addSVGAccessibility, createStructuredSelector({
                 title: titleSelector,
                 description: descriptionSelector,
                 isInteractive: () => true,
@@ -255,24 +255,24 @@ export const drawTimeSeriesGraph = function(elem, siteNo, showMLName) {
             .call(plotSvgDefs)
             .call(svg => {
                 svg.append('g')
-                    .call(link((elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), layoutSelector))
-                    .call(link(appendAxes, axesSelector))
-                    .call(link(plotDataLines, createStructuredSelector({
+                    .call(link(store, (elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), layoutSelector))
+                    .call(link(store, appendAxes, axesSelector))
+                    .call(link(store, plotDataLines, createStructuredSelector({
                         visible: isVisibleSelector('current'),
                         tsLinesMap: currentVariableLineSegmentsSelector('current'),
                         xScale: xScaleSelector('current'),
                         yScale: yScaleSelector,
                         tsKey: () => 'current'
                     })))
-                    .call(link(plotDataLines, createStructuredSelector({
+                    .call(link(store, plotDataLines, createStructuredSelector({
                         visible: isVisibleSelector('compare'),
                         tsLinesMap: currentVariableLineSegmentsSelector('compare'),
                         xScale: xScaleSelector('compare'),
                         yScale: yScaleSelector,
                         tsKey: () => 'compare'
                     })))
-                    .call(createTooltipFocus)
-                    .call(link(plotAllMedianPoints, createStructuredSelector({
+                    .call(createTooltipFocus, store)
+                    .call(link(store, plotAllMedianPoints, createStructuredSelector({
                         visible: isVisibleSelector('median'),
                         xscale: xScaleSelector('current'),
                         yscale: yScaleSelector,

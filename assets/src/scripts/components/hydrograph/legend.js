@@ -9,7 +9,7 @@ import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from './drawi
 import config from '../../config';
 import { getCurrentVariableMedianMetadata } from '../../selectors/median-statistics-selector';
 import { mediaQuery } from '../../utils';
-import {link} from '../../lib/redux';
+import {link} from '../../lib/d3-redux';
 
 const TS_LABEL = {
     'current': 'Current: ',
@@ -223,10 +223,10 @@ export const legendMarkerRowsSelector = createSelector(
 );
 
 
-export const drawTimeSeriesLegend = function(elem) {
+export const drawTimeSeriesLegend = function(elem, store) {
     elem.append('div')
         .classed('hydrograph-container', true)
-        .call(link(drawSimpleLegend, createStructuredSelector({
+        .call(link(store, drawSimpleLegend, createStructuredSelector({
             legendMarkerRows: legendMarkerRowsSelector,
             layout: layoutSelector
         })));

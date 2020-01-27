@@ -4,7 +4,7 @@ import { createSelector, createStructuredSelector } from 'reselect';
 
 import config from '../../config';
 import { Actions } from '../../store';
-import { dispatch, link } from '../../lib/redux';
+import { link } from '../../lib/d3-redux';
 import {getCurrentMethodID} from '../../selectors/time-series-selector';
 
 import { currentVariablePointsByTsIdSelector } from './drawing-data';
@@ -111,7 +111,7 @@ export const tsCursorPointsSelector = memoize(tsKey => createSelector(
     })
 );
 
-export const cursorSlider = function (elem) {
+export const cursorSlider = function (elem, store) {
     elem.append('div')
         .attr('class', 'slider-wrapper')
         .call(wrap => {
@@ -120,27 +120,27 @@ export const cursorSlider = function (elem) {
                 .attr('id', 'cursor-slider')
                 .attr('class', 'usa-range')
                 .attr('aria-label', 'Hydrograph cursor slider')
-                .on('input', dispatch(function () {
-                    return Actions.setCursorOffset(this.valueAsNumber);
-                }))
-                .on('focus', dispatch(function () {
-                    return Actions.setCursorOffset(this.valueAsNumber);
-                }))
-                .on('blur', dispatch(function () {
-                    return Actions.setCursorOffset(null);
-                }))
-                .call(link((input, xScale) => {
+                .on('input', () => {
+                    store.dispatch(Actions.setCursorOffset(this.valueAsNumber));
+                })
+                .on('focus', function () {
+                    store.dispatch(Actions.setCursorOffset(this.valueAsNumber));
+                })
+                .on('blur', function () {
+                    store.dispatch(Actions.setCursorOffset(null));
+                })
+                .call(link(store,(input, xScale) => {
                     const domain = xScale.domain();
                     const timeScale = domain[1] - domain[0];
                     input.attr('min', 0)
                         .attr('max', timeScale)
                         .attr('step', timeScale / SLIDER_STEPS);
                 }, xScaleSelector('current')))
-                .call(link((input, cursorOffset) => {
+                .call(link(store,(input, cursorOffset) => {
                     input.property('value', cursorOffset || input.attr('max'))
                         .classed('active', cursorOffset !== null);
                 }, cursorOffsetSelector))
-                .call(link((input, {layout, xScale}) => {
+                .call(link(store,(input, {layout, xScale}) => {
                     const maxXScaleRange = xScale.range()[1];
                     input.style('left', layout.margin.left - SLIDER_OFFSET_PX + 'px');
                     input.style('right', layout.margin.right - SLIDER_OFFSET_PX + 'px');

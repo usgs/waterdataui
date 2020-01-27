@@ -1,6 +1,5 @@
 import { select } from 'd3-selection';
 
-import {provide} from '../../lib/redux';
 import { Actions, configureStore } from '../../store';
 
 import {drawDateRangeControls} from './date-controls';
@@ -159,8 +158,7 @@ describe('date-controls', () => {
     beforeEach(() => {
         div = select('body').append('div');
         store = configureStore(TEST_STATE);
-        div.call(provide(store))
-            .call(drawDateRangeControls, '12345678');
+        div.call(drawDateRangeControls, store, '12345678');
     });
 
     afterEach(() => {
@@ -177,7 +175,7 @@ describe('date-controls', () => {
     });
 
     it('Expects to retrieve the extended time series when the radio buttons are change', () => {
-        spyOn(Actions, 'retrieveExtendedTimeSeries');
+        spyOn(Actions, 'retrieveExtendedTimeSeries').and.callThrough();
         let lastRadio = select('#one-year');
         lastRadio.attr('checked', true);
         lastRadio.dispatch('change');
@@ -218,7 +216,7 @@ describe('date-controls', () => {
     });
 
     it('Expects data to be retrieved if both custom start and end dates are provided', () => {
-        spyOn(Actions, 'retrieveUserRequestedDataForDateRange');
+        spyOn(Actions, 'retrieveUserRequestedDataForDateRange').and.callThrough();
 
         select('#custom-start-date').property('value', '2063-04-03');
         select('#custom-end-date').property('value', '2063-04-05');

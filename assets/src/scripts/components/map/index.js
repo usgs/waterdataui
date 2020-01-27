@@ -2,7 +2,7 @@ import { select } from 'd3-selection';
 import { createStructuredSelector } from 'reselect';
 import { map as createMap, marker as createMarker, control, layerGroup } from 'leaflet';
 import { TiledMapLayer, dynamicMapLayer, Util, basemapLayer } from 'esri-leaflet/src/EsriLeaflet';
-import { link, provide } from '../../lib/redux';
+import { link } from '../../lib/d3-redux';
 import config from '../../config';
 import { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } from '../../flood-data';
 import { hasFloodData, getFloodExtent, getFloodStageHeight } from '../../selectors/flood-data-selector';
@@ -22,7 +22,7 @@ const getLayerDefs = function(layerNo, siteno, stage) {
 /*
  * Creates a site map
  */
-const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
+const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
 
     let gray = layerGroup();
     basemapLayer('Gray').addTo(gray);
@@ -158,15 +158,15 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}) {
     };
 
     node
-        .call(link(updateFloodLayers, createStructuredSelector({
+        .call(link(store, updateFloodLayers, createStructuredSelector({
             hasFloodData: hasFloodData,
             floodStageHeight: getFloodStageHeight
         })))
-        .call(link(updateMapExtent, getFloodExtent))
-        .call(link(addFIMLegend, hasFloodData))
-        .call(link(addFimLink, hasFloodData))
-        .call(link(addNldiLegend, hasNldiData))
-        .call(link(updateNldiLayers, createStructuredSelector({
+        .call(link(store, updateMapExtent, getFloodExtent))
+        .call(link(store, addFIMLegend, hasFloodData))
+        .call(link(store, addFimLink, hasFloodData))
+        .call(link(store, addNldiLegend, hasNldiData))
+        .call(link(store, updateNldiLayers, createStructuredSelector({
             upstreamFlows: getNldiUpstreamFlows,
             downstreamFlows: getNldiDownstreamFlows,
             upstreamSites: getNldiUpstreamSites,
@@ -189,11 +189,9 @@ export const attachToNode = function(store, node, {siteno, latitude, longitude, 
     // hydrates the store with nldi data
     store.dispatch(Actions.retrieveNldiData(siteno));
 
-    select(node)
-        .call(provide(store));
     select(node).select('#flood-layer-control-container')
-        .call(floodSlider);
+        .call(floodSlider, store);
     select(node)
-        .call(siteMap, {siteno, latitude, longitude, zoom});
+        .call(siteMap, {siteno, latitude, longitude, zoom}, store);
 };
 

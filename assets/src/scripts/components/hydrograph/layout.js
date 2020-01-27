@@ -25,6 +25,8 @@ const MARGIN_SMALL_DEVICE = {
 export const CIRCLE_RADIUS = 4;
 export const CIRCLE_RADIUS_SINGLE_PT = 1;
 
+
+
 export const SPARK_LINE_DIM = {
     width: 60,
     height: 30

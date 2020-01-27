@@ -218,6 +218,8 @@ export const Actions = {
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     }
                 );
+            } else {
+                return Promise.resolve({});
             }
         };
     },

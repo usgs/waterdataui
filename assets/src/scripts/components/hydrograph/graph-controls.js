@@ -2,7 +2,7 @@
  * Hydrograph controls module.
  */
 import { Actions } from '../../store';
-import { dispatch, link } from '../../lib/redux';
+import { link } from '../../lib/d3-redux';
 import { audibleUI } from './audible';
 import { getCurrentVariableMedianStatistics } from '../../selectors/median-statistics-selector';
 import { isVisibleSelector, currentVariableTimeSeriesSelector } from './time-series';
@@ -11,7 +11,7 @@ import { isVisibleSelector, currentVariableTimeSeriesSelector } from './time-ser
  * Create the show audible toggle, last year toggle, and median toggle for the time series graph.
  * @param {Object} elem - D3 selection
  */
-export const drawGraphControls = function(elem) {
+export const drawGraphControls = function(elem, store) {
 
     const graphControlDiv = elem.append('ul')
         .classed('usa-fieldset', true)
@@ -19,7 +19,7 @@ export const drawGraphControls = function(elem) {
         .classed('graph-controls-container', true);
 
     graphControlDiv.append('li')
-        .call(audibleUI);
+        .call(audibleUI, store);
 
     const compareControlDiv = graphControlDiv.append('li')
         .classed('usa-checkbox', true);
@@ -32,17 +32,17 @@ export const drawGraphControls = function(elem) {
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', 'toggleCompare')
-        .on('click', dispatch(function() {
-            return Actions.toggleTimeSeries('compare', this.checked);
-        }))
+        .on('click', function() {
+            store.dispatch(Actions.toggleTimeSeries('compare', this.checked));
+        })
         // Disables the checkbox if no compare time series for the current variable
-        .call(link(function(elem, compareTimeSeries) {
+        .call(link(store,function(elem, compareTimeSeries) {
             const exists = Object.keys(compareTimeSeries) ?
                 Object.values(compareTimeSeries).filter(tsValues => tsValues.points.length).length > 0 : false;
             elem.property('disabled', !exists);
         }, currentVariableTimeSeriesSelector('compare')))
         // Sets the state of the toggle
-        .call(link(function(elem, checked) {
+        .call(link(store,function(elem, checked) {
             elem.property('checked', checked);
         }, isVisibleSelector('compare')));
     compareControlDiv.append('label')
@@ -62,15 +62,15 @@ export const drawGraphControls = function(elem) {
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', 'toggleMedian')
-        .on('click', dispatch(function() {
-            return Actions.toggleTimeSeries('median', this.checked);
-        }))
+        .on('click', function() {
+            store.dispatch(Actions.toggleTimeSeries('median', this.checked));
+        })
         // Disables the checkbox if no median data for the current variable
-        .call(link(function(elem, medianData) {
+        .call(link(store,function(elem, medianData) {
             elem.property('disabled', medianData === null);
         }, getCurrentVariableMedianStatistics))
         // Sets the state of the toggle
-        .call(link(function(elem, checked) {
+        .call(link(store,function(elem, checked) {
             elem.property('checked', checked);
         }, isVisibleSelector('median')));
 

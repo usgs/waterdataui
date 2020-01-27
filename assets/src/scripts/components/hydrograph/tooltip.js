@@ -5,7 +5,7 @@ import memoize from 'fast-memoize';
 import { createSelector, createStructuredSelector } from 'reselect';
 import { DateTime } from 'luxon';
 
-import { dispatch, link, initAndUpdate } from '../../lib/redux';
+import { link, initAndUpdate } from '../../lib/d3-redux';
 import { Actions } from '../../store';
 import { cursorTimeSelector, tsCursorPointsSelector } from './cursor';
 import { classesForPoint, MASK_DESC } from './drawing-data';
@@ -212,8 +212,8 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
  * Append a group containing the tooltip text elements to elem
  * @param {Object} elem - D3 selector
  */
-export const createTooltipText = function (elem) {
-    elem.call(link(createTooltipTextGroup, createStructuredSelector({
+export const createTooltipText = function (elem, store) {
+    elem.call(link(store, createTooltipTextGroup, createStructuredSelector({
         currentPoints: tsCursorPointsSelector('current'),
         comparePoints: tsCursorPointsSelector('compare'),
         qualifiers: qualifiersSelector,
@@ -258,21 +258,17 @@ const createFocusCircles = function (elem, tooltipPoints, circleContainer) {
 /*
  * Appends a group to elem containing a focus line and circles for the current and compare time series
  * @param {Object} elem - D3 select
- * @param {Object} xScale - D3 X scale for the current time series
+ * @param {Object} store - Redux.Store
  * @param {Object} yScale - D3 Y scale for the graph
- * @param {Object} compareXScale - D3 X scale for the compate time series
- * @param {Array} currentTsData - current time series points
- * @param {Array} compareTsData - compare time series points
- * @param {Boolean} isCompareVisible
  */
-export const createTooltipFocus = function(elem) {
-    elem.call(link(initAndUpdate(createFocusLine, updateFocusLine), createStructuredSelector({
+export const createTooltipFocus = function(elem, store) {
+    elem.call(link(store, initAndUpdate(createFocusLine, updateFocusLine), createStructuredSelector({
         xScale: xScaleSelector('current'),
         yScale: yScaleSelector,
         cursorTime: cursorTimeSelector('current')
     })));
 
-    elem.call(link(createFocusCircles, createSelector(
+    elem.call(link(store, createFocusCircles, createSelector(
         tooltipPointsSelector('current'),
         tooltipPointsSelector('compare'),
         (current, compare) => {
@@ -280,7 +276,7 @@ export const createTooltipFocus = function(elem) {
         }
     )));
 
-    elem.call(link(function (elem, {xScale, layout}) {
+    elem.call(link(store,function (elem, {xScale, layout}) {
         elem.select('.overlay').remove();
         elem.append('rect')
             .attr('class', 'overlay')
@@ -288,19 +284,19 @@ export const createTooltipFocus = function(elem) {
             .attr('y', 0)
             .attr('width', layout.width - layout.margin.right)
             .attr('height', layout.height - (layout.margin.top + layout.margin.bottom))
-            .on('mouseover', dispatch(function() {
+            .on('mouseover', function() {
                 const selectedTime = xScale.invert(mouse(elem.node())[0]);
                 const startTime = xScale.domain()[0];
-                return Actions.setCursorOffset(selectedTime - startTime);
-            }))
-            .on('mouseout', dispatch(function() {
-                return Actions.setCursorOffset(null);
-            }))
-            .on('mousemove', dispatch(function() {
+                store.dispatch(Actions.setCursorOffset(selectedTime - startTime));
+            })
+            .on('mouseout', function() {
+                store.dispatch(Actions.setCursorOffset(null));
+            })
+            .on('mousemove', function() {
                 const selectedTime = xScale.invert(mouse(elem.node())[0]);
                 const startTime = xScale.domain()[0];
-                return Actions.setCursorOffset(selectedTime - startTime);
-            }));
+                store.dispatch(Actions.setCursorOffset(selectedTime - startTime));
+            });
     }, createStructuredSelector({
         xScale: xScaleSelector('current'),
         layout: layoutSelector
