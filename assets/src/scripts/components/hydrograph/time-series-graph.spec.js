@@ -146,7 +146,8 @@ const TEST_STATE = {
         loadingTSKeys: []
     },
     ui: {
-        width: 400
+        width: 400,
+        hydrographXRange: undefined
     }
 };
 

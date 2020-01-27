@@ -204,6 +204,13 @@ export const getAxes = memoize(kind => createSelector(
     }
 ));
 
+/*
+ * Add X Axis to svg or group elem given the xAxis and layout
+ * @param {Object} elem - svg or g D3 selection
+ * @param {Object}
+ *      @prop {Object} xAxis - D3 axis object
+ *      @prop {Object} layout - contains properties for width, height, and margin for enclosing svg.
+ */
 export const appendXAxis = function(elem, {xAxis, layout}) {
     const xLoc = {
         x: 0,
