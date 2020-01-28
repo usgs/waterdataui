@@ -47,7 +47,7 @@ export const getLayout = memoize(kind => createSelector(
     tickSelector,
     (width, windowWidth, tickDetails) => {
         const isDesktop = mediaQuery(config.USWDS_SITE_MAX_WIDTH);
-        const height = kind === 'BRUSH' ? (isDesktop ? BRUSH_HEIGHT : BRUSH_MOBILE_HEIGHT) : width * ASPECT_RATIO;
+        const height = kind === 'BRUSH' ? isDesktop ? BRUSH_HEIGHT : BRUSH_MOBILE_HEIGHT : width * ASPECT_RATIO;
         const margin = isDesktop ? MARGIN : MARGIN_SMALL_DEVICE;
         const tickLengths = tickDetails.tickValues.map(v => tickDetails.tickFormat(v).length);
         const approxLabelLength = Math.max(...tickLengths) * 10;
