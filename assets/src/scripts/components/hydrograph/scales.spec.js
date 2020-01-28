@@ -1,6 +1,6 @@
 import { extent } from 'd3-array';
 import { DateTime } from 'luxon';
-import { createXScale, createYScale, getMainYScale, getSecondaryYScale } from './scales';
+import { createXScale, createYScale, getMainYScale, getBrushYScale, getSecondaryYScale } from './scales';
 
 
 describe('scales', () => {
@@ -102,7 +102,7 @@ describe('scales', () => {
     describe('getMainYScale', () => {
 
         it('Creates a scale when there is no initial data', () => {
-            expect(getMainYScale({
+            const STATE = {
                 series: {},
                 statisticsData: {},
                 timeSeriesState: {
@@ -117,11 +117,13 @@ describe('scales', () => {
                     width: 200,
                     windowWidth: 600
                 }
-            }).name).toBe('scale');
+            };
+            expect(getMainYScale(STATE).name).toBe('scale');
+            expect(getBrushYScale(STATE).name).toBe('scale');
         });
 
         it('Creates a scale when there is initial data', () => {
-            expect(getMainYScale({
+            const STATE = {
                 series: {
                     variables: {
                        '00060ID': {
@@ -146,7 +148,9 @@ describe('scales', () => {
                     width: 200,
                     windowWidth: 600
                 }
-            }).name).toBe('scale');
+            };
+            expect(getMainYScale(STATE).name).toBe('scale');
+            expect(getBrushYScale(STATE).name).toBe('scale');
         });
     });
 
