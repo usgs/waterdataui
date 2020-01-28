@@ -172,5 +172,12 @@ describe ('graph-brush module', () => {
             expect(div.select('.selection').size()).toBe(1);
             expect(div.selectAll('.handle').size()).toBe(2);
         });
+
+        it('Should create a time-series-line, and an x-axis', () => {
+            div.call(drawGraphBrush, store);
+
+            expect(div.selectAll('#ts-current-group').size()).toBe(1);
+            expect(div.selectAll('.x-axis').size()).toBe(1);
+        });
     });
 });
