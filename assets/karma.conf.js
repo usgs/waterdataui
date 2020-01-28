@@ -321,7 +321,7 @@ function getCustomLaunchers() {
             browser_version: '10.0',
             device: 'iPhone 7',
             os: 'ios',
-            os_version: '10.0',
+            os_version: '10.0'
         },
         bs_iphone5s: {
             base: 'BrowserStack',
