@@ -261,6 +261,10 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             expect(selectAll('table .tooltip-item').size()).toBe(2);
         });
 
+        it('should have brush element for the hydrograph', () => {
+            expect(selectAll('.brush').size()).toBe(1);
+        });
+
         it('should not have tooltips for the select series table when the screen is large', (done) => {
             store.dispatch(Actions.resizeUI(800, 800));
             window.requestAnimationFrame(() => {
