@@ -16,7 +16,7 @@ describe('layout module', () => {
     });
 
     it('Should return the width and the height with the height set to the BRUSH_HEIGHT for the brush layout', () => {
-        const layout = getMainLayout.resultFunc(200, 600, {
+        const layout = getBrushLayout.resultFunc(200, 600, {
             tickValues: [5, 10, 15],
             tickFormat: format('d')
         });

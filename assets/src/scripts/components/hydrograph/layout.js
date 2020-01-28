@@ -65,8 +65,3 @@ export const getLayout = memoize(kind => createSelector(
 
 export const getMainLayout = getLayout();
 export const getBrushLayout = getLayout('BRUSH');
-
-export const layoutBrushSelector = createSelector(
-    (state) => state.ui.width,
-    (state) => state.ui.windowWidth
-);
