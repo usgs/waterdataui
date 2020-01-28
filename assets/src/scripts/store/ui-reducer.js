@@ -20,7 +20,7 @@ const setHydrographXRange = function(ui, action) {
     };
 };
 
-const clearHydrographXrange = function(ui, action) {
+const clearHydrographXrange = function(ui) {
     return {
         ...ui,
         hydrographXRange: undefined
@@ -31,7 +31,7 @@ export const uiReducer = function(ui={}, action) {
     switch(action.type) {
         case 'RESIZE_UI': return resizeUI(ui, action);
         case 'SET_HYDROGRAPH_X_RANGE': return setHydrographXRange(ui, action);
-        case 'CLEAR_HYDROGRAPH_X_RANGE': return clearHydrographXrange(ui, action);
+        case 'CLEAR_HYDROGRAPH_X_RANGE': return clearHydrographXrange(ui);
         default: return ui;
     }
 };

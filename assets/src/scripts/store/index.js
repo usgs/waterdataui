@@ -378,7 +378,7 @@ export const Actions = {
     clearHydrographXRange() {
         return {
             type: 'CLEAR_HYDROGRAPH_X_RANGE'
-        }
+        };
     },
     setCurrentVariable(variableID) {
         return {

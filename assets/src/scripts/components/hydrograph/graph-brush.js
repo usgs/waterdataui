@@ -22,7 +22,7 @@ export const drawGraphBrush = function(container, store) {
         const xScale = getBrushXScale('current')(store.getState());
         const brushRange = event.selection || xScale.range();
         // Only about the main hydrograph when user is done adjusting the time range.
-        if (event.sourceEvent.type === 'mouseup') {
+        if (event.sourceEvent.type === 'mouseup' || event.sourceEvent.type === 'touchend') {
             console.log('Updating main scale');
             store.dispatch(Actions.setHydrographXRange(brushRange.map(xScale.invert, xScale)));
         }

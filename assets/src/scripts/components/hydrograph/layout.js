@@ -28,6 +28,7 @@ export const CIRCLE_RADIUS = 4;
 export const CIRCLE_RADIUS_SINGLE_PT = 1;
 
 export const BRUSH_HEIGHT = 100;
+export const BRUSH_MOBILE_HEIGHT = 50;
 
 
 export const SPARK_LINE_DIM = {
@@ -45,8 +46,9 @@ export const getLayout = memoize(kind => createSelector(
     (state) => state.ui.windowWidth,
     tickSelector,
     (width, windowWidth, tickDetails) => {
-        const height = kind === 'BRUSH' ? BRUSH_HEIGHT : width * ASPECT_RATIO;
-        const margin = mediaQuery(config.USWDS_SITE_MAX_WIDTH) ? MARGIN : MARGIN_SMALL_DEVICE;
+        const isDesktop = mediaQuery(config.USWDS_SITE_MAX_WIDTH);
+        const height = kind === 'BRUSH' ? (isDesktop ? BRUSH_HEIGHT : BRUSH_MOBILE_HEIGHT) : width * ASPECT_RATIO;
+        const margin = isDesktop ? MARGIN : MARGIN_SMALL_DEVICE;
         const tickLengths = tickDetails.tickValues.map(v => tickDetails.tickFormat(v).length);
         const approxLabelLength = Math.max(...tickLengths) * 10;
         return {
