@@ -14,15 +14,4 @@ describe('layout module', () => {
         expect(layout.height).toEqual(200 * ASPECT_RATIO);
         expect(layout.windowWidth).toEqual(600);
     });
-
-    it('Should return the width and the height with the height set to the BRUSH_HEIGHT for the brush layout', () => {
-        const layout = getBrushLayout.resultFunc(200, 600, {
-            tickValues: [5, 10, 15],
-            tickFormat: format('d')
-        });
-
-        expect(layout.width).toEqual(200);
-        expect(layout.height).toEqual(BRUSH_HEIGHT);
-        expect(layout.windowWidth).toEqual(600);
-    });
 });
