@@ -183,7 +183,8 @@ function getCustomLaunchers() {
             browser: 'edge',
             browser_version: 'latest',
             os: 'Windows',
-            os_version: '10'
+            os_version: '10',
+            resolution : '1280x800'
         },
         bs_ie11_windows10: {
             base: 'BrowserStack',
@@ -218,7 +219,8 @@ function getCustomLaunchers() {
             browser: 'firefox',
             browser_version: 'latest',
             os: 'Windows',
-            os_version: '10'
+            os_version: '10',
+            resolution : '1280x800'
         },
         bs_firefox51_windows10: {
             base: 'BrowserStack',
@@ -232,7 +234,9 @@ function getCustomLaunchers() {
             browser: 'chrome',
             browser_version: 'latest',
             os: 'Windows',
-            os_version: '10'
+            os_version: '10',
+            resolution : '1280x800'
+
         },
         bs_chrome58_windows10: {
             base: 'BrowserStack',
@@ -297,14 +301,17 @@ function getCustomLaunchers() {
             browser: 'safari',
             browser_version: '10.0',
             os: 'OS X',
-            os_version: 'Sierra'
+            os_version: 'Sierra',
+            resolution : '1280x800'
         },
         bs_safarilatest_mac: {
             base: 'BrowserStack',
             browser: 'safari',
             browser_version: 'latest',
             os: 'OS X',
-            os_version: 'High Sierra'
+            os_version: 'Mojave',
+            resolution : '1280x800'
+
         },
 
         // iOS browsers
