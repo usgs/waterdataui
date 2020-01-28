@@ -19,7 +19,7 @@
 }
 
 svg {
-  .overlay {
+  .focus-overlay {
     fill: none;
     pointer-events: all;
   }
@@ -40,6 +40,12 @@ svg {
     }
   }
 
+  .zoom {
+    cursor: move;
+    fill: none;
+    pointer-events: all;
+  }
+
   .line-segment {
     fill: none;
     stroke-width: 3px;
@@ -54,7 +60,7 @@ svg {
     }
 
     &.not-current-method {
-      opacity: $not-current_method-opacity;
+      opacity: $not-current-method-opacity;
     }
   }
 

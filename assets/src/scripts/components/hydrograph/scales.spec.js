@@ -1,6 +1,6 @@
 import { extent } from 'd3-array';
 import { DateTime } from 'luxon';
-import { createXScale, createYScale, yScaleSelector, secondaryYScaleSelector } from './scales';
+import { createXScale, createYScale, getMainYScale, getBrushYScale, getSecondaryYScale } from './scales';
 
 
 describe('scales', () => {
@@ -99,10 +99,10 @@ describe('scales', () => {
         expect(singleLinear10 - singleLinear20).toBeCloseTo(singleLinear20 - singleLinear30);
     });
 
-    describe('yScaleSelector', () => {
+    describe('getMainYScale', () => {
 
         it('Creates a scale when there is no initial data', () => {
-            expect(yScaleSelector({
+            const STATE = {
                 series: {},
                 statisticsData: {},
                 timeSeriesState: {
@@ -117,11 +117,13 @@ describe('scales', () => {
                     width: 200,
                     windowWidth: 600
                 }
-            }).name).toBe('scale');
+            };
+            expect(getMainYScale(STATE).name).toBe('scale');
+            expect(getBrushYScale(STATE).name).toBe('scale');
         });
 
         it('Creates a scale when there is initial data', () => {
-            expect(yScaleSelector({
+            const STATE = {
                 series: {
                     variables: {
                        '00060ID': {
@@ -146,13 +148,15 @@ describe('scales', () => {
                     width: 200,
                     windowWidth: 600
                 }
-            }).name).toBe('scale');
+            };
+            expect(getMainYScale(STATE).name).toBe('scale');
+            expect(getBrushYScale(STATE).name).toBe('scale');
         });
     });
 
-    describe('secondaryYScaleSelector', () => {
+    describe('getSecondaryYScale', () => {
         it('Returns null if a non-temperature parameter is selected', () => {
-            expect(secondaryYScaleSelector({
+            expect(getSecondaryYScale()({
                 series: {
                     variables: {
                        '00060ID': {
@@ -181,7 +185,7 @@ describe('scales', () => {
         });
 
         it('Returns a scale if a celsius temperature parameter is selected', () => {
-            const secondaryYScale = secondaryYScaleSelector({
+            const secondaryYScale = getSecondaryYScale()({
                 series: {
                     variables: {
                        '00010ID': {
@@ -211,7 +215,7 @@ describe('scales', () => {
         });
 
         it('Returns a scale if a fahrenheit temperature parameter is selected', () => {
-            const secondaryYScale = secondaryYScaleSelector({
+            const secondaryYScale = getSecondaryYScale()({
                 series: {
                     variables: {
                        '00011ID': {

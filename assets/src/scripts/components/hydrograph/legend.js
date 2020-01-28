@@ -3,7 +3,7 @@ import { set } from 'd3-collection';
 import memoize from 'fast-memoize';
 import {createSelector, createStructuredSelector} from 'reselect';
 
-import {CIRCLE_RADIUS, layoutSelector} from './layout';
+import {CIRCLE_RADIUS, getMainLayout} from './layout';
 import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from './markers';
 import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from './drawing-data';
 import config from '../../config';
@@ -228,7 +228,7 @@ export const drawTimeSeriesLegend = function(elem, store) {
         .classed('hydrograph-container', true)
         .call(link(store, drawSimpleLegend, createStructuredSelector({
             legendMarkerRows: legendMarkerRowsSelector,
-            layout: layoutSelector
+            layout: getMainLayout
         })));
 };
 

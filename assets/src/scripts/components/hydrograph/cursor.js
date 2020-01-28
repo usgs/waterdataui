@@ -8,8 +8,8 @@ import { link } from '../../lib/d3-redux';
 import {getCurrentMethodID} from '../../selectors/time-series-selector';
 
 import { currentVariablePointsByTsIdSelector } from './drawing-data';
-import { layoutSelector } from './layout';
-import { xScaleSelector } from './scales';
+import { getMainLayout } from './layout';
+import { getMainXScale } from './scales';
 import { isVisibleSelector } from './time-series';
 
 
@@ -21,7 +21,7 @@ const SLIDER_OFFSET_PX = 10;
 
 
 export const cursorOffsetSelector = createSelector(
-    xScaleSelector('current'),
+    getMainXScale('current'),
     state => state.timeSeriesState.cursorOffset,
     (xScale, cursorOffset) => {
         // If cursorOffset is false, don't show it
@@ -45,7 +45,7 @@ export const cursorOffsetSelector = createSelector(
  */
 export const cursorTimeSelector = memoize(tsKey => createSelector(
     cursorOffsetSelector,
-    xScaleSelector(tsKey),
+    getMainXScale(tsKey),
     (cursorOffset, xScale) => {
         return cursorOffset ? new Date(xScale.domain()[0] + cursorOffset) : null;
     }
@@ -120,7 +120,7 @@ export const cursorSlider = function (elem, store) {
                 .attr('id', 'cursor-slider')
                 .attr('class', 'usa-range')
                 .attr('aria-label', 'Hydrograph cursor slider')
-                .on('input', () => {
+                .on('input', function() {
                     store.dispatch(Actions.setCursorOffset(this.valueAsNumber));
                 })
                 .on('focus', function () {
@@ -135,7 +135,7 @@ export const cursorSlider = function (elem, store) {
                     input.attr('min', 0)
                         .attr('max', timeScale)
                         .attr('step', timeScale / SLIDER_STEPS);
-                }, xScaleSelector('current')))
+                }, getMainXScale('current')))
                 .call(link(store,(input, cursorOffset) => {
                     input.property('value', cursorOffset || input.attr('max'))
                         .classed('active', cursorOffset !== null);
@@ -146,8 +146,8 @@ export const cursorSlider = function (elem, store) {
                     input.style('right', layout.margin.right - SLIDER_OFFSET_PX + 'px');
                     input.style('width', maxXScaleRange - (layout.margin.left + layout.margin.right) + SLIDER_OFFSET_PX * 2 + 'px');
                 }, createStructuredSelector( {
-                    layout: layoutSelector,
-                    xScale: xScaleSelector('current')
+                    layout: getMainLayout,
+                    xScale: getMainXScale('current')
                 })));
         });
 };

@@ -1,14 +1,16 @@
 import { axisBottom, axisLeft, axisRight } from 'd3-axis';
-import { createSelector } from 'reselect';
+import memoize from 'fast-memoize';
 import { DateTime } from 'luxon';
-import { wrap, deltaDays } from '../../utils';
-import { getYTickDetails } from './domain';
-import { layoutSelector } from './layout';
-import { xScaleSelector, yScaleSelector, secondaryYScaleSelector } from './scales';
-import { yLabelSelector, secondaryYLabelSelector, tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
+import { createSelector } from 'reselect';
+
 import config from '../../config';
 import { getCurrentDateRange, getCurrentParmCd } from '../../selectors/time-series-selector';
-import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius, mediaQuery } from '../../utils';
+import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius, mediaQuery, wrap, deltaDays } from '../../utils';
+
+import { getYTickDetails } from './domain';
+import {getLayout} from './layout';
+import { getXScale, getBrushXScale, getYScale, getSecondaryYScale } from './scales';
+import { yLabelSelector, secondaryYLabelSelector, tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
 
 
 const FORMAT = {
@@ -96,27 +98,34 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
     return dates;
 };
 
-/**
- * Create an x and y axis for hydrograph
- * @param  {Object} xScale      D3 Scale object for the x-axis
- * @param  {Object} yScale      D3 Scale object for the y-axis
- * @param  {Number} yTickSize   Size of inner ticks for the y-axis
- * @param {String} parmCd - parameter code of time series to be shown on the graph.
- * @param {String} period - ISO duration for date range of the time series
- * @param {String} ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
- * @return {Object}             {xAxis, yAxis} - D3 Axis
- */
-export const createAxes = function({xScale, yScale, secondaryYScale}, yTickSize, parmCd, period, ianaTimeZone) {
-    // Create x-axis
+
+
+const createXAxis = function(xScale,  period, ianaTimeZone) {
     const [startDate, endDate] = xScale.domain();
     const tickDates = generateDateTicks(startDate, endDate, period, ianaTimeZone);
-    const xAxis = axisBottom()
+    return axisBottom()
         .scale(xScale)
         .tickValues(tickDates)
         .tickSizeOuter(0)
         .tickFormat(d => {
             return DateTime.fromMillis(d, {zone: ianaTimeZone}).toFormat(FORMAT[period]);
         });
+};
+
+/**
+ * Create an x and y axis for hydrograph
+ * @param {Object} xScale      D3 Scale object for the x-axis
+ * @param {Object} yScale      D3 Scale object for the y-axis
+ * @param {Object} secondaryYscale - D3 Scale object for the secondary y-axis
+ * @param {Number} yTickSize   Size of inner ticks for the y-axis
+ * @param {String} parmCd - parameter code of time series to be shown on the graph.
+ * @param {String} period - ISO duration for date range of the time series
+ * @param {String} ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
+ * @return {Object} {xAxis, yAxis, secondardYaxis} - D3 Axis
+ */
+export const createAxes = function(xScale, yScale, secondaryYScale, yTickSize, parmCd, period, ianaTimeZone) {
+    // Create x-axis
+    const xAxis = createXAxis(xScale, period, ianaTimeZone);
 
     // Create y-axis
     const tickDetails = getYTickDetails(yScale.domain(), parmCd);
@@ -153,16 +162,25 @@ export const createAxes = function({xScale, yScale, secondaryYScale}, yTickSize,
     return {xAxis, yAxis, secondaryYAxis};
 };
 
+/**
+ * Selector that returns the zo
+ */
+export const getBrushXAxis = createSelector(
+    getBrushXScale('current'),
+    tsTimeZoneSelector,
+    getCurrentDateRange,
+    (xScale, ianaTimeZone, period) => createXAxis(xScale, period, ianaTimeZone)
+);
 
 /**
  * Returns data necessary to render the graph axes.
  * @return {Object}
  */
-export const axesSelector = createSelector(
-    xScaleSelector('current'),
-    yScaleSelector,
-    secondaryYScaleSelector,
-    layoutSelector,
+export const getAxes = memoize(kind => createSelector(
+    getXScale(kind, 'current'),
+    getYScale(kind),
+    getSecondaryYScale(kind),
+    getLayout(kind),
     yLabelSelector,
     tsTimeZoneSelector,
     getCurrentParmCd,
@@ -171,7 +189,9 @@ export const axesSelector = createSelector(
     (xScale, yScale, secondaryYScale, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange, plotSecondaryYLabel) => {
         return {
             ...createAxes(
-                {xScale, yScale, secondaryYScale},
+                xScale,
+                yScale,
+                secondaryYScale,
                 -layout.width + layout.margin.right,
                 parmCd,
                 currentDateRange,
@@ -182,32 +202,42 @@ export const axesSelector = createSelector(
             secondaryYTitle: plotSecondaryYLabel
         };
     }
-);
+));
 
+/*
+ * Add X Axis to svg or group elem given the xAxis and layout
+ * @param {Object} elem - svg or g D3 selection
+ * @param {Object}
+ *      @prop {Object} xAxis - D3 axis object
+ *      @prop {Object} layout - contains properties for width, height, and margin for enclosing svg.
+ */
+export const appendXAxis = function(elem, {xAxis, layout}) {
+    const xLoc = {
+        x: 0,
+        y: layout.height - (layout.margin.top + layout.margin.bottom)
+    };
+    elem.selectAll('.x-axis').remove();
+    elem.append('g')
+        .attr('class', 'x-axis')
+        .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
+        .call(xAxis);
+};
 
 /**
  * Add x and y axes to the given svg node.
  */
 export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, yTitle, secondaryYTitle}) {
 
-    const xLoc = {
-        x: 0,
-        y: layout.height - (layout.margin.top + layout.margin.bottom)
-    };
     const yLoc = {x: 0, y: 0};
     const yLabelLoc = {
         x: layout.height / -2 + layout.margin.top,
         y: -1 * layout.margin.left + 12
     };
 
-    // Remove existing axes before adding the new ones.
-    elem.selectAll('.x-axis, .y-axis').remove();
+    appendXAxis(elem, {xAxis, layout});
 
-    // Add x-axis
-    elem.append('g')
-        .attr('class', 'x-axis')
-        .attr('transform', `translate(${xLoc.x}, ${xLoc.y})`)
-        .call(xAxis);
+    // Remove existing axes before adding the new ones.
+    elem.selectAll('.y-axis').remove();
 
     // Add y-axis and a text label
     elem.append('g')
