@@ -27,7 +27,7 @@ const MARGIN_SMALL_DEVICE = {
 export const CIRCLE_RADIUS = 4;
 export const CIRCLE_RADIUS_SINGLE_PT = 1;
 
-const BRUSH_HEIGHT = 100;
+export const BRUSH_HEIGHT = 100;
 
 
 export const SPARK_LINE_DIM = {
