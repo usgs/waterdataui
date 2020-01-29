@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.24.0...master)
 ### Fixed
-- Brush selection is new maintained when selecting a new variable.
+- Brush selection is now maintained when selecting a new variable.
 
 ## [0.24.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.23.0...waterdataui-0.24.0)
 ### Changed
