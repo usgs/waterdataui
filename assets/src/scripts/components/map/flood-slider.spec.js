@@ -1,5 +1,4 @@
 import { select } from 'd3-selection';
-import { provide } from '../../lib/redux';
 import { configureStore } from '../../store';
 import { floodSlider } from './flood-slider';
 
@@ -24,8 +23,7 @@ describe('floodSlider', () => {
         beforeEach(() => {
             store = configureStore();
             select(sliderNode)
-                .call(provide(store))
-                .call(floodSlider);
+                .call(floodSlider, store);
         });
 
         it('The slider should not be created', () => {
@@ -45,8 +43,7 @@ describe('floodSlider', () => {
                 }
             });
             select(sliderNode)
-                .call(provide(store))
-                .call(floodSlider);
+                .call(floodSlider, store);
         });
 
         it('The slider is not hidden', () => {
@@ -78,17 +75,19 @@ describe('floodSlider', () => {
                 }
             });
             select(sliderNode)
-                .call(provide(store))
-                .call(floodSlider);
+                .call(floodSlider, store);
         });
 
-        it('Sets the gageHeight when the slider value changes and updates the label', () => {
+        it('Sets the gageHeight when the slider value changes and updates the label', (done) => {
             const slider = select(sliderNode).select('input[type="range"]');
             slider.attr('value', 2)
                 .dispatch('input');
+            window.requestAnimationFrame(() => {
+                expect(store.getState().floodState.gageHeight).toBe(11);
+                expect(select(sliderNode).select('label').html()).toContain('11');
+                done();
+            });
 
-            expect(store.getState().floodState.gageHeight).toBe(11);
-            expect(select(sliderNode).select('label').html()).toContain('11');
         });
     });
 });

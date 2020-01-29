@@ -218,6 +218,8 @@ export const Actions = {
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     }
                 );
+            } else {
+                return Promise.resolve({});
             }
         };
     },
@@ -367,6 +369,17 @@ export const Actions = {
             width
         };
     },
+    setHydrographXRange(hydrographXRange) {
+        return {
+            type: 'SET_HYDROGRAPH_X_RANGE',
+            hydrographXRange
+        };
+    },
+    clearHydrographXRange() {
+        return {
+            type: 'CLEAR_HYDROGRAPH_X_RANGE'
+        };
+    },
     setCurrentVariable(variableID) {
         return {
             type: 'SET_CURRENT_VARIABLE',
@@ -390,7 +403,6 @@ export const Actions = {
             type: 'SET_CUSTOM_DATE_RANGE',
             startTime,
             endTime
-
         };
     },
     retrieveUserRequestedDataForDateRange(siteno, startTimeStr, endTimeStr) {
@@ -399,8 +411,7 @@ export const Actions = {
             const locationIanaTimeZone = getIanaTimeZone(state);
             const startTime = new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis();
             const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis();
-            
-            dispatch(Actions.retrieveCustomTimeSeries(siteno, startTime, endTime));
+            return dispatch(Actions.retrieveCustomTimeSeries(siteno, startTime, endTime));
         };
     },
     retrieveDataForDateRange(siteno, startTimeStr, endTimeStr, parmCd) {
@@ -482,7 +493,8 @@ export const configureStore = function (initialState) {
         },
         ui : {
             windowWidth: 1024,
-            width: 800
+            width: 800,
+            hydrographXRange: {}
         },
         ...initialState
     };

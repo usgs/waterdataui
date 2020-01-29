@@ -3,10 +3,10 @@ import { select } from 'd3-selection';
 import memoize from 'fast-memoize';
 import { createSelector, createStructuredSelector } from 'reselect';
 import { tsCursorPointsSelector } from './cursor';
-import { xScaleSelector, yScaleSelector } from './scales';
+import { getMainXScale, getMainYScale } from './scales';
 import { allTimeSeriesSelector } from './time-series';
 import config from '../../config';
-import { dispatch, link } from '../../lib/redux';
+import { link } from '../../lib/d3-redux';
 import { Actions } from '../../store';
 
 // Higher tones get lower volume
@@ -73,7 +73,7 @@ export const updateSound = function ({enabled, points}) {
 const audibleInterfaceOnSelector = state => state.timeSeriesState.audiblePlayId !== null;
 
 const audibleScaleSelector = createSelector(
-    yScaleSelector,
+    getMainYScale,
     (yScale) => {
         return scaleLinear()
             .domain(yScale.domain())
@@ -110,7 +110,7 @@ const audiblePointsSelector = createSelector(
     }
 );
 
-export const audibleUI = function (elem) {
+export const audibleUI = function (elem, store) {
     // Only enable the audio interface on dev tiers.
     if (!config.TIMESERIES_AUDIO_ENABLED) {
         return;
@@ -129,7 +129,7 @@ export const audibleUI = function (elem) {
         .html('Audible&nbsp;');
     button.append('i')
         .classed('fas', true);
-    button.call(link(function(elem, audibleOn) {
+    button.call(link(store, function(elem, audibleOn) {
             if (audibleOn) {
                 elem.attr('title', 'Stop')
                     .attr('ga-event-action', 'stopAudible');
@@ -141,24 +141,23 @@ export const audibleUI = function (elem) {
                 .classed('fa-play', !audibleOn)
                 .classed('fa-stop', audibleOn);
         }, audibleInterfaceOnSelector))
-        .call(link(function(elem, xScale) {
+        .call(link(store, function(elem, xScale) {
             const domain = xScale.domain();
             elem.attr('data-max-offset', domain[1] - domain[0]);
-        }, xScaleSelector('current')))
-        .on('click', dispatch(function() {
-            const button = select(this);
+        }, getMainXScale('current')))
+        .on('click', () =>  {
             if (button.attr('title') === 'Play') {
-                return Actions.startTimeSeriesPlay(button.attr('data-max-offset'));
+                store.dispatch(Actions.startTimeSeriesPlay(button.attr('data-max-offset')));
             } else {
-                return Actions.stopTimeSeriesPlay();
+                store.dispatch(Actions.stopTimeSeriesPlay());
             }
-        }));
+        });
 
     // Listen for focus changes, and play back the audio representation of
     // the selected points.
     // TODO: Handle more than just the first time series of each tsKey. This can
     // piggyback on work to support multiple tooltip selections.
-    elem.call(link(function (elem, {enabled, points}) {
+    elem.call(link(store,function (elem, {enabled, points}) {
         updateSound({
             points,
             enabled

@@ -4,12 +4,12 @@
 
 import { select } from 'd3-selection';
 
-import{ dispatch, link } from '../../lib/redux';
+import{ link } from '../../lib/d3-redux';
 import config from '../../config';
 import { Actions } from '../../store';
 import { getAllMethodsForCurrentVariable } from './time-series';
 
-export const drawMethodPicker = function(elem) {
+export const drawMethodPicker = function(elem, store) {
     if (!config.MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED) {
         return;
     }
@@ -23,10 +23,10 @@ export const drawMethodPicker = function(elem) {
     pickerContainer.append('select')
         .attr('class', 'usa-select')
         .attr('id', 'method-picker')
-        .on('change', dispatch(function() {
-            return Actions.setCurrentMethodID(parseInt(select(this).property('value')));
-        }))
-        .call(link(function(elem, methods) {
+        .on('change', function() {
+            store.dispatch(Actions.setCurrentMethodID(parseInt(select(this).property('value'))));
+        })
+        .call(link(store,function(elem, methods) {
             elem.selectAll('option').remove();
             methods.forEach((method) => {
                 elem.append('option')

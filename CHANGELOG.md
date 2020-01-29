@@ -4,7 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.22.0...master)
+## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.24.0...master)
+### Fixed
+- Brush selection is now maintained when selecting a new variable.
+
+## [0.24.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.23.0...waterdataui-0.24.0)
+### Changed
+- Refactored the lib/redux module and renamed to d3-redux. The use of the Redux store is now 
+explicit in the calls rather than saving it in local storage on a d3 node.
+
+### Added
+- Added a brush feature to the hydrograph.
+
+## [0.23.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.22.0...waterdataui-0.23.0)
 ### Added
 - Image server now accepts the period parameter which should be a ISO-8601 duration format. 
 However please note that NWIS only accepts periods using xxD.

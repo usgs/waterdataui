@@ -1,6 +1,5 @@
 import { select, selectAll } from 'd3-selection';
 
-import {provide} from '../../lib/redux';
 import {Actions, configureStore} from '../../store';
 
 import {drawTimeSeriesGraph} from './time-series-graph';
@@ -147,7 +146,8 @@ const TEST_STATE = {
         loadingTSKeys: []
     },
     ui: {
-        width: 400
+        width: 400,
+        hydrographXRange: undefined
     }
 };
 
@@ -160,8 +160,7 @@ describe('time series graph', () => {
         div = select('body').append('div')
             .attr('id', 'hydrograph');
         store = configureStore(TEST_STATE);
-        div.call(provide(store))
-            .call(drawTimeSeriesGraph, '12345678', false);
+        div.call(drawTimeSeriesGraph, store, '12345678', false);
     });
 
     afterEach(() => {
@@ -178,12 +177,6 @@ describe('time series graph', () => {
 
         it('should not be hidden tag if there is data', () => {
             expect(select('#hydrograph').attr('hidden')).toBeNull();
-        });
-
-        it('should have a style tag if there is no data', () => {
-            const store = configureStore({series: {timeSeries: {}}});
-            div.call(provide(store))
-                .call(drawTimeSeriesGraph);
         });
     });
 
@@ -207,6 +200,18 @@ describe('time series graph', () => {
         it('svg should be focusable', function() {
             expect(svg.attr('tabindex')).toBe('0');
         });
+
+        it('should have a defs node', () => {
+            expect(selectAll('defs').size()).toBe(1);
+            expect(selectAll('defs mask').size()).toBe(1);
+            expect(selectAll('defs pattern').size()).toBe(2);
+        });
+
+        it('should render time series data as a line', () => {
+            // There should be one segment per time-series. Each is a single
+            // point, so should be a circle.
+            expect(selectAll('.hydrograph-svg .line-segment').size()).toBe(2);
+        });
     });
 
     //TODO: Consider adding a test which checks that the y axis is rescaled by
@@ -218,9 +223,12 @@ describe('time series graph', () => {
             expect(selectAll('#ts-compare-group .line-segment').size()).toBe(1);
         });
 
-        it('Should remove the lines when removing the compare time series', () => {
+        it('Should remove the lines when removing the compare time series', (done) => {
             store.dispatch(Actions.toggleTimeSeries('compare', false));
-            expect(selectAll('#ts-compare-group .line-segment').size()).toBe(0);
+            window.requestAnimationFrame(() => {
+                expect(selectAll('#ts-compare-group .line-segment').size()).toBe(0);
+                done();
+            });
         });
     });
 
@@ -230,102 +238,12 @@ describe('time series graph', () => {
             expect(selectAll('#median-points .median-data-series').size()).toBe(1);
         });
 
-        it('Should remove the lines when removing the median statistics data', () => {
+        it('Should remove the lines when removing the median statistics data', (done) => {
             store.dispatch(Actions.toggleTimeSeries('median', false));
-            expect(selectAll('#median-points .median-data-series').size()).toBe(0);
+            window.requestAnimationFrame(() => {
+                expect(selectAll('#median-points .median-data-series').size()).toBe(0);
+                done();
+            });
         });
-    });
-});
-
-describe('SVG contains the expected elements', () => {
-    /* eslint no-use-before-define: 0 */
-
-    let div;
-    let store;
-
-    beforeEach(() => {
-        div = select('body').append('div')
-            .attr('id', 'hydrograph');
-
-        store = configureStore({
-            ...TEST_STATE,
-            series: {
-                ...TEST_STATE.series,
-                timeSeries: {
-                    ...TEST_STATE.series.timeSeries,
-                    '00060:current': {
-                        ...TEST_STATE.series.timeSeries['00060:current'],
-                        startTime: 1514926800000,
-                        endTime: 1514930400000,
-                        points: [{
-                            dateTime: 1514926800000,
-                            value: 10,
-                            qualifiers: ['P']
-                        }, {
-                            dateTime: 1514930400000,
-                            value: null,
-                            qualifiers: ['P', 'FLD']
-                        }]
-                    }
-                }
-            },
-            timeSeriesState: {
-                showSeries: {
-                    current: true,
-                    compare: true,
-                    median: true
-                },
-                currentVariableID: '45807197',
-                currentDateRange: 'P7D',
-                currentMethodID: 'method1',
-                loadingTSKeys: []
-            },
-            ui: {
-                windowWidth: 400,
-                width: 400
-            }
-
-        });
-
-        store = configureStore(TEST_STATE);
-        div.call(provide(store))
-            .call(drawTimeSeriesGraph, '12345678', false);
-    });
-
-    afterEach(function () {
-      div.remove();
-    });
-
-    it('should render the correct number of svg nodes', () => {
-        // one main hydrograph
-        expect(selectAll('svg').size()).toBe(1);
-    });
-
-    it('should have a title div', () => {
-        const titleDiv = selectAll('.time-series-graph-title');
-        expect(titleDiv.size()).toBe(1);
-        expect(titleDiv.text()).toEqual('Test title for 00060');
-    });
-
-    it('should have a defs node', () => {
-        expect(selectAll('defs').size()).toBe(1);
-        expect(selectAll('defs mask').size()).toBe(1);
-        expect(selectAll('defs pattern').size()).toBe(2);
-    });
-
-    it('should render time series data as a line', () => {
-        // There should be one segment per time-series. Each is a single
-        // point, so should be a circle.
-        expect(selectAll('.hydrograph-svg .line-segment').size()).toBe(2);
-    });
-
-    it('should have a point for the median stat data with a label', () => {
-        expect(selectAll('#median-points path').size()).toBe(1);
-        expect(selectAll('#median-points text').size()).toBe(0);
-    });
-
-    it('should not have tooltips for the select series table when the screen is large', () => {
-        store.dispatch(Actions.resizeUI(800, 800));
-        expect(selectAll('table .tooltip-table').size()).toBe(0);
     });
 });

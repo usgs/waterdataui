@@ -1,9 +1,10 @@
-import {Actions, configureStore} from '../../store';
-import { select } from 'd3-selection';
-import { drawGraphControls } from './graph-controls';
+import {select} from 'd3-selection';
 
-// Tests for the graph-controls module
-describe('graph-controls', () => {
+import{configureStore} from '../../store';
+
+import {drawGraphBrush} from './graph-brush';
+
+describe ('graph-brush module', () => {
 
     const TEST_STATE = {
         series: {
@@ -146,81 +147,37 @@ describe('graph-controls', () => {
             loadingTSKeys: []
         },
         ui: {
-            width: 400
+            width: 400,
+            hydrographXRange: undefined
         }
     };
-
-    describe('drawGraphControls', () => {
-
-        let div;
-        let store;
+    describe('drawGraphBrush', () => {
+        let div, store;
 
         beforeEach(() => {
             div = select('body').append('div');
             store = configureStore(TEST_STATE);
-            div.call(drawGraphControls, store);
         });
 
         afterEach(() => {
             div.remove();
         });
 
-        // last year checkbox tests
-        it('Should render the compare toggle checked', () => {
-            const checkbox = select('#last-year-checkbox');
-            expect(checkbox.size()).toBe(1);
-            expect(checkbox.property('checked')).toBe(true);
+        it('Should create a brush svg element', () => {
+            div.call(drawGraphBrush, store);
+
+            expect(div.select('svg').size()).toBe(1);
+            expect(div.select('.brush').size()).toBe(1);
+            expect(div.select('.overlay').size()).toBe(1);
+            expect(div.select('.selection').size()).toBe(1);
+            expect(div.selectAll('.handle').size()).toBe(2);
         });
 
-        it('Should render the compare toggle unchecked', (done) => {
-            store.dispatch(Actions.toggleTimeSeries('compare', false));
-            window.requestAnimationFrame(() => {
-                const checkbox = select('#last-year-checkbox');
-                expect(checkbox.size()).toBe(1);
-                expect(checkbox.property('checked')).toBe(false);
-                done();
-            });
-        });
+        it('Should create a time-series-line, and an x-axis', () => {
+            div.call(drawGraphBrush, store);
 
-        it('should be enabled if there are last year data', () => {
-            expect(select('#last-year-checkbox').property('disabled')).toBeFalsy();
-        });
-
-        it('should be disabled if there are no last year data', (done) => {
-            store.dispatch(Actions.setCurrentVariable('45807190'));
-            window.requestAnimationFrame(() => {
-                expect(select('#last-year-checkbox').property('disabled')).toBeTruthy();
-                done();
-            });
-        });
-
-        // median checkbox tests
-        it('Should render the median toggle checked', () => {
-            const checkbox = select('#median-checkbox');
-            expect(checkbox.size()).toBe(1);
-            expect(checkbox.property('checked')).toBe(true);
-        });
-
-        it('Should render the median toggle unchecked', (done) => {
-            store.dispatch(Actions.toggleTimeSeries('median', false));
-            window.requestAnimationFrame(() => {
-                const checkbox = select('#median-checkbox');
-                expect(checkbox.size()).toBe(1);
-                expect(checkbox.property('checked')).toBe(false);
-                done();
-            });
-        });
-
-        it('should be enabled if there are median statistics data', () => {
-            expect(select('#median-checkbox').property('disabled')).toBeFalsy();
-        });
-
-        it('should be disabled if there are no median statistics data', (done) => {
-            store.dispatch(Actions.setCurrentVariable('45807190'));
-            window.requestAnimationFrame(() => {
-                expect(select('#median-checkbox').property('disabled')).toBeTruthy();
-                done();
-            });
+            expect(div.selectAll('#ts-current-group').size()).toBe(1);
+            expect(div.selectAll('.x-axis').size()).toBe(1);
         });
     });
 });

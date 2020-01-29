@@ -215,7 +215,8 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                 },
                 ui: {
                     windowWidth: 400,
-                    width: 400
+                    width: 400,
+                    hydrographXRange: undefined
                 }
 
             });
@@ -224,8 +225,8 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         });
 
         it('should render the correct number of svg nodes', () => {
-            // one main hydrograph, legend and two sparklines
-            expect(selectAll('svg').size()).toBe(4);
+            // one main hydrograph, brush, legend and two sparklines
+            expect(selectAll('svg').size()).toBe(5);
         });
 
         it('should have a title div', () => {
@@ -260,9 +261,16 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             expect(selectAll('table .tooltip-item').size()).toBe(2);
         });
 
-        it('should not have tooltips for the select series table when the screen is large', () => {
+        it('should have brush element for the hydrograph', () => {
+            expect(selectAll('.brush').size()).toBe(1);
+        });
+
+        it('should not have tooltips for the select series table when the screen is large', (done) => {
             store.dispatch(Actions.resizeUI(800, 800));
-            expect(selectAll('table .tooltip-table').size()).toBe(0);
+            window.requestAnimationFrame(() => {
+                expect(selectAll('table .tooltip-table').size()).toBe(0);
+                done();
+            });
         });
     });
 

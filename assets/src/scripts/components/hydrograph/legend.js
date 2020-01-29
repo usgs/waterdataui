@@ -3,13 +3,13 @@ import { set } from 'd3-collection';
 import memoize from 'fast-memoize';
 import {createSelector, createStructuredSelector} from 'reselect';
 
-import {CIRCLE_RADIUS, layoutSelector} from './layout';
+import {CIRCLE_RADIUS, getMainLayout} from './layout';
 import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from './markers';
 import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from './drawing-data';
 import config from '../../config';
 import { getCurrentVariableMedianMetadata } from '../../selectors/median-statistics-selector';
 import { mediaQuery } from '../../utils';
-import {link} from '../../lib/redux';
+import {link} from '../../lib/d3-redux';
 
 const TS_LABEL = {
     'current': 'Current: ',
@@ -223,12 +223,12 @@ export const legendMarkerRowsSelector = createSelector(
 );
 
 
-export const drawTimeSeriesLegend = function(elem) {
+export const drawTimeSeriesLegend = function(elem, store) {
     elem.append('div')
         .classed('hydrograph-container', true)
-        .call(link(drawSimpleLegend, createStructuredSelector({
+        .call(link(store, drawSimpleLegend, createStructuredSelector({
             legendMarkerRows: legendMarkerRowsSelector,
-            layout: layoutSelector
+            layout: getMainLayout
         })));
 };
 

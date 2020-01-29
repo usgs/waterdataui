@@ -1,6 +1,6 @@
 {
   "name": "waterdataui-graph-server",
-  "version": "0.23.0dev",
+  "version": "0.25.0dev",
   "description": "Water Data For The Nation graph server renderer",
   "main": "src/index.js",
   "scripts": {
@@ -27,7 +27,7 @@
     "express-cache-headers": "0.1.4",
     "express-validator": "6.3.1",
     "generic-pool": "3.7.1",
-    "puppeteer": "2.0.0"
+    "puppeteer": "2.1.0"
   },
   "devDependencies": {
     "decache": "^4.5.1",

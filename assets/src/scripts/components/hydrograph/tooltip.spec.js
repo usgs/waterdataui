@@ -1,5 +1,4 @@
 import { select } from 'd3-selection';
-import { provide } from '../../lib/redux';
 import { Actions, configureStore } from '../../store';
 import { createTooltipText, createTooltipFocus, tooltipPointsSelector } from './tooltip';
 
@@ -159,7 +158,13 @@ describe('Hydrograph tooltip module', () => {
             },
             currentVariableID: '00060id',
             currentMethodID: 69928,
-            currentDateRange: 'P7D'
+            currentDateRange: 'P7D',
+            customTimeRange: null
+        },
+        ui: {
+            windowWidth: 1300,
+            width: 990,
+            hydrographXRange: undefined
         }
     };
 
@@ -225,8 +230,7 @@ describe('Hydrograph tooltip module', () => {
                 }
             });
 
-            div.call(provide(store))
-                .call(createTooltipText);
+            div.call(createTooltipText, store);
 
             const textGroup = div.selectAll('.tooltip-text-group');
             expect(textGroup.size()).toBe(1);
@@ -239,8 +243,7 @@ describe('Hydrograph tooltip module', () => {
                 })
             }));
 
-            div.call(provide(store))
-                .call(createTooltipText);
+            div.call(createTooltipText, store);
 
             let value = div.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('14 ft3/s');
@@ -257,8 +260,7 @@ describe('Hydrograph tooltip module', () => {
                 })
             }));
 
-            div.call(provide(store))
-                .call(createTooltipText);
+            div.call(createTooltipText, store);
 
             let value = div.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('14 deg C (57.2 deg F)');
@@ -266,42 +268,46 @@ describe('Hydrograph tooltip module', () => {
             expect(value).toBe('14 deg C (57.2 deg F)');
         });
 
-        it('Text contents are updated when the store is provided with new focus times', () => {
+        it('Text contents are updated when the store is provided with new focus times', (done) => {
             let store = configureStore(Object.assign({}, testState, {
                 timeSeriesState: Object.assign({}, testState.timeSeriesState, {
                     cursorOffset: 1
                 })
             }));
 
-            div.call(provide(store))
-                .call(createTooltipText);
+            div.call(createTooltipText, store);
 
             let value = div.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('12 ft3/s');
             store.dispatch(Actions.setCursorOffset(3 * 60 * 60 * 1000));
 
-            value = div.select('.current-tooltip-text').text().split(' - ')[0];
-            expect(value).toBe('15 ft3/s');
+            window.requestAnimationFrame(() => {
+                value = div.select('.current-tooltip-text').text().split(' - ')[0];
+                expect(value).toBe('15 ft3/s');
 
-            value = div.select('.compare-tooltip-text').text().split(' - ')[0];
-            expect(value).toBe('15 ft3/s');
+                value = div.select('.compare-tooltip-text').text().split(' - ')[0];
+                expect(value).toBe('15 ft3/s');
+                done();
+            });
         });
 
-        it('Shows the qualifier text if focus is near masked data points', () => {
+        it('Shows the qualifier text if focus is near masked data points', (done) => {
             let store = configureStore(Object.assign({}, testState, {
                 timeSeriesState: Object.assign({}, testState.timeSeriesState, {
                     cursorOffset: 1
                 })
             }));
 
-            div.call(provide(store))
-                .call(createTooltipText);
+            div.call(createTooltipText, store);
             store.dispatch(Actions.setCursorOffset(299 * 60 * 1000));  // 2018-01-03T16:59:00.000Z
 
-            expect(div.select('.current-tooltip-text').text()).toContain('Flood');
+            window.requestAnimationFrame(() => {
+                expect(div.select('.current-tooltip-text').text()).toContain('Flood');
+                done();
+            });
         });
 
-        it('Creates the correct text for values of zero', () => {
+        it('Creates the correct text for values of zero', (done) => {
             const zeroData = [12, 13, 14, 15, 16].map(hour => {
                 return {
                     dateTime: new Date(`2018-01-03T${hour}:00:00.000Z`).getTime(),
@@ -321,12 +327,14 @@ describe('Hydrograph tooltip module', () => {
                     cursorOffset: 10
                 })
             }));
-            div.call(provide(store))
-                .call(createTooltipText);
+            div.call(createTooltipText, store);
             store.dispatch(Actions.setCursorOffset(119 * 60 * 1000));
-            let value = div.select('.current-tooltip-text').text().split(' - ')[0];
+            window.requestAnimationFrame(() => {
+                let value = div.select('.current-tooltip-text').text().split(' - ')[0];
 
-            expect(value).toBe('0 ft3/s');
+                expect(value).toBe('0 ft3/s');
+                done();
+            });
         });
     });
 
@@ -371,8 +379,7 @@ describe('Hydrograph tooltip module', () => {
                 })
             }));
 
-            svg.call(provide(store)).
-                call(createTooltipFocus);
+            svg.call(createTooltipFocus, store);
 
             expect(svg.selectAll('.focus-line').size()).toBe(1);
             expect(svg.selectAll('circle').size()).toBe(2);
@@ -402,8 +409,7 @@ describe('Hydrograph tooltip module', () => {
                 })
             }));
 
-            svg.call(provide(store)).
-                call(createTooltipFocus);
+            svg.call(createTooltipFocus, store);
 
             expect(svg.select('.focus:first-child').style('display')).not.toBe('none');
             expect(svg.select('.focus:nth-child(2)').style('display')).not.toBe('none');

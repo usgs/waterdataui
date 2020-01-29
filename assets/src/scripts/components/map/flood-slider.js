@@ -1,12 +1,12 @@
 import { createStructuredSelector } from 'reselect';
-import { dispatch, link } from '../../lib/redux';
+import { link } from '../../lib/d3-redux';
 import { getFloodStages, getFloodStageHeight, getFloodGageHeightStageIndex, hasFloodData } from '../../selectors/flood-data-selector';
 import { Actions } from '../../store';
 import { appendTooltip } from '../../tooltips';
 
 
 
-const createSlider = function(elem, stages) {
+const createSlider = function(elem, stages, store) {
     const SLIDER_ID = 'fim-slider';
     elem.select('#flood-slider-container').remove();
     if (stages.length) {
@@ -26,9 +26,9 @@ const createSlider = function(elem, stages) {
             .attr('step', 1)
             .attr('aria-valuemin', 0)
             .attr('aria-valuemax', stages.length - 1)
-            .on('input', dispatch(function () {
-                return Actions.setGageHeightFromStageIndex(this.value);
-            }));
+            .on('input', function () {
+                store.dispatch(Actions.setGageHeightFromStageIndex(this.value));
+            });
     }
 };
 
@@ -51,11 +51,11 @@ export const createSliderHelp = function(elem, hasFloodData) {
     }
 };
 
-export const floodSlider = function(elem) {
+export const floodSlider = function(elem, store) {
     elem
-        .call(link(createSliderHelp, hasFloodData))
-        .call(link(createSlider, getFloodStages))
-        .call(link(updateSlider, createStructuredSelector({
+        .call(link(store, createSliderHelp, hasFloodData))
+        .call(link(store, createSlider, getFloodStages, store))
+        .call(link(store, updateSlider, createStructuredSelector({
             stageHeight: getFloodStageHeight,
             gageHeightStageIndex: getFloodGageHeightStageIndex
         })));

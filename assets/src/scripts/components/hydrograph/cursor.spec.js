@@ -1,6 +1,5 @@
 import { select } from 'd3-selection';
 import { Actions, configureStore } from '../../store';
-import { provide } from '../../lib/redux';
 import { cursorSlider, getNearestTime, tsCursorPointsSelector, cursorOffsetSelector } from './cursor';
 
 
@@ -377,8 +376,7 @@ describe('Cursor module', () => {
             store = configureStore(TEST_STATE_ONE_VAR);
             div = select('body')
                 .append('div')
-                .call(provide(store));
-            cursorSlider(div);
+                .call(cursorSlider, store);
         });
 
         afterEach(() => {
