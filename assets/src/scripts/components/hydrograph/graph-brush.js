@@ -1,4 +1,4 @@
-import {brushX} from 'd3-brush';
+import {brushX, brushSelection} from 'd3-brush';
 import { event } from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
@@ -8,7 +8,7 @@ import {Actions} from '../../store';
 
 import {appendXAxis, getBrushXAxis} from './axes';
 import {currentVariableLineSegmentsSelector} from './drawing-data';
-import {getBrushLayout} from './layout';
+import {getBrushLayout, isHydrographXRange} from './layout';
 import {getBrushXScale, getBrushYScale} from './scales';
 import {isVisibleSelector} from './time-series';
 import {drawDataLines} from './time-series-data';
@@ -60,12 +60,23 @@ export const drawGraphBrush = function(container, store) {
                     enableClip: () => false
                 })));
         })
-        .call(link(store, (svg, layout) => {
-            svg.select('.brush').remove();
+        .call(link(store, (svg, {layout, isHydrographXRange}) => {
+            let selection;
+            const brushElem = svg.select('.brush');
+            if (isHydrographXRange && brushElem.size() !== 0) {
+                selection = brushSelection(brushElem.node());
+            }
+            if (!selection) {
+                selection = [0, layout.width - layout.margin.right];
+            }
+            brushElem.remove();
             const group = svg.append('g').attr('class', 'brush')
                 .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
             graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom]]);
             group.call(graphBrush);
-            graphBrush.move(group, [0, layout.width - layout.margin.right]);
-        }, getBrushLayout));
+            graphBrush.move(group, selection);
+        }, createStructuredSelector({
+            layout: getBrushLayout,
+            isHydrographXRange: (state) => state.ui.hydrographXRange !== undefined
+        })));
 };

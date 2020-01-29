@@ -163,7 +163,7 @@ export const createAxes = function(xScale, yScale, secondaryYScale, yTickSize, p
 };
 
 /**
- * Selector that returns the zo
+ * Selector that returns the brush x axis
  */
 export const getBrushXAxis = createSelector(
     getBrushXScale('current'),
