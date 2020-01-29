@@ -304,7 +304,7 @@ function getCustomLaunchers() {
             browser: 'safari',
             browser_version: 'latest',
             os: 'OS X',
-            os_version: 'Mojave'
+            os_version: 'High Sierra'
         },
 
         // iOS browsers
