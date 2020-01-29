@@ -175,6 +175,8 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
         .call(plotSvgDefs)
         .call(link(store, (svg, layout) => {
             svg.select('#graph-clip').remove();
+            svg.select('.plot-data-lines-group').remove();
+
             svg.append('clipPath')
                 .attr('id', 'graph-clip')
                 .append('rect')
