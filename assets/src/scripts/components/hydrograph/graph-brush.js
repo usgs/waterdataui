@@ -8,7 +8,7 @@ import {Actions} from '../../store';
 
 import {appendXAxis, getBrushXAxis} from './axes';
 import {currentVariableLineSegmentsSelector} from './drawing-data';
-import {getBrushLayout, isHydrographXRange} from './layout';
+import {getBrushLayout} from './layout';
 import {getBrushXScale, getBrushYScale} from './scales';
 import {isVisibleSelector} from './time-series';
 import {drawDataLines} from './time-series-data';
