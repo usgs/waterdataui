@@ -53,16 +53,16 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
         in: ['query'],
         optional: true,
         toDate: true,
-        isISO8601: ('yyyy-mm-dd'),
+        isISO8601: 'yyyy-mm-dd',
         errorMessage: 'The startDT must be a date'
     },
     endDT: {
         in: ['query'],
         optional: true,
         toDate: true,
-        isISO8601: ('yyyy-mm-dd'),
+        isISO8601: 'yyyy-mm-dd',
         custom: {
-            options: ((value, { req }) => value > req.query.startDT),
+            options: (value, { req }) => value > req.query.startDT,
             errorMessage: 'endDT must be after the startDT'
         },
         errorMessage: 'The endDT must be a date'
