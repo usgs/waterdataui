@@ -9,8 +9,8 @@ import { link, initAndUpdate } from '../../lib/d3-redux';
 import { Actions } from '../../store';
 import { cursorTimeSelector, tsCursorPointsSelector } from './cursor';
 import { classesForPoint, MASK_DESC } from './drawing-data';
-import { layoutSelector } from './layout';
-import { xScaleSelector, yScaleSelector } from './scales';
+import { getMainLayout } from './layout';
+import { getMainXScale, getMainYScale } from './scales';
 import { tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
 import { getCurrentVariable, getCurrentParmCd } from '../../selectors/time-series-selector';
 import config from '../../config';
@@ -54,8 +54,8 @@ const updateFocusLine = function(elem, {cursorTime, yScale, xScale}) {
  * @return {Object}
  */
 export const tooltipPointsSelector = memoize(tsKey => createSelector(
-    xScaleSelector(tsKey),
-    yScaleSelector,
+    getMainXScale(tsKey),
+    getMainYScale,
     tsCursorPointsSelector(tsKey),
     (xScale, yScale, cursorPoints) => {
         return Object.keys(cursorPoints).reduce((tooltipPoints, tsID) => {
@@ -140,7 +140,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
     });
 
     // Put the circles in a container so we can keep the their position in the
-    // DOM before rect.overlay, to prevent the circles from receiving mouse
+    // DOM before rect.focus-overlay, to prevent the circles from receiving mouse
     // events.
     if (!textGroup) {
         textGroup = elem.append('div')
@@ -218,7 +218,7 @@ export const createTooltipText = function (elem, store) {
         comparePoints: tsCursorPointsSelector('compare'),
         qualifiers: qualifiersSelector,
         unitCode: unitCodeSelector,
-        layout: layoutSelector,
+        layout: getMainLayout,
         ianaTimeZone: tsTimeZoneSelector,
         currentParmCd: getCurrentParmCd
     })));
@@ -263,8 +263,8 @@ const createFocusCircles = function (elem, tooltipPoints, circleContainer) {
  */
 export const createTooltipFocus = function(elem, store) {
     elem.call(link(store, initAndUpdate(createFocusLine, updateFocusLine), createStructuredSelector({
-        xScale: xScaleSelector('current'),
-        yScale: yScaleSelector,
+        xScale: getMainXScale('current'),
+        yScale: getMainYScale,
         cursorTime: cursorTimeSelector('current')
     })));
 
@@ -277,9 +277,9 @@ export const createTooltipFocus = function(elem, store) {
     )));
 
     elem.call(link(store,function (elem, {xScale, layout}) {
-        elem.select('.overlay').remove();
+        elem.select('.focus-overlay').remove();
         elem.append('rect')
-            .attr('class', 'overlay')
+            .attr('class', 'focus-overlay')
             .attr('x', 0)
             .attr('y', 0)
             .attr('width', layout.width - layout.margin.right)
@@ -298,7 +298,7 @@ export const createTooltipFocus = function(elem, store) {
                 store.dispatch(Actions.setCursorOffset(selectedTime - startTime));
             });
     }, createStructuredSelector({
-        xScale: xScaleSelector('current'),
-        layout: layoutSelector
+        xScale: getMainXScale('current'),
+        layout: getMainLayout
     })));
 };

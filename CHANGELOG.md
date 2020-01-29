@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Refactored the lib/redux module and renamed to d3-redux. The use of the Redux store is now 
 explicit in the calls rather than saving it in local storage on a d3 node.
 
+### Added
+- Added a brush feature to the hydrograph.
+
 ## [0.23.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.22.0...waterdataui-0.23.0)
 ### Added
 - Image server now accepts the period parameter which should be a ISO-8601 duration format. 
