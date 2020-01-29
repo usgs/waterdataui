@@ -7,7 +7,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { link, provide } from '../../lib/redux';
 
-import {isLoadingTS, hasAnyTimeSeries, getIanaTimeZone} from '../../selectors/time-series-selector';
+import {isLoadingTS, hasAnyTimeSeries} from '../../selectors/time-series-selector';
 import { Actions } from '../../store';
 import { callIf } from '../../utils';
 
@@ -23,7 +23,6 @@ import { plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters
 import { timeSeriesScalesByParmCdSelector } from './scales';
 import { allTimeSeriesSelector } from './time-series';
 import { drawTimeSeriesGraph } from './time-series-graph';
-import {DateTime} from "luxon";
 
 
 const drawMessage = function(elem, message) {
@@ -79,7 +78,7 @@ export const attachToNode = function (store,
      cursorOffset,
      showOnlyGraph = false,
      showMLName = false
- } = {}, locationIanaTimeZone = null) {
+ } = {}) {
     const nodeElem = select(node);
 
     if (!siteno) {

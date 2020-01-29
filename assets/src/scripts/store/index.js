@@ -164,7 +164,7 @@ export const Actions = {
     retrieveCustomTimeSeries(site, startTime, endTime, parmCd) {
         return function(dispatch, getState) {
             const state = getState();
-            const thisParmCd = parmCd ? parmCd : getCurrentParmCd(state)
+            const thisParmCd = parmCd ? parmCd : getCurrentParmCd(state);
             const requestKey = getTsRequestKey('current', 'custom', thisParmCd)(state);
 
             dispatch(Actions.setCustomDateRange(startTime, endTime));
