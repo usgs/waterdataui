@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.23.0...master)
+## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.24.0...master)
+
+## [0.24.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.23.0...waterdataui-0.24.0)
 ### Changed
 - Refactored the lib/redux module and renamed to d3-redux. The use of the Redux store is now 
 explicit in the calls rather than saving it in local storage on a d3 node.
