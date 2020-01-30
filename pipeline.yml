@@ -1,5 +1,5 @@
 # name of the project
-projectName: "iow-allegemein"
+projectName: "iow-allgemein"
 # name of the application or service
 applicationName: "graph-server"
 # name of the docker image
