@@ -14,6 +14,7 @@ import {getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, g
 
 import {fetchFloodFeatures, fetchFloodExtent} from '../web-services/flood-data';
 import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from '../web-services/models';
+import {fetchTimeSeries} from "../web-services/observations";
 import {fetchSiteStatistics} from '../web-services/statistics-data';
 
 import {floodDataReducer as floodData} from './flood-data-reducer';
@@ -226,8 +227,17 @@ export const Actions = {
             }
         };
     },
-    retrieveDailyValueData(siteno, timeSeriesID) {
-
+    retrieveDailyValueData(monitoringLocationId, timeSeriesId) {
+        return function(dispatch) {
+            return fetchTimeSeries(monitoringLocationId, timeSeriesId)
+                .then(
+                    (data) => {
+                        dispatch(Actions.setObservationsTimeSeries(timeSeriesId, data));
+                    },
+                    () => {
+                        console.log(`Unable to fetch observations time series for ${timeSeriesId}`);
+                    });
+        };
     },
     retrieveFloodData(siteno) {
         return function (dispatch) {
@@ -335,6 +345,13 @@ export const Actions = {
             upstreamSites,
             downstreamSites
         };
+    },
+    setObservationsTimeSeries(timeSeriesId, data) {
+        return {
+            type: 'SET_OBSERVATIONS_TIME_SERIES',
+            timeSeriesId,
+            data
+        }
     },
     toggleTimeSeries(key, show) {
         return {

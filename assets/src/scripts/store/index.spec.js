@@ -782,6 +782,60 @@ describe('Redux store', () => {
             });
         });
 
+        describe('retrieveDailyValueData', () => {
+            const TEST_DATA = `{
+                "type": "FEATURE",
+                "properties": {
+                    "timeStep": ["2000-01-01", "2000-01-02", "2000-01-03"],
+                    "result": ["1", "2", "3"]
+                }
+            }`;
+
+            let mockDispatch;
+
+            beforeEach(() => {
+                jasmine.Ajax.install();
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                spyOn(Actions, 'setObservationsTimeSeries').and.callThrough();
+            });
+
+            afterEach(() => {
+                jasmine.Ajax.uninstall();
+            });
+
+            it('Successful fetch sends triggers setObservationsTimeSeries action', (done) => {
+                Actions.retrieveDailyValueData('12345', 'abc12')(mockDispatch)
+                    .then(() => {
+                        expect(mockDispatch).toHaveBeenCalled();
+                        expect(Actions.setObservationsTimeSeries).toHaveBeenCalledWith('abc12', {
+                            type: 'FEATURE',
+                            properties: {
+                                timeStep: ['2000-01-01', '2000-01-02', '2000-01-03'],
+                                result: ['1', '2', '3']
+                            }
+                        });
+                        done();
+                    });
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 200,
+                    responseText: TEST_DATA,
+                    contentType: 'application/json'
+                });
+            });
+
+            it('Expect that setObservationsTimeSeries action is called with an empty object for a failed request', (done) => {
+                Actions.retrieveDailyValueData('12345', 'abc12')(mockDispatch)
+                    .then(() => {
+                        expect(mockDispatch).toHaveBeenCalled();
+                        expect(Actions.setObservationsTimeSeries).toHaveBeenCalledWith('abc12', {});
+                        done();
+                    });
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 500
+                });
+            });
+        });
+
         describe('retrieveFloodData with no data', () => {
             let mockDispatch;
 

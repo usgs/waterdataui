@@ -56,6 +56,7 @@ import './store/flood-data-reducer.spec';
 import './store/nldi-data-reducer.spec';
 import './store/flood-state-reducer.spec';
 import './store/index.spec';
+import './store/observations-data-reducer.spec';
 import './store/series-reducer.spec';
 import './store/time-series-state-reducer.spec';
 import './store/ui-reducer.spec';
