@@ -22,6 +22,7 @@ COOPERATOR_LOOKUP_ENABLED = True  # may also be set to a list of district codes
 MONITORING_CAMERA_ENABLED = True
 MONITORING_CAMERA_PATH = os.path.join(PROJECT_HOME, 'data/monitoring_camera_data.json')
 MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED = True
+DAILY_VALUE_HYDROGRAPH_ENABLED = True
 
 DEBUG = False
 
@@ -33,6 +34,8 @@ NWIS_ENDPOINTS = {
     'UV': 'https://waterdata.usgs.gov/nwis/uv'
 }
 WEATHER_SERVICE_ROOT = 'https://api.weather.gov'
+
+OBSERVATIONS_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/'
 
 FIM_GIS_ENDPOINT = 'https://gis.wim.usgs.gov/arcgis/rest/services/FIMMapper/'
 FIM_ENDPOINT = 'https://fim.wim.usgs.gov/fim/'
