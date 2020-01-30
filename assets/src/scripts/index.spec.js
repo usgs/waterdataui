@@ -62,3 +62,5 @@ import './store/ui-reducer.spec';
 
 import './tooltips.spec';
 import './utils.spec';
+
+import './web-services/observations-spec';

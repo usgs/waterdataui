@@ -223,6 +223,9 @@ export const Actions = {
             }
         };
     },
+    retrieveDailyValueData(siteno, timeSeriesID) {
+
+    },
     retrieveFloodData(siteno) {
         return function (dispatch) {
             const floodFeatures = fetchFloodFeatures(siteno);
@@ -452,6 +455,7 @@ const MIDDLEWARES = [thunk];
 export const configureStore = function (initialState) {
     initialState = {
         series: {},
+        dailyValueData: {},
         floodData: {
             stages: [],
             extent: {}
