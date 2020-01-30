@@ -1,16 +1,16 @@
-import { createSelector } from 'reselect';
-import { line } from 'd3-shape';
-import { select } from 'd3-selection';
+import {createSelector} from 'reselect';
+import {line} from 'd3-shape';
+import {select} from 'd3-selection';
 
-import { MASK_DESC } from './drawing-data';
-import { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } from './layout';
-import { allTimeSeriesSelector } from './time-series';
+import {getVariables, getCurrentVariableID} from '../../selectors/time-series-selector';
 
-import { sortedParameters } from '../../models';
-import { getVariables, getCurrentVariableID } from '../../selectors/time-series-selector';
-import { Actions } from '../../store';
-import { appendTooltip } from '../../tooltips';
+import {Actions} from '../../store';
+import {appendTooltip} from '../../tooltips';
+import {sortedParameters} from '../../utils';
 
+import {MASK_DESC} from './drawing-data';
+import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from './layout';
+import {allTimeSeriesSelector} from './time-series';
 
 /**
  * Returns metadata for each available time series.

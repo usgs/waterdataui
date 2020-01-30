@@ -2,25 +2,28 @@
 import find from 'lodash/find';
 import findKey from 'lodash/findKey';
 import last from 'lodash/last';
-import { DateTime } from 'luxon';
-import { applyMiddleware, createStore, combineReducers, compose } from 'redux';
-import { default as thunk } from 'redux-thunk';
+import {DateTime} from 'luxon';
+import {applyMiddleware, createStore, combineReducers, compose} from 'redux';
+import {default as thunk} from 'redux-thunk';
 
-import { getPreviousYearTimeSeries, getTimeSeries, sortedParameters, queryWeatherService } from '../models';
-import { calcStartTime } from '../utils';
-import { normalize } from '../schema';
-import { fetchFloodFeatures, fetchFloodExtent } from '../flood-data';
-import { fetchSiteStatistics } from '../statistics-data';
-import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
-    getCustomTimeRange, getIanaTimeZone } from '../selectors/time-series-selector';
-import { floodDataReducer as floodData } from './flood-data-reducer';
-import { floodStateReducer as floodState } from './flood-state-reducer';
-import { nldiDataReducer as nldiData } from './nldi-data-reducer';
-import { fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow } from '../nldi-data';
-import { seriesReducer as series } from './series-reducer';
-import { statisticsDataReducer as statisticsData } from './statistics-data-reducer';
-import { timeSeriesStateReducer as timeSeriesState } from './time-series-state-reducer';
-import { uiReducer as ui } from './ui-reducer';
+import {normalize} from '../schema';
+import {calcStartTime, sortedParameters} from '../utils';
+
+import {getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
+    getCustomTimeRange, getIanaTimeZone} from '../selectors/time-series-selector';
+
+import {fetchFloodFeatures, fetchFloodExtent} from '../web-services/flood-data';
+import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from '../web-services/models';
+import {fetchSiteStatistics} from '../web-services/statistics-data';
+
+import {floodDataReducer as floodData} from './flood-data-reducer';
+import {floodStateReducer as floodState} from './flood-state-reducer';
+import {nldiDataReducer as nldiData} from './nldi-data-reducer';
+import {fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow} from '../web-services/nldi-data';
+import {seriesReducer as series} from './series-reducer';
+import {statisticsDataReducer as statisticsData} from './statistics-data-reducer';
+import {timeSeriesStateReducer as timeSeriesState} from './time-series-state-reducer';
+import {uiReducer as ui} from './ui-reducer';
 
 const GAGE_HEIGHT_CD = '00065';
 /*

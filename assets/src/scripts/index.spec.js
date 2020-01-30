@@ -36,13 +36,13 @@ import './components/map/flood-slider.spec';
 import './components/map/index.spec';
 import './components/map/legend.spec';
 
-import './flood-data.spec';
-import './nldi-data.spec';
+import './web-services/flood-data.spec';
+import './web-services/nldi-data.spec';
 import './helpers.spec';
 
 import './lib/d3-redux.spec';
 
-import './models.spec';
+import './web-services/models.spec';
 import './schema.spec';
 
 import './selectors/flood-data-selector.spec';
@@ -50,7 +50,7 @@ import './selectors/nldi-data-selector.spec';
 import './selectors/median-statistics-selector.spec';
 import './selectors/time-series-selector.spec';
 
-import './statistics-data.spec';
+import './web-services/statistics-data.spec';
 
 import './store/flood-data-reducer.spec';
 import './store/nldi-data-reducer.spec';

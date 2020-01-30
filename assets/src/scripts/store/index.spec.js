@@ -1,5 +1,5 @@
 import { Actions, configureStore } from './index';
-import { MOCK_RDB as MOCK_STATS_DATA } from '../statistics-data.spec.js';
+import { MOCK_RDB as MOCK_STATS_DATA } from '../web-services/statistics-data.spec.js';
 
 describe('Redux store', () => {
 
