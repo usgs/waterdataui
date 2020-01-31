@@ -72,6 +72,8 @@ export const attachToNode = function (store,
                                           parameter,
                                           compare,
                                           period,
+                                          startDT,
+                                          endDT,
                                           cursorOffset,
                                           showOnlyGraph = false,
                                           showMLName = false
@@ -99,6 +101,10 @@ export const attachToNode = function (store,
     // If specified, initialize the cursorOffset
     if (cursorOffset !== undefined) {
         store.dispatch(Actions.setCursorOffset(cursorOffset));
+    }
+
+    if (startDT !==undefined && endDT !== undefined) {
+        store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, parameter));
     }
 
     // Fetch the time series data

@@ -347,7 +347,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             expect(select(graphNode).select('#ts-daterange-select-container').select('.loading-indicator').size()).toBe(1);
         });
 
-        it('Expects the date range control loading indicator to notbe visible if not loading for the selected date range', () => {
+        it('Expects the date range control loading indicator to not be visible if not loading for the selected date range', () => {
             const newTestState = {
                 ...TEST_STATE,
                 timeSeriesState: {

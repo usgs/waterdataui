@@ -48,9 +48,29 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
         optional: true,
         isBoolean: true,
         toBoolean: true
+    },
+    startDT: {
+        in: ['query'],
+        optional: true,
+        toDate: true,
+        isISO8601: 'yyyy-mm-dd',
+        errorMessage: 'The startDT must be a date'
+    },
+    endDT: {
+        in: ['query'],
+        optional: true,
+        toDate: true,
+        isISO8601: 'yyyy-mm-dd',
+        custom: {
+            options: (value, { req }) => value > req.query.startDT,
+            errorMessage: 'endDT must be after the startDT'
+        },
+        errorMessage: 'The endDT must be a date'
     }
+
 }), function (req, res) {
     const errors = validationResult(req).array();
+
     if (errors.length > 0) {
         res.status(400);
         res.send(errors);
@@ -62,6 +82,8 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
         parameterCode: req.query.parameterCode,
         compare: req.query.compare,
         period: req.query.period,
+        startDT: req.query.startDT,
+        endDT: req.query.endDT,
         showMLName: req.query.title === 'true'
     });
 });

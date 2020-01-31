@@ -165,18 +165,18 @@ export const Actions = {
         };
     },
 
-    retrieveCustomTimeSeries(site, startTime, endTime) {
+    retrieveCustomTimeSeries(site, startTime, endTime, parmCd) {
         return function(dispatch, getState) {
             const state = getState();
-            const parmCd = getCurrentParmCd(state);
-            const requestKey = getTsRequestKey('current', 'custom', parmCd)(state);
+            const thisParmCd = parmCd ? parmCd : getCurrentParmCd(state);
+            const requestKey = getTsRequestKey('current', 'custom', thisParmCd)(state);
 
             dispatch(Actions.setCustomDateRange(startTime, endTime));
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
             dispatch(Actions.toggleTimeSeries('median', false));
             return getTimeSeries({
                 sites: [site],
-                params: [parmCd],
+                params: [thisParmCd],
                 startDate: startTime,
                 endDate: endTime
             }).then(
@@ -186,7 +186,7 @@ export const Actions = {
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                 },
                 () => {
-                    console.log(`Unable to fetch data for between ${startTime} and ${endTime} and parameter code ${parmCd}`);
+                    console.log(`Unable to fetch data for between ${startTime} and ${endTime} and parameter code ${thisParmCd}`);
                     dispatch(Actions.addSeriesCollection(requestKey, {}));
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                 }
@@ -435,6 +435,16 @@ export const Actions = {
             const startTime = new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis();
             const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis();
             return dispatch(Actions.retrieveCustomTimeSeries(siteno, startTime, endTime));
+        };
+    },
+    retrieveDataForDateRange(siteno, startTimeStr, endTimeStr, parmCd) {
+        return function(dispatch, getState) {
+            const state = getState();
+            const locationIanaTimeZone = getIanaTimeZone(state);
+            const startTime = new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis();
+            const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis();
+
+            dispatch(Actions.retrieveCustomTimeSeries(siteno, startTime, endTime, parmCd));
         };
     },
     setGageHeightFromStageIndex(index) {
