@@ -15,6 +15,9 @@ $fa-font-path: './fonts' !default;
   &[data-component='hydrograph'] {
     @import './components/hydrograph/app';
   }
+  &[data-component='dv-hydrograph'] {
+    @import './components/dv-hydrograph';
+  }
 
   &[data-component='map'] {
     @import './components/map';

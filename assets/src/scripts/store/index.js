@@ -14,13 +14,14 @@ import {getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, g
 
 import {fetchFloodFeatures, fetchFloodExtent} from '../web-services/flood-data';
 import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from '../web-services/models';
-import {fetchTimeSeries} from "../web-services/observations";
+import {fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow} from '../web-services/nldi-data';
+import {fetchTimeSeries} from '../web-services/observations';
 import {fetchSiteStatistics} from '../web-services/statistics-data';
 
 import {floodDataReducer as floodData} from './flood-data-reducer';
 import {floodStateReducer as floodState} from './flood-state-reducer';
 import {nldiDataReducer as nldiData} from './nldi-data-reducer';
-import {fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow} from '../web-services/nldi-data';
+import {observationsDataReducer as observationsData} from './observations-data-reducer';
 import {seriesReducer as series} from './series-reducer';
 import {statisticsDataReducer as statisticsData} from './statistics-data-reducer';
 import {timeSeriesStateReducer as timeSeriesState} from './time-series-state-reducer';
@@ -351,7 +352,7 @@ export const Actions = {
             type: 'SET_OBSERVATIONS_TIME_SERIES',
             timeSeriesId,
             data
-        }
+        };
     },
     toggleTimeSeries(key, show) {
         return {
@@ -471,6 +472,7 @@ export const Actions = {
 
 const appReducer = combineReducers({
     series,
+    observationsData,
     statisticsData,
     floodData,
     nldiData,
@@ -485,7 +487,7 @@ const MIDDLEWARES = [thunk];
 export const configureStore = function (initialState) {
     initialState = {
         series: {},
-        dailyValueData: {},
+        observationsData: {},
         floodData: {
             stages: [],
             extent: {}

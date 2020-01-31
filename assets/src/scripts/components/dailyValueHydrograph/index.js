@@ -1,6 +1,9 @@
 
 import {select} from 'd3-selection';
 
+import {Actions} from '../../store';
+import {drawErrorAlert, drawInfoAlert} from '../alerts';
+
 export const attachToNode = function (store,
                                       node,
                                       {
@@ -12,6 +15,21 @@ export const attachToNode = function (store,
 
     const nodeElem = select(node);
     if (!siteno) {
-        select(node).call()
+        nodeElem.call(drawErrorAlert, {
+            title: 'Must specify monitoring location ID',
+            body: ''
+        });
     }
-}
+
+    store.dispatch(Actions.retrieveDailyValueData(`USGS-${siteno}`, TEMP_TIME_SERIES_ID))
+        .then(() => {
+            if (Object.keys(store.getState().observationsData.timeSeries[TEMP_TIME_SERIES_ID]).length === 0) {
+                drawInfoAlert(nodeElem, {
+                    title: 'No Data',
+                    body: 'There is no ground water level daily data available for this site'
+                });
+            } else {
+                nodeElem.append('div').text('Was able to retrieve data');
+            }
+        });
+};
