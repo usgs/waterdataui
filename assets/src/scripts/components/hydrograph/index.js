@@ -123,8 +123,8 @@ export const attachToNode = function (store,
         .call(drawTimeSeriesGraph, store, siteno, showMLName);
     if (!showOnlyGraph) {
         graphContainer.call(cursorSlider, store);
+        graphContainer.call(drawGraphBrush, store);
     }
-    graphContainer.call(drawGraphBrush, store);
     graphContainer.append('div')
         .classed('ts-legend-controls-container', true)
         .call(drawTimeSeriesLegend, store);

@@ -176,7 +176,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         expect(graphNode.innerHTML).toContain('No data is available');
     });
 
-    describe('SVG contains the expected elements', () => {
+    describe('graphNode contains the expected elements when showOnlyGraph is false', () => {
         /* eslint no-use-before-define: 0 */
         let store;
         beforeEach(() => {
@@ -256,13 +256,30 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             expect(selectAll('#median-points text').size()).toBe(0);
         });
 
+        it('should have brush element for the hydrograph', () => {
+            expect(selectAll('.brush').size()).toBe(1);
+        });
+
+        it('should have slider-wrapper element', () => {
+            expect(selectAll('.slider-wrapper').size()).toBe(1);
+        });
+
+        it('should have date control elements', () => {
+            expect(selectAll('#ts-daterange-select-container').size()).toBe(1);
+            expect(selectAll('#ts-customdaterange-select-container').size()).toBe(1);
+        });
+
+        it('should have method select element', () => {
+            expect(selectAll('#ts-method-select-container').size()).toBe(1);
+        });
+
+        it('should have the select time series element', () => {
+            expect(selectAll('#select-time-series').size()).toBe(1);
+        });
+
         it('should have tooltips for the select series table', () => {
             // one for each of the two parameters
             expect(selectAll('table .tooltip-item').size()).toBe(2);
-        });
-
-        it('should have brush element for the hydrograph', () => {
-            expect(selectAll('.brush').size()).toBe(1);
         });
 
         it('should not have tooltips for the select series table when the screen is large', (done) => {
@@ -271,6 +288,75 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                 expect(selectAll('table .tooltip-table').size()).toBe(0);
                 done();
             });
+        });
+    });
+
+    describe('hide elements when showOnlyGraph is set to true', () => {
+        let store;
+        beforeEach(() => {
+            store = configureStore({
+                ...TEST_STATE,
+                series: {
+                    ...TEST_STATE.series,
+                    timeSeries: {
+                        ...TEST_STATE.series.timeSeries,
+                        '00060:current': {
+                            ...TEST_STATE.series.timeSeries['00060:current'],
+                            startTime: 1514926800000,
+                            endTime: 1514930400000,
+                            points: [{
+                                dateTime: 1514926800000,
+                                value: 10,
+                                qualifiers: ['P']
+                            }, {
+                                dateTime: 1514930400000,
+                                value: null,
+                                qualifiers: ['P', 'FLD']
+                            }]
+                        }
+                    }
+                },
+                timeSeriesState: {
+                    showSeries: {
+                        current: true,
+                        compare: true,
+                        median: true
+                    },
+                    currentVariableID: '45807197',
+                    currentDateRange: 'P7D',
+                    currentMethodID: 'method1',
+                    loadingTSKeys: []
+                },
+                ui: {
+                    windowWidth: 400,
+                    width: 400,
+                    hydrographXRange: undefined
+                }
+
+            });
+
+            attachToNode(store, graphNode, {siteno: '123456788', showOnlyGraph: true});
+        });
+
+        it('should not have brush element for the hydrograph', () => {
+            expect(selectAll('.brush').size()).toBe(0);
+        });
+
+        it('should not have slider-wrapper element', () => {
+            expect(selectAll('.slider-wrapper').size()).toBe(0);
+        });
+
+        it('should not have date control elements', () => {
+            expect(selectAll('#ts-daterange-select-container').size()).toBe(0);
+            expect(selectAll('#ts-customdaterange-select-container').size()).toBe(0);
+        });
+
+        it('should not have method select element', () => {
+            expect(selectAll('#ts-method-select-container').size()).toBe(0);
+        });
+
+        it('should not have the select time series element', () => {
+            expect(selectAll('#select-time-series').size()).toBe(0);
         });
     });
 

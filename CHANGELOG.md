@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Brush selection is now maintained when selecting a new variable.
 
+### Added
+- Image server now accepts startDT and endDT (ISO-8601 dates) to set the range of the hydrograph
+
 ## [0.24.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.23.0...waterdataui-0.24.0)
 ### Changed
 - Refactored the lib/redux module and renamed to d3-redux. The use of the Redux store is now 
