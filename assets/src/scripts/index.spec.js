@@ -12,8 +12,10 @@ import './polyfills';
 import './accessibility.spec';
 import './ajax.spec';
 
+import './components/alerts.spec';
 import './components/embed.spec';
 import './components/loading-indicator.spec';
+
 import './components/hydrograph/audible.spec';
 import './components/hydrograph/axes.spec';
 import './components/hydrograph/cursor.spec';
@@ -32,6 +34,7 @@ import './components/hydrograph/scales.spec';
 import './components/hydrograph/time-series.spec';
 import './components/hydrograph/time-series-graph.spec';
 import './components/hydrograph/tooltip.spec';
+
 import './components/map/flood-slider.spec';
 import './components/map/index.spec';
 import './components/map/legend.spec';
