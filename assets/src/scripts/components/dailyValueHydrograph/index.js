@@ -1,17 +1,23 @@
 
 import {select} from 'd3-selection';
 
+import {link} from '../../lib/d3-redux';
+import {hasObservationsTimeSeries} from '../../selectors/observations-selector';
 import {Actions} from '../../store';
-import {drawErrorAlert, drawInfoAlert} from '../alerts';
+
+import {drawErrorAlert, drawInfoAlert} from '../../d3-utils/alerts';
+import {drawTimeSeriesGraph} from "./time-series-graph";
+
+const TEMP_TIME_SERIES_ID = '36307c899ac14d2eac6956b1bf5ceb69';
 
 export const attachToNode = function (store,
                                       node,
                                       {
-                                          siteno
+                                          siteno,
+                                          timeSeriesId=TEMP_TIME_SERIES_ID
                                       } = {}) {
     // Not sure how we will be getting the time series id but for now default to this which will
     // only work for the site USGS-414240072033201
-    const TEMP_TIME_SERIES_ID = '36307c899ac14d2eac6956b1bf5ceb69';
 
     const nodeElem = select(node);
     if (!siteno) {
@@ -32,4 +38,11 @@ export const attachToNode = function (store,
                 nodeElem.append('div').text('Was able to retrieve data');
             }
         });
+
+        let graphContainer = nodeElem.select('.graph-container')
+            .call(link(store, function(container, showElem) {
+                container.attr('hidden', showElem ? null : true);
+            }, hasObservationsTimeSeries))
+            .call(drawTimeSeriesGraph, store, timeSeriesId);
+
 };

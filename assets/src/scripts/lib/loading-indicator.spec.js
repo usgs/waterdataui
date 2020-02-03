@@ -1,5 +1,5 @@
 import { select } from 'd3-selection';
-import {drawLoadingIndicator} from './loading-indicator';
+import {drawLoadingIndicator} from '../d3-utils/loading-indicator';
 
 describe('loading indicator', () => {
     let div;

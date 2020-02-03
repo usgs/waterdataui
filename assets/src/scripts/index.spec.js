@@ -12,9 +12,9 @@ import './polyfills';
 import './accessibility.spec';
 import './ajax.spec';
 
-import './components/alerts.spec';
+import './d3-utils/alerts.spec';
 import './components/embed.spec';
-import './components/loading-indicator.spec';
+import './lib/loading-indicator.spec';
 
 import './components/hydrograph/audible.spec';
 import './components/hydrograph/axes.spec';
@@ -51,6 +51,7 @@ import './schema.spec';
 import './selectors/flood-data-selector.spec';
 import './selectors/nldi-data-selector.spec';
 import './selectors/median-statistics-selector.spec';
+import './selectors/observations-selector.spec';
 import './selectors/time-series-selector.spec';
 
 import './web-services/statistics-data.spec';

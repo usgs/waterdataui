@@ -16,7 +16,7 @@ import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
 import {SPARK_LINE_DIM}  from './layout';
 import {drawTimeSeriesLegend} from './legend';
-import {drawLoadingIndicator} from '../loading-indicator';
+import {drawLoadingIndicator} from '../../d3-utils/loading-indicator';
 import {drawMethodPicker} from './method-picker';
 import {plotSeriesSelectTable, availableTimeSeriesSelector} from './parameters';
 import {timeSeriesScalesByParmCdSelector} from './scales';
