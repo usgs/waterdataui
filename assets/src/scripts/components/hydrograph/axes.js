@@ -4,6 +4,7 @@ import { DateTime } from 'luxon';
 import { createSelector } from 'reselect';
 
 import config from '../../config';
+import {appendXAxis, appendYAxis, appendSecondaryYAxis} from '../../d3-utils/axes';
 import { getCurrentDateRange, getCurrentParmCd } from '../../selectors/time-series-selector';
 import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius, mediaQuery, wrap, deltaDays } from '../../utils';
 

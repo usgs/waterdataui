@@ -1,6 +1,6 @@
 import {line as d3Line, curveStepAfter} from 'd3-shape';
 
-import {addSVGAccessibility} from '../../accessibility';
+import {addSVGAccessibility} from '../../d3-utils/accessibility';
 import config from '../../config';
 import {link} from '../../lib/d3-redux';
 import {getAgencyCode, getMonitoringLocationName} from '../../selectors/time-series-selector';

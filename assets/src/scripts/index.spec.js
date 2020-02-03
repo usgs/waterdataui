@@ -9,12 +9,12 @@
 
 import './polyfills';
 
-import './accessibility.spec';
+import './d3-utils/accessibility.spec';
 import './ajax.spec';
 
 import './d3-utils/alerts.spec';
 import './components/embed.spec';
-import './lib/loading-indicator.spec';
+import './d3-utils/loading-indicator.spec';
 
 import './components/hydrograph/audible.spec';
 import './components/hydrograph/axes.spec';
