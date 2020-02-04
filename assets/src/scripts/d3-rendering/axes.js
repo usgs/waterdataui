@@ -1,6 +1,11 @@
 import {wrap} from '../utils';
 
 /*
+ * The functions assume that the enclosing elem as been translated so that the {0, 0} is
+ * the upper left of the hydrograph itself.
+ */
+
+/*
  * Add X Axis to svg or group elem given the xAxis and layout
  * @param {Object} elem - svg or g D3 selection
  * @param {Object}
@@ -8,6 +13,7 @@ import {wrap} from '../utils';
  *      @prop {Object} layout - contains properties for width, height, and margin for enclosing svg.
  */
 export const appendXAxis = function(elem, {xAxis, layout}) {
+    console.log(`Layout is ${layout.width}, ${layout.height} margin: ${layout.margin.top}, ${layout.margin.bottom}, ${layout.margin.left}, ${layout.margin.right}`);
     const xLoc = {
         x: 0,
         y: layout.height - (layout.margin.top + layout.margin.bottom)
@@ -60,11 +66,9 @@ export const appendYAxis = function(elem, {yAxis, layout, yTitle}) {
  *      @prop {String} yTitle - label for the y axis
  */
 export const appendSecondaryYAxis = function(elem, {yAxis, layout, yTitle}) {
-//    const maxXScaleRange = xAxis.scale().range()[1];
     const secondaryYLabelLoc = {
         x: layout.height / -2 + layout.margin.top,
-        y: (layout.width - layout.margin.right) * 1.5
-//        y: (layout.width - maxXScaleRange) * 1.5
+        y: layout.margin.right + 12
     };
     elem.append('g')
         .attr('class', 'y-axis')
@@ -93,7 +97,7 @@ export const appendSecondaryYAxis = function(elem, {yAxis, layout, yTitle}) {
 export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, yTitle, secondaryYTitle}) {
     elem.call(appendXAxis, {xAxis, layout})
         .call(appendYAxis, {yAxis, layout, yTitle});
-    if (secondaryYAxis && secondaryYTitle) {
+    if (secondaryYAxis) {
         elem.call(appendSecondaryYAxis, {
             yAxis: secondaryYAxis,
             layout: layout,

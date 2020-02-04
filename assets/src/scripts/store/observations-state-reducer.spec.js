@@ -1,8 +1,8 @@
-import {observationsDataReducer} from './observations-data-reducer';
+import {observationsStateReducer} from './observations-state-reducer';
 
-fdescribe('observationsDataReducer', () => {
+describe('observationsStateReducer', () => {
     it('should handle SET_CURRENT_TIME_SERIES_ID', () => {
-        expect(observationsDataReducer({
+        expect(observationsStateReducer({
             currentTimeSeriesId: '12345'
         }, {
             type: 'SET_CURRENT_TIME_SERIES_ID',

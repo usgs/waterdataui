@@ -12,6 +12,7 @@ import './polyfills';
 import './d3-rendering/accessibility.spec';
 import './ajax.spec';
 
+import './d3-rendering/axes.spec';
 import './d3-rendering/alerts.spec';
 import './components/embed.spec';
 import './d3-rendering/loading-indicator.spec';
