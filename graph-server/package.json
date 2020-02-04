@@ -1,6 +1,6 @@
 {
   "name": "waterdataui-graph-server",
-  "version": "0.25.0dev",
+  "version": "0.26.0dev",
   "description": "Water Data For The Nation graph server renderer",
   "main": "src/index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "watch": "DEBUG=express:* STATIC_ROOT=http://localhost:9000 nodemon src"
   },
   "engines": {
-    "node": "10.18.0"
+    "node": "10.18.1"
   },
   "repository": {
     "type": "git",

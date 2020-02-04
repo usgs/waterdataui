@@ -1,7 +1,8 @@
 # Use LTS release
-FROM node:10.18.0-slim
+FROM node:10.18.1-slim
 
 RUN  apt-get update \
+    && apt-get install -y gnupg1 \
      # Install latest chrome dev package, which installs the necessary libs to
      # make the bundled version of Chromium that Puppeteer installs work.
      && apt-get install -y wget --no-install-recommends \
