@@ -4,7 +4,7 @@ import {wrap} from '../utils';
  * Add X Axis to svg or group elem given the xAxis and layout
  * @param {Object} elem - svg or g D3 selection
  * @param {Object}
- *      @prop {Object} xAxis - D3 axis object
+ *      @prop {Object} xAxis - D3 axis object - assumed to be bottom oriented
  *      @prop {Object} layout - contains properties for width, height, and margin for enclosing svg.
  */
 export const appendXAxis = function(elem, {xAxis, layout}) {
@@ -19,6 +19,14 @@ export const appendXAxis = function(elem, {xAxis, layout}) {
         .call(xAxis);
 };
 
+/*
+ * Add Y Axis to svg or group elem given the xAxis and layout
+ * @param {Object} elem - svg or g D3 selection
+ * @param {Object}
+ *      @prop {Object} yAxis - D3 axis object - assumed to be left oriented
+ *      @prop {Object} layout - contains properties for width, height, and margin for enclosing svg.
+ *      @prop {String} yTitle - label for the y axis
+ */
 export const appendYAxis = function(elem, {yAxis, layout, yTitle}) {
     const yLoc = {x: 0, y: 0};
     const yLabelLoc = {
@@ -43,6 +51,14 @@ export const appendYAxis = function(elem, {yAxis, layout, yTitle}) {
                 .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
 };
 
+/*
+ * Add secondary Y Axis to svg or group elem given the xAxis and layout
+ * @param {Object} elem - svg or g D3 selection
+ * @param {Object}
+ *      @prop {Object} yAxis - D3 axis object - assumed to be right oriented
+ *      @prop {Object} layout - contains properties for width, height, and margin for enclosing svg.
+ *      @prop {String} yTitle - label for the y axis
+ */
 export const appendSecondaryYAxis = function(elem, {yAxis, layout, yTitle}) {
 //    const maxXScaleRange = xAxis.scale().range()[1];
     const secondaryYLabelLoc = {
@@ -63,7 +79,25 @@ export const appendSecondaryYAxis = function(elem, {yAxis, layout, yTitle}) {
                 .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
 };
 
-export const appendAxes = function(elem, {xAxis, yAxis, secondaryYaxis, layout, yTile, secondaryYtitle}) {
-    elem.call(appendXAxis, xAxis, layout)
-    app
+/*
+ * Convience function to append xaxis, yaxis, and secondaryYaxis (if define) to elem
+ * @param {Object} elem - svg or g D3 selection
+ * @param {Object}
+ *      @prop {Object} xAxis - D3 axis object - assumed to be bottom oriented
+ *      @prop {Object} yAxis - D3 axis object - assumed to be left oriented
+ *      @prop {Object} secondaryYAxis - D3 axis object - assumed to be right oriented
+ *      @prop {Object} layout - contains properties for width, height, and margin for enclosing svg.
+ *      @prop {String} yTitle - label for the y axis
+ *      @prop {String} secondaryYtitle - label for the secondary y axis.
+ */
+export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, yTitle, secondaryYTitle}) {
+    elem.call(appendXAxis, {xAxis, layout})
+        .call(appendYAxis, {yAxis, layout, yTitle});
+    if (secondaryYAxis && secondaryYTitle) {
+        elem.call(appendSecondaryYAxis, {
+            yAxis: secondaryYAxis,
+            layout: layout,
+            yTitle: secondaryYTitle
+        });
+    }
 };

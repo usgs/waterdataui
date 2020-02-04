@@ -9,12 +9,12 @@
 
 import './polyfills';
 
-import './d3-utils/accessibility.spec';
+import './d3-rendering/accessibility.spec';
 import './ajax.spec';
 
-import './d3-utils/alerts.spec';
+import './d3-rendering/alerts.spec';
 import './components/embed.spec';
-import './d3-utils/loading-indicator.spec';
+import './d3-rendering/loading-indicator.spec';
 
 import './components/hydrograph/audible.spec';
 import './components/hydrograph/axes.spec';
@@ -61,6 +61,7 @@ import './store/nldi-data-reducer.spec';
 import './store/flood-state-reducer.spec';
 import './store/index.spec';
 import './store/observations-data-reducer.spec';
+import './store/observations-state-reducer.spec';
 import './store/series-reducer.spec';
 import './store/time-series-state-reducer.spec';
 import './store/ui-reducer.spec';

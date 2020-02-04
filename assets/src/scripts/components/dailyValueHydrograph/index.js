@@ -5,7 +5,7 @@ import {link} from '../../lib/d3-redux';
 import {hasObservationsTimeSeries} from '../../selectors/observations-selector';
 import {Actions} from '../../store';
 
-import {drawErrorAlert, drawInfoAlert} from '../../d3-utils/alerts';
+import {drawErrorAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {drawTimeSeriesGraph} from "./time-series-graph";
 
 const TEMP_TIME_SERIES_ID = '36307c899ac14d2eac6956b1bf5ceb69';

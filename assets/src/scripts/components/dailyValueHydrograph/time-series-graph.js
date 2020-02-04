@@ -1,7 +1,7 @@
 import memoize from 'fast-memoize';
 import {createSelector, createStructuredSelector} from 'reselect';
 
-import {addSVGAccessibility} from '../../d3-utils/accessibility';
+import {addSVGAccessibility} from '../../d3-rendering/accessibility';
 import {link} from '../../lib/d3-redux';
 import {getTimeSeries} from '../../selectors/observations-selector';
 
