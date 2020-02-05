@@ -70,12 +70,13 @@ export const appendSecondaryYAxis = function(elem, {yAxis, layout, yTitle}) {
         x: layout.height / -2 + layout.margin.top,
         y: layout.margin.right + 12
     };
+    elem.selectAll('.secondary-y-axis').remove();
     elem.append('g')
-        .attr('class', 'y-axis')
+        .attr('class', 'secondary-y-axis')
         .attr('transform', `translate(${layout.width - layout.margin.right}, 0)`)
         .call(yAxis)
         .append('text')
-            .attr('class', 'y-axis-label')
+            .attr('class', 'secondary-y-axis-label')
             .attr('transform', 'rotate(-90)')
             .attr('x', secondaryYLabelLoc.x )
             .attr('y', secondaryYLabelLoc.y )

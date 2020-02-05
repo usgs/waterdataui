@@ -9,3 +9,50 @@
     width: 100%;
   }
 }
+
+svg {
+  .tick {
+    text {
+      font-size: 1.05em;
+      @include at-media('mobile-lg') {
+        font-size: 1.2em;
+      }
+      @include at-media('tablet') {
+        font-size: 1.4em;
+      }
+    }
+  }
+  .y-axis {
+    text {
+      fill: black;
+
+      &.y-axis-label {
+        text-anchor: middle;
+        display: none;
+        font-size: 1.5em;
+        font-style: italic;
+        @include at-media($theme-site-max-width) {
+          display: block;
+        }
+      }
+    }
+
+    .tick {
+      line {
+        fill: none;
+        stroke: lightgrey;
+        stroke-opacity: 0.7;
+      }
+    }
+  }
+
+  .x-axis {
+    .tick {
+      line {
+        fill: none;
+        stroke: black;
+        stroke-opacity: 0.7;
+      }
+    }
+  }
+}

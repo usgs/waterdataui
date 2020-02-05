@@ -22,6 +22,7 @@ import {floodDataReducer as floodData} from './flood-data-reducer';
 import {floodStateReducer as floodState} from './flood-state-reducer';
 import {nldiDataReducer as nldiData} from './nldi-data-reducer';
 import {observationsDataReducer as observationsData} from './observations-data-reducer';
+import {observationsStateReducer as observationsState} from './observations-state-reducer';
 import {seriesReducer as series} from './series-reducer';
 import {statisticsDataReducer as statisticsData} from './statistics-data-reducer';
 import {timeSeriesStateReducer as timeSeriesState} from './time-series-state-reducer';
@@ -467,6 +468,12 @@ export const Actions = {
             type: 'LOCATION_IANA_TIME_ZONE_SET',
             ianaTimeZone
         };
+    },
+    setCurrentObservationsTimeSeriesId(timeSeriesId) {
+        return {
+            type: 'SET_CURRENT_TIME_SERIES_ID',
+            timeSeriesId
+        };
     }
 };
 
@@ -477,6 +484,7 @@ const appReducer = combineReducers({
     floodData,
     nldiData,
     timeSeriesState,
+    observationsState,
     floodState,
     ui
 });
@@ -514,6 +522,7 @@ export const configureStore = function (initialState) {
             audiblePlayId: null,
             loadingTSKeys: []
         },
+        observationsState: {},
         floodState: {
             gageHeight: null
         },

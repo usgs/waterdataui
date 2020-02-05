@@ -2,7 +2,7 @@
 import {select} from 'd3-selection';
 
 import {link} from '../../lib/d3-redux';
-import {hasObservationsTimeSeries} from '../../selectors/observations-selector';
+import {hasCurrentObservationsTimeSeries} from '../../selectors/observations-selector';
 import {Actions} from '../../store';
 
 import {drawErrorAlert, drawInfoAlert} from '../../d3-rendering/alerts';
@@ -27,22 +27,22 @@ export const attachToNode = function (store,
         });
     }
 
-    store.dispatch(Actions.retrieveDailyValueData(`USGS-${siteno}`, TEMP_TIME_SERIES_ID))
+    store.dispatch(Actions.retrieveDailyValueData(`USGS-${siteno}`, timeSeriesId))
         .then(() => {
-            if (Object.keys(store.getState().observationsData.timeSeries[TEMP_TIME_SERIES_ID]).length === 0) {
+            if (Object.keys(store.getState().observationsData.timeSeries[timeSeriesId]).length === 0) {
                 drawInfoAlert(nodeElem, {
                     title: 'No Data',
                     body: 'There is no ground water level daily data available for this site'
                 });
             } else {
-                nodeElem.append('div').text('Was able to retrieve data');
+                store.dispatch(Actions.setCurrentObservationsTimeSeriesId(timeSeriesId));
             }
         });
 
-        let graphContainer = nodeElem.select('.graph-container')
+        nodeElem.select('.graph-container')
             .call(link(store, function(container, showElem) {
                 container.attr('hidden', showElem ? null : true);
-            }, hasObservationsTimeSeries))
-            .call(drawTimeSeriesGraph, store, timeSeriesId);
+            }, hasCurrentObservationsTimeSeries))
+            .call(drawTimeSeriesGraph, store);
 
 };

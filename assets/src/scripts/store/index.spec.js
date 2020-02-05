@@ -1177,6 +1177,13 @@ describe('Redux store', () => {
                 ianaTimeZone: 'America/Chicago'
             });
         });
+
+        it('should create an action to set the current observations time series id', () => {
+            expect(Actions.setCurrentObservationsTimeSeriesId('12345')).toEqual({
+                type: 'SET_CURRENT_TIME_SERIES_ID',
+                timeSeriesId: '12345'
+            });
+        });
     });
 });
 

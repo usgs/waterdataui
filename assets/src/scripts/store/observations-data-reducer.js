@@ -1,8 +1,6 @@
 
 const INITIAL_STATE = {
-    observationsData: {
-        timeSeries: {}
-    }
+    observationsData: {}
 };
 
 /*
