@@ -17,6 +17,7 @@ DEPLOYMENT_ENVIRONMENT = 'development'
 TIMESERIES_AUDIO_ENABLED = True
 HYDROLOGIC_PAGES_ENABLED = True
 STATE_COUNTY_PAGES_ENABLED = True
+NETWORK_PAGES_ENABLED = True
 EMBED_IMAGE_FEATURE_ENABLED = True
 COOPERATOR_LOOKUP_ENABLED = True  # may also be set to a list of district codes
 MONITORING_CAMERA_ENABLED = True
@@ -60,3 +61,7 @@ COOPERATOR_SERVICE_PATTERN = 'https://water.usgs.gov/customer/stories/{site_no}/
 
 NLDI_SERVICES_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/nldi/linked-data'
 NLDI_SERVICES_DISTANCE = '322'
+
+# Networks
+#OGC_SERVICE = 'https://labs.waterdata.usgs.gov/api/ogcAPI/collections?f=json'
+OGC_SERVICE ='https://labs-dev.wma.chs.usgs.gov/api/ogcAPI/collections'
