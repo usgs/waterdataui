@@ -4,7 +4,7 @@ import {createSelector} from 'reselect';
 import {
     getCurrentObservationsTimeSeriesTimeRange,
     getCurrentObservationsTimeSeriesValueRange
-} from '../../selectors/observations-selector';
+} from '../../../selectors/observations-selector';
 
 import {getLayout} from './layout';
 
@@ -40,9 +40,10 @@ export const getYScale = createSelector(
             // Positve ranges should not be extended below zero.
             extendedRange.min = isPositive ? Math.max(0, extendedRange.min) : extendedRange.min;
 
+            // Defaulting to descending scale (min at top)
             yScale
                 .range([layout.height - layout.margin.top - layout.margin.bottom, 0])
-                .domain([extendedRange.min, extendedRange.max]);
+                .domain([extendedRange.max, extendedRange.min]);
         }
         return yScale;
     }

@@ -17,6 +17,8 @@ import './d3-rendering/alerts.spec';
 import './components/embed.spec';
 import './d3-rendering/loading-indicator.spec';
 
+import './components/dailyValueHydrograph/selectors/time-series-line.spec';
+
 import './components/hydrograph/audible.spec';
 import './components/hydrograph/axes.spec';
 import './components/hydrograph/cursor.spec';

@@ -1,3 +1,5 @@
+import { line as d3Line } from 'd3-shape';
+import includes from 'lodash/includes';
 import {createSelector, createStructuredSelector} from 'reselect';
 
 import {addSVGAccessibility} from '../../d3-rendering/accessibility';
@@ -6,9 +8,14 @@ import {getCurrentObservationsTimeSeries} from '../../selectors/observations-sel
 
 import {appendAxes} from '../../d3-rendering/axes';
 
-import {getLayout} from './layout';
-import {getXAxis, getYAxis} from './axes';
-import {getMainLayout} from "../hydrograph/layout";
+import {getXAxis, getYAxis} from './selectors/axes';
+import {getLayout} from './selectors/layout';
+import {getXScale, getYScale} from './selectors/scales';
+import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-lines';
+
+const APPROVED = 'Approved';
+const ESTIMATED = 'Estimated';
+const CIRCLE_RADIUS_SINGLE_PT = 1;
 
 const getTimeSeriesTitle = createSelector(
     getCurrentObservationsTimeSeries,
@@ -33,6 +40,42 @@ const getYTitle = createSelector(
             `${timeSeries.properties.observedPropertyName}, ${timeSeries.properties.unitOfMeasureName}` : '';
     }
 );
+
+const drawDataLine = function (group, {lineSegment, xScale, yScale}) {
+    let lineElem;
+    if (lineSegment.points.length === 1) {
+        lineElem = group.append('circle')
+            .data(lineSegment.points)
+            .attr('r', CIRCLE_RADIUS_SINGLE_PT)
+            .attr('cx', d => xScale(d.date))
+            .attr('cy', d => yScale(d.value));
+    } else {
+        const dvLine = d3Line()
+            .x(d => xScale(d.date))
+            .y(d => yScale(d.value));
+        lineElem = group.append('path')
+            .datum(lineSegment.points)
+            .attr('d', dvLine);
+    }
+    lineElem
+        .classed('line-segment', true)
+        .classed('approved', includes(lineSegment.approvals, APPROVED))
+        .classed('estimated', includes(lineSegment.approvals, ESTIMATED));
+};
+
+const drawDataLines = function (elem, {lines, xScale, yScale, layout}) {
+    elem.select('#daily-values-lines-group').remove();
+
+    const linesGroup = elem.append('g')
+        .attr('id', 'daily-values-lines-group')
+        .attr('x', layout.margin.left)
+        .attr('y', layout.margin.top)
+        .attr('width', layout.width - layout.margin.right)
+        .attr('height', layout.height - layout.margin.bottom);
+    lines.forEach((lineSegment) => {
+        drawDataLine(linesGroup, {lineSegment, xScale, yScale});
+    });
+};
 
 export const drawTimeSeriesGraph = function(elem, store) {
 
@@ -60,5 +103,11 @@ export const drawTimeSeriesGraph = function(elem, store) {
             yAxis: getYAxis,
             layout: getLayout,
             yTitle: getYTitle
+        })))
+        .call(link(store, drawDataLines, createStructuredSelector({
+            lines: getCurrentTimeSeriesLineSegments,
+            xScale: getXScale,
+            yScale: getYScale,
+            layout: getLayout
         })));
 };

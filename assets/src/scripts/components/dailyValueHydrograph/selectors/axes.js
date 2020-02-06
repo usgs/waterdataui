@@ -5,6 +5,7 @@ import { DateTime } from 'luxon';
 import {createSelector} from 'reselect';
 
 import {getXScale, getYScale} from './scales';
+import {getLayout} from './layout';
 
 export const getXAxis = createSelector(
     getXScale,
@@ -12,16 +13,18 @@ export const getXAxis = createSelector(
         return axisBottom()
             .scale(xScale)
             .tickSizeOuter(0)
-            .tickFormat(d => DateTime.fromMillis(d).toFormat('MMM yyyy'));
+            .tickFormat(d => DateTime.fromMillis(d).toFormat('yyyy-LL-dd'));
     }
 );
 
 export const getYAxis = createSelector(
     getYScale,
-    (yScale) => {
+    getLayout,
+    (yScale, layout) => {
         return axisLeft()
             .scale(yScale)
             .tickSizeOuter(0)
+            .tickSizeInner(-layout.width + layout.margin.right + layout.margin.left)
             .tickFormat(format('.1f'));
     }
 );
