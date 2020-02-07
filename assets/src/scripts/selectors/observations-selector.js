@@ -53,8 +53,8 @@ export const getCurrentObservationsTimeSeriesTimeRange = createSelector(
         let timeRange = null;
         if (currentTimeSeries) {
             timeRange = {
-                startTime: new DateTime.fromISO(currentTimeSeries.properties.phenomenonTimeStart).toMillis(),
-                endTime: new DateTime.fromISO(currentTimeSeries.properties.phenomenonTimeEnd).toMillis()
+                startTime: new DateTime.fromISO(currentTimeSeries.properties.phenomenonTimeStart, {zone: 'UTC'}).toMillis(),
+                endTime: new DateTime.fromISO(currentTimeSeries.properties.phenomenonTimeEnd, {zone: 'UTC'}).toMillis()
             };
         }
         return timeRange;

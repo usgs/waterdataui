@@ -22,7 +22,7 @@ export const getCurrentTimeSeriesLineSegments = createSelector(
             return [];
         }
 
-        const timeStepInMillis = timeSeries.properties.timeStep.map((t) => new DateTime.fromISO(t).toMillis());
+        const timeStepInMillis = timeSeries.properties.timeStep.map((t) => new DateTime.fromISO(t, {zone: 'UTC'}).toMillis());
 
         let lineSegments = [];
         let previousDate = timeStepInMillis[0];

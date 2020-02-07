@@ -1,14 +1,14 @@
 import { line as d3Line } from 'd3-shape';
 import includes from 'lodash/includes';
-import {createSelector, createStructuredSelector} from 'reselect';
+import {createStructuredSelector} from 'reselect';
 
 import {addSVGAccessibility} from '../../d3-rendering/accessibility';
 import {link} from '../../lib/d3-redux';
-import {getCurrentObservationsTimeSeries} from '../../selectors/observations-selector';
 
 import {appendAxes} from '../../d3-rendering/axes';
 
 import {getXAxis, getYAxis} from './selectors/axes';
+import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesTitle, getCurrentTimeSeriesYTitle} from "./selectors/labels";
 import {getLayout} from './selectors/layout';
 import {getXScale, getYScale} from './selectors/scales';
 import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-lines';
@@ -17,29 +17,6 @@ const APPROVED = 'Approved';
 const ESTIMATED = 'Estimated';
 const CIRCLE_RADIUS_SINGLE_PT = 1;
 
-const getTimeSeriesTitle = createSelector(
-    getCurrentObservationsTimeSeries,
-    (timeSeries) => {
-        return timeSeries && timeSeries.properties && timeSeries.properties.observedPropertyName ?
-            timeSeries.properties.observedPropertyName : '';
-    }
-);
-
-const getTimeSeriesDescription = createSelector(
-    getCurrentObservationsTimeSeries,
-    (timeSeries) => {
-        return timeSeries && timeSeries.properties && timeSeries.properties.observedPropertyName ?
-            `${timeSeries.properties.observedPropertyName} for ${timeSeries.properties.samplingFeatureName}` : '';
-    }
-);
-
-const getYTitle = createSelector(
-    getCurrentObservationsTimeSeries,
-    (timeSeries) => {
-        return timeSeries ?
-            `${timeSeries.properties.observedPropertyName}, ${timeSeries.properties.unitOfMeasureName}` : '';
-    }
-);
 
 const drawDataLine = function (group, {lineSegment, xScale, yScale}) {
     let lineElem;
@@ -90,8 +67,8 @@ export const drawTimeSeriesGraph = function(elem, store) {
                 elem.attr('height', layout.height);
             }, getLayout))
             .call(link(store, addSVGAccessibility, createStructuredSelector({
-                title: getTimeSeriesTitle,
-                description: getTimeSeriesDescription,
+                title: getCurrentTimeSeriesTitle,
+                description: getCurrentTimeSeriesDescription,
                 isInteractive: () => true,
                 idPrefix: () => 'dv-hydrograph'
             })));
@@ -102,7 +79,7 @@ export const drawTimeSeriesGraph = function(elem, store) {
             xAxis: getXAxis,
             yAxis: getYAxis,
             layout: getLayout,
-            yTitle: getYTitle
+            yTitle: getCurrentTimeSeriesYTitle
         })))
         .call(link(store, drawDataLines, createStructuredSelector({
             lines: getCurrentTimeSeriesLineSegments,

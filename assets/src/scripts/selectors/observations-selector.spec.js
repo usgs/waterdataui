@@ -202,8 +202,8 @@ describe('observations-selector', () => {
                     currentTimeSeriesId: '12345'
                 }
             })).toEqual({
-                startTime: 1262325600000,
-                endTime: 1575180000000
+                startTime: 1262304000000,
+                endTime: 1575158400000
             });
         });
     });

@@ -6,7 +6,8 @@ import {hasCurrentObservationsTimeSeries} from '../../selectors/observations-sel
 import {Actions} from '../../store';
 
 import {drawErrorAlert, drawInfoAlert} from '../../d3-rendering/alerts';
-import {drawTimeSeriesGraph} from "./time-series-graph";
+
+import {drawTimeSeriesGraph} from './time-series-graph';
 
 const TEMP_TIME_SERIES_ID = '36307c899ac14d2eac6956b1bf5ceb69';
 
@@ -25,6 +26,7 @@ export const attachToNode = function (store,
             title: 'Must specify monitoring location ID',
             body: ''
         });
+        return;
     }
 
     store.dispatch(Actions.retrieveDailyValueData(`USGS-${siteno}`, timeSeriesId))
@@ -39,10 +41,10 @@ export const attachToNode = function (store,
             }
         });
 
-        nodeElem.select('.graph-container')
-            .call(link(store, function(container, showElem) {
-                container.attr('hidden', showElem ? null : true);
-            }, hasCurrentObservationsTimeSeries))
-            .call(drawTimeSeriesGraph, store);
+    nodeElem.select('.graph-container')
+        .call(link(store, function(container, showElem) {
+            container.attr('hidden', showElem ? null : true);
+        }, hasCurrentObservationsTimeSeries))
+        .call(drawTimeSeriesGraph, store);
 
 };

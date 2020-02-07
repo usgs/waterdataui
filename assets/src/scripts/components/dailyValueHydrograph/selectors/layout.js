@@ -1,9 +1,7 @@
-import memoize from "fast-memoize";
-import {createSelector} from "reselect";
-import {tickSelector} from "../../hydrograph/domain";
-import {mediaQuery} from "../../../utils";
-import config from "../../../config";
-import {BRUSH_HEIGHT, BRUSH_MOBILE_HEIGHT} from "../../hydrograph/layout";
+import {createSelector} from 'reselect';
+
+import config from '../../../config';
+import {mediaQuery} from '../../../utils';
 
 export const ASPECT_RATIO = 1 / 2;
 export const ASPECT_RATIO_PERCENT = `${100 * ASPECT_RATIO}%`;

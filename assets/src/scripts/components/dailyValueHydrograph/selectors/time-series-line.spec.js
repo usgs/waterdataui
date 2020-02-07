@@ -31,7 +31,7 @@ describe('time-series-line module', () => {
             expect(result.length).toBe(1);
             expect(result[0].points.length).toBe(4);
             expect(result[0].points[0]).toEqual({
-                date: 1514872800000,
+                date: 1514851200000,
                 value: 5.0
             });
             expect(result[0].approvals).toEqual(['Approved']);
