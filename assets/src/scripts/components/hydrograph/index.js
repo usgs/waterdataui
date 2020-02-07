@@ -5,6 +5,7 @@ import {select} from 'd3-selection';
 
 import {createStructuredSelector} from 'reselect';
 
+import {drawWarningAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {link} from '../../lib/d3-redux';
 import {isLoadingTS, hasAnyTimeSeries} from '../../selectors/time-series-selector';
 import {Actions} from '../../store';
@@ -24,23 +25,6 @@ import {allTimeSeriesSelector} from './time-series';
 import {drawTimeSeriesGraph} from './time-series-graph';
 
 
-const drawMessage = function(elem, message) {
-    // Set up parent element and SVG
-    elem.innerHTML = '';
-    const alertBox = elem
-        .append('div')
-            .attr('class', 'usa-alert usa-alert-warning')
-            .append('div')
-                .attr('class', 'usa-alert-body');
-    alertBox
-        .append('h3')
-            .attr('class', 'usa-alert-heading')
-            .html('Hydrograph Alert');
-    alertBox
-        .append('p')
-            .html(message);
-};
-
 /**
  * Modify styling to hide or display the elem.
  *
@@ -49,20 +33,6 @@ const drawMessage = function(elem, message) {
  */
 const controlDisplay = function(elem, showElem) {
     elem.attr('hidden', showElem ? null : true);
-};
-
-const dataLoadingAlert = function(elem, message) {
-    elem.select('#no-data-message').remove();
-    if (message) {
-        elem.append('div')
-            .attr('id', 'no-data-message')
-            .attr('class', 'usa-alert usa-alert-info')
-            .append('div')
-            .attr('class', 'usa-alert-body')
-            .append('p')
-            .attr('class', 'usa-alert-text')
-            .text(message);
-    }
 };
 
 export const attachToNode = function (store,
@@ -80,7 +50,7 @@ export const attachToNode = function (store,
                                       } = {}) {
     const nodeElem = select(node);
     if (!siteno) {
-        select(node).call(drawMessage, 'No data is available.');
+        select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No data is available.'});
         return;
     }
 
@@ -110,10 +80,10 @@ export const attachToNode = function (store,
     // Fetch the time series data
     if (period) {
         store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, parameter ? parameter : '00060', period))
-            .catch((message) => dataLoadingAlert(nodeElem, message ? message : 'No data returned'));
+            .catch((message) => drawInfoAlert(nodeElem, {body: message ? message : 'No data returned'}));
     } else {
         store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null))
-            .catch(() => dataLoadingAlert((nodeElem, 'No current time series data available for this site')));
+            .catch(() => drawInfoAlert(nodeElem, {body: 'No current time series data available for this site'}));
     }
     store.dispatch(Actions.retrieveMedianStatistics(siteno));
 
