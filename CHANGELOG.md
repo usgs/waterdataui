@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.25.0...master)
+### Added
+- Daily value graph. This has a feature toggle and is valid for only a single site. Sites without
+data will show an info alert.
 
 ## [0.25.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.24.0...waterdataui-0.25.0)
 ### Fixed
