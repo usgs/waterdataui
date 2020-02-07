@@ -153,18 +153,21 @@ class TestNetworkView(TestCase):
 
     @mock.patch('waterdata.services.ogc.get_networks')
     def test_networks(self, network_mock):
+        network_mock.return_value.status_code = 200
         response = self.app_client.get('/networks/')
         # Assert network listing works
         assert response.status_code == 200
 
     @mock.patch('waterdata.services.ogc.get_networks')
     def test_one_network(self, network_mock):
+        network_mock.return_value.status_code = 200
         response = self.app_client.get('/networks/{}/'.format(self.network))
         # Assert a known network works in gui
         assert response.status_code == 200
 
     @mock.patch('waterdata.services.ogc.get_networks')
     def test_invalid_network(self, network_mock):
+        network_mock.return_value.status_code = 200
         network = 'monitoring-locations-invalid'
         url = '/networks/{}/'.format(network)
         response = self.app_client.get(url)
@@ -173,6 +176,7 @@ class TestNetworkView(TestCase):
 
     @mock.patch('waterdata.services.ogc.get_networks')
     def test_invalid_network_json_call(self, network_mock):
+        network_mock.return_value.status_code = 200
         network = 'monitoring-locations-invalid'
         url = '{0}{1}?f={2}'.format(self.test_url, network, self.format)
         response = self.app_client.get(url)
