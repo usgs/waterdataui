@@ -34,4 +34,3 @@ def get_networks(network_cd):
             return resp_json
         if network_cd == 'ALL':
             return resp_json.get('collections', [])
-
