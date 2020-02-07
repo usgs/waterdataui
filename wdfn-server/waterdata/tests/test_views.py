@@ -147,7 +147,7 @@ class TestNetworkView(TestCase):
 
     def setUp(self):
         self.app_client = app.test_client()
-        self.test_url = '{0}/'.format(app.config['OGC_SERVICE'])
+        self.test_url = '{0}/'.format(app.config['NETWORK_ENDPOINT'])
         self.network = 'monitoring-locations'
         self.format = 'json'
 

@@ -7,13 +7,19 @@
         {% if http_code == 200 %}
             <h1>Networks</h1>
 
-            {% if network_cd == 'ALL' %}
+            {% if network_cd %}
+                {% if collection.description %}
+                    <h2>Network: {{ network_cd }} </h2>
+                    <h3>Description: {{ collection.description }} </h3>
+                {% else %}
+                    <h2>Network: < {{ network_cd }} > not found. </h2>
+                {% endif %}
+            {% else %}
                 <p>Select a Network</p>
                 <table class="usa-table">
                     <thead>
                         <tr>
                             <th scope="col">Network</th>
-                            <th scope="col">Type</th>
                             <th scope="col">Title</th>
                             <th scope="col">Description</th>
                         </tr>
@@ -22,23 +28,13 @@
                         {% for network in collection %}
                             <tr>
                                 <th scope="row"><a class="usa-link" href="{{ url_for('networks', network_cd=network.id) }}">{{ network.id }}</a></th>
-                                <td>{{ network.itemType }}</td>
                                 <td>{{ network.title }}</td>
                                 <td>{{ network.description }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-
-            {% else %}
-                {% if collection.description %}
-                    <h2>Network: {{ network_cd }} </h2>
-                    <h3>Description: {{ collection.description }} </h3>
-                {% else %}
-                    <h2>Network: < {{ network_cd }} > not found. </h2>
-                {% endif %}
             {% endif %}
-
 
         {% else %}
             <h1>Error: HTTP {{ http_code }} -- Network not found.</h1>

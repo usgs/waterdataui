@@ -191,9 +191,8 @@ def hydrological_unit_locations(huc_cd):
     return hydrological_unit(huc_cd, show_locations=True)
 
 
-@app.route('/networks/', defaults={'network_cd': 'ALL'}, methods=['GET'])
+@app.route('/networks/', defaults={'network_cd': None}, methods=['GET'])
 @app.route('/networks/<network_cd>/', methods=['GET'])
-@defined_when(app.config['NETWORK_PAGES_ENABLED'], return_404)
 def networks(network_cd):
     """
     Network unit view
@@ -201,9 +200,14 @@ def networks(network_cd):
     """
 
     # Grab the Network info
-    collection = ogc.get_networks(network_cd)
+    network_data = ogc.get_networks(network_cd)
 
-    http_code = 200 if (network_cd != '') else 404
+    if network_cd:
+        collection = network_data
+    else:
+        collection = network_data.get('collections')
+
+    http_code = 200 if (collection) else 404
 
     return render_template(
         'networks.html',
