@@ -20,7 +20,7 @@ def get_networks(network_cd):
         url = url +'/'+network_cd+'/'
     url = url + '?f=json'
 
-    print('services: ogc.py: get_networks(): ' + url)
+    #print('services: ogc.py: get_networks(): ' + url)
     response = execute_get_request(url)
 
     if response.status_code != 200:
@@ -30,7 +30,6 @@ def get_networks(network_cd):
     except ValueError:
         return []
     else:
-        if network_cd != 'ALL':
-            return resp_json
         if network_cd == 'ALL':
             return resp_json.get('collections', [])
+        return resp_json
