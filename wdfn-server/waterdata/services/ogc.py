@@ -5,7 +5,7 @@ from waterdata import app
 from waterdata.utils import execute_get_request
 
 
-def get_Networks(network_cd):
+def get_networks(network_cd):
     """
     Gets the network data from a json file
     :param network_cd: collections-id
@@ -20,7 +20,7 @@ def get_Networks(network_cd):
         url = url +'/'+network_cd+'/'
     url = url + '?f=json'
 
-    #print('services: ogc.py: get_Networks(): ' + url)
+    #print('services: ogc.py: get_networks(): ' + url)
     response = execute_get_request(url)
 
     if response.status_code != 200:

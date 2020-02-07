@@ -201,7 +201,7 @@ def networks(network_cd):
     """
 
     # Grab the Network info
-    collection = ogc.get_Networks(network_cd)
+    collection = ogc.get_networks(network_cd)
 
     http_code = 200 if (network_cd != '') else 404
 

@@ -151,19 +151,19 @@ class TestNetworkView(TestCase):
         self.network = 'monitoring-locations'
         self.format = 'json'
 
-    @mock.patch('waterdata.services.ogc.get_Networks')
+    @mock.patch('waterdata.services.ogc.get_networks')
     def test_networks(self, network_mock):
         response = self.app_client.get('/networks/')
         # Assert network listing works
         assert response.status_code == 200
 
-    @mock.patch('waterdata.services.ogc.get_Networks')
+    @mock.patch('waterdata.services.ogc.get_networks')
     def test_one_network(self, network_mock):
         response = self.app_client.get('/networks/{}/'.format(self.network))
         # Assert a known network works in gui
         assert response.status_code == 200
 
-    @mock.patch('waterdata.services.ogc.get_Networks')
+    @mock.patch('waterdata.services.ogc.get_networks')
     def test_invalid_network(self, network_mock):
         network = 'monitoring-locations-invalid'
         url = '/networks/{}/'.format(network)
@@ -171,10 +171,10 @@ class TestNetworkView(TestCase):
         # Assert an invalid network in gui does not 404
         assert response.status_code == 200
 
-    @mock.patch('waterdata.services.ogc.get_Networks')
+    @mock.patch('waterdata.services.ogc.get_networks')
     def test_invalid_network_json_call(self, network_mock):
         network = 'monitoring-locations-invalid'
-        url = '{0}{1}?f={2}'.format(self.test_url, network, self.format )
+        url = '{0}{1}?f={2}'.format(self.test_url, network, self.format)
         response = self.app_client.get(url)
         # Assert an invalid ogc json network call 404s
         assert response.status_code == 404
