@@ -8,7 +8,7 @@ import {link} from '../../lib/d3-redux';
 import {appendAxes} from '../../d3-rendering/axes';
 
 import {getXAxis, getYAxis} from './selectors/axes';
-import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesTitle, getCurrentTimeSeriesYTitle} from "./selectors/labels";
+import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesTitle, getCurrentTimeSeriesYTitle} from './selectors/labels';
 import {getLayout} from './selectors/layout';
 import {getXScale, getYScale} from './selectors/scales';
 import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-lines';
