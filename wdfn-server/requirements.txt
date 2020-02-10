@@ -10,7 +10,7 @@ pendulum==2.0.5
 pyfakefs==3.7.1
 pytest==5.3.4
 pytest-mock==2.0.0
-pytest-flask==0.15.0
+pytest-flask==0.15.1
 requests==2.22.0
 requests-mock==1.7.0
 six==1.14.0
