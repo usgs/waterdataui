@@ -53,7 +53,7 @@ export const appendYAxis = function(elem, {yAxis, layout, yTitle}) {
             .attr('x', yLabelLoc.x)
             .attr('y', yLabelLoc.y)
             .text(yTitle)
-                .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
+            .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
 };
 
 /*
