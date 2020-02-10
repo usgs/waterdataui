@@ -23,6 +23,4 @@ def get_networks(network_cd=None):
     except ValueError:
         return []
     else:
-        #if network_cd == 'ALL':
-        #    return resp_json.get('collections', [])
         return resp_json
