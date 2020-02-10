@@ -12,7 +12,7 @@ import { DV_DATA } from '../dv_414240072033201';
  * @return {Promise}<Object>
  */
 export const fetchTimeSeries = function(monitoringLocationId, timeSeriesId) {
-    // temporary to read data from file
+    // TODO: When observations are available for all sites remove this ad remove the dv data file.
     if (monitoringLocationId === 'USGS-414240072033201') {
         return Promise.resolve (JSON.parse(DV_DATA));
     } else {

@@ -4,7 +4,7 @@ import {createSelector} from 'reselect';
 
 import {getCurrentObservationsTimeSeries} from '../../../selectors/observations-selector';
 
-const TWO_DAYS = 1000 * 60 * 60 * 24 * 2;
+const TWO_DAYS = 1000 * 60 * 60 * 24 * 2; // In milliseconds
 
 /*
  * Returns selector function which returns an array of Objects which include the data needed to render the line.

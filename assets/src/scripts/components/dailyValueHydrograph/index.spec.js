@@ -47,6 +47,8 @@ describe('components/dailyValueHydrograph/index', () => {
         jasmine.Ajax.install();
         testDiv = select('body').append('div');
         testDiv.append('div')
+            .attr('class', 'loading-indicator-container');
+        testDiv.append('div')
             .attr('class', 'graph-container');
 
         spyOn(Actions, 'retrieveDailyValueData').and.callThrough();
@@ -64,14 +66,15 @@ describe('components/dailyValueHydrograph/index', () => {
         expect(Actions.retrieveDailyValueData).not.toHaveBeenCalled();
     });
 
-    it('Expects that if siteno and timeSeriesId are defined the daily value data will be fetched', () => {
+    it('Expects that if siteno and timeSeriesId are defined the daily value data will be fetched and the loading indicator shown', () => {
         attachToNode(configureStore(), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
 
         expect(testDiv.selectAll('.usa-alert--error').size()).toBe(0);
         expect(Actions.retrieveDailyValueData).toHaveBeenCalledWith('USGS-1213', '12345') ;
+        expect(testDiv.selectAll('.loading-indicator').size()).toBe(1);
     });
 
-    it('Expects that if the fetch is successful the current observations time series id is updated in the store', (done) => {
+    it('Expects that if the fetch is successful the current observations time series id is updated in the store and the loading indicatoris no longer visible', (done) => {
         let store = configureStore();
         attachToNode(store, testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
         jasmine.Ajax.requests.mostRecent().respondWith({
@@ -82,12 +85,13 @@ describe('components/dailyValueHydrograph/index', () => {
         window.requestAnimationFrame(() => {
             expect(store.getState().observationsState.currentTimeSeriesId).toEqual('12345');
             expect(testDiv.selectAll('.usa-alert--info').size()).toBe(0);
+            expect(testDiv.selectAll('.loading-indicator').size()).toBe(0);
 
             done();
         });
     });
 
-    it('Expect that if the fetch is not successful an info alert is shown', (done) => {
+    it('Expect that if the fetch is not successful an info alert is shown and the loading indicator is no longer shown', (done) => {
         let store = configureStore();
         attachToNode(store, testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
         jasmine.Ajax.requests.mostRecent().respondWith({
@@ -97,6 +101,7 @@ describe('components/dailyValueHydrograph/index', () => {
         window.requestAnimationFrame(() => {
             expect(store.getState().observationsState.currentTimeSeriesId).toBeUndefined();
             expect(testDiv.selectAll('.usa-alert--info').size()).toBe(1);
+            expect(testDiv.selectAll('.loading-indicator').size()).toBe(0);
 
             done();
         });
