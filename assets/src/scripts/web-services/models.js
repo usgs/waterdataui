@@ -1,6 +1,6 @@
-import { utcFormat } from 'd3-time-format';
-import config from './config';
-import { get } from './ajax';
+import {utcFormat} from 'd3-time-format';
+import config from '../config';
+import {get} from '../ajax';
 
 
 // Define Water Services root URL - use global variable if defined, otherwise
@@ -11,11 +11,6 @@ const WEATHER_SERVICE_ROOT = config.WEATHER_SERVICE_ROOT || 'https://api.weather
 
 export const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
-const PARAM_PERTINENCE = {
-    '00060': 0,
-    '00065': 1,
-    '72019': 2
-};
 
 function olderThan120Days(date) {
     return date < new Date() - 120;
@@ -76,32 +71,6 @@ export const getPreviousYearTimeSeries = function ({site, startTime, endTime}) {
     lastYearStartTime.setFullYear(lastYearStartTime.getFullYear() - 1);
     lastYearEndTime.setFullYear(lastYearEndTime.getFullYear() - 1);
     return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
-};
-
-export const sortedParameters = function (variables) {
-    const dataVars = variables ? Object.values(variables) : [];
-    const pertinentParmCds = Object.keys(PARAM_PERTINENCE);
-    const highPertinenceVars = dataVars.filter(x => pertinentParmCds.includes(x.variableCode.value))
-        .sort((a, b) => {
-            const aPertinence = PARAM_PERTINENCE[a.variableCode.value];
-            const bPertinence = PARAM_PERTINENCE[b.variableCode.value];
-            if (aPertinence < bPertinence) {
-                return -1;
-            } else {
-                return 1;
-            }
-        });
-    const lowPertinenceVars = dataVars.filter(x => !pertinentParmCds.includes(x.variableCode.value))
-        .sort((a, b) => {
-            const aDesc = a.variableDescription.toLowerCase();
-            const bDesc = b.variableDescription.toLowerCase();
-            if (aDesc < bDesc) {
-                return -1;
-            } else {
-                return 1;
-            }
-        });
-    return highPertinenceVars.concat(lowPertinenceVars);
 };
 
 export const queryWeatherService = function (latitude, longitude) {

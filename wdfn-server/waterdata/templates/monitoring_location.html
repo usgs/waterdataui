@@ -70,33 +70,39 @@
                 </div>
 
                 {{ components.TimeSeriesComponent(stations[0].site_no) }}
+
                 {% if monitoring_camera.exists %}
-                <div class="usa-accordion" style="margin-top:1em;">
-                    <h2 class="usa-accordion__heading">
-                        <button class="usa-accordion__button" aria-expanded="true" aria-controls="ts-a1a">Monitoring Camera</button>
-                    </h2>
-                    <div id="ts-a1a" class="usa-accordion__content">
-			    <div>Most recent image</div>
-                        <div style="float:left">
-                            <a href="{{ monitoring_camera.video  }}" title="click image to open full-size video" target="_blank">
-                                <img width="200" src="{{ monitoring_camera.thumb }}" alt="lastest camera image thumbnail">
-                            </a>
-                        </div>
-                        <div style="float:right">
-			    <div><b>Frames Gallery: </b>
-                                <a href="{{ monitoring_camera.frame_gallery }}" target="_blank">
-                                    Last 99 Frames
+                    <div class="usa-accordion" style="margin-top:1em;">
+                        <h2 class="usa-accordion__heading">
+                            <button class="usa-accordion__button" aria-expanded="true" aria-controls="ts-a1a">Monitoring Camera</button>
+                        </h2>
+                        <div id="ts-a1a" class="usa-accordion__content">
+                            <div>Most recent image</div>
+                            <div style="float:left">
+                                <a href="{{ monitoring_camera.video  }}" title="click image to open full-size video" target="_blank">
+                                    <img width="200" src="{{ monitoring_camera.thumb }}" alt="lastest camera image thumbnail">
                                 </a>
                             </div>
-                            <div><b>Video Folder: </b>
-                                <a href="{{ monitoring_camera.video_index }}" target="_blank">
-                                    Index of videos and images
-                                </a>
+                            <div style="float:right">
+                                <div><b>Frames Gallery: </b>
+                                    <a href="{{ monitoring_camera.frame_gallery }}" target="_blank">
+                                        Last 99 Frames
+                                    </a>
+                                </div>
+                                <div><b>Video Folder: </b>
+                                    <a href="{{ monitoring_camera.video_index }}" target="_blank">
+                                        Index of videos and images
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 {% endif %}
+
+                {% if config.DAILY_VALUE_HYDROGRAPH_ENABLED %}
+                    {{ components.DailyValueTimeSeriesComponent(stations[0].site_no) }}
+                {%  endif %}
+
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
                     {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
                 {% endif %}
@@ -172,6 +178,7 @@
                         </table>
                     </div>
                 </div>
+
                 {% if questions_link %}
                     <div>
                         <a class="usa-link" href="{{ questions_link }}">Email USGS questions about this site</a>

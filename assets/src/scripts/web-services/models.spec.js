@@ -1,4 +1,4 @@
-import { getPreviousYearTimeSeries, getTimeSeries, sortedParameters } from './models';
+import {getPreviousYearTimeSeries, getTimeSeries} from './models';
 
 
 describe('Models module', () => {
@@ -124,59 +124,7 @@ describe('Models module', () => {
         });
     });
 
-    describe('sortedParameters', () => {
 
-        const testVars = {
-            20214: {
-                oid: '20214',
-                variableCode: {'value': '00065', variableID: 20214},
-                variableDescription: 'Gage Height, meters',
-                variableName: 'Gage Height, m'
-            },
-            1701: {
-                oid: '1701',
-                variableCode: {value: '91102', variableID: 1701},
-                variableDescription: 'Mass, cobalt(II) chloride, kilogram',
-                variableName: 'Mass, cobalt(II) chloride, kg'
-            },
-            501: {
-                oid: '501',
-                variableCode: {value: '20018', variableID: 501},
-                variableDescription: 'Volume, bromine, liter',
-                variableName: 'Volume, bromine, L'
-            },
-            17778: {
-                oid: '17778',
-                variableCode: {value: '72019', variableID: 17778},
-                variableDescription: 'Depth to water level, meters below land surface',
-                variableName: 'Depth to water level, m'
-            },
-            42: {
-                oid: '42',
-                variableCode: {value: '83452', variableID: 42},
-                variableDescription: 'Cross-sectional area, millibarn',
-                variableName: 'Cross-sectional area, mb'
-            },
-            88450: {
-                oid: '88450',
-                variableCode: {value: '00060', variableID: 88450},
-                variableDescription: 'Discharge, cubic meters per second',
-                variableName: 'Discharge, m3/s'
-            }
-        };
-
-        it('sorts a group of parameters', () => {
-            expect(sortedParameters(testVars).map(x => x.oid)).toEqual(['88450', '20214', '17778', '42', '1701', '501']);
-        });
-
-        it('handles the case where variables are empty', () => {
-            expect(sortedParameters({}).length).toEqual(0);
-        });
-
-        it('handles the case where variables are undefined', () => {
-            expect(sortedParameters(undefined).length).toEqual(0);
-        });
-    });
 });
 
 const MOCK_DATA = `

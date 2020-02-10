@@ -238,3 +238,40 @@ export const convertFahrenheitToCelsius = function(fahrenheit) {
 export const convertCelsiusToFahrenheit = function(celsius) {
     return celsius * 9/5 + 32;
 };
+
+/*
+ * Return the variables sorted with the ones we care about first
+ * @param {Array of String}
+ * @return {Array of String}
+ */
+export const sortedParameters = function (variables) {
+    const PARAM_PERTINENCE = {
+        '00060': 0,
+        '00065': 1,
+        '72019': 2
+    };
+
+    const dataVars = variables ? Object.values(variables) : [];
+    const pertinentParmCds = Object.keys(PARAM_PERTINENCE);
+    const highPertinenceVars = dataVars.filter(x => pertinentParmCds.includes(x.variableCode.value))
+        .sort((a, b) => {
+            const aPertinence = PARAM_PERTINENCE[a.variableCode.value];
+            const bPertinence = PARAM_PERTINENCE[b.variableCode.value];
+            if (aPertinence < bPertinence) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+    const lowPertinenceVars = dataVars.filter(x => !pertinentParmCds.includes(x.variableCode.value))
+        .sort((a, b) => {
+            const aDesc = a.variableDescription.toLowerCase();
+            const bDesc = b.variableDescription.toLowerCase();
+            if (aDesc < bDesc) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+    return highPertinenceVars.concat(lowPertinenceVars);
+};

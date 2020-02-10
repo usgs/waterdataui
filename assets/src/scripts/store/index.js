@@ -2,25 +2,31 @@
 import find from 'lodash/find';
 import findKey from 'lodash/findKey';
 import last from 'lodash/last';
-import { DateTime } from 'luxon';
-import { applyMiddleware, createStore, combineReducers, compose } from 'redux';
-import { default as thunk } from 'redux-thunk';
+import {DateTime} from 'luxon';
+import {applyMiddleware, createStore, combineReducers, compose} from 'redux';
+import {default as thunk} from 'redux-thunk';
 
-import { getPreviousYearTimeSeries, getTimeSeries, sortedParameters, queryWeatherService } from '../models';
-import { calcStartTime } from '../utils';
-import { normalize } from '../schema';
-import { fetchFloodFeatures, fetchFloodExtent } from '../flood-data';
-import { fetchSiteStatistics } from '../statistics-data';
-import { getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
-    getCustomTimeRange, getIanaTimeZone } from '../selectors/time-series-selector';
-import { floodDataReducer as floodData } from './flood-data-reducer';
-import { floodStateReducer as floodState } from './flood-state-reducer';
-import { nldiDataReducer as nldiData } from './nldi-data-reducer';
-import { fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow } from '../nldi-data';
-import { seriesReducer as series } from './series-reducer';
-import { statisticsDataReducer as statisticsData } from './statistics-data-reducer';
-import { timeSeriesStateReducer as timeSeriesState } from './time-series-state-reducer';
-import { uiReducer as ui } from './ui-reducer';
+import {normalize} from '../schema';
+import {calcStartTime, sortedParameters} from '../utils';
+
+import {getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
+    getCustomTimeRange, getIanaTimeZone} from '../selectors/time-series-selector';
+
+import {fetchFloodFeatures, fetchFloodExtent} from '../web-services/flood-data';
+import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from '../web-services/models';
+import {fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow} from '../web-services/nldi-data';
+import {fetchTimeSeries} from '../web-services/observations';
+import {fetchSiteStatistics} from '../web-services/statistics-data';
+
+import {floodDataReducer as floodData} from './flood-data-reducer';
+import {floodStateReducer as floodState} from './flood-state-reducer';
+import {nldiDataReducer as nldiData} from './nldi-data-reducer';
+import {observationsDataReducer as observationsData} from './observations-data-reducer';
+import {observationsStateReducer as observationsState} from './observations-state-reducer';
+import {seriesReducer as series} from './series-reducer';
+import {statisticsDataReducer as statisticsData} from './statistics-data-reducer';
+import {timeSeriesStateReducer as timeSeriesState} from './time-series-state-reducer';
+import {uiReducer as ui} from './ui-reducer';
 
 const GAGE_HEIGHT_CD = '00065';
 /*
@@ -223,6 +229,18 @@ export const Actions = {
             }
         };
     },
+    retrieveDailyValueData(monitoringLocationId, timeSeriesId) {
+        return function(dispatch) {
+            return fetchTimeSeries(monitoringLocationId, timeSeriesId)
+                .then(
+                    (data) => {
+                        dispatch(Actions.setObservationsTimeSeries(timeSeriesId, data));
+                    },
+                    () => {
+                        console.log(`Unable to fetch observations time series for ${timeSeriesId}`);
+                    });
+        };
+    },
     retrieveFloodData(siteno) {
         return function (dispatch) {
             const floodFeatures = fetchFloodFeatures(siteno);
@@ -328,6 +346,13 @@ export const Actions = {
             downstreamFlows,
             upstreamSites,
             downstreamSites
+        };
+    },
+    setObservationsTimeSeries(timeSeriesId, data) {
+        return {
+            type: 'SET_OBSERVATIONS_TIME_SERIES',
+            timeSeriesId,
+            data
         };
     },
     toggleTimeSeries(key, show) {
@@ -443,15 +468,23 @@ export const Actions = {
             type: 'LOCATION_IANA_TIME_ZONE_SET',
             ianaTimeZone
         };
+    },
+    setCurrentObservationsTimeSeriesId(timeSeriesId) {
+        return {
+            type: 'SET_CURRENT_TIME_SERIES_ID',
+            timeSeriesId
+        };
     }
 };
 
 const appReducer = combineReducers({
     series,
+    observationsData,
     statisticsData,
     floodData,
     nldiData,
     timeSeriesState,
+    observationsState,
     floodState,
     ui
 });
@@ -462,6 +495,7 @@ const MIDDLEWARES = [thunk];
 export const configureStore = function (initialState) {
     initialState = {
         series: {},
+        observationsData: {},
         floodData: {
             stages: [],
             extent: {}
@@ -488,6 +522,7 @@ export const configureStore = function (initialState) {
             audiblePlayId: null,
             loadingTSKeys: []
         },
+        observationsState: {},
         floodState: {
             gageHeight: null
         },

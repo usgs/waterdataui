@@ -1,11 +1,13 @@
 import {line as d3Line, curveStepAfter} from 'd3-shape';
 
-import {addSVGAccessibility} from '../../accessibility';
 import config from '../../config';
+
+import {addSVGAccessibility} from '../../d3-rendering/accessibility';
+import {appendAxes} from '../../d3-rendering/axes';
 import {link} from '../../lib/d3-redux';
 import {getAgencyCode, getMonitoringLocationName} from '../../selectors/time-series-selector';
 
-import {appendAxes, getAxes}  from './axes';
+import {getAxes}  from './axes';
 import {
     currentVariableLineSegmentsSelector,
     getCurrentVariableMedianStatPoints,

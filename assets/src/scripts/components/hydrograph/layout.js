@@ -38,8 +38,14 @@ export const SPARK_LINE_DIM = {
 
 
 /*
- * @param {Object} state - Redux store
- * @return {Object} containing width and height properties.
+ * Returns a selector function. This function returns an object containing the following properties:
+ *  @prop {Number} - height - This is the height of the svg containing hydrograph
+ *  @prop {Number} - width - This is the width of the svg containing hydrgoraph
+ *  @prop {Object} - margin - Has top, bottom, left, right Number properties which define the margins
+ *      with the enclosing svg for the hydrograph. Typically the area in the margins are used for axis
+ *      labels and graph titles.
+ * @param {String} kind - Either 'BRUSH' or 'MAIN'. If null 'MAIN' is assumed
+ * @return {Selector function}
  */
 export const getLayout = memoize(kind => createSelector(
     (state) => state.ui.width,
