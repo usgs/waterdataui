@@ -13,7 +13,7 @@ MOCK_RESPONSE = """
 MOCK_NETWORK_LIST = json.loads(MOCK_RESPONSE)
 
 
-def test_ogc_response(config):
+def test_ogc_response():
     with mock.patch('waterdata.services.ogc.execute_get_request') as r_mock:
         response = mock.Mock()
         response.status_code = 200
@@ -25,7 +25,7 @@ def test_ogc_response(config):
         assert networks == MOCK_NETWORK_LIST, 'Expected response'
 
 
-def test_ogc_handling_bad_status_code(config):
+def test_ogc_handling_bad_status_code():
     with mock.patch('waterdata.services.ogc.execute_get_request') as r_mock:
         response = mock.Mock()
         response.status_code = 500
@@ -35,7 +35,7 @@ def test_ogc_handling_bad_status_code(config):
         assert networks == [], 'Expected response'
 
 
-def test_unparsable_json(config):
+def test_unparsable_json():
     with mock.patch('waterdata.services.ogc.execute_get_request') as r_mock:
         mock_resp = mock.Mock()
         mock_resp.status_code = 200
