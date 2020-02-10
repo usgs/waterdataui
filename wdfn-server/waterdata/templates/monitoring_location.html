@@ -71,8 +71,6 @@
 
                 {{ components.TimeSeriesComponent(stations[0].site_no) }}
 
-                {{ components.DailyValueTimeSeriesComponent(stations[0].site_no) }}
-
                 {% if monitoring_camera.exists %}
                     <div class="usa-accordion" style="margin-top:1em;">
                         <h2 class="usa-accordion__heading">
@@ -100,6 +98,11 @@
                         </div>
                     </div>
                 {% endif %}
+
+                {% if config.DAILY_VALUE_HYDROGRAPH_ENABLED %}
+                    {{ components.DailyValueTimeSeriesComponent(stations[0].site_no) }}
+                {%  endif %}
+
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
                     {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
                 {% endif %}
@@ -175,6 +178,7 @@
                         </table>
                     </div>
                 </div>
+
                 {% if questions_link %}
                     <div>
                         <a class="usa-link" href="{{ questions_link }}">Email USGS questions about this site</a>

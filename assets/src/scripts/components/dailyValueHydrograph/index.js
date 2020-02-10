@@ -39,8 +39,8 @@ export const attachToNode = function (store,
             loadingIndicator.call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
             if (Object.keys(store.getState().observationsData.timeSeries[timeSeriesId]).length === 0) {
                 drawInfoAlert(nodeElem, {
-                    title: 'No Data',
-                    body: 'There is no ground water level daily data available for this site'
+                    title: 'No Max Daily Value Data',
+                    body: 'There is no ground water level maximum daily data available for this site'
                 });
             } else {
                 store.dispatch(Actions.setCurrentObservationsTimeSeriesId(timeSeriesId));

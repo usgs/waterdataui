@@ -17,6 +17,13 @@ const APPROVED = 'Approved';
 const ESTIMATED = 'Estimated';
 const CIRCLE_RADIUS_SINGLE_PT = 1;
 
+const createTitle = function(elem, store) {
+    elem.append('div')
+        .classed('time-series-graph-title', true)
+        .call(link(store, (elem, title) => {
+            elem.html(title);
+        }, getCurrentTimeSeriesYTitle));
+};
 
 const drawDataLine = function (group, {lineSegment, xScale, yScale}) {
     let lineElem;
@@ -58,6 +65,7 @@ export const drawTimeSeriesGraph = function(elem, store) {
 
     const svg = elem.append('div')
         .attr('class', 'hydrograph-container')
+        .call(createTitle, store)
         .append('svg')
             .attr('xmlns', 'http://www.w3.org/2000/svg')
             .classed('hydrograph-svg', true)
