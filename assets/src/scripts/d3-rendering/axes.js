@@ -13,7 +13,6 @@ import {wrap} from '../utils';
  *      @prop {Object} layout - contains properties for width, height, and margin for enclosing svg.
  */
 export const appendXAxis = function(elem, {xAxis, layout}) {
-    console.log(`Layout is ${layout.width}, ${layout.height} margin: ${layout.margin.top}, ${layout.margin.bottom}, ${layout.margin.left}, ${layout.margin.right}`);
     const xLoc = {
         x: 0,
         y: layout.height - (layout.margin.top + layout.margin.bottom)

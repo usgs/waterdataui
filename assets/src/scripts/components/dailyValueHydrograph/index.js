@@ -1,11 +1,13 @@
 
 import {select} from 'd3-selection';
+import {createStructuredSelector} from 'reselect';
 
 import {link} from '../../lib/d3-redux';
 import {hasCurrentObservationsTimeSeries} from '../../selectors/observations-selector';
 import {Actions} from '../../store';
 
 import {drawErrorAlert, drawInfoAlert} from '../../d3-rendering/alerts';
+import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
 
 import {drawTimeSeriesGraph} from './time-series-graph';
 
@@ -29,8 +31,12 @@ export const attachToNode = function (store,
         return;
     }
 
+    const loadingIndicator = nodeElem.select('.loading-indicator-container')
+        .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
+
     store.dispatch(Actions.retrieveDailyValueData(`USGS-${siteno}`, timeSeriesId))
         .then(() => {
+            loadingIndicator.call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
             if (Object.keys(store.getState().observationsData.timeSeries[timeSeriesId]).length === 0) {
                 drawInfoAlert(nodeElem, {
                     title: 'No Data',

@@ -44,9 +44,6 @@ export const getCurrentTimeSeriesLineSegments = createSelector(
             }
 
             if (hasGap || hasDifferentApprovals) {
-                if (hasGap) {
-                    console.log(`Gap detected at ${DateTime.fromMillis(date).toFormat('MMM dd yyyy')}`);
-                }
                 lineSegments.push(segment);
                 segment = {
                     points: [],
