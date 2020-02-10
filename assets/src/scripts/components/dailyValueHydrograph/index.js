@@ -1,6 +1,5 @@
 
 import {select} from 'd3-selection';
-import {createStructuredSelector} from 'reselect';
 
 import {link} from '../../lib/d3-redux';
 import {hasCurrentObservationsTimeSeries} from '../../selectors/observations-selector';

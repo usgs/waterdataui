@@ -63,5 +63,3 @@ COOPERATOR_SERVICE_PATTERN = 'https://water.usgs.gov/customer/stories/{site_no}/
 
 NLDI_SERVICES_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/nldi/linked-data'
 NLDI_SERVICES_DISTANCE = '322'
-
-
