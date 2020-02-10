@@ -33,7 +33,6 @@ describe('axes module', () => {
             appendXAxis(svg, {xAxis, layout});
 
             expect(svg.selectAll('.x-axis').size()).toBe(1);
-            expect(svg.select('.x-axis').attr('transform')).toContain('0, 880');
             expect(xAxis).toHaveBeenCalled();
         });
     });
@@ -48,7 +47,6 @@ describe('axes module', () => {
             appendYAxis(svg, {yAxis, layout, yTitle: 'The Y Axis Title'});
 
             expect(svg.selectAll('.y-axis').size()).toBe(1);
-            expect(svg.select('.y-axis').attr('transform')).toContain('0, 0');
             expect(svg.selectAll('.y-axis-label').size()).toBe(1);
             expect(svg.select('.y-axis-label').select('tspan').html()).toEqual('The Y Axis Title');
             expect(yAxis).toHaveBeenCalled();
@@ -65,7 +63,6 @@ describe('axes module', () => {
             appendSecondaryYAxis(svg, {yAxis, layout, yTitle: 'The Secondary Y Axis Title'});
 
             expect(svg.selectAll('.secondary-y-axis').size()).toBe(1);
-            expect(svg.select('.secondary-y-axis').attr('transform')).toContain('525, 0');
             expect(svg.selectAll('.secondary-y-axis-label').size()).toBe(1);
             expect(svg.select('.secondary-y-axis-label').select('tspan').html()).toEqual('The Secondary Y Axis Title');
             expect(yAxis).toHaveBeenCalled();
