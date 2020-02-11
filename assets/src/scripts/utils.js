@@ -100,7 +100,6 @@ export const wrap = function (text, width, break_chars=TEXT_WRAP_BREAK_CHARS) {
 
         let x = elem.attr('x');
         let y = elem.attr('y');
-        console.log('dy attribute:' + elem.attr('dy'))
         let dy = parseFloat(elem.attr('dy') || 0);
 
         let tspan = elem
