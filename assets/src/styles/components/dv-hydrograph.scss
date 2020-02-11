@@ -1,0 +1,84 @@
+$approved-time-series: #1b9e77;
+$estimated-time-series: #7570b3;
+$default-time-series: #d95f02;
+
+.graph-container {
+  width: 100%;
+}
+
+.loading-indicator-container {
+  i {
+    text-align: center;
+    vertical: middle;
+    width: 100%;
+  }
+}
+
+.time-series-graph-title {
+  @include u-margin-top(4);
+  @include h4();
+  @include at-media('tablet') {
+    @include h3();
+  }
+  text-align: center;
+}
+
+svg {
+  .tick {
+    text {
+      font-size: 1.05em;
+      @include at-media('mobile-lg') {
+        font-size: 1.2em;
+      }
+      @include at-media('tablet') {
+        font-size: 1.4em;
+      }
+    }
+  }
+  .y-axis {
+    text {
+      fill: black;
+    }
+    .y-axis-label {
+      text-anchor: middle;
+      display: none;
+      font-size: 1.5em;
+      font-style: italic;
+      @include at-media($theme-site-max-width) {
+        display: block;
+      }
+    }
+
+    .tick {
+      line {
+        fill: none;
+        stroke: lightgrey;
+        stroke-opacity: 0.7;
+      }
+    }
+  }
+
+  .x-axis {
+    .tick {
+      line {
+        fill: none;
+        stroke: black;
+        stroke-opacity: 0.7;
+      }
+    }
+  }
+
+  .line-segment {
+    fill: none;
+    stroke-width: 3px;
+    stroke: $default-time-series;
+
+    &.approved {
+      stroke: $approved-time-series;
+    }
+
+    &.estimated {
+      stroke: $estimated-time-series;
+    }
+  }
+}

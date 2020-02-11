@@ -4,7 +4,7 @@ import { map as createMap, marker as createMarker, control, layerGroup } from 'l
 import { TiledMapLayer, dynamicMapLayer, Util, basemapLayer } from 'esri-leaflet/src/EsriLeaflet';
 import { link } from '../../lib/d3-redux';
 import config from '../../config';
-import { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } from '../../flood-data';
+import { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } from '../../web-services/flood-data';
 import { hasFloodData, getFloodExtent, getFloodStageHeight } from '../../selectors/flood-data-selector';
 import { Actions } from '../../store';
 import { floodSlider } from './flood-slider';

@@ -84,8 +84,9 @@ const TEXT_WRAP_BREAK_CHARS = [];
 /**
  * Wrap long svg text labels into multiple lines.
  * Based on: https://bl.ocks.org/ericsoco/647db6ebadd4f4756cae
- * @param  {String} text
+ * @param  {D3 selection} text
  * @param  {Number} width
+ * @param {Array of Strings} break_chars - these along with spaces are acceptable places to break on}
  */
 export const wrap = function (text, width, break_chars=TEXT_WRAP_BREAK_CHARS) {
     text.each(function () {
@@ -99,6 +100,7 @@ export const wrap = function (text, width, break_chars=TEXT_WRAP_BREAK_CHARS) {
 
         let x = elem.attr('x');
         let y = elem.attr('y');
+        console.log('dy attribute:' + elem.attr('dy'))
         let dy = parseFloat(elem.attr('dy') || 0);
 
         let tspan = elem
@@ -111,14 +113,16 @@ export const wrap = function (text, width, break_chars=TEXT_WRAP_BREAK_CHARS) {
         // Iteratively add each word to the line until we exceed the maximum width.
         let line = [];
         let lineCount = 0;
-        for (const word of textContent.split(/\s+/)) {
+        const words = textContent.split(/\s+/);
+        for (const word of words) {
             // Add this word to the line
             line.push(word);
             tspan.text(line.join(' '));
 
             // If we exceeded the line width, remove the last word from the array
             // and append this tspan to the DOM node.
-            if (tspan.node().getComputedTextLength() > width) {
+            let tspanNode = tspan.node();
+            if (tspanNode.getComputedTextLength() > width) {
                 // Remove the last word and put it on the next line.
                 line.pop();
                 let spanContent = line.join(' ');
@@ -237,4 +241,41 @@ export const convertFahrenheitToCelsius = function(fahrenheit) {
  */
 export const convertCelsiusToFahrenheit = function(celsius) {
     return celsius * 9/5 + 32;
+};
+
+/*
+ * Return the variables sorted with the ones we care about first
+ * @param {Array of String}
+ * @return {Array of String}
+ */
+export const sortedParameters = function (variables) {
+    const PARAM_PERTINENCE = {
+        '00060': 0,
+        '00065': 1,
+        '72019': 2
+    };
+
+    const dataVars = variables ? Object.values(variables) : [];
+    const pertinentParmCds = Object.keys(PARAM_PERTINENCE);
+    const highPertinenceVars = dataVars.filter(x => pertinentParmCds.includes(x.variableCode.value))
+        .sort((a, b) => {
+            const aPertinence = PARAM_PERTINENCE[a.variableCode.value];
+            const bPertinence = PARAM_PERTINENCE[b.variableCode.value];
+            if (aPertinence < bPertinence) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+    const lowPertinenceVars = dataVars.filter(x => !pertinentParmCds.includes(x.variableCode.value))
+        .sort((a, b) => {
+            const aDesc = a.variableDescription.toLowerCase();
+            const bDesc = b.variableDescription.toLowerCase();
+            if (aDesc < bDesc) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+    return highPertinenceVars.concat(lowPertinenceVars);
 };

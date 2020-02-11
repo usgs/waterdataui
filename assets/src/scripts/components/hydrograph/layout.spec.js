@@ -1,6 +1,6 @@
 import { format } from 'd3-format';
 
-import { getMainLayout, getBrushLayout, ASPECT_RATIO, BRUSH_HEIGHT } from './layout';
+import { getMainLayout, ASPECT_RATIO } from './layout';
 
 describe('layout module', () => {
 
