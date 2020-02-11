@@ -142,6 +142,48 @@ class TestHydrologicalUnitView:
         assert text.count('01630500') == 16, 'Expected site 01630500 in output'
 
 
+class TestNetworkView(TestCase):
+    # pylint: disable=R0902
+
+    def setUp(self):
+        self.app_client = app.test_client()
+        self.test_url = '{0}/'.format(app.config['NETWORK_ENDPOINT'])
+        self.network = 'monitoring-locations'
+        self.format = 'json'
+
+    @mock.patch('waterdata.services.ogc.get_networks')
+    def test_networks(self, network_mock):
+        network_mock.return_value.status_code = 200
+        response = self.app_client.get('/networks/')
+        # Assert network listing works
+        assert response.status_code == 200
+
+    @mock.patch('waterdata.services.ogc.get_networks')
+    def test_one_network(self, network_mock):
+        network_mock.return_value.status_code = 200
+        response = self.app_client.get('/networks/{}/'.format(self.network))
+        # Assert a known network works in gui
+        assert response.status_code == 200
+
+    @mock.patch('waterdata.services.ogc.get_networks')
+    def test_invalid_network(self, network_mock):
+        network_mock.return_value.status_code = 200
+        network = 'monitoring-locations-invalid'
+        url = '/networks/{}/'.format(network)
+        response = self.app_client.get(url)
+        # Assert an invalid network in gui does not 404
+        assert response.status_code == 200
+
+    @mock.patch('waterdata.services.ogc.get_networks')
+    def test_invalid_network_json_call(self, network_mock):
+        network_mock.return_value.status_code = 200
+        network = 'monitoring-locations-invalid'
+        url = '{0}{1}?f={2}'.format(self.test_url, network, self.format)
+        response = self.app_client.get(url)
+        # Assert an invalid ogc json network call 404s
+        assert response.status_code == 404
+
+
 class TestCountryStateCountyView:
     # pylint: disable=R0201
 

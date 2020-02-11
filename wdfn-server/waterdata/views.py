@@ -8,7 +8,7 @@ from flask import abort, render_template, request, Markup
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries
 from .utils import construct_url, defined_when, parse_rdb
-from .services import sifta
+from .services import sifta, ogc
 from .services.nwis import NwisWebServices
 
 # Station Fields Mapping to Descriptions
@@ -189,6 +189,32 @@ def hydrological_unit_locations(huc_cd):
     Returns a HUC page with a list of monitoring locations included.
     """
     return hydrological_unit(huc_cd, show_locations=True)
+
+
+@app.route('/networks/', defaults={'network_cd': None}, methods=['GET'])
+@app.route('/networks/<network_cd>/', methods=['GET'])
+def networks(network_cd):
+    """
+    Network unit view
+    :param network_cd: ID for this network
+    """
+
+    # Grab the Network info
+    network_data = ogc.get_networks(network_cd)
+
+    if network_cd:
+        collection = network_data
+    else:
+        collection = network_data.get('collections')
+
+    http_code = 200 if (collection) else 404
+
+    return render_template(
+        'networks.html',
+        http_code=http_code,
+        network_cd=network_cd,
+        collection=collection
+    ), http_code
 
 
 @app.route('/states/', defaults={'state_cd': None, 'county_cd': None}, methods=['GET'])
