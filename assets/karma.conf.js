@@ -182,6 +182,7 @@ function getCustomLaunchers() {
             base: 'BrowserStack',
             browser: 'edge',
             browser_version: 'latest',
+            resolution: '1280x800',
             os: 'Windows',
             os_version: '10'
         },
