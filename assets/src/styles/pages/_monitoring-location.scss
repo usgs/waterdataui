@@ -22,6 +22,10 @@
   }
 }
 
+#dv-accordion {
+  @include u-margin-top(2);
+}
+
 table {
   #site-summary {
     table-layout: fixed;
