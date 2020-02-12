@@ -181,7 +181,9 @@ function getCustomLaunchers() {
         bs_edgelatest_windows10: {
             base: 'BrowserStack',
             browser: 'edge',
-            browser_version: '18',
+            device: null,
+            browser_version: '79.0 beta',
+            real_mobile: null,
             os: 'Windows',
             os_version: '10'
         },
