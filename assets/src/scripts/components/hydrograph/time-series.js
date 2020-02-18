@@ -39,28 +39,6 @@ export const TEMPERATURE_PARAMETERS = {
 const formatTime = timeFormat('%c %Z');
 
 
-
-/**
- * @return {Object} Mapping of time series ID to time series details. Only time series with non zero points are returned
-TODO: Remove this
-export const allTimeSeriesSelector = createSelector(
-    state => state.series,
-    (stateSeries) => {
-        let timeSeries = {};
-        if (stateSeries && stateSeries.hasOwnProperty('timeSeries')) {
-            let stateTimeSeries = stateSeries.timeSeries;
-            for (let key of Object.keys(stateTimeSeries)) {
-                const ts = stateTimeSeries[key];
-                if (ts.hasOwnProperty('points') && ts.points.length > 0) {
-                    timeSeries[key] = ts;
-                }
-            }
-        }
-        return timeSeries;
-    }
-);
- */
-
 /**
  * Returns a selector that, for a given tsKey:
  * Selects all time series for the current time series variable and current date range.

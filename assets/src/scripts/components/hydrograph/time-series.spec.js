@@ -216,50 +216,6 @@ const TEST_DATA = {
 
 describe('TimeSeries module', () => {
 
-    describe('allTimesSeriesSelector', () => {
-
-        it('should return all time series if they have data points', () => {
-            expect(allTimeSeriesSelector({
-                series: {
-                    timeSeries: {
-                        '00010': {
-                            points: [1, 2, 3, 4]
-                        },
-                        '00095': {
-                            points: [8, 9, 10, 11]
-                        }
-                    }
-                }
-            })).toEqual({
-                '00010': {
-                    points: [1, 2, 3, 4]
-                },
-                '00095': {
-                    points: [8, 9, 10, 11]
-                }
-            });
-        });
-
-        it('should exclude time series if they do not have data points', () => {
-            expect(allTimeSeriesSelector({
-                series: {
-                    timeSeries: {
-                        '00010': {
-                            points: [1, 2, 3, 4]
-                        },
-                        '00095': {
-                            points: []
-                        }
-                    }
-                }
-            })).toEqual({
-                '00010': {
-                    points: [1, 2, 3, 4]
-                }
-            });
-        });
-    });
-
     describe('currentVariableTimeSeriesSelector', () => {
         it('works', () => {
             expect(currentVariableTimeSeriesSelector('current')({
