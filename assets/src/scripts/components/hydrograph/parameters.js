@@ -59,6 +59,9 @@ export const availableTimeSeriesSelector = createSelector(
  * @param {Object} scales - has x property for x scale and y property for y scale
  */
 export const addSparkLine = function(svgSelection, {seriesLineSegments, scales}) {
+    if (seriesLineSegments.length === 0) {
+        return;
+    }
     let spark = line()
         .x(function(d) {
             return scales.x(d.dateTime);
