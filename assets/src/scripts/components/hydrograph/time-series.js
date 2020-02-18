@@ -6,7 +6,7 @@ import { createSelector } from 'reselect';
 
 import {
     getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone, getCurrentParmCd, getCurrentMethodID,
-    getMethods
+    getMethods, getTimeSeries
 } from '../../selectors/time-series-selector';
 
 
@@ -42,7 +42,7 @@ const formatTime = timeFormat('%c %Z');
 
 /**
  * @return {Object} Mapping of time series ID to time series details. Only time series with non zero points are returned
- */
+TODO: Remove this
 export const allTimeSeriesSelector = createSelector(
     state => state.series,
     (stateSeries) => {
@@ -59,7 +59,7 @@ export const allTimeSeriesSelector = createSelector(
         return timeSeries;
     }
 );
-
+ */
 
 /**
  * Returns a selector that, for a given tsKey:
@@ -70,7 +70,7 @@ export const allTimeSeriesSelector = createSelector(
  */
 export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector(
     getTsRequestKey(tsKey),
-    allTimeSeriesSelector,
+    getTimeSeries,
     getCurrentVariable,
     (tsRequestKey, timeSeries, variable) => {
         let ts = {};
@@ -92,7 +92,7 @@ export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector
  */
 export const getAllTimeSeriesForCurrentVariable = createSelector(
     getCurrentVariable,
-    allTimeSeriesSelector,
+    getTimeSeries,
     (variable, timeSeries) => {
         let ts = {};
         if (variable) {
@@ -136,7 +136,7 @@ export const getAllMethodsForCurrentVariable = createSelector(
  */
 export const timeSeriesSelector = memoize((tsKey, period) => createSelector(
     getTsRequestKey(tsKey, period),
-    allTimeSeriesSelector,
+    getTimeSeries,
     (tsRequestKey, timeSeries) => {
         let x = {};
         Object.keys(timeSeries).forEach(key => {

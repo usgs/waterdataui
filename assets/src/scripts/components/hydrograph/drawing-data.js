@@ -6,11 +6,11 @@ import { createSelector } from 'reselect';
 import { format } from 'd3-format';
 
 import config from '../../config';
-import { getVariables, getCurrentMethodID, getTsRequestKey, getRequestTimeRange, getIanaTimeZone }
+import { getVariables, getCurrentMethodID, getTimeSeries, getTsRequestKey, getRequestTimeRange, getIanaTimeZone }
     from '../../selectors/time-series-selector';
 import { getCurrentVariableMedianStatistics } from '../../selectors/median-statistics-selector';
 
-import { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } from './time-series';
+import { currentVariableTimeSeriesSelector, timeSeriesSelector } from './time-series';
 
 
 export const MASK_DESC = {
@@ -68,7 +68,7 @@ const transformToCumulative = function(points) {
  * @return {Object} where the keys are ts ids and the values are an Array of point Objects.
  */
 export const allPointsSelector = createSelector(
-    allTimeSeriesSelector,
+    getTimeSeries,
     state => state.series.variables,
     (timeSeries, variables) => {
         let allPoints = {};
@@ -94,7 +94,7 @@ export const allPointsSelector = createSelector(
 export const pointsByTsKeySelector = memoize((tsKey, period) => createSelector(
     getTsRequestKey(tsKey, period),
     allPointsSelector,
-    state => state.series.timeSeries,
+    getTimeSeries,
     (tsRequestKey, points, timeSeries) => {
         let result = {};
         Object.keys(points).forEach((tsId) => {

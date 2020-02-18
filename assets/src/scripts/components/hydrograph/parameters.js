@@ -2,7 +2,7 @@ import {createSelector} from 'reselect';
 import {line} from 'd3-shape';
 import {select} from 'd3-selection';
 
-import {getVariables, getCurrentVariableID} from '../../selectors/time-series-selector';
+import {getVariables, getCurrentVariableID, getTimeSeries} from '../../selectors/time-series-selector';
 
 import {Actions} from '../../store';
 import {appendTooltip} from '../../tooltips';
@@ -10,7 +10,6 @@ import {sortedParameters} from '../../utils';
 
 import {MASK_DESC} from './drawing-data';
 import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from './layout';
-import {allTimeSeriesSelector} from './time-series';
 
 /**
  * Returns metadata for each available time series.
@@ -19,7 +18,7 @@ import {allTimeSeriesSelector} from './time-series';
  */
 export const availableTimeSeriesSelector = createSelector(
     getVariables,
-    allTimeSeriesSelector,
+    getTimeSeries,
     getCurrentVariableID,
     (variables, timeSeries, currentVariableID) => {
         if (!variables) {
@@ -32,7 +31,7 @@ export const availableTimeSeriesSelector = createSelector(
         const sortedVariables = sortedParameters(variables).map(x => x.oid);
         for (const variableID of sortedVariables) {
             // start the next iteration if a variable is not a
-            // series returned by the allTimeSeriesSelector
+            // series returned by the getTimeSeries
             if (!timeSeriesVariables.includes(variableID)) {
                 continue;
             }
