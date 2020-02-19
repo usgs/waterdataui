@@ -86,7 +86,7 @@ svg {
     }
   }
 
-  .y-axis {
+  .y-axis, .secondary-y-axis {
     text {
       fill: black;
       &.y-axis-label {
