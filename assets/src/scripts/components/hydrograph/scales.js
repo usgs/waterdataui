@@ -3,7 +3,7 @@ import memoize from 'fast-memoize';
 import { createSelector } from 'reselect';
 import { getYDomain, SYMLOG_PARMS } from './domain';
 import { getLayout } from './layout';
-import { timeSeriesSelector, TEMPERATURE_PARAMETERS } from './time-series';
+import { getTimeSeriesForTsKey, TEMPERATURE_PARAMETERS } from './time-series';
 import { visiblePointsSelector, pointsByTsKeySelector } from './drawing-data';
 import { getVariables, getCurrentParmCd, getRequestTimeRange } from '../../selectors/time-series-selector';
 import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius } from '../../utils';
@@ -131,7 +131,7 @@ export const getSecondaryYScale = memoize(kind => createSelector(
  */
 const parmCdPointsSelector = memoize((tsKey, period) => createSelector(
     pointsByTsKeySelector(tsKey, period),
-    timeSeriesSelector(tsKey, period),
+    getTimeSeriesForTsKey(tsKey, period),
     getVariables,
     (tsPoints, timeSeries, variables) => {
         return Object.keys(tsPoints).reduce((byParmCd, tsID) => {

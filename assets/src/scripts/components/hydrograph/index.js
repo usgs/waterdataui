@@ -7,7 +7,7 @@ import {createStructuredSelector} from 'reselect';
 
 import {drawWarningAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {link} from '../../lib/d3-redux';
-import {isLoadingTS, hasAnyTimeSeries} from '../../selectors/time-series-selector';
+import {isLoadingTS, hasAnyTimeSeries, getTimeSeries} from '../../selectors/time-series-selector';
 import {Actions} from '../../store';
 
 import {cursorSlider} from './cursor';
@@ -21,7 +21,6 @@ import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
 import {drawMethodPicker} from './method-picker';
 import {plotSeriesSelectTable, availableTimeSeriesSelector} from './parameters';
 import {timeSeriesScalesByParmCdSelector} from './scales';
-import {allTimeSeriesSelector} from './time-series';
 import {drawTimeSeriesGraph} from './time-series-graph';
 
 
@@ -118,7 +117,7 @@ export const attachToNode = function (store,
         nodeElem.select('.provisional-data-alert')
             .call(link(store, function(elem, allTimeSeries) {
                 elem.attr('hidden', Object.keys(allTimeSeries).length ? null : true);
-            }, allTimeSeriesSelector));
+            }, getTimeSeries));
     }
 
     window.onresize = function() {

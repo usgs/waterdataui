@@ -2,9 +2,10 @@ import { scaleLinear } from 'd3-scale';
 import { select } from 'd3-selection';
 import memoize from 'fast-memoize';
 import { createSelector, createStructuredSelector } from 'reselect';
+
+import {getTimeSeries} from '../../selectors/time-series-selector';
 import { tsCursorPointsSelector } from './cursor';
 import { getMainXScale, getMainYScale } from './scales';
-import { allTimeSeriesSelector } from './time-series';
 import config from '../../config';
 import { link } from '../../lib/d3-redux';
 import { Actions } from '../../store';
@@ -82,7 +83,7 @@ const audibleScaleSelector = createSelector(
 );
 
 const audiblePointsSelector = createSelector(
-    allTimeSeriesSelector,
+    getTimeSeries,
     tsCursorPointsSelector('current'),
     tsCursorPointsSelector('compare'),
     audibleScaleSelector,

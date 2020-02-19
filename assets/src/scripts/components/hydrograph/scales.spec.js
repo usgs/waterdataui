@@ -133,7 +133,10 @@ describe('scales', () => {
                        }
                     },
                     timeSeries: {
-                        '00060ID': {}
+                        '00060ID': {
+                            variable: '00060ID',
+                            points: []
+                        }
                     }
                 },
                 statisticsData: {},
@@ -166,7 +169,10 @@ describe('scales', () => {
                        }
                     },
                     timeSeries: {
-                        '00060ID': {}
+                        '00060ID': {
+                            variable: '00060ID',
+                            points: []
+                        }
                     }
                 },
                 statisticsData: {},
@@ -195,7 +201,10 @@ describe('scales', () => {
                        }
                     },
                     timeSeries: {
-                        '00010ID': {}
+                        '00010ID': {
+                            variable: '00010ID',
+                            points: []
+                        }
                     }
                 },
                 statisticsData: {},
@@ -225,7 +234,10 @@ describe('scales', () => {
                        }
                     },
                     timeSeries: {
-                        '00011ID': {}
+                        '00011ID': {
+                            variable: '00011ID',
+                            points: []
+                        }
                     }
                 },
                 statisticsData: {},
