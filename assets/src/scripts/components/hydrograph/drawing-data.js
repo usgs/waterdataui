@@ -10,7 +10,7 @@ import { getVariables, getCurrentMethodID, getTimeSeries, getTsRequestKey, getRe
     from '../../selectors/time-series-selector';
 import { getCurrentVariableMedianStatistics } from '../../selectors/median-statistics-selector';
 
-import { currentVariableTimeSeriesSelector, timeSeriesSelector } from './time-series';
+import { getCurrentVariableTimeSeries, getTimeSeriesForTsKey } from './time-series';
 
 
 export const MASK_DESC = {
@@ -113,7 +113,7 @@ export const pointsByTsKeySelector = memoize((tsKey, period) => createSelector(
  */
 export const currentVariablePointsByTsIdSelector = memoize(tsKey => createSelector(
     pointsByTsKeySelector(tsKey),
-    currentVariableTimeSeriesSelector(tsKey),
+    getCurrentVariableTimeSeries(tsKey),
     (points, timeSeries) => {
         let result = {};
         if (points) {
@@ -133,7 +133,7 @@ export const currentVariablePointsByTsIdSelector = memoize(tsKey => createSelect
  */
 export const currentVariablePointsSelector = memoize(tsKey => createSelector(
     pointsByTsKeySelector(tsKey),
-    currentVariableTimeSeriesSelector(tsKey),
+    getCurrentVariableTimeSeries(tsKey),
     (points, timeSeries) => {
         return timeSeries ? Object.keys(timeSeries).map((tsId) => points[tsId]) : [];
     }
@@ -337,7 +337,7 @@ export const lineSegmentsSelector = memoize((tsKey, period) => createSelector(
  */
 export const lineSegmentsByParmCdSelector = memoize((tsKey, period) => createSelector(
     lineSegmentsSelector(tsKey, period),
-    timeSeriesSelector(tsKey, period),
+    getTimeSeriesForTsKey(tsKey, period),
     getVariables,
     (lineSegmentsBySeriesID, timeSeriesMap, variables) => {
         return Object.keys(lineSegmentsBySeriesID).reduce((byVarID, sID) => {
@@ -357,7 +357,7 @@ export const lineSegmentsByParmCdSelector = memoize((tsKey, period) => createSel
  * @return {Object} - Keys are time series ids and values are the line segment arrays
  */
 export const currentVariableLineSegmentsSelector = memoize(tsKey => createSelector(
-    currentVariableTimeSeriesSelector(tsKey),
+    getCurrentVariableTimeSeries(tsKey),
     lineSegmentsSelector(tsKey),
     (seriesMap, linesMap) => {
         return Object.keys(seriesMap).reduce((visMap, sID) => {

@@ -1,7 +1,7 @@
 import {
-    timeSeriesSelector, hasTimeSeriesWithPoints, isVisibleSelector, yLabelSelector, titleSelector,
-    descriptionSelector, currentVariableTimeSeriesSelector, allTimeSeriesSelector, tsTimeZoneSelector,
-    getAllTimeSeriesForCurrentVariable, getAllMethodsForCurrentVariable, secondaryYLabelSelector} from './time-series';
+    getTimeSeriesForTsKey, hasTimeSeriesWithPoints, isVisibleSelector, yLabelSelector, titleSelector,
+    descriptionSelector, getCurrentVariableTimeSeries, tsTimeZoneSelector,
+    getAllMethodsForCurrentVariable, secondaryYLabelSelector} from './time-series';
 
 
 const TEST_DATA = {
@@ -53,7 +53,8 @@ const TEST_DATA = {
                     estimated: false
                 }]
             },
-            '00010:2': {tsKey: 'compare:P7D',
+            '00010:2': {
+                tsKey: 'current:P7D',
                 startTime: 1520351100000,
                 endTime: 1520948700000,
                 variable: '45807196',
@@ -216,9 +217,9 @@ const TEST_DATA = {
 
 describe('TimeSeries module', () => {
 
-    describe('currentVariableTimeSeriesSelector', () => {
+    describe('getCurrentVariableTimeSeries', () => {
         it('works', () => {
-            expect(currentVariableTimeSeriesSelector('current')({
+            expect(getCurrentVariableTimeSeries('current', 'P7D')({
                 series: {
                     requests: {
                         'current:P7D': {
@@ -300,94 +301,13 @@ describe('TimeSeries module', () => {
         });
 
         it('returns {} if there is no currentVariableId', () => {
-            expect(currentVariableTimeSeriesSelector('current')({
+            expect(getCurrentVariableTimeSeries('current', 'P7D')({
                 series: {},
                 timeSeriesState: {
                     currentVariableID: null,
                     currentDateRange: 'P7D'
                 }
             })).toEqual({});
-        });
-    });
-
-    describe('getAllTimeSeriesForCurrentVariable', () => {
-
-        it('Expect no time series if the current variable is not set', () => {
-            const newTestData = {
-                ...TEST_DATA,
-                timeSeriesState: {
-                }
-            };
-            expect(getAllTimeSeriesForCurrentVariable(newTestData)).toEqual({});
-        });
-
-        it('Expect no time series if the current variable does not have any timeSeries', () => {
-            const newTestData = {
-                ...TEST_DATA,
-                timeSeriesState: {
-                    ...TEST_DATA.timeSeriesState,
-                    currentVariableID: '55807196'
-                }
-            };
-            expect(getAllTimeSeriesForCurrentVariable(newTestData)).toEqual({});
-        });
-
-        it('Expect all time series for the current variable', () => {
-            const newTestData = {
-                ...TEST_DATA,
-                timeSeriesState: {
-                    ...TEST_DATA.timeSeriesState,
-                    currentVariableID: '45807196'
-                }
-            };
-            expect(getAllTimeSeriesForCurrentVariable(newTestData)).toEqual({
-                '00010': {
-                    tsKey: 'compare:P7D',
-                    startTime: 1520351100000,
-                    endTime: 1520948700000,
-                    variable: '45807196',
-                    method: 69931,
-                    points: [{
-                        value: 1,
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
-                    }, {
-                        value: 2,
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
-                    }, {
-                        value: 3,
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
-                    }]
-                },
-                '00010:2': {
-                    tsKey: 'compare:P7D',
-                    startTime: 1520351100000,
-                    endTime: 1520948700000,
-                    variable: '45807196',
-                    method: 69930,
-                    points: [{
-                        value: 1,
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
-                    }, {
-                        value: 2,
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
-                    }, {
-                        value: 3,
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
-                    }]
-                }
-            });
         });
     });
 
@@ -410,8 +330,8 @@ describe('TimeSeries module', () => {
                     ...TEST_DATA.series,
                     timeSeries: {
                         ...TEST_DATA.series.timeSeries,
-                        '00010:current:P30D': {
-                            tsKey: 'current:P30D',
+                        '00010:current:P7D': {
+                            tsKey: 'current:P7D',
                             startTime: 1520351100000,
                             endTime: 1520948700000,
                             variable: '45807196',
@@ -453,10 +373,10 @@ describe('TimeSeries module', () => {
         });
     });
 
-    describe('timeSeriesSelector', () => {
+    describe('getTimeSeriesForTsKey', () => {
 
         it('should return the selected time series', () => {
-            expect(timeSeriesSelector('current')(TEST_DATA)).toEqual({
+            expect(getTimeSeriesForTsKey('current')(TEST_DATA)).toEqual({
                 '00060': {
                     tsKey: 'current:P7D',
                     startTime: 1520351100000,
@@ -479,9 +399,32 @@ describe('TimeSeries module', () => {
                     }],
                     variable: '45807197',
                     method: 69929
+                },
+                '00010:2': {
+                    tsKey: 'current:P7D',
+                    startTime: 1520351100000,
+                    endTime: 1520948700000,
+                    variable: '45807196',
+                    method: 69930,
+                    points: [{
+                        value: 1,
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: 2,
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: 3,
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
+                    }]
                 }
             });
-            expect(timeSeriesSelector('current','P30D')(TEST_DATA)).toEqual({
+            expect(getTimeSeriesForTsKey('current','P30D')(TEST_DATA)).toEqual({
                 '00060:P30D': {
                     tsKey: 'current:P30D:00060',
                     startTime: 1520351100000,
@@ -509,7 +452,7 @@ describe('TimeSeries module', () => {
         });
 
         it('should return null the empty set if no time series for the selected key exist', () => {
-            expect(timeSeriesSelector('compare:P7D')(TEST_DATA)).toEqual({});
+            expect(getTimeSeriesForTsKey('compare:P7D')(TEST_DATA)).toEqual({});
         });
     });
 
@@ -518,32 +461,8 @@ describe('TimeSeries module', () => {
             expect(hasTimeSeriesWithPoints('current')(TEST_DATA)).toBe(true);
             expect(hasTimeSeriesWithPoints('current', 'P30D')(TEST_DATA)).toBe(true);
         });
-        it('Returns false if the times series for tsKey and period have zero points', () => {
-            const newTestData = {
-                ...TEST_DATA,
-                series: {
-                    ...TEST_DATA.series,
-                    timeSeries: {
-                        ...TEST_DATA.series.timeSeries,
-                        '00060': {
-                            tsKey: 'current:P7D',
-                            startTime: 1520351100000,
-                            endTime: 1520948700000,
-                            variable: '45807197',
-                            points: []
-                        },
-                        '00060:P30D': {
-                            tsKey: 'current:P30D:00060',
-                            startTime: 1520351100000,
-                            endTime: 1520948700000,
-                            variable: '45807197',
-                            points: []
-                        }
-                    }
-                }
-            };
-            expect(hasTimeSeriesWithPoints('current')(newTestData)).toBe(false);
-            expect(hasTimeSeriesWithPoints('current', 'P30D')(newTestData)).toBe(false);
+        it('Returns false if the times series for tsKey and period have zero time series', () => {
+            expect(hasTimeSeriesWithPoints('compare', 'P30D')(TEST_DATA)).toBe(false);
         });
     });
 
