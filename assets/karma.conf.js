@@ -182,7 +182,7 @@ function getCustomLaunchers() {
             base: 'BrowserStack',
             browser: 'edge',
             device: null,
-            browser_version: '79.0 beta',
+            browser_version: 'latest',
             real_mobile: null,
             os: 'Windows',
             os_version: '10'
