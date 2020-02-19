@@ -115,7 +115,7 @@ describe('Parameters module', () => {
             ]);
         });
 
-        it('time series without data points are considered uavailable', () => {
+        it('time series without data points are considered available', () => {
             const available = availableTimeSeriesSelector({
                 series: {
                     timeSeries: {
