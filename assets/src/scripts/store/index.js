@@ -49,11 +49,16 @@ const getLatestValue = function(collection, parmCd) {
  * @param {Object} variables  - keys are the variable id
  */
 const getCurrentVariableId = function(timeSeries, variables) {
-    const tsVariables = Object.values(timeSeries)
+    const tsVariablesWithData = Object.values(timeSeries)
         .filter((ts) => ts.points.length)
         .map((ts) => variables[ts.variable]);
-    const sortedVars = sortedParameters(tsVariables);
-    return sortedVars.length ? sortedVars[0].oid : '';
+    const sortedVarsWithData = sortedParameters(tsVariablesWithData);
+    if (sortedVarsWithData.length) {
+        return sortedVarsWithData[0].oid;
+    } else {
+        const sortedVars = sortedParameters(Object.values(variables));
+        return sortedVars.length ? sortedVars[0].oid : '';
+    }
 };
 
 
