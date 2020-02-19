@@ -69,7 +69,7 @@ const transformToCumulative = function(points) {
  */
 export const allPointsSelector = createSelector(
     getTimeSeries,
-    state => state.series.variables,
+    getVariables,
     (timeSeries, variables) => {
         let allPoints = {};
         Object.keys(timeSeries).forEach((tsId) => {
@@ -153,22 +153,6 @@ export const pointsSelector = memoize((tsKey) => createSelector(
         return Object.values(points);
     }
 ));
-
-
-/**
- * Factory function that returns a selector for a given tsKey, that:
- * Returns a single array of all points.
- * @param  {Object} state       Redux state
- * @return {Array}              Array of points.
- */
-export const flatPointsSelector = memoize(tsKey => createSelector(
-    pointsSelector(tsKey),
-    tsPointsList => tsPointsList.reduce((finalPoints, points) => {
-        Array.prototype.push.apply(finalPoints, points);
-        return finalPoints;
-    }, [])
-));
-
 
 /*
  * Returns an object which identifies which classes to use for the point
@@ -266,29 +250,6 @@ export const visiblePointsSelector = createSelector(
     }
 );
 
-
-/**
- * Factory function creates a function that, for a given tsKey:
- * Returns all point data as an array of [value, time, qualifiers].
- * @param {Object} state - Redux store
- * @param {String} tsKey - Time series key
- * @param {Object} - keys are ts id, values are an array of points where each point is an Array as follows:  [value, time, qualifiers].
- */
-export const pointsTableDataSelector = memoize(tsKey => createSelector(
-    pointsByTsKeySelector(tsKey),
-    (allPoints) => {
-        return Object.keys(allPoints).reduce((databyTsId, tsId) => {
-            databyTsId[tsId] = allPoints[tsId].map((value) => {
-                return [
-                    value.value || '',
-                    value.dateTime || '',
-                    value.qualifiers && value.qualifiers.length > 0 ? value.qualifiers.join(', ') : ''
-                ];
-            });
-            return databyTsId;
-        }, {});
-    }
-));
 
 const getLineClasses = function(pt, isCurrentMethod) {
     let dataMask = null;

@@ -293,6 +293,7 @@ describe('TimeSeries module', () => {
                 }
             })).toEqual({
                 one: {item: 'one', points: [1, 2], tsKey: 'current:P7D', variable: 45807197},
+                two: {item: 'two', points: [], tsKey: 'current:P7D', variable: 45807197},
                 three: {item: 'three', points: [3, 4], tsKey: 'current:P7D', variable: 45807197},
                 four: {item: 'four', points: [4, 5], tsKey: 'current:P7D', variable: 45807197}
             });
