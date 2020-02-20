@@ -200,19 +200,19 @@ export const Actions = {
             );
         };
     },
-    retrieveExtendedTimeSeries(site, period) {
+    retrieveExtendedTimeSeries(site, period, paramCd=null) {
         return function(dispatch, getState) {
             const state = getState();
-            const parmCd = getCurrentParmCd(state);
-            const requestKey = getTsRequestKey ('current', period, parmCd)(state);
+            const thisParamCd = paramCd ? paramCd : getCurrentParmCd(state);
+            const requestKey = getTsRequestKey ('current', period, thisParamCd)(state);
             dispatch(Actions.setCurrentDateRange(period));
-            if (!hasTimeSeries('current', period, parmCd)(state)) {
+            if (!hasTimeSeries('current', period, thisParamCd)(state)) {
                 dispatch(Actions.addTimeSeriesLoading([requestKey]));
                 const endTime = getRequestTimeRange('current', 'P7D')(state).end;
                 const startTime = calcStartTime(period, endTime);
                 return getTimeSeries({
                     sites: [site],
-                    params: [parmCd],
+                    params: [thisParamCd],
                     startDate: startTime,
                     endDate: endTime
                 }).then(
@@ -221,10 +221,9 @@ export const Actions = {
                         dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
-                        dispatch(Actions.toggleTimeSeries('median', true));
                     },
                     () => {
-                        console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
+                        console.log(`Unable to fetch data for period ${period} and parameter code ${thisParamCd}`);
                         dispatch(Actions.addSeriesCollection(requestKey, {}));
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     }

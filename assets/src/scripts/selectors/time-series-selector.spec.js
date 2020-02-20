@@ -1,5 +1,5 @@
 import { getVariables, getSourceInfo, getSiteCodes, getCurrentVariableID, getCurrentDateRange, getTimeSeries,
-    getMonitoringLocationName, getAgencyCode, getCurrentVariable, getQueryInfo, getRequests, getCurrentParmCd,
+    hasAnyTimeSeries, getMonitoringLocationName, getAgencyCode, getCurrentVariable, getQueryInfo, getRequests, getCurrentParmCd,
     hasTimeSeries, getTsRequestKey, getTsQueryInfo, getRequestTimeRange, isLoadingTS, getTSRequest,
     getTimeSeriesCollectionIds, getIanaTimeZone, getNwisTimeZone } from './time-series-selector';
 
@@ -54,6 +54,26 @@ describe('timeSeriesSelector', () => {
                     prop1: 'value1'
                 }
             });
+        });
+    });
+
+    describe('hasAnyTimeSeries', () => {
+        it('Return false if series is empty', () => {
+            expect(hasAnyTimeSeries({
+               series: {}
+            })).toBe(false);
+        });
+
+        it('Return true if series is not empty', () => {
+            expect(hasAnyTimeSeries({
+                series: {
+                    timeSeries: {
+                        '00010': {
+                            prop1: 'value1'
+                        }
+                    }
+                }
+            })).toBe(true);
         });
     });
 

@@ -7,7 +7,8 @@ import {createStructuredSelector} from 'reselect';
 
 import {drawWarningAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {link} from '../../lib/d3-redux';
-import {isLoadingTS, hasAnyTimeSeries, getTimeSeries} from '../../selectors/time-series-selector';
+import {isLoadingTS, hasAnyTimeSeries, getTimeSeries, getCurrentParmCd,
+    getVariables} from '../../selectors/time-series-selector';
 import {Actions} from '../../store';
 
 import {cursorSlider} from './cursor';
@@ -34,16 +35,16 @@ const controlDisplay = function(elem, showElem) {
     elem.attr('hidden', showElem ? null : true);
 };
 
+
 export const attachToNode = function (store,
                                       node,
                                       {
                                           siteno,
-                                          parameter,
+                                          parameterCode,
                                           compare,
                                           period,
                                           startDT,
                                           endDT,
-                                          cursorOffset,
                                           showOnlyGraph = false,
                                           showMLName = false
                                       } = {}) {
@@ -62,29 +63,52 @@ export const attachToNode = function (store,
                 sizeClass: () => 'fa-3x'
             })));
 
-    // If specified, turn the visibility of the comparison time series on.
-    if (compare) {
-        store.dispatch(Actions.toggleTimeSeries('compare', true));
-    }
-
-    // If specified, initialize the cursorOffset
-    if (cursorOffset !== undefined) {
-        store.dispatch(Actions.setCursorOffset(cursorOffset));
-    }
-
-    if (startDT !==undefined && endDT !== undefined) {
-        store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, parameter));
-    }
-
-    // Fetch the time series data
-    if (period) {
-        store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, parameter ? parameter : '00060', period))
-            .catch((message) => drawInfoAlert(nodeElem, {body: message ? message : 'No data returned'}));
+    let fetchPromise;
+    if (showOnlyGraph) {
+        // Only fetch what is needed
+        if (parameterCode && period) {
+            fetchPromise = store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, parameterCode, period));
+        } else if (parameterCode && startDT && endDT) {
+            fetchPromise = store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, parameterCode));
+        } else {
+            fetchPromise = store.dispatch(Actions.retrieveTimeSeries(siteno, parameterCode ? [parameterCode] : null));
+        }
     } else {
-        store.dispatch(Actions.retrieveTimeSeries(siteno, parameter ? [parameter] : null))
-            .catch(() => drawInfoAlert(nodeElem, {body: 'No current time series data available for this site'}));
+        // Retrieve all parameter codes for 7 days and median statistics
+        fetchPromise = store.dispatch(Actions.retrieveTimeSeries(siteno))
+            .then(() => {
+                // Fetch any extended data needed to set initial state
+                const currentParamCode = parameterCode ? parameterCode : getCurrentParmCd(store.getState());
+                if (period === 'P30D' || period === 'P1Y') {
+                    store.dispatch(Actions.retrieveExtendedTimeSeries(siteno, period, currentParamCode));
+                } else if (startDT && endDT) {
+                    store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, currentParamCode));
+                }
+            });
+        store.dispatch(Actions.retrieveMedianStatistics(siteno));
     }
-    store.dispatch(Actions.retrieveMedianStatistics(siteno));
+    fetchPromise.then(() => {
+        if (!hasAnyTimeSeries(store.getState())) {
+            drawInfoAlert(nodeElem, {body: 'No time series data available for this site'});
+        } else {
+            //Update time series state
+            if (parameterCode) {
+                const isThisParamCode = function(variable) {
+                    return variable.variableCode.value === parameterCode;
+                };
+                const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
+                store.dispatch(Actions.setCurrentVariable(thisVariable.oid));
+            }
+            if (compare) {
+                store.dispatch(Actions.toggleTimeSeries('compare', true));
+            }
+        }
+    });
+    // Set currentDateRange prior to rendering so initial state is correct
+    if (period || (startDT && endDT)) {
+        store.dispatch(Actions.setCurrentDateRange(period ? period : 'custom'));
+        store.dispatch(Actions.setCustomDateRange())
+    }
 
     // Set up rendering functions for the graph-container
     let graphContainer = nodeElem.select('.graph-container')

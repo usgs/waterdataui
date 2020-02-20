@@ -34,7 +34,13 @@ export const getCustomTimeRange = state => state.timeSeriesState.customTimeRange
 
 export const getTimeSeries = state => state.series.timeSeries ? state.series.timeSeries : {};
 
-export const hasAnyTimeSeries = state => state.series && state.series.timeSeries && state.series.timeSeries != {};
+export const hasAnyTimeSeries = createSelector(
+    getTimeSeries,
+    (timeSeries) => {
+        return Object.keys(timeSeries).length ? true : false;
+    }
+);
+
 /*
  * Selectors the return derived data from the state
  */

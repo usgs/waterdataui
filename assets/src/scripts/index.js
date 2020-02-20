@@ -31,7 +31,9 @@ const load = function () {
         // If options is specified on the node, expect it to be a JSON string.
         // Otherwise, use the dataset attributes as the component options.
         const options = node.dataset.options ? JSON.parse(node.dataset.options) : node.dataset;
-        COMPONENTS[node.dataset.component](store, node, options);
+        let hash = window.location.hash;
+        const hashOptions = hash.length ? Object.fromEntries(new window.URLSearchParams(hash.substring(1))) : {};
+        COMPONENTS[node.dataset.component](store, node, Object.assign({}, options, hashOptions));
     }
 
 

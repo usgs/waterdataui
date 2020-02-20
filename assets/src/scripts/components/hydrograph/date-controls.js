@@ -1,32 +1,47 @@
-import { DateTime } from 'luxon';
-import { createStructuredSelector } from 'reselect';
+import {DateTime} from 'luxon';
+import {createStructuredSelector} from 'reselect';
 
-import { link } from '../../lib/d3-redux';
+import {link} from '../../lib/d3-redux';
 
-import { drawLoadingIndicator } from '../../d3-rendering/loading-indicator';
-import { isLoadingTS, hasAnyTimeSeries } from '../../selectors/time-series-selector';
-import { Actions } from '../../store';
+import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
+import {
+    isLoadingTS,
+    hasAnyTimeSeries,
+    getCurrentDateRange,
+    getCustomTimeRange,
+    getIanaTimeZone
+} from '../../selectors/time-series-selector';
+import {Actions} from '../../store';
 
 
 export const drawDateRangeControls = function(elem, store, siteno) {
     const DATE_RANGE = [{
-        label: 'seven-day',
         name: '7 days',
         period: 'P7D'
     }, {
-        label: 'thirty-days',
         name: '30 days',
         period: 'P30D'
     }, {
-        label: 'one-year',
+        label: 'one-',
         name: '1 year',
         period: 'P1Y'
     }, {
-        label: 'custom-date-range',
         name: 'Custom',
         period: 'custom',
         ariaExpanded: false
     }];
+
+    const initialDateRange = getCurrentDateRange(store.getState());
+    let initialCustomTimeRange;
+    /* TODO: add back in once we straighten out time zone retrieval */
+    //if (initialDateRange === 'custom') {
+    //    const customTimeRangeInMillis = getCustomTimeRange(store.getState());
+    //    const locationIanaTimeZone = getIanaTimeZone(store.getState());
+    //    initialCustomTimeRange = {
+    //        start : DateTime.fromMillis(customTimeRangeInMillis.startDT, {zone: locationIanaTimeZone}).toFormat('LL/dd/yyyy'),
+    //        end: DateTime.fromMillis(customTimeRangeInMillis.endDT, {zone: locationIanaTimeZone}).toFormat('LL/dd/yyyy')
+    //    };
+   // }
 
     const container = elem.insert('div', ':nth-child(2)')
         .attr('id', 'ts-daterange-select-container')
@@ -39,8 +54,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     const customDateContainer = elem.insert('div', ':nth-child(3)')
         .attr('id', 'ts-customdaterange-select-container')
         .attr('role', 'customdate')
+        .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date specification')
-        .attr('hidden', true);
+        .attr('hidden', initialDateRange !== 'custom' ? true : null);
 
     customDateContainer.append('label')
         .attr('for', 'date-input')
@@ -77,6 +93,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('name', 'user-specified-start-date')
         .attr('aria-labelledby', 'custom-start-date-label')
         .attr('type', 'date');
+    if (initialCustomTimeRange) {
+        customStartDate.attr('value', initialCustomTimeRange.start);
+    }
 
     endDateContainer.append('label')
         .attr('class', 'usa-label')
@@ -90,8 +109,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('name', 'user-specified-end-date')
         .attr('aria-labelledby', 'custom-end-date-label')
         .attr('type', 'date');
-
-    customDateContainer.append('br');
+    if (initialCustomTimeRange) {
+        customEndDate.attr('value', initialCustomTimeRange.end);
+    }
 
     const submitContainer = customDateContainer.append('div')
         .attr('class', 'submit-button');
@@ -137,7 +157,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     li.append('input')
         .attr('type', 'radio')
         .attr('name', 'ts-daterange-input')
-        .attr('id', d => d.label)
+        .attr('id', d => `${d.period}-input`)
         .attr('class', 'usa-radio__input')
         .attr('value', d => d.period)
         .attr('ga-on', 'click')
@@ -163,7 +183,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         });
     li.append('label')
         .attr('class', 'usa-radio__label')
-        .attr('for', (d) => d.label)
+        .attr('for', (d) => `${d.period}-input`)
         .text((d) => d.name);
-    li.select(`#${DATE_RANGE[0].label}`).attr('checked', true);
+    li.select(`#${initialDateRange}-input`).attr('checked', true);
 };

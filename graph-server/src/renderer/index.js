@@ -9,7 +9,7 @@ const renderToResponse = function (res, {siteID, parameterCode, compare, period,
     console.log(`Using static root ${STATIC_ROOT}`);
     const componentOptions = {
         siteno: siteID,
-        parameter: parameterCode,
+        parameterCode: parameterCode,
         compare: compare,
         period: period,
         startDT: startDT,
