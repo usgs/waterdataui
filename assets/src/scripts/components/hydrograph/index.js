@@ -58,42 +58,52 @@ export const attachToNode = function (store,
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     nodeElem
         .select('.loading-indicator-container')
-            .call(link(store, drawLoadingIndicator, createStructuredSelector({
-                showLoadingIndicator: isLoadingTS('current', 'P7D'),
-                sizeClass: () => 'fa-3x'
-            })));
+        .call(link(store, drawLoadingIndicator, createStructuredSelector({
+            showLoadingIndicator: isLoadingTS('current', 'P7D'),
+            sizeClass: () => 'fa-3x'
+        })));
 
-    let fetchPromise;
+    // Fetch time zone
+    const fetchTimeZonePromise = store.dispatch(Actions.retrieveLocationTimeZone(CONFIG.siteLocation.latitude, CONFIG.siteLocation.longitude));
+    let fetchDataPromise;
     if (showOnlyGraph) {
         // Only fetch what is needed
         if (parameterCode && period) {
-            fetchPromise = store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, parameterCode, period));
+            fetchDataPromise = store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, parameterCode, period));
         } else if (parameterCode && startDT && endDT) {
-            fetchPromise = store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, parameterCode));
+            // Don't fetch until time zone is available
+            fetchDataPromise = fetchTimeZonePromise.then(() => {
+                store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, parameterCode));
+            });
         } else {
-            fetchPromise = store.dispatch(Actions.retrieveTimeSeries(siteno, parameterCode ? [parameterCode] : null));
+            fetchDataPromise = store.dispatch(Actions.retrieveTimeSeries(siteno, parameterCode ? [parameterCode] : null));
         }
     } else {
         // Retrieve all parameter codes for 7 days and median statistics
-        fetchPromise = store.dispatch(Actions.retrieveTimeSeries(siteno))
+        fetchDataPromise = store.dispatch(Actions.retrieveTimeSeries(siteno))
             .then(() => {
                 // Fetch any extended data needed to set initial state
                 const currentParamCode = parameterCode ? parameterCode : getCurrentParmCd(store.getState());
                 if (period === 'P30D' || period === 'P1Y') {
                     store.dispatch(Actions.retrieveExtendedTimeSeries(siteno, period, currentParamCode));
                 } else if (startDT && endDT) {
-                    store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, currentParamCode));
+                    console.log('Waiting for time zone promise');
+                    fetchTimeZonePromise.then(() => {
+                        console.log('time zone retrieved. Retrieving custom date range');
+                        store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, currentParamCode));
+                    });
                 }
             });
         store.dispatch(Actions.retrieveMedianStatistics(siteno));
     }
-    fetchPromise.then(() => {
+    fetchDataPromise.then(() => {
+        console.log('fetchDataPromise then is bein processed');
         if (!hasAnyTimeSeries(store.getState())) {
             drawInfoAlert(nodeElem, {body: 'No time series data available for this site'});
         } else {
             //Update time series state
             if (parameterCode) {
-                const isThisParamCode = function(variable) {
+                const isThisParamCode = function (variable) {
                     return variable.variableCode.value === parameterCode;
                 };
                 const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
@@ -102,47 +112,43 @@ export const attachToNode = function (store,
             if (compare) {
                 store.dispatch(Actions.toggleTimeSeries('compare', true));
             }
+            // Initial data has been fetched and initial state set. We can render the hydrograph elements
+            // Set up rendering functions for the graph-container
+            let graphContainer = nodeElem.select('.graph-container')
+                .call(link(store, controlDisplay, hasAnyTimeSeries))
+                .call(drawTimeSeriesGraph, store, siteno, showMLName);
+            if (!showOnlyGraph) {
+                graphContainer.call(cursorSlider, store);
+                graphContainer.call(drawGraphBrush, store);
+            }
+            graphContainer.append('div')
+                .classed('ts-legend-controls-container', true)
+                .call(drawTimeSeriesLegend, store);
+
+            // Add UI interactive elements and the provisional data alert.
+            if (!showOnlyGraph) {
+                console.log('Rendering date range controls')
+                nodeElem
+                    .call(drawMethodPicker, store)
+                    .call(drawDateRangeControls, store, siteno);
+
+                nodeElem.select('.ts-legend-controls-container')
+                    .call(drawGraphControls, store);
+
+                nodeElem.select('.select-time-series-container')
+                    .call(link(store, plotSeriesSelectTable, createStructuredSelector({
+                        siteno: () => siteno,
+                        availableTimeSeries: availableTimeSeriesSelector,
+                        lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current', 'P7D'),
+                        timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM)
+                    }), store));
+                nodeElem.select('.provisional-data-alert')
+                    .call(link(store, function (elem, allTimeSeries) {
+                        elem.attr('hidden', Object.keys(allTimeSeries).length ? null : true);
+                    }, getTimeSeries));
+            }
         }
     });
-    // Set currentDateRange prior to rendering so initial state is correct
-    if (period || (startDT && endDT)) {
-        store.dispatch(Actions.setCurrentDateRange(period ? period : 'custom'));
-        store.dispatch(Actions.setCustomDateRange())
-    }
-
-    // Set up rendering functions for the graph-container
-    let graphContainer = nodeElem.select('.graph-container')
-        .call(link(store, controlDisplay, hasAnyTimeSeries))
-        .call(drawTimeSeriesGraph, store, siteno, showMLName);
-    if (!showOnlyGraph) {
-        graphContainer.call(cursorSlider, store);
-        graphContainer.call(drawGraphBrush, store);
-    }
-    graphContainer.append('div')
-        .classed('ts-legend-controls-container', true)
-        .call(drawTimeSeriesLegend, store);
-
-    // Add UI interactive elements and the provisional data alert.
-    if (!showOnlyGraph) {
-        nodeElem
-            .call(drawMethodPicker, store)
-            .call(drawDateRangeControls, store, siteno);
-
-        nodeElem.select('.ts-legend-controls-container')
-            .call(drawGraphControls, store);
-
-        nodeElem.select('.select-time-series-container')
-            .call(link(store, plotSeriesSelectTable, createStructuredSelector({
-                siteno: () => siteno,
-                availableTimeSeries: availableTimeSeriesSelector,
-                lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current', 'P7D'),
-                timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM)
-            }), store));
-        nodeElem.select('.provisional-data-alert')
-            .call(link(store, function(elem, allTimeSeries) {
-                elem.attr('hidden', Object.keys(allTimeSeries).length ? null : true);
-            }, getTimeSeries));
-    }
 
     window.onresize = function() {
         store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));

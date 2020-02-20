@@ -33,15 +33,14 @@ export const drawDateRangeControls = function(elem, store, siteno) {
 
     const initialDateRange = getCurrentDateRange(store.getState());
     let initialCustomTimeRange;
-    /* TODO: add back in once we straighten out time zone retrieval */
-    //if (initialDateRange === 'custom') {
-    //    const customTimeRangeInMillis = getCustomTimeRange(store.getState());
-    //    const locationIanaTimeZone = getIanaTimeZone(store.getState());
-    //    initialCustomTimeRange = {
-    //        start : DateTime.fromMillis(customTimeRangeInMillis.startDT, {zone: locationIanaTimeZone}).toFormat('LL/dd/yyyy'),
-    //        end: DateTime.fromMillis(customTimeRangeInMillis.endDT, {zone: locationIanaTimeZone}).toFormat('LL/dd/yyyy')
-    //    };
-   // }
+    if (initialDateRange === 'custom') {
+        const customTimeRangeInMillis = getCustomTimeRange(store.getState());
+        const locationIanaTimeZone = getIanaTimeZone(store.getState());
+        initialCustomTimeRange = {
+            start : DateTime.fromMillis(customTimeRangeInMillis.startDT, {zone: locationIanaTimeZone}).toFormat('yyyy-LL-dd'),
+            end: DateTime.fromMillis(customTimeRangeInMillis.endDT, {zone: locationIanaTimeZone}).toFormat('yyyy-LL-dd')
+        };
+    }
 
     const container = elem.insert('div', ':nth-child(2)')
         .attr('id', 'ts-daterange-select-container')

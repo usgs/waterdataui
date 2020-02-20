@@ -28,6 +28,14 @@
         {{ json_ld }}
     </script>
     {% endif %}
+    {% if stations|length == 1 %}
+        <script type="text/javascript">
+            CONFIG['siteLocation'] = {
+                latitude: {{ stations[0].dec_lat_va }},
+                longitude: {{ stations[0].dec_long_va }}
+            };
+        </script>
+    {% endif %}
 {% endblock page_script %}
 
 {% set body_id = 'monitoring-location' %}
