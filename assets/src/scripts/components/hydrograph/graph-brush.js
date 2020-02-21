@@ -62,6 +62,7 @@ export const drawGraphBrush = function(container, store) {
         })
         .call(link(store, (svg, {layout, isHydrographXRange}) => {
             let selection;
+
             const brushElem = svg.select('.brush');
             if (isHydrographXRange && brushElem.size() !== 0) {
                 selection = brushSelection(brushElem.node());
@@ -70,11 +71,29 @@ export const drawGraphBrush = function(container, store) {
                 selection = [0, layout.width - layout.margin.right];
             }
             brushElem.remove();
+
             const group = svg.append('g').attr('class', 'brush')
                 .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
+
             graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom]]);
+
+            // brush handle tooltip
+            var tooltip = svg.append('text').attr('x',125).attr('y',80)
+                .attr('stroke', '#022F54').text('<-- Brush handles move -->')
+                .style('font-style', 'italic').style('opacity', .7).style('visibility', 'hidden');
+
+            // Creates the brush
             group.call(graphBrush);
+
+            // Color brush handles, set tooltip mouseover
+            svg.selectAll('.handle').style('fill', ' #022F54').style('opacity', .5).style('width', 10)
+                .on('mouseover', function(){
+                    tooltip.style('visibility', 'visible');
+                    tooltip.transition().delay(2000).style('visibility', 'hidden');
+                    });
+
             graphBrush.move(group, selection);
+
         }, createStructuredSelector({
             layout: getBrushLayout,
             isHydrographXRange: (state) => state.ui.hydrographXRange !== undefined
