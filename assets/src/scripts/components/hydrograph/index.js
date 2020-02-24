@@ -5,6 +5,7 @@ import {select} from 'd3-selection';
 
 import {createStructuredSelector} from 'reselect';
 
+import config from '../../config';
 import {drawWarningAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {link} from '../../lib/d3-redux';
 import {isLoadingTS, hasAnyTimeSeries, getTimeSeries, getCurrentParmCd,
@@ -45,6 +46,7 @@ export const attachToNode = function (store,
                                           period,
                                           startDT,
                                           endDT,
+                                          timeSeriesId,
                                           showOnlyGraph = false,
                                           showMLName = false
                                       } = {}) {
@@ -64,7 +66,7 @@ export const attachToNode = function (store,
         })));
 
     // Fetch time zone
-    const fetchTimeZonePromise = store.dispatch(Actions.retrieveLocationTimeZone(CONFIG.siteLocation.latitude, CONFIG.siteLocation.longitude));
+    const fetchTimeZonePromise = store.dispatch(Actions.retrieveLocationTimeZone(config.siteLocation.latitude, config.siteLocation.longitude));
     let fetchDataPromise;
     if (showOnlyGraph) {
         // Only fetch what is needed
@@ -112,6 +114,9 @@ export const attachToNode = function (store,
             if (compare) {
                 store.dispatch(Actions.toggleTimeSeries('compare', true));
             }
+            if (timeSeriesId) {
+                store.dispatch(Actions.setCurrentMethodID(timeSeriesId));
+            }
             // Initial data has been fetched and initial state set. We can render the hydrograph elements
             // Set up rendering functions for the graph-container
             let graphContainer = nodeElem.select('.graph-container')
@@ -127,7 +132,6 @@ export const attachToNode = function (store,
 
             // Add UI interactive elements and the provisional data alert.
             if (!showOnlyGraph) {
-                console.log('Rendering date range controls')
                 nodeElem
                     .call(drawMethodPicker, store)
                     .call(drawDateRangeControls, store, siteno);
