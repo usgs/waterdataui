@@ -171,15 +171,232 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         select('#hydrograph').remove();
     });
 
-    it('empty graph displays warning', () => {
+    it('expect alert if no siteno defined', () => {
         attachToNode({}, graphNode, {});
         expect(graphNode.innerHTML).toContain('No data is available');
+    });
+
+    describe('Tests for initial data fetching when showOnlyGraph is false (the default)', () => {
+        let store;
+
+        beforeEach(() => {
+            store = configureStore({});
+        });
+
+        it('loading-indicator is shown until initial data has been retrieved', () => {
+            attachToNode(store, graphNode, {
+                siteno: '1234568'
+            });
+
+            expect(select(graphNode).select('.loading-indicator').size()).toBe(1);
+        });
+
+        it('Expects retrieveLocationTimeZone to be called', () => {
+            spyOn(Actions, 'retrieveLocationTimeZone').and.callThrough();
+            attachToNode(store, graphNode, {
+                siteno: '12345678'
+            });
+
+            expect(Actions.retrieveLocationTimeZone).toHaveBeenCalled();
+        });
+
+        describe('Always retrieve the 7 day data and median statistics', () => {
+
+            beforeEach(() => {
+                spyOn(Actions, 'retrieveTimeSeries').and.callThrough();
+                spyOn(Actions, 'retrieveMedianStatistics').and.callThrough();
+            });
+
+            it('Retrieve if no date parameters are used', () => {
+                attachToNode(store, graphNode, {
+                    siteno: '12345678',
+                    parameterCode: '00065'
+                });
+
+                expect(Actions.retrieveTimeSeries).toHaveBeenCalledWith('12345678');
+                expect(Actions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
+            });
+
+            it('Retrieve if period parameters is used', () => {
+                attachToNode(store, graphNode, {
+                    siteno: '12345678',
+                    parameterCode: '00065',
+                    period: 'P30D'
+                });
+
+                expect(Actions.retrieveTimeSeries).toHaveBeenCalledWith('12345678');
+                expect(Actions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
+            });
+
+            it('Retrieve if startDT and endDT parameters are used', () => {
+                attachToNode(store, graphNode, {
+                    siteno: '12345678',
+                    parameterCode: '00065',
+                    startDT: '2010-01-01',
+                    endDT: '2010-03-01'
+                });
+
+                expect(Actions.retrieveTimeSeries).toHaveBeenCalledWith('12345678');
+                expect(Actions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
+            });
+        });
+
+        describe('Retrieve additional data if indicated', () => {
+            beforeEach(() => {
+                spyOn(Actions, 'retrieveTimeSeries').and.returnValue(function() {
+                    return Promise.resolve({});
+                });
+                spyOn(Actions, 'retrieveExtendedTimeSeries').and.callThrough();
+                spyOn(Actions, 'retrieveDataForDateRange').and.callThrough();
+            });
+
+            it('Expect to not retrieve additional time series if not indicated', (done) => {
+                attachToNode(store, graphNode, {
+                    siteno: '12345678',
+                    parameterCode: '00065'
+                });
+
+                window.requestAnimationFrame(() => {
+                    expect(Actions.retrieveExtendedTimeSeries).not.toHaveBeenCalled();
+                    expect(Actions.retrieveDataForDateRange).not.toHaveBeenCalled();
+                    done();
+                });
+            });
+            it('should retrieve extend time series if period set', (done) => {
+                attachToNode(store, graphNode, {
+                    siteno: '12345678',
+                    parameterCode: '00065',
+                    period: 'P30D'
+                });
+
+                window.requestAnimationFrame(() => {
+                    expect(Actions.retrieveExtendedTimeSeries).toHaveBeenCalledWith('12345678', 'P30D', '00065');
+                    expect(Actions.retrieveDataForDateRange).not.toHaveBeenCalled();
+                    done();
+                });
+            });
+
+            it('should not retrieve data for date range if  time zone has not been fetched', (done) => {
+                attachToNode(store, graphNode, {
+                    siteno: '12345678',
+                    parameterCode: '00065',
+                    startDT: '2010-01-01',
+                    endDT: '2010-03-01'
+                });
+
+                window.requestAnimationFrame(() => {
+                    expect(Actions.retrieveExtendedTimeSeries).not. toHaveBeenCalled();
+                    expect(Actions.retrieveDataForDateRange).not.toHaveBeenCalled();
+                    done();
+                });
+            });
+
+            it('should retrieve data for date range if  time zone has  been fetched', (done) => {
+                spyOn(Actions, 'retrieveLocationTimeZone').and.returnValue(function() {
+                    return Promise.resolve({});
+                });
+                attachToNode(store, graphNode, {
+                    siteno: '12345678',
+                    parameterCode: '00065',
+                    startDT: '2010-01-01',
+                    endDT: '2010-03-01'
+                });
+
+                window.requestAnimationFrame(() => {
+                    expect(Actions.retrieveExtendedTimeSeries).not. toHaveBeenCalled();
+                    expect(Actions.retrieveDataForDateRange).toHaveBeenCalledWith('12345678', '2010-01-01', '2010-03-01', '00065');
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('Tests for initial data fetching when showOnlyGraph is true ', () => {
+        let store;
+
+        beforeEach(() => {
+            store = configureStore({});
+            spyOn(Actions, 'retrieveTimeSeries').and.callThrough();
+            spyOn(Actions, 'retrieveCustomTimePeriodTimeSeries').and.callThrough();
+            spyOn(Actions, 'retrieveDataForDateRange');
+        });
+
+        it('should retrieve custom time period if period is specificed', (done) => {
+            attachToNode(store, graphNode, {
+                siteno: '12345678',
+                parameterCode: '00065',
+                period: 'P20D',
+                showOnlyGraph: true
+            });
+
+            window.requestAnimationFrame(() => {
+                expect(Actions.retrieveTimeSeries).not.toHaveBeenCalled();
+                expect(Actions.retrieveCustomTimePeriodTimeSeries).toHaveBeenCalledWith('12345678', '00065', 'P20D');
+                expect(Actions.retrieveDataForDateRange).not.toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should not retrieve date range for date range parameters if time zone has not been fetched', (done) => {
+            attachToNode(store, graphNode, {
+                siteno: '12345678',
+                parameterCode: '00065',
+                startDT: '2010-01-01',
+                endDT: '2010-03-01',
+                showOnlyGraph: true
+            });
+
+            window.requestAnimationFrame(() => {
+                expect(Actions.retrieveTimeSeries).not.toHaveBeenCalled();
+                expect(Actions.retrieveCustomTimePeriodTimeSeries).not.toHaveBeenCalled();
+                expect(Actions.retrieveDataForDateRange).not.toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should  retrieve date range for date range parameters if time zone has been fetched', (done) => {
+            spyOn(Actions, 'retrieveLocationTimeZone').and.returnValue(function() {
+                return Promise.resolve({});
+            });
+            attachToNode(store, graphNode, {
+                siteno: '12345678',
+                parameterCode: '00065',
+                startDT: '2010-01-01',
+                endDT: '2010-03-01',
+                showOnlyGraph: true
+            });
+
+            window.requestAnimationFrame(() => {
+                expect(Actions.retrieveTimeSeries).not.toHaveBeenCalled();
+                expect(Actions.retrieveCustomTimePeriodTimeSeries).not.toHaveBeenCalled();
+                expect(Actions.retrieveDataForDateRange).toHaveBeenCalledWith('12345678', '2010-01-01', '2010-03-01', '00065');
+                done();
+            });
+        });
+
+        it('should retrieve time series if no custom period or date range', (done) => {
+            attachToNode(store, graphNode, {
+                siteno: '12345678',
+                parameterCode: '00065',
+                showOnlyGraph: true
+            });
+
+            window.requestAnimationFrame(() => {
+                expect(Actions.retrieveTimeSeries).toHaveBeenCalledWith('12345678', ['00065']);
+                expect(Actions.retrieveCustomTimePeriodTimeSeries).not.toHaveBeenCalled();
+                expect(Actions.retrieveDataForDateRange).not.toHaveBeenCalled();
+                done();
+            });
+        });
     });
 
     describe('graphNode contains the expected elements when showOnlyGraph is false', () => {
         /* eslint no-use-before-define: 0 */
         let store;
-        beforeEach(() => {
+        beforeEach((done) => {
+            spyOn(Actions, 'retrieveTimeSeries').and.returnValue(function() {
+                return Promise.resolve({});
+            });
             store = configureStore({
                 ...TEST_STATE,
                 series: {
@@ -222,6 +439,9 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             });
 
             attachToNode(store, graphNode, {siteno: '123456788'});
+            window.requestAnimationFrame(() => {
+                done();
+            });
         });
 
         it('should render the correct number of svg nodes', () => {
@@ -294,6 +514,9 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
     describe('hide elements when showOnlyGraph is set to true', () => {
         let store;
         beforeEach(() => {
+            spyOn(Actions, 'retrieveTimeSeries').and.returnValue(function() {
+                return Promise.resolve({});
+            });
             store = configureStore({
                 ...TEST_STATE,
                 series: {
@@ -357,102 +580,6 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
 
         it('should not have the select time series element', () => {
             expect(selectAll('#select-time-series').size()).toBe(0);
-        });
-    });
-
-    describe('hiding/showing provisional alert', () => {
-
-        it('Expects the provisional alert to be visible when time series data is provided', () => {
-            let store = configureStore(TEST_STATE);
-            attachToNode(store, graphNode, {siteno: '12345678'});
-
-            expect(select(graphNode).select('.provisional-data-alert').attr('hidden')).toBeNull();
-        });
-
-        it('Expects the provisional alert to be hidden when no time series data is provided', () => {
-            let store = configureStore({
-                ...TEST_STATE,
-                series: {},
-                timeSeriesState: {
-                    ...TEST_STATE.timeSeriesState,
-                    currentVariableID: ''
-                }
-            });
-            attachToNode(store, graphNode, {siteno: '12345678'});
-
-            expect(select(graphNode).select('.provisional-data-alert').attr('hidden')).toBe('true');
-        });
-    });
-
-    describe('Tests for loading indicators', () => {
-
-        it('Expects the graph loading indicator to be visible if the current 7 day data is being loaded', () => {
-            const newTestState = {
-                ...TEST_STATE,
-                timeSeriesState: {
-                    ...TEST_STATE.timeSeriesState,
-                    currentDateRange: 'P7D',
-                    loadingTSKeys: ['current:P7D']
-                }
-            };
-            let store = configureStore(newTestState);
-            spyOn(store, 'dispatch').and.callThrough();
-            attachToNode(store, graphNode, {siteno: '12345678'});
-
-            expect(select(graphNode).select('.loading-indicator-container').select('.loading-indicator').size()).toBe(1);
-        });
-
-        it('Expects the graph loading indicator to not be visible if the current 7 day data is not being loaded', () => {
-            const newTestState = {
-                ...TEST_STATE,
-                timeSeriesState: {
-                    ...TEST_STATE.timeSeriesState,
-                    currentDateRange: 'P7D'
-                }
-            };
-            let store = configureStore(newTestState);
-            spyOn(store, 'dispatch').and.callThrough();
-            attachToNode(store, graphNode, {siteno: '12345678'});
-            store.dispatch(Actions.removeTimeSeriesLoading(['current:P7D']));
-
-            expect(select(graphNode).select('.loading-indicator-container').select('.loading-indicator').size()).toBe(0);
-        });
-
-        it('Expects the date range control loading indicator to be visible if loading is in progress for the selected date range', () => {
-            const newTestState = {
-                ...TEST_STATE,
-                timeSeriesState: {
-                    ...TEST_STATE.timeSeriesState,
-                    currentDateRange: 'P30D',
-                    loadingTSKeys: ['current:P30D:00060']
-                }
-            };
-            let store = configureStore(newTestState);
-            attachToNode(store, graphNode, {siteno: '12345678'});
-
-            expect(select(graphNode).select('#ts-daterange-select-container').select('.loading-indicator').size()).toBe(1);
-        });
-
-        it('Expects the date range control loading indicator to not be visible if not loading for the selected date range', () => {
-            const newTestState = {
-                ...TEST_STATE,
-                timeSeriesState: {
-                    ...TEST_STATE.timeSeriesState,
-                    currentDateRange: 'P30D',
-                    loadingTSKeys: ['compare:P30D:00060']
-                }
-            };
-            let store = configureStore(newTestState);
-            attachToNode(store, graphNode, {siteno: '12345678'});
-
-            expect(select(graphNode).select('#ts-daterange-select-container').select('.loading-indicator').size()).toBe(0);
-        });
-
-        it('Expects that the no data alert will not be shown if there is data', () => {
-            let store = configureStore(TEST_STATE);
-            attachToNode(store, graphNode, {siteno: '12345678'});
-
-            expect(select(graphNode).select('#no-data-message').size()).toBe(0);
         });
     });
 });

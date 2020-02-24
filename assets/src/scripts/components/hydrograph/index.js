@@ -60,10 +60,7 @@ export const attachToNode = function (store,
     store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
     nodeElem
         .select('.loading-indicator-container')
-        .call(link(store, drawLoadingIndicator, createStructuredSelector({
-            showLoadingIndicator: isLoadingTS('current', 'P7D'),
-            sizeClass: () => 'fa-3x'
-        })));
+        .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
 
     // Fetch time zone
     const fetchTimeZonePromise = store.dispatch(Actions.retrieveLocationTimeZone(config.siteLocation.latitude, config.siteLocation.longitude));
@@ -89,9 +86,7 @@ export const attachToNode = function (store,
                 if (period === 'P30D' || period === 'P1Y') {
                     store.dispatch(Actions.retrieveExtendedTimeSeries(siteno, period, currentParamCode));
                 } else if (startDT && endDT) {
-                    console.log('Waiting for time zone promise');
                     fetchTimeZonePromise.then(() => {
-                        console.log('time zone retrieved. Retrieving custom date range');
                         store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, currentParamCode));
                     });
                 }
@@ -99,7 +94,10 @@ export const attachToNode = function (store,
         store.dispatch(Actions.retrieveMedianStatistics(siteno));
     }
     fetchDataPromise.then(() => {
-        console.log('fetchDataPromise then is bein processed');
+        // Hide the loading indocatr
+        nodeElem
+            .select('.loading-indicator-container')
+            .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
         if (!hasAnyTimeSeries(store.getState())) {
             drawInfoAlert(nodeElem, {body: 'No time series data available for this site'});
         } else {
@@ -147,9 +145,7 @@ export const attachToNode = function (store,
                         timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM)
                     }), store));
                 nodeElem.select('.provisional-data-alert')
-                    .call(link(store, function (elem, allTimeSeries) {
-                        elem.attr('hidden', Object.keys(allTimeSeries).length ? null : true);
-                    }, getTimeSeries));
+                    .attr('hidden', null);
             }
         }
     });

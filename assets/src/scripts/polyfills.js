@@ -11,7 +11,7 @@ import 'core-js/features/math/sign';
 import 'core-js/features/math/trunc';
 import 'core-js/features/number/is-integer';
 import 'core-js/features/number/is-nan';
-import 'core-js/features/from-entries';
+import 'core-js/features/object/from-entries';
 import 'core-js/features/object/values';
 import 'core-js/features/promise';
 import 'core-js/features/string/repeat';

@@ -101,8 +101,7 @@ export const Actions = {
                     // Update the application state
                     dispatch(Actions.toggleTimeSeries('current', true));
                     const variable = getCurrentVariableId(collection.timeSeries || {}, collection.variables || {});
-                    const action = Actions.setCurrentVariable(variable);
-                    dispatch(action);
+                    dispatch(Actions.setCurrentVariable(variable));
                     dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
                 },
                 () => {

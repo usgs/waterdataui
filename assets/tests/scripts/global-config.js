@@ -1,7 +1,11 @@
 var CONFIG = {
     TIMESERIES_AUDIO_ENABLED: true,
     MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED: true,
-    FIM_GIS_ENDPOINT: 'https:/fakelegendservice.com'
+    FIM_GIS_ENDPOINT: 'https:/fakelegendservice.com',
+    siteLocation: {
+        latitude: 43.5,
+        longitude: -100.0
+    }
 };
 
 var mockOscillator = function() {
