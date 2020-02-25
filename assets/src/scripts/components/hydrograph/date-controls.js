@@ -22,7 +22,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         name: '30 days',
         period: 'P30D'
     }, {
-        label: 'one-',
         name: '1 year',
         period: 'P1Y'
     }, {
