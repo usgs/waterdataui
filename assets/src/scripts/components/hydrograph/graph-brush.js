@@ -21,6 +21,9 @@ export const drawGraphBrush = function(container, store) {
         }
         const xScale = getBrushXScale('current')(store.getState());
         const brushRange = event.selection || xScale.range();
+
+        console.log('brushRange:'+brushRange)
+
         // Only about the main hydrograph when user is done adjusting the time range.
         if (event.sourceEvent.type === 'mouseup' || event.sourceEvent.type === 'touchend') {
             store.dispatch(Actions.setHydrographXRange(brushRange.map(xScale.invert, xScale)));
@@ -77,19 +80,15 @@ export const drawGraphBrush = function(container, store) {
 
             graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom]]);
 
-            // brush handle tooltip
-            var tooltip = svg.append('text').attr('x',125).attr('y',80)
-                .attr('stroke', '#022F54').text('<-- Brush handles move -->')
-                .style('font-style', 'italic').style('opacity', .7).style('visibility', 'hidden');
-
             // Creates the brush
             group.call(graphBrush);
 
-            // Color brush handles, set tooltip mouseover
-            svg.selectAll('.handle').style('fill', ' #022F54').style('opacity', .5).style('width', 10)
+            // Fill & round corners of brush handles, set mouseover highlight
+            svg.selectAll('.handle').style('fill', '#022F54').style('opacity', .5)
+                .style('width', 8).attr('stroke', '#000000').attr('stroke-width', '#000000')
+                .attr('rx',15).attr('ry',15)  // Round corners
                 .on('mouseover', function(){
-                    tooltip.style('visibility', 'visible');
-                    tooltip.transition().delay(2000).style('visibility', 'hidden');
+                    svg.selectAll('.handle').transition().style('fill','#CCFFFF').duration(1000).transition().style('fill','#022F54').duration(1000);
                     });
 
             graphBrush.move(group, selection);
