@@ -82,11 +82,10 @@ export const drawGraphBrush = function(container, store) {
             group.call(graphBrush);
 
             // Fill & round corners of brush handles, set mouseover highlight
-            svg.selectAll('.handle').style('fill', '#022F54').style('opacity', .5)
-                .style('width', 8).attr('stroke', '#000000').attr('stroke-width', '#000000')
+            svg.selectAll('.handle').classed('brush-handle-fill', true)
                 .attr('rx',15).attr('ry',15)  // Round corners
                 .on('mouseover', function(){
-                    svg.selectAll('.handle').transition().style('fill','#CCFFFF').duration(1000).transition().style('fill','#022F54').duration(1000);
+                    svg.selectAll('.handle').transition().style('fill','#e1e7f1').duration(1000).transition().style('fill','#345d96').duration(1000);
                     });
 
             graphBrush.move(group, selection);
