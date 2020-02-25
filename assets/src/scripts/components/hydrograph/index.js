@@ -68,14 +68,14 @@ export const attachToNode = function (store,
     if (showOnlyGraph) {
         // Only fetch what is needed
         if (parameterCode && period) {
-            fetchDataPromise = store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, parameterCode, period));
+            fetchDataPromise = store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, parameterCode, period, true));
         } else if (parameterCode && startDT && endDT) {
             // Don't fetch until time zone is available
             fetchDataPromise = fetchTimeZonePromise.then(() => {
                 store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, parameterCode));
             });
         } else {
-            fetchDataPromise = store.dispatch(Actions.retrieveTimeSeries(siteno, parameterCode ? [parameterCode] : null));
+            fetchDataPromise = store.dispatch(Actions.retrieveTimeSeries(siteno, parameterCode ? [parameterCode] : null, true));
         }
     } else {
         // Retrieve all parameter codes for 7 days and median statistics
