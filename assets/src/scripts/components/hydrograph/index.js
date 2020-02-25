@@ -8,9 +8,9 @@ import {createStructuredSelector} from 'reselect';
 import config from '../../config';
 import {drawWarningAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {link} from '../../lib/d3-redux';
-import {isLoadingTS, hasAnyTimeSeries, getTimeSeries, getCurrentParmCd,
-    getVariables} from '../../selectors/time-series-selector';
+import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from '../../selectors/time-series-selector';
 import {Actions} from '../../store';
+import {renderTimeSeriesUrlParams} from '../../url-params';
 
 import {cursorSlider} from './cursor';
 import {drawDateRangeControls} from './date-controls';
@@ -146,6 +146,8 @@ export const attachToNode = function (store,
                     }), store));
                 nodeElem.select('.provisional-data-alert')
                     .attr('hidden', null);
+
+                renderTimeSeriesUrlParams(store);
             }
         }
     });
