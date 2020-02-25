@@ -5,6 +5,9 @@ import {listen} from './lib/d3-redux';
 import {getCurrentMethodID, getMethods, getCurrentDateRange, getCustomTimeRange, getCurrentParmCd,
     getIanaTimeZone} from './selectors/time-series-selector';
 
+/*
+ * Return {String} hash part of url minus the leading '#'.
+ */
 export const getParamString = function() {
     const hash = window.location.hash;
     return hash.length ? hash.substring(1) : '';
@@ -22,7 +25,9 @@ export const renderTimeSeriesUrlParams = function(store) {
         timeZone: getIanaTimeZone
     }), ({parameterCode, methodId, methods, compare, currentDateRange, customTimeRange, timeZone}) => {
         let params = new window.URLSearchParams();
-        params.set('parameterCode', parameterCode);
+        if (parameterCode) {
+            params.set('parameterCode', parameterCode);
+        }
         if (Object.keys(methods).length > 1) {
             params.set('timeSeriesId', methodId);
         }
