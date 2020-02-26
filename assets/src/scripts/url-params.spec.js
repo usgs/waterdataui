@@ -37,7 +37,19 @@ describe('url-params module', () => {
                 },
                 methods: {
                     '69928': {
-                        methodDescription: 'Method 69928'
+                        methodDescription: 'Method 69928',
+                        methodID: 69928
+                    },
+                    '69929': {
+                        methodDescription: 'Method 69929',
+                        methodID: 69929
+                    }
+                },
+                timeSeries: {
+                    '69928:current:P7D': {
+                        tsKey: 'current:P7D',
+                        method: 69928,
+                        variable: '123456'
                     }
                 },
                 ianaTimeZone: 'America/New_York'
@@ -134,17 +146,21 @@ describe('url-params module', () => {
             expect(window.location.hash).not.toContain('timeSeriesId');
         });
 
-        it('expects timeSeriesId to be set if currentMethodId is not null', () => {
+        it('expects timeSeriesId to be set if currentMethodId is not null and multiple time series in selected variable', () => {
             let store = configureStore({
                 ...TEST_STATE,
                 series: {
                     ...TEST_STATE.series,
-                    methods: {
-                        '69928': {
-                            methodDescription: 'Method 69928'
+                    timeSeries: {
+                        '69928:current:P7D': {
+                            tsKey: 'current:P7D',
+                            method: 69928,
+                            variable: '123456'
                         },
-                        '69929': {
-                            methodDescription: 'Method 69929'
+                        '69929:current:P7D': {
+                            tsKey: 'current:P7D',
+                            method: 69929,
+                            variable: '123456'
                         }
                     }
                 }
