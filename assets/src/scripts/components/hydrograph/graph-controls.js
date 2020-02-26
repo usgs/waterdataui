@@ -1,11 +1,11 @@
-/**
- * Hydrograph controls module.
- */
-import { Actions } from '../../store';
-import { link } from '../../lib/d3-redux';
-import { audibleUI } from './audible';
-import { getCurrentVariableMedianStatistics } from '../../selectors/median-statistics-selector';
-import { isVisibleSelector, getCurrentVariableTimeSeries } from './time-series';
+
+import {link} from '../../lib/d3-redux';
+import {getCurrentVariableTimeSeries} from '../../selectors/time-series-selector';
+import {Actions} from '../../store';
+
+import {audibleUI} from './audible';
+import {getCurrentVariableMedianStatistics} from '../../selectors/median-statistics-selector';
+import {isVisibleSelector} from './time-series';
 
 /*
  * Create the show audible toggle, last year toggle, and median toggle for the time series graph.

@@ -2,7 +2,7 @@ import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
 import {listen} from './lib/d3-redux';
-import {getCurrentMethodID, getMethods, getCurrentDateRange, getCustomTimeRange, getCurrentParmCd,
+import {getCurrentMethodID, getAllMethodsForCurrentVariable, getCurrentDateRange, getCustomTimeRange, getCurrentParmCd,
     getIanaTimeZone} from './selectors/time-series-selector';
 
 /*
@@ -18,7 +18,7 @@ export const renderTimeSeriesUrlParams = function(store) {
     listen(store, createStructuredSelector({
         parameterCode: getCurrentParmCd,
         methodId: getCurrentMethodID,
-        methods: getMethods,
+        methods: getAllMethodsForCurrentVariable,
         compare: (state) => state.timeSeriesState.showSeries.compare,
         currentDateRange: getCurrentDateRange,
         customTimeRange: getCustomTimeRange,

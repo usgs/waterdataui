@@ -75,22 +75,14 @@ export const Actions = {
             );
         };
     },
-    retrieveTimeSeries(siteno, params=null, fetchTimeZone=false) {
+    retrieveTimeSeries(siteno, params=null) {
         return function (dispatch, getState) {
             const currentState = getState();
             const requestKey = getTsRequestKey('current', 'P7D')(currentState);
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
-            let fetchTimeZonePromise;
-
-            let fetchTimeSeriesPromise = getTimeSeries({sites: [siteno], params}).then(
+            return  getTimeSeries({sites: [siteno], params}).then(
                 series => {
                     const collection = normalize(series, requestKey);
-                    if (fetchTimeZone) {
-                        const location = collection.sourceInfo ? collection.sourceInfo[siteno].geoLocation.geogLocation : {};
-                        fetchTimeZonePromise = dispatch(Actions.retrieveLocationTimeZone(location.latitude || null, location.longitude || null));
-                    } else {
-                        fetchTimeZonePromise = Promise.resolve();
-                    }
 
                     // Get the start/end times of this request's range.
                     const notes = collection.queryInfo[requestKey].notes;
@@ -117,8 +109,6 @@ export const Actions = {
                     dispatch(Actions.toggleTimeSeries('current', false));
                 }
             );
-
-            return Promise.all(fetchTimeSeriesPromise, fetchTimeZonePromise);
         };
     },
     retrieveCompareTimeSeries(site, period, startTime, endTime) {
@@ -148,23 +138,16 @@ export const Actions = {
         };
     },
 
-    retrieveCustomTimePeriodTimeSeries(site, parameterCd, period, fetchTimeZone=false) {
+    retrieveCustomTimePeriodTimeSeries(site, parameterCd, period) {
         return function(dispatch, getState) {
             const state = getState();
             const parmCd = parameterCd;
             const requestKey = getTsRequestKey('current', 'custom', parmCd)(state);
-            let fetchTimeZonePromise;
             dispatch(Actions.setCurrentDateRange('custom'));
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
-            let fetchTimeSeriesPromise = getTimeSeries({sites: [site], params: [parmCd], period: period}).then(
+            return getTimeSeries({sites: [site], params: [parmCd], period: period}).then(
                 series => {
                     const collection = normalize(series, requestKey);
-                    if (fetchTimeZone) {
-                        const location = collection.sourceInfo ? collection.sourceInfo[site].geoLocation.geogLocation : {};
-                        fetchTimeZonePromise = dispatch(Actions.retrieveLocationTimeZone(location.latitude || null, location.longitude || null));
-                    } else {
-                        fetchTimeZonePromise = Promise.resolve();
-                    }
                     const variables = Object.values(collection.variables);
                     const variableToDraw = find(variables, v =>  v.variableCode.value === parameterCd);
                     dispatch(Actions.setCurrentVariable(variableToDraw.variableCode.variableID));
@@ -177,11 +160,10 @@ export const Actions = {
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                 }
             );
-            return Promise.all(fetchTimeZonePromise, fetchTimeSeriesPromise);
         };
     },
 
-    retrieveCustomTimeSeries(site, startTime, endTime, parmCd, fetchTimeZone=false) {
+    retrieveCustomTimeSeries(site, startTime, endTime, parmCd) {
         return function(dispatch, getState) {
             const state = getState();
             const thisParmCd = parmCd ? parmCd : getCurrentParmCd(state);
@@ -190,8 +172,7 @@ export const Actions = {
             dispatch(Actions.setCustomDateRange(startTime, endTime));
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
             dispatch(Actions.toggleTimeSeries('median', false));
-            let fetchTimeZonePromise;
-            let fetchTimeSeriesPromise = getTimeSeries({
+            return getTimeSeries({
                 sites: [site],
                 params: [thisParmCd],
                 startDate: startTime,
@@ -199,12 +180,6 @@ export const Actions = {
             }).then(
                 series => {
                     const collection = normalize(series, requestKey);
-                    if (fetchTimeZone) {
-                        const location = collection.sourceInfo ? collection.sourceInfo[site].geoLocation.geogLocation : {};
-                        fetchTimeZonePromise = dispatch(Actions.retrieveLocationTimeZone(location.latitude || null, location.longitude || null));
-                    } else {
-                        fetchTimeZonePromise = Promise.resolve();
-                    }
                     dispatch(Actions.addSeriesCollection(requestKey, collection));
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                 },
@@ -214,7 +189,6 @@ export const Actions = {
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                 }
             );
-            return Promise.all(fetchTimeZonePromise, fetchTimeSeriesPromise);
         };
     },
     retrieveExtendedTimeSeries(site, period, paramCd=null) {
@@ -460,14 +434,14 @@ export const Actions = {
             return dispatch(Actions.retrieveCustomTimeSeries(siteno, startTime, endTime));
         };
     },
-    retrieveDataForDateRange(siteno, startTimeStr, endTimeStr, parmCd, fetchTimeZone=false) {
+    retrieveDataForDateRange(siteno, startTimeStr, endTimeStr, parmCd) {
         return function(dispatch, getState) {
             const state = getState();
             const locationIanaTimeZone = getIanaTimeZone(state);
             const startTime = new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis();
             const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis();
 
-            dispatch(Actions.retrieveCustomTimeSeries(siteno, startTime, endTime, parmCd, fetchTimeZone));
+            dispatch(Actions.retrieveCustomTimeSeries(siteno, startTime, endTime, parmCd));
         };
     },
     setGageHeightFromStageIndex(index) {

@@ -7,10 +7,10 @@ import {createStructuredSelector} from 'reselect';
 
 import{link}  from '../../lib/d3-redux';
 import config from '../../config';
-import {getCurrentMethodID} from '../../selectors/time-series-selector';
+import {getCurrentMethodID, getAllMethodsForCurrentVariable} from '../../selectors/time-series-selector';
 import {Actions} from '../../store';
 
-import { getAllMethodsForCurrentVariable } from './time-series';
+import { } from './time-series';
 
 export const drawMethodPicker = function(elem, store) {
     if (!config.MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED) {

@@ -36,11 +36,16 @@ const controlDisplay = function(elem, showElem) {
     elem.attr('hidden', showElem ? null : true);
 };
 
-
+/*
+ * Renders the hydrograph on the node element using the Redux store for state information. The siteno, latitude, and
+ * longitude are required parameters. All others are optional and are used to set the initial state of the hydrograph.
+ */
 export const attachToNode = function (store,
                                       node,
                                       {
                                           siteno,
+                                          latitude,
+                                          longitude,
                                           parameterCode,
                                           compare,
                                           period,
@@ -63,7 +68,7 @@ export const attachToNode = function (store,
         .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
 
     // Fetch time zone
-    const fetchTimeZonePromise = store.dispatch(Actions.retrieveLocationTimeZone(config.siteLocation.latitude, config.siteLocation.longitude));
+    const fetchTimeZonePromise = store.dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
     let fetchDataPromise;
     if (showOnlyGraph) {
         // Only fetch what is needed
