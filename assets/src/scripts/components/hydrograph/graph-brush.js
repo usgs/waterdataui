@@ -82,7 +82,7 @@ export const drawGraphBrush = function(container, store) {
             group.call(graphBrush);
 
             // Fill & round corners of brush handles, set mouseover highlight
-            svg.selectAll('.handle').classed('brush-handle-fill', true)
+            svg.selectAll('.handle').classed('brush-handle-detail', true).style('fill','#345d96')
                 .attr('rx',15).attr('ry',15)  // Round corners
                 .on('mouseover', function(){
                     svg.selectAll('.handle').transition().style('fill','#e1e7f1').duration(1000).transition().style('fill','#345d96').duration(1000);
