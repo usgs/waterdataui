@@ -21,6 +21,7 @@ export const drawGraphBrush = function(container, store) {
         }
         const xScale = getBrushXScale('current')(store.getState());
         const brushRange = event.selection || xScale.range();
+
         // Only about the main hydrograph when user is done adjusting the time range.
         if (event.sourceEvent.type === 'mouseup' || event.sourceEvent.type === 'touchend') {
             store.dispatch(Actions.setHydrographXRange(brushRange.map(xScale.invert, xScale)));
@@ -62,6 +63,7 @@ export const drawGraphBrush = function(container, store) {
         })
         .call(link(store, (svg, {layout, isHydrographXRange}) => {
             let selection;
+
             const brushElem = svg.select('.brush');
             if (isHydrographXRange && brushElem.size() !== 0) {
                 selection = brushSelection(brushElem.node());
@@ -70,11 +72,24 @@ export const drawGraphBrush = function(container, store) {
                 selection = [0, layout.width - layout.margin.right];
             }
             brushElem.remove();
+
             const group = svg.append('g').attr('class', 'brush')
                 .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
+
             graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom]]);
+
+            // Creates the brush
             group.call(graphBrush);
+
+            // Fill & round corners of brush handles, set mouseover highlight
+            svg.selectAll('.handle').classed('brush-handle-detail', true).style('fill','#345d96')
+                .attr('rx',15).attr('ry',15)  // Round corners
+                .on('mouseover', function(){
+                    svg.selectAll('.handle').transition().style('fill','#e1e7f1').duration(1000).transition().style('fill','#345d96').duration(1000);
+                    });
+
             graphBrush.move(group, selection);
+
         }, createStructuredSelector({
             layout: getBrushLayout,
             isHydrographXRange: (state) => state.ui.hydrographXRange !== undefined

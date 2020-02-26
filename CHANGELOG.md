@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.26.0...master)
 ### Changed
 - All IV time series are now available for drawing on the hydrograph not just those in the last 7 days.
+- Added brush handle fill and transition highlight on mouseover.
 
 ## [0.26.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.25.0...waterdataui-0.26.0) - 2020-02-12
 ### Added
