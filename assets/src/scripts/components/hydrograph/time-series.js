@@ -6,7 +6,7 @@ import { createSelector } from 'reselect';
 
 import {
     getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone, getCurrentParmCd, getCurrentMethodID,
-    getMethods
+    getMethods, getTimeSeries
 } from '../../selectors/time-series-selector';
 
 
@@ -38,105 +38,17 @@ export const TEMPERATURE_PARAMETERS = {
 // Create a time formatting function from D3's timeFormat
 const formatTime = timeFormat('%c %Z');
 
-
-
-/**
- * @return {Object} Mapping of time series ID to time series details. Only time series with non zero points are returned
- */
-export const allTimeSeriesSelector = createSelector(
-    state => state.series,
-    (stateSeries) => {
-        let timeSeries = {};
-        if (stateSeries && stateSeries.hasOwnProperty('timeSeries')) {
-            let stateTimeSeries = stateSeries.timeSeries;
-            for (let key of Object.keys(stateTimeSeries)) {
-                const ts = stateTimeSeries[key];
-                if (ts.hasOwnProperty('points') && ts.points.length > 0) {
-                    timeSeries[key] = ts;
-                }
-            }
-        }
-        return timeSeries;
-    }
-);
-
-
-/**
- * Returns a selector that, for a given tsKey:
- * Selects all time series for the current time series variable and current date range.
- * @param  {String} tsKey   Time-series key
- * @param  {Object} state   Redux state
- * @return {Object}         Time-series data
- */
-export const currentVariableTimeSeriesSelector = memoize(tsKey => createSelector(
-    getTsRequestKey(tsKey),
-    allTimeSeriesSelector,
-    getCurrentVariable,
-    (tsRequestKey, timeSeries, variable) => {
-        let ts = {};
-        if (variable) {
-            Object.keys(timeSeries).forEach(key => {
-                const series = timeSeries[key];
-                if (series.tsKey === tsRequestKey && series.variable === variable.oid) {
-                    ts[key] = series;
-                }
-            });
-        }
-        return ts;
-    }
-));
-
-/*
- * Return all times series for the current variable.
- * @ return {Object} time series data
- */
-export const getAllTimeSeriesForCurrentVariable = createSelector(
-    getCurrentVariable,
-    allTimeSeriesSelector,
-    (variable, timeSeries) => {
-        let ts = {};
-        if (variable) {
-            Object.keys(timeSeries).forEach(key => {
-                const series = timeSeries[key];
-                if (series.variable === variable.oid) {
-                    ts[key] = series;
-                }
-            });
-        }
-        return ts;
-    }
-);
-
-/*
- * @param {String} tsKey - current or compare
- * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
- * @param {String} or null parmCd - Only need to specify if period is something other than P7D or null
- * return {Array} an object containing method_id and method_description properties
- */
-export const getAllMethodsForCurrentVariable = createSelector(
-    getMethods,
-    getAllTimeSeriesForCurrentVariable,
-    (methods, timeSeries) => {
-        const allMethods = Object.values(methods);
-        const currentMethodIds = uniq(Object.values(timeSeries).map((ts) => ts.method));
-
-        return allMethods.filter((method) => {
-            return _includes(currentMethodIds, method.methodID);
-        });
-    }
-);
-
 /**
  * Returns a selector that, for a given tsKey and period:
  * Selects all time series data. If period is null then, the currentDateRange is used
  * @param  {String} tsKey   Time-series key
- * @param {String} or null date range using ISO-8601 duration;
+ * @param {String} period or null date range using ISO-8601 duration;
  * @param  {Object} state   Redux state
  * @return {Object} - Keys are tsID, values are time-series data
  */
-export const timeSeriesSelector = memoize((tsKey, period) => createSelector(
+export const getTimeSeriesForTsKey = memoize((tsKey, period) => createSelector(
     getTsRequestKey(tsKey, period),
-    allTimeSeriesSelector,
+    getTimeSeries,
     (tsRequestKey, timeSeries) => {
         let x = {};
         Object.keys(timeSeries).forEach(key => {
@@ -149,8 +61,51 @@ export const timeSeriesSelector = memoize((tsKey, period) => createSelector(
     }
 ));
 
+/**
+ * Returns a selector that, for a given tsKey:
+ * Selects all time series for the current time series variable and current date range.
+ * @param  {String} tsKey   Time-series key
+ * @param  {Object} state   Redux state
+ * @return {Object}         Time-series data
+ */
+export const getCurrentVariableTimeSeries = memoize((tsKey, period) => createSelector(
+    getTimeSeriesForTsKey(tsKey, period),
+    getCurrentVariable,
+    (timeSeries, variable) => {
+        let ts = {};
+        if (variable) {
+            Object.keys(timeSeries).forEach(key => {
+                const series = timeSeries[key];
+                if (series.variable === variable.oid) {
+                    ts[key] = series;
+                }
+            });
+        }
+        return ts;
+    }
+));
+
+/*
+ * @param {String} tsKey - current or compare
+ * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
+ * @param {String} or null parmCd - Only need to specify if period is something other than P7D or null
+ * return {Array} an object containing method_id and method_description properties
+ */
+export const getAllMethodsForCurrentVariable = createSelector(
+    getMethods,
+    getCurrentVariableTimeSeries('current', 'P7D'),
+    (methods, timeSeries) => {
+        const allMethods = Object.values(methods);
+        const currentMethodIds = uniq(Object.values(timeSeries).map((ts) => ts.method));
+
+        return allMethods.filter((method) => {
+            return _includes(currentMethodIds, method.methodID);
+        });
+    }
+);
+
 export const hasTimeSeriesWithPoints = memoize((tsKey, period) => createSelector(
-    timeSeriesSelector(tsKey, period),
+    getTimeSeriesForTsKey(tsKey, period),
     (timeSeries) => {
         const seriesWithPoints = Object.values(timeSeries).filter(x => x.points.length > 0);
         return seriesWithPoints.length > 0;

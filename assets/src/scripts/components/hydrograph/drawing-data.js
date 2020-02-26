@@ -6,11 +6,11 @@ import { createSelector } from 'reselect';
 import { format } from 'd3-format';
 
 import config from '../../config';
-import { getVariables, getCurrentMethodID, getTsRequestKey, getRequestTimeRange, getIanaTimeZone }
+import { getVariables, getCurrentMethodID, getTimeSeries, getTsRequestKey, getRequestTimeRange, getIanaTimeZone }
     from '../../selectors/time-series-selector';
 import { getCurrentVariableMedianStatistics } from '../../selectors/median-statistics-selector';
 
-import { allTimeSeriesSelector, currentVariableTimeSeriesSelector, timeSeriesSelector } from './time-series';
+import { getCurrentVariableTimeSeries, getTimeSeriesForTsKey } from './time-series';
 
 
 export const MASK_DESC = {
@@ -68,8 +68,8 @@ const transformToCumulative = function(points) {
  * @return {Object} where the keys are ts ids and the values are an Array of point Objects.
  */
 export const allPointsSelector = createSelector(
-    allTimeSeriesSelector,
-    state => state.series.variables,
+    getTimeSeries,
+    getVariables,
     (timeSeries, variables) => {
         let allPoints = {};
         Object.keys(timeSeries).forEach((tsId) => {
@@ -94,7 +94,7 @@ export const allPointsSelector = createSelector(
 export const pointsByTsKeySelector = memoize((tsKey, period) => createSelector(
     getTsRequestKey(tsKey, period),
     allPointsSelector,
-    state => state.series.timeSeries,
+    getTimeSeries,
     (tsRequestKey, points, timeSeries) => {
         let result = {};
         Object.keys(points).forEach((tsId) => {
@@ -113,7 +113,7 @@ export const pointsByTsKeySelector = memoize((tsKey, period) => createSelector(
  */
 export const currentVariablePointsByTsIdSelector = memoize(tsKey => createSelector(
     pointsByTsKeySelector(tsKey),
-    currentVariableTimeSeriesSelector(tsKey),
+    getCurrentVariableTimeSeries(tsKey),
     (points, timeSeries) => {
         let result = {};
         if (points) {
@@ -133,7 +133,7 @@ export const currentVariablePointsByTsIdSelector = memoize(tsKey => createSelect
  */
 export const currentVariablePointsSelector = memoize(tsKey => createSelector(
     pointsByTsKeySelector(tsKey),
-    currentVariableTimeSeriesSelector(tsKey),
+    getCurrentVariableTimeSeries(tsKey),
     (points, timeSeries) => {
         return timeSeries ? Object.keys(timeSeries).map((tsId) => points[tsId]) : [];
     }
@@ -153,22 +153,6 @@ export const pointsSelector = memoize((tsKey) => createSelector(
         return Object.values(points);
     }
 ));
-
-
-/**
- * Factory function that returns a selector for a given tsKey, that:
- * Returns a single array of all points.
- * @param  {Object} state       Redux state
- * @return {Array}              Array of points.
- */
-export const flatPointsSelector = memoize(tsKey => createSelector(
-    pointsSelector(tsKey),
-    tsPointsList => tsPointsList.reduce((finalPoints, points) => {
-        Array.prototype.push.apply(finalPoints, points);
-        return finalPoints;
-    }, [])
-));
-
 
 /*
  * Returns an object which identifies which classes to use for the point
@@ -267,29 +251,6 @@ export const visiblePointsSelector = createSelector(
 );
 
 
-/**
- * Factory function creates a function that, for a given tsKey:
- * Returns all point data as an array of [value, time, qualifiers].
- * @param {Object} state - Redux store
- * @param {String} tsKey - Time series key
- * @param {Object} - keys are ts id, values are an array of points where each point is an Array as follows:  [value, time, qualifiers].
- */
-export const pointsTableDataSelector = memoize(tsKey => createSelector(
-    pointsByTsKeySelector(tsKey),
-    (allPoints) => {
-        return Object.keys(allPoints).reduce((databyTsId, tsId) => {
-            databyTsId[tsId] = allPoints[tsId].map((value) => {
-                return [
-                    value.value || '',
-                    value.dateTime || '',
-                    value.qualifiers && value.qualifiers.length > 0 ? value.qualifiers.join(', ') : ''
-                ];
-            });
-            return databyTsId;
-        }, {});
-    }
-));
-
 const getLineClasses = function(pt, isCurrentMethod) {
     let dataMask = null;
     if (pt.value === null) {
@@ -376,7 +337,7 @@ export const lineSegmentsSelector = memoize((tsKey, period) => createSelector(
  */
 export const lineSegmentsByParmCdSelector = memoize((tsKey, period) => createSelector(
     lineSegmentsSelector(tsKey, period),
-    timeSeriesSelector(tsKey, period),
+    getTimeSeriesForTsKey(tsKey, period),
     getVariables,
     (lineSegmentsBySeriesID, timeSeriesMap, variables) => {
         return Object.keys(lineSegmentsBySeriesID).reduce((byVarID, sID) => {
@@ -396,7 +357,7 @@ export const lineSegmentsByParmCdSelector = memoize((tsKey, period) => createSel
  * @return {Object} - Keys are time series ids and values are the line segment arrays
  */
 export const currentVariableLineSegmentsSelector = memoize(tsKey => createSelector(
-    currentVariableTimeSeriesSelector(tsKey),
+    getCurrentVariableTimeSeries(tsKey),
     lineSegmentsSelector(tsKey),
     (seriesMap, linesMap) => {
         return Object.keys(seriesMap).reduce((visMap, sID) => {

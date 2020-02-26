@@ -1,6 +1,6 @@
 
 import { DateTime } from 'luxon';
-import { lineSegmentsSelector, pointsSelector, pointsTableDataSelector, allPointsSelector, pointsByTsKeySelector, classesForPoint, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, currentVariablePointsSelector, currentVariablePointsByTsIdSelector, visiblePointsSelector, getCurrentVariableMedianStatPoints, MAX_LINE_POINT_GAP } from './drawing-data';
+import { lineSegmentsSelector, pointsSelector, allPointsSelector, pointsByTsKeySelector, classesForPoint, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, currentVariablePointsSelector, currentVariablePointsByTsIdSelector, visiblePointsSelector, getCurrentVariableMedianStatPoints, MAX_LINE_POINT_GAP } from './drawing-data';
 
 const TEST_DATA = {
     series: {
@@ -50,12 +50,12 @@ const TEST_DATA = {
                     estimated: false
                 }]
             },
-            '69928:00010': {
+            '69929:00010': {
                 tsKey: 'compare:P7D',
                 startTime: new Date('2017-03-06T15:45:00.000Z'),
                 endTime: new Date('2017-03-13t13:45:00.000Z'),
                 variable: '45807196',
-                method: 69928,
+                method: 69929,
                 points: [{
                     value: 1,
                     qualifiers: ['P'],
@@ -73,12 +73,12 @@ const TEST_DATA = {
                     estimated: false
                 }]
             },
-            '69928:00045': {
+            '69930:00045': {
                 tsKey: 'current:P7D',
                 startTime: new Date('2017-03-06T15:45:00.000Z'),
                 endTime: new Date('2017-03-13t13:45:00.000Z'),
                 variable: '45807140',
-                method: 69928,
+                method: 69930,
                 points: [{
                     value: 0,
                     qualifiers: ['P'],
@@ -206,8 +206,8 @@ describe('drawingData module', () => {
         it('Return three time series', () => {
             expect(Object.keys(result).length).toBe(3);
             expect(result['69928:00060']).toBeDefined();
-            expect(result['69928:00010']).toBeDefined();
-            expect(result['69928:00045']).toBeDefined();
+            expect(result['69929:00010']).toBeDefined();
+            expect(result['69930:00045']).toBeDefined();
         });
 
         it('Return the points array for time series with parameter code 00060 without modification', () => {
@@ -215,7 +215,7 @@ describe('drawingData module', () => {
         });
 
         it('Return the points array accumulated for the time series with  parameter code 00045', () => {
-            expect(result['69928:00045'].map((point) => point.value)).toEqual([0, 0.01, 0.03, 0.06]);
+            expect(result['69930:00045'].map((point) => point.value)).toEqual([0, 0.01, 0.03, 0.06]);
         });
 
         it('Return the empty object if there are no time series', () =>  {
@@ -229,11 +229,12 @@ describe('drawingData module', () => {
                     ...TEST_DATA.series,
                     timeSeries: {
                         ...TEST_DATA.series.timeSeries,
-                        '69928:00045': {
+                        '69930:00045': {
                             tsKey: 'current:P7D',
                             startTime: new Date('2017-03-06T15:45:00.000Z'),
                             endTime: new Date('2017-03-13t13:45:00.000Z'),
                             variable: '45807140',
+                            method: '69930',
                             points: [{
                                 value: 0.01,
                                 qualifiers: ['P'],
@@ -260,7 +261,7 @@ describe('drawingData module', () => {
                 }
             };
 
-            expect(allPointsSelector(newTestData)['69928:00045'].map((point) => point.value)).toEqual([0.01, 0.03, null, 0.04]);
+            expect(allPointsSelector(newTestData)['69930:00045'].map((point) => point.value)).toEqual([0.01, 0.03, null, 0.04]);
         });
     });
 
@@ -270,7 +271,7 @@ describe('drawingData module', () => {
 
             expect(Object.keys(result).length).toBe(2);
             expect(result['69928:00060']).toBeDefined();
-            expect(result['69928:00045']).toBeDefined();
+            expect(result['69930:00045']).toBeDefined();
         });
 
         it('return the empty object if no time series for series', () => {
@@ -326,8 +327,8 @@ describe('drawingData module', () => {
                             }],
                             tsKey: 'current:P7D'
                         },
-                        '69928:00045': {
-                            ...TEST_DATA.series.timeSeries['69928:00045'],
+                        '69930:00045': {
+                            ...TEST_DATA.series.timeSeries['69930:00045'],
                             tsKey: 'compare:P7D'
                         }
                     }
@@ -383,6 +384,7 @@ describe('drawingData module', () => {
                         ...TEST_DATA.series.timeSeries,
                         '69928:00060': {
                             ...TEST_DATA.series.timeSeries['69928:00060'],
+                            variable: '45807197',
                             points: [{
                                 value: 10,
                                 qualifiers: ['P']
@@ -395,8 +397,8 @@ describe('drawingData module', () => {
                             }],
                             tsKey: 'current:P7D'
                         },
-                        '69928:00045': {
-                            ...TEST_DATA.series.timeSeries['00045'],
+                        '69930:00045': {
+                            ...TEST_DATA.series.timeSeries['69930:00045'],
                             tsKey: 'compare:P7D'
                         }
                     }
@@ -468,8 +470,8 @@ describe('drawingData module', () => {
                             }],
                             tsKey: 'current:P7D'
                         },
-                        '69928:00045': {
-                            ...TEST_DATA.series.timeSeries['69928:00045'],
+                        '69930:00045': {
+                            ...TEST_DATA.series.timeSeries['69930:00045'],
                             tsKey: 'compare:P7D'
                         }
                     }
@@ -555,8 +557,8 @@ describe('drawingData module', () => {
                             }),
                             tsKey: 'current:P7D'
                         },
-                        '69928:00045': {
-                            ...TEST_DATA.series.timeSeries['69928:00045'],
+                        '69930:00045': {
+                            ...TEST_DATA.series.timeSeries['69930:00045'],
                             tsKey: 'compare:P7D'
                         }
                     }
@@ -633,8 +635,8 @@ describe('drawingData module', () => {
                             }),
                             tsKey: 'current:P7D'
                         },
-                        '69928:00045': {
-                            ...TEST_DATA.series.timeSeries['69928:00045'],
+                        '69930:00045': {
+                            ...TEST_DATA.series.timeSeries['69930:00045'],
                             tsKey: 'compare:P7D'
                         }
                     }
@@ -728,7 +730,7 @@ describe('drawingData module', () => {
                         }]
                     }
                 ],
-                '69928:00045': [
+                '69930:00045': [
                     {
                         'classes': {
                             'approved': false,
@@ -895,69 +897,6 @@ describe('drawingData module', () => {
         });
     });
 
-    describe('pointsTableDataSelect', () => {
-        it('Return an array of arrays if series is visible', () => {
-            const result = pointsTableDataSelector('current')({
-                series: {
-                    requests: {
-                        'current:P7D': {
-                            timeSeriesCollections: ['coll1']
-                        }
-                    },
-                    timeSeriesCollections: {
-                        'coll1': {
-                            variable: 45807197,
-                            timeSeries: ['one']
-                        }
-                    },
-                    timeSeries: {
-                        one: {
-                            tsKey: 'current:P7D',
-                            points: [{
-                                dateTime: '2018-01-01',
-                                qualifiers: ['P'],
-                                approved: false,
-                                estimated: false
-                            }, {
-                                value: 15,
-                                approved: false,
-                                estimated: true
-                            }, {
-                                value: 10,
-                                dateTime: '2018-01-03',
-                                qualifiers: ['P', 'Ice'],
-                                approved: false,
-                                estimated: true
-                            }],
-                            variable: '45807197'
-                        }
-                    },
-                    variables: {
-                        '45807197': {
-                            variableCode: {value: '00060'},
-                            oid: 45807197
-                        }
-                    },
-                    ianaTimeZone: 'Pacific/Honolulu'
-                },
-                timeSeriesState: {
-                    currentVariableID: '45807197',
-                    currentDateRange: 'P7D',
-                    showSeries: {
-                        current: true
-                    }
-                }
-            });
-            expect(result).toEqual({
-                one: [
-                    ['', '2018-01-01', 'P'],
-                    [15, '', ''],
-                    [10, '2018-01-03', 'P, Ice']
-                ]
-            });
-        });
-    });
-
     describe('getCurrentVariableMedianStatPoints', () => {
         const TEST_VARS = {
             '45807042': {
@@ -977,7 +916,7 @@ describe('drawingData module', () => {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
-                            requestDT: (new Date(2017, 2, 1, 11, 15, 0, 0)).getTime(),
+                            requestDT: new Date(2017, 2, 1, 11, 15, 0, 0).getTime(),
                             'filter:timeRange': {
                                 mode: 'PERIOD',
                                 periodDays: '7',

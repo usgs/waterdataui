@@ -5,7 +5,7 @@ import { Actions } from '../../store';
 import { link } from '../../lib/d3-redux';
 import { audibleUI } from './audible';
 import { getCurrentVariableMedianStatistics } from '../../selectors/median-statistics-selector';
-import { isVisibleSelector, currentVariableTimeSeriesSelector } from './time-series';
+import { isVisibleSelector, getCurrentVariableTimeSeries } from './time-series';
 
 /*
  * Create the show audible toggle, last year toggle, and median toggle for the time series graph.
@@ -40,7 +40,7 @@ export const drawGraphControls = function(elem, store) {
             const exists = Object.keys(compareTimeSeries) ?
                 Object.values(compareTimeSeries).filter(tsValues => tsValues.points.length).length > 0 : false;
             elem.property('disabled', !exists);
-        }, currentVariableTimeSeriesSelector('compare')))
+        }, getCurrentVariableTimeSeries('compare')))
         // Sets the state of the toggle
         .call(link(store,function(elem, checked) {
             elem.property('checked', checked);
