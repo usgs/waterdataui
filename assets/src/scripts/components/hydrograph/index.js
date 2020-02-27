@@ -76,7 +76,7 @@ export const attachToNode = function (store,
         } else if (parameterCode && startDT && endDT) {
             // Don't fetch until time zone is available
             fetchDataPromise = fetchTimeZonePromise.then(() => {
-                store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, parameterCode));
+                return store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, parameterCode));
             });
         } else {
             fetchDataPromise = store.dispatch(Actions.retrieveTimeSeries(siteno, parameterCode ? [parameterCode] : null));
@@ -98,7 +98,7 @@ export const attachToNode = function (store,
         store.dispatch(Actions.retrieveMedianStatistics(siteno));
     }
     fetchDataPromise.then(() => {
-        // Hide the loading indocatr
+        // Hide the loading indicator
         nodeElem
             .select('.loading-indicator-container')
             .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
@@ -123,7 +123,7 @@ export const attachToNode = function (store,
             // Set up rendering functions for the graph-container
             let graphContainer = nodeElem.select('.graph-container')
                 .call(link(store, controlDisplay, hasAnyTimeSeries))
-                .call(drawTimeSeriesGraph, store, siteno, showMLName);
+                .call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph);
             if (!showOnlyGraph) {
                 graphContainer.call(cursorSlider, store);
                 graphContainer.call(drawGraphBrush, store);
