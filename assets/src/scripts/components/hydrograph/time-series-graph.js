@@ -152,7 +152,7 @@ const watermark = function (elem, store) {
         }, getMainLayout));
 };
 
-export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
+export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, showTooltip) {
     let graphDiv;
 
     graphDiv = elem.append('div')
@@ -186,7 +186,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
                     .attr('y', 0)
                     .attr('width', layout.width - layout.margin.right)
                     .attr('height', layout.height - layout.margin.bottom);
-            svg.append('g')
+            const dataGroup = svg.append('g')
                 .attr('class', 'plot-data-lines-group')
                 .call(link(store, (elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), getMainLayout))
                 .call(link(store, appendAxes, getAxes()))
@@ -208,7 +208,6 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
                     layout: getMainLayout,
                     enableClip: () => true
                 })))
-                .call(createTooltipFocus, store)
                 .call(link(store, plotAllMedianPoints, createStructuredSelector({
                     visible: isVisibleSelector('median'),
                     xscale: getMainXScale('current'),
@@ -216,5 +215,8 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
                     seriesPoints: getCurrentVariableMedianStatPoints,
                     enableClip: () => true
                 })));
+            if (showTooltip) {
+                dataGroup.call(createTooltipFocus, store);
+            }
         }, getMainLayout));
 };

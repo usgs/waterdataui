@@ -1,16 +1,14 @@
-import { set } from 'd3-collection';
+import {set} from 'd3-collection';
 import memoize from 'fast-memoize';
 import find from 'lodash/find';
-import { DateTime } from 'luxon';
-import { createSelector } from 'reselect';
-import { format } from 'd3-format';
+import {DateTime} from 'luxon';
+import {createSelector} from 'reselect';
+import {format} from 'd3-format';
 
 import config from '../../config';
-import { getVariables, getCurrentMethodID, getTimeSeries, getTsRequestKey, getRequestTimeRange, getIanaTimeZone }
-    from '../../selectors/time-series-selector';
-import { getCurrentVariableMedianStatistics } from '../../selectors/median-statistics-selector';
-
-import { getCurrentVariableTimeSeries, getTimeSeriesForTsKey } from './time-series';
+import {getVariables, getCurrentMethodID, getTimeSeries, getCurrentVariableTimeSeries, getTimeSeriesForTsKey,
+    getTsRequestKey, getRequestTimeRange, getIanaTimeZone} from '../../selectors/time-series-selector';
+import {getCurrentVariableMedianStatistics} from '../../selectors/median-statistics-selector';
 
 
 export const MASK_DESC = {

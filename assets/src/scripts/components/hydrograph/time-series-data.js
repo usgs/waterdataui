@@ -47,7 +47,7 @@ export const drawDataLine = function(group, {visible, lines, tsKey, xScale, ySca
                     .classed('approved', line.classes.approved)
                     .classed('estimated', line.classes.estimated)
                     .classed('not-current-method', !line.classes.currentMethod)
-                    .classed(`ts-${tsKey}`, true)
+                    .classed(tsKeyClass, true)
                     .attr('d', tsLine);
             }
         } else {
@@ -66,7 +66,7 @@ export const drawDataLine = function(group, {visible, lines, tsKey, xScale, ySca
                 .attr('width', rectWidth)
                 .attr('height', Math.abs(yScale(yRangeEnd) - yScale(yRangeStart)))
                 .attr('class', `mask ${maskDisplayName}-mask`)
-                .classed(`ts-${tsKey}`, true);
+                .classed(tsKeyClass, true);
 
 
             const patternId = HASH_ID[tsKey] ? `url(#${HASH_ID[tsKey]})` : '';

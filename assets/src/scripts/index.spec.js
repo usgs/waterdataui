@@ -9,12 +9,11 @@
 
 import './polyfills';
 
-import './d3-rendering/accessibility.spec';
 import './ajax.spec';
 
-import './d3-rendering/axes.spec';
+import './d3-rendering/accessibility.spec';
 import './d3-rendering/alerts.spec';
-import './components/embed.spec';
+import './d3-rendering/axes.spec';
 import './d3-rendering/loading-indicator.spec';
 
 import './components/dailyValueHydrograph/selectors/labels.spec';
@@ -23,6 +22,8 @@ import './components/dailyValueHydrograph/selectors/time-series-data.spec';
 
 import './components/dailyValueHydrograph/index.spec';
 import './components/dailyValueHydrograph/time-series-graph.spec';
+
+import './components/embed.spec';
 
 import './components/hydrograph/audible.spec';
 import './components/hydrograph/axes.spec';
@@ -47,13 +48,10 @@ import './components/map/flood-slider.spec';
 import './components/map/index.spec';
 import './components/map/legend.spec';
 
-import './web-services/flood-data.spec';
-import './web-services/nldi-data.spec';
 import './helpers.spec';
 
 import './lib/d3-redux.spec';
 
-import './web-services/models.spec';
 import './schema.spec';
 
 import './selectors/flood-data-selector.spec';
@@ -61,8 +59,6 @@ import './selectors/nldi-data-selector.spec';
 import './selectors/median-statistics-selector.spec';
 import './selectors/observations-selector.spec';
 import './selectors/time-series-selector.spec';
-
-import './web-services/statistics-data.spec';
 
 import './store/flood-data-reducer.spec';
 import './store/nldi-data-reducer.spec';
@@ -75,6 +71,11 @@ import './store/time-series-state-reducer.spec';
 import './store/ui-reducer.spec';
 
 import './tooltips.spec';
+import './url-params.spec';
 import './utils.spec';
 
+import './web-services/flood-data.spec';
+import './web-services/models.spec';
+import './web-services/nldi-data.spec';
 import './web-services/observations-spec';
+import './web-services/statistics-data.spec';

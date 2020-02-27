@@ -23,6 +23,7 @@ RUN npm ci
 COPY ./src ./src
 
 ENV STATIC_URL https://waterdata.usgs.gov/nwisweb/wsgi/static
+ENV OGC_SITE_ENDPOINT https://labs.waterdata.usgs.gov/api/ogcAPI/collections/monitoring-locations/items/
 ENV DEBUG express:*
 # Add user so we don't need the --no-sandbox Chrome option
 RUN groupadd grapher && useradd -g grapher grapher \
@@ -33,4 +34,4 @@ USER grapher
 
 EXPOSE 2929
 
-CMD DEBUG=${DEBUG} STATIC_ROOT=${STATIC_URL} node src/index.js
+CMD DEBUG=${DEBUG} STATIC_ROOT=${STATIC_URL} OGC_SITE_ENDPOINT=${OGC_SITE_ENDPOINT} node src/index.js
