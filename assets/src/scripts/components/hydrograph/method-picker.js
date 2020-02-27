@@ -2,12 +2,15 @@
  * Pick list for methods module
  */
 
-import { select } from 'd3-selection';
+import {select} from 'd3-selection';
+import {createStructuredSelector} from 'reselect';
 
-import{ link } from '../../lib/d3-redux';
+import{link}  from '../../lib/d3-redux';
 import config from '../../config';
-import { Actions } from '../../store';
-import { getAllMethodsForCurrentVariable } from './time-series';
+import {getCurrentMethodID, getAllMethodsForCurrentVariable} from '../../selectors/time-series-selector';
+import {Actions} from '../../store';
+
+import { } from './time-series';
 
 export const drawMethodPicker = function(elem, store) {
     if (!config.MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED) {
@@ -26,17 +29,22 @@ export const drawMethodPicker = function(elem, store) {
         .on('change', function() {
             store.dispatch(Actions.setCurrentMethodID(parseInt(select(this).property('value'))));
         })
-        .call(link(store,function(elem, methods) {
+        .call(link(store,function(elem, {methods, currentMethodId}) {
+            const currentMethodIdString = parseInt(currentMethodId);
             elem.selectAll('option').remove();
             methods.forEach((method) => {
                 elem.append('option')
                     .text(method.methodDescription ? `${method.methodDescription}` : 'None')
+                    .attr('selected', currentMethodIdString === method.methodID ? true : null)
                     .node().value = method.methodID;
             });
             pickerContainer.property('hidden', methods.length <= 1);
             if (methods.length) {
                 elem.dispatch('change');
             }
-        }, getAllMethodsForCurrentVariable));
+        }, createStructuredSelector({
+            methods: getAllMethodsForCurrentVariable,
+            currentMethodId: getCurrentMethodID
+        })));
 };
 
