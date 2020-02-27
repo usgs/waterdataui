@@ -61,3 +61,5 @@ export const getCurrentTimeSeriesLineSegments = createSelector(
         return lineSegments;
     }
 );
+
+//export const getDataAtCursorOffset

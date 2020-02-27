@@ -1,4 +1,4 @@
-import {getCurrentTimeSeriesLineSegments} from './time-series-lines';
+import {getCurrentTimeSeriesLineSegments} from './time-series-data';
 
 describe('time-series-line module', () => {
     describe('getCurrentTimeSeriesLineSegments', () => {

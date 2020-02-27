@@ -1,16 +1,16 @@
-import { bisector } from 'd3-array';
 import memoize from 'fast-memoize';
-import { createSelector, createStructuredSelector } from 'reselect';
+import {createSelector, createStructuredSelector} from 'reselect';
 
 import config from '../../config';
-import { Actions } from '../../store';
-import { link } from '../../lib/d3-redux';
+import {Actions} from '../../store';
+import {link} from '../../lib/d3-redux';
 import {getCurrentMethodID} from '../../selectors/time-series-selector';
+import {getNearestTime} from '../../utils';
 
-import { currentVariablePointsByTsIdSelector } from './drawing-data';
-import { getMainLayout } from './layout';
-import { getMainXScale } from './scales';
-import { isVisibleSelector } from './time-series';
+import {currentVariablePointsByTsIdSelector} from './drawing-data';
+import {getMainLayout} from './layout';
+import {getMainXScale} from './scales';
+import {isVisibleSelector} from './time-series';
 
 
 const SLIDER_STEPS = 1000;
@@ -52,37 +52,6 @@ export const cursorTimeSelector = memoize(tsKey => createSelector(
 ));
 
 /*
- * Return the data point nearest to time and its index.
- * @param {Array} data - array of Object where one of the keys is time.
- * @param {Date} time
- * @return {Object} - datum and index
- */
-export const getNearestTime = function(data, time) {
-    // Function that returns the left bounding point for a given chart point.
-    if (data.length === 0) {
-        return null;
-    }
-    const bisectDate = bisector(d => d.dateTime).left;
-    let index = bisectDate(data, time, 1);
-    let datum;
-    let d0 = data[index - 1];
-    let d1 = data[index];
-
-    if (d0 && d1) {
-        datum = time - d0.dateTime > d1.dateTime - time ? d1 : d0;
-    } else {
-        datum = d0 || d1;
-    }
-
-    // Return the nearest data point and its index.
-    return {
-        datum,
-        index: datum === d0 ? index - 1 : index
-    };
-};
-
-
-/*
  * Returns a function that the time series data point nearest the tooltip focus time for the given time series
  * with the current variable and current method
  * @param {Object} state - Redux store
@@ -101,7 +70,7 @@ export const tsCursorPointsSelector = memoize(tsKey => createSelector(
         return Object.keys(timeSeries).reduce((data, tsId) => {
             if (timeSeries[tsId].length &&
                 (!config.MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED || parseInt(tsId.split(':')[0]) === currentMethodId)) {
-                const datum = getNearestTime(timeSeries[tsId], cursorTime).datum;
+                const datum = getNearestTime(timeSeries[tsId], cursorTime);
                 data[tsId] = {
                     ...datum,
                     tsKey: tsKey

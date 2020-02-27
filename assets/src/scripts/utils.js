@@ -1,5 +1,6 @@
-import { select } from 'd3-selection';
-import { DateTime } from 'luxon';
+import {bisector} from 'd3-array';
+import {select} from 'd3-selection';
+import {DateTime} from 'luxon';
 
 /**
  * Determine the unicode variant of an HTML decimal entity
@@ -277,4 +278,31 @@ export const sortedParameters = function (variables) {
             }
         });
     return highPertinenceVars.concat(lowPertinenceVars);
+};
+
+/*
+ * Return the data point nearest to time and its index.
+ * @param {Array} data - array of Object where one of the keys is dateTime in Unix epoch.
+ * @param {Date} time
+ * @return {Object} - datum
+ */
+export const getNearestTime = function(data, time) {
+    // Function that returns the left bounding point for a given chart point.
+    if (data.length === 0) {
+        return null;
+    }
+    const bisectDate = bisector(d => d.dateTime).left;
+    let index = bisectDate(data, time, 1);
+    let datum;
+    let d0 = data[index - 1];
+    let d1 = data[index];
+
+    if (d0 && d1) {
+        datum = time - d0.dateTime > d1.dateTime - time ? d1 : d0;
+    } else {
+        datum = d0 || d1;
+    }
+
+    // Return the nearest data point and its index.
+    return datum;
 };

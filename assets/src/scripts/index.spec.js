@@ -19,7 +19,7 @@ import './d3-rendering/loading-indicator.spec';
 
 import './components/dailyValueHydrograph/selectors/labels.spec';
 import './components/dailyValueHydrograph/selectors/scales.spec';
-import './components/dailyValueHydrograph/selectors/time-series-line.spec';
+import './components/dailyValueHydrograph/selectors/time-series-data.spec';
 
 import './components/dailyValueHydrograph/index.spec';
 import './components/dailyValueHydrograph/time-series-graph.spec';

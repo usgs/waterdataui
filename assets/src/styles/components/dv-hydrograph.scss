@@ -81,4 +81,8 @@ svg {
       stroke: $estimated-time-series;
     }
   }
+  .focus-overlay {
+    fill: none;
+    pointer-events: all;
+  }
 }

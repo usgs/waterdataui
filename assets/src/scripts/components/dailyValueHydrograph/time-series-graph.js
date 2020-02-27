@@ -11,7 +11,9 @@ import {getXAxis, getYAxis} from './selectors/axes';
 import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesTitle, getCurrentTimeSeriesYTitle} from './selectors/labels';
 import {getLayout} from './selectors/layout';
 import {getXScale, getYScale} from './selectors/scales';
-import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-lines';
+import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-data';
+
+import {createTooltipFocus} from './tooltip';
 
 const APPROVED = 'Approved';
 const ESTIMATED = 'Estimated';
@@ -94,5 +96,6 @@ export const drawTimeSeriesGraph = function(elem, store) {
             xScale: getXScale,
             yScale: getYScale,
             layout: getLayout
-        })));
+        })))
+        .call(createTooltipFocus, store);
 };
