@@ -11,7 +11,7 @@ import {getCursorPoint} from './selectors/time-series-data';
 
 export const createTooltipFocus = function(elem, store) {
     elem
-        //.call(link(store, drawFocusCircles, getCursorPoint))
+        .call(link(store, drawFocusCircles, getCursorPoint))
         .call(link(
             store,
             drawFocusOverlay,

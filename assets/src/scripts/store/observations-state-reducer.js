@@ -24,7 +24,7 @@ export const observationsStateReducer = function(observationsState={}, action) {
     switch (action.type) {
         case 'SET_CURRENT_TIME_SERIES_ID':
             return setCurrentTimeSeriesId(observationsState, action);
-        case 'SET_DAILY_VALUE_CURSOR_EPOCH_TIME':
+        case 'SET_DAILY_VALUE_CURSOR_OFFSET':
             return setDailyValueCursorOffset(observationsState, action);
         default:
             return observationsState;

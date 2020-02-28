@@ -107,9 +107,11 @@ export const getCursorEpochTime = createSelector(
     getObservationsCursorOffset,
     getXScale,
     (cursorOffset, xScale) => {
+        console.log('Cursor offset is: ' + cursorOffset)
         if (!cursorOffset) {
             return null;
         }
+        console.log('Epoch time is: ' + xScale.domain()[0] + cursorOffset)
         return xScale.domain()[0] + cursorOffset;
     }
 );
@@ -121,6 +123,7 @@ export const getDataAtCursor = createSelector(
     getCursorEpochTime,
     getCurrentTimeSeriesPoints,
     (cursorEpochTime, points)=> {
+        console.log('In getDataAtCursor ' + cursorEpochTime)
         if (!cursorEpochTime) {
             return null;
         }
@@ -137,11 +140,12 @@ export const getCursorPoint = createSelector(
     getYScale,
     (point, xScale, yScale) => {
         if (!point) {
-            return null;
+            return [];
         }
-        return {
+        console.log(`in getCursorPoint for ${point.dateTime} and ${point.value}`);
+        return [{
             x: xScale(point.dateTime),
             y: yScale(point.value)
-        };
+        }];
     }
 );
