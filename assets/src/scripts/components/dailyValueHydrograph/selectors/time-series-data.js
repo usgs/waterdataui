@@ -1,10 +1,47 @@
 import {DateTime} from 'luxon';
 import isEqual from 'lodash/isEqual';
+import zip from 'lodash/zip';
+import zipObject from 'lodash/zipObject';
 import {createSelector} from 'reselect';
 
-import {getCurrentObservationsTimeSeries} from '../../../selectors/observations-selector';
+import {getCurrentObservationsTimeSeries, getObservationsCursorOffset} from '../../../selectors/observations-selector';
+import {getNearestTime} from '../../../utils';
+
+import {getXScale, getYScale} from './scales';
 
 const TWO_DAYS = 1000 * 60 * 60 * 24 * 2; // In milliseconds
+
+/* Returns the selector function wheich returns an Array of Objects, each object representing one value, dateTime (in epoch time),
+and other attributes representing metadata on the value. This will represent the time series for the current
+selected time series
+ */
+export const getCurrentTimeSeriesPoints = createSelector(
+    getCurrentObservationsTimeSeries,
+    (timeSeries) => {
+        if (!timeSeries) {
+            return [];
+        }
+        return zip(
+            timeSeries.properties.result,
+            timeSeries.properties.timeStep.map((timeStep) => {
+                return new DateTime.fromISO(timeStep, {zone: 'UTC'}).toMillis();
+            }),
+            timeSeries.properties.nilReason,
+            timeSeries.properties.approvals,
+            timeSeries.properties.qualifiers,
+            timeSeries.properties.grades)
+            .map((zippedStep) => {
+                return zipObject([
+                    'value',
+                    'dateTime',
+                    'nilReason',
+                    'approvals',
+                    'qualifiers',
+                    'grades'
+                ], zippedStep);
+            });
+    }
+);
 
 /*
  * Returns selector function which returns an array of Objects which include the data needed to render the line.
@@ -62,4 +99,49 @@ export const getCurrentTimeSeriesLineSegments = createSelector(
     }
 );
 
-//export const getDataAtCursorOffset
+/*
+ * Return a selector function that returns the epoch time for the current observations cursor offset.
+ * Return null if no current observations cursor offset is set.
+ */
+export const getCursorEpochTime = createSelector(
+    getObservationsCursorOffset,
+    getXScale,
+    (cursorOffset, xScale) => {
+        if (!cursorOffset) {
+            return null;
+        }
+        return xScale.domain()[0] + cursorOffset;
+    }
+);
+
+/*
+ * Return a selector which returns the points nearest the cursor's epoch time.
+ */
+export const getDataAtCursor = createSelector(
+    getCursorEpochTime,
+    getCurrentTimeSeriesPoints,
+    (cursorEpochTime, points)=> {
+        if (!cursorEpochTime) {
+            return null;
+        }
+        return getNearestTime(points, cursorEpochTime);
+    }
+);
+
+/*
+ * Return a selector which returns the x, y coordinates of the cursor
+ */
+export const getCursorPoint = createSelector(
+    getDataAtCursor,
+    getXScale,
+    getYScale,
+    (point, xScale, yScale) => {
+        if (!point) {
+            return null;
+        }
+        return {
+            x: xScale(point.dateTime),
+            y: yScale(point.value)
+        };
+    }
+);

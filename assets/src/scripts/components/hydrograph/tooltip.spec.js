@@ -183,12 +183,10 @@ describe('Hydrograph tooltip module', () => {
                 }
             })).toEqual([{
                 x: '1date',
-                y: 1,
-                tsID: '00060:current'
+                y: 1
             }, {
                 x: '2date',
-                y: 2,
-                tsID: '00060:compare'
+                y: 2
             }]);
         });
 
@@ -204,8 +202,7 @@ describe('Hydrograph tooltip module', () => {
                 }
             })).toEqual([{
                 x: '2date',
-                y: 2,
-                tsID: '00060:compare'
+                y: 2
             }]);
         });
     });

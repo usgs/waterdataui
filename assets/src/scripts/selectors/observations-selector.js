@@ -2,6 +2,8 @@ import {extent} from 'd3-array';
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
+export const getObservationsCursorOffset = (state) => state.observationsState.cursorOffset || null;
+
 /*
  * Return a selector function which returns the current time series id or null if none define
  * @return {Function} - selector function which returns {String}

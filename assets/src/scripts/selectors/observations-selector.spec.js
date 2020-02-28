@@ -1,5 +1,6 @@
 
 import {
+    getObservationsCursorOffset,
     getCurrentObservationsTimeSeriesId,
     getAllObservationsTimeSeries,
     hasCurrentObservationsTimeSeries,
@@ -9,6 +10,21 @@ import {
 } from './observations-selector';
 
 describe('observations-selector', () => {
+    describe('getObservationsCursorOffset', () => {
+       it('Should be null if no cursorOffset set', () => {
+           expect(getObservationsCursorOffset({
+               observationsState: {}
+           })).toBeNull();
+       });
+
+       it('Should return the cursorOofset if set in store', () => {
+           expect(getObservationsCursorOffset({
+               observationsState: {
+                   cursorOffset: 1234567880
+               }
+           })).toEqual(1234567880);
+       });
+    });
     describe('getCurrentObservationsTimeSeriesId', () => {
        it('should be false if no current time series id set', () => {
            expect(getCurrentObservationsTimeSeriesId({
