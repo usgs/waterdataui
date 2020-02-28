@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - All IV time series are now available for drawing on the hydrograph not just those in the last 7 days.
 - Added brush handle fill.
 
+### Added
+- The state of the UI for the hydrograph is now preserved in the hash portion of the url and state 
+can be restored by pasting the url into a browser window.
+
 ## [0.26.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.25.0...waterdataui-0.26.0) - 2020-02-12
 ### Added
 - Daily value graph. This has a feature toggle and is valid for only a single site. Sites without
