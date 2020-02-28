@@ -1,4 +1,5 @@
-import { fetchNldiUpstreamSites, fetchNldiUpstreamFlow, fetchNldiDownstreamSites, fetchNldiDownstreamFlow} from './nldi-data';
+import { fetchNldiUpstreamSites, fetchNldiUpstreamFlow, fetchNldiDownstreamSites, fetchNldiDownstreamFlow,
+         fetchNldiUpstreamBasin} from './nldi-data';
 
 describe('nldi-data module', () => {
     beforeEach(() => {
@@ -165,6 +166,44 @@ describe('nldi-data module', () => {
         });
     });
 
+    describe('fetchNldiUpstreamBasin', () => {
+        const siteno = '12345678';
+
+        describe('with valid response', () => {
+
+            let upstreamBasinPromise;
+
+            beforeEach(() => {
+                /* eslint no-use-before-define: 0 */
+
+                upstreamBasinPromise = fetchNldiUpstreamBasin(siteno);
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 200,
+                    responseText: MOCK_NLDI_UPSTREAM_BASIN_FEATURE,
+                    contentType: 'application/json'
+                });
+            });
+
+            it('expected response is json object with the upstream basin', () => {
+                upstreamBasinPromise.then((resp) => {
+                    expect(resp.length).toBe(1);
+                });
+            });
+        });
+
+        describe('with error response', () => {
+            it('On failed response return an empty feature list', () => {
+                fetchNldiUpstreamBasin(siteno).then((resp) => {
+                   expect(resp.length).toBe(0);
+                });
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 500
+                });
+            });
+        });
+
+    });
+
 });
 
 const MOCK_NLDI_UPSTREAM_FLOW_FEATURE = `
@@ -300,5 +339,22 @@ const MOCK_NLDI_DOWNSTREAM_SITES_FEATURE = `
         "navigation": "https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-03325000/navigate"
     }
 }]
+}
+`;
+
+const MOCK_NLDI_UPSTREAM_BASIN_FEATURE = `
+{
+    "type":"FeatureCollection",
+    "features":[{
+        "type": "Feature",
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [[-105.996400477, 36.1905362630001],
+                [-105.994985767, 36.20007602],
+                [-105.997781253, 36.2060425510001],
+                [-105.995979878, 36.2080856000001]]
+        },
+        "properties": {}
+        }]
 }
 `;

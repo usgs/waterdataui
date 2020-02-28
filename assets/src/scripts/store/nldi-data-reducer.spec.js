@@ -129,7 +129,10 @@ describe('nldi-data-reducer', () => {
                                 navigation: 'https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-03325000/navigate'
                             }
                         }
-                    ]
+                    ],
+                upstreamBasin: {
+
+                }
             })).toEqual({
                     upstreamFlows: [
                         {
