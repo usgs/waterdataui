@@ -9,7 +9,7 @@ export const upstreamColor = '#253494';
 export const flowLineOpacity = 0.65;
 export const basinColor = '#c0c1c2';
 export const basinFillColor = '#d9d9d9';
-export const basinFillOpacity = .8
+export const basinFillOpacity = .8;
 
 /**
  * Add NLDI layer overlays to a leaflet map. An overlay is added for the flowlines
@@ -92,7 +92,7 @@ export const addNldiLayers = function (map, upstreamFlows, downstreamFlows, upst
         return getPolygonLayer(nldiData, style);
     };
 
-    map.addLayer(fetchNldiUpstreamBasin(upstreamBasin, basinStyle))
+    map.addLayer(fetchNldiUpstreamBasin(upstreamBasin, basinStyle));
     map.addLayer(fetchNldiLinesLayer(upstreamFlows, upstreamLineStyle));
     map.addLayer(fetchNldiLinesLayer(downstreamFlows, downstreamLineStyle));
     map.addLayer(fetchNldiPointsLayer(upstreamSites, geojsonMarkerOptions));
