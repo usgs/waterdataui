@@ -84,7 +84,7 @@
     "autotrack": "2.4.1",
     "core-js": "3.6.4",
     "d3": "5.15.0",
-    "date-time-format-timezone": "1.0.21",
+    "date-time-format-timezone": "1.0.22",
     "element-closest": "3.0.2",
     "esri-leaflet": "2.3.3",
     "fast-memoize": "2.5.1",
