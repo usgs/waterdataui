@@ -24,7 +24,7 @@ export const getCurrentTimeSeriesPoints = createSelector(
         return zip(
             timeSeries.properties.result,
             timeSeries.properties.timeStep.map((timeStep) => {
-                return new DateTime.fromISO(timeStep, ).toMillis();
+                return new DateTime.fromISO(timeStep, {zone: 'UTC'}).toMillis();
             }),
             timeSeries.properties.nilReason,
             timeSeries.properties.approvals,
@@ -109,7 +109,6 @@ export const getCursorEpochTime = createSelector(
     (cursorOffset, xScale) => {
 
         if (!cursorOffset) {
-            console.log('')
             return xScale.domain()[1];
         }
         return xScale.domain()[0] + cursorOffset;

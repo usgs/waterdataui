@@ -140,8 +140,8 @@ describe('time-series-data module', () => {
     });
 
     describe('getCursorEpochTime', () => {
-        it('should return null if cursor offset is not set', () => {
-            expect(getCursorEpochTime(TEST_STATE)).toBeNull();
+        it('should return latest time if cursor offset is not set', () => {
+            expect(getCursorEpochTime(TEST_STATE)).toEqual(1515110400000);
         });
 
         it('should return the epoch time of the offset', () => {
@@ -156,8 +156,15 @@ describe('time-series-data module', () => {
     });
 
     describe('getDataAtCursor', () => {
-        it('should return null if cursor offset is not set', () => {
-            expect(getDataAtCursor(TEST_STATE)).toBeNull();
+        it('should return last point if cursor offset is not set', () => {
+            expect(getDataAtCursor(TEST_STATE)).toEqual({
+                value: '3.2',
+                dateTime: 1515110400000,
+                approvals: ['Approved'],
+                nilReason: null,
+                qualifiers: ['ICE'],
+                grades: ['60']
+            });
         });
 
         it('should return the point nearest the cursor offset', () => {
@@ -174,7 +181,6 @@ describe('time-series-data module', () => {
                 nilReason: 'AA',
                 qualifiers: null,
                 grades: ['50']
-
             });
         });
     });

@@ -379,8 +379,8 @@ describe('Hydrograph tooltip module', () => {
             svg.call(createTooltipFocus, store);
 
             expect(svg.selectAll('.focus-line').size()).toBe(1);
-            expect(svg.selectAll('circle').size()).toBe(2);
-            expect(svg.select('.focus').size()).toBe(1);
+            expect(svg.selectAll('.focus-circle').size()).toBe(2);
+            expect(svg.select('.focus-overlay').size()).toBe(1);
         });
 
         it('Focus circles and line are displayed if cursor is set', () => {
@@ -408,8 +408,9 @@ describe('Hydrograph tooltip module', () => {
 
             svg.call(createTooltipFocus, store);
 
-            expect(svg.select('.focus:first-child').style('display')).not.toBe('none');
-            expect(svg.select('.focus:nth-child(2)').style('display')).not.toBe('none');
+            expect(svg.selectAll('.focus-line').size()).toBe(1);
+            expect(svg.selectAll('.focus-circle').size()).toBe(2);
+            expect(svg.select('.focus-overlay').size()).toBe(1);
         });
     });
 });
