@@ -140,9 +140,6 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
         };
     });
 
-    // Put the circles in a container so we can keep the their position in the
-    // DOM before rect.focus-overlay, to prevent the circles from receiving mouse
-    // events.
     if (!textGroup) {
         textGroup = elem.append('div')
             .attr('class', 'tooltip-text-group')

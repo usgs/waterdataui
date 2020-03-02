@@ -13,10 +13,10 @@ import {getLayout} from './selectors/layout';
 import {getXScale, getYScale} from './selectors/scales';
 import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-data';
 
-import {createTooltipFocus} from './tooltip';
+import {drawTooltipFocus, drawTooltipText} from './tooltip';
 
-const APPROVED = 'Approved';
-const ESTIMATED = 'Estimated';
+export const APPROVED = 'Approved';
+export const ESTIMATED = 'Estimated';
 const CIRCLE_RADIUS_SINGLE_PT = 1;
 
 const createTitle = function(elem, store) {
@@ -68,6 +68,7 @@ export const drawTimeSeriesGraph = function(elem, store) {
     const svg = elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(createTitle, store)
+        .call(drawTooltipText, store)
         .append('svg')
             .attr('xmlns', 'http://www.w3.org/2000/svg')
             .classed('hydrograph-svg', true)
@@ -97,5 +98,5 @@ export const drawTimeSeriesGraph = function(elem, store) {
             yScale: getYScale,
             layout: getLayout
         })))
-        .call(createTooltipFocus, store);
+        .call(drawTooltipFocus, store);
 };

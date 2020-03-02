@@ -42,6 +42,17 @@ export const getCurrentObservationsTimeSeries = createSelector(
     }
 );
 
+/*
+ * Return a selector function which returns a String representing the unit of measure for the current observations time series
+ * @return {Function} - selector function returns a String. String will be empty if no current time series available.
+ */
+export const getCurrentObservationsTimeSeriesUnitOfMeasure = createSelector(
+    getCurrentObservationsTimeSeries,
+    (currentTimeSeries) => {
+        return currentTimeSeries ? currentTimeSeries.properties.unitOfMeasureName : '';
+    }
+)
+
 
 
 /*

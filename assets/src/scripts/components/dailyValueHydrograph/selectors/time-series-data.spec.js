@@ -5,7 +5,7 @@ import {
     getDataAtCursor
 } from './time-series-data';
 
-fdescribe('time-series-data module', () => {
+describe('time-series-data module', () => {
     const TEST_STATE = {
         observationsData: {
             timeSeries: {

@@ -23,6 +23,20 @@ $default-time-series: #d95f02;
   text-align: center;
 }
 
+.dv-tooltip-container {
+  pointer-event: none;
+  .dv-tooltip-text {
+    color: $default-time-series;
+    font-weight: bold;
+  }
+  .approved {
+    color: $approved-time-series;
+  }
+  .estimated {
+    color: $estimated-time-series;
+  }
+}
+
 svg {
   .tick {
     text {

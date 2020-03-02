@@ -5,8 +5,9 @@ import {
     getAllObservationsTimeSeries,
     hasCurrentObservationsTimeSeries,
     getCurrentObservationsTimeSeries,
+    getCurrentObservationsTimeSeriesUnitOfMeasure,
     getCurrentObservationsTimeSeriesTimeRange,
-    getCurrentObservationsTimeSeriesValueRange
+    getCurrentObservationsTimeSeriesValueRange,
 } from './observations-selector';
 
 describe('observations-selector', () => {
@@ -181,6 +182,41 @@ describe('observations-selector', () => {
                 type: 'Feature',
                 id: '12345'
             });
+        });
+    });
+
+    describe('getCurrentObservationsTimeSeriesUnitOfMeasure', () => {
+        it('expect empty string if not time series defined', () => {
+            expect(getCurrentObservationsTimeSeriesUnitOfMeasure({
+                observationsData : {},
+                observationsState: {}
+            })).toEqual('');
+        });
+
+        it('Expect the unit of measure for current time series', () => {
+            expect(getCurrentObservationsTimeSeriesUnitOfMeasure({
+                observationsData: {
+                    timeSeries: {
+                        '12345': {
+                            type: 'Feature',
+                            id: '12345',
+                            properties: {
+                                unitOfMeasureName: 'ft'
+                            }
+                        },
+                        '12346': {
+                            type: 'Feature',
+                            id: '12345',
+                            properties: {
+                                unitOfMeasureName: 'km'
+                            }
+                        }
+                    }
+                },
+                observationsState: {
+                    currentTimeSeriesId: '12345'
+                }
+            })).toEqual('ft');
         });
     });
 

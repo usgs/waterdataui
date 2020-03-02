@@ -526,7 +526,9 @@ export const configureStore = function (initialState) {
             audiblePlayId: null,
             loadingTSKeys: []
         },
-        observationsState: {},
+        observationsState: {
+            cursorOffset: null
+        },
         floodState: {
             gageHeight: null
         },

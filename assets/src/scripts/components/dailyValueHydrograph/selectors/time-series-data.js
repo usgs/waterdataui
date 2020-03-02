@@ -24,7 +24,7 @@ export const getCurrentTimeSeriesPoints = createSelector(
         return zip(
             timeSeries.properties.result,
             timeSeries.properties.timeStep.map((timeStep) => {
-                return new DateTime.fromISO(timeStep, {zone: 'UTC'}).toMillis();
+                return new DateTime.fromISO(timeStep, ).toMillis();
             }),
             timeSeries.properties.nilReason,
             timeSeries.properties.approvals,
@@ -107,11 +107,11 @@ export const getCursorEpochTime = createSelector(
     getObservationsCursorOffset,
     getXScale,
     (cursorOffset, xScale) => {
-        console.log('Cursor offset is: ' + cursorOffset)
+
         if (!cursorOffset) {
-            return null;
+            console.log('')
+            return xScale.domain()[1];
         }
-        console.log('Epoch time is: ' + xScale.domain()[0] + cursorOffset)
         return xScale.domain()[0] + cursorOffset;
     }
 );
@@ -123,10 +123,11 @@ export const getDataAtCursor = createSelector(
     getCursorEpochTime,
     getCurrentTimeSeriesPoints,
     (cursorEpochTime, points)=> {
-        console.log('In getDataAtCursor ' + cursorEpochTime)
-        if (!cursorEpochTime) {
+        console.log('Cursor epoch time is ' + cursorEpochTime);
+        if (!points.length) {
             return null;
         }
+        console.log(`point at nearest time ${getNearestTime(points, cursorEpochTime).dateTime}`);
         return getNearestTime(points, cursorEpochTime);
     }
 );
@@ -142,10 +143,10 @@ export const getCursorPoint = createSelector(
         if (!point) {
             return [];
         }
-        console.log(`in getCursorPoint for ${point.dateTime} and ${point.value}`);
-        return [{
+        const result = [{
             x: xScale(point.dateTime),
             y: yScale(point.value)
         }];
+        return result;
     }
 );
