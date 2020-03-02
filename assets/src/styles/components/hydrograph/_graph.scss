@@ -24,11 +24,9 @@ svg {
     pointer-events: all;
   }
 
-  circle {
-    .focus {
-      fill: #436baf;
-      opacity: .6;
-    }
+  .focus-circle {
+    fill: black;
+    opacity: .6;
   }
 
   .focus {

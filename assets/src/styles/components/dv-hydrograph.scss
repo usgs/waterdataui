@@ -35,10 +35,12 @@ svg {
       }
     }
   }
+
   .y-axis {
     text {
       fill: black;
     }
+
     .y-axis-label {
       text-anchor: middle;
       display: none;
@@ -81,8 +83,22 @@ svg {
       stroke: $estimated-time-series;
     }
   }
+
   .focus-overlay {
     fill: none;
     pointer-events: all;
+  }
+
+  .focus-circle {
+    fill: black;
+    opacity: .6;
+  }
+  .focus {
+    line {
+      opacity: .5;
+      stroke: #436baf;
+      stroke-width: 1px;
+      stroke-dasharray: 5, 5;
+    }
   }
 }

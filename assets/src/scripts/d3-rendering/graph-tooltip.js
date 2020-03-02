@@ -45,7 +45,7 @@ export const drawFocusCircles = function (elem, tooltipPoints, circleContainer) 
     circleContainer = circleContainer || elem.append('g');
 
     const circles = circleContainer
-        .selectAll('circle.focus')
+        .selectAll('circle.focus-circle')
         .data(tooltipPoints);
 
     // Remove old circles after fading them out
@@ -57,7 +57,7 @@ export const drawFocusCircles = function (elem, tooltipPoints, circleContainer) 
     // Add new focus circles
     const newCircles = circles.enter()
         .append('circle')
-            .attr('class', 'focus')
+            .attr('class', 'focus-circle')
             .attr('r', 5.5);
 
     // Update the location of all circles
