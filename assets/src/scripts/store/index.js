@@ -14,7 +14,7 @@ import {getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, g
 
 import {fetchFloodFeatures, fetchFloodExtent} from '../web-services/flood-data';
 import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from '../web-services/models';
-import {fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow} from '../web-services/nldi-data';
+import {fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow, fetchNldiUpstreamBasin} from '../web-services/nldi-data';
 import {fetchTimeSeries} from '../web-services/observations';
 import {fetchSiteStatistics} from '../web-services/statistics-data';
 
@@ -255,12 +255,13 @@ export const Actions = {
             const downstreamFlow = fetchNldiDownstreamFlow(siteno);
             const upstreamSites = fetchNldiUpstreamSites(siteno);
             const downstreamSites = fetchNldiDownstreamSites(siteno);
+            const upstreamBasin = fetchNldiUpstreamBasin(siteno);
 
             return Promise.all([
-                upstreamFlow, downstreamFlow, upstreamSites, downstreamSites
+                upstreamFlow, downstreamFlow, upstreamSites, downstreamSites, upstreamBasin
             ]).then(function(data) {
-               const [upStreamLines, downStreamLines, upStreamPoints, downStreamPoints] = data;
-               dispatch(Actions.setNldiFeatures(upStreamLines, downStreamLines, upStreamPoints, downStreamPoints));
+               const [upStreamLines, downStreamLines, upStreamPoints, downStreamPoints, upstreamBasin] = data;
+               dispatch(Actions.setNldiFeatures(upStreamLines, downStreamLines, upStreamPoints, downStreamPoints, upstreamBasin));
             });
         };
     },
@@ -334,13 +335,14 @@ export const Actions = {
             extent
         };
     },
-    setNldiFeatures(upstreamFlows, downstreamFlows, upstreamSites, downstreamSites) {
+    setNldiFeatures(upstreamFlows, downstreamFlows, upstreamSites, downstreamSites, upstreamBasin) {
         return {
             type: 'SET_NLDI_FEATURES',
             upstreamFlows,
             downstreamFlows,
             upstreamSites,
-            downstreamSites
+            downstreamSites,
+            upstreamBasin
         };
     },
     setObservationsTimeSeries(timeSeriesId, data) {
@@ -498,7 +500,8 @@ export const configureStore = function (initialState) {
             upstreamFlows: [],
             downstreamFlows: [],
             upstreamSites: [],
-            downstreamSites: []
+            downstreamSites: [],
+            upstreamBasin: []
         },
 
         statisticsData: {},

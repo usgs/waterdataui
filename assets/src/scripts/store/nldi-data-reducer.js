@@ -2,7 +2,8 @@ const INITIAL_STATE = {
     upstreamFlows: [],
     downstreamFlows: [],
     upstreamSites: [],
-    downstreamSites: []
+    downstreamSites: [],
+    upstreamBasin: []
 };
 
 /*
@@ -13,7 +14,8 @@ const setNldiFeatures = function(nldiData, action) {
         upstreamFlows: action.upstreamFlows,
         downstreamFlows: action.downstreamFlows,
         upstreamSites: action.upstreamSites,
-        downstreamSites: action.downstreamSites
+        downstreamSites: action.downstreamSites,
+        upstreamBasin: action.upstreamBasin
     };
 };
 

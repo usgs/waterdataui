@@ -3,6 +3,7 @@ import {
     getNldiUpstreamFlows,
     getNldiDownstreamSites,
     getNldiDownstreamFlows,
+    getNldiUpstreamBasin,
     hasNldiData
 } from './nldi-data-selector';
 
@@ -80,6 +81,24 @@ describe('nldi-data-selector', () => {
         });
     });
 
+    describe('getNldiUpstreamBasin', () => {
+        it('if upstream basins is empty, empty array is returned', () => {
+            expect(getNldiUpstreamBasin({
+                nldiData: {
+                    upstreamBasin: []
+                }
+            })).toEqual([]);
+        });
+
+        it('if upstream basins has data, the data is returned', () => {
+            expect(getNldiUpstreamBasin({
+                nldiData: {
+                    upstreamBasin: [1,2,3]
+                }
+            })).toEqual([1,2,3]);
+        });
+    });
+
     describe('hasNldiData', () => {
         it('if all nldi data is empty, return false', () => {
             expect(hasNldiData({
@@ -87,7 +106,8 @@ describe('nldi-data-selector', () => {
                     upstreamFlows: [],
                     downstreamFlows: [],
                     upstreamSites: [],
-                    downstreamSites: []
+                    downstreamSites: [],
+                    upstreamBasin: []
                 }
             })).toEqual(false);
         });
@@ -98,7 +118,8 @@ describe('nldi-data-selector', () => {
                     upstreamFlows: [1],
                     downstreamFlows: [],
                     upstreamSites: [],
-                    downstreamSites: []
+                    downstreamSites: [],
+                    upstreamBasin: []
                 }
             })).toEqual(true);
         });
