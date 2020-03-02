@@ -6,8 +6,8 @@ import {createSelector, createStructuredSelector} from 'reselect';
 import {DateTime} from 'luxon';
 
 import config from '../../config';
-import {drawFocusOverlay, drawFocusCircles} from '../../d3-rendering/graph-tooltip';
-import {link, initAndUpdate} from '../../lib/d3-redux';
+import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from '../../d3-rendering/graph-tooltip';
+import {link} from '../../lib/d3-redux';
 import {getCurrentVariable, getCurrentParmCd} from '../../selectors/time-series-selector';
 import {Actions} from '../../store';
 import {mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../utils';
@@ -18,33 +18,6 @@ import {getMainLayout} from './layout';
 import {getMainXScale, getMainYScale} from './scales';
 import {tsTimeZoneSelector, TEMPERATURE_PARAMETERS} from './time-series';
 
-
-const createFocusLine = function(elem) {
-    let focus = elem.append('g')
-        .attr('class', 'focus')
-        .style('display', 'none');
-
-    focus.append('line')
-        .attr('class', 'focus-line');
-
-    return focus;
-};
-
-const updateFocusLine = function(elem, {cursorTime, yScale, xScale}) {
-    if (cursorTime) {
-        const x = xScale(cursorTime);
-        const range = yScale.range();
-
-        elem.select('.focus-line')
-            .attr('y1', range[0])
-            .attr('y2', range[1])
-            .attr('x1', x)
-            .attr('x2', x);
-        elem.style('display', null);
-    } else {
-        elem.style('display', 'none');
-    }
-};
 
 /*
  * Returns a function that returns the time series data point nearest the
@@ -231,7 +204,7 @@ export const createTooltipText = function (elem, store) {
  * @param {Object} yScale - D3 Y scale for the graph
  */
 export const createTooltipFocus = function(elem, store) {
-    elem.call(link(store, initAndUpdate(createFocusLine, updateFocusLine), createStructuredSelector({
+    elem.call(link(store, drawFocusLine, createStructuredSelector({
         xScale: getMainXScale('current'),
         yScale: getMainYScale,
         cursorTime: cursorTimeSelector('current')

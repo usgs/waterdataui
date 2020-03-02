@@ -29,13 +29,11 @@ svg {
     opacity: .6;
   }
 
-  .focus {
-    line {
-      opacity: .5;
-      stroke: #436baf;
-      stroke-width: 1px;
-      stroke-dasharray: 5, 5;
-    }
+  .focus-line {
+    opacity: .5;
+    stroke: black;
+    stroke-width: 1px;
+    stroke-dasharray: 5, 5;
   }
 
   .zoom {

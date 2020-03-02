@@ -2,15 +2,15 @@ import includes from 'lodash/includes';
 import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
-import {drawFocusCircles, drawFocusOverlay} from '../../d3-rendering/graph-tooltip';
+import {drawFocusCircles, drawFocusOverlay, drawFocusLine} from '../../d3-rendering/graph-tooltip';
 import {link} from '../../lib/d3-redux';
 import {getCurrentObservationsTimeSeriesUnitOfMeasure} from '../../selectors/observations-selector';
 import {Actions} from '../../store';
 
 import {APPROVED, ESTIMATED} from './time-series-graph';
 import {getLayout} from './selectors/layout';
-import {getXScale} from './selectors/scales';
-import {getCursorPoint, getDataAtCursor} from './selectors/time-series-data';
+import {getXScale, getYScale} from './selectors/scales';
+import {getCursorPoint, getDataAtCursor, getCursorEpochTime} from './selectors/time-series-data';
 
 /*
  * Renders the tooltip text representing the data at the current cursor position
@@ -47,6 +47,11 @@ export const drawTooltipText = function(elem, store) {
  */
 export const drawTooltipFocus = function(elem, store) {
     elem
+        .call(link(store, drawFocusLine, createStructuredSelector({
+            cursorTime: getCursorEpochTime,
+            xScale: getXScale,
+            yScale: getYScale
+        })))
         .call(link(store, drawFocusCircles, getCursorPoint))
         .call(link(
             store,

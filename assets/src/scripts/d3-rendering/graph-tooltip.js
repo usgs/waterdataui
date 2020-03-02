@@ -1,5 +1,4 @@
 import {mouse} from 'd3-selection';
-import {transition} from 'd3-transition';
 
 /*
  * Draws an overlay rectangle with the given scale and layout and creates mouse events
@@ -50,20 +49,33 @@ export const drawFocusCircles = function (elem, tooltipPoints, circleContainer) 
 
     // Remove old circles after fading them out
     circles.exit()
-        .transition(transition().duration(500))
-            .style('opacity', '0')
-            .remove();
+        .remove();
 
     // Add new focus circles
     const newCircles = circles.enter()
         .append('circle')
             .attr('class', 'focus-circle')
-            .attr('r', 5.5);
+            .attr('r', 5.5)
+            .style('opacity', '.6');
 
     // Update the location of all circles
     circles.merge(newCircles)
-        .transition(transition().duration(20))
-            .style('opacity', '.6')
-            .attr('transform', (tsDatum) => `translate(${tsDatum.x}, ${tsDatum.y})`);
+        .attr('transform', (tsDatum) => `translate(${tsDatum.x}, ${tsDatum.y})`);
     return circleContainer;
+};
+
+export const drawFocusLine = function(elem, {cursorTime, xScale, yScale}) {
+    elem.selectAll('.focus-line-group').remove();
+    if (cursorTime) {
+        const x = xScale(cursorTime);
+        const range = yScale.range();
+        elem.append('g')
+            .attr('class', 'focus-line-group')
+            .append('line')
+                .attr('class', 'focus-line')
+                .attr('y1', range[0])
+                .attr('y2', range[1])
+                .attr('x1', x)
+                .attr('x2', x);
+    }
 };
