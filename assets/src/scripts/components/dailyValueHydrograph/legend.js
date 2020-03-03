@@ -3,32 +3,21 @@ import { set } from 'd3-collection';
 import memoize from 'fast-memoize';
 import {createSelector, createStructuredSelector} from 'reselect';
 
-import {CIRCLE_RADIUS, getMainLayout} from './layout';
-import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from './markers';
-import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from './drawing-data';
+import {getLayout} from './selectors/layout';
+import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from '../hydrograph/markers';
+import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from '../hydrograph/drawing-data';
 import config from '../../config';
-import { getCurrentVariableMedianMetadata } from '../../selectors/median-statistics-selector';
 import { mediaQuery } from '../../utils';
 import {link} from '../../lib/d3-redux';
 
 const TS_LABEL = {
-    'current': 'Current: ',
-    'compare': 'Last year: ',
-    'median': 'Median: '
-};
-
-
-const tsMaskMarkers = function(tsKey, masks) {
-    return Array.from(masks.values()).map((mask) => {
-        const maskName = MASK_DESC[mask];
-        const tsClass = `${maskName.replace(' ', '-').toLowerCase()}-mask`;
-        const fill = `url(#${HASH_ID[tsKey]})`;
-        return defineRectangleMarker(null, `mask ${tsClass}`, maskName, fill);
-    });
+    'current': 'Current: '
 };
 
 const tsLineMarkers = function(tsKey, lineClasses) {
     let result = [];
+
+    console.log('tsKey:'+tsKey);
 
     if (lineClasses.default) {
         result.push(defineLineMarker(null, `line-segment ts-${tsKey}`, 'Provisional'));
@@ -56,49 +45,12 @@ const createLegendMarkers = function(displayItems) {
     if (displayItems.current) {
         const currentMarkers = [
             ...tsLineMarkers('current', displayItems.current),
-            ...tsMaskMarkers('current', displayItems.current.dataMasks)
         ];
         if (currentMarkers.length) {
             legendMarkers.push([
                 defineTextOnlyMarker(TS_LABEL.current, null, 'ts-legend-current-text'),
                 ...currentMarkers
             ]);
-        }
-    }
-    if (displayItems.compare) {
-        const compareMarkers = [
-            ...tsLineMarkers('compare', displayItems.compare),
-            ...tsMaskMarkers('compare', displayItems.compare.dataMasks)
-        ];
-        if (compareMarkers.length) {
-            legendMarkers.push([
-                defineTextOnlyMarker(TS_LABEL.compare, null, 'ts-legend-compare-text'),
-                ...compareMarkers
-            ]);
-        }
-    }
-
-    if (displayItems.median) {
-        const medians = Object.values(displayItems.median);
-        for (let index = 0; index < medians.length; index++) {
-            const stats = medians[index];
-            // Get the unique non-null years, in chronological order
-            const years = [];
-            if (stats.beginYear) {
-                years.push(stats.beginYear);
-            }
-            if (stats.endYear && stats.beginYear !== stats.endYear) {
-                years.push(stats.endYear);
-            }
-            const dateText = years.join(' - ');
-
-            const descriptionText = stats.methodDescription ? `${stats.methodDescription} ` : '';
-            const classes = `median-data-series median-step median-step-${index % 6}`;
-            const label = `${descriptionText}${dateText}`;
-
-            legendMarkers.push([
-                defineTextOnlyMarker(TS_LABEL.median),
-                defineLineMarker(null, classes, label)]);
         }
     }
 
@@ -146,8 +98,7 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
                 r: marker.r,
                 fill: marker.fill
             };
-
-            //console.log('UV: marker text:'+marker.text+ ' xPosition:'+xPosition+ ' yPosition:'+yPosition );
+            console.log('DV: marker text:'+marker.text+ ' xPosition:'+xPosition+ ' yPosition:'+yPosition );
 
             let markerGroup = marker.type(legend, markerArgs);
             let markerGroupBBox;
@@ -164,8 +115,8 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
                 markerGroupBBox = markerGroup.node().getBBox();
                 xPosition = markerGroupBBox.x + markerGroupBBox.width + markerGroupXOffset;
 
-                //console.log('UV: markerGroupBBox.x:'+markerGroupBBox.x+ ' markerGroupBBox.width:'+markerGroupBBox.width+ ' markerGroupXOffset:'+markerGroupXOffset);
-                //console.log('UV: xPosition:'+xPosition);
+                console.log('DV: markerGroupBBox.x:'+markerGroupBBox.x+ ' markerGroupBBox.width:'+markerGroupBBox.width+ ' markerGroupXOffset:'+markerGroupXOffset);
+                console.log('DV: xPosition:'+xPosition);
 
             } catch(error) {
                 // See above explanation
@@ -180,7 +131,7 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
     } catch(error) {
         return;
     }
-    svg.attr('viewBox', `-${CIRCLE_RADIUS} 0 ${layout.width} ${bBox.height + 10}`);
+    svg.attr('viewBox', `-4 0 ${layout.width} ${bBox.height + 20}`);
 };
 
 const uniqueClassesSelector = memoize(tsKey => createSelector(
@@ -188,12 +139,9 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
     (tsLineSegments) => {
         let classes = [].concat(...Object.values(tsLineSegments)).map((line) => line.classes);
         return {
-            default: classes.some((cls) => !cls.approved && !cls.estimated && !cls.dataMask),
+            default: classes.some((cls) => !cls.approved && !cls.estimated),
             approved: classes.some((cls) => cls.approved),
             estimated: classes.some((cls) => cls.estimated),
-            dataMasks: set(classes.map((cls) => cls.dataMask).filter((mask) => {
-                return mask;
-            }))
         };
     }
 ));
@@ -205,21 +153,18 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
  */
 const legendDisplaySelector = createSelector(
     (state) => state.timeSeriesState.showSeries,
-    getCurrentVariableMedianMetadata,
     uniqueClassesSelector('current'),
     uniqueClassesSelector('compare'),
     (showSeries, medianSeries, currentClasses, compareClasses) => {
         return {
             current: showSeries.current ? currentClasses : undefined,
-            compare: showSeries.compare ? compareClasses : undefined,
-            median: showSeries.median ? medianSeries : undefined
         };
     }
 );
 
 
 /*
- * Factory function  that returns an array of array of markers to be used for the
+ * Factory function that returns an array of array of markers to be used for the
  * time series graph legend
  * @return {Array of Array} of markers
  */
@@ -234,7 +179,7 @@ export const drawTimeSeriesLegend = function(elem, store) {
         .classed('hydrograph-container', true)
         .call(link(store, drawSimpleLegend, createStructuredSelector({
             legendMarkerRows: legendMarkerRowsSelector,
-            layout: getMainLayout
+            layout: getLayout
         })));
 };
 

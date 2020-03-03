@@ -9,6 +9,7 @@ import {drawErrorAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
 
 import {drawTimeSeriesGraph} from './time-series-graph';
+import {drawTimeSeriesLegend} from "./legend";
 
 const TEMP_TIME_SERIES_ID = '36307c899ac14d2eac6956b1bf5ceb69';
 
@@ -51,5 +52,11 @@ export const attachToNode = function (store,
             container.attr('hidden', showElem ? null : true);
         }, hasCurrentObservationsTimeSeries))
         .call(drawTimeSeriesGraph, store);
+
+    // Add DV legend
+    let graphContainer = nodeElem.select('.graph-container')
+    graphContainer.append('div')
+        .classed('dv-legend-controls-container', true)
+        .call(drawTimeSeriesLegend, store);
 
 };
