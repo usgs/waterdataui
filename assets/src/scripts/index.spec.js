@@ -14,7 +14,9 @@ import './ajax.spec';
 import './d3-rendering/accessibility.spec';
 import './d3-rendering/alerts.spec';
 import './d3-rendering/axes.spec';
+import './d3-rendering/cursor-slider.spec';
 import './d3-rendering/loading-indicator.spec';
+import './d3-rendering/graph-tooltip.spec';
 
 import './components/dailyValueHydrograph/selectors/labels.spec';
 import './components/dailyValueHydrograph/selectors/scales.spec';
@@ -22,6 +24,7 @@ import './components/dailyValueHydrograph/selectors/time-series-data.spec';
 
 import './components/dailyValueHydrograph/index.spec';
 import './components/dailyValueHydrograph/time-series-graph.spec';
+import './components/dailyValueHydrograph/tooltip.spec';
 
 import './components/embed.spec';
 

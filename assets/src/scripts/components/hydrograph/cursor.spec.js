@@ -1,6 +1,5 @@
-import { select } from 'd3-selection';
-import { Actions, configureStore } from '../../store';
-import { cursorSlider, tsCursorPointsSelector, cursorOffsetSelector } from './cursor';
+import {Actions, configureStore} from '../../store';
+import {tsCursorPointsSelector, cursorOffsetSelector} from './cursor';
 
 let DATA = [12, 13, 14, 15, 16].map(hour => {
     return {
@@ -328,35 +327,6 @@ const TEST_STATE_ONE_VAR = {
 };
 
 describe('Cursor module', () => {
-
-    describe('cursorSlider', () => {
-        let div;
-        let store;
-
-        beforeEach(() => {
-            store = configureStore(TEST_STATE_ONE_VAR);
-            div = select('body')
-                .append('div')
-                .call(cursorSlider, store);
-        });
-
-        afterEach(() => {
-            div.remove();
-        });
-
-        it('is active irrespective of focus', () => {
-            const input = div.select('input');
-
-            expect(input.classed('active')).toBe(true);
-            expect(store.getState().timeSeriesState.cursorOffset).toBe(null);
-            div.select('input').dispatch('focus');
-            expect(input.classed('active')).toBe(true);
-            expect(store.getState().timeSeriesState.cursorOffset).not.toBe(null);
-            div.select('input').dispatch('blur');
-            expect(input.classed('active')).toBe(true);
-            expect(store.getState().timeSeriesState.cursorOffset).toBe(null);
-        });
-    });
 
     describe('tsCursorPointsSelector', () => {
 

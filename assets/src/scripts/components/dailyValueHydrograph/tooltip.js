@@ -24,13 +24,12 @@ export const drawTooltipText = function(elem, store) {
             elem.select('.dv-tooltip-text').remove();
 
             if (pointAtCursorOffset) {
-                console.log(`Drawing tooltip for time ${pointAtCursorOffset.dateTime}`);
                 elem.append('div')
                     .attr('style', `margin-left: ${layout.margin.left}px`)
                     .classed('dv-tooltip-text', true)
                     .classed('approved', includes(pointAtCursorOffset.approvals, APPROVED))
                     .classed('estimated', includes(pointAtCursorOffset.approvals, ESTIMATED))
-                    .text(`${pointAtCursorOffset.value} ${unitOfMeasure} - ${DateTime.fromMillis(pointAtCursorOffset.dateTime).toFormat('yyyy-LL-dd', {zone: 'UTC'})}`);
+                    .text(`${pointAtCursorOffset.value} ${unitOfMeasure} - ${DateTime.fromMillis(pointAtCursorOffset.dateTime, {zone: 'UTC'}).toFormat('yyyy-LL-dd')}`);
             }
 
         }, createStructuredSelector({

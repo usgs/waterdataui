@@ -18,8 +18,6 @@ export const drawCursorSlider = function(elem, {cursorOffset, xScale, layout}, s
             .attr('min', 0);
     }
 
-    console.log(`In cursor slider layout is width: ${layout.width}, height: ${layout.height}, left: ${layout.margin.left}, right: ${layout.margin.right}`);
-
     sliderContainer.select('.usa-range')
         .attr('max', timeScale)
         .attr('step', timeScale / SLIDER_STEPS)
