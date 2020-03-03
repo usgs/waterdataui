@@ -15,7 +15,7 @@ export const getXScale = createSelector(
         let xScale = scaleLinear();
         if (timeRange) {
             xScale
-                .range([0, layout.width - layout.margin.right - layout.margin.left])
+                .range([0, layout.width - layout.margin.right])
                 .domain([timeRange.startTime, timeRange.endTime]);
         }
         return xScale;

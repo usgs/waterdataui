@@ -6,22 +6,23 @@ import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import {drawWarningAlert, drawInfoAlert} from '../../d3-rendering/alerts';
+import {drawCursorSlider} from '../../d3-rendering/cursor-slider';
+
 import {link} from '../../lib/d3-redux';
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from '../../selectors/time-series-selector';
 import {Actions} from '../../store';
 import {renderTimeSeriesUrlParams} from '../../url-params';
 
-import {cursorSlider} from './cursor';
 import {drawDateRangeControls} from './date-controls';
 import {lineSegmentsByParmCdSelector} from './drawing-data';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
-import {SPARK_LINE_DIM}  from './layout';
+import {SPARK_LINE_DIM, getMainLayout}  from './layout';
 import {drawTimeSeriesLegend} from './legend';
 import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
 import {drawMethodPicker} from './method-picker';
 import {plotSeriesSelectTable, availableTimeSeriesSelector} from './parameters';
-import {timeSeriesScalesByParmCdSelector} from './scales';
+import {timeSeriesScalesByParmCdSelector, getMainXScale} from './scales';
 import {drawTimeSeriesGraph} from './time-series-graph';
 
 
@@ -125,7 +126,12 @@ export const attachToNode = function (store,
                 .call(link(store, controlDisplay, hasAnyTimeSeries))
                 .call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph);
             if (!showOnlyGraph) {
-                graphContainer.call(cursorSlider, store);
+                graphContainer.append('div')
+                    .call(link(store, drawCursorSlider, createStructuredSelector({
+                        cursorOffset: (state) => state.timeSeriesState.cursorOffset,
+                        xScale: getMainXScale('current'),
+                        layout: getMainLayout
+                    }), store, Actions.setCursorOffset));
                 graphContainer.call(drawGraphBrush, store);
             }
             graphContainer.append('div')

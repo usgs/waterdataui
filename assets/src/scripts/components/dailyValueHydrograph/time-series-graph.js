@@ -52,7 +52,8 @@ const drawDataLine = function (group, {lineSegment, xScale, yScale}) {
 const drawDataLines = function (elem, {lines, xScale, yScale, layout}) {
     elem.select('#daily-values-lines-group').remove();
 
-    const linesGroup = elem.append('g')
+    const allLinesGroup = elem.append('g');
+    const linesGroup = allLinesGroup.append('g')
         .attr('id', 'daily-values-lines-group')
         .attr('x', layout.margin.left)
         .attr('y', layout.margin.top)

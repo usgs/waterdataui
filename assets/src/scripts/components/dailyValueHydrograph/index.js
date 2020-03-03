@@ -1,12 +1,17 @@
 
 import {select} from 'd3-selection';
+import {createStructuredSelector} from 'reselect';
 
+import {drawCursorSlider} from '../../d3-rendering/cursor-slider';
 import {link} from '../../lib/d3-redux';
-import {hasCurrentObservationsTimeSeries} from '../../selectors/observations-selector';
+import {hasCurrentObservationsTimeSeries, getObservationsCursorOffset} from '../../selectors/observations-selector';
 import {Actions} from '../../store';
 
 import {drawErrorAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
+
+import {getLayout} from './selectors/layout';
+import {getXScale} from './selectors/scales';
 
 import {drawTimeSeriesGraph} from './time-series-graph';
 
@@ -50,6 +55,16 @@ export const attachToNode = function (store,
         .call(link(store, function(container, showElem) {
             container.attr('hidden', showElem ? null : true);
         }, hasCurrentObservationsTimeSeries))
-        .call(drawTimeSeriesGraph, store);
-
+        .call(drawTimeSeriesGraph, store)
+        .call(link(
+            store,
+            drawCursorSlider,
+            createStructuredSelector({
+                cursorOffset: getObservationsCursorOffset,
+                xScale: getXScale,
+                layout: getLayout
+            }),
+            store,
+            Actions.setDailyValueCursorOffset
+        ));
 };

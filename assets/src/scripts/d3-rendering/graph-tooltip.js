@@ -42,6 +42,7 @@ export const drawFocusOverlay = function(elem, {xScale, layout}, store, setCurso
  */
 export const drawFocusCircles = function (elem, tooltipPoints, circleContainer) {
     circleContainer = circleContainer || elem.append('g');
+    circleContainer.style('pointer-events', 'none');
 
     const circles = circleContainer
         .selectAll('circle.focus-circle')
@@ -71,6 +72,7 @@ export const drawFocusLine = function(elem, {cursorTime, xScale, yScale}) {
         const range = yScale.range();
         elem.append('g')
             .attr('class', 'focus-line-group')
+            .style('pointer-events', 'none')
             .append('line')
                 .attr('class', 'focus-line')
                 .attr('y1', range[0])
