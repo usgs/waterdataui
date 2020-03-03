@@ -4,8 +4,8 @@ import memoize from 'fast-memoize';
 import {createSelector, createStructuredSelector} from 'reselect';
 
 import {getLayout} from './selectors/layout';
-import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from '../hydrograph/markers';
-import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from '../hydrograph/drawing-data';
+import { defineLineMarker, defineTextOnlyMarker } from '../hydrograph/markers';
+import { currentVariableLineSegmentsSelector } from '../hydrograph/drawing-data';
 import config from '../../config';
 import { mediaQuery } from '../../utils';
 import {link} from '../../lib/d3-redux';
