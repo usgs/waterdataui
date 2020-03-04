@@ -2,9 +2,9 @@ import {select} from 'd3-selection';
 
 import {configureStore} from '../../store';
 
-import {drawTooltipFocus, drawTooltipText} from './tooltip';
+import {drawTooltipFocus, drawTooltipText, drawTooltipCursorSlider} from './tooltip';
 
-fdescribe('dailyValueHydrograph/tooltip module', () => {
+describe('dailyValueHydrograph/tooltip module', () => {
     const TEST_STATE = {
         observationsData: {
             timeSeries: {
@@ -41,7 +41,6 @@ fdescribe('dailyValueHydrograph/tooltip module', () => {
 
         beforeEach(() => {
             div = select('body').append('div');
-            store = configureStore(TEST_STATE);
         });
 
         afterEach(() => {
@@ -49,15 +48,78 @@ fdescribe('dailyValueHydrograph/tooltip module', () => {
         });
 
         it('Expect to render a dv tooltip text div with the appropriate text', () => {
+            store = configureStore(TEST_STATE);
             drawTooltipText(div, store);
 
             const textDiv = div.selectAll('.dv-tooltip-text');
             expect(textDiv.size()).toBe(1);
             const tooltip = textDiv.text();
-            console.log(`tooltip is ${tooltip}`);
             expect(tooltip).toContain('ft');
             expect(tooltip).toContain('4.0');
             expect(tooltip).toContain('2018-01-03');
+        });
+
+        it('Expect tooltip text element rendered to contain the most recent information if cursorOffset is null', () => {
+            store = configureStore({
+                ...TEST_STATE,
+                observationsState: {
+                    ...TEST_STATE.observationsState,
+                    cursorOffset: null
+                }
+            });
+            drawTooltipText(div, store);
+
+            const textDiv = div.selectAll('.dv-tooltip-text');
+            expect(textDiv.size()).toBe(1);
+            const tooltip = textDiv.text();
+            expect(tooltip).toContain('ft');
+            expect(tooltip).toContain('3.2');
+            expect(tooltip).toContain('2018-01-05');
+        });
+    });
+
+    describe('drawTooltipFocus', () => {
+        let svg;
+        beforeEach(() => {
+            svg = select('body').append('svg');
+        }) ;
+
+        afterEach(() => {
+            svg.remove();
+        });
+
+        it('Should draw the focus line, focus circles, and focus overlay', () => {
+            let store = configureStore(TEST_STATE);
+            drawTooltipFocus(svg, store);
+
+            expect(svg.selectAll('.focus-line').size()).toBe(1);
+            expect(svg.selectAll('.focus-circle').size()).toBe(1);
+            expect(svg.selectAll('.focus-overlay').size()).toBe(1);
+        });
+    });
+
+
+    describe('drawTooltipCursorSlider', () => {
+        let div;
+        beforeEach(() => {
+            div = select('body').append('div');
+        });
+
+        afterEach(() => {
+            div.remove();
+        });
+
+        it('should draw a slider with the position set to the cursor offset', () => {
+            let store = configureStore(TEST_STATE);
+            drawTooltipCursorSlider(div, store);
+
+            const rangeInput = div.selectAll('input');
+            expect(rangeInput.size()).toBe(1);
+            expect(rangeInput.attr('type')).toBe('range');
+            // Test that the range value is within half of the step size of the slider
+            const value = rangeInput.property('value');
+            expect(value).toBeLessThan(86400000);
+            expect(value).toBeGreaterThan(8670400);
         });
     });
 });

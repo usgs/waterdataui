@@ -1,19 +1,16 @@
 
 import {select} from 'd3-selection';
-import {createStructuredSelector} from 'reselect';
 
-import {drawCursorSlider} from '../../d3-rendering/cursor-slider';
 import {link} from '../../lib/d3-redux';
-import {hasCurrentObservationsTimeSeries, getObservationsCursorOffset} from '../../selectors/observations-selector';
+import {hasCurrentObservationsTimeSeries} from '../../selectors/observations-selector';
 import {Actions} from '../../store';
 
 import {drawErrorAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
 
-import {getLayout} from './selectors/layout';
-import {getXScale} from './selectors/scales';
 
 import {drawTimeSeriesGraph} from './time-series-graph';
+import {drawTooltipCursorSlider} from './tooltip';
 
 const TEMP_TIME_SERIES_ID = '36307c899ac14d2eac6956b1bf5ceb69';
 
@@ -56,15 +53,5 @@ export const attachToNode = function (store,
             container.attr('hidden', showElem ? null : true);
         }, hasCurrentObservationsTimeSeries))
         .call(drawTimeSeriesGraph, store)
-        .call(link(
-            store,
-            drawCursorSlider,
-            createStructuredSelector({
-                cursorOffset: getObservationsCursorOffset,
-                xScale: getXScale,
-                layout: getLayout
-            }),
-            store,
-            Actions.setDailyValueCursorOffset
-        ));
+        .call(drawTooltipCursorSlider, store);
 };
