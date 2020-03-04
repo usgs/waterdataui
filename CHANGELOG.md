@@ -8,10 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - All IV time series are now available for drawing on the hydrograph not just those in the last 7 days.
 - Added brush handle fill.
+- Adjusted x scale of compare time series when called by a brush event so it would not
+disappear from the hydrograph when the brush was adjusted.
 
 ### Added
 - The state of the UI for the hydrograph is now preserved in the hash portion of the url and state 
 can be restored by pasting the url into a browser window.
+- Added upstream basin to NLDI map on the monitoring location pages.
 
 ## [0.26.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.25.0...waterdataui-0.26.0) - 2020-02-12
 ### Added
