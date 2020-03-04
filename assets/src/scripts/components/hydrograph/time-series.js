@@ -1,6 +1,6 @@
-import { timeFormat } from 'd3-time-format';
 import memoize from 'fast-memoize';
-import { createSelector } from 'reselect';
+import {DateTime} from 'luxon';
+import {createSelector} from 'reselect';
 
 import {
     getRequestTimeRange, getCurrentVariable, getTimeSeriesForTsKey, getIanaTimeZone, getCurrentParmCd, getCurrentMethodID,
@@ -33,8 +33,10 @@ export const TEMPERATURE_PARAMETERS = {
 };
 
 
-// Create a time formatting function from D3's timeFormat
-const formatTime = timeFormat('%c %Z');
+
+const formatTime = function(timeInMillis, timeZone) {
+    return DateTime.fromMillis(timeInMillis, {zone: timeZone}).toFormat('L/d/yyyy tt ZZZ');
+};
 
 
 export const hasTimeSeriesWithPoints = memoize((tsKey, period) => createSelector(
@@ -105,10 +107,11 @@ export const titleSelector = createSelector(
 export const descriptionSelector = createSelector(
     getCurrentVariable,
     getRequestTimeRange('current', 'P7D'),
-    (variable, requestTimeRange) => {
+    getIanaTimeZone,
+    (variable, requestTimeRange, timeZone) => {
         const desc = variable ? variable.variableDescription : '';
         if (requestTimeRange) {
-            return `${desc} from ${formatTime(requestTimeRange.start)} to ${formatTime(requestTimeRange.end)}`;
+            return `${desc} from ${formatTime(requestTimeRange.start, timeZone)} to ${formatTime(requestTimeRange.end, timeZone)}`;
         } else {
             return desc;
         }
