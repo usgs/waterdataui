@@ -1,48 +1,24 @@
-import { set } from 'd3-collection';
-import { mouse, select } from 'd3-selection';
-import { transition } from 'd3-transition';
+import {set} from 'd3-collection';
+import {select} from 'd3-selection';
+import {transition} from 'd3-transition';
 import memoize from 'fast-memoize';
-import { createSelector, createStructuredSelector } from 'reselect';
-import { DateTime } from 'luxon';
+import {createSelector, createStructuredSelector} from 'reselect';
+import {DateTime} from 'luxon';
 
-import { link, initAndUpdate } from '../../lib/d3-redux';
-import { Actions } from '../../store';
-import { cursorTimeSelector, tsCursorPointsSelector } from './cursor';
-import { classesForPoint, MASK_DESC } from './drawing-data';
-import { getMainLayout } from './layout';
-import { getMainXScale, getMainYScale } from './scales';
-import { tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
-import { getCurrentVariable, getCurrentParmCd } from '../../selectors/time-series-selector';
 import config from '../../config';
-import { mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius } from '../../utils';
+import {drawCursorSlider} from '../../d3-rendering/cursor-slider';
+import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from '../../d3-rendering/graph-tooltip';
+import {link} from '../../lib/d3-redux';
+import {getCurrentVariable, getCurrentParmCd} from '../../selectors/time-series-selector';
+import {Actions} from '../../store';
+import {mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../utils';
 
+import {cursorTimeSelector, tsCursorPointsSelector} from './cursor';
+import {classesForPoint, MASK_DESC} from './drawing-data';
+import {getMainLayout} from './layout';
+import {getMainXScale, getMainYScale} from './scales';
+import {tsTimeZoneSelector, TEMPERATURE_PARAMETERS} from './time-series';
 
-const createFocusLine = function(elem) {
-    let focus = elem.append('g')
-        .attr('class', 'focus')
-        .style('display', 'none');
-
-    focus.append('line')
-        .attr('class', 'focus-line');
-
-    return focus;
-};
-
-const updateFocusLine = function(elem, {cursorTime, yScale, xScale}) {
-    if (cursorTime) {
-        const x = xScale(cursorTime);
-        const range = yScale.range();
-
-        elem.select('.focus-line')
-            .attr('y1', range[0])
-            .attr('y2', range[1])
-            .attr('x1', x)
-            .attr('x2', x);
-        elem.style('display', null);
-    } else {
-        elem.style('display', 'none');
-    }
-};
 
 /*
  * Returns a function that returns the time series data point nearest the
@@ -63,8 +39,7 @@ export const tooltipPointsSelector = memoize(tsKey => createSelector(
             if (isFinite(yScale(cursorPoint.value))) {
                 tooltipPoints.push({
                     x: xScale(cursorPoint.dateTime),
-                    y: yScale(cursorPoint.value),
-                    tsID
+                    y: yScale(cursorPoint.value)
                 });
             }
             return tooltipPoints;
@@ -139,9 +114,6 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
         };
     });
 
-    // Put the circles in a container so we can keep the their position in the
-    // DOM before rect.focus-overlay, to prevent the circles from receiving mouse
-    // events.
     if (!textGroup) {
         textGroup = elem.append('div')
             .attr('class', 'tooltip-text-group')
@@ -212,7 +184,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
  * Append a group containing the tooltip text elements to elem
  * @param {Object} elem - D3 selector
  */
-export const createTooltipText = function (elem, store) {
+export const drawTooltipText = function (elem, store) {
     elem.call(link(store, createTooltipTextGroup, createStructuredSelector({
         currentPoints: tsCursorPointsSelector('current'),
         comparePoints: tsCursorPointsSelector('compare'),
@@ -224,36 +196,7 @@ export const createTooltipText = function (elem, store) {
     })));
 };
 
-const createFocusCircles = function (elem, tooltipPoints, circleContainer) {
-    // Put the circles in a container so we can keep the their position in the
-    // DOM before rect.overlay, to prevent the circles from receiving mouse
-    // events.
-    circleContainer = circleContainer || elem.append('g');
 
-    const circles = circleContainer
-        .selectAll('circle.focus')
-        .data(tooltipPoints, d => d.tsID);
-
-    // Remove old circles after fading them out
-    circles.exit()
-        .transition(transition().duration(500))
-            .style('opacity', '0')
-            .remove();
-
-    // Add new focus circles
-    const newCircles = circles.enter()
-        .append('circle')
-            .attr('class', 'focus')
-            .attr('r', 5.5);
-
-    // Update the location of all circles
-    circles.merge(newCircles)
-        .transition(transition().duration(20))
-            .style('opacity', '.6')
-            .attr('transform', (tsDatum) => `translate(${tsDatum.x}, ${tsDatum.y})`);
-
-    return circleContainer;
-};
 
 /*
  * Appends a group to elem containing a focus line and circles for the current and compare time series
@@ -261,14 +204,14 @@ const createFocusCircles = function (elem, tooltipPoints, circleContainer) {
  * @param {Object} store - Redux.Store
  * @param {Object} yScale - D3 Y scale for the graph
  */
-export const createTooltipFocus = function(elem, store) {
-    elem.call(link(store, initAndUpdate(createFocusLine, updateFocusLine), createStructuredSelector({
+export const drawTooltipFocus = function(elem, store) {
+    elem.call(link(store, drawFocusLine, createStructuredSelector({
         xScale: getMainXScale('current'),
         yScale: getMainYScale,
         cursorTime: cursorTimeSelector('current')
     })));
 
-    elem.call(link(store, createFocusCircles, createSelector(
+    elem.call(link(store, drawFocusCircles, createSelector(
         tooltipPointsSelector('current'),
         tooltipPointsSelector('compare'),
         (current, compare) => {
@@ -276,29 +219,34 @@ export const createTooltipFocus = function(elem, store) {
         }
     )));
 
-    elem.call(link(store,function (elem, {xScale, layout}) {
-        elem.select('.focus-overlay').remove();
-        elem.append('rect')
-            .attr('class', 'focus-overlay')
-            .attr('x', 0)
-            .attr('y', 0)
-            .attr('width', layout.width - layout.margin.right)
-            .attr('height', layout.height - (layout.margin.top + layout.margin.bottom))
-            .on('mouseover', function() {
-                const selectedTime = xScale.invert(mouse(elem.node())[0]);
-                const startTime = xScale.domain()[0];
-                store.dispatch(Actions.setCursorOffset(selectedTime - startTime));
-            })
-            .on('mouseout', function() {
-                store.dispatch(Actions.setCursorOffset(null));
-            })
-            .on('mousemove', function() {
-                const selectedTime = xScale.invert(mouse(elem.node())[0]);
-                const startTime = xScale.domain()[0];
-                store.dispatch(Actions.setCursorOffset(selectedTime - startTime));
-            });
-    }, createStructuredSelector({
-        xScale: getMainXScale('current'),
-        layout: getMainLayout
-    })));
+    elem.call(link(
+        store,
+        drawFocusOverlay,
+        createStructuredSelector({
+            xScale: getMainXScale('current'),
+            layout: getMainLayout
+        }),
+        store,
+        Actions.setCursorOffset)
+    );
+};
+
+/*
+ * Renders the cursor slider used to move the tooltip focus
+ * @param {D3 selection} elem
+ * @param {Redux store} store
+ */
+export const drawTooltipCursorSlider = function(elem, store) {
+    elem.append('div')
+        .call(link(
+            store,
+            drawCursorSlider,
+            createStructuredSelector({
+                cursorOffset: (state) => state.timeSeriesState.cursorOffset,
+                xScale: getMainXScale('current'),
+                layout: getMainLayout
+            }),
+            store,
+            Actions.setCursorOffset
+        ));
 };

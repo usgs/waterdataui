@@ -1188,6 +1188,13 @@ describe('Redux store', () => {
                 timeSeriesId: '12345'
             });
         });
+
+        it('should create an action to set the current daily value graph cursor offset', () => {
+            expect(Actions.setDailyValueCursorOffset('13566')).toEqual({
+                type: 'SET_DAILY_VALUE_CURSOR_OFFSET',
+                cursorOffset: '13566'
+            });
+        });
     });
 });
 

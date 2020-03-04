@@ -23,6 +23,20 @@ $default-time-series: #d95f02;
   text-align: center;
 }
 
+.dv-tooltip-container {
+  pointer-event: none;
+  .dv-tooltip-text {
+    color: $default-time-series;
+    font-weight: bold;
+  }
+  .approved {
+    color: $approved-time-series;
+  }
+  .estimated {
+    color: $estimated-time-series;
+  }
+}
+
 svg {
   .tick {
     text {
@@ -35,10 +49,12 @@ svg {
       }
     }
   }
+
   .y-axis {
     text {
       fill: black;
     }
+
     .y-axis-label {
       text-anchor: middle;
       display: none;
@@ -81,4 +97,23 @@ svg {
       stroke: $estimated-time-series;
     }
   }
+
+  .focus-overlay {
+    fill: none;
+    pointer-events: all;
+  }
+
+  .focus-circle {
+    fill: black;
+    opacity: .6;
+  }
+  .focus-line {
+    opacity: .5;
+    stroke: black;
+    stroke-width: 1px;
+    stroke-dasharray: 5, 5;
+  }
+}
+.slider-wrapper {
+  margin-left: 10px;
 }

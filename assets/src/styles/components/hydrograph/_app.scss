@@ -171,20 +171,6 @@
   }
 }
 
-.slider-wrapper {
-  #cursor-slider {
-    max-width: none;
-    position: relative;
-    opacity: .2;
-    background: none;
-    padding: 0;
-    margin: 0;
-    &.active {
-      opacity: 1;
-    }
-  }
-}
-
 .ts-legend-controls-container {
   position: relative;
 

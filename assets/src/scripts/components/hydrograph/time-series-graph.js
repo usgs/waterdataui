@@ -18,7 +18,7 @@ import {createStructuredSelector} from 'reselect';
 import {getMainXScale, getMainYScale} from './scales';
 import {descriptionSelector, isVisibleSelector, titleSelector} from './time-series';
 import {drawDataLines} from './time-series-data';
-import {createTooltipFocus, createTooltipText}  from './tooltip';
+import {drawTooltipFocus, drawTooltipText}  from './tooltip';
 import {mediaQuery}  from '../../utils';
 
 const plotSvgDefs = function(elem) {
@@ -159,7 +159,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
         .attr('class', 'hydrograph-container')
         .call(watermark, store)
         .call(createTitle, store, siteNo, showMLName)
-        .call(createTooltipText, store);
+        .call(drawTooltipText, store);
     graphDiv.append('svg')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .classed('hydrograph-svg', true)
@@ -216,7 +216,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
                     enableClip: () => true
                 })));
             if (showTooltip) {
-                dataGroup.call(createTooltipFocus, store);
+                dataGroup.call(drawTooltipFocus, store);
             }
         }, getMainLayout));
 };

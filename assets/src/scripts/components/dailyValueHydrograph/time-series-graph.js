@@ -11,10 +11,12 @@ import {getXAxis, getYAxis} from './selectors/axes';
 import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesTitle, getCurrentTimeSeriesYTitle} from './selectors/labels';
 import {getLayout} from './selectors/layout';
 import {getXScale, getYScale} from './selectors/scales';
-import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-lines';
+import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-data';
 
-const APPROVED = 'Approved';
-const ESTIMATED = 'Estimated';
+import {drawTooltipFocus, drawTooltipText} from './tooltip';
+
+export const APPROVED = 'Approved';
+export const ESTIMATED = 'Estimated';
 const CIRCLE_RADIUS_SINGLE_PT = 1;
 
 const createTitle = function(elem, store) {
@@ -50,7 +52,8 @@ const drawDataLine = function (group, {lineSegment, xScale, yScale}) {
 const drawDataLines = function (elem, {lines, xScale, yScale, layout}) {
     elem.select('#daily-values-lines-group').remove();
 
-    const linesGroup = elem.append('g')
+    const allLinesGroup = elem.append('g');
+    const linesGroup = allLinesGroup.append('g')
         .attr('id', 'daily-values-lines-group')
         .attr('x', layout.margin.left)
         .attr('y', layout.margin.top)
@@ -66,6 +69,7 @@ export const drawTimeSeriesGraph = function(elem, store) {
     const svg = elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(createTitle, store)
+        .call(drawTooltipText, store)
         .append('svg')
             .attr('xmlns', 'http://www.w3.org/2000/svg')
             .classed('hydrograph-svg', true)
@@ -94,5 +98,6 @@ export const drawTimeSeriesGraph = function(elem, store) {
             xScale: getXScale,
             yScale: getYScale,
             layout: getLayout
-        })));
+        })))
+        .call(drawTooltipFocus, store);
 };
