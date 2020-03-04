@@ -76,24 +76,15 @@ export const getXScale = memoize((kind, tsKey) => createSelector(
         if (kind === 'BRUSH') {
             timeRange = requestTimeRange;
         } else {
-            if (hydrographXRange) {
-                if (tsKey === 'compare') {
-                    try {
-                        timeRange = {
-                            'start': DateTime.fromMillis(hydrographXRange['start']).minus({'years': 1}).toMillis(),
-                            'end': DateTime.fromMillis(hydrographXRange['end']).minus({'years': 1}).toMillis()
-                        };
-                    } catch(err) {
-                        timeRange = requestTimeRange;
-                    }
-                } else{
-                    timeRange = hydrographXRange;
-                }
+            if (hydrographXRange && Object.keys(hydrographXRange).length > 0) {
+                    timeRange = tsKey === 'compare' ? {
+                        'start': DateTime.fromMillis(hydrographXRange['start']).minus({'years': 1}).toMillis(),
+                        'end': DateTime.fromMillis(hydrographXRange['end']).minus({'years': 1}).toMillis()
+                    } : hydrographXRange;
             } else{
                 timeRange = requestTimeRange;
             }
         }
-
         return createXScale(timeRange, layout.width - layout.margin.right);
     }
 ));
