@@ -51,7 +51,7 @@ export const getCurrentObservationsTimeSeriesUnitOfMeasure = createSelector(
     (currentTimeSeries) => {
         return currentTimeSeries ? currentTimeSeries.properties.unitOfMeasureName : '';
     }
-)
+);
 
 
 

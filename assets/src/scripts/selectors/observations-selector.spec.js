@@ -7,7 +7,7 @@ import {
     getCurrentObservationsTimeSeries,
     getCurrentObservationsTimeSeriesUnitOfMeasure,
     getCurrentObservationsTimeSeriesTimeRange,
-    getCurrentObservationsTimeSeriesValueRange,
+    getCurrentObservationsTimeSeriesValueRange
 } from './observations-selector';
 
 describe('observations-selector', () => {
