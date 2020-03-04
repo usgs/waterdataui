@@ -83,7 +83,7 @@ export const getXScale = memoize((kind, tsKey) => createSelector(
                         timeRange['start'] = DateTime.fromMillis(hydrographXRange['start']).minus({'years': 1}).toMillis();
                         timeRange['end'] = DateTime.fromMillis(hydrographXRange['end']).minus({'years': 1}).toMillis();
                     } catch(err) {
-                        timeRange = hydrographXRange;
+                        timeRange = requestTimeRange;
                     }
 
                 } else{
