@@ -6,6 +6,7 @@ import {createSelector, createStructuredSelector} from 'reselect';
 import {DateTime} from 'luxon';
 
 import config from '../../config';
+import {drawCursorSlider} from '../../d3-rendering/cursor-slider';
 import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from '../../d3-rendering/graph-tooltip';
 import {link} from '../../lib/d3-redux';
 import {getCurrentVariable, getCurrentParmCd} from '../../selectors/time-series-selector';
@@ -183,7 +184,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
  * Append a group containing the tooltip text elements to elem
  * @param {Object} elem - D3 selector
  */
-export const createTooltipText = function (elem, store) {
+export const drawTooltipText = function (elem, store) {
     elem.call(link(store, createTooltipTextGroup, createStructuredSelector({
         currentPoints: tsCursorPointsSelector('current'),
         comparePoints: tsCursorPointsSelector('compare'),
@@ -203,7 +204,7 @@ export const createTooltipText = function (elem, store) {
  * @param {Object} store - Redux.Store
  * @param {Object} yScale - D3 Y scale for the graph
  */
-export const createTooltipFocus = function(elem, store) {
+export const drawTooltipFocus = function(elem, store) {
     elem.call(link(store, drawFocusLine, createStructuredSelector({
         xScale: getMainXScale('current'),
         yScale: getMainYScale,
@@ -228,4 +229,24 @@ export const createTooltipFocus = function(elem, store) {
         store,
         Actions.setCursorOffset)
     );
+};
+
+/*
+ * Renders the cursor slider used to move the tooltip focus
+ * @param {D3 selection} elem
+ * @param {Redux store} store
+ */
+export const drawTooltipCursorSlider = function(elem, store) {
+    elem.append('div')
+        .call(link(
+            store,
+            drawCursorSlider,
+            createStructuredSelector({
+                cursorOffset: (state) => state.timeSeriesState.cursorOffset,
+                xScale: getMainXScale('current'),
+                layout: getMainLayout
+            }),
+            store,
+            Actions.setCursorOffset
+        ));
 };

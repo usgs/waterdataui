@@ -1,6 +1,6 @@
 import { select } from 'd3-selection';
 import { Actions, configureStore } from '../../store';
-import { createTooltipText, createTooltipFocus, tooltipPointsSelector } from './tooltip';
+import {drawTooltipText, drawTooltipFocus, tooltipPointsSelector, drawTooltipCursorSlider} from './tooltip';
 
 
 describe('Hydrograph tooltip module', () => {
@@ -159,7 +159,8 @@ describe('Hydrograph tooltip module', () => {
             currentVariableID: '00060id',
             currentMethodID: 69928,
             currentDateRange: 'P7D',
-            customTimeRange: null
+            customTimeRange: null,
+            cursorOffset: 61200000
         },
         ui: {
             windowWidth: 1300,
@@ -207,7 +208,7 @@ describe('Hydrograph tooltip module', () => {
         });
     });
 
-    describe('createTooltipText', () => {
+    describe('drawTooltipText', () => {
         let div;
         beforeEach(() => {
             div = select('body').append('div');
@@ -227,7 +228,7 @@ describe('Hydrograph tooltip module', () => {
                 }
             });
 
-            div.call(createTooltipText, store);
+            div.call(drawTooltipText, store);
 
             const textGroup = div.selectAll('.tooltip-text-group');
             expect(textGroup.size()).toBe(1);
@@ -240,7 +241,7 @@ describe('Hydrograph tooltip module', () => {
                 })
             }));
 
-            div.call(createTooltipText, store);
+            div.call(drawTooltipText, store);
 
             let value = div.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('14 ft3/s');
@@ -257,7 +258,7 @@ describe('Hydrograph tooltip module', () => {
                 })
             }));
 
-            div.call(createTooltipText, store);
+            div.call(drawTooltipText, store);
 
             let value = div.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('14 deg C (57.2 deg F)');
@@ -272,7 +273,7 @@ describe('Hydrograph tooltip module', () => {
                 })
             }));
 
-            div.call(createTooltipText, store);
+            div.call(drawTooltipText, store);
 
             let value = div.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('12 ft3/s');
@@ -295,7 +296,7 @@ describe('Hydrograph tooltip module', () => {
                 })
             }));
 
-            div.call(createTooltipText, store);
+            div.call(drawTooltipText, store);
             store.dispatch(Actions.setCursorOffset(299 * 60 * 1000));  // 2018-01-03T16:59:00.000Z
 
             window.requestAnimationFrame(() => {
@@ -324,7 +325,7 @@ describe('Hydrograph tooltip module', () => {
                     cursorOffset: 10
                 })
             }));
-            div.call(createTooltipText, store);
+            div.call(drawTooltipText, store);
             store.dispatch(Actions.setCursorOffset(119 * 60 * 1000));
             window.requestAnimationFrame(() => {
                 let value = div.select('.current-tooltip-text').text().split(' - ')[0];
@@ -376,7 +377,7 @@ describe('Hydrograph tooltip module', () => {
                 })
             }));
 
-            svg.call(createTooltipFocus, store);
+            svg.call(drawTooltipFocus, store);
 
             expect(svg.selectAll('.focus-line').size()).toBe(1);
             expect(svg.selectAll('.focus-circle').size()).toBe(2);
@@ -406,11 +407,31 @@ describe('Hydrograph tooltip module', () => {
                 })
             }));
 
-            svg.call(createTooltipFocus, store);
+            svg.call(drawTooltipFocus, store);
 
             expect(svg.selectAll('.focus-line').size()).toBe(1);
             expect(svg.selectAll('.focus-circle').size()).toBe(2);
             expect(svg.select('.focus-overlay').size()).toBe(1);
+        });
+    });
+
+    describe('drawTooltipCursorClider', () => {
+        let div;
+        beforeEach(() => {
+            div = select('body').append('div');
+        });
+
+        afterEach(() => {
+            div.remove();
+        });
+
+        it('should render the cursor slider and set the position to the cursor offset', () => {
+            let store = configureStore(testState);
+            drawTooltipCursorSlider(div, store);
+
+            const rangeInput = div.selectAll('input');
+            expect(rangeInput.size()).toBe(1);
+            expect(rangeInput.attr('type')).toBe('range');
         });
     });
 });

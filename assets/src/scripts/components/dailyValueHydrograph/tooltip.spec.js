@@ -116,10 +116,6 @@ describe('dailyValueHydrograph/tooltip module', () => {
             const rangeInput = div.selectAll('input');
             expect(rangeInput.size()).toBe(1);
             expect(rangeInput.attr('type')).toBe('range');
-            // Test that the range value is within half of the step size of the slider
-            const value = rangeInput.property('value');
-            expect(value).toBeLessThan(86400000);
-            expect(value).toBeGreaterThan(8670400);
         });
     });
 });
