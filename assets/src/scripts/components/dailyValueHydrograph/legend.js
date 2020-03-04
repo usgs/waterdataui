@@ -5,7 +5,10 @@ import {createSelector, createStructuredSelector} from 'reselect';
 
 import {getLayout} from './selectors/layout';
 import { defineLineMarker, defineTextOnlyMarker } from '../hydrograph/markers';
+
 import { currentVariableLineSegmentsSelector } from '../hydrograph/drawing-data';
+//import { getCurrentTimeSeriesLineSegments } from './selectors/time-series-lines';
+
 import config from '../../config';
 import { mediaQuery } from '../../utils';
 import {link} from '../../lib/d3-redux';
@@ -136,6 +139,7 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
 
 const uniqueClassesSelector = memoize(tsKey => createSelector(
     currentVariableLineSegmentsSelector(tsKey),
+    //getCurrentTimeSeriesLineSegments(tsKey),
     (tsLineSegments) => {
         let classes = [].concat(...Object.values(tsLineSegments)).map((line) => line.classes);
         return {
