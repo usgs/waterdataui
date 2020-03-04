@@ -6,12 +6,12 @@ import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import {drawWarningAlert, drawInfoAlert} from '../../d3-rendering/alerts';
+
 import {link} from '../../lib/d3-redux';
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from '../../selectors/time-series-selector';
 import {Actions} from '../../store';
 import {renderTimeSeriesUrlParams} from '../../url-params';
 
-import {cursorSlider} from './cursor';
 import {drawDateRangeControls} from './date-controls';
 import {lineSegmentsByParmCdSelector} from './drawing-data';
 import {drawGraphBrush} from './graph-brush';
@@ -23,6 +23,7 @@ import {drawMethodPicker} from './method-picker';
 import {plotSeriesSelectTable, availableTimeSeriesSelector} from './parameters';
 import {timeSeriesScalesByParmCdSelector} from './scales';
 import {drawTimeSeriesGraph} from './time-series-graph';
+import {drawTooltipCursorSlider} from './tooltip';
 
 
 /**
@@ -125,8 +126,9 @@ export const attachToNode = function (store,
                 .call(link(store, controlDisplay, hasAnyTimeSeries))
                 .call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph);
             if (!showOnlyGraph) {
-                graphContainer.call(cursorSlider, store);
-                graphContainer.call(drawGraphBrush, store);
+                graphContainer
+                    .call(drawTooltipCursorSlider, store)
+                    .call(drawGraphBrush, store);
             }
             graphContainer.append('div')
                 .classed('ts-legend-controls-container', true)

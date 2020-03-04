@@ -33,7 +33,8 @@ describe('components/dailyValueHydrograph/index', () => {
             }
         },
         observationsState: {
-            currentTimeSeriesId: '12345'
+            currentTimeSeriesId: '12345',
+            cursorOffset: 1262476800000
         },
         ui: {
             windowWidth: 1024,
@@ -128,5 +129,11 @@ describe('components/dailyValueHydrograph/index', () => {
         attachToNode(configureStore(), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
 
         expect(testDiv.select('.graph-container').selectAll('.hydrograph-container').size()).toBe(1);
+    });
+
+    it('should render the tooltip cursor slider', () => {
+        attachToNode(configureStore(TEST_STATE), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
+
+        expect(testDiv.select('.graph-container').selectAll('.slider-wrapper').size()).toBe(1);
     });
 });

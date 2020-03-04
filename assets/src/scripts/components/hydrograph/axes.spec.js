@@ -1,28 +1,9 @@
-import { scaleLinear } from 'd3-scale';
-import { select } from 'd3-selection';
-import { createAxes, appendAxes, generateDateTicks } from './axes';
+import {generateDateTicks } from './axes';
 
 
 describe('Chart axes', () => {
-    // xScale is oriented on the left
-    const xScale = scaleLinear().range([0, 10]).domain([1318230000000, 1318230000000]);
-    const yScale = scaleLinear().range([0, 10]).domain([0, 10]);
-    let secondaryYScale;
-
-    const layout = {
-        width: 400,
-        height: 200,
-        margin: {
-            top: 25,
-            right: 0,
-            bottom: 10,
-            left: 65
-        }
-    };
 
     const timeZone = 'America/Los_Angeles';
-    let svg;
-
 
     describe('generateDateTicks', () => {
 

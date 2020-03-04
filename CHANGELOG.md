@@ -15,6 +15,7 @@ disappear from the hydrograph when the brush was adjusted.
 - The state of the UI for the hydrograph is now preserved in the hash portion of the url and state 
 can be restored by pasting the url into a browser window.
 - Added upstream basin to NLDI map on the monitoring location pages.
+- Added both hover and a cursor slider tooltip capability to the DV graph.
 
 ## [0.26.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.25.0...waterdataui-0.26.0) - 2020-02-12
 ### Added

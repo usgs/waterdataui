@@ -470,6 +470,15 @@ export const Actions = {
             type: 'SET_CURRENT_TIME_SERIES_ID',
             timeSeriesId
         };
+    },
+    /*
+     * @param {Number} cursorOffset - difference in epoch time from the start of the graph to the position of of the cursor
+     */
+    setDailyValueCursorOffset(cursorOffset) {
+        return {
+            type: 'SET_DAILY_VALUE_CURSOR_OFFSET',
+            cursorOffset
+        };
     }
 };
 
@@ -519,7 +528,9 @@ export const configureStore = function (initialState) {
             audiblePlayId: null,
             loadingTSKeys: []
         },
-        observationsState: {},
+        observationsState: {
+            cursorOffset: null
+        },
         floodState: {
             gageHeight: null
         },
