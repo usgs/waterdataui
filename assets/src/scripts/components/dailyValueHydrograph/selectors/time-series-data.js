@@ -122,17 +122,16 @@ export const getDataAtCursor = createSelector(
     getCursorEpochTime,
     getCurrentTimeSeriesPoints,
     (cursorEpochTime, points)=> {
-        console.log('Cursor epoch time is ' + cursorEpochTime);
         if (!points.length) {
             return null;
         }
-        console.log(`point at nearest time ${getNearestTime(points, cursorEpochTime).dateTime}`);
         return getNearestTime(points, cursorEpochTime);
     }
 );
 
 /*
- * Return a selector which returns the x, y coordinates of the cursor
+ * Return a selector which returns an array of objects with x, y coordinates, that represent
+ * the position of the line(s) at the cursor offset. Currently this is a single element array.
  */
 export const getCursorPoint = createSelector(
     getDataAtCursor,

@@ -6,7 +6,6 @@ import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import {drawWarningAlert, drawInfoAlert} from '../../d3-rendering/alerts';
-import {} from '../../d3-rendering/cursor-slider';
 
 import {link} from '../../lib/d3-redux';
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from '../../selectors/time-series-selector';

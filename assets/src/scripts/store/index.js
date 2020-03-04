@@ -475,7 +475,6 @@ export const Actions = {
      * @param {Number} cursorOffset - difference in epoch time from the start of the graph to the position of of the cursor
      */
     setDailyValueCursorOffset(cursorOffset) {
-        console.log('setting daily value cursor offset: ' + cursorOffset);
         return {
             type: 'SET_DAILY_VALUE_CURSOR_OFFSET',
             cursorOffset
