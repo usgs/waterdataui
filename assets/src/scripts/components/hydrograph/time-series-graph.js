@@ -18,7 +18,7 @@ import {createStructuredSelector} from 'reselect';
 import {getMainXScale, getMainYScale} from './scales';
 import {descriptionSelector, isVisibleSelector, titleSelector} from './time-series';
 import {drawDataLines} from './time-series-data';
-import {createTooltipFocus, createTooltipText}  from './tooltip';
+import {drawTooltipFocus, drawTooltipText}  from './tooltip';
 import {mediaQuery}  from '../../utils';
 
 const plotSvgDefs = function(elem) {
@@ -152,14 +152,14 @@ const watermark = function (elem, store) {
         }, getMainLayout));
 };
 
-export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
+export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, showTooltip) {
     let graphDiv;
 
     graphDiv = elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(watermark, store)
         .call(createTitle, store, siteNo, showMLName)
-        .call(createTooltipText, store);
+        .call(drawTooltipText, store);
     graphDiv.append('svg')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .classed('hydrograph-svg', true)
@@ -186,7 +186,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
                     .attr('y', 0)
                     .attr('width', layout.width - layout.margin.right)
                     .attr('height', layout.height - layout.margin.bottom);
-            svg.append('g')
+            const dataGroup = svg.append('g')
                 .attr('class', 'plot-data-lines-group')
                 .call(link(store, (elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), getMainLayout))
                 .call(link(store, appendAxes, getAxes()))
@@ -208,7 +208,6 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
                     layout: getMainLayout,
                     enableClip: () => true
                 })))
-                .call(createTooltipFocus, store)
                 .call(link(store, plotAllMedianPoints, createStructuredSelector({
                     visible: isVisibleSelector('median'),
                     xscale: getMainXScale('current'),
@@ -216,5 +215,8 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName) {
                     seriesPoints: getCurrentVariableMedianStatPoints,
                     enableClip: () => true
                 })));
+            if (showTooltip) {
+                dataGroup.call(drawTooltipFocus, store);
+            }
         }, getMainLayout));
 };

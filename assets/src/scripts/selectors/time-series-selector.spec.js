@@ -1,7 +1,241 @@
-import { getVariables, getSourceInfo, getSiteCodes, getCurrentVariableID, getCurrentDateRange, getTimeSeries,
-    getMonitoringLocationName, getAgencyCode, getCurrentVariable, getQueryInfo, getRequests, getCurrentParmCd,
-    hasTimeSeries, getTsRequestKey, getTsQueryInfo, getRequestTimeRange, isLoadingTS, getTSRequest,
-    getTimeSeriesCollectionIds, getIanaTimeZone, getNwisTimeZone } from './time-series-selector';
+import {
+    getVariables,
+    getSourceInfo,
+    getSiteCodes,
+    getCurrentVariableID,
+    getCurrentDateRange,
+    getTimeSeries,
+    hasAnyTimeSeries,
+    getMonitoringLocationName,
+    getAgencyCode,
+    getCurrentVariable,
+    getQueryInfo,
+    getRequests,
+    getCurrentParmCd,
+    hasTimeSeries,
+    getTsRequestKey,
+    getTsQueryInfo,
+    getRequestTimeRange,
+    isLoadingTS,
+    getTSRequest,
+    getTimeSeriesCollectionIds,
+    getIanaTimeZone,
+    getNwisTimeZone,
+    getAllMethodsForCurrentVariable,
+    getCurrentVariableTimeSeries,
+    getTimeSeriesForTsKey
+} from './time-series-selector';
+
+const TEST_DATA = {
+    series: {
+        timeSeries: {
+            '00060': {
+                tsKey: 'current:P7D',
+                startTime: 1520351100000,
+                endTime: 1520948700000,
+                variable: '45807197',
+                method: 69929,
+                points: [{
+                    value: 10,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: null,
+                    qualifiers: ['P', 'ICE'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: null,
+                    qualifiers: ['P', 'FLD'],
+                    approved: false,
+                    estimated: false
+                }]
+            },
+            '00010': {
+                tsKey: 'compare:P7D',
+                startTime: 1520351100000,
+                endTime: 1520948700000,
+                variable: '45807196',
+                method: 69931,
+                points: [{
+                    value: 1,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 2,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 3,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }]
+            },
+            '00010:2': {
+                tsKey: 'current:P7D',
+                startTime: 1520351100000,
+                endTime: 1520948700000,
+                variable: '45807196',
+                method: 69930,
+                points: [{
+                    value: 1,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 2,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 3,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }]
+            },
+            '00011': {
+                tsKey: 'compare:P7D',
+                startTime: 1520351100000,
+                endTime: 1520948700000,
+                variable: '45807195',
+                method: 69929,
+                points: [{
+                    value: 68,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 70,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: 77,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }]
+            },
+            '00060:P30D': {
+                tsKey: 'current:P30D:00060',
+                startTime: 1520351100000,
+                endTime: 1520948700000,
+                variable: '45807197',
+                method: 69929,
+                points: [{
+                    value: 10,
+                    qualifiers: ['P'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: null,
+                    qualifiers: ['P', 'ICE'],
+                    approved: false,
+                    estimated: false
+                }, {
+                    value: null,
+                    qualifiers: ['P', 'FLD'],
+                    approved: false,
+                    estimated: false
+                }]
+            }
+        },
+        timeSeriesCollections: {
+            'coll1': {
+                variable: 45807197,
+                timeSeries: ['00060']
+            }
+        },
+        requests: {
+            'current:P7D': {
+                timeSeriesCollections: ['coll1']
+            },
+            'current:P30D:00060': {}
+        },
+        variables: {
+            '45807197': {
+                variableCode: {
+                    value: '00060'
+                },
+                variableName: 'Streamflow',
+                variableDescription: 'Discharge, cubic feet per second',
+                oid: '45807197'
+            },
+            '45807196': {
+                variableCode: {
+                    value: '00010'
+                },
+                variableName: 'Temperature, water, degrees Celsius',
+                variableDescription: 'Water Temperature in Celsius',
+                oid: '45807196'
+            },
+            '45807195': {
+                variableCode: {
+                    value: '00011'
+                },
+                variableName: 'Temperature, water, degrees Fahrenheit',
+                variableDescription: 'Water Temperature in Fahrenheit',
+                oid: '45807195'
+            },
+            '55807196' : {
+                variableCode: {
+                    value: '11111'
+                },
+                variableName: 'My variable',
+                variableDescription: 'My awesome variable',
+                oid: '55807196'
+            }
+        },
+        methods: {
+            69329: {
+                methodDescription: '',
+                methodID: 69928
+            },
+            69330: {
+                methodDescription: '4.1 ft from riverbed (middle)',
+                methodID: 69930
+            },
+            69331: {
+                methodDescription: '1.0 ft from riverbed (bottom)',
+                methodID: 69931
+            }
+        },
+        queryInfo: {
+            'current:P7D': {
+                notes: {
+                    requestDT: 1483994767572,
+                    'filter:timeRange': {
+                        mode: 'PERIOD',
+                        periodDays: 7,
+                        modifiedSince: null
+                    }
+                }
+            },
+            'current:P30D:00060': {
+                notes: {
+                    requestDT: 1483994767572,
+                    'filter:timeRange': {
+                        mode: 'RANGE',
+                        interval: {
+                            start: 1483941600000,
+                            end: 1486533600000
+                        },
+                        modifiedSince: null
+                    }
+                }
+            }
+        }
+    },
+    timeSeriesState: {
+        currentVariableID: '45807197',
+        currentDateRange: 'P7D'
+    }
+};
 
 describe('timeSeriesSelector', () => {
     const TEST_VARS = {
@@ -54,6 +288,26 @@ describe('timeSeriesSelector', () => {
                     prop1: 'value1'
                 }
             });
+        });
+    });
+
+    describe('hasAnyTimeSeries', () => {
+        it('Return false if series is empty', () => {
+            expect(hasAnyTimeSeries({
+               series: {}
+            })).toBe(false);
+        });
+
+        it('Return true if series is not empty', () => {
+            expect(hasAnyTimeSeries({
+                series: {
+                    timeSeries: {
+                        '00010': {
+                            prop1: 'value1'
+                        }
+                    }
+                }
+            })).toBe(true);
         });
     });
 
@@ -647,6 +901,245 @@ describe('timeSeriesSelector', () => {
             expect(getTimeSeriesCollectionIds('compare')(TEST_DATA)).toBeNull();
             expect(getTimeSeriesCollectionIds('compare', 'P7D')(TEST_DATA)).toBeNull();
             expect(getTimeSeriesCollectionIds('current', 'P1Y', '00010')(TEST_DATA)).toBeNull({});
+        });
+    });
+
+    describe('getCurrentVariableTimeSeries', () => {
+        it('works', () => {
+            expect(getCurrentVariableTimeSeries('current', 'P7D')({
+                series: {
+                    requests: {
+                        'current:P7D': {
+                            timeSeriesCollections: ['coll1', 'coll2']
+                        }
+                    },
+                    timeSeriesCollections: {
+                        'coll1': {
+                            timeSeries: ['one', 'two'],
+                            variable: 45807197
+                        },
+                        'coll2': {
+                            timeSeries: ['three', 'four'],
+                            variable: 45807197
+                        },
+                        'coll3': {
+                            timeSeries: ['five', 'six'],
+                            variable: 'do not match'
+                        }
+                    },
+                    timeSeries: {
+                        one: {
+                            item: 'one',
+                            points: [1, 2],
+                            tsKey: 'current:P7D',
+                            variable: 45807197
+                        },
+                        two: {
+                            item: 'two',
+                            points: [],
+                            tsKey: 'current:P7D',
+                            variable: 45807197
+                        },
+                        three: {
+                            item: 'three',
+                            points: [3, 4],
+                            tsKey: 'current:P7D',
+                            variable: 45807197
+                        },
+                        four: {
+                            item: 'four',
+                            points: [4, 5],
+                            tsKey: 'current:P7D',
+                            variable: 45807197
+                        },
+                        five: {
+                            item: 'five',
+                            points: [5, 6],
+                            tsKey: 'compare:P7D',
+                            variable: 45807190
+                        },
+                        six: {
+                            item: 'six',
+                            points: [6, 7],
+                            tsKey: 'compare:P7D',
+                            variable: 45807190
+                        }
+                    },
+                    variables: {
+                        '45807197': {
+                            oid: 45807197,
+                            variableCode: {
+                                value: '00060',
+                                variableID: 45807197
+                            }
+                        }
+                    }
+                },
+                timeSeriesState: {
+                    currentVariableID: '45807197',
+                    currentDateRange: 'P7D'
+                }
+            })).toEqual({
+                one: {item: 'one', points: [1, 2], tsKey: 'current:P7D', variable: 45807197},
+                two: {item: 'two', points: [], tsKey: 'current:P7D', variable: 45807197},
+                three: {item: 'three', points: [3, 4], tsKey: 'current:P7D', variable: 45807197},
+                four: {item: 'four', points: [4, 5], tsKey: 'current:P7D', variable: 45807197}
+            });
+        });
+
+        it('returns {} if there is no currentVariableId', () => {
+            expect(getCurrentVariableTimeSeries('current', 'P7D')({
+                series: {},
+                timeSeriesState: {
+                    currentVariableID: null,
+                    currentDateRange: 'P7D'
+                }
+            })).toEqual({});
+        });
+    });
+
+    describe('getAllMethodsForCurrentVariable', () => {
+        it('Expect empty array if current variable has no time series', () => {
+            const newTestData = {
+                ...TEST_DATA,
+                timeSeriesState: {
+                    ...TEST_DATA.timeSeriesState,
+                    currentVariableID: '55807196'
+                }
+            };
+            expect(getAllMethodsForCurrentVariable(newTestData)).toEqual([]);
+        });
+
+        it('Expect method ids for current variable', () => {
+            const newTestData = {
+                ...TEST_DATA,
+                series: {
+                    ...TEST_DATA.series,
+                    timeSeries: {
+                        ...TEST_DATA.series.timeSeries,
+                        '00010:current:P7D': {
+                            tsKey: 'current:P7D',
+                            startTime: 1520351100000,
+                            endTime: 1520948700000,
+                            variable: '45807196',
+                            method: 69931,
+                            points: [{
+                                value: 1,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: 2,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: 3,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }]
+                        }
+                    }
+                },
+                timeSeriesState: {
+                    ...TEST_DATA.timeSeriesState,
+                    currentVariableID: '45807196'
+                }
+            };
+            const result = getAllMethodsForCurrentVariable(newTestData);
+            expect(result.length).toEqual(2);
+            expect(result).toContain({
+                methodDescription: '4.1 ft from riverbed (middle)',
+                methodID: 69930
+            });
+            expect(result).toContain({
+                methodDescription: '1.0 ft from riverbed (bottom)',
+                methodID: 69931
+            });
+        });
+    });
+
+    describe('getTimeSeriesForTsKey', () => {
+
+        it('should return the selected time series', () => {
+            expect(getTimeSeriesForTsKey('current')(TEST_DATA)).toEqual({
+                '00060': {
+                    tsKey: 'current:P7D',
+                    startTime: 1520351100000,
+                    endTime: 1520948700000,
+                    points: [{
+                        value: 10,
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: null,
+                        qualifiers: ['P', 'ICE'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: null,
+                        qualifiers: ['P', 'FLD'],
+                        approved: false,
+                        estimated: false
+                    }],
+                    variable: '45807197',
+                    method: 69929
+                },
+                '00010:2': {
+                    tsKey: 'current:P7D',
+                    startTime: 1520351100000,
+                    endTime: 1520948700000,
+                    variable: '45807196',
+                    method: 69930,
+                    points: [{
+                        value: 1,
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: 2,
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: 3,
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
+                    }]
+                }
+            });
+            expect(getTimeSeriesForTsKey('current','P30D')(TEST_DATA)).toEqual({
+                '00060:P30D': {
+                    tsKey: 'current:P30D:00060',
+                    startTime: 1520351100000,
+                    endTime: 1520948700000,
+                    variable: '45807197',
+                    method: 69929,
+                    points: [{
+                        value: 10,
+                        qualifiers: ['P'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: null,
+                        qualifiers: ['P', 'ICE'],
+                        approved: false,
+                        estimated: false
+                    }, {
+                        value: null,
+                        qualifiers: ['P', 'FLD'],
+                        approved: false,
+                        estimated: false
+                    }]
+                }
+            });
+        });
+
+        it('should return null the empty set if no time series for the selected key exist', () => {
+            expect(getTimeSeriesForTsKey('compare:P7D')(TEST_DATA)).toEqual({});
         });
     });
 });

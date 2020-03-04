@@ -3,15 +3,16 @@ import './polyfills';
 import wdfnviz from 'wdfn-viz';
 
 // Load misc Javascript helpers for general page interactivity.
-import { register } from './helpers';
+import {register} from './helpers';
 register();
 
-import { configureStore } from './store';
+import {configureStore} from './store';
+import {getParamString} from './url-params';
 
-import { attachToNode as EmbedComponent } from './components/embed';
-import { attachToNode as DailyValueHydrographComponent } from './components/dailyValueHydrograph';
-import { attachToNode as HydrographComponent } from './components/hydrograph';
-import { attachToNode as MapComponent } from './components/map';
+import {attachToNode as EmbedComponent} from './components/embed';
+import {attachToNode as DailyValueHydrographComponent} from './components/dailyValueHydrograph';
+import {attachToNode as HydrographComponent} from './components/hydrograph';
+import {attachToNode as MapComponent} from './components/map';
 
 const COMPONENTS = {
     embed: EmbedComponent,
@@ -19,6 +20,7 @@ const COMPONENTS = {
     hydrograph: HydrographComponent,
     map: MapComponent
 };
+
 
 const load = function () {
     let nodes = document.getElementsByClassName('wdfn-component');
@@ -31,7 +33,8 @@ const load = function () {
         // If options is specified on the node, expect it to be a JSON string.
         // Otherwise, use the dataset attributes as the component options.
         const options = node.dataset.options ? JSON.parse(node.dataset.options) : node.dataset;
-        COMPONENTS[node.dataset.component](store, node, options);
+        const hashOptions = Object.fromEntries(new window.URLSearchParams(getParamString()));
+        COMPONENTS[node.dataset.component](store, node, Object.assign({}, options, hashOptions));
     }
 
 

@@ -129,7 +129,20 @@ describe('nldi-data-reducer', () => {
                                 navigation: 'https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-03325000/navigate'
                             }
                         }
-                    ]
+                    ],
+                upstreamBasin: {
+                            type: 'FeatureCollection',
+                            features: [
+                                {
+                                    type: 'Feature',
+                                    geometry: {
+                                        type: 'Polygon',
+                                        coordinates: [[-105.996400477, 36.1905362630001], [-105.994985767, 36.20007602], [-105.997781253, 36.2060425510001], [-105.995979878, 36.2080856000001]]
+                                    },
+                                    properties: {}
+                                }
+                                ]
+                }
             })).toEqual({
                     upstreamFlows: [
                         {
@@ -254,7 +267,20 @@ describe('nldi-data-reducer', () => {
                                 navigation: 'https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-03325000/navigate'
                             }
                         }
-                    ]
+                    ],
+                upstreamBasin: {
+                            type: 'FeatureCollection',
+                            features: [
+                                {
+                                    type: 'Feature',
+                                    geometry: {
+                                        type: 'Polygon',
+                                        coordinates: [[-105.996400477, 36.1905362630001], [-105.994985767, 36.20007602], [-105.997781253, 36.2060425510001], [-105.995979878, 36.2080856000001]]
+                                    },
+                                    properties: {}
+                                }
+                                ]
+                }
             });
         });
     });

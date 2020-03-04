@@ -1,14 +1,31 @@
 
 import {
+    getObservationsCursorOffset,
     getCurrentObservationsTimeSeriesId,
     getAllObservationsTimeSeries,
     hasCurrentObservationsTimeSeries,
     getCurrentObservationsTimeSeries,
+    getCurrentObservationsTimeSeriesUnitOfMeasure,
     getCurrentObservationsTimeSeriesTimeRange,
     getCurrentObservationsTimeSeriesValueRange
 } from './observations-selector';
 
 describe('observations-selector', () => {
+    describe('getObservationsCursorOffset', () => {
+       it('Should be null if no cursorOffset set', () => {
+           expect(getObservationsCursorOffset({
+               observationsState: {}
+           })).toBeNull();
+       });
+
+       it('Should return the cursorOofset if set in store', () => {
+           expect(getObservationsCursorOffset({
+               observationsState: {
+                   cursorOffset: 1234567880
+               }
+           })).toEqual(1234567880);
+       });
+    });
     describe('getCurrentObservationsTimeSeriesId', () => {
        it('should be false if no current time series id set', () => {
            expect(getCurrentObservationsTimeSeriesId({
@@ -165,6 +182,41 @@ describe('observations-selector', () => {
                 type: 'Feature',
                 id: '12345'
             });
+        });
+    });
+
+    describe('getCurrentObservationsTimeSeriesUnitOfMeasure', () => {
+        it('expect empty string if not time series defined', () => {
+            expect(getCurrentObservationsTimeSeriesUnitOfMeasure({
+                observationsData : {},
+                observationsState: {}
+            })).toEqual('');
+        });
+
+        it('Expect the unit of measure for current time series', () => {
+            expect(getCurrentObservationsTimeSeriesUnitOfMeasure({
+                observationsData: {
+                    timeSeries: {
+                        '12345': {
+                            type: 'Feature',
+                            id: '12345',
+                            properties: {
+                                unitOfMeasureName: 'ft'
+                            }
+                        },
+                        '12346': {
+                            type: 'Feature',
+                            id: '12345',
+                            properties: {
+                                unitOfMeasureName: 'km'
+                            }
+                        }
+                    }
+                },
+                observationsState: {
+                    currentTimeSeriesId: '12345'
+                }
+            })).toEqual('ft');
         });
     });
 

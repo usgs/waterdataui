@@ -33,7 +33,8 @@ describe('components/dailyValueHydrograph/time-series-graph', () => {
             }
         },
         observationsState: {
-            currentTimeSeriesId: '12345'
+            currentTimeSeriesId: '12345',
+            cursorOffset: 1262476800000
         },
         ui: {
             windowWidth: 1024,
@@ -111,6 +112,13 @@ describe('components/dailyValueHydrograph/time-series-graph', () => {
 
                 done();
             });
+        });
+
+        it('Should render the tooltip elements in the svg', () => {
+            const svg = testDiv.selectAll('svg');
+            expect(svg.selectAll('.focus-line').size()).toBe(1);
+            expect(svg.selectAll('.focus-circle').size()).toBe(1);
+            expect(svg.selectAll('.focus-overlay').size()).toBe(1);
         });
     });
 });

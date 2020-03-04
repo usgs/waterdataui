@@ -14,7 +14,7 @@ import {getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, g
 
 import {fetchFloodFeatures, fetchFloodExtent} from '../web-services/flood-data';
 import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from '../web-services/models';
-import {fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow} from '../web-services/nldi-data';
+import {fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow, fetchNldiUpstreamBasin} from '../web-services/nldi-data';
 import {fetchTimeSeries} from '../web-services/observations';
 import {fetchSiteStatistics} from '../web-services/statistics-data';
 
@@ -61,7 +61,6 @@ const getCurrentVariableId = function(timeSeries, variables) {
     }
 };
 
-
 export const Actions = {
     retrieveLocationTimeZone(latitude, longitude) {
         return function(dispatch) {
@@ -81,22 +80,15 @@ export const Actions = {
             const currentState = getState();
             const requestKey = getTsRequestKey('current', 'P7D')(currentState);
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
-
             return getTimeSeries({sites: [siteno], params}).then(
                 series => {
                     const collection = normalize(series, requestKey);
-                    // get the lat/lon of the site
-                    const location = collection.sourceInfo ? collection.sourceInfo[siteno].geoLocation.geogLocation : {};
-                    const latitude = location.latitude || null;
-                    const longitude = location.longitude || null;
 
                     // Get the start/end times of this request's range.
                     const notes = collection.queryInfo[requestKey].notes;
                     const endTime = notes.requestDT;
                     const startTime = calcStartTime('P7D', endTime, 'local');
-                    if (latitude !== null && longitude !== null) {
-                        dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
-                    }
+
                     // Trigger a call to get last year's data
                     dispatch(Actions.retrieveCompareTimeSeries(siteno, 'P7D', startTime, endTime));
 
@@ -107,8 +99,7 @@ export const Actions = {
                     // Update the application state
                     dispatch(Actions.toggleTimeSeries('current', true));
                     const variable = getCurrentVariableId(collection.timeSeries || {}, collection.variables || {});
-                    const action = Actions.setCurrentVariable(variable);
-                    dispatch(action);
+                    dispatch(Actions.setCurrentVariable(variable));
                     dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
                 },
                 () => {
@@ -200,19 +191,19 @@ export const Actions = {
             );
         };
     },
-    retrieveExtendedTimeSeries(site, period) {
+    retrieveExtendedTimeSeries(site, period, paramCd=null) {
         return function(dispatch, getState) {
             const state = getState();
-            const parmCd = getCurrentParmCd(state);
-            const requestKey = getTsRequestKey ('current', period, parmCd)(state);
+            const thisParamCd = paramCd ? paramCd : getCurrentParmCd(state);
+            const requestKey = getTsRequestKey ('current', period, thisParamCd)(state);
             dispatch(Actions.setCurrentDateRange(period));
-            if (!hasTimeSeries('current', period, parmCd)(state)) {
+            if (!hasTimeSeries('current', period, thisParamCd)(state)) {
                 dispatch(Actions.addTimeSeriesLoading([requestKey]));
                 const endTime = getRequestTimeRange('current', 'P7D')(state).end;
                 const startTime = calcStartTime(period, endTime);
                 return getTimeSeries({
                     sites: [site],
-                    params: [parmCd],
+                    params: [thisParamCd],
                     startDate: startTime,
                     endDate: endTime
                 }).then(
@@ -221,10 +212,9 @@ export const Actions = {
                         dispatch(Actions.retrieveCompareTimeSeries(site, period, startTime, endTime));
                         dispatch(Actions.addSeriesCollection(requestKey, collection));
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
-                        dispatch(Actions.toggleTimeSeries('median', true));
                     },
                     () => {
-                        console.log(`Unable to fetch data for period ${period} and parameter code ${parmCd}`);
+                        console.log(`Unable to fetch data for period ${period} and parameter code ${thisParamCd}`);
                         dispatch(Actions.addSeriesCollection(requestKey, {}));
                         dispatch(Actions.removeTimeSeriesLoading([requestKey]));
                     }
@@ -265,12 +255,13 @@ export const Actions = {
             const downstreamFlow = fetchNldiDownstreamFlow(siteno);
             const upstreamSites = fetchNldiUpstreamSites(siteno);
             const downstreamSites = fetchNldiDownstreamSites(siteno);
+            const upstreamBasin = fetchNldiUpstreamBasin(siteno);
 
             return Promise.all([
-                upstreamFlow, downstreamFlow, upstreamSites, downstreamSites
+                upstreamFlow, downstreamFlow, upstreamSites, downstreamSites, upstreamBasin
             ]).then(function(data) {
-               const [upStreamLines, downStreamLines, upStreamPoints, downStreamPoints] = data;
-               dispatch(Actions.setNldiFeatures(upStreamLines, downStreamLines, upStreamPoints, downStreamPoints));
+               const [upStreamLines, downStreamLines, upStreamPoints, downStreamPoints, upstreamBasin] = data;
+               dispatch(Actions.setNldiFeatures(upStreamLines, downStreamLines, upStreamPoints, downStreamPoints, upstreamBasin));
             });
         };
     },
@@ -344,13 +335,14 @@ export const Actions = {
             extent
         };
     },
-    setNldiFeatures(upstreamFlows, downstreamFlows, upstreamSites, downstreamSites) {
+    setNldiFeatures(upstreamFlows, downstreamFlows, upstreamSites, downstreamSites, upstreamBasin) {
         return {
             type: 'SET_NLDI_FEATURES',
             upstreamFlows,
             downstreamFlows,
             upstreamSites,
-            downstreamSites
+            downstreamSites,
+            upstreamBasin
         };
     },
     setObservationsTimeSeries(timeSeriesId, data) {
@@ -450,8 +442,7 @@ export const Actions = {
             const locationIanaTimeZone = getIanaTimeZone(state);
             const startTime = new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis();
             const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis();
-
-            dispatch(Actions.retrieveCustomTimeSeries(siteno, startTime, endTime, parmCd));
+            return dispatch(Actions.retrieveCustomTimeSeries(siteno, startTime, endTime, parmCd));
         };
     },
     setGageHeightFromStageIndex(index) {
@@ -478,6 +469,15 @@ export const Actions = {
         return {
             type: 'SET_CURRENT_TIME_SERIES_ID',
             timeSeriesId
+        };
+    },
+    /*
+     * @param {Number} cursorOffset - difference in epoch time from the start of the graph to the position of of the cursor
+     */
+    setDailyValueCursorOffset(cursorOffset) {
+        return {
+            type: 'SET_DAILY_VALUE_CURSOR_OFFSET',
+            cursorOffset
         };
     }
 };
@@ -509,7 +509,8 @@ export const configureStore = function (initialState) {
             upstreamFlows: [],
             downstreamFlows: [],
             upstreamSites: [],
-            downstreamSites: []
+            downstreamSites: [],
+            upstreamBasin: []
         },
 
         statisticsData: {},
@@ -527,7 +528,9 @@ export const configureStore = function (initialState) {
             audiblePlayId: null,
             loadingTSKeys: []
         },
-        observationsState: {},
+        observationsState: {
+            cursorOffset: null
+        },
         floodState: {
             gageHeight: null
         },

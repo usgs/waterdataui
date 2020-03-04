@@ -24,7 +24,7 @@ export const getYAxis = createSelector(
         return axisLeft()
             .scale(yScale)
             .tickSizeOuter(0)
-            .tickSizeInner(-layout.width + layout.margin.right + layout.margin.left)
+            .tickSizeInner(-layout.width + layout.margin.right)
             .tickFormat(format('.1f'));
     }
 );

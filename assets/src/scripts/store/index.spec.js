@@ -164,18 +164,18 @@ describe('Redux store', () => {
 
             it('should fetch the times series, retrieve the compare time series once the time series is fetched and fetch the statistics', (done) => {
                 spyOn(Actions, 'addSeriesCollection');
-                spyOn(Actions, 'retrieveLocationTimeZone');
                 spyOn(Actions, 'retrieveCompareTimeSeries');
                 spyOn(Actions, 'toggleTimeSeries');
                 spyOn(Actions, 'setCurrentVariable');
+                spyOn(Actions, 'setGageHeight');
                 let p = Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
 
+                expect(Actions.addTimeSeriesLoading.calls.count()).toBe(1);
+                expect(Actions.addTimeSeriesLoading.calls.argsFor(0)[0]).toEqual(['current:P7D']);
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(8);
+                    expect(mockDispatch.calls.count()).toBe(7);
                     expect(Actions.addSeriesCollection.calls.count()).toBe(1);
                     expect(Actions.addSeriesCollection.calls.argsFor(0)[0]).toBe('current');
-                    expect(Actions.retrieveLocationTimeZone.calls.count()).toBe(1);
-                    expect(Actions.retrieveLocationTimeZone.calls.argsFor(0)).toEqual([42.72027778, -90.8191667]);
                     expect(Actions.removeTimeSeriesLoading.calls.count()).toBe(1);
                     expect(Actions.removeTimeSeriesLoading.calls.argsFor(0)[0]).toEqual(['current:P7D']);
                     expect(Actions.retrieveCompareTimeSeries.calls.count()).toBe(1);
@@ -184,7 +184,7 @@ describe('Redux store', () => {
                     expect(Actions.toggleTimeSeries.calls.argsFor(0)).toEqual(['current', true]);
                     expect(Actions.setCurrentVariable.calls.count()).toBe(1);
                     expect(Actions.setCurrentVariable.calls.argsFor(0)).toEqual(['45807197']);
-
+                    expect(Actions.setGageHeight.calls.count()).toBe(1);
                     done();
                 });
             });
@@ -636,20 +636,24 @@ describe('Redux store', () => {
                 mockGetState.and.returnValue(TEST_STATE);
                 spyOn(Actions, 'retrieveCompareTimeSeries');
                 spyOn(Actions, 'addSeriesCollection');
+                spyOn(Actions, 'setCurrentDateRange');
                 let p = Actions.retrieveExtendedTimeSeries('12345678', 'P30D')(mockDispatch, mockGetState);
                 request = jasmine.Ajax.requests.mostRecent();
                 request.respondWith({
                     responseText: MOCK_DATA,
                     status: 200
                 });
+                expect(Actions.addTimeSeriesLoading.calls.count()).toBe(1);
+                expect(Actions.addTimeSeriesLoading.calls.argsFor(0)[0]).toEqual(['current:P30D:00060']);
+                expect(Actions.setCurrentDateRange.calls.count()).toBe(1);
+                expect(Actions.setCurrentDateRange.calls.argsFor(0)[0], 'P30D');
                 p.then(() => {
-                    expect(mockDispatch.calls.count()).toBe(6);
+                    expect(mockDispatch.calls.count()).toBe(5);
                     expect(Actions.addSeriesCollection).toHaveBeenCalled();
                     expect(Actions.addSeriesCollection.calls.argsFor(0)[0]).toEqual('current:P30D:00060');
                     expect(Actions.retrieveCompareTimeSeries).toHaveBeenCalled();
                     expect(Actions.retrieveCompareTimeSeries.calls.argsFor(0)[1]).toEqual('P30D');
                     expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['current:P30D:00060']);
-                    expect(Actions.toggleTimeSeries).toHaveBeenCalledWith('median', true);
                     done();
                 });
             });
@@ -1182,6 +1186,13 @@ describe('Redux store', () => {
             expect(Actions.setCurrentObservationsTimeSeriesId('12345')).toEqual({
                 type: 'SET_CURRENT_TIME_SERIES_ID',
                 timeSeriesId: '12345'
+            });
+        });
+
+        it('should create an action to set the current daily value graph cursor offset', () => {
+            expect(Actions.setDailyValueCursorOffset('13566')).toEqual({
+                type: 'SET_DAILY_VALUE_CURSOR_OFFSET',
+                cursorOffset: '13566'
             });
         });
     });

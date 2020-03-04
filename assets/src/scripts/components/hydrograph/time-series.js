@@ -1,12 +1,10 @@
-import { timeFormat } from 'd3-time-format';
 import memoize from 'fast-memoize';
-import _includes from 'lodash/includes';
-import uniq from 'lodash/uniq';
-import { createSelector } from 'reselect';
+import {DateTime} from 'luxon';
+import {createSelector} from 'reselect';
 
 import {
-    getRequestTimeRange, getCurrentVariable, getTsRequestKey, getIanaTimeZone, getCurrentParmCd, getCurrentMethodID,
-    getMethods, getTimeSeries
+    getRequestTimeRange, getCurrentVariable, getTimeSeriesForTsKey, getIanaTimeZone, getCurrentParmCd, getCurrentMethodID,
+    getMethods
 } from '../../selectors/time-series-selector';
 
 
@@ -35,74 +33,11 @@ export const TEMPERATURE_PARAMETERS = {
 };
 
 
-// Create a time formatting function from D3's timeFormat
-const formatTime = timeFormat('%c %Z');
 
-/**
- * Returns a selector that, for a given tsKey and period:
- * Selects all time series data. If period is null then, the currentDateRange is used
- * @param  {String} tsKey   Time-series key
- * @param {String} period or null date range using ISO-8601 duration;
- * @param  {Object} state   Redux state
- * @return {Object} - Keys are tsID, values are time-series data
- */
-export const getTimeSeriesForTsKey = memoize((tsKey, period) => createSelector(
-    getTsRequestKey(tsKey, period),
-    getTimeSeries,
-    (tsRequestKey, timeSeries) => {
-        let x = {};
-        Object.keys(timeSeries).forEach(key => {
-            const series = timeSeries[key];
-            if (series.tsKey === tsRequestKey) {
-                x[key] = series;
-            }
-        });
-        return x;
-    }
-));
+const formatTime = function(timeInMillis, timeZone) {
+    return DateTime.fromMillis(timeInMillis, {zone: timeZone}).toFormat('L/d/yyyy tt ZZZ');
+};
 
-/**
- * Returns a selector that, for a given tsKey:
- * Selects all time series for the current time series variable and current date range.
- * @param  {String} tsKey   Time-series key
- * @param  {Object} state   Redux state
- * @return {Object}         Time-series data
- */
-export const getCurrentVariableTimeSeries = memoize((tsKey, period) => createSelector(
-    getTimeSeriesForTsKey(tsKey, period),
-    getCurrentVariable,
-    (timeSeries, variable) => {
-        let ts = {};
-        if (variable) {
-            Object.keys(timeSeries).forEach(key => {
-                const series = timeSeries[key];
-                if (series.variable === variable.oid) {
-                    ts[key] = series;
-                }
-            });
-        }
-        return ts;
-    }
-));
-
-/*
- * @param {String} tsKey - current or compare
- * @param {String} or null period - date range of interest specified as an ISO-8601 duration. If null, P7D is assumed
- * @param {String} or null parmCd - Only need to specify if period is something other than P7D or null
- * return {Array} an object containing method_id and method_description properties
- */
-export const getAllMethodsForCurrentVariable = createSelector(
-    getMethods,
-    getCurrentVariableTimeSeries('current', 'P7D'),
-    (methods, timeSeries) => {
-        const allMethods = Object.values(methods);
-        const currentMethodIds = uniq(Object.values(timeSeries).map((ts) => ts.method));
-
-        return allMethods.filter((method) => {
-            return _includes(currentMethodIds, method.methodID);
-        });
-    }
-);
 
 export const hasTimeSeriesWithPoints = memoize((tsKey, period) => createSelector(
     getTimeSeriesForTsKey(tsKey, period),
@@ -172,10 +107,11 @@ export const titleSelector = createSelector(
 export const descriptionSelector = createSelector(
     getCurrentVariable,
     getRequestTimeRange('current', 'P7D'),
-    (variable, requestTimeRange) => {
+    getIanaTimeZone,
+    (variable, requestTimeRange, timeZone) => {
         const desc = variable ? variable.variableDescription : '';
         if (requestTimeRange) {
-            return `${desc} from ${formatTime(requestTimeRange.start)} to ${formatTime(requestTimeRange.end)}`;
+            return `${desc} from ${formatTime(requestTimeRange.start, timeZone)} to ${formatTime(requestTimeRange.end, timeZone)}`;
         } else {
             return desc;
         }

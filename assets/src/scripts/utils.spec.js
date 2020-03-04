@@ -2,7 +2,7 @@ import {select} from 'd3-selection';
 import {
     unicodeHtmlEntity, getHtmlFromString, deltaDays, replaceHtmlEntities, setEquality,
     wrap, mediaQuery, calcStartTime, callIf, parseRDB, convertFahrenheitToCelsius,
-    convertCelsiusToFahrenheit, sortedParameters} from './utils';
+    convertCelsiusToFahrenheit, sortedParameters, getNearestTime} from './utils';
 
 
 describe('Utils module', () => {
@@ -275,6 +275,62 @@ describe('Utils module', () => {
 
         it('handles the case where variables are undefined', () => {
             expect(sortedParameters(undefined).length).toEqual(0);
+        });
+    });
+
+    describe('getNearestTime', () => {
+        let DATA = [12, 13, 14, 15, 16].map(hour => {
+            return {
+                dateTime: new Date(`2018-01-03T${hour}:00:00.000Z`).getTime(),
+                qualifiers: ['P'],
+                value: hour
+            };
+        });
+        DATA = DATA.concat([
+            {
+                dateTime: 1514998800000,
+                qualifiers: ['Fld', 'P'],
+                value: null
+            },
+            {
+                dateTime: 1515002400000,
+                qualifiers: ['Mnt', 'P'],
+                value: null
+            }
+
+        ]);
+        it('Return null if the DATA array is empty', function() {
+            expect(getNearestTime([], DATA[0].dateTime)).toBeNull();
+        });
+
+        it('return correct DATA points via getNearestTime' , () => {
+            // Check each date with the given offset against the hourly-spaced
+            // test DATA.
+            function expectOffset(offset, side) {
+                for (let [index, datum] of DATA.entries()) {
+                    let expected;
+                    if (side === 'left' || index === DATA.length - 1) {
+                        expected = {datum, index};
+                    } else {
+                        expected = {datum: DATA[index + 1], index: index + 1};
+                    }
+                    let time = new Date(datum.dateTime + offset);
+                    let returned = getNearestTime(DATA, time);
+
+                    expect(returned.datum.dateTime).toBe(expected.datum.dateTime);
+                    expect(returned.datum.index).toBe(expected.datum.index);
+                }
+            }
+
+            let hour = 3600000;  // 1 hour in milliseconds
+
+            // Check each date against an offset from itself.
+            expectOffset(0, 'left');
+            expectOffset(1, 'left');
+            expectOffset(hour / 2 - 1, 'left');
+            expectOffset(hour / 2, 'left');
+            expectOffset(hour / 2 + 1, 'right');
+            expectOffset(hour - 1, 'right');
         });
     });
 });

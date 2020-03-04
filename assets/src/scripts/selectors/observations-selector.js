@@ -2,6 +2,8 @@ import {extent} from 'd3-array';
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
+export const getObservationsCursorOffset = (state) => state.observationsState.cursorOffset || null;
+
 /*
  * Return a selector function which returns the current time series id or null if none define
  * @return {Function} - selector function which returns {String}
@@ -37,6 +39,17 @@ export const getCurrentObservationsTimeSeries = createSelector(
     getAllObservationsTimeSeries,
     (timeSeriesId, allTimeSeries) => {
         return timeSeriesId && allTimeSeries && allTimeSeries[timeSeriesId] ? allTimeSeries[timeSeriesId] : null;
+    }
+);
+
+/*
+ * Return a selector function which returns a String representing the unit of measure for the current observations time series
+ * @return {Function} - selector function returns a String. String will be empty if no current time series available.
+ */
+export const getCurrentObservationsTimeSeriesUnitOfMeasure = createSelector(
+    getCurrentObservationsTimeSeries,
+    (currentTimeSeries) => {
+        return currentTimeSeries ? currentTimeSeries.properties.unitOfMeasureName : '';
     }
 );
 

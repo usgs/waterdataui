@@ -43,8 +43,6 @@ export const getCurrentTimeSeriesLineSegments = createSelector(
                 });
             }
 
-            console.log('resultValue: '+resultValue+' date: '+date+' approvals: '+timeSeries.properties.approvals[index]);
-
             if (hasGap || hasDifferentApprovals) {
                 lineSegments.push(segment);
                 segment = {

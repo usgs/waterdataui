@@ -10,7 +10,7 @@ import { Actions } from '../../store';
 import { floodSlider } from './flood-slider';
 import { createLegendControl, createFIMLegend, createNldiLegend } from './legend';
 import { addNldiLayers} from './nldiMapping';
-import { hasNldiData, getNldiDownstreamFlows, getNldiDownstreamSites, getNldiUpstreamFlows, getNldiUpstreamSites}
+import { hasNldiData, getNldiDownstreamFlows, getNldiDownstreamSites, getNldiUpstreamFlows, getNldiUpstreamSites, getNldiUpstreamBasin}
     from '../../selectors/nldi-data-selector';
 
 
@@ -95,8 +95,8 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
     };
 
 
-    const updateNldiLayers = function (node, {upstreamFlows, downstreamFlows, upstreamSites, downstreamSites}) {
-        addNldiLayers(map, upstreamFlows, downstreamFlows, upstreamSites, downstreamSites);
+    const updateNldiLayers = function (node, {upstreamFlows, downstreamFlows, upstreamSites, downstreamSites, upstreamBasin}) {
+        addNldiLayers(map, upstreamFlows, downstreamFlows, upstreamSites, downstreamSites, upstreamBasin);
     };
 
 
@@ -170,7 +170,8 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
             upstreamFlows: getNldiUpstreamFlows,
             downstreamFlows: getNldiDownstreamFlows,
             upstreamSites: getNldiUpstreamSites,
-            downstreamSites: getNldiDownstreamSites
+            downstreamSites: getNldiDownstreamSites,
+            upstreamBasin: getNldiUpstreamBasin
         })));
 };
 
