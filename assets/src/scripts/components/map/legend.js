@@ -6,7 +6,8 @@ import { control as createControl, DomUtil, DomEvent } from 'leaflet';
 import { get } from '../../ajax';
 import config from '../../config';
 import { mediaQuery } from '../../utils';
-import { markerFillColor, markerFillOpacity, downStreamColor, upstreamColor, flowLineOpacity } from './nldiMapping';
+import { markerFillColor, markerFillOpacity, downStreamColor, upstreamColor, flowLineOpacity,
+         basinFillColor, basinFillOpacity} from './nldiMapping';
 
 
 const fetchLayerLegend = function(layer, defaultName) {
@@ -162,6 +163,10 @@ export const createNldiLegend = function(legendControl, isNldiAvailable) {
         nldiMarker.append('span').attr('style', `color: ${markerFillColor}; width: 16px; height: 16px; float: left; opacity: ${markerFillOpacity}; margin-right: 2px;`)
             .attr('class', 'fas fa-circle');
         nldiMarker.append('span').text('Additional Monitoring Locations');
+
+        const nldiBasin = nldiLegendList.append('li');
+        nldiBasin.append('span').attr('style', `background: ${basinFillColor}; width: 16px; height: 16px; float: left; opacity: ${basinFillOpacity}; margin-right: 2px;`);
+        nldiBasin.append('span').text('Upstream Basin');
 
         compressLegendOnSmallDevices(legendControl);
 
