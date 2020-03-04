@@ -79,13 +79,13 @@ export const getXScale = memoize((kind, tsKey) => createSelector(
             if (hydrographXRange) {
                 if (tsKey === 'compare') {
                     try {
-                        timeRange = {};
-                        timeRange['start'] = DateTime.fromMillis(hydrographXRange['start']).minus({'years': 1}).toMillis();
-                        timeRange['end'] = DateTime.fromMillis(hydrographXRange['end']).minus({'years': 1}).toMillis();
+                        timeRange = {
+                            'start': DateTime.fromMillis(hydrographXRange['start']).minus({'years': 1}).toMillis(),
+                            'end': DateTime.fromMillis(hydrographXRange['end']).minus({'years': 1}).toMillis()
+                        };
                     } catch(err) {
                         timeRange = requestTimeRange;
                     }
-
                 } else{
                     timeRange = hydrographXRange;
                 }
