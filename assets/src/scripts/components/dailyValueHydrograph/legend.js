@@ -1,5 +1,4 @@
-// functions to facilitate legend creation for a d3 plot
-import { set } from 'd3-collection';
+// functions to facilitate DV legend creation for a d3 plot
 import memoize from 'fast-memoize';
 import {createSelector, createStructuredSelector} from 'reselect';
 
@@ -39,7 +38,7 @@ const createLegendMarkers = function(displayItems) {
 
     if (displayItems.current) {
         const currentMarkers = [
-            ...tsLineMarkers('current', displayItems.current),
+            ...tsLineMarkers('current', displayItems.current)
         ];
         if (currentMarkers.length) {
             legendMarkers.push([
@@ -143,7 +142,7 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
             result.estimated = result.estimated || segment.approvals.includes('Estimated');
             result.default = result.default || segment.approvals.length === 0;
         });
-        return result
+        return result;
     }
 ));
 
@@ -155,9 +154,9 @@ const legendDisplaySelector = createSelector(
     (state) => state.timeSeriesState.showSeries,
     uniqueClassesSelector('current'),
     uniqueClassesSelector('compare'),
-    (showSeries, medianSeries, currentClasses, compareClasses) => {
+    (showSeries, medianSeries, currentClasses) => {
         return {
-            current: showSeries.current ? currentClasses : undefined,
+            current: showSeries.current ? currentClasses : undefined
         };
     }
 );
