@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - All IV time series are now available for drawing on the hydrograph not just those in the last 7 days.
 - Added brush handle fill.
+- Updated to latest wdfn-viz 1.4.0 and implemented the new build guidance.
 
 ### Added
 - The state of the UI for the hydrograph is now preserved in the hash portion of the url and state 
