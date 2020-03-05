@@ -1,6 +1,6 @@
 import { select, selectAll } from 'd3-selection';
 import { drawSimpleLegend, legendMarkerRowsSelector, drawTimeSeriesLegend } from './legend';
-import { lineMarker, rectangleMarker, textOnlyMarker } from './markers';
+import { lineMarker, rectangleMarker, textOnlyMarker } from '../../d3-rendering/markers';
 import {Actions, configureStore} from '../../store';
 
 describe('Legend module', () => {

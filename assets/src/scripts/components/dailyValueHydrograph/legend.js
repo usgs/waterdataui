@@ -3,24 +3,16 @@ import { set } from 'd3-collection';
 import memoize from 'fast-memoize';
 import {createSelector, createStructuredSelector} from 'reselect';
 
+import {defineLineMarker, defineTextOnlyMarker} from '../../d3-rendering/markers';
 import {getLayout} from './selectors/layout';
-import { defineLineMarker, defineTextOnlyMarker } from '../hydrograph/markers';
-
-import { currentVariableLineSegmentsSelector } from '../hydrograph/drawing-data';
-//import { getCurrentTimeSeriesLineSegments } from './selectors/time-series-lines';
+import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-lines';
 
 import config from '../../config';
 import { mediaQuery } from '../../utils';
 import {link} from '../../lib/d3-redux';
 
-const TS_LABEL = {
-    'current': 'Current: '
-};
-
 const tsLineMarkers = function(tsKey, lineClasses) {
     let result = [];
-
-    console.log('tsKey:'+tsKey);
 
     if (lineClasses.default) {
         result.push(defineLineMarker(null, `line-segment ts-${tsKey}`, 'Provisional'));
@@ -51,7 +43,7 @@ const createLegendMarkers = function(displayItems) {
         ];
         if (currentMarkers.length) {
             legendMarkers.push([
-                defineTextOnlyMarker(TS_LABEL.current, null, 'ts-legend-current-text'),
+                defineTextOnlyMarker('', null, 'ts-legend-current-text'),
                 ...currentMarkers
             ]);
         }
@@ -139,15 +131,19 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
 
 
 const uniqueClassesSelector = memoize(tsKey => createSelector(
-    currentVariableLineSegmentsSelector(tsKey),
-    //getCurrentTimeSeriesLineSegments(tsKey),
+    getCurrentTimeSeriesLineSegments,
     (tsLineSegments) => {
-        let classes = [].concat(...Object.values(tsLineSegments)).map((line) => line.classes);
-        return {
-            default: classes.some((cls) => !cls.approved && !cls.estimated),
-            approved: classes.some((cls) => cls.approved),
-            estimated: classes.some((cls) => cls.estimated),
+        let result = {
+            default: false,
+            approved: false,
+            estimated: false
         };
+        tsLineSegments.forEach((segment) => {
+            result.approved = result.approved || segment.approvals.includes('Approved');
+            result.estimated = result.estimated || segment.approvals.includes('Estimated');
+            result.default = result.default || segment.approvals.length === 0;
+        });
+        return result
     }
 ));
 

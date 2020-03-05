@@ -39,7 +39,7 @@ import './components/hydrograph/graph-controls.spec';
 import './components/hydrograph/index.spec';
 import './components/hydrograph/layout.spec';
 import './components/hydrograph/legend.spec';
-import './components/hydrograph/markers.spec';
+import './d3-rendering/markers.spec';
 import './components/hydrograph/method-picker.spec';
 import './components/hydrograph/parameters.spec';
 import './components/hydrograph/scales.spec';

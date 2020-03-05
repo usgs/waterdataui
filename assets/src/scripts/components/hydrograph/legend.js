@@ -4,7 +4,7 @@ import memoize from 'fast-memoize';
 import {createSelector, createStructuredSelector} from 'reselect';
 
 import {CIRCLE_RADIUS, getMainLayout} from './layout';
-import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from './markers';
+import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from '../../d3-rendering/markers';
 import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from './drawing-data';
 import config from '../../config';
 import { getCurrentVariableMedianMetadata } from '../../selectors/median-statistics-selector';
