@@ -87,7 +87,7 @@
     "date-time-format-timezone": "1.0.21",
     "element-closest": "3.0.2",
     "esri-leaflet": "2.3.3",
-    "fast-memoize": "2.5.1",
+    "fast-memoize": "2.5.2",
     "leaflet": "1.6.0",
     "lodash": "4.17.15",
     "luxon": "1.22.0",
