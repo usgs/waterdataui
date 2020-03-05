@@ -137,6 +137,7 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
     svg.attr('viewBox', `-4 0 ${layout.width} ${bBox.height + 20}`);
 };
 
+
 const uniqueClassesSelector = memoize(tsKey => createSelector(
     currentVariableLineSegmentsSelector(tsKey),
     //getCurrentTimeSeriesLineSegments(tsKey),
@@ -149,7 +150,6 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
         };
     }
 ));
-
 
 
 /**
