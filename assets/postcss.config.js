@@ -9,13 +9,8 @@ module.exports = ctx => ({
     parser: ctx.options.parser,
     plugins: {
         autoprefixer: autoprefixerOptions,
-        cssnano: {
-            autoprefixer: {
-                browsers: autoprefixerOptions
-            }
-        },
-        'css-mqpacker': {
-            sort: true
+        'postcss-csso': {
+            forceMediaMerge: false
         },
         'postcss-flexbugs-fixes': {}
     }
