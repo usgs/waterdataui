@@ -118,7 +118,7 @@ const createTitle = function(elem, store, siteNo, showMLName) {
         titleDiv.append('div')
             .call(link(store,(elem, {mlName, agencyCode}) => {
                 elem.attr('class', 'monitoring-location-name-div')
-                elem.html(`${mlName}, ${agencyCode} ${siteNo}`);
+                    .html(`${mlName}, ${agencyCode} ${siteNo}`);
             }, createStructuredSelector({
                 mlName: getMonitoringLocationName(siteNo),
                 agencyCode: getAgencyCode(siteNo)
