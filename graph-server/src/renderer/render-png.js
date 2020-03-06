@@ -80,7 +80,7 @@ async function getPNG({pageContent, viewportSize, componentOptions}) {
 
         // If the page should have a comparison series, wait for it. Otherwise,
         // wait for the current year series. Fall back to the no-data-message
-        const chartSel = componentOptions.compare ? '.ts-compare' : '.ts-current';
+        const chartSel = componentOptions.compare ? '#ts-compare-group' : '#ts-current-group';
         await page.waitForSelector(`${chartSel}, #no-data-message`);
 
         // Get a snapshot of either the graph or the no data message, if the

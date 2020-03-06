@@ -33,7 +33,7 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
     },
     parameterCode: {
         in: ['query'],
-        errorMessage: 'parameterCode (5 digit integer) is required',
+        errorMessage: 'parameterCode (5 digit string) is required',
         isInt: true,
         isLength: {
             errorMessage: 'parameterCode should be 5 digits',
@@ -43,7 +43,19 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
             }
         }
     },
+    width: {
+        in: ['query'],
+        errorMessage: 'width should be an integer',
+        isInt: true,
+        toInt: true
+    },
     compare: {
+        in: ['query'],
+        optional: true,
+        isBoolean: true,
+        toBoolean: true
+    },
+    title: {
         in: ['query'],
         optional: true,
         isBoolean: true,
@@ -66,7 +78,8 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
             errorMessage: 'endDT must be after the startDT'
         },
         errorMessage: 'The endDT must be a date'
-    }
+    },
+
 
 }), function (req, res) {
     const errors = validationResult(req).array();
