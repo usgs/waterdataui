@@ -8,33 +8,38 @@ import {drawTimeSeriesGraph} from './time-series-graph';
 const TEST_STATE = {
     series: {
         timeSeries: {
-            '00010:current': {
+            '2:00010:current': {
                 points: [{
                     dateTime: 1514926800000,
                     value: 4,
                     qualifiers: ['P']
                 }],
-                method: 'method1',
+                method: '2',
                 tsKey: 'current:P7D',
                 variable: '45807190'
             },
-            '00060:current': {
+            '1:00060:current': {
                 points: [{
                     dateTime: 1514926800000,
                     value: 10,
                     qualifiers: ['P']
+                },
+                {
+                    dateTime: 1514928800000,
+                    value: 10,
+                    qualifiers: ['P']
                 }],
-                method: 'method1',
+                method: '1',
                 tsKey: 'current:P7D',
                 variable: '45807197'
             },
-            '00060:compare': {
+            '1:00060:compare': {
                 points: [{
                     dateTime: 1514926800000,
                     value: 10,
                     qualifiers: ['P']
                 }],
-                method: 'method1',
+                method: '1',
                 tsKey: 'compare:P7D',
                 variable: '45807197'
             }
@@ -56,6 +61,17 @@ const TEST_STATE = {
                 variable: '45807190',
                 timeSeries: ['00010:current']
             }
+        },
+        siteCodes: {
+            '12345678': {
+                agencyCode: 'USGS'
+            }
+        },
+        sourceInfo: {
+            '12345678': {
+                siteName: 'Monitoring Location for Test'
+            }
+
         },
         queryInfo: {
             'current:P7D': {
@@ -99,7 +115,7 @@ const TEST_STATE = {
             }
         },
         methods: {
-            'method1': {
+            '1': {
                 methodDescription: 'method description'
             }
         }
@@ -136,6 +152,8 @@ const TEST_STATE = {
     },
     timeSeriesState: {
         currentVariableID: '45807197',
+        cursorOffset: 0,
+        currentMethodID: 1,
         currentDateRange: 'P7D',
         requestedTimeRange: null,
         showSeries: {
@@ -160,7 +178,6 @@ describe('time series graph', () => {
         div = select('body').append('div')
             .attr('id', 'hydrograph');
         store = configureStore(TEST_STATE);
-        div.call(drawTimeSeriesGraph, store, '12345678', false);
     });
 
     afterEach(() => {
@@ -168,7 +185,9 @@ describe('time series graph', () => {
     });
 
     it('single data point renders', () => {
+        div.call(drawTimeSeriesGraph, store, '12345678', false, false);
         let svgNodes = selectAll('svg');
+
         expect(svgNodes.size()).toBe(1);
         expect(div.html()).toContain('hydrograph-container');
     });
@@ -176,6 +195,7 @@ describe('time series graph', () => {
     describe('container display', () => {
 
         it('should not be hidden tag if there is data', () => {
+            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
             expect(select('#hydrograph').attr('hidden')).toBeNull();
         });
     });
@@ -183,13 +203,14 @@ describe('time series graph', () => {
     describe('SVG has been made accessibile', () => {
         let svg;
         beforeEach(() => {
+            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
             svg = select('svg');
         });
 
         it('title and desc attributes are present', function() {
             const descText = svg.select('desc').html();
 
-            expect(svg.select('title').html()).toEqual('Test title for 00060');
+            expect(svg.select('title').html()).toEqual('Test title for 00060, method description');
             expect(descText).toContain('Test description for 00060');
             expect(descText).toContain('3/23/2018');
             expect(descText).toContain('3/30/2018');
@@ -219,6 +240,10 @@ describe('time series graph', () => {
 
     describe('compare line', () => {
 
+        beforeEach(() => {
+            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
+        });
+
         it('Should render one lines', () => {
             expect(selectAll('#ts-compare-group .line-segment').size()).toBe(1);
         });
@@ -234,6 +259,10 @@ describe('time series graph', () => {
 
     describe('median lines', () => {
 
+        beforeEach(() => {
+            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
+        });
+
         it('Should render one lines', () => {
             expect(selectAll('#median-points .median-data-series').size()).toBe(1);
         });
@@ -244,6 +273,45 @@ describe('time series graph', () => {
                 expect(selectAll('#median-points .median-data-series').size()).toBe(0);
                 done();
             });
+        });
+    });
+
+    describe('monitoring location name', () => {
+        it('Should not render the monitoring location name if showMLName is false', () => {
+            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
+
+            expect(div.selectAll('.monitoring-location-name-div').size()).toBe(0);
+        });
+
+        it('Should render the monitoring location if showMLName is true', () => {
+            div.call(drawTimeSeriesGraph, store, '12345678', true, false);
+
+            const nameDiv = div.selectAll('.monitoring-location-name-div');
+            const nameContents = nameDiv.html();
+            expect(nameDiv.size()).toBe(1);
+            expect(nameContents).toContain('Monitoring Location for Test');
+            expect(nameContents).toContain('USGS');
+            expect(nameContents).toContain('12345678');
+        });
+    });
+
+    describe('tooltip text and focus elements', () => {
+        it('Should not render the tooltip if showTooltip is false', () => {
+             div.call(drawTimeSeriesGraph, store, '12345678', false, false);
+
+             expect(div.selectAll('.tooltip-text-group').size()).toBe(0);
+             expect(div.selectAll('.focus-overlay').size()).toBe(0);
+             expect(div.selectAll('.focus-circle').size()).toBe(0);
+             expect(div.selectAll('.focus-line').size()).toBe(0);
+        });
+
+        it('Should not render the tooltip if showTooltip is false', () => {
+             div.call(drawTimeSeriesGraph, store, '12345678', false, true);
+
+             expect(div.selectAll('.tooltip-text-group').size()).toBe(1);
+             expect(div.selectAll('.focus-overlay').size()).toBe(1);
+             expect(div.selectAll('.focus-circle').size()).toBe(2);
+             expect(div.selectAll('.focus-line').size()).toBe(1);
         });
     });
 });
