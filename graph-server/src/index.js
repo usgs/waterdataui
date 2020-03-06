@@ -78,9 +78,7 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
             errorMessage: 'endDT must be after the startDT'
         },
         errorMessage: 'The endDT must be a date'
-    },
-
-
+    }
 }), function (req, res) {
     const errors = validationResult(req).array();
 
