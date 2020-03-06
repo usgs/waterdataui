@@ -117,7 +117,8 @@ const createTitle = function(elem, store, siteNo, showMLName) {
     if (showMLName) {
         titleDiv.append('div')
             .call(link(store,(elem, {mlName, agencyCode}) => {
-                elem.html(`${mlName}, ${agencyCode} ${siteNo}`);
+                elem.attr('class', 'monitoring-location-name-div')
+                    .html(`${mlName}, ${agencyCode} ${siteNo}`);
             }, createStructuredSelector({
                 mlName: getMonitoringLocationName(siteNo),
                 agencyCode: getAgencyCode(siteNo)
@@ -158,8 +159,10 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
     graphDiv = elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(watermark, store)
-        .call(createTitle, store, siteNo, showMLName)
-        .call(drawTooltipText, store);
+        .call(createTitle, store, siteNo, showMLName);
+    if (showTooltip) {
+        graphDiv.call(drawTooltipText, store);
+    }
     graphDiv.append('svg')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .classed('hydrograph-svg', true)
