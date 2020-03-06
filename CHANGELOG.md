@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - The state of the UI for the hydrograph is now preserved in the hash portion of the url and state 
 can be restored by pasting the url into a browser window.
 - Added both hover and a cursor slider tooltip capability to the DV graph.
+- Added width integer parameter to the graph-server which allows the user to return the width of the image.
 
 ## [0.26.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.25.0...waterdataui-0.26.0) - 2020-02-12
 ### Added
