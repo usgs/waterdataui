@@ -72,12 +72,6 @@ async function getPNG({pageContent, viewportSize, componentOptions}) {
         // Use an arbitrary width that will guarantee desktop-like rendering.
         page.setViewport(viewportSize);
 
-        // Set the page content from the pre-built bundle.
-        // await Promise.all([
-        //     page.addStyleTag({content: bundles.styles}),
-        //     page.addScriptTag({content: bundles.script})
-        // ]);
-
         // Log browser console messages
         page.on('console', msg => console.log('[CONSOLE LOG]', msg.text()));
 
