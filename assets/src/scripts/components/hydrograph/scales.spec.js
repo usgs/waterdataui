@@ -1,6 +1,6 @@
 import { extent } from 'd3-array';
 import { DateTime } from 'luxon';
-import { createXScale, createYScale, getXScale, getMainYScale, getBrushYScale, getSecondaryYScale } from './scales';
+import { createXScale, createYScale, getMainYScale, getBrushYScale, getSecondaryYScale } from './scales';
 
 
 describe('scales', () => {
@@ -9,18 +9,6 @@ describe('scales', () => {
         return {
             dateTime: DateTime.fromObject({
                 year: 2017,
-                month: 10,
-                day: 10,
-                hour: hour,
-                zone: timeZone
-            }).valueOf(),
-            value: hour
-        };
-    });
-    const comparePoints = Array(23).fill(0).map((_, hour) => {
-        return {
-            dateTime: DateTime.fromObject({
-                year: 2016,
                 month: 10,
                 day: 10,
                 hour: hour,

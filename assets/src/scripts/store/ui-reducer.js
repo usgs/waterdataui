@@ -13,9 +13,9 @@ const resizeUI = function(ui, action) {
 const setHydrographBrushOffset= function(ui, action) {
     return {
         ...ui,
-        hydrographXRange: {
-            start: action.hydrographXRange[0],
-            end: action.hydrographXRange[1]
+        hydrographBrushOffset: {
+            start: action.hydrographBrushOffset[0],
+            end: action.hydrographBrushOffset[1]
         }
     };
 };
@@ -23,7 +23,7 @@ const setHydrographBrushOffset= function(ui, action) {
 const clearHydrographBrushOffset = function(ui) {
     return {
         ...ui,
-        hydrographXRange: undefined
+        hydrographBrushOffset: undefined
     };
 };
 

@@ -1,7 +1,6 @@
 import {scaleLinear, scaleSymlog} from 'd3-scale';
 import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
-import { DateTime } from 'luxon';
 
 import {getVariables, getCurrentParmCd, getRequestTimeRange, getTimeSeriesForTsKey} from '../../selectors/time-series-selector';
 import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../utils';
@@ -70,19 +69,23 @@ export const createYScale = function (parmCd, extent, size) {
 export const getXScale = memoize((kind, tsKey) => createSelector(
     getLayout(kind),
     getRequestTimeRange(tsKey),
-        state => state.ui.hydrographXRange,
-    (layout, requestTimeRange, hydrographXRange) => {
+        state => state.ui.hydrographBrushOffset,
+    (layout, requestTimeRange, hydrographBrushOffset) => {
         let timeRange;
         if (kind === 'BRUSH') {
             timeRange = requestTimeRange;
         } else {
-            if (hydrographXRange && Object.keys(hydrographXRange).length > 0) {
-                    timeRange = tsKey === 'compare' ? {
-                        'start': DateTime.fromMillis(hydrographXRange['start']).minus({'years': 1}).toMillis(),
-                        'end': DateTime.fromMillis(hydrographXRange['end']).minus({'years': 1}).toMillis()
-                    } : hydrographXRange;
-            } else{
+
+            if (requestTimeRange && hydrographBrushOffset) {
+
+                timeRange = {
+                    'start': requestTimeRange.start + hydrographBrushOffset.start,
+                    'end': requestTimeRange.end - hydrographBrushOffset.end
+                };
+            } else if (requestTimeRange) {
                 timeRange = requestTimeRange;
+            } else{
+                timeRange = {'start': 0, 'end': 1};
             }
         }
         return createXScale(timeRange, layout.width - layout.margin.right);
@@ -171,7 +174,6 @@ export const timeSeriesScalesByParmCdSelector = memoize((tsKey, period, dimensio
                 x: createXScale(requestTimeRange, dimensions.width),
                 y: createYScale(parmCd, yDomain, dimensions.height)
             };
-            console.log(tsScales);
             return tsScales;
         }, {});
     }

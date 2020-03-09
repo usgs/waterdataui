@@ -6,7 +6,7 @@ describe('uiReducer', () => {
         expect(uiReducer({
             width: 50,
             windowWidth: 100,
-            hydrographXRange: undefined
+            hydrographBrushOffset: undefined
         }, {
             type: 'RESIZE_UI',
             width: 20,
@@ -14,42 +14,42 @@ describe('uiReducer', () => {
         })).toEqual({
             width: 20,
             windowWidth: 50,
-            hydrographXRange: undefined
+            hydrographBrushOffset: undefined
         });
     });
 
-    it('Handles SET_HYDROGRAPH_X_RANGE', () => {
+    it('Handles SET_HYDROGRAPH_BRUSH_OFFSET', () => {
         expect(uiReducer({
             width: 50,
             windowWidth: 100,
-            hydrographXRange: undefined
+            hydrographBrushOffset: undefined
         }, {
-            type: 'SET_HYDROGRAPH_X_RANGE',
-            hydrographXRange: [150000000, 150000100]
+            type: 'SET_HYDROGRAPH_BRUSH_OFFSET',
+            hydrographBrushOffset: [1000, 10000000]
         })).toEqual({
             width: 50,
             windowWidth: 100,
-            hydrographXRange: {
-                start: 150000000,
-                end: 150000100
+            hydrographBrushOffset: {
+                start: 1000,
+                end: 10000000
             }
         });
     });
 
-    it('Handles CLEAR_HYDROGRAPH_X_RANGE', () => {
+    it('Handles CLEAR_HYDROGRAPH_BRUSH_OFFSET', () => {
         expect(uiReducer({
             width: 50,
             windowWidth: 100,
-            hydrographXRange: {
-                start: 150000000,
-                end: 150000100
+            hydrographBrushOffset: {
+                start: 1000,
+                end: 10000000
             }
         }, {
-            type: 'CLEAR_HYDROGRAPH_X_RANGE'
+            type: 'CLEAR_HYDROGRAPH_BRUSH_OFFSET'
         })).toEqual({
             width: 50,
             windowWidth: 100,
-            hydrographXRange: undefined
+            hydrographBrushOffset: undefined
         });
     });
 });

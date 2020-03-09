@@ -7,11 +7,12 @@ import {link} from '../../lib/d3-redux';
 import {Actions} from '../../store';
 
 import {getBrushXAxis} from './axes';
-import {currentVariableLineSegmentsSelector} from './drawing-data';
+import {currentVariableLineSegmentsSelector, currentVariablePointsByTsIdSelector} from './drawing-data';
 import {getBrushLayout} from './layout';
 import {getBrushXScale, getBrushYScale} from './scales';
 import {isVisibleSelector} from './time-series';
 import {drawDataLines} from './time-series-data';
+import {getNearestTime} from '../../utils';
 
 export const drawGraphBrush = function(container, store) {
 
@@ -24,7 +25,14 @@ export const drawGraphBrush = function(container, store) {
 
         // Only about the main hydrograph when user is done adjusting the time range.
         if (event.sourceEvent.type === 'mouseup' || event.sourceEvent.type === 'touchend') {
-            store.dispatch(Actions.setHydrographXRange(brushRange.map(xScale.invert, xScale)));
+
+            const ts = currentVariablePointsByTsIdSelector('current')(store.getState());
+            const keys = Object.keys(ts);
+            const points = ts[keys[0]];
+            const adjustedBrush = brushRange.map(xScale.invert, xScale);
+            const brushOffsets = [getNearestTime(points, adjustedBrush[0]).dateTime - points[0].dateTime,
+                points.slice(-1)[0].dateTime - getNearestTime(points, adjustedBrush[1]).dateTime];
+            store.dispatch(Actions.setHydrographBrushOffset(brushOffsets));
         }
     };
 
@@ -61,11 +69,11 @@ export const drawGraphBrush = function(container, store) {
                     enableClip: () => false
                 })));
         })
-        .call(link(store, (svg, {layout, isHydrographXRange}) => {
+        .call(link(store, (svg, {layout, isHydrographBrushOffset}) => {
             let selection;
 
             const brushElem = svg.select('.brush');
-            if (isHydrographXRange && brushElem.size() !== 0) {
+            if (isHydrographBrushOffset && brushElem.size() !== 0) {
                 selection = brushSelection(brushElem.node());
             }
             if (!selection) {
@@ -89,6 +97,6 @@ export const drawGraphBrush = function(container, store) {
 
         }, createStructuredSelector({
             layout: getBrushLayout,
-            isHydrographXRange: (state) => state.ui.hydrographXRange !== undefined
+            isHydrographBrushOffset: (state) => state.ui.hydrographBrushOffset !== undefined
         })));
 };
