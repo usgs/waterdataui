@@ -45,9 +45,15 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
     },
     width: {
         in: ['query'],
-        errorMessage: 'width should be an integer',
-        isInt: true,
-        toInt: true
+        errorMessage: 'width should be an integer between 300 and 1200',
+        isInt: {
+            options: {
+                min: 300,
+                max: 1200
+            }
+        },
+        toInt: true,
+
     },
     compare: {
         in: ['query'],
