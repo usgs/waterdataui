@@ -171,6 +171,7 @@ export const timeSeriesScalesByParmCdSelector = memoize((tsKey, period, dimensio
                 x: createXScale(requestTimeRange, dimensions.width),
                 y: createYScale(parmCd, yDomain, dimensions.height)
             };
+            console.log(tsScales);
             return tsScales;
         }, {});
     }

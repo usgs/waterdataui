@@ -8,14 +8,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - All IV time series are now available for drawing on the hydrograph not just those in the last 7 days.
 - Added brush handle fill.
-- Adjusted x scale of compare time series when called by a brush event so it would not
-disappear from the hydrograph when the brush was adjusted.
+- Updated to latest wdfn-viz 1.4.0 and implemented the new build guidance.
+
 
 ### Added
 - The state of the UI for the hydrograph is now preserved in the hash portion of the url and state 
 can be restored by pasting the url into a browser window.
 - Added upstream basin to NLDI map on the monitoring location pages.
 - Added both hover and a cursor slider tooltip capability to the DV graph.
+- Added width integer parameter to the graph-server which allows the user to return the width of the image.
 
 ## [0.26.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.25.0...waterdataui-0.26.0) - 2020-02-12
 ### Added
