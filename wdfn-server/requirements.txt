@@ -4,11 +4,11 @@ click==7.0
 Flask==1.1.1
 itsdangerous==1.1.0
 MarkupSafe==1.1.1
-pendulum==2.0.5
+pendulum==2.1.0
 pyfakefs==4.0.2
 pytest==5.3.5
 pytest-mock==2.0.0
-pytest-flask==0.15.1
+pytest-flask==1.0.0
 requests==2.23.0
 requests-mock==1.7.0
 six==1.14.0
