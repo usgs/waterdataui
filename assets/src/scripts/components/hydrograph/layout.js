@@ -2,12 +2,14 @@
 // selector function which will return the width/height to use.
 
 import memoize from 'fast-memoize';
-import { createSelector } from 'reselect';
+import {createSelector} from 'reselect';
 
 import config from '../../config';
-import { mediaQuery } from '../../utils';
-import { tickSelector } from './domain';
+import {getCurrentParmCd} from '../../selectors/time-series-selector';
+import {mediaQuery} from '../../utils';
 
+import {tickSelector} from './domain';
+import {TEMPERATURE_PARAMETERS} from './time-series';
 
 
 export const ASPECT_RATIO = 1 / 2;
@@ -51,12 +53,16 @@ export const getLayout = memoize(kind => createSelector(
     (state) => state.ui.width,
     (state) => state.ui.windowWidth,
     tickSelector,
-    (width, windowWidth, tickDetails) => {
+    getCurrentParmCd,
+    (width, windowWidth, tickDetails, parmCd) => {
         const isDesktop = mediaQuery(config.USWDS_SITE_MAX_WIDTH);
         const height = kind === 'BRUSH' ? isDesktop ? BRUSH_HEIGHT : BRUSH_MOBILE_HEIGHT : width * ASPECT_RATIO;
         const margin = isDesktop ? MARGIN : MARGIN_SMALL_DEVICE;
         const tickLengths = tickDetails.tickValues.map(v => tickDetails.tickFormat(v).length);
         const approxLabelLength = Math.max(...tickLengths) * 10;
+        const isTemperatureParameter =
+            TEMPERATURE_PARAMETERS.celsius.concat(TEMPERATURE_PARAMETERS.fahrenheit).includes(parmCd);
+        console.log('Is temperator Parameter: ' + isTemperatureParameter);
         return {
             width: width,
             height: height,
@@ -65,7 +71,7 @@ export const getLayout = memoize(kind => createSelector(
                 ...margin,
                 top: kind === 'BRUSH' ? 0 : margin.top,
                 left: margin.left + approxLabelLength,
-                right: margin.right + approxLabelLength
+                right: margin.right + isTemperatureParameter ? approxLabelLength : 0
             }
         };
     }
