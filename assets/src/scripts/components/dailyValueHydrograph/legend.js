@@ -1,55 +1,14 @@
 // functions to facilitate DV legend creation for a d3 plot
-import memoize from 'fast-memoize';
-import {createSelector, createStructuredSelector} from 'reselect';
+import {createStructuredSelector} from 'reselect';
 
-import {defineLineMarker, defineTextOnlyMarker} from '../../d3-rendering/markers';
+import {defineLineMarker} from '../../d3-rendering/markers';
 import {getLayout} from './selectors/layout';
-import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-lines';
+import {getLegendMarkerRows} from './selectors/legend-data';
 
 import config from '../../config';
 import { mediaQuery } from '../../utils';
 import {link} from '../../lib/d3-redux';
 
-const tsLineMarkers = function(tsKey, lineClasses) {
-    let result = [];
-
-    if (lineClasses.default) {
-        result.push(defineLineMarker(null, `line-segment ts-${tsKey}`, 'Provisional'));
-    }
-    if (lineClasses.approved) {
-        result.push(defineLineMarker(null, `line-segment approved ts-${tsKey}`, 'Approved'));
-    }
-    if (lineClasses.estimated) {
-        result.push(defineLineMarker(null, `line-segment estimated ts-${tsKey}`, 'Estimated'));
-    }
-    return result;
-};
-
-/**
- * create elements for the legend in the svg
- *
- * @param {Object} displayItems - Object containing keys for each ts. The current and compare will contain an
- *                 object that has a masks property containing the Set of masks that are currently displayed.
- *                 The median property will contain the metadata for the median statistics
- * @return {Object} - Each key represents a ts and contains an array of markers to show.
- */
-const createLegendMarkers = function(displayItems) {
-    const legendMarkers = [];
-
-    if (displayItems.current) {
-        const currentMarkers = [
-            ...tsLineMarkers('current', displayItems.current)
-        ];
-        if (currentMarkers.length) {
-            legendMarkers.push([
-                defineTextOnlyMarker('', null, 'ts-legend-current-text'),
-                ...currentMarkers
-            ]);
-        }
-    }
-
-    return legendMarkers;
-};
 
 /**
  * Create a simple legend
@@ -125,55 +84,11 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
 };
 
 
-const uniqueClassesSelector = memoize(tsKey => createSelector(
-    getCurrentTimeSeriesLineSegments,
-    (tsLineSegments) => {
-        let result = {
-            default: false,
-            approved: false,
-            estimated: false
-        };
-        tsLineSegments.forEach((segment) => {
-            result.approved = result.approved || segment.approvals.includes('Approved');
-            result.estimated = result.estimated || segment.approvals.includes('Estimated');
-            result.default = result.default || segment.approvals.length === 0;
-        });
-        return result;
-    }
-));
-
-
-/**
- * Select attributes from the state useful for legend creation
- */
-const legendDisplaySelector = createSelector(
-    (state) => state.timeSeriesState.showSeries,
-    uniqueClassesSelector('current'),
-    uniqueClassesSelector('compare'),
-    (showSeries, medianSeries, currentClasses) => {
-        return {
-            current: showSeries.current ? currentClasses : undefined
-        };
-    }
-);
-
-
-/*
- * Factory function that returns an array of array of markers to be used for the
- * time series graph legend
- * @return {Array of Array} of markers
- */
-export const legendMarkerRowsSelector = createSelector(
-    legendDisplaySelector,
-    displayItems => createLegendMarkers(displayItems)
-);
-
-
 export const drawTimeSeriesLegend = function(elem, store) {
     elem.append('div')
         .classed('hydrograph-container', true)
         .call(link(store, drawSimpleLegend, createStructuredSelector({
-            legendMarkerRows: legendMarkerRowsSelector,
+            legendMarkerRows: getLegendMarkerRows,
             layout: getLayout
         })));
 };
