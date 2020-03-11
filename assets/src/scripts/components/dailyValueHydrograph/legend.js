@@ -1,7 +1,6 @@
 // functions to facilitate DV legend creation for a d3 plot
 import {createStructuredSelector} from 'reselect';
 
-import {defineLineMarker} from '../../d3-rendering/markers';
 import {getLayout} from './selectors/layout';
 import {getLegendMarkerRows} from './selectors/legend-data';
 

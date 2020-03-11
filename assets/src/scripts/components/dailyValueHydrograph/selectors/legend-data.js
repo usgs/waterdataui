@@ -7,13 +7,13 @@ const tsLineMarkers = function(lineClasses) {
     let result = [];
 
     if (lineClasses.default) {
-        result.push(defineLineMarker(null, `line-segment ts-dv`, 'Provisional'));
+        result.push(defineLineMarker(null, 'line-segment ts-dv', 'Provisional'));
     }
     if (lineClasses.approved) {
-        result.push(defineLineMarker(null, `line-segment approved ts-dv`, 'Approved'));
+        result.push(defineLineMarker(null, 'line-segment approved ts-dv', 'Approved'));
     }
     if (lineClasses.estimated) {
-        result.push(defineLineMarker(null, `line-segment estimated ts-dv`, 'Estimated'));
+        result.push(defineLineMarker(null, 'line-segment estimated ts-dv', 'Estimated'));
     }
     return result;
 };
@@ -69,6 +69,6 @@ export const getUniqueClasses = createSelector(
 export const getLegendMarkerRows = createSelector(
     getUniqueClasses,
     displayItems => {
-        return createLegendMarkers(displayItems)
+        return createLegendMarkers(displayItems);
     }
 );
