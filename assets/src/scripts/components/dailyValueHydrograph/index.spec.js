@@ -75,7 +75,7 @@ describe('components/dailyValueHydrograph/index', () => {
         expect(testDiv.selectAll('.loading-indicator').size()).toBe(1);
     });
 
-    it('Expects that if the fetch is successful the current observations time series id is updated in the store and the loading indicatoris no longer visible', (done) => {
+    it('Expects that if the fetch is successful the current observations time series id is updated in the store and the loading indicator is no longer visible', (done) => {
         let store = configureStore();
         attachToNode(store, testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
         jasmine.Ajax.requests.mostRecent().respondWith({
@@ -125,11 +125,13 @@ describe('components/dailyValueHydrograph/index', () => {
         expect(testDiv.select('.graph-container').attr('hidden')).toBeNull();
     });
 
+
     it('Should render the hydrograph container', () => {
         attachToNode(configureStore(), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
 
-        expect(testDiv.select('.graph-container').selectAll('.hydrograph-container').size()).toBe(1);
+        expect(testDiv.select('.graph-container').selectAll('.hydrograph-container').size()).toBe(2);
     });
+
 
     it('should render the tooltip cursor slider', () => {
         attachToNode(configureStore(TEST_STATE), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});

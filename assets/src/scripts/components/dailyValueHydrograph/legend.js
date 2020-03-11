@@ -92,7 +92,6 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
                 r: marker.r,
                 fill: marker.fill
             };
-            console.log('DV: marker text:'+marker.text+ ' xPosition:'+xPosition+ ' yPosition:'+yPosition );
 
             let markerGroup = marker.type(legend, markerArgs);
             let markerGroupBBox;
@@ -108,9 +107,6 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
             try {
                 markerGroupBBox = markerGroup.node().getBBox();
                 xPosition = markerGroupBBox.x + markerGroupBBox.width + markerGroupXOffset;
-
-                console.log('DV: markerGroupBBox.x:'+markerGroupBBox.x+ ' markerGroupBBox.width:'+markerGroupBBox.width+ ' markerGroupXOffset:'+markerGroupXOffset);
-                console.log('DV: xPosition:'+xPosition);
 
             } catch(error) {
                 // See above explanation

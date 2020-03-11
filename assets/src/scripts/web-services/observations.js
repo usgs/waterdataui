@@ -19,7 +19,7 @@ export const fetchTimeSeries = function(monitoringLocationId, timeSeriesId) {
         return get(`${config.OBSERVATIONS_ENDPOINT}monitoring-location/${monitoringLocationId}/time-series/${timeSeriesId}`)
             .then((response) => JSON.parse(response))
             .catch(reason => {
-                console.log(`Unable to fetch observations time-series ${timeSeriesId} for monitoring location 
+                console.log(`Unable to fetch observations time-series ${timeSeriesId} for monitoring location
                     ${monitoringLocationId} with reason: ${reason}`);
                 return {};
             });
