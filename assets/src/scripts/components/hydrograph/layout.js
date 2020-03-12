@@ -62,7 +62,6 @@ export const getLayout = memoize(kind => createSelector(
         const approxLabelLength = Math.max(...tickLengths) * 10;
         const isTemperatureParameter =
             TEMPERATURE_PARAMETERS.celsius.concat(TEMPERATURE_PARAMETERS.fahrenheit).includes(parmCd);
-        console.log('Is temperator Parameter: ' + isTemperatureParameter);
         return {
             width: width,
             height: height,

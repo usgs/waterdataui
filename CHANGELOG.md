@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added brush handle fill.
 - Updated to latest wdfn-viz 1.4.0 and implemented the new build guidance.
 - Fixed bug that made compare time series disappear when the brush was adjusted by adding
-offsets to ui state in order to adjust x scale.
+offsets to time series state in order to adjust x scale.
 
 ### Added
 - The state of the UI for the hydrograph is now preserved in the hash portion of the url and state 

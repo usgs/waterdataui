@@ -526,7 +526,8 @@ export const configureStore = function (initialState) {
             currentVariableID: null,
             cursorOffset: null,
             audiblePlayId: null,
-            loadingTSKeys: []
+            loadingTSKeys: [],
+            hydrographBrushOffset: {}
         },
         observationsState: {
             cursorOffset: null
@@ -536,8 +537,7 @@ export const configureStore = function (initialState) {
         },
         ui : {
             windowWidth: 1024,
-            width: 800,
-            hydrographBrushOffset: {}
+            width: 800
         },
         ...initialState
     };
