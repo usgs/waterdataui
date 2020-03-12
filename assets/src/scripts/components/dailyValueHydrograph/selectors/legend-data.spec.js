@@ -1,8 +1,8 @@
 import {select, selectAll} from 'd3-selection';
 import {drawSimpleLegend, drawTimeSeriesLegend} from '../legend';
-import {lineMarker, rectangleMarker, textOnlyMarker} from "../../../d3-rendering/markers";
+import {lineMarker, rectangleMarker, textOnlyMarker} from '../../../d3-rendering/markers';
 import {getLegendMarkerRows} from './legend-data';
-import {configureStore} from "../../../store";
+import {configureStore} from '../../../store';
 
 
 describe('DV: Legend module', () => {
@@ -123,7 +123,7 @@ describe('DV: Legend module', () => {
                 observationsData: {
                     ...TEST_STATE.observationsData,
                     timeSeries: {}
-                },
+                }
             };
 
             expect(getLegendMarkerRows(newData)).toEqual([]);
