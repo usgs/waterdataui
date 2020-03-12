@@ -108,34 +108,30 @@ describe('components/dailyValueHydrograph/index', () => {
         });
     });
 
-    it('graph-container should be hidden if no current observations time series is set', () => {
-        let store = configureStore({
-            ...TEST_STATE,
-            observationsState: {}
-        });
-        attachToNode(store, testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
-
-        expect(testDiv.select('.graph-container').attr('hidden')).toBe('true');
-    });
-
-    it('graph-container should be hidden if no current observations time series is set', () => {
-        let store = configureStore(TEST_STATE);
-        attachToNode(store, testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
-
-        expect(testDiv.select('.graph-container').attr('hidden')).toBeNull();
-    });
-
-
-    it('Should render the hydrograph container', () => {
+    it('Should render the hydrograph container', (done) => {
         attachToNode(configureStore(), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
+        jasmine.Ajax.requests.mostRecent().respondWith({
+            status: 200,
+            response: JSON.stringify(TEST_STATE.observationsData.timeSeries['12345'])
+        });
 
-        expect(testDiv.select('.graph-container').selectAll('.hydrograph-container').size()).toBe(2);
+        window.requestAnimationFrame(() => {
+            expect(testDiv.select('.graph-container').selectAll('.hydrograph-container').size()).toBe(2);
+            done();
+        });
     });
 
 
-    it('should render the tooltip cursor slider', () => {
+    it('should render the tooltip cursor slider', (done) => {
         attachToNode(configureStore(TEST_STATE), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
+        jasmine.Ajax.requests.mostRecent().respondWith({
+            status: 200,
+            response: JSON.stringify(TEST_STATE.observationsData.timeSeries['12345'])
+        });
 
-        expect(testDiv.select('.graph-container').selectAll('.slider-wrapper').size()).toBe(1);
+        window.requestAnimationFrame(() => {
+            expect(testDiv.select('.graph-container').selectAll('.slider-wrapper').size()).toBe(1);
+            done();
+        });
     });
 });

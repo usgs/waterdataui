@@ -1,4 +1,3 @@
-
 import {select} from 'd3-selection';
 
 import {link} from '../../lib/d3-redux';
@@ -45,20 +44,16 @@ export const attachToNode = function (store,
                 });
             } else {
                 store.dispatch(Actions.setCurrentObservationsTimeSeriesId(timeSeriesId));
+
+                nodeElem.select('.graph-container')
+                    .call(drawTimeSeriesGraph, store)
+                    .call(drawTooltipCursorSlider, store);
+
+                // Add DV legend
+                let graphContainer = nodeElem.select('.graph-container');
+                graphContainer.append('div')
+                    .classed('dv-legend-controls-container', true)
+                    .call(drawTimeSeriesLegend, store);
             }
         });
-
-    nodeElem.select('.graph-container')
-        .call(link(store, function(container, showElem) {
-            container.attr('hidden', showElem ? null : true);
-        }, hasCurrentObservationsTimeSeries))
-        .call(drawTimeSeriesGraph, store)
-        .call(drawTooltipCursorSlider, store);
-
-    // Add DV legend
-    let graphContainer = nodeElem.select('.graph-container');
-    graphContainer.append('div')
-        .classed('dv-legend-controls-container', true)
-        .call(drawTimeSeriesLegend, store);
-
 };
