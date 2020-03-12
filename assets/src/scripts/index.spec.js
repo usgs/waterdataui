@@ -21,6 +21,7 @@ import './d3-rendering/graph-tooltip.spec';
 import './components/dailyValueHydrograph/selectors/labels.spec';
 import './components/dailyValueHydrograph/selectors/scales.spec';
 import './components/dailyValueHydrograph/selectors/time-series-data.spec';
+import './components/dailyValueHydrograph/selectors/legend-data.spec';
 
 import './components/dailyValueHydrograph/index.spec';
 import './components/dailyValueHydrograph/time-series-graph.spec';

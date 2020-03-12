@@ -1,7 +1,5 @@
 import {select} from 'd3-selection';
 
-import {link} from '../../lib/d3-redux';
-import {hasCurrentObservationsTimeSeries} from '../../selectors/observations-selector';
 import {Actions} from '../../store';
 
 import {drawErrorAlert, drawInfoAlert} from '../../d3-rendering/alerts';
