@@ -6,7 +6,7 @@ import json
 from flask import abort, render_template, request, Markup
 
 from . import app, __version__
-from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries
+from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, get_period_of_record_by_parm_cd
 from .utils import construct_url, defined_when, parse_rdb
 from .services import sifta, ogc
 from .services.nwis import NwisWebServices
@@ -106,12 +106,14 @@ def monitoring_location(site_no):
                 }
                 questions_link = construct_url('https://water.usgs.gov', 'contact/gsanswers', questions_link_params)
 
+
             context = {
                 'status_code': status,
                 'stations': data_list,
                 'location_with_values': location_with_values,
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
+                'uv_period_of_record': get_period_of_record_by_parm_cd(parameter_data),
                 'parm_grp_summary': grouped_dataseries,
                 'questions_link': questions_link,
                 'cooperators': cooperators

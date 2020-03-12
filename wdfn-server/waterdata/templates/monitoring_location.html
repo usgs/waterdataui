@@ -24,9 +24,14 @@
 
 {% block page_script %}
     {% if json_ld %}
-    <script type="application/ld+json">
-        {{ json_ld }}
-    </script>
+        <script type="application/ld+json">
+            {{ json_ld }}
+        </script>
+    {% endif %}
+    {% if uv_period_of_record %}
+        <script type="application/javascript">
+            CONFIG.uvPeriodOfRecord = {{ uv_period_of_record | tojson }}
+        </script>
     {% endif %}
 {% endblock page_script %}
 
