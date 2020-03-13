@@ -99,4 +99,31 @@ describe('time-series-state-reducer', () => {
             currentDateRange: 'custom'
         });
     });
+
+    it('Handles SET_HYDROGRAPH_BRUSH_OFFSET', () => {
+        expect(timeSeriesStateReducer({
+            hydrographBrushOffset: undefined
+        }, {
+            type: 'SET_HYDROGRAPH_BRUSH_OFFSET',
+            hydrographBrushOffset: [1000, 10000000]
+        })).toEqual({
+            hydrographBrushOffset: {
+                start: 1000,
+                end: 10000000
+            }
+        });
+    });
+
+    it('Handles CLEAR_HYDROGRAPH_BRUSH_OFFSET', () => {
+        expect(timeSeriesStateReducer({
+            hydrographBrushOffset: {
+                start: 1000,
+                end: 10000000
+            }
+        }, {
+            type: 'CLEAR_HYDROGRAPH_BRUSH_OFFSET'
+        })).toEqual({
+            hydrographBrushOffset: undefined
+        });
+    });
 });

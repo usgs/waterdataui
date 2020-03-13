@@ -33,7 +33,7 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
     },
     parameterCode: {
         in: ['query'],
-        errorMessage: 'parameterCode (5 digit integer) is required',
+        errorMessage: 'parameterCode (5 digit string) is required',
         isInt: true,
         isLength: {
             errorMessage: 'parameterCode should be 5 digits',
@@ -43,7 +43,26 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
             }
         }
     },
+    width: {
+        in: ['query'],
+        errorMessage: 'width should be an integer between 300 and 1200',
+        optional: true,
+        isInt: {
+            options: {
+                min: 300,
+                max: 1200
+            }
+        },
+        toInt: true,
+
+    },
     compare: {
+        in: ['query'],
+        optional: true,
+        isBoolean: true,
+        toBoolean: true
+    },
+    title: {
         in: ['query'],
         optional: true,
         isBoolean: true,
@@ -67,7 +86,6 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
         },
         errorMessage: 'The endDT must be a date'
     }
-
 }), function (req, res) {
     const errors = validationResult(req).array();
 
@@ -84,7 +102,8 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
         period: req.query.period,
         startDT: req.query.startDT,
         endDT: req.query.endDT,
-        showMLName: req.query.title === 'true'
+        showMLName: req.query.title || false,
+        width: req.query.width ? req.query.width : 1200
     });
 });
 

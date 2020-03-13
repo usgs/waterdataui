@@ -148,7 +148,7 @@ describe ('graph-brush module', () => {
         },
         ui: {
             width: 400,
-            hydrographXRange: undefined
+            hydrographBrushOffset: undefined
         }
     };
     describe('drawGraphBrush', () => {

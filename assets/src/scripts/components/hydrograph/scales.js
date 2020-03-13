@@ -69,13 +69,22 @@ export const createYScale = function (parmCd, extent, size) {
 export const getXScale = memoize((kind, tsKey) => createSelector(
     getLayout(kind),
     getRequestTimeRange(tsKey),
-        state => state.ui.hydrographXRange,
-    (layout, requestTimeRange, hydrographXRange) => {
+        state => state.timeSeriesState.hydrographBrushOffset,
+    (layout, requestTimeRange, hydrographBrushOffset) => {
         let timeRange;
         if (kind === 'BRUSH') {
             timeRange = requestTimeRange;
         } else {
-            timeRange = hydrographXRange ? hydrographXRange : requestTimeRange;
+
+            if (hydrographBrushOffset) {
+
+                timeRange = {
+                    'start': requestTimeRange.start + hydrographBrushOffset.start,
+                    'end': requestTimeRange.end - hydrographBrushOffset.end
+                };
+            } else {
+                timeRange = requestTimeRange;
+            }
         }
         return createXScale(timeRange, layout.width - layout.margin.right);
     }

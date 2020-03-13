@@ -2,13 +2,14 @@
 // selector function which will return the width/height to use.
 
 import memoize from 'fast-memoize';
-import {createSelector} from 'reselect';
+import { createSelector } from 'reselect';
 
 import config from '../../config';
-
+import {getCurrentParmCd} from '../../selectors/time-series-selector';
 import {mediaQuery} from '../../utils';
 
 import {tickSelector} from './domain';
+import {TEMPERATURE_PARAMETERS} from './time-series';
 
 
 export const ASPECT_RATIO = 1 / 2;
@@ -25,7 +26,7 @@ const MARGIN_SMALL_DEVICE = {
     bottom: 10,
     left: 0
 };
-
+export const CIRCLE_RADIUS = 4;
 export const CIRCLE_RADIUS_SINGLE_PT = 1;
 
 export const BRUSH_HEIGHT = 100;
@@ -58,6 +59,8 @@ export const getLayout = memoize(kind => createSelector(
         const margin = isDesktop ? MARGIN : MARGIN_SMALL_DEVICE;
         const tickLengths = tickDetails.tickValues.map(v => tickDetails.tickFormat(v).length);
         const approxLabelLength = Math.max(...tickLengths) * 10;
+        const isTemperatureParameter =
+            TEMPERATURE_PARAMETERS.celsius.concat(TEMPERATURE_PARAMETERS.fahrenheit).includes(parmCd);
         return {
             width: width,
             height: height,
