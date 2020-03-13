@@ -70,7 +70,7 @@ var mockCompressor = function() {
     };
 };
 
-const MockAudioContext = function() {
+var MockAudioContext = function() {
     this.createOscillator = mockOscillator;
     this.createGain = mockGain;
     this.createDynamicsCompressor = mockCompressor;
