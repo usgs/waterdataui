@@ -1,5 +1,5 @@
-import {mediaQuery} from "../utils";
-import config from "../config";
+import {mediaQuery} from '../utils';
+import config from '../config';
 
 export const CIRCLE_RADIUS = 4;
 

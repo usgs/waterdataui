@@ -3,7 +3,7 @@ import {set} from 'd3-collection';
 import memoize from 'fast-memoize';
 import {createSelector, createStructuredSelector} from 'reselect';
 
-import {CIRCLE_RADIUS, drawSimpleLegend} from '../../d3-rendering/legend';
+import {drawSimpleLegend} from '../../d3-rendering/legend';
 import {defineLineMarker, defineTextOnlyMarker, defineRectangleMarker} from '../../d3-rendering/markers';
 
 import {getMainLayout} from './layout';

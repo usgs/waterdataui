@@ -1,39 +1,8 @@
-import {select, selectAll} from 'd3-selection';
-import {lineMarker, rectangleMarker, textOnlyMarker} from "./markers";
-import {drawSimpleLegend} from "./legend";
+import {select} from 'd3-selection';
+import {lineMarker, rectangleMarker, textOnlyMarker} from './markers';
+import {drawSimpleLegend} from './legend';
 
 describe('D3-rendering: Legend module', () => {
-
-    const TEST_STATE = {
-        observationsData: {
-            timeSeries: {
-                '12345': {
-                    type: 'Feature',
-                    id: '12345',
-                    properties: {
-                        phenomenonTimeStart: '2018-01-02',
-                        phenomenonTimeEnd: '2018-01-05',
-                        timeStep: ['2018-01-02', '2018-01-03', '2018-01-04', '2018-01-05'],
-                        result: ['5.0', '4.0', '6.1', '3.2'],
-                        approvals: [['Approved'], ['Approved'], ['Approved'], ['Estimated']],
-                        nilReason: [null, 'AA', null, null],
-                        qualifiers: [null, null, ['ICE'], ['ICE']],
-                        grades: [['50'], ['50'], ['60'], ['60']]
-                    }
-                }
-            }
-        },
-        observationsState: {
-            currentTimeSeriesId: '12345',
-            showSeries: {
-                current: true
-            }
-        },
-        ui: {
-            windowWidth: 1024,
-            width: 800
-        }
-    };
 
     describe('drawSimpleLegend', () => {
         let container;
