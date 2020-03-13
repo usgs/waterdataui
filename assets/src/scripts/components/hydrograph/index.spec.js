@@ -428,12 +428,12 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                     currentVariableID: '45807197',
                     currentDateRange: 'P7D',
                     currentMethodID: 'method1',
-                    loadingTSKeys: []
+                    loadingTSKeys: [],
+                    hydrographBrushOffset: null
                 },
                 ui: {
                     windowWidth: 400,
-                    width: 400,
-                    hydrographXRange: undefined
+                    width: 400
                 }
 
             });
@@ -548,12 +548,12 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                     currentVariableID: '45807197',
                     currentDateRange: 'P7D',
                     currentMethodID: 'method1',
-                    loadingTSKeys: []
+                    loadingTSKeys: [],
+                    hydrographBrushOffset: null
                 },
                 ui: {
                     windowWidth: 400,
-                    width: 400,
-                    hydrographXRange: undefined
+                    width: 400
                 }
 
             });
