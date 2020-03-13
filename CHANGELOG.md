@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.27.0...master)
+### Added
+- Add period of record for each parameter in the monitoring location page parameter selection list.
 
 ## [0.27.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.26.0...waterdataui-0.27.0) - 2020-3-11
 ### Changed
