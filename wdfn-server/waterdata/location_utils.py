@@ -308,7 +308,7 @@ def get_period_of_record_by_parm_cd(site_records, data_type_cd='uv'):
 
     :param site_records: list of period of records (dict), typically for a single site
     :param data_type_cd: string - only site_records items that match data_type_cd will be considered by this function
-    :return: dict - keys will for parmCD and the value will be a dict with begin_date and end_date keys.
+    :return: dict - keys are the parmCds and the value for each will be a dict with begin_date and end_date keys.
     """
 
     DATE_FORMAT = '%Y-%m-%d'
