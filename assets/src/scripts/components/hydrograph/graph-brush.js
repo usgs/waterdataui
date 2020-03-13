@@ -24,7 +24,12 @@ export const drawGraphBrush = function(container, store) {
 
         // Only about the main hydrograph when user is done adjusting the time range.
         if (event.sourceEvent.type === 'mouseup' || event.sourceEvent.type === 'touchend') {
-            store.dispatch(Actions.setHydrographXRange(brushRange.map(xScale.invert, xScale)));
+
+            const adjustedBrush = brushRange.map(xScale.invert, xScale);
+            const brushOffsets = [adjustedBrush[0]- xScale.domain()[0],
+                xScale.domain()[1] - adjustedBrush[1]];
+
+            store.dispatch(Actions.setHydrographBrushOffset(brushOffsets));
         }
     };
 
@@ -61,11 +66,11 @@ export const drawGraphBrush = function(container, store) {
                     enableClip: () => false
                 })));
         })
-        .call(link(store, (svg, {layout, isHydrographXRange}) => {
+        .call(link(store, (svg, {layout, isHydrographBrushOffset}) => {
             let selection;
 
             const brushElem = svg.select('.brush');
-            if (isHydrographXRange && brushElem.size() !== 0) {
+            if (isHydrographBrushOffset && brushElem.size() !== 0) {
                 selection = brushSelection(brushElem.node());
             }
             if (!selection) {
@@ -89,6 +94,6 @@ export const drawGraphBrush = function(container, store) {
 
         }, createStructuredSelector({
             layout: getBrushLayout,
-            isHydrographXRange: (state) => state.ui.hydrographXRange !== undefined
+            isHydrographBrushOffset: (state) => state.timeSeriesState.hydrographBrushOffset !== undefined
         })));
 };

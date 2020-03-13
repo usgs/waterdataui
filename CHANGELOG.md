@@ -13,10 +13,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - All IV time series are now available for drawing on the hydrograph not just those in the last 7 days.
 - Added brush handle fill.
 - Updated to latest wdfn-viz 1.4.0 and implemented the new build guidance.
+- Fixed bug that made compare time series disappear when the brush was adjusted by adding
+offsets to time series state in order to adjust x scale.
 
 ### Added
 - The state of the UI for the hydrograph is now preserved in the hash portion of the url and state 
 can be restored by pasting the url into a browser window.
+- Added upstream basin to NLDI map on the monitoring location pages.
 - Added both hover and a cursor slider tooltip capability to the DV graph.
 - Added width integer parameter to the graph-server which allows the user to return the width of the image.
 
