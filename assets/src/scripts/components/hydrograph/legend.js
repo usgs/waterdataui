@@ -1,14 +1,14 @@
 // functions to facilitate legend creation for a d3 plot
-import { set } from 'd3-collection';
+import {set} from 'd3-collection';
 import memoize from 'fast-memoize';
 import {createSelector, createStructuredSelector} from 'reselect';
 
 import {CIRCLE_RADIUS, getMainLayout} from './layout';
-import { defineLineMarker, defineTextOnlyMarker, defineRectangleMarker } from '../../d3-rendering/markers';
-import { currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC } from './drawing-data';
+import {defineLineMarker, defineTextOnlyMarker, defineRectangleMarker} from '../../d3-rendering/markers';
+import {currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} from './drawing-data';
 import config from '../../config';
-import { getCurrentVariableMedianMetadata } from '../../selectors/median-statistics-selector';
-import { mediaQuery } from '../../utils';
+import {getCurrentVariableMedianMetadata} from '../../selectors/median-statistics-selector';
+import {mediaQuery} from '../../utils';
 import {link} from '../../lib/d3-redux';
 
 const TS_LABEL = {
@@ -147,8 +147,6 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
                 fill: marker.fill
             };
 
-            //console.log('UV: marker text:'+marker.text+ ' xPosition:'+xPosition+ ' yPosition:'+yPosition );
-
             let markerGroup = marker.type(legend, markerArgs);
             let markerGroupBBox;
             // Long story short, firefox is unable to get the bounding box if
@@ -163,9 +161,6 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
             try {
                 markerGroupBBox = markerGroup.node().getBBox();
                 xPosition = markerGroupBBox.x + markerGroupBBox.width + markerGroupXOffset;
-
-                //console.log('UV: markerGroupBBox.x:'+markerGroupBBox.x+ ' markerGroupBBox.width:'+markerGroupBBox.width+ ' markerGroupXOffset:'+markerGroupXOffset);
-                //console.log('UV: xPosition:'+xPosition);
 
             } catch(error) {
                 // See above explanation

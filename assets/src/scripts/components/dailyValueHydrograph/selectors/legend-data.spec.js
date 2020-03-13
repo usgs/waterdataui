@@ -26,12 +26,6 @@ describe('DV: Legend module', () => {
                 }
             }
         },
-        observationsState: {
-            currentTimeSeriesId: '12345',
-            showSeries: {
-                current: true
-            }
-        },
         ui: {
             windowWidth: 1024,
             width: 800

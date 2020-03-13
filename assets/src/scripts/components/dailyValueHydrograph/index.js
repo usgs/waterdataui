@@ -43,15 +43,14 @@ export const attachToNode = function (store,
             } else {
                 store.dispatch(Actions.setCurrentObservationsTimeSeriesId(timeSeriesId));
 
-                nodeElem.select('.graph-container')
-                    .call(drawTimeSeriesGraph, store)
-                    .call(drawTooltipCursorSlider, store);
-
-                // Add DV legend
                 let graphContainer = nodeElem.select('.graph-container');
-                graphContainer.append('div')
-                    .classed('dv-legend-controls-container', true)
-                    .call(drawTimeSeriesLegend, store);
+
+                graphContainer
+                    .call(drawTimeSeriesGraph, store)
+                    .call(drawTooltipCursorSlider, store)
+                    .append('div')
+                        .classed('dv-legend-controls-container', true)
+                        .call(drawTimeSeriesLegend, store);
             }
         });
 };

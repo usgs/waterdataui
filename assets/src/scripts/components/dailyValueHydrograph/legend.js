@@ -5,7 +5,7 @@ import {getLayout} from './selectors/layout';
 import {getLegendMarkerRows} from './selectors/legend-data';
 
 import config from '../../config';
-import { mediaQuery } from '../../utils';
+import {mediaQuery} from '../../utils';
 import {link} from '../../lib/d3-redux';
 
 
@@ -19,7 +19,7 @@ import {link} from '../../lib/d3-redux';
 export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
     div.selectAll('.legend-svg').remove();
 
-    if (!legendMarkerRows.length || !layout) {
+    if (!legendMarkerRows.length) {
         return;
     }
 
