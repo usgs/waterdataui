@@ -563,13 +563,20 @@ class TestGetPeriodOfRecordByParmCd(TestCase):
         }, {
             'agency_cd': 'USGS',
             'site_no': '01646500',
+            'data_type_cd': 'uv',
+            'parm_cd': '00065',
+            'ts_id': 'Two',
+            'begin_date': '2000-01-04',
+            'end_date': '2018-03-01'
+        }, {
+            'agency_cd': 'USGS',
+            'site_no': '01646500',
             'data_type_cd': 'dv',
             'parm_cd': '00060',
             'ts_id': 'One',
             'begin_date': '1990-01-04',
             'end_date': '2018-03-01'
-        }
-    ]
+        }]
 
     def test_empty_site_records(self):
         self.assertEqual(get_period_of_record_by_parm_cd([]), {})
@@ -592,7 +599,7 @@ class TestGetPeriodOfRecordByParmCd(TestCase):
                 'end_date': '2018-03-01'
             },
             '00065': {
-                'begin_date': '2001-01-04',
+                'begin_date': '2000-01-04',
                 'end_date': '2019-03-01'
             }
         })

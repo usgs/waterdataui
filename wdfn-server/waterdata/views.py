@@ -6,7 +6,8 @@ import json
 from flask import abort, render_template, request, Markup
 
 from . import app, __version__
-from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, get_period_of_record_by_parm_cd
+from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, \
+    get_period_of_record_by_parm_cd
 from .utils import construct_url, defined_when, parse_rdb
 from .services import sifta, ogc
 from .services.nwis import NwisWebServices
