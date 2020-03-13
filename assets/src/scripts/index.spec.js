@@ -18,6 +18,7 @@ import './d3-rendering/cursor-slider.spec';
 import './d3-rendering/loading-indicator.spec';
 import './d3-rendering/graph-tooltip.spec';
 import './d3-rendering/markers.spec';
+import './d3-rendering/legend.spec';
 
 import './components/dailyValueHydrograph/selectors/labels.spec';
 import './components/dailyValueHydrograph/selectors/scales.spec';

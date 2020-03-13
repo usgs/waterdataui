@@ -1,9 +1,10 @@
-import { select, selectAll } from 'd3-selection';
-import { drawSimpleLegend, legendMarkerRowsSelector, drawTimeSeriesLegend } from './legend';
-import { lineMarker, rectangleMarker, textOnlyMarker } from '../../d3-rendering/markers';
+import {select, selectAll} from 'd3-selection';
+import {legendMarkerRowsSelector, drawTimeSeriesLegend} from './legend';
+import {drawSimpleLegend} from '../../d3-rendering/legend';
+import {lineMarker, rectangleMarker, textOnlyMarker} from '../../d3-rendering/markers';
 import {Actions, configureStore} from '../../store';
 
-describe('Legend module', () => {
+describe('UV: Legend module', () => {
 
     const TEST_DATA = {
         series: {
