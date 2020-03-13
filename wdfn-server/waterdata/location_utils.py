@@ -311,7 +311,7 @@ def get_period_of_record_by_parm_cd(site_records, data_type_cd='uv'):
     :return: dict - keys are the parmCds and the value for each will be a dict with begin_date and end_date keys.
     """
 
-    DATE_FORMAT = '%Y-%m-%d'
+    date_format = '%Y-%m-%d'
     data_type_records_iter = filter(lambda record: record['data_type_cd'] == data_type_cd, site_records)
     mapped_records_iter = map(lambda record: {
         'parm_cd': record['parm_cd'],
@@ -324,13 +324,13 @@ def get_period_of_record_by_parm_cd(site_records, data_type_cd='uv'):
         this_parm_cd = record['parm_cd']
 
         if this_parm_cd in records_by_parm_cd:
-            record_begin_datetime = datetime.strptime(record['begin_date'], DATE_FORMAT)
-            current_begin_datetime = datetime.strptime(records_by_parm_cd[this_parm_cd]['begin_date'], DATE_FORMAT)
+            record_begin_datetime = datetime.strptime(record['begin_date'], date_format)
+            current_begin_datetime = datetime.strptime(records_by_parm_cd[this_parm_cd]['begin_date'], date_format)
             if record_begin_datetime < current_begin_datetime:
                 records_by_parm_cd[this_parm_cd]['begin_date'] = record['begin_date']
 
-            record_end_datetime = datetime.strptime(record['end_date'], DATE_FORMAT)
-            current_end_datetime = datetime.strptime(records_by_parm_cd[this_parm_cd]['end_date'], DATE_FORMAT)
+            record_end_datetime = datetime.strptime(record['end_date'], date_format)
+            current_end_datetime = datetime.strptime(records_by_parm_cd[this_parm_cd]['end_date'], date_format)
             if record_end_datetime > current_end_datetime:
                 records_by_parm_cd[this_parm_cd]['end_date'] = record['end_date']
 

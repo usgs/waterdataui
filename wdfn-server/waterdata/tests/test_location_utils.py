@@ -503,7 +503,7 @@ class TestRollupDataseries(TestCase):
                 'parm_grp_cd': {'code': 'ALL', 'name': 'ALL'},
                 'begin_date': {'name': '1967-03-28', 'code': '1967-03-28'},
                 'end_date': {'name': '1993-09-07', 'code': '1993-09-07'}
-            },
+            }
         ]
 
     def test_series_no_group_and_code(self):
