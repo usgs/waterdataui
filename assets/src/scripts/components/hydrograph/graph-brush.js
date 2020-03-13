@@ -94,6 +94,6 @@ export const drawGraphBrush = function(container, store) {
 
         }, createStructuredSelector({
             layout: getBrushLayout,
-            isHydrographBrushOffset: (state) => state.ui.hydrographBrushOffset !== undefined
+            isHydrographBrushOffset: (state) => state.timeSeriesState.hydrographBrushOffset !== undefined
         })));
 };
