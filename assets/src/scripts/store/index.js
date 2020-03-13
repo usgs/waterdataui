@@ -391,15 +391,15 @@ export const Actions = {
             width
         };
     },
-    setHydrographXRange(hydrographXRange) {
+    setHydrographBrushOffset(hydrographBrushOffset) {
         return {
-            type: 'SET_HYDROGRAPH_X_RANGE',
-            hydrographXRange
+            type: 'SET_HYDROGRAPH_BRUSH_OFFSET',
+            hydrographBrushOffset
         };
     },
-    clearHydrographXRange() {
+    clearHydrographBrushOffset() {
         return {
-            type: 'CLEAR_HYDROGRAPH_X_RANGE'
+            type: 'CLEAR_HYDROGRAPH_BRUSH_OFFSET'
         };
     },
     setCurrentVariable(variableID) {
@@ -526,7 +526,8 @@ export const configureStore = function (initialState) {
             currentVariableID: null,
             cursorOffset: null,
             audiblePlayId: null,
-            loadingTSKeys: []
+            loadingTSKeys: [],
+            hydrographBrushOffset: null
         },
         observationsState: {
             cursorOffset: null
@@ -536,8 +537,7 @@ export const configureStore = function (initialState) {
         },
         ui : {
             windowWidth: 1024,
-            width: 800,
-            hydrographXRange: {}
+            width: 800
         },
         ...initialState
     };

@@ -76,6 +76,23 @@ const setCustomDateRange = function(timeSeriesState, action) {
     };
 };
 
+const setHydrographBrushOffset= function(timeSeriesState, action) {
+    return {
+        ...timeSeriesState,
+        hydrographBrushOffset: {
+            start: action.hydrographBrushOffset[0],
+            end: action.hydrographBrushOffset[1]
+        }
+    };
+};
+
+const clearHydrographBrushOffset = function(timeSeriesState) {
+    return {
+        ...timeSeriesState,
+        hydrographBrushOffset: undefined
+    };
+};
+
 /*
  * Slice reducer
  */
@@ -91,6 +108,8 @@ export const timeSeriesStateReducer = function(timeSeriesState={}, action) {
         case 'TIME_SERIES_LOADING_ADD': return addLoadingTimeSeries(timeSeriesState, action);
         case 'TIME_SERIES_LOADING_REMOVE': return removeLoadingTimeSeries(timeSeriesState, action);
         case 'SET_CUSTOM_DATE_RANGE': return setCustomDateRange(timeSeriesState, action);
+        case 'SET_HYDROGRAPH_BRUSH_OFFSET': return setHydrographBrushOffset(timeSeriesState, action);
+        case 'CLEAR_HYDROGRAPH_BRUSH_OFFSET': return clearHydrographBrushOffset(timeSeriesState);
         default: return timeSeriesState;
     }
 };
