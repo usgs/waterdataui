@@ -1,7 +1,21 @@
 var CONFIG = {
     TIMESERIES_AUDIO_ENABLED: true,
     MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED: true,
-    FIM_GIS_ENDPOINT: 'https:/fakelegendservice.com'
+    FIM_GIS_ENDPOINT: 'https:/fakelegendservice.com',
+    uvPeriodOfRecord: {
+        '00010': {
+            begin_date: '01-02-2001',
+            end_date: '10-15-2015'
+        },
+        '00067': {
+            begin_date: '04-01-1990',
+            end_date: '10-15-2006'
+        },
+        '00093': {
+            begin_date: '11-25-2001',
+            end_date: '03-01-2020'
+        }
+    }
 };
 
 var mockOscillator = function() {
@@ -56,7 +70,7 @@ var mockCompressor = function() {
     };
 };
 
-var MockAudioContext = function() {
+const MockAudioContext = function() {
     this.createOscillator = mockOscillator;
     this.createGain = mockGain;
     this.createDynamicsCompressor = mockCompressor;
