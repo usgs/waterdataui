@@ -121,8 +121,20 @@ describe('components/dailyValueHydrograph/index', () => {
         });
     });
 
+    it('Should render the DV legend', (done) => {
+        attachToNode(configureStore(TEST_STATE), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
+        jasmine.Ajax.requests.mostRecent().respondWith({
+            status: 200,
+            response: JSON.stringify(TEST_STATE.observationsData.timeSeries['12345'])
+        });
 
-    it('should render the tooltip cursor slider', (done) => {
+        window.requestAnimationFrame(() => {
+            expect(testDiv.select('.graph-container').selectAll('.dv-legend-controls-container').size()).toBe(1);
+            done();
+        });
+    });
+
+    it('Should render the tooltip cursor slider', (done) => {
         attachToNode(configureStore(TEST_STATE), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
         jasmine.Ajax.requests.mostRecent().respondWith({
             status: 200,
