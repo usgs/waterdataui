@@ -2,7 +2,7 @@
 // selector function which will return the width/height to use.
 
 import memoize from 'fast-memoize';
-import { createSelector } from 'reselect';
+import {createSelector} from 'reselect';
 
 import config from '../../config';
 import {getCurrentParmCd} from '../../selectors/time-series-selector';
@@ -26,7 +26,7 @@ const MARGIN_SMALL_DEVICE = {
     bottom: 10,
     left: 0
 };
-//export const CIRCLE_RADIUS = 4;
+
 export const CIRCLE_RADIUS_SINGLE_PT = 1;
 
 export const BRUSH_HEIGHT = 100;

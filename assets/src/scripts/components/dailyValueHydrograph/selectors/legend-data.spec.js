@@ -30,7 +30,7 @@ describe('DV: Legend module', () => {
             currentTimeSeriesId: '12345',
             showSeries: {
                 current: true
-            }
+                        }
         },
         ui: {
             windowWidth: 1024,
