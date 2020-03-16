@@ -137,7 +137,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     siteno,
                     userSpecifiedStart,
                     userSpecifiedEnd
-                )).then(() => store.dispatch(Actions.clearHydrographXRange()));
+                )).then(() => store.dispatch(Actions.clearHydrographBrushOffset()));
             }
         });
 
@@ -175,7 +175,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     siteno,
                     li.select('input:checked').attr('value')
                 )).then(() => {
-                    store.dispatch(Actions.clearHydrographXRange());
+                    store.dispatch(Actions.clearHydrographBrushOffset());
                 });
             }
         });
