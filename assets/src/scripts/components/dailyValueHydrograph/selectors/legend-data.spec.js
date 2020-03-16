@@ -56,8 +56,8 @@ describe('DV: Legend module', () => {
             const result = getLegendMarkerRows(TEST_STATE);
 
             expect(result.length).toBe(1);
-            expect(result[0].length).toBe(3);
-            expect(result[0][0].type).toEqual(textOnlyMarker);
+            expect(result[0].length).toBe(2);
+            expect(result[0][0].type).toEqual(lineMarker);
             expect(result[0][1].type).toEqual(lineMarker);
         });
 
@@ -89,8 +89,8 @@ describe('DV: Legend module', () => {
         });
 
 
-        it('Should have 3 legend markers', () => {
-            expect(selectAll('.legend g').size()).toBe(3);
+        it('Should have 2 legend markers', () => {
+            expect(selectAll('.legend g').size()).toBe(2);
         });
 
     });

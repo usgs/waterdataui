@@ -34,7 +34,6 @@ const createLegendMarkers = function(displayItems) {
         ];
         if (currentMarkers.length) {
             legendMarkers.push([
-                defineTextOnlyMarker('', null, 'ts-legend-current-text'),
                 ...currentMarkers
             ]);
         }
