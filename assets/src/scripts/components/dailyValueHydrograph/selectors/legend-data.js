@@ -1,6 +1,6 @@
 import {createSelector} from 'reselect';
 import {getCurrentTimeSeriesLineSegments} from './time-series-data';
-import {defineLineMarker, defineTextOnlyMarker} from '../../../d3-rendering/markers';
+import {defineLineMarker} from '../../../d3-rendering/markers';
 
 
 const tsLineMarkers = function(lineClasses) {

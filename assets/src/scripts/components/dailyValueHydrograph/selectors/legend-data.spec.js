@@ -1,7 +1,7 @@
 import {select, selectAll} from 'd3-selection';
 import {drawTimeSeriesLegend} from '../legend';
 import {getLegendMarkerRows} from './legend-data';
-import {lineMarker, textOnlyMarker} from '../../../d3-rendering/markers';
+import {lineMarker} from '../../../d3-rendering/markers';
 import {configureStore} from '../../../store';
 
 
@@ -27,10 +27,7 @@ describe('DV: Legend module', () => {
             }
         },
         observationsState: {
-            currentTimeSeriesId: '12345',
-            showSeries: {
-                current: true
-                        }
+            currentTimeSeriesId: '12345'
         },
         ui: {
             windowWidth: 1024,
