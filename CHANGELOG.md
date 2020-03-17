@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Fixed
 - Fixed bug that made compare time series disappear when the brush was adjusted by adding
 offsets to time series state in order to adjust x scale.
+- Added DV legend.
 
 ## [0.27.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.26.0...waterdataui-0.27.0) - 2020-3-11
 ### Changed

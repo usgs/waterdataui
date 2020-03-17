@@ -1,8 +1,74 @@
-import {select} from 'd3-selection';
+import {select, selectAll} from 'd3-selection';
 import {lineMarker, rectangleMarker, textOnlyMarker} from './markers';
 import {drawSimpleLegend} from './legend';
+import {configureStore} from "../store";
+import {drawTimeSeriesLegend} from "../components/dailyValueHydrograph/legend";
 
-describe('D3-rendering: Legend module', () => {
+describe('Legend module', () => {
+
+    const TEST_STATE = {
+        observationsData: {
+            timeSeries: {
+                '12345': {
+                    type: 'Feature',
+                    id: '12345',
+                    properties: {
+                        phenomenonTimeStart: '2018-01-02',
+                        phenomenonTimeEnd: '2018-01-05',
+                        timeStep: ['2018-01-02', '2018-01-03', '2018-01-04', '2018-01-05'],
+                        result: ['5.0', '4.0', '6.1', '3.2'],
+                        approvals: [['Approved'], ['Approved'], ['Approved'], ['Estimated']],
+                        nilReason: [null, 'AA', null, null],
+                        qualifiers: [null, null, ['ICE'], ['ICE']],
+                        grades: [['50'], ['50'], ['60'], ['60']]
+                    }
+                }
+            }
+        },
+        observationsState: {
+            currentTimeSeriesId: '12345'
+        },
+        ui: {
+            windowWidth: 1024,
+            width: 800
+        }
+    };
+
+    describe('Legend should render', () => {
+
+        let graphNode;
+        let store;
+
+        beforeEach(() => {
+            let body = select('body');
+            let component = body.append('div').attr('id', 'hydrograph');
+            component.append('div').attr('class', 'loading-indicator-container');
+            component.append('div').attr('class', 'graph-container');
+
+            graphNode = document.getElementById('hydrograph');
+
+            store = configureStore(TEST_STATE);
+            select(graphNode)
+                .call(drawTimeSeriesLegend, store);
+
+            jasmine.Ajax.install();
+        });
+
+        afterEach(() => {
+            jasmine.Ajax.uninstall();
+            select('#hydrograph').remove();
+        });
+
+
+        it('Should have 2 legend markers', () => {
+            expect(selectAll('.legend g').size()).toBe(2);
+        });
+
+    });
+
+});
+
+describe('Legend module', () => {
 
     describe('drawSimpleLegend', () => {
         let container;

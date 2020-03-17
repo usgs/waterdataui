@@ -1,9 +1,5 @@
-import {select, selectAll} from 'd3-selection';
-import {drawTimeSeriesLegend} from '../legend';
 import {getLegendMarkerRows} from './legend-data';
 import {lineMarker} from '../../../d3-rendering/markers';
-import {configureStore} from '../../../store';
-
 
 describe('DV: Legend module', () => {
 
@@ -56,38 +52,6 @@ describe('DV: Legend module', () => {
             expect(result[0].length).toBe(2);
             expect(result[0][0].type).toEqual(lineMarker);
             expect(result[0][1].type).toEqual(lineMarker);
-        });
-
-    });
-
-    describe('DV: legend should render', () => {
-
-        let graphNode;
-        let store;
-
-        beforeEach(() => {
-            let body = select('body');
-            let component = body.append('div').attr('id', 'hydrograph');
-            component.append('div').attr('class', 'loading-indicator-container');
-            component.append('div').attr('class', 'graph-container');
-
-            graphNode = document.getElementById('hydrograph');
-
-            store = configureStore(TEST_STATE);
-            select(graphNode)
-                .call(drawTimeSeriesLegend, store);
-
-            jasmine.Ajax.install();
-        });
-
-        afterEach(() => {
-            jasmine.Ajax.uninstall();
-            select('#hydrograph').remove();
-        });
-
-
-        it('Should have 2 legend markers', () => {
-            expect(selectAll('.legend g').size()).toBe(2);
         });
 
     });
