@@ -8,7 +8,7 @@
  */
 
 import './polyfills';
-
+/*
 import './ajax.spec';
 
 import './d3-rendering/accessibility.spec';
@@ -29,7 +29,9 @@ import './components/dailyValueHydrograph/tooltip.spec';
 import './components/embed.spec';
 
 import './components/hydrograph/audible.spec';
+ */
 import './components/hydrograph/axes.spec';
+/*
 import './components/hydrograph/cursor.spec';
 import './components/hydrograph/date-controls.spec';
 import './components/hydrograph/domain.spec';
@@ -82,3 +84,4 @@ import './web-services/models.spec';
 import './web-services/nldi-data.spec';
 import './web-services/observations-spec';
 import './web-services/statistics-data.spec';
+*/

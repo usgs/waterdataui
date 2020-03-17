@@ -1,12 +1,85 @@
+import {DateTime} from 'luxon';
+
 import {generateDateTicks } from './axes';
 
 
 describe('Chart axes', () => {
 
-    const timeZone = 'America/Los_Angeles';
+    const timeZone = 'America/Chicago';
 
-    describe('generateDateTicks', () => {
+    fdescribe('generateDateTicks', () => {
+        const startTime = 1551471524000;
+        it('Generates day length tick marks with format MMM dd when length is 7 days', () => {
+            const endTime = DateTime.fromMillis(startTime).plus({days: 7}).toMillis();
+            const result = generateDateTicks(startTime, endTime, timeZone);
 
+            expect(result.dates.length).toBe(7);
+            expect(result.dates.map(result.format)).toEqual(
+                ['Mar 02', 'Mar 03', 'Mar 04', 'Mar 05', 'Mar 06', 'Mar 07', 'Mar 08']
+            );
+        });
+        it('Generates day length tick marks with format MMM dd when length is 4 days', () => {
+            const endTime = DateTime.fromMillis(startTime).plus({days: 3}).toMillis();
+            const result = generateDateTicks(startTime, endTime, timeZone);
+
+            expect(result.dates.length).toBe(3);
+            expect(result.dates.map(result.format)).toEqual(
+                ['Mar 02', 'Mar 03', 'Mar 04']
+            );
+        });
+
+        it('Generates every other day tick marks with format MMM dd when length is 8 days', () => {
+            const endTime = DateTime.fromMillis(startTime).plus({days: 8}).toMillis();
+            const result = generateDateTicks(startTime, endTime, timeZone);
+
+            expect(result.dates.length).toBe(4);
+            expect(result.dates.map(result.format)).toEqual(
+                ['Mar 02', 'Mar 04', 'Mar 06', 'Mar 08']
+            );
+        });
+
+        it('Generates every other day tick marks with format MM dd when length is 14', () => {
+            const endTime = DateTime.fromMillis(startTime).plus({days: 14}).toMillis();
+            const result = generateDateTicks(startTime, endTime, timeZone);
+
+            expect(result.dates.length).toBe(7);
+            expect(result.dates.map(result.format)).toEqual(
+                ['Mar 02', 'Mar 04', 'Mar 06', 'Mar 08', 'Mar 10', 'Mar 12', 'Mar 14']
+            );
+        });
+
+        it('Generates every fourth day tick marks with format MM dd when length is 15', () => {
+            const endTime = DateTime.fromMillis(startTime).plus({days: 15}).toMillis();
+            const result = generateDateTicks(startTime, endTime, timeZone);
+
+            expect(result.dates.length).toBe(4);
+            expect(result.dates.map(result.format)).toEqual(
+                ['Mar 02', 'Mar 06', 'Mar 10', 'Mar 14']
+            );
+        });
+
+        it('Generates every fourth day tick marks with format MM dd when length is 28', () => {
+            const endTime = DateTime.fromMillis(startTime).plus({days: 28}).toMillis();
+            const result = generateDateTicks(startTime, endTime, timeZone);
+
+            expect(result.dates.length).toBe(7);
+            expect(result.dates.map(result.format)).toEqual(
+                ['Mar 02', 'Mar 06', 'Mar 10', 'Mar 14', 'Mar 18', 'Mar 22', 'Mar 26']
+            );
+        });
+
+        it('Generates every week tick marks with format MM dd when day count is 29', () => {
+            const endTime = DateTime.fromMillis(startTime).plus({days: 29}).toMillis();
+            const result = generateDateTicks(startTime, endTime, timeZone);
+
+            expect(result.dates.length).toBe(4);
+            expect(result.dates.map(result.format)).toEqual(
+                ['Mar 04', 'Mar 11', 'Mar 18', 'Mar 25']
+            );
+        });
+
+
+/*
         const endDate = 1504215240000;
         const startP7D = 1503610440000;
         const startP30D = 1501623240000;
@@ -110,5 +183,6 @@ describe('Chart axes', () => {
                 1459494000000
             ]);
         });
+        */
     });
 });

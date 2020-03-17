@@ -1,6 +1,6 @@
 import { axisBottom, axisLeft, axisRight } from 'd3-axis';
 import memoize from 'fast-memoize';
-import { DateTime } from 'luxon';
+import { DateTime, Interval } from 'luxon';
 import { createSelector } from 'reselect';
 
 import config from '../../config';
@@ -25,11 +25,70 @@ const FORMAT = {
  *
  * @param startDate - start datetime in the form of milliseconds since 1970-01-01 UTC
  * @param endDate - end datetime in the form of milliseconds since 1970-01-01 UTC
- * @param period - ISO duration for date range of the time series
  * @param ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
- * @returns {Array}
+ * @returns {Object} with two properties, dates {Array of Number timestamp in milliseconds} and
+ *      format {String} the format that should be used used to display the dates.
  */
-export const generateDateTicks = function(startDate, endDate, period, ianaTimeZone) {
+export const generateDateTicks = function(startDate, endDate, ianaTimeZone) {
+
+    const startDateTime = DateTime.fromMillis(startDate, {zone: ianaTimeZone});
+    const endDateTime = DateTime.fromMillis(endDate, {zone: ianaTimeZone});
+    const length = Interval.fromDateTimes(startDateTime, endDateTime);
+    const dayCount = length.count('days');
+    const weekCount = length.count('weeks');
+    const monthCount = length.count('months');
+    const yearCount = length.count('years');
+
+    const formatFnc = (format) => {
+        return function(dateTime)  {
+            return DateTime.fromMillis(dateTime, {zone: ianaTimeZone}).toFormat(format);
+        };
+    };
+
+    const getTicks = function(interval, nextDuration ) {
+        let dateTime = startDateTime.startOf('day').plus(nextDuration);
+        let result = [];
+        while (dateTime < endDateTime) {
+            console.log(`${dateTime.toFormat('f')}`);
+            result.push(dateTime.toMillis());
+            dateTime = dateTime.plus(interval);
+        }
+        return result;
+    };
+
+    let result = {
+        dates: [],
+        format: null
+    };
+
+    if (dayCount > 3 && dayCount <= 8) {
+        // Tick marks are daily
+        result = {
+            dates: getTicks({days: 1}, {days: 1}),
+            format: formatFnc('MMM dd')
+        };
+
+    } else if (dayCount > 8 && dayCount <= 15) {
+        // Tick marks are ever other day
+        result = {
+            dates: getTicks({days: 2}, {days: 1}),
+            format: formatFnc('MMM dd')
+        };
+    } else if (dayCount > 15 && dayCount <= 29) {
+        //Tick marks every fourth day
+        result = {
+            dates: getTicks({days: 4}, {days: 1}),
+            format: formatFnc('MMM dd')
+        };
+    } else if (weekCount > 4 && weekCount <= 8) {
+        result = {
+            dates: getTicks({weeks: 1}, {days: 3}),
+            format: formatFnc('MMM dd')
+        };
+    }
+
+    return result;
+    /*
     const tzStartDate = DateTime.fromMillis(startDate, {zone: ianaTimeZone});
     let dates = [];
     let date;
@@ -96,6 +155,7 @@ export const generateDateTicks = function(startDate, endDate, period, ianaTimeZo
         }
     }
     return dates;
+    */
 };
 
 
