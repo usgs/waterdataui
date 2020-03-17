@@ -4,6 +4,7 @@ import {select} from 'd3-selection';
 
 import {getVariables, getCurrentVariableID, getTimeSeries} from '../../selectors/time-series-selector';
 
+import config from '../../config';
 import {Actions} from '../../store';
 import {appendTooltip} from '../../tooltips';
 import {sortedParameters} from '../../utils';
@@ -145,7 +146,7 @@ export const plotSeriesSelectTable = function (elem,
         return;
     }
 
-    const columnHeaders = ['Parameter', 'Preview', '#'];
+    const columnHeaders = ['Parameter', 'Preview', '#', 'Period of Record'];
     const tableContainer = elem.append('div')
         .attr('id', 'select-time-series');
 
@@ -189,13 +190,15 @@ export const plotSeriesSelectTable = function (elem,
                 parmCdCol.append('span')
                     .text(parm => parm[1].description)
                     .call(appendTooltip, parm => `Parameter code: ${parm[0]}`);
-
                 tr.append('td')
                     .append('svg')
                     .attr('width', SPARK_LINE_DIM.width.toString())
                     .attr('height', SPARK_LINE_DIM.height.toString());
                 tr.append('td')
                     .text(parm => parm[1].currentTimeSeriesCount);
+                tr.append('td')
+                    .style('white-space', 'nowrap')
+                    .text(parm =>`${config.uvPeriodOfRecord[parm[0]].begin_date} to ${config.uvPeriodOfRecord[parm[0]].end_date}`);
             });
 
     table.property('scrollTop', scrollTop);

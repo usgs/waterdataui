@@ -8,7 +8,8 @@ from pendulum import datetime
 
 from .. import app
 from ..location_utils import (
-    build_linked_data, get_disambiguated_values, get_state_abbreviation, rollup_dataseries
+    build_linked_data, get_disambiguated_values, get_state_abbreviation, rollup_dataseries,
+    get_period_of_record_by_parm_cd
 )
 
 
@@ -502,7 +503,7 @@ class TestRollupDataseries(TestCase):
                 'parm_grp_cd': {'code': 'ALL', 'name': 'ALL'},
                 'begin_date': {'name': '1967-03-28', 'code': '1967-03-28'},
                 'end_date': {'name': '1993-09-07', 'code': '1993-09-07'}
-            },
+            }
         ]
 
     def test_series_no_group_and_code(self):
@@ -531,3 +532,74 @@ class TestRollupDataseries(TestCase):
             set(result[0]['parameters'][0].keys()),
             {'start_date', 'end_date', 'parameter_name', 'data_types', 'parameter_code'}
         )
+
+class TestGetPeriodOfRecordByParmCd(TestCase):
+
+    def setUp(self):
+        self.test_data = [{
+            'agency_cd': 'USGS',
+            'site_no': '01646500',
+            'data_type_cd': 'uv',
+            'parm_cd': '00060',
+            'ts_id': 'One',
+            'begin_date': '2001-01-04',
+            'end_date': '2018-03-01'
+        }, {
+            'agency_cd': 'USGS',
+            'site_no': '01646500',
+            'data_type_cd': 'uv',
+            'parm_cd': '00065',
+            'ts_id': 'One',
+            'begin_date': '2001-01-04',
+            'end_date': '2018-03-01'
+        }, {
+            'agency_cd': 'USGS',
+            'site_no': '01646500',
+            'data_type_cd': 'uv',
+            'parm_cd': '00065',
+            'ts_id': 'Two',
+            'begin_date': '2004-01-04',
+            'end_date': '2019-03-01'
+        }, {
+            'agency_cd': 'USGS',
+            'site_no': '01646500',
+            'data_type_cd': 'uv',
+            'parm_cd': '00065',
+            'ts_id': 'Two',
+            'begin_date': '2000-01-04',
+            'end_date': '2018-03-01'
+        }, {
+            'agency_cd': 'USGS',
+            'site_no': '01646500',
+            'data_type_cd': 'dv',
+            'parm_cd': '00060',
+            'ts_id': 'One',
+            'begin_date': '1990-01-04',
+            'end_date': '2018-03-01'
+        }]
+
+    def test_empty_site_records(self):
+        self.assertEqual(get_period_of_record_by_parm_cd([]), {})
+
+    def test_no_data_type_cd(self):
+        self.assertEqual(get_period_of_record_by_parm_cd(self.test_data, 'wq'), {})
+
+    def test_one_record_per_parm(self):
+        self.assertEqual(get_period_of_record_by_parm_cd(self.test_data, 'dv'), {
+            '00060': {
+                'begin_date': '1990-01-04',
+                'end_date': '2018-03-01'
+            }
+        })
+
+    def test_two_record_per_parm(self):
+        self.assertEqual(get_period_of_record_by_parm_cd(self.test_data), {
+            '00060': {
+                'begin_date': '2001-01-04',
+                'end_date': '2018-03-01'
+            },
+            '00065': {
+                'begin_date': '2000-01-04',
+                'end_date': '2019-03-01'
+            }
+        })

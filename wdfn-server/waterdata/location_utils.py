@@ -3,6 +3,7 @@ Utility functions and classes for working with
 USGS water services.
 
 """
+from datetime import datetime
 import itertools
 
 from flask import url_for
@@ -300,3 +301,43 @@ def rollup_dataseries(dataseries):
     data_type_groups = [_extract_group_summary_data(v) for v in rollup_by_dt_code.values()]
 
     return parameter_groups + data_type_groups
+
+def get_period_of_record_by_parm_cd(site_records, data_type_cd='uv'):
+    """
+    Return the merged period of record for each unique parameter code with data_type_cd in site_records
+
+    :param site_records: list of period of records (dict), typically for a single site
+    :param data_type_cd: string - only site_records items that match data_type_cd will be considered by this function
+    :return: dict - keys are the parmCds and the value for each will be a dict with begin_date and end_date keys.
+    """
+
+    date_format = '%Y-%m-%d'
+    data_type_records_iter = filter(lambda record: record['data_type_cd'] == data_type_cd, site_records)
+    mapped_records_iter = map(lambda record: {
+        'parm_cd': record['parm_cd'],
+        'begin_date': record['begin_date'],
+        'end_date': record['end_date']
+    }, data_type_records_iter)
+
+    records_by_parm_cd = {}
+    for record in mapped_records_iter:
+        this_parm_cd = record['parm_cd']
+
+        if this_parm_cd in records_by_parm_cd:
+            record_begin_datetime = datetime.strptime(record['begin_date'], date_format)
+            current_begin_datetime = datetime.strptime(records_by_parm_cd[this_parm_cd]['begin_date'], date_format)
+            if record_begin_datetime < current_begin_datetime:
+                records_by_parm_cd[this_parm_cd]['begin_date'] = record['begin_date']
+
+            record_end_datetime = datetime.strptime(record['end_date'], date_format)
+            current_end_datetime = datetime.strptime(records_by_parm_cd[this_parm_cd]['end_date'], date_format)
+            if record_end_datetime > current_end_datetime:
+                records_by_parm_cd[this_parm_cd]['end_date'] = record['end_date']
+
+        else:
+            records_by_parm_cd[this_parm_cd] = {
+                'begin_date': record['begin_date'],
+                'end_date': record['end_date']
+            }
+
+    return records_by_parm_cd
