@@ -78,7 +78,25 @@ describe('Chart axes', () => {
             );
         });
 
+        it('Generates every week tick marks with format MM dd when week count is 8', () => {
+            const endTime = DateTime.fromMillis(startTime).plus({days: 50}).toMillis();
+            const result = generateDateTicks(startTime, endTime, timeZone);
 
+            expect(result.dates.length).toBe(7);
+            expect(result.dates.map(result.format)).toEqual(
+                ['Mar 04', 'Mar 11', 'Mar 18', 'Mar 25', 'Apr 01', 'Apr 08', 'Apr 15']
+            );
+        });
+
+        it('Generates every week tick marks with format MM dd when day count is 29', () => {
+            const endTime = DateTime.fromMillis(startTime).plus({days: 51}).toMillis();
+            const result = generateDateTicks(startTime, endTime, timeZone);
+
+            expect(result.dates.length).toBe(4);
+            expect(result.dates.map(result.format)).toEqual(
+                ['Mar 08', 'Mar 22', 'Apr 04', 'Apr 18']
+            );
+        });
 /*
         const endDate = 1504215240000;
         const startP7D = 1503610440000;

@@ -85,6 +85,11 @@ export const generateDateTicks = function(startDate, endDate, ianaTimeZone) {
             dates: getTicks({weeks: 1}, {days: 3}),
             format: formatFnc('MMM dd')
         };
+    } else if (weekCount > 9 && weekCount <= 18) {
+        result = {
+            dates: getTicks({weeks: 2}, {days: 7}),
+            format: formatFnc('MMM dd')
+        };
     }
 
     return result;
