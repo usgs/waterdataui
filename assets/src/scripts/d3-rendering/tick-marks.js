@@ -23,7 +23,6 @@ const getTicks = function(startDateTime, endDateTime, interval, startOffset ) {
 
     let result = [];
     while (dateTime < endDateTime) {
-        console.log(`${dateTime.toFormat('f')}`);
         result.push(dateTime.toMillis());
         dateTime = dateTime.plus(interval);
     }
@@ -48,7 +47,6 @@ const getDefaultTicks = function (startMillis, endMillis, unit, tickCount, ianaT
         let dateTime = DateTime.fromMillis(startMillis + tickInterval, {zone: ianaTimeZone});
         while (dateTime < endDateTime) {
             let tickDateTime = dateTime.startOf(unit);
-            console.log(`Default ${tickDateTime.toFormat('f')}`);
             result.push(tickDateTime.toMillis());
             dateTime = dateTime.plus(tickInterval);
         }
