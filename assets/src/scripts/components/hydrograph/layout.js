@@ -26,7 +26,7 @@ const MARGIN_SMALL_DEVICE = {
     bottom: 10,
     left: 0
 };
-export const CIRCLE_RADIUS = 4;
+
 export const CIRCLE_RADIUS_SINGLE_PT = 1;
 
 export const BRUSH_HEIGHT = 100;
@@ -54,7 +54,7 @@ export const getLayout = memoize(kind => createSelector(
     (state) => state.ui.windowWidth,
     tickSelector,
     getCurrentParmCd,
-    (width, windowWidth, tickDetails, parmCd) => {
+    (width, windowWidth, tickDetails,parmCd) => {
         const isDesktop = mediaQuery(config.USWDS_SITE_MAX_WIDTH);
         const height = kind === 'BRUSH' ? isDesktop ? BRUSH_HEIGHT : BRUSH_MOBILE_HEIGHT : width * ASPECT_RATIO;
         const margin = isDesktop ? MARGIN : MARGIN_SMALL_DEVICE;

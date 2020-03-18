@@ -107,7 +107,7 @@
                 {% if config.DAILY_VALUE_HYDROGRAPH_ENABLED %}
                     <div id="dv-accordion" class="usa-accordion">
                         <h2 class="usa-accordion__heading">
-                            <button class="usa-accordion__button" aria-expanded="false" aria-controls="dv-graph-container">Groundwater Data</button>
+                            <button class="usa-accordion__button" aria-expanded="true" aria-controls="dv-graph-container">Groundwater Data</button>
                         </h2>
                         <div id="dv-graph-container" class="usa-accordion_content">
                             {{ components.DailyValueTimeSeriesComponent(stations[0].site_no) }}
