@@ -45,8 +45,18 @@ export const generateDateTicks = function(startDate, endDate, ianaTimeZone) {
         };
     };
 
-    const getTicks = function(interval, nextDuration ) {
-        let dateTime = startDateTime.startOf('day').plus(nextDuration);
+    const getTicks = function(interval, startOffset ) {
+        let dateTime;
+        const startOffsetKind = Object.keys(startOffset)[0];
+        if (startOffsetKind === 'years') {
+            dateTime = startDateTime.startOf('year');
+        } else if (startOffsetKind === 'months') {
+            dateTime = startDateTime.startOf('month');
+        } else {
+            dateTime = startDateTime.startOf('day');
+        }
+        dateTime = dateTime.plus(startOffset);
+
         let result = [];
         while (dateTime < endDateTime) {
             console.log(`${dateTime.toFormat('f')}`);
@@ -56,12 +66,32 @@ export const generateDateTicks = function(startDate, endDate, ianaTimeZone) {
         return result;
     };
 
+    const getDefaultTicks = function (unit, tickCount) {
+        const tickInterval = (endDate - startDate) / (tickCount + 1);
+        let result = [];
+
+        let dateTime = DateTime.fromMillis(startDate + tickInterval, {zone: ianaTimeZone});
+        while (dateTime < endDateTime) {
+            let tickDateTime = dateTime.startOf(unit);
+            console.log(`Default ${tickDateTime.toFormat('f')}`);
+            result.push(tickDateTime.toMillis());
+            dateTime = dateTime.plus(tickInterval);
+        }
+
+        return result;
+    };
+
     let result = {
         dates: [],
         format: null
     };
 
-    if (dayCount > 3 && dayCount <= 8) {
+    if (dayCount <= 3) {
+        result = {
+            dates: getDefaultTicks('minute', 4),
+            format: formatFnc('MMM dd HH:mm')
+        };
+    } else if (dayCount > 3 && dayCount <= 8) {
         // Tick marks are daily
         result = {
             dates: getTicks({days: 1}, {days: 1}),
@@ -81,16 +111,55 @@ export const generateDateTicks = function(startDate, endDate, ianaTimeZone) {
             format: formatFnc('MMM dd')
         };
     } else if (weekCount > 4 && weekCount <= 8) {
+        //Tick marks every week
         result = {
             dates: getTicks({weeks: 1}, {days: 3}),
             format: formatFnc('MMM dd')
         };
-    } else if (weekCount > 9 && weekCount <= 18) {
+    } else if (weekCount > 8 && weekCount <= 15) {
+        // Tick marks every other week
         result = {
             dates: getTicks({weeks: 2}, {days: 7}),
             format: formatFnc('MMM dd')
         };
+    } else if (weekCount > 15 && monthCount <= 8) {
+        //Tick marks every month
+        result = {
+            dates: getTicks({months: 1}, {months : 1}),
+            format: formatFnc('MMM yyyy')
+        };
+    } else if (monthCount > 8 && monthCount <= 15) {
+        //Tick marks every other month
+        result = {
+            dates: getTicks({months: 2}, {months: 1}),
+            format: formatFnc('MMM yyyy')
+        };
+    } else if (monthCount > 15 && monthCount <= 29){
+        // Tick marks every 4 months
+        result = {
+            dates: getTicks({months: 4}, {months: 2}),
+            format: formatFnc('MMM yyyy')
+        };
+    } else if (monthCount > 29 && monthCount <= 43) {
+        // Tick marks every 6 months
+        result = {
+            dates: getTicks({months: 6}, {months: 3}),
+            format: formatFnc('MMM yyyy')
+        };
+    } else if (monthCount > 43 && yearCount <= 8) {
+        // Tick marks every year
+        result = {
+            dates: getTicks({years: 1}, {years: 1}),
+            format: formatFnc('yyyy')
+        };
+    } else {
+        // Generate 8 tick marks and put them at the beginning of the year of that date.
+        result = {
+            dates: getDefaultTicks('year', 7),
+            format: formatFnc('yyyy')
+        };
     }
+
 
     return result;
     /*
