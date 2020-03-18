@@ -74,6 +74,9 @@ export const generateTimeTicks = function(startMillis, endMillis, ianaTimeZone) 
     const monthCount = length.count('months');
     const yearCount = length.count('years');
 
+    /*
+     * Returns a function that takes timeInMillis parameters and returns a string that using format to generate the string.
+     */
     const formatFnc = (format) => {
         return function(timeInMillis)  {
             return DateTime.fromMillis(timeInMillis, {zone: ianaTimeZone}).toFormat(format);
