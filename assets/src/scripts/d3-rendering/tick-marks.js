@@ -5,8 +5,8 @@ import {DateTime, Interval} from 'luxon';
  * start at startOffset
  * @param {DateTime} startDateTime
  * @param {DateTime} endDateTime
- * @param {Object} interval - a Luxon object that can be used in the .plus method
- * @param {Object} startOffset - a Luxon object than can be used in the .plus method
+ * @param {Object} interval - a Luxon object that can be used in the .plus method to set the length between tick marks
+ * @param {Object} startOffset - a Luxon object than can be used in the .plus method to set where the first tick mark begins
  * @return {Array of Number} - tick marks in milliseconds.
  */
 const getTicks = function(startDateTime, endDateTime, interval, startOffset ) {
@@ -89,25 +89,26 @@ export const generateTimeTicks = function(startMillis, endMillis, ianaTimeZone) 
     };
 
     if (length.count('hours') <= 4) {
+        // Generates 4 ticks that are on the start of a minute
         result = {
             dates: getDefaultTicks(startMillis, endMillis, 'minute', 4, ianaTimeZone),
             format: formatFnc('MMM dd HH:mm')
         };
     } else if (dayCount <= 3) {
-        // Generates 4 tick marks that are on the start of a minute
+        // Generates 4 tick marks that are on the start of a hour
         result = {
             dates: getDefaultTicks(startMillis, endMillis,'hour', 4, ianaTimeZone),
             format: formatFnc('MMM dd HH:mm')
         };
     } else if (dayCount > 3 && dayCount <= 8) {
-        // Tick marks are daily
+        // Tick marks every day
         result = {
             dates: getTicks(startDateTime, endDateTime,{days: 1}, {days: 1}),
             format: formatFnc('MMM dd')
         };
 
     } else if (dayCount > 8 && dayCount <= 15) {
-        // Tick marks are ever other day
+        // Tick marks every other day
         result = {
             dates: getTicks(startDateTime, endDateTime,{days: 2}, {days: 1}),
             format: formatFnc('MMM dd')
