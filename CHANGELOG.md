@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 offsets to time series state in order to adjust x scale.
 - Added DV legend.
 
+### Changed
+- Scaling on the UV hydrograph is now more flexible. It is designed to have no less than 3 tick marks
+but no more than 8. Format changes depending on how wide a time range is being graphed.
+
 ## [0.27.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.26.0...waterdataui-0.27.0) - 2020-3-11
 ### Changed
 - All IV time series are now available for drawing on the hydrograph not just those in the last 7 days.
