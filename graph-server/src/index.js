@@ -29,8 +29,6 @@ const server = app.listen(PORT, function () {
  * Render hydrograph PNGs
  */
 app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOUT}), checkSchema({
-    renderer: {
-    },
     parameterCode: {
         in: ['query'],
         errorMessage: 'parameterCode (5 digit string) is required',
