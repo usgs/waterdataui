@@ -4,12 +4,12 @@ import {format} from 'd3-format';
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
-import {getMainXScale, getMainYScale} from './scales';
-import {getMainLayout} from './layout';
+import {getXScale, getYScale} from './scales';
+import {getLayout} from './layout';
 
 
 export const getXAxis = memoize(kind =>createSelector(
-    getMainXScale(),
+    getXScale(kind),
     (xScale) => {
         return axisBottom()
             .scale(xScale)
@@ -20,8 +20,8 @@ export const getXAxis = memoize(kind =>createSelector(
 
 
 export const getYAxis = memoize(kind =>createSelector(
-    getMainYScale(),
-    getMainLayout,
+    getYScale(kind),
+    getLayout(kind),
     (yScale, layout) => {
         return axisLeft()
             .scale(yScale)

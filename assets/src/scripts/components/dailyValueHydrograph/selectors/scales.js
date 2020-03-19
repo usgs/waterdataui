@@ -7,10 +7,10 @@ import {
     getCurrentObservationsTimeSeriesValueRange
 } from '../../../selectors/observations-selector';
 
-import {getMainLayout} from './layout';
+import {getLayout} from './layout';
 
 export const getXScale = memoize((kind) =>createSelector(
-    getMainLayout(),
+    getLayout(kind),
     getCurrentObservationsTimeSeriesTimeRange,
     state => state.timeSeriesState.hydrographBrushOffset,
     (layout, timeRange,hydrographBrushOffset) => {
@@ -29,7 +29,7 @@ export const getMainXScale = getXScale();
 export const getBrushXScale = getXScale('BRUSH');
 
 export const getYScale = memoize((kind) =>createSelector(
-    getMainLayout(),
+    getLayout(kind),
     getCurrentObservationsTimeSeriesValueRange,
     (layout, valueRange) => {
         const PADDING_RATIO = 0.2;
