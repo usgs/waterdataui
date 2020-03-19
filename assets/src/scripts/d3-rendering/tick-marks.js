@@ -88,17 +88,11 @@ export const generateTimeTicks = function(startMillis, endMillis, ianaTimeZone) 
         format: null
     };
 
-    if (length.count('hours') <= 4) {
-        // Generates 4 ticks that are on the start of a minute
-        result = {
-            dates: getDefaultTicks(startMillis, endMillis, 'minute', 4, ianaTimeZone),
-            format: formatFnc('MMM dd HH:mm')
-        };
-    } else if (dayCount <= 3) {
+    if (dayCount <= 3) {
         // Generates 4 tick marks that are on the start of a hour
         result = {
-            dates: getDefaultTicks(startMillis, endMillis,'hour', 4, ianaTimeZone),
-            format: formatFnc('MMM dd HH:mm')
+            dates: getDefaultTicks(startMillis, endMillis,'minute', 4, ianaTimeZone),
+            format: formatFnc('MMM dd hh:mm a')
         };
     } else if (dayCount > 3 && dayCount <= 8) {
         // Tick marks every day
@@ -159,13 +153,13 @@ export const generateTimeTicks = function(startMillis, endMillis, ianaTimeZone) 
         // Tick marks every year
         result = {
             dates: getTicks(startDateTime, endDateTime,{years: 1}, {years: 1}),
-            format: formatFnc('yyyy')
+            format: formatFnc('MMM yyyy')
         };
     } else {
         // Generate 7 tick marks and put them at the beginning of the year of that date.
         result = {
-            dates: getDefaultTicks(startMillis, endMillis, 'year', 7, ianaTimeZone),
-            format: formatFnc('yyyy')
+            dates: getDefaultTicks(startMillis, endMillis, 'month', 7, ianaTimeZone),
+            format: formatFnc('MMM yyyy')
         };
     }
 
