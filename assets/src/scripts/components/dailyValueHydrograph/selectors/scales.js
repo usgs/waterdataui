@@ -1,3 +1,4 @@
+import memoize from 'fast-memoize';
 import {scaleLinear} from 'd3-scale';
 import {createSelector} from 'reselect';
 
@@ -6,13 +7,15 @@ import {
     getCurrentObservationsTimeSeriesValueRange
 } from '../../../selectors/observations-selector';
 
-import {getLayout} from './layout';
+import {getMainLayout} from './layout';
 
-export const getXScale = createSelector(
-    getLayout,
+export const getXScale = memoize((kind) =>createSelector(
+    getMainLayout(),
     getCurrentObservationsTimeSeriesTimeRange,
-    (layout, timeRange) => {
+    state => state.timeSeriesState.hydrographBrushOffset,
+    (layout, timeRange,hydrographBrushOffset) => {
         let xScale = scaleLinear();
+        console.log('margin.right:'+layout.margin.right);
         if (timeRange) {
             xScale
                 .range([0, layout.width - layout.margin.right])
@@ -20,10 +23,13 @@ export const getXScale = createSelector(
         }
         return xScale;
     }
-);
+));
 
-export const getYScale = createSelector(
-    getLayout,
+export const getMainXScale = getXScale();
+export const getBrushXScale = getXScale('BRUSH');
+
+export const getYScale = memoize((kind) =>createSelector(
+    getMainLayout(),
     getCurrentObservationsTimeSeriesValueRange,
     (layout, valueRange) => {
         const PADDING_RATIO = 0.2;
@@ -37,7 +43,7 @@ export const getYScale = createSelector(
                 min: valueRange.min - padding,
                 max: valueRange.max + padding
             };
-            // Positve ranges should not be extended below zero.
+            // Positive ranges should not be extended below zero.
             extendedRange.min = isPositive ? Math.max(0, extendedRange.min) : extendedRange.min;
 
             // Defaulting to descending scale (min at top)
@@ -47,4 +53,7 @@ export const getYScale = createSelector(
         }
         return yScale;
     }
-);
+));
+
+export const getMainYScale = getYScale();
+export const getBrushYScale = getYScale('BRUSH');

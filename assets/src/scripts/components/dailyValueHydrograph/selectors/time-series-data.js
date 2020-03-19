@@ -105,7 +105,7 @@ export const getCurrentTimeSeriesLineSegments = createSelector(
  */
 export const getCursorEpochTime = createSelector(
     getObservationsCursorOffset,
-    getXScale,
+    getXScale(),
     (cursorOffset, xScale) => {
 
         if (!cursorOffset) {

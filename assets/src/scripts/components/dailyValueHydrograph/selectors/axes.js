@@ -1,25 +1,27 @@
-
+import memoize from 'fast-memoize';
 import {axisBottom, axisLeft} from 'd3-axis';
 import {format} from 'd3-format';
-import { DateTime } from 'luxon';
+import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
-import {getXScale, getYScale} from './scales';
-import {getLayout} from './layout';
+import {getMainXScale, getMainYScale} from './scales';
+import {getMainLayout} from './layout';
 
-export const getXAxis = createSelector(
-    getXScale,
+
+export const getXAxis = memoize(kind =>createSelector(
+    getMainXScale(),
     (xScale) => {
         return axisBottom()
             .scale(xScale)
             .tickSizeOuter(0)
             .tickFormat(d => DateTime.fromMillis(d).toFormat('yyyy-LL-dd'));
     }
-);
+));
 
-export const getYAxis = createSelector(
-    getYScale,
-    getLayout,
+
+export const getYAxis = memoize(kind =>createSelector(
+    getMainYScale(),
+    getMainLayout,
     (yScale, layout) => {
         return axisLeft()
             .scale(yScale)
@@ -27,4 +29,4 @@ export const getYAxis = createSelector(
             .tickSizeInner(-layout.width + layout.margin.right)
             .tickFormat(format('.1f'));
     }
-);
+));
