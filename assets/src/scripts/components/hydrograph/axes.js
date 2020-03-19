@@ -1,115 +1,24 @@
-import { axisBottom, axisLeft, axisRight } from 'd3-axis';
+import {axisBottom, axisLeft, axisRight} from 'd3-axis';
 import memoize from 'fast-memoize';
-import { DateTime } from 'luxon';
-import { createSelector } from 'reselect';
+import {createSelector} from 'reselect';
 
-import config from '../../config';
-import { getCurrentDateRange, getCurrentParmCd } from '../../selectors/time-series-selector';
-import { convertCelsiusToFahrenheit, convertFahrenheitToCelsius, mediaQuery, deltaDays } from '../../utils';
+import {generateTimeTicks} from '../../d3-rendering/tick-marks';
+import {getCurrentDateRange, getCurrentParmCd} from '../../selectors/time-series-selector';
+import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../utils';
 
-import { getYTickDetails } from './domain';
+import {getYTickDetails} from './domain';
 import {getLayout} from './layout';
-import { getXScale, getBrushXScale, getYScale, getSecondaryYScale } from './scales';
-import { yLabelSelector, secondaryYLabelSelector, tsTimeZoneSelector, TEMPERATURE_PARAMETERS } from './time-series';
-
-
-const FORMAT = {
-    P7D: 'MMM dd',
-    P30D: 'MMM dd',
-    P1Y: 'MMM yyyy',
-    custom: null
-};
-
-/**
- * Generate the values for ticks to place on a hydrograph.
- *
- * @param startDate - start datetime in the form of milliseconds since 1970-01-01 UTC
- * @param endDate - end datetime in the form of milliseconds since 1970-01-01 UTC
- * @param period - ISO duration for date range of the time series
- * @param ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
- * @returns {Array}
- */
-export const generateDateTicks = function(startDate, endDate, period, ianaTimeZone) {
-    const tzStartDate = DateTime.fromMillis(startDate, {zone: ianaTimeZone});
-    let dates = [];
-    let date;
-    let timePeriod;
-    let interval;
-    let dateDiff;
-
-    const setP7D = () => {
-        date = tzStartDate.startOf('day');
-        timePeriod = 'days';
-        interval = 1;
-    };
-    const setP30D = () => {
-        date = tzStartDate.minus({days: tzStartDate.weekday}).startOf('day');
-        timePeriod = 'weeks';
-        interval = 1;
-    };
-    const setP1Y = () => {
-        date = tzStartDate.startOf('month');
-        timePeriod = 'months';
-        if (mediaQuery(config.USWDS_LARGE_SCREEN)) {
-            interval = 1;
-        } else {
-            interval = 2;
-        }
-    };
-    switch (period) {
-        case 'P7D':
-            setP7D();
-            break;
-        case 'P30D':
-            setP30D();
-            break;
-        case 'P1Y':
-            setP1Y();
-            break;
-        case 'custom':
-            dateDiff = deltaDays(new Date(startDate), new Date(endDate));
-            if (dateDiff <= 7) {
-                setP7D();
-                FORMAT.custom = 'MMM dd';
-            } else if (7 < dateDiff && dateDiff <= 30) {
-                setP30D();
-                FORMAT.custom = 'MMM dd';
-            } else if (30 < dateDiff && dateDiff <= 365) {
-                setP1Y();
-                FORMAT.custom = 'MMM yyyy';
-            } else {
-                date = tzStartDate.startOf('month');
-                timePeriod = 'months';
-                interval = Math.ceil(dateDiff/365.25);
-                FORMAT.custom = 'MMM yyyy';
-            }
-            break;
-        default:
-            date = tzStartDate.startOf('day');
-            timePeriod = 'days';
-            interval = 1;
-    }
-    while (date.valueOf() <= endDate) {
-        date = date.plus({[timePeriod]: interval});
-        if (startDate <= date.valueOf() && date.valueOf() <= endDate) {
-            dates.push(date.valueOf());
-        }
-    }
-    return dates;
-};
-
-
+import {getXScale, getBrushXScale, getYScale, getSecondaryYScale} from './scales';
+import {yLabelSelector, secondaryYLabelSelector, tsTimeZoneSelector, TEMPERATURE_PARAMETERS} from './time-series';
 
 const createXAxis = function(xScale,  period, ianaTimeZone) {
-    const [startDate, endDate] = xScale.domain();
-    const tickDates = generateDateTicks(startDate, endDate, period, ianaTimeZone);
+    const [startMillis, endMillis] = xScale.domain();
+    const ticks = generateTimeTicks(startMillis, endMillis, ianaTimeZone);
     return axisBottom()
         .scale(xScale)
-        .tickValues(tickDates)
+        .tickValues(ticks.dates)
         .tickSizeOuter(0)
-        .tickFormat(d => {
-            return DateTime.fromMillis(d, {zone: ianaTimeZone}).toFormat(FORMAT[period]);
-        });
+        .tickFormat(ticks.format);
 };
 
 /**
