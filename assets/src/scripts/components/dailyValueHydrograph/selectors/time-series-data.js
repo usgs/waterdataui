@@ -7,7 +7,7 @@ import {createSelector} from 'reselect';
 import {getCurrentObservationsTimeSeries, getObservationsCursorOffset} from '../../../selectors/observations-selector';
 import {getNearestTime} from '../../../utils';
 
-import {getXScale, getYScale} from './scales';
+import {getXScale, getMainXScale, getMainYScale} from './scales';
 
 const TWO_DAYS = 1000 * 60 * 60 * 24 * 2; // In milliseconds
 
@@ -135,8 +135,8 @@ export const getDataAtCursor = createSelector(
  */
 export const getCursorPoint = createSelector(
     getDataAtCursor,
-    getXScale,
-    getYScale,
+    getMainXScale,
+    getMainYScale,
     (point, xScale, yScale) => {
         if (!point) {
             return [];

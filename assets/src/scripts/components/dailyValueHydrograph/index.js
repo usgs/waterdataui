@@ -8,7 +8,7 @@ import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
 import {drawTimeSeriesLegend} from './legend';
-import {drawGraphBrush} from './graph-brush'
+import {drawGraphBrush} from './graph-brush';
 
 const TEMP_TIME_SERIES_ID = '36307c899ac14d2eac6956b1bf5ceb69';
 
