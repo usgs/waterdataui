@@ -30,6 +30,8 @@ app.use(`${PATH_CONTEXT}/api-docs`, swaggerUi.serve, swaggerUi.setup(swaggerDocu
  * /api/graph-images/monitoring-location/{siteID}/:
  *   get:
  *     description: Returns a graph of IV data for the site as a png. Default graph is for the last 7 days.
+ *     tags:
+ *       - USGS Site Instantaneous Value  Graph
  *     parameters:
  *       - name: siteID
  *         in: path
@@ -175,6 +177,20 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
     });
 });
 
+/**
+ * @swagger
+ * /api/graph-images/status/:
+ *   get:
+ *     description: Return application version number
+ *     tags:
+ *       - Version
+ *     responses:
+ *       200:
+ *         description:
+ *         content:
+ *           application/json:
+ *             examples: ''
+ */
 app.get(`${PATH_CONTEXT}/status`, function (req, res) {
     res.status(200);
     res.send({
