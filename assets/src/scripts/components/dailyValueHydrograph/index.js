@@ -49,7 +49,7 @@ export const attachToNode = function (store,
                 graphContainer
                     .call(drawTimeSeriesGraph, store)
                     .call(drawTooltipCursorSlider, store)
-                    //.call(drawGraphBrush, store)
+                    .call(drawGraphBrush, store)
                     .append('div')
                         .classed('dv-legend-controls-container', true)
                         .call(drawTimeSeriesLegend, store);

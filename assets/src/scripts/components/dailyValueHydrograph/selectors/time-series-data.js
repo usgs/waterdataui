@@ -11,7 +11,7 @@ import {getXScale, getMainXScale, getMainYScale} from './scales';
 
 const TWO_DAYS = 1000 * 60 * 60 * 24 * 2; // In milliseconds
 
-/* Returns the selector function wheich returns an Array of Objects, each object representing one value, dateTime (in epoch time),
+/* Returns the selector function which returns an Array of Objects, each object representing one value, dateTime (in epoch time),
 and other attributes representing metadata on the value. This will represent the time series for the current
 selected time series
  */

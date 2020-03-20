@@ -6,13 +6,22 @@ import {appendXAxis} from '../../d3-rendering/axes';
 import {link} from '../../lib/d3-redux';
 import {Actions} from '../../store';
 
-import {getBrushLayout} from '../hydrograph/layout';
-import {getBrushXAxis} from '../hydrograph/axes';
-import {getBrushXScale, getBrushYScale} from '../hydrograph/scales';
-import {currentVariableLineSegmentsSelector} from '../hydrograph/drawing-data';
-import {isVisibleSelector} from '../hydrograph/time-series';
-import {drawDataLines} from '../hydrograph/time-series-data';
+//import {getBrushLayout} from '../hydrograph/layout';
+import {getBrushLayout} from './selectors/layout';
 
+//import {getBrushXAxis} from '../hydrograph/axes';
+import {getXAxis} from './selectors/axes';
+
+//import {getBrushXScale, getBrushYScale} from '../hydrograph/scales';
+import {getBrushXScale, getBrushYScale} from './selectors/scales';
+
+//import {currentVariableLineSegmentsSelector} from '../hydrograph/drawing-data';
+import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-data';
+
+import {isVisibleSelector} from '../hydrograph/time-series';
+
+import {drawDataLines} from '../hydrograph/time-series-data';
+//import {drawDataLines} from '/time-series-graph';
 
 export const drawGraphBrush = function(container, store) {
 
@@ -20,7 +29,7 @@ export const drawGraphBrush = function(container, store) {
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
             return;
         }
-        const xScale = getBrushXScale('current')(store.getState());
+        const xScale = getBrushXScale(store.getState());
         const brushRange = event.selection || xScale.range();
 
         // Only about the main hydrograph when user is done adjusting the time range.
@@ -54,15 +63,17 @@ export const drawGraphBrush = function(container, store) {
                                 getBrushLayout
                 ))
                 .call(link(store, appendXAxis, createStructuredSelector({
-                    xAxis: getBrushXAxis,
+                    //xAxis: getBrushXAxis,
+                    xAxis: getXAxis('BRUSH'),
                     layout: getBrushLayout
                 })))
                 .call(link(store, drawDataLines, createStructuredSelector({
                     visible: isVisibleSelector('current'),
-                    tsLinesMap: currentVariableLineSegmentsSelector('current'),
-                    xScale: getBrushXScale('current'),
+                    //tsLinesMap: currentVariableLineSegmentsSelector('current'),
+                    tsLinesMap: getCurrentTimeSeriesLineSegments,
+                    xScale: getBrushXScale,
                     yScale: getBrushYScale,
-                    tsKey: () => 'current',
+                    //tsKey: () => 'current',
                     layout: getBrushLayout,
                     enableClip: () => false
                 })));

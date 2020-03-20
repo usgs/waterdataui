@@ -18,7 +18,6 @@ export const getXAxis = memoize(kind =>createSelector(
     }
 ));
 
-
 export const getYAxis = memoize(kind =>createSelector(
     getYScale(kind),
     getLayout(kind),
