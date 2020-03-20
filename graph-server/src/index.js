@@ -1,6 +1,8 @@
 const express = require('express');
 const cache = require('express-cache-headers');
 const { checkSchema, validationResult } = require('express-validator');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 const { version } = require('../package.json');
 const renderToResponse = require('./renderer');
@@ -18,6 +20,8 @@ const app = express();
 const server = app.listen(PORT, function () {
     console.log(`Graph server running on port ${PORT}`);
 });
+
+app.use(`${PATH_CONTEXT}/api-docs`, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 /**
  * Render hydrograph PNGs
