@@ -25,6 +25,78 @@ app.use(`${PATH_CONTEXT}/api-docs`, swaggerUi.serve, swaggerUi.setup(swaggerDocu
 
 /**
  * Render hydrograph PNGs
+ *
+ * @swagger
+ * /api/graph-images/monitoring-location/{siteID}/:
+ *   get:
+ *     description: Returns a graph of IV data for the site as a png. Default graph is for the last 7 days.
+ *     parameters:
+ *       - name: siteID
+ *         in: path
+ *         description: USGS site ID
+ *         required: true
+ *       - name: parameterCode
+ *         in: query
+ *         description: 5 digit string for the desired data
+ *         required: true
+ *         schema:
+ *           type: string
+ *           maxLength: 5
+ *       - name: width
+ *         in: query
+ *         description: width in pixels
+ *         schema:
+ *           type: integer
+ *           default: 1200
+ *           maximum: 1200
+ *           minimum: 300
+ *       - name: title
+ *         in: query
+ *         description: adds the site name, site id and agency code to the title of the graph
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *       - name: compare
+ *         in: query
+ *         description: set to true to also draw last year's data - should not be used with period, startDT or endDT
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *       - name: period
+ *         in: query
+ *         description: ISO 8601 duration format in the form of PnD where n is a positive integer. Can't be used with startDT and endDT
+ *         schema:
+ *           type: string
+ *           pattern: ^P([0-9]+)D$
+ *       - name: startDT
+ *         in: query
+ *         description: ISO 8601 date format (YYYY-MM-DD). Must also use endDT and be before endDT
+ *         schema:
+ *           type: string
+ *           pattern: ^([0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|[1-2][0-9]|0[1-9])$
+ *       - name: endDT
+ *         in: query
+ *         description: ISO 8601 date format (YYYY-MM-DD). Must also use startDT and be after startDT
+ *         schema:
+ *           type: string
+ *           pattern: ^([0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|[1-2][0-9]|0[1-9])$
+ *     responses:
+ *       200:
+ *         description: PNG image of the IV data for the siteID and parameterCode
+ *         content:
+ *           image/png:
+ *             examples: ''
+ *       400:
+ *         description: one or more of the query parameters did not validate
+ *         content:
+ *           application/json:
+ *             examples: ''
+ *
+ *       404:
+ *         description: Site does not exist
+ *       500:
+ *         description: The image could not be rendered, typically because a query parameter value is not available.
+ *
  */
 app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOUT}), checkSchema({
     parameterCode: {
