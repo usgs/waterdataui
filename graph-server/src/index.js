@@ -1,4 +1,3 @@
-const bodyParser = require('body-parser');
 const express = require('express');
 const cache = require('express-cache-headers');
 const { checkSchema, validationResult } = require('express-validator');
@@ -14,11 +13,6 @@ const PATH_CONTEXT = process.env.PATH_CONTEXT || '/api/graph-images';
 
 // Create the Express app
 const app = express();
-
-// Use to parse incoming request bodies
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
 
 // Start the server
 const server = app.listen(PORT, function () {
