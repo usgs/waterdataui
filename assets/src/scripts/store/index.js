@@ -17,6 +17,7 @@ import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from '../
 import {fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow, fetchNldiUpstreamBasin} from '../web-services/nldi-data';
 import {fetchTimeSeries} from '../web-services/observations';
 import {fetchSiteStatistics} from '../web-services/statistics-data';
+import {fetchNetworkSites} from '../web-services/network-data';
 
 import {floodDataReducer as floodData} from './flood-data-reducer';
 import {floodStateReducer as floodState} from './flood-state-reducer';
@@ -27,6 +28,7 @@ import {seriesReducer as series} from './series-reducer';
 import {statisticsDataReducer as statisticsData} from './statistics-data-reducer';
 import {timeSeriesStateReducer as timeSeriesState} from './time-series-state-reducer';
 import {uiReducer as ui} from './ui-reducer';
+import {networkDataReducer as networkData} from './network-data-reducer';
 
 const GAGE_HEIGHT_CD = '00065';
 /*
@@ -265,6 +267,17 @@ export const Actions = {
             });
         };
     },
+    retrieveNetworkData(networkCd) {
+        return function(dispatch) {
+            const networkSites = fetchNetworkSites(networkCd);
+
+            return Promise.all( [networkSites]
+            ).then(function(data){
+                const [networkSites] = data;
+                dispatch(Actions.setNetworkFeatures(networkSites));
+            });
+        };
+    },
     updateCurrentVariable(siteno, variableID) {
         return function(dispatch, getState) {
             dispatch(Actions.setCurrentVariable(variableID));
@@ -343,6 +356,12 @@ export const Actions = {
             upstreamSites,
             downstreamSites,
             upstreamBasin
+        };
+    },
+    setNetworkFeatures(networkSites) {
+         return {
+            type: 'SET_NETWORK_FEATURES',
+            networkSites
         };
     },
     setObservationsTimeSeries(timeSeriesId, data) {
@@ -491,7 +510,8 @@ const appReducer = combineReducers({
     timeSeriesState,
     observationsState,
     floodState,
-    ui
+    ui,
+    networkData
 });
 
 const MIDDLEWARES = [thunk];
@@ -511,6 +531,9 @@ export const configureStore = function (initialState) {
             upstreamSites: [],
             downstreamSites: [],
             upstreamBasin: []
+        },
+        networkData: {
+            networkSites: []
         },
 
         statisticsData: {},

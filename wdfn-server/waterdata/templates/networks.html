@@ -2,6 +2,8 @@
 
 {% if network_cd %}{% set page_title = 'Networks' %}{% endif %}
 
+{% import 'macros/components.html' as components %}
+
 {% block content %}
     <div class="usa-width-one-whole">
         {% if http_code == 200 %}
@@ -12,8 +14,10 @@
                     <h2>Network: {{ network_cd }} </h2>
                     <h3>Description: {{ collection.description }} </h3>
                 {% else %}
-                    <h2>Network: < {{ network_cd }} > not found. </h2>
+                    <h2>Network: {{ network_cd }} </h2>
+                    <h3>Description: No description found</h3>
                 {% endif %}
+               {{ components.NetworkMapComponent(network_cd, extent) }}
             {% else %}
                 <p>Select a Network</p>
                 <table class="usa-table">

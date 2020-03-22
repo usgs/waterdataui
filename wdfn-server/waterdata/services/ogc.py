@@ -14,8 +14,11 @@ def get_networks(network_cd=None):
     if network_cd:
         url = url + '/' + network_cd
 
+    print(url)
+
     response = execute_get_request(url, params={'f': 'json'})
 
+    print(response.status_code)
     if response.status_code != 200:
         return []
     try:

@@ -38,6 +38,12 @@
     </div>
 {%- endmacro %}
 
+{% macro NetworkMapComponent(network_cd, extent) -%}
+    <div class="wdfn-component" data-component="network-map" data-networkcd="{{ network_cd }}" data-extent="{{  extent }}">
+        <div id="network-map"></div>
+    </div>
+{%- endmacro %}
+
 
 {% macro EmbedComponent(site_no) -%}
     <span class="wdfn-component" data-component="embed">

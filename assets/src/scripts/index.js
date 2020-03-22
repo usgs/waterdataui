@@ -13,12 +13,14 @@ import {attachToNode as EmbedComponent} from './components/embed';
 import {attachToNode as DailyValueHydrographComponent} from './components/dailyValueHydrograph';
 import {attachToNode as HydrographComponent} from './components/hydrograph';
 import {attachToNode as MapComponent} from './components/map';
+import {attachToNode as NetworkMapComponent} from './networks';
 
 const COMPONENTS = {
     embed: EmbedComponent,
     'dv-hydrograph': DailyValueHydrographComponent,
     hydrograph: HydrographComponent,
-    map: MapComponent
+    map: MapComponent,
+    'network-map': NetworkMapComponent
 };
 
 
