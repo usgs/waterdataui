@@ -31,7 +31,7 @@ app.use(`${PATH_CONTEXT}/api-docs`, swaggerUi.serve, swaggerUi.setup(swaggerDocu
  *   get:
  *     description: Returns a graph of IV data for the site as a png. Default graph is for the last 7 days.
  *     tags:
- *       - USGS Site Instantaneous Value  Graph
+ *       - USGS Site Instantaneous Value Graph
  *     parameters:
  *       - name: siteID
  *         in: path
@@ -39,7 +39,7 @@ app.use(`${PATH_CONTEXT}/api-docs`, swaggerUi.serve, swaggerUi.setup(swaggerDocu
  *         required: true
  *       - name: parameterCode
  *         in: query
- *         description: 5 digit string for the desired data
+ *         description: 5 digit string for the desired data (see <a href="https://help.waterdata.usgs.gov/parameter_cd?group_cd=%">parameter code definition</a> for a complete list)
  *         required: true
  *         schema:
  *           type: string
