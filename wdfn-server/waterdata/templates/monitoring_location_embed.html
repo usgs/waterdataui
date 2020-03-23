@@ -1,5 +1,12 @@
 {% extends 'base_plain.html' %}
 
+{% block page_css %}
+ <link rel="stylesheet" href="{{ 'main.css' | asset_url }}">
+{% endblock page_css %}
+{% block page_script %}
+ <script async src="{{ 'bundle.js' | asset_url }}"></script>">
+{% endblock page_script %}
+
 {% import 'macros/components.html' as components %}
 
 {% block body %}
