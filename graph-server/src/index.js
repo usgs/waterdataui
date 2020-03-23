@@ -1,7 +1,8 @@
-const bodyParser = require('body-parser');
 const express = require('express');
 const cache = require('express-cache-headers');
 const { checkSchema, validationResult } = require('express-validator');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 const { version } = require('../package.json');
 const renderToResponse = require('./renderer');
@@ -15,22 +16,91 @@ const PATH_CONTEXT = process.env.PATH_CONTEXT || '/api/graph-images';
 // Create the Express app
 const app = express();
 
-// Use to parse incoming request bodies
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
-
 // Start the server
 const server = app.listen(PORT, function () {
     console.log(`Graph server running on port ${PORT}`);
 });
 
+app.use(`${PATH_CONTEXT}/api-docs`, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 /**
  * Render hydrograph PNGs
+ *
+ * @swagger
+ * /api/graph-images/monitoring-location/{siteID}/:
+ *   get:
+ *     description: Returns a graph of IV data for the site as a png. Default graph is for the last 7 days.
+ *     tags:
+ *       - USGS Site Instantaneous Value Graph
+ *     parameters:
+ *       - name: siteID
+ *         in: path
+ *         description: USGS site ID
+ *         required: true
+ *       - name: parameterCode
+ *         in: query
+ *         description: 5 digit string for the desired data (see <a href="https://help.waterdata.usgs.gov/parameter_cd?group_cd=%">parameter code definition</a> for a complete list)
+ *         required: true
+ *         schema:
+ *           type: string
+ *           maxLength: 5
+ *       - name: width
+ *         in: query
+ *         description: width in pixels
+ *         schema:
+ *           type: integer
+ *           default: 1200
+ *           maximum: 1200
+ *           minimum: 300
+ *       - name: title
+ *         in: query
+ *         description: adds the site name, site id and agency code to the title of the graph
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *       - name: compare
+ *         in: query
+ *         description: set to true to also draw last year's data - should not be used with period, startDT or endDT
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *       - name: period
+ *         in: query
+ *         description: ISO 8601 duration format in the form of PnD where n is a positive integer. Can't be used with startDT and endDT
+ *         schema:
+ *           type: string
+ *           pattern: ^P([0-9]+)D$
+ *       - name: startDT
+ *         in: query
+ *         description: ISO 8601 date format (YYYY-MM-DD). Must also use endDT and be before endDT
+ *         schema:
+ *           type: string
+ *           pattern: ^([0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|[1-2][0-9]|0[1-9])$
+ *       - name: endDT
+ *         in: query
+ *         description: ISO 8601 date format (YYYY-MM-DD). Must also use startDT and be after startDT
+ *         schema:
+ *           type: string
+ *           pattern: ^([0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|[1-2][0-9]|0[1-9])$
+ *     responses:
+ *       200:
+ *         description: PNG image of the IV data for the siteID and parameterCode
+ *         content:
+ *           image/png:
+ *             examples: ''
+ *       400:
+ *         description: one or more of the query parameters did not validate
+ *         content:
+ *           application/json:
+ *             examples: ''
+ *
+ *       404:
+ *         description: Site does not exist
+ *       500:
+ *         description: The image could not be rendered, typically because a query parameter value is not available.
+ *
  */
 app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOUT}), checkSchema({
-    renderer: {
-    },
     parameterCode: {
         in: ['query'],
         errorMessage: 'parameterCode (5 digit string) is required',
@@ -107,6 +177,20 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
     });
 });
 
+/**
+ * @swagger
+ * /api/graph-images/status/:
+ *   get:
+ *     description: Return application version number
+ *     tags:
+ *       - Version
+ *     responses:
+ *       200:
+ *         description:
+ *         content:
+ *           application/json:
+ *             examples: ''
+ */
 app.get(`${PATH_CONTEXT}/status`, function (req, res) {
     res.status(200);
     res.send({
