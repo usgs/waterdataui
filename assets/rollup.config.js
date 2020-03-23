@@ -16,6 +16,7 @@ const { uglify } = require('rollup-plugin-uglify');
 const env = process.env.NODE_ENV || 'development';
 
 const getBundleConfig = function (src, dest) {
+
     return {
         input: src,
         plugins: [

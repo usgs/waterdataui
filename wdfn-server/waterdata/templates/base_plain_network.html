@@ -10,7 +10,10 @@
         {% include 'partials/google_analytics.html' %}
 
         <link rel="shortcut icon" type="image/ico" href="{{ 'img/usgs_favicon.ico' | asset_url }}">
+        <script src="{{ 'scripts/vendor.js' | asset_url }}"></script>
+        <link rel="stylesheet" href="{{ 'vendor.css' | asset_url }}">
         <link rel="stylesheet" href="{{ 'network.css' | asset_url }}">
+
         <script type="text/javascript">
             var CONFIG = {
                 'SERVICE_ROOT': '{{ config.SERVICE_ROOT }}/nwis',
@@ -35,10 +38,10 @@
             if (!!document.documentMode) {
                 document.write('<script src="{{ "scripts/date-time-format-timezone-complete-min.js" | asset_url }}"><\/script>');
             }
-        </script>
-
+        </script>make
 
         <script async src="{{ 'network-bundle.js' | asset_url }}"></script>
+
         {% block page_script %}{% endblock %}
         <!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TKQR8KP');</script>
         <title>

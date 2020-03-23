@@ -1,6 +1,3 @@
-import { geoJson, circleMarker} from 'leaflet';
-import {markerClusterGroup} from 'markercluster-iow/src';
-
 export const markerFillColor = '#ff7800';
 export const markerFillOpacity = 0.8;
 
@@ -30,10 +27,10 @@ export const addNetworkLayers = function (map, networkSites) {
     };
 
     const getPointDataLayer = function (data, markerOptions) {
-        return geoJson(data, {
+        return L.geoJson(data, {
             onEachFeature: onEachPointFeatureAddPopUp,
             pointToLayer: function (feature, latlng) {
-                return circleMarker(latlng, markerOptions);
+                return L.circleMarker(latlng, markerOptions);
             }
         });
     };
@@ -44,7 +41,7 @@ export const addNetworkLayers = function (map, networkSites) {
 
     const networkLayer = fetchNetworkPointsLayer(networkSites, geojsonMarkerOptions);
     if (networkSites.length > 50){
-         const markers = markerClusterGroup({ chunkedLoading: true });
+         const markers = L.markerClusterGroup({ chunkedLoading: true });
          markers.addLayer(networkLayer);
          map.addLayer(markers);
     } else {

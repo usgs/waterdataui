@@ -1,7 +1,5 @@
 import { select } from 'd3-selection';
 import { createStructuredSelector } from 'reselect';
-import { map as createMap, control, layerGroup } from 'leaflet';
-import { TiledMapLayer, basemapLayer } from 'esri-leaflet/src/EsriLeaflet';
 import { link } from '../../lib/d3-redux';
 import config from '../../config';
 
@@ -16,17 +14,17 @@ import { hasNetworkData, getNetworkSites}
  */
 const networkMap = function(node, {extent}, store) {
 
-    let gray = layerGroup();
-    basemapLayer('Gray').addTo(gray);
+    let gray = new L.layerGroup();
+    L.esri.basemapLayer('Gray').addTo(gray);
 
     if (config.HYDRO_ENDPOINT) {
-        gray.addLayer(new TiledMapLayer({url: config.HYDRO_ENDPOINT,
+        gray.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT,
             maxZoom: 22,
             maxNativeZoom: 19}));
     }
 
     // Create map on node
-    const map = createMap('network-map', {
+    const map = new L.Map('network-map', {
         center: [0, 0],
         zoom: 1,
         scrollWheelZoom: false,
@@ -57,15 +55,15 @@ const networkMap = function(node, {extent}, store) {
     //add additional baselayer
     var baseLayers = {
         'Grayscale': gray,
-        'Satellite': basemapLayer('ImageryFirefly')
+        'Satellite': new L.esri.basemapLayer('ImageryFirefly')
     };
 
     //add layer control
-    control.layers(baseLayers).addTo(map);
+    L.control.layers(baseLayers).addTo(map);
 
     // Add the ESRI World Hydro Reference Overlay
     if (config.HYDRO_ENDPOINT) {
-        map.addLayer(new TiledMapLayer({url: config.HYDRO_ENDPOINT}));
+        map.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT}));
     }
 
     // // Add a marker at the site location
