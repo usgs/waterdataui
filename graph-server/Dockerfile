@@ -21,6 +21,7 @@ RUN npm ci
 
 # Add the server source code
 COPY ./src ./src
+RUN npm run build:swagger
 
 ENV STATIC_URL https://waterdata.usgs.gov/nwisweb/wsgi/static
 ENV OGC_SITE_ENDPOINT https://labs.waterdata.usgs.gov/api/ogcAPI/collections/monitoring-locations/items/
