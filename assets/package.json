@@ -57,7 +57,7 @@
     "karma-jasmine": "^3.1.1",
     "karma-jasmine-ajax": "^0.1.13",
     "karma-rollup-preprocessor": "^7.0.3",
-    "karma-sauce-launcher": "^2.0.2",
+    "karma-sauce-launcher": "^4.0.0",
     "karma-spec-reporter": "0.0.32",
     "live-server": "^1.2.1",
     "nodemon": "^2.0.2",
