@@ -15,7 +15,7 @@ module.exports = {
         license: {
             name: 'CC0 1.0 Universal Summary',
             url: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
-        },
+        }
     },
     basePath: PATH_CONTEXT,
     apis: ['src/index.js']
