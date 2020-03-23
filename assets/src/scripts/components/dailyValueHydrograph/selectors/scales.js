@@ -20,8 +20,8 @@ export const getXScale = memoize((kind) =>createSelector(
                 .range([0, layout.width - layout.margin.right])
                 .domain([timeRange.startTime, timeRange.endTime]);
             if (hydrographBrushOffset) {
-                console.log('kind:'+kind);
-                console.log('hydrographBrushOffset start-end:'+hydrographBrushOffset.start+' '+hydrographBrushOffset.end);
+                console.log('DV scales.js: kind:'+kind);
+                console.log('DV scales.js: hydrographBrushOffset start-end:'+hydrographBrushOffset.start+' '+hydrographBrushOffset.end);
                 xScale.domain([timeRange.startTime+hydrographBrushOffset.start, timeRange.endTime-hydrographBrushOffset.end]);
             }
         }

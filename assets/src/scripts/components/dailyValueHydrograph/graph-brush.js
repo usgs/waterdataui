@@ -15,8 +15,8 @@ import {getXAxis} from './selectors/axes';
 //import {getBrushXScale, getBrushYScale} from '../hydrograph/scales';
 import {getBrushXScale, getBrushYScale} from './selectors/scales';
 
-//import {currentVariableLineSegmentsSelector} from '../hydrograph/drawing-data';
-import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-data';
+import {currentVariableLineSegmentsSelector} from '../hydrograph/drawing-data';
+//import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-data';
 
 import {isVisibleSelector} from '../hydrograph/time-series';
 
@@ -68,14 +68,14 @@ export const drawGraphBrush = function(container, store) {
                     layout: getBrushLayout
                 })))
                 .call(link(store, drawDataLines, createStructuredSelector({
-                    visible: isVisibleSelector('current'),
-                    //tsLinesMap: currentVariableLineSegmentsSelector('current'),
-                    tsLinesMap: getCurrentTimeSeriesLineSegments,
+                    //visible: isVisibleSelector('current'),
+                    tsLinesMap: currentVariableLineSegmentsSelector('current'),
+                    //lines: getCurrentTimeSeriesLineSegments,
                     xScale: getBrushXScale,
                     yScale: getBrushYScale,
                     //tsKey: () => 'current',
-                    layout: getBrushLayout,
-                    enableClip: () => false
+                    layout: getBrushLayout
+                    //enableClip: () => false
                 })));
         })
         .call(link(store, (svg, {layout, isHydrographBrushOffset}) => {
