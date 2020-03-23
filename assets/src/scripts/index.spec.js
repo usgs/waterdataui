@@ -69,7 +69,7 @@ import './selectors/time-series-selector.spec';
 import './store/flood-data-reducer.spec';
 import './store/nldi-data-reducer.spec';
 import './store/flood-state-reducer.spec';
-import './store/index.spec';
+import './store/site-store.spec';
 import './store/observations-data-reducer.spec';
 import './store/observations-state-reducer.spec';
 import './store/series-reducer.spec';

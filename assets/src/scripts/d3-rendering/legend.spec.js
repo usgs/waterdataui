@@ -1,7 +1,7 @@
 import {select, selectAll} from 'd3-selection';
 import {lineMarker, rectangleMarker, textOnlyMarker} from './markers';
 import {drawSimpleLegend} from './legend';
-import {configureStore} from '../store';
+import {configureStore} from '../store/site-store';
 import {drawTimeSeriesLegend} from '../components/dailyValueHydrograph/legend';
 
 describe('Legend module', () => {

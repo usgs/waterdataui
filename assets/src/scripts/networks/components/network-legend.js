@@ -4,9 +4,9 @@
 import { select } from 'd3-selection';
 import { control as createControl, DomUtil, DomEvent } from 'leaflet';
 // import { get } from '../ajax';
-import config from '../config';
-import { mediaQuery } from '../utils';
-import { markerFillColor, markerFillOpacity} from './networkMapping';
+import config from '../../config';
+import { mediaQuery } from '../../utils';
+import { markerFillColor, markerFillOpacity} from './network-mapping';
 
 
 // const fetchLayerLegend = function(layer, defaultName) {

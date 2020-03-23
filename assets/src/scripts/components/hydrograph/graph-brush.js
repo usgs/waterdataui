@@ -4,7 +4,7 @@ import {createStructuredSelector} from 'reselect';
 
 import {appendXAxis} from '../../d3-rendering/axes';
 import {link} from '../../lib/d3-redux';
-import {Actions} from '../../store';
+import {Actions} from '../../store/site-store';
 
 import {getBrushXAxis} from './axes';
 import {currentVariableLineSegmentsSelector} from './drawing-data';

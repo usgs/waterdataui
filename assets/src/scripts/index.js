@@ -6,21 +6,19 @@ import wdfnviz from 'wdfn-viz';
 import {register} from './helpers';
 register();
 
-import {configureStore} from './store';
+import {configureStore} from './store/site-store';
 import {getParamString} from './url-params';
 
 import {attachToNode as EmbedComponent} from './components/embed';
 import {attachToNode as DailyValueHydrographComponent} from './components/dailyValueHydrograph';
 import {attachToNode as HydrographComponent} from './components/hydrograph';
 import {attachToNode as MapComponent} from './components/map';
-import {attachToNode as NetworkMapComponent} from './networks';
 
 const COMPONENTS = {
     embed: EmbedComponent,
     'dv-hydrograph': DailyValueHydrographComponent,
     hydrograph: HydrographComponent,
-    map: MapComponent,
-    'network-map': NetworkMapComponent
+    map: MapComponent
 };
 
 

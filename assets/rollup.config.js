@@ -62,11 +62,8 @@ const getBundleConfig = function (src, dest) {
 };
 
 module.exports = [
-
-    getBundleConfig('src/scripts/index.js', 'dist/bundle.js')
-
-    // getBundleConfig('js/bundles/coverage.js', 'dist/scripts/coverage.js'),
-
+    getBundleConfig('src/scripts/index.js', 'dist/bundle.js'),
+    getBundleConfig('src/scripts/networks/index.js', 'dist/network-bundle.js')
 ];
 
 

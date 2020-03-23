@@ -1,6 +1,6 @@
 import {select} from 'd3-selection';
 
-import {Actions} from '../../store';
+import {Actions} from '../../store/site-store';
 
 import {drawErrorAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';

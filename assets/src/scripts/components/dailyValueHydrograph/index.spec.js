@@ -1,6 +1,6 @@
 import {select} from 'd3-selection';
 
-import {configureStore, Actions} from '../../store';
+import {configureStore, Actions} from '../../store/site-store';
 
 import {attachToNode} from './index';
 

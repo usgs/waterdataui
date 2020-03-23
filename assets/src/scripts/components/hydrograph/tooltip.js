@@ -10,7 +10,7 @@ import {drawCursorSlider} from '../../d3-rendering/cursor-slider';
 import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from '../../d3-rendering/graph-tooltip';
 import {link} from '../../lib/d3-redux';
 import {getCurrentVariable, getCurrentParmCd} from '../../selectors/time-series-selector';
-import {Actions} from '../../store';
+import {Actions} from '../../store/site-store';
 import {mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../utils';
 
 import {cursorTimeSelector, tsCursorPointsSelector} from './cursor';

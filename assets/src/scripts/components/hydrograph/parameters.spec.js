@@ -1,7 +1,7 @@
 import { select } from 'd3-selection';
 import { scaleLinear } from 'd3-scale';
 import { addSparkLine, plotSeriesSelectTable, availableTimeSeriesSelector } from './parameters';
-import { configureStore} from '../../store';
+import { configureStore} from '../../store/site-store';
 
 
 describe('Parameters module', () => {

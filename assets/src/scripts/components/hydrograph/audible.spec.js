@@ -1,6 +1,6 @@
 import { select } from 'd3-selection';
 import { audibleUI } from './audible';
-import { configureStore } from '../../store';
+import { configureStore } from '../../store/site-store';
 
 
 const TEST_STATE = {

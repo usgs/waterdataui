@@ -36,7 +36,7 @@ module.exports = function (config) {
 
         // list of files / patterns to exclude
         exclude: [
-            'src/scripts/index.js'
+            'src/scripts/site-store.js'
         ],
 
         // preprocess matching files before serving them to the browser

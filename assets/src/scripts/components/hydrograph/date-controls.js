@@ -11,7 +11,7 @@ import {
     getCustomTimeRange,
     getIanaTimeZone
 } from '../../selectors/time-series-selector';
-import {Actions} from '../../store';
+import {Actions} from '../../store/site-store';
 
 
 export const drawDateRangeControls = function(elem, store, siteno) {

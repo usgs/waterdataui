@@ -1,6 +1,5 @@
 @import 'leaflet';
-@import '../../node_modules/markercluster-iow/dist/_MarkerCluster.scss';
-@import '../../node_modules/markercluster-iow/dist/_MarkerCluster.Default.scss';
+
 @import './common';
 
 $fa-font-path: './fonts' !default;
@@ -32,7 +31,7 @@ $fa-font-path: './fonts' !default;
   }
 
   &[data-component='network-map']{
-    @import './networks/networkmap';
+    @import 'network';
     margin-bottom: 1em;
   }
 }

@@ -1,7 +1,7 @@
 import { createStructuredSelector } from 'reselect';
 import { link } from '../../lib/d3-redux';
 import { getFloodStages, getFloodStageHeight, getFloodGageHeightStageIndex, hasFloodData } from '../../selectors/flood-data-selector';
-import { Actions } from '../../store';
+import { Actions } from '../../store/site-store';
 import { appendTooltip } from '../../tooltips';
 
 
