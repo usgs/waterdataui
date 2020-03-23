@@ -17,6 +17,6 @@ module.exports = {
             url: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
         },
     },
-    basePath: '/api/graph-images',
+    basePath: PATH_CONTEXT,
     apis: ['src/index.js']
 };
