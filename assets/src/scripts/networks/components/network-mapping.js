@@ -11,6 +11,7 @@ export const markerFillOpacity = 0.8;
  */
 
 export const addNetworkLayers = function (map, networkSites) {
+
     const geojsonMarkerOptions = {
         radius: 6,
         fillColor: markerFillColor,
@@ -20,7 +21,12 @@ export const addNetworkLayers = function (map, networkSites) {
         fillOpacity: markerFillOpacity
     };
 
+    const dataValues = [];
     const onEachPointFeatureAddPopUp = function (feature, layer) {
+        dataValues.push({
+            'name': feature.properties.monitoringLocationName,
+            'link': feature.properties.monitoringLocationUrl
+        });
         const popupText = `Monitoring Location: <a href="${feature.properties.monitoringLocationUrl}">${feature.properties.monitoringLocationName}</a>
             <br>ID: ${feature.properties.monitoringLocationNumber}`;
         layer.bindPopup(popupText);
@@ -40,14 +46,37 @@ export const addNetworkLayers = function (map, networkSites) {
     };
 
     const networkLayer = fetchNetworkPointsLayer(networkSites, geojsonMarkerOptions);
-    if (networkSites.length > 50){
-         const markers = L.markerClusterGroup({ chunkedLoading: true });
-         markers.addLayer(networkLayer);
-         map.addLayer(markers);
-    } else {
-        map.addLayer(networkLayer);
+
+
+    if(networkSites.length > 0 && networkSites.length < 10000) {
+        if (networkSites.length > 50) {
+            const markers = L.markerClusterGroup({chunkedLoading: true});
+            markers.addLayer(networkLayer);
+            map.addLayer(markers);
+        } else {
+            map.addLayer(networkLayer);
+        }
+
+
+        $('#link-list').DataTable({
+            'data': dataValues,
+            'columns': [
+                {'name': 'Name', 'data': 'name'},
+                {
+                    'name': 'Link',
+                    'data': 'link',
+                    'render': function (data, type) {
+                        if (type === 'display') {
+                            data = '<a href="' + data + '">' + data + '</a>';
+                        }
+                        return data;
+                    }
+                }
+            ]
+        });
+    } else{
+        if (networkSites.length > 0) {
+            $('.site_overload').show();
+        }
     }
-
-
-
 };

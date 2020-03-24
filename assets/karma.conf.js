@@ -36,7 +36,7 @@ module.exports = function (config) {
 
         // list of files / patterns to exclude
         exclude: [
-            'src/scripts/site-store.js'
+            'src/scripts/index.js'
         ],
 
         // preprocess matching files before serving them to the browser
@@ -50,7 +50,7 @@ module.exports = function (config) {
              * This is just a normal Rollup config object,
              * except that `input` is handled for you.
              */
-            ...require('./rollup.config')
+            ...require('./rollup.config')[0]
         },
 
         // test results reporter to use
