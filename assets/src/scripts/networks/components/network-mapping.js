@@ -1,3 +1,4 @@
+import Tabulator from 'tabulator-tables/dist/js/tabulator.js';
 export const markerFillColor = '#ff7800';
 export const markerFillOpacity = 0.8;
 
@@ -21,9 +22,9 @@ export const addNetworkLayers = function (map, networkSites) {
         fillOpacity: markerFillOpacity
     };
 
-    const dataValues = [];
+    const listValues = [];
     const onEachPointFeatureAddPopUp = function (feature, layer) {
-        dataValues.push({
+        listValues.push({
             'name': feature.properties.monitoringLocationName,
             'link': feature.properties.monitoringLocationUrl
         });
@@ -57,26 +58,39 @@ export const addNetworkLayers = function (map, networkSites) {
             map.addLayer(networkLayer);
         }
 
-
-        $('#link-list').DataTable({
-            'data': dataValues,
-            'columns': [
-                {'name': 'Name', 'data': 'name'},
-                {
-                    'name': 'Link',
-                    'data': 'link',
-                    'render': function (data, type) {
-                        if (type === 'display') {
-                            data = '<a href="' + data + '">' + data + '</a>';
-                        }
-                        return data;
-                    }
-                }
+        const tableEl = document.getElementById('link-list');
+        const table = new Tabulator(tableEl, {
+            data: listValues,
+            height: '400px',
+            layout: 'fitColumns',
+            responsiveLayout: 'hide',
+            tooltips: true,
+            pagination: 'local',
+            paginationSize: 30,
+            movableColumns: true,
+            resizableRows: true,
+            initialSort: [
+                {column: 'name', dir: 'asc'}
+            ],
+            columns: [
+                {title: 'Name', field: 'name'},
+                {title: 'Link', field: 'link', formatter: 'link', formatterParams:{
+                    labelField:'link'
+                }}
             ]
         });
+
+        const searchValue = document.getElementById('table-search');
+
+        searchValue.addEventListener('keyup', function() {
+            table.setFilter('name', 'like', searchValue.value);
+        });
+
+
     } else{
         if (networkSites.length > 0) {
-            $('.site_overload').show();
+            document.getElementById('overload-map').innerHTML = 'Too many sites to display on map';
+            document.getElementById('overload-table').innerHTML = 'Too many sites to display in table';
         }
     }
 };

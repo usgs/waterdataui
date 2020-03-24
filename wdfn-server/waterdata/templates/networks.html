@@ -18,11 +18,13 @@
                     <h3>Description: Not Available</h3>
                 {% endif %}
                 <h3 id="network_map_heading">Network Map:</h3>
-                <p class="red site_overload">Too many sites to display on map</p>
+                <p id="overload-map"></p>
                {{ components.NetworkMapComponent(network_cd, extent) }}
                 <h3 id="network_table_heading">Link Table:</h3>
-                <p class="red site_overload">Too many sites to display in table</p>
-                <table class="display" id="link-list"></table>
+                <p id="overload-table"></p>
+                <span>Search Name:</span> <input id="table-search" />
+                <div id="link-list" >
+                </div>
             {% else %}
                 <p>Select a Network</p>
                 <table class="usa-table">
