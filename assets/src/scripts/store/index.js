@@ -5,7 +5,7 @@ const createReducer = function(asyncReducers) {
   return combineReducers({
     ...asyncReducers
   });
-}
+};
 
 const MIDDLEWARES = [thunk];
 
