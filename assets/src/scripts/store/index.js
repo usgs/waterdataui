@@ -35,5 +35,5 @@ export const configureReduxStore = function(initialState, reducers) {
 
   // Return the modified store
   return store;
-}
+};
 
