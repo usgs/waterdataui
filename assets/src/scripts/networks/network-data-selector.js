@@ -9,5 +9,5 @@ export const hasNetworkData = createSelector(
     getNetworkSites,
 
     (networkSites) =>
-        networkSites.length > 0,
+        networkSites.length > 0
 );

@@ -219,7 +219,7 @@ def networks(network_cd):
         http_code=http_code,
         network_cd=network_cd,
         collection=collection,
-        extent = extent
+        extent=extent
     ), http_code
 
 

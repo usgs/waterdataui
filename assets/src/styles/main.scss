@@ -30,7 +30,7 @@ $fa-font-path: './fonts' !default;
     margin-bottom: 1em;
   }
 
-  &[data-component='network-map']{
+  &[data-component='network-map'] {
     @import 'network';
     margin-bottom: 1em;
   }
