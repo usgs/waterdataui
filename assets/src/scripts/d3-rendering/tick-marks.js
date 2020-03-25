@@ -44,7 +44,7 @@ const getDefaultTicks = function (startMillis, endMillis, unit, tickCount, ianaT
         const endDateTime = DateTime.fromMillis(endMillis, {zone: ianaTimeZone});
         let result = [];
 
-        let dateTime = DateTime.fromMillis(startMillis + tickInterval, {zone: ianaTimeZone});
+        let dateTime = DateTime.fromMillis(startMillis + tickInterval / 2, {zone: ianaTimeZone});
         while (dateTime < endDateTime) {
             let tickDateTime = dateTime.startOf(unit);
             result.push(tickDateTime.toMillis());
@@ -91,7 +91,7 @@ export const generateTimeTicks = function(startMillis, endMillis, ianaTimeZone) 
     if (dayCount <= 3) {
         // Generates 4 tick marks that are on the start of a hour
         result = {
-            dates: getDefaultTicks(startMillis, endMillis,'minute', 4, ianaTimeZone),
+            dates: getDefaultTicks(startMillis, endMillis,'minute', 3, ianaTimeZone),
             format: formatFnc('MMM dd hh:mm a')
         };
     } else if (dayCount > 3 && dayCount <= 8) {
@@ -156,9 +156,9 @@ export const generateTimeTicks = function(startMillis, endMillis, ianaTimeZone) 
             format: formatFnc('MMM yyyy')
         };
     } else {
-        // Generate 7 tick marks and put them at the beginning of the year of that date.
+        // Generate 6 tick marks and put them at the beginning of the year of that date.
         result = {
-            dates: getDefaultTicks(startMillis, endMillis, 'month', 7, ianaTimeZone),
+            dates: getDefaultTicks(startMillis, endMillis, 'month', 6, ianaTimeZone),
             format: formatFnc('MMM yyyy')
         };
     }

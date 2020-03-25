@@ -12,7 +12,7 @@ describe('generateTimeTicks', () => {
 
         expect(result.dates.length).toBe(4);
         expect(result.dates.map(result.format)).toEqual(
-            ['Mar 08 02:20 PM', 'Mar 08 02:56 PM', 'Mar 08 03:32 PM', 'Mar 08 04:08 PM']
+            ['Mar 08 02:07 PM', 'Mar 08 02:52 PM', 'Mar 08 03:37 PM', 'Mar 08 04:22 PM']
         );
         expect(DateTime.fromMillis(result.dates[0], {zone: timeZone}).second).toBe(0);
     });
@@ -23,7 +23,7 @@ describe('generateTimeTicks', () => {
 
         expect(result.dates.length).toBe(4);
         expect(result.dates.map(result.format)).toEqual(
-            ['Mar 08 02:44 PM', 'Mar 08 03:44 PM', 'Mar 08 04:44 PM', 'Mar 08 05:44 PM']
+            ['Mar 08 02:22 PM', 'Mar 08 03:37 PM', 'Mar 08 04:52 PM', 'Mar 08 06:07 PM']
         );
         expect(DateTime.fromMillis(result.dates[0], {zone: timeZone}).second).toBe(0);
     });
@@ -34,7 +34,7 @@ describe('generateTimeTicks', () => {
 
         expect(result.dates.length).toBe(4);
         expect(result.dates.map(result.format)).toEqual(
-            ['Mar 08 11:20 PM', 'Mar 09 08:56 AM', 'Mar 09 06:32 PM', 'Mar 10 04:08 AM']
+            ['Mar 08 07:44 PM', 'Mar 09 07:44 AM', 'Mar 09 07:44 PM', 'Mar 10 07:44 AM']
         );
         expect(DateTime.fromMillis(result.dates[0], {zone: timeZone}).second).toBe(0);
     });
@@ -260,24 +260,24 @@ describe('generateTimeTicks', () => {
         expect(DateTime.fromMillis(result.dates[0], {zone: timeZone}).day).toBe(1);
     });
 
-    it('Generates 7 tick marks with format YYYY when year count is 9', () => {
+    it('Generates 7 tick marks with format MMM YYYY when year count is 9', () => {
         const endTime = DateTime.fromMillis(startTime).plus({year: 9}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
         expect(result.dates.length).toBe(7);
         expect(result.dates.map(result.format)).toEqual(
-            ['Apr 2019', 'Jun 2020', 'Jul 2021', 'Sep 2022', 'Oct 2023', 'Dec 2024', 'Jan 2026']
+            ['Oct 2018', 'Feb 2020', 'May 2021', 'Sep 2022', 'Dec 2023', 'Apr 2025', 'Jul 2026']
         );
         expect(DateTime.fromMillis(result.dates[0], {zone: timeZone}).day).toBe(1);
     });
 
-    it('Generates 7 tick marks with format YYYY when year count is large', () => {
+    it('Generates 7 tick marks with format MMM YYYY when year count is large', () => {
         const endTime = DateTime.fromMillis(startTime).plus({year: 20}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
         expect(result.dates.length).toBe(7);
         expect(result.dates.map(result.format)).toEqual(
-            ['Sep 2020', 'Mar 2023', 'Sep 2025', 'Mar 2028', 'Sep 2030', 'Mar 2033', 'Sep 2035']
+            ['Aug 2019', 'Jun 2022', 'Apr 2025', 'Mar 2028', 'Jan 2031', 'Nov 2033', 'Oct 2036']
         );
         expect(DateTime.fromMillis(result.dates[0], {zone: timeZone}).day).toBe(1);
     });
