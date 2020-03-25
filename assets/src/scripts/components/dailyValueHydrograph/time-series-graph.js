@@ -49,7 +49,7 @@ const drawDataLine = function (group, {lineSegment, xScale, yScale}) {
         .classed('estimated', includes(lineSegment.approvals, ESTIMATED));
 };
 
-const drawDataLines = function (elem, {lines, xScale, yScale, layout}) {
+export const drawDataLines = function (elem, {lines, xScale, yScale, layout, enableClip}) {
     elem.select('#daily-values-lines-group').remove();
 
     const allLinesGroup = elem.append('g');
@@ -59,6 +59,9 @@ const drawDataLines = function (elem, {lines, xScale, yScale, layout}) {
         .attr('y', layout.margin.top)
         .attr('width', layout.width - layout.margin.right)
         .attr('height', layout.height - layout.margin.bottom);
+     if (enableClip) {
+        elem.select(`#daily-values-lines-group`).attr('clip-path', 'url(#graph-clip)');
+    }
     lines.forEach((lineSegment) => {
         drawDataLine(linesGroup, {lineSegment, xScale, yScale});
     });
@@ -97,7 +100,8 @@ export const drawTimeSeriesGraph = function(elem, store) {
             lines: getCurrentTimeSeriesLineSegments,
             xScale: getMainXScale,
             yScale: getMainYScale,
-            layout: getMainLayout
+            layout: getMainLayout,
+            enableClip: () => true
         })))
         .call(drawTooltipFocus, store);
 };

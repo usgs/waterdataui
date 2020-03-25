@@ -6,22 +6,12 @@ import {appendXAxis} from '../../d3-rendering/axes';
 import {link} from '../../lib/d3-redux';
 import {Actions} from '../../store';
 
-//import {getBrushLayout} from '../hydrograph/layout';
 import {getBrushLayout} from './selectors/layout';
-
-//import {getBrushXAxis} from '../hydrograph/axes';
 import {getXAxis} from './selectors/axes';
-
-//import {getBrushXScale, getBrushYScale} from '../hydrograph/scales';
 import {getBrushXScale, getBrushYScale} from './selectors/scales';
+import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-data';
 
-import {currentVariableLineSegmentsSelector} from '../hydrograph/drawing-data';
-//import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-data';
-
-import {isVisibleSelector} from '../hydrograph/time-series';
-
-import {drawDataLines} from '../hydrograph/time-series-data';
-//import {drawDataLines} from '/time-series-graph';
+import {drawDataLines} from './time-series-graph';
 
 export const drawGraphBrush = function(container, store) {
 
@@ -63,19 +53,15 @@ export const drawGraphBrush = function(container, store) {
                                 getBrushLayout
                 ))
                 .call(link(store, appendXAxis, createStructuredSelector({
-                    //xAxis: getBrushXAxis,
                     xAxis: getXAxis('BRUSH'),
                     layout: getBrushLayout
                 })))
                 .call(link(store, drawDataLines, createStructuredSelector({
-                    //visible: isVisibleSelector('current'),
-                    tsLinesMap: currentVariableLineSegmentsSelector('current'),
-                    //lines: getCurrentTimeSeriesLineSegments,
+                    lines: getCurrentTimeSeriesLineSegments,
                     xScale: getBrushXScale,
                     yScale: getBrushYScale,
-                    //tsKey: () => 'current',
-                    layout: getBrushLayout
-                    //enableClip: () => false
+                    layout: getBrushLayout,
+                    enableClip: () => true
                 })));
         })
         .call(link(store, (svg, {layout, isHydrographBrushOffset}) => {
@@ -98,9 +84,10 @@ export const drawGraphBrush = function(container, store) {
             // Creates the brush
             group.call(graphBrush);
 
-            // Fill & round corners of brush handles
+             // Fill & round corners of brush handles
             svg.selectAll('.handle').classed('brush-handle-fill', true)
-                .attr('rx',15).attr('ry',15);
+                .attr('rx',15).attr('ry',15)
+                .style('fill','#345d96').style('opacity',.5).style('width',8).style('stroke','#000000').style('stroke-width',1);
 
             graphBrush.move(group, selection);
 
