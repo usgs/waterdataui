@@ -29,7 +29,7 @@ export const drawGraphBrush = function(container, store) {
             const brushOffsets = [adjustedBrush[0]- xScale.domain()[0],
                 xScale.domain()[1] - adjustedBrush[1]];
 
-            store.dispatch(Actions.setHydrographBrushOffset(brushOffsets));
+            store.dispatch(Actions.setDVGraphBrushOffset(brushOffsets));
         }
     };
 
@@ -64,11 +64,11 @@ export const drawGraphBrush = function(container, store) {
                     enableClip: () => true
                 })));
         })
-        .call(link(store, (svg, {layout, isHydrographBrushOffset}) => {
+        .call(link(store, (svg, {layout, isDVGraphBrushOffset}) => {
             let selection;
 
             const brushElem = svg.select('.brush');
-            if (isHydrographBrushOffset && brushElem.size() !== 0) {
+            if (isDVGraphBrushOffset && brushElem.size() !== 0) {
                 selection = brushSelection(brushElem.node());
             }
             if (!selection) {
@@ -86,13 +86,12 @@ export const drawGraphBrush = function(container, store) {
 
              // Fill & round corners of brush handles
             svg.selectAll('.handle').classed('brush-handle-fill', true)
-                .attr('rx',15).attr('ry',15)
-                .style('fill','#345d96').style('opacity',.5).style('width',8).style('stroke','#000000').style('stroke-width',1);
+                .attr('rx',15).attr('ry',15);
 
             graphBrush.move(group, selection);
 
         }, createStructuredSelector({
             layout: getBrushLayout,
-            isHydrographBrushOffset: (state) => state.timeSeriesState.hydrographBrushOffset !== undefined
+            isDVGraphBrushOffset: (state) => state.observationsState.dvGraphBrushOffset !== undefined
         })));
 };

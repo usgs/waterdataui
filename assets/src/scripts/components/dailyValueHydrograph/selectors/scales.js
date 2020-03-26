@@ -12,17 +12,17 @@ import {getLayout} from './layout';
 export const getXScale = memoize((kind) =>createSelector(
     getLayout(kind),
     getCurrentObservationsTimeSeriesTimeRange,
-    state => state.timeSeriesState.hydrographBrushOffset,
-    (layout, timeRange,hydrographBrushOffset) => {
+    state => state.observationsState.dvGraphBrushOffset,
+    (layout, timeRange,dvGraphBrushOffset) => {
         let xScale = scaleLinear();
         if (timeRange) {
             xScale
                 .range([0, layout.width - layout.margin.right])
                 .domain([timeRange.startTime, timeRange.endTime]);
-            if (hydrographBrushOffset) {
+            if (dvGraphBrushOffset) {
                 console.log('DV scales.js: kind:'+kind);
-                console.log('DV scales.js: hydrographBrushOffset start-end:'+hydrographBrushOffset.start+' '+hydrographBrushOffset.end);
-                xScale.domain([timeRange.startTime+hydrographBrushOffset.start, timeRange.endTime-hydrographBrushOffset.end]);
+                console.log('DV scales.js: dvGraphBrushOffset start-end:'+dvGraphBrushOffset.start+' '+dvGraphBrushOffset.end);
+                xScale.domain([timeRange.startTime+dvGraphBrushOffset.start, timeRange.endTime-dvGraphBrushOffset.end]);
             }
         }
         return xScale;

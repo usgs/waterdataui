@@ -60,7 +60,7 @@ export const drawDataLines = function (elem, {lines, xScale, yScale, layout, ena
         .attr('width', layout.width - layout.margin.right)
         .attr('height', layout.height - layout.margin.bottom);
      if (enableClip) {
-        elem.select(`#daily-values-lines-group`).attr('clip-path', 'url(#graph-clip)');
+        elem.select('#daily-values-lines-group').attr('clip-path', 'url(#graph-clip)');
     }
     lines.forEach((lineSegment) => {
         drawDataLine(linesGroup, {lineSegment, xScale, yScale});
