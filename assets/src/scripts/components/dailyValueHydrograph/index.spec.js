@@ -116,7 +116,7 @@ describe('components/dailyValueHydrograph/index', () => {
         });
 
         window.requestAnimationFrame(() => {
-            expect(testDiv.select('.graph-container').selectAll('.hydrograph-container').size()).toBe(2);
+            expect(testDiv.select('.graph-container').selectAll('.hydrograph-container').size()).toBe(3);
             done();
         });
     });
