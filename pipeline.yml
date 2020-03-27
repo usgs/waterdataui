@@ -10,17 +10,12 @@ buildContext: "./graph-server"
 containerPort: 2929
 # docker image path in artifactory
 artifactoryPath: "graph-server"
-# docker image path in gitlab
-gitlabPath: "wma/docker/waterdataui"
 # complete github url
 gitRepoUrl: "https://github.com/usgs/waterdataui.git"
 # github credentials
 gitRepoCredentialsId: "Jenkins-GitHub-Read-Write-Token"
 # maximum amount of RAM for running Docker containers in the service
 memory: 1024
-# integer representing the order of precedence of the ALB rule.
-# set to a low priority; services are given higher priority.
-rulePriority: 503
 # string parameter specifying a path that ALB should use to verify that your application is alive
 healthCheck: "/api/graph-images/status/"
 # string parameter that tells the ALB how to route requests to the containers (e.g. /my-app/*); this forms a listener rule for the load balancer
@@ -29,3 +24,8 @@ contextPath: "/api/graph-images/*"
 deployJobName: "wdfn-graph-server-deploy"
 configRepoPath: "wma/docker/waterdataui/wdfn_graph_server"
 configCredentialsId: "wma-eto-eb-rsa"
+urlRules:
+  - type: forward
+    conditions:
+      - "/api/graph-images/*"
+    priority: 503
