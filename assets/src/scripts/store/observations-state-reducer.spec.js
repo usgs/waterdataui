@@ -22,4 +22,31 @@ describe('observationsStateReducer', () => {
             cursorOffset: '55555'
         });
     });
+
+    it('Handles SET_DV_GRAPH_BRUSH_OFFSET', () => {
+        expect(observationsStateReducer({
+            dvGraphBrushOffset: undefined
+        }, {
+            type: 'SET_DV_GRAPH_BRUSH_OFFSET',
+            dvGraphBrushOffset: [1000, 10000000]
+        })).toEqual({
+            dvGraphBrushOffset: {
+                start: 1000,
+                end: 10000000
+            }
+        });
+    });
+
+    it('Handles CLEAR_DV_GRAPH_BRUSH_OFFSET', () => {
+        expect(observationsStateReducer({
+            dvGraphBrushOffset: {
+                start: 1000,
+                end: 10000000
+            }
+        }, {
+            type: 'CLEAR_DV_GRAPH_BRUSH_OFFSET'
+        })).toEqual({
+            dvGraphBrushOffset: undefined
+        });
+    });
 });

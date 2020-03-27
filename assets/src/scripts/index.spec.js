@@ -27,6 +27,7 @@ import './components/dailyValueHydrograph/selectors/legend-data.spec';
 
 import './components/dailyValueHydrograph/index.spec';
 import './components/dailyValueHydrograph/time-series-graph.spec';
+import './components/dailyValueHydrograph/graph-brush.spec';
 import './components/dailyValueHydrograph/tooltip.spec';
 
 import './components/embed.spec';

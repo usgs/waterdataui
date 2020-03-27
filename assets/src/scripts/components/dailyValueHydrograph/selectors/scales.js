@@ -20,8 +20,6 @@ export const getXScale = memoize((kind) =>createSelector(
                 .range([0, layout.width - layout.margin.right])
                 .domain([timeRange.startTime, timeRange.endTime]);
             if (dvGraphBrushOffset) {
-                console.log('DV scales.js: kind:'+kind);
-                console.log('DV scales.js: dvGraphBrushOffset start-end:'+dvGraphBrushOffset.start+' '+dvGraphBrushOffset.end);
                 xScale.domain([timeRange.startTime+dvGraphBrushOffset.start, timeRange.endTime-dvGraphBrushOffset.end]);
             }
         }
@@ -41,7 +39,7 @@ export const getYScale = memoize((kind) =>createSelector(
         if (valueRange) {
             const isPositive = valueRange.min > 0 && valueRange.max > 0;
 
-            // if the min and max are the same just divide the min by 2 for the padding
+            // If the min and max are the same just divide the min by 2 for the padding
             const padding = valueRange.min === valueRange.max ? valueRange.min / 2 : PADDING_RATIO * (valueRange.max - valueRange.min);
             let extendedRange = {
                 min: valueRange.min - padding,

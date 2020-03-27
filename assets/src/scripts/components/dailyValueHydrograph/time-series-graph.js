@@ -91,8 +91,8 @@ export const drawTimeSeriesGraph = function(elem, store) {
         .attr('class', 'daily-values-graph-group')
         .call(link(store, (elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), getMainLayout))
         .call(link(store, appendAxes, createStructuredSelector({
-            xAxis: getXAxis(''),
-            yAxis: getYAxis(''),
+            xAxis: getXAxis(),
+            yAxis: getYAxis(),
             layout: getMainLayout,
             yTitle: getCurrentTimeSeriesYTitle
         })))

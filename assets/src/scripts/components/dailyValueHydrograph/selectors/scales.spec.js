@@ -25,7 +25,7 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
         }
     };
    describe('getXScale', () => {
-        it('should have a  default domain if no current time series is set', () => {
+        it('Should have a default domain if no current time series is set', () => {
             expect(getMainXScale({
                 ...TEST_STATE,
                 observationsData: {},
@@ -37,13 +37,13 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
             }).domain()).toEqual([0, 1]);
         });
 
-        it('should have the expected domain if a current time series is set', () => {
+        it('Should have the expected domain if a current time series is set', () => {
             expect(getMainXScale(TEST_STATE).domain()).toEqual([1262304000000, 1262563200000]);
         });
    });
 
    describe('getYScale', () => {
-       it('should have the default domain if no current time series is set', () => {
+       it('Should have the default domain if no current time series is set', () => {
            expect(getMainYScale({
                 ...TEST_STATE,
                 observationsData: {},
@@ -51,13 +51,13 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
             }).domain()).toEqual([0, 1]);
        });
 
-       it('should have a domain where the first number is greater than the second (inverted)', () => {
+       it('Should have a domain where the first number is greater than the second (inverted)', () => {
            const result = getMainYScale(TEST_STATE).domain();
 
            expect(result[1]).toBeLessThan(result[0]);
        });
 
-       it('should have an extended domain', () => {
+       it('Should have an extended domain', () => {
            const result = getMainYScale(TEST_STATE).domain();
 
            expect(result[1]).toBeLessThan(2.9);
