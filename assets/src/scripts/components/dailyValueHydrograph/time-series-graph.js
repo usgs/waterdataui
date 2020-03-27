@@ -9,8 +9,8 @@ import {appendAxes} from '../../d3-rendering/axes';
 
 import {getXAxis, getYAxis} from './selectors/axes';
 import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesTitle, getCurrentTimeSeriesYTitle} from './selectors/labels';
-import {getLayout} from './selectors/layout';
-import {getXScale, getYScale} from './selectors/scales';
+import {getMainLayout} from './selectors/layout';
+import {getMainXScale, getMainYScale} from './selectors/scales';
 import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-data';
 
 import {drawTooltipFocus, drawTooltipText} from './tooltip';
@@ -49,7 +49,7 @@ const drawDataLine = function (group, {lineSegment, xScale, yScale}) {
         .classed('estimated', includes(lineSegment.approvals, ESTIMATED));
 };
 
-const drawDataLines = function (elem, {lines, xScale, yScale, layout}) {
+export const drawDataLines = function (elem, {lines, xScale, yScale, layout}) {
     elem.select('#daily-values-lines-group').remove();
 
     const allLinesGroup = elem.append('g');
@@ -77,7 +77,7 @@ export const drawTimeSeriesGraph = function(elem, store) {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`);
                 elem.attr('width', layout.width);
                 elem.attr('height', layout.height);
-            }, getLayout))
+            }, getMainLayout))
             .call(link(store, addSVGAccessibility, createStructuredSelector({
                 title: getCurrentTimeSeriesTitle,
                 description: getCurrentTimeSeriesDescription,
@@ -86,18 +86,18 @@ export const drawTimeSeriesGraph = function(elem, store) {
             })));
     svg.append('g')
         .attr('class', 'daily-values-graph-group')
-        .call(link(store, (elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), getLayout))
+        .call(link(store, (elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), getMainLayout))
         .call(link(store, appendAxes, createStructuredSelector({
-            xAxis: getXAxis,
-            yAxis: getYAxis,
-            layout: getLayout,
+            xAxis: getXAxis(),
+            yAxis: getYAxis(),
+            layout: getMainLayout,
             yTitle: getCurrentTimeSeriesYTitle
         })))
         .call(link(store, drawDataLines, createStructuredSelector({
             lines: getCurrentTimeSeriesLineSegments,
-            xScale: getXScale,
-            yScale: getYScale,
-            layout: getLayout
+            xScale: getMainXScale,
+            yScale: getMainYScale,
+            layout: getMainLayout
         })))
         .call(drawTooltipFocus, store);
 };

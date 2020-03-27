@@ -9,8 +9,8 @@ import {getObservationsCursorOffset, getCurrentObservationsTimeSeriesUnitOfMeasu
 import {Actions} from '../../store';
 
 import {APPROVED, ESTIMATED} from './time-series-graph';
-import {getLayout} from './selectors/layout';
-import {getXScale, getYScale} from './selectors/scales';
+import {getMainLayout} from './selectors/layout';
+import {getMainXScale, getMainYScale} from './selectors/scales';
 import {getCursorPoint, getDataAtCursor, getCursorEpochTime} from './selectors/time-series-data';
 
 /*
@@ -36,7 +36,7 @@ export const drawTooltipText = function(elem, store) {
         }, createStructuredSelector({
             pointAtCursorOffset: getDataAtCursor,
             unitOfMeasure: getCurrentObservationsTimeSeriesUnitOfMeasure,
-            layout: getLayout
+            layout: getMainLayout
         })));
 };
 
@@ -49,16 +49,16 @@ export const drawTooltipFocus = function(elem, store) {
     elem
         .call(link(store, drawFocusLine, createStructuredSelector({
             cursorTime: getCursorEpochTime,
-            xScale: getXScale,
-            yScale: getYScale
+            xScale: getMainXScale,
+            yScale: getMainYScale
         })))
         .call(link(store, drawFocusCircles, getCursorPoint))
         .call(link(
             store,
             drawFocusOverlay,
             createStructuredSelector({
-                xScale: getXScale,
-                layout: getLayout
+                xScale: getMainXScale,
+                layout: getMainLayout
             }),
             store,
             Actions.setDailyValueCursorOffset)
@@ -76,8 +76,8 @@ export const drawTooltipCursorSlider = function(elem, store) {
         drawCursorSlider,
         createStructuredSelector({
             cursorOffset: getObservationsCursorOffset,
-            xScale: getXScale,
-            layout: getLayout
+            xScale: getMainXScale,
+            layout: getMainLayout
         }),
         store,
         Actions.setDailyValueCursorOffset

@@ -1,4 +1,4 @@
-import {getXScale, getYScale} from './scales';
+import {getMainXScale, getMainYScale} from './scales';
 
 describe('components/dailyValueHydrograph/selectors/scales', () => {
     const TEST_STATE = {
@@ -25,47 +25,47 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
         }
     };
    describe('getXScale', () => {
-        it('should have a  default domain if no current time series is set', () => {
-            expect(getXScale({
+        it('Should have a default domain if no current time series is set', () => {
+            expect(getMainXScale({
                 ...TEST_STATE,
                 observationsData: {},
                 observationsState: {}
             }).domain()).toEqual([0, 1]);
-            expect(getXScale({
+            expect(getMainXScale({
                 ...TEST_STATE,
                 observationsState: {}
             }).domain()).toEqual([0, 1]);
         });
 
-        it('should have the expected domain if a current time series is set', () => {
-            expect(getXScale(TEST_STATE).domain()).toEqual([1262304000000, 1262563200000]);
+        it('Should have the expected domain if a current time series is set', () => {
+            expect(getMainXScale(TEST_STATE).domain()).toEqual([1262304000000, 1262563200000]);
         });
    });
 
    describe('getYScale', () => {
-       it('should have the default domain if no current time series is set', () => {
-           expect(getYScale({
+       it('Should have the default domain if no current time series is set', () => {
+           expect(getMainYScale({
                 ...TEST_STATE,
                 observationsData: {},
                 observationsState: {}
             }).domain()).toEqual([0, 1]);
        });
 
-       it('should have a domain where the first number is greater than the second (inverted)', () => {
-           const result = getYScale(TEST_STATE).domain();
+       it('Should have a domain where the first number is greater than the second (inverted)', () => {
+           const result = getMainYScale(TEST_STATE).domain();
 
            expect(result[1]).toBeLessThan(result[0]);
        });
 
-       it('should have an extended domain', () => {
-           const result = getYScale(TEST_STATE).domain();
+       it('Should have an extended domain', () => {
+           const result = getMainYScale(TEST_STATE).domain();
 
            expect(result[1]).toBeLessThan(2.9);
            expect(result[0]).toBeGreaterThan(4.6);
        });
 
        it('Should not extend domain beyond zero', () =>  {
-           const result = getYScale({
+           const result = getMainYScale({
                ...TEST_STATE,
                observationsData: {
                    timeSeries: {
