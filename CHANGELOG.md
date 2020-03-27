@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.27.0...master)
 ### Added
 - Add period of record for each parameter in the monitoring location page parameter selection list.
+- Added Brush to DV graph.
 
 ## Fixed
 - Fixed bug that made compare time series disappear when the brush was adjusted by adding
