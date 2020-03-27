@@ -20,7 +20,7 @@ export const getXScale = memoize((kind) =>createSelector(
                 .range([0, layout.width - layout.margin.right])
                 .domain([timeRange.startTime, timeRange.endTime]);
             if (dvGraphBrushOffset) {
-                xScale.domain([timeRange.startTime+dvGraphBrushOffset.start, timeRange.endTime-dvGraphBrushOffset.end]);
+                xScale.domain([timeRange.startTime + dvGraphBrushOffset.start, timeRange.endTime - dvGraphBrushOffset.end]);
             }
         }
         return xScale;
