@@ -6,22 +6,18 @@ import wdfnviz from 'wdfn-viz';
 import {register} from '../helpers';
 register();
 
-import {configureStore} from './network-store';
+import {configureStore} from './store/network-store';
 import {getParamString} from '../url-params';
 
-import {attachToNode as NetworkMapComponent} from './components';
+import {attachToNode as NetworkMapComponent} from './network-component';
 
 const COMPONENTS = {
-    'network-map': NetworkMapComponent
+    'network': NetworkMapComponent
 };
 
 const load = function () {
     let nodes = document.getElementsByClassName('wdfn-component');
-    let store = configureStore({
-        ui: {
-            windowWidth: window.innerWidth
-        }
-    });
+    let store = configureStore();
     for (let node of nodes) {
         // If options is specified on the node, expect it to be a JSON string.
         // Otherwise, use the dataset attributes as the component options.

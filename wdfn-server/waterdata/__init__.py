@@ -7,7 +7,6 @@ import os
 import sys
 
 from flask import Flask
-# from flask_cors import CORS
 
 __version__ = '0.28.0dev'
 
@@ -37,7 +36,7 @@ app = Flask(__name__.split()[0], instance_relative_config=True)  # pylint: disab
 
 # Loads configuration information from config.py and instance/config.py
 app.config.from_object('config')
-# CORS(app, resources={r"/*": {"origins": "*"}}, expose_headers='Authorization')
+
 try:
     app.config.from_pyfile('config.py')
 except FileNotFoundError:

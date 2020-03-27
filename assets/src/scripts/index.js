@@ -6,7 +6,7 @@ import wdfnviz from 'wdfn-viz';
 import {register} from './helpers';
 register();
 
-import {configureStore} from './store/site-store';
+import {configureStore} from './store';
 import {getParamString} from './url-params';
 
 import {attachToNode as EmbedComponent} from './components/embed';

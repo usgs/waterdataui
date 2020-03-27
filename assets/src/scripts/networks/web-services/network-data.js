@@ -1,5 +1,5 @@
-import config from '../config';
-import { get } from '../ajax';
+import config from '../../config';
+import {get} from '../../ajax';
 
 const networkUrl = config.NETWORK_ENDPOINT;
 
@@ -20,7 +20,7 @@ const fetchNetworkData = function(networkQuery, networkCd) {
         });
 };
 
-// nldi webservice calls
+// network webservice calls
 export const fetchNetworkSites = function(networkCd) {
     const networkQuery = `${networkUrl}/${networkCd}/items`;
     return fetchNetworkData(networkQuery, networkCd);

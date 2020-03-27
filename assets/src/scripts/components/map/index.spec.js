@@ -1,6 +1,6 @@
-import { select } from 'd3-selection';
-import { attachToNode } from './index';
-import { configureStore } from '../../store/site-store';
+import {select} from 'd3-selection';
+import {attachToNode} from './index';
+import {configureStore} from '../../store';
 
 describe('map module', () => {
     let mapNode;

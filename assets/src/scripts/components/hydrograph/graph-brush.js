@@ -1,10 +1,10 @@
 import {brushX, brushSelection} from 'd3-brush';
-import { event } from 'd3-selection';
+import {event} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import {appendXAxis} from '../../d3-rendering/axes';
 import {link} from '../../lib/d3-redux';
-import {Actions} from '../../store/site-store';
+import {Actions} from '../../store';
 
 import {getBrushXAxis} from './axes';
 import {currentVariableLineSegmentsSelector} from './drawing-data';

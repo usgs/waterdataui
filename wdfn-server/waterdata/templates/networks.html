@@ -17,14 +17,9 @@
                     <h2>Network: {{ network_cd }} </h2>
                     <h3>Description: Not Available</h3>
                 {% endif %}
-                <h3 id="network_map_heading">Network Map:</h3>
-                <p id="overload-map"></p>
-               {{ components.NetworkMapComponent(network_cd, extent) }}
-                <h3 id="network_table_heading">Link Table:</h3>
-                <p id="overload-table"></p>
-                <span>Search Name:</span> <input id="table-search" />
-                <div id="link-list" >
-                </div>
+
+               {{ components.NetworkComponent(network_cd, extent) }}
+
             {% else %}
                 <p>Select a Network</p>
                 <table class="usa-table">

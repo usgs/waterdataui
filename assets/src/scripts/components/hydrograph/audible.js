@@ -8,7 +8,7 @@ import { tsCursorPointsSelector } from './cursor';
 import { getMainXScale, getMainYScale } from './scales';
 import config from '../../config';
 import { link } from '../../lib/d3-redux';
-import { Actions } from '../../store/site-store';
+import { Actions } from '../../store';
 
 // Higher tones get lower volume
 const volumeScale = scaleLinear().range([2, .3]);

@@ -19,7 +19,7 @@ one representing the time period specified and the second representing the same 
 
 ## Running the server
 
-The entrypoint is `src/site-store.js`, which accepts the following environment
+The entrypoint is `src/index.js`, which accepts the following environment
 variables as arguments:
 
 - NODE_PORT: Port to run http server on. Default 2929.
@@ -30,7 +30,7 @@ variables as arguments:
 For example:
 
 ```bash
-% NODE_PORT=80 node src/site-store.js
+% NODE_PORT=80 node src/index.js
 ```
 
 Alternatively, if you want to use defaults as well as add DEBUG just use

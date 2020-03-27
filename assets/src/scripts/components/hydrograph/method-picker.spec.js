@@ -1,8 +1,8 @@
-import { select } from 'd3-selection';
+import {select} from 'd3-selection';
 
-import { configureStore } from '../../store/site-store';
+import {configureStore} from '../../store';
 
-import { drawMethodPicker } from './method-picker';
+import {drawMethodPicker} from './method-picker';
 
 describe('method-picker', () => {
 

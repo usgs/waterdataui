@@ -29,20 +29,23 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'tests/scripts/global-config.js',
-            {pattern: 'src/scripts/index.spec.js', watched: false}
+            '../global-config.js',
+            '../../../node_modules/leaflet/dist/leaflet.js',
+            '../../../node_modules/esri-leaflet/dist/esri-leaflet.js',
+            '../../../node_modules/leaflet.markercluster/dist/leaflet.markercluster.js',
+            {pattern: '../../../src/scripts/networks/index.spec.js', watched: false}
 
         ],
 
         // list of files / patterns to exclude
         exclude: [
-            'src/scripts/index.js'
+            '../../../src/scripts/networks/index.js'
         ],
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/scripts/index.spec.js': ['rollup']
+            '../../../src/scripts/networks/index.spec.js': ['rollup']
         },
 
         rollupPreprocessor: {
@@ -50,7 +53,7 @@ module.exports = function (config) {
              * This is just a normal Rollup config object,
              * except that `input` is handled for you.
              */
-            ...require('./rollup.config')[0]
+            ...require('../../../rollup.config')[1]
         },
 
         // test results reporter to use
@@ -95,11 +98,11 @@ module.exports = function (config) {
                 plugins: [
                     ...karmaConfig.rollupPreprocessor.plugins,
                     istanbul({
+                        include: [
+                            '../../../src/scripts/networks/*.js'
+                        ],
                         exclude: [
-                            'tests/**/*.js',
-                            'src/scripts/**/*.spec.js',
-                            'src/scripts/networks/*.js',
-                            'node_modules/**/*'
+                            '../../../src/scripts/networks/*.spec.js'
                         ]
                     })
                 ]

@@ -1,6 +1,6 @@
-import { select, selectAll } from 'd3-selection';
-import { attachToNode } from './index';
-import { Actions, configureStore } from '../../store/site-store';
+import {select, selectAll} from 'd3-selection';
+import {attachToNode} from './index';
+import {Actions, configureStore} from '../../store';
 
 
 const TEST_STATE = {

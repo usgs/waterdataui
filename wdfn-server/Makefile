@@ -35,7 +35,7 @@ wdfn-server/env:
 
 wdfn-env-requirements:
 	@echo 'Installing requirements.txt'
-	$(PIP) install -r wdfn-server/requirements.txt -r wdfn-server/requirements-dev.txt --trusted-host pypi.org --trusted-host files.pythonhosted.org
+	$(PIP) install -r wdfn-server/requirements.txt -r wdfn-server/requirements-dev.txt
 
 wdfn-server/instance/config.py:
 	@echo 'Creating wdfn-server/instance/config.py...'

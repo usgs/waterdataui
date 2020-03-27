@@ -1,6 +1,6 @@
-import { select, selectAll } from 'd3-selection';
+import {select, selectAll} from 'd3-selection';
 
-import {Actions, configureStore} from '../../store/site-store';
+import {Actions, configureStore} from '../../store';
 
 import {drawTimeSeriesGraph} from './time-series-graph';
 

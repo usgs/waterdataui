@@ -1,16 +1,16 @@
-import { select } from 'd3-selection';
-import { createStructuredSelector } from 'reselect';
-import { map as createMap, marker as createMarker, control, layerGroup } from 'leaflet';
-import { TiledMapLayer, dynamicMapLayer, Util, basemapLayer } from 'esri-leaflet/src/EsriLeaflet';
-import { link } from '../../lib/d3-redux';
+import {select} from 'd3-selection';
+import {createStructuredSelector} from 'reselect';
+import {map as createMap, marker as createMarker, control, layerGroup} from 'leaflet';
+import {TiledMapLayer, dynamicMapLayer, Util, basemapLayer} from 'esri-leaflet/src/EsriLeaflet';
+import {link} from '../../lib/d3-redux';
 import config from '../../config';
-import { FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT } from '../../web-services/flood-data';
-import { hasFloodData, getFloodExtent, getFloodStageHeight } from '../../selectors/flood-data-selector';
-import { Actions } from '../../store/site-store';
-import { floodSlider } from './flood-slider';
-import { createLegendControl, createFIMLegend, createNldiLegend } from './legend';
-import { addNldiLayers} from './nldiMapping';
-import { hasNldiData, getNldiDownstreamFlows, getNldiDownstreamSites, getNldiUpstreamFlows, getNldiUpstreamSites, getNldiUpstreamBasin}
+import {FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT} from '../../web-services/flood-data';
+import {hasFloodData, getFloodExtent, getFloodStageHeight} from '../../selectors/flood-data-selector';
+import {Actions} from '../../store';
+import {floodSlider} from './flood-slider';
+import {createLegendControl, createFIMLegend, createNldiLegend} from './legend';
+import {addNldiLayers} from './nldiMapping';
+import {hasNldiData, getNldiDownstreamFlows, getNldiDownstreamSites, getNldiUpstreamFlows, getNldiUpstreamSites, getNldiUpstreamBasin}
     from '../../selectors/nldi-data-selector';
 
 

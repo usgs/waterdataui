@@ -1,4 +1,4 @@
-import { fetchSiteStatistics, fetchSitesStatisticsRDB } from './statistics-data';
+import {fetchSiteStatistics, fetchSitesStatisticsRDB} from './statistics-data';
 
 
 describe('statistics-data', () => {

@@ -1,5 +1,5 @@
-import { select } from 'd3-selection';
-import { Actions, configureStore } from '../../store/site-store';
+import {select} from 'd3-selection';
+import {Actions, configureStore} from '../../store';
 import {drawTooltipText, drawTooltipFocus, tooltipPointsSelector, drawTooltipCursorSlider} from './tooltip';
 
 

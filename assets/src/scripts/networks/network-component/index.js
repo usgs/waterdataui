@@ -1,30 +1,30 @@
-import { select } from 'd3-selection';
-import { createStructuredSelector } from 'reselect';
-import { link } from '../../lib/d3-redux';
+import {select} from 'd3-selection';
+import {createStructuredSelector} from 'reselect';
+import {link} from '../../lib/d3-redux';
 import config from '../../config';
 
-import { Actions } from '../network-store';
-import { createLegendControl, createNetworkLegend } from './network-legend';
-import { addNetworkLayers} from './network-mapping';
-import { hasNetworkData, getNetworkSites}
-    from '../network-data-selector';
+import {Actions} from '../store/network-store';
+import {createLegendControl, createNetworkLegend} from './network-legend';
+import {addNetworkLayers} from './network-elements';
+import {hasNetworkData, getNetworkSites}
+    from '../selectors/network-data-selector';
 
 /*
  * Creates a network map
  */
-const networkMap = function(node, {extent}, store) {
+const networkMap = function(node, extent, store) {
 
-    let gray = new L.layerGroup();
-    L.esri.basemapLayer('Gray').addTo(gray);
+    let gray = new window.L.layerGroup();
+    window.L.esri.basemapLayer('Gray').addTo(gray);
 
     if (config.HYDRO_ENDPOINT) {
-        gray.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT,
+        gray.addLayer(new window.L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT,
             maxZoom: 22,
             maxNativeZoom: 19}));
     }
 
     // Create map on node
-    const map = new L.Map('network-map', {
+    const map = new window.L.Map('network-map', {
         center: [0, 0],
         zoom: 1,
         scrollWheelZoom: false,
@@ -42,7 +42,6 @@ const networkMap = function(node, {extent}, store) {
         map.scrollWheelZoom.disable();
     });
 
-
     let legendControl = createLegendControl({
         position: 'bottomright'
     });
@@ -55,24 +54,21 @@ const networkMap = function(node, {extent}, store) {
     //add additional baselayer
     var baseLayers = {
         'Grayscale': gray,
-        'Satellite': new L.esri.basemapLayer('ImageryFirefly')
+        'Satellite': new window.L.esri.basemapLayer('ImageryFirefly')
     };
 
     //add layer control
-    L.control.layers(baseLayers).addTo(map);
+    window.L.control.layers(baseLayers).addTo(map);
 
     // Add the ESRI World Hydro Reference Overlay
     if (config.HYDRO_ENDPOINT) {
-        map.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT}));
+        map.addLayer(new window.L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT}));
     }
 
-    // // Add a marker at the site location
-    // createMarker([latitude, longitude]).addTo(map);
-
     /*
-     * Creates the NLDI legend if NLDI data is available, otherwise removes the NLDI legend if it exists.
+     * Creates the Network legend if Network data is available, otherwise removes the Network legend if it exists.
      * @param {HTMLElement} node - element where the map is rendered
-     * @param {Boolean} isNldiAvailable
+     * @param {Boolean} isNetworkAvailable
      */
     const addNetworkLegend = function(node, isNetworkAvailable) {
         createNetworkLegend(legendControl, isNetworkAvailable);
@@ -96,6 +92,6 @@ export const attachToNode = function(store, node, {networkcd, extent}) {
     store.dispatch(Actions.retrieveNetworkData(networkcd));
 
     select(node)
-        .call(networkMap, {extent}, store);
+        .call(networkMap, extent, store);
 };
 

@@ -5,7 +5,7 @@ import {select} from 'd3-selection';
 import {getVariables, getCurrentVariableID, getTimeSeries} from '../../selectors/time-series-selector';
 
 import config from '../../config';
-import {Actions} from '../../store/site-store';
+import {Actions} from '../../store';
 import {appendTooltip} from '../../tooltips';
 import {sortedParameters} from '../../utils';
 

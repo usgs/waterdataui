@@ -38,10 +38,38 @@
     </div>
 {%- endmacro %}
 
-{% macro NetworkMapComponent(network_cd, extent) -%}
-    <div class="wdfn-component" data-component="network-map" data-networkcd="{{ network_cd }}" data-extent="{{  extent }}">
+{% macro NetworkComponent(network_cd, extent) -%}
+     <h3 id="network_map_heading">Network Map:</h3>
+                <p id="overload-map"></p>
+    <div class="wdfn-component" data-component="network" data-networkcd="{{ network_cd }}" data-extent="{{  extent }}">
         <div id="network-map"></div>
     </div>
+    <h3 id="network_table_heading">Link Table:</h3>
+    <p id="overload-table"></p>
+    <div id="link-list">
+        <table id="link-table" class="usa-table">
+            <thead>
+                <tr>
+                    <th colspan="2">
+                        <input id="search-name" class="search" placeholder="Search Name">
+                        <div class="table-pagination">
+                            <ul class="pagination"></ul>
+                        </div>
+                    </th>
+                </tr>
+                <tr>
+                    <th>
+                        <button type="button" class="sort" data-sort="name">Description<i class="caret"></i></button>
+                    </th>
+                    <th>
+                        Link
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="list"></tbody>
+        </table>
+    </div>
+
 {%- endmacro %}
 
 

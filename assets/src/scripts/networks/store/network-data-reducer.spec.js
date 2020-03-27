@@ -1,11 +1,11 @@
-import { networkDataReducer } from './network-data-reducer';
+import {networkDataReducer} from './network-data-reducer';
 
 describe('network-data-reducer', () => {
 
     describe('SET_NETWORK_FEATURES', () => {
-        it('should handle setting the nldiData', () => {
+        it('should handle setting the network data', () => {
             expect(networkDataReducer({}, {
-                type: 'SET_NLDI_FEATURES',
+                type: 'SET_NETWORK_FEATURES',
                     networkSites: [
                         {
                             type: 'Feature',

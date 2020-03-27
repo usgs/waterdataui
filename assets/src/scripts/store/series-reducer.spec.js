@@ -1,5 +1,5 @@
 
-import { seriesReducer } from './series-reducer';
+import {seriesReducer} from './series-reducer';
 
 describe('series-reducer', () => {
 

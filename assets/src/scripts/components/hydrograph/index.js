@@ -9,7 +9,7 @@ import {drawWarningAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 
 import {link} from '../../lib/d3-redux';
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from '../../selectors/time-series-selector';
-import {Actions} from '../../store/site-store';
+import {Actions} from '../../store';
 import {renderTimeSeriesUrlParams} from '../../url-params';
 
 import {drawDateRangeControls} from './date-controls';

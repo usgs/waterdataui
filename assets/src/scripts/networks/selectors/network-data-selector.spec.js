@@ -5,8 +5,8 @@ import {
 
 describe('network-data-selector', () => {
 
-    describe('getNldiUpstreamFlows', () => {
-        it('if upstream flows is empty, empty array is returned', () => {
+    describe('getNetworkSites', () => {
+        it('if network is empty, empty array is returned', () => {
             expect(getNetworkSites({
                 networkData: {
                     networkSites: []
@@ -14,7 +14,7 @@ describe('network-data-selector', () => {
             })).toEqual([]);
         });
 
-        it('if upstream flows has data, the data is returned', () => {
+        it('if network sites, the data is returned', () => {
             expect(getNetworkSites({
                 networkData: {
                     networkSites: [1,2,3]
@@ -25,7 +25,7 @@ describe('network-data-selector', () => {
 
 
     describe('hasNetworkData', () => {
-        it('if all nldi data is empty, return false', () => {
+        it('if all network data is empty, return false', () => {
             expect(hasNetworkData({
                 networkData: {
                     networkSites: []
@@ -33,7 +33,7 @@ describe('network-data-selector', () => {
             })).toEqual(false);
         });
 
-        it('if even one nldi data has data, return true', () => {
+        it('if even one network data has data, return true', () => {
             expect(hasNetworkData({
                  networkData: {
                     networkSites: [1]

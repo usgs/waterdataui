@@ -99,6 +99,7 @@ const MOCK_NETWORK_FEATURE = `
             "title": "Arkansas Hot Springs National Park Network",
             "href": "https://labs.waterdata.usgs.gov/api/observations/collections/AHS?f=json"
         }]
-    ]}
+    }]
 }
-`;
+`
+;

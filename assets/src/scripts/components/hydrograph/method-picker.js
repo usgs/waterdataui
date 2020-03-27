@@ -8,7 +8,7 @@ import {createStructuredSelector} from 'reselect';
 import{link}  from '../../lib/d3-redux';
 import config from '../../config';
 import {getCurrentMethodID, getAllMethodsForCurrentVariable} from '../../selectors/time-series-selector';
-import {Actions} from '../../store/site-store';
+import {Actions} from '../../store';
 
 import { } from './time-series';
 

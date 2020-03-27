@@ -1,7 +1,7 @@
 
 import {link} from '../../lib/d3-redux';
 import {getCurrentVariableTimeSeries} from '../../selectors/time-series-selector';
-import {Actions} from '../../store/site-store';
+import {Actions} from '../../store';
 
 import {audibleUI} from './audible';
 import {getCurrentVariableMedianStatistics} from '../../selectors/median-statistics-selector';

@@ -1,5 +1,4 @@
-
-import {configureStore, Actions} from './store/site-store';
+import {configureStore, Actions} from './store';
 import {getParamString, renderTimeSeriesUrlParams} from './url-params';
 
 describe('url-params module', () => {

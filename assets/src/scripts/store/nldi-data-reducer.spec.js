@@ -1,4 +1,4 @@
-import { nldiDataReducer } from './nldi-data-reducer';
+import {nldiDataReducer} from './nldi-data-reducer';
 
 describe('nldi-data-reducer', () => {
 

@@ -1,4 +1,4 @@
-import {Actions, configureStore} from '../../store/site-store';
+import {Actions, configureStore} from '../../store';
 import {tsCursorPointsSelector, cursorOffsetSelector} from './cursor';
 
 let DATA = [12, 13, 14, 15, 16].map(hour => {

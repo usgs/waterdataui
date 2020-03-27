@@ -1,7 +1,6 @@
 {% extends 'base_plain.html' %}
 
 {% block page_css %}
-      <link rel="stylesheet" href="{{ 'vendor.css' | asset_url }}">
       <link rel="stylesheet" href="{{ 'network.css' | asset_url }}">
 {% endblock %}
 
@@ -11,10 +10,10 @@
 {% endblock %}
 
 {% block body %}
-{% include 'partials/base.html' %}
-<main id="main-content" class="grid-container content-container usa-prose">
-    {% block content %}{% endblock %}
-</main>
-{% include 'partials/footer.html' %}
-{% block extra_body %}{% endblock %}
+    {% include 'partials/base.html' %}
+    <main id="main-content" class="grid-container content-container usa-prose">
+        {% block content %}{% endblock %}
+    </main>
+    {% include 'partials/footer.html' %}
+    {% block extra_body %}{% endblock %}
 {% endblock %}

@@ -1,4 +1,4 @@
-import Tabulator from 'tabulator-tables/dist/js/tabulator.js';
+import List from 'list.js';
 export const markerFillColor = '#ff7800';
 export const markerFillOpacity = 0.8;
 
@@ -8,9 +8,7 @@ export const markerFillOpacity = 0.8;
  *
  * @param {L.map} map The leaflet map to which the overlay should be added
  * @param newtorkSites network site geojson data
-
  */
-
 export const addNetworkLayers = function (map, networkSites) {
 
     const geojsonMarkerOptions = {
@@ -34,10 +32,10 @@ export const addNetworkLayers = function (map, networkSites) {
     };
 
     const getPointDataLayer = function (data, markerOptions) {
-        return L.geoJson(data, {
+        return window.L.geoJson(data, {
             onEachFeature: onEachPointFeatureAddPopUp,
             pointToLayer: function (feature, latlng) {
-                return L.circleMarker(latlng, markerOptions);
+                return window.L.circleMarker(latlng, markerOptions);
             }
         });
     };
@@ -51,40 +49,27 @@ export const addNetworkLayers = function (map, networkSites) {
 
     if(networkSites.length > 0 && networkSites.length < 10000) {
         if (networkSites.length > 50) {
-            const markers = L.markerClusterGroup({chunkedLoading: true});
+            const markers = window.L.markerClusterGroup({chunkedLoading: true});
             markers.addLayer(networkLayer);
             map.addLayer(markers);
         } else {
             map.addLayer(networkLayer);
         }
 
-        const tableEl = document.getElementById('link-list');
-        const table = new Tabulator(tableEl, {
-            data: listValues,
-            height: '400px',
-            layout: 'fitColumns',
-            responsiveLayout: 'hide',
-            tooltips: true,
-            pagination: 'local',
-            paginationSize: 30,
-            movableColumns: true,
-            resizableRows: true,
-            initialSort: [
-                {column: 'name', dir: 'asc'}
-            ],
-            columns: [
-                {title: 'Name', field: 'name'},
-                {title: 'Link', field: 'link', formatter: 'link', formatterParams:{
-                    labelField:'link'
-                }}
-            ]
-        });
+        const valueNames = ['name', 'link',  { name: 'link', attr: 'href' }];
+        const options = {
+            valueNames: valueNames,
+            item: '<tr><td class="name"></td><td><a class="link"></a></td></tr>',
+            page: 10,
+            pagination: [{
+                left: 1,
+                right: 1,
+                innerWindow: 2,
+                outerWindow: 1
+            }]
+        };
+        new List('link-list', options, listValues);
 
-        const searchValue = document.getElementById('table-search');
-
-        searchValue.addEventListener('keyup', function() {
-            table.setFilter('name', 'like', searchValue.value);
-        });
 
 
     } else{

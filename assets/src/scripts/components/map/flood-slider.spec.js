@@ -1,6 +1,6 @@
-import { select } from 'd3-selection';
-import { configureStore } from '../../store/site-store';
-import { floodSlider } from './flood-slider';
+import {select} from 'd3-selection';
+import {configureStore} from '../../store';
+import {floodSlider} from './flood-slider';
 
 
 describe('floodSlider', () => {

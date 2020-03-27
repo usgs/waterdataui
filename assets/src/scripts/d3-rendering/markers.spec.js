@@ -1,5 +1,5 @@
-import { select } from 'd3-selection';
-import { lineMarker, circleMarker, rectangleMarker, textOnlyMarker } from './markers';
+import {select} from 'd3-selection';
+import {lineMarker, circleMarker, rectangleMarker, textOnlyMarker} from './markers';
 
 describe('Markers module', () => {
 

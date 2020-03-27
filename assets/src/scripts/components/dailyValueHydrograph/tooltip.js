@@ -6,7 +6,7 @@ import {drawCursorSlider} from '../../d3-rendering/cursor-slider';
 import {drawFocusCircles, drawFocusOverlay, drawFocusLine} from '../../d3-rendering/graph-tooltip';
 import {link} from '../../lib/d3-redux';
 import {getObservationsCursorOffset, getCurrentObservationsTimeSeriesUnitOfMeasure} from '../../selectors/observations-selector';
-import {Actions} from '../../store/site-store';
+import {Actions} from '../../store';
 
 import {APPROVED, ESTIMATED} from './time-series-graph';
 import {getLayout} from './selectors/layout';

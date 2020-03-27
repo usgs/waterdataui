@@ -1,5 +1,5 @@
-import { select } from 'd3-selection';
-import { registerTooltips, unregisterTooltips } from './helpers';
+import {select} from 'd3-selection';
+import {registerTooltips, unregisterTooltips} from './helpers';
 
 
 /**

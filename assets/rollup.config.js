@@ -17,7 +17,7 @@ const env = process.env.NODE_ENV || 'development';
 
 const getBundleConfig = function (src, dest) {
 
-    return {
+    const configMap = {
         input: src,
         plugins: [
             alias({
@@ -60,6 +60,14 @@ const getBundleConfig = function (src, dest) {
         },
         treeshake: env === 'production'
     };
+
+    if (src == 'src/scripts/networks/index.js'){
+        configMap['external'] = {
+           window: 'window'
+        };
+    }
+
+    return configMap;
 };
 
 module.exports = [

@@ -1,6 +1,6 @@
-import { select } from 'd3-selection';
+import {select} from 'd3-selection';
 
-import { Actions, configureStore } from '../../store/site-store';
+import {Actions, configureStore} from '../../store';
 
 import {drawDateRangeControls} from './date-controls';
 
