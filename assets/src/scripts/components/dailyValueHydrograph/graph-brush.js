@@ -60,8 +60,7 @@ export const drawGraphBrush = function(container, store) {
                     lines: getCurrentTimeSeriesLineSegments,
                     xScale: getBrushXScale,
                     yScale: getBrushYScale,
-                    layout: getBrushLayout,
-                    enableClip: () => true
+                    layout: getBrushLayout
                 })));
         })
         .call(link(store, (svg, {layout, isDVGraphBrushOffset}) => {
