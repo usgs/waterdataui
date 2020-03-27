@@ -13,12 +13,15 @@ describe('network map module', () => {
                 .attr('id', 'map');
         mapContainer.append('div').attr('id', 'network-map');
         mapNode = document.getElementById('map');
-        select('body')
-            .append('input')
-                .attr('id', 'table-search');
-        select('body')
+        let tableDiv = select('body')
             .append('div')
                 .attr('id', 'link-list');
+        tableDiv.append('ul')
+            .attr('class', 'pagination');
+        tableDiv
+            .append('table')
+            .append('tbody')
+            .attr('class', 'list');
     });
 
     afterEach(() => {

@@ -24,7 +24,7 @@ def execute_get_request(hostname, path=None, params=None):
     target = urljoin(hostname, path)
     print(target)
     try:
-        resp = r.get(target, params=params, verify=False)
+        resp = r.get(target, params=params)
     except (r.exceptions.Timeout, r.exceptions.ConnectionError) as err:
         app.logger.debug(repr(err))
         resp = r.Response()  # return an empty response object
