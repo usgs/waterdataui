@@ -117,3 +117,4 @@ venv.bak/
 # Node.js stuff
 node_modules/
 graph-server/.nyc_output/
+graph-server/src/swagger.json

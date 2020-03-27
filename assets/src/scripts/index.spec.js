@@ -15,10 +15,12 @@ import './d3-rendering/accessibility.spec';
 import './d3-rendering/alerts.spec';
 import './d3-rendering/axes.spec';
 import './d3-rendering/cursor-slider.spec';
-import './d3-rendering/loading-indicator.spec';
 import './d3-rendering/graph-tooltip.spec';
-import './d3-rendering/markers.spec';
 import './d3-rendering/legend.spec';
+import './d3-rendering/loading-indicator.spec';
+import './d3-rendering/markers.spec';
+import './d3-rendering/tick-marks.spec';
+
 
 import './components/dailyValueHydrograph/selectors/labels.spec';
 import './components/dailyValueHydrograph/selectors/scales.spec';
@@ -33,7 +35,6 @@ import './components/dailyValueHydrograph/tooltip.spec';
 import './components/embed.spec';
 
 import './components/hydrograph/audible.spec';
-import './components/hydrograph/axes.spec';
 import './components/hydrograph/cursor.spec';
 import './components/hydrograph/date-controls.spec';
 import './components/hydrograph/domain.spec';

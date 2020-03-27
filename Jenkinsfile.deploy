@@ -1,4 +1,4 @@
-@Library(value='iow-ecs-pipeline@1.0.0', changelog=false) _
+@Library(value='iow-ecs-pipeline@2.0.0', changelog=false) _
 
 pipeline {
     agent {
