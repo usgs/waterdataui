@@ -8,6 +8,7 @@ import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
 import {drawTimeSeriesLegend} from './legend';
+import {drawGraphBrush} from './graph-brush';
 
 const TEMP_TIME_SERIES_ID = '36307c899ac14d2eac6956b1bf5ceb69';
 
@@ -48,6 +49,7 @@ export const attachToNode = function (store,
                 graphContainer
                     .call(drawTimeSeriesGraph, store)
                     .call(drawTooltipCursorSlider, store)
+                    .call(drawGraphBrush, store)
                     .append('div')
                         .classed('dv-legend-controls-container', true)
                         .call(drawTimeSeriesLegend, store);

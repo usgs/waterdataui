@@ -17,6 +17,23 @@ const setDailyValueCursorOffset = function(observationsState, action) {
     };
 };
 
+const setDVGraphBrushOffset= function(observationsState, action) {
+    return {
+        ...observationsState,
+        dvGraphBrushOffset: {
+            start: action.dvGraphBrushOffset[0],
+            end: action.dvGraphBrushOffset[1]
+        }
+    };
+};
+
+const clearDVGraphBrushOffset = function(observationsState) {
+    return {
+        ...observationsState,
+        dvGraphBrushOffset: undefined
+    };
+};
+
 /*
  * Slice reducer
  */
@@ -26,6 +43,10 @@ export const observationsStateReducer = function(observationsState={}, action) {
             return setCurrentTimeSeriesId(observationsState, action);
         case 'SET_DAILY_VALUE_CURSOR_OFFSET':
             return setDailyValueCursorOffset(observationsState, action);
+        case 'SET_DV_GRAPH_BRUSH_OFFSET':
+            return setDVGraphBrushOffset(observationsState, action);
+        case 'CLEAR_DV_GRAPH_BRUSH_OFFSET':
+            return clearDVGraphBrushOffset(observationsState);
         default:
             return observationsState;
     }

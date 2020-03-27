@@ -116,7 +116,7 @@ describe('components/dailyValueHydrograph/index', () => {
         });
 
         window.requestAnimationFrame(() => {
-            expect(testDiv.select('.graph-container').selectAll('.hydrograph-container').size()).toBe(2);
+            expect(testDiv.select('.graph-container').selectAll('.hydrograph-container').size()).toBe(3);
             done();
         });
     });
@@ -130,6 +130,18 @@ describe('components/dailyValueHydrograph/index', () => {
 
         window.requestAnimationFrame(() => {
             expect(testDiv.select('.graph-container').selectAll('.dv-legend-controls-container').size()).toBe(1);
+            done();
+        });
+    });
+
+    it('Should render brush element for the DV graph', (done) => {
+         attachToNode(configureStore(TEST_STATE), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
+        jasmine.Ajax.requests.mostRecent().respondWith({
+            status: 200,
+            response: JSON.stringify(TEST_STATE.observationsData.timeSeries['12345'])
+        });
+        window.requestAnimationFrame(() => {
+            expect(testDiv.select('.graph-container').selectAll('.brush').size()).toBe(1);
             done();
         });
     });

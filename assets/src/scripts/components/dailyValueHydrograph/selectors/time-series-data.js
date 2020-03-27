@@ -7,11 +7,11 @@ import {createSelector} from 'reselect';
 import {getCurrentObservationsTimeSeries, getObservationsCursorOffset} from '../../../selectors/observations-selector';
 import {getNearestTime} from '../../../utils';
 
-import {getXScale, getYScale} from './scales';
+import {getXScale, getMainXScale, getMainYScale} from './scales';
 
 const TWO_DAYS = 1000 * 60 * 60 * 24 * 2; // In milliseconds
 
-/* Returns the selector function wheich returns an Array of Objects, each object representing one value, dateTime (in epoch time),
+/* Returns the selector function which returns an Array of Objects, each object representing one value, dateTime (in epoch time),
 and other attributes representing metadata on the value. This will represent the time series for the current
 selected time series
  */
@@ -105,7 +105,7 @@ export const getCurrentTimeSeriesLineSegments = createSelector(
  */
 export const getCursorEpochTime = createSelector(
     getObservationsCursorOffset,
-    getXScale,
+    getXScale(),
     (cursorOffset, xScale) => {
 
         if (!cursorOffset) {
@@ -135,8 +135,8 @@ export const getDataAtCursor = createSelector(
  */
 export const getCursorPoint = createSelector(
     getDataAtCursor,
-    getXScale,
-    getYScale,
+    getMainXScale,
+    getMainYScale,
     (point, xScale, yScale) => {
         if (!point) {
             return [];
