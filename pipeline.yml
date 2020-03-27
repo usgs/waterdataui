@@ -18,8 +18,6 @@ gitRepoCredentialsId: "Jenkins-GitHub-Read-Write-Token"
 memory: 1024
 # string parameter specifying a path that ALB should use to verify that your application is alive
 healthCheck: "/api/graph-images/status/"
-# string parameter that tells the ALB how to route requests to the containers (e.g. /my-app/*); this forms a listener rule for the load balancer
-contextPath: "/api/graph-images/*"
 # name of the deploy job to trigger
 deployJobName: "wdfn-graph-server-deploy"
 configRepoPath: "wma/docker/waterdataui/wdfn_graph_server"
