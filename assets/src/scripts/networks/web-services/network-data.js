@@ -11,6 +11,7 @@ const networkUrl = config.NETWORK_ENDPOINT;
 const fetchNetworkData = function(networkQuery, networkCd) {
     return get(networkQuery)
         .then((responseText) => {
+
             const responseJson = JSON.parse(responseText);
             return responseJson.features ? responseJson.features : [];
         })

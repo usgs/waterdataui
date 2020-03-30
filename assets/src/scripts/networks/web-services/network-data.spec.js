@@ -14,12 +14,12 @@ describe('network-data module', () => {
 
         describe('with valid response', () => {
 
-            let upstreamSitePromise;
+            let networkPromise;
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
 
-                upstreamSitePromise = fetchNetworkSites(networkCd );
+                networkPromise = fetchNetworkSites(networkCd );
                 jasmine.Ajax.requests.mostRecent().respondWith({
                     status: 200,
                     responseText: MOCK_NETWORK_FEATURE,
@@ -28,7 +28,7 @@ describe('network-data module', () => {
             });
 
             it('expected response is json object with the network sites', () => {
-                upstreamSitePromise.then((resp) => {
+                networkPromise.then((resp) => {
                     expect(resp.length).toBe(1);
                 });
             });
@@ -47,7 +47,7 @@ describe('network-data module', () => {
     });
 });
 
-const MOCK_NETWORK_FEATURE = `
+export const MOCK_NETWORK_FEATURE = `
 {
     "type": "FeatureCollection",
     "features": [{

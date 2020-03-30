@@ -344,12 +344,6 @@ export const Actions = {
             upstreamBasin
         };
     },
-    setNetworkFeatures(networkSites) {
-         return {
-            type: 'SET_NETWORK_FEATURES',
-            networkSites
-        };
-    },
     setObservationsTimeSeries(timeSeriesId, data) {
         return {
             type: 'SET_OBSERVATIONS_TIME_SERIES',

@@ -16,7 +16,6 @@ export const createLegendControl = function(options) {
         let container = window.L.DomUtil.create('div', 'legend');
 
         let buttonContainer = window.L.DomUtil.create('div', 'legend-expand-container', container);
-        // Only make the expand button available if FIM legends are added
         buttonContainer.setAttribute('hidden', true);
         let buttonLabel = window.L.DomUtil.create('span', '', buttonContainer);
         buttonLabel.innerHTML = 'Legend';

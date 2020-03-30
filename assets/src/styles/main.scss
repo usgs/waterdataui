@@ -29,11 +29,6 @@ $fa-font-path: './fonts' !default;
     @import './components/embed';
     margin-bottom: 1em;
   }
-
-  &[data-component='network-map'] {
-    @import 'network';
-    margin-bottom: 1em;
-  }
 }
 
 /* This fixes an issue with Firefox not hiding long divs. I opened https://github.com/uswds/uswds/issues/2380 .
@@ -56,37 +51,7 @@ body {
     @include u-maxw('desktop');
   }
 
-  #wdfn-alert-banner input:checked ~ * {
-    display: none;
-  }
-
-  #wdfn-alert-banner {
-    background-color: color('accent-cool-lighter');
-
-    .wdfn-alert-body {
-      padding-top: 0.5em;
-      padding-bottom: 0.5em;
-      padding-right: 1em;
-      padding-left: 1em;
-      margin-top: 0;
-
-      .close {
-        float: right;
-        cursor: pointer;
-        margin-top: -5px;
-        margin-right: -10px;
-      }
-
-      .div {
-        font-size: 0.9em;
-        @include at-media('tablet') {
-          font-size: 1em;
-        }
-        padding-left: 1em;
-      }
-    }
-
-  }
+  @import './partials/alerts';
 
   &#monitoring-location {
     @import './pages/monitoring-location';

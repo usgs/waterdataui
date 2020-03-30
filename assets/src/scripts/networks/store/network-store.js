@@ -9,7 +9,6 @@ export const Actions = {
     retrieveNetworkData(networkCd) {
         return function(dispatch) {
             const networkSites = fetchNetworkSites(networkCd);
-
             return Promise.all( [networkSites]
             ).then(function(data){
                 const [networkSites] = data;

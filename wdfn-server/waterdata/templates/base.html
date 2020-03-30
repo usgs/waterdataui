@@ -9,10 +9,10 @@
 {% endblock %}
 
 {% block body %}
-{% include 'partials/base.html' %}
-<main id="main-content" class="grid-container content-container usa-prose">
-    {% block content %}{% endblock %}
-</main>
-{% include 'partials/footer.html' %}
-{% block extra_body %}{% endblock %}
+    {% include 'partials/base.html' %}
+    <main id="main-content" class="grid-container content-container usa-prose">
+        {% block content %}{% endblock %}
+    </main>
+    {% include 'partials/footer.html' %}
+    {% block extra_body %}{% endblock %}
 {% endblock %}
