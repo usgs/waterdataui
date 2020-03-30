@@ -81,20 +81,19 @@ sort {
   color: #808080;
   line-height: 14px;
 }
-.sort.textcenter { text-align:center; }
-.sort.textright { text-align:right; }
+.sort.textcenter { text-align: center; }
+.sort.textright { text-align: right; }
 
-.caret { line-height:0; }
-.caret:after { content:""; }
+.caret { line-height: 0; }
+.caret:after { content: ''; }
 .asc .caret:after {
   width: 0;
   height: 0;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
   border-top: 10px solid #808080;
-  content: "";
+  content: '';
   position: relative;
-  top: 0px;
   right: -10px;
   font-size: 0;
 }
@@ -104,21 +103,21 @@ sort {
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
   border-bottom: 10px solid #808080;
-  content: "";
+  content: '';
   position: relative;
   top: -10px;
   right: -10px;
   font-size: 0;
 }
 
-.sort .caret { display:none; }
-.sort.asc .caret { display:inline-block; }
-.sort.desc .caret { display:inline-block; }
+.sort .caret { display: none; }
+.sort.asc .caret { display: inline-block; }
+.sort.desc .caret { display: inline-block; }
 
 #link-table {
   width: 100%;
 
-  button.sort {
+  button {
     background: none;
     background-color: transparent;
     box-shadow: none;
