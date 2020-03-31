@@ -81,7 +81,7 @@
     "stylelint-scss": "^3.16.0"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "5.12.1",
+    "@fortawesome/fontawesome-free": "5.13.0",
     "autotrack": "2.4.1",
     "core-js": "3.6.4",
     "d3": "5.15.0",
