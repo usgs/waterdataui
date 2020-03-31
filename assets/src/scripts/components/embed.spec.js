@@ -1,5 +1,5 @@
-import { select } from 'd3-selection';
-import { attachToNode } from './embed';
+import {select} from 'd3-selection';
+import {attachToNode} from './embed';
 
 
 describe('embed component', () => {

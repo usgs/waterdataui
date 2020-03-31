@@ -1,4 +1,4 @@
-import { floodStateReducer } from './flood-state-reducer';
+import {floodStateReducer} from './flood-state-reducer';
 
 describe('flood-state-reducer', () => {
 

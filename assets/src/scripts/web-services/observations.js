@@ -1,5 +1,5 @@
 
-import { get } from '../ajax';
+import {get} from '../ajax';
 import config from '../config';
 
 import { DV_DATA } from '../dv_414240072033201';

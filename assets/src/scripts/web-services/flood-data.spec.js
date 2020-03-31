@@ -1,4 +1,4 @@
-import { fetchFloodExtent, fetchFloodFeatures } from './flood-data';
+import {fetchFloodExtent, fetchFloodFeatures} from './flood-data';
 
 
 describe('flood_data module', () => {

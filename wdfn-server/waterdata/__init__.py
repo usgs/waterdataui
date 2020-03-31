@@ -8,7 +8,6 @@ import sys
 
 from flask import Flask
 
-
 __version__ = '0.29.0dev'
 
 
@@ -37,6 +36,7 @@ app = Flask(__name__.split()[0], instance_relative_config=True)  # pylint: disab
 
 # Loads configuration information from config.py and instance/config.py
 app.config.from_object('config')
+
 try:
     app.config.from_pyfile('config.py')
 except FileNotFoundError:

@@ -1,5 +1,5 @@
-import { extent } from 'd3-array';
-import { line as d3Line } from 'd3-shape';
+import {extent} from 'd3-array';
+import {line as d3Line} from 'd3-shape';
 
 import {HASH_ID, MASK_DESC} from './drawing-data';
 

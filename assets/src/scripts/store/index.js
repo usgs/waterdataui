@@ -1,4 +1,3 @@
-
 import find from 'lodash/find';
 import findKey from 'lodash/findKey';
 import last from 'lodash/last';
@@ -512,9 +511,7 @@ export const configureStore = function (initialState) {
             downstreamSites: [],
             upstreamBasin: []
         },
-
         statisticsData: {},
-
         timeSeriesState: {
             showSeries: {
                 current: true,

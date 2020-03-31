@@ -1,4 +1,4 @@
-import { fetchNldiUpstreamSites, fetchNldiUpstreamFlow, fetchNldiDownstreamSites, fetchNldiDownstreamFlow,
+import {fetchNldiUpstreamSites, fetchNldiUpstreamFlow, fetchNldiDownstreamSites, fetchNldiDownstreamFlow,
          fetchNldiUpstreamBasin} from './nldi-data';
 
 describe('nldi-data module', () => {

@@ -1,6 +1,6 @@
 import {Actions, configureStore} from '../../store';
-import { select } from 'd3-selection';
-import { drawGraphControls } from './graph-controls';
+import {select} from 'd3-selection';
+import {drawGraphControls} from './graph-controls';
 
 // Tests for the graph-controls module
 describe('graph-controls', () => {

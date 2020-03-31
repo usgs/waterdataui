@@ -1,4 +1,3 @@
-
 import {configureStore, Actions} from './store';
 import {getParamString, renderTimeSeriesUrlParams} from './url-params';
 

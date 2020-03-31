@@ -65,4 +65,4 @@ NLDI_SERVICES_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/nldi/linked-data'
 NLDI_SERVICES_DISTANCE = '322'
 
 # Networks
-NETWORK_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/ogcAPI/collections'
+NETWORK_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections'

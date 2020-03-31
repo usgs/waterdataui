@@ -1,5 +1,5 @@
 import {brushX, brushSelection} from 'd3-brush';
-import { event } from 'd3-selection';
+import {event} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import {appendXAxis} from '../../d3-rendering/axes';

@@ -50,7 +50,7 @@ module.exports = function (config) {
              * This is just a normal Rollup config object,
              * except that `input` is handled for you.
              */
-            ...require('./rollup.config')
+            ...require('./rollup.config')[0]
         },
 
         // test results reporter to use
@@ -98,6 +98,7 @@ module.exports = function (config) {
                         exclude: [
                             'tests/**/*.js',
                             'src/scripts/**/*.spec.js',
+                            'src/scripts/networks/*.js',
                             'node_modules/**/*'
                         ]
                     })

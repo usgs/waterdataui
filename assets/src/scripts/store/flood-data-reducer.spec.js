@@ -1,4 +1,4 @@
-import { floodDataReducer } from './flood-data-reducer';
+import {floodDataReducer} from './flood-data-reducer';
 
 describe('flood-data-reducer', () => {
 

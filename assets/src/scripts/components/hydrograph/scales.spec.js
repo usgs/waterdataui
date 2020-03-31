@@ -1,6 +1,6 @@
-import { extent } from 'd3-array';
-import { DateTime } from 'luxon';
-import { createXScale, createYScale, getMainYScale, getBrushYScale, getSecondaryYScale } from './scales';
+import {extent} from 'd3-array';
+import {DateTime} from 'luxon';
+import {createXScale, createYScale, getMainYScale, getBrushYScale, getSecondaryYScale} from './scales';
 
 
 describe('scales', () => {

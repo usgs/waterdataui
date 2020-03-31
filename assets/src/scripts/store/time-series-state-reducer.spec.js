@@ -1,5 +1,5 @@
 
-import { timeSeriesStateReducer } from './time-series-state-reducer';
+import {timeSeriesStateReducer} from './time-series-state-reducer';
 
 describe('time-series-state-reducer', () => {
 

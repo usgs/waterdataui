@@ -1,4 +1,4 @@
-import { select, selectAll } from 'd3-selection';
+import {select, selectAll} from 'd3-selection';
 
 import {Actions, configureStore} from '../../store';
 

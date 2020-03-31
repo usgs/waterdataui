@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Added period of record for each parameter in the monitoring location page parameter selection list.
 - Added OpenAPI documentation to the graph-server along with a Swagger UI served at /api/graph-images/api-docs
+- Added Networks Page with a map and a table for all the sites
 
 ## Fixed
 - Fixed bug that made compare time series disappear when the brush was adjusted by adding

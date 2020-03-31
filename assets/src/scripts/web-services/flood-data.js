@@ -1,4 +1,4 @@
-import { get } from '../ajax';
+import {get} from '../ajax';
 import config from '../config';
 
 

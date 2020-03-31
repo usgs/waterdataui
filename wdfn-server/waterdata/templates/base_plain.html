@@ -10,7 +10,8 @@
         {% include 'partials/google_analytics.html' %}
 
         <link rel="shortcut icon" type="image/ico" href="{{ 'img/usgs_favicon.ico' | asset_url }}">
-        <link rel="stylesheet" href="{{ 'main.css' | asset_url }}">
+
+        {% block page_css %}{% endblock %}
         <script type="text/javascript">
             var CONFIG = {
                 'SERVICE_ROOT': '{{ config.SERVICE_ROOT }}/nwis',
@@ -25,7 +26,8 @@
                 'WEATHER_SERVICE_ROOT': '{{ config.WEATHER_SERVICE_ROOT }}',
                 'CITIES_ENDPOINT': '{{ config.CITIES_ENDPOINT }}',
                 'NLDI_SERVICES_ENDPOINT': '{{ config.NLDI_SERVICES_ENDPOINT }}',
-                'NLDI_SERVICES_DISTANCE': '{{ config.NLDI_SERVICES_DISTANCE }}'
+                'NLDI_SERVICES_DISTANCE': '{{ config.NLDI_SERVICES_DISTANCE }}',
+                'NETWORK_ENDPOINT': '{{ config.NETWORK_ENDPOINT }}'
             };
         </script>
         <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
@@ -36,8 +38,7 @@
             }
         </script>
 
-
-        <script async src="{{ 'bundle.js' | asset_url }}"></script>
+        {% block bundle_script %}{% endblock %}
         {% block page_script %}{% endblock %}
         <!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TKQR8KP');</script>
         <title>

@@ -207,8 +207,10 @@ def networks(network_cd):
 
     if network_cd:
         collection = network_data
+        extent = network_data['extent']['spatial']['bbox'][0]
     else:
         collection = network_data.get('collections')
+        extent = None
 
     http_code = 200 if (collection) else 404
 
@@ -216,7 +218,8 @@ def networks(network_cd):
         'networks.html',
         http_code=http_code,
         network_cd=network_cd,
-        collection=collection
+        collection=collection,
+        extent=extent
     ), http_code
 
 
