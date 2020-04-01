@@ -92,9 +92,10 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
  * @param  {Boolean} visible
  * @param  {Function} xscale
  * @param  {Function} yscale
- * @param  {Array} pointsList
+ * @param  {Array} seriesPoints
+ * @param {Boolean} enableClip
  */
-const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoints}) {
+const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
     elem.select('#median-points').remove();
     if (!visible) {
         return;
@@ -102,6 +103,9 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoin
     const container = elem
         .append('g')
             .attr('id', 'median-points');
+    if (enableClip) {
+        container.attr('clip-path', 'url(#graph-clip');
+    }
 
     seriesPoints.forEach((points, index) => {
         plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points: points});
@@ -167,7 +171,14 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
         .call(link(store,(elem, layout) => {
             elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`)
                 .attr('width', layout.width)
-                .attr('height', layout.height);
+                .attr('height', layout.height)
+                .append('clipPath')
+                    .attr('id', 'graph-clip')
+                    .append('rect')
+                        .attr('x', 0)
+                        .attr('y', 0)
+                        .attr('width', layout.width - layout.margin.right)
+                        .attr('height', layout.height - layout.margin.bottom);
             }, getMainLayout))
         .call(link(store, addSVGAccessibility, createStructuredSelector({
             title: titleSelector,
@@ -188,14 +199,16 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
             tsLinesMap: currentVariableLineSegmentsSelector('current'),
             xScale: getMainXScale('current'),
             yScale: getMainYScale,
-            tsKey: () => 'current'
+            tsKey: () => 'current',
+            enableClip: () => true
         })))
         .call(link(store, drawDataLines, createStructuredSelector({
             visible: isVisibleSelector('compare'),
             tsLinesMap: currentVariableLineSegmentsSelector('compare'),
             xScale: getMainXScale('compare'),
             yScale: getMainYScale,
-            tsKey: () => 'compare'
+            tsKey: () => 'compare',
+            enableClip: () => true
         })))
         .call(link(store, plotAllMedianPoints, createStructuredSelector({
             visible: isVisibleSelector('median'),

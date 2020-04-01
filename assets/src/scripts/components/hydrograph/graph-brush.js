@@ -58,7 +58,8 @@ export const drawGraphBrush = function(container, store) {
                     tsLinesMap: currentVariableLineSegmentsSelector('current'),
                     xScale: getBrushXScale('current'),
                     yScale: getBrushYScale,
-                    tsKey: () => 'current'
+                    tsKey: () => 'current',
+                    enableClip: () => false
                 })));
         })
         .call(link(store, (svg, {layout, hydrographBrushOffset, xScale}) => {
@@ -78,8 +79,8 @@ export const drawGraphBrush = function(container, store) {
             group.call(graphBrush);
 
             // Fill & round corners of brush handles
-            //svg.selectAll('.handle').classed('brush-handle-fill', true)
-            //    .attr('rx',15).attr('ry',15);
+            svg.selectAll('.handle').classed('brush-handle-fill', true)
+               .attr('rx',15).attr('ry',15);
 
             if (hydrographBrushOffset) {
                 const [startMillis, endMillis] = xScale.domain();
