@@ -7,12 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.28.0...master)
 ### Added
 - Added Brush to DV graph.
+- Added Networks Page with a map and a table for all the sites
+
+### Fixed
+- Bug where when switching parameters and the brush selection was not being properly set.
+
 
 ## [0.28.0 ](https://github.com/usgs/waterdataui/compare/waterdataui-0.27.0...waterdataui-0.28.0) - 2020-03-27
 ### Added
 - Added period of record for each parameter in the monitoring location page parameter selection list.
 - Added OpenAPI documentation to the graph-server along with a Swagger UI served at /api/graph-images/api-docs
-- Added Networks Page with a map and a table for all the sites
 
 ## Fixed
 - Fixed bug that made compare time series disappear when the brush was adjusted by adding
