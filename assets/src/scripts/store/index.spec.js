@@ -1195,6 +1195,19 @@ describe('Redux store', () => {
                 cursorOffset: '13566'
             });
         });
+
+         it('should create an action to set the DV graph brush offset', () => {
+            expect(Actions.setDVGraphBrushOffset([1000, 10000000])).toEqual({
+                type: 'SET_DV_GRAPH_BRUSH_OFFSET',
+                dvGraphBrushOffset: [1000, 10000000]
+            });
+         });
+
+         it('should create an action to clear the DV graph brush offset', () => {
+            expect(Actions.clearDVGraphBrushOffset()).toEqual({
+                type: 'CLEAR_DV_GRAPH_BRUSH_OFFSET'
+            });
+         });
     });
 });
 
