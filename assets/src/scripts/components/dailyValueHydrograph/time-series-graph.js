@@ -49,18 +49,17 @@ const drawDataLine = function (group, {lineSegment, xScale, yScale}) {
         .classed('estimated', includes(lineSegment.approvals, ESTIMATED));
 };
 
-export const drawDataLines = function (elem, {lines, xScale, yScale, layout}) {
+export const drawDataLines = function (elem, {lines, xScale, yScale, enableClip}) {
     elem.select('#daily-values-lines-group').remove();
 
-    const allLinesGroup = elem.append('g');
-    const linesGroup = allLinesGroup.append('g')
-        .attr('id', 'daily-values-lines-group')
-        .attr('x', layout.margin.left)
-        .attr('y', layout.margin.top)
-        .attr('width', layout.width - layout.margin.right)
-        .attr('height', layout.height - layout.margin.bottom);
+    const allLinesGroup = elem.append('g')
+        .attr('id', 'daily-values-lines-group');
+    if (enableClip) {
+        allLinesGroup.attr('clip-path', 'url(#dv-graph-clip)');
+    }
+
     lines.forEach((lineSegment) => {
-        drawDataLine(linesGroup, {lineSegment, xScale, yScale});
+        drawDataLine(allLinesGroup, {lineSegment, xScale, yScale});
     });
 };
 
@@ -74,9 +73,16 @@ export const drawTimeSeriesGraph = function(elem, store) {
             .attr('xmlns', 'http://www.w3.org/2000/svg')
             .classed('hydrograph-svg', true)
             .call(link(store,(elem, layout) => {
-                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`);
-                elem.attr('width', layout.width);
-                elem.attr('height', layout.height);
+                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`)
+                    .attr('width', layout.width)
+                    .attr('height', layout.height)
+                        .append('clipPath')
+                        .attr('id', 'dv-graph-clip')
+                        .append('rect')
+                            .attr('x', 0)
+                            .attr('y', 0)
+                            .attr('width', layout.width - layout.margin.right)
+                            .attr('height', layout.height - layout.margin.bottom);
             }, getMainLayout))
             .call(link(store, addSVGAccessibility, createStructuredSelector({
                 title: getCurrentTimeSeriesTitle,
@@ -97,7 +103,8 @@ export const drawTimeSeriesGraph = function(elem, store) {
             lines: getCurrentTimeSeriesLineSegments,
             xScale: getMainXScale,
             yScale: getMainYScale,
-            layout: getMainLayout
+            layout: getMainLayout,
+            enableClip: () => true
         })))
         .call(drawTooltipFocus, store);
 };

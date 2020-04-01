@@ -30,13 +30,17 @@ module.exports = function (config) {
         // list of files / patterns to load in the browser
         files: [
             'tests/scripts/global-config.js',
+            'node_modules/leaflet/dist/leaflet.js',
+            'node_modules/esri-leaflet/dist/esri-leaflet.js',
+            'node_modules/leaflet.markercluster/dist/leaflet.markercluster.js',
             {pattern: 'src/scripts/index.spec.js', watched: false}
 
         ],
 
         // list of files / patterns to exclude
         exclude: [
-            'src/scripts/index.js'
+            'src/scripts/index.js',
+            'src/scripts/networks/index.js'
         ],
 
         // preprocess matching files before serving them to the browser
@@ -98,7 +102,6 @@ module.exports = function (config) {
                         exclude: [
                             'tests/**/*.js',
                             'src/scripts/**/*.spec.js',
-                            'src/scripts/networks/*.js',
                             'node_modules/**/*'
                         ]
                     })

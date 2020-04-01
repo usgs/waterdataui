@@ -33,9 +33,6 @@ export const drawGraphBrush = function(container, store) {
         }
     };
 
-    const graphBrush = brushX()
-        .on('brush end', brushed);
-
     const div = container.append('div')
         .attr('class', 'hydrograph-container');
     div.append('svg')
@@ -62,21 +59,16 @@ export const drawGraphBrush = function(container, store) {
                     xScale: getBrushXScale('current'),
                     yScale: getBrushYScale,
                     tsKey: () => 'current',
-                    layout: getBrushLayout,
                     enableClip: () => false
                 })));
         })
-        .call(link(store, (svg, {layout, isHydrographBrushOffset}) => {
+        .call(link(store, (svg, {layout, hydrographBrushOffset, xScale}) => {
             let selection;
 
-            const brushElem = svg.select('.brush');
-            if (isHydrographBrushOffset && brushElem.size() !== 0) {
-                selection = brushSelection(brushElem.node());
-            }
-            if (!selection) {
-                selection = [0, layout.width - layout.margin.right];
-            }
-            brushElem.remove();
+            const graphBrush = brushX()
+                .on('brush end', brushed);
+
+            svg.select('.brush').remove();
 
             const group = svg.append('g').attr('class', 'brush')
                 .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
@@ -90,10 +82,20 @@ export const drawGraphBrush = function(container, store) {
             svg.selectAll('.handle').classed('brush-handle-fill', true)
                 .attr('rx',15).attr('ry',15);
 
+            if (hydrographBrushOffset) {
+                const [startMillis, endMillis] = xScale.domain();
+                selection = [
+                    xScale(startMillis + hydrographBrushOffset.start),
+                    xScale(endMillis - hydrographBrushOffset.end)
+                ];
+            } else {
+                selection = xScale.range();
+            }
             graphBrush.move(group, selection);
 
         }, createStructuredSelector({
             layout: getBrushLayout,
-            isHydrographBrushOffset: (state) => state.timeSeriesState.hydrographBrushOffset !== undefined
+            hydrographBrushOffset: (state) => state.timeSeriesState.hydrographBrushOffset,
+            xScale: getBrushXScale('current')
         })));
 };

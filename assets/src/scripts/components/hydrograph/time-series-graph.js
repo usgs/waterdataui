@@ -92,7 +92,8 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
  * @param  {Boolean} visible
  * @param  {Function} xscale
  * @param  {Function} yscale
- * @param  {Array} pointsList
+ * @param  {Array} seriesPoints
+ * @param {Boolean} enableClip
  */
 const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
     elem.select('#median-points').remove();
@@ -105,6 +106,7 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoin
     if (enableClip) {
         container.attr('clip-path', 'url(#graph-clip');
     }
+
     seriesPoints.forEach((points, index) => {
         plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points: points});
     });
@@ -163,63 +165,58 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
     if (showTooltip) {
         graphDiv.call(drawTooltipText, store);
     }
-    graphDiv.append('svg')
+    const graphSvg = graphDiv.append('svg')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .classed('hydrograph-svg', true)
         .call(link(store,(elem, layout) => {
-            elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`);
-            elem.attr('width', layout.width);
-            elem.attr('height', layout.height);
-        }, getMainLayout))
+            elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`)
+                .attr('width', layout.width)
+                .attr('height', layout.height)
+                .append('clipPath')
+                    .attr('id', 'graph-clip')
+                    .append('rect')
+                        .attr('x', 0)
+                        .attr('y', 0)
+                        .attr('width', layout.width - layout.margin.right)
+                        .attr('height', layout.height - layout.margin.bottom);
+            }, getMainLayout))
         .call(link(store, addSVGAccessibility, createStructuredSelector({
             title: titleSelector,
             description: descriptionSelector,
             isInteractive: () => true,
             idPrefix: () => 'hydrograph'
         })))
-        .call(plotSvgDefs)
-        .call(link(store, (svg, layout) => {
-            svg.select('#graph-clip').remove();
-            svg.select('.plot-data-lines-group').remove();
+        .call(plotSvgDefs);
 
-            svg.append('clipPath')
-                .attr('id', 'graph-clip')
-                .append('rect')
-                    .attr('x', 0)
-                    .attr('y', 0)
-                    .attr('width', layout.width - layout.margin.right)
-                    .attr('height', layout.height - layout.margin.bottom);
-            const dataGroup = svg.append('g')
-                .attr('class', 'plot-data-lines-group')
-                .call(link(store, (elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), getMainLayout))
-                .call(link(store, appendAxes, getAxes()))
-                .call(link(store, drawDataLines, createStructuredSelector({
-                    visible: isVisibleSelector('current'),
-                    tsLinesMap: currentVariableLineSegmentsSelector('current'),
-                    xScale: getMainXScale('current'),
-                    yScale: getMainYScale,
-                    tsKey: () => 'current',
-                    layout: getMainLayout,
-                    enableClip: () => true
-                })))
-                .call(link(store, drawDataLines, createStructuredSelector({
-                    visible: isVisibleSelector('compare'),
-                    tsLinesMap: currentVariableLineSegmentsSelector('compare'),
-                    xScale: getMainXScale('compare'),
-                    yScale: getMainYScale,
-                    tsKey: () => 'compare',
-                    layout: getMainLayout,
-                    enableClip: () => true
-                })))
-                .call(link(store, plotAllMedianPoints, createStructuredSelector({
-                    visible: isVisibleSelector('median'),
-                    xscale: getMainXScale('current'),
-                    yscale: getMainYScale,
-                    seriesPoints: getCurrentVariableMedianStatPoints,
-                    enableClip: () => true
-                })));
-            if (showTooltip) {
-                dataGroup.call(drawTooltipFocus, store);
-            }
-        }, getMainLayout));
+    const dataGroup = graphSvg.append('g')
+        .attr('class', 'plot-data-lines-group')
+        .call(link(store, (group, layout) => {
+            group.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
+        }, getMainLayout))
+        .call(link(store, appendAxes, getAxes()))
+        .call(link(store, drawDataLines, createStructuredSelector({
+            visible: isVisibleSelector('current'),
+            tsLinesMap: currentVariableLineSegmentsSelector('current'),
+            xScale: getMainXScale('current'),
+            yScale: getMainYScale,
+            tsKey: () => 'current',
+            enableClip: () => true
+        })))
+        .call(link(store, drawDataLines, createStructuredSelector({
+            visible: isVisibleSelector('compare'),
+            tsLinesMap: currentVariableLineSegmentsSelector('compare'),
+            xScale: getMainXScale('compare'),
+            yScale: getMainYScale,
+            tsKey: () => 'compare',
+            enableClip: () => true
+        })))
+        .call(link(store, plotAllMedianPoints, createStructuredSelector({
+            visible: isVisibleSelector('median'),
+            xscale: getMainXScale('current'),
+            yscale: getMainYScale,
+            seriesPoints: getCurrentVariableMedianStatPoints
+        })));
+    if (showTooltip) {
+        dataGroup.call(drawTooltipFocus, store);
+    }
 };
