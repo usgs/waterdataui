@@ -102,7 +102,7 @@ export const drawDataLines = function(elem, {visible, tsLinesMap, tsKey, xScale,
             .classed('tsKey', true);
 
     if (enableClip) {
-        container.select(`#${elemId}`).attr('clip-path', 'url(#graph-clip)');
+        tsLineGroup.attr('clip-path', 'url(#graph-clip)');
     }
 
     for (const lines of Object.values(tsLinesMap)) {

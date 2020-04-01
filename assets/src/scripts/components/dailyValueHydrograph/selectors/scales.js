@@ -14,14 +14,18 @@ export const getXScale = memoize((kind) =>createSelector(
     getCurrentObservationsTimeSeriesTimeRange,
     state => state.observationsState.dvGraphBrushOffset,
     (layout, timeRange,dvGraphBrushOffset) => {
-        let xScale = scaleLinear();
-        if (timeRange) {
+        let xScale = scaleLinear()
+            .range([0, layout.width - layout.margin.right]);
+
+        if (kind !== 'BRUSH' && timeRange) {
             xScale
                 .range([0, layout.width - layout.margin.right])
                 .domain([timeRange.startTime, timeRange.endTime]);
             if (dvGraphBrushOffset) {
                 xScale.domain([timeRange.startTime + dvGraphBrushOffset.start, timeRange.endTime - dvGraphBrushOffset.end]);
             }
+        } else {
+            xScale.domain([timeRange.startTime, timeRange.endTime]);
         }
         return xScale;
     }
