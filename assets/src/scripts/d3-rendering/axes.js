@@ -70,17 +70,20 @@ export const appendSecondaryYAxis = function(elem, {yAxis, layout, yTitle}) {
         y: layout.margin.right + 12
     };
     elem.selectAll('.secondary-y-axis').remove();
+    if (!yAxis) {
+        return;
+    }
     elem.append('g')
         .attr('class', 'secondary-y-axis')
         .attr('transform', `translate(${layout.width - layout.margin.right}, 0)`)
         .call(yAxis)
         .append('text')
-            .attr('class', 'secondary-y-axis-label')
-            .attr('transform', 'rotate(-90)')
-            .attr('x', secondaryYLabelLoc.x )
-            .attr('y', secondaryYLabelLoc.y )
-            .text(yTitle)
-                .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
+        .attr('class', 'secondary-y-axis-label')
+        .attr('transform', 'rotate(-90)')
+        .attr('x', secondaryYLabelLoc.x)
+        .attr('y', secondaryYLabelLoc.y)
+        .text(yTitle)
+        .call(wrap, layout.height - (layout.margin.top + layout.margin.bottom));
 };
 
 /*
@@ -96,12 +99,10 @@ export const appendSecondaryYAxis = function(elem, {yAxis, layout, yTitle}) {
  */
 export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, yTitle, secondaryYTitle}) {
     elem.call(appendXAxis, {xAxis, layout})
-        .call(appendYAxis, {yAxis, layout, yTitle});
-    if (secondaryYAxis) {
-        elem.call(appendSecondaryYAxis, {
+        .call(appendYAxis, {yAxis, layout, yTitle})
+        .call(appendSecondaryYAxis, {
             yAxis: secondaryYAxis,
             layout: layout,
             yTitle: secondaryYTitle
         });
-    }
 };

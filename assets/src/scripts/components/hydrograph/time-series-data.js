@@ -92,7 +92,7 @@ export const drawDataLine = function(group, {visible, lines, tsKey, xScale, ySca
  * @param {Object} layout - contains properties for width, height, and margins of the svg
  * @param {Boolean} enableClip - Set if lines should be clipped to the width/height of the container.
  */
-export const drawDataLines = function(elem, {visible, tsLinesMap, tsKey, xScale, yScale, layout, enableClip}, container) {
+export const drawDataLines = function(elem, {visible, tsLinesMap, tsKey, xScale, yScale}, container) {
     container = container || elem.append('g');
 
     const elemId = `ts-${tsKey}-group`;
@@ -100,14 +100,7 @@ export const drawDataLines = function(elem, {visible, tsLinesMap, tsKey, xScale,
     const tsLineGroup = container
         .append('g')
             .attr('id', elemId)
-            .attr('x', layout.margin.left)
-            .attr('y', layout.margin.top)
-            .attr('width', layout.width - layout.margin.right)
-            .attr('height', layout.height - layout.margin.bottom)
             .classed('tsKey', true);
-    if (enableClip) {
-        container.select(`#${elemId}`).attr('clip-path', 'url(#graph-clip)');
-    }
 
     for (const lines of Object.values(tsLinesMap)) {
         drawDataLine(tsLineGroup, {visible, lines, tsKey, xScale, yScale});
