@@ -478,6 +478,17 @@ export const Actions = {
             type: 'SET_DAILY_VALUE_CURSOR_OFFSET',
             cursorOffset
         };
+    },
+    setDVGraphBrushOffset(dvGraphBrushOffset) {
+        return {
+            type: 'SET_DV_GRAPH_BRUSH_OFFSET',
+            dvGraphBrushOffset
+        };
+    },
+    clearDVGraphBrushOffset() {
+        return {
+            type: 'CLEAR_DV_GRAPH_BRUSH_OFFSET'
+        };
     }
 };
 
