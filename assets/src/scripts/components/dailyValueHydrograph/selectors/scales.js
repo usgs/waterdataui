@@ -9,6 +9,10 @@ import {
 
 import {getLayout} from './layout';
 
+/*
+ * Returns a selector function which returns a d3 scale for either the brush,
+ * kind = 'BRUSH' or the main xscale for the dv graph.
+ */
 export const getXScale = memoize((kind) =>createSelector(
     getLayout(kind),
     getCurrentObservationsTimeSeriesTimeRange,
@@ -17,14 +21,9 @@ export const getXScale = memoize((kind) =>createSelector(
         let xScale = scaleLinear()
             .range([0, layout.width - layout.margin.right]);
 
-        if (kind !== 'BRUSH' && timeRange) {
-            xScale
-                .range([0, layout.width - layout.margin.right])
-                .domain([timeRange.startTime, timeRange.endTime]);
-            if (dvGraphBrushOffset) {
-                xScale.domain([timeRange.startTime + dvGraphBrushOffset.start, timeRange.endTime - dvGraphBrushOffset.end]);
-            }
-        } else {
+        if (kind !== 'BRUSH' && timeRange && dvGraphBrushOffset) {
+            xScale.domain([timeRange.startTime + dvGraphBrushOffset.start, timeRange.endTime - dvGraphBrushOffset.end]);
+        } else if (timeRange) {
             xScale.domain([timeRange.startTime, timeRange.endTime]);
         }
         return xScale;
@@ -34,6 +33,9 @@ export const getXScale = memoize((kind) =>createSelector(
 export const getMainXScale = getXScale();
 export const getBrushXScale = getXScale('BRUSH');
 
+/*
+ * Returns a selector function which will return the yScale for the given kind ('BRUSH' or other).
+ */
 export const getYScale = memoize((kind) =>createSelector(
     getLayout(kind),
     getCurrentObservationsTimeSeriesValueRange,

@@ -1,4 +1,4 @@
-import {getMainXScale, getMainYScale} from './scales';
+import {getMainXScale, getBrushXScale, getMainYScale} from './scales';
 
 describe('components/dailyValueHydrograph/selectors/scales', () => {
     const TEST_STATE = {
@@ -24,7 +24,7 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
             width: 800
         }
     };
-   describe('getXScale', () => {
+   fdescribe('getMainXScale', () => {
         it('Should have a default domain if no current time series is set', () => {
             expect(getMainXScale({
                 ...TEST_STATE,
@@ -37,8 +37,52 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
             }).domain()).toEqual([0, 1]);
         });
 
-        it('Should have the expected domain if a current time series is set', () => {
+        it('Should have the expected domain if a current time series is set and no dvGraphBrushOffset', () => {
             expect(getMainXScale(TEST_STATE).domain()).toEqual([1262304000000, 1262563200000]);
+        });
+
+        it('Should have the expected domain if a current time series is set and dvGraphBrushOffset is set', () => {
+            expect(getMainXScale({
+                ...TEST_STATE,
+                observationsState: {
+                    ...TEST_STATE.observationsState,
+                    dvGraphBrushOffset: {
+                        start: 10000,
+                        end: 50000
+                    }
+                }
+            }).domain()).toEqual([1262304010000, 1262563150000]);
+        });
+   });
+
+   fdescribe('getBrushXScale', () => {
+       it('Should have a default domain if no current time series is set', () => {
+            expect(getBrushXScale({
+                ...TEST_STATE,
+                observationsData: {},
+                observationsState: {}
+            }).domain()).toEqual([0, 1]);
+            expect(getBrushXScale({
+                ...TEST_STATE,
+                observationsState: {}
+            }).domain()).toEqual([0, 1]);
+        });
+
+        it('Should have the expected domain if a current time series is set and no dvGraphBrushOffset', () => {
+            expect(getBrushXScale(TEST_STATE).domain()).toEqual([1262304000000, 1262563200000]);
+        });
+
+        it('Should have the expected domain if a current time series is set and dvGraphBrushOffset is set', () => {
+            expect(getBrushXScale({
+                ...TEST_STATE,
+                observationsState: {
+                    ...TEST_STATE.observationsState,
+                    dvGraphBrushOffset: {
+                        start: 10000,
+                        end: 50000
+                    }
+                }
+            }).domain()).toEqual([1262304000000, 1262563200000]);
         });
    });
 

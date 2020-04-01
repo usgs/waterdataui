@@ -57,10 +57,9 @@ export const drawDataLines = function (elem, {lines, xScale, yScale, enableClip}
     if (enableClip) {
         allLinesGroup.attr('clip-path', 'url(#dv-graph-clip)');
     }
-    const linesGroup = allLinesGroup.append('g')
-        .attr('id', 'daily-values-lines-group');
+
     lines.forEach((lineSegment) => {
-        drawDataLine(linesGroup, {lineSegment, xScale, yScale});
+        drawDataLine(allLinesGroup, {lineSegment, xScale, yScale});
     });
 };
 
