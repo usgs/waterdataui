@@ -80,7 +80,7 @@ export const drawGraphBrush = function(container, store) {
 
             // Fill & round corners of brush handles
             svg.selectAll('.handle').classed('brush-handle-fill', true)
-               .attr('rx',15).attr('ry',15);
+                .attr('rx',15).attr('ry',15);
 
             if (hydrographBrushOffset) {
                 const [startMillis, endMillis] = xScale.domain();
