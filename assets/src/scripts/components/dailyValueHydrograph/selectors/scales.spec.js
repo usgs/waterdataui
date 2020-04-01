@@ -24,7 +24,7 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
             width: 800
         }
     };
-   fdescribe('getMainXScale', () => {
+   describe('getMainXScale', () => {
         it('Should have a default domain if no current time series is set', () => {
             expect(getMainXScale({
                 ...TEST_STATE,
@@ -55,7 +55,7 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
         });
    });
 
-   fdescribe('getBrushXScale', () => {
+   describe('getBrushXScale', () => {
        it('Should have a default domain if no current time series is set', () => {
             expect(getBrushXScale({
                 ...TEST_STATE,
