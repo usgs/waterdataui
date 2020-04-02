@@ -68,5 +68,5 @@ NLDI_SERVICES_DISTANCE = '322'
 NETWORK_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections'
 
 # These messages below will be added to a dismissible panel below the main header. It is an array of strings. Markup
-# can be used to add things like links, etc.
+# can be used to add things like links, bold text, etc.
 BANNER_NOTICES = []
