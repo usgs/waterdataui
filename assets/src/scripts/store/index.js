@@ -9,7 +9,7 @@ import {normalize} from '../schema';
 import {calcStartTime, sortedParameters} from '../utils';
 
 import {getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
-    getCustomTimeRange, getIanaTimeZone} from '../selectors/time-series-selector';
+    getCustomTimeRange, getIanaTimeZone, getTimeSeriesCollectionIds} from '../selectors/time-series-selector';
 
 import {fetchFloodFeatures, fetchFloodExtent} from '../web-services/flood-data';
 import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from '../web-services/models';
@@ -142,6 +142,15 @@ export const Actions = {
             const state = getState();
             const parmCd = parameterCd;
             const requestKey = getTsRequestKey('current', 'custom', parmCd)(state);
+
+            // We need to resetTimeSeries because the merge function in the addSeriesCollection does not clear out the
+            // time series values. This is an issue if the length of the values that we are retrieving are fewer than
+            // what is saved.
+            const currentTsIds = getTimeSeriesCollectionIds('current', 'custom', parmCd)(state) || [];
+            if (currentTsIds.length > 0) {
+                dispatch(Actions.resetTimeSeries(requestKey));
+            }
+
             dispatch(Actions.setCurrentDateRange('custom'));
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
             return getTimeSeries({sites: [site], params: [parmCd], period: period}).then(
@@ -167,6 +176,13 @@ export const Actions = {
             const state = getState();
             const thisParmCd = parmCd ? parmCd : getCurrentParmCd(state);
             const requestKey = getTsRequestKey('current', 'custom', thisParmCd)(state);
+            // We need to resetTimeSeries because the merge function in the addSeriesCollection does not clear out the
+            // time series values. This is an issue if the length of the values that we are retrieving are fewer than
+            // what is saved.
+            const currentTsIds = getTimeSeriesCollectionIds('current', 'custom', parmCd)(state) || [];
+            if (currentTsIds.length > 0) {
+                dispatch(Actions.resetTimeSeries(requestKey));
+            }
 
             dispatch(Actions.setCustomDateRange(startTime, endTime));
             dispatch(Actions.addTimeSeriesLoading([requestKey]));
