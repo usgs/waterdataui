@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Added Brush to DV graph.
 - Added Networks Page with a map and a table for all the sites
+- Configurable notices in the banner
 
 ### Fixed
 - Bug where when switching parameters and the brush selection was not being properly set.
