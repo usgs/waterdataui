@@ -73,6 +73,7 @@ export const drawTimeSeriesGraph = function(elem, store) {
             .attr('xmlns', 'http://www.w3.org/2000/svg')
             .classed('hydrograph-svg', true)
             .call(link(store,(elem, layout) => {
+                elem.select('#dv-graph-clip').remove();
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`)
                     .attr('width', layout.width)
                     .attr('height', layout.height)
