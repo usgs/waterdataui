@@ -198,15 +198,8 @@
   }
 }
 
-.dv-legend-controls-container {
-  display: inline-block;
-  height: 85px;
-
-  font-size: .7em;
-  @include at-media('tablet') {
-    font-size: 1em;
-  }
-
+.cursor-slider-svg {
+  width: 100%;
 }
 
 .provisional-data-alert {

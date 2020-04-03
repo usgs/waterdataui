@@ -2,7 +2,7 @@ import includes from 'lodash/includes';
 import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
-import {drawCursorSlider} from '../../d3-rendering/cursor-slider';
+//import {drawCursorSlider} from '../../d3-rendering/cursor-slider';
 import {drawFocusCircles, drawFocusOverlay, drawFocusLine} from '../../d3-rendering/graph-tooltip';
 import {link} from '../../lib/d3-redux';
 import {getObservationsCursorOffset, getCurrentObservationsTimeSeriesUnitOfMeasure} from '../../selectors/observations-selector';
@@ -70,6 +70,7 @@ export const drawTooltipFocus = function(elem, store) {
  * @param {D3 selection} elem
  * @param {Redux store} store
  */
+/*
 export const drawTooltipCursorSlider = function(elem, store) {
     elem.call(link(
         store,
@@ -82,4 +83,6 @@ export const drawTooltipCursorSlider = function(elem, store) {
         store,
         Actions.setDailyValueCursorOffset
     ));
+
 };
+    */

@@ -15,7 +15,7 @@ import {mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from
 
 import {cursorTimeSelector, tsCursorPointsSelector} from './cursor';
 import {classesForPoint, MASK_DESC} from './drawing-data';
-import {getMainLayout} from './layout';
+import {getBrushLayout, getMainLayout} from './layout';
 import {getMainXScale, getMainYScale} from './scales';
 import {tsTimeZoneSelector, TEMPERATURE_PARAMETERS} from './time-series';
 
@@ -237,16 +237,15 @@ export const drawTooltipFocus = function(elem, store) {
  * @param {Redux store} store
  */
 export const drawTooltipCursorSlider = function(elem, store) {
-    elem.append('div')
-        .call(link(
-            store,
-            drawCursorSlider,
-            createStructuredSelector({
-                cursorOffset: (state) => state.timeSeriesState.cursorOffset,
-                xScale: getMainXScale('current'),
-                layout: getMainLayout
-            }),
-            store,
-            Actions.setCursorOffset
-        ));
+    elem.append('svg')
+        .classed('cursor-slider-svg', true)
+        .attr('xmlns', 'http://www.w3.org/2000/svg')
+        .call(link(store,(elem, layout) => {
+                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} 60`);
+            }, getBrushLayout))
+        .call(link(store, drawCursorSlider, createStructuredSelector({
+            cursorOffset: (state) => state.timeSeriesState.cursorOffset,
+            xScale: getMainXScale('current'),
+            layout: getMainLayout
+        }), store, Actions.setCursorOffset));
 };
