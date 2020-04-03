@@ -177,7 +177,7 @@ describe('date-controls', () => {
     it('Expects to retrieve the extended time series when the radio buttons are change', () => {
         spyOn(Actions, 'retrieveExtendedTimeSeries').and.callThrough();
         let lastRadio = select('#P1Y-input');
-        lastRadio.attr('checked', true);
+        lastRadio.property('checked', true);
         lastRadio.dispatch('change');
 
         expect(Actions.retrieveExtendedTimeSeries).toHaveBeenCalledWith('12345678', 'P1Y');
@@ -185,7 +185,7 @@ describe('date-controls', () => {
 
     it('Expects to show the date range form when the Custom radio is selected', () => {
         let customRadio = select('#custom-input');
-        customRadio.attr('checked', true);
+        customRadio.property('checked', true);
         customRadio.dispatch('change');
 
         let customDateDiv = select('div#ts-customdaterange-select-container');

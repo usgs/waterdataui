@@ -402,7 +402,7 @@ describe('Redux store', () => {
             });
         });
 
-        fdescribe('retrieveCustomTimePeriodTimeSeries', () => {
+        describe('retrieveCustomTimePeriodTimeSeries', () => {
             let mockDispatch;
             let mockGetState;
 
@@ -489,7 +489,7 @@ describe('Redux store', () => {
             });
         });
 
-        fdescribe('retrieveCustomTimeSeries with good data', () => {
+        describe('retrieveCustomTimeSeries with good data', () => {
             let mockDispatch;
             let mockGetState;
             let request;
