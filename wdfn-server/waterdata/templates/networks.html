@@ -1,6 +1,10 @@
 {% extends 'base_network.html' %}
 
-{% if network_cd %}{% set page_title = 'Networks' %}{% endif %}
+{% if network_cd %}
+    {% set page_title = collection.title %}
+{% else %}
+    {% set page_title = 'Networks' %}
+{% endif %}
 
 {% import 'macros/components.html' as components %}
 
@@ -11,10 +15,10 @@
 
             {% if network_cd %}
                 {% if collection.description %}
-                    <h2>Network: {{ network_cd }} </h2>
+                    <h2>Network: {{ collection.title }} </h2>
                     <h3>Description: {{ collection.description }} </h3>
                 {% else %}
-                    <h2>Network: {{ network_cd }} </h2>
+                    <h2>Network: {{ collection.title }} </h2>
                     <h3>Description: Not Available</h3>
                 {% endif %}
 
