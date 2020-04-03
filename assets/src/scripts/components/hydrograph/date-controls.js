@@ -183,5 +183,5 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-radio__label')
         .attr('for', (d) => `${d.period}-input`)
         .text((d) => d.name);
-    li.select(`#${initialDateRange}-input`).attr('checked', true);
+    li.select(`#${initialDateRange}-input`).property('checked', true);
 };
