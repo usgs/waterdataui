@@ -466,6 +466,27 @@ describe('Redux store', () => {
                     done();
                 });
             });
+
+            it('Should reset the time series if it already exists', (done) => {
+                mockGetState.and.returnValue(Object.assign({}, TEST_STATE, {
+                    series: Object.assign({}, TEST_STATE.series, {
+                        requests: {'current:custom:00060': {
+                                timeSeriesCollections: [7, 8]
+                            }}
+                    })
+                }));
+                spyOn(Actions, 'resetTimeSeries');
+                let p = Actions.retrieveCustomTimePeriodTimeSeries('490129388', '00060', 'P10D')(mockDispatch, mockGetState);
+                let request = jasmine.Ajax.requests.mostRecent();
+                request.respondWith({
+                    responseText: MOCK_DATA,
+                    status: 200
+                });
+                p.then(() => {
+                    expect(Actions.resetTimeSeries).toHaveBeenCalled();
+                    done();
+                });
+            });
         });
 
         describe('retrieveCustomTimeSeries with good data', () => {
@@ -533,6 +554,28 @@ describe('Redux store', () => {
                     expect(Actions.retrieveCompareTimeSeries).not.toHaveBeenCalled();
                     expect(Actions.toggleTimeSeries).toHaveBeenCalled();
                     expect(Actions.toggleTimeSeries.calls.argsFor(0)).toEqual(['median', false]);
+                    done();
+                });
+            });
+
+            it('Should reset the time series if it already exists', (done) => {
+                mockGetState.and.returnValue(Object.assign({}, TEST_STATE, {
+                    series: Object.assign({}, TEST_STATE.series, {
+                        requests: {'current:custom:00060': {
+                                timeSeriesCollections: [7, 8]
+                            }}
+                    })
+                }));
+                spyOn(Actions, 'resetTimeSeries');
+                let p = Actions.retrieveCustomTimeSeries('490129388', 1488348000000, 1490936400000)(mockDispatch, mockGetState);
+                request = jasmine.Ajax.requests.mostRecent();
+                request.respondWith({
+                    responseText: MOCK_DATA,
+                    status: 200
+                });
+                p.then(() => {
+                    expect(mockDispatch.calls.count()).toBe(6);
+                    expect(Actions.resetTimeSeries).toHaveBeenCalled();
                     done();
                 });
             });
