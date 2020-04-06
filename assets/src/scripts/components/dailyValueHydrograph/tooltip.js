@@ -70,7 +70,6 @@ export const drawTooltipFocus = function(elem, store) {
  * @param {D3 selection} elem
  * @param {Redux store} store
  */
-
 export const drawTooltipCursorSlider = function(elem, store) {
     elem.append('svg')
         .classed('cursor-slider-svg', true)
