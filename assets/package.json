@@ -43,12 +43,12 @@
   },
   "homepage": "https://github.com/usgs/waterdataui#readme",
   "devDependencies": {
-    "autoprefixer": "^9.7.4",
+    "autoprefixer": "^9.7.5",
     "concat": "^1.0.3",
     "eslint": "^6.8.0",
     "eslint-plugin-jasmine": "^4.1.0",
     "gulp": "^4.0.2",
-    "gulp-rev-all": "^2.0.2",
+    "gulp-rev-all": "^2.0.3",
     "isparta": "^4.1.1",
     "jasmine": "3.5.0",
     "jasmine-ajax": "^4.0.0",
@@ -67,7 +67,7 @@
     "postcss-cli": "^7.0.0",
     "postcss-csso": "^4.0.0",
     "postcss-flexbugs-fixes": "^4.2.0",
-    "rollup": "^2.1.0",
+    "rollup": "^2.3.3",
     "@rollup/plugin-alias": "^3.0.1",
     "rollup-plugin-buble": "^0.19.8",
     "rollup-plugin-commonjs": "^10.1.0",
@@ -77,14 +77,14 @@
     "@rollup/plugin-replace": "^2.3.1",
     "rollup-plugin-uglify": "^6.0.4",
     "sass": "^1.26.3",
-    "stylelint": "^13.2.1",
+    "stylelint": "^13.3.0",
     "stylelint-scss": "^3.16.0"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "5.12.1",
+    "@fortawesome/fontawesome-free": "5.13.0",
     "autotrack": "2.4.1",
     "core-js": "3.6.4",
-    "d3": "5.15.0",
+    "d3": "5.15.1",
     "date-time-format-timezone": "1.0.22",
     "element-closest": "3.0.2",
     "esri-leaflet": "2.3.3",
@@ -93,13 +93,13 @@
     "leaflet.markercluster": "1.4.1",
     "list.js": "1.5.0",
     "lodash": "4.17.15",
-    "luxon": "1.22.0",
+    "luxon": "1.23.0",
     "matchmedia-polyfill": "0.3.2",
     "normalizr": "3.6.0",
     "raf-throttle": "2.0.3",
     "redux": "4.0.5",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
-    "wdfn-viz": "1.4.0"
+    "wdfn-viz": "^1.5.0-snapshot.f5cb0fc"
   }
 }
