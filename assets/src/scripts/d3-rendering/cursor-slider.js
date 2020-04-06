@@ -1,9 +1,6 @@
 
 import {sliderTop} from 'd3-simple-slider';
 
-const SLIDER_STEPS = 1000;
-
-
 export const drawCursorSlider = function(svg, {cursorOffset, xScale, layout}, store, setCursorOffsetAction) {
     const [startMillis, endMillis] = xScale.domain();
     const [startX, endX] = xScale.range();
@@ -11,7 +8,6 @@ export const drawCursorSlider = function(svg, {cursorOffset, xScale, layout}, st
     let slider = sliderTop()
         .min(startMillis)
         .max(endMillis)
-        //.step((endMillis - startMillis) / SLIDER_STEPS)
         .width(endX - startX)
         .displayValue(false)
         .ticks(0);
