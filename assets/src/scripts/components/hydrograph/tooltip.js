@@ -15,7 +15,7 @@ import {mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from
 
 import {cursorTimeSelector, tsCursorPointsSelector} from './cursor';
 import {classesForPoint, MASK_DESC} from './drawing-data';
-import {getBrushLayout, getMainLayout} from './layout';
+import {getMainLayout} from './layout';
 import {getMainXScale, getMainYScale} from './scales';
 import {tsTimeZoneSelector, TEMPERATURE_PARAMETERS} from './time-series';
 
