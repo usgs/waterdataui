@@ -24,7 +24,8 @@ export const addNetworkLayers = function (map, networkSites) {
     const onEachPointFeatureAddPopUp = function (feature, layer) {
         listValues.push({
             'name': feature.properties.monitoringLocationName,
-            'link': feature.properties.monitoringLocationUrl
+            'link': feature.properties.monitoringLocationUrl,
+            'linkhref': feature.properties.monitoringLocationUrl
         });
         const popupText = `Monitoring Location: <a href="${feature.properties.monitoringLocationUrl}">${feature.properties.monitoringLocationName}</a>
             <br>ID: ${feature.properties.monitoringLocationNumber}`;
@@ -56,11 +57,11 @@ export const addNetworkLayers = function (map, networkSites) {
             map.addLayer(networkLayer);
         }
 
-        const valueNames = ['name', 'link',  { name: 'link', attr: 'href' }];
+        const valueNames = ['name', 'link',  { name: 'linkhref', attr: 'href' }];
         const options = {
             valueNames: valueNames,
-            item: '<tr><td class="name"></td><td><a class="link"></a></td></tr>',
-            page: 10,
+            item: '<tr><td class="name"></td><td><a class="link linkhref"></a></td></tr>',
+            page: 50,
             pagination: [{
                 left: 1,
                 right: 1,
