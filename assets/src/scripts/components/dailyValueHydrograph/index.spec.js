@@ -154,7 +154,7 @@ describe('components/dailyValueHydrograph/index', () => {
         });
 
         window.requestAnimationFrame(() => {
-            expect(testDiv.select('.graph-container').selectAll('.slider-wrapper').size()).toBe(1);
+            expect(testDiv.select('.graph-container').selectAll('.cursor-slider-svg').size()).toBe(1);
             done();
         });
     });

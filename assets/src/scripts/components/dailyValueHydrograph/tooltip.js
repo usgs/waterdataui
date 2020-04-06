@@ -71,15 +71,15 @@ export const drawTooltipFocus = function(elem, store) {
  * @param {Redux store} store
  */
 export const drawTooltipCursorSlider = function(elem, store) {
-    elem.call(link(
-        store,
-        drawCursorSlider,
-        createStructuredSelector({
+    elem.append('svg')
+        .classed('cursor-slider-svg', true)
+        .attr('xmlns', 'http://www.w3.org/2000/svg')
+        .call(link(store,(elem, layout) => {
+                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} 25`);
+            }, getMainLayout))
+        .call(link(store, drawCursorSlider, createStructuredSelector({
             cursorOffset: getObservationsCursorOffset,
             xScale: getMainXScale,
             layout: getMainLayout
-        }),
-        store,
-        Actions.setDailyValueCursorOffset
-    ));
+        }), store, Actions.setDailyValueCursorOffset));
 };

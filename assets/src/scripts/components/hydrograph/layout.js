@@ -17,13 +17,13 @@ export const ASPECT_RATIO_PERCENT = `${100 * ASPECT_RATIO}%`;
 const MARGIN = {
     top: 25,
     right: 25,
-    bottom: 10,
+    bottom: 5,
     left: 45
 };
 const MARGIN_SMALL_DEVICE = {
     top: 25,
     right: 10,
-    bottom: 10,
+    bottom: 5,
     left: 10
 };
 

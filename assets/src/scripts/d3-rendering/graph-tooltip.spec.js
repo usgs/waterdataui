@@ -69,25 +69,6 @@ describe('graph-tooltip module', () => {
             expect(mockAction).toHaveBeenCalled();
         });
 
-        it('expect that a mouseout event triggers a dispatch to mockAction', () => {
-            drawFocusOverlay(svg, {
-                xScale: xScale,
-                layout: {
-                    width: 400,
-                    height: 200,
-                    margin: {
-                        left: 10,
-                        right: 10,
-                        top: 15,
-                        bottom: 15
-                    }
-                }
-            }, mockStore, mockAction);
-            svg.select('rect').node().dispatchEvent(new window.MouseEvent('mouseout'));
-
-            expect(mockAction).toHaveBeenCalledWith(null);
-        });
-
         it('expect that a mousemove event triggers a dispatch to mockAction', () => {
             drawFocusOverlay(svg, {
                 xScale: xScale,
@@ -102,7 +83,7 @@ describe('graph-tooltip module', () => {
                     }
                 }
             }, mockStore, mockAction);
-            svg.select('rect').node().dispatchEvent(new window.MouseEvent('mouseout'));
+            svg.select('rect').node().dispatchEvent(new window.MouseEvent('mousemove'));
 
             expect(mockAction).toHaveBeenCalled();
         });

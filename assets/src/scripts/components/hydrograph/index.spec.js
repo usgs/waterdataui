@@ -445,8 +445,8 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         });
 
         it('should render the correct number of svg nodes', () => {
-            // one main hydrograph, brush, legend and two sparklines
-            expect(selectAll('svg').size()).toBe(5);
+            // one main hydrograph, brush, slider, legend and two sparklines
+            expect(selectAll('svg').size()).toBe(6);
         });
 
         it('should have a title div', () => {
@@ -480,8 +480,8 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             expect(selectAll('.brush').size()).toBe(1);
         });
 
-        it('should have slider-wrapper element', () => {
-            expect(selectAll('.slider-wrapper').size()).toBe(1);
+        it('should have .cursor-slider-svg element', () => {
+            expect(selectAll('.cursor-slider-svg').size()).toBe(1);
         });
 
         it('should have date control elements', () => {
