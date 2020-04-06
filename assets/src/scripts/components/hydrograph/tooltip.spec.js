@@ -415,7 +415,7 @@ describe('Hydrograph tooltip module', () => {
         });
     });
 
-    describe('drawTooltipCursorClider', () => {
+    describe('drawTooltipCursorSlider', () => {
         let div;
         beforeEach(() => {
             div = select('body').append('div');
@@ -425,13 +425,15 @@ describe('Hydrograph tooltip module', () => {
             div.remove();
         });
 
-        it('should render the cursor slider and set the position to the cursor offset', () => {
+        it('should render the cursor slider', () => {
             let store = configureStore(testState);
             drawTooltipCursorSlider(div, store);
 
-            const rangeInput = div.selectAll('input');
-            expect(rangeInput.size()).toBe(1);
-            expect(rangeInput.attr('type')).toBe('range');
+            const sliderSvg = div.selectAll('.cursor-slider-svg');
+            const slider = sliderSvg.selectAll('.slider');
+
+            expect(sliderSvg.size()).toBe(1);
+            expect(slider.size()).toBe(1);
         });
     });
 });

@@ -1,38 +1,34 @@
 
-const SLIDER_STEPS = 1000;
+import {sliderTop} from 'd3-simple-slider';
 
-// This is a bit of a hack to deal with the radius on the slider circle, so
-// the slider is aligned with the graph.
-const SLIDER_OFFSET_PX = 15;
+/*
+ * Creates a group in svg offset by layout.margin.left and renders a d3-simple-slider with a
+ * domain and range of xScale. Appropriate event handlers are added that dispatch setCursorOffsetAction
+ * to the redux store when the cursor slider is changed.
+ * @param {D3 svg selection} svg
+ * @param {Number} cursorOffset - Is the difference between the cursor location and the beginning of the scale
+ * @param {Object} layout - the margin.left property is used to offset the slider,
+ * @param {Object} store - Redux store instance
+ * @param {Object} setCursorOffsetAction - Redux action which will be dispatched when the slider value changes.
+ */
+export const drawCursorSlider = function(svg, {cursorOffset, xScale, layout}, store, setCursorOffsetAction) {
+    const [startMillis, endMillis] = xScale.domain();
+    const [startX, endX] = xScale.range();
+    let slider = sliderTop()
+        .min(startMillis)
+        .max(endMillis)
+        .width(endX - startX)
+        .displayValue(false)
+        .ticks(0);
 
-export const drawCursorSlider = function(elem, {cursorOffset, xScale, layout}, store, setCursorOffsetAction, sliderContainer) {
-    const xDomain = xScale.domain();
-    const timeScale = xDomain[1] - xDomain[0];
-    if (!sliderContainer) {
-        sliderContainer = elem.append('div')
-            .attr('class', 'slider-wrapper');
-        sliderContainer.append('input')
-            .attr('type', 'range')
-            .classed('usa-range', true)
-            .attr('aria-label', 'Graph Cursor Slider')
-            .attr('min', 0);
-    }
+    svg.select('.cursor-slider-group').remove();
+    svg.append('g')
+        .attr('class', 'cursor-slider-group')
+        .attr('transform', `translate(${layout.margin.left},15)`)
+        .call(slider);
+    slider.silentValue(cursorOffset ? startMillis + cursorOffset : endMillis);
 
-    sliderContainer.select('.usa-range')
-        .attr('max', timeScale)
-        .attr('step', timeScale / SLIDER_STEPS)
-        .property('value', cursorOffset || timeScale)
-        .style('position', 'relative')
-        .style('max-width', 'none')
-        .style('padding-left', '0')
-        .style('padding-right', '0')
-        .style('left', `${layout.margin.left - SLIDER_OFFSET_PX}px`)
-        .style('width', `${layout.width - layout.margin.left - layout.margin.right - 2 * SLIDER_OFFSET_PX}px`)
-        .on('input', function () {
-            store.dispatch(setCursorOffsetAction(this.valueAsNumber));
-        })
-        .on('focus', function () {
-            store.dispatch(setCursorOffsetAction(this.valueAsNumber));
-        });
-    return sliderContainer;
+    slider.on('end', (val) => {
+        store.dispatch(setCursorOffsetAction(val - startMillis));
+    });
 };

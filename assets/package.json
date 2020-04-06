@@ -85,6 +85,7 @@
     "autotrack": "2.4.1",
     "core-js": "3.6.4",
     "d3": "5.15.1",
+    "d3-simple-slider": "1.5.5",
     "date-time-format-timezone": "1.0.22",
     "element-closest": "3.0.2",
     "esri-leaflet": "2.3.3",
@@ -100,6 +101,6 @@
     "redux": "4.0.5",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
-    "wdfn-viz": "^1.5.0-snapshot.f5cb0fc"
+    "wdfn-viz": "1.5.0"
   }
 }

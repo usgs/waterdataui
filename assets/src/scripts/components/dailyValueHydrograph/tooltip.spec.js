@@ -109,13 +109,15 @@ describe('dailyValueHydrograph/tooltip module', () => {
             div.remove();
         });
 
-        it('should draw a slider with the position set to the cursor offset', () => {
+        it('should draw a slider', () => {
             let store = configureStore(TEST_STATE);
             drawTooltipCursorSlider(div, store);
 
-            const rangeInput = div.selectAll('input');
-            expect(rangeInput.size()).toBe(1);
-            expect(rangeInput.attr('type')).toBe('range');
+            const sliderSvg = div.selectAll('.cursor-slider-svg');
+            const slider = sliderSvg.selectAll('.slider');
+
+            expect(sliderSvg.size()).toBe(1);
+            expect(slider.size()).toBe(1);
         });
     });
 });

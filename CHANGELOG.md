@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed bug when drawing custom time series and then changing the time was drawing extraneous lines
 - Fixed scaling of the brush on mobile.
 
+### Changed
+- Replaced the range input slider with an svg slider for moving the cursor tooltip point
+in the UV and DV graphs. The slider now is appropriately scaled on mobile.
+
 ## [0.29.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.28.0...waterdataui-0.29.0) - 2020-04-02
 ### Added
 - Added Brush to DV graph.

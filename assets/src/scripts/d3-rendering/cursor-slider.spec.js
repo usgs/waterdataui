@@ -21,7 +21,7 @@ describe('cursor-slider', () => {
             svg.remove();
         });
 
-        it('Renders a slider with expected properties and attributes', () => {
+        it('Renders a slider', () => {
             drawCursorSlider(svg, {
                 cursorOffset: 1400,
                 xScale: xScale,
@@ -36,70 +36,10 @@ describe('cursor-slider', () => {
                     }
                 }
             }, mockStore, mockAction);
-            const slider = svg.selectAll('.slider-wrapper');
+            const sliderGroup = svg.selectAll('.cursor-slider-group');
+            expect(sliderGroup.size()).toBe(1);
+            const slider = sliderGroup.selectAll('.slider');
             expect(slider.size()).toBe(1);
-            const input = slider.selectAll('input');
-            expect(input.size()).toBe(1);
-            expect(input.attr('type')).toEqual('range');
-            expect(input.property('value')).toEqual(1400);
-            expect(input.attr('max')).toEqual('999');
-        });
-
-        it('Set the value property to the scale\'s domain range if cursorOffset is not set', () => {
-            drawCursorSlider(svg, {
-                cursorOffset: null,
-                xScale: xScale,
-                layout: {
-                    width: 400,
-                    height: 200,
-                    margin: {
-                        left: 10,
-                        right: 10,
-                        top: 20,
-                        bottom: 20
-                    }
-                }
-            }, mockStore, mockAction);
-
-            expect(svg.select('.slider-wrapper').select('input').property('value')).toEqual(999);
-        });
-
-        it('updates the cursor offset if the input event is triggered', () => {
-            drawCursorSlider(svg, {
-                cursorOffset: null,
-                xScale: xScale,
-                layout: {
-                    width: 400,
-                    height: 200,
-                    margin: {
-                        left: 10,
-                        right: 10,
-                        top: 20,
-                        bottom: 20
-                    }
-                }
-            }, mockStore, mockAction);
-            svg.select('input').dispatch('input');
-            expect(mockAction).toHaveBeenCalled();
-        });
-
-        it('updates the cursor offset if the focus event is triggered', () => {
-            drawCursorSlider(svg, {
-                cursorOffset: null,
-                xScale: xScale,
-                layout: {
-                    width: 400,
-                    height: 200,
-                    margin: {
-                        left: 10,
-                        right: 10,
-                        top: 20,
-                        bottom: 20
-                    }
-                }
-            }, mockStore, mockAction);
-            svg.select('input').dispatch('focus');
-            expect(mockAction).toHaveBeenCalled();
         });
     });
 });
