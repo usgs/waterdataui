@@ -241,8 +241,8 @@ export const drawTooltipCursorSlider = function(elem, store) {
         .classed('cursor-slider-svg', true)
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .call(link(store,(elem, layout) => {
-                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} 60`);
-            }, getBrushLayout))
+                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} 25`);
+            }, getMainLayout))
         .call(link(store, drawCursorSlider, createStructuredSelector({
             cursorOffset: (state) => state.timeSeriesState.cursorOffset,
             xScale: getMainXScale('current'),

@@ -6,7 +6,7 @@ import {drawErrorAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
 
 import {drawTimeSeriesGraph} from './time-series-graph';
-//import {drawTooltipCursorSlider} from './tooltip';
+import {drawTooltipCursorSlider} from './tooltip';
 import {drawTimeSeriesLegend} from './legend';
 import {drawGraphBrush} from './graph-brush';
 
@@ -48,7 +48,7 @@ export const attachToNode = function (store,
 
                 graphContainer
                     .call(drawTimeSeriesGraph, store)
-                    //.call(drawTooltipCursorSlider, store)
+                    .call(drawTooltipCursorSlider, store)
                     .call(drawGraphBrush, store)
                     .append('div')
                         .classed('dv-legend-controls-container', true)

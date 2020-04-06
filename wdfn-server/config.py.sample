@@ -14,3 +14,5 @@ LIVE_RELOAD_PATH = 'ws://localhost:9000/ws'
 DEPLOYMENT_ENVIRONMENT = 'development'
 
 #ASSET_MANIFEST_PATH = '/Users/dnaab/src/waterdataui/assets/dist/rev-manifest.json'
+
+TIMESERIES_AUDIO_ENABLED = False

@@ -24,9 +24,6 @@ export const drawFocusOverlay = function(elem, {xScale, layout}, store, setCurso
             const startTime = xScale.domain()[0];
             store.dispatch(setCursorOffsetAction(selectedTime - startTime));
         })
-        .on('mouseout', function() {
-            store.dispatch(setCursorOffsetAction(null));
-        })
         .on('mousemove', function() {
             const selectedTime = xScale.invert(mouse(elem.node())[0]);
             const startTime = xScale.domain()[0];

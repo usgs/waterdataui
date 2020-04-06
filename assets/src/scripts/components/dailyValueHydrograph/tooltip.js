@@ -2,7 +2,7 @@ import includes from 'lodash/includes';
 import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
-//import {drawCursorSlider} from '../../d3-rendering/cursor-slider';
+import {drawCursorSlider} from '../../d3-rendering/cursor-slider';
 import {drawFocusCircles, drawFocusOverlay, drawFocusLine} from '../../d3-rendering/graph-tooltip';
 import {link} from '../../lib/d3-redux';
 import {getObservationsCursorOffset, getCurrentObservationsTimeSeriesUnitOfMeasure} from '../../selectors/observations-selector';
@@ -70,19 +70,17 @@ export const drawTooltipFocus = function(elem, store) {
  * @param {D3 selection} elem
  * @param {Redux store} store
  */
-/*
+
 export const drawTooltipCursorSlider = function(elem, store) {
-    elem.call(link(
-        store,
-        drawCursorSlider,
-        createStructuredSelector({
+    elem.append('svg')
+        .classed('cursor-slider-svg', true)
+        .attr('xmlns', 'http://www.w3.org/2000/svg')
+        .call(link(store,(elem, layout) => {
+                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} 25`);
+            }, getMainLayout))
+        .call(link(store, drawCursorSlider, createStructuredSelector({
             cursorOffset: getObservationsCursorOffset,
             xScale: getMainXScale,
             layout: getMainLayout
-        }),
-        store,
-        Actions.setDailyValueCursorOffset
-    ));
-
+        }), store, Actions.setDailyValueCursorOffset));
 };
-    */
