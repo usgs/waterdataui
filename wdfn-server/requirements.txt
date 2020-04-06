@@ -7,7 +7,7 @@ MarkupSafe==1.1.1
 pendulum==2.1.0
 pyfakefs==4.0.2
 pytest==5.4.1
-pytest-mock==2.0.0
+pytest-mock==3.0.0
 pytest-flask==1.0.0
 requests==2.23.0
 requests-mock==1.7.0
