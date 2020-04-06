@@ -75,15 +75,13 @@ export const drawTimeSeriesGraph = function(elem, store) {
             .call(link(store,(elem, layout) => {
                 elem.select('#dv-graph-clip').remove();
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`)
-                    .attr('width', layout.width)
-                    .attr('height', layout.height)
-                        .append('clipPath')
-                        .attr('id', 'dv-graph-clip')
-                        .append('rect')
-                            .attr('x', 0)
-                            .attr('y', 0)
-                            .attr('width', layout.width - layout.margin.right)
-                            .attr('height', layout.height - layout.margin.bottom);
+                    .append('clipPath')
+                    .attr('id', 'dv-graph-clip')
+                    .append('rect')
+                        .attr('x', 0)
+                        .attr('y', 0)
+                        .attr('width', layout.width - layout.margin.right)
+                        .attr('height', layout.height - layout.margin.bottom);
             }, getMainLayout))
             .call(link(store, addSVGAccessibility, createStructuredSelector({
                 title: getCurrentTimeSeriesTitle,

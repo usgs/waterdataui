@@ -1,4 +1,4 @@
-import {brushX, brushSelection} from 'd3-brush';
+import {brushX} from 'd3-brush';
 import {event} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
@@ -39,9 +39,7 @@ export const drawGraphBrush = function(container, store) {
         .classed('brush-svg', true)
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .call(link(store,(elem, layout) => {
-                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.bottom}`);
-                elem.attr('width', layout.width);
-                elem.attr('height', layout.height);
+                elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.bottom + layout.margin.top}`);
             }, getBrushLayout
             ))
         .call(svg => {
@@ -71,7 +69,7 @@ export const drawGraphBrush = function(container, store) {
             const group = svg.append('g').attr('class', 'brush')
                 .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
 
-            graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom]]);
+            graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom - layout.margin.top]]);
 
             // Creates the brush
             group.call(graphBrush);

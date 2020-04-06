@@ -22,9 +22,9 @@ const MARGIN = {
 };
 const MARGIN_SMALL_DEVICE = {
     top: 25,
-    right: 0,
+    right: 10,
     bottom: 10,
-    left: 0
+    left: 10
 };
 
 export const CIRCLE_RADIUS_SINGLE_PT = 1;
@@ -68,7 +68,7 @@ export const getLayout = memoize(kind => createSelector(
             windowWidth: windowWidth,
             margin: {
                 bottom: margin.bottom,
-                top: kind === 'BRUSH' ? 0 : margin.top,
+                top: kind === 'BRUSH' ? 10 : margin.top,
                 left: margin.left + approxLabelLength,
                 right: margin.right + (isTemperatureParameter ? approxLabelLength : 0)
             }

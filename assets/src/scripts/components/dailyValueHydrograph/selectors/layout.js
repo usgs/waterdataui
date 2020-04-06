@@ -14,9 +14,9 @@ const MARGIN = {
 };
 const MARGIN_SMALL_DEVICE = {
     top: 25,
-    right: 0,
+    right: 10,
     bottom: 10,
-    left: 0
+    left: 30
 };
 export const BRUSH_HEIGHT = 100;
 export const BRUSH_MOBILE_HEIGHT = 50;
@@ -43,7 +43,7 @@ export const getLayout = memoize(kind => createSelector(
             height: height,
             windowWidth: windowWidth,
             margin: {
-                top: kind === 'BRUSH' ? 0 : margin.top,
+                top: kind === 'BRUSH' ? 10 : margin.top,
                 right: margin.right,
                 bottom: margin.bottom,
                 left: margin.left

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.29.0...master)
 ### Fixed
 - Fixed bug when drawing custom time series and then changing the time was drawing extraneous lines
-- Fixed issue where custom date range in url was not setting the radio button for custom.
+- Fixed scaling of the brush on mobile.
 
 ## [0.29.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.28.0...waterdataui-0.29.0) - 2020-04-02
 ### Added
