@@ -1,4 +1,6 @@
-import {fetchNetworkSites} from './network-data';
+import config from '../config';
+
+import {fetchNetworkFeatures} from './network-data';
 
 describe('network-data module', () => {
     beforeEach(() => {
@@ -9,7 +11,7 @@ describe('network-data module', () => {
         jasmine.Ajax.uninstall();
     });
 
-    describe('fetchNetworkSites', () => {
+    describe('fetchNetworkFeatures', () => {
         const networkCd = 'AHS';
 
         describe('with valid response', () => {
@@ -19,27 +21,32 @@ describe('network-data module', () => {
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
 
-                networkPromise = fetchNetworkSites(networkCd );
-                jasmine.Ajax.requests.mostRecent().respondWith({
+                networkPromise = fetchNetworkFeatures(networkCd );
+            });
+
+            it('expect url to contain networkCd', () => {
+               expect(jasmine.Ajax.requests.mostRecent().url).toContain(networkCd);
+            });
+
+            it('expected response is json object with the network sites', () => {
+                jasmine.Ajax.stubRequest(`${config.NETWORK_ENDPOINT}/${networkCd}/items`).andReturn({
                     status: 200,
                     responseText: MOCK_NETWORK_FEATURE,
                     contentType: 'application/json'
                 });
-            });
-
-            it('expected response is json object with the network sites', () => {
                 networkPromise.then((resp) => {
                     expect(resp.length).toBe(1);
+                    expect(resp).toEqual(JSON.parse(MOCK_NETWORK_FEATURE).features);
                 });
             });
         });
 
         describe('with error response', () => {
             it('On failed response return an empty feature list', () => {
-                fetchNetworkSites(networkCd).then((resp) => {
+                fetchNetworkFeatures(networkCd).then((resp) => {
                    expect(resp.length).toBe(0);
                 });
-                jasmine.Ajax.requests.mostRecent().respondWith({
+                jasmine.Ajax.stubRequest(`${config.NETWORK_ENDPOINT}/${networkCd}/items`).andReturn({
                     status: 500
                 });
             });

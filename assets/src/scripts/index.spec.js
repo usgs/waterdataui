@@ -87,7 +87,7 @@ import './web-services/nldi-data.spec';
 import './web-services/observations-spec';
 import './web-services/statistics-data.spec';
 
-import './networks/web-services/network-data.spec';
+import './web-services/network-data.spec';
 import './networks/store/network-store.spec';
 import './networks/store/network-data-reducer.spec';
 import './networks/selectors/network-data-selector.spec';

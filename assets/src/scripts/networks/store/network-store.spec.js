@@ -1,3 +1,5 @@
+import config from '../../config';
+
 import {Actions, configureStore} from './network-store';
 
 const MOCK_NETWORK_FEATURE = `
@@ -74,7 +76,7 @@ describe('Network Redux store', () => {
             beforeEach(() => {
                 jasmine.Ajax.install();
 
-                jasmine.Ajax.stubRequest(`undefined/${NETWORK_CD}/items`).andReturn({
+                jasmine.Ajax.stubRequest(`${config.NETWORK_ENDPOINT}/${NETWORK_CD}/items`).andReturn({
                     status: 200,
                     response: MOCK_NETWORK_FEATURE,
                     contentType: 'application/json'
@@ -91,6 +93,7 @@ describe('Network Redux store', () => {
 
             it('fetches data from NWIS reference networks', () => {
                 Actions.retrieveNetworkData(NETWORK_CD)(mockDispatch,mockGetState);
+                console.log('Request url is ' + jasmine.Ajax.requests.mostRecent().url);
                 expect(jasmine.Ajax.requests.mostRecent().url).toContain('items');
             });
 
@@ -112,7 +115,7 @@ describe('Network Redux store', () => {
             beforeEach(() => {
                 jasmine.Ajax.install();
 
-                jasmine.Ajax.stubRequest(`undefined/${NETWORK_CD}/items`).andReturn({
+                jasmine.Ajax.stubRequest(`${config.NETWORK_ENDPOINT}/${NETWORK_CD}/items`).andReturn({
                     status: 500
                 });
 
