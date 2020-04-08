@@ -9,6 +9,9 @@
 
 import './polyfills';
 
+import './web-services/observations.spec';
+import './store/observations.spec';
+/*
 import './ajax.spec';
 
 import './d3-rendering/accessibility.spec';
@@ -93,3 +96,4 @@ import './networks/store/network-data-reducer.spec';
 import './networks/selectors/network-data-selector.spec';
 import './networks/network-component/index.spec';
 import './networks/network-component/network-legend.spec';
+*/

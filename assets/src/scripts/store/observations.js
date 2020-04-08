@@ -30,6 +30,29 @@ export const addDVTimeSeries = function(timeSeriesId, data) {
 };
 
 /*
+ * Synchronous Redux Action to update the current time series id to be viewed
+ * @param {String} currentDVTimeSeriesId
+ */
+export const setCurrentDVTimeSeriesId = function(timeSeriesId) {
+    return {
+        type: 'SET_CURRENT_DV_TIME_SERIES_ID',
+        timeSeriesId
+    };
+};
+
+/*
+ * Synchronous Redux action to update the graph's cursor offset
+ * @param {Number} dvCursorOffset - difference in epoch time from the cursor position to graph start time
+ */
+export const setDVGraphCursorOffset = function(cursorOffset) {
+    return {
+        type: 'SET_DV_GRAPH_CURSOR_OFFSET',
+        cursorOffset
+    };
+};
+
+
+/*
  * Redux asynchronous action to fetch the available time series and
  * update the store. The dispatched action returns a Promise.
  * @param {String} monitoringLocationId
@@ -39,7 +62,7 @@ export const retrieveAvailableDVTimeSeries = function(monitoringLocationId) {
         return fetchAvailableDVTimeSeries(monitoringLocationId)
             .then(
                 (data) => {
-                    dispatch(setAvailableDVTimeSeries(data.timeSeries));
+                    dispatch(setAvailableDVTimeSeries(data.timeSeries || []));
                 },
                 () => {
                     console.log(`Unable to fetch available dv time series for ${monitoringLocationId}`);
@@ -52,11 +75,16 @@ export const retrieveAvailableDVTimeSeries = function(monitoringLocationId) {
  * The dispatched action returns a Promise that resolves when the data has been fetched.
  */
 export const retrieveDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
-    return function(dispatch) {
+    return function(dispatch, store) {
+        if (timeSeriesId in store.getState().observationsData.dvTimeSeries) {
+            dispatch(setCurrentDVTimeSeriesId(timeSeriesId));
+            return Promise.resolve();
+        }
         return fetchDVTimeSeries(monitoringLocationId, timeSeriesId)
             .then(
                 (data) => {
                     dispatch(addDVTimeSeries(timeSeriesId, data));
+                    dispatch(setCurrentDVTimeSeriesId(timeSeriesId));
                 },
                 () => {
                     console.log(`Unable to fetch observations time series for ${timeSeriesId}`);
@@ -87,27 +115,6 @@ export const observationsDataReducer = function(observationsData=INITIAL_OBSERVA
 };
 
 
-/*
- * Synchronous Redux Action to update the current time series id to be viewed
- * @param {String} currentDVTimeSeriesId
- */
-export const setCurrentDVTimeSeriesId = function(timeSeriesId) {
-    return {
-        type: 'SET_CURRENT_DV_TIME_SERIES_ID',
-        timeSeriesId
-    };
-};
-
-/*
- * Synchronous Redux action to update the graph's cursor offset
- * @param {Number} dvCursorOffset - difference in epoch time from the cursor position to graph start time
- */
-export const setDVGraphCursorOffset = function(cursorOffset) {
-    return {
-        type: 'SET_DV_GRAPH_CURSOR_OFFSET',
-        cursorOffset
-    };
-};
 
 /*
  * Synchronous Redux action to update the graph's brush offset

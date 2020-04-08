@@ -35,7 +35,7 @@ NWIS_ENDPOINTS = {
 }
 WEATHER_SERVICE_ROOT = 'https://api.weather.gov'
 
-OBSERVATIONS_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/'
+OBSERVATIONS_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections/monitoring-locations'
 
 FIM_GIS_ENDPOINT = 'https://gis.wim.usgs.gov/arcgis/rest/services/FIMMapper/'
 FIM_ENDPOINT = 'https://fim.wim.usgs.gov/fim/'

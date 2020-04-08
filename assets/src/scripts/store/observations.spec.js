@@ -83,6 +83,21 @@ describe('store/observations module', () => {
                 });
             });
 
+            it('Expects a successful fetch request with no time series sets the store to show empty array', (done) => {
+                const promise = store.dispatch(retrieveAvailableDVTimeSeries('USGS-12345678'));
+
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 200,
+                    responseText: MOCK_EMPTY_AVAILABLE_TIME_SERIES
+                });
+
+                promise.then(() => {
+                    expect(store.getState().observationsData.availableDVTimeSeries).toEqual([]);
+
+                    done();
+                });
+            });
+
             it('Expects a bad fetch request to not update the store', (done) => {
                 const promise = store.dispatch(retrieveAvailableDVTimeSeries('USGS-12345678'));
                 jasmine.Ajax.requests.mostRecent().respondWith({
@@ -92,7 +107,7 @@ describe('store/observations module', () => {
 
                 promise.then(() => {
                     const state = store.getState();
-                    expect(state.observationsData.availableDVTimeSeries).not.toBeDefined();
+                    expect(state.observationsData.availableDVTimeSeries).toEqual([]);
 
                     done();
                 });
@@ -207,6 +222,21 @@ const MOCK_AVAILABLE_TIME_SERIES = `
       "id": "AGENCY-FEATURE-TIMESERIES"
     }
   ]
+}`;
+
+const MOCK_EMPTY_AVAILABLE_TIME_SERIES = `{
+  "type": "Feature",
+  "id": "USGS-07227448",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      0
+    ]
+  },
+  "properties": {
+    "samplingFeatureName": "Yahara River at Main St."
+  },
+  "timeSeries": []
 }`;
 
 const MOCK_DV_TIME_SERIES = `{
