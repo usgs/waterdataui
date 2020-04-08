@@ -2,7 +2,7 @@ import config from '../config';
 
 import {fetchNetworkFeatures} from './network-data';
 
-describe('network-data module', () => {
+describe('web-services/network-data module', () => {
     beforeEach(() => {
         jasmine.Ajax.install();
     });
