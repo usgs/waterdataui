@@ -7,10 +7,23 @@ import {attachToNode} from './index';
 describe('components/dailyValueHydrograph/index', () => {
     const TEST_STATE = {
         observationsData: {
-            timeSeries: {
-                '12345' : {
+            availableDVTimeSeries: [{
+                parameterCode: '72019',
+                statisticCode: '00001',
+                id: 'USGS-12345-1122'
+            },{
+                parameterCode: '72019',
+                statisticCode: '00002',
+                id: 'USGS-12345-1123'
+            },{
+                parameterCode: '00060',
+                statisticCode: '00001',
+                id: 'USGS-12345-1124'
+            }],
+            dvTimeSeries: {
+                '1122' : {
                     type: 'Feature',
-                    id: '12345',
+                    id: '1122',
                     properties: {
                         observationType: 'MeasureTimeseriesObservation',
                         phenomenonTimeStart: '2010-01-01',
@@ -33,7 +46,7 @@ describe('components/dailyValueHydrograph/index', () => {
             }
         },
         observationsState: {
-            currentTimeSeriesId: '12345',
+            currentTimeSeriesId: '1122',
             cursorOffset: 1262476800000
         },
         ui: {
@@ -44,6 +57,16 @@ describe('components/dailyValueHydrograph/index', () => {
 
     let testDiv;
 
+    const INITIAL_STATE = {
+        observationsData: {},
+        observationsState: {},
+        ui: {
+            windowWidth: 1024,
+            width: 800
+        }
+    }
+    let store;
+
     beforeEach(() => {
         jasmine.Ajax.install();
         testDiv = select('body').append('div');
@@ -51,8 +74,7 @@ describe('components/dailyValueHydrograph/index', () => {
             .attr('class', 'loading-indicator-container');
         testDiv.append('div')
             .attr('class', 'graph-container');
-
-        spyOn(Actions, 'retrieveDailyValueData').and.callThrough();
+        store = configureStore(INITIAL_STATE);
     });
 
     afterEach(() => {
@@ -61,18 +83,77 @@ describe('components/dailyValueHydrograph/index', () => {
     });
 
     it('Expects that an empty siteno will render an error alert', () => {
-        attachToNode(configureStore(), testDiv.node());
+        attachToNode(store, testDiv.node());
 
         expect(testDiv.selectAll('.usa-alert--error').size()).toBe(1);
-        expect(Actions.retrieveDailyValueData).not.toHaveBeenCalled();
+        expect(jasmine.Ajax.requests.count()).toBe(0);
     });
 
-    it('Expects that if siteno and timeSeriesId are defined the daily value data will be fetched and the loading indicator shown', () => {
-        attachToNode(configureStore(), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
+    it('Expects that if siteno is defined, the available time series is fetched', () => {
+        attachToNode(store, testDiv.node(), {siteno: '12345'});
 
         expect(testDiv.selectAll('.usa-alert--error').size()).toBe(0);
-        expect(Actions.retrieveDailyValueData).toHaveBeenCalledWith('USGS-1213', '12345') ;
         expect(testDiv.selectAll('.loading-indicator').size()).toBe(1);
+        expect(jasmine.Ajax.requests.mostRecent().url).toContain('USGS-12345');
+    });
+
+    it('Expects that once the available time series is fetched and contains a valid time series id, the time series is fetched', (done) => {
+        attachToNode(store, testDiv.node(), {siteno: '12345'});
+        jasmine.Ajax.requests.mostRecent().respondWith({
+            status: 200,
+            response: JSON.stringify({
+                timeSeries: TEST_STATE.observationsData.availableDVTimeSeries
+            })
+        });
+
+        window.setTimeout(() => {
+            const url = jasmine.Ajax.requests.mostRecent().url;
+            expect(store.getState().observationsData.availableDVTimeSeries).toEqual(TEST_STATE.observationsData.availableDVTimeSeries)
+            expect(url).toContain('USGS-12345');
+            expect(url).toContain('1122');
+            done();
+        }, 1000);
+    });
+
+    it('Expects that if there is not a valid time series that the alert is shown indicating no data', (done) => {
+        attachToNode(store, testDiv.node(), {siteno: '12345'});
+        jasmine.Ajax.requests.mostRecent().respondWith({
+            status: 200,
+            response: JSON.stringify({
+                timeSeries: TEST_STATE.observationsData.availableDVTimeSeries.slice(1)
+            })
+        });
+        window.setTimeout(() => {
+            expect(jasmine.Ajax.requests.count()).toBe(1);
+            expect(testDiv.selectAll('.usa-alert--info').size()).toBe(1);
+            expect(testDiv.selectAll('.loading-indicator').size()).toBe(0);
+            done();
+        }, 1000);
+    });
+
+    fit('Expect that a successful fetch of the dv series removes loading indicator and renders the expected elements', (done) => {
+        attachToNode(store, testDiv.node(), {siteno: '12345'});
+        jasmine.Ajax.requests.mostRecent().respondWith({
+            status: 200,
+            response: JSON.stringify({
+                timeSeries: TEST_STATE.observationsData.availableDVTimeSeries.slice(1)
+            })
+        });
+        window.setTimeout(() => {
+            jasmine.Ajax.requests.mostRecent().respondWith({
+                status: 200,
+                responseText: JSON.stringify(TEST_STATE.observationsData.dvTimeSeries)
+            });
+
+            window.setTimeout(() => {
+                console.log('Waiting for retrieving DV time series')
+                expect(testDiv.selectAll('.loading-indicator').size()).toBe(0);
+                done();
+            }, 1000)
+
+            done();
+        }, 1000);
+
     });
 
     it('Expects that if the fetch is successful the current observations time series id is updated in the store and the loading indicator is no longer visible', (done) => {

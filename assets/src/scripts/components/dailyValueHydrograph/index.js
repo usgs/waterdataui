@@ -55,10 +55,12 @@ export const attachToNode = function (store,
         .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
     const fetchAvailableDVTimeSeries = store.dispatch(retrieveAvailableDVTimeSeries(monitoringLocationId));
     fetchAvailableDVTimeSeries.then(() => {
+        console.log('Successful fetchAvailableDVTimeSeries');
         const defaultTimeSeriesId = getDefaultTimeSeriesId(getAvailableDVTimeSeries(store.getState()));
         if (defaultTimeSeriesId) {
             store.dispatch(retrieveDVTimeSeries(monitoringLocationId, defaultTimeSeriesId))
                 .then(() => {
+                    console.log('retrievedDVTimeSeries')
                     loadingIndicator.call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
                     let graphContainer = nodeElem.select('.graph-container');
                     graphContainer
