@@ -5,13 +5,12 @@ import {createStructuredSelector} from 'reselect';
 import {drawCursorSlider} from '../../d3-rendering/cursor-slider';
 import {drawFocusCircles, drawFocusOverlay, drawFocusLine} from '../../d3-rendering/graph-tooltip';
 import {link} from '../../lib/d3-redux';
-import {getObservationsCursorOffset, getCurrentObservationsTimeSeriesUnitOfMeasure} from '../../selectors/observations-selector';
+import {getDVGraphCursorOffset, getCurrentDVTimeSeriesUnitOfMeasure} from '../../selectors/observations-selector';
 import {setDVGraphCursorOffset} from '../../store/observations';
 
-import {APPROVED, ESTIMATED} from './time-series-graph';
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getCursorPoint, getDataAtCursor, getCursorEpochTime} from './selectors/time-series-data';
+import {getCursorPoint, getDataAtCursor, getCursorEpochTime, APPROVED, ESTIMATED} from './selectors/time-series-data';
 
 /*
  * Renders the tooltip text representing the data at the current cursor position
@@ -35,7 +34,7 @@ export const drawTooltipText = function(elem, store) {
 
         }, createStructuredSelector({
             pointAtCursorOffset: getDataAtCursor,
-            unitOfMeasure: getCurrentObservationsTimeSeriesUnitOfMeasure,
+            unitOfMeasure: getCurrentDVTimeSeriesUnitOfMeasure,
             layout: getMainLayout
         })));
 };
@@ -78,7 +77,7 @@ export const drawTooltipCursorSlider = function(elem, store) {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} 25`);
             }, getMainLayout))
         .call(link(store, drawCursorSlider, createStructuredSelector({
-            cursorOffset: getObservationsCursorOffset,
+            cursorOffset: getDVGraphCursorOffset,
             xScale: getMainXScale,
             layout: getMainLayout
         }), store, setDVGraphCursorOffset));

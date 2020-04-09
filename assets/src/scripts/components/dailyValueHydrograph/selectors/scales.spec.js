@@ -3,7 +3,7 @@ import {getMainXScale, getBrushXScale, getMainYScale} from './scales';
 describe('components/dailyValueHydrograph/selectors/scales', () => {
     const TEST_STATE = {
         observationsData: {
-            timeSeries: {
+            dvTimeSeries: {
                 '12345' : {
                     type: 'Feature',
                     id: '12345',
@@ -17,7 +17,7 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
             }
         },
         observationsState: {
-            currentTimeSeriesId: '12345'
+            currentDVTimeSeriesId: '12345'
         },
         ui: {
             windowWidth: 1024,
@@ -112,7 +112,7 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
            const result = getMainYScale({
                ...TEST_STATE,
                observationsData: {
-                   timeSeries: {
+                   dvTimeSeries: {
                        '12345': {
                            type: 'Feature',
                            id: '12345',

@@ -3,8 +3,8 @@ import {scaleLinear} from 'd3-scale';
 import {createSelector} from 'reselect';
 
 import {
-    getCurrentObservationsTimeSeriesTimeRange,
-    getCurrentObservationsTimeSeriesValueRange
+    getCurrentDVTimeSeriesTimeRange,
+    getCurrentDVTimeSeriesValueRange
 } from '../../../selectors/observations-selector';
 
 import {getLayout} from './layout';
@@ -15,7 +15,7 @@ import {getLayout} from './layout';
  */
 export const getXScale = memoize((kind) =>createSelector(
     getLayout(kind),
-    getCurrentObservationsTimeSeriesTimeRange,
+    getCurrentDVTimeSeriesTimeRange,
     state => state.observationsState.dvGraphBrushOffset,
     (layout, timeRange,dvGraphBrushOffset) => {
         let xScale = scaleLinear()
@@ -38,7 +38,7 @@ export const getBrushXScale = getXScale('BRUSH');
  */
 export const getYScale = memoize((kind) =>createSelector(
     getLayout(kind),
-    getCurrentObservationsTimeSeriesValueRange,
+    getCurrentDVTimeSeriesValueRange,
     (layout, valueRange) => {
         const PADDING_RATIO = 0.2;
         let yScale = scaleLinear();

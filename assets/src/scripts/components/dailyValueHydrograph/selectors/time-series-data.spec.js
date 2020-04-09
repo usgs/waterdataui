@@ -8,25 +8,25 @@ import {
 describe('time-series-data module', () => {
     const TEST_STATE = {
         observationsData: {
-            timeSeries: {
+            dvTimeSeries: {
                 '12345': {
                     type: 'Feature',
                     id: '12345',
                     properties: {
                         phenomenonTimeStart: '2018-01-02',
                         phenomenonTimeEnd: '2018-01-05',
-                        timeStep: ['2018-01-02', '2018-01-03', '2018-01-04', '2018-01-05'],
-                        result: ['5.0', '4.0', '6.1', '3.2'],
+                        timeStep: ['2018-01-05', '2018-01-03', '2018-01-02', '2018-01-04'],
+                        result: [ '3.2', '4.0', '5.0', '6.1'],
                         approvals: [['Approved'], ['Approved'], ['Approved'], ['Approved']],
                         nilReason: [null, 'AA', null, null],
-                        qualifiers: [null, null, ['ICE'], ['ICE']],
-                        grades: [['50'], ['50'], ['60'], ['60']]
+                        qualifiers: [['ICE'], null, null, ['ICE']],
+                        grades: [['60'], ['50'], ['50'], ['60']]
                     }
                 }
             }
         },
         observationsState: {
-            currentTimeSeriesId: '12345'
+            currentDVTimeSeriesId: '12345'
         },
         ui: {
             windowWidth: 1024,
@@ -87,7 +87,7 @@ describe('time-series-data module', () => {
         it('Should return a two line segments if time series has two day gap', () => {
             const result = getCurrentTimeSeriesLineSegments({
                 observationsData: {
-                    timeSeries: {
+                    dvTimeSeries: {
                         '12345': {
                             type: 'Feature',
                             id: '12345',
@@ -103,7 +103,7 @@ describe('time-series-data module', () => {
                     }
                 },
                 observationsState: {
-                    currentTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: '12345'
                 }
             });
             expect(result.length).toBe(2);
@@ -114,7 +114,7 @@ describe('time-series-data module', () => {
         it('should return two line segment if the time series approvals change', () => {
             const result = getCurrentTimeSeriesLineSegments({
                 observationsData: {
-                    timeSeries: {
+                    dvTimeSeries: {
                         '12345': {
                             type: 'Feature',
                             id: '12345',
@@ -130,7 +130,7 @@ describe('time-series-data module', () => {
                     }
                 },
                 observationsState: {
-                    currentTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: '12345'
                 }
             });
             expect(result.length).toBe(2);
@@ -149,7 +149,7 @@ describe('time-series-data module', () => {
                 ...TEST_STATE,
                 observationsState: {
                     ...TEST_STATE.observationsState,
-                    cursorOffset: 86400000
+                    dvGraphCursorOffset: 86400000
                 }
             })).toEqual(1514937600000);
         });
@@ -172,7 +172,7 @@ describe('time-series-data module', () => {
                 ...TEST_STATE,
                 observationsState: {
                     ...TEST_STATE.observationsState,
-                    cursorOffset: 86400000
+                    dvGraphCursorOffset: 86400000
                 }
             })).toEqual({
                 value: '4.0',

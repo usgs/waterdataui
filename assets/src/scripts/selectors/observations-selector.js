@@ -1,42 +1,43 @@
 import {extent} from 'd3-array';
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
-
-export const getObservationsCursorOffset = (state) => state.observationsState.cursorOffset || null;
-
 /*
- * Return a selector function which returns the current time series id or null if none define
- * @return {Function} - selector function which returns {String}
+ * Selectors to return observations state information or null if missing
  */
-export const getCurrentObservationsTimeSeriesId =
-    (state) => state.observationsState.currentTimeSeriesId ? state.observationsState.currentTimeSeriesId : null;
+export const getCurrentDVTimeSeriesId =
+    (state) => state.observationsState.currentDVTimeSeriesId ? state.observationsState.currentDVTimeSeriesId : null;
+
+export const getDVGraphCursorOffset = (state) => state.observationsState.dvGraphCursorOffset || null;
+export const getDVGraphBrushOffset = (state) => state.observationsState.dvGraphBrushOffset || null;
 
 /*
- * Return a select function which returns all time series or null if none are defined
- * @return {Function} - selector function which returns {Object}
+ * Selectors to return observations data or null if mssing
  */
-export const getAllObservationsTimeSeries = (state) => state.observationsData.timeSeries ? state.observationsData.timeSeries : null;
+export const getAvailableDVTimeSeries =
+    (state) => state.observationsData.availableDVTimeSeries ? state.observationsData.availableDVTimeSeries : null;
+export const getAllDVTimeSeries =
+    (state) => state.observationsData.dvTimeSeries ? state.observationsData.dvTimeSeries : null;
 
 /*
- * Return a selector function which will return true if the current timeSeries is in the state
+ * Return a selector function which will return true if the current DV timeSeries is in the state
  * @return selector function which returns Boolean
  */
-export const hasCurrentObservationsTimeSeries = createSelector(
-    getCurrentObservationsTimeSeriesId,
-    getAllObservationsTimeSeries,
+export const hasCurrentDVTimeSeries = createSelector(
+    getCurrentDVTimeSeriesId,
+    getAllDVTimeSeries,
     (timeSeriesId, allTimeSeries) => {
         return timeSeriesId && allTimeSeries && allTimeSeries[timeSeriesId] ? true : false;
     }
 );
 
 /*
- * Return a selector function which returns the specific timeSeries or null if not in the state
+ * Return a selector function which returns the current DV timeSeries or null if not in the state
  * @param {String} timeSeriesId
  * @return {Function} - selector function returns an Object
  */
-export const getCurrentObservationsTimeSeries = createSelector(
-    getCurrentObservationsTimeSeriesId,
-    getAllObservationsTimeSeries,
+export const getCurrentDVTimeSeries = createSelector(
+    getCurrentDVTimeSeriesId,
+    getAllDVTimeSeries,
     (timeSeriesId, allTimeSeries) => {
         return timeSeriesId && allTimeSeries && allTimeSeries[timeSeriesId] ? allTimeSeries[timeSeriesId] : null;
     }
@@ -46,8 +47,8 @@ export const getCurrentObservationsTimeSeries = createSelector(
  * Return a selector function which returns a String representing the unit of measure for the current observations time series
  * @return {Function} - selector function returns a String. String will be empty if no current time series available.
  */
-export const getCurrentObservationsTimeSeriesUnitOfMeasure = createSelector(
-    getCurrentObservationsTimeSeries,
+export const getCurrentDVTimeSeriesUnitOfMeasure = createSelector(
+    getCurrentDVTimeSeries,
     (currentTimeSeries) => {
         return currentTimeSeries ? currentTimeSeries.properties.unitOfMeasureName : '';
     }
@@ -60,8 +61,8 @@ export const getCurrentObservationsTimeSeriesUnitOfMeasure = createSelector(
  * the time series is not defined
  * @return {Function} - selector function returns an Object with startTime and endTime properties
  */
-export const getCurrentObservationsTimeSeriesTimeRange = createSelector(
-    getCurrentObservationsTimeSeries,
+export const getCurrentDVTimeSeriesTimeRange = createSelector(
+    getCurrentDVTimeSeries,
     (currentTimeSeries) => {
         let timeRange = null;
         if (currentTimeSeries) {
@@ -79,8 +80,8 @@ export const getCurrentObservationsTimeSeriesTimeRange = createSelector(
  * the time series is not defined
  * @return {Function} - selector function returns an Object with min and max Number properties
  */
-export const getCurrentObservationsTimeSeriesValueRange = createSelector(
-   getCurrentObservationsTimeSeries,
+export const getCurrentDVTimeSeriesValueRange = createSelector(
+   getCurrentDVTimeSeries,
     (currentTimeSeries) => {
         let valueRange = null;
         if (currentTimeSeries && currentTimeSeries.properties.result && currentTimeSeries.properties.result.length) {

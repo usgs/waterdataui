@@ -1,6 +1,7 @@
 import {select} from 'd3-selection';
-import {includes} from 'lodash/includes';
+import includes from 'lodash/includes';
 
+import {getAvailableDVTimeSeries} from '../../selectors/observations-selector';
 import {retrieveAvailableDVTimeSeries, retrieveDVTimeSeries} from '../../store/observations';
 
 import {drawErrorAlert, drawInfoAlert} from '../../d3-rendering/alerts';
@@ -12,23 +13,34 @@ import {drawTimeSeriesLegend} from './legend';
 import {drawGraphBrush} from './graph-brush';
 
 const GROUND_WATER_LEVELS_PARM_CD  = ['62610', '62611', '72019', '72020', '72150', '72226', '72227', '72228', '72229', '72230', '72231', '72232'];
-const MAX_STATISTICS_CODE = '00001';
+const MAX_STATISTIC_CODE = '00001';
 
 const getDefaultTimeSeriesId = function(availableTimeSeries) {
-    const result = availableTimeSeries
+    const groundWaterTimeSeries = availableTimeSeries
         .filter(ts => includes(GROUND_WATER_LEVELS_PARM_CD, ts.parameterCode))
-        .filters(ts => ts.statisticsCode === MAX_STATISTICS_CODE);
-    return result.length ? result : undefined;
-};
+        .filter(ts => ts.statisticCode === MAX_STATISTIC_CODE);
+    if (groundWaterTimeSeries.length === 0) {
+        return undefined;
+    } else {
+        // TODO: This code to split the id will be removed as part of IOW-444 once the time-series-service has been updated.
+        const splitIds = groundWaterTimeSeries[0]['id'].split('-');
+        return splitIds[2];
+    }
 
+
+};
+/*
+ * Creates the daily value hydrograph component on the DOM element node for siteno and state
+ * information that is stored in the Redux store.
+ * @param {Object} store - Redux store
+ * @param {Object} node - DOM element parent for this component
+ * @param {String} siteno - the site number of the monitoring location.
+ */
 export const attachToNode = function (store,
                                       node,
                                       {
                                           siteno
                                       } = {}) {
-    // Not sure how we will be getting the time series id but for now default to this which will
-    // only work for the site USGS-414240072033201
-
     const nodeElem = select(node);
     if (!siteno) {
         nodeElem.call(drawErrorAlert, {
@@ -43,7 +55,7 @@ export const attachToNode = function (store,
         .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
     const fetchAvailableDVTimeSeries = store.dispatch(retrieveAvailableDVTimeSeries(monitoringLocationId));
     fetchAvailableDVTimeSeries.then(() => {
-        const defaultTimeSeriesId = getDefaultTimeSeriesId(store.getState().observationsState.availableDVTimeSeries);
+        const defaultTimeSeriesId = getDefaultTimeSeriesId(getAvailableDVTimeSeries(store.getState()));
         if (defaultTimeSeriesId) {
             store.dispatch(retrieveDVTimeSeries(monitoringLocationId, defaultTimeSeriesId))
                 .then(() => {

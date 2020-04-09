@@ -5,7 +5,7 @@ describe('DV: Legend module', () => {
 
     const TEST_STATE = {
         observationsData: {
-            timeSeries: {
+            dvTimeSeries: {
                 '12345': {
                     type: 'Feature',
                     id: '12345',
@@ -23,7 +23,7 @@ describe('DV: Legend module', () => {
             }
         },
         observationsState: {
-            currentTimeSeriesId: '12345'
+            currentDVTimeSeriesId: '12345'
         },
         ui: {
             windowWidth: 1024,
@@ -38,7 +38,7 @@ describe('DV: Legend module', () => {
                 ...TEST_STATE,
                 observationsData: {
                     ...TEST_STATE.observationsData,
-                    timeSeries: {}
+                    dvTimeSeries: {}
                 }
             };
 

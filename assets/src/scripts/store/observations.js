@@ -75,8 +75,9 @@ export const retrieveAvailableDVTimeSeries = function(monitoringLocationId) {
  * The dispatched action returns a Promise that resolves when the data has been fetched.
  */
 export const retrieveDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
-    return function(dispatch, store) {
-        if (timeSeriesId in store.getState().observationsData.dvTimeSeries) {
+    return function(dispatch, getState) {
+        const state = getState();
+        if (state.observationsData.dvTimeSeries && timeSeriesId in state.observationsData.dvTimeSeries) {
             dispatch(setCurrentDVTimeSeriesId(timeSeriesId));
             return Promise.resolve();
         }

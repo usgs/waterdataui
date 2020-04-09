@@ -3,20 +3,17 @@ import includes from 'lodash/includes';
 import {createStructuredSelector} from 'reselect';
 
 import {addSVGAccessibility} from '../../d3-rendering/accessibility';
-import {link} from '../../lib/d3-redux';
-
 import {appendAxes} from '../../d3-rendering/axes';
+import {link} from '../../lib/d3-redux';
 
 import {getXAxis, getYAxis} from './selectors/axes';
 import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesTitle, getCurrentTimeSeriesYTitle} from './selectors/labels';
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-data';
+import {getCurrentTimeSeriesLineSegments, APPROVED, ESTIMATED} from './selectors/time-series-data';
 
 import {drawTooltipFocus, drawTooltipText} from './tooltip';
 
-export const APPROVED = 'Approved';
-export const ESTIMATED = 'Estimated';
 const CIRCLE_RADIUS_SINGLE_PT = 1;
 
 const createTitle = function(elem, store) {
@@ -49,6 +46,15 @@ const drawDataLine = function (group, {lineSegment, xScale, yScale}) {
         .classed('estimated', includes(lineSegment.approvals, ESTIMATED));
 };
 
+/*
+ * Renders the line segments in lines using the D3 scales on the svg or group, elem, adding
+ * the clip rectangle if enableClip
+ * @param {D3 selection for svg or group} elem
+ * @param {Array of Object} lines
+ * @param {D3 scale} xScale
+ * @param {D3 scale} yScale
+ * @param {Boolean} enableClip
+ */
 export const drawDataLines = function (elem, {lines, xScale, yScale, enableClip}) {
     elem.select('#daily-values-lines-group').remove();
 
@@ -63,6 +69,11 @@ export const drawDataLines = function (elem, {lines, xScale, yScale, enableClip}
     });
 };
 
+/*
+ * Renders the time series graph and tooltip
+ * @param {D3 selection} elem
+ * @param {Redux store} store
+ */
 export const drawTimeSeriesGraph = function(elem, store) {
 
     const svg = elem.append('div')

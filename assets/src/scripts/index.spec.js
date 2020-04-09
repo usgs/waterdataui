@@ -23,13 +23,13 @@ import './d3-rendering/legend.spec';
 import './d3-rendering/loading-indicator.spec';
 import './d3-rendering/markers.spec';
 import './d3-rendering/tick-marks.spec';
-
+*/
 
 import './components/dailyValueHydrograph/selectors/labels.spec';
 import './components/dailyValueHydrograph/selectors/scales.spec';
 import './components/dailyValueHydrograph/selectors/time-series-data.spec';
 import './components/dailyValueHydrograph/selectors/legend-data.spec';
-
+/*
 import './components/dailyValueHydrograph/index.spec';
 import './components/dailyValueHydrograph/time-series-graph.spec';
 import './components/dailyValueHydrograph/graph-brush.spec';
@@ -67,7 +67,9 @@ import './schema.spec';
 import './selectors/flood-data-selector.spec';
 import './selectors/nldi-data-selector.spec';
 import './selectors/median-statistics-selector.spec';
+*/
 import './selectors/observations-selector.spec';
+/*
 import './selectors/time-series-selector.spec';
 
 import './store/flood-data-reducer.spec';
