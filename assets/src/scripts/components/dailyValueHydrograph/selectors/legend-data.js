@@ -54,10 +54,10 @@ const getUniqueClasses = createSelector(
         };
         //TODO: default is for any approvals that are not Approved or Estimated. This will likely need to change.
         tsLineSegments.forEach((segment) => {
-            result.approved = result.approved || segment.approvals.includes(APPROVED);
-            result.estimated = result.estimated || segment.approvals.includes(ESTIMATED);
+            result.approved = result.approved || includes(segment.approvals, APPROVED);
+            result.estimated = result.estimated || includes(segment.approvals, ESTIMATED);
             result.default =
-                result.default || !(segment.approvals.includes(APPROVED) && !segment.approvals.includes(ESTIMATED));
+                result.default || (!(includes(segment.approvals, APPROVED)) && !(includes(segment.approvals, ESTIMATED)));
         });
         return result;
     }

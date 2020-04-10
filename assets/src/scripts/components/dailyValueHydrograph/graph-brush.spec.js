@@ -8,7 +8,7 @@ describe ('graph-brush module', () => {
 
     const TEST_STATE = {
         observationsData: {
-            timeSeries: {
+            dvTimeSeries: {
                 '12345' : {
                     type: 'Feature',
                     id: '12345',
@@ -34,8 +34,8 @@ describe ('graph-brush module', () => {
             }
         },
         observationsState: {
-            currentTimeSeriesId: '12345',
-            cursorOffset: 1262476800000,
+            currentDVTimeSeriesId: '12345',
+            dvGraphCursorOffset: 1262476800000,
             dvGraphBrushOffset: undefined
         },
         ui: {

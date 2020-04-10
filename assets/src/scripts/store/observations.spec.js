@@ -3,7 +3,7 @@ import {default as thunk} from 'redux-thunk';
 
 import {Actions, observationsDataReducer, observationsStateReducer} from './observations';
 
-fdescribe('store/observations module', () => {
+describe('store/observations module', () => {
     /* eslint no-use-before-define: 0 */
     let store;
 

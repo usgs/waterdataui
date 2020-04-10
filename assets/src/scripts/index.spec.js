@@ -8,11 +8,7 @@
  */
 
 import './polyfills';
-/*
-import './web-services/observations.spec';
-*/
-import './store/observations.spec';
-/*
+
 import './ajax.spec';
 
 import './d3-rendering/accessibility.spec';
@@ -25,18 +21,16 @@ import './d3-rendering/loading-indicator.spec';
 import './d3-rendering/markers.spec';
 import './d3-rendering/tick-marks.spec';
 
-
 import './components/dailyValueHydrograph/selectors/labels.spec';
 import './components/dailyValueHydrograph/selectors/scales.spec';
 import './components/dailyValueHydrograph/selectors/time-series-data.spec';
 import './components/dailyValueHydrograph/selectors/legend-data.spec';
-*/
-import './components/dailyValueHydrograph/index.spec';
-/*
-import './components/dailyValueHydrograph/time-series-graph.spec';
+
 import './components/dailyValueHydrograph/graph-brush.spec';
+import './components/dailyValueHydrograph/index.spec';
+import './components/dailyValueHydrograph/time-series-graph.spec';
 import './components/dailyValueHydrograph/tooltip.spec';
-/*
+
 import './components/embed.spec';
 
 import './components/hydrograph/audible.spec';
@@ -69,15 +63,14 @@ import './schema.spec';
 import './selectors/flood-data-selector.spec';
 import './selectors/nldi-data-selector.spec';
 import './selectors/median-statistics-selector.spec';
-*/
 import './selectors/observations-selector.spec';
-/*
 import './selectors/time-series-selector.spec';
 
 import './store/flood-data-reducer.spec';
-import './store/nldi-data-reducer.spec';
 import './store/flood-state-reducer.spec';
 import './store/index.spec';
+import './store/nldi-data-reducer.spec';
+import './store/observations.spec';
 import './store/series-reducer.spec';
 import './store/time-series-state-reducer.spec';
 import './store/ui-reducer.spec';
@@ -88,14 +81,13 @@ import './utils.spec';
 
 import './web-services/flood-data.spec';
 import './web-services/models.spec';
+import './web-services/network-data.spec';
 import './web-services/nldi-data.spec';
-import './web-services/observations-spec';
+import './web-services/observations.spec';
 import './web-services/statistics-data.spec';
 
-import './web-services/network-data.spec';
-import './networks/store/network-store.spec';
-import './networks/store/network-data-reducer.spec';
-import './networks/selectors/network-data-selector.spec';
 import './networks/network-component/index.spec';
 import './networks/network-component/network-legend.spec';
-*/
+import './networks/selectors/network-data-selector.spec';
+import './networks/store/network-store.spec';
+import './networks/store/network-data-reducer.spec';

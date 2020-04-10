@@ -7,7 +7,7 @@ import {drawTooltipFocus, drawTooltipText, drawTooltipCursorSlider} from './tool
 describe('dailyValueHydrograph/tooltip module', () => {
     const TEST_STATE = {
         observationsData: {
-            timeSeries: {
+            dvTimeSeries: {
                 '12345': {
                     type: 'Feature',
                     id: '12345',
@@ -26,8 +26,8 @@ describe('dailyValueHydrograph/tooltip module', () => {
             }
         },
         observationsState: {
-            currentTimeSeriesId: '12345',
-            cursorOffset: 86400000
+            currentDVTimeSeriesId: '12345',
+            dvGraphCursorOffset: 86400000
         },
         ui: {
             windowWidth: 1024,
@@ -64,7 +64,7 @@ describe('dailyValueHydrograph/tooltip module', () => {
                 ...TEST_STATE,
                 observationsState: {
                     ...TEST_STATE.observationsState,
-                    cursorOffset: null
+                    dvGraphCursorOffset: null
                 }
             });
             drawTooltipText(div, store);

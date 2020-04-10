@@ -68,7 +68,5 @@ describe('Legend module', () => {
             expect(container.selectAll('rect').size()).toBe(1);
             expect(container.selectAll('text').size()).toBe(4);
         });
-
     });
-
 });
