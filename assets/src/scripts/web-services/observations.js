@@ -13,7 +13,7 @@ const fetchObservationsData = function(queryUrl) {
             console.log(`Unable to fetch data from ${url} with reason: ${reason}`);
             return {};
         });
-}
+};
 
 /*
  * Fetches the available DV time series and returns a Promise that returns a

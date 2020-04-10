@@ -57,7 +57,7 @@ const getUniqueClasses = createSelector(
             result.approved = result.approved || includes(segment.approvals, APPROVED);
             result.estimated = result.estimated || includes(segment.approvals, ESTIMATED);
             result.default =
-                result.default || (!(includes(segment.approvals, APPROVED)) && !(includes(segment.approvals, ESTIMATED)));
+                result.default || !includes(segment.approvals, APPROVED) && !includes(segment.approvals, ESTIMATED);
         });
         return result;
     }
