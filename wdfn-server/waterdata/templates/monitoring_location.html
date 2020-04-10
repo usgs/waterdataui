@@ -217,4 +217,8 @@
             <h1>Error: HTTP {{ status_code }} -- {{ reason }}</h1>
         {% endif %}
     </div>
+
+    {%  if config.TOUCHPOINT_SCRIPT %}
+        {{ config.TOUCHPOINT_SCRIPT | safe }}
+    {%  endif %}
 {% endblock content %}
