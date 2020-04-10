@@ -43,7 +43,7 @@ HYDRO_ENDPOINT = 'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/se
 
 CITIES_ENDPOINT = 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Major_Cities/FeatureServer/0'
 
-TOUCHPOINT_SCRIPT= '';
+TOUCHPOINT_SCRIPT= ''
 LOGGING_ENABLED = True
 LOGGING_DIRECTORY = None
 LOGGING_LEVEL = logging.DEBUG
