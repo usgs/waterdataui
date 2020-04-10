@@ -85,6 +85,9 @@ svg {
   .y-axis, .secondary-y-axis {
     text {
       fill: black;
+    }
+
+    .y-axis-label, .secondary-y-axis-label {
       text-anchor: middle;
       display: none;
       font-size: 1.5em;
