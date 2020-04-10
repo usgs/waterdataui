@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.29.0...master)
+### Added
+- Add config variable, TOUCHPOINT_SCRIPT, which is used to add the touchpoint script
+to the monitoring-location pages. By default the script is empty and the feature is disabled.
+
 ### Fixed
 - Fixed bug when drawing custom time series and then changing the time was drawing extraneous lines
 - Fixed scaling of the brush on mobile.
