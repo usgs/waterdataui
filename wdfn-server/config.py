@@ -49,6 +49,7 @@ NLDI_SERVICES_DISTANCE = '322'
 # Networks
 NETWORK_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections'
 
+TOUCHPOINT_SCRIPT = ''
 LOGGING_ENABLED = True
 LOGGING_DIRECTORY = None
 LOGGING_LEVEL = logging.DEBUG
