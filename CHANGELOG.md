@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.29.0...master)
+### Added
+- The new statistical time series service is used to fetch the available statistical
+time series and if daily max and a water level parameter code, the time series is displayed.
+
 ### Fixed
 - Fixed bug when drawing custom time series and then changing the time was drawing extraneous lines
 - Fixed scaling of the brush on mobile.
