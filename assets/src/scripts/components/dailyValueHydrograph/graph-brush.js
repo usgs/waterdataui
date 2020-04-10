@@ -5,7 +5,7 @@ import {createStructuredSelector} from 'reselect';
 import {appendXAxis} from '../../d3-rendering/axes';
 import {link} from '../../lib/d3-redux';
 import {getDVGraphBrushOffset} from '../../selectors/observations-selector';
-import {setDVGraphBrushOffset} from '../../store/observations';
+import {Actions} from '../../store/observations';
 
 import {getBrushLayout} from './selectors/layout';
 import {getXAxis} from './selectors/axes';
@@ -28,7 +28,7 @@ export const drawGraphBrush = function(container, store) {
 
             const adjustedBrush = brushRange.map(xScale.invert, xScale);
 
-            store.dispatch(setDVGraphBrushOffset(adjustedBrush[0]- xScale.domain()[0], xScale.domain()[1] - adjustedBrush[1]));
+            store.dispatch(Actions.setDVGraphBrushOffset(adjustedBrush[0]- xScale.domain()[0], xScale.domain()[1] - adjustedBrush[1]));
         }
     };
 

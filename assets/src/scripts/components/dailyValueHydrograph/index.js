@@ -2,7 +2,7 @@ import {select} from 'd3-selection';
 import includes from 'lodash/includes';
 
 import {getAvailableDVTimeSeries} from '../../selectors/observations-selector';
-import {retrieveAvailableDVTimeSeries, retrieveDVTimeSeries} from '../../store/observations';
+import {Actions} from '../../store/observations';
 
 import {drawErrorAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
@@ -53,14 +53,12 @@ export const attachToNode = function (store,
     const monitoringLocationId = `USGS-${siteno}`;
     const loadingIndicator = nodeElem.select('.loading-indicator-container')
         .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
-    const fetchAvailableDVTimeSeries = store.dispatch(retrieveAvailableDVTimeSeries(monitoringLocationId));
+    const fetchAvailableDVTimeSeries = store.dispatch(Actions.retrieveAvailableDVTimeSeries(monitoringLocationId));
     fetchAvailableDVTimeSeries.then(() => {
-        console.log('Successful fetchAvailableDVTimeSeries');
         const defaultTimeSeriesId = getDefaultTimeSeriesId(getAvailableDVTimeSeries(store.getState()));
         if (defaultTimeSeriesId) {
-            store.dispatch(retrieveDVTimeSeries(monitoringLocationId, defaultTimeSeriesId))
+            store.dispatch(Actions.retrieveDVTimeSeries(monitoringLocationId, defaultTimeSeriesId))
                 .then(() => {
-                    console.log('retrievedDVTimeSeries')
                     loadingIndicator.call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
                     let graphContainer = nodeElem.select('.graph-container');
                     graphContainer

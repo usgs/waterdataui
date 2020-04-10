@@ -9,7 +9,7 @@ const INITIAL_OBSERVATIONS_DATA_STATE = {
  * Synchronous Redux action to set the available dv time series
  * @param {Object} availableDVTimeSeries
  */
-export const setAvailableDVTimeSeries = function (availableTimeSeries) {
+const setAvailableDVTimeSeries = function (availableTimeSeries) {
     return {
         type: 'SET_AVAILABLE_DV_TIME_SERIES',
         availableTimeSeries
@@ -21,7 +21,7 @@ export const setAvailableDVTimeSeries = function (availableTimeSeries) {
  * @param {String} timeSeriesId
  * #param {Object} data
  */
-export const addDVTimeSeries = function(timeSeriesId, data) {
+const addDVTimeSeries = function(timeSeriesId, data) {
     return {
         type: 'ADD_DV_TIME_SERIES',
         timeSeriesId,
@@ -33,7 +33,7 @@ export const addDVTimeSeries = function(timeSeriesId, data) {
  * Synchronous Redux Action to update the current time series id to be viewed
  * @param {String} currentDVTimeSeriesId
  */
-export const setCurrentDVTimeSeriesId = function(timeSeriesId) {
+const setCurrentDVTimeSeriesId = function(timeSeriesId) {
     return {
         type: 'SET_CURRENT_DV_TIME_SERIES_ID',
         timeSeriesId
@@ -44,7 +44,7 @@ export const setCurrentDVTimeSeriesId = function(timeSeriesId) {
  * Synchronous Redux action to update the graph's cursor offset
  * @param {Number} dvCursorOffset - difference in epoch time from the cursor position to graph start time
  */
-export const setDVGraphCursorOffset = function(cursorOffset) {
+const setDVGraphCursorOffset = function(cursorOffset) {
     return {
         type: 'SET_DV_GRAPH_CURSOR_OFFSET',
         cursorOffset
@@ -57,7 +57,7 @@ export const setDVGraphCursorOffset = function(cursorOffset) {
  * update the store. The dispatched action returns a Promise.
  * @param {String} monitoringLocationId
  */
-export const retrieveAvailableDVTimeSeries = function(monitoringLocationId) {
+const retrieveAvailableDVTimeSeries = function(monitoringLocationId) {
     return function(dispatch) {
         return fetchAvailableDVTimeSeries(monitoringLocationId)
             .then(
@@ -74,7 +74,7 @@ export const retrieveAvailableDVTimeSeries = function(monitoringLocationId) {
  * Redux asynchronous action to retrieve the statistical time series with id timeSeriesId and monitoringLocationId.
  * The dispatched action returns a Promise that resolves when the data has been fetched.
  */
-export const retrieveDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
+const retrieveDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
     return function(dispatch, getState) {
         const state = getState();
         if (state.observationsData.dvTimeSeries && timeSeriesId in state.observationsData.dvTimeSeries) {
@@ -122,7 +122,7 @@ export const observationsDataReducer = function(observationsData=INITIAL_OBSERVA
  * @param {Number} startBrushOffset - difference in epoch time from brush start to the displayed time series start time
  * @param {Number} endBrushOffset - difference in epoch time from displayed time series end to the end of the brush
  */
-export const setDVGraphBrushOffset = function(startBrushOffset, endBrushOffset) {
+const setDVGraphBrushOffset = function(startBrushOffset, endBrushOffset) {
     return {
         type: 'SET_DV_GRAPH_BRUSH_OFFSET',
         startBrushOffset,
@@ -133,7 +133,7 @@ export const setDVGraphBrushOffset = function(startBrushOffset, endBrushOffset) 
 /*
  * Synchronous Redux action to clear the graph's brush offset
  */
-export const clearDVGraphBrushOffset = function() {
+const clearDVGraphBrushOffset = function() {
     return {
         type: 'CLEAR_DV_GRAPH_BRUSH_OFFSET'
     };
@@ -170,4 +170,15 @@ export const observationsStateReducer = function(observationsState={}, action) {
         default:
             return observationsState;
     }
+};
+
+export const Actions = {
+    setAvailableDVTimeSeries,
+    addDVTimeSeries,
+    setCurrentDVTimeSeriesId,
+    setDVGraphCursorOffset,
+    retrieveAvailableDVTimeSeries,
+    retrieveDVTimeSeries,
+    setDVGraphBrushOffset,
+    clearDVGraphBrushOffset
 };

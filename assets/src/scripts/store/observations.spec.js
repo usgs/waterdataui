@@ -1,13 +1,9 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import {default as thunk} from 'redux-thunk';
 
+import {Actions, observationsDataReducer, observationsStateReducer} from './observations';
 
-import {retrieveAvailableDVTimeSeries, retrieveDVTimeSeries, setAvailableDVTimeSeries,
-    addDVTimeSeries, observationsDataReducer, setCurrentDVTimeSeriesId, setDVGraphCursorOffset,
-    setDVGraphBrushOffset, clearDVGraphBrushOffset, observationsStateReducer
-} from './observations';
-
-describe('store/observations module', () => {
+fdescribe('store/observations module', () => {
     /* eslint no-use-before-define: 0 */
     let store;
 
@@ -32,24 +28,24 @@ describe('store/observations module', () => {
 
     describe('observationsDataReducer actions', () => {
 
-        describe('setAvailableDVTimeSeries', () => {
+        describe('Actions.setAvailableDVTimeSeries', () => {
             it('expect to set the availableDVTimeSeries', () => {
-                store.dispatch(setAvailableDVTimeSeries([{id: '1'}, {id: '2'}]));
+                store.dispatch(Actions.setAvailableDVTimeSeries([{id: '1'}, {id: '2'}]));
 
                 expect(store.getState().observationsData.availableDVTimeSeries).toEqual([{id: '1'}, {id: '2'}]);
             });
         });
 
-        describe('addDVTimeSeries', () => {
+        describe('Actions.addDVTimeSeries', () => {
             it('expect to add the dvTimeSeries to the store', () => {
-                store.dispatch(addDVTimeSeries('ffff345', {id: 'fffff345'}));
+                store.dispatch(Actions.addDVTimeSeries('ffff345', {id: 'fffff345'}));
 
                 expect(store.getState().observationsData.dvTimeSeries.ffff345).toEqual({id: 'fffff345'});
             });
 
             it('Expect to retain other time series but add new to the store', () =>{
-                store.dispatch(addDVTimeSeries('ffff345', {id: 'fffff345'}));
-                store.dispatch(addDVTimeSeries('aaaa345', {id: 'aaaa345'}));
+                store.dispatch(Actions.addDVTimeSeries('ffff345', {id: 'fffff345'}));
+                store.dispatch(Actions.addDVTimeSeries('aaaa345', {id: 'aaaa345'}));
                 const state = store.getState();
 
                 expect(state.observationsData.dvTimeSeries.ffff345).toEqual({id: 'fffff345'});
@@ -57,9 +53,9 @@ describe('store/observations module', () => {
             });
         });
 
-        describe('retrieveAvailableDVTimeSeries', () => {
+        describe('Actions.retrieveAvailableDVTimeSeries', () => {
             it('Expects a successful fetch request to update the store', (done) => {
-                const promise = store.dispatch(retrieveAvailableDVTimeSeries('USGS-12345678'));
+                const promise = store.dispatch(Actions.retrieveAvailableDVTimeSeries('USGS-12345678'));
 
                 expect(jasmine.Ajax.requests.mostRecent().url).toContain('USGS-12345678');
                 jasmine.Ajax.requests.mostRecent().respondWith({
@@ -84,7 +80,7 @@ describe('store/observations module', () => {
             });
 
             it('Expects a successful fetch request with no time series sets the store to show empty array', (done) => {
-                const promise = store.dispatch(retrieveAvailableDVTimeSeries('USGS-12345678'));
+                const promise = store.dispatch(Actions.retrieveAvailableDVTimeSeries('USGS-12345678'));
 
                 jasmine.Ajax.requests.mostRecent().respondWith({
                     status: 200,
@@ -99,7 +95,7 @@ describe('store/observations module', () => {
             });
 
             it('Expects a bad fetch request to not update the store', (done) => {
-                const promise = store.dispatch(retrieveAvailableDVTimeSeries('USGS-12345678'));
+                const promise = store.dispatch(Actions.retrieveAvailableDVTimeSeries('USGS-12345678'));
                 jasmine.Ajax.requests.mostRecent().respondWith({
                     status: 500,
                     responseText: 'Bad Data'
@@ -114,9 +110,9 @@ describe('store/observations module', () => {
             });
         });
 
-        describe('retrieveDVTimeSeries', () => {
+        describe('Actions.retrieveDVTimeSeries', () => {
             it('Expects a successful fetch request to update the store', (done) => {
-                const promise = store.dispatch(retrieveDVTimeSeries('USGS-12345678', 'ffff345'));
+                const promise = store.dispatch(Actions.retrieveDVTimeSeries('USGS-12345678', 'ffff345'));
                 const url = jasmine.Ajax.requests.mostRecent().url;
                 expect(url).toContain('USGS-12345678');
                 expect(url).toContain('ffff345');
@@ -137,13 +133,13 @@ describe('store/observations module', () => {
             });
 
             it('Expects a bad fetch request to not add a time series the store', (done) => {
-                const initPromise = store.dispatch(retrieveDVTimeSeries('USGS-12345678', 'ffff345'));
+                const initPromise = store.dispatch(Actions.retrieveDVTimeSeries('USGS-12345678', 'ffff345'));
                 jasmine.Ajax.requests.mostRecent().respondWith({
                     status: 200,
                     responseText: MOCK_DV_TIME_SERIES
                 });
                 initPromise.then(() => {
-                    const promise = store.dispatch(retrieveDVTimeSeries('USGS-12345678', 'aaaa345'));
+                    const promise = store.dispatch(Actions.retrieveDVTimeSeries('USGS-12345678', 'aaaa345'));
                     jasmine.Ajax.requests.mostRecent().respondWith({
                         status: 500,
                         responseText: 'Bad Data'
@@ -163,25 +159,25 @@ describe('store/observations module', () => {
     });
 
     describe('observationsStateReducer actions', () => {
-        describe('setCurrentDVTimeSeriesId', () => {
+        describe('Actions.setCurrentDVTimeSeriesId', () => {
             it('updates current time series id', () => {
-                store.dispatch(setCurrentDVTimeSeriesId('ffff345'));
+                store.dispatch(Actions.setCurrentDVTimeSeriesId('ffff345'));
 
                 expect(store.getState().observationsState.currentDVTimeSeriesId).toEqual('ffff345');
             });
         });
 
-        describe('setCurrentDVGraphCursorOffset', () => {
+        describe('Actions.setCurrentDVGraphCursorOffset', () => {
             it('updates cursor offset', () => {
-                store.dispatch(setDVGraphCursorOffset(1234512345));
+                store.dispatch(Actions.setDVGraphCursorOffset(1234512345));
 
                 expect(store.getState().observationsState.dvGraphCursorOffset).toEqual(1234512345);
             });
         });
 
-        describe('setDVGraphBrushOffset', () => {
+        describe('Actions.setDVGraphBrushOffset', () => {
             it('updates brush offset', () => {
-                store.dispatch(setDVGraphBrushOffset(1234512345, 1111122222));
+                store.dispatch(Actions.setDVGraphBrushOffset(1234512345, 1111122222));
 
                 expect(store.getState().observationsState.dvGraphBrushOffset).toEqual({
                     start: 1234512345,
@@ -190,10 +186,10 @@ describe('store/observations module', () => {
             });
         });
 
-        describe('clearDVGraphBrushOffset', () => {
+        describe('Actions.clearDVGraphBrushOffset', () => {
             it('clear the  brush offset', () => {
-                store.dispatch(setDVGraphBrushOffset(1234512345, 1111122222));
-                store.dispatch(clearDVGraphBrushOffset());
+                store.dispatch(Actions.setDVGraphBrushOffset(1234512345, 1111122222));
+                store.dispatch(Actions.clearDVGraphBrushOffset());
                 expect(store.getState().observationsState.dvGraphBrushOffset).not.toBeDefined();
             });
         });

@@ -1,6 +1,7 @@
 import {select} from 'd3-selection';
 
-import {configureStore, Actions} from '../../store';
+import {configureStore} from '../../store';
+import {Actions} from '../../store/observations';
 
 import {attachToNode} from './index';
 
@@ -57,16 +58,6 @@ describe('components/dailyValueHydrograph/index', () => {
 
     let testDiv;
 
-    const INITIAL_STATE = {
-        observationsData: {},
-        observationsState: {},
-        ui: {
-            windowWidth: 1024,
-            width: 800
-        }
-    }
-    let store;
-
     beforeEach(() => {
         jasmine.Ajax.install();
         testDiv = select('body').append('div');
@@ -74,7 +65,6 @@ describe('components/dailyValueHydrograph/index', () => {
             .attr('class', 'loading-indicator-container');
         testDiv.append('div')
             .attr('class', 'graph-container');
-        store = configureStore(INITIAL_STATE);
     });
 
     afterEach(() => {
@@ -83,160 +73,131 @@ describe('components/dailyValueHydrograph/index', () => {
     });
 
     it('Expects that an empty siteno will render an error alert', () => {
-        attachToNode(store, testDiv.node());
+        attachToNode(configureStore(), testDiv.node());
 
         expect(testDiv.selectAll('.usa-alert--error').size()).toBe(1);
         expect(jasmine.Ajax.requests.count()).toBe(0);
     });
 
     it('Expects that if siteno is defined, the available time series is fetched', () => {
-        attachToNode(store, testDiv.node(), {siteno: '12345'});
+        spyOn(Actions, 'retrieveAvailableDVTimeSeries').and.callThrough();
+        attachToNode(configureStore(), testDiv.node(), {siteno: '12345'});
 
         expect(testDiv.selectAll('.usa-alert--error').size()).toBe(0);
         expect(testDiv.selectAll('.loading-indicator').size()).toBe(1);
-        expect(jasmine.Ajax.requests.mostRecent().url).toContain('USGS-12345');
+        expect(Actions.retrieveAvailableDVTimeSeries).toHaveBeenCalledWith('USGS-12345');
     });
 
-    it('Expects that once the available time series is fetched and contains a valid time series id, the time series is fetched', (done) => {
-        attachToNode(store, testDiv.node(), {siteno: '12345'});
-        jasmine.Ajax.requests.mostRecent().respondWith({
-            status: 200,
-            response: JSON.stringify({
-                timeSeries: TEST_STATE.observationsData.availableDVTimeSeries
-            })
+    describe('Tests after available time series is fetched', () => {
+        beforeEach(() => {
+            spyOn(Actions, 'retrieveAvailableDVTimeSeries').and.returnValue(function () {
+                return Promise.resolve({});
+            });
+            spyOn(Actions, 'retrieveDVTimeSeries').and.callThrough();
         });
 
-        window.setTimeout(() => {
-            const url = jasmine.Ajax.requests.mostRecent().url;
-            expect(store.getState().observationsData.availableDVTimeSeries).toEqual(TEST_STATE.observationsData.availableDVTimeSeries)
-            expect(url).toContain('USGS-12345');
-            expect(url).toContain('1122');
-            done();
-        }, 1000);
+        it('Expects that once the available time series is fetched and contains a valid time series id, the time series is fetched', (done) => {
+            attachToNode(configureStore({
+                observationsData: {
+                    availableDVTimeSeries: TEST_STATE.observationsData.availableDVTimeSeries
+                }
+            }), testDiv.node(), {siteno: '12345'});
+
+            window.requestAnimationFrame(() => {
+                expect(Actions.retrieveDVTimeSeries).toHaveBeenCalledWith('USGS-12345', '1122');
+
+                done();
+            });
+        });
+
+        it('Expects that if there is not a valid time series that the alert is shown indicating no data', (done) => {
+            attachToNode(configureStore({
+                observationsData: {
+                    availableDVTimeSeries: TEST_STATE.observationsData.availableDVTimeSeries.slice(1)
+                }
+            }), testDiv.node(), {siteno: '12345'});
+            window.requestAnimationFrame(() => {
+                expect(Actions.retrieveDVTimeSeries).not.toHaveBeenCalled();
+                expect(testDiv.selectAll('.usa-alert--info').size()).toBe(1);
+                expect(testDiv.selectAll('.loading-indicator').size()).toBe(0);
+
+                done();
+            });
+        });
     });
 
-    it('Expects that if there is not a valid time series that the alert is shown indicating no data', (done) => {
-        attachToNode(store, testDiv.node(), {siteno: '12345'});
-        jasmine.Ajax.requests.mostRecent().respondWith({
-            status: 200,
-            response: JSON.stringify({
-                timeSeries: TEST_STATE.observationsData.availableDVTimeSeries.slice(1)
-            })
-        });
-        window.setTimeout(() => {
-            expect(jasmine.Ajax.requests.count()).toBe(1);
-            expect(testDiv.selectAll('.usa-alert--info').size()).toBe(1);
-            expect(testDiv.selectAll('.loading-indicator').size()).toBe(0);
-            done();
-        }, 1000);
-    });
-
-    fit('Expect that a successful fetch of the dv series removes loading indicator and renders the expected elements', (done) => {
-        attachToNode(store, testDiv.node(), {siteno: '12345'});
-        jasmine.Ajax.requests.mostRecent().respondWith({
-            status: 200,
-            response: JSON.stringify({
-                timeSeries: TEST_STATE.observationsData.availableDVTimeSeries.slice(1)
-            })
-        });
-        window.setTimeout(() => {
-            jasmine.Ajax.requests.mostRecent().respondWith({
-                status: 200,
-                responseText: JSON.stringify(TEST_STATE.observationsData.dvTimeSeries)
+    describe('Tests after successful fetch of the dv series', () => {
+        let store;
+        beforeEach(() => {
+            spyOn(Actions, 'retrieveAvailableDVTimeSeries').and.returnValue(function () {
+                return Promise.resolve({});
+            });
+            spyOn(Actions, 'retrieveDVTimeSeries').and.returnValue(function () {
+                return Promise.resolve({});
             });
 
-            window.setTimeout(() => {
-                console.log('Waiting for retrieving DV time series')
-                expect(testDiv.selectAll('.loading-indicator').size()).toBe(0);
-                done();
-            }, 1000)
-
-            done();
-        }, 1000);
-
-    });
-
-    it('Expects that if the fetch is successful the current observations time series id is updated in the store and the loading indicator is no longer visible', (done) => {
-        let store = configureStore();
-        attachToNode(store, testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
-        jasmine.Ajax.requests.mostRecent().respondWith({
-            status: 200,
-            response: JSON.stringify(TEST_STATE.observationsData.timeSeries['12345'])
+            store = configureStore(TEST_STATE);
         });
 
-        window.requestAnimationFrame(() => {
-            expect(store.getState().observationsState.currentTimeSeriesId).toEqual('12345');
-            expect(testDiv.selectAll('.usa-alert--info').size()).toBe(0);
-            expect(testDiv.selectAll('.loading-indicator').size()).toBe(0);
+        it('Expect that a successful fetch of the dv series removes loading indicator and renders the expected elements', (done) => {
+            attachToNode(store, testDiv.node(), {siteno: '12345'});
 
-            done();
-        });
-    });
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    expect(testDiv.selectAll('.loading-indicator').size()).toBe(0);
+                    expect(testDiv.selectAll('.usa-alert--info').size()).toBe(0);
 
-    it('Expect that if the fetch is not successful an info alert is shown and the loading indicator is no longer shown', (done) => {
-        let store = configureStore();
-        attachToNode(store, testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
-        jasmine.Ajax.requests.mostRecent().respondWith({
-            status: 500
+                    done();
+                });
+            });
         });
 
-        window.requestAnimationFrame(() => {
-            expect(store.getState().observationsState.currentTimeSeriesId).toBeUndefined();
-            expect(testDiv.selectAll('.usa-alert--info').size()).toBe(1);
-            expect(testDiv.selectAll('.loading-indicator').size()).toBe(0);
+        it('Expect that the hydrograph svg is rendered', (done) => {
+            attachToNode(store, testDiv.node(), {siteno: '12345'});
 
-            done();
-        });
-    });
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    expect(testDiv.select('.graph-container').selectAll('.hydrograph-svg').size()).toBe(1);
 
-    it('Should render the hydrograph container', (done) => {
-        attachToNode(configureStore(), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
-        jasmine.Ajax.requests.mostRecent().respondWith({
-            status: 200,
-            response: JSON.stringify(TEST_STATE.observationsData.timeSeries['12345'])
+                    done();
+                });
+            });
         });
 
-        window.requestAnimationFrame(() => {
-            expect(testDiv.select('.graph-container').selectAll('.hydrograph-container').size()).toBe(3);
-            done();
-        });
-    });
+        it('Expect that the legend is rendered', (done) => {
+            attachToNode(store, testDiv.node(), {siteno: '12345'});
 
-    it('Should render the DV legend', (done) => {
-        attachToNode(configureStore(TEST_STATE), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
-        jasmine.Ajax.requests.mostRecent().respondWith({
-            status: 200,
-            response: JSON.stringify(TEST_STATE.observationsData.timeSeries['12345'])
-        });
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    expect(testDiv.select('.graph-container').selectAll('.dv-legend-controls-container').size()).toBe(1);
 
-        window.requestAnimationFrame(() => {
-            expect(testDiv.select('.graph-container').selectAll('.dv-legend-controls-container').size()).toBe(1);
-            done();
-        });
-    });
-
-    it('Should render brush element for the DV graph', (done) => {
-         attachToNode(configureStore(TEST_STATE), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
-        jasmine.Ajax.requests.mostRecent().respondWith({
-            status: 200,
-            response: JSON.stringify(TEST_STATE.observationsData.timeSeries['12345'])
-        });
-        window.requestAnimationFrame(() => {
-            expect(testDiv.select('.graph-container').selectAll('.brush').size()).toBe(1);
-            done();
-        });
-    });
-
-    it('Should render the tooltip cursor slider', (done) => {
-        attachToNode(configureStore(TEST_STATE), testDiv.node(), {siteno: '1213', timeSeriesId: '12345'});
-        jasmine.Ajax.requests.mostRecent().respondWith({
-            status: 200,
-            response: JSON.stringify(TEST_STATE.observationsData.timeSeries['12345'])
+                    done();
+                });
+            });
         });
 
-        window.requestAnimationFrame(() => {
-            expect(testDiv.select('.graph-container').selectAll('.cursor-slider-svg').size()).toBe(1);
-            done();
+        it('Expect that the brush is rendered', (done) => {
+            attachToNode(store, testDiv.node(), {siteno: '12345'});
+
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    expect(testDiv.select('.graph-container').selectAll('.brush').size()).toBe(1);
+
+                    done();
+                });
+            });
+        });
+
+        it('Expect that the cursor slider is rendered', (done) => {
+            attachToNode(store, testDiv.node(), {siteno: '12345'});
+
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    expect(testDiv.select('.graph-container').selectAll('.cursor-slider-svg').size()).toBe(1);
+
+                    done();
+                });
+            });
         });
     });
 });

@@ -6,7 +6,7 @@ import {drawCursorSlider} from '../../d3-rendering/cursor-slider';
 import {drawFocusCircles, drawFocusOverlay, drawFocusLine} from '../../d3-rendering/graph-tooltip';
 import {link} from '../../lib/d3-redux';
 import {getDVGraphCursorOffset, getCurrentDVTimeSeriesUnitOfMeasure} from '../../selectors/observations-selector';
-import {setDVGraphCursorOffset} from '../../store/observations';
+import {Actions} from '../../store/observations';
 
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale} from './selectors/scales';
@@ -60,7 +60,7 @@ export const drawTooltipFocus = function(elem, store) {
                 layout: getMainLayout
             }),
             store,
-            setDVGraphCursorOffset)
+            Actions.setDVGraphCursorOffset)
     );
 };
 
@@ -80,5 +80,5 @@ export const drawTooltipCursorSlider = function(elem, store) {
             cursorOffset: getDVGraphCursorOffset,
             xScale: getMainXScale,
             layout: getMainLayout
-        }), store, setDVGraphCursorOffset));
+        }), store, Actions.setDVGraphCursorOffset));
 };
