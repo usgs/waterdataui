@@ -10,8 +10,9 @@
 import './polyfills';
 /*
 import './web-services/observations.spec';
+*/
 import './store/observations.spec';
-
+/*
 import './ajax.spec';
 
 import './d3-rendering/accessibility.spec';
@@ -77,8 +78,6 @@ import './store/flood-data-reducer.spec';
 import './store/nldi-data-reducer.spec';
 import './store/flood-state-reducer.spec';
 import './store/index.spec';
-import './store/observations-data-reducer.spec';
-import './store/observations-state-reducer.spec';
 import './store/series-reducer.spec';
 import './store/time-series-state-reducer.spec';
 import './store/ui-reducer.spec';

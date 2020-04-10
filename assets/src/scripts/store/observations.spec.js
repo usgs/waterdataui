@@ -126,10 +126,19 @@ fdescribe('store/observations module', () => {
                     const state = store.getState();
                     expect(state.observationsData.dvTimeSeries).toBeDefined();
                     expect(state.observationsData.dvTimeSeries.ffff345).toBeDefined();
-                    expect(state.observationsData.dvTimeSeries.ffff345.id = 'USGS-1234567-ffff345');
+                    expect(state.observationsData.dvTimeSeries.ffff345.id).toEqual('USGS-12345678-ffff345');
+                    expect(state.observationsState.currentDVTimeSeriesId).toEqual('ffff345');
 
                     done();
                 });
+            });
+
+            it('Expects that if the time series has already been fetched, the data is not refetched', () => {
+                store.dispatch(Actions.addDVTimeSeries('ffff345', {id: 'ffff345'}));
+                store.dispatch(Actions.retrieveDVTimeSeries('USGS-12345678', 'ffff345'));
+
+                expect(jasmine.Ajax.requests.count()).toBe(0);
+                expect(store.getState().observationsState.currentDVTimeSeriesId).toEqual('ffff345');
             });
 
             it('Expects a bad fetch request to not add a time series the store', (done) => {
