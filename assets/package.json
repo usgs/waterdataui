@@ -43,7 +43,7 @@
   },
   "homepage": "https://github.com/usgs/waterdataui#readme",
   "devDependencies": {
-    "autoprefixer": "^9.7.5",
+    "autoprefixer": "^9.7.6",
     "concat": "^1.0.3",
     "eslint": "^6.8.0",
     "eslint-plugin-jasmine": "^4.1.0",
