@@ -63,8 +63,8 @@ describe('axes module', () => {
             appendSecondaryYAxis(svg, {yAxis, layout, yTitle: 'The Secondary Y Axis Title'});
 
             expect(svg.selectAll('.secondary-y-axis').size()).toBe(1);
-            expect(svg.selectAll('.secondary-y-axis-label').size()).toBe(1);
-            expect(svg.select('.secondary-y-axis-label').select('tspan').html()).toEqual('The Secondary Y Axis Title');
+            expect(svg.select('.secondary-y-axis').selectAll('.y-axis-label').size()).toBe(1);
+            expect(svg.select('.secondary-y-axis').select('.y-axis-label').select('tspan').html()).toEqual('The Secondary Y Axis Title');
             expect(yAxis).toHaveBeenCalled();
         });
     });
@@ -82,9 +82,8 @@ describe('axes module', () => {
 
             expect(svg.selectAll('.x-axis').size()).toBe(1);
             expect(svg.selectAll('.y-axis').size()).toBe(1);
-            expect(svg.selectAll('.y-axis-label').size()).toBe(1);
             expect(svg.selectAll('.secondary-y-axis').size()).toBe(1);
-            expect(svg.selectAll('.secondary-y-axis-label').size()).toBe(1);
+            expect(svg.selectAll('.y-axis-label').size()).toBe(2);
         });
 
         it('should render only one y axis if a secondaryYAxis is not defined', () => {
@@ -94,7 +93,6 @@ describe('axes module', () => {
             expect(svg.selectAll('.y-axis').size()).toBe(1);
             expect(svg.selectAll('.y-axis-label').size()).toBe(1);
             expect(svg.selectAll('.secondary-y-axis').size()).toBe(0);
-            expect(svg.selectAll('.secondary-y-axis-label').size()).toBe(0);
         });
     });
 });

@@ -78,7 +78,7 @@ export const appendSecondaryYAxis = function(elem, {yAxis, layout, yTitle}) {
         .attr('transform', `translate(${layout.width - layout.margin.right}, 0)`)
         .call(yAxis)
         .append('text')
-            .attr('class', 'secondary-y-axis-label')
+            .attr('class', 'y-axis-label')
             .attr('transform', 'rotate(-90)')
             .attr('x', secondaryYLabelLoc.x)
             .attr('y', secondaryYLabelLoc.y)

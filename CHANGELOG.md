@@ -12,6 +12,7 @@ to the monitoring-location pages. By default the script is empty and the feature
 ### Fixed
 - Fixed bug when drawing custom time series and then changing the time was drawing extraneous lines
 - Fixed scaling of the brush on mobile.
+- Styling on the secondary y axis
 
 ### Changed
 - Replaced the range input slider with an svg slider for moving the cursor tooltip point
