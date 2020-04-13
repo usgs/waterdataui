@@ -78,7 +78,7 @@
     "rollup-plugin-uglify": "^6.0.4",
     "sass": "^1.26.3",
     "stylelint": "^13.3.0",
-    "stylelint-scss": "^3.16.0"
+    "stylelint-scss": "^3.16.1"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.13.0",
