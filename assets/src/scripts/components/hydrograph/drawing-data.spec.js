@@ -916,7 +916,7 @@ describe('drawingData module', () => {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
-                            requestDT: new Date(2017, 2, 1, 11, 15, 0, 0).getTime(),
+                            requestDT: 1488388500000,
                             'filter:timeRange': {
                                 mode: 'PERIOD',
                                 periodDays: '7',
@@ -1001,7 +1001,8 @@ describe('drawingData module', () => {
                     day: 22,
                     hour: 11,
                     minute: 15,
-                    second: 0
+                    second: 0,
+                    zone: 'America/Chicago'
                 }).valueOf()
             });
             expect(result[0][8]).toEqual({
@@ -1012,7 +1013,8 @@ describe('drawingData module', () => {
                     day: 1,
                     hour: 11,
                     minute: 15,
-                    second: 0
+                    second: 0,
+                    zone: 'America/Chicago'
                 }).valueOf()
             });
         });
