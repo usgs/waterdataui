@@ -4,13 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.30.0...master)
+### Added
+- The new statistical time series service is used to fetch the available statistical
+time series and if daily max and a water level parameter code, the time series is displayed.
 
 ## [0.30.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.29.0...waterdataui-0.30.0) - 2020-04-13
 ### Added
 - Add config variable, TOUCHPOINT_SCRIPT, which is used to add the touchpoint script
 to the monitoring-location pages. By default the script is empty and the feature is disabled.
-- The new statistical time series service is used to fetch the available statistical
-time series and if daily max and a water level parameter code, the time series is displayed.
 
 ### Fixed
 - Fixed bug when drawing custom time series and then changing the time was drawing extraneous lines
