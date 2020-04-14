@@ -7,6 +7,7 @@ import {drawTimeSeriesGraph} from './time-series-graph';
 
 const TEST_STATE = {
     series: {
+        ianaTimeZone: 'America/Chicago',
         timeSeries: {
             '2:00010:current': {
                 points: [{
