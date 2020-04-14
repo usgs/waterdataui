@@ -31,7 +31,7 @@ const addDVTimeSeries = function(timeSeriesId, data) {
 
 /*
  * Synchronous Redux Action to update the current time series id to be viewed
- * @param {String} currentDVTimeSeriesId
+ * @param {String} timeSeriesId
  */
 const setCurrentDVTimeSeriesId = function(timeSeriesId) {
     return {
@@ -42,7 +42,7 @@ const setCurrentDVTimeSeriesId = function(timeSeriesId) {
 
 /*
  * Synchronous Redux action to update the graph's cursor offset
- * @param {Number} dvCursorOffset - difference in epoch time from the cursor position to graph start time
+ * @param {Number} cursorOffset - difference in epoch time from the cursor position to graph start time
  */
 const setDVGraphCursorOffset = function(cursorOffset) {
     return {

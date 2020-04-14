@@ -30,5 +30,3 @@ export const fetchNetworkFeatures = function(networkCd) {
             return response.features ? response.features : [];
         });
 };
-
-//export const fetchMonitoringLocationAvailableStatisticalData = function(siteId) {}
