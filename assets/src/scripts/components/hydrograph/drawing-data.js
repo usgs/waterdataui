@@ -192,7 +192,7 @@ export const getCurrentVariableMedianStatPoints = createSelector(
                 year: nextDateTime.year,
                 month: nextDateTime.month.toString(),
                 day: nextDateTime.day.toString(),
-                utcDate: nextDateTime.valueOf()
+                utcDate: nextDateTime.toMillis()
             });
             nextDateTime = nextDateTime.plus({days: 1});
         }
