@@ -5,7 +5,7 @@ describe('DV: Legend module', () => {
 
     const TEST_STATE = {
         observationsData: {
-            timeSeries: {
+            dvTimeSeries: {
                 '12345': {
                     type: 'Feature',
                     id: '12345',
@@ -14,7 +14,7 @@ describe('DV: Legend module', () => {
                         phenomenonTimeEnd: '2018-01-05',
                         timeStep: ['2018-01-02', '2018-01-03', '2018-01-04', '2018-01-05'],
                         result: ['5.0', '4.0', '6.1', '3.2'],
-                        approvals: [['Approved'], ['Approved'], ['Approved'], ['Estimated']],
+                        approvals: [['Approved'], ['Approved'], [], ['Estimated']],
                         nilReason: [null, 'AA', null, null],
                         qualifiers: [null, null, ['ICE'], ['ICE']],
                         grades: [['50'], ['50'], ['60'], ['60']]
@@ -23,7 +23,7 @@ describe('DV: Legend module', () => {
             }
         },
         observationsState: {
-            currentTimeSeriesId: '12345'
+            currentDVTimeSeriesId: '12345'
         },
         ui: {
             windowWidth: 1024,
@@ -31,14 +31,14 @@ describe('DV: Legend module', () => {
         }
     };
 
-    describe('DV: legendMarkerRowSelector', () => {
+    describe('DV: getLegendMarkerRows', () => {
 
         it('Should return no markers if no time series to show', () => {
             let newData = {
                 ...TEST_STATE,
                 observationsData: {
                     ...TEST_STATE.observationsData,
-                    timeSeries: {}
+                    dvTimeSeries: {}
                 }
             };
 
@@ -49,7 +49,7 @@ describe('DV: Legend module', () => {
             const result = getLegendMarkerRows(TEST_STATE);
 
             expect(result.length).toBe(1);
-            expect(result[0].length).toBe(2);
+            expect(result[0].length).toBe(3);
             expect(result[0][0].type).toEqual(lineMarker);
             expect(result[0][1].type).toEqual(lineMarker);
         });

@@ -1,13 +1,14 @@
 import {select} from 'd3-selection';
 
-import {configureStore, Actions} from '../../store';
+import {configureStore} from '../../store';
+import {Actions} from '../../store/observations';
 
 import {drawTimeSeriesGraph} from './time-series-graph';
 
 describe('components/dailyValueHydrograph/time-series-graph', () => {
     const TEST_STATE = {
         observationsData: {
-            timeSeries: {
+            dvTimeSeries: {
                 '12345' : {
                     type: 'Feature',
                     id: '12345',
@@ -33,8 +34,8 @@ describe('components/dailyValueHydrograph/time-series-graph', () => {
             }
         },
         observationsState: {
-            currentTimeSeriesId: '12345',
-            cursorOffset: 1262476800000
+            currentDVTimeSeriesId: '12345',
+            dvGraphCursorOffset: 1262476800000
         },
         ui: {
             windowWidth: 1024,
@@ -81,7 +82,7 @@ describe('components/dailyValueHydrograph/time-series-graph', () => {
         });
 
         it('should render a circle if there is a one element line segment', (done) => {
-            store.dispatch(Actions.setObservationsTimeSeries('12345', {
+            store.dispatch(Actions.addDVTimeSeries('12345', {
                     type: 'Feature',
                     id: '12345',
                     properties: {

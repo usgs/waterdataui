@@ -1,5 +1,6 @@
-import {Actions, configureStore} from '../../store';
 import {select} from 'd3-selection';
+
+import {Actions, configureStore} from '../../store';
 import {drawGraphControls} from './graph-controls';
 
 // Tests for the graph-controls module

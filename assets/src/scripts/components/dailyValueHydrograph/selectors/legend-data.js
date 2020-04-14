@@ -1,6 +1,9 @@
+import includes from 'lodash/includes';
 import {createSelector} from 'reselect';
-import {getCurrentTimeSeriesLineSegments} from './time-series-data';
+
 import {defineLineMarker} from '../../../d3-rendering/markers';
+
+import {getCurrentTimeSeriesLineSegments, APPROVED, ESTIMATED} from './time-series-data';
 
 
 const tsLineMarkers = function(lineClasses) {
@@ -41,8 +44,7 @@ const createLegendMarkers = function(displayItems) {
     return legendMarkers;
 };
 
-
-export const getUniqueClasses = createSelector(
+const getUniqueClasses = createSelector(
     getCurrentTimeSeriesLineSegments,
     (tsLineSegments) => {
         let result = {
@@ -50,15 +52,16 @@ export const getUniqueClasses = createSelector(
             approved: false,
             estimated: false
         };
+        //TODO: default is for any approvals that are not Approved or Estimated. This will likely need to change.
         tsLineSegments.forEach((segment) => {
-            result.approved = result.approved || segment.approvals.includes('Approved');
-            result.estimated = result.estimated || segment.approvals.includes('Estimated');
-            result.default = result.default || segment.approvals.length === 0;
+            result.approved = result.approved || includes(segment.approvals, APPROVED);
+            result.estimated = result.estimated || includes(segment.approvals, ESTIMATED);
+            result.default =
+                result.default || !includes(segment.approvals, APPROVED) && !includes(segment.approvals, ESTIMATED);
         });
         return result;
     }
 );
-
 
 /*
  * Factory function that returns an array of array of markers to be used for the

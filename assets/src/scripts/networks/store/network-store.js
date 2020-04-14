@@ -1,18 +1,16 @@
 import {applyMiddleware, createStore, combineReducers, compose} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
-import {fetchNetworkSites} from '../web-services/network-data';
+import {fetchNetworkFeatures} from '../../web-services/network-data';
 
 import {networkDataReducer as networkData} from './network-data-reducer';
 
 export const Actions = {
     retrieveNetworkData(networkCd) {
         return function(dispatch) {
-            const networkSites = fetchNetworkSites(networkCd);
-            return Promise.all( [networkSites]
-            ).then(function(data){
-                const [networkSites] = data;
-                dispatch(Actions.setNetworkFeatures(networkSites));
+            return fetchNetworkFeatures(networkCd)
+                .then(function(features){
+                    dispatch(Actions.setNetworkFeatures(features));
             });
         };
     },

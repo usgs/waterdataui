@@ -14,14 +14,13 @@ import {getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, g
 import {fetchFloodFeatures, fetchFloodExtent} from '../web-services/flood-data';
 import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from '../web-services/models';
 import {fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow, fetchNldiUpstreamBasin} from '../web-services/nldi-data';
-import {fetchTimeSeries} from '../web-services/observations';
 import {fetchSiteStatistics} from '../web-services/statistics-data';
 
 import {floodDataReducer as floodData} from './flood-data-reducer';
 import {floodStateReducer as floodState} from './flood-state-reducer';
 import {nldiDataReducer as nldiData} from './nldi-data-reducer';
-import {observationsDataReducer as observationsData} from './observations-data-reducer';
-import {observationsStateReducer as observationsState} from './observations-state-reducer';
+import {observationsDataReducer as observationsData} from './observations';
+import {observationsStateReducer as observationsState} from './observations';
 import {seriesReducer as series} from './series-reducer';
 import {statisticsDataReducer as statisticsData} from './statistics-data-reducer';
 import {timeSeriesStateReducer as timeSeriesState} from './time-series-state-reducer';
@@ -239,18 +238,6 @@ export const Actions = {
             }
         };
     },
-    retrieveDailyValueData(monitoringLocationId, timeSeriesId) {
-        return function(dispatch) {
-            return fetchTimeSeries(monitoringLocationId, timeSeriesId)
-                .then(
-                    (data) => {
-                        dispatch(Actions.setObservationsTimeSeries(timeSeriesId, data));
-                    },
-                    () => {
-                        console.log(`Unable to fetch observations time series for ${timeSeriesId}`);
-                    });
-        };
-    },
     retrieveFloodData(siteno) {
         return function (dispatch) {
             const floodFeatures = fetchFloodFeatures(siteno);
@@ -358,13 +345,6 @@ export const Actions = {
             upstreamSites,
             downstreamSites,
             upstreamBasin
-        };
-    },
-    setObservationsTimeSeries(timeSeriesId, data) {
-        return {
-            type: 'SET_OBSERVATIONS_TIME_SERIES',
-            timeSeriesId,
-            data
         };
     },
     toggleTimeSeries(key, show) {
@@ -478,32 +458,6 @@ export const Actions = {
         return {
             type: 'LOCATION_IANA_TIME_ZONE_SET',
             ianaTimeZone
-        };
-    },
-    setCurrentObservationsTimeSeriesId(timeSeriesId) {
-        return {
-            type: 'SET_CURRENT_TIME_SERIES_ID',
-            timeSeriesId
-        };
-    },
-    /*
-     * @param {Number} cursorOffset - difference in epoch time from the start of the graph to the position of of the cursor
-     */
-    setDailyValueCursorOffset(cursorOffset) {
-        return {
-            type: 'SET_DAILY_VALUE_CURSOR_OFFSET',
-            cursorOffset
-        };
-    },
-    setDVGraphBrushOffset(dvGraphBrushOffset) {
-        return {
-            type: 'SET_DV_GRAPH_BRUSH_OFFSET',
-            dvGraphBrushOffset
-        };
-    },
-    clearDVGraphBrushOffset() {
-        return {
-            type: 'CLEAR_DV_GRAPH_BRUSH_OFFSET'
         };
     }
 };

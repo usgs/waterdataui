@@ -4,24 +4,27 @@ import zip from 'lodash/zip';
 import zipObject from 'lodash/zipObject';
 import {createSelector} from 'reselect';
 
-import {getCurrentObservationsTimeSeries, getObservationsCursorOffset} from '../../../selectors/observations-selector';
+import {getCurrentDVTimeSeries, getDVGraphCursorOffset} from '../../../selectors/observations-selector';
 import {getNearestTime} from '../../../utils';
 
 import {getXScale, getMainXScale, getMainYScale} from './scales';
 
 const TWO_DAYS = 1000 * 60 * 60 * 24 * 2; // In milliseconds
 
+export const APPROVED = 'Approved';
+export const ESTIMATED = 'Estimated';
+
 /* Returns the selector function which returns an Array of Objects, each object representing one value, dateTime (in epoch time),
 and other attributes representing metadata on the value. This will represent the time series for the current
 selected time series
  */
 export const getCurrentTimeSeriesPoints = createSelector(
-    getCurrentObservationsTimeSeries,
+    getCurrentDVTimeSeries,
     (timeSeries) => {
         if (!timeSeries) {
             return [];
         }
-        return zip(
+        let result =  zip(
             timeSeries.properties.result,
             timeSeries.properties.timeStep.map((timeStep) => {
                 return new DateTime.fromISO(timeStep, {zone: 'UTC'}).toMillis();
@@ -40,6 +43,16 @@ export const getCurrentTimeSeriesPoints = createSelector(
                     'grades'
                 ], zippedStep);
             });
+
+        return result.sort((first, second) => {
+            if (first.dateTime < second.dateTime) {
+                return -1;
+            } else if (first.dateTime > second.dateTime) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
     }
 );
 
@@ -53,30 +66,28 @@ export const getCurrentTimeSeriesPoints = createSelector(
  *  The time series
  */
 export const getCurrentTimeSeriesLineSegments = createSelector(
-    getCurrentObservationsTimeSeries,
+    getCurrentTimeSeriesPoints,
     (timeSeries) => {
-        if (!timeSeries) {
+        if (timeSeries.length === 0) {
             return [];
         }
 
-        const timeStepInMillis = timeSeries.properties.timeStep.map((t) => new DateTime.fromISO(t, {zone: 'UTC'}).toMillis());
-
         let lineSegments = [];
-        let previousDate = timeStepInMillis[0];
-        let previousApprovals = timeSeries.properties.approvals[0];
+        let previousDate = timeSeries[0].dateTime;
+        let previousApprovals = timeSeries[0].approvals;
         let segment = {
             points: [],
-            approvals: timeSeries.properties.approvals[0]
+            approvals: previousApprovals
         };
-        timeStepInMillis.forEach(function(date, index) {
-            const resultValue = parseFloat(timeSeries.properties.result[index]);
-            const hasGap = date - previousDate >= TWO_DAYS;
-            const hasDifferentApprovals = !isEqual(timeSeries.properties.approvals[index], previousApprovals);
+        timeSeries.forEach((point) => {
+            const resultValue = parseFloat(point.value);
+            const hasGap = point.dateTime - previousDate >= TWO_DAYS;
+            const hasDifferentApprovals = !isEqual(point.approvals, previousApprovals);
             if (hasDifferentApprovals && !hasGap) {
-                // Add the current point to the last segment so that line is continuous
+                // Add the current point to the last segment so that line is continous
                 segment.points.push({
                     value: resultValue,
-                    date: date
+                    date: point.dateTime
                 });
             }
 
@@ -84,16 +95,17 @@ export const getCurrentTimeSeriesLineSegments = createSelector(
                 lineSegments.push(segment);
                 segment = {
                     points: [],
-                    approvals: timeSeries.properties.approvals[index]
+                    approvals: point.approvals
                 };
-                previousApprovals = timeSeries.properties.approvals[index];
+                previousApprovals = point.approvals;
             }
             segment.points.push({
-                value: parseFloat(resultValue),
-                date: date
+                value: resultValue,
+                date: point.dateTime
             });
-            previousDate = date;
+            previousDate = point.dateTime;
         });
+
         lineSegments.push(segment);
         return lineSegments;
     }
@@ -104,7 +116,7 @@ export const getCurrentTimeSeriesLineSegments = createSelector(
  * Return null if no current observations cursor offset is set.
  */
 export const getCursorEpochTime = createSelector(
-    getObservationsCursorOffset,
+    getDVGraphCursorOffset,
     getXScale(),
     (cursorOffset, xScale) => {
 

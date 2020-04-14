@@ -35,13 +35,19 @@ NWIS_ENDPOINTS = {
 }
 WEATHER_SERVICE_ROOT = 'https://api.weather.gov'
 
-OBSERVATIONS_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/'
+OBSERVATIONS_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections/monitoring-locations'
 
 FIM_GIS_ENDPOINT = 'https://gis.wim.usgs.gov/arcgis/rest/services/FIMMapper/'
 FIM_ENDPOINT = 'https://fim.wim.usgs.gov/fim/'
 HYDRO_ENDPOINT = 'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Esri_Hydro_Reference_Overlay/MapServer'
 
 CITIES_ENDPOINT = 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Major_Cities/FeatureServer/0'
+
+NLDI_SERVICES_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/nldi/linked-data'
+NLDI_SERVICES_DISTANCE = '322'
+
+# Networks
+NETWORK_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections'
 
 TOUCHPOINT_SCRIPT = ''
 LOGGING_ENABLED = True
@@ -61,12 +67,6 @@ ASSET_MANIFEST_PATH = None
 
 # For cooperator site service, current lookup service is temporary, constants may need reconfiguring for the new service
 COOPERATOR_SERVICE_PATTERN = 'https://water.usgs.gov/customer/stories/{site_no}/approved.json'
-
-NLDI_SERVICES_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/nldi/linked-data'
-NLDI_SERVICES_DISTANCE = '322'
-
-# Networks
-NETWORK_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections'
 
 # These messages below will be added to a dismissible panel below the main header. It is an array of strings. Markup
 # can be used to add things like links, bold text, etc.

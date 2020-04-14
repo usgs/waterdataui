@@ -829,60 +829,6 @@ describe('Redux store', () => {
             });
         });
 
-        describe('retrieveDailyValueData', () => {
-            const TEST_DATA = `{
-                "type": "FEATURE",
-                "properties": {
-                    "timeStep": ["2000-01-01", "2000-01-02", "2000-01-03"],
-                    "result": ["1", "2", "3"]
-                }
-            }`;
-
-            let mockDispatch;
-
-            beforeEach(() => {
-                jasmine.Ajax.install();
-                mockDispatch = jasmine.createSpy('mockDispatch');
-                spyOn(Actions, 'setObservationsTimeSeries').and.callThrough();
-            });
-
-            afterEach(() => {
-                jasmine.Ajax.uninstall();
-            });
-
-            it('Successful fetch sends triggers setObservationsTimeSeries action', (done) => {
-                Actions.retrieveDailyValueData('12345', 'abc12')(mockDispatch)
-                    .then(() => {
-                        expect(mockDispatch).toHaveBeenCalled();
-                        expect(Actions.setObservationsTimeSeries).toHaveBeenCalledWith('abc12', {
-                            type: 'FEATURE',
-                            properties: {
-                                timeStep: ['2000-01-01', '2000-01-02', '2000-01-03'],
-                                result: ['1', '2', '3']
-                            }
-                        });
-                        done();
-                    });
-                jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 200,
-                    responseText: TEST_DATA,
-                    contentType: 'application/json'
-                });
-            });
-
-            it('Expect that setObservationsTimeSeries action is called with an empty object for a failed request', (done) => {
-                Actions.retrieveDailyValueData('12345', 'abc12')(mockDispatch)
-                    .then(() => {
-                        expect(mockDispatch).toHaveBeenCalled();
-                        expect(Actions.setObservationsTimeSeries).toHaveBeenCalledWith('abc12', {});
-                        done();
-                    });
-                jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 500
-                });
-            });
-        });
-
         describe('retrieveFloodData with no data', () => {
             let mockDispatch;
 
@@ -1225,32 +1171,7 @@ describe('Redux store', () => {
             });
         });
 
-        it('should create an action to set the current observations time series id', () => {
-            expect(Actions.setCurrentObservationsTimeSeriesId('12345')).toEqual({
-                type: 'SET_CURRENT_TIME_SERIES_ID',
-                timeSeriesId: '12345'
-            });
-        });
 
-        it('should create an action to set the current daily value graph cursor offset', () => {
-            expect(Actions.setDailyValueCursorOffset('13566')).toEqual({
-                type: 'SET_DAILY_VALUE_CURSOR_OFFSET',
-                cursorOffset: '13566'
-            });
-        });
-
-         it('should create an action to set the DV graph brush offset', () => {
-            expect(Actions.setDVGraphBrushOffset([1000, 10000000])).toEqual({
-                type: 'SET_DV_GRAPH_BRUSH_OFFSET',
-                dvGraphBrushOffset: [1000, 10000000]
-            });
-         });
-
-         it('should create an action to clear the DV graph brush offset', () => {
-            expect(Actions.clearDVGraphBrushOffset()).toEqual({
-                type: 'CLEAR_DV_GRAPH_BRUSH_OFFSET'
-            });
-         });
     });
 });
 
