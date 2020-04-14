@@ -916,7 +916,7 @@ describe('drawingData module', () => {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
-                            requestDT: new Date(2017, 2, 1, 11, 15, 0, 0).getTime(),
+                            requestDT: 1488388500000,
                             'filter:timeRange': {
                                 mode: 'PERIOD',
                                 periodDays: '7',

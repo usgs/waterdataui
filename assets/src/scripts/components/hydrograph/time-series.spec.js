@@ -5,7 +5,7 @@ import {
 
 const TEST_DATA = {
     series: {
-        ianaTimezone: 'America/Chicago',
+        ianaTimeZone: 'America/Chicago',
         timeSeries: {
             '00060': {
                 tsKey: 'current:P7D',
