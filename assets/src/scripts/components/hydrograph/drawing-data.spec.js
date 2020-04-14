@@ -1001,7 +1001,8 @@ describe('drawingData module', () => {
                     day: 22,
                     hour: 11,
                     minute: 15,
-                    second: 0
+                    second: 0,
+                    zone: 'America/Chicago'
                 }).valueOf()
             });
             expect(result[0][8]).toEqual({
@@ -1012,7 +1013,8 @@ describe('drawingData module', () => {
                     day: 1,
                     hour: 11,
                     minute: 15,
-                    second: 0
+                    second: 0,
+                    zone: 'America/Chicago'
                 }).valueOf()
             });
         });
