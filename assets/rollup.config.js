@@ -5,8 +5,8 @@
 const path = require('path');
 
 const alias = require('@rollup/plugin-alias');
-const buble = require('rollup-plugin-buble');
-const commonjs = require('rollup-plugin-commonjs');
+const buble = require('@rollup/plugin-buble');
+const commonjs = require('@rollup/plugin-commonjs');
 const json = require('@rollup/plugin-json');
 const resolve = require('@rollup/plugin-node-resolve');
 const replace = require('@rollup/plugin-replace');
@@ -32,7 +32,11 @@ const getBundleConfig = function (src, dest) {
                 mainFields: ['module', 'jsnext', 'main']
             }),
             json(),
-            commonjs(),
+            commonjs({
+                exclude: [
+                    'node_modules/symbol-observable/es/index.js'
+                ]
+            }),
             buble({
                 objectAssign: 'Object.assign',
                 transforms: {
