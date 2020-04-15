@@ -19,8 +19,8 @@ import {fetchSiteStatistics} from '../web-services/statistics-data';
 import {floodDataReducer as floodData} from './flood-data-reducer';
 import {floodStateReducer as floodState} from './flood-state-reducer';
 import {nldiDataReducer as nldiData} from './nldi-data-reducer';
-import {observationsDataReducer as observationsData} from './observations';
-import {observationsStateReducer as observationsState} from './observations';
+import {dailyValueTimeSeriesDataReducer as dailyValueTimeSeriesData} from './daily-value-time-series';
+import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './daily-value-time-series';
 import {seriesReducer as series} from './series-reducer';
 import {statisticsDataReducer as statisticsData} from './statistics-data-reducer';
 import {timeSeriesStateReducer as timeSeriesState} from './time-series-state-reducer';
@@ -464,12 +464,12 @@ export const Actions = {
 
 const appReducer = combineReducers({
     series,
-    observationsData,
+    dailyValueTimeSeriesData,
     statisticsData,
     floodData,
     nldiData,
     timeSeriesState,
-    observationsState,
+    dailyValueTimeSeriesState,
     floodState,
     ui
 });
@@ -480,7 +480,7 @@ const MIDDLEWARES = [thunk];
 export const configureStore = function (initialState) {
     initialState = {
         series: {},
-        observationsData: {},
+        dailyValueTimeSeriesData: {},
         floodData: {
             stages: [],
             extent: {}
@@ -507,7 +507,7 @@ export const configureStore = function (initialState) {
             loadingTSKeys: [],
             hydrographBrushOffset: null
         },
-        observationsState: {
+        dailyValueTimeSeriesState: {
             cursorOffset: null
         },
         floodState: {

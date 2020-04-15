@@ -3,9 +3,10 @@ import {scaleLinear} from 'd3-scale';
 import {createSelector} from 'reselect';
 
 import {
+    getDVGraphBrushOffset,
     getCurrentDVTimeSeriesTimeRange,
     getCurrentDVTimeSeriesValueRange
-} from '../../../selectors/observations-selector';
+} from '../../../selectors/daily-value-time-series-selector';
 
 import {getLayout} from './layout';
 
@@ -16,7 +17,7 @@ import {getLayout} from './layout';
 export const getXScale = memoize((kind) =>createSelector(
     getLayout(kind),
     getCurrentDVTimeSeriesTimeRange,
-    state => state.observationsState.dvGraphBrushOffset,
+    getDVGraphBrushOffset,
     (layout, timeRange,dvGraphBrushOffset) => {
         let xScale = scaleLinear()
             .range([0, layout.width - layout.margin.right]);

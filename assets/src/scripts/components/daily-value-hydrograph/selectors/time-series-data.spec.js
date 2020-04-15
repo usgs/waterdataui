@@ -5,9 +5,9 @@ import {
     getDataAtCursor
 } from './time-series-data';
 
-describe('time-series-data module', () => {
+describe('components/daily-value-hydrograph/time-series-data module', () => {
     const TEST_STATE = {
-        observationsData: {
+        dailyValueTimeSeriesData: {
             dvTimeSeries: {
                 '12345': {
                     type: 'Feature',
@@ -25,7 +25,7 @@ describe('time-series-data module', () => {
                 }
             }
         },
-        observationsState: {
+        dailyValueTimeSeriesState: {
             currentDVTimeSeriesId: '12345'
         },
         ui: {
@@ -36,8 +36,8 @@ describe('time-series-data module', () => {
     describe('getCurrentTimeSeriesPoints', () => {
         it('should return an empty array if no current time series is defined', () => {
             expect(getCurrentTimeSeriesPoints({
-                observationsData: {},
-                observationsState: {}
+                dailyValueTimeSeriesData: {},
+                dailyValueTimeSeriesState: {}
             })).toEqual([]);
         });
 
@@ -67,8 +67,8 @@ describe('time-series-data module', () => {
     describe('getCurrentTimeSeriesLineSegments', () => {
         it('Should return an empty array if no current time series is defined', () => {
            expect(getCurrentTimeSeriesLineSegments({
-               observationsData: {},
-               observationsState: {}
+               dailyValueTimeSeriesData: {},
+               dailyValueTimeSeriesState: {}
            })).toEqual([]);
         });
 
@@ -86,7 +86,7 @@ describe('time-series-data module', () => {
 
         it('Should return a two line segments if time series has two day gap', () => {
             const result = getCurrentTimeSeriesLineSegments({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '12345': {
                             type: 'Feature',
@@ -102,7 +102,7 @@ describe('time-series-data module', () => {
                         }
                     }
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             });
@@ -113,7 +113,7 @@ describe('time-series-data module', () => {
 
         it('should return two line segment if the time series approvals change', () => {
             const result = getCurrentTimeSeriesLineSegments({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '12345': {
                             type: 'Feature',
@@ -129,7 +129,7 @@ describe('time-series-data module', () => {
                         }
                     }
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             });
@@ -147,8 +147,8 @@ describe('time-series-data module', () => {
         it('should return the epoch time of the offset', () => {
             expect(getCursorEpochTime({
                 ...TEST_STATE,
-                observationsState: {
-                    ...TEST_STATE.observationsState,
+                dailyValueTimeSeriesState: {
+                    ...TEST_STATE.dailyValueTimeSeriesState,
                     dvGraphCursorOffset: 86400000
                 }
             })).toEqual(1514937600000);
@@ -170,8 +170,8 @@ describe('time-series-data module', () => {
         it('should return the point nearest the cursor offset', () => {
             expect(getDataAtCursor({
                 ...TEST_STATE,
-                observationsState: {
-                    ...TEST_STATE.observationsState,
+                dailyValueTimeSeriesState: {
+                    ...TEST_STATE.dailyValueTimeSeriesState,
                     dvGraphCursorOffset: 86400000
                 }
             })).toEqual({

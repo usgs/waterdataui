@@ -4,10 +4,10 @@ import{configureStore} from '../../store';
 
 import {drawGraphBrush} from './graph-brush';
 
-describe ('graph-brush module', () => {
+describe ('components/daily-value-hydrograph/graph-brush module', () => {
 
     const TEST_STATE = {
-        observationsData: {
+        dailyValueTimeSeriesData: {
             dvTimeSeries: {
                 '12345' : {
                     type: 'Feature',
@@ -33,7 +33,7 @@ describe ('graph-brush module', () => {
                 }
             }
         },
-        observationsState: {
+        dailyValueTimeSeriesState: {
             currentDVTimeSeriesId: '12345',
             dvGraphCursorOffset: 1262476800000,
             dvGraphBrushOffset: undefined

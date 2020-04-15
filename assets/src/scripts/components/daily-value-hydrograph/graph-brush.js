@@ -4,8 +4,8 @@ import {createStructuredSelector} from 'reselect';
 
 import {appendXAxis} from '../../d3-rendering/axes';
 import {link} from '../../lib/d3-redux';
-import {getDVGraphBrushOffset} from '../../selectors/observations-selector';
-import {Actions} from '../../store/observations';
+import {getDVGraphBrushOffset} from '../../selectors/daily-value-time-series-selector';
+import {Actions} from '../../store/daily-value-time-series';
 
 import {getBrushLayout} from './selectors/layout';
 import {getXAxis} from './selectors/axes';

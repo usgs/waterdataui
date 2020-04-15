@@ -1,6 +1,6 @@
 import {fetchAvailableDVTimeSeries, fetchDVTimeSeries} from '../web-services/observations';
 
-const INITIAL_OBSERVATIONS_DATA_STATE = {
+const INITIAL_DAILY_VALUE_TIME_SERIES_DATA= {
     availableDVTimeSeries: [],
     dvTimeSeries: {}
 };
@@ -77,7 +77,7 @@ const retrieveAvailableDVTimeSeries = function(monitoringLocationId) {
 const retrieveDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
     return function(dispatch, getState) {
         const state = getState();
-        if (state.observationsData.dvTimeSeries && timeSeriesId in state.observationsData.dvTimeSeries) {
+        if (state.dailyValueTimeSeriesData.dvTimeSeries && timeSeriesId in state.dailyValueTimeSeriesData.dvTimeSeries) {
             dispatch(setCurrentDVTimeSeriesId(timeSeriesId));
             return Promise.resolve();
         }
@@ -88,32 +88,34 @@ const retrieveDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
                     dispatch(setCurrentDVTimeSeriesId(timeSeriesId));
                 },
                 () => {
-                    console.log(`Unable to fetch observations time series for ${timeSeriesId}`);
+                    console.log(`Unable to fetch dailyValueTimeSeries time series for ${timeSeriesId}`);
                 });
     };
 };
 
 /*
- * Slice reducer for observations data
+ * Slice reducer for dailyValueTimeSeries data
  */
-export const observationsDataReducer = function(observationsData=INITIAL_OBSERVATIONS_DATA_STATE, action) {
-    switch (action.type) {
-        case 'SET_AVAILABLE_DV_TIME_SERIES': {
-            return {
-                ...observationsData,
-                availableDVTimeSeries: action.availableTimeSeries
-            };
+export const dailyValueTimeSeriesDataReducer =
+    function (dailyValueTimeSeriesData = INITIAL_DAILY_VALUE_TIME_SERIES_DATA, action) {
+        switch (action.type) {
+            case 'SET_AVAILABLE_DV_TIME_SERIES': {
+                return {
+                    ...dailyValueTimeSeriesData,
+                    availableDVTimeSeries: action.availableTimeSeries
+                };
+            }
+            case 'ADD_DV_TIME_SERIES': {
+                let newData = {};
+                newData[action.timeSeriesId] = action.data;
+                return Object.assign({}, dailyValueTimeSeriesData, {
+                    dvTimeSeries: Object.assign({}, dailyValueTimeSeriesData.dvTimeSeries, newData)
+                });
+            }
+            default:
+                return dailyValueTimeSeriesData;
         }
-        case 'ADD_DV_TIME_SERIES': {
-            let newData = {};
-            newData[action.timeSeriesId] = action.data;
-            return Object.assign({}, observationsData, {
-                dvTimeSeries: Object.assign({}, observationsData.dvTimeSeries, newData)
-            });
-        }
-        default: return observationsData;
-    }
-};
+    };
 
 
 
@@ -140,23 +142,23 @@ const clearDVGraphBrushOffset = function() {
 };
 
 /*
- * Slice reducer for observationsState
+ * Slice reducer for dailyValueTimeSeriesState
  */
-export const observationsStateReducer = function(observationsState={}, action) {
+export const dailyValueTimeSeriesStateReducer = function(dailyValueTimeSeriesState={}, action) {
     switch (action.type) {
         case 'SET_CURRENT_DV_TIME_SERIES_ID':
             return {
-                ...observationsState,
+                ...dailyValueTimeSeriesState,
                 currentDVTimeSeriesId: action.timeSeriesId
             };
         case 'SET_DV_GRAPH_CURSOR_OFFSET':
             return {
-                ...observationsState,
+                ...dailyValueTimeSeriesState,
                 dvGraphCursorOffset: action.cursorOffset
             };
         case 'SET_DV_GRAPH_BRUSH_OFFSET':
             return {
-                ...observationsState,
+                ...dailyValueTimeSeriesState,
                 dvGraphBrushOffset: {
                     start: action.startBrushOffset,
                     end: action.endBrushOffset
@@ -164,11 +166,11 @@ export const observationsStateReducer = function(observationsState={}, action) {
             };
         case 'CLEAR_DV_GRAPH_BRUSH_OFFSET':
             return {
-                ...observationsState,
+                ...dailyValueTimeSeriesState,
                 dvGraphBrushOffset: undefined
             };
         default:
-            return observationsState;
+            return dailyValueTimeSeriesState;
     }
 };
 

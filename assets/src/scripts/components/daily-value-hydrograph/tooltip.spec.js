@@ -4,9 +4,9 @@ import {configureStore} from '../../store';
 
 import {drawTooltipFocus, drawTooltipText, drawTooltipCursorSlider} from './tooltip';
 
-describe('dailyValueHydrograph/tooltip module', () => {
+describe('components/daily-value-hydrograph/tooltip module', () => {
     const TEST_STATE = {
-        observationsData: {
+        dailyValueTimeSeriesData: {
             dvTimeSeries: {
                 '12345': {
                     type: 'Feature',
@@ -25,7 +25,7 @@ describe('dailyValueHydrograph/tooltip module', () => {
                 }
             }
         },
-        observationsState: {
+        dailyValueTimeSeriesState: {
             currentDVTimeSeriesId: '12345',
             dvGraphCursorOffset: 86400000
         },
@@ -62,8 +62,8 @@ describe('dailyValueHydrograph/tooltip module', () => {
         it('Expect tooltip text element rendered to contain the most recent information if cursorOffset is null', () => {
             store = configureStore({
                 ...TEST_STATE,
-                observationsState: {
-                    ...TEST_STATE.observationsState,
+                dailyValueTimeSeriesState: {
+                    ...TEST_STATE.dailyValueTimeSeriesState,
                     dvGraphCursorOffset: null
                 }
             });

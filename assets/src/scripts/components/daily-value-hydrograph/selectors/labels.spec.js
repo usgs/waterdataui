@@ -1,14 +1,14 @@
 import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesYTitle, getCurrentTimeSeriesTitle} from './labels';
 
-describe('components/dailyValueHydrograph/selectors/label module', () => {
+describe('components/daily-value-hydrograph/selectors/label module', () => {
     describe('getCurrentTimeSeriesDescription', () => {
         it('should return empty string if no current time series is defined', () => {
             expect(getCurrentTimeSeriesDescription({
-                observationsData: {},
-                observationsState: {}
+                dailyValueTimeSeriesData: {},
+                dailyValueTimeSeriesState: {}
             })).toBe('');
             expect(getCurrentTimeSeriesDescription({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '12345': {
                             type: 'Feature',
@@ -20,13 +20,13 @@ describe('components/dailyValueHydrograph/selectors/label module', () => {
                         }
                     }
                 },
-                observationsState: {}
+                dailyValueTimeSeriesState: {}
             })).toBe('');
         });
 
         it('should return the description string containing the observedPropertyName and samplingFeatureName', () => {
             const result = getCurrentTimeSeriesDescription({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '12345': {
                             type: 'Feature',
@@ -38,7 +38,7 @@ describe('components/dailyValueHydrograph/selectors/label module', () => {
                         }
                     }
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             });
@@ -51,11 +51,11 @@ describe('components/dailyValueHydrograph/selectors/label module', () => {
     describe('getCurrentTimeSeriesYTitle', () => {
         it('should return empty string if no current time series is defined', () => {
             expect(getCurrentTimeSeriesYTitle({
-                observationsData: {},
-                observationsState: {}
+                dailyValueTimeSeriesData: {},
+                dailyValueTimeSeriesState: {}
             })).toBe('');
             expect(getCurrentTimeSeriesYTitle({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '12345': {
                             type: 'Feature',
@@ -67,13 +67,13 @@ describe('components/dailyValueHydrograph/selectors/label module', () => {
                         }
                     }
                 },
-                observationsState: {}
+                dailyValueTimeSeriesState: {}
             })).toBe('');
         });
 
         it('should return the description string containing the observedPropertyName and unitOfMeasureName', () => {
             const result = getCurrentTimeSeriesYTitle({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '12345': {
                             type: 'Feature',
@@ -85,7 +85,7 @@ describe('components/dailyValueHydrograph/selectors/label module', () => {
                         }
                     }
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             });
@@ -98,11 +98,11 @@ describe('components/dailyValueHydrograph/selectors/label module', () => {
     describe('getCurrentTimeSeriesTitle', () => {
         it('should return empty string if no current time series is defined', () => {
             expect(getCurrentTimeSeriesTitle({
-                observationsData: {},
-                observationsState: {}
+                dailyValueTimeSeriesData: {},
+                dailyValueTimeSeriesState: {}
             })).toBe('');
             expect(getCurrentTimeSeriesTitle({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '12345': {
                             type: 'Feature',
@@ -114,13 +114,13 @@ describe('components/dailyValueHydrograph/selectors/label module', () => {
                         }
                     }
                 },
-                observationsState: {}
+                dailyValueTimeSeriesState: {}
             })).toBe('');
         });
 
         it('should return the description string containing the observedPropertyName', () => {
             const result = getCurrentTimeSeriesYTitle({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '12345': {
                             type: 'Feature',
@@ -131,7 +131,7 @@ describe('components/dailyValueHydrograph/selectors/label module', () => {
                         }
                     }
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             });

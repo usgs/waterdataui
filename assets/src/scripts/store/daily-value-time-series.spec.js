@@ -1,21 +1,21 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import {default as thunk} from 'redux-thunk';
 
-import {Actions, observationsDataReducer, observationsStateReducer} from './observations';
+import {Actions, dailyValueTimeSeriesDataReducer, dailyValueTimeSeriesStateReducer} from './daily-value-time-series';
 
-describe('store/observations module', () => {
+describe('store/daily-value-time-series module', () => {
     /* eslint no-use-before-define: 0 */
     let store;
 
     beforeEach(() => {
         store = createStore(
             combineReducers({
-                observationsData: observationsDataReducer,
-                observationsState: observationsStateReducer
+                dailyValueTimeSeriesData: dailyValueTimeSeriesDataReducer,
+                dailyValueTimeSeriesState: dailyValueTimeSeriesStateReducer
             }),
             {
-                observationsData: {},
-                observationsState: {}
+                dailyValueTimeSeriesData: {},
+                dailyValueTimeSeriesState: {}
             },
             applyMiddleware(thunk)
         );
@@ -26,13 +26,13 @@ describe('store/observations module', () => {
         jasmine.Ajax.uninstall();
     });
 
-    describe('observationsDataReducer actions', () => {
+    describe('dailyValueTimeSeriesDataReducer actions', () => {
 
         describe('Actions.setAvailableDVTimeSeries', () => {
             it('expect to set the availableDVTimeSeries', () => {
                 store.dispatch(Actions.setAvailableDVTimeSeries([{id: '1'}, {id: '2'}]));
 
-                expect(store.getState().observationsData.availableDVTimeSeries).toEqual([{id: '1'}, {id: '2'}]);
+                expect(store.getState().dailyValueTimeSeriesData.availableDVTimeSeries).toEqual([{id: '1'}, {id: '2'}]);
             });
         });
 
@@ -40,7 +40,7 @@ describe('store/observations module', () => {
             it('expect to add the dvTimeSeries to the store', () => {
                 store.dispatch(Actions.addDVTimeSeries('ffff345', {id: 'fffff345'}));
 
-                expect(store.getState().observationsData.dvTimeSeries.ffff345).toEqual({id: 'fffff345'});
+                expect(store.getState().dailyValueTimeSeriesData.dvTimeSeries.ffff345).toEqual({id: 'fffff345'});
             });
 
             it('Expect to retain other time series but add new to the store', () =>{
@@ -48,8 +48,8 @@ describe('store/observations module', () => {
                 store.dispatch(Actions.addDVTimeSeries('aaaa345', {id: 'aaaa345'}));
                 const state = store.getState();
 
-                expect(state.observationsData.dvTimeSeries.ffff345).toEqual({id: 'fffff345'});
-                expect(state.observationsData.dvTimeSeries.aaaa345).toEqual({id: 'aaaa345'});
+                expect(state.dailyValueTimeSeriesData.dvTimeSeries.ffff345).toEqual({id: 'fffff345'});
+                expect(state.dailyValueTimeSeriesData.dvTimeSeries.aaaa345).toEqual({id: 'aaaa345'});
             });
         });
 
@@ -65,8 +65,8 @@ describe('store/observations module', () => {
 
                 promise.then(() => {
                     const state = store.getState();
-                    expect(state.observationsData.availableDVTimeSeries).toBeDefined();
-                    expect(state.observationsData.availableDVTimeSeries).toEqual([
+                    expect(state.dailyValueTimeSeriesData.availableDVTimeSeries).toBeDefined();
+                    expect(state.dailyValueTimeSeriesData.availableDVTimeSeries).toEqual([
                         {
                             'parameterCode': '72019',
                             'statisticCode': '00002',
@@ -88,7 +88,7 @@ describe('store/observations module', () => {
                 });
 
                 promise.then(() => {
-                    expect(store.getState().observationsData.availableDVTimeSeries).toEqual([]);
+                    expect(store.getState().dailyValueTimeSeriesData.availableDVTimeSeries).toEqual([]);
 
                     done();
                 });
@@ -103,7 +103,7 @@ describe('store/observations module', () => {
 
                 promise.then(() => {
                     const state = store.getState();
-                    expect(state.observationsData.availableDVTimeSeries).toEqual([]);
+                    expect(state.dailyValueTimeSeriesData.availableDVTimeSeries).toEqual([]);
 
                     done();
                 });
@@ -124,10 +124,10 @@ describe('store/observations module', () => {
 
                 promise.then(() => {
                     const state = store.getState();
-                    expect(state.observationsData.dvTimeSeries).toBeDefined();
-                    expect(state.observationsData.dvTimeSeries.ffff345).toBeDefined();
-                    expect(state.observationsData.dvTimeSeries.ffff345.id).toEqual('USGS-12345678-ffff345');
-                    expect(state.observationsState.currentDVTimeSeriesId).toEqual('ffff345');
+                    expect(state.dailyValueTimeSeriesData.dvTimeSeries).toBeDefined();
+                    expect(state.dailyValueTimeSeriesData.dvTimeSeries.ffff345).toBeDefined();
+                    expect(state.dailyValueTimeSeriesData.dvTimeSeries.ffff345.id).toEqual('USGS-12345678-ffff345');
+                    expect(state.dailyValueTimeSeriesState.currentDVTimeSeriesId).toEqual('ffff345');
 
                     done();
                 });
@@ -138,7 +138,7 @@ describe('store/observations module', () => {
                 store.dispatch(Actions.retrieveDVTimeSeries('USGS-12345678', 'ffff345'));
 
                 expect(jasmine.Ajax.requests.count()).toBe(0);
-                expect(store.getState().observationsState.currentDVTimeSeriesId).toEqual('ffff345');
+                expect(store.getState().dailyValueTimeSeriesState.currentDVTimeSeriesId).toEqual('ffff345');
             });
 
             it('Expects a bad fetch request to not add a time series the store', (done) => {
@@ -156,9 +156,9 @@ describe('store/observations module', () => {
 
                     promise.then(() => {
                         const state = store.getState();
-                        expect(state.observationsData.dvTimeSeries.ffff345).toBeDefined();
-                        expect(state.observationsData.dvTimeSeries.aaaa345).toBeDefined();
-                        expect(state.observationsData.dvTimeSeries.aaaa345).toEqual({});
+                        expect(state.dailyValueTimeSeriesData.dvTimeSeries.ffff345).toBeDefined();
+                        expect(state.dailyValueTimeSeriesData.dvTimeSeries.aaaa345).toBeDefined();
+                        expect(state.dailyValueTimeSeriesData.dvTimeSeries.aaaa345).toEqual({});
 
                         done();
                     });
@@ -167,12 +167,12 @@ describe('store/observations module', () => {
         });
     });
 
-    describe('observationsStateReducer actions', () => {
+    describe('dailyValueTimeSeriesStateReducer actions', () => {
         describe('Actions.setCurrentDVTimeSeriesId', () => {
             it('updates current time series id', () => {
                 store.dispatch(Actions.setCurrentDVTimeSeriesId('ffff345'));
 
-                expect(store.getState().observationsState.currentDVTimeSeriesId).toEqual('ffff345');
+                expect(store.getState().dailyValueTimeSeriesState.currentDVTimeSeriesId).toEqual('ffff345');
             });
         });
 
@@ -180,7 +180,7 @@ describe('store/observations module', () => {
             it('updates cursor offset', () => {
                 store.dispatch(Actions.setDVGraphCursorOffset(1234512345));
 
-                expect(store.getState().observationsState.dvGraphCursorOffset).toEqual(1234512345);
+                expect(store.getState().dailyValueTimeSeriesState.dvGraphCursorOffset).toEqual(1234512345);
             });
         });
 
@@ -188,7 +188,7 @@ describe('store/observations module', () => {
             it('updates brush offset', () => {
                 store.dispatch(Actions.setDVGraphBrushOffset(1234512345, 1111122222));
 
-                expect(store.getState().observationsState.dvGraphBrushOffset).toEqual({
+                expect(store.getState().dailyValueTimeSeriesState.dvGraphBrushOffset).toEqual({
                     start: 1234512345,
                     end: 1111122222
                 });
@@ -199,7 +199,7 @@ describe('store/observations module', () => {
             it('clear the  brush offset', () => {
                 store.dispatch(Actions.setDVGraphBrushOffset(1234512345, 1111122222));
                 store.dispatch(Actions.clearDVGraphBrushOffset());
-                expect(store.getState().observationsState.dvGraphBrushOffset).not.toBeDefined();
+                expect(store.getState().dailyValueTimeSeriesState.dvGraphBrushOffset).not.toBeDefined();
             });
         });
     });

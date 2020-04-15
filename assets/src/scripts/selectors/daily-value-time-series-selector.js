@@ -1,22 +1,21 @@
-import {extent} from 'd3-array';
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 /*
- * Selectors to return observations state information or null if missing
+ * Selectors to return dailyValueTimeSeries state information or null if missing
  */
 export const getCurrentDVTimeSeriesId =
-    (state) => state.observationsState.currentDVTimeSeriesId ? state.observationsState.currentDVTimeSeriesId : null;
+    (state) => state.dailyValueTimeSeriesState.currentDVTimeSeriesId ? state.dailyValueTimeSeriesState.currentDVTimeSeriesId : null;
 
-export const getDVGraphCursorOffset = (state) => state.observationsState.dvGraphCursorOffset || null;
-export const getDVGraphBrushOffset = (state) => state.observationsState.dvGraphBrushOffset || null;
+export const getDVGraphCursorOffset = (state) => state.dailyValueTimeSeriesState.dvGraphCursorOffset || null;
+export const getDVGraphBrushOffset = (state) => state.dailyValueTimeSeriesState.dvGraphBrushOffset || null;
 
 /*
- * Selectors to return observations data or null if mssing
+ * Selectors to return dailyValueTimeSeries data or null if mssing
  */
 export const getAvailableDVTimeSeries =
-    (state) => state.observationsData.availableDVTimeSeries ? state.observationsData.availableDVTimeSeries : null;
+    (state) => state.dailyValueTimeSeriesData.availableDVTimeSeries ? state.dailyValueTimeSeriesData.availableDVTimeSeries : null;
 export const getAllDVTimeSeries =
-    (state) => state.observationsData.dvTimeSeries ? state.observationsData.dvTimeSeries : null;
+    (state) => state.dailyValueTimeSeriesData.dvTimeSeries ? state.dailyValueTimeSeriesData.dvTimeSeries : null;
 
 /*
  * Return a selector function which will return true if the current DV timeSeries is in the state
@@ -44,7 +43,7 @@ export const getCurrentDVTimeSeries = createSelector(
 );
 
 /*
- * Return a selector function which returns a String representing the unit of measure for the current observations time series
+ * Return a selector function which returns a String representing the unit of measure for the current dailyValueTimeSeries time series
  * @return {Function} - selector function returns a String. String will be empty if no current time series available.
  */
 export const getCurrentDVTimeSeriesUnitOfMeasure = createSelector(
@@ -85,10 +84,10 @@ export const getCurrentDVTimeSeriesValueRange = createSelector(
     (currentTimeSeries) => {
         let valueRange = null;
         if (currentTimeSeries && currentTimeSeries.properties.result && currentTimeSeries.properties.result.length) {
-            const rangeExtent = extent(currentTimeSeries.properties.result.map((value) => parseFloat(value)));
+            const numValues = currentTimeSeries.properties.result.map((value) => parseFloat(value));
             valueRange = {
-                min: rangeExtent[0],
-                max: rangeExtent[1]
+                min: Math.min(...numValues),
+                max: Math.max(...numValues)
             };
         }
         return valueRange;

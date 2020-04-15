@@ -10,7 +10,7 @@ import {configureStore} from './store';
 import {getParamString} from './url-params';
 
 import {attachToNode as EmbedComponent} from './components/embed';
-import {attachToNode as DailyValueHydrographComponent} from './components/dailyValueHydrograph';
+import {attachToNode as DailyValueHydrographComponent} from './components/daily-value-hydrograph';
 import {attachToNode as HydrographComponent} from './components/hydrograph';
 import {attachToNode as MapComponent} from './components/map';
 

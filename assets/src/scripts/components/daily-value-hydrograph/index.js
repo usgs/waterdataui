@@ -1,8 +1,8 @@
 import {select} from 'd3-selection';
 import includes from 'lodash/includes';
 
-import {getAvailableDVTimeSeries} from '../../selectors/observations-selector';
-import {Actions} from '../../store/observations';
+import {getAvailableDVTimeSeries} from '../../selectors/daily-value-time-series-selector';
+import {Actions} from '../../store/daily-value-time-series';
 
 import {drawErrorAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';

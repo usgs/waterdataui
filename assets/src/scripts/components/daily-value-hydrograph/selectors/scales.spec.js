@@ -1,8 +1,8 @@
 import {getMainXScale, getBrushXScale, getMainYScale} from './scales';
 
-describe('components/dailyValueHydrograph/selectors/scales', () => {
+describe('components/daily-value-hydrograph/selectors/scales', () => {
     const TEST_STATE = {
-        observationsData: {
+        dailyValueTimeSeriesData: {
             dvTimeSeries: {
                 '12345' : {
                     type: 'Feature',
@@ -16,7 +16,7 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
                 }
             }
         },
-        observationsState: {
+        dailyValueTimeSeriesState: {
             currentDVTimeSeriesId: '12345'
         },
         ui: {
@@ -28,12 +28,12 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
         it('Should have a default domain if no current time series is set', () => {
             expect(getMainXScale({
                 ...TEST_STATE,
-                observationsData: {},
-                observationsState: {}
+                dailyValueTimeSeriesData: {},
+                dailyValueTimeSeriesState: {}
             }).domain()).toEqual([0, 1]);
             expect(getMainXScale({
                 ...TEST_STATE,
-                observationsState: {}
+                dailyValueTimeSeriesState: {}
             }).domain()).toEqual([0, 1]);
         });
 
@@ -44,8 +44,8 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
         it('Should have the expected domain if a current time series is set and dvGraphBrushOffset is set', () => {
             expect(getMainXScale({
                 ...TEST_STATE,
-                observationsState: {
-                    ...TEST_STATE.observationsState,
+                dailyValueTimeSeriesState: {
+                    ...TEST_STATE.dailyValueTimeSeriesState,
                     dvGraphBrushOffset: {
                         start: 10000,
                         end: 50000
@@ -59,12 +59,12 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
        it('Should have a default domain if no current time series is set', () => {
             expect(getBrushXScale({
                 ...TEST_STATE,
-                observationsData: {},
-                observationsState: {}
+                dailyValueTimeSeriesData: {},
+                dailyValueTimeSeriesState: {}
             }).domain()).toEqual([0, 1]);
             expect(getBrushXScale({
                 ...TEST_STATE,
-                observationsState: {}
+                dailyValueTimeSeriesState: {}
             }).domain()).toEqual([0, 1]);
         });
 
@@ -75,8 +75,8 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
         it('Should have the expected domain if a current time series is set and dvGraphBrushOffset is set', () => {
             expect(getBrushXScale({
                 ...TEST_STATE,
-                observationsState: {
-                    ...TEST_STATE.observationsState,
+                dailyValueTimeSeriesState: {
+                    ...TEST_STATE.dailyValueTimeSeriesState,
                     dvGraphBrushOffset: {
                         start: 10000,
                         end: 50000
@@ -90,8 +90,8 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
        it('Should have the default domain if no current time series is set', () => {
            expect(getMainYScale({
                 ...TEST_STATE,
-                observationsData: {},
-                observationsState: {}
+                dailyValueTimeSeriesData: {},
+                dailyValueTimeSeriesState: {}
             }).domain()).toEqual([0, 1]);
        });
 
@@ -111,7 +111,7 @@ describe('components/dailyValueHydrograph/selectors/scales', () => {
        it('Should not extend domain beyond zero', () =>  {
            const result = getMainYScale({
                ...TEST_STATE,
-               observationsData: {
+               dailyValueTimeSeriesData: {
                    dvTimeSeries: {
                        '12345': {
                            type: 'Feature',

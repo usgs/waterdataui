@@ -1,13 +1,13 @@
 import {select} from 'd3-selection';
 
 import {configureStore} from '../../store';
-import {Actions} from '../../store/observations';
+import {Actions} from '../../store/daily-value-time-series';
 
 import {attachToNode} from './index';
 
 describe('components/dailyValueHydrograph/index', () => {
     const TEST_STATE = {
-        observationsData: {
+        dailyValueTimeSeriesData: {
             availableDVTimeSeries: [{
                 parameterCode: '72019',
                 statisticCode: '00001',
@@ -46,9 +46,9 @@ describe('components/dailyValueHydrograph/index', () => {
                 }
             }
         },
-        observationsState: {
-            currentTimeSeriesId: '1122',
-            cursorOffset: 1262476800000
+        dailyValueTimeSeriesState: {
+            currentDVTimeSeriesId: '1122',
+            dvGraphCursorOffset: 1262476800000
         },
         ui: {
             windowWidth: 1024,
@@ -98,8 +98,8 @@ describe('components/dailyValueHydrograph/index', () => {
 
         it('Expects that once the available time series is fetched and contains a valid time series id, the time series is fetched', (done) => {
             attachToNode(configureStore({
-                observationsData: {
-                    availableDVTimeSeries: TEST_STATE.observationsData.availableDVTimeSeries
+                dailyValueTimeSeriesData: {
+                    availableDVTimeSeries: TEST_STATE.dailyValueTimeSeriesData.availableDVTimeSeries
                 }
             }), testDiv.node(), {siteno: '12345'});
 
@@ -112,8 +112,8 @@ describe('components/dailyValueHydrograph/index', () => {
 
         it('Expects that if there is not a valid time series that the alert is shown indicating no data', (done) => {
             attachToNode(configureStore({
-                observationsData: {
-                    availableDVTimeSeries: TEST_STATE.observationsData.availableDVTimeSeries.slice(1)
+                dailyValueTimeSeriesData: {
+                    availableDVTimeSeries: TEST_STATE.dailyValueTimeSeriesData.availableDVTimeSeries.slice(1)
                 }
             }), testDiv.node(), {siteno: '12345'});
             window.requestAnimationFrame(() => {

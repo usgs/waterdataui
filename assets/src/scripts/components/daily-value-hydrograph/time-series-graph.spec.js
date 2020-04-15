@@ -1,13 +1,13 @@
 import {select} from 'd3-selection';
 
 import {configureStore} from '../../store';
-import {Actions} from '../../store/observations';
+import {Actions} from '../../store/daily-value-time-series';
 
 import {drawTimeSeriesGraph} from './time-series-graph';
 
 describe('components/dailyValueHydrograph/time-series-graph', () => {
     const TEST_STATE = {
-        observationsData: {
+        dailyValueTimeSeriesData: {
             dvTimeSeries: {
                 '12345' : {
                     type: 'Feature',
@@ -33,7 +33,7 @@ describe('components/dailyValueHydrograph/time-series-graph', () => {
                 }
             }
         },
-        observationsState: {
+        dailyValueTimeSeriesState: {
             currentDVTimeSeriesId: '12345',
             dvGraphCursorOffset: 1262476800000
         },

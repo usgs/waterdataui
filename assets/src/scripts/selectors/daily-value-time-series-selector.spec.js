@@ -10,19 +10,19 @@ import {
     getCurrentDVTimeSeriesUnitOfMeasure,
     getCurrentDVTimeSeriesTimeRange,
     getCurrentDVTimeSeriesValueRange
-} from './observations-selector';
+} from './daily-value-time-series-selector';
 
-describe('observations-selector', () => {
+describe('daily-value-time-series-selector', () => {
     describe('getCurrentDVTimeSeriesId', () => {
        it('should be false if no current time series id set', () => {
            expect(getCurrentDVTimeSeriesId({
-               observationsState: {}
+               dailyValueTimeSeriesState: {}
            })).toBeNull();
        });
 
        it('should be true if current time series id is set', () => {
            expect(getCurrentDVTimeSeriesId({
-               observationsState: {
+               dailyValueTimeSeriesState: {
                    currentDVTimeSeriesId: '12345'
                }
            })).toEqual('12345');
@@ -32,13 +32,13 @@ describe('observations-selector', () => {
     describe('getDVGraphCursorOffset', () => {
        it('Should be null if no cursorOffset set', () => {
            expect(getDVGraphCursorOffset({
-               observationsState: {}
+               dailyValueTimeSeriesState: {}
            })).toBeNull();
        });
 
        it('Should return the DV cursor offset if set in store', () => {
            expect(getDVGraphCursorOffset({
-               observationsState: {
+               dailyValueTimeSeriesState: {
                    dvGraphCursorOffset: 1234567880
                }
            })).toEqual(1234567880);
@@ -48,13 +48,13 @@ describe('observations-selector', () => {
     describe('getDVGraphBrushOffset', () => {
        it('Should be null if no cursorOffset set', () => {
            expect(getDVGraphBrushOffset({
-               observationsState: {}
+               dailyValueTimeSeriesState: {}
            })).toBeNull();
        });
 
        it('Should return the DV cursor offset if set in store', () => {
            expect(getDVGraphBrushOffset({
-               observationsState: {
+               dailyValueTimeSeriesState: {
                    dvGraphBrushOffset: {
                        start: 1234567880,
                        end: 555566666
@@ -70,13 +70,13 @@ describe('observations-selector', () => {
     describe('getAvailableDVTimeSeries', () => {
         it('should be null if no available dv time series', () => {
             expect(getAvailableDVTimeSeries({
-                observationsData: {}
+                dailyValueTimeSeriesData: {}
             })).toBeNull();
         });
 
         it('should return the available dv time series', () => {
             expect(getAvailableDVTimeSeries({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     availableDVTimeSeries: [{id: 1}, {id: 2}]
                 }
             })).toEqual([{id: 1}, {id: 2}]);
@@ -86,13 +86,13 @@ describe('observations-selector', () => {
     describe('getAllDVTimeSeries', () => {
         it('should be null if no time series are defined', () => {
             expect(getAllDVTimeSeries({
-                observationsData: {}
+                dailyValueTimeSeriesData: {}
             })).toBeNull();
         });
 
         it('should return time series when defined', () => {
             expect(getAllDVTimeSeries({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '11111': {
                             type: 'Feature',
@@ -120,22 +120,22 @@ describe('observations-selector', () => {
     describe('hasCurrentDVTimeSeries', () => {
         it('expect false if no timeSeries defined', () => {
             expect(hasCurrentDVTimeSeries({
-                observationsData: {},
-                observationsState: {}
+                dailyValueTimeSeriesData: {},
+                dailyValueTimeSeriesState: {}
             })).toBe(false);
         });
 
         it('expect false if specific timeSeries is not defined', () => {
             expect(hasCurrentDVTimeSeries({
-                observationsData : {
+                dailyValueTimeSeriesData : {
                     dvTimeSeries: {}
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             })).toBe(false);
             expect(hasCurrentDVTimeSeries({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '11111': {
                             type: 'Feature',
@@ -143,7 +143,7 @@ describe('observations-selector', () => {
                         }
                     }
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             })).toBe(false);
@@ -151,7 +151,7 @@ describe('observations-selector', () => {
 
         it('expect true if specific timeSeries is defined', () => {
             expect(hasCurrentDVTimeSeries({
-                observationsData : {
+                dailyValueTimeSeriesData : {
                     dvTimeSeries: {
                         '11111': {
                             type: 'Feature',
@@ -163,7 +163,7 @@ describe('observations-selector', () => {
                         }
                     }
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             })).toBe(true);
@@ -173,11 +173,11 @@ describe('observations-selector', () => {
     describe('getCurrentDVTimeSeries', () => {
         it('expect null if timeSeries is not defined', () => {
             expect(getCurrentDVTimeSeries({
-                observationsData : {},
-                observationsState: {}
+                dailyValueTimeSeriesData : {},
+                dailyValueTimeSeriesState: {}
             })).toBeNull();
             expect(getCurrentDVTimeSeries({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '11111': {
                             type: 'Feature',
@@ -185,10 +185,10 @@ describe('observations-selector', () => {
                         }
                     }
                 },
-                observationsState: {}
+                dailyValueTimeSeriesState: {}
             })).toBeNull();
             expect(getCurrentDVTimeSeries({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '11111': {
                             type: 'Feature',
@@ -196,7 +196,7 @@ describe('observations-selector', () => {
                         }
                     }
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             })).toBeNull();
@@ -204,7 +204,7 @@ describe('observations-selector', () => {
 
         it('expect object if timeSeries is defined', () => {
             expect(getCurrentDVTimeSeries({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '11111': {
                             type: 'Feature',
@@ -216,7 +216,7 @@ describe('observations-selector', () => {
                         }
                     }
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             })).toEqual({
@@ -229,14 +229,14 @@ describe('observations-selector', () => {
     describe('getCurrentDVTimeSeriesUnitOfMeasure', () => {
         it('expect empty string if not time series defined', () => {
             expect(getCurrentDVTimeSeriesUnitOfMeasure({
-                observationsData : {},
-                observationsState: {}
+                dailyValueTimeSeriesData : {},
+                dailyValueTimeSeriesState: {}
             })).toEqual('');
         });
 
         it('Expect the unit of measure for current time series', () => {
             expect(getCurrentDVTimeSeriesUnitOfMeasure({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '12345': {
                             type: 'Feature',
@@ -254,7 +254,7 @@ describe('observations-selector', () => {
                         }
                     }
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             })).toEqual('ft');
@@ -264,14 +264,14 @@ describe('observations-selector', () => {
     describe('getCurrentDVTimeSeriesTimeRange', () => {
         it('should be null if no current time series is set or available', () => {
             expect(getCurrentDVTimeSeriesTimeRange({
-                observationsData: {},
-                observationsState: {}
+                dailyValueTimeSeriesData: {},
+                dailyValueTimeSeriesState: {}
             })).toBeNull();
             expect(getCurrentDVTimeSeriesTimeRange({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {}
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             })).toBeNull();
@@ -279,7 +279,7 @@ describe('observations-selector', () => {
 
         it('should return startTime and endTime properties in universal time when time series is defined', () => {
             expect(getCurrentDVTimeSeriesTimeRange({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '12345': {
                             type: 'Feature',
@@ -291,7 +291,7 @@ describe('observations-selector', () => {
                         }
                     }
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             })).toEqual({
@@ -304,14 +304,14 @@ describe('observations-selector', () => {
     describe('getCurrentDVTimeSeriesValueRange', () => {
         it('should be null if if no current time series is set or available', () => {
             expect(getCurrentDVTimeSeriesValueRange({
-                observationsData: {},
-                observationsState: {}
+                dailyValueTimeSeriesData: {},
+                dailyValueTimeSeriesState: {}
             })).toBeNull();
             expect(getCurrentDVTimeSeriesValueRange({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {}
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             })).toBeNull();
@@ -319,7 +319,7 @@ describe('observations-selector', () => {
 
         it('should return the extent of the current time series', () => {
             expect(getCurrentDVTimeSeriesValueRange({
-                observationsData: {
+                dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '12345': {
                             type: 'Feature',
@@ -335,7 +335,7 @@ describe('observations-selector', () => {
                         }
                     }
                 },
-                observationsState: {
+                dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: '12345'
                 }
             })).toEqual({

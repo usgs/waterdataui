@@ -1,10 +1,11 @@
-import {getLegendMarkerRows} from './legend-data';
 import {lineMarker} from '../../../d3-rendering/markers';
 
-describe('DV: Legend module', () => {
+import {getLegendMarkerRows} from './legend-data';
+
+describe('daily-value-hydrograph/legend-data', () => {
 
     const TEST_STATE = {
-        observationsData: {
+        dailyValueTimeSeriesData: {
             dvTimeSeries: {
                 '12345': {
                     type: 'Feature',
@@ -22,7 +23,7 @@ describe('DV: Legend module', () => {
                 }
             }
         },
-        observationsState: {
+        dailyValueTimeSeriesState: {
             currentDVTimeSeriesId: '12345'
         },
         ui: {
@@ -31,13 +32,13 @@ describe('DV: Legend module', () => {
         }
     };
 
-    describe('DV: getLegendMarkerRows', () => {
+    describe('getLegendMarkerRows', () => {
 
         it('Should return no markers if no time series to show', () => {
             let newData = {
                 ...TEST_STATE,
-                observationsData: {
-                    ...TEST_STATE.observationsData,
+                dailyValueTimeSeriesData: {
+                    ...TEST_STATE.dailyValueTimeSeriesData,
                     dvTimeSeries: {}
                 }
             };

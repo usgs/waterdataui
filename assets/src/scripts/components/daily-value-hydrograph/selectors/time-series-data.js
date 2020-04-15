@@ -4,7 +4,7 @@ import zip from 'lodash/zip';
 import zipObject from 'lodash/zipObject';
 import {createSelector} from 'reselect';
 
-import {getCurrentDVTimeSeries, getDVGraphCursorOffset} from '../../../selectors/observations-selector';
+import {getCurrentDVTimeSeries, getDVGraphCursorOffset} from '../../../selectors/daily-value-time-series-selector';
 import {getNearestTime} from '../../../utils';
 
 import {getXScale, getMainXScale, getMainYScale} from './scales';
@@ -112,8 +112,8 @@ export const getCurrentTimeSeriesLineSegments = createSelector(
 );
 
 /*
- * Return a selector function that returns the epoch time for the current observations cursor offset.
- * Return null if no current observations cursor offset is set.
+ * Return a selector function that returns the epoch time for the current daily value cursor offset.
+ * Return null if no current daily value cursor offset is set.
  */
 export const getCursorEpochTime = createSelector(
     getDVGraphCursorOffset,
