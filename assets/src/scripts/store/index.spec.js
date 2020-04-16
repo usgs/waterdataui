@@ -1,4 +1,6 @@
 import {Actions, configureStore} from './index';
+import {Actions as floodInundationActions} from './flood-inundation';
+
 import {MOCK_RDB as MOCK_STATS_DATA} from '../web-services/statistics-data.spec.js';
 
 describe('Redux store', () => {
@@ -167,7 +169,7 @@ describe('Redux store', () => {
                 spyOn(Actions, 'retrieveCompareTimeSeries');
                 spyOn(Actions, 'toggleTimeSeries');
                 spyOn(Actions, 'setCurrentVariable');
-                spyOn(Actions, 'setGageHeight');
+                spyOn(floodInundationActions, 'setGageHeight');
                 let p = Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
 
                 expect(Actions.addTimeSeriesLoading.calls.count()).toBe(1);
@@ -184,16 +186,16 @@ describe('Redux store', () => {
                     expect(Actions.toggleTimeSeries.calls.argsFor(0)).toEqual(['current', true]);
                     expect(Actions.setCurrentVariable.calls.count()).toBe(1);
                     expect(Actions.setCurrentVariable.calls.argsFor(0)).toEqual(['45807197']);
-                    expect(Actions.setGageHeight.calls.count()).toBe(1);
+                    expect(floodInundationActions.setGageHeight.calls.count()).toBe(1);
                     done();
                 });
             });
 
             it('The gage height is not set since there is no gage height data', (done) => {
-                spyOn(Actions, 'setGageHeight');
+                spyOn(floodInundationActions, 'setGageHeight');
                 let p = Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
                 p.then(() => {
-                    expect(Actions.setGageHeight).toHaveBeenCalledWith(null);
+                    expect(floodInundationActions.setGageHeight).toHaveBeenCalledWith(null);
 
                     done();
                 });
@@ -216,7 +218,7 @@ describe('Redux store', () => {
             });
 
             it('The gage height is set', (done) => {
-                spyOn(Actions, 'setGageHeight');
+                spyOn(floodInundationActions, 'setGageHeight');
                 let p = Actions.retrieveTimeSeries(SITE_NO)(mockDispatch, mockGetState);
 
                 /* eslint no-use-before-define: 0 */
@@ -226,7 +228,7 @@ describe('Redux store', () => {
                 });
 
                 p.then(() => {
-                    expect(Actions.setGageHeight).toHaveBeenCalledWith(20);
+                    expect(floodInundationActions.setGageHeight).toHaveBeenCalledWith(20);
 
                     done();
                 });
@@ -758,121 +760,6 @@ describe('Redux store', () => {
             });
         });
 
-        describe('retrieveFloodData with data', () => {
-            let mockDispatch;
-
-            beforeEach(() => {
-                jasmine.Ajax.install();
-
-                jasmine.Ajax.stubRequest(/returnGeometry/).andReturn({
-                    status: 200,
-                    response: JSON.stringify({
-                        features: [{
-                            attributes: {
-                                USGSI: '03341500',
-                                STAGE: 30
-                            }
-                        }, {
-                            attributes: {
-                                USGSID: '03341500',
-                                STAGE: 29
-                            }
-                        }, {
-                            attributes: {
-                                USGSID: '03341500',
-                                STAGE: 28
-                            }
-                        }]
-                    }),
-                    contentType: 'application/json'
-                });
-
-                jasmine.Ajax.stubRequest(/returnExtentOnly/).andReturn({
-                    status: 200,
-                    response: JSON.stringify({
-                        extent: {
-                            xmin: -84.35321,
-                            ymin: 34.01666,
-                            xmax: 84.22346,
-                            ymax: 34.1010
-                        },
-                        spatialReference: {
-                            wkid: 4326,
-                            latestWkid: 4326
-                        }
-                    }),
-                    contentType: 'application/json'
-                });
-
-                mockDispatch = jasmine.createSpy('mockDispatch');
-            });
-
-            afterEach(() => {
-                jasmine.Ajax.uninstall();
-            });
-
-            it('dispatches a setFloodFeatures action after promises are resolved', (done) => {
-                spyOn(Actions, 'setFloodFeatures').and.callThrough();
-                let p = Actions.retrieveFloodData(SITE_NO)(mockDispatch);
-
-                p.then(() => {
-                    expect(mockDispatch).toHaveBeenCalled();
-                    expect(Actions.setFloodFeatures).toHaveBeenCalledWith([28, 29, 30], {
-                        xmin: -84.35321,
-                        ymin: 34.01666,
-                        xmax: 84.22346,
-                        ymax: 34.1010
-                    });
-
-                    done();
-                });
-            });
-        });
-
-        describe('retrieveFloodData with no data', () => {
-            let mockDispatch;
-
-            const SITE_NO = '12345678';
-
-            beforeEach(() => {
-                jasmine.Ajax.install();
-
-                jasmine.Ajax.stubRequest(/returnGeometry/).andReturn({
-                    status: 200,
-                    responseText: JSON.stringify({features: []}),
-                    contentType: 'application/json'
-                });
-
-                jasmine.Ajax.stubRequest(/returnExtentOnly/).andReturn({
-                    status: 200,
-                    responseText: JSON.stringify({
-                        xmin: 'NaN',
-                        ymin: 'NaN',
-                        xmax: 'NaN',
-                        ymax: 'NaN'
-                    }),
-                    contentType: 'application/json'
-                });
-
-                mockDispatch = jasmine.createSpy('mockDispatch');
-            });
-
-            afterEach(() => {
-                jasmine.Ajax.uninstall();
-            });
-
-            it('dispatches a setFloodFeatures action after promises are resolved', (done) => {
-                spyOn(Actions, 'setFloodFeatures').and.callThrough();
-                let p = Actions.retrieveFloodData(SITE_NO)(mockDispatch);
-                p.then(() => {
-                    expect(mockDispatch).toHaveBeenCalled();
-                    expect(Actions.setFloodFeatures).toHaveBeenCalledWith([], {});
-
-                    done();
-                });
-            });
-        });
-
         describe('startTimeSeriesPlay', () => {
 
             let mockDispatch, mockGetState;
@@ -1058,48 +945,6 @@ describe('Redux store', () => {
                 type: 'TIME_SERIES_LOADING_REMOVE',
                 tsKeys: ['current', 'compare']
             });
-        });
-        it('should create an action to set flood features state', () => {
-            expect(Actions.setFloodFeatures([9, 10, 11], {xmin: -87, ymin: 42, xmax: -86, ymax: 43})).toEqual({
-                type: 'SET_FLOOD_FEATURES',
-                stages: [9, 10, 11],
-                extent: {xmin: -87, ymin: 42, xmax: -86, ymax: 43}
-            });
-        });
-
-        it('should create an action to update the gage height state', () => {
-            expect(Actions.setGageHeight(10)).toEqual({
-                type: 'SET_GAGE_HEIGHT',
-                gageHeight: 10
-            });
-        });
-
-        it('if gageHeight index is in the stages array, dispatch the setGageHeight action', () => {
-            let mockDispatch = jasmine.createSpy('mockDispatch');
-            let mockGetState = jasmine.createSpy('mockGetState');
-            mockGetState.and.returnValues({
-                floodData: {
-                    stages: [9, 10, 11]
-                }
-            });
-            Actions.setGageHeightFromStageIndex(1)(mockDispatch, mockGetState);
-            expect(mockDispatch.calls.count()).toBe(1);
-            expect(mockDispatch.calls.argsFor({
-                type: 'SET_GAGE_HEIGHT',
-                gageHeight: 10
-            }));
-        });
-
-        it('if gageHeight index is outside the boundes of stages array, do not dispatch the action', () => {
-            let mockDispatch = jasmine.createSpy('mockDispatch');
-            let mockGetState = jasmine.createSpy('mockGetState');
-            mockGetState.and.returnValues({
-                floodData: {
-                    stages: [9, 10, 11]
-                }
-            });
-            Actions.setGageHeightFromStageIndex(3)(mockDispatch, mockGetState);
-            expect(mockDispatch).not.toHaveBeenCalled();
         });
 
         it('should create an action to toggle time series view state', () => {

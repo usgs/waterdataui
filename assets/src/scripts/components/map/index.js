@@ -1,17 +1,20 @@
 import {select} from 'd3-selection';
-import {createStructuredSelector} from 'reselect';
-import {map as createMap, marker as createMarker, control, layerGroup} from 'leaflet';
 import {TiledMapLayer, dynamicMapLayer, Util, basemapLayer} from 'esri-leaflet/src/EsriLeaflet';
-import {link} from '../../lib/d3-redux';
+import {map as createMap, marker as createMarker, control, layerGroup} from 'leaflet';
+import {createStructuredSelector} from 'reselect';
+
 import config from '../../config';
-import {FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT} from '../../web-services/flood-data';
+import {link} from '../../lib/d3-redux';
 import {hasFloodData, getFloodExtent, getFloodStageHeight} from '../../selectors/flood-data-selector';
+import {hasNldiData, getNldiDownstreamFlows, getNldiDownstreamSites, getNldiUpstreamFlows, getNldiUpstreamSites, getNldiUpstreamBasin}
+    from '../../selectors/nldi-data-selector';
 import {Actions} from '../../store';
+import {Actions as floodInundationActions} from '../../store/flood-inundation';
+import {FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT} from '../../web-services/flood-data';
+
 import {floodSlider} from './flood-slider';
 import {createLegendControl, createFIMLegend, createNldiLegend} from './legend';
 import {addNldiLayers} from './nldiMapping';
-import {hasNldiData, getNldiDownstreamFlows, getNldiDownstreamSites, getNldiUpstreamFlows, getNldiUpstreamSites, getNldiUpstreamBasin}
-    from '../../selectors/nldi-data-selector';
 
 
 const getLayerDefs = function(layerNo, siteno, stage) {
@@ -185,8 +188,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
  * @param {Number} zoom - zoom level to initially set the map to
  */
 export const attachToNode = function(store, node, {siteno, latitude, longitude, zoom}) {
-
-    store.dispatch(Actions.retrieveFloodData(siteno));
+    store.dispatch(floodInundationActions.retrieveFloodData(siteno));
     // hydrates the store with nldi data
     store.dispatch(Actions.retrieveNldiData(siteno));
 

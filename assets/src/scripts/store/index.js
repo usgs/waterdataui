@@ -11,13 +11,13 @@ import {calcStartTime, sortedParameters} from '../utils';
 import {getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
     getCustomTimeRange, getIanaTimeZone, getTimeSeriesCollectionIds} from '../selectors/time-series-selector';
 
-import {fetchFloodFeatures, fetchFloodExtent} from '../web-services/flood-data';
 import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from '../web-services/models';
 import {fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow, fetchNldiUpstreamBasin} from '../web-services/nldi-data';
 import {fetchSiteStatistics} from '../web-services/statistics-data';
 
-import {floodDataReducer as floodData} from './flood-data-reducer';
-import {floodStateReducer as floodState} from './flood-state-reducer';
+import {Actions as floodInundationActions,
+    floodDataReducer as floodData,
+    floodStateReducer as floodState} from './flood-inundation';
 import {nldiDataReducer as nldiData} from './nldi-data-reducer';
 import {dailyValueTimeSeriesDataReducer as dailyValueTimeSeriesData} from './daily-value-time-series';
 import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './daily-value-time-series';
@@ -98,7 +98,7 @@ export const Actions = {
                     dispatch(Actions.toggleTimeSeries('current', true));
                     const variable = getCurrentVariableId(collection.timeSeries || {}, collection.variables || {});
                     dispatch(Actions.setCurrentVariable(variable));
-                    dispatch(Actions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
+                    dispatch(floodInundationActions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
                 },
                 () => {
                     dispatch(Actions.resetTimeSeries(getTsRequestKey('current', 'P7D')(currentState)));
@@ -238,19 +238,7 @@ export const Actions = {
             }
         };
     },
-    retrieveFloodData(siteno) {
-        return function (dispatch) {
-            const floodFeatures = fetchFloodFeatures(siteno);
-            const floodExtent = fetchFloodExtent(siteno);
-            return Promise.all([floodFeatures, floodExtent]).then((data) => {
-                const [features, extent] = data;
-                const stages = features.map((feature) => feature.attributes.STAGE).sort(function (a, b) {
-                    return a - b;
-                });
-                dispatch(Actions.setFloodFeatures(stages, stages.length ? extent.extent : {}));
-            });
-        };
-    },
+
     retrieveNldiData(siteno) {
         return function (dispatch) {
             const upstreamFlow = fetchNldiUpstreamFlow(siteno);
@@ -330,13 +318,7 @@ export const Actions = {
             tsKeys
         };
     },
-    setFloodFeatures(stages, extent) {
-        return {
-            type: 'SET_FLOOD_FEATURES',
-            stages,
-            extent
-        };
-    },
+
     setNldiFeatures(upstreamFlows, downstreamFlows, upstreamSites, downstreamSites, upstreamBasin) {
         return {
             type: 'SET_NLDI_FEATURES',
@@ -438,20 +420,6 @@ export const Actions = {
             const startTime = new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis();
             const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis();
             return dispatch(Actions.retrieveCustomTimeSeries(siteno, startTime, endTime, parmCd));
-        };
-    },
-    setGageHeightFromStageIndex(index) {
-        return function(dispatch, getState) {
-            const stages = getState().floodData.stages;
-            if (index > -1 && index < stages.length) {
-                dispatch(Actions.setGageHeight(stages[index]));
-            }
-        };
-    },
-    setGageHeight(gageHeight) {
-        return {
-            type: 'SET_GAGE_HEIGHT',
-            gageHeight
         };
     },
     setLocationIanaTimeZone(ianaTimeZone) {

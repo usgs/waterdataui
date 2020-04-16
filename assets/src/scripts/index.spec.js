@@ -22,9 +22,9 @@ import './d3-rendering/markers.spec';
 import './d3-rendering/tick-marks.spec';
 
 import './components/daily-value-hydrograph/selectors/labels.spec';
+import './components/daily-value-hydrograph/selectors/legend-data.spec';
 import './components/daily-value-hydrograph/selectors/scales.spec';
 import './components/daily-value-hydrograph/selectors/time-series-data.spec';
-import './components/daily-value-hydrograph/selectors/legend-data.spec';
 
 import './components/daily-value-hydrograph/graph-brush.spec';
 import './components/daily-value-hydrograph/index.spec';
@@ -60,17 +60,16 @@ import './lib/d3-redux.spec';
 
 import './schema.spec';
 
+import './selectors/daily-value-time-series-selector.spec';
 import './selectors/flood-data-selector.spec';
 import './selectors/nldi-data-selector.spec';
 import './selectors/median-statistics-selector.spec';
-import './selectors/daily-value-time-series-selector.spec';
 import './selectors/time-series-selector.spec';
 
-import './store/flood-data-reducer.spec';
-import './store/flood-state-reducer.spec';
+import './store/daily-value-time-series.spec';
+import './store/flood-inundation.spec';
 import './store/index.spec';
 import './store/nldi-data-reducer.spec';
-import './store/daily-value-time-series.spec';
 import './store/series-reducer.spec';
 import './store/time-series-state-reducer.spec';
 import './store/ui-reducer.spec';
@@ -91,3 +90,4 @@ import './networks/network-component/network-legend.spec';
 import './networks/selectors/network-data-selector.spec';
 import './networks/store/network-store.spec';
 import './networks/store/network-data-reducer.spec';
+

@@ -14,6 +14,7 @@ import 'core-js/features/number/is-nan';
 import 'core-js/features/object/from-entries';
 import 'core-js/features/object/values';
 import 'core-js/features/promise';
+import 'core-js/features/string/includes';
 import 'core-js/features/string/repeat';
 import 'core-js/features/string/starts-with';
 import 'core-js/features/url-search-params';
