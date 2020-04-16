@@ -1,9 +1,9 @@
 import { createSelector } from 'reselect';
 
 
-export const getFloodStages = state => state.floodData.stages;
+export const getFloodStages = state => state.floodData.stages || [];
 
-export const getFloodExtent = state => state.floodData.extent;
+export const getFloodExtent = state => state.floodData.extent || {};
 
 export const getFloodGageHeight = state => state.floodState.gageHeight;
 

@@ -35,12 +35,12 @@ describe('statistics-data', () => {
         let request;
         let promise;
 
-        const site = '05370000';
+        const siteno = '05370000';
         const statType = 'median';
         const params = ['00060'];
 
         beforeEach(() => {
-            promise = fetchSiteStatistics({site, statType, params});
+            promise = fetchSiteStatistics({siteno, statType, params});
             request = jasmine.Ajax.requests.mostRecent();
             request.respondWith({
                 response: MOCK_RDB,

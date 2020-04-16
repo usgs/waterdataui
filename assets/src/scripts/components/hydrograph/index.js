@@ -10,6 +10,7 @@ import {drawWarningAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {link} from '../../lib/d3-redux';
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from '../../selectors/time-series-selector';
 import {Actions} from '../../store';
+import {Actions as statisticsDataActions} from '../../store/statistics-data';
 import {renderTimeSeriesUrlParams} from '../../url-params';
 
 import {drawDateRangeControls} from './date-controls';
@@ -96,7 +97,7 @@ export const attachToNode = function (store,
                     });
                 }
             });
-        store.dispatch(Actions.retrieveMedianStatistics(siteno));
+        store.dispatch(statisticsDataActions.retrieveMedianStatistics(siteno));
     }
     fetchDataPromise.then(() => {
         // Hide the loading indicator

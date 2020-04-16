@@ -12,7 +12,6 @@ import {getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, g
     getCustomTimeRange, getIanaTimeZone, getTimeSeriesCollectionIds} from '../selectors/time-series-selector';
 
 import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from '../web-services/models';
-import {fetchSiteStatistics} from '../web-services/statistics-data';
 
 import {Actions as floodInundationActions,
     floodDataReducer as floodData,
@@ -21,7 +20,7 @@ import {nldiDataReducer as nldiData} from './nldi-data';
 import {dailyValueTimeSeriesDataReducer as dailyValueTimeSeriesData} from './daily-value-time-series';
 import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './daily-value-time-series';
 import {seriesReducer as series} from './series-reducer';
-import {statisticsDataReducer as statisticsData} from './statistics-data-reducer';
+import {statisticsDataReducer as statisticsData} from './statistics-data';
 import {timeSeriesStateReducer as timeSeriesState} from './time-series-state-reducer';
 import {uiReducer as ui} from './ui-reducer';
 
@@ -121,15 +120,6 @@ export const Actions = {
                 () => {
                     dispatch(Actions.resetTimeSeries(getTsRequestKey('compare', period)(getState())));
                     dispatch(Actions.removeTimeSeriesLoading([requestKey]));
-                }
-            );
-        };
-    },
-    retrieveMedianStatistics(site) {
-        return function(dispatch) {
-            return fetchSiteStatistics({site, statType: 'median'}).then(
-                stats => {
-                    dispatch(Actions.addMedianStats(stats));
                 }
             );
         };
@@ -320,12 +310,6 @@ export const Actions = {
         return {
             type: 'RESET_TIME_SERIES',
             key
-        };
-    },
-    addMedianStats(data) {
-        return {
-            type: 'MEDIAN_STATS_ADD',
-            data
         };
     },
     setCursorOffset(cursorOffset) {
