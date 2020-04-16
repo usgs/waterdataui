@@ -72,6 +72,7 @@ import './store/flood-inundation.spec';
 import './store/index.spec';
 import './store/nldi-data.spec';
 import './store/series-reducer.spec';
+import './store/statistics-data.spec';
 import './store/time-series-state-reducer.spec';
 import './store/ui-reducer.spec';
 
@@ -91,4 +92,3 @@ import './networks/network-component/network-legend.spec';
 import './networks/selectors/network-data-selector.spec';
 import './networks/store/network-store.spec';
 import './networks/store/network-data-reducer.spec';
-

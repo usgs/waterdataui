@@ -1,8 +1,6 @@
 import {Actions, configureStore} from './index';
 import {Actions as floodInundationActions} from './flood-inundation';
 
-import {MOCK_RDB as MOCK_STATS_DATA} from '../web-services/statistics-data.spec.js';
-
 describe('Redux store', () => {
 
     describe('asynchronous actions', () => {
@@ -365,40 +363,6 @@ describe('Redux store', () => {
                     expect(Actions.resetTimeSeries.calls.argsFor(0)[0]).toBe('compare:P7D');
                     expect(Actions.removeTimeSeriesLoading).toHaveBeenCalledWith(['compare:P7D']);
 
-                    done();
-                });
-            });
-        });
-
-        describe('retrieveMedianStatistics with data', () => {
-            let mockDispatch;
-
-            beforeEach(() => {
-                jasmine.Ajax.install();
-
-                mockDispatch = jasmine.createSpy('mockDispatch');
-                configureStore();
-                spyOn(Actions, 'addMedianStats');
-                spyOn(Actions, 'toggleTimeSeries');
-
-                mockDispatch = jasmine.createSpy('mockDispatch');
-            });
-
-            afterEach(() => {
-                jasmine.Ajax.uninstall();
-            });
-
-            it('should fetch the site statistics and call the appropriate actions', (done) => {
-                const promise = Actions.retrieveMedianStatistics('12345678')(mockDispatch);
-                const request = jasmine.Ajax.requests.mostRecent();
-                request.respondWith({
-                    response: MOCK_STATS_DATA,
-                    status: 200
-                });
-                promise.then(() => {
-                    expect(request.url).toContain('https://waterservices.usgs.gov/nwis/stat');
-                    expect(mockDispatch.calls.count()).toBe(1);
-                    expect(Actions.addMedianStats).toHaveBeenCalled();
                     done();
                 });
             });
@@ -967,17 +931,6 @@ describe('Redux store', () => {
             expect(Actions.resetTimeSeries('current')).toEqual({
                 type: 'RESET_TIME_SERIES',
                 key: 'current'
-            });
-        });
-
-        it('should create an actions to set the median stats', () => {
-            expect(Actions.addMedianStats({
-                '00010': 'some data'
-            })).toEqual({
-                type: 'MEDIAN_STATS_ADD',
-                data: {
-                    '00010': 'some data'
-                }
             });
         });
 

@@ -38,7 +38,7 @@ export const fetchSiteStatistics = function({siteno, statType, params=null}) {
             finalResult[dataLine.parameter_cd][dataLine.ts_id].push(dataLine);
             return finalResult;
         }, {});
-    }, (error) => {
-        return error;
+    }, () => {
+        return {};
     });
 };

@@ -1,6 +1,7 @@
 import {select, selectAll} from 'd3-selection';
 import {attachToNode} from './index';
 import {Actions, configureStore} from '../../store';
+import {Actions as statisticsDataActions} from '../../store/statistics-data';
 
 
 const TEST_STATE = {
@@ -204,7 +205,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
 
             beforeEach(() => {
                 spyOn(Actions, 'retrieveTimeSeries').and.callThrough();
-                spyOn(Actions, 'retrieveMedianStatistics').and.callThrough();
+                spyOn(statisticsDataActions, 'retrieveMedianStatistics').and.callThrough();
             });
 
             it('Retrieve if no date parameters are used', () => {
@@ -214,7 +215,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                 });
 
                 expect(Actions.retrieveTimeSeries).toHaveBeenCalledWith('12345678');
-                expect(Actions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
+                expect(statisticsDataActions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
             });
 
             it('Retrieve if period parameters is used', () => {
@@ -225,7 +226,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                 });
 
                 expect(Actions.retrieveTimeSeries).toHaveBeenCalledWith('12345678');
-                expect(Actions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
+                expect(statisticsDataActions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
             });
 
             it('Retrieve if startDT and endDT parameters are used', () => {
@@ -237,7 +238,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                 });
 
                 expect(Actions.retrieveTimeSeries).toHaveBeenCalledWith('12345678');
-                expect(Actions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
+                expect(statisticsDataActions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
             });
         });
 
