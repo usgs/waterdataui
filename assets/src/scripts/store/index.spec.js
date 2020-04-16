@@ -934,14 +934,6 @@ describe('Redux store', () => {
             });
         });
 
-        it('should create an action to resize plot', () => {
-            expect(Actions.resizeUI(800, 100)).toEqual({
-                type: 'RESIZE_UI',
-                windowWidth: 800,
-                width: 100
-            });
-        });
-
         it('should create an action to set the cursor offset', () => {
             expect(Actions.setCursorOffset(10)).toEqual({
                 type: 'SET_CURSOR_OFFSET',

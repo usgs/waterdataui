@@ -501,15 +501,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         it('should have tooltips for the select series table', () => {
             // one for each of the two parameters
             expect(selectAll('table .tooltip-item').size()).toBe(2);
-        });
-
-        it('should not have tooltips for the select series table when the screen is large', (done) => {
-            store.dispatch(Actions.resizeUI(800, 800));
-            window.requestAnimationFrame(() => {
-                expect(selectAll('table .tooltip-table').size()).toBe(0);
-                done();
-            });
-        });
+        })
     });
 
     describe('hide elements when showOnlyGraph is set to true', () => {

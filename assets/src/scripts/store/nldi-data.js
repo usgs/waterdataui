@@ -20,7 +20,7 @@ const INITIAL_DATA = {
  * @param {Array of GeoJSON Object} upstreamSites
  * @param {Array of GeoJSON Object} downstreamSites
  * @param {GeoJSON Object} upstreamBasin
- * @return {Function} which returns a Redux action
+ * @return {Object} Redux action
  */
 const setNldiFeatures = function(upstreamFlows, downstreamFlows, upstreamSites, downstreamSites, upstreamBasin) {
     return {

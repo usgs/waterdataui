@@ -74,7 +74,7 @@ import './store/nldi-data.spec';
 import './store/series-reducer.spec';
 import './store/statistics-data.spec';
 import './store/time-series-state-reducer.spec';
-import './store/ui-reducer.spec';
+import './store/ui-state.spec';
 
 import './tooltips.spec';
 import './url-params.spec';

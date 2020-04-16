@@ -38,7 +38,7 @@
 {% set body_id = 'monitoring-location' %}
 
 {% block content %}
-    <div>
+    <div id="monitoring-location-page-container">
         {% if status_code == 200 %}
             {% if stations|length > 1 %}
                 <h1>Multiple sites found</h1>

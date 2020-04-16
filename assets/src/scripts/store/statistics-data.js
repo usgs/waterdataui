@@ -7,7 +7,7 @@ const INITIAL_DATA = {
 /*
  * Synchronous Redux action to update the median statistics data.
  * @param {Object} statisticsData data where keys are the parameter codes for which median stats are available
- * @return {Function} which returns a Redux action
+ * @return {Object} Redux action
  */
 const setMedianStats = function(statisticsData) {
     return {

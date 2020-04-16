@@ -62,8 +62,7 @@ export const attachToNode = function (store,
         return;
     }
 
-    // Initialize hydrograph with the store and show the loading indicator
-    store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
+    // Show the loading indicator
     nodeElem
         .select('.loading-indicator-container')
         .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
@@ -158,8 +157,4 @@ export const attachToNode = function (store,
             }
         }
     });
-
-    window.onresize = function() {
-        store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
-    };
 };

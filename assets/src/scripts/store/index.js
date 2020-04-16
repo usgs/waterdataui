@@ -22,7 +22,7 @@ import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './d
 import {seriesReducer as series} from './series-reducer';
 import {statisticsDataReducer as statisticsData} from './statistics-data';
 import {timeSeriesStateReducer as timeSeriesState} from './time-series-state-reducer';
-import {uiReducer as ui} from './ui-reducer';
+import {uiReducer as ui} from './ui-state';
 
 const GAGE_HEIGHT_CD = '00065';
 /*
@@ -316,13 +316,6 @@ export const Actions = {
         return {
             type: 'SET_CURSOR_OFFSET',
             cursorOffset
-        };
-    },
-    resizeUI(windowWidth, width) {
-        return {
-            type: 'RESIZE_UI',
-            windowWidth,
-            width
         };
     },
     setHydrographBrushOffset(hydrographBrushOffset) {

@@ -9,7 +9,7 @@ const INITIAL_DATA = {
  * Synchronous Redux action to update the flood inundation data for stages and extents
  * @param {Array of Objects} stages
  * @param {Object} extent
- * @return {Function} which returns a Redux action
+ * @return {Object} Redux action
  */
 const setFloodFeatures = function(stages, extent) {
     return {
@@ -58,7 +58,7 @@ export const floodDataReducer = function(floodData=INITIAL_DATA, action) {
 /*
  * Synchronous action that sets the current gage height to be displayed
  * @param {Number} gageHeight
- * @return {Function} which returns a Redux action
+ * @return {Object} Redux action
  */
 const setGageHeight = function(gageHeight) {
     return {
