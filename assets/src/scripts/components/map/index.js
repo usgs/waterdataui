@@ -8,7 +8,7 @@ import {link} from '../../lib/d3-redux';
 import {hasFloodData, getFloodExtent, getFloodStageHeight} from '../../selectors/flood-data-selector';
 import {hasNldiData, getNldiDownstreamFlows, getNldiDownstreamSites, getNldiUpstreamFlows, getNldiUpstreamSites, getNldiUpstreamBasin}
     from '../../selectors/nldi-data-selector';
-import {Actions} from '../../store';
+import {Actions as nldiDataActions} from '../../store/nldi-data';
 import {Actions as floodInundationActions} from '../../store/flood-inundation';
 import {FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT} from '../../web-services/flood-data';
 
@@ -190,7 +190,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
 export const attachToNode = function(store, node, {siteno, latitude, longitude, zoom}) {
     store.dispatch(floodInundationActions.retrieveFloodData(siteno));
     // hydrates the store with nldi data
-    store.dispatch(Actions.retrieveNldiData(siteno));
+    store.dispatch(nldiDataActions.retrieveNldiData(siteno));
 
     select(node).select('#flood-layer-control-container')
         .call(floodSlider, store);

@@ -12,13 +12,12 @@ import {getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, g
     getCustomTimeRange, getIanaTimeZone, getTimeSeriesCollectionIds} from '../selectors/time-series-selector';
 
 import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from '../web-services/models';
-import {fetchNldiUpstreamSites, fetchNldiDownstreamSites, fetchNldiDownstreamFlow, fetchNldiUpstreamFlow, fetchNldiUpstreamBasin} from '../web-services/nldi-data';
 import {fetchSiteStatistics} from '../web-services/statistics-data';
 
 import {Actions as floodInundationActions,
     floodDataReducer as floodData,
     floodStateReducer as floodState} from './flood-inundation';
-import {nldiDataReducer as nldiData} from './nldi-data-reducer';
+import {nldiDataReducer as nldiData} from './nldi-data';
 import {dailyValueTimeSeriesDataReducer as dailyValueTimeSeriesData} from './daily-value-time-series';
 import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './daily-value-time-series';
 import {seriesReducer as series} from './series-reducer';
@@ -239,22 +238,6 @@ export const Actions = {
         };
     },
 
-    retrieveNldiData(siteno) {
-        return function (dispatch) {
-            const upstreamFlow = fetchNldiUpstreamFlow(siteno);
-            const downstreamFlow = fetchNldiDownstreamFlow(siteno);
-            const upstreamSites = fetchNldiUpstreamSites(siteno);
-            const downstreamSites = fetchNldiDownstreamSites(siteno);
-            const upstreamBasin = fetchNldiUpstreamBasin(siteno);
-
-            return Promise.all([
-                upstreamFlow, downstreamFlow, upstreamSites, downstreamSites, upstreamBasin
-            ]).then(function(data) {
-               const [upStreamLines, downStreamLines, upStreamPoints, downStreamPoints, upstreamBasin] = data;
-               dispatch(Actions.setNldiFeatures(upStreamLines, downStreamLines, upStreamPoints, downStreamPoints, upstreamBasin));
-            });
-        };
-    },
     updateCurrentVariable(siteno, variableID) {
         return function(dispatch, getState) {
             dispatch(Actions.setCurrentVariable(variableID));
@@ -319,16 +302,6 @@ export const Actions = {
         };
     },
 
-    setNldiFeatures(upstreamFlows, downstreamFlows, upstreamSites, downstreamSites, upstreamBasin) {
-        return {
-            type: 'SET_NLDI_FEATURES',
-            upstreamFlows,
-            downstreamFlows,
-            upstreamSites,
-            downstreamSites,
-            upstreamBasin
-        };
-    },
     toggleTimeSeries(key, show) {
         return {
             type: 'TOGGLE_TIME_SERIES',

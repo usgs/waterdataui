@@ -7,6 +7,7 @@
  * time, and `karma --watch` tasks are very fast.
  */
 
+import './mock-service-data';
 import './polyfills';
 
 import './ajax.spec';
@@ -69,7 +70,7 @@ import './selectors/time-series-selector.spec';
 import './store/daily-value-time-series.spec';
 import './store/flood-inundation.spec';
 import './store/index.spec';
-import './store/nldi-data-reducer.spec';
+import './store/nldi-data.spec';
 import './store/series-reducer.spec';
 import './store/time-series-state-reducer.spec';
 import './store/ui-reducer.spec';
