@@ -6,9 +6,10 @@ import {createSelector} from 'reselect';
 import {format} from 'd3-format';
 
 import config from '../../config';
-import {getVariables, getCurrentMethodID, getTimeSeries, getCurrentVariableTimeSeries, getTimeSeriesForTsKey,
-    getTsRequestKey, getRequestTimeRange, getIanaTimeZone} from '../../selectors/time-series-selector';
 import {getCurrentVariableMedianStatistics} from '../../selectors/median-statistics-selector';
+import {getVariables, getCurrentMethodID, getTimeSeries, getCurrentVariableTimeSeries, getTimeSeriesForTsKey,
+    getTsRequestKey, getRequestTimeRange} from '../../selectors/time-series-selector';
+import {getIanaTimeZone} from '../../selectors/time-zone-selector';
 
 
 export const MASK_DESC = {
@@ -290,7 +291,7 @@ export const lineSegmentsSelector = memoize((tsKey, period) => createSelector(
 
             for (let pt of points) {
                 // Classes to put on the line with this point.
-                let lineClasses = getLineClasses(pt, !config.MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED || currentMethodID === parseInt(methodID));
+                let lineClasses = getLineClasses(pt, !config.MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED || !currentMethodID || currentMethodID === parseInt(methodID));
 
                 // If this is a non-masked data point, split lines if the gap
                 // from the period point exceeds MAX_LINE_POINT_GAP.

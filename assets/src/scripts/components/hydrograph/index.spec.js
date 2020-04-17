@@ -2,6 +2,7 @@ import {select, selectAll} from 'd3-selection';
 import {attachToNode} from './index';
 import {Actions, configureStore} from '../../store';
 import {Actions as statisticsDataActions} from '../../store/statistics-data';
+import {Actions as timeZoneActions} from '../../store/time-zone';
 
 
 const TEST_STATE = {
@@ -192,13 +193,13 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             expect(select(graphNode).select('.loading-indicator').size()).toBe(1);
         });
 
-        it('Expects retrieveLocationTimeZone to be called', () => {
-            spyOn(Actions, 'retrieveLocationTimeZone').and.callThrough();
+        it('Expects retrieveIanaTimeZone to be called', () => {
+            spyOn(timeZoneActions, 'retrieveIanaTimeZone').and.callThrough();
             attachToNode(store, graphNode, {
                 siteno: '12345678'
             });
 
-            expect(Actions.retrieveLocationTimeZone).toHaveBeenCalled();
+            expect(timeZoneActions.retrieveIanaTimeZone).toHaveBeenCalled();
         });
 
         describe('Always retrieve the 7 day data and median statistics', () => {
@@ -293,7 +294,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             });
 
             it('should retrieve data for date range if  time zone has  been fetched', (done) => {
-                spyOn(Actions, 'retrieveLocationTimeZone').and.returnValue(function() {
+                spyOn(timeZoneActions, 'retrieveIanaTimeZone').and.returnValue(function() {
                     return Promise.resolve({});
                 });
                 attachToNode(store, graphNode, {
@@ -356,7 +357,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         });
 
         it('should  retrieve date range for date range parameters if time zone has been fetched', (done) => {
-            spyOn(Actions, 'retrieveLocationTimeZone').and.returnValue(function() {
+            spyOn(timeZoneActions, 'retrieveIanaTimeZone').and.returnValue(function() {
                 return Promise.resolve({});
             });
             attachToNode(store, graphNode, {
@@ -501,7 +502,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         it('should have tooltips for the select series table', () => {
             // one for each of the two parameters
             expect(selectAll('table .tooltip-item').size()).toBe(2);
-        })
+        });
     });
 
     describe('hide elements when showOnlyGraph is set to true', () => {

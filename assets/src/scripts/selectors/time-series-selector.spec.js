@@ -19,7 +19,6 @@ import {
     isLoadingTS,
     getTSRequest,
     getTimeSeriesCollectionIds,
-    getIanaTimeZone,
     getNwisTimeZone,
     getAllMethodsForCurrentVariable,
     getCurrentVariableTimeSeries,
@@ -675,8 +674,8 @@ describe('timeSeriesSelector', () => {
 
     describe('getRequestTimeRange', () => {
         const TEST_DATA = {
+            ianaTimeZone: 'America/Chicago',
             series: {
-                ianaTimeZone: 'America/Chicago',
                 queryInfo: {
                     'current:P7D': {
                         notes: {
@@ -753,23 +752,6 @@ describe('timeSeriesSelector', () => {
                 start: 1454738400000,
                 end: 1557896400000
             });
-        });
-    });
-
-    describe('getIanaTimeZone', () => {
-
-        it('returns null if series is empty', () => {
-            expect(getIanaTimeZone({
-                series: {}
-            })).toBeNull();
-        });
-
-        it('returns the time zone when present', () => {
-            expect(getIanaTimeZone({
-                series: {
-                    ianaTimeZone: 'America/Los_Angeles'
-                }
-            })).toEqual('America/Los_Angeles');
         });
     });
 

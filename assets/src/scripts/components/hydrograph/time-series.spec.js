@@ -4,8 +4,8 @@ import {
 
 
 const TEST_DATA = {
+    ianaTimeZone: 'America/Chicago',
     series: {
-        ianaTimeZone: 'America/Chicago',
         timeSeries: {
             '00060': {
                 tsKey: 'current:P7D',
@@ -332,18 +332,14 @@ describe('TimeSeries module', () => {
 
         it('Returns local if timezone is null', () => {
             const result = tsTimeZoneSelector({
-                series: {
-                    ianaTimeZone: null
-                }
+                ianaTimeZone: null
             });
             expect(result).toEqual('local');
         });
 
         it('Returns the IANA timezone NWIS and IANA agree', () => {
             const result = tsTimeZoneSelector({
-                series: {
-                    ianaTimeZone: 'America/New_York'
-                }
+                ianaTimeZone: 'America/New_York'
             });
             expect(result).toEqual('America/New_York');
         });

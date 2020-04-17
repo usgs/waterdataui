@@ -5,10 +5,6 @@ describe('Redux store', () => {
 
     describe('asynchronous actions', () => {
         const SITE_NO = '12345678';
-        const LOCATION = {
-            latitude: 44.8528,
-            longitude: -92.2383
-        };
 
         const TEST_STATE = {
             series: {
@@ -58,76 +54,6 @@ describe('Redux store', () => {
                 customTimeRange: {startDT: 1488348000000, endDT: 1490936400000}
             }
         };
-
-        describe('retrieveLocationTimeZone with good data', () => {
-            let mockDispatch;
-            let mockGetState;
-
-            const MOCK_WEATHER_SERVICE_DATA = '{"properties" : {"timeZone" : "America/Chicago"}}';
-
-            beforeEach(() => {
-                jasmine.Ajax.install();
-
-                jasmine.Ajax.stubRequest(/api\.weather\.gov/).andReturn({
-                    status: 200,
-                    response: MOCK_WEATHER_SERVICE_DATA,
-                    contentType: 'application/json'
-                });
-
-                mockDispatch = jasmine.createSpy('mockDispatch');
-                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                configureStore();
-            });
-
-            afterEach(() => {
-                jasmine.Ajax.uninstall();
-            });
-
-            it('fetches data from the weather service', () => {
-                Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
-                expect(jasmine.Ajax.requests.mostRecent().url).toContain('api.weather.gov');
-            });
-
-            it('gets the data and sets the timezone', (done) => {
-                spyOn(Actions, 'setLocationIanaTimeZone');
-                let p = Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
-                p.then(() => {
-                    expect(Actions.setLocationIanaTimeZone.calls.count()).toBe(1);
-                    expect(Actions.setLocationIanaTimeZone).toHaveBeenCalledWith('America/Chicago');
-                    done();
-                });
-            });
-        });
-
-        describe('retrieveLocationTimeZone with bad data', () => {
-            let mockDispatch;
-            let mockGetState;
-
-            beforeEach(() => {
-                jasmine.Ajax.install();
-                mockDispatch = jasmine.createSpy('mockDispatch');
-                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                configureStore();
-            });
-
-            afterEach(() => {
-                jasmine.Ajax.uninstall();
-            });
-
-            it('gets the data and sets the timezone to something', (done) => {
-                spyOn(Actions, 'setLocationIanaTimeZone');
-                let p = Actions.retrieveLocationTimeZone(LOCATION.latitude, LOCATION.longitude)(mockDispatch, mockGetState);
-                jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 500
-                });
-                p.then(
-                    () => {
-                        expect(Actions.setLocationIanaTimeZone.calls.count()).toBe(1);
-                        expect(Actions.setLocationIanaTimeZone).toHaveBeenCalledWith(null);
-                        done();
-                    });
-            });
-        });
 
         describe('retrieveTimeSeries with good data', () => {
             let mockDispatch;
@@ -844,9 +770,8 @@ describe('Redux store', () => {
             beforeEach(() => {
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue({
-                    series: {
-                        ianaTimeZone: 'America/Chicago'
-                    }
+                    ianaTimeZone: 'America/Chicago',
+                    series: {}
                 });
 
                 spyOn(Actions, 'retrieveCustomTimeSeries');
@@ -873,9 +798,8 @@ describe('Redux store', () => {
             beforeEach(() => {
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue({
-                    series: {
-                        ianaTimeZone: 'America/Chicago'
-                    }
+                    ianaTimeZone: 'America/Chicago',
+                    series: {}
                 });
 
                 spyOn(Actions, 'retrieveCustomTimeSeries');
@@ -953,15 +877,6 @@ describe('Redux store', () => {
                 type: 'TIME_SERIES_PLAY_STOP'
             });
         });
-
-        it('should create an action to set the location IANA time zone', () => {
-            expect(Actions.setLocationIanaTimeZone('America/Chicago')).toEqual({
-                type: 'LOCATION_IANA_TIME_ZONE_SET',
-                ianaTimeZone: 'America/Chicago'
-            });
-        });
-
-
     });
 });
 

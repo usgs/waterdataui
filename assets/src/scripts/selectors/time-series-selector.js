@@ -1,9 +1,10 @@
-import { DateTime } from 'luxon';
-
 import memoize from 'fast-memoize';
-import { createSelector } from 'reselect';
 import uniq from 'lodash/uniq';
 import _includes from 'lodash/includes';
+import { DateTime } from 'luxon';
+import { createSelector } from 'reselect';
+
+import {getIanaTimeZone} from './time-zone-selector';
 
 /*
  * Selectors that return properties from the state
@@ -27,8 +28,6 @@ export const getCurrentMethodID = state => state.timeSeriesState.currentMethodID
 export const getCurrentDateRange = state => state.timeSeriesState.currentDateRange;
 
 export const getLoadingTsKeys = state => state.timeSeriesState.loadingTSKeys;
-
-export const getIanaTimeZone = state => state.series.ianaTimeZone ? state.series.ianaTimeZone : null;
 
 export const getNwisTimeZone = state => state.series.timeZones || {};
 

@@ -8,9 +8,8 @@ import {
     isLoadingTS,
     hasAnyTimeSeries,
     getCurrentDateRange,
-    getCustomTimeRange,
-    getIanaTimeZone
-} from '../../selectors/time-series-selector';
+    getCustomTimeRange} from '../../selectors/time-series-selector';
+import {getIanaTimeZone} from '../../selectors/time-zone-selector';
 import {Actions} from '../../store';
 
 

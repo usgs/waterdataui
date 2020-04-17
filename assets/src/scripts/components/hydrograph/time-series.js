@@ -3,9 +3,10 @@ import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
 import {
-    getRequestTimeRange, getCurrentVariable, getTimeSeriesForTsKey, getIanaTimeZone, getCurrentParmCd, getCurrentMethodID,
+    getRequestTimeRange, getCurrentVariable, getTimeSeriesForTsKey, getCurrentParmCd, getCurrentMethodID,
     getMethods
 } from '../../selectors/time-series-selector';
+import {getIanaTimeZone} from '../../selectors/time-zone-selector';
 
 
 export const TEMPERATURE_PARAMETERS = {

@@ -9,9 +9,10 @@ import {normalize} from '../schema';
 import {calcStartTime, sortedParameters} from '../utils';
 
 import {getCurrentParmCd, getCurrentDateRange, hasTimeSeries, getTsRequestKey, getRequestTimeRange,
-    getCustomTimeRange, getIanaTimeZone, getTimeSeriesCollectionIds} from '../selectors/time-series-selector';
+    getCustomTimeRange, getTimeSeriesCollectionIds} from '../selectors/time-series-selector';
+import {getIanaTimeZone} from '../selectors/time-zone-selector';
 
-import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from '../web-services/models';
+import {getPreviousYearTimeSeries, getTimeSeries} from '../web-services/models';
 
 import {Actions as floodInundationActions,
     floodDataReducer as floodData,
@@ -22,6 +23,7 @@ import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './d
 import {seriesReducer as series} from './series-reducer';
 import {statisticsDataReducer as statisticsData} from './statistics-data';
 import {timeSeriesStateReducer as timeSeriesState} from './time-series-state-reducer';
+import {timeZoneReducer as ianaTimeZone} from './time-zone';
 import {uiReducer as ui} from './ui-state';
 
 const GAGE_HEIGHT_CD = '00065';
@@ -58,19 +60,6 @@ const getCurrentVariableId = function(timeSeries, variables) {
 };
 
 export const Actions = {
-    retrieveLocationTimeZone(latitude, longitude) {
-        return function(dispatch) {
-            return queryWeatherService(latitude, longitude).then(
-                resp => {
-                    const tzIANA = resp.properties.timeZone || null; // set to time zone to null if unavailable
-                    dispatch(Actions.setLocationIanaTimeZone(tzIANA));
-                },
-                () => {
-                    dispatch(Actions.setLocationIanaTimeZone(null));
-                }
-            );
-        };
-    },
     retrieveTimeSeries(siteno, params=null) {
         return function (dispatch, getState) {
             const currentState = getState();
@@ -371,17 +360,12 @@ export const Actions = {
             const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis();
             return dispatch(Actions.retrieveCustomTimeSeries(siteno, startTime, endTime, parmCd));
         };
-    },
-    setLocationIanaTimeZone(ianaTimeZone) {
-        return {
-            type: 'LOCATION_IANA_TIME_ZONE_SET',
-            ianaTimeZone
-        };
     }
 };
 
 const appReducer = combineReducers({
     series,
+    ianaTimeZone,
     dailyValueTimeSeriesData,
     statisticsData,
     floodData,
@@ -398,6 +382,7 @@ const MIDDLEWARES = [thunk];
 export const configureStore = function (initialState) {
     initialState = {
         series: {},
+        ianaTimeZone: null,
         dailyValueTimeSeriesData: {},
         floodData: {
             stages: [],

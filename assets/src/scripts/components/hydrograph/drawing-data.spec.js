@@ -925,9 +925,9 @@ describe('drawingData module', () => {
                         }
                     }
                 },
-                variables: TEST_VARS,
-                ianaTimeZone: 'America/Chicago'
+                variables: TEST_VARS
             },
+            ianaTimeZone: 'America/Chicago',
             statisticsData : {
                 median: {
                     '00010': {

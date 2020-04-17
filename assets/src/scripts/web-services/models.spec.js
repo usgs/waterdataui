@@ -1,4 +1,4 @@
-import {getPreviousYearTimeSeries, getTimeSeries} from './models';
+import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from './models';
 
 
 describe('Models module', () => {
@@ -13,7 +13,6 @@ describe('Models module', () => {
     });
 
     describe('getTimeSeries function', () => {
-
         const paramCode = '00060';
         const siteID = '05413500';
 
@@ -124,7 +123,44 @@ describe('Models module', () => {
         });
     });
 
+    describe('queryWeatherService', () => {
+        it('Expect the url to contain the latitude and longitude', () => {
+            queryWeatherService('45.3', '-100.2');
 
+            expect(jasmine.Ajax.requests.mostRecent().url).toContain('45.3,-100.2');
+        });
+
+        it('Expect that a successful fetch returns the response', (done) => {
+            const MOCK_WEATHER_SERVICE_DATA = '{"properties" : {"timeZone" : "America/Chicago"}}';
+            const promise = queryWeatherService('45.3', '100.2');
+            jasmine.Ajax.requests.mostRecent().respondWith({
+                status: 200,
+                responseText: MOCK_WEATHER_SERVICE_DATA
+            });
+            promise.then((response) => {
+                expect(response).toEqual({
+                    properties: {
+                        timeZone: 'America/Chicago'
+                    }
+                });
+                done();
+            });
+        });
+
+        it('Expect that a failed fetch returns a JSON object with empty properties', (done) => {
+            const promise = queryWeatherService('45.3', '100.2');
+            jasmine.Ajax.requests.mostRecent().respondWith({
+                status: 500,
+                responseText: 'Internal server error'
+            });
+            promise.then((response) => {
+                expect(response).toEqual({
+                    properties: {}
+                });
+                done();
+            });
+        });
+    });
 });
 
 const MOCK_DATA = `

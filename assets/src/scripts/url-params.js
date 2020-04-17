@@ -2,8 +2,9 @@ import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
 import {listen} from './lib/d3-redux';
-import {getCurrentMethodID, getAllMethodsForCurrentVariable, getCurrentDateRange, getCustomTimeRange, getCurrentParmCd,
-    getIanaTimeZone} from './selectors/time-series-selector';
+import {getCurrentMethodID, getAllMethodsForCurrentVariable, getCurrentDateRange, getCustomTimeRange, getCurrentParmCd}
+    from './selectors/time-series-selector';
+import {getIanaTimeZone} from './selectors/time-zone-selector';
 
 /*
  * Return {String} hash part of url minus the leading '#'.

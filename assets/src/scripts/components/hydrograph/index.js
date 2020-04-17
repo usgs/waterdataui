@@ -11,6 +11,7 @@ import {link} from '../../lib/d3-redux';
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from '../../selectors/time-series-selector';
 import {Actions} from '../../store';
 import {Actions as statisticsDataActions} from '../../store/statistics-data';
+import {Actions as timeZoneActions} from '../../store/time-zone';
 import {renderTimeSeriesUrlParams} from '../../url-params';
 
 import {drawDateRangeControls} from './date-controls';
@@ -68,7 +69,7 @@ export const attachToNode = function (store,
         .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
 
     // Fetch time zone
-    const fetchTimeZonePromise = store.dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
+    const fetchTimeZonePromise = store.dispatch(timeZoneActions.retrieveIanaTimeZone(latitude, longitude));
     let fetchDataPromise;
     if (showOnlyGraph) {
         // Only fetch what is needed

@@ -50,9 +50,9 @@ describe('url-params module', () => {
                         method: 69928,
                         variable: '123456'
                     }
-                },
-                ianaTimeZone: 'America/New_York'
+                }
             },
+            ianaTimeZone: 'America/New_York',
             timeSeriesState: {
                 currentVariableID: '123456',
                 currentDateRange: 'P7D',
