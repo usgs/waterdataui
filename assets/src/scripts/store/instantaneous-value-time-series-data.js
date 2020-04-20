@@ -5,7 +5,7 @@ import merge from 'lodash/merge';
 import omitBy from 'lodash/omitBy';
 
 import {
-    getCurrentDateRange,
+    getCurrentDateRangeKind,
     getCurrentParmCd, getCustomTimeRange, getRequestTimeRange,
     getTimeSeriesCollectionIds,
     getTsRequestKey,
@@ -19,6 +19,8 @@ import {Actions as floodInundationActions} from './flood-inundation';
 import {Actions as ivTimeSeriesStateActions} from './instantaneous-value-time-series-state';
 
 const GAGE_HEIGHT_CD = '00065';
+
+/* eslint no-use-before-define: 0 */
 
 /*
 * Local helper functions
@@ -54,7 +56,6 @@ const getCurrentVariableId = function(timeSeries, variables) {
 /*
  * Actions for ivTimeSeriesDataReducer
  */
-
 /*
  * Synchronous Redux action to add a collection of time series to the Redux store
  * The collection will be merged into the existing collection of time series
@@ -82,33 +83,6 @@ const resetIVTimeSeries = function(tsRequestKey) {
 };
 
 /*
- * Asynchronous Redux action - fetches the IV Time series which represents period for site one year after
- * startTime and endTime.
- * @param {String} siteno
- * @param {String} period - ISO 8601 duration
- * @param {Number} startTime - in epoch milliseconds
- * @param {Number} endTime - in epoch milliseconds
- * @return {Function} which when dispatched returns a Promise
- */
-const retrieveCompareIVTimeSeries = function(siteno, period, startTime, endTime) {
-    return function (dispatch, getState) {
-        const tsRequestKey = getTsRequestKey('compare', period)(getState());
-        dispatch(ivTimeSeriesStateActions.addIVTimeSeriesToLoadingKeys([tsRequestKey]));
-        return getPreviousYearTimeSeries({siteno, startTime, endTime}).then(
-            series => {
-                const collection = normalize(series, tsRequestKey);
-                dispatch(addIVTimeSeriesCollection(collection));
-                dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
-            },
-            () => {
-                dispatch(resetIVTimeSeries(tsRequestKey));
-                dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
-            }
-        );
-    };
-};
-
-/*
  * Asynchronous Redux action - fetches the IV time series data for all parameter codes for siteno for the
  * last 7 days.
  * @param {String} siteno
@@ -129,10 +103,10 @@ const retrieveIVTimeSeries = function(siteno) {
                 const startTime = calcStartTime('P7D', endTime, 'local');
 
                 // Trigger a call to get last year's data
-                dispatch(retrieveCompareIVTimeSeries(siteno, 'P7D', startTime, endTime));
+                dispatch(Actions.retrieveCompareIVTimeSeries(siteno, 'P7D', startTime, endTime));
 
                 // Update the series data for the 'current' series
-                dispatch(addIVTimeSeriesCollection(collection));
+                dispatch(Actions.addIVTimeSeriesCollection(collection));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
 
                 // Update the application state
@@ -142,10 +116,37 @@ const retrieveIVTimeSeries = function(siteno) {
                 dispatch(floodInundationActions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
             },
             () => {
-                dispatch(resetIVTimeSeries(tsRequestKey));
+                dispatch(Actions.resetIVTimeSeries(tsRequestKey));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
 
                 dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('current', false));
+            }
+        );
+    };
+};
+
+/*
+ * Asynchronous Redux action - fetches the IV Time series which represents period for site one year after
+ * startTime and endTime.
+ * @param {String} siteno
+ * @param {String} period - ISO 8601 duration
+ * @param {Number} startTime - in epoch milliseconds
+ * @param {Number} endTime - in epoch milliseconds
+ * @return {Function} which when dispatched returns a Promise
+ */
+const retrieveCompareIVTimeSeries = function(siteno, period, startTime, endTime) {
+    return function (dispatch, getState) {
+        const tsRequestKey = getTsRequestKey('compare', period)(getState());
+        dispatch(ivTimeSeriesStateActions.addIVTimeSeriesToLoadingKeys([tsRequestKey]));
+        return getPreviousYearTimeSeries({site: siteno, startTime, endTime}).then(
+            series => {
+                const collection = normalize(series, tsRequestKey);
+                dispatch(Actions.addIVTimeSeriesCollection(collection));
+                dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
+            },
+            () => {
+                dispatch(Actions.resetIVTimeSeries(tsRequestKey));
+                dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
             }
         );
     };
@@ -168,7 +169,7 @@ const retrieveCustomTimePeriodIVTimeSeries = function(siteno, parameterCd, perio
         // what is saved.
         const currentTsIds = getTimeSeriesCollectionIds('current', 'custom', parameterCd)(state) || [];
         if (currentTsIds.length > 0) {
-            dispatch(resetIVTimeSeries(tsRequestKey));
+            dispatch(Actions.resetIVTimeSeries(tsRequestKey));
         }
 
         dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKind('custom'));
@@ -179,12 +180,12 @@ const retrieveCustomTimePeriodIVTimeSeries = function(siteno, parameterCd, perio
                 const variables = Object.values(collection.variables);
                 const variableToDraw = find(variables, v =>  v.variableCode.value === parameterCd);
                 dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(variableToDraw.variableCode.variableID));
-                dispatch(addIVTimeSeriesCollection(collection));
+                dispatch(Actions.addIVTimeSeriesCollection(collection));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
             },
             () => {
                 console.log(`Unable to fetch data for period ${period} and parameter code ${parameterCd}`);
-                dispatch(resetIVTimeSeries(tsRequestKey));
+                dispatch(Actions.resetIVTimeSeries(tsRequestKey));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
             }
         );
@@ -210,7 +211,7 @@ const retrieveCustomIVTimeSeries = function(siteno, startTime, endTime, parmCd=n
         // what is saved.
         const currentTsIds = getTimeSeriesCollectionIds('current', 'custom', parmCd)(state) || [];
         if (currentTsIds.length > 0) {
-            dispatch(resetIVTimeSeries(tsRequestKey));
+            dispatch(Actions.resetIVTimeSeries(tsRequestKey));
         }
 
         dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(startTime, endTime));
@@ -224,12 +225,12 @@ const retrieveCustomIVTimeSeries = function(siteno, startTime, endTime, parmCd=n
         }).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
-                dispatch(addIVTimeSeriesCollection(collection));
+                dispatch(Actions.addIVTimeSeriesCollection(collection));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
             },
             () => {
                 console.log(`Unable to fetch data for between ${startTime} and ${endTime} and parameter code ${thisParmCd}`);
-                dispatch(addIVTimeSeriesCollection({}));
+                dispatch(Actions.addIVTimeSeriesCollection({}));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
             }
         );
@@ -265,13 +266,13 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
             }).then(
                 series => {
                     const collection = normalize(series, tsRequestKey);
-                    dispatch(retrieveCompareIVTimeSeries(siteno, period, startTime, endTime));
-                    dispatch(addIVTimeSeriesCollection(collection));
+                    dispatch(Actions.retrieveCompareIVTimeSeries(siteno, period, startTime, endTime));
+                    dispatch(Actions.addIVTimeSeriesCollection(collection));
                     dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
                 },
                 () => {
                     console.log(`Unable to fetch data for period ${period} and parameter code ${thisParamCd}`);
-                    dispatch(addIVTimeSeriesCollection({}));
+                    dispatch(Actions.addIVTimeSeriesCollection({}));
                     dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
                 }
             );
@@ -292,13 +293,13 @@ const updateIVCurrentVariableAndRetrieveTimeSeries = function(siteno, variableID
     return function(dispatch, getState) {
         dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(variableID));
         const state = getState();
-        const currentDateRange = getCurrentDateRange(state);
+        const currentDateRange = getCurrentDateRangeKind(state);
         if (currentDateRange === 'custom') {
             const timeRange = getCustomTimeRange(state);
             return dispatch(
-                retrieveCustomIVTimeSeries(siteno, timeRange.startDT, timeRange.endDT));
+                Actions.retrieveCustomIVTimeSeries(siteno, timeRange.startDT, timeRange.endDT));
         } else {
-            return dispatch(retrieveExtendedIVTimeSeries(siteno, currentDateRange));
+            return dispatch(Actions.retrieveExtendedIVTimeSeries(siteno, currentDateRange));
         }
     };
 };
@@ -306,17 +307,17 @@ const updateIVCurrentVariableAndRetrieveTimeSeries = function(siteno, variableID
 export const ivTimeSeriesDataReducer = function(ivTimeSeriesData={}, action) {
     switch(action.type) {
         case 'ADD_IV_TIME_SERIES_COLLECTION':
-            return merge({}, ivTimeSeriesData, action.data);
+            return merge({}, ivTimeSeriesData, action.collection);
 
         case 'RESET_IV_TIME_SERIES': {
             let newSeries = {
                 ...ivTimeSeriesData,
-                timeSeries: omitBy(ivTimeSeriesData.timeSeries, (tsValue) => tsValue.tsKey === action.key),
+                timeSeries: omitBy(ivTimeSeriesData.timeSeries, (tsValue) => tsValue.tsKey === action.tsRequestKey),
                 requests: {
                     ...(ivTimeSeriesData || {}).requests
                 }
             };
-            newSeries.requests[action.key] = {};
+            newSeries.requests[action.tsRequestKey] = {};
 
             return newSeries;
         }

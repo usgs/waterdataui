@@ -1,3 +1,6 @@
+/* eslint no-use-before-define: 0 */
+
+
 /*
  * Actions for the ivTimeSeriesStateReducer
  */
@@ -157,21 +160,21 @@ const ivTimeSeriesPlayStop = function() {
  */
 const startTimeSeriesPlay = function(maxCursorOffset) {
     return function (dispatch, getState) {
-        let state = getState().timeSeriesState;
-        if (state.cursorOffset == null || state.cursorOffset >= maxCursorOffset) {
-            dispatch(setIVGraphCursorOffset(0));
+        let state = getState().ivTimeSeriesState;
+        if (state.ivGraphCursorOffset == null || state.ivGraphCursorOffset >= maxCursorOffset) {
+            dispatch(Actions.setIVGraphCursorOffset(0));
         }
         if (!state.audiblePlayId) {
             let play = function () {
-                let newOffset = getState().timeSeriesState.cursorOffset + 15 * 60 * 1000;
+                let newOffset = getState().ivTimeSeriesState.ivGraphCursorOffset + 15 * 60 * 1000;
                 if (newOffset > maxCursorOffset) {
-                    dispatch(ivTimeSeriesPlayStop());
+                    dispatch(Actions.ivTimeSeriesPlayStop());
                 } else {
-                    dispatch(setIVGraphCursorOffset(newOffset));
+                    dispatch(Actions.setIVGraphCursorOffset(newOffset));
                 }
             };
             let playId = window.setInterval(play, 10);
-            dispatch(ivTimeSeriesPlayOn(playId));
+            dispatch(Actions.ivTimeSeriesPlayOn(playId));
         }
     };
 };
@@ -182,8 +185,8 @@ const startTimeSeriesPlay = function(maxCursorOffset) {
  */
 const stopTimeSeriesPlay = function() {
     return function(dispatch, getState) {
-        window.clearInterval(getState().timeSeriesState.audiblePlayId);
-        dispatch(ivTimeSeriesPlayStop());
+        window.clearInterval(getState().ivTimeSeriesState.audiblePlayId);
+        dispatch(Actions.ivTimeSeriesPlayStop());
     };
 };
 
@@ -243,6 +246,31 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
             return {
                 ...ivTimeSeriesState,
                 ivGraphBrushOffset: undefined
+            };
+
+        case 'ADD_IV_TIME_SERIES_TO_LOADING_KEYS':
+            return {
+                ...ivTimeSeriesState,
+                loadingIVTSKeys: ivTimeSeriesState.loadingIVTSKeys.concat(action.tsRequestKeys)
+            };
+
+        case 'REMOVE_IV_TIME_SERIES_FROM_LOADING_KEYS':
+            return {
+                ...ivTimeSeriesState,
+                loadingIVTSKeys: ivTimeSeriesState.loadingIVTSKeys.filter((tsRequestKey) => !action.tsRequestKeys.includes(tsRequestKey))
+            };
+
+        case 'IV_TIME_SERIES_PLAY_ON':
+            return {
+                ...ivTimeSeriesState,
+                audiblePlayId: action.audiblePlayId
+
+            };
+
+        case 'IV_TIME_SERIES_PLAY_STOP':
+            return {
+                ...ivTimeSeriesState,
+                audiblePlayId: null
             };
 
         default: return ivTimeSeriesState;

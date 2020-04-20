@@ -9,31 +9,31 @@ import {getIanaTimeZone} from './time-zone-selector';
 /*
  * Selectors that return properties from the state
  */
-export const getVariables = state => state.series.variables ? state.series.variables : null;
+export const getVariables = state => state.ivTimeSeriesData.variables ? state.ivTimeSeriesData.variables : null;
 
-export const getSourceInfo = state => state.series.sourceInfo || {};
+export const getSourceInfo = state => state.ivTimeSeriesData.sourceInfo || {};
 
-export const getSiteCodes = state => state.series.siteCodes || {};
+export const getSiteCodes = state => state.ivTimeSeriesData.siteCodes || {};
 
-export const getMethods = state => state.series.methods ? state.series.methods : {};
+export const getMethods = state => state.ivTimeSeriesData.methods ? state.ivTimeSeriesData.methods : {};
 
-export const getQueryInfo = state => state.series.queryInfo || {};
+export const getQueryInfo = state => state.ivTimeSeriesData.queryInfo || {};
 
-export const getRequests = state => state.series.requests || {};
+export const getRequests = state => state.ivTimeSeriesData.requests || {};
 
-export const getCurrentVariableID = state => state.timeSeriesState.currentVariableID;
+export const getCurrentVariableID = state => state.ivTimeSeriesState.currentIVVariableID;
 
-export const getCurrentMethodID = state => state.timeSeriesState.currentMethodID;
+export const getCurrentMethodID = state => state.ivTimeSeriesState.currentIVMethodID;
 
-export const getCurrentDateRange = state => state.timeSeriesState.currentDateRange;
+export const getCurrentDateRangeKind = state => state.ivTimeSeriesState.currentIVDateRangeKind;
 
-export const getLoadingTsKeys = state => state.timeSeriesState.loadingTSKeys;
+export const getLoadingTsKeys = state => state.ivTimeSeriesState.loadingIVTSKeys;
 
-export const getNwisTimeZone = state => state.series.timeZones || {};
+export const getNwisTimeZone = state => state.ivTimeSeriesData.timeZones || {};
 
-export const getCustomTimeRange = state => state.timeSeriesState.customTimeRange;
+export const getCustomTimeRange = state => state.ivTimeSeriesState.customIVTimeRange;
 
-export const getTimeSeries = state => state.series.timeSeries ? state.series.timeSeries : {};
+export const getTimeSeries = state => state.ivTimeSeriesData.timeSeries ? state.ivTimeSeriesData.timeSeries : {};
 
 export const hasAnyTimeSeries = createSelector(
     getTimeSeries,
@@ -92,10 +92,10 @@ export const getCurrentParmCd = createSelector(
  * selected variable.
  */
 export const getTsRequestKey = memoize((tsKey, period, parmCd) => createSelector(
-    getCurrentDateRange,
+    getCurrentDateRangeKind,
     getCurrentParmCd,
-    (dateRange, currentParmCd) => {
-        const periodToUse = period ? period : dateRange;
+    (dateRangeKind, currentParmCd) => {
+        const periodToUse = period ? period : dateRangeKind;
 
         let result = `${tsKey}:${periodToUse}`;
         if (periodToUse !== 'P7D') {
@@ -115,7 +115,7 @@ export const getTsRequestKey = memoize((tsKey, period, parmCd) => createSelector
  */
 export const hasTimeSeries = memoize((tsKey, period, parmCd) => createSelector(
     getTsRequestKey(tsKey, period, parmCd),
-    state => state.series,
+    state => state.ivTimeSeriesData,
     (tsRequestKey, series) => {
         return Boolean(series && series.requests && series.requests[tsRequestKey]);
 }));
