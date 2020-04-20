@@ -3,7 +3,7 @@ import {DateTime} from 'luxon';
 import {lineSegmentsSelector, pointsSelector, allPointsSelector, pointsByTsKeySelector, classesForPoint, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, currentVariablePointsSelector, currentVariablePointsByTsIdSelector, visiblePointsSelector, getCurrentVariableMedianStatPoints, MAX_LINE_POINT_GAP} from './drawing-data';
 
 const TEST_DATA = {
-    series: {
+    ivTimeSeriesData: {
         queryInfo: {
             'current:P7D': {
                 notes: {
@@ -191,10 +191,10 @@ const TEST_DATA = {
             }
         }
     },
-    timeSeriesState: {
-        currentVariableID: '45807197',
-        currentDateRange: 'P7D',
-        currentMethodID: 69928
+    ivTimeSeriesState: {
+        currentIVVariableID: '45807197',
+        currentIVDateRangeKind: 'P7D',
+        currentIVMethodID: 69928
     }
 };
 
@@ -211,7 +211,7 @@ describe('drawingData module', () => {
         });
 
         it('Return the points array for time series with parameter code 00060 without modification', () => {
-            expect(result['69928:00060']).toEqual(TEST_DATA.series.timeSeries['69928:00060'].points);
+            expect(result['69928:00060']).toEqual(TEST_DATA.ivTimeSeriesData.timeSeries['69928:00060'].points);
         });
 
         it('Return the points array accumulated for the time series with  parameter code 00045', () => {
@@ -219,16 +219,16 @@ describe('drawingData module', () => {
         });
 
         it('Return the empty object if there are no time series', () =>  {
-            expect(allPointsSelector({series: {}})).toEqual({});
+            expect(allPointsSelector({ivTimeSeriesData: {}})).toEqual({});
         });
 
         it('Resets the accumulator for precip if null value is encountered', () => {
             const newTestData = {
                 ...TEST_DATA,
-                series: {
-                    ...TEST_DATA.series,
+                ivTimeSeriesData: {
+                    ...TEST_DATA.ivTimeSeriesData,
                     timeSeries: {
-                        ...TEST_DATA.series.timeSeries,
+                        ...TEST_DATA.ivTimeSeriesData.timeSeries,
                         '69930:00045': {
                             tsKey: 'current:P7D',
                             startTime: new Date('2017-03-06T15:45:00.000Z'),
@@ -284,7 +284,7 @@ describe('drawingData module', () => {
            const result = currentVariablePointsByTsIdSelector('current')(TEST_DATA);
 
            expect(result['69928:00060']).toBeDefined();
-           expect(result['69928:00060']).toEqual(TEST_DATA.series.timeSeries['69928:00060'].points);
+           expect(result['69928:00060']).toEqual(TEST_DATA.ivTimeSeriesData.timeSeries['69928:00060'].points);
        });
 
        it('Return an empty array if the tsKey has no time series with the current variable', () => {
@@ -297,7 +297,7 @@ describe('drawingData module', () => {
            const result = currentVariablePointsSelector('current')(TEST_DATA);
 
            expect(result.length).toBe(1);
-           expect(result[0]).toEqual(TEST_DATA.series.timeSeries['69928:00060'].points);
+           expect(result[0]).toEqual(TEST_DATA.ivTimeSeriesData.timeSeries['69928:00060'].points);
        });
 
        it('Return an empty array if the tsKey has no time series with the current variable', () => {
@@ -309,12 +309,12 @@ describe('drawingData module', () => {
         it('should separate on approved', () => {
             expect(lineSegmentsSelector('current')({
                 ...TEST_DATA,
-                series: {
-                    ...TEST_DATA.series,
+                ivTimeSeriesData: {
+                    ...TEST_DATA.ivTimeSeriesData,
                     timeSeries: {
-                        ...TEST_DATA.series.timeSeries,
+                        ...TEST_DATA.ivTimeSeriesData.timeSeries,
                         '69928:00060': {
-                            ...TEST_DATA.series.timeSeries['69928:00060'],
+                            ...TEST_DATA.ivTimeSeriesData.timeSeries['69928:00060'],
                             points: [{
                                 value: 10,
                                 qualifiers: []
@@ -328,7 +328,7 @@ describe('drawingData module', () => {
                             tsKey: 'current:P7D'
                         },
                         '69930:00045': {
-                            ...TEST_DATA.series.timeSeries['69930:00045'],
+                            ...TEST_DATA.ivTimeSeriesData.timeSeries['69930:00045'],
                             tsKey: 'compare:P7D'
                         }
                     }
@@ -378,12 +378,12 @@ describe('drawingData module', () => {
         it('should separate on estimated', () => {
             expect(lineSegmentsSelector('current')({
                 ...TEST_DATA,
-                series: {
-                    ...TEST_DATA.series,
+                ivTimeSeriesData: {
+                    ...TEST_DATA.ivTimeSeriesData,
                     timeSeries: {
-                        ...TEST_DATA.series.timeSeries,
+                        ...TEST_DATA.ivTimeSeriesData.timeSeries,
                         '69928:00060': {
-                            ...TEST_DATA.series.timeSeries['69928:00060'],
+                            ...TEST_DATA.ivTimeSeriesData.timeSeries['69928:00060'],
                             variable: '45807197',
                             points: [{
                                 value: 10,
@@ -398,7 +398,7 @@ describe('drawingData module', () => {
                             tsKey: 'current:P7D'
                         },
                         '69930:00045': {
-                            ...TEST_DATA.series.timeSeries['69930:00045'],
+                            ...TEST_DATA.ivTimeSeriesData.timeSeries['69930:00045'],
                             tsKey: 'compare:P7D'
                         }
                     }
@@ -452,12 +452,12 @@ describe('drawingData module', () => {
         it('should separate out masked values', () => {
             expect(lineSegmentsSelector('current')({
                 ...TEST_DATA,
-                series: {
-                    ...TEST_DATA.series,
+                ivTimeSeriesData: {
+                    ...TEST_DATA.ivTimeSeriesData,
                     timeSeries: {
-                        ...TEST_DATA.series.timeSeries,
+                        ...TEST_DATA.ivTimeSeriesData.timeSeries,
                         '69928:00060': {
-                            ...TEST_DATA.series.timeSeries['69928:00060'],
+                            ...TEST_DATA.ivTimeSeriesData.timeSeries['69928:00060'],
                             points: [{
                                 value: 10,
                                 qualifiers: ['P']
@@ -471,7 +471,7 @@ describe('drawingData module', () => {
                             tsKey: 'current:P7D'
                         },
                         '69930:00045': {
-                            ...TEST_DATA.series.timeSeries['69930:00045'],
+                            ...TEST_DATA.ivTimeSeriesData.timeSeries['69930:00045'],
                             tsKey: 'compare:P7D'
                         }
                     }
@@ -542,12 +542,12 @@ describe('drawingData module', () => {
             ];
             expect(lineSegmentsSelector('current')({
                 ...TEST_DATA,
-                series: {
-                    ...TEST_DATA.series,
+                ivTimeSeriesData: {
+                    ...TEST_DATA.ivTimeSeriesData,
                     timeSeries: {
-                        ...TEST_DATA.series.timeSeries,
+                        ...TEST_DATA.ivTimeSeriesData.timeSeries,
                         '69928:00060': {
-                            ...TEST_DATA.series.timeSeries['69928:00060'],
+                            ...TEST_DATA.ivTimeSeriesData.timeSeries['69928:00060'],
                             points: dates.map(d => {
                                 return {
                                     value: 10,
@@ -558,7 +558,7 @@ describe('drawingData module', () => {
                             tsKey: 'current:P7D'
                         },
                         '69930:00045': {
-                            ...TEST_DATA.series.timeSeries['69930:00045'],
+                            ...TEST_DATA.ivTimeSeriesData.timeSeries['69930:00045'],
                             tsKey: 'compare:P7D'
                         }
                     }
@@ -620,12 +620,12 @@ describe('drawingData module', () => {
             ];
             expect(lineSegmentsSelector('current')({
                 ...TEST_DATA,
-                series: {
-                    ...TEST_DATA.series,
+                ivTimeSeriesData: {
+                    ...TEST_DATA.ivTimeSeriesData,
                     timeSeries: {
-                        ...TEST_DATA.series.timeSeries,
+                        ...TEST_DATA.ivTimeSeriesData.timeSeries,
                         '69928:00060': {
-                            ...TEST_DATA.series.timeSeries['69928:00060'],
+                            ...TEST_DATA.ivTimeSeriesData.timeSeries['69928:00060'],
                             points: dates.map(d => {
                                 return {
                                     value: null,
@@ -636,7 +636,7 @@ describe('drawingData module', () => {
                             tsKey: 'current:P7D'
                         },
                         '69930:00045': {
-                            ...TEST_DATA.series.timeSeries['69930:00045'],
+                            ...TEST_DATA.ivTimeSeriesData.timeSeries['69930:00045'],
                             tsKey: 'compare:P7D'
                         }
                     }
@@ -681,9 +681,9 @@ describe('drawingData module', () => {
         it('Should not set currentMethod to true if method is selected', () => {
             expect(lineSegmentsSelector('current')({
                 ...TEST_DATA,
-                timeSeriesState : {
-                    ...TEST_DATA.timeSeriesState,
-                    currentMethodID: 69929
+                ivTimeSeriesState : {
+                    ...TEST_DATA.ivTimeSeriesState,
+                    currentIVMethodID: 69929
                 }
             })).toEqual({
                 '69928:00060': [
@@ -793,7 +793,7 @@ describe('drawingData module', () => {
     describe('pointsSelector', () => {
         it('works with a single collection and two time series', () => {
             expect(pointsSelector('current')({
-                series: {
+                ivTimeSeriesData: {
                     requests: {
                         current: {
                             timeSeriesCollections: ['coll1']
@@ -826,9 +826,9 @@ describe('drawingData module', () => {
                         }
                     }
                 },
-                timeSeriesState: {
-                    currentVariableID: '45807197',
-                    currentDateRange: 'P7D'
+                ivTimeSeriesState: {
+                    currentIVVariableID: '45807197',
+                    currentIVDateRangeKind: 'P7D'
                 }
             })).toEqual([['ptOne', 'ptTwo', 'ptThree'], ['ptOne2', 'ptTwo2', 'ptThree2']]);
         });
@@ -854,9 +854,9 @@ describe('drawingData module', () => {
     describe('visiblePointsSelector', () => {
         const testData = {
             ...TEST_DATA,
-            timeSeriesState: {
-                ...TEST_DATA.timeSeriesState,
-                showSeries: {
+            ivTimeSeriesState: {
+                ...TEST_DATA.ivTimeSeriesState,
+                showIVTimeSeries: {
                     'current': true,
                     'compare': true,
                     'median': true
@@ -871,9 +871,9 @@ describe('drawingData module', () => {
         it('Expects one array if only median is not visible', () => {
             const newTestData = {
                 ...testData,
-                timeSeriesState: {
-                    ...testData.timeSeriesState,
-                    showSeries: {
+                ivTimeSeriesState: {
+                    ...testData.ivTimeSeriesState,
+                    showIVTimesSeries: {
                         'current': true,
                         'compare': true,
                         'median': false
@@ -887,9 +887,9 @@ describe('drawingData module', () => {
         it('Expects an empty array if no visible series has the current variable', () => {
             const newTestData = {
                 ...testData,
-                timeSeriesState: {
-                    ...testData.timeSeriesState,
-                    currentVariableID: '11111111'
+                ivTimeSeriesState: {
+                    ...testData.ivTimeSeriesState,
+                    currentIVVariableID: '11111111'
                 }
             };
 
@@ -912,7 +912,7 @@ describe('drawingData module', () => {
         };
 
         const TEST_STATE = {
-            series: {
+            ivTimeSeriesData: {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
@@ -983,9 +983,9 @@ describe('drawingData module', () => {
                     ]}
                 }
             },
-            timeSeriesState: {
-                currentVariableID: '45807142',
-                currentDateRange: 'P7D'
+            ivTimeSeriesState: {
+                currentIVVariableID: '45807142',
+                currentIVDateRangeKind: 'P7D'
             }
         };
 
@@ -1022,9 +1022,9 @@ describe('drawingData module', () => {
         it('Return empty array of no median data for the selected current variable exists', () => {
             const newTestState = {
                 ...TEST_STATE,
-                timeSeriesState: {
-                    ...TEST_STATE.timeSeriesState,
-                    currentVariableID: '45807042'
+                ivTimeSeriesState: {
+                    ...TEST_STATE.ivTimeSeriesState,
+                    currentIVVariableID: '45807042'
                 }
             };
             expect(getCurrentVariableMedianStatPoints(newTestState)).toEqual([]);
