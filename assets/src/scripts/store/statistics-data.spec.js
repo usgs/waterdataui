@@ -11,7 +11,7 @@ describe('store/statistics-data module', () => {
     beforeEach(() => {
         store = createStore(
             combineReducers({
-                statisticsData: statisticsDataReducer,
+                statisticsData: statisticsDataReducer
             }),
             {
                 floodData: {},

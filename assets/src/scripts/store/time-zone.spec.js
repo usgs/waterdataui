@@ -1,4 +1,4 @@
-import {applyMiddleware, combineReducers, createStore} from "redux";
+import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
 import {Actions, timeZoneReducer} from './time-zone';

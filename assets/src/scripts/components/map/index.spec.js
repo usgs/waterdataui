@@ -1,7 +1,6 @@
 import {select} from 'd3-selection';
 
 import {configureStore} from '../../store';
-import {Actions as nldiDataActions} from '../../store/nldi-data';
 
 import {attachToNode} from './index';
 

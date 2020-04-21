@@ -91,7 +91,7 @@ export const drawGraphBrush = function(container, store) {
             }
             if (selection[1] - selection[0] > 0) {
                 graphBrush.move(group, selection);
-            };
+            }
 
         }, createStructuredSelector({
             layout: getBrushLayout,

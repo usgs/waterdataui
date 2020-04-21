@@ -6,7 +6,7 @@ import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import {drawWarningAlert, drawInfoAlert} from '../../d3-rendering/alerts';
-
+import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
 import {link} from '../../lib/d3-redux';
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from '../../selectors/time-series-selector';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
@@ -21,14 +21,11 @@ import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
 import {SPARK_LINE_DIM}  from './layout';
 import {drawTimeSeriesLegend} from './legend';
-import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
 import {drawMethodPicker} from './method-picker';
 import {plotSeriesSelectTable, availableTimeSeriesSelector} from './parameters';
 import {timeSeriesScalesByParmCdSelector} from './scales';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
-import {DateTime} from "luxon";
-
 
 /**
  * Modify styling to hide or display the elem.
