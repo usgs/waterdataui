@@ -65,7 +65,11 @@ describe('url-params module', () => {
             }
         };
         it('adds nothing to the window.location.hash when the store is empty', () => {
-            let store = configureStore({});
+            let store = configureStore({
+                ivTimeSeriesState: {
+                    showIVTimeSeries: {}
+                }
+            });
             renderTimeSeriesUrlParams(store);
             expect(window.location.hash).toEqual('');
         });

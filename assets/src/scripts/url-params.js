@@ -20,7 +20,7 @@ export const renderTimeSeriesUrlParams = function(store) {
         parameterCode: getCurrentParmCd,
         methodId: getCurrentMethodID,
         methods: getAllMethodsForCurrentVariable,
-        compare: (state) => state.timeSeriesState.showSeries.compare,
+        compare: (state) => state.ivTimeSeriesState.showIVTimeSeries.compare,
         currentDateRangeKind: getCurrentDateRangeKind,
         customTimeRange: getCustomTimeRange,
         timeZone: getIanaTimeZone
@@ -40,10 +40,10 @@ export const renderTimeSeriesUrlParams = function(store) {
             case 'custom':
                 params.set(
                     'startDT',
-                    DateTime.fromMillis(customTimeRange.startDT, {zone: timeZone}).toFormat('yyyy-LL-dd'));
+                    DateTime.fromMillis(customTimeRange.start, {zone: timeZone}).toFormat('yyyy-LL-dd'));
                 params.set(
                     'endDT',
-                    DateTime.fromMillis(customTimeRange.endDT, {zone: timeZone}).toFormat('yyyy-LL-dd'));
+                    DateTime.fromMillis(customTimeRange.end, {zone: timeZone}).toFormat('yyyy-LL-dd'));
         }
         if (compare) {
             params.set('compare', true);

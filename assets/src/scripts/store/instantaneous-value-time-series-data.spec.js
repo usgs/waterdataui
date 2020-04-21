@@ -503,119 +503,6 @@ describe('store/instantaneous-value-time-series-data module', () => {
             });
         });
 
-        describe('startTimeSeriesPlay', () => {
-
-            let mockDispatch, mockGetState;
-
-            beforeEach(() => {
-                mockDispatch = jasmine.createSpy('mockDispatch');
-                mockGetState = jasmine.createSpy('mockGetState');
-
-                jasmine.clock().install();
-                spyOn(ivTimeSeriesStateActions, 'setIVGraphCursorOffset');
-                spyOn(ivTimeSeriesStateActions, 'ivTimeSeriesPlayOn');
-                spyOn(Actions, 'stopTimeSeriesPlay');
-            });
-
-            afterEach(() => {
-                jasmine.clock().uninstall();
-            });
-
-            it('Does not reset the cursor offset when current offset is not null or greater than the max offset ', () => {
-                mockGetState.and.returnValues({
-                    ivTimeSeriesState: {
-                        ivGraphCursorOffset: 0
-                    }
-                });
-                Actions.startTimeSeriesPlay(2700000)(mockDispatch, mockGetState);
-
-                expect(ivTimeSeriesStateActions.setIVGraphCursorOffset).not.toHaveBeenCalled();
-            });
-
-            it('Call the action to start time series play', () => {
-                mockGetState.and.returnValues({
-                    ivTimeSeriesState: {
-                        ivGraphCursorOffset: 0
-                    }
-                });
-                Actions.startTimeSeriesPlay(2700000)(mockDispatch, mockGetState);
-
-                expect(ivTimeSeriesStateActions.ivTimeSeriesPlayOn).toHaveBeenCalled();
-            });
-
-            it('Expects the cursor to be updated after 10 milliseconds', () => {
-                mockGetState.and.returnValues({
-                    ivTimeSeriesState: {
-                        ivGraphCursorOffset: 0
-                    }
-                }, {
-                    ivTimeSeriesState: {
-                        ivGraphCursorOffset: 0
-                    }
-                });
-                Actions.startTimeSeriesPlay(2700000)(mockDispatch, mockGetState);
-                jasmine.clock().tick(11);
-
-                expect(ivTimeSeriesStateActions.setIVGraphCursorOffset.calls.count()).toBe(1);
-                expect(ivTimeSeriesStateActions.setIVGraphCursorOffset.calls.argsFor(0)[0]).toBe(900000);
-            });
-
-            it('Expects the cursor to be reset if the cursor offset is greater than the maxCursorOffset', () => {
-                mockGetState.and.returnValues({
-                    ivTimeSeriesState: {
-                        ivGraphCursorOffset: 2700000
-                    }
-                });
-
-                Actions.startTimeSeriesPlay(2700000)(mockDispatch, mockGetState);
-
-                expect(ivTimeSeriesStateActions.setIVGraphCursorOffset).toHaveBeenCalledWith(0);
-            });
-
-            it('Expects the play to be stopped if the cursorOffset exceeds the maxCursorOffset', () => {
-                mockGetState.and.returnValues({
-                    ivTimeSeriesState: {
-                        ivGraphCursorOffset: 2100000
-                    }
-                }, {
-                    ivTimeSeriesState: {
-                        ivGraphCursorOffset: 2100000
-                    }
-                });
-                Actions.startTimeSeriesPlay(2700000)(mockDispatch, mockGetState);
-                jasmine.clock().tick(11);
-
-                expect(Actions.stopTimeSeriesPlay).toHaveBeenCalled();
-            });
-        });
-
-        describe('stopTimeSeriesPlay', () => {
-            let mockDispatch, mockGetState;
-
-            beforeEach(() => {
-                mockDispatch = jasmine.createSpy('mockDispatch');
-                mockGetState = jasmine.createSpy('mockGetState');
-
-                jasmine.clock().install();
-                spyOn(ivTimeSeriesStateActions, 'ivTimeSeriesPlayStop');
-            });
-
-            afterEach(() => {
-                jasmine.clock().uninstall();
-            });
-
-            it('Expects that ivTimeSeriesPlayStop is called', () => {
-                mockGetState.and.returnValues({
-                    ivTimeSeriesState: {
-                        audiblePlayId: 1
-                    }
-                });
-
-                Actions.stopTimeSeriesPlay()(mockDispatch, mockGetState);
-                expect(ivTimeSeriesStateActions.ivTimeSeriesPlayStop).toHaveBeenCalled();
-            });
-        });
-
         describe('retrieveUserRequestedIVDataForDateRange', () => {
             let mockDispatch;
             let mockGetState;
@@ -628,12 +515,10 @@ describe('store/instantaneous-value-time-series-data module', () => {
                     }
                 });
 
-                spyOn(Actions, 'retrieveCustomTimeSeries');
-                jasmine.Ajax.install();
+                spyOn(Actions, 'retrieveCustomIVTimeSeries');
             });
 
             afterEach(() => {
-                jasmine.Ajax.uninstall();
             });
 
             it('Converts time strings to javascript date/time objects correctly', () => {
