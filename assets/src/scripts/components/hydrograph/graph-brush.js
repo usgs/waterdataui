@@ -26,10 +26,10 @@ export const drawGraphBrush = function(container, store) {
         if (event.sourceEvent.type === 'mouseup' || event.sourceEvent.type === 'touchend') {
 
             const adjustedBrush = brushRange.map(xScale.invert, xScale);
-            const brushOffsets = [adjustedBrush[0]- xScale.domain()[0],
-                xScale.domain()[1] - adjustedBrush[1]];
 
-            store.dispatch(Actions.setIVGraphBrushOffset(brushOffsets));
+            store.dispatch(Actions.setIVGraphBrushOffset(
+                adjustedBrush[0]- xScale.domain()[0],
+                xScale.domain()[1] - adjustedBrush[1]));
         }
     };
 
@@ -89,7 +89,9 @@ export const drawGraphBrush = function(container, store) {
             } else {
                 selection = xScale.range();
             }
-            graphBrush.move(group, selection);
+            if (selection[1] - selection[0] > 0) {
+                graphBrush.move(group, selection);
+            };
 
         }, createStructuredSelector({
             layout: getBrushLayout,

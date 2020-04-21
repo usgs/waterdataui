@@ -47,18 +47,18 @@ export const configureStore = function (initialState) {
         },
         statisticsData: {},
         ivTimeSeriesState: {
-            showSeries: {
+            showIVTimeSeries: {
                 current: true,
                 compare: false,
                 median: false
             },
-            currentDateRange: 'P7D',
-            customTimeRange: null,
-            currentVariableID: null,
-            cursorOffset: null,
+            currentIVDateRangeKind: 'P7D',
+            customIVTimeRange: null,
+            currentIVVariableID: null,
+            ivGraphCursorOffset: null,
             audiblePlayId: null,
-            loadingTSKeys: [],
-            hydrographBrushOffset: null
+            loadingIVTSKeys: [],
+            ivGraphBrushOffset: null
         },
         dailyValueTimeSeriesState: {
             cursorOffset: null

@@ -27,6 +27,7 @@ import {plotSeriesSelectTable, availableTimeSeriesSelector} from './parameters';
 import {timeSeriesScalesByParmCdSelector} from './scales';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
+import {DateTime} from "luxon";
 
 
 /**
@@ -86,7 +87,7 @@ export const attachToNode = function (store,
         }
     } else {
         // Retrieve all parameter codes for 7 days and median statistics
-        fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno))
+         fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno))
             .then(() => {
                 // Fetch any extended data needed to set initial state
                 const currentParamCode = parameterCode ? parameterCode : getCurrentParmCd(store.getState());

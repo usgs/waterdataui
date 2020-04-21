@@ -9,7 +9,6 @@ import {
     hasAnyTimeSeries,
     getCurrentDateRangeKind,
     getCustomTimeRange} from '../../selectors/time-series-selector';
-import {getIanaTimeZone} from '../../selectors/time-zone-selector';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
 
@@ -32,12 +31,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     let initialCustomTimeRange;
     const dateRangeKind = getCurrentDateRangeKind(store.getState());
     const isDateRangeKindCustom = dateRangeKind === 'custom';
-    if (isDateRangeKindCustom === 'custom') {
+    if (isDateRangeKindCustom) {
         const customTimeRangeInMillis = getCustomTimeRange(store.getState());
-        const locationIanaTimeZone = getIanaTimeZone(store.getState());
         initialCustomTimeRange = {
-            start : DateTime.fromMillis(customTimeRangeInMillis.startDT, {zone: locationIanaTimeZone}).toFormat('yyyy-LL-dd'),
-            end: DateTime.fromMillis(customTimeRangeInMillis.endDT, {zone: locationIanaTimeZone}).toFormat('yyyy-LL-dd')
+            start : DateTime.fromMillis(customTimeRangeInMillis.startDT).toFormat('yyyy-LL-dd'),
+            end: DateTime.fromMillis(customTimeRangeInMillis.endDT).toFormat('yyyy-LL-dd')
         };
     }
 
@@ -137,7 +135,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     siteno,
                     userSpecifiedStart,
                     userSpecifiedEnd
-                )).then(() => store.dispatch(ivTimeSeriesStateActions.clearHydrographBrushOffset()));
+                )).then(() => store.dispatch(ivTimeSeriesStateActions.clearIVGraphBrushOffset()));
             }
         });
 
@@ -175,7 +173,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     siteno,
                     li.select('input:checked').attr('value')
                 )).then(() => {
-                    store.dispatch(ivTimeSeriesStateActions.clearHydrographBrushOffset());
+                    store.dispatch(ivTimeSeriesStateActions.clearIVGraphBrushOffset());
                 });
             }
         });

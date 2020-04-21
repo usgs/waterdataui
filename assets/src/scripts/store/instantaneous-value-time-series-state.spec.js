@@ -79,6 +79,15 @@ describe('store/instantaneous-value-time-series-state', () => {
             });
         });
 
+        describe('clearIVGraphBrushOffset', () => {
+            it('clears the iv graph brush offset', () => {
+                store.dispatch(Actions.setIVGraphBrushOffset(100200, 300400));
+                store.dispatch(Actions.clearIVGraphBrushOffset());
+
+                expect(store.getState().ivTimeSeriesState.ivGraphBrushOffset).not.toBeDefined();
+            });
+        });
+
         describe('addIVTimeSeriesToLoadingKeys', () => {
             it('expects to add keys to ts loading keys', () => {
                 store.dispatch(Actions.addIVTimeSeriesToLoadingKeys(['current:P7D']));

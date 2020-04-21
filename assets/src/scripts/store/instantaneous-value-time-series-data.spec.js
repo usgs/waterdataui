@@ -29,7 +29,7 @@ describe('store/instantaneous-value-time-series-data module', () => {
                         }
                     },
                     ivTimeSeriesState: {
-                        currentDateRange: 'P7D',
+                        currentDateRangeKind: 'P7D',
                         loadingIVTSKeys: []
                     }
                 },

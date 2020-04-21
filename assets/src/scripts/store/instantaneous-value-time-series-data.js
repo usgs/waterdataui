@@ -228,6 +228,7 @@ const retrieveCustomIVTimeSeries = function(siteno, startTime, endTime, parmCd=n
             series => {
                 const collection = normalize(series, tsRequestKey);
                 dispatch(Actions.addIVTimeSeriesCollection(collection));
+                dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKind('custom'));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
             },
             () => {
@@ -317,7 +318,7 @@ const updateIVCurrentVariableAndRetrieveTimeSeries = function(siteno, variableID
         if (currentDateRange === 'custom') {
             const timeRange = getCustomTimeRange(state);
             return dispatch(
-                Actions.retrieveCustomIVTimeSeries(siteno, timeRange.startDT, timeRange.endDT));
+                Actions.retrieveCustomIVTimeSeries(siteno, timeRange.start, timeRange.end));
         } else {
             return dispatch(Actions.retrieveExtendedIVTimeSeries(siteno, currentDateRange));
         }
