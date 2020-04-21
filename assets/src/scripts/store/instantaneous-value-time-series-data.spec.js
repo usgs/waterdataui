@@ -510,9 +510,7 @@ describe('store/instantaneous-value-time-series-data module', () => {
             beforeEach(() => {
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue({
-                    series: {
-                        ianaTimeZone: 'America/Chicago'
-                    }
+                    ianaTimeZone: 'America/Chicago'
                 });
 
                 spyOn(Actions, 'retrieveCustomIVTimeSeries');
