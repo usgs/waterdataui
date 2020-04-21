@@ -1,5 +1,8 @@
 import {select} from 'd3-selection';
-import {Actions, configureStore} from '../../store';
+
+import {configureStore} from '../../store';
+import {Actions} from '../../store/instantaneous-value-time-series-state';
+
 import {drawTooltipText, drawTooltipFocus, tooltipPointsSelector, drawTooltipCursorSlider} from './tooltip';
 
 
@@ -28,7 +31,7 @@ describe('Hydrograph tooltip module', () => {
     data = data.concat(maskedData);
 
     const testState = {
-        series: {
+        ivTimeSeriesData: {
             timeSeries: {
                 '69928:current:P7D': {
                     points: data,
@@ -151,21 +154,20 @@ describe('Hydrograph tooltip module', () => {
                 }
             }
         },
-        timeSeriesState: {
-            showSeries: {
+        ivTimeSeriesState: {
+            showIVTimeSeries: {
                 current: true,
                 compare: true
             },
-            currentVariableID: '00060id',
-            currentMethodID: 69928,
-            currentDateRange: 'P7D',
-            customTimeRange: null,
-            cursorOffset: 61200000
+            currentIVVariableID: '00060id',
+            currentIVMethodID: 69928,
+            currentIVDateRangeKind: 'P7D',
+            customIVTimeRange: null,
+            ivGraphCursorOffset: 61200000
         },
         ui: {
             windowWidth: 1300,
-            width: 990,
-            hydrographXRange: undefined
+            width: 990
         }
     };
 
@@ -220,9 +222,9 @@ describe('Hydrograph tooltip module', () => {
 
         it('Creates the container for tooltips', () => {
             let store = configureStore({
-                timeSeriesState: {
-                    cursorOffset: null,
-                    showSeries: {
+                ivTimeSeriesState: {
+                    ivGraphCursorOffset: null,
+                    showIVTimeSeries: {
                         current: true
                     }
                 }
@@ -236,8 +238,8 @@ describe('Hydrograph tooltip module', () => {
 
         it('Creates the text elements with the label for the focus times', () => {
             let store = configureStore(Object.assign({}, testState, {
-                timeSeriesState: Object.assign({}, testState.timeSeriesState, {
-                    cursorOffset: 2 * 60 * 60 * 1000
+                ivTimeSeriesState: Object.assign({}, testState.ivTimeSeriesState, {
+                    ivGraphCursorOffset: 2 * 60 * 60 * 1000
                 })
             }));
 
@@ -251,10 +253,10 @@ describe('Hydrograph tooltip module', () => {
 
         it('Creates the text elements with the label for the focus times when there is a second axis', () => {
             let store = configureStore(Object.assign({}, testState, {
-                timeSeriesState: Object.assign({}, testState.timeSeriesState, {
-                    cursorOffset: 2 * 60 * 60 * 1000,
-                    currentVariableID: '00010id',
-                    currentMethodID: 69929
+                ivTimeSeriesState: Object.assign({}, testState.ivTimeSeriesState, {
+                    ivGraphCursorOffset: 2 * 60 * 60 * 1000,
+                    currentIVVariableID: '00010id',
+                    currentIVMethodID: 69929
                 })
             }));
 
@@ -268,8 +270,8 @@ describe('Hydrograph tooltip module', () => {
 
         it('Text contents are updated when the store is provided with new focus times', (done) => {
             let store = configureStore(Object.assign({}, testState, {
-                timeSeriesState: Object.assign({}, testState.timeSeriesState, {
-                    cursorOffset: 1
+                ivTimeSeriesState: Object.assign({}, testState.ivTimeSeriesState, {
+                    ivGraphCursorOffset: 1
                 })
             }));
 
@@ -277,7 +279,7 @@ describe('Hydrograph tooltip module', () => {
 
             let value = div.select('.current-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('12 ft3/s');
-            store.dispatch(Actions.setCursorOffset(3 * 60 * 60 * 1000));
+            store.dispatch(Actions.setIVGraphCursorOffset(3 * 60 * 60 * 1000));
 
             window.requestAnimationFrame(() => {
                 value = div.select('.current-tooltip-text').text().split(' - ')[0];
@@ -291,13 +293,13 @@ describe('Hydrograph tooltip module', () => {
 
         it('Shows the qualifier text if focus is near masked data points', (done) => {
             let store = configureStore(Object.assign({}, testState, {
-                timeSeriesState: Object.assign({}, testState.timeSeriesState, {
-                    cursorOffset: 1
+                ivTimeSeriesState: Object.assign({}, testState.ivTimeSeriesState, {
+                    ivGraphCursorOffset: 1
                 })
             }));
 
             div.call(drawTooltipText, store);
-            store.dispatch(Actions.setCursorOffset(299 * 60 * 1000));  // 2018-01-03T16:59:00.000Z
+            store.dispatch(Actions.setIVGraphCursorOffset(299 * 60 * 1000));  // 2018-01-03T16:59:00.000Z
 
             window.requestAnimationFrame(() => {
                 expect(div.select('.current-tooltip-text').text()).toContain('Flood');
@@ -314,19 +316,19 @@ describe('Hydrograph tooltip module', () => {
                 };
             });
             let store = configureStore(Object.assign({}, testState, {
-                series: Object.assign({}, testState.series, {
-                    timeSeries: Object.assign({}, testState.series.timeSeries, {
-                        '69928:current:P7D': Object.assign({}, testState.series.timeSeries['69928:current:P7D'], {
+                ivTimeSeriesData: Object.assign({}, testState.ivTimeSeriesData, {
+                    timeSeries: Object.assign({}, testState.ivTimeSeriesData.timeSeries, {
+                        '69928:current:P7D': Object.assign({}, testState.ivTimeSeriesData.timeSeries['69928:current:P7D'], {
                             points: zeroData
                         })
                     })
                 }),
-                timeSeriesState: Object.assign({}, testState.timeSeriesState, {
-                    cursorOffset: 10
+                ivTimeSeriesState: Object.assign({}, testState.ivTimeSeriesState, {
+                    ivGraphCursorOffset: 10
                 })
             }));
             div.call(drawTooltipText, store);
-            store.dispatch(Actions.setCursorOffset(119 * 60 * 1000));
+            store.dispatch(Actions.setIVGraphCursorOffset(119 * 60 * 1000));
             window.requestAnimationFrame(() => {
                 let value = div.select('.current-tooltip-text').text().split(' - ')[0];
 
@@ -356,8 +358,8 @@ describe('Hydrograph tooltip module', () => {
 
         it('Creates focus lines and focus circles when cursor not set', () => {
             let store = configureStore(Object.assign({}, testState, {
-                series: Object.assign({}, testState.series, {
-                    timeSeries: Object.assign({}, testState.series.timeSeries, {
+                ivTimeSeriesData: Object.assign({}, testState.ivTimeSeriesData, {
+                    timeSeries: Object.assign({}, testState.ivTimeSeriesData.timeSeries, {
                         '69928:current:P7D': {
                             points: currentTsData,
                             tsKey: 'current:P7D',
@@ -372,8 +374,8 @@ describe('Hydrograph tooltip module', () => {
                         }
                     })
                 }),
-                timeSeriesState: Object.assign({}, testState.timeSeriesState, {
-                    cursorOffset: null
+                ivTimeSeriesState: Object.assign({}, testState.ivTimeSeriesState, {
+                    ivGraphCursorOffset: null
                 })
             }));
 
@@ -386,8 +388,8 @@ describe('Hydrograph tooltip module', () => {
 
         it('Focus circles and line are displayed if cursor is set', () => {
             let store = configureStore(Object.assign({}, testState, {
-                series: Object.assign({}, testState.series, {
-                    timeSeries: Object.assign({}, testState.series.timeSeries, {
+                ivTimeSeriesData: Object.assign({}, testState.ivTimeSeriesData, {
+                    timeSeries: Object.assign({}, testState.ivTimeSeriesData.timeSeries, {
                         '69928:current:P7D': {
                             points: currentTsData,
                             tsKey: 'current:P7D',
@@ -402,8 +404,8 @@ describe('Hydrograph tooltip module', () => {
                         }
                     })
                 }),
-                timeSeriesState: Object.assign({}, testState.timeSeriesState, {
-                    cursorOffset: 39 * 60 * 1000
+                ivTimeSeriesState: Object.assign({}, testState.ivTimeSeriesState, {
+                    ivGraphCursorOffset: 39 * 60 * 1000
                 })
             }));
 

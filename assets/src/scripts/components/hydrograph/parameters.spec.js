@@ -1,7 +1,9 @@
-import {select} from 'd3-selection';
 import {scaleLinear} from 'd3-scale';
-import {addSparkLine, plotSeriesSelectTable, availableTimeSeriesSelector} from './parameters';
+import {select} from 'd3-selection';
+
 import {configureStore} from '../../store';
+
+import {addSparkLine, plotSeriesSelectTable, availableTimeSeriesSelector} from './parameters';
 
 
 describe('Parameters module', () => {
@@ -9,7 +11,7 @@ describe('Parameters module', () => {
     describe('availableTimeSeriesSelector', () => {
         it('sets attributes correctly when all series have data points', () => {
             const available = availableTimeSeriesSelector({
-                series: {
+                ivTimeSeriesData: {
                     timeSeries: {
                         'current:00060': {description: '00060', tsKey: 'current:P7D', variable: 'code0', points: [{x: 1, y: 2}]},
                         'current:00061': {description: '00061', tsKey: 'current:P7D', variable: 'code1', points: [{x: 2, y: 3}]},
@@ -49,8 +51,8 @@ describe('Parameters module', () => {
                         }
                     }
                 },
-                timeSeriesState: {
-                    currentVariableID: 'code0'
+                ivTimeSeriesState: {
+                    currentIVVariableID: 'code0'
                 }
             });
             // Series are ordered by parameter code and have expected values.
@@ -63,7 +65,7 @@ describe('Parameters module', () => {
 
         it('sets attributes correctly when not all series have data points', () => {
             const available = availableTimeSeriesSelector({
-                series: {
+                ivTimeSeriesData: {
                     timeSeries: {
                         'current:00060': {description: '00060', tsKey: 'current:P7D', variable: 'code0', points: [{x: 1, y: 2}]},
                         'current:00061': {description: '00061', tsKey: 'current:P7D', variable: 'code1', points: [{x: 2, y: 3}]},
@@ -103,8 +105,8 @@ describe('Parameters module', () => {
                         }
                     }
                 },
-                timeSeriesState: {
-                    currentVariableID: 'code0'
+                ivTimeSeriesState: {
+                    currentIVVariableID: 'code0'
                 }
             });
             // Series are ordered by parameter code and have expected values.
@@ -117,7 +119,7 @@ describe('Parameters module', () => {
 
         it('time series without data points are considered available', () => {
             const available = availableTimeSeriesSelector({
-                series: {
+                ivTimeSeriesData: {
                     timeSeries: {
                         'current:00060': {description: '00060', tsKey: 'current:P7D', variable: 'code0', points: [{x: 1, y: 2}]},
                         'current:00061': {description: '00061', tsKey: 'current:P7D', variable: 'code1', points: []},
@@ -157,8 +159,8 @@ describe('Parameters module', () => {
                         }
                     }
                 },
-                timeSeriesState: {
-                    currentVariableID: 'code0'
+                ivTimeSeriesState: {
+                    currentIVVariableID: 'code0'
                 }
             });
             // Series are ordered by parameter code and have expected values.

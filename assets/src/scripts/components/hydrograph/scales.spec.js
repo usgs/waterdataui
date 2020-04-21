@@ -103,10 +103,10 @@ describe('scales', () => {
 
         it('Creates a scale when there is no initial data', () => {
             const STATE = {
-                series: {},
+                ivTimeSeriesData: {},
                 statisticsData: {},
-                timeSeriesState: {
-                    showSeries: {
+                ivTimeSeriesState: {
+                    showIVTimeSeries: {
                         current: true,
                         compare: false,
                         median: false
@@ -124,7 +124,7 @@ describe('scales', () => {
 
         it('Creates a scale when there is initial data', () => {
             const STATE = {
-                series: {
+                ivTimeSeriesData: {
                     variables: {
                        '00060ID': {
                            variableCode: {
@@ -140,12 +140,12 @@ describe('scales', () => {
                     }
                 },
                 statisticsData: {},
-                timeSeriesState: {
-                    showSeries: {
+                ivTimeSeriesState: {
+                    showIVTimeSeries: {
                         current: true,
                         compare: false
                     },
-                    currentVariableID: '00060ID'
+                    currentIVVariableID: '00060ID'
                 },
                 ui: {
                     width: 200,
@@ -160,7 +160,7 @@ describe('scales', () => {
     describe('getSecondaryYScale', () => {
         it('Returns null if a non-temperature parameter is selected', () => {
             expect(getSecondaryYScale()({
-                series: {
+                ivTimeSeriesData: {
                     variables: {
                        '00060ID': {
                            variableCode: {
@@ -176,12 +176,12 @@ describe('scales', () => {
                     }
                 },
                 statisticsData: {},
-                timeSeriesState: {
-                    showSeries: {
+                ivTimeSeriesState: {
+                    showIVTimeSeries: {
                         current: true,
                         compare: false
                     },
-                    currentVariableID: '00060ID'
+                    currentIVVariableID: '00060ID'
                 },
                 ui: {
                     width: 200,
@@ -192,7 +192,7 @@ describe('scales', () => {
 
         it('Returns a scale if a celsius temperature parameter is selected', () => {
             const secondaryYScale = getSecondaryYScale()({
-                series: {
+                ivTimeSeriesData: {
                     variables: {
                        '00010ID': {
                            variableCode: {
@@ -208,12 +208,12 @@ describe('scales', () => {
                     }
                 },
                 statisticsData: {},
-                timeSeriesState: {
-                    showSeries: {
+                ivTimeSeriesState: {
+                    showIVTimeSeries: {
                         current: true,
                         compare: false
                     },
-                    currentVariableID: '00010ID'
+                    currentIVVariableID: '00010ID'
                 },
                 ui: {
                     width: 200,
@@ -225,7 +225,7 @@ describe('scales', () => {
 
         it('Returns a scale if a fahrenheit temperature parameter is selected', () => {
             const secondaryYScale = getSecondaryYScale()({
-                series: {
+                ivTimeSeriesData: {
                     variables: {
                        '00011ID': {
                            variableCode: {
@@ -241,12 +241,12 @@ describe('scales', () => {
                     }
                 },
                 statisticsData: {},
-                timeSeriesState: {
-                    showSeries: {
+                ivTimeSeriesState: {
+                    showIVTimeSeries: {
                         current: true,
                         compare: false
                     },
-                    currentVariableID: '00011ID'
+                    currentIVVariableID: '00011ID'
                 },
                 ui: {
                     width: 200,

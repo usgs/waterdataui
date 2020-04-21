@@ -2,8 +2,8 @@ import {set} from 'd3-collection';
 import {select} from 'd3-selection';
 import {transition} from 'd3-transition';
 import memoize from 'fast-memoize';
-import {createSelector, createStructuredSelector} from 'reselect';
 import {DateTime} from 'luxon';
+import {createSelector, createStructuredSelector} from 'reselect';
 
 import config from '../../config';
 import {drawCursorSlider} from '../../d3-rendering/cursor-slider';
@@ -227,7 +227,7 @@ export const drawTooltipFocus = function(elem, store) {
             layout: getMainLayout
         }),
         store,
-        Actions.setCursorOffset)
+        Actions.setIVGraphCursorOffset)
     );
 };
 
@@ -244,8 +244,8 @@ export const drawTooltipCursorSlider = function(elem, store) {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} 25`);
             }, getMainLayout))
         .call(link(store, drawCursorSlider, createStructuredSelector({
-            cursorOffset: (state) => state.timeSeriesState.cursorOffset,
+            cursorOffset: (state) => state.ivTimeSeriesState.ivGraphCursorOffset,
             xScale: getMainXScale('current'),
             layout: getMainLayout
-        }), store, Actions.setCursorOffset));
+        }), store, Actions.setIVGraphCursorOffset));
 };

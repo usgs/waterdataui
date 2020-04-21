@@ -196,7 +196,7 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
             let newVisibility = {};
             newVisibility[action.key] = action.show;
             return Object.assign({}, ivTimeSeriesState, {
-                showIVTimeSeries: Object.assign({}, ivTimeSeriesState.showSeries, newVisibility)
+                showIVTimeSeries: Object.assign({}, ivTimeSeriesState.showIVTimeSeries, newVisibility)
             });
         }
 

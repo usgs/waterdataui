@@ -319,7 +319,7 @@ const TEST_STATE_ONE_VAR = {
         },
         currentIVVariableID: '00060id',
         currentIVMethodID: 69928,
-        currentIVDateRange: 'P7D',
+        currentIVDateRangeKind: 'P7D',
         ivGraphCursorOffset: null
     },
     ui: {
@@ -331,7 +331,6 @@ const TEST_STATE_ONE_VAR = {
 describe('Cursor module', () => {
 
     describe('tsCursorPointsSelector', () => {
-
         it('Should return last time with non-masked value if the cursor offset is null', function() {
             expect(tsCursorPointsSelector('compare')(TEST_STATE_ONE_VAR)).toEqual({
                 '69928:compare:P7D': {
@@ -391,7 +390,7 @@ describe('Cursor module', () => {
                     ...TEST_STATE_THREE_VARS.ivTimeSeriesState,
                     currentIVVariableID: '45807140',
                     currentIVMethodID: 69930,
-                    cursorIVOffset: 29 * 60 * 1000
+                    ivGraphCursorOffset: 29 * 60 * 1000
                 }
             };
 

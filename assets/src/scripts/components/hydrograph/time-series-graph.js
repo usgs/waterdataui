@@ -1,4 +1,5 @@
 import {line as d3Line, curveStepAfter} from 'd3-shape';
+import {createStructuredSelector} from 'reselect';
 
 import config from '../../config';
 
@@ -6,6 +7,7 @@ import {addSVGAccessibility} from '../../d3-rendering/accessibility';
 import {appendAxes} from '../../d3-rendering/axes';
 import {link} from '../../lib/d3-redux';
 import {getAgencyCode, getMonitoringLocationName} from '../../selectors/time-series-selector';
+import {mediaQuery}  from '../../utils';
 
 import {getAxes}  from './axes';
 import {
@@ -14,12 +16,10 @@ import {
     HASH_ID
 } from './drawing-data';
 import {getMainLayout} from './layout';
-import {createStructuredSelector} from 'reselect';
 import {getMainXScale, getMainYScale} from './scales';
 import {descriptionSelector, isVisibleSelector, titleSelector} from './time-series';
 import {drawDataLines} from './time-series-data';
 import {drawTooltipFocus, drawTooltipText}  from './tooltip';
-import {mediaQuery}  from '../../utils';
 
 const plotSvgDefs = function(elem) {
 

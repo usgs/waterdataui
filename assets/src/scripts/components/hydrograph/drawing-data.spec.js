@@ -873,7 +873,7 @@ describe('drawingData module', () => {
                 ...testData,
                 ivTimeSeriesState: {
                     ...testData.ivTimeSeriesState,
-                    showIVTimesSeries: {
+                    showIVTimeSeries: {
                         'current': true,
                         'compare': true,
                         'median': false

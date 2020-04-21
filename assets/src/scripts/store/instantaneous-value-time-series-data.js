@@ -3,6 +3,7 @@ import findKey from 'lodash/findKey';
 import last from 'lodash/last';
 import merge from 'lodash/merge';
 import omitBy from 'lodash/omitBy';
+import {DateTime} from 'luxon';
 
 import {
     getCurrentDateRangeKind,
@@ -11,6 +12,7 @@ import {
     getTsRequestKey,
     hasTimeSeries
 } from '../selectors/time-series-selector';
+import {getIanaTimeZone} from '../selectors/time-zone-selector';
 import {getPreviousYearTimeSeries, getTimeSeries} from '../web-services/models';
 import {normalize} from '../schema';
 import {calcStartTime, sortedParameters} from '../utils';
@@ -283,6 +285,24 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
 };
 
 /*
+ * Asynchronous Redux Action which retrieves data for a custom time range
+ * @param {String} siteno
+ * @param {String} startTimeStr
+ * @param {String} endTimeStr
+ * @param {String} paramCd
+ * @return {Function} which returns a promise when the data has been fetched
+ */
+const retrieveUserRequestedIVDataForDateRange = function(siteno, startTimeStr, endTimeStr, parmCd=null) {
+    return function(dispatch, getState) {
+        const state = getState();
+        const locationIanaTimeZone = getIanaTimeZone(state);
+        const startTime = new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis();
+        const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis();
+        return dispatch(Actions.retrieveCustomIVTimeSeries(siteno, startTime, endTime, parmCd));
+    };
+};
+
+/*
 * Asynchronous Redux Action which sets the current variable id and fetches the custom
 * time series for that variable or the extended time series depending on the current date range kind.
 * @param {String} siteno
@@ -335,5 +355,6 @@ export const Actions = {
     retrieveCustomTimePeriodIVTimeSeries,
     retrieveCustomIVTimeSeries,
     retrieveExtendedIVTimeSeries,
+    retrieveUserRequestedIVDataForDateRange,
     updateIVCurrentVariableAndRetrieveTimeSeries
 };

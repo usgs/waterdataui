@@ -5,11 +5,12 @@ import {createSelector, createStructuredSelector} from 'reselect';
 
 import {drawSimpleLegend} from '../../d3-rendering/legend';
 import {defineLineMarker, defineTextOnlyMarker, defineRectangleMarker} from '../../d3-rendering/markers';
-
-import {getMainLayout} from './layout';
-import {currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} from './drawing-data';
-import {getCurrentVariableMedianMetadata} from '../../selectors/median-statistics-selector';
 import {link} from '../../lib/d3-redux';
+import {getCurrentVariableMedianMetadata} from '../../selectors/median-statistics-selector';
+
+import {currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} from './drawing-data';
+import {getMainLayout} from './layout';
+
 
 const TS_LABEL = {
     'current': 'Current: ',
@@ -127,7 +128,7 @@ const uniqueClassesSelector = memoize(tsKey => createSelector(
  * Select attributes from the state useful for legend creation
  */
 const legendDisplaySelector = createSelector(
-    (state) => state.timeSeriesState.showSeries,
+    (state) => state.ivTimeSeriesState.showIVTimeSeries,
     getCurrentVariableMedianMetadata,
     uniqueClassesSelector('current'),
     uniqueClassesSelector('compare'),

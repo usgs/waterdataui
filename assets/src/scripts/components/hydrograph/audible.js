@@ -73,7 +73,7 @@ export const updateSound = function ({enabled, points}) {
     }
 };
 
-const audibleInterfaceOnSelector = state => state.timeSeriesState.audiblePlayId !== null;
+const audibleInterfaceOnSelector = state => state.ivTimeSeriesState.audiblePlayId !== null;
 
 const audibleScaleSelector = createSelector(
     getMainYScale,

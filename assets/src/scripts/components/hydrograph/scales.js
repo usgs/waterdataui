@@ -69,18 +69,18 @@ export const createYScale = function (parmCd, extent, size) {
 export const getXScale = memoize((kind, tsKey) => createSelector(
     getLayout(kind),
     getRequestTimeRange(tsKey),
-        state => state.timeSeriesState.hydrographBrushOffset,
-    (layout, requestTimeRange, hydrographBrushOffset) => {
+        state => state.ivTimeSeriesState.ivGraphBrushOffset,
+    (layout, requestTimeRange, brushOffset) => {
         let timeRange;
         if (kind === 'BRUSH') {
             timeRange = requestTimeRange;
         } else {
 
-            if (hydrographBrushOffset) {
+            if (brushOffset) {
 
                 timeRange = {
-                    'start': requestTimeRange.start + hydrographBrushOffset.start,
-                    'end': requestTimeRange.end - hydrographBrushOffset.end
+                    'start': requestTimeRange.start + brushOffset.start,
+                    'end': requestTimeRange.end - brushOffset.end
                 };
             } else {
                 timeRange = requestTimeRange;

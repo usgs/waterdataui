@@ -1,12 +1,13 @@
 import {select, selectAll} from 'd3-selection';
 import {attachToNode} from './index';
-import {Actions, configureStore} from '../../store';
+import {configureStore} from '../../store';
+import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
 import {Actions as statisticsDataActions} from '../../store/statistics-data';
 import {Actions as timeZoneActions} from '../../store/time-zone';
 
 
 const TEST_STATE = {
-    series: {
+    ivTimeSeriesData: {
         timeSeries: {
             '00010:current': {
                 points: [{
@@ -134,16 +135,15 @@ const TEST_STATE = {
             }
         }
     },
-    timeSeriesState: {
-        currentVariableID: '45807197',
-        currentDateRange: 'P7D',
-        requestedTimeRange: null,
-        showSeries: {
+    ivTimeSeriesState: {
+        currentIVVariableID: '45807197',
+        currentIVDateRangeKind: 'P7D',
+        showIVTimeSeries: {
             current: true,
             compare: true,
             median: true
         },
-        loadingTSKeys: []
+        loadingIVTSKeys: []
     },
     ui: {
         width: 400
@@ -182,7 +182,11 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         let store;
 
         beforeEach(() => {
-            store = configureStore({});
+            store = configureStore({
+                ivTimeSeriesState: {
+                    loadingIVTSKeys: []
+                }
+            });
         });
 
         it('loading-indicator is shown until initial data has been retrieved', () => {
@@ -205,7 +209,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         describe('Always retrieve the 7 day data and median statistics', () => {
 
             beforeEach(() => {
-                spyOn(Actions, 'retrieveTimeSeries').and.callThrough();
+                spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.callThrough();
                 spyOn(statisticsDataActions, 'retrieveMedianStatistics').and.callThrough();
             });
 
@@ -215,7 +219,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                     parameterCode: '00065'
                 });
 
-                expect(Actions.retrieveTimeSeries).toHaveBeenCalledWith('12345678');
+                expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).toHaveBeenCalledWith('12345678');
                 expect(statisticsDataActions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
             });
 
@@ -226,7 +230,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                     period: 'P30D'
                 });
 
-                expect(Actions.retrieveTimeSeries).toHaveBeenCalledWith('12345678');
+                expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).toHaveBeenCalledWith('12345678');
                 expect(statisticsDataActions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
             });
 
@@ -238,18 +242,18 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                     endDT: '2010-03-01'
                 });
 
-                expect(Actions.retrieveTimeSeries).toHaveBeenCalledWith('12345678');
+                expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).toHaveBeenCalledWith('12345678');
                 expect(statisticsDataActions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
             });
         });
 
         describe('Retrieve additional data if indicated', () => {
             beforeEach(() => {
-                spyOn(Actions, 'retrieveTimeSeries').and.returnValue(function() {
+                spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.returnValue(function() {
                     return Promise.resolve({});
                 });
-                spyOn(Actions, 'retrieveExtendedTimeSeries').and.callThrough();
-                spyOn(Actions, 'retrieveDataForDateRange').and.callThrough();
+                spyOn(ivTimeSeriesDataActions, 'retrieveExtendedIVTimeSeries').and.callThrough();
+                spyOn(ivTimeSeriesDataActions, 'retrieveUserRequestedIVDataForDateRange').and.callThrough();
             });
 
             it('Expect to not retrieve additional time series if not indicated', (done) => {
@@ -259,8 +263,8 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                 });
 
                 window.requestAnimationFrame(() => {
-                    expect(Actions.retrieveExtendedTimeSeries).not.toHaveBeenCalled();
-                    expect(Actions.retrieveDataForDateRange).not.toHaveBeenCalled();
+                    expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).not.toHaveBeenCalled();
+                    expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
                     done();
                 });
             });
@@ -272,8 +276,8 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                 });
 
                 window.requestAnimationFrame(() => {
-                    expect(Actions.retrieveExtendedTimeSeries).toHaveBeenCalledWith('12345678', 'P30D', '00065');
-                    expect(Actions.retrieveDataForDateRange).not.toHaveBeenCalled();
+                    expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).toHaveBeenCalledWith('12345678', 'P30D', '00065');
+                    expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
                     done();
                 });
             });
@@ -287,13 +291,13 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                 });
 
                 window.requestAnimationFrame(() => {
-                    expect(Actions.retrieveExtendedTimeSeries).not. toHaveBeenCalled();
-                    expect(Actions.retrieveDataForDateRange).not.toHaveBeenCalled();
+                    expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).not. toHaveBeenCalled();
+                    expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
                     done();
                 });
             });
 
-            it('should retrieve data for date range if  time zone has  been fetched', (done) => {
+            it('should retrieve data for date range if time zone has  been fetched', (done) => {
                 spyOn(timeZoneActions, 'retrieveIanaTimeZone').and.returnValue(function() {
                     return Promise.resolve({});
                 });
@@ -305,8 +309,8 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                 });
 
                 window.requestAnimationFrame(() => {
-                    expect(Actions.retrieveExtendedTimeSeries).not. toHaveBeenCalled();
-                    expect(Actions.retrieveDataForDateRange).toHaveBeenCalledWith('12345678', '2010-01-01', '2010-03-01', '00065');
+                    expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).not. toHaveBeenCalled();
+                    expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).toHaveBeenCalledWith('12345678', '2010-01-01', '2010-03-01', '00065');
                     done();
                 });
             });
@@ -317,10 +321,14 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         let store;
 
         beforeEach(() => {
-            store = configureStore({});
-            spyOn(Actions, 'retrieveTimeSeries').and.callThrough();
-            spyOn(Actions, 'retrieveCustomTimePeriodTimeSeries').and.callThrough();
-            spyOn(Actions, 'retrieveDataForDateRange');
+            store = configureStore({
+                ivTimeSeriesState: {
+                    loadingIVTSKeys: []
+                }
+            });
+            spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.callThrough();
+            spyOn(ivTimeSeriesDataActions, 'retrieveCustomTimePeriodIVTimeSeries').and.callThrough();
+            spyOn(ivTimeSeriesDataActions, 'retrieveUserRequestedIVDataForDateRange');
         });
 
         it('should retrieve custom time period if period is specificed', (done) => {
@@ -332,9 +340,9 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             });
 
             window.requestAnimationFrame(() => {
-                expect(Actions.retrieveTimeSeries).not.toHaveBeenCalled();
-                expect(Actions.retrieveCustomTimePeriodTimeSeries).toHaveBeenCalledWith('12345678', '00065', 'P20D');
-                expect(Actions.retrieveDataForDateRange).not.toHaveBeenCalled();
+                expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).not.toHaveBeenCalled();
+                expect(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries).toHaveBeenCalledWith('12345678', '00065', 'P20D');
+                expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
                 done();
             });
         });
@@ -349,9 +357,9 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             });
 
             window.requestAnimationFrame(() => {
-                expect(Actions.retrieveTimeSeries).not.toHaveBeenCalled();
-                expect(Actions.retrieveCustomTimePeriodTimeSeries).not.toHaveBeenCalled();
-                expect(Actions.retrieveDataForDateRange).not.toHaveBeenCalled();
+                expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).not.toHaveBeenCalled();
+                expect(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries).not.toHaveBeenCalled();
+                expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
                 done();
             });
         });
@@ -369,9 +377,9 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             });
 
             window.requestAnimationFrame(() => {
-                expect(Actions.retrieveTimeSeries).not.toHaveBeenCalled();
-                expect(Actions.retrieveCustomTimePeriodTimeSeries).not.toHaveBeenCalled();
-                expect(Actions.retrieveDataForDateRange).toHaveBeenCalledWith('12345678', '2010-01-01', '2010-03-01', '00065');
+                expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).not.toHaveBeenCalled();
+                expect(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries).not.toHaveBeenCalled();
+                expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).toHaveBeenCalledWith('12345678', '2010-01-01', '2010-03-01', '00065');
                 done();
             });
         });
@@ -384,9 +392,9 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             });
 
             window.requestAnimationFrame(() => {
-                expect(Actions.retrieveTimeSeries).toHaveBeenCalledWith('12345678', ['00065']);
-                expect(Actions.retrieveCustomTimePeriodTimeSeries).not.toHaveBeenCalled();
-                expect(Actions.retrieveDataForDateRange).not.toHaveBeenCalled();
+                expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).toHaveBeenCalledWith('12345678', ['00065']);
+                expect(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries).not.toHaveBeenCalled();
+                expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
                 done();
             });
         });
@@ -396,17 +404,17 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         /* eslint no-use-before-define: 0 */
         let store;
         beforeEach((done) => {
-            spyOn(Actions, 'retrieveTimeSeries').and.returnValue(function() {
+            spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.returnValue(function() {
                 return Promise.resolve({});
             });
             store = configureStore({
                 ...TEST_STATE,
-                series: {
-                    ...TEST_STATE.series,
+                ivTimeSeriesData: {
+                    ...TEST_STATE.ivTimeSeriesData,
                     timeSeries: {
-                        ...TEST_STATE.series.timeSeries,
+                        ...TEST_STATE.ivTimeSeriesData.timeSeries,
                         '00060:current': {
-                            ...TEST_STATE.series.timeSeries['00060:current'],
+                            ...TEST_STATE.ivTimeSeriesData.timeSeries['00060:current'],
                             startTime: 1514926800000,
                             endTime: 1514930400000,
                             points: [{
@@ -421,17 +429,17 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                         }
                     }
                 },
-                timeSeriesState: {
-                    showSeries: {
+                ivTimeSeriesState: {
+                    showIVTimeSeries: {
                         current: true,
                         compare: true,
                         median: true
                     },
-                    currentVariableID: '45807197',
-                    currentDateRange: 'P7D',
-                    currentMethodID: 'method1',
-                    loadingTSKeys: [],
-                    hydrographBrushOffset: null
+                    currentIVVariableID: '45807197',
+                    currentIVDateRangeKind: 'P7D',
+                    currentIVMethodID: 'method1',
+                    loadingIVTSKeys: [],
+                    ivGraphBrushOffset: null
                 },
                 ui: {
                     windowWidth: 400,
@@ -508,17 +516,17 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
     describe('hide elements when showOnlyGraph is set to true', () => {
         let store;
         beforeEach(() => {
-            spyOn(Actions, 'retrieveTimeSeries').and.returnValue(function() {
+            spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.returnValue(function() {
                 return Promise.resolve({});
             });
             store = configureStore({
                 ...TEST_STATE,
-                series: {
-                    ...TEST_STATE.series,
+                ivTimeSeriesData: {
+                    ...TEST_STATE.ivTimeSeriesData,
                     timeSeries: {
-                        ...TEST_STATE.series.timeSeries,
+                        ...TEST_STATE.ivTimeSeriesData.timeSeries,
                         '00060:current': {
-                            ...TEST_STATE.series.timeSeries['00060:current'],
+                            ...TEST_STATE.ivTimeSeriesData.timeSeries['00060:current'],
                             startTime: 1514926800000,
                             endTime: 1514930400000,
                             points: [{
@@ -533,17 +541,17 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                         }
                     }
                 },
-                timeSeriesState: {
-                    showSeries: {
+                ivTimeSeriesState: {
+                    showIVTimeSeries: {
                         current: true,
                         compare: true,
                         median: true
                     },
-                    currentVariableID: '45807197',
-                    currentDateRange: 'P7D',
-                    currentMethodID: 'method1',
-                    loadingTSKeys: [],
-                    hydrographBrushOffset: null
+                    currentIVVariableID: '45807197',
+                    currentIVDateRangeKind: 'P7D',
+                    currentIVMethodID: 'method1',
+                    loadingIVTSKeys: [],
+                    ivGraphBrushOffset: null
                 },
                 ui: {
                     windowWidth: 400,

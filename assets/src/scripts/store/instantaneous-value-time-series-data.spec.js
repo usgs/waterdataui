@@ -615,5 +615,34 @@ describe('store/instantaneous-value-time-series-data module', () => {
                 expect(ivTimeSeriesStateActions.ivTimeSeriesPlayStop).toHaveBeenCalled();
             });
         });
+
+        describe('retrieveUserRequestedIVDataForDateRange', () => {
+            let mockDispatch;
+            let mockGetState;
+
+            beforeEach(() => {
+                mockDispatch = jasmine.createSpy('mockDispatch');
+                mockGetState = jasmine.createSpy('mockGetState').and.returnValue({
+                    series: {
+                        ianaTimeZone: 'America/Chicago'
+                    }
+                });
+
+                spyOn(Actions, 'retrieveCustomTimeSeries');
+                jasmine.Ajax.install();
+            });
+
+            afterEach(() => {
+                jasmine.Ajax.uninstall();
+            });
+
+            it('Converts time strings to javascript date/time objects correctly', () => {
+                Actions.retrieveUserRequestedIVDataForDateRange('12345678', '2010-01-01', '2010-03-01')(mockDispatch, mockGetState);
+                expect(Actions.retrieveCustomIVTimeSeries).toHaveBeenCalled();
+                expect(Actions.retrieveCustomIVTimeSeries.calls.argsFor(0)[0]).toEqual('12345678');
+                expect(Actions.retrieveCustomIVTimeSeries.calls.argsFor(0)[1]).toEqual(1262325600000);
+                expect(Actions.retrieveCustomIVTimeSeries.calls.argsFor(0)[2]).toEqual(1267423200000);
+            });
+        });
     });
 });

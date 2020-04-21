@@ -7,11 +7,11 @@ import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
 import {
     isLoadingTS,
     hasAnyTimeSeries,
-    getCurrentDateRange,
+    getCurrentDateRangeKind,
     getCustomTimeRange} from '../../selectors/time-series-selector';
 import {getIanaTimeZone} from '../../selectors/time-zone-selector';
-import {Actions} from '../../store';
-
+import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
+import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
 
 export const drawDateRangeControls = function(elem, store, siteno) {
     const DATE_RANGE = [{
@@ -29,9 +29,10 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         ariaExpanded: false
     }];
 
-    const initialDateRange = getCurrentDateRange(store.getState());
     let initialCustomTimeRange;
-    if (initialDateRange === 'custom') {
+    const dateRangeKind = getCurrentDateRangeKind(store.getState());
+    const isDateRangeKindCustom = dateRangeKind === 'custom';
+    if (isDateRangeKindCustom === 'custom') {
         const customTimeRangeInMillis = getCustomTimeRange(store.getState());
         const locationIanaTimeZone = getIanaTimeZone(store.getState());
         initialCustomTimeRange = {
@@ -53,7 +54,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('role', 'customdate')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date specification')
-        .attr('hidden', initialDateRange !== 'custom' ? true : null);
+        .attr('hidden', isDateRangeKindCustom ? null: true);
 
     customDateContainer.append('label')
         .attr('for', 'date-input')
@@ -132,11 +133,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 customDateValidationContainer.attr('hidden', null);
             } else {
                 customDateValidationContainer.attr('hidden', true);
-                store.dispatch(Actions.retrieveUserRequestedDataForDateRange(
+                store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange(
                     siteno,
                     userSpecifiedStart,
                     userSpecifiedEnd
-                )).then(() => store.dispatch(Actions.clearHydrographBrushOffset()));
+                )).then(() => store.dispatch(ivTimeSeriesStateActions.clearHydrographBrushOffset()));
             }
         });
 
@@ -170,11 +171,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             } else {
                 li.select('input#custom-date-range').attr('aria-expanded', false);
                 customDateContainer.attr('hidden', true);
-                store.dispatch(Actions.retrieveExtendedTimeSeries(
+                store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(
                     siteno,
                     li.select('input:checked').attr('value')
                 )).then(() => {
-                    store.dispatch(Actions.clearHydrographBrushOffset());
+                    store.dispatch(ivTimeSeriesStateActions.clearHydrographBrushOffset());
                 });
             }
         });
@@ -182,5 +183,5 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-radio__label')
         .attr('for', (d) => `${d.period}-input`)
         .text((d) => d.name);
-    li.select(`#${initialDateRange}-input`).property('checked', true);
+    li.select(`#${dateRangeKind}-input`).property('checked', true);
 };

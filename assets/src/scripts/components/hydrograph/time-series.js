@@ -56,7 +56,7 @@ export const hasTimeSeriesWithPoints = memoize((tsKey, period) => createSelector
  * @return {Boolean}           Show state of the time series
  */
 export const isVisibleSelector = memoize(tsKey => (state) => {
-    return state.timeSeriesState.showSeries[tsKey];
+    return state.ivTimeSeriesState.showIVTimeSeries[tsKey];
 });
 
 

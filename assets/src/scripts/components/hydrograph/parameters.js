@@ -5,7 +5,7 @@ import {select} from 'd3-selection';
 import {getVariables, getCurrentVariableID, getTimeSeries} from '../../selectors/time-series-selector';
 
 import config from '../../config';
-import {Actions} from '../../store';
+import {Actions} from '../../store/instantaneous-value-time-series-data';
 import {appendTooltip} from '../../tooltips';
 import {sortedParameters} from '../../utils';
 
@@ -181,7 +181,7 @@ export const plotSeriesSelectTable = function (elem,
             .attr('aria-selected', parm => parm[1].selected)
             .on('click', function (parm) {
                 if (!parm[1].selected) {
-                    store.dispatch(Actions.updateCurrentVariable(siteno, parm[1].variableID));
+                    store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, parm[1].variableID));
                 }
             })
             .call(tr => {

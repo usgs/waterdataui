@@ -7,7 +7,7 @@ import {drawGraphBrush} from './graph-brush';
 describe ('graph-brush module', () => {
 
     const TEST_STATE = {
-        series: {
+        ivTimeSeriesData: {
             timeSeries: {
                 '00010:current': {
                     points: [{
@@ -135,20 +135,18 @@ describe ('graph-brush module', () => {
                 }
             }
         },
-        timeSeriesState: {
-            currentVariableID: '45807197',
-            currentDateRange: 'P7D',
-            requestedTimeRange: null,
-            showSeries: {
+        ivTimeSeriesState: {
+            currentIVVariableID: '45807197',
+            currentIVDateRangeKind: 'P7D',
+            showIVTimeSeries: {
                 current: true,
                 compare: true,
                 median: true
             },
-            loadingTSKeys: []
+            loadingIVTSKeys: []
         },
         ui: {
-            width: 400,
-            hydrographBrushOffset: undefined
+            width: 400
         }
     };
     describe('drawGraphBrush', () => {

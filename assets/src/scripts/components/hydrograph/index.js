@@ -9,7 +9,8 @@ import {drawWarningAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 
 import {link} from '../../lib/d3-redux';
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from '../../selectors/time-series-selector';
-import {Actions} from '../../store';
+import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
+import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
 import {Actions as statisticsDataActions} from '../../store/statistics-data';
 import {Actions as timeZoneActions} from '../../store/time-zone';
 import {renderTimeSeriesUrlParams} from '../../url-params';
@@ -74,26 +75,26 @@ export const attachToNode = function (store,
     if (showOnlyGraph) {
         // Only fetch what is needed
         if (parameterCode && period) {
-            fetchDataPromise = store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, parameterCode, period));
+            fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(siteno, parameterCode, period));
         } else if (parameterCode && startDT && endDT) {
             // Don't fetch until time zone is available
             fetchDataPromise = fetchTimeZonePromise.then(() => {
-                return store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, parameterCode));
+                return store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange(siteno, startDT, endDT, parameterCode));
             });
         } else {
-            fetchDataPromise = store.dispatch(Actions.retrieveTimeSeries(siteno, parameterCode ? [parameterCode] : null));
+            fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno, parameterCode ? [parameterCode] : null));
         }
     } else {
         // Retrieve all parameter codes for 7 days and median statistics
-        fetchDataPromise = store.dispatch(Actions.retrieveTimeSeries(siteno))
+        fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno))
             .then(() => {
                 // Fetch any extended data needed to set initial state
                 const currentParamCode = parameterCode ? parameterCode : getCurrentParmCd(store.getState());
                 if (period === 'P30D' || period === 'P1Y') {
-                    store.dispatch(Actions.retrieveExtendedTimeSeries(siteno, period, currentParamCode));
+                    store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(siteno, period, currentParamCode));
                 } else if (startDT && endDT) {
                     fetchTimeZonePromise.then(() => {
-                        store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, currentParamCode));
+                        store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange(siteno, startDT, endDT, currentParamCode));
                     });
                 }
             });
@@ -113,13 +114,13 @@ export const attachToNode = function (store,
                     return variable.variableCode.value === parameterCode;
                 };
                 const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
-                store.dispatch(Actions.setCurrentVariable(thisVariable.oid));
+                store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
             }
             if (compare) {
-                store.dispatch(Actions.toggleTimeSeries('compare', true));
+                store.dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('compare', true));
             }
             if (timeSeriesId) {
-                store.dispatch(Actions.setCurrentMethodID(timeSeriesId));
+                store.dispatch(ivTimeSeriesStateActions.setCurrentIVMethodID(timeSeriesId));
             }
             // Initial data has been fetched and initial state set. We can render the hydrograph elements
             // Set up rendering functions for the graph-container

@@ -7,20 +7,20 @@ import {
 import {nldiDataReducer as nldiData} from './nldi-data';
 import {dailyValueTimeSeriesDataReducer as dailyValueTimeSeriesData} from './daily-value-time-series';
 import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './daily-value-time-series';
-import {ivTimeSeriesDataReducer as series} from './instantaneous-value-time-series-data';
-import {ivTimeSeriesStateReducer as timeSeriesState} from './instantaneous-value-time-series-state';
+import {ivTimeSeriesDataReducer as ivTimeSeriesData} from './instantaneous-value-time-series-data';
+import {ivTimeSeriesStateReducer as ivTimeSeriesState} from './instantaneous-value-time-series-state';
 import {statisticsDataReducer as statisticsData} from './statistics-data';
 import {timeZoneReducer as ianaTimeZone} from './time-zone';
 import {uiReducer as ui} from './ui-state';
 
 const appReducer = combineReducers({
-    series,
+    ivTimeSeriesData,
     ianaTimeZone,
     dailyValueTimeSeriesData,
     statisticsData,
     floodData,
     nldiData,
-    timeSeriesState,
+    ivTimeSeriesState,
     dailyValueTimeSeriesState,
     floodState,
     ui

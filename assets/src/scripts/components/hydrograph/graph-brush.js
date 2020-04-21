@@ -1,10 +1,10 @@
-import {brushX, brushSelection} from 'd3-brush';
+import {brushX} from 'd3-brush';
 import {event} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import {appendXAxis} from '../../d3-rendering/axes';
 import {link} from '../../lib/d3-redux';
-import {Actions} from '../../store';
+import {Actions} from '../../store/instantaneous-value-time-series-state';
 
 import {getBrushXAxis} from './axes';
 import {currentVariableLineSegmentsSelector} from './drawing-data';
@@ -29,7 +29,7 @@ export const drawGraphBrush = function(container, store) {
             const brushOffsets = [adjustedBrush[0]- xScale.domain()[0],
                 xScale.domain()[1] - adjustedBrush[1]];
 
-            store.dispatch(Actions.setHydrographBrushOffset(brushOffsets));
+            store.dispatch(Actions.setIVGraphBrushOffset(brushOffsets));
         }
     };
 
@@ -93,7 +93,7 @@ export const drawGraphBrush = function(container, store) {
 
         }, createStructuredSelector({
             layout: getBrushLayout,
-            hydrographBrushOffset: (state) => state.timeSeriesState.hydrographBrushOffset,
+            hydrographBrushOffset: (state) => state.ivTimeSeriesState.ivGraphBrushOffset,
             xScale: getBrushXScale('current')
         })));
 };

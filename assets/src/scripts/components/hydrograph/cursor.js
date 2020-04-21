@@ -12,7 +12,7 @@ import {isVisibleSelector} from './time-series';
 
 export const cursorOffsetSelector = createSelector(
     getMainXScale('current'),
-    state => state.ivTimeSeriesState.currentIVGraphCursorOffset,
+    state => state.ivTimeSeriesState.ivGraphCursorOffset,
     (xScale, cursorOffset) => {
         // If cursorOffset is false, don't show it
         if (cursorOffset === false) {

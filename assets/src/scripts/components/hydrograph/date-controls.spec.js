@@ -1,11 +1,12 @@
 import {select} from 'd3-selection';
 
-import {Actions, configureStore} from '../../store';
+import {configureStore} from '../../store';
+import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
 
 import {drawDateRangeControls} from './date-controls';
 
 const TEST_STATE = {
-    series: {
+    ivTimeSeriesData: {
         timeSeries: {
             '00010:current': {
                 points: [{
@@ -133,16 +134,15 @@ const TEST_STATE = {
             }
         }
     },
-    timeSeriesState: {
-        currentVariableID: '45807197',
-        currentDateRange: 'P7D',
-        requestedTimeRange: null,
-        showSeries: {
+    ivTimeSeriesState: {
+        currentIVVariableID: '45807197',
+        currentIVDateRangeKind: 'P7D',
+        showIVTimeSeries: {
             current: true,
             compare: true,
             median: true
         },
-        loadingTSKeys: []
+        loadingIVTSKeys: []
     },
     ui: {
         width: 400
@@ -175,12 +175,12 @@ describe('date-controls', () => {
     });
 
     it('Expects to retrieve the extended time series when the radio buttons are change', () => {
-        spyOn(Actions, 'retrieveExtendedTimeSeries').and.callThrough();
+        spyOn(ivTimeSeriesDataActions, 'retrieveExtendedIVTimeSeries').and.callThrough();
         let lastRadio = select('#P1Y-input');
         lastRadio.property('checked', true);
         lastRadio.dispatch('change');
 
-        expect(Actions.retrieveExtendedTimeSeries).toHaveBeenCalledWith('12345678', 'P1Y');
+        expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).toHaveBeenCalledWith('12345678', 'P1Y');
     });
 
     it('Expects to show the date range form when the Custom radio is selected', () => {
@@ -216,7 +216,7 @@ describe('date-controls', () => {
     });
 
     it('Expects data to be retrieved if both custom start and end dates are provided', () => {
-        spyOn(Actions, 'retrieveUserRequestedDataForDateRange').and.callThrough();
+        spyOn(ivTimeSeriesDataActions, 'retrieveUserRequestedIVDataForDateRange').and.callThrough();
 
         select('#custom-start-date').property('value', '2063-04-03');
         select('#custom-end-date').property('value', '2063-04-05');
@@ -226,7 +226,7 @@ describe('date-controls', () => {
         let customDateAlertDiv = select('#custom-date-alert-container');
         expect(customDateAlertDiv.attr('hidden')).toBe('true');
 
-        expect(Actions.retrieveUserRequestedDataForDateRange).toHaveBeenCalledWith(
+        expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).toHaveBeenCalledWith(
             '12345678', '2063-04-03', '2063-04-05'
         );
     });
