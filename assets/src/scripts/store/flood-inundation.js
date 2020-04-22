@@ -29,13 +29,11 @@ const retrieveFloodData = function(siteno) {
         const floodFeatures = fetchFloodFeatures(siteno);
         const floodExtent = fetchFloodExtent(siteno);
         return Promise.all([floodFeatures, floodExtent]).then((data) => {
-            console.log('Fetched both features and extent');
             const [features, extent] = data;
             const stages = features.map((feature) => feature.attributes.STAGE).sort(function (a, b) {
                 return a - b;
             });
             dispatch(setFloodFeatures(stages, extent.extent ? extent.extent : {}));
-            console.log('Update flood data');
         });
     };
 };
