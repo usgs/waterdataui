@@ -28,17 +28,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         ariaExpanded: false
     }];
 
-    let initialCustomTimeRange;
-    const dateRangeKind = getCurrentDateRangeKind(store.getState());
-    const isDateRangeKindCustom = dateRangeKind === 'custom';
-    if (isDateRangeKindCustom) {
-        const customTimeRangeInMillis = getCustomTimeRange(store.getState());
-        initialCustomTimeRange = {
-            start : DateTime.fromMillis(customTimeRangeInMillis.startDT).toFormat('yyyy-LL-dd'),
-            end: DateTime.fromMillis(customTimeRangeInMillis.endDT).toFormat('yyyy-LL-dd')
-        };
-    }
-
     const container = elem.insert('div', ':nth-child(2)')
         .attr('id', 'ts-daterange-select-container')
         .attr('role', 'radiogroup')
@@ -52,7 +41,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('role', 'customdate')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date specification')
-        .attr('hidden', isDateRangeKindCustom ? null: true);
+        .call(link(store, (container, dateRangeKind) => {
+            container.attr('hidden', dateRangeKind === 'custom' ? null : true);
+        }, getCurrentDateRangeKind));
 
     customDateContainer.append('label')
         .attr('for', 'date-input')
@@ -89,9 +80,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('name', 'user-specified-start-date')
         .attr('aria-labelledby', 'custom-start-date-label')
         .attr('type', 'date');
-    if (initialCustomTimeRange) {
-        customStartDate.attr('value', initialCustomTimeRange.start);
-    }
 
     endDateContainer.append('label')
         .attr('class', 'usa-label')
@@ -105,9 +93,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('name', 'user-specified-end-date')
         .attr('aria-labelledby', 'custom-end-date-label')
         .attr('type', 'date');
-    if (initialCustomTimeRange) {
-        customEndDate.attr('value', initialCustomTimeRange.end);
-    }
 
     const submitContainer = customDateContainer.append('div')
         .attr('class', 'submit-button');
@@ -138,6 +123,13 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 )).then(() => store.dispatch(ivTimeSeriesStateActions.clearIVGraphBrushOffset()));
             }
         });
+
+    customDateContainer.call(link(store, (container, customTimeRange) => {
+        container.select('#custom-start-date')
+            .attr('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start).toFormat('yyyy-LL-dd') : '');
+        container.select('#custom-end-date')
+            .attr('value', customTimeRange && customTimeRange.end ? DateTime.fromMillis(customTimeRange.end).toFormat('yyyy-LL-dd') : '');
+    }, getCustomTimeRange));
 
     const listContainer = container.append('ul')
         .attr('class', 'usa-fieldset usa-list--unstyled');
@@ -177,9 +169,12 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 });
             }
         });
+
     li.append('label')
         .attr('class', 'usa-radio__label')
         .attr('for', (d) => `${d.period}-input`)
         .text((d) => d.name);
-    li.select(`#${dateRangeKind}-input`).property('checked', true);
+    li.call(link(store, (elem, dateRangeKind) => {
+        elem.select(`#${dateRangeKind}-input`).property('checked', true);
+    }, getCurrentDateRangeKind));
 };
