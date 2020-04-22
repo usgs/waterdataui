@@ -4,7 +4,7 @@ import {configureStore} from '../../store';
 
 
 const TEST_STATE = {
-    series: {
+    ivTimeSeriesData: {
         timeSeries: {
             '00060:current': {
                 startTime: new Date('2018-01-02T15:00:00.000-06:00'),
@@ -41,9 +41,9 @@ const TEST_STATE = {
             }
         }
     },
-    timeSeriesState: {
-        currentVariableID: '45807197',
-        showSeries: {
+    ivTimeSeriesState: {
+        currentIVVariableID: '45807197',
+        showIVTimeSeries: {
             current: true,
             compare: true
         },
@@ -75,14 +75,14 @@ describe('audibleUI', () => {
     it('Expects the store to have a playId if the button is clicked', () => {
         container.select('button').dispatch('click');
 
-        expect(store.getState().timeSeriesState.audiblePlayId).not.toBeNull();
+        expect(store.getState().ivTimeSeriesState.audiblePlayId).not.toBeNull();
     });
 
     it('Expects the store to have a null playId if the  button is clicked after clicking the once', (done) => {
         container.select('button').dispatch('click');
         window.requestAnimationFrame(() => {
             container.select('button').dispatch('click');
-            expect(store.getState().timeSeriesState.audiblePlayId).toBeNull();
+            expect(store.getState().ivTimeSeriesState.audiblePlayId).toBeNull();
             done();
         });
     });

@@ -7,10 +7,11 @@ import {register} from './helpers';
 register();
 
 import {configureStore} from './store';
+import {Actions as uiActions} from './store/ui-state';
 import {getParamString} from './url-params';
 
 import {attachToNode as EmbedComponent} from './components/embed';
-import {attachToNode as DailyValueHydrographComponent} from './components/dailyValueHydrograph';
+import {attachToNode as DailyValueHydrographComponent} from './components/daily-value-hydrograph';
 import {attachToNode as HydrographComponent} from './components/hydrograph';
 import {attachToNode as MapComponent} from './components/map';
 
@@ -21,14 +22,15 @@ const COMPONENTS = {
     map: MapComponent
 };
 
-
 const load = function () {
-    let nodes = document.getElementsByClassName('wdfn-component');
+    let pageContainer = document.getElementById('monitoring-location-page-container');
     let store = configureStore({
         ui: {
-            windowWidth: window.innerWidth
+            windowWidth: window.innerWidth,
+            width: pageContainer.offsetWidth
         }
     });
+    let nodes = document.getElementsByClassName('wdfn-component');
     for (let node of nodes) {
         // If options is specified on the node, expect it to be a JSON string.
         // Otherwise, use the dataset attributes as the component options.
@@ -37,7 +39,9 @@ const load = function () {
         COMPONENTS[node.dataset.component](store, node, Object.assign({}, options, hashOptions));
     }
 
-
+    window.onresize = function() {
+        store.dispatch(uiActions.resizeUI(window.innerWidth, pageContainer.offsetWidth));
+    };
 };
 
 wdfnviz.main(load);

@@ -1,12 +1,14 @@
 // Creates a Leaflet legend control. If the legend contains FIM information than the expand/collapse control
 // will be visible
 
-import { select } from 'd3-selection';
-import { control as createControl, DomUtil, DomEvent } from 'leaflet';
-import { get } from '../../ajax';
+import {select} from 'd3-selection';
+import {control as createControl, DomUtil, DomEvent} from 'leaflet';
+
+import {get} from '../../ajax';
 import config from '../../config';
-import { mediaQuery } from '../../utils';
-import { markerFillColor, markerFillOpacity, downStreamColor, upstreamColor, flowLineOpacity,
+import {mediaQuery} from '../../utils';
+
+import {markerFillColor, markerFillOpacity, downStreamColor, upstreamColor, flowLineOpacity,
          basinFillColor, basinFillOpacity} from './nldiMapping';
 
 
@@ -33,7 +35,6 @@ const fetchLayerLegend = function(layer, defaultName) {
             return [];
         });
 };
-
 
 /*
  * @param {Object} - options allowed for a standard Leaflet Control.
@@ -78,7 +79,6 @@ export const createLegendControl = function(options) {
     return legendControl;
 };
 
-
 /**
  * Compresses the legend on smaller devices like phones
  * @param {L.Control} legendControl - Leaflet legend control
@@ -100,7 +100,6 @@ const compressLegendOnSmallDevices = function(legendControl) {
         }
     }
 };
-
 
 /*
  * Creates the FIM legend if FIM data is available, otherwise removes the FIM legend if it exists.
@@ -137,7 +136,6 @@ export const createFIMLegend = function(legendControl, isFIMAvailable) {
         select(legendControl.getContainer()).select('#fim-legend-list').remove();
     }
 };
-
 
 /**
  * Creates the NLDI legend if NLDI data is available, otherwise removes the NLDI legend if it exists.

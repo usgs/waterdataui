@@ -1,7 +1,7 @@
 
 import {link} from '../../lib/d3-redux';
 import {getCurrentVariableTimeSeries} from '../../selectors/time-series-selector';
-import {Actions} from '../../store';
+import {Actions} from '../../store/instantaneous-value-time-series-state';
 
 import {audibleUI} from './audible';
 import {getCurrentVariableMedianStatistics} from '../../selectors/median-statistics-selector';
@@ -33,7 +33,7 @@ export const drawGraphControls = function(elem, store) {
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', 'toggleCompare')
         .on('click', function() {
-            store.dispatch(Actions.toggleTimeSeries('compare', this.checked));
+            store.dispatch(Actions.setIVTimeSeriesVisibility('compare', this.checked));
         })
         // Disables the checkbox if no compare time series for the current variable
         .call(link(store,function(elem, compareTimeSeries) {
@@ -63,7 +63,7 @@ export const drawGraphControls = function(elem, store) {
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', 'toggleMedian')
         .on('click', function() {
-            store.dispatch(Actions.toggleTimeSeries('median', this.checked));
+            store.dispatch(Actions.setIVTimeSeriesVisibility('median', this.checked));
         })
         // Disables the checkbox if no median data for the current variable
         .call(link(store,function(elem, medianData) {

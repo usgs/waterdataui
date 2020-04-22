@@ -15,7 +15,7 @@ describe('median-statistics-selector', () => {
     };
 
     const TEST_STATE = {
-        series: {
+        ivTimeSeriesData: {
             queryInfo: {
                 'current:P7D': {
                     notes: {
@@ -133,9 +133,9 @@ describe('median-statistics-selector', () => {
                 }
             }
         },
-        timeSeriesState: {
-            currentVariableID: '45807142',
-            currentDateRange: 'P7D'
+        ivTimeSeriesState: {
+            currentIVVariableID: '45807142',
+            currentIVDateRangeKind: 'P7D'
         }
     };
 

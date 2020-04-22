@@ -1,4 +1,5 @@
-import {configureStore, Actions} from './store';
+import {configureStore} from './store';
+import {Actions} from './store/instantaneous-value-time-series-state';
 import {getParamString, renderTimeSeriesUrlParams} from './url-params';
 
 describe('url-params module', () => {
@@ -19,7 +20,7 @@ describe('url-params module', () => {
 
     describe('renderTimeSeriesUrlParams', () => {
         const TEST_STATE = {
-            series: {
+            ivTimeSeriesData: {
                 variables: {
                     '123456': {
                         oid: '123456',
@@ -50,21 +51,25 @@ describe('url-params module', () => {
                         method: 69928,
                         variable: '123456'
                     }
-                },
-                ianaTimeZone: 'America/New_York'
+                }
             },
-            timeSeriesState: {
-                currentVariableID: '123456',
-                currentDateRange: 'P7D',
-                customTimeRange: null,
-                currentMethodID: '69928',
-                showSeries: {
+            ianaTimeZone: 'America/New_York',
+            ivTimeSeriesState: {
+                currentIVVariableID: '123456',
+                currentIVDateRangeKind: 'P7D',
+                customIVTimeRange: null,
+                currentIVMethodID: '69928',
+                showIVTimeSeries: {
                     compare: false
                 }
             }
         };
         it('adds nothing to the window.location.hash when the store is empty', () => {
-            let store = configureStore({});
+            let store = configureStore({
+                ivTimeSeriesState: {
+                    showIVTimeSeries: {}
+                }
+            });
             renderTimeSeriesUrlParams(store);
             expect(window.location.hash).toEqual('');
         });
@@ -83,9 +88,9 @@ describe('url-params module', () => {
         it('adds compare if compare is in the store', () => {
             let store = configureStore({
                 ...TEST_STATE,
-                timeSeriesState: {
-                    ...TEST_STATE.timeSeriesState,
-                    showSeries: {
+                ivTimeSeriesState: {
+                    ...TEST_STATE.ivTimeSeriesState,
+                    showIVTimeSeries: {
                         compare: true
                     }
                 }
@@ -103,9 +108,9 @@ describe('url-params module', () => {
         it('adds period if current date range is P30D or P1Y', (done) => {
             let store = configureStore({
                 ...TEST_STATE,
-                timeSeriesState: {
-                    ...TEST_STATE.timeSeriesState,
-                    currentDateRange: 'P30D'
+                ivTimeSeriesState: {
+                    ...TEST_STATE.ivTimeSeriesState,
+                    currentIVDateRangeKind: 'P30D'
                 }
             });
             renderTimeSeriesUrlParams(store);
@@ -117,7 +122,7 @@ describe('url-params module', () => {
             expect(window.location.hash).not.toContain('endDT');
             expect(window.location.hash).not.toContain('timeSeriesId');
 
-            store.dispatch(Actions.setCurrentDateRange('P1Y'));
+            store.dispatch(Actions.setCurrentIVDateRangeKind('P1Y'));
             window.requestAnimationFrame(() => {
                 expect(window.location.hash).toContain('period=P1Y');
                 done();
@@ -126,12 +131,12 @@ describe('url-params module', () => {
         it('Contains startDT and endDT in url if customTimeRange is set in store', () => {
             let store = configureStore({
                 ...TEST_STATE,
-                timeSeriesState: {
-                    ...TEST_STATE.timeSeriesState,
-                    currentDateRange: 'custom',
-                    customTimeRange: {
-                        startDT: 1546318800000,
-                        endDT: 1551416400000
+                ivTimeSeriesState: {
+                    ...TEST_STATE.ivTimeSeriesState,
+                    currentIVDateRangeKind: 'custom',
+                    customIVTimeRange: {
+                        start: 1546318800000,
+                        end: 1551416400000
                     }
                 }
             });
@@ -148,8 +153,8 @@ describe('url-params module', () => {
         it('expects timeSeriesId to be set if currentMethodId is not null and multiple time series in selected variable', () => {
             let store = configureStore({
                 ...TEST_STATE,
-                series: {
-                    ...TEST_STATE.series,
+                ivTimeSeriesData: {
+                    ...TEST_STATE.ivTimeSeriesData,
                     timeSeries: {
                         '69928:current:P7D': {
                             tsKey: 'current:P7D',

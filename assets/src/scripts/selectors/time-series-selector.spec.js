@@ -3,7 +3,7 @@ import {
     getSourceInfo,
     getSiteCodes,
     getCurrentVariableID,
-    getCurrentDateRange,
+    getCurrentDateRangeKind,
     getTimeSeries,
     hasAnyTimeSeries,
     getMonitoringLocationName,
@@ -19,7 +19,6 @@ import {
     isLoadingTS,
     getTSRequest,
     getTimeSeriesCollectionIds,
-    getIanaTimeZone,
     getNwisTimeZone,
     getAllMethodsForCurrentVariable,
     getCurrentVariableTimeSeries,
@@ -27,7 +26,7 @@ import {
 } from './time-series-selector';
 
 const TEST_DATA = {
-    series: {
+    ivTimeSeriesData: {
         timeSeries: {
             '00060': {
                 tsKey: 'current:P7D',
@@ -231,9 +230,9 @@ const TEST_DATA = {
             }
         }
     },
-    timeSeriesState: {
-        currentVariableID: '45807197',
-        currentDateRange: 'P7D'
+    ivTimeSeriesState: {
+        currentIVVariableID: '45807197',
+        currentIVDateRangeKind: 'P7D'
     }
 };
 
@@ -254,13 +253,13 @@ describe('timeSeriesSelector', () => {
     describe('getVariables', () => {
         it('Return null if series is empty', () => {
             expect(getVariables({
-                series: {}
+                ivTimeSeriesData: {}
             })).toBeNull();
         });
 
         it('Return the variables if in series', () => {
             expect(getVariables({
-                series: {
+                ivTimeSeriesData: {
                     variables: TEST_VARS
                 }
             })).toEqual(TEST_VARS);
@@ -270,13 +269,13 @@ describe('timeSeriesSelector', () => {
     describe('getTimeSeries', () => {
         it('Return empty object if series is empty', () => {
             expect(getTimeSeries({
-                series: {}
+                ivTimeSeriesData: {}
             })).toEqual({});
         });
 
         it('Return the timeSeries if in series', () => {
             expect(getTimeSeries({
-                series: {
+                ivTimeSeriesData: {
                     timeSeries: {
                         '00010': {
                             prop1: 'value1'
@@ -294,13 +293,13 @@ describe('timeSeriesSelector', () => {
     describe('hasAnyTimeSeries', () => {
         it('Return false if series is empty', () => {
             expect(hasAnyTimeSeries({
-               series: {}
+               ivTimeSeriesData: {}
             })).toBe(false);
         });
 
         it('Return true if series is not empty', () => {
             expect(hasAnyTimeSeries({
-                series: {
+                ivTimeSeriesData: {
                     timeSeries: {
                         '00010': {
                             prop1: 'value1'
@@ -314,13 +313,13 @@ describe('timeSeriesSelector', () => {
     describe('getSourceInfo', () => {
         it('Return an empty object if series is empty', () => {
             expect(getSourceInfo({
-                series: {}
+                ivTimeSeriesData: {}
             })).toEqual({});
         });
 
         it('Return the sourceInfo if in series', () => {
             expect(getSourceInfo({
-                series: {
+                ivTimeSeriesData: {
                     sourceInfo: {
                         '0537000': {
                             siteName: 'Site Name'
@@ -338,13 +337,13 @@ describe('timeSeriesSelector', () => {
     describe('getSiteCodes', () => {
         it('Return an empty object if series is empty', () => {
             expect(getSiteCodes({
-                series: {}
+                ivTimeSeriesData: {}
             })).toEqual({});
         });
 
         it('Return the siteCodes if in series', () => {
             expect(getSiteCodes({
-                series: {
+                ivTimeSeriesData: {
                     siteCodes: {
                         '0537000': {
                             agencyCode: 'USGS'
@@ -362,13 +361,13 @@ describe('timeSeriesSelector', () => {
     describe('getQueryInfo', () => {
         it('Return empty object if series is empty', () => {
             expect(getQueryInfo({
-                series: {}
+                ivTimeSeriesData: {}
             })).toEqual({});
         });
 
         it('Return queryinfo is state', () => {
             expect(getQueryInfo({
-                series: {
+                ivTimeSeriesData: {
                     queryInfo: {
                         'current:P7D': {
                             queryURL: 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D'
@@ -386,13 +385,13 @@ describe('timeSeriesSelector', () => {
     describe('getRequests', () => {
         it('Empty object if series is empty', () => {
             expect(getRequests({
-                series: {}
+                ivTimeSeriesData: {}
             })).toEqual({});
         });
 
         it('Requests object if in state', () => {
             expect(getRequests({
-                series: {
+                ivTimeSeriesData: {
                     requests : {
                         'current:P7D': {
                             timeSeriesCollections: ['1', '2']
@@ -421,7 +420,7 @@ describe('timeSeriesSelector', () => {
 
     describe('getMonitoringLocationName', () => {
         const TEST_INFO = {
-            series: {
+            ivTimeSeriesData: {
                 sourceInfo: {
                     '01010101': {
                         'siteName': 'My Site Name'
@@ -431,7 +430,7 @@ describe('timeSeriesSelector', () => {
         };
         it('Returns empty string if state has no sourceInfo', () => {
            expect(getMonitoringLocationName('12345678')({
-               series: {}
+               ivTimeSeriesData: {}
            })).toBe('');
         });
 
@@ -446,7 +445,7 @@ describe('timeSeriesSelector', () => {
 
     describe('getAgencyCode', () => {
         const TEST_SITE_CODES = {
-            series: {
+            ivTimeSeriesData: {
                 siteCodes: {
                     '01010101': {
                         'agencyCode': 'USGS'
@@ -456,7 +455,7 @@ describe('timeSeriesSelector', () => {
         };
         it('Returns empty string if state has no siteCodes ', () => {
            expect(getAgencyCode('12345678')({
-               series: {}
+               ivTimeSeriesData: {}
            })).toBe('');
         });
 
@@ -472,18 +471,18 @@ describe('timeSeriesSelector', () => {
     describe('getCurrentVariableID', () => {
         it('Return the current variable ID', () => {
             expect(getCurrentVariableID({
-                timeSeriesState: {
-                    currentVariableID: '00060'
+                ivTimeSeriesState: {
+                    currentIVVariableID: '00060'
                 }
             })).toEqual('00060');
         });
     });
 
-    describe('getCurrentDateRange', () => {
+    describe('getCurrentDateRangeKind', () => {
        it('Return the current date range', () => {
-           expect(getCurrentDateRange({
-               timeSeriesState: {
-                   currentDateRange: 'P30D'
+           expect(getCurrentDateRangeKind({
+               ivTimeSeriesState: {
+                   currentIVDateRangeKind: 'P30D'
                }
            })).toEqual('P30D');
        });
@@ -491,19 +490,19 @@ describe('timeSeriesSelector', () => {
 
     describe('getCurrentVariable', () => {
         const TEST_STATE = {
-            series: {
+            ivTimeSeriesData: {
                 variables: TEST_VARS
             },
-            timeSeriesState: {
-                currentVariableID: '45807042'
+            ivTimeSeriesState: {
+                currentIVVariableID: '45807042'
             }
         };
 
         it('Return null if no variable is selected', () => {
             expect(getCurrentVariable({
                 ...TEST_STATE,
-                timeSeriesState: {
-                    currentVariableID: null
+                ivTimeSeriesState: {
+                    currentIVVariableID: null
                 }
             })).toBeNull();
         });
@@ -511,13 +510,13 @@ describe('timeSeriesSelector', () => {
         it('Return null if no variables are in series', () => {
            expect(getCurrentVariable({
                ...TEST_STATE,
-               series: {
+               ivTimeSeriesData: {
                    variables: {}
                }
            })).toBeNull();
            expect(getCurrentVariable({
                ...TEST_STATE,
-               series: {}
+               ivTimeSeriesData: {}
            })).toBeNull();
         });
 
@@ -528,19 +527,19 @@ describe('timeSeriesSelector', () => {
 
     describe('getCurrentParmCd', () => {
         const TEST_STATE = {
-            series: {
+            ivTimeSeriesData: {
                 variables: TEST_VARS
             },
-            timeSeriesState: {
-                currentVariableID: '45807042'
+            ivTimeSeriesState: {
+                currentIVVariableID: '45807042'
             }
         };
 
         it('Return null if no variable is selected', () => {
             expect(getCurrentParmCd({
                 ...TEST_STATE,
-                timeSeriesState: {
-                    currentVariableID: null
+                ivTimeSeriesState: {
+                    currentIVVariableID: null
                 }
             })).toBeNull();
         });
@@ -548,13 +547,13 @@ describe('timeSeriesSelector', () => {
         it('Return null if no variables are in series', () => {
            expect(getCurrentParmCd({
                ...TEST_STATE,
-               series: {
+               ivTimeSeriesData: {
                    variables: {}
                }
            })).toBeNull();
            expect(getCurrentParmCd({
                ...TEST_STATE,
-               series: {}
+               ivTimeSeriesData: {}
            })).toBeNull();
         });
 
@@ -565,25 +564,25 @@ describe('timeSeriesSelector', () => {
 
     describe('hasTimeSeries', () => {
         const TEST_STATE = {
-            series: {
+            ivTimeSeriesData: {
                 variables: TEST_VARS,
                 requests : {
                     'current:P7D': {},
                     'current:P30D:00060': {}
                 }
             },
-            timeSeriesState: {
-                currentDateRange: 'P7D',
-                currentVariableID: '45807042'
+            ivTimeSeriesState: {
+                currentIVDateRangeKind: 'P7D',
+                currentIVVariableID: '45807042'
             }
         };
 
         it('Return false if no requests in series', () => {
             expect(hasTimeSeries('current', 'P7D', '00060')({
-                series: {},
-                timeSeriesState: {
-                    currentDateRange: 'P7D',
-                    currentVariableID: '45807042'
+                ivTimeSeriesData: {},
+                ivTimeSeriesState: {
+                    currentIVDateRangeKind: 'P7D',
+                    currentIVVariableID: '45807042'
                 }
             })).toBe(false);
         });
@@ -601,12 +600,12 @@ describe('timeSeriesSelector', () => {
 
     describe('getTsRequestKey', () => {
         const TEST_STATE = {
-            series: {
+            ivTimeSeriesData: {
                 variables: TEST_VARS
             },
-            timeSeriesState: {
-                currentDateRange: 'P7D',
-                currentVariableID: '45807042'
+            ivTimeSeriesState: {
+                currentIVDateRangeKind: 'P7D',
+                currentIVVariableID: '45807042'
             }
         };
         it('Return the expected request key if period and parmCd are not specified', () => {
@@ -627,7 +626,7 @@ describe('timeSeriesSelector', () => {
 
     describe('getTsQueryInfo', () => {
         const TEST_DATA = {
-            series: {
+            ivTimeSeriesData: {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
@@ -654,20 +653,20 @@ describe('timeSeriesSelector', () => {
                 },
                 variables: TEST_VARS
             },
-            timeSeriesState: {
-                currentDateRange: 'P7D',
-                currentVariableID: '45807042'
+            ivTimeSeriesState: {
+                currentIVDateRangeKind: 'P7D',
+                currentIVVariableID: '45807042'
             }
         };
 
         it('Return the query info requested by tsKey using current date range', () => {
-            expect(getTsQueryInfo('current')(TEST_DATA)).toEqual(TEST_DATA.series.queryInfo['current:P7D']);
+            expect(getTsQueryInfo('current')(TEST_DATA)).toEqual(TEST_DATA.ivTimeSeriesData.queryInfo['current:P7D']);
             expect(getTsQueryInfo('compare')(TEST_DATA)).toEqual({});
         });
 
         it('Return the query info request by tsKey and period and parmCd', () => {
             expect(getTsQueryInfo('current', 'P1Y')(TEST_DATA)).toEqual({});
-            expect(getTsQueryInfo('current', 'P30D')(TEST_DATA)).toEqual(TEST_DATA.series.queryInfo['current:P30D:00060']);
+            expect(getTsQueryInfo('current', 'P30D')(TEST_DATA)).toEqual(TEST_DATA.ivTimeSeriesData.queryInfo['current:P30D:00060']);
             expect(getTsQueryInfo('current', 'P30D', '00010')(TEST_DATA)).toEqual({});
         });
     });
@@ -675,8 +674,8 @@ describe('timeSeriesSelector', () => {
 
     describe('getRequestTimeRange', () => {
         const TEST_DATA = {
-            series: {
-                ianaTimeZone: 'America/Chicago',
+            ianaTimeZone: 'America/Chicago',
+            ivTimeSeriesData: {
                 queryInfo: {
                     'current:P7D': {
                         notes: {
@@ -715,16 +714,16 @@ describe('timeSeriesSelector', () => {
                 },
                 variables: TEST_VARS
             },
-            timeSeriesState: {
-                currentDateRange: 'P7D',
-                currentVariableID: '45807042'
+            ivTimeSeriesState: {
+                currentIVDateRangeKind: 'P7D',
+                currentIVVariableID: '45807042'
             }
         };
 
         it('should return null if there is no series data', () => {
             const newTestData = {
                 ...TEST_DATA,
-                series: {}
+                ivTimeSeriesData: {}
             };
             expect(getRequestTimeRange('current')(newTestData)).toBeNull();
         });
@@ -756,34 +755,17 @@ describe('timeSeriesSelector', () => {
         });
     });
 
-    describe('getIanaTimeZone', () => {
-
-        it('returns null if series is empty', () => {
-            expect(getIanaTimeZone({
-                series: {}
-            })).toBeNull();
-        });
-
-        it('returns the time zone when present', () => {
-            expect(getIanaTimeZone({
-                series: {
-                    ianaTimeZone: 'America/Los_Angeles'
-                }
-            })).toEqual('America/Los_Angeles');
-        });
-    });
-
     describe('getNwisTimeZone', () => {
 
         it('returns an empty object if series is empty', () => {
             expect(getNwisTimeZone({
-                series: {}
+                ivTimeSeriesData: {}
             })).toEqual({});
         });
 
         it('returns the NWIS provide timezones when present', () => {
             expect(getNwisTimeZone({
-                series: {
+                ivTimeSeriesData: {
                     timeZones: {
                         CDT: {
                             content: 'x'
@@ -806,13 +788,13 @@ describe('timeSeriesSelector', () => {
 
     describe('isLoadingTS', () => {
         const TEST_DATA = {
-            series: {
+            ivTimeSeriesData: {
                 variables: TEST_VARS
             },
-            timeSeriesState: {
-                currentDateRange: 'P30D',
-                currentVariableID: '45807042',
-                loadingTSKeys: ['compare:P7D', 'current:P30D:00060']
+            ivTimeSeriesState: {
+                currentIVDateRangeKind: 'P30D',
+                currentIVVariableID: '45807042',
+                loadingIVTSKeys: ['compare:P7D', 'current:P30D:00060']
             }
         };
 
@@ -830,7 +812,7 @@ describe('timeSeriesSelector', () => {
 
     describe('getTSRequest', () => {
         const TEST_DATA = {
-            series: {
+            ivTimeSeriesData: {
                 requests: {
                     'current:P7D': {
                         timeSeriesCollections: ['1', '2']
@@ -844,9 +826,9 @@ describe('timeSeriesSelector', () => {
                 },
                 variables: TEST_VARS
             },
-            timeSeriesState: {
-                currentDateRange: 'P30D',
-                currentVariableID: '45807042'
+            ivTimeSeriesState: {
+                currentIVDateRangeKind: 'P30D',
+                currentIVVariableID: '45807042'
             }
         };
 
@@ -871,7 +853,7 @@ describe('timeSeriesSelector', () => {
 
     describe('getTimeSeriesCollectionIds', () => {
         const TEST_DATA = {
-            series: {
+            ivTimeSeriesData: {
                 requests: {
                     'current:P7D': {
                         timeSeriesCollections: ['1', '2']
@@ -885,9 +867,9 @@ describe('timeSeriesSelector', () => {
                 },
                 variables: TEST_VARS
             },
-            timeSeriesState: {
-                currentDateRange: 'P30D',
-                currentVariableID: '45807042'
+            ivTimeSeriesState: {
+                currentIVDateRangeKind: 'P30D',
+                currentIVVariableID: '45807042'
             }
         };
 
@@ -907,7 +889,7 @@ describe('timeSeriesSelector', () => {
     describe('getCurrentVariableTimeSeries', () => {
         it('works', () => {
             expect(getCurrentVariableTimeSeries('current', 'P7D')({
-                series: {
+                ivTimeSeriesData: {
                     requests: {
                         'current:P7D': {
                             timeSeriesCollections: ['coll1', 'coll2']
@@ -975,9 +957,9 @@ describe('timeSeriesSelector', () => {
                         }
                     }
                 },
-                timeSeriesState: {
-                    currentVariableID: '45807197',
-                    currentDateRange: 'P7D'
+                ivTimeSeriesState: {
+                    currentIVVariableID: '45807197',
+                    currentIVDateRangeKind: 'P7D'
                 }
             })).toEqual({
                 one: {item: 'one', points: [1, 2], tsKey: 'current:P7D', variable: 45807197},
@@ -989,10 +971,10 @@ describe('timeSeriesSelector', () => {
 
         it('returns {} if there is no currentVariableId', () => {
             expect(getCurrentVariableTimeSeries('current', 'P7D')({
-                series: {},
-                timeSeriesState: {
-                    currentVariableID: null,
-                    currentDateRange: 'P7D'
+                ivTimeSeriesData: {},
+                ivTimeSeriesState: {
+                    currentIVVariableID: null,
+                    currentIVDateRangeKind: 'P7D'
                 }
             })).toEqual({});
         });
@@ -1002,9 +984,9 @@ describe('timeSeriesSelector', () => {
         it('Expect empty array if current variable has no time series', () => {
             const newTestData = {
                 ...TEST_DATA,
-                timeSeriesState: {
-                    ...TEST_DATA.timeSeriesState,
-                    currentVariableID: '55807196'
+                ivTimeSeriesState: {
+                    ...TEST_DATA.ivTimeSeriesState,
+                    currentIVVariableID: '55807196'
                 }
             };
             expect(getAllMethodsForCurrentVariable(newTestData)).toEqual([]);
@@ -1013,10 +995,10 @@ describe('timeSeriesSelector', () => {
         it('Expect method ids for current variable', () => {
             const newTestData = {
                 ...TEST_DATA,
-                series: {
-                    ...TEST_DATA.series,
+                ivTimeSeriesData: {
+                    ...TEST_DATA.ivTimeSeriesData,
                     timeSeries: {
-                        ...TEST_DATA.series.timeSeries,
+                        ...TEST_DATA.ivTimeSeriesData.timeSeries,
                         '00010:current:P7D': {
                             tsKey: 'current:P7D',
                             startTime: 1520351100000,
@@ -1042,9 +1024,9 @@ describe('timeSeriesSelector', () => {
                         }
                     }
                 },
-                timeSeriesState: {
-                    ...TEST_DATA.timeSeriesState,
-                    currentVariableID: '45807196'
+                ivTimeSeriesState: {
+                    ...TEST_DATA.ivTimeSeriesState,
+                    currentIVVariableID: '45807196'
                 }
             };
             const result = getAllMethodsForCurrentVariable(newTestData);

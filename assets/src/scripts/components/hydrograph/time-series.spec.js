@@ -4,8 +4,8 @@ import {
 
 
 const TEST_DATA = {
-    series: {
-        ianaTimeZone: 'America/Chicago',
+    ianaTimeZone: 'America/Chicago',
+    ivTimeSeriesData: {
         timeSeries: {
             '00060': {
                 tsKey: 'current:P7D',
@@ -209,9 +209,9 @@ const TEST_DATA = {
             }
         }
     },
-    timeSeriesState: {
-        currentVariableID: '45807197',
-        currentDateRange: 'P7D'
+    ivTimeSeriesState: {
+        currentIVVariableID: '45807197',
+        currentIVDateRangeKind: 'P7D'
     }
 };
 
@@ -230,8 +230,8 @@ describe('TimeSeries module', () => {
     describe('isVisibleSelector', () => {
         it('Returns whether the time series is visible', () => {
             const store = {
-                timeSeriesState: {
-                    showSeries: {
+                ivTimeSeriesState: {
+                    showIVTimeSeries: {
                         'current': true,
                         'compare': false,
                         'median': true
@@ -253,9 +253,9 @@ describe('TimeSeries module', () => {
         it('Returns empty string if no variable selected', () => {
             expect(yLabelSelector({
                 ...TEST_DATA,
-                timeSeriesState: {
-                    ...TEST_DATA.timeSeriesState,
-                    currentVariableID: null
+                ivTimeSeriesState: {
+                    ...TEST_DATA.ivTimeSeriesState,
+                    currentIVVariableID: null
                 }
             })).toBe('');
         });
@@ -265,9 +265,9 @@ describe('TimeSeries module', () => {
         it('returns a secondary label when a celsius parameter is selected', () => {
              expect(secondaryYLabelSelector({
                  ...TEST_DATA,
-                 timeSeriesState: {
-                     ...TEST_DATA.timeSeriesState,
-                     currentVariableID: '45807196'
+                 ivTimeSeriesState: {
+                     ...TEST_DATA.ivTimeSeriesState,
+                     currentIVVariableID: '45807196'
                  }
              })).toEqual('degrees Fahrenheit');
         });
@@ -275,9 +275,9 @@ describe('TimeSeries module', () => {
         it('returns a secondary label when a fahrenheit parameter is selected', () => {
              expect(secondaryYLabelSelector({
                  ...TEST_DATA,
-                 timeSeriesState: {
-                     ...TEST_DATA.timeSeriesState,
-                     currentVariableID: '45807195'
+                 ivTimeSeriesState: {
+                     ...TEST_DATA.ivTimeSeriesState,
+                     currentIVVariableID: '45807195'
                  }
              })).toEqual('degrees Celsius');
         });
@@ -294,18 +294,18 @@ describe('TimeSeries module', () => {
         it('Returns the title string with the method description appended', () => {
             expect(titleSelector({
                 ...TEST_DATA,
-                timeSeriesState: {
-                    ...TEST_DATA.timeSeriesState,
-                    currentMethodID: 69330
+                ivTimeSeriesState: {
+                    ...TEST_DATA.ivTimeSeriesState,
+                    currentIVMethodID: 69330
                 }
             })).toBe('Streamflow' + ', ' + '4.1 ft from riverbed (middle)');
         });
         it('Returns empty string if no variable selected', () => {
             expect(titleSelector({
                 ...TEST_DATA,
-                timeSeriesState: {
-                    ...TEST_DATA.timeSeriesState,
-                    currentVariableID: null
+                ivTimeSeriesState: {
+                    ...TEST_DATA.ivTimeSeriesState,
+                    currentIVVariableID: null
                 }
             })).toBe('');
         });
@@ -332,18 +332,14 @@ describe('TimeSeries module', () => {
 
         it('Returns local if timezone is null', () => {
             const result = tsTimeZoneSelector({
-                series: {
-                    ianaTimeZone: null
-                }
+                ianaTimeZone: null
             });
             expect(result).toEqual('local');
         });
 
         it('Returns the IANA timezone NWIS and IANA agree', () => {
             const result = tsTimeZoneSelector({
-                series: {
-                    ianaTimeZone: 'America/New_York'
-                }
+                ianaTimeZone: 'America/New_York'
             });
             expect(result).toEqual('America/New_York');
         });

@@ -1,14 +1,16 @@
-import { scaleLinear } from 'd3-scale';
-import { select } from 'd3-selection';
+import {scaleLinear} from 'd3-scale';
+import {select} from 'd3-selection';
 import memoize from 'fast-memoize';
-import { createSelector, createStructuredSelector } from 'reselect';
+import {createSelector, createStructuredSelector} from 'reselect';
 
-import {getTimeSeries} from '../../selectors/time-series-selector';
-import { tsCursorPointsSelector } from './cursor';
-import { getMainXScale, getMainYScale } from './scales';
 import config from '../../config';
-import { link } from '../../lib/d3-redux';
-import { Actions } from '../../store';
+import {link} from '../../lib/d3-redux';
+import {getTimeSeries} from '../../selectors/time-series-selector';
+import {Actions} from '../../store/instantaneous-value-time-series-state';
+
+import {tsCursorPointsSelector} from './cursor';
+import {getMainXScale, getMainYScale} from './scales';
+
 
 // Higher tones get lower volume
 const volumeScale = scaleLinear().range([2, .3]);
@@ -71,7 +73,7 @@ export const updateSound = function ({enabled, points}) {
     }
 };
 
-const audibleInterfaceOnSelector = state => state.timeSeriesState.audiblePlayId !== null;
+const audibleInterfaceOnSelector = state => state.ivTimeSeriesState.audiblePlayId !== null;
 
 const audibleScaleSelector = createSelector(
     getMainYScale,

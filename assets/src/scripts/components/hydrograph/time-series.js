@@ -3,9 +3,10 @@ import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
 import {
-    getRequestTimeRange, getCurrentVariable, getTimeSeriesForTsKey, getIanaTimeZone, getCurrentParmCd, getCurrentMethodID,
+    getRequestTimeRange, getCurrentVariable, getTimeSeriesForTsKey, getCurrentParmCd, getCurrentMethodID,
     getMethods
 } from '../../selectors/time-series-selector';
+import {getIanaTimeZone} from '../../selectors/time-zone-selector';
 
 
 export const TEMPERATURE_PARAMETERS = {
@@ -55,7 +56,7 @@ export const hasTimeSeriesWithPoints = memoize((tsKey, period) => createSelector
  * @return {Boolean}           Show state of the time series
  */
 export const isVisibleSelector = memoize(tsKey => (state) => {
-    return state.timeSeriesState.showSeries[tsKey];
+    return state.ivTimeSeriesState.showIVTimeSeries[tsKey];
 });
 
 

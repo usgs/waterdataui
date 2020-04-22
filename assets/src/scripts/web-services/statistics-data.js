@@ -27,8 +27,8 @@ export const fetchSitesStatisticsRDB = function({sites, statType, params=null}) 
  * @param {Array of String} params
  * @returns {Promise}. If resolved, {Object} is returned. If rejected, the error status is passed
  */
-export const fetchSiteStatistics = function({site, statType, params=null}) {
-    let medianRDB = fetchSitesStatisticsRDB({sites: [site], statType, params: params});
+export const fetchSiteStatistics = function({siteno, statType, params=null}) {
+    let medianRDB = fetchSitesStatisticsRDB({sites: [siteno], statType, params: params});
     return medianRDB.then((response) => {
         const statsData = parseRDB(response);
         return statsData.reduce((finalResult, dataLine) => {
@@ -38,7 +38,7 @@ export const fetchSiteStatistics = function({site, statType, params=null}) {
             finalResult[dataLine.parameter_cd][dataLine.ts_id].push(dataLine);
             return finalResult;
         }, {});
-    }, (error) => {
-        return error;
+    }, () => {
+        return {};
     });
 };

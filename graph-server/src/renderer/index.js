@@ -43,7 +43,7 @@ const renderToResponse = function (res, {siteID, parameterCode, compare, period,
                         <link rel="stylesheet" href="${STATIC_ROOT}/main.css">
                         <script src="${STATIC_ROOT}/bundle.js"></script>
                     </head>
-                    <body>
+                    <body id="monitoring-location-page-container">
                         <div class="wdfn-component" data-component="hydrograph" data-options='${JSON.stringify(componentOptions)}'>
                             <div class="graph-container"></div>
                         </div>

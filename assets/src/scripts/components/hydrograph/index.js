@@ -6,10 +6,13 @@ import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import {drawWarningAlert, drawInfoAlert} from '../../d3-rendering/alerts';
-
+import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
 import {link} from '../../lib/d3-redux';
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from '../../selectors/time-series-selector';
-import {Actions} from '../../store';
+import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
+import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
+import {Actions as statisticsDataActions} from '../../store/statistics-data';
+import {Actions as timeZoneActions} from '../../store/time-zone';
 import {renderTimeSeriesUrlParams} from '../../url-params';
 
 import {drawDateRangeControls} from './date-controls';
@@ -18,13 +21,11 @@ import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
 import {SPARK_LINE_DIM}  from './layout';
 import {drawTimeSeriesLegend} from './legend';
-import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
 import {drawMethodPicker} from './method-picker';
 import {plotSeriesSelectTable, availableTimeSeriesSelector} from './parameters';
 import {timeSeriesScalesByParmCdSelector} from './scales';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
-
 
 /**
  * Modify styling to hide or display the elem.
@@ -61,42 +62,41 @@ export const attachToNode = function (store,
         return;
     }
 
-    // Initialize hydrograph with the store and show the loading indicator
-    store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
+    // Show the loading indicator
     nodeElem
         .select('.loading-indicator-container')
         .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
 
     // Fetch time zone
-    const fetchTimeZonePromise = store.dispatch(Actions.retrieveLocationTimeZone(latitude, longitude));
+    const fetchTimeZonePromise = store.dispatch(timeZoneActions.retrieveIanaTimeZone(latitude, longitude));
     let fetchDataPromise;
     if (showOnlyGraph) {
         // Only fetch what is needed
         if (parameterCode && period) {
-            fetchDataPromise = store.dispatch(Actions.retrieveCustomTimePeriodTimeSeries(siteno, parameterCode, period));
+            fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(siteno, parameterCode, period));
         } else if (parameterCode && startDT && endDT) {
             // Don't fetch until time zone is available
             fetchDataPromise = fetchTimeZonePromise.then(() => {
-                return store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, parameterCode));
+                return store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange(siteno, startDT, endDT, parameterCode));
             });
         } else {
-            fetchDataPromise = store.dispatch(Actions.retrieveTimeSeries(siteno, parameterCode ? [parameterCode] : null));
+            fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno, parameterCode ? [parameterCode] : null));
         }
     } else {
         // Retrieve all parameter codes for 7 days and median statistics
-        fetchDataPromise = store.dispatch(Actions.retrieveTimeSeries(siteno))
+         fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno))
             .then(() => {
                 // Fetch any extended data needed to set initial state
                 const currentParamCode = parameterCode ? parameterCode : getCurrentParmCd(store.getState());
                 if (period === 'P30D' || period === 'P1Y') {
-                    store.dispatch(Actions.retrieveExtendedTimeSeries(siteno, period, currentParamCode));
+                    store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(siteno, period, currentParamCode));
                 } else if (startDT && endDT) {
                     fetchTimeZonePromise.then(() => {
-                        store.dispatch(Actions.retrieveDataForDateRange(siteno, startDT, endDT, currentParamCode));
+                        store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange(siteno, startDT, endDT, currentParamCode));
                     });
                 }
             });
-        store.dispatch(Actions.retrieveMedianStatistics(siteno));
+        store.dispatch(statisticsDataActions.retrieveMedianStatistics(siteno));
     }
     fetchDataPromise.then(() => {
         // Hide the loading indicator
@@ -112,13 +112,13 @@ export const attachToNode = function (store,
                     return variable.variableCode.value === parameterCode;
                 };
                 const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
-                store.dispatch(Actions.setCurrentVariable(thisVariable.oid));
+                store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
             }
             if (compare) {
-                store.dispatch(Actions.toggleTimeSeries('compare', true));
+                store.dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('compare', true));
             }
             if (timeSeriesId) {
-                store.dispatch(Actions.setCurrentMethodID(timeSeriesId));
+                store.dispatch(ivTimeSeriesStateActions.setCurrentIVMethodID(timeSeriesId));
             }
             // Initial data has been fetched and initial state set. We can render the hydrograph elements
             // Set up rendering functions for the graph-container
@@ -157,8 +157,4 @@ export const attachToNode = function (store,
             }
         }
     });
-
-    window.onresize = function() {
-        store.dispatch(Actions.resizeUI(window.innerWidth, node.offsetWidth));
-    };
 };

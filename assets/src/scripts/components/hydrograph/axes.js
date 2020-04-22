@@ -3,7 +3,7 @@ import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
 import {generateTimeTicks} from '../../d3-rendering/tick-marks';
-import {getCurrentDateRange, getCurrentParmCd} from '../../selectors/time-series-selector';
+import {getCurrentDateRangeKind, getCurrentParmCd} from '../../selectors/time-series-selector';
 import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../utils';
 
 import {getYTickDetails} from './domain';
@@ -77,7 +77,7 @@ export const createAxes = function(xScale, yScale, secondaryYScale, yTickSize, p
 export const getBrushXAxis = createSelector(
     getBrushXScale('current'),
     tsTimeZoneSelector,
-    getCurrentDateRange,
+    getCurrentDateRangeKind,
     (xScale, ianaTimeZone, period) => createXAxis(xScale, period, ianaTimeZone)
 );
 
@@ -93,7 +93,7 @@ export const getAxes = memoize(kind => createSelector(
     yLabelSelector,
     tsTimeZoneSelector,
     getCurrentParmCd,
-    getCurrentDateRange,
+    getCurrentDateRangeKind,
     secondaryYLabelSelector,
     (xScale, yScale, secondaryYScale, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange, plotSecondaryYLabel) => {
         return {

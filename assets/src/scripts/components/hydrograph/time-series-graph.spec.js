@@ -1,13 +1,14 @@
 import {select, selectAll} from 'd3-selection';
 
-import {Actions, configureStore} from '../../store';
+import {configureStore} from '../../store';
+import {Actions} from '../../store/instantaneous-value-time-series-state';
 
 import {drawTimeSeriesGraph} from './time-series-graph';
 
 
 const TEST_STATE = {
-    series: {
-        ianaTimeZone: 'America/Chicago',
+    ianaTimeZone: 'America/Chicago',
+    ivTimeSeriesData: {
         timeSeries: {
             '2:00010:current': {
                 points: [{
@@ -151,22 +152,20 @@ const TEST_STATE = {
             }
         }
     },
-    timeSeriesState: {
-        currentVariableID: '45807197',
-        cursorOffset: 0,
-        currentMethodID: 1,
-        currentDateRange: 'P7D',
-        requestedTimeRange: null,
-        showSeries: {
+    ivTimeSeriesState: {
+        currentIVVariableID: '45807197',
+        ivGraphCursorOffset: 0,
+        currentIVMethodID: 1,
+        currentIVDateRangeKind: 'P7D',
+        showIVTimeSeries: {
             current: true,
             compare: true,
             median: true
         },
-        loadingTSKeys: []
+        loadingIVTSKeys: []
     },
     ui: {
-        width: 400,
-        hydrographXRange: undefined
+        width: 400
     }
 };
 
@@ -250,7 +249,7 @@ describe('time series graph', () => {
         });
 
         it('Should remove the lines when removing the compare time series', (done) => {
-            store.dispatch(Actions.toggleTimeSeries('compare', false));
+            store.dispatch(Actions.setIVTimeSeriesVisibility('compare', false));
             window.requestAnimationFrame(() => {
                 expect(selectAll('#ts-compare-group .line-segment').size()).toBe(0);
                 done();
@@ -269,7 +268,7 @@ describe('time series graph', () => {
         });
 
         it('Should remove the lines when removing the median statistics data', (done) => {
-            store.dispatch(Actions.toggleTimeSeries('median', false));
+            store.dispatch(Actions.setIVTimeSeriesVisibility('median', false));
             window.requestAnimationFrame(() => {
                 expect(selectAll('#median-points .median-data-series').size()).toBe(0);
                 done();

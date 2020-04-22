@@ -1,12 +1,16 @@
 import {select, selectAll} from 'd3-selection';
-import {legendMarkerRowsSelector, drawTimeSeriesLegend} from './legend';
+
 import {lineMarker, rectangleMarker, textOnlyMarker} from '../../d3-rendering/markers';
-import {Actions, configureStore} from '../../store';
+import {configureStore} from '../../store';
+import {Actions} from '../../store/instantaneous-value-time-series-state';
+
+import {legendMarkerRowsSelector, drawTimeSeriesLegend} from './legend';
+
 
 describe('UV: Legend module', () => {
 
     const TEST_DATA = {
-        series: {
+        ivTimeSeriesData: {
             timeSeries: {
                 '00060:current': {
                     tsKey: 'current:P7D',
@@ -82,10 +86,10 @@ describe('UV: Legend module', () => {
                 }
             }
         },
-        timeSeriesState: {
-            currentVariableID: '45807197',
-            currentDateRange: 'P7D',
-            showSeries: {
+        ivTimeSeriesState: {
+            currentIVVariableID: '45807197',
+            currentIVDateRangeKind: 'P7D',
+            showIVTimeSeries: {
                 current: true,
                 compare: true,
                 median: true
@@ -98,8 +102,8 @@ describe('UV: Legend module', () => {
         it('Should return no markers if no time series to show', () => {
             let newData = {
                 ...TEST_DATA,
-                series: {
-                    ...TEST_DATA.series,
+                ivTimeSeriesData: {
+                    ...TEST_DATA.ivTimeSeriesData,
                     timeSeries: {}
                 },
                 statisticsData: {}
@@ -125,9 +129,9 @@ describe('UV: Legend module', () => {
         it('Should return markers for a different selected variable', () => {
             const newData = {
                 ...TEST_DATA,
-                timeSeriesState: {
-                    ...TEST_DATA.timeSeriesState,
-                    currentVariableID: '45807202'
+                ivTimeSeriesState: {
+                    ...TEST_DATA.ivTimeSeriesState,
+                    currentIVVariableID: '45807202'
                 }
             };
             const result = legendMarkerRowsSelector(newData);
@@ -142,9 +146,9 @@ describe('UV: Legend module', () => {
         it('Should return markers only for time series shown', () => {
             const newData = {
                 ...TEST_DATA,
-                timeSeriesState: {
-                    ...TEST_DATA.timeSeriesState,
-                    showSeries: {
+                ivTimeSeriesState: {
+                    ...TEST_DATA.ivTimeSeriesState,
+                    showIVTimeSeries: {
                         'current': true,
                         'compare': false,
                         'median': false
@@ -198,7 +202,7 @@ describe('UV: Legend module', () => {
         });
 
         it('Should have 4 legend marker after the median time series are removed', (done) => {
-            store.dispatch(Actions.toggleTimeSeries('median', false));
+            store.dispatch(Actions.setIVTimeSeriesVisibility('median', false));
             window.requestAnimationFrame(() => {
                 expect(selectAll('.legend g').size()).toBe(4);
                 done();

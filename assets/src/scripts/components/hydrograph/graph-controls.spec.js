@@ -1,13 +1,14 @@
 import {select} from 'd3-selection';
 
-import {Actions, configureStore} from '../../store';
+import {configureStore} from '../../store';
+import {Actions} from '../../store/instantaneous-value-time-series-state';
 import {drawGraphControls} from './graph-controls';
 
 // Tests for the graph-controls module
 describe('graph-controls', () => {
 
     const TEST_STATE = {
-        series: {
+        ivTimeSeriesData: {
             timeSeries: {
                 '00010:current': {
                     points: [{
@@ -135,16 +136,15 @@ describe('graph-controls', () => {
                 }
             }
         },
-        timeSeriesState: {
-            currentVariableID: '45807197',
-            currentDateRange: 'P7D',
-            requestedTimeRange: null,
-            showSeries: {
+        ivTimeSeriesState: {
+            currentIVVariableID: '45807197',
+            currentIVDateRangeKind: 'P7D',
+            showIVTimeSeries: {
                 current: true,
                 compare: true,
                 median: true
             },
-            loadingTSKeys: []
+            loadingIVTSKeys: []
         },
         ui: {
             width: 400
@@ -174,7 +174,7 @@ describe('graph-controls', () => {
         });
 
         it('Should render the compare toggle unchecked', (done) => {
-            store.dispatch(Actions.toggleTimeSeries('compare', false));
+            store.dispatch(Actions.setIVTimeSeriesVisibility('compare', false));
             window.requestAnimationFrame(() => {
                 const checkbox = select('#last-year-checkbox');
                 expect(checkbox.size()).toBe(1);
@@ -188,7 +188,7 @@ describe('graph-controls', () => {
         });
 
         it('should be disabled if there are no last year data', (done) => {
-            store.dispatch(Actions.setCurrentVariable('45807190'));
+            store.dispatch(Actions.setCurrentIVVariable('45807190'));
             window.requestAnimationFrame(() => {
                 expect(select('#last-year-checkbox').property('disabled')).toBeTruthy();
                 done();
@@ -203,7 +203,7 @@ describe('graph-controls', () => {
         });
 
         it('Should render the median toggle unchecked', (done) => {
-            store.dispatch(Actions.toggleTimeSeries('median', false));
+            store.dispatch(Actions.setIVTimeSeriesVisibility('median', false));
             window.requestAnimationFrame(() => {
                 const checkbox = select('#median-checkbox');
                 expect(checkbox.size()).toBe(1);
@@ -217,7 +217,7 @@ describe('graph-controls', () => {
         });
 
         it('should be disabled if there are no median statistics data', (done) => {
-            store.dispatch(Actions.setCurrentVariable('45807190'));
+            store.dispatch(Actions.setCurrentIVVariable('45807190'));
             window.requestAnimationFrame(() => {
                 expect(select('#median-checkbox').property('disabled')).toBeTruthy();
                 done();

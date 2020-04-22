@@ -16,7 +16,7 @@ describe('method-picker', () => {
         });
 
         const TEST_STATE = {
-            series: {
+            ivTimeSeriesData: {
                 timeSeries: {
                     '69930:00010:current': {
                         points: DATA,
@@ -53,8 +53,8 @@ describe('method-picker', () => {
                     }
                 }
             },
-            timeSeriesState: {
-                currentVariableID: '00010id'
+            ivTimeSeriesState: {
+                currentIVVariableID: '00010id'
             }
         };
 
@@ -73,7 +73,7 @@ describe('method-picker', () => {
             window.requestAnimationFrame(() => {
                 expect(div.select('div').property('hidden')).toEqual(false);
                 expect(div.select('select').property('value')).toEqual('69930');
-                expect(store.getState().timeSeriesState.currentMethodID).toEqual(69930);
+                expect(store.getState().ivTimeSeriesState.currentIVMethodID).toEqual(69930);
                 done();
             });
         });

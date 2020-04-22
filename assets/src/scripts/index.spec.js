@@ -7,6 +7,7 @@
  * time, and `karma --watch` tasks are very fast.
  */
 
+import './mock-service-data';
 import './polyfills';
 
 import './ajax.spec';
@@ -21,15 +22,15 @@ import './d3-rendering/loading-indicator.spec';
 import './d3-rendering/markers.spec';
 import './d3-rendering/tick-marks.spec';
 
-import './components/dailyValueHydrograph/selectors/labels.spec';
-import './components/dailyValueHydrograph/selectors/scales.spec';
-import './components/dailyValueHydrograph/selectors/time-series-data.spec';
-import './components/dailyValueHydrograph/selectors/legend-data.spec';
+import './components/daily-value-hydrograph/selectors/labels.spec';
+import './components/daily-value-hydrograph/selectors/legend-data.spec';
+import './components/daily-value-hydrograph/selectors/scales.spec';
+import './components/daily-value-hydrograph/selectors/time-series-data.spec';
 
-import './components/dailyValueHydrograph/graph-brush.spec';
-import './components/dailyValueHydrograph/index.spec';
-import './components/dailyValueHydrograph/time-series-graph.spec';
-import './components/dailyValueHydrograph/tooltip.spec';
+import './components/daily-value-hydrograph/graph-brush.spec';
+import './components/daily-value-hydrograph/index.spec';
+import './components/daily-value-hydrograph/time-series-graph.spec';
+import './components/daily-value-hydrograph/tooltip.spec';
 
 import './components/embed.spec';
 
@@ -60,20 +61,21 @@ import './lib/d3-redux.spec';
 
 import './schema.spec';
 
+import './selectors/daily-value-time-series-selector.spec';
 import './selectors/flood-data-selector.spec';
 import './selectors/nldi-data-selector.spec';
 import './selectors/median-statistics-selector.spec';
-import './selectors/observations-selector.spec';
 import './selectors/time-series-selector.spec';
+import './selectors/time-zone-selector.spec';
 
-import './store/flood-data-reducer.spec';
-import './store/flood-state-reducer.spec';
-import './store/index.spec';
-import './store/nldi-data-reducer.spec';
-import './store/observations.spec';
-import './store/series-reducer.spec';
-import './store/time-series-state-reducer.spec';
-import './store/ui-reducer.spec';
+import './store/daily-value-time-series.spec';
+import './store/flood-inundation.spec';
+import './store/instantaneous-value-time-series-data.spec';
+import './store/instantaneous-value-time-series-state.spec';
+import './store/nldi-data.spec';
+import './store/statistics-data.spec';
+import './store/time-zone.spec';
+import './store/ui-state.spec';
 
 import './tooltips.spec';
 import './url-params.spec';

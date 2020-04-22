@@ -1,4 +1,6 @@
-import {Actions, configureStore} from '../../store';
+import {configureStore} from '../../store';
+import {Actions} from '../../store/instantaneous-value-time-series-state';
+
 import {tsCursorPointsSelector, cursorOffsetSelector} from './cursor';
 
 let DATA = [12, 13, 14, 15, 16].map(hour => {
@@ -22,7 +24,7 @@ DATA = DATA.concat([
 
 ]);
 const TEST_STATE_THREE_VARS = {
-    series: {
+    ivTimeSeriesData: {
         queryInfo: {
             'current:P7D': {
                 notes: {
@@ -185,15 +187,15 @@ const TEST_STATE_THREE_VARS = {
         }
     },
     statisticsData: {},
-    timeSeriesState: {
-        showSeries: {
+    ivTimeSeriesState: {
+        showIVTimeSeries: {
             current: true,
             compare: false,
             median: false
         },
-        currentVariableID: '45807197',
-        currentMethodID: 69928,
-        currentDateRange: 'P7D',
+        currentIVVariableID: '45807197',
+        currentIVMethodID: 69928,
+        currentIVDateRangeKind: 'P7D',
         audiblePlayId: null
     },
     ui: {
@@ -203,7 +205,7 @@ const TEST_STATE_THREE_VARS = {
 };
 
 const TEST_STATE_ONE_VAR = {
-    series: {
+    ivTimeSeriesData: {
         timeSeries: {
             '69928:current:P7D': {
                 points: DATA,
@@ -310,15 +312,15 @@ const TEST_STATE_ONE_VAR = {
         }
     },
     statisticsData: {},
-    timeSeriesState: {
-        showSeries: {
+    ivTimeSeriesState: {
+        showIVTimeSeries: {
             current: true,
             compare: true
         },
-        currentVariableID: '00060id',
-        currentMethodID: 69928,
-        currentDateRange: 'P7D',
-        cursorOffset: null
+        currentIVVariableID: '00060id',
+        currentIVMethodID: 69928,
+        currentIVDateRangeKind: 'P7D',
+        ivGraphCursorOffset: null
     },
     ui: {
         windowWidth: 1024,
@@ -329,7 +331,6 @@ const TEST_STATE_ONE_VAR = {
 describe('Cursor module', () => {
 
     describe('tsCursorPointsSelector', () => {
-
         it('Should return last time with non-masked value if the cursor offset is null', function() {
             expect(tsCursorPointsSelector('compare')(TEST_STATE_ONE_VAR)).toEqual({
                 '69928:compare:P7D': {
@@ -352,9 +353,9 @@ describe('Cursor module', () => {
         it('Should return the nearest datum for the selected time series', function() {
             let state = {
                 ...TEST_STATE_ONE_VAR,
-                timeSeriesState: {
-                    ...TEST_STATE_ONE_VAR.timeSeriesState,
-                    cursorOffset: 149 * 60 * 1000
+                ivTimeSeriesState: {
+                    ...TEST_STATE_ONE_VAR.ivTimeSeriesState,
+                    ivGraphCursorOffset: 149 * 60 * 1000
                 }
             };
 
@@ -365,11 +366,11 @@ describe('Cursor module', () => {
         it('Selects the nearest point for the current variable streamflow', () => {
             const newState = {
                 ...TEST_STATE_THREE_VARS,
-                timeSeriesState: {
-                    ...TEST_STATE_THREE_VARS.timeSeriesState,
-                    currentVariableID: '45807196',
-                    currentMethodID: 69929,
-                    cursorOffset: 16 * 60 * 1000
+                ivTimeSeriesState: {
+                    ...TEST_STATE_THREE_VARS.ivTimeSeriesState,
+                    currentIVVariableID: '45807196',
+                    currentIVMethodID: 69929,
+                    ivGraphCursorOffset: 16 * 60 * 1000
                 }
             };
             expect(tsCursorPointsSelector('current')(newState)).toEqual({
@@ -385,11 +386,11 @@ describe('Cursor module', () => {
         it('Selects the nearest point for current variable precipitation', () => {
             const newState = {
                 ...TEST_STATE_THREE_VARS,
-                timeSeriesState: {
-                    ...TEST_STATE_THREE_VARS.timeSeriesState,
-                    currentVariableID: '45807140',
-                    currentMethodID: 69930,
-                    cursorOffset: 29 * 60 * 1000
+                ivTimeSeriesState: {
+                    ...TEST_STATE_THREE_VARS.ivTimeSeriesState,
+                    currentIVVariableID: '45807140',
+                    currentIVMethodID: 69930,
+                    ivGraphCursorOffset: 29 * 60 * 1000
                 }
             };
 
@@ -411,12 +412,12 @@ describe('Cursor module', () => {
         });
 
         it('returns null when false', () => {
-            store.dispatch(Actions.setCursorOffset(false));
+            store.dispatch(Actions.setIVGraphCursorOffset(false));
             expect(cursorOffsetSelector(store.getState())).toBe(null);
         });
 
         it('returns last point when null', () => {
-            store.dispatch(Actions.setCursorOffset(null));
+            store.dispatch(Actions.setIVGraphCursorOffset(null));
             const cursorRange = DATA[4].dateTime - DATA[0].dateTime;
             expect(cursorOffsetSelector(store.getState())).toBe(cursorRange);
         });

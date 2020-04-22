@@ -1,5 +1,4 @@
-import { geoJson, circleMarker } from 'leaflet';
-
+import {geoJson, circleMarker} from 'leaflet';
 
 
 export const markerFillColor = '#ff7800';

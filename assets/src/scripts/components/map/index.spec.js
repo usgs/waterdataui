@@ -1,6 +1,9 @@
 import {select} from 'd3-selection';
-import {attachToNode} from './index';
+
 import {configureStore} from '../../store';
+
+import {attachToNode} from './index';
+
 
 describe('map module', () => {
     let mapNode;
@@ -306,7 +309,8 @@ describe('map module', () => {
                                 navigation: 'https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-03325000/navigate'
                             }
                         }
-                    ]
+                    ],
+                    upstreamBasin: []
                 }
             });
             attachToNode(store, mapNode, {

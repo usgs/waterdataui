@@ -8,7 +8,7 @@ import {createStructuredSelector} from 'reselect';
 import{link}  from '../../lib/d3-redux';
 import config from '../../config';
 import {getCurrentMethodID, getAllMethodsForCurrentVariable} from '../../selectors/time-series-selector';
-import {Actions} from '../../store';
+import {Actions} from '../../store/instantaneous-value-time-series-state';
 
 import { } from './time-series';
 
@@ -27,7 +27,7 @@ export const drawMethodPicker = function(elem, store) {
         .attr('class', 'usa-select')
         .attr('id', 'method-picker')
         .on('change', function() {
-            store.dispatch(Actions.setCurrentMethodID(parseInt(select(this).property('value'))));
+            store.dispatch(Actions.setCurrentIVMethodID(parseInt(select(this).property('value'))));
         })
         .call(link(store,function(elem, {methods, currentMethodId}) {
             const currentMethodIdString = parseInt(currentMethodId);

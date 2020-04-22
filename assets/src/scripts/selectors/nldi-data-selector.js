@@ -1,10 +1,10 @@
 import { createSelector } from 'reselect';
 
-export const getNldiUpstreamSites = state => state.nldiData.upstreamSites;
-export const getNldiUpstreamFlows = state => state.nldiData.upstreamFlows;
-export const getNldiDownstreamSites = state => state.nldiData.downstreamSites;
-export const getNldiDownstreamFlows = state => state.nldiData.downstreamFlows;
-export const getNldiUpstreamBasin = state => state.nldiData.upstreamBasin;
+export const getNldiUpstreamSites = state => state.nldiData.upstreamSites || [];
+export const getNldiUpstreamFlows = state => state.nldiData.upstreamFlows || [];
+export const getNldiDownstreamSites = state => state.nldiData.downstreamSites || [];
+export const getNldiDownstreamFlows = state => state.nldiData.downstreamFlows|| [];
+export const getNldiUpstreamBasin = state => state.nldiData.upstreamBasin || {};
 
 /*
  * Provides a function which returns True if nldi data is not empty.
