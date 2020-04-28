@@ -1,5 +1,4 @@
 import { select } from 'd3-selection';
-import { map as createMap } from 'leaflet';
 
 import { createLegendControl, createFIMLegend, createNldiLegend } from './legend';
 
@@ -12,7 +11,7 @@ describe('component/map/legend module', () => {
         jasmine.Ajax.install();
         select('body').append('div')
             .attr('id', 'map');
-        map = createMap('map', {
+        map = L.map('map', {
             center: [43.0, -100.0],
             zoom: 5
         });

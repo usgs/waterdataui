@@ -1,5 +1,3 @@
-import {geoJson, circleMarker} from 'leaflet';
-
 
 export const markerFillColor = '#ff7800';
 export const markerFillOpacity = 0.8;
@@ -59,22 +57,22 @@ export const addNldiLayers = function (map, upstreamFlows, downstreamFlows, upst
     };
 
     const getPointDataLayer = function(data, markerOptions) {
-        return geoJson(data, {
+        return L.geoJson(data, {
             onEachFeature: onEachPointFeatureAddPopUp,
             pointToLayer: function (feature, latlng) {
-                return circleMarker(latlng, markerOptions);
+                return L.circleMarker(latlng, markerOptions);
             }
         });
     };
 
     const getLineDataLayer = function(data, style) {
-        return geoJson(data, {
+        return L.geoJson(data, {
             style: style
         });
     };
 
     const getPolygonLayer = function(data, style){
-      return geoJson(data, {
+      return L.geoJson(data, {
           style: style
       });
     };

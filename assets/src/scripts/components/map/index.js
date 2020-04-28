@@ -1,6 +1,4 @@
 import {select} from 'd3-selection';
-import {TiledMapLayer, dynamicMapLayer, Util, basemapLayer} from 'esri-leaflet/src/EsriLeaflet';
-import {map as createMap, marker as createMarker, control, layerGroup} from 'leaflet';
 import {createStructuredSelector} from 'reselect';
 
 import config from '../../config';
@@ -27,15 +25,15 @@ const getLayerDefs = function(layerNo, siteno, stage) {
  */
 const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
 
-    let gray = layerGroup();
-    basemapLayer('Gray').addTo(gray);
+    let gray = L.layerGroup();
+    L.esri.basemapLayer('Gray').addTo(gray);
 
     if (config.HYDRO_ENDPOINT) {
-        gray.addLayer(new TiledMapLayer({url: config.HYDRO_ENDPOINT}));
+        gray.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT}));
     }
 
     // Create map on node
-    const map = createMap('site-map', {
+    const map = L.map('site-map', {
         center: [latitude, longitude],
         zoom: zoom,
         scrollWheelZoom: false,
@@ -49,19 +47,19 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         map.scrollWheelZoom.disable();
     });
 
-    let floodLayer = dynamicMapLayer({
+    let floodLayer = L.esri.dynamicMapLayer({
         url: FLOOD_EXTENTS_ENDPOINT,
         layers: [0],
         f: 'image',
         format: 'png8'
     });
-    let breachLayer = dynamicMapLayer({
+    let breachLayer = L.esri.dynamicMapLayer({
         url: FLOOD_BREACH_ENDPOINT,
         layers: [0],
         f: 'image',
         format: 'png8'
     });
-    let leveeLayer = dynamicMapLayer({
+    let leveeLayer = L.esri.dynamicMapLayer({
         url: FLOOD_LEVEE_ENDPOINT,
         layers: [0, 1],
         f: 'image',
@@ -105,7 +103,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
 
     const updateMapExtent = function (node, extent) {
         if (Object.keys(extent).length > 0) {
-            map.fitBounds(Util.extentToBounds(extent).extend([latitude, longitude]));
+            map.fitBounds(L.esri.Util.extentToBounds(extent).extend([latitude, longitude]));
         }
     };
 
@@ -137,19 +135,19 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
     //add additional baselayer
     var baseLayers = {
         'Grayscale': gray,
-        'Satellite': basemapLayer('ImageryFirefly')
+        'Satellite': L.esri.basemapLayer('ImageryFirefly')
     };
 
     //add layer control
-    control.layers(baseLayers).addTo(map);
+    L.control.layers(baseLayers).addTo(map);
 
     // Add the ESRI World Hydro Reference Overlay
     if (config.HYDRO_ENDPOINT) {
-        map.addLayer(new TiledMapLayer({url: config.HYDRO_ENDPOINT}));
+        map.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT}));
     }
 
     // Add a marker at the site location
-    createMarker([latitude, longitude]).addTo(map);
+    L.marker([latitude, longitude]).addTo(map);
 
     /*
      * Creates the NLDI legend if NLDI data is available, otherwise removes the NLDI legend if it exists.

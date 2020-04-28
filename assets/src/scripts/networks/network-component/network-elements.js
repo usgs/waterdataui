@@ -33,10 +33,10 @@ export const addNetworkLayers = function (map, networkSites) {
     };
 
     const getPointDataLayer = function (data, markerOptions) {
-        return window.L.geoJson(data, {
+        return L.geoJson(data, {
             onEachFeature: onEachPointFeatureAddPopUp,
             pointToLayer: function (feature, latlng) {
-                return window.L.circleMarker(latlng, markerOptions);
+                return L.circleMarker(latlng, markerOptions);
             }
         });
     };
@@ -50,7 +50,7 @@ export const addNetworkLayers = function (map, networkSites) {
 
     if(networkSites.length > 0 && networkSites.length < 10000) {
         if (networkSites.length > 50) {
-            const markers = window.L.markerClusterGroup({chunkedLoading: true});
+            const markers = L.markerClusterGroup({chunkedLoading: true});
             markers.addLayer(networkLayer);
             map.addLayer(markers);
         } else {

@@ -11,7 +11,7 @@ describe('component/map/legend module', () => {
         jasmine.Ajax.install();
         select('body').append('div')
             .attr('id', 'map');
-        map = window.L.map('map', {
+        map = L.map('map', {
             center: [43.0, -100.0],
             zoom: 5
         });

@@ -30,6 +30,7 @@
     "Math": true,
     "process": true,
     "XMLHttpRequest": true,
-    "window": true
+    "window": true,
+    "L": true
   }
 }

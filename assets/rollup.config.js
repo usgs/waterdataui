@@ -2,9 +2,7 @@
  * Rollup configuration.
  * NOTE: This is a CommonJS module so it can be imported by Karma.
  */
-const path = require('path');
 
-const alias = require('@rollup/plugin-alias');
 const buble = require('@rollup/plugin-buble');
 const commonjs = require('@rollup/plugin-commonjs');
 const json = require('@rollup/plugin-json');
@@ -20,14 +18,6 @@ const getBundleConfig = function (src, dest) {
     const configMap = {
         input: src,
         plugins: [
-            alias({
-                entries: [
-                    {
-                        find: 'leaflet',
-                        replacement: path.resolve(__dirname, 'node_modules/leaflet/dist/leaflet-src.esm.js')
-                    }
-                ]
-            }),
             resolve({
                 mainFields: ['module', 'jsnext', 'main']
             }),
