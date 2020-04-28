@@ -14,17 +14,17 @@ import {hasNetworkData, getNetworkSites}
  */
 const networkMap = function(node, extent, store) {
 
-    let gray = new window.L.layerGroup();
-    window.L.esri.basemapLayer('Gray').addTo(gray);
+    let gray = new L.layerGroup();
+    L.esri.basemapLayer('Gray').addTo(gray);
 
     if (config.HYDRO_ENDPOINT) {
-        gray.addLayer(new window.L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT,
+        gray.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT,
             maxZoom: 22,
             maxNativeZoom: 19}));
     }
 
     // Create map on node
-    const map = new window.L.Map('network-map', {
+    const map = new L.Map('network-map', {
         center: [0, 0],
         zoom: 1,
         scrollWheelZoom: false,
@@ -54,15 +54,15 @@ const networkMap = function(node, extent, store) {
     //add additional baselayer
     var baseLayers = {
         'Grayscale': gray,
-        'Satellite': new window.L.esri.basemapLayer('ImageryFirefly')
+        'Satellite': new L.esri.basemapLayer('ImageryFirefly')
     };
 
     //add layer control
-    window.L.control.layers(baseLayers).addTo(map);
+    L.control.layers(baseLayers).addTo(map);
 
     // Add the ESRI World Hydro Reference Overlay
     if (config.HYDRO_ENDPOINT) {
-        map.addLayer(new window.L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT}));
+        map.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT}));
     }
 
     /*

@@ -2,7 +2,7 @@
 // will be visible
 
 import {select} from 'd3-selection';
-import {control as createControl, DomUtil, DomEvent} from 'leaflet';
+//import {control as createControl, DomUtil, DomEvent} from 'leaflet';
 
 import {get} from '../../ajax';
 import config from '../../config';
@@ -41,27 +41,27 @@ const fetchLayerLegend = function(layer, defaultName) {
  * @return L.Control containing the legend control
  */
 export const createLegendControl = function(options) {
-    let legendControl = createControl(options);
+    let legendControl = L.control(options);
 
     legendControl.onAdd = function() {
-        let container = DomUtil.create('div', 'legend');
+        let container = L.DomUtil.create('div', 'legend');
 
-        let buttonContainer = DomUtil.create('div', 'legend-expand-container', container);
+        let buttonContainer = L.DomUtil.create('div', 'legend-expand-container', container);
         // Only make the expand button available if FIM legends are added
         buttonContainer.setAttribute('hidden', true);
-        let buttonLabel = DomUtil.create('span', '', buttonContainer);
+        let buttonLabel = L.DomUtil.create('span', '', buttonContainer);
         buttonLabel.innerHTML = 'Legend';
-        let expandButton = DomUtil.create('button', 'legend-expand usa-button-secondary', buttonContainer);
+        let expandButton = L.DomUtil.create('button', 'legend-expand usa-button-secondary', buttonContainer);
         expandButton.innerHTML = '<i class="fas fa-compress"></i>';
         expandButton.title = 'Hide legend';
 
-        let legendListContainer = DomUtil.create('div', 'legend-list-container', container);
-        let legendList = DomUtil.create('ul', 'usa-list--unstyled', legendListContainer);
+        let legendListContainer = L.DomUtil.create('div', 'legend-list-container', container);
+        let legendList = L.DomUtil.create('ul', 'usa-list--unstyled', legendListContainer);
         legendList.id = 'site-legend-list';
         legendList.innerHTML = `<li><img src="${config.STATIC_URL}/images/marker-icon.png" alt="Map marker"/><span>Monitoring Location</span> </li>`;
 
         // Set up click handler for the expandButton
-        DomEvent.on(expandButton, 'click', function() {
+        L.DomEvent.on(expandButton, 'click', function() {
             if (expandButton.title === 'Hide legend') {
                 expandButton.innerHTML = '<i class="fas fa-expand"></i>';
                 expandButton.title = 'Show legend';
