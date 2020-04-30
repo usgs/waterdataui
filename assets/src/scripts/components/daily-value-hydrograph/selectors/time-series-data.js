@@ -14,9 +14,32 @@ const TWO_DAYS = 1000 * 60 * 60 * 24 * 2; // In milliseconds
 export const APPROVED = 'Approved';
 export const ESTIMATED = 'Estimated';
 
+const MASKED_QUALIFIERS = {
+    'BACKWATER': {label: 'Backwater', class: 'backwater-mask'},
+    'DISCONTINUED': {label: 'Discontinued', class: 'discontinued-mask'},
+    'DRY': {label: 'Dry', class: 'dry-mask'},
+    'EQUIP': {label: 'Equipment malfunction', class: 'equip-mask'},
+    'FLOOD': {label: 'Flood', class: 'flood-mask'},
+    'ICE': {label: 'Ice Affected', class: 'ice-mask'},
+    'MAINT': {label: 'Maintenance', class: 'maint-mask'},
+    'PARTIAL_RECORD': {label: 'Partial Record', class: 'partial-record-mask'},
+    'PUMP': {label: 'Pump', class: 'pump-mask'},
+    'RATINGDEV': {label: 'Rating Development', class: 'ratingdev-mask'},
+    'SEASONAL': {label: 'Seasonal', class: 'seasonal-mask'},
+    'TEST': {label: 'Test', class: 'test-mask'},
+    'UNAVAIL': {label: 'Unavailable', class: 'unavail-mask'},
+    'ZEROFLOW': {label: 'Zero flow', class: 'zeroflow-mask'}
+};
+
+const LINE_CLASSES = {
+    'APPROVED': {label: 'Approved', class: 'approved'},
+    'ESTIMATED': {label: 'Estimated', class: 'estimated'},
+    'PROVISIONAL': {label: 'Provisional', class: 'provisional'}
+};
+
 /* Returns the selector function which returns an Array of Objects, each object representing one value, dateTime (in epoch time),
 and other attributes representing metadata on the value. This will represent the time series for the current
-selected time series
+selected time series and is in increasing date order.
  */
 export const getCurrentTimeSeriesPoints = createSelector(
     getCurrentDVTimeSeries,
@@ -57,20 +80,67 @@ export const getCurrentTimeSeriesPoints = createSelector(
 );
 
 /*
- * Returns selector function which returns an array of Objects which include the data needed to render the line.
- * The time series data is broken into line segments. The points in a line segment will be shown as continuous and
- * the data has the same approvals.
- * Each Object contains the following properties
- *      @prop {Array of Object} points - each object has date (in milliseconds) and value {Number} properties
- *      @prop {Array of String} approvals - The approvals for this line segment
- *  The time series
+ * Returns selector function which returns an Object. The object has two properties
+ *      @prop {Array of Objects} lineSegments - is an array of
+ *          Objects which include points (Array of value and date properties) and a class property which is a
+ *          determined from the approvals and default qualifiers.
+ *      @prop {Array of Object} maskedDataSegments - is an array Objects which include properties: startTime and endTime (both Numbers
+ *          in epoch milliseconds and qualifiers which is an array of masked qualifiers that apply to this section.
+ * Assumes that a change from masked qualifier to none (or vice versa) or different set of qualifiers starts a new segment and for lines a data gap
+ * of two days also creates a new segment.
  */
-export const getCurrentTimeSeriesLineSegments = createSelector(
+export const getCurrentTimeSeriesSegments = createSelector(
     getCurrentTimeSeriesPoints,
     (timeSeries) => {
+        const getMaskedQualifiers = function(point) {
+            return point.qualifiers
+                .filter(qualifier => qualifier in Object.Keys(MASKED_QUALIFIERS))
+                .sort()
+        };
+
+        const getClass = function(point) {
+            if (point.approvals.contains('Approved')) {
+                return point.qualifiers.contains('ESTIMATED') ? 'ESTIMATED' : 'APPROVED'
+            } else {
+                return 'PROVISIONAL'
+            }
+        };
+
         if (timeSeries.length === 0) {
-            return [];
+            return {};
         }
+
+        let lineSegments = [];
+        let maskSegments = [];
+
+        let previousDate = timeSeries[0].dateTime;
+        let previousMaskedQualifiers = getMaskedQualifiers(timeSeries[0]);
+        let previousClass = getClass(timeSeries[0]);
+        let previousSegmentKind = previousMaskedQualifiers.length ? 'MASKED' : 'LINE';
+        let previousSegment = previousMaskedQualifiers.length ?
+            {startTime: timeSeries[0].dateTime, qualifiers: previousMaskedQualifiers} : {points: [], class: previousClass};
+
+
+        timeSeries.forEach((point) => {
+            const nextMaskedQualifiers = getMaskedQualifiers(point);
+            const nextClass = getClass(point);
+                        const hasGap = point.dateTime - previousDate >= TWO_DAYS;
+            if (previousMaskedQualifiers != nextMaskedQualifiers) {
+                // Previous segment should be ended
+                switch (previousSegmentKind) {
+                    case 'MASKED':
+                        previousSegment.endTime = point.dateTime;
+                    case 'LINE':
+                        previousSegment.points.push(point);
+                }
+                // if a line segment check to see if there is a gap
+            } else if (nextMaskedQualifier.length === 0 && point.dateTime - previousDate >= TWO_DAYS) {
+
+            }
+
+        })
+
+
 
         let lineSegments = [];
         let previousDate = timeSeries[0].dateTime;

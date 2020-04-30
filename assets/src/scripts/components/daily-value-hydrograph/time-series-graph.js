@@ -4,6 +4,7 @@ import {createStructuredSelector} from 'reselect';
 
 import {addSVGAccessibility} from '../../d3-rendering/accessibility';
 import {appendAxes} from '../../d3-rendering/axes';
+import {renderMaskDefs} from '../../d3-rendering/data-masks';
 import {link} from '../../lib/d3-redux';
 
 import {getXAxis, getYAxis} from './selectors/axes';
@@ -22,6 +23,16 @@ const createTitle = function(elem, store) {
         .call(link(store, (elem, title) => {
             elem.html(title);
         }, getCurrentTimeSeriesYTitle));
+};
+
+const addDefsPatterns = function(elem) {
+    const patterns = [{
+        patternId: 'dv-masked-pattern',
+        patternTransform: 'rotate(45)'
+    }];
+
+    const defs = elem.append('defs');
+    renderMaskDefs(defs, 'dv-graph-pattern-mask', patterns);
 };
 
 const drawDataLine = function (group, {lineSegment, xScale, yScale}) {
@@ -75,7 +86,6 @@ export const drawDataLines = function (elem, {lines, xScale, yScale, enableClip}
  * @param {Redux store} store
  */
 export const drawTimeSeriesGraph = function(elem, store) {
-
     const svg = elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(createTitle, store)
@@ -99,7 +109,8 @@ export const drawTimeSeriesGraph = function(elem, store) {
                 description: getCurrentTimeSeriesDescription,
                 isInteractive: () => true,
                 idPrefix: () => 'dv-hydrograph'
-            })));
+            })))
+            .call(addDefsPatterns);
     svg.append('g')
         .attr('class', 'daily-values-graph-group')
         .call(link(store, (elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`), getMainLayout))

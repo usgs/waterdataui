@@ -10,6 +10,8 @@
 import './mock-service-data';
 import './polyfills';
 
+import './d3-rendering/data-masks.spec';
+/*
 import './ajax.spec';
 
 import './d3-rendering/accessibility.spec';
@@ -93,3 +95,4 @@ import './networks/network-component/network-legend.spec';
 import './networks/selectors/network-data-selector.spec';
 import './networks/store/network-store.spec';
 import './networks/store/network-data-reducer.spec';
+*/
