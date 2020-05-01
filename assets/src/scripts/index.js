@@ -11,13 +11,13 @@ import {Actions as uiActions} from './store/ui-state';
 import {getParamString} from './url-params';
 
 import {attachToNode as EmbedComponent} from './components/embed';
-import {attachToNode as DailyValueHydrographComponent} from './components/daily-value-hydrograph';
+//import {attachToNode as DailyValueHydrographComponent} from './components/daily-value-hydrograph';
 import {attachToNode as HydrographComponent} from './components/hydrograph';
 import {attachToNode as MapComponent} from './components/map';
 
 const COMPONENTS = {
     embed: EmbedComponent,
-    'dv-hydrograph': DailyValueHydrographComponent,
+//    'dv-hydrograph': DailyValueHydrographComponent,
     hydrograph: HydrographComponent,
     map: MapComponent
 };

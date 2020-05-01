@@ -27,12 +27,12 @@ import './d3-rendering/tick-marks.spec';
 import './components/daily-value-hydrograph/selectors/labels.spec';
 import './components/daily-value-hydrograph/selectors/legend-data.spec';
 import './components/daily-value-hydrograph/selectors/scales.spec';
-*/
 import './components/daily-value-hydrograph/selectors/time-series-data.spec';
-/*
 import './components/daily-value-hydrograph/graph-brush.spec';
 import './components/daily-value-hydrograph/index.spec';
+*/
 import './components/daily-value-hydrograph/time-series-graph.spec';
+/*
 import './components/daily-value-hydrograph/tooltip.spec';
 
 import './components/embed.spec';

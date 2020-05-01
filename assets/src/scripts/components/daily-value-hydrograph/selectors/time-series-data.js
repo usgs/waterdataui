@@ -207,7 +207,7 @@ export const getCurrentTimeSeriesSegments = createSelector(
         const finalLineSegments = lineSegments.map((segment) => {
             return {
                 points: segment.points,
-                class: LINE_CLASSES[segment.class]
+                decorations: LINE_CLASSES[segment.class]
             };
         });
 
@@ -224,7 +224,7 @@ export const getCurrentTimeSeriesSegments = createSelector(
             return {
                 startTime: segment.startTime,
                 endTime: segment.endTime,
-                qualifiers: {
+                decorations: {
                     label: segment.qualifiers.map(qualifier => MASKED_QUALIFIERS[qualifier].label).join(', '),
                     class: MASK_CLASSES[maskToUse]
                 }

@@ -54,7 +54,7 @@ export const drawDataLine = function(group, {visible, lines, tsKey, xScale, ySca
             const maskCode = line.classes.dataMask.toLowerCase();
             const maskDisplayName = MASK_DESC[maskCode].replace(' ', '-').toLowerCase();
             const [xDomainStart, xDomainEnd] = extent(line.points, d => d.dateTime);
-            const [yRangeStart, yRangeEnd] = yScale.domain();
+            const [yRangeStart, yRangeEnd] = yScale.range();
             let maskGroup = group.append('g')
                 .attr('class', `${tsKey}-mask-group`);
             const xSpan = xScale(xDomainEnd) - xScale(xDomainStart);
@@ -62,9 +62,9 @@ export const drawDataLine = function(group, {visible, lines, tsKey, xScale, ySca
 
             maskGroup.append('rect')
                 .attr('x', xScale(xDomainStart))
-                .attr('y', yScale(yRangeEnd))
+                .attr('y', yRangeEnd)
                 .attr('width', rectWidth)
-                .attr('height', Math.abs(yScale(yRangeEnd) - yScale(yRangeStart)))
+                .attr('height', Math.abs(yRangeEnd - yRangeStart))
                 .attr('class', `mask ${maskDisplayName}-mask`)
                 .classed(tsKeyClass, true);
 
@@ -73,9 +73,10 @@ export const drawDataLine = function(group, {visible, lines, tsKey, xScale, ySca
 
             maskGroup.append('rect')
                 .attr('x', xScale(xDomainStart))
-                .attr('y', yScale(yRangeEnd))
+                .attr('y', yRangeEnd)
                 .attr('width', rectWidth)
-                .attr('height', Math.abs(yScale(yRangeEnd) - yScale(yRangeStart)))
+                .attr('height', Math.abs(yRangeEnd - yRangeStart))
+                //.attr('class', `mask ${maskDisplayName}-mask`)
                 .attr('fill', patternId);
         }
     }

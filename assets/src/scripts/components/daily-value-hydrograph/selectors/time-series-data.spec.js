@@ -92,7 +92,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
             expect(result.lineSegments.length).toBe(3);
             expect(result.maskSegments.length).toBe(2);
 
-            expect(result.lineSegments[0].class).toEqual({
+            expect(result.lineSegments[0].decorations).toEqual({
                 label: 'Approved',
                 class: 'approved'
             });
@@ -101,7 +101,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                 {value: '4.0', dateTime: 1514937600000},
                 {value: '6.1', dateTime: 1515024000000}
             ]);
-            expect(result.lineSegments[1].class).toEqual({
+            expect(result.lineSegments[1].decorations).toEqual({
                 label: 'Estimated',
                 class: 'estimated'
             });
@@ -109,7 +109,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                 {value: '6.2', dateTime: 1515369600000},
                 {value: '2.9', dateTime: 1515456000000}
             ]);
-            expect(result.lineSegments[2].class).toEqual({
+            expect(result.lineSegments[2].decorations).toEqual({
                 label: 'Provisional',
                 class: 'provisional'
             });
@@ -121,12 +121,12 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
             expect(result.maskSegments[0]).toEqual({
                 startTime: 1515024000000,
                 endTime: 1515196800000,
-                qualifiers: {label: 'Ice affected', class: 'mask-0'}
+                decorations: {label: 'Ice affected', class: 'mask-0'}
             });
             expect(result.maskSegments[1]).toEqual({
                 startTime: 1515196800000,
                 endTime: 1515369600000,
-                qualifiers: {label: 'Equipment malfunction, Ice affected', class: 'mask-1'}
+                decorations: {label: 'Equipment malfunction, Ice affected', class: 'mask-1'}
             });
         });
 

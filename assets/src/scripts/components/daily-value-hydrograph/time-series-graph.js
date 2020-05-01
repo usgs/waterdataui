@@ -11,7 +11,7 @@ import {getXAxis, getYAxis} from './selectors/axes';
 import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesTitle, getCurrentTimeSeriesYTitle} from './selectors/labels';
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getCurrentTimeSeriesLineSegments, APPROVED, ESTIMATED} from './selectors/time-series-data';
+import {getCurrentTimeSeriesSegments} from './selectors/time-series-data';
 
 import {drawTooltipFocus, drawTooltipText} from './tooltip';
 
@@ -35,17 +35,17 @@ const addDefsPatterns = function(elem) {
     renderMaskDefs(defs, 'dv-graph-pattern-mask', patterns);
 };
 
-const drawDataLine = function (group, {lineSegment, xScale, yScale}) {
+const drawLineSegment = function (group, {lineSegment, xScale, yScale}) {
     let lineElem;
     if (lineSegment.points.length === 1) {
         lineElem = group.append('circle')
             .data(lineSegment.points)
             .attr('r', CIRCLE_RADIUS_SINGLE_PT)
-            .attr('cx', d => xScale(d.date))
+            .attr('cx', d => xScale(d.dateTime))
             .attr('cy', d => yScale(d.value));
     } else {
         const dvLine = d3Line()
-            .x(d => xScale(d.date))
+            .x(d => xScale(d.dateTime))
             .y(d => yScale(d.value));
         lineElem = group.append('path')
             .datum(lineSegment.points)
@@ -53,8 +53,33 @@ const drawDataLine = function (group, {lineSegment, xScale, yScale}) {
     }
     lineElem
         .classed('line-segment', true)
-        .classed('approved', includes(lineSegment.approvals, APPROVED))
-        .classed('estimated', includes(lineSegment.approvals, ESTIMATED));
+        .classed(lineSegment.decorations.class, true);
+};
+
+const drawMaskSegment = function(group, {maskSegment, xScale, yScale}) {
+    const [yRangeStart, yRangeEnd] = yScale.range();
+    const xRangeStart = xScale(maskSegment.startTime);
+    const xRangeEnd = xScale(maskSegment.endTime);
+    const xSpan = xRangeEnd - xRangeStart;
+    const rectWidth = xSpan > 1 ? xSpan : 1;
+    const rectHeight = Math.abs(yRangeEnd - yRangeStart);
+
+    const maskGroup = group.append('g')
+        .attr('class', 'dv-mask-group');
+
+    maskGroup.append('rect')
+        .attr('x', xRangeStart)
+        .attr('y', yRangeEnd)
+        .attr('width', rectWidth)
+        .attr('height', rectHeight)
+        .classed('mask', true)
+        .classed(maskSegment.decorations.class, true);
+    maskGroup.append('rect')
+        .attr('x', xRangeStart)
+        .attr('y', yRangeEnd)
+        .attr('width', rectWidth)
+        .attr('height', rectHeight)
+        .attr('fill', 'url(#dv-masked-pattern');
 };
 
 /*
@@ -66,7 +91,7 @@ const drawDataLine = function (group, {lineSegment, xScale, yScale}) {
  * @param {D3 scale} yScale
  * @param {Boolean} enableClip
  */
-export const drawDataLines = function (elem, {lines, xScale, yScale, enableClip}) {
+export const drawDataSegments = function (elem, {segments, xScale, yScale, enableClip}) {
     elem.select('#daily-values-lines-group').remove();
 
     const allLinesGroup = elem.append('g')
@@ -75,8 +100,11 @@ export const drawDataLines = function (elem, {lines, xScale, yScale, enableClip}
         allLinesGroup.attr('clip-path', 'url(#dv-graph-clip)');
     }
 
-    lines.forEach((lineSegment) => {
-        drawDataLine(allLinesGroup, {lineSegment, xScale, yScale});
+    segments.lineSegments.forEach((lineSegment) => {
+        drawLineSegment(allLinesGroup, {lineSegment, xScale, yScale});
+    });
+    segments.maskSegments.forEach((maskSegment) => {
+        drawMaskSegment(allLinesGroup, {maskSegment, xScale, yScale});
     });
 };
 
@@ -120,8 +148,8 @@ export const drawTimeSeriesGraph = function(elem, store) {
             layout: getMainLayout,
             yTitle: getCurrentTimeSeriesYTitle
         })))
-        .call(link(store, drawDataLines, createStructuredSelector({
-            lines: getCurrentTimeSeriesLineSegments,
+        .call(link(store, drawDataSegments, createStructuredSelector({
+            segments: getCurrentTimeSeriesSegments,
             xScale: getMainXScale,
             yScale: getMainYScale,
             layout: getMainLayout,
