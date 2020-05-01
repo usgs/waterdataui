@@ -1,6 +1,6 @@
 import {
     getCurrentTimeSeriesPoints,
-    getCurrentTimeSeriesLineSegments,
+    getCurrentTimeSeriesSegments,
     getCursorEpochTime,
     getDataAtCursor
 } from './time-series-data';
@@ -15,12 +15,16 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                     properties: {
                         phenomenonTimeStart: '2018-01-02',
                         phenomenonTimeEnd: '2018-01-05',
-                        timeStep: ['2018-01-05', '2018-01-03', '2018-01-02', '2018-01-04'],
-                        result: [ '3.2', '4.0', '5.0', '6.1'],
-                        approvals: [['Approved'], ['Approved'], ['Approved'], ['Approved']],
-                        nilReason: [null, 'AA', null, null],
-                        qualifiers: [['ICE'], null, null, ['ICE']],
-                        grades: [['60'], ['50'], ['50'], ['60']]
+                        timeStep: ['2018-01-05', '2018-01-03', '2018-01-02', '2018-01-04',
+                            '2018-01-06', '2018-01-07', '2018-01-08', '2018-01-09', '2018-01-10'],
+                        result: [ '3.2', '4.0', '5.0', '6.1',
+                            '7.3', '8.1', '6.2', '2.9', '3.4'],
+                        approvals: [['Approved'], ['Approved'], ['Approved'], ['Approved'],
+                            ['Approved'], ['Approved'], ['Approved'], ['Approved'], ['Working']],
+                        nilReason: [null, 'AA', null, null, null, null, null, null, null],
+                        qualifiers: [['ICE'], null, null, null,
+                            ['ICE', 'EQUIP'], ['ICE', 'EQUIP'], ['ESTIMATED'], ['ESTIMATED'], null],
+                        grades: [['60'], ['50'], ['50'], ['60'], ['50'], ['50'], ['50'], ['50'], ['50']]
                     }
                 }
             }
@@ -44,7 +48,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
         it('should return an array of objects representing the time series', () => {
             const result = getCurrentTimeSeriesPoints(TEST_STATE);
 
-            expect(result.length).toBe(4);
+            expect(result.length).toBe(9);
             expect(result[0]).toEqual({
                 value: '5.0',
                 dateTime: 1514851200000,
@@ -61,31 +65,73 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                 qualifiers: ['ICE'],
                 grades: ['60']
             });
+            expect(result[8]).toEqual({
+                value: '3.4',
+                dateTime: 1515542400000,
+                approvals: ['Working'],
+                nilReason: null,
+                qualifiers: null,
+                grades: ['50']
+            });
         });
     });
 
-    describe('getCurrentTimeSeriesLineSegments', () => {
-        it('Should return an empty array if no current time series is defined', () => {
-           expect(getCurrentTimeSeriesLineSegments({
+    describe('getCurrentTimeSeriesSegments', () => {
+        it('Should return an object with empty lineSegments and maskSegments if no current time series is defined', () => {
+            const result = getCurrentTimeSeriesSegments({
                dailyValueTimeSeriesData: {},
                dailyValueTimeSeriesState: {}
-           })).toEqual([]);
+            });
+            expect(result.lineSegments).toEqual([]);
+            expect(result.maskSegments).toEqual([]);
         });
 
-        it('Should return a single line segment if time series has no gaps or changes in approvals', () => {
-            const result = getCurrentTimeSeriesLineSegments(TEST_STATE);
+        it('Should return a three line segments and two mask segments', () => {
+            const result = getCurrentTimeSeriesSegments(TEST_STATE);
 
-            expect(result.length).toBe(1);
-            expect(result[0].points.length).toBe(4);
-            expect(result[0].points[0]).toEqual({
-                date: 1514851200000,
-                value: 5.0
+            expect(result.lineSegments.length).toBe(3);
+            expect(result.maskSegments.length).toBe(2);
+
+            expect(result.lineSegments[0].class).toEqual({
+                label: 'Approved',
+                class: 'approved'
             });
-            expect(result[0].approvals).toEqual(['Approved']);
+            expect(result.lineSegments[0].points).toEqual([
+                {value: '5.0', dateTime: 1514851200000},
+                {value: '4.0', dateTime: 1514937600000},
+                {value: '6.1', dateTime: 1515024000000}
+            ]);
+            expect(result.lineSegments[1].class).toEqual({
+                label: 'Estimated',
+                class: 'estimated'
+            });
+            expect(result.lineSegments[1].points).toEqual([
+                {value: '6.2', dateTime: 1515369600000},
+                {value: '2.9', dateTime: 1515456000000}
+            ]);
+            expect(result.lineSegments[2].class).toEqual({
+                label: 'Provisional',
+                class: 'provisional'
+            });
+            expect(result.lineSegments[2].points).toEqual([
+                {value: '2.9', dateTime: 1515456000000},
+                {value: '3.4', dateTime: 1515542400000}
+            ]);
+
+            expect(result.maskSegments[0]).toEqual({
+                startTime: 1515024000000,
+                endTime: 1515196800000,
+                qualifiers: {label: 'Ice affected', class: 'mask-0'}
+            });
+            expect(result.maskSegments[1]).toEqual({
+                startTime: 1515196800000,
+                endTime: 1515369600000,
+                qualifiers: {label: 'Equipment malfunction, Ice affected', class: 'mask-1'}
+            });
         });
 
         it('Should return a two line segments if time series has two day gap', () => {
-            const result = getCurrentTimeSeriesLineSegments({
+            const result = getCurrentTimeSeriesSegments({
                 dailyValueTimeSeriesData: {
                     dvTimeSeries: {
                         '12345': {
@@ -96,7 +142,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                                 result: ['5.0', '4.0', '6.1', '3.2'],
                                 approvals: [['Approved'], ['Approved'], ['Approved'], ['Approved']],
                                 nilReason: [null, 'AA', null, null],
-                                qualifiers: [null, null, ['ICE'], ['ICE']],
+                                qualifiers: [null, null, null, null],
                                 grades: [['50'], ['50'], ['60'], ['60']]
                             }
                         }
@@ -106,36 +152,10 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                     currentDVTimeSeriesId: '12345'
                 }
             });
-            expect(result.length).toBe(2);
-            expect(result[0].points.length).toBe(1);
-            expect(result[1].points.length).toBe(3);
-        });
-
-        it('should return two line segment if the time series approvals change', () => {
-            const result = getCurrentTimeSeriesLineSegments({
-                dailyValueTimeSeriesData: {
-                    dvTimeSeries: {
-                        '12345': {
-                            type: 'Feature',
-                            id: '12345',
-                            properties: {
-                                timeStep: ['2018-01-02', '2018-01-03', '2018-01-04', '2018-01-05'],
-                                result: ['5.0', '4.0', '6.1', '3.2'],
-                                approvals: [['Estimated', 'Approved'], ['Estimated', 'Approved'], ['Approved'], ['Approved']],
-                                nilReason: [null, 'AA', null, null],
-                                qualifiers: [null, null, ['ICE'], ['ICE']],
-                                grades: [['50'], ['50'], ['60'], ['60']]
-                            }
-                        }
-                    }
-                },
-                dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
-                }
-            });
-            expect(result.length).toBe(2);
-            expect(result[0].points.length).toBe(3);
-            expect(result[1].points.length).toBe(2);
+            expect(result.lineSegments.length).toBe(2);
+            expect(result.maskSegments.length).toBe(0);
+            expect(result.lineSegments[0].points.length).toBe(1);
+            expect(result.lineSegments[1].points.length).toBe(3);
         });
     });
 

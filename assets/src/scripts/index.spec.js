@@ -10,8 +10,8 @@
 import './mock-service-data';
 import './polyfills';
 
-import './d3-rendering/data-masks.spec';
 /*
+import './d3-rendering/data-masks.spec';
 import './ajax.spec';
 
 import './d3-rendering/accessibility.spec';
@@ -27,8 +27,9 @@ import './d3-rendering/tick-marks.spec';
 import './components/daily-value-hydrograph/selectors/labels.spec';
 import './components/daily-value-hydrograph/selectors/legend-data.spec';
 import './components/daily-value-hydrograph/selectors/scales.spec';
+*/
 import './components/daily-value-hydrograph/selectors/time-series-data.spec';
-
+/*
 import './components/daily-value-hydrograph/graph-brush.spec';
 import './components/daily-value-hydrograph/index.spec';
 import './components/daily-value-hydrograph/time-series-graph.spec';
