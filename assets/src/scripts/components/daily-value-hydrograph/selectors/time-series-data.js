@@ -1,6 +1,7 @@
 import {DateTime} from 'luxon';
 import findIndex from 'lodash/findIndex';
 import isEqual from 'lodash/isEqual';
+import uniq from 'lodash/uniq';
 import uniqWith from 'lodash/uniqWith';
 import zip from 'lodash/zip';
 import zipObject from 'lodash/zipObject';
@@ -12,9 +13,6 @@ import {getNearestTime} from '../../../utils';
 import {getXScale, getMainXScale, getMainYScale} from './scales';
 
 const TWO_DAYS = 1000 * 60 * 60 * 24 * 2; // In milliseconds
-
-export const APPROVED = 'Approved';
-export const ESTIMATED = 'Estimated';
 
 const MASKED_QUALIFIERS = {
     'BACKWATER': {label: 'Backwater'},
@@ -47,7 +45,7 @@ const LINE_CLASSES = {
 and other attributes representing metadata on the value. This will represent the time series for the current
 selected time series and is in increasing date order.
  */
-export const getCurrentTimeSeriesPoints = createSelector(
+export const getCurrentTimeSeriesData = createSelector(
     getCurrentDVTimeSeries,
     (timeSeries) => {
         if (!timeSeries) {
@@ -85,30 +83,20 @@ export const getCurrentTimeSeriesPoints = createSelector(
     }
 );
 
-/*
- * Returns selector function which returns an Object. The object has two properties
- *      @prop {Array of Objects} lineSegments - is an array of
- *          Objects which include points (Array of value and date properties) and a class property which is a
- *          determined from the approvals and default qualifiers.
- *      @prop {Array of Object} maskSegments - is an array Objects which include properties: startTime and endTime (both Numbers
- *          in epoch milliseconds and qualifiers which is an array of masked qualifiers that apply to this section.
- * Assumes that a change from masked qualifier to none (or vice versa) or different set of qualifiers starts a new segment and for lines a data gap
- * of two days also creates a new segment.
- */
-export const getCurrentTimeSeriesSegments = createSelector(
-    getCurrentTimeSeriesPoints,
-    (timeSeries) => {
-        const getMaskedQualifiers = function(point) {
-            if (point.qualifiers) {
-                return point.qualifiers
-                    .filter(qualifier => qualifier in MASKED_QUALIFIERS)
-                    .sort();
-            } else {
-                return [];
-            }
-        };
 
-        const getClass = function(point) {
+/*
+ * Returns a selector function function returns an Array of Object that can be used to visualize the data.
+ * Each object has the following properties:
+ *      @prop {String} value
+ *      @prop {Number} dateTime - in epoch milliseconds
+ *      @prop {Boolean} isMasked
+ *      @prop {String} label - human readable label
+ *      @prop {String} class - can be used to style the data
+ */
+export const getCurrentTimeSeriesPoints = createSelector(
+    getCurrentTimeSeriesData,
+    (tsData) => {
+        const getLineClass = function(point) {
             if (!point.approvals) {
                 return 'PROVISIONAL';
             } else if (point.approvals.includes('Approved')) {
@@ -118,122 +106,134 @@ export const getCurrentTimeSeriesSegments = createSelector(
             }
         };
 
-        const getNewMaskedSegment = function(qualifiers, startTime) {
+        const points = tsData.map((point) => {
+            const maskedQualifierLabels = (point.qualifiers ? point.qualifiers : [])
+                    .filter(qualifier => qualifier in MASKED_QUALIFIERS)
+                    .sort()
+                    .map(qualifier => MASKED_QUALIFIERS[qualifier].label);
+            const isMasked = maskedQualifierLabels.length > 0;
+            const lineClass = getLineClass(point);
             return {
-                startTime,
-                qualifiers
+                value : point.value,
+                dateTime: point.dateTime,
+                isMasked: isMasked,
+                label: isMasked ? maskedQualifierLabels.join(', ') : LINE_CLASSES[lineClass].label,
+                class: isMasked ? '' : LINE_CLASSES[lineClass].class
             };
-        };
+        });
 
-        const getNewLineSegment = function(pointClass) {
+        // For masked data, find all unique combinations and then assign each unique combination a mask
+        // If in the unlikely case that there are more the 14 combinations, the class name will be repeated.
+        const allMaskLabels = points
+            .filter(point => point.isMasked)
+            .map(point => point.label);
+        const uniqueMaskLabels = uniq(allMaskLabels);
+        const finalPoints = points.map((point) => {
+            if (point.isMasked) {
+                const maskToUse = findIndex(uniqueMaskLabels, (label) => label === point.label);
+                return {
+                    ...point,
+                    class: MASK_CLASSES[maskToUse]
+                };
+            } else {
+                return {
+                    ...point
+                };
+            }
+        });
+
+        return finalPoints;
+    }
+);
+
+/*
+ * Returns selector function which returns an Array of Objects. Each object has four properties and
+ * represents a segment
+ *      @prop {Boolean} isMasked
+ *      @prop {Array of Object} points - Each point has {Number} value and {Number in milliseconds} dateTime
+ *      @prop {String} label
+ *      @prop {String} class
+ *
+ * A new segment is started when there is a change from masked to non-masked (or vice versa),
+ * if a segment has a different label, or if two line segments are separated by more than two days.
+ */
+export const getCurrentTimeSeriesSegments = createSelector(
+    getCurrentTimeSeriesPoints,
+    (points) => {
+        const getNewSegment = function(point) {
             return {
+                isMasked: point.isMasked,
                 points: [],
-                class: pointClass
+                label: point.label,
+                class: point.class
             };
         };
 
-        if (timeSeries.length === 0) {
-            return {
-                lineSegments: [],
-                maskSegments: []
-            };
+        if (points.length === 0) {
+            return [];
         }
 
-        let lineSegments = [];
-        let maskSegments = [];
+        let segments = [];
+        let previousDate = points[0].dateTime;
+        let newSegment = getNewSegment(points[0]);
 
-        let previousDate = timeSeries[0].dateTime;
-        let newMaskedQualifiers = getMaskedQualifiers(timeSeries[0]);
-        let isNewSegmentMasked = newMaskedQualifiers.length > 0;
-        let newSegment = isNewSegmentMasked ?
-            getNewMaskedSegment(newMaskedQualifiers, timeSeries[0].dateTime) :
-            getNewLineSegment(getClass(timeSeries[0]), timeSeries[0]);
-
-        timeSeries.forEach((point) => {
-            const nextMaskedQualifiers = getMaskedQualifiers(point);
-            const nextClass = getClass(point);
+        points.forEach((point) => {
+            const resultValue = parseFloat(point.value);
             const hasGap = point.dateTime - previousDate >= TWO_DAYS;
-            if (!isNewSegmentMasked && !nextMaskedQualifiers.length && hasGap) {
+            if (!newSegment.isMasked && !point.isMasked && hasGap) {
                 // there is a gap between two line segments so start a new segment
-                lineSegments.push(newSegment);
-                newSegment = getNewLineSegment(nextClass);
+                segments.push(newSegment);
+                newSegment = getNewSegment(point);
 
-            } else if (isNewSegmentMasked && !isEqual(newSegment.qualifiers, nextMaskedQualifiers)) {
+            } else if (newSegment.isMasked && newSegment.label != point.label) {
                 // end previous masked segment where the next segment starts
-                newSegment.endTime = point.dateTime;
-                maskSegments.push(newSegment);
-
-                isNewSegmentMasked = nextMaskedQualifiers.length > 0;
-                if (isNewSegmentMasked) {
-                    newSegment = getNewMaskedSegment(nextMaskedQualifiers, point.dateTime);
-                } else  {
-                    newSegment = getNewLineSegment(nextClass);
-                }
-
-            } else if (!isNewSegmentMasked && (nextMaskedQualifiers.length || newSegment.class != nextClass)) {
-                // end previous line segment and start the next segment where the previous line ends
-                const lastPoint = newSegment.points[newSegment.points.length - 1];
-                lineSegments.push(newSegment);
-
-                isNewSegmentMasked = nextMaskedQualifiers.length > 0;
-                if (isNewSegmentMasked) {
-                    newSegment = getNewMaskedSegment(nextMaskedQualifiers, lastPoint.dateTime);
-                } else {
-                    newSegment = getNewLineSegment(nextClass);
-                    newSegment.points.push({
-                        value: lastPoint.value,
-                        dateTime: lastPoint.dateTime
-                    });
-                }
-            }
-
-            if (!isNewSegmentMasked) {
                 newSegment.points.push({
-                    value: point.value,
+                    value: resultValue,
                     dateTime: point.dateTime
                 });
+                segments.push(newSegment);
+
+                newSegment = getNewSegment(point);
+
+            } else if (!newSegment.isMasked && newSegment.label != point.label) {
+                // end previous line segment and start the next segment where the previous line ends
+                const lastPoint = newSegment.points[newSegment.points.length - 1];
+                segments.push(newSegment);
+
+                newSegment = getNewSegment(point);
+                newSegment.points.push(lastPoint);
             }
+
+            newSegment.points.push({
+                value: resultValue,
+                dateTime: point.dateTime
+            });
             previousDate = point.dateTime;
         });
+        segments.push(newSegment);
 
-        if (isNewSegmentMasked) {
-            newSegment.endTime = timeSeries[timeSeries.length - 1].dateTime;
-            maskSegments.push(newSegment);
-        } else {
-            lineSegments.push(newSegment);
-        }
-        // Add in full info for qualifiers and class in segments
+        return segments;
+    }
+);
 
-        const finalLineSegments = lineSegments.map((segment) => {
+/*
+ * Return a selector function that returns an Array of Objects. The array represents the unique kinds of
+ * data that are being currently displayed. Each Object has the following properties:
+ *      @prop {Boolean} isMasked
+ *      @prop {String} label
+ *      @prop {String} class
+ */
+export const getCurrentUniqueDataKinds = createSelector(
+    getCurrentTimeSeriesPoints,
+    (points) => {
+        const mappedPoints = points.map((point) => {
             return {
-                points: segment.points,
-                decorations: LINE_CLASSES[segment.class]
+                isMasked: point.isMasked,
+                label: point.label,
+                class: point.class
             };
         });
-
-        // For qualifiers, we color each unique combination of qualifiers. In the unlikely
-        // event that we exceed 14 different unique combinations we will start over. The
-        // label is always formed by combining the labels for all of the qualifiers for a
-        // segment
-
-        const uniqueMaskCombos = uniqWith(maskSegments.map(segment => segment.qualifiers));
-
-
-        const finalMaskedSegments = maskSegments.map((segment) => {
-            const maskToUse = findIndex(uniqueMaskCombos, (qualifiers) => isEqual(qualifiers, segment.qualifiers)) % 14;
-            return {
-                startTime: segment.startTime,
-                endTime: segment.endTime,
-                decorations: {
-                    label: segment.qualifiers.map(qualifier => MASKED_QUALIFIERS[qualifier].label).join(', '),
-                    class: MASK_CLASSES[maskToUse]
-                }
-            };
-        });
-        return {
-            lineSegments: finalLineSegments,
-            maskSegments: finalMaskedSegments
-        };
+        return uniqWith(mappedPoints, isEqual);
     }
 );
 
@@ -254,9 +254,15 @@ export const getCursorEpochTime = createSelector(
 );
 
 /*
- * Return a selector which returns the points nearest the cursor's epoch time.
+ * Return a selector which returns the point nearest the cursor's epoch time.
+ * @returns Function which returns {Object} the following properties:
+ *      @prop {Number} value
+ *      @prop {Number} dateTime - in epoch milliseconds
+ *      @prop {Boolean} isMasked
+ *      @prop {String} label - human readable label
+ *      @prop {String} class - can be used to style the data
  */
-export const getDataAtCursor = createSelector(
+export const getCurrentDataPointAtCursor = createSelector(
     getCursorEpochTime,
     getCurrentTimeSeriesPoints,
     (cursorEpochTime, points)=> {
@@ -268,21 +274,20 @@ export const getDataAtCursor = createSelector(
 );
 
 /*
- * Return a selector which returns an array of objects with x, y coordinates, that represent
- * the position of the line(s) at the cursor offset. Currently this is a single element array.
+ * Return a selector which returns an Array of Objects with x, y coordinates, that represent
+ * the position of the point at the cursor offset. Currently this is a single element array.
  */
-export const getCursorPoint = createSelector(
-    getDataAtCursor,
+export const getCurrentCursorPoint = createSelector(
+    getCurrentDataPointAtCursor,
     getMainXScale,
     getMainYScale,
     (point, xScale, yScale) => {
         if (!point) {
             return [];
         }
-        const result = [{
+        return [{
             x: xScale(point.dateTime),
             y: yScale(point.value)
         }];
-        return result;
     }
 );

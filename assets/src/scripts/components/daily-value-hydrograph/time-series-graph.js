@@ -1,5 +1,4 @@
 import { line as d3Line } from 'd3-shape';
-import includes from 'lodash/includes';
 import {createStructuredSelector} from 'reselect';
 
 import {addSVGAccessibility} from '../../d3-rendering/accessibility';
@@ -35,11 +34,11 @@ const addDefsPatterns = function(elem) {
     renderMaskDefs(defs, 'dv-graph-pattern-mask', patterns);
 };
 
-const drawLineSegment = function (group, {lineSegment, xScale, yScale}) {
+const drawLineSegment = function (group, {segment, xScale, yScale}) {
     let lineElem;
-    if (lineSegment.points.length === 1) {
+    if (segment.points.length === 1) {
         lineElem = group.append('circle')
-            .data(lineSegment.points)
+            .data(segment.points)
             .attr('r', CIRCLE_RADIUS_SINGLE_PT)
             .attr('cx', d => xScale(d.dateTime))
             .attr('cy', d => yScale(d.value));
@@ -48,18 +47,18 @@ const drawLineSegment = function (group, {lineSegment, xScale, yScale}) {
             .x(d => xScale(d.dateTime))
             .y(d => yScale(d.value));
         lineElem = group.append('path')
-            .datum(lineSegment.points)
+            .datum(segment.points)
             .attr('d', dvLine);
     }
     lineElem
         .classed('line-segment', true)
-        .classed(lineSegment.decorations.class, true);
+        .classed(segment.class, true);
 };
 
-const drawMaskSegment = function(group, {maskSegment, xScale, yScale}) {
+const drawMaskSegment = function(group, {segment, xScale, yScale}) {
     const [yRangeStart, yRangeEnd] = yScale.range();
-    const xRangeStart = xScale(maskSegment.startTime);
-    const xRangeEnd = xScale(maskSegment.endTime);
+    const xRangeStart = xScale(segment.points[0].dateTime);
+    const xRangeEnd = xScale(segment.points[segment.points.length - 1].dateTime);
     const xSpan = xRangeEnd - xRangeStart;
     const rectWidth = xSpan > 1 ? xSpan : 1;
     const rectHeight = Math.abs(yRangeEnd - yRangeStart);
@@ -73,13 +72,21 @@ const drawMaskSegment = function(group, {maskSegment, xScale, yScale}) {
         .attr('width', rectWidth)
         .attr('height', rectHeight)
         .classed('mask', true)
-        .classed(maskSegment.decorations.class, true);
+        .classed(segment.class, true);
     maskGroup.append('rect')
         .attr('x', xRangeStart)
         .attr('y', yRangeEnd)
         .attr('width', rectWidth)
         .attr('height', rectHeight)
-        .attr('fill', 'url(#dv-masked-pattern');
+        .attr('fill', 'url(#dv-masked-pattern)');
+};
+
+const drawDataSegment = function(group, {segment, xScale, yScale}) {
+    if (segment.isMasked) {
+        drawMaskSegment(group, {segment, xScale, yScale});
+    } else {
+        drawLineSegment(group, {segment, xScale, yScale});
+    }
 };
 
 /*
@@ -94,17 +101,14 @@ const drawMaskSegment = function(group, {maskSegment, xScale, yScale}) {
 export const drawDataSegments = function (elem, {segments, xScale, yScale, enableClip}) {
     elem.select('#daily-values-lines-group').remove();
 
-    const allLinesGroup = elem.append('g')
+    const drawingGroup = elem.append('g')
         .attr('id', 'daily-values-lines-group');
     if (enableClip) {
-        allLinesGroup.attr('clip-path', 'url(#dv-graph-clip)');
+        drawingGroup.attr('clip-path', 'url(#dv-graph-clip)');
     }
 
-    segments.lineSegments.forEach((lineSegment) => {
-        drawLineSegment(allLinesGroup, {lineSegment, xScale, yScale});
-    });
-    segments.maskSegments.forEach((maskSegment) => {
-        drawMaskSegment(allLinesGroup, {maskSegment, xScale, yScale});
+    segments.forEach((segment) => {
+        drawDataSegment(drawingGroup, {segment, xScale, yScale});
     });
 };
 

@@ -10,14 +10,13 @@
 import './mock-service-data';
 import './polyfills';
 
-/*
-import './d3-rendering/data-masks.spec';
 import './ajax.spec';
 
 import './d3-rendering/accessibility.spec';
 import './d3-rendering/alerts.spec';
 import './d3-rendering/axes.spec';
 import './d3-rendering/cursor-slider.spec';
+import './d3-rendering/data-masks.spec';
 import './d3-rendering/graph-tooltip.spec';
 import './d3-rendering/legend.spec';
 import './d3-rendering/loading-indicator.spec';
@@ -30,9 +29,7 @@ import './components/daily-value-hydrograph/selectors/scales.spec';
 import './components/daily-value-hydrograph/selectors/time-series-data.spec';
 import './components/daily-value-hydrograph/graph-brush.spec';
 import './components/daily-value-hydrograph/index.spec';
-*/
 import './components/daily-value-hydrograph/time-series-graph.spec';
-/*
 import './components/daily-value-hydrograph/tooltip.spec';
 
 import './components/embed.spec';
@@ -96,4 +93,3 @@ import './networks/network-component/network-legend.spec';
 import './networks/selectors/network-data-selector.spec';
 import './networks/store/network-store.spec';
 import './networks/store/network-data-reducer.spec';
-*/
