@@ -97,7 +97,7 @@ svg {
       stroke: $estimated-time-series;
     }
     &.provisional {
-      stroke: $default-time-series;
+      stroke: $provisional-time-series;
     }
   }
 
