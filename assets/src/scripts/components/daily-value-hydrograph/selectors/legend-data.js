@@ -14,8 +14,8 @@ export const getLegendMarkers = createSelector(
     (dataKinds) => {
         return dataKinds.map((dataKind) => {
             return dataKind.isMasked ?
-                defineRectangleMarker(null, dataKind.class, dataKind.label, 'url(#dv-masked-pattern)') :
-                defineLineMarker(null, dataKind.class, dataKind.label);
+                defineRectangleMarker(null, `mask ${dataKind.class}`, dataKind.label, 'url(#dv-masked-pattern)') :
+                defineLineMarker(null, `line-segment ${dataKind.class}`, dataKind.label);
         });
     }
 );

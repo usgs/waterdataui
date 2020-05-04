@@ -52,21 +52,21 @@ describe('daily-value-hydrograph/legend-data', () => {
             expect(result).toContain({
                 type: lineMarker,
                 domId: null,
-                domClass: 'approved',
+                domClass: 'line-segment approved',
                 text: 'Approved'
 
             });
             expect(result).toContain({
                 type: lineMarker,
                 domId: null,
-                domClass: 'estimated',
+                domClass: 'line-segment estimated',
                 text: 'Estimated'
 
             });
             expect(result).toContain({
                 type: rectangleMarker,
                 domId: null,
-                domClass: 'mask-0',
+                domClass: 'mask mask-0',
                 text: 'Ice affected',
                 fill: 'url(#dv-masked-pattern)'
 

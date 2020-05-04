@@ -1,6 +1,6 @@
 $approved-time-series: #1b9e77;
 $estimated-time-series: #7570b3;
-$default-time-series: #d95f02;
+$provisional-time-series: #d95f02;
 
 .graph-container {
   width: 100%;
@@ -26,7 +26,6 @@ $default-time-series: #d95f02;
 .dv-tooltip-container {
   pointer-event: none;
   .dv-tooltip-text {
-    color: $default-time-series;
     font-weight: bold;
   }
   .approved {
@@ -34,6 +33,9 @@ $default-time-series: #d95f02;
   }
   .estimated {
     color: $estimated-time-series;
+  }
+  .provisional {
+    color: $provisional-time-series;
   }
 }
 
@@ -87,15 +89,63 @@ svg {
   .line-segment {
     fill: none;
     stroke-width: 3px;
-    stroke: $default-time-series;
 
     &.approved {
       stroke: $approved-time-series;
     }
-
     &.estimated {
       stroke: $estimated-time-series;
     }
+    &.provisional {
+      stroke: $default-time-series;
+    }
+  }
+
+  .mask {
+    opacity: 0.2;
+  }
+
+  .mask-0 {
+    fill: #33daff;
+  }
+  .mask-1 {
+    fill: #0c7d40;
+  }
+  .mask-2 {
+    fill: #f4f727;
+  }
+  .mask-3 {
+    fill: #9a9b77;
+  }
+  .mask-4 {
+    fill: #17fc04;
+  }
+  .mask-5 {
+    fill: #ec14fe;
+  }
+  .mask-6 {
+    fill: #fe141b;
+  }
+  .mask-7 {
+    fill: #0557fc;
+  }
+  .mask-8 {
+    fill: #01fab6;
+  }
+  .mask-9 {
+    fill: #abb2b9;
+  }
+  .mask-10 {
+    fill: #4729a5;
+  }
+  .mask-11 {
+    fill: #3498db;
+  }
+  .mask-12 {
+    fill: #ff8c00;
+  }
+  .mask-13 {
+    fill: #e9967a;
   }
 
   .focus-overlay {
