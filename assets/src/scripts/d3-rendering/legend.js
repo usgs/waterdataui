@@ -55,7 +55,7 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
         };
 
         const repositionLastMarkerWhenNeeded = function() {
-            if (xPosition > layout.width) {
+            if (xPosition - MARKER_GROUP_X_OFFSET > layout.width) {
                 // Need to remove the last marker and draw it on the next row.
                 markerGroup.remove();
                 xPosition = 0;
