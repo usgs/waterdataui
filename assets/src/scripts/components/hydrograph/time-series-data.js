@@ -55,6 +55,9 @@ export const drawDataLine = function(group, {visible, lines, tsKey, xScale, ySca
             const maskDisplayName = MASK_DESC[maskCode].replace(' ', '-').toLowerCase();
             const [xDomainStart, xDomainEnd] = extent(line.points, d => d.dateTime);
             const [yRangeStart, yRangeEnd] = yScale.range();
+
+            // Some data is shown with the yAxis decreasing from top top bottom
+            const yTop = yRangeEnd > yRangeStart ? yRangeStart : yRangeEnd;
             let maskGroup = group.append('g')
                 .attr('class', `${tsKey}-mask-group`);
             const xSpan = xScale(xDomainEnd) - xScale(xDomainStart);
@@ -62,7 +65,7 @@ export const drawDataLine = function(group, {visible, lines, tsKey, xScale, ySca
 
             maskGroup.append('rect')
                 .attr('x', xScale(xDomainStart))
-                .attr('y', yRangeEnd)
+                .attr('y', yTop)
                 .attr('width', rectWidth)
                 .attr('height', Math.abs(yRangeEnd - yRangeStart))
                 .attr('class', `mask ${maskDisplayName}-mask`)
@@ -73,7 +76,7 @@ export const drawDataLine = function(group, {visible, lines, tsKey, xScale, ySca
 
             maskGroup.append('rect')
                 .attr('x', xScale(xDomainStart))
-                .attr('y', yRangeEnd)
+                .attr('y', yTop)
                 .attr('width', rectWidth)
                 .attr('height', Math.abs(yRangeEnd - yRangeStart))
                 //.attr('class', `mask ${maskDisplayName}-mask`)

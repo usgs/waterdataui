@@ -59,6 +59,10 @@ const drawMaskSegment = function(group, {segment, xScale, yScale}) {
     const [yRangeStart, yRangeEnd] = yScale.range();
     const xRangeStart = xScale(segment.points[0].dateTime);
     const xRangeEnd = xScale(segment.points[segment.points.length - 1].dateTime);
+
+    // Some data is shown with the yAxis decreasing from top top bottom
+    const yTop = yRangeEnd > yRangeStart ? yRangeStart : yRangeEnd;
+
     const xSpan = xRangeEnd - xRangeStart;
     const rectWidth = xSpan > 1 ? xSpan : 1;
     const rectHeight = Math.abs(yRangeEnd - yRangeStart);
@@ -68,7 +72,7 @@ const drawMaskSegment = function(group, {segment, xScale, yScale}) {
 
     maskGroup.append('rect')
         .attr('x', xRangeStart)
-        .attr('y', yRangeEnd)
+        .attr('y', yTop)
         .attr('width', rectWidth)
         .attr('height', rectHeight)
         .classed('mask', true)

@@ -7,7 +7,7 @@ import {getCurrentUniqueDataKinds} from './time-series-data';
 /*
  * Factory function that returns  array of markers to be used for the
  * DV time series graph legend
- * @return {Array of Object} - where the objects are markers (see d3-rendering/markers.js)
+ * @return {Array of Object} - where the objects are markers (see d3-rendering/markers.js).
  */
 export const getLegendMarkers = createSelector(
     getCurrentUniqueDataKinds,

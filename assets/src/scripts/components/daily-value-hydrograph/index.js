@@ -13,7 +13,7 @@ import {drawTimeSeriesLegend} from './legend';
 import {drawGraphBrush} from './graph-brush';
 
 const GROUND_WATER_LEVELS_PARM_CD  = ['62610', '62611', '72019', '72020', '72150', '72226', '72227', '72228', '72229', '72230', '72231', '72232'];
-const MAX_STATISTIC_CODE = '00001';
+const MAX_STATISTIC_CODE = '00002';
 
 const getDefaultTimeSeriesId = function(availableTimeSeries) {
     const groundWaterTimeSeries = availableTimeSeries
@@ -66,7 +66,7 @@ export const attachToNode = function (store,
                         .call(drawTooltipCursorSlider, store)
                         .call(drawGraphBrush, store)
                         .append('div')
-                            .classed('dv-legend-controls-container', true)
+                            .classed('dv-legend-container', true)
                             .call(drawTimeSeriesLegend, store);
                 });
         } else {

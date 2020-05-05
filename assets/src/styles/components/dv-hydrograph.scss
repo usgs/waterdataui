@@ -2,10 +2,6 @@ $approved-time-series: #1b9e77;
 $estimated-time-series: #7570b3;
 $provisional-time-series: #d95f02;
 
-.graph-container {
-  width: 100%;
-}
-
 .loading-indicator-container {
   i {
     text-align: center;
@@ -15,7 +11,7 @@ $provisional-time-series: #d95f02;
 }
 
 .time-series-graph-title {
-  @include u-margin-top(4);
+  @include u-margin-top(1);
   @include h4();
   @include at-media('tablet') {
     @include h3();
@@ -23,8 +19,20 @@ $provisional-time-series: #d95f02;
   text-align: center;
 }
 
+.dv-legend-container {
+  font-size: .7em;
+  @include at-media('tablet') {
+    font-size: 1em;
+  }
+}
+
 .dv-tooltip-container {
+  position: absolute;
   pointer-event: none;
+  font-size: .7em;
+  @include at-media('tablet') {
+    font-size: 1em;
+  }
   .dv-tooltip-text {
     font-weight: bold;
   }
