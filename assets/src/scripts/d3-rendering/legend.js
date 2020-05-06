@@ -2,7 +2,7 @@ import {mediaQuery} from '../utils';
 import config from '../config';
 
 const RECTANGLE_MARKER_WIDTH = 20;
-const RECTANGLE_MARKER_HEIGTH = 10;
+const RECTANGLE_MARKER_HEIGHT = 10;
 const LINE_MARKER_WIDTH = 20;
 const MARKER_GROUP_X_OFFSET = 15;
 const VERTICAL_ROW_OFFSET = 18;
@@ -77,7 +77,7 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
                 domId: marker.domId,
                 domClass: marker.domClass,
                 width: RECTANGLE_MARKER_WIDTH,
-                height: RECTANGLE_MARKER_HEIGTH,
+                height: RECTANGLE_MARKER_HEIGHT,
                 length: LINE_MARKER_WIDTH,
                 r: marker.r,
                 fill: marker.fill

@@ -196,8 +196,6 @@ export const drawTooltipText = function (elem, store) {
     })));
 };
 
-
-
 /*
  * Appends a group to elem containing a focus line and circles for the current and compare time series
  * @param {Object} elem - D3 select

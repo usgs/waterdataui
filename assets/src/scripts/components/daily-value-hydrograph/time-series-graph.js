@@ -94,10 +94,10 @@ const drawDataSegment = function(group, {segment, xScale, yScale}) {
 };
 
 /*
- * Renders the line segments in lines using the D3 scales on the svg or group, elem, adding
+ * Renders the segments  using the D3 scales on the svg or group, elem, adding
  * the clip rectangle if enableClip
  * @param {D3 selection for svg or group} elem
- * @param {Array of Object} lines
+ * @param {Array of Object} segments
  * @param {D3 scale} xScale
  * @param {D3 scale} yScale
  * @param {Boolean} enableClip

@@ -79,7 +79,6 @@ export const drawDataLine = function(group, {visible, lines, tsKey, xScale, ySca
                 .attr('y', yTop)
                 .attr('width', rectWidth)
                 .attr('height', Math.abs(yRangeEnd - yRangeStart))
-                //.attr('class', `mask ${maskDisplayName}-mask`)
                 .attr('fill', patternId);
         }
     }

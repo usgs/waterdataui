@@ -14,6 +14,11 @@ import {getCurrentTimeSeriesSegments} from './selectors/time-series-data';
 
 import {drawDataSegments} from './time-series-graph';
 
+/*
+ * Renders a brush element within container for the daily value graph
+ * @param {D3 selection} container
+ * @param {Redux store} store
+ */
 export const drawGraphBrush = function(container, store) {
 
     const brushed = function() {

@@ -129,6 +129,14 @@ const watermark = function (elem, store) {
         }, getMainLayout));
 };
 
+/*
+ * Renders the IV time series graph with the D3 elem using the state information in store.
+ * @param {D3 selection} elem
+ * @param {Redux store} store
+ * @param {String} siteNo
+ * @param {Boolean} showMLName - If true add the monitoring location name to the top of the graph
+ * @param {Boolean} showTooltip - If true render the tooltip text and add the tooltip focus element
+ */
 export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, showTooltip) {
     let graphDiv;
 

@@ -41,9 +41,10 @@ const LINE_CLASSES = {
 };
 
 
-/* Returns the selector function which returns an Array of Objects, each object representing one value, dateTime (in epoch time),
-and other attributes representing metadata on the value. This will represent the time series for the current
-selected time series and is in increasing date order.
+/*
+ * Returns the selector function which returns an Array of Objects, each object representing
+ * one value, dateTime (in epoch time), approvals, nilReason, qualifiers, and grades
+ * This will represent the time series for the current selected time series and is in increasing date order.
  */
 export const getCurrentTimeSeriesData = createSelector(
     getCurrentDVTimeSeries,
@@ -85,7 +86,8 @@ export const getCurrentTimeSeriesData = createSelector(
 
 
 /*
- * Returns a selector function function returns an Array of Object that can be used to visualize the data.
+ * Returns a selector function function returns an Array of Object that can be used to visualize the
+ * currently selected time series data.
  * Each object has the following properties:
  *      @prop {String} value
  *      @prop {Number} dateTime - in epoch milliseconds
@@ -128,7 +130,8 @@ export const getCurrentTimeSeriesPoints = createSelector(
             .filter(point => point.isMasked)
             .map(point => point.label);
         const uniqueMaskLabels = uniq(allMaskLabels);
-        const finalPoints = points.map((point) => {
+
+        return points.map((point) => {
             if (point.isMasked) {
                 const maskToUse = findIndex(uniqueMaskLabels, (label) => label === point.label);
                 return {
@@ -141,8 +144,6 @@ export const getCurrentTimeSeriesPoints = createSelector(
                 };
             }
         });
-
-        return finalPoints;
     }
 );
 
@@ -156,6 +157,7 @@ export const getCurrentTimeSeriesPoints = createSelector(
  *
  * A new segment is started when there is a change from masked to non-masked (or vice versa),
  * if a segment has a different label, or if two line segments are separated by more than two days.
+ * The returned segments represent the currently selected time series
  */
 export const getCurrentTimeSeriesSegments = createSelector(
     getCurrentTimeSeriesPoints,
@@ -180,12 +182,14 @@ export const getCurrentTimeSeriesSegments = createSelector(
         points.forEach((point) => {
             const resultValue = parseFloat(point.value);
             const hasGap = point.dateTime - previousDate >= TWO_DAYS;
+            const pointLabelHasChanged = newSegment.label !== point.label;
+
             if (!newSegment.isMasked && !point.isMasked && hasGap) {
                 // there is a gap between two line segments so start a new segment
                 segments.push(newSegment);
                 newSegment = getNewSegment(point);
 
-            } else if (newSegment.isMasked && newSegment.label != point.label) {
+            } else if (newSegment.isMasked && pointLabelHasChanged) {
                 // end previous masked segment where the next segment starts
                 newSegment.points.push({
                     value: resultValue,
@@ -195,7 +199,7 @@ export const getCurrentTimeSeriesSegments = createSelector(
 
                 newSegment = getNewSegment(point);
 
-            } else if (!newSegment.isMasked && newSegment.label != point.label) {
+            } else if (!newSegment.isMasked && pointLabelHasChanged) {
                 // end previous line segment and start the next segment where the previous line ends
                 const lastPoint = newSegment.points[newSegment.points.length - 1];
                 segments.push(newSegment);
@@ -239,7 +243,7 @@ export const getCurrentUniqueDataKinds = createSelector(
 
 /*
  * Return a selector function that returns the epoch time for the current daily value cursor offset.
- * Return null if no current daily value cursor offset is set.
+ * Return the latest time if no current daily value cursor offset is set.
  */
 export const getCursorEpochTime = createSelector(
     getDVGraphCursorOffset,
@@ -275,7 +279,7 @@ export const getCurrentDataPointAtCursor = createSelector(
 
 /*
  * Return a selector which returns an Array of Objects with x, y coordinates, that represent
- * the position of the point at the cursor offset. Currently this is a single element array.
+ * the position of the currently selected time series point at the cursor offset. This is a single element array.
  */
 export const getCurrentCursorPoint = createSelector(
     getCurrentDataPointAtCursor,
