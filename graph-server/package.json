@@ -28,7 +28,7 @@
     "axios": "0.19.2",
     "express": "4.17.1",
     "express-cache-headers": "0.1.4",
-    "express-validator": "6.4.0",
+    "express-validator": "6.4.1",
     "generic-pool": "3.7.1",
     "puppeteer": "3.0.2",
     "swagger-ui-express": "4.1.4"
