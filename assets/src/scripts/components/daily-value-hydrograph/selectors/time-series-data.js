@@ -24,7 +24,7 @@ const MASKED_QUALIFIERS = {
     'MAINT': {label: 'Maintenance'},
     'PARTIAL_RECORD': {label: 'Partial record'},
     'PUMP': {label: 'Pump'},
-    'RATINGDEV': {label: 'Rating revelopment'},
+    'RATINGDEV': {label: 'Rating development'},
     'SEASONAL': {label: 'Seasonal'},
     'TEST': {label: 'Test'},
     'UNAVAIL': {label: 'Unavailable'},
