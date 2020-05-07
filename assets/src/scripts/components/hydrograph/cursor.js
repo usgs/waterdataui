@@ -42,7 +42,7 @@ export const cursorTimeSelector = memoize(tsKey => createSelector(
 ));
 
 /*
- * Returns a function that the time series data point nearest the tooltip focus time for the given time series
+ * Returns a function that the time series data point nearest the tooltip focus time for the current time series
  * with the current variable and current method
  * @param {Object} state - Redux store
  * @param String} tsKey - Time series key
@@ -58,8 +58,7 @@ export const tsCursorPointsSelector = memoize(tsKey => createSelector(
             return {};
         }
         return Object.keys(timeSeries).reduce((data, tsId) => {
-            if (timeSeries[tsId].length &&
-                (!config.MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED || parseInt(tsId.split(':')[0]) === currentMethodId)) {
+            if (timeSeries[tsId].length && parseInt(tsId.split(':')[0]) === currentMethodId) {
                 const datum = getNearestTime(timeSeries[tsId], cursorTime);
                 data[tsId] = {
                     ...datum,

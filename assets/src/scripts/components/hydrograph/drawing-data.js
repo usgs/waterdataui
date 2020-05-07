@@ -291,7 +291,7 @@ export const lineSegmentsSelector = memoize((tsKey, period) => createSelector(
 
             for (let pt of points) {
                 // Classes to put on the line with this point.
-                let lineClasses = getLineClasses(pt, !config.MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED || !currentMethodID || currentMethodID === parseInt(methodID));
+                let lineClasses = getLineClasses(pt, !currentMethodID || currentMethodID === parseInt(methodID));
 
                 // If this is a non-masked data point, split lines if the gap
                 // from the period point exceeds MAX_LINE_POINT_GAP.

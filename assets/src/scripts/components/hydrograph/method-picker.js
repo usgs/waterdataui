@@ -6,16 +6,12 @@ import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import{link}  from '../../lib/d3-redux';
-import config from '../../config';
 import {getCurrentMethodID, getAllMethodsForCurrentVariable} from '../../selectors/time-series-selector';
 import {Actions} from '../../store/instantaneous-value-time-series-state';
 
 import { } from './time-series';
 
 export const drawMethodPicker = function(elem, store) {
-    if (!config.MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED) {
-        return;
-    }
     const pickerContainer = elem.insert('div', ':nth-child(2)')
         .attr('id', 'ts-method-select-container');
 
