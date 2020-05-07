@@ -72,8 +72,7 @@ describe('components/daily-value-hydrograph/tooltip module', () => {
             const textDiv = div.selectAll('.dv-tooltip-text');
             expect(textDiv.size()).toBe(1);
             const tooltip = textDiv.text();
-            expect(tooltip).toContain('ft');
-            expect(tooltip).toContain('3.2');
+            expect(tooltip).toContain('Ice affected');
             expect(tooltip).toContain('2018-01-05');
         });
     });

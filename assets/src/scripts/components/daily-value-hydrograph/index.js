@@ -66,7 +66,7 @@ export const attachToNode = function (store,
                         .call(drawTooltipCursorSlider, store)
                         .call(drawGraphBrush, store)
                         .append('div')
-                            .classed('dv-legend-controls-container', true)
+                            .classed('dv-legend-container', true)
                             .call(drawTimeSeriesLegend, store);
                 });
         } else {

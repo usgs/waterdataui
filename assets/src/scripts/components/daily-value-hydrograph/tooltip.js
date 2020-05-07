@@ -1,4 +1,3 @@
-import includes from 'lodash/includes';
 import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
@@ -10,7 +9,7 @@ import {Actions} from '../../store/daily-value-time-series';
 
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getCursorPoint, getDataAtCursor, getCursorEpochTime, APPROVED, ESTIMATED} from './selectors/time-series-data';
+import {getCurrentCursorPoint, getCurrentDataPointAtCursor, getCursorEpochTime} from './selectors/time-series-data';
 
 /*
  * Renders the tooltip text representing the data at the current cursor position
@@ -24,16 +23,20 @@ export const drawTooltipText = function(elem, store) {
             elem.select('.dv-tooltip-text').remove();
 
             if (pointAtCursorOffset) {
+                const dateLabel = DateTime.fromMillis(pointAtCursorOffset.dateTime, {zone: 'UTC'}).toFormat('yyyy-LL-dd');
+                const label = pointAtCursorOffset.isMasked ?
+                    `${pointAtCursorOffset.label} - ${dateLabel}` :
+                    `${pointAtCursorOffset.value} ${unitOfMeasure} - ${dateLabel}`;
+                    
                 elem.append('div')
                     .attr('style', `margin-left: ${layout.margin.left}px`)
                     .classed('dv-tooltip-text', true)
-                    .classed('approved', includes(pointAtCursorOffset.approvals, APPROVED))
-                    .classed('estimated', includes(pointAtCursorOffset.approvals, ESTIMATED))
-                    .text(`${pointAtCursorOffset.value} ${unitOfMeasure} - ${DateTime.fromMillis(pointAtCursorOffset.dateTime, {zone: 'UTC'}).toFormat('yyyy-LL-dd')}`);
+                    .classed(pointAtCursorOffset.class, true)
+                    .text(label);
             }
 
         }, createStructuredSelector({
-            pointAtCursorOffset: getDataAtCursor,
+            pointAtCursorOffset: getCurrentDataPointAtCursor,
             unitOfMeasure: getCurrentDVTimeSeriesUnitOfMeasure,
             layout: getMainLayout
         })));
@@ -51,7 +54,7 @@ export const drawTooltipFocus = function(elem, store) {
             xScale: getMainXScale,
             yScale: getMainYScale
         })))
-        .call(link(store, drawFocusCircles, getCursorPoint))
+        .call(link(store, drawFocusCircles, getCurrentCursorPoint))
         .call(link(
             store,
             drawFocusOverlay,

@@ -1,76 +1,21 @@
-import includes from 'lodash/includes';
 import {createSelector} from 'reselect';
 
-import {defineLineMarker} from '../../../d3-rendering/markers';
+import {defineLineMarker, defineRectangleMarker} from '../../../d3-rendering/markers';
 
-import {getCurrentTimeSeriesLineSegments, APPROVED, ESTIMATED} from './time-series-data';
-
-
-const tsLineMarkers = function(lineClasses) {
-    let result = [];
-
-    if (lineClasses.default) {
-        result.push(defineLineMarker(null, 'line-segment ts-dv', 'Provisional'));
-    }
-    if (lineClasses.approved) {
-        result.push(defineLineMarker(null, 'line-segment approved ts-dv', 'Approved'));
-    }
-    if (lineClasses.estimated) {
-        result.push(defineLineMarker(null, 'line-segment estimated ts-dv', 'Estimated'));
-    }
-    return result;
-};
-
-
-/**
- * create elements for the legend in the svg
- *
- * @param {Object} displayItems - Object containing Object containing default, estimated and approved properties.
- * @return {Array} - Returns an array of markers.
- */
-const createLegendMarkers = function(displayItems) {
-    const legendMarkers = [];
-
-    if (displayItems) {
-        const currentMarkers = [
-            ...tsLineMarkers(displayItems)
-        ];
-        if (currentMarkers.length) {
-            legendMarkers.push([
-                ...currentMarkers
-            ]);
-        }
-    }
-    return legendMarkers;
-};
-
-const getUniqueClasses = createSelector(
-    getCurrentTimeSeriesLineSegments,
-    (tsLineSegments) => {
-        let result = {
-            default: false,
-            approved: false,
-            estimated: false
-        };
-        //TODO: default is for any approvals that are not Approved or Estimated. This will likely need to change.
-        tsLineSegments.forEach((segment) => {
-            result.approved = result.approved || includes(segment.approvals, APPROVED);
-            result.estimated = result.estimated || includes(segment.approvals, ESTIMATED);
-            result.default =
-                result.default || !includes(segment.approvals, APPROVED) && !includes(segment.approvals, ESTIMATED);
-        });
-        return result;
-    }
-);
+import {getCurrentUniqueDataKinds} from './time-series-data';
 
 /*
- * Factory function that returns an array of array of markers to be used for the
- * time series graph legend
- * @return {Array of Array} of markers
+ * Factory function that returns  array of markers to be used for the
+ * DV time series graph legend
+ * @return {Function} which returns {Array of Object}, where the objects are markers (see d3-rendering/markers.js).
  */
-export const getLegendMarkerRows = createSelector(
-    getUniqueClasses,
-    displayItems => {
-        return createLegendMarkers(displayItems);
+export const getLegendMarkers = createSelector(
+    getCurrentUniqueDataKinds,
+    (dataKinds) => {
+        return dataKinds.map((dataKind) => {
+            return dataKind.isMasked ?
+                defineRectangleMarker(null, `mask ${dataKind.class}`, dataKind.label, 'url(#dv-masked-pattern)') :
+                defineLineMarker(null, `line-segment ${dataKind.class}`, dataKind.label);
+        });
     }
 );

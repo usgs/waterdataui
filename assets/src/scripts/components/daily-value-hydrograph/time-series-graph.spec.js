@@ -27,7 +27,7 @@ describe('components/dailyValueHydrograph/time-series-graph', () => {
                         result: ['4.5', '3.2', '4.6', '2.9'],
                         nilReason: [null, null, null, null],
                         approvals: [['Approved'], ['Approved'], ['Approved'], ['Approved']],
-                        qualifiers: [null, null, null, null],
+                        qualifiers: [null, null, ['ICE'], ['ICE']],
                         grades: [['50'], ['50'], ['50'], ['50']]
                     }
                 }
@@ -73,12 +73,13 @@ describe('components/dailyValueHydrograph/time-series-graph', () => {
             expect(svg.selectAll('.y-axis').size()).toBe(1);
         });
 
-        it('svg should contain a daily-values-lines-group with a single path', () => {
+        it('svg should contain a daily-values-lines-group with a single path and a single mask', () => {
             const svg = testDiv.selectAll('svg');
             const group = svg.selectAll('#daily-values-lines-group');
 
             expect(group.size()).toBe(1);
             expect(group.selectAll('path').size()).toBe(1);
+            expect(group.selectAll('.dv-mask-group').size()).toBe(1);
         });
 
         it('should render a circle if there is a one element line segment', (done) => {

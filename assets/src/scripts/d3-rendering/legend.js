@@ -1,7 +1,11 @@
 import {mediaQuery} from '../utils';
 import config from '../config';
 
-export const CIRCLE_RADIUS = 4;
+const RECTANGLE_MARKER_WIDTH = 20;
+const RECTANGLE_MARKER_HEIGHT = 10;
+const LINE_MARKER_WIDTH = 20;
+const MARKER_GROUP_X_OFFSET = 15;
+const VERTICAL_ROW_OFFSET = 18;
 
 /**
  * Create a simple legend
@@ -17,36 +21,21 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
         return;
     }
 
-    const markerGroupXOffset = 15;
-    const verticalRowOffset = 18;
-
-    let svg = div.append('svg')
+    const svg = div.append('svg')
         .attr('class', 'legend-svg');
-    let legend = svg
+    const legend = svg
         .append('g')
             .attr('class', 'legend')
             .attr('transform', `translate(${mediaQuery(config.USWDS_MEDIUM_SCREEN) ? layout.margin.left : 0}, 0)`);
 
-    legendMarkerRows.forEach((rowMarkers, rowIndex) => {
+    let yPosition = VERTICAL_ROW_OFFSET;
+    legendMarkerRows.forEach((rowMarkers) => {
         let xPosition = 0;
-        let yPosition = verticalRowOffset * (rowIndex + 1);
+        let markerArgs;
+        let markerGroup;
+        let lastMarker;
 
-        rowMarkers.forEach((marker) => {
-            let markerArgs = {
-                x: xPosition,
-                y: yPosition,
-                text: marker.text,
-                domId: marker.domId,
-                domClass: marker.domClass,
-                width: 20,
-                height: 10,
-                length: 20,
-                r: marker.r,
-                fill: marker.fill
-            };
-
-            let markerGroup = marker.type(legend, markerArgs);
-            let markerGroupBBox;
+        const getNewXPosition = function(markerGroup, lastXPosition) {
             // Long story short, firefox is unable to get the bounding box if
             // the svg element isn't actually taking up space and visible. Folks on the
             // internet seem to have gotten around this by setting `visibility:hidden`
@@ -57,13 +46,50 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
             // https://bugzilla.mozilla.org/show_bug.cgi?id=612118 and
             // https://stackoverflow.com/questions/28282295/getbbox-of-svg-when-hidden.
             try {
-                markerGroupBBox = markerGroup.node().getBBox();
-                xPosition = markerGroupBBox.x + markerGroupBBox.width + markerGroupXOffset;
-
+                const markerGroupBBox = markerGroup.node().getBBox();
+                return markerGroupBBox.x + markerGroupBBox.width + MARKER_GROUP_X_OFFSET;
             } catch(error) {
                 // See above explanation
+                return lastXPosition;
             }
+        };
+
+        const repositionLastMarkerWhenNeeded = function() {
+            if (xPosition - MARKER_GROUP_X_OFFSET > layout.width) {
+                // Need to remove the last marker and draw it on the next row.
+                markerGroup.remove();
+                xPosition = 0;
+                yPosition = yPosition + VERTICAL_ROW_OFFSET;
+                markerArgs.x = xPosition;
+                markerArgs.y = yPosition;
+                markerGroup = lastMarker.type(legend, markerArgs);
+                xPosition = getNewXPosition(markerGroup, xPosition);
+            }
+        };
+
+        rowMarkers.forEach((marker) => {
+            repositionLastMarkerWhenNeeded();
+
+            markerArgs = {
+                x: xPosition,
+                y: yPosition,
+                text: marker.text,
+                domId: marker.domId,
+                domClass: marker.domClass,
+                width: RECTANGLE_MARKER_WIDTH,
+                height: RECTANGLE_MARKER_HEIGHT,
+                length: LINE_MARKER_WIDTH,
+                r: marker.r,
+                fill: marker.fill
+            };
+
+            lastMarker = marker;
+            markerGroup = marker.type(legend, markerArgs);
+            xPosition = getNewXPosition(markerGroup, xPosition);
         });
+        repositionLastMarkerWhenNeeded();
+        //start new reow
+        yPosition = yPosition = yPosition + VERTICAL_ROW_OFFSET;
     });
 
     // Set the size of the containing svg node to the size of the legend.
@@ -73,5 +99,5 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
     } catch(error) {
         return;
     }
-    svg.attr('viewBox', `-${CIRCLE_RADIUS} 0 ${layout.width} ${bBox.height + 10}`);
+    svg.attr('viewBox', `0 0 ${layout.width} ${bBox.height + 10}`);
 };

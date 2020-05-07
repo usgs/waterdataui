@@ -5,6 +5,7 @@ import config from '../../config';
 
 import {addSVGAccessibility} from '../../d3-rendering/accessibility';
 import {appendAxes} from '../../d3-rendering/axes';
+import {renderMaskDefs} from '../../d3-rendering/data-masks';
 import {link} from '../../lib/d3-redux';
 import {getAgencyCode, getMonitoringLocationName} from '../../selectors/time-series-selector';
 import {mediaQuery}  from '../../utils';
@@ -21,43 +22,16 @@ import {descriptionSelector, isVisibleSelector, titleSelector} from './time-seri
 import {drawDataLines} from './time-series-data';
 import {drawTooltipFocus, drawTooltipText}  from './tooltip';
 
-const plotSvgDefs = function(elem) {
-
-    let defs = elem.append('defs');
-
-    defs.append('mask')
-        .attr('id', 'display-mask')
-        .attr('maskUnits', 'userSpaceOnUse')
-        .append('rect')
-            .attr('x', '0')
-            .attr('y', '0')
-            .attr('width', '100%')
-            .attr('height', '100%')
-            .attr('fill', '#0000ff');
-
-    defs.append('pattern')
-        .attr('id', HASH_ID.current)
-        .attr('width', '8')
-        .attr('height', '8')
-        .attr('patternUnits', 'userSpaceOnUse')
-        .attr('patternTransform', 'rotate(45)')
-        .append('rect')
-            .attr('width', '4')
-            .attr('height', '8')
-            .attr('transform', 'translate(0, 0)')
-            .attr('mask', 'url(#display-mask)');
-
-    defs.append('pattern')
-        .attr('id', HASH_ID.compare)
-        .attr('width', '8')
-        .attr('height', '8')
-        .attr('patternUnits', 'userSpaceOnUse')
-        .attr('patternTransform', 'rotate(135)')
-        .append('rect')
-            .attr('width', '4')
-            .attr('height', '8')
-            .attr('transform', 'translate(0, 0)')
-            .attr('mask', 'url(#display-mask)');
+const addDefsPatterns = function(elem) {
+    const patterns = [{
+        patternId: HASH_ID.current,
+        patternTransform: 'rotate(45)'
+    }, {
+        patternId: HASH_ID.compare,
+        patternTransform: 'rotate(135)'
+    }];
+    const defs = elem.append('defs');
+    renderMaskDefs(defs, 'iv-graph-pattern-mask', patterns);
 };
 
 /**
@@ -155,6 +129,14 @@ const watermark = function (elem, store) {
         }, getMainLayout));
 };
 
+/*
+ * Renders the IV time series graph with the D3 elem using the state information in store.
+ * @param {D3 selection} elem
+ * @param {Redux store} store
+ * @param {String} siteNo
+ * @param {Boolean} showMLName - If true add the monitoring location name to the top of the graph
+ * @param {Boolean} showTooltip - If true render the tooltip text and add the tooltip focus element
+ */
 export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, showTooltip) {
     let graphDiv;
 
@@ -185,7 +167,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
             isInteractive: () => true,
             idPrefix: () => 'hydrograph'
         })))
-        .call(plotSvgDefs);
+        .call(addDefsPatterns);
 
     const dataGroup = graphSvg.append('g')
         .attr('class', 'plot-data-lines-group')

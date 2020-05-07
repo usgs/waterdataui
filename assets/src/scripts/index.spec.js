@@ -12,21 +12,10 @@ import './polyfills';
 
 import './ajax.spec';
 
-import './d3-rendering/accessibility.spec';
-import './d3-rendering/alerts.spec';
-import './d3-rendering/axes.spec';
-import './d3-rendering/cursor-slider.spec';
-import './d3-rendering/graph-tooltip.spec';
-import './d3-rendering/legend.spec';
-import './d3-rendering/loading-indicator.spec';
-import './d3-rendering/markers.spec';
-import './d3-rendering/tick-marks.spec';
-
 import './components/daily-value-hydrograph/selectors/labels.spec';
 import './components/daily-value-hydrograph/selectors/legend-data.spec';
 import './components/daily-value-hydrograph/selectors/scales.spec';
 import './components/daily-value-hydrograph/selectors/time-series-data.spec';
-
 import './components/daily-value-hydrograph/graph-brush.spec';
 import './components/daily-value-hydrograph/index.spec';
 import './components/daily-value-hydrograph/time-series-graph.spec';
@@ -54,6 +43,17 @@ import './components/hydrograph/tooltip.spec';
 import './components/map/flood-slider.spec';
 import './components/map/index.spec';
 import './components/map/legend.spec';
+
+import './d3-rendering/accessibility.spec';
+import './d3-rendering/alerts.spec';
+import './d3-rendering/axes.spec';
+import './d3-rendering/cursor-slider.spec';
+import './d3-rendering/data-masks.spec';
+import './d3-rendering/graph-tooltip.spec';
+import './d3-rendering/legend.spec';
+import './d3-rendering/loading-indicator.spec';
+import './d3-rendering/markers.spec';
+import './d3-rendering/tick-marks.spec';
 
 import './helpers.spec';
 

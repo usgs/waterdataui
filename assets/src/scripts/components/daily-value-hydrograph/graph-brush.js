@@ -10,10 +10,15 @@ import {Actions} from '../../store/daily-value-time-series';
 import {getBrushLayout} from './selectors/layout';
 import {getXAxis} from './selectors/axes';
 import {getBrushXScale, getBrushYScale} from './selectors/scales';
-import {getCurrentTimeSeriesLineSegments} from './selectors/time-series-data';
+import {getCurrentTimeSeriesSegments} from './selectors/time-series-data';
 
-import {drawDataLines} from './time-series-graph';
+import {drawDataSegments} from './time-series-graph';
 
+/*
+ * Renders a brush element within container for the daily value graph
+ * @param {D3 selection} container
+ * @param {Redux store} store
+ */
 export const drawGraphBrush = function(container, store) {
 
     const brushed = function() {
@@ -50,8 +55,8 @@ export const drawGraphBrush = function(container, store) {
                     xAxis: getXAxis('BRUSH'),
                     layout: getBrushLayout
                 })))
-                .call(link(store, drawDataLines, createStructuredSelector({
-                    lines: getCurrentTimeSeriesLineSegments,
+                .call(link(store, drawDataSegments, createStructuredSelector({
+                    segments: getCurrentTimeSeriesSegments,
                     xScale: getBrushXScale,
                     yScale: getBrushYScale,
                     enableClip: () => false

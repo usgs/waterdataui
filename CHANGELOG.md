@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.31.0...master)
+### Added
+- Daily value graph now handles masked data
 
 ## [0.31.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.30.0...waterdataui-0.31.0) - 2020-04-29
 ### Changed
