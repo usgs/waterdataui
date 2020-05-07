@@ -1,7 +1,6 @@
 import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
-import config from '../../config';
 import {getCurrentMethodID} from '../../selectors/time-series-selector';
 import {getNearestTime} from '../../utils';
 

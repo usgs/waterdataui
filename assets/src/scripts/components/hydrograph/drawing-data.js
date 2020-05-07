@@ -5,7 +5,6 @@ import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 import {format} from 'd3-format';
 
-import config from '../../config';
 import {getCurrentVariableMedianStatistics} from '../../selectors/median-statistics-selector';
 import {getVariables, getCurrentMethodID, getTimeSeries, getCurrentVariableTimeSeries, getTimeSeriesForTsKey,
     getTsRequestKey, getRequestTimeRange} from '../../selectors/time-series-selector';
@@ -279,9 +278,13 @@ export const lineSegmentsSelector = memoize((tsKey, period) => createSelector(
     pointsByTsKeySelector(tsKey, period),
     getCurrentMethodID,
     (tsPoints, currentMethodID) => {
+        console.log('In lineSegementsSelector current method id is ' + currentMethodID);
         let seriesLines = {};
         Object.keys(tsPoints).forEach((tsId) => {
             const methodID = tsId.split(':')[0];
+            if (tsPoints[tsId].length) {
+                console.log('Drawing points for methodID ' + methodID);
+            }
             const points = tsPoints[tsId];
             let lines = [];
 

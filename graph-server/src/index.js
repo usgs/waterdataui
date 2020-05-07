@@ -86,7 +86,7 @@ app.use(`${PATH_CONTEXT}/api-docs`, swaggerUi.serve, swaggerUi.setup(swaggerDocu
  *         in: query
  *         description: represents an IV timeSeriesId valid for parameterCode
  *         schema:
- *           type: string
+ *           type: integer
  *     responses:
  *       200:
  *         description: PNG image of the IV data for the siteID and parameterCode
