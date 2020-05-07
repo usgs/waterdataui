@@ -158,7 +158,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
         } else {
             tooltipFontSize = 0.8;
         }
-        elem.style('font-size', tooltipFontSize + 'rem');
+        textGroup.style('font-size', tooltipFontSize + 'rem');
     };
 
     // Update the text and backgrounds of all tooltip labels
@@ -195,8 +195,6 @@ export const drawTooltipText = function (elem, store) {
         currentParmCd: getCurrentParmCd
     })));
 };
-
-
 
 /*
  * Appends a group to elem containing a focus line and circles for the current and compare time series

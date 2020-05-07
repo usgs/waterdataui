@@ -169,7 +169,7 @@ describe('components/dailyValueHydrograph/index', () => {
 
             window.requestAnimationFrame(() => {
                 window.requestAnimationFrame(() => {
-                    expect(testDiv.select('.graph-container').selectAll('.dv-legend-controls-container').size()).toBe(1);
+                    expect(testDiv.select('.graph-container').selectAll('.dv-legend-container').size()).toBe(1);
 
                     done();
                 });

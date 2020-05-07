@@ -200,7 +200,7 @@ describe('time series graph', () => {
         });
     });
 
-    describe('SVG has been made accessibile', () => {
+    describe('SVG has been made accessible', () => {
         let svg;
         beforeEach(() => {
             div.call(drawTimeSeriesGraph, store, '12345678', false, false);
