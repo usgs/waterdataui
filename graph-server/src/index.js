@@ -82,6 +82,11 @@ app.use(`${PATH_CONTEXT}/api-docs`, swaggerUi.serve, swaggerUi.setup(swaggerDocu
  *         schema:
  *           type: string
  *           pattern: ^([0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|[1-2][0-9]|0[1-9])$
+ *       - name: timeSeriesId
+ *         in: query
+ *         description: represents an IV timeSeriesId valid for parameterCode
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
  *         description: PNG image of the IV data for the siteID and parameterCode
@@ -155,6 +160,11 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
             errorMessage: 'endDT must be after the startDT'
         },
         errorMessage: 'The endDT must be a date'
+    },
+    timeSeriesId: {
+        in: ['query'],
+        optional: true,
+        toInt: true
     }
 }), function (req, res) {
     const errors = validationResult(req).array();
@@ -172,6 +182,7 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
         period: req.query.period,
         startDT: req.query.startDT,
         endDT: req.query.endDT,
+        timeSeriesId: req.query.timeSeriesId,
         showMLName: req.query.title || false,
         width: req.query.width ? req.query.width : 1200
     });

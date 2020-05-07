@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.31.0...master)
 ### Added
 - Daily value graph now handles masked data
+- The timeSeriesId is now a parameter on the graph image server to show a specific time series for
+a parameter code.
 
 ## [0.31.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.30.0...waterdataui-0.31.0) - 2020-04-29
 ### Changed

@@ -1,6 +1,5 @@
 var CONFIG = {
     TIMESERIES_AUDIO_ENABLED: true,
-    MULTIPLE_TIME_SERIES_METADATA_SELECTOR_ENABLED: true,
     FIM_GIS_ENDPOINT: 'https:/fakelegendservice.com',
     NETWORK_ENDPOINT: 'https://fakeogcservice.com/observations/collections',
     OBSERVATIONS_ENDPOINT: 'https://fakeogcservice.com/observations/collections/monitoring-locations',

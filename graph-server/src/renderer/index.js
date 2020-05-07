@@ -8,7 +8,18 @@ const STATIC_ROOT = process.env.STATIC_ROOT || 'https://waterdata.usgs.gov/nwisw
 const OGC_SITE_ENDPOINT = process.env.OGC_SITE_ENDPOINT || 'https://labs.waterdata.usgs.gov/api/ogcAPI/collections/monitoring-locations/items/';
 
 
-const renderToResponse = function (res, {siteID, parameterCode, compare, period, startDT, endDT, showMLName, width}) {
+const renderToResponse = function (res,
+                                   {
+                                       siteID,
+                                       parameterCode,
+                                       compare,
+                                       period,
+                                       startDT,
+                                       endDT,
+                                       timeSeriesId,
+                                       showMLName,
+                                       width
+                                   }) {
     console.log(`Using static root ${STATIC_ROOT}`);
     console.log(`Retrieving site id with ${OGC_SITE_ENDPOINT}USGS-${siteID}?f=json`);
     axios.get(`${OGC_SITE_ENDPOINT}USGS-${siteID}?f=json`)
@@ -22,6 +33,7 @@ const renderToResponse = function (res, {siteID, parameterCode, compare, period,
                 period: period,
                 startDT: startDT,
                 endDT: endDT,
+                timeSeriesId: timeSeriesId,
                 cursorOffset: false,
                 showOnlyGraph: true,
                 showMLName: showMLName

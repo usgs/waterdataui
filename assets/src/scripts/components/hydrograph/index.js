@@ -40,6 +40,9 @@ const controlDisplay = function(elem, showElem) {
 /*
  * Renders the hydrograph on the node element using the Redux store for state information. The siteno, latitude, and
  * longitude are required parameters. All others are optional and are used to set the initial state of the hydrograph.
+ * @param {Redux store} store
+ * @param {DOM node} node
+ * @param {Object} - string properties to set initial state information. The property siteno is required
  */
 export const attachToNode = function (store,
                                       node,
@@ -52,7 +55,7 @@ export const attachToNode = function (store,
                                           period,
                                           startDT,
                                           endDT,
-                                          timeSeriesId,
+                                          timeSeriesId, // This must be converted to an integer
                                           showOnlyGraph = false,
                                           showMLName = false
                                       } = {}) {
@@ -118,7 +121,7 @@ export const attachToNode = function (store,
                 store.dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('compare', true));
             }
             if (timeSeriesId) {
-                store.dispatch(ivTimeSeriesStateActions.setCurrentIVMethodID(timeSeriesId));
+                store.dispatch(ivTimeSeriesStateActions.setCurrentIVMethodID(parseInt(timeSeriesId)));
             }
             // Initial data has been fetched and initial state set. We can render the hydrograph elements
             // Set up rendering functions for the graph-container

@@ -30,7 +30,7 @@
     "express-cache-headers": "0.1.4",
     "express-validator": "6.4.1",
     "generic-pool": "3.7.1",
-    "puppeteer": "3.0.2",
+    "puppeteer": "3.0.4",
     "swagger-ui-express": "4.1.4"
   },
   "devDependencies": {
