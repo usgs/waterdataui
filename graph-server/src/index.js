@@ -164,6 +164,7 @@ app.get(`${PATH_CONTEXT}/monitoring-location/:siteID/`, cache({ttl: CACHE_TIMEOU
     timeSeriesId: {
         in: ['query'],
         optional: true,
+        toInt: true
     }
 }), function (req, res) {
     const errors = validationResult(req).array();
