@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - The timeSeriesId is now a parameter on the graph image server to show a specific time series for
 a parameter code.
 
+### Changed
+- Updated to use the latest USWDS/WDFN-VIZ packages
+
 ## [0.31.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.30.0...waterdataui-0.31.0) - 2020-04-29
 ### Changed
 - Major rework of how the monitoring location Redux state code is organized. 
