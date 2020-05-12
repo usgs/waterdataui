@@ -5,7 +5,7 @@ const renderPNG = require('./render-png');
 const SERVICE_ROOT = process.env.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
 const PAST_SERVICE_ROOT = process.env.PAST_SERVICE_ROOT || 'https://nwis.waterservices.usgs.gov/nwis';
 const STATIC_ROOT = process.env.STATIC_ROOT || 'https://waterdata.usgs.gov/nwisweb/wsgi/static';
-const OGC_SITE_ENDPOINT = process.env.OGC_SITE_ENDPOINT || 'https://labs.waterdata.usgs.gov/api/ogcAPI/collections/monitoring-locations/items/';
+const OGC_SITE_ENDPOINT = process.env.OGC_SITE_ENDPOINT || 'https://labs.waterdata.usgs.gov/api/observations/collections/monitoring-locations/items/';
 
 
 const renderToResponse = function (res,
