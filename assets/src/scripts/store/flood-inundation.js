@@ -1,4 +1,5 @@
-import {fetchFloodExtent, fetchFloodFeatures} from '../web-services/flood-data';
+import {fetchFloodExtent, fetchFloodFeatures,
+    fetchWaterwatchFloodLevels} from '../web-services/flood-data';
 
 const INITIAL_DATA = {
     stages: [],
@@ -38,6 +39,8 @@ const retrieveFloodData = function(siteno) {
     };
 };
 
+
+
 /*
  * Slice reducer
  */
@@ -66,21 +69,63 @@ const setGageHeight = function(gageHeight) {
 };
 
 /*
+ * Synchronous Redux actions to save the waterwatch data
+ * @param {JSON Object} floodLevels
+ * @return {Object} Redux action
+ */
+const setWaterwatchFloodLevels = function(floodLevels) {
+    return {
+        type: 'SET_WATERWACH_FLOOD_LEVELS',
+        floodLevels
+    };
+};
+
+/*
+ * Asynchronous Redux action to fetch the Waterwatch flood levels data
+ * @param {String} siteno
+ * @return {Function} which returns a Promise
+ */
+const retrieveWaterwatchData = function(siteno) {
+    return function (dispatch) {
+        const floodLevels = fetchWaterwatchFloodLevels(siteno);
+
+        return Promise.all([
+            floodLevels
+        ]).then(function(data) {
+           const floodLevels = data;
+           dispatch(setWaterwatchFloodLevels(floodLevels));
+        });
+    };
+};
+
+/*
  * Slice reducer
  */
 export const floodStateReducer = function(floodState={}, action) {
+
     switch(action.type) {
         case 'SET_GAGE_HEIGHT':
             return {
                 ...floodState,
                 gageHeight: action.gageHeight
             };
+        case 'SET_WATERWACH_FLOOD_LEVELS':
+            return {
+                ...floodState,
+                actionStage: parseInt(action.floodLevels[0].action_stage),
+                floodStage: parseInt(action.floodLevels[0].flood_stage),
+                moderateFloodStage: parseInt(action.floodLevels[0].moderate_flood_stage),
+                majorFloodStage: parseInt(action.floodLevels[0].major_flood_stage)
+            };
         default: return floodState;
     }
 };
 
+
 export const Actions = {
     setFloodFeatures,
     retrieveFloodData,
-    setGageHeight
+    setGageHeight,
+    setWaterwatchFloodLevels,
+    retrieveWaterwatchData
 };

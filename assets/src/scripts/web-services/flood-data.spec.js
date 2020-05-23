@@ -1,4 +1,7 @@
-import {fetchFloodExtent, fetchFloodFeatures} from './flood-data';
+import {fetchFloodExtent, fetchFloodFeatures,
+    fetchWaterwatchFloodLevels} from './flood-data';
+import MOCK_WATERWATCH_FLOOD_LEVELS from '../mock-service-data';
+import {} from './waterwatch-data';
 
 
 describe('flood_data module', () => {
@@ -88,6 +91,44 @@ describe('flood_data module', () => {
                promise.then((resp) => {
                    expect(resp).toEqual({});
                });
+            });
+        });
+    });
+
+    describe('fetchWaterwatchFloodLevels', () => {
+        const siteno = '07144100';
+
+        describe('with valid response', () => {
+
+            let floodLevelPromise;
+
+            beforeEach(() => {
+                /* eslint no-use-before-define: 0 */
+
+                floodLevelPromise = fetchWaterwatchFloodLevels(siteno);
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 200,
+                    responseText: MOCK_WATERWATCH_FLOOD_LEVELS,
+                    contentType: 'application/json'
+                });
+            });
+
+            it('expected response is json object with the flood levels', () => {
+                floodLevelPromise.then((resp) => {
+                    expect(resp.length).toBe(1);
+                    expect(resp[0].properties.site_no).toBe('07144100');
+                });
+            });
+        });
+
+        describe('with error response', () => {
+            it('On failed response return an empty flood levels list', () => {
+                etchWaterwatchFloodLevels(siteno).then((resp) => {
+                    expect(resp.length).toBe(0);
+                });
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 500
+                });
             });
         });
     });

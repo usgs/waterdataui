@@ -13,6 +13,7 @@ import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-valu
 import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
 import {Actions as statisticsDataActions} from '../../store/statistics-data';
 import {Actions as timeZoneActions} from '../../store/time-zone';
+import {Actions as floodStateActions} from '../../store/flood-inundation';
 import {renderTimeSeriesUrlParams} from '../../url-params';
 
 import {drawDateRangeControls} from './date-controls';
@@ -72,6 +73,8 @@ export const attachToNode = function (store,
 
     // Fetch time zone
     const fetchTimeZonePromise = store.dispatch(timeZoneActions.retrieveIanaTimeZone(latitude, longitude));
+    // Fetch waterwatch flood levels
+    const fetchWaterWatchPromise = store.dispatch(floodStateActions.retrieveWaterwatchData(siteno));
     let fetchDataPromise;
     if (showOnlyGraph) {
         // Only fetch what is needed
@@ -101,63 +104,66 @@ export const attachToNode = function (store,
             });
         store.dispatch(statisticsDataActions.retrieveMedianStatistics(siteno));
     }
-    fetchDataPromise.then(() => {
-        // Hide the loading indicator
-        nodeElem
-            .select('.loading-indicator-container')
-            .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
-        if (!hasAnyTimeSeries(store.getState())) {
-            drawInfoAlert(nodeElem, {body: 'No time series data available for this site'});
-        } else {
-            //Update time series state
-            if (parameterCode) {
-                const isThisParamCode = function (variable) {
-                    return variable.variableCode.value === parameterCode;
-                };
-                const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
-                store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
-            }
-            if (compare) {
-                store.dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('compare', true));
-            }
-            if (timeSeriesId) {
-                store.dispatch(ivTimeSeriesStateActions.setCurrentIVMethodID(parseInt(timeSeriesId)));
-            }
-            // Initial data has been fetched and initial state set. We can render the hydrograph elements
-            // Set up rendering functions for the graph-container
-            let graphContainer = nodeElem.select('.graph-container')
-                .call(link(store, controlDisplay, hasAnyTimeSeries))
-                .call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph);
-            if (!showOnlyGraph) {
-                graphContainer
-                    .call(drawTooltipCursorSlider, store)
-                    .call(drawGraphBrush, store);
-            }
-            graphContainer.append('div')
-                .classed('ts-legend-controls-container', true)
-                .call(drawTimeSeriesLegend, store);
 
-            // Add UI interactive elements and the provisional data alert.
-            if (!showOnlyGraph) {
-                nodeElem
-                    .call(drawMethodPicker, store)
-                    .call(drawDateRangeControls, store, siteno);
+    fetchWaterWatchPromise.then( () => {
+        fetchDataPromise.then(() => {
+            // Hide the loading indicator
+            nodeElem
+                .select('.loading-indicator-container')
+                .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
+            if (!hasAnyTimeSeries(store.getState())) {
+                drawInfoAlert(nodeElem, {body: 'No time series data available for this site'});
+            } else {
+                //Update time series state
+                if (parameterCode) {
+                    const isThisParamCode = function (variable) {
+                        return variable.variableCode.value === parameterCode;
+                    };
+                    const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
+                    store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
+                }
+                if (compare) {
+                    store.dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('compare', true));
+                }
+                if (timeSeriesId) {
+                    store.dispatch(ivTimeSeriesStateActions.setCurrentIVMethodID(parseInt(timeSeriesId)));
+                }
+                // Initial data has been fetched and initial state set. We can render the hydrograph elements
+                // Set up rendering functions for the graph-container
+                let graphContainer = nodeElem.select('.graph-container')
+                    .call(link(store, controlDisplay, hasAnyTimeSeries))
+                    .call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph);
+                if (!showOnlyGraph) {
+                    graphContainer
+                        .call(drawTooltipCursorSlider, store)
+                        .call(drawGraphBrush, store);
+                }
+                graphContainer.append('div')
+                    .classed('ts-legend-controls-container', true)
+                    .call(drawTimeSeriesLegend, store);
 
-                nodeElem.select('.ts-legend-controls-container')
-                    .call(drawGraphControls, store);
+                // Add UI interactive elements and the provisional data alert.
+                if (!showOnlyGraph) {
+                    nodeElem
+                        .call(drawMethodPicker, store)
+                        .call(drawDateRangeControls, store, siteno);
 
-                nodeElem.select('.select-time-series-container')
-                    .call(link(store, plotSeriesSelectTable, createStructuredSelector({
-                        siteno: () => siteno,
-                        availableTimeSeries: availableTimeSeriesSelector,
-                        lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current', 'P7D'),
-                        timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM)
-                    }), store));
-                nodeElem.select('.provisional-data-alert')
-                    .attr('hidden', null);
+                    nodeElem.select('.ts-legend-controls-container')
+                        .call(drawGraphControls, store);
 
-                renderTimeSeriesUrlParams(store);
+                    nodeElem.select('.select-time-series-container')
+                        .call(link(store, plotSeriesSelectTable, createStructuredSelector({
+                            siteno: () => siteno,
+                            availableTimeSeries: availableTimeSeriesSelector,
+                            lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current', 'P7D'),
+                            timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM)
+                        }), store));
+                    nodeElem.select('.provisional-data-alert')
+                        .attr('hidden', null);
+
+                    renderTimeSeriesUrlParams(store);
+                }
             }
-        }
+        });
     });
 };

@@ -1,4 +1,5 @@
-import { getFloodStageHeight, hasFloodData, getFloodGageHeightStageIndex } from './flood-data-selector';
+import { getFloodStageHeight, hasFloodData, getFloodGageHeightStageIndex,
+    hasWaterwatchData, getWaterwatchFloodLevels} from './flood-data-selector';
 
 describe('flood-data-selector', () => {
 
@@ -75,6 +76,43 @@ describe('flood-data-selector', () => {
                     stages: [9, 10, 11]
                 }
             })).toBeTruthy();
+        });
+    });
+
+       describe('hasWaterwatchData', () => {
+        it('Return false if no waterwatch flood levels are available', () =>{
+            expect(hasWaterwatchData({
+                floodState: {
+                    actionStage: null,
+                    floodStage: null,
+                    moderateFloodStage: null,
+                    majorFloodStage: null
+                }
+            })).toBeFalsy();
+        });
+
+        it('return true if flood stages are available', () => {
+            expect(hasWaterwatchData({
+                loodState: {
+                    actionStage: 1,
+                    floodStage: null,
+                    moderateFloodStage: null,
+                    majorFloodStage: null
+                }
+            })).toBeTruthy();
+        });
+    });
+
+       describe('getWaterwatchData', () => {
+        it('Return true if waterwatch flood levels are returned', () =>{
+            expect(hasWaterwatchData({
+                floodState: {
+                    actionStage: 1,
+                    floodStage: 2,
+                    moderateFloodStage: 3,
+                    majorFloodStage: 4
+                }
+            })).toBe([1,2,3,4]);
         });
     });
 

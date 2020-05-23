@@ -64,7 +64,11 @@ export const configureStore = function (initialState) {
             cursorOffset: null
         },
         floodState: {
-            gageHeight: null
+            gageHeight: null,
+            actionStage: null,
+            floodStage: null,
+            moderateFloodStage: null,
+            majorFloodStage: null
         },
         ui : {
             windowWidth: 1024,

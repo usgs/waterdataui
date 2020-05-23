@@ -2,6 +2,7 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import {default as thunk} from 'redux-thunk';
 
 import {Actions, floodDataReducer, floodStateReducer} from './flood-inundation';
+import MOCK_WATERWATCH_FLOOD_LEVELS from "../mock-service-data";
 
 describe('store/flood-inundation module', () => {
     /* eslint no-use-before-define: 0 */
@@ -130,6 +131,73 @@ describe('store/flood-inundation module', () => {
                 store.dispatch(Actions.setGageHeight(12));
 
                 expect(store.getState().floodState.gageHeight).toBe(12);
+            });
+        });
+
+        escribe('setWaterwatchFloodLevels', () => {
+            const FLOOD_LEVELS = {
+                "sites": [
+                    {
+                        site_no: "07144100",
+                        action_stage: "20",
+                        flood_stage: "22",
+                        moderate_flood_stage: "25",
+                        major_flood_stage: "26"
+                    }
+                ]
+            };
+        });
+
+
+        describe('retrieveWaterwatchData', () => {
+            it('Expects that fetching urls have the siteno', () => {
+                store.dispatch(Actions.retrieveWaterwatchData('12345678'));
+
+                expect(jasmine.Ajax.requests.count()).toBe(5);
+                expect(jasmine.Ajax.requests.at(0).url).toContain('USGS-12345678');
+                expect(jasmine.Ajax.requests.at(1).url).toContain('USGS-12345678');
+                expect(jasmine.Ajax.requests.at(2).url).toContain('USGS-12345678');
+                expect(jasmine.Ajax.requests.at(3).url).toContain('USGS-12345678');
+                expect(jasmine.Ajax.requests.at(4).url).toContain('USGS-12345678');
+            });
+
+            it('Expects the store to be updated on successful fetches', (done) => {
+                const promise = store.dispatch(Actions.retrieveWaterwatchData('12345678'));
+                jasmine.Ajax.requests.at(0).respondWith({
+                    status: 200,
+                    responseText: MOCK_WATERWATCH_FLOOD_LEVELS
+                });
+
+                promise.then(() => {
+                    const waterwatchData = store.getState().floodState;
+
+                    expect(waterwatchData.actionStage).toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).action_stage);
+                    expect(waterwatchData.floodStage).toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).flood_stage);
+                    expect(waterwatchData.moderateFloodStage)
+                        .toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).moderate_flood_stage);
+                    expect(waterwatchData.majorFloodStage)
+                        .toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).major_flood_stage);
+                    done();
+                });
+            });
+
+            it('Expects the store to not contain empty features if calls are unsuccessful', (done) => {
+                const promise = store.dispatch(Actions.retrieveWaterwatchData('12345678'));
+                jasmine.Ajax.requests.at(0).respondWith({
+                    status: 500,
+                    responseText: 'Internal server error'
+                });
+
+
+                promise.then(() => {
+                    const waterwatchData = store.getState().floodState;
+
+                    expect(waterwatchData.actionStage.toEqual(null));
+                    expect(waterwatchData.floodStage.toEqual(null));
+                    expect(waterwatchData.moderateFloodStage.toEqual(null));
+                    expect(waterwatchData.majorFloodStage.toEqual(null));
+                    done();
+                });
             });
         });
     });
