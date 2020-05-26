@@ -64,7 +64,6 @@ const fetchWaterwatchData = function(waterwatchQuery, siteno) {
 
 // waterwatch webservice calls
 export const fetchWaterwatchFloodLevels = function(siteno) {
-    console.log(`${waterwatchUrl}/floodstage?format=${format}&site=${siteno}`);
     const waterwatchQuery = `${waterwatchUrl}/floodstage?format=${format}&site=${siteno}`;
     return fetchWaterwatchData(waterwatchQuery, siteno);
 };

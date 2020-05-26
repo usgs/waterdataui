@@ -143,7 +143,7 @@ describe('UV: Legend module', () => {
             };
             const result = legendMarkerRowsSelector(newData);
 
-            expect(result.length).toBe(1);
+            expect(result.length).toBe(5);
             expect(result[0].length).toBe(3);
             expect(result[0][0].type).toEqual(textOnlyMarker);
             expect(result[0][1].type).toEqual(lineMarker);

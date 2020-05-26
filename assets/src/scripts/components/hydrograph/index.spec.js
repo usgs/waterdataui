@@ -4,6 +4,7 @@ import {configureStore} from '../../store';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
 import {Actions as statisticsDataActions} from '../../store/statistics-data';
 import {Actions as timeZoneActions} from '../../store/time-zone';
+import {Actions as floodStateActions} from '../../store/flood-inundation';
 
 
 const TEST_STATE = {
@@ -147,6 +148,12 @@ const TEST_STATE = {
     },
     ui: {
         width: 400
+    },
+    floodState: {
+        actionStage: 1,
+        floodStage: 2,
+        moderateFloodStage: 3,
+        majorFloodStage: 4
     }
 };
 
@@ -444,11 +451,17 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                 ui: {
                     windowWidth: 400,
                     width: 400
-                }
+                },
+                 floodState: {
+                     actionStage: 1,
+                     floodStage: 2,
+                     moderateFloodStage: 3,
+                     majorFloodStage: 4
+                 }
 
             });
 
-            attachToNode(store, graphNode, {siteno: '123456788'});
+            attachToNode(store, graphNode, {siteno: '12345678'});
             window.requestAnimationFrame(() => {
                 done();
             });
@@ -516,9 +529,13 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
     describe('hide elements when showOnlyGraph is set to true', () => {
         let store;
         beforeEach(() => {
+            spyOn(floodStateActions, 'retrieveWaterwatchData').and.returnValue(function() {
+                return Promise.resolve({});
+            });
             spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.returnValue(function() {
                 return Promise.resolve({});
             });
+
             store = configureStore({
                 ...TEST_STATE,
                 ivTimeSeriesData: {

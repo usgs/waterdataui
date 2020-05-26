@@ -97,9 +97,20 @@ const TEST_STATE = {
         variables: {
             '45807197': {
                 variableCode: {
-                    value: '00065'
+                    value: '00060'
                 },
                 oid: '45807197',
+                variableName: 'Test title for 00060',
+                variableDescription: 'Test description for 00060',
+                unit: {
+                    unitCode: 'unitCode'
+                }
+            },
+            '45809999': {
+                variableCode: {
+                    value: '00065'
+                },
+                oid: '45809999',
                 variableName: 'Test title for 00065',
                 variableDescription: 'Test description for 00065',
                 unit: {
@@ -166,6 +177,12 @@ const TEST_STATE = {
     },
     ui: {
         width: 400
+    },
+    floodState: {
+        actionStage: 1,
+        floodStage: 2,
+        moderateFloodStage: 3,
+        majorFloodStage: 4
     }
 };
 
@@ -278,10 +295,16 @@ describe('time series graph', () => {
 
     describe('flood level lines', () => {
 
-        beforeEach(() => {
-            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
-        });
+        let tempStore;
 
+        tempStore = {
+                ...TEST_STATE,
+                ivTimeSeriesState: {
+                    ...TEST_STATE.ivTimeSeriesState,
+                    currentIVVariableID: '45809999'
+                }
+            };
+        div.call(drawTimeSeriesGraph, configureStore(tempStore), '12345678', false, false);
         it('Should render four lines', () => {
             expect(selectAll('#flood-level-points .action-stage').size()).toBe(1);
             expect(selectAll('#flood-level-points .flood-stage').size()).toBe(1);
@@ -289,8 +312,16 @@ describe('time series graph', () => {
             expect(selectAll('#flood-level-points .major-flood-stage').size()).toBe(1);
         });
 
-        it('Should remove the lines when removing the median statistics data', (done) => {
-            store.dispatch(Actions.setCurrentIVVariable(45807190));
+        tempStore = {
+                ...TEST_STATE,
+                ivTimeSeriesState: {
+                    ...TEST_STATE.ivTimeSeriesState,
+                    currentIVVariableID: '45807197'
+                }
+            };
+        div.call(drawTimeSeriesGraph, configureStore(tempStore), '12345678', false, false);
+
+        it('Should remove the lines when removing the waterwatch flood levels data', (done) => {
             window.requestAnimationFrame(() => {
                 expect(selectAll('#flood-level-points').size()).toBe(0);
                 done();

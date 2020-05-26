@@ -2,7 +2,7 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import {default as thunk} from 'redux-thunk';
 
 import {Actions, floodDataReducer, floodStateReducer} from './flood-inundation';
-import MOCK_WATERWATCH_FLOOD_LEVELS from "../mock-service-data";
+import {MOCK_WATERWATCH_FLOOD_LEVELS} from "../mock-service-data";
 
 describe('store/flood-inundation module', () => {
     /* eslint no-use-before-define: 0 */

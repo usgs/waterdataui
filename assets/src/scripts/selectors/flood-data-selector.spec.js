@@ -91,9 +91,9 @@ describe('flood-data-selector', () => {
             })).toBeFalsy();
         });
 
-        it('return true if flood stages are available', () => {
+        it('return true if waterwatch flood levels are available', () => {
             expect(hasWaterwatchData({
-                loodState: {
+                floodState: {
                     actionStage: 1,
                     floodStage: null,
                     moderateFloodStage: null,
@@ -112,7 +112,7 @@ describe('flood-data-selector', () => {
                     moderateFloodStage: 3,
                     majorFloodStage: 4
                 }
-            })).toBe([1,2,3,4]);
+            })).toEqual([1,2,3,4]);
         });
     });
 

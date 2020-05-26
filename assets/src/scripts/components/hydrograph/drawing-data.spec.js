@@ -1055,7 +1055,7 @@ describe('drawingData module', () => {
                     queryInfo: {
                         'current:P7D': {
                             notes: {
-                                requestDT: 1488388500000,
+                                requestDT: 1520966700000,
                                 'filter:timeRange': {
                                     mode: 'PERIOD',
                                     periodDays: '7',
@@ -1106,7 +1106,7 @@ describe('drawingData module', () => {
 
             it('Return the expected data points', () => {
                 let result = getWaterwatchFloodLevelDataPoints(TEST_STATE);
-                expect(result.length).toBe(1);
+                expect(result.length).toBe(4);
                 expect(result[0].length).toBe(2);
                 expect(result[0][0]).toEqual({
                     value: 1,
@@ -1114,7 +1114,7 @@ describe('drawingData module', () => {
                         year: 2018,
                         month: 3,
                         day: 6,
-                        hour: 15,
+                        hour: 13,
                         minute: 45,
                         second: 0,
                         zone: 'America/Chicago'
@@ -1124,7 +1124,7 @@ describe('drawingData module', () => {
 
             it('Return the expected data points', () => {
                 let result = getWaterwatchFloodLevelDataPoints(TEST_STATE);
-                expect(result.length).toBe(1);
+                expect(result.length).toBe(4);
                 expect(result[0].length).toBe(2);
                 expect(result[0][1]).toEqual({
                     value: 1,
