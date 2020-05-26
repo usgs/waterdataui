@@ -16,6 +16,7 @@ import {Actions as timeZoneActions} from '../../store/time-zone';
 import {renderTimeSeriesUrlParams} from '../../url-params';
 
 import {drawDateRangeControls} from './date-controls';
+import {drawDataTable} from './data-table';
 import {lineSegmentsByParmCdSelector} from './drawing-data';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
@@ -137,7 +138,7 @@ export const attachToNode = function (store,
                 .classed('ts-legend-controls-container', true)
                 .call(drawTimeSeriesLegend, store);
 
-            // Add UI interactive elements and the provisional data alert.
+            // Add UI interactive elements, data table  and the provisional data alert.
             if (!showOnlyGraph) {
                 nodeElem
                     .call(drawMethodPicker, store)
@@ -153,6 +154,8 @@ export const attachToNode = function (store,
                         lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current', 'P7D'),
                         timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM)
                     }), store));
+                nodeElem.select('#iv-data-table-container')
+                    .call(drawDataTable, store);
                 nodeElem.select('.provisional-data-alert')
                     .attr('hidden', null);
 

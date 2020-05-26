@@ -1,4 +1,3 @@
-import {set} from 'd3-collection';
 import memoize from 'fast-memoize';
 import find from 'lodash/find';
 import {DateTime} from 'luxon';
@@ -6,10 +5,11 @@ import {createSelector} from 'reselect';
 import {format} from 'd3-format';
 
 import {getCurrentVariableMedianStatistics} from '../../selectors/median-statistics-selector';
-import {getVariables, getCurrentMethodID, getTimeSeries, getCurrentVariableTimeSeries, getTimeSeriesForTsKey,
-    getTsRequestKey, getRequestTimeRange} from '../../selectors/time-series-selector';
+import {
+    getVariables, getCurrentMethodID, getTimeSeries, getCurrentVariableTimeSeries, getTimeSeriesForTsKey,
+    getTsRequestKey, getRequestTimeRange, getCurrentVariable
+} from '../../selectors/time-series-selector';
 import {getIanaTimeZone} from '../../selectors/time-zone-selector';
-
 
 export const MASK_DESC = {
     ice: 'Ice Affected',
@@ -157,7 +157,7 @@ export const pointsSelector = memoize((tsKey) => createSelector(
  * @param {Object} point
  * @return {Object}
  */
-export const classesForPoint = point => {
+export const classesForPoint = function(point) {
     return {
         approved: point.qualifiers.indexOf('A') > -1,
         estimated: point.qualifiers.indexOf('e') > -1 || point.qualifiers.indexOf('E') > -1
@@ -250,21 +250,55 @@ export const visiblePointsSelector = createSelector(
 
 
 const getLineClasses = function(pt, isCurrentMethod) {
-    let dataMask = null;
+    let maskIntersection = [];
     if (pt.value === null) {
-        let qualifiers = set(pt.qualifiers.map(q => q.toLowerCase()));
+        const qualifiers = pt.qualifiers.map((q) => {
+            return q.toLowerCase();
+        });
 
         // current business rules specify that a particular data point
         // will only have at most one masking qualifier
-        let maskIntersection = Object.keys(MASK_DESC).filter(x => qualifiers.has(x));
-        dataMask = maskIntersection[0];
+        maskIntersection = Object.keys(MASK_DESC).filter(x => qualifiers.includes(x));
     }
     return {
         ...classesForPoint(pt),
         currentMethod: isCurrentMethod,
-        dataMask
+        dataMask: maskIntersection
     };
 };
+
+export const getCurrentPointData = createSelector(
+    currentVariablePointsByTsIdSelector('current'),
+    getCurrentMethodID,
+    getCurrentVariable,
+    getIanaTimeZone,
+    (pointsByTsId, currentMethodId, currentVariable, timeZone) => {
+         const pointsKey = Object.keys(pointsByTsId).find((tsId) => {
+            return parseInt(tsId.split(':')[0]) === currentMethodId;
+        });
+        return pointsByTsId[pointsKey].map((point) => {
+            const lineClasses = getLineClasses(point, false);
+            let approvals = [];
+            if (lineClasses.approved) {
+                approvals.push('Approved');
+            }
+            if (lineClasses.estimated) {
+                approvals.push('Estimated');
+            }
+
+            if (approvals.length === 0) {
+                approvals.push('Provisional');
+            }
+            return {
+                parameterName: currentVariable.variableName,
+                result: parseFloat(point.value),
+                dateTime: DateTime.fromMillis(point.dateTime, {zone: timeZone}).toISO(),
+                approvals: approvals.join(','),
+                masks: lineClasses.dataMask.join(',')
+            };
+        });
+    }
+);
 
 
 /**
@@ -291,7 +325,7 @@ export const lineSegmentsSelector = memoize((tsKey, period) => createSelector(
             for (let pt of points) {
                 // Classes to put on the line with this point.
                 let lineClasses = getLineClasses(pt, !currentMethodID || currentMethodID === parseInt(methodID));
-
+                lineClasses.dataMask = lineClasses.dataMask.length ? lineClasses.dataMask[0] : null;
                 // If this is a non-masked data point, split lines if the gap
                 // from the period point exceeds MAX_LINE_POINT_GAP.
                 let splitOnGap = false;
