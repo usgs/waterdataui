@@ -295,31 +295,19 @@ describe('time series graph', () => {
 
     describe('flood level lines', () => {
 
-        let tempStore;
+        beforeEach(() => {
+            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
+        });
 
-        tempStore = {
-                ...TEST_STATE,
-                ivTimeSeriesState: {
-                    ...TEST_STATE.ivTimeSeriesState,
-                    currentIVVariableID: '45809999'
-                }
-            };
-        div.call(drawTimeSeriesGraph, configureStore(tempStore), '12345678', false, false);
         it('Should render four lines', () => {
+            store.dispatch(Actions.setCurrentIVVariable(45809999));
+            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
             expect(selectAll('#flood-level-points .action-stage').size()).toBe(1);
             expect(selectAll('#flood-level-points .flood-stage').size()).toBe(1);
             expect(selectAll('#flood-level-points .moderate-flood-stage').size()).toBe(1);
             expect(selectAll('#flood-level-points .major-flood-stage').size()).toBe(1);
         });
 
-        tempStore = {
-                ...TEST_STATE,
-                ivTimeSeriesState: {
-                    ...TEST_STATE.ivTimeSeriesState,
-                    currentIVVariableID: '45807197'
-                }
-            };
-        div.call(drawTimeSeriesGraph, configureStore(tempStore), '12345678', false, false);
 
         it('Should remove the lines when removing the waterwatch flood levels data', (done) => {
             window.requestAnimationFrame(() => {

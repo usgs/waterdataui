@@ -122,7 +122,7 @@ describe('flood_data module', () => {
 
         describe('with error response', () => {
             it('On failed response return an empty flood levels list', () => {
-                etchWaterwatchFloodLevels(siteno).then((resp) => {
+                fetchWaterwatchFloodLevels(siteno).then((resp) => {
                     expect(resp.length).toBe(0);
                 });
                 jasmine.Ajax.requests.mostRecent().respondWith({

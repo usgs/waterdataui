@@ -88,13 +88,12 @@ const setWaterwatchFloodLevels = function(floodLevels) {
 const retrieveWaterwatchData = function(siteno) {
     return function (dispatch) {
         const floodLevels = fetchWaterwatchFloodLevels(siteno);
-
         return Promise.all([
             floodLevels
         ]).then(function(data) {
            const floodLevels = data;
            dispatch(setWaterwatchFloodLevels(floodLevels));
-        });
+        })
     };
 };
 

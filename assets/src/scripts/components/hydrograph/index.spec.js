@@ -198,7 +198,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
 
         it('loading-indicator is shown until initial data has been retrieved', () => {
             attachToNode(store, graphNode, {
-                siteno: '1234568'
+                siteno: '12345678'
             });
 
             expect(select(graphNode).select('.loading-indicator').size()).toBe(1);
@@ -411,6 +411,9 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         /* eslint no-use-before-define: 0 */
         let store;
         beforeEach((done) => {
+            spyOn(floodStateActions, 'retrieveWaterwatchData').and.returnValue(function() {
+                return Promise.resolve({});
+            });
             spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.returnValue(function() {
                 return Promise.resolve({});
             });
@@ -529,9 +532,6 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
     describe('hide elements when showOnlyGraph is set to true', () => {
         let store;
         beforeEach(() => {
-            spyOn(floodStateActions, 'retrieveWaterwatchData').and.returnValue(function() {
-                return Promise.resolve({});
-            });
             spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.returnValue(function() {
                 return Promise.resolve({});
             });

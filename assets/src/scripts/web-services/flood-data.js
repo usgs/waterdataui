@@ -57,7 +57,7 @@ const fetchWaterwatchData = function(waterwatchQuery, siteno) {
             return responseJson ? responseJson : null;
         })
         .catch(reason => {
-            console.error(`Unable to get Waterwatch data for ${siteno} with reason: ${reason}`);
+            console.log(`Unable to get Waterwatch data for ${siteno} with reason: ${reason}`);
             return null;
         });
 };
