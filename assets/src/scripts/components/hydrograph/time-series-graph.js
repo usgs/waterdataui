@@ -7,17 +7,19 @@ import {addSVGAccessibility} from '../../d3-rendering/accessibility';
 import {appendAxes} from '../../d3-rendering/axes';
 import {renderMaskDefs} from '../../d3-rendering/data-masks';
 import {link} from '../../lib/d3-redux';
-import {getAgencyCode, getMonitoringLocationName} from '../../selectors/time-series-selector';
+import {getAgencyCode, getCurrentParmCd, getMonitoringLocationName} from '../../selectors/time-series-selector';
+import {waterwatchVisible} from '../../selectors/flood-data-selector';
 import {mediaQuery}  from '../../utils';
 
 import {getAxes}  from './axes';
 import {
     currentVariableLineSegmentsSelector,
     getCurrentVariableMedianStatPoints,
+    getWaterwatchFloodLevelDataPoints,
     HASH_ID
 } from './drawing-data';
 import {getMainLayout} from './layout';
-import {getMainXScale, getMainYScale} from './scales';
+import {getMainXScale, getMainYScale, getBrushXScale} from './scales';
 import {descriptionSelector, isVisibleSelector, titleSelector} from './time-series';
 import {drawDataLines} from './time-series-data';
 import {drawTooltipFocus, drawTooltipText}  from './tooltip';
@@ -85,6 +87,63 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoin
         plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points: points});
     });
 };
+
+/**
+ * Plots the Waterwatch flood level points for a multiple time series.
+ * @param  {Object} elem
+ * @param  {Function} xscale
+ * @param  {Function} yscale
+ * @param  {Number} modulo
+ * @param  {Array} points
+ */
+const plotFloodLevelPoints = function(elem, {xscale, yscale, points, classes}) {
+    const stepFunction = d3Line()
+        .curve(curveStepAfter)
+        .x(function (d) {
+            return xscale(d.date);
+        })
+        .y(function (d) {
+            return yscale(d.value);
+        });
+    const floodLevelGrp = elem.append('g');
+    floodLevelGrp.append('path')
+        .datum(points)
+        .classed(classes[0], true)
+        .classed(classes[1], true)
+        .attr('d', stepFunction);
+};
+
+/**
+ * Plots the Waterwatch points for all flood levels for the current variable.
+ * @param  {Object} elem
+ * @param  {Boolean} visible
+ * @param  {Function} xscale
+ * @param  {Function} yscale
+ * @param  {Array} seriesPoints
+ * @param {Boolean} enableClip
+ */
+const plotAllFloodLevelPoints = function (elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
+    elem.select('#flood-level-points').remove();
+    if (!visible) {
+        return;
+    }
+    const container = elem
+        .append('g')
+        .lower()
+            .attr('id', 'flood-level-points');
+    if (enableClip) {
+        container.attr('clip-path', 'url(#graph-clip');
+    }
+    const classes = [['waterwatch-data-series','action-stage'],
+        ['waterwatch-data-series','flood-stage'],
+        ['waterwatch-data-series','moderate-flood-stage'],
+        ['waterwatch-data-series','major-flood-stage']];
+
+    seriesPoints.forEach((points, index) => {
+        plotFloodLevelPoints(container, {xscale, yscale, points: points, classes: classes[index]});
+    });
+};
+
 
 const createTitle = function(elem, store, siteNo, showMLName) {
     let titleDiv = elem.append('div')
@@ -196,6 +255,12 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
             xscale: getMainXScale('current'),
             yscale: getMainYScale,
             seriesPoints: getCurrentVariableMedianStatPoints
+        })))
+       .call(link(store, plotAllFloodLevelPoints, createStructuredSelector({
+            visible: waterwatchVisible,
+            xscale: getBrushXScale('current'),
+            yscale: getMainYScale,
+            seriesPoints: getWaterwatchFloodLevelDataPoints
         })));
     if (showTooltip) {
         dataGroup.call(drawTooltipFocus, store);

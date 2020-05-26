@@ -97,11 +97,11 @@ const TEST_STATE = {
         variables: {
             '45807197': {
                 variableCode: {
-                    value: '00060'
+                    value: '00065'
                 },
                 oid: '45807197',
-                variableName: 'Test title for 00060',
-                variableDescription: 'Test description for 00060',
+                variableName: 'Test title for 00065',
+                variableDescription: 'Test description for 00065',
                 unit: {
                     unitCode: 'unitCode'
                 }
@@ -271,6 +271,28 @@ describe('time series graph', () => {
             store.dispatch(Actions.setIVTimeSeriesVisibility('median', false));
             window.requestAnimationFrame(() => {
                 expect(selectAll('#median-points .median-data-series').size()).toBe(0);
+                done();
+            });
+        });
+    });
+
+    describe('flood level lines', () => {
+
+        beforeEach(() => {
+            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
+        });
+
+        it('Should render four lines', () => {
+            expect(selectAll('#flood-level-points .action-stage').size()).toBe(1);
+            expect(selectAll('#flood-level-points .flood-stage').size()).toBe(1);
+            expect(selectAll('#flood-level-points .moderate-flood-stage').size()).toBe(1);
+            expect(selectAll('#flood-level-points .major-flood-stage').size()).toBe(1);
+        });
+
+        it('Should remove the lines when removing the median statistics data', (done) => {
+            store.dispatch(Actions.setCurrentIVVariable(45807190));
+            window.requestAnimationFrame(() => {
+                expect(selectAll('#flood-level-points').size()).toBe(0);
                 done();
             });
         });

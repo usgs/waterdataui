@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-
+import { getCurrentParmCd } from './time-series-selector';
 
 export const getFloodStages = state => state.floodData.stages || [];
 
@@ -33,6 +33,16 @@ export const hasWaterwatchData = createSelector(
         floodStage != null ||
         moderateFloodStage != null ||
         majorFloodStage != null
+);
+
+/*
+ * Provides a function which returns True if waterwatch flood levels should be visible.
+ */
+export const waterwatchVisible = createSelector(
+    hasWaterwatchData,
+    getCurrentParmCd,
+    (hasWW, paramCd) =>
+        hasWW && paramCd == "00065"
 );
 
 /*

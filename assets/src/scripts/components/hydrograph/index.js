@@ -149,6 +149,7 @@ export const attachToNode = function (store,
                         .call(drawDateRangeControls, store, siteno);
 
                     nodeElem.select('.ts-legend-controls-container')
+
                         .call(drawGraphControls, store);
 
                     nodeElem.select('.select-time-series-container')

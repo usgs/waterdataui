@@ -112,10 +112,10 @@ export const floodStateReducer = function(floodState={}, action) {
         case 'SET_WATERWACH_FLOOD_LEVELS':
             return {
                 ...floodState,
-                actionStage: parseInt(action.floodLevels[0].action_stage),
-                floodStage: parseInt(action.floodLevels[0].flood_stage),
-                moderateFloodStage: parseInt(action.floodLevels[0].moderate_flood_stage),
-                majorFloodStage: parseInt(action.floodLevels[0].major_flood_stage)
+                actionStage: action.floodLevels[0] ? parseInt(action.floodLevels[0].action_stage) : null,
+                floodStage: action.floodLevels[0] ? parseInt(action.floodLevels[0].flood_stage) : null,
+                moderateFloodStage: action.floodLevels[0] ? parseInt(action.floodLevels[0].moderate_flood_stage) : null,
+                majorFloodStage: action.floodLevels[0] ? parseInt(action.floodLevels[0].major_flood_stage) : null
             };
         default: return floodState;
     }

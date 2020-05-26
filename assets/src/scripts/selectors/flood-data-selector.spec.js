@@ -1,5 +1,5 @@
 import { getFloodStageHeight, hasFloodData, getFloodGageHeightStageIndex,
-    hasWaterwatchData, getWaterwatchFloodLevels} from './flood-data-selector';
+    hasWaterwatchData, getWaterwatchFloodLevels, waterwatchVisible} from './flood-data-selector';
 
 describe('flood-data-selector', () => {
 
@@ -105,7 +105,7 @@ describe('flood-data-selector', () => {
 
        describe('getWaterwatchData', () => {
         it('Return true if waterwatch flood levels are returned', () =>{
-            expect(hasWaterwatchData({
+            expect(getWaterwatchFloodLevels({
                 floodState: {
                     actionStage: 1,
                     floodStage: 2,
@@ -113,6 +113,50 @@ describe('flood-data-selector', () => {
                     majorFloodStage: 4
                 }
             })).toBe([1,2,3,4]);
+        });
+    });
+
+       describe('waterwatchVisible', () => {
+        it('Return false if waterwatch flood levels should not be visible', () =>{
+            expect(waterwatchVisible({
+                floodState: {
+                    actionStage: 1,
+                    floodStage: 2,
+                    moderateFloodStage: 3,
+                    majorFloodStage: 4
+                },
+                ivTimeSeriesState: {
+                    currentIVVariableID: '45807197',
+                },
+                ivTimeSeriesData: {
+                    variables: {
+                        '45807197': {
+                            variableCode: {value: '00060'},
+                        }
+                    }
+                }
+            })).toBeFalsy();
+        });
+
+         it('Return true if waterwatch flood levels should be visible', () =>{
+            expect(waterwatchVisible({
+                floodState: {
+                    actionStage: 1,
+                    floodStage: 2,
+                    moderateFloodStage: 3,
+                    majorFloodStage: 4
+                },
+                ivTimeSeriesState: {
+                    currentIVVariableID: '45807197',
+                },
+                ivTimeSeriesData: {
+                    variables: {
+                        '45807197': {
+                            variableCode: {value: '00065'},
+                        }
+                    }
+                }
+            })).toBeTruthy();
         });
     });
 

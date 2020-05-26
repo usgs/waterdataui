@@ -94,6 +94,12 @@ describe('UV: Legend module', () => {
                 compare: true,
                 median: true
             }
+        },
+        floodState: {
+            actionStage: 1,
+            floodStage: 2,
+            moderateFloodStage: 3,
+            majorFloodStage: 4
         }
     };
 
@@ -106,7 +112,8 @@ describe('UV: Legend module', () => {
                     ...TEST_DATA.ivTimeSeriesData,
                     timeSeries: {}
                 },
-                statisticsData: {}
+                statisticsData: {},
+                floodState: {}
             };
 
             expect(legendMarkerRowsSelector(newData)).toEqual([]);

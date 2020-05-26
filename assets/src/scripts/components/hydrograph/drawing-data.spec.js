@@ -1,6 +1,6 @@
 
 import {DateTime} from 'luxon';
-import {lineSegmentsSelector, pointsSelector, allPointsSelector, pointsByTsKeySelector, classesForPoint, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, currentVariablePointsSelector, currentVariablePointsByTsIdSelector, visiblePointsSelector, getCurrentVariableMedianStatPoints, MAX_LINE_POINT_GAP} from './drawing-data';
+import {lineSegmentsSelector, pointsSelector, allPointsSelector, pointsByTsKeySelector, classesForPoint, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, currentVariablePointsSelector, currentVariablePointsByTsIdSelector, visiblePointsSelector, getCurrentVariableMedianStatPoints, MAX_LINE_POINT_GAP, getWaterwatchFloodLevelDataPoints} from './drawing-data';
 
 const TEST_DATA = {
     ivTimeSeriesData: {
@@ -195,6 +195,12 @@ const TEST_DATA = {
         currentIVVariableID: '45807197',
         currentIVDateRangeKind: 'P7D',
         currentIVMethodID: 69928
+    },
+    floodState: {
+        actionStage: 1,
+        floodStage: 2,
+        moderateFloodStage: 3,
+        majorFloodStage: 4
     }
 };
 
@@ -1028,6 +1034,111 @@ describe('drawingData module', () => {
                 }
             };
             expect(getCurrentVariableMedianStatPoints(newTestState)).toEqual([]);
+        });
+
+        describe('getWaterwatchtFloodLevelPoints', () => {
+            const TEST_VARS = {
+                '45807042': {
+                    variableCode: {
+                        'value': '00060'
+                    }
+                },
+                '45807142': {
+                    variableCode: {
+                        'value': '00010'
+                    }
+                }
+            };
+
+            const TEST_STATE = {
+                ivTimeSeriesData: {
+                    queryInfo: {
+                        'current:P7D': {
+                            notes: {
+                                requestDT: 1488388500000,
+                                'filter:timeRange': {
+                                    mode: 'PERIOD',
+                                    periodDays: '7',
+                                    modifiedSince: null
+                                }
+                            }
+                        }
+                    },
+                    variables: TEST_VARS,
+                    timeSeries: {
+                        '69928:00060': {
+                            tsKey: 'current:P7D',
+                            startTime: new Date('2018-03-06T15:45:00.000Z'),
+                            endTime: new Date('2018-03-13t13:45:00.000Z'),
+                            variable: '45807197',
+                            method: 69928,
+                            points: [{
+                                value: 10,
+                                qualifiers: ['P'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: null,
+                                qualifiers: ['P', 'ICE'],
+                                approved: false,
+                                estimated: false
+                            }, {
+                                value: null,
+                                qualifiers: ['P', 'FLD'],
+                                approved: false,
+                                estimated: false
+                            }]
+                        }
+                    }
+                },
+                ianaTimeZone: 'America/Chicago',
+                ivTimeSeriesState: {
+                    currentIVVariableID: '45807142',
+                    currentIVDateRangeKind: 'P7D'
+                },
+                floodState: {
+                    actionStage: 1,
+                    floodStage: 2,
+                    moderateFloodStage: 3,
+                    majorFloodStage: 4
+                },
+            };
+
+            it('Return the expected data points', () => {
+                let result = getWaterwatchFloodLevelDataPoints(TEST_STATE);
+                expect(result.length).toBe(1);
+                expect(result[0].length).toBe(2);
+                expect(result[0][0]).toEqual({
+                    value: 1,
+                    date: DateTime.fromObject({
+                        year: 2018,
+                        month: 3,
+                        day: 6,
+                        hour: 15,
+                        minute: 45,
+                        second: 0,
+                        zone: 'America/Chicago'
+                    }).valueOf()
+                });
+            });
+
+            it('Return the expected data points', () => {
+                let result = getWaterwatchFloodLevelDataPoints(TEST_STATE);
+                expect(result.length).toBe(1);
+                expect(result[0].length).toBe(2);
+                expect(result[0][1]).toEqual({
+                    value: 1,
+                    date: DateTime.fromObject({
+                        year: 2018,
+                        month: 3,
+                        day: 13,
+                        hour: 13,
+                        minute: 45,
+                        second: 0,
+                        zone: 'America/Chicago'
+                    }).valueOf()
+                });
+            });
         });
     });
 });

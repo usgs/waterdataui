@@ -7,8 +7,9 @@ import {drawSimpleLegend} from '../../d3-rendering/legend';
 import {defineLineMarker, defineTextOnlyMarker, defineRectangleMarker} from '../../d3-rendering/markers';
 import {link} from '../../lib/d3-redux';
 import {getCurrentVariableMedianMetadata} from '../../selectors/median-statistics-selector';
-import {hasWaterwatchData, getWaterwatchFloodLevels} from '../../selectors/flood-data-selector';
-import {getCurrentVariable} from '../../selectors/time-series-selector';
+import {hasWaterwatchData, getWaterwatchFloodLevels,
+    waterwatchVisible} from '../../selectors/flood-data-selector';
+import {getCurrentParmCd} from '../../selectors/time-series-selector';
 
 import {currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} from './drawing-data';
 import {getMainLayout} from './layout';
@@ -107,15 +108,15 @@ const createLegendMarkers = function(displayItems) {
 
     if (displayItems.floodLevels) {
         const floodLevels = displayItems.floodLevels;
-        console.log(floodLevels);
         const labels = ['Action Stage: ', 'Flood Stage: ', 'Moderate Flood Stage: ', 'Major Flood Stage: ']
-        const classes = ['action-stage-data-series', 'flood-stage-data-series',
-            'moderate-flood-stage-data-series', 'major-flood-stage-data-series']
+        const wwSeriesClass = 'waterwatch-data-series';
+        const classes = ['action-stage', 'flood-stage', 'moderate-flood-stage', 'major-flood-stage']
 
         for (let index = 0; index < floodLevels.length; index++) {
             legendMarkers.push([
                 defineTextOnlyMarker(labels[index]),
-                defineLineMarker(null, classes[index], `${floodLevels[index]} ft`)]);
+                defineLineMarker(null, `${wwSeriesClass} ${classes[index]}`,
+                    `${floodLevels[index]} ft`)]);
         }
     }
 
@@ -148,15 +149,14 @@ const legendDisplaySelector = createSelector(
     getCurrentVariableMedianMetadata,
     uniqueClassesSelector('current'),
     uniqueClassesSelector('compare'),
-    hasWaterwatchData,
+    waterwatchVisible,
     getWaterwatchFloodLevels,
-    getCurrentVariable,
-    (showSeries, medianSeries, currentClasses, compareClasses, hasWW, getWW, getVar) => {
+    (showSeries, medianSeries, currentClasses, compareClasses, visible, getWW) => {
         return {
             current: showSeries.current ? currentClasses : undefined,
             compare: showSeries.compare ? compareClasses : undefined,
             median: showSeries.median ? medianSeries : undefined,
-            floodLevels: hasWW && getVar.variableCode.value == "00065" ? getWW : undefined,
+            floodLevels: visible ? getWW : undefined,
         };
     }
 );

@@ -6,6 +6,7 @@ import {createSelector} from 'reselect';
 import {format} from 'd3-format';
 
 import {getCurrentVariableMedianStatistics} from '../../selectors/median-statistics-selector';
+import {getWaterwatchFloodLevels} from '../../selectors/flood-data-selector';
 import {getVariables, getCurrentMethodID, getTimeSeries, getCurrentVariableTimeSeries, getTimeSeriesForTsKey,
     getTsRequestKey, getRequestTimeRange} from '../../selectors/time-series-selector';
 import {getIanaTimeZone} from '../../selectors/time-zone-selector';
@@ -165,7 +166,7 @@ export const classesForPoint = point => {
 };
 
 /*
- * @ return {Array of Arrays of Objects} where the properties are date (universal), class,  and value
+ * @ return {Array of Arrays of Objects} where the properties are date (universal), and value
 */
 export const getCurrentVariableMedianStatPoints = createSelector(
     getCurrentVariableMedianStatistics,
@@ -219,6 +220,46 @@ export const getCurrentVariableMedianStatPoints = createSelector(
                 });
         });
     });
+
+/*
+ * @ return {Array of Arrays of Objects} where the properties are date (universal), and value
+*/
+export const getWaterwatchFloodLevelDataPoints = createSelector(
+    getWaterwatchFloodLevels,
+    getRequestTimeRange('current'),
+    getIanaTimeZone,
+    (floodLevels, timeRange, ianaTimeZone) => {
+        if (!floodLevels || !timeRange) {
+            return [];
+        }
+
+        let datesOfInterest = [];
+        let nextDateTime = DateTime.fromMillis(timeRange.start, {zone: ianaTimeZone});
+        datesOfInterest.push({
+            year: nextDateTime.year,
+            month: nextDateTime.month.toString(),
+            day: nextDateTime.day.toString(),
+            utcDate: timeRange.start
+        });
+        nextDateTime = DateTime.fromMillis(timeRange.end, {zone: ianaTimeZone});
+        datesOfInterest.push({
+            year: nextDateTime.year,
+            month: nextDateTime.month.toString(),
+            day: nextDateTime.day.toString(),
+            utcDate: timeRange.end
+        });
+
+        return floodLevels.map((floodLevel) => {
+            return datesOfInterest
+                .map((date) => {
+                    return {
+                        value: floodLevel,
+                        date: date.utcDate
+                    };
+                })
+        });
+    }
+);
 
 
 /**
