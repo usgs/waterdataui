@@ -49,11 +49,11 @@ const TEST_DATA = {
                 method: 69928,
                 points: [{
                     value: 10,
-                    qualifiers: ['P'],
+                    qualifiers: ['A'],
                     dateTime: 1520351100000
                 }, {
                     value: null,
-                    qualifiers: ['P', 'ICE'],
+                    qualifiers: ['E', 'ICE'],
                     dateTime: 1520352000000
                 }, {
                     value: null,
@@ -327,14 +327,14 @@ describe('drawingData module', () => {
                parameterName: 'Streamflow',
                dateTime: '2018-03-06T09:45-06:00',
                result: '10',
-               approvals: 'Provisional',
+               approvals: 'Approved',
                masks: ''
            });
            expect(result[1]).toEqual({
                parameterName: 'Streamflow',
                dateTime: '2018-03-06T10:00-06:00',
                result: '',
-               approvals: 'Provisional',
+               approvals: 'Estimated',
                masks: 'Ice Affected'
            });
            expect(result[2]).toEqual({
@@ -731,27 +731,27 @@ describe('drawingData module', () => {
                 '69928:00060': [
                     {
                         'classes': {
-                            'approved': false,
+                            'approved': true,
                             'estimated': false,
                             'currentMethod': false,
                             'dataMask': null
                         },
                         'points': [{
                             'value': 10,
-                            'qualifiers': ['P'],
+                            'qualifiers': ['A'],
                             'dateTime': 1520351100000
                         }]
                     },
                     {
                         'classes': {
                             'approved': false,
-                            'estimated': false,
+                            'estimated': true,
                             'currentMethod': false,
                             'dataMask': 'ice'
                         },
                         'points': [{
                             'value': null,
-                            'qualifiers': ['P', 'ICE'],
+                            'qualifiers': ['E', 'ICE'],
                             'dateTime': 1520352000000
                         }]
                     },
