@@ -147,7 +147,7 @@ describe('flood-data-selector', () => {
                     majorFloodStage: 4
                 },
                 ivTimeSeriesState: {
-                    currentIVVariableID: '45807197',
+                    currentIVVariableID: '45807197'
                 },
                 ivTimeSeriesData: {
                     variables: {
