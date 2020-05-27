@@ -192,6 +192,7 @@ const TEST_DATA = {
             }
         }
     },
+    ianaTimeZone: 'America/Chicago',
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
         currentIVDateRangeKind: 'P7D',
