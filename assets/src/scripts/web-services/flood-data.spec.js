@@ -95,16 +95,16 @@ describe('flood_data module', () => {
     });
 
     describe('fetchWaterwatchFloodLevels', () => {
+        let floodLevelPromise;
         const siteno = '07144100';
 
         describe('with valid response', () => {
-
-            let floodLevelPromise;
 
             beforeEach(() => {
                 /* eslint no-use-before-define: 0 */
 
                 floodLevelPromise = fetchWaterwatchFloodLevels(siteno);
+                console.log(jasmine.Ajax.requests.mostRecent());
                 jasmine.Ajax.requests.mostRecent().respondWith({
                     status: 200,
                     responseText: MOCK_WATERWATCH_FLOOD_LEVELS,
@@ -114,7 +114,8 @@ describe('flood_data module', () => {
 
             it('expected response is json object with the flood levels', () => {
                 floodLevelPromise.then((resp) => {
-                    expect(resp.length).toBe(1);
+                    console.log(resp);
+                    expect(resp).not.toEqual(null);
                     expect(resp[0].properties.site_no).toBe('07144100');
                 });
             });
@@ -126,7 +127,8 @@ describe('flood_data module', () => {
                     expect(resp.length).toBe(0);
                 });
                 jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 500
+                    status: 500,
+                    responseText: 'Error'
                 });
             });
         });

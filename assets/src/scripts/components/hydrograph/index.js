@@ -105,7 +105,7 @@ export const attachToNode = function (store,
         store.dispatch(statisticsDataActions.retrieveMedianStatistics(siteno));
     }
 
-    fetchWaterWatchPromise.then( () => {
+    Promise.all([fetchDataPromise, fetchWaterWatchPromise]).then( () => {
         fetchDataPromise.then(() => {
             // Hide the loading indicator
             nodeElem

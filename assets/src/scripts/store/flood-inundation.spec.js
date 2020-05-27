@@ -181,7 +181,7 @@ describe('store/flood-inundation module', () => {
             });
 
             it('Expects the store to not contain empty features if calls are unsuccessful', (done) => {
-                spyOn(Actions, 'retrieveWaterwatchData')
+
                 const promise = store.dispatch(Actions.retrieveWaterwatchData('12345678'));
 
                 jasmine.Ajax.requests.at(0).respondWith({
@@ -192,10 +192,10 @@ describe('store/flood-inundation module', () => {
                 promise.then(() => {
                     const waterwatchData = store.getState().floodState;
 
-                    expect(waterwatchData.actionStage.toEqual(null));
-                    expect(waterwatchData.floodStage.toEqual(null));
-                    expect(waterwatchData.moderateFloodStage.toEqual(null));
-                    expect(waterwatchData.majorFloodStage.toEqual(null));
+                    expect(waterwatchData.actionStage).toEqual(null);
+                    expect(waterwatchData.floodStage).toEqual(null);
+                    expect(waterwatchData.moderateFloodStage).toEqual(null);
+                    expect(waterwatchData.majorFloodStage).toEqual(null);
                     done();
                 });
             });
