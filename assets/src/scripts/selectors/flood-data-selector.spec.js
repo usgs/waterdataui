@@ -126,12 +126,12 @@ describe('flood-data-selector', () => {
                     majorFloodStage: 4
                 },
                 ivTimeSeriesState: {
-                    currentIVVariableID: '45807197',
+                    currentIVVariableID: '45807197'
                 },
                 ivTimeSeriesData: {
                     variables: {
                         '45807197': {
-                            variableCode: {value: '00060'},
+                            variableCode: {value: '00060'}
                         }
                     }
                 }
@@ -152,7 +152,7 @@ describe('flood-data-selector', () => {
                 ivTimeSeriesData: {
                     variables: {
                         '45807197': {
-                            variableCode: {value: '00065'},
+                            variableCode: {value: '00065'}
                         }
                     }
                 }

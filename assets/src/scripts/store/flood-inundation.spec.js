@@ -2,8 +2,7 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import {default as thunk} from 'redux-thunk';
 
 import {Actions, floodDataReducer, floodStateReducer} from './flood-inundation';
-import {MOCK_WATERWATCH_FLOOD_LEVELS} from "../mock-service-data";
-import {Actions as ivTimeSeriesDataActions} from "./instantaneous-value-time-series-data";
+import {MOCK_WATERWATCH_FLOOD_LEVELS} from '../mock-service-data';
 
 describe('store/flood-inundation module', () => {
     /* eslint no-use-before-define: 0 */
@@ -136,19 +135,27 @@ describe('store/flood-inundation module', () => {
         });
 
         describe('setWaterwatchFloodLevels', () => {
-            const FLOOD_LEVELS = {
-                "sites": [
+            const FLOOD_LEVELS = [
                     {
-                        site_no: "07144100",
-                        action_stage: "20",
-                        flood_stage: "22",
-                        moderate_flood_stage: "25",
-                        major_flood_stage: "26"
+                        site_no: '07144100',
+                        action_stage: '20',
+                        flood_stage: '22',
+                        moderate_flood_stage: '25',
+                        major_flood_stage: '26'
                     }
-                ]
-            };
-        });
+                ];
 
+            it('expect waterwatch data to be updated', () => {
+                store.dispatch(
+                    Actions.setWaterwatchFloodLevels(FLOOD_LEVELS));
+                const waterwatchData = store.getState().floodState;
+
+                expect(waterwatchData.actionStage).toEqual(parseInt(FLOOD_LEVELS[0].action_stage));
+                expect(waterwatchData.floodStage).toEqual(parseInt(FLOOD_LEVELS[0].flood_stage));
+                expect(waterwatchData.moderateFloodStage).toEqual(parseInt(FLOOD_LEVELS[0].moderate_flood_stage));
+                expect(waterwatchData.majorFloodStage).toEqual(parseInt(FLOOD_LEVELS[0].major_flood_stage));
+            });
+        });
 
         describe('retrieveWaterwatchData', () => {
             it('Expects that fetching urls have the siteno', () => {

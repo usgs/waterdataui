@@ -256,7 +256,7 @@ export const getWaterwatchFloodLevelDataPoints = createSelector(
                         value: floodLevel,
                         date: date.utcDate
                     };
-                })
+                });
         });
     }
 );

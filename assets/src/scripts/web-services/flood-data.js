@@ -1,12 +1,11 @@
 import {get} from '../ajax';
 import config from '../config';
 
-
 export const FLOOD_EXTENTS_ENDPOINT = `${config.FIM_GIS_ENDPOINT}floodExtents/MapServer/`;
 export const FLOOD_BREACH_ENDPOINT = `${config.FIM_GIS_ENDPOINT}breach/MapServer/`;
 export const FLOOD_LEVEE_ENDPOINT = `${config.FIM_GIS_ENDPOINT}suppLyrs/MapServer/`;
 const waterwatchUrl = config.WATERWATCH_ENDPOINT;
-const format = 'json'
+const format = 'json';
 
 /*
  * Retrieve flood features if any for siteno

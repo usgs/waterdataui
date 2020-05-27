@@ -42,7 +42,7 @@ export const waterwatchVisible = createSelector(
     hasWaterwatchData,
     getCurrentParmCd,
     (hasWW, paramCd) =>
-        hasWW && paramCd == "00065"
+        hasWW && paramCd == '00065'
 );
 
 /*

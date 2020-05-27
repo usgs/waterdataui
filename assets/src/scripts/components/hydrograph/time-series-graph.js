@@ -7,7 +7,7 @@ import {addSVGAccessibility} from '../../d3-rendering/accessibility';
 import {appendAxes} from '../../d3-rendering/axes';
 import {renderMaskDefs} from '../../d3-rendering/data-masks';
 import {link} from '../../lib/d3-redux';
-import {getAgencyCode, getCurrentParmCd, getMonitoringLocationName} from '../../selectors/time-series-selector';
+import {getAgencyCode, getMonitoringLocationName} from '../../selectors/time-series-selector';
 import {waterwatchVisible} from '../../selectors/flood-data-selector';
 import {mediaQuery}  from '../../utils';
 

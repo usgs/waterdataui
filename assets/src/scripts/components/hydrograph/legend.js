@@ -7,9 +7,7 @@ import {drawSimpleLegend} from '../../d3-rendering/legend';
 import {defineLineMarker, defineTextOnlyMarker, defineRectangleMarker} from '../../d3-rendering/markers';
 import {link} from '../../lib/d3-redux';
 import {getCurrentVariableMedianMetadata} from '../../selectors/median-statistics-selector';
-import {hasWaterwatchData, getWaterwatchFloodLevels,
-    waterwatchVisible} from '../../selectors/flood-data-selector';
-import {getCurrentParmCd} from '../../selectors/time-series-selector';
+import {getWaterwatchFloodLevels, waterwatchVisible} from '../../selectors/flood-data-selector';
 
 import {currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} from './drawing-data';
 import {getMainLayout} from './layout';
@@ -108,9 +106,9 @@ const createLegendMarkers = function(displayItems) {
 
     if (displayItems.floodLevels) {
         const floodLevels = displayItems.floodLevels;
-        const labels = ['Action Stage: ', 'Flood Stage: ', 'Moderate Flood Stage: ', 'Major Flood Stage: ']
+        const labels = ['Action Stage: ', 'Flood Stage: ', 'Moderate Flood Stage: ', 'Major Flood Stage: '];
         const wwSeriesClass = 'waterwatch-data-series';
-        const classes = ['action-stage', 'flood-stage', 'moderate-flood-stage', 'major-flood-stage']
+        const classes = ['action-stage', 'flood-stage', 'moderate-flood-stage', 'major-flood-stage'];
 
         for (let index = 0; index < floodLevels.length; index++) {
             legendMarkers.push([
@@ -156,7 +154,7 @@ const legendDisplaySelector = createSelector(
             current: showSeries.current ? currentClasses : undefined,
             compare: showSeries.compare ? compareClasses : undefined,
             median: showSeries.median ? medianSeries : undefined,
-            floodLevels: visible ? getWW : undefined,
+            floodLevels: visible ? getWW : undefined
         };
     }
 );

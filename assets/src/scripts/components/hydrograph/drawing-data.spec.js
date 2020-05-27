@@ -1101,7 +1101,7 @@ describe('drawingData module', () => {
                     floodStage: 2,
                     moderateFloodStage: 3,
                     majorFloodStage: 4
-                },
+                }
             };
 
             it('Return the expected data points', () => {
