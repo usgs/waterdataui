@@ -28,6 +28,7 @@ import './components/hydrograph/cursor.spec';
 import './components/hydrograph/date-controls.spec';
 import './components/hydrograph/domain.spec';
 import './components/hydrograph/drawing-data.spec';
+import './components/hydrograph/data-table.spec';
 import './components/hydrograph/graph-brush.spec';
 import './components/hydrograph/graph-controls.spec';
 import './components/hydrograph/index.spec';

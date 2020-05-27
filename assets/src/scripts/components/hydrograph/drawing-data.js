@@ -267,17 +267,27 @@ const getLineClasses = function(pt, isCurrentMethod) {
     };
 };
 
+/*
+ * Returns a selector function which returns an array of Objects that represent
+ * the current IV data for the current time range.
+ * @return {Function} which returns an array of objects.
+ */
 export const getCurrentPointData = createSelector(
     currentVariablePointsByTsIdSelector('current'),
     getCurrentMethodID,
     getCurrentVariable,
     getIanaTimeZone,
     (pointsByTsId, currentMethodId, currentVariable, timeZone) => {
-         const pointsKey = Object.keys(pointsByTsId).find((tsId) => {
+        const pointsKey = Object.keys(pointsByTsId).find((tsId) => {
             return parseInt(tsId.split(':')[0]) === currentMethodId;
         });
+
+        if (!pointsKey) {
+            return [];
+        }
         return pointsByTsId[pointsKey].map((point) => {
             const lineClasses = getLineClasses(point, false);
+            const masks = lineClasses.dataMask.map(key => MASK_DESC[key]);
             let approvals = [];
             if (lineClasses.approved) {
                 approvals.push('Approved');
@@ -291,10 +301,13 @@ export const getCurrentPointData = createSelector(
             }
             return {
                 parameterName: currentVariable.variableName,
-                result: parseFloat(point.value),
-                dateTime: DateTime.fromMillis(point.dateTime, {zone: timeZone}).toISO(),
+                result: point.value === null ? '' : point.value.toString(),
+                dateTime: DateTime.fromMillis(point.dateTime, {zone: timeZone}).toISO({
+                    suppressMilliseconds: true,
+                    suppressSeconds: true
+                }),
                 approvals: approvals.join(','),
-                masks: lineClasses.dataMask.join(',')
+                masks: masks.join(',')
             };
         });
     }

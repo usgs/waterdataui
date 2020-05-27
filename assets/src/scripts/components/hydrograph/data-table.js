@@ -50,7 +50,7 @@ const drawTableBody = function(table, ivData) {
  */
 export const drawDataTable = function(elem, store) {
     const tableContainer = elem.append('div')
-        .attr('id', `#${CONTAINER_ID}`);
+        .attr('id', CONTAINER_ID);
     const table = tableContainer.append('table')
         .classed('usa-table', true);
     tableContainer.append('ul')
