@@ -146,7 +146,11 @@ export const attachToNode = function (store,
 
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
-
+                nodeElem.select('#iv-data-table-container')
+                    .call(drawDataTable, store);
+                nodeElem.select('.provisional-data-alert')
+                    .attr('hidden', null);
+                //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
                 nodeElem.select('.select-time-series-container')
                     .call(link(store, plotSeriesSelectTable, createStructuredSelector({
                         siteno: () => siteno,
@@ -154,10 +158,7 @@ export const attachToNode = function (store,
                         lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current', 'P7D'),
                         timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM)
                     }), store));
-                nodeElem.select('#iv-data-table-container')
-                    .call(drawDataTable, store);
-                nodeElem.select('.provisional-data-alert')
-                    .attr('hidden', null);
+
 
                 renderTimeSeriesUrlParams(store);
             }
