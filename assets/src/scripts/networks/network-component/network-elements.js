@@ -1,4 +1,5 @@
 import List from 'list.js';
+
 export const markerFillColor = '#ff7800';
 export const markerFillOpacity = 0.8;
 
