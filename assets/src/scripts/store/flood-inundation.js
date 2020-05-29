@@ -45,12 +45,21 @@ const retrieveFloodData = function(siteno) {
  * Slice reducer
  */
 export const floodDataReducer = function(floodData=INITIAL_DATA, action) {
+
+    floodData = {...floodData,
+        INITIAL_DATA};
+
     switch(action.type) {
         case 'SET_FLOOD_FEATURES':
             return {
                 ...floodData,
                 stages: action.stages,
                 extent: action.extent
+            };
+        case 'SET_WATERWACH_FLOOD_LEVELS':
+            return {
+                ...floodData,
+                floodLevels: action.floodLevels
             };
         default: return floodData;
     }
@@ -87,14 +96,10 @@ const setWaterwatchFloodLevels = function(floodLevels) {
  */
 const retrieveWaterwatchData = function(siteno) {
     return function (dispatch) {
-        const floodLevels = fetchWaterwatchFloodLevels(siteno);
-        return Promise.all([
-            floodLevels
-        ]).then(function(data) {
-           const floodLevels = data;
-           dispatch(setWaterwatchFloodLevels(floodLevels));
+        return fetchWaterwatchFloodLevels(siteno).then(function (floodLevels) {
+            dispatch(setWaterwatchFloodLevels(floodLevels));
         });
-    };
+    }
 };
 
 /*
@@ -107,14 +112,6 @@ export const floodStateReducer = function(floodState={}, action) {
             return {
                 ...floodState,
                 gageHeight: action.gageHeight
-            };
-        case 'SET_WATERWACH_FLOOD_LEVELS':
-            return {
-                ...floodState,
-                actionStage: action.floodLevels[0] ? parseInt(action.floodLevels[0].action_stage) : null,
-                floodStage: action.floodLevels[0] ? parseInt(action.floodLevels[0].flood_stage) : null,
-                moderateFloodStage: action.floodLevels[0] ? parseInt(action.floodLevels[0].moderate_flood_stage) : null,
-                majorFloodStage: action.floodLevels[0] ? parseInt(action.floodLevels[0].major_flood_stage) : null
             };
         default: return floodState;
     }

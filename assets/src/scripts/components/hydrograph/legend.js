@@ -106,15 +106,16 @@ const createLegendMarkers = function(displayItems) {
 
     if (displayItems.floodLevels) {
         const floodLevels = displayItems.floodLevels;
+        const keys = ['actionStage', 'floodStage', 'moderateFloodStage', 'mjaorFloodStage'];
         const labels = ['Action Stage: ', 'Flood Stage: ', 'Moderate Flood Stage: ', 'Major Flood Stage: '];
         const wwSeriesClass = 'waterwatch-data-series';
         const classes = ['action-stage', 'flood-stage', 'moderate-flood-stage', 'major-flood-stage'];
 
-        for (let index = 0; index < floodLevels.length; index++) {
+        for (let index = 0; index < keys.length; index++) {
             legendMarkers.push([
                 defineTextOnlyMarker(labels[index]),
                 defineLineMarker(null, `${wwSeriesClass} ${classes[index]}`,
-                    `${floodLevels[index]} ft`)]);
+                    `${floodLevels[keys[index]]} ft`)]);
         }
     }
 
@@ -149,12 +150,12 @@ const legendDisplaySelector = createSelector(
     uniqueClassesSelector('compare'),
     waterwatchVisible,
     getWaterwatchFloodLevels,
-    (showSeries, medianSeries, currentClasses, compareClasses, visible, getWW) => {
+    (showSeries, medianSeries, currentClasses, compareClasses, visible, floodLevels) => {
         return {
             current: showSeries.current ? currentClasses : undefined,
             compare: showSeries.compare ? compareClasses : undefined,
             median: showSeries.median ? medianSeries : undefined,
-            floodLevels: visible ? getWW : undefined
+            floodLevels: visible ? floodLevels : undefined
         };
     }
 );

@@ -229,32 +229,23 @@ export const getWaterwatchFloodLevelDataPoints = createSelector(
     getRequestTimeRange('current'),
     getIanaTimeZone,
     (floodLevels, timeRange, ianaTimeZone) => {
+        console.log(floodLevels);
         if (!floodLevels || !timeRange) {
             return [];
         }
 
-        let datesOfInterest = [];
-        let nextDateTime = DateTime.fromMillis(timeRange.start, {zone: ianaTimeZone});
-        datesOfInterest.push({
-            year: nextDateTime.year,
-            month: nextDateTime.month.toString(),
-            day: nextDateTime.day.toString(),
-            utcDate: timeRange.start
-        });
-        nextDateTime = DateTime.fromMillis(timeRange.end, {zone: ianaTimeZone});
-        datesOfInterest.push({
-            year: nextDateTime.year,
-            month: nextDateTime.month.toString(),
-            day: nextDateTime.day.toString(),
-            utcDate: timeRange.end
-        });
+        let datesOfInterest = [DateTime.fromMillis(timeRange.start, {zone: ianaTimeZone}),
+            DateTime.fromMillis(timeRange.end, {zone: ianaTimeZone})
+        ];
 
-        return floodLevels.map((floodLevel) => {
+        const floodLevelsKeys = ['actionStage', 'floodStage', 'moderateFloodStage', 'majorFloodStage'];
+
+        return floodLevelsKeys.map((key) => {
             return datesOfInterest
                 .map((date) => {
                     return {
-                        value: floodLevel,
-                        date: date.utcDate
+                        value: floodLevels[key],
+                        date: date.ts
                     };
                 });
         });

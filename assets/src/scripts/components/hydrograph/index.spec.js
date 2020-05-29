@@ -149,11 +149,19 @@ const TEST_STATE = {
     ui: {
         width: 400
     },
-    floodState: {
-        actionStage: 1,
-        floodStage: 2,
-        moderateFloodStage: 3,
-        majorFloodStage: 4
+    floodData: {
+        floodLevels: {
+            sites:
+                [
+                    {
+                        site_no: '07144100',
+                        action_stage: '20',
+                        flood_stage: '22',
+                        moderate_flood_stage: '25',
+                        major_flood_stage: '26'
+                    }
+                ]
+        }
     }
 };
 

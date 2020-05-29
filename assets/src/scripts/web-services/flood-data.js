@@ -4,8 +4,8 @@ import config from '../config';
 export const FLOOD_EXTENTS_ENDPOINT = `${config.FIM_GIS_ENDPOINT}floodExtents/MapServer/`;
 export const FLOOD_BREACH_ENDPOINT = `${config.FIM_GIS_ENDPOINT}breach/MapServer/`;
 export const FLOOD_LEVEE_ENDPOINT = `${config.FIM_GIS_ENDPOINT}suppLyrs/MapServer/`;
-const waterwatchUrl = config.WATERWATCH_ENDPOINT;
-const format = 'json';
+const WATERWATCH_URL = config.WATERWATCH_ENDPOINT;
+const FORMAT = 'json';
 
 /*
  * Retrieve flood features if any for siteno
@@ -63,6 +63,6 @@ const fetchWaterwatchData = function(waterwatchQuery, siteno) {
 
 // waterwatch webservice calls
 export const fetchWaterwatchFloodLevels = function(siteno) {
-    const waterwatchQuery = `${waterwatchUrl}/floodstage?format=${format}&site=${siteno}`;
+    const waterwatchQuery = `${WATERWATCH_URL}/floodstage?format=${FORMAT}&site=${siteno}`;
     return fetchWaterwatchData(waterwatchQuery, siteno);
 };

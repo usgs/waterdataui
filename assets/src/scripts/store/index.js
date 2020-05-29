@@ -36,7 +36,8 @@ export const configureStore = function (initialState) {
         dailyValueTimeSeriesData: {},
         floodData: {
             stages: [],
-            extent: {}
+            extent: {},
+            floodLevels: null
         },
         nldiData: {
             upstreamFlows: [],
@@ -65,10 +66,6 @@ export const configureStore = function (initialState) {
         },
         floodState: {
             gageHeight: null,
-            actionStage: null,
-            floodStage: null,
-            moderateFloodStage: null,
-            majorFloodStage: null
         },
         ui : {
             windowWidth: 1024,

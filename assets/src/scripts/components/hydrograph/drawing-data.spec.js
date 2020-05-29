@@ -1096,11 +1096,14 @@ describe('drawingData module', () => {
                     currentIVVariableID: '45807142',
                     currentIVDateRangeKind: 'P7D'
                 },
-                floodState: {
-                    actionStage: 1,
-                    floodStage: 2,
-                    moderateFloodStage: 3,
-                    majorFloodStage: 4
+                floodData: {
+                    floodLevels: {
+                        site_no: "07144100",
+                        action_stage: "20",
+                        flood_stage: "22",
+                        moderate_flood_stage: "25",
+                        major_flood_stage: "26"
+                    }
                 }
             };
 
@@ -1109,7 +1112,7 @@ describe('drawingData module', () => {
                 expect(result.length).toBe(4);
                 expect(result[0].length).toBe(2);
                 expect(result[0][0]).toEqual({
-                    value: 1,
+                    value: 20,
                     date: DateTime.fromObject({
                         year: 2018,
                         month: 3,
@@ -1122,22 +1125,15 @@ describe('drawingData module', () => {
                 });
             });
 
-            it('Return the expected data points', () => {
-                let result = getWaterwatchFloodLevelDataPoints(TEST_STATE);
-                expect(result.length).toBe(4);
-                expect(result[0].length).toBe(2);
-                expect(result[0][1]).toEqual({
-                    value: 1,
-                    date: DateTime.fromObject({
-                        year: 2018,
-                        month: 3,
-                        day: 13,
-                        hour: 13,
-                        minute: 45,
-                        second: 0,
-                        zone: 'America/Chicago'
-                    }).valueOf()
-                });
+            const NO_FLOOD_DATA_STATE = {
+                ...TEST_STATE,
+                floodData: {
+                    floodLevels: null
+                }
+            };
+
+            it('Return undefined points', () => {
+                expect(getWaterwatchFloodLevelDataPoints(NO_FLOOD_DATA_STATE)).toEqual([]);
             });
         });
     });

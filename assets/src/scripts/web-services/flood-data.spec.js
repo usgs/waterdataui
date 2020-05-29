@@ -104,7 +104,7 @@ describe('flood_data module', () => {
                 /* eslint no-use-before-define: 0 */
 
                 floodLevelPromise = fetchWaterwatchFloodLevels(siteno);
-                console.log(jasmine.Ajax.requests.mostRecent());
+
                 jasmine.Ajax.requests.mostRecent().respondWith({
                     status: 200,
                     responseText: MOCK_WATERWATCH_FLOOD_LEVELS,
@@ -114,7 +114,6 @@ describe('flood_data module', () => {
 
             it('expected response is json object with the flood levels', () => {
                 floodLevelPromise.then((resp) => {
-                    console.log(resp);
                     expect(resp).not.toEqual(null);
                     expect(resp[0].properties.site_no).toBe('07144100');
                 });

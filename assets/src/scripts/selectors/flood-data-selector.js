@@ -5,12 +5,9 @@ export const getFloodStages = state => state.floodData.stages || [];
 
 export const getFloodExtent = state => state.floodData.extent || {};
 
-export const getFloodGageHeight = state => state.floodState.gageHeight;
+export const getFloodLevels = state => state.floodData.floodLevels || null;
 
-export const getWaterwatchActionStage = state => state.floodState.actionStage;
-export const getWaterwatchFloodStage = state => state.floodState.floodStage;
-export const getWaterwatchModerateFloodStage = state => state.floodState.moderateFloodStage;
-export const getWaterwatchMajorFloodStage = state => state.floodState.majorFloodStage;
+export const getFloodGageHeight = state => state.floodState.gageHeight;
 
 /*
  * Provides a function which returns True if flood data is not empty.
@@ -24,15 +21,9 @@ export const hasFloodData = createSelector(
  * Provides a function which returns True if waterwatch flood levels is not empty.
  */
 export const hasWaterwatchData = createSelector(
-    getWaterwatchActionStage,
-    getWaterwatchFloodStage,
-    getWaterwatchModerateFloodStage,
-    getWaterwatchMajorFloodStage,
-    (actionStage, floodStage, moderateFloodStage, majorFloodStage) =>
-        actionStage != null ||
-        floodStage != null ||
-        moderateFloodStage != null ||
-        majorFloodStage != null
+    getFloodLevels,
+    (floodLevels) =>
+        floodLevels != null
 );
 
 /*
@@ -41,8 +32,8 @@ export const hasWaterwatchData = createSelector(
 export const waterwatchVisible = createSelector(
     hasWaterwatchData,
     getCurrentParmCd,
-    (hasWW, paramCd) =>
-        hasWW && paramCd == '00065'
+    (hasFloodLevels, paramCd) =>
+        hasFloodLevels && paramCd == '00065'
 );
 
 /*
@@ -87,12 +78,14 @@ export const getFloodGageHeightStageIndex= createSelector(
  * Provides a function which returns the Waterwatch Flood Levels
  */
 export const getWaterwatchFloodLevels = createSelector(
-    getWaterwatchActionStage,
-    getWaterwatchFloodStage,
-    getWaterwatchModerateFloodStage,
-    getWaterwatchMajorFloodStage,
-    (actionStage, floodStage, moderateFloodStage, majorFloodStage) => {
-        return [actionStage, floodStage, moderateFloodStage, majorFloodStage];
+    getFloodLevels,
+    (floodLevels) => {
+        return floodLevels ? {
+            actionStage: parseInt(floodLevels.action_stage),
+            floodStage: parseInt(floodLevels.flood_stage),
+            moderateFloodStage: parseInt(floodLevels.moderate_flood_stage),
+            majorFloodStage: parseInt(floodLevels.major_flood_stage)
+        } : null;
     }
 );
 

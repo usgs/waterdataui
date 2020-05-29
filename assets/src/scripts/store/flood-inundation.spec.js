@@ -123,14 +123,52 @@ describe('store/flood-inundation module', () => {
                 done();
             });
         });
-    });
 
-    describe('floodStateReducer', () => {
-        describe('Actions.setGageHeight', () => {
-            it('Updates the gageHeight', () => {
-                store.dispatch(Actions.setGageHeight(12));
+        describe('retrieveWaterwatchData', () => {
+            it('Expects that fetching urls have the siteno', () => {
+                store.dispatch(Actions.retrieveWaterwatchData('12345678'));
 
-                expect(store.getState().floodState.gageHeight).toBe(12);
+                expect(jasmine.Ajax.requests.count()).toBe(1);
+                expect(jasmine.Ajax.requests.at(0).url).toContain('12345678');
+            });
+
+            it('Expects the store to be updated on successful fetches', (done) => {
+                const promise = store.dispatch(Actions.retrieveWaterwatchData('12345678'));
+
+                jasmine.Ajax.requests.at(0).respondWith({
+                    status: 200,
+                    responseText: MOCK_WATERWATCH_FLOOD_LEVELS
+                });
+
+                promise.then(() => {
+                    const waterwatchData = store.getState().floodData;
+                    expect(waterwatchData.floodLevels.action_stage)
+                        .toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].action_stage);
+                    expect(waterwatchData.floodLevels.flood_stage)
+                        .toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].flood_stage);
+                    expect(waterwatchData.floodLevels.moderate_flood_stage)
+                        .toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].moderate_flood_stage);
+                    expect(waterwatchData.floodLevels.major_flood_stage)
+                        .toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].major_flood_stage);
+                    done();
+                });
+            });
+
+            it('Expects the store to not contain empty features if calls are unsuccessful', (done) => {
+
+                const promise = store.dispatch(Actions.retrieveWaterwatchData('12345678'));
+
+                jasmine.Ajax.requests.at(0).respondWith({
+                    status: 500,
+                    responseText: 'Internal server error'
+                });
+
+                promise.then(() => {
+                    const waterwatchData = store.getState().floodData;
+
+                    expect(waterwatchData.floodLevels).toEqual(null);
+                    done();
+                });
             });
         });
 
@@ -148,63 +186,22 @@ describe('store/flood-inundation module', () => {
             it('expect waterwatch data to be updated', () => {
                 store.dispatch(
                     Actions.setWaterwatchFloodLevels(FLOOD_LEVELS));
-                const waterwatchData = store.getState().floodState;
+                const waterwatchData = store.getState().floodData;
 
-                expect(waterwatchData.actionStage).toEqual(parseInt(FLOOD_LEVELS[0].action_stage));
-                expect(waterwatchData.floodStage).toEqual(parseInt(FLOOD_LEVELS[0].flood_stage));
-                expect(waterwatchData.moderateFloodStage).toEqual(parseInt(FLOOD_LEVELS[0].moderate_flood_stage));
-                expect(waterwatchData.majorFloodStage).toEqual(parseInt(FLOOD_LEVELS[0].major_flood_stage));
+                expect(waterwatchData.floodLevels[0].action_stage).toEqual(FLOOD_LEVELS[0].action_stage);
+                expect(waterwatchData.floodLevels[0].flood_stage).toEqual(FLOOD_LEVELS[0].flood_stage);
+                expect(waterwatchData.floodLevels[0].moderate_flood_stage).toEqual(FLOOD_LEVELS[0].moderate_flood_stage);
+                expect(waterwatchData.floodLevels[0].major_flood_stage).toEqual(FLOOD_LEVELS[0].major_flood_stage);
             });
         });
+    });
 
-        describe('retrieveWaterwatchData', () => {
-            it('Expects that fetching urls have the siteno', () => {
-                store.dispatch(Actions.retrieveWaterwatchData('12345678'));
+    describe('floodStateReducer', () => {
+        describe('Actions.setGageHeight', () => {
+            it('Updates the gageHeight', () => {
+                store.dispatch(Actions.setGageHeight(12));
 
-                expect(jasmine.Ajax.requests.count()).toBe(1);
-                expect(jasmine.Ajax.requests.at(0).url).toContain('12345678');
-            });
-
-            it('Expects the store to be updated on successful fetches', (done) => {
-                const promise = store.dispatch(Actions.retrieveWaterwatchData('12345678'));
-                jasmine.Ajax.requests.at(0).respondWith({
-                    status: 200,
-                    responseText: MOCK_WATERWATCH_FLOOD_LEVELS
-                });
-
-                promise.then(() => {
-                    const waterwatchData = store.getState().floodState;
-
-                    expect(waterwatchData.actionStage)
-                        .toEqual(parseInt(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].action_stage));
-                    expect(waterwatchData.floodStage)
-                        .toEqual(parseInt(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].flood_stage));
-                    expect(waterwatchData.moderateFloodStage)
-                        .toEqual(parseInt(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].moderate_flood_stage));
-                    expect(waterwatchData.majorFloodStage)
-                        .toEqual(parseInt(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].major_flood_stage));
-                    done();
-                });
-            });
-
-            it('Expects the store to not contain empty features if calls are unsuccessful', (done) => {
-
-                const promise = store.dispatch(Actions.retrieveWaterwatchData('12345678'));
-
-                jasmine.Ajax.requests.at(0).respondWith({
-                    status: 500,
-                    responseText: 'Internal server error'
-                });
-
-                promise.then(() => {
-                    const waterwatchData = store.getState().floodState;
-
-                    expect(waterwatchData.actionStage).toEqual(null);
-                    expect(waterwatchData.floodStage).toEqual(null);
-                    expect(waterwatchData.moderateFloodStage).toEqual(null);
-                    expect(waterwatchData.majorFloodStage).toEqual(null);
-                    done();
-                });
+                expect(store.getState().floodState.gageHeight).toBe(12);
             });
         });
     });
