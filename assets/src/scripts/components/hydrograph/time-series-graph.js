@@ -19,7 +19,7 @@ import {
     HASH_ID
 } from './drawing-data';
 import {getMainLayout} from './layout';
-import {getMainXScale, getMainYScale} from './scales';
+import {getMainXScale, getMainYScale, getBrushXScale} from './scales';
 import {descriptionSelector, isVisibleSelector, titleSelector} from './time-series';
 import {drawDataLines} from './time-series-data';
 import {drawTooltipFocus, drawTooltipText}  from './tooltip';
@@ -258,7 +258,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
         })))
        .call(link(store, plotAllFloodLevelPoints, createStructuredSelector({
             visible: waterwatchVisible,
-            xscale: getMainXScale('current'),
+            xscale: getBrushXScale('current'),
             yscale: getMainYScale,
             seriesPoints: getWaterwatchFloodLevelDataPoints
         })));
