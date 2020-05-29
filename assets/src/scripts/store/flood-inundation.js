@@ -99,7 +99,7 @@ const retrieveWaterwatchData = function(siteno) {
         return fetchWaterwatchFloodLevels(siteno).then(function (floodLevels) {
             dispatch(setWaterwatchFloodLevels(floodLevels));
         });
-    }
+    };
 };
 
 /*

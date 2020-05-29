@@ -65,7 +65,7 @@ export const configureStore = function (initialState) {
             cursorOffset: null
         },
         floodState: {
-            gageHeight: null,
+            gageHeight: null
         },
         ui : {
             windowWidth: 1024,

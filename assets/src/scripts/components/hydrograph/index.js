@@ -75,7 +75,7 @@ export const attachToNode = function (store,
     // Fetch time zone
     const fetchTimeZonePromise = store.dispatch(timeZoneActions.retrieveIanaTimeZone(latitude, longitude));
     // Fetch waterwatch flood levels
-    const fetchWaterWatchPromise = store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
+    store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
     let fetchDataPromise;
     if (showOnlyGraph) {
         // Only fetch what is needed
