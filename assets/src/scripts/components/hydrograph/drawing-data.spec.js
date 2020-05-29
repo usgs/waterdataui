@@ -1,6 +1,22 @@
 
 import {DateTime} from 'luxon';
-import {lineSegmentsSelector, pointsSelector, allPointsSelector, pointsByTsKeySelector, classesForPoint, lineSegmentsByParmCdSelector, currentVariableLineSegmentsSelector, currentVariablePointsSelector, currentVariablePointsByTsIdSelector, visiblePointsSelector, getCurrentVariableMedianStatPoints, MAX_LINE_POINT_GAP, getWaterwatchFloodLevelDataPoints} from './drawing-data';
+import {
+    lineSegmentsSelector,
+    pointsSelector,
+    allPointsSelector,
+    pointsByTsKeySelector,
+    classesForPoint,
+    lineSegmentsByParmCdSelector,
+    currentVariableLineSegmentsSelector,
+    currentVariablePointsSelector,
+    currentVariablePointsByTsIdSelector,
+    visiblePointsSelector,
+    getCurrentVariableMedianStatPoints,
+    MAX_LINE_POINT_GAP,
+    getCurrentPointData,
+    getWaterwatchFloodLevelDataPoints
+} from './drawing-data';
+
 
 const TEST_DATA = {
     ivTimeSeriesData: {
@@ -35,70 +51,57 @@ const TEST_DATA = {
                 method: 69928,
                 points: [{
                     value: 10,
-                    qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
+                    qualifiers: ['A'],
+                    dateTime: 1520351100000
                 }, {
                     value: null,
-                    qualifiers: ['P', 'ICE'],
-                    approved: false,
-                    estimated: false
+                    qualifiers: ['E', 'ICE'],
+                    dateTime: 1520352000000
                 }, {
                     value: null,
                     qualifiers: ['P', 'FLD'],
-                    approved: false,
-                    estimated: false
+                    dateTime: 1520352900000
                 }]
             },
             '69929:00010': {
                 tsKey: 'compare:P7D',
-                startTime: new Date('2017-03-06T15:45:00.000Z'),
-                endTime: new Date('2017-03-13t13:45:00.000Z'),
                 variable: '45807196',
                 method: 69929,
                 points: [{
                     value: 1,
                     qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
+                    dateTime: 1488815100000
                 }, {
                     value: 2,
                     qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
+                    dateTime: 1488816000000
                 }, {
                     value: 3,
                     qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
+                    dateTime: 1488816900000
                 }]
             },
             '69930:00045': {
                 tsKey: 'current:P7D',
-                startTime: new Date('2017-03-06T15:45:00.000Z'),
-                endTime: new Date('2017-03-13t13:45:00.000Z'),
+
                 variable: '45807140',
                 method: 69930,
                 points: [{
                     value: 0,
                     qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
+                    dateTime: 1520351100000
                 }, {
                     value: 0.01,
                     qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
+                    dateTime: 1520352000000
                 }, {
                     value: 0.02,
                     qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
+                    dateTime: 1520352900000
                 }, {
                     value: 0.03,
                     qualifiers: ['P'],
-                    approved: false,
-                    estimated: false
+                    dateTime: 1520353800000
                 }]
             }
         },
@@ -191,6 +194,7 @@ const TEST_DATA = {
             }
         }
     },
+    ianaTimeZone: 'America/Chicago',
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
         currentIVDateRangeKind: 'P7D',
@@ -308,6 +312,46 @@ describe('drawingData module', () => {
 
        it('Return an empty array if the tsKey has no time series with the current variable', () => {
            expect(currentVariablePointsSelector('compare')(TEST_DATA)).toEqual([]);
+       });
+    });
+
+    describe('getCurrentPointData', () => {
+       it('Returns an empty array if no data exists', () => {
+           const NEW_TEST_DATA = {
+               ...TEST_DATA,
+               ivTimeSeriesState: {
+                   ...TEST_DATA.ivTimeSeriesData,
+                   currentIVVariableID: '45807196'
+               }
+           };
+           expect(getCurrentPointData(NEW_TEST_DATA)).toEqual([]);
+       });
+
+       it('Returns the expected data', () => {
+           const result = getCurrentPointData(TEST_DATA);
+
+           expect(result.length).toBe(3);
+           expect(result[0]).toEqual({
+               parameterName: 'Streamflow',
+               dateTime: '2018-03-06T09:45-06:00',
+               result: '10',
+               approvals: 'Approved',
+               masks: ''
+           });
+           expect(result[1]).toEqual({
+               parameterName: 'Streamflow',
+               dateTime: '2018-03-06T10:00-06:00',
+               result: '',
+               approvals: 'Estimated',
+               masks: 'Ice Affected'
+           });
+           expect(result[2]).toEqual({
+               parameterName: 'Streamflow',
+               dateTime: '2018-03-06T10:15-06:00',
+               result: '',
+               approvals: 'Provisional',
+               masks: 'Flood'
+           });
        });
     });
 
@@ -695,30 +739,28 @@ describe('drawingData module', () => {
                 '69928:00060': [
                     {
                         'classes': {
-                            'approved': false,
+                            'approved': true,
                             'estimated': false,
                             'currentMethod': false,
                             'dataMask': null
                         },
                         'points': [{
-                                'approved': false,
-                                'estimated': false,
-                                'value': 10,
-                                'qualifiers': ['P']
+                            'value': 10,
+                            'qualifiers': ['A'],
+                            'dateTime': 1520351100000
                         }]
                     },
                     {
                         'classes': {
                             'approved': false,
-                            'estimated': false,
+                            'estimated': true,
                             'currentMethod': false,
                             'dataMask': 'ice'
                         },
                         'points': [{
-                                'approved': false,
-                                'estimated': false,
-                                'value': null,
-                                'qualifiers': ['P', 'ICE']
+                            'value': null,
+                            'qualifiers': ['E', 'ICE'],
+                            'dateTime': 1520352000000
                         }]
                     },
                     {
@@ -729,10 +771,9 @@ describe('drawingData module', () => {
                             'dataMask': 'fld'
                         },
                         'points': [{
-                                'approved': false,
-                                'estimated': false,
-                                'value': null,
-                                'qualifiers': ['P', 'FLD']
+                            'value': null,
+                            'qualifiers': ['P', 'FLD'],
+                            'dateTime': 1520352900000
                         }]
                     }
                 ],
@@ -746,26 +787,21 @@ describe('drawingData module', () => {
                         },
                         'points': [
                             {
-                                'approved': false,
-                                'estimated': false,
                                 'value': 0,
-                                'qualifiers': ['P']
+                                'qualifiers': ['P'],
+                                'dateTime': 1520351100000
                             }, {
-
-                                'approved': false,
-                                'estimated': false,
                                 'value': 0.01,
-                                'qualifiers': ['P']
+                                'qualifiers': ['P'],
+                                'dateTime': 1520352000000
                             }, {
-                                'approved': false,
-                                'estimated': false,
                                 'value': 0.03,
-                                'qualifiers': ['P']
+                                'qualifiers': ['P'],
+                                'dateTime': 1520352900000
                             }, {
-                                'approved': false,
-                                'estimated': false,
                                 'value': 0.06,
-                                'qualifiers': ['P']
+                                'qualifiers': ['P'],
+                                'dateTime': 1520353800000
                             }
                         ]
                     }

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Moved graph-server to it's own repo <https://github.com/usgs/wdfn-graph-server>
 
+### Added
+- The current IV data now appear in a table within an accordion below the parameter selection list.
+
 ## [0.32.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.32.0...master)
 ### Added
 - Daily value graph now handles masked data

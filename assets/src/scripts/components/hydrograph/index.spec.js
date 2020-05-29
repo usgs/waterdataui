@@ -177,6 +177,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         component.append('div').attr('class', 'graph-container');
         component.append('div').attr('class', 'select-time-series-container');
         component.append('div').attr('class', 'provisional-data-alert');
+        component.append('div').attr('id', 'iv-data-table-container');
 
         graphNode = document.getElementById('hydrograph');
 
@@ -535,6 +536,15 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             // one for each of the two parameters
             expect(selectAll('table .tooltip-item').size()).toBe(2);
         });
+
+        it('should render the data table', (done) => {
+            window.requestAnimationFrame(() => {
+                const container = select('#iv-data-table-container');
+                expect(container.selectAll('table').size()).toBe(1);
+                expect(container.select('.pagination').size()).toBe(1);
+                done();
+            });
+        });
     });
 
     describe('hide elements when showOnlyGraph is set to true', () => {
@@ -607,6 +617,10 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
 
         it('should not have the select time series element', () => {
             expect(selectAll('#select-time-series').size()).toBe(0);
+        });
+
+        it('should not have the data table', () => {
+            expect(select('#iv-data-table-container').selectAll('table').size()).toBe(0);
         });
     });
 });
