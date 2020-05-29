@@ -258,7 +258,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
         })))
        .call(link(store, plotAllFloodLevelPoints, createStructuredSelector({
             visible: waterwatchVisible,
-            xscale: getBrushXScale('current'),
+            xscale: getMainXScale('current'),
             yscale: getMainYScale,
             seriesPoints: getWaterwatchFloodLevelDataPoints
         })));
