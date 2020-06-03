@@ -4,7 +4,7 @@ import {configureStore} from '../../store';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
 import {Actions as statisticsDataActions} from '../../store/statistics-data';
 import {Actions as timeZoneActions} from '../../store/time-zone';
-import {Actions as floodStateActions} from '../../store/flood-inundation';
+import {Actions as floodDataActions} from '../../store/flood-inundation';
 
 
 const TEST_STATE = {
@@ -420,7 +420,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         /* eslint no-use-before-define: 0 */
         let store;
         beforeEach((done) => {
-            spyOn(floodStateActions, 'retrieveWaterwatchData').and.returnValue(function() {
+            spyOn(floodDataActions, 'retrieveWaterwatchData').and.returnValue(function() {
                 return Promise.resolve({});
             });
             spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.returnValue(function() {

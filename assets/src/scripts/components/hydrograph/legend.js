@@ -106,7 +106,7 @@ const createLegendMarkers = function(displayItems) {
 
     if (displayItems.floodLevels) {
         const floodLevels = displayItems.floodLevels;
-        const keys = ['actionStage', 'floodStage', 'moderateFloodStage', 'mjaorFloodStage'];
+        const keys = ['actionStage', 'floodStage', 'moderateFloodStage', 'majorFloodStage'];
         const labels = ['Action Stage: ', 'Flood Stage: ', 'Moderate Flood Stage: ', 'Major Flood Stage: '];
         const wwSeriesClass = 'waterwatch-data-series';
         const classes = ['action-stage', 'flood-stage', 'moderate-flood-stage', 'major-flood-stage'];

@@ -221,37 +221,6 @@ export const getCurrentVariableMedianStatPoints = createSelector(
         });
     });
 
-/*
- * @ return {Array of Arrays of Objects} where the properties are date (universal), and value
-*/
-export const getWaterwatchFloodLevelDataPoints = createSelector(
-    getWaterwatchFloodLevels,
-    getRequestTimeRange('current'),
-    getIanaTimeZone,
-    (floodLevels, timeRange, ianaTimeZone) => {
-        if (!floodLevels || !timeRange) {
-            return [];
-        }
-
-        let datesOfInterest = [DateTime.fromMillis(timeRange.start, {zone: ianaTimeZone}),
-            DateTime.fromMillis(timeRange.end, {zone: ianaTimeZone})
-        ];
-
-        const floodLevelsKeys = ['actionStage', 'floodStage', 'moderateFloodStage', 'majorFloodStage'];
-
-        return floodLevelsKeys.map((key) => {
-            return datesOfInterest
-                .map((date) => {
-                    return {
-                        value: floodLevels[key],
-                        date: date.ts
-                    };
-                });
-        });
-    }
-);
-
-
 /**
  * Factory function create a function that
  * returns an array of points for each visible time series.
