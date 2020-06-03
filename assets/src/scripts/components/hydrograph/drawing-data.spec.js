@@ -13,7 +13,7 @@ import {
     visiblePointsSelector,
     getCurrentVariableMedianStatPoints,
     MAX_LINE_POINT_GAP,
-    getCurrentPointData,
+    getCurrentPointData
 } from './drawing-data';
 
 
