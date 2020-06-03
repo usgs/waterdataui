@@ -164,20 +164,15 @@ describe('flood-data-selector', () => {
 
          it('Return true if waterwatch flood levels should be visible', () =>{
             expect(waterwatchVisible({
-                floodData: {
-                    floodLevels: {
-                        sites:
-                            [
-                                {
-                                    site_no: '07144100',
-                                    action_stage: '20',
-                                    flood_stage: '22',
-                                    moderate_flood_stage: '25',
-                                    major_flood_stage: '26'
-                                }
-                            ]
-                    }
-                },
+                 floodData: {
+                     floodLevels: {
+                         site_no: '07144100',
+                         action_stage: '20',
+                         flood_stage: '22',
+                         moderate_flood_stage: '25',
+                         major_flood_stage: '26'
+                     }
+                 },
                 ivTimeSeriesState: {
                     currentIVVariableID: '45807197'
                 },
