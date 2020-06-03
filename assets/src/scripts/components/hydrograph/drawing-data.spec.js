@@ -14,7 +14,6 @@ import {
     getCurrentVariableMedianStatPoints,
     MAX_LINE_POINT_GAP,
     getCurrentPointData,
-    getWaterwatchFloodLevelDataPoints
 } from './drawing-data';
 
 

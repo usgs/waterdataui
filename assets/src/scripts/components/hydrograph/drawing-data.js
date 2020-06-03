@@ -10,7 +10,6 @@ import {
     getTsRequestKey, getRequestTimeRange, getCurrentVariable
 } from '../../selectors/time-series-selector';
 import {getIanaTimeZone} from '../../selectors/time-zone-selector';
-import {getWaterwatchFloodLevels} from '../../selectors/flood-data-selector';
 
 export const MASK_DESC = {
     ice: 'Ice Affected',
