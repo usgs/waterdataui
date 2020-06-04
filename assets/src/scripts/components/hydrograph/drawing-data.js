@@ -165,7 +165,7 @@ export const classesForPoint = function(point) {
 };
 
 /*
- * @ return {Array of Arrays of Objects} where the properties are date (universal), class,  and value
+ * @ return {Array of Arrays of Objects} where the properties are date (universal), and value
 */
 export const getCurrentVariableMedianStatPoints = createSelector(
     getCurrentVariableMedianStatistics,
@@ -219,7 +219,6 @@ export const getCurrentVariableMedianStatPoints = createSelector(
                 });
         });
     });
-
 
 /**
  * Factory function create a function that

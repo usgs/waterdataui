@@ -3012,3 +3012,17 @@ export const MOCK_IV_DATA = `
 "typeSubstituted" : false
 }
 `;
+
+export const MOCK_WATERWATCH_FLOOD_LEVELS = `
+{
+  "sites": [
+    {
+      "site_no": "07144100",
+      "action_stage": "20",
+      "flood_stage": "22",
+      "moderate_flood_stage": "25",
+      "major_flood_stage": "26"
+    }
+  ]
+}
+`;

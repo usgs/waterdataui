@@ -106,6 +106,17 @@ const TEST_STATE = {
                     unitCode: 'unitCode'
                 }
             },
+            '45809999': {
+                variableCode: {
+                    value: '00065'
+                },
+                oid: '45809999',
+                variableName: 'Test title for 00065',
+                variableDescription: 'Test description for 00065',
+                unit: {
+                    unitCode: 'unitCode'
+                }
+            },
             '45807190': {
                 variableCode: {
                     value: '00010'
@@ -166,6 +177,15 @@ const TEST_STATE = {
     },
     ui: {
         width: 400
+    },
+    floodData: {
+        floodLevels: {
+            site_no: '07144100',
+            action_stage: '20',
+            flood_stage: '22',
+            moderate_flood_stage: '25',
+            major_flood_stage: '26'
+        }
     }
 };
 
@@ -271,6 +291,30 @@ describe('time series graph', () => {
             store.dispatch(Actions.setIVTimeSeriesVisibility('median', false));
             window.requestAnimationFrame(() => {
                 expect(selectAll('#median-points .median-data-series').size()).toBe(0);
+                done();
+            });
+        });
+    });
+
+    describe('flood level lines', () => {
+
+        beforeEach(() => {
+            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
+        });
+
+        it('Should render four lines', () => {
+            store.dispatch(Actions.setCurrentIVVariable(45809999));
+            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
+            expect(selectAll('#flood-level-points .action-stage').size()).toBe(1);
+            expect(selectAll('#flood-level-points .flood-stage').size()).toBe(1);
+            expect(selectAll('#flood-level-points .moderate-flood-stage').size()).toBe(1);
+            expect(selectAll('#flood-level-points .major-flood-stage').size()).toBe(1);
+        });
+
+
+        it('Should remove the lines when removing the waterwatch flood levels data', (done) => {
+            window.requestAnimationFrame(() => {
+                expect(selectAll('#flood-level-points').size()).toBe(0);
                 done();
             });
         });

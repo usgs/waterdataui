@@ -180,6 +180,28 @@ svg {
     }
   }
 
+  .waterwatch-data-series {
+    fill: none;
+    stroke-width: 1px;
+    stroke: #001aff;
+
+    &.action-stage {
+      stroke-dasharray: 3, 3;
+    }
+
+    &.flood-stage {
+      stroke-dasharray: 7, 3;
+    }
+
+    &.moderate-flood-stage {
+      stroke-dasharray: 13, 5;
+    }
+
+    &.major-flood-stage {
+      stroke-dasharray: 20, 7;
+    }
+  }
+
   .mask {
     opacity: 0.2;
   }

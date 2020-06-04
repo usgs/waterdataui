@@ -94,6 +94,15 @@ describe('UV: Legend module', () => {
                 compare: true,
                 median: true
             }
+        },
+        floodData: {
+            floodLevels: {
+                site_no: '07144100',
+                action_stage: '20',
+                flood_stage: '22',
+                moderate_flood_stage: '25',
+                major_flood_stage: '26'
+            }
         }
     };
 
@@ -106,7 +115,8 @@ describe('UV: Legend module', () => {
                     ...TEST_DATA.ivTimeSeriesData,
                     timeSeries: {}
                 },
-                statisticsData: {}
+                statisticsData: {},
+                floodState: {}
             };
 
             expect(legendMarkerRowsSelector(newData)).toEqual([]);
@@ -136,7 +146,7 @@ describe('UV: Legend module', () => {
             };
             const result = legendMarkerRowsSelector(newData);
 
-            expect(result.length).toBe(1);
+            expect(result.length).toBe(5);
             expect(result[0].length).toBe(3);
             expect(result[0][0].type).toEqual(textOnlyMarker);
             expect(result[0][1].type).toEqual(lineMarker);

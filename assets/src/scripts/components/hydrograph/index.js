@@ -13,6 +13,7 @@ import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-valu
 import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
 import {Actions as statisticsDataActions} from '../../store/statistics-data';
 import {Actions as timeZoneActions} from '../../store/time-zone';
+import {Actions as floodDataActions} from '../../store/flood-inundation';
 import {renderTimeSeriesUrlParams} from '../../url-params';
 
 import {drawDateRangeControls} from './date-controls';
@@ -73,6 +74,8 @@ export const attachToNode = function (store,
 
     // Fetch time zone
     const fetchTimeZonePromise = store.dispatch(timeZoneActions.retrieveIanaTimeZone(latitude, longitude));
+    // Fetch waterwatch flood levels
+    store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
     let fetchDataPromise;
     if (showOnlyGraph) {
         // Only fetch what is needed
@@ -102,6 +105,8 @@ export const attachToNode = function (store,
             });
         store.dispatch(statisticsDataActions.retrieveMedianStatistics(siteno));
     }
+
+
     fetchDataPromise.then(() => {
         // Hide the loading indicator
         nodeElem
@@ -145,6 +150,7 @@ export const attachToNode = function (store,
                     .call(drawDateRangeControls, store, siteno);
 
                 nodeElem.select('.ts-legend-controls-container')
+
                     .call(drawGraphControls, store);
                 nodeElem.select('#iv-data-table-container')
                     .call(drawDataTable, store);

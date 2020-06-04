@@ -4,6 +4,7 @@ import {configureStore} from '../../store';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
 import {Actions as statisticsDataActions} from '../../store/statistics-data';
 import {Actions as timeZoneActions} from '../../store/time-zone';
+import {Actions as floodDataActions} from '../../store/flood-inundation';
 
 
 const TEST_STATE = {
@@ -147,6 +148,15 @@ const TEST_STATE = {
     },
     ui: {
         width: 400
+    },
+    floodData: {
+        floodLevels: {
+            site_no: '07144100',
+            action_stage: '20',
+            flood_stage: '22',
+            moderate_flood_stage: '25',
+            major_flood_stage: '26'
+        }
     }
 };
 
@@ -192,7 +202,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
 
         it('loading-indicator is shown until initial data has been retrieved', () => {
             attachToNode(store, graphNode, {
-                siteno: '1234568'
+                siteno: '12345678'
             });
 
             expect(select(graphNode).select('.loading-indicator').size()).toBe(1);
@@ -405,6 +415,9 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         /* eslint no-use-before-define: 0 */
         let store;
         beforeEach((done) => {
+            spyOn(floodDataActions, 'retrieveWaterwatchData').and.returnValue(function() {
+                return Promise.resolve({});
+            });
             spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.returnValue(function() {
                 return Promise.resolve({});
             });
@@ -445,11 +458,17 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                 ui: {
                     windowWidth: 400,
                     width: 400
-                }
+                },
+                 floodState: {
+                     actionStage: 1,
+                     floodStage: 2,
+                     moderateFloodStage: 3,
+                     majorFloodStage: 4
+                 }
 
             });
 
-            attachToNode(store, graphNode, {siteno: '123456788'});
+            attachToNode(store, graphNode, {siteno: '12345678'});
             window.requestAnimationFrame(() => {
                 done();
             });
@@ -529,6 +548,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
             spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.returnValue(function() {
                 return Promise.resolve({});
             });
+
             store = configureStore({
                 ...TEST_STATE,
                 ivTimeSeriesData: {

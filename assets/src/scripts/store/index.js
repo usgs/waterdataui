@@ -36,7 +36,8 @@ export const configureStore = function (initialState) {
         dailyValueTimeSeriesData: {},
         floodData: {
             stages: [],
-            extent: {}
+            extent: {},
+            floodLevels: null
         },
         nldiData: {
             upstreamFlows: [],
