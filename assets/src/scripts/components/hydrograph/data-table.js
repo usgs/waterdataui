@@ -27,8 +27,12 @@ const drawTableBody = function(table, ivData) {
     table.select('tbody').remove();
     table.append('tbody')
         .classed('list', true);
-    const items = VALUE_NAMES.reduce(function(total, propName) {
-        return `${total}<td class="${propName}"></td>`;
+    const items = VALUE_NAMES.reduce(function(total, propName, index) {
+        if (index === 0) {
+            return `${total}<th scope="row" class="${propName}"></th>`;
+        } else {
+            return `${total}<td class="${propName}"></td>`;
+        }
     }, '');
     const options = {
         valueNames: VALUE_NAMES,
@@ -62,6 +66,7 @@ export const drawDataTable = function(elem, store) {
                 .data(COLUMN_HEADINGS)
                 .enter()
                 .append('th')
+                    .attr('scope', 'col')
                     .text(col => col);
     table.call(link(store, drawTableBody, getCurrentPointData));
 };
