@@ -8,7 +8,7 @@ import sys
 
 from flask import Flask
 
-__version__ = '0.33.0dev'
+__version__ = '0.33.0'
 
 
 def _create_log_handler(log_directory=None, log_name=__name__):
