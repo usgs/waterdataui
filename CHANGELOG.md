@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.32.0...master)
 
+## [0.33.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.33.0...master) - 2020-06-10
 ### Changed
 - Moved graph-server to it's own repo <https://github.com/usgs/wdfn-graph-server>
 
@@ -12,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - The current IV data now appear in a table within an accordion below the parameter selection list.
 - Waterwatch flood levels to gage height graph on monitoring location page
 
-## [0.32.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.32.0...master)
+## [0.32.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.31.0...waterdataui-0.32.0)
 ### Added
 - Daily value graph now handles masked data
 - The timeSeriesId is now a parameter on the graph image server to show a specific time series for
