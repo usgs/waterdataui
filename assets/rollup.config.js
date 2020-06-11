@@ -18,7 +18,7 @@ const getBundleConfig = function (src, dest) {
     const configMap = {
         input: src,
         plugins: [
-            resolve({
+            resolve.nodeResolve({
                 mainFields: ['module', 'jsnext', 'main']
             }),
             json(),
