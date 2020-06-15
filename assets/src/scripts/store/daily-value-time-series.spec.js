@@ -127,7 +127,6 @@ describe('store/daily-value-time-series module', () => {
                     expect(state.dailyValueTimeSeriesData.dvTimeSeries).toBeDefined();
                     expect(state.dailyValueTimeSeriesData.dvTimeSeries.ffff345).toBeDefined();
                     expect(state.dailyValueTimeSeriesData.dvTimeSeries.ffff345.id).toEqual('USGS-12345678-ffff345');
-                    expect(state.dailyValueTimeSeriesState.currentDVTimeSeriesId).toEqual('ffff345');
 
                     done();
                 });
@@ -138,7 +137,6 @@ describe('store/daily-value-time-series module', () => {
                 store.dispatch(Actions.retrieveDVTimeSeries('USGS-12345678', 'ffff345'));
 
                 expect(jasmine.Ajax.requests.count()).toBe(0);
-                expect(store.getState().dailyValueTimeSeriesState.currentDVTimeSeriesId).toEqual('ffff345');
             });
 
             it('Expects a bad fetch request to not add a time series the store', (done) => {
@@ -168,11 +166,30 @@ describe('store/daily-value-time-series module', () => {
     });
 
     describe('dailyValueTimeSeriesStateReducer actions', () => {
-        describe('Actions.setCurrentDVTimeSeriesId', () => {
-            it('updates current time series id', () => {
-                store.dispatch(Actions.setCurrentDVTimeSeriesId('ffff345'));
+        describe('Actions.setCurrentDVParameterCode', () => {
+            it('updates current parameter codes', () => {
+                store.dispatch(Actions.setCurrentDVParameterCode('00060'));
 
-                expect(store.getState().dailyValueTimeSeriesState.currentDVTimeSeriesId).toEqual('ffff345');
+                expect(store.getState().dailyValueTimeSeriesState.currentDVParameterCode).toEqual('00060');
+            });
+        });
+
+        describe('Actions.setCurrentDVTimeSeriesIds', () => {
+            it('Updates the current set of DV time series ids', () => {
+                store.dispatch(Actions.setCurrentDVTimeSeriesIds('ffff3455', 'dddd1111', 'cccc3333'));
+
+                expect(store.getState().dailyValueTimeSeriesState.currentDVTimeSeriesId).toEqual({
+                    min: 'ffff3455',
+                    median: 'dddd1111',
+                    max: 'cccc3333'
+                });
+
+                store.dispatch(Actions.setCurrentDVTimeSeriesIds('aaaa3455', null, null));
+                expect(store.getState().dailyValueTimeSeriesState.currentDVTimeSeriesId).toEqual({
+                    min: 'aaaa3455',
+                    median: null,
+                    max: null
+                });
             });
         });
 

@@ -1,11 +1,11 @@
 
 import {
-    getCurrentDVTimeSeriesId,
+    getCurrentDVParameterCode,
+    getCurrentDVTimeSeriesIds,
     getDVGraphCursorOffset,
     getDVGraphBrushOffset,
     getAvailableDVTimeSeries,
     getAllDVTimeSeries,
-    hasCurrentDVTimeSeries,
     getCurrentDVTimeSeries,
     getCurrentDVTimeSeriesUnitOfMeasure,
     getCurrentDVTimeSeriesTimeRange,
@@ -13,19 +13,43 @@ import {
 } from './daily-value-time-series-selector';
 
 describe('daily-value-time-series-selector', () => {
-    describe('getCurrentDVTimeSeriesId', () => {
-       it('should be false if no current time series id set', () => {
-           expect(getCurrentDVTimeSeriesId({
+    describe('getCurrentDVParameterCode', () => {
+       it('should be null if no current parameter code set', () => {
+           expect(getCurrentDVParameterCode({
                dailyValueTimeSeriesState: {}
            })).toBeNull();
        });
 
-       it('should be true if current time series id is set', () => {
-           expect(getCurrentDVTimeSeriesId({
+       it('should return the current parameter code', () => {
+           expect(getCurrentDVParameterCode({
                dailyValueTimeSeriesState: {
-                   currentDVTimeSeriesId: '12345'
+                   currentDVParameterCode: '12345'
                }
            })).toEqual('12345');
+       });
+    });
+
+    describe('getCurrentDVTimeSeriesIds', () => {
+       it('should be null if no current time series ids are set', () => {
+           expect(getCurrentDVTimeSeriesIds({
+               dailyValueTimeSeriesState: {}
+           })).toBeNull();
+       });
+
+       it('should return the current time series ids', () => {
+           expect(getCurrentDVTimeSeriesIds({
+               dailyValueTimeSeriesState: {
+                   currentDVTimeSeriesId: {
+                       min: 'ffff1234',
+                       median: 'aaaa9876',
+                       max: 'eeee1234'
+                   }
+               }
+           })).toEqual({
+               min: 'ffff1234',
+               median: 'aaaa9876',
+               max: 'eeee1234'
+           });
        });
     });
 
@@ -117,59 +141,6 @@ describe('daily-value-time-series-selector', () => {
         });
     });
 
-    describe('hasCurrentDVTimeSeries', () => {
-        it('expect false if no timeSeries defined', () => {
-            expect(hasCurrentDVTimeSeries({
-                dailyValueTimeSeriesData: {},
-                dailyValueTimeSeriesState: {}
-            })).toBe(false);
-        });
-
-        it('expect false if specific timeSeries is not defined', () => {
-            expect(hasCurrentDVTimeSeries({
-                dailyValueTimeSeriesData : {
-                    dvTimeSeries: {}
-                },
-                dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
-                }
-            })).toBe(false);
-            expect(hasCurrentDVTimeSeries({
-                dailyValueTimeSeriesData: {
-                    dvTimeSeries: {
-                        '11111': {
-                            type: 'Feature',
-                            id: '11111'
-                        }
-                    }
-                },
-                dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
-                }
-            })).toBe(false);
-        });
-
-        it('expect true if specific timeSeries is defined', () => {
-            expect(hasCurrentDVTimeSeries({
-                dailyValueTimeSeriesData : {
-                    dvTimeSeries: {
-                        '11111': {
-                            type: 'Feature',
-                            id: '11111'
-                        },
-                        '12345' : {
-                            type: 'Feature',
-                            id: '12345'
-                        }
-                    }
-                },
-                dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
-                }
-            })).toBe(true);
-        });
-    });
-
     describe('getCurrentDVTimeSeries', () => {
         it('expect null if timeSeries is not defined', () => {
             expect(getCurrentDVTimeSeries({
@@ -188,16 +159,13 @@ describe('daily-value-time-series-selector', () => {
                 dailyValueTimeSeriesState: {}
             })).toBeNull();
             expect(getCurrentDVTimeSeries({
-                dailyValueTimeSeriesData: {
-                    dvTimeSeries: {
-                        '11111': {
-                            type: 'Feature',
-                            id: '11111'
-                        }
-                    }
-                },
+                dailyValueTimeSeriesData: {},
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: 'eeee2345',
+                        median: 'ffff1234',
+                        max: 'aaaa9876'
+                    }
                 }
             })).toBeNull();
         });
@@ -217,11 +185,19 @@ describe('daily-value-time-series-selector', () => {
                     }
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: '11111',
+                        median: '33333',
+                        max: null
+                    }
                 }
             })).toEqual({
-                type: 'Feature',
-                id: '12345'
+                min: {
+                    type: 'Feature',
+                    id: '11111'
+                },
+                median: null,
+                max: null
             });
         });
     });
@@ -247,7 +223,7 @@ describe('daily-value-time-series-selector', () => {
                         },
                         '12346': {
                             type: 'Feature',
-                            id: '12345',
+                            id: '12346',
                             properties: {
                                 unitOfMeasureName: 'km'
                             }
@@ -255,9 +231,13 @@ describe('daily-value-time-series-selector', () => {
                     }
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: '33333',
+                        median: '12346',
+                        max: null
+                    }
                 }
-            })).toEqual('ft');
+            })).toEqual('km');
         });
     });
 
@@ -272,9 +252,16 @@ describe('daily-value-time-series-selector', () => {
                     dvTimeSeries: {}
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: '12345',
+                        median: null,
+                        max: null
+                    }
                 }
-            })).toBeNull();
+            })).toEqual({
+                startTime: null,
+                endTime: null
+            });
         });
 
         it('should return startTime and endTime properties in universal time when time series is defined', () => {
@@ -285,18 +272,38 @@ describe('daily-value-time-series-selector', () => {
                             type: 'Feature',
                             id: '12345',
                             properties: {
-                                phenomenonTimeStart: '2010-01-01',
+                                phenomenonTimeStart: '2010-02-01',
                                 phenomenonTimeEnd: '2019-12-01'
+                            }
+                        },
+                        '12346': {
+                           type: 'Feature',
+                            id: '12347',
+                            properties: {
+                                phenomenonTimeStart: '2010-01-01',
+                                phenomenonTimeEnd: '2019-11-01'
+                            }
+                        },
+                        '12347': {
+                           type: 'Feature',
+                            id: '12347',
+                            properties: {
+                                phenomenonTimeStart: '2010-01-01',
+                                phenomenonTimeEnd: '2019-12-31'
                             }
                         }
                     }
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: '12345',
+                        median: '12346',
+                        max: '12347'
+                    }
                 }
             })).toEqual({
                 startTime: 1262304000000,
-                endTime: 1575158400000
+                endTime: 1577750400000
             });
         });
     });
@@ -312,9 +319,16 @@ describe('daily-value-time-series-selector', () => {
                     dvTimeSeries: {}
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: '12345',
+                        median: null,
+                        max: null
+                    }
                 }
-            })).toBeNull();
+            })).toEqual({
+                min: null,
+                max: null
+            });
         });
 
         it('should return the extent of the current time series', () => {
@@ -332,15 +346,31 @@ describe('daily-value-time-series-selector', () => {
                                     '7.6'
                                 ]
                             }
+                        },
+                        '12346': {
+                            type: 'Feature',
+                            id: '12346',
+                            properties: {
+                                result: [
+                                    '13.3',
+                                    '14.0',
+                                    '12.3',
+                                    '8.3'
+                                ]
+                            }
                         }
                     }
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: '12345',
+                        median: null,
+                        max: '12346'
+                    }
                 }
             })).toEqual({
                 min: 4.5,
-                max: 12.4
+                max: 14.0
             });
         });
     });

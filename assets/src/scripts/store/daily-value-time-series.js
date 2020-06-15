@@ -32,14 +32,24 @@ const addDVTimeSeries = function(timeSeriesId, data) {
 };
 
 /*
- * Synchronous Redux Action to update the current time series id to be viewed
- * @param {String} timeSeriesId
- * @return {Object} Redux action
+ * Synchronous Redux action to set the currently displayed DV parameter code
  */
-const setCurrentDVTimeSeriesId = function(timeSeriesId) {
+const setCurrentDVParameterCode = function(parameterCode) {
     return {
-        type: 'SET_CURRENT_DV_TIME_SERIES_ID',
-        timeSeriesId
+        type: 'SET_CURRENT_DV_PARAMETER_CODE',
+        parameterCode
+    };
+};
+
+/*
+ * Synchronous Redux action to set the currently displayed DV time series id
+ */
+const setCurrentDVTimeSeriesIds = function(minTimeSeriesId, medianTimeSeriesId, maxTimeSeriesId) {
+    return {
+        type: 'SET_CURRENT_DV_TIME_SERIES_IDS',
+        minTimeSeriesId,
+        medianTimeSeriesId,
+        maxTimeSeriesId
     };
 };
 
@@ -52,6 +62,30 @@ const setDVGraphCursorOffset = function(cursorOffset) {
     return {
         type: 'SET_DV_GRAPH_CURSOR_OFFSET',
         cursorOffset
+    };
+};
+
+/*
+ * Synchronous Redux action to update the graph's brush offset
+ * @param {Number} startBrushOffset - difference in epoch time from brush start to the displayed time series start time
+ * @param {Number} endBrushOffset - difference in epoch time from displayed time series end to the end of the brush
+ * @return {Object} Redux action
+ */
+const setDVGraphBrushOffset = function(startBrushOffset, endBrushOffset) {
+    return {
+        type: 'SET_DV_GRAPH_BRUSH_OFFSET',
+        startBrushOffset,
+        endBrushOffset
+    };
+};
+
+/*
+ * Synchronous Redux action to clear the graph's brush offset
+ * @return {Object} Redux action
+ */
+const clearDVGraphBrushOffset = function() {
+    return {
+        type: 'CLEAR_DV_GRAPH_BRUSH_OFFSET'
     };
 };
 
@@ -86,14 +120,12 @@ const retrieveDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
     return function(dispatch, getState) {
         const state = getState();
         if (state.dailyValueTimeSeriesData.dvTimeSeries && timeSeriesId in state.dailyValueTimeSeriesData.dvTimeSeries) {
-            dispatch(setCurrentDVTimeSeriesId(timeSeriesId));
             return Promise.resolve();
         }
         return fetchDVTimeSeries(monitoringLocationId, timeSeriesId)
             .then(
                 (data) => {
                     dispatch(addDVTimeSeries(timeSeriesId, data));
-                    dispatch(setCurrentDVTimeSeriesId(timeSeriesId));
                 },
                 () => {
                     console.log(`Unable to fetch dailyValueTimeSeries time series for ${timeSeriesId}`);
@@ -125,42 +157,26 @@ export const dailyValueTimeSeriesDataReducer =
         }
     };
 
-
-
-/*
- * Synchronous Redux action to update the graph's brush offset
- * @param {Number} startBrushOffset - difference in epoch time from brush start to the displayed time series start time
- * @param {Number} endBrushOffset - difference in epoch time from displayed time series end to the end of the brush
- * @return {Object} Redux action
- */
-const setDVGraphBrushOffset = function(startBrushOffset, endBrushOffset) {
-    return {
-        type: 'SET_DV_GRAPH_BRUSH_OFFSET',
-        startBrushOffset,
-        endBrushOffset
-    };
-};
-
-/*
- * Synchronous Redux action to clear the graph's brush offset
- * @return {Object} Redux action
- */
-const clearDVGraphBrushOffset = function() {
-    return {
-        type: 'CLEAR_DV_GRAPH_BRUSH_OFFSET'
-    };
-};
-
 /*
  * Slice reducer for dailyValueTimeSeriesState
  */
 export const dailyValueTimeSeriesStateReducer = function(dailyValueTimeSeriesState={}, action) {
     switch (action.type) {
-        case 'SET_CURRENT_DV_TIME_SERIES_ID':
+        case 'SET_CURRENT_DV_PARAMETER_CODE':
             return {
                 ...dailyValueTimeSeriesState,
-                currentDVTimeSeriesId: action.timeSeriesId
+                currentDVParameterCode: action.parameterCode
             };
+        case 'SET_CURRENT_DV_TIME_SERIES_IDS':
+            return {
+                ...dailyValueTimeSeriesState,
+                currentDVTimeSeriesId : {
+                    min: action.minTimeSeriesId,
+                    median: action.medianTimeSeriesId,
+                    max: action.maxTimeSeriesId
+                }
+            };
+
         case 'SET_DV_GRAPH_CURSOR_OFFSET':
             return {
                 ...dailyValueTimeSeriesState,
@@ -187,7 +203,8 @@ export const dailyValueTimeSeriesStateReducer = function(dailyValueTimeSeriesSta
 export const Actions = {
     setAvailableDVTimeSeries,
     addDVTimeSeries,
-    setCurrentDVTimeSeriesId,
+    setCurrentDVParameterCode,
+    setCurrentDVTimeSeriesIds,
     setDVGraphCursorOffset,
     retrieveAvailableDVTimeSeries,
     retrieveDVTimeSeries,
