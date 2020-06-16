@@ -37,12 +37,19 @@
 {%- endmacro %}
 
 {% macro MapComponent(site_no, latitude, longitude) -%}
-    <div class="wdfn-component" data-component="map" data-siteno="{{ site_no }}", data-latitude="{{ latitude }}" data-longitude="{{ longitude }}" data-zoom=12>
+    <div class="wdfn-component" data-component="map" data-siteno="{{ site_no }}" data-latitude="{{ latitude }}" data-longitude="{{ longitude }}" data-zoom=12>
         <div id="flood-layer-control-container"></div>
         <div id="site-map"></div>
         <div>
             <a class="usa-link" href="https://waterdata.usgs.gov/blog/nldi-intro/" target="_blank" >About the Network-Linked Data Index (NLDI)</a>
         </div>
+    </div>
+{%- endmacro %}
+
+{% macro USMapComponent(latitude, longitude, zoom) -%}
+  <div class="wdfn-component" data-component="us-map" data-latitude="{{ latitude }}" data-longitude="{{ longitude }}" data-zoom="{{zoom}}">
+        <div id="flood-layer-control-container"></div>
+        <div id="site-map"></div>
     </div>
 {%- endmacro %}
 
