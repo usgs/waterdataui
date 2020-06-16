@@ -9,7 +9,7 @@ import {Actions} from '../../store/daily-value-time-series';
 
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getCurrentCursorPoint, getCurrentDataPointAtCursor, getCursorEpochTime} from './selectors/time-series-data';
+import {getCurrentCursorPoint, getCurrentDataPointsAtCursor, getCursorEpochTime} from './selectors/time-series-data';
 
 /*
  * Renders the tooltip text representing the data at the current cursor position
@@ -19,24 +19,30 @@ import {getCurrentCursorPoint, getCurrentDataPointAtCursor, getCursorEpochTime} 
 export const drawTooltipText = function(elem, store) {
     elem.append('div')
         .attr('class', 'dv-tooltip-container')
-        .call(link(store, (elem, {pointAtCursorOffset, unitOfMeasure, layout}) => {
+        .call(link(store, (elem, {pointsAtCursorOffset, unitOfMeasure, layout}) => {
             elem.select('.dv-tooltip-text').remove();
 
-            if (pointAtCursorOffset) {
-                const dateLabel = DateTime.fromMillis(pointAtCursorOffset.dateTime, {zone: 'UTC'}).toFormat('yyyy-LL-dd');
-                const label = pointAtCursorOffset.isMasked ?
-                    `${pointAtCursorOffset.label} - ${dateLabel}` :
-                    `${pointAtCursorOffset.value} ${unitOfMeasure} - ${dateLabel}`;
-                    
-                elem.append('div')
-                    .attr('style', `margin-left: ${layout.margin.left}px`)
-                    .classed('dv-tooltip-text', true)
-                    .classed(pointAtCursorOffset.class, true)
-                    .text(label);
-            }
+            const pointsDescending = Object.values(pointsAtCursorOffset)
+                .filter(point => point ? true : false)
+                .sort((a, b) => b - a);
+
+            pointsDescending.forEach((point) => {
+                if (point) {
+                    const dateLabel = DateTime.fromMillis(point.dateTime, {zone: 'UTC'}).toFormat('yyyy-LL-dd');
+                    const label = point.isMasked ?
+                        `${point.label} - ${dateLabel}` :
+                        `${point.value} ${unitOfMeasure} - ${dateLabel}`;
+
+                    elem.append('div')
+                        .attr('style', `margin-left: ${layout.margin.left}px`)
+                        .classed('dv-tooltip-text', true)
+                        .classed(point.class, true)
+                        .text(label);
+                }
+            });
 
         }, createStructuredSelector({
-            pointAtCursorOffset: getCurrentDataPointAtCursor,
+            pointsAtCursorOffset: getCurrentDataPointsAtCursor,
             unitOfMeasure: getCurrentDVTimeSeriesUnitOfMeasure,
             layout: getMainLayout
         })));

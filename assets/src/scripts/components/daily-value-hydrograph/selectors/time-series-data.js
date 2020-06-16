@@ -172,7 +172,7 @@ export const getCurrentTimeSeriesPoints = createSelector(
 
 /*
  * Returns selector function which returns an Object with properties min, median, and max. Each properties value's are
- * anArray of Objects. Each object has four properties and
+ * an Array of Objects. Each object has four properties and
  * represents a segment
  *      @prop {Boolean} isMasked
  *      @prop {Array of Object} points - Each point has {Number} value and {Number in milliseconds} dateTime

@@ -16,7 +16,7 @@ export const drawTimeSeriesLegend = function(elem, store) {
     elem.append('div')
         .classed('hydrograph-container', true)
         .call(link(store, drawSimpleLegend, createStructuredSelector({
-            legendMarkerRows: (state) => [getLegendMarkers(state)],
+            legendMarkerRows: (state) => getLegendMarkers(state),
             layout: getMainLayout
         })));
 };
