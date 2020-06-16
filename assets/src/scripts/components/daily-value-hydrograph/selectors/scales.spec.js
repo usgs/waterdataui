@@ -13,11 +13,35 @@ describe('components/daily-value-hydrograph/selectors/scales', () => {
                         timeStep: ['2010-01-01', '2010-01-02', '2010-01-03', '2010-01-04'],
                         result: ['4.5', '3.2', '4.6', '2.9']
                     }
+                },
+                '12346' : {
+                    type: 'Feature',
+                    id: '12346',
+                    properties: {
+                        phenomenonTimeStart: '2010-01-01',
+                        phenomenonTimeEnd: '2010-01-04',
+                        timeStep: ['2010-01-01', '2010-01-02', '2010-01-03', '2010-01-04'],
+                        result: ['4.8', '3.3', '5.6', '3.0']
+                    }
+                },
+                '12347' : {
+                    type: 'Feature',
+                    id: '12347',
+                    properties: {
+                        phenomenonTimeStart: '2010-01-01',
+                        phenomenonTimeEnd: '2010-01-04',
+                        timeStep: ['2010-01-01', '2010-01-02', '2010-01-03', '2010-01-04'],
+                        result: ['4.9', '3.5', '5.9', '3.5']
+                    }
                 }
             }
         },
         dailyValueTimeSeriesState: {
-            currentDVTimeSeriesId: '12345'
+            currentDVTimeSeriesId: {
+                min: '12345',
+                median: '12346',
+                max: '12347'
+            }
         },
         ui: {
             windowWidth: 1024,
@@ -105,7 +129,7 @@ describe('components/daily-value-hydrograph/selectors/scales', () => {
            const result = getMainYScale(TEST_STATE).domain();
 
            expect(result[1]).toBeLessThan(2.9);
-           expect(result[0]).toBeGreaterThan(4.6);
+           expect(result[0]).toBeGreaterThan(5.9);
        });
 
        it('Should not extend domain beyond zero', () =>  {

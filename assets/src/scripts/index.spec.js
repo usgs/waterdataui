@@ -9,11 +9,12 @@
 
 import './mock-service-data';
 import './polyfills';
-
+/*
 import './ajax.spec';
-
 import './components/daily-value-hydrograph/selectors/labels.spec';
+ */
 import './components/daily-value-hydrograph/selectors/legend-data.spec';
+/*
 import './components/daily-value-hydrograph/selectors/scales.spec';
 import './components/daily-value-hydrograph/selectors/time-series-data.spec';
 import './components/daily-value-hydrograph/graph-brush.spec';
@@ -61,14 +62,12 @@ import './helpers.spec';
 import './lib/d3-redux.spec';
 
 import './schema.spec';
-
 import './selectors/daily-value-time-series-selector.spec';
 import './selectors/flood-data-selector.spec';
 import './selectors/nldi-data-selector.spec';
 import './selectors/median-statistics-selector.spec';
 import './selectors/time-series-selector.spec';
 import './selectors/time-zone-selector.spec';
-
 import './store/daily-value-time-series.spec';
 import './store/flood-inundation.spec';
 import './store/instantaneous-value-time-series-data.spec';
@@ -94,3 +93,4 @@ import './networks/network-component/network-legend.spec';
 import './networks/selectors/network-data-selector.spec';
 import './networks/store/network-store.spec';
 import './networks/store/network-data-reducer.spec';
+*/

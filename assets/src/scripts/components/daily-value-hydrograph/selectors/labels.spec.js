@@ -20,7 +20,11 @@ describe('components/daily-value-hydrograph/selectors/label module', () => {
                         }
                     }
                 },
-                dailyValueTimeSeriesState: {}
+                dailyValueTimeSeriesState: {
+                    min: null,
+                    median: null,
+                    max: null
+                }
             })).toBe('');
         });
 
@@ -39,7 +43,11 @@ describe('components/daily-value-hydrograph/selectors/label module', () => {
                     }
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: null,
+                        median: '12345',
+                        max: null
+                    }
                 }
             });
 
@@ -67,7 +75,11 @@ describe('components/daily-value-hydrograph/selectors/label module', () => {
                         }
                     }
                 },
-                dailyValueTimeSeriesState: {}
+                dailyValueTimeSeriesState: {
+                    min: null,
+                    median: null,
+                    max: null
+                }
             })).toBe('');
         });
 
@@ -86,7 +98,11 @@ describe('components/daily-value-hydrograph/selectors/label module', () => {
                     }
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: '12345',
+                        median: null,
+                        max: null
+                    }
                 }
             });
 
@@ -114,7 +130,11 @@ describe('components/daily-value-hydrograph/selectors/label module', () => {
                         }
                     }
                 },
-                dailyValueTimeSeriesState: {}
+                dailyValueTimeSeriesState: {
+                    min: null,
+                    median: null,
+                    max: null
+                }
             })).toBe('');
         });
 
@@ -126,17 +146,23 @@ describe('components/daily-value-hydrograph/selectors/label module', () => {
                             type: 'Feature',
                             id: '12345',
                             properties: {
-                                observedPropertyName: 'Water level, depth LSD'
+                                observedPropertyName: 'Water level, depth LSD',
+                                unitOfMeasureName: 'ft'
                             }
                         }
                     }
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: null,
+                        median: null,
+                        max: '12345'
+                    }
                 }
             });
 
             expect(result).toContain('Water level, depth LSD');
+            expect(result).toContain('ft');
         });
     });
 });
