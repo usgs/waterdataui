@@ -5,9 +5,9 @@ import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from '../
 import {getCurrentUniqueDataKinds} from './time-series-data';
 
 const TS_LABEL = {
-    min: 'Minimum',
-    median: 'Median',
-    max: 'Maximum'
+    min: 'Minimum:',
+    median: 'Median:',
+    max: 'Maximum:'
 };
 
 /*
@@ -18,17 +18,25 @@ const TS_LABEL = {
 export const getLegendMarkers = createSelector(
     getCurrentUniqueDataKinds,
     (dataKinds) => {
+        const getTsMarkers = function(tsKey, dataKinds) {
+            const lineKinds = dataKinds.filter(kind => !kind.isMasked).sort((a, b) => a.label > b.label ? 1 : -1);
+            const maskKinds = dataKinds.filter(kind => kind.isMasked);
+            return [defineTextOnlyMarker(TS_LABEL[tsKey])].concat(
+                lineKinds.map(dataKind => defineLineMarker(null, `line-segment ${dataKind.class} ${tsKey}`, dataKind.label)),
+                maskKinds.map(dataKind => defineRectangleMarker(null, `mask ${dataKind.class}`, dataKind.label, 'url(#dv-masked-pattern)'))
+                );
+        };
+
         const result = [];
-        Object.keys(dataKinds).forEach((tsKey) => {
-           if (dataKinds[tsKey].length) {
-               const markers = dataKinds[tsKey].map((dataKind) => {
-                   return dataKind.isMasked ?
-                       defineRectangleMarker(null, `mask ${dataKind.class}`, dataKind.label, 'url(#dv-masked-pattern)') :
-                       defineLineMarker(null, `line-segment ${dataKind.class}`, dataKind.label);
-               });
-               result.push([defineTextOnlyMarker(TS_LABEL[tsKey]), ...markers]);
-           }
-        });
+        if (dataKinds.max.length) {
+            result.push(getTsMarkers('max', dataKinds.max));
+        }
+        if (dataKinds.median.length) {
+            result.push(getTsMarkers('median', dataKinds.median));
+        }
+        if (dataKinds.min.length) {
+            result.push(getTsMarkers('min', dataKinds.min));
+        }
         return result;
     }
 );

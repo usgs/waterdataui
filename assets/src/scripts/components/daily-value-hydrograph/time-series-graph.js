@@ -16,12 +16,6 @@ import {drawTooltipFocus, drawTooltipText} from './tooltip';
 
 const CIRCLE_RADIUS_SINGLE_PT = 1;
 
-const STROKE_DASH_ARRAY = {
-    min: '4,4',
-    median: '',
-    max: '5,5,2,2,2,2'
-};
-
 const MASK_PATTERN_ID = {
     min: 'dv-min-masked-pattern',
     median: 'dv-median-masked-pattern',
@@ -66,13 +60,13 @@ const drawLineSegment = function (group, {segment, tsKey, xScale, yScale}) {
             .y(d => yScale(d.value));
         lineElem = group.append('path')
             .datum(segment.points)
-            .attr('d', dvLine)
-            .style('stroke-dasharray', STROKE_DASH_ARRAY[tsKey]);
+            .attr('d', dvLine);
 
     }
     lineElem
         .classed('line-segment', true)
-        .classed(segment.class, true);
+        .classed(segment.class, true)
+        .classed(tsKey, true);
 };
 
 const drawMaskSegment = function(group, {segment, tsKey, xScale, yScale}) {
