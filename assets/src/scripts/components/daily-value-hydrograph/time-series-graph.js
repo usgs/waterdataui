@@ -63,11 +63,12 @@ const drawLineSegment = function (group, {segment, tsKey, xScale, yScale}) {
     } else {
         const dvLine = d3Line()
             .x(d => xScale(d.dateTime))
-            .y(d => yScale(d.value))
-            .style('stroke-dasharray', STROKE_DASH_ARRAY[tsKey]);
+            .y(d => yScale(d.value));
         lineElem = group.append('path')
             .datum(segment.points)
-            .attr('d', dvLine);
+            .attr('d', dvLine)
+            .style('stroke-dasharray', STROKE_DASH_ARRAY[tsKey]);
+
     }
     lineElem
         .classed('line-segment', true)

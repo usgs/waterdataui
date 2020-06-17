@@ -9,12 +9,10 @@
 
 import './mock-service-data';
 import './polyfills';
-/*
+
 import './ajax.spec';
 import './components/daily-value-hydrograph/selectors/labels.spec';
- */
 import './components/daily-value-hydrograph/selectors/legend-data.spec';
-/*
 import './components/daily-value-hydrograph/selectors/scales.spec';
 import './components/daily-value-hydrograph/selectors/time-series-data.spec';
 import './components/daily-value-hydrograph/graph-brush.spec';
@@ -93,4 +91,3 @@ import './networks/network-component/network-legend.spec';
 import './networks/selectors/network-data-selector.spec';
 import './networks/store/network-store.spec';
 import './networks/store/network-data-reducer.spec';
-*/

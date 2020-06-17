@@ -67,7 +67,7 @@ export const attachToNode = function (store,
                 .map(id => store.dispatch(Actions.retrieveDVTimeSeries(monitoringLocationId, id)));
             Promise.allSettled(fetchDVTimeSeries).then(() => {
                 let min, median, max = null;
-                let allDVTimeSeries = getAllDVTimeSeries(store);
+                let allDVTimeSeries = getAllDVTimeSeries(store.getState());
                 Object.keys(allDVTimeSeries).forEach((tsId) => {
                     switch (allDVTimeSeries[tsId].properties.statistic) {
                         case 'MINIMUM':

@@ -11,6 +11,27 @@ import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale} from './selectors/scales';
 import {getCurrentCursorPoint, getCurrentDataPointsAtCursor, getCursorEpochTime} from './selectors/time-series-data';
 
+const TOOLTIP_LABEL = {
+    min: 'Min',
+    median: 'Mean',
+    max: 'Max'
+};
+
+const drawOnePointText = function(elem, point, statLabel, unitOfMeasure, marginLeft) {
+    if (point) {
+        const dateLabel = DateTime.fromMillis(point.dateTime, {zone: 'UTC'}).toFormat('yyyy-LL-dd');
+        const label = point.isMasked ?
+            `${statLabel} ${point.label} - ${dateLabel}` :
+            `${statLabel} ${point.value} ${unitOfMeasure} - ${dateLabel}`;
+
+        elem.append('div')
+            .attr('style', `margin-left: ${marginLeft}px`)
+            .classed('dv-tooltip-text', true)
+            .classed(point.class, true)
+            .text(label);
+    }
+};
+
 /*
  * Renders the tooltip text representing the data at the current cursor position
  * @param {D3 selection} - elem
@@ -20,26 +41,10 @@ export const drawTooltipText = function(elem, store) {
     elem.append('div')
         .attr('class', 'dv-tooltip-container')
         .call(link(store, (elem, {pointsAtCursorOffset, unitOfMeasure, layout}) => {
-            elem.select('.dv-tooltip-text').remove();
-
-            const pointsDescending = Object.values(pointsAtCursorOffset)
-                .filter(point => point ? true : false)
-                .sort((a, b) => b - a);
-
-            pointsDescending.forEach((point) => {
-                if (point) {
-                    const dateLabel = DateTime.fromMillis(point.dateTime, {zone: 'UTC'}).toFormat('yyyy-LL-dd');
-                    const label = point.isMasked ?
-                        `${point.label} - ${dateLabel}` :
-                        `${point.value} ${unitOfMeasure} - ${dateLabel}`;
-
-                    elem.append('div')
-                        .attr('style', `margin-left: ${layout.margin.left}px`)
-                        .classed('dv-tooltip-text', true)
-                        .classed(point.class, true)
-                        .text(label);
-                }
-            });
+            elem.selectAll('.dv-tooltip-text').remove();
+            drawOnePointText(elem, pointsAtCursorOffset.max, TOOLTIP_LABEL.max, unitOfMeasure, layout.margin.left);
+            drawOnePointText(elem, pointsAtCursorOffset.median, TOOLTIP_LABEL.median, unitOfMeasure, layout.margin.left);
+            drawOnePointText(elem, pointsAtCursorOffset.min, TOOLTIP_LABEL.min, unitOfMeasure, layout.margin.left);
 
         }, createStructuredSelector({
             pointsAtCursorOffset: getCurrentDataPointsAtCursor,
