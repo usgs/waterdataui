@@ -36,7 +36,7 @@ const addDefsPatterns = function(elem) {
         patternTransform: 'rotate(45)'
     }, {
         patternId: 'dv-median-masked-pattern',
-        patternTransform: 'skewX(30)'
+        patternTransform: 'rotate(90)'
     }, {
         patternId: 'dv-max-masked-pattern',
         patternTransform: 'rotate(135)'

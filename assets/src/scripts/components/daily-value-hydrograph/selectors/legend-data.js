@@ -23,7 +23,8 @@ export const getLegendMarkers = createSelector(
             const maskKinds = dataKinds.filter(kind => kind.isMasked);
             return [defineTextOnlyMarker(TS_LABEL[tsKey])].concat(
                 lineKinds.map(dataKind => defineLineMarker(null, `line-segment ${dataKind.class} ${tsKey}`, dataKind.label)),
-                maskKinds.map(dataKind => defineRectangleMarker(null, `mask ${dataKind.class}`, dataKind.label, 'url(#dv-masked-pattern)'))
+                maskKinds.map(dataKind =>
+                    defineRectangleMarker(null, `mask ${dataKind.class}`, dataKind.label, `url(#dv-${tsKey}-masked-pattern)`))
                 );
         };
 
