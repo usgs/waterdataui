@@ -1,16 +1,14 @@
-import {DateTime} from 'luxon';
 import findIndex from 'lodash/findIndex';
 import isEqual from 'lodash/isEqual';
 import uniq from 'lodash/uniq';
 import uniqWith from 'lodash/uniqWith';
-import zip from 'lodash/zip';
-import zipObject from 'lodash/zipObject';
+
 import {createSelector} from 'reselect';
 
-import {getCurrentDVTimeSeries, getDVGraphCursorOffset} from '../../../selectors/daily-value-time-series-selector';
+import {getCurrentDVTimeSeriesData, getDVGraphCursorOffset} from '../../../selectors/daily-value-time-series-selector';
 import {getNearestTime} from '../../../utils';
 
-import {getXScale, getMainXScale, getMainYScale} from './scales';
+import {getMainXScale, getMainYScale} from './scales';
 
 const TWO_DAYS = 1000 * 60 * 60 * 24 * 2; // In milliseconds
 
@@ -42,62 +40,6 @@ const LINE_CLASSES = {
 
 
 /*
- * Returns the selector function which returns an Object with min, media, and max properties. Each key's value
- * is an Array of Objects, each object representing
- * one value, dateTime (in epoch time), approvals, nilReason, qualifiers, and grades
- * This will represent the time series for the current selected time series and is in increasing date order.
- */
-export const getCurrentTimeSeriesData = createSelector(
-    getCurrentDVTimeSeries,
-    (timeSeries) => {
-        let tsData = {
-            min: [],
-            median: [],
-            max: []
-        };
-
-        if (timeSeries) {
-            Object.keys(timeSeries).forEach((tsKey) => {
-                const thisTimeSeries = timeSeries[tsKey];
-                if (thisTimeSeries) {
-                    let result = zip(
-                        thisTimeSeries.properties.result,
-                        thisTimeSeries.properties.timeStep.map((timeStep) => {
-                            return new DateTime.fromISO(timeStep, {zone: 'UTC'}).toMillis();
-                        }),
-                        thisTimeSeries.properties.nilReason,
-                        thisTimeSeries.properties.approvals,
-                        thisTimeSeries.properties.qualifiers,
-                        thisTimeSeries.properties.grades)
-                        .map((zippedStep) => {
-                            return zipObject([
-                                'value',
-                                'dateTime',
-                                'nilReason',
-                                'approvals',
-                                'qualifiers',
-                                'grades'
-                            ], zippedStep);
-                        });
-
-                    tsData[tsKey] = result.sort((first, second) => {
-                        if (first.dateTime < second.dateTime) {
-                            return -1;
-                        } else if (first.dateTime > second.dateTime) {
-                            return 1;
-                        } else {
-                            return 0;
-                        }
-                    });
-                }
-            });
-        }
-        return tsData;
-    }
-);
-
-
-/*
  * Returns a selector function function returns an Object. The object has three properties, min, median, and max.
  * Each are an Array of Objects that can be used to visualize the
  * currently selected time series data.
@@ -109,7 +51,7 @@ export const getCurrentTimeSeriesData = createSelector(
  *      @prop {String} class - can be used to style the data
  */
 export const getCurrentTimeSeriesPoints = createSelector(
-    getCurrentTimeSeriesData,
+    getCurrentDVTimeSeriesData,
     (tsData) => {
         const getLineClass = function(point) {
             if (!point.approvals) {
@@ -290,7 +232,7 @@ export const getCurrentUniqueDataKinds = createSelector(
  */
 export const getCursorEpochTime = createSelector(
     getDVGraphCursorOffset,
-    getXScale(),
+    getMainXScale,
     (cursorOffset, xScale) => {
 
         if (!cursorOffset) {

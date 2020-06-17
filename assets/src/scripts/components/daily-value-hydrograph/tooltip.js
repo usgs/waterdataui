@@ -42,9 +42,9 @@ export const drawTooltipText = function(elem, store) {
         .attr('class', 'dv-tooltip-container')
         .call(link(store, (elem, {pointsAtCursorOffset, unitOfMeasure, layout}) => {
             elem.selectAll('.dv-tooltip-text').remove();
-            drawOnePointText(elem, pointsAtCursorOffset.max, TOOLTIP_LABEL.max, unitOfMeasure, layout.margin.left);
-            drawOnePointText(elem, pointsAtCursorOffset.median, TOOLTIP_LABEL.median, unitOfMeasure, layout.margin.left);
             drawOnePointText(elem, pointsAtCursorOffset.min, TOOLTIP_LABEL.min, unitOfMeasure, layout.margin.left);
+            drawOnePointText(elem, pointsAtCursorOffset.median, TOOLTIP_LABEL.median, unitOfMeasure, layout.margin.left);
+            drawOnePointText(elem, pointsAtCursorOffset.max, TOOLTIP_LABEL.max, unitOfMeasure, layout.margin.left);
 
         }, createStructuredSelector({
             pointsAtCursorOffset: getCurrentDataPointsAtCursor,

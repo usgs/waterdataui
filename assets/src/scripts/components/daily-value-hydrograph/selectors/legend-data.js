@@ -29,14 +29,14 @@ export const getLegendMarkers = createSelector(
         };
 
         const result = [];
-        if (dataKinds.max.length) {
-            result.push(getTsMarkers('max', dataKinds.max));
+        if (dataKinds.min.length) {
+            result.push(getTsMarkers('min', dataKinds.min));
         }
         if (dataKinds.median.length) {
             result.push(getTsMarkers('median', dataKinds.median));
         }
-        if (dataKinds.min.length) {
-            result.push(getTsMarkers('min', dataKinds.min));
+        if (dataKinds.max.length) {
+            result.push(getTsMarkers('max', dataKinds.max));
         }
         return result;
     }

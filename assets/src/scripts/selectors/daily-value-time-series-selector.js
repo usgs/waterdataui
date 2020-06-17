@@ -1,5 +1,8 @@
+import zip from 'lodash/zip';
+import zipObject from 'lodash/zipObject';
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
+
 
 const getEpochMilliseconds = function(dateStr) {
    return new DateTime.fromISO(dateStr, {zone: 'UTC'}).toMillis();
@@ -48,6 +51,62 @@ export const getCurrentDVTimeSeries = createSelector(
         return result;
     }
 );
+
+/*
+ * Returns the selector function which returns an Object with min, media, and max properties. Each key's value
+ * is an Array of Objects, each object representing
+ * one value, dateTime (in epoch time), approvals, nilReason, qualifiers, and grades
+ * This will represent the time series for the current selected time series and is in increasing date order.
+ */
+export const getCurrentDVTimeSeriesData = createSelector(
+    getCurrentDVTimeSeries,
+    (timeSeries) => {
+        let tsData = {
+            min: [],
+            median: [],
+            max: []
+        };
+
+        if (timeSeries) {
+            Object.keys(timeSeries).forEach((tsKey) => {
+                const thisTimeSeries = timeSeries[tsKey];
+                if (thisTimeSeries) {
+                    let result = zip(
+                        thisTimeSeries.properties.result,
+                        thisTimeSeries.properties.timeStep.map((timeStep) => {
+                            return new DateTime.fromISO(timeStep, {zone: 'UTC'}).toMillis();
+                        }),
+                        thisTimeSeries.properties.nilReason,
+                        thisTimeSeries.properties.approvals,
+                        thisTimeSeries.properties.qualifiers,
+                        thisTimeSeries.properties.grades)
+                        .map((zippedStep) => {
+                            return zipObject([
+                                'value',
+                                'dateTime',
+                                'nilReason',
+                                'approvals',
+                                'qualifiers',
+                                'grades'
+                            ], zippedStep);
+                        });
+
+                    tsData[tsKey] = result.sort((first, second) => {
+                        if (first.dateTime < second.dateTime) {
+                            return -1;
+                        } else if (first.dateTime > second.dateTime) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    });
+                }
+            });
+        }
+        return tsData;
+    }
+);
+
 
 /*
  * Return a selector function which returns a String representing the unit of measure for the current dailyValueTimeSeries time series.

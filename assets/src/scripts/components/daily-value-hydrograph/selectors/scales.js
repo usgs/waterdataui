@@ -5,11 +5,11 @@ import {createSelector} from 'reselect';
 import {
     getDVGraphBrushOffset,
     getCurrentDVTimeSeriesTimeRange,
-    getCurrentDVTimeSeriesValueRange
+    getCurrentDVTimeSeriesValueRange,
+    getCurrentDVTimeSeriesData
 } from '../../../selectors/daily-value-time-series-selector';
 
 import {getLayout} from './layout';
-import {getCurrentTimeSeriesData} from './time-series-data';
 
 /*
  * Returns a selector function which returns a d3 scale for either the brush,
@@ -63,7 +63,7 @@ const createYScale = function (layout, valueRange) {
  */
 export const getMainYScale = createSelector(
     getLayout('MAIN'),
-    getCurrentTimeSeriesData,
+    getCurrentDVTimeSeriesData,
     getXScale('MAIN'),
     (layout, allTSData, xScale) => {
         const [startTime, endTime] = xScale.domain();
