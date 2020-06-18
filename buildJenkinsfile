@@ -1,0 +1,86 @@
+@Library(value='iow-ecs-pipeline@2.2.0', changelog=false) _
+
+def p
+def deployConfigs
+
+pipeline {
+    agent {
+        node {
+            label 'team:iow'
+        }
+    }
+    parameters {
+        choice(choices: ['snapshots', 'releases'], description: 'type of build', name: 'BUILD_TYPE')
+    }
+    triggers {
+        pollSCM('H/5 * * * *')
+    }
+    stages {
+        stage('clean workspace') {
+            steps {
+                script {
+                    pipelineUtils.cleanWorkspace()
+                }
+            }
+        }
+        stage('checkout source') {
+            steps {
+                script {
+                    // clone the repo
+                    pipelineUtils.cloneGitRepo()
+                }
+                script {
+                    p = pipelineCfg('pipeline.yml')
+                }
+            }
+        }
+        stage('create virtualenv') {
+            steps {
+                script {
+                    pipelineUtils.setUpPythonVirtualEnv()
+                    pipelineUtils.pipInstall('--only-binary=bumpversion bumpversion==0.5.3 requests boto3 pyyaml chevron')
+                }
+            }
+        }
+        stage('pull scripts') {
+            steps {
+                script {
+                    pipelineUtils.pullEcsScripts()
+                }
+            }
+        }
+        stage('build assets docker image') {
+            steps {
+                script {
+                    pipelineUtils.buildDockerImage('wqp_assets', './assets')
+                }
+            }
+        }
+        stage('build server docker image') {
+            steps {
+                script {
+                    version = pipelineUtils.bumpVersion(params.BUILD_TYPE)
+                    buildConfigs = p['docker_build'] ?: [p]
+                    deployConfigs = dockerPipeline.buildPublishAndCleanUpDockerImages(buildConfigs, version)
+                }
+            }
+        }
+        stage('push to git') {
+            steps {
+                script {
+                    if ("${params.BUILD_TYPE}" == "releases") {
+                        pipelineUtils.incrementToNextDevelopmentVersion()
+                        pipelineUtils.pushToGitRepo(p.gitRepoUrl, p.gitRepoCredentialsId)
+                    }
+                }
+            }
+        }
+        stage('deploy image') {
+            steps {
+                script {
+                    dockerPipeline.deployImages(deployConfigs)
+                }
+            }
+        }
+    }
+}
