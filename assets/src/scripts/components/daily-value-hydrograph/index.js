@@ -20,6 +20,13 @@ const STATISTIC_CODES = {
     max: '00001'
 };
 
+/*
+ * Returns the set of time series for a single parameter code. That code must
+ * be in GROUND_WATER_LEVELS_PARM_CD and contain one or more STATISTIC_CODES. If more
+ * than one parameter code has time series than the one with the most of the
+ * desired statistics codes will be chosen.
+ * @return Object - available time series object
+ */
 const getBestAvailableTimeSeriesToUse = function(availableTimeSeries) {
     const gwAvailableTimeSeries = availableTimeSeries
         .filter(ts => includes(GROUND_WATER_LEVELS_PARM_CD, ts.parameterCode))
