@@ -6,7 +6,7 @@ import {getCurrentUniqueDataKinds} from './time-series-data';
 
 const TS_LABEL = {
     min: 'Minimum:',
-    median: 'Median:',
+    mean: 'Mean:',
     max: 'Maximum:'
 };
 
@@ -32,8 +32,8 @@ export const getLegendMarkers = createSelector(
         if (dataKinds.min.length) {
             result.push(getTsMarkers('min', dataKinds.min));
         }
-        if (dataKinds.median.length) {
-            result.push(getTsMarkers('median', dataKinds.median));
+        if (dataKinds.mean.length) {
+            result.push(getTsMarkers('mean', dataKinds.mean));
         }
         if (dataKinds.max.length) {
             result.push(getTsMarkers('max', dataKinds.max));

@@ -16,7 +16,7 @@ import {drawGraphBrush} from './graph-brush';
 const GROUND_WATER_LEVELS_PARM_CD  = ['62610', '62611', '72019', '72020', '72150', '72226', '72227', '72228', '72229', '72230', '72231', '72232'];
 const STATISTIC_CODES = {
     min: '00002',
-    median: '00003',
+    mean: '00003',
     max: '00001'
 };
 
@@ -66,7 +66,7 @@ export const attachToNode = function (store,
                 .map(availableTs => getTSId(availableTs.id))
                 .map(id => store.dispatch(Actions.retrieveDVTimeSeries(monitoringLocationId, id)));
             Promise.allSettled(fetchDVTimeSeries).then(() => {
-                let min, median, max = null;
+                let min, mean, max = null;
                 let allDVTimeSeries = getAllDVTimeSeries(store.getState());
                 Object.keys(allDVTimeSeries).forEach((tsId) => {
                     switch (allDVTimeSeries[tsId].properties.statistic) {
@@ -74,13 +74,13 @@ export const attachToNode = function (store,
                             min = tsId;
                             break;
                         case 'MEAN':
-                            median = tsId;
+                            mean = tsId;
                             break;
                         case 'MAXIMUM':
                             max = tsId;
                     }
                 });
-                store.dispatch(Actions.setCurrentDVTimeSeriesIds(min, median, max));
+                store.dispatch(Actions.setCurrentDVTimeSeriesIds(min, mean, max));
                 loadingIndicator.call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
                 let graphContainer = nodeElem.select('.graph-container');
                 graphContainer

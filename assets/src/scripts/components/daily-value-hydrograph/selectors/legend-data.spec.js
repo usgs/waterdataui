@@ -40,7 +40,7 @@ describe('daily-value-hydrograph/legend-data', () => {
         dailyValueTimeSeriesState: {
             currentDVTimeSeriesId: {
                 min: null,
-                median: '12345',
+                mean: '12345',
                 max: '12346'
             }
         },
@@ -72,19 +72,19 @@ describe('daily-value-hydrograph/legend-data', () => {
                 type: textOnlyMarker,
                 domId: null,
                 domClass: null,
-                text: 'Median'
+                text: 'Mean:'
             });
             expect(result[0]).toContain({
                 type: lineMarker,
                 domId: null,
-                domClass: 'line-segment approved',
+                domClass: 'line-segment approved mean',
                 text: 'Approved'
 
             });
             expect(result[0]).toContain({
                 type: lineMarker,
                 domId: null,
-                domClass: 'line-segment estimated',
+                domClass: 'line-segment estimated mean',
                 text: 'Estimated'
 
             });
@@ -93,7 +93,7 @@ describe('daily-value-hydrograph/legend-data', () => {
                 domId: null,
                 domClass: 'mask mask-0',
                 text: 'Ice affected',
-                fill: 'url(#dv-masked-pattern)'
+                fill: 'url(#dv-mean-masked-pattern)'
 
             });
 
@@ -102,12 +102,12 @@ describe('daily-value-hydrograph/legend-data', () => {
                 type: textOnlyMarker,
                 domId: null,
                 domClass: null,
-                text: 'Maximum'
+                text: 'Maximum:'
             });
             expect(result[1]).toContain({
                 type: lineMarker,
                 domId: null,
-                domClass: 'line-segment approved',
+                domClass: 'line-segment approved max',
                 text: 'Approved'
 
             });

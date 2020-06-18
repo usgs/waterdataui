@@ -40,7 +40,7 @@ const LINE_CLASSES = {
 
 
 /*
- * Returns a selector function function returns an Object. The object has three properties, min, median, and max.
+ * Returns a selector function function returns an Object. The object has three properties, min, mean, and max.
  * Each are an Array of Objects that can be used to visualize the
  * currently selected time series data.
  * Each object has the following properties:
@@ -65,7 +65,7 @@ export const getCurrentTimeSeriesPoints = createSelector(
 
         let result = {
             min: [],
-            median: [],
+            mean: [],
             max: []
         };
         Object.keys(tsData).forEach((tsKey) => {
@@ -113,7 +113,7 @@ export const getCurrentTimeSeriesPoints = createSelector(
 );
 
 /*
- * Returns selector function which returns an Object with properties min, median, and max. Each properties value's are
+ * Returns selector function which returns an Object with properties min, mean, and max. Each properties value's are
  * an Array of Objects. Each object has four properties and
  * represents a segment
  *      @prop {Boolean} isMasked
@@ -138,7 +138,7 @@ export const getCurrentTimeSeriesSegments = createSelector(
         };
         let result = {
             min: [],
-            median: [],
+            mean: [],
             max: []
         };
 
@@ -196,7 +196,7 @@ export const getCurrentTimeSeriesSegments = createSelector(
 );
 
 /*
- * Return a selector function that returns an Object with min, median, and max properties. Each property is an
+ * Return a selector function that returns an Object with min, mean, and max properties. Each property is an
  * Array of Objects. The array represents the unique kinds of
  * data that are being currently displayed. Each Object has the following properties:
  *      @prop {Boolean} isMasked
@@ -208,7 +208,7 @@ export const getCurrentUniqueDataKinds = createSelector(
     (points) => {
         let result = {
             min: [],
-            median: [],
+            mean: [],
             max: []
         };
 
@@ -243,7 +243,7 @@ export const getCursorEpochTime = createSelector(
 );
 
 /*
- * Return a selector which returns an Object with min, median, and max properties. Each property
+ * Return a selector which returns an Object with min, mean, and max properties. Each property
  * represents a point nearest the cursor's epoch time. The property value will be null
  * if that time series does not exist for the property. Each object has the following properties:
  *      @prop {Number} value
@@ -259,7 +259,7 @@ export const getCurrentDataPointsAtCursor = createSelector(
     (cursorEpochTime, points)=> {
         let result = {
             min: null,
-            median: null,
+            mean: null,
             max: null
         };
         Object.keys(points).forEach((tsKey) => {

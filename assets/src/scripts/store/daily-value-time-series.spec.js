@@ -180,14 +180,14 @@ describe('store/daily-value-time-series module', () => {
 
                 expect(store.getState().dailyValueTimeSeriesState.currentDVTimeSeriesId).toEqual({
                     min: 'ffff3455',
-                    median: 'dddd1111',
+                    mean: 'dddd1111',
                     max: 'cccc3333'
                 });
 
                 store.dispatch(Actions.setCurrentDVTimeSeriesIds('aaaa3455', null, null));
                 expect(store.getState().dailyValueTimeSeriesState.currentDVTimeSeriesId).toEqual({
                     min: 'aaaa3455',
-                    median: null,
+                    mean: null,
                     max: null
                 });
             });

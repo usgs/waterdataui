@@ -18,7 +18,7 @@ const CIRCLE_RADIUS_SINGLE_PT = 1;
 
 const MASK_PATTERN_ID = {
     min: 'dv-min-masked-pattern',
-    median: 'dv-median-masked-pattern',
+    mean: 'dv-mean-masked-pattern',
     max: 'dv-max-masked-pattern'
 };
 
@@ -35,7 +35,7 @@ const addDefsPatterns = function(elem) {
         patternId: 'dv-min-masked-pattern',
         patternTransform: 'rotate(45)'
     }, {
-        patternId: 'dv-median-masked-pattern',
+        patternId: 'dv-mean-masked-pattern',
         patternTransform: 'rotate(90)'
     }, {
         patternId: 'dv-max-masked-pattern',

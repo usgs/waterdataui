@@ -31,10 +31,10 @@ export const getAllDVTimeSeries =
     (state) => state.dailyValueTimeSeriesData.dvTimeSeries ? state.dailyValueTimeSeriesData.dvTimeSeries : null;
 
 /*
- * Return a selector function which returns an Object containing current DV timeSeries for min, median, and max. If none are available
+ * Return a selector function which returns an Object containing current DV timeSeries for min, mean, and max. If none are available
  * null will be returned. A particular time series for a statistic can be null
  * @param {String} timeSeriesId
- * @return {Function} - selector function returns an Object with min, median, and max properties or null.
+ * @return {Function} - selector function returns an Object with min, mean, and max properties or null.
  */
 export const getCurrentDVTimeSeries = createSelector(
     getCurrentDVTimeSeriesIds,
@@ -44,7 +44,7 @@ export const getCurrentDVTimeSeries = createSelector(
         if (timeSeriesIds && allTimeSeries) {
             result = {
                 min: timeSeriesIds.min && allTimeSeries[timeSeriesIds.min]? allTimeSeries[timeSeriesIds.min] : null,
-                median: timeSeriesIds.median && allTimeSeries[timeSeriesIds.median] ? allTimeSeries[timeSeriesIds.median] : null,
+                mean: timeSeriesIds.mean && allTimeSeries[timeSeriesIds.mean] ? allTimeSeries[timeSeriesIds.mean] : null,
                 max: timeSeriesIds.max && allTimeSeries[timeSeriesIds.max]? allTimeSeries[timeSeriesIds.max] : null
             };
         }
@@ -63,7 +63,7 @@ export const getCurrentDVTimeSeriesData = createSelector(
     (timeSeries) => {
         let tsData = {
             min: [],
-            median: [],
+            mean: [],
             max: []
         };
 
@@ -118,7 +118,7 @@ export const getCurrentDVTimeSeriesUnitOfMeasure = createSelector(
     (currentTimeSeries) => {
         let result = '';
         if (currentTimeSeries) {
-            let ts = currentTimeSeries.min || currentTimeSeries.median || currentTimeSeries.max;
+            let ts = currentTimeSeries.min || currentTimeSeries.mean || currentTimeSeries.max;
             result = ts.properties.unitOfMeasureName ? ts.properties.unitOfMeasureName : '';
         }
         return result;

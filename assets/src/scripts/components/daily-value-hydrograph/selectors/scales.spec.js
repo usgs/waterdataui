@@ -39,7 +39,7 @@ describe('components/daily-value-hydrograph/selectors/scales', () => {
         dailyValueTimeSeriesState: {
             currentDVTimeSeriesId: {
                 min: '12345',
-                median: '12346',
+                mean: '12346',
                 max: '12347'
             }
         },
@@ -110,7 +110,7 @@ describe('components/daily-value-hydrograph/selectors/scales', () => {
         });
    });
 
-   describe('getYScale', () => {
+   describe('getMainYScale', () => {
        it('Should have the default domain if no current time series is set', () => {
            expect(getMainYScale({
                 ...TEST_STATE,

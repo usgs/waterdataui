@@ -1,5 +1,4 @@
 import {
-    getCurrentTimeSeriesData,
     getCurrentTimeSeriesPoints,
     getCurrentTimeSeriesSegments,
     getCursorEpochTime,
@@ -52,7 +51,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
         dailyValueTimeSeriesState: {
             currentDVTimeSeriesId: {
                 min: '12345',
-                median: null,
+                mean: null,
                 max: '12346'
             }
         },
@@ -62,72 +61,6 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
         }
     };
 
-    describe('getCurrentTimeSeriesData', () => {
-        it('should return an empty array if no current time series is defined', () => {
-            expect(getCurrentTimeSeriesData({
-                dailyValueTimeSeriesData: {},
-                dailyValueTimeSeriesState: {}
-            })).toEqual({
-                min: [],
-                median: [],
-                max: []
-            });
-        });
-
-        it('should return an array of objects representing the time series for the min and max properties', () => {
-            const result = getCurrentTimeSeriesData(TEST_STATE);
-
-            const minResult = result.min;
-            const medianResult = result.median;
-            const maxResult = result.max;
-            expect(minResult.length).toBe(9);
-            expect(minResult[0]).toEqual({
-                value: '5.0',
-                dateTime: 1514851200000,
-                approvals: ['Approved'],
-                nilReason: null,
-                qualifiers: null,
-                grades: ['50']
-            });
-            expect(minResult[3]).toEqual({
-                value: '3.2',
-                dateTime: 1515110400000,
-                approvals: ['Approved'],
-                nilReason: null,
-                qualifiers: ['ICE'],
-                grades: ['60']
-            });
-            expect(minResult[8]).toEqual({
-                value: '3.4',
-                dateTime: 1515542400000,
-                approvals: ['Working'],
-                nilReason: null,
-                qualifiers: null,
-                grades: ['50']
-            });
-
-            expect(medianResult.length).toBe(0);
-
-            expect(maxResult.length).toBe(9);
-            expect(maxResult[0]).toEqual({
-                value: '5.2',
-                dateTime: 1514851200000,
-                approvals: ['Approved'],
-                nilReason: null,
-                qualifiers: null,
-                grades: ['50']
-            });
-            expect(maxResult[8]).toEqual({
-                value: '4.4',
-                dateTime: 1515542400000,
-                approvals: ['Working'],
-                nilReason: null,
-                qualifiers: null,
-                grades: ['50']
-            });
-        });
-    });
-
     describe('getCurrentTimeSeriesPoints', () => {
         it('Should return an empty array if not current time series is defined', () => {
             expect(getCurrentTimeSeriesPoints({
@@ -135,7 +68,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                 dailyValueTimeSeriesState: {}
             })).toEqual({
                 min: [],
-                median: [],
+                mean: [],
                 max: []
             });
         });
@@ -143,7 +76,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
         it('should return 3 masked points and 5 non masked points for min and max', () => {
             const result = getCurrentTimeSeriesPoints(TEST_STATE);
             const minResult = result.min;
-            const medianResult = result.median;
+            const meanResult = result.mean;
             const maxResult = result.max;
 
             expect(minResult[0]).toEqual({
@@ -210,7 +143,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                 label: 'Provisional',
                 class: 'provisional'
             });
-            expect(medianResult.length).toBe(0);
+            expect(meanResult.length).toBe(0);
             expect(maxResult.length).toBe(9);
         });
     });
@@ -222,7 +155,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                dailyValueTimeSeriesState: {}
             })).toEqual({
                 min: [],
-                median: [],
+                mean: [],
                 max: []
             });
         });
@@ -230,7 +163,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
         it('Should return a three line segments and two mask segments for min and max', () => {
             const result = getCurrentTimeSeriesSegments(TEST_STATE);
             const minResult = result.min;
-            const medianResult = result.median;
+            const meanResult = result.mean;
             const maxResult = result.max;
 
             expect(minResult.length).toBe(5);
@@ -273,7 +206,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
             expect(minResult[4].label).toBe('Provisional');
             expect(minResult[4].class).toBe('provisional');
 
-            expect(medianResult.length).toBe(0);
+            expect(meanResult.length).toBe(0);
             expect(maxResult.length).toBe(5);
         });
 
@@ -298,7 +231,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                 dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: {
                         min: '12345',
-                        median: null,
+                        mean: null,
                         max: null
                     }
                 }
@@ -317,7 +250,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                dailyValueTimeSeriesState: {}
             })).toEqual({
                 min: [],
-                median: [],
+                mean: [],
                 max: []
             });
         });
@@ -343,7 +276,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                 dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: {
                         min: '12345',
-                        median: null,
+                        mean: null,
                         max: null
                     }
                 }
@@ -359,7 +292,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                 label: 'Approved',
                 class: 'approved'
             });
-            expect(result.median.length).toBe(0);
+            expect(result.mean.length).toBe(0);
             expect(result.max.length).toBe(0);
         });
     });
@@ -390,7 +323,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                 label: 'Provisional',
                 class: 'provisional'
             });
-            expect(result.median).toBeNull();
+            expect(result.mean).toBeNull();
             expect(result.max).toEqual({
                 value: '4.4',
                 dateTime: 1515542400000,
@@ -415,7 +348,7 @@ describe('components/daily-value-hydrograph/time-series-data module', () => {
                 label: 'Approved',
                 class: 'approved'
             });
-            expect(result.median).toBeNull();
+            expect(result.mean).toBeNull();
             expect(result.max).toEqual({
                 value: '3.0',
                 dateTime: 1514937600000,

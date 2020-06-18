@@ -107,7 +107,7 @@ svg {
     &.provisional {
       stroke: $provisional-time-series;
     }
-    &.median {
+    &.mean {
       stroke-width: 3px;
     }
     &.min {
@@ -117,7 +117,7 @@ svg {
     }
     &.max {
       stroke-width: 2px;
-      stroke-dasharray: 8;
+      stroke-dasharray: 6;
       stroke-dashoffset: 1;
     }
   }

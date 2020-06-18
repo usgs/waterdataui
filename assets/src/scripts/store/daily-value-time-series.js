@@ -44,11 +44,11 @@ const setCurrentDVParameterCode = function(parameterCode) {
 /*
  * Synchronous Redux action to set the currently displayed DV time series id
  */
-const setCurrentDVTimeSeriesIds = function(minTimeSeriesId, medianTimeSeriesId, maxTimeSeriesId) {
+const setCurrentDVTimeSeriesIds = function(minTimeSeriesId, meanTimeSeriesId, maxTimeSeriesId) {
     return {
         type: 'SET_CURRENT_DV_TIME_SERIES_IDS',
         minTimeSeriesId,
-        medianTimeSeriesId,
+        meanTimeSeriesId,
         maxTimeSeriesId
     };
 };
@@ -172,7 +172,7 @@ export const dailyValueTimeSeriesStateReducer = function(dailyValueTimeSeriesSta
                 ...dailyValueTimeSeriesState,
                 currentDVTimeSeriesId : {
                     min: action.minTimeSeriesId,
-                    median: action.medianTimeSeriesId,
+                    mean: action.meanTimeSeriesId,
                     max: action.maxTimeSeriesId
                 }
             };

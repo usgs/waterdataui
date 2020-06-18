@@ -22,7 +22,7 @@ describe('components/daily-value-hydrograph/selectors/label module', () => {
                 },
                 dailyValueTimeSeriesState: {
                     min: null,
-                    median: null,
+                    mean: null,
                     max: null
                 }
             })).toBe('');
@@ -45,7 +45,7 @@ describe('components/daily-value-hydrograph/selectors/label module', () => {
                 dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: {
                         min: null,
-                        median: '12345',
+                        mean: '12345',
                         max: null
                     }
                 }
@@ -77,7 +77,7 @@ describe('components/daily-value-hydrograph/selectors/label module', () => {
                 },
                 dailyValueTimeSeriesState: {
                     min: null,
-                    median: null,
+                    mean: null,
                     max: null
                 }
             })).toBe('');
@@ -100,7 +100,7 @@ describe('components/daily-value-hydrograph/selectors/label module', () => {
                 dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: {
                         min: '12345',
-                        median: null,
+                        mean: null,
                         max: null
                     }
                 }
@@ -132,7 +132,7 @@ describe('components/daily-value-hydrograph/selectors/label module', () => {
                 },
                 dailyValueTimeSeriesState: {
                     min: null,
-                    median: null,
+                    mean: null,
                     max: null
                 }
             })).toBe('');
@@ -155,7 +155,7 @@ describe('components/daily-value-hydrograph/selectors/label module', () => {
                 dailyValueTimeSeriesState: {
                     currentDVTimeSeriesId: {
                         min: null,
-                        median: null,
+                        mean: null,
                         max: '12345'
                     }
                 }

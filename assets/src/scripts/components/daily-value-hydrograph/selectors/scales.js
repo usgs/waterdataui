@@ -38,6 +38,7 @@ export const getBrushXScale = getXScale('BRUSH');
 const createYScale = function (layout, valueRange) {
     const PADDING_RATIO = 0.2;
     let yScale = scaleLinear();
+    yScale.range([layout.height - layout.margin.top - layout.margin.bottom, 0]);
     if (valueRange) {
         const isPositive = valueRange.min > 0 && valueRange.max > 0;
 
@@ -51,9 +52,9 @@ const createYScale = function (layout, valueRange) {
         extendedRange.min = isPositive ? Math.max(0, extendedRange.min) : extendedRange.min;
 
         // Defaulting to descending scale (min at top)
-        yScale
-            .range([layout.height - layout.margin.top - layout.margin.bottom, 0])
-            .domain([extendedRange.max, extendedRange.min]);
+        yScale.domain([extendedRange.max, extendedRange.min]);
+    } else {
+        yScale.domain([0, 1]);
     }
     return yScale;
 };
@@ -71,11 +72,13 @@ export const getMainYScale = createSelector(
         let maxValues = [];
 
         Object.values(allTSData).forEach((tsData) => {
-            const tsValues = tsData
-                .filter(point => point.dateTime >= startTime && point.dateTime <= endTime)
-                .map(point => parseFloat(point.value));
-            minValues.push(Math.min(...tsValues));
-            maxValues.push(Math.max(...tsValues));
+            if (tsData.length) {
+                const tsValues = tsData
+                    .filter(point => point.dateTime >= startTime && point.dateTime <= endTime)
+                    .map(point => parseFloat(point.value));
+                minValues.push(Math.min(...tsValues));
+                maxValues.push(Math.max(...tsValues));
+            }
         });
 
         let valueRange;
@@ -85,7 +88,6 @@ export const getMainYScale = createSelector(
                 max: Math.max(...maxValues)
             };
         }
-
         return createYScale(layout, valueRange);
     }
 );
