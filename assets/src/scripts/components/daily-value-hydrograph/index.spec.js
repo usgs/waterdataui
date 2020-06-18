@@ -14,7 +14,7 @@ describe('components/dailyValueHydrograph/index', () => {
                 id: 'USGS-12345-1122'
             },{
                 parameterCode: '72019',
-                statisticCode: '00002',
+                statisticCode: '00003',
                 id: 'USGS-12345-1123'
             },{
                 parameterCode: '00060',
