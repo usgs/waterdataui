@@ -68,7 +68,6 @@ export const attachToNode = function (store,
     fetchAvailableDVTimeSeries.then(() => {
         const bestAvailableTimeSeries = getBestAvailableTimeSeriesToUse(getAvailableDVTimeSeries(store.getState()));
         if (bestAvailableTimeSeries.length) {
-            store.dispatch(Actions.setCurrentDVParameterCode(bestAvailableTimeSeries[0].parameterCode));
             const fetchDVTimeSeries = bestAvailableTimeSeries
                 .map(availableTs => getTSId(availableTs.id))
                 .map(id => store.dispatch(Actions.retrieveDVTimeSeries(monitoringLocationId, id)));

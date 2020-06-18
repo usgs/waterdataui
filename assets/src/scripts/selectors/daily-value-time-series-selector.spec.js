@@ -1,6 +1,5 @@
 
 import {
-    getCurrentDVParameterCode,
     getCurrentDVTimeSeriesIds,
     getDVGraphCursorOffset,
     getDVGraphBrushOffset,
@@ -14,21 +13,6 @@ import {
 } from './daily-value-time-series-selector';
 
 describe('daily-value-time-series-selector', () => {
-    describe('getCurrentDVParameterCode', () => {
-       it('should be null if no current parameter code set', () => {
-           expect(getCurrentDVParameterCode({
-               dailyValueTimeSeriesState: {}
-           })).toBeNull();
-       });
-
-       it('should return the current parameter code', () => {
-           expect(getCurrentDVParameterCode({
-               dailyValueTimeSeriesState: {
-                   currentDVParameterCode: '12345'
-               }
-           })).toEqual('12345');
-       });
-    });
 
     describe('getCurrentDVTimeSeriesIds', () => {
        it('should be null if no current time series ids are set', () => {

@@ -32,16 +32,6 @@ const addDVTimeSeries = function(timeSeriesId, data) {
 };
 
 /*
- * Synchronous Redux action to set the currently displayed DV parameter code
- */
-const setCurrentDVParameterCode = function(parameterCode) {
-    return {
-        type: 'SET_CURRENT_DV_PARAMETER_CODE',
-        parameterCode
-    };
-};
-
-/*
  * Synchronous Redux action to set the currently displayed DV time series id
  */
 const setCurrentDVTimeSeriesIds = function(minTimeSeriesId, meanTimeSeriesId, maxTimeSeriesId) {
@@ -162,11 +152,6 @@ export const dailyValueTimeSeriesDataReducer =
  */
 export const dailyValueTimeSeriesStateReducer = function(dailyValueTimeSeriesState={}, action) {
     switch (action.type) {
-        case 'SET_CURRENT_DV_PARAMETER_CODE':
-            return {
-                ...dailyValueTimeSeriesState,
-                currentDVParameterCode: action.parameterCode
-            };
         case 'SET_CURRENT_DV_TIME_SERIES_IDS':
             return {
                 ...dailyValueTimeSeriesState,
@@ -203,7 +188,6 @@ export const dailyValueTimeSeriesStateReducer = function(dailyValueTimeSeriesSta
 export const Actions = {
     setAvailableDVTimeSeries,
     addDVTimeSeries,
-    setCurrentDVParameterCode,
     setCurrentDVTimeSeriesIds,
     setDVGraphCursorOffset,
     retrieveAvailableDVTimeSeries,

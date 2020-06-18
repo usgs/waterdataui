@@ -166,13 +166,6 @@ describe('store/daily-value-time-series module', () => {
     });
 
     describe('dailyValueTimeSeriesStateReducer actions', () => {
-        describe('Actions.setCurrentDVParameterCode', () => {
-            it('updates current parameter codes', () => {
-                store.dispatch(Actions.setCurrentDVParameterCode('00060'));
-
-                expect(store.getState().dailyValueTimeSeriesState.currentDVParameterCode).toEqual('00060');
-            });
-        });
 
         describe('Actions.setCurrentDVTimeSeriesIds', () => {
             it('Updates the current set of DV time series ids', () => {

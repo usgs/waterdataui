@@ -11,15 +11,12 @@ const getEpochMilliseconds = function(dateStr) {
 /*
  * Selectors to return dailyValueTimeSeries state information or null if missing
  */
-export const getCurrentDVParameterCode =
-    (state) => state.dailyValueTimeSeriesState.currentDVParameterCode ?
-        state.dailyValueTimeSeriesState.currentDVParameterCode : null;
-
 export const getCurrentDVTimeSeriesIds =
     (state) => state.dailyValueTimeSeriesState.currentDVTimeSeriesId ?
         state.dailyValueTimeSeriesState.currentDVTimeSeriesId : null;
 
 export const getDVGraphCursorOffset = (state) => state.dailyValueTimeSeriesState.dvGraphCursorOffset || null;
+
 export const getDVGraphBrushOffset = (state) => state.dailyValueTimeSeriesState.dvGraphBrushOffset || null;
 
 /*
