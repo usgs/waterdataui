@@ -4,6 +4,9 @@ artifactoryPath: "wdfn"
 # name of the docker image
 dockerImageName: "waterdataui"
 
+# location of the Dockerfile
+buildContext: "./wdfn-server/"
+
 # location of the application project git repo (as opposed to the configuration repo)
 gitRepoUrl: "https://github.com/ACWI-SOGW/well_registry_management.git"
 
