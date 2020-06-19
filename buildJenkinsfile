@@ -52,7 +52,7 @@ pipeline {
         stage('build assets docker image') {
             steps {
                 script {
-                    pipelineUtils.buildDockerImage('wqp_assets', './assets')
+                    pipelineUtils.buildDockerImage('assets', './assets')
                 }
             }
         }
