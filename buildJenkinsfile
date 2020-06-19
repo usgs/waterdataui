@@ -10,7 +10,7 @@ pipeline {
         }
     }
     parameters {
-        choice(choices: ['snapshots', 'releases'], description: 'type of build', name: 'BUILD_TYPE')
+        choice(choices: ['snapshots'], description: 'type of build', name: 'BUILD_TYPE')
     }
     triggers {
         pollSCM('H/5 * * * *')
