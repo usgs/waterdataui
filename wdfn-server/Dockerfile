@@ -1,4 +1,4 @@
-FROM assets
+FROM assets as assets
 
 RUN npm run build
 

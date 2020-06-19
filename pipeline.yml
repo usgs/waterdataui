@@ -14,7 +14,7 @@ gitRepoUrl: "https://github.com/ACWI-SOGW/well_registry_management.git"
 gitRepoCredentialsId: "Jenkins-GitHub-Read-Write-Token"
 
 # name of the CHS Jenkins deploy job to trigger.
-deployJobName: "monitoring-locations-deploy"
+deployJobName: "waterdataui-deploy"
 
 # name of the project - identifier of the ECS Cluster to use for this project
 projectName: "iow-allgemein"
@@ -29,7 +29,7 @@ applicationName: "waterdataui"
 containerPort: 5050
 
 # string parameter specifying a path that ALB should use to verify that your application is alive
-healthCheck: "/registry/status"
+healthCheck: "/states/"
 
 # This tells AWS what requests to redirect or route to this container
 urlRules:
@@ -41,3 +41,7 @@ urlRules:
       - "/states/*"
       - "/components/*"
     priority: 610
+  - type: forward
+    conditions:
+      - "/static/*"
+    priority: 611
