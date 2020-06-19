@@ -1,6 +1,8 @@
-import {select} from 'd3-selection';
-
+import { select } from 'd3-selection';
+import { link } from '../../lib/d3-redux';
+import { Features } from '../../selectors/observations-selector';
 import config from '../../config';
+import { retrieveObservationsData } from '../../store/observations';
 
 /*
  * Creates a site map
@@ -25,6 +27,17 @@ const siteMap = function(node, {latitude, longitude, zoom}, store) {
         map.scrollWheelZoom.disable();
     });
 
+    map.on('moveend', () => {
+        const bounds = map.getBounds();
+        const bbox = {
+          west: bounds.getWest(),     
+          south: bounds.getSouth(),     
+          east: bounds.getEast(),     
+          north: bounds.getNorth()     
+        };
+        store.dispatch(retrieveObservationsData(bbox));
+    });
+
     //add additional baselayer
     var baseLayers = {
         'Grayscale': gray,
@@ -38,6 +51,9 @@ const siteMap = function(node, {latitude, longitude, zoom}, store) {
     if (config.HYDRO_ENDPOINT) {
         map.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT}));
     }
+
+    // node
+    //     .call(link(store, retrieveObservationsData, Features, bbox));
 };
 
 /*
@@ -52,4 +68,3 @@ export const attachToNode = function(store, node, {latitude, longitude, zoom}) {
     select(node)
         .call(siteMap, {latitude, longitude, zoom}, store);
 };
-

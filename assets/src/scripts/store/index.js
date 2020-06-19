@@ -9,6 +9,7 @@ import {dailyValueTimeSeriesDataReducer as dailyValueTimeSeriesData} from './dai
 import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './daily-value-time-series';
 import {ivTimeSeriesDataReducer as ivTimeSeriesData} from './instantaneous-value-time-series-data';
 import {ivTimeSeriesStateReducer as ivTimeSeriesState} from './instantaneous-value-time-series-state';
+import {observationsDataReducer as observations} from './observations';
 import {statisticsDataReducer as statisticsData} from './statistics-data';
 import {timeZoneReducer as ianaTimeZone} from './time-zone';
 import {uiReducer as ui} from './ui-state';
@@ -17,6 +18,7 @@ const appReducer = combineReducers({
     ivTimeSeriesData,
     ianaTimeZone,
     dailyValueTimeSeriesData,
+    observations,
     statisticsData,
     floodData,
     nldiData,
@@ -45,6 +47,7 @@ export const configureStore = function (initialState) {
             downstreamSites: [],
             upstreamBasin: []
         },
+        observations: {},
         statisticsData: {},
         ivTimeSeriesState: {
             showIVTimeSeries: {
