@@ -1,31 +1,40 @@
 
 import {
-    getCurrentDVTimeSeriesId,
+    getCurrentDVTimeSeriesIds,
     getDVGraphCursorOffset,
     getDVGraphBrushOffset,
     getAvailableDVTimeSeries,
     getAllDVTimeSeries,
-    hasCurrentDVTimeSeries,
     getCurrentDVTimeSeries,
+    getCurrentDVTimeSeriesData,
     getCurrentDVTimeSeriesUnitOfMeasure,
     getCurrentDVTimeSeriesTimeRange,
     getCurrentDVTimeSeriesValueRange
 } from './daily-value-time-series-selector';
 
 describe('daily-value-time-series-selector', () => {
-    describe('getCurrentDVTimeSeriesId', () => {
-       it('should be false if no current time series id set', () => {
-           expect(getCurrentDVTimeSeriesId({
+
+    describe('getCurrentDVTimeSeriesIds', () => {
+       it('should be null if no current time series ids are set', () => {
+           expect(getCurrentDVTimeSeriesIds({
                dailyValueTimeSeriesState: {}
            })).toBeNull();
        });
 
-       it('should be true if current time series id is set', () => {
-           expect(getCurrentDVTimeSeriesId({
+       it('should return the current time series ids', () => {
+           expect(getCurrentDVTimeSeriesIds({
                dailyValueTimeSeriesState: {
-                   currentDVTimeSeriesId: '12345'
+                   currentDVTimeSeriesId: {
+                       min: 'ffff1234',
+                       mean: 'aaaa9876',
+                       max: 'eeee1234'
+                   }
                }
-           })).toEqual('12345');
+           })).toEqual({
+               min: 'ffff1234',
+               mean: 'aaaa9876',
+               max: 'eeee1234'
+           });
        });
     });
 
@@ -117,59 +126,6 @@ describe('daily-value-time-series-selector', () => {
         });
     });
 
-    describe('hasCurrentDVTimeSeries', () => {
-        it('expect false if no timeSeries defined', () => {
-            expect(hasCurrentDVTimeSeries({
-                dailyValueTimeSeriesData: {},
-                dailyValueTimeSeriesState: {}
-            })).toBe(false);
-        });
-
-        it('expect false if specific timeSeries is not defined', () => {
-            expect(hasCurrentDVTimeSeries({
-                dailyValueTimeSeriesData : {
-                    dvTimeSeries: {}
-                },
-                dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
-                }
-            })).toBe(false);
-            expect(hasCurrentDVTimeSeries({
-                dailyValueTimeSeriesData: {
-                    dvTimeSeries: {
-                        '11111': {
-                            type: 'Feature',
-                            id: '11111'
-                        }
-                    }
-                },
-                dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
-                }
-            })).toBe(false);
-        });
-
-        it('expect true if specific timeSeries is defined', () => {
-            expect(hasCurrentDVTimeSeries({
-                dailyValueTimeSeriesData : {
-                    dvTimeSeries: {
-                        '11111': {
-                            type: 'Feature',
-                            id: '11111'
-                        },
-                        '12345' : {
-                            type: 'Feature',
-                            id: '12345'
-                        }
-                    }
-                },
-                dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
-                }
-            })).toBe(true);
-        });
-    });
-
     describe('getCurrentDVTimeSeries', () => {
         it('expect null if timeSeries is not defined', () => {
             expect(getCurrentDVTimeSeries({
@@ -188,16 +144,13 @@ describe('daily-value-time-series-selector', () => {
                 dailyValueTimeSeriesState: {}
             })).toBeNull();
             expect(getCurrentDVTimeSeries({
-                dailyValueTimeSeriesData: {
-                    dvTimeSeries: {
-                        '11111': {
-                            type: 'Feature',
-                            id: '11111'
-                        }
-                    }
-                },
+                dailyValueTimeSeriesData: {},
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: 'eeee2345',
+                        mean: 'ffff1234',
+                        max: 'aaaa9876'
+                    }
                 }
             })).toBeNull();
         });
@@ -217,11 +170,138 @@ describe('daily-value-time-series-selector', () => {
                     }
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: '11111',
+                        mean: '33333',
+                        max: null
+                    }
                 }
             })).toEqual({
-                type: 'Feature',
-                id: '12345'
+                min: {
+                    type: 'Feature',
+                    id: '11111'
+                },
+                mean: null,
+                max: null
+            });
+        });
+    });
+
+    describe('getCurrentTimeSeriesData', () => {
+        it('should return an empty array if no current time series is defined', () => {
+            expect(getCurrentDVTimeSeriesData({
+                dailyValueTimeSeriesData: {},
+                dailyValueTimeSeriesState: {}
+            })).toEqual({
+                min: [],
+                mean: [],
+                max: []
+            });
+        });
+
+        it('should return an array of objects representing the time series for the min and max properties', () => {
+            const TEST_STATE_WITH_RESULTS = {
+                dailyValueTimeSeriesData: {
+                    dvTimeSeries: {
+                        '12345': {
+                            type: 'Feature',
+                            id: '12345',
+                            properties: {
+                                phenomenonTimeStart: '2018-01-02',
+                                phenomenonTimeEnd: '2018-01-10',
+                                timeStep: ['2018-01-05', '2018-01-03', '2018-01-02', '2018-01-04',
+                                    '2018-01-06', '2018-01-07', '2018-01-08', '2018-01-09', '2018-01-10'],
+                                result: [ '3.2', '4.0', '5.0', '6.1',
+                                    '7.3', '8.1', '6.2', '2.9', '3.4'],
+                                approvals: [['Approved'], ['Approved'], ['Approved'], ['Approved'],
+                                    ['Approved'], ['Approved'], ['Approved'], ['Approved'], ['Working']],
+                                nilReason: [null, 'AA', null, null, null, null, null, null, null],
+                                qualifiers: [['ICE'], null, null, null,
+                                    ['ICE', 'EQUIP'], ['ICE', 'EQUIP'], ['ESTIMATED'], ['ESTIMATED'], null],
+                                grades: [['60'], ['50'], ['50'], ['60'], ['50'], ['50'], ['50'], ['50'], ['50']]
+                            }
+                        },
+                        '12346': {
+                            type: 'Feature',
+                            id: '12346',
+                            properties: {
+                                phenomenonTimeStart: '2018-01-02',
+                                phenomenonTimeEnd: '2018-01-10',
+                                timeStep: ['2018-01-02', '2018-01-03', '2018-01-04', '2018-01-05',
+                                    '2018-01-06', '2018-01-07', '2018-01-08', '2018-01-09', '2018-01-10'],
+                                result: [ '5.2', '3.0', '6.0', '7.1',
+                                    '8.3', '9.1', '7.2', '3.9', '4.4'],
+                                approvals: [['Approved'], ['Approved'], ['Approved'], ['Approved'],
+                                    ['Approved'], ['Approved'], ['Approved'], ['Approved'], ['Working']],
+                                nilReason: [null, 'AA', null, null, null, null, null, null, null],
+                                qualifiers: [null, null, null, ['ICE'],
+                                    ['ICE', 'EQUIP'], ['ICE', 'EQUIP'], ['ESTIMATED'], ['ESTIMATED'], null],
+                                grades: [['50'], ['50'], ['50'], ['60'], ['50'], ['50'], ['50'], ['50'], ['50']]
+                            }
+                        }
+                    }
+                },
+                dailyValueTimeSeriesState: {
+                    currentDVTimeSeriesId: {
+                        min: '12345',
+                        mean: null,
+                        max: '12346'
+                    }
+                },
+                ui: {
+                    windowWidth: 1024,
+                    width: 800
+                }
+            };
+            const result = getCurrentDVTimeSeriesData(TEST_STATE_WITH_RESULTS);
+            const minResult = result.min;
+            const meanResult = result.mean;
+            const maxResult = result.max;
+
+            expect(minResult.length).toBe(9);
+            expect(minResult[0]).toEqual({
+                value: '5.0',
+                dateTime: 1514851200000,
+                approvals: ['Approved'],
+                nilReason: null,
+                qualifiers: null,
+                grades: ['50']
+            });
+            expect(minResult[3]).toEqual({
+                value: '3.2',
+                dateTime: 1515110400000,
+                approvals: ['Approved'],
+                nilReason: null,
+                qualifiers: ['ICE'],
+                grades: ['60']
+            });
+            expect(minResult[8]).toEqual({
+                value: '3.4',
+                dateTime: 1515542400000,
+                approvals: ['Working'],
+                nilReason: null,
+                qualifiers: null,
+                grades: ['50']
+            });
+
+            expect(meanResult.length).toBe(0);
+
+            expect(maxResult.length).toBe(9);
+            expect(maxResult[0]).toEqual({
+                value: '5.2',
+                dateTime: 1514851200000,
+                approvals: ['Approved'],
+                nilReason: null,
+                qualifiers: null,
+                grades: ['50']
+            });
+            expect(maxResult[8]).toEqual({
+                value: '4.4',
+                dateTime: 1515542400000,
+                approvals: ['Working'],
+                nilReason: null,
+                qualifiers: null,
+                grades: ['50']
             });
         });
     });
@@ -247,7 +327,7 @@ describe('daily-value-time-series-selector', () => {
                         },
                         '12346': {
                             type: 'Feature',
-                            id: '12345',
+                            id: '12346',
                             properties: {
                                 unitOfMeasureName: 'km'
                             }
@@ -255,9 +335,13 @@ describe('daily-value-time-series-selector', () => {
                     }
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: '33333',
+                        mean: '12346',
+                        max: null
+                    }
                 }
-            })).toEqual('ft');
+            })).toEqual('km');
         });
     });
 
@@ -272,9 +356,16 @@ describe('daily-value-time-series-selector', () => {
                     dvTimeSeries: {}
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: '12345',
+                        mean: null,
+                        max: null
+                    }
                 }
-            })).toBeNull();
+            })).toEqual({
+                startTime: null,
+                endTime: null
+            });
         });
 
         it('should return startTime and endTime properties in universal time when time series is defined', () => {
@@ -285,18 +376,38 @@ describe('daily-value-time-series-selector', () => {
                             type: 'Feature',
                             id: '12345',
                             properties: {
-                                phenomenonTimeStart: '2010-01-01',
+                                phenomenonTimeStart: '2010-02-01',
                                 phenomenonTimeEnd: '2019-12-01'
+                            }
+                        },
+                        '12346': {
+                           type: 'Feature',
+                            id: '12347',
+                            properties: {
+                                phenomenonTimeStart: '2010-01-01',
+                                phenomenonTimeEnd: '2019-11-01'
+                            }
+                        },
+                        '12347': {
+                           type: 'Feature',
+                            id: '12347',
+                            properties: {
+                                phenomenonTimeStart: '2010-01-01',
+                                phenomenonTimeEnd: '2019-12-31'
                             }
                         }
                     }
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: '12345',
+                        mean: '12346',
+                        max: '12347'
+                    }
                 }
             })).toEqual({
                 startTime: 1262304000000,
-                endTime: 1575158400000
+                endTime: 1577750400000
             });
         });
     });
@@ -312,9 +423,16 @@ describe('daily-value-time-series-selector', () => {
                     dvTimeSeries: {}
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: '12345',
+                        mean: null,
+                        max: null
+                    }
                 }
-            })).toBeNull();
+            })).toEqual({
+                min: null,
+                max: null
+            });
         });
 
         it('should return the extent of the current time series', () => {
@@ -332,15 +450,31 @@ describe('daily-value-time-series-selector', () => {
                                     '7.6'
                                 ]
                             }
+                        },
+                        '12346': {
+                            type: 'Feature',
+                            id: '12346',
+                            properties: {
+                                result: [
+                                    '13.3',
+                                    '14.0',
+                                    '12.3',
+                                    '8.3'
+                                ]
+                            }
                         }
                     }
                 },
                 dailyValueTimeSeriesState: {
-                    currentDVTimeSeriesId: '12345'
+                    currentDVTimeSeriesId: {
+                        min: '12345',
+                        mean: null,
+                        max: '12346'
+                    }
                 }
             })).toEqual({
                 min: 4.5,
-                max: 12.4
+                max: 14.0
             });
         });
     });

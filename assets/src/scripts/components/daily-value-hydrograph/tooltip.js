@@ -9,7 +9,28 @@ import {Actions} from '../../store/daily-value-time-series';
 
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getCurrentCursorPoint, getCurrentDataPointAtCursor, getCursorEpochTime} from './selectors/time-series-data';
+import {getCurrentCursorPoint, getCurrentDataPointsAtCursor, getCursorEpochTime} from './selectors/time-series-data';
+
+const TOOLTIP_LABEL = {
+    min: 'Min',
+    mean: 'Mean',
+    max: 'Max'
+};
+
+const drawOnePointText = function(elem, point, statLabel, unitOfMeasure, marginLeft) {
+    if (point) {
+        const dateLabel = DateTime.fromMillis(point.dateTime, {zone: 'UTC'}).toFormat('yyyy-LL-dd');
+        const label = point.isMasked ?
+            `${statLabel} ${point.label} - ${dateLabel}` :
+            `${statLabel} ${point.value} ${unitOfMeasure} - ${dateLabel}`;
+
+        elem.append('div')
+            .attr('style', `margin-left: ${marginLeft}px`)
+            .classed('dv-tooltip-text', true)
+            .classed(point.class, true)
+            .text(label);
+    }
+};
 
 /*
  * Renders the tooltip text representing the data at the current cursor position
@@ -19,24 +40,14 @@ import {getCurrentCursorPoint, getCurrentDataPointAtCursor, getCursorEpochTime} 
 export const drawTooltipText = function(elem, store) {
     elem.append('div')
         .attr('class', 'dv-tooltip-container')
-        .call(link(store, (elem, {pointAtCursorOffset, unitOfMeasure, layout}) => {
-            elem.select('.dv-tooltip-text').remove();
-
-            if (pointAtCursorOffset) {
-                const dateLabel = DateTime.fromMillis(pointAtCursorOffset.dateTime, {zone: 'UTC'}).toFormat('yyyy-LL-dd');
-                const label = pointAtCursorOffset.isMasked ?
-                    `${pointAtCursorOffset.label} - ${dateLabel}` :
-                    `${pointAtCursorOffset.value} ${unitOfMeasure} - ${dateLabel}`;
-                    
-                elem.append('div')
-                    .attr('style', `margin-left: ${layout.margin.left}px`)
-                    .classed('dv-tooltip-text', true)
-                    .classed(pointAtCursorOffset.class, true)
-                    .text(label);
-            }
+        .call(link(store, (elem, {pointsAtCursorOffset, unitOfMeasure, layout}) => {
+            elem.selectAll('.dv-tooltip-text').remove();
+            drawOnePointText(elem, pointsAtCursorOffset.min, TOOLTIP_LABEL.min, unitOfMeasure, layout.margin.left);
+            drawOnePointText(elem, pointsAtCursorOffset.mean, TOOLTIP_LABEL.mean, unitOfMeasure, layout.margin.left);
+            drawOnePointText(elem, pointsAtCursorOffset.max, TOOLTIP_LABEL.max, unitOfMeasure, layout.margin.left);
 
         }, createStructuredSelector({
-            pointAtCursorOffset: getCurrentDataPointAtCursor,
+            pointsAtCursorOffset: getCurrentDataPointsAtCursor,
             unitOfMeasure: getCurrentDVTimeSeriesUnitOfMeasure,
             layout: getMainLayout
         })));

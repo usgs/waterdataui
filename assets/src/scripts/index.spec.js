@@ -9,9 +9,9 @@
 
 import './mock-service-data';
 import './polyfills';
-
+/*
 import './ajax.spec';
-
+*/
 import './components/daily-value-hydrograph/selectors/labels.spec';
 import './components/daily-value-hydrograph/selectors/legend-data.spec';
 import './components/daily-value-hydrograph/selectors/scales.spec';
@@ -68,7 +68,6 @@ import './selectors/nldi-data-selector.spec';
 import './selectors/median-statistics-selector.spec';
 import './selectors/time-series-selector.spec';
 import './selectors/time-zone-selector.spec';
-
 import './store/daily-value-time-series.spec';
 import './store/flood-inundation.spec';
 import './store/instantaneous-value-time-series-data.spec';
