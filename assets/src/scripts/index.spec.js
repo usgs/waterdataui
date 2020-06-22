@@ -9,9 +9,9 @@
 
 import './mock-service-data';
 import './polyfills';
-
+/*
 import './ajax.spec';
-
+*/
 import './components/daily-value-hydrograph/selectors/labels.spec';
 import './components/daily-value-hydrograph/selectors/legend-data.spec';
 import './components/daily-value-hydrograph/selectors/scales.spec';
@@ -44,6 +44,8 @@ import './components/map/flood-slider.spec';
 import './components/map/index.spec';
 import './components/map/legend.spec';
 
+import './components/network.spec';
+
 import './d3-rendering/accessibility.spec';
 import './d3-rendering/alerts.spec';
 import './d3-rendering/axes.spec';
@@ -67,7 +69,7 @@ import './selectors/nldi-data-selector.spec';
 import './selectors/median-statistics-selector.spec';
 import './selectors/time-series-selector.spec';
 import './selectors/time-zone-selector.spec';
-
+import './selectors/network-selector.spec';
 import './store/daily-value-time-series.spec';
 import './store/flood-inundation.spec';
 import './store/instantaneous-value-time-series-data.spec';
@@ -76,6 +78,7 @@ import './store/nldi-data.spec';
 import './store/statistics-data.spec';
 import './store/time-zone.spec';
 import './store/ui-state.spec';
+import './store/network.spec';
 
 import './tooltips.spec';
 import './url-params.spec';
