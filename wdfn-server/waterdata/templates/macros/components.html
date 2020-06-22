@@ -38,6 +38,8 @@
     </div>
 {%- endmacro %}
 
+
+
 {% macro NetworkComponent(network_cd, extent) -%}
 
     <div class="wdfn-component" data-component="network" data-networkcd="{{ network_cd }}" data-extent="{{  extent }}">
@@ -84,6 +86,14 @@
     </span>
 {%- endmacro %}
 
+{% macro ObservationNetworkListComponent(site_no) -%}
+      <div class="wdfn-component" data-component="observation-network-list" data-siteno="{{ site_no }}">
+          <div id="observation-network-list-container">
+              <table id="network-list-table" class="usa-table">
+              </table>
+          </div>
+      </div>
+{%- endmacro %}
 
 {%  macro Description(site_no, loc_vals, param_grp_series) -%}
     {% if loc_vals %}

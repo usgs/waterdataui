@@ -1,4 +1,6 @@
-import {fetchAvailableDVTimeSeries, fetchDVTimeSeries} from './observations';
+import {fetchAvailableDVTimeSeries, fetchDVTimeSeries,
+    fetchObservationItem} from './observations';
+import {MOCK_OBSERVATION_ITEM} from "../mock-service-data";
 
 describe('web-services/observations module', () => {
     /* eslint no-use-before-define: off */
@@ -71,6 +73,42 @@ describe('web-services/observations module', () => {
 
         it('Expect empty object with an bad response', (done) => {
             fetchDVTimeSeries('1234567890', '12345670abcdef')
+                .then((resp) => {
+                    expect(resp).toBeInstanceOf(Object);
+                    expect(resp).toEqual({});
+                    done();
+                });
+            jasmine.Ajax.requests.mostRecent().respondWith({
+                status: 500
+            });
+        });
+    });
+
+    describe('fetchObservationItem', () => {
+        it('Expects the url to contain monitoringLocationId and time series id', () => {
+            fetchObservationItem('USGS-1234567890');
+            const url = jasmine.Ajax.requests.mostRecent().url;
+            expect(url).toContain('USGS-1234567890');
+        });
+
+        it('Expect json response with a valid response', (done) => {
+            fetchObservationItem('USGS-1234567890')
+                .then((resp) => {
+                    expect(resp).toBeInstanceOf(Object);
+                    expect(resp.properties).toBeDefined;
+                    expect(resp.links.length).toEqual(6);
+
+                    done();
+                });
+            jasmine.Ajax.requests.mostRecent().respondWith({
+                status: 200,
+                responseText: MOCK_OBSERVATION_ITEM,
+                contentType: 'application/json'
+            });
+        });
+
+        it('Expect empty object with an bad response', (done) => {
+            fetchObservationItem('1234567890')
                 .then((resp) => {
                     expect(resp).toBeInstanceOf(Object);
                     expect(resp).toEqual({});

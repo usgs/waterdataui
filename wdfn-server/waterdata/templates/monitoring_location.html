@@ -107,7 +107,7 @@
                 {% endif %}
 
                 {% if config.DAILY_VALUE_HYDROGRAPH_ENABLED %}
-                    <div id="dv-accordion" class="usa-accordion usa-alert--slim">
+                    <div id="dv-accordion" class="usa-accordion">
                         <div>
                             <h3 class="usa-accordion__heading">
                                 <button class="usa-accordion__button" aria-expanded="true" aria-controls="dv-graph-container">Groundwater Data</button>
@@ -122,6 +122,15 @@
                 {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
                     {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
                 {% endif %}
+
+                <div class="usa-accordion">
+                    <h3 class="usa-accordion__heading">
+                        <button class="usa-accordion__button" aria-expanded="true" aria-controls="network-list">Affiliated Networks</button>
+                    </h3>
+                    <div id="network-list" class="usa-accordion__content">
+                        {{ components.ObservationNetworkListComponent(stations[0].site_no) }}
+                    </div>
+                </div>
 
                 {% if parm_grp_summary %}
                     <div class="usa-accordion">
