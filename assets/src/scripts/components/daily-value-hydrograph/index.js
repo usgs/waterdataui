@@ -1,7 +1,8 @@
 import {select} from 'd3-selection';
+import groupBy from 'lodash/groupBy';
 import includes from 'lodash/includes';
 
-import {getAvailableDVTimeSeries} from '../../selectors/daily-value-time-series-selector';
+import {getAvailableDVTimeSeries, getAllDVTimeSeries} from '../../selectors/daily-value-time-series-selector';
 import {Actions} from '../../store/daily-value-time-series';
 
 import {drawErrorAlert, drawInfoAlert} from '../../d3-rendering/alerts';
@@ -13,22 +14,32 @@ import {drawTimeSeriesLegend} from './legend';
 import {drawGraphBrush} from './graph-brush';
 
 const GROUND_WATER_LEVELS_PARM_CD  = ['62610', '62611', '72019', '72020', '72150', '72226', '72227', '72228', '72229', '72230', '72231', '72232'];
-const MAX_STATISTIC_CODE = '00001';
-
-const getDefaultTimeSeriesId = function(availableTimeSeries) {
-    const groundWaterTimeSeries = availableTimeSeries
-        .filter(ts => includes(GROUND_WATER_LEVELS_PARM_CD, ts.parameterCode))
-        .filter(ts => ts.statisticCode === MAX_STATISTIC_CODE);
-    if (groundWaterTimeSeries.length === 0) {
-        return undefined;
-    } else {
-        // TODO: This code to split the id will be removed as part of IOW-444 once the time-series-service has been updated.
-        const splitIds = groundWaterTimeSeries[0]['id'].split('-');
-        return splitIds[2];
-    }
-
-
+const STATISTIC_CODES = {
+    min: '00002',
+    mean: '00003',
+    max: '00001'
 };
+
+/*
+ * Returns the set of time series for a single parameter code. That code must
+ * be in GROUND_WATER_LEVELS_PARM_CD and contain one or more STATISTIC_CODES. If more
+ * than one parameter code has time series than the one with the most of the
+ * desired statistics codes will be chosen.
+ * @return Object - available time series object
+ */
+const getBestAvailableTimeSeriesToUse = function(availableTimeSeries) {
+    const gwAvailableTimeSeries = availableTimeSeries
+        .filter(ts => includes(GROUND_WATER_LEVELS_PARM_CD, ts.parameterCode))
+        .filter(ts => includes(Object.values(STATISTIC_CODES), ts.statisticCode));
+    let gwByParmCode = groupBy(gwAvailableTimeSeries, ts => ts.parameterCode);
+    let bestParamToUse = Object.values(gwByParmCode).sort((a, b) => a.length - b.length);
+    return bestParamToUse.length ? bestParamToUse[0] : [];
+};
+
+const getTSId = function(id) {
+   return id.split('-')[2];
+};
+
 /*
  * Creates the daily value hydrograph component on the DOM element node for siteno and state
  * information that is stored in the Redux store.
@@ -55,25 +66,43 @@ export const attachToNode = function (store,
         .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
     const fetchAvailableDVTimeSeries = store.dispatch(Actions.retrieveAvailableDVTimeSeries(monitoringLocationId));
     fetchAvailableDVTimeSeries.then(() => {
-        const defaultTimeSeriesId = getDefaultTimeSeriesId(getAvailableDVTimeSeries(store.getState()));
-        if (defaultTimeSeriesId) {
-            store.dispatch(Actions.retrieveDVTimeSeries(monitoringLocationId, defaultTimeSeriesId))
-                .then(() => {
-                    loadingIndicator.call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
-                    let graphContainer = nodeElem.select('.graph-container');
-                    graphContainer
-                        .call(drawTimeSeriesGraph, store)
-                        .call(drawTooltipCursorSlider, store)
-                        .call(drawGraphBrush, store)
-                        .append('div')
-                            .classed('dv-legend-container', true)
-                            .call(drawTimeSeriesLegend, store);
+        const bestAvailableTimeSeries = getBestAvailableTimeSeriesToUse(getAvailableDVTimeSeries(store.getState()));
+        if (bestAvailableTimeSeries.length) {
+            const fetchDVTimeSeries = bestAvailableTimeSeries
+                .map(availableTs => getTSId(availableTs.id))
+                .map(id => store.dispatch(Actions.retrieveDVTimeSeries(monitoringLocationId, id)));
+            Promise.allSettled(fetchDVTimeSeries).then(() => {
+                let min, mean, max = null;
+                let allDVTimeSeries = getAllDVTimeSeries(store.getState());
+                Object.keys(allDVTimeSeries).forEach((tsId) => {
+                    switch (allDVTimeSeries[tsId].properties.statistic) {
+                        case 'MINIMUM':
+                            min = tsId;
+                            break;
+                        case 'MEAN':
+                            mean = tsId;
+                            break;
+                        case 'MAXIMUM':
+                            max = tsId;
+                    }
                 });
+                store.dispatch(Actions.setCurrentDVTimeSeriesIds(min, mean, max));
+                loadingIndicator.call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
+                let graphContainer = nodeElem.select('.graph-container');
+                graphContainer
+                    .call(drawTimeSeriesGraph, store)
+                    .call(drawTooltipCursorSlider, store)
+                    .call(drawGraphBrush, store)
+                    .append('div')
+                        .classed('dv-legend-container', true)
+                        .call(drawTimeSeriesLegend, store);
+            });
+
         } else {
             loadingIndicator.call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
             drawInfoAlert(nodeElem, {
-                title: 'No Max Daily Value Data',
-                body: 'There is no ground water level maximum daily data available for this site'
+                title: 'No Daily Value StatisticalData',
+                body: 'There is no ground water level statistical daily data available for this site'
             });
         }
     });

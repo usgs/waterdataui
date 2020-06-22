@@ -16,6 +16,12 @@ import {drawTooltipFocus, drawTooltipText} from './tooltip';
 
 const CIRCLE_RADIUS_SINGLE_PT = 1;
 
+const MASK_PATTERN_ID = {
+    min: 'dv-min-masked-pattern',
+    mean: 'dv-mean-masked-pattern',
+    max: 'dv-max-masked-pattern'
+};
+
 const createTitle = function(elem, store) {
     elem.append('div')
         .classed('time-series-graph-title', true)
@@ -26,15 +32,21 @@ const createTitle = function(elem, store) {
 
 const addDefsPatterns = function(elem) {
     const patterns = [{
-        patternId: 'dv-masked-pattern',
+        patternId: 'dv-min-masked-pattern',
         patternTransform: 'rotate(45)'
+    }, {
+        patternId: 'dv-mean-masked-pattern',
+        patternTransform: 'rotate(90)'
+    }, {
+        patternId: 'dv-max-masked-pattern',
+        patternTransform: 'rotate(135)'
     }];
 
     const defs = elem.append('defs');
     renderMaskDefs(defs, 'dv-graph-pattern-mask', patterns);
 };
 
-const drawLineSegment = function (group, {segment, xScale, yScale}) {
+const drawLineSegment = function (group, {segment, tsKey, xScale, yScale}) {
     let lineElem;
     if (segment.points.length === 1) {
         lineElem = group.append('circle')
@@ -49,13 +61,15 @@ const drawLineSegment = function (group, {segment, xScale, yScale}) {
         lineElem = group.append('path')
             .datum(segment.points)
             .attr('d', dvLine);
+
     }
     lineElem
         .classed('line-segment', true)
-        .classed(segment.class, true);
+        .classed(segment.class, true)
+        .classed(tsKey, true);
 };
 
-const drawMaskSegment = function(group, {segment, xScale, yScale}) {
+const drawMaskSegment = function(group, {segment, tsKey, xScale, yScale}) {
     const [yRangeStart, yRangeEnd] = yScale.range();
     const xRangeStart = xScale(segment.points[0].dateTime);
     const xRangeEnd = xScale(segment.points[segment.points.length - 1].dateTime);
@@ -82,14 +96,14 @@ const drawMaskSegment = function(group, {segment, xScale, yScale}) {
         .attr('y', yRangeEnd)
         .attr('width', rectWidth)
         .attr('height', rectHeight)
-        .attr('fill', 'url(#dv-masked-pattern)');
+        .attr('fill', `url(#${MASK_PATTERN_ID[tsKey]})`);
 };
 
-const drawDataSegment = function(group, {segment, xScale, yScale}) {
+const drawDataSegment = function(group, {segment, tsKey, xScale, yScale}) {
     if (segment.isMasked) {
-        drawMaskSegment(group, {segment, xScale, yScale});
+        drawMaskSegment(group, {segment, tsKey, xScale, yScale});
     } else {
-        drawLineSegment(group, {segment, xScale, yScale});
+        drawLineSegment(group, {segment, tsKey, xScale, yScale});
     }
 };
 
@@ -111,8 +125,10 @@ export const drawDataSegments = function (elem, {segments, xScale, yScale, enabl
         drawingGroup.attr('clip-path', 'url(#dv-graph-clip)');
     }
 
-    segments.forEach((segment) => {
-        drawDataSegment(drawingGroup, {segment, xScale, yScale});
+    Object.keys(segments).forEach((tsKey) => {
+        segments[tsKey].forEach((segment) => {
+            drawDataSegment(drawingGroup, {segment, tsKey, xScale, yScale});
+        });
     });
 };
 

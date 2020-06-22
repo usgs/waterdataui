@@ -2,6 +2,7 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import {default as thunk} from 'redux-thunk';
 
 import {Actions, floodDataReducer, floodStateReducer} from './flood-inundation';
+import {MOCK_WATERWATCH_FLOOD_LEVELS} from '../mock-service-data';
 
 describe('store/flood-inundation module', () => {
     /* eslint no-use-before-define: 0 */
@@ -120,6 +121,77 @@ describe('store/flood-inundation module', () => {
                 expect(floodData.stages).toEqual([28, 29, 30]);
                 expect(floodData.extent).toEqual({});
                 done();
+            });
+        });
+
+        describe('retrieveWaterwatchData', () => {
+            it('Expects that fetching urls have the siteno', () => {
+                store.dispatch(Actions.retrieveWaterwatchData('12345678'));
+
+                expect(jasmine.Ajax.requests.count()).toBe(1);
+                expect(jasmine.Ajax.requests.at(0).url).toContain('12345678');
+            });
+
+            it('Expects the store to be updated on successful fetches', (done) => {
+                const promise = store.dispatch(Actions.retrieveWaterwatchData('12345678'));
+
+                jasmine.Ajax.requests.at(0).respondWith({
+                    status: 200,
+                    responseText: MOCK_WATERWATCH_FLOOD_LEVELS
+                });
+
+                promise.then(() => {
+                    const waterwatchData = store.getState().floodData;
+                    expect(waterwatchData.floodLevels.action_stage)
+                        .toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].action_stage);
+                    expect(waterwatchData.floodLevels.flood_stage)
+                        .toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].flood_stage);
+                    expect(waterwatchData.floodLevels.moderate_flood_stage)
+                        .toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].moderate_flood_stage);
+                    expect(waterwatchData.floodLevels.major_flood_stage)
+                        .toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].major_flood_stage);
+                    done();
+                });
+            });
+
+            it('Expects the store to not contain empty features if calls are unsuccessful', (done) => {
+
+                const promise = store.dispatch(Actions.retrieveWaterwatchData('12345678'));
+
+                jasmine.Ajax.requests.at(0).respondWith({
+                    status: 500,
+                    responseText: 'Internal server error'
+                });
+
+                promise.then(() => {
+                    const waterwatchData = store.getState().floodData;
+
+                    expect(waterwatchData.floodLevels).toEqual(null);
+                    done();
+                });
+            });
+        });
+
+        describe('setWaterwatchFloodLevels', () => {
+            const FLOOD_LEVELS = [
+                    {
+                        site_no: '07144100',
+                        action_stage: '20',
+                        flood_stage: '22',
+                        moderate_flood_stage: '25',
+                        major_flood_stage: '26'
+                    }
+                ];
+
+            it('expect waterwatch data to be updated', () => {
+                store.dispatch(
+                    Actions.setWaterwatchFloodLevels(FLOOD_LEVELS));
+                const waterwatchData = store.getState().floodData;
+
+                expect(waterwatchData.floodLevels[0].action_stage).toEqual(FLOOD_LEVELS[0].action_stage);
+                expect(waterwatchData.floodLevels[0].flood_stage).toEqual(FLOOD_LEVELS[0].flood_stage);
+                expect(waterwatchData.floodLevels[0].moderate_flood_stage).toEqual(FLOOD_LEVELS[0].moderate_flood_stage);
+                expect(waterwatchData.floodLevels[0].major_flood_stage).toEqual(FLOOD_LEVELS[0].major_flood_stage);
             });
         });
     });

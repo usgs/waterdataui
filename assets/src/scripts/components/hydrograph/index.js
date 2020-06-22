@@ -13,9 +13,11 @@ import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-valu
 import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
 import {Actions as statisticsDataActions} from '../../store/statistics-data';
 import {Actions as timeZoneActions} from '../../store/time-zone';
+import {Actions as floodDataActions} from '../../store/flood-inundation';
 import {renderTimeSeriesUrlParams} from '../../url-params';
 
 import {drawDateRangeControls} from './date-controls';
+import {drawDataTable} from './data-table';
 import {lineSegmentsByParmCdSelector} from './drawing-data';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
@@ -72,6 +74,8 @@ export const attachToNode = function (store,
 
     // Fetch time zone
     const fetchTimeZonePromise = store.dispatch(timeZoneActions.retrieveIanaTimeZone(latitude, longitude));
+    // Fetch waterwatch flood levels
+    store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
     let fetchDataPromise;
     if (showOnlyGraph) {
         // Only fetch what is needed
@@ -101,6 +105,8 @@ export const attachToNode = function (store,
             });
         store.dispatch(statisticsDataActions.retrieveMedianStatistics(siteno));
     }
+
+
     fetchDataPromise.then(() => {
         // Hide the loading indicator
         nodeElem
@@ -137,15 +143,20 @@ export const attachToNode = function (store,
                 .classed('ts-legend-controls-container', true)
                 .call(drawTimeSeriesLegend, store);
 
-            // Add UI interactive elements and the provisional data alert.
+            // Add UI interactive elements, data table  and the provisional data alert.
             if (!showOnlyGraph) {
                 nodeElem
                     .call(drawMethodPicker, store)
                     .call(drawDateRangeControls, store, siteno);
 
                 nodeElem.select('.ts-legend-controls-container')
-                    .call(drawGraphControls, store);
 
+                    .call(drawGraphControls, store);
+                nodeElem.select('#iv-data-table-container')
+                    .call(drawDataTable, store);
+                nodeElem.select('.provisional-data-alert')
+                    .attr('hidden', null);
+                //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
                 nodeElem.select('.select-time-series-container')
                     .call(link(store, plotSeriesSelectTable, createStructuredSelector({
                         siteno: () => siteno,
@@ -153,8 +164,7 @@ export const attachToNode = function (store,
                         lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current', 'P7D'),
                         timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM)
                     }), store));
-                nodeElem.select('.provisional-data-alert')
-                    .attr('hidden', null);
+
 
                 renderTimeSeriesUrlParams(store);
             }

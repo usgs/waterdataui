@@ -24,7 +24,7 @@ describe('store/network module', () => {
         jasmine.Ajax.uninstall();
     });
 
-    describe('nldiDataReducer and Actions', () => {
+    describe('networkDataReducer and Actions', () => {
         describe('setNetworkList', () => {
             const NETWORK_LIST = [
                 {
@@ -72,12 +72,8 @@ describe('store/network module', () => {
             it('Expects that fetching urls have the siteno', () => {
                 store.dispatch(Actions.retrieveNetworkListData('12345678'));
 
-                expect(jasmine.Ajax.requests.count()).toBe(5);
+                expect(jasmine.Ajax.requests.count()).toBe(1);
                 expect(jasmine.Ajax.requests.at(0).url).toContain('USGS-12345678');
-                expect(jasmine.Ajax.requests.at(1).url).toContain('USGS-12345678');
-                expect(jasmine.Ajax.requests.at(2).url).toContain('USGS-12345678');
-                expect(jasmine.Ajax.requests.at(3).url).toContain('USGS-12345678');
-                expect(jasmine.Ajax.requests.at(4).url).toContain('USGS-12345678');
             });
 
             it('Expects the store to be updated on successful fetches', (done) => {
@@ -87,12 +83,13 @@ describe('store/network module', () => {
                     responseText: MOCK_OBSERVATION_ITEM
                 });
 
-
                 promise.then(() => {
                     const networkData = store.getState().networkData;
 
                     expect(networkData.networkList).toEqual(
                         JSON.parse(MOCK_OBSERVATION_ITEM).links.filter(function (link) {
+                            const networkTitle = link['href'].split('/')[6].split('?')[0];
+                            link['href'] =  'https://waterdata.usgs.gov/networks/' + networkTitle;
                             return link['rel'] == 'collection';
                         }));
                     done();
@@ -111,7 +108,9 @@ describe('store/network module', () => {
 
                     expect(networkData.networkList).toEqual([]);
                     done();
-                });
+                }).catch(function(msg){
+                    console.log(msg);
+                })
             });
         });
     });

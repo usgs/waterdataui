@@ -34,7 +34,11 @@ describe('components/dailyValueHydrograph/time-series-graph', () => {
             }
         },
         dailyValueTimeSeriesState: {
-            currentDVTimeSeriesId: '12345',
+            currentDVTimeSeriesId: {
+                min: null,
+                mean: null,
+                max: '12345'
+            },
             dvGraphCursorOffset: 1262476800000
         },
         ui: {

@@ -25,7 +25,7 @@ describe('network-selector', () => {
 
     describe('hasNetworkData', () => {
         it('if netowrk data is empty, return false', () => {
-            expect(hasNldiData({
+            expect(hasNetworkData({
                 networkData: {
                     networkList: []
                 }
@@ -33,7 +33,7 @@ describe('network-selector', () => {
         });
 
         it('if even one nldi data has data, return true', () => {
-            expect(hasNldiData({
+            expect(hasNetworkData({
                 networkData: {
                     networkList: [1]
                 }

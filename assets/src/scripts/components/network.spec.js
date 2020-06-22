@@ -1,9 +1,9 @@
-import {select} from 'd3-selection';
-import {attachToNode} from './index';
-import {configureStore} from '../../store';
+import {select, selectAll} from 'd3-selection';
+import {attachToNode} from './network';
+import {configureStore} from '../store';
 
 const TEST_STATE = {
-    newtorkData: {
+    networkData: {
         networkList: [
                 {
                     rel: "collection",
@@ -36,12 +36,18 @@ const TEST_STATE = {
                     title: "Active Groundwater Level Network"
                 }
         ]
+    },
+    ui: {
+        width: 400
     }
 };
 
 const TEST_NO_STATE = {
-    newtorkData: {
+    networkData: {
         networkList: []
+    },
+    ui: {
+        width: 400
     }
 };
 
@@ -51,7 +57,9 @@ describe('network component', () => {
     beforeEach(() => {
       let body = select('body');
       body.append('div')
-            .attr('id', 'observation-network-list');
+            .attr('id', 'observation-network-list')
+          .append('table')
+          .attr('id', 'network-list-table');
 
       networkNode = document.getElementById('observation-network-list');
       jasmine.Ajax.install();
@@ -62,10 +70,6 @@ describe('network component', () => {
         select('#observation-network-list').remove();
     });
 
-    it('expect alert if no siteno defined', () => {
-        attachToNode({}, networkNode, {});
-        expect(graphNode.innerHTML).toContain('No network data is available');
-    });
 
     describe('Tests for no network data', () => {
         let store;
@@ -74,12 +78,12 @@ describe('network component', () => {
             store = configureStore(TEST_NO_STATE)
         });
 
-        it('loading-indicator is shown until initial data has been retrieved', () => {
-            attachToNode(store, graphNode, {
+        it('No rows if no data', () => {
+            attachToNode(store, networkNode, {
                 siteno: '12345678'
             });
 
-            expect(select(graphNode).select('tbody tr').size()).toBe(0);
+            expect(select(networkNode).select('tbody tr').size()).toBe(0);
         });
     });
 
@@ -90,12 +94,12 @@ describe('network component', () => {
             store = configureStore(TEST_STATE)
         });
 
-        it('loading-indicator is shown until initial data has been retrieved', () => {
-            attachToNode(store, graphNode, {
+        it('Create network table if data', () => {
+            attachToNode(store, networkNode, {
                 siteno: '12345678'
             });
 
-            expect(select(graphNode).select('tbody tr').size()).toBe(5);
+            expect(select(networkNode).selectAll('tbody tr').size()).toBe(5);
         });
     });
 });

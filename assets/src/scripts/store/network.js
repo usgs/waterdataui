@@ -22,14 +22,20 @@ const setNetworkList = function(networkList) {
 const retrieveNetworkListData = function(siteno) {
      return function (dispatch) {
         return fetchObservationItem(siteno).then(function (networkList) {
-            networkList = networkList['links'].filter(function(item) {
-               return item['rel'] == 'collection';
-            });
-            networkList.forEach(function(item) {
-                const networkTitle = item['href'].split('/')[6].split('?')[0];
-                item['href'] =  'https://waterdata.usgs.gov/networks/' + networkTitle;
-            });
-            dispatch(setNetworkList(networkList));
+
+            if (networkList != [] && 'links' in networkList) {
+                networkList = networkList['links'].filter(function (item) {
+                    return item['rel'] == 'collection';
+                });
+                networkList.forEach(function (item) {
+                    const networkTitle = item['href'].split('/')[6].split('?')[0];
+                    item['href'] = 'https://waterdata.usgs.gov/networks/' + networkTitle;
+                });
+                dispatch(setNetworkList(networkList));
+            } else{
+                dispatch(setNetworkList([]));
+            }
+
         });
     };
 };

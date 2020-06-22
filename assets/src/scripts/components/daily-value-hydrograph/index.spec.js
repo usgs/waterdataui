@@ -14,7 +14,7 @@ describe('components/dailyValueHydrograph/index', () => {
                 id: 'USGS-12345-1122'
             },{
                 parameterCode: '72019',
-                statisticCode: '00002',
+                statisticCode: '00003',
                 id: 'USGS-12345-1123'
             },{
                 parameterCode: '00060',
@@ -32,7 +32,7 @@ describe('components/dailyValueHydrograph/index', () => {
                         observedPropertyName: 'Water level, depth LSD',
                         observedPropertyReference: null,
                         samplingFeatureName: 'CT-SC    22 SCOTLAND',
-                        statistic: null,
+                        statistic: 'MAXIMUM',
                         statisticReference: null,
                         unitOfMeasureName: 'ft',
                         unitOfMeasureReference: null,
@@ -43,11 +43,37 @@ describe('components/dailyValueHydrograph/index', () => {
                         qualifiers: [null, null, null, null],
                         grades: [['50'], ['50'], ['50'], ['50']]
                     }
+                },
+                '1123' : {
+                    type: 'Feature',
+                    id: '1123',
+                    properties: {
+                        observationType: 'MeasureTimeseriesObservation',
+                        phenomenonTimeStart: '2010-01-01',
+                        phenomenonTimeEnd: '2010-01-04',
+                        observedPropertyName: 'Water level, depth LSD',
+                        observedPropertyReference: null,
+                        samplingFeatureName: 'CT-SC    22 SCOTLAND',
+                        statistic: 'MEAN',
+                        statisticReference: null,
+                        unitOfMeasureName: 'ft',
+                        unitOfMeasureReference: null,
+                        timeStep: ['2010-01-01', '2010-01-02', '2010-01-03', '2010-01-04'],
+                        result: ['3.5', '2.2', '3.6', '1.9'],
+                        nilReason: [null, null, null, null],
+                        approvals: [['Approved'], ['Approved'], ['Approved'], ['Approved']],
+                        qualifiers: [null, null, null, null],
+                        grades: [['50'], ['50'], ['50'], ['50']]
+                    }
                 }
             }
         },
         dailyValueTimeSeriesState: {
-            currentDVTimeSeriesId: '1122',
+            currentDVTimeSeriesId: {
+                min: null,
+                mean: '1123',
+                max: '1122'
+            },
             dvGraphCursorOffset: 1262476800000
         },
         ui: {
@@ -104,7 +130,9 @@ describe('components/dailyValueHydrograph/index', () => {
             }), testDiv.node(), {siteno: '12345'});
 
             window.requestAnimationFrame(() => {
-                expect(Actions.retrieveDVTimeSeries).toHaveBeenCalledWith('USGS-12345', '1122');
+                expect(Actions.retrieveDVTimeSeries.calls.count()).toBe(2);
+                expect(Actions.retrieveDVTimeSeries.calls.argsFor(0)).toEqual(['USGS-12345', '1122']);
+                expect(Actions.retrieveDVTimeSeries.calls.argsFor(1)).toEqual(['USGS-12345', '1123']);
 
                 done();
             });
@@ -113,7 +141,7 @@ describe('components/dailyValueHydrograph/index', () => {
         it('Expects that if there is not a valid time series that the alert is shown indicating no data', (done) => {
             attachToNode(configureStore({
                 dailyValueTimeSeriesData: {
-                    availableDVTimeSeries: TEST_STATE.dailyValueTimeSeriesData.availableDVTimeSeries.slice(1)
+                    availableDVTimeSeries: TEST_STATE.dailyValueTimeSeriesData.availableDVTimeSeries.slice(2)
                 }
             }), testDiv.node(), {siteno: '12345'});
             window.requestAnimationFrame(() => {

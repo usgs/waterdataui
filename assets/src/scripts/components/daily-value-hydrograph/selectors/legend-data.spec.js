@@ -1,4 +1,4 @@
-import {lineMarker, rectangleMarker} from '../../../d3-rendering/markers';
+import {lineMarker, rectangleMarker, textOnlyMarker} from '../../../d3-rendering/markers';
 
 import {getLegendMarkers} from './legend-data';
 
@@ -20,11 +20,29 @@ describe('daily-value-hydrograph/legend-data', () => {
                         qualifiers: [null, ['ESTIMATED'], ['ICE'], ['ICE']],
                         grades: [['50'], ['50'], ['60'], ['60']]
                     }
+                },
+                '12346': {
+                    type: 'Feature',
+                    id: '12346',
+                    properties: {
+                        phenomenonTimeStart: '2018-01-02',
+                        phenomenonTimeEnd: '2018-01-05',
+                        timeStep: ['2018-01-02', '2018-01-03', '2018-01-04', '2018-01-05'],
+                        result: ['6.0', '5.0', '7.1', '4.2'],
+                        approvals: [['Approved'], ['Approved'], ['Approved'], ['Approved']],
+                        nilReason: [null, 'AA', null, null],
+                        qualifiers: [null, null, null, null],
+                        grades: [['50'], ['50'], ['60'], ['60']]
+                    }
                 }
             }
         },
         dailyValueTimeSeriesState: {
-            currentDVTimeSeriesId: '12345'
+            currentDVTimeSeriesId: {
+                min: null,
+                mean: '12345',
+                max: '12346'
+            }
         },
         ui: {
             windowWidth: 1024,
@@ -48,31 +66,51 @@ describe('daily-value-hydrograph/legend-data', () => {
         it('Should return markers for the selected variable', () => {
             const result = getLegendMarkers(TEST_STATE);
 
-            expect(result.length).toBe(3);
-            expect(result).toContain({
+            expect(result.length).toBe(2);
+            expect(result[0].length).toBe(4);
+            expect(result[0][0]).toEqual({
+                type: textOnlyMarker,
+                domId: null,
+                domClass: null,
+                text: 'Mean:'
+            });
+            expect(result[0]).toContain({
                 type: lineMarker,
                 domId: null,
-                domClass: 'line-segment approved',
+                domClass: 'line-segment approved mean',
                 text: 'Approved'
 
             });
-            expect(result).toContain({
+            expect(result[0]).toContain({
                 type: lineMarker,
                 domId: null,
-                domClass: 'line-segment estimated',
+                domClass: 'line-segment estimated mean',
                 text: 'Estimated'
 
             });
-            expect(result).toContain({
+            expect(result[0]).toContain({
                 type: rectangleMarker,
                 domId: null,
                 domClass: 'mask mask-0',
                 text: 'Ice affected',
-                fill: 'url(#dv-masked-pattern)'
+                fill: 'url(#dv-mean-masked-pattern)'
+
+            });
+
+            expect(result[1].length).toEqual(2);
+            expect(result[1][0]).toEqual({
+                type: textOnlyMarker,
+                domId: null,
+                domClass: null,
+                text: 'Maximum:'
+            });
+            expect(result[1]).toContain({
+                type: lineMarker,
+                domId: null,
+                domClass: 'line-segment approved max',
+                text: 'Approved'
 
             });
         });
-
     });
-
 });

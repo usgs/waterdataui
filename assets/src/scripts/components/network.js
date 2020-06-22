@@ -9,33 +9,31 @@ export const attachToNode = function (store,
                                       node,
                                       {siteno}) {
 
-    let fetchDataPromise;
-    fetchDataPromise = store.dispatch(networkActions.retrieveNetworkListData(siteno));
-    fetchDataPromise.then(() => {
-        select(node).call(link(store, addNetworkRows, createStructuredSelector({
-            hasData: hasNetworkData,
-            networkList: getNetworkList,
-        })));
-    });
+    console.log('hey');
+    store.dispatch(networkActions.retrieveNetworkListData(siteno));
+    select(node).call(link(store, addNetworkRows, createStructuredSelector({
+        hasData: hasNetworkData,
+        networkList: getNetworkList,
+    })));
+};
 
-    const addNetworkRows = function(node, {hasData, networkList}){
-        if (hasData){
-            const input = node.select('#network-list-table');
-            input.append('thead').html(
-                "<tr><th>Name</th><th>Link</th></tr>"
-            );
-            const tbody = input.append('tbody')
+const addNetworkRows = function(node, {hasData, networkList}){
+    if (hasData){
+        const input = node.select('#network-list-table');
+        input.append('thead').html(
+            "<tr><th>Name</th><th>Link</th></tr>"
+        );
+        const tbody = input.append('tbody')
 
-            let tbodyHTML = '';
-            networkList.forEach(function(network) {
-                tbodyHTML += `<tr><td>${network.title}</td><td><a href="${network.href}">
-                    ${network.href}</a></td></tr>`;
-            })
+        let tbodyHTML = '';
+        networkList.forEach(function(network) {
+            tbodyHTML += `<tr><td>${network.title}</td><td><a href="${network.href}">
+                ${network.href}</a></td></tr>`;
+        })
 
-            tbody.html(tbodyHTML);
-            
-        } else{
-            node.html('<p>No network data is available</p>');
-        }
+        tbody.html(tbodyHTML);
+
+    } else{
+        node.html('<p>No network data is available</p>');
     }
 };

@@ -7,6 +7,7 @@ import {drawSimpleLegend} from '../../d3-rendering/legend';
 import {defineLineMarker, defineTextOnlyMarker, defineRectangleMarker} from '../../d3-rendering/markers';
 import {link} from '../../lib/d3-redux';
 import {getCurrentVariableMedianMetadata} from '../../selectors/median-statistics-selector';
+import {getWaterwatchFloodLevels, waterwatchVisible} from '../../selectors/flood-data-selector';
 
 import {currentVariableLineSegmentsSelector, HASH_ID, MASK_DESC} from './drawing-data';
 import {getMainLayout} from './layout';
@@ -103,6 +104,21 @@ const createLegendMarkers = function(displayItems) {
         }
     }
 
+    if (displayItems.floodLevels) {
+        const floodLevels = displayItems.floodLevels;
+        const keys = ['actionStage', 'floodStage', 'moderateFloodStage', 'majorFloodStage'];
+        const labels = ['Action Stage: ', 'Flood Stage: ', 'Moderate Flood Stage: ', 'Major Flood Stage: '];
+        const wwSeriesClass = 'waterwatch-data-series';
+        const classes = ['action-stage', 'flood-stage', 'moderate-flood-stage', 'major-flood-stage'];
+
+        for (let index = 0; index < keys.length; index++) {
+            legendMarkers.push([
+                defineTextOnlyMarker(labels[index]),
+                defineLineMarker(null, `${wwSeriesClass} ${classes[index]}`,
+                    `${floodLevels[keys[index]]} ft`)]);
+        }
+    }
+
     return legendMarkers;
 };
 
@@ -132,11 +148,14 @@ const legendDisplaySelector = createSelector(
     getCurrentVariableMedianMetadata,
     uniqueClassesSelector('current'),
     uniqueClassesSelector('compare'),
-    (showSeries, medianSeries, currentClasses, compareClasses) => {
+    waterwatchVisible,
+    getWaterwatchFloodLevels,
+    (showSeries, medianSeries, currentClasses, compareClasses, visible, floodLevels) => {
         return {
             current: showSeries.current ? currentClasses : undefined,
             compare: showSeries.compare ? compareClasses : undefined,
-            median: showSeries.median ? medianSeries : undefined
+            median: showSeries.median ? medianSeries : undefined,
+            floodLevels: visible ? floodLevels : undefined
         };
     }
 );

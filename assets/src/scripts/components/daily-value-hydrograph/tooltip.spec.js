@@ -26,7 +26,11 @@ describe('components/daily-value-hydrograph/tooltip module', () => {
             }
         },
         dailyValueTimeSeriesState: {
-            currentDVTimeSeriesId: '12345',
+            currentDVTimeSeriesId: {
+                min: null,
+                mean: null,
+                max: '12345'
+            },
             dvGraphCursorOffset: 86400000
         },
         ui: {
