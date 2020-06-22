@@ -166,6 +166,9 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
 
     beforeEach(() => {
         let body = select('body');
+        body.append('a')
+            .attr('id','classic-page-link')
+            .attr('href', 'https://fakeserver/link');
         let component = body.append('div')
             .attr('id', 'hydrograph');
         component.append('div').attr('class', 'loading-indicator-container');
@@ -182,6 +185,7 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
     afterEach(() => {
         jasmine.Ajax.uninstall();
         select('#hydrograph').remove();
+        select('#classic-page-link').remove();
     });
 
     it('expect alert if no siteno defined', () => {
@@ -411,6 +415,44 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
         });
     });
 
+    describe('graphNode contains the expected elements when no IV time series has been retrieved and showOnlyGraph is false', () => {
+        let store;
+        beforeEach((done) => {
+            spyOn(floodDataActions, 'retrieveWaterwatchData').and.returnValue(function () {
+                return Promise.resolve({});
+            });
+            spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.returnValue(function () {
+                return Promise.resolve({});
+            });
+            store = configureStore({
+                ...TEST_STATE,
+                ivTimeSeriesData: {},
+                ivTimeSeriesState: {
+                    ...TEST_STATE.ivTimeSeriesState,
+                    currentIVVariableID: '',
+                    currentIVDateRangeKind: ''
+
+                },
+                ui: {
+                    windowWidth: 400,
+                    width: 400
+                }
+            });
+            attachToNode(store, graphNode, {siteno: '12345678'});
+            window.requestAnimationFrame(() => {
+                done();
+            });
+        });
+
+        it('should show info alert', () => {
+            expect(select('.usa-alert--info').size()).toBe(1);
+        });
+
+        it('should use inventory for classic page link', () => {
+            expect(select('#classic-page-link').attr('href')).toContain('https://fakenwis.usgs.gov/inventory');
+        });
+    });
+
     describe('graphNode contains the expected elements when showOnlyGraph is false', () => {
         /* eslint no-use-before-define: 0 */
         let store;
@@ -458,20 +500,21 @@ describe('Hydrograph charting and Loading indicators and data alerts', () => {
                 ui: {
                     windowWidth: 400,
                     width: 400
-                },
-                 floodState: {
-                     actionStage: 1,
-                     floodStage: 2,
-                     moderateFloodStage: 3,
-                     majorFloodStage: 4
-                 }
-
+                }
             });
 
             attachToNode(store, graphNode, {siteno: '12345678'});
             window.requestAnimationFrame(() => {
                 done();
             });
+        });
+
+        it('should not show info alert', () => {
+            expect(select('.usa-alert--info').size()).toBe(0);
+        });
+
+        it('should not use inventory for classic page link', () => {
+            expect(select('#classic-page-link').attr('href')).not.toContain('https://fakenwis.usgs.gov/inventory');
         });
 
         it('should render the correct number of svg nodes', () => {
