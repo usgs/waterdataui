@@ -1,13 +1,13 @@
 import { select } from 'd3-selection';
-import { link } from '../../lib/d3-redux';
+import { link, subscribe } from '../../lib/d3-redux';
 import { Features } from '../../selectors/observations-selector';
 import config from '../../config';
 import { retrieveObservationsData } from '../../store/observations';
 
 /*
- * Creates a site map
+ * Creates a US map
  */
-const siteMap = function(node, {latitude, longitude, zoom}, store) {
+const usMap = function(node, {latitude, longitude, zoom}, store) {
     let gray = L.layerGroup();
     L.esri.basemapLayer('Gray').addTo(gray);
 
@@ -27,7 +27,7 @@ const siteMap = function(node, {latitude, longitude, zoom}, store) {
         map.scrollWheelZoom.disable();
     });
 
-    map.on('moveend', () => {
+    const getFeaturesInBbox = () => {
         const bounds = map.getBounds();
         const bbox = {
           west: bounds.getWest(),     
@@ -36,7 +36,25 @@ const siteMap = function(node, {latitude, longitude, zoom}, store) {
           north: bounds.getNorth()     
         };
         store.dispatch(retrieveObservationsData(bbox));
+    };
+
+    map.on('moveend', () => {
+        getFeaturesInBbox();
     });
+
+    const addSiteCircles = (node, features) => {
+        features.forEach(f => {
+            if (f.geometry) {
+                const marker = L.circle(f.geometry.coordinates.reverse(), {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.2,
+                    radius: 5000
+                });
+                marker.addTo(map);
+            }
+        });
+    };
 
     //add additional baselayer
     var baseLayers = {
@@ -52,12 +70,12 @@ const siteMap = function(node, {latitude, longitude, zoom}, store) {
         map.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT}));
     }
 
-    // node
-    //     .call(link(store, retrieveObservationsData, Features, bbox));
+    node
+        .call(link(store, addSiteCircles, Features));
 };
 
 /*
- * Creates the site map with node and attach it to the Redux store.
+ * Creates the US map with node and attach it to the Redux store.
  * @param {Object} store - Redux store
  * @param {Object} node - DOM element
  * @param {Number} latitude - latitude of siteno
@@ -66,5 +84,5 @@ const siteMap = function(node, {latitude, longitude, zoom}, store) {
  */
 export const attachToNode = function(store, node, {latitude, longitude, zoom}) {
     select(node)
-        .call(siteMap, {latitude, longitude, zoom}, store);
+        .call(usMap, {latitude, longitude, zoom}, store);
 };

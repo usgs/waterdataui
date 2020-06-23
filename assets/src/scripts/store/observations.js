@@ -5,7 +5,6 @@ import {
 const SET_OBSERVATIONS_FEATURES = 'SET_OBSERVATIONs_FEATURES';
 
 const INITIAL_DATA = {
-    features: {}
 };
 
 /*
