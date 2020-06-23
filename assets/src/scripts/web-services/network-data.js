@@ -14,7 +14,7 @@ const fetchNetworkData = function(networkQuery) {
         })
         .catch(reason => {
             console.error(`Unable to retrieve data from ${url} with reason: ${reason}`);
-            return [];
+            return {};
         });
 };
 

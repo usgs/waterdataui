@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 export const getNetworkList = state => state.networkData.networkList || [];
 
 /*
- * Provides a function which returns True if nldi data is not empty.
+ * Provides a function which returns True if network data is not empty.
  */
 export const hasNetworkData = createSelector(
     getNetworkList,

@@ -14,14 +14,14 @@ import {attachToNode as EmbedComponent} from './components/embed';
 import {attachToNode as DailyValueHydrographComponent} from './components/daily-value-hydrograph';
 import {attachToNode as HydrographComponent} from './components/hydrograph';
 import {attachToNode as MapComponent} from './components/map';
-import {attachToNode as ObservationNetworkListComponent} from './components/network';
+import {attachToNode as NetworkListComponent} from './components/network-list';
 
 const COMPONENTS = {
     embed: EmbedComponent,
     'dv-hydrograph': DailyValueHydrographComponent,
     hydrograph: HydrographComponent,
     map: MapComponent,
-    'observation-network-list': ObservationNetworkListComponent
+    'observation-network-list': NetworkListComponent
 };
 
 const load = function () {

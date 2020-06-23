@@ -1,6 +1,6 @@
 import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
-import {Actions, networkDataReducer, buildNetworkURL} from './network';
+import {Actions, networkDataReducer} from './network';
 import {MOCK_OBSERVATION_ITEM} from '../mock-service-data';
 
 describe('store/network module', () => {
@@ -88,7 +88,6 @@ describe('store/network module', () => {
 
                     expect(networkData.networkList).toEqual(
                         JSON.parse(MOCK_OBSERVATION_ITEM).links.filter(function (link) {
-                            link['href'] = buildNetworkURL(link['href']);
                             return link['rel'] == 'collection';
                         }));
                     done();

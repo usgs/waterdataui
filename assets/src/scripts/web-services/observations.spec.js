@@ -1,5 +1,5 @@
 import {fetchAvailableDVTimeSeries, fetchDVTimeSeries,
-    fetchObservationItem} from './observations';
+    fetchMonitoringLocationMetaData} from './observations';
 import {MOCK_OBSERVATION_ITEM} from '../mock-service-data';
 
 describe('web-services/observations module', () => {
@@ -86,13 +86,13 @@ describe('web-services/observations module', () => {
 
     describe('fetchObservationItem', () => {
         it('Expects the url to contain monitoringLocationId and time series id', () => {
-            fetchObservationItem('USGS-1234567890');
+            fetchMonitoringLocationMetaData('USGS-1234567890');
             const url = jasmine.Ajax.requests.mostRecent().url;
             expect(url).toContain('USGS-1234567890');
         });
 
         it('Expect json response with a valid response', (done) => {
-            fetchObservationItem('USGS-1234567890')
+            fetchMonitoringLocationMetaData('USGS-1234567890')
                 .then((resp) => {
                     expect(resp).toBeInstanceOf(Object);
                     expect(resp.properties).toBeDefined;
@@ -108,7 +108,7 @@ describe('web-services/observations module', () => {
         });
 
         it('Expect empty object with an bad response', (done) => {
-            fetchObservationItem('1234567890')
+            fetchMonitoringLocationMetaData('1234567890')
                 .then((resp) => {
                     expect(resp).toBeInstanceOf(Object);
                     expect(resp).toEqual({});

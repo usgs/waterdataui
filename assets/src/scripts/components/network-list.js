@@ -1,8 +1,22 @@
 import {select} from 'd3-selection';
-import {Actions as networkActions} from '../store/network';
-import {hasNetworkData, getNetworkList} from '../selectors/network-selector';
 import {createStructuredSelector} from 'reselect';
 import {link} from '../lib/d3-redux';
+
+import {Actions as networkActions} from '../store/network';
+import {hasNetworkData, getNetworkList} from '../selectors/network-selector';
+
+
+/*
+ * function to build a network URL from a labs json url
+ * @param {String} link
+ * @return {String} network link
+ */
+export const buildNetworkURL = function(link) {
+    const networkTitle = link.split('/')[6].split('?')[0];
+    let baseURL = String(window.location);
+    baseURL = baseURL.slice(0,baseURL.indexOf('monitoring-location'));
+    return `${baseURL}networks/${networkTitle}`;
+};
 
 const addNetworkRows = function(node, {hasData, networkList}){
     if (hasData){
@@ -13,15 +27,17 @@ const addNetworkRows = function(node, {hasData, networkList}){
         const tbody = input.append('tbody');
 
         let tbodyHTML = '';
+        let networkUrl;
         networkList.forEach(function(network) {
-            tbodyHTML += `<tr><td>${network.title}</td><td><a href="${network.href}">
-                ${network.href}</a></td></tr>`;
+            networkUrl = buildNetworkURL(network.href);
+            tbodyHTML += `<tr><td>${network.title}</td><td><a href="${networkUrl}">
+                ${networkUrl}</a></td></tr>`;
         });
 
         tbody.html(tbodyHTML);
 
     } else{
-        node.html('<p>No network data is available</p>');
+        node.html('<p>This site is not in any networks</p>');
     }
 };
 

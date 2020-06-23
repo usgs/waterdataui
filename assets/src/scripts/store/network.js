@@ -1,22 +1,12 @@
 import {
-    fetchObservationItem
+    fetchMonitoringLocationMetaData
 } from '../web-services/observations';
 
 const INITIAL_DATA = {
     networkList: []
 };
 
-/*
- * function to build a network URL from a labs json url
- * @param {String} link
- * @return {String} network link
- */
-export const buildNetworkURL = function(link) {
-    const networkTitle = link.split('/')[6].split('?')[0];
-    let baseURL = String(window.location);
-    baseURL = baseURL.slice(0,baseURL.indexOf('monitoring-location'));
-    return `${baseURL}networks/${networkTitle}`;
-};
+
 
 /*
  * Synchronous Redux actions to save the observation's networks data
@@ -32,14 +22,11 @@ const setNetworkList = function(networkList) {
 
 const retrieveNetworkListData = function(siteno) {
      return function (dispatch) {
-        return fetchObservationItem(siteno).then(function (networkList) {
+        return fetchMonitoringLocationMetaData(siteno).then(function (networkList) {
 
             if (networkList != [] && 'links' in networkList) {
                 networkList = networkList['links'].filter(function (item) {
                     return item['rel'] == 'collection';
-                });
-                networkList.forEach(function (item) {
-                    item['href'] = buildNetworkURL(item['href']);
                 });
                 dispatch(setNetworkList(networkList));
             } else{

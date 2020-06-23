@@ -42,6 +42,6 @@ export const fetchDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
  * @param {String} monitoringLocation
  * @return {Promise}<Object>
  */
-export const fetchObservationItem = function(monitoringLocationId) {
+export const fetchMonitoringLocationMetaData = function(monitoringLocationId) {
     return fetchObservationsData(`items/USGS-${monitoringLocationId}`);
 };
