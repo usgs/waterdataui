@@ -77,7 +77,7 @@ describe('network component', () => {
         let originalTimeout;
 
         beforeEach(() => {
-            store = configureStore(TEST_NO_STATE)
+            store = configureStore(TEST_NO_STATE);
             originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
             jasmine.DEFAULT_TIMEOUT_INTERVAL = 10001;
         });
@@ -106,7 +106,7 @@ describe('network component', () => {
         let originalTimeout;
 
         beforeEach(() => {
-            store = configureStore(TEST_STATE)
+            store = configureStore(TEST_STATE);
             originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
             jasmine.DEFAULT_TIMEOUT_INTERVAL = 10001;
         });
