@@ -28,8 +28,7 @@ const retrieveNetworkListData = function(siteno) {
                     return item['rel'] == 'collection';
                 });
                 networkList.forEach(function (item) {
-                    const networkTitle = item['href'].split('/')[6].split('?')[0];
-                    item['href'] = 'https://waterdata.usgs.gov/networks/' + networkTitle;
+                    item['href'] = buildNetworkURL(item['href']);
                 });
                 dispatch(setNetworkList(networkList));
             } else{
@@ -38,6 +37,18 @@ const retrieveNetworkListData = function(siteno) {
 
         });
     };
+};
+
+/*
+ * function to build a network URL from a labs json url
+ * @param {String} link
+ * @return {String} network link
+ */
+export const buildNetworkURL = function(link) {
+    const networkTitle = link.split('/')[6].split('?')[0];
+    let baseURL = String(window.location)
+    baseURL = baseURL.slice(0,baseURL.indexOf('monitoring-location'));
+    return `${baseURL}networks/${networkTitle}`;
 };
 
 /*

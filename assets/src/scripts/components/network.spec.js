@@ -1,6 +1,8 @@
 import {select, selectAll} from 'd3-selection';
 import {attachToNode} from './network';
 import {configureStore} from '../store';
+import {Actions as networkActions} from "../store/network";
+import {Actions as ivTimeSeriesDataActions} from "../store/instantaneous-value-time-series-data";
 
 const TEST_STATE = {
     networkData: {
@@ -89,17 +91,33 @@ describe('network component', () => {
 
     describe('Tests for network data', () => {
         let store;
+        let originalTimeout;
 
         beforeEach(() => {
             store = configureStore(TEST_STATE)
+            originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = 100000;
+        });
+
+        afterEach(() => {
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
         });
 
         it('Create network table if data', () => {
+
+            spyOn(networkActions, 'retrieveNetworkListData').and.returnValue(function() {
+                    return Promise.resolve(TEST_STATE['networkData']['networkList']);
+                });
+
             attachToNode(store, networkNode, {
                 siteno: '12345678'
             });
 
+            setTimeout(function(){
             expect(select(networkNode).selectAll('tbody tr').size()).toBe(5);
+            }, 10000);
+
+
         });
     });
 });

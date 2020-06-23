@@ -9,16 +9,20 @@ export const attachToNode = function (store,
                                       node,
                                       {siteno}) {
 
-    console.log('hey');
-    store.dispatch(networkActions.retrieveNetworkListData(siteno));
-    select(node).call(link(store, addNetworkRows, createStructuredSelector({
-        hasData: hasNetworkData,
-        networkList: getNetworkList,
-    })));
+    const fetchDataPromise = store.dispatch(networkActions.retrieveNetworkListData(siteno));
+    console.log('promised');
+    fetchDataPromise.then(() => {
+        console.log('you made it in her finally');
+        select(node).call(link(store, addNetworkRows, createStructuredSelector({
+            hasData: hasNetworkData,
+            networkList: getNetworkList
+        })));
+    });
 };
 
 const addNetworkRows = function(node, {hasData, networkList}){
     if (hasData){
+        console.log(networkList);
         const input = node.select('#network-list-table');
         input.append('thead').html(
             "<tr><th>Name</th><th>Link</th></tr>"
