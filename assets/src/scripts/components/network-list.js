@@ -11,7 +11,7 @@ import {hasNetworkData, getNetworkList} from '../selectors/network-selector';
  * @param {String} link
  * @return {String} network link
  */
-export const buildNetworkURL = function(link) {
+const buildNetworkURL = function(link) {
     const networkTitle = link.split('/')[6].split('?')[0];
     let baseURL = String(window.location);
     baseURL = baseURL.slice(0,baseURL.indexOf('monitoring-location'));
