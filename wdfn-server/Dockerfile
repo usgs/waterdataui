@@ -20,7 +20,3 @@ EXPOSE 5050
 
 ENTRYPOINT ["gunicorn"]
 CMD ["--config", "gunicorn.conf.py", "waterdata:app"]
-
-
-
-
