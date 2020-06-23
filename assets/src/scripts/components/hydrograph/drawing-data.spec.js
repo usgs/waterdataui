@@ -198,12 +198,6 @@ const TEST_DATA = {
         currentIVVariableID: '45807197',
         currentIVDateRangeKind: 'P7D',
         currentIVMethodID: 69928
-    },
-    floodState: {
-        actionStage: 1,
-        floodStage: 2,
-        moderateFloodStage: 3,
-        majorFloodStage: 4
     }
 };
 

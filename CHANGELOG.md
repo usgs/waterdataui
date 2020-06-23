@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - The DV graph shows min, mean, and maximum statistics if available.
 - List of affiliated networks for a monitoring location on its page.
+- Classic page link now uses the inventory if no IV time series data is available for the site.
 
 ## [0.33.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.32.0...waterdataui-0.33.0) - 2020-06-10
 ### Changed
