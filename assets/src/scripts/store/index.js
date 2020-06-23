@@ -12,6 +12,7 @@ import {ivTimeSeriesStateReducer as ivTimeSeriesState} from './instantaneous-val
 import {statisticsDataReducer as statisticsData} from './statistics-data';
 import {timeZoneReducer as ianaTimeZone} from './time-zone';
 import {uiReducer as ui} from './ui-state';
+import {networkDataReducer as networkData} from './network';
 
 const appReducer = combineReducers({
     ivTimeSeriesData,
@@ -23,7 +24,8 @@ const appReducer = combineReducers({
     ivTimeSeriesState,
     dailyValueTimeSeriesState,
     floodState,
-    ui
+    ui,
+    networkData
 });
 
 const MIDDLEWARES = [thunk];
@@ -70,6 +72,9 @@ export const configureStore = function (initialState) {
         ui : {
             windowWidth: 1024,
             width: 800
+        },
+        networkData : {
+            networkList: []
         },
         ...initialState
     };

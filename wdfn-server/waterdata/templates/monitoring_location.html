@@ -123,6 +123,15 @@
                     {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
                 {% endif %}
 
+                <div class="usa-accordion">
+                    <h3 class="usa-accordion__heading">
+                        <button class="usa-accordion__button" aria-expanded="true" aria-controls="network-list">Affiliated Networks</button>
+                    </h3>
+                    <div id="network-list" class="usa-accordion__content">
+                        {{ components.ObservationNetworkListComponent(stations[0].site_no) }}
+                    </div>
+                </div>
+
                 {% if parm_grp_summary %}
                     <div class="usa-accordion">
                         <h2 class="usa-accordion__heading">

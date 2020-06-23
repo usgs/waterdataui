@@ -35,3 +35,13 @@ export const fetchAvailableDVTimeSeries = function(monitoringLocationId) {
 export const fetchDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
     return fetchObservationsData(`items/${monitoringLocationId}/observations/statistical-time-series/${timeSeriesId}`);
 };
+
+/*
+ * Fetches the observation data with siteid and returns a Promise
+ * that returns a GeoJson object containing the observation geojson
+ * @param {String} monitoringLocation
+ * @return {Promise}<Object>
+ */
+export const fetchMonitoringLocationMetaData = function(monitoringLocationId) {
+    return fetchObservationsData(`items/USGS-${monitoringLocationId}`);
+};

@@ -64,18 +64,22 @@ import './schema.spec';
 
 import './selectors/daily-value-time-series-selector.spec';
 import './selectors/flood-data-selector.spec';
+import './selectors/network-selector.spec';
 import './selectors/nldi-data-selector.spec';
 import './selectors/median-statistics-selector.spec';
 import './selectors/time-series-selector.spec';
 import './selectors/time-zone-selector.spec';
+
 import './store/daily-value-time-series.spec';
 import './store/flood-inundation.spec';
 import './store/instantaneous-value-time-series-data.spec';
 import './store/instantaneous-value-time-series-state.spec';
+import './store/network.spec';
 import './store/nldi-data.spec';
 import './store/statistics-data.spec';
 import './store/time-zone.spec';
 import './store/ui-state.spec';
+
 
 import './tooltips.spec';
 import './url-params.spec';

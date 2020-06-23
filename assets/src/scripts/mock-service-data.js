@@ -3026,3 +3026,78 @@ export const MOCK_WATERWATCH_FLOOD_LEVELS = `
   ]
 }
 `;
+
+export const MOCK_OBSERVATION_ITEM = `{
+    "type": "Feature",
+    "id": "USGS-343048093030401",
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-93.0511417,
+            34.513375
+        ]
+    },
+    "properties": {
+        "agency": "U.S. Geological Survey",
+        "monitoringLocationNumber": "343048093030401",
+        "monitoringLocationName": "02S19W33CBD1 Hot Springs",
+        "monitoringLocationType": "Well",
+        "district": "Arkansas",
+        "state": "Arkansas",
+        "county": "Garland County",
+        "country": "US",
+        "monitoringLocationAltitudeLandSurface": "749",
+        "altitudeMethod": "Interpolated from Digital Elevation Model",
+        "altitudeAccuracy": "4.3",
+        "altitudeDatum": "North American Vertical Datum of 1988",
+        "nationalAquifer": "Other aquifers",
+        "localAquifer": "Hot Springs Sandstone",
+        "localAquiferType": "Unconfined single aquifer",
+        "wellDepth": "336.5",
+        "holeDepth": "336.5",
+        "holeDepthSource": "L",
+        "agencyCode": "USGS",
+        "districtCode": "05",
+        "stateFIPS": "US:05",
+        "countyFIPS": "US:05:051",
+        "countryFIPS": "US",
+        "hydrologicUnit": "080401010804",
+        "monitoringLocationUrl": "https://waterdata.usgs.gov/monitoring-location/343048093030401"
+    },
+    "links": [{
+        "rel": "self",
+        "href": "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/AHS/items/USGS-343048093030401?f=json",
+        "type": "application/geo+json",
+        "title": "This document as GeoJSON"
+    },
+        {
+            "rel": "collection",
+            "href": "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/monitoring-locations?f=json",
+            "type": "application/json",
+            "title": "NWIS Monitoring Locations"
+        },
+        {
+            "rel": "collection",
+            "href": "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/AHS?f=json",
+            "type": "application/json",
+            "title": "Arkansas Hot Springs National Park Network"
+        },
+        {
+            "rel": "collection",
+            "href": "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/RTN?f=json",
+            "type": "application/json",
+            "title": "Real-Time Groundwater Level Network"
+        },
+        {
+            "rel": "collection",
+            "href": "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/CRN?f=json",
+            "type": "application/json",
+            "title": "Climate Response Network"
+        },
+        {
+            "rel": "collection",
+            "href": "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/AGL?f=json",
+            "type": "application/json",
+            "title": "Active Groundwater Level Network"
+        }
+    ]
+}`;
