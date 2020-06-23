@@ -1,6 +1,6 @@
 import {fetchAvailableDVTimeSeries, fetchDVTimeSeries,
     fetchObservationItem} from './observations';
-import {MOCK_OBSERVATION_ITEM} from "../mock-service-data";
+import {MOCK_OBSERVATION_ITEM} from '../mock-service-data';
 
 describe('web-services/observations module', () => {
     /* eslint no-use-before-define: off */

@@ -28,34 +28,34 @@ describe('store/network module', () => {
         describe('setNetworkList', () => {
             const NETWORK_LIST = [
                 {
-                    rel: "collection",
-                    href: "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/monitoring-locations?f=json",
-                    type: "application/json",
-                    title: "NWIS Monitoring Locations"
+                    rel: 'collection',
+                    href: 'https://labs-dev.wma.chs.usgs.gov/api/observations/collections/monitoring-locations?f=json',
+                    type: 'application/json',
+                    title: 'NWIS Monitoring Locations'
                 },
                 {
-                    rel: "collection",
-                    href: "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/AHS?f=json",
-                    type: "application/json",
-                    title: "Arkansas Hot Springs National Park Network"
+                    rel: 'collection',
+                    href: 'https://labs-dev.wma.chs.usgs.gov/api/observations/collections/AHS?f=json',
+                    type: 'application/json',
+                    title: 'Arkansas Hot Springs National Park Network'
                 },
                 {
-                    rel: "collection",
-                    href: "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/RTN?f=json",
-                    type: "application/json",
-                    title: "Real-Time Groundwater Level Network"
+                    rel: 'collection',
+                    href: 'https://labs-dev.wma.chs.usgs.gov/api/observations/collections/RTN?f=json',
+                    type: 'application/json',
+                    title: 'Real-Time Groundwater Level Network'
                 },
                 {
-                    rel: "collection",
-                    href: "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/CRN?f=json",
-                    type: "application/json",
-                    title: "Climate Response Network"
+                    rel: 'collection',
+                    href: 'https://labs-dev.wma.chs.usgs.gov/api/observations/collections/CRN?f=json',
+                    type: 'application/json',
+                    title: 'Climate Response Network'
                 },
                 {
-                    rel: "collection",
-                    href: "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/AGL?f=json",
-                    type: "application/json",
-                    title: "Active Groundwater Level Network"
+                    rel: 'collection',
+                    href: 'https://labs-dev.wma.chs.usgs.gov/api/observations/collections/AGL?f=json',
+                    type: 'application/json',
+                    title: 'Active Groundwater Level Network'
                 }
         ];
 
@@ -107,9 +107,7 @@ describe('store/network module', () => {
 
                     expect(networkData.networkList).toEqual([]);
                     done();
-                }).catch(function(msg){
-                    console.log(msg);
-                })
+                });
             });
         });
     });

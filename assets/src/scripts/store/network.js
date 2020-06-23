@@ -3,9 +3,20 @@ import {
 } from '../web-services/observations';
 
 const INITIAL_DATA = {
-    networkList: [],
+    networkList: []
 };
-import config from '../config';
+
+/*
+ * function to build a network URL from a labs json url
+ * @param {String} link
+ * @return {String} network link
+ */
+export const buildNetworkURL = function(link) {
+    const networkTitle = link.split('/')[6].split('?')[0];
+    let baseURL = String(window.location);
+    baseURL = baseURL.slice(0,baseURL.indexOf('monitoring-location'));
+    return `${baseURL}networks/${networkTitle}`;
+};
 
 /*
  * Synchronous Redux actions to save the observation's networks data
@@ -40,18 +51,6 @@ const retrieveNetworkListData = function(siteno) {
 };
 
 /*
- * function to build a network URL from a labs json url
- * @param {String} link
- * @return {String} network link
- */
-export const buildNetworkURL = function(link) {
-    const networkTitle = link.split('/')[6].split('?')[0];
-    let baseURL = String(window.location)
-    baseURL = baseURL.slice(0,baseURL.indexOf('monitoring-location'));
-    return `${baseURL}networks/${networkTitle}`;
-};
-
-/*
  * Slice reducer
  */
 export const networkDataReducer = function(networkData=INITIAL_DATA, action) {
@@ -59,7 +58,7 @@ export const networkDataReducer = function(networkData=INITIAL_DATA, action) {
         case 'SET_NETWORK_LIST':
             return {
                 ...networkData,
-                networkList: action.networkList,
+                networkList: action.networkList
             };
 
         default: return networkData;

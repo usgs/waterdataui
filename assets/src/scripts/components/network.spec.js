@@ -1,41 +1,40 @@
-import {select, selectAll} from 'd3-selection';
+import {select} from 'd3-selection';
 import {attachToNode} from './network';
 import {configureStore} from '../store';
-import {Actions as networkActions} from "../store/network";
-import {Actions as ivTimeSeriesDataActions} from "../store/instantaneous-value-time-series-data";
+import {Actions as networkActions} from '../store/network';
 
 const TEST_STATE = {
     networkData: {
         networkList: [
                 {
-                    rel: "collection",
-                    href: "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/monitoring-locations?f=json",
-                    type: "application/json",
-                    title: "NWIS Monitoring Locations"
+                    rel: 'collection',
+                    href: 'https://labs-dev.wma.chs.usgs.gov/api/observations/collections/monitoring-locations?f=json',
+                    type: 'application/json',
+                    title: 'NWIS Monitoring Locations'
                 },
                 {
-                    rel: "collection",
-                    href: "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/AHS?f=json",
-                    type: "application/json",
-                    title: "Arkansas Hot Springs National Park Network"
+                    rel: 'collection',
+                    href: 'https://labs-dev.wma.chs.usgs.gov/api/observations/collections/AHS?f=json',
+                    type: 'application/json',
+                    title: 'Arkansas Hot Springs National Park Network'
                 },
                 {
-                    rel: "collection",
-                    href: "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/RTN?f=json",
-                    type: "application/json",
-                    title: "Real-Time Groundwater Level Network"
+                    rel: 'collection',
+                    href: 'https://labs-dev.wma.chs.usgs.gov/api/observations/collections/RTN?f=json',
+                    type: 'application/json',
+                    title: 'Real-Time Groundwater Level Network'
                 },
                 {
-                    rel: "collection",
-                    href: "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/CRN?f=json",
-                    type: "application/json",
-                    title: "Climate Response Network"
+                    rel: 'collection',
+                    href: 'https://labs-dev.wma.chs.usgs.gov/api/observations/collections/CRN?f=json',
+                    type: 'application/json',
+                    title: 'Climate Response Network'
                 },
                 {
-                    rel: "collection",
-                    href: "https://labs-dev.wma.chs.usgs.gov/api/observations/collections/AGL?f=json",
-                    type: "application/json",
-                    title: "Active Groundwater Level Network"
+                    rel: 'collection',
+                    href: 'https://labs-dev.wma.chs.usgs.gov/api/observations/collections/AGL?f=json',
+                    type: 'application/json',
+                    title: 'Active Groundwater Level Network'
                 }
         ]
     },
@@ -75,17 +74,30 @@ describe('network component', () => {
 
     describe('Tests for no network data', () => {
         let store;
+        let originalTimeout;
 
         beforeEach(() => {
             store = configureStore(TEST_NO_STATE)
+            originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = 10001;
+        });
+
+        afterEach(() => {
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
         });
 
         it('No rows if no data', () => {
+            spyOn(networkActions, 'retrieveNetworkListData').and.returnValue(function() {
+                    return Promise.resolve([]);
+                });
+
             attachToNode(store, networkNode, {
                 siteno: '12345678'
             });
 
-            expect(select(networkNode).select('tbody tr').size()).toBe(0);
+            window.setTimeout(function(){
+                expect(select(networkNode).selectAll('tbody tr').size()).toBe(0);
+            }, 10000);
         });
     });
 
@@ -96,7 +108,7 @@ describe('network component', () => {
         beforeEach(() => {
             store = configureStore(TEST_STATE)
             originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-            jasmine.DEFAULT_TIMEOUT_INTERVAL = 100000;
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = 10001;
         });
 
         afterEach(() => {
@@ -113,8 +125,8 @@ describe('network component', () => {
                 siteno: '12345678'
             });
 
-            setTimeout(function(){
-            expect(select(networkNode).selectAll('tbody tr').size()).toBe(5);
+            window.setTimeout(function(){
+                expect(select(networkNode).selectAll('tbody tr').size()).toBe(5);
             }, 10000);
 
 
