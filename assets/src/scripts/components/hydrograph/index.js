@@ -5,6 +5,7 @@ import {select} from 'd3-selection';
 
 import {createStructuredSelector} from 'reselect';
 
+import config from '../../config.js';
 import {drawWarningAlert, drawInfoAlert} from '../../d3-rendering/alerts';
 import {drawLoadingIndicator} from '../../d3-rendering/loading-indicator';
 import {link} from '../../lib/d3-redux';
@@ -114,6 +115,10 @@ export const attachToNode = function (store,
             .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
         if (!hasAnyTimeSeries(store.getState())) {
             drawInfoAlert(nodeElem, {body: 'No time series data available for this site'});
+            if (!showOnlyGraph) {
+                document.getElementById('classic-page-link')
+                    .setAttribute('href', `${config.NWIS_INVENTORY_ENDPOINT}?site_no=${siteno}`);
+            }
         } else {
             //Update time series state
             if (parameterCode) {
