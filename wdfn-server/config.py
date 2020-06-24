@@ -73,3 +73,7 @@ COOPERATOR_SERVICE_PATTERN = 'https://water.usgs.gov/customer/stories/{site_no}/
 # These messages below will be added to a dismissible panel below the main header. It is an array of strings. Markup
 # can be used to add things like links, bold text, etc.
 BANNER_NOTICES = []
+
+# set this if running in a container
+if os.getenv('CONTAINER_RUN', False):
+    STATIC_ROOT = os.environ.get('STATIC_ROOT', '/static/')

@@ -1,0 +1,47 @@
+# docker image path in artifactory
+artifactoryPath: "wdfn"
+
+# name of the docker image
+dockerImageName: "waterdataui"
+
+# location of the Dockerfile
+buildContext: "./wdfn-server/"
+
+# location of the application project git repo (as opposed to the configuration repo)
+gitRepoUrl: "https://github.com/ACWI-SOGW/well_registry_management.git"
+
+# Jenkins credential for pushing back to application repo
+gitRepoCredentialsId: "Jenkins-GitHub-Read-Write-Token"
+
+# name of the CHS Jenkins deploy job to trigger.
+deployJobName: "waterdataui-deploy"
+
+# name of the project - identifier of the ECS Cluster to use for this project
+projectName: "iow-allgemein"
+
+# maximum amount of RAM (MB) for running Docker containers in the service
+memory: 512
+
+# name of the application or service name within the project, projectName
+applicationName: "waterdataui"
+
+# docker port that is exposed by your container
+containerPort: 5050
+
+# string parameter specifying a path that ALB should use to verify that your application is alive
+healthCheck: "/states/"
+
+# This tells AWS what requests to redirect or route to this container
+urlRules:
+  - type: forward
+    conditions:
+      - "/monitoring-location/*"
+      - "/hydrological-unit/*"
+      - "/networks/*"
+      - "/states/*"
+      - "/components/*"
+    priority: 610
+  - type: forward
+    conditions:
+      - "/static/*"
+    priority: 611
