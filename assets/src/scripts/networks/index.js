@@ -7,7 +7,7 @@ import {register} from '../helpers';
 register();
 
 import {configureStore} from './store/network-store';
-import {getParamString} from '../url-params';
+import {getParamString} from '../monitoring-location/url-params';
 
 import {attachToNode as NetworkMapComponent} from './network-component';
 

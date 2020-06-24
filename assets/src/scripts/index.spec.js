@@ -9,41 +9,12 @@
 
 import './mock-service-data';
 import './polyfills';
-/*
+
 import './ajax.spec';
-*/
-import './components/daily-value-hydrograph/selectors/labels.spec';
-import './components/daily-value-hydrograph/selectors/legend-data.spec';
-import './components/daily-value-hydrograph/selectors/scales.spec';
-import './components/daily-value-hydrograph/selectors/time-series-data.spec';
-import './components/daily-value-hydrograph/graph-brush.spec';
-import './components/daily-value-hydrograph/index.spec';
-import './components/daily-value-hydrograph/time-series-graph.spec';
-import './components/daily-value-hydrograph/tooltip.spec';
-
-import './components/embed.spec';
-
-import './components/hydrograph/audible.spec';
-import './components/hydrograph/cursor.spec';
-import './components/hydrograph/date-controls.spec';
-import './components/hydrograph/domain.spec';
-import './components/hydrograph/drawing-data.spec';
-import './components/hydrograph/data-table.spec';
-import './components/hydrograph/graph-brush.spec';
-import './components/hydrograph/graph-controls.spec';
-import './components/hydrograph/index.spec';
-import './components/hydrograph/layout.spec';
-import './components/hydrograph/legend.spec';
-import './components/hydrograph/method-picker.spec';
-import './components/hydrograph/parameters.spec';
-import './components/hydrograph/scales.spec';
-import './components/hydrograph/time-series.spec';
-import './components/hydrograph/time-series-graph.spec';
-import './components/hydrograph/tooltip.spec';
-
-import './components/map/flood-slider.spec';
-import './components/map/index.spec';
-import './components/map/legend.spec';
+import './helpers.spec';
+import './schema.spec';
+import './tooltips.spec';
+import './utils.spec';
 
 import './d3-rendering/accessibility.spec';
 import './d3-rendering/alerts.spec';
@@ -56,34 +27,66 @@ import './d3-rendering/loading-indicator.spec';
 import './d3-rendering/markers.spec';
 import './d3-rendering/tick-marks.spec';
 
-import './helpers.spec';
-
 import './lib/d3-redux.spec';
 
-import './schema.spec';
+import './monitoring-location/components/daily-value-hydrograph/selectors/labels.spec';
+import './monitoring-location/components/daily-value-hydrograph/selectors/legend-data.spec';
+import './monitoring-location/components/daily-value-hydrograph/selectors/scales.spec';
+import './monitoring-location/components/daily-value-hydrograph/selectors/time-series-data.spec';
+import './monitoring-location/components/daily-value-hydrograph/graph-brush.spec';
+import './monitoring-location/components/daily-value-hydrograph/index.spec';
+import './monitoring-location/components/daily-value-hydrograph/time-series-graph.spec';
+import './monitoring-location/components/daily-value-hydrograph/tooltip.spec';
 
-import './selectors/daily-value-time-series-selector.spec';
-import './selectors/flood-data-selector.spec';
-import './selectors/network-selector.spec';
-import './selectors/nldi-data-selector.spec';
-import './selectors/median-statistics-selector.spec';
-import './selectors/time-series-selector.spec';
-import './selectors/time-zone-selector.spec';
+import './monitoring-location/components/embed.spec';
 
-import './store/daily-value-time-series.spec';
-import './store/flood-inundation.spec';
-import './store/instantaneous-value-time-series-data.spec';
-import './store/instantaneous-value-time-series-state.spec';
-import './store/network.spec';
-import './store/nldi-data.spec';
-import './store/statistics-data.spec';
-import './store/time-zone.spec';
-import './store/ui-state.spec';
+import './monitoring-location/components/hydrograph/audible.spec';
+import './monitoring-location/components/hydrograph/cursor.spec';
+import './monitoring-location/components/hydrograph/date-controls.spec';
+import './monitoring-location/components/hydrograph/domain.spec';
+import './monitoring-location/components/hydrograph/drawing-data.spec';
+import './monitoring-location/components/hydrograph/data-table.spec';
+import './monitoring-location/components/hydrograph/graph-brush.spec';
+import './monitoring-location/components/hydrograph/graph-controls.spec';
+import './monitoring-location/components/hydrograph/index.spec';
+import './monitoring-location/components/hydrograph/layout.spec';
+import './monitoring-location/components/hydrograph/legend.spec';
+import './monitoring-location/components/hydrograph/method-picker.spec';
+import './monitoring-location/components/hydrograph/parameters.spec';
+import './monitoring-location/components/hydrograph/scales.spec';
+import './monitoring-location/components/hydrograph/time-series.spec';
+import './monitoring-location/components/hydrograph/time-series-graph.spec';
+import './monitoring-location/components/hydrograph/tooltip.spec';
 
+import './monitoring-location/components/map/flood-slider.spec';
+import './monitoring-location/components/map/index.spec';
+import './monitoring-location/components/map/legend.spec';
 
-import './tooltips.spec';
-import './url-params.spec';
-import './utils.spec';
+import './monitoring-location/selectors/daily-value-time-series-selector.spec';
+import './monitoring-location/selectors/flood-data-selector.spec';
+import './monitoring-location/selectors/network-selector.spec';
+import './monitoring-location/selectors/nldi-data-selector.spec';
+import './monitoring-location/selectors/median-statistics-selector.spec';
+import './monitoring-location/selectors/time-series-selector.spec';
+import './monitoring-location/selectors/time-zone-selector.spec';
+
+import './monitoring-location/store/daily-value-time-series.spec';
+import './monitoring-location/store/flood-inundation.spec';
+import './monitoring-location/store/instantaneous-value-time-series-data.spec';
+import './monitoring-location/store/instantaneous-value-time-series-state.spec';
+import './monitoring-location/store/network.spec';
+import './monitoring-location/store/nldi-data.spec';
+import './monitoring-location/store/statistics-data.spec';
+import './monitoring-location/store/time-zone.spec';
+import './monitoring-location/store/ui-state.spec';
+
+import './monitoring-location/url-params.spec';
+
+import './networks/network-component/index.spec';
+import './networks/network-component/network-legend.spec';
+import './networks/selectors/network-data-selector.spec';
+import './networks/store/network-store.spec';
+import './networks/store/network-data-reducer.spec';
 
 import './web-services/flood-data.spec';
 import './web-services/models.spec';
@@ -92,8 +95,3 @@ import './web-services/nldi-data.spec';
 import './web-services/observations.spec';
 import './web-services/statistics-data.spec';
 
-import './networks/network-component/index.spec';
-import './networks/network-component/network-legend.spec';
-import './networks/selectors/network-data-selector.spec';
-import './networks/store/network-store.spec';
-import './networks/store/network-data-reducer.spec';
