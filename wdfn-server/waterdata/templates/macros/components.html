@@ -49,7 +49,6 @@
 
 
 {% macro NetworkComponent(network_cd, extent) -%}
-
     <div class="wdfn-component" data-component="network" data-networkcd="{{ network_cd }}" data-extent="{{  extent }}">
         <h3 id="network_map_heading">Network Map:</h3>
         <p id="overload-map"></p>
@@ -94,9 +93,9 @@
     </span>
 {%- endmacro %}
 
-{% macro ObservationNetworkListComponent(site_no) -%}
-      <div class="wdfn-component" data-component="observation-network-list" data-siteno="{{ site_no }}">
-          <div id="observation-network-list-container">
+{% macro NetworkListComponent(site_no) -%}
+      <div class="wdfn-component" data-component="network-list" data-siteno="{{ site_no }}">
+          <div id="network-list-container">
               <table id="network-list-table" class="usa-table">
               </table>
           </div>

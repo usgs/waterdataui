@@ -2,7 +2,7 @@
   "name": "waterdataui-assets",
   "version": "0.34.0dev",
   "description": "Compiled static assets for Water Data For The Nation",
-  "main": "src/scripts/index.js",
+  "main": "src/scripts/monitoring-location/index.js",
   "scripts": {
     "test": "karma start",
     "test:chrome": "karma start --browsers Chrome",
