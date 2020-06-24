@@ -3,6 +3,7 @@ import { link, subscribe } from '../../lib/d3-redux';
 import { Features } from '../../selectors/observations-selector';
 import config from '../../config';
 import { retrieveObservationsData } from '../../store/observations';
+import { retrieveWaterqualityData } from '../../store/waterquality';
 
 /*
  * Creates a US map
@@ -35,7 +36,8 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
           east: bounds.getEast(),     
           north: bounds.getNorth()     
         };
-        store.dispatch(retrieveObservationsData(bbox));
+        // store.dispatch(retrieveObservationsData(bbox));
+        store.dispatch(retrieveWaterqualityData(bbox));
     };
 
     map.on('moveend', () => {

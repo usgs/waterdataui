@@ -13,6 +13,7 @@ import {observationsDataReducer as observations} from './observations';
 import {statisticsDataReducer as statisticsData} from './statistics-data';
 import {timeZoneReducer as ianaTimeZone} from './time-zone';
 import {uiReducer as ui} from './ui-state';
+import {waterqualityDataReducer as waterquality} from './waterquality';
 
 const appReducer = combineReducers({
     ivTimeSeriesData,
@@ -20,6 +21,7 @@ const appReducer = combineReducers({
     dailyValueTimeSeriesData,
     observations,
     statisticsData,
+    waterquality,
     floodData,
     nldiData,
     ivTimeSeriesState,
@@ -48,6 +50,7 @@ export const configureStore = function (initialState) {
             upstreamBasin: []
         },
         observations: {},
+        waterquality: {},
         statisticsData: {},
         ivTimeSeriesState: {
             showIVTimeSeries: {
