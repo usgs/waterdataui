@@ -46,30 +46,29 @@
     </div>
 {%- endmacro %}
 
-{% macro NetworkSitesMapComponent(network_cd, extent) -%}
-    <div class="wdfn-component" data-component="network-sites-map" data-networkcd="{{ network_cd }}" data-extent="{{ extent }}">
-        <h3 id="network_map_heading">Network Map:</h3>
+{% macro NetworkComponent(network_cd, extent) -%}
+    <div class="wdfn-component" data-component="network" data-networkcd="{{ network_cd }}" data-extent="{{ extent }}">
+        <h3>Network Map:</h3>
         <p id="overload-map"></p>
         <div id="network-map"></div>
-    </div>
-{%- endmacro %}
-
-{% macro NetworkSitesTable(network_cd) -%}
-    <div class="wdfn-component" data-component="network-sites-table" data-networkdcd="{{ network_cd }}">
-        <h3 id="network_table_heading">Link Table:</h3>
-        <p class="overload-table"></p>
+        <h3>Link Table:</h3>
         <div id="link-list">
-            <div>
-                <input class="search" placeholder="Search Name">
-                <ul class="pagination"></ul>
-            </div>
+            <p class="overload-table"></p>
             <table id="link-table" class="usa-table">
                 <thead>
                     <tr>
-                        <th>
+                        <th colspan="2">
+                            <input id="search-name" class="search" placeholder="Search Name">
+                            <div class="table-pagination">
+                                <ul class="pagination"></ul>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th scope="col">
                             <button type="button" class="sort" data-sort="name">Description<i class="caret"></i></button>
                         </th>
-                        <th>Link</th>
+                        <th scope="col">Link</th>
                     </tr>
                 </thead>
                 <tbody class="list"></tbody>

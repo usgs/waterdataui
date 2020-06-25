@@ -1,6 +1,6 @@
 import {select} from 'd3-selection';
 
-import {createLegendControl, createNetworkLegend} from './legend';
+import {createLegendControl, createNetworkSitesLegend} from './legend';
 
 
 describe('component/map/legend module', () => {
@@ -63,12 +63,12 @@ describe('component/map/legend module', () => {
 
 
 
-    describe('createNetworkLegend', () => {
+    describe('createNetworkSitesLegend', () => {
         beforeEach(() => {
             legendControl = createLegendControl({});
             legendControl.addTo(map);
 
-            createNetworkLegend(legendControl, true);
+            createNetworkSitesLegend(legendControl, true);
         });
 
         it('createNetworkLegend with Network available true makes the expand button visible', () =>  {
@@ -80,7 +80,7 @@ describe('component/map/legend module', () => {
         });
 
         it('Calling createNetworkLegend a second time with available set to false cause the Network legend list to be removed', () => {
-            createNetworkLegend(legendControl, false);
+            createNetworkSitesLegend(legendControl, false);
             expect(select(legendControl.getContainer()).select('#network-legend-list').size()).toBe(0);
         });
     });

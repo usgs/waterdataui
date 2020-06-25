@@ -7,10 +7,10 @@ import List from 'list.js';
  * * @param {Array of Objects} networkSites
  */
 export const drawSiteTable = function(divId, networkSites) {
-    if (networkSites.length < 10000) {
+    if (networkSites.length > 0 && networkSites.length < 10000) {
         const options = {
             valueNames: ['name', 'link',  { name: 'linkhref', attr: 'href' }],
-            item: '<tr><td class="name"></td><td><a class="link linkhref"></a></td></tr>',
+            item: '<tr><th scope="row" class="name"></th><td><a class="link linkhref"></a></td></tr>',
             page: 50,
             pagination: [{
                 left: 1,

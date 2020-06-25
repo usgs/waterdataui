@@ -6,8 +6,7 @@ import wdfnviz from 'wdfn-viz';
 import {register} from '../helpers';
 register();
 
-import {configureStore} from './store/network-store';
-import {getParamString} from '../monitoring-location/url-params';
+import {configureStore} from './store';
 
 import {attachToNode as NetworkMapComponent} from './components/network-sites';
 
@@ -22,8 +21,7 @@ const load = function () {
         // If options is specified on the node, expect it to be a JSON string.
         // Otherwise, use the dataset attributes as the component options.
         const options = node.dataset.options ? JSON.parse(node.dataset.options) : node.dataset;
-        const hashOptions = Object.fromEntries(new window.URLSearchParams(getParamString()));
-        COMPONENTS[node.dataset.component](store, node, Object.assign({}, options, hashOptions));
+        COMPONENTS[node.dataset.component](store, node, Object.assign({}, options));
     }
 
 

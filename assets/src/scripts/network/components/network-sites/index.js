@@ -1,5 +1,5 @@
 
-import {Actions} from '../../store/network-store';
+import {Actions} from '../../store';
 import {getNetworkSites} from '../../selectors/network-data-selector';
 
 import {drawSiteTable} from './data-table';
@@ -12,8 +12,8 @@ import {createSiteMap, addSitesLayer} from './map';
  * @param {Object} node - DOM element
  * @param {String} networkcd
  */
-export const attachToNode = function(store, node, {networkCd, extent}) {
-    const fetchNetworkSites = store.dispatch(Actions.retrieveNetworkData(networkCd));
+export const attachToNode = function(store, node, {networkcd, extent}) {
+    const fetchNetworkSites = store.dispatch(Actions.retrieveNetworkData(networkcd));
 
     const map = createSiteMap(extent);
     const mapLegend = createLegendControl({
@@ -25,7 +25,7 @@ export const attachToNode = function(store, node, {networkCd, extent}) {
         const networkSites = getNetworkSites(store.getState());
         addSitesLayer(map, networkSites);
         createNetworkSitesLegend(mapLegend, networkSites.length > 0);
-        drawSiteTable('overload-table', networkSites);
+        drawSiteTable('link-list', networkSites);
     });
 };
 

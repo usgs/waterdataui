@@ -81,11 +81,11 @@ import './monitoring-location/store/time-zone.spec';
 import './monitoring-location/store/ui-state.spec';
 
 import './monitoring-location/url-params.spec';
-
+import './network/components/network-sites/data-table.spec';
 import './network/components/network-sites/index.spec';
 import './network/components/network-sites/legend.spec';
 import './network/selectors/network-data-selector.spec';
-import './network/store/network-store.spec';
+import './network/store/index.spec';
 import './network/store/network-data-reducer.spec';
 
 import './web-services/flood-data.spec';
@@ -94,4 +94,3 @@ import './web-services/network-data.spec';
 import './web-services/nldi-data.spec';
 import './web-services/observations.spec';
 import './web-services/statistics-data.spec';
-

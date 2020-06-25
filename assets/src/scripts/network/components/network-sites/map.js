@@ -1,12 +1,10 @@
 import config from '../../../config';
 
-import {createLegendControl} from './legend';
-
 export const MARKER_FILL_COLOR = '#ff7800';
 export const MARKER_FILL_OPACITY = 0.8;
 
 /*
- * Create map with base layers, a legend control. The map's initial bounds will be
+ * Create map with base layers. The map's initial bounds will be
  * set to extent
  * @param {Array of Number [west, south, east, north]} extent
  * @return {L.map}
@@ -39,11 +37,6 @@ export const createSiteMap = function(extent) {
     map.on('blur', () => {
         map.scrollWheelZoom.disable();
     });
-
-    let legendControl = createLegendControl({
-        position: 'bottomright'
-    });
-    legendControl.addTo(map);
 
     return map;
 };
