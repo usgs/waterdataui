@@ -1,8 +1,8 @@
 // Creates a Leaflet legend control. If the legend contains FIM information than the expand/collapse control
 // will be visible
 import {select} from 'd3-selection';
-import config from '../../config';
-import {mediaQuery} from '../../utils';
+import config from '../../../config';
+import {mediaQuery} from '../../../utils';
 import {markerFillColor, markerFillOpacity} from './network-elements';
 
 /*
@@ -73,7 +73,7 @@ const compressLegendOnSmallDevices = function(legendControl) {
  * @param {L.Control} legendControl - Leaflet legend control
  * @param {Boolean} is network available
  */
-export const createNetworkLegend = function(legendControl, isNetworkAvailable) {
+export const createNetworkSitesLegend = function(legendControl, isNetworkAvailable) {
     if (isNetworkAvailable) {
         const legendListContainer = select(legendControl.getContainer()).select('.legend-list-container');
         const networkLegendList = legendListContainer.append('ul')

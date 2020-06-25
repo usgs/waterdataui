@@ -9,7 +9,7 @@ register();
 import {configureStore} from './store/network-store';
 import {getParamString} from '../monitoring-location/url-params';
 
-import {attachToNode as NetworkMapComponent} from './network-component';
+import {attachToNode as NetworkMapComponent} from './components/network-sites';
 
 const COMPONENTS = {
     'network': NetworkMapComponent

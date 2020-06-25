@@ -82,11 +82,11 @@ import './monitoring-location/store/ui-state.spec';
 
 import './monitoring-location/url-params.spec';
 
-import './networks/network-component/index.spec';
-import './networks/network-component/network-legend.spec';
-import './networks/selectors/network-data-selector.spec';
-import './networks/store/network-store.spec';
-import './networks/store/network-data-reducer.spec';
+import './network/components/network-sites/index.spec';
+import './network/components/network-sites/legend.spec';
+import './network/selectors/network-data-selector.spec';
+import './network/store/network-store.spec';
+import './network/store/network-data-reducer.spec';
 
 import './web-services/flood-data.spec';
 import './web-services/models.spec';

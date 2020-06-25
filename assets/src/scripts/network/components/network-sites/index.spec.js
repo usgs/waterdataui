@@ -1,6 +1,6 @@
 import {select} from 'd3-selection';
 import {attachToNode} from './index';
-import {configureStore} from '../store/network-store';
+import {configureStore} from '../../store/network-store';
 
 describe('network map module', () => {
     let mapNode;

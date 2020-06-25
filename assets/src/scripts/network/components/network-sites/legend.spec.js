@@ -1,6 +1,6 @@
 import {select} from 'd3-selection';
 
-import {createLegendControl, createNetworkLegend} from './network-legend';
+import {createLegendControl, createNetworkLegend} from './legend';
 
 
 describe('component/map/legend module', () => {

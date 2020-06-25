@@ -8,7 +8,7 @@ import config from '../../../config';
 import {mediaQuery} from '../../../utils';
 
 import {markerFillColor, markerFillOpacity, downStreamColor, upstreamColor, flowLineOpacity,
-         basinFillColor, basinFillOpacity} from './nldiMapping';
+         basinFillColor, basinFillOpacity} from './nldi-mapping';
 
 
 const fetchLayerLegend = function(layer, defaultName) {

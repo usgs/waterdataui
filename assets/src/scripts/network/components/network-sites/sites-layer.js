@@ -8,7 +8,7 @@ export const markerFillOpacity = 0.8;
  * associated with the network.
  *
  * @param {L.map} map The leaflet map to which the overlay should be added
- * @param newtorkSites network site geojson data
+ * @param networkSites network site geojson data
  */
 export const addNetworkLayers = function (map, networkSites) {
 
@@ -21,7 +21,6 @@ export const addNetworkLayers = function (map, networkSites) {
         fillOpacity: markerFillOpacity
     };
 
-    const listValues = [];
     const onEachPointFeatureAddPopUp = function (feature, layer) {
         listValues.push({
             'name': feature.properties.monitoringLocationName,
