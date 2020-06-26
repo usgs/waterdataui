@@ -1,19 +1,21 @@
 import {select} from 'd3-selection';
+
+import {configureStore, Actions} from '../../store';
+
 import {attachToNode} from './index';
-import {configureStore} from '../store/network-store';
 
 describe('network map module', () => {
-    let mapNode;
+    let componentNode;
     let store;
-
+    let container;
     beforeEach(() => {
         jasmine.Ajax.install();
-        let mapContainer = select('body')
+        container = select('body')
             .append('div')
-                .attr('id', 'map');
-        mapContainer.append('div').attr('id', 'network-map');
-        mapNode = document.getElementById('map');
-        let tableDiv = select('body')
+            .attr('id', 'network-component');
+        container.append('div').attr('id', 'network-map');
+        componentNode = document.getElementById('network-component');
+        let tableDiv = container
             .append('div')
                 .attr('id', 'link-list');
         tableDiv.append('ul')
@@ -25,7 +27,7 @@ describe('network map module', () => {
     });
 
     afterEach(() => {
-        select('#map').remove();
+        container.remove();
         jasmine.Ajax.uninstall();
     });
 
@@ -33,34 +35,46 @@ describe('network map module', () => {
     describe('Map creation without Network maps', () => {
         beforeEach(() => {
             store = configureStore();
-            attachToNode(store, mapNode, {
+            spyOn(Actions, 'retrieveNetworkData').and.returnValue(function () {
+                return Promise.resolve({});
+            });
+            attachToNode(store, componentNode, {
                 networkcd: 'AHS',
                 extent: '[-93.078075, 34.513375, -92.986325, 34.588425]'
             });
+
+
         });
 
         it('Should create a leaflet map within the mapNode with', () => {
-            expect(select(mapNode).selectAll('.leaflet-container').size()).toBe(1);
-        });
-
-        it('Should not create an overlay layer', () => {
-            expect(select(mapNode).selectAll('.leaflet-overlay-pane img').size()).toBe(0);
+            expect(select(componentNode).selectAll('.leaflet-container').size()).toBe(1);
         });
 
         it('Should create a legend control', () => {
-            expect(select(mapNode).selectAll('.legend').size()).toBe(1);
+            expect(select(componentNode).selectAll('.legend').size()).toBe(1);
         });
 
-        it('Should create not create Network Legend', () => {
-            expect(select(mapNode).select('#network-legend-list').size()).toBe(0);
+        it('Should not create an overlay layer', (done) => {
+            window.requestAnimationFrame(() => {
+                expect(select(componentNode).selectAll('.leaflet-overlay-pane img').size()).toBe(0);
+                done();
+            });
         });
 
-        it('Should create a leaf-control-layers class', () => {
-            expect(select(mapNode).selectAll('.leaflet-control-layers').size()).toBe(1);
+        it('Should not create Network Legend', (done) => {
+            window.requestAnimationFrame(() => {
+                expect(select(componentNode).select('#network-legend-list').size()).toBe(0);
+                done();
+            });
         });
 
+        it('should not create any rows in the table', (done) => {
+            window.requestAnimationFrame(() => {
+                expect(select(componentNode).selectAll('tbody tr').size()).toBe(0);
+                done();
+            });
+        });
     });
-
 
     describe('Map network information', () => {
         beforeEach(() => {
@@ -121,19 +135,34 @@ describe('network map module', () => {
                     ]
                 }
             });
-            attachToNode(store, mapNode, {
+            spyOn(Actions, 'retrieveNetworkData').and.returnValue(function () {
+                return Promise.resolve({});
+            });
+            attachToNode(store, componentNode, {
                 networkcd: 'AHS',
                 extent: '[-93.078075, 34.513375, -92.986325, 34.588425]'
             });
         });
 
-        it('Should create Network layers', () => {
-            expect(select(mapNode).selectAll('.leaflet-overlay-pane svg g').size()).toBe(1);
+        it('Should create Network layers', (done) => {
+            window.requestAnimationFrame(() => {
+                expect(select(componentNode).selectAll('.leaflet-overlay-pane svg g').size()).toBe(1);
+                done();
+            });
         });
 
-        it('Should create a Network Legend', () => {
-            expect(select(mapNode).select('#network-legend-list').size()).toBe(1);
+        it('Should create a Network Legend', (done) => {
+            window.requestAnimationFrame(() => {
+                expect(select(componentNode).select('#network-legend-list').size()).toBe(1);
+                done();
+            });
         });
 
+        it('Should create rows in the data table', (done) => {
+            window.requestAnimationFrame(() => {
+                expect(select(componentNode).selectAll('tbody tr').size()).toBe(1);
+                done();
+            });
+        });
     });
 });

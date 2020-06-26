@@ -1,9 +1,9 @@
 // Creates a Leaflet legend control. If the legend contains FIM information than the expand/collapse control
 // will be visible
 import {select} from 'd3-selection';
-import config from '../../config';
-import {mediaQuery} from '../../utils';
-import {markerFillColor, markerFillOpacity} from './network-elements';
+import config from '../../../config';
+import {mediaQuery} from '../../../utils';
+import {MARKER_FILL_COLOR, MARKER_FILL_OPACITY} from './map';
 
 /*
  * @param {Object} - options allowed for a standard Leaflet Control.
@@ -73,7 +73,7 @@ const compressLegendOnSmallDevices = function(legendControl) {
  * @param {L.Control} legendControl - Leaflet legend control
  * @param {Boolean} is network available
  */
-export const createNetworkLegend = function(legendControl, isNetworkAvailable) {
+export const createNetworkSitesLegend = function(legendControl, isNetworkAvailable) {
     if (isNetworkAvailable) {
         const legendListContainer = select(legendControl.getContainer()).select('.legend-list-container');
         const networkLegendList = legendListContainer.append('ul')
@@ -81,8 +81,13 @@ export const createNetworkLegend = function(legendControl, isNetworkAvailable) {
                     .attr('class', 'usa-list--unstyled');
 
         const networkMarker = networkLegendList.append('li');
-        networkMarker.append('span').attr('style', `color: ${markerFillColor}; width: 16px; height: 16px; float: left; opacity: ${markerFillOpacity}; margin-right: 2px;`)
-            .attr('class', 'fas fa-circle');
+        networkMarker.append('span')
+            .attr('class', 'fas fa-circle')
+            .style('color', MARKER_FILL_COLOR)
+            .style('width', '16px')
+            .style('height', '16px')
+            .style('float', 'left')
+            .style('opacity', MARKER_FILL_OPACITY);
         networkMarker.append('span').text('Network Sites');
 
         compressLegendOnSmallDevices(legendControl);

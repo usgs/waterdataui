@@ -13,7 +13,7 @@ import {Actions as floodInundationActions} from '../../store/flood-inundation';
 
 import {floodSlider} from './flood-slider';
 import {createLegendControl, createFIMLegend, createNldiLegend} from './legend';
-import {addNldiLayers} from './nldiMapping';
+import {addNldiLayers} from './nldi-mapping';
 
 
 const getLayerDefs = function(layerNo, siteno, stage) {

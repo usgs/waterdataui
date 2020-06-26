@@ -55,7 +55,7 @@ const getBundleConfig = function (src, dest) {
         treeshake: env === 'production'
     };
 
-    if (src == 'src/scripts/networks/index.js'){
+    if (src == 'src/scripts/network/index.js'){
         configMap['external'] = {
            window: 'window'
         };
@@ -66,7 +66,7 @@ const getBundleConfig = function (src, dest) {
 
 module.exports = [
     getBundleConfig('src/scripts/monitoring-location/index.js', 'dist/bundle.js'),
-    getBundleConfig('src/scripts/networks/index.js', 'dist/network-bundle.js')
+    getBundleConfig('src/scripts/network/index.js', 'dist/network-bundle.js')
 ];
 
 

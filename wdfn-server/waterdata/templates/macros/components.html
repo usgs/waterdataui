@@ -46,42 +46,37 @@
     </div>
 {%- endmacro %}
 
-
-
 {% macro NetworkComponent(network_cd, extent) -%}
-    <div class="wdfn-component" data-component="network" data-networkcd="{{ network_cd }}" data-extent="{{  extent }}">
-        <h3 id="network_map_heading">Network Map:</h3>
+    <div class="wdfn-component" data-component="network" data-networkcd="{{ network_cd }}" data-extent="{{ extent }}">
+        <h3>Network Map:</h3>
         <p id="overload-map"></p>
         <div id="network-map"></div>
-        <h3 id="network_table_heading">Link Table:</h3>
-        <p id="overload-table"></p>
+        <h3>Link Table:</h3>
         <div id="link-list">
+            <p class="overload-table"></p>
             <table id="link-table" class="usa-table">
                 <thead>
-                <tr>
-                    <th colspan="2">
-                        <input id="search-name" class="search" placeholder="Search Name">
-                        <div class="table-pagination">
-                            <ul class="pagination"></ul>
-                        </div>
-                    </th>
-                </tr>
-                <tr>
-                    <th>
-                        <button type="button" class="sort" data-sort="name">Description<i class="caret"></i></button>
-                    </th>
-                    <th>
-                        Link
-                    </th>
-                </tr>
+                    <tr>
+                        <th colspan="2">
+                            <label class="usa-sr-only" for="search-name">Search</label>
+                            <input id="search-name" class="search" placeholder="Search Name">
+                            <div class="table-pagination">
+                                <ul class="pagination"></ul>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th scope="col">
+                            <button type="button" class="sort" data-sort="name">Description<i class="caret"></i></button>
+                        </th>
+                        <th scope="col">Link</th>
+                    </tr>
                 </thead>
                 <tbody class="list"></tbody>
             </table>
         </div>
     </div>
-
 {%- endmacro %}
-
 
 {% macro EmbedComponent(site_no) -%}
     <span class="wdfn-component" data-component="embed">
