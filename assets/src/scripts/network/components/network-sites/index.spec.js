@@ -61,7 +61,7 @@ describe('network map module', () => {
             });
         });
 
-        it('Should create not create Network Legend', (done) => {
+        it('Should not create Network Legend', (done) => {
             window.requestAnimationFrame(() => {
                 expect(select(componentNode).select('#network-legend-list').size()).toBe(0);
                 done();
