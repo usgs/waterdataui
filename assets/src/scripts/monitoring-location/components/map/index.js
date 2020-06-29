@@ -2,8 +2,8 @@ import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import config from '../../../config';
-import {createMap, createBaseLayerGroup} from '../../../leaflet-rendering';
-import {legendControl} from '../../../leaflet-legend-control';
+import {createMap, createBaseLayerGroup} from '../../../leaflet-rendering/map';
+import {legendControl} from '../../../leaflet-rendering/legend-control';
 import {link} from '../../../lib/d3-redux';
 import {FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT} from '../../../web-services/flood-data';
 

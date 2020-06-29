@@ -16,8 +16,7 @@ export const attachToNode = function(store, node, {networkcd, extent}) {
     const fetchNetworkSites = store.dispatch(Actions.retrieveNetworkData(networkcd));
 
     const map = createSiteMap(extent);
-    const legend = createMapLegend(store);
-    map.addControl(legend);
+    createMapLegend(map, store);
 
     fetchNetworkSites.then(() => {
         const networkSites = getNetworkSites(store.getState());

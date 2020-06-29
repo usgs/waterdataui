@@ -2,7 +2,7 @@
 // will be visible
 import {select} from 'd3-selection';
 
-import {legendControl} from '../../../leaflet-legend-control';
+import {legendControl} from '../../../leaflet-rendering/legend-control';
 import {listen} from '../../../lib/d3-redux';
 
 import {hasNetworkData} from '../../selectors/network-data-selector';
@@ -14,14 +14,15 @@ import {MARKER_FILL_COLOR, MARKER_FILL_OPACITY} from './map';
  * @param {Redux store} - store
  * @return {Leaflet Control}
  */
-export const createMapLegend = function(store) {
+export const createMapLegend = function(map, store) {
     const networkLegendControl = legendControl({
         addExpandButton: false
     });
+    map.addControl(networkLegendControl);
 
     listen(store, hasNetworkData, (showLegend) => {
             if (showLegend) {
-                const legendListContainer = select(networkLegendControl.getContainer()).select('.legend-list-container');
+                const legendListContainer = select(networkLegendControl.getLegendListContainer());
                 const networkLegendList = legendListContainer.append('ul')
                             .attr('id', 'network-legend-list')
                             .attr('class', 'usa-list--unstyled');

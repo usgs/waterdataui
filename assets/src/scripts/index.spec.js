@@ -10,9 +10,10 @@
 import './mock-service-data';
 import './polyfills';
 
+
+
 import './ajax.spec';
 import './helpers.spec';
-import './leaflet-rendering.spec';
 import './schema.spec';
 import './tooltips.spec';
 import './utils.spec';
@@ -27,6 +28,9 @@ import './d3-rendering/legend.spec';
 import './d3-rendering/loading-indicator.spec';
 import './d3-rendering/markers.spec';
 import './d3-rendering/tick-marks.spec';
+
+import './leaflet-rendering/map.spec';
+import './leaflet-rendering/legend-control.spec';
 
 import './lib/d3-redux.spec';
 

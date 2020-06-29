@@ -1,8 +1,6 @@
+import {createMap} from './map';
 
-
-import {createMap} from './leaflet-rendering';
-
-describe('leaflet-rendering', () => {
+describe('leaflet-rendering/map', () => {
 
     describe('createMap', () => {
        let mapDiv;

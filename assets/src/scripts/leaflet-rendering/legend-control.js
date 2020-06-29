@@ -1,5 +1,5 @@
-import config from './config.js';
-import {mediaQuery} from './utils';
+import config from '../config.js';
+import {mediaQuery} from '../utils';
 
 export const LegendControl = L.Control.extend({
     options: {
