@@ -2,6 +2,8 @@ import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import config from '../../../config';
+import {createMap, createBaseLayerGroup} from '../../../leaflet-rendering';
+import {legendControl} from '../../../leaflet-legend-control';
 import {link} from '../../../lib/d3-redux';
 import {FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT} from '../../../web-services/flood-data';
 
@@ -12,7 +14,7 @@ import {Actions as nldiDataActions} from '../../store/nldi-data';
 import {Actions as floodInundationActions} from '../../store/flood-inundation';
 
 import {floodSlider} from './flood-slider';
-import {createLegendControl, createFIMLegend, createNldiLegend} from './legend';
+import {addMonitoringLocationMarker, createFIMLegend, createNldiLegend} from './legend';
 import {addNldiLayers} from './nldi-mapping';
 
 
@@ -25,54 +27,43 @@ const getLayerDefs = function(layerNo, siteno, stage) {
  * Creates a site map
  */
 const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
-
-    let gray = L.layerGroup();
-    L.esri.basemapLayer('Gray').addTo(gray);
-
-    if (config.HYDRO_ENDPOINT) {
-        gray.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT}));
-    }
-
-    // Create map on node
-    const map = L.map('site-map', {
+    const map = createMap('site-map', {
         center: [latitude, longitude],
-        zoom: zoom,
-        scrollWheelZoom: false,
-        layers: gray
+        zoom: zoom
     });
 
-    map.on('focus', () => {
-        map.scrollWheelZoom.enable();
-    });
-    map.on('blur', () => {
-        map.scrollWheelZoom.disable();
-    });
+    const baseMapLayers = {
+        'Grayscale': createBaseLayerGroup('Gray', config.HYDRO_ENDPOINT || null),
+        'Satellite': createBaseLayerGroup('ImageryFirefly', null)
+    };
+    map.addLayer(baseMapLayers['Grayscale']);
 
-    let floodLayer = L.esri.dynamicMapLayer({
+    //add layer control
+    L.control.layers(baseMapLayers).addTo(map);
+
+    const mlLegendControl = legendControl();
+    mlLegendControl.addTo(map);
+    addMonitoringLocationMarker(mlLegendControl);
+
+    const floodLayer = L.esri.dynamicMapLayer({
         url: FLOOD_EXTENTS_ENDPOINT,
         layers: [0],
         f: 'image',
         format: 'png8'
     });
-    let breachLayer = L.esri.dynamicMapLayer({
+    const breachLayer = L.esri.dynamicMapLayer({
         url: FLOOD_BREACH_ENDPOINT,
         layers: [0],
         f: 'image',
         format: 'png8'
     });
-    let leveeLayer = L.esri.dynamicMapLayer({
+    const leveeLayer = L.esri.dynamicMapLayer({
         url: FLOOD_LEVEE_ENDPOINT,
         layers: [0, 1],
         f: 'image',
         format: 'png8',
         layerDefs: `${getLayerDefs(0, siteno)};${getLayerDefs(1, siteno)}`
     });
-
-    let legendControl = createLegendControl({
-        position: 'bottomright'
-    });
-    legendControl.addTo(map);
-
 
     const updateFloodLayers = function (node, {hasFloodData, floodStageHeight}) {
         if (floodStageHeight) {
@@ -96,7 +87,6 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         }
     };
 
-
     const updateNldiLayers = function (node, {upstreamFlows, downstreamFlows, upstreamSites, downstreamSites, upstreamBasin}) {
         addNldiLayers(map, upstreamFlows, downstreamFlows, upstreamSites, downstreamSites, upstreamBasin);
     };
@@ -108,16 +98,14 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         }
     };
 
-
     /*
      * Creates the FIM legend if FIM data is available, otherwise removes the FIM legend if it exists.
      * @param {HTMLElement} node - element where the map is rendered
      * @param {Boolean} isFIMAvailable
      */
     const addFIMLegend = function(node, hasFloodData) {
-        createFIMLegend(legendControl, hasFloodData);
+        createFIMLegend(mlLegendControl, hasFloodData);
     };
-
 
     const addFimLink = function (node, hasFloodData) {
         if (hasFloodData) {
@@ -133,20 +121,6 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         }
     };
 
-    //add additional baselayer
-    var baseLayers = {
-        'Grayscale': gray,
-        'Satellite': L.esri.basemapLayer('ImageryFirefly')
-    };
-
-    //add layer control
-    L.control.layers(baseLayers).addTo(map);
-
-    // Add the ESRI World Hydro Reference Overlay
-    if (config.HYDRO_ENDPOINT) {
-        map.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT}));
-    }
-
     // Add a marker at the site location
     L.marker([latitude, longitude]).addTo(map);
 
@@ -156,7 +130,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
      * @param {Boolean} isNldiAvailable
      */
     const addNldiLegend = function(node, isNldiAvailable) {
-        createNldiLegend(legendControl, isNldiAvailable);
+        createNldiLegend(mlLegendControl, isNldiAvailable);
     };
 
     node

@@ -12,6 +12,7 @@ import './polyfills';
 
 import './ajax.spec';
 import './helpers.spec';
+import './leaflet-rendering.spec';
 import './schema.spec';
 import './tooltips.spec';
 import './utils.spec';

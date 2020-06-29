@@ -3,7 +3,7 @@ import {Actions} from '../../store';
 import {getNetworkSites} from '../../selectors/network-data-selector';
 
 import {drawSiteTable} from './data-table';
-import {createLegendControl, createNetworkSitesLegend} from './legend';
+import {createMapLegend} from './legend';
 import {createSiteMap, addSitesLayer} from './map';
 
 /*
@@ -16,15 +16,12 @@ export const attachToNode = function(store, node, {networkcd, extent}) {
     const fetchNetworkSites = store.dispatch(Actions.retrieveNetworkData(networkcd));
 
     const map = createSiteMap(extent);
-    const mapLegend = createLegendControl({
-        position: 'bottomright'
-    });
-    mapLegend.addTo(map);
+    const legend = createMapLegend(store);
+    map.addControl(legend);
 
     fetchNetworkSites.then(() => {
         const networkSites = getNetworkSites(store.getState());
         addSitesLayer(map, networkSites);
-        createNetworkSitesLegend(mapLegend, networkSites.length > 0);
         drawSiteTable('link-list', networkSites);
     });
 };
