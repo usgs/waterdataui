@@ -33,4 +33,38 @@ export const get = function (url) {
     });
 };
 
+export const sendAjaxRequest = function (url, payload=null, method='GET', headers) {
+    return new Promise(function (resolve, reject) {
+        const req = new XMLHttpRequest();
+        req.open(method, url);
+
+        Object.keys(headers).forEach(k => {
+            req.setRequestHeader(k, headers[k]);
+        });
+
+        req.onload = function () {
+            if (req.status === 200) {
+                resolve(req.response);
+            } else {
+                if (window.ga) {
+                    window.ga('send', 'event', 'serviceFailure', req.status, url);
+                }
+                reject(Error(`Failed with status ${req.status}: ${req.statusText}`));
+            }
+        };
+
+        req.onerror = function() {
+            reject(Error('Network Error'));
+        };
+
+        // Make the request
+        req.send(payload);
+    });
+};
+
+export const post = function (url, payload, headers) {
+    return sendAjaxRequest(url, payload, 'POST', headers);
+};
+
 window.testGet = get;
+window.testPost = post;
