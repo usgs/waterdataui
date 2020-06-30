@@ -1,6 +1,7 @@
 import { select } from 'd3-selection';
 import { link, subscribe } from '../../lib/d3-redux';
 import { Features } from '../../selectors/observations-selector';
+import { Sites } from '../../selectors/waterquality-selector';
 import config from '../../config';
 import { retrieveObservationsData } from '../../store/observations';
 import { retrieveWaterqualityData } from '../../store/waterquality';
@@ -58,6 +59,22 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
         });
     };
 
+    const plotWaterQualitySites = (node, sites) => {
+        Object.values(sites).forEach(s => {
+          const marker = L.circle([s.LatitudeMeasure, s.LongitudeMeasure], {
+              color: 'red',
+              fillColor: '#f03',
+              fillOpacity: 0.2,
+              radius: 5000
+          });
+          console.log(s);
+          const popup = 
+            `<span style="display: block; font-weight: bold">${s.MonitoringLocationName}</span>Vertical Measure: ${s['VerticalMeasure/MeasureValue']}`;
+          marker.bindPopup(popup);
+          marker.addTo(map);
+        });
+    };
+
     //add additional baselayer
     var baseLayers = {
         'Grayscale': gray,
@@ -72,8 +89,10 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
         map.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT}));
     }
 
+    // node
+    //     .call(link(store, addSiteCircles, Features));
     node
-        .call(link(store, addSiteCircles, Features));
+        .call(link(store, plotWaterQualitySites, Sites));
 };
 
 /*
