@@ -1,10 +1,11 @@
-import { select } from 'd3-selection';
+import {select} from 'd3-selection';
 
-import { createLegendControl, createFIMLegend, createNldiLegend } from './legend';
+import {legendControl} from '../../../leaflet-rendering/legend-control';
+import {createFIMLegend, createNldiLegend} from './legend';
 
 
 describe('monitoring-location/components/map/legend module', () => {
-    let legendControl;
+    let mlLegendControl;
     let map;
 
     beforeEach(() => {
@@ -20,46 +21,6 @@ describe('monitoring-location/components/map/legend module', () => {
     afterEach(() => {
         select('#map').remove();
         jasmine.Ajax.uninstall();
-    });
-
-    describe('createLegendControl', () => {
-        let legendContainer, containerSelect;
-        beforeEach(() => {
-            legendControl = createLegendControl({});
-            legendControl.addTo(map);
-
-            legendContainer = legendControl.getContainer();
-            containerSelect = select(legendContainer);
-        });
-
-        it('Creates the expected DOM elements', () => {
-            expect(legendContainer).toBeDefined();
-            expect(containerSelect.selectAll('.legend-expand').size()).toBe(1);
-            expect(containerSelect.selectAll('.legend-list-container').size()).toBe(1);
-            expect(containerSelect.select('#site-legend-list').size()).toBe(1);
-        });
-
-        it('The legend expand button is not visible and that the legend list is visible', () => {
-            expect(containerSelect.selectAll('.legend-expand-container').attr('hidden')).toBeTruthy();
-            expect(containerSelect.selectAll('.legend-list-container').attr('hidden')).toBeNull();
-        });
-
-        it('Clicking the expand button once hides the legend list', () => {
-            let expandButton = containerSelect.select('.legend-expand');
-            expandButton.dispatch('click');
-
-            expect(containerSelect.selectAll('.legend-list-container').attr('hidden')).toBeTruthy();
-            expect(expandButton.attr('title')).toContain('Show');
-        });
-
-        it('Clicking the expand button a second time shows the legend list', () => {
-            let expandButton = containerSelect.select('.legend-expand');
-            expandButton.dispatch('click');
-            expandButton.dispatch('click');
-
-            expect(containerSelect.selectAll('.legend-list-container').attr('hidden')).toBeNull();
-            expect(expandButton.attr('title')).toContain('Hide');
-        });
     });
 
     describe('createFIMLegend', () => {
@@ -93,10 +54,10 @@ describe('monitoring-location/components/map/legend module', () => {
                     ]}`;
 
         beforeEach(() => {
-            legendControl = createLegendControl({});
-            legendControl.addTo(map);
+            mlLegendControl = legendControl();
+            mlLegendControl.addTo(map);
 
-            createFIMLegend(legendControl, true);
+            createFIMLegend(mlLegendControl, true);
 
             // Return the same response on all requests
             jasmine.Ajax.stubRequest(/(.*?)/).andReturn({
@@ -111,39 +72,39 @@ describe('monitoring-location/components/map/legend module', () => {
         });
 
         it('createFIMLegend with FIM available true makes the expand button visible', () =>  {
-            expect(select(legendControl.getContainer()).select('.legend-expand-container').attr('hidden')).toBeNull();
+            expect(select(mlLegendControl.getContainer()).select('.legend-expand-container').attr('hidden')).toBeNull();
         });
 
         it('createFIMLegend with FIM available add the FIM legend list to the control', () => {
-            expect(select(legendControl.getContainer()).select('#fim-legend-list').size()).toBe(1);
+            expect(select(mlLegendControl.getContainer()).select('#fim-legend-list').size()).toBe(1);
         });
 
         it('Calling createFIMLegend a second time with available set to false cause the fim legend list to be removed', () => {
-            createFIMLegend(legendControl, false);
+            createFIMLegend(mlLegendControl, false);
 
-            expect(select(legendControl.getContainer()).select('#fim-legend-list').size()).toBe(0);
+            expect(select(mlLegendControl.getContainer()).select('#fim-legend-list').size()).toBe(0);
         });
     });
 
     describe('createNldiLegend', () => {
         beforeEach(() => {
-            legendControl = createLegendControl({});
-            legendControl.addTo(map);
+            mlLegendControl = legendControl();
+            mlLegendControl.addTo(map);
 
-            createNldiLegend(legendControl, true);
+            createNldiLegend(mlLegendControl, true);
         });
 
         it('createNldiLegend with NLDI available true makes the expand button visible', () =>  {
-            expect(select(legendControl.getContainer()).select('.legend-expand-container').attr('hidden')).toBeNull();
+            expect(select(mlLegendControl.getContainer()).select('.legend-expand-container').attr('hidden')).toBeNull();
         });
 
         it('createNldiLegend with NLDI available add the NLDI legend list to the control', () => {
-            expect(select(legendControl.getContainer()).select('#nldi-legend-list').size()).toBe(1);
+            expect(select(mlLegendControl.getContainer()).select('#nldi-legend-list').size()).toBe(1);
         });
 
         it('Calling createNldiLegend a second time with available set to false cause the NLDI legend list to be removed', () => {
-            createNldiLegend(legendControl, false);
-            expect(select(legendControl.getContainer()).select('#nldi-legend-list').size()).toBe(0);
+            createNldiLegend(mlLegendControl, false);
+            expect(select(mlLegendControl.getContainer()).select('#nldi-legend-list').size()).toBe(0);
         });
     });
 });

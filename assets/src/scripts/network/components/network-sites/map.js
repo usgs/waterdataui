@@ -1,4 +1,5 @@
 import config from '../../../config';
+import {createMap, createBaseLayerGroup} from '../../../leaflet-rendering/map';
 
 export const MARKER_FILL_COLOR = '#ff7800';
 export const MARKER_FILL_OPACITY = 0.8;
@@ -10,33 +11,15 @@ export const MARKER_FILL_OPACITY = 0.8;
  * @return {L.map}
  */
 export const createSiteMap = function(extent) {
-    let gray = new L.layerGroup();
-    L.esri.basemapLayer('Gray').addTo(gray);
-
-    if (config.HYDRO_ENDPOINT) {
-        gray.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT,
-            maxZoom: 22,
-            maxNativeZoom: 19}));
-    }
-
-    // Create map on node
-    const map = new L.Map('network-map', {
+    const map = createMap('network-map', {
         center: [0, 0],
-        zoom: 1,
-        scrollWheelZoom: false,
-        layers: gray
+        zoom: 1
     });
+    map.addLayer(createBaseLayerGroup('Gray', config.HYDRO_ENDPOINT || null));
 
     const pExt = JSON.parse(extent);
     const leafletExtent = [[pExt[3],pExt[2]],[pExt[1],pExt[0]]];
     map.fitBounds(leafletExtent);
-
-    map.on('focus', () => {
-        map.scrollWheelZoom.enable();
-    });
-    map.on('blur', () => {
-        map.scrollWheelZoom.disable();
-    });
 
     return map;
 };

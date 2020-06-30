@@ -1,11 +1,14 @@
 import {select} from 'd3-selection';
 
-import {createLegendControl, createNetworkSitesLegend} from './legend';
+import {configureStore} from '../../store';
+
+import {createMapLegend} from './legend';
 
 
 describe('component/map/legend module', () => {
-    let legendControl;
+    let control;
     let map;
+    let store;
 
     beforeEach(() => {
         jasmine.Ajax.install();
@@ -15,6 +18,13 @@ describe('component/map/legend module', () => {
             center: [43.0, -100.0],
             zoom: 5
         });
+
+        store = configureStore({
+            networkData: {
+                networkSites: []
+            }
+        });
+        control = createMapLegend(map, store);
     });
 
     afterEach(() => {
@@ -22,66 +32,31 @@ describe('component/map/legend module', () => {
         jasmine.Ajax.uninstall();
     });
 
-    describe('createLegendControl', () => {
-        let legendContainer, containerSelect;
-        beforeEach(() => {
-            legendControl = createLegendControl({});
-            legendControl.addTo(map);
-
-            legendContainer = legendControl.getContainer();
-            containerSelect = select(legendContainer);
+    describe('createMapLegend', () => {
+        it('expect to create a legend with no markers if there is no data', () => {
+            store = configureStore({
+                networkData: {
+                    networkSites: []
+                }
+            });
+            control = createMapLegend(map, store);
+            expect(control.getLegendListContainer().hasChildNodes()).toBe(false);
         });
 
-        it('Creates the expected DOM elements', () => {
-            expect(legendContainer).toBeDefined();
-            expect(containerSelect.selectAll('.legend-expand').size()).toBe(1);
-            expect(containerSelect.selectAll('.legend-list-container').size()).toBe(1);
-        });
-
-        it('The legend expand button is not visible and that the legend list is visible', () => {
-            expect(containerSelect.selectAll('.legend-expand-container').attr('hidden')).toBeTruthy();
-            expect(containerSelect.selectAll('.legend-list-container').attr('hidden')).toBeNull();
-        });
-
-        it('Clicking the expand button once hides the legend list', () => {
-            let expandButton = containerSelect.select('.legend-expand');
-            expandButton.dispatch('click');
-
-            expect(containerSelect.selectAll('.legend-list-container').attr('hidden')).toBeTruthy();
-            expect(expandButton.attr('title')).toContain('Show');
-        });
-
-        it('Clicking the expand button a second time shows the legend list', () => {
-            let expandButton = containerSelect.select('.legend-expand');
-            expandButton.dispatch('click');
-            expandButton.dispatch('click');
-
-            expect(containerSelect.selectAll('.legend-list-container').attr('hidden')).toBeNull();
-            expect(expandButton.attr('title')).toContain('Hide');
-        });
-    });
-
-
-
-    describe('createNetworkSitesLegend', () => {
-        beforeEach(() => {
-            legendControl = createLegendControl({});
-            legendControl.addTo(map);
-
-            createNetworkSitesLegend(legendControl, true);
-        });
-
-        it('createNetworkLegend with Network available true makes the expand button visible', () =>  {
-            expect(select(legendControl.getContainer()).select('.legend-expand-container').attr('hidden')).toBeNull();
-        });
-
-        it('createNetworkLegend with Network available add the Network legend list to the control', () => {
-            expect(select(legendControl.getContainer()).select('#network-legend-list').size()).toBe(1);
-        });
-
-        it('Calling createNetworkLegend a second time with available set to false cause the Network legend list to be removed', () => {
-            createNetworkSitesLegend(legendControl, false);
-            expect(select(legendControl.getContainer()).select('#network-legend-list').size()).toBe(0);
+        it('expect to create a legend with a marker is there is data', () => {
+            store = configureStore({
+                networkData: {
+                    networkSites: [{
+                        type: 'Feature',
+                        id: 'USGS-343048093030401'
+                    }, {
+                        type: 'Feature',
+                        id: 'USGS-343048093030402'
+                    }]
+                }
+            });
+            control = createMapLegend(map, store);
+            expect(control.getLegendListContainer().childNodes.length).toBe(1);
         });
     });
 });

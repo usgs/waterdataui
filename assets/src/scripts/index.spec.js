@@ -27,6 +27,9 @@ import './d3-rendering/loading-indicator.spec';
 import './d3-rendering/markers.spec';
 import './d3-rendering/tick-marks.spec';
 
+import './leaflet-rendering/map.spec';
+import './leaflet-rendering/legend-control.spec';
+
 import './lib/d3-redux.spec';
 
 import './monitoring-location/components/daily-value-hydrograph/selectors/labels.spec';
