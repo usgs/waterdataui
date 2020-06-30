@@ -6,12 +6,12 @@ import {appendXAxis} from '../../../d3-rendering/axes';
 import {link} from '../../../lib/d3-redux';
 import {Actions} from '../../store/instantaneous-value-time-series-state';
 
-import {getBrushXAxis} from './axes';
-import {currentVariableLineSegmentsSelector} from './drawing-data';
-import {getBrushLayout} from './layout';
-import {getBrushXScale, getBrushYScale} from './scales';
-import {isVisibleSelector} from './time-series';
-import {drawDataLines} from './time-series-data';
+import {getBrushXAxis} from './selectors/axes';
+import {getCurrentVariableLineSegments} from './drawing-data';
+import {getBrushLayout} from './selectors/layout';
+import {getBrushXScale, getBrushYScale} from './selectors/scales';
+import {isVisibleSelector} from './selectors/time-series-data';
+import {drawDataLines} from './time-series-lines';
 
 export const drawGraphBrush = function(container, store) {
 
@@ -53,7 +53,7 @@ export const drawGraphBrush = function(container, store) {
                 })))
                 .call(link(store, drawDataLines, createStructuredSelector({
                     visible: isVisibleSelector('current'),
-                    tsLinesMap: currentVariableLineSegmentsSelector('current'),
+                    tsLinesMap: getCurrentVariableLineSegments('current'),
                     xScale: getBrushXScale('current'),
                     yScale: getBrushYScale,
                     tsKey: () => 'current',

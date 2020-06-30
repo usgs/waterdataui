@@ -1,7 +1,7 @@
-import {configureStore} from '../../store';
-import {Actions} from '../../store/instantaneous-value-time-series-state';
+import {configureStore} from '../../../store';
+import {Actions} from '../../../store/instantaneous-value-time-series-state';
 
-import {tsCursorPointsSelector, cursorOffsetSelector} from './cursor';
+import {getTsCursorPoints, getCursorOffset, getTooltipPoints} from './cursor';
 
 let DATA = [12, 13, 14, 15, 16].map(hour => {
     return {
@@ -330,9 +330,9 @@ const TEST_STATE_ONE_VAR = {
 
 describe('monitoring-location/components/hydrograph/cursor module', () => {
 
-    describe('tsCursorPointsSelector', () => {
+    describe('getTsCursorPoints', () => {
         it('Should return last time with non-masked value if the cursor offset is null', function() {
-            expect(tsCursorPointsSelector('compare')(TEST_STATE_ONE_VAR)).toEqual({
+            expect(getTsCursorPoints('compare')(TEST_STATE_ONE_VAR)).toEqual({
                 '69928:compare:P7D': {
                     dateTime: 1514995200000,
                     qualifiers: ['P'],
@@ -340,7 +340,7 @@ describe('monitoring-location/components/hydrograph/cursor module', () => {
                     tsKey: 'compare'
                 }
             });
-            expect(tsCursorPointsSelector('current')(TEST_STATE_ONE_VAR)).toEqual({
+            expect(getTsCursorPoints('current')(TEST_STATE_ONE_VAR)).toEqual({
                 '69928:current:P7D': {
                     dateTime: 1514995200000,
                     qualifiers: ['P'],
@@ -359,8 +359,8 @@ describe('monitoring-location/components/hydrograph/cursor module', () => {
                 }
             };
 
-            expect(tsCursorPointsSelector('current')(state)['69928:current:P7D'].value).toEqual(14);
-            expect(tsCursorPointsSelector('compare')(state)['69928:compare:P7D'].value).toEqual(14);
+            expect(getTsCursorPoints('current')(state)['69928:current:P7D'].value).toEqual(14);
+            expect(getTsCursorPoints('compare')(state)['69928:compare:P7D'].value).toEqual(14);
         });
 
         it('Selects the nearest point for the current variable streamflow', () => {
@@ -373,7 +373,7 @@ describe('monitoring-location/components/hydrograph/cursor module', () => {
                     ivGraphCursorOffset: 16 * 60 * 1000
                 }
             };
-            expect(tsCursorPointsSelector('current')(newState)).toEqual({
+            expect(getTsCursorPoints('current')(newState)).toEqual({
                 '69929:current:P7D': {
                     value: 2,
                     qualifiers: ['P'],
@@ -394,7 +394,7 @@ describe('monitoring-location/components/hydrograph/cursor module', () => {
                 }
             };
 
-            expect(tsCursorPointsSelector('current')(newState)).toEqual({
+            expect(getTsCursorPoints('current')(newState)).toEqual({
                 '69930:current:P7D': {
                     value: 0.03,
                     qualifiers: ['P'],
@@ -405,7 +405,7 @@ describe('monitoring-location/components/hydrograph/cursor module', () => {
         });
     });
 
-    describe('cursorOffsetSelector', () => {
+    describe('getCursorOffset', () => {
         let store;
         beforeEach(() => {
             store = configureStore(TEST_STATE_ONE_VAR);
@@ -413,13 +413,53 @@ describe('monitoring-location/components/hydrograph/cursor module', () => {
 
         it('returns null when false', () => {
             store.dispatch(Actions.setIVGraphCursorOffset(false));
-            expect(cursorOffsetSelector(store.getState())).toBe(null);
+            expect(getCursorOffset(store.getState())).toBe(null);
         });
 
         it('returns last point when null', () => {
             store.dispatch(Actions.setIVGraphCursorOffset(null));
             const cursorRange = DATA[4].dateTime - DATA[0].dateTime;
-            expect(cursorOffsetSelector(store.getState())).toBe(cursorRange);
+            expect(getCursorOffset(store.getState())).toBe(cursorRange);
         });
     });
+
+    describe('tooltipPointsSelector', () => {
+        const id = (val) => val;
+
+        it('should return the requested time series focus time', () => {
+            expect(tooltipPointsSelector('current').resultFunc(id, id, {
+                '00060:current': {
+                    dateTime: '1date',
+                    value: 1
+                },
+                '00060:compare': {
+                    dateTime: '2date',
+                    value: 2
+                }
+            })).toEqual([{
+                x: '1date',
+                y: 1
+            }, {
+                x: '2date',
+                y: 2
+            }]);
+        });
+
+        it('should exclude values that are infinite', () => {
+            expect(getTooltipPoints('current').resultFunc(id, id, {
+                '00060:current': {
+                    dateTime: '1date',
+                    value: Infinity
+                },
+                '00060:compare': {
+                    dateTime: '2date',
+                    value: 2
+                }
+            })).toEqual([{
+                x: '2date',
+                y: 2
+            }]);
+        });
+    });
+
 });

@@ -1,14 +1,8 @@
-import {select, selectAll} from 'd3-selection';
+import {lineMarker, rectangleMarker, textOnlyMarker} from '../../../../d3-rendering/markers';
 
+import {getLegendMarkerRows} from './legend-data';
 
-import {configureStore} from '../../store';
-import {Actions} from '../../store/instantaneous-value-time-series-state';
-
-import {drawTimeSeriesLegend} from './legend';
-
-
-describe('monitoring-location/components/hydrograph/legend module', () => {
-
+describe('monitoring-location/components/hydrograph/selectors/legend-data', () => {
     const TEST_DATA = {
         ivTimeSeriesData: {
             timeSeries: {
@@ -106,46 +100,74 @@ describe('monitoring-location/components/hydrograph/legend module', () => {
         }
     };
 
-    describe('legends should render', () => {
+    describe('getLegendMarkerRows', () => {
 
-        let graphNode;
-        let store;
+        it('Should return no markers if no time series to show', () => {
+            let newData = {
+                ...TEST_DATA,
+                ivTimeSeriesData: {
+                    ...TEST_DATA.ivTimeSeriesData,
+                    timeSeries: {}
+                },
+                statisticsData: {},
+                floodState: {}
+            };
 
-        beforeEach(() => {
-            let body = select('body');
-            let component = body.append('div')
-                .attr('id', 'hydrograph');
-            component.append('div').attr('class', 'loading-indicator-container');
-            component.append('div').attr('class', 'graph-container');
-            component.append('div').attr('class', 'select-time-series-container');
-            component.append('div').attr('class', 'provisional-data-alert');
-
-            graphNode = document.getElementById('hydrograph');
-
-            store = configureStore(TEST_DATA);
-            select(graphNode)
-                .call(drawTimeSeriesLegend, store);
-
-            jasmine.Ajax.install();
+            expect(getLegendMarkerRows(newData)).toEqual([]);
         });
 
-        afterEach(() => {
-            jasmine.Ajax.uninstall();
-            select('#hydrograph').remove();
+        it('Should return markers for the selected variable', () => {
+            const result = getLegendMarkerRows(TEST_DATA);
+
+            expect(result.length).toBe(2);
+            expect(result[0].length).toBe(4);
+            expect(result[0][0].type).toEqual(textOnlyMarker);
+            expect(result[0][1].type).toEqual(lineMarker);
+            expect(result[0][2].type).toEqual(rectangleMarker);
+            expect(result[0][3].type).toEqual(rectangleMarker);
+            expect(result[1].length).toBe(2);
+            expect(result[1][0].type).toEqual(textOnlyMarker);
+            expect(result[1][1].type).toEqual(lineMarker);
         });
 
+        it('Should return markers for a different selected variable', () => {
+            const newData = {
+                ...TEST_DATA,
+                ivTimeSeriesState: {
+                    ...TEST_DATA.ivTimeSeriesState,
+                    currentIVVariableID: '45807202'
+                }
+            };
+            const result = getLegendMarkerRows(newData);
 
-        it('Should have 6 legend markers', () => {
-            expect(selectAll('.legend g').size()).toBe(6);
-            expect(selectAll('.legend g line.median-step').size()).toBe(1);
+            expect(result.length).toBe(5);
+            expect(result[0].length).toBe(3);
+            expect(result[0][0].type).toEqual(textOnlyMarker);
+            expect(result[0][1].type).toEqual(lineMarker);
+            expect(result[0][2].type).toEqual(lineMarker);
         });
 
-        it('Should have 4 legend marker after the median time series are removed', (done) => {
-            store.dispatch(Actions.setIVTimeSeriesVisibility('median', false));
-            window.requestAnimationFrame(() => {
-                expect(selectAll('.legend g').size()).toBe(4);
-                done();
-            });
+        it('Should return markers only for time series shown', () => {
+            const newData = {
+                ...TEST_DATA,
+                ivTimeSeriesState: {
+                    ...TEST_DATA.ivTimeSeriesState,
+                    showIVTimeSeries: {
+                        'current': true,
+                        'compare': false,
+                        'median': false
+                    }
+                }
+            };
+
+            const result = getLegendMarkerRows(newData);
+
+            expect(result.length).toBe(1);
+            expect(result[0].length).toBe(4);
+            expect(result[0][0].type).toEqual(textOnlyMarker);
+            expect(result[0][1].type).toEqual(lineMarker);
+            expect(result[0][2].type).toEqual(rectangleMarker);
+            expect(result[0][3].type).toEqual(rectangleMarker);
         });
     });
 });

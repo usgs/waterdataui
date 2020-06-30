@@ -9,7 +9,7 @@ import {
 } from './domain';
 
 
-describe('monitoring-location/componens/hydrograph/domain module', () => {
+describe('monitoring-location/componens/hydrograph/selectors/domain module', () => {
     describe('extendDomain', () => {
         it('lower bounds are calculated based on order of magnitude with the parameter, upper bound 20%', () => {
             const lowValDomain = extendDomain([50, 1000], true);

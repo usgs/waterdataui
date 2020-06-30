@@ -44,20 +44,20 @@ import './monitoring-location/components/daily-value-hydrograph/tooltip.spec';
 import './monitoring-location/components/embed.spec';
 
 import './monitoring-location/components/hydrograph/audible.spec';
-import './monitoring-location/components/hydrograph/cursor.spec';
+import './monitoring-location/components/hydrograph/selectors/cursor.spec';
 import './monitoring-location/components/hydrograph/date-controls.spec';
-import './monitoring-location/components/hydrograph/domain.spec';
+import './monitoring-location/components/hydrograph/selectors/domain.spec';
 import './monitoring-location/components/hydrograph/drawing-data.spec';
 import './monitoring-location/components/hydrograph/data-table.spec';
 import './monitoring-location/components/hydrograph/graph-brush.spec';
 import './monitoring-location/components/hydrograph/graph-controls.spec';
 import './monitoring-location/components/hydrograph/index.spec';
-import './monitoring-location/components/hydrograph/layout.spec';
+import './monitoring-location/components/hydrograph/selectors/layout.spec';
 import './monitoring-location/components/hydrograph/legend.spec';
 import './monitoring-location/components/hydrograph/method-picker.spec';
 import './monitoring-location/components/hydrograph/parameters.spec';
-import './monitoring-location/components/hydrograph/scales.spec';
-import './monitoring-location/components/hydrograph/time-series.spec';
+import './monitoring-location/components/hydrograph/selectors/scales.spec';
+import './monitoring-location/components/hydrograph/selectors/time-series-data.spec';
 import './monitoring-location/components/hydrograph/time-series-graph.spec';
 import './monitoring-location/components/hydrograph/tooltip.spec';
 

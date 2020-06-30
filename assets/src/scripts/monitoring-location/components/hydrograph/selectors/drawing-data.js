@@ -1,3 +1,9 @@
+/*
+ * One helper function is exported and used in some of the rendering code.
+ * It would be good to refactor this but I think ultimately it will likely wait until
+ * we have a new IV data service that follows similar patterns to what is returned by
+ * the daily value statistical service.
+ */
 import {format} from 'd3-format';
 import memoize from 'fast-memoize';
 import find from 'lodash/find';
@@ -60,12 +66,26 @@ const transformToCumulative = function(points) {
     });
 };
 
+/*
+ * Helper function that returns an object which identifies which classes to use for the point.
+ * This is used within a few of the rendering modules.
+ * @param {Object} point
+ * @return {Object}
+ */
+export const classesForPoint = function(point) {
+    return {
+        approved: point.qualifiers.indexOf('A') > -1,
+        estimated: point.qualifiers.indexOf('e') > -1 || point.qualifiers.indexOf('E') > -1
+    };
+};
+
+
 /* Factory function that returns a function that returns an object where the properties are ts IDs and the values
  * are array of point objects that can be used to render a time series graph.
  * @param {Object} state
  * @return {Object} where the keys are ts ids and the values are an Array of point Objects.
  */
-export const allPointsSelector = createSelector(
+export const getAllPoints= createSelector(
     getTimeSeries,
     getVariables,
     (timeSeries, variables) => {
@@ -89,9 +109,9 @@ export const allPointsSelector = createSelector(
  * @param {String} tsKey
  * @return {Object} of keys are tsId, values are Array of point Objects
  */
-export const pointsByTsKeySelector = memoize((tsKey, period) => createSelector(
+export const getPointsByTsKey = memoize((tsKey, period) => createSelector(
     getTsRequestKey(tsKey, period),
-    allPointsSelector,
+    getAllPoints,
     getTimeSeries,
     (tsRequestKey, points, timeSeries) => {
         let result = {};
@@ -109,8 +129,8 @@ export const pointsByTsKeySelector = memoize((tsKey, period) => createSelector(
  * @param {String} tsKey
  * @return Object
  */
-export const currentVariablePointsByTsIdSelector = memoize(tsKey => createSelector(
-    pointsByTsKeySelector(tsKey),
+export const getCurrentVariablePointsByTsId = memoize(tsKey => createSelector(
+    getPointsByTsKey(tsKey),
     getCurrentVariableTimeSeries(tsKey),
     (points, timeSeries) => {
         let result = {};
@@ -129,8 +149,8 @@ export const currentVariablePointsByTsIdSelector = memoize(tsKey => createSelect
  * @param {String} tsKey
  * @return Array of Array of points
  */
-export const currentVariablePointsSelector = memoize(tsKey => createSelector(
-    pointsByTsKeySelector(tsKey),
+export const getCurrentVariablePoints = memoize(tsKey => createSelector(
+    getPointsByTsKey(tsKey),
     getCurrentVariableTimeSeries(tsKey),
     (points, timeSeries) => {
         return timeSeries ? Object.keys(timeSeries).map((tsId) => points[tsId]) : [];
@@ -145,24 +165,13 @@ export const currentVariablePointsSelector = memoize(tsKey => createSelector(
  * @param  {String} tsKey     Time series key
  * @return {Array}            Array of array of points.
  */
-export const pointsSelector = memoize((tsKey) => createSelector(
-    pointsByTsKeySelector(tsKey),
+export const getPoints = memoize((tsKey) => createSelector(
+    getPointsByTsKey(tsKey),
     (points) => {
         return Object.values(points);
     }
 ));
 
-/*
- * Returns an object which identifies which classes to use for the point
- * @param {Object} point
- * @return {Object}
- */
-export const classesForPoint = function(point) {
-    return {
-        approved: point.qualifiers.indexOf('A') > -1,
-        estimated: point.qualifiers.indexOf('e') > -1 || point.qualifiers.indexOf('E') > -1
-    };
-};
 
 /*
  * @ return {Array of Arrays of Objects} where the properties are date (universal), and value
@@ -226,9 +235,9 @@ export const getCurrentVariableMedianStatPoints = createSelector(
  * @param  {Object} state     Redux store
  * @return {Array}            Array of point arrays.
  */
-export const visiblePointsSelector = createSelector(
-    currentVariablePointsSelector('current'),
-    currentVariablePointsSelector('compare'),
+export const getVisiblePointsSelector = createSelector(
+    getCurrentVariablePoints('current'),
+    getCurrentVariablePoints('compare'),
     getCurrentVariableMedianStatPoints,
     (state) => state.ivTimeSeriesState.showIVTimeSeries,
     (current, compare, median, showSeries) => {
@@ -272,7 +281,7 @@ const getLineClasses = function(pt, isCurrentMethod) {
  * @return {Function} which returns an array of objects.
  */
 export const getCurrentPointData = createSelector(
-    currentVariablePointsByTsIdSelector('current'),
+    getCurrentVariablePointsByTsId('current'),
     getCurrentMethodID,
     getCurrentVariable,
     getIanaTimeZone,
@@ -320,8 +329,8 @@ export const getCurrentPointData = createSelector(
  * @param  {String} tsKey Time series key
  * @return {Object}  Keys are ts Ids, values are  of array of line segments.
  */
-export const lineSegmentsSelector = memoize((tsKey, period) => createSelector(
-    pointsByTsKeySelector(tsKey, period),
+export const getLineSegments = memoize((tsKey, period) => createSelector(
+    getPointsByTsKey(tsKey, period),
     getCurrentMethodID,
     (tsPoints, currentMethodID) => {
         let seriesLines = {};
@@ -379,8 +388,8 @@ export const lineSegmentsSelector = memoize((tsKey, period) => createSelector(
  * Factory function creates a function that, for a given tsKey:
  * @return {Object} - Mapping of parameter code Array of line segments.
  */
-export const lineSegmentsByParmCdSelector = memoize((tsKey, period) => createSelector(
-    lineSegmentsSelector(tsKey, period),
+export const getLineSegmentsByParmCd = memoize((tsKey, period) => createSelector(
+    getLineSegments(tsKey, period),
     getTimeSeriesForTsKey(tsKey, period),
     getVariables,
     (lineSegmentsBySeriesID, timeSeriesMap, variables) => {
@@ -402,7 +411,7 @@ export const lineSegmentsByParmCdSelector = memoize((tsKey, period) => createSel
  */
 export const currentVariableLineSegmentsSelector = memoize(tsKey => createSelector(
     getCurrentVariableTimeSeries(tsKey),
-    lineSegmentsSelector(tsKey),
+    getLineSegments(tsKey),
     (seriesMap, linesMap) => {
         return Object.keys(seriesMap).reduce((visMap, sID) => {
                 visMap[sID] = linesMap[sID];

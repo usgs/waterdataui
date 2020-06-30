@@ -1,11 +1,12 @@
 
 import {link} from '../../../lib/d3-redux';
+
 import {getCurrentVariableMedianStatistics} from '../../selectors/median-statistics-selector';
 import {getCurrentVariableTimeSeries} from '../../selectors/time-series-selector';
 import {Actions} from '../../store/instantaneous-value-time-series-state';
 
 import {audibleUI} from './audible';
-import {isVisibleSelector} from './time-series';
+import {isVisibleSelector} from './selectors/time-series-data';
 
 /*
  * Create the show audible toggle, last year toggle, and median toggle for the time series graph.

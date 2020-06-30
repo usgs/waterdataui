@@ -9,18 +9,18 @@ import {link} from '../../../lib/d3-redux';
 import {mediaQuery}  from '../../../utils';
 
 import {getAgencyCode, getMonitoringLocationName} from '../../selectors/time-series-selector';
-import {waterwatchVisible, getWaterwatchFloodLevels} from '../../selectors/flood-data-selector';
+import {isWaterwatchVisible, getWaterwatchFloodLevels} from '../../selectors/flood-data-selector';
 
-import {getAxes}  from './axes';
+import {getAxes}  from './selectors/axes';
 import {
-    currentVariableLineSegmentsSelector,
+    getCurrentVariableLineSegments,
     getCurrentVariableMedianStatPoints,
     HASH_ID
 } from './drawing-data';
-import {getMainLayout} from './layout';
-import {getMainXScale, getMainYScale, getBrushXScale} from './scales';
-import {descriptionSelector, isVisibleSelector, titleSelector} from './time-series';
-import {drawDataLines} from './time-series-data';
+import {getMainLayout} from './selectors/layout';
+import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
+import {descriptionSelector, isVisibleSelector, titleSelector} from './selectors/time-series-data';
+import {drawDataLines} from './time-series-lines';
 import {drawTooltipFocus, drawTooltipText}  from './tooltip';
 
 const addDefsPatterns = function(elem) {
@@ -236,7 +236,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
         .call(link(store, appendAxes, getAxes()))
         .call(link(store, drawDataLines, createStructuredSelector({
             visible: isVisibleSelector('current'),
-            tsLinesMap: currentVariableLineSegmentsSelector('current'),
+            tsLinesMap: getCurrentVariableLineSegments('current'),
             xScale: getMainXScale('current'),
             yScale: getMainYScale,
             tsKey: () => 'current',
@@ -244,7 +244,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
         })))
         .call(link(store, drawDataLines, createStructuredSelector({
             visible: isVisibleSelector('compare'),
-            tsLinesMap: currentVariableLineSegmentsSelector('compare'),
+            tsLinesMap: getCurrentVariableLineSegments('compare'),
             xScale: getMainXScale('compare'),
             yScale: getMainYScale,
             tsKey: () => 'compare',
@@ -257,7 +257,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
             seriesPoints: getCurrentVariableMedianStatPoints
         })))
        .call(link(store, plotAllFloodLevelPoints, createStructuredSelector({
-            visible: waterwatchVisible,
+            visible: isWaterwatchVisible,
             xscale: getBrushXScale('current'),
             yscale: getMainYScale,
             seriesPoints: getWaterwatchFloodLevels

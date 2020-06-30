@@ -2,13 +2,13 @@ import {scaleLinear, scaleSymlog} from 'd3-scale';
 import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
-import {getVariables, getCurrentParmCd, getRequestTimeRange, getTimeSeriesForTsKey} from '../../selectors/time-series-selector';
-import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../../utils';
+import {getVariables, getCurrentParmCd, getRequestTimeRange, getTimeSeriesForTsKey} from '../../../selectors/time-series-selector';
+import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../../../utils';
 
 import {getYDomain, SYMLOG_PARMS} from './domain';
-import {visiblePointsSelector, pointsByTsKeySelector} from './drawing-data';
+import {getPointsByTsKey} from './drawing-data';
 import {getLayout} from './layout';
-import {TEMPERATURE_PARAMETERS} from './time-series';
+import {TEMPERATURE_PARAMETERS} from './time-series-data';
 
 const REVERSE_AXIS_PARMS = [
     '72019',
@@ -19,6 +19,10 @@ const REVERSE_AXIS_PARMS = [
     '72147',
     '72148'
 ];
+
+/* The two create* functions are helper functions. They are exported primariy
+ * for ease of testing
+ */
 
 /**
  * Create an x-scale oriented on the left
@@ -101,10 +105,9 @@ export const getBrushXScale = (tsKey) => getXScale('BRUSH', tsKey);
  */
 export const getYScale = memoize(kind => createSelector(
     getLayout(kind),
-    visiblePointsSelector,
+    getYDomain,
     getCurrentParmCd,
-    (layout, pointArrays, currentVarParmCd) => {
-        const yDomain = getYDomain(pointArrays, currentVarParmCd);
+    (layout, yDomain, currentVarParmCd) => {
         return createYScale(currentVarParmCd, yDomain, layout.height - (layout.margin.top + layout.margin.bottom));
     }
 ));
@@ -114,11 +117,10 @@ export const getBrushYScale = getYScale('BRUSH');
 
 export const getSecondaryYScale = memoize(kind => createSelector(
     getLayout(kind),
-    visiblePointsSelector,
+    getYDomain,
     getCurrentParmCd,
-    (layout, pointArrays, currentVarParmCd) => {
-        const yDomain = getYDomain(pointArrays, currentVarParmCd);
-        let convertedYDomain = [0, 1];
+    (layout, yDomain, currentVarParmCd) => {
+        let convertedYDomain;
         if (TEMPERATURE_PARAMETERS.celsius.includes(currentVarParmCd)) {
             convertedYDomain = yDomain.map(celsius => convertCelsiusToFahrenheit(celsius));
         } else if (TEMPERATURE_PARAMETERS.fahrenheit.includes(currentVarParmCd)) {
@@ -139,8 +141,8 @@ export const getSecondaryYScale = memoize(kind => createSelector(
  * @param  {String} tsKey             Time series key
  * @return {Object} - keys are parmCd and values are array of array of points
  */
-const parmCdPointsSelector = memoize((tsKey, period) => createSelector(
-    pointsByTsKeySelector(tsKey, period),
+const getParmCdPoints = memoize((tsKey, period) => createSelector(
+    getPointsByTsKey(tsKey, period),
     getTimeSeriesForTsKey(tsKey, period),
     getVariables,
     (tsPoints, timeSeries, variables) => {
@@ -160,8 +162,8 @@ const parmCdPointsSelector = memoize((tsKey, period) => createSelector(
  * Returns x and y scales for all "current" time series.
  * @type {Object}   Mapping of parameter code to time series list.
  */
-export const timeSeriesScalesByParmCdSelector = memoize((tsKey, period, dimensions) => createSelector(
-    parmCdPointsSelector(tsKey, period),
+export const getTimeSeriesScalesByParmCd= memoize((tsKey, period, dimensions) => createSelector(
+    getParmCdPoints(tsKey, period),
     getRequestTimeRange(tsKey, period),
     (pointsByParmCd, requestTimeRange) => {
         return Object.keys(pointsByParmCd).reduce((tsScales, parmCd) => {

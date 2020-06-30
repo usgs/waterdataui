@@ -2,11 +2,11 @@ import {extent, ticks} from 'd3-array';
 import {format} from 'd3-format';
 import {createSelector} from 'reselect';
 
-import config from '../../../config';
-import {mediaQuery} from '../../../utils';
-import {getCurrentParmCd} from '../../selectors/time-series-selector';
+import config from '../../../../config';
+import {mediaQuery} from '../../../../utils';
+import {getCurrentParmCd} from '../../../selectors/time-series-selector';
 
-import {visiblePointsSelector} from './drawing-data';
+import {getVisiblePoints} from '../drawing-data';
 
 
 const PADDING_RATIO = 0.2;
@@ -18,8 +18,11 @@ export const SYMLOG_PARMS = [
     '72137'
 ];
 
+/*
+ * The helper functions are exported as an aid to testing. Only the selectors are actually imported into other modules
+ */
 /**
- *  Return domain padded on both ends by paddingRatio.
+ *  Helper function which returns domain padded on both ends by paddingRatio.
  *  For positive domains, a zero-lower bound on the y-axis is enforced.
  *  @param {Array} domain - array of two numbers
  *  @param {Boolean} lowerBoundPOW10 - using log scale
@@ -52,50 +55,6 @@ export const extendDomain = function (domain, lowerBoundPOW10) {
     ];
 };
 
-
-export const getYDomain = function (pointArrays, currentVarParmCd) {
-    let yExtent;
-    let scaleDomains = [];
-
-    // Calculate max and min for data
-    for (const points of pointArrays) {
-        if (points.length === 0) {
-            continue;
-        }
-        const finitePts = points.map(pt => pt.value).filter(val => isFinite(val));
-        let ptExtent = extent(finitePts);
-        if (ptExtent[0] === ptExtent[1]) {
-            // when both the lower and upper values of
-            // extent are the same, the domain of the
-            // extent is from -Infinity to +Infinity;
-            // this isn't useful for creation of data
-            // points, so add this broadens the extent
-            // a bit for single point series
-            if (ptExtent[0]) {
-                ptExtent = [ptExtent[0] - ptExtent[0] / 2, ptExtent[0] + ptExtent[0] / 2];
-            } else { // ptExtent of 0 so just set to a constant
-                ptExtent = [0, 1];
-            }
-        }
-        scaleDomains.push(ptExtent);
-    }
-    if (scaleDomains.length > 0) {
-        const flatDomains = [].concat(...scaleDomains).filter(val => isFinite(val));
-        if (flatDomains.length > 0) {
-            yExtent = [Math.min(...flatDomains), Math.max(...flatDomains)];
-        }
-    }
-
-    // Add padding to the extent and handle empty data sets.
-    if (yExtent) {
-        yExtent = extendDomain(yExtent, SYMLOG_PARMS.indexOf(currentVarParmCd) > -1);
-    } else {
-        yExtent = [0, 1];
-    }
-    return yExtent;
-};
-
-
 /**
  * Helper function that finds highest negative value (or lowest positive value) in array of tick values, then returns
  * that number's absolute value
@@ -124,7 +83,7 @@ export const getLowestAbsoluteValueOfTickValues = function(tickValues) {
  * value of negative y-axis values
  * @returns {array} additionalTickValues, set of new y-axis tick values that will fill tick mark gaps on log scale graphs
  */
-export const generateAdditionalTickValues = function(lowestTickValueOfLogScale) {
+const generateAdditionalTickValues = function(lowestTickValueOfLogScale) {
     let additionalTickValues = [];
     while (lowestTickValueOfLogScale > 2) {
         lowestTickValueOfLogScale = Math.ceil(lowestTickValueOfLogScale / 2);
@@ -186,7 +145,7 @@ export const generateNegativeTicks = function(tickValues, additionalTickValues) 
 
 
 /**
- * Function creates a new set of tick values that will fill in gaps in log scale ticks, then combines this new set with the
+ * Help function creates a new set of tick values that will fill in gaps in log scale ticks, then combines this new set with the
  * original set of tick marks.
  * @param {array} tickValues, the list of y-axis tick values
  * @param {array} yDomain, an array of two values, the lower and upper extent of the y-axis
@@ -211,59 +170,97 @@ export const getFullArrayOfAdditionalTickMarks = function(tickValues, yDomain) {
    return fullArrayOfTickMarks;
 };
 
-
-/**
- * Helper function which generates y tick values for a scale
- * @param {Array} yDomain - Two element array representing the domain on the yscale.
- * @param {Array} parmCd - parameter code for time series that is being generated.
- * @returns {Array} of tick values
+/*
+ * Returns a Redux selector function that returns the yExtent for the currently
+ * visible points
  */
-export const getYTickDetails = function (yDomain, parmCd) {
-    const isSymlog = SYMLOG_PARMS.indexOf(parmCd) > -1;
-
-    let tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
-
-    // When there are too many log scale ticks they will overlap--reduce the number in proportion to the number of ticks
-    // For example, if there are 37 tick marks, every 4 ticks will be used... if there are 31 tick marks, every 3 ticks
-    // will be used. Screens smaller than the USWDS defined medium screen will use fewer tick marks than larger screens.
-    if (isSymlog) {
-        // add additional ticks and labels to log scales as needed
-        tickValues = getFullArrayOfAdditionalTickMarks(tickValues, yDomain);
-        // remove ticks if there are too many of them
-        let lengthLimit = 20;
-        let divisor = 10;
-        if (!mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
-            lengthLimit = 10;
-            divisor = 5;
-        }
-        if (tickValues.length > lengthLimit) {
-            tickValues = tickValues
-                .sort((a, b) => a - b)
-                .filter((_, index) => {
-                    return !(index % Math.round(tickValues.length/divisor));
-                });
-        }
-    }
-
-    // If all ticks are integers, don't display right of the decimal place.
-    // Otherwise, format with two decimal points.
-    const tickFormat = tickValues.filter(t => !Number.isInteger(t)).length ? '.2f' : 'd';
-    return {
-        tickValues,
-        tickFormat: format(tickFormat)
-    };
-};
-
-
-const yDomainSelector = createSelector(
-    visiblePointsSelector,
+export const getYDomain = createSelector(
+    getVisiblePoints,
     getCurrentParmCd,
-    getYDomain
+    (pointArrays, currentVarParmCd) => {
+        let yExtent;
+        let scaleDomains = [];
+
+        // Calculate max and min for data
+        for (const points of pointArrays) {
+            if (points.length === 0) {
+                continue;
+            }
+            const finitePts = points.map(pt => pt.value).filter(val => isFinite(val));
+            let ptExtent = extent(finitePts);
+            if (ptExtent[0] === ptExtent[1]) {
+                // when both the lower and upper values of
+                // extent are the same, the domain of the
+                // extent is from -Infinity to +Infinity;
+                // this isn't useful for creation of data
+                // points, so add this broadens the extent
+                // a bit for single point series
+                if (ptExtent[0]) {
+                    ptExtent = [ptExtent[0] - ptExtent[0] / 2, ptExtent[0] + ptExtent[0] / 2];
+                } else { // ptExtent of 0 so just set to a constant
+                    ptExtent = [0, 1];
+                }
+            }
+            scaleDomains.push(ptExtent);
+        }
+        if (scaleDomains.length > 0) {
+            const flatDomains = [].concat(...scaleDomains).filter(val => isFinite(val));
+            if (flatDomains.length > 0) {
+                yExtent = [Math.min(...flatDomains), Math.max(...flatDomains)];
+            }
+        }
+
+        // Add padding to the extent and handle empty data sets.
+        if (yExtent) {
+            yExtent = extendDomain(yExtent, SYMLOG_PARMS.indexOf(currentVarParmCd) > -1);
+        } else {
+            yExtent = [0, 1];
+        }
+        return yExtent;
+    }
 );
 
-
-export const tickSelector = createSelector(
-    yDomainSelector,
+/*
+ * Returns a Redux selector function that returns an Object with two properties:
+ *      @prop tickValues {Array of Number}
+ *      @prop tickFormat {Array of String} - formatted tickValues
+ */
+export const getYTickDetails = createSelector(
+    getYDomain,
     getCurrentParmCd,
-    getYTickDetails
+    (yDomain, parmCd) => {
+        const isSymlog = SYMLOG_PARMS.indexOf(parmCd) > -1;
+
+        let tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
+
+        // When there are too many log scale ticks they will overlap--reduce the number in proportion to the number of ticks
+        // For example, if there are 37 tick marks, every 4 ticks will be used... if there are 31 tick marks, every 3 ticks
+        // will be used. Screens smaller than the USWDS defined medium screen will use fewer tick marks than larger screens.
+        if (isSymlog) {
+            // add additional ticks and labels to log scales as needed
+            tickValues = getFullArrayOfAdditionalTickMarks(tickValues, yDomain);
+            // remove ticks if there are too many of them
+            let lengthLimit = 20;
+            let divisor = 10;
+            if (!mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
+                lengthLimit = 10;
+                divisor = 5;
+            }
+            if (tickValues.length > lengthLimit) {
+                tickValues = tickValues
+                    .sort((a, b) => a - b)
+                    .filter((_, index) => {
+                        return !(index % Math.round(tickValues.length / divisor));
+                    });
+            }
+        }
+
+        // If all ticks are integers, don't display right of the decimal place.
+        // Otherwise, format with two decimal points.
+        const tickFormat = tickValues.filter(t => !Number.isInteger(t)).length ? '.2f' : 'd';
+        return {
+            tickValues: tickValues,
+            tickFormat: format(tickFormat)
+        };
+    }
 );
