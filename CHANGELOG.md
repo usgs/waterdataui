@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - List of affiliated networks for a monitoring location on its page.
 - Classic page link now uses the inventory if no IV time series data is available for the site.
 - Support for limited containerized deployments.
+- Radio buttons for switching between available DV Time Series graphs
 
 ## [0.33.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.32.0...waterdataui-0.33.0) - 2020-06-10
 ### Changed
