@@ -2,16 +2,15 @@
 import {DateTime} from 'luxon';
 
 import {
-    lineSegmentsSelector,
-    pointsSelector,
-    allPointsSelector,
-    pointsByTsKeySelector,
+    getLineSegments,
+    getAllPoints,
+    getPointsByTsKey,
     classesForPoint,
-    lineSegmentsByParmCdSelector,
-    currentVariableLineSegmentsSelector,
-    currentVariablePointsSelector,
-    currentVariablePointsByTsIdSelector,
-    visiblePointsSelector,
+    getLineSegmentsByParmCd,
+    getCurrentVariableLineSegments,
+    getCurrentVariablePoints,
+    getCurrentVariablePointsByTsId,
+    getVisiblePoints,
     getCurrentVariableMedianStatPoints,
     MAX_LINE_POINT_GAP,
     getCurrentPointData
@@ -204,9 +203,9 @@ const TEST_DATA = {
 
 describe('monitoring-location/components/hydrograph/drawingData module', () => {
 
-    describe('allPointsSelector', () => {
+    describe('getAllPoints', () => {
 
-        const result = allPointsSelector(TEST_DATA);
+        const result = getAllPoints(TEST_DATA);
         it('Return three time series', () => {
             expect(Object.keys(result).length).toBe(3);
             expect(result['69928:00060']).toBeDefined();
@@ -223,7 +222,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
         });
 
         it('Return the empty object if there are no time series', () =>  {
-            expect(allPointsSelector({ivTimeSeriesData: {}})).toEqual({});
+            expect(getAllPoints({ivTimeSeriesData: {}})).toEqual({});
         });
 
         it('Resets the accumulator for precip if null value is encountered', () => {
@@ -265,13 +264,13 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
                 }
             };
 
-            expect(allPointsSelector(newTestData)['69930:00045'].map((point) => point.value)).toEqual([0.01, 0.03, null, 0.04]);
+            expect(getAllPoints(newTestData)['69930:00045'].map((point) => point.value)).toEqual([0.01, 0.03, null, 0.04]);
         });
     });
 
-    describe('pointsByTsKeySelector', () => {
+    describe('getPointsByTsKey', () => {
         it('Return the points array for the ts Key selector', () => {
-            const result = pointsByTsKeySelector('current')(TEST_DATA);
+            const result = getPointsByTsKey('current')(TEST_DATA);
 
             expect(Object.keys(result).length).toBe(2);
             expect(result['69928:00060']).toBeDefined();
@@ -279,33 +278,33 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
         });
 
         it('return the empty object if no time series for series', () => {
-            expect(pointsByTsKeySelector('current:P30D:00010')(TEST_DATA)).toEqual({});
+            expect(getPointsByTsKey('current:P30D:00010')(TEST_DATA)).toEqual({});
         });
     });
 
-    describe('currentVariablePointsByTsIdSelector', () => {
+    describe('getCurrentVariablePointsByTsId', () => {
        it('Return the current variable for the tsKey', () => {
-           const result = currentVariablePointsByTsIdSelector('current')(TEST_DATA);
+           const result = getCurrentVariablePointsByTsId('current')(TEST_DATA);
 
            expect(result['69928:00060']).toBeDefined();
            expect(result['69928:00060']).toEqual(TEST_DATA.ivTimeSeriesData.timeSeries['69928:00060'].points);
        });
 
        it('Return an empty array if the tsKey has no time series with the current variable', () => {
-           expect(currentVariablePointsByTsIdSelector('compare')(TEST_DATA)).toEqual({});
+           expect(getCurrentVariablePointsByTsId('compare')(TEST_DATA)).toEqual({});
        });
     });
 
-    describe('currentVariablePointsSelector', () => {
+    describe('getCurrentVariablePoints', () => {
        it('Return the current variable for the tsKey', () => {
-           const result = currentVariablePointsSelector('current')(TEST_DATA);
+           const result = getCurrentVariablePoints('current')(TEST_DATA);
 
            expect(result.length).toBe(1);
            expect(result[0]).toEqual(TEST_DATA.ivTimeSeriesData.timeSeries['69928:00060'].points);
        });
 
        it('Return an empty array if the tsKey has no time series with the current variable', () => {
-           expect(currentVariablePointsSelector('compare')(TEST_DATA)).toEqual([]);
+           expect(getCurrentVariablePoints('compare')(TEST_DATA)).toEqual([]);
        });
     });
 
@@ -351,7 +350,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
 
     describe('line segment selector', () => {
         it('should separate on approved', () => {
-            expect(lineSegmentsSelector('current')({
+            expect(getLineSegments('current')({
                 ...TEST_DATA,
                 ivTimeSeriesData: {
                     ...TEST_DATA.ivTimeSeriesData,
@@ -420,7 +419,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
         });
 
         it('should separate on estimated', () => {
-            expect(lineSegmentsSelector('current')({
+            expect(getLineSegments('current')({
                 ...TEST_DATA,
                 ivTimeSeriesData: {
                     ...TEST_DATA.ivTimeSeriesData,
@@ -494,7 +493,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
         });
 
         it('should separate out masked values', () => {
-            expect(lineSegmentsSelector('current')({
+            expect(getLineSegments('current')({
                 ...TEST_DATA,
                 ivTimeSeriesData: {
                     ...TEST_DATA.ivTimeSeriesData,
@@ -584,7 +583,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
                 new Date(3 * MAX_LINE_POINT_GAP + 1),
                 new Date(3 * MAX_LINE_POINT_GAP + 2)
             ];
-            expect(lineSegmentsSelector('current')({
+            expect(getLineSegments('current')({
                 ...TEST_DATA,
                 ivTimeSeriesData: {
                     ...TEST_DATA.ivTimeSeriesData,
@@ -662,7 +661,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
                 new Date(3 * MAX_LINE_POINT_GAP + 1),
                 new Date(3 * MAX_LINE_POINT_GAP + 2)
             ];
-            expect(lineSegmentsSelector('current')({
+            expect(getLineSegments('current')({
                 ...TEST_DATA,
                 ivTimeSeriesData: {
                     ...TEST_DATA.ivTimeSeriesData,
@@ -723,7 +722,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
         });
 
         it('Should not set currentMethod to true if method is selected', () => {
-            expect(lineSegmentsSelector('current')({
+            expect(getLineSegments('current')({
                 ...TEST_DATA,
                 ivTimeSeriesState : {
                     ...TEST_DATA.ivTimeSeriesState,
@@ -803,9 +802,9 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
         });
     });
 
-    describe('lineSegmentsByParmCdSelector', () => {
+    describe('getLineSegmentsByParmCd', () => {
         it('Should return two mappings for current time series', () => {
-            const result = lineSegmentsByParmCdSelector('current')(TEST_DATA);
+            const result = getLineSegmentsByParmCd('current')(TEST_DATA);
 
             expect(Object.keys(result).length).toBe(2);
             expect(result['00060']).toBeDefined();
@@ -813,60 +812,16 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
         });
     });
 
-    describe('currentVariableLineSegmentsSelector', () => {
+    describe('getCurrentVariableLineSegments', () => {
         it('Should return a single time series for current', () => {
-            const result = currentVariableLineSegmentsSelector('current')(TEST_DATA);
+            const result = getCurrentVariableLineSegments('current')(TEST_DATA);
 
             expect(Object.keys(result).length).toBe(1);
             expect(result['69928:00060']).toBeDefined();
         });
 
         it('Should return an empty object for the compare time series', () => {
-            expect(currentVariableLineSegmentsSelector('compare')(TEST_DATA)).toEqual({});
-        });
-    });
-
-    describe('pointsSelector', () => {
-        it('works with a single collection and two time series', () => {
-            expect(pointsSelector('current')({
-                ivTimeSeriesData: {
-                    requests: {
-                        current: {
-                            timeSeriesCollections: ['coll1']
-                        }
-                    },
-                    timeSeriesCollections: {
-                        'coll1': {
-                            variable: 45807197,
-                            timeSeries: ['one', 'two']
-                        }
-                    },
-                    timeSeries: {
-                        one: {
-                            points: ['ptOne', 'ptTwo', 'ptThree'],
-                            tsKey: 'current:P7D',
-                            variable: 45807197
-                        },
-                        two: {
-                            points: ['ptOne2', 'ptTwo2', 'ptThree2'],
-                            tsKey: 'current:P7D',
-                            variable: 45807197
-                        }
-                    },
-                    variables: {
-                        '45807197': {
-                            variableCode: {
-                                value: '00060'
-                            },
-                            oid: 45807197
-                        }
-                    }
-                },
-                ivTimeSeriesState: {
-                    currentIVVariableID: '45807197',
-                    currentIVDateRangeKind: 'P7D'
-                }
-            })).toEqual([['ptOne', 'ptTwo', 'ptThree'], ['ptOne2', 'ptTwo2', 'ptThree2']]);
+            expect(getCurrentVariableLineSegments('compare')(TEST_DATA)).toEqual({});
         });
     });
 
@@ -887,7 +842,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
         });
     });
 
-    describe('visiblePointsSelector', () => {
+    describe('getVisiblePoints', () => {
         const testData = {
             ...TEST_DATA,
             ivTimeSeriesState: {
@@ -901,7 +856,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
         };
 
         it('Return two arrays', () => {
-           expect(visiblePointsSelector(testData).length).toBe(2);
+           expect(getVisiblePoints(testData).length).toBe(2);
         });
 
         it('Expects one array if only median is not visible', () => {
@@ -917,7 +872,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
                 }
             };
 
-            expect(visiblePointsSelector(newTestData).length).toBe(1);
+            expect(getVisiblePoints(newTestData).length).toBe(1);
         });
 
         it('Expects an empty array if no visible series has the current variable', () => {
@@ -929,7 +884,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
                 }
             };
 
-            expect(visiblePointsSelector(newTestData).length).toBe(0);
+            expect(getVisiblePoints(newTestData).length).toBe(0);
         });
     });
 

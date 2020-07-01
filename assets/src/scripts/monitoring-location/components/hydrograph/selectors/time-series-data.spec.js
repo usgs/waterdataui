@@ -1,6 +1,6 @@
 import {
-    hasTimeSeriesWithPoints, isVisibleSelector, yLabelSelector, titleSelector,
-    descriptionSelector, tsTimeZoneSelector, secondaryYLabelSelector} from './time-series';
+    isVisible, getYLabel, getTitle,
+    getDescription, getTsTimeZone, getSecondaryYLabel} from './time-series-data';
 
 
 const TEST_DATA = {
@@ -217,17 +217,7 @@ const TEST_DATA = {
 
 describe('monitoring-location/components/hydrograph/time-series module', () => {
 
-    describe('hasTimeSeriesWithPoints', () => {
-        it('Returns true if the time series for tsKey and period have non zero points', () => {
-            expect(hasTimeSeriesWithPoints('current')(TEST_DATA)).toBe(true);
-            expect(hasTimeSeriesWithPoints('current', 'P30D')(TEST_DATA)).toBe(true);
-        });
-        it('Returns false if the times series for tsKey and period have zero time series', () => {
-            expect(hasTimeSeriesWithPoints('compare', 'P30D')(TEST_DATA)).toBe(false);
-        });
-    });
-
-    describe('isVisibleSelector', () => {
+    describe('isVisible', () => {
         it('Returns whether the time series is visible', () => {
             const store = {
                 ivTimeSeriesState: {
@@ -239,19 +229,19 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
                 }
             };
 
-            expect(isVisibleSelector('current')(store)).toBe(true);
-            expect(isVisibleSelector('compare')(store)).toBe(false);
-            expect(isVisibleSelector('median')(store)).toBe(true);
+            expect(isVisible('current')(store)).toBe(true);
+            expect(isVisible('compare')(store)).toBe(false);
+            expect(isVisible('median')(store)).toBe(true);
         });
     });
 
     describe('yLabelSelector', () => {
         it('Returns string to be used for labeling the y axis', () => {
-            expect(yLabelSelector(TEST_DATA)).toBe('Discharge, cubic feet per second');
+            expect(getYLabel(TEST_DATA)).toBe('Discharge, cubic feet per second');
         });
 
         it('Returns empty string if no variable selected', () => {
-            expect(yLabelSelector({
+            expect(getYLabel({
                 ...TEST_DATA,
                 ivTimeSeriesState: {
                     ...TEST_DATA.ivTimeSeriesState,
@@ -261,9 +251,9 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
         });
     });
 
-    describe('secondaryYLabelSelector', () => {
+    describe('getSecondaryYLabel', () => {
         it('returns a secondary label when a celsius parameter is selected', () => {
-             expect(secondaryYLabelSelector({
+             expect(getSecondaryYLabel({
                  ...TEST_DATA,
                  ivTimeSeriesState: {
                      ...TEST_DATA.ivTimeSeriesState,
@@ -273,7 +263,7 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
         });
 
         it('returns a secondary label when a fahrenheit parameter is selected', () => {
-             expect(secondaryYLabelSelector({
+             expect(getSecondaryYLabel({
                  ...TEST_DATA,
                  ivTimeSeriesState: {
                      ...TEST_DATA.ivTimeSeriesState,
@@ -283,16 +273,16 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
         });
 
         it('does not return a secondary when a parameter when a non-temperature parameter is selected', () => {
-             expect(secondaryYLabelSelector(TEST_DATA)).toBeNull();
+             expect(getSecondaryYLabel(TEST_DATA)).toBeNull();
         });
     });
 
-    describe('titleSelector', () => {
+    describe('getTitle', () => {
         it('Returns the string to used for graph title', () => {
-            expect(titleSelector(TEST_DATA)).toBe('Streamflow');
+            expect(getTitle(TEST_DATA)).toBe('Streamflow');
         });
         it('Returns the title string with the method description appended', () => {
-            expect(titleSelector({
+            expect(getTitle({
                 ...TEST_DATA,
                 ivTimeSeriesState: {
                     ...TEST_DATA.ivTimeSeriesState,
@@ -301,7 +291,7 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
             })).toBe('Streamflow' + ', ' + '4.1 ft from riverbed (middle)');
         });
         it('Returns empty string if no variable selected', () => {
-            expect(titleSelector({
+            expect(getTitle({
                 ...TEST_DATA,
                 ivTimeSeriesState: {
                     ...TEST_DATA.ivTimeSeriesState,
@@ -311,9 +301,9 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
         });
     });
 
-    describe('descriptionSelector', () => {
+    describe('getDescription', () => {
         it('Returns a description with the date for the current times series', () => {
-            const result = descriptionSelector(TEST_DATA);
+            const result = getDescription(TEST_DATA);
 
             expect(result).toContain('Discharge, cubic feet per second');
             expect(result).toContain('1/2/2017');
@@ -321,24 +311,24 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
         });
     });
 
-    describe('tsTimeZoneSelector', () => {
+    describe('getTsTimeZone', () => {
 
         it('Returns local if series is empty', () => {
-            const result = tsTimeZoneSelector({
+            const result = getTsTimeZone({
                 series: {}
             });
             expect(result).toEqual('local');
         });
 
         it('Returns local if timezone is null', () => {
-            const result = tsTimeZoneSelector({
+            const result = getTsTimeZone({
                 ianaTimeZone: null
             });
             expect(result).toEqual('local');
         });
 
         it('Returns the IANA timezone NWIS and IANA agree', () => {
-            const result = tsTimeZoneSelector({
+            const result = getTsTimeZone({
                 ianaTimeZone: 'America/New_York'
             });
             expect(result).toEqual('America/New_York');

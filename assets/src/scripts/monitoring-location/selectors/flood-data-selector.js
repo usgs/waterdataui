@@ -29,7 +29,7 @@ export const hasWaterwatchData = createSelector(
 /*
  * Provides a function which returns True if waterwatch flood levels should be visible.
  */
-export const waterwatchVisible = createSelector(
+export const isWaterwatchVisible = createSelector(
     hasWaterwatchData,
     getCurrentParmCd,
     (hasFloodLevels, paramCd) =>

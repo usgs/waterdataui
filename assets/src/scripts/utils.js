@@ -228,8 +228,8 @@ export const convertCelsiusToFahrenheit = function(celsius) {
 
 /*
  * Return the variables sorted with the ones we care about first
- * @param {Array of String}
- * @return {Array of String}
+ * @param {Array of variable Object}
+ * @return {Array of variable Object}
  */
 export const sortedParameters = function (variables) {
     const PARAM_PERTINENCE = {

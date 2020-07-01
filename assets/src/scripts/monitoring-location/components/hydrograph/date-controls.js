@@ -3,6 +3,7 @@ import {createStructuredSelector} from 'reselect';
 
 import {link} from '../../../lib/d3-redux';
 import {drawLoadingIndicator} from '../../../d3-rendering/loading-indicator';
+
 import {
     isLoadingTS,
     hasAnyTimeSeries,

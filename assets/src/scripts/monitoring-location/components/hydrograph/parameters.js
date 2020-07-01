@@ -1,56 +1,13 @@
 import {line} from 'd3-shape';
 import {select} from 'd3-selection';
-import {createSelector} from 'reselect';
 
 import config from '../../../config';
 import {appendTooltip} from '../../../tooltips';
-import {sortedParameters} from '../../../utils';
 
-import {getVariables, getCurrentVariableID, getTimeSeries} from '../../selectors/time-series-selector';
 import {Actions} from '../../store/instantaneous-value-time-series-data';
 
-import {MASK_DESC} from './drawing-data';
-import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from './layout';
-
-/**
- * Returns metadata for each available time series.
- * @param  {Object} state Redux state
- * @return {Array}        Sorted array of [code, metadata] pairs.
- */
-export const availableTimeSeriesSelector = createSelector(
-    getVariables,
-    getTimeSeries,
-    getCurrentVariableID,
-    (variables, timeSeries, currentVariableID) => {
-        if (!variables) {
-            return [];
-        }
-
-        let sorted = [];
-        const seriesList = Object.values(timeSeries);
-        const timeSeriesVariables = seriesList.map(x => x.variable);
-        const sortedVariables = sortedParameters(variables).map(x => x.oid);
-        for (const variableID of sortedVariables) {
-            // start the next iteration if a variable is not a
-            // series returned by the getTimeSeries
-            if (!timeSeriesVariables.includes(variableID)) {
-                continue;
-            }
-            const variable = variables[variableID];
-            const currentTimeSeriesCount = seriesList.filter(ts => ts.tsKey === 'current:P7D' && ts.variable === variableID).length;
-            if (currentTimeSeriesCount > 0) {
-                let varCodes = {
-                    variableID: variable.oid,
-                    description: variable.variableDescription,
-                    selected: currentVariableID === variableID,
-                    currentTimeSeriesCount: currentTimeSeriesCount
-                };
-                sorted.push([variable.variableCode.value, varCodes]);
-            }
-        }
-        return sorted;
-    }
-);
+import {MASK_DESC} from './selectors/drawing-data';
+import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from './selectors/layout';
 
 /**
  * Draw a sparkline in a selected SVG element
@@ -126,14 +83,14 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  * a row changes the active parameter code.
  * @param  {Object} elem                        d3 selection
  * @param  {String} siteno
- * @param  {Object} availableTimeSeries         Time series metadata to display
+ * @param  {Object} availableParameterCodes        parameter metadata to display
  * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
  * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
  */
 export const plotSeriesSelectTable = function (elem,
    {
         siteno,
-        availableTimeSeries,
+        availableParameterCodes,
         lineSegmentsByParmCd,
         timeSeriesScalesByParmCd
    }, store ){
@@ -142,7 +99,7 @@ export const plotSeriesSelectTable = function (elem,
     const scrollTop = lastTable.size() ? lastTable.property('scrollTop') : null;
     elem.select('#select-time-series').remove();
 
-    if (!availableTimeSeries.length) {
+    if (!availableParameterCodes.length) {
         return;
     }
 
@@ -171,41 +128,41 @@ export const plotSeriesSelectTable = function (elem,
 
     table.append('tbody')
         .selectAll('tr')
-        .data(availableTimeSeries)
+        .data(availableParameterCodes)
         .enter().append('tr')
             .attr('ga-on', 'click')
             .attr('ga-event-category', 'selectTimeSeries')
-            .attr('ga-event-action', (parm) => `time-series-parmcd-${parm[0]}`)
+            .attr('ga-event-action', (parm) => `time-series-parmcd-${parm.parameterCode}`)
             .attr('role', 'option')
-            .classed('selected', parm => parm[1].selected)
-            .attr('aria-selected', parm => parm[1].selected)
+            .classed('selected', parm => parm.selected)
+            .attr('aria-selected', parm => parm.selected)
             .on('click', function (parm) {
-                if (!parm[1].selected) {
-                    store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, parm[1].variableID));
+                if (!parm.selected) {
+                    store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, parm.variableID));
                 }
             })
             .call(tr => {
                 let parmCdCol = tr.append('th')
                     .attr('scope', 'row');
                 parmCdCol.append('span')
-                    .text(parm => parm[1].description)
-                    .call(appendTooltip, parm => `Parameter code: ${parm[0]}`);
+                    .text(parm => parm.description)
+                    .call(appendTooltip, parm => `Parameter code: ${parm.parameterCode}`);
                 tr.append('td')
                     .append('svg')
                     .attr('width', SPARK_LINE_DIM.width.toString())
                     .attr('height', SPARK_LINE_DIM.height.toString());
                 tr.append('td')
-                    .text(parm => parm[1].currentTimeSeriesCount);
+                    .text(parm => parm.timeSeriesCount);
                 tr.append('td')
                     .style('white-space', 'nowrap')
-                    .text(parm =>`${config.uvPeriodOfRecord[parm[0]].begin_date} to ${config.uvPeriodOfRecord[parm[0]].end_date}`);
+                    .text(parm =>`${config.uvPeriodOfRecord[parm.parameterCode].begin_date} to ${config.uvPeriodOfRecord[parm.parameterCode].end_date}`);
             });
 
     table.property('scrollTop', scrollTop);
 
     table.selectAll('tbody svg').each(function(d) {
         let selection = select(this);
-        const parmCd = d[0];
+        const parmCd = d.parameterCode;
         const lineSegments = lineSegmentsByParmCd[parmCd] ? lineSegmentsByParmCd[parmCd] : [];
         for (const seriesLineSegments of lineSegments) {
             selection.call(addSparkLine, {

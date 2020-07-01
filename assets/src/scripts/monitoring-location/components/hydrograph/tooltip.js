@@ -1,7 +1,6 @@
 import {set} from 'd3-collection';
 import {select} from 'd3-selection';
 import {transition} from 'd3-transition';
-import memoize from 'fast-memoize';
 import {DateTime} from 'luxon';
 import {createSelector, createStructuredSelector} from 'reselect';
 
@@ -11,42 +10,15 @@ import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from '../../../d3-ren
 import {link} from '../../../lib/d3-redux';
 import {mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../../utils';
 
-import {getCurrentVariable, getCurrentParmCd} from '../../selectors/time-series-selector';
+import {getCurrentParmCd} from '../../selectors/time-series-selector';
 import {Actions} from '../../store/instantaneous-value-time-series-state';
 
-import {cursorTimeSelector, tsCursorPointsSelector} from './cursor';
-import {classesForPoint, MASK_DESC} from './drawing-data';
-import {getMainLayout} from './layout';
-import {getMainXScale, getMainYScale} from './scales';
-import {tsTimeZoneSelector, TEMPERATURE_PARAMETERS} from './time-series';
+import {getCursorTime, getTsCursorPoints, getTooltipPoints} from './selectors/cursor';
+import {classesForPoint, MASK_DESC} from './selectors/drawing-data';
+import {getMainLayout} from './selectors/layout';
+import {getMainXScale, getMainYScale} from './selectors/scales';
+import {getTsTimeZone, getQualifiers, getCurrentVariableUnitCode, TEMPERATURE_PARAMETERS} from './selectors/time-series-data';
 
-
-/*
- * Returns a function that returns the time series data point nearest the
- * tooltip focus time for the given time series key. Only returns those points
- * where the y-value is finite; no use in making a point if y is Infinity.
- *
- * @param {Object} state - Redux store
- * @param String} tsKey - Time series key
- * @return {Object}
- */
-export const tooltipPointsSelector = memoize(tsKey => createSelector(
-    getMainXScale(tsKey),
-    getMainYScale,
-    tsCursorPointsSelector(tsKey),
-    (xScale, yScale, cursorPoints) => {
-        return Object.keys(cursorPoints).reduce((tooltipPoints, tsID) => {
-            const cursorPoint = cursorPoints[tsID];
-            if (isFinite(yScale(cursorPoint.value))) {
-                tooltipPoints.push({
-                    x: xScale(cursorPoint.dateTime),
-                    y: yScale(cursorPoint.value)
-                });
-            }
-            return tooltipPoints;
-        }, []);
-    }
-));
 
 const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd) {
     let label = '';
@@ -83,13 +55,6 @@ const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, curre
 
     return label;
 };
-
-const qualifiersSelector = state => state.ivTimeSeriesData.qualifiers;
-
-const unitCodeSelector = createSelector(
-    getCurrentVariable,
-    variable => variable ? variable.unit.unitCode : null
-);
 
 const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone, layout, currentParmCd}, textGroup) {
     // Find the width of the between the y-axis and margin and set the tooltip margin based on that number
@@ -187,12 +152,12 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
  */
 export const drawTooltipText = function (elem, store) {
     elem.call(link(store, createTooltipTextGroup, createStructuredSelector({
-        currentPoints: tsCursorPointsSelector('current'),
-        comparePoints: tsCursorPointsSelector('compare'),
-        qualifiers: qualifiersSelector,
-        unitCode: unitCodeSelector,
+        currentPoints: getTsCursorPoints('current'),
+        comparePoints: getTsCursorPoints('compare'),
+        qualifiers: getQualifiers,
+        unitCode: getCurrentVariableUnitCode,
         layout: getMainLayout,
-        ianaTimeZone: tsTimeZoneSelector,
+        ianaTimeZone: getTsTimeZone,
         currentParmCd: getCurrentParmCd
     })));
 };
@@ -207,12 +172,12 @@ export const drawTooltipFocus = function(elem, store) {
     elem.call(link(store, drawFocusLine, createStructuredSelector({
         xScale: getMainXScale('current'),
         yScale: getMainYScale,
-        cursorTime: cursorTimeSelector('current')
+        cursorTime: getCursorTime('current')
     })));
 
     elem.call(link(store, drawFocusCircles, createSelector(
-        tooltipPointsSelector('current'),
-        tooltipPointsSelector('compare'),
+        getTooltipPoints('current'),
+        getTooltipPoints('compare'),
         (current, compare) => {
             return current.concat(compare);
         }

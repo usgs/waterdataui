@@ -9,7 +9,7 @@ import {
 } from './domain';
 
 
-describe('monitoring-location/componens/hydrograph/domain module', () => {
+describe('monitoring-location/components/hydrograph/selectors/domain module', () => {
     describe('extendDomain', () => {
         it('lower bounds are calculated based on order of magnitude with the parameter, upper bound 20%', () => {
             const lowValDomain = extendDomain([50, 1000], true);
@@ -115,7 +115,7 @@ describe('monitoring-location/componens/hydrograph/domain module', () => {
 
     describe('getYTickDetails', () => {
         it('returns ticks and a formatting function', () => {
-            const tickDetails = getYTickDetails([0, 1]);
+            const tickDetails = getYTickDetails.resultFunc([0, 1]);
             expect(tickDetails.tickValues).toEqual(jasmine.any(Array));
             expect(tickDetails.tickFormat).toEqual(jasmine.any(Function));
             expect(tickDetails.tickFormat(1)).toEqual(jasmine.any(String));

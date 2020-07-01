@@ -5,8 +5,8 @@ import {createSelector} from 'reselect';
 import {
     getRequestTimeRange, getCurrentVariable, getTimeSeriesForTsKey, getCurrentParmCd, getCurrentMethodID,
     getMethods
-} from '../../selectors/time-series-selector';
-import {getIanaTimeZone} from '../../selectors/time-zone-selector';
+} from '../../../selectors/time-series-selector';
+import {getIanaTimeZone} from '../../../selectors/time-zone-selector';
 
 
 export const TEMPERATURE_PARAMETERS = {
@@ -39,15 +39,6 @@ const formatTime = function(timeInMillis, timeZone) {
     return DateTime.fromMillis(timeInMillis, {zone: timeZone}).toFormat('L/d/yyyy tt ZZZ');
 };
 
-
-export const hasTimeSeriesWithPoints = memoize((tsKey, period) => createSelector(
-    getTimeSeriesForTsKey(tsKey, period),
-    (timeSeries) => {
-        const seriesWithPoints = Object.values(timeSeries).filter(x => x.points.length > 0);
-        return seriesWithPoints.length > 0;
-}));
-
-
 /**
  * Factory function creates a function that:
  * Returns the current show state of a time series.
@@ -55,22 +46,23 @@ export const hasTimeSeriesWithPoints = memoize((tsKey, period) => createSelector
  * @param  {String}  tsKey Time series key
  * @return {Boolean}           Show state of the time series
  */
-export const isVisibleSelector = memoize(tsKey => (state) => {
+export const isVisible = memoize(tsKey => (state) => {
     return state.ivTimeSeriesState.showIVTimeSeries[tsKey];
 });
 
 
-
 /**
- * @return {String}     The label for the y-axis
+ * Returns a Redux selector function which returns the label to be used for the Y axis
  */
-export const yLabelSelector = createSelector(
+export const getYLabel = createSelector(
     getCurrentVariable,
     variable => variable ? variable.variableDescription : ''
 );
 
-
-export const secondaryYLabelSelector = createSelector(
+/*
+ * Returns a Redux selector function which returns the label to be used for the secondary y axis
+ */
+export const getSecondaryYLabel= createSelector(
     getCurrentParmCd,
     parmCd => {
         let secondaryYLabel = null;
@@ -85,9 +77,9 @@ export const secondaryYLabelSelector = createSelector(
 
 
 /**
- * @return {String}     The title to include in the hyrdograph, will include method description if defined.
+ * Returns a Redux selector function which returns the title to be used for the hydrograph
  */
-export const titleSelector = createSelector(
+export const getTitle = createSelector(
     getCurrentVariable,
     getCurrentMethodID,
     getMethods,
@@ -101,11 +93,10 @@ export const titleSelector = createSelector(
 );
 
 
-/**
- * @return {String}     Description for the currently display set of time
- *                      series
+/*
+ * Returns a Redux selector function which returns the description of the hydrograph
  */
-export const descriptionSelector = createSelector(
+export const getDescription = createSelector(
     getCurrentVariable,
     getRequestTimeRange('current', 'P7D'),
     getIanaTimeZone,
@@ -120,14 +111,18 @@ export const descriptionSelector = createSelector(
 );
 
 /**
- * Select the time zone. If the time zone is null, use `local` as the time zone
- *
- * @ return {String} - IANA time zone
- *
+ * Returns a Redux selector function which returns the iana time zone or local if none is set
  */
-export const tsTimeZoneSelector = createSelector(
+export const getTsTimeZone= createSelector(
     getIanaTimeZone,
     ianaTimeZone => {
         return ianaTimeZone !== null ? ianaTimeZone : 'local';
     }
+);
+
+export const getQualifiers = state => state.ivTimeSeriesData.qualifiers;
+
+export const getCurrentVariableUnitCode = createSelector(
+    getCurrentVariable,
+    variable => variable ? variable.unit.unitCode : null
 );
