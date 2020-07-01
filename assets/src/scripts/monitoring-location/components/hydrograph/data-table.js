@@ -3,7 +3,7 @@ import List from 'list.js';
 
 import {link} from '../../../lib/d3-redux';
 
-import {getCurrentPointData} from './drawing-data';
+import {getCurrentPointData} from './selectors/drawing-data';
 
 const COLUMN_HEADINGS = [
     'Parameter',

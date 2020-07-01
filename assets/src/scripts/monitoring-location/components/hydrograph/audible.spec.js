@@ -88,8 +88,4 @@ describe('monitoring-location/components/hydrograph/audible audibleUI', () => {
             done();
         });
     });
-
-
-
-
 });

@@ -25,9 +25,11 @@ export const getCurrentVariableID = state => state.ivTimeSeriesState.currentIVVa
 
 export const getCurrentMethodID = state => state.ivTimeSeriesState.currentIVMethodID;
 
-export const getCurrentDateRangeKind = state => state.ivTimeSeriesState.currentIVDateRangeKind;
+export const getCurrentDateRangeKind = (state) => {
+    return state.ivTimeSeriesState.currentIVDateRangeKind || null;
+};
 
-export const getLoadingTsKeys = state => state.ivTimeSeriesState.loadingIVTSKeys;
+export const getLoadingTsKeys = state => state.ivTimeSeriesState.loadingIVTSKeys || [];
 
 export const getNwisTimeZone = state => state.ivTimeSeriesData.timeZones || {};
 

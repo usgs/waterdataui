@@ -161,7 +161,6 @@ const TEST_STATE = {
     }
 };
 
-
 describe('monitoring-location/components/hydrograph module', () => {
     let graphNode;
 
@@ -518,9 +517,14 @@ describe('monitoring-location/components/hydrograph module', () => {
             expect(select('#classic-page-link').attr('href')).not.toContain('https://fakenwis.usgs.gov/inventory');
         });
 
-        it('should render the correct number of svg nodes', () => {
-            // one main hydrograph, brush, slider, legend and two sparklines
-            expect(selectAll('svg').size()).toBe(6);
+        it('should render the correct number of svg nodes', (done) => {
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    // one main hydrograph, brush, slider, legend and two sparklines
+                    expect(selectAll('svg').size()).toBe(6);
+                    done();
+                });
+            });
         });
 
         it('should have a title div', () => {

@@ -1,11 +1,12 @@
 
 import {link} from '../../../lib/d3-redux';
+
 import {getCurrentVariableMedianStatistics} from '../../selectors/median-statistics-selector';
 import {getCurrentVariableTimeSeries} from '../../selectors/time-series-selector';
 import {Actions} from '../../store/instantaneous-value-time-series-state';
 
 import {audibleUI} from './audible';
-import {isVisibleSelector} from './time-series';
+import {isVisible} from './selectors/time-series-data';
 
 /*
  * Create the show audible toggle, last year toggle, and median toggle for the time series graph.
@@ -44,7 +45,7 @@ export const drawGraphControls = function(elem, store) {
         // Sets the state of the toggle
         .call(link(store,function(elem, checked) {
             elem.property('checked', checked);
-        }, isVisibleSelector('compare')));
+        }, isVisible('compare')));
     compareControlDiv.append('label')
         .classed('usa-checkbox__label', true)
         .attr('id', 'last-year-label')
@@ -72,7 +73,7 @@ export const drawGraphControls = function(elem, store) {
         // Sets the state of the toggle
         .call(link(store,function(elem, checked) {
             elem.property('checked', checked);
-        }, isVisibleSelector('median')));
+        }, isVisible('median')));
 
     medianControlDiv.append('label')
         .classed('usa-checkbox__label', true)

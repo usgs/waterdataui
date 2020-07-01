@@ -1,5 +1,5 @@
 import {getFloodStageHeight, hasFloodData, getFloodGageHeightStageIndex,
-    hasWaterwatchData, getWaterwatchFloodLevels, waterwatchVisible} from './flood-data-selector';
+    hasWaterwatchData, getWaterwatchFloodLevels, isWaterwatchVisible} from './flood-data-selector';
 
 describe('monitoring-location/selectors/flood-data-selector', () => {
 
@@ -119,9 +119,9 @@ describe('monitoring-location/selectors/flood-data-selector', () => {
         });
     });
 
-       describe('waterwatchVisible', () => {
+       describe('isWaterwatchVisible', () => {
         it('Return false if waterwatch flood levels should not be visible due to parameter code', () =>{
-            expect(waterwatchVisible({
+            expect(isWaterwatchVisible({
                 floodData: {
                     floodLevels: {
                         site_no: '07144100',
@@ -145,7 +145,7 @@ describe('monitoring-location/selectors/flood-data-selector', () => {
         });
 
         it('Return false if waterwatch flood levels should not be visible due to no flood levels', () =>{
-            expect(waterwatchVisible({
+            expect(isWaterwatchVisible({
                 floodData: {
                     floodLevels: null
                 },
@@ -163,7 +163,7 @@ describe('monitoring-location/selectors/flood-data-selector', () => {
         });
 
          it('Return true if waterwatch flood levels should be visible', () =>{
-            expect(waterwatchVisible({
+            expect(isWaterwatchVisible({
                  floodData: {
                      floodLevels: {
                          site_no: '07144100',

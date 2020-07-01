@@ -171,45 +171,6 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
         }
     };
 
-    describe('tooltipPointsSelector', () => {
-        const id = (val) => val;
-
-        it('should return the requested time series focus time', () => {
-            expect(tooltipPointsSelector('current').resultFunc(id, id, {
-                '00060:current': {
-                    dateTime: '1date',
-                    value: 1
-                },
-                '00060:compare': {
-                    dateTime: '2date',
-                    value: 2
-                }
-            })).toEqual([{
-                x: '1date',
-                y: 1
-            }, {
-                x: '2date',
-                y: 2
-            }]);
-        });
-
-        it('should exclude values that are infinite', () => {
-            expect(tooltipPointsSelector('current').resultFunc(id, id, {
-                '00060:current': {
-                    dateTime: '1date',
-                    value: Infinity
-                },
-                '00060:compare': {
-                    dateTime: '2date',
-                    value: 2
-                }
-            })).toEqual([{
-                x: '2date',
-                y: 2
-            }]);
-        });
-    });
-
     describe('drawTooltipText', () => {
         let div;
         beforeEach(() => {

@@ -19,14 +19,15 @@ import {renderTimeSeriesUrlParams} from '../../url-params';
 
 import {drawDateRangeControls} from './date-controls';
 import {drawDataTable} from './data-table';
-import {lineSegmentsByParmCdSelector} from './drawing-data';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
-import {SPARK_LINE_DIM}  from './layout';
+import {SPARK_LINE_DIM}  from './selectors/layout';
 import {drawTimeSeriesLegend} from './legend';
 import {drawMethodPicker} from './method-picker';
-import {plotSeriesSelectTable, availableTimeSeriesSelector} from './parameters';
-import {timeSeriesScalesByParmCdSelector} from './scales';
+import {plotSeriesSelectTable} from './parameters';
+import {getLineSegmentsByParmCd} from './selectors/drawing-data';
+import {getAvailableParameterCodes} from './selectors/parameter-data';
+import {getTimeSeriesScalesByParmCd} from './selectors/scales';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
 
@@ -165,9 +166,9 @@ export const attachToNode = function (store,
                 nodeElem.select('.select-time-series-container')
                     .call(link(store, plotSeriesSelectTable, createStructuredSelector({
                         siteno: () => siteno,
-                        availableTimeSeries: availableTimeSeriesSelector,
-                        lineSegmentsByParmCd: lineSegmentsByParmCdSelector('current', 'P7D'),
-                        timeSeriesScalesByParmCd: timeSeriesScalesByParmCdSelector('current', 'P7D', SPARK_LINE_DIM)
+                        availableParameterCodes: getAvailableParameterCodes,
+                        lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
+                        timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
                     }), store));
 
 

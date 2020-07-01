@@ -2,14 +2,15 @@ import {axisBottom, axisLeft, axisRight} from 'd3-axis';
 import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
-import {generateTimeTicks} from '../../../d3-rendering/tick-marks';
-import {getCurrentDateRangeKind, getCurrentParmCd} from '../../selectors/time-series-selector';
-import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../../utils';
+import {generateTimeTicks} from '../../../../d3-rendering/tick-marks';
+import {getCurrentDateRangeKind, getCurrentParmCd} from '../../../selectors/time-series-selector';
+import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../../../utils';
 
 import {getYTickDetails} from './domain';
 import {getLayout} from './layout';
 import {getXScale, getBrushXScale, getYScale, getSecondaryYScale} from './scales';
-import {yLabelSelector, secondaryYLabelSelector, tsTimeZoneSelector, TEMPERATURE_PARAMETERS} from './time-series';
+import {getYLabel, getSecondaryYLabel, getTsTimeZone, TEMPERATURE_PARAMETERS} from './time-series-data';
+
 
 const createXAxis = function(xScale,  period, ianaTimeZone) {
     const [startMillis, endMillis] = xScale.domain();
@@ -32,16 +33,15 @@ const createXAxis = function(xScale,  period, ianaTimeZone) {
  * @param {String} ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
  * @return {Object} {xAxis, yAxis, secondardYaxis} - D3 Axis
  */
-export const createAxes = function(xScale, yScale, secondaryYScale, yTickSize, parmCd, period, ianaTimeZone) {
+const createAxes = function(xScale, yScale, secondaryYScale, yTickDetails, yTickSize, parmCd, period, ianaTimeZone) {
     // Create x-axis
     const xAxis = createXAxis(xScale, period, ianaTimeZone);
 
     // Create y-axis
-    const tickDetails = getYTickDetails(yScale.domain(), parmCd);
     const yAxis = axisLeft()
         .scale(yScale)
-        .tickValues(tickDetails.tickValues)
-        .tickFormat(tickDetails.tickFormat)
+        .tickValues(yTickDetails.tickValues)
+        .tickFormat(yTickDetails.tickFormat)
         .tickSizeInner(yTickSize)
         .tickPadding(3)
         .tickSizeOuter(0);
@@ -60,7 +60,7 @@ export const createAxes = function(xScale, yScale, secondaryYScale, yTickSize, p
 
     if (secondaryYScale !== null) {
         let secondaryAxisTicks;
-        const primaryAxisTicks = tickDetails.tickValues;
+        const primaryAxisTicks = yTickDetails.tickValues;
         if (TEMPERATURE_PARAMETERS.celsius.includes(parmCd)) {
             secondaryAxisTicks = primaryAxisTicks.map(celsius => convertCelsiusToFahrenheit(celsius));
         } else if (TEMPERATURE_PARAMETERS.fahrenheit.includes(parmCd)) {
@@ -72,35 +72,36 @@ export const createAxes = function(xScale, yScale, secondaryYScale, yTickSize, p
 };
 
 /**
- * Selector that returns the brush x axis
+ * Returns a Redux selector function that returns the brush x axis
  */
 export const getBrushXAxis = createSelector(
     getBrushXScale('current'),
-    tsTimeZoneSelector,
+    getTsTimeZone,
     getCurrentDateRangeKind,
     (xScale, ianaTimeZone, period) => createXAxis(xScale, period, ianaTimeZone)
 );
 
 /**
- * Returns data necessary to render the graph axes.
- * @return {Object}
+ * Returns a Redux Selection that returns an object with xAxis, yAxis, and secondaryYAxis properties
  */
 export const getAxes = memoize(kind => createSelector(
     getXScale(kind, 'current'),
     getYScale(kind),
     getSecondaryYScale(kind),
+    getYTickDetails,
     getLayout(kind),
-    yLabelSelector,
-    tsTimeZoneSelector,
+    getYLabel,
+    getTsTimeZone,
     getCurrentParmCd,
     getCurrentDateRangeKind,
-    secondaryYLabelSelector,
-    (xScale, yScale, secondaryYScale, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange, plotSecondaryYLabel) => {
+    getSecondaryYLabel,
+    (xScale, yScale, secondaryYScale, yTickDetails, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange, plotSecondaryYLabel) => {
         return {
             ...createAxes(
                 xScale,
                 yScale,
                 secondaryYScale,
+                yTickDetails,
                 -layout.width + layout.margin.right,
                 parmCd,
                 currentDateRange,
