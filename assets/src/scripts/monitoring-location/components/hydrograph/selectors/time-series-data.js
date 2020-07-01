@@ -39,14 +39,6 @@ const formatTime = function(timeInMillis, timeZone) {
     return DateTime.fromMillis(timeInMillis, {zone: timeZone}).toFormat('L/d/yyyy tt ZZZ');
 };
 
-
-export const hasTimeSeriesWithPoints = memoize((tsKey, period) => createSelector(
-    getTimeSeriesForTsKey(tsKey, period),
-    (timeSeries) => {
-        const seriesWithPoints = Object.values(timeSeries).filter(x => x.points.length > 0);
-        return seriesWithPoints.length > 0;
-}));
-
 /**
  * Factory function creates a function that:
  * Returns the current show state of a time series.

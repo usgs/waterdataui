@@ -16,10 +16,10 @@ import {
     getCurrentVariableLineSegments,
     getCurrentVariableMedianStatPoints,
     HASH_ID
-} from './drawing-data';
+} from './selectors/drawing-data';
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
-import {descriptionSelector, isVisibleSelector, titleSelector} from './selectors/time-series-data';
+import {getDescription, isVisible, getTitle} from './selectors/time-series-data';
 import {drawDataLines} from './time-series-lines';
 import {drawTooltipFocus, drawTooltipText}  from './tooltip';
 
@@ -162,7 +162,7 @@ const createTitle = function(elem, store, siteNo, showMLName) {
     titleDiv.append('div')
         .call(link(store,(elem, title) => {
             elem.html(title);
-        }, titleSelector));
+        }, getTitle));
 };
 
 const watermark = function (elem, store) {
@@ -221,8 +221,8 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
                         .attr('height', layout.height - layout.margin.bottom);
             }, getMainLayout))
         .call(link(store, addSVGAccessibility, createStructuredSelector({
-            title: titleSelector,
-            description: descriptionSelector,
+            title: getTitle,
+            description: getDescription,
             isInteractive: () => true,
             idPrefix: () => 'hydrograph'
         })))
@@ -235,7 +235,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
         }, getMainLayout))
         .call(link(store, appendAxes, getAxes()))
         .call(link(store, drawDataLines, createStructuredSelector({
-            visible: isVisibleSelector('current'),
+            visible: isVisible('current'),
             tsLinesMap: getCurrentVariableLineSegments('current'),
             xScale: getMainXScale('current'),
             yScale: getMainYScale,
@@ -243,7 +243,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
             enableClip: () => true
         })))
         .call(link(store, drawDataLines, createStructuredSelector({
-            visible: isVisibleSelector('compare'),
+            visible: isVisible('compare'),
             tsLinesMap: getCurrentVariableLineSegments('compare'),
             xScale: getMainXScale('compare'),
             yScale: getMainYScale,
@@ -251,7 +251,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
             enableClip: () => true
         })))
         .call(link(store, plotAllMedianPoints, createStructuredSelector({
-            visible: isVisibleSelector('median'),
+            visible: isVisible('median'),
             xscale: getMainXScale('current'),
             yscale: getMainYScale,
             seriesPoints: getCurrentVariableMedianStatPoints

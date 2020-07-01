@@ -3,11 +3,10 @@ import {DateTime} from 'luxon';
 
 import {
     getLineSegments,
-    getPoints,
     getAllPoints,
     getPointsByTsKey,
     classesForPoint,
-    getLineSegmentsByParmCdSelector,
+    getLineSegmentsByParmCd,
     getCurrentVariableLineSegments,
     getCurrentVariablePoints,
     getCurrentVariablePointsByTsId,
@@ -803,9 +802,9 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
         });
     });
 
-    describe('getLineSegmentsByParmCdSelector', () => {
+    describe('getLineSegmentsByParmCd', () => {
         it('Should return two mappings for current time series', () => {
-            const result = getLineSegmentsByParmCdSelector('current')(TEST_DATA);
+            const result = getLineSegmentsByParmCd('current')(TEST_DATA);
 
             expect(Object.keys(result).length).toBe(2);
             expect(result['00060']).toBeDefined();
@@ -823,50 +822,6 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
 
         it('Should return an empty object for the compare time series', () => {
             expect(getCurrentVariableLineSegments('compare')(TEST_DATA)).toEqual({});
-        });
-    });
-
-    describe('getPoints', () => {
-        it('works with a single collection and two time series', () => {
-            expect(getPoints('current')({
-                ivTimeSeriesData: {
-                    requests: {
-                        current: {
-                            timeSeriesCollections: ['coll1']
-                        }
-                    },
-                    timeSeriesCollections: {
-                        'coll1': {
-                            variable: 45807197,
-                            timeSeries: ['one', 'two']
-                        }
-                    },
-                    timeSeries: {
-                        one: {
-                            points: ['ptOne', 'ptTwo', 'ptThree'],
-                            tsKey: 'current:P7D',
-                            variable: 45807197
-                        },
-                        two: {
-                            points: ['ptOne2', 'ptTwo2', 'ptThree2'],
-                            tsKey: 'current:P7D',
-                            variable: 45807197
-                        }
-                    },
-                    variables: {
-                        '45807197': {
-                            variableCode: {
-                                value: '00060'
-                            },
-                            oid: 45807197
-                        }
-                    }
-                },
-                ivTimeSeriesState: {
-                    currentIVVariableID: '45807197',
-                    currentIVDateRangeKind: 'P7D'
-                }
-            })).toEqual([['ptOne', 'ptTwo', 'ptThree'], ['ptOne2', 'ptTwo2', 'ptThree2']]);
         });
     });
 

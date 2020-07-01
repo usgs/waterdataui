@@ -5,7 +5,7 @@ import {createSelector} from 'reselect';
 import {getVariables, getCurrentParmCd, getRequestTimeRange, getTimeSeriesForTsKey} from '../../../selectors/time-series-selector';
 import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../../../utils';
 
-import {getYDomain, SYMLOG_PARMS} from './domain';
+import {getYDomain, getYDomainForVisiblePoints, SYMLOG_PARMS} from './domain';
 import {getPointsByTsKey} from './drawing-data';
 import {getLayout} from './layout';
 import {TEMPERATURE_PARAMETERS} from './time-series-data';
@@ -105,7 +105,7 @@ export const getBrushXScale = (tsKey) => getXScale('BRUSH', tsKey);
  */
 export const getYScale = memoize(kind => createSelector(
     getLayout(kind),
-    getYDomain,
+    getYDomainForVisiblePoints,
     getCurrentParmCd,
     (layout, yDomain, currentVarParmCd) => {
         return createYScale(currentVarParmCd, yDomain, layout.height - (layout.margin.top + layout.margin.bottom));
@@ -117,7 +117,7 @@ export const getBrushYScale = getYScale('BRUSH');
 
 export const getSecondaryYScale = memoize(kind => createSelector(
     getLayout(kind),
-    getYDomain,
+    getYDomainForVisiblePoints,
     getCurrentParmCd,
     (layout, yDomain, currentVarParmCd) => {
         let convertedYDomain;

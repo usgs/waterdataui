@@ -423,11 +423,11 @@ describe('monitoring-location/components/hydrograph/cursor module', () => {
         });
     });
 
-    describe('tooltipPointsSelector', () => {
+    describe('getTooltipPoints', () => {
         const id = (val) => val;
 
         it('should return the requested time series focus time', () => {
-            expect(tooltipPointsSelector('current').resultFunc(id, id, {
+            expect(getTooltipPoints('current').resultFunc(id, id, {
                 '00060:current': {
                     dateTime: '1date',
                     value: 1

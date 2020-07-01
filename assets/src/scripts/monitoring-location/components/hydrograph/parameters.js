@@ -152,7 +152,7 @@ export const plotSeriesSelectTable = function (elem,
                     .attr('width', SPARK_LINE_DIM.width.toString())
                     .attr('height', SPARK_LINE_DIM.height.toString());
                 tr.append('td')
-                    .text(parm => parm[1].currentTimeSeriesCount);
+                    .text(parm => parm.timeSeriesCount);
                 tr.append('td')
                     .style('white-space', 'nowrap')
                     .text(parm =>`${config.uvPeriodOfRecord[parm.parameterCode].begin_date} to ${config.uvPeriodOfRecord[parm.parameterCode].end_date}`);

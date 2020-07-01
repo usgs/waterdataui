@@ -8,13 +8,13 @@ import {createSelector} from 'reselect';
 
 import {getTimeSeries} from '../../../selectors/time-series-selector';
 
-import {tsCursorPointsSelector} from './cursor';
+import {getTsCursorPoints} from './cursor';
 import {getMainYScale} from './scales';
 
 /*
  * Returns a Redux selector function that returns true if the audible interface is playing.
  */
-export const isAudiblePlaying = state => state.ivTimeSeriesStat.audiblePlayId !== null;
+export const isAudiblePlaying = state => state.ivTimeSeriesState.audiblePlayId !== null;
 
 const getAudibleYScale = createSelector(
     getMainYScale,
@@ -31,8 +31,8 @@ const getAudibleYScale = createSelector(
  */
 export const getAudiblePoints = createSelector(
     getTimeSeries,
-    tsCursorPointsSelector('current'),
-    tsCursorPointsSelector('compare'),
+    getTsCursorPoints('current'),
+    getTsCursorPoints('compare'),
     getAudibleYScale,
     (allTimeSeries, currentPoints, comparePoints, yScale) => {
         // Set null points for all time series, so we can turn audio for those

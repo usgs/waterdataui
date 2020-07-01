@@ -20,10 +20,10 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
             };
         });
 
-        const availableTimeSeries = [
-            ['00010', {variableID: '00010ID', description: 'Temperature', selected: true, currentTimeSeriesCount: 1}],
-            ['00067', {variableID: '00067ID', description: 'Ruthenium (VI) Fluoride', selected: false, currentTimeSeriesCount: 1}],
-            ['00093', {variableID: '00093ID', description: 'Uranium (V) Oxide', selected: false, currentTimeSeriesCount: 1}]
+        const availableParameterCodes = [
+            {variableID: '00010ID', parameterCode: '00010', description: 'Temperature', selected: true, timeSeriesCount: 1},
+            {variableID: '00067ID', parameterCode: '00067', description: 'Ruthenium (VI) Fluoride', selected: false, timeSeriesCount: 1},
+            {variableID: '00093ID', parameterCode: '00093', description: 'Uranium (V) Oxide', selected: false, timeSeriesCount: 1}
         ];
 
         const lineSegmentsByParmCd = {
@@ -38,13 +38,14 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
 
         const testArgsWithData = {
             siteno: '12345678',
-            availableTimeSeries: availableTimeSeries,
+            availableParameterCodes: availableParameterCodes,
             lineSegmentsByParmCd: lineSegmentsByParmCd,
             timeSeriesScalesByParmCd: timeSeriesScalesByParmCd
         };
 
         const testArgsWithoutData = {
-            availableTimeSeries: [],
+            siteno: '12345678',
+            availableParameterCodes: [],
             lineSegmentsByParmCd: {},
             timeSeriesScalesByParmCd: {}
         };

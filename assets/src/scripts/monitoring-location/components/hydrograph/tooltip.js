@@ -14,7 +14,7 @@ import {getCurrentParmCd} from '../../selectors/time-series-selector';
 import {Actions} from '../../store/instantaneous-value-time-series-state';
 
 import {getCursorTime, getTsCursorPoints, getTooltipPoints} from './selectors/cursor';
-import {classesForPoint, MASK_DESC} from './drawing-data';
+import {classesForPoint, MASK_DESC} from './selectors/drawing-data';
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale} from './selectors/scales';
 import {getTsTimeZone, getQualifiers, getCurrentVariableUnitCode, TEMPERATURE_PARAMETERS} from './selectors/time-series-data';

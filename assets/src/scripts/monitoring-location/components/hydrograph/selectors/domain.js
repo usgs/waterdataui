@@ -6,7 +6,7 @@ import config from '../../../../config';
 import {mediaQuery} from '../../../../utils';
 import {getCurrentParmCd} from '../../../selectors/time-series-selector';
 
-import {getVisiblePoints} from '../drawing-data';
+import {getVisiblePoints} from './drawing-data';
 
 
 const PADDING_RATIO = 0.2;
@@ -171,53 +171,57 @@ export const getFullArrayOfAdditionalTickMarks = function(tickValues, yDomain) {
 };
 
 /*
- * Returns a Redux selector function that returns the yExtent for the currently
- * visible points
+ * Helper function that returns the yExtent for the points in pointArrays.
+ * @param {Array of Array of point objects} pointArrays
+ * @param {String} currentVarParmCd
+ * @return {Array of two Number} - represents the extent of the points to be used to graph the data.
  */
-export const getYDomain = createSelector(
+export const getYDomain = function(pointArrays, currentVarParmCd) {
+    let yExtent;
+    let scaleDomains = [];
+
+    // Calculate max and min for data
+    for (const points of pointArrays) {
+        if (points.length === 0) {
+            continue;
+        }
+        const finitePts = points.map(pt => pt.value).filter(val => isFinite(val));
+        let ptExtent = extent(finitePts);
+        if (ptExtent[0] === ptExtent[1]) {
+            // when both the lower and upper values of
+            // extent are the same, the domain of the
+            // extent is from -Infinity to +Infinity;
+            // this isn't useful for creation of data
+            // points, so add this broadens the extent
+            // a bit for single point series
+            if (ptExtent[0]) {
+                ptExtent = [ptExtent[0] - ptExtent[0] / 2, ptExtent[0] + ptExtent[0] / 2];
+            } else { // ptExtent of 0 so just set to a constant
+                ptExtent = [0, 1];
+            }
+        }
+        scaleDomains.push(ptExtent);
+    }
+    if (scaleDomains.length > 0) {
+        const flatDomains = [].concat(...scaleDomains).filter(val => isFinite(val));
+        if (flatDomains.length > 0) {
+            yExtent = [Math.min(...flatDomains), Math.max(...flatDomains)];
+        }
+    }
+
+    // Add padding to the extent and handle empty data sets.
+    if (yExtent) {
+        yExtent = extendDomain(yExtent, SYMLOG_PARMS.indexOf(currentVarParmCd) > -1);
+    } else {
+        yExtent = [0, 1];
+    }
+    return yExtent;
+};
+
+export const getYDomainForVisiblePoints = createSelector(
     getVisiblePoints,
     getCurrentParmCd,
-    (pointArrays, currentVarParmCd) => {
-        let yExtent;
-        let scaleDomains = [];
-
-        // Calculate max and min for data
-        for (const points of pointArrays) {
-            if (points.length === 0) {
-                continue;
-            }
-            const finitePts = points.map(pt => pt.value).filter(val => isFinite(val));
-            let ptExtent = extent(finitePts);
-            if (ptExtent[0] === ptExtent[1]) {
-                // when both the lower and upper values of
-                // extent are the same, the domain of the
-                // extent is from -Infinity to +Infinity;
-                // this isn't useful for creation of data
-                // points, so add this broadens the extent
-                // a bit for single point series
-                if (ptExtent[0]) {
-                    ptExtent = [ptExtent[0] - ptExtent[0] / 2, ptExtent[0] + ptExtent[0] / 2];
-                } else { // ptExtent of 0 so just set to a constant
-                    ptExtent = [0, 1];
-                }
-            }
-            scaleDomains.push(ptExtent);
-        }
-        if (scaleDomains.length > 0) {
-            const flatDomains = [].concat(...scaleDomains).filter(val => isFinite(val));
-            if (flatDomains.length > 0) {
-                yExtent = [Math.min(...flatDomains), Math.max(...flatDomains)];
-            }
-        }
-
-        // Add padding to the extent and handle empty data sets.
-        if (yExtent) {
-            yExtent = extendDomain(yExtent, SYMLOG_PARMS.indexOf(currentVarParmCd) > -1);
-        } else {
-            yExtent = [0, 1];
-        }
-        return yExtent;
-    }
+    getYDomain
 );
 
 /*
@@ -226,7 +230,7 @@ export const getYDomain = createSelector(
  *      @prop tickFormat {Array of String} - formatted tickValues
  */
 export const getYTickDetails = createSelector(
-    getYDomain,
+    getYDomainForVisiblePoints,
     getCurrentParmCd,
     (yDomain, parmCd) => {
         const isSymlog = SYMLOG_PARMS.indexOf(parmCd) > -1;

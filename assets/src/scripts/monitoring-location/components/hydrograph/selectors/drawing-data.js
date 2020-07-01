@@ -10,12 +10,12 @@ import find from 'lodash/find';
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
-import {getCurrentVariableMedianStatistics} from '../../selectors/median-statistics-selector';
+import {getCurrentVariableMedianStatistics} from '../../../selectors/median-statistics-selector';
 import {
     getVariables, getCurrentMethodID, getTimeSeries, getCurrentVariableTimeSeries, getTimeSeriesForTsKey,
     getTsRequestKey, getRequestTimeRange, getCurrentVariable
-} from '../../selectors/time-series-selector';
-import {getIanaTimeZone} from '../../selectors/time-zone-selector';
+} from '../../../selectors/time-series-selector';
+import {getIanaTimeZone} from '../../../selectors/time-zone-selector';
 
 export const MASK_DESC = {
     ice: 'Ice Affected',
@@ -85,7 +85,7 @@ export const classesForPoint = function(point) {
  * @param {Object} state
  * @return {Object} where the keys are ts ids and the values are an Array of point Objects.
  */
-export const getAllPoints= createSelector(
+export const getAllPoints = createSelector(
     getTimeSeries,
     getVariables,
     (timeSeries, variables) => {
@@ -157,22 +157,6 @@ export const getCurrentVariablePoints = memoize(tsKey => createSelector(
     }
 ));
 
-
-/**
- * Returns a selector that, for a given tsKey:
- * Returns an array of time points for all time series.
- * @param  {Object} state     Redux store
- * @param  {String} tsKey     Time series key
- * @return {Array}            Array of array of points.
- */
-export const getPoints = memoize((tsKey) => createSelector(
-    getPointsByTsKey(tsKey),
-    (points) => {
-        return Object.values(points);
-    }
-));
-
-
 /*
  * @ return {Array of Arrays of Objects} where the properties are date (universal), and value
 */
@@ -235,7 +219,7 @@ export const getCurrentVariableMedianStatPoints = createSelector(
  * @param  {Object} state     Redux store
  * @return {Array}            Array of point arrays.
  */
-export const getVisiblePointsSelector = createSelector(
+export const getVisiblePoints = createSelector(
     getCurrentVariablePoints('current'),
     getCurrentVariablePoints('compare'),
     getCurrentVariableMedianStatPoints,
@@ -409,7 +393,7 @@ export const getLineSegmentsByParmCd = memoize((tsKey, period) => createSelector
  * Returns mapping of series ID to line segments for the currently selected variable.
  * @return {Object} - Keys are time series ids and values are the line segment arrays
  */
-export const currentVariableLineSegmentsSelector = memoize(tsKey => createSelector(
+export const getCurrentVariableLineSegments = memoize(tsKey => createSelector(
     getCurrentVariableTimeSeries(tsKey),
     getLineSegments(tsKey),
     (seriesMap, linesMap) => {

@@ -5,7 +5,7 @@ import {getNearestTime} from '../../../../utils';
 
 import {getCurrentMethodID} from '../../../selectors/time-series-selector';
 
-import {getCurrentVariablePointsByTsId} from '../drawing-data';
+import {getCurrentVariablePointsByTsId} from './drawing-data';
 import {getMainXScale, getMainYScale} from './scales';
 import {isVisible} from './time-series-data';
 

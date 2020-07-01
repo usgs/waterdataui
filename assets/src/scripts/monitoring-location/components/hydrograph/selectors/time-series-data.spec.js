@@ -1,5 +1,5 @@
 import {
-    hasTimeSeriesWithPoints, isVisible, getYLabel, getTitle,
+    isVisible, getYLabel, getTitle,
     getDescription, getTsTimeZone, getSecondaryYLabel} from './time-series-data';
 
 
@@ -216,16 +216,6 @@ const TEST_DATA = {
 };
 
 describe('monitoring-location/components/hydrograph/time-series module', () => {
-
-    describe('hasTimeSeriesWithPoints', () => {
-        it('Returns true if the time series for tsKey and period have non zero points', () => {
-            expect(hasTimeSeriesWithPoints('current')(TEST_DATA)).toBe(true);
-            expect(hasTimeSeriesWithPoints('current', 'P30D')(TEST_DATA)).toBe(true);
-        });
-        it('Returns false if the times series for tsKey and period have zero time series', () => {
-            expect(hasTimeSeriesWithPoints('compare', 'P30D')(TEST_DATA)).toBe(false);
-        });
-    });
 
     describe('isVisible', () => {
         it('Returns whether the time series is visible', () => {

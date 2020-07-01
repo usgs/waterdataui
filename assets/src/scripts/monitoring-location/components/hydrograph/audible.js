@@ -12,7 +12,8 @@ import {link} from '../../../lib/d3-redux';
 import {getTimeSeries} from '../../selectors/time-series-selector';
 import {Actions} from '../../store/instantaneous-value-time-series-state';
 
-import {getMainXScale, getMainYScale} from './scales';
+import {isAudiblePlaying, getAudiblePoints} from './selectors/audible-data';
+import {getMainXScale, getMainYScale} from './selectors/scales';
 
 
 // Higher tones get lower volume
