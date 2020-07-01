@@ -20,21 +20,19 @@ const buildNetworkURL = function(link) {
 
 const addNetworkRows = function(node, {hasData, networkList}){
     if (hasData){
-        const input = node.select('#network-list-table');
-        input.append('thead').html(
-            '<tr><th>Name</th><th>Link</th></tr>'
-        );
-        const tbody = input.append('tbody');
+        const input = node.append('ul')
+        .classed('usa-fieldset', true)
+        .classed('usa-list--unstyled', true)
 
-        let tbodyHTML = '';
+        let ulHTML = '';
         let networkUrl;
         networkList.forEach(function(network) {
             networkUrl = buildNetworkURL(network.href);
-            tbodyHTML += `<tr><td>${network.title}</td><td><a href="${networkUrl}">
-                ${networkUrl}</a></td></tr>`;
+            ulHTML += `<li><a class="usa-link" href="${networkUrl}">
+                ${network.title}</a></li>`;
         });
 
-        tbody.html(tbodyHTML);
+        input.html(ulHTML);
 
     } else{
         node.html('<p>This site is not in any networks</p>');

@@ -37,6 +37,7 @@ import './monitoring-location/components/daily-value-hydrograph/selectors/legend
 import './monitoring-location/components/daily-value-hydrograph/selectors/scales.spec';
 import './monitoring-location/components/daily-value-hydrograph/selectors/time-series-data.spec';
 import './monitoring-location/components/daily-value-hydrograph/graph-brush.spec';
+import './monitoring-location/components/daily-value-hydrograph/graph-controls.spec';
 import './monitoring-location/components/daily-value-hydrograph/index.spec';
 import './monitoring-location/components/daily-value-hydrograph/time-series-graph.spec';
 import './monitoring-location/components/daily-value-hydrograph/tooltip.spec';
