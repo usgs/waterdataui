@@ -20,7 +20,6 @@ $provisional-time-series: #d95f02;
 }
 
 .dv-legend-container {
-  min-height: 100px;
   position: relative;
   font-size: .7em;
   @include at-media('tablet') {

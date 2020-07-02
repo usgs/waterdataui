@@ -1,3 +1,4 @@
+import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 import {link} from '../../../lib/d3-redux';
 import {Actions} from '../../store/daily-value-time-series';
@@ -7,6 +8,9 @@ const drawDVTimeSeriesSelection = function(ul, {multipleParamCds, dvTimeSeries},
 
     if (multipleParamCds) {
         let paramCodeElements = {};
+        let divSize = 25;
+        ul.append('li')
+                   .text('Parameter Codes')
 
         dvTimeSeries.forEach((dvTs) => {
             let element;
@@ -17,27 +21,28 @@ const drawDVTimeSeriesSelection = function(ul, {multipleParamCds, dvTimeSeries},
             if (Object.keys(paramCodeElements).includes(paramCd)){
                 element = paramCodeElements[paramCd];
             } else {
-               element = ul.append('li')
-                    .classed('usa-radio', true);
+                divSize += 30;
+                element = ul.append('li')
+                     .classed('usa-radio', true);
 
-               let input = element.append('input')
-                   .classed('usa-radio__input', true)
-                   .attr('type', 'radio')
-                   .attr('id', `code-${paramCd}-radio`)
-                   .attr('aria-labelledby', `code-${paramCd}-label`)
-                   .attr('ga-on', 'click')
-                   .attr('ga-event-category', 'DVSeriesGraph')
-                   .attr('ga-event-action', 'toggleCurrentTS')
-                   .attr('name', 'dvParamCd')
-                   .on('click', function() {
-                       store.dispatch(Actions.retrieveDVTimeSeries(
-                           monitorLoc, ts_id
-                       ));
-                       store.dispatch(Actions.setCurrentDVTimeSeriesIds(
-                           this.getAttribute('data-00002'),
-                           this.getAttribute('data-00003'),
-                           this.getAttribute('data-00001')));
-                   });
+                let input = element.append('input')
+                    .classed('usa-radio__input', true)
+                    .attr('type', 'radio')
+                    .attr('id', `code-${paramCd}-radio`)
+                    .attr('aria-labelledby', `code-${paramCd}-label`)
+                    .attr('ga-on', 'click')
+                    .attr('ga-event-category', 'DVSeriesGraph')
+                    .attr('ga-event-action', 'toggleCurrentTS')
+                    .attr('name', 'dvParamCd')
+                    .on('click', function() {
+                         store.dispatch(Actions.retrieveDVTimeSeries(
+                            monitorLoc, ts_id
+                        ));
+                        store.dispatch(Actions.setCurrentDVTimeSeriesIds(
+                            this.getAttribute('data-00002'),
+                            this.getAttribute('data-00003'),
+                            this.getAttribute('data-00001')));
+                    });
 
                if (Object.keys(paramCodeElements).length < 1){
                    input.attr('checked', 'checked');
@@ -47,7 +52,7 @@ const drawDVTimeSeriesSelection = function(ul, {multipleParamCds, dvTimeSeries},
                    .classed('usa-radio__label', true)
                    .attr('id', `code-${paramCd}-label`)
                    .attr('for', `code-${paramCd}-radio`)
-                   .text(`Parameter Code: ${paramCd}`);
+                   .text(`${paramCd}`);
             };
 
             element.select('input[type="radio"]')
@@ -55,6 +60,7 @@ const drawDVTimeSeriesSelection = function(ul, {multipleParamCds, dvTimeSeries},
 
             paramCodeElements[paramCd] = element;
         });
+        select('.dv-legend-container ').style('min-height', `${divSize}px`);
     };
 };
 /*
