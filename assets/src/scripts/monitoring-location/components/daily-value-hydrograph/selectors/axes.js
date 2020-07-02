@@ -14,6 +14,7 @@ export const getXAxis = memoize(kind =>createSelector(
         return axisBottom()
             .scale(xScale)
             .tickSizeOuter(0)
+            .ticks(7)
             .tickFormat(d => DateTime.fromMillis(d).toFormat('yyyy-LL-dd'));
     }
 ));

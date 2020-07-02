@@ -129,7 +129,6 @@ export const getCurrentDVTimeSeriesUnitOfMeasure = createSelector(
     (currentTimeSeries) => {
         let result = '';
         if (currentTimeSeries) {
-            console.log(currentTimeSeries)
             let ts = currentTimeSeries.min || currentTimeSeries.mean || currentTimeSeries.max;
             result = ts.properties.unitOfMeasureName ? ts.properties.unitOfMeasureName : '';
         }

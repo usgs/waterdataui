@@ -1,5 +1,4 @@
-import {select} from 'd3-selection';
-import {createStructuredSelector} from "reselect";
+import {createStructuredSelector} from 'reselect';
 import {link} from '../../../lib/d3-redux';
 import {Actions} from '../../store/daily-value-time-series';
 import {hasMultipleParameterCodes, getAvailableDVTimeSeries} from '../../selectors/daily-value-time-series-selector';
@@ -15,7 +14,7 @@ const drawDVTimeSeriesSelection = function(ul, {multipleParamCds, dvTimeSeries},
             let ts_id = dvTs.id.split('-')[2];
             let monitorLoc = `${dvTs.id.split('-')[0]}-${dvTs.id.split('-')[1]}`;
 
-            if (paramCodeElements.hasOwnProperty(paramCd)){
+            if (Object.keys(paramCodeElements).includes(paramCd)){
                 element = paramCodeElements[paramCd];
             } else {
                element = ul.append('li')
@@ -41,14 +40,14 @@ const drawDVTimeSeriesSelection = function(ul, {multipleParamCds, dvTimeSeries},
                    });
 
                if (Object.keys(paramCodeElements).length < 1){
-                   input.attr('checked', "checked");
-               };
+                   input.attr('checked', 'checked');
+               }
 
                element.append('label')
                    .classed('usa-radio__label', true)
                    .attr('id', `code-${paramCd}-label`)
                    .attr('for', `code-${paramCd}-radio`)
-                   .text(`${paramCd}`);
+                   .text(`Parameter Code: ${paramCd}`);
             };
 
             element.select('input[type="radio"]')
@@ -70,6 +69,6 @@ export const drawGraphControls = function(elem, store) {
         .classed('graph-controls-container', true)
         .call(link(store, drawDVTimeSeriesSelection, createStructuredSelector({
             multipleParamCds: hasMultipleParameterCodes,
-            dvTimeSeries: getAvailableDVTimeSeries,
+            dvTimeSeries: getAvailableDVTimeSeries
         }), store));
 };

@@ -479,20 +479,20 @@ describe('monitoring-location/selectors/daily-value-time-series-selector', () =>
             });
         });
 
-        it('Should return true if there are multiple parameter codes in available'), () => {
+        it('Should return true if there are multiple parameter codes in available', () => {
             expect(hasMultipleParameterCodes(
                 {dailyValueTimeSeriesData:
                         {availableDVTimeSeries:
                             [{parameterCode: '1'}, {parameterCode: '2'}]
                         }})).toBeTruthy();
-        }
+        });
 
-         it('Should return true if there are multiple parameter codes in available'), () => {
+        it('Should return true if there are multiple parameter codes in available', () => {
             expect(hasMultipleParameterCodes(
                 {dailyValueTimeSeriesData:
                         {availableDVTimeSeries:
-                            [{parameterCode: '1'}, {parameterCode: '1'}]
+                                [{parameterCode: '1'}, {parameterCode: '1'}]
                         }})).toBeFalsy();
-        }
+        });
     });
 });
