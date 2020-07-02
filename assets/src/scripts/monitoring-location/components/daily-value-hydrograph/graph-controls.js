@@ -53,7 +53,7 @@ const drawDVTimeSeriesSelection = function(ul, {multipleParamCds, dvTimeSeries},
                    .attr('id', `code-${paramCd}-label`)
                    .attr('for', `code-${paramCd}-radio`)
                    .text(`${paramCd}`);
-            };
+            }
 
             element.select('input[type="radio"]')
                 .attr(`data-${dvTs.statisticCode}`, ts_id);
