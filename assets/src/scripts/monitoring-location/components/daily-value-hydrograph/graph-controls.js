@@ -1,71 +1,80 @@
+import _ from 'lodash';
 import {select} from 'd3-selection';
-import {createStructuredSelector} from 'reselect';
-import {link} from '../../../lib/d3-redux';
 import {Actions} from '../../store/daily-value-time-series';
-import {hasMultipleParameterCodes, getAvailableDVTimeSeries} from '../../selectors/daily-value-time-series-selector';
 
-const drawDVTimeSeriesSelection = function(ul, {multipleParamCds, dvTimeSeries}, store) {
+/*
+ * Draw the parameter code toggle for the daily values time series graph.
+ * @param {Object} elem - D3 selection
+ * @param {Object} store - Redux Store
+ */
+const drawDVTimeSeriesSelection = function(ul, store) {
 
-    if (multipleParamCds) {
-        let paramCodeElements = {};
-        let divSize = 25;
+    const availTimeSeries = store.getState()
+        .dailyValueTimeSeriesData.availableDVTimeSeries;
+    const groupedTs = _.groupBy(availTimeSeries, (ts) => { return ts.parameterCode});
+    const groupedKeys = Object.keys(groupedTs);
+    let checked = false;
+
+    if (groupedKeys.length > 1) {
+        let divSize = 30;
         ul.append('li')
-                   .text('Parameter Codes')
+            .text('Parameter Codes')
 
-        dvTimeSeries.forEach((dvTs) => {
-            let element;
-            let paramCd = dvTs.parameterCode;
-            let ts_id = dvTs.id.split('-')[2];
-            let monitorLoc = `${dvTs.id.split('-')[0]}-${dvTs.id.split('-')[1]}`;
+        groupedKeys.forEach((key) => {
 
-            if (Object.keys(paramCodeElements).includes(paramCd)){
-                element = paramCodeElements[paramCd];
-            } else {
-                divSize += 30;
-                element = ul.append('li')
-                     .classed('usa-radio', true);
+            const paramCd = groupedTs[key][0].parameterCode;
+            const ts_id = groupedTs[key][0].id.split('-')[2];
+            const monitorLoc = `${groupedTs[key][0].id.split('-')[0]}-${groupedTs[key][0].id.split('-')[1]}`;
+            const element = ul.append('li')
+                 .classed('usa-radio', true);
 
-                let input = element.append('input')
-                    .classed('usa-radio__input', true)
-                    .attr('type', 'radio')
-                    .attr('id', `code-${paramCd}-radio`)
-                    .attr('aria-labelledby', `code-${paramCd}-label`)
-                    .attr('ga-on', 'click')
-                    .attr('ga-event-category', 'DVSeriesGraph')
-                    .attr('ga-event-action', 'toggleCurrentTS')
-                    .attr('name', 'dvParamCd')
-                    .on('click', function() {
-                         store.dispatch(Actions.retrieveDVTimeSeries(
-                            monitorLoc, ts_id
-                        ));
-                        store.dispatch(Actions.setCurrentDVTimeSeriesIds(
-                            this.getAttribute('data-00002'),
-                            this.getAttribute('data-00003'),
-                            this.getAttribute('data-00001')));
-                    });
+            const input = element.append('input')
+                .classed('usa-radio__input', true)
+                .attr('type', 'radio')
+                .attr('id', `code-${paramCd}-radio`)
+                .attr('aria-labelledby', `code-${paramCd}-label`)
+                .attr('ga-on', 'click')
+                .attr('ga-event-category', 'DVSeriesGraph')
+                .attr('ga-event-action', 'toggleParameterCode')
+                .attr('name', 'dvParamCd');
 
-               if (Object.keys(paramCodeElements).length < 1){
-                   input.attr('checked', 'checked');
-               }
+            input.on('click', function() {
+                store.dispatch(Actions.retrieveDVTimeSeries(
+                    monitorLoc, ts_id
+                )).then(function () {
+                    store.dispatch(Actions.setCurrentDVTimeSeriesIds(
+                        input.attr('data-00002'),
+                        input.attr('data-00003'),
+                        input.attr('data-00001')));
+                })});
 
-               element.append('label')
-                   .classed('usa-radio__label', true)
-                   .attr('id', `code-${paramCd}-label`)
-                   .attr('for', `code-${paramCd}-radio`)
-                   .text(`${paramCd}`);
+            if (!checked){
+                input.attr('checked', 'checked');
+                checked = true;
             }
 
-            element.select('input[type="radio"]')
-                .attr(`data-${dvTs.statisticCode}`, ts_id);
+            element.append('label')
+                .classed('usa-radio__label', true)
+                .attr('id', `code-${paramCd}-label`)
+                .attr('for', `code-${paramCd}-radio`)
+                .text(`${paramCd}`);
 
-            paramCodeElements[paramCd] = element;
+            groupedTs[key].forEach((ts) => {
+                element.select('input[type="radio"]')
+                .attr(`data-${ts.statisticCode}`, ts_id);
+            });
+
+            divSize += 30;
         });
+
         select('.dv-legend-container ').style('min-height', `${divSize}px`);
     };
 };
+
 /*
- * Create the show audible toggle, last year toggle, and median toggle for the time series graph.
+ * Create the parameter code toggle for the daily values time series graph.
  * @param {Object} elem - D3 selection
+ * @param {Object} store - Redux Store
  */
 export const drawGraphControls = function(elem, store) {
 
@@ -73,8 +82,5 @@ export const drawGraphControls = function(elem, store) {
         .classed('usa-fieldset', true)
         .classed('usa-list--unstyled', true)
         .classed('graph-controls-container', true)
-        .call(link(store, drawDVTimeSeriesSelection, createStructuredSelector({
-            multipleParamCds: hasMultipleParameterCodes,
-            dvTimeSeries: getAvailableDVTimeSeries
-        }), store));
+        .call(drawDVTimeSeriesSelection, store);
 };

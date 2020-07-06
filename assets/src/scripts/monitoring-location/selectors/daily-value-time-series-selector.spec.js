@@ -487,7 +487,7 @@ describe('monitoring-location/selectors/daily-value-time-series-selector', () =>
                         }})).toBeTruthy();
         });
 
-        it('Should return true if there are multiple parameter codes in available', () => {
+        it('Should return false if there are multiple parameter codes in available', () => {
             expect(hasMultipleParameterCodes(
                 {dailyValueTimeSeriesData:
                         {availableDVTimeSeries:

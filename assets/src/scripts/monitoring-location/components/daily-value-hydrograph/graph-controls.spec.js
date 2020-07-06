@@ -1,8 +1,8 @@
 import {select, selectAll} from 'd3-selection';
-
 import {configureStore} from '../../store';
 import {Actions} from '../../store/daily-value-time-series';
 import {drawGraphControls} from './graph-controls';
+
 
 // Tests for the graph-controls module
 describe('monitoring-location/components/dailyValueHydrograph/graphControls', () => {
@@ -117,12 +117,13 @@ describe('monitoring-location/components/dailyValueHydrograph/graphControls', ()
         }
     };
 
-    describe('drawGraphControls with data', () => {
+    fdescribe('drawGraphControls with data', () => {
 
         let div;
         let store;
 
         beforeEach(() => {
+
             div = select('body').append('div');
             store = configureStore(TEST_STATE);
             div.call(drawGraphControls, store);
@@ -132,24 +133,11 @@ describe('monitoring-location/components/dailyValueHydrograph/graphControls', ()
             div.remove();
         });
 
-        // last year checkbox tests
         it('Should render the radio buttons', () => {
             const radioButtons = selectAll('input[type="radio"]');
             const firstRadioButton = select('#code-72019-radio');
             expect(radioButtons.size()).toBe(2);
             expect(firstRadioButton.property('checked')).toBe(true);
-        });
-
-        it('Elements should reamin and check other radio button', (done) => {
-            store.dispatch(Actions.setCurrentDVTimeSeriesIds(
-                null,
-                1123,
-                null));
-            window.requestAnimationFrame(() => {
-                const radioButtons = selectAll('input[type="radio"]');
-                expect(radioButtons.size()).toBe(2);
-                done();
-            });
         });
     });
 
@@ -164,7 +152,6 @@ describe('monitoring-location/components/dailyValueHydrograph/graphControls', ()
             div.call(drawGraphControls, store);
         });
 
-          // last year checkbox tests
         it('Should not render the radio buttons', () => {
             const radioButtons = selectAll('input[type="radio"]');
             expect(radioButtons.size()).toBe(0);
@@ -182,7 +169,6 @@ describe('monitoring-location/components/dailyValueHydrograph/graphControls', ()
             div.call(drawGraphControls, store);
         });
 
-          // last year checkbox tests
         it('Should not render the radio buttons', () => {
             const radioButtons = selectAll('input[type="radio"]');
             expect(radioButtons.size()).toBe(0);
