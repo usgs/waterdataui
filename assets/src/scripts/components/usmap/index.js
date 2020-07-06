@@ -32,10 +32,10 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
     const getFeaturesInBbox = () => {
         const bounds = map.getBounds();
         const bbox = {
-          west: bounds.getWest(),     
-          south: bounds.getSouth(),     
-          east: bounds.getEast(),     
-          north: bounds.getNorth()     
+          west: bounds.getWest(),
+          south: bounds.getSouth(),
+          east: bounds.getEast(),
+          north: bounds.getNorth()
         };
         // store.dispatch(retrieveObservationsData(bbox));
         store.dispatch(retrieveWaterqualityData(bbox));
