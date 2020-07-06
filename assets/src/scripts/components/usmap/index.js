@@ -11,7 +11,7 @@ import { retrieveWaterqualityData } from '../../store/waterquality';
  */
 const usMap = function(node, {latitude, longitude, zoom}, store) {
     let gray = L.layerGroup();
-    L.esri.basemapLayer('Gray').addTo(gray);
+    L.esri.basemapLayer('Streets').addTo(gray);
 
     // Create map on node
     const map = L.map('site-map', {
@@ -61,12 +61,7 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
 
     const plotWaterQualitySites = (node, sites) => {
         Object.values(sites).forEach(s => {
-          const marker = L.circle([s.LatitudeMeasure, s.LongitudeMeasure], {
-              color: 'red',
-              fillColor: '#f03',
-              fillOpacity: 0.2,
-              radius: 5000
-          });
+          const marker = L.marker([s.LatitudeMeasure, s.LongitudeMeasure]);
           console.log(s);
           const popup = 
             `<span style="display: block; font-weight: bold">${s.MonitoringLocationName}</span>Vertical Measure: ${s['VerticalMeasure/MeasureValue']}`;
