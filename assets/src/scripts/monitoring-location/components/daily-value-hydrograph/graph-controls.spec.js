@@ -1,6 +1,5 @@
 import {select, selectAll} from 'd3-selection';
 import {configureStore} from '../../store';
-import {Actions} from '../../store/daily-value-time-series';
 import {drawGraphControls} from './graph-controls';
 
 

@@ -11,14 +11,15 @@ const drawDVTimeSeriesSelection = function(ul, store) {
 
     const availTimeSeries = store.getState()
         .dailyValueTimeSeriesData.availableDVTimeSeries;
-    const groupedTs = _.groupBy(availTimeSeries, (ts) => { return ts.parameterCode});
+    const groupedTs = _.groupBy(availTimeSeries, (ts) => {
+        return ts.parameterCode; });
     const groupedKeys = Object.keys(groupedTs);
     let checked = false;
 
     if (groupedKeys.length > 1) {
         let divSize = 30;
         ul.append('li')
-            .text('Parameter Codes')
+            .text('Parameter Codes');
 
         groupedKeys.forEach((key) => {
 
@@ -46,7 +47,8 @@ const drawDVTimeSeriesSelection = function(ul, store) {
                         input.attr('data-00002'),
                         input.attr('data-00003'),
                         input.attr('data-00001')));
-                })});
+                });
+            });
 
             if (!checked){
                 input.attr('checked', 'checked');
@@ -68,7 +70,7 @@ const drawDVTimeSeriesSelection = function(ul, store) {
         });
 
         select('.dv-legend-container ').style('min-height', `${divSize}px`);
-    };
+    }
 };
 
 /*

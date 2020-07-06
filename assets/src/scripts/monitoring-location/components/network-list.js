@@ -30,11 +30,11 @@ const addNetworkRows = function(node, {hasData, networkList}){
         networkList.forEach(function(network) {
             console.log(network.title);
             networkUrl = buildNetworkURL(network.href);
-            liTag = input.append('li');
-            aTag = liTag.append('a')
+            input.append('li')
+                .append('a')
                 .classed('usa-link', true)
                 .attr('href', networkUrl)
-                .text(network.title)
+                .text(network.title);
         });
 
     } else{
