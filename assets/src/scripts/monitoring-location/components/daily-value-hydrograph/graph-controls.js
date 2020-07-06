@@ -12,7 +12,8 @@ const drawDVTimeSeriesSelection = function(ul, store) {
     const availTimeSeries = store.getState()
         .dailyValueTimeSeriesData.availableDVTimeSeries;
     const groupedTs = _.groupBy(availTimeSeries, (ts) => {
-        return ts.parameterCode; });
+        return ts.parameterCode;
+    });
     const groupedKeys = Object.keys(groupedTs);
     let checked = false;
 
