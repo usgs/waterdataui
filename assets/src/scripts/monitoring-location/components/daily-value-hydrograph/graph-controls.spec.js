@@ -116,7 +116,7 @@ describe('monitoring-location/components/dailyValueHydrograph/graphControls', ()
         }
     };
 
-    fdescribe('drawGraphControls with data', () => {
+    describe('drawGraphControls with data', () => {
 
         let div;
         let store;
