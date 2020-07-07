@@ -50,7 +50,15 @@ export const configureStore = function (initialState) {
             upstreamBasin: []
         },
         observations: {},
-        waterquality: {},
+        waterquality: {
+            filters: {
+                characteristics: {
+                    Nitrate: false,
+                    Lead: false
+                }    
+            },
+            sites: []
+        },
         statisticsData: {},
         ivTimeSeriesState: {
             showIVTimeSeries: {

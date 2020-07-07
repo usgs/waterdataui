@@ -2,17 +2,20 @@ import { select } from 'd3-selection';
 import { link, subscribe } from '../../lib/d3-redux';
 import { Features } from '../../selectors/observations-selector';
 import { Sites } from '../../selectors/waterquality-selector';
+import { Filters } from '../../selectors/waterquality-selector';
 import config from '../../config';
 import { retrieveObservationsData } from '../../store/observations';
-import { retrieveWaterqualityData } from '../../store/waterquality';
+import { applyCharacteristicFilter, retrieveWaterqualityData } from '../../store/waterquality';
 
 /*
  * Creates a US map
  */
 const usMap = function(node, {latitude, longitude, zoom}, store) {
     let gray = L.layerGroup();
-    L.esri.basemapLayer('Streets').addTo(gray);
+    L.esri.basemapLayer('Gray').addTo(gray);
 
+    const checkboxes = document.querySelectorAll('#param-filters input');
+        
     // Create map on node
     const map = L.map('site-map', {
         center: [latitude, longitude],
@@ -29,7 +32,13 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
         map.scrollWheelZoom.disable();
     });
 
-    const getFeaturesInBbox = () => {
+    const setCharacteristicFilter = (filter, store) => {
+        store.dispatch(applyCharacteristicFilter(filter.value, filter.checked));
+    };
+
+    checkboxes.forEach(b => b.addEventListener('change', e => setCharacteristicFilter(e.target, store)));
+
+    const getFeaturesInBbox = (charateristic) => {
         const bounds = map.getBounds();
         const bbox = {
           west: bounds.getWest(),
@@ -38,7 +47,7 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
           north: bounds.getNorth()
         };
         // store.dispatch(retrieveObservationsData(bbox));
-        store.dispatch(retrieveWaterqualityData(bbox));
+        store.dispatch(retrieveWaterqualityData(bbox,charateristic));
     };
 
     map.on('moveend', () => {
@@ -46,28 +55,28 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
     });
 
     const addSiteCircles = (node, features) => {
+        // features.forEach(f => {
+        //     if (f.geometry) {
+        //         const marker = L.circle(f.geometry.coordinates.reverse(), {
+        //             color: 'red',
+        //             fillColor: '#f03',
+        //             fillOpacity: 0.2,
+        //             radius: 5000
+        //         });
+        //         marker.addTo(map);
+        //     }
+        // });
+
         features.forEach(f => {
-            if (f.geometry) {
-                const marker = L.circle(f.geometry.coordinates.reverse(), {
-                    color: 'red',
-                    fillColor: '#f03',
-                    fillOpacity: 0.2,
-                    radius: 5000
-                });
-                marker.addTo(map);
-            }
+            const marker = L.marker([f.LatitudeMeasure, f.LongitudeMeasure]).addTo(map);
         });
     };
 
-    const plotWaterQualitySites = (node, sites) => {
-        Object.values(sites).forEach(s => {
-          const marker = L.marker([s.LatitudeMeasure, s.LongitudeMeasure]);
-          console.log(s);
-          const popup = 
-            `<span style="display: block; font-weight: bold">${s.MonitoringLocationName}</span>Vertical Measure: ${s['VerticalMeasure/MeasureValue']}`;
-          marker.bindPopup(popup);
-          marker.addTo(map);
-        });
+    const applyFilter = (node, filter) => {
+        const charateristic = Object.keys(filter)[0];
+        if (filter[charateristic]) {
+            getFeaturesInBbox(charateristic);
+        }
     };
 
     //add additional baselayer
@@ -84,10 +93,11 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
         map.addLayer(new L.esri.TiledMapLayer({url: config.HYDRO_ENDPOINT}));
     }
 
-    // node
-    //     .call(link(store, addSiteCircles, Features));
     node
-        .call(link(store, plotWaterQualitySites, Sites));
+        .call(link(store, addSiteCircles, Sites));
+
+    node
+        .call(link(store, applyFilter, Filters));
 };
 
 /*

@@ -3,6 +3,7 @@ import {
 } from '../web-services/waterquality';
 
 const SET_WATERQUALITY_FEATURES = 'SET_WATERQUALITY_FEATURES';
+const APPLY_CHARACTERISTIC_FILTER = 'APPLY_CHARACTERISTIC_FILTER';
 
 const INITIAL_DATA = {
 };
@@ -23,9 +24,23 @@ const setWaterqualityFeatures = function(features) {
     };
 };
 
-export const retrieveWaterqualityData = function(bbox) {
+const setFilter = function (filter) {
+    return {
+        type: APPLY_CHARACTERISTIC_FILTER,
+        filter
+    };
+};
+
+export const applyCharacteristicFilter = function (characteristicName, filterValue) {
     return function (dispatch) {
-        const features = fetchSitesInBbox(bbox);
+        console.log(characteristicName, filterValue);
+        dispatch(setFilter({ [characteristicName]: filterValue }));
+    };
+};
+
+export const retrieveWaterqualityData = function(bbox, characteristicName) {
+    return function (dispatch) {
+        const features = fetchSitesInBbox(bbox, characteristicName);
         return Promise.all([
             features
         ]).then(function(data) {
@@ -42,15 +57,23 @@ export const waterqualityDataReducer = function(waterqualityData=INITIAL_DATA, a
     switch(action.type) {
         case SET_WATERQUALITY_FEATURES:
             return {
-                // ...observationsData,
-                ...action.features
+                sites: [...action.features]
             };
-
+        case APPLY_CHARACTERISTIC_FILTER:
+            return {
+                ...waterqualityData,
+                filters: {
+                characteristics: {
+                        ...action.filter      
+                    }
+                }
+            };
         default: return waterqualityData;
     }
 };
 
 export const Actions = {
+    applyCharacteristicFilter,
     setWaterqualityFeatures,
     retrieveWaterqualityData
 };

@@ -14,6 +14,7 @@
 {% block content %}
   <div id="monitoring-location-page-container">
     <h2>Hello, WDFN!</h2>
+    {{ components.WQPParamFilters() }}
     {{ components.USMapComponent(latitude, longitude, zoom) }}
   </div>
 {% endblock %}

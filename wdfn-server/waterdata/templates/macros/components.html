@@ -50,7 +50,20 @@
   <div class="wdfn-component" data-component="us-map" data-latitude="{{ latitude }}" data-longitude="{{ longitude }}" data-zoom="{{zoom}}">
         <div id="flood-layer-control-container"></div>
         <div id="site-map"></div>
-    </div>
+  </div>
+{%- endmacro %}
+
+{% macro WQPParamFilters() -%}
+    <form action="" id="param-filters">
+        <fieldset>
+            <label for="filter-nitrate">Nitrate
+                <input type="checkbox" name="filter-nitrate" id="filter-nitrate" value="Nitrate">
+            </label>
+            <label for="filter-lead">Lead
+                <input type="checkbox" name="filter-lead" id="filter-lead" value="Lead">
+            </label>
+        </fieldset>
+    </form>
 {%- endmacro %}
 
 {% macro NetworkComponent(network_cd, extent) -%}

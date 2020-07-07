@@ -18,6 +18,10 @@ const fetchWaterqualityData = function(queryUrl, payload) {
         });
 };
 
-export const fetchSitesInBbox = function ({ west, south, east, north }) {
-    return fetchWaterqualityData('data/Station/search?mimeType=tsv', `{"bbox":"${west},${south},${east},${north}","pCode":["00060"]}`);
+export const fetchSitesInBbox = function ({ west, south, east, north }, characteristic) {
+    const bboxStr = `"bbox":"${west},${south},${east},${north}"`;
+    const charStr = `"characteristicName":["${characteristic}"]`;
+    const query = `{${bboxStr},${charStr}}`;
+    
+    if (characteristic) return fetchWaterqualityData('data/Station/search?mimeType=tsv', query);
 };
