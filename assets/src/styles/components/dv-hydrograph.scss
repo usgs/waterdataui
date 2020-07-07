@@ -19,6 +19,15 @@ $provisional-time-series: #d95f02;
   text-align: center;
 }
 
+#dv-parameter-code-toggle {
+  list-style: none;
+  padding-top: 25px;
+  li {
+    display: inline-block;
+    padding-right: 25px;
+  }
+}
+
 .dv-legend-container {
   position: relative;
   font-size: .7em;
