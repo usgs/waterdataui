@@ -15,7 +15,6 @@ const drawDVTimeSeriesSelection = function(ul, store) {
         return ts.parameterCode;
     });
     const groupedKeys = Object.keys(groupedTs);
-    let checked = false;
 
     if (groupedKeys.length > 1) {
         let divSize = 30;
@@ -38,7 +37,7 @@ const drawDVTimeSeriesSelection = function(ul, store) {
                 .attr('ga-on', 'click')
                 .attr('ga-event-category', 'DVSeriesGraph')
                 .attr('ga-event-action', 'toggleParameterCode')
-                .attr('name', 'dvParamCd')
+                .attr('name', 'dvParamCd');
 
             if (idx == 0){
                 input.attr('checked', 'checked');
