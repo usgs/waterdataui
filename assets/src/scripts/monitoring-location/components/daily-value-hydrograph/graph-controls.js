@@ -79,7 +79,7 @@ const drawDVTimeSeriesSelection = function(ul, store) {
  */
 export const drawGraphControls = function(elem, store) {
 
-    const containerDiv = elem.append('ul')
+    elem.append('ul')
         .attr('id', 'dv-parameter-code-toggle')
         .classed('usa-fieldset', true)
         .classed('usa-list--unstyled', true)
