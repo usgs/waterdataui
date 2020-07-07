@@ -78,5 +78,10 @@ if app.config.get('LOGGING_ENABLED'):
     app.logger.addHandler(handler)
 
 
+# setup up serving of static files by whitenoise if running in a container
+if os.getenv('CONTAINER_RUN', False):
+    from whitenoise import WhiteNoise
+    app.wsgi_app = WhiteNoise(app.wsgi_app, root='/home/python/assets', prefix='static/')
+
 from . import views  # pylint: disable=C0413
 from . import filters  # pylint: disable=C0413
