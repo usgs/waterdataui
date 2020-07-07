@@ -22,7 +22,7 @@ const drawDVTimeSeriesSelection = function(ul, store) {
         ul.append('li')
             .text('Parameter Codes');
 
-        groupedKeys.forEach((key) => {
+        groupedKeys.forEach((key, idx) => {
 
             const paramCd = groupedTs[key][0].parameterCode;
             const ts_id = groupedTs[key][0].id.split('-')[2];
@@ -38,7 +38,11 @@ const drawDVTimeSeriesSelection = function(ul, store) {
                 .attr('ga-on', 'click')
                 .attr('ga-event-category', 'DVSeriesGraph')
                 .attr('ga-event-action', 'toggleParameterCode')
-                .attr('name', 'dvParamCd');
+                .attr('name', 'dvParamCd')
+
+            if (idx == 0){
+                input.attr('checked', 'checked');
+            }
 
             input.on('click', function() {
                 store.dispatch(Actions.retrieveDVTimeSeries(
@@ -50,11 +54,6 @@ const drawDVTimeSeriesSelection = function(ul, store) {
                         input.attr('data-00001')));
                 });
             });
-
-            if (!checked){
-                input.attr('checked', 'checked');
-                checked = true;
-            }
 
             element.append('label')
                 .classed('usa-radio__label', true)

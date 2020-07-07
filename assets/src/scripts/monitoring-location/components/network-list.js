@@ -23,7 +23,7 @@ const addNetworkRows = function(node, {hasData, networkList}){
         let input = node.append('ul')
         .classed('usa-fieldset', true)
         .classed('usa-list--unstyled', true);
-        
+
         let networkUrl;
         networkList.forEach(function(network) {
             console.log(network.title);
