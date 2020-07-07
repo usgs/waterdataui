@@ -9,6 +9,7 @@ import {drawErrorAlert, drawInfoAlert} from '../../../d3-rendering/alerts';
 import {drawLoadingIndicator} from '../../../d3-rendering/loading-indicator';
 
 import {drawGraphBrush} from './graph-brush';
+import {drawGraphControls} from './graph-controls';
 import {drawTimeSeriesLegend} from './legend';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
@@ -95,7 +96,8 @@ export const attachToNode = function (store,
                     .call(drawGraphBrush, store)
                     .append('div')
                         .classed('dv-legend-container', true)
-                        .call(drawTimeSeriesLegend, store);
+                        .call(drawTimeSeriesLegend, store)
+                        .call(drawGraphControls, store);
             });
 
         } else {

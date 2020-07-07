@@ -9,7 +9,8 @@ import {
     getCurrentDVTimeSeriesData,
     getCurrentDVTimeSeriesUnitOfMeasure,
     getCurrentDVTimeSeriesTimeRange,
-    getCurrentDVTimeSeriesValueRange
+    getCurrentDVTimeSeriesValueRange,
+    hasMultipleParameterCodes
 } from './daily-value-time-series-selector';
 
 describe('monitoring-location/selectors/daily-value-time-series-selector', () => {
@@ -476,6 +477,22 @@ describe('monitoring-location/selectors/daily-value-time-series-selector', () =>
                 min: 4.5,
                 max: 14.0
             });
+        });
+
+        it('Should return true if there are multiple parameter codes in available', () => {
+            expect(hasMultipleParameterCodes(
+                {dailyValueTimeSeriesData:
+                        {availableDVTimeSeries:
+                            [{parameterCode: '1'}, {parameterCode: '2'}]
+                        }})).toBeTruthy();
+        });
+
+        it('Should return false if there are multiple parameter codes in available', () => {
+            expect(hasMultipleParameterCodes(
+                {dailyValueTimeSeriesData:
+                        {availableDVTimeSeries:
+                                [{parameterCode: '1'}, {parameterCode: '1'}]
+                        }})).toBeFalsy();
         });
     });
 });

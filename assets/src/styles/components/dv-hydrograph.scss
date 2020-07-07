@@ -20,9 +20,21 @@ $provisional-time-series: #d95f02;
 }
 
 .dv-legend-container {
+  position: relative;
   font-size: .7em;
   @include at-media('tablet') {
     font-size: 1em;
+  }
+  .graph-controls-container {
+    display: inline-block;
+    li {
+      margin-bottom: 10px;
+    }
+    @include at-media('tablet') {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
   }
 }
 

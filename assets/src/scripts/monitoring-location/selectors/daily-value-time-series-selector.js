@@ -28,6 +28,20 @@ export const getAllDVTimeSeries =
     (state) => state.dailyValueTimeSeriesData.dvTimeSeries ? state.dailyValueTimeSeriesData.dvTimeSeries : null;
 
 /*
+ * Return a selector function which returns boolean of whether there is more than one prameter code
+ * @param {Object Array} dvTimeSeries
+ * @return {Function} - selector function returns true or false.
+ */
+export const hasMultipleParameterCodes = createSelector(
+    getAvailableDVTimeSeries,
+    (dvTimeSeries) => {
+        let paramcodes = new Set(dvTimeSeries.map((ts) => {
+           return ts.parameterCode;
+        }));
+        return paramcodes.size > 1;
+    }
+);
+/*
  * Return a selector function which returns an Object containing current DV timeSeries for min, mean, and max. If none are available
  * null will be returned. A particular time series for a statistic can be null
  * @param {String} timeSeriesId
