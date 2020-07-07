@@ -91,13 +91,13 @@ export const attachToNode = function (store,
                 loadingIndicator.call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
                 let graphContainer = nodeElem.select('.graph-container');
                 graphContainer
+                    .call(drawGraphControls, store)
                     .call(drawTimeSeriesGraph, store)
                     .call(drawTooltipCursorSlider, store)
                     .call(drawGraphBrush, store)
                     .append('div')
                         .classed('dv-legend-container', true)
-                        .call(drawTimeSeriesLegend, store)
-                        .call(drawGraphControls, store);
+                        .call(drawTimeSeriesLegend, store);
             });
 
         } else {

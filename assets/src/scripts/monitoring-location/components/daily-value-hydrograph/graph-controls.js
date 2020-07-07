@@ -19,7 +19,7 @@ const drawDVTimeSeriesSelection = function(ul, store) {
     if (groupedKeys.length > 1) {
         let divSize = 30;
         ul.append('li')
-            .text('Parameter Codes');
+            .text('Parameter Codes:');
 
         groupedKeys.forEach((key, idx) => {
 
@@ -79,9 +79,9 @@ const drawDVTimeSeriesSelection = function(ul, store) {
  */
 export const drawGraphControls = function(elem, store) {
 
-    elem.append('ul')
+    const containerDiv = elem.append('ul')
+        .attr('id', 'dv-parameter-code-toggle')
         .classed('usa-fieldset', true)
         .classed('usa-list--unstyled', true)
-        .classed('graph-controls-container', true)
         .call(drawDVTimeSeriesSelection, store);
 };
