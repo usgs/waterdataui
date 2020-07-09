@@ -12,6 +12,8 @@ import { applyCharacteristicFilter, retrieveWaterqualityData } from '../../store
  */
 const usMap = function(node, {latitude, longitude, zoom}, store) {
     let gray = L.layerGroup();
+    const markerGroup = L.layerGroup();
+
     L.esri.basemapLayer('Gray').addTo(gray);
 
     const checkboxes = document.querySelectorAll('#param-filters input');
@@ -50,11 +52,12 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
         store.dispatch(retrieveWaterqualityData(bbox,charateristic));
     };
 
-    map.on('moveend', () => {
-        getFeaturesInBbox();
-    });
+    // map.on('moveend', () => {
+    //     getFeaturesInBbox();
+    // });
 
     const addSiteCircles = (node, features) => {
+        markerGroup.addTo(map);
         // features.forEach(f => {
         //     if (f.geometry) {
         //         const marker = L.circle(f.geometry.coordinates.reverse(), {
@@ -68,11 +71,13 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
         // });
 
         features.forEach(f => {
-            const marker = L.marker([f.LatitudeMeasure, f.LongitudeMeasure]).addTo(map);
+            L.marker([f.LatitudeMeasure, f.LongitudeMeasure]).addTo(markerGroup);
         });
     };
 
     const applyFilter = (node, filter) => {
+        markerGroup.clearLayers();
+        
         const charateristic = Object.keys(filter)[0];
         if (filter[charateristic]) {
             getFeaturesInBbox(charateristic);

@@ -8,6 +8,19 @@ const APPLY_CHARACTERISTIC_FILTER = 'APPLY_CHARACTERISTIC_FILTER';
 const INITIAL_DATA = {
 };
 
+const downSelect = (oldSites, newSites) => {
+    if (oldSites.sites.length > 0) {
+        const oldSiteIds = oldSites.sites.map(s => s.MonitoringLocationIdentifier);
+        const filteredSites = newSites.filter(s => oldSiteIds.includes(s.MonitoringLocationIdentifier));
+        console.log(`Old Sites: ${oldSites.sites.length}`,
+                    `New sites: ${newSites.length}`,
+                    `Old AND New: ${filteredSites.length}`);
+        return filteredSites;
+    } else {
+        return newSites;
+    }
+};
+
 /*
  * Synchronous Redux actions to save the nldi data
  * @param {Array of GeoJSON Object} upstreamFlows
@@ -33,7 +46,6 @@ const setFilter = function (filter) {
 
 export const applyCharacteristicFilter = function (characteristicName, filterValue) {
     return function (dispatch) {
-        console.log(characteristicName, filterValue);
         dispatch(setFilter({ [characteristicName]: filterValue }));
     };
 };
@@ -57,7 +69,7 @@ export const waterqualityDataReducer = function(waterqualityData=INITIAL_DATA, a
     switch(action.type) {
         case SET_WATERQUALITY_FEATURES:
             return {
-                sites: [...action.features]
+                sites: downSelect(waterqualityData, action.features)
             };
         case APPLY_CHARACTERISTIC_FILTER:
             return {
