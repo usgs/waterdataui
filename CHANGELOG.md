@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.34.0...master)
 
+### Changed
+- Using the latest guidance for the contents of the government banner from USWDS
+
 ## [0.34.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.33.0...waterdataui-0.34.0) - 2020-07-07
 ### Added
 - The DV graph shows min, mean, and maximum statistics if available.
