@@ -76,7 +76,7 @@ export const waterqualityDataReducer = function(waterqualityData=INITIAL_DATA, a
                 ...waterqualityData,
                 filters: {
                 characteristics: {
-                        ...action.filter      
+                        ...action.filter
                     }
                 }
             };

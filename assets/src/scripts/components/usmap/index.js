@@ -17,7 +17,7 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
     L.esri.basemapLayer('Gray').addTo(gray);
 
     const checkboxes = document.querySelectorAll('#param-filters input');
-        
+
     // Create map on node
     const map = L.map('site-map', {
         center: [latitude, longitude],
@@ -77,7 +77,7 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
 
     const applyFilter = (node, filter) => {
         markerGroup.clearLayers();
-        
+
         const charateristic = Object.keys(filter)[0];
         if (filter[charateristic]) {
             getFeaturesInBbox(charateristic);
