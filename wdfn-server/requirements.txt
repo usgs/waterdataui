@@ -5,9 +5,9 @@ Flask==1.1.2
 itsdangerous==1.1.0
 MarkupSafe==1.1.1
 pendulum==2.1.0
-pyfakefs==4.0.2
+pyfakefs==4.1.0
 pytest==5.4.3
-pytest-mock==3.1.1
+pytest-mock==3.2.0
 pytest-flask==1.0.0
 requests==2.24.0
 requests-mock==1.8.0

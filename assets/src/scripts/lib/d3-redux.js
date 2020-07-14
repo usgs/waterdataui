@@ -21,7 +21,7 @@ export const subscribe = function (store, callback, args) {
         }
     }
 
-    store.subscribe(throttle(handleUpdate));
+    store.subscribe(throttle.default(handleUpdate));
 };
 
 /**
@@ -80,7 +80,7 @@ export const listen = function (store, selector, func, raf = true) {
         }
     };
     if (raf) {
-        callback = throttle(callback);
+        callback = throttle.default(callback);
     }
     func(current);
     return store.subscribe(callback);
