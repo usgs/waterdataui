@@ -1,13 +1,13 @@
-import {line} from 'd3-shape';
-import {select} from 'd3-selection';
+import { line } from 'd3-shape';
+import { select } from 'd3-selection';
 
 import config from '../../../config';
-import {appendTooltip} from '../../../tooltips';
+import { appendTooltip } from '../../../tooltips';
 
-import {Actions} from '../../store/instantaneous-value-time-series-data';
+import { Actions } from '../../store/instantaneous-value-time-series-data';
 
-import {MASK_DESC} from './selectors/drawing-data';
-import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from './selectors/layout';
+import { MASK_DESC } from './selectors/drawing-data';
+import { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } from './selectors/layout';
 
 /**
  * Draw a sparkline in a selected SVG element
@@ -16,15 +16,15 @@ import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from './selectors/layout';
  * @param {Array} of line segment Objects - seriesLineSegments
  * @param {Object} scales - has x property for x scale and y property for y scale
  */
-export const addSparkLine = function(svgSelection, {seriesLineSegments, scales}) {
+export const addSparkLine = function (svgSelection, { seriesLineSegments, scales }) {
     if (seriesLineSegments.length === 0) {
         return;
     }
     let spark = line()
-        .x(function(d) {
+        .x(function (d) {
             return scales.x(d.dateTime);
         })
-        .y(function(d) {
+        .y(function (d) {
             return scales.y(d.value);
         });
     const seriesDataMasks = seriesLineSegments.map(x => x.classes.dataMask);
@@ -35,11 +35,11 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
                     svgSelection.append('circle')
                         .data(lineSegment.points)
                         .classed('spark-point', true)
-                        .attr('r', CIRCLE_RADIUS_SINGLE_PT/2)
+                        .attr('r', CIRCLE_RADIUS_SINGLE_PT / 2)
                         .attr('cx', d => scales.x(d.dateTime))
                         .attr('cy', d => scales.y(d.value));
                 } else {
-                     svgSelection.append('path')
+                    svgSelection.append('path')
                         .attr('d', spark(lineSegment.points))
                         .classed('spark-line', true);
                 }
@@ -61,7 +61,7 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
 
         if (maskDescWords.length > 1) {
             Array.from(maskDescWords.entries()).forEach(x => {
-                const yPosition = 15 + x[0]*12;
+                const yPosition = 15 + x[0] * 12;
                 const maskText = x[1];
                 let tspan = svgText.append('tspan')
                     .attr('x', 0)
@@ -88,12 +88,12 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
  */
 export const plotSeriesSelectTable = function (elem,
-   {
+    {
         siteno,
         availableParameterCodes,
         lineSegmentsByParmCd,
         timeSeriesScalesByParmCd
-   }, store ){
+    }, store) {
     // Get the position of the scrolled window before removing it so it can be set to the same value.
     const lastTable = elem.select('#select-time-series table');
     const scrollTop = lastTable.size() ? lastTable.property('scrollTop') : null;
@@ -103,7 +103,7 @@ export const plotSeriesSelectTable = function (elem,
         return;
     }
 
-    const columnHeaders = ['Parameter', 'Preview', '#', 'Period of Record'];
+    const columnHeaders = ['   ', 'Parameter', 'Preview', '#', 'Period of Record'];
     const tableContainer = elem.append('div')
         .attr('id', 'select-time-series');
 
@@ -118,49 +118,88 @@ export const plotSeriesSelectTable = function (elem,
         .attr('role', 'listbox');
 
 
+
     table.append('thead')
         .append('tr')
-            .selectAll('th')
-            .data(columnHeaders)
-            .enter().append('th')
-                .attr('scope', 'col')
-                .text(d => d);
+        .selectAll('th')
+        .data(columnHeaders)
+        .enter().append('th')
+        .attr('scope', 'col')
+        .text(d => d);
 
     table.append('tbody')
+        .attr('class', 'usa-fieldset')
         .selectAll('tr')
         .data(availableParameterCodes)
         .enter().append('tr')
-            .attr('ga-on', 'click')
-            .attr('ga-event-category', 'selectTimeSeries')
-            .attr('ga-event-action', (parm) => `time-series-parmcd-${parm.parameterCode}`)
-            .attr('role', 'option')
-            .classed('selected', parm => parm.selected)
-            .attr('aria-selected', parm => parm.selected)
-            .on('click', function (parm) {
-                if (!parm.selected) {
-                    store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, parm.variableID));
-                }
-            })
-            .call(tr => {
-                let parmCdCol = tr.append('th')
-                    .attr('scope', 'row');
-                parmCdCol.append('span')
-                    .text(parm => parm.description)
-                    .call(appendTooltip, parm => `Parameter code: ${parm.parameterCode}`);
-                tr.append('td')
-                    .append('svg')
-                    .attr('width', SPARK_LINE_DIM.width.toString())
-                    .attr('height', SPARK_LINE_DIM.height.toString());
-                tr.append('td')
-                    .text(parm => parm.timeSeriesCount);
-                tr.append('td')
-                    .style('white-space', 'nowrap')
-                    .text(parm =>`${config.uvPeriodOfRecord[parm.parameterCode].begin_date} to ${config.uvPeriodOfRecord[parm.parameterCode].end_date}`);
-            });
+        .attr('ga-on', 'click')
+        .attr('ga-event-category', 'selectTimeSeries')
+        .attr('ga-event-action', (parm) => `time-series-parmcd-${parm.parameterCode}`)
+        .attr('role', 'option')
+        .classed('selected', parm => parm.selected)
+        .attr('aria-selected', parm => parm.selected)
+        .on('click', function (parm) {
+            if (!parm.selected) {
+                // TODO: move this to the redux response. not staying set after store.dispatch.
+                let selectedInput = elem.select('#input-' + parm.variableID);
+                selectedInput.attr('checked', 'true');
+                store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, parm.variableID));
+               
+            }
+        })
+        .call(tr => {
+
+            let parmSelectCol = tr.append('td')
+                .attr('scope', 'row');
+            parmSelectCol.append('input')
+                .attr('type', 'radio')
+                .attr('name', 'param-select-input')
+                .attr('id', parm => `input-${parm.variableID}`)
+                .attr('class', 'usa-radio__input')
+                .attr('value', parm => `${parm.variableID}`)
+                .style('position', 'inherit');
+
+            let parmCdCol = tr.append('th')
+                .attr('scope', 'row');
+            parmCdCol.append('span')
+                .text(parm => parm.description)
+                .call(appendTooltip, parm => `Parameter code: ${parm.parameterCode}`);
+            // tr.append('td')
+            //     .attr('class', 'usa-radio radio-button-column');
+            //.attr('class', 'usa-radio');
+            // .append('div')
+            // .attr('class', 'usa-radio')
+            // .text('x');
+            // .append('input')
+            // .attr('type', 'radio')
+            // .attr('name', 'param-select-input')
+            // .attr('id', parm => `${parm.variableID}-input`)
+            // .attr('class', 'usa-radio__input');
+            // .attr('value', parm => parm.parameterCode)
+            tr.append('td')
+                .append('svg')
+                .attr('width', SPARK_LINE_DIM.width.toString())
+                .attr('height', SPARK_LINE_DIM.height.toString());
+            tr.append('td')
+                .text(parm => parm.timeSeriesCount);
+            tr.append('td')
+                .style('white-space', 'nowrap')
+                .text(parm => `${config.uvPeriodOfRecord[parm.parameterCode].begin_date} to ${config.uvPeriodOfRecord[parm.parameterCode].end_date}`);
+
+            // const paramSelectionTD = elem.selectAll('.radio-button-column');
+            // paramSelectionTD.append('input')
+            //     .attr('type', 'radio')
+            //     .attr('name', 'param-select-input')
+            //     .attr('class', 'usa-radio__input, param-select-radio')
+            //     .style('position', 'inherit');
+        });
+
+
+
 
     table.property('scrollTop', scrollTop);
 
-    table.selectAll('tbody svg').each(function(d) {
+    table.selectAll('tbody svg').each(function (d) {
         let selection = select(this);
         const parmCd = d.parameterCode;
         const lineSegments = lineSegmentsByParmCd[parmCd] ? lineSegmentsByParmCd[parmCd] : [];
