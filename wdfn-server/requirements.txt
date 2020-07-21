@@ -4,7 +4,7 @@ click==7.1.2
 Flask==1.1.2
 itsdangerous==1.1.0
 MarkupSafe==1.1.1
-pendulum==2.1.0
+pendulum==2.1.1
 pyfakefs==4.1.0
 pytest==5.4.3
 pytest-mock==3.2.0
