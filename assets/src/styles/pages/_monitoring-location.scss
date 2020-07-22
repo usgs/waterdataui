@@ -30,12 +30,20 @@ table {
   #site-summary {
     table-layout: fixed;
     width: 100%;
-    overflow: visible; /* Prevent extra scrollbar space */
+    overflow: visible;
+
+    /* Prevent extra scrollbar space */
     td {
       .loc-metadata {
         word-wrap: break-word;
       }
     }
+  }
+
+  .param-select-input {
+    position: inherit;
+    width: 1.25rem;
+    height: 1.25rem;
   }
 }
 

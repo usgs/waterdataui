@@ -117,8 +117,6 @@ export const plotSeriesSelectTable = function (elem,
         .attr('tabindex', 0)
         .attr('role', 'listbox');
 
-
-
     table.append('thead')
         .append('tr')
         .selectAll('th')
@@ -140,11 +138,7 @@ export const plotSeriesSelectTable = function (elem,
         .attr('aria-selected', parm => parm.selected)
         .on('click', function (parm) {
             if (!parm.selected) {
-                // TODO: move this to the redux response. not staying set after store.dispatch.
-                let selectedInput = elem.select('#input-' + parm.variableID);
-                selectedInput.attr('checked', 'true');
                 store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, parm.variableID));
-               
             }
         })
         .call(tr => {
@@ -153,29 +147,16 @@ export const plotSeriesSelectTable = function (elem,
                 .attr('scope', 'row');
             parmSelectCol.append('input')
                 .attr('type', 'radio')
-                .attr('name', 'param-select-input')
                 .attr('id', parm => `input-${parm.variableID}`)
-                .attr('class', 'usa-radio__input')
+                .attr('class', 'usa-radio__input param-select-input')
                 .attr('value', parm => `${parm.variableID}`)
-                .style('position', 'inherit');
+                .property('checked', parm => parm.selected);
 
             let parmCdCol = tr.append('th')
                 .attr('scope', 'row');
             parmCdCol.append('span')
                 .text(parm => parm.description)
                 .call(appendTooltip, parm => `Parameter code: ${parm.parameterCode}`);
-            // tr.append('td')
-            //     .attr('class', 'usa-radio radio-button-column');
-            //.attr('class', 'usa-radio');
-            // .append('div')
-            // .attr('class', 'usa-radio')
-            // .text('x');
-            // .append('input')
-            // .attr('type', 'radio')
-            // .attr('name', 'param-select-input')
-            // .attr('id', parm => `${parm.variableID}-input`)
-            // .attr('class', 'usa-radio__input');
-            // .attr('value', parm => parm.parameterCode)
             tr.append('td')
                 .append('svg')
                 .attr('width', SPARK_LINE_DIM.width.toString())
@@ -185,16 +166,7 @@ export const plotSeriesSelectTable = function (elem,
             tr.append('td')
                 .style('white-space', 'nowrap')
                 .text(parm => `${config.uvPeriodOfRecord[parm.parameterCode].begin_date} to ${config.uvPeriodOfRecord[parm.parameterCode].end_date}`);
-
-            // const paramSelectionTD = elem.selectAll('.radio-button-column');
-            // paramSelectionTD.append('input')
-            //     .attr('type', 'radio')
-            //     .attr('name', 'param-select-input')
-            //     .attr('class', 'usa-radio__input, param-select-radio')
-            //     .style('position', 'inherit');
         });
-
-
 
 
     table.property('scrollTop', scrollTop);
