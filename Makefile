@@ -22,11 +22,10 @@ MAKEPID:= $(shell echo $$PPID)
 
 env: env-assets env-wdfn
 test: test-assets test-wdfn
-clean: clean-assets clean-graph-server clean-wdfn
+clean: clean-assets clean-wdfn
 cleanenv: cleanenv-assets cleanenv-wdfn
 build: env build-assets build-wdfn
 watch:
 	(make watch-wdfn & \
 	 make watch-assets & \
 	 wait) || kill -TERM $(MAKEPID)
-
