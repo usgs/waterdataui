@@ -9,9 +9,6 @@ import os
 import sys
 
 from flask import Flask
-from waterdata.schema import Query
-from flask_graphql import GraphQLView
-from graphene import Schema
 
 __version__ = '0.33.0dev'
 
@@ -89,12 +86,6 @@ if os.getenv('CONTAINER_RUN', False):
     app.wsgi_app = WhiteNoise(
         app.wsgi_app, root='/home/python/assets', prefix='static/')
 
-# view for graphQL — should probably move to views file
-view_func = GraphQLView.as_view(
-    'graphql', schema=Schema(query=Query), graphiql=True
-)
-
-app.add_url_rule('/graphql', view_func=view_func)
 
 from . import views  # pylint: disable=C0413
 from . import filters  # pylint: disable=C0413

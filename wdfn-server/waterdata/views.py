@@ -4,6 +4,8 @@ Main application views.
 import json
 
 from flask import abort, render_template, request, Markup
+from flask_graphql import GraphQLView
+from graphene import Schema
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, \
@@ -11,6 +13,7 @@ from .location_utils import build_linked_data, get_disambiguated_values, rollup_
 from .utils import construct_url, defined_when, parse_rdb
 from .services import sifta, ogc
 from .services.nwis import NwisWebServices
+from .schema import Query
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -286,3 +289,11 @@ def time_series_component(site_no):
     Returns an unadorned page with the time series component for a site.
     """
     return render_template('monitoring_location_embed.html', site_no=site_no)
+
+
+# view for graphQL
+view_func = GraphQLView.as_view(
+    'graphql', schema=Schema(query=Query), graphiql=True
+)
+
+app.add_url_rule('/graphql', view_func=view_func)
