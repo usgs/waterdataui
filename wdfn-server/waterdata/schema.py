@@ -2,6 +2,7 @@ from graphene import ObjectType, String, Boolean, ID, List, Field, Int
 import json
 import os
 from collections import namedtuple
+from datetime import datetime, timedelta
 import requests
 
 
@@ -39,11 +40,28 @@ class Feature(ObjectType):
 
 
 class Query(ObjectType):
-    features = List(Feature)
+    features = List(Feature,
+                    siteType=List(String),
+                    bBox=String(),
+                    startDateLo=String(),
+                    startDateHi=String())
 
-    def resolve_features(self, info):
+    def resolve_features(self,
+                        info,
+                        **kwargs):
         url = 'https://www.waterqualitydata.us/data/Station/search?mimeType=geojson'
-        data = {"bBox": "-83,36.5,-81,38.5", "characteristicName": ["Nitrate"]}
+        five_years_ago = datetime.now() - timedelta(days=(365 * 5))
+        five_years_ago = five_years_ago.strftime("%m-%d-%Y")
+        # data = {"bBox": "-83,36.5,-81,38.5", "characteristicName": ["Nitrate"]}
+        data = kwargs
         r = requests.post(url=url, data=data)
         features = json.dumps(r.json()['features'])
         return json2obj(features)
+
+# siteTypes:
+# Aggregate groundwater use; Aggregate surface-water-use; Atmosphere;
+# Estuary; Facility; Glacier; Lake, Reservoir, Impoundment; Land; Ocean;
+# Spring; Stream; Subsurface; Well; Wetland
+
+# startDateLo; startDateHi:
+# mm-dd-yyyy
