@@ -150,7 +150,8 @@ export const plotSeriesSelectTable = function (elem,
                 .attr('id', parm => `input-${parm.variableID}`)
                 .attr('class', 'usa-radio__input param-select-input')
                 .attr('value', parm => `${parm.variableID}`)
-                .property('checked', parm => parm.selected);
+                .property('checked', parm => parm.selected)
+                .attr('checked', parm => parm.selected);
 
             let parmCdCol = tr.append('th')
                 .attr('scope', 'row');

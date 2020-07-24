@@ -74,6 +74,26 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
             plotSeriesSelectTable(tableDivSelection, testArgsWithoutData, store);
             expect(tableDivSelection.selectAll('table').size()).toEqual(0);
         });
+
+        ////
+
+        it('creates a radio button for each parameter in the table', () => {
+            plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
+            expect(tableDivSelection.selectAll('input').size()).toEqual(3);
+        });
+
+        it('updates the input checked property for the corresponding selected parameter', () => {
+            plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
+
+            let selectedParamRow = select('tr').filter('.selected');
+            let selectedParamTD = selectedParamRow.select('td')
+            let selectedParamRowInput = selectedParamTD.select('input')
+            expect(selectedParamRowInput.attr('checked')).toBe('true');
+     
+        });
+
+
+        ////
     });
 
 
