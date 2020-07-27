@@ -84,8 +84,8 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
             plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
 
             let selectedParamRow = tableDivSelection.selectAll('tr').filter('.selected');
-            let selectedParamTD = selectedParamRow.select('td')
-            let selectedParamRowInput = selectedParamTD.select('input')
+            let selectedParamTD = selectedParamRow.select('td');
+            let selectedParamRowInput = selectedParamTD.select('input');
             expect(selectedParamRowInput.attr('checked')).toBeTruthy();  
         });
 
