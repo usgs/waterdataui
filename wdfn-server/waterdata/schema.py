@@ -1,10 +1,15 @@
+from . import app
 from graphene import ObjectType, String, Boolean, ID, List, Field, Int
 import json
 import os
 from collections import namedtuple
 from datetime import datetime, timedelta
+from .services.nwis import NwisWebServices
 import requests
+import pprint
 
+SERVICE_ROOT = app.config['SERVER_SERVICE_ROOT']
+NWIS = NwisWebServices(SERVICE_ROOT)
 
 def _json_object_hook(d):
     return namedtuple('X', d.keys())(*d.values())
@@ -14,12 +19,18 @@ def json2obj(data):
     return json.loads(data, object_hook=_json_object_hook)
 
 
+
+class MonitoringLocation(ObjectType):
+    Name = String()
+    Id = ID()
+
+
 class Properties(ObjectType):
     MonitoringLocationName = String()
     ProviderName = String()
     OrganizationIdentifier = String()
     OrganizationFormalName = String()
-    MonitoringLocationIdentifier = String()
+    MonitoringLocationIdentifier = ID()
     MonitoringLocationName = String()
     MonitoringLocationTypeName = String()
     ResolvedMonitoringLocationTypeName = String()
@@ -58,6 +69,14 @@ class Query(ObjectType):
         r = requests.post(url=url, data=data)
         features = json.dumps(r.json()['features'])
         return json2obj(features)
+
+    monitoring_location = Field(MonitoringLocation, id=String())
+
+    def resolve_monitoring_location(self, info, id):
+        data = NWIS.get_site_parameters(id, "USGS")
+        monitoring_location = json.dumps(data)
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(monitoring_location)
 
 # siteTypes:
 # Aggregate groundwater use; Aggregate surface-water-use; Atmosphere;
