@@ -42,6 +42,7 @@ class Feature(ObjectType):
 class Query(ObjectType):
     features = List(Feature,
                     siteType=List(String),
+                    providers=List(String),
                     bBox=String(),
                     startDateLo=String(),
                     startDateHi=String())
