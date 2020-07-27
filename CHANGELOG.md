@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Using the latest guidance for the contents of the government banner from USWDS
 
+### Added 
+- Parameter selection list now has radio buttons to indicate selection.
+
 ## [0.34.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.33.0...waterdataui-0.34.0) - 2020-07-07
 ### Added
 - The DV graph shows min, mean, and maximum statistics if available.

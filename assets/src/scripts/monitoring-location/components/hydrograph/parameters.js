@@ -132,41 +132,41 @@ export const plotSeriesSelectTable = function (elem,
         .enter().append('tr')
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'selectTimeSeries')
-        .attr('ga-event-action', (parm) => `time-series-parmcd-${parm.parameterCode}`)
+        .attr('ga-event-action', (param) => `time-series-parmcd-${param.parameterCode}`)
         .attr('role', 'option')
-        .classed('selected', parm => parm.selected)
-        .attr('aria-selected', parm => parm.selected)
-        .on('click', function (parm) {
-            if (!parm.selected) {
-                store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, parm.variableID));
+        .classed('selected', param => param.selected)
+        .attr('aria-selected', param => param.selected)
+        .on('click', function (param) {
+            if (!param.selected) {
+                store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, param.variableID));
             }
         })
         .call(tr => {
 
-            let parmSelectCol = tr.append('td')
+            let paramSelectCol = tr.append('td')
                 .attr('scope', 'row');
-            parmSelectCol.append('input')
+            paramSelectCol.append('input')
                 .attr('type', 'radio')
-                .attr('id', parm => `input-${parm.variableID}`)
+                .attr('id', param => `input-${param.variableID}`)
                 .attr('class', 'usa-radio__input param-select-input')
-                .attr('value', parm => `${parm.variableID}`)
-                .property('checked', parm => parm.selected)
-                .attr('checked', parm => parm.selected);
+                .attr('value', param => `${param.variableID}`)
+                .property('checked', param => param.selected)
+                .attr('checked', param => param.selected);
 
-            let parmCdCol = tr.append('th')
+            let paramCdCol = tr.append('th')
                 .attr('scope', 'row');
-            parmCdCol.append('span')
-                .text(parm => parm.description)
-                .call(appendTooltip, parm => `Parameter code: ${parm.parameterCode}`);
+            paramCdCol.append('span')
+                .text(param => param.description)
+                .call(appendTooltip, param => `Parameter code: ${param.parameterCode}`);
             tr.append('td')
                 .append('svg')
                 .attr('width', SPARK_LINE_DIM.width.toString())
                 .attr('height', SPARK_LINE_DIM.height.toString());
             tr.append('td')
-                .text(parm => parm.timeSeriesCount);
+                .text(param => param.timeSeriesCount);
             tr.append('td')
                 .style('white-space', 'nowrap')
-                .text(parm => `${config.uvPeriodOfRecord[parm.parameterCode].begin_date} to ${config.uvPeriodOfRecord[parm.parameterCode].end_date}`);
+                .text(param => `${config.uvPeriodOfRecord[param.parameterCode].begin_date} to ${config.uvPeriodOfRecord[param.parameterCode].end_date}`);
         });
 
 
@@ -174,12 +174,12 @@ export const plotSeriesSelectTable = function (elem,
 
     table.selectAll('tbody svg').each(function (d) {
         let selection = select(this);
-        const parmCd = d.parameterCode;
-        const lineSegments = lineSegmentsByParmCd[parmCd] ? lineSegmentsByParmCd[parmCd] : [];
+        const paramCd = d.parameterCode;
+        const lineSegments = lineSegmentsByParmCd[paramCd] ? lineSegmentsByParmCd[paramCd] : [];
         for (const seriesLineSegments of lineSegments) {
             selection.call(addSparkLine, {
                 seriesLineSegments: seriesLineSegments,
-                scales: timeSeriesScalesByParmCd[parmCd]
+                scales: timeSeriesScalesByParmCd[paramCd]
             });
         }
     });
