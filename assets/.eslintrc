@@ -21,7 +21,9 @@
     "brace-style": [1,"1tbs",{}],
     "no-mixed-spaces-and-tabs": 2,
     "quotes": ["error", "single"],
-    "semi": ["error", "always"]
+    "semi": ["error", "always"],
+    "space-before-function-paren": ["error", "never"],
+    "space-in-brackets": ["error", "never"]
   },
   "globals": {
     "__dirname": true,
