@@ -1,3 +1,17 @@
+// Modified CSS for USWDS Tooltip component
+// usa-tooltip__body usa-tooltip__body--bottom usa-tooltip__body--top is-set usa-tooltip__body--right is-visible
+.usa-tooltip__body {
+    width: auto;
+    white-space: pre-wrap;
+    width: 40vw;
+	max-width: 450px;
+
+	@media only screen and (max-width: 700px) {
+		width: 40vw;
+		max-width: 250px;
+		font-size: 14px;
+	}
+}
 // Based off http://refills.bourbon.io/components/
 .tooltip-item {
   $base-border-color: gainsboro !default;
