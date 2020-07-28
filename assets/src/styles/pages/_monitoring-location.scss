@@ -30,7 +30,9 @@ table {
   #site-summary {
     table-layout: fixed;
     width: 100%;
-    overflow: visible; /* Prevent extra scrollbar space */
+    overflow: visible;
+
+    /* Prevent extra scrollbar space */
     td {
       .loc-metadata {
         word-wrap: break-word;
