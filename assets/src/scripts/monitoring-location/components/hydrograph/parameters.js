@@ -142,17 +142,15 @@ export const plotSeriesSelectTable = function (elem,
             }
         })
         .call(tr => {
-
-            let paramSelectCol = tr.append('td')
-                .attr('scope', 'row');
+            let paramSelectCol = tr.append('td');
             paramSelectCol.append('input')
                 .attr('type', 'radio')
-                .attr('id', param => `input-${param.variableID}`)
-                .attr('class', 'usa-radio__input param-select-input')
+                .attr('name', 'param-select-radio-input')
+                .attr('class', 'usa-radio__input')
                 .attr('value', param => `${param.variableID}`)
-                .property('checked', param => param.selected)
-                .attr('checked', param => param.selected);
-
+                .property('checked', param => param.selected ? true : null);
+            paramSelectCol.append('label')
+               .attr('class', 'usa-radio__label');
             let paramCdCol = tr.append('th')
                 .attr('scope', 'row');
             paramCdCol.append('span')
