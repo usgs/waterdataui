@@ -50,7 +50,32 @@ class Feature(ObjectType):
     properties = Field(Properties)
 
 
+class AllFeatures(ObjectType):
+    count = Int()
+    features = List(Feature)
+
+
 class Query(ObjectType):
+    all_features = Field(AllFeatures,
+                    siteType=List(String),
+                    providers=List(String),
+                    bBox=String(),
+                    startDateLo=String(),
+                    startDateHi=String())
+
+    def resolve_all_features(self,
+                             info,
+                             **kwargs):
+        url = 'https://www.waterqualitydata.us/data/Station/search?mimeType=geojson'
+        five_years_ago = datetime.now() - timedelta(days=(365 * 5))
+        five_years_ago = five_years_ago.strftime("%m-%d-%Y")
+        # data = {"bBox": "-83,36.5,-81,38.5"}#, "characteristicName": ["Nitrate"]}
+        data = kwargs
+        r = requests.post(url=url, data=data)
+        features = json.dumps(r.json()['features'])
+        features_obj = json2obj(features)
+        return {"count": len(features_obj), "features": features_obj}
+
     features = List(Feature,
                     siteType=List(String),
                     providers=List(String),
@@ -64,11 +89,12 @@ class Query(ObjectType):
         url = 'https://www.waterqualitydata.us/data/Station/search?mimeType=geojson'
         five_years_ago = datetime.now() - timedelta(days=(365 * 5))
         five_years_ago = five_years_ago.strftime("%m-%d-%Y")
-        # data = {"bBox": "-83,36.5,-81,38.5", "characteristicName": ["Nitrate"]}
+        # data = {"bBox": "-83,36.5,-81,38.5"}#, "characteristicName": ["Nitrate"]}
         data = kwargs
         r = requests.post(url=url, data=data)
         features = json.dumps(r.json()['features'])
         return json2obj(features)
+
 
     monitoring_location = Field(MonitoringLocation, id=String())
 
