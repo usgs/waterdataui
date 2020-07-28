@@ -21,7 +21,7 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
         return;
     }
     let spark = line()
-        .x(function(d){
+        .x(function(d) {
             return scales.x(d.dateTime);
         })
         .y(function(d) {
@@ -119,11 +119,11 @@ export const plotSeriesSelectTable = function (elem,
 
     table.append('thead')
         .append('tr')
-        .selectAll('th')
-        .data(columnHeaders)
-        .enter().append('th')
-        .attr('scope', 'col')
-        .text(d => d);
+            .selectAll('th')
+            .data(columnHeaders)
+            .enter().append('th')
+            .attr('scope', 'col')
+            .text(d => d);
 
     table.append('tbody')
         .attr('class', 'usa-fieldset')
