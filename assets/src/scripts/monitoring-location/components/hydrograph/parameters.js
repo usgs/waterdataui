@@ -122,8 +122,8 @@ export const plotSeriesSelectTable = function (elem,
             .selectAll('th')
             .data(columnHeaders)
             .enter().append('th')
-            .attr('scope', 'col')
-            .text(d => d);
+                .attr('scope', 'col')
+                .text(d => d);
 
     table.append('tbody')
         .attr('class', 'usa-fieldset')
