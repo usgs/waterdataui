@@ -1,13 +1,13 @@
-import { line } from 'd3-shape';
-import { select } from 'd3-selection';
+import {line} from 'd3-shape';
+import {select} from 'd3-selection';
 
 import config from '../../../config';
-import { appendTooltip } from '../../../tooltips';
+import {appendTooltip} from '../../../tooltips';
 
-import { Actions } from '../../store/instantaneous-value-time-series-data';
+import {Actions} from '../../store/instantaneous-value-time-series-data';
 
-import { MASK_DESC } from './selectors/drawing-data';
-import { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } from './selectors/layout';
+import {MASK_DESC} from './selectors/drawing-data';
+import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from './selectors/layout';
 
 /**
  * Draw a sparkline in a selected SVG element
@@ -16,15 +16,15 @@ import { SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT } from './selectors/layout';
  * @param {Array} of line segment Objects - seriesLineSegments
  * @param {Object} scales - has x property for x scale and y property for y scale
  */
-export const addSparkLine = function (svgSelection, { seriesLineSegments, scales }) {
+export const addSparkLine = function(svgSelection, {seriesLineSegments, scales}) {
     if (seriesLineSegments.length === 0) {
         return;
     }
     let spark = line()
-        .x(function (d) {
+        .x(function(d){
             return scales.x(d.dateTime);
         })
-        .y(function (d) {
+        .y(function(d) {
             return scales.y(d.value);
         });
     const seriesDataMasks = seriesLineSegments.map(x => x.classes.dataMask);
@@ -35,7 +35,7 @@ export const addSparkLine = function (svgSelection, { seriesLineSegments, scales
                     svgSelection.append('circle')
                         .data(lineSegment.points)
                         .classed('spark-point', true)
-                        .attr('r', CIRCLE_RADIUS_SINGLE_PT / 2)
+                        .attr('r', CIRCLE_RADIUS_SINGLE_PT/2)
                         .attr('cx', d => scales.x(d.dateTime))
                         .attr('cy', d => scales.y(d.value));
                 } else {
@@ -61,7 +61,7 @@ export const addSparkLine = function (svgSelection, { seriesLineSegments, scales
 
         if (maskDescWords.length > 1) {
             Array.from(maskDescWords.entries()).forEach(x => {
-                const yPosition = 15 + x[0] * 12;
+                const yPosition = 15 + x[0]*12;
                 const maskText = x[1];
                 let tspan = svgText.append('tspan')
                     .attr('x', 0)
@@ -93,7 +93,7 @@ export const plotSeriesSelectTable = function (elem,
         availableParameterCodes,
         lineSegmentsByParmCd,
         timeSeriesScalesByParmCd
-    }, store) {
+    }, store){
     // Get the position of the scrolled window before removing it so it can be set to the same value.
     const lastTable = elem.select('#select-time-series table');
     const scrollTop = lastTable.size() ? lastTable.property('scrollTop') : null;
