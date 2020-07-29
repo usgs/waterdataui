@@ -5,6 +5,7 @@ import os
 from collections import namedtuple
 from datetime import datetime, timedelta
 from .services.nwis import NwisWebServices
+from .location_utils import get_period_of_record_by_parm_cd
 import requests
 import pprint
 
@@ -19,10 +20,16 @@ def json2obj(data):
     return json.loads(data, object_hook=_json_object_hook)
 
 
+class Parameter(ObjectType):
+    name = String()
+    begin_date = String()
+    end_date = String()
+    group = String()
+    code = String()
 
 class MonitoringLocation(ObjectType):
-    Name = String()
-    Id = ID()
+    parameters = List(Parameter)
+
 
 
 class Properties(ObjectType):
@@ -102,7 +109,24 @@ class Query(ObjectType):
         data = NWIS.get_site_parameters(id, "USGS")
         monitoring_location = json.dumps(data)
         pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(monitoring_location)
+        pp.pprint(json2obj(monitoring_location))
+
+        data_type = {d["data_type_cd"] for d in data}
+
+        period_of_record = {}
+        for dt in data_type:
+            # do we want to keep data type info?
+            period_of_record.update(get_period_of_record_by_parm_cd(data, dt))
+
+        parameters = []
+        for pcode in period_of_record:
+            pcode_properties = app.config['NWIS_CODE_LOOKUP']["parm_cd"].get(pcode, "")
+            period_of_record[pcode].update(pcode_properties)
+            period_of_record[pcode].update({"code": pcode})
+            parameters.append(period_of_record[pcode])
+
+        return { "parameters": parameters }
+
 
 # siteTypes:
 # Aggregate groundwater use; Aggregate surface-water-use; Atmosphere;
