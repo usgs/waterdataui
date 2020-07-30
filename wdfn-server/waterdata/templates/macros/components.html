@@ -54,14 +54,92 @@
 {%- endmacro %}
 
 {% macro WQPParamFilters() -%}
-    <form action="" id="param-filters">
-        <fieldset>
-            <label for="filter-nitrate">Nitrate
-                <input type="checkbox" name="filter-nitrate" id="filter-nitrate" value="Nitrate">
-            </label>
-            <label for="filter-lead">Lead
-                <input type="checkbox" name="filter-lead" id="filter-lead" value="Lead">
-            </label>
+    <form action="" class="grid-row">
+        <fieldset class="usa-fieldset tablet:grid-col-3" id="site-type-filters">
+            <legend class="usa-fieldset"><h3>Type of sites</h3></legend>
+            <div class="usa-checkbox">
+                <input type="checkbox"
+                    name="site-type-groundwater"
+                    id="site-type-groundwater"
+                    value="groundwater"
+                    class="usa-checkbox__input" />
+                <label for="site-type-groundwater" class="usa-checkbox__label">
+                    Groundwater
+                </label>
+            </div>
+            <div class="usa-checkbox">
+                <input type="checkbox"
+                       name="site-type-surface"
+                       id="site-type-surface"
+                       value="surfacewater"
+                       class="usa-checkbox__input" />
+                <label for="site-type-surface" class="usa-checkbox__label">
+                    Surface water
+                </label>
+            </div>
+            <div class="usa-checkbox">
+                <input type="checkbox"
+                       name="site-type-atmospheric"
+                       id="site-type-atmospheric"
+                       value="atmospheric"
+                       class="usa-checkbox__input" />
+                <label for="site-type-atmospheric" class="usa-checkbox__label">
+                    Atmospheric
+                </label>
+            </div>
+            <div class="usa-checkbox">
+                <input type="checkbox"
+                       name="site-type-spring"
+                       id="site-type-spring"
+                       value="spring"
+                       class="usa-checkbox__input" />
+                <label for="site-type-spring" class="usa-checkbox__label">
+                    Spring
+                </label>
+            </div>
+        </fieldset>
+
+        <fieldset class="usa-fieldset tablet:grid-col-3">
+            <legend>
+                <h3>Time period</h3>
+            </legend>
+            <div class="usa-radio">
+                <input type="radio"
+                       class="usa-radio__input"
+                       id="period-5-years"
+                       name="period"
+                       value="5" />
+                <label for="period-5-years" class="usa-radio__label">5 years</label>
+            </div>
+            <div class="usa-radio">
+                <input type="radio"
+                       class="usa-radio__input"
+                       id="period-10-years"
+                       name="period"
+                       value="10" />
+                <label for="period-10-years" class="usa-radio__label">10 years</label>
+            </div>
+            <div class="usa-radio">
+                <input type="radio"
+                       class="usa-radio__input"
+                       id="period-20-years"
+                       name="period"
+                       value="20" />
+                <label for="period-20-years" class="usa-radio__label">20 years</label>
+            </div>
+            <div class="usa-radio">
+                <input type="radio"
+                       class="usa-radio__input"
+                       id="period-50-years"
+                       name="period"
+                       value="50" />
+                <label for="period-50-years" class="usa-radio__label">50 years</label>
+            </div>
+        </fieldset>
+        <fieldset class="usa-fieldset tablet:grid-col">
+            <legend>
+                <h3>Site data parameters</h3>
+            </legend>
         </fieldset>
     </form>
 {%- endmacro %}

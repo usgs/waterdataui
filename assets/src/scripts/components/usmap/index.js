@@ -2,10 +2,11 @@ import { select } from 'd3-selection';
 import { link, subscribe } from '../../lib/d3-redux';
 import { Features } from '../../selectors/observations-selector';
 import { Sites } from '../../selectors/waterquality-selector';
-import { Filters } from '../../selectors/waterquality-selector';
+import { siteTypes } from '../../selectors/wdfn-selector';
+import { Filters } from '../../selectors/wdfn-selector';
 import config from '../../config';
-import { retrieveObservationsData } from '../../store/observations';
-import { applyCharacteristicFilter, retrieveWaterqualityData } from '../../store/waterquality';
+import { applySiteTypeFilter, retrieveWdfnData } from '../../store/wdfn';
+import { createStructuredSelector } from 'reselect';
 
 /*
  * Creates a US map
@@ -16,7 +17,7 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
 
     L.esri.basemapLayer('Gray').addTo(gray);
 
-    const checkboxes = document.querySelectorAll('#param-filters input');
+    const checkboxes = document.querySelectorAll('#site-type-filters input');
 
     // Create map on node
     const map = L.map('site-map', {
@@ -34,27 +35,25 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
         map.scrollWheelZoom.disable();
     });
 
-    const setCharacteristicFilter = (filter, store) => {
-        store.dispatch(applyCharacteristicFilter(filter.value, filter.checked));
+    const setSiteTypeFilter = (filter, store) => {
+        store.dispatch(applySiteTypeFilter(filter.value, filter.checked));
     };
 
-    checkboxes.forEach(b => b.addEventListener('change', e => setCharacteristicFilter(e.target, store)));
+    checkboxes.forEach(b => b.addEventListener('change', e => setSiteTypeFilter(e.target, store)));
 
-    const getFeaturesInBbox = (charateristic) => {
-        const bounds = map.getBounds();
-        const bbox = {
-          west: bounds.getWest(),
-          south: bounds.getSouth(),
-          east: bounds.getEast(),
-          north: bounds.getNorth()
-        };
+    const fetchMatchingSites = (node, filters) => {
+        // const bounds = map.getBounds();
+        // const bbox = {
+        //   west: bounds.getWest(),
+        //   south: bounds.getSouth(),
+        //   east: bounds.getEast(),
+        //   north: bounds.getNorth()
+        // };
         // store.dispatch(retrieveObservationsData(bbox));
-        store.dispatch(retrieveWaterqualityData(bbox,charateristic));
+        const hasSiteType = Object.values(filters.siteTypes).some(el => el);
+        if (hasSiteType)
+            store.dispatch(retrieveWdfnData(filters));
     };
-
-    // map.on('moveend', () => {
-    //     getFeaturesInBbox();
-    // });
 
     const addSiteCircles = (node, features) => {
         markerGroup.addTo(map);
@@ -102,7 +101,7 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
         .call(link(store, addSiteCircles, Sites));
 
     node
-        .call(link(store, applyFilter, Filters));
+        .call(link(store, fetchMatchingSites, Filters));
 };
 
 /*

@@ -4,7 +4,7 @@ const variables = {
   providers: ['NWIS']
 };
 
-const query = `
+export const mapQuery = `
 query($bbox: String,
       $providers: [String] = ['NWIS'],
       $siteType: [String],
@@ -27,10 +27,10 @@ query($bbox: String,
 `;
 
 export const executeGraphQlQuery = (
-    host = 'http://localhost:5050',
     query,
     variables) => {
-  return fetch(`${host}/graphql`, {
+  console.log(query, variables);
+  return fetch('/graphql', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
