@@ -1,13 +1,14 @@
-from . import app
-from graphene import ObjectType, String, Boolean, ID, List, Field, Int
 import json
 import os
-from collections import namedtuple
-from datetime import datetime, timedelta
-from .services.nwis import NwisWebServices
-from .location_utils import get_period_of_record_by_parm_cd
 import requests
 import pprint
+from graphene import ObjectType, String, Boolean, ID, List, Field, Int
+from collections import namedtuple
+from datetime import datetime, timedelta
+from . import app
+from .services.nwis import NwisWebServices
+from .location_utils import get_period_of_record_by_parm_cd
+from .utils import parse_rdb
 
 SERVICE_ROOT = app.config['SERVER_SERVICE_ROOT']
 NWIS = NwisWebServices(SERVICE_ROOT)
@@ -22,14 +23,39 @@ def json2obj(data):
 
 class Parameter(ObjectType):
     name = String()
-    begin_date = String()
-    end_date = String()
-    group = String()
-    code = String()
+    begin_date = String() # begin_date
+    end_date = String() # end_date
+    group = String() # parm_grp_cd
+    code = String() # parm_cd
+    # @TODO: Do we need any of these?
+    # "data_type_cd"
+    # "stat_cd"
+    # "ts_id"
+    # "loc_web_ds"
+    # "medium_grp_cd"
+    # "srs_id"
+    # "access_cd"
+    # "count_nu"
 
+# @TODO: Should data from MonitoringLocation query different from AllFeatures query.  Maybe should be the same?
 class MonitoringLocation(ObjectType):
-    parameters = List(Parameter)
 
+    # These are the items from get_site_parameters
+    # @TODO: Will look at get_site to see if we want additional items
+    agency = String() # agency_cd
+    siteNumber = String() # site_no
+    name = String() # station_nm
+    siteType = String() # site_tp_cd
+    decimalLatitude = String() # dec_lat_va
+    decimalLongitude = String() # dec_long_va
+    coordinatesAccuracy = String() # coord_acy_cd
+    decimalCoordinatesDatum = String() # dec_coord_datum_cd
+    altitude = String() # alt_va
+    altitudeAccuracy = String() # alt_acy_va
+    altitudeDatum = String() # alt_datum_cd
+    HUCEightDigitCode = String() # huc_cd
+
+    parameters = List(Parameter)
 
 
 class Properties(ObjectType):
@@ -115,7 +141,7 @@ class Query(ObjectType):
 
         period_of_record = {}
         for dt in data_type:
-            # do we want to keep data type info?
+            # @TODO: do we want to keep data type info?
             period_of_record.update(get_period_of_record_by_parm_cd(data, dt))
 
         parameters = []
@@ -125,7 +151,23 @@ class Query(ObjectType):
             period_of_record[pcode].update({"code": pcode})
             parameters.append(period_of_record[pcode])
 
-        return { "parameters": parameters }
+        result = {}
+        # Just use one entry because the monitoring location properties are the same
+        prop = data[0]
+        result["agency"] = app.config['NWIS_CODE_LOOKUP']["agency_cd"][prop["agency_cd"]]
+        result["siteNumber"] = prop["site_no"]
+        result["name"] = prop["station_nm"]
+        result["siteType"] = app.config['NWIS_CODE_LOOKUP']["site_tp_cd"][prop["site_tp_cd"]]["name"]
+        result["decimalLatitude"] = prop["dec_lat_va"]
+        result["decimalLongitude"] = prop["dec_long_va"]
+        result["coordinatesAccuracy"] = app.config['NWIS_CODE_LOOKUP']["coord_acy_cd"][prop["coord_acy_cd"]]["name"]
+        result["decimalCoordinatesDatum"] = app.config['NWIS_CODE_LOOKUP']["dec_coord_datum_cd"][prop["dec_coord_datum_cd"]]["name"]
+        result["altitude"] = prop["alt_va"]
+        result["altitudeAccuracy"] = prop["alt_acy_va"]
+        result["altitudeDatum"] = app.config['NWIS_CODE_LOOKUP']["alt_datum_cd"][prop["alt_datum_cd"]]["name"]
+        result["HUCEightDigitCode"] = prop["huc_cd"]
+        result["parameters"] = parameters
+        return result
 
 
 # siteTypes:
