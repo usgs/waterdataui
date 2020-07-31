@@ -53,9 +53,10 @@
   </div>
 {%- endmacro %}
 
-{% macro WQPParamFilters() -%}
+{% macro WDFNParamFilters() -%}
+<div class="wdfn-component" data-component="wdfn-param-filters">
     <form action="" class="grid-row">
-        <fieldset class="usa-fieldset tablet:grid-col-3" id="site-type-filters">
+        <fieldset class="usa-fieldset tablet:grid-col-2" id="site-type-filters">
             <legend class="usa-fieldset"><h3>Type of sites</h3></legend>
             <div class="usa-checkbox">
                 <input type="checkbox"
@@ -99,7 +100,7 @@
             </div>
         </fieldset>
 
-        <fieldset class="usa-fieldset tablet:grid-col-3">
+        <fieldset class="usa-fieldset tablet:grid-col-2">
             <legend>
                 <h3>Time period</h3>
             </legend>
@@ -136,12 +137,199 @@
                 <label for="period-50-years" class="usa-radio__label">50 years</label>
             </div>
         </fieldset>
-        <fieldset class="usa-fieldset tablet:grid-col">
+        <fieldset class="usa-fieldset tablet:grid-col-8" id="filter-site-params">
             <legend>
                 <h3>Site data parameters</h3>
             </legend>
+
+            <div class="filter-param-list__wrapper grid-row">
+                <div class="filter-param-list tablet:grid-col">
+                    <h4>
+                        <button class="params-toggle"
+                        aria-expanded="false"
+                        aria-controls="water-level-params">
+                            <span>Water Level</span>
+                        </button>
+                    </h4>
+                    <ul id="water-level-params" class="filter-site-params__options" data-open-state="closed">
+                        <li class="usa-checkbox">
+                            <input type="checkbox" name="params-stage" id="params-stage" class="usa-checkbox__input">
+                            <label for="params-stage" class="usa-checkbox__label">Stage</label>
+                            <ul>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-stage-gage-height" id="params-stage-gage-height" class="usa-checkbox__input">
+                                    <label for="params-stage-gage-height" class="usa-checkbox__label">Gage height</label>
+                                </li>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-stage-stream-level" id="params-stage-stream-level" class="usa-checkbox__input">
+                                    <label for="params-stage-stream-level" class="usa-checkbox__label">Stream level</label>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="usa-checkbox">
+                            <input type="checkbox" name="params-groundwater-level" id="params-groundwater-level" class="usa-checkbox__input">
+                            <label for="params-groundwater-level" class="usa-checkbox__label">Groundwater level</label>
+                            <ul>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-groundwater-level-depth-lsdparams-sea-level" id="params-groundwater-level-depth-lsdparams-sea-level" class="usa-checkbox__input">
+                                    <label for="params-groundwater-level-depth-lsdparams-sea-level" class="usa-checkbox__label">Water level, depth LSD</label>
+                                </li>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-groundwater-level-depth" id="params-groundwater-level-depth" class="usa-checkbox__input">
+                                    <label for="params-groundwater-level-depth" class="usa-checkbox__label">Depth to water parameters</label>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="usa-checkbox">
+                            <input type="checkbox" name="params-sea-level" id="params-sea-level" class="usa-checkbox__input">
+                            <label for="params-sea-level" class="usa-checkbox__label">Sea level</label>
+                            <ul>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-sea-level-water-elevation" id="params-sea-level-water-elevation" class="usa-checkbox__input">
+                                    <label for="params-sea-level-water-elevation" class="usa-checkbox__label">Water elevation</label>
+                                </li>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-sea-level-tidal-elevation" id="params-sea-level-tidal-elevation" class="usa-checkbox__input">
+                                    <label for="params-sea-level-tidal-elevation" class="usa-checkbox__label">Tidal elevation</label>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="usa-checkbox">
+                            <input type="checkbox" name="params-lake-level" id="params-lake-level" class="usa-checkbox__input">
+                            <label for="params-lake-level" class="usa-checkbox__label">Lake/reservoir level</label>
+                            <ul>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-lake-level-water-elevation" id="params-lake-level-water-elevation" class="usa-checkbox__input">
+                                    <label for="params-lake-level-water-elevation" class="usa-checkbox__label">Water elevation</label>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="filter-param-list grid-col">
+                    <h4>
+                        <button class="params-toggle"
+                        aria-expanded="false"
+                        aria-controls="water-quality-params">
+                            <span>Water Quality</span>
+                        </button>
+                    </h4>
+                    <ul id="water-quality-params" class="filter-site-params__options" data-open-state="closed">
+                        <li class="usa-checkbox">
+                            <input type="checkbox" name="params-physical" id="params-physical" class="usa-checkbox__input">
+                            <label for="params-physical" class="usa-checkbox__label">Physical</label>
+                            <ul>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-physical-water-temperature" id="params-physical-water-temperature" class="usa-checkbox__input">
+                                    <label for="params-physical-water-temperature" class="usa-checkbox__label">Water temperature</label>
+                                </li>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-physical-turbidity" id="params-stage-turbidity" class="usa-checkbox__input">
+                                    <label for="params-physical-turbidity" class="usa-checkbox__label">Turbidity</label>
+                                </li>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-physical-specific-conductance" id="params-physical-specific-conductance" class="usa-checkbox__input">
+                                    <label for="params-physical-specific-conductance" class="usa-checkbox__label">Specific conductance</label>
+                                </li>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-physical-salinity" id="params-physical-salinity" class="usa-checkbox__input">
+                                    <label for="params-physical-salinity" class="usa-checkbox__label">Salinity</label>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="usa-checkbox">
+                            <input type="checkbox" name="params-chemical" id="params-chemical" class="usa-checkbox__input">
+                            <label for="params-chemical" class="usa-checkbox__label">Chemical</label>
+                            <ul>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-chemical-nutrients" id="params-chemical-nutrients" class="usa-checkbox__input">
+                                    <label for="params-chemical-nutrients" class="usa-checkbox__label">Nutrients</label>
+                                </li>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-chemical-metals" id="params-chemical-metals" class="usa-checkbox__input">
+                                    <label for="params-chemical-metals" class="usa-checkbox__label">Metals</label>
+                                </li>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-chemical-pesticides" id="params-stage-pesticides" class="usa-checkbox__input">
+                                    <label for="params-chemical-pesticides" class="usa-checkbox__label">Pesticides</label>
+                                </li>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-chemical-ph" id="params-chemical-ph" class="usa-checkbox__input">
+                                    <label for="params-chemical-ph" class="usa-checkbox__label">pH</label>
+                                </li>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-chemical-dissolved-oxygen" id="params-chemical-salinity" class="usa-checkbox__input">
+                                    <label for="params-chemical-dissolved-oxygen" class="usa-checkbox__label">Dissolved oxygen</label>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="usa-checkbox">
+                            <input type="checkbox" name="params-biological" id="params-biological" class="usa-checkbox__input">
+                            <label for="params-biological" class="usa-checkbox__label">Biological</label>
+                            <ul>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-biological-tissue-sample" id="params-biological-tissue-sample" class="usa-checkbox__input">
+                                    <label for="params-biological-tissue-sample" class="usa-checkbox__label">Tissue sample</label>
+                                </li>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-biological-algal" id="params-biological-algal" class="usa-checkbox__input">
+                                    <label for="params-biological-algal" class="usa-checkbox__label">Algal (clorophyll)</label>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="usa-checkbox">
+                            <input type="checkbox" name="params-flow" id="params-flow" class="usa-checkbox__input">
+                            <label for="params-flow" class="usa-checkbox__label">Flow</label>
+                            <ul>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-flow-discharge" id="params-flow-discharge" class="usa-checkbox__input">
+                                    <label for="params-flow-discharge" class="usa-checkbox__label">Discharge</label>
+                                </li>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-flow-flow-rate" id="params-flow-flow-rate" class="usa-checkbox__input">
+                                    <label for="params-flow-flow-rate" class="usa-checkbox__label">Flow rate</label>
+                                </li>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-flow-mean-velocity" id="params-flow-mean-velocity" class="usa-checkbox__input">
+                                    <label for="params-flow-mean-velocity" class="usa-checkbox__label">Mean water velocity</label>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="filter-param-list grid-col">
+                    <h4>
+                        <button class="params-toggle"
+                        aria-expanded="false"
+                        aria-controls="flow-rate-params">
+                            <span>Flow rate</span>
+                        </button>
+                    </h4>
+                    <ul id="flow-rate-params" class="filter-site-params__options" data-open-state="closed">
+                        <li class="usa-checkbox">
+                            <input type="checkbox" name="params-flow-rate" id="params-flow-rate" class="usa-checkbox__input">
+                            <label for="params-flow-rate" class="usa-checkbox__label">Physical</label>
+                            <ul>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-flow-rate-discharge" id="params-flow-rate-discharge" class="usa-checkbox__input">
+                                    <label for="params-flow-rate-discharge" class="usa-checkbox__label">Discharge</label>
+                                </li>
+                                <li class="usa-checkbox">
+                                    <input type="checkbox" name="params-flow-rate-well" id="params-flow-rate-well" class="usa-checkbox__input">
+                                    <label for="params-flow-rate-well" class="usa-checkbox__label">Well</label>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </fieldset>
     </form>
+</div>
 {%- endmacro %}
 
 {% macro NetworkComponent(network_cd, extent) -%}

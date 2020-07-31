@@ -15,13 +15,15 @@ import {attachToNode as DailyValueHydrographComponent} from './components/daily-
 import {attachToNode as HydrographComponent} from './components/hydrograph';
 import {attachToNode as MapComponent} from './components/map';
 import {attachToNode as USMapComponent} from './components/usmap';
+import {attachToNode as WDFNParamFilters} from './components/wdfn-param-filters';
 
 const COMPONENTS = {
     embed: EmbedComponent,
     'dv-hydrograph': DailyValueHydrographComponent,
     hydrograph: HydrographComponent,
     map: MapComponent,
-    'us-map': USMapComponent
+    'us-map': USMapComponent,
+    'wdfn-param-filters': WDFNParamFilters
 };
 
 const load = function () {
