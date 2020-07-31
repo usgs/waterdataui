@@ -36,7 +36,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             container.attr('hidden', showControls ? null : true);
         }, hasAnyTimeSeries));
 
-    const customDateContainer = elem.insert('div', ':nth-child(3)')
+    const customDateContainer = elem.insert('form', ':nth-child(3)')
         .attr('id', 'ts-customdaterange-select-container')
         .attr('role', 'customdate')
         .attr('class', 'usa-form')
@@ -49,6 +49,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('for', 'date-input')
         .text('Enter Dates');
 
+    const dateRangePicker = customDateContainer.append('div')
+        .attr('class', 'usa-date-range-picker');
+       
     const customDateValidationContainer = customDateContainer.append('div')
         .attr('class', 'usa-alert usa-alert--warning usa-alert--validation')
         .attr('id', 'custom-date-alert-container')
@@ -62,37 +65,62 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-alert__heading')
         .text('Date requirements');
 
-    const startDateContainer = customDateContainer.append('div')
-        .attr('id', 'start-date-input-container');
+    const startDateFormGroup = dateRangePicker.append('div')
+        // .attr('id', 'start-date-form-group')
+        .attr('class', 'usa-form-group');
 
-    const endDateContainer = customDateContainer.append('div')
-        .attr('id', 'end-date-input-container');
+    const endDateFormGroup = dateRangePicker.append('div')
+        // .attr('id', 'end-date-form-group')
+        .attr('class', 'usa-form-group');
 
-    startDateContainer.append('label')
+    startDateFormGroup.append('label')
         .attr('class', 'usa-label')
         .attr('id', 'custom-start-date-label')
         .attr('for', 'custom-start-date')
         .text('Start Date');
 
-    const customStartDate = startDateContainer.append('input')
+    startDateFormGroup.append('div')
+        .attr('class', 'usa-hint')
+        .attr('id', 'custom-start-date-hint')
+        .text('mm/dd/yyyy');
+
+    const customStartDate = startDateFormGroup.append('div')
+        .attr('class', 'usa-date-picker')
+        .attr('data-max-date', '')
+        .attr('data-range-date', '')
+        .attr('data-default-date', '');
+
+    const customStartDateInput = customStartDate.append('input')
         .attr('class', 'usa-input')
         .attr('id', 'custom-start-date')
-        .attr('name', 'user-specified-start-date')
-        .attr('aria-labelledby', 'custom-start-date-label')
-        .attr('type', 'date');
+        .attr('name', 'custom-start-date')
+        .attr('aria-describedby', 'custom-start-date-label custom-start-date-hint')
+        .attr('type', 'text');
 
-    endDateContainer.append('label')
+    endDateFormGroup.append('label')
         .attr('class', 'usa-label')
         .attr('id', 'custom-end-date-label')
         .attr('for', 'custom-end-date')
         .text('End Date');
 
-    const customEndDate = endDateContainer.append('input')
+    endDateFormGroup.append('div')
+        .attr('class', 'usa-hint')
+        .attr('id', 'custom-end-date-hint')
+        .text('mm/dd/yyyy');
+
+    const customEndDate = endDateFormGroup.append('div')
+        .attr('class', 'usa-date-picker')
+        .attr('data-max-date', '')
+        .attr('data-range-date', '')
+        .attr('data-default-date', '');
+
+    const customEndDateInput = customEndDate.append('input')
         .attr('class', 'usa-input')
         .attr('id', 'custom-end-date')
-        .attr('name', 'user-specified-end-date')
-        .attr('aria-labelledby', 'custom-end-date-label')
-        .attr('type', 'date');
+        .attr('name', 'custom-end-date')
+        .attr('type', 'text')
+        .attr('aria-describedby', 'custom-end-date-label custom-end-date-hint');
+      
 
     const submitContainer = customDateContainer.append('div')
         .attr('class', 'submit-button');
@@ -102,8 +130,8 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('id', 'custom-date-submit')
         .text('Submit')
         .on('click', function() {
-            const userSpecifiedStart = customStartDate.node().value;
-            const userSpecifiedEnd = customEndDate.node().value;
+            const userSpecifiedStart = customStartDateInput.node().value;
+            const userSpecifiedEnd = customEndDateInput.node().value;
             if (userSpecifiedStart.length === 0 || userSpecifiedEnd.length === 0) {
                 dateAlertBody.selectAll('p').remove();
                 dateAlertBody.append('p')

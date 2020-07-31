@@ -12,6 +12,11 @@ $fa-font-path: './fonts' !default;
 @import './partials/social-share';
 @import './partials/tooltip';
 
+@import 'uswds';
+
+@import '../../node_modules/uswds/src/stylesheets/packages/form-controls';
+
+
 .wdfn-component {
   &[data-component='hydrograph'] {
     @import './components/hydrograph/app';

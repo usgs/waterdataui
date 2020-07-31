@@ -6,6 +6,10 @@ import wdfnviz from 'wdfn-viz';
 import {register} from '../helpers';
 register();
 
+import 'uswds'
+
+// window.uswds = require("/node_modules/uswds/dist/js/uswds");
+
 import {getParamString} from './url-params';
 
 import {configureStore} from './store';
@@ -48,8 +52,6 @@ const load = function () {
 };
 
 wdfnviz.main(load);
-
-
 
 // Leaflet expects an exports global to exist - so although we don't use this,
 // just set it to something so it's not undefined.
