@@ -38,6 +38,7 @@ class Parameter(ObjectType):
     # "count_nu"
 
 # @TODO: Should data from MonitoringLocation query different from AllFeatures query.  Maybe should be the same?
+# @TODO: Do we want the code and description for some of these items?
 class MonitoringLocation(ObjectType):
 
     # These are the items from get_site_parameters
@@ -54,6 +55,37 @@ class MonitoringLocation(ObjectType):
     altitudeAccuracy = String() # alt_acy_va
     altitudeDatum = String() # alt_datum_cd
     HUCEightDigitCode = String() # huc_cd
+
+    DMSLatitude = String() # lat_va
+    DMSLongititude = String() # long_va
+    coordinatesMethod = String() # coord_meth_cd
+    coordinatesDatum = String() # coord_datum_cd
+    district = String() # district_cd
+    state_cd = String() # state_cd
+    county = String() # county_cd
+    country = String() # country_cd
+    landNetLocationDesc = String() # lang_net_ds
+    mapName = String() # map_nm
+    mapScale = String() # map_scale_fc
+    altitudeMethod = String() # alt_meth_cd
+    basinCode = String() # basin_cd
+    topographicSetting = String() # topo_cd
+    instruments = String() # instruments_cd
+    constructionDate = String() # construction_dt
+    inventoryDate = String() # inventory_dt
+    drainArea = String() # drain_area_va
+    contributingDrainArea = String() # contrib_drain_area_va
+    timeZone = String() # tz_cd
+    honorDaylightSavings = String() # local_time_fg
+    reliability = String() # reliability_cd
+    GWFile = String() # gw_file_cd
+    nationalAquifer = String() # nat_aqfr_cd
+    aquifer = String() # aqfr_cd
+    aquiferType = String() # aqfr_type_cd
+    wellDepth = String() # well_depth_va
+    holeDepth = String() # hole_depth_va
+    depthSource = String() # depth_src_cd
+    projectNumber = String() # project_no
 
     parameters = List(Parameter)
 
@@ -147,6 +179,8 @@ class Query(ObjectType):
         parameters = []
         for pcode in period_of_record:
             pcode_properties = app.config['NWIS_CODE_LOOKUP']["parm_cd"].get(pcode, "")
+            print(pcode_properties)
+            print(period_of_record[pcode])
             period_of_record[pcode].update(pcode_properties)
             period_of_record[pcode].update({"code": pcode})
             parameters.append(period_of_record[pcode])
@@ -167,6 +201,46 @@ class Query(ObjectType):
         result["altitudeDatum"] = app.config['NWIS_CODE_LOOKUP']["alt_datum_cd"][prop["alt_datum_cd"]]["name"]
         result["HUCEightDigitCode"] = prop["huc_cd"]
         result["parameters"] = parameters
+
+        # get the rest of the site properties
+        resp = NWIS.get_site(id, "USGS")
+        if resp.status_code == 200:
+            iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
+            data_list = list(iter_data)
+            # expecting one item here
+            site_info = data_list[0]
+
+        result["DMSLatitude"] = site_info["lat_va"]
+        result["DMSLongititude"] = site_info["long_va"]
+        result["coordinatesMethod"] = app.config['NWIS_CODE_LOOKUP']["coord_meth_cd"][site_info["coord_meth_cd"]]["name"]
+        result["coordinatesDatum"] =  app.config['NWIS_CODE_LOOKUP']["coord_datum_cd"][site_info["coord_datum_cd"]]["name"]
+        result["district"] = site_info["district_cd"]
+        result["state"] = app.config['COUNTRY_STATE_COUNTY_LOOKUP'][site_info["country_cd"]]["state_cd"][site_info["state_cd"]].get("name", site_info["state_cd"])
+        result["county"] = app.config['COUNTRY_STATE_COUNTY_LOOKUP'][site_info["country_cd"]]["state_cd"][site_info["state_cd"]]["county_cd"][site_info["county_cd"]]["name"] if result["state"] else ""
+        result["country"] = site_info["country_cd"]
+        result["landNetLocationDesc"] = site_info["land_net_ds"]
+        result["mapName"] = site_info["map_nm"]
+        result["mapScale"] = site_info["map_scale_fc"]
+        result["altitudeMethod"] = app.config['NWIS_CODE_LOOKUP']["alt_meth_cd"][site_info["alt_meth_cd"]]["name"]
+        result["basinCode"] = site_info["basin_cd"]
+        result["topographicSetting"] = app.config['NWIS_CODE_LOOKUP']["topo_cd"][site_info["topo_cd"]]["name"]
+        result["instruments"] = site_info["instruments_cd"]
+        result["constructionDate"] = site_info["construction_dt"]
+        result["inventoryDate"] = site_info["inventory_dt"]
+        result["drainArea"] = site_info["drain_area_va"]
+        result["contributingDrainArea"] = site_info["contrib_drain_area_va"]
+        result["timeZone"] = site_info["tz_cd"]
+        result["honorDaylightSavings"] = site_info["local_time_fg"]
+        result["reliability"] = app.config['NWIS_CODE_LOOKUP']["reliability_cd"][site_info["reliability_cd"]]["name"] if site_info["reliability_cd"] else ""
+        result["GWFile"] = site_info["gw_file_cd"]
+        result["nationalAquifer"] = app.config['NWIS_CODE_LOOKUP']["nat_aqfr_cd"][site_info["nat_aqfr_cd"]]["name"] if site_info["nat_aqfr_cd"] else ""
+        result["aquifer"] = app.config['NWIS_CODE_LOOKUP']["aqfr_cd"][site_info["aqfr_cd"]]["name"] if site_info["aqfr_cd"] else ""
+        result["aquiferType"] = app.config['NWIS_CODE_LOOKUP']["aqfr_type_cd"][site_info["aqfr_type_cd"]]["name"] if site_info["aqfr_type_cd"] else ""
+        result["wellDepth"] = site_info["well_depth_va"]
+        result["holeDepth"] = site_info["hole_depth_va"]
+        result["depthSource"] = site_info["depth_src_cd"]
+        result["projectNumber"] = site_info["project_no"]
+
         return result
 
 
