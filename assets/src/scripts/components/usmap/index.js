@@ -18,6 +18,7 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
     L.esri.basemapLayer('Gray').addTo(gray);
 
     const checkboxes = document.querySelectorAll('#site-type-filters input');
+    const paramCheckboxes = document.querySelectorAll('#filter-site-params input');
 
     // Create map on node
     const map = L.map('site-map', {
@@ -34,6 +35,20 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
     map.on('blur', () => {
         map.scrollWheelZoom.disable();
     });
+
+    const toggleChildCheckboxes = (checkbox) => {
+        const checked = checkbox.checked;
+        const li = checkbox.parentNode;
+        const childBoxes = li.querySelectorAll('li ul input[type=checkbox]');
+
+        if (childBoxes.length < 2) return;
+
+        Array.from(childBoxes).forEach(b => {
+            b.checked = checked;
+        });
+    };
+
+    paramCheckboxes.forEach(b => b.addEventListener('change', e => toggleChildCheckboxes(e.target)));
 
     const setSiteTypeFilter = (filter, store) => {
         store.dispatch(applySiteTypeFilter(filter.value, filter.checked));
