@@ -1,7 +1,6 @@
 import {createStructuredSelector} from 'reselect';
 
 import {link} from '../../../lib/d3-redux';
-import {appendTooltip} from '../../../tooltips';
 
 import {getFloodStages, getFloodStageHeight, getFloodGageHeightStageIndex, hasFloodData} from '../../selectors/flood-data-selector';
 import {Actions} from '../../store/flood-inundation';
@@ -42,20 +41,8 @@ const updateSlider = function(elem, {stageHeight, gageHeightStageIndex}) {
     elem.select('.range-value').text(stageHeight);
 };
 
-export const createSliderHelp = function(elem, hasFloodData) {
-    elem.select('#fim-tooltip-container').remove();
-    if (hasFloodData) {
-        elem.append('div')
-            .attr('id', 'fim-tooltip-container')
-            .attr('class', 'label-tooltip-container')
-            .html('Flood Visualization Control')
-            .call(appendTooltip, 'Move the slider to see flood inundation at different gage heights');
-    }
-};
-
 export const floodSlider = function(elem, store) {
     elem
-        .call(link(store, createSliderHelp, hasFloodData))
         .call(link(store, createSlider, getFloodStages, store))
         .call(link(store, updateSlider, createStructuredSelector({
             stageHeight: getFloodStageHeight,

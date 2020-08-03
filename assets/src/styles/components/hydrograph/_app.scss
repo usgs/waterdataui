@@ -69,10 +69,6 @@
           th, td {
             background-color: $highlight;
           }
-
-          .tooltip-item {
-            background-color: $highlight;
-          }
         }
 
         &.selected {
@@ -80,27 +76,6 @@
 
           th, td {
             background-color: $selected;
-          }
-
-          .tooltip-item {
-            background-color: $selected;
-          }
-        }
-
-        .tooltip-item {
-          span {
-            padding-left: 0.25em;
-            font-size: 0.8em;
-          }
-
-          .tooltip {
-            position: absolute;
-            bottom: 0;
-            left: 1em;
-            text-align: center;
-            width: 11em;
-            padding: 0.2em;
-            margin: 0 0;
           }
         }
       }

@@ -8,12 +8,19 @@
  */
 export const appendTooltip = function(elem, text) {
     let tooltip = elem.append('div')
-        .attr('class', 'tooltip-item');
-    tooltip.append('span')
-        .append('i')
-            .attr('class', 'fas fa-info-circle');
+		.attr('class', 'usa-tooltip render-tooltip')
+		
     tooltip.append('div')
-        .attr('class', 'tooltip')
-        .append('p')
-            .text(text);
+        .attr('class', 'usa-tooltip__trigger')
+        .attr('data-position', 'right')
+        .attr('tabindex', '0')
+		.append('i')
+       	 	.attr('class', 'fas fa-info-circle')
+       	 	.attr('aria-hidden', 'true');
+
+    tooltip.append('span')
+        .attr('class', 'usa-tooltip__body usa-tooltip__body--right')
+		.attr('role', 'tooltip')
+		.attr('aria-hidden', 'true')
+		.text(text);
 };

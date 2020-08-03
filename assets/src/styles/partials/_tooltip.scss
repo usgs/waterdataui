@@ -1,5 +1,4 @@
 // Modified CSS for USWDS Tooltip component
-// usa-tooltip__body usa-tooltip__body--bottom usa-tooltip__body--top is-set usa-tooltip__body--right is-visible
 .usa-tooltip__body {
     width: auto;
     white-space: pre-wrap;
@@ -12,66 +11,13 @@
 		font-size: 14px;
 	}
 }
-// Based off http://refills.bourbon.io/components/
-.tooltip-item {
-  $base-border-color: gainsboro !default;
-  $base-border-radius: 3px !default;
-  $base-line-height: 1.5em !default;
-  $dark-gray: #333 !default;
-  $base-font-color: $dark-gray !default;
-  $tooltip-background: white;
-  $tooltip-color: $base-font-color;
-  $tooltip-width: 16em;
-  $tooltip-shadow: 0 2px 2px silver;
-  $tooltip-distance-from-item: 1em;
 
-  background: $tooltip-background;
-  border-radius: $base-border-radius;
-  display: inline-block;
-  position: relative;
-  text-align: center;
+// Rendered USWDS tooltips that aren't initialized by USWDS
+.render-tooltip:hover{
 
-  // On pointer devices, use the focus and hover state to indicate visibility. Can't use hover media query as it is
-  // not implemented on Firefox or IE11.
-  &:focus,
-  &:hover .tooltip {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  // On touch devices, use the show-tooltip class to indicate visibility.
-  // See helpers.js for corresponding Javascript.
-  @media (hover: none) {
-    &.show-tooltip .tooltip {
-      opacity: 1;
-      visibility: visible;
-    }
-  }
-
-  .tooltip {
-    word-wrap: normal;
-    position: absolute;
-    left: $tooltip-distance-from-item;
-    background-color: $tooltip-background;
-    background: #fff;
-    border-radius: $base-border-radius;
-    box-shadow: $tooltip-shadow;
-    color: $tooltip-color;
-    font-size: 0.9em; // Make sure you use -webkit-backface-visibility: hidden; on the body element to prevent 1px nudging bugs.
-    line-height: 1.5em;
-    margin: 0 auto;
-    width: $tooltip-width;
-    opacity: 0;
-    padding: 1em;
-    text-align: center;
-    transition: all 0.2s ease-in-out;
-    visibility: hidden;
-    z-index: 1000;
-
-    p {
-      color: $base-font-color;
-      line-height: $base-line-height;
-      margin: 0;
-    }
-  }
+	.usa-tooltip__body{
+		opacity: 1;
+		display: block;
+		margin-left: 24px;
+	}
 }
