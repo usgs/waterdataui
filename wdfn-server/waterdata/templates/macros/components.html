@@ -58,6 +58,9 @@
     <form action="" class="grid-row">
         <fieldset class="usa-fieldset tablet:grid-col-2" id="site-type-filters">
             <legend class="usa-fieldset"><h3>Type of sites</h3></legend>
+            <p class="explanation">
+                Show sites of the following types:
+            </p>
             <div class="usa-checkbox">
                 <input type="checkbox"
                     name="site-type-groundwater"
@@ -98,12 +101,25 @@
                     Spring
                 </label>
             </div>
+            <div class="usa-checkbox">
+                <input type="checkbox"
+                       name="site-type-other"
+                       id="site-type-other"
+                       value="other"
+                       class="usa-checkbox__input" />
+                <label for="site-type-other" class="usa-checkbox__label">
+                    Other
+                </label>
+            </div>
         </fieldset>
 
         <fieldset class="usa-fieldset tablet:grid-col-2">
             <legend>
                 <h3>Time period</h3>
             </legend>
+            <p class="explanation">
+                Show sites with data in the last:
+            </p>
             <div class="usa-radio">
                 <input type="radio"
                        class="usa-radio__input"
@@ -141,7 +157,9 @@
             <legend>
                 <h3>Site data parameters</h3>
             </legend>
-
+            <p class="explanation">
+                Show sites collecting ANY of the following types of data:
+            </p>
             <div class="filter-param-list__wrapper grid-row">
                 <div class="filter-param-list tablet:grid-col">
                     <h4>
@@ -225,7 +243,7 @@
                                     <label for="params-physical-water-temperature" class="usa-checkbox__label">Water temperature</label>
                                 </li>
                                 <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-physical-turbidity" id="params-stage-turbidity" class="usa-checkbox__input">
+                                    <input type="checkbox" name="params-physical-turbidity" id="params-physical-turbidity" class="usa-checkbox__input">
                                     <label for="params-physical-turbidity" class="usa-checkbox__label">Turbidity</label>
                                 </li>
                                 <li class="usa-checkbox">
@@ -252,7 +270,7 @@
                                     <label for="params-chemical-metals" class="usa-checkbox__label">Metals</label>
                                 </li>
                                 <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-chemical-pesticides" id="params-stage-pesticides" class="usa-checkbox__input">
+                                    <input type="checkbox" name="params-chemical-pesticides" id="params-chemical-pesticides" class="usa-checkbox__input">
                                     <label for="params-chemical-pesticides" class="usa-checkbox__label">Pesticides</label>
                                 </li>
                                 <li class="usa-checkbox">
@@ -260,7 +278,7 @@
                                     <label for="params-chemical-ph" class="usa-checkbox__label">pH</label>
                                 </li>
                                 <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-chemical-dissolved-oxygen" id="params-chemical-salinity" class="usa-checkbox__input">
+                                    <input type="checkbox" name="params-chemical-dissolved-oxygen" id="params-chemical-dissolved-oxygen" class="usa-checkbox__input">
                                     <label for="params-chemical-dissolved-oxygen" class="usa-checkbox__label">Dissolved oxygen</label>
                                 </li>
                             </ul>

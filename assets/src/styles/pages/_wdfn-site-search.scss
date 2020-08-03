@@ -1,12 +1,16 @@
+.explanation {
+  color: color('base');
+  font-size: size('ui', xs);
+  margin-top: 0;
+  padding-right: 1.3rem;
+}
+
 #filter-site-params {
   & .filter-param-list > ul {
     margin-top: 0;
     padding: 0;
   }
 
-  .filter-param-list {
-    margin: 0;
-  }
 
   li {
     list-style-type: none;
