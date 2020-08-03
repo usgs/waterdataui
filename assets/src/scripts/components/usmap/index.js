@@ -50,9 +50,9 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
         //   north: bounds.getNorth()
         // };
         // store.dispatch(retrieveObservationsData(bbox));
-        const hasSiteType = Object.values(filters.siteTypes).some(el => el);
-        if (hasSiteType)
-            store.dispatch(retrieveWdfnData(filters));
+        // const hasSiteType = Object.values(filters.siteTypes).some(el => el);
+        // if (hasSiteType)
+        //     store.dispatch(retrieveWdfnData(filters));
     };
 
     const addSiteCircles = (node, features) => {
