@@ -35,13 +35,5 @@ healthCheck: "/states/"
 urlRules:
   - type: forward
     conditions:
-      - "/monitoring-location/*"
-      - "/hydrological-unit/*"
-      - "/networks/*"
-      - "/states/*"
-      - "/components/*"
+      - "/*"
     priority: 610
-  - type: forward
-    conditions:
-      - "/static/*"
-    priority: 611
