@@ -38,7 +38,7 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
 
     const toggleChildCheckboxes = (checkbox) => {
         const checked = checkbox.checked;
-        const li = checkbox.parentNode;
+        const li = checkbox.parentNode.parentNode;
         const childBoxes = li.querySelectorAll('li li input[type=checkbox]');
 
         Array.from(childBoxes).forEach(b => {

@@ -53,6 +53,24 @@
   </div>
 {%- endmacro %}
 
+{% macro USWDSCheckbox(name, label, value) -%}
+    <div class="usa-checkbox">
+        <input type="checkbox" name="{{ name }}" id="{{ name }}" class="usa-checkbox__input">
+        <label for="{{ name }}" class="usa-checkbox__label">{{ label }}</label>
+    </div>
+{%- endmacro -%}
+
+{% macro USWDSRadio(id, name, label, value) -%}
+    <div class="usa-radio">
+        <input type="radio"
+                class="usa-radio__input"
+                id="{{ id }}"
+                name="{{ name }}"
+                value="{{ value }}" />
+        <label for="{{ id }}" class="usa-radio__label">{{ label }}</label>
+    </div>
+{%- endmacro -%}
+
 {% macro WDFNParamFilters() -%}
 <div class="wdfn-component" data-component="wdfn-param-filters">
     <form action="" class="grid-row">
@@ -61,56 +79,11 @@
             <p class="explanation">
                 Show sites of the following types:
             </p>
-            <div class="usa-checkbox">
-                <input type="checkbox"
-                    name="site-type-groundwater"
-                    id="site-type-groundwater"
-                    value="groundwater"
-                    class="usa-checkbox__input" />
-                <label for="site-type-groundwater" class="usa-checkbox__label">
-                    Groundwater
-                </label>
-            </div>
-            <div class="usa-checkbox">
-                <input type="checkbox"
-                       name="site-type-surface"
-                       id="site-type-surface"
-                       value="surfacewater"
-                       class="usa-checkbox__input" />
-                <label for="site-type-surface" class="usa-checkbox__label">
-                    Surface water
-                </label>
-            </div>
-            <div class="usa-checkbox">
-                <input type="checkbox"
-                       name="site-type-atmospheric"
-                       id="site-type-atmospheric"
-                       value="atmospheric"
-                       class="usa-checkbox__input" />
-                <label for="site-type-atmospheric" class="usa-checkbox__label">
-                    Atmospheric
-                </label>
-            </div>
-            <div class="usa-checkbox">
-                <input type="checkbox"
-                       name="site-type-spring"
-                       id="site-type-spring"
-                       value="spring"
-                       class="usa-checkbox__input" />
-                <label for="site-type-spring" class="usa-checkbox__label">
-                    Spring
-                </label>
-            </div>
-            <div class="usa-checkbox">
-                <input type="checkbox"
-                       name="site-type-other"
-                       id="site-type-other"
-                       value="other"
-                       class="usa-checkbox__input" />
-                <label for="site-type-other" class="usa-checkbox__label">
-                    Other
-                </label>
-            </div>
+            {{ USWDSCheckbox("site-type-groundwater", "Groundwater", "groundwater") }}
+            {{ USWDSCheckbox("site-type-surface", "Surface water", "surfacewater") }}
+            {{ USWDSCheckbox("site-type-atmospheric", "Atmospheric", "atmospheric") }}
+            {{ USWDSCheckbox("site-type-spring", "Spring", "spring") }}
+            {{ USWDSCheckbox("site-type-other", "Other", "other") }}
         </fieldset>
 
         <fieldset class="usa-fieldset tablet:grid-col-2">
@@ -120,38 +93,10 @@
             <p class="explanation">
                 Show sites with data in the last:
             </p>
-            <div class="usa-radio">
-                <input type="radio"
-                       class="usa-radio__input"
-                       id="period-5-years"
-                       name="period"
-                       value="5" />
-                <label for="period-5-years" class="usa-radio__label">5 years</label>
-            </div>
-            <div class="usa-radio">
-                <input type="radio"
-                       class="usa-radio__input"
-                       id="period-10-years"
-                       name="period"
-                       value="10" />
-                <label for="period-10-years" class="usa-radio__label">10 years</label>
-            </div>
-            <div class="usa-radio">
-                <input type="radio"
-                       class="usa-radio__input"
-                       id="period-20-years"
-                       name="period"
-                       value="20" />
-                <label for="period-20-years" class="usa-radio__label">20 years</label>
-            </div>
-            <div class="usa-radio">
-                <input type="radio"
-                       class="usa-radio__input"
-                       id="period-50-years"
-                       name="period"
-                       value="50" />
-                <label for="period-50-years" class="usa-radio__label">50 years</label>
-            </div>
+            {{ USWDSRadio("period-5-years", "period", "5 years", "5") }}
+            {{ USWDSRadio("period-10-years", "period", "10 years", "10") }}
+            {{ USWDSRadio("period-20-years", "period", "20 years", "20") }}
+            {{ USWDSRadio("period-50-years", "period", "50 years", "50") }}
         </fieldset>
         <fieldset class="usa-fieldset tablet:grid-col-8" id="filter-site-params">
             <legend>
@@ -170,55 +115,44 @@
                         </button>
                     </h4>
                     <ul id="water-level-params" class="filter-site-params__options" data-open-state="closed">
-                        <li class="usa-checkbox">
-                            <input type="checkbox" name="params-stage" id="params-stage" class="usa-checkbox__input">
-                            <label for="params-stage" class="usa-checkbox__label">Stage</label>
+                        <li>
+                            {{ USWDSCheckbox("params-stage", "Stage") }}
                             <ul>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-stage-gage-height" id="params-stage-gage-height" class="usa-checkbox__input">
-                                    <label for="params-stage-gage-height" class="usa-checkbox__label">Gage height</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-stage-gage-height", "Gage height") }}
                                 </li>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-stage-stream-level" id="params-stage-stream-level" class="usa-checkbox__input">
-                                    <label for="params-stage-stream-level" class="usa-checkbox__label">Stream level</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-stage-stream-level", "Stream level") }}
                                 </li>
                             </ul>
                         </li>
-                        <li class="usa-checkbox">
-                            <input type="checkbox" name="params-groundwater-level" id="params-groundwater-level" class="usa-checkbox__input">
-                            <label for="params-groundwater-level" class="usa-checkbox__label">Groundwater level</label>
+                        <li>
+                            {{ USWDSCheckbox("params-groundwater-level", "Groundwater level") }}
                             <ul>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-groundwater-level-depth-lsdparams-sea-level" id="params-groundwater-level-depth-lsdparams-sea-level" class="usa-checkbox__input">
-                                    <label for="params-groundwater-level-depth-lsdparams-sea-level" class="usa-checkbox__label">Water level, depth LSD</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-groundwater-level-lsdparams", "Water level, depth LSD") }}
                                 </li>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-groundwater-level-depth" id="params-groundwater-level-depth" class="usa-checkbox__input">
-                                    <label for="params-groundwater-level-depth" class="usa-checkbox__label">Depth to water parameters</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-groundwater-level-depth", "Depth to water parameters") }}
                                 </li>
                             </ul>
                         </li>
-                        <li class="usa-checkbox">
-                            <input type="checkbox" name="params-sea-level" id="params-sea-level" class="usa-checkbox__input">
-                            <label for="params-sea-level" class="usa-checkbox__label">Sea level</label>
+                        <li>
+                            {{ USWDSCheckbox("params-sea-level", "Sea level") }}
                             <ul>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-sea-level-water-elevation" id="params-sea-level-water-elevation" class="usa-checkbox__input">
-                                    <label for="params-sea-level-water-elevation" class="usa-checkbox__label">Water elevation</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-sea-level-water-elevation", "Water elevation") }}
                                 </li>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-sea-level-tidal-elevation" id="params-sea-level-tidal-elevation" class="usa-checkbox__input">
-                                    <label for="params-sea-level-tidal-elevation" class="usa-checkbox__label">Tidal elevation</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-sea-level-tidal-elevation", "Tidal elevation") }}
                                 </li>
                             </ul>
                         </li>
-                        <li class="usa-checkbox">
-                            <input type="checkbox" name="params-lake-level" id="params-lake-level" class="usa-checkbox__input">
-                            <label for="params-lake-level" class="usa-checkbox__label">Lake/reservoir level</label>
+                        <li>
+                            {{ USWDSCheckbox("params-lake-level", "Lake/reservoir level") }}
                             <ul>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-lake-level-water-elevation" id="params-lake-level-water-elevation" class="usa-checkbox__input">
-                                    <label for="params-lake-level-water-elevation" class="usa-checkbox__label">Water elevation</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-lake-level-water-elevation", "Water elevation") }}
                                 </li>
                             </ul>
                         </li>
@@ -234,86 +168,68 @@
                         </button>
                     </h4>
                     <ul id="water-quality-params" class="filter-site-params__options" data-open-state="closed">
-                        <li class="usa-checkbox">
-                            <input type="checkbox" name="params-physical" id="params-physical" class="usa-checkbox__input">
-                            <label for="params-physical" class="usa-checkbox__label">Physical</label>
+                        <li>
+                            {{ USWDSCheckbox("params-physical", "Physical") }}
                             <ul>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-physical-water-temperature" id="params-physical-water-temperature" class="usa-checkbox__input">
-                                    <label for="params-physical-water-temperature" class="usa-checkbox__label">Water temperature</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-physical-water-temperature", "Water temperature") }}
                                 </li>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-physical-turbidity" id="params-physical-turbidity" class="usa-checkbox__input">
-                                    <label for="params-physical-turbidity" class="usa-checkbox__label">Turbidity</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-physical-turbidity", "Turbidity") }}
                                 </li>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-physical-specific-conductance" id="params-physical-specific-conductance" class="usa-checkbox__input">
-                                    <label for="params-physical-specific-conductance" class="usa-checkbox__label">Specific conductance</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-physical-specific-conductance", "Specific conductance") }}
                                 </li>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-physical-salinity" id="params-physical-salinity" class="usa-checkbox__input">
-                                    <label for="params-physical-salinity" class="usa-checkbox__label">Salinity</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-physical-salinity", "Salinity") }}
                                 </li>
                             </ul>
                         </li>
 
-                        <li class="usa-checkbox">
-                            <input type="checkbox" name="params-chemical" id="params-chemical" class="usa-checkbox__input">
-                            <label for="params-chemical" class="usa-checkbox__label">Chemical</label>
+                        <li>
+                            {{ USWDSCheckbox("params-chemical", "Chemical") }}
                             <ul>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-chemical-nutrients" id="params-chemical-nutrients" class="usa-checkbox__input">
-                                    <label for="params-chemical-nutrients" class="usa-checkbox__label">Nutrients</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-chemical-nutrients", "Nutrients") }}
                                 </li>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-chemical-metals" id="params-chemical-metals" class="usa-checkbox__input">
-                                    <label for="params-chemical-metals" class="usa-checkbox__label">Metals</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-chemical-metals", "Metals") }}
                                 </li>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-chemical-pesticides" id="params-chemical-pesticides" class="usa-checkbox__input">
-                                    <label for="params-chemical-pesticides" class="usa-checkbox__label">Pesticides</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-chemical-pesticides", "Pesticides") }}
                                 </li>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-chemical-ph" id="params-chemical-ph" class="usa-checkbox__input">
-                                    <label for="params-chemical-ph" class="usa-checkbox__label">pH</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-chemical-ph", "pH") }}
                                 </li>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-chemical-dissolved-oxygen" id="params-chemical-dissolved-oxygen" class="usa-checkbox__input">
-                                    <label for="params-chemical-dissolved-oxygen" class="usa-checkbox__label">Dissolved oxygen</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-chemical-dissolved-oxygen", "Dissolved oxygen") }}
                                 </li>
                             </ul>
                         </li>
 
-                        <li class="usa-checkbox">
-                            <input type="checkbox" name="params-biological" id="params-biological" class="usa-checkbox__input">
-                            <label for="params-biological" class="usa-checkbox__label">Biological</label>
+                        <li>
+                            {{ USWDSCheckbox("params-biological", "Biological") }}
                             <ul>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-biological-tissue-sample" id="params-biological-tissue-sample" class="usa-checkbox__input">
-                                    <label for="params-biological-tissue-sample" class="usa-checkbox__label">Tissue sample</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-biological-tissue-sample", "Tissue sample") }}
                                 </li>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-biological-algal" id="params-biological-algal" class="usa-checkbox__input">
-                                    <label for="params-biological-algal" class="usa-checkbox__label">Algal (clorophyll)</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-biological-algal", "Algal (clorophyll)") }}
                                 </li>
                             </ul>
                         </li>
 
-                        <li class="usa-checkbox">
-                            <input type="checkbox" name="params-flow" id="params-flow" class="usa-checkbox__input">
-                            <label for="params-flow" class="usa-checkbox__label">Flow</label>
+                        <li>
+                            {{ USWDSCheckbox("params-flow", "Flow") }}
                             <ul>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-flow-discharge" id="params-flow-discharge" class="usa-checkbox__input">
-                                    <label for="params-flow-discharge" class="usa-checkbox__label">Discharge</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-flow-discharge", "Discharge") }}
                                 </li>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-flow-flow-rate" id="params-flow-flow-rate" class="usa-checkbox__input">
-                                    <label for="params-flow-flow-rate" class="usa-checkbox__label">Flow rate</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-flow-flow-rate", "Flow rate") }}
                                 </li>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-flow-mean-velocity" id="params-flow-mean-velocity" class="usa-checkbox__input">
-                                    <label for="params-flow-mean-velocity" class="usa-checkbox__label">Mean water velocity</label>
+                                <li>
+                                    {{ USWDSCheckbox("params-flow-mean-velocity", "Mean water velocity") }}
                                 </li>
                             </ul>
                         </li>
@@ -328,19 +244,11 @@
                         </button>
                     </h4>
                     <ul id="flow-rate-params" class="filter-site-params__options" data-open-state="closed">
-                        <li class="usa-checkbox">
-                            <input type="checkbox" name="params-flow-rate" id="params-flow-rate" class="usa-checkbox__input">
-                            <label for="params-flow-rate" class="usa-checkbox__label">Physical</label>
-                            <ul>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-flow-rate-discharge" id="params-flow-rate-discharge" class="usa-checkbox__input">
-                                    <label for="params-flow-rate-discharge" class="usa-checkbox__label">Discharge</label>
-                                </li>
-                                <li class="usa-checkbox">
-                                    <input type="checkbox" name="params-flow-rate-well" id="params-flow-rate-well" class="usa-checkbox__input">
-                                    <label for="params-flow-rate-well" class="usa-checkbox__label">Well</label>
-                                </li>
-                            </ul>
+                        <li>
+                            {{ USWDSCheckbox("params-flow-rate-discharge", "Discharge") }}
+                        </li>
+                        <li>
+                            {{ USWDSCheckbox("params-flow-rate-well", "Well") }}
                         </li>
                     </ul>
                 </div>
