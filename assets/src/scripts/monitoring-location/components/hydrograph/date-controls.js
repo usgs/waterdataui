@@ -137,7 +137,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 dateAlertBody.append('p')
                     .text('Both start and end dates must be specified.');
                 customDateValidationContainer.attr('hidden', null);
-            } else if (DateTime.fromISO(userSpecifiedEnd) < DateTime.fromISO(userSpecifiedStart)) {
+            } else if (DateTime.fromFormat(userSpecifiedEnd, 'LL/mm/yyyy') < DateTime.fromFormat(userSpecifiedStart, 'LL/mm/yyyy')) {
                 dateAlertBody.selectAll('p').remove();
                 dateAlertBody.append('p')
                     .text('The start date must precede the end date.');
@@ -154,9 +154,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
 
     customDateContainer.call(link(store, (container, customTimeRange) => {
         container.select('#custom-start-date')
-            .attr('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start).toFormat('yyyy-LL-dd') : '');
+            .property('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start).toFormat('LL/dd/yyyy') : '')
+            //.attr('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start).toFormat('LL/dd/yyyy') : '');
         container.select('#custom-end-date')
-            .attr('value', customTimeRange && customTimeRange.end ? DateTime.fromMillis(customTimeRange.end).toFormat('yyyy-LL-dd') : '');
+            .property('value', customTimeRange && customTimeRange.end ? DateTime.fromMillis(customTimeRange.end).toFormat('LL/dd/yyyy') : '')
+            //.attr('value', customTimeRange && customTimeRange.end ? DateTime.fromMillis(customTimeRange.end).toFormat('LL/dd/yyyy') : '');
     }, getCustomTimeRange));
 
     // required to init the USWDS date picker after page load
