@@ -41,12 +41,12 @@
     cursor: pointer;
 
     &[aria-expanded=false] {
-      background-image: url('/img/angle-arrow-down.svg'),
+      background-image: url('./img/angle-arrow-down.svg'),
         linear-gradient(transparent, transparent);
     }
 
     &[aria-expanded=true] {
-      background-image: url('/img/angle-arrow-up-primary.svg'),
+      background-image: url('./img/angle-arrow-up-primary.svg'),
         linear-gradient(transparent, transparent);
     }
 
