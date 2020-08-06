@@ -205,8 +205,8 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
     });
 
     it('Expects an alert to be thrown if the end date is earlier than the start date.', () => {
-        select('#custom-start-date').property('value', '2063-04-05');
-        select('#custom-end-date').property('value', '2063-04-03');
+        select('#custom-start-date').property('value', '04/05/2063');
+        select('#custom-end-date').property('value', '04/03/2063');
 
         select('#custom-date-submit').dispatch('click');
 
@@ -218,8 +218,8 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
     it('Expects data to be retrieved if both custom start and end dates are provided', () => {
         spyOn(ivTimeSeriesDataActions, 'retrieveUserRequestedIVDataForDateRange').and.callThrough();
 
-        select('#custom-start-date').property('value', '2063-04-03');
-        select('#custom-end-date').property('value', '2063-04-05');
+        select('#custom-start-date').property('value', '04/03/2063');
+        select('#custom-end-date').property('value', '04/05/2063');
 
         select('#custom-date-submit').dispatch('click');
 

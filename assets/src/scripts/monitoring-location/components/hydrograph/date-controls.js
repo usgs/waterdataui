@@ -90,14 +90,13 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     const customStartDate = startDateFormGroup.append('div')
         .attr('class', 'usa-date-picker')
         .attr('data-min-date', '1900-01-01')
-        .attr('data-max-date', '2050-12-31');
-
-    const customStartDateInput = customStartDate.append('input')
-        .attr('class', 'usa-input')
-        .attr('id', 'custom-start-date')
-        .attr('name', 'custom-start-date')
-        .attr('aria-describedby', 'custom-start-date-label custom-start-date-hint')
-        .attr('type', 'text');
+        .attr('data-max-date', '2100-12-31')
+        .append('input')
+            .attr('class', 'usa-input')
+            .attr('id', 'custom-start-date')
+            .attr('name', 'custom-start-date')
+            .attr('aria-describedby', 'custom-start-date-label custom-start-date-hint')
+            .attr('type', 'text');
 
     endDateFormGroup.append('label')
         .attr('class', 'usa-label')
@@ -113,14 +112,13 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     const customEndDate = endDateFormGroup.append('div')
         .attr('class', 'usa-date-picker')
         .attr('data-min-date', '1900-01-01')
-        .attr('data-max-date', '2050-12-31');
-
-    const customEndDateInput = customEndDate.append('input')
-        .attr('class', 'usa-input')
-        .attr('id', 'custom-end-date')
-        .attr('name', 'custom-end-date')
-        .attr('type', 'text')
-        .attr('aria-describedby', 'custom-end-date-label custom-end-date-hint');
+        .attr('data-max-date', '2100-12-31')
+        .append('input')
+            .attr('class', 'usa-input')
+            .attr('id', 'custom-end-date')
+            .attr('name', 'custom-end-date')
+            .attr('type', 'text')
+            .attr('aria-describedby', 'custom-end-date-label custom-end-date-hint');
 
     // required to init the USWDS date picker after page load
     components.datePicker.init(elem.node());
