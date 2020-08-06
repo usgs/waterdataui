@@ -6,6 +6,7 @@ import {
 const SET_WDFN_FEATURES = 'SET_WDFN_FEATURES';
 const APPLY_FILTER = 'APPLY_FILTER';
 const APPLY_SITE_TYPE_FILTER = 'APPLY_SITE_TYPE_FILTER';
+const APPLY_GEOGRAPHIC_FILTER = 'APPLY_GEOGRAPHIC_FILTER';
 
 const INITIAL_DATA = {
 };
@@ -64,31 +65,24 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, timePeriod }) {
     return function (dispatch) {
         const variables = {};
         if (Object.values(siteTypes).some(el => el))
-            variables.siteTypes = lookupSiteTypesFullNames(siteTypes);
+            variables.siteType = lookupSiteTypesFullNames(siteTypes);
 
         executeGraphQlQuery(mapQuery, variables)
-            .then(resp => resp.json())
-            .then(json => console.log(json));
+            .then(({ data }) => {
+                dispatch(setWaterqualityFeatures(data.features));
+            });
     };
-    // return function (dispatch) {
-    //     const features = fetchSitesInBbox(bbox, characteristicName);
-    //     return Promise.all([
-    //         features
-    //     ]).then(function(data) {
-    //        const [features] = data;
-    //        dispatch(setWaterqualityFeatures(features));
-    //     });
-    // };
 };
 
 /*
  * Slice reducer
  */
 export const wdfnDataReducer = function(wdfnData=INITIAL_DATA, action) {
+    console.log(action);
     switch(action.type) {
         case SET_WDFN_FEATURES:
             return {
-                sites: downSelect(wdfnData, action.features)
+                sites: action.features
             };
         case APPLY_SITE_TYPE_FILTER:
             return {

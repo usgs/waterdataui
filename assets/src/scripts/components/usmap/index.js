@@ -1,7 +1,7 @@
 import { select } from 'd3-selection';
 import { link, subscribe } from '../../lib/d3-redux';
 import { Features } from '../../selectors/observations-selector';
-import { Sites } from '../../selectors/waterquality-selector';
+import { Sites } from '../../selectors/wdfn-selector';
 import { siteTypes } from '../../selectors/wdfn-selector';
 import { Filters } from '../../selectors/wdfn-selector';
 import config from '../../config';
@@ -49,38 +49,43 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
     paramCheckboxes.forEach(b => b.addEventListener('change', e => toggleChildCheckboxes(e.target)));
 
     const setSiteTypeFilter = (filter, store) => {
-        store.dispatch(applySiteTypeFilter(filter.value, filter.checked));
+        const siteType = filter.name.replace('site-type-','');
+        store.dispatch(applySiteTypeFilter(siteType, filter.checked));
     };
 
     checkboxes.forEach(b => b.addEventListener('change', e => setSiteTypeFilter(e.target, store)));
 
     const fetchMatchingSites = (node, filters) => {
-        // const bounds = map.getBounds();
-        // const bbox = {
-        //   west: bounds.getWest(),
-        //   south: bounds.getSouth(),
-        //   east: bounds.getEast(),
-        //   north: bounds.getNorth()
-        // };
-        // store.dispatch(retrieveObservationsData(bbox));
-        // const hasSiteType = Object.values(filters.siteTypes).some(el => el);
-        // if (hasSiteType)
-        //     store.dispatch(retrieveWdfnData(filters));
+        const bounds = map.getBounds();
+        const bbox = {
+          west: bounds.getWest(),
+          south: bounds.getSouth(),
+          east: bounds.getEast(),
+          north: bounds.getNorth()
+        };
+
+        if (Object.keys(filters).length === 0) return;
+
+        const hasSiteType = Object.values(filters.siteTypes).some(el => el);
+
+        if (hasSiteType)
+            store.dispatch(retrieveWdfnData(filters));
     };
 
     const addSiteCircles = (node, features) => {
+        console.log(features);
         markerGroup.addTo(map);
-        // features.forEach(f => {
-        //     if (f.geometry) {
-        //         const marker = L.circle(f.geometry.coordinates.reverse(), {
-        //             color: 'red',
-        //             fillColor: '#f03',
-        //             fillOpacity: 0.2,
-        //             radius: 5000
-        //         });
-        //         marker.addTo(map);
-        //     }
-        // });
+        features.forEach(f => {
+            if (f.geometry) {
+                const marker = L.circle(f.geometry.coordinates.reverse(), {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.2,
+                    radius: 5000
+                });
+                marker.addTo(map);
+            }
+        });
 
         features.forEach(f => {
             L.marker([f.LatitudeMeasure, f.LongitudeMeasure]).addTo(markerGroup);

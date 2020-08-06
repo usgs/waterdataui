@@ -5,13 +5,15 @@ const variables = {
 };
 
 export const mapQuery = `
-query($bbox: String,
-      $providers: [String] = ['NWIS'],
+query($bBox: String,
+      $providers: [String] = ["NWIS"],
       $siteType: [String],
       $startDateLo: String,
       $startDateHi: String) {
-  features(siteType: $siteType,
+  features(bBox: $bBox,
+           siteType: $siteType,
            startDateLo: $startDateLo,
+           startDateHi: $startDateHi,
            providers: $providers) {
     geometry {
       coordinates
@@ -41,5 +43,5 @@ export const executeGraphQlQuery = (
         variables
       })
     }).then(resp => resp.json())
-      .then(json => console.log(JSON.stringify(json)));
+      .then(json => json);
 };
