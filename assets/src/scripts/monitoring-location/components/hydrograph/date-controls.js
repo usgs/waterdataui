@@ -122,6 +122,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('type', 'text')
         .attr('aria-describedby', 'custom-end-date-label custom-end-date-hint');
 
+    // required to init the USWDS date picker after page load
+    components.datePicker.init(elem.node());
+    // required to init the USWDS date range picker after page load
+    components.dateRangePicker.init(elem.node());
+
     const submitContainer = customDateContainer.append('div')
         .attr('class', 'submit-button');
 
@@ -130,20 +135,22 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('id', 'custom-date-submit')
         .text('Submit')
         .on('click', function() {
-            const userSpecifiedStart = customStartDateInput.node().value;
-            const userSpecifiedEnd = customEndDateInput.node().value;
+            let userSpecifiedStart = document.getElementById('custom-start-date').value
+            let userSpecifiedEnd = document.getElementById('custom-end-date').value
             if (userSpecifiedStart.length === 0 || userSpecifiedEnd.length === 0) {
                 dateAlertBody.selectAll('p').remove();
                 dateAlertBody.append('p')
                     .text('Both start and end dates must be specified.');
                 customDateValidationContainer.attr('hidden', null);
-            } else if (DateTime.fromFormat(userSpecifiedEnd, 'LL/mm/yyyy') < DateTime.fromFormat(userSpecifiedStart, 'LL/mm/yyyy')) {
+            } else if (DateTime.fromFormat(userSpecifiedEnd, 'LL/dd/yyyy') < DateTime.fromFormat(userSpecifiedStart, 'LL/dd/yyyy')) {
                 dateAlertBody.selectAll('p').remove();
                 dateAlertBody.append('p')
                     .text('The start date must precede the end date.');
                 customDateValidationContainer.attr('hidden', null);
             } else {
                 customDateValidationContainer.attr('hidden', true);
+                userSpecifiedStart = DateTime.fromFormat(userSpecifiedStart, 'LL/dd/yyyy').toISODate();
+                userSpecifiedEnd = DateTime.fromFormat(userSpecifiedEnd, 'LL/dd/yyyy').toISODate()
                 store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange(
                     siteno,
                     userSpecifiedStart,
@@ -155,16 +162,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     customDateContainer.call(link(store, (container, customTimeRange) => {
         container.select('#custom-start-date')
             .property('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start).toFormat('LL/dd/yyyy') : '')
-            //.attr('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start).toFormat('LL/dd/yyyy') : '');
         container.select('#custom-end-date')
             .property('value', customTimeRange && customTimeRange.end ? DateTime.fromMillis(customTimeRange.end).toFormat('LL/dd/yyyy') : '')
-            //.attr('value', customTimeRange && customTimeRange.end ? DateTime.fromMillis(customTimeRange.end).toFormat('LL/dd/yyyy') : '');
     }, getCustomTimeRange));
-
-    // required to init the USWDS date picker after page load
-    components.datePicker.init(elem.node());
-    // required to init the USWDS date range picker after page load
-    components.dateRangePicker.init(elem.node());
 
     const listContainer = container.append('ul')
         .attr('class', 'usa-fieldset usa-list--unstyled');
