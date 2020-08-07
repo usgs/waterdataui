@@ -10,20 +10,23 @@ query($bBox: String,
       $siteType: [String],
       $startDateLo: String,
       $startDateHi: String) {
-  features(bBox: $bBox,
+  allFeatures(bBox: $bBox,
            siteType: $siteType,
            startDateLo: $startDateLo,
            startDateHi: $startDateHi,
            providers: $providers) {
-    geometry {
-      coordinates
+    features {
+      geometry {
+        coordinates
+      }
+      properties {
+        OrganizationIdentifier
+        MonitoringLocationName
+        siteUrl
+        MonitoringLocationIdentifier
+      }
     }
-    properties {
-      OrganizationIdentifier
-      MonitoringLocationName
-      siteUrl
-      MonitoringLocationIdentifier
-    }
+    count
   }
 }
 `;

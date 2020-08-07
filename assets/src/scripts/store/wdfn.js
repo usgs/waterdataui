@@ -64,12 +64,15 @@ export const applySiteTypeFilter = function (siteType, checked) {
 export const retrieveWdfnData = function ({ siteTypes, bBox, timePeriod }) {
     return function (dispatch) {
         const variables = {};
+
         if (Object.values(siteTypes).some(el => el))
             variables.siteType = lookupSiteTypesFullNames(siteTypes);
 
+        variables.startDateLo = '08-06-2015';
+
         executeGraphQlQuery(mapQuery, variables)
             .then(({ data }) => {
-                dispatch(setWaterqualityFeatures(data.features));
+                dispatch(setWaterqualityFeatures(data.allFeatures.features));
             });
     };
 };
@@ -82,6 +85,7 @@ export const wdfnDataReducer = function(wdfnData=INITIAL_DATA, action) {
     switch(action.type) {
         case SET_WDFN_FEATURES:
             return {
+                ...wdfnData,
                 sites: action.features
             };
         case APPLY_SITE_TYPE_FILTER:
