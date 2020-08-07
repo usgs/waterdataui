@@ -3,6 +3,7 @@ import {
     mapQuery
 } from '../web-services/graphql';
 
+const SET_COUNT = 'SET_COUNT';
 const SET_WDFN_FEATURES = 'SET_WDFN_FEATURES';
 const APPLY_FILTER = 'APPLY_FILTER';
 const APPLY_SITE_TYPE_FILTER = 'APPLY_SITE_TYPE_FILTER';
@@ -31,6 +32,12 @@ const lookupSiteTypesFullNames = function (siteTypes) {
     return siteTypes;
 };
 
+const setCount = function (count) {
+    return {
+        type: SET_COUNT,
+        count
+    };
+};
 
 /*
  * Synchronous Redux actions to save the nldi data
@@ -73,6 +80,7 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, timePeriod }) {
         executeGraphQlQuery(mapQuery, variables)
             .then(({ data }) => {
                 dispatch(setWaterqualityFeatures(data.allFeatures.features));
+                dispatch(setCount(data.allFeatures.count));
             });
     };
 };
@@ -98,6 +106,11 @@ export const wdfnDataReducer = function(wdfnData=INITIAL_DATA, action) {
                         ...action.filter
                     }
                 }
+            };
+        case SET_COUNT:
+            return {
+                ...wdfnData,
+                count: action.count
             };
         default: return wdfnData;
     }

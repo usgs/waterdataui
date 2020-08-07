@@ -1,12 +1,8 @@
 import { select } from 'd3-selection';
 import { link, subscribe } from '../../lib/d3-redux';
-import { Features } from '../../selectors/observations-selector';
-import { Sites } from '../../selectors/wdfn-selector';
-import { siteTypes } from '../../selectors/wdfn-selector';
-import { Filters } from '../../selectors/wdfn-selector';
+import { Filters, Sites, Count } from '../../selectors/wdfn-selector';
 import config from '../../config';
 import { applySiteTypeFilter, retrieveWdfnData } from '../../store/wdfn';
-import { createStructuredSelector } from 'reselect';
 
 /*
  * Creates a US map
@@ -73,8 +69,8 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
     };
 
     const addSiteCircles = (node, features) => {
-        console.log(features);
         markerGroup.addTo(map);
+
         features.forEach(f => {
             if (f.geometry) {
                 const marker = L.circle(f.geometry.coordinates.reverse(), {
@@ -88,17 +84,15 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
         });
 
         features.forEach(f => {
-            L.marker([f.LatitudeMeasure, f.LongitudeMeasure]).addTo(markerGroup);
+            if (f.LatitudeMeasure && f.LongitudeMeasure) {
+                L.marker([f.LatitudeMeasure, f.LongitudeMeasure]).addTo(markerGroup);
+            }
         });
     };
 
-    const applyFilter = (node, filter) => {
-        markerGroup.clearLayers();
-
-        const charateristic = Object.keys(filter)[0];
-        if (filter[charateristic]) {
-            getFeaturesInBbox(charateristic);
-        }
+    const setCount = (node, count) => {
+        if (typeof count !== 'number') return 0;
+        document.querySelector('#result-count span').textContent = count;
     };
 
     //add additional baselayer
@@ -117,7 +111,8 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
 
     node
         .call(link(store, addSiteCircles, Sites));
-
+    node
+        .call(link(store, setCount, Count));
     node
         .call(link(store, fetchMatchingSites, Filters));
 };
