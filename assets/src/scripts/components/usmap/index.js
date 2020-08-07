@@ -1,5 +1,5 @@
 import { select } from 'd3-selection';
-import { link, subscribe } from '../../lib/d3-redux';
+import { link } from '../../lib/d3-redux';
 import { Filters, Sites, Count } from '../../selectors/wdfn-selector';
 import config from '../../config';
 import { applySiteTypeFilter, retrieveWdfnData } from '../../store/wdfn';
@@ -90,6 +90,7 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
         });
     };
 
+    // Updates the count of sites matching the selected filters
     const setCount = (node, count) => {
         if (typeof count !== 'number') return 0;
         document.querySelector('#result-count span').textContent = count;

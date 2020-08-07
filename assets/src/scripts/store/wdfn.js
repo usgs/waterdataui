@@ -5,26 +5,24 @@ import {
 
 const SET_COUNT = 'SET_COUNT';
 const SET_WDFN_FEATURES = 'SET_WDFN_FEATURES';
-const APPLY_FILTER = 'APPLY_FILTER';
 const APPLY_SITE_TYPE_FILTER = 'APPLY_SITE_TYPE_FILTER';
 const APPLY_GEOGRAPHIC_FILTER = 'APPLY_GEOGRAPHIC_FILTER';
 
 const INITIAL_DATA = {
 };
 
-//  Aggregate groundwater use; Aggregate surface-water-use; Atmosphere;
-//  Estuary; Facility; Glacier; Lake, Reservoir, Impoundment; Land; Ocean;
-//  Spring; Stream; Subsurface; Well; Wetland
+// other: ['Estuary', 'Facility', 'Glacier', 'Lake', 'Reservoir', 'Impoundment', 'Land', 'Ocean', 'Stream', 'Subsurface', 'Well', 'Wetland']
 
 const lookupSiteTypesFullNames = function (siteTypes) {
     const dictionary = {
         groundwater: 'Aggregate groundwater use',
         surfacewater: 'Aggregate surfacewater use',
         atmospheric: 'Atmosphere',
-        spring: 'Spring'
+        spring: 'Spring',
+        other: ['Estuary', 'Facility', 'Glacier']
     };
 
-    siteTypes = Object.keys(siteTypes).map(st => {
+    siteTypes = Object.keys(siteTypes).flatMap(st => {
         if (siteTypes[st]) return dictionary[st];
     })
         .filter(st => st);
@@ -77,6 +75,7 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, timePeriod }) {
 
         variables.startDateLo = '08-06-2015';
 
+        console.log(variables);
         executeGraphQlQuery(mapQuery, variables)
             .then(({ data }) => {
                 dispatch(setWaterqualityFeatures(data.allFeatures.features));
