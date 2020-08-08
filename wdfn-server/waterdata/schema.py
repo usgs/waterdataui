@@ -3,7 +3,7 @@ import os
 import requests
 import pprint
 from graphene import ObjectType, String, Boolean, ID, List, Field, Int
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 from datetime import datetime, timedelta
 from . import app
 from .services.nwis import NwisWebServices
@@ -20,6 +20,18 @@ def _json_object_hook(d):
 def json2obj(data):
     return json.loads(data, object_hook=_json_object_hook)
 
+def get_period_of_record_with_gaps_by_parm_cd(site_records):
+    records_by_parm_cd = {}
+    # print("########site_records#####")
+    # print(json.dumps(site_records))
+    for record in site_records:
+        this_parm_cd = record['parm_cd']
+        if this_parm_cd not in records_by_parm_cd:
+            records_by_parm_cd[this_parm_cd] = defaultdict(list)
+        records_by_parm_cd[this_parm_cd][record['data_type_cd']].append(
+            {"begin_date": record['begin_date'], "end_date": record['end_date']})
+
+    return records_by_parm_cd
 
 class Parameter(ObjectType):
     name = String()
@@ -126,7 +138,8 @@ class Query(ObjectType):
                     providers=List(String),
                     bBox=String(),
                     startDateLo=String(),
-                    startDateHi=String())
+                    startDateHi=String(),
+                    pCode=List(String))
 
     def resolve_all_features(self,
                              info,
@@ -136,6 +149,7 @@ class Query(ObjectType):
         five_years_ago = five_years_ago.strftime("%m-%d-%Y")
         # data = {"bBox": "-83,36.5,-81,38.5"}#, "characteristicName": ["Nitrate"]}
         data = kwargs
+        # print(data)
         r = requests.post(url=url, data=data)
         features = json.dumps(r.json()['features'])
         features_obj = json2obj(features)
@@ -168,7 +182,8 @@ class Query(ObjectType):
         monitoring_location = json.dumps(data)
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(json2obj(monitoring_location))
-
+        # print("**********period of record with gaps***********")
+        # print(json.dumps(get_period_of_record_with_gaps_by_parm_cd(data)))
         data_type = {d["data_type_cd"] for d in data}
 
         period_of_record = {}
@@ -179,8 +194,8 @@ class Query(ObjectType):
         parameters = []
         for pcode in period_of_record:
             pcode_properties = app.config['NWIS_CODE_LOOKUP']["parm_cd"].get(pcode, "")
-            print(pcode_properties)
-            print(period_of_record[pcode])
+            # print(pcode_properties)
+            # print(period_of_record[pcode])
             period_of_record[pcode].update(pcode_properties)
             period_of_record[pcode].update({"code": pcode})
             parameters.append(period_of_record[pcode])
@@ -221,9 +236,9 @@ class Query(ObjectType):
         result["landNetLocationDesc"] = site_info["land_net_ds"]
         result["mapName"] = site_info["map_nm"]
         result["mapScale"] = site_info["map_scale_fc"]
-        result["altitudeMethod"] = app.config['NWIS_CODE_LOOKUP']["alt_meth_cd"][site_info["alt_meth_cd"]]["name"]
+        result["altitudeMethod"] = app.config['NWIS_CODE_LOOKUP']["alt_meth_cd"][site_info["alt_meth_cd"]]["name"] if site_info["alt_meth_cd"] else ""
         result["basinCode"] = site_info["basin_cd"]
-        result["topographicSetting"] = app.config['NWIS_CODE_LOOKUP']["topo_cd"][site_info["topo_cd"]]["name"]
+        result["topographicSetting"] = app.config['NWIS_CODE_LOOKUP']["topo_cd"][site_info["topo_cd"]]["name"] if site_info["topo_cd"] else ""
         result["instruments"] = site_info["instruments_cd"]
         result["constructionDate"] = site_info["construction_dt"]
         result["inventoryDate"] = site_info["inventory_dt"]
