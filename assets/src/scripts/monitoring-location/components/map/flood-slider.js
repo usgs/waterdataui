@@ -55,7 +55,7 @@ export const createSliderHelp = function(elem, hasFloodData) {
 
 export const floodSlider = function(elem, store) {
 	elem
-		.call(link(store, createSliderHelp, hasFloodData))
+        .call(link(store, createSliderHelp, hasFloodData))
         .call(link(store, createSlider, getFloodStages, store))
         .call(link(store, updateSlider, createStructuredSelector({
             stageHeight: getFloodStageHeight,

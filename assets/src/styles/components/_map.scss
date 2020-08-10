@@ -1,15 +1,15 @@
 #flood-layer-control-container {
-	.label-tooltip-container {
-	  margin-top: 1em;
-	  @include u-text('bold');
-	}
-  
-	#flood-slider-container {
-	  label {
-		margin-top: 5px;
-	  }
-	}
+  .label-tooltip-container {
+    margin-top: 1em;
+    @include u-text('bold');
   }
+  
+  #flood-slider-container {
+    label {
+      margin-top: 5px;
+    }
+  }
+}
 
 #site-map {
   height: 350px;

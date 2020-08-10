@@ -10,13 +10,13 @@
 import components from '../../node_modules/uswds/src/js/components';
 
 export const appendTooltip = function(elem, text) {
-    let tooltip = elem.append('div')
+	let tooltip = elem.append('div')
         .attr('class', 'usa-tooltip')
         .attr('data-position', 'right')
         .attr('title', text);
     tooltip.append('i')
-		.attr('class', 'fas fa-info-circle');
+        .attr('class', 'fas fa-info-circle');
 
-	// Initialize USWDS tooltip after page load
-	components.tooltip.init();
+    // Initialize USWDS tooltip after page load
+    components.tooltip.init();
 };

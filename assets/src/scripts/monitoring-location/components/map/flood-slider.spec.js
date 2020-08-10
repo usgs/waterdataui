@@ -49,6 +49,7 @@ describe('monitoring-location/components/map/flood-slider', () => {
         });
 
         it('The slider is not hidden', () => {
+            expect(select(sliderNode).select('#fim-tooltip-container').size()).toBe(1);
             expect(select(sliderNode).select('.slider-wrapper').size()).toBe(1);
         });
 

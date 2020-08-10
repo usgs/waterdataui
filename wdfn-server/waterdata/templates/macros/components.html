@@ -106,6 +106,6 @@
 
 {%  macro QuestionTooltip(text_id, content, external_desc) -%}
     <div class="usa-tooltip" data-position="right" title="{{ content }}" {% if not external_desc %}aria-describedby="{{ text_id|tooltip_content_id }}"{% endif %}>
-		<i class="fas fa-question-circle" aria-hidden="true"></i>
+        <i class="fas fa-question-circle" aria-hidden="true"></i>
     </div>
 {%- endmacro  %}
