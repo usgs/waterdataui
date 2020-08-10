@@ -1,23 +1,21 @@
-// Modified CSS for USWDS Tooltip component
+// Modifies USWDS Tooltip components
+.usa-tooltip {
+	margin-left: 4px;
+}
+
+// Set max width for body of tooltip
+// Otherwise it takes hover-element width
 .usa-tooltip__body {
     width: auto;
     white-space: pre-wrap;
-    width: 40vw;
+    width: 35vw;
 	max-width: 450px;
+	font-weight: 500;
 
+	// Decrease width under 700px width
 	@media only screen and (max-width: 700px) {
-		width: 40vw;
+		width: 35vw;
 		max-width: 250px;
 		font-size: 14px;
-	}
-}
-
-// Rendered USWDS tooltips that aren't initialized by USWDS
-.render-tooltip:hover{
-
-	.usa-tooltip__body{
-		opacity: 1;
-		display: block;
-		margin-left: 24px;
 	}
 }

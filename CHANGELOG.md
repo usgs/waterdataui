@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.34.0...master)
 
 ### Changed
-- Using the latest guidance for the contents of the government banner from USWDS
+- Removed custom tooltips and replaced with USWDS tooltip component.
 
 ## [0.34.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.33.0...waterdataui-0.34.0) - 2020-07-07
 ### Added
