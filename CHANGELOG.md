@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Using the latest guidance for the contents of the government banner from USWDS
+- Updated monitoring location page custom date range selection to use USWDS date range picker
 
 ### Added 
 - Parameter selection list now has radio buttons to indicate selection.

@@ -5,6 +5,7 @@ volumes/
 .sublimelinterrc
 *.sublime-project
 *.sublime-workspace
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
