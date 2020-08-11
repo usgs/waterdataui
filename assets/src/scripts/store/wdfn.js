@@ -46,7 +46,7 @@ const setCount = function (count) {
  * @param {GeoJSON Object} upstreamBasin
  * @return {Object} Redux action
  */
-const setWaterqualityFeatures = function(features) {
+const setWdfnFeatures = function(features) {
     return {
         type: SET_WDFN_FEATURES,
         features
@@ -95,7 +95,7 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, timePeriod }) {
 
         executeGraphQlQuery(mapQuery, variables)
             .then(({ data }) => {
-                dispatch(setWaterqualityFeatures(data.allFeatures.features));
+                dispatch(setWdfnFeatures(data.allFeatures.features));
                 dispatch(setCount(data.allFeatures.count));
             });
     };
@@ -146,6 +146,5 @@ export const wdfnDataReducer = function(wdfnData=INITIAL_DATA, action) {
 
 export const Actions = {
     applySiteTypeFilter,
-    setWaterqualityFeatures,
     retrieveWdfnData
 };
