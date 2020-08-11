@@ -2,7 +2,7 @@ import { select } from 'd3-selection';
 import { link } from '../../lib/d3-redux';
 import { Filters, Sites, Count } from '../../selectors/wdfn-selector';
 import config from '../../config';
-import { applySiteTypeFilter, retrieveWdfnData } from '../../store/wdfn';
+import { applySiteTypeFilter, applyGeographicFilter, retrieveWdfnData } from '../../store/wdfn';
 
 /*
  * Creates a US map
@@ -32,6 +32,7 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
         map.scrollWheelZoom.disable();
     });
 
+    // Parent checkboxes should control the state of their children
     const toggleChildCheckboxes = (checkbox) => {
         const checked = checkbox.checked;
         const li = checkbox.parentNode.parentNode;
@@ -51,8 +52,10 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
 
     checkboxes.forEach(b => b.addEventListener('change', e => setSiteTypeFilter(e.target, store)));
 
-    const fetchMatchingSites = (node, filters) => {
+    // Store bounding box coordinates
+    const setBboxFilter = () => {
         const bounds = map.getBounds();
+
         const bbox = {
           west: bounds.getWest(),
           south: bounds.getSouth(),
@@ -60,11 +63,22 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
           north: bounds.getNorth()
         };
 
+        store.dispatch(applyGeographicFilter(bbox));
+    };
+
+    map.on('moveend', setBboxFilter);
+
+    // Dispatch redux action that will fetch sites from API
+    const fetchMatchingSites = (node, filters) => {
         if (Object.keys(filters).length === 0) return;
 
-        const hasSiteType = Object.values(filters.siteTypes).some(el => el);
+        // If there are any sites already on the map, remove them
+        markerGroup.clearLayers();
 
-        if (hasSiteType)
+        const hasSiteType = Object.values(filters.siteTypes).some(el => el);
+        const hasBbox = Object.values(filters.bBox).every(el => el);
+
+        if (hasSiteType || hasBbox)
             store.dispatch(retrieveWdfnData(filters));
     };
 
@@ -79,13 +93,7 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
                     fillOpacity: 0.2,
                     radius: 5000
                 });
-                marker.addTo(map);
-            }
-        });
-
-        features.forEach(f => {
-            if (f.LatitudeMeasure && f.LongitudeMeasure) {
-                L.marker([f.LatitudeMeasure, f.LongitudeMeasure]).addTo(markerGroup);
+                marker.addTo(markerGroup);
             }
         });
     };

@@ -60,6 +60,22 @@ const setSiteTypeFilter = function (filter) {
     };
 };
 
+const setBboxFilter = function ({ west, south, east, north }) {
+    return {
+        type: APPLY_GEOGRAPHIC_FILTER,
+        west,
+        south,
+        east,
+        north
+    };
+};
+
+export const applyGeographicFilter = function (bBox) {
+    return function (dispatch) {
+        dispatch(setBboxFilter(bBox));
+    };
+};
+
 export const applySiteTypeFilter = function (siteType, checked) {
     return function (dispatch) {
         dispatch(setSiteTypeFilter({ [siteType]: checked }));
@@ -73,9 +89,13 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, timePeriod }) {
         if (Object.values(siteTypes).some(el => el))
             variables.siteType = lookupSiteTypesFullNames(siteTypes);
 
-        variables.startDateLo = '08-06-2015';
+        if (Object.values(bBox).every(el => el)) {
+            variables.bBox = `${bBox.west},${bBox.south},${bBox.east},${bBox.north}`;
+        }
 
+        variables.startDateLo = '08-06-2015';
         console.log(variables);
+
         executeGraphQlQuery(mapQuery, variables)
             .then(({ data }) => {
                 dispatch(setWaterqualityFeatures(data.allFeatures.features));
@@ -88,12 +108,24 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, timePeriod }) {
  * Slice reducer
  */
 export const wdfnDataReducer = function(wdfnData=INITIAL_DATA, action) {
-    console.log(action);
     switch(action.type) {
         case SET_WDFN_FEATURES:
             return {
                 ...wdfnData,
                 sites: action.features
+            };
+        case APPLY_GEOGRAPHIC_FILTER:
+            return {
+                ...wdfnData,
+                filters: {
+                    ...wdfnData.filters,
+                    bBox: {
+                        west: action.west,
+                        east: action.east,
+                        north: action.north,
+                        south: action.south
+                    }
+                }
             };
         case APPLY_SITE_TYPE_FILTER:
             return {
