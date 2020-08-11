@@ -93,9 +93,6 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, timePeriod }) {
             variables.bBox = `${bBox.west},${bBox.south},${bBox.east},${bBox.north}`;
         }
 
-        variables.startDateLo = '08-06-2015';
-        console.log(variables);
-
         executeGraphQlQuery(mapQuery, variables)
             .then(({ data }) => {
                 dispatch(setWaterqualityFeatures(data.allFeatures.features));
