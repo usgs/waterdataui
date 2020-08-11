@@ -85,18 +85,17 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     startDateFormGroup.append('div')
         .attr('class', 'usa-hint')
         .attr('id', 'custom-start-date-hint')
-        .text('mm/dd/yyyy');
-
-    const customStartDate = startDateFormGroup.append('div')
-        .attr('class', 'usa-date-picker')
-        .attr('data-min-date', '1900-01-01')
-        .attr('data-max-date', '2100-12-31')
-        .append('input')
-            .attr('class', 'usa-input')
-            .attr('id', 'custom-start-date')
-            .attr('name', 'custom-start-date')
-            .attr('aria-describedby', 'custom-start-date-label custom-start-date-hint')
-            .attr('type', 'text');
+        .text('mm/dd/yyyy')
+        .append('div')
+            .attr('class', 'usa-date-picker')
+            .attr('data-min-date', '1900-01-01')
+            .attr('data-max-date', '2100-12-31')
+            .append('input')
+                .attr('class', 'usa-input')
+                .attr('id', 'custom-start-date')
+                .attr('name', 'custom-start-date')
+                .attr('aria-describedby', 'custom-start-date-label custom-start-date-hint')
+                .attr('type', 'text');
 
     endDateFormGroup.append('label')
         .attr('class', 'usa-label')
@@ -107,18 +106,17 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     endDateFormGroup.append('div')
         .attr('class', 'usa-hint')
         .attr('id', 'custom-end-date-hint')
-        .text('mm/dd/yyyy');
-
-    const customEndDate = endDateFormGroup.append('div')
-        .attr('class', 'usa-date-picker')
-        .attr('data-min-date', '1900-01-01')
-        .attr('data-max-date', '2100-12-31')
-        .append('input')
-            .attr('class', 'usa-input')
-            .attr('id', 'custom-end-date')
-            .attr('name', 'custom-end-date')
-            .attr('type', 'text')
-            .attr('aria-describedby', 'custom-end-date-label custom-end-date-hint');
+        .text('mm/dd/yyyy')
+        .append('div')
+            .attr('class', 'usa-date-picker')
+            .attr('data-min-date', '1900-01-01')
+            .attr('data-max-date', '2100-12-31')
+            .append('input')
+                .attr('class', 'usa-input')
+                .attr('id', 'custom-end-date')
+                .attr('name', 'custom-end-date')
+                .attr('type', 'text')
+                .attr('aria-describedby', 'custom-end-date-label custom-end-date-hint');
 
     // required to init the USWDS date picker after page load
     components.datePicker.init(elem.node());
@@ -133,8 +131,8 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('id', 'custom-date-submit')
         .text('Submit')
         .on('click', function() {
-            let userSpecifiedStart = document.getElementById('custom-start-date').value
-            let userSpecifiedEnd = document.getElementById('custom-end-date').value
+            let userSpecifiedStart = document.getElementById('custom-start-date').value;
+            let userSpecifiedEnd = document.getElementById('custom-end-date').value;
             if (userSpecifiedStart.length === 0 || userSpecifiedEnd.length === 0) {
                 dateAlertBody.selectAll('p').remove();
                 dateAlertBody.append('p')
@@ -148,7 +146,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             } else {
                 customDateValidationContainer.attr('hidden', true);
                 userSpecifiedStart = DateTime.fromFormat(userSpecifiedStart, 'LL/dd/yyyy').toISODate();
-                userSpecifiedEnd = DateTime.fromFormat(userSpecifiedEnd, 'LL/dd/yyyy').toISODate()
+                userSpecifiedEnd = DateTime.fromFormat(userSpecifiedEnd, 'LL/dd/yyyy').toISODate();
                 store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange(
                     siteno,
                     userSpecifiedStart,
@@ -159,9 +157,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
 
     customDateContainer.call(link(store, (container, customTimeRange) => {
         container.select('#custom-start-date')
-            .property('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start).toFormat('LL/dd/yyyy') : '')
+            .property('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start).toFormat('LL/dd/yyyy') : '');
         container.select('#custom-end-date')
-            .property('value', customTimeRange && customTimeRange.end ? DateTime.fromMillis(customTimeRange.end).toFormat('LL/dd/yyyy') : '')
+            .property('value', customTimeRange && customTimeRange.end ? DateTime.fromMillis(customTimeRange.end).toFormat('LL/dd/yyyy') : '');
     }, getCustomTimeRange));
 
     const listContainer = container.append('ul')
