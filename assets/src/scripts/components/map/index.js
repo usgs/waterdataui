@@ -24,7 +24,6 @@ const getLayerDefs = function(layerNo, siteno, stage) {
  * Creates a site map
  */
 const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
-
     let gray = L.layerGroup();
     L.esri.basemapLayer('Gray').addTo(gray);
 
@@ -189,10 +188,8 @@ export const attachToNode = function(store, node, {siteno, latitude, longitude, 
     store.dispatch(floodInundationActions.retrieveFloodData(siteno));
     // hydrates the store with nldi data
     store.dispatch(nldiDataActions.retrieveNldiData(siteno));
-
     select(node).select('#flood-layer-control-container')
         .call(floodSlider, store);
     select(node)
         .call(siteMap, {siteno, latitude, longitude, zoom}, store);
 };
-

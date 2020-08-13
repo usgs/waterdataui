@@ -35,3 +35,7 @@ export const fetchAvailableDVTimeSeries = function(monitoringLocationId) {
 export const fetchDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
     return fetchObservationsData(`items/${monitoringLocationId}/observations/statistical-time-series/${timeSeriesId}`);
 };
+
+export const fetchSitesInBbox = function ({ west, south, east, north }) {
+    return fetchObservationsData(`items/?f=json&bbox=${west},${south},${east},${north}&limit=100`);
+};

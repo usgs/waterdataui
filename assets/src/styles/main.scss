@@ -25,6 +25,11 @@ $fa-font-path: './fonts' !default;
     margin-bottom: 1em;
   }
 
+  &[data-component='us-map'] {
+    @import './components/map';
+    margin-bottom: 1em;
+  }
+
   &[data-component='embed'] {
     @import './components/embed';
     margin-bottom: 1em;
@@ -55,5 +60,9 @@ body {
 
   &#monitoring-location {
     @import './pages/monitoring-location';
+  }
+
+  &#wdfn-site-search {
+    @import './pages/wdfn-site-search';
   }
 }

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ 'main.css' | asset_url }}">
+{% endblock page_css %}
+
+{% block page_script %}
+    <script src="{{ 'scripts/vendor.js' | asset_url }}"></script>
+    <script async src="{{ 'bundle.js' | asset_url }}"></script>
+{% endblock %}}
+
+{% import 'macros/components.html' as components %}
+
+{% set body_id = 'wdfn-site-search' %}
+
+{% block content %}
+  <div id="monitoring-location-page-container">
+    <h2>Explore USGS Water Data</h2>
+    {{ components.WDFNParamFilters() }}
+    {{ components.USMapComponent(latitude, longitude, zoom) }}
+  </div>
+{% endblock %}

@@ -20,13 +20,16 @@ STATE_COUNTY_PAGES_ENABLED = True
 EMBED_IMAGE_FEATURE_ENABLED = True
 COOPERATOR_LOOKUP_ENABLED = True  # may also be set to a list of district codes
 MONITORING_CAMERA_ENABLED = True
-MONITORING_CAMERA_PATH = os.path.join(PROJECT_HOME, 'data/monitoring_camera_data.json')
+MONITORING_CAMERA_PATH = os.path.join(
+    PROJECT_HOME, 'data/monitoring_camera_data.json')
 DAILY_VALUE_HYDROGRAPH_ENABLED = True
 
 DEBUG = False
 
-SERVER_SERVICE_ROOT = 'https://waterservices.usgs.gov'  # Used for webserver calls to waterservices. Allows us to use a private url.
-SERVICE_ROOT = 'https://waterservices.usgs.gov'  # Use for client side calls to waterservices. Most be a public url.
+# Used for webserver calls to waterservices. Allows us to use a private url.
+SERVER_SERVICE_ROOT = 'https://waterservices.usgs.gov'
+# Use for client side calls to waterservices. Most be a public url.
+SERVICE_ROOT = 'https://waterservices.usgs.gov'
 PAST_SERVICE_ROOT = 'https://nwis.waterservices.usgs.gov'
 NWIS_ENDPOINTS = {
     'INVENTORY': 'https://waterdata.usgs.gov/nwis/inventory',
@@ -57,6 +60,9 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 NWIS_CODE_LOOKUP_FILENAME = 'nwis_lookup.json'
 COUNTRY_STATE_COUNTY_LOOKUP_FILENAME = 'nwis_country_state_lookup.json'
 HUC_LOOKUP_FILENAME = 'huc_lookup.json'
+
+# Water Quality
+WQP_LOOKUP_ENDPOINT = 'https://www.waterqualitydata.us'
 
 GA_TRACKING_CODE = ''
 ENABLE_USGS_GA = False
