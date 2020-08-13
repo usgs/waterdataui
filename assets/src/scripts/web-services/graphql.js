@@ -1,9 +1,3 @@
-const variables = {
-  siteType: ['Well'],
-  startDateLo: '07-23-2019',
-  providers: ['NWIS']
-};
-
 export const mapQuery = `
 query($bBox: String,
       $providers: [String] = ["NWIS"],
@@ -34,7 +28,7 @@ query($bBox: String,
 export const executeGraphQlQuery = (
     query,
     variables) => {
-  console.log(query, variables);
+
   return fetch('/graphql', {
       method: 'POST',
       headers: {
