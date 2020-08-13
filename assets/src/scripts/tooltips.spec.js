@@ -17,9 +17,9 @@ describe('tooltips', () => {
     it('Creates a tooltip widget', () => {
         let tooltipItem;
         testDiv.call(appendTooltip, 'Help text');
-        tooltipItem = testDiv.select('.tooltip-item');
+        tooltipItem = testDiv.select('.usa-tooltip');
         expect(tooltipItem.size()).toBe(1);
-        expect(tooltipItem.select('.tooltip').html()).toContain('Help text');
+        expect(tooltipItem.select('.usa-tooltip__body').html()).toContain('Help text');
     });
 
     it('Uses bound data to create tooltips', () => {

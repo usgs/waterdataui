@@ -2,13 +2,7 @@
   .label-tooltip-container {
     margin-top: 1em;
     @include u-text('bold');
-
-    .tooltip-item {
-      @include u-text('normal');
-      margin-left: 0.5em;
-    }
   }
-
   #flood-slider-container {
     label {
       margin-top: 5px;
