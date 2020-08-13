@@ -2,10 +2,6 @@ import '../polyfills';
 
 import wdfnviz from 'wdfn-viz';
 
-// Load misc Javascript helpers for general page interactivity.
-import {register} from '../helpers';
-register();
-
 import {configureStore} from './store';
 
 import {attachToNode as NetworkMapComponent} from './components/network-sites';
