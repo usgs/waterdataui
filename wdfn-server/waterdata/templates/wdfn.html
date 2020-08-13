@@ -1,0 +1,17 @@
+{% extends 'base_wdfn.html' %}
+
+{% if network_cd %}
+    {% set page_title = collection.title %}
+{% else %}
+    {% set page_title = 'Water Data For the Nation' %}
+{% endif %}
+
+{% import 'macros/components.html' as components %}
+
+{% block content %}
+    <div class="usa-width-one-whole">
+      <h1>Explore USGS Water Data</h1>
+      {{ components.WDFNParamFilters() }}
+      {{ components.USMapComponent(latitude, longitude, zoom) }}
+    </div>
+{% endblock content %}

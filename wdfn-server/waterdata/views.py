@@ -293,7 +293,7 @@ def time_series_component(site_no):
 @app.route('/wdfn-test-new/', methods=['GET'])
 def wdfn_test():
     return render_template(
-        'wdfn-test.html',
+        'wdfn.html',
         latitude='39.8283',
         longitude='-98.5795',
         zoom='3'

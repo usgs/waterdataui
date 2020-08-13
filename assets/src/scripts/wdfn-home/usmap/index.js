@@ -1,8 +1,12 @@
 import { select } from 'd3-selection';
 import { link } from '../../lib/d3-redux';
-import { Filters, Sites, Count } from '../../selectors/wdfn-selector';
+import { Filters, Sites, Count } from '../selectors/wdfn-selector';
 import config from '../../config';
-import { applySiteTypeFilter, applyGeographicFilter, retrieveWdfnData } from '../../store/wdfn';
+import { 
+  applySiteTypeFilter, 
+  applyGeographicFilter,
+  retrieveWdfnData 
+} from '../store/wdfn-store';
 
 /*
  * Creates a US map
@@ -78,7 +82,7 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
         const hasSiteType = Object.values(filters.siteTypes).some(el => el);
         const hasBbox = Object.values(filters.bBox).every(el => el);
 
-        if (hasSiteType || hasBbox)
+        if (hasSiteType && hasBbox)
             store.dispatch(retrieveWdfnData(filters));
     };
 

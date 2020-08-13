@@ -12,14 +12,12 @@ import {ivTimeSeriesStateReducer as ivTimeSeriesState} from './instantaneous-val
 import {statisticsDataReducer as statisticsData} from './statistics-data';
 import {timeZoneReducer as ianaTimeZone} from './time-zone';
 import {uiReducer as ui} from './ui-state';
-import {wdfnDataReducer as wdfn} from './wdfn';
 
 const appReducer = combineReducers({
     ivTimeSeriesData,
     ianaTimeZone,
     dailyValueTimeSeriesData,
     statisticsData,
-    wdfn,
     floodData,
     nldiData,
     ivTimeSeriesState,
@@ -46,25 +44,6 @@ export const configureStore = function (initialState) {
             upstreamSites: [],
             downstreamSites: [],
             upstreamBasin: []
-        },
-        wdfn: {
-            filters: {
-                siteTypes: {
-                    groundwater: false,
-                    surfacewater: false,
-                    atmospheric: false,
-                    spring: false
-                },
-                timePeriod: null,
-                bBox: {
-                    west: null,
-                    south: null,
-                    east: null,
-                    north: null
-                }
-            },
-            count: 0,
-            sites: []
         },
         statisticsData: {},
         ivTimeSeriesState: {

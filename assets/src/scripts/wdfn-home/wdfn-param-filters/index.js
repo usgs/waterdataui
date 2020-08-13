@@ -1,12 +1,4 @@
 import { select } from 'd3-selection';
-import { link, subscribe } from '../../lib/d3-redux';
-import { Features } from '../../selectors/observations-selector';
-import { Sites } from '../../selectors/waterquality-selector';
-import { siteTypes } from '../../selectors/wdfn-selector';
-import { Filters } from '../../selectors/wdfn-selector';
-import config from '../../config';
-import { applySiteTypeFilter, retrieveWdfnData } from '../../store/wdfn';
-import { createStructuredSelector } from 'reselect';
 
 const paramToggleButtons = document.getElementsByClassName('params-toggle');
 
