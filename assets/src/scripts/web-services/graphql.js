@@ -1,3 +1,5 @@
+import {post} from '../ajax';
+
 export const mapQuery = `
 query($bBox: String,
       $providers: [String] = ["NWIS"],
@@ -29,16 +31,15 @@ export const executeGraphQlQuery = (
     query,
     variables) => {
 
-  return fetch('/graphql', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
+      const payload = JSON.stringify({
         query,
         variables
-      })
-    }).then(resp => resp.json())
-      .then(json => json);
+      });
+
+      const headers = {
+        'Content-type': 'application/json',
+        'Accept': 'application/json'
+      };
+
+      return post('/graphql', payload, headers);
 };

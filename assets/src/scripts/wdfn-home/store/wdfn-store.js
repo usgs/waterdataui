@@ -10,6 +10,28 @@ export const SET_WDFN_FEATURES = 'SET_WDFN_FEATURES';
 export const APPLY_SITE_TYPE_FILTER = 'APPLY_SITE_TYPE_FILTER';
 export const APPLY_GEOGRAPHIC_FILTER = 'APPLY_GEOGRAPHIC_FILTER';
 
+export const STORE_STRUCTURE = {
+  wdfnData: {
+      filters: {
+          siteTypes: {
+              groundwater: false,
+              surfacewater: false,
+              atmospheric: false,
+              spring: false
+          },
+          timePeriod: null,
+          bBox: {
+              west: null,
+              south: null,
+              east: null,
+              north: null
+          }
+      },
+      count: 0,
+      sites: []
+  }
+};
+
 const lookupSiteTypesFullNames = function (siteTypes) {
     // Translate keys into WQP understands
     const dictionary = {
@@ -66,7 +88,6 @@ export const applyGeographicFilter = function (bBox) {
 };
 
 
-
 export const retrieveWdfnData = function ({ siteTypes, bBox, timePeriod }) {
     return function (dispatch) {
         const variables = {};
@@ -79,6 +100,7 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, timePeriod }) {
         }
 
         executeGraphQlQuery(mapQuery, variables)
+            .then(resp => JSON.parse(resp))
             .then(({ data }) => {
                 dispatch(setWdfnFeatures(data.allFeatures.features));
                 dispatch(setCount(data.allFeatures.count));
@@ -100,25 +122,7 @@ const MIDDLEWARES = [thunk];
 
 export const configureStore = function (initialState) {
     initialState = {
-        wdfnData: {
-            filters: {
-                siteTypes: {
-                    groundwater: false,
-                    surfacewater: false,
-                    atmospheric: false,
-                    spring: false
-                },
-                timePeriod: null,
-                bBox: {
-                    west: null,
-                    south: null,
-                    east: null,
-                    north: null
-                }
-            },
-            count: 0,
-            sites: []
-        },
+        ...STORE_STRUCTURE,
         ...initialState
     };
 
@@ -137,4 +141,11 @@ export const configureStore = function (initialState) {
         initialState,
         enhancers
     );
+};
+
+export const Actions = {
+  setSiteTypeFilter,
+  setCount,
+  setBboxFilter,
+  setWdfnFeatures
 };
