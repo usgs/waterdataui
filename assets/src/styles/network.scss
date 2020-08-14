@@ -49,5 +49,25 @@ body {
 		font-weight: bold;
 	}
 
+	#contact-name{
+		margin-right: 0.5em;
+	}
+
+	#contact-email {
+		margin-left: 0.25em;
+	}
+
+	.cooperator-row {
+		@include grid-col(12);
+
+		@include at-media(tablet) {
+			@include grid-col(6)
+		}
+
+		@include at-media(desktop) {
+			@include grid-col(4);
+		  }
+	}
+
 	@import './partials/alerts';
 }

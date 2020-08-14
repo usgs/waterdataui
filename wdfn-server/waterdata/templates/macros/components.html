@@ -58,31 +58,29 @@
             {% if collection.properties.contactInformation.contactName and collection.properties.contactInformation.contactEmail %}
             <label class="bold-label" for="contact-info">Network Contact</label><br>
             <span id="contact-info">
-                <span>{{ collection.properties.contactInformation.contactName }}</span>&nbsp;&nbsp;&nbsp;
-                <span><a href="mailto:{{ collection.properties.contactInformation.contactEmail }}"><i class="fas fa-envelope"></i></a>
-                &nbsp;<a href="mailto:{{ collection.properties.contactInformation.contactEmail }}">{{ collection.properties.contactInformation.contactEmail }}</a></span>
+                <span id="contact-name">{{ collection.properties.contactInformation.contactName }}</span>
+                <span><a class="usa-link" href="mailto:{{ collection.properties.contactInformation.contactEmail }}"><i class="fas fa-envelope"></i></a>
+                <a id="contact-email" class="usa-link" href="mailto:{{ collection.properties.contactInformation.contactEmail }}">{{ collection.properties.contactInformation.contactEmail }}</a></span>
             </span>
             {% endif %}
 
             {% if collection.properties.cooperators %}
             <div id="network-cooperators">
                 <h3>Cooperators</h3>
-                <div class="grid-container">
                     <div class="grid-row"> 
                     {% for cooperator in collection.properties.cooperators %}
-                        <div class="grid-col-12 tablet:grid-col-6 desktop:grid-col-4">
+                        <div class="cooperator-row">
                             {% if cooperator.cooperatorLogo == '' %}
-                                <a href="{{ cooperator.cooperatorURL}}">{{ cooperator.cooperatorName }}</a>
+                                <a class="usa-link" href="{{ cooperator.cooperatorURL}}">{{ cooperator.cooperatorName }}</a>
                             {% else %}
                                 <figure>
                                     <a href="{{ cooperator.cooperatorURL}}"><img src="{{ cooperator.cooperatorLogo }}" class="cooperator_logo" alt="Logo for {{ cooperator.cooperatorName }}"></a>
-                                    <figcaption><a href="{{ cooperator.cooperatorURL}}">{{ cooperator.cooperatorName }}</a></figcaption>
+                                    <figcaption><a class="usa-link" href="{{ cooperator.cooperatorURL}}">{{ cooperator.cooperatorName }}</a></figcaption>
                                 </figure>
                             {% endif %}
                         </div>
                     {% endfor %}  
                     </div>
-                </div>
             </div>
             {% endif %}
         </div>

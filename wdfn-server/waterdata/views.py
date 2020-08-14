@@ -209,10 +209,7 @@ def networks(network_cd):
     if network_cd:
         collection = network_data
         extent = network_data['extent']['spatial']['bbox'][0]
-        if network_data['properties']['narrative']:
-            narrative = markdown(network_data['properties']['narrative'])
-        else:
-            narrative = None
+        narrative = markdown(network_data['properties']['narrative']) if network_data['properties']['narrative'] else None
     else:
         collection = network_data.get('collections')
         extent = None
