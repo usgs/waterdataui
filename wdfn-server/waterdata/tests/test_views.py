@@ -14,6 +14,7 @@ from ..views import __version__
 from ..utils import parse_rdb
 from .rdb_snippets import SITE_RDB, PARAMETER_RDB
 
+from markdown import markdown
 
 class TestHomeView(TestCase):
     def setUp(self):
