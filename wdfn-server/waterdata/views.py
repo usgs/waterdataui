@@ -209,9 +209,9 @@ def networks(network_cd):
     if network_cd:
         collection = network_data
         extent = network_data['extent']['spatial']['bbox'][0]
-        if (network_data['properties']['narrative']):
+        if network_data['properties']['narrative']:
             narrative = markdown(network_data['properties']['narrative'])
-        else: 
+        else:
             narrative = None
     else:
         collection = network_data.get('collections')
@@ -293,4 +293,3 @@ def time_series_component(site_no):
     Returns an unadorned page with the time series component for a site.
     """
     return render_template('monitoring_location_embed.html', site_no=site_no)
-    
