@@ -5,15 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.35.0...master)
 
+### Added
+- Added network metadata to the network pages.
+
 ## [0.35.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.34.0...waterdataui-0.35.0) - 2020-07-30
 
 ### Changed
-- Using the latest guidance for the contents of the government banner from USWDS
-- Updated monitoring location page custom date range selection to use USWDS date range picker
-- Added network metadata to the network page
-
-### Added 
-- Parameter selection list now has radio buttons to indicate selection.
+- Removed custom tooltips and replaced with USWDS tooltip component.
 
 ## [0.34.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.33.0...waterdataui-0.34.0) - 2020-07-07
 ### Added
