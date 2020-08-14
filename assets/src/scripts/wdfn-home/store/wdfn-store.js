@@ -11,9 +11,10 @@ export const APPLY_SITE_TYPE_FILTER = 'APPLY_SITE_TYPE_FILTER';
 export const APPLY_GEOGRAPHIC_FILTER = 'APPLY_GEOGRAPHIC_FILTER';
 
 const lookupSiteTypesFullNames = function (siteTypes) {
+    // Translate keys into WQP understands
     const dictionary = {
         groundwater: 'Aggregate groundwater use',
-        surfacewater: 'Aggregate surfacewater use',
+        surfacewater: 'Aggregate surface-water-use',
         atmospheric: 'Atmosphere',
         spring: 'Spring',
         other: ['Estuary', 'Facility', 'Glacier']
