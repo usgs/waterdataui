@@ -15,14 +15,13 @@
 
             {% if network_cd %}
                 {% if collection.description %}
-                    <h2>Network: {{ collection.title }} </h2>
-                    <h3>Description: {{ collection.description }} </h3>
+                    <h2>{{ collection.title }} </h2>
+                    <h3>{{ collection.description }} </h3>
                 {% else %}
-                    <h2>Network: {{ collection.title }} </h2>
-                    <h3>Description: Not Available</h3>
+                    <h2>{{ collection.title }} </h2>
                 {% endif %}
 
-               {{ components.NetworkComponent(network_cd, extent) }}
+               {{ components.NetworkComponent(network_cd, extent, collection, narrative) }}
 
             {% else %}
                 <p>Select a Network</p>

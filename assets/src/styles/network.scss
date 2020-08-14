@@ -40,5 +40,14 @@ body {
     @include u-maxw('desktop');
   }
 
+  .cooperator_logo {
+    max-height: 150px;
+  }
+
+  .bold-label {
+  font-size: large;
+  font-weight: bold;
+  }
+
   @import './partials/alerts';
 }

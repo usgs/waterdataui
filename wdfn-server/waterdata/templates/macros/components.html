@@ -46,12 +46,43 @@
     </div>
 {%- endmacro %}
 
-{% macro NetworkComponent(network_cd, extent) -%}
+{% macro NetworkComponent(network_cd, extent, collection, narrative) -%}
     <div class="wdfn-component" data-component="network" data-networkcd="{{ network_cd }}" data-extent="{{ extent }}">
-        <h3>Network Map:</h3>
         <p id="overload-map"></p>
         <div id="network-map"></div>
-        <h3>Link Table:</h3>
+        <div id="network-metadata" class="usa-prose">
+            {% if collection.properties.narrative %}
+                <div>{{ narrative|safe }}</div>
+            {% endif %}
+
+            {% if collection.properties.contactInformation.contactName and collection.properties.contactInformation.contactEmail %}
+            <label class="bold-label" for="contact-info">Network Contact</label><br>
+            <span id="contact-info">
+                <span>{{ collection.properties.contactInformation.contactName }}</span>&nbsp;&nbsp;&nbsp;
+                <span><a href="mailto:{{ collection.properties.contactInformation.contactEmail }}"><i class="fas fa-envelope"></i></a>
+                &nbsp;<a href="mailto:{{ collection.properties.contactInformation.contactEmail }}">{{ collection.properties.contactInformation.contactEmail }}</a></span>
+            </span>
+            {% endif %}
+
+            {% if collection.properties.cooperators %}
+            <div id="network-cooperators">
+                <h3>Cooperators</h3>
+                <div class="grid-container">
+                    <div class="grid-row"> 
+                    {% for cooperator in collection.properties.cooperators %}
+                        <div class="grid-col-12 tablet:grid-col-6 desktop:grid-col-4">
+                            <figure>
+                                <a href="{{ cooperator.cooperatorURL}}"><img src="{{ cooperator.cooperatorLogo }}" class="cooperator_logo"></a>
+                                <figcaption><a href="{{ cooperator.cooperatorURL}}">{{ cooperator.cooperatorName }}</a></figcaption>
+                            </figure>
+                        </div>
+                    {% endfor %}  
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <h3>Link Table</h3>
         <div id="link-list">
             <p class="overload-table"></p>
             <table id="link-table" class="usa-table">
