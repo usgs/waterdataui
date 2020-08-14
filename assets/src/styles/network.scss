@@ -1,23 +1,23 @@
-@import "common";
+@import 'common';
 
-$fa-font-path: "./fonts" !default;
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome";
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/brands";
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/solid";
-@import "../../node_modules/leaflet/dist/leaflet";
-@import "../../node_modules/leaflet.markercluster/dist/MarkerCluster";
-@import "../../node_modules/leaflet.markercluster/dist/MarkerCluster.Default";
+$fa-font-path: './fonts' !default;
+@import '../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome';
+@import '../../node_modules/@fortawesome/fontawesome-free/scss/brands';
+@import '../../node_modules/@fortawesome/fontawesome-free/scss/solid';
+@import '../../node_modules/leaflet/dist/leaflet';
+@import '../../node_modules/leaflet.markercluster/dist/MarkerCluster';
+@import '../../node_modules/leaflet.markercluster/dist/MarkerCluster.Default';
 
-@import "partials/script";
-@import "partials/slider";
-@import "partials/social-share";
-@import "partials/tooltip";
+@import 'partials/script';
+@import 'partials/slider';
+@import 'partials/social-share';
+@import 'partials/tooltip';
 
 .wdfn-component {
-	&[data-component="network"] {
-		@import "./components/network";
-		margin-bottom: 1em;
-	}
+  &[data-component='network'] {
+    @import './components/network';
+  margin-bottom: 1em;
+  }
 }
 
 /* This fixes an issue with Firefox not hiding long divs. I opened https://github.com/uswds/uswds/issues/2380 .
@@ -37,7 +37,7 @@ body {
 	.content-container {
 		margin-left: auto;
 		margin-right: auto;
-		@include u-maxw("desktop");
+		@include u-maxw('desktop');
 	}
 
 	.cooperator_logo {
@@ -49,5 +49,5 @@ body {
 		font-weight: bold;
 	}
 
-	@import "./partials/alerts";
+	@import './partials/alerts';
 }
