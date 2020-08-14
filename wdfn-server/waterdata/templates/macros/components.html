@@ -51,7 +51,7 @@
         <p id="overload-map"></p>
         <div id="network-map"></div>
         <div id="network-metadata" class="usa-prose">
-            {% if collection.properties.narrative %}
+            {% if narrative %}
                 <div>{{ narrative|safe }}</div>
             {% endif %}
 
@@ -71,10 +71,14 @@
                     <div class="grid-row"> 
                     {% for cooperator in collection.properties.cooperators %}
                         <div class="grid-col-12 tablet:grid-col-6 desktop:grid-col-4">
-                            <figure>
-                                <a href="{{ cooperator.cooperatorURL}}"><img src="{{ cooperator.cooperatorLogo }}" class="cooperator_logo"></a>
-                                <figcaption><a href="{{ cooperator.cooperatorURL}}">{{ cooperator.cooperatorName }}</a></figcaption>
-                            </figure>
+                            {% if cooperator.cooperatorLogo == '' %}
+                                <a href="{{ cooperator.cooperatorURL}}">{{ cooperator.cooperatorName }}</a>
+                            {% else %}
+                                <figure>
+                                    <a href="{{ cooperator.cooperatorURL}}"><img src="{{ cooperator.cooperatorLogo }}" class="cooperator_logo"></a>
+                                    <figcaption><a href="{{ cooperator.cooperatorURL}}">{{ cooperator.cooperatorName }}</a></figcaption>
+                                </figure>
+                            {% endif %}
                         </div>
                     {% endfor %}  
                     </div>

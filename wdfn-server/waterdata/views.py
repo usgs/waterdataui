@@ -293,3 +293,4 @@ def time_series_component(site_no):
     Returns an unadorned page with the time series component for a site.
     """
     return render_template('monitoring_location_embed.html', site_no=site_no)
+    
