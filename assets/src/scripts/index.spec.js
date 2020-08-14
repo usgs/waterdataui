@@ -94,3 +94,5 @@ import './networks/network-component/network-legend.spec';
 import './networks/selectors/network-data-selector.spec';
 import './networks/store/network-store.spec';
 import './networks/store/network-data-reducer.spec';
+
+import './wdfn-home/store/wdfn-store.spec';
