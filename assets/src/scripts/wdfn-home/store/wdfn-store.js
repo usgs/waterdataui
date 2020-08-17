@@ -87,7 +87,6 @@ export const applyGeographicFilter = function (bBox) {
     };
 };
 
-
 export const retrieveWdfnData = function ({ siteTypes, bBox, timePeriod }) {
     return function (dispatch) {
         const variables = {};
