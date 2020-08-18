@@ -1,6 +1,6 @@
 import { select } from 'd3-selection';
 import { link } from '../../lib/d3-redux';
-import { Filters, Sites, Count } from '../selectors/wdfn-selector';
+import { Sites } from '../selectors/wdfn-selector';
 import config from '../../config';
 import { 
   applyGeographicFilter,
@@ -48,20 +48,6 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
 
     map.on('moveend', setBboxFilter);
 
-    // Dispatch redux action that will fetch sites from API
-    const fetchMatchingSites = (node, filters) => {
-        if (Object.keys(filters).length === 0) return;
-
-        // If there are any sites already on the map, remove them
-        markerGroup.clearLayers();
-
-        const hasSiteType = Object.values(filters.siteTypes).some(el => el);
-        const hasBbox = Object.values(filters.bBox).every(el => el);
-
-        if (hasSiteType && hasBbox)
-            store.dispatch(retrieveWdfnData(filters));
-    };
-
     const addSiteCircles = (node, features) => {
         markerGroup.addTo(map);
 
@@ -76,12 +62,6 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
                 marker.addTo(markerGroup);
             }
         });
-    };
-
-    // Updates the count of sites matching the selected filters
-    const setCount = (node, count) => {
-        if (typeof count !== 'number') return 0;
-        document.querySelector('#result-count span').textContent = count;
     };
 
     //add additional baselayer
@@ -100,10 +80,6 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
 
     node
         .call(link(store, addSiteCircles, Sites));
-    node
-        .call(link(store, setCount, Count));
-    node
-        .call(link(store, fetchMatchingSites, Filters));
 };
 
 /*

@@ -1,6 +1,9 @@
 import { select } from 'd3-selection';
+import { link } from '../../lib/d3-redux';
+import { Filters, Count } from '../selectors/wdfn-selector';
 import { 
-  applySiteTypeFilter 
+  applySiteTypeFilter,
+  retrieveWdfnData 
 } from '../store/wdfn-store';
 
 const checkboxes = document.querySelectorAll('#site-type-filters input');
@@ -46,6 +49,28 @@ const WDFNParamFilters = (node, store) => {
   };
 
   checkboxes.forEach(b => b.addEventListener('change', e => setSiteTypeFilter(e.target, store)));
+
+  // Dispatch redux action that will fetch sites from API
+  const fetchMatchingSites = (node, filters) => {
+      if (Object.keys(filters).length === 0) return;
+
+      const hasSiteType = Object.values(filters.siteTypes).some(el => el);
+      const hasBbox = Object.values(filters.bBox).every(el => el);
+
+      if (hasSiteType && hasBbox)
+          store.dispatch(retrieveWdfnData(filters));
+  };
+
+  // Updates the count of sites matching the selected filters
+  const setCount = (node, count) => {
+      if (typeof count !== 'number') return 0;
+      document.querySelector('#result-count span').textContent = count;
+  };
+
+  node
+      .call(link(store, setCount, Count));
+  node
+      .call(link(store, fetchMatchingSites, Filters));
 };
 
 export const attachToNode = function(store, node) {
