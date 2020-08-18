@@ -16,7 +16,7 @@ export const STORE_STRUCTURE = {
       filters: {
           siteTypes: {
               groundwater: false,
-                surfacewater: false,
+              surfacewater: false,
               atmospheric: false,
               spring: false
           },
