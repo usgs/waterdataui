@@ -29,20 +29,11 @@ export const createMap = function(divId, {center=[0,0], zoom=1}) {
 };
 
 /*
- * Create a base layer group using the esriBaseMapLayer and if defined add the tiled layer to the
- * returned layer group
- * @param {String} esriBaseMapLayer - See https://esri.github.io/esri-leaflet/api-reference/layers/basemap-layer.html#basemaps
- * @param {String} tiledMapLayerOverlayUrl
+ * Create a base or overlay layer using esri tiledMapLayer and a National Map basemap URL
+ * @param {String} tiledMapLayerUrl
  * @return {L.LayerGroup}
  */
-export const createBaseLayerGroup = function(esriBaseMapLayer, tiledMapLayerOverlayUrl=null) {
-    let layer = L.layerGroup();
-    L.esri.basemapLayer(esriBaseMapLayer).addTo(layer);
-    if (tiledMapLayerOverlayUrl) {
-        layer.addLayer(L.esri.tiledMapLayer({
-            url: tiledMapLayerOverlayUrl
-        }));
-    }
-    return layer;
+export const createBaseLayer = function(tiledMapLayerUrl) {
+    let layer = L.esri.tiledMapLayer({url: tiledMapLayerUrl});
+    return layer
 };
-

@@ -51,6 +51,12 @@ NETWORK_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections
 # Waterwatch
 WATERWATCH_ENDPOINT = 'https://waterwatch.usgs.gov/webservices'
 
+# The National Map Basemaps
+TNM_USGS_TOPO_ENDPOINT = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer'
+TNM_USGS_IMAGERY_ONLY_ENDPOINT = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer'
+TNM_USGS_IMAGERY_TOPO_ENDPOINT = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer'
+TNM_HYDRO_ENDPOINT = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSHydroCached/MapServer'
+
 TOUCHPOINT_SCRIPT = ''
 LOGGING_ENABLED = True
 LOGGING_DIRECTORY = None
