@@ -72,191 +72,196 @@
 
 {% macro WDFNParamFilters() -%}
 <div class="wdfn-component" data-component="wdfn-param-filters">
-    <form action="" class="grid-row">
-        <fieldset class="usa-fieldset tablet:grid-col-2" id="site-type-filters">
-            <legend class="usa-fieldset"><h3>Type of sites</h3></legend>
-            <p class="explanation">
-                Show sites of the following types:
-            </p>
-            {{ USWDSCheckbox("site-type-groundwater", "Groundwater", "groundwater") }}
-            {{ USWDSCheckbox("site-type-surfacewater", "Surface water", "surfacewater") }}
-            {{ USWDSCheckbox("site-type-atmospheric", "Atmospheric", "atmospheric") }}
-            {{ USWDSCheckbox("site-type-spring", "Spring", "spring") }}
-            {{ USWDSCheckbox("site-type-other", "Other", "other") }}
-        </fieldset>
+    <form action="" class="grid-row" id="monitoring-location-search">
+      <div class="grid-row">
+          <fieldset class="usa-fieldset tablet:grid-col-2" id="site-type-filters">
+              <legend class="usa-fieldset"><h3>Type of sites</h3></legend>
+              <p class="explanation">
+                  Show sites of the following types:
+              </p>
+              {{ USWDSCheckbox("site-type-groundwater", "Groundwater", "groundwater") }}
+              {{ USWDSCheckbox("site-type-surfacewater", "Surface water", "surfacewater") }}
+              {{ USWDSCheckbox("site-type-atmospheric", "Atmospheric", "atmospheric") }}
+              {{ USWDSCheckbox("site-type-spring", "Spring", "spring") }}
+              {{ USWDSCheckbox("site-type-other", "Other", "other") }}
+          </fieldset>
 
-        <fieldset class="usa-fieldset tablet:grid-col-2">
-            <legend>
-                <h3>Time period</h3>
-            </legend>
-            <p class="explanation">
-                Show sites with data in the last:
-            </p>
-            {{ USWDSRadio("period-5-years", "period", "5 years", "5") }}
-            {{ USWDSRadio("period-10-years", "period", "10 years", "10") }}
-            {{ USWDSRadio("period-20-years", "period", "20 years", "20") }}
-            {{ USWDSRadio("period-50-years", "period", "50 years", "50") }}
-        </fieldset>
-        <fieldset class="usa-fieldset tablet:grid-col-8" id="filter-site-params">
-            <legend>
-                <h3>Site data parameters</h3>
-            </legend>
-            <p class="explanation">
-                Show sites collecting ANY of the following types of data:
-            </p>
-            <div class="filter-param-list__wrapper grid-row">
-                <div class="filter-param-list tablet:grid-col">
-                    <h4>
-                        <button class="params-toggle"
-                        aria-expanded="false"
-                        aria-controls="water-level-params">
-                            <span>Water Level</span>
-                        </button>
-                    </h4>
-                    <ul id="water-level-params" class="filter-site-params__options" data-open-state="closed">
-                        <li>
-                            {{ USWDSCheckbox("params-stage", "Stage") }}
-                            <ul>
-                                <li>
-                                    {{ USWDSCheckbox("params-stage-gage-height", "Gage height") }}
-                                </li>
-                                <li>
-                                    {{ USWDSCheckbox("params-stage-stream-level", "Stream level") }}
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            {{ USWDSCheckbox("params-groundwater-level", "Groundwater level") }}
-                            <ul>
-                                <li>
-                                    {{ USWDSCheckbox("params-groundwater-level-lsdparams", "Water level, depth LSD") }}
-                                </li>
-                                <li>
-                                    {{ USWDSCheckbox("params-groundwater-level-depth", "Depth to water parameters") }}
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            {{ USWDSCheckbox("params-sea-level", "Sea level") }}
-                            <ul>
-                                <li>
-                                    {{ USWDSCheckbox("params-sea-level-water-elevation", "Water elevation") }}
-                                </li>
-                                <li>
-                                    {{ USWDSCheckbox("params-sea-level-tidal-elevation", "Tidal elevation") }}
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            {{ USWDSCheckbox("params-lake-level", "Lake/reservoir level") }}
-                            <ul>
-                                <li>
-                                    {{ USWDSCheckbox("params-lake-level-water-elevation", "Water elevation") }}
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
+          <fieldset class="usa-fieldset tablet:grid-col-2">
+              <legend>
+                  <h3>Time period</h3>
+              </legend>
+              <p class="explanation">
+                  Show sites with data in the last:
+              </p>
+              {{ USWDSRadio("period-5-years", "period", "5 years", "5") }}
+              {{ USWDSRadio("period-10-years", "period", "10 years", "10") }}
+              {{ USWDSRadio("period-20-years", "period", "20 years", "20") }}
+              {{ USWDSRadio("period-50-years", "period", "50 years", "50") }}
+          </fieldset>
+          <fieldset class="usa-fieldset tablet:grid-col-8" id="filter-site-params">
+              <legend>
+                  <h3>Site data parameters</h3>
+              </legend>
+              <p class="explanation">
+                  Show sites collecting ANY of the following types of data:
+              </p>
+              <div class="filter-param-list__wrapper grid-row">
+                  <div class="filter-param-list tablet:grid-col">
+                      <h4>
+                          <button class="params-toggle"
+                          aria-expanded="false"
+                          aria-controls="water-level-params">
+                              <span>Water Level</span>
+                          </button>
+                      </h4>
+                      <ul id="water-level-params" class="filter-site-params__options" data-open-state="closed">
+                          <li>
+                              {{ USWDSCheckbox("params-stage", "Stage") }}
+                              <ul>
+                                  <li>
+                                      {{ USWDSCheckbox("params-stage-gage-height", "Gage height") }}
+                                  </li>
+                                  <li>
+                                      {{ USWDSCheckbox("params-stage-stream-level", "Stream level") }}
+                                  </li>
+                              </ul>
+                          </li>
+                          <li>
+                              {{ USWDSCheckbox("params-groundwater-level", "Groundwater level") }}
+                              <ul>
+                                  <li>
+                                      {{ USWDSCheckbox("params-groundwater-level-lsdparams", "Water level, depth LSD") }}
+                                  </li>
+                                  <li>
+                                      {{ USWDSCheckbox("params-groundwater-level-depth", "Depth to water parameters") }}
+                                  </li>
+                              </ul>
+                          </li>
+                          <li>
+                              {{ USWDSCheckbox("params-sea-level", "Sea level") }}
+                              <ul>
+                                  <li>
+                                      {{ USWDSCheckbox("params-sea-level-water-elevation", "Water elevation") }}
+                                  </li>
+                                  <li>
+                                      {{ USWDSCheckbox("params-sea-level-tidal-elevation", "Tidal elevation") }}
+                                  </li>
+                              </ul>
+                          </li>
+                          <li>
+                              {{ USWDSCheckbox("params-lake-level", "Lake/reservoir level") }}
+                              <ul>
+                                  <li>
+                                      {{ USWDSCheckbox("params-lake-level-water-elevation", "Water elevation") }}
+                                  </li>
+                              </ul>
+                          </li>
+                      </ul>
+                  </div>
 
-                <div class="filter-param-list grid-col">
-                    <h4>
-                        <button class="params-toggle"
-                        aria-expanded="false"
-                        aria-controls="water-quality-params">
-                            <span>Water Quality</span>
-                        </button>
-                    </h4>
-                    <ul id="water-quality-params" class="filter-site-params__options" data-open-state="closed">
-                        <li>
-                            {{ USWDSCheckbox("params-physical", "Physical") }}
-                            <ul>
-                                <li>
-                                    {{ USWDSCheckbox("params-physical-water-temperature", "Water temperature") }}
-                                </li>
-                                <li>
-                                    {{ USWDSCheckbox("params-physical-turbidity", "Turbidity") }}
-                                </li>
-                                <li>
-                                    {{ USWDSCheckbox("params-physical-specific-conductance", "Specific conductance") }}
-                                </li>
-                                <li>
-                                    {{ USWDSCheckbox("params-physical-salinity", "Salinity") }}
-                                </li>
-                            </ul>
-                        </li>
+                  <div class="filter-param-list grid-col">
+                      <h4>
+                          <button class="params-toggle"
+                          aria-expanded="false"
+                          aria-controls="water-quality-params">
+                              <span>Water Quality</span>
+                          </button>
+                      </h4>
+                      <ul id="water-quality-params" class="filter-site-params__options" data-open-state="closed">
+                          <li>
+                              {{ USWDSCheckbox("params-physical", "Physical") }}
+                              <ul>
+                                  <li>
+                                      {{ USWDSCheckbox("params-physical-water-temperature", "Water temperature") }}
+                                  </li>
+                                  <li>
+                                      {{ USWDSCheckbox("params-physical-turbidity", "Turbidity") }}
+                                  </li>
+                                  <li>
+                                      {{ USWDSCheckbox("params-physical-specific-conductance", "Specific conductance") }}
+                                  </li>
+                                  <li>
+                                      {{ USWDSCheckbox("params-physical-salinity", "Salinity") }}
+                                  </li>
+                              </ul>
+                          </li>
 
-                        <li>
-                            {{ USWDSCheckbox("params-chemical", "Chemical") }}
-                            <ul>
-                                <li>
-                                    {{ USWDSCheckbox("params-chemical-nutrients", "Nutrients") }}
-                                </li>
-                                <li>
-                                    {{ USWDSCheckbox("params-chemical-metals", "Metals") }}
-                                </li>
-                                <li>
-                                    {{ USWDSCheckbox("params-chemical-pesticides", "Pesticides") }}
-                                </li>
-                                <li>
-                                    {{ USWDSCheckbox("params-chemical-ph", "pH") }}
-                                </li>
-                                <li>
-                                    {{ USWDSCheckbox("params-chemical-dissolved-oxygen", "Dissolved oxygen") }}
-                                </li>
-                            </ul>
-                        </li>
+                          <li>
+                              {{ USWDSCheckbox("params-chemical", "Chemical") }}
+                              <ul>
+                                  <li>
+                                      {{ USWDSCheckbox("params-chemical-nutrients", "Nutrients") }}
+                                  </li>
+                                  <li>
+                                      {{ USWDSCheckbox("params-chemical-metals", "Metals") }}
+                                  </li>
+                                  <li>
+                                      {{ USWDSCheckbox("params-chemical-pesticides", "Pesticides") }}
+                                  </li>
+                                  <li>
+                                      {{ USWDSCheckbox("params-chemical-ph", "pH") }}
+                                  </li>
+                                  <li>
+                                      {{ USWDSCheckbox("params-chemical-dissolved-oxygen", "Dissolved oxygen") }}
+                                  </li>
+                              </ul>
+                          </li>
 
-                        <li>
-                            {{ USWDSCheckbox("params-biological", "Biological") }}
-                            <ul>
-                                <li>
-                                    {{ USWDSCheckbox("params-biological-tissue-sample", "Tissue sample") }}
-                                </li>
-                                <li>
-                                    {{ USWDSCheckbox("params-biological-algal", "Algal (clorophyll)") }}
-                                </li>
-                            </ul>
-                        </li>
+                          <li>
+                              {{ USWDSCheckbox("params-biological", "Biological") }}
+                              <ul>
+                                  <li>
+                                      {{ USWDSCheckbox("params-biological-tissue-sample", "Tissue sample") }}
+                                  </li>
+                                  <li>
+                                      {{ USWDSCheckbox("params-biological-algal", "Algal (clorophyll)") }}
+                                  </li>
+                              </ul>
+                          </li>
 
-                        <li>
-                            {{ USWDSCheckbox("params-flow", "Flow") }}
-                            <ul>
-                                <li>
-                                    {{ USWDSCheckbox("params-flow-discharge", "Discharge") }}
-                                </li>
-                                <li>
-                                    {{ USWDSCheckbox("params-flow-flow-rate", "Flow rate") }}
-                                </li>
-                                <li>
-                                    {{ USWDSCheckbox("params-flow-mean-velocity", "Mean water velocity") }}
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-                <div class="filter-param-list grid-col">
-                    <h4>
-                        <button class="params-toggle"
-                        aria-expanded="false"
-                        aria-controls="flow-rate-params">
-                            <span>Flow rate</span>
-                        </button>
-                    </h4>
-                    <ul id="flow-rate-params" class="filter-site-params__options" data-open-state="closed">
-                        <li>
-                            {{ USWDSCheckbox("params-flow-rate-discharge", "Discharge") }}
-                        </li>
-                        <li>
-                            {{ USWDSCheckbox("params-flow-rate-well", "Well") }}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </fieldset>
+                          <li>
+                              {{ USWDSCheckbox("params-flow", "Flow") }}
+                              <ul>
+                                  <li>
+                                      {{ USWDSCheckbox("params-flow-discharge", "Discharge") }}
+                                  </li>
+                                  <li>
+                                      {{ USWDSCheckbox("params-flow-flow-rate", "Flow rate") }}
+                                  </li>
+                                  <li>
+                                      {{ USWDSCheckbox("params-flow-mean-velocity", "Mean water velocity") }}
+                                  </li>
+                              </ul>
+                          </li>
+                      </ul>
+                  </div>
+                  <div class="filter-param-list grid-col">
+                      <h4>
+                          <button class="params-toggle"
+                          aria-expanded="false"
+                          aria-controls="flow-rate-params">
+                              <span>Flow rate</span>
+                          </button>
+                      </h4>
+                      <ul id="flow-rate-params" class="filter-site-params__options" data-open-state="closed">
+                          <li>
+                              {{ USWDSCheckbox("params-flow-rate-discharge", "Discharge") }}
+                          </li>
+                          <li>
+                              {{ USWDSCheckbox("params-flow-rate-well", "Well") }}
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+          </fieldset>
+      </div>
+      <div class="grid-row count-and-buttons">
+        <div id="result-count" aria-live="polite">
+            Number of matching sites: <span>0</span>
+        </div>
+        <button class="usa-button" type="submit">Show results</button>
+      </div>
     </form>
-    <div id="result-count" aria-live="polite">
-        Number of matching sites: <span>0</span>
-    </div>
 </div>
 {%- endmacro %}
 

@@ -9,6 +9,7 @@ import {
 const checkboxes = document.querySelectorAll('#site-type-filters input');
 const paramCheckboxes = document.querySelectorAll('#filter-site-params input');
 const paramToggleButtons = document.getElementsByClassName('params-toggle');
+const filterForm = document.getElementById('monitoring-location-search');
 
 const WDFNParamFilters = (node, store) => {
   const toggleFilterVisibility = e => {
@@ -51,7 +52,7 @@ const WDFNParamFilters = (node, store) => {
   checkboxes.forEach(b => b.addEventListener('change', e => setSiteTypeFilter(e.target, store)));
 
   // Dispatch redux action that will fetch sites from API
-  const fetchMatchingSites = (node, filters) => {
+  const fetchMatchingSites = (filters) => {
       if (Object.keys(filters).length === 0) return;
 
       const hasSiteType = Object.values(filters.siteTypes).some(el => el);
@@ -61,16 +62,19 @@ const WDFNParamFilters = (node, store) => {
           store.dispatch(retrieveWdfnData(filters));
   };
 
+  filterForm.addEventListener('submit', e => {
+    e.preventDefault();
+    fetchMatchingSites(Filters(store.getState()));
+  });
+
   // Updates the count of sites matching the selected filters
-  const setCount = (node, count) => {
+  const setCount = (count) => {
       if (typeof count !== 'number') return 0;
       document.querySelector('#result-count span').textContent = count;
   };
 
   node
       .call(link(store, setCount, Count));
-  node
-      .call(link(store, fetchMatchingSites, Filters));
 };
 
 export const attachToNode = function(store, node) {
