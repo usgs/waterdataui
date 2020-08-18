@@ -3,7 +3,6 @@ import { link } from '../../lib/d3-redux';
 import { Filters, Sites, Count } from '../selectors/wdfn-selector';
 import config from '../../config';
 import { 
-  applySiteTypeFilter, 
   applyGeographicFilter,
   retrieveWdfnData 
 } from '../store/wdfn-store';
@@ -16,9 +15,6 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
     const markerGroup = L.layerGroup();
 
     L.esri.basemapLayer('Gray').addTo(gray);
-
-    const checkboxes = document.querySelectorAll('#site-type-filters input');
-    const paramCheckboxes = document.querySelectorAll('#filter-site-params input');
 
     // Create map on node
     const map = L.map('site-map', {
@@ -35,26 +31,6 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
     map.on('blur', () => {
         map.scrollWheelZoom.disable();
     });
-
-    // Parent checkboxes should control the state of their children
-    const toggleChildCheckboxes = (checkbox) => {
-        const checked = checkbox.checked;
-        const li = checkbox.parentNode.parentNode;
-        const childBoxes = li.querySelectorAll('li li input[type=checkbox]');
-
-        Array.from(childBoxes).forEach(b => {
-            b.checked = checked;
-        });
-    };
-
-    paramCheckboxes.forEach(b => b.addEventListener('change', e => toggleChildCheckboxes(e.target)));
-
-    const setSiteTypeFilter = (filter, store) => {
-        const siteType = filter.name.replace('site-type-','');
-        store.dispatch(applySiteTypeFilter(siteType, filter.checked));
-    };
-
-    checkboxes.forEach(b => b.addEventListener('change', e => setSiteTypeFilter(e.target, store)));
 
     // Store bounding box coordinates
     const setBboxFilter = () => {
