@@ -16,7 +16,7 @@ $fa-font-path: './fonts' !default;
 .wdfn-component {
   &[data-component='network'] {
     @import './components/network';
-    margin-bottom: 1em;
+  margin-bottom: 1em;
   }
 }
 
@@ -24,21 +24,50 @@ $fa-font-path: './fonts' !default;
  * If it gets addressed this can be removed.
  */
 .usa-sr-only {
-  overflow: hidden;
+	overflow: hidden;
 }
 
 body {
-  #main-content {
-    margin-top: 1em;
-    margin-bottom: 1em;
-    padding: 0 1em;
-  }
+	#main-content {
+		margin-top: 1em;
+		margin-bottom: 1em;
+		padding: 0 1em;
+	}
 
-  .content-container {
-    margin-left: auto;
-    margin-right: auto;
-    @include u-maxw('desktop');
-  }
+	.content-container {
+		margin-left: auto;
+		margin-right: auto;
+		@include u-maxw('desktop');
+	}
 
-  @import './partials/alerts';
+	.cooperator_logo {
+		max-height: 150px;
+	}
+
+	.bold-label {
+		font-size: large;
+		font-weight: bold;
+	}
+
+	#contact-name{
+		margin-right: 0.5em;
+	}
+
+	#contact-email {
+		margin-left: 0.25em;
+	}
+
+	.cooperator-row {
+		@include grid-col(12);
+
+		@include at-media(tablet) {
+			@include grid-col(6)
+		}
+
+		@include at-media(desktop) {
+			@include grid-col(4);
+		  }
+	}
+
+	@import './partials/alerts';
 }
