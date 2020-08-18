@@ -6,12 +6,10 @@ import {
   retrieveWdfnData 
 } from '../store/wdfn-store';
 
-const checkboxes = document.querySelectorAll('#site-type-filters input');
-const paramCheckboxes = document.querySelectorAll('#filter-site-params input');
-const paramToggleButtons = document.getElementsByClassName('params-toggle');
-const filterForm = document.getElementById('monitoring-location-search');
 
 const WDFNParamFilters = (node, store) => {
+
+  // Expand/Collapse param filter dropdowns
   const toggleFilterVisibility = e => {
     e.preventDefault();
 
@@ -28,6 +26,7 @@ const WDFNParamFilters = (node, store) => {
     controlledEl.dataset.openState = openState == 'closed' ? 'open' : 'closed';
   };
 
+  const paramToggleButtons = document.getElementsByClassName('params-toggle');
   Array.from(paramToggleButtons)
     .forEach(btn => btn.addEventListener('click', toggleFilterVisibility));
 
@@ -42,6 +41,7 @@ const WDFNParamFilters = (node, store) => {
       });
   };
 
+  const paramCheckboxes = document.querySelectorAll('#filter-site-params input');
   paramCheckboxes.forEach(b => b.addEventListener('change', e => toggleChildCheckboxes(e.target)));
 
   const setSiteTypeFilter = (filter, store) => {
@@ -49,6 +49,7 @@ const WDFNParamFilters = (node, store) => {
       store.dispatch(applySiteTypeFilter(siteType, filter.checked));
   };
 
+  const checkboxes = document.querySelectorAll('#site-type-filters input');
   checkboxes.forEach(b => b.addEventListener('change', e => setSiteTypeFilter(e.target, store)));
 
   // Dispatch redux action that will fetch sites from API
@@ -62,6 +63,7 @@ const WDFNParamFilters = (node, store) => {
           store.dispatch(retrieveWdfnData(filters));
   };
 
+  const filterForm = document.getElementById('monitoring-location-search');
   filterForm.addEventListener('submit', e => {
     e.preventDefault();
     fetchMatchingSites(Filters(store.getState()));
