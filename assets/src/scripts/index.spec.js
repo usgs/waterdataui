@@ -11,7 +11,6 @@ import './mock-service-data';
 import './polyfills';
 
 import './ajax.spec';
-import './helpers.spec';
 import './schema.spec';
 import './tooltips.spec';
 import './utils.spec';
