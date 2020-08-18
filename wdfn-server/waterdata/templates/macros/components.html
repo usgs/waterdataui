@@ -54,7 +54,11 @@
 
 {% macro USWDSCheckbox(name, label, value) -%}
     <div class="usa-checkbox">
-        <input type="checkbox" name="{{ name }}" id="{{ name }}" class="usa-checkbox__input">
+      <input type="checkbox" 
+             class="usa-checkbox__input"
+             name="{{ name }}" 
+             id="{{ name }}" 
+             value={{ value }} />
         <label for="{{ name }}" class="usa-checkbox__label">{{ label }}</label>
     </div>
 {%- endmacro -%}
@@ -119,10 +123,10 @@
                               {{ USWDSCheckbox("params-stage", "Stage") }}
                               <ul>
                                   <li>
-                                      {{ USWDSCheckbox("params-stage-gage-height", "Gage height") }}
+                                      {{ USWDSCheckbox("params-stage-gage-height", "Gage height", "00065") }}
                                   </li>
                                   <li>
-                                      {{ USWDSCheckbox("params-stage-stream-level", "Stream level") }}
+                                      {{ USWDSCheckbox("params-stage-stream-level", "Stream level", "00072") }}
                                   </li>
                               </ul>
                           </li>
@@ -130,10 +134,10 @@
                               {{ USWDSCheckbox("params-groundwater-level", "Groundwater level") }}
                               <ul>
                                   <li>
-                                      {{ USWDSCheckbox("params-groundwater-level-lsdparams", "Water level, depth LSD") }}
+                                      {{ USWDSCheckbox("params-groundwater-level-lsdparams", "Water level, depth LSD", "30210") }}
                                   </li>
                                   <li>
-                                      {{ USWDSCheckbox("params-groundwater-level-depth", "Depth to water parameters") }}
+                                      {{ USWDSCheckbox("params-groundwater-level-depth", "Depth to water parameters", "72019") }}
                                   </li>
                               </ul>
                           </li>

@@ -2,7 +2,8 @@ import {
   SET_WDFN_FEATURES, 
   APPLY_GEOGRAPHIC_FILTER, 
   APPLY_SITE_TYPE_FILTER, 
-  SET_COUNT 
+  APPLY_PARAMETER_FILTER,
+  SET_COUNT
 } from './wdfn-store';
 
 const INITIAL_DATA = {
@@ -39,6 +40,14 @@ export const wdfnDataReducer = function(wdfnData=INITIAL_DATA, action) {
                     }
                 }
             };
+        case APPLY_PARAMETER_FILTER:
+          return {
+              ...wdfnData,
+              filters: {
+                ...wdfnData.filters,
+                parameters: action.pCodes
+              }
+          };
         case SET_COUNT:
             return {
                 ...wdfnData,

@@ -5,12 +5,14 @@ query($bBox: String,
       $providers: [String] = ["NWIS"],
       $siteType: [String],
       $startDateLo: String,
-      $startDateHi: String) {
+      $startDateHi: String,
+      $pCode: [String]) {
   allFeatures(bBox: $bBox,
            siteType: $siteType,
            startDateLo: $startDateLo,
            startDateHi: $startDateHi,
-           providers: $providers) {
+           providers: $providers
+           pCode: $pCode) {
     features {
       geometry {
         coordinates

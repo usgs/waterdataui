@@ -7,6 +7,7 @@ import {wdfnDataReducer as wdfnData} from './wdfn-data-reducer';
 
 export const SET_COUNT = 'SET_COUNT';
 export const SET_WDFN_FEATURES = 'SET_WDFN_FEATURES';
+export const APPLY_PARAMETER_FILTER = 'APPLY_PARAMETER_FILTER';
 export const APPLY_SITE_TYPE_FILTER = 'APPLY_SITE_TYPE_FILTER';
 export const APPLY_GEOGRAPHIC_FILTER = 'APPLY_GEOGRAPHIC_FILTER';
 
@@ -25,7 +26,8 @@ export const STORE_STRUCTURE = {
               south: null,
               east: null,
               north: null
-          }
+          },
+          parameters: []
       },
       count: 0,
       sites: []
@@ -64,6 +66,11 @@ const setWdfnFeatures = function(features) {
     };
 };
 
+/* 
+ * Synchronous redux action to set the site type filter
+ * @param { Object.<string, boolean> } filter
+ * @returns Redux action
+ */
 const setSiteTypeFilter = function (filter) {
     return {
         type: APPLY_SITE_TYPE_FILTER,
@@ -71,6 +78,29 @@ const setSiteTypeFilter = function (filter) {
     };
 };
 
+/* 
+ * Synchronous redux action to set the parameter codes to search
+ * @param { Array.<string> } filter
+ * @returns Redux action
+ */
+const setParamFilter = function (pCodes) {
+    return {
+        type: APPLY_PARAMETER_FILTER,
+        pCodes
+    };
+};
+
+export const applyParamFilter = function (pCodes) {
+  return function (dispatch) {
+    dispatch(setParamFilter(pCodes));
+  };
+};
+
+/* 
+ * Synchronous redux action to set the bounding box coordinates 
+ * @param { Object.<string, string> } filter
+ * @returns Redux action
+ */
 const setBboxFilter = function ({ west, south, east, north }) {
     return {
         type: APPLY_GEOGRAPHIC_FILTER,
@@ -87,7 +117,7 @@ export const applyGeographicFilter = function (bBox) {
     };
 };
 
-export const retrieveWdfnData = function ({ siteTypes, bBox, timePeriod }) {
+export const retrieveWdfnData = function ({ siteTypes, bBox, parameters }) {
     return function (dispatch) {
         const variables = {};
 
@@ -96,6 +126,10 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, timePeriod }) {
 
         if (Object.values(bBox).every(el => el)) {
             variables.bBox = `${bBox.west},${bBox.south},${bBox.east},${bBox.north}`;
+        }
+
+        if (parameters.length > 0) {
+            variables.pCode = parameters;
         }
 
         executeGraphQlQuery(mapQuery, variables)

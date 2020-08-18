@@ -3,6 +3,7 @@ import { link } from '../../lib/d3-redux';
 import { Filters, Count } from '../selectors/wdfn-selector';
 import { 
   applySiteTypeFilter,
+  applyParamFilter,
   retrieveWdfnData 
 } from '../store/wdfn-store';
 
@@ -42,7 +43,23 @@ const WDFNParamFilters = (node, store) => {
   };
 
   const paramCheckboxes = document.querySelectorAll('#filter-site-params input');
-  paramCheckboxes.forEach(b => b.addEventListener('change', e => toggleChildCheckboxes(e.target)));
+
+  const setParamsFilter = () => {
+    const checkedParams = document.querySelectorAll('#filter-site-params input:checked');
+    const checkedParamsValues = Array.from(checkedParams).map(checkbox => {
+      const value = checkbox.value;
+      if (value != '/') return value;
+    }).filter(el => {
+      if (typeof el != 'undefined') return el;
+    });
+
+    store.dispatch(applyParamFilter(checkedParamsValues));
+  };
+
+  paramCheckboxes.forEach(b => b.addEventListener('change', e => {
+    toggleChildCheckboxes(e.target);
+    setParamsFilter();
+  }));
 
   const setSiteTypeFilter = (filter, store) => {
       const siteType = filter.name.replace('site-type-','');
@@ -57,9 +74,8 @@ const WDFNParamFilters = (node, store) => {
       if (Object.keys(filters).length === 0) return;
 
       const hasSiteType = Object.values(filters.siteTypes).some(el => el);
-      const hasBbox = Object.values(filters.bBox).every(el => el);
 
-      if (hasSiteType && hasBbox)
+      if (hasSiteType)
           store.dispatch(retrieveWdfnData(filters));
   };
 
@@ -70,7 +86,7 @@ const WDFNParamFilters = (node, store) => {
   });
 
   // Updates the count of sites matching the selected filters
-  const setCount = (count) => {
+  const setCount = (_, count) => {
       if (typeof count !== 'number') return 0;
       document.querySelector('#result-count span').textContent = count;
   };
