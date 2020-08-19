@@ -1,8 +1,8 @@
 """
 GraphQL API Schema for WDFN and its related functions
 """
-
 from collections import namedtuple, defaultdict
+from datetime import datetime
 import json
 # import pprint
 
@@ -11,7 +11,6 @@ import requests
 
 from . import app
 from .services.nwis import NwisWebServices
-from .location_utils import get_period_of_record_by_parm_cd
 from .utils import parse_rdb
 
 
@@ -30,7 +29,7 @@ def json2obj(data):
     return json.loads(data, object_hook=_json_object_hook)
 
 
-def get_period_of_record_with_gaps_by_parm_cd(site_records):
+def get_period_of_record_by_parm_cd_datatype(site_records):
     """
     Returns a dictionary of period of record for each parameter and its datatype
     """
@@ -40,11 +39,39 @@ def get_period_of_record_with_gaps_by_parm_cd(site_records):
     for record in site_records:
         this_parm_cd = record['parm_cd']
         if this_parm_cd not in records_by_parm_cd:
-            records_by_parm_cd[this_parm_cd] = defaultdict(list)
-        records_by_parm_cd[this_parm_cd][record['data_type_cd']].append(
-            {"begin_date": record['begin_date'], "end_date": record['end_date']})
+            records_by_parm_cd[this_parm_cd] = defaultdict(dict)
+        if not records_by_parm_cd[this_parm_cd][record['data_type_cd']]:
+            records_by_parm_cd[this_parm_cd][record['data_type_cd']] = {
+                "begin_date": record['begin_date'],
+                "end_date": record['end_date'],
+                "count": int(record['count_nu'])
+            }
+        else:
+            date_format = '%Y-%m-%d'
+            if (datetime.strptime(record['begin_date'], date_format)
+                    < datetime.strptime(records_by_parm_cd[this_parm_cd][record['data_type_cd']]['begin_date'],
+                                        date_format)):
+                records_by_parm_cd[this_parm_cd][record['data_type_cd']]['begin_date'] = record['begin_date']
+            if (datetime.strptime(record['end_date'], date_format)
+                    > datetime.strptime(records_by_parm_cd[this_parm_cd][record['data_type_cd']]['end_date'],
+                                        date_format)):
+                records_by_parm_cd[this_parm_cd][record['data_type_cd']]['end_date'] = record['end_date']
+
+            records_by_parm_cd[this_parm_cd][record['data_type_cd']]['count'] += int(record['count_nu'])
 
     return records_by_parm_cd
+
+
+class DataType(ObjectType):
+    # pylint: disable=R0903
+    """
+    DataType field
+    """
+    code = String()
+    name = String()
+    begin_date = String()
+    end_date = String()
+    count = Int()
 
 
 class Parameter(ObjectType):
@@ -57,6 +84,7 @@ class Parameter(ObjectType):
     end_date = String()  # end_date
     group = String()  # parm_grp_cd
     code = String()  # parm_cd
+    data_types = List(DataType)
     # @TODO: Do we need any of these?
     # "data_type_cd"
     # "stat_cd"
@@ -79,48 +107,48 @@ class MonitoringLocation(ObjectType):
     # These are the items from get_site_parameters
     # @TODO: Will look at get_site to see if we want additional items
     agency = String()  # agency_cd
-    siteNumber = String()  # site_no
+    site_number = String()  # site_no
     name = String()  # station_nm
-    siteType = String()  # site_tp_cd
-    decimalLatitude = String()  # dec_lat_va
-    decimalLongitude = String()  # dec_long_va
-    coordinatesAccuracy = String()  # coord_acy_cd
-    decimalCoordinatesDatum = String()  # dec_coord_datum_cd
+    site_type = String()  # site_tp_cd
+    decimal_latitude = String()  # dec_lat_va
+    decimal_longitude = String()  # dec_long_va
+    coordinates_accuracy = String()  # coord_acy_cd
+    decimal_coordinates_datum = String()  # dec_coord_datum_cd
     altitude = String()  # alt_va
-    altitudeAccuracy = String()  # alt_acy_va
-    altitudeDatum = String()  # alt_datum_cd
-    HUCEightDigitCode = String()  # huc_cd
+    altitude_accuracy = String()  # alt_acy_va
+    altitude_datum = String()  # alt_datum_cd
+    HUC_eight_digit_code = String()  # huc_cd
 
-    DMSLatitude = String()  # lat_va
-    DMSLongititude = String()  # long_va
-    coordinatesMethod = String()  # coord_meth_cd
-    coordinatesDatum = String()  # coord_datum_cd
+    DMS_latitude = String()  # lat_va
+    DMS_longititude = String()  # long_va
+    coordinates_method = String()  # coord_meth_cd
+    coordinates_datum = String()  # coord_datum_cd
     district = String()  # district_cd
     state_cd = String()  # state_cd
     county = String()  # county_cd
     country = String()  # country_cd
-    landNetLocationDesc = String()  # lang_net_ds
-    mapName = String()  # map_nm
-    mapScale = String()  # map_scale_fc
-    altitudeMethod = String()  # alt_meth_cd
-    basinCode = String()  # basin_cd
-    topographicSetting = String()  # topo_cd
+    land_net_location_desc = String()  # lang_net_ds
+    map_name = String()  # map_nm
+    map_scale = String()  # map_scale_fc
+    altitude_method = String()  # alt_meth_cd
+    basin_code = String()  # basin_cd
+    topographic_setting = String()  # topo_cd
     instruments = String()  # instruments_cd
-    constructionDate = String()  # construction_dt
-    inventoryDate = String()  # inventory_dt
-    drainArea = String()  # drain_area_va
-    contributingDrainArea = String()  # contrib_drain_area_va
-    timeZone = String()  # tz_cd
-    honorDaylightSavings = String()  # local_time_fg
+    construction_date = String()  # construction_dt
+    inventory_date = String()  # inventory_dt
+    drain_area = String()  # drain_area_va
+    contributing_drain_area = String()  # contrib_drain_area_va
+    time_zone = String()  # tz_cd
+    honor_daylight_savings = String()  # local_time_fg
     reliability = String()  # reliability_cd
-    GWFile = String()  # gw_file_cd
-    nationalAquifer = String()  # nat_aqfr_cd
+    GW_file = String()  # gw_file_cd
+    national_aquifer = String()  # nat_aqfr_cd
     aquifer = String()  # aqfr_cd
-    aquiferType = String()  # aqfr_type_cd
-    wellDepth = String()  # well_depth_va
-    holeDepth = String()  # hole_depth_va
-    depthSource = String()  # depth_src_cd
-    projectNumber = String()  # project_no
+    aquifer_type = String()  # aqfr_type_cd
+    well_depth = String()  # well_depth_va
+    hole_depth = String()  # hole_depth_va
+    depth_source = String()  # depth_src_cd
+    project_number = String()  # project_no
 
     parameters = List(Parameter)
 
@@ -130,19 +158,18 @@ class Properties(ObjectType):
     """
     Properties field for Feature
     """
-    MonitoringLocationName = String()
-    ProviderName = String()
-    OrganizationIdentifier = String()
-    OrganizationFormalName = String()
-    MonitoringLocationIdentifier = ID()
-    MonitoringLocationName = String()
-    MonitoringLocationTypeName = String()
-    ResolvedMonitoringLocationTypeName = String()
-    HUCEightDigitCode = String()
-    siteUrl = String()
-    activityCount = String()
-    resultCount = String()
-    StateName = String()
+    monitoring_location_name = String()
+    provider_name = String()
+    organization_identifier = String()
+    organization_formal_name = String()
+    monitoring_location_identifier = ID()
+    monitoring_location_type_name = String()
+    resolvedmonitoring_location_type_name = String()
+    HUC_eight_digit_code = String()
+    site_url = String()
+    activity_count = String()
+    result_count = String()
+    state_name = String()
 
 
 class Geometry(ObjectType):
@@ -176,7 +203,7 @@ class Query(ObjectType):
     Queries
     """
     all_features = Field(AllFeatures,
-                         siteType=List(String),
+                         site_type=List(String),
                          providers=List(String),
                          bBox=String(),
                          startDateLo=String(),
@@ -205,43 +232,39 @@ class Query(ObjectType):
         Get site properties from the NWIS.get_site_parameters function and return a dictionary
         """
         data = NWIS.get_site_parameters(site_no, agency)
-        # monitoring_location = json.dumps(data)
-        # pp = pprint.PrettyPrinter(indent=4)
-        # pp.pprint(json2obj(monitoring_location))
         # print("**********period of record with gaps***********")
-        # print(json.dumps(get_period_of_record_with_gaps_by_parm_cd(data)))
-        data_type = {d["data_type_cd"] for d in data}
-
-        period_of_record = {}
-        for d_t in data_type:
-            # @TODO: do we want to keep data type info?
-            period_of_record.update(get_period_of_record_by_parm_cd(data, d_t))
+        period_of_record = get_period_of_record_by_parm_cd_datatype(data)
+        # print(json.dumps(period_of_record))
 
         parameters = []
         for pcode in period_of_record:
-            pcode_properties = app.config['NWIS_CODE_LOOKUP']["parm_cd"].get(pcode, "")
-            # print(pcode_properties)
-            # print(period_of_record[pcode])
-            period_of_record[pcode].update(pcode_properties)
-            period_of_record[pcode].update({"code": pcode})
-            parameters.append(period_of_record[pcode])
+            pcode_properties = app.config['NWIS_CODE_LOOKUP']["parm_cd"].get(pcode, {})
+            pcode_properties["data_types"] = []
+            pcode_properties.update({"code": pcode})
+            for data_type in period_of_record[pcode]:
+                d_t_properties = app.config['NWIS_CODE_LOOKUP']["data_type_cd"].get(data_type, {})
+                d_t_properties.update({"code": data_type})
+                d_t_properties.update(period_of_record[pcode][data_type])
+                pcode_properties["data_types"].append(d_t_properties)
+
+            parameters.append(pcode_properties)
 
         result = {}
         # Just use one entry because the monitoring location properties are the same
         prop = data[0]
         result["agency"] = app.config['NWIS_CODE_LOOKUP']["agency_cd"][prop["agency_cd"]]
-        result["siteNumber"] = prop["site_no"]
+        result["site_number"] = prop["site_no"]
         result["name"] = prop["station_nm"]
-        result["siteType"] = app.config['NWIS_CODE_LOOKUP']["site_tp_cd"][prop["site_tp_cd"]]["name"]
-        result["decimalLatitude"] = prop["dec_lat_va"]
-        result["decimalLongitude"] = prop["dec_long_va"]
-        result["coordinatesAccuracy"] = app.config['NWIS_CODE_LOOKUP']["coord_acy_cd"][prop["coord_acy_cd"]]["name"]
-        result["decimalCoordinatesDatum"] = (app.config['NWIS_CODE_LOOKUP']
-                                             ["dec_coord_datum_cd"][prop["dec_coord_datum_cd"]]["name"])
+        result["site_type"] = app.config['NWIS_CODE_LOOKUP']["site_tp_cd"][prop["site_tp_cd"]]["name"]
+        result["decimal_latitude"] = prop["dec_lat_va"]
+        result["decimal_longitude"] = prop["dec_long_va"]
+        result["coordinates_accuracy"] = app.config['NWIS_CODE_LOOKUP']["coord_acy_cd"][prop["coord_acy_cd"]]["name"]
+        result["decimal_coordinates_datum"] = (app.config['NWIS_CODE_LOOKUP']
+                                               ["dec_coord_datum_cd"][prop["dec_coord_datum_cd"]]["name"])
         result["altitude"] = prop["alt_va"]
-        result["altitudeAccuracy"] = prop["alt_acy_va"]
-        result["altitudeDatum"] = app.config['NWIS_CODE_LOOKUP']["alt_datum_cd"][prop["alt_datum_cd"]]["name"]
-        result["HUCEightDigitCode"] = prop["huc_cd"]
+        result["altitude_accuracy"] = prop["alt_acy_va"]
+        result["altitude_datum"] = app.config['NWIS_CODE_LOOKUP']["alt_datum_cd"][prop["alt_datum_cd"]]["name"]
+        result["HUC_eight_digit_code"] = prop["huc_cd"]
         result["parameters"] = parameters
 
         return result
@@ -259,12 +282,12 @@ class Query(ObjectType):
             # expecting one item here
             site_info = data_list[0]
 
-        result["DMSLatitude"] = site_info["lat_va"]
-        result["DMSLongititude"] = site_info["long_va"]
-        result["coordinatesMethod"] = (app.config['NWIS_CODE_LOOKUP']["coord_meth_cd"]
-                                       [site_info["coord_meth_cd"]]["name"])
-        result["coordinatesDatum"] = (app.config['NWIS_CODE_LOOKUP']["coord_datum_cd"]
-                                      [site_info["coord_datum_cd"]]["name"])
+        result["DMS_latitude"] = site_info["lat_va"]
+        result["DMS_longititude"] = site_info["long_va"]
+        result["coordinates_method"] = (app.config['NWIS_CODE_LOOKUP']["coord_meth_cd"]
+                                        [site_info["coord_meth_cd"]]["name"])
+        result["coordinates_datum"] = (app.config['NWIS_CODE_LOOKUP']["coord_datum_cd"]
+                                       [site_info["coord_datum_cd"]]["name"])
         result["district"] = site_info["district_cd"]
         result["state"] = (app.config['COUNTRY_STATE_COUNTY_LOOKUP']
                            [site_info["country_cd"]]["state_cd"][site_info["state_cd"]]
@@ -273,34 +296,34 @@ class Query(ObjectType):
                             [site_info["country_cd"]]["state_cd"][site_info["state_cd"]]
                             ["county_cd"][site_info["county_cd"]]["name"] if result["state"] else "")
         result["country"] = site_info["country_cd"]
-        result["landNetLocationDesc"] = site_info["land_net_ds"]
-        result["mapName"] = site_info["map_nm"]
-        result["mapScale"] = site_info["map_scale_fc"]
-        result["altitudeMethod"] = (app.config['NWIS_CODE_LOOKUP']["alt_meth_cd"][site_info["alt_meth_cd"]]["name"]
-                                    if site_info["alt_meth_cd"] else "")
-        result["basinCode"] = site_info["basin_cd"]
-        result["topographicSetting"] = (app.config['NWIS_CODE_LOOKUP']["topo_cd"][site_info["topo_cd"]]["name"]
-                                        if site_info["topo_cd"] else "")
+        result["land_net_location_desc"] = site_info["land_net_ds"]
+        result["map_name"] = site_info["map_nm"]
+        result["map_scale"] = site_info["map_scale_fc"]
+        result["altitude_method"] = (app.config['NWIS_CODE_LOOKUP']["alt_meth_cd"][site_info["alt_meth_cd"]]["name"]
+                                     if site_info["alt_meth_cd"] else "")
+        result["basin_code"] = site_info["basin_cd"]
+        result["topographic_setting"] = (app.config['NWIS_CODE_LOOKUP']["topo_cd"][site_info["topo_cd"]]["name"]
+                                         if site_info["topo_cd"] else "")
         result["instruments"] = site_info["instruments_cd"]
-        result["constructionDate"] = site_info["construction_dt"]
-        result["inventoryDate"] = site_info["inventory_dt"]
-        result["drainArea"] = site_info["drain_area_va"]
-        result["contributingDrainArea"] = site_info["contrib_drain_area_va"]
-        result["timeZone"] = site_info["tz_cd"]
-        result["honorDaylightSavings"] = site_info["local_time_fg"]
+        result["construction_date"] = site_info["construction_dt"]
+        result["inventory_date"] = site_info["inventory_dt"]
+        result["drain_area"] = site_info["drain_area_va"]
+        result["contributing_drain_area"] = site_info["contrib_drain_area_va"]
+        result["time_zone"] = site_info["tz_cd"]
+        result["honor_daylight_savings"] = site_info["local_time_fg"]
         result["reliability"] = (app.config['NWIS_CODE_LOOKUP']["reliability_cd"][site_info["reliability_cd"]]["name"]
                                  if site_info["reliability_cd"] else "")
-        result["GWFile"] = site_info["gw_file_cd"]
-        result["nationalAquifer"] = (app.config['NWIS_CODE_LOOKUP']["nat_aqfr_cd"][site_info["nat_aqfr_cd"]]["name"]
-                                     if site_info["nat_aqfr_cd"] else "")
+        result["GW_file"] = site_info["gw_file_cd"]
+        result["national_aquifer"] = (app.config['NWIS_CODE_LOOKUP']["nat_aqfr_cd"][site_info["nat_aqfr_cd"]]["name"]
+                                      if site_info["nat_aqfr_cd"] else "")
         result["aquifer"] = (app.config['NWIS_CODE_LOOKUP']["aqfr_cd"][site_info["aqfr_cd"]]["name"]
                              if site_info["aqfr_cd"] else "")
-        result["aquiferType"] = (app.config['NWIS_CODE_LOOKUP']["aqfr_type_cd"][site_info["aqfr_type_cd"]]["name"]
-                                 if site_info["aqfr_type_cd"] else "")
-        result["wellDepth"] = site_info["well_depth_va"]
-        result["holeDepth"] = site_info["hole_depth_va"]
-        result["depthSource"] = site_info["depth_src_cd"]
-        result["projectNumber"] = site_info["project_no"]
+        result["aquifer_type"] = (app.config['NWIS_CODE_LOOKUP']["aqfr_type_cd"][site_info["aqfr_type_cd"]]["name"]
+                                  if site_info["aqfr_type_cd"] else "")
+        result["well_depth"] = site_info["well_depth_va"]
+        result["hole_depth"] = site_info["hole_depth_va"]
+        result["depth_source"] = site_info["depth_src_cd"]
+        result["project_number"] = site_info["project_no"]
 
         return result
 
@@ -316,7 +339,7 @@ class Query(ObjectType):
         return result
 
 
-# siteTypes:
+# site_types:
 # Aggregate groundwater use; Aggregate surface-water-use; Atmosphere;
 # Estuary; Facility; Glacier; Lake, Reservoir, Impoundment; Land; Ocean;
 # Spring; Stream; Subsurface; Well; Wetland
