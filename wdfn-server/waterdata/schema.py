@@ -220,10 +220,8 @@ class Query(ObjectType):
         url = 'https://www.waterqualitydata.us/data/Station/search?mimeType=geojson'
         data = kwargs
         resp = requests.post(url=url, data=data)
-        print(resp)
         features = json.dumps(resp.json()['features'])
         features_obj = json2obj(features)
-
         return {"count": len(features_obj), "features": features_obj}
 
     monitoring_location = Field(MonitoringLocation, site_no=String())
