@@ -1,5 +1,5 @@
 import config from '../../../config';
-import {createMap, createBaseLayerGroup} from '../../../leaflet-rendering/map';
+import {createMap, createBaseLayer} from '../../../leaflet-rendering/map';
 
 export const MARKER_FILL_COLOR = '#ff7800';
 export const MARKER_FILL_OPACITY = 0.8;
@@ -15,7 +15,21 @@ export const createSiteMap = function(extent) {
         center: [0, 0],
         zoom: 1
     });
-    map.addLayer(createBaseLayerGroup('Gray', config.HYDRO_ENDPOINT || null));
+    
+    const baseMapLayers = {
+        'USGS Topo': createBaseLayer(config.TNM_USGS_TOPO_ENDPOINT),
+        'Imagery': createBaseLayer(config.TNM_USGS_IMAGERY_ONLY_ENDPOINT),
+        'Imagery+Topo': createBaseLayer(config.TNM_USGS_IMAGERY_TOPO_ENDPOINT)
+    };
+
+    const overlayLayers = {
+        'Hydro': createBaseLayer(config.TNM_HYDRO_ENDPOINT)
+    };
+
+    map.addLayer(baseMapLayers['USGS Topo']);
+
+    //add layer control
+    L.control.layers(baseMapLayers, overlayLayers).addTo(map);
 
     const pExt = JSON.parse(extent);
     const leafletExtent = [[pExt[3],pExt[2]],[pExt[1],pExt[0]]];
