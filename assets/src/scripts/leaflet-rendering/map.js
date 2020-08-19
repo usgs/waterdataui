@@ -35,5 +35,5 @@ export const createMap = function(divId, {center=[0,0], zoom=1}) {
  */
 export const createBaseLayer = function(tiledMapLayerUrl) {
     let layer = L.esri.tiledMapLayer({url: tiledMapLayerUrl});
-    return layer
+    return layer;
 };

@@ -40,12 +40,12 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
 
     const overlayLayers = {
         'Hydro': createBaseLayer(config.TNM_HYDRO_ENDPOINT)
-    }
+    };
 
     map.addLayer(baseMapLayers['USGS Topo']);
 
     //add layer control
-    L.control.layers(baseMapLayers, overlayLayers).addTo(map);
+    L.control.layers(baseMapLayers,overlayLayers).addTo(map);
 
     const mlLegendControl = legendControl();
     mlLegendControl.addTo(map);

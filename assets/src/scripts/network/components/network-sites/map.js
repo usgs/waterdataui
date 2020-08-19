@@ -24,7 +24,7 @@ export const createSiteMap = function(extent) {
 
     const overlayLayers = {
         'Hydro': createBaseLayer(config.TNM_HYDRO_ENDPOINT)
-    }
+    };
 
     map.addLayer(baseMapLayers['USGS Topo']);
 
