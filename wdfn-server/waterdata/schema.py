@@ -158,18 +158,18 @@ class Properties(ObjectType):
     """
     Properties field for Feature
     """
-    monitoring_location_name = String()
-    provider_name = String()
-    organization_identifier = String()
-    organization_formal_name = String()
-    monitoring_location_identifier = ID()
-    monitoring_location_type_name = String()
-    resolvedmonitoring_location_type_name = String()
-    HUC_eight_digit_code = String()
-    site_url = String()
-    activity_count = String()
-    result_count = String()
-    state_name = String()
+    MonitoringLocationName = String()
+    ProviderName = String()
+    OrganizationIdentifier = String()
+    OrganizationFormalName = String()
+    MonitoringLocationIdentifier = ID()
+    MonitoringLocationTypeName = String()
+    ResolvedMonitoringLocationTypeName = String()
+    HUCEightDigitCode = String()
+    siteUrl = String()
+    activityCount = String()
+    resultCount = String()
+    stateName = String()
 
 
 class Geometry(ObjectType):
@@ -220,8 +220,10 @@ class Query(ObjectType):
         url = 'https://www.waterqualitydata.us/data/Station/search?mimeType=geojson'
         data = kwargs
         resp = requests.post(url=url, data=data)
+        print(resp)
         features = json.dumps(resp.json()['features'])
         features_obj = json2obj(features)
+
         return {"count": len(features_obj), "features": features_obj}
 
     monitoring_location = Field(MonitoringLocation, site_no=String())
