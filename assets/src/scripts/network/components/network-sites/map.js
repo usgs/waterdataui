@@ -17,13 +17,13 @@ export const createSiteMap = function(extent) {
     });
     
     const baseMapLayers = {
-        'USGS Topo': createBaseLayer(config.TNM_USGS_TOPO_ENDPOINT || null),
-        'Imagery': createBaseLayer(config.TNM_USGS_IMAGERY_ONLY_ENDPOINT) || null,
-        'Imagery+Topo': createBaseLayer(config.TNM_USGS_IMAGERY_TOPO_ENDPOINT || null)
+        'USGS Topo': createBaseLayer(config.TNM_USGS_TOPO_ENDPOINT),
+        'Imagery': createBaseLayer(config.TNM_USGS_IMAGERY_ONLY_ENDPOINT),
+        'Imagery+Topo': createBaseLayer(config.TNM_USGS_IMAGERY_TOPO_ENDPOINT)
     };
 
     const overlayLayers = {
-        'Hydro': createBaseLayer(config.TNM_HYDRO_ENDPOINT || null)
+        'Hydro': createBaseLayer(config.TNM_HYDRO_ENDPOINT)
     }
 
     map.addLayer(baseMapLayers['USGS Topo']);
