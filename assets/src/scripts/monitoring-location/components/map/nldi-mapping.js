@@ -6,7 +6,7 @@ export const upstreamColor = '#253494';
 export const flowLineOpacity = 0.65;
 export const basinColor = '#c0c1c2';
 export const basinFillColor = '#d9d9d9';
-export const basinFillOpacity = .8;
+export const basinFillOpacity = .50;
 
 /**
  * Add NLDI layer overlays to a leaflet map. An overlay is added for the flowlines

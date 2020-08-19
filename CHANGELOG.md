@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.35.0...master)
 ### Changed
 - Removed custom tooltips and replaced with USWDS tooltip component.
+- Decreased opacity of the upstream basin polygon.
 
 ### Added
 - Updated monitoring location page custom date range selection to use USWDS date range picker
