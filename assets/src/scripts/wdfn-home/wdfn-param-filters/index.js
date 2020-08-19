@@ -4,9 +4,24 @@ import { Filters, Count } from '../selectors/wdfn-selector';
 import { 
   applySiteTypeFilter,
   applyParamFilter,
-  retrieveWdfnData 
+  applyPeriodFilter,
+  retrieveWdfnData
 } from '../store/wdfn-store';
 
+const getDateRanges = () => {
+  const now = new Date();
+
+  const day = `${now.getDate()}`.padStart(2, '0');
+  const month = `${now.getMonth() + 1}`.padStart(2, '0');
+  const year = now.getFullYear();
+
+  return {
+    '5': `${month}-${day}-${year - 5}`,
+    '10': `${month}-${day}-${year - 10}`,
+    '20': `${month}-${day}-${year - 20}`,
+    '50': `${month}-${day}-${year - 50}`
+  };
+};
 
 const WDFNParamFilters = (node, store) => {
 
@@ -68,6 +83,13 @@ const WDFNParamFilters = (node, store) => {
 
   const checkboxes = document.querySelectorAll('#site-type-filters input');
   checkboxes.forEach(b => b.addEventListener('change', e => setSiteTypeFilter(e.target, store)));
+
+  const periodRadioBtns = document.querySelectorAll('input[type=radio][name=period]');
+  const setPeriodFilter = e => {
+    const period = getDateRanges()[e.target.value];
+    store.dispatch(applyPeriodFilter(period));
+  };
+  periodRadioBtns.forEach(b => b.addEventListener('change', setPeriodFilter));
 
   // Dispatch redux action that will fetch sites from API
   const fetchMatchingSites = (filters) => {

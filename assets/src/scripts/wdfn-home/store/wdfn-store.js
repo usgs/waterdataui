@@ -8,6 +8,7 @@ import {wdfnDataReducer as wdfnData} from './wdfn-data-reducer';
 export const SET_COUNT = 'SET_COUNT';
 export const SET_WDFN_FEATURES = 'SET_WDFN_FEATURES';
 export const APPLY_PARAMETER_FILTER = 'APPLY_PARAMETER_FILTER';
+export const APPLY_PERIOD_FILTER = 'APPLY_PERIOD_FILTER';
 export const APPLY_SITE_TYPE_FILTER = 'APPLY_SITE_TYPE_FILTER';
 export const APPLY_GEOGRAPHIC_FILTER = 'APPLY_GEOGRAPHIC_FILTER';
 
@@ -117,7 +118,20 @@ export const applyGeographicFilter = function (bBox) {
     };
 };
 
-export const retrieveWdfnData = function ({ siteTypes, bBox, parameters }) {
+const setPeriodFilter = function (startDate) {
+  return {
+    type: APPLY_PERIOD_FILTER,
+    startDate
+  };
+};
+
+export const applyPeriodFilter = function (startDate) {
+  return function (dispatch) {
+    dispatch(setPeriodFilter(startDate));
+  };
+};
+
+export const retrieveWdfnData = function ({ siteTypes, bBox, parameters, timePeriod }) {
     return function (dispatch) {
         const variables = {};
 
@@ -130,6 +144,10 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, parameters }) {
 
         if (parameters.length > 0) {
             variables.pCode = parameters;
+        }
+
+        if (timePeriod) {
+          variables.startDateLo = timePeriod;
         }
 
         executeGraphQlQuery(mapQuery, variables)
