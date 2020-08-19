@@ -157,9 +157,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
 
     customDateContainer.call(link(store, (container, customTimeRange) => {
         container.select('#custom-start-date')
-            .property('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start).toFormat('LL/dd/yyyy') : '');
+            .property('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start).toUTC().toFormat('LL/dd/yyyy') : '');
         container.select('#custom-end-date')
-            .property('value', customTimeRange && customTimeRange.end ? DateTime.fromMillis(customTimeRange.end).toFormat('LL/dd/yyyy') : '');
+            .property('value', customTimeRange && customTimeRange.end ? DateTime.fromMillis(customTimeRange.end).toUTC().toFormat('LL/dd/yyyy') : '');
     }, getCustomTimeRange));
 
     const listContainer = container.append('ul')
