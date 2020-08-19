@@ -31,7 +31,7 @@ export const createMap = function(divId, {center=[0,0], zoom=1}) {
 /*
  * Create a base or overlay layer using esri tiledMapLayer and a National Map basemap URL
  * @param {String} tiledMapLayerUrl
- * @return {L.LayerGroup}
+ * @return {L.esri.tiledMapLayer}
  */
 export const createBaseLayer = function(tiledMapLayerUrl) {
     let layer = L.esri.tiledMapLayer({url: tiledMapLayerUrl});
