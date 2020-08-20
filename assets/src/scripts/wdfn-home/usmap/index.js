@@ -49,6 +49,7 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
     map.on('moveend', setBboxFilter);
 
     const addSiteCircles = (node, features) => {
+        markerGroup.clearLayers();
         markerGroup.addTo(map);
 
         features.forEach(f => {

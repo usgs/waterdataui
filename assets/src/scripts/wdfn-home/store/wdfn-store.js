@@ -38,11 +38,11 @@ export const STORE_STRUCTURE = {
 const lookupSiteTypesFullNames = function (siteTypes) {
     // Translate keys into WQP understands
     const dictionary = {
-        groundwater: 'Aggregate groundwater use',
-        surfacewater: 'Aggregate surface-water-use',
+        groundwater: ['Aggregate groundwater use', 'Well', 'Subsurface'],
+        surfacewater: ['Aggregate surface-water-use', 'Stream', 'Lake, Reservoir, Impoundment'],
         atmospheric: 'Atmosphere',
         spring: 'Spring',
-        other: ['Estuary', 'Facility', 'Glacier']
+        other: ['Facility', 'Land']
     };
 
     siteTypes = Object.keys(siteTypes).flatMap(st => {
