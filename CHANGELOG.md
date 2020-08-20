@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Removed custom tooltips and replaced with USWDS tooltip component.
 - Decreased opacity of the upstream basin polygon.
-- Updated the NWIS time series data graph to dsiplay data for entire days of selected dates.
+- Updated the NWIS time series data graph to display data for entire days of selected custom dates.
 
 ### Added
 - Updated monitoring location page custom date range selection to use USWDS date range picker
