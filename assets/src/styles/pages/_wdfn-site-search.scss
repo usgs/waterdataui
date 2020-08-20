@@ -55,3 +55,14 @@
     }
   }
 }
+
+.count-and-buttons {
+  border-top: 1px solid color($theme-color-base-light);
+  margin-top: 1rem;
+  padding-top: 1rem;
+  width: 100%;
+
+  .result-count {
+    margin-right: 1rem;
+  }
+}
