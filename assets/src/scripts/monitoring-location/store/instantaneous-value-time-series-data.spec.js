@@ -396,7 +396,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 promise.then(() => {
                     const tsState = store.getState().ivTimeSeriesState;
                     expect(Actions.addIVTimeSeriesCollection).toHaveBeenCalledWith({});
-                    expect(tsState.loadingIVTSKeys).not.toContain('current:custom:00060');
+                    expect(tsState.loadingIVTSKeys).not.toContain('current:custom:00060');     
                     done();
                 });
             });

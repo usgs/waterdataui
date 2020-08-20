@@ -2,6 +2,7 @@ import {utcFormat} from 'd3-time-format';
 import config from '../config';
 import {get} from '../ajax';
 
+import {DateTime} from 'luxon';
 
 // Define Water Services root URL - use global variable if defined, otherwise
 // use production.
@@ -42,14 +43,17 @@ export const getTimeSeries = function ({sites, params=null, startDate=null, endD
     let timeParams;
     let serviceRoot;
 
+    if (typeof startDate == 'object') { startDate = DateTime.fromJSDate(startDate).toMillis();}
+    if (typeof endDate == 'object') {endDate = DateTime.fromJSDate(endDate).toMillis();}
+
     if (!startDate && !endDate) {
         const timePeriod = period || 'P7D';
         const dayCount = getNumberOfDays(timePeriod);
         timeParams = `period=${timePeriod}`;
         serviceRoot = dayCount && dayCount < 120 ? SERVICE_ROOT : PAST_SERVICE_ROOT;
     } else {
-        let startString = startDate ? isoFormatTime(startDate) : '';
-        let endString = endDate ? isoFormatTime(endDate) : '';
+        let startString = startDate ? isoFormatTime(DateTime.fromMillis(startDate).toLocal().startOf('day')) : '';
+        let endString = endDate ? isoFormatTime(DateTime.fromMillis(endDate).toLocal().endOf('day')): '';
         timeParams = `startDT=${startString}&endDT=${endString}`;
         serviceRoot = tsServiceRoot(startDate);
     }
