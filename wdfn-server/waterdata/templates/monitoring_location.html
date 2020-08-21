@@ -12,14 +12,14 @@
             <meta property="og:url" content="{{ url_for('monitoring_location', site_no=stations[0].site_no, _external=True) }}" />
             <meta property="og:type" content="website" />
             <meta property="og:title" content="{{ page_title }}" />
-			<meta property="og:description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}" />
-			<meta name="og:image" content="https://labs.waterdata.usgs.gov/api/graph-images/monitoring-location/{{stations[0].site_no}}/?parameterCode={{uv_period_of_record|first}}&width=1000&title=false">
+            <meta property="og:description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}" />
+            <meta name="og:image" content="https://labs.waterdata.usgs.gov/api/graph-images/monitoring-location/{{stations[0].site_no}}/?parameterCode={{uv_period_of_record|first}}&width=1000">
             <!-- tags for Twitter Cards -->
             <meta name="twitter:card" content="summary_large_image">
             <meta name="twitter:site" content="@USGS">
             <meta name="twitter:title" content="{{ page_title }}">
             <meta name="twitter:description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}">
-            <meta name="twitter:image" content="https://labs.waterdata.usgs.gov/api/graph-images/monitoring-location/{{stations[0].site_no}}/?parameterCode={{uv_period_of_record|first}}&width=1000&title=false">
+            <meta name="twitter:image" content="https://labs.waterdata.usgs.gov/api/graph-images/monitoring-location/{{stations[0].site_no}}/?parameterCode={{uv_period_of_record|first}}&width=1000">
         {%  endif %}
     {%  endif %}
 {% endblock %}
