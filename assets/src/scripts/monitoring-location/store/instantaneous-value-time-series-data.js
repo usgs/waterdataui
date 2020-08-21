@@ -92,7 +92,7 @@ const resetIVTimeSeries = function(tsRequestKey) {
  * @return {Function} which when dispatched returns a Promise
  */
 const retrieveIVTimeSeries = function(siteno) {
-    return function (dispatch, getState) {
+    return function(dispatch, getState) {
         const currentState = getState();
         const tsRequestKey = getTsRequestKey('current', 'P7D')(currentState);
         dispatch(ivTimeSeriesStateActions.addIVTimeSeriesToLoadingKeys([tsRequestKey]));
@@ -138,7 +138,7 @@ const retrieveIVTimeSeries = function(siteno) {
  * @return {Function} which when dispatched returns a Promise
  */
 const retrieveCompareIVTimeSeries = function(siteno, period, startTime, endTime) {
-    return function (dispatch, getState) {
+    return function(dispatch, getState) {
         const tsRequestKey = getTsRequestKey('compare', period)(getState());
         dispatch(ivTimeSeriesStateActions.addIVTimeSeriesToLoadingKeys([tsRequestKey]));
         return getPreviousYearTimeSeries({site: siteno, startTime, endTime}).then(
@@ -289,17 +289,17 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
 /*
  * Asynchronous Redux Action which retrieves data for a custom time range
  * @param {String} siteno
- * @param {String} startTimeStr
- * @param {String} endTimeStr
+ * @param {String} startDateStr - ISO date string
+ * @param {String} endDateStr - ISO date String
  * @param {String} paramCd
  * @return {Function} which returns a promise when the data has been fetched
  */
-const retrieveUserRequestedIVDataForDateRange = function(siteno, startTimeStr, endTimeStr, parmCd=null) {
+const retrieveUserRequestedIVDataForDateRange = function(siteno, startDateStr, endDateStr, parmCd=null) {
     return function(dispatch, getState) {
         const state = getState();
         const locationIanaTimeZone = getIanaTimeZone(state);
-        const startTime = new DateTime.fromISO(startTimeStr,{zone: locationIanaTimeZone}).toMillis();
-        const endTime = new DateTime.fromISO(endTimeStr, {zone: locationIanaTimeZone}).toMillis();
+        const startTime = new DateTime.fromISO(startDateStr,{zone: locationIanaTimeZone}).toMillis();
+        const endTime = new DateTime.fromISO(endDateStr, {zone: locationIanaTimeZone}).endOf('day').toMillis();
         return dispatch(Actions.retrieveCustomIVTimeSeries(siteno, startTime, endTime, parmCd));
     };
 };
