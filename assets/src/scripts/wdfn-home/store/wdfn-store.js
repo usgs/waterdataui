@@ -35,8 +35,12 @@ export const STORE_STRUCTURE = {
   }
 };
 
+/* 
+ * Translates the selected site types into proper WQP keywords
+ * @param { Object.<string, boolean> } siteTypes
+ * @returns { Array.<String> } WQP-friendly search terms 
+ */
 const lookupSiteTypesFullNames = function (siteTypes) {
-    // Translate keys into WQP understands
     const dictionary = {
         groundwater: ['Aggregate groundwater use', 'Well', 'Subsurface'],
         surfacewater: ['Aggregate surface-water-use', 'Stream', 'Lake, Reservoir, Impoundment'],
@@ -53,6 +57,11 @@ const lookupSiteTypesFullNames = function (siteTypes) {
     return siteTypes;
 };
 
+/* 
+ * Synchronous redux action to set the number of sites returned 
+ * @param { number } count
+ * @returns { Object } Redux action
+ */
 const setCount = function (count) {
     return {
         type: SET_COUNT,
@@ -60,6 +69,11 @@ const setCount = function (count) {
     };
 };
 
+/* 
+ * Synchronous redux action to set the features returned from the API 
+ * @param { Array.<Object> } features
+ * @returns { Object } Redux action
+ */
 const setWdfnFeatures = function(features) {
     return {
         type: SET_WDFN_FEATURES,
@@ -70,7 +84,7 @@ const setWdfnFeatures = function(features) {
 /* 
  * Synchronous redux action to set the site type filter
  * @param { Object.<string, boolean> } filter
- * @returns Redux action
+ * @returns { Object } Redux action
  */
 const setSiteTypeFilter = function (filter) {
     return {
@@ -82,7 +96,7 @@ const setSiteTypeFilter = function (filter) {
 /* 
  * Synchronous redux action to set the parameter codes to search
  * @param { Array.<string> } filter
- * @returns Redux action
+ * @returns { Object } Redux action
  */
 const setParamFilter = function (pCodes) {
     return {
@@ -131,6 +145,11 @@ export const applyPeriodFilter = function (startDate) {
   };
 };
 
+/*
+ * Asynchronous Redux action to fetch data from the API
+ * @param { Object } 
+ * @returns Redux dispatch function
+ */
 export const retrieveWdfnData = function ({ siteTypes, bBox, parameters, timePeriod }) {
     return function (dispatch) {
         const variables = {};
