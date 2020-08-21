@@ -1,10 +1,6 @@
 {% extends 'base_wdfn.html' %}
 
-{% if network_cd %}
-    {% set page_title = collection.title %}
-{% else %}
-    {% set page_title = 'Water Data For the Nation' %}
-{% endif %}
+{% set page_title = 'Water Data For the Nation' %}
 
 {% import 'macros/components.html' as components %}
 
@@ -50,50 +46,48 @@
                               <h4>
                                   <button class="params-toggle"
                                   aria-expanded="false"
-                                  aria-controls="water-level-params">
-                                      <span>Water Level</span>
+                                  aria-controls="water-quantity-params">
+                                      <span>Water Quantity</span>
                                   </button>
                               </h4>
-                              <ul id="water-level-params" class="filter-site-params__options" data-open-state="closed">
-                                  <li>
-                                      {{ components.USWDSCheckbox("params-stage", "Stage") }}
-                                      <ul>
-                                          <li>
-                                              {{ components.USWDSCheckbox("params-stage-gage-height", "Gage height", "00065") }}
-                                          </li>
-                                          <li>
-                                              {{ components.USWDSCheckbox("params-stage-stream-level", "Stream level", "00072") }}
-                                          </li>
-                                      </ul>
+                              <ul id="water-quantity-params" class="filter-site-params__options" data-open-state="closed">
+                                  <li>{{ components.USWDSCheckbox("params-flow-rate", "Flow Rate")}}
+                                    <ul>
+                                      <li>
+                                        {{ components.USWDSCheckbox("params-flow-rate-discharge", "Discharge", "00060") }}
+                                      </li>
+                                      <li>
+                                        {{ components.USWDSCheckbox("params-flow-rate-well", "Well", "00058") }}
+                                      </li>
+                                    </ul>
                                   </li>
                                   <li>
-                                      {{ components.USWDSCheckbox("params-groundwater-level", "Groundwater level") }}
-                                      <ul>
-                                          <li>
-                                              {{ components.USWDSCheckbox("params-groundwater-level-lsdparams", "Water level, depth LSD", "30210") }}
-                                          </li>
-                                          <li>
-                                              {{ components.USWDSCheckbox("params-groundwater-level-depth", "Depth to water parameters", "72019") }}
-                                          </li>
-                                      </ul>
+                                    {{ components.USWDSCheckbox("params-precipitation", "Precipitation")}}
+                                    <ul>
+                                      <li>{{ components.USWDSCheckbox("params-precipitation-rainfall", "Rainfall", "00045")}}</li>
+                                    </ul>
                                   </li>
                                   <li>
-                                      {{ components.USWDSCheckbox("params-sea-level", "Sea level") }}
+                                      {{ components.USWDSCheckbox("params-water-level", "Water Level") }}
                                       <ul>
                                           <li>
-                                              {{ components.USWDSCheckbox("params-sea-level-water-elevation", "Water elevation") }}
+                                              {{ components.USWDSCheckbox("params-water-level-gage-height", "Stage — Gage height", "00065") }}
                                           </li>
                                           <li>
-                                              {{ components.USWDSCheckbox("params-sea-level-tidal-elevation", "Tidal elevation") }}
+                                              {{ components.USWDSCheckbox("params-water-level-stage-stream-level-navd", "Stage — Stream level NAVD88", "63160") }}
                                           </li>
-                                      </ul>
-                                  </li>
-                                  <li>
-                                      {{ components.USWDSCheckbox("params-lake-level", "Lake/reservoir level") }}
-                                      <ul>
                                           <li>
-                                              {{ components.USWDSCheckbox("params-lake-level-water-elevation", "Water elevation") }}
+                                              {{ components.USWDSCheckbox("params-water-level-stage-stream-level-ngvd", "Stage — Stream level NGVD29", "63158") }}
                                           </li>
+                                          <li>{{ components.USWDSCheckbox("params-groundwater-level-depth-to-water", "Groundwater level — depth to water") }}</li>
+                                          <li>{{ components.USWDSCheckbox("params-sea-level-navd", "Sea level — ocean/estuary NAVD88", "62620") }}</li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-lake-elevation-ngvd", "Lake/reservoir elevation, NGVD29", "62614") }}
+                                          </li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-lake-elevation-navd", "Lake/reservoir elevation, NAVD88", "62615") }}
+                                          </li>
+                                          <li>
                                       </ul>
                                   </li>
                               </ul>
@@ -112,16 +106,25 @@
                                       {{ components.USWDSCheckbox("params-physical", "Physical") }}
                                       <ul>
                                           <li>
-                                              {{ components.USWDSCheckbox("params-physical-water-temperature", "Water temperature") }}
+                                            {{ components.USWDSCheckbox("params-physical-water-temperature-c", "Water temperature (C)", "00010") }}
                                           </li>
                                           <li>
-                                              {{ components.USWDSCheckbox("params-physical-turbidity", "Turbidity") }}
+                                            {{ components.USWDSCheckbox("params-physical-water-temperature-f", "Water temperature (F)", "00011") }}
                                           </li>
                                           <li>
-                                              {{ components.USWDSCheckbox("params-physical-specific-conductance", "Specific conductance") }}
+                                              {{ components.USWDSCheckbox("params-physical-turbidity", "Turbidity", "63680") }}
                                           </li>
                                           <li>
-                                              {{ components.USWDSCheckbox("params-physical-salinity", "Salinity") }}
+                                              {{ components.USWDSCheckbox("params-physical-specific-conductance", "Specific conductance", "00095") }}
+                                          </li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-physical-salinity", "Salinity", "00480") }}
+                                          </li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-physical-ph", "pH", "00434") }}
+                                          </li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-physical-dissolved-oxygen", "Dissolved oxygen", "00300") }}
                                           </li>
                                       </ul>
                                   </li>
@@ -129,20 +132,14 @@
                                   <li>
                                       {{ components.USWDSCheckbox("params-chemical", "Chemical") }}
                                       <ul>
+                                          <!-- <li> -->
+                                          <!--     {{ components.USWDSCheckbox("params-chemical-nutrients", "Nutrients", "") }} -->
+                                          <!-- </li> -->
+                                          <!-- <li> -->
+                                          <!--     {{ components.USWDSCheckbox("params-chemical-metals", "Metals") }} -->
+                                          <!-- </li> -->
                                           <li>
-                                              {{ components.USWDSCheckbox("params-chemical-nutrients", "Nutrients") }}
-                                          </li>
-                                          <li>
-                                              {{ components.USWDSCheckbox("params-chemical-metals", "Metals") }}
-                                          </li>
-                                          <li>
-                                              {{ components.USWDSCheckbox("params-chemical-pesticides", "Pesticides") }}
-                                          </li>
-                                          <li>
-                                              {{ components.USWDSCheckbox("params-chemical-ph", "pH") }}
-                                          </li>
-                                          <li>
-                                              {{ components.USWDSCheckbox("params-chemical-dissolved-oxygen", "Dissolved oxygen") }}
+                                              {{ components.USWDSCheckbox("params-chemical-pesticides", "Pesticides", "99575") }}
                                           </li>
                                       </ul>
                                   </li>
@@ -151,44 +148,12 @@
                                       {{ components.USWDSCheckbox("params-biological", "Biological") }}
                                       <ul>
                                           <li>
-                                              {{ components.USWDSCheckbox("params-biological-tissue-sample", "Tissue sample") }}
+                                              {{ components.USWDSCheckbox("params-biological-tissue-sample", "Tissue sample", "01371") }}
                                           </li>
                                           <li>
-                                              {{ components.USWDSCheckbox("params-biological-algal", "Algal (clorophyll)") }}
+                                              {{ components.USWDSCheckbox("params-biological-algal", "Algal (clorophyll)", "32209") }}
                                           </li>
                                       </ul>
-                                  </li>
-
-                                  <li>
-                                      {{ components.USWDSCheckbox("params-flow", "Flow") }}
-                                      <ul>
-                                          <li>
-                                              {{ components.USWDSCheckbox("params-flow-discharge", "Discharge") }}
-                                          </li>
-                                          <li>
-                                              {{ components.USWDSCheckbox("params-flow-flow-rate", "Flow rate") }}
-                                          </li>
-                                          <li>
-                                              {{ components.USWDSCheckbox("params-flow-mean-velocity", "Mean water velocity") }}
-                                          </li>
-                                      </ul>
-                                  </li>
-                              </ul>
-                          </div>
-                          <div class="filter-param-list grid-col">
-                              <h4>
-                                  <button class="params-toggle"
-                                  aria-expanded="false"
-                                  aria-controls="flow-rate-params">
-                                      <span>Flow rate</span>
-                                  </button>
-                              </h4>
-                              <ul id="flow-rate-params" class="filter-site-params__options" data-open-state="closed">
-                                  <li>
-                                      {{ components.USWDSCheckbox("params-flow-rate-discharge", "Discharge") }}
-                                  </li>
-                                  <li>
-                                      {{ components.USWDSCheckbox("params-flow-rate-well", "Well") }}
                                   </li>
                               </ul>
                           </div>
@@ -196,7 +161,7 @@
                   </fieldset>
               </div>
               <div class="grid-row count-and-buttons">
-                <div id="result-count" aria-live="polite">
+                <div id="result-count" class="result-count" aria-live="polite">
                     Number of matching sites: <span>0</span>
                 </div>
                 <button class="usa-button" type="submit">Show results</button>
