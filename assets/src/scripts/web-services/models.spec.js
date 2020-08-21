@@ -1,5 +1,8 @@
 import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from './models';
+import { DateTime } from 'luxon';
+import {utcFormat} from 'd3-time-format';
 
+export const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
 describe('Models module', () => {
     /* eslint no-use-before-define: 0 */
@@ -52,8 +55,11 @@ describe('Models module', () => {
             getTimeSeries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
             const request = jasmine.Ajax.requests.mostRecent();
             expect(request.url).not.toContain('period=P7D');
-            expect(request.url).toContain('startDT=2018-01-02T21:00');
-            expect(request.url).toContain('endDT=2018-01-02T22:45');
+            // convert start and endDate using Luxon
+            let convertedStartDate = isoFormatTime(DateTime.fromJSDate(startDate).toLocal().startOf('day'));
+            let convertedEndDate = isoFormatTime(DateTime.fromJSDate(endDate).toLocal().endOf('day'));
+            expect(request.url).toContain('startDT=' + convertedStartDate);
+            expect(request.url).toContain('endDT=' + convertedEndDate);
         });
 
         it('Get url includes period when available and startDT and endDT are null', () => {
@@ -110,8 +116,11 @@ describe('Models module', () => {
         it('Retrieves data using the startDT and endDT parameters', () => {
             getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate});
             let request = jasmine.Ajax.requests.mostRecent();
-            expect(request.url).toContain('startDT=2017-01-02T21:00');
-            expect(request.url).toContain('endDT=2017-01-02T22:45');
+            // convert start and endDate using Luxon
+            let convertedStartDate = isoFormatTime(DateTime.fromJSDate(startDate).set({year:2017}).toLocal().startOf('day'));
+            let convertedEndDate = isoFormatTime(DateTime.fromJSDate(endDate).set({year:2017}).toLocal().endOf('day'));
+            expect(request.url).toContain('startDT=' + convertedStartDate);
+            expect(request.url).toContain('endDT=' + convertedEndDate);
         });
 
         it('Parses valid data', () => {
