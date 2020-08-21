@@ -12,6 +12,7 @@ import {
     hasAnyTimeSeries,
     getCurrentDateRangeKind,
     getCustomTimeRange} from '../../selectors/time-series-selector';
+import {getIanaTimeZone} from '../../selectors/time-zone-selector';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
 
@@ -155,12 +156,15 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             }
         });
 
-    customDateContainer.call(link(store, (container, customTimeRange) => {
+    customDateContainer.call(link(store, (container, {customTimeRange, ianaTimeZone}) => {
         container.select('#custom-start-date')
-            .property('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start).toUTC().toFormat('LL/dd/yyyy') : '');
+            .property('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start, {zone: ianaTimeZone}).startOf('day').toFormat('LL/dd/yyyy') : '');
         container.select('#custom-end-date')
-            .property('value', customTimeRange && customTimeRange.end ? DateTime.fromMillis(customTimeRange.end).toUTC().toFormat('LL/dd/yyyy') : '');
-    }, getCustomTimeRange));
+            .property('value', customTimeRange && customTimeRange.end ? DateTime.fromMillis(customTimeRange.end, {zone: ianaTimeZone}).toFormat('LL/dd/yyyy') : '');
+    }, createStructuredSelector({
+        customTimeRange: getCustomTimeRange,
+        ianaTimeZone: getIanaTimeZone
+    })));
 
     const listContainer = container.append('ul')
         .attr('class', 'usa-fieldset usa-list--unstyled');

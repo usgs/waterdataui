@@ -387,7 +387,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 });
             });
 
-            xit('Expect that a failed fetch resets the time series and removes the loading key', (done) => {
+            it('Expect that a failed fetch resets the time series and removes the loading key', (done) => {
                 const promise = store.dispatch(Actions.retrieveCustomIVTimeSeries('12345678', '00060', 'P14D'));
                 jasmine.Ajax.requests.mostRecent().respondWith({
                     status: 500,
@@ -524,7 +524,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 expect(Actions.retrieveCustomIVTimeSeries).toHaveBeenCalled();
                 expect(Actions.retrieveCustomIVTimeSeries.calls.argsFor(0)[0]).toEqual('12345678');
                 expect(Actions.retrieveCustomIVTimeSeries.calls.argsFor(0)[1]).toEqual(1262325600000);
-                expect(Actions.retrieveCustomIVTimeSeries.calls.argsFor(0)[2]).toEqual(1267423200000);
+                expect(Actions.retrieveCustomIVTimeSeries.calls.argsFor(0)[2]).toEqual(1267509599999);
             });
         });
     });
