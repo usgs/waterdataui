@@ -3,13 +3,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.35.0...master)
 - Added Meta Tags for Facebook and Twitter images using graph image server.
 
-## [0.35.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.34.0...waterdataui-0.35.0) - 2020-07-30
+## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.35.0...master)
+- Changed "Summary" heading to "Summary of All Available Data"
 
 ### Changed
 - Removed custom tooltips and replaced with USWDS tooltip component.
+- Decreased opacity of the upstream basin polygon.
+
+### Added
+- Updated monitoring location page custom date range selection to use USWDS date range picker
+- Added basemaps and hydro overlay from The National Map to replace existing basemaps on monitoring location and network pages.
+
+## [0.35.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.34.0...waterdataui-0.35.0) - 2020-07-30
+### Changed
+- Using the latest guidance for the contents of the government banner from USWDS
+
+### Added
+- Parameter selection list now has radio buttons to indicate selection.
 
 ## [0.34.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.33.0...waterdataui-0.34.0) - 2020-07-07
 ### Added

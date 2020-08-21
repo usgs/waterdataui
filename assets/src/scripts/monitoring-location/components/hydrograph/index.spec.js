@@ -267,8 +267,12 @@ describe('monitoring-location/components/hydrograph module', () => {
                 spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.returnValue(function() {
                     return Promise.resolve({});
                 });
-                spyOn(ivTimeSeriesDataActions, 'retrieveExtendedIVTimeSeries').and.callThrough();
-                spyOn(ivTimeSeriesDataActions, 'retrieveUserRequestedIVDataForDateRange').and.callThrough();
+                spyOn(ivTimeSeriesDataActions, 'retrieveExtendedIVTimeSeries').and.returnValue(function() {
+                    return Promise.resolve({});
+                });
+                spyOn(ivTimeSeriesDataActions, 'retrieveUserRequestedIVDataForDateRange').and.returnValue(function() {
+                    return Promise.resolve({});
+                });
             });
 
             it('Expect to not retrieve additional time series if not indicated', (done) => {
@@ -306,7 +310,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 });
 
                 window.requestAnimationFrame(() => {
-                    expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).not. toHaveBeenCalled();
+                    expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).not.toHaveBeenCalled();
                     expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
                     done();
                 });
@@ -341,9 +345,15 @@ describe('monitoring-location/components/hydrograph module', () => {
                     loadingIVTSKeys: []
                 }
             });
-            spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.callThrough();
-            spyOn(ivTimeSeriesDataActions, 'retrieveCustomTimePeriodIVTimeSeries').and.callThrough();
-            spyOn(ivTimeSeriesDataActions, 'retrieveUserRequestedIVDataForDateRange');
+            spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.returnValue(function() {
+                return Promise.resolve({});
+            });
+            spyOn(ivTimeSeriesDataActions, 'retrieveCustomTimePeriodIVTimeSeries').and.returnValue(function() {
+                return Promise.resolve({});
+            });
+            spyOn(ivTimeSeriesDataActions, 'retrieveUserRequestedIVDataForDateRange').and.returnValue(function() {
+                return Promise.resolve({});
+            });
         });
 
         it('should retrieve custom time period if period is specificed', (done) => {
@@ -418,10 +428,10 @@ describe('monitoring-location/components/hydrograph module', () => {
     describe('graphNode contains the expected elements when no IV time series has been retrieved and showOnlyGraph is false', () => {
         let store;
         beforeEach((done) => {
-            spyOn(floodDataActions, 'retrieveWaterwatchData').and.returnValue(function () {
+            spyOn(floodDataActions, 'retrieveWaterwatchData').and.returnValue(function() {
                 return Promise.resolve({});
             });
-            spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.returnValue(function () {
+            spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').and.returnValue(function() {
                 return Promise.resolve({});
             });
             store = configureStore({
