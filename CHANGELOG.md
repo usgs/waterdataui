@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.35.0...master)
+- Added Meta Tags for Facebook and Twitter images using graph image server.
+
+## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.35.0...master)
 - Changed "Summary" heading to "Summary of All Available Data"
 
 ### Changed
