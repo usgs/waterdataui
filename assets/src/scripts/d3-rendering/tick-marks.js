@@ -39,14 +39,16 @@ const getTicks = function(startDateTime, endDateTime, interval, startOffset ) {
  * @param {String} ianaTimeZone - used when converting time in milliseconds to DateTime.
  * @return {Array of Number} - tick marks in milliseconds.
  */
-const getDefaultTicks = function (startMillis, endMillis, unit, tickCount, ianaTimeZone) {
+const getDefaultTicks = function(startMillis, endMillis, unit, tickCount, ianaTimeZone) {
+        const addToEnd = {};
+        addToEnd[unit] = 1;
         const tickInterval = (endMillis - startMillis) / (tickCount + 1);
         const endDateTime = DateTime.fromMillis(endMillis, {zone: ianaTimeZone});
         let result = [];
 
         let dateTime = DateTime.fromMillis(startMillis + tickInterval / 2, {zone: ianaTimeZone});
         while (dateTime < endDateTime) {
-            let tickDateTime = dateTime.startOf(unit);
+            let tickDateTime = dateTime.plus(addToEnd).startOf(unit);
             result.push(tickDateTime.toMillis());
             dateTime = dateTime.plus(tickInterval);
         }
@@ -137,7 +139,7 @@ export const generateTimeTicks = function(startMillis, endMillis, ianaTimeZone) 
             dates: getTicks(startDateTime, endDateTime,{months: 2}, {months: 1}),
             format: formatFnc('MMM yyyy')
         };
-    } else if (monthCount > 15 && monthCount <= 29){
+    } else if (monthCount > 15 && monthCount <= 29) {
         // Tick marks every 4 months
         result = {
             dates: getTicks(startDateTime, endDateTime,{months: 4}, {months: 2}),
