@@ -161,7 +161,7 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, parameters, timePer
             variables.bBox = `${bBox.west},${bBox.south},${bBox.east},${bBox.north}`;
         }
 
-        if (parameters.length > 0) {
+        if (parameters && parameters.length > 0) {
             variables.pCode = parameters;
         }
 
