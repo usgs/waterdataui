@@ -12,7 +12,7 @@ describe('generateTimeTicks', () => {
 
         expect(result.dates.length).toBe(4);
         expect(result.dates.map(result.format)).toEqual(
-            ['Mar 08 02:07 PM', 'Mar 08 02:52 PM', 'Mar 08 03:37 PM', 'Mar 08 04:22 PM']
+            ['Mar 08 02:08 PM', 'Mar 08 02:53 PM', 'Mar 08 03:38 PM', 'Mar 08 04:23 PM']
         );
         expect(DateTime.fromMillis(result.dates[0], {zone: timeZone}).second).toBe(0);
     });
@@ -23,7 +23,7 @@ describe('generateTimeTicks', () => {
 
         expect(result.dates.length).toBe(4);
         expect(result.dates.map(result.format)).toEqual(
-            ['Mar 08 02:22 PM', 'Mar 08 03:37 PM', 'Mar 08 04:52 PM', 'Mar 08 06:07 PM']
+            ['Mar 08 02:23 PM', 'Mar 08 03:38 PM', 'Mar 08 04:53 PM', 'Mar 08 06:08 PM']
         );
         expect(DateTime.fromMillis(result.dates[0], {zone: timeZone}).second).toBe(0);
     });
@@ -34,7 +34,7 @@ describe('generateTimeTicks', () => {
 
         expect(result.dates.length).toBe(4);
         expect(result.dates.map(result.format)).toEqual(
-            ['Mar 08 07:44 PM', 'Mar 09 07:44 AM', 'Mar 09 07:44 PM', 'Mar 10 07:44 AM']
+            ['Mar 08 07:45 PM', 'Mar 09 07:45 AM', 'Mar 09 07:45 PM', 'Mar 10 07:45 AM']
         );
         expect(DateTime.fromMillis(result.dates[0], {zone: timeZone}).second).toBe(0);
     });
@@ -266,7 +266,7 @@ describe('generateTimeTicks', () => {
 
         expect(result.dates.length).toBe(7);
         expect(result.dates.map(result.format)).toEqual(
-            ['Oct 2018', 'Feb 2020', 'May 2021', 'Sep 2022', 'Dec 2023', 'Apr 2025', 'Jul 2026']
+            ['Nov 2018', 'Mar 2020', 'Jun 2021', 'Oct 2022', 'Jan 2024', 'May 2025', 'Aug 2026']
         );
         expect(DateTime.fromMillis(result.dates[0], {zone: timeZone}).day).toBe(1);
     });
@@ -277,7 +277,7 @@ describe('generateTimeTicks', () => {
 
         expect(result.dates.length).toBe(7);
         expect(result.dates.map(result.format)).toEqual(
-            ['Aug 2019', 'Jun 2022', 'Apr 2025', 'Mar 2028', 'Jan 2031', 'Nov 2033', 'Oct 2036']
+            ['Sep 2019', 'Jul 2022', 'May 2025', 'Apr 2028', 'Feb 2031', 'Dec 2033', 'Nov 2036']
         );
         expect(DateTime.fromMillis(result.dates[0], {zone: timeZone}).day).toBe(1);
     });

@@ -12,7 +12,7 @@ import {getXScale, getBrushXScale, getYScale, getSecondaryYScale} from './scales
 import {getYLabel, getSecondaryYLabel, getTsTimeZone, TEMPERATURE_PARAMETERS} from './time-series-data';
 
 
-const createXAxis = function(xScale,  period, ianaTimeZone) {
+const createXAxis = function(xScale, ianaTimeZone) {
     const [startMillis, endMillis] = xScale.domain();
     const ticks = generateTimeTicks(startMillis, endMillis, ianaTimeZone);
     return axisBottom()
@@ -29,13 +29,12 @@ const createXAxis = function(xScale,  period, ianaTimeZone) {
  * @param {Object} secondaryYscale - D3 Scale object for the secondary y-axis
  * @param {Number} yTickSize   Size of inner ticks for the y-axis
  * @param {String} parmCd - parameter code of time series to be shown on the graph.
- * @param {String} period - ISO duration for date range of the time series
  * @param {String} ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
  * @return {Object} {xAxis, yAxis, secondardYaxis} - D3 Axis
  */
-const createAxes = function(xScale, yScale, secondaryYScale, yTickDetails, yTickSize, parmCd, period, ianaTimeZone) {
+const createAxes = function(xScale, yScale, secondaryYScale, yTickDetails, yTickSize, parmCd, ianaTimeZone) {
     // Create x-axis
-    const xAxis = createXAxis(xScale, period, ianaTimeZone);
+    const xAxis = createXAxis(xScale, ianaTimeZone);
 
     // Create y-axis
     const yAxis = axisLeft()
@@ -95,7 +94,7 @@ export const getAxes = memoize(kind => createSelector(
     getCurrentParmCd,
     getCurrentDateRangeKind,
     getSecondaryYLabel,
-    (xScale, yScale, secondaryYScale, yTickDetails, layout, plotYLabel, ianaTimeZone, parmCd, currentDateRange, plotSecondaryYLabel) => {
+    (xScale, yScale, secondaryYScale, yTickDetails, layout, plotYLabel, ianaTimeZone, parmCd, plotSecondaryYLabel) => {
         return {
             ...createAxes(
                 xScale,
@@ -104,7 +103,6 @@ export const getAxes = memoize(kind => createSelector(
                 yTickDetails,
                 -layout.width + layout.margin.right,
                 parmCd,
-                currentDateRange,
                 ianaTimeZone
             ),
             layout: layout,
