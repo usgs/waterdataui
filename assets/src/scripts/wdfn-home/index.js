@@ -10,8 +10,10 @@ import {configureStore} from './store/wdfn-store';
 
 import {attachToNode as USMapComponent} from './usmap';
 import {attachToNode as WDFNParamFilters} from './wdfn-param-filters';
+import {attachToNode as SiteSummaries} from './site-summary';
 
 const COMPONENTS = {
+    'site-summaries': SiteSummaries,
     'us-map': USMapComponent,
     'wdfn-param-filters': WDFNParamFilters
 };

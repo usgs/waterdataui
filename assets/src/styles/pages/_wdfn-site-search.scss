@@ -66,3 +66,53 @@
     margin-right: 1rem;
   }
 }
+
+.wdfn-map-container {
+  position: relative;
+  $site-summary-column-width: 300px;
+
+  .site-summaries {
+    display: none;
+  }
+  
+  &[data-summaries-visible="true"] {
+    .site-summaries {
+      background-color: color('green-cool-5v');
+      display: block;
+      height: 350px;
+      width: $site-summary-column-width;
+      overflow: scroll;
+      position: absolute;
+      z-index: 1100;
+
+      $list-border-style: 1px solid color('gray-cool-20');
+
+      ul {
+        border: $list-border-style;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      li {
+        border-bottom: $list-border-style;
+        padding: units(1) units(2);
+      }
+
+      h3 {
+        font-size: size('body', 'sm');
+        margin: units('05') 0;
+      }
+
+      .site-id {
+        color: color('base');
+        font-size: size('body', '2xs');
+        margin: units('05') 0;
+      }
+    }
+
+    .leaflet-control-zoom {
+      margin-left: $site-summary-column-width + 10px;
+    }
+  }
+}
