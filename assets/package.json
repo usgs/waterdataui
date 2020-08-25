@@ -1,6 +1,6 @@
 {
   "name": "waterdataui-assets",
-  "version": "0.36.0",
+  "version": "0.37.0dev",
   "description": "Compiled static assets for Water Data For The Nation",
   "main": "src/scripts/monitoring-location/index.js",
   "scripts": {
