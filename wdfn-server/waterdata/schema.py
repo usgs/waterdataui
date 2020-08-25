@@ -21,8 +21,6 @@ def get_period_of_record_by_parm_cd_datatype(site_records):
     Returns a dictionary of period of record for each parameter and its datatype
     """
     records_by_parm_cd = {}
-    # print("########site_records#####")
-    # print(json.dumps(site_records))
     for record in site_records:
         this_parm_cd = record['parm_cd']
         if this_parm_cd not in records_by_parm_cd:
@@ -83,68 +81,13 @@ class Parameter(ObjectType):
     # "count_nu"
 
 
-# @TODO: Should data from MonitoringLocation query different from AllFeatures query.  Maybe should be the same?
-# @TODO: Do we want the code and description for some of these items?
-class MonitoringLocation(ObjectType):
-    # pylint: disable=R0903
-    """
-    Monitoring location field
-    """
-
-    # These are the items from get_site_parameters
-    # @TODO: Will look at get_site to see if we want additional items
-    agency = String()  # agency_cd
-    site_number = String()  # site_no
-    name = String()  # station_nm
-    site_type = String()  # site_tp_cd
-    decimal_latitude = String()  # dec_lat_va
-    decimal_longitude = String()  # dec_long_va
-    coordinates_accuracy = String()  # coord_acy_cd
-    decimal_coordinates_datum = String()  # dec_coord_datum_cd
-    altitude = String()  # alt_va
-    altitude_accuracy = String()  # alt_acy_va
-    altitude_datum = String()  # alt_datum_cd
-    HUC_eight_digit_code = String()  # huc_cd
-
-    DMS_latitude = String()  # lat_va
-    DMS_longititude = String()  # long_va
-    coordinates_method = String()  # coord_meth_cd
-    coordinates_datum = String()  # coord_datum_cd
-    district = String()  # district_cd
-    state_cd = String()  # state_cd
-    county = String()  # county_cd
-    country = String()  # country_cd
-    land_net_location_desc = String()  # lang_net_ds
-    map_name = String()  # map_nm
-    map_scale = String()  # map_scale_fc
-    altitude_method = String()  # alt_meth_cd
-    basin_code = String()  # basin_cd
-    topographic_setting = String()  # topo_cd
-    instruments = String()  # instruments_cd
-    construction_date = String()  # construction_dt
-    inventory_date = String()  # inventory_dt
-    drain_area = String()  # drain_area_va
-    contributing_drain_area = String()  # contrib_drain_area_va
-    time_zone = String()  # tz_cd
-    honor_daylight_savings = String()  # local_time_fg
-    reliability = String()  # reliability_cd
-    GW_file = String()  # gw_file_cd
-    national_aquifer = String()  # nat_aqfr_cd
-    aquifer = String()  # aqfr_cd
-    aquifer_type = String()  # aqfr_type_cd
-    well_depth = String()  # well_depth_va
-    hole_depth = String()  # hole_depth_va
-    depth_source = String()  # depth_src_cd
-    project_number = String()  # project_no
-
-    parameters = List(Parameter)
-
-
 class Properties(ObjectType):
     # pylint: disable=R0903
     """
     Properties field for Feature
     """
+
+    # Fields from Water Quality Portal API
     monitoring_location_name = String()
     provider_name = String()
     organization_identifier = String()
@@ -158,6 +101,7 @@ class Properties(ObjectType):
     result_count = String()
     state_name = String()
 
+    # Fields from get_site_parameters
     agency = String()  # agency_cd
     site_number = String()  # site_no
     name = String()  # station_nm
@@ -170,7 +114,9 @@ class Properties(ObjectType):
     altitude_accuracy = String()  # alt_acy_va
     altitude_datum = String()  # alt_datum_cd
     HUC_eight_digit_code = String()  # huc_cd
+    parameters = List(Parameter)
 
+    # Fields from get_site
     DMS_latitude = String()  # lat_va
     DMS_longititude = String()  # long_va
     coordinates_method = String()  # coord_meth_cd
@@ -202,14 +148,13 @@ class Properties(ObjectType):
     depth_source = String()  # depth_src_cd
     project_number = String()  # project_no
 
-    parameters = List(Parameter)
-
 
 class Geometry(ObjectType):
     # pylint: disable=R0903
     """
     Geometry field for Feature
     """
+    type = String(default_value='Point')
     coordinates = List(String)
 
 
@@ -218,16 +163,26 @@ class Feature(ObjectType):
     """
     Feature field for Monitoring Location
     """
+    type = String(default_value='Feature')
     geometry = Field(Geometry)
     properties = Field(Properties)
 
 
-class AllFeatures(ObjectType):
+class MonitoringLocation(ObjectType):
+    # pylint: disable=R0903
+    """
+    Monitoring location field
+    """
+    feature = Field(Feature)
+
+
+class MonitoringLocations(ObjectType):
     # pylint: disable=R0903
     """
     A list of features with count
     """
     count = Int()
+    type = String(default_value='FeatureCollection')
     features = List(Feature)
 
 
@@ -235,17 +190,17 @@ class Query(ObjectType):
     """
     Queries
     """
-    all_features = Field(AllFeatures,
-                         site_type=List(String),
-                         providers=List(String),
-                         bBox=String(),
-                         startDateLo=String(),
-                         startDateHi=String(),
-                         pCode=List(String))
+    monitoring_locations = Field(MonitoringLocations,
+                                 site_type=List(String),
+                                 providers=List(String),
+                                 bBox=String(),
+                                 startDateLo=String(),
+                                 startDateHi=String(),
+                                 pCode=List(String))
 
-    def resolve_all_features(parent,
-                             info,
-                             **kwargs):
+    def resolve_monitoring_locations(parent,
+                                     info,
+                                     **kwargs):
         # pylint: disable=E0213,W0613,R0201
         """
         Resolver for All Features
@@ -254,7 +209,6 @@ class Query(ObjectType):
         data = kwargs
         resp = requests.post(url=url, data=data)
         features_obj = resp.json()['features']
-
         for feature in features_obj:
             properties = feature["properties"]
             properties["monitoring_location_name"] = properties.pop("MonitoringLocationName", None)
@@ -271,10 +225,13 @@ class Query(ObjectType):
             properties["result_count"] = properties.pop("resultCount", None)
             properties["state_name"] = properties.pop("StateName", None)
 
-            if properties["monitoring_location_identifier"].startswith('USGS-'):
-                site_no = properties["monitoring_location_identifier"].replace('USGS-', '')
-                properties.update(Query.get_site_properties_from_get_site_parameters(site_no))
-                properties.update(Query.get_site_properties_from_get_site(site_no))
+            # This piece below is supposed to fill out all the details for each monitoring location
+            # but due to the fact that it is calling the water services and process the data, it will
+            # take too long.  So commenting out for now
+            # if properties["monitoring_location_identifier"].startswith('USGS-'):
+            #     site_no = properties["monitoring_location_identifier"].replace('USGS-', '')
+            #     properties.update(Query.get_site_properties_from_get_site_parameters(site_no))
+            #     properties.update(Query.get_site_properties_from_get_site(site_no))
 
         return {"count": len(features_obj), "features": features_obj}
 
@@ -286,9 +243,7 @@ class Query(ObjectType):
         Get site properties from the NWIS.get_site_parameters function and return a dictionary
         """
         data = NWIS.get_site_parameters(site_no, agency)
-        # print("**********period of record with gaps***********")
         period_of_record = get_period_of_record_by_parm_cd_datatype(data)
-        # print(json.dumps(period_of_record))
 
         parameters = []
         for pcode in period_of_record:
@@ -309,7 +264,8 @@ class Query(ObjectType):
             return {}
 
         prop = data[0]
-        result["agency"] = app.config['NWIS_CODE_LOOKUP']["agency_cd"][prop["agency_cd"]] if prop["agency_cd"] else ""
+        result["agency"] = (app.config['NWIS_CODE_LOOKUP']["agency_cd"][prop["agency_cd"]]["name"]
+                            if prop["agency_cd"] else "")
         result["site_number"] = prop["site_no"]
         result["name"] = prop["station_nm"]
         result["site_type"] = (app.config['NWIS_CODE_LOOKUP']["site_tp_cd"][prop["site_tp_cd"]]["name"]
@@ -396,9 +352,13 @@ class Query(ObjectType):
         """
         Resolver for monitoring location
         """
-
-        result = Query.get_site_properties_from_get_site_parameters(site_no)
-        result.update(Query.get_site_properties_from_get_site(site_no))
+        result = {'feature': {'geometry': {}, 'properties': {}}}
+        result['feature']['properties'] = Query.get_site_properties_from_get_site_parameters(site_no)
+        result['feature']['properties'].update(Query.get_site_properties_from_get_site(site_no))
+        result['feature']['geometry']['coordinates'] = [
+            result['feature']['properties']['decimal_longitude'],
+            result['feature']['properties']['decimal_latitude']
+        ]
 
         return result
 
