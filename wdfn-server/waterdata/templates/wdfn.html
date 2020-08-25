@@ -4,6 +4,12 @@
 
 {% import 'macros/components.html' as components %}
 
+{% macro USMapComponent(latitude, longitude, zoom) -%}
+  <div class="wdfn-component" data-component="us-map" data-latitude="{{ latitude }}" data-longitude="{{ longitude }}" data-zoom="{{zoom}}">
+        <div id="site-map"></div>
+  </div>
+{%- endmacro %}
+
 {% block content %}
     <div class="usa-width-one-whole">
       <h1>Explore USGS Water Data</h1>
@@ -168,6 +174,6 @@
               </div>
             </form>
         </div>
-      {{ components.USMapComponent(latitude, longitude, zoom) }}
+      {{ USMapComponent(latitude, longitude, zoom) }}
     </div>
 {% endblock content %}
