@@ -9,21 +9,15 @@ import {dailyValueTimeSeriesDataReducer as dailyValueTimeSeriesData} from './dai
 import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './daily-value-time-series';
 import {ivTimeSeriesDataReducer as ivTimeSeriesData} from './instantaneous-value-time-series-data';
 import {ivTimeSeriesStateReducer as ivTimeSeriesState} from './instantaneous-value-time-series-state';
-import {observationsDataReducer as observations} from './observations';
 import {statisticsDataReducer as statisticsData} from './statistics-data';
 import {timeZoneReducer as ianaTimeZone} from './time-zone';
 import {uiReducer as ui} from './ui-state';
-import {waterqualityDataReducer as waterquality} from './waterquality';
-import {wdfnDataReducer as wdfn} from './wdfn';
 
 const appReducer = combineReducers({
     ivTimeSeriesData,
     ianaTimeZone,
     dailyValueTimeSeriesData,
-    observations,
     statisticsData,
-    waterquality,
-    wdfn,
     floodData,
     nldiData,
     ivTimeSeriesState,
@@ -50,35 +44,6 @@ export const configureStore = function (initialState) {
             upstreamSites: [],
             downstreamSites: [],
             upstreamBasin: []
-        },
-        observations: {},
-        waterquality: {
-            filters: {
-                characteristics: {
-                    Nitrate: false,
-                    Lead: false
-                }
-            },
-            sites: []
-        },
-        wdfn: {
-            filters: {
-                siteTypes: {
-                    groundwater: false,
-                    surfacewater: false,
-                    atmospheric: false,
-                    spring: false
-                },
-                timePeriod: null,
-                bBox: {
-                    west: null,
-                    south: null,
-                    east: null,
-                    north: null
-                }
-            },
-            count: 0,
-            sites: []
         },
         statisticsData: {},
         ivTimeSeriesState: {

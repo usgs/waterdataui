@@ -1,0 +1,173 @@
+{% extends 'base_wdfn.html' %}
+
+{% set page_title = 'Water Data For the Nation' %}
+
+{% import 'macros/components.html' as components %}
+
+{% block content %}
+    <div class="usa-width-one-whole">
+      <h1>Explore USGS Water Data</h1>
+        <div class="wdfn-component" data-component="wdfn-param-filters">
+            <form action="" class="grid-row" id="monitoring-location-search">
+              <div class="grid-row">
+                  <fieldset class="usa-fieldset tablet:grid-col-2" id="site-type-filters">
+                      <legend class="usa-fieldset"><h3>Type of sites</h3></legend>
+                      <p class="explanation">
+                          Show sites of the following types:
+                      </p>
+                      {{ components.USWDSCheckbox("site-type-groundwater", "Groundwater", "groundwater") }}
+                      {{ components.USWDSCheckbox("site-type-surfacewater", "Surface water", "surfacewater") }}
+                      {{ components.USWDSCheckbox("site-type-atmospheric", "Atmospheric", "atmospheric") }}
+                      {{ components.USWDSCheckbox("site-type-spring", "Spring", "spring") }}
+                      {{ components.USWDSCheckbox("site-type-other", "Other", "other") }}
+                  </fieldset>
+
+                  <fieldset class="usa-fieldset tablet:grid-col-2">
+                      <legend>
+                          <h3>Time period</h3>
+                      </legend>
+                      <p class="explanation">
+                          Show sites with data in the last:
+                      </p>
+                      {{ components.USWDSRadio("period-5-years", "period", "5 years", "5") }}
+                      {{ components.USWDSRadio("period-10-years", "period", "10 years", "10") }}
+                      {{ components.USWDSRadio("period-20-years", "period", "20 years", "20") }}
+                      {{ components.USWDSRadio("period-50-years", "period", "50 years", "50") }}
+                  </fieldset>
+                  <fieldset class="usa-fieldset tablet:grid-col-8" id="filter-site-params">
+                      <legend>
+                          <h3>Site data parameters</h3>
+                      </legend>
+                      <p class="explanation">
+                          Show sites collecting ANY of the following types of data:
+                      </p>
+                      <div class="filter-param-list__wrapper grid-row">
+                          <div class="filter-param-list tablet:grid-col">
+                              <h4>
+                                  <button class="params-toggle"
+                                  aria-expanded="false"
+                                  aria-controls="water-quantity-params">
+                                      <span>Water Quantity</span>
+                                  </button>
+                              </h4>
+                              <ul id="water-quantity-params" class="filter-site-params__options" data-open-state="closed">
+                                  <li>{{ components.USWDSCheckbox("params-flow-rate", "Flow Rate")}}
+                                    <ul>
+                                      <li>
+                                        {{ components.USWDSCheckbox("params-flow-rate-discharge", "Discharge", "00060") }}
+                                      </li>
+                                      <li>
+                                        {{ components.USWDSCheckbox("params-flow-rate-well", "Well", "00058") }}
+                                      </li>
+                                    </ul>
+                                  </li>
+                                  <li>
+                                    {{ components.USWDSCheckbox("params-precipitation", "Precipitation")}}
+                                    <ul>
+                                      <li>{{ components.USWDSCheckbox("params-precipitation-rainfall", "Rainfall", "00045")}}</li>
+                                    </ul>
+                                  </li>
+                                  <li>
+                                      {{ components.USWDSCheckbox("params-water-level", "Water Level") }}
+                                      <ul>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-water-level-gage-height", "Stage — Gage height", "00065") }}
+                                          </li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-water-level-stage-stream-level-navd", "Stage — Stream level NAVD88", "63160") }}
+                                          </li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-water-level-stage-stream-level-ngvd", "Stage — Stream level NGVD29", "63158") }}
+                                          </li>
+                                          <li>{{ components.USWDSCheckbox("params-groundwater-level-depth-to-water", "Groundwater level — depth to water") }}</li>
+                                          <li>{{ components.USWDSCheckbox("params-sea-level-navd", "Sea level — ocean/estuary NAVD88", "62620") }}</li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-lake-elevation-ngvd", "Lake/reservoir elevation, NGVD29", "62614") }}
+                                          </li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-lake-elevation-navd", "Lake/reservoir elevation, NAVD88", "62615") }}
+                                          </li>
+                                          <li>
+                                      </ul>
+                                  </li>
+                              </ul>
+                          </div>
+
+                          <div class="filter-param-list grid-col">
+                              <h4>
+                                  <button class="params-toggle"
+                                  aria-expanded="false"
+                                  aria-controls="water-quality-params">
+                                      <span>Water Quality</span>
+                                  </button>
+                              </h4>
+                              <ul id="water-quality-params" class="filter-site-params__options" data-open-state="closed">
+                                  <li>
+                                      {{ components.USWDSCheckbox("params-physical", "Physical") }}
+                                      <ul>
+                                          <li>
+                                            {{ components.USWDSCheckbox("params-physical-water-temperature-c", "Water temperature (C)", "00010") }}
+                                          </li>
+                                          <li>
+                                            {{ components.USWDSCheckbox("params-physical-water-temperature-f", "Water temperature (F)", "00011") }}
+                                          </li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-physical-turbidity", "Turbidity", "63680") }}
+                                          </li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-physical-specific-conductance", "Specific conductance", "00095") }}
+                                          </li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-physical-salinity", "Salinity", "00480") }}
+                                          </li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-physical-ph", "pH", "00434") }}
+                                          </li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-physical-dissolved-oxygen", "Dissolved oxygen", "00300") }}
+                                          </li>
+                                      </ul>
+                                  </li>
+
+                                  <li>
+                                      {{ components.USWDSCheckbox("params-chemical", "Chemical") }}
+                                      <ul>
+                                          <!-- <li> -->
+                                          <!--     {{ components.USWDSCheckbox("params-chemical-nutrients", "Nutrients", "") }} -->
+                                          <!-- </li> -->
+                                          <!-- <li> -->
+                                          <!--     {{ components.USWDSCheckbox("params-chemical-metals", "Metals") }} -->
+                                          <!-- </li> -->
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-chemical-pesticides", "Pesticides", "99575") }}
+                                          </li>
+                                      </ul>
+                                  </li>
+
+                                  <li>
+                                      {{ components.USWDSCheckbox("params-biological", "Biological") }}
+                                      <ul>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-biological-tissue-sample", "Tissue sample", "01371") }}
+                                          </li>
+                                          <li>
+                                              {{ components.USWDSCheckbox("params-biological-algal", "Algal (clorophyll)", "32209") }}
+                                          </li>
+                                      </ul>
+                                  </li>
+                              </ul>
+                          </div>
+                      </div>
+                  </fieldset>
+              </div>
+              <div class="grid-row count-and-buttons">
+                <div id="result-count" class="result-count" aria-live="polite">
+                    Number of matching sites: <span>0</span>
+                </div>
+                <button class="usa-button" type="submit">Show results</button>
+              </div>
+            </form>
+        </div>
+      {{ components.USMapComponent(latitude, longitude, zoom) }}
+    </div>
+{% endblock content %}

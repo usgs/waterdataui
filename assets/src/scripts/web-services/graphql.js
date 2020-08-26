@@ -1,27 +1,30 @@
-const variables = {
-  siteType: ['Well'],
-  startDateLo: '07-23-2019',
-  providers: ['NWIS']
-};
+import {post} from '../ajax';
 
 export const mapQuery = `
-query($bbox: String,
-      $providers: [String] = ['NWIS'],
+query($bBox: String,
+      $providers: [String] = ["NWIS"],
       $siteType: [String],
       $startDateLo: String,
-      $startDateHi: String) {
-  features(siteType: $siteType,
+      $startDateHi: String,
+      $pCode: [String]) {
+  allFeatures(bBox: $bBox,
+           siteType: $siteType,
            startDateLo: $startDateLo,
-           providers: $providers) {
-    geometry {
-      coordinates
+           startDateHi: $startDateHi,
+           providers: $providers
+           pCode: $pCode) {
+    features {
+      geometry {
+        coordinates
+      }
+      properties {
+        OrganizationIdentifier
+        MonitoringLocationName
+        siteUrl
+        MonitoringLocationIdentifier
+      }
     }
-    properties {
-      OrganizationIdentifier
-      MonitoringLocationName
-      siteUrl
-      MonitoringLocationIdentifier
-    }
+    count
   }
 }
 `;
@@ -29,17 +32,16 @@ query($bbox: String,
 export const executeGraphQlQuery = (
     query,
     variables) => {
-  console.log(query, variables);
-  return fetch('/graphql', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
+
+      const payload = JSON.stringify({
         query,
         variables
-      })
-    }).then(resp => resp.json())
-      .then(json => console.log(JSON.stringify(json)));
+      });
+
+      const headers = {
+        'Content-type': 'application/json',
+        'Accept': 'application/json'
+      };
+
+      return post('/graphql', payload, headers);
 };
