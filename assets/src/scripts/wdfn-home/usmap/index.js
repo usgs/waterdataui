@@ -53,12 +53,10 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
         markerGroup.addTo(map);
 
         features.forEach(f => {
-            if (f.geometry) {
+            if (f.geometry && f.properties) {
                 const marker = L.circle(f.geometry.coordinates.reverse(), {
-                    color: 'red',
-                    fillColor: '#f03',
-                    fillOpacity: 0.2,
-                    radius: 5000
+                    radius: 5000,
+                    className: `site-marker ${f.properties.MonitoringLocationIdentifier}`
                 });
                 marker.addTo(markerGroup);
             }

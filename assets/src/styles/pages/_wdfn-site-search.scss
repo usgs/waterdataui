@@ -119,4 +119,13 @@
       margin-left: $site-summary-column-width + 10px;
     }
   }
+
+  .site-marker {
+    fill: red;
+    stroke: #f03;
+    opacity: 0.5;
+    fill-opacity: 0.3;
+  }
 }
+
+
