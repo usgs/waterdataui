@@ -104,10 +104,14 @@
         margin: units('05') 0;
       }
 
-      .site-id {
+      .site-id, .site-type {
         color: color('base');
         font-size: size('body', '2xs');
         margin: units('05') 0;
+      }
+
+      .site-type {
+        margin-top: units('105');
       }
     }
 

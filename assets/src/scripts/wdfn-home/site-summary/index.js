@@ -3,10 +3,11 @@ import { link } from '../../lib/d3-redux';
 import { Sites } from '../selectors/wdfn-selector';
 
 const SiteSummaries = (node, store) => {
-    const siteSummaryTmpl = (siteName, siteId) => {
+    const siteSummaryTmpl = (siteName, siteId, siteType) => {
       return `<li>
                 <h3>${siteName}</h3>
                 <p class="site-id">${siteId}</p>
+                <p class="site-type">${siteType}</p>
               </li>`;
     };
 
@@ -18,8 +19,11 @@ const SiteSummaries = (node, store) => {
         mapContainer.dataset.summariesVisible = 'true';
 
         const siteListMarkup = sites.map(s => {
-          return siteSummaryTmpl(s.properties.MonitoringLocationName, 
-            s.properties.MonitoringLocationIdentifier);
+          return siteSummaryTmpl(
+            s.properties.MonitoringLocationName, 
+            s.properties.MonitoringLocationIdentifier,
+            s.properties.MonitoringLocationTypeName
+          );
         });
 
         siteSummariesList.innerHTML = siteListMarkup.join('');
