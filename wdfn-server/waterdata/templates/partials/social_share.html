@@ -2,10 +2,10 @@
 
 {% with share_encoded_url = url_for(request.endpoint, _external=True, **request.view_args)|urlencode %}
     <div class="social-share">
-        <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_encoded_url }}" target="_blank">
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_encoded_url }}" target="_blank" rel="noopener">
             <i class="fab fa-facebook-square" aria-label="Share on Facebook"></i>
         </a>
-        <a href="https://twitter.com/home?status={{ share_encoded_url }}" target="_blank">
+        <a href="https://twitter.com/home?status={{ share_encoded_url }}" target="_blank" rel="noopener">
             <i class="fab fa-twitter-square" aria-label="Share on Twitter"></i>
         </a>
         <span class="embed-container">
