@@ -3,8 +3,7 @@ import { link } from '../../lib/d3-redux';
 import { Sites } from '../selectors/wdfn-selector';
 import config from '../../config';
 import { 
-  applyGeographicFilter,
-  retrieveWdfnData 
+  applyGeographicFilter
 } from '../store/wdfn-store';
 
 /*
