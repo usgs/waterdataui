@@ -65,6 +65,16 @@
   .result-count {
     margin-right: 1rem;
   }
+
+  .explanation {
+    visibility: hidden;
+  }
+
+  &:hover {
+    button:disabled + .explanation {
+      visibility: visible;
+    }
+  }
 }
 
 .wdfn-map-container {

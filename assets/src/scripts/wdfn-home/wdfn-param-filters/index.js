@@ -122,10 +122,32 @@ const WDFNParamFilters = (node, store) => {
     mapContainerEl.dataset.loadingState = loadingState;
   };
 
+  const toggleSearchEnabled = (_, filters) => {
+    let activeFilters = 0;
+
+    const submitBtn = document.getElementById('wdfn-search-submit');
+
+    const siteTypeFilters = Object.values(filters.siteTypes);
+    if (siteTypeFilters.some(v => v)) activeFilters += 1;
+
+    if (filters.timePeriod) activeFilters += 1;
+
+    const bboxFilters = Object.values(filters.bBox);
+    if (bboxFilters.every(v => v)) activeFilters += 1;
+
+    if (filters.parameters.length > 0) activeFilters += 1;
+
+    const isDisabled = activeFilters < 2;
+    submitBtn.ariaDisabled = isDisabled;
+    submitBtn.disabled = isDisabled;
+  };
+
   node
       .call(link(store, setCount, Count));
   node
       .call(link(store, setLoadingState, getLoadingState));
+  node
+      .call(link(store, toggleSearchEnabled, Filters));
 };
 
 export const attachToNode = function(store, node) {
