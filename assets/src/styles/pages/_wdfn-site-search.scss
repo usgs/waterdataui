@@ -126,6 +126,30 @@
     opacity: 0.5;
     fill-opacity: 0.3;
   }
+
+  .loading-modal {
+    display: none;
+  }
+
+  &[data-loading-state="loading"] {
+    .loading-modal {
+      background-color: rgba(120,120,190,.3); 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 350px;
+      width: 100%;
+      position: absolute;
+      z-index: 1200;
+    }
+
+    .loading {
+      background: white;
+      border: 1px solid color('base');
+      border-radius: units(2);
+      padding: units(2);
+    }
+  }
 }
 
 

@@ -1,11 +1,12 @@
 import { select } from 'd3-selection';
 import { link } from '../../lib/d3-redux';
-import { Filters, Count } from '../selectors/wdfn-selector';
+import { Filters, Count, getLoadingState } from '../selectors/wdfn-selector';
 import { 
   applySiteTypeFilter,
   applyParamFilter,
   applyPeriodFilter,
-  retrieveWdfnData
+  retrieveWdfnData,
+  applyLoadingState
 } from '../store/wdfn-store';
 
 const getDateRanges = () => {
@@ -99,6 +100,8 @@ const WDFNParamFilters = (node, store) => {
 
       if (hasSiteType)
           store.dispatch(retrieveWdfnData(filters));
+      
+      store.dispatch(applyLoadingState('loading'));
   };
 
   const filterForm = document.getElementById('monitoring-location-search');
@@ -111,10 +114,18 @@ const WDFNParamFilters = (node, store) => {
   const setCount = (_, count) => {
       if (typeof count !== 'number') return 0;
       document.querySelector('#result-count span').textContent = count;
+      store.dispatch(applyLoadingState('loaded'));
+  };
+
+  const setLoadingState = (_, loadingState) => {
+    const mapContainerEl = document.getElementById('wdfn-map-container');
+    mapContainerEl.dataset.loadingState = loadingState;
   };
 
   node
       .call(link(store, setCount, Count));
+  node
+      .call(link(store, setLoadingState, getLoadingState));
 };
 
 export const attachToNode = function(store, node) {

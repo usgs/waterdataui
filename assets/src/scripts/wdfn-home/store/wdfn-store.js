@@ -7,6 +7,7 @@ import {wdfnDataReducer as wdfnData} from './wdfn-data-reducer';
 
 export const SET_COUNT = 'SET_COUNT';
 export const SET_WDFN_FEATURES = 'SET_WDFN_FEATURES';
+export const SET_LOADING_STATE = 'SET_LOADING_STATE';
 export const APPLY_PARAMETER_FILTER = 'APPLY_PARAMETER_FILTER';
 export const APPLY_PERIOD_FILTER = 'APPLY_PERIOD_FILTER';
 export const APPLY_SITE_TYPE_FILTER = 'APPLY_SITE_TYPE_FILTER';
@@ -31,7 +32,10 @@ export const STORE_STRUCTURE = {
           parameters: []
       },
       count: 0,
-      sites: []
+      sites: [],
+      uiState: {
+        loading: false
+      }
   }
 };
 
@@ -142,6 +146,24 @@ const setPeriodFilter = function (startDate) {
 export const applyPeriodFilter = function (startDate) {
   return function (dispatch) {
     dispatch(setPeriodFilter(startDate));
+  };
+};
+
+const setLoadingState = function (loadingState) {
+  return {
+    type: SET_LOADING_STATE,
+    loadingState
+  };
+};
+
+/*
+ * Asynchronous Redux action to set the loading state 
+ * @param { String } loadingState
+ * @returns Redux dispatch function
+ */
+export const applyLoadingState = function (loadingState) {
+  return function (dispatch) {
+    dispatch(setLoadingState(loadingState));
   };
 };
 
