@@ -124,6 +124,7 @@ const WDFNParamFilters = (node, store) => {
 
   const toggleSearchEnabled = (_, filters) => {
     let activeFilters = 0;
+    const filterInstructions = document.querySelector('.filter-instructions');
 
     const submitBtn = document.getElementById('wdfn-search-submit');
 
@@ -140,6 +141,7 @@ const WDFNParamFilters = (node, store) => {
     const isDisabled = activeFilters < 2;
     submitBtn.ariaDisabled = isDisabled;
     submitBtn.disabled = isDisabled;
+    filterInstructions.hidden = !isDisabled;
   };
 
   node

@@ -15,6 +15,13 @@
       <h1>Explore USGS Water Data</h1>
         <div class="wdfn-component" data-component="wdfn-param-filters">
             <form action="" class="grid-row" id="monitoring-location-search">
+              <div class="alerts">
+                <div class="usa-alert usa-alert--info filter-instructions">
+                  <div class="usa-alert__body">
+                    <p class="usa-alert__text">Please select at least two filters</p>
+                  </div>
+                </div>
+              </div>
               <div class="grid-row">
                   <fieldset class="usa-fieldset tablet:grid-col-2" id="site-type-filters">
                       <legend class="usa-fieldset"><h3>Type of sites</h3></legend>
@@ -177,7 +184,6 @@
                         >
                   Show results
                 </button>
-                <p class="explanation">Please select at least two filters from the form above</p>
               </div>
             </form>
         </div>

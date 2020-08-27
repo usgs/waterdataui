@@ -60,20 +60,11 @@
   border-top: 1px solid color($theme-color-base-light);
   margin-top: 1rem;
   padding-top: 1rem;
+  position: relative;
   width: 100%;
 
   .result-count {
     margin-right: 1rem;
-  }
-
-  .explanation {
-    visibility: hidden;
-  }
-
-  &:hover {
-    button:disabled + .explanation {
-      visibility: visible;
-    }
   }
 }
 
