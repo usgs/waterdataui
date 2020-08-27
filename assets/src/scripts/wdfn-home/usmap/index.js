@@ -55,7 +55,7 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
             if (f.geometry && f.properties) {
                 const marker = L.circle(f.geometry.coordinates.reverse(), {
                     radius: 5000,
-                    className: `site-marker ${f.properties.MonitoringLocationIdentifier}`
+                    className: `site-marker ${f.properties.monitoringLocationIdentifier}`
                 });
                 marker.addTo(markerGroup);
             }
