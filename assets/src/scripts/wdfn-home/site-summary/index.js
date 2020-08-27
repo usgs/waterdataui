@@ -20,9 +20,9 @@ const SiteSummaries = (node, store) => {
 
         const siteListMarkup = sites.map(s => {
           return siteSummaryTmpl(
-            s.properties.MonitoringLocationName, 
-            s.properties.MonitoringLocationIdentifier,
-            s.properties.MonitoringLocationTypeName
+            s.properties.monitoringLocationName, 
+            s.properties.monitoringLocationIdentifier,
+            s.properties.monitoringLocationTypeName
           );
         });
 
