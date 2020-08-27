@@ -119,7 +119,9 @@ const WDFNParamFilters = (node, store) => {
 
   const setLoadingState = (_, loadingState) => {
     const mapContainerEl = document.getElementById('wdfn-map-container');
+    const submitBtn = document.getElementById('wdfn-search-submit');
     mapContainerEl.dataset.loadingState = loadingState;
+    if (loadingState == 'loaded') submitBtn.innerText = 'Update results';
   };
 
   const toggleSearchEnabled = (_, filters) => {
