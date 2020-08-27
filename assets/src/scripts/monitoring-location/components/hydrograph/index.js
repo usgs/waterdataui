@@ -22,7 +22,6 @@ import {drawDataTable} from './data-table';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
 import {SPARK_LINE_DIM}  from './selectors/layout';
-import {renderProvisionalDataMessage} from './provisonal-data-message';
 import {drawTimeSeriesLegend} from './legend';
 import {drawMethodPicker} from './method-picker';
 import {plotSeriesSelectTable} from './parameters';
@@ -146,9 +145,6 @@ export const attachToNode = function (store,
                     .call(drawTooltipCursorSlider, store)
                     .call(drawGraphBrush, store);
             }
-            graphContainer.append('div')
-                .classed('provisional-data-statement-container', true)
-                .call(renderProvisionalDataMessage, store);
             graphContainer.append('div')
                 .classed('ts-legend-controls-container', true)
                 .call(drawTimeSeriesLegend, store);
