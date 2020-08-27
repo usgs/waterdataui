@@ -172,8 +172,8 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, parameters, timePer
         executeGraphQlQuery(mapQuery, variables)
             .then(resp => JSON.parse(resp))
             .then(({ data }) => {
-                dispatch(setWdfnFeatures(data.allFeatures.features));
-                dispatch(setCount(data.allFeatures.count));
+                dispatch(setWdfnFeatures(data.monitoringLocations.features));
+                dispatch(setCount(data.monitoringLocations.count));
             });
     };
 };
