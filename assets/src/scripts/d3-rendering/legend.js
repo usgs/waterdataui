@@ -34,13 +34,13 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
         .attr('class', 'provisional-data-message')
         .attr('x', 0)
         .attr('y', VERTICAL_ROW_OFFSET_PROVISIONAL_DATA_MESSAGE)
-        .text('Important - data displayed may be provisional');
+        .text('Important - Graph may contain provisional data');
     legend.append('a')
         .attr('class', 'provisional-data-link')
         .attr('xlink:href', '/svg/index.html')
         .append('text')
         .style('fill', 'blue')
-        .attr('x', 330)
+        .attr('x', 340)
         .attr('y', VERTICAL_ROW_OFFSET_PROVISIONAL_DATA_MESSAGE)
         .text('learn more');
 
