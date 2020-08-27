@@ -199,6 +199,10 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, parameters, timePer
                 dispatch(setWdfnFeatures(data.allFeatures.features));
                 dispatch(setCount(data.allFeatures.count));
                 dispatch(applyLoadingState('loaded'));
+            })
+            .catch(error => {
+                console.error(error);
+                dispatch(applyLoadingState('error'));
             });
     };
 };
