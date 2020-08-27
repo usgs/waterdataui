@@ -66,6 +66,14 @@
   .result-count {
     margin-right: 1rem;
   }
+
+  .share-search {
+    margin-left: auto;
+  }
+  
+  .download:after {
+    content: '»';
+  }
 }
 
 .wdfn-map-container {
