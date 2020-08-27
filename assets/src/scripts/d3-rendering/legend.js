@@ -5,7 +5,8 @@ const RECTANGLE_MARKER_WIDTH = 20;
 const RECTANGLE_MARKER_HEIGHT = 10;
 const LINE_MARKER_WIDTH = 20;
 const MARKER_GROUP_X_OFFSET = 15;
-const VERTICAL_ROW_OFFSET = 18;
+const VERTICAL_ROW_OFFSET_PROVISIONAL_DATA_MESSAGE = 18;
+const VERTICAL_ROW_OFFSET = 38;
 
 /**
  * Create a simple legend
@@ -23,10 +24,25 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
 
     const svg = div.append('svg')
         .attr('class', 'legend-svg');
+
     const legend = svg
         .append('g')
             .attr('class', 'legend')
             .attr('transform', `translate(${mediaQuery(config.USWDS_MEDIUM_SCREEN) ? layout.margin.left : 0}, 0)`);
+
+    legend.append('text')
+        .attr('class', 'provisional-data-message')
+        .attr('x', 0)
+        .attr('y', VERTICAL_ROW_OFFSET_PROVISIONAL_DATA_MESSAGE)
+        .text('Important - data displayed may be provisional');
+    legend.append('a')
+        .attr('class', 'provisional-data-link')
+        .attr('xlink:href', '/svg/index.html')
+        .append('text')
+        .style('fill', 'blue')
+        .attr('x', 330)
+        .attr('y', VERTICAL_ROW_OFFSET_PROVISIONAL_DATA_MESSAGE)
+        .text('learn more');
 
     let yPosition = VERTICAL_ROW_OFFSET;
     legendMarkerRows.forEach((rowMarkers) => {
