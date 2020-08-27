@@ -7,7 +7,7 @@ query($bBox: String,
       $startDateLo: String,
       $startDateHi: String,
       $pCode: [String]) {
-  allFeatures(bBox: $bBox,
+  monitoringLocations(bBox: $bBox,
            siteType: $siteType,
            startDateLo: $startDateLo,
            startDateHi: $startDateHi,
@@ -18,10 +18,10 @@ query($bBox: String,
         coordinates
       }
       properties {
-        OrganizationIdentifier
-        MonitoringLocationName
+        organizationIdentifier
+        monitoringLocationName
         siteUrl
-        MonitoringLocationIdentifier
+        monitoringLocationIdentifier
       }
     }
     count

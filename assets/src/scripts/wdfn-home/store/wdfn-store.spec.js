@@ -5,7 +5,7 @@ import {Actions, STORE_STRUCTURE, retrieveWdfnData} from './wdfn-store';
 
 const MOCK_WDFN_FEATURES = {
   'data': {
-    'allFeatures': {
+    'monitoringLocations': {
       'features': [{
         'geometry': {
           'coordinates': [
@@ -14,10 +14,10 @@ const MOCK_WDFN_FEATURES = {
           ]
         },
         'properties': {
-          'OrganizationIdentifier': 'USGS-WY',
-          'MonitoringLocationName': 'Huckleberry Hot Springs H-3',
+          'organizationIdentifier': 'USGS-WY',
+          'monitoringLocationName': 'Huckleberry Hot Springs H-3',
           'siteUrl': 'https://www.waterqualitydata.us/data/provider/NWIS/USGS-WY/USGS-440650110410801/',
-          'MonitoringLocationIdentifier': 'USGS-440650110410801'
+          'monitoringLocationIdentifier': 'USGS-440650110410801'
         }
       },
       {
@@ -28,10 +28,10 @@ const MOCK_WDFN_FEATURES = {
           ]
         },
         'properties': {
-          'OrganizationIdentifier': 'USGS-WY',
-          'MonitoringLocationName': 'Huckleberry Hot Springs H-1',
+          'organizationIdentifier': 'USGS-WY',
+          'monitoringLocationName': 'Huckleberry Hot Springs H-1',
           'siteUrl': 'https://www.waterqualitydata.us/data/provider/NWIS/USGS-WY/USGS-440653110411401/',
-          'MonitoringLocationIdentifier': 'USGS-440653110411401'
+          'monitoringLocationIdentifier': 'USGS-440653110411401'
         }
       },
       {
@@ -42,10 +42,10 @@ const MOCK_WDFN_FEATURES = {
           ]
         },
         'properties': {
-          'OrganizationIdentifier': 'USGS-WY',
-          'MonitoringLocationName': 'Huckleberry Hot Springs H-2',
+          'organizationIdentifier': 'USGS-WY',
+          'monitoringLocationName': 'Huckleberry Hot Springs H-2',
           'siteUrl': 'https://www.waterqualitydata.us/data/provider/NWIS/USGS-WY/USGS-440654110411301/',
-          'MonitoringLocationIdentifier': 'USGS-440654110411301'
+          'monitoringLocationIdentifier': 'USGS-440654110411301'
         }
       }
     ]}
