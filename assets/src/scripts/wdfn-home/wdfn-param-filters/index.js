@@ -64,9 +64,13 @@ const WDFNParamFilters = (node, store) => {
     const checkedParams = document.querySelectorAll('#filter-site-params input:checked');
     const checkedParamsValues = Array.from(checkedParams).map(checkbox => {
       const value = checkbox.value;
-      if (value != '/') return value;
+      if (value != '/') {
+        return value; 
+      }
     }).filter(el => {
-      if (typeof el != 'undefined') return el;
+      if (typeof el != 'undefined') {
+        return el;
+      }
     });
 
     store.dispatch(applyParamFilter(checkedParamsValues));
@@ -120,7 +124,10 @@ const WDFNParamFilters = (node, store) => {
     const submitBtn = document.getElementById('wdfn-search-submit');
 
     mapContainerEl.dataset.loadingState = loadingState;
-    if (loadingState == 'loaded') submitBtn.innerText = 'Update results';
+
+    if (loadingState == 'loaded') {
+      submitBtn.innerText = 'Update results';
+    }
   };
 
   const toggleSearchEnabled = (_, filters) => {
@@ -130,14 +137,22 @@ const WDFNParamFilters = (node, store) => {
     const submitBtn = document.getElementById('wdfn-search-submit');
 
     const siteTypeFilters = Object.values(filters.siteTypes);
-    if (siteTypeFilters.some(v => v)) activeFilters += 1;
+    if (siteTypeFilters.some(v => v)) { 
+      activeFilters += 1; 
+    }
 
-    if (filters.timePeriod) activeFilters += 1;
+    if (filters.timePeriod) { 
+      activeFilters += 1; 
+    }
 
     const bboxFilters = Object.values(filters.bBox);
-    if (bboxFilters.every(v => v)) activeFilters += 1;
+    if (bboxFilters.every(v => v)) { 
+      activeFilters += 1; 
+    }
 
-    if (filters.parameters.length > 0) activeFilters += 1;
+    if (filters.parameters.length > 0) { 
+      activeFilters += 1;
+    }
 
     const isDisabled = activeFilters < 2;
     submitBtn.ariaDisabled = isDisabled;
