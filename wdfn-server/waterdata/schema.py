@@ -239,11 +239,11 @@ class Query(ObjectType):
 
         parameters = []
         for pcode in period_of_record:
-            pcode_properties = app.config["NWIS_CODE_LOOKUP"]["parm_cd"].get(pcode, {})
+            pcode_properties = app.config["NWIS_CODE_LOOKUP"]["parm_cd"].get(pcode, {}).copy()
             pcode_properties["data_types"] = []
             pcode_properties.update({"code": pcode})
             for data_type in period_of_record[pcode]:
-                d_t_properties = app.config["NWIS_CODE_LOOKUP"]["data_type_cd"].get(data_type, {})
+                d_t_properties = app.config["NWIS_CODE_LOOKUP"]["data_type_cd"].get(data_type, {}).copy()
                 d_t_properties.update({"code": data_type})
                 d_t_properties.update(period_of_record[pcode][data_type])
                 pcode_properties["data_types"].append(d_t_properties)
