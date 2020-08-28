@@ -32,9 +32,9 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
 
     legend.append('rect')
         .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', 98)
-        .attr('height', VERTICAL_ROW_OFFSET_PROVISIONAL_DATA_MESSAGE + 5)
+        .attr('y', mediaQuery(config.USWDS_MEDIUM_SCREEN) ? 0 : 5)
+        .attr('width', mediaQuery(config.USWDS_MEDIUM_SCREEN) ? 98 : 73)
+        .attr('height', mediaQuery(config.USWDS_MEDIUM_SCREEN) ? VERTICAL_ROW_OFFSET_PROVISIONAL_DATA_MESSAGE + 5 : 17)
         .attr('fill', '#565c65')
         .attr('rx', 2);
 
@@ -44,8 +44,11 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
         .attr('x', 8)
         .attr('y', VERTICAL_ROW_OFFSET_PROVISIONAL_DATA_MESSAGE)
         .append('tspan')
-        .text('IMPORTANT').style('fill', 'white')
-        .append('tspan').text('data shown may be provisional - ').style('fill', 'black').attr('x', 105)
+        .text('IMPORTANT')
+        .style('fill', 'white')
+        .append('tspan').text('data may be provisional - ')
+        .style('fill', 'black')
+        .attr('x', mediaQuery(config.USWDS_MEDIUM_SCREEN) ? 105 : 75)
         .append('tspan')
         .text('learn more')
         .style('fill', '#0000EE');
