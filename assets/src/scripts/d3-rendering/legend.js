@@ -30,12 +30,25 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
             .attr('class', 'legend')
             .attr('transform', `translate(${mediaQuery(config.USWDS_MEDIUM_SCREEN) ? layout.margin.left : 0}, 0)`);
 
+    legend.append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', 98)
+        .attr('height', VERTICAL_ROW_OFFSET_PROVISIONAL_DATA_MESSAGE + 5)
+        .attr('fill', '#565c65')
+        .attr('rx', 2);
+
     legend.append('a')
         .attr('xlink:href', '/provisional-data-statement')
         .append('text')
-        .attr('x', 0)
+        .attr('x', 8)
         .attr('y', VERTICAL_ROW_OFFSET_PROVISIONAL_DATA_MESSAGE)
-        .text('Important - Graph may contain provisional data - ').append('tspan').text('learn more').style('fill', '#0000EE');
+        .append('tspan')
+        .text('IMPORTANT').style('fill', 'white')
+        .append('tspan').text('data shown may be provisional - ').style('fill', 'black').attr('x', 105)
+        .append('tspan')
+        .text('learn more')
+        .style('fill', '#0000EE');
 
     let yPosition = VERTICAL_ROW_OFFSET;
     legendMarkerRows.forEach((rowMarkers) => {
