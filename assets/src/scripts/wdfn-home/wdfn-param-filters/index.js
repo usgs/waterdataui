@@ -1,11 +1,12 @@
 import { select } from 'd3-selection';
 import { link } from '../../lib/d3-redux';
-import { Filters, Count } from '../selectors/wdfn-selector';
+import { Filters, Count, getLoadingState } from '../selectors/wdfn-selector';
 import { 
   applySiteTypeFilter,
   applyParamFilter,
   applyPeriodFilter,
-  retrieveWdfnData
+  retrieveWdfnData,
+  applyLoadingState
 } from '../store/wdfn-store';
 
 const getDateRanges = () => {
@@ -63,9 +64,13 @@ const WDFNParamFilters = (node, store) => {
     const checkedParams = document.querySelectorAll('#filter-site-params input:checked');
     const checkedParamsValues = Array.from(checkedParams).map(checkbox => {
       const value = checkbox.value;
-      if (value != '/') return value;
+      if (value != '/') {
+        return value; 
+      }
     }).filter(el => {
-      if (typeof el != 'undefined') return el;
+      if (typeof el != 'undefined') {
+        return el;
+      }
     });
 
     store.dispatch(applyParamFilter(checkedParamsValues));
@@ -111,10 +116,56 @@ const WDFNParamFilters = (node, store) => {
   const setCount = (_, count) => {
       if (typeof count !== 'number') return 0;
       document.querySelector('#result-count span').textContent = count;
+      store.dispatch(applyLoadingState('loaded'));
+  };
+
+  const setLoadingState = (_, loadingState) => {
+    const mapContainerEl = document.getElementById('wdfn-map-container');
+    const submitBtn = document.getElementById('wdfn-search-submit');
+
+    mapContainerEl.dataset.loadingState = loadingState;
+
+    if (loadingState == 'loaded') {
+      submitBtn.innerText = 'Update results';
+    }
+  };
+
+  const toggleSearchEnabled = (_, filters) => {
+    let activeFilters = 0;
+    const filterInstructions = document.querySelector('.filter-instructions');
+
+    const submitBtn = document.getElementById('wdfn-search-submit');
+
+    const siteTypeFilters = Object.values(filters.siteTypes);
+    if (siteTypeFilters.some(v => v)) { 
+      activeFilters += 1; 
+    }
+
+    if (filters.timePeriod) { 
+      activeFilters += 1; 
+    }
+
+    const bboxFilters = Object.values(filters.bBox);
+    if (bboxFilters.every(v => v)) { 
+      activeFilters += 1; 
+    }
+
+    if (filters.parameters.length > 0) { 
+      activeFilters += 1;
+    }
+
+    const isDisabled = activeFilters < 2;
+    submitBtn.ariaDisabled = isDisabled;
+    submitBtn.disabled = isDisabled;
+    filterInstructions.hidden = !isDisabled;
   };
 
   node
       .call(link(store, setCount, Count));
+  node
+      .call(link(store, setLoadingState, getLoadingState));
+  node
+      .call(link(store, toggleSearchEnabled, Filters));
 };
 
 export const attachToNode = function(store, node) {

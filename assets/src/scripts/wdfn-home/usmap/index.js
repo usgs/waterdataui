@@ -3,8 +3,7 @@ import { link } from '../../lib/d3-redux';
 import { Sites } from '../selectors/wdfn-selector';
 import config from '../../config';
 import { 
-  applyGeographicFilter,
-  retrieveWdfnData 
+  applyGeographicFilter
 } from '../store/wdfn-store';
 
 /*
@@ -48,17 +47,15 @@ const usMap = function(node, {latitude, longitude, zoom}, store) {
 
     map.on('moveend', setBboxFilter);
 
-    const addSiteCircles = (node, features) => {
+    const addSiteCircles = (_, features) => {
         markerGroup.clearLayers();
         markerGroup.addTo(map);
 
         features.forEach(f => {
-            if (f.geometry) {
+            if (f.geometry && f.properties) {
                 const marker = L.circle(f.geometry.coordinates.reverse(), {
-                    color: 'red',
-                    fillColor: '#f03',
-                    fillOpacity: 0.2,
-                    radius: 5000
+                    radius: 5000,
+                    className: `site-marker ${f.properties.monitoringLocationIdentifier}`
                 });
                 marker.addTo(markerGroup);
             }

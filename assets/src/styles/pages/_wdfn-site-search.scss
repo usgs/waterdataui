@@ -16,7 +16,7 @@
     list-style-type: none;
   }
 
-  h4 {
+  h4, label {
     margin-top: 0;
   }
 
@@ -60,9 +60,105 @@
   border-top: 1px solid color($theme-color-base-light);
   margin-top: 1rem;
   padding-top: 1rem;
+  position: relative;
   width: 100%;
 
   .result-count {
     margin-right: 1rem;
   }
+
+  .share-search {
+    margin-left: auto;
+  }
+  
+  .download:after {
+    content: '»';
+  }
 }
+
+.wdfn-map-container {
+  position: relative;
+  $site-summary-column-width: 300px;
+
+  .site-summaries {
+    display: none;
+  }
+  
+  &[data-summaries-visible="true"] {
+    .site-summaries {
+      background-color: color('green-cool-5v');
+      display: block;
+      height: 350px;
+      width: $site-summary-column-width;
+      overflow: scroll;
+      position: absolute;
+      z-index: 1100;
+
+      $list-border-style: 1px solid color('gray-cool-20');
+
+      ul {
+        border: $list-border-style;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      li {
+        border-bottom: $list-border-style;
+        padding: units(1) units(2);
+      }
+
+      h3 {
+        font-size: size('body', 'sm');
+        margin: units('05') 0;
+      }
+
+      .site-id, .site-type {
+        color: color('base');
+        font-size: size('body', '2xs');
+        margin: units('05') 0;
+      }
+
+      .site-type {
+        margin-top: units('105');
+      }
+    }
+
+    .leaflet-control-zoom {
+      margin-left: $site-summary-column-width + 10px;
+    }
+  }
+
+  .site-marker {
+    fill: red;
+    stroke: #f03;
+    opacity: 0.5;
+    fill-opacity: 0.3;
+  }
+
+  .loading-modal {
+    display: none;
+  }
+
+  &[data-loading-state="loading"] {
+    .loading-modal {
+      background-color: rgba(120,120,190,.3); 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 350px;
+      width: 100%;
+      position: absolute;
+      z-index: 1200;
+    }
+
+    .loading {
+      background: white;
+      border: 1px solid color('base');
+      border-radius: units(2);
+      padding: units(2);
+    }
+  }
+}
+
+

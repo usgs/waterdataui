@@ -22,6 +22,7 @@ query($bBox: String,
         monitoringLocationName
         siteUrl
         monitoringLocationIdentifier
+        monitoringLocationTypeName
       }
     }
     count
