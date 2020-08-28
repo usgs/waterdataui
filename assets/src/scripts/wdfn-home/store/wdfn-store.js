@@ -46,11 +46,11 @@ export const STORE_STRUCTURE = {
  */
 const lookupSiteTypesFullNames = function (siteTypes) {
     const dictionary = {
-        groundwater: ['Aggregate groundwater use', 'Well', 'Subsurface'],
-        surfacewater: ['Aggregate surface-water-use', 'Stream', 'Lake, Reservoir, Impoundment'],
+        groundwater: ['Well', 'Subsurface'],
+        surfacewater: ['Estuary', 'Stream', 'Lake, Reservoir, Impoundment', 'Ocean', 'Wetland'],
         atmospheric: 'Atmosphere',
         spring: 'Spring',
-        other: ['Facility', 'Land']
+        other: ['Facility', 'Land', 'Aggregate groundwater use', 'Aggregate surface-water-use', 'Glacier']
     };
 
     siteTypes = Object.keys(siteTypes).flatMap(st => {
