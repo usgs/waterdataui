@@ -66,7 +66,7 @@ describe('Legend module', () => {
             expect(container.select('svg').size()).toBe(1);
             expect(container.selectAll('line').size()).toBe(2);
             expect(container.selectAll('rect').size()).toBe(1);
-            expect(container.selectAll('text').size()).toBe(4);
+            expect(container.selectAll('text').size()).toBe(5); // The 'provisional data message' is a text node that is always present in the legend, making the count one more than might be expected from the mock data
         });
     });
 });
