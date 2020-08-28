@@ -31,11 +31,11 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
             .attr('transform', `translate(${mediaQuery(config.USWDS_MEDIUM_SCREEN) ? layout.margin.left : 0}, 0)`);
 
     legend.append('a')
-        .attr('xlink:href', '/svg/index.html')
+        .attr('xlink:href', '/provisional-data-statement')
         .append('text')
         .attr('x', 0)
         .attr('y', VERTICAL_ROW_OFFSET_PROVISIONAL_DATA_MESSAGE)
-        .html('Important - Graph may contain provisional data - ').append('tspan').text('learn more').style('fill', '#0000EE');
+        .text('Important - Graph may contain provisional data - ').append('tspan').text('learn more').style('fill', '#0000EE');
 
     let yPosition = VERTICAL_ROW_OFFSET;
     legendMarkerRows.forEach((rowMarkers) => {
