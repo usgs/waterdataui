@@ -90,7 +90,7 @@ def test_monitoring_location_invalid_site_no():
         }
     }
     ''')
-    # print(executed)
+
     assert executed == {
         "data": {
             "monitoringLocation": {
@@ -181,7 +181,7 @@ def test_monitoring_location_valid():
         }
     }
     ''')
-    # print(executed)
+
     assert executed == {
         "data": {
             "monitoringLocation": {
@@ -216,7 +216,7 @@ def test_monitoring_locations_valid():
         }
     }
     ''')
-    # print(executed)
+
     assert executed == {
         "data": {
             "monitoringLocations": {
