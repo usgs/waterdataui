@@ -46,12 +46,6 @@
     </div>
 {%- endmacro %}
 
-{% macro USMapComponent(latitude, longitude, zoom) -%}
-  <div class="wdfn-component" data-component="us-map" data-latitude="{{ latitude }}" data-longitude="{{ longitude }}" data-zoom="{{zoom}}">
-        <div id="site-map"></div>
-  </div>
-{%- endmacro %}
-
 {% macro USWDSCheckbox(name, label, value) -%}
     <div class="usa-checkbox">
       <input type="checkbox" 

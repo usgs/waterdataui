@@ -4,7 +4,8 @@ import {
   APPLY_SITE_TYPE_FILTER, 
   APPLY_PARAMETER_FILTER,
   SET_COUNT,
-  APPLY_PERIOD_FILTER
+  APPLY_PERIOD_FILTER,
+  SET_LOADING_STATE
 } from './wdfn-store';
 
 const INITIAL_DATA = {
@@ -62,6 +63,14 @@ export const wdfnDataReducer = function(wdfnData=INITIAL_DATA, action) {
                 ...wdfnData,
                 count: action.count
             };
+      case SET_LOADING_STATE:
+        return {
+          ...wdfnData,
+          uiState: {
+            ...wdfnData.uiState,
+            loading: action.loadingState
+          }
+        };
         default: return wdfnData;
     }
 };

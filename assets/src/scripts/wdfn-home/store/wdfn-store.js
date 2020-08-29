@@ -7,6 +7,7 @@ import {wdfnDataReducer as wdfnData} from './wdfn-data-reducer';
 
 export const SET_COUNT = 'SET_COUNT';
 export const SET_WDFN_FEATURES = 'SET_WDFN_FEATURES';
+export const SET_LOADING_STATE = 'SET_LOADING_STATE';
 export const APPLY_PARAMETER_FILTER = 'APPLY_PARAMETER_FILTER';
 export const APPLY_PERIOD_FILTER = 'APPLY_PERIOD_FILTER';
 export const APPLY_SITE_TYPE_FILTER = 'APPLY_SITE_TYPE_FILTER';
@@ -31,7 +32,10 @@ export const STORE_STRUCTURE = {
           parameters: []
       },
       count: 0,
-      sites: []
+      sites: [],
+      uiState: {
+        loading: false
+      }
   }
 };
 
@@ -42,11 +46,11 @@ export const STORE_STRUCTURE = {
  */
 const lookupSiteTypesFullNames = function (siteTypes) {
     const dictionary = {
-        groundwater: ['Aggregate groundwater use', 'Well', 'Subsurface'],
-        surfacewater: ['Aggregate surface-water-use', 'Stream', 'Lake, Reservoir, Impoundment'],
+        groundwater: ['Well', 'Subsurface'],
+        surfacewater: ['Estuary', 'Stream', 'Lake, Reservoir, Impoundment', 'Ocean', 'Wetland'],
         atmospheric: 'Atmosphere',
         spring: 'Spring',
-        other: ['Facility', 'Land']
+        other: ['Facility', 'Land', 'Aggregate groundwater use', 'Aggregate surface-water-use', 'Glacier']
     };
 
     siteTypes = Object.keys(siteTypes).flatMap(st => {
@@ -145,6 +149,24 @@ export const applyPeriodFilter = function (startDate) {
   };
 };
 
+const setLoadingState = function (loadingState) {
+  return {
+    type: SET_LOADING_STATE,
+    loadingState
+  };
+};
+
+/*
+ * Asynchronous Redux action to set the loading state 
+ * @param { String } loadingState
+ * @returns Redux dispatch function
+ */
+export const applyLoadingState = function (loadingState) {
+  return function (dispatch) {
+    dispatch(setLoadingState(loadingState));
+  };
+};
+
 /*
  * Asynchronous Redux action to fetch data from the API
  * @param { Object } 
@@ -169,11 +191,18 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, parameters, timePer
           variables.startDateLo = timePeriod;
         }
 
+        dispatch(applyLoadingState('loading'));
+
         executeGraphQlQuery(mapQuery, variables)
             .then(resp => JSON.parse(resp))
             .then(({ data }) => {
                 dispatch(setWdfnFeatures(data.monitoringLocations.features));
                 dispatch(setCount(data.monitoringLocations.count));
+                dispatch(applyLoadingState('loaded'));
+            })
+            .catch(error => {
+                console.error(error);
+                dispatch(applyLoadingState('error'));
             });
     };
 };

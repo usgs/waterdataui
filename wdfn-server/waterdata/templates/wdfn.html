@@ -4,11 +4,24 @@
 
 {% import 'macros/components.html' as components %}
 
+{% macro USMapComponent(latitude, longitude, zoom) -%}
+  <div class="wdfn-component" data-component="us-map" data-latitude="{{ latitude }}" data-longitude="{{ longitude }}" data-zoom="{{zoom}}">
+        <div id="site-map"></div>
+  </div>
+{%- endmacro %}
+
 {% block content %}
     <div class="usa-width-one-whole">
       <h1>Explore USGS Water Data</h1>
         <div class="wdfn-component" data-component="wdfn-param-filters">
             <form action="" class="grid-row" id="monitoring-location-search">
+              <div class="alerts">
+                <div class="usa-alert usa-alert--info filter-instructions">
+                  <div class="usa-alert__body">
+                    <p class="usa-alert__text">Please select at least two filters</p>
+                  </div>
+                </div>
+              </div>
               <div class="grid-row">
                   <fieldset class="usa-fieldset tablet:grid-col-2" id="site-type-filters">
                       <legend class="usa-fieldset"><h3>Type of sites</h3></legend>
@@ -157,6 +170,19 @@
                                   </li>
                               </ul>
                           </div>
+                          <div class="filter-param-list grid-col">
+                            <label class="usa-label" for="all-parameters">All USGS Parameters</label>
+                            <div class="usa-combo-box">
+                              <select
+                                class="usa-select"
+                                name="all-parameters"
+                                id="all-parameters"
+                              >
+                                <option value>Select a parameter</option>
+                                <option value="test">Just testing</option>
+                              </select>
+                              <p class="explanation">View a list of all parameters</p>
+                          </div>
                       </div>
                   </fieldset>
               </div>
@@ -164,10 +190,42 @@
                 <div id="result-count" class="result-count" aria-live="polite">
                     Number of matching sites: <span>0</span>
                 </div>
-                <button class="usa-button" type="submit">Show results</button>
+                <button class="usa-button" 
+                        type="submit" 
+                        id="wdfn-search-submit"
+                        class="wdfn-search-submit"
+                        >
+                  Show results
+                </button>
+                <button class="usa-button share-search" 
+                        disabled
+                        >
+                  Share this search 
+                </button>
+                <button class="usa-button download" 
+                        disabled
+                        >
+                  Refine and download
+                </button>
               </div>
             </form>
         </div>
-      {{ components.USMapComponent(latitude, longitude, zoom) }}
+        <div class="wdfn-component wdfn-map-container" 
+             id="wdfn-map-container"
+             data-component="site-summaries"
+             data-summaries-visible="false"
+             data-loading-state="first-load"
+             >
+          <div id="loading-modal" class="loading-modal">
+            <div class="loading">
+              <i class="fas fa-spinner fa-spin"></i>
+              Loading…
+            </div>
+          </div>
+          <div id="site-summaries" class="site-summaries">
+            <ul></ul>
+          </div>
+          {{ USMapComponent(latitude, longitude, zoom) }}
+        </div>
     </div>
 {% endblock content %}
