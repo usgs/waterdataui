@@ -183,7 +183,7 @@ class Query(ObjectType):
     Queries
     """
     monitoring_locations = Field(MonitoringLocations,
-                                 site_type=List(String),
+                                 siteType=List(String),
                                  providers=List(String),
                                  bBox=String(),
                                  startDateLo=String(),
