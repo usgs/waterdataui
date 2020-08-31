@@ -100,10 +100,7 @@ const WDFNParamFilters = (node, store) => {
   const fetchMatchingSites = (filters) => {
       if (Object.keys(filters).length === 0) return;
 
-      const hasSiteType = Object.values(filters.siteTypes).some(el => el);
-
-      if (hasSiteType)
-          store.dispatch(retrieveWdfnData(filters));
+      store.dispatch(retrieveWdfnData(filters));
   };
 
   const filterForm = document.getElementById('monitoring-location-search');
