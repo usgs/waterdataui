@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Added rel="noopener" attribute to links with target="_blank" attribute.
 
+### Changed 
+- Changed the word 'Toggle' to 'Display' for the 'median' checkbox.
+
 ## [0.36.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.35.0...waterdataui-0.36.0) - 2020-08-25
 ### Changed
 - Removed custom tooltips and replaced with USWDS tooltip component.
