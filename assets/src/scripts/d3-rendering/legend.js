@@ -7,7 +7,6 @@ const LINE_MARKER_WIDTH = 20;
 const MARKER_GROUP_X_OFFSET = 15;
 const VERTICAL_ROW_OFFSET = 18;
 
-
 /**
  * Create a simple legend
  *
@@ -24,7 +23,6 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
 
     const svg = div.append('svg')
         .attr('class', 'legend-svg');
-
     const legend = svg
         .append('g')
             .attr('class', 'legend')
