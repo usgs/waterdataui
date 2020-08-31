@@ -5,18 +5,7 @@ const RECTANGLE_MARKER_WIDTH = 20;
 const RECTANGLE_MARKER_HEIGHT = 10;
 const LINE_MARKER_WIDTH = 20;
 const MARKER_GROUP_X_OFFSET = 15;
-const VERTICAL_ROW_OFFSET_PROVISIONAL_DATA_MESSAGE = 18;
-const VERTICAL_ROW_OFFSET = 38;
-
-const BACKING_RECTANGLE_WIDTH = 98;
-const BACKING_RECTANGLE_WIDTH_MOBILE = 73;
-const BACKING_RECTANGLE_HEIGHT = 23;
-const BACKING_RECTANGLE_HEIGHT_MOBILE = 17;
-const BACKING_RECTANGLE_ROUNDING_RADIUS = 2;
-const HORIZONTAL_START_PROVISIONAL_DATA_TEXT = 105;
-const HORIZONTAL_START_PROVISIONAL_DATA_TEXT_MOBILE = 75;
-const HORIZONTAL_OFFSET_TO_CENTER_TEXT_IN_BACKING_RECTANGLE = 8;
-const VERTICAL_OFFSET_FOR_BACKING_RECTANGLE_MOBILE = 5;
+const VERTICAL_ROW_OFFSET = 18;
 
 
 /**
@@ -40,32 +29,6 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
         .append('g')
             .attr('class', 'legend')
             .attr('transform', `translate(${mediaQuery(config.USWDS_MEDIUM_SCREEN) ? layout.margin.left : 0}, 0)`);
-
-    legend.append('rect')
-        .attr('x', 0)
-        .attr('y', mediaQuery(config.USWDS_MEDIUM_SCREEN) ? 0 : VERTICAL_OFFSET_FOR_BACKING_RECTANGLE_MOBILE)
-        .attr('width', mediaQuery(config.USWDS_MEDIUM_SCREEN) ? BACKING_RECTANGLE_WIDTH :
-            BACKING_RECTANGLE_WIDTH_MOBILE)
-        .attr('height', mediaQuery(config.USWDS_MEDIUM_SCREEN) ? BACKING_RECTANGLE_HEIGHT :
-            BACKING_RECTANGLE_HEIGHT_MOBILE)
-        .attr('fill', '#565c65')
-        .attr('rx', BACKING_RECTANGLE_ROUNDING_RADIUS);
-
-    legend.append('a')
-        .attr('xlink:href', '/provisional-data-statement')
-        .append('text')
-        .attr('x', HORIZONTAL_OFFSET_TO_CENTER_TEXT_IN_BACKING_RECTANGLE)
-        .attr('y', VERTICAL_ROW_OFFSET_PROVISIONAL_DATA_MESSAGE)
-        .append('tspan')
-        .text('IMPORTANT')
-        .style('fill', 'white')
-        .append('tspan').text('data may be provisional - ')
-        .style('fill', 'black')
-        .attr('x', mediaQuery(config.USWDS_MEDIUM_SCREEN) ? HORIZONTAL_START_PROVISIONAL_DATA_TEXT :
-            HORIZONTAL_START_PROVISIONAL_DATA_TEXT_MOBILE)
-        .append('tspan')
-        .text('learn more')
-        .style('fill', '#0000EE');
 
     let yPosition = VERTICAL_ROW_OFFSET;
     legendMarkerRows.forEach((rowMarkers) => {

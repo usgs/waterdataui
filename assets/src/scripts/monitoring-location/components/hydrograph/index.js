@@ -145,9 +145,16 @@ export const attachToNode = function (store,
                     .call(drawTooltipCursorSlider, store)
                     .call(drawGraphBrush, store);
             }
+
             graphContainer.append('div')
                 .classed('ts-legend-controls-container', true)
                 .call(drawTimeSeriesLegend, store);
+
+            graphContainer.append('div')
+                .classed('provisional-data-statement', true)
+                .classed('usa-fieldset', true)
+                .html('<span class="usa-tag">Important</span> data may be provisional - ' +
+                    '<a href="/provisional-data-statement">learn more</a>');
 
             // Add UI interactive elements, data table  and the provisional data alert.
             if (!showOnlyGraph) {
@@ -156,7 +163,6 @@ export const attachToNode = function (store,
                     .call(drawDateRangeControls, store, siteno);
 
                 nodeElem.select('.ts-legend-controls-container')
-
                     .call(drawGraphControls, store);
                 nodeElem.select('#iv-data-table-container')
                     .call(drawDataTable, store);
