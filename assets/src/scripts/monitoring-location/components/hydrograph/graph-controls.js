@@ -79,5 +79,5 @@ export const drawGraphControls = function(elem, store) {
         .classed('usa-checkbox__label', true)
         .attr('id', 'median-label')
         .attr('for', 'median-checkbox')
-        .text('Toggle median');
+        .text('Display median');
 };
