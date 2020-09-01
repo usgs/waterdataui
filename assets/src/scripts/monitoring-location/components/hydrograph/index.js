@@ -150,12 +150,6 @@ export const attachToNode = function (store,
                 .classed('ts-legend-controls-container', true)
                 .call(drawTimeSeriesLegend, store);
 
-            graphContainer.append('div')
-                .classed('provisional-data-statement', true)
-                .classed('usa-fieldset', true)
-                .html('<span class="usa-tag">Important</span> data may be provisional - ' +
-                    '<a href="/provisional-data-statement">learn more</a>');
-
             // Add UI interactive elements, data table  and the provisional data alert.
             if (!showOnlyGraph) {
                 nodeElem

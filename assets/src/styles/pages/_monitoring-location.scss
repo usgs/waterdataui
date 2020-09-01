@@ -15,7 +15,7 @@
 }
 
 .provisional-data-statement {
-  padding-bottom: 10px;
+  @include u-padding-bottom(1);
 }
 
 #dv-accordion {
