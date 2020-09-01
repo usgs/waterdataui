@@ -187,7 +187,7 @@ export const retrieveWdfnData = function ({ siteTypes, bBox, parameters, timePer
             variables.pCode = parameters;
         }
 
-        if (timePeriod) {
+        if (timePeriod && timePeriod !== 'all') {
           variables.startDateLo = timePeriod;
         }
 
