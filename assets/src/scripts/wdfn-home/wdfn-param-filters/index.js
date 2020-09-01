@@ -20,7 +20,8 @@ const getDateRanges = () => {
     '5': `${month}-${day}-${year - 5}`,
     '10': `${month}-${day}-${year - 10}`,
     '20': `${month}-${day}-${year - 20}`,
-    '50': `${month}-${day}-${year - 50}`
+    '50': `${month}-${day}-${year - 50}`,
+    'all': 'all'
   };
 };
 
