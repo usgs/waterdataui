@@ -27,6 +27,12 @@ def home():
     return render_template('index.html', version=__version__)
 
 
+@app.route('/provisional-data-statement')
+def provisional_data_statement():
+    """Render the provisional data statement page."""
+    return render_template('provisional_data_statement.html')
+
+
 @app.route('/monitoring-location/<site_no>/', methods=['GET'])
 def monitoring_location(site_no):
     """

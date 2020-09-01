@@ -2,29 +2,20 @@
     <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ site_no }}" data-latitude="{{ latitude }}" data-longitude="{{ longitude }}">
         <div class="loading-indicator-container"></div>
         <div class="graph-container"></div>
+        <div class="provisional-data-statement">
+            <p>
+                <span class="usa-tag">Important</span>
+                data may be provisional - <a class="usa-link" href="{{ url_for('provisional_data_statement') }}">learn more</a>
+            </p>
+        </div>
         <div class="select-time-series-container"></div>
         <div class="graph-data usa-accordion">
-            <h2 class="usa-acordion__heading">
+            <h2 class="usa-accordion__heading">
                 <button class="usa-accordion__button" aria-expanded="false" aria-controls="iv-data-table-container">
                     Table of hydrograph data
                 </button>
             </h2>
             <div id="iv-data-table-container" class="usa-accordion__content usa-prose"></div>
-        </div>
-        <div class="usa-alert usa-alert--info provisional-data-alert" role="alert" hidden>
-            <div class="usa-alert__body">
-                <h3 class="usa-alert__heading">Provisional Data Statement</h3>
-                <p class="usa-alert__text">
-                    Data are provisional and subject to revision until they have been thoroughly reviewed and received final approval.
-                    Current condition data relayed by satellite or other telemetry are automatically screened to not display improbable
-                    values until they can be verified. Provisional data may be inaccurate due to instrument malfunctions or physical
-                    changes at the measurement site. Subsequent review based on field inspections and measurements may result in
-                    significant revisions to the data. Data users are cautioned to consider carefully the provisional nature of the
-                    information before using it for decisions that concern personal or public safety or the conduct of business that
-                    involves substantial monetary or operational consequences. Information concerning the accuracy and appropriate uses
-                    of these data or concerning other hydrologic data may be obtained from the USGS.
-                </p>
-            </div>
         </div>
     </div>
 {%- endmacro %}

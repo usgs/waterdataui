@@ -145,6 +145,7 @@ export const attachToNode = function (store,
                     .call(drawTooltipCursorSlider, store)
                     .call(drawGraphBrush, store);
             }
+
             graphContainer.append('div')
                 .classed('ts-legend-controls-container', true)
                 .call(drawTimeSeriesLegend, store);
@@ -156,7 +157,6 @@ export const attachToNode = function (store,
                     .call(drawDateRangeControls, store, siteno);
 
                 nodeElem.select('.ts-legend-controls-container')
-
                     .call(drawGraphControls, store);
                 nodeElem.select('#iv-data-table-container')
                     .call(drawDataTable, store);

@@ -25,6 +25,16 @@ class TestHomeView(TestCase):
         self.assertIn(__version__, response.data.decode('utf-8'))
 
 
+class TestProvisionalDataStatementView(TestCase):
+    def setUp(self):
+        self.app_client = app.test_client()
+
+    def test_version(self):
+        response = self.app_client.get('/provisional-data-statement')
+
+        self.assertEqual(response.status_code, 200)
+
+
 class TestMonitoringLocationView(TestCase):
     # pylint: disable=R0902
 
