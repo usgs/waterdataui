@@ -71,8 +71,10 @@ export const drawGraphBrush = function(container, store) {
             let selection;
 
             const graphBrush = brushX()
-                .extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom - layout.margin.top]]);                
-            
+                .extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom - layout.margin.top]]);
+
+            svg.select('.brush').remove();
+
             const group = svg.append('g').attr('class', 'brush')
                 .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`)
                 .call(graphBrush);
@@ -108,7 +110,7 @@ export const drawGraphBrush = function(container, store) {
 
             graphBrush.on('brush end', brushed(customHandle, layout.height, selection));
 
-            svg.select('.brush').remove();s
+
 
 
         }, createStructuredSelector({
