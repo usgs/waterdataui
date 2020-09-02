@@ -20,7 +20,7 @@ export const drawGraphBrush = function(container, store) {
         if (selection == null) {
             customHandle.attr('display', 'none');
         } else {
-            customHandle.attr('display', null).attr('transform', function(d, i) { return 'translate(' + [selection[i], - height / 4] + ')'; });
+            customHandle.attr('display', null).attr('transform', function(d, i) { return 'translate(' + [selection[i], - height / 3.3] + ')'; });
         }
         
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
@@ -52,7 +52,7 @@ export const drawGraphBrush = function(container, store) {
         .call(svg => {
             svg.append('g')
                 .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`),
-                                getBrushLayout
+                    getBrushLayout
                 ))
                 .call(link(store, appendXAxis, createStructuredSelector({
                     xAxis: getBrushXAxis,
@@ -76,7 +76,7 @@ export const drawGraphBrush = function(container, store) {
             const group = svg.append('g').attr('class', 'brush')
                 .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`)
                 .call(graphBrush);
-            
+
             const brushResizePath = function(d) {
                 let e = +(d.type == 'e'),
                     x = e ? 1 : -1,
@@ -105,11 +105,10 @@ export const drawGraphBrush = function(container, store) {
             if (selection[1] - selection[0] > 0) {
                 graphBrush.move(group, selection);
             }
-            
+
             graphBrush.on('brush end', brushed(customHandle, layout.height, selection));
 
-
-            svg.select('.brush').remove();
+            svg.select('.brush').remove();s
 
 
         }, createStructuredSelector({
