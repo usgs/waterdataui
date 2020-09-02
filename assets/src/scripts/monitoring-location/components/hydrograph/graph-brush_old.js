@@ -15,7 +15,6 @@ import {drawDataLines} from './time-series-lines';
 
 export const drawGraphBrush = function(container, store) {
     const brushed = function() {
-        console.log('event ', event)
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
             return;
         }
