@@ -14,7 +14,6 @@ import {isVisible} from './selectors/time-series-data';
 import {drawDataLines} from './time-series-lines';
 
 export const drawGraphBrush = function(container, store) {
-
     const brushed = function() {
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
             return;
@@ -64,6 +63,7 @@ export const drawGraphBrush = function(container, store) {
             let selection;
 
             const graphBrush = brushX()
+                .extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom - layout.margin.top]])
                 .on('brush end', brushed);
 
             svg.select('.brush').remove();
@@ -71,7 +71,7 @@ export const drawGraphBrush = function(container, store) {
             const group = svg.append('g').attr('class', 'brush')
                 .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
 
-            graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom - layout.margin.top]]);
+
 
             // Creates the brush
             group.call(graphBrush);
