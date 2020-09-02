@@ -14,12 +14,20 @@ import {isVisible} from './selectors/time-series-data';
 import {drawDataLines} from './time-series-lines';
 
 export const drawGraphBrush = function(container, store) {
-
+    const brushed = function(customHandle, height) {
     const brushed = function() {
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
             return;
         }
-        console.log('event sourceEvent', event.sourceEvent);
+        const selection = event.selection;
+console.log('selection ', event.selection);
+        if (selection == null) {
+            customHandle.attr('display', 'none');
+        } else {
+            customHandle.attr('display', null).attr('transform', function(d, i) { return 'translate(' + [selection[i], - height / 3.3] + ')'; });
+        }
+
+
         const xScale = getBrushXScale('current')(store.getState());
         const brushRange = event.selection || xScale.range();
 
@@ -42,7 +50,7 @@ export const drawGraphBrush = function(container, store) {
         .call(link(store,(elem, layout) => {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.bottom + layout.margin.top}`);
             }, getBrushLayout
-        ))
+            ))
         .call(svg => {
             svg.append('text').classed('brush-text-hint', true).text('move handles to change timeframe').attr('text-anchor', 'middle')
                 .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2},${layout.height + 10})`),
@@ -74,10 +82,7 @@ export const drawGraphBrush = function(container, store) {
                     y = layout.height / 2;
                 return 'M' + (.5 * x) + ',' + y + 'A6,6 0 0 ' + e + ' ' + (6.5 * x) + ',' + (y + 6) + 'V' + (2 * y - 6) + 'A6,6 0 0 ' + e + ' ' + (.5 * x) + ',' + (2 * y) + 'Z' + 'M' + (2.5 * x) + ',' + (y + 8) + 'V' + (2 * y - 8) + 'M' + (4.5 * x) + ',' + (y + 8) + 'V' + (2 * y - 8);
             };
-
-            const graphBrush = brushX()
-                .on('brush end', brushed);
-
+            const graphBrush = brushX().on('brush end', brushed());
             svg.select('.brush').remove();
 
             const group = svg.append('g').attr('class', 'brush')
@@ -93,11 +98,22 @@ export const drawGraphBrush = function(container, store) {
 
             graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom - layout.margin.top]]);
 
-            // Creates the brush
+            graphBrush.on('brush end', brushed(customHandle, layout.height));
+
+
+
+
+
             group.call(graphBrush);
 
-            // Fill & round corners of brush handles
             svg.selectAll('.handle').classed('standard-brush-handle', true);
+
+
+
+
+
+
+
 
             if (hydrographBrushOffset) {
                 const [startMillis, endMillis] = xScale.domain();
@@ -111,6 +127,11 @@ export const drawGraphBrush = function(container, store) {
             if (selection[1] - selection[0] > 0) {
                 graphBrush.move(group, selection);
             }
+
+
+
+
+
 
         }, createStructuredSelector({
             layout: getBrushLayout,
