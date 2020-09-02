@@ -50,6 +50,10 @@ export const drawGraphBrush = function(container, store) {
             }, getBrushLayout
             ))
         .call(svg => {
+            svg.append('text').classed('brush-text-hint', true).text('move handles to change timeframe').attr('text-anchor', 'middle')
+                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2},${layout.height + 8})`),
+                    getBrushLayout
+                ));
             svg.append('g')
                 .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`),
                     getBrushLayout
@@ -78,6 +82,9 @@ export const drawGraphBrush = function(container, store) {
             const group = svg.append('g').attr('class', 'brush')
                 .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`)
                 .call(graphBrush);
+
+            svg.selectAll('.handle').classed('standard-brush-handle', true);
+
 
             const brushResizePath = function(d) {
                 let e = +(d.type == 'e'),
