@@ -14,8 +14,9 @@ import {isVisible} from './selectors/time-series-data';
 import {drawDataLines} from './time-series-lines';
 
 export const drawGraphBrush = function(container, store) {
-    const brushed = function(customHandle, height) {
-        const selection = event.selection;
+    const brushed = function(customHandle, height, selection) {
+
+        console.log('selection ', selection);
         if (selection == null) {
             customHandle.attr('display', 'none');
         } else {
@@ -90,16 +91,7 @@ export const drawGraphBrush = function(container, store) {
                 .attr('stroke', '#000')
                 .attr('cursor', 'ew-resize')
                 .attr('d', brushResizePath);
-            
-            graphBrush.on('brush end', brushed(customHandle, layout.height));
 
-
-            svg.select('.brush').remove();
-
-
-            // Fill & round corners of brush handles
-            svg.selectAll('.handle').classed('brush-handle-fill', true)
-                .attr('rx', 15).attr('ry', 15);
 
             if (hydrographBrushOffset) {
                 const [startMillis, endMillis] = xScale.domain();
@@ -113,6 +105,12 @@ export const drawGraphBrush = function(container, store) {
             if (selection[1] - selection[0] > 0) {
                 graphBrush.move(group, selection);
             }
+            
+            graphBrush.on('brush end', brushed(customHandle, layout.height, selection));
+
+
+            svg.select('.brush').remove();
+
 
         }, createStructuredSelector({
             layout: getBrushLayout,
