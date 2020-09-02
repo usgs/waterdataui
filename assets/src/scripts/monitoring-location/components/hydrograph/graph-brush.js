@@ -14,7 +14,14 @@ import {isVisible} from './selectors/time-series-data';
 import {drawDataLines} from './time-series-lines';
 
 export const drawGraphBrush = function(container, store) {
-    const brushed = function() {
+    const brushed = function(customHandle, height) {
+        const selection = event.selection;
+        if (selection == null) {
+            customHandle.attr('display', 'none');
+        } else {
+            customHandle.attr('display', null).attr('transform', function(d, i) { return 'translate(' + [selection[i], - height / 4] + ')'; });
+        }
+        
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
             return;
         }
@@ -63,18 +70,32 @@ export const drawGraphBrush = function(container, store) {
             let selection;
 
             const graphBrush = brushX()
-                .extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom - layout.margin.top]])
-                .on('brush end', brushed);
+                .extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom - layout.margin.top]]);                
+            
+            const group = svg.append('g').attr('class', 'brush')
+                .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`)
+                .call(graphBrush);
+            
+            const brushResizePath = function(d) {
+                let e = +(d.type == 'e'),
+                    x = e ? 1 : -1,
+                    y = layout.height / 2;
+                return 'M' + (.5 * x) + ',' + y + 'A6,6 0 0 ' + e + ' ' + (6.5 * x) + ',' + (y + 6) + 'V' + (2 * y - 6) + 'A6,6 0 0 ' + e + ' ' + (.5 * x) + ',' + (2 * y) + 'Z' + 'M' + (2.5 * x) + ',' + (y + 8) + 'V' + (2 * y - 8) + 'M' + (4.5 * x) + ',' + (y + 8) + 'V' + (2 * y - 8);
+            };
+            
+            const customHandle = group.selectAll('.handle--custom')
+                .data([{type: 'w'}, {type: 'e'}])
+                .enter().append('path')
+                .attr('class', 'handle--custom')
+                .attr('stroke', '#000')
+                .attr('cursor', 'ew-resize')
+                .attr('d', brushResizePath);
+            
+            graphBrush.on('brush end', brushed(customHandle, layout.height));
+
 
             svg.select('.brush').remove();
 
-            const group = svg.append('g').attr('class', 'brush')
-                .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
-
-
-
-            // Creates the brush
-            group.call(graphBrush);
 
             // Fill & round corners of brush handles
             svg.selectAll('.handle').classed('brush-handle-fill', true)
