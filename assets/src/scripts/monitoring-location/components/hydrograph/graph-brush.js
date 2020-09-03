@@ -82,7 +82,6 @@ export const drawGraphBrush = function(container, store) {
                 })));
         })
         .call(link(store, (svg, {layout, hydrographBrushOffset, xScale}) => {
-            console.log('layout ', layout)
             let selection;
             layoutHeight = layout.height;
 
