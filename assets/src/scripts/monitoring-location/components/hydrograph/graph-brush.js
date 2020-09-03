@@ -18,25 +18,19 @@ export const drawGraphBrush = function(container, store) {
     let layoutHeight;
 
     const brushed = function() {
-        console.log('event ', event.selection)
-        console.log('height ', layoutHeight)
+        customHandle.attr('transform', function(d, index) {
+            return 'translate(' + [event.selection[index], - layoutHeight / 3.3] + ')';
+        });
+
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
             return;
         }
 
-        if (event.selection == null) {
-            customHandle.attr('display', 'none');
-        } else {
-            customHandle.attr('display', null).attr('transform', function(d, index) {
-                return 'translate(' + [event.selection[index], - layoutHeight / 3.3] + ')';
-            });
-        }
         const xScale = getBrushXScale('current')(store.getState());
         const brushRange = event.selection || xScale.range();
 
         // Only about the main hydrograph when user is done adjusting the time range.
         if (event.sourceEvent.type === 'mouseup' || event.sourceEvent.type === 'touchend') {
-
             const adjustedBrush = brushRange.map(xScale.invert, xScale);
 
             store.dispatch(Actions.setIVGraphBrushOffset(
@@ -121,7 +115,8 @@ export const drawGraphBrush = function(container, store) {
                 selection = xScale.range();
             }
             if (selection[1] - selection[0] > 0) {
-                graphBrush.move(group, selection);
+                // graphBrush.move(group, selection);
+                group.call(graphBrush.move, selection);
             }
 
         }, createStructuredSelector({
