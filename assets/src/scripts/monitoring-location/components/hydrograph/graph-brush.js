@@ -20,6 +20,10 @@ export const drawGraphBrush = function(container, store) {
     let layoutHeight;
 
     const brushed = function() {
+        // if the user click a range point in the brush area without making an actual selection, remove the custom handles
+        if (event.selection == null) {
+            customHandle.attr('display', 'none');            
+        }
         customHandle.attr('transform', function(d, index) {
             const yPositionForCustomHandle = mediaQuery(config.USWDS_LARGE_SCREEN) ? layoutHeight / 3.3 * -1 : layoutHeight / 2.5 * -1;
             return 'translate(' + [event.selection[index], yPositionForCustomHandle] + ')';
@@ -32,7 +36,7 @@ export const drawGraphBrush = function(container, store) {
         const xScale = getBrushXScale('current')(store.getState());
         const brushRange = event.selection || xScale.range();
 
-        // Only about the main hydrograph when user is done adjusting the time range.
+        // Only adjust the main hydrograph when user is done adjusting the time range.
         if (event.sourceEvent.type === 'mouseup' || event.sourceEvent.type === 'touchend') {
             const adjustedBrush = brushRange.map(xScale.invert, xScale);
 
@@ -52,8 +56,12 @@ export const drawGraphBrush = function(container, store) {
             }, getBrushLayout
         ))
         .call(svg => {
-            svg.append('text').classed('brush-text-hint', true).text('move handles to change timeframe').attr('text-anchor', 'middle')
-                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2},${layout.height + 10})`),
+            svg.append('text')
+                .classed('brush-text-hint', true)
+                .text('move handles to change timeframe')
+                .attr('text-anchor', 'middle')
+                .attr('font-size', 'smaller')
+                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2},${layout.height + 8})`),
                     getBrushLayout
                 ));
             svg.append('g')
