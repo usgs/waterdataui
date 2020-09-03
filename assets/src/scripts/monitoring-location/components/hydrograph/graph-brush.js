@@ -14,12 +14,18 @@ import {isVisible} from './selectors/time-series-data';
 import {drawDataLines} from './time-series-lines';
 
 export const drawGraphBrush = function(container, store) {
+    let customHandle;
     const brushed = function() {
-        console.log('event ', event)
+        console.log('event ', event.selection)
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
             return;
         }
-        console.log('event sourceEvent', event.sourceEvent);
+
+        if (event.selection == null) {
+            customHandle.attr('display', 'none');
+        } else {
+            customHandle.attr('display', null).attr('transform', function(d, i) { return 'translate(' + [event.selection[i], - 100 / 3.3] + ')'; });
+        }
         const xScale = getBrushXScale('current')(store.getState());
         const brushRange = event.selection || xScale.range();
 
@@ -83,7 +89,7 @@ export const drawGraphBrush = function(container, store) {
             const group = svg.append('g').attr('class', 'brush')
                 .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
 
-            const customHandle = group.selectAll('.handle--custom')
+            customHandle = group.selectAll('.handle--custom')
                 .data([{type: 'w'}, {type: 'e'}])
                 .enter().append('path')
                 .attr('class', 'handle--custom')
