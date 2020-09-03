@@ -221,7 +221,7 @@ class Query(ObjectType):
             # but due to the fact that it is calling the water services and process the data, it will
             # take too long.  So commenting out for now
             # if properties['monitoring_location_identifier'].startswith('USGS-'):
-            #     site_no = properties['monitoring_location_identifier'].replace('USGS-', ')
+            #     site_no = properties['monitoring_location_identifier'].replace('USGS-', '')
             #     properties.update(Query.get_site_properties_from_get_site_parameters(site_no))
             #     properties.update(Query.get_site_properties_from_get_site(site_no))
 
