@@ -91,6 +91,7 @@ export const drawGraphBrush = function(container, store) {
                 .attr('cursor', 'ew-resize')
                 .attr('d', brushResizePath);
 
+            graphBrush.handleSize([1]); // make default handle 1px wide
             graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom - layout.margin.top]]);
 
             // Creates the brush
