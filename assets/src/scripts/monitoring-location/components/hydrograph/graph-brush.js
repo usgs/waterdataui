@@ -12,6 +12,8 @@ import {getBrushLayout} from './selectors/layout';
 import {getBrushXScale, getBrushYScale} from './selectors/scales';
 import {isVisible} from './selectors/time-series-data';
 import {drawDataLines} from './time-series-lines';
+import {mediaQuery} from '../../../utils';
+import config from '../../../config';
 
 export const drawGraphBrush = function(container, store) {
     let customHandle;
@@ -19,7 +21,8 @@ export const drawGraphBrush = function(container, store) {
 
     const brushed = function() {
         customHandle.attr('transform', function(d, index) {
-            return 'translate(' + [event.selection[index], - layoutHeight / 3.3] + ')';
+            const yPositionForCustomHandle = mediaQuery(config.USWDS_LARGE_SCREEN) ? layoutHeight / 3.3 * -1 : layoutHeight / 2.5 * -1;
+            return 'translate(' + [event.selection[index], yPositionForCustomHandle] + ')';
         });
 
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
