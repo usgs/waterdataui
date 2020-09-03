@@ -169,6 +169,7 @@ describe ('monitoring-location/components/hydrograph/graph-brush module', () => 
             expect(div.select('.overlay').size()).toBe(1);
             expect(div.select('.selection').size()).toBe(1);
             expect(div.selectAll('.handle').size()).toBe(2);
+            expect(div.selectAll('.handle--custom').size()).toBe(2);
         });
 
         it('Should create a time-series-line, and an x-axis', () => {
