@@ -20,7 +20,7 @@ export const drawGraphBrush = function(container, store) {
     let layoutHeight;
 
     const brushed = function() {
-        // if the user click a range point in the brush area without making an actual selection, remove the custom handles
+        // if the user clicks a point in the brush area without making an actual selection, remove the custom handles
         if (event.selection == null) {
             customHandle.attr('display', 'none');            
         }
@@ -58,10 +58,10 @@ export const drawGraphBrush = function(container, store) {
         .call(svg => {
             svg.append('text')
                 .classed('brush-text-hint', true)
-                .text('move handles to change timeframe')
+                .text('drag handles to change timeframe')
                 .attr('text-anchor', 'middle')
                 .attr('font-size', 'smaller')
-                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2},${layout.height + 8})`),
+                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${(layout.width / 2) + (layout.margin.left / 2) },${layout.height + 10})`),
                     getBrushLayout
                 ));
             svg.append('g')
@@ -82,6 +82,7 @@ export const drawGraphBrush = function(container, store) {
                 })));
         })
         .call(link(store, (svg, {layout, hydrographBrushOffset, xScale}) => {
+            console.log('layout ', layout)
             let selection;
             layoutHeight = layout.height;
 
@@ -91,7 +92,7 @@ export const drawGraphBrush = function(container, store) {
             svg.select('.brush').remove();
 
             const group = svg.append('g').attr('class', 'brush')
-                .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
+                .attr('transform', `translate(${layout.margin.left}, ${layout.margin.top})`);
 
             graphBrush.handleSize([1]); // make default handle 1px wide
             graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom - layout.margin.top]]);
