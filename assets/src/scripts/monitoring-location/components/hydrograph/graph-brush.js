@@ -118,7 +118,6 @@ export const drawGraphBrush = function(container, store) {
                 selection = xScale.range();
             }
             if (selection[1] - selection[0] > 0) {
-                // graphBrush.move(group, selection);
                 group.call(graphBrush.move, selection);
             }
 
