@@ -61,11 +61,11 @@ export const drawGraphBrush = function(container, store) {
                 .text('drag handles to change timeframe')
                 .attr('text-anchor', 'middle')
                 .attr('font-size', 'smaller')
-                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${(layout.width / 2) + (layout.margin.left / 2) },${layout.height + 10})`),
+                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${(layout.width / 2) + (layout.margin.left / 2) }, ${layout.height + 10})`),
                     getBrushLayout
                 ));
             svg.append('g')
-                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`),
+                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.margin.left}, ${layout.margin.top})`),
                     getBrushLayout
                 ))
                 .call(link(store, appendXAxis, createStructuredSelector({
