@@ -51,7 +51,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
 
     customDateContainer.append('label')
         .attr('for', 'date-input')
-        .text('Enter Dates');
+        .text('Enter Custom Timespan');
 
     const numberOfDaysSelection = customDateContainer.append('div')
         .attr('class', 'usa-character-count')
