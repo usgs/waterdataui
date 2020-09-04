@@ -46,13 +46,15 @@
                 <div>{{ narrative|safe }}</div>
             {% endif %}
 
-            {% if collection.properties.contactInformation.contactName and collection.properties.contactInformation.contactEmail %}
-            <label class="bold-label" for="contact-info">Network Contact</label><br>
-            <span id="contact-info">
-                <span id="contact-name">{{ collection.properties.contactInformation.contactName }}</span>
-                <span><a class="usa-link" href="mailto:{{ collection.properties.contactInformation.contactEmail }}"><i class="fas fa-envelope"></i></a>
-                <a id="contact-email" class="usa-link" href="mailto:{{ collection.properties.contactInformation.contactEmail }}">{{ collection.properties.contactInformation.contactEmail }}</a></span>
-            </span>
+            {% if collection.properties.contactInformation %} {# compensates for missing contactInformation attribute in JSON for networks/monitoring-locations #}
+                {% if collection.properties.contactInformation.contactName and collection.properties.contactInformation.contactEmail %}
+                <label class="bold-label" for="contact-info">Network Contact</label><br>
+                <span id="contact-info">
+                    <span id="contact-name">{{ collection.properties.contactInformation.contactName }}</span>
+                    <span><a class="usa-link" href="mailto:{{ collection.properties.contactInformation.contactEmail }}"><i class="fas fa-envelope"></i></a>
+                    <a id="contact-email" class="usa-link" href="mailto:{{ collection.properties.contactInformation.contactEmail }}">{{ collection.properties.contactInformation.contactEmail }}</a></span>
+                </span>
+                {% endif %}
             {% endif %}
 
             {% if collection.properties.cooperators %}
