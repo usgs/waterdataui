@@ -16,6 +16,8 @@ import {mediaQuery} from '../../../utils';
 import config from '../../../config';
 
 export const drawGraphBrush = function(container, store) {
+    const CENTERING_DIVISOR_LARGE_SCREEN = 3.3;
+    const CENTERING_DIVISOR_SMALL_SCREEN = 2.5;
     let customHandle;
     let layoutHeight;
 
@@ -25,7 +27,7 @@ export const drawGraphBrush = function(container, store) {
             customHandle.attr('display', 'none');            
         }
         customHandle.attr('transform', function(d, index) {
-            const yPositionForCustomHandle = mediaQuery(config.USWDS_LARGE_SCREEN) ? layoutHeight / 3.3 * -1 : layoutHeight / 2.5 * -1;
+            const yPositionForCustomHandle = mediaQuery(config.USWDS_LARGE_SCREEN) ? -layoutHeight / CENTERING_DIVISOR_LARGE_SCREEN : -layoutHeight / CENTERING_DIVISOR_SMALL_SCREEN;
             return 'translate(' + [event.selection[index], yPositionForCustomHandle] + ')';
         });
 
