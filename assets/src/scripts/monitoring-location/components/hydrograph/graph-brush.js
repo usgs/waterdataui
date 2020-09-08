@@ -16,12 +16,12 @@ import {mediaQuery} from '../../../utils';
 import config from '../../../config';
 
 export const drawGraphBrush = function(container, store) {
-    const CENTERING_DIVISOR_LARGE_SCREEN = 3.3;
-    const CENTERING_DIVISOR_SMALL_SCREEN = 2.5;
     let customHandle;
     let layoutHeight;
 
     const brushed = function() {
+        const CENTERING_DIVISOR_LARGE_SCREEN = 3.3;
+        const CENTERING_DIVISOR_SMALL_SCREEN = 2.5;
         // if the user clicks a point in the brush area without making an actual selection, remove the custom handles
         if (event.selection == null) {
             customHandle.attr('display', 'none');            
@@ -105,8 +105,7 @@ export const drawGraphBrush = function(container, store) {
                     x = east ? 1 : -1,
                     y = layoutHeight / 2;
 
-                let pathSVG =
-                    `M ${.5 * x},${y} 
+                return `M ${.5 * x},${y} 
                     A6,6 0 0 ${east} ${6.5 * x},${y + 6}
                     V${2 * y - 6}
                     A6,6 0 0 ${east} ${.5 * x},${2 * y}
@@ -116,7 +115,6 @@ export const drawGraphBrush = function(container, store) {
                     M${4.5 * x},${y + 8}
                     V${2 * y - 8}`;
 
-                return pathSVG;
             };
 
             /* Attaches the custom brush handle to the DOM and binds d3 brush data placeholders 'w' for the west end (right side)
