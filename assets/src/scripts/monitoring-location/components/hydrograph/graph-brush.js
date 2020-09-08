@@ -107,6 +107,7 @@ export const drawGraphBrush = function(container, store) {
                     x = east ? 1 : -1,
                     y = layoutHeight / 2;
 
+                // Create the svg path using the standard SVG commands M, A, V etc. and substituted variables.
                 return `M ${.5 * x},${y} 
                     A6,6 0 0 ${east} ${6.5 * x},${y + 6}
                     V${2 * y - 6}
@@ -116,7 +117,6 @@ export const drawGraphBrush = function(container, store) {
                     V${2 * y - 8}
                     M${4.5 * x},${y + 8}
                     V${2 * y - 8}`;
-
             };
 
             /* Attaches the custom brush handle to the DOM and binds d3 brush data placeholders 'w' for the west end (right side)
