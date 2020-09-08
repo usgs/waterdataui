@@ -26,14 +26,16 @@ export const drawGraphBrush = function(container, store) {
     let layoutHeight;
 
     const brushed = function() {
-        const CENTERING_DIVISOR_LARGE_SCREEN = 3.3;
-        const CENTERING_DIVISOR_SMALL_SCREEN = 2.5;
+        const CENTERING_DIVISOR_LARGE_SCREEN = 3;
+        const CENTERING_DIVISOR_SMALL_SCREEN = 2.3;
         // if the user clicks a point in the brush area without making an actual selection, remove the custom handles
         if (event.selection == null) {
             customHandle.attr('display', 'none');
         }
         customHandle.attr('transform', function(d, index) {
-            const yPositionForCustomHandle = mediaQuery(config.USWDS_LARGE_SCREEN) ? -layoutHeight / CENTERING_DIVISOR_LARGE_SCREEN : -layoutHeight / CENTERING_DIVISOR_SMALL_SCREEN;
+            const yPositionForCustomHandle = mediaQuery(config.USWDS_LARGE_SCREEN) ?
+                -layoutHeight / CENTERING_DIVISOR_LARGE_SCREEN :
+                -layoutHeight / CENTERING_DIVISOR_SMALL_SCREEN;
             return `translate(${event.selection[index]}, ${yPositionForCustomHandle})`;
         });
 
@@ -63,12 +65,6 @@ export const drawGraphBrush = function(container, store) {
             }, getBrushLayout
             ))
         .call(svg => {
-            svg.append('text')
-                .classed('brush-text-hint', true)
-                .text('drag handles to change timeframe')
-                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2 + layout.margin.left / 2}, ${layout.height + 19})`),
-                    getBrushLayout
-                ));
             svg.append('g')
                 .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`),
                                 getBrushLayout
@@ -83,6 +79,7 @@ export const drawGraphBrush = function(container, store) {
                     yScale: getBrushYScale,
                     enableClip: () => false
                 })));
+
         })
         .call(link(store, (svg, {layout, graphBrushOffset, xScale}) => {
             let selection;
@@ -132,6 +129,17 @@ export const drawGraphBrush = function(container, store) {
 
             // Add a class so the default handles can have styling that won't conflict with the slider handle
             svg.selectAll('.handle').classed('standard-brush-handle', true);
+
+            svg.select('.brush-text-hint').remove();
+            // Add the hint text after the brush is created so that the words sit on top of the brush area
+            svg.call(svg => {
+                svg.append('text')
+                    .classed('brush-text-hint', true)
+                    .text('drag handles to change timeframe')
+                    .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2 + layout.margin.left}, 10)`),
+                        getBrushLayout
+                    ));
+            });
 
             if (graphBrushOffset) {
                 const [startMillis, endMillis] = xScale.domain();

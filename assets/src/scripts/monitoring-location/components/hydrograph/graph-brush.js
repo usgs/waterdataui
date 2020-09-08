@@ -27,7 +27,9 @@ export const drawGraphBrush = function(container, store) {
             customHandle.attr('display', 'none');            
         }
         customHandle.attr('transform', function(d, index) {
-            const yPositionForCustomHandle = mediaQuery(config.USWDS_LARGE_SCREEN) ? -layoutHeight / CENTERING_DIVISOR_LARGE_SCREEN : -layoutHeight / CENTERING_DIVISOR_SMALL_SCREEN;
+            const yPositionForCustomHandle = mediaQuery(config.USWDS_LARGE_SCREEN) ?
+                -layoutHeight / CENTERING_DIVISOR_LARGE_SCREEN :
+                -layoutHeight / CENTERING_DIVISOR_SMALL_SCREEN;
             return `translate(${event.selection[index]}, ${yPositionForCustomHandle})`;
         });
 
@@ -58,12 +60,6 @@ export const drawGraphBrush = function(container, store) {
             }, getBrushLayout
         ))
         .call(svg => {
-            svg.append('text')
-                .classed('brush-text-hint', true)
-                .text('drag handles to change timeframe')
-                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2 + layout.margin.left / 2 }, ${layout.height + 10})`),
-                    getBrushLayout
-                ));
             svg.append('g')
                 .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.margin.left}, ${layout.margin.top})`),
                     getBrushLayout
@@ -80,6 +76,12 @@ export const drawGraphBrush = function(container, store) {
                     tsKey: () => 'current',
                     enableClip: () => false
                 })));
+            svg.append('text')
+                .classed('brush-text-hint', true)
+                .text('drag handles to change timeframe')
+                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2 + layout.margin.left}, ${layout.height + 10})`),
+                    getBrushLayout
+                ));
         })
         .call(link(store, (svg, {layout, hydrographBrushOffset, xScale}) => {
             let selection;
