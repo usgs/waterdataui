@@ -28,7 +28,7 @@ export const drawGraphBrush = function(container, store) {
         }
         customHandle.attr('transform', function(d, index) {
             const yPositionForCustomHandle = mediaQuery(config.USWDS_LARGE_SCREEN) ? -layoutHeight / CENTERING_DIVISOR_LARGE_SCREEN : -layoutHeight / CENTERING_DIVISOR_SMALL_SCREEN;
-            return 'translate(' + [event.selection[index], yPositionForCustomHandle] + ')';
+            return `translate(${event.selection[index]}, ${yPositionForCustomHandle})`;
         });
 
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
@@ -98,21 +98,26 @@ export const drawGraphBrush = function(container, store) {
 
             /* Draws the custom brush handle using an SVG path. The path is drawn twice, once for the handle
             * on the left hand side, which in d3 brush terms is referred to as 'east' (data type 'e'), and then
-            *  inverted for the right hand custom handle */
+            * inverted for the right hand custom handle. Here 'east' will be a value of either 1 or 0 (in effect, making
+            * it a boolean value of 'east' or 'not east' */
             const brushResizePath = function(d) {
-                let east = +(d.type == 'e'),
+                let east = d.type === 'e' ? 1:0,
                     x = east ? 1 : -1,
                     y = layoutHeight / 2;
+                // return `M `
                 return 'M' + (.5 * x) + ',' + y + 'A6,6 0 0 ' + east + ' ' + (6.5 * x) + ',' + (y + 6) + 'V' + (2 * y - 6) + 'A6,6 0 0 ' + east + ' ' + (.5 * x) + ',' + (2 * y) + 'Z' + 'M' + (2.5 * x) + ',' + (y + 8) + 'V' + (2 * y - 8) + 'M' + (4.5 * x) + ',' + (y + 8) + 'V' + (2 * y - 8);
+
+                // return 'M' + (.5 * x) + ',' + y + 'A6,6 0 0 ' + east + ' ' + (6.5 * x) + ',' + (y + 6) + 'V' + (2 * y - 6) + 'A6,6 0 0 ' + east + ' ' + (.5 * x) + ',' + (2 * y) + 'Z' + 'M' + (2.5 * x) + ',' + (y + 8) + 'V' + (2 * y - 8) + 'M' + (4.5 * x) + ',' + (y + 8) + 'V' + (2 * y - 8);
             };
-            /* Attaches the custom brush handle to the DOM and binds data placeholders 'w' for the west end (right side)
+
+            /* Attaches the custom brush handle to the DOM and binds d3 brush data placeholders 'w' for the west end (right side)
             * and 'e' for east end of the brush area */
             customHandle = group.selectAll('.handle--custom')
                 .data([{type: 'w'}, {type: 'e'}])
                 .enter().append('path')
                 .attr('class', 'handle--custom')
-                .attr('stroke', '#000')
-                .attr('cursor', 'ew-resize')
+
+
                 .attr('d', brushResizePath);
 
             // Creates the brush
@@ -131,7 +136,7 @@ export const drawGraphBrush = function(container, store) {
                 selection = xScale.range();
             }
             if (selection[1] - selection[0] > 0) {
-                group.call(graphBrush.move, selection);
+                graphBrush.move(group, selection);
             }
 
         }, createStructuredSelector({

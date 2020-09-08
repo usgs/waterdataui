@@ -136,6 +136,20 @@
       font-weight: normal;
     }
   }
+
+  .brush-text-hint {
+    text-anchor: middle;
+    font-size: size('body', 1)
+  }
+
+  .handle--custom {
+    stroke: color('black');
+    cursor: 'ew-resize';
+  }
+
+  .standard-brush-handle {
+    fill: color('black');
+  }
 }
 
 .loading-indicator-container {
@@ -182,13 +196,7 @@
     }
   }
 }
-.standard-brush-handle {
-  fill: color('black');
-}
-.brush-text-hint {
-  text-anchor: middle;
-  @include u-font('body', 1);
-}
+
 .pagination {
   li {
     display: inline-block;
