@@ -61,7 +61,7 @@ export const drawGraphBrush = function(container, store) {
             svg.append('text')
                 .classed('brush-text-hint', true)
                 .text('drag handles to change timeframe')
-                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${(layout.width / 2) + (layout.margin.left / 2) }, ${layout.height + 10})`),
+                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2 + layout.margin.left / 2 }, ${layout.height + 10})`),
                     getBrushLayout
                 ));
             svg.append('g')
@@ -123,8 +123,6 @@ export const drawGraphBrush = function(container, store) {
                 .data([{type: 'w'}, {type: 'e'}])
                 .enter().append('path')
                 .attr('class', 'handle--custom')
-
-
                 .attr('d', brushResizePath);
 
             // Creates the brush

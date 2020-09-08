@@ -214,3 +214,17 @@ svg {
   stroke: #000000;
   stroke-width: 1px;
 }
+
+.brush-text-hint {
+  text-anchor: middle;
+  font-size: size('body', 1)
+}
+
+.handle--custom {
+  stroke: color('black');
+  cursor: 'ew-resize';
+}
+
+.standard-brush-handle {
+  fill: color('black');
+}
