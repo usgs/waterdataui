@@ -63,7 +63,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     numberOfDaysSelection.append('input').attr('class', 'usa-input usa-character-count__field')
         .attr('id', 'with-hint-input').attr('maxlength', '4').attr('name', 'with-hint-input')
         .attr('aria-describedby', 'with-hint-input-info with-hint-input-hint');
-    numberOfDaysSelection.append('span').text('4 digits allowed').attr('id', 'with-hint-input-info').attr('class', 'usa-hint usa-character-count__message')
+    numberOfDaysSelection.append('span').text('').attr('id', 'with-hint-input-info').attr('class', 'usa-hint usa-character-count__message')
         .attr('aria-live', 'polite');
 
     const dateRangePicker = customDateContainer.append('div')
