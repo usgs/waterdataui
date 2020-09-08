@@ -185,6 +185,10 @@
 .standard-brush-handle {
   fill: color('black');
 }
+.brush-text-hint {
+  text-anchor: middle;
+  @include u-font('body', 1);
+}
 .pagination {
   li {
     display: inline-block;
