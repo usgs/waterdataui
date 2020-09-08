@@ -104,10 +104,19 @@ export const drawGraphBrush = function(container, store) {
                 let east = d.type === 'e' ? 1:0,
                     x = east ? 1 : -1,
                     y = layoutHeight / 2;
-                // return `M `
-                return 'M' + (.5 * x) + ',' + y + 'A6,6 0 0 ' + east + ' ' + (6.5 * x) + ',' + (y + 6) + 'V' + (2 * y - 6) + 'A6,6 0 0 ' + east + ' ' + (.5 * x) + ',' + (2 * y) + 'Z' + 'M' + (2.5 * x) + ',' + (y + 8) + 'V' + (2 * y - 8) + 'M' + (4.5 * x) + ',' + (y + 8) + 'V' + (2 * y - 8);
 
-                // return 'M' + (.5 * x) + ',' + y + 'A6,6 0 0 ' + east + ' ' + (6.5 * x) + ',' + (y + 6) + 'V' + (2 * y - 6) + 'A6,6 0 0 ' + east + ' ' + (.5 * x) + ',' + (2 * y) + 'Z' + 'M' + (2.5 * x) + ',' + (y + 8) + 'V' + (2 * y - 8) + 'M' + (4.5 * x) + ',' + (y + 8) + 'V' + (2 * y - 8);
+                let pathSVG =
+                    `M ${.5 * x},${y} 
+                    A6,6 0 0 ${east} ${6.5 * x},${y + 6}
+                    V${2 * y - 6}
+                    A6,6 0 0 ${east} ${.5 * x},${2 * y}
+                    Z
+                    M${2.5 * x},${y + 8}
+                    V${2 * y - 8}
+                    M${4.5 * x},${y + 8}
+                    V${2 * y - 8}`;
+
+                return pathSVG;
             };
 
             /* Attaches the custom brush handle to the DOM and binds d3 brush data placeholders 'w' for the west end (right side)
