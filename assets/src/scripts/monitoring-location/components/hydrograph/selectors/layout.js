@@ -69,7 +69,7 @@ export const getLayout = memoize(kind => createSelector(
             windowWidth: windowWidth,
             margin: {
                 bottom: margin.bottom,
-                top: kind === 'BRUSH' ? 10 : margin.top,
+                top: kind === 'BRUSH' ? 12 : margin.top,
                 left: margin.left + approxLabelLength,
                 right: margin.right + (isTemperatureParameter ? approxLabelLength : 0)
             }

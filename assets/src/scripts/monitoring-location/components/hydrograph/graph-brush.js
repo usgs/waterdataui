@@ -1,6 +1,5 @@
 import {brushX} from 'd3-brush';
 import {event} from 'd3-selection';
-import {select} from 'd3';
 import {createStructuredSelector} from 'reselect';
 
 import {appendXAxis} from '../../../d3-rendering/axes';
@@ -68,6 +67,14 @@ export const drawGraphBrush = function(container, store) {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.bottom + layout.margin.top}`);
             }, getBrushLayout
         ))
+        .call(svgTarget => {
+            svgTarget.append('text')
+                .classed('brush-text-hint', true)
+                .text('drag handles to change timeframe')
+                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2 + layout.margin.left}, ${BRUSH_HINT_TOP_POSITION})`),
+                    getBrushLayout
+                ));
+        })
         .call(svg => {
             svg.append('g')
                 .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.margin.left}, ${layout.margin.top})`),
@@ -154,20 +161,4 @@ export const drawGraphBrush = function(container, store) {
             hydrographBrushOffset: (state) => state.ivTimeSeriesState.ivGraphBrushOffset,
             xScale: getBrushXScale('current')
         })));
-    const svgTarget = container.select('.brush-svg');
-
-    svgTarget.call(link(store, (svgTarget) => {
-        svgTarget.select('.brush-text-hint').remove();
-        svgTarget.call(svgTarget => {
-            svgTarget.append('text')
-                .classed('brush-text-hint', true)
-                .text('drag handles to change timeframe')
-                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2 + layout.margin.left}, ${BRUSH_HINT_TOP_POSITION})`),
-                    getBrushLayout
-                ));
-        });
-    }, createStructuredSelector({
-        layout: getBrushLayout,
-        graphBrushOffset: getDVGraphBrushOffset
-    })));
 };
