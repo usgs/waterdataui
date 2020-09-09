@@ -76,12 +76,6 @@ export const drawGraphBrush = function(container, store) {
                     tsKey: () => 'current',
                     enableClip: () => false
                 })));
-            svg.append('text')
-                .classed('brush-text-hint', true)
-                .text('drag handles to change timeframe')
-                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2 + layout.margin.left}, ${layout.height + 10})`),
-                    getBrushLayout
-                ));
         })
         .call(link(store, (svg, {layout, hydrographBrushOffset, xScale}) => {
             let selection;
@@ -129,6 +123,17 @@ export const drawGraphBrush = function(container, store) {
 
             // Creates the brush
             group.call(graphBrush);
+
+            svg.select('.brush-text-hint').remove();
+            // Add the hint text after the brush is created so that the words sit on top of the brush area
+            svg.call(svg => {
+                svg.append('text')
+                    .classed('brush-text-hint', true)
+                    .text('drag handles to change timeframe')
+                    .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2 + layout.margin.left}, 10)`),
+                        getBrushLayout
+                    ));
+            });
 
             // Add a class so the default handles can have styling that won't conflict with the slider handle
             svg.selectAll('.handle').classed('standard-brush-handle', true);
