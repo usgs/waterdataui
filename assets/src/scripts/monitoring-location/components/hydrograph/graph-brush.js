@@ -1,5 +1,6 @@
 import {brushX} from 'd3-brush';
 import {event} from 'd3-selection';
+import {select} from 'd3';
 import {createStructuredSelector} from 'reselect';
 
 import {appendXAxis} from '../../../d3-rendering/axes';
@@ -14,14 +15,22 @@ import {isVisible} from './selectors/time-series-data';
 import {drawDataLines} from './time-series-lines';
 import {mediaQuery} from '../../../utils';
 import config from '../../../config';
+import {getDVGraphBrushOffset} from "../../selectors/daily-value-time-series-selector";
 
+/*
+ * Renders a brush element within container for the main graph
+ * @param {D3 selection} container
+ * @param {Redux store} store
+ */
 export const drawGraphBrush = function(container, store) {
+    const BRUSH_HINT_TOP_POSITION = 9;
     let customHandle;
     let layoutHeight;
 
     const brushed = function() {
         const CENTERING_DIVISOR_LARGE_SCREEN = 3.3;
         const CENTERING_DIVISOR_SMALL_SCREEN = 2.5;
+
         // if the user clicks a point in the brush area without making an actual selection, remove the custom handles
         if (event.selection == null) {
             customHandle.attr('display', 'none');            
@@ -124,17 +133,6 @@ export const drawGraphBrush = function(container, store) {
             // Creates the brush
             group.call(graphBrush);
 
-            svg.select('.brush-text-hint').remove();
-            // Add the hint text after the brush is created so that the words sit on top of the brush area
-            svg.call(svg => {
-                svg.append('text')
-                    .classed('brush-text-hint', true)
-                    .text('drag handles to change timeframe')
-                    .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2 + layout.margin.left}, 10)`),
-                        getBrushLayout
-                    ));
-            });
-
             // Add a class so the default handles can have styling that won't conflict with the slider handle
             svg.selectAll('.handle').classed('standard-brush-handle', true);
 
@@ -156,4 +154,20 @@ export const drawGraphBrush = function(container, store) {
             hydrographBrushOffset: (state) => state.ivTimeSeriesState.ivGraphBrushOffset,
             xScale: getBrushXScale('current')
         })));
+    const svgTarget = container.select('.brush-svg');
+
+    svgTarget.call(link(store, (svgTarget) => {
+        svgTarget.select('.brush-text-hint').remove();
+        svgTarget.call(svgTarget => {
+            svgTarget.append('text')
+                .classed('brush-text-hint', true)
+                .text('drag handles to change timeframe')
+                .call(link(store,(elem, layout) => elem.attr('transform', `translate(${layout.width / 2 + layout.margin.left}, ${BRUSH_HINT_TOP_POSITION})`),
+                    getBrushLayout
+                ));
+        });
+    }, createStructuredSelector({
+        layout: getBrushLayout,
+        graphBrushOffset: getDVGraphBrushOffset
+    })));
 };

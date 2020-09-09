@@ -67,6 +67,7 @@ describe ('monitoring-location/components/daily-value-hydrograph/graph-brush mod
             expect(div.select('.brush').size()).toBe(1);
             expect(div.select('.overlay').size()).toBe(1);
             expect(div.select('.selection').size()).toBe(1);
+            expect(div.select('.brush-text-hint').size()).toBe(1);
             expect(div.selectAll('.handle').size()).toBe(2);
             expect(div.selectAll('.handle--custom').size()).toBe(2);
         });
