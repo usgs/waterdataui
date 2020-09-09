@@ -14,7 +14,6 @@ import {isVisible} from './selectors/time-series-data';
 import {drawDataLines} from './time-series-lines';
 import {mediaQuery} from '../../../utils';
 import config from '../../../config';
-import {getDVGraphBrushOffset} from "../../selectors/daily-value-time-series-selector";
 
 /*
  * Renders a brush element within container for the main graph
