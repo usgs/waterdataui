@@ -57,13 +57,25 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-character-count')
         .append('div')
         .attr('class', 'usa-form-group');
-    numberOfDaysSelection.append('label').attr('class', 'usa-label').attr('for', 'with-hint-input' ).text('Days');
+    numberOfDaysSelection.append('label')
+        .attr('class', 'usa-label')
+        .attr('for', 'with-hint-input' )
+        .text('Days');
 
-    numberOfDaysSelection.append('span').attr('id', 'with-hint-input-hint').attr('class', 'usa-hint').text('time in days before today');
-    numberOfDaysSelection.append('input').attr('class', 'usa-input usa-character-count__field')
-        .attr('id', 'with-hint-input').attr('maxlength', '4').attr('name', 'with-hint-input')
+    numberOfDaysSelection.append('span')
+        .attr('id', 'with-hint-input-hint')
+        .attr('class', 'usa-hint')
+        .text('time in days before today');
+    numberOfDaysSelection.append('input')
+        .attr('class', 'usa-input usa-character-count__field')
+        .attr('id', 'with-hint-input')
+        .attr('maxlength', '4')
+        .attr('name', 'with-hint-input')
         .attr('aria-describedby', 'with-hint-input-info with-hint-input-hint');
-    numberOfDaysSelection.append('span').text('').attr('id', 'with-hint-input-info').attr('class', 'usa-hint usa-character-count__message')
+    numberOfDaysSelection.append('span')
+        .text('4 characters allowed')
+        .attr('id', 'with-hint-input-info')
+        .attr('class', 'usa-hint usa-character-count__message')
         .attr('aria-live', 'polite');
 
     const dateRangePicker = customDateContainer.append('div')
