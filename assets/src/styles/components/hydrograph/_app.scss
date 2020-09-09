@@ -136,19 +136,20 @@
       font-weight: normal;
     }
   }
+  svg {
+    .brush-text-hint {
+      position: relative;
+      text-anchor: middle;
+      font-size: size('body', 1)
+    }
 
-  .brush-text-hint {
-    text-anchor: middle;
-    font-size: size('body', 1)
-  }
-
-  .handle--custom {
-    stroke: color('black');
-    cursor: 'ew-resize';
-  }
-
-  .standard-brush-handle {
-    fill: color('black');
+    .handle--custom {
+      stroke: color('black');
+      cursor: 'ew-resize';
+    }
+    .standard-brush-handle {
+      fill: color('black');
+    }
   }
 }
 
