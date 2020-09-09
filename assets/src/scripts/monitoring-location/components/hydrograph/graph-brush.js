@@ -97,9 +97,9 @@ export const drawGraphBrush = function(container, store) {
             * inverted for the right hand custom handle. Here 'east' will be a value of either 1 or 0 (in effect, making
             * it a boolean value of 'east' or 'not east' */
             const brushResizePath = function(d) {
-                let east = d.type === 'e' ? 1:0,
-                    x = east ? 1 : -1,
-                    y = layoutHeight / 2;
+                const east = d.type === 'e' ? 1:0;
+                const x = east ? 1 : -1;
+                const y = layoutHeight / 2;
 
                 // Create the svg path using the standard SVG commands M, A, V etc. and substituted variables.
                 return `M ${.5 * x},${y} 
