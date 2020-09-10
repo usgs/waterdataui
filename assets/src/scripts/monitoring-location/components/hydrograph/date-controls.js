@@ -49,12 +49,65 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             container.attr('hidden', dateRangeKind === 'custom' ? null : true);
         }, getCurrentDateRangeKind));
 
-    customDateContainer.append('label')
-        .attr('for', 'date-input')
-        .text('Enter custom timespan with');
 
-    customDateContainer.append('')
 
+
+
+
+    // customDateContainer.append('label')
+    //     .attr('for', 'date-input')
+    //     .text('Enter custom timespan with');
+
+
+
+    // Add radio buttons for 'days from today' and 'calendar days' selections
+    const radioGroupForCustomSelectRadioButtons = customDateContainer.append('div')
+        .attr('role', 'radiogroup');
+    const radioButtonListForCustomSelectRadioButtons = radioGroupForCustomSelectRadioButtons.append('ul').attr('class', 'usa-fieldset usa-list--unstyled');
+    const radioCustomDateRadioButton1 = radioButtonListForCustomSelectRadioButtons.append('li');
+        radioCustomDateRadioButton1.append('input').attr('type', 'radio').attr('name', 'ts-custom-daterange-input');
+        radioCustomDateRadioButton1.append('label').text('one');
+    const radioCustomDateRadioButton2 = radioButtonListForCustomSelectRadioButtons.append('li');
+        radioCustomDateRadioButton2.append('input').attr('type', 'radio').attr('name', 'ts-custom-daterange-input');
+        radioCustomDateRadioButton2.append('label').text('two');
+
+
+
+    // radioGroupForCustomSelectRadioButtons.append('input').attr('type', 'radio');
+    // radioGroupForCustomSelectRadioButtons.append('input').attr('type', 'radio');
+
+
+    // const radioButtonsForSelectionOfCustomTimespans = customDateContainer.append('div')
+    //     .attr('id', 'ts-daterange-custom-select-container')
+    //     .attr('role', 'radiogroup')
+    //     .attr('aria-label', 'Custom time interval select');
+    // const customRadioButtonList = radioButtonsForSelectionOfCustomTimespans.append('ul')
+    //     .attr('class', 'usa-fieldset usa-list--unstyled');
+    // customRadioButtonList.append('li')
+    //     .append('input').attr('id', 'placeholder-id-1').attr('class', 'usa-radio__input').attr('type', 'radio').attr('name', 'ts-custom-daterange-input')
+    // ;
+    // customRadioButtonList.append('li')
+    //     .append('input').attr('id', 'placeholder-id-2').attr('class', 'usa-radio__input').attr('type', 'radio').attr('name', 'ts-custom-daterange-input')
+    // ;
+
+    // radioButtonsForSelectionOfCustomTimespans.append('legend')
+    //     .attr('class', 'usa-sr-only')
+    //     .text('Enter custom timespan with');
+    // const buttonOneForSelectionOfCustomTimespans = radioButtonsForSelectionOfCustomTimespans.append('div')
+    //     .attr('class', 'usa-radio');
+    // buttonOneForSelectionOfCustomTimespans.append('input').attr('class', 'usa-radio__input').attr('id', 'days').attr('type', 'radio').attr('checked', 'true').attr('name', 'selection-custom-selection').attr('value', 'days');
+    // buttonOneForSelectionOfCustomTimespans.append('label').attr('class', 'radio__label').attr('for', 'days').text('days before today');
+    //
+    // const buttonTwoForSelectionOfCustomTimespans = radioButtonsForSelectionOfCustomTimespans.append('div')
+    //     .attr('class', 'usa-radio');
+    // buttonTwoForSelectionOfCustomTimespans.append('input').attr('class', 'usa-radio__input').attr('id', 'calender').attr('type', 'radio').attr('checked', 'true').attr('name', 'selection-custom-selection').attr('value', 'calender');
+    // buttonTwoForSelectionOfCustomTimespans.append('label').attr('class', 'radio__label').attr('for', 'calender').text('calendar days');
+
+
+
+
+
+    // Add controls for selecting time in days from today
     const numberOfDaysSelection = customDateContainer.append('div')
         .attr('class', 'usa-character-count')
         .append('div')
@@ -63,7 +116,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-label')
         .attr('for', 'with-hint-input' )
         .text('Days');
-
     numberOfDaysSelection.append('span')
         .attr('id', 'with-hint-input-hint')
         .attr('class', 'usa-hint')
