@@ -46,7 +46,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('role', 'radiogroup')
         .attr('aria-label', 'Time interval select')
         .call(link(store, (container, dateRangeKind) => {
-            console.log('container radio group 2 ', container)
             container.attr('hidden', dateRangeKind === 'custom' ? null : true);
         }, getCurrentDateRangeKind));
 
@@ -55,8 +54,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date by days before today specification')
         .call(link(store, (container, dateRangeKind) => {
-            console.log('container days before ', container)
-            console.log('date range days before dateRangeKind', dateRangeKind)
             container.attr('hidden', dateRangeKind === 'custom' ? null : true);
         }, getCurrentDateRangeKind));
 
@@ -66,8 +63,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date specification')
         .call(link(store, (container, dateRangeKind) => {
-            console.log('container customDate ', container)
-            console.log('container customDate dateRangeKind', dateRangeKind)
             container.attr('hidden', dateRangeKind === 'custom' ? null : true);
         }, getCurrentDateRangeKind));
 
@@ -284,7 +279,8 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             } else {
                 li.select('input#custom-date-range').attr('aria-expanded', false);
                 containerRadioGroupCustomSelectButtons.attr('hidden', true);
-
+                customDateContainer.attr('hidden', true);
+                customDaysBeforeTodayContainer.attr('hidden', true);
                 store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(
                     siteno,
                     li.select('input:checked').attr('value')
