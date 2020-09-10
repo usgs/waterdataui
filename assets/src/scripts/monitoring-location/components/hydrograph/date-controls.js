@@ -32,7 +32,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         ariaExpanded: false
     }];
 
-    const container = elem.insert('div', ':nth-child(2)')
+    const containerRadioGroupMainSelectButtons = elem.insert('div', ':nth-child(2)')
         .attr('id', 'ts-daterange-select-container')
         .attr('role', 'radiogroup')
         .attr('aria-label', 'Time interval select')
@@ -45,18 +45,25 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('role', 'radiogroup')
         .attr('aria-label', 'Time interval select')
         .call(link(store, (container, dateRangeKind) => {
-            container.attr('hidden', dateRangeKind === 'custom' ? null : null);
+            container.attr('hidden', dateRangeKind === 'custom' ? null : true);
         }, getCurrentDateRangeKind));
 
-    const customDateContainer = elem.insert('div', ':nth-child(4)')
+    const customDaysBeforeTodayContainer = elem.insert('div', ':nth-child(4)')
+        .attr('id', 'ts-customdaterange-select-container')
+        .attr('class', 'usa-form')
+        .attr('aria-label', 'Custom date by days before today specification')
+        .call(link(store, (container, dateRangeKind) => {
+            container.attr('hidden', dateRangeKind === 'custom' ? null : true);
+        }, getCurrentDateRangeKind));
+
+    const customDateContainer = elem.insert('div', ':nth-child(5)')
         .attr('id', 'ts-customdaterange-select-container')
         .attr('role', 'customdate')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date specification')
         .call(link(store, (container, dateRangeKind) => {
             container.attr('hidden', dateRangeKind === 'custom' ? null : true);
-        }, getCurrentDateRangeKind))
-    ;
+        }, getCurrentDateRangeKind));
 
 
 
@@ -78,7 +85,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
 
 
     // Add controls for selecting time in days from today
-    const numberOfDaysSelection = customDateContainer.append('div')
+    const numberOfDaysSelection = customDaysBeforeTodayContainer.append('div')
         .attr('class', 'usa-character-count')
         .append('div')
         .attr('class', 'usa-form-group');
@@ -103,7 +110,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('aria-live', 'polite');
 
 
-
+    // Adds controls for the date picker
     const dateRangePicker = customDateContainer.append('div')
         .attr('class', 'usa-date-range-picker');
 
@@ -175,6 +182,8 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     // required to init the USWDS date range picker after page load
     components.dateRangePicker.init(elem.node());
 
+
+    // Adds controls for the submit button
     const submitContainer = customDateContainer.append('div')
         .attr('class', 'submit-button');
 
@@ -207,6 +216,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             }
         });
 
+    // Adds controls for the custom date calender picker
     customDateContainer.call(link(store, (container, {customTimeRange, ianaTimeZone}) => {
         container.select('#custom-start-date')
             .property('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start, {zone: ianaTimeZone}).startOf('day').toFormat('LL/dd/yyyy') : '');
@@ -217,7 +227,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         ianaTimeZone: getIanaTimeZone
     })));
 
-    const listContainer = container.append('ul')
+    const listContainer = containerRadioGroupMainSelectButtons.append('ul')
         .attr('class', 'usa-fieldset usa-list--unstyled');
     const li = listContainer.selectAll('li')
         .attr('class', 'usa-fieldset')
