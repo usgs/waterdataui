@@ -40,6 +40,14 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             container.attr('hidden', showControls ? null : true);
         }, hasAnyTimeSeries));
 
+    const containerRadioGroupCustomSelectButtons = elem.insert('div', ':nth-child(3)')
+        .attr('id', 'ts-custom-date-radio-group')
+        .attr('role', 'radiogroup')
+        .attr('aria-label', 'Time interval select')
+        .call(link(store, (container, dateRangeKind) => {
+            container.attr('hidden', dateRangeKind === 'custom' ? null : null);
+        }, getCurrentDateRangeKind));
+
     const customDateContainer = elem.insert('div', ':nth-child(4)')
         .attr('id', 'ts-customdaterange-select-container')
         .attr('role', 'customdate')
@@ -47,21 +55,22 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('aria-label', 'Custom date specification')
         .call(link(store, (container, dateRangeKind) => {
             container.attr('hidden', dateRangeKind === 'custom' ? null : true);
-        }, getCurrentDateRangeKind));
+        }, getCurrentDateRangeKind))
+    ;
 
 
 
 
     // Add radio buttons for 'days from today' and 'calendar days' selections
-    const radioGroupForCustomSelectRadioButtons = customDateContainer.append('div')
+    const radioGroupForCustomSelectRadioButtons = containerRadioGroupCustomSelectButtons.append('div')
         .attr('role', 'radiogroup');
     const radioButtonListForCustomSelectRadioButtons = radioGroupForCustomSelectRadioButtons.append('ul').attr('class', 'usa-fieldset usa-list--unstyled');
     const radioCustomDateRadioButton1 = radioButtonListForCustomSelectRadioButtons.append('li');
-        radioCustomDateRadioButton1.append('input').attr('id', 'custom-input-days-from-today').attr('type', 'radio').attr('name', 'ts-custom-daterange-input').attr('value', 'days').checked = true;
-        radioCustomDateRadioButton1.append('label').attr('class', 'usa-radio__label').text('days before today');
+        radioCustomDateRadioButton1.append('input').attr('class', 'usa-radio__input').attr('id', 'custom-input-days-from-today').attr('type', 'radio').attr('name', 'ts-custom-daterange-input').attr('value', 'days').checked = true;
+        radioCustomDateRadioButton1.append('label').attr('class', 'usa-radio__label').attr('for', 'custom-input-days-from-today').text('days before today');
     const radioCustomDateRadioButton2 = radioButtonListForCustomSelectRadioButtons.append('li');
-        radioCustomDateRadioButton2.append('input').attr('id', 'custom-input-calender-day').attr('type', 'radio').attr('name', 'ts-custom-daterange-input').attr('value', 'calender');
-        radioCustomDateRadioButton2.append('label').attr('class', 'usa-radio__label').text('calender days');
+        radioCustomDateRadioButton2.append('input').attr('class', 'usa-radio__input').attr('id', 'custom-input-calender-day').attr('type', 'radio').attr('name', 'ts-custom-daterange-input').attr('value', 'calender');
+        radioCustomDateRadioButton2.append('label').attr('class', 'usa-radio__label').attr('for', 'custom-input-calender-day').text('calender days');
 
 
 
