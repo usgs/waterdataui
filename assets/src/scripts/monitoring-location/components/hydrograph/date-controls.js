@@ -78,12 +78,33 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     const radioGroupForCustomSelectRadioButtons = containerRadioGroupCustomSelectButtons.append('div')
         .attr('role', 'radiogroup');
     const radioButtonListForCustomSelectRadioButtons = radioGroupForCustomSelectRadioButtons.append('ul').attr('class', 'usa-fieldset usa-list--unstyled');
-    const radioCustomDateRadioButton1 = radioButtonListForCustomSelectRadioButtons.append('li');
-        radioCustomDateRadioButton1.append('input').attr('class', 'usa-radio__input').attr('id', 'custom-input-days-from-today').attr('type', 'radio').attr('name', 'ts-custom-daterange-input').attr('value', 'days').checked = true;
-        radioCustomDateRadioButton1.append('label').attr('class', 'usa-radio__label').attr('for', 'custom-input-days-from-today').text('days before today');
-    const radioCustomDateRadioButton2 = radioButtonListForCustomSelectRadioButtons.append('li');
-        radioCustomDateRadioButton2.append('input').attr('class', 'usa-radio__input').attr('id', 'custom-input-calender-day').attr('type', 'radio').attr('name', 'ts-custom-daterange-input').attr('value', 'calender');
-        radioCustomDateRadioButton2.append('label').attr('class', 'usa-radio__label').attr('for', 'custom-input-calender-day').text('calender days');
+    const radioCustomDateRadioButtonDaysFromToday = radioButtonListForCustomSelectRadioButtons.append('li');
+        radioCustomDateRadioButtonDaysFromToday.append('input')
+            .attr('class', 'usa-radio__input')
+            .attr('id', 'custom-input-days-from-today')
+            .attr('type', 'radio')
+            .attr('name', 'ts-custom-daterange-input')
+            .attr('value', 'days')
+            .on('change', function() {
+                customDaysBeforeTodayContainer.attr('hidden', null);
+                customDateContainer.attr('hidden', true);
+                console.log('click is for days registered');
+            });
+        radioCustomDateRadioButtonDaysFromToday.append('label').attr('class', 'usa-radio__label').attr('for', 'custom-input-days-from-today').text('days before today');
+
+    const radioCustomDateRadioButtonCalender = radioButtonListForCustomSelectRadioButtons.append('li');
+        radioCustomDateRadioButtonCalender.append('input')
+            .attr('class', 'usa-radio__input')
+            .attr('id', 'custom-input-calender-day')
+            .attr('type', 'radio')
+            .attr('name', 'ts-custom-daterange-input')
+            .attr('value', 'calender')
+            .on('change', function() {
+                customDaysBeforeTodayContainer.attr('hidden', true);
+                customDateContainer.attr('hidden', null);
+                console.log('click is for calender registered');
+            });
+        radioCustomDateRadioButtonCalender.append('label').attr('class', 'usa-radio__label').attr('for', 'custom-input-calender-day').text('calender days');
 
 
 
@@ -259,12 +280,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             const selectedVal = selected.attr('value');
             if (selectedVal === 'custom') {
                 containerRadioGroupCustomSelectButtons.attr('hidden', null);
-                customDateContainer.attr('hidden', null);
                 selected.attr('aria-expanded', true);
             } else {
                 li.select('input#custom-date-range').attr('aria-expanded', false);
                 containerRadioGroupCustomSelectButtons.attr('hidden', true);
-                customDateContainer.attr('hidden', true);
+
                 store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(
                     siteno,
                     li.select('input:checked').attr('value')
