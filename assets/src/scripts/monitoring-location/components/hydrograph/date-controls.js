@@ -54,6 +54,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date by days before today specification')
         .call(link(store, (container, dateRangeKind) => {
+            console.log('days before dateRangeKind', dateRangeKind)
             container.attr('hidden', dateRangeKind === 'custom' ? null : true);
         }, getCurrentDateRangeKind));
 
@@ -63,6 +64,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date specification')
         .call(link(store, (container, dateRangeKind) => {
+            console.log('calender dateRangeKind', dateRangeKind)
             container.attr('hidden', dateRangeKind === 'custom' ? null : true);
         }, getCurrentDateRangeKind));
 
@@ -261,7 +263,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .text('Submit')
         .on('click', function() {
             const userSpecifiedNumberOfDays = document.getElementById('with-hint-input-days-from-today').value;
-
+            const formatedPeriodQueryParameter = `P${userSpecifiedNumberOfDays}D`;
             if (isNaN(userSpecifiedNumberOfDays) || userSpecifiedNumberOfDays.length === 0) {
                 customDaysBeforeTodayAlertBody.selectAll('p').remove();
                 customDaysBeforeTodayAlertBody.append('p')
@@ -269,16 +271,17 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 customDaysBeforeTodayValidationContainer.attr('hidden', null);
             } else {
                 customDaysBeforeTodayValidationContainer.attr('hidden', true);
-                store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDaysFromToday(
+                store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(
                     siteno,
-                    userSpecifiedNumberOfDays
-                )).then(() => store.dispatch(ivTimeSeriesStateActions.clearIVGraphBrushOffset()));
-                console.log('submit dates');
+                    formatedPeriodQueryParameter
+                )).then(() => {
+                    store.dispatch(ivTimeSeriesStateActions.clearIVGraphBrushOffset());
+                });
+                console.log('this is the query parameter ', formatedPeriodQueryParameter);
             }
 
         });
 
-    // Adds controls for the custom date calender picker
     customCalenderDaysContainer.call(link(store, (container, {customTimeRange, ianaTimeZone}) => {
         container.select('#custom-start-date')
             .property('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start, {zone: ianaTimeZone}).startOf('day').toFormat('LL/dd/yyyy') : '');
@@ -289,6 +292,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         ianaTimeZone: getIanaTimeZone
     })));
 
+    // Add Radio buttons to
     const listContainer = containerRadioGroupMainSelectButtons.append('ul')
         .attr('class', 'usa-fieldset usa-list--unstyled');
     const li = listContainer.selectAll('li')

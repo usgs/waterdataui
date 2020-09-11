@@ -151,20 +151,18 @@ export const mediaQuery = function (minWidth) {
  * @param {String} ianaTimeZone -- Internet Assigned Numbers Authority designation for a time zone
  * @returns {Number} the start time as universal time
  */
-export const calcStartTime = function (period, endTime, ianaTimeZone) {
+export const calcStartTime = function(period, endTime, ianaTimeZone) {
+    const periodCode = period.substr(period.length - 1);
+    const timePeriod = period.slice(1,-1);
+
     let startTime = new DateTime.fromMillis(endTime, {zone: ianaTimeZone});
-    switch (period) {
-        case 'P7D':
-            startTime = startTime.minus({days: 7});
-            break;
-        case 'P30D':
-            startTime = startTime.minus({days: 30});
-            break;
-        case 'P1Y':
-            startTime = startTime.minus({years: 1});
-            break;
-        default:
-            console.log('No known period specified');
+
+    if (periodCode === 'D') {
+        startTime = startTime.minus({days: timePeriod});
+    } else if (periodCode === 'Y') {
+        startTime = startTime.minus({years: timePeriod});
+    } else {
+        console.log('No known period specified');
     }
     return startTime.valueOf();
 };
