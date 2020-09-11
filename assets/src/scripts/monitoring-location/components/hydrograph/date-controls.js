@@ -17,6 +17,7 @@ import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-valu
 import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
 
 export const drawDateRangeControls = function(elem, store, siteno) {
+    const MAX_NUMBER_OF_DAYS = 5;
     const DATE_RANGE = [{
         name: '7 days',
         period: 'P7D'
@@ -110,23 +111,34 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-form-group');
     numberOfDaysSelection.append('label')
         .attr('class', 'usa-label')
-        .attr('for', 'with-hint-input' )
+        .attr('for', 'with-hint-input-days-from-today' )
         .text('Days');
     numberOfDaysSelection.append('span')
-        .attr('id', 'with-hint-input-hint')
+        .attr('id', 'with-hint-input-days-from-today-hint')
         .attr('class', 'usa-hint')
-        .text('time in days before today');
+        .text('timespan in days before today');
     numberOfDaysSelection.append('input')
         .attr('class', 'usa-input usa-character-count__field')
-        .attr('id', 'with-hint-input')
-        .attr('maxlength', '4')
-        .attr('name', 'with-hint-input')
-        .attr('aria-describedby', 'with-hint-input-info with-hint-input-hint');
+        .attr('id', 'with-hint-input-days-from-today')
+        .attr('maxlength', `${MAX_NUMBER_OF_DAYS}`)
+        .attr('name', 'with-hint-input-days-from-today')
+        .attr('aria-describedby', 'with-hint-input-days-from-today-info with-hint-input-days-from-today-hint');
     numberOfDaysSelection.append('span')
-        .text('4 characters allowed')
-        .attr('id', 'with-hint-input-info')
+        .text(`${MAX_NUMBER_OF_DAYS} digits allowed`)
+        .attr('id', 'with-hint-input-days-from-today-info')
         .attr('class', 'usa-hint usa-character-count__message')
         .attr('aria-live', 'polite');
+    // Create a validation alert for user selection of number of days before today
+    const customDaysBeforeTodayValidationContainer = customDaysBeforeTodayContainer.append('div')
+        .attr('class', 'usa-alert usa-alert--warning usa-alert--validation')
+        .attr('id', 'custom-date-alert-container')
+        .attr('hidden', true);
+    const customDaysBeforeTodayAlertBody = customDaysBeforeTodayValidationContainer.append('div')
+        .attr('class', 'usa-alert__body')
+        .attr('id', 'custom-days-before-today-alert');
+    customDaysBeforeTodayAlertBody.append('h3')
+        .attr('class', 'usa-alert__heading')
+        .text('Requirements');
 
 
     // Adds controls for the date picker
@@ -244,7 +256,17 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('id', 'custom-date-submit')
         .text('Submit')
         .on('click', function() {
-  console.log('days before today submit clicked');
+            const userSpecifiedNumberOfDays = document.getElementById('with-hint-input-days-from-today').value;
+
+            if (isNaN(userSpecifiedNumberOfDays) || userSpecifiedNumberOfDays.length === 0) {
+                customDaysBeforeTodayAlertBody.selectAll('p').remove();
+                customDaysBeforeTodayAlertBody.append('p')
+                    .text('Entry must be a number.');
+                customDaysBeforeTodayValidationContainer.attr('hidden', null);
+            } else {
+                customDaysBeforeTodayValidationContainer.attr('hidden', true);
+                console.log('length ', userSpecifiedNumberOfDays.length);
+            }
 
         });
 
