@@ -67,9 +67,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         }, getCurrentDateRangeKind));
 
 
-
-
-    // Add radio buttons for 'days from today' and 'calendar days' selections
+       // Add radio buttons for 'days from today' and 'calendar days' selections
     const radioGroupForCustomSelectRadioButtons = containerRadioGroupCustomSelectButtons.append('div')
         .attr('role', 'radiogroup');
     const radioButtonListForCustomSelectRadioButtons = radioGroupForCustomSelectRadioButtons.append('ul').attr('class', 'usa-fieldset usa-list--unstyled');
@@ -84,7 +82,10 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 customDaysBeforeTodayContainer.attr('hidden', null);
                 customCalenderDaysContainer.attr('hidden', true);
             });
-        radioCustomDateRadioButtonDaysFromToday.append('label').attr('class', 'usa-radio__label').attr('for', 'custom-input-days-from-today').text('days before today');
+        radioCustomDateRadioButtonDaysFromToday.append('label')
+            .attr('class', 'usa-radio__label')
+            .attr('for', 'custom-input-days-from-today')
+            .text('days before today');
 
     const radioCustomDateRadioButtonCalender = radioButtonListForCustomSelectRadioButtons.append('li');
         radioCustomDateRadioButtonCalender.append('input')
@@ -97,7 +98,10 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 customDaysBeforeTodayContainer.attr('hidden', true);
                 customCalenderDaysContainer.attr('hidden', null);
             });
-        radioCustomDateRadioButtonCalender.append('label').attr('class', 'usa-radio__label').attr('for', 'custom-input-calender-day').text('calender days');
+        radioCustomDateRadioButtonCalender.append('label')
+            .attr('class', 'usa-radio__label')
+            .attr('for', 'custom-input-calender-day')
+            .text('calender days');
 
 
 
@@ -265,7 +269,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 customDaysBeforeTodayValidationContainer.attr('hidden', null);
             } else {
                 customDaysBeforeTodayValidationContainer.attr('hidden', true);
-                console.log('length ', userSpecifiedNumberOfDays.length);
+                store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDaysFromToday(
+                    siteno,
+                    userSpecifiedNumberOfDays
+                )).then(() => store.dispatch(ivTimeSeriesStateActions.clearIVGraphBrushOffset()));
+                console.log('submit dates');
             }
 
         });

@@ -10,7 +10,7 @@ const INITIAL_DAILY_VALUE_TIME_SERIES_DATA= {
  * @param {Object} availableDVTimeSeries
  * @return {Object} Redux action
  */
-const setAvailableDVTimeSeries = function (availableTimeSeries) {
+const setAvailableDVTimeSeries = function(availableTimeSeries) {
     return {
         type: 'SET_AVAILABLE_DV_TIME_SERIES',
         availableTimeSeries

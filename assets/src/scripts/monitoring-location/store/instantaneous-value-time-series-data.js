@@ -305,6 +305,19 @@ const retrieveUserRequestedIVDataForDateRange = function(siteno, startDateStr, e
 };
 
 /*
+ * Asynchronous Redux Action which retrieves data for a custom time range
+ * @param {String} siteno
+ * @param {number} numberOfDays
+ * @param {String} paramCd
+ * @return {Function} which returns a promise when the data has been fetched
+ */
+const retrieveUserRequestedIVDataForDaysFromToday = function(siteno, numberOfDays, parmCd=null) {
+    return function(dispatch) {
+        return dispatch(Actions.retrieveCustomIVTimeSeries(siteno, numberOfDays, parmCd));
+    };
+};
+
+/*
 * Asynchronous Redux Action which sets the current variable id and fetches the custom
 * time series for that variable or the extended time series depending on the current date range kind.
 * @param {String} siteno
@@ -358,5 +371,6 @@ export const Actions = {
     retrieveCustomIVTimeSeries,
     retrieveExtendedIVTimeSeries,
     retrieveUserRequestedIVDataForDateRange,
+    retrieveUserRequestedIVDataForDaysFromToday,
     updateIVCurrentVariableAndRetrieveTimeSeries
 };
