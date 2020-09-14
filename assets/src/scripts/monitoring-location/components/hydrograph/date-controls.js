@@ -85,61 +85,42 @@ export const drawDateRangeControls = function(elem, store, siteno) {
    // Add radio buttons for 'days from today' and 'calendar days' selections
     const listContainerForCustomSelectRadioButtons = containerRadioGroupCustomSelectButtons.append('ul')
         .attr('class', 'usa-fieldset usa-list--unstyled');
-    // const listItemForCustomSelectRadioButtons  = listContainerForCustomSelectRadioButtons.selectAll('li')
-    //     .attr('class', 'usa-fieldset')
-    //     .data(CUSTOM_TIMEFRAME_RADIO_BUTTON_DETAILS)
-    //     .enter()
-    //     .append('li');
-    // listItemForCustomSelectRadioButtons.append('input')
-    //     .attr('type', 'radio')
-    //     .attr('name', 'ts-custom-daterange-input')
-    //     .attr('id', d => `${d.value}-input`)
-    //     .attr('class', 'usa-radio__input')
-    //     .attr('value', d => d.value)
-    //     .attr('ga-on', 'click')
-    //     .attr('aria-expanded', d => d.ariaExpanded)
-    //     .attr('ga-event-category', 'TimeSeriesGraph')
-    //     .attr('ga-event-action', d => `changeDateRangeWith${d.value}`)
-    //     .on('change', function() {
-    //         const selected = listItemForCustomSelectRadioButtons.select('input:checked');
-    //         const selectedVal = selected.attr('value');
-    //         if (selectedVal === 'Days') {
-    //             customDaysBeforeTodayContainer.attr('hidden', null);
-    //             customCalenderDaysContainer.attr('hidden', true);
-    //         } else if (selectedVal === 'Calender') {
-    //             customDaysBeforeTodayContainer.attr('hidden', true);
-    //             customCalenderDaysContainer.attr('hidden', null);
-    //         } else {
-    //             console.log('there was an error in the custom timeframe selection');
-    //         }
-    //     });
-    //
-    CUSTOM_TIMEFRAME_RADIO_BUTTON_DETAILS.forEach(function(button) {
-        const radioCustomDateRadioButtonDaysFromToday = listContainerForCustomSelectRadioButtons.append('li');
-        radioCustomDateRadioButtonDaysFromToday.append('input')
-            .attr('class', 'usa-radio__input')
-            .attr('id', button.id)
-            .attr('type', 'radio')
-            .attr('name', 'ts-custom-daterange-input')
-            .attr('value', button.value)
-            .attr('ga-on', 'click')
-            .attr('ga-event-category', 'TimeSeriesGraph')
-            .attr('ga-event-action', `customDateRangeSelectionUsing${button.value}`)
-            .on('change', function() {
-                if (button.id === 'custom-input-calender-days') {
-                    containerCustomDaysBeforeToday.attr('hidden', true);
-                    containerCustomCalenderDays.attr('hidden', null);
-                } else {
-                    containerCustomDaysBeforeToday.attr('hidden', null);
-                    containerCustomCalenderDays.attr('hidden', true);
-                }
-            });
-        radioCustomDateRadioButtonDaysFromToday.append('label')
-            .attr('class', 'usa-radio__label')
-            .attr('for', button.id)
-            .text(button.text);
-    });
+    const listItemForCustomSelectRadioButtons  = listContainerForCustomSelectRadioButtons.selectAll('li')
+        .attr('class', 'usa-fieldset')
+        .data(CUSTOM_TIMEFRAME_RADIO_BUTTON_DETAILS)
+        .enter()
+        .append('li');
+    listItemForCustomSelectRadioButtons.append('input')
+        .attr('type', 'radio')
+        .attr('name', 'ts-custom-daterange-input')
+        .attr('id', d => `${d.value}-input`)
+        .attr('class', 'usa-radio__input')
+        .attr('value', d => d.value)
+        .attr('ga-on', 'click')
+        .attr('aria-expanded', d => d.ariaExpanded)
+        .attr('ga-event-category', 'TimeSeriesGraph')
+        .attr('ga-event-action', d => `changeDateRangeWith${d.value}`)
+        .on('change', function() {
+            const selected = listItemForCustomSelectRadioButtons.select('input:checked');
+            const selectedVal = selected.attr('value');
+            if (selectedVal === 'Days') {
+                containerCustomDaysBeforeToday.attr('hidden', null);
+                containerCustomCalenderDays.attr('hidden', true);
+            } else if (selectedVal === 'Calender') {
+                containerCustomDaysBeforeToday.attr('hidden', true);
+                containerCustomCalenderDays.attr('hidden', null);
+            } else {
+                console.log('there was an error in the custom timeframe selection');
+            }
+        });
 
+    listItemForCustomSelectRadioButtons.append('label')
+        .attr('class', 'usa-radio__label')
+        .attr('for', (d) => `${d.value}-input`)
+        .text((d) => d.text);
+    // li.call(link(store, (elem, dateRangeKind) => {
+    //     elem.select(`#${dateRangeKind}-input`).property('checked', true);
+    // }, getCurrentDateRangeKind));
 
     // Add controls for selecting time in days from today
     const numberOfDaysSelection = containerCustomDaysBeforeToday.append('div')
@@ -188,7 +169,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .on('click', function() {
             const userSpecifiedNumberOfDays = document.getElementById('with-hint-input-days-from-today').value;
             const formattedPeriodQueryParameter = `P${parseInt(userSpecifiedNumberOfDays)}D`;
-            // Validate input
+            // Validate user input for things not a number and blank entries
             if (isNaN(userSpecifiedNumberOfDays) || userSpecifiedNumberOfDays.length === 0) {
                 customDaysBeforeTodayAlertBody.selectAll('p').remove();
                 customDaysBeforeTodayAlertBody.append('p')
