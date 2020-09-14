@@ -146,20 +146,22 @@ export const mediaQuery = function (minWidth) {
 /**
  * Calculate the start time of a time range based on a time-delta string and the end time
  *
- * @param {String} period -- ISO duration for date range of the time series
+ * @param {String} period -- ISO duration for date range of the time series - which has the form of something like
+ * P7D in which the 'P' stands for 'period', the '7' is units in the period, and 'D' is the type of unit
+ * in this case 'Days.' There are only two unit types here, 'Days' or 'Years'
  * @param {Number} endTime -- the end time as universal time
  * @param {String} ianaTimeZone -- Internet Assigned Numbers Authority designation for a time zone
  * @returns {Number} the start time as universal time
  */
 export const calcStartTime = function(period, endTime, ianaTimeZone) {
-    const periodCode = period.substr(period.length - 1);
+    const timePeriodCode = period.substr(period.length - 1);
     const timePeriod = period.slice(1,-1);
 
     let startTime = new DateTime.fromMillis(endTime, {zone: ianaTimeZone});
 
-    if (periodCode === 'D') {
+    if (timePeriodCode === 'D') {
         startTime = startTime.minus({days: timePeriod});
-    } else if (periodCode === 'Y') {
+    } else if (timePeriodCode === 'Y') {
         startTime = startTime.minus({years: timePeriod});
     } else {
         console.log('No known period specified');
