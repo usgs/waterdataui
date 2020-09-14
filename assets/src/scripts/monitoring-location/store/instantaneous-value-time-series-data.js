@@ -305,6 +305,19 @@ const retrieveUserRequestedIVDataForDateRange = function(siteno, startDateStr, e
 };
 
 /*
+ * Asynchronous Redux Action which retrieves data for a custom time range
+ * @param {String} siteno
+ * @param {String} queryParameter - has the format P7D where 'P' stands for 'period', '7'is the unit value, and 'D' is a unit of days or years ('Y')
+ * @param {String} paramCd
+ * @return {Function} which returns a promise when the data has been fetched
+ */
+const retrieveUserRequestedIVDataForDateRangeWithCustomSelection = function(siteno, queryParameter, parmCd=null) {
+    return function(dispatch) {
+        return dispatch(Actions.retrieveCustomIVTimeSeries(siteno, queryParameter, parmCd));
+    };
+};
+
+/*
 * Asynchronous Redux Action which sets the current variable id and fetches the custom
 * time series for that variable or the extended time series depending on the current date range kind.
 * @param {String} siteno
@@ -358,5 +371,6 @@ export const Actions = {
     retrieveCustomIVTimeSeries,
     retrieveExtendedIVTimeSeries,
     retrieveUserRequestedIVDataForDateRange,
+    retrieveUserRequestedIVDataForDateRangeWithCustomSelection,
     updateIVCurrentVariableAndRetrieveTimeSeries
 };
