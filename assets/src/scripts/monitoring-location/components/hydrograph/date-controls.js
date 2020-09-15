@@ -11,6 +11,7 @@ import {
     isLoadingTS,
     hasAnyTimeSeries,
     getCurrentDateRangeKind,
+    getCurrentDateRangeKindCustomSelection,
     getCustomTimeRange} from '../../selectors/time-series-selector';
 import {getIanaTimeZone} from '../../selectors/time-zone-selector';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
@@ -61,6 +62,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('aria-label', 'Custom time interval select')
         .call(link(store, (container, dateRangeKind) => {
             container.attr('hidden', dateRangeKind === 'custom' ? null : true);
+
         }, getCurrentDateRangeKind));
 
     const containerCustomDaysBeforeToday = elem.insert('div', ':nth-child(4)')
@@ -68,8 +70,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date by days before today specification')
         .call(link(store, (container, dateRangeKind) => {
+            console.log('container ', container)
             console.log('days before dateRangeKind', dateRangeKind)
-            container.attr('hidden', dateRangeKind === 'custom' ? null : true);
+
         }, getCurrentDateRangeKind));
 
     const containerCustomCalenderDays = elem.insert('div', ':nth-child(5)')
@@ -79,8 +82,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('aria-label', 'Custom date specification')
         .call(link(store, (container, dateRangeKind) => {
             console.log('calender dateRangeKind', dateRangeKind)
+
             container.attr('hidden', dateRangeKind === 'custom' ? null : true);
-        }, getCurrentDateRangeKind));
+        }, getCurrentDateRangeKind, getCurrentDateRangeKindCustomSelection));
 
    // Add radio buttons for 'days from today' and 'calendar days' selections
     const listContainerForCustomSelectRadioButtons = containerRadioGroupCustomSelectButtons.append('ul')
@@ -118,9 +122,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-radio__label')
         .attr('for', (d) => `${d.value}-input`)
         .text((d) => d.text);
-    // li.call(link(store, (elem, dateRangeKind) => {
-    //     elem.select(`#${dateRangeKind}-input`).property('checked', true);
-    // }, getCurrentDateRangeKind));
+    listItemForCustomSelectRadioButtons.call(link(store, (elem, dateRangeKindCustomSelection) => {
+        console.log('element selected ', elem.select(`#${dateRangeKindCustomSelection}-input`).property('checked', true));
+        console.log('select item call dateRangeKindCustomSelection ', dateRangeKindCustomSelection)
+        elem.select(`#${dateRangeKindCustomSelection}-input`).property('checked', true);
+    }, getCurrentDateRangeKindCustomSelection));
 
     // Add controls for selecting time in days from today
     const numberOfDaysSelection = containerCustomDaysBeforeToday.append('div')
@@ -177,10 +183,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 customDaysBeforeTodayValidationContainer.attr('hidden', null);
             } else {
                 customDaysBeforeTodayValidationContainer.attr('hidden', true);
-
-                store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(
+                const  dateRangeKindCustomSelection = 'Days';
+                store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeriesCustomSelectionPeriod(
                     siteno,
-                    formattedPeriodQueryParameter
+                    formattedPeriodQueryParameter,
+                    dateRangeKindCustomSelection
                 )).then(() => store.dispatch(ivTimeSeriesStateActions.clearIVGraphBrushOffset()));
                 console.log('this is the query parameter ', formattedPeriodQueryParameter);
             }

@@ -29,6 +29,10 @@ export const getCurrentDateRangeKind = (state) => {
     return state.ivTimeSeriesState.currentIVDateRangeKind || null;
 };
 
+export const getCurrentDateRangeKindCustomSelection = (state) => {
+    return state.ivTimeSeriesState.currentIVDateRangeKindCustomSelection || null;
+};
+
 export const getLoadingTsKeys = state => state.ivTimeSeriesState.loadingIVTSKeys || [];
 
 export const getNwisTimeZone = state => state.ivTimeSeriesData.timeZones || {};

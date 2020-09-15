@@ -56,6 +56,21 @@ const setCurrentIVDateRangeKind = function(dateRangeKind) {
 };
 
 /*
+ * Synchronous action sets the date range custom selection kind of the IV data.
+ * @param {String} dateRangeKindCustomSelection - is a subselection for users
+ * choosing a custom timeframe for the hydrograph. The possible values are 'Days' or 'Calender'
+ * For users viewing 'days from today' or a span of calender dates on the hydrograph.
+ * @return {Object} - Redux action
+ */
+const setCurrentIVDateRangeKindCustomSelection = function(dateRangeKindCustomSelection) {
+    console.log('setting here ', dateRangeKindCustomSelection)
+    return {
+        type: 'SET_CURRENT_IV_DATE_RANGE_KIND_CUSTOM_SELECTION',
+        dateRangeKindCustomSelection
+    };
+};
+
+/*
  * Synchronous action sets the custom date range for the IV graph
  * @param {Number} startTime - epoch in milliseconds
  * @param {Number} endTime - epoch in milliseconds
@@ -218,6 +233,12 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
                 currentIVDateRangeKind: action.dateRangeKind
             };
 
+        case 'SET_CURRENT_IV_DATE_RANGE_KIND_CUSTOM_SELECTION':
+            return {
+                ...ivTimeSeriesState,
+                currentIVDateRangeKindCustomSelection: action.dateRangeKindCustomSelection
+            };
+
         case 'SET_CUSTOM_IV_TIME_RANGE':
             return {
                 ...ivTimeSeriesState,
@@ -282,6 +303,7 @@ export const Actions = {
     setCurrentIVVariable,
     setCurrentIVMethodID,
     setCurrentIVDateRangeKind,
+    setCurrentIVDateRangeKindCustomSelection,
     setCustomIVTimeRange,
     setIVGraphCursorOffset,
     setIVGraphBrushOffset,
