@@ -98,7 +98,8 @@ export const drawGraphBrush = function(container, store) {
             svg.select('.brush').remove();
 
             const group = svg.append('g').attr('class', 'brush')
-                .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`).call(graphBrush);
+                .attr('transform', `translate(${layout.margin.left},${layout.margin.top})`)
+                .call(graphBrush);
 
             /* Draws the custom brush handle using an SVG path. The path is drawn twice, once for the handle
             * on the left hand side, which in d3 brush terms is referred to as 'east' (data type 'e'), and then
@@ -128,8 +129,6 @@ export const drawGraphBrush = function(container, store) {
                 .enter().append('path')
                 .attr('class', 'handle--custom')
                 .attr('d', brushResizePath);
-
-
 
             // Add a class so the default handles can have styling that won't conflict with the slider handle
             svg.selectAll('.handle').classed('standard-brush-handle', true);
