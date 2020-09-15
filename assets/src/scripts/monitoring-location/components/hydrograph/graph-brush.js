@@ -29,15 +29,11 @@ export const drawGraphBrush = function(container, store) {
         const CENTERING_DIVISOR_LARGE_SCREEN = 3.3;
         const CENTERING_DIVISOR_SMALL_SCREEN = 2.5;
 
-        // if the user clicks a point in the brush area without making an actual selection, remove the custom handles
-        if (event.selection == null) {
-            customHandle.attr('display', 'none');            
-        }
         customHandle.attr('transform', function(d, index) {
             const yPositionForCustomHandle = mediaQuery(config.USWDS_LARGE_SCREEN) ?
                 -layoutHeight / CENTERING_DIVISOR_LARGE_SCREEN :
                 -layoutHeight / CENTERING_DIVISOR_SMALL_SCREEN;
-            return `translate(${event.selection[index]}, ${yPositionForCustomHandle})`;
+            return event.selection != null ? `translate(${event.selection[index]}, ${yPositionForCustomHandle})` : null;
         });
 
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
@@ -117,7 +113,7 @@ export const drawGraphBrush = function(container, store) {
                 const y = layoutHeight / 2;
 
                 // Create the svg path using the standard SVG commands M, A, V etc. and substituted variables.
-                return `M ${.5 * x},${y} 
+                return `M ${.5 * x},${y}
                     A6,6 0 0 ${east} ${6.5 * x},${y + 6}
                     V${2 * y - 6}
                     A6,6 0 0 ${east} ${.5 * x},${2 * y}

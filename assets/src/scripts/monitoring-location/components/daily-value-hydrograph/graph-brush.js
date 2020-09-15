@@ -30,15 +30,11 @@ export const drawGraphBrush = function(container, store) {
         const CENTERING_DIVISOR_LARGE_SCREEN = 3;
         const CENTERING_DIVISOR_SMALL_SCREEN = 2.3;
 
-        // if the user clicks a point in the brush area without making an actual selection, remove the custom handles
-        if (event.selection == null) {
-            customHandle.attr('display', 'none');
-        }
         customHandle.attr('transform', function(d, index) {
             const yPositionForCustomHandle = mediaQuery(config.USWDS_LARGE_SCREEN) ?
                 -layoutHeight / CENTERING_DIVISOR_LARGE_SCREEN :
                 -layoutHeight / CENTERING_DIVISOR_SMALL_SCREEN;
-            return `translate(${event.selection[index]}, ${yPositionForCustomHandle})`;
+            return event.selection != null ? `translate(${event.selection[index]}, ${yPositionForCustomHandle})` : null;
         });
 
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
