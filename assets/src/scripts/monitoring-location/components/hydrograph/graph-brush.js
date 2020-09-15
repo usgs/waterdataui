@@ -14,6 +14,7 @@ import {isVisible} from './selectors/time-series-data';
 import {drawDataLines} from './time-series-lines';
 import {mediaQuery} from '../../../utils';
 import config from '../../../config';
+import {getXAxis} from "../daily-value-hydrograph/selectors/axes";
 
 /*
  * Renders a brush element within container for the main graph
@@ -76,7 +77,7 @@ export const drawGraphBrush = function(container, store) {
                     getBrushLayout
                 ))
                 .call(link(store, appendXAxis, createStructuredSelector({
-                    xAxis: getBrushXAxis,
+                    xAxis: getXAxis('BRUSH'),
                     layout: getBrushLayout
                 })))
                 .call(link(store, drawDataLines, createStructuredSelector({
@@ -130,6 +131,7 @@ export const drawGraphBrush = function(container, store) {
                 .data([{type: 'w'}, {type: 'e'}])
                 .enter().append('path')
                 .attr('class', 'handle--custom')
+                .attr('cursor', 'ew-resize')
                 .attr('d', brushResizePath);
 
             // Creates the brush
