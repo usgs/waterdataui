@@ -35,8 +35,6 @@ export const createXScale = function (timeRange, xSize) {
     let scale = scaleLinear()
         .range([0, xSize]);
     if (timeRange) {
-        console.log('this should run with timeRange = ', timeRange)
-        console.log('in createXScale xSize', xSize)
         scale.domain([timeRange.start, timeRange.end]);
     }
     return scale;
@@ -78,9 +76,8 @@ export const getXScale = memoize((kind, tsKey) => createSelector(
         state => state.ivTimeSeriesState.ivGraphBrushOffset,
     (layout, requestTimeRange, brushOffset) => {
         let timeRange;
-        console.log('in getXScale')
+
         if (kind === 'BRUSH') {
-            console.log('this should have run and this is requestTimeRange ', requestTimeRange)
             timeRange = requestTimeRange;
         } else {
 
