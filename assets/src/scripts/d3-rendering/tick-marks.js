@@ -87,7 +87,7 @@ export const generateTimeTicks = function(startMillis, endMillis, ianaTimeZone) 
 
     let result = {
         dates: [],
-        format: null
+        format: {}
     };
 
     if (dayCount <= 3) {

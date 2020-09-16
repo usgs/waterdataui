@@ -15,6 +15,7 @@ import {getYLabel, getSecondaryYLabel, getTsTimeZone, TEMPERATURE_PARAMETERS} fr
 const createXAxis = function(xScale, ianaTimeZone) {
     const [startMillis, endMillis] = xScale.domain();
     const ticks = generateTimeTicks(startMillis, endMillis, ianaTimeZone);
+
     return axisBottom()
         .scale(xScale)
         .tickValues(ticks.dates)
@@ -77,7 +78,7 @@ export const getBrushXAxis = createSelector(
     getBrushXScale('current'),
     getTsTimeZone,
     getCurrentDateRangeKind,
-    (xScale, ianaTimeZone, period) => createXAxis(xScale, period, ianaTimeZone)
+    (xScale, ianaTimeZone, period) => createXAxis(xScale, ianaTimeZone, period)
 );
 
 /**
