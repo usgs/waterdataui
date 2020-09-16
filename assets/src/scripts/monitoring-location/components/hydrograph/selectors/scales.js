@@ -76,7 +76,7 @@ export const getXScale = memoize((kind, tsKey) => createSelector(
         state => state.ivTimeSeriesState.ivGraphBrushOffset,
     (layout, requestTimeRange, brushOffset) => {
         let timeRange;
-        
+
         if (kind === 'BRUSH') {
             timeRange = requestTimeRange;
         } else {
