@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.37.0...master)
 
-## [0.37.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.36.0...waterdataui-0.37.0) - 2020-09-15
+## [0.37.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.36.0...waterdataui-0.37.0) - 2020-09-16
 ### Added
 - Added custom handles and hint text to  brush graph.
 - Added rel="noopener" attribute to links with target="_blank" attribute.
