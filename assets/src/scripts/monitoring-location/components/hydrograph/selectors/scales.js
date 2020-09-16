@@ -80,7 +80,6 @@ export const getXScale = memoize((kind, tsKey) => createSelector(
         if (kind === 'BRUSH') {
             timeRange = requestTimeRange;
         } else {
-
             if (brushOffset && requestTimeRange) {
                 timeRange = {
                     'start': requestTimeRange.start + brushOffset.start,
