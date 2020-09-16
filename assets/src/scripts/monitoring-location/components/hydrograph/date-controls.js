@@ -343,6 +343,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             if (selectedVal === 'custom') {
                 containerRadioGroupCustomSelectButtons.attr('hidden', null);
                 selected.attr('aria-expanded', true);
+                store.dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton('custom'));
             } else {
                 li.select('input#custom-date-range').attr('aria-expanded', false);
                 containerRadioGroupCustomSelectButtons.attr('hidden', true);
