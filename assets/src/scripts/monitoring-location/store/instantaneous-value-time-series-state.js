@@ -71,11 +71,11 @@ const setCustomIVTimeRange = function(startTime, endTime) {
 };
 
 
-const setCustomTimeRangeSelectionButton = function(checkedCustomTimeRangeSelectionButton) {
-    console.log('in setCustomTimeRangeSelectionButton received ', checkedCustomTimeRangeSelectionButton)
+const setUserInputTimeRangeSelectionButton = function(checkedUserInputTimeRangeSelectionButton) {
+    console.log('in setCustomTimeRangeSelectionButton received ', checkedUserInputTimeRangeSelectionButton)
     return {
-        type: 'SET_CUSTOM_TIME_RANGE_SELECTION_BUTTON',
-        checkedCustomTimeRangeSelectionButton
+        type: 'SET_USER_INPUT_TIME_RANGE_SELECTION_BUTTON',
+        checkedUserInputTimeRangeSelectionButton
     };
 };
 
@@ -247,11 +247,11 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
                 }
             };
 
-        case 'SET_CUSTOM_TIME_RANGE_SELECTION_BUTTON':
-            console.log('ran SET_CUSTOM_TIME_RANGE_SELECTION_BUTTON')
+        case 'SET_USER_INPUT_TIME_RANGE_SELECTION_BUTTON':
+            console.log('ran SET_USER_INPUT_TIME_RANGE_SELECTION_BUTTON')
             return {
                 ...ivTimeSeriesState,
-                customTimeRangeSelectionButton: action.checkedCustomTimeRangeSelectionButton
+                userInputTimeRangeSelectionButton: action.checkedUserInputTimeRangeSelectionButton
             };
 
         case 'SET_CUSTOM_TIME_RANGE_SUB_SELECTION_BUTTON':
@@ -316,7 +316,7 @@ export const Actions = {
     setCurrentIVMethodID,
     setCurrentIVDateRangeKind,
     setCustomIVTimeRange,
-    setCustomTimeRangeSelectionButton,
+    setUserInputTimeRangeSelectionButton,
     setCustomTimeRangeSubSelectionButton,
     setIVGraphCursorOffset,
     setIVGraphBrushOffset,

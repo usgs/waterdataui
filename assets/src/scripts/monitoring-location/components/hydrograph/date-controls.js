@@ -10,7 +10,7 @@ import components from '../../../../../node_modules/uswds/src/js/components';
 import {
     isLoadingTS,
     hasAnyTimeSeries,
-    getCheckedCustomTimeRangeSelectionButton,
+    getCheckedUserInputTimeRangeSelectionButton,
     getCheckedCustomTimeRangeSubSelectionButton,
     getCurrentDateRangeKind,
     getCustomTimeRange} from '../../selectors/time-series-selector';
@@ -122,13 +122,13 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-radio__label')
         .attr('for', (d) => `${d.value}-input`)
         .text((d) => d.text);
-    listItemForCustomSelectRadioButtons.call(link(store, (elem, checkedCustomTimeRangeSelectionButton) => {
-        console.log('select button from state ? ', checkedCustomTimeRangeSelectionButton)
+    listItemForCustomSelectRadioButtons.call(link(store, (elem, checkedUserInputTimeRangeSelectionButton) => {
+        console.log('select button from state ? ', checkedUserInputTimeRangeSelectionButton)
 
         // console.log('element selected ', elem.select(`#${dateRangeKindCustomSelection}-input`).property('checked', true));
         // console.log('select item call dateRangeKindCustomSelection ', dateRangeKindCustomSelection)
-        elem.select(`#${checkedCustomTimeRangeSelectionButton}`).property('checked', true);
-    }, getCheckedCustomTimeRangeSelectionButton))
+        elem.select(`#${checkedUserInputTimeRangeSelectionButton}`).property('checked', true);
+    }, getCheckedUserInputTimeRangeSelectionButton))
     .call(link(store, (elem, checkedCustomTimeRangeSubSelectionButton) => {
         console.log('sub select button from state ? ', checkedCustomTimeRangeSubSelectionButton)
         // console.log('element selected ', elem.select(`#${dateRangeKindCustomSelection}-input`).property('checked', true));
