@@ -49,6 +49,7 @@ const setCurrentIVMethodID = function(methodID) {
  * @return {Object} - Redux action
  */
 const setCurrentIVDateRangeKind = function(dateRangeKind) {
+    console.log('in setCurrentIVDateRangeKind got dateRangeKind = ', dateRangeKind)
     return {
         type: 'SET_CURRENT_IV_DATE_RANGE_KIND',
         dateRangeKind
@@ -70,17 +71,20 @@ const setCustomIVTimeRange = function(startTime, endTime) {
 };
 
 
-const setCustomTimeRangeSelectionButton = function(CheckedCustomTimeRangeSelectionButton) {
+const setCustomTimeRangeSelectionButton = function(checkedCustomTimeRangeSelectionButton) {
+    console.log('in setCustomTimeRangeSelectionButton received ', checkedCustomTimeRangeSelectionButton)
     return {
         type: 'SET_CUSTOM_TIME_RANGE_SELECTION_BUTTON',
-        CheckedCustomTimeRangeSelectionButton
+        checkedCustomTimeRangeSelectionButton
     };
 };
 
-const setCustomTimeRangeSubSelectionButton = function(CheckedCustomTimeRangeSubSelectionButton) {
+const setCustomTimeRangeSubSelectionButton = function(checkedCustomTimeRangeSubSelectionButton) {
+    console.log('in setCustomTimeRangeSUBSelectionButton received ', checkedCustomTimeRangeSubSelectionButton)
+
     return {
         type: 'SET_CUSTOM_TIME_RANGE_SUB_SELECTION_BUTTON',
-        CheckedCustomTimeRangeSubSelectionButton
+        checkedCustomTimeRangeSubSelectionButton
     };
 };
 
@@ -206,6 +210,7 @@ const stopTimeSeriesPlay = function() {
 };
 
 export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
+    console.log('action type = ', action.type)
     switch (action.type) {
         case 'SET_IV_TIME_SERIES_VISIBILITY': {
             let newVisibility = {};
@@ -243,12 +248,14 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
             };
 
         case 'SET_CUSTOM_TIME_RANGE_SELECTION_BUTTON':
+            console.log('ran SET_CUSTOM_TIME_RANGE_SELECTION_BUTTON')
             return {
                 ...ivTimeSeriesState,
                 customTimeRangeSelectionButton: action.checkedCustomTimeRangeSelectionButton
             };
 
         case 'SET_CUSTOM_TIME_RANGE_SUB_SELECTION_BUTTON':
+            console.log('ran SET_CUSTOM_TIME_RANGE_SUBBBBSELECTION_BUTTON')
             return {
                 ...ivTimeSeriesState,
                 customTimeRangeSubSelectionButton: action.checkedCustomTimeRangeSubSelectionButton

@@ -258,6 +258,8 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
         const thisParamCd = paramCd ? paramCd : getCurrentParmCd(state);
         const tsRequestKey = getTsRequestKey ('current', period, thisParamCd)(state);
         dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKind(period));
+        dispatch(ivTimeSeriesStateActions.setCustomTimeRangeSelectionButton('thing one'));
+        dispatch(ivTimeSeriesStateActions.setCustomTimeRangeSubSelectionButton('thing two'));
         if (!hasTimeSeries('current', period, thisParamCd)(state)) {
             dispatch(ivTimeSeriesStateActions.addIVTimeSeriesToLoadingKeys([tsRequestKey]));
             const endTime = getRequestTimeRange('current', 'P7D')(state).end;

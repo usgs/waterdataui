@@ -71,9 +71,8 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date by days before today specification')
         .call(link(store, (container, dateRangeKind) => {
-            console.log('container ', container)
             console.log('days before dateRangeKind', dateRangeKind)
-
+            container.attr('hidden', dateRangeKind === 'custom' ? null : true);
         }, getCurrentDateRangeKind));
 
     const containerCustomCalenderDays = elem.insert('div', ':nth-child(5)')
@@ -191,13 +190,12 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 customDaysBeforeTodayValidationContainer.attr('hidden', null);
             } else {
                 customDaysBeforeTodayValidationContainer.attr('hidden', true);
-                const  dateRangeKindCustomSelection = 'days';
+                const dateRangeKindCustomSelection = 'days';
                 store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeriesCustomSelectionPeriod(
                     siteno,
                     formattedPeriodQueryParameter,
                     dateRangeKindCustomSelection
                 )).then(() => store.dispatch(ivTimeSeriesStateActions.clearIVGraphBrushOffset()));
-                console.log('this is the query parameter ', formattedPeriodQueryParameter);
             }
         });
 
