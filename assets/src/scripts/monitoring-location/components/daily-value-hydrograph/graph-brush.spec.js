@@ -70,6 +70,7 @@ describe ('monitoring-location/components/daily-value-hydrograph/graph-brush mod
             expect(div.select('.brush-text-hint').size()).toBe(1);
             expect(div.selectAll('.handle').size()).toBe(2);
             expect(div.selectAll('.handle--custom').size()).toBe(2);
+            expect(div.selectAll('.tick').size()).toBe(5);
         });
 
         it('Should create a DV line, and an x-axis', () => {
