@@ -56,9 +56,9 @@ export const configureStore = function (initialState) {
                 median: false
             },
             currentIVDateRangeKind: 'P7D',
-            currentIVDateRangeKindButtonSelection: 'P7D',
-            currentIVDateRangeKindButtonSubSelection: 'Days',
             customIVTimeRange: null,
+            customTimeRangeSelectionButton: 'P7D-input',
+            customTimeRangeSubSelectionButton: 'Days',
             currentIVVariableID: null,
             ivGraphCursorOffset: null,
             audiblePlayId: null,
