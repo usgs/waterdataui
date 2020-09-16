@@ -77,8 +77,7 @@ const createAxes = function(xScale, yScale, secondaryYScale, yTickDetails, yTick
 export const getBrushXAxis = createSelector(
     getBrushXScale('current'),
     getTsTimeZone,
-    getCurrentDateRangeKind,
-    (xScale, ianaTimeZone, period) => createXAxis(xScale, ianaTimeZone, period)
+    (xScale, ianaTimeZone) => createXAxis(xScale, ianaTimeZone)
 );
 
 /**
