@@ -29,15 +29,11 @@ export const drawGraphBrush = function(container, store) {
         const CENTERING_DIVISOR_LARGE_SCREEN = 3.3;
         const CENTERING_DIVISOR_SMALL_SCREEN = 2.5;
 
-        // if the user clicks a point in the brush area without making an actual selection, remove the custom handles
-        if (event.selection == null) {
-            customHandle.attr('display', 'none');            
-        }
         customHandle.attr('transform', function(d, index) {
             const yPositionForCustomHandle = mediaQuery(config.USWDS_LARGE_SCREEN) ?
                 -layoutHeight / CENTERING_DIVISOR_LARGE_SCREEN :
                 -layoutHeight / CENTERING_DIVISOR_SMALL_SCREEN;
-            return `translate(${event.selection[index]}, ${yPositionForCustomHandle})`;
+            return event.selection != null ? `translate(${event.selection[index]}, ${yPositionForCustomHandle})` : null;
         });
 
         if (!event.sourceEvent || event.sourceEvent.type === 'zoom') {
@@ -97,15 +93,15 @@ export const drawGraphBrush = function(container, store) {
             layoutHeight = layout.height;
 
             const graphBrush = brushX()
+                .extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom - layout.margin.top]])
+                .handleSize([1]) // make default handle 1px wide
                 .on('brush end', brushed);
 
             svg.select('.brush').remove();
 
             const group = svg.append('g').attr('class', 'brush')
-                .attr('transform', `translate(${layout.margin.left}, ${layout.margin.top})`);
-
-            graphBrush.handleSize([1]); // make default handle 1px wide
-            graphBrush.extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom - layout.margin.top]]);
+                .attr('transform', `translate(${layout.margin.left}, ${layout.margin.top})`)
+                .call(graphBrush)
 
             /* Draws the custom brush handle using an SVG path. The path is drawn twice, once for the handle
             * on the left hand side, which in d3 brush terms is referred to as 'east' (data type 'e'), and then
@@ -117,7 +113,7 @@ export const drawGraphBrush = function(container, store) {
                 const y = layoutHeight / 2;
 
                 // Create the svg path using the standard SVG commands M, A, V etc. and substituted variables.
-                return `M ${.5 * x},${y} 
+                return `M ${.5 * x},${y}
                     A6,6 0 0 ${east} ${6.5 * x},${y + 6}
                     V${2 * y - 6}
                     A6,6 0 0 ${east} ${.5 * x},${2 * y}
@@ -135,9 +131,6 @@ export const drawGraphBrush = function(container, store) {
                 .enter().append('path')
                 .attr('class', 'handle--custom')
                 .attr('d', brushResizePath);
-
-            // Creates the brush
-            group.call(graphBrush);
 
             // Add a class so the default handles can have styling that won't conflict with the slider handle
             svg.selectAll('.handle').classed('standard-brush-handle', true);
