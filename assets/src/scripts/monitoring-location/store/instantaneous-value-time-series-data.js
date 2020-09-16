@@ -311,14 +311,12 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
 * For users viewing 'days from today' or a span of calender dates on the hydrograph respectively.
 * @return {Function} which returns a promise.
  */
-const retrieveExtendedIVTimeSeriesCustomSelectionPeriod = function(siteno, period, dateRangeKindCustomSelection, paramCd=null) {
-    console.log('the goal ', dateRangeKindCustomSelection)
+const retrieveExtendedIVTimeSeriesCustomSelectionPeriod = function(siteno, period, paramCd=null) {
     return function(dispatch, getState) {
         const state = getState();
         const thisParamCd = paramCd ? paramCd : getCurrentParmCd(state);
         const tsRequestKey = getTsRequestKey ('current', period, thisParamCd)(state);
         dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKind(period));
-        dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKindCustomSelection(dateRangeKindCustomSelection));
         if (!hasTimeSeries('current', period, thisParamCd)(state)) {
             dispatch(ivTimeSeriesStateActions.addIVTimeSeriesToLoadingKeys([tsRequestKey]));
             const endTime = getRequestTimeRange('current', 'P7D')(state).end;
