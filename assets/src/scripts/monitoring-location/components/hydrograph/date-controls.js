@@ -61,10 +61,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('id', 'ts-custom-date-radio-group')
         .attr('role', 'radiogroup')
         .attr('aria-label', 'Custom time interval select')
-        .call(link(store, (container, dateRangeKind) => {
-            container.attr('hidden', dateRangeKind === 'custom' ? null : true);
-
-        }, getCurrentDateRangeKind));
+        .call(link(store, (container, checkedUserInputTimeRangeSelectionButton) => {
+            container.attr('hidden', checkedUserInputTimeRangeSelectionButton === 'custom' ? null : true);
+        }, getCheckedCustomTimeRangeSubSelectionButton));
 
     const containerCustomDaysBeforeToday = elem.insert('div', ':nth-child(4)')
         .attr('id', 'ts-custom-days-before-today-select-container')
