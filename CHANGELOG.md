@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Moved the 'provisional data statement' to a separate page--added link below graph.
 
 ### Fixed
+- Issue that removed tick marks from main graph's brush area
 - Issue where networks/monitoring-locations/ caused an error
 
 ## [0.36.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.35.0...waterdataui-0.36.0) - 2020-08-25
