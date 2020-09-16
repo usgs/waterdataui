@@ -25,6 +25,10 @@ export const getCurrentVariableID = state => state.ivTimeSeriesState.currentIVVa
 
 export const getCurrentMethodID = state => state.ivTimeSeriesState.currentIVMethodID;
 
+export const getCheckedCustomTimeRangeSelectionButton = state => state.customTimeRangeSelectionButton;
+
+export const getCheckedCustomTimeRangeSubSelectionButton = state => state.customTimeRangeSubSelectionButton;
+
 export const getCurrentDateRangeKind = (state) => {
     return state.ivTimeSeriesState.currentIVDateRangeKind || null;
 };
