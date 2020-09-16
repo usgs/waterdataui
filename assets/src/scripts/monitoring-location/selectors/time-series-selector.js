@@ -1,8 +1,8 @@
 import memoize from 'fast-memoize';
 import uniq from 'lodash/uniq';
 import _includes from 'lodash/includes';
-import { DateTime } from 'luxon';
-import { createSelector } from 'reselect';
+import {DateTime} from 'luxon';
+import {createSelector} from 'reselect';
 
 import {getIanaTimeZone} from './time-zone-selector';
 
@@ -25,9 +25,9 @@ export const getCurrentVariableID = state => state.ivTimeSeriesState.currentIVVa
 
 export const getCurrentMethodID = state => state.ivTimeSeriesState.currentIVMethodID;
 
-export const getCheckedCustomTimeRangeSelectionButton = state => state.customTimeRangeSelectionButton;
+export const getCheckedCustomTimeRangeSelectionButton = state => state.ivTimeSeriesState.customTimeRangeSelectionButton;
 
-export const getCheckedCustomTimeRangeSubSelectionButton = state => state.customTimeRangeSubSelectionButton;
+export const getCheckedCustomTimeRangeSubSelectionButton = state => state.ivTimeSeriesState.customTimeRangeSubSelectionButton;
 
 export const getCurrentDateRangeKind = (state) => {
     return state.ivTimeSeriesState.currentIVDateRangeKind || null;
