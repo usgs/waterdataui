@@ -63,7 +63,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'container-radio-group-and-form-buttons')
         .call(link(store, (container, checkedUserInputTimeRangeSelectionButton) => {
             container.attr('hidden', checkedUserInputTimeRangeSelectionButton === 'custom' ? null : true);
-        }, getCheckedUserInputTimeRangeSelectionButton));
+        }, getCheckedUserInputTimeRangeSelectionButton))
+        // .call(link(store, (container, checkedCustomTimeRangeSubSelectionButton) => {
+        //
+        //
+        // }, getCheckedCustomTimeRangeSubSelectionButton));
 
 
 
@@ -132,7 +136,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     .call(link(store, (elem, checkedCustomTimeRangeSubSelectionButton) => {
         console.log('sub select button from state ? ', checkedCustomTimeRangeSubSelectionButton)
 
-        // elem.select(`#${dateRangeKindCustomSelection}-input`).property('checked', true);
+
     }, getCheckedCustomTimeRangeSubSelectionButton));
     // Add controls for selecting time in days from today
     const numberOfDaysSelection = containerCustomDaysBeforeToday.append('div')
