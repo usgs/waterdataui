@@ -266,8 +266,7 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
             dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton('custom'));
         }
 
-        // this next line is just for testing
-        dispatch(ivTimeSeriesStateActions.setCustomTimeRangeSubSelectionButton('thing two'));
+
 
         if (!hasTimeSeries('current', period, thisParamCd)(state)) {
             dispatch(ivTimeSeriesStateActions.addIVTimeSeriesToLoadingKeys([tsRequestKey]));
