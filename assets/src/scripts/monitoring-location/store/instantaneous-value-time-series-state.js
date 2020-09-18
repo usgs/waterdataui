@@ -266,7 +266,7 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
             return {
                 ...ivTimeSeriesState,
                 userInputNumberOfDays: action.userInputNumberOfDays
-            };           
+            };
 
         case 'SET_IV_GRAPH_CURSOR_OFFSET':
             return {

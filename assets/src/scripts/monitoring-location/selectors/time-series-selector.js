@@ -45,6 +45,8 @@ export const getCustomTimeRange = state => state.ivTimeSeriesState.customIVTimeR
 
 export const getTimeSeries = state => state.ivTimeSeriesData.timeSeries ? state.ivTimeSeriesData.timeSeries : {};
 
+export const getUserInputNumberOfDays = state => state.ivTimeSeriesState.userInputNumberOfDays;
+
 export const hasAnyTimeSeries = createSelector(
     getTimeSeries,
     (timeSeries) => {
