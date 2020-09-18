@@ -12,6 +12,7 @@ import {
     hasAnyTimeSeries,
     getCheckedUserInputTimeRangeSelectionButton,
     getCheckedUserInputCustomTimeRangeSelectionButton,
+    getCurrentDateRangeKind,
     getCustomTimeRange} from '../../selectors/time-series-selector';
 import {getIanaTimeZone} from '../../selectors/time-zone-selector';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
@@ -156,6 +157,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     customDaysBeforeTodayAlertBody.append('h3')
         .attr('class', 'usa-alert__heading')
         .text('Requirements');
+    numberOfDaysSelection.call(link(store, (container, dateRangeKind) => {
+        console.log('dateRangeKind ', dateRangeKind)
+        container.select('#with-hint-input-days-from-today')
+            .property('value', '5');
+    }, getCurrentDateRangeKind));
 
     // Adds controls for the days before today submit button
     const daysBeforeTodaySubmitContainer = containerCustomDaysBeforeToday.append('div')

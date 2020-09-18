@@ -3,7 +3,7 @@ import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
 import {
-    getRequestTimeRange, getCurrentVariable, getTimeSeriesForTsKey, getCurrentParmCd, getCurrentMethodID,
+    getRequestTimeRange, getCurrentVariable, getCurrentParmCd, getCurrentMethodID,
     getMethods
 } from '../../../selectors/time-series-selector';
 import {getIanaTimeZone} from '../../../selectors/time-zone-selector';

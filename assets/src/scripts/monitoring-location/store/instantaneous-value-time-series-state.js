@@ -85,6 +85,13 @@ const setUserInputCustomTimeRangeSelectionButton = function(checkedUserInputCust
     };
 };
 
+const setUserInputNumberOfDays = function (userInputNumberOfDays) {
+    return {
+        type: 'SET_USER_INPUT_NUMBER_OF_DAYS',
+        userInputNumberOfDays
+    };
+};
+
 /*
  * Synchronous action sets the IV graph cursor offset - This is the difference
  * in cursor position and graph start time, in milliseconds
@@ -254,6 +261,13 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
                 ...ivTimeSeriesState,
                 userInputCustomTimeRangeSelectionButton: action.checkedUserInputCustomTimeRangeSelectionButton
             };
+
+        case 'SET_USER_INPUT_NUMBER_OF_DAYS':
+            return {
+                ...ivTimeSeriesState,
+                userInputNumberOfDays: action.userInputNumberOfDays
+            };           
+
         case 'SET_IV_GRAPH_CURSOR_OFFSET':
             return {
                 ...ivTimeSeriesState,
