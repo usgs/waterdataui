@@ -254,7 +254,7 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
         case 'SET_CUSTOM_TIME_RANGE_SUB_SELECTION_BUTTON':
             return {
                 ...ivTimeSeriesState,
-                customTimeRangeSubSelectionButton: action.checkedCustomTimeRangeSubSelectionButton
+                userInputCustomTimeRangeSelectionButton: action.checkedCustomTimeRangeSubSelectionButton
             };
         case 'SET_IV_GRAPH_CURSOR_OFFSET':
             return {

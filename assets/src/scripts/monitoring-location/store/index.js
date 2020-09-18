@@ -57,13 +57,13 @@ export const configureStore = function (initialState) {
             },
             currentIVDateRangeKind: 'P7D',
             customIVTimeRange: null,
-            customTimeRangeSubSelectionButton: 'days-input',
             currentIVVariableID: null,
             ivGraphCursorOffset: null,
             audiblePlayId: null,
             loadingIVTSKeys: [],
             ivGraphBrushOffset: null,
-            userInputTimeRangeSelectionButton: 'P7D'
+            userInputTimeRangeSelectionButton: 'P7D',
+            userInputCustomTimeRangeSelectionButton: 'days-input'
         },
         dailyValueTimeSeriesState: {
             cursorOffset: null

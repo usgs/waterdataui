@@ -11,7 +11,7 @@ import {
     isLoadingTS,
     hasAnyTimeSeries,
     getCheckedUserInputTimeRangeSelectionButton,
-    getCheckedCustomTimeRangeSubSelectionButton,
+    getCheckedUserInputCustomTimeRangeSelectionButton,
     getCustomTimeRange} from '../../selectors/time-series-selector';
 import {getIanaTimeZone} from '../../selectors/time-zone-selector';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
@@ -75,18 +75,18 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('id', 'ts-custom-days-before-today-select-container')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date by days before today specification')
-        .call(link(store, (container, checkedCustomTimeRangeSubSelectionButton) => {
-            container.attr('hidden', checkedCustomTimeRangeSubSelectionButton === 'days-input' ? null : true);
-        }, getCheckedCustomTimeRangeSubSelectionButton));
+        .call(link(store, (container, checkedUserInputCustomTimeRangeSelectionButton) => {
+            container.attr('hidden', checkedUserInputCustomTimeRangeSelectionButton === 'days-input' ? null : true);
+        }, getCheckedUserInputCustomTimeRangeSelectionButton));
 
     const containerCustomCalenderDays = containerRadioGroupAndFormButtons.append('div')
         .attr('id', 'ts-customdaterange-select-container')
         .attr('role', 'customdate')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date specification')
-        .call(link(store, (container, checkedCustomTimeRangeSubSelectionButton) => {
-            container.attr('hidden', checkedCustomTimeRangeSubSelectionButton === 'calender-input' ? null : true);
-        }, getCheckedCustomTimeRangeSubSelectionButton));
+        .call(link(store, (container, checkedUserInputCustomTimeRangeSelectionButton) => {
+            container.attr('hidden', checkedUserInputCustomTimeRangeSelectionButton === 'calender-input' ? null : true);
+        }, getCheckedUserInputCustomTimeRangeSelectionButton));
 
    // Add radio buttons for 'days from today' and 'calendar days' selections
     const listContainerForCustomSelectRadioButtons = containerRadioGroupCustomSelectButtons.append('ul')
@@ -134,7 +134,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('id', 'with-hint-input-days-from-today-hint')
         .attr('class', 'usa-hint')
         .text('timespan in days before today');
-    const numberOfDaysSelectionInputField = numberOfDaysSelection.append('input')
+    numberOfDaysSelection.append('input')
         .attr('class', 'usa-input usa-character-count__field')
         .attr('id', 'with-hint-input-days-from-today')
         .attr('maxlength', `${MAX_NUMBER_OF_DAYS_USERS_CAN_INPUT}`)
@@ -329,16 +329,17 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 containerRadioGroupCustomSelectButtons.attr('hidden', null);
                 containerCustomDaysBeforeToday.attr('hidden', null);
                 containerCustomCalenderDays.attr('hidden', true);
-                numberOfDaysSelectionInputField.attr('value', 'test');
                 store.dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton('custom'));
             } else {
+                const userInputTimeframeButtonSelected = li.select('input:checked').attr('value');
                 li.select('input#custom-date-range').attr('aria-expanded', false);
                 containerRadioGroupCustomSelectButtons.attr('hidden', true);
                 containerCustomDaysBeforeToday.attr('hidden', true);
                 containerCustomCalenderDays.attr('hidden', true);
+                store.dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton(userInputTimeframeButtonSelected));
                 store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(
                     siteno,
-                    li.select('input:checked').attr('value')
+                    userInputTimeframeButtonSelected
                 )).then(() => {
                     store.dispatch(ivTimeSeriesStateActions.clearIVGraphBrushOffset());
                 });
