@@ -326,6 +326,7 @@ export const Actions = {
     setCustomIVTimeRange,
     setUserInputTimeRangeSelectionButton,
     setUserInputCustomTimeRangeSelectionButton,
+    setUserInputNumberOfDays,
     setIVGraphCursorOffset,
     setIVGraphBrushOffset,
     clearIVGraphBrushOffset,

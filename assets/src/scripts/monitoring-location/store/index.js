@@ -64,7 +64,7 @@ export const configureStore = function (initialState) {
             ivGraphBrushOffset: null,
             userInputCustomTimeRangeSelectionButton: 'days-input',
             userInputTimeRangeSelectionButton: 'P7D',
-            userInputNumberOfDays: 'testing!!!!!'
+            userInputNumberOfDays: null
         },
         dailyValueTimeSeriesState: {
             cursorOffset: null

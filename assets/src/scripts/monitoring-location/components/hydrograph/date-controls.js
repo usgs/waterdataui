@@ -182,6 +182,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 customDaysBeforeTodayValidationContainer.attr('hidden', null);
             } else {
                 customDaysBeforeTodayValidationContainer.attr('hidden', true);
+                store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userSpecifiedNumberOfDays));
                 store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(
                     siteno,
                     formattedPeriodQueryParameter
