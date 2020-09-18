@@ -158,19 +158,20 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-alert__heading')
         .text('Requirements');
     numberOfDaysSelection.call(link(store, (container, userInputNumberOfDays) => {
-        console.log('userInputNumberOfDays ', userInputNumberOfDays)
+        console.log('before userInputNumberOfDays ', userInputNumberOfDays)
         container.select('#with-hint-input-days-from-today')
             .property('value', userInputNumberOfDays);
+        console.log('after userInputNumberOfDays ', userInputNumberOfDays)
     }, getUserInputNumberOfDays));
 
-    // Adds controls for the days before today submit button
+    // Adds controls for the 'days before today' submit button
     const daysBeforeTodaySubmitContainer = containerCustomDaysBeforeToday.append('div')
         .attr('class', 'submit-button');
 
     daysBeforeTodaySubmitContainer.append('button')
         .attr('class', 'usa-button')
         .attr('id', 'custom-date-submit-days')
-        .text('Submit')
+        .text('Display data on graph')
         .on('click', function() {
             const userSpecifiedNumberOfDays = document.getElementById('with-hint-input-days-from-today').value;
             const formattedPeriodQueryParameter = `P${parseInt(userSpecifiedNumberOfDays)}D`;
@@ -269,7 +270,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     calenderDaysSubmitContainer.append('button')
         .attr('class', 'usa-button')
         .attr('id', 'custom-date-submit-calender')
-        .text('Submit')
+        .text('Display data on graph')
         .on('click', function() {
             let userSpecifiedStart = document.getElementById('custom-start-date').value;
             let userSpecifiedEnd = document.getElementById('custom-end-date').value;
@@ -331,7 +332,16 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .on('change', function() {
             const selected = li.select('input:checked');
             const selectedVal = selected.attr('value');
+
+            // Remove any values stored in the form, because they may not match what is shown in the graph until the submit button is pushed
+            store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(null));
+            store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
+
             if (selectedVal === 'custom') {
+                // Remove any values stored in the form, because they may not match what is shown in the graph until the submit button is pushed
+                store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(null));
+                store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
+
                 selected.attr('aria-expanded', true);
                 containerRadioGroupCustomSelectButtons.attr('hidden', null);
                 containerCustomDaysBeforeToday.attr('hidden', null);
@@ -339,6 +349,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 store.dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton('custom'));
             } else {
                 const userInputTimeframeButtonSelected = li.select('input:checked').attr('value');
+
+                // Remove any values stored in the form, because they may not match what is shown in the graph until the submit button is pushed
+                store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(null));
+                store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
+
                 li.select('input#custom-date-range').attr('aria-expanded', false);
                 containerRadioGroupCustomSelectButtons.attr('hidden', true);
                 containerCustomDaysBeforeToday.attr('hidden', true);

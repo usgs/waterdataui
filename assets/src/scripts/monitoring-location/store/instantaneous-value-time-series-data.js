@@ -260,7 +260,9 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
         const currentUserInputCustomTimeRangeSelectionButton = period !== 'P7D' && period !== 'P30D' && period !== 'P1Y' ? 'custom' : period;
         const userInputNumberOfDays = period.slice(1,-1);
         dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKind(period));
-        dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userInputNumberOfDays));
+        period !== 'P7D' && period !== 'P30D' && period !== 'P1Y' ?
+            dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userInputNumberOfDays)) :
+            null;
         dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton(currentUserInputCustomTimeRangeSelectionButton));
 
         if (!hasTimeSeries('current', period, thisParamCd)(state)) {
