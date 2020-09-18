@@ -110,7 +110,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .on('change', function() {
             const selected = listItemForCustomSelectRadioButtons.select('input:checked');
             const selectedVal = selected.attr('id');
-            store.dispatch(ivTimeSeriesStateActions.setCustomTimeRangeSubSelectionButton(selectedVal));
+            store.dispatch(ivTimeSeriesStateActions.setUserInputCustomTimeRangeSelectionButton(selectedVal));
         });
 
     listItemForCustomSelectRadioButtons.append('label')
