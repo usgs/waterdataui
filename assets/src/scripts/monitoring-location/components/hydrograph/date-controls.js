@@ -51,7 +51,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         }
     ];
 
-
     const containerRadioGroupMainSelectButtons = elem.insert('div', ':nth-child(2)')
         .attr('id', 'ts-daterange-select-container')
         .attr('role', 'radiogroup')
@@ -76,18 +75,24 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('id', 'ts-custom-days-before-today-select-container')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date by days before today specification')
-        .call(link(store, (container, checkedUserInputCustomTimeRangeSelectionButton) => {
-            container.attr('hidden', checkedUserInputCustomTimeRangeSelectionButton === 'days-input' ? null : true);
-        }, getCheckedUserInputCustomTimeRangeSelectionButton));
+    .call(link(store, (container, {checkedUserInputTimeRangeSelectionButton, checkedUserInputCustomTimeRangeSelectionButton}) => {
+        container.attr('hidden', checkedUserInputCustomTimeRangeSelectionButton === 'days-input' && checkedUserInputTimeRangeSelectionButton === 'custom' ? null : true);
+    }, createStructuredSelector({
+        checkedUserInputTimeRangeSelectionButton: getCheckedUserInputTimeRangeSelectionButton,
+        checkedUserInputCustomTimeRangeSelectionButton: getCheckedUserInputCustomTimeRangeSelectionButton
+    })));
 
     const containerCustomCalenderDays = containerRadioGroupAndFormButtons.append('div')
         .attr('id', 'ts-customdaterange-select-container')
         .attr('role', 'customdate')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date specification')
-        .call(link(store, (container, checkedUserInputCustomTimeRangeSelectionButton) => {
-            container.attr('hidden', checkedUserInputCustomTimeRangeSelectionButton === 'calender-input' ? null : true);
-        }, getCheckedUserInputCustomTimeRangeSelectionButton));
+        .call(link(store, (container, {checkedUserInputTimeRangeSelectionButton, checkedUserInputCustomTimeRangeSelectionButton}) => {
+            container.attr('hidden', checkedUserInputCustomTimeRangeSelectionButton === 'calender-input' && checkedUserInputTimeRangeSelectionButton === 'custom' ? null : true);
+        }, createStructuredSelector({
+            checkedUserInputTimeRangeSelectionButton: getCheckedUserInputTimeRangeSelectionButton,
+            checkedUserInputCustomTimeRangeSelectionButton: getCheckedUserInputCustomTimeRangeSelectionButton
+        })));
 
    // Add radio buttons for 'days before today' and 'calendar days' selections
     containerRadioGroupCustomSelectButtons.append('p').text('Enter timespan using');
@@ -120,7 +125,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('for', (d) => `${d.value}-input`)
         .text((d) => d.text);
     listItemForCustomSelectRadioButtons.call(link(store, (elem, userInputCustomTimeRangeSelectionButton) => {
-        console.log('checkedUserInputTimeRangeSelectionButton, yes?? ', userInputCustomTimeRangeSelectionButton)
         elem.select(`#${userInputCustomTimeRangeSelectionButton}`).property('checked', true);
     }, getCheckedUserInputCustomTimeRangeSelectionButton));
 
@@ -151,7 +155,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     // Create a validation alert for user selection of number of days before today
     const customDaysBeforeTodayValidationContainer = containerCustomDaysBeforeToday.append('div')
         .attr('class', 'usa-alert usa-alert--warning usa-alert--validation')
-        .attr('id', 'custom-date-alert-container')
+        .attr('id', 'custom-days-before-today-alert-container')
         .attr('hidden', true);
     const customDaysBeforeTodayAlertBody = customDaysBeforeTodayValidationContainer.append('div')
         .attr('class', 'usa-alert__body')
@@ -160,10 +164,8 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-alert__heading')
         .text('Requirements');
     numberOfDaysSelection.call(link(store, (container, userInputNumberOfDays) => {
-        console.log('before userInputNumberOfDays ', userInputNumberOfDays)
         container.select('#with-hint-input-days-from-today')
             .property('value', userInputNumberOfDays);
-        console.log('after userInputNumberOfDays ', userInputNumberOfDays)
     }, getUserInputNumberOfDays));
 
     // Adds controls for the 'days before today' submit button
@@ -298,7 +300,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             }
         });
 
-
     containerCustomCalenderDays.call(link(store, (container, {customTimeRange, ianaTimeZone}) => {
         container.select('#custom-start-date')
             .property('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start, {zone: ianaTimeZone}).startOf('day').toFormat('LL/dd/yyyy') : '');
@@ -334,7 +335,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .on('change', function() {
             const selected = li.select('input:checked');
             const selectedVal = selected.attr('value');
-
+console.log('change to custom button')
             // Remove any values stored in the form, because they may not match what is shown in the graph until the submit button is pushed
             store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(null));
             store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
@@ -374,7 +375,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('class', 'usa-radio__label')
         .attr('for', (d) => `${d.period}-input`)
         .text((d) => d.name);
-    li.call(link(store, (elem, userInputTimeRangeSelectionButton) => {
-        elem.select(`#${userInputTimeRangeSelectionButton}-input`).property('checked', true);
+    li.call(link(store, (elem, checkedUserInputTimeRangeSelectionButton) => {
+        elem.select(`#${checkedUserInputTimeRangeSelectionButton}-input`).property('checked', true);
     }, getCheckedUserInputTimeRangeSelectionButton));
 };

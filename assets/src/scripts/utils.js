@@ -154,8 +154,8 @@ export const mediaQuery = function (minWidth) {
  * @returns {Number} the start time as universal time
  */
 export const calcStartTime = function(period, endTime, ianaTimeZone) {
-    const timePeriodCode = period.substr(period.length - 1);
-    const timePeriod = period.slice(1,-1);
+    const timePeriodCode = period !== null ? period.substr(period.length - 1) : null;
+    const timePeriod = period !== null ? period.slice(1,-1) : null;
 
     let startTime = new DateTime.fromMillis(endTime, {zone: ianaTimeZone});
 

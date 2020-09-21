@@ -260,7 +260,7 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
         const thisParamCd = paramCd ? paramCd : getCurrentParmCd(state);
         const tsRequestKey = getTsRequestKey ('current', period, thisParamCd)(state);
         const currentUserInputCustomTimeRangeSelectionButton = period !== 'P7D' && period !== 'P30D' && period !== 'P1Y' ? 'custom' : period;
-        const userInputNumberOfDays = period.slice(1,-1);
+        const userInputNumberOfDays = period !== null ? period.slice(1,-1) : '';
         dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKind(period));
         period !== 'P7D' && period !== 'P30D' && period !== 'P1Y' ?
             dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userInputNumberOfDays)) :
@@ -375,6 +375,7 @@ const updateIVCurrentVariableAndRetrieveTimeSeries = function(siteno, variableID
         dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(variableID));
         const state = getState();
         const currentDateRange = getCurrentDateRangeKind(state);
+
         if (currentDateRange === 'custom') {
             const timeRange = getCustomTimeRange(state);
             return dispatch(

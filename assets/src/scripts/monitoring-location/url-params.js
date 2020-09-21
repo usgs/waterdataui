@@ -36,7 +36,8 @@ export const renderTimeSeriesUrlParams = function(store) {
         */
         const filteredCurrentDateRangeKind =
             currentDateRangeKind === 'P7D' ? 'P7D' :
-            currentDateRangeKind !== 'custom' ? currentDateRangeKind.substr(0, 1) : currentDateRangeKind;
+            currentDateRangeKind === 'custom' ? currentDateRangeKind :
+            currentDateRangeKind !== null ? currentDateRangeKind.substr(0, 1) : '';
 
         if (parameterCode) {
             params.set('parameterCode', parameterCode);
@@ -45,7 +46,7 @@ export const renderTimeSeriesUrlParams = function(store) {
         if (Object.keys(methods).length > 1) {
             params.set('timeSeriesId', methodId);
         }
-        console.log('filteredCurrentDateRangeKind ', filteredCurrentDateRangeKind)
+
         switch(filteredCurrentDateRangeKind) {
             case 'P7D':
                 break;

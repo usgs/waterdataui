@@ -137,6 +137,8 @@ const TEST_STATE = {
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
         currentIVDateRangeKind: 'P7D',
+        userInputCustomTimeRangeSelectionButton: 'days-input',
+        userInputTimeRangeSelectionButton: 'P7D',
         showIVTimeSeries: {
             current: true,
             compare: true,
@@ -174,7 +176,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
         expect(customDateDiv.attr('hidden')).toBe('true');
     });
 
-    it('Expects to retrieve the extended time series when the radio buttons are change', () => {
+    it('Expects to retrieve the extended time series when the radio buttons are changed', () => {
         spyOn(ivTimeSeriesDataActions, 'retrieveExtendedIVTimeSeries').and.callThrough();
         let lastRadio = select('#P1Y-input');
         lastRadio.property('checked', true);
@@ -183,10 +185,29 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
         expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).toHaveBeenCalledWith('12345678', 'P1Y');
     });
 
-    it('Expects to show the date range form when the Custom radio is selected', () => {
+    it('Expects to show the days before today form when only the Custom radio is selected', () => {
         let customRadio = select('#custom-input');
         customRadio.property('checked', true);
         customRadio.dispatch('change');
+
+        let customDaysBeforeTodayDiv = select('div#ts-custom-days-before-today-select-container');
+        expect(customDaysBeforeTodayDiv.attr('hidden')).toBeNull();
+
+        let customDaysBeforeTodayAlertDiv = select('#custom-days-before-today-alert-container');
+        expect(customDaysBeforeTodayAlertDiv.attr('hidden')).toBe('true');
+    });
+
+    fit('Expects to show the date range form when the Custom and Calender Days radio buttons are selected', () => {
+        let customRadio = select('#custom-input');
+        let customTimeSpanRadioButton = select('#calender-input');
+        console.log('customRadio ', customRadio.checked)
+        console.log('customTimeSpanRadioButton ', customTimeSpanRadioButton.checked)
+        customRadio.property('checked', true);
+        console.log('customRadio ', customRadio.checked)
+        customTimeSpanRadioButton.property('checked', true);
+        customRadio.dispatch('change');
+        customTimeSpanRadioButton.dispatch('change');
+
 
         let customDateDiv = select('div#ts-customdaterange-select-container');
         expect(customDateDiv.attr('hidden')).toBeNull();
@@ -196,7 +217,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
     });
 
     it('Expects an alert to be thrown if custom dates are not provided.', () => {
-         let submitButton = select('#custom-date-submit');
+         let submitButton = select('#custom-date-submit-calender');
          submitButton.dispatch('click');
 
          let customDateAlertDiv = select('#custom-date-alert');
@@ -208,7 +229,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
         select('#custom-start-date').property('value', '04/05/2063');
         select('#custom-end-date').property('value', '04/03/2063');
 
-        select('#custom-date-submit').dispatch('click');
+        select('#custom-date-submit-calender').dispatch('click');
 
         let customDateAlertDiv = select('#custom-date-alert-container');
         expect(customDateAlertDiv.attr('hidden')).toBeNull();
@@ -221,7 +242,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
         select('#custom-start-date').property('value', '04/03/2063');
         select('#custom-end-date').property('value', '04/05/2063');
 
-        select('#custom-date-submit').dispatch('click');
+        select('#custom-date-submit-calender').dispatch('click');
 
         let customDateAlertDiv = select('#custom-date-alert-container');
         expect(customDateAlertDiv.attr('hidden')).toBe('true');
