@@ -19,14 +19,18 @@
 }
 .container-radio-group-and-form-buttons {
   border: solid 1px color('black');
-  margin-bottom: 1em;
+  @include u-margin-bottom(1);
   #ts-custom-date-radio-group {
     padding-left: 1em;
+    p {
+      @include u-text('bold');
+      @include u-margin-bottom(1);
+    }
     ul {
       display: inline-block;
       li {
         display: inline-block;
-        padding: 1em 1em 0 0;
+        padding: 0 1em 0 0;
       }
     }
   }
@@ -34,15 +38,10 @@
     padding: 0 1em 1em 1em
   }
   #ts-customdaterange-select-container {
-    padding: 0 1em 1em 1em
-  }
-}
-
-
-
-#ts-customdaterange-select-container {
-  label {
-    @include u-text('bold');
+    padding: 0 1em 1em 1em;
+    label {
+      @include u-text('bold');
+    }
   }
 }
 
