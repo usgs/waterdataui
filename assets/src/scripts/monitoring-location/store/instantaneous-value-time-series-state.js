@@ -71,17 +71,17 @@ const setCustomIVTimeRange = function(startTime, endTime) {
 };
 
 
-const setUserInputTimeRangeSelectionButton = function(checkedUserInputTimeRangeSelectionButton) {
+const setUserInputTimeRangeSelectionButton = function(userInputTimeRangeSelectionButton) {
     return {
         type: 'SET_USER_INPUT_TIME_RANGE_SELECTION_BUTTON',
-        checkedUserInputTimeRangeSelectionButton
+        userInputTimeRangeSelectionButton
     };
 };
 
-const setUserInputCustomTimeRangeSelectionButton = function(checkedUserInputCustomTimeRangeSelectionButton) {
+const setUserInputCustomTimeRangeSelectionButton = function(userInputCustomTimeRangeSelectionButton) {
     return {
         type: 'SET_USER_INPUT_CUSTOM_TIME_RANGE_SELECTION_BUTTON',
-        checkedUserInputCustomTimeRangeSelectionButton
+        userInputCustomTimeRangeSelectionButton
     };
 };
 
@@ -253,13 +253,13 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
         case 'SET_USER_INPUT_TIME_RANGE_SELECTION_BUTTON':
             return {
                 ...ivTimeSeriesState,
-                userInputTimeRangeSelectionButton: action.checkedUserInputTimeRangeSelectionButton
+                userInputTimeRangeSelectionButton: action.userInputTimeRangeSelectionButton
             };
 
         case 'SET_USER_INPUT_CUSTOM_TIME_RANGE_SELECTION_BUTTON':
             return {
                 ...ivTimeSeriesState,
-                userInputCustomTimeRangeSelectionButton: action.checkedUserInputCustomTimeRangeSelectionButton
+                userInputCustomTimeRangeSelectionButton: action.userInputCustomTimeRangeSelectionButton
             };
 
         case 'SET_USER_INPUT_NUMBER_OF_DAYS':

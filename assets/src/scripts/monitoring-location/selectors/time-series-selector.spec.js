@@ -8,6 +8,8 @@ import {
     hasAnyTimeSeries,
     getMonitoringLocationName,
     getAgencyCode,
+    getUserInputTimeRangeSelectionButton,
+    getUserInputCustomTimeRangeSelectionButton,
     getCurrentVariable,
     getQueryInfo,
     getRequests,
@@ -22,7 +24,8 @@ import {
     getNwisTimeZone,
     getAllMethodsForCurrentVariable,
     getCurrentVariableTimeSeries,
-    getTimeSeriesForTsKey
+    getTimeSeriesForTsKey,
+    getUserInputNumberOfDays
 } from './time-series-selector';
 
 const TEST_DATA = {
@@ -232,7 +235,10 @@ const TEST_DATA = {
     },
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
-        currentIVDateRangeKind: 'P7D'
+        currentIVDateRangeKind: 'P7D',
+        userInputCustomTimeRangeSelectionButton: 'days-input',
+        userInputTimeRangeSelectionButton: 'P7D',
+        userInputNumberOfDays: '3'
     }
 };
 
@@ -467,6 +473,27 @@ describe('monitoring-location/selectors/time-series-selector', () => {
             expect(getAgencyCode('01010101')(TEST_SITE_CODES)).toBe('USGS');
         });
     });
+
+    describe('getUserInputTimeRangeSelectionButton', () => {
+        it('Returns the timespan radio button that is checked in the main list', () => {
+            expect(getUserInputTimeRangeSelectionButton({
+                ivTimeSeriesState: {
+                    userInputTimeRangeSelectionButton: 'custom'
+                }
+            })).toEqual('custom');
+        });
+    });
+
+    describe('getUserInputTimeRangeSelectionButton', () => {
+        it('Returns the timespan radio button that is checked in the subselection custom list', () => {
+            expect(getUserInputCustomTimeRangeSelectionButton({
+                ivTimeSeriesState: {
+                    userInputCustomTimeRangeSelectionButton: 'calender-input'
+                }
+            })).toEqual('calender-input');
+        });
+    });
+
 
     describe('getCurrentVariableID', () => {
         it('Return the current variable ID', () => {
@@ -1122,6 +1149,16 @@ describe('monitoring-location/selectors/time-series-selector', () => {
 
         it('should return null the empty set if no time series for the selected key exist', () => {
             expect(getTimeSeriesForTsKey('compare:P7D')(TEST_DATA)).toEqual({});
+        });
+    });
+
+    describe('getUserInputNumberOfDays', () => {
+        it('Returns the number of days from today the user entered in the custom timeframe subselection form field', () => {
+            expect(getUserInputNumberOfDays({
+                ivTimeSeriesState: {
+                    userInputNumberOfDays: '22'
+                }
+            })).toEqual('22');
         });
     });
 });

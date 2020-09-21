@@ -21,20 +21,16 @@ export const getQueryInfo = state => state.ivTimeSeriesData.queryInfo || {};
 
 export const getRequests = state => state.ivTimeSeriesData.requests || {};
 
+export const getUserInputTimeRangeSelectionButton = state => state.ivTimeSeriesState.userInputTimeRangeSelectionButton;
+
+export const getUserInputCustomTimeRangeSelectionButton = state => state.ivTimeSeriesState.userInputCustomTimeRangeSelectionButton;
+
 export const getCurrentVariableID = state => state.ivTimeSeriesState.currentIVVariableID;
 
 export const getCurrentMethodID = state => state.ivTimeSeriesState.currentIVMethodID;
 
-export const getCheckedUserInputTimeRangeSelectionButton = state => state.ivTimeSeriesState.userInputTimeRangeSelectionButton;
-
-export const getCheckedUserInputCustomTimeRangeSelectionButton = state => state.ivTimeSeriesState.userInputCustomTimeRangeSelectionButton;
-
 export const getCurrentDateRangeKind = (state) => {
     return state.ivTimeSeriesState.currentIVDateRangeKind || null;
-};
-
-export const getCurrentDateRangeKindCustomSelection = (state) => {
-    return state.ivTimeSeriesState.currentIVDateRangeKindCustomSelection || null;
 };
 
 export const getLoadingTsKeys = state => state.ivTimeSeriesState.loadingIVTSKeys || [];
