@@ -230,6 +230,8 @@ const retrieveCustomIVTimeSeries = function(siteno, startTime, endTime, parmCd=n
                 const collection = normalize(series, tsRequestKey);
                 dispatch(Actions.addIVTimeSeriesCollection(collection));
                 dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKind('custom'));
+                dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton('custom'));
+                dispatch(ivTimeSeriesStateActions.setUserInputCustomTimeRangeSelectionButton('calender-input'));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
             },
             () => {

@@ -27,9 +27,12 @@ export const renderTimeSeriesUrlParams = function(store) {
     }), ({parameterCode, methodId, methods, compare, currentDateRangeKind, customTimeRange, timeZone}) => {
         let params = new window.URLSearchParams();
 
-        /* filter the 'currentDateRangeKind', which comes in one of two forms 'P{some number}D' (like P30D) or the word 'custom'
-        * if it is the default of 'P7D' or of the type 'custom', we will leave it as is. Otherwise we will make it generic,
-        * in the form of 'P' so that it will work for any arbitrary number of days.
+        /* filter the 'currentDateRangeKind', which comes in one of two forms
+        * 'P{some number}{Day or Year code}' (like P30D or P1Y) or the word 'custom'.
+        * In this case, 'custom' is a selection not using the 'period query', such as start and end date calender dates.
+        * If the user selection is the default of 'P7D' or of the type 'custom', we will leave it as is.
+        * Otherwise, we will filter the code so it is generic and in the form of 'P'
+        * so that it will work for any arbitrary number of days in query parameters such as P20D.
         */
         const filteredCurrentDateRangeKind =
             currentDateRangeKind === 'P7D' ? 'P7D' :
@@ -42,6 +45,7 @@ export const renderTimeSeriesUrlParams = function(store) {
         if (Object.keys(methods).length > 1) {
             params.set('timeSeriesId', methodId);
         }
+        console.log('filteredCurrentDateRangeKind ', filteredCurrentDateRangeKind)
         switch(filteredCurrentDateRangeKind) {
             case 'P7D':
                 break;
