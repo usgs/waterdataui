@@ -237,7 +237,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
         });
 
         describe('setUserInputNumberOfDays', () => {
-            fit('sets the value entered in the Custom subselection from field for days before today', () => {
+            it('sets the value entered in the Custom subselection from field for days before today', () => {
                 store.dispatch(Actions.setUserInputNumberOfDays(23));
                 expect(store.getState().ivTimeSeriesState.userInputNumberOfDays).toBe(23);
             });
