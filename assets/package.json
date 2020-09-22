@@ -96,7 +96,7 @@
     "luxon": "1.24.1",
     "matchmedia-polyfill": "0.3.2",
     "normalizr": "3.6.0",
-    "raf-throttle": "2.0.3",
+    "raf-throttle": "2.0.5",
     "redux": "4.0.5",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
