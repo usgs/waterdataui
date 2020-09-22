@@ -115,7 +115,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', d => `changeDateRangeWith${d.value}`)
         .on('change', function() {
-            console.log('change for calender')
             const selected = listItemForCustomSelectRadioButtons.select('input:checked');
             const selectedVal = selected.attr('id');
             store.dispatch(ivTimeSeriesStateActions.setUserInputCustomTimeRangeSelectionButton(selectedVal));
@@ -338,7 +337,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', d => `changeDateRangeTo${d.period}`)
         .on('change', function() {
-            console.log('ran change')
             const selected = li.select('input:checked');
             const selectedVal = selected.attr('value');
 
