@@ -295,56 +295,6 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
     };
 };
 
-
-/*
-* Asynchronous Redux function which fetches the IV time series for siteno for the period and paramCd.
-* If paramCd, the current parameter code is retrieved from the state and used. Before
-* trying to fetch the data, the store is checked to see if it's already been retrieved. If so
-* the promise is immediately resolved. This function is used for custom time selection using the period query parameter
-* @param {String} siteno
-* @param {String} period - ISO 8601 duration
-* @param {String} paramCd
-* @param {String} dateRangeKindCustomSelection - is a subselection for users
-* choosing a custom timeframe for the hydrograph. The possible values are 'Days' or 'Calender'
-* For users viewing 'days from today' or a span of calender dates on the hydrograph respectively.
-* @return {Function} which returns a promise.
- */
-const retrieveExtendedIVTimeSeriesCustomSelectionPeriod = function(siteno, period, paramCd=null) {
-    return function(dispatch, getState) {
-        const state = getState();
-        const thisParamCd = paramCd ? paramCd : getCurrentParmCd(state);
-        const tsRequestKey = getTsRequestKey ('current', period, thisParamCd)(state);
-        dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKind(period));
-        if (!hasTimeSeries('current', period, thisParamCd)(state)) {
-            dispatch(ivTimeSeriesStateActions.addIVTimeSeriesToLoadingKeys([tsRequestKey]));
-            const endTime = getRequestTimeRange('current', 'P7D')(state).end;
-            const startTime = calcStartTime(period, endTime);
-            return getTimeSeries({
-                sites: [siteno],
-                params: [thisParamCd],
-                startDate: startTime,
-                endDate: endTime
-            }).then(
-                series => {
-                    const collection = normalize(series, tsRequestKey);
-                    dispatch(Actions.retrieveCompareIVTimeSeries(siteno, period, startTime, endTime));
-                    dispatch(Actions.addIVTimeSeriesCollection(collection));
-                    dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
-                },
-                () => {
-                    console.log(`Unable to fetch data for period ${period} and parameter code ${thisParamCd}`);
-                    dispatch(Actions.addIVTimeSeriesCollection({}));
-                    dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
-                }
-            );
-        } else {
-            return Promise.resolve({});
-        }
-    };
-};
-
-
-
 /*
  * Asynchronous Redux Action which retrieves data for a custom time range
  * @param {String} siteno
@@ -415,7 +365,6 @@ export const Actions = {
     retrieveCompareIVTimeSeries,
     retrieveIVTimeSeries,
     retrieveCustomTimePeriodIVTimeSeries,
-    retrieveExtendedIVTimeSeriesCustomSelectionPeriod,
     retrieveCustomIVTimeSeries,
     retrieveExtendedIVTimeSeries,
     retrieveUserRequestedIVDataForDateRange,

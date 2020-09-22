@@ -155,7 +155,7 @@ describe('monitoring-location/url-params module', () => {
             });
         });
 
-        fit('does not add period if current date range is P7D', (done) => {
+        it('does not add period if current date range is P7D', (done) => {
             let store = configureStore({
                 ...TEST_STATE,
                 ivTimeSeriesState: {
