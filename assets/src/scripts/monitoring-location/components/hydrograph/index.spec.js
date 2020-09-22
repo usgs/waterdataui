@@ -140,6 +140,9 @@ const TEST_STATE = {
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
         currentIVDateRangeKind: 'P7D',
+        userInputCustomTimeRangeSelectionButton: 'days-input',
+        userInputTimeRangeSelectionButton: 'P7D',
+        userInputNumberOfDays: null,
         showIVTimeSeries: {
             current: true,
             compare: true,
@@ -356,7 +359,7 @@ describe('monitoring-location/components/hydrograph module', () => {
             });
         });
 
-        it('should retrieve custom time period if period is specificed', (done) => {
+        it('should retrieve custom time period if period is specified', (done) => {
             attachToNode(store, graphNode, {
                 siteno: '12345678',
                 parameterCode: '00065',
@@ -662,6 +665,7 @@ describe('monitoring-location/components/hydrograph module', () => {
         it('should not have date control elements', () => {
             expect(selectAll('#ts-daterange-select-container').size()).toBe(0);
             expect(selectAll('#ts-customdaterange-select-container').size()).toBe(0);
+            expect(selectAll('#ts-container-radio-group-and-form-buttons').size()).toBe(0);
         });
 
         it('should not have method select element', () => {
