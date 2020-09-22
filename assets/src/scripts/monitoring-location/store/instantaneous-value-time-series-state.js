@@ -70,7 +70,13 @@ const setCustomIVTimeRange = function(startTime, endTime) {
     };
 };
 
-
+/*
+ * Synchronous action sets value indicating which of the main time range selection (the
+ * buttons for '7 days', '30 days', etc.) for the IV graph the is checked.
+ * @param {String} userInputTimeRangeSelectionButton - the value of the user selected button
+ * such as 'P7D, P1Y, or custom'
+ * @return {Object} - Redux action
+ */
 const setUserInputTimeRangeSelectionButton = function(userInputTimeRangeSelectionButton) {
     return {
         type: 'SET_USER_INPUT_TIME_RANGE_SELECTION_BUTTON',
@@ -78,6 +84,14 @@ const setUserInputTimeRangeSelectionButton = function(userInputTimeRangeSelectio
     };
 };
 
+/*
+ * Synchronous action sets value indicating which of the 'custom' subselection buttons of
+ * the main time range selection (the buttons for 'days before today' or 'calender days')
+ * for the IV graph is checked.
+ * @param {String} userInputCustomTimeRangeSelectionButton - the value of the user selected button
+ * such as 'days-input' or 'calender-input'
+ * @return {Object} - Redux action
+ */
 const setUserInputCustomTimeRangeSelectionButton = function(userInputCustomTimeRangeSelectionButton) {
     return {
         type: 'SET_USER_INPUT_CUSTOM_TIME_RANGE_SELECTION_BUTTON',
@@ -85,6 +99,12 @@ const setUserInputCustomTimeRangeSelectionButton = function(userInputCustomTimeR
     };
 };
 
+/*
+ * Synchronous action sets number of days from today that is entered in the form field for
+ * 'days before today' on the custom date range menu.
+ * @param {Number} userInputNumberOfDays - the number of days
+ * @return {Object} - Redux action
+ */
 const setUserInputNumberOfDays = function (userInputNumberOfDays) {
     return {
         type: 'SET_USER_INPUT_NUMBER_OF_DAYS',
