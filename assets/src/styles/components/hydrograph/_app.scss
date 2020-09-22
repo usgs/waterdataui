@@ -21,7 +21,7 @@
   border: solid 1px color('black');
   @include u-margin-bottom(1);
   #ts-custom-date-radio-group {
-    padding-left: 1em;
+    @include u-padding-left(1);
     p {
       @include u-text('bold');
       @include u-margin-bottom(1);
@@ -30,15 +30,19 @@
       display: inline-block;
       li {
         display: inline-block;
-        padding: 0 1em 0 0;
+        @include u-padding-right(1);
       }
     }
   }
   #ts-custom-days-before-today-select-container {
-    padding: 0 1em 1em 1em
+    @include u-padding-right(1);
+    @include u-padding-bottom(1);
+    @include u-padding-left(1);
   }
   #ts-customdaterange-select-container {
-    padding: 0 1em 1em 1em;
+    @include u-padding-right(1);
+    @include u-padding-bottom(1);
+    @include u-padding-left(1);
     label {
       @include u-text('bold');
     }
