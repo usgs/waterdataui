@@ -93,7 +93,7 @@
     "leaflet.markercluster": "1.4.1",
     "list.js": "1.5.0",
     "lodash": "4.17.20",
-    "luxon": "1.24.1",
+    "luxon": "1.25.0",
     "matchmedia-polyfill": "0.3.2",
     "normalizr": "3.6.0",
     "raf-throttle": "2.0.5",
