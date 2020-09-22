@@ -2,6 +2,7 @@ import {select} from 'd3-selection';
 
 import {configureStore} from '../../store';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
+import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
 
 import {drawDateRangeControls} from './date-controls';
 
@@ -169,10 +170,15 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
 
     it('Expects the date range controls to be created', () => {
         let dateRangeContainer = select('#ts-daterange-select-container');
+        let subSelectionRadioButtonsContainer = select('div#ts-custom-date-radio-group');
         let customDateDiv = select('div#ts-customdaterange-select-container');
 
         expect(dateRangeContainer.size()).toBe(1);
         expect(dateRangeContainer.selectAll('input[type=radio]').size()).toBe(4);
+
+        expect(subSelectionRadioButtonsContainer.size()).toBe(1);
+        expect(subSelectionRadioButtonsContainer.selectAll('input[type=radio]').size()).toBe(2);
+
         expect(customDateDiv.attr('hidden')).toBe('true');
     });
 
@@ -186,36 +192,16 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
     });
 
     it('Expects to show the days before today form when only the Custom radio is selected', () => {
-        let customRadio = select('#custom-input');
-        customRadio.property('checked', true);
-        customRadio.dispatch('change');
+        let customRadioButtonElement = select('#custom-input');
+        customRadioButtonElement.property('checked', true);
+        customRadioButtonElement.dispatch('change');
 
         let customDaysBeforeTodayDiv = select('div#ts-custom-days-before-today-select-container');
         expect(customDaysBeforeTodayDiv.attr('hidden')).toBeNull();
 
-        let customDaysBeforeTodayAlertDiv = select('#custom-days-before-today-alert-container');
+        let customDaysBeforeTodayAlertDiv = select('div#custom-days-before-today-alert-container');
         expect(customDaysBeforeTodayAlertDiv.attr('hidden')).toBe('true');
     });
-
-    // fit('Expects to show the date range form when the Custom and Calender Days radio buttons are selected', () => {
-    //     let customRadio = select('#custom-input');
-    //     let customTimeSpanRadioButton = select('#calender-input');
-    //     console.log('customRadio ', customRadio)
-    //     console.log('customTimeSpanRadioButton ', customTimeSpanRadioButton)
-    //     customRadio.property('checked', true);
-    //     console.log('customRadio ', customRadio.checked)
-    //     customTimeSpanRadioButton.property('checked', true);
-    //     customRadio.dispatch('change');
-    //     customTimeSpanRadioButton.dispatch('change');
-    //
-    //
-    //     let customDateDiv = select('div#ts-customdaterange-select-container');
-    //     console.log('customDateDiv', customDateDiv)
-    //     // expect(customDateDiv.attr('hidden')).toBeNull();
-    //
-    //     let customDateAlertDiv = select('#custom-date-alert-container');
-    //     expect(customDateAlertDiv.attr('hidden')).toBe('true');
-    // });
 
     it('Expects an alert to be thrown if custom dates are not provided.', () => {
          let submitButton = select('#custom-date-submit-calender');
@@ -250,6 +236,38 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
 
         expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).toHaveBeenCalledWith(
             '12345678', '2063-04-03', '2063-04-05'
+        );
+    });
+
+
+
+    it('Expects an alert if no number is entered in days before today form field.', () => {
+        select('#custom-date-submit-days').dispatch('click');
+
+        let userInputDaysBeforeTodayAlertDiv = select('#custom-days-before-today-alert-container');
+        expect(userInputDaysBeforeTodayAlertDiv.attr('hidden')).toBeNull();
+        expect(userInputDaysBeforeTodayAlertDiv.select('p').text()).toEqual('Entry must be a number.');
+    });
+
+    it('Expects an alert if something other than a number is entered in days before today form field.', () => {
+        let userInputDaysBeforeTodayAlertDiv = select('#custom-days-before-today-alert-container');
+        userInputDaysBeforeTodayAlertDiv.property('value', 'not');
+        select('#custom-date-submit-days').dispatch('click');
+
+        expect(userInputDaysBeforeTodayAlertDiv.attr('hidden')).toBeNull();
+        expect(userInputDaysBeforeTodayAlertDiv.select('p').text()).toEqual('Entry must be a number.');
+    });
+
+    it('Expects data to be retrieved if a number of correct length is entered in days before today form field.', () => {
+        spyOn(ivTimeSeriesDataActions, 'retrieveExtendedIVTimeSeries').and.callThrough();
+        select('#with-hint-input-days-from-today').property('value', 3);
+        select('#custom-date-submit-days').dispatch('click');
+
+        let userInputDaysBeforeTodayAlertDiv = select('#custom-days-before-today-alert-container');
+        expect(userInputDaysBeforeTodayAlertDiv.attr('hidden')).toBe('true');
+
+        expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).toHaveBeenCalledWith(
+            '12345678', 'P3D'
         );
     });
 });

@@ -115,17 +115,17 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', d => `changeDateRangeWith${d.value}`)
         .on('change', function() {
+            console.log('change for calender')
             const selected = listItemForCustomSelectRadioButtons.select('input:checked');
             const selectedVal = selected.attr('id');
             store.dispatch(ivTimeSeriesStateActions.setUserInputCustomTimeRangeSelectionButton(selectedVal));
         });
-
     listItemForCustomSelectRadioButtons.append('label')
         .attr('class', 'usa-radio__label')
         .attr('for', (d) => `${d.value}-input`)
         .text((d) => d.text);
     listItemForCustomSelectRadioButtons.call(link(store, (elem, userInputCustomTimeRangeSelectionButton) => {
-        elem.select(`#${userInputCustomTimeRangeSelectionButton}`).property('checked', true);
+       elem.select(`#${userInputCustomTimeRangeSelectionButton}`).property('checked', true);
     }, getUserInputCustomTimeRangeSelectionButton));
 
     // Add controls for selecting time in days from today
@@ -177,7 +177,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     // Adds controls for the 'days before today' submit button
     const daysBeforeTodaySubmitContainer = containerCustomDaysBeforeToday.append('div')
         .attr('class', 'submit-button');
-
     daysBeforeTodaySubmitContainer.append('button')
         .attr('class', 'usa-button')
         .attr('id', 'custom-date-submit-days')
@@ -339,9 +338,10 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', d => `changeDateRangeTo${d.period}`)
         .on('change', function() {
+            console.log('ran change')
             const selected = li.select('input:checked');
             const selectedVal = selected.attr('value');
-console.log('change to custom button')
+
             // Remove any values stored in the form, because they may not match what is shown in the graph until the submit button is pushed
             store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(''));
             store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
