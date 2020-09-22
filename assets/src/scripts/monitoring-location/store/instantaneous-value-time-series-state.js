@@ -105,7 +105,7 @@ const setUserInputCustomTimeRangeSelectionButton = function(userInputCustomTimeR
  * @param {Number} userInputNumberOfDays - the number of days
  * @return {Object} - Redux action
  */
-const setUserInputNumberOfDays = function (userInputNumberOfDays) {
+const setUserInputNumberOfDays = function(userInputNumberOfDays) {
     return {
         type: 'SET_USER_INPUT_NUMBER_OF_DAYS',
         userInputNumberOfDays
