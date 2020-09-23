@@ -18,6 +18,8 @@ def get_cooperators(site_no, district_cd):
             district_cd not in app.config['COOPERATOR_LOOKUP_ENABLED']):
         return []
 
+    print(app.config['COOPERATOR_SERVICE_PATTERN'].format(site_no=site_no))
+
     url = app.config['COOPERATOR_SERVICE_PATTERN'].format(site_no=site_no)
     response = execute_get_request(url)
     if response.status_code != 200:
