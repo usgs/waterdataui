@@ -3,7 +3,7 @@ Main application views.
 """
 import json
 
-from flask import abort, render_template, request, Markup
+from flask import abort, render_template, request, Markup, make_response
 
 from markdown import markdown
 
@@ -21,6 +21,15 @@ from .camera import get_monitoring_camera_data
 SERVICE_ROOT = app.config['SERVER_SERVICE_ROOT']
 NWIS = NwisWebServices(SERVICE_ROOT)
 
+@app.route('/cookie')
+def cookie():
+    response = make_response('set cookie here')
+    # response.set_cookie('test-name', 'test-cookie-value', max_age=60*60*24*30) thirty days
+    response.set_cookie('test', 'testvalue', max_age=60)
+    return response
+
+
+
 @app.route('/')
 def home():
     """Render the home page."""
@@ -34,6 +43,8 @@ def provisional_data_statement():
 
 
 @app.route('/monitoring-location/<site_no>/', methods=['GET'])
+
+
 def monitoring_location(site_no):
     """
     Monitoring Location view
@@ -41,11 +52,15 @@ def monitoring_location(site_no):
     :param site_no: USGS site number
 
     """
+    response = make_response()
+    response.set_cookie('testing2', 'testvalue2', max_age=60)
     agency_cd = request.args.get('agency_cd')
     resp = NWIS.get_site(site_no, agency_cd)
     status = resp.status_code
     json_ld = None
+
     if status == 200:
+
         iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
 
         data_list = list(iter_data)
