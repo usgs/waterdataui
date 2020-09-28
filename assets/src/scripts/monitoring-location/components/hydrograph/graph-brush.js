@@ -95,13 +95,13 @@ export const drawGraphBrush = function(container, store) {
             const graphBrush = brushX()
                 .extent([[0, 0], [layout.width - layout.margin.right, layout.height - layout.margin.bottom - layout.margin.top]])
                 .handleSize([1]) // make default handle 1px wide
-                .on('brush end', brushed);
+                .on('start brush end', brushed);
 
             svg.select('.brush').remove();
 
             const group = svg.append('g').attr('class', 'brush')
                 .attr('transform', `translate(${layout.margin.left}, ${layout.margin.top})`)
-                .call(graphBrush)
+                .call(graphBrush);
 
             /* Draws the custom brush handle using an SVG path. The path is drawn twice, once for the handle
             * on the left hand side, which in d3 brush terms is referred to as 'east' (data type 'e'), and then
