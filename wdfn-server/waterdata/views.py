@@ -21,13 +21,12 @@ from .camera import get_monitoring_camera_data
 SERVICE_ROOT = app.config['SERVER_SERVICE_ROOT']
 NWIS = NwisWebServices(SERVICE_ROOT)
 
+
 @app.route('/cookie')
 def cookie():
     response = make_response('set cookie here')
-    # response.set_cookie('test-name', 'test-cookie-value', max_age=60*60*24*30) thirty days
-    response.set_cookie('test', 'testvalue', max_age=60)
+    response.set_cookie('pandemic-message', 'no-show', max_age=60*60*24*30)
     return response
-
 
 
 @app.route('/')
@@ -43,8 +42,6 @@ def provisional_data_statement():
 
 
 @app.route('/monitoring-location/<site_no>/', methods=['GET'])
-
-
 def monitoring_location(site_no):
     """
     Monitoring Location view
@@ -52,7 +49,7 @@ def monitoring_location(site_no):
     :param site_no: USGS site number
 
     """
-    response = make_response()
+    response = make_response('this was working')
     response.set_cookie('testing2', 'testvalue2', max_age=60)
     agency_cd = request.args.get('agency_cd')
     resp = NWIS.get_site(site_no, agency_cd)
