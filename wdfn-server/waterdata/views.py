@@ -157,10 +157,8 @@ def monitoring_location(site_no):
     if request.cookies.get('special-banner-message') is None:
         print('no cookie so making one')
         full_function_response_object.set_cookie('special-banner-message', 'no-show', max_age=60*60*24*30)
-    else:
-        print('there already is a cookie')
-
     return full_function_response_object
+
 
 def return_404(*args, **kwargs):
     return abort(404)
