@@ -5,8 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.37.0...master)
-<<<<<<< HEAD
 ### Added
+- Cookie to control pandemic banner message
 - A set of device specific favicons
 =======
 ### Changed
@@ -15,8 +15,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Stopped end of median line from showing outside of graph area.
 - Custom brush handles now reposition when user clicks and holds.
-
->>>>>>> 11ad75377c2b270f6f338df299b0f75ae08b0d84
 
 ## [0.37.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.36.0...waterdataui-0.37.0) - 2020-09-16
 ### Added
