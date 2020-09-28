@@ -22,13 +22,6 @@ SERVICE_ROOT = app.config['SERVER_SERVICE_ROOT']
 NWIS = NwisWebServices(SERVICE_ROOT)
 
 
-@app.route('/cookie')
-def cookie():
-    response = make_response('set cookie here')
-    response.set_cookie('pandemic-message', 'no-show', max_age=60*60*24*30)
-    return response
-
-
 @app.route('/')
 def home():
     """Render the home page."""
@@ -49,8 +42,6 @@ def monitoring_location(site_no):
     :param site_no: USGS site number
 
     """
-    response = make_response('this was working')
-    response.set_cookie('testing2', 'testvalue2', max_age=60)
     agency_cd = request.args.get('agency_cd')
     resp = NWIS.get_site(site_no, agency_cd)
     status = resp.status_code
@@ -160,8 +151,16 @@ def monitoring_location(site_no):
         # mimetype would require changing the app's JSONIFY_MIMETYPE,
         # which defaults to application/json... didn't really want to change that
         return app.response_class(json.dumps(json_ld), status=http_code, mimetype='application/ld+json')
-    return render_template(template, **context), http_code
+    # At this point 'resp' is not a full response object in the Flask world.
+    # In order to set a cookie to the 'resp', we need to have the full response object, so let's create that here
+    full_function_response_object = make_response(render_template(template, **context), http_code)
+    if request.cookies.get('special-banner-message') is None:
+        print('no cookie so making one')
+        full_function_response_object.set_cookie('special-banner-message', 'no-show', max_age=60*60*24*30)
+    else:
+        print('there already is a cookie')
 
+    return full_function_response_object
 
 def return_404(*args, **kwargs):
     return abort(404)
