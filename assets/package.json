@@ -67,7 +67,7 @@
     "postcss-cli": "^7.1.1",
     "postcss-csso": "^4.0.0",
     "postcss-flexbugs-fixes": "^4.2.1",
-    "rollup": "^2.28.1",
+    "rollup": "^2.28.2",
     "@rollup/plugin-buble": "^0.21.3",
     "@rollup/plugin-commonjs": "^15.1.0",
     "rollup-plugin-istanbul": "^2.0.1",
