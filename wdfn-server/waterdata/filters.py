@@ -23,19 +23,6 @@ def asset_url_filter(asset_src):
     return urljoin(app.config.get('STATIC_ROOT'), asset_path)
 
 
-@app.template_filter('asset_url_non_hashed')
-def asset_url_filter_non_hashed(asset_src):
-    """
-    We use the npm package gulp-rev-all to hash our assets, but it won't hash certain types of files so
-    this filter is needed to produce a URL for static assets that don't get hashed.
-
-    :param str asset_src: Static asset location, relative to STATIC_ROOT.
-    :return: complete URL, including STATIC_ROOT
-    :rtype: str
-    """
-    return urljoin(app.config.get('STATIC_ROOT'), asset_src)
-
-
 @app.template_filter('indefinite_article')
 def use_correct_indefinite_article(some_noun):
     """
