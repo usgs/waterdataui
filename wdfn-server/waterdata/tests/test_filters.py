@@ -24,6 +24,11 @@ def test_asset_url_filter_no_manifest(app, mocker):
     assert filters.asset_url_filter('src.css') == 'root/path/src.css'
 
 
+def test_asset_url_filter_non_hashed(app, mocker):
+    mocker.patch.dict(app.config, {'STATIC_ROOT': 'root/path/'})
+    assert filters.asset_url_filter_non_hashed('site.webmanifest') == 'root/path/site.webmanifest'
+
+
 class TestIndefiniteArticleFilter(TestCase):
 
     def setUp(self):
