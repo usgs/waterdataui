@@ -22,6 +22,7 @@ COOPERATOR_LOOKUP_ENABLED = True  # may also be set to a list of district codes
 MONITORING_CAMERA_ENABLED = True
 MONITORING_CAMERA_PATH = os.path.join(PROJECT_HOME, 'data/monitoring_camera_data.json')
 DAILY_VALUE_HYDROGRAPH_ENABLED = True
+SET_COOKIE_TO_HIDE_BANNER_NOTICES = True  # set cookie set to hide banner messages for the life of the cookie
 
 DEBUG = False
 
@@ -79,9 +80,6 @@ COOPERATOR_SERVICE_PATTERN = 'https://water.usgs.gov/cgi-bin/customer/stories/?s
 # These messages below will be added to a dismissible panel below the main header. It is an array of strings. Markup
 # can be used to add things like links, bold text, etc.
 BANNER_NOTICES = []
-
-# If this is true, a cookie will be set that will hide banner messages for the life of the cookie
-SET_COOKIE_TO_HIDE_BANNER_NOTICES = True
 
 # set this if running in a container
 if os.getenv('CONTAINER_RUN', False):
