@@ -78,7 +78,10 @@ COOPERATOR_SERVICE_PATTERN = 'https://water.usgs.gov/cgi-bin/customer/stories/?s
 
 # These messages below will be added to a dismissible panel below the main header. It is an array of strings. Markup
 # can be used to add things like links, bold text, etc.
-BANNER_NOTICES = ['if here', 'cookie did not work']
+BANNER_NOTICES = []
+
+# If this is true, a cookie will be set that will hide banner messages for the life of the cookie
+SET_COOKIE_TO_HIDE_BANNER_NOTICES = True
 
 # set this if running in a container
 if os.getenv('CONTAINER_RUN', False):
