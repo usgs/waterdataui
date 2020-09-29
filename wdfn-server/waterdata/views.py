@@ -10,7 +10,7 @@ from markdown import markdown
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, \
     get_period_of_record_by_parm_cd
-from .utils import construct_url, defined_when, parse_rdb
+from .utils import construct_url, defined_when, parse_rdb, set_banner_notice_cookie
 from .services import sifta, ogc
 from .services.nwis import NwisWebServices
 
@@ -154,6 +154,8 @@ def monitoring_location(site_no):
     # At this point 'resp' is not a full response object in the Flask world.
     # In order to set a cookie to the 'resp', we need to have the full response object, so let's create that here
     full_function_response_object = make_response(render_template(template, **context), http_code)
+    full_function_response_object = set_banner_notice_cookie(full_function_response_object)
+
     if app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES']:
         if request.cookies.get('no-show-banner-message') is None:
             full_function_response_object.set_cookie('no-show-banner-message', 'no-show', max_age=60*60*24*30)
