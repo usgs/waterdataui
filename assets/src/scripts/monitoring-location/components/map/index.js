@@ -161,7 +161,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
  * @param {Number} zoom - zoom level to initially set the map to
  */
 export const attachToNode = function(store, node, {siteno, latitude, longitude, zoom}) {
-    store.dispatch(floodInundationActions.retrieveFloodSite(siteno));
+    store.dispatch(floodInundationActions.retrieveFloodData(siteno));
     // hydrates the store with nldi data
     store.dispatch(nldiDataActions.retrieveNldiData(siteno));
 

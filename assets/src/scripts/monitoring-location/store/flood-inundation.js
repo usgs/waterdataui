@@ -1,4 +1,4 @@
-import {fetchFloodSiteInfo, fetchFloodExtent, fetchFloodFeatures,
+import {fetchFloodExtent, fetchFloodFeatures,
     fetchWaterwatchFloodLevels} from '../../web-services/flood-data';
 
 const INITIAL_DATA = {
@@ -20,19 +20,6 @@ const setFloodFeatures = function(stages, extent) {
     };
 };
 
-/*
- * Action to fetch the flood site data, determine if public
- * @param {String} siteno
- * @return {Function} which returns a Promise
- */
-const retrieveFloodSite = function(siteno) {
-    return function (dispatch) {
-        const floodSite = fetchFloodSiteInfo(siteno);
-        return Promise.all(floodSite).then((data) => {
-			console.log(data);
-        });
-    };
-};
 /*
  * Asynchronous Redux action to fetch the flood data features and extent
  * @param {String} siteno
@@ -133,7 +120,6 @@ export const floodStateReducer = function(floodState={}, action) {
 
 export const Actions = {
     setFloodFeatures,
-    retrieveFloodSite,
     retrieveFloodData,
     setGageHeight,
     setWaterwatchFloodLevels,
