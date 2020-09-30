@@ -80,11 +80,11 @@
                 </thead>
                 <tbody class="list"></tbody>
             </table>
-		</div>
-		{% if collection.properties.cooperators %}
+        </div>
+        {% if collection.properties.cooperators %}
             <div id="network-cooperators">
                 <h3>Cooperators</h3>
-                    <div class="grid-row"> 
+                <div class="grid-row"> 
                     {% for cooperator in collection.properties.cooperators %}
                         <div class="cooperator-row">
                             {% if cooperator.cooperatorLogo == '' %}
@@ -97,9 +97,9 @@
                             {% endif %}
                         </div>
                     {% endfor %}  
-                    </div>
+                </div>
             </div>
-            {% endif %}
+        {% endif %}
     </div>
 {%- endmacro %}
 

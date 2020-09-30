@@ -11,12 +11,10 @@
 {% block content %}
     <div class="usa-width-one-whole">
         {% if http_code == 200 %}
-            {% if network_cd %}
+			{% if network_cd %}
+				<h1>{{ collection.title }} </h1>
                 {% if collection.description %}
-                    <h1>{{ collection.title }} </h1>
 					<p>{{ collection.description }} </p>
-                {% else %}
-                    <h1>{{ collection.title }} </h1>
                 {% endif %}
 
                {{ components.NetworkComponent(network_cd, extent, collection, narrative) }}
