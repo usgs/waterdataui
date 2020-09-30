@@ -48,9 +48,7 @@ def monitoring_location(site_no):
     json_ld = None
 
     if status == 200:
-
         iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
-
         data_list = list(iter_data)
 
         template = 'monitoring_location.html'
