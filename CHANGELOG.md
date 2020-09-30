@@ -5,7 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.37.0...master)
-### Added 'Days from today' custom selection
+### Added
+- Added 'Days from today' custom selection.
+- A set of device specific favicons.
+
+### Changed
+- Now using the new SIFTA service.
+
+### Fixed
+- Stopped end of median line from showing outside of graph area.
+- Custom brush handles now reposition when user clicks and holds.
 
 ## [0.37.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.36.0...waterdataui-0.37.0) - 2020-09-16
 ### Added

@@ -14,9 +14,9 @@ gulp.task('revall', function () {
                 // Skip leaflet markers that are referenced via Javascript
                 /marker-icon.png$/,
                 /marker-icon-2x.png$/,
-                /marker-shadow.png$/,
+                /marker-shadow.png$/
             ],
-            includeFilesInManifest: ['.css', '.js', '.ico', '.svg', '.png']
+            includeFilesInManifest: ['.css', '.js', '.ico', '.svg', '.png', '.webmanifest', '.xml']
         }))
         .pipe(gulp.dest('dist'))
         .pipe(RevAll.manifestFile({fileName: 'manifest.json'}))
