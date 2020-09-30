@@ -40,7 +40,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             value: 'days',
             text: 'Days before today',
             checked: true,
-            ariaExpanded: true
+            ariaExpanded: false
         },
         {
             id: 'custom-input-calender-days',

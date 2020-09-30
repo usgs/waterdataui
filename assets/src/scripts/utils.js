@@ -227,6 +227,15 @@ export const convertCelsiusToFahrenheit = function(celsius) {
 };
 
 /*
+* Helper function that sorts between 'custom' (user defined)  and the default time period options
+* @param {String} the time period code from the timespan radio buttons
+* @return {Boolean} if the value is or is not a 'custom' (user defined) time period
+* */
+export const isCustomPeriod = function(period) {
+    return period !== 'P7D' && period !== 'P30D' && period !== 'P1Y' ?  true : false;
+};
+
+/*
  * Return the variables sorted with the ones we care about first
  * @param {Array of variable Object}
  * @return {Array of variable Object}

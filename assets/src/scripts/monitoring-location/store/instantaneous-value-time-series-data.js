@@ -6,7 +6,7 @@ import omitBy from 'lodash/omitBy';
 import {DateTime} from 'luxon';
 
 import {normalize} from '../../schema';
-import {calcStartTime, sortedParameters} from '../../utils';
+import {calcStartTime, isCustomPeriod, sortedParameters} from '../../utils';
 import {getPreviousYearTimeSeries, getTimeSeries} from '../../web-services/models';
 
 import {
@@ -259,10 +259,10 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
         const state = getState();
         const thisParamCd = paramCd ? paramCd : getCurrentParmCd(state);
         const tsRequestKey = getTsRequestKey ('current', period, thisParamCd)(state);
-        const currentUserInputCustomTimeRangeSelectionButton = period !== 'P7D' && period !== 'P30D' && period !== 'P1Y' ? 'custom' : period;
+        const currentUserInputCustomTimeRangeSelectionButton = isCustomPeriod(period) ? 'custom' : period;
         const userInputNumberOfDays = period !== null ? period.slice(1,-1) : '';
         dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKind(period));
-        period !== 'P7D' && period !== 'P30D' && period !== 'P1Y' ?
+        isCustomPeriod(period) ?
             dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userInputNumberOfDays)) :
             null;
         dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton(currentUserInputCustomTimeRangeSelectionButton));

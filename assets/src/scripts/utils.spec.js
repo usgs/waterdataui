@@ -2,7 +2,7 @@ import {select} from 'd3-selection';
 import {
     unicodeHtmlEntity, getHtmlFromString, replaceHtmlEntities, setEquality,
     wrap, mediaQuery, calcStartTime, callIf, parseRDB, convertFahrenheitToCelsius,
-    convertCelsiusToFahrenheit, sortedParameters, getNearestTime} from './utils';
+    convertCelsiusToFahrenheit, isCustomPeriod, sortedParameters, getNearestTime} from './utils';
 
 
 describe('Utils module', () => {
@@ -198,6 +198,15 @@ describe('Utils module', () => {
             expect(convertCelsiusToFahrenheit(100)).toEqual(212);
             expect(convertCelsiusToFahrenheit(0)).toEqual(32);
             expect(convertCelsiusToFahrenheit(-40)).toEqual(-40);
+        });
+    });
+
+    describe('isCustomPeriod', () => {
+        it('will return correct boolean value', () => {
+            expect(isCustomPeriod('P7D')).toEqual(false);
+            expect(isCustomPeriod('P30D')).toEqual(false);
+            expect(isCustomPeriod('P1Y')).toEqual(false);
+            expect(isCustomPeriod('P32D')).toEqual(true);
         });
     });
 
