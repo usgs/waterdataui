@@ -38,14 +38,14 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         {
             id: 'custom-input-days-before-today',
             value: 'days',
-            text: 'days before today',
+            text: 'Days before today',
             checked: true,
             ariaExpanded: true
         },
         {
             id: 'custom-input-calender-days',
             value: 'calender',
-            text: 'calender days',
+            text: 'Calender days',
             checked: false,
             ariaExpanded: false
         }
@@ -139,7 +139,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     numberOfDaysSelection.append('span')
         .attr('id', 'with-hint-input-days-from-today-hint')
         .attr('class', 'usa-hint')
-        .text('timespan in days before today');
+        .text('Timespan in days before today');
     numberOfDaysSelection.append('input')
         .attr('class', 'usa-input usa-character-count__field')
         .attr('id', 'with-hint-input-days-from-today')

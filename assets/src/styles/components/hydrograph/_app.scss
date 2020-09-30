@@ -38,6 +38,9 @@
     @include u-padding-right(1);
     @include u-padding-bottom(1);
     @include u-padding-left(1);
+    .usa-label {
+      @include u-text('bold');
+    }
   }
   #ts-customdaterange-select-container {
     @include u-padding-right(1);
