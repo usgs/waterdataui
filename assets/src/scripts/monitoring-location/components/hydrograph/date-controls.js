@@ -19,7 +19,7 @@ import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-valu
 import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
 
 export const drawDateRangeControls = function(elem, store, siteno) {
-    const MAX_NUMBER_OF_DAYS_USERS_CAN_INPUT = 5;
+    const MAX_DIGITS_FOR_DAYS_FROM_TODAY = 5;
     const DATE_RANGE = [{
         name: '7 days',
         period: 'P7D'
@@ -143,11 +143,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     numberOfDaysSelection.append('input')
         .attr('class', 'usa-input usa-character-count__field')
         .attr('id', 'with-hint-input-days-from-today')
-        .attr('maxlength', `${MAX_NUMBER_OF_DAYS_USERS_CAN_INPUT}`)
+        .attr('maxlength', `${MAX_DIGITS_FOR_DAYS_FROM_TODAY}`)
         .attr('name', 'with-hint-input-days-from-today')
         .attr('aria-describedby', 'with-hint-input-days-from-today-info with-hint-input-days-from-today-hint');
     numberOfDaysSelection.append('span')
-        .text(`${MAX_NUMBER_OF_DAYS_USERS_CAN_INPUT} digits allowed`)
+        .text(`${MAX_DIGITS_FOR_DAYS_FROM_TODAY} digits allowed`)
         .attr('id', 'with-hint-input-days-from-today-info')
         .attr('class', 'usa-hint usa-character-count__message')
         .attr('aria-live', 'polite');
