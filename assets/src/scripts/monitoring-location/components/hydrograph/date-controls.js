@@ -10,6 +10,7 @@ import components from '../../../../../node_modules/uswds/src/js/components';
 import {
     isLoadingTS,
     hasAnyTimeSeries,
+    getCurrentVariableID,
     getUserInputTimeRangeSelectionButton,
     getUserInputCustomTimeRangeSelectionButton,
     getUserInputNumberOfDays,
@@ -17,6 +18,8 @@ import {
 import {getIanaTimeZone} from '../../selectors/time-zone-selector';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
+
+import {getVariables} from '../../selectors/time-series-selector';
 
 export const drawDateRangeControls = function(elem, store, siteno) {
     const MAX_DIGITS_FOR_DAYS_FROM_TODAY = 5;
@@ -190,12 +193,20 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     .text('Entry must be a number.');
                 customDaysBeforeTodayValidationContainer.attr('hidden', null);
             } else {
-                customDaysBeforeTodayValidationContainer.attr('hidden', true);
-                store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userSpecifiedNumberOfDays));
-                store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(
-                    siteno,
-                    formattedPeriodQueryParameter
-                )).then(() => store.dispatch(ivTimeSeriesStateActions.clearIVGraphBrushOffset()));
+                customDaysBeforeTodayValidationContainer.call(link(store, (elem, {parameterVariables, currentVariableID}) => {
+                    customDaysBeforeTodayValidationContainer.attr('hidden', true);
+                    const parameterCode = `${parameterVariables[currentVariableID].variableCode.value}`;
+                    console.log('parameterCode ', parameterCode)
+
+                    store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userSpecifiedNumberOfDays));
+                    store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(
+                        siteno,
+                        formattedPeriodQueryParameter
+                    )).then(() => store.dispatch(ivTimeSeriesStateActions.clearIVGraphBrushOffset()));
+                }, createStructuredSelector({
+                    parameterVariables: getVariables,
+                    currentVariableID: getCurrentVariableID
+                })));
             }
         });
 
