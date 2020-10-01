@@ -169,7 +169,8 @@ const retrieveCustomTimePeriodIVTimeSeries = function(siteno, parameterCd, perio
     return function(dispatch, getState) {
         const state = getState();
         const tsRequestKey = getTsRequestKey('current', 'custom', parameterCd)(state);
-
+        const currentUserInputCustomTimeRangeSelectionButton = isCustomPeriod(period) ? 'custom' : period;
+        const userInputNumberOfDays = period !== null ? period.slice(1,-1) : '';
         // We need to resetTimeSeries because the merge function in the addSeriesCollection does not clear out the
         // time series values. This is an issue if the length of the values that we are retrieving are fewer than
         // what is saved.
@@ -178,7 +179,13 @@ const retrieveCustomTimePeriodIVTimeSeries = function(siteno, parameterCd, perio
             dispatch(Actions.resetIVTimeSeries(tsRequestKey));
         }
 
-        dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKind('custom'));
+        dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKind(period));
+        isCustomPeriod(period) ?
+            dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userInputNumberOfDays)) :
+            null;
+        dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton(currentUserInputCustomTimeRangeSelectionButton));
+
+        // dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKind('custom'));
         dispatch(ivTimeSeriesStateActions.addIVTimeSeriesToLoadingKeys([tsRequestKey]));
         return getTimeSeries({sites: [siteno], params: [parameterCd], period: period}).then(
             series => {
