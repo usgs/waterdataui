@@ -193,20 +193,20 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     .text('Entry must be a number.');
                 customDaysBeforeTodayValidationContainer.attr('hidden', null);
             } else {
+                customDaysBeforeTodayValidationContainer.attr('hidden', true);
+                let parameterCode;
                 customDaysBeforeTodayValidationContainer.call(link(store, (elem, {parameterVariables, currentVariableID}) => {
-                    customDaysBeforeTodayValidationContainer.attr('hidden', true);
-                    const parameterCode = `${parameterVariables[currentVariableID].variableCode.value}`;
-                    console.log('parameterCode ', parameterCode)
-
-                    store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userSpecifiedNumberOfDays));
-                    store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(
-                        siteno,
-                        formattedPeriodQueryParameter
-                    )).then(() => store.dispatch(ivTimeSeriesStateActions.clearIVGraphBrushOffset()));
+                    parameterCode = `${parameterVariables[currentVariableID].variableCode.value}`;
                 }, createStructuredSelector({
                     parameterVariables: getVariables,
                     currentVariableID: getCurrentVariableID
                 })));
+                store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userSpecifiedNumberOfDays));
+                store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(
+                    siteno,
+                    parameterCode,
+                    formattedPeriodQueryParameter
+                )).then(() => store.dispatch(ivTimeSeriesStateActions.clearIVGraphBrushOffset()));
             }
         });
 

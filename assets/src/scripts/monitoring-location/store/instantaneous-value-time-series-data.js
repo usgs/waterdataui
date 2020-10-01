@@ -163,6 +163,9 @@ const retrieveCompareIVTimeSeries = function(siteno, period, startTime, endTime)
 * @return {Function} which returns a promise
  */
 const retrieveCustomTimePeriodIVTimeSeries = function(siteno, parameterCd, period) {
+    console.log('in retrieveCustomTimePeriodIVTimeSeries siteno ',  siteno)
+    console.log('in retrieveCustomTimePeriodIVTimeSeries parameterCd ',  parameterCd)
+    console.log('in retrieveCustomTimePeriodIVTimeSeries period ',  period)
     return function(dispatch, getState) {
         const state = getState();
         const tsRequestKey = getTsRequestKey('current', 'custom', parameterCd)(state);
