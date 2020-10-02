@@ -259,15 +259,15 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
     });
 
     it('Expects data to be retrieved if a number of correct length is entered in days before today form field.', () => {
-        spyOn(ivTimeSeriesDataActions, 'retrieveExtendedIVTimeSeries').and.callThrough();
+        spyOn(ivTimeSeriesDataActions, 'retrieveCustomTimePeriodIVTimeSeries').and.callThrough();
         select('#with-hint-input-days-from-today').property('value', 3);
         select('#custom-date-submit-days').dispatch('click');
 
         let userInputDaysBeforeTodayAlertDiv = select('#custom-days-before-today-alert-container');
         expect(userInputDaysBeforeTodayAlertDiv.attr('hidden')).toBe('true');
 
-        expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).toHaveBeenCalledWith(
-            '12345678', 'P3D'
+        expect(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries).toHaveBeenCalledWith(
+            '12345678', '00060', 'P3D'
         );
     });
 });
