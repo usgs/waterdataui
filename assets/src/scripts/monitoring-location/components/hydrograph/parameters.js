@@ -130,6 +130,7 @@ export const plotSeriesSelectTable = function (elem,
         .selectAll('tr')
         .data(availableParameterCodes)
         .enter().append('tr')
+        .attr('id', param => `time-series-select-table-row-${param.parameterCode}`)
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'selectTimeSeries')
         .attr('ga-event-action', (param) => `time-series-parmcd-${param.parameterCode}`)
@@ -144,6 +145,7 @@ export const plotSeriesSelectTable = function (elem,
         .call(tr => {
             let paramSelectCol = tr.append('td');
             paramSelectCol.append('input')
+                .attr('id', param => `time-series-select-radio-button-${param.parameterCode}`)
                 .attr('type', 'radio')
                 .attr('name', 'param-select-radio-input')
                 .attr('class', 'usa-radio__input')

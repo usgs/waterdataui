@@ -14,7 +14,8 @@ import {
     getUserInputTimeRangeSelectionButton,
     getUserInputCustomTimeRangeSelectionButton,
     getUserInputNumberOfDays,
-    getCustomTimeRange} from '../../selectors/time-series-selector';
+    getCustomTimeRange, getCurrentParmCd
+} from '../../selectors/time-series-selector';
 import {getIanaTimeZone} from '../../selectors/time-zone-selector';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
@@ -194,13 +195,12 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 customDaysBeforeTodayValidationContainer.attr('hidden', null);
             } else {
                 customDaysBeforeTodayValidationContainer.attr('hidden', true);
-                let parameterCode;
-                customDaysBeforeTodayValidationContainer.call(link(store, (elem, {parameterVariables, currentVariableID}) => {
-                    parameterCode = `${parameterVariables[currentVariableID].variableCode.value}`;
-                }, createStructuredSelector({
-                    parameterVariables: getVariables,
-                    currentVariableID: getCurrentVariableID
-                })));
+                const parameterCode = getCurrentParmCd(store.getState());
+                document.getElementById(`time-series-select-table-row-${parameterCode}`).selected=true;
+                document.getElementById(`time-series-select-radio-button-${parameterCode}`).checked=true;
+                console.log('row ', document.getElementById(`time-series-select-table-row-${parameterCode}`))
+                console.log('button  ', document.getElementById(`time-series-select-radio-button-${parameterCode}`))
+
                 store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userSpecifiedNumberOfDays));
                 store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(
                     siteno,
