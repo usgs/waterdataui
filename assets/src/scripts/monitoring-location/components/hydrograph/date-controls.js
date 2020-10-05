@@ -10,7 +10,6 @@ import components from '../../../../../node_modules/uswds/src/js/components';
 import {
     isLoadingTS,
     hasAnyTimeSeries,
-    getCurrentVariableID,
     getUserInputTimeRangeSelectionButton,
     getUserInputCustomTimeRangeSelectionButton,
     getUserInputNumberOfDays,
@@ -19,8 +18,6 @@ import {
 import {getIanaTimeZone} from '../../selectors/time-zone-selector';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
-
-import {getVariables} from '../../selectors/time-series-selector';
 
 export const drawDateRangeControls = function(elem, store, siteno) {
     const MAX_DIGITS_FOR_DAYS_FROM_TODAY = 5;
@@ -196,10 +193,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             } else {
                 customDaysBeforeTodayValidationContainer.attr('hidden', true);
                 const parameterCode = getCurrentParmCd(store.getState());
-                document.getElementById(`time-series-select-table-row-${parameterCode}`).selected=true;
-                document.getElementById(`time-series-select-radio-button-${parameterCode}`).checked=true;
-                console.log('row ', document.getElementById(`time-series-select-table-row-${parameterCode}`))
-                console.log('button  ', document.getElementById(`time-series-select-radio-button-${parameterCode}`))
 
                 store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userSpecifiedNumberOfDays));
                 store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(
@@ -356,10 +349,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
 
             if (selectedVal === 'custom') {
-                // Remove any values stored in the form, because they may not match what is shown in the graph until the submit button is pushed
-                store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(''));
-                store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
-
                 selected.attr('aria-expanded', true);
                 containerRadioGroupCustomSelectButtons.attr('hidden', null);
                 containerCustomDaysBeforeToday.attr('hidden', null);
@@ -367,10 +356,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 store.dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton('custom'));
             } else {
                 const userInputTimeframeButtonSelected = li.select('input:checked').attr('value');
-
-                // Remove any values stored in the form, because they may not match what is shown in the graph until the submit button is pushed
-                store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(''));
-                store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
 
                 li.select('input#custom-date-range').attr('aria-expanded', false);
                 containerRadioGroupCustomSelectButtons.attr('hidden', true);

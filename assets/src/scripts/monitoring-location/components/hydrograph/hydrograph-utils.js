@@ -20,11 +20,19 @@ export const isPeriodCustom = function(periodCode) {
 * @return {Object} parsed period code values
 * */
 export const parsePeriodCode = function(periodCode) {
-    const currentUserInputCustomTimeRangeSelectionButton = isPeriodCustom(periodCode) ? 'custom' : periodCode;
-    const userInputNumberOfDays = periodCode !== null ? periodCode.slice(1,-1) : '';
+    if (periodCode) {
+        const currentUserInputCustomTimeRangeSelectionButton = isPeriodCustom(periodCode) ? 'custom' : periodCode;
+        const userInputNumberOfDays = periodCode !== null ? periodCode.slice(1,-1) : '';
 
-    return {
-        'currentUserInputCustomTimeRangeSelectionButton' : currentUserInputCustomTimeRangeSelectionButton,
-        'userInputNumberOfDays': userInputNumberOfDays
-    };
+        return {
+            'currentUserInputCustomTimeRangeSelectionButton' : currentUserInputCustomTimeRangeSelectionButton,
+            'userInputNumberOfDays': userInputNumberOfDays
+        };
+    } else {
+
+        return {
+            'currentUserInputCustomTimeRangeSelectionButton' : 'P7D',
+            'userInputNumberOfDays': ''
+        };
+    }
 };
