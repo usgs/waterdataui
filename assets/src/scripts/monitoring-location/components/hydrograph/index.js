@@ -99,7 +99,6 @@ export const attachToNode = function (store,
                 const currentParamCode = parameterCode ? parameterCode : getCurrentParmCd(store.getState());
 
                 if (period && period.substr(0,1) === 'P' && period !== 'P7D') {
-                    console.log('ran in instantaineou value toem series data')
                     // store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(siteno, period, currentParamCode));
 
                     store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(siteno, period, currentParamCode));

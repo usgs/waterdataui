@@ -307,7 +307,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 store.dispatch(Actions.retrieveCustomTimePeriodIVTimeSeries('12345678', '00060', 'P14D'));
 
                 const tsState = store.getState().ivTimeSeriesState;
-                expect(tsState.loadingIVTSKeys).toContain('current:custom:00060');
+                expect(tsState.loadingIVTSKeys).toContain('current:P14D:00060');
                 expect(tsState.userInputTimeRangeSelectionButton).toBe('custom');
             });
 
@@ -320,7 +320,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 promise.then(() => {
                     const tsState = store.getState().ivTimeSeriesState;
                     expect(Actions.addIVTimeSeriesCollection).toHaveBeenCalled();
-                    expect(tsState.currentIVVariableID).toBe(45807197);
+                    expect(tsState.currentIVVariableID).toBe('45807197');
                     expect(tsState.loadingIVTSKeys).not.toContain('current:custom:00060');
                     done();
                 });
