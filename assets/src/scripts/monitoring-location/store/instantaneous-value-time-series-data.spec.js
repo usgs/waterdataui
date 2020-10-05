@@ -480,7 +480,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
             });
 
             it('Expect to retrieve custom time series if date range kind is custom', () => {
-                store.dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKind('custom'));
+                store.dispatch(ivTimeSeriesStateActions.setCurrentIVDateRange('custom'));
                 store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(startDT, endDT));
                 store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries('12345678', '45807197'));
 

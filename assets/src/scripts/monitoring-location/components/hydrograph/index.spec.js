@@ -139,7 +139,7 @@ const TEST_STATE = {
     },
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
-        currentIVDateRangeKind: 'P7D',
+        currentIVDateRange: 'P7D',
         userInputCustomTimeRangeSelectionButton: 'days-input',
         userInputTimeRangeSelectionButton: 'P7D',
         userInputNumberOfDays: null,
@@ -443,7 +443,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 ivTimeSeriesState: {
                     ...TEST_STATE.ivTimeSeriesState,
                     currentIVVariableID: '',
-                    currentIVDateRangeKind: ''
+                    currentIVDateRange: ''
 
                 },
                 ui: {
@@ -505,7 +505,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                         median: true
                     },
                     currentIVVariableID: '45807197',
-                    currentIVDateRangeKind: 'P7D',
+                    currentIVDateRange: 'P7D',
                     currentIVMethodID: 'method1',
                     loadingIVTSKeys: [],
                     ivGraphBrushOffset: null
@@ -639,7 +639,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                         median: true
                     },
                     currentIVVariableID: '45807197',
-                    currentIVDateRangeKind: 'P7D',
+                    currentIVDateRange: 'P7D',
                     currentIVMethodID: 'method1',
                     loadingIVTSKeys: [],
                     ivGraphBrushOffset: null

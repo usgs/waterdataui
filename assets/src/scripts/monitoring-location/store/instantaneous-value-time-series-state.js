@@ -48,11 +48,11 @@ const setCurrentIVMethodID = function(methodID) {
  * @param {String} dateRangeKind - represents an ISO 8601 Duration or "custom"
  * @return {Object} - Redux action
  */
-const setCurrentIVDateRangeKind = function(dateRangeKind) {
+const setCurrentIVDateRange = function(dateRange) {
 
     return {
-        type: 'SET_CURRENT_IV_DATE_RANGE_KIND',
-        dateRangeKind
+        type: 'SET_CURRENT_IV_DATE_RANGE',
+        dateRange
     };
 };
 
@@ -255,10 +255,10 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
                 currentIVMethodID: action.methodID
             };
 
-        case 'SET_CURRENT_IV_DATE_RANGE_KIND':
+        case 'SET_CURRENT_IV_DATE_RANGE':
             return {
                 ...ivTimeSeriesState,
-                currentIVDateRangeKind: action.dateRangeKind
+                currentIVDateRange: action.dateRange
             };
 
         case 'SET_CUSTOM_IV_TIME_RANGE':
@@ -342,7 +342,7 @@ export const Actions = {
     setIVTimeSeriesVisibility,
     setCurrentIVVariable,
     setCurrentIVMethodID,
-    setCurrentIVDateRangeKind,
+    setCurrentIVDateRange,
     setCustomIVTimeRange,
     setUserInputTimeRangeSelectionButton,
     setUserInputCustomTimeRangeSelectionButton,

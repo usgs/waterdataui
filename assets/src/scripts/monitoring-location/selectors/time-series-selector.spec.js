@@ -235,7 +235,7 @@ const TEST_DATA = {
     },
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
-        currentIVDateRangeKind: 'P7D',
+        currentIVDateRange: 'P7D',
         userInputCustomTimeRangeSelectionButton: 'days-input',
         userInputTimeRangeSelectionButton: 'P7D',
         userInputNumberOfDays: '3'
@@ -509,7 +509,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
        it('Return the current date range', () => {
            expect(getCurrentDateRangeKind({
                ivTimeSeriesState: {
-                   currentIVDateRangeKind: 'P30D'
+                   currentIVDateRange: 'P30D'
                }
            })).toEqual('P30D');
        });
@@ -599,7 +599,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 }
             },
             ivTimeSeriesState: {
-                currentIVDateRangeKind: 'P7D',
+                currentIVDateRange: 'P7D',
                 currentIVVariableID: '45807042'
             }
         };
@@ -608,7 +608,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
             expect(hasTimeSeries('current', 'P7D', '00060')({
                 ivTimeSeriesData: {},
                 ivTimeSeriesState: {
-                    currentIVDateRangeKind: 'P7D',
+                    currentIVDateRange: 'P7D',
                     currentIVVariableID: '45807042'
                 }
             })).toBe(false);
@@ -631,7 +631,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 variables: TEST_VARS
             },
             ivTimeSeriesState: {
-                currentIVDateRangeKind: 'P7D',
+                currentIVDateRange: 'P7D',
                 currentIVVariableID: '45807042'
             }
         };
@@ -681,7 +681,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 variables: TEST_VARS
             },
             ivTimeSeriesState: {
-                currentIVDateRangeKind: 'P7D',
+                currentIVDateRange: 'P7D',
                 currentIVVariableID: '45807042'
             }
         };
@@ -742,7 +742,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 variables: TEST_VARS
             },
             ivTimeSeriesState: {
-                currentIVDateRangeKind: 'P7D',
+                currentIVDateRange: 'P7D',
                 currentIVVariableID: '45807042'
             }
         };
@@ -819,7 +819,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 variables: TEST_VARS
             },
             ivTimeSeriesState: {
-                currentIVDateRangeKind: 'P30D',
+                currentIVDateRange: 'P30D',
                 currentIVVariableID: '45807042',
                 loadingIVTSKeys: ['compare:P7D', 'current:P30D:00060']
             }
@@ -854,7 +854,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 variables: TEST_VARS
             },
             ivTimeSeriesState: {
-                currentIVDateRangeKind: 'P30D',
+                currentIVDateRange: 'P30D',
                 currentIVVariableID: '45807042'
             }
         };
@@ -895,7 +895,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 variables: TEST_VARS
             },
             ivTimeSeriesState: {
-                currentIVDateRangeKind: 'P30D',
+                currentIVDateRange: 'P30D',
                 currentIVVariableID: '45807042'
             }
         };
@@ -986,7 +986,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 },
                 ivTimeSeriesState: {
                     currentIVVariableID: '45807197',
-                    currentIVDateRangeKind: 'P7D'
+                    currentIVDateRange: 'P7D'
                 }
             })).toEqual({
                 one: {item: 'one', points: [1, 2], tsKey: 'current:P7D', variable: 45807197},
@@ -1001,7 +1001,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 ivTimeSeriesData: {},
                 ivTimeSeriesState: {
                     currentIVVariableID: null,
-                    currentIVDateRangeKind: 'P7D'
+                    currentIVDateRange: 'P7D'
                 }
             })).toEqual({});
         });

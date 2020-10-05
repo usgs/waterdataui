@@ -55,7 +55,7 @@ export const configureStore = function (initialState) {
                 compare: false,
                 median: false
             },
-            currentIVDateRangeKind: 'P7D',
+            currentIVDateRange: 'P7D',
             customIVTimeRange: null,
             currentIVVariableID: null,
             ivGraphCursorOffset: null,

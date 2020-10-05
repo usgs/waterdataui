@@ -135,7 +135,7 @@ describe('monitoring-location/selectors/median-statistics-selector', () => {
         },
         ivTimeSeriesState: {
             currentIVVariableID: '45807142',
-            currentIVDateRangeKind: 'P7D'
+            currentIVDateRange: 'P7D'
         }
     };
 

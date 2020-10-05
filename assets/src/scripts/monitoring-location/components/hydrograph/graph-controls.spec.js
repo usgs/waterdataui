@@ -138,7 +138,7 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
         },
         ivTimeSeriesState: {
             currentIVVariableID: '45807197',
-            currentIVDateRangeKind: 'P7D',
+            currentIVDateRange: 'P7D',
             showIVTimeSeries: {
                 current: true,
                 compare: true,

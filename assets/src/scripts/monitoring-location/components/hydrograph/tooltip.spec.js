@@ -161,7 +161,7 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
             },
             currentIVVariableID: '00060id',
             currentIVMethodID: 69928,
-            currentIVDateRangeKind: 'P7D',
+            currentIVDateRange: 'P7D',
             customIVTimeRange: null,
             ivGraphCursorOffset: 61200000
         },

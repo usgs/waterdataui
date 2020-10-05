@@ -56,7 +56,7 @@ describe('monitoring-location/url-params module', () => {
             ianaTimeZone: 'America/New_York',
             ivTimeSeriesState: {
                 currentIVVariableID: '123456',
-                currentIVDateRangeKind: 'P7D',
+                currentIVDateRange: 'P7D',
                 customIVTimeRange: null,
                 currentIVMethodID: '69928',
                 userInputCustomTimeRangeSelectionButton: 'days-input',
@@ -112,7 +112,7 @@ describe('monitoring-location/url-params module', () => {
                 ...TEST_STATE,
                 ivTimeSeriesState: {
                     ...TEST_STATE.ivTimeSeriesState,
-                    currentIVDateRangeKind: 'P30D'
+                    currentIVDateRange: 'P30D'
                 }
             });
             renderTimeSeriesUrlParams(store);
@@ -124,7 +124,7 @@ describe('monitoring-location/url-params module', () => {
             expect(window.location.hash).not.toContain('endDT');
             expect(window.location.hash).not.toContain('timeSeriesId');
 
-            store.dispatch(Actions.setCurrentIVDateRangeKind('P1Y'));
+            store.dispatch(Actions.setCurrentIVDateRange('P1Y'));
             window.requestAnimationFrame(() => {
                 expect(window.location.hash).toContain('period=P1Y');
                 done();
@@ -136,7 +136,7 @@ describe('monitoring-location/url-params module', () => {
                 ...TEST_STATE,
                 ivTimeSeriesState: {
                     ...TEST_STATE.ivTimeSeriesState,
-                    currentIVDateRangeKind: 'P23D'
+                    currentIVDateRange: 'P23D'
                 }
             });
             renderTimeSeriesUrlParams(store);
@@ -148,7 +148,7 @@ describe('monitoring-location/url-params module', () => {
             expect(window.location.hash).not.toContain('endDT');
             expect(window.location.hash).not.toContain('timeSeriesId');
 
-            store.dispatch(Actions.setCurrentIVDateRangeKind('P1Y'));
+            store.dispatch(Actions.setCurrentIVDateRange('P1Y'));
             window.requestAnimationFrame(() => {
                 expect(window.location.hash).toContain('period=P1Y');
                 done();
@@ -160,7 +160,7 @@ describe('monitoring-location/url-params module', () => {
                 ...TEST_STATE,
                 ivTimeSeriesState: {
                     ...TEST_STATE.ivTimeSeriesState,
-                    currentIVDateRangeKind: 'P23D'
+                    currentIVDateRange: 'P23D'
                 }
             });
             renderTimeSeriesUrlParams(store);
@@ -172,7 +172,7 @@ describe('monitoring-location/url-params module', () => {
             expect(window.location.hash).not.toContain('endDT');
             expect(window.location.hash).not.toContain('timeSeriesId');
 
-            store.dispatch(Actions.setCurrentIVDateRangeKind('P1Y'));
+            store.dispatch(Actions.setCurrentIVDateRange('P1Y'));
             window.requestAnimationFrame(() => {
                 expect(window.location.hash).toContain('period=P1Y');
                 done();
@@ -184,7 +184,7 @@ describe('monitoring-location/url-params module', () => {
                 ...TEST_STATE,
                 ivTimeSeriesState: {
                     ...TEST_STATE.ivTimeSeriesState,
-                    currentIVDateRangeKind: 'custom',
+                    currentIVDateRange: 'custom',
                     customIVTimeRange: {
                         start: 1546318800000,
                         end: 1551416400000
