@@ -5,6 +5,7 @@
 * @return {Boolean} if the value is or is not a 'custom' (user defined) time period
 * */
 export const isPeriodCustom = function(periodCode) {
+
     return periodCode !== 'P7D' && periodCode !== 'P30D' && periodCode !== 'P1Y' ?  true : false;
 };
 

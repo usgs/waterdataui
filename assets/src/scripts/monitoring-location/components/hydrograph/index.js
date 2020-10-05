@@ -30,6 +30,7 @@ import {getAvailableParameterCodes} from './selectors/parameter-data';
 import {getTimeSeriesScalesByParmCd} from './selectors/scales';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
+import {isPeriodCustom} from './hydrograph-utils';
 
 /**
  * Modify styling to hide or display the elem.
@@ -97,9 +98,10 @@ export const attachToNode = function (store,
             .then(() => {
                 // Fetch any extended data needed to set initial state
                 const currentParamCode = parameterCode ? parameterCode : getCurrentParmCd(store.getState());
-
-                if (period && period.substr(0,1) === 'P' && period !== 'P7D') {
-                    store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(siteno, currentParamCode, period));
+                if (period && period !== 'P7D') {
+                    isPeriodCustom(period) ?
+                        store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(siteno, parameterCode, period)) :
+                        store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(siteno, period, currentParamCode));
                 } else if (startDT && endDT) {
                     fetchTimeZonePromise.then(() => {
                         store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange(siteno, startDT, endDT, currentParamCode));
