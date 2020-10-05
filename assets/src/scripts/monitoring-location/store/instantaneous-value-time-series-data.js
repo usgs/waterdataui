@@ -12,7 +12,7 @@ import {calcStartTime, sortedParameters} from '../../utils';
 import {getPreviousYearTimeSeries, getTimeSeries} from '../../web-services/models';
 
 import {
-    getCurrentDateRangeKind,
+    getCurrentDateRange,
     getCurrentParmCd, getCustomTimeRange, getRequestTimeRange,
     getTimeSeriesCollectionIds,
     getTsRequestKey,
@@ -345,7 +345,7 @@ const updateIVCurrentVariableAndRetrieveTimeSeries = function(siteno, variableID
     return function(dispatch, getState) {
         dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(variableID));
         const state = getState();
-        const currentDateRange = getCurrentDateRangeKind(state);
+        const currentDateRange = getCurrentDateRange(state);
 
         if (currentDateRange === 'custom') {
             const timeRange = getCustomTimeRange(state);

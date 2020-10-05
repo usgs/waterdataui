@@ -25,11 +25,13 @@ export const getUserInputTimeRangeSelectionButton = state => state.ivTimeSeriesS
 
 export const getUserInputCustomTimeRangeSelectionButton = state => state.ivTimeSeriesState.userInputCustomTimeRangeSelectionButton;
 
+export const getUserInputNumberOfDays = state => state.ivTimeSeriesState.userInputNumberOfDays;
+
 export const getCurrentVariableID = state => state.ivTimeSeriesState.currentIVVariableID;
 
 export const getCurrentMethodID = state => state.ivTimeSeriesState.currentIVMethodID;
 
-export const getCurrentDateRangeKind = (state) => {
+export const getCurrentDateRange = (state) => {
     return state.ivTimeSeriesState.currentIVDateRange || null;
 };
 
@@ -41,7 +43,7 @@ export const getCustomTimeRange = state => state.ivTimeSeriesState.customIVTimeR
 
 export const getTimeSeries = state => state.ivTimeSeriesData.timeSeries ? state.ivTimeSeriesData.timeSeries : {};
 
-export const getUserInputNumberOfDays = state => state.ivTimeSeriesState.userInputNumberOfDays;
+
 
 export const hasAnyTimeSeries = createSelector(
     getTimeSeries,
@@ -100,10 +102,10 @@ export const getCurrentParmCd = createSelector(
  * selected variable.
  */
 export const getTsRequestKey = memoize((tsKey, period, parmCd) => createSelector(
-    getCurrentDateRangeKind,
+    getCurrentDateRange,
     getCurrentParmCd,
-    (dateRangeKind, currentParmCd) => {
-        const periodToUse = period ? period : dateRangeKind;
+    (dateRange, currentParmCd) => {
+        const periodToUse = period ? period : dateRange;
 
         let result = `${tsKey}:${periodToUse}`;
         if (periodToUse !== 'P7D') {

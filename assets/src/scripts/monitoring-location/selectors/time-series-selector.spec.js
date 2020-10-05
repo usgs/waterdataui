@@ -3,7 +3,7 @@ import {
     getSourceInfo,
     getSiteCodes,
     getCurrentVariableID,
-    getCurrentDateRangeKind,
+    getCurrentDateRange,
     getTimeSeries,
     hasAnyTimeSeries,
     getMonitoringLocationName,
@@ -505,9 +505,9 @@ describe('monitoring-location/selectors/time-series-selector', () => {
         });
     });
 
-    describe('getCurrentDateRangeKind', () => {
+    describe('getCurrentDateRange', () => {
        it('Return the current date range', () => {
-           expect(getCurrentDateRangeKind({
+           expect(getCurrentDateRange({
                ivTimeSeriesState: {
                    currentIVDateRange: 'P30D'
                }

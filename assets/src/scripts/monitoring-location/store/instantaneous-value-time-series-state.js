@@ -45,7 +45,7 @@ const setCurrentIVMethodID = function(methodID) {
 
 /*
  * Synchronous action sets the date range kind of the IV data.
- * @param {String} dateRangeKind - represents an ISO 8601 Duration or "custom"
+ * @param {String} dateRange - represents an ISO 8601 Duration or "custom"
  * @return {Object} - Redux action
  */
 const setCurrentIVDateRange = function(dateRange) {
@@ -108,6 +108,15 @@ const setUserInputCustomTimeRangeSelectionButton = function(userInputCustomTimeR
 const setUserInputNumberOfDays = function(userInputNumberOfDays) {
     return {
         type: 'SET_USER_INPUT_NUMBER_OF_DAYS',
+        userInputNumberOfDays
+    };
+};
+
+const setUserInputs = function(userInputTimeRangeSelectionButton, userInputCustomTimeRangeSelectionButton, userInputNumberOfDays) {
+    return {
+        type: 'SET_USER_INPUTS',
+        userInputTimeRangeSelectionButton,
+        userInputCustomTimeRangeSelectionButton,
         userInputNumberOfDays
     };
 };
@@ -286,6 +295,16 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
             return {
                 ...ivTimeSeriesState,
                 userInputNumberOfDays: action.userInputNumberOfDays
+            };
+
+        case 'SET_USER_INPUTS':
+            return {
+                ...ivTimeSeriesState,
+                userInputs: {
+                    userInputTimeRangeSelectionButton: action.userInputTimeRangeSelectionButton,
+                    userInputCustomTimeRangeSelectionButton: action.userInputTimeRangeSelectionButton,
+                    userInputNumberOfDays: action.userInputNumberOfDays
+                }
             };
 
         case 'SET_IV_GRAPH_CURSOR_OFFSET':

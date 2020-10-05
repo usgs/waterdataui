@@ -29,7 +29,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                         }
                     },
                     ivTimeSeriesState: {
-                        currentDateRangeKind: 'P7D',
+                        currentDateRange: 'P7D',
                         loadingIVTSKeys: []
                     }
                 },

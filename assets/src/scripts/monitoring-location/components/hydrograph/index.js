@@ -112,7 +112,6 @@ export const attachToNode = function (store,
         store.dispatch(statisticsDataActions.retrieveMedianStatistics(siteno));
     }
 
-
     fetchDataPromise.then(() => {
         // Hide the loading indicator
         nodeElem

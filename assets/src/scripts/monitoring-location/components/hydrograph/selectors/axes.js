@@ -3,7 +3,7 @@ import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
 import {generateTimeTicks} from '../../../../d3-rendering/tick-marks';
-import {getCurrentDateRangeKind, getCurrentParmCd} from '../../../selectors/time-series-selector';
+import {getCurrentDateRange, getCurrentParmCd} from '../../../selectors/time-series-selector';
 import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../../../utils';
 
 import {getYTickDetails} from './domain';
@@ -92,7 +92,7 @@ export const getAxes = memoize(kind => createSelector(
     getYLabel,
     getTsTimeZone,
     getCurrentParmCd,
-    getCurrentDateRangeKind,
+    getCurrentDateRange,
     getSecondaryYLabel,
     (xScale, yScale, secondaryYScale, yTickDetails, layout, plotYLabel, ianaTimeZone, parmCd, plotSecondaryYLabel) => {
         return {
