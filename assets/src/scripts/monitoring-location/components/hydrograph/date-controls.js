@@ -18,9 +18,9 @@ import {
 import {getIanaTimeZone} from '../../selectors/time-zone-selector';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
+import {MAX_DIGITS_FOR_DAYS_FROM_TODAY} from './hydrograph-utils';
 
 export const drawDateRangeControls = function(elem, store, siteno) {
-    const MAX_DIGITS_FOR_DAYS_FROM_TODAY = 5;
     const DATE_RANGE = [{
         name: '7 days',
         period: 'P7D'

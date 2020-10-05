@@ -1,8 +1,17 @@
-import {isPeriodCustom, parsePeriodCode} from './hydrograph-utils';
+import {isPeriodWithinAcceptableRange, isPeriodCustom, parsePeriodCode} from './hydrograph-utils';
 
+describe('isPeriodWithinAcceptableRange', () => {
+    it('will return correct boolean value if the url parameters for time period a within an acceptable range', () => {
+        expect(isPeriodWithinAcceptableRange('totalNonsense')).toEqual(false);
+        expect(isPeriodWithinAcceptableRange('P700000D')).toEqual(false);
+        expect(isPeriodWithinAcceptableRange('P2Y')).toEqual(false);
+        expect(isPeriodWithinAcceptableRange('P1Y')).toEqual(true);
+        expect(isPeriodWithinAcceptableRange('P32D')).toEqual(true);
+    });
+});
 
 describe('isCustomPeriod', () => {
-    it('will return correct boolean value', () => {
+    it('will return correct boolean value is period is custom', () => {
         expect(isPeriodCustom('P7D')).toEqual(false);
         expect(isPeriodCustom('P30D')).toEqual(false);
         expect(isPeriodCustom('P1Y')).toEqual(false);

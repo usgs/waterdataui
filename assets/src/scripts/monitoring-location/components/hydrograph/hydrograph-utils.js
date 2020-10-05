@@ -1,6 +1,25 @@
 
+export const MAX_DIGITS_FOR_DAYS_FROM_TODAY = 5;
+
 /*
-* Local helper function that sorts between 'custom' (user defined)  and the default time period options
+* Helper function that determines if URL query parameters for time period is
+* acceptable. The purpose here is to prevent users from altering the URL in a way that
+* is undesirable or impossible for the application to process. We will accept
+* time periods in the form of P{MAX_DIGITS_FOR_DAYS_FROM_TODAY}D, or P1Y
+* @param {String} periodCode the time period code from the timespan radio buttons
+* @return {Boolean} if the value is within acceptable limits
+* */
+export const isPeriodWithinAcceptableRange = function(periodCode) {
+    return periodCode &&
+        periodCode.charAt(0) === 'P' &&
+        periodCode.slice(-1) === 'D' &&
+        periodCode.slice(1,-1).length < MAX_DIGITS_FOR_DAYS_FROM_TODAY ||
+        periodCode === 'P1Y';
+};
+
+
+/*
+* Helper function that sorts between 'custom' (user defined)  and the default time period options
 * @param {String} periodCode the time period code from the timespan radio buttons
 * @return {Boolean} if the value is or is not a 'custom' (user defined) time period
 * */
