@@ -99,9 +99,7 @@ export const attachToNode = function (store,
                 const currentParamCode = parameterCode ? parameterCode : getCurrentParmCd(store.getState());
 
                 if (period && period.substr(0,1) === 'P' && period !== 'P7D') {
-                    // store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(siteno, period, currentParamCode));
-
-                    store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(siteno, period, currentParamCode));
+                    store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(siteno, currentParamCode, period));
                 } else if (startDT && endDT) {
                     fetchTimeZonePromise.then(() => {
                         store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange(siteno, startDT, endDT, currentParamCode));
