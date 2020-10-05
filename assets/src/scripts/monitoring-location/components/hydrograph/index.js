@@ -98,7 +98,7 @@ export const attachToNode = function (store,
             .then(() => {
                 // Fetch any extended data needed to set initial state
                 const currentParamCode = parameterCode ? parameterCode : getCurrentParmCd(store.getState());
-                if (period && period !== 'P7D') {
+                if (period && period.charAt(0) === 'P' && period.slice(-1) === 'D' || period === 'P1Y') {
                     isPeriodCustom(period) ?
                         store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(siteno, parameterCode, period)) :
                         store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(siteno, period, currentParamCode));
