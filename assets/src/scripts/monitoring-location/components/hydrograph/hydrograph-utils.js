@@ -23,7 +23,7 @@ export const isPeriodCustom = function(periodCode) {
 export const parsePeriodCode = function(periodCode) {
     if (periodCode) {
         const currentUserInputCustomTimeRangeSelectionButton = isPeriodCustom(periodCode) ? 'custom' : periodCode;
-        const userInputNumberOfDays = periodCode !== null ? periodCode.slice(1,-1) : '';
+        const userInputNumberOfDays = currentUserInputCustomTimeRangeSelectionButton === 'custom' ? periodCode.slice(1,-1) : '';
 
         return {
             'currentUserInputCustomTimeRangeSelectionButton' : currentUserInputCustomTimeRangeSelectionButton,

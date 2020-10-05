@@ -2,7 +2,6 @@ import {select} from 'd3-selection';
 
 import {configureStore} from '../../store';
 import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
-import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
 
 import {drawDateRangeControls} from './date-controls';
 
