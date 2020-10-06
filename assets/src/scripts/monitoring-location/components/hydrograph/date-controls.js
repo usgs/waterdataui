@@ -125,6 +125,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             .attr('for', (d) => `${d.value}-input`)
             .text((d) => d.text);
         listItemForCustomSelectRadioButtons.call(link(store, (elem, userInputCustomTimeRangeSelectionButton) => {
+            store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
             elem.select(`#${userInputCustomTimeRangeSelectionButton}`).property('checked', true);
         }, getUserInputCustomTimeRangeSelectionButton));
     };
@@ -356,6 +357,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     containerCustomDaysBeforeToday.attr('hidden', null);
                     containerCustomCalenderDays.attr('hidden', true);
                     store.dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton('custom'));
+
                 } else {
                     const userInputTimeframeButtonSelected = li.select('input:checked').attr('value');
 
@@ -378,6 +380,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             .attr('for', (d) => `${d.period}-input`)
             .text((d) => d.name);
         li.call(link(store, (elem, userInputTimeRangeSelectionButton) => {
+            store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
             elem.select(`#${userInputTimeRangeSelectionButton}-input`).property('checked', true);
         }, getUserInputTimeRangeSelectionButton));
     };

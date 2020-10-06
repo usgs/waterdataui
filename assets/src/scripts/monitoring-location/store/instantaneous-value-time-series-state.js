@@ -113,6 +113,8 @@ const setUserInputNumberOfDays = function(userInputNumberOfDays) {
 };
 
 const setUserInputs = function(userInputTimeRangeSelectionButton, userInputCustomTimeRangeSelectionButton, userInputNumberOfDays) {
+    const state = getState().ivTimeSeriesState;
+
     return {
         type: 'SET_USER_INPUTS',
         userInputTimeRangeSelectionButton,
@@ -366,6 +368,7 @@ export const Actions = {
     setUserInputTimeRangeSelectionButton,
     setUserInputCustomTimeRangeSelectionButton,
     setUserInputNumberOfDays,
+    setUserInputs,
     setIVGraphCursorOffset,
     setIVGraphBrushOffset,
     clearIVGraphBrushOffset,
