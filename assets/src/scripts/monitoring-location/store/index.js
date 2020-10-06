@@ -62,10 +62,10 @@ export const configureStore = function (initialState) {
             audiblePlayId: null,
             loadingIVTSKeys: [],
             ivGraphBrushOffset: null,
-            userInputs: {
-                userInputCustomTimeRangeSelectionButton: 'days-input',
-                userInputTimeRangeSelectionButton: 'P7D',
-                userInputNumberOfDays: ''
+            timespanUserInputs: {
+                customTimeRangeSelectionButton: 'days-input',
+                timeRangeSelectionButton: 'P7D',
+                inputNumberOfDays: ''
             },
             userInputCustomTimeRangeSelectionButton: 'days-input',
             userInputTimeRangeSelectionButton: 'P7D',

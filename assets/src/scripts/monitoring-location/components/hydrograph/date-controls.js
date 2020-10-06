@@ -118,7 +118,8 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             .on('change', function() {
                 const selected = listItemForCustomSelectRadioButtons.select('input:checked');
                 const selectedVal = selected.attr('id');
-                store.dispatch(ivTimeSeriesStateActions.setUserInputCustomTimeRangeSelectionButton(selectedVal));
+                store.dispatch(ivTimeSeriesStateActions.setTimespanUserInputs('customTimeRangeSelectionButton', selectedVal));
+                store.dispatch(ivTimeSeriesStateActions.setUserInputCustomTimeRangeSelectionButton(selectedVal)); // remove
             });
         listItemForCustomSelectRadioButtons.append('label')
             .attr('class', 'usa-radio__label')
@@ -195,7 +196,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     customDaysBeforeTodayValidationContainer.attr('hidden', true);
                     const parameterCode = getCurrentParmCd(store.getState());
 
-                    store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userSpecifiedNumberOfDays));
+                    store.dispatch(ivTimeSeriesStateActions.setTimespanUserInputs('inputNumberOfDays', userSpecifiedNumberOfDays));
+                    store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userSpecifiedNumberOfDays)); // remove
+
                     store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(
                         siteno,
                         parameterCode,
@@ -348,7 +351,8 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 const selectedVal = selected.attr('value');
 
                 // Remove any values stored in the form, because they may not match what is shown in the graph until the submit button is pushed
-                store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(''));
+                store.dispatch(ivTimeSeriesStateActions.setTimespanUserInputs('inputNumberOfDays', ''));
+                store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays('')); // remove
                 store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
 
                 if (selectedVal === 'custom') {
@@ -356,7 +360,8 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     containerRadioGroupCustomSelectButtons.attr('hidden', null);
                     containerCustomDaysBeforeToday.attr('hidden', null);
                     containerCustomCalenderDays.attr('hidden', true);
-                    store.dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton('custom'));
+                    store.dispatch(ivTimeSeriesStateActions.setTimespanUserInputs('timeRangeSelectionButton', 'custom'));
+                    store.dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton('custom')); // remove
 
                 } else {
                     const userInputTimeframeButtonSelected = li.select('input:checked').attr('value');
@@ -365,7 +370,8 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     containerRadioGroupCustomSelectButtons.attr('hidden', true);
                     containerCustomDaysBeforeToday.attr('hidden', true);
                     containerCustomCalenderDays.attr('hidden', true);
-                    store.dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton(userInputTimeframeButtonSelected));
+                    store.dispatch(ivTimeSeriesStateActions.setTimespanUserInputs('timeRangeSelectionButton', userInputTimeframeButtonSelected));
+                    store.dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton(userInputTimeframeButtonSelected)); // remove
                     store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(
                         siteno,
                         userInputTimeframeButtonSelected

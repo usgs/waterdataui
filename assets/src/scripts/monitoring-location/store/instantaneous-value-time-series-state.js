@@ -49,7 +49,6 @@ const setCurrentIVMethodID = function(methodID) {
  * @return {Object} - Redux action
  */
 const setCurrentIVDateRange = function(dateRange) {
-
     return {
         type: 'SET_CURRENT_IV_DATE_RANGE',
         dateRange
@@ -112,16 +111,15 @@ const setUserInputNumberOfDays = function(userInputNumberOfDays) {
     };
 };
 
-const setUserInputs = function(userInputTimeRangeSelectionButton, userInputCustomTimeRangeSelectionButton, userInputNumberOfDays) {
-    const state = getState().ivTimeSeriesState;
 
+const setTimespanUserInputs = function(key, value) {
     return {
-        type: 'SET_USER_INPUTS',
-        userInputTimeRangeSelectionButton,
-        userInputCustomTimeRangeSelectionButton,
-        userInputNumberOfDays
+        type: 'SET_TIMESPAN_USER_INPUTS',
+        key,
+        value
     };
 };
+
 
 /*
  * Synchronous action sets the IV graph cursor offset - This is the difference
@@ -299,15 +297,13 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
                 userInputNumberOfDays: action.userInputNumberOfDays
             };
 
-        case 'SET_USER_INPUTS':
-            return {
-                ...ivTimeSeriesState,
-                userInputs: {
-                    userInputTimeRangeSelectionButton: action.userInputTimeRangeSelectionButton,
-                    userInputCustomTimeRangeSelectionButton: action.userInputTimeRangeSelectionButton,
-                    userInputNumberOfDays: action.userInputNumberOfDays
-                }
-            };
+        case 'SET_TIMESPAN_USER_INPUTS': {
+            const timespanInputSettings = {};
+            timespanInputSettings[action.key] = action.value;
+            return Object.assign({}, ivTimeSeriesState, {
+                timespanUserInputs: Object.assign({}, ivTimeSeriesState.timespanUserInputs, timespanInputSettings)
+            });
+        }
 
         case 'SET_IV_GRAPH_CURSOR_OFFSET':
             return {
@@ -368,7 +364,7 @@ export const Actions = {
     setUserInputTimeRangeSelectionButton,
     setUserInputCustomTimeRangeSelectionButton,
     setUserInputNumberOfDays,
-    setUserInputs,
+    setTimespanUserInputs,
     setIVGraphCursorOffset,
     setIVGraphBrushOffset,
     clearIVGraphBrushOffset,
