@@ -222,24 +222,20 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
             });
         });
 
-        describe('setUserInputTimeRangeSelectionButton', () => { // remove
+        describe('setTimespanUserInputs', () => {
             it('sets the value for which of the main time range selection buttons are checked', () => {
-                store.dispatch(Actions.setUserInputTimeRangeSelectionButton('custom'));
-                expect(store.getState().ivTimeSeriesState.userInputTimeRangeSelectionButton).toBe('custom');
+                store.dispatch(Actions.setTimespanUserInputs('timeRangeSelectionButton', 'custom'));
+                expect(store.getState().ivTimeSeriesState.timespanUserInputs.timeRangeSelectionButton).toBe('custom');
             });
-        });
 
-        describe('setUserInputCustomTimeRangeSelectionButton', () => { // remove
             it('sets the value for which of the Custom subselection time range selection buttons are checked', () => {
-                store.dispatch(Actions.setUserInputCustomTimeRangeSelectionButton('calender-input'));
-                expect(store.getState().ivTimeSeriesState.userInputCustomTimeRangeSelectionButton).toBe('calender-input');
+                store.dispatch(Actions.setTimespanUserInputs('customTimeRangeSelectionButton', 'calender-input'));
+                expect(store.getState().ivTimeSeriesState.timespanUserInputs.customTimeRangeSelectionButton).toBe('calender-input');
             });
-        });
 
-        describe('setUserInputNumberOfDays', () => { // remove
             it('sets the value entered in the Custom subselection from field for days before today', () => {
-                store.dispatch(Actions.setUserInputNumberOfDays(23));
-                expect(store.getState().ivTimeSeriesState.userInputNumberOfDays).toBe(23);
+                store.dispatch(Actions.setTimespanUserInputs('inputNumberOfDays', '23'));
+                expect(store.getState().ivTimeSeriesState.timespanUserInputs.inputNumberOfDays).toBe('23');
             });
         });
     });

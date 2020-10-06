@@ -21,12 +21,6 @@ export const getQueryInfo = state => state.ivTimeSeriesData.queryInfo || {};
 
 export const getRequests = state => state.ivTimeSeriesData.requests || {};
 
-export const getUserInputTimeRangeSelectionButton = state => state.ivTimeSeriesState.userInputTimeRangeSelectionButton;
-
-export const getUserInputCustomTimeRangeSelectionButton = state => state.ivTimeSeriesState.userInputCustomTimeRangeSelectionButton;
-
-export const getUserInputNumberOfDays = state => state.ivTimeSeriesState.userInputNumberOfDays;
-
 export const getTimespanUserInputs = state => state.ivTimeSeriesState.timespanUserInputs;
 
 export const getCurrentVariableID = state => state.ivTimeSeriesState.currentIVVariableID;
