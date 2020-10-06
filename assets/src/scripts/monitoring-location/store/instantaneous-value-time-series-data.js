@@ -247,7 +247,7 @@ const retrieveCustomIVTimeSeries = function(siteno, startTime, endTime, parmCd=n
                 dispatch(Actions.addIVTimeSeriesCollection(collection));
                 dispatch(ivTimeSeriesStateActions.setCurrentIVDateRange('custom'));
                 dispatch(ivTimeSeriesStateActions.setTimespanUserInputs('timeRangeSelectionButton', 'custom'));
-                dispatch(ivTimeSeriesStateActions.setTimespanUserInputs('timeRangeSelectionButton', 'calender-input'));
+                dispatch(ivTimeSeriesStateActions.setTimespanUserInputs('customTimeRangeSelectionButton', 'calender-input'));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
             },
             () => {
@@ -277,7 +277,7 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
         const tsRequestKey = getTsRequestKey ('current', period, thisParamCd)(state);
 
         const parsedPeriodCodes = parsePeriodCode(period);
-        dispatch(ivTimeSeriesStateActions.setTimespanUserInputs('timeRangeSelectionButton', parsedPeriodCodes.currentUserInputCustomTimeRangeSelectionButton));
+        dispatch(ivTimeSeriesStateActions.setTimespanUserInputs('customTimeRangeSelectionButton', parsedPeriodCodes.currentUserInputCustomTimeRangeSelectionButton));
         dispatch(ivTimeSeriesStateActions.setCurrentIVDateRange(period));
         isPeriodCustom(period) ?
             dispatch(ivTimeSeriesStateActions.setTimespanUserInputs('inputNumberOfDays', parsedPeriodCodes.userInputNumberOfDays)) :
