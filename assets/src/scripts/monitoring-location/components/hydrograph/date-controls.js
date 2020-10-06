@@ -119,7 +119,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             .text((d) => d.text);
         listItemForCustomSelectRadioButtons.call(link(store, (elem, timespanUserInputs) => {
             store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
-            elem.select(`#${timespanUserInputs.timeRangeSelectionButton}`).property('checked', true);
+            elem.select(`#${timespanUserInputs.customTimeRangeSelectionButton}`).property('checked', true);
         }, getTimespanUserInputs));
     };
 
