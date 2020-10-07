@@ -505,7 +505,12 @@ describe('monitoring-location/components/hydrograph module', () => {
                     currentIVDateRange: 'P7D',
                     currentIVMethodID: 'method1',
                     loadingIVTSKeys: [],
-                    ivGraphBrushOffset: null
+                    ivGraphBrushOffset: null,
+                    userInputsForTimeRange: {
+                        mainTimeRangeSelectionButton: 'P7D',
+                        customTimeRangeSelectionButton: 'days-input',
+                        numberOfDaysFieldValue: ''
+                    }
                 },
                 ui: {
                     windowWidth: 400,
