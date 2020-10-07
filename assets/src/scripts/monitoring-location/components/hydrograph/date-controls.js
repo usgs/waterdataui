@@ -76,10 +76,10 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('id', 'ts-custom-days-before-today-select-container')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date by days before today specification')
-    .call(link(store, (container, {userInputTimeRangeSelectionButton, userInputCustomTimeRangeSelectionButton}) => {
-        container.attr('hidden', userInputCustomTimeRangeSelectionButton === 'days-input' && userInputTimeRangeSelectionButton === 'custom' ? null : true);
+    .call(link(store, (container, {userInputsForSelectingTimespan, userInputCustomTimeRangeSelectionButton}) => {
+        container.attr('hidden', userInputCustomTimeRangeSelectionButton === 'days-input' && userInputsForSelectingTimespan.mainTimeRangeSelectionButton === 'custom' ? null : true);
     }, createStructuredSelector({
-        userInputTimeRangeSelectionButton: getUserInputTimeRangeSelectionButton,
+        userInputsForSelectingTimespan: getUserInputsForSelectingTimespan,
         userInputCustomTimeRangeSelectionButton: getUserInputCustomTimeRangeSelectionButton
     })));
 
@@ -88,10 +88,10 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('role', 'customdate')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date specification')
-        .call(link(store, (container, {userInputTimeRangeSelectionButton, userInputCustomTimeRangeSelectionButton}) => {
-            container.attr('hidden', userInputCustomTimeRangeSelectionButton === 'calender-input' && userInputTimeRangeSelectionButton === 'custom' ? null : true);
+        .call(link(store, (container, {userInputsForSelectingTimespan, userInputCustomTimeRangeSelectionButton}) => {
+            container.attr('hidden', userInputCustomTimeRangeSelectionButton === 'calender-input' && userInputsForSelectingTimespan.mainTimeRangeSelectionButton === 'custom' ? null : true);
         }, createStructuredSelector({
-            userInputTimeRangeSelectionButton: getUserInputTimeRangeSelectionButton,
+            userInputsForSelectingTimespan: getUserInputsForSelectingTimespan,
             userInputCustomTimeRangeSelectionButton: getUserInputCustomTimeRangeSelectionButton
         })));
 
