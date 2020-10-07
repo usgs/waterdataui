@@ -27,7 +27,7 @@ export const getUserInputCustomTimeRangeSelectionButton = state => state.ivTimeS
 
 export const getUserInputNumberOfDays = state => state.ivTimeSeriesState.userInputNumberOfDays;
 
-export const getUserInputs = state => state.ivTimeSeriesState.userInputs;
+export const getUserInputsForSelectingTimespan = state => state.ivTimeSeriesState.userInputsForTimeRange;
 
 export const getCurrentVariableID = state => state.ivTimeSeriesState.currentIVVariableID;
 
