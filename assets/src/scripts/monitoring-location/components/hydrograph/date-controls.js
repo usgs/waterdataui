@@ -12,7 +12,7 @@ import {
     hasAnyTimeSeries,
     getUserInputTimeRangeSelectionButton,
     getUserInputCustomTimeRangeSelectionButton,
-    getUserInputNumberOfDays,
+    getUserInputsForSelectingTimespan,
     getCustomTimeRange, getCurrentParmCd
 } from '../../selectors/time-series-selector';
 import {getIanaTimeZone} from '../../selectors/time-zone-selector';
@@ -165,15 +165,15 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         customDaysBeforeTodayAlertBody.append('h3')
             .attr('class', 'usa-alert__heading')
             .text('Requirements');
-        numberOfDaysSelection.call(link(store, (container, {userInputTimeRangeSelectionButton, userInputCustomTimeRangeSelectionButton, userInputNumberOfDays}) => {
+        numberOfDaysSelection.call(link(store, (container, {userInputTimeRangeSelectionButton, userInputCustomTimeRangeSelectionButton, userInputsForSelectingTimespan}) => {
             if (userInputTimeRangeSelectionButton === 'custom' && userInputCustomTimeRangeSelectionButton === 'days-input') {
                 container.select('#with-hint-input-days-from-today')
-                    .property('value', userInputNumberOfDays);
+                    .property('value', userInputsForSelectingTimespan.numberOfDaysFieldValue);
             }
         }, createStructuredSelector({
             userInputTimeRangeSelectionButton: getUserInputTimeRangeSelectionButton,
             userInputCustomTimeRangeSelectionButton: getUserInputCustomTimeRangeSelectionButton,
-            userInputNumberOfDays: getUserInputNumberOfDays
+            userInputsForSelectingTimespan: getUserInputsForSelectingTimespan
         })));
         // Adds controls for the 'days before today' submit button
         const daysBeforeTodaySubmitContainer = containerCustomDaysBeforeToday.append('div')

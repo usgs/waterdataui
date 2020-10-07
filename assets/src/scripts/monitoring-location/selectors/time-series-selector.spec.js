@@ -8,8 +8,7 @@ import {
     hasAnyTimeSeries,
     getMonitoringLocationName,
     getAgencyCode,
-    getUserInputTimeRangeSelectionButton,
-    getUserInputCustomTimeRangeSelectionButton,
+    getUserInputsForSelectingTimespan,
     getCurrentVariable,
     getQueryInfo,
     getRequests,
@@ -24,8 +23,7 @@ import {
     getNwisTimeZone,
     getAllMethodsForCurrentVariable,
     getCurrentVariableTimeSeries,
-    getTimeSeriesForTsKey,
-    getUserInputNumberOfDays
+    getTimeSeriesForTsKey
 } from './time-series-selector';
 
 const TEST_DATA = {
@@ -236,7 +234,6 @@ const TEST_DATA = {
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
         currentIVDateRange: 'P7D',
-
     }
 };
 
@@ -297,7 +294,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
     describe('hasAnyTimeSeries', () => {
         it('Return false if series is empty', () => {
             expect(hasAnyTimeSeries({
-               ivTimeSeriesData: {}
+                ivTimeSeriesData: {}
             })).toBe(false);
         });
 
@@ -433,9 +430,9 @@ describe('monitoring-location/selectors/time-series-selector', () => {
             }
         };
         it('Returns empty string if state has no sourceInfo', () => {
-           expect(getMonitoringLocationName('12345678')({
-               ivTimeSeriesData: {}
-           })).toBe('');
+            expect(getMonitoringLocationName('12345678')({
+                ivTimeSeriesData: {}
+            })).toBe('');
         });
 
         it('Returns empty string if siteNo is not in sourceInfo', () => {
@@ -458,9 +455,9 @@ describe('monitoring-location/selectors/time-series-selector', () => {
             }
         };
         it('Returns empty string if state has no siteCodes ', () => {
-           expect(getAgencyCode('12345678')({
-               ivTimeSeriesData: {}
-           })).toBe('');
+            expect(getAgencyCode('12345678')({
+                ivTimeSeriesData: {}
+            })).toBe('');
         });
 
         it('Returns empty string if siteNo is not in siteCodes', () => {
@@ -472,23 +469,21 @@ describe('monitoring-location/selectors/time-series-selector', () => {
         });
     });
 
-    describe('getUserInputTimeRangeSelectionButton', () => {
-        it('Returns the timespan radio button that is checked in the main list', () => {
-            expect(getUserInputTimeRangeSelectionButton({
+    describe('getTimespanUserInputs', () => {
+        it('Returns the an object with user input selections for  time ranges', () => {
+            expect(getUserInputsForSelectingTimespan({
                 ivTimeSeriesState: {
-                    userInputTimeRangeSelectionButton: 'custom'
+                    userInputsForTimeRange: {
+                        mainTimeRangeSelectionButton: 'custom',
+                        customTimeRangeSelectionButton: 'days-input',
+                        numberOfDaysFieldValue: '3'
+                    }
                 }
-            })).toEqual('custom');
-        });
-    });
-
-    describe('getUserInputTimeRangeSelectionButton', () => {
-        it('Returns the timespan radio button that is checked in the subselection custom list', () => {
-            expect(getUserInputCustomTimeRangeSelectionButton({
-                ivTimeSeriesState: {
-                    userInputCustomTimeRangeSelectionButton: 'calender-input'
-                }
-            })).toEqual('calender-input');
+            })).toEqual({
+                mainTimeRangeSelectionButton: 'custom',
+                customTimeRangeSelectionButton: 'days-input',
+                numberOfDaysFieldValue: '3'
+            });
         });
     });
 
@@ -504,13 +499,13 @@ describe('monitoring-location/selectors/time-series-selector', () => {
     });
 
     describe('getCurrentDateRange', () => {
-       it('Return the current date range', () => {
-           expect(getCurrentDateRange({
-               ivTimeSeriesState: {
-                   currentIVDateRange: 'P30D'
-               }
-           })).toEqual('P30D');
-       });
+        it('Return the current date range', () => {
+            expect(getCurrentDateRange({
+                ivTimeSeriesState: {
+                    currentIVDateRange: 'P30D'
+                }
+            })).toEqual('P30D');
+        });
     });
 
     describe('getCurrentVariable', () => {
@@ -533,16 +528,16 @@ describe('monitoring-location/selectors/time-series-selector', () => {
         });
 
         it('Return null if no variables are in series', () => {
-           expect(getCurrentVariable({
-               ...TEST_STATE,
-               ivTimeSeriesData: {
-                   variables: {}
-               }
-           })).toBeNull();
-           expect(getCurrentVariable({
-               ...TEST_STATE,
-               ivTimeSeriesData: {}
-           })).toBeNull();
+            expect(getCurrentVariable({
+                ...TEST_STATE,
+                ivTimeSeriesData: {
+                    variables: {}
+                }
+            })).toBeNull();
+            expect(getCurrentVariable({
+                ...TEST_STATE,
+                ivTimeSeriesData: {}
+            })).toBeNull();
         });
 
         it('Return selected variable', () => {
@@ -570,16 +565,16 @@ describe('monitoring-location/selectors/time-series-selector', () => {
         });
 
         it('Return null if no variables are in series', () => {
-           expect(getCurrentParmCd({
-               ...TEST_STATE,
-               ivTimeSeriesData: {
-                   variables: {}
-               }
-           })).toBeNull();
-           expect(getCurrentParmCd({
-               ...TEST_STATE,
-               ivTimeSeriesData: {}
-           })).toBeNull();
+            expect(getCurrentParmCd({
+                ...TEST_STATE,
+                ivTimeSeriesData: {
+                    variables: {}
+                }
+            })).toBeNull();
+            expect(getCurrentParmCd({
+                ...TEST_STATE,
+                ivTimeSeriesData: {}
+            })).toBeNull();
         });
 
         it('Return selected parm code', () => {
@@ -1147,16 +1142,6 @@ describe('monitoring-location/selectors/time-series-selector', () => {
 
         it('should return null the empty set if no time series for the selected key exist', () => {
             expect(getTimeSeriesForTsKey('compare:P7D')(TEST_DATA)).toEqual({});
-        });
-    });
-
-    describe('getUserInputNumberOfDays', () => {
-        it('Returns the number of days from today the user entered in the custom timeframe subselection form field', () => {
-            expect(getUserInputNumberOfDays({
-                ivTimeSeriesState: {
-                    userInputNumberOfDays: '22'
-                }
-            })).toEqual('22');
         });
     });
 });
