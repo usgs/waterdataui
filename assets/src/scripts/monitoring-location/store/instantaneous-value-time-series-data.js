@@ -185,11 +185,14 @@ const retrieveCustomTimePeriodIVTimeSeries = function(siteno, parameterCd, perio
         const parsedPeriodCodes = parsePeriodCode(period);
         dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton(parsedPeriodCodes.mainTimeRangeSelectionButton));
         dispatch(ivTimeSeriesStateActions.setCurrentIVDateRange(period));
+
         isPeriodCustom(period) ?
             dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(parsedPeriodCodes.numberOfDaysFieldValue)) :
             null;
-
-
+//remove if above^^^^^ replace with below
+        isPeriodCustom(period) ?
+            dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('numberOfDaysFieldValue', parsedPeriodCodes.numberOfDaysFieldValue)) :
+            null;
 
         dispatch(ivTimeSeriesStateActions.addIVTimeSeriesToLoadingKeys([tsRequestKey]));
 
@@ -285,7 +288,10 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
             dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(parsedPeriodCodes.numberOfDaysFieldValue)) :
             null;
 
-
+//remove if above^^^^^ replace with below
+        isPeriodCustom(period) ?
+            dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('numberOfDaysFieldValue', parsedPeriodCodes.numberOfDaysFieldValue)) :
+            null;
 
 
         if (!hasTimeSeries('current', period, thisParamCd)(state)) {

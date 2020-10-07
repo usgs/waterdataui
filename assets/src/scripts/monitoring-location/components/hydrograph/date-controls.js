@@ -195,7 +195,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     customDaysBeforeTodayValidationContainer.attr('hidden', true);
                     const parameterCode = getCurrentParmCd(store.getState());
 
-                    store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userSpecifiedNumberOfDays));
+                    store.dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('numberOfDaysFieldValue', userSpecifiedNumberOfDays));
+                    store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(userSpecifiedNumberOfDays)); //remove
+
                     store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(
                         siteno,
                         parameterCode,
@@ -348,7 +350,8 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 const selectedVal = selected.attr('value');
 
                 // Remove any values stored in the form, because they may not match what is shown in the graph until the submit button is pushed
-                store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays(''));
+                store.dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('numberOfDaysFieldValue', ''));
+                store.dispatch(ivTimeSeriesStateActions.setUserInputNumberOfDays('')); //remove
                 store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
 
                 if (selectedVal === 'custom') {
