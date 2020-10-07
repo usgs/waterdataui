@@ -118,13 +118,14 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             .on('change', function() {
                 const selected = listItemForCustomSelectRadioButtons.select('input:checked');
                 const selectedVal = selected.attr('id');
-                store.dispatch(ivTimeSeriesStateActions.setUserInputCustomTimeRangeSelectionButton(selectedVal));
+                store.dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('customTimeRangeSelectionButton', selectedVal));
+                store.dispatch(ivTimeSeriesStateActions.setUserInputCustomTimeRangeSelectionButton(selectedVal)); //remove
             });
         listItemForCustomSelectRadioButtons.append('label')
             .attr('class', 'usa-radio__label')
             .attr('for', (d) => `${d.value}-input`)
             .text((d) => d.text);
-        listItemForCustomSelectRadioButtons.call(link(store, (elem, userInputCustomTimeRangeSelectionButton) => {
+        listItemForCustomSelectRadioButtons.call(link(store, (elem, userInputCustomTimeRangeSelectionButton) => { // WON"T WORK!!!!!!!
             store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
             elem.select(`#${userInputCustomTimeRangeSelectionButton}`).property('checked', true);
         }, getUserInputCustomTimeRangeSelectionButton));
@@ -165,7 +166,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         customDaysBeforeTodayAlertBody.append('h3')
             .attr('class', 'usa-alert__heading')
             .text('Requirements');
-        numberOfDaysSelection.call(link(store, (container, {userInputTimeRangeSelectionButton, userInputCustomTimeRangeSelectionButton, userInputsForSelectingTimespan}) => {
+        numberOfDaysSelection.call(link(store, (container, {userInputTimeRangeSelectionButton, userInputCustomTimeRangeSelectionButton, userInputsForSelectingTimespan}) => { // WON"T WORK!!!!!!!
             if (userInputTimeRangeSelectionButton === 'custom' && userInputCustomTimeRangeSelectionButton === 'days-input') {
                 container.select('#with-hint-input-days-from-today')
                     .property('value', userInputsForSelectingTimespan.numberOfDaysFieldValue);
@@ -383,7 +384,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             .attr('class', 'usa-radio__label')
             .attr('for', (d) => `${d.period}-input`)
             .text((d) => d.name);
-        li.call(link(store, (elem, userInputTimeRangeSelectionButton) => {
+        li.call(link(store, (elem, userInputTimeRangeSelectionButton) => { // WON'T WORK!!!!!
             store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
             elem.select(`#${userInputTimeRangeSelectionButton}-input`).property('checked', true);
         }, getUserInputTimeRangeSelectionButton));
