@@ -22,10 +22,10 @@ describe('isCustomPeriod', () => {
 describe('parsePeriodCode', () => {
     it('will break down the period code into input selection button and the number of days the user entered', () => {
         expect(parsePeriodCode('P32D'))
-            .toEqual({currentUserInputCustomTimeRangeSelectionButton: 'custom', userInputNumberOfDays: '32'});
+            .toEqual({mainTimeRangeSelectionButton: 'custom', numberOfDaysFieldValue: '32'});
         expect(parsePeriodCode('P1Y'))
-            .toEqual({currentUserInputCustomTimeRangeSelectionButton: 'P1Y', userInputNumberOfDays: ''});
+            .toEqual({mainTimeRangeSelectionButton: 'P1Y', numberOfDaysFieldValue: ''});
         expect(parsePeriodCode(null))
-            .toEqual({'currentUserInputCustomTimeRangeSelectionButton' : 'P7D', 'userInputNumberOfDays': ''});
+            .toEqual({'mainTimeRangeSelectionButton' : 'P7D', 'numberOfDaysFieldValue': ''});
     });
 });

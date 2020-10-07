@@ -44,18 +44,18 @@ export const isPeriodCustom = function(periodCode) {
 * */
 export const parsePeriodCode = function(periodCode) {
     if (periodCode) {
-        const currentUserInputCustomTimeRangeSelectionButton = isPeriodCustom(periodCode) ? 'custom' : periodCode;
-        const userInputNumberOfDays = currentUserInputCustomTimeRangeSelectionButton === 'custom' ? periodCode.slice(1,-1) : '';
+        const mainTimeRangeSelectionButton = isPeriodCustom(periodCode) ? 'custom' : periodCode;
+        const userInputNumberOfDays = mainTimeRangeSelectionButton === 'custom' ? periodCode.slice(1,-1) : '';
 
         return {
-            'currentUserInputCustomTimeRangeSelectionButton' : currentUserInputCustomTimeRangeSelectionButton,
-            'userInputNumberOfDays': userInputNumberOfDays
+            'mainTimeRangeSelectionButton' : mainTimeRangeSelectionButton,
+            'numberOfDaysFieldValue': userInputNumberOfDays
         };
     } else {
 
         return {
-            'currentUserInputCustomTimeRangeSelectionButton' : 'P7D',
-            'userInputNumberOfDays': ''
+            'mainTimeRangeSelectionButton' : 'P7D',
+            'numberOfDaysFieldValue': ''
         };
     }
 };
