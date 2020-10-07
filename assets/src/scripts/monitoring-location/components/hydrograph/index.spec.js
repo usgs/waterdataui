@@ -142,7 +142,6 @@ const TEST_STATE = {
         currentIVDateRange: 'P7D',
         userInputCustomTimeRangeSelectionButton: 'days-input',
         userInputTimeRangeSelectionButton: 'P7D',
-        userInputNumberOfDays: null,
         showIVTimeSeries: {
             current: true,
             compare: true,

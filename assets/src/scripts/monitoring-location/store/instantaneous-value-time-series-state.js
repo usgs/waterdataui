@@ -100,19 +100,6 @@ const setUserInputCustomTimeRangeSelectionButton = function(userInputCustomTimeR
 };
 
 /*
- * Synchronous action sets number of days from today that is entered in the form field for
- * 'days before today' on the custom date range menu.
- * @param {Number} userInputNumberOfDays - the number of days
- * @return {Object} - Redux action
- */
-const setUserInputNumberOfDays = function(userInputNumberOfDays) { //remove
-    return {
-        type: 'SET_USER_INPUT_NUMBER_OF_DAYS',
-        userInputNumberOfDays
-    };
-};
-
-/*
  * Synchronous action sets
  * @param {String} key which is one of the three following options
  * - customTimeRangeSelectionButton - one of two selections for custom time periods, either 'days-input' or 'calender-input'
@@ -299,12 +286,6 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
                 userInputCustomTimeRangeSelectionButton: action.userInputCustomTimeRangeSelectionButton
             };
 
-        case 'SET_USER_INPUT_NUMBER_OF_DAYS':
-            return {
-                ...ivTimeSeriesState,
-                userInputNumberOfDays: action.userInputNumberOfDays
-            };
-
         case 'SET_USER_INPUTS_FOR_SELECTING_TIMESPAN': {
             const timespanInputSettings = {};
             timespanInputSettings[action.key] = action.value;
@@ -371,7 +352,6 @@ export const Actions = {
     setCustomIVTimeRange,
     setUserInputTimeRangeSelectionButton,
     setUserInputCustomTimeRangeSelectionButton,
-    setUserInputNumberOfDays,
     setUserInputsForSelectingTimespan,
     setIVGraphCursorOffset,
     setIVGraphBrushOffset,

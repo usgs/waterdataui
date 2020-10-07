@@ -68,8 +68,7 @@ export const configureStore = function (initialState) {
                 numberOfDaysFieldValue: ''
             },
             userInputCustomTimeRangeSelectionButton: 'days-input',
-            userInputTimeRangeSelectionButton: 'P7D',
-            userInputNumberOfDays: ''
+            userInputTimeRangeSelectionButton: 'P7D'
         },
         dailyValueTimeSeriesState: {
             cursorOffset: null
