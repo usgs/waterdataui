@@ -137,8 +137,6 @@ const TEST_STATE = {
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
         currentIVDateRange: 'P7D',
-        userInputCustomTimeRangeSelectionButton: 'days-input',
-        userInputTimeRangeSelectionButton: 'P7D',
         userInputsForTimeRange: {
             mainTimeRangeSelectionButton: 'P7D',
             customTimeRangeSelectionButton: 'days-input',
@@ -179,10 +177,8 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
 
         expect(dateRangeContainer.size()).toBe(1);
         expect(dateRangeContainer.selectAll('input[type=radio]').size()).toBe(4);
-
         expect(subSelectionRadioButtonsContainer.size()).toBe(1);
         expect(subSelectionRadioButtonsContainer.selectAll('input[type=radio]').size()).toBe(2);
-
         expect(customDateDiv.attr('hidden')).toBe('true');
     });
 
@@ -242,8 +238,6 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
             '12345678', '2063-04-03', '2063-04-05'
         );
     });
-
-
 
     it('Expects an alert if no number is entered in days before today form field.', () => {
         select('#custom-date-submit-days').dispatch('click');
