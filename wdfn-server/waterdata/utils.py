@@ -49,8 +49,9 @@ def construct_url(netloc, path, parameters=()):
 
 def set_cookie_for_banner_message(full_function_response_object):
     """
+    Checks if a cookie is desired and has not been set. If so it will set a cooke that will turn off
+    the special banner messages, such as the one for pandemics
     :param full_function_response_object: standard HTTP response object
-    :return: the HTTP response object, possibly with a ccokie added
     """
     if app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES']:
         if request.cookies.get('no-show-banner-message') is None:

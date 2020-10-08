@@ -5,6 +5,7 @@ Unit tests for the main WDFN views.
 from unittest import TestCase, mock
 
 import requests as r
+from .. import app
 
 from ..utils import construct_url, defined_when, execute_get_request, parse_rdb
 
@@ -28,6 +29,16 @@ class TestConstructUrl(TestCase):
     def test_with_no_params(self):
         expected = 'https://fakeurl.gov/blah1/blah2'
         self.assertEqual(construct_url(self.test_netloc, self.test_path), expected)
+
+
+class TestCookieSetting(TestCase):
+    def setUp(self):
+        self.full_function_response_object = app.make_response({ })
+
+    def test_set_cookie_for_banner_message(self):
+        # app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES'] = True
+        self.assertEqual(self.full_function_response_object.cookies, {'no-show-banner-message': 'no-show'})
+
 
 
 class TestGetWaterServicesData(TestCase):
