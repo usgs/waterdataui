@@ -5,12 +5,13 @@ Unit tests for the main WDFN views.
 from unittest import TestCase, mock
 
 import requests as r
-from flask import render_template
+
+from flask import Response, request
 
 from .. import app
-from flask import flask
 
-from ..utils import construct_url, defined_when, execute_get_request, parse_rdb
+
+from ..utils import construct_url, defined_when, execute_get_request, parse_rdb, set_cookie_for_banner_message
 
 
 class TestConstructUrl(TestCase):
@@ -34,15 +35,25 @@ class TestConstructUrl(TestCase):
         self.assertEqual(construct_url(self.test_netloc, self.test_path), expected)
 
 
-class TestCookieSetting(TestCase):
-    def setUp(self):
-        self.full_function_response_object = flask.response()
 
+
+class TestCookieSetting(TestCase):
+
+    def setUp(self):
+        self.app_client = app.test_client()
+        self.response = Response()
 
     def test_set_cookie_for_banner_message(self):
-        # app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES'] = True
-        self.assertIn('no-show-banner-message', self.full_function_response_object.cookies)
+        app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES'] = True
+        with app.test_request_context('/'):
+            set_cookie_for_banner_message(self.response)
+            self.assertIn('no-show-banner-message', self.response.headers.getlist('Set-Cookie')[0])
 
+    def test_set_cookie_for_banner_message(self):
+        app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES'] = False
+        with app.test_request_context('/'):
+            set_cookie_for_banner_message(self.response)
+            self.assertEqual([], self.response.headers.getlist('Set-Cookie'))
 
 
 class TestGetWaterServicesData(TestCase):
