@@ -5,7 +5,10 @@ Unit tests for the main WDFN views.
 from unittest import TestCase, mock
 
 import requests as r
+from flask import render_template
+
 from .. import app
+from flask import flask
 
 from ..utils import construct_url, defined_when, execute_get_request, parse_rdb
 
@@ -33,11 +36,12 @@ class TestConstructUrl(TestCase):
 
 class TestCookieSetting(TestCase):
     def setUp(self):
-        self.full_function_response_object = app.make_response({ })
+        self.full_function_response_object = flask.response()
+
 
     def test_set_cookie_for_banner_message(self):
         # app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES'] = True
-        self.assertEqual(self.full_function_response_object.cookies, {'no-show-banner-message': 'no-show'})
+        self.assertIn('no-show-banner-message', self.full_function_response_object.cookies)
 
 
 
