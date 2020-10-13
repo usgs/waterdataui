@@ -112,7 +112,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 const selected = listItemForCustomSelectRadioButtons.select('input:checked');
                 const selectedVal = selected.attr('id');
                 store.dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('customTimeRangeSelectionButton', selectedVal));
-                store.dispatch(ivTimeSeriesStateActions.setUserInputCustomTimeRangeSelectionButton(selectedVal)); //remove
             });
         listItemForCustomSelectRadioButtons.append('label')
             .attr('class', 'usa-radio__label')
@@ -346,11 +345,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     containerRadioGroupCustomSelectButtons.attr('hidden', null);
                     containerCustomDaysBeforeToday.attr('hidden', null);
                     containerCustomCalenderDays.attr('hidden', true);
-
-
                     store.dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', 'custom'));
-                    store.dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton('custom')); //remove
-
                 } else {
                     const userInputTimeframeButtonSelected = li.select('input:checked').attr('value');
 
@@ -359,7 +354,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     containerCustomDaysBeforeToday.attr('hidden', true);
                     containerCustomCalenderDays.attr('hidden', true);
                     store.dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', userInputTimeframeButtonSelected));
-                    store.dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton(userInputTimeframeButtonSelected)); //remove
                     store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(
                         siteno,
                         userInputTimeframeButtonSelected

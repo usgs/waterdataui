@@ -85,21 +85,6 @@ const setUserInputTimeRangeSelectionButton = function(userInputTimeRangeSelectio
 };
 
 /*
- * Synchronous action sets value indicating which of the 'custom' subselection buttons of
- * the main time range selection (the buttons for 'days before today' or 'calender days')
- * for the IV graph is checked.
- * @param {String} userInputCustomTimeRangeSelectionButton - the value of the user selected button
- * such as 'days-input' or 'calender-input'
- * @return {Object} - Redux action
- */
-const setUserInputCustomTimeRangeSelectionButton = function(userInputCustomTimeRangeSelectionButton) {  //remove
-    return {
-        type: 'SET_USER_INPUT_CUSTOM_TIME_RANGE_SELECTION_BUTTON',
-        userInputCustomTimeRangeSelectionButton
-    };
-};
-
-/*
  * Synchronous action sets
  * @param {String} key which is one of the three following options
  * - customTimeRangeSelectionButton - one of two selections for custom time periods, either 'days-input' or 'calender-input'
@@ -280,12 +265,6 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
                 userInputTimeRangeSelectionButton: action.userInputTimeRangeSelectionButton
             };
 
-        case 'SET_USER_INPUT_CUSTOM_TIME_RANGE_SELECTION_BUTTON':
-            return {
-                ...ivTimeSeriesState,
-                userInputCustomTimeRangeSelectionButton: action.userInputCustomTimeRangeSelectionButton
-            };
-
         case 'SET_USER_INPUTS_FOR_SELECTING_TIMESPAN': {
             const timespanInputSettings = {};
             timespanInputSettings[action.key] = action.value;
@@ -350,8 +329,6 @@ export const Actions = {
     setCurrentIVMethodID,
     setCurrentIVDateRange,
     setCustomIVTimeRange,
-    setUserInputTimeRangeSelectionButton,
-    setUserInputCustomTimeRangeSelectionButton,
     setUserInputsForSelectingTimespan,
     setIVGraphCursorOffset,
     setIVGraphBrushOffset,

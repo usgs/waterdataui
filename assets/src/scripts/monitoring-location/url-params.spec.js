@@ -59,8 +59,6 @@ describe('monitoring-location/url-params module', () => {
                 currentIVDateRange: 'P7D',
                 customIVTimeRange: null,
                 currentIVMethodID: '69928',
-                userInputCustomTimeRangeSelectionButton: 'days-input',
-                userInputTimeRangeSelectionButton: 'P7D',
                 showIVTimeSeries: {
                     compare: false
                 }
