@@ -176,15 +176,12 @@ const retrieveCustomTimePeriodIVTimeSeries = function(siteno, parameterCd, perio
         // time series values. This is an issue if the length of the values that we are retrieving are fewer than
         // what is saved.
         const currentTsIds = getTimeSeriesCollectionIds('current', 'period', parameterCd)(state) || [];
-
-
         if (currentTsIds.length > 0) {
             dispatch(Actions.resetIVTimeSeries(tsRequestKey));
         }
 
         const parsedPeriodCodes = parsePeriodCode(period);
         dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', parsedPeriodCodes.mainTimeRangeSelectionButton));
-        dispatch(ivTimeSeriesStateActions.setUserInputTimeRangeSelectionButton(parsedPeriodCodes.mainTimeRangeSelectionButton)); //remove and check again
         dispatch(ivTimeSeriesStateActions.setCurrentIVDateRange(period));
 
         isPeriodCustom(period) ?

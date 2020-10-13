@@ -71,20 +71,6 @@ const setCustomIVTimeRange = function(startTime, endTime) {
 };
 
 /*
- * Synchronous action sets value indicating which of the main time range selection (the
- * buttons for '7 days', '30 days', etc.) for the IV graph the is checked.
- * @param {String} userInputTimeRangeSelectionButton - the value of the user selected button
- * such as 'P7D, P1Y, or custom'
- * @return {Object} - Redux action
- */
-const setUserInputTimeRangeSelectionButton = function(userInputTimeRangeSelectionButton) { //remove
-    return {
-        type: 'SET_USER_INPUT_TIME_RANGE_SELECTION_BUTTON',
-        userInputTimeRangeSelectionButton
-    };
-};
-
-/*
  * Synchronous action sets
  * @param {String} key which is one of the three following options
  * - customTimeRangeSelectionButton - one of two selections for custom time periods, either 'days-input' or 'calender-input'
@@ -257,12 +243,6 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
                     start: action.startTime,
                     end: action.endTime
                 }
-            };
-
-        case 'SET_USER_INPUT_TIME_RANGE_SELECTION_BUTTON':
-            return {
-                ...ivTimeSeriesState,
-                userInputTimeRangeSelectionButton: action.userInputTimeRangeSelectionButton
             };
 
         case 'SET_USER_INPUTS_FOR_SELECTING_TIMESPAN': {

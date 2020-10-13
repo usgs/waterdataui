@@ -29,8 +29,12 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                         }
                     },
                     ivTimeSeriesState: {
-                        currentDateRange: 'P7D',
-                        loadingIVTSKeys: []
+                        loadingIVTSKeys: [],
+                        userInputsForTimeRange: {
+                            mainTimeRangeSelectionButton: 'P7D',
+                            customTimeRangeSelectionButton: 'days-input',
+                            numberOfDaysFieldValue: ''
+                        }
                     }
                 },
                 applyMiddleware(thunk)
@@ -308,7 +312,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
 
                 const tsState = store.getState().ivTimeSeriesState;
                 expect(tsState.loadingIVTSKeys).toContain('current:P14D:00060');
-                expect(tsState.userInputTimeRangeSelectionButton).toBe('custom');
+                expect(tsState.userInputsForTimeRange.mainTimeRangeSelectionButton).toBe('custom');
             });
 
             it('Expect that a successful fetch updates the data and sets the state appropriately', (done) => {
