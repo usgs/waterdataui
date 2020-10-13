@@ -44,7 +44,9 @@ export default function compound() {
   };
 
   scale.copy = function() {
-    return compound.apply(null, scales.map(function(s) { return s.copy(); }));
+    return compound.apply(null, scales.map(function(s) {
+      return s.copy();
+    }));
   };
 
   scale.scales = function(_) {

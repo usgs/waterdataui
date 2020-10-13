@@ -116,7 +116,7 @@ describe('monitoring-location/components/dailyValueHydrograph/index', () => {
 
     describe('Tests after available time series is fetched', () => {
         beforeEach(() => {
-            spyOn(Actions, 'retrieveAvailableDVTimeSeries').and.returnValue(function () {
+            spyOn(Actions, 'retrieveAvailableDVTimeSeries').and.returnValue(function() {
                 return Promise.resolve({});
             });
             spyOn(Actions, 'retrieveDVTimeSeries').and.callThrough();

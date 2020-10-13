@@ -6,7 +6,7 @@ from .. import camera
 
 JSON_CAMERA_TEST_FILE = "wdfn-server/data/monitoring_camera_data_test.json"
 with open(JSON_CAMERA_TEST_FILE, 'r') as json_file:
-     camera.MONITORING_CAMERA_RAW = json_file.read()
+    camera.MONITORING_CAMERA_RAW = json_file.read()
 
 
 class TestCamera(TestCase):

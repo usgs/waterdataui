@@ -1,6 +1,6 @@
-import { createStore } from 'redux';
+import {createStore} from 'redux';
 
-import { listen } from './d3-redux';
+import {listen} from './d3-redux';
 
 
 describe('d3-redux', () => {

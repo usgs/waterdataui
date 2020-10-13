@@ -39,14 +39,14 @@ const drawDVTimeSeriesSelection = function(ul, store) {
                 .attr('ga-event-action', 'toggleParameterCode')
                 .attr('name', 'dvParamCd');
 
-            if (idx == 0){
+            if (idx == 0) {
                 input.attr('checked', 'checked');
             }
 
             input.on('click', function() {
                 store.dispatch(Actions.retrieveDVTimeSeries(
                     monitorLoc, ts_id
-                )).then(function () {
+                )).then(function() {
                     store.dispatch(Actions.setCurrentDVTimeSeriesIds(
                         input.attr('data-00002'),
                         input.attr('data-00003'),

@@ -49,7 +49,7 @@ const controlDisplay = function(elem, showElem) {
  * @param {DOM node} node
  * @param {Object} - string properties to set initial state information. The property siteno is required
  */
-export const attachToNode = function (store,
+export const attachToNode = function(store,
                                       node,
                                       {
                                           siteno,

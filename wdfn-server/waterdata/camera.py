@@ -14,7 +14,7 @@ import os
 
 from waterdata import app
 # proof of concept. should call service to get
-MONITORING_CAMERA_RAW = app.config['MONITORING_CAMERA_LOOKUP'];
+MONITORING_CAMERA_RAW = app.config['MONITORING_CAMERA_LOOKUP']
 
 
 def get_json_camera_data():

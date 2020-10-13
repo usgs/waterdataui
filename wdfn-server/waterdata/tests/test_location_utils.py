@@ -384,10 +384,10 @@ class TestBuildLinkedData(TestCase):
                     'geo': {'@type': 'schema:GeoCoordinates',
                             'latitude': '-800.12',
                             'longitude': '12.12'
-                            },
+                           },
                     'image': ('https://waterdata.usgs.gov/nwisweb/graph'
                               '?agency_cd=Cat Leadership Academy&site_no=09876543&parm_cd=00060&period=100'
-                              )
+                             )
                     }
         self.assertDictEqual(result, expected)
 

@@ -1,4 +1,4 @@
-import { line as d3Line } from 'd3-shape';
+import {line as d3Line} from 'd3-shape';
 import {createStructuredSelector} from 'reselect';
 
 import {addSVGAccessibility} from '../../../d3-rendering/accessibility';
