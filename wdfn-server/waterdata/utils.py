@@ -2,6 +2,7 @@
 Utility functions
 
 """
+from flask import request
 from functools import update_wrapper
 from urllib.parse import urlencode, urljoin
 
@@ -44,6 +45,18 @@ def construct_url(netloc, path, parameters=()):
     """
     encoded_parameters = urlencode(parameters)
     return urljoin(netloc, '{0}?{1}'.format(path, encoded_parameters))
+
+
+def set_cookie_for_banner_message(full_function_response_object):
+    """
+    Checks if a cookie is desired and has not been set. If so it will set a cooke that will turn off
+    the special banner messages, such as the one for pandemics
+    :param full_function_response_object: standard HTTP response object
+    """
+    if app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES']:
+        previously_set_cookie = request.cookies.get('no-show-banner-message')
+        if previously_set_cookie is None:
+            full_function_response_object.set_cookie('no-show-banner-message', 'no-show', max_age=60*60*24*30)
 
 
 def parse_rdb(rdb_iter_lines):

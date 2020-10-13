@@ -22,6 +22,7 @@ COOPERATOR_LOOKUP_ENABLED = True  # may also be set to a list of district codes
 MONITORING_CAMERA_ENABLED = True
 MONITORING_CAMERA_PATH = os.path.join(PROJECT_HOME, 'data/monitoring_camera_data.json')
 DAILY_VALUE_HYDROGRAPH_ENABLED = True
+SET_COOKIE_TO_HIDE_BANNER_NOTICES = True  # set cookie set to hide banner messages for the life of the cookie
 
 DEBUG = False
 
