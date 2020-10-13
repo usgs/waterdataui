@@ -167,7 +167,7 @@ const TEST_STATE = {
         currentIVVariableID: '45807197',
         ivGraphCursorOffset: 0,
         currentIVMethodID: 1,
-        currentIVDateRangeKind: 'P7D',
+        currentIVDateRange: 'P7D',
         showIVTimeSeries: {
             current: true,
             compare: true,

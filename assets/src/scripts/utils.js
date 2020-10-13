@@ -8,7 +8,7 @@ import {DateTime} from 'luxon';
  * @param someString
  * @returns {string}
  */
-export const unicodeHtmlEntity = function (someString) {
+export const unicodeHtmlEntity = function(someString) {
     let numericValue = parseInt(someString.slice(2, -1), 10);
     if (numericValue) {
         return String.fromCharCode(numericValue);
@@ -23,7 +23,7 @@ export const unicodeHtmlEntity = function (someString) {
  * @param someString
  * @returns {array} or {null}
  */
-export const getHtmlFromString = function (someString) {
+export const getHtmlFromString = function(someString) {
     let re = /&(?:[a-z]+|#\d+);/g;
     return someString.match(re);
 };
@@ -34,7 +34,7 @@ export const getHtmlFromString = function (someString) {
  * @param someString
  * @returns {*}
  */
-export const replaceHtmlEntities = function (someString) {
+export const replaceHtmlEntities = function(someString) {
     let entities = getHtmlFromString(someString);
     if (entities) {
         for (let entity of entities) {
@@ -52,7 +52,7 @@ export const replaceHtmlEntities = function (someString) {
  * @param set2
  * @returns {boolean}
  */
-export const setEquality = function (set1, set2) {
+export const setEquality = function(set1, set2) {
     let sizeEqual = set1.size === set2.size;
     let itemsEqual = Array.from(set1).every(x => {
         return set2.has(x);
@@ -72,8 +72,8 @@ const TEXT_WRAP_BREAK_CHARS = [];
  * @param  {Number} width
  * @param {Array of Strings} break_chars - these along with spaces are acceptable places to break on}
  */
-export const wrap = function (text, width, break_chars=TEXT_WRAP_BREAK_CHARS) {
-    text.each(function () {
+export const wrap = function(text, width, break_chars=TEXT_WRAP_BREAK_CHARS) {
+    text.each(function() {
         const elem = select(this);
 
         // To determine line breaks, add a space after each break character
@@ -139,32 +139,32 @@ export const wrap = function (text, width, break_chars=TEXT_WRAP_BREAK_CHARS) {
  * @param  {Number} minWidth
  * @return {Boolean} true if the media query is active at the given width
  */
-export const mediaQuery = function (minWidth) {
+export const mediaQuery = function(minWidth) {
     return window.matchMedia(`screen and (min-width: ${minWidth}px)`).matches;
 };
 
 /**
  * Calculate the start time of a time range based on a time-delta string and the end time
  *
- * @param {String} period -- ISO duration for date range of the time series
+ * @param {String} period -- ISO duration for date range of the time series - which has the form of something like
+ * P7D in which the 'P' stands for 'period', the '7' is units in the period, and 'D' is the type of unit
+ * in this case 'Days.' There are only two unit types here, 'Days' or 'Years'
  * @param {Number} endTime -- the end time as universal time
  * @param {String} ianaTimeZone -- Internet Assigned Numbers Authority designation for a time zone
  * @returns {Number} the start time as universal time
  */
-export const calcStartTime = function (period, endTime, ianaTimeZone) {
+export const calcStartTime = function(period, endTime, ianaTimeZone) {
+    const timePeriodCode = period !== null ? period.substr(period.length - 1) : null;
+    const timePeriod = period !== null ? period.slice(1,-1) : null;
+
     let startTime = new DateTime.fromMillis(endTime, {zone: ianaTimeZone});
-    switch (period) {
-        case 'P7D':
-            startTime = startTime.minus({days: 7});
-            break;
-        case 'P30D':
-            startTime = startTime.minus({days: 30});
-            break;
-        case 'P1Y':
-            startTime = startTime.minus({years: 1});
-            break;
-        default:
-            console.log('No known period specified');
+
+    if (timePeriodCode === 'D') {
+        startTime = startTime.minus({days: timePeriod});
+    } else if (timePeriodCode === 'Y') {
+        startTime = startTime.minus({years: timePeriod});
+    } else {
+        console.log('No known period specified');
     }
     return startTime.valueOf();
 };
@@ -175,8 +175,8 @@ export const calcStartTime = function (period, endTime, ianaTimeZone) {
  * @param  {Boolean} condition If true, will run `func`
  * @param  {Function} func
  */
-export const callIf = function (condition, func) {
-    return function (...args) {
+export const callIf = function(condition, func) {
+    return function(...args) {
         if (condition) {
             func(...args);
         }
@@ -231,7 +231,7 @@ export const convertCelsiusToFahrenheit = function(celsius) {
  * @param {Array of variable Object}
  * @return {Array of variable Object}
  */
-export const sortedParameters = function (variables) {
+export const sortedParameters = function(variables) {
     const PARAM_PERTINENCE = {
         '00060': 0,
         '00065': 1,

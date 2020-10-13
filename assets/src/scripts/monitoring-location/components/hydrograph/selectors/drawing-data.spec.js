@@ -196,7 +196,7 @@ const TEST_DATA = {
     ianaTimeZone: 'America/Chicago',
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
-        currentIVDateRangeKind: 'P7D',
+        currentIVDateRange: 'P7D',
         currentIVMethodID: 69928
     }
 };
@@ -976,7 +976,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
             },
             ivTimeSeriesState: {
                 currentIVVariableID: '45807142',
-                currentIVDateRangeKind: 'P7D'
+                currentIVDateRange: 'P7D'
             }
         };
 

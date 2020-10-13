@@ -7,23 +7,48 @@
   .loading-indicator-container {
     display: inline-block;
   }
-
   ul {
     display: inline-block;
-
     li {
       display: inline-block;
-
       label {
         width: 110px;
       }
     }
   }
 }
-
-#ts-customdaterange-select-container {
-  label {
-    @include u-text('bold');
+.container-radio-group-and-form-buttons {
+  border: solid 1px color('black');
+  @include u-margin-bottom(1);
+  #ts-custom-date-radio-group {
+    @include u-padding-left(1);
+    p {
+      @include u-text('bold');
+      @include u-margin-bottom(1);
+    }
+    ul {
+      display: inline-block;
+      li {
+        display: inline-block;
+        @include u-padding-right(1);
+      }
+    }
+  }
+  #ts-custom-days-before-today-select-container {
+    @include u-padding-right(1);
+    @include u-padding-bottom(1);
+    @include u-padding-left(1);
+    .usa-label {
+      @include u-text('bold');
+    }
+  }
+  #ts-customdaterange-select-container {
+    @include u-padding-right(1);
+    @include u-padding-bottom(1);
+    @include u-padding-left(1);
+    label {
+      @include u-text('bold');
+    }
   }
 }
 
@@ -140,7 +165,7 @@
     .brush-text-hint {
       position: relative;
       text-anchor: middle;
-      font-size: size('body', 1)
+      font-size: size('body', 1);
     }
 
     .handle--custom {

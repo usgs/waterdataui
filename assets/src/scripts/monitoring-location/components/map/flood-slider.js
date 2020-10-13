@@ -27,7 +27,7 @@ const createSlider = function(elem, stages, store) {
             .attr('step', 1)
             .attr('aria-valuemin', 0)
             .attr('aria-valuemax', stages.length - 1)
-            .on('input', function () {
+            .on('input', function() {
                 const stages = getFloodStages(store.getState());
                 store.dispatch(Actions.setGageHeight(stages[this.value]));
             });

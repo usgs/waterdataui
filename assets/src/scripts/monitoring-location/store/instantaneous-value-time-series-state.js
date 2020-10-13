@@ -13,9 +13,9 @@
  */
 const setIVTimeSeriesVisibility = function(key, show) {
     return {
-     type: 'SET_IV_TIME_SERIES_VISIBILITY',
-     key,
-     show
+        type: 'SET_IV_TIME_SERIES_VISIBILITY',
+        key,
+        show
     };
 };
 /*
@@ -45,13 +45,14 @@ const setCurrentIVMethodID = function(methodID) {
 
 /*
  * Synchronous action sets the date range kind of the IV data.
- * @param {String} dateRangeKind - represents an ISO 8601 Duration or "custom"
+ * @param {String} dateRange - represents an ISO 8601 Duration or "custom"
  * @return {Object} - Redux action
  */
-const setCurrentIVDateRangeKind = function(dateRangeKind) {
+const setCurrentIVDateRange = function(dateRange) {
+
     return {
-        type: 'SET_CURRENT_IV_DATE_RANGE_KIND',
-        dateRangeKind
+        type: 'SET_CURRENT_IV_DATE_RANGE',
+        dateRange
     };
 };
 
@@ -66,6 +67,23 @@ const setCustomIVTimeRange = function(startTime, endTime) {
         type: 'SET_CUSTOM_IV_TIME_RANGE',
         startTime,
         endTime
+    };
+};
+
+/*
+ * Synchronous action sets
+ * @param {String} key which is one of the three following options
+ * - customTimeRangeSelectionButton - one of two selections for custom time periods, either 'days-input' or 'calender-input'
+ * - mainTimeRangeSelectionButton - one of the four main timeframe selections, 'P7D', 'P30D', 'P1Y', or 'custom'
+ * - numberOfDaysFieldValue - number of days from today that is entered in the form field for 'days before today' on the custom date range menu.
+ * @param {String} a value suitable for the above mentioned keys
+ * @return {Object} - Redux action
+ */
+const setUserInputsForSelectingTimespan = function(key, value) {
+    return {
+        type: 'SET_USER_INPUTS_FOR_SELECTING_TIMESPAN',
+        key,
+        value
     };
 };
 
@@ -165,7 +183,7 @@ const startTimeSeriesPlay = function(maxCursorOffset) {
             dispatch(Actions.setIVGraphCursorOffset(0));
         }
         if (!state.audiblePlayId) {
-            let play = function () {
+            let play = function() {
                 let newOffset = getState().ivTimeSeriesState.ivGraphCursorOffset + 15 * 60 * 1000;
                 if (newOffset > maxCursorOffset) {
                     dispatch(Actions.ivTimeSeriesPlayStop());
@@ -212,10 +230,10 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
                 currentIVMethodID: action.methodID
             };
 
-        case 'SET_CURRENT_IV_DATE_RANGE_KIND':
+        case 'SET_CURRENT_IV_DATE_RANGE':
             return {
                 ...ivTimeSeriesState,
-                currentIVDateRangeKind: action.dateRangeKind
+                currentIVDateRange: action.dateRange
             };
 
         case 'SET_CUSTOM_IV_TIME_RANGE':
@@ -226,6 +244,14 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
                     end: action.endTime
                 }
             };
+
+        case 'SET_USER_INPUTS_FOR_SELECTING_TIMESPAN': {
+            const timespanInputSettings = {};
+            timespanInputSettings[action.key] = action.value;
+            return Object.assign({}, ivTimeSeriesState, {
+                userInputsForTimeRange: Object.assign({}, ivTimeSeriesState.userInputsForTimeRange, timespanInputSettings)
+            });
+        }
 
         case 'SET_IV_GRAPH_CURSOR_OFFSET':
             return {
@@ -281,8 +307,9 @@ export const Actions = {
     setIVTimeSeriesVisibility,
     setCurrentIVVariable,
     setCurrentIVMethodID,
-    setCurrentIVDateRangeKind,
+    setCurrentIVDateRange,
     setCustomIVTimeRange,
+    setUserInputsForSelectingTimespan,
     setIVGraphCursorOffset,
     setIVGraphBrushOffset,
     clearIVGraphBrushOffset,

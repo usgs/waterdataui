@@ -26,12 +26,12 @@ const setFloodFeatures = function(stages, extent) {
  * @return {Function} which returns a Promise
  */
 const retrieveFloodData = function(siteno) {
-    return function (dispatch) {
+    return function(dispatch) {
         const floodFeatures = fetchFloodFeatures(siteno);
         const floodExtent = fetchFloodExtent(siteno);
         return Promise.all([floodFeatures, floodExtent]).then((data) => {
             const [features, extent] = data;
-            const stages = features.map((feature) => feature.attributes.STAGE).sort(function (a, b) {
+            const stages = features.map((feature) => feature.attributes.STAGE).sort(function(a, b) {
                 return a - b;
             });
             dispatch(setFloodFeatures(stages, extent.extent ? extent.extent : {}));
@@ -95,8 +95,8 @@ const setWaterwatchFloodLevels = function(floodLevels) {
  * @return {Function} which returns a Promise
  */
 const retrieveWaterwatchData = function(siteno) {
-    return function (dispatch) {
-        return fetchWaterwatchFloodLevels(siteno).then(function (floodLevels) {
+    return function(dispatch) {
+        return fetchWaterwatchFloodLevels(siteno).then(function(floodLevels) {
             dispatch(setWaterwatchFloodLevels(floodLevels));
         });
     };

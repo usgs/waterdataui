@@ -1,8 +1,8 @@
 import memoize from 'fast-memoize';
 import uniq from 'lodash/uniq';
 import _includes from 'lodash/includes';
-import { DateTime } from 'luxon';
-import { createSelector } from 'reselect';
+import {DateTime} from 'luxon';
+import {createSelector} from 'reselect';
 
 import {getIanaTimeZone} from './time-zone-selector';
 
@@ -21,12 +21,14 @@ export const getQueryInfo = state => state.ivTimeSeriesData.queryInfo || {};
 
 export const getRequests = state => state.ivTimeSeriesData.requests || {};
 
+export const getUserInputsForSelectingTimespan = state => state.ivTimeSeriesState.userInputsForTimeRange;
+
 export const getCurrentVariableID = state => state.ivTimeSeriesState.currentIVVariableID;
 
 export const getCurrentMethodID = state => state.ivTimeSeriesState.currentIVMethodID;
 
-export const getCurrentDateRangeKind = (state) => {
-    return state.ivTimeSeriesState.currentIVDateRangeKind || null;
+export const getCurrentDateRange = (state) => {
+    return state.ivTimeSeriesState.currentIVDateRange || null;
 };
 
 export const getLoadingTsKeys = state => state.ivTimeSeriesState.loadingIVTSKeys || [];
@@ -36,6 +38,8 @@ export const getNwisTimeZone = state => state.ivTimeSeriesData.timeZones || {};
 export const getCustomTimeRange = state => state.ivTimeSeriesState.customIVTimeRange;
 
 export const getTimeSeries = state => state.ivTimeSeriesData.timeSeries ? state.ivTimeSeriesData.timeSeries : {};
+
+
 
 export const hasAnyTimeSeries = createSelector(
     getTimeSeries,
@@ -94,10 +98,10 @@ export const getCurrentParmCd = createSelector(
  * selected variable.
  */
 export const getTsRequestKey = memoize((tsKey, period, parmCd) => createSelector(
-    getCurrentDateRangeKind,
+    getCurrentDateRange,
     getCurrentParmCd,
-    (dateRangeKind, currentParmCd) => {
-        const periodToUse = period ? period : dateRangeKind;
+    (dateRange, currentParmCd) => {
+        const periodToUse = period ? period : dateRange;
 
         let result = `${tsKey}:${periodToUse}`;
         if (periodToUse !== 'P7D') {

@@ -56,9 +56,9 @@ const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, curre
     return label;
 };
 
-const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone, layout, currentParmCd}, textGroup) {
+const createTooltipTextGroup = function(elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone, layout, currentParmCd}, textGroup) {
     // Find the width of the between the y-axis and margin and set the tooltip margin based on that number
-    const adjustMarginOfTooltips = function (elem) {
+    const adjustMarginOfTooltips = function(elem) {
         // set a base number of pixels to bump the tooltips away from y-axis and compensate for slight under reporting
         // of margin width by layout selector on time series with single or double digits on y-axis
         const baseMarginOffsetTextGroup = 27;
@@ -134,7 +134,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
 
     merge
         .text(datum => getTooltipText(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd))
-        .each(function (datum) {
+        .each(function(datum) {
             const classes = classesForPoint(datum);
             const text = select(this);
             text.attr('class', d => `${d.tsKey}-tooltip-text`);
@@ -150,7 +150,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
  * Append a group containing the tooltip text elements to elem
  * @param {Object} elem - D3 selector
  */
-export const drawTooltipText = function (elem, store) {
+export const drawTooltipText = function(elem, store) {
     elem.call(link(store, createTooltipTextGroup, createStructuredSelector({
         currentPoints: getTsCursorPoints('current'),
         comparePoints: getTsCursorPoints('compare'),

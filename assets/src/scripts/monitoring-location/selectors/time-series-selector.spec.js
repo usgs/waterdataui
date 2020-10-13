@@ -3,11 +3,12 @@ import {
     getSourceInfo,
     getSiteCodes,
     getCurrentVariableID,
-    getCurrentDateRangeKind,
+    getCurrentDateRange,
     getTimeSeries,
     hasAnyTimeSeries,
     getMonitoringLocationName,
     getAgencyCode,
+    getUserInputsForSelectingTimespan,
     getCurrentVariable,
     getQueryInfo,
     getRequests,
@@ -232,7 +233,7 @@ const TEST_DATA = {
     },
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
-        currentIVDateRangeKind: 'P7D'
+        currentIVDateRange: 'P7D'
     }
 };
 
@@ -293,7 +294,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
     describe('hasAnyTimeSeries', () => {
         it('Return false if series is empty', () => {
             expect(hasAnyTimeSeries({
-               ivTimeSeriesData: {}
+                ivTimeSeriesData: {}
             })).toBe(false);
         });
 
@@ -429,9 +430,9 @@ describe('monitoring-location/selectors/time-series-selector', () => {
             }
         };
         it('Returns empty string if state has no sourceInfo', () => {
-           expect(getMonitoringLocationName('12345678')({
-               ivTimeSeriesData: {}
-           })).toBe('');
+            expect(getMonitoringLocationName('12345678')({
+                ivTimeSeriesData: {}
+            })).toBe('');
         });
 
         it('Returns empty string if siteNo is not in sourceInfo', () => {
@@ -454,9 +455,9 @@ describe('monitoring-location/selectors/time-series-selector', () => {
             }
         };
         it('Returns empty string if state has no siteCodes ', () => {
-           expect(getAgencyCode('12345678')({
-               ivTimeSeriesData: {}
-           })).toBe('');
+            expect(getAgencyCode('12345678')({
+                ivTimeSeriesData: {}
+            })).toBe('');
         });
 
         it('Returns empty string if siteNo is not in siteCodes', () => {
@@ -468,6 +469,25 @@ describe('monitoring-location/selectors/time-series-selector', () => {
         });
     });
 
+    describe('getTimespanUserInputs', () => {
+        it('Returns the an object with user input selections for  time ranges', () => {
+            expect(getUserInputsForSelectingTimespan({
+                ivTimeSeriesState: {
+                    userInputsForTimeRange: {
+                        mainTimeRangeSelectionButton: 'custom',
+                        customTimeRangeSelectionButton: 'days-input',
+                        numberOfDaysFieldValue: '3'
+                    }
+                }
+            })).toEqual({
+                mainTimeRangeSelectionButton: 'custom',
+                customTimeRangeSelectionButton: 'days-input',
+                numberOfDaysFieldValue: '3'
+            });
+        });
+    });
+
+
     describe('getCurrentVariableID', () => {
         it('Return the current variable ID', () => {
             expect(getCurrentVariableID({
@@ -478,14 +498,14 @@ describe('monitoring-location/selectors/time-series-selector', () => {
         });
     });
 
-    describe('getCurrentDateRangeKind', () => {
-       it('Return the current date range', () => {
-           expect(getCurrentDateRangeKind({
-               ivTimeSeriesState: {
-                   currentIVDateRangeKind: 'P30D'
-               }
-           })).toEqual('P30D');
-       });
+    describe('getCurrentDateRange', () => {
+        it('Return the current date range', () => {
+            expect(getCurrentDateRange({
+                ivTimeSeriesState: {
+                    currentIVDateRange: 'P30D'
+                }
+            })).toEqual('P30D');
+        });
     });
 
     describe('getCurrentVariable', () => {
@@ -508,16 +528,16 @@ describe('monitoring-location/selectors/time-series-selector', () => {
         });
 
         it('Return null if no variables are in series', () => {
-           expect(getCurrentVariable({
-               ...TEST_STATE,
-               ivTimeSeriesData: {
-                   variables: {}
-               }
-           })).toBeNull();
-           expect(getCurrentVariable({
-               ...TEST_STATE,
-               ivTimeSeriesData: {}
-           })).toBeNull();
+            expect(getCurrentVariable({
+                ...TEST_STATE,
+                ivTimeSeriesData: {
+                    variables: {}
+                }
+            })).toBeNull();
+            expect(getCurrentVariable({
+                ...TEST_STATE,
+                ivTimeSeriesData: {}
+            })).toBeNull();
         });
 
         it('Return selected variable', () => {
@@ -545,16 +565,16 @@ describe('monitoring-location/selectors/time-series-selector', () => {
         });
 
         it('Return null if no variables are in series', () => {
-           expect(getCurrentParmCd({
-               ...TEST_STATE,
-               ivTimeSeriesData: {
-                   variables: {}
-               }
-           })).toBeNull();
-           expect(getCurrentParmCd({
-               ...TEST_STATE,
-               ivTimeSeriesData: {}
-           })).toBeNull();
+            expect(getCurrentParmCd({
+                ...TEST_STATE,
+                ivTimeSeriesData: {
+                    variables: {}
+                }
+            })).toBeNull();
+            expect(getCurrentParmCd({
+                ...TEST_STATE,
+                ivTimeSeriesData: {}
+            })).toBeNull();
         });
 
         it('Return selected parm code', () => {
@@ -572,7 +592,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 }
             },
             ivTimeSeriesState: {
-                currentIVDateRangeKind: 'P7D',
+                currentIVDateRange: 'P7D',
                 currentIVVariableID: '45807042'
             }
         };
@@ -581,7 +601,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
             expect(hasTimeSeries('current', 'P7D', '00060')({
                 ivTimeSeriesData: {},
                 ivTimeSeriesState: {
-                    currentIVDateRangeKind: 'P7D',
+                    currentIVDateRange: 'P7D',
                     currentIVVariableID: '45807042'
                 }
             })).toBe(false);
@@ -604,7 +624,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 variables: TEST_VARS
             },
             ivTimeSeriesState: {
-                currentIVDateRangeKind: 'P7D',
+                currentIVDateRange: 'P7D',
                 currentIVVariableID: '45807042'
             }
         };
@@ -654,7 +674,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 variables: TEST_VARS
             },
             ivTimeSeriesState: {
-                currentIVDateRangeKind: 'P7D',
+                currentIVDateRange: 'P7D',
                 currentIVVariableID: '45807042'
             }
         };
@@ -715,7 +735,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 variables: TEST_VARS
             },
             ivTimeSeriesState: {
-                currentIVDateRangeKind: 'P7D',
+                currentIVDateRange: 'P7D',
                 currentIVVariableID: '45807042'
             }
         };
@@ -792,7 +812,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 variables: TEST_VARS
             },
             ivTimeSeriesState: {
-                currentIVDateRangeKind: 'P30D',
+                currentIVDateRange: 'P30D',
                 currentIVVariableID: '45807042',
                 loadingIVTSKeys: ['compare:P7D', 'current:P30D:00060']
             }
@@ -827,7 +847,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 variables: TEST_VARS
             },
             ivTimeSeriesState: {
-                currentIVDateRangeKind: 'P30D',
+                currentIVDateRange: 'P30D',
                 currentIVVariableID: '45807042'
             }
         };
@@ -868,7 +888,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 variables: TEST_VARS
             },
             ivTimeSeriesState: {
-                currentIVDateRangeKind: 'P30D',
+                currentIVDateRange: 'P30D',
                 currentIVVariableID: '45807042'
             }
         };
@@ -959,7 +979,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 },
                 ivTimeSeriesState: {
                     currentIVVariableID: '45807197',
-                    currentIVDateRangeKind: 'P7D'
+                    currentIVDateRange: 'P7D'
                 }
             })).toEqual({
                 one: {item: 'one', points: [1, 2], tsKey: 'current:P7D', variable: 45807197},
@@ -974,7 +994,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 ivTimeSeriesData: {},
                 ivTimeSeriesState: {
                     currentIVVariableID: null,
-                    currentIVDateRangeKind: 'P7D'
+                    currentIVDateRange: 'P7D'
                 }
             })).toEqual({});
         });

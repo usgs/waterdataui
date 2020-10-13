@@ -120,7 +120,7 @@ const plotFloodLevelPoints = function(elem, {xscale, yscale, points, classes}) {
  * @param  {Array} seriesPoints
  * @param {Boolean} enableClip
  */
-const plotAllFloodLevelPoints = function (elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
+const plotAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
     elem.select('#flood-level-points').remove();
     if (!visible) {
         return;

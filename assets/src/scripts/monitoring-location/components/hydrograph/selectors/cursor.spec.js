@@ -195,7 +195,7 @@ const TEST_STATE_THREE_VARS = {
         },
         currentIVVariableID: '45807197',
         currentIVMethodID: 69928,
-        currentIVDateRangeKind: 'P7D',
+        currentIVDateRange: 'P7D',
         audiblePlayId: null
     },
     ui: {
@@ -319,7 +319,7 @@ const TEST_STATE_ONE_VAR = {
         },
         currentIVVariableID: '00060id',
         currentIVMethodID: 69928,
-        currentIVDateRangeKind: 'P7D',
+        currentIVDateRange: 'P7D',
         ivGraphCursorOffset: null
     },
     ui: {

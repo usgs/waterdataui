@@ -25,10 +25,16 @@ var CONFIG = {
 };
 
 var mockOscillator = function() {
-    var connect = function() { return null; };
-    var start = function() { return null; };
+    var connect = function() {
+        return null;
+    };
+    var start = function() {
+        return null;
+    };
     var frequency = {
-        setTargetAtTime : function() { return null; }
+        setTargetAtTime : function() {
+            return null;
+        }
     };
     return {
         type: '',
@@ -39,9 +45,13 @@ var mockOscillator = function() {
 };
 
 var mockGain = function() {
-    var connect = function() { return null; };
+    var connect = function() {
+        return null;
+    };
     var gain = {
-        setTargetAtTime: function() { return null; }
+        setTargetAtTime: function() {
+            return null;
+        }
     };
     return {
         connect: connect,
@@ -50,21 +60,33 @@ var mockGain = function() {
 };
 
 var mockCompressor = function() {
-    var connect = function() { return null; };
+    var connect = function() {
+        return null;
+    };
     var threshold = {
-        setValueAtTime: function() { return null; }
+        setValueAtTime: function() {
+            return null;
+        }
     };
     var knee = {
-        setValueAtTime: function() { return null; }
+        setValueAtTime: function() {
+            return null;
+        }
     };
     var ratio = {
-        setValueAtTime: function() { return null; }
+        setValueAtTime: function() {
+            return null;
+        }
     };
     var attack = {
-        setValueAtTime: function() { return null; }
+        setValueAtTime: function() {
+            return null;
+        }
     };
     var release = {
-        setValueAtTime: function() { return null; }
+        setValueAtTime: function() {
+            return null;
+        }
     };
     return {
         connect: connect,
