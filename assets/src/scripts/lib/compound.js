@@ -23,7 +23,9 @@ export default function compound() {
       return s.domain();
     }));
     var domain = [Math.min.apply(null, values), Math.max.apply(null, values)];
-    if (values[0] > values[1]) {domain = domain.slice().reverse();}
+    if (values[0] > values[1]) {
+      domain = domain.slice().reverse();
+    }
     return domain;
   };
 
