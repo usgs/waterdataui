@@ -52,13 +52,6 @@ class TestCookieSetting(TestCase):
             set_cookie_for_banner_message(self.response)
             self.assertEqual([], self.response.headers.getlist('Set-Cookie'))
 
-    @mock.patch('waterdata.utils.set_cookie_for_banner_message.request.cookies.get', return_value=None)
-    def test_set_cookie_for_banner_message_cookie_not_previously_set(self, mock_cookie_get):
-        app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES'] = True
-        with app.test_request_context('/'):
-            set_cookie_for_banner_message(self.response)
-            self.assertIn('no-show-banner-message', self.response.headers.getlist('Set-Cookie')[0])
-
 
 class TestGetWaterServicesData(TestCase):
 
