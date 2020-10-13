@@ -35,21 +35,19 @@ class TestConstructUrl(TestCase):
         self.assertEqual(construct_url(self.test_netloc, self.test_path), expected)
 
 
-
-
 class TestCookieSetting(TestCase):
 
     def setUp(self):
         self.app_client = app.test_client()
         self.response = Response()
 
-    def test_set_cookie_for_banner_message(self):
+    def test_set_cookie_for_banner_message_true(self):
         app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES'] = True
         with app.test_request_context('/'):
             set_cookie_for_banner_message(self.response)
             self.assertIn('no-show-banner-message', self.response.headers.getlist('Set-Cookie')[0])
 
-    def test_set_cookie_for_banner_message(self):
+    def test_set_cookie_for_banner_message_false(self):
         app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES'] = False
         with app.test_request_context('/'):
             set_cookie_for_banner_message(self.response)
