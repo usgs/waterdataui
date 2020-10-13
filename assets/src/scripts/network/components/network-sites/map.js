@@ -56,7 +56,7 @@ export const addSitesLayer = function (map, networkSites) {
         fillOpacity: MARKER_FILL_OPACITY
     };
 
-    const onEachPointFeatureAddPopUp = function (feature, layer) {
+    const onEachPointFeatureAddPopUp = function(feature, layer) {
         const popupText = `Monitoring Location: <a href="${feature.properties.monitoringLocationUrl}">${feature.properties.monitoringLocationName}</a>
             <br>ID: ${feature.properties.monitoringLocationNumber}`;
         layer.bindPopup(popupText);

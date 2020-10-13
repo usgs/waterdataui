@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.37.0...master)
 ### Added
+- Cookie to control pandemic banner message.
 - Added 'Days from today' custom selection.
 - A set of device specific favicons.
 

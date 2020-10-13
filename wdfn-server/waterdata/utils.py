@@ -54,7 +54,8 @@ def set_cookie_for_banner_message(full_function_response_object):
     :param full_function_response_object: standard HTTP response object
     """
     if app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES']:
-        if request.cookies.get('no-show-banner-message') is None:
+        previously_set_cookie = request.cookies.get('no-show-banner-message')
+        if previously_set_cookie is None:
             full_function_response_object.set_cookie('no-show-banner-message', 'no-show', max_age=60*60*24*30)
 
 

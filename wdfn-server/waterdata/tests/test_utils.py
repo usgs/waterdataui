@@ -46,6 +46,12 @@ class TestCookieSetting(TestCase):
             set_cookie_for_banner_message(self.response)
             self.assertIn('no-show-banner-message', self.response.headers.getlist('Set-Cookie')[0])
 
+    def test_set_cookie_for_banner_message_false(self):
+        app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES'] = False
+        with app.test_request_context('/'):
+            set_cookie_for_banner_message(self.response)
+            self.assertEqual([], self.response.headers.getlist('Set-Cookie'))
+
 
 class TestGetWaterServicesData(TestCase):
 
@@ -212,7 +218,7 @@ class TestParseRdb(TestCase):
         expected_1 = {'agency_cd': 'USGS',
                       'site_no': '345670',
                       'station_nm':
-                          'Some Random Site',
+                      'Some Random Site',
                       'site_tp_cd': 'ST',
                       'dec_lat_va': '200.94977778',
                       'dec_long_va': '-100.12763889',
@@ -222,11 +228,11 @@ class TestParseRdb(TestCase):
                       'alt_acy_va': ' .1',
                       'alt_datum_cd': 'NAVD88',
                       'huc_cd': '02070010'
-                      }
+                     }
         expected_2 = {'agency_cd': 'USGS',
                       'site_no': '345671',
                       'station_nm':
-                          'Some Random Site 1',
+                      'Some Random Site 1',
                       'site_tp_cd': 'ST',
                       'dec_lat_va': '201.94977778',
                       'dec_long_va': '-101.12763889',
@@ -236,7 +242,7 @@ class TestParseRdb(TestCase):
                       'alt_acy_va': ' .1',
                       'alt_datum_cd': 'NAVD88',
                       'huc_cd': '02070010'
-                      }
+                     }
         self.assertDictEqual(next(result), expected_1)
         self.assertDictEqual(next(result), expected_2)
 

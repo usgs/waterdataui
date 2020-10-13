@@ -3,14 +3,14 @@ Main application views.
 """
 import json
 
-from flask import abort, render_template, request, Markup
+from flask import abort, render_template, request, Markup, make_response
 
 from markdown import markdown
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, \
     get_period_of_record_by_parm_cd
-from .utils import construct_url, defined_when, parse_rdb
+from .utils import construct_url, defined_when, parse_rdb, set_cookie_for_banner_message
 from .services import sifta, ogc
 from .services.nwis import NwisWebServices
 
@@ -20,6 +20,7 @@ from .camera import get_monitoring_camera_data
 
 SERVICE_ROOT = app.config['SERVER_SERVICE_ROOT']
 NWIS = NwisWebServices(SERVICE_ROOT)
+
 
 @app.route('/')
 def home():
@@ -45,9 +46,9 @@ def monitoring_location(site_no):
     resp = NWIS.get_site(site_no, agency_cd)
     status = resp.status_code
     json_ld = None
+
     if status == 200:
         iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
-
         data_list = list(iter_data)
 
         template = 'monitoring_location.html'
@@ -148,7 +149,11 @@ def monitoring_location(site_no):
         # mimetype would require changing the app's JSONIFY_MIMETYPE,
         # which defaults to application/json... didn't really want to change that
         return app.response_class(json.dumps(json_ld), status=http_code, mimetype='application/ld+json')
-    return render_template(template, **context), http_code
+    # At this point 'resp' is not a full response object in the Flask world.
+    # In order to set a cookie to the 'resp', we need to have the full response object, so let's create that here
+    full_function_response_object = make_response(render_template(template, **context), http_code)
+    set_cookie_for_banner_message(full_function_response_object)
+    return full_function_response_object
 
 
 def return_404(*args, **kwargs):
