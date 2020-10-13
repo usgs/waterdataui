@@ -10,7 +10,7 @@ const COMPONENTS = {
     'network': NetworkMapComponent
 };
 
-const load = function () {
+const load = function() {
     let nodes = document.getElementsByClassName('wdfn-component');
     let store = configureStore();
     for (let node of nodes) {

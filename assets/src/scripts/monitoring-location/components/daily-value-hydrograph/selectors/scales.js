@@ -35,7 +35,7 @@ export const getXScale = memoize((kind) => createSelector(
 export const getMainXScale = getXScale();
 export const getBrushXScale = getXScale('BRUSH');
 
-const createYScale = function (layout, valueRange) {
+const createYScale = function(layout, valueRange) {
     const PADDING_RATIO = 0.2;
     let yScale = scaleLinear();
     yScale.range([layout.height - layout.margin.top - layout.margin.bottom, 0]);

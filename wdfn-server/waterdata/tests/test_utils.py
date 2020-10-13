@@ -4,12 +4,11 @@ Unit tests for the main WDFN views.
 
 from unittest import TestCase, mock
 
+from flask import Response
+
 import requests as r
 
-from flask import Response, request
-
 from .. import app
-
 
 from ..utils import construct_url, defined_when, execute_get_request, parse_rdb, set_cookie_for_banner_message
 

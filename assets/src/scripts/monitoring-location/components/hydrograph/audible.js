@@ -20,7 +20,7 @@ import {getMainXScale, getMainYScale} from './selectors/scales';
 const volumeScale = scaleLinear().range([2, .3]);
 
 const AudioContext = config.TIMESERIES_AUDIO_ENABLED ? window.AudioContext || window.webkitAudioContext : null;
-const getAudioContext = memoize(function () {
+const getAudioContext = memoize(function() {
     return new AudioContext();
 });
 
@@ -51,7 +51,7 @@ export const createSound = memoize(/* eslint no-unused-vars: off */ tsKey => {
     return {oscillator, gainNode, compressor};
 });
 
-export const updateSound = function ({enabled, points}) {
+export const updateSound = function({enabled, points}) {
     const audioCtx = getAudioContext();
     for (const tsKey of Object.keys(points)) {
         const point = points[tsKey];
