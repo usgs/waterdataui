@@ -29,8 +29,12 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                         }
                     },
                     ivTimeSeriesState: {
-                        currentDateRangeKind: 'P7D',
-                        loadingIVTSKeys: []
+                        loadingIVTSKeys: [],
+                        userInputsForTimeRange: {
+                            mainTimeRangeSelectionButton: 'P7D',
+                            customTimeRangeSelectionButton: 'days-input',
+                            numberOfDaysFieldValue: ''
+                        }
                     }
                 },
                 applyMiddleware(thunk)
@@ -303,12 +307,12 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 expect(url).toContain('period=P14D');
             });
 
-            it('Loading key should be set for this time series before fetch is complete and current date range kind set to custo', () => {
+            it('Loading key should be set for this time series before fetch is complete and current user input time range selection button set to custom', () => {
                 store.dispatch(Actions.retrieveCustomTimePeriodIVTimeSeries('12345678', '00060', 'P14D'));
 
                 const tsState = store.getState().ivTimeSeriesState;
-                expect(tsState.loadingIVTSKeys).toContain('current:custom:00060');
-                expect(tsState.currentIVDateRangeKind).toBe('custom');
+                expect(tsState.loadingIVTSKeys).toContain('current:P14D:00060');
+                expect(tsState.userInputsForTimeRange.mainTimeRangeSelectionButton).toBe('custom');
             });
 
             it('Expect that a successful fetch updates the data and sets the state appropriately', (done) => {
@@ -320,7 +324,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 promise.then(() => {
                     const tsState = store.getState().ivTimeSeriesState;
                     expect(Actions.addIVTimeSeriesCollection).toHaveBeenCalled();
-                    expect(tsState.currentIVVariableID).toBe(45807197);
+                    expect(tsState.currentIVVariableID).toBe('45807197');
                     expect(tsState.loadingIVTSKeys).not.toContain('current:custom:00060');
                     done();
                 });
@@ -480,7 +484,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
             });
 
             it('Expect to retrieve custom time series if date range kind is custom', () => {
-                store.dispatch(ivTimeSeriesStateActions.setCurrentIVDateRangeKind('custom'));
+                store.dispatch(ivTimeSeriesStateActions.setCurrentIVDateRange('custom'));
                 store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(startDT, endDT));
                 store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries('12345678', '45807197'));
 

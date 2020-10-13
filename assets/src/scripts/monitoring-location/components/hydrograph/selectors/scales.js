@@ -47,7 +47,7 @@ export const createXScale = function (timeRange, xSize) {
  * @param {Array} extent
  * @param {Number} size
  */
-export const createYScale = function (parmCd, extent, size) {
+export const createYScale = function(parmCd, extent, size) {
     if (SYMLOG_PARMS.indexOf(parmCd) >= 0) {
         return scaleSymlog()
             .domain(extent)

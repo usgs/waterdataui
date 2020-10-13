@@ -137,7 +137,7 @@ describe ('monitoring-location/components/hydrograph/graph-brush module', () => 
         },
         ivTimeSeriesState: {
             currentIVVariableID: '45807197',
-            currentIVDateRangeKind: 'P7D',
+            currentIVDateRange: 'P7D',
             showIVTimeSeries: {
                 current: true,
                 compare: true,

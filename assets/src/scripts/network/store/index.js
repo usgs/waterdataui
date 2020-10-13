@@ -9,7 +9,7 @@ export const Actions = {
     retrieveNetworkData(networkCd) {
         return function(dispatch) {
             return fetchNetworkFeatures(networkCd)
-                .then(function(features){
+                .then(function(features) {
                     dispatch(Actions.setNetworkFeatures(features));
             });
         };
@@ -28,7 +28,7 @@ const appReducer = combineReducers({
 
 const MIDDLEWARES = [thunk];
 
-export const configureStore = function (initialState) {
+export const configureStore = function(initialState) {
     initialState = {
         networkData: {
             networkSites: []

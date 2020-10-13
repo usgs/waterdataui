@@ -136,7 +136,12 @@ const TEST_STATE = {
     },
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
-        currentIVDateRangeKind: 'P7D',
+        currentIVDateRange: 'P7D',
+        userInputsForTimeRange: {
+            mainTimeRangeSelectionButton: 'P7D',
+            customTimeRangeSelectionButton: 'days-input',
+            numberOfDaysFieldValue: ''
+        },
         showIVTimeSeries: {
             current: true,
             compare: true,
@@ -167,14 +172,17 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
 
     it('Expects the date range controls to be created', () => {
         let dateRangeContainer = select('#ts-daterange-select-container');
+        let subSelectionRadioButtonsContainer = select('div#ts-custom-date-radio-group');
         let customDateDiv = select('div#ts-customdaterange-select-container');
 
         expect(dateRangeContainer.size()).toBe(1);
         expect(dateRangeContainer.selectAll('input[type=radio]').size()).toBe(4);
+        expect(subSelectionRadioButtonsContainer.size()).toBe(1);
+        expect(subSelectionRadioButtonsContainer.selectAll('input[type=radio]').size()).toBe(2);
         expect(customDateDiv.attr('hidden')).toBe('true');
     });
 
-    it('Expects to retrieve the extended time series when the radio buttons are change', () => {
+    it('Expects to retrieve the extended time series when the radio buttons are changed', () => {
         spyOn(ivTimeSeriesDataActions, 'retrieveExtendedIVTimeSeries').and.callThrough();
         let lastRadio = select('#P1Y-input');
         lastRadio.property('checked', true);
@@ -183,20 +191,20 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
         expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).toHaveBeenCalledWith('12345678', 'P1Y');
     });
 
-    it('Expects to show the date range form when the Custom radio is selected', () => {
-        let customRadio = select('#custom-input');
-        customRadio.property('checked', true);
-        customRadio.dispatch('change');
+    it('Expects to show the days before today form when only the Custom radio is selected', () => {
+        let customRadioButtonElement = select('#custom-input');
+        customRadioButtonElement.property('checked', true);
+        customRadioButtonElement.dispatch('change');
 
-        let customDateDiv = select('div#ts-customdaterange-select-container');
-        expect(customDateDiv.attr('hidden')).toBeNull();
+        let customDaysBeforeTodayDiv = select('div#ts-custom-days-before-today-select-container');
+        expect(customDaysBeforeTodayDiv.attr('hidden')).toBeNull();
 
-        let customDateAlertDiv = select('#custom-date-alert-container');
-        expect(customDateAlertDiv.attr('hidden')).toBe('true');
+        let customDaysBeforeTodayAlertDiv = select('div#custom-days-before-today-alert-container');
+        expect(customDaysBeforeTodayAlertDiv.attr('hidden')).toBe('true');
     });
 
     it('Expects an alert to be thrown if custom dates are not provided.', () => {
-         let submitButton = select('#custom-date-submit');
+         let submitButton = select('#custom-date-submit-calender');
          submitButton.dispatch('click');
 
          let customDateAlertDiv = select('#custom-date-alert');
@@ -208,7 +216,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
         select('#custom-start-date').property('value', '04/05/2063');
         select('#custom-end-date').property('value', '04/03/2063');
 
-        select('#custom-date-submit').dispatch('click');
+        select('#custom-date-submit-calender').dispatch('click');
 
         let customDateAlertDiv = select('#custom-date-alert-container');
         expect(customDateAlertDiv.attr('hidden')).toBeNull();
@@ -221,13 +229,43 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
         select('#custom-start-date').property('value', '04/03/2063');
         select('#custom-end-date').property('value', '04/05/2063');
 
-        select('#custom-date-submit').dispatch('click');
+        select('#custom-date-submit-calender').dispatch('click');
 
         let customDateAlertDiv = select('#custom-date-alert-container');
         expect(customDateAlertDiv.attr('hidden')).toBe('true');
 
         expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).toHaveBeenCalledWith(
             '12345678', '2063-04-03', '2063-04-05'
+        );
+    });
+
+    it('Expects an alert if no number is entered in days before today form field.', () => {
+        select('#custom-date-submit-days').dispatch('click');
+
+        let userInputDaysBeforeTodayAlertDiv = select('#custom-days-before-today-alert-container');
+        expect(userInputDaysBeforeTodayAlertDiv.attr('hidden')).toBeNull();
+        expect(userInputDaysBeforeTodayAlertDiv.select('p').text()).toEqual('Entry must be a number.');
+    });
+
+    it('Expects an alert if something other than a number is entered in days before today form field.', () => {
+        let userInputDaysBeforeTodayAlertDiv = select('#custom-days-before-today-alert-container');
+        userInputDaysBeforeTodayAlertDiv.property('value', 'not');
+        select('#custom-date-submit-days').dispatch('click');
+
+        expect(userInputDaysBeforeTodayAlertDiv.attr('hidden')).toBeNull();
+        expect(userInputDaysBeforeTodayAlertDiv.select('p').text()).toEqual('Entry must be a number.');
+    });
+
+    it('Expects data to be retrieved if a number of correct length is entered in days before today form field.', () => {
+        spyOn(ivTimeSeriesDataActions, 'retrieveCustomTimePeriodIVTimeSeries').and.callThrough();
+        select('#with-hint-input-days-from-today').property('value', 3);
+        select('#custom-date-submit-days').dispatch('click');
+
+        let userInputDaysBeforeTodayAlertDiv = select('#custom-days-before-today-alert-container');
+        expect(userInputDaysBeforeTodayAlertDiv.attr('hidden')).toBe('true');
+
+        expect(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries).toHaveBeenCalledWith(
+            '12345678', '00060', 'P3D'
         );
     });
 });

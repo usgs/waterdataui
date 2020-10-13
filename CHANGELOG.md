@@ -6,15 +6,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.37.0...master)
 ### Added
-- Cookie to control pandemic banner message
-- A set of device specific favicons
-=======
+- Cookie to control pandemic banner message.
+- Added 'Days from today' custom selection.
+- A set of device specific favicons.
+
 ### Changed
 - Now using the new SIFTA service
+- Changed headers on network page to match monitoring location pages.
+- Moved cooperators section to bottom of page.
 
 ### Fixed
-- Stopped end of median line from showing outside of graph area.
-- Custom brush handles now reposition when user clicks and holds.
+ - Stopped end of median line from showing outside of graph area.
+ - Custom brush handles now reposition when user clicks and holds.
 
 ## [0.37.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.36.0...waterdataui-0.37.0) - 2020-09-16
 ### Added

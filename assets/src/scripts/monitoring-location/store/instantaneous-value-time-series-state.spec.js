@@ -42,10 +42,10 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
             });
         });
 
-        describe('setCurrentIVDateRangeKind', () => {
+        describe('setCurrentIVDateRange', () => {
             it('sets the current date range kind', () => {
-                store.dispatch(Actions.setCurrentIVDateRangeKind('P30D'));
-                expect(store.getState().ivTimeSeriesState.currentIVDateRangeKind).toBe('P30D');
+                store.dispatch(Actions.setCurrentIVDateRange('P30D'));
+                expect(store.getState().ivTimeSeriesState.currentIVDateRange).toBe('P30D');
             });
         });
 
@@ -219,6 +219,23 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
 
                 Actions.stopTimeSeriesPlay()(mockDispatch, mockGetState);
                 expect(Actions.ivTimeSeriesPlayStop).toHaveBeenCalled();
+            });
+        });
+
+        describe('setUserInputsForSelectingTimespan', () => {
+            it('sets the value for which of the main time range selection buttons are checked', () => {
+                store.dispatch(Actions.setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', 'custom'));
+                expect(store.getState().ivTimeSeriesState.userInputsForTimeRange.mainTimeRangeSelectionButton).toBe('custom');
+            });
+
+            it('sets the value for which of the Custom subselection time range selection buttons are checked', () => {
+                store.dispatch(Actions.setUserInputsForSelectingTimespan('customTimeRangeSelectionButton', 'calender-input'));
+                expect(store.getState().ivTimeSeriesState.userInputsForTimeRange.customTimeRangeSelectionButton).toBe('calender-input');
+            });
+
+            it('sets the value entered in the Custom subselection from field for days before today', () => {
+                store.dispatch(Actions.setUserInputsForSelectingTimespan('numberOfDaysFieldValue', '23'));
+                expect(store.getState().ivTimeSeriesState.userInputsForTimeRange.numberOfDaysFieldValue).toBe('23');
             });
         });
     });

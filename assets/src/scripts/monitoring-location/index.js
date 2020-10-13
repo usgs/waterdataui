@@ -21,7 +21,7 @@ const COMPONENTS = {
     'network-list': NetworkListComponent
 };
 
-const load = function () {
+const load = function() {
     let pageContainer = document.getElementById('monitoring-location-page-container');
     let store = configureStore({
         ui: {

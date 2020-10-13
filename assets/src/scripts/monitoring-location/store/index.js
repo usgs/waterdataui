@@ -31,7 +31,7 @@ const appReducer = combineReducers({
 const MIDDLEWARES = [thunk];
 
 
-export const configureStore = function (initialState) {
+export const configureStore = function(initialState) {
     initialState = {
         ivTimeSeriesData: {},
         ianaTimeZone: null,
@@ -55,13 +55,18 @@ export const configureStore = function (initialState) {
                 compare: false,
                 median: false
             },
-            currentIVDateRangeKind: 'P7D',
+            currentIVDateRange: 'P7D',
             customIVTimeRange: null,
             currentIVVariableID: null,
             ivGraphCursorOffset: null,
             audiblePlayId: null,
             loadingIVTSKeys: [],
-            ivGraphBrushOffset: null
+            ivGraphBrushOffset: null,
+            userInputsForTimeRange: {
+                mainTimeRangeSelectionButton: 'P7D',
+                customTimeRangeSelectionButton: 'days-input',
+                numberOfDaysFieldValue: ''
+            }
         },
         dailyValueTimeSeriesState: {
             cursorOffset: null

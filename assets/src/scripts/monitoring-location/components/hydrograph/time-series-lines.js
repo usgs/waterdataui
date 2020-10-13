@@ -15,7 +15,7 @@ const CIRCLE_RADIUS_SINGLE_PT = 1;
  * @param {Object} xScale - D3 scale for the x axis
  * @param {Object} yScale - D3 scale for the y axis
  */
-export const drawDataLine = function(group, {visible, lines, tsKey, xScale, yScale }) {
+export const drawDataLine = function(group, {visible, lines, tsKey, xScale, yScale}) {
     if (!visible) {
         return;
     }

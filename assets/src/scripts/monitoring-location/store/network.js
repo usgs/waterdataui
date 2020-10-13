@@ -21,11 +21,11 @@ const setNetworkList = function(networkList) {
 };
 
 const retrieveNetworkListData = function(siteno) {
-     return function (dispatch) {
-        return fetchMonitoringLocationMetaData(siteno).then(function (networkList) {
+     return function(dispatch) {
+        return fetchMonitoringLocationMetaData(siteno).then(function(networkList) {
 
             if (networkList != [] && 'links' in networkList) {
-                networkList = networkList['links'].filter(function (item) {
+                networkList = networkList['links'].filter(function(item) {
                     return item['rel'] == 'collection';
                 });
                 dispatch(setNetworkList(networkList));

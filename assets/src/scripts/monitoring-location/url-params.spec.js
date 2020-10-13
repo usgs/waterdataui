@@ -56,7 +56,7 @@ describe('monitoring-location/url-params module', () => {
             ianaTimeZone: 'America/New_York',
             ivTimeSeriesState: {
                 currentIVVariableID: '123456',
-                currentIVDateRangeKind: 'P7D',
+                currentIVDateRange: 'P7D',
                 customIVTimeRange: null,
                 currentIVMethodID: '69928',
                 showIVTimeSeries: {
@@ -110,7 +110,7 @@ describe('monitoring-location/url-params module', () => {
                 ...TEST_STATE,
                 ivTimeSeriesState: {
                     ...TEST_STATE.ivTimeSeriesState,
-                    currentIVDateRangeKind: 'P30D'
+                    currentIVDateRange: 'P30D'
                 }
             });
             renderTimeSeriesUrlParams(store);
@@ -122,18 +122,67 @@ describe('monitoring-location/url-params module', () => {
             expect(window.location.hash).not.toContain('endDT');
             expect(window.location.hash).not.toContain('timeSeriesId');
 
-            store.dispatch(Actions.setCurrentIVDateRangeKind('P1Y'));
+            store.dispatch(Actions.setCurrentIVDateRange('P1Y'));
             window.requestAnimationFrame(() => {
                 expect(window.location.hash).toContain('period=P1Y');
                 done();
             });
         });
+
+        it('adds period if current date range not P7D and is in the form of P{some number}{Day or Year code}', (done) => {
+            let store = configureStore({
+                ...TEST_STATE,
+                ivTimeSeriesState: {
+                    ...TEST_STATE.ivTimeSeriesState,
+                    currentIVDateRange: 'P23D'
+                }
+            });
+            renderTimeSeriesUrlParams(store);
+
+            expect(window.location.hash).toContain('parameterCode=00010');
+            expect(window.location.hash).not.toContain('compare=true');
+            expect(window.location.hash).toContain('period=P23D');
+            expect(window.location.hash).not.toContain('startDT');
+            expect(window.location.hash).not.toContain('endDT');
+            expect(window.location.hash).not.toContain('timeSeriesId');
+
+            store.dispatch(Actions.setCurrentIVDateRange('P1Y'));
+            window.requestAnimationFrame(() => {
+                expect(window.location.hash).toContain('period=P1Y');
+                done();
+            });
+        });
+
+        it('does not add period if current date range is P7D', (done) => {
+            let store = configureStore({
+                ...TEST_STATE,
+                ivTimeSeriesState: {
+                    ...TEST_STATE.ivTimeSeriesState,
+                    currentIVDateRange: 'P23D'
+                }
+            });
+            renderTimeSeriesUrlParams(store);
+
+            expect(window.location.hash).toContain('parameterCode=00010');
+            expect(window.location.hash).not.toContain('compare=true');
+            expect(window.location.hash).not.toContain('period=P7D');
+            expect(window.location.hash).not.toContain('startDT');
+            expect(window.location.hash).not.toContain('endDT');
+            expect(window.location.hash).not.toContain('timeSeriesId');
+
+            store.dispatch(Actions.setCurrentIVDateRange('P1Y'));
+            window.requestAnimationFrame(() => {
+                expect(window.location.hash).toContain('period=P1Y');
+                done();
+            });
+        });
+
         it('Contains startDT and endDT in url if customTimeRange is set in store', () => {
             let store = configureStore({
                 ...TEST_STATE,
                 ivTimeSeriesState: {
                     ...TEST_STATE.ivTimeSeriesState,
-                    currentIVDateRangeKind: 'custom',
+                    currentIVDateRange: 'custom',
                     customIVTimeRange: {
                         start: 1546318800000,
                         end: 1551416400000

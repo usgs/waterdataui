@@ -56,6 +56,7 @@ import './monitoring-location/components/hydrograph/date-controls.spec';
 import './monitoring-location/components/hydrograph/data-table.spec';
 import './monitoring-location/components/hydrograph/graph-brush.spec';
 import './monitoring-location/components/hydrograph/graph-controls.spec';
+import './monitoring-location/components/hydrograph/hydrograph-utils.spec';
 import './monitoring-location/components/hydrograph/index.spec';
 import './monitoring-location/components/hydrograph/legend.spec';
 import './monitoring-location/components/hydrograph/method-picker.spec';

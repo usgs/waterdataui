@@ -88,7 +88,7 @@ describe('monitoring-location/components/hydrograph/legend module', () => {
         },
         ivTimeSeriesState: {
             currentIVVariableID: '45807197',
-            currentIVDateRangeKind: 'P7D',
+            currentIVDateRange: 'P7D',
             showIVTimeSeries: {
                 current: true,
                 compare: true,

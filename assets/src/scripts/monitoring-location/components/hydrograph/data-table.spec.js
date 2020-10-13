@@ -101,7 +101,7 @@ const TEST_DATA = {
     },
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
-        currentIVDateRangeKind: 'P7D',
+        currentIVDateRange: 'P7D',
         currentIVMethodID: 69928
     }
 };

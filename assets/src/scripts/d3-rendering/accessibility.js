@@ -7,7 +7,7 @@
  * @param {Boolean} isInteractive
  * @param {String} idPrefix
  */
-export const addSVGAccessibility = function (svg, {title, description, isInteractive, idPrefix}) {
+export const addSVGAccessibility = function(svg, {title, description, isInteractive, idPrefix}) {
     svg.selectAll('title, desc').remove();
     let descElement = svg.insert('desc', ':first-child')
         .html(description);

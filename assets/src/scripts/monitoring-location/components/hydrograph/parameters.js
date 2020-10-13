@@ -46,7 +46,7 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
             }
         }
     } else {
-        const centerElement = function (svgElement) {
+        const centerElement = function(svgElement) {
             const elementWidth = svgElement.node().getBoundingClientRect().width;
             const xLocation = (SPARK_LINE_DIM.width - elementWidth) / 2;
             svgElement.attr('x', xLocation);
@@ -87,7 +87,7 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
  * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
  */
-export const plotSeriesSelectTable = function (elem,
+export const plotSeriesSelectTable = function(elem,
     {
         siteno,
         availableParameterCodes,
@@ -130,13 +130,14 @@ export const plotSeriesSelectTable = function (elem,
         .selectAll('tr')
         .data(availableParameterCodes)
         .enter().append('tr')
+        .attr('id', param => `time-series-select-table-row-${param.parameterCode}`)
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'selectTimeSeries')
         .attr('ga-event-action', (param) => `time-series-parmcd-${param.parameterCode}`)
         .attr('role', 'option')
         .classed('selected', param => param.selected)
         .attr('aria-selected', param => param.selected)
-        .on('click', function (param) {
+        .on('click', function(param) {
             if (!param.selected) {
                 store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, param.variableID));
             }
@@ -144,6 +145,7 @@ export const plotSeriesSelectTable = function (elem,
         .call(tr => {
             let paramSelectCol = tr.append('td');
             paramSelectCol.append('input')
+                .attr('id', param => `time-series-select-radio-button-${param.parameterCode}`)
                 .attr('type', 'radio')
                 .attr('name', 'param-select-radio-input')
                 .attr('class', 'usa-radio__input')

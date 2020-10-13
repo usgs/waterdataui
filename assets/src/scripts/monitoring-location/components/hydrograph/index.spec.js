@@ -139,7 +139,7 @@ const TEST_STATE = {
     },
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
-        currentIVDateRangeKind: 'P7D',
+        currentIVDateRange: 'P7D',
         showIVTimeSeries: {
             current: true,
             compare: true,
@@ -356,7 +356,7 @@ describe('monitoring-location/components/hydrograph module', () => {
             });
         });
 
-        it('should retrieve custom time period if period is specificed', (done) => {
+        it('should retrieve custom time period if period is specified', (done) => {
             attachToNode(store, graphNode, {
                 siteno: '12345678',
                 parameterCode: '00065',
@@ -440,7 +440,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 ivTimeSeriesState: {
                     ...TEST_STATE.ivTimeSeriesState,
                     currentIVVariableID: '',
-                    currentIVDateRangeKind: ''
+                    currentIVDateRange: ''
 
                 },
                 ui: {
@@ -502,10 +502,15 @@ describe('monitoring-location/components/hydrograph module', () => {
                         median: true
                     },
                     currentIVVariableID: '45807197',
-                    currentIVDateRangeKind: 'P7D',
+                    currentIVDateRange: 'P7D',
                     currentIVMethodID: 'method1',
                     loadingIVTSKeys: [],
-                    ivGraphBrushOffset: null
+                    ivGraphBrushOffset: null,
+                    userInputsForTimeRange: {
+                        mainTimeRangeSelectionButton: 'P7D',
+                        customTimeRangeSelectionButton: 'days-input',
+                        numberOfDaysFieldValue: ''
+                    }
                 },
                 ui: {
                     windowWidth: 400,
@@ -636,7 +641,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                         median: true
                     },
                     currentIVVariableID: '45807197',
-                    currentIVDateRangeKind: 'P7D',
+                    currentIVDateRange: 'P7D',
                     currentIVMethodID: 'method1',
                     loadingIVTSKeys: [],
                     ivGraphBrushOffset: null
@@ -662,6 +667,7 @@ describe('monitoring-location/components/hydrograph module', () => {
         it('should not have date control elements', () => {
             expect(selectAll('#ts-daterange-select-container').size()).toBe(0);
             expect(selectAll('#ts-customdaterange-select-container').size()).toBe(0);
+            expect(selectAll('#ts-container-radio-group-and-form-buttons').size()).toBe(0);
         });
 
         it('should not have method select element', () => {
