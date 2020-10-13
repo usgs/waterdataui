@@ -37,7 +37,7 @@ export const drawFocusOverlay = function(elem, {xScale, layout}, store, setCurso
  * @param {Array of Object} tooltipPoints - Each element contains x and y pixel properties
  * @param {D3 selection for g} - Can be null in which case the a group is appended to elem
  */
-export const drawFocusCircles = function (elem, tooltipPoints, circleContainer) {
+export const drawFocusCircles = function(elem, tooltipPoints, circleContainer) {
     circleContainer = circleContainer || elem.append('g');
     circleContainer.style('pointer-events', 'none');
 

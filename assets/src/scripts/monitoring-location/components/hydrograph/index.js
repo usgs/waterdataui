@@ -30,7 +30,7 @@ import {getAvailableParameterCodes} from './selectors/parameter-data';
 import {getTimeSeriesScalesByParmCd} from './selectors/scales';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
-import {MAX_DIGITS_FOR_DAYS_FROM_TODAY, isPeriodWithinAcceptableRange, isPeriodCustom} from './hydrograph-utils';
+import {isPeriodWithinAcceptableRange, isPeriodCustom} from './hydrograph-utils';
 
 /**
  * Modify styling to hide or display the elem.

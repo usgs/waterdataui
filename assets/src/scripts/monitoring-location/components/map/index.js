@@ -71,7 +71,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         layerDefs: `${getLayerDefs(0, siteno)};${getLayerDefs(1, siteno)}`
     });
 
-    const updateFloodLayers = function (node, {hasFloodData, floodStageHeight}) {
+    const updateFloodLayers = function(node, {hasFloodData, floodStageHeight}) {
         if (floodStageHeight) {
             const layerDefs = getLayerDefs(0, siteno, floodStageHeight);
             floodLayer.setLayerDefs(layerDefs);

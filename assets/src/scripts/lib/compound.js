@@ -19,9 +19,11 @@ export default function compound() {
     if (arguments.length) {
       throw 'Setting a domain is not supported on compound scales';
     }
-    var values = [].concat.apply([], scales.map(function(s) { return s.domain(); }));
+    var values = [].concat.apply([], scales.map(function(s) {
+      return s.domain();
+    }));
     var domain = [Math.min.apply(null, values), Math.max.apply(null, values)];
-    if (values[0] > values[1]) domain = domain.slice().reverse();
+    if (values[0] > values[1]) {domain = domain.slice().reverse();}
     return domain;
   };
 
@@ -29,9 +31,13 @@ export default function compound() {
     if (arguments.length) {
       throw 'Setting a range is not supported on compound scales';
     }
-    var values = [].concat.apply([], scales.map(function(s) { return s.range(); }));
+    var values = [].concat.apply([], scales.map(function(s) {
+      return s.range();
+    }));
     var range = [Math.min.apply(null, values), Math.max.apply(null, values)];
-    if (values[0] > values[1]) range = range.slice().reverse();
+    if (values[0] > values[1]) {
+      range = range.slice().reverse();
+    }
     return range;
   };
 

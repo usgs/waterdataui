@@ -2,7 +2,7 @@ const gulp = require('gulp');
 const RevAll = require('gulp-rev-all');
 
 
-gulp.task('revall', function () {
+gulp.task('revall', function() {
     return gulp.src('dist/**')
         .pipe(RevAll.revision({
             dontGlobal: [

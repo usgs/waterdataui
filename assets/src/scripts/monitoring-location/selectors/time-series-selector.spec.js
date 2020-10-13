@@ -233,7 +233,7 @@ const TEST_DATA = {
     },
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
-        currentIVDateRange: 'P7D',
+        currentIVDateRange: 'P7D'
     }
 };
 

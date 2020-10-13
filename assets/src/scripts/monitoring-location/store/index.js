@@ -31,7 +31,7 @@ const appReducer = combineReducers({
 const MIDDLEWARES = [thunk];
 
 
-export const configureStore = function (initialState) {
+export const configureStore = function(initialState) {
     initialState = {
         ivTimeSeriesData: {},
         ianaTimeZone: null,

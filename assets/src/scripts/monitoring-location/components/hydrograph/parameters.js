@@ -46,7 +46,7 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
             }
         }
     } else {
-        const centerElement = function (svgElement) {
+        const centerElement = function(svgElement) {
             const elementWidth = svgElement.node().getBoundingClientRect().width;
             const xLocation = (SPARK_LINE_DIM.width - elementWidth) / 2;
             svgElement.attr('x', xLocation);
@@ -87,7 +87,7 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
  * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
  */
-export const plotSeriesSelectTable = function (elem,
+export const plotSeriesSelectTable = function(elem,
     {
         siteno,
         availableParameterCodes,
@@ -137,7 +137,7 @@ export const plotSeriesSelectTable = function (elem,
         .attr('role', 'option')
         .classed('selected', param => param.selected)
         .attr('aria-selected', param => param.selected)
-        .on('click', function (param) {
+        .on('click', function(param) {
             if (!param.selected) {
                 store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, param.variableID));
             }

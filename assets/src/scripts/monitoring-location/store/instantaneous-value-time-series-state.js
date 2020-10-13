@@ -183,7 +183,7 @@ const startTimeSeriesPlay = function(maxCursorOffset) {
             dispatch(Actions.setIVGraphCursorOffset(0));
         }
         if (!state.audiblePlayId) {
-            let play = function () {
+            let play = function() {
                 let newOffset = getState().ivTimeSeriesState.ivGraphCursorOffset + 15 * 60 * 1000;
                 if (newOffset > maxCursorOffset) {
                     dispatch(Actions.ivTimeSeriesPlayStop());
