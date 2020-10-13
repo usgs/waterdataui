@@ -4,9 +4,9 @@ Unit tests for the main WDFN views.
 
 from unittest import TestCase, mock
 
-import requests as r
-
 from flask import Response
+
+import requests as r
 
 from .. import app
 
