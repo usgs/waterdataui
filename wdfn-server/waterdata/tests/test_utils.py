@@ -6,7 +6,12 @@ from unittest import TestCase, mock
 
 import requests as r
 
-from ..utils import construct_url, defined_when, execute_get_request, parse_rdb
+from flask import Response, request
+
+from .. import app
+
+
+from ..utils import construct_url, defined_when, execute_get_request, parse_rdb, set_cookie_for_banner_message
 
 
 class TestConstructUrl(TestCase):
@@ -28,6 +33,25 @@ class TestConstructUrl(TestCase):
     def test_with_no_params(self):
         expected = 'https://fakeurl.gov/blah1/blah2'
         self.assertEqual(construct_url(self.test_netloc, self.test_path), expected)
+
+
+class TestCookieSetting(TestCase):
+
+    def setUp(self):
+        self.app_client = app.test_client()
+        self.response = Response()
+
+    def test_set_cookie_for_banner_message_true(self):
+        app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES'] = True
+        with app.test_request_context('/'):
+            set_cookie_for_banner_message(self.response)
+            self.assertIn('no-show-banner-message', self.response.headers.getlist('Set-Cookie')[0])
+
+    def test_set_cookie_for_banner_message_false(self):
+        app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES'] = False
+        with app.test_request_context('/'):
+            set_cookie_for_banner_message(self.response)
+            self.assertEqual([], self.response.headers.getlist('Set-Cookie'))
 
 
 class TestGetWaterServicesData(TestCase):
@@ -195,7 +219,7 @@ class TestParseRdb(TestCase):
         expected_1 = {'agency_cd': 'USGS',
                       'site_no': '345670',
                       'station_nm':
-                      'Some Random Site',
+                          'Some Random Site',
                       'site_tp_cd': 'ST',
                       'dec_lat_va': '200.94977778',
                       'dec_long_va': '-100.12763889',
@@ -205,11 +229,11 @@ class TestParseRdb(TestCase):
                       'alt_acy_va': ' .1',
                       'alt_datum_cd': 'NAVD88',
                       'huc_cd': '02070010'
-                     }
+                      }
         expected_2 = {'agency_cd': 'USGS',
                       'site_no': '345671',
                       'station_nm':
-                      'Some Random Site 1',
+                          'Some Random Site 1',
                       'site_tp_cd': 'ST',
                       'dec_lat_va': '201.94977778',
                       'dec_long_va': '-101.12763889',
@@ -219,7 +243,7 @@ class TestParseRdb(TestCase):
                       'alt_acy_va': ' .1',
                       'alt_datum_cd': 'NAVD88',
                       'huc_cd': '02070010'
-                     }
+                      }
         self.assertDictEqual(next(result), expected_1)
         self.assertDictEqual(next(result), expected_2)
 
