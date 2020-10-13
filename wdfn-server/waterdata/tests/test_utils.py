@@ -46,12 +46,6 @@ class TestCookieSetting(TestCase):
             set_cookie_for_banner_message(self.response)
             self.assertIn('no-show-banner-message', self.response.headers.getlist('Set-Cookie')[0])
 
-    def test_set_cookie_for_banner_message_false(self):
-        app.config['SET_COOKIE_TO_HIDE_BANNER_NOTICES'] = False
-        with app.test_request_context('/'):
-            set_cookie_for_banner_message(self.response)
-            self.assertEqual([], self.response.headers.getlist('Set-Cookie'))
-
 
 class TestGetWaterServicesData(TestCase):
 
