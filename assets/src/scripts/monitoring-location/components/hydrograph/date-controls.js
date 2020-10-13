@@ -230,15 +230,15 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             .attr('id', 'custom-start-date-hint')
             .text('mm/dd/yyyy')
             .append('div')
-            .attr('class', 'usa-date-picker')
-            .attr('data-min-date', '1900-01-01')
-            .attr('data-max-date', '2100-12-31')
+                .attr('class', 'usa-date-picker')
+                .attr('data-min-date', '1900-01-01')
+                .attr('data-max-date', '2100-12-31')
             .append('input')
-            .attr('class', 'usa-input')
-            .attr('id', 'custom-start-date')
-            .attr('name', 'custom-start-date')
-            .attr('aria-describedby', 'custom-start-date-label custom-start-date-hint')
-            .attr('type', 'text');
+                .attr('class', 'usa-input')
+                .attr('id', 'custom-start-date')
+                .attr('name', 'custom-start-date')
+                .attr('aria-describedby', 'custom-start-date-label custom-start-date-hint')
+                .attr('type', 'text');
 
         endDateFormGroup.append('label')
             .attr('class', 'usa-label')
