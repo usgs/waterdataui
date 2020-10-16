@@ -1,6 +1,6 @@
 import {select, selectAll} from 'd3-selection';
-import {configureStore} from '../../store';
-import {drawGraphControls} from './graph-controls';
+import {configureStore} from 'ml/store';
+import {drawGraphControls} from 'dvhydrograph/graph-controls';
 
 
 // Tests for the graph-controls module
