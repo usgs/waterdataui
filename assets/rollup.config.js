@@ -18,7 +18,11 @@ const env = process.env.NODE_ENV || 'development';
 
 const getBundleConfig = function(src, dest) {
     const hydrographEntries = [
-        {find: 'ml', replacement: path.resolve(__dirname, 'src/scripts/monitoring-location')}
+        {find: 'ml', replacement: path.resolve(__dirname, 'src/scripts/monitoring-location')},
+        {find: 'ui', replacement: path.resolve(__dirname, 'src/scripts/')},
+        {find:'d3render', replacement: path.resolve(__dirname, 'src/scripts/d3-rendering')},
+        {find: 'dvhydrograph', replacement: path.resolve(__dirname, 'src/scripts/monitoring-location/components/daily-value-hydrograph')},
+        {find: 'ivhydrograph', replacement: path.resolve(__dirname, 'src/scripts/monitoring-location/components/hydrograph')}
     ];
     const networkEntries = [
         {find: 'network', replacement: path.resolve(__dirname, 'src/scripts/network')}

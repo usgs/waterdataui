@@ -7,62 +7,62 @@
  * time, and `karma --watch` tasks are very fast.
  */
 
-import './mock-service-data';
-import './polyfills';
+import 'ui/mock-service-data';
+import 'ui/polyfills';
 
-import './ajax.spec';
-import './schema.spec';
-import './tooltips.spec';
-import './utils.spec';
+import 'ui/ajax.spec';
+import 'ui/schema.spec';
+import 'ui/tooltips.spec';
+import 'ui/utils.spec';
 
-import './d3-rendering/accessibility.spec';
-import './d3-rendering/alerts.spec';
-import './d3-rendering/axes.spec';
-import './d3-rendering/cursor-slider.spec';
-import './d3-rendering/data-masks.spec';
-import './d3-rendering/graph-tooltip.spec';
-import './d3-rendering/legend.spec';
-import './d3-rendering/loading-indicator.spec';
-import './d3-rendering/markers.spec';
-import './d3-rendering/tick-marks.spec';
+import 'd3render/accessibility.spec';
+import 'd3render/alerts.spec';
+import 'd3render/axes.spec';
+import 'd3render/cursor-slider.spec';
+import 'd3render/data-masks.spec';
+import 'd3render/graph-tooltip.spec';
+import 'd3render/legend.spec';
+import 'd3render/loading-indicator.spec';
+import 'd3render/markers.spec';
+import 'd3render/tick-marks.spec';
 
-import './leaflet-rendering/map.spec';
-import './leaflet-rendering/legend-control.spec';
+import 'ui/leaflet-rendering/map.spec';
+import 'ui/leaflet-rendering/legend-control.spec';
 
-import './lib/d3-redux.spec';
+import 'ui/lib/d3-redux.spec';
 
-import 'ml/components/daily-value-hydrograph/selectors/labels.spec';
-import 'ml/components/daily-value-hydrograph/selectors/legend-data.spec';
-import 'ml/components/daily-value-hydrograph/selectors/scales.spec';
-import 'ml/components/daily-value-hydrograph/selectors/time-series-data.spec';
-import 'ml/components/daily-value-hydrograph/graph-brush.spec';
-import 'ml/components/daily-value-hydrograph/graph-controls.spec';
-import 'ml/components/daily-value-hydrograph/index.spec';
-import 'ml/components/daily-value-hydrograph/time-series-graph.spec';
-import 'ml/components/daily-value-hydrograph/tooltip.spec';
+import 'dvhydrograph/selectors/labels.spec';
+import 'dvhydrograph/selectors/legend-data.spec';
+import 'dvhydrograph/selectors/scales.spec';
+import 'dvhydrograph/selectors/time-series-data.spec';
+import 'dvhydrograph/graph-brush.spec';
+import 'dvhydrograph/graph-controls.spec';
+import 'dvhydrograph/index.spec';
+import 'dvhydrograph/time-series-graph.spec';
+import 'dvhydrograph/tooltip.spec';
 
 import 'ml/components/embed.spec';
 
-import 'ml/components/hydrograph/selectors/cursor.spec';
-import 'ml/components/hydrograph/selectors/domain.spec';
-import 'ml/components/hydrograph/selectors/drawing-data.spec';
-import 'ml/components/hydrograph/selectors/layout.spec';
-import 'ml/components/hydrograph/selectors/parameter-data.spec';
-import 'ml/components/hydrograph/selectors/scales.spec';
-import 'ml/components/hydrograph/selectors/time-series-data.spec';
+import 'ivhydrograph/selectors/cursor.spec';
+import 'ivhydrograph/selectors/domain.spec';
+import 'ivhydrograph/selectors/drawing-data.spec';
+import 'ivhydrograph/selectors/layout.spec';
+import 'ivhydrograph/selectors/parameter-data.spec';
+import 'ivhydrograph/selectors/scales.spec';
+import 'ivhydrograph/selectors/time-series-data.spec';
 
-import 'ml/components/hydrograph/audible.spec';
-import 'ml/components/hydrograph/date-controls.spec';
-import 'ml/components/hydrograph/data-table.spec';
-import 'ml/components/hydrograph/graph-brush.spec';
-import 'ml/components/hydrograph/graph-controls.spec';
-import 'ml/components/hydrograph/hydrograph-utils.spec';
-import 'ml/components/hydrograph/index.spec';
-import 'ml/components/hydrograph/legend.spec';
-import 'ml/components/hydrograph/method-picker.spec';
-import 'ml/components/hydrograph/parameters.spec';
-import 'ml/components/hydrograph/time-series-graph.spec';
-import 'ml/components/hydrograph/tooltip.spec';
+import 'ivhydrograph/audible.spec';
+import 'ivhydrograph/date-controls.spec';
+import 'ivhydrograph/data-table.spec';
+import 'ivhydrograph/graph-brush.spec';
+import 'ivhydrograph/graph-controls.spec';
+import 'ivhydrograph/hydrograph-utils.spec';
+import 'ivhydrograph/index.spec';
+import 'ivhydrograph/legend.spec';
+import 'ivhydrograph/method-picker.spec';
+import 'ivhydrograph/parameters.spec';
+import 'ivhydrograph/time-series-graph.spec';
+import 'ivhydrograph/tooltip.spec';
 
 import 'ml/components/map/flood-slider.spec';
 import 'ml/components/map/index.spec';
