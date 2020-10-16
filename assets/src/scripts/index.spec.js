@@ -87,16 +87,16 @@ import 'ml/store/time-zone.spec';
 import 'ml/store/ui-state.spec';
 
 import 'ml/url-params.spec';
-import './network/components/network-sites/data-table.spec';
-import './network/components/network-sites/index.spec';
-import './network/components/network-sites/legend.spec';
-import './network/selectors/network-data-selector.spec';
-import './network/store/index.spec';
-import './network/store/network-data-reducer.spec';
+import 'ui/network/components/network-sites/data-table.spec';
+import 'ui/network/components/network-sites/index.spec';
+import 'ui/network/components/network-sites/legend.spec';
+import 'ui/network/selectors/network-data-selector.spec';
+import 'ui/network/store/index.spec';
+import 'ui/network/store/network-data-reducer.spec';
 
-import './web-services/flood-data.spec';
-import './web-services/models.spec';
-import './web-services/network-data.spec';
-import './web-services/nldi-data.spec';
-import './web-services/observations.spec';
-import './web-services/statistics-data.spec';
+import 'ui/web-services/flood-data.spec';
+import 'ui/web-services/models.spec';
+import 'ui/web-services/network-data.spec';
+import 'ui/web-services/nldi-data.spec';
+import 'ui/web-services/observations.spec';
+import 'ui/web-services/statistics-data.spec';
