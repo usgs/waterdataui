@@ -1,4 +1,4 @@
-import {isPeriodWithinAcceptableRange, isPeriodCustom, parsePeriodCode} from './hydrograph-utils';
+import {isPeriodWithinAcceptableRange, isPeriodCustom, parsePeriodCode} from 'ivhydrograph/hydrograph-utils';
 
 describe('isPeriodWithinAcceptableRange', () => {
     it('will return correct boolean value if the url parameters for time period a within an acceptable range', () => {

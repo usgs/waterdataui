@@ -2,7 +2,7 @@ import {createSelector} from 'reselect';
 
 import {sortedParameters} from 'ui/utils';
 
-import {getCurrentVariableID, getTimeSeries, getVariables} from '../../../selectors/time-series-selector';
+import {getCurrentVariableID, getTimeSeries, getVariables} from 'ml/selectors/time-series-selector';
 
 /**
  * Returns a Redux selector function which returns an sorted array of metadata

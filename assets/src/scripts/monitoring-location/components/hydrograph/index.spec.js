@@ -1,12 +1,12 @@
 import {select, selectAll} from 'd3-selection';
 
-import {configureStore} from '../../store';
-import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
-import {Actions as statisticsDataActions} from '../../store/statistics-data';
-import {Actions as timeZoneActions} from '../../store/time-zone';
-import {Actions as floodDataActions} from '../../store/flood-inundation';
+import {configureStore} from 'ml/store';
+import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
+import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
+import {Actions as timeZoneActions} from 'ml/store/time-zone';
+import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
-import {attachToNode} from './index';
+import {attachToNode} from 'ivhydrograph/index';
 
 const TEST_STATE = {
     ivTimeSeriesData: {

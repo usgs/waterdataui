@@ -4,10 +4,10 @@ import {select} from 'd3-selection';
 import config from 'ui/config';
 import {appendTooltip} from 'ui/tooltips';
 
-import {Actions} from '../../store/instantaneous-value-time-series-data';
+import {Actions} from 'ml/store/instantaneous-value-time-series-data';
 
-import {MASK_DESC} from './selectors/drawing-data';
-import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from './selectors/layout';
+import {MASK_DESC} from 'ivhydrograph/selectors/drawing-data';
+import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from 'ivhydrograph/selectors/layout';
 
 /**
  * Draw a sparkline in a selected SVG element

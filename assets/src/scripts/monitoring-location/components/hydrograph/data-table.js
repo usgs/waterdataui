@@ -1,7 +1,7 @@
 
 import List from 'list.js';
 
-import {link} from '../../../lib/d3-redux';
+import {link} from 'ui/lib/d3-redux';
 
 import {getCurrentPointData} from 'ivhydrograph/selectors/drawing-data';
 

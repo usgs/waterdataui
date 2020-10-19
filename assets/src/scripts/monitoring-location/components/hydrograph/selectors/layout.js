@@ -7,10 +7,10 @@ import {createSelector} from 'reselect';
 import config from 'ui/config';
 import {mediaQuery} from 'ui/utils';
 
-import {getCurrentParmCd} from '../../../selectors/time-series-selector';
+import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
 
-import {getYTickDetails} from './domain';
-import {TEMPERATURE_PARAMETERS} from './time-series-data';
+import {getYTickDetails} from 'ivhydrograph/selectors/domain';
+import {TEMPERATURE_PARAMETERS} from 'ivhydrograph/selectors/time-series-data';
 
 
 export const ASPECT_RATIO = 1 / 2;

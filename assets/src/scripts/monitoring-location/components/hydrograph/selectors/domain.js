@@ -4,9 +4,9 @@ import {createSelector} from 'reselect';
 
 import config from 'ui/config';
 import {mediaQuery} from 'ui/utils';
-import {getCurrentParmCd} from '../../../selectors/time-series-selector';
+import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
 
-import {getVisiblePoints} from './drawing-data';
+import {getVisiblePoints} from 'ivhydrograph/selectors/drawing-data';
 
 
 const PADDING_RATIO = 0.2;

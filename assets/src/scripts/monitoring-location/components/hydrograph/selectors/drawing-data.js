@@ -10,12 +10,12 @@ import find from 'lodash/find';
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
-import {getCurrentVariableMedianStatistics} from '../../../selectors/median-statistics-selector';
+import {getCurrentVariableMedianStatistics} from 'ml/selectors/median-statistics-selector';
 import {
     getVariables, getCurrentMethodID, getTimeSeries, getCurrentVariableTimeSeries, getTimeSeriesForTsKey,
     getTsRequestKey, getRequestTimeRange, getCurrentVariable
-} from '../../../selectors/time-series-selector';
-import {getIanaTimeZone} from '../../../selectors/time-zone-selector';
+} from 'ml/selectors/time-series-selector';
+import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
 
 export const MASK_DESC = {
     ice: 'Ice Affected',
