@@ -1,5 +1,5 @@
 import {select} from 'd3-selection';
-import {lineMarker, rectangleMarker, textOnlyMarker} from './markers';
+import {lineMarker, rectangleMarker, textOnlyMarker} from 'd3render/markers';
 import {drawSimpleLegend} from './legend';
 
 describe('Legend module', () => {
