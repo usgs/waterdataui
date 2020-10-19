@@ -2,7 +2,7 @@ import {select} from 'd3-selection';
 import {
     unicodeHtmlEntity, getHtmlFromString, replaceHtmlEntities, setEquality,
     wrap, mediaQuery, calcStartTime, callIf, parseRDB, convertFahrenheitToCelsius,
-    convertCelsiusToFahrenheit, sortedParameters, getNearestTime} from './utils';
+    convertCelsiusToFahrenheit, sortedParameters, getNearestTime} from 'ui/utils';
 
 
 describe('Utils module', () => {

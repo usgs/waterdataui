@@ -8,7 +8,7 @@ import config from '../../../config';
 import {drawCursorSlider} from '../../../d3-rendering/cursor-slider';
 import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from '../../../d3-rendering/graph-tooltip';
 import {link} from '../../../lib/d3-redux';
-import {mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../../utils';
+import {mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
 
 import {getCurrentParmCd} from '../../selectors/time-series-selector';
 import {Actions} from '../../store/instantaneous-value-time-series-state';

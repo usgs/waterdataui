@@ -5,7 +5,7 @@ import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
 import config from '../../../../config';
-import {mediaQuery} from '../../../../utils';
+import {mediaQuery} from 'ui/utils';
 
 import {getCurrentParmCd} from '../../../selectors/time-series-selector';
 

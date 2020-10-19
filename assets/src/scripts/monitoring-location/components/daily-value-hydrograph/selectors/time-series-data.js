@@ -5,7 +5,7 @@ import uniqWith from 'lodash/uniqWith';
 import {createSelector} from 'reselect';
 
 import {getCurrentDVTimeSeriesData, getDVGraphCursorOffset} from '../../../selectors/daily-value-time-series-selector';
-import {getNearestTime} from '../../../../utils';
+import {getNearestTime} from 'ui/utils';
 
 import {getMainXScale, getMainYScale} from './scales';
 

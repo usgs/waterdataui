@@ -12,7 +12,7 @@ import {getBrushLayout} from './selectors/layout';
 import {getBrushXScale, getBrushYScale} from './selectors/scales';
 import {isVisible} from './selectors/time-series-data';
 import {drawDataLines} from './time-series-lines';
-import {mediaQuery} from '../../../utils';
+import {mediaQuery} from 'ui/utils';
 import config from '../../../config';
 
 /*

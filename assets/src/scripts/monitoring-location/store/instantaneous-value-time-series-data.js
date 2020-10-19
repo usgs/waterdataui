@@ -8,7 +8,7 @@ import {DateTime} from 'luxon';
 import {isPeriodCustom, parsePeriodCode} from '../components/hydrograph/hydrograph-utils';
 
 import {normalize} from '../../schema';
-import {calcStartTime, sortedParameters} from '../../utils';
+import {calcStartTime, sortedParameters} from 'ui/utils';
 import {getPreviousYearTimeSeries, getTimeSeries} from '../../web-services/models';
 
 import {

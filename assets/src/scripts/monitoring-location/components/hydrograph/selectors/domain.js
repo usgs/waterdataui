@@ -3,7 +3,7 @@ import {format} from 'd3-format';
 import {createSelector} from 'reselect';
 
 import config from '../../../../config';
-import {mediaQuery} from '../../../../utils';
+import {mediaQuery} from 'ui/utils';
 import {getCurrentParmCd} from '../../../selectors/time-series-selector';
 
 import {getVisiblePoints} from './drawing-data';

@@ -3,7 +3,7 @@ import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
 import {getVariables, getCurrentParmCd, getRequestTimeRange, getTimeSeriesForTsKey} from '../../../selectors/time-series-selector';
-import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../../../utils';
+import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
 
 import {getYDomain, getYDomainForVisiblePoints, SYMLOG_PARMS} from './domain';
 import {getPointsByTsKey} from './drawing-data';

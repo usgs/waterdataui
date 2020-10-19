@@ -13,7 +13,7 @@ import {getBrushXScale, getBrushYScale} from './selectors/scales';
 import {getCurrentTimeSeriesSegments} from './selectors/time-series-data';
 
 import {drawDataSegments} from './time-series-graph';
-import {mediaQuery} from '../../../utils';
+import {mediaQuery} from 'ui/utils';
 import config from '../../../config';
 
 /*

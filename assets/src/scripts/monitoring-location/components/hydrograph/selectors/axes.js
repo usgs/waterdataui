@@ -4,7 +4,7 @@ import {createSelector} from 'reselect';
 
 import {generateTimeTicks} from '../../../../d3-rendering/tick-marks';
 import {getCurrentDateRange, getCurrentParmCd} from '../../../selectors/time-series-selector';
-import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../../../utils';
+import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
 
 import {getYTickDetails} from './domain';
 import {getLayout} from './layout';

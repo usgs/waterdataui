@@ -1,6 +1,6 @@
 import {createSelector} from 'reselect';
 
-import {sortedParameters} from '../../../../utils';
+import {sortedParameters} from 'ui/utils';
 
 import {getCurrentVariableID, getTimeSeries, getVariables} from '../../../selectors/time-series-selector';
 
