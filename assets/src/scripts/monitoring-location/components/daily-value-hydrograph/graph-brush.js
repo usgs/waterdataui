@@ -14,7 +14,7 @@ import {getCurrentTimeSeriesSegments} from './selectors/time-series-data';
 
 import {drawDataSegments} from './time-series-graph';
 import {mediaQuery} from 'ui/utils';
-import config from '../../../config';
+import config from 'ui/config';
 
 /*
  * Renders a brush element within container for the daily value graph

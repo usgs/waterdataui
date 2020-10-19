@@ -1,7 +1,7 @@
 import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
-import {MOCK_STATISTICS_RDB} from '../../mock-service-data';
+import {MOCK_STATISTICS_RDB} from 'ui/mock-service-data';
 
 import {statisticsDataReducer, Actions} from './statistics-data';
 

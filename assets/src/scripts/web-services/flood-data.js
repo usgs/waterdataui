@@ -1,5 +1,5 @@
-import {get} from '../ajax';
-import config from '../config';
+import {get} from 'ui/ajax';
+import config from 'ui/config';
 
 export const FLOOD_EXTENTS_ENDPOINT = `${config.FIM_GIS_ENDPOINT}floodExtents/MapServer/`;
 export const FLOOD_BREACH_ENDPOINT = `${config.FIM_GIS_ENDPOINT}breach/MapServer/`;

@@ -1,4 +1,4 @@
-import config from '../../../config';
+import config from 'ui/config';
 import {createMap, createBaseLayer} from '../../../leaflet-rendering/map';
 
 export const MARKER_FILL_COLOR = '#ff7800';

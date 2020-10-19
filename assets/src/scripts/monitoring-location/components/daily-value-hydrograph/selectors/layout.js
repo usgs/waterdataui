@@ -1,7 +1,7 @@
 import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
-import config from '../../../../config';
+import config from 'ui/config';
 import {mediaQuery} from 'ui/utils';
 
 export const ASPECT_RATIO = 1 / 2;

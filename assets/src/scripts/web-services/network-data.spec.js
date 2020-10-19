@@ -1,4 +1,4 @@
-import config from '../config';
+import config from 'ui/config';
 
 import {fetchNetworkFeatures} from './network-data';
 

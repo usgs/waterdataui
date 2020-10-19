@@ -1,6 +1,6 @@
 import {fetchFloodExtent, fetchFloodFeatures,
     fetchWaterwatchFloodLevels} from './flood-data';
-import {MOCK_WATERWATCH_FLOOD_LEVELS} from '../mock-service-data';
+import {MOCK_WATERWATCH_FLOOD_LEVELS} from 'ui/mock-service-data';
 
 
 describe('flood_data module', () => {

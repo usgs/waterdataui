@@ -4,7 +4,7 @@
 import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
-import config from '../../../config.js';
+import config from 'ui/config.js';
 import {drawWarningAlert, drawInfoAlert} from '../../../d3-rendering/alerts';
 import {drawLoadingIndicator} from '../../../d3-rendering/loading-indicator';
 import {link} from '../../../lib/d3-redux';

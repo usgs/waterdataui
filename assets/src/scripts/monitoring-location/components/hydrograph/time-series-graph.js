@@ -1,7 +1,7 @@
 import {line as d3Line, curveStepAfter} from 'd3-shape';
 import {createStructuredSelector} from 'reselect';
 
-import config from '../../../config';
+import config from 'ui/config';
 import {addSVGAccessibility} from '../../../d3-rendering/accessibility';
 import {appendAxes} from '../../../d3-rendering/axes';
 import {renderMaskDefs} from '../../../d3-rendering/data-masks';

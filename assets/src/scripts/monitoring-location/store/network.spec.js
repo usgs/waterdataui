@@ -1,7 +1,7 @@
 import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
-import {MOCK_OBSERVATION_ITEM} from '../../mock-service-data';
+import {MOCK_OBSERVATION_ITEM} from 'ui/mock-service-data';
 
 import {Actions, networkDataReducer} from './network';
 

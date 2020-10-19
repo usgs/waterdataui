@@ -1,4 +1,4 @@
-import config from '../config.js';
+import config from 'ui/config.js';
 import {mediaQuery} from 'ui/utils';
 
 export const LegendControl = L.Control.extend({

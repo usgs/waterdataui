@@ -1,7 +1,7 @@
 import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
-import config from '../../../config';
+import config from 'ui/config';
 import {createMap, createBaseLayer} from '../../../leaflet-rendering/map';
 import {legendControl} from '../../../leaflet-rendering/legend-control';
 import {link} from '../../../lib/d3-redux';

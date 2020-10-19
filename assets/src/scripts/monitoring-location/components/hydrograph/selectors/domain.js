@@ -2,7 +2,7 @@ import {extent, ticks} from 'd3-array';
 import {format} from 'd3-format';
 import {createSelector} from 'reselect';
 
-import config from '../../../../config';
+import config from 'ui/config';
 import {mediaQuery} from 'ui/utils';
 import {getCurrentParmCd} from '../../../selectors/time-series-selector';
 

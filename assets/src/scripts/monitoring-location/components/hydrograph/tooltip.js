@@ -4,7 +4,7 @@ import {transition} from 'd3-transition';
 import {DateTime} from 'luxon';
 import {createSelector, createStructuredSelector} from 'reselect';
 
-import config from '../../../config';
+import config from 'ui/config';
 import {drawCursorSlider} from '../../../d3-rendering/cursor-slider';
 import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from '../../../d3-rendering/graph-tooltip';
 import {link} from '../../../lib/d3-redux';

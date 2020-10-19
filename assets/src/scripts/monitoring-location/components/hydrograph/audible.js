@@ -7,7 +7,7 @@ import {scaleLinear} from 'd3-scale';
 import memoize from 'fast-memoize';
 import {createSelector, createStructuredSelector} from 'reselect';
 
-import config from '../../../config';
+import config from 'ui/config';
 import {link} from '../../../lib/d3-redux';
 import {getTimeSeries} from '../../selectors/time-series-selector';
 import {Actions} from '../../store/instantaneous-value-time-series-state';

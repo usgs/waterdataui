@@ -1,4 +1,4 @@
-import '../polyfills';
+import 'ui/polyfills';
 
 import wdfnviz from 'wdfn-viz';
 

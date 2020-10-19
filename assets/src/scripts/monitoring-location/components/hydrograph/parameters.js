@@ -1,8 +1,8 @@
 import {line} from 'd3-shape';
 import {select} from 'd3-selection';
 
-import config from '../../../config';
-import {appendTooltip} from '../../../tooltips';
+import config from 'ui/config';
+import {appendTooltip} from 'ui/tooltips';
 
 import {Actions} from '../../store/instantaneous-value-time-series-data';
 

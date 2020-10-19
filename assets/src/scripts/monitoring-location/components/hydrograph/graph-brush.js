@@ -13,7 +13,7 @@ import {getBrushXScale, getBrushYScale} from './selectors/scales';
 import {isVisible} from './selectors/time-series-data';
 import {drawDataLines} from './time-series-lines';
 import {mediaQuery} from 'ui/utils';
-import config from '../../../config';
+import config from 'ui/config';
 
 /*
  * Renders a brush element within container for the main graph
