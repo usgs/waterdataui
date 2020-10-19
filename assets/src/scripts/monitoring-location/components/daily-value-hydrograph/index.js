@@ -48,7 +48,7 @@ const getTSId = function(id) {
  * @param {Object} node - DOM element parent for this component
  * @param {String} siteno - the site number of the monitoring location.
  */
-export const attachToNode = function (store,
+export const attachToNode = function(store,
                                       node,
                                       {
                                           siteno

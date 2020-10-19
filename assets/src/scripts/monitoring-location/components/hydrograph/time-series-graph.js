@@ -46,10 +46,10 @@ const addDefsPatterns = function(elem) {
 const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
     const stepFunction = d3Line()
         .curve(curveStepAfter)
-        .x(function (d) {
+        .x(function(d) {
             return xscale(d.date);
         })
-        .y(function (d) {
+        .y(function(d) {
             return yscale(d.value);
         });
     const medianGrp = elem.append('g');
@@ -70,7 +70,7 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
  * @param  {Array} seriesPoints
  * @param {Boolean} enableClip
  */
-const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
+const plotAllMedianPoints = function(elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
     elem.select('#median-points').remove();
     if (!visible) {
         return;
@@ -97,7 +97,7 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoin
  */
 const plotFloodLevelPoints = function(elem, {xscale, yscale, points, classes}) {
     const stepFunction = d3Line()
-        .x(function (_,i) {
+        .x(function(_,i) {
             return xscale(xscale.domain()[i]);
         })
         .y(function (d) {
@@ -165,7 +165,7 @@ const createTitle = function(elem, store, siteNo, showMLName) {
         }, getTitle));
 };
 
-const watermark = function (elem, store) {
+const watermark = function(elem, store) {
     // These constants will need to change if the watermark svg is updated
     const watermarkHalfHeight = 87 / 2;
     const watermarkHalfWidth = 235 / 2;

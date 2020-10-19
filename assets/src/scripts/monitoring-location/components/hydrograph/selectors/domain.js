@@ -28,7 +28,7 @@ export const SYMLOG_PARMS = [
  *  @param {Boolean} lowerBoundPOW10 - using log scale
  *  @return {Array} - array of two numbers
  */
-export const extendDomain = function (domain, lowerBoundPOW10) {
+export const extendDomain = function(domain, lowerBoundPOW10) {
     const isPositive = domain[0] > 0 && domain[1] > 0;
     let extendedDomain;
 

@@ -89,7 +89,7 @@ describe('monitoring-location/store/network module', () => {
                     const networkData = store.getState().networkData;
 
                     expect(networkData.networkList).toEqual(
-                        JSON.parse(MOCK_OBSERVATION_ITEM).links.filter(function (link) {
+                        JSON.parse(MOCK_OBSERVATION_ITEM).links.filter(function(link) {
                             return link['rel'] == 'collection';
                         }));
                     done();

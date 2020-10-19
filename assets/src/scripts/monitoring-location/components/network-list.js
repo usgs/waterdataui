@@ -40,7 +40,7 @@ const addNetworkRows = function(node, {hasData, networkList}) {
     }
 };
 
-export const attachToNode = function (store,
+export const attachToNode = function(store,
                                       node,
                                       {siteno}) {
 

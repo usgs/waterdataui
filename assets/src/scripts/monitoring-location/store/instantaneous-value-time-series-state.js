@@ -177,7 +177,7 @@ const ivTimeSeriesPlayStop = function() {
  * @return {Function}
  */
 const startTimeSeriesPlay = function(maxCursorOffset) {
-    return function (dispatch, getState) {
+    return function(dispatch, getState) {
         let state = getState().ivTimeSeriesState;
         if (state.ivGraphCursorOffset == null || state.ivGraphCursorOffset >= maxCursorOffset) {
             dispatch(Actions.setIVGraphCursorOffset(0));

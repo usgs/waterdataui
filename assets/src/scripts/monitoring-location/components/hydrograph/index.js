@@ -126,7 +126,7 @@ export const attachToNode = function(store,
         } else {
             //Update time series state
             if (parameterCode) {
-                const isThisParamCode = function (variable) {
+                const isThisParamCode = function(variable) {
                     return variable.variableCode.value === parameterCode;
                 };
                 const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);

@@ -93,7 +93,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         }
     };
 
-    const updateNldiLayers = function (node, {upstreamFlows, downstreamFlows, upstreamSites, downstreamSites, upstreamBasin}) {
+    const updateNldiLayers = function(node, {upstreamFlows, downstreamFlows, upstreamSites, downstreamSites, upstreamBasin}) {
         addNldiLayers(map, upstreamFlows, downstreamFlows, upstreamSites, downstreamSites, upstreamBasin);
     };
 

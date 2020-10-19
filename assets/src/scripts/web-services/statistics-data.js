@@ -1,6 +1,6 @@
 import {get} from 'ui/ajax';
 import config from 'ui/config';
-import { parseRDB } from 'ui/utils';
+import {parseRDB} from 'ui/utils';
 
 
 

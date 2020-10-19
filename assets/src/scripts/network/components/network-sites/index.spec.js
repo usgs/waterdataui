@@ -35,7 +35,7 @@ describe('network map module', () => {
     describe('Map creation without Network maps', () => {
         beforeEach(() => {
             store = configureStore();
-            spyOn(Actions, 'retrieveNetworkData').and.returnValue(function () {
+            spyOn(Actions, 'retrieveNetworkData').and.returnValue(function() {
                 return Promise.resolve({});
             });
             attachToNode(store, componentNode, {

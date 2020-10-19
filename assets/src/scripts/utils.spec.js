@@ -84,7 +84,7 @@ describe('Utils module', () => {
 
         function testWidth(width) {
             elem.call(wrap, width);
-            elem.selectAll('tspan').each(function () {
+            elem.selectAll('tspan').each(function() {
                 expect(this.getComputedTextLength()).toBeLessThanOrEqual(width);
             });
         }

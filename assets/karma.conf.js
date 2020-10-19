@@ -9,7 +9,7 @@ function isDebug(argument) {
  * Karma configuration for WDFN assets
  */
 
-module.exports = function (config) {
+module.exports = function(config) {
     /**
      * Base configuration shared by all run configurations
      */

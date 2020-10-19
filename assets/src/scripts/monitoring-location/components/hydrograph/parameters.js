@@ -93,7 +93,7 @@ export const plotSeriesSelectTable = function(elem,
         availableParameterCodes,
         lineSegmentsByParmCd,
         timeSeriesScalesByParmCd
-    }, store ){
+    }, store) {
     // Get the position of the scrolled window before removing it so it can be set to the same value.
     const lastTable = elem.select('#select-time-series table');
     const scrollTop = lastTable.size() ? lastTable.property('scrollTop') : null;
@@ -172,7 +172,7 @@ export const plotSeriesSelectTable = function(elem,
 
     table.property('scrollTop', scrollTop);
 
-    table.selectAll('tbody svg').each(function (d) {
+    table.selectAll('tbody svg').each(function(d) {
         let selection = select(this);
         const paramCd = d.parameterCode;
         const lineSegments = lineSegmentsByParmCd[paramCd] ? lineSegmentsByParmCd[paramCd] : [];

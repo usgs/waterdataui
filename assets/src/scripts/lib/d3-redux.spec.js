@@ -32,7 +32,7 @@ describe('d3-redux', () => {
         it('returns correct object', (done) => {
             const state = 'my state object';
             store.dispatch({type: 'a', payload: state});
-            listen(store, selector, function (value) {
+            listen(store, selector, function(value) {
                 expect(value).toBe(state);
                 done();
             });
