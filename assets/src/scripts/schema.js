@@ -1,6 +1,6 @@
 import memoize from 'fast-memoize';
 import {normalize as normalizr, schema} from 'normalizr';
-import {replaceHtmlEntities} from './utils';
+import {replaceHtmlEntities} from 'ui/utils';
 
 
 // sourceInfo schema

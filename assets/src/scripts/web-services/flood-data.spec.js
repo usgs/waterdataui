@@ -1,5 +1,5 @@
 import {fetchFloodExtent, fetchFloodFeatures,
-    fetchWaterwatchFloodLevels} from './flood-data';
+    fetchWaterwatchFloodLevels} from 'ui/web-services/flood-data';
 import {MOCK_WATERWATCH_FLOOD_LEVELS} from 'ui/mock-service-data';
 
 
