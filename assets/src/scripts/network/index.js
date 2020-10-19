@@ -4,7 +4,7 @@ import wdfnviz from 'wdfn-viz';
 
 import {configureStore} from './store';
 
-import {attachToNode as NetworkMapComponent} from './components/network-sites';
+import {attachToNode as NetworkMapComponent} from 'network/components/network-sites';
 
 const COMPONENTS = {
     'network': NetworkMapComponent

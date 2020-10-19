@@ -1,6 +1,6 @@
 import {select} from 'd3-selection';
 
-import {drawSiteTable} from './data-table';
+import {drawSiteTable} from 'network/components/network-sites/data-table';
 
 describe('network/components/network-sites/data-table', () => {
 

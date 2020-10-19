@@ -2,10 +2,10 @@
 // will be visible
 import {select} from 'd3-selection';
 
-import {legendControl} from '../../../leaflet-rendering/legend-control';
-import {listen} from '../../../lib/d3-redux';
+import {legendControl} from 'ui/leaflet-rendering/legend-control';
+import {listen} from 'ui/lib/d3-redux';
 
-import {hasNetworkData} from '../../selectors/network-data-selector';
+import {hasNetworkData} from 'network/selectors/network-data-selector';
 
 import {MARKER_FILL_COLOR, MARKER_FILL_OPACITY} from './map';
 

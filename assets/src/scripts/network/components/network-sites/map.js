@@ -1,5 +1,5 @@
 import config from 'ui/config';
-import {createMap, createBaseLayer} from '../../../leaflet-rendering/map';
+import {createMap, createBaseLayer} from 'ui/leaflet-rendering/map';
 
 export const MARKER_FILL_COLOR = '#ff7800';
 export const MARKER_FILL_OPACITY = 0.8;

@@ -1,7 +1,7 @@
 import {
     getNetworkSites,
     hasNetworkData
-} from './network-data-selector';
+} from 'network/selectors/network-data-selector';
 
 describe('network-data-selector', () => {
 

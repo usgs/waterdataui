@@ -1,8 +1,8 @@
 import {select} from 'd3-selection';
 
-import {configureStore, Actions} from '../../store';
+import {configureStore, Actions} from 'network/store';
 
-import {attachToNode} from './index';
+import {attachToNode} from 'network/components/network-sites/index';
 
 describe('network map module', () => {
     let componentNode;
