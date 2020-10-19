@@ -1,5 +1,5 @@
 import {getFloodStageHeight, hasFloodData, getFloodGageHeightStageIndex,
-    hasWaterwatchData, getWaterwatchFloodLevels, isWaterwatchVisible} from './flood-data-selector';
+    hasWaterwatchData, getWaterwatchFloodLevels, isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
 
 describe('monitoring-location/selectors/flood-data-selector', () => {
 

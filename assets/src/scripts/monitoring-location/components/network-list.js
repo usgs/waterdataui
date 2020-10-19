@@ -1,10 +1,10 @@
 import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
-import {link} from '../../lib/d3-redux';
+import {link} from 'ui/lib/d3-redux';
 
-import {Actions as networkActions} from '../store/network';
-import {hasNetworkData, getNetworkList} from '../selectors/network-selector';
+import {Actions as networkActions} from 'ml/store/network';
+import {hasNetworkData, getNetworkList} from 'ml/selectors/network-selector';
 
 /*
  * function to build a network URL from a labs json url
