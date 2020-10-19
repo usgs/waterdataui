@@ -1,6 +1,6 @@
 import {createStore} from 'redux';
 
-import {listen} from './d3-redux';
+import {listen} from 'ui/lib/d3-redux';
 
 
 describe('d3-redux', () => {
@@ -11,7 +11,7 @@ describe('d3-redux', () => {
     });
 
     describe('listen', () => {
-        const selector = function (state) {
+        const selector = function(state) {
             return state;
         };
 

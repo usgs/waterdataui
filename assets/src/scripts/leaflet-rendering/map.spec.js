@@ -1,4 +1,4 @@
-import {createMap} from './map';
+import {createMap} from 'ui/leaflet-rendering/map';
 
 describe('leaflet-rendering/map', () => {
 
