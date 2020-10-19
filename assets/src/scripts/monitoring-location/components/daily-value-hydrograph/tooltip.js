@@ -1,15 +1,15 @@
 import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
-import {drawCursorSlider} from '../../../d3-rendering/cursor-slider';
-import {drawFocusCircles, drawFocusOverlay, drawFocusLine} from '../../../d3-rendering/graph-tooltip';
-import {link} from '../../../lib/d3-redux';
-import {getDVGraphCursorOffset, getCurrentDVTimeSeriesUnitOfMeasure} from '../../selectors/daily-value-time-series-selector';
-import {Actions} from '../../store/daily-value-time-series';
+import {drawCursorSlider} from 'd3render/cursor-slider';
+import {drawFocusCircles, drawFocusOverlay, drawFocusLine} from 'd3render/graph-tooltip';
+import {link} from 'ui/lib/d3-redux';
+import {getDVGraphCursorOffset, getCurrentDVTimeSeriesUnitOfMeasure} from 'ml/selectors/daily-value-time-series-selector';
+import {Actions} from 'ml/store/daily-value-time-series';
 
-import {getMainLayout} from './selectors/layout';
-import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getCurrentCursorPoint, getCurrentDataPointsAtCursor, getCursorEpochTime} from './selectors/time-series-data';
+import {getMainLayout} from 'dvhydrograph/selectors/layout';
+import {getMainXScale, getMainYScale} from 'dvhydrograph/selectors/scales';
+import {getCurrentCursorPoint, getCurrentDataPointsAtCursor, getCursorEpochTime} from 'dvhydrograph/selectors/time-series-data';
 
 const TOOLTIP_LABEL = {
     min: 'Min',

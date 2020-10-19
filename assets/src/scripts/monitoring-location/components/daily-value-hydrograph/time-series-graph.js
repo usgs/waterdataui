@@ -6,11 +6,11 @@ import {appendAxes} from '../../../d3-rendering/axes';
 import {renderMaskDefs} from '../../../d3-rendering/data-masks';
 import {link} from '../../../lib/d3-redux';
 
-import {getXAxis, getYAxis} from './selectors/axes';
-import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesTitle, getCurrentTimeSeriesYTitle} from './selectors/labels';
-import {getMainLayout} from './selectors/layout';
-import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getCurrentTimeSeriesSegments} from './selectors/time-series-data';
+import {getXAxis, getYAxis} from 'dvhydrograph/selectors/axes';
+import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesTitle, getCurrentTimeSeriesYTitle} from 'dvhydrograph/selectors/labels';
+import {getMainLayout} from 'dvhydrograph/selectors/layout';
+import {getMainXScale, getMainYScale} from 'dvhydrograph/selectors/scales';
+import {getCurrentTimeSeriesSegments} from 'dvhydrograph/selectors/time-series-data';
 
 import {drawTooltipFocus, drawTooltipText} from './tooltip';
 

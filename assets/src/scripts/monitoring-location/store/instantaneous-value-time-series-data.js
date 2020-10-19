@@ -5,11 +5,11 @@ import merge from 'lodash/merge';
 import omitBy from 'lodash/omitBy';
 import {DateTime} from 'luxon';
 
-import {isPeriodCustom, parsePeriodCode} from '../components/hydrograph/hydrograph-utils';
+import {isPeriodCustom, parsePeriodCode} from 'ml/components/hydrograph/hydrograph-utils';
 
 import {normalize} from 'ui/schema';
 import {calcStartTime, sortedParameters} from 'ui/utils';
-import {getPreviousYearTimeSeries, getTimeSeries} from '../../web-services/models';
+import {getPreviousYearTimeSeries, getTimeSeries} from 'ui/web-services/models';
 
 import {
     getCurrentDateRange,
@@ -17,11 +17,11 @@ import {
     getTimeSeriesCollectionIds,
     getTsRequestKey,
     hasTimeSeries
-} from '../selectors/time-series-selector';
-import {getIanaTimeZone} from '../selectors/time-zone-selector';
+} from 'ml/selectors/time-series-selector';
+import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
 
-import {Actions as floodInundationActions} from './flood-inundation';
-import {Actions as ivTimeSeriesStateActions} from './instantaneous-value-time-series-state';
+import {Actions as floodInundationActions} from 'ml/store/flood-inundation';
+import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
 
 const GAGE_HEIGHT_CD = '00065';
 

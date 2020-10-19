@@ -5,19 +5,19 @@ import {DateTime} from 'luxon';
 import {createSelector, createStructuredSelector} from 'reselect';
 
 import config from 'ui/config';
-import {drawCursorSlider} from '../../../d3-rendering/cursor-slider';
-import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from '../../../d3-rendering/graph-tooltip';
-import {link} from '../../../lib/d3-redux';
+import {drawCursorSlider} from 'd3render/cursor-slider';
+import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from 'd3render/graph-tooltip';
+import {link} from 'ui/lib/d3-redux';
 import {mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
 
-import {getCurrentParmCd} from '../../selectors/time-series-selector';
-import {Actions} from '../../store/instantaneous-value-time-series-state';
+import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
+import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {getCursorTime, getTsCursorPoints, getTooltipPoints} from './selectors/cursor';
-import {classesForPoint, MASK_DESC} from './selectors/drawing-data';
-import {getMainLayout} from './selectors/layout';
-import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getTsTimeZone, getQualifiers, getCurrentVariableUnitCode, TEMPERATURE_PARAMETERS} from './selectors/time-series-data';
+import {getCursorTime, getTsCursorPoints, getTooltipPoints} from 'ivhydrograph/selectors/cursor';
+import {classesForPoint, MASK_DESC} from 'ivhydrograph/selectors/drawing-data';
+import {getMainLayout} from 'ivhydrograph/selectors/layout';
+import {getMainXScale, getMainYScale} from 'ivhydrograph/selectors/scales';
+import {getTsTimeZone, getQualifiers, getCurrentVariableUnitCode, TEMPERATURE_PARAMETERS} from 'ivhydrograph/selectors/time-series-data';
 
 
 const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd) {

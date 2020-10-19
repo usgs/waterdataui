@@ -25,7 +25,12 @@ const getBundleConfig = function(src, dest) {
         {find: 'ivhydrograph', replacement: path.resolve(__dirname, 'src/scripts/monitoring-location/components/hydrograph')}
     ];
     const networkEntries = [
-        {find: 'network', replacement: path.resolve(__dirname, 'src/scripts/network')}
+        {find: 'network', replacement: path.resolve(__dirname, 'src/scripts/network')},
+        {find: 'ui', replacement: path.resolve(__dirname, 'src/scripts/')},
+        {find: 'ml', replacement: path.resolve(__dirname, 'src/scripts/monitoring-location')},
+        {find:'d3render', replacement: path.resolve(__dirname, 'src/scripts/d3-rendering')},
+        {find: 'dvhydrograph', replacement: path.resolve(__dirname, 'src/scripts/monitoring-location/components/daily-value-hydrograph')},
+        {find: 'ivhydrograph', replacement: path.resolve(__dirname, 'src/scripts/monitoring-location/components/hydrograph')}
     ];
     const entries = src === 'src/scripts/monitoring-location/index.js' ?  hydrographEntries : networkEntries;
 

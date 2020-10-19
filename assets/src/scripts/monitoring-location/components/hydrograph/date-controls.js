@@ -1,8 +1,8 @@
 import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
-import {link} from '../../../lib/d3-redux';
-import {drawLoadingIndicator} from '../../../d3-rendering/loading-indicator';
+import {link} from 'ui/lib/d3-redux';
+import {drawLoadingIndicator} from 'd3render/loading-indicator';
 
 // required to make the USWDS component JS available to init after page load
 import components from '../../../../../node_modules/uswds/src/js/components';
@@ -13,11 +13,11 @@ import {
     getUserInputsForSelectingTimespan,
     getCustomTimeRange,
     getCurrentParmCd
-} from '../../selectors/time-series-selector';
-import {getIanaTimeZone} from '../../selectors/time-zone-selector';
-import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
-import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
-import {MAX_DIGITS_FOR_DAYS_FROM_TODAY} from './hydrograph-utils';
+} from 'ml/selectors/time-series-selector';
+import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
+import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
+import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
+import {MAX_DIGITS_FOR_DAYS_FROM_TODAY} from 'ivhydrograph/hydrograph-utils';
 
 export const drawDateRangeControls = function(elem, store, siteno) {
     const DATE_RANGE = [{

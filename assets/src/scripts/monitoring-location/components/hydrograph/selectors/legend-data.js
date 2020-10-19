@@ -2,12 +2,12 @@ import {set} from 'd3-collection';
 import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
-import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from '../../../../d3-rendering/markers';
+import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from 'd3render/markers';
 
-import {getWaterwatchFloodLevels, isWaterwatchVisible} from '../../../selectors/flood-data-selector';
-import {getCurrentVariableMedianMetadata} from '../../../selectors/median-statistics-selector';
+import {getWaterwatchFloodLevels, isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
+import {getCurrentVariableMedianMetadata} from 'ml/selectors/median-statistics-selector';
 
-import {getCurrentVariableLineSegments, HASH_ID, MASK_DESC} from './drawing-data';
+import {getCurrentVariableLineSegments, HASH_ID, MASK_DESC} from 'ivhydrograph/selectors/drawing-data';
 
 const TS_LABEL = {
     'current': 'Current: ',

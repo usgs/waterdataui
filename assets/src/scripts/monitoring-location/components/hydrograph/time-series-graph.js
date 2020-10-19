@@ -2,26 +2,26 @@ import {line as d3Line, curveStepAfter} from 'd3-shape';
 import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config';
-import {addSVGAccessibility} from '../../../d3-rendering/accessibility';
-import {appendAxes} from '../../../d3-rendering/axes';
-import {renderMaskDefs} from '../../../d3-rendering/data-masks';
-import {link} from '../../../lib/d3-redux';
+import {addSVGAccessibility} from 'd3render/accessibility';
+import {appendAxes} from 'd3render/axes';
+import {renderMaskDefs} from 'd3render/data-masks';
+import {link} from 'ui/lib/d3-redux';
 import {mediaQuery}  from 'ui/utils';
 
-import {getAgencyCode, getMonitoringLocationName} from '../../selectors/time-series-selector';
-import {isWaterwatchVisible, getWaterwatchFloodLevels} from '../../selectors/flood-data-selector';
+import {getAgencyCode, getMonitoringLocationName} from 'ml/selectors/time-series-selector';
+import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
 
-import {getAxes}  from './selectors/axes';
+import {getAxes}  from 'ivhydrograph/selectors/axes';
 import {
     getCurrentVariableLineSegments,
     getCurrentVariableMedianStatPoints,
     HASH_ID
-} from './selectors/drawing-data';
-import {getMainLayout} from './selectors/layout';
-import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
-import {getDescription, isVisible, getTitle} from './selectors/time-series-data';
-import {drawDataLines} from './time-series-lines';
-import {drawTooltipFocus, drawTooltipText}  from './tooltip';
+} from 'ivhydrograph/selectors/drawing-data';
+import {getMainLayout} from 'ivhydrograph/selectors/layout';
+import {getMainXScale, getMainYScale, getBrushXScale} from 'ivhydrograph/selectors/scales';
+import {getDescription, isVisible, getTitle} from 'ivhydrograph/selectors/time-series-data';
+import {drawDataLines} from 'ivhydrograph/time-series-lines';
+import {drawTooltipFocus, drawTooltipText}  from 'ivhydrograph/tooltip';
 
 const addDefsPatterns = function(elem) {
     const patterns = [{

@@ -8,12 +8,11 @@ import memoize from 'fast-memoize';
 import {createSelector, createStructuredSelector} from 'reselect';
 
 import config from 'ui/config';
-import {link} from '../../../lib/d3-redux';
-import {getTimeSeries} from '../../selectors/time-series-selector';
-import {Actions} from '../../store/instantaneous-value-time-series-state';
+import {link} from 'ui/lib/d3-redux';
+import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {isAudiblePlaying, getAudiblePoints} from './selectors/audible-data';
-import {getMainXScale, getMainYScale} from './selectors/scales';
+import {isAudiblePlaying, getAudiblePoints} from 'ivhydrograph/selectors/audible-data';
+import {getMainXScale} from 'ivhydrograph/selectors/scales';
 
 
 // Higher tones get lower volume
