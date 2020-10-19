@@ -1,6 +1,6 @@
 import config from 'ui/config';
 
-import {Actions, configureStore} from './index';
+import {Actions, configureStore} from 'network/store/index';
 
 const MOCK_NETWORK_FEATURE = `
 {
