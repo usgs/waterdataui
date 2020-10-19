@@ -1,7 +1,7 @@
 import {select} from 'd3-selection';
 
-import {configureStore} from '../../store';
-import {Actions} from '../../store/daily-value-time-series';
+import {configureStore} from 'ml/store';
+import {Actions} from 'ml/store/daily-value-time-series';
 
 import {drawTimeSeriesGraph} from './time-series-graph';
 

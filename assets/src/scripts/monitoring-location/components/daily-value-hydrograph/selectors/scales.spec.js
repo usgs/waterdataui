@@ -1,4 +1,4 @@
-import {getMainXScale, getBrushXScale, getMainYScale} from './scales';
+import {getMainXScale, getBrushXScale, getMainYScale} from 'dvhydrograph/selectors/scales';
 
 describe('monitoring-location/components/daily-value-hydrograph/selectors/scales', () => {
     const TEST_STATE = {

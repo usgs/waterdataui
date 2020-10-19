@@ -1,8 +1,8 @@
 import {createSelector} from 'reselect';
 
-import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from '../../../../d3-rendering/markers';
+import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from 'd3render//markers';
 
-import {getCurrentUniqueDataKinds} from './time-series-data';
+import {getCurrentUniqueDataKinds} from 'dvhydrograph/selectors/time-series-data';
 
 const TS_LABEL = {
     min: 'Minimum:',

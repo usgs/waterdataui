@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {select} from 'd3-selection';
-import {Actions} from '../../store/daily-value-time-series';
+import {Actions} from 'ml/store/daily-value-time-series';
 
 /*
  * Draw the parameter code toggle for the daily values time series graph.

@@ -4,8 +4,8 @@ import memoize from 'fast-memoize';
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
-import {getXScale, getYScale} from './scales';
-import {getLayout} from './layout';
+import {getXScale, getYScale} from 'dvhydrograph/selectors/scales';
+import {getLayout} from 'dvhydrograph/selectors/layout';
 
 
 export const getXAxis = memoize(kind =>createSelector(
