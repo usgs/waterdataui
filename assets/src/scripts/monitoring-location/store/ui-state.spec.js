@@ -1,7 +1,7 @@
-import { applyMiddleware, combineReducers, createStore } from 'redux';
+import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
-import {uiReducer, Actions} from './ui-state';
+import {uiReducer, Actions} from 'ml/store/ui-state';
 
 describe('monitoring-location/store/ui-state module', () => {
     let store;

@@ -3,7 +3,7 @@ import {
     fetchNldiDownstreamSites, fetchNldiUpstreamBasin,
     fetchNldiUpstreamFlow,
     fetchNldiUpstreamSites
-} from '../../web-services/nldi-data';
+} from 'ui/web-services/nldi-data';
 
 const INITIAL_DATA = {
     upstreamFlows: [],

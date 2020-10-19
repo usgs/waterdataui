@@ -3,7 +3,7 @@ import {default as thunk} from 'redux-thunk';
 
 import {MOCK_STATISTICS_RDB} from 'ui/mock-service-data';
 
-import {statisticsDataReducer, Actions} from './statistics-data';
+import {statisticsDataReducer, Actions} from 'ml/store/statistics-data';
 
 describe('monitoring-location/store/statistics-data module', () => {
     let store;

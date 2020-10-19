@@ -1,6 +1,6 @@
 import {
     fetchMonitoringLocationMetaData
-} from '../../web-services/observations';
+} from 'ui/web-services/observations';
 
 const INITIAL_DATA = {
     networkList: []

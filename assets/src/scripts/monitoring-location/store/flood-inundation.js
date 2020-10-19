@@ -1,5 +1,5 @@
 import {fetchFloodExtent, fetchFloodFeatures,
-    fetchWaterwatchFloodLevels} from '../../web-services/flood-data';
+    fetchWaterwatchFloodLevels} from 'ui/web-services/flood-data';
 
 const INITIAL_DATA = {
     stages: [],

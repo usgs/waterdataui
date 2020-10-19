@@ -1,11 +1,11 @@
 import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
-import {MOCK_IV_DATA} from '../../mock-service-data';
+import {MOCK_IV_DATA} from 'ui/mock-service-data';
 
-import {Actions as floodStateActions, floodStateReducer} from './flood-inundation';
-import {Actions, ivTimeSeriesDataReducer} from './instantaneous-value-time-series-data';
-import {Actions as ivTimeSeriesStateActions, ivTimeSeriesStateReducer} from './instantaneous-value-time-series-state';
+import {Actions as floodStateActions, floodStateReducer} from 'ml/store/flood-inundation';
+import {Actions, ivTimeSeriesDataReducer} from 'ml/store/instantaneous-value-time-series-data';
+import {Actions as ivTimeSeriesStateActions, ivTimeSeriesStateReducer} from 'ml/store/instantaneous-value-time-series-state';
 
 describe('monitoring-location/store/instantaneous-value-time-series-data module', () => {
     let store;
