@@ -2,20 +2,20 @@ import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config';
-import {createMap, createBaseLayer} from '../../../leaflet-rendering/map';
-import {legendControl} from '../../../leaflet-rendering/legend-control';
-import {link} from '../../../lib/d3-redux';
-import {FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT} from '../../../web-services/flood-data';
+import {createMap, createBaseLayer} from 'ui/leaflet-rendering/map';
+import {legendControl} from 'ui/leaflet-rendering/legend-control';
+import {link} from 'ui/lib/d3-redux';
+import {FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT} from 'ui/web-services/flood-data';
 
-import {hasFloodData, getFloodExtent, getFloodStageHeight} from '../../selectors/flood-data-selector';
+import {hasFloodData, getFloodExtent, getFloodStageHeight} from 'ml/selectors/flood-data-selector';
 import {hasNldiData, getNldiDownstreamFlows, getNldiDownstreamSites, getNldiUpstreamFlows, getNldiUpstreamSites, getNldiUpstreamBasin}
-    from '../../selectors/nldi-data-selector';
-import {Actions as nldiDataActions} from '../../store/nldi-data';
-import {Actions as floodInundationActions} from '../../store/flood-inundation';
+    from 'ml/selectors/nldi-data-selector';
+import {Actions as nldiDataActions} from 'ml/store/nldi-data';
+import {Actions as floodInundationActions} from 'ml/store/flood-inundation';
 
-import {floodSlider} from './flood-slider';
-import {addMonitoringLocationMarker, createFIMLegend, createNldiLegend} from './legend';
-import {addNldiLayers} from './nldi-mapping';
+import {floodSlider} from 'map/flood-slider';
+import {addMonitoringLocationMarker, createFIMLegend, createNldiLegend} from 'map/legend';
+import {addNldiLayers} from 'map/nldi-mapping';
 
 
 const getLayerDefs = function(layerNo, siteno, stage) {

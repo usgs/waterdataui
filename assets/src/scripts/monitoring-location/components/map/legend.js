@@ -7,7 +7,7 @@ import {get} from 'ui/ajax';
 import config from 'ui/config';
 
 import {markerFillColor, markerFillOpacity, downStreamColor, upstreamColor, flowLineOpacity,
-         basinFillColor, basinFillOpacity} from './nldi-mapping';
+         basinFillColor, basinFillOpacity} from 'map/nldi-mapping';
 
 
 const fetchLayerLegend = function(layer, defaultName) {

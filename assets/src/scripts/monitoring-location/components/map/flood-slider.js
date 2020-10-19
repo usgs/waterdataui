@@ -1,10 +1,10 @@
 import {createStructuredSelector} from 'reselect';
 
-import {link} from '../../../lib/d3-redux';
+import {link} from 'ui/lib/d3-redux';
 import {appendTooltip} from 'ui/tooltips';
 
-import {getFloodStages, getFloodStageHeight, getFloodGageHeightStageIndex, hasFloodData} from '../../selectors/flood-data-selector';
-import {Actions} from '../../store/flood-inundation';
+import {getFloodStages, getFloodStageHeight, getFloodGageHeightStageIndex, hasFloodData} from 'ml/selectors/flood-data-selector';
+import {Actions} from 'ml/store/flood-inundation';
 
 
 const createSlider = function(elem, stages, store) {
