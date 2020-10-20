@@ -2,7 +2,7 @@ import {select} from 'd3-selection';
 import {
     unicodeHtmlEntity, getHtmlFromString, replaceHtmlEntities, setEquality,
     wrap, mediaQuery, calcStartTime, callIf, parseRDB, convertFahrenheitToCelsius,
-    convertCelsiusToFahrenheit, sortedParameters, getNearestTime} from './utils';
+    convertCelsiusToFahrenheit, sortedParameters, getNearestTime} from 'ui/utils';
 
 
 describe('Utils module', () => {
@@ -84,7 +84,7 @@ describe('Utils module', () => {
 
         function testWidth(width) {
             elem.call(wrap, width);
-            elem.selectAll('tspan').each(function () {
+            elem.selectAll('tspan').each(function() {
                 expect(this.getComputedTextLength()).toBeLessThanOrEqual(width);
             });
         }

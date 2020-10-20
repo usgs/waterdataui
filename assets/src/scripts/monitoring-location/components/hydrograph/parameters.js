@@ -1,13 +1,13 @@
 import {line} from 'd3-shape';
 import {select} from 'd3-selection';
 
-import config from '../../../config';
-import {appendTooltip} from '../../../tooltips';
+import config from 'ui/config';
+import {appendTooltip} from 'ui/tooltips';
 
-import {Actions} from '../../store/instantaneous-value-time-series-data';
+import {Actions} from 'ml/store/instantaneous-value-time-series-data';
 
-import {MASK_DESC} from './selectors/drawing-data';
-import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from './selectors/layout';
+import {MASK_DESC} from 'ivhydrograph/selectors/drawing-data';
+import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from 'ivhydrograph/selectors/layout';
 
 /**
  * Draw a sparkline in a selected SVG element
@@ -93,7 +93,7 @@ export const plotSeriesSelectTable = function(elem,
         availableParameterCodes,
         lineSegmentsByParmCd,
         timeSeriesScalesByParmCd
-    }, store ){
+    }, store) {
     // Get the position of the scrolled window before removing it so it can be set to the same value.
     const lastTable = elem.select('#select-time-series table');
     const scrollTop = lastTable.size() ? lastTable.property('scrollTop') : null;
@@ -172,7 +172,7 @@ export const plotSeriesSelectTable = function(elem,
 
     table.property('scrollTop', scrollTop);
 
-    table.selectAll('tbody svg').each(function (d) {
+    table.selectAll('tbody svg').each(function(d) {
         let selection = select(this);
         const paramCd = d.parameterCode;
         const lineSegments = lineSegmentsByParmCd[paramCd] ? lineSegmentsByParmCd[paramCd] : [];

@@ -1,18 +1,18 @@
 import {line as d3Line} from 'd3-shape';
 import {createStructuredSelector} from 'reselect';
 
-import {addSVGAccessibility} from '../../../d3-rendering/accessibility';
-import {appendAxes} from '../../../d3-rendering/axes';
-import {renderMaskDefs} from '../../../d3-rendering/data-masks';
-import {link} from '../../../lib/d3-redux';
+import {addSVGAccessibility} from 'd3render//accessibility';
+import {appendAxes} from 'd3render//axes';
+import {renderMaskDefs} from 'd3render//data-masks';
+import {link} from 'ui/lib/d3-redux';
 
-import {getXAxis, getYAxis} from './selectors/axes';
-import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesTitle, getCurrentTimeSeriesYTitle} from './selectors/labels';
-import {getMainLayout} from './selectors/layout';
-import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getCurrentTimeSeriesSegments} from './selectors/time-series-data';
+import {getXAxis, getYAxis} from 'dvhydrograph/selectors/axes';
+import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesTitle, getCurrentTimeSeriesYTitle} from 'dvhydrograph/selectors/labels';
+import {getMainLayout} from 'dvhydrograph/selectors/layout';
+import {getMainXScale, getMainYScale} from 'dvhydrograph/selectors/scales';
+import {getCurrentTimeSeriesSegments} from 'dvhydrograph/selectors/time-series-data';
 
-import {drawTooltipFocus, drawTooltipText} from './tooltip';
+import {drawTooltipFocus, drawTooltipText} from 'dvhydrograph/tooltip';
 
 const CIRCLE_RADIUS_SINGLE_PT = 1;
 

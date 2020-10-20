@@ -4,7 +4,7 @@ import _includes from 'lodash/includes';
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
-import {getIanaTimeZone} from './time-zone-selector';
+import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
 
 /*
  * Selectors that return properties from the state

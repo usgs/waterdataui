@@ -1,5 +1,5 @@
-import config from '../config.js';
-import {mediaQuery} from '../utils';
+import config from 'ui/config.js';
+import {mediaQuery} from 'ui/utils';
 
 export const LegendControl = L.Control.extend({
     options: {
@@ -27,7 +27,7 @@ export const LegendControl = L.Control.extend({
 
         if (this.options.addExpandButton) {
             // Set up click handler for the expandButton
-            L.DomEvent.on(this.expandButton, 'click', function () {
+            L.DomEvent.on(this.expandButton, 'click', function() {
                 if (this.expandButton.title === 'Hide legend') {
                     this.expandButton.innerHTML = '<i class="fas fa-expand"></i>';
                     this.expandButton.title = 'Show legend';

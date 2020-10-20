@@ -1,6 +1,6 @@
-import config from '../config';
+import config from 'ui/config';
 
-import {fetchNetworkFeatures} from './network-data';
+import {fetchNetworkFeatures} from 'ui/web-services/network-data';
 
 describe('web-services/network-data module', () => {
     beforeEach(() => {

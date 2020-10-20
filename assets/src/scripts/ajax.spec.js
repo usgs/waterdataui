@@ -1,4 +1,4 @@
-import {get} from './ajax';
+import {get} from 'ui/ajax';
 
 describe('ajax module', () => {
     describe('get', () => {

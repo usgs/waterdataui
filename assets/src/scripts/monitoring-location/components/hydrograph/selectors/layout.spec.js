@@ -1,6 +1,6 @@
 import {format} from 'd3-format';
 
-import {getMainLayout, ASPECT_RATIO} from './layout';
+import {getMainLayout, ASPECT_RATIO} from 'ivhydrograph/selectors/layout';
 
 describe('monitoring-location/components/hydrograph/layout module', () => {
 

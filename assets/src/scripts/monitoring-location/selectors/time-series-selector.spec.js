@@ -24,7 +24,7 @@ import {
     getAllMethodsForCurrentVariable,
     getCurrentVariableTimeSeries,
     getTimeSeriesForTsKey
-} from './time-series-selector';
+} from 'ml/selectors/time-series-selector';
 
 const TEST_DATA = {
     ivTimeSeriesData: {

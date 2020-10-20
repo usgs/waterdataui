@@ -1,4 +1,4 @@
-import {fetchAvailableDVTimeSeries, fetchDVTimeSeries} from '../../web-services/observations';
+import {fetchAvailableDVTimeSeries, fetchDVTimeSeries} from 'ui/web-services/observations';
 
 const INITIAL_DAILY_VALUE_TIME_SERIES_DATA= {
     availableDVTimeSeries: [],

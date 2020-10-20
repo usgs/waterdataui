@@ -1,17 +1,17 @@
-import '../polyfills';
+import 'ui/polyfills';
 
 import wdfnviz from 'wdfn-viz';
 
-import {getParamString} from './url-params';
+import {getParamString} from 'ml/url-params';
 
-import {configureStore} from './store';
-import {Actions as uiActions} from './store/ui-state';
+import {configureStore} from 'ml/store';
+import {Actions as uiActions} from 'ml/store/ui-state';
 
-import {attachToNode as EmbedComponent} from './components/embed';
-import {attachToNode as DailyValueHydrographComponent} from './components/daily-value-hydrograph';
-import {attachToNode as HydrographComponent} from './components/hydrograph';
-import {attachToNode as MapComponent} from './components/map';
-import {attachToNode as NetworkListComponent} from './components/network-list';
+import {attachToNode as EmbedComponent} from 'ml/components/embed';
+import {attachToNode as DailyValueHydrographComponent} from 'ml/components/daily-value-hydrograph';
+import {attachToNode as HydrographComponent} from 'ml/components/hydrograph';
+import {attachToNode as MapComponent} from 'ml/components/map';
+import {attachToNode as NetworkListComponent} from 'ml/components/network-list';
 
 const COMPONENTS = {
     embed: EmbedComponent,

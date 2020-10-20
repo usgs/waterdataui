@@ -1,10 +1,10 @@
 
-import {Actions} from '../../store';
-import {getNetworkSites} from '../../selectors/network-data-selector';
+import {Actions} from 'network/store';
+import {getNetworkSites} from 'network/selectors/network-data-selector';
 
-import {drawSiteTable} from './data-table';
-import {createMapLegend} from './legend';
-import {createSiteMap, addSitesLayer} from './map';
+import {drawSiteTable} from 'network/components/network-sites/data-table';
+import {createMapLegend} from 'network/components/network-sites/legend';
+import {createSiteMap, addSitesLayer} from 'network/components/network-sites/map';
 
 /*
  * Creates the network map with node and attach it to the Redux store.

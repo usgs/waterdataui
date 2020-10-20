@@ -4,7 +4,7 @@ import {
     getCursorEpochTime,
     getCurrentDataPointsAtCursor,
     getCurrentUniqueDataKinds
-} from './time-series-data';
+} from 'dvhydrograph/selectors/time-series-data';
 
 describe('monitoring-location/components/daily-value-hydrograph/time-series-data module', () => {
     const TEST_STATE = {
@@ -18,7 +18,7 @@ describe('monitoring-location/components/daily-value-hydrograph/time-series-data
                         phenomenonTimeEnd: '2018-01-10',
                         timeStep: ['2018-01-05', '2018-01-03', '2018-01-02', '2018-01-04',
                             '2018-01-06', '2018-01-07', '2018-01-08', '2018-01-09', '2018-01-10'],
-                        result: [ '3.2', '4.0', '5.0', '6.1',
+                        result: ['3.2', '4.0', '5.0', '6.1',
                             '7.3', '8.1', '6.2', '2.9', '3.4'],
                         approvals: [['Approved'], ['Approved'], ['Approved'], ['Approved'],
                             ['Approved'], ['Approved'], ['Approved'], ['Approved'], ['Working']],

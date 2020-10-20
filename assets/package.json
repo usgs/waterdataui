@@ -43,6 +43,7 @@
   },
   "homepage": "https://github.com/usgs/waterdataui#readme",
   "devDependencies": {
+    "@rollup/plugin-alias": "^3.1.1",
     "autoprefixer": "^9.8.6",
     "concat": "^1.0.3",
     "eslint": "^7.9.0",

@@ -2,11 +2,11 @@ import {extent, ticks} from 'd3-array';
 import {format} from 'd3-format';
 import {createSelector} from 'reselect';
 
-import config from '../../../../config';
-import {mediaQuery} from '../../../../utils';
-import {getCurrentParmCd} from '../../../selectors/time-series-selector';
+import config from 'ui/config';
+import {mediaQuery} from 'ui/utils';
+import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
 
-import {getVisiblePoints} from './drawing-data';
+import {getVisiblePoints} from 'ivhydrograph/selectors/drawing-data';
 
 
 const PADDING_RATIO = 0.2;
@@ -28,7 +28,7 @@ export const SYMLOG_PARMS = [
  *  @param {Boolean} lowerBoundPOW10 - using log scale
  *  @return {Array} - array of two numbers
  */
-export const extendDomain = function (domain, lowerBoundPOW10) {
+export const extendDomain = function(domain, lowerBoundPOW10) {
     const isPositive = domain[0] > 0 && domain[1] > 0;
     let extendedDomain;
 

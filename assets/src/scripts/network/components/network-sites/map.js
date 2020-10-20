@@ -1,5 +1,5 @@
-import config from '../../../config';
-import {createMap, createBaseLayer} from '../../../leaflet-rendering/map';
+import config from 'ui/config';
+import {createMap, createBaseLayer} from 'ui/leaflet-rendering/map';
 
 export const MARKER_FILL_COLOR = '#ff7800';
 export const MARKER_FILL_OPACITY = 0.8;
@@ -45,7 +45,7 @@ export const createSiteMap = function(extent) {
  * @param {L.map} map The leaflet map to which the overlay should be added
  * @param networkSites network site geojson data
  */
-export const addSitesLayer = function (map, networkSites) {
+export const addSitesLayer = function(map, networkSites) {
 
     const geojsonMarkerOptions = {
         radius: 6,
@@ -62,10 +62,10 @@ export const addSitesLayer = function (map, networkSites) {
         layer.bindPopup(popupText);
     };
 
-    const getSitesLayer = function (sites, markerOptions) {
+    const getSitesLayer = function(sites, markerOptions) {
         return L.geoJson(sites, {
             onEachFeature: onEachPointFeatureAddPopUp,
-            pointToLayer: function (feature, latlng) {
+            pointToLayer: function(feature, latlng) {
                 return L.circleMarker(latlng, markerOptions);
             }
         });

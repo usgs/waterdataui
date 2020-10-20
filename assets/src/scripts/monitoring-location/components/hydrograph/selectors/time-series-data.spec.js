@@ -1,6 +1,6 @@
 import {
     isVisible, getYLabel, getTitle,
-    getDescription, getTsTimeZone, getSecondaryYLabel} from './time-series-data';
+    getDescription, getTsTimeZone, getSecondaryYLabel} from 'ivhydrograph/selectors/time-series-data';
 
 
 const TEST_DATA = {

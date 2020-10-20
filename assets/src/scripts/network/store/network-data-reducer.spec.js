@@ -1,4 +1,4 @@
-import {networkDataReducer} from './network-data-reducer';
+import {networkDataReducer} from 'network/store/network-data-reducer';
 
 describe('network-data-reducer', () => {
 

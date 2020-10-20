@@ -11,7 +11,7 @@ import {
     getCurrentDVTimeSeriesTimeRange,
     getCurrentDVTimeSeriesValueRange,
     hasMultipleParameterCodes
-} from './daily-value-time-series-selector';
+} from 'ml/selectors/daily-value-time-series-selector';
 
 describe('monitoring-location/selectors/daily-value-time-series-selector', () => {
 
@@ -230,7 +230,7 @@ describe('monitoring-location/selectors/daily-value-time-series-selector', () =>
                                 phenomenonTimeEnd: '2018-01-10',
                                 timeStep: ['2018-01-02', '2018-01-03', '2018-01-04', '2018-01-05',
                                     '2018-01-06', '2018-01-07', '2018-01-08', '2018-01-09', '2018-01-10'],
-                                result: [ '5.2', '3.0', '6.0', '7.1',
+                                result: ['5.2', '3.0', '6.0', '7.1',
                                     '8.3', '9.1', '7.2', '3.9', '4.4'],
                                 approvals: [['Approved'], ['Approved'], ['Approved'], ['Approved'],
                                     ['Approved'], ['Approved'], ['Approved'], ['Approved'], ['Working']],

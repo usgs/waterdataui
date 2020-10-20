@@ -1,6 +1,6 @@
 import {fetchAvailableDVTimeSeries, fetchDVTimeSeries,
-    fetchMonitoringLocationMetaData} from './observations';
-import {MOCK_OBSERVATION_ITEM} from '../mock-service-data';
+    fetchMonitoringLocationMetaData} from 'ui/web-services/observations';
+import {MOCK_OBSERVATION_ITEM} from 'ui/mock-service-data';
 
 describe('web-services/observations module', () => {
     /* eslint no-use-before-define: off */

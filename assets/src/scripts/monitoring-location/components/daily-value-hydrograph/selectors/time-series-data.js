@@ -4,10 +4,10 @@ import uniq from 'lodash/uniq';
 import uniqWith from 'lodash/uniqWith';
 import {createSelector} from 'reselect';
 
-import {getCurrentDVTimeSeriesData, getDVGraphCursorOffset} from '../../../selectors/daily-value-time-series-selector';
-import {getNearestTime} from '../../../../utils';
+import {getCurrentDVTimeSeriesData, getDVGraphCursorOffset} from 'ml/selectors/daily-value-time-series-selector';
+import {getNearestTime} from 'ui/utils';
 
-import {getMainXScale, getMainYScale} from './scales';
+import {getMainXScale, getMainYScale} from 'dvhydrograph/selectors/scales';
 
 const TWO_DAYS = 1000 * 60 * 60 * 24 * 2; // In milliseconds
 

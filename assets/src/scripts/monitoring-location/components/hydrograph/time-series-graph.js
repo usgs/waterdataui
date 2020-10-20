@@ -1,27 +1,27 @@
 import {line as d3Line, curveStepAfter} from 'd3-shape';
 import {createStructuredSelector} from 'reselect';
 
-import config from '../../../config';
-import {addSVGAccessibility} from '../../../d3-rendering/accessibility';
-import {appendAxes} from '../../../d3-rendering/axes';
-import {renderMaskDefs} from '../../../d3-rendering/data-masks';
-import {link} from '../../../lib/d3-redux';
-import {mediaQuery}  from '../../../utils';
+import config from 'ui/config';
+import {addSVGAccessibility} from 'd3render/accessibility';
+import {appendAxes} from 'd3render/axes';
+import {renderMaskDefs} from 'd3render/data-masks';
+import {link} from 'ui/lib/d3-redux';
+import {mediaQuery}  from 'ui/utils';
 
-import {getAgencyCode, getMonitoringLocationName} from '../../selectors/time-series-selector';
-import {isWaterwatchVisible, getWaterwatchFloodLevels} from '../../selectors/flood-data-selector';
+import {getAgencyCode, getMonitoringLocationName} from 'ml/selectors/time-series-selector';
+import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
 
-import {getAxes}  from './selectors/axes';
+import {getAxes}  from 'ivhydrograph/selectors/axes';
 import {
     getCurrentVariableLineSegments,
     getCurrentVariableMedianStatPoints,
     HASH_ID
-} from './selectors/drawing-data';
-import {getMainLayout} from './selectors/layout';
-import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
-import {getDescription, isVisible, getTitle} from './selectors/time-series-data';
-import {drawDataLines} from './time-series-lines';
-import {drawTooltipFocus, drawTooltipText}  from './tooltip';
+} from 'ivhydrograph/selectors/drawing-data';
+import {getMainLayout} from 'ivhydrograph/selectors/layout';
+import {getMainXScale, getMainYScale, getBrushXScale} from 'ivhydrograph/selectors/scales';
+import {getDescription, isVisible, getTitle} from 'ivhydrograph/selectors/time-series-data';
+import {drawDataLines} from 'ivhydrograph/time-series-lines';
+import {drawTooltipFocus, drawTooltipText}  from 'ivhydrograph/tooltip';
 
 const addDefsPatterns = function(elem) {
     const patterns = [{
@@ -46,10 +46,10 @@ const addDefsPatterns = function(elem) {
 const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
     const stepFunction = d3Line()
         .curve(curveStepAfter)
-        .x(function (d) {
+        .x(function(d) {
             return xscale(d.date);
         })
-        .y(function (d) {
+        .y(function(d) {
             return yscale(d.value);
         });
     const medianGrp = elem.append('g');
@@ -70,7 +70,7 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
  * @param  {Array} seriesPoints
  * @param {Boolean} enableClip
  */
-const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
+const plotAllMedianPoints = function(elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
     elem.select('#median-points').remove();
     if (!visible) {
         return;
@@ -97,7 +97,7 @@ const plotAllMedianPoints = function (elem, {visible, xscale, yscale, seriesPoin
  */
 const plotFloodLevelPoints = function(elem, {xscale, yscale, points, classes}) {
     const stepFunction = d3Line()
-        .x(function (_,i) {
+        .x(function(_,i) {
             return xscale(xscale.domain()[i]);
         })
         .y(function (d) {
@@ -165,7 +165,7 @@ const createTitle = function(elem, store, siteNo, showMLName) {
         }, getTitle));
 };
 
-const watermark = function (elem, store) {
+const watermark = function(elem, store) {
     // These constants will need to change if the watermark svg is updated
     const watermarkHalfHeight = 87 / 2;
     const watermarkHalfWidth = 235 / 2;

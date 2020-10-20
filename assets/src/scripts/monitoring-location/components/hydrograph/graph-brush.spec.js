@@ -1,8 +1,8 @@
 import {select} from 'd3-selection';
 
-import{configureStore} from '../../store';
+import{configureStore} from 'ml/store';
 
-import {drawGraphBrush} from './graph-brush';
+import {drawGraphBrush} from 'ivhydrograph/graph-brush';
 
 describe ('monitoring-location/components/hydrograph/graph-brush module', () => {
 

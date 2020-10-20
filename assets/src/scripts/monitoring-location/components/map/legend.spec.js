@@ -1,7 +1,7 @@
 import {select} from 'd3-selection';
 
-import {legendControl} from '../../../leaflet-rendering/legend-control';
-import {createFIMLegend, createNldiLegend} from './legend';
+import {legendControl} from 'ui/leaflet-rendering/legend-control';
+import {createFIMLegend, createNldiLegend} from 'map/legend';
 
 
 describe('monitoring-location/components/map/legend module', () => {

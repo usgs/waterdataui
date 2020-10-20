@@ -1,7 +1,7 @@
 import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
-import {Actions, timeZoneReducer} from './time-zone';
+import {Actions, timeZoneReducer} from 'ml/store/time-zone';
 
 describe('monitoring-location/store/time-zone module', () => {
     let store;

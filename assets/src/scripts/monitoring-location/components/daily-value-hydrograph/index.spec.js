@@ -1,9 +1,9 @@
 import {select} from 'd3-selection';
 
-import {configureStore} from '../../store';
-import {Actions} from '../../store/daily-value-time-series';
+import {configureStore} from 'ml/store';
+import {Actions} from 'ml/store/daily-value-time-series';
 
-import {attachToNode} from './index';
+import {attachToNode} from 'dvhydrograph/index';
 
 describe('monitoring-location/components/dailyValueHydrograph/index', () => {
     const TEST_STATE = {
@@ -157,10 +157,10 @@ describe('monitoring-location/components/dailyValueHydrograph/index', () => {
     describe('Tests after successful fetch of the dv series', () => {
         let store;
         beforeEach(() => {
-            spyOn(Actions, 'retrieveAvailableDVTimeSeries').and.returnValue(function () {
+            spyOn(Actions, 'retrieveAvailableDVTimeSeries').and.returnValue(function() {
                 return Promise.resolve({});
             });
-            spyOn(Actions, 'retrieveDVTimeSeries').and.returnValue(function () {
+            spyOn(Actions, 'retrieveDVTimeSeries').and.returnValue(function() {
                 return Promise.resolve({});
             });
 

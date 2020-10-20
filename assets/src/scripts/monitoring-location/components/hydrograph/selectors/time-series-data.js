@@ -5,8 +5,8 @@ import {createSelector} from 'reselect';
 import {
     getRequestTimeRange, getCurrentVariable, getCurrentParmCd, getCurrentMethodID,
     getMethods
-} from '../../../selectors/time-series-selector';
-import {getIanaTimeZone} from '../../../selectors/time-zone-selector';
+} from 'ml/selectors/time-series-selector';
+import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
 
 
 export const TEMPERATURE_PARAMETERS = {

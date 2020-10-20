@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - A set of device specific favicons.
 
 ### Changed
-- Now using the new SIFTA service
+- Using Rollup/plugin-alias for module imports.
+- Now using the new SIFTA service.
 - Changed headers on network page to match monitoring location pages.
 - Moved cooperators section to bottom of page.
 

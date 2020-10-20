@@ -1,7 +1,7 @@
 import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
-import {Actions, ivTimeSeriesStateReducer} from './instantaneous-value-time-series-state';
+import {Actions, ivTimeSeriesStateReducer} from 'ml/store/instantaneous-value-time-series-state';
 
 describe('monitoring-location/store/instantaneous-value-time-series-state', () => {
     let store;

@@ -1,6 +1,6 @@
-import {lineMarker, rectangleMarker, textOnlyMarker} from '../../../../d3-rendering/markers';
+import {lineMarker, rectangleMarker, textOnlyMarker} from 'd3render//markers';
 
-import {getLegendMarkerRows} from './legend-data';
+import {getLegendMarkerRows} from 'ivhydrograph/selectors/legend-data';
 
 describe('monitoring-location/components/hydrograph/selectors/legend-data', () => {
     const TEST_DATA = {
