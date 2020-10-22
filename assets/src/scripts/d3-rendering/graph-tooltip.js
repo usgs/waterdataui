@@ -1,4 +1,4 @@
-import {mouse} from 'd3-selection';
+import {pointer} from 'd3-selection';
 
 /*
  * Draws an overlay rectangle with the given scale and layout and creates mouse events
@@ -15,19 +15,24 @@ export const drawFocusOverlay = function(elem, {xScale, layout}, store, setCurso
     elem.select('.focus-overlay').remove();
     elem.append('rect')
         .classed('focus-overlay', true)
+        .data([4])
         .attr('x', 0)
         .attr('y', 0)
         .attr('width', layout.width - layout.margin.right)
-        .attr('height', layout.height - (layout.margin.top + layout.margin.bottom))
-        .on('mouseover', function() {
-            const selectedTime = xScale.invert(mouse(elem.node())[0]);
-            const startTime = xScale.domain()[0];
-            store.dispatch(setCursorOffsetAction(selectedTime - startTime));
-        })
-        .on('mousemove', function() {
-            const selectedTime = xScale.invert(mouse(elem.node())[0]);
-            const startTime = xScale.domain()[0];
-            store.dispatch(setCursorOffsetAction(selectedTime - startTime));
+        .attr('height', layout.height - (layout.margin.top + layout.margin.bottom));
+    elem.select('.focus-overlay').on('mouseover', (event) => {
+            if (event) {
+                const selectedTime = xScale.invert(pointer(event)[0]);
+                const startTime = xScale.domain()[0];
+                store.dispatch(setCursorOffsetAction(selectedTime - startTime));
+            }
+        });
+    elem.select('.focus-overlay').on('mousemove', (event) => {
+            if (event) {
+                const selectedTime = xScale.invert(pointer(event)[0]);
+                const startTime = xScale.domain()[0];
+                store.dispatch(setCursorOffsetAction(selectedTime - startTime));
+            }
         });
 };
 

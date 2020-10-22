@@ -11,7 +11,7 @@ const commonjs = require('@rollup/plugin-commonjs');
 const json = require('@rollup/plugin-json');
 const resolve = require('@rollup/plugin-node-resolve');
 const replace = require('@rollup/plugin-replace');
-const {uglify} = require('rollup-plugin-uglify');
+//const {uglify} = require('rollup-plugin-uglify');
 
 
 const env = process.env.NODE_ENV || 'development';
@@ -48,18 +48,18 @@ const getBundleConfig = function(src, dest) {
             buble({
                 objectAssign: 'Object.assign',
                 transforms: {
-                    dangerousForOf: true
+                    dangerousForOf: true, generator: false
                 }
             }),
             replace({
                 'process.env.NODE_ENV': JSON.stringify(env)
-            }),
-            env === 'production' && uglify({
-                compress: {
-                    dead_code: true,
-                    drop_console: true
-                }
-            })
+            })//,
+//            env === 'production' && uglify({
+//                compress: {
+//                    dead_code: true,
+//                    drop_console: true
+//                }
+//            })
         ],
         watch: {
             chokidar: false

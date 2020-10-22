@@ -1,5 +1,4 @@
 import {brushX} from 'd3-brush';
-import {event} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import {appendXAxis} from 'd3render/axes';
@@ -26,7 +25,7 @@ export const drawGraphBrush = function(container, store) {
     let customHandle;
     let layoutHeight;
 
-    const brushed = function() {
+    const brushed = function(event) {
         const CENTERING_DIVISOR_LARGE_SCREEN = 3;
         const CENTERING_DIVISOR_SMALL_SCREEN = 2.3;
 

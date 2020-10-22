@@ -1,4 +1,3 @@
-import {set} from 'd3-collection';
 import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
@@ -21,7 +20,7 @@ const TS_LABEL = {
  *      @prop {Boolean} default
  *      @prop {Boolean} approved
  *      @prop {Boolean} estimated
- *      @prop {D3 set} dataMask
+ *      @prop {Set} dataMasks
  */
 const getUniqueClasses = memoize(tsKey => createSelector(
     getCurrentVariableLineSegments(tsKey),
@@ -31,7 +30,7 @@ const getUniqueClasses = memoize(tsKey => createSelector(
             default: classes.some((cls) => !cls.approved && !cls.estimated && !cls.dataMask),
             approved: classes.some((cls) => cls.approved),
             estimated: classes.some((cls) => cls.estimated),
-            dataMasks: set(classes.map((cls) => cls.dataMask).filter((mask) => {
+            dataMasks: new Set(classes.map((cls) => cls.dataMask).filter((mask) => {
                 return mask;
             }))
         };
@@ -65,7 +64,7 @@ const getLegendDisplay = createSelector(
 
 const getTsMarkers = function(tsKey, uniqueClasses) {
     let tsMarkers;
-    const maskMarkers = uniqueClasses.dataMasks.values().map((mask) => {
+    const maskMarkers = Array.from(uniqueClasses.dataMasks.entries()).map((mask) => {
         const maskName = MASK_DESC[mask];
         const tsClass = `${maskName.replace(' ', '-').toLowerCase()}-mask`;
         const fill = `url(#${HASH_ID[tsKey]})`;

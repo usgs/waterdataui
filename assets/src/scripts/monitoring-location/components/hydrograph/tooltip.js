@@ -1,11 +1,10 @@
-import {set} from 'd3-collection';
 import {select} from 'd3-selection';
 import {transition} from 'd3-transition';
 import {DateTime} from 'luxon';
 import {createSelector, createStructuredSelector} from 'reselect';
 
 import config from 'ui/config';
-import {drawCursorSlider} from 'd3render/cursor-slider';
+//import {drawCursorSlider} from 'd3render/cursor-slider';
 import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from 'd3render/graph-tooltip';
 import {link} from 'ui/lib/d3-redux';
 import {mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
@@ -24,8 +23,8 @@ const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, curre
     let label = '';
     if (datum && qualifiers) {
         let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
-        const maskKeys = set(Object.keys(MASK_DESC));
-        const qualiferKeysLower = set(datum.qualifiers.map(x => x.toLowerCase()));
+        const maskKeys = new Set(Object.keys(MASK_DESC));
+        const qualiferKeysLower = new Set(datum.qualifiers.map(x => x.toLowerCase()));
         const maskKeyIntersect = [...qualiferKeysLower.values()].filter(x => maskKeys.has(x));
         if (valueStr !== ' ') {
             let convertedValue;
@@ -206,10 +205,10 @@ export const drawTooltipCursorSlider = function(elem, store) {
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .call(link(store,(elem, layout) => {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} 25`);
-            }, getMainLayout))
-        .call(link(store, drawCursorSlider, createStructuredSelector({
-            cursorOffset: (state) => state.ivTimeSeriesState.ivGraphCursorOffset,
-            xScale: getMainXScale('current'),
-            layout: getMainLayout
-        }), store, Actions.setIVGraphCursorOffset));
+            }, getMainLayout));
+//        .call(link(store, drawCursorSlider, createStructuredSelector({
+//            cursorOffset: (state) => state.ivTimeSeriesState.ivGraphCursorOffset,
+//            xScale: getMainXScale('current'),
+//            layout: getMainLayout
+//        }), store, Actions.setIVGraphCursorOffset));
 };
