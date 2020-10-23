@@ -88,7 +88,7 @@
     "d3-simple-slider": "1.10.0",
     "date-time-format-timezone": "1.0.22",
     "element-closest": "3.0.2",
-    "esri-leaflet": "2.5.0",
+    "esri-leaflet": "2.5.1",
     "fast-memoize": "2.5.2",
     "leaflet": "1.7.1",
     "leaflet.markercluster": "1.4.1",
