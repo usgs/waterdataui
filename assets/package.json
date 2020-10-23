@@ -101,6 +101,6 @@
     "redux": "4.0.5",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
-    "wdfn-viz": "^1.7.1"
+    "wdfn-viz": "^1.8.0"
   }
 }
