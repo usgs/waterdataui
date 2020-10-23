@@ -12,6 +12,8 @@
     li {
       display: inline-block;
       label {
+        margin: 0;
+        @include u-margin-bottom(1);
         width: 110px;
       }
     }
