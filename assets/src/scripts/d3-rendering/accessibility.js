@@ -1,5 +1,6 @@
+import * as selection from 'd3-selection';
 /**
- * Adds accessibility attributes to the svg.
+ * Adds accessibility a ttributes to the svg.
  * This was based on the recommendations in this article: https://www.w3.org/WAI/PF/HTML/wiki/Canvas
  * @param {Object} svg - Can be a selector string or d3 selection for an svg element
  * @param {String} title
@@ -8,6 +9,7 @@
  * @param {String} idPrefix
  */
 export const addSVGAccessibility = function(svg, {title, description, isInteractive, idPrefix}) {
+    console.log(Object.getOwnPropertyNames(selection));
     svg.selectAll('title, desc').remove();
     let descElement = svg.insert('desc', ':first-child')
         .html(description);

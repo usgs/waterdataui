@@ -1,7 +1,7 @@
 import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
-//import {drawCursorSlider} from 'd3render/cursor-slider';
+import {drawCursorSlider} from 'd3render/cursor-slider';
 import {drawFocusCircles, drawFocusOverlay, drawFocusLine} from 'd3render/graph-tooltip';
 import {link} from 'ui/lib/d3-redux';
 import {getDVGraphCursorOffset, getCurrentDVTimeSeriesUnitOfMeasure} from 'ml/selectors/daily-value-time-series-selector';
@@ -89,10 +89,10 @@ export const drawTooltipCursorSlider = function(elem, store) {
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .call(link(store,(elem, layout) => {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} 25`);
-            }, getMainLayout));
-//        .call(link(store, drawCursorSlider, createStructuredSelector({
-//            cursorOffset: getDVGraphCursorOffset,
-//            xScale: getMainXScale,
-//            layout: getMainLayout
-//        }), store, Actions.setDVGraphCursorOffset));
+            }, getMainLayout))
+        .call(link(store, drawCursorSlider, createStructuredSelector({
+            cursorOffset: getDVGraphCursorOffset,
+            xScale: getMainXScale,
+            layout: getMainLayout
+        }), store, Actions.setDVGraphCursorOffset));
 };

@@ -4,7 +4,7 @@ import {DateTime} from 'luxon';
 import {createSelector, createStructuredSelector} from 'reselect';
 
 import config from 'ui/config';
-//import {drawCursorSlider} from 'd3render/cursor-slider';
+import {drawCursorSlider} from 'd3render/cursor-slider';
 import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from 'd3render/graph-tooltip';
 import {link} from 'ui/lib/d3-redux';
 import {mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
@@ -19,13 +19,14 @@ import {getMainXScale, getMainYScale} from 'ivhydrograph/selectors/scales';
 import {getTsTimeZone, getQualifiers, getCurrentVariableUnitCode, TEMPERATURE_PARAMETERS} from 'ivhydrograph/selectors/time-series-data';
 
 
+
 const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd) {
     let label = '';
     if (datum && qualifiers) {
         let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
         const maskKeys = new Set(Object.keys(MASK_DESC));
-        const qualiferKeysLower = new Set(datum.qualifiers.map(x => x.toLowerCase()));
-        const maskKeyIntersect = [...qualiferKeysLower.values()].filter(x => maskKeys.has(x));
+        const qualifierKeysLower = new Set(datum.qualifiers.map(x => x.toLowerCase()));
+        const maskKeyIntersect = Array.from(qualifierKeysLower.values()).filter(x => maskKeys.has(x));
         if (valueStr !== ' ') {
             let convertedValue;
             let convertedUnit;
@@ -43,7 +44,7 @@ const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, curre
         }
         if (maskKeyIntersect.length) {
             // a data point will have at most one masking qualifier
-            valueStr = MASK_DESC[[maskKeyIntersect][0]];
+            valueStr = MASK_DESC[maskKeyIntersect[0]];
         }
         const timeLabel = DateTime.fromMillis(
             datum.dateTime,
@@ -205,10 +206,10 @@ export const drawTooltipCursorSlider = function(elem, store) {
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .call(link(store,(elem, layout) => {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} 25`);
-            }, getMainLayout));
-//        .call(link(store, drawCursorSlider, createStructuredSelector({
-//            cursorOffset: (state) => state.ivTimeSeriesState.ivGraphCursorOffset,
-//            xScale: getMainXScale('current'),
-//            layout: getMainLayout
-//        }), store, Actions.setIVGraphCursorOffset));
+            }, getMainLayout))
+        .call(link(store, drawCursorSlider, createStructuredSelector({
+            cursorOffset: (state) => state.ivTimeSeriesState.ivGraphCursorOffset,
+            xScale: getMainXScale('current'),
+            layout: getMainLayout
+        }), store, Actions.setIVGraphCursorOffset));
 };

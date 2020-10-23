@@ -91,6 +91,7 @@
     "d3-scale": "3.2.3",
     "d3-selection": "^2.0.0",
     "d3-shape": "2.0.0",
+    "d3-simple-slider": "^1.10.1",
     "d3-transition": "2.0.0",
     "date-time-format-timezone": "1.0.22",
     "element-closest": "3.0.2",

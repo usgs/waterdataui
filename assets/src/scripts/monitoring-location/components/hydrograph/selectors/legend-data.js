@@ -64,7 +64,7 @@ const getLegendDisplay = createSelector(
 
 const getTsMarkers = function(tsKey, uniqueClasses) {
     let tsMarkers;
-    const maskMarkers = Array.from(uniqueClasses.dataMasks.entries()).map((mask) => {
+    const maskMarkers = Array.from(uniqueClasses.dataMasks.values()).map((mask) => {
         const maskName = MASK_DESC[mask];
         const tsClass = `${maskName.replace(' ', '-').toLowerCase()}-mask`;
         const fill = `url(#${HASH_ID[tsKey]})`;

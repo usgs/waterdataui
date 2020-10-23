@@ -48,7 +48,8 @@ const getBundleConfig = function(src, dest) {
             buble({
                 objectAssign: 'Object.assign',
                 transforms: {
-                    dangerousForOf: true, generator: false
+                    forOf: false,
+                    generator: false
                 }
             }),
             replace({
