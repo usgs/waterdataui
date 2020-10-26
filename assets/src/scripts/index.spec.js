@@ -6,7 +6,6 @@
  * tests and the application dependencies only need to be compiled a single
  * time, and `karma --watch` tasks are very fast.
  */
-
 import 'ui/mock-service-data';
 import 'ui/polyfills';
 
@@ -47,6 +46,7 @@ import 'ivhydrograph/selectors/cursor.spec';
 import 'ivhydrograph/selectors/domain.spec';
 import 'ivhydrograph/selectors/drawing-data.spec';
 import 'ivhydrograph/selectors/layout.spec';
+import 'ivhydrograph/selectors/legend-data.spec';
 import 'ivhydrograph/selectors/parameter-data.spec';
 import 'ivhydrograph/selectors/scales.spec';
 import 'ivhydrograph/selectors/time-series-data.spec';

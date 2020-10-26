@@ -1,4 +1,3 @@
-import {set} from 'd3-collection';
 import {select} from 'd3-selection';
 import {transition} from 'd3-transition';
 import {DateTime} from 'luxon';
@@ -20,13 +19,14 @@ import {getMainXScale, getMainYScale} from 'ivhydrograph/selectors/scales';
 import {getTsTimeZone, getQualifiers, getCurrentVariableUnitCode, TEMPERATURE_PARAMETERS} from 'ivhydrograph/selectors/time-series-data';
 
 
+
 const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd) {
     let label = '';
     if (datum && qualifiers) {
         let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
-        const maskKeys = set(Object.keys(MASK_DESC));
-        const qualiferKeysLower = set(datum.qualifiers.map(x => x.toLowerCase()));
-        const maskKeyIntersect = [...qualiferKeysLower.values()].filter(x => maskKeys.has(x));
+        const maskKeys = new Set(Object.keys(MASK_DESC));
+        const qualifierKeysLower = new Set(datum.qualifiers.map(x => x.toLowerCase()));
+        const maskKeyIntersect = Array.from(qualifierKeysLower.values()).filter(x => maskKeys.has(x));
         if (valueStr !== ' ') {
             let convertedValue;
             let convertedUnit;
@@ -44,7 +44,7 @@ const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, curre
         }
         if (maskKeyIntersect.length) {
             // a data point will have at most one masking qualifier
-            valueStr = MASK_DESC[[maskKeyIntersect][0]];
+            valueStr = MASK_DESC[maskKeyIntersect[0]];
         }
         const timeLabel = DateTime.fromMillis(
             datum.dateTime,

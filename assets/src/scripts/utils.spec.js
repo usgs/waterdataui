@@ -105,7 +105,7 @@ describe('Utils module', () => {
             elem.call(wrap, maxWordWidth * 2);
 
             let tspans = [];
-            elem.selectAll('tspan').each(function () {
+            elem.selectAll('tspan').each(function() {
                 tspans.push(this.textContent);
             });
 
@@ -256,14 +256,14 @@ describe('Utils module', () => {
     });
 
     describe('getNearestTime', () => {
-        let DATA = [12, 13, 14, 15, 16].map(hour => {
+        let testData = [12, 13, 14, 15, 16].map(hour => {
             return {
                 dateTime: new Date(`2018-01-03T${hour}:00:00.000Z`).getTime(),
                 qualifiers: ['P'],
                 value: hour
             };
         });
-        DATA = DATA.concat([
+        testData = testData.concat([
             {
                 dateTime: 1514998800000,
                 qualifiers: ['Fld', 'P'],
@@ -277,26 +277,26 @@ describe('Utils module', () => {
 
         ]);
         it('Return null if the DATA array is empty', function() {
-            expect(getNearestTime([], DATA[0].dateTime)).toBeNull();
+            expect(getNearestTime([], testData[0].dateTime)).toBeNull();
         });
 
         it('return correct DATA points via getNearestTime' , () => {
             // Check each date with the given offset against the hourly-spaced
             // test DATA.
+
             function expectOffset(offset, side) {
-                for (let [index, datum] of DATA.entries()) {
+                testData.forEach((datum, index, thisArray) => {
                     let expected;
-                    if (side === 'left' || index === DATA.length - 1) {
+                    if (side === 'left' || index === thisArray.length - 1) {
                         expected = {datum, index};
                     } else {
-                        expected = {datum: DATA[index + 1], index: index + 1};
+                        expected = {datum: thisArray[index + 1], index: index + 1};
                     }
                     let time = new Date(datum.dateTime + offset);
-                    let returned = getNearestTime(DATA, time);
+                    let returned = getNearestTime(thisArray, time);
 
-                    expect(returned.datum.dateTime).toBe(expected.datum.dateTime);
-                    expect(returned.datum.index).toBe(expected.datum.index);
-                }
+                    expect(returned.dateTime).toBe(expected.datum.dateTime);
+                });
             }
 
             let hour = 3600000;  // 1 hour in milliseconds

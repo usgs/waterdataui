@@ -32,7 +32,7 @@ export const addSVGAccessibility = function(svg, {title, description, isInteract
  * @param {String} describeById - Optional id string of the element that describes this table
  * @param {String} describeByText - Optional text that describes this table
  */
-export const addSROnlyTable = function (container, {columnNames, data, describeById=null, describeByText=null}) {
+export const addSROnlyTable = function(container, {columnNames, data, describeById=null, describeByText=null}) {
     if (data.length > 0) {
         const table = container
             .append('table')
@@ -52,7 +52,7 @@ export const addSROnlyTable = function (container, {columnNames, data, describeB
                     .data(columnNames)
                     .enter().append('th')
                         .attr('scope', 'col')
-                        .text(function (d) {
+                        .text(function(d) {
                             return d;
                         });
 
@@ -62,11 +62,11 @@ export const addSROnlyTable = function (container, {columnNames, data, describeB
                 .enter().append('tr');
 
         data_rows.selectAll('td')
-            .data(function (d) {
+            .data(function(d) {
                 return d;
             })
             .enter().append('td')
-                .text(function (d) {
+                .text(function(d) {
                     return d;
                 });
     }

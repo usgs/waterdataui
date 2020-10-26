@@ -137,7 +137,7 @@ export const plotSeriesSelectTable = function(elem,
         .attr('role', 'option')
         .classed('selected', param => param.selected)
         .attr('aria-selected', param => param.selected)
-        .on('click', function(param) {
+        .on('click', function(event, param) {
             if (!param.selected) {
                 store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, param.variableID));
             }
