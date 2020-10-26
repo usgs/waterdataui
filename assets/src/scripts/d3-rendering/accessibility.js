@@ -1,5 +1,5 @@
 /**
- * Adds accessibility a ttributes to the svg.
+ * Adds accessibility attributes to the svg.
  * This was based on the recommendations in this article: https://www.w3.org/WAI/PF/HTML/wiki/Canvas
  * @param {Object} svg - Can be a selector string or d3 selection for an svg element
  * @param {String} title
