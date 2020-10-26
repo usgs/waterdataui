@@ -15,19 +15,18 @@ export const drawFocusOverlay = function(elem, {xScale, layout}, store, setCurso
     elem.select('.focus-overlay').remove();
     elem.append('rect')
         .classed('focus-overlay', true)
-        .data([4])
         .attr('x', 0)
         .attr('y', 0)
         .attr('width', layout.width - layout.margin.right)
-        .attr('height', layout.height - (layout.margin.top + layout.margin.bottom));
-    elem.select('.focus-overlay').on('mouseover', (event) => {
+        .attr('height', layout.height - (layout.margin.top + layout.margin.bottom))
+        .on('mouseover', (event) => {
             if (event) {
                 const selectedTime = xScale.invert(pointer(event)[0]);
                 const startTime = xScale.domain()[0];
                 store.dispatch(setCursorOffsetAction(selectedTime - startTime));
             }
-        });
-    elem.select('.focus-overlay').on('mousemove', (event) => {
+        })
+        .on('mousemove', (event) => {
             if (event) {
                 const selectedTime = xScale.invert(pointer(event)[0]);
                 const startTime = xScale.domain()[0];
