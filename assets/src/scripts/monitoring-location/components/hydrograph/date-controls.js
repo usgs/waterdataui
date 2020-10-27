@@ -43,9 +43,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             ariaExpanded: false
         },
         {
-            id: 'custom-input-calender-days',
-            value: 'calender',
-            text: 'Calender days',
+            id: 'custom-input-calendar-days',
+            value: 'calendar',
+            text: 'Calendar days',
             checked: false,
             ariaExpanded: false
         }
@@ -79,13 +79,13 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         container.attr('hidden', userInputsForSelectingTimespan.customTimeRangeSelectionButton === 'days-input' && userInputsForSelectingTimespan.mainTimeRangeSelectionButton === 'custom' ? null : true);
     }, getUserInputsForSelectingTimespan));
 
-    const containerCustomCalenderDays = containerRadioGroupAndFormButtons.append('div')
+    const containerCustomCalendarDays = containerRadioGroupAndFormButtons.append('div')
         .attr('id', 'ts-customdaterange-select-container')
         .attr('role', 'customdate')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date specification')
         .call(link(store, (container, userInputsForSelectingTimespan) => {
-            container.attr('hidden', userInputsForSelectingTimespan.customTimeRangeSelectionButton === 'calender-input' && userInputsForSelectingTimespan.mainTimeRangeSelectionButton === 'custom' ? null : true);
+            container.attr('hidden', userInputsForSelectingTimespan.customTimeRangeSelectionButton === 'calendar-input' && userInputsForSelectingTimespan.mainTimeRangeSelectionButton === 'custom' ? null : true);
         }, getUserInputsForSelectingTimespan));
 
     const createRadioButtonsForCustomDaterangeSelection = function(containerRadioGroupCustomSelectButtons) {
@@ -195,10 +195,10 @@ export const drawDateRangeControls = function(elem, store, siteno) {
     };
 
     const createControlsForDateRangePicker = function() {
-        const dateRangePicker = containerCustomCalenderDays.append('div')
+        const dateRangePicker = containerCustomCalendarDays.append('div')
             .attr('class', 'usa-date-range-picker');
 
-        const customDateValidationContainer = containerCustomCalenderDays.append('div')
+        const customDateValidationContainer = containerCustomCalendarDays.append('div')
             .attr('class', 'usa-alert usa-alert--warning usa-alert--validation')
             .attr('id', 'custom-date-alert-container')
             .attr('hidden', true);
@@ -266,13 +266,13 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         // required to init the USWDS date range picker after page load
         components.dateRangePicker.init(elem.node());
 
-        // Adds controls for the calender day submit button
-        const calenderDaysSubmitContainer = containerCustomCalenderDays.append('div')
+        // Adds controls for the calendar day submit button
+        const calendarDaysSubmitContainer = containerCustomCalendarDays.append('div')
             .attr('class', 'submit-button');
 
-        calenderDaysSubmitContainer.append('button')
+        calendarDaysSubmitContainer.append('button')
             .attr('class', 'usa-button')
-            .attr('id', 'custom-date-submit-calender')
+            .attr('id', 'custom-date-submit-calendar')
             .text('Display data on graph')
             .on('click', function() {
                 let userSpecifiedStart = document.getElementById('custom-start-date').value;
@@ -299,7 +299,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                 }
             });
 
-        containerCustomCalenderDays.call(link(store, (container, {customTimeRange, ianaTimeZone}) => {
+        containerCustomCalendarDays.call(link(store, (container, {customTimeRange, ianaTimeZone}) => {
             container.select('#custom-start-date')
                 .property('value', customTimeRange && customTimeRange.start ? DateTime.fromMillis(customTimeRange.start, {zone: ianaTimeZone}).startOf('day').toFormat('LL/dd/yyyy') : '');
             container.select('#custom-end-date')
@@ -344,7 +344,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     selected.attr('aria-expanded', true);
                     containerRadioGroupCustomSelectButtons.attr('hidden', null);
                     containerCustomDaysBeforeToday.attr('hidden', null);
-                    containerCustomCalenderDays.attr('hidden', true);
+                    containerCustomCalendarDays.attr('hidden', true);
                     store.dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', 'custom'));
                 } else {
                     const userInputTimeframeButtonSelected = li.select('input:checked').attr('value');
@@ -352,7 +352,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     li.select('input#custom-date-range').attr('aria-expanded', false);
                     containerRadioGroupCustomSelectButtons.attr('hidden', true);
                     containerCustomDaysBeforeToday.attr('hidden', true);
-                    containerCustomCalenderDays.attr('hidden', true);
+                    containerCustomCalendarDays.attr('hidden', true);
                     store.dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', userInputTimeframeButtonSelected));
                     store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(
                         siteno,
