@@ -29,7 +29,7 @@ export const renderTimeSeriesUrlParams = function(store) {
 
         /* filter the 'currentDateRange', which comes in one of two forms
         * 'P{some number}{Day or Year code}' (like P30D or P1Y) or the word 'custom'.
-        * In this case, 'custom' is a selection not using the 'period query', such as start and end date calender dates.
+        * In this case, 'custom' is a selection not using the 'period query', such as start and end date calendar dates.
         * If the user selection is the default of 'P7D' or of the type 'custom', we will leave it as is.
         * Otherwise, we will filter the code so it is generic and in the form of 'P'
         * so that it will work for any arbitrary number of days in query parameters such as P20D.

@@ -204,7 +204,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
     });
 
     it('Expects an alert to be thrown if custom dates are not provided.', () => {
-         let submitButton = select('#custom-date-submit-calender');
+         let submitButton = select('#custom-date-submit-calendar');
          submitButton.dispatch('click');
 
          let customDateAlertDiv = select('#custom-date-alert');
@@ -216,7 +216,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
         select('#custom-start-date').property('value', '04/05/2063');
         select('#custom-end-date').property('value', '04/03/2063');
 
-        select('#custom-date-submit-calender').dispatch('click');
+        select('#custom-date-submit-calendar').dispatch('click');
 
         let customDateAlertDiv = select('#custom-date-alert-container');
         expect(customDateAlertDiv.attr('hidden')).toBeNull();
@@ -229,7 +229,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
         select('#custom-start-date').property('value', '04/03/2063');
         select('#custom-end-date').property('value', '04/05/2063');
 
-        select('#custom-date-submit-calender').dispatch('click');
+        select('#custom-date-submit-calendar').dispatch('click');
 
         let customDateAlertDiv = select('#custom-date-alert-container');
         expect(customDateAlertDiv.attr('hidden')).toBe('true');
