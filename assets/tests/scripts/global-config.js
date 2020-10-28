@@ -14,8 +14,8 @@ var CONFIG = {
             end_date: '10-15-2015'
         },
         '00060': {
-            begin_date: '04-01-1990',
-            end_date: '10-15-2006'
+            begin_date: '04-01-1991',
+            end_date: '10-15-2007'
         },
         '00093': {
             begin_date: '11-25-2001',
