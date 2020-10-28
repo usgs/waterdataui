@@ -164,9 +164,11 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
         div = select('body').append('div');
         store = configureStore(TEST_STATE);
         div.call(drawDateRangeControls, store, '12345678');
+        jasmine.Ajax.install();
     });
 
     afterEach(() => {
+        jasmine.Ajax.uninstall();
         div.remove();
     });
 

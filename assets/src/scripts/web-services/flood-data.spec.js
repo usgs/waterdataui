@@ -115,7 +115,7 @@ describe('flood_data module', () => {
             it('expected response is json object with the flood levels', () => {
                 floodLevelPromise.then((resp) => {
                     expect(resp).not.toEqual(null);
-                    expect(resp[0].properties.site_no).toBe('07144100');
+                    expect(resp.site_no).toBe('07144100');
                 });
             });
         });
@@ -123,7 +123,7 @@ describe('flood_data module', () => {
         describe('with error response', () => {
             it('On failed response return an empty flood levels list', () => {
                 fetchWaterwatchFloodLevels(siteno).then((resp) => {
-                    expect(resp.length).toBe(0);
+                    expect(resp).toBeNull();
                 });
                 jasmine.Ajax.requests.mostRecent().respondWith({
                     status: 500,
