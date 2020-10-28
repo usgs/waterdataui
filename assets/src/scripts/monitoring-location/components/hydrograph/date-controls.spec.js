@@ -164,9 +164,11 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
         div = select('body').append('div');
         store = configureStore(TEST_STATE);
         div.call(drawDateRangeControls, store, '12345678');
+        jasmine.Ajax.install();
     });
 
     afterEach(() => {
+        jasmine.Ajax.uninstall();
         div.remove();
     });
 
@@ -204,12 +206,12 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
     });
 
     it('Expects an alert to be thrown if custom dates are not provided.', () => {
-         let submitButton = select('#custom-date-submit-calender');
-         submitButton.dispatch('click');
+        let submitButton = select('#custom-date-submit-calender');
+        submitButton.dispatch('click');
 
-         let customDateAlertDiv = select('#custom-date-alert');
-         expect(customDateAlertDiv.attr('hidden')).toBeNull();
-         expect(customDateAlertDiv.select('p').text()).toEqual('Both start and end dates must be specified.');
+        let customDateAlertDiv = select('#custom-date-alert');
+        expect(customDateAlertDiv.attr('hidden')).toBeNull();
+        expect(customDateAlertDiv.select('p').text()).toEqual('Both start and end dates must be specified.');
     });
 
     it('Expects an alert to be thrown if the end date is earlier than the start date.', () => {

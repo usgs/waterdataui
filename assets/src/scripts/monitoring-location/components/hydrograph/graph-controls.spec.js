@@ -160,9 +160,11 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             div = select('body').append('div');
             store = configureStore(TEST_STATE);
             div.call(drawGraphControls, store);
+            jasmine.Ajax.install();
         });
 
         afterEach(() => {
+            jasmine.Ajax.uninstall();
             div.remove();
         });
 

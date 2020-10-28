@@ -22,7 +22,7 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
 
         const availableParameterCodes = [
             {variableID: '00010ID', parameterCode: '00010', description: 'Temperature', selected: true, timeSeriesCount: 1},
-            {variableID: '00060ID', parameterCode: '00060', description: 'Ruthenium (VI) Fluoride', selected: false, timeSeriesCount: 1},
+            {variableID: '00067ID', parameterCode: '00067', description: 'Ruthenium (VI) Fluoride', selected: false, timeSeriesCount: 1},
             {variableID: '00093ID', parameterCode: '00093', description: 'Uranium (V) Oxide', selected: false, timeSeriesCount: 1}
         ];
 

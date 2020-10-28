@@ -50,7 +50,6 @@ import 'ivhydrograph/selectors/legend-data.spec';
 import 'ivhydrograph/selectors/parameter-data.spec';
 import 'ivhydrograph/selectors/scales.spec';
 import 'ivhydrograph/selectors/time-series-data.spec';
-
 import 'ivhydrograph/audible.spec';
 import 'ivhydrograph/date-controls.spec';
 import 'ivhydrograph/data-table.spec';
