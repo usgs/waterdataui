@@ -7,6 +7,7 @@ import {createStructuredSelector} from 'reselect';
 import config from 'ui/config.js';
 import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
+import {fetchStaticGraphImage} from 'ui/web-services/graph-server';
 import {link} from 'ui/lib/d3-redux';
 
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
@@ -149,33 +150,39 @@ export const attachToNode = function(store,
                     .call(drawGraphBrush, store);
             }
 
-            graphContainer.append('div')
-                .classed('ts-legend-controls-container', true)
-                .call(drawTimeSeriesLegend, store);
+            graphContainer.append('div');
+            const isShowingStaticGraph = true;
 
-            // Add UI interactive elements, data table  and the provisional data alert.
-            if (!showOnlyGraph) {
-                nodeElem
-                    .call(drawMethodPicker, store)
-                    .call(drawDateRangeControls, store, siteno);
+            if (isShowingStaticGraph) {
+                console.log('config ', config)
+                const graphServerQuery = 'monitoring-location/05370000/?parameterCode=00060';
+                fetchStaticGraphImage(graphServerQuery);
+            } else {
+                graphContainer.classed('ts-legend-controls-container', true)
+                    .call(drawTimeSeriesLegend, store);
 
-                nodeElem.select('.ts-legend-controls-container')
-                    .call(drawGraphControls, store);
-                nodeElem.select('#iv-data-table-container')
-                    .call(drawDataTable, store);
-                nodeElem.select('.provisional-data-alert')
-                    .attr('hidden', null);
-                //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
-                nodeElem.select('.select-time-series-container')
-                    .call(link(store, plotSeriesSelectTable, createStructuredSelector({
-                        siteno: () => siteno,
-                        availableParameterCodes: getAvailableParameterCodes,
-                        lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
-                        timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
-                    }), store));
+                // Add UI interactive elements, data table  and the provisional data alert.
+                if (!showOnlyGraph) {
+                    nodeElem
+                        .call(drawMethodPicker, store)
+                        .call(drawDateRangeControls, store, siteno);
 
-
-                renderTimeSeriesUrlParams(store);
+                    nodeElem.select('.ts-legend-controls-container')
+                        .call(drawGraphControls, store);
+                    nodeElem.select('#iv-data-table-container')
+                        .call(drawDataTable, store);
+                    nodeElem.select('.provisional-data-alert')
+                        .attr('hidden', null);
+                    //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
+                    nodeElem.select('.select-time-series-container')
+                        .call(link(store, plotSeriesSelectTable, createStructuredSelector({
+                            siteno: () => siteno,
+                            availableParameterCodes: getAvailableParameterCodes,
+                            lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
+                            timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
+                        }), store));
+            }
+            renderTimeSeriesUrlParams(store);
             }
         }
     });

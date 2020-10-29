@@ -52,6 +52,9 @@ NETWORK_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections
 # Waterwatch
 WATERWATCH_ENDPOINT = 'https://waterwatch.usgs.gov/webservices'
 
+# Graph Server
+GRAPH_SERVER_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/graph-images'
+
 # The National Map Basemaps
 TNM_USGS_TOPO_ENDPOINT = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer'
 TNM_USGS_IMAGERY_ONLY_ENDPOINT = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer'
