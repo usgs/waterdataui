@@ -78,6 +78,8 @@
                     <p id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}</p>
                 </div>
 
+                <img src="{{ config.GRAPH_SERVER_ENDPOINT }}/monitoring-location/{{ stations[0].site_no }}/?parameterCode={{uv_period_of_record|first}}" alt="hydrograph" />
+
                 {{ components.TimeSeriesComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
 
                 {% if monitoring_camera.exists %}

@@ -7,7 +7,6 @@ import {createStructuredSelector} from 'reselect';
 import config from 'ui/config.js';
 import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
-import {fetchStaticGraphImage} from 'ui/web-services/graph-server';
 import {link} from 'ui/lib/d3-redux';
 
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
@@ -51,20 +50,20 @@ const controlDisplay = function(elem, showElem) {
  * @param {Object} - string properties to set initial state information. The property siteno is required
  */
 export const attachToNode = function(store,
-                                      node,
-                                      {
-                                          siteno,
-                                          latitude,
-                                          longitude,
-                                          parameterCode,
-                                          compare,
-                                          period,
-                                          startDT,
-                                          endDT,
-                                          timeSeriesId, // This must be converted to an integer
-                                          showOnlyGraph = false,
-                                          showMLName = false
-                                      } = {}) {
+                                     node,
+                                     {
+                                         siteno,
+                                         latitude,
+                                         longitude,
+                                         parameterCode,
+                                         compare,
+                                         period,
+                                         startDT,
+                                         endDT,
+                                         timeSeriesId, // This must be converted to an integer
+                                         showOnlyGraph = false,
+                                         showMLName = false
+                                     } = {}) {
     const nodeElem = select(node);
     if (!siteno) {
         select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No data is available.'});
@@ -95,7 +94,7 @@ export const attachToNode = function(store,
         }
     } else {
         // Retrieve all parameter codes for 7 days and median statistics
-         fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno))
+        fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno))
             .then(() => {
                 // Fetch any extended data needed to set initial state
                 const currentParamCode = parameterCode ? parameterCode : getCurrentParmCd(store.getState());
@@ -150,39 +149,33 @@ export const attachToNode = function(store,
                     .call(drawGraphBrush, store);
             }
 
-            graphContainer.append('div');
-            const isShowingStaticGraph = true;
+            graphContainer.append('div')
+                .classed('ts-legend-controls-container', true)
+                .call(drawTimeSeriesLegend, store);
 
-            if (isShowingStaticGraph) {
-                console.log('config ', config)
-                const graphServerQuery = 'monitoring-location/05370000/?parameterCode=00060';
-                fetchStaticGraphImage(graphServerQuery);
-            } else {
-                graphContainer.classed('ts-legend-controls-container', true)
-                    .call(drawTimeSeriesLegend, store);
+            // Add UI interactive elements, data table  and the provisional data alert.
+            if (!showOnlyGraph) {
+                nodeElem
+                    .call(drawMethodPicker, store)
+                    .call(drawDateRangeControls, store, siteno);
 
-                // Add UI interactive elements, data table  and the provisional data alert.
-                if (!showOnlyGraph) {
-                    nodeElem
-                        .call(drawMethodPicker, store)
-                        .call(drawDateRangeControls, store, siteno);
+                nodeElem.select('.ts-legend-controls-container')
+                    .call(drawGraphControls, store);
+                nodeElem.select('#iv-data-table-container')
+                    .call(drawDataTable, store);
+                nodeElem.select('.provisional-data-alert')
+                    .attr('hidden', null);
+                //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
+                nodeElem.select('.select-time-series-container')
+                    .call(link(store, plotSeriesSelectTable, createStructuredSelector({
+                        siteno: () => siteno,
+                        availableParameterCodes: getAvailableParameterCodes,
+                        lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
+                        timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
+                    }), store));
 
-                    nodeElem.select('.ts-legend-controls-container')
-                        .call(drawGraphControls, store);
-                    nodeElem.select('#iv-data-table-container')
-                        .call(drawDataTable, store);
-                    nodeElem.select('.provisional-data-alert')
-                        .attr('hidden', null);
-                    //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
-                    nodeElem.select('.select-time-series-container')
-                        .call(link(store, plotSeriesSelectTable, createStructuredSelector({
-                            siteno: () => siteno,
-                            availableParameterCodes: getAvailableParameterCodes,
-                            lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
-                            timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
-                        }), store));
-            }
-            renderTimeSeriesUrlParams(store);
+
+                renderTimeSeriesUrlParams(store);
             }
         }
     });
