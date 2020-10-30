@@ -4,9 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.37.0...master)
+## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.38.0...master)
+
+## [0.38.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.37.0...waerdataui-0.38.0) - 2020-10-30
 ### Added
-- Cookie to control pandemic banner message.
+- Cookie to control banner message.
 - Added 'Days from today' custom selection.
 - A set of device specific favicons.
 
