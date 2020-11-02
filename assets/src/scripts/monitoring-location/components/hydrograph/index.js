@@ -129,7 +129,7 @@ export const attachToNode = function(store,
             let graphContainer = nodeElem.select('.graph-container');
             graphContainer.append('div')
                 .attr('class', 'static-graph-container')
-                .append('img').attr('src', `https://labs.waterdata.usgs.gov/api/graph-images/monitoring-location/05370000/?parameterCode=00060`);
+                .append('img').attr('src', `${config.GRAPH_SERVER_ENDPOINT}/monitoring-location/${siteno}/?parameterCode=${parameterCode ? parameterCode : '00060' }`);
         } else {
             //Update time series state
             if (parameterCode) {
