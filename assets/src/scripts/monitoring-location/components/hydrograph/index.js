@@ -65,6 +65,7 @@ export const attachToNode = function(store,
                                          showMLName = false
                                      } = {}) {
     const nodeElem = select(node);
+
     if (!siteno) {
         select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No data is available.'});
         return;
@@ -117,6 +118,7 @@ export const attachToNode = function(store,
         nodeElem
             .select('.loading-indicator-container')
             .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
+
         if (!hasAnyTimeSeries(store.getState())) {
             drawInfoAlert(nodeElem, {body: 'No time series data available for this site'});
             if (!showOnlyGraph) {
@@ -153,7 +155,7 @@ export const attachToNode = function(store,
                 .classed('ts-legend-controls-container', true)
                 .call(drawTimeSeriesLegend, store);
 
-            // Add UI interactive elements, data table  and the provisional data alert.
+            // Add UI interactive elements and data table.
             if (!showOnlyGraph) {
                 nodeElem
                     .call(drawMethodPicker, store)
