@@ -56,7 +56,7 @@
     "gulp": "^4.0.2",
     "gulp-rev-all": "^2.0.3",
     "isparta": "^4.1.1",
-    "jasmine": "^3.6.2",
+    "jasmine": "^3.6.3",
     "jasmine-ajax": "^4.0.0",
     "karma": "^5.2.3",
     "karma-browserstack-launcher": "^1.6.0",
