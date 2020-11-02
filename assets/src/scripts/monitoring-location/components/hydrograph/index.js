@@ -125,6 +125,11 @@ export const attachToNode = function(store,
                 document.getElementById('classic-page-link')
                     .setAttribute('href', `${config.NWIS_INVENTORY_ENDPOINT}?site_no=${siteno}`);
             }
+        } else if (window.navigator.userAgent.includes('Firefox')) {
+            let graphContainer = nodeElem.select('.graph-container');
+            graphContainer.append('div')
+                .attr('class', 'static-graph-container')
+                .append('img').attr('src', `https://labs.waterdata.usgs.gov/api/graph-images/monitoring-location/05370000/?parameterCode=00060`);
         } else {
             //Update time series state
             if (parameterCode) {
