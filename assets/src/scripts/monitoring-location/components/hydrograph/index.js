@@ -9,7 +9,7 @@ import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
 import {link} from 'ui/lib/d3-redux';
 
-import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
+import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getSiteCodes} from 'ml/selectors/time-series-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
 import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
@@ -28,7 +28,7 @@ import {plotSeriesSelectTable} from 'ivhydrograph/parameters';
 import {getLineSegmentsByParmCd} from 'ivhydrograph/selectors/drawing-data';
 import {getAvailableParameterCodes} from 'ivhydrograph/selectors/parameter-data';
 import {getTimeSeriesScalesByParmCd} from 'ivhydrograph/selectors/scales';
-import {drawTimeSeriesGraph} from 'ivhydrograph/time-series-graph';
+import {drawTimeSeriesGraph, getStaticGraph} from 'ivhydrograph/time-series-graph';
 import {drawTooltipCursorSlider} from 'ivhydrograph/tooltip';
 import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ivhydrograph/hydrograph-utils';
 
@@ -125,65 +125,69 @@ export const attachToNode = function(store,
                 document.getElementById('classic-page-link')
                     .setAttribute('href', `${config.NWIS_INVENTORY_ENDPOINT}?site_no=${siteno}`);
             }
-        } else if (window.navigator.userAgent.includes('Firefox')) {
-            let graphContainer = nodeElem.select('.graph-container');
-            graphContainer.append('div')
-                .attr('class', 'static-graph-container')
-                .append('img').attr('src', `${config.GRAPH_SERVER_ENDPOINT}/monitoring-location/${siteno}/?parameterCode=${parameterCode ? parameterCode : '00060' }`);
-        } else {
-            //Update time series state
-            if (parameterCode) {
-                const isThisParamCode = function(variable) {
-                    return variable.variableCode.value === parameterCode;
-                };
-                const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
-                store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
-            }
-            if (compare) {
-                store.dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('compare', true));
-            }
-            if (timeSeriesId) {
-                store.dispatch(ivTimeSeriesStateActions.setCurrentIVMethodID(parseInt(timeSeriesId)));
-            }
-            // Initial data has been fetched and initial state set. We can render the hydrograph elements
-            // Set up rendering functions for the graph-container
-            let graphContainer = nodeElem.select('.graph-container')
-                .call(link(store, controlDisplay, hasAnyTimeSeries))
-                .call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph);
-            if (!showOnlyGraph) {
-                graphContainer
-                    .call(drawTooltipCursorSlider, store)
-                    .call(drawGraphBrush, store);
-            }
-
-            graphContainer.append('div')
-                .classed('ts-legend-controls-container', true)
-                .call(drawTimeSeriesLegend, store);
-
-            // Add UI interactive elements and data table.
-            if (!showOnlyGraph) {
-                nodeElem
-                    .call(drawMethodPicker, store)
-                    .call(drawDateRangeControls, store, siteno);
-
-                nodeElem.select('.ts-legend-controls-container')
-                    .call(drawGraphControls, store);
-                nodeElem.select('#iv-data-table-container')
-                    .call(drawDataTable, store);
-                nodeElem.select('.provisional-data-alert')
-                    .attr('hidden', null);
-                //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
-                nodeElem.select('.select-time-series-container')
-                    .call(link(store, plotSeriesSelectTable, createStructuredSelector({
-                        siteno: () => siteno,
-                        availableParameterCodes: getAvailableParameterCodes,
-                        lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
-                        timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
-                    }), store));
-
-
-                renderTimeSeriesUrlParams(store);
-            }
         }
+        //Update time series state
+        if (parameterCode) {
+            const isThisParamCode = function(variable) {
+                return variable.variableCode.value === parameterCode;
+            };
+            const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
+            store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
+        }
+        if (compare) {
+            store.dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('compare', true));
+        }
+        if (timeSeriesId) {
+            store.dispatch(ivTimeSeriesStateActions.setCurrentIVMethodID(parseInt(timeSeriesId)));
+        }
+        // Initial data has been fetched and initial state set. We can render the hydrograph elements
+        // Set up rendering functions for the graph-container
+        let graphContainer = nodeElem.select('.graph-container')
+            .call(link(store, controlDisplay, hasAnyTimeSeries));
+
+if (window.navigator.userAgent.includes('Firefox')) {
+    graphContainer.call(link(store, getStaticGraph, createStructuredSelector({
+        siteCodes: getSiteCodes,
+        parameterCode: getCurrentParmCd
+    })));
+} else {
+console.log('in the else of if ')
+}
+    graphContainer.call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph, parameterCode);
+    if (!showOnlyGraph) {
+        graphContainer
+            .call(drawTooltipCursorSlider, store)
+            .call(drawGraphBrush, store);
+
+        graphContainer.append('div')
+            .classed('ts-legend-controls-container', true)
+            .call(drawTimeSeriesLegend, store);
+    }
+
+        // Add UI interactive elements and data table.
+        if (!showOnlyGraph) {
+            nodeElem
+                .call(drawMethodPicker, store)
+                .call(drawDateRangeControls, store, siteno);
+
+            nodeElem.select('.ts-legend-controls-container')
+                .call(drawGraphControls, store);
+            nodeElem.select('#iv-data-table-container')
+                .call(drawDataTable, store);
+            nodeElem.select('.provisional-data-alert')
+                .attr('hidden', null);
+            //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
+            nodeElem.select('.select-time-series-container')
+                .call(link(store, plotSeriesSelectTable, createStructuredSelector({
+                    siteno: () => siteno,
+                    availableParameterCodes: getAvailableParameterCodes,
+                    lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
+                    timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
+                }), store));
+
+
+            renderTimeSeriesUrlParams(store);
+        }
+
     });
 };

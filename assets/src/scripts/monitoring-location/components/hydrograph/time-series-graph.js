@@ -38,7 +38,21 @@ const addDefsPatterns = function(elem) {
 /**
  * Plots the median points for a single median time series.
  * @param  {Object} elem
+/**
+ * Plots the median points for a single median time series.
+ * @param  {Object} elem
  * @param  {Function} xscale
+ * @param  {Function} yscale
+ * @param  {Number} modulo
+ * @param  {Array} points
+ * @param  {Function} xscale
+/**
+ * Plots the median points for a single median time series.
+ * @param  {Object} elem
+ * @param  {Function} xscale
+ * @param  {Function} yscale
+ * @param  {Number} modulo
+ * @param  {Array} points
  * @param  {Function} yscale
  * @param  {Number} modulo
  * @param  {Array} points
@@ -266,4 +280,17 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
     if (showTooltip) {
         dataGroup.call(drawTooltipFocus, store);
     }
+};
+
+export const getStaticGraph = function(elem, siteCodes, parameterCode) {
+
+    console.log('parameterCode ', siteCodes.parameterCode)
+    console.log('siteCodes ', siteCodes);
+    console.log('query ', `${config.GRAPH_SERVER_ENDPOINT}/monitoring-location/${Object.keys(siteCodes.siteCodes)}/?parameterCode=${siteCodes.siteCodes.parameterCode ? siteCodes.siteCodes.parameterCode : '00060'}`)
+const staticGraphContainer = document.getElementById('static-ivgraph-container');
+    if (staticGraphContainer) {
+        staticGraphContainer.remove();
+    }
+    elem.append('div').attr('id', 'static-ivgraph-container')
+        .append('img').attr('src', `${config.GRAPH_SERVER_ENDPOINT}/monitoring-location/${Object.keys(siteCodes.siteCodes)}/?parameterCode=${siteCodes.parameterCode ? siteCodes.parameterCode : '00060'}`);
 };
