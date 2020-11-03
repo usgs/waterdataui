@@ -9,7 +9,16 @@ import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
 import {link} from 'ui/lib/d3-redux';
 
-import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getSiteCodes} from 'ml/selectors/time-series-selector';
+import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
+
+import {hasAnyTimeSeries,
+    getCurrentParmCd,
+    getVariables,
+    getSiteCodes,
+    getCurrentDateRange,
+    getShowIVTimeSeries,
+    getCustomTimeRange
+} from 'ml/selectors/time-series-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
 import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
@@ -145,24 +154,28 @@ export const attachToNode = function(store,
         let graphContainer = nodeElem.select('.graph-container')
             .call(link(store, controlDisplay, hasAnyTimeSeries));
 
-if (window.navigator.userAgent.includes('Firefox')) {
-    graphContainer.call(link(store, getStaticGraph, createStructuredSelector({
-        siteCodes: getSiteCodes,
-        parameterCode: getCurrentParmCd
-    })));
-} else {
-console.log('in the else of if ')
-}
-    graphContainer.call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph, parameterCode);
-    if (!showOnlyGraph) {
-        graphContainer
-            .call(drawTooltipCursorSlider, store)
-            .call(drawGraphBrush, store);
+        if (window.navigator.userAgent.includes('Firefox')) {
+            graphContainer.call(link(store, getStaticGraph, createStructuredSelector({
+                siteNumber: getSiteCodes,
+                parameterCode: getCurrentParmCd,
+                currentDateRange: getCurrentDateRange,
+                timeSeriesShowOnGraphOptions: getShowIVTimeSeries,
+                customTimeRange: getCustomTimeRange,
+                timeZone: getIanaTimeZone
+            })));
+        } else {
+        console.log('in the else of if ');
+        }
+        graphContainer.call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph, parameterCode);
+        if (!showOnlyGraph) {
+            graphContainer
+                .call(drawTooltipCursorSlider, store)
+                .call(drawGraphBrush, store);
 
-        graphContainer.append('div')
-            .classed('ts-legend-controls-container', true)
-            .call(drawTimeSeriesLegend, store);
-    }
+            graphContainer.append('div')
+                .classed('ts-legend-controls-container', true)
+                .call(drawTimeSeriesLegend, store);
+        }
 
         // Add UI interactive elements and data table.
         if (!showOnlyGraph) {

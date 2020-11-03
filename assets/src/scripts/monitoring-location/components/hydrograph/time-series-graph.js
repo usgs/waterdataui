@@ -22,6 +22,7 @@ import {getMainXScale, getMainYScale, getBrushXScale} from 'ivhydrograph/selecto
 import {getDescription, isVisible, getTitle} from 'ivhydrograph/selectors/time-series-data';
 import {drawDataLines} from 'ivhydrograph/time-series-lines';
 import {drawTooltipFocus, drawTooltipText}  from 'ivhydrograph/tooltip';
+import {DateTime} from "luxon";
 
 const addDefsPatterns = function(elem) {
     const patterns = [{
@@ -282,15 +283,40 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
     }
 };
 
-export const getStaticGraph = function(elem, siteCodes, parameterCode) {
 
-    console.log('parameterCode ', siteCodes.parameterCode)
-    console.log('siteCodes ', siteCodes);
-    console.log('query ', `${config.GRAPH_SERVER_ENDPOINT}/monitoring-location/${Object.keys(siteCodes.siteCodes)}/?parameterCode=${siteCodes.siteCodes.parameterCode ? siteCodes.siteCodes.parameterCode : '00060'}`)
-const staticGraphContainer = document.getElementById('static-ivgraph-container');
+const generateStaticGraphURL = function(queryParameterParts) {
+    const siteNumber = Object.keys(queryParameterParts.siteNumber);
+    const parameterCode = queryParameterParts.parameterCode ? queryParameterParts.parameterCode :  '00060';
+    const timePeriod = queryParameterParts.currentDateRange ? queryParameterParts.currentDateRange : null;
+    const isCompareSelected = queryParameterParts.timeSeriesShowOnGraphOptions.compare ? queryParameterParts.timeSeriesShowOnGraphOptions.compare : false;
+    let customStartDate;
+    let customEndDate;
+    if (queryParameterParts.customTimeRange) {
+        customStartDate = queryParameterParts.customTimeRange.start ?  DateTime.fromMillis(queryParameterParts.customTimeRange.start, {zone: queryParameterParts.timeZone}).toFormat('yyyy-LL-dd') : null;
+        customEndDate = queryParameterParts.customTimeRange.end ?  DateTime.fromMillis(queryParameterParts.customTimeRange.end, {zone: queryParameterParts.timeZone}).toFormat('yyyy-LL-dd') : null;
+    }
+console.log('start date ', customStartDate);
+console.log('end date ', customEndDate);
+
+    let url = `${config.GRAPH_SERVER_ENDPOINT}/monitoring-location/${siteNumber}/?parameterCode=${parameterCode}`;
+    if (timePeriod && timePeriod !== 'custom') {
+        url = `${url}&period=${timePeriod}&compare=${isCompareSelected}`;
+    } else if (customStartDate && customEndDate) {
+        url = `${url}&startDT=${customStartDate}&endDT=${customEndDate}`;
+    }
+
+    return url;
+};
+
+export const getStaticGraph = function(elem, queryParameterParts) {
+    console.log('queryParameterParts object ', queryParameterParts);
+
+    const graphServerURL = generateStaticGraphURL(queryParameterParts);
+    console.log('url? ', graphServerURL)
+    const staticGraphContainer = document.getElementById('static-ivgraph-container');
     if (staticGraphContainer) {
         staticGraphContainer.remove();
     }
     elem.append('div').attr('id', 'static-ivgraph-container')
-        .append('img').attr('src', `${config.GRAPH_SERVER_ENDPOINT}/monitoring-location/${Object.keys(siteCodes.siteCodes)}/?parameterCode=${siteCodes.parameterCode ? siteCodes.parameterCode : '00060'}`);
+        .append('img').attr('src', `${graphServerURL}`);
 };
