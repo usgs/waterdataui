@@ -295,8 +295,6 @@ const generateStaticGraphURL = function(queryParameterParts) {
         customStartDate = queryParameterParts.customTimeRange.start ?  DateTime.fromMillis(queryParameterParts.customTimeRange.start, {zone: queryParameterParts.timeZone}).toFormat('yyyy-LL-dd') : null;
         customEndDate = queryParameterParts.customTimeRange.end ?  DateTime.fromMillis(queryParameterParts.customTimeRange.end, {zone: queryParameterParts.timeZone}).toFormat('yyyy-LL-dd') : null;
     }
-console.log('start date ', customStartDate);
-console.log('end date ', customEndDate);
 
     let url = `${config.GRAPH_SERVER_ENDPOINT}/monitoring-location/${siteNumber}/?parameterCode=${parameterCode}`;
     if (timePeriod && timePeriod !== 'custom') {
@@ -309,11 +307,9 @@ console.log('end date ', customEndDate);
 };
 
 export const getStaticGraph = function(elem, queryParameterParts) {
-    console.log('queryParameterParts object ', queryParameterParts);
-
     const graphServerURL = generateStaticGraphURL(queryParameterParts);
-    console.log('url? ', graphServerURL)
     const staticGraphContainer = document.getElementById('static-ivgraph-container');
+
     if (staticGraphContainer) {
         staticGraphContainer.remove();
     }

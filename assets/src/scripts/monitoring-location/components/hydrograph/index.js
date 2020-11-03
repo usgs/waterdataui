@@ -154,7 +154,7 @@ export const attachToNode = function(store,
         let graphContainer = nodeElem.select('.graph-container')
             .call(link(store, controlDisplay, hasAnyTimeSeries));
 
-        if (window.navigator.userAgent.includes('Firefox')) {
+        if (window.navigator.userAgent.includes('MSIE')) {
             graphContainer.call(link(store, getStaticGraph, createStructuredSelector({
                 siteNumber: getSiteCodes,
                 parameterCode: getCurrentParmCd,
@@ -164,19 +164,17 @@ export const attachToNode = function(store,
                 timeZone: getIanaTimeZone
             })));
         } else {
-        console.log('in the else of if ');
-        }
-        graphContainer.call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph, parameterCode);
-        if (!showOnlyGraph) {
-            graphContainer
-                .call(drawTooltipCursorSlider, store)
-                .call(drawGraphBrush, store);
+            graphContainer.call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph, parameterCode);
+            if (!showOnlyGraph) {
+                graphContainer
+                    .call(drawTooltipCursorSlider, store)
+                    .call(drawGraphBrush, store);
 
-            graphContainer.append('div')
-                .classed('ts-legend-controls-container', true)
-                .call(drawTimeSeriesLegend, store);
+                graphContainer.append('div')
+                    .classed('ts-legend-controls-container', true)
+                    .call(drawTimeSeriesLegend, store);
+             }
         }
-
         // Add UI interactive elements and data table.
         if (!showOnlyGraph) {
             nodeElem
