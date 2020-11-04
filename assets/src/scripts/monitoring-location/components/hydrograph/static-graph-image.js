@@ -43,5 +43,7 @@ export const getStaticGraph = function(elem, queryParameterParts) {
         staticGraphContainer.remove();
     }
     elem.append('div').attr('id', 'static-ivgraph-container')
-        .append('img').attr('src', `${graphServerURL}`);
+        .append('img')
+            .attr('src', graphServerURL)
+            .attr('alt', `static graph for location ${Object.keys(queryParameterParts.siteNumber)}`);
 };

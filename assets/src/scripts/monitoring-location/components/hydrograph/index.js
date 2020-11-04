@@ -142,6 +142,7 @@ export const attachToNode = function(store,
                 const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
                 store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
             }
+
             if (compare) {
                 store.dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('compare', true));
             }
@@ -152,8 +153,9 @@ export const attachToNode = function(store,
             // Set up rendering functions for the graph-container
             let graphContainer = nodeElem.select('.graph-container')
                 .call(link(store, controlDisplay, hasAnyTimeSeries));
-            if (window.navigator.userAgent.includes('MSIE')) {
-                    graphContainer.call(link(store, getStaticGraph, createStructuredSelector({
+
+            if (window.navigator.userAgent.indexOf('MSIE') !== -1) {
+                graphContainer.call(link(store, getStaticGraph, createStructuredSelector({
                     siteNumber: getSiteCodes,
                     parameterCode: getCurrentParmCd,
                     currentDateRange: getCurrentDateRange,
@@ -168,12 +170,10 @@ export const attachToNode = function(store,
                         .call(drawTooltipCursorSlider, store)
                         .call(drawGraphBrush, store);
                 }
+                graphContainer.append('div')
+                    .classed('ts-legend-controls-container', true)
+                    .call(drawTimeSeriesLegend, store);
             }
-
-            graphContainer.append('div')
-                .classed('ts-legend-controls-container', true)
-                .call(drawTimeSeriesLegend, store);
-
             // Add UI interactive elements, data table  and the provisional data alert.
             if (!showOnlyGraph) {
                 nodeElem
