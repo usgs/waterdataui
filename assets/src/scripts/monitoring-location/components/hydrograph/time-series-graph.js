@@ -77,7 +77,7 @@ const plotAllMedianPoints = function(elem, {visible, xscale, yscale, seriesPoint
     }
     const container = elem
         .append('g')
-        .attr('id', 'median-points');
+            .attr('id', 'median-points');
     if (enableClip) {
         container.attr('clip-path', 'url(#graph-clip');
     }
@@ -128,7 +128,7 @@ const plotAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesP
     const container = elem
         .append('g')
         .lower()
-        .attr('id', 'flood-level-points');
+            .attr('id', 'flood-level-points');
     if (enableClip) {
         container.attr('clip-path', 'url(#graph-clip');
     }
@@ -213,12 +213,12 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
             elem.select('#graph-clip').remove();
             elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`)
                 .append('clipPath')
-                .attr('id', 'graph-clip')
-                .append('rect')
-                .attr('x', 0)
-                .attr('y', 0)
-                .attr('width', layout.width - layout.margin.right)
-                .attr('height', layout.height - layout.margin.bottom);
+                    .attr('id', 'graph-clip')
+                    .append('rect')
+                        .attr('x', 0)
+                        .attr('y', 0)
+                        .attr('width', layout.width - layout.margin.right)
+                        .attr('height', layout.height - layout.margin.bottom);
         }, getMainLayout))
         .call(link(store, addSVGAccessibility, createStructuredSelector({
             title: getTitle,
