@@ -7,7 +7,7 @@ import config from 'ui/config';
 * @param {Object} queryParameterParts - contains information needed to construct the graph server URL
 * such as site number and parameter codes
 */
-const generateStaticGraphURL = function(queryParameterParts) {
+export const generateStaticGraphURL = function(queryParameterParts) {
     const siteNumber = Object.keys(queryParameterParts.siteNumber);
     const parameterCode = queryParameterParts.parameterCode ? queryParameterParts.parameterCode :  '00060';
     const timePeriod = queryParameterParts.currentDateRange ? queryParameterParts.currentDateRange : null;

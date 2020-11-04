@@ -520,7 +520,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
             }
         };
 
-        fit(' will return an object indicating which graph options are shown', () => {
+        it(' will return an object indicating which graph options are shown', () => {
             expect(getShowIVTimeSeries(TEST_STATE)).toEqual({
                 current: true,
                 compare: false,
