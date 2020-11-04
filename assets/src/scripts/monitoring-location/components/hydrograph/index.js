@@ -37,7 +37,7 @@ import {plotSeriesSelectTable} from 'ivhydrograph/parameters';
 import {getLineSegmentsByParmCd} from 'ivhydrograph/selectors/drawing-data';
 import {getAvailableParameterCodes} from 'ivhydrograph/selectors/parameter-data';
 import {getTimeSeriesScalesByParmCd} from 'ivhydrograph/selectors/scales';
-import {getStaticGraph} from 'ivhydrograph/time-series-graph';
+import {getStaticGraph} from 'ivhydrograph/static-graph-image';
 import {drawTimeSeriesGraph} from 'ivhydrograph/time-series-graph';
 import {drawTooltipCursorSlider} from 'ivhydrograph/tooltip';
 import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ivhydrograph/hydrograph-utils';
@@ -75,7 +75,6 @@ export const attachToNode = function(store,
                                          showMLName = false
                                      } = {}) {
     const nodeElem = select(node);
-
     if (!siteno) {
         select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No data is available.'});
         return;
@@ -128,78 +127,77 @@ export const attachToNode = function(store,
         nodeElem
             .select('.loading-indicator-container')
             .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
-
         if (!hasAnyTimeSeries(store.getState())) {
             drawInfoAlert(nodeElem, {body: 'No time series data available for this site'});
             if (!showOnlyGraph) {
                 document.getElementById('classic-page-link')
                     .setAttribute('href', `${config.NWIS_INVENTORY_ENDPOINT}?site_no=${siteno}`);
             }
-        }
-        //Update time series state
-        if (parameterCode) {
-            const isThisParamCode = function(variable) {
-                return variable.variableCode.value === parameterCode;
-            };
-            const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
-            store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
-        }
-        if (compare) {
-            store.dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('compare', true));
-        }
-        if (timeSeriesId) {
-            store.dispatch(ivTimeSeriesStateActions.setCurrentIVMethodID(parseInt(timeSeriesId)));
-        }
-        // Initial data has been fetched and initial state set. We can render the hydrograph elements
-        // Set up rendering functions for the graph-container
-        let graphContainer = nodeElem.select('.graph-container')
-            .call(link(store, controlDisplay, hasAnyTimeSeries));
-
-        if (window.navigator.userAgent.includes('MSIE')) {
-            graphContainer.call(link(store, getStaticGraph, createStructuredSelector({
-                siteNumber: getSiteCodes,
-                parameterCode: getCurrentParmCd,
-                currentDateRange: getCurrentDateRange,
-                timeSeriesShowOnGraphOptions: getShowIVTimeSeries,
-                customTimeRange: getCustomTimeRange,
-                timeZone: getIanaTimeZone
-            })));
         } else {
-            graphContainer.call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph, parameterCode);
+            //Update time series state
+            if (parameterCode) {
+                const isThisParamCode = function(variable) {
+                    return variable.variableCode.value === parameterCode;
+                };
+                const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
+                store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
+            }
+            if (compare) {
+                store.dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('compare', true));
+            }
+            if (timeSeriesId) {
+                store.dispatch(ivTimeSeriesStateActions.setCurrentIVMethodID(parseInt(timeSeriesId)));
+            }
+            // Initial data has been fetched and initial state set. We can render the hydrograph elements
+            // Set up rendering functions for the graph-container
+            let graphContainer = nodeElem.select('.graph-container')
+                .call(link(store, controlDisplay, hasAnyTimeSeries));
+            if (window.navigator.userAgent.includes('MSIE')) {
+                    graphContainer.call(link(store, getStaticGraph, createStructuredSelector({
+                    siteNumber: getSiteCodes,
+                    parameterCode: getCurrentParmCd,
+                    currentDateRange: getCurrentDateRange,
+                    timeSeriesShowOnGraphOptions: getShowIVTimeSeries,
+                    customTimeRange: getCustomTimeRange,
+                    timeZone: getIanaTimeZone
+                })));
+            } else {
+                graphContainer.call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph);
+                if (!showOnlyGraph) {
+                    graphContainer
+                        .call(drawTooltipCursorSlider, store)
+                        .call(drawGraphBrush, store);
+                }
+            }
+
+            graphContainer.append('div')
+                .classed('ts-legend-controls-container', true)
+                .call(drawTimeSeriesLegend, store);
+
+            // Add UI interactive elements, data table  and the provisional data alert.
             if (!showOnlyGraph) {
-                graphContainer
-                    .call(drawTooltipCursorSlider, store)
-                    .call(drawGraphBrush, store);
+                nodeElem
+                    .call(drawMethodPicker, store)
+                    .call(drawDateRangeControls, store, siteno);
 
-                graphContainer.append('div')
-                    .classed('ts-legend-controls-container', true)
-                    .call(drawTimeSeriesLegend, store);
-             }
+                nodeElem.select('.ts-legend-controls-container')
+                    .call(drawGraphControls, store);
+                nodeElem.select('#iv-data-table-container')
+                    .call(drawDataTable, store);
+                nodeElem.select('.provisional-data-alert')
+                    .attr('hidden', null);
+                //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
+                nodeElem.select('.select-time-series-container')
+                    .call(link(store, plotSeriesSelectTable, createStructuredSelector({
+                        siteno: () => siteno,
+                        availableParameterCodes: getAvailableParameterCodes,
+                        lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
+                        timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
+                    }), store));
+
+
+                renderTimeSeriesUrlParams(store);
+            }
         }
-        // Add UI interactive elements and data table.
-        if (!showOnlyGraph) {
-            nodeElem
-                .call(drawMethodPicker, store)
-                .call(drawDateRangeControls, store, siteno);
-
-            nodeElem.select('.ts-legend-controls-container')
-                .call(drawGraphControls, store);
-            nodeElem.select('#iv-data-table-container')
-                .call(drawDataTable, store);
-            nodeElem.select('.provisional-data-alert')
-                .attr('hidden', null);
-            //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
-            nodeElem.select('.select-time-series-container')
-                .call(link(store, plotSeriesSelectTable, createStructuredSelector({
-                    siteno: () => siteno,
-                    availableParameterCodes: getAvailableParameterCodes,
-                    lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
-                    timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
-                }), store));
-
-
-            renderTimeSeriesUrlParams(store);
-        }
-
     });
 };
