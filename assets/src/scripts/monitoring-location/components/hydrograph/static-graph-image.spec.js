@@ -86,7 +86,7 @@ describe('generateStaticGraphURL', () => {
         }
     };
 
-    fit('will return a properly formatted URL', () => {
+    it('will return a properly formatted URL', () => {
         expect(generateStaticGraphURL(queryParameterPartsNoParameterCode))
             .toEqual('https:/fake-graph-server/monitoring-location/05413500/?parameterCode=00060');
         expect(generateStaticGraphURL(queryParameterPartsWithParameterCode))
