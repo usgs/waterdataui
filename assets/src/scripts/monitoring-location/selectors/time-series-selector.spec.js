@@ -13,6 +13,7 @@ import {
     getQueryInfo,
     getRequests,
     getCurrentParmCd,
+    getShowIVTimeSeries,
     hasTimeSeries,
     getTsRequestKey,
     getTsQueryInfo,
@@ -505,6 +506,26 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                     currentIVDateRange: 'P30D'
                 }
             })).toEqual('P30D');
+        });
+    });
+
+    describe('getShowIVTimeSeries', () => {
+        const TEST_STATE = {
+            ivTimeSeriesState: {
+                showIVTimeSeries: {
+                    current: true,
+                    compare: false,
+                    median: false
+                }
+            }
+        };
+
+        fit(' will return an object indicating which graph options are shown', () => {
+            expect(getShowIVTimeSeries(TEST_STATE)).toEqual({
+                current: true,
+                compare: false,
+                median: false
+            });
         });
     });
 

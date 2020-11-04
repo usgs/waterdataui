@@ -2,8 +2,11 @@ import {DateTime} from 'luxon';
 
 import config from 'ui/config';
 
-
-
+/*
+* Creates a URL that is used to call the graph server and return a static image of the hydrograph
+* @param {Object} queryParameterParts - contains information needed to construct the graph server URL
+* such as site number and parameter codes
+*/
 const generateStaticGraphURL = function(queryParameterParts) {
     const siteNumber = Object.keys(queryParameterParts.siteNumber);
     const parameterCode = queryParameterParts.parameterCode ? queryParameterParts.parameterCode :  '00060';
@@ -26,6 +29,12 @@ const generateStaticGraphURL = function(queryParameterParts) {
     return url;
 };
 
+/*
+ * Adds an image tag to the target element so that an image from the graph server can be inserted into the tag.
+ * @param {D3 selection} elem
+ * @param {Object} queryParameterParts - contains information needed to construct the graph server URL
+ *  such as site number and parameter codes
+ */
 export const getStaticGraph = function(elem, queryParameterParts) {
     const graphServerURL = generateStaticGraphURL(queryParameterParts);
     const staticGraphContainer = document.getElementById('static-ivgraph-container');
