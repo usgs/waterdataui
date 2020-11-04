@@ -37,7 +37,8 @@ import {plotSeriesSelectTable} from 'ivhydrograph/parameters';
 import {getLineSegmentsByParmCd} from 'ivhydrograph/selectors/drawing-data';
 import {getAvailableParameterCodes} from 'ivhydrograph/selectors/parameter-data';
 import {getTimeSeriesScalesByParmCd} from 'ivhydrograph/selectors/scales';
-import {drawTimeSeriesGraph, getStaticGraph} from 'ivhydrograph/time-series-graph';
+import {getStaticGraph} from 'ivhydrograph/time-series-graph';
+import {drawTimeSeriesGraph} from 'ivhydrograph/time-series-graph';
 import {drawTooltipCursorSlider} from 'ivhydrograph/tooltip';
 import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ivhydrograph/hydrograph-utils';
 

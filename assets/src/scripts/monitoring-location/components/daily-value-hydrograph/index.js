@@ -89,9 +89,6 @@ export const attachToNode = function(store,
                 });
                 store.dispatch(Actions.setCurrentDVTimeSeriesIds(min, mean, max));
                 loadingIndicator.call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
-
-
-
                 let graphContainer = nodeElem.select('.graph-container');
                 graphContainer
                     .call(drawGraphControls, store)

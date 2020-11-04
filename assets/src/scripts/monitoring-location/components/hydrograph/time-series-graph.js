@@ -22,7 +22,6 @@ import {getMainXScale, getMainYScale, getBrushXScale} from 'ivhydrograph/selecto
 import {getDescription, isVisible, getTitle} from 'ivhydrograph/selectors/time-series-data';
 import {drawDataLines} from 'ivhydrograph/time-series-lines';
 import {drawTooltipFocus, drawTooltipText}  from 'ivhydrograph/tooltip';
-import {DateTime} from "luxon";
 
 const addDefsPatterns = function(elem) {
     const patterns = [{
@@ -39,21 +38,7 @@ const addDefsPatterns = function(elem) {
 /**
  * Plots the median points for a single median time series.
  * @param  {Object} elem
-/**
- * Plots the median points for a single median time series.
- * @param  {Object} elem
  * @param  {Function} xscale
- * @param  {Function} yscale
- * @param  {Number} modulo
- * @param  {Array} points
- * @param  {Function} xscale
-/**
- * Plots the median points for a single median time series.
- * @param  {Object} elem
- * @param  {Function} xscale
- * @param  {Function} yscale
- * @param  {Number} modulo
- * @param  {Array} points
  * @param  {Function} yscale
  * @param  {Number} modulo
  * @param  {Array} points
@@ -92,7 +77,7 @@ const plotAllMedianPoints = function(elem, {visible, xscale, yscale, seriesPoint
     }
     const container = elem
         .append('g')
-            .attr('id', 'median-points');
+        .attr('id', 'median-points');
     if (enableClip) {
         container.attr('clip-path', 'url(#graph-clip');
     }
@@ -143,7 +128,7 @@ const plotAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesP
     const container = elem
         .append('g')
         .lower()
-            .attr('id', 'flood-level-points');
+        .attr('id', 'flood-level-points');
     if (enableClip) {
         container.attr('clip-path', 'url(#graph-clip');
     }
@@ -228,13 +213,13 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
             elem.select('#graph-clip').remove();
             elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.top + layout.margin.bottom}`)
                 .append('clipPath')
-                    .attr('id', 'graph-clip')
-                    .append('rect')
-                        .attr('x', 0)
-                        .attr('y', 0)
-                        .attr('width', layout.width - layout.margin.right)
-                        .attr('height', layout.height - layout.margin.bottom);
-            }, getMainLayout))
+                .attr('id', 'graph-clip')
+                .append('rect')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('width', layout.width - layout.margin.right)
+                .attr('height', layout.height - layout.margin.bottom);
+        }, getMainLayout))
         .call(link(store, addSVGAccessibility, createStructuredSelector({
             title: getTitle,
             description: getDescription,
@@ -272,7 +257,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
             seriesPoints: getCurrentVariableMedianStatPoints,
             enableClip: () => true
         })))
-       .call(link(store, plotAllFloodLevelPoints, createStructuredSelector({
+        .call(link(store, plotAllFloodLevelPoints, createStructuredSelector({
             visible: isWaterwatchVisible,
             xscale: getBrushXScale('current'),
             yscale: getMainYScale,
@@ -281,38 +266,4 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
     if (showTooltip) {
         dataGroup.call(drawTooltipFocus, store);
     }
-};
-
-
-const generateStaticGraphURL = function(queryParameterParts) {
-    const siteNumber = Object.keys(queryParameterParts.siteNumber);
-    const parameterCode = queryParameterParts.parameterCode ? queryParameterParts.parameterCode :  '00060';
-    const timePeriod = queryParameterParts.currentDateRange ? queryParameterParts.currentDateRange : null;
-    const isCompareSelected = queryParameterParts.timeSeriesShowOnGraphOptions.compare ? queryParameterParts.timeSeriesShowOnGraphOptions.compare : false;
-    let customStartDate;
-    let customEndDate;
-    if (queryParameterParts.customTimeRange) {
-        customStartDate = queryParameterParts.customTimeRange.start ?  DateTime.fromMillis(queryParameterParts.customTimeRange.start, {zone: queryParameterParts.timeZone}).toFormat('yyyy-LL-dd') : null;
-        customEndDate = queryParameterParts.customTimeRange.end ?  DateTime.fromMillis(queryParameterParts.customTimeRange.end, {zone: queryParameterParts.timeZone}).toFormat('yyyy-LL-dd') : null;
-    }
-
-    let url = `${config.GRAPH_SERVER_ENDPOINT}/monitoring-location/${siteNumber}/?parameterCode=${parameterCode}`;
-    if (timePeriod && timePeriod !== 'custom') {
-        url = `${url}&period=${timePeriod}&compare=${isCompareSelected}`;
-    } else if (customStartDate && customEndDate) {
-        url = `${url}&startDT=${customStartDate}&endDT=${customEndDate}`;
-    }
-
-    return url;
-};
-
-export const getStaticGraph = function(elem, queryParameterParts) {
-    const graphServerURL = generateStaticGraphURL(queryParameterParts);
-    const staticGraphContainer = document.getElementById('static-ivgraph-container');
-
-    if (staticGraphContainer) {
-        staticGraphContainer.remove();
-    }
-    elem.append('div').attr('id', 'static-ivgraph-container')
-        .append('img').attr('src', `${graphServerURL}`);
 };
