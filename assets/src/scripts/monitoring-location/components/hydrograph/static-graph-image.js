@@ -33,11 +33,10 @@ export const generateStaticGraphURL = function(queryParameterParts) {
 /*
  * Adds an image tag to the target element so that an image from the graph server can be inserted into the tag.
  * NOTE: Needs to be written in pre-ES6 code compatable with Internet Explorer 11
- * @param {D3 selection} elem
  * @param {Object} queryParameterParts - contains information needed to construct the graph server URL
  *  such as site number and parameter codes
  */
-export const getStaticGraph = function(elem, queryParameterParts) {
+export const getStaticGraph = function(queryParameterParts) {
     const graphServerURL = generateStaticGraphURL(queryParameterParts);
     const graphContainer = document.getElementById('graph-container');
     const staticGraphContainer = document.getElementById('static-ivgraph-container');

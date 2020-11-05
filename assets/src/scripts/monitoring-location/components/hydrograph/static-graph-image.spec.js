@@ -120,7 +120,7 @@ describe('getStaticGraph', () => {
 
     beforeEach(() => {
         div = select('body').append('div')
-            .attr('id', 'hydrograph');
+            .attr('id', 'graph-container');
     });
 
     afterEach(() => {
@@ -128,7 +128,7 @@ describe('getStaticGraph', () => {
     });
 
     it  ('will add an image element', () => {
-        getStaticGraph(div, queryParameterParts);
+        getStaticGraph(queryParameterParts);
         expect(div.selectAll('img').size()).toBe(1);
     });
 });
