@@ -154,7 +154,8 @@ export const attachToNode = function(store,
             let graphContainer = nodeElem.select('.graph-container')
                 .call(link(store, controlDisplay, hasAnyTimeSeries));
 
-            if (window.navigator.userAgent.indexOf('MSIE') !== -1) {
+            // if (window.navigator.userAgent.indexOf('MSIE') !== -1) {
+            if (window.navigator.userAgent.indexOf('Firefox') !== -1) {
                 graphContainer.call(link(store, getStaticGraph, createStructuredSelector({
                     siteNumber: getSiteCodes,
                     parameterCode: getCurrentParmCd,

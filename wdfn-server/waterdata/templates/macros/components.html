@@ -1,7 +1,7 @@
 {% macro TimeSeriesComponent(site_no, latitude, longitude) -%}
     <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ site_no }}" data-latitude="{{ latitude }}" data-longitude="{{ longitude }}">
         <div class="loading-indicator-container"></div>
-        <div class="graph-container"></div>
+        <div id="graph-container" class="graph-container"></div>
         <div class="provisional-data-statement">
             <p>
                 <span class="usa-tag">Important</span>
