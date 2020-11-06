@@ -49,11 +49,11 @@
                 <h3>Please pick a site:</h3>
                 <table class="usa-table usa-table--borderless">
                     <thead>
-                        <tr>
-                            <th scope="col">Agency</th>
-                            <th scope="col">Site number</th>
-                            <th scope="col">Site name</th>
-                        </tr>
+                    <tr>
+                        <th scope="col">Agency</th>
+                        <th scope="col">Site number</th>
+                        <th scope="col">Site name</th>
+                    </tr>
                     </thead>
                     <tbody>
                     {% for site in stations %}
@@ -85,14 +85,16 @@
                             var splitUrl = urlString.split('#')
                             var siteNumber = splitUrl[0].split('/monitoring-location/')[1].slice(0, -1);
                             var paramString = splitUrl[1];
-                            var graphServerURL = '{{ config.GRAPH_SERVER_ENDPOINT }}/monitoring-location/' + siteNumber + '/?' + paramString;
-                            var altText = 'hydrograph for monitoring location' + siteNumber;
-                            var monitoringLocationContainer = document.getElementById('monitoring-location-page-container');
 
+                            if (typeof(paramString) === "undefined") {
+                                paramString = 'parameterCode=00060'
+                            }
+                            var graphServerURL = '{{ config.GRAPH_SERVER_ENDPOINT }}/monitoring-location/' + siteNumber + '/?' + paramString;
+                            var altText = 'hydrograph for monitoring location ' + siteNumber;
+                            var monitoringLocationContainer = document.getElementById('monitoring-location-page-container');
                             var staticGraphImage = document.createElement('img');
                             staticGraphImage.setAttribute('src', graphServerURL);
                             staticGraphImage.setAttribute('alt', altText);
-
                             monitoringLocationContainer.appendChild(staticGraphImage);
                         </script>
                     {% endblock %}
@@ -139,20 +141,20 @@
                             </div>
                         </div>
                     {%  endif %}
-
-                    {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
-                        {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
-                    {% endif %}
-
-                    <div class="usa-accordion">
-                        <h3 class="usa-accordion__heading">
-                            <button class="usa-accordion__button" aria-expanded="true" aria-controls="network-list">Affiliated Networks</button>
-                        </h3>
-                        <div id="network-list" class="usa-accordion__content">
-                            {{ components.NetworkListComponent(stations[0].site_no) }}
-                        </div>
-                    </div>
                 {% endif %}
+
+                {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
+                    {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
+                {% endif %}
+
+                <div class="usa-accordion">
+                    <h3 class="usa-accordion__heading">
+                        <button class="usa-accordion__button" aria-expanded="true" aria-controls="network-list">Affiliated Networks</button>
+                    </h3>
+                    <div id="network-list" class="usa-accordion__content">
+                        {{ components.NetworkListComponent(stations[0].site_no) }}
+                    </div>
+                </div>
 
                 {% if parm_grp_summary %}
                     <div class="usa-accordion">
@@ -162,22 +164,22 @@
                         <div id="ts-a1" class="usa-accordion__content">
                             <table class="usa-table" id="site-data-summary">
                                 <thead>
-                                    <tr>
-                                        <th scope="col">USGS Parameter Group</th>
-                                        <th scope="col">Data Types</th>
-                                        <th scope="col">Start Date</th>
-                                        <th scope="col">End Date</th>
-                                    </tr>
+                                <tr>
+                                    <th scope="col">USGS Parameter Group</th>
+                                    <th scope="col">Data Types</th>
+                                    <th scope="col">Start Date</th>
+                                    <th scope="col">End Date</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    {% for grp in parm_grp_summary %}
-                                        <tr>
-                                            <th scope="row">{% if grp.name %}{{ grp.name }}{% else %}<sub>n/a</sub>{% endif %}</th>
-                                            <td>{{ grp.data_types }}</td>
-                                            <td>{{ grp.start_date|date_to_string }}</td>
-                                            <td>{{ grp.end_date|date_to_string }}</td>
-                                        </tr>
-                                    {% endfor %}
+                                {% for grp in parm_grp_summary %}
+                                    <tr>
+                                        <th scope="row">{% if grp.name %}{{ grp.name }}{% else %}<sub>n/a</sub>{% endif %}</th>
+                                        <td>{{ grp.data_types }}</td>
+                                        <td>{{ grp.start_date|date_to_string }}</td>
+                                        <td>{{ grp.end_date|date_to_string }}</td>
+                                    </tr>
+                                {% endfor %}
                                 </tbody>
                             </table>
                             <a class="usa-link" href="{{ config.NWIS_ENDPOINTS.INVENTORY}}?site_no={{ stations[0].site_no }}" target="_blank" rel="noopener">Classic Water Data for the Nation Inventory</a>
@@ -194,33 +196,33 @@
                     <div id="ts-a2" class="usa-accordion__content">
                         <table class="usa-table" id="site-summary" summary="Descriptive metadata about this monitoring location">
                             <thead>
-                                <tr>
-                                    <th scope="col">Metadata Element</th>
-                                    <th scope="col">Location Metadata</th>
-                                    <th scope="col">Metadata Code</th>
-                                </tr>
+                            <tr>
+                                <th scope="col">Metadata Element</th>
+                                <th scope="col">Location Metadata</th>
+                                <th scope="col">Metadata Code</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                {% for key, value in location_with_values.items() %}
-                                    <tr>
-                                        <th scope="row" {%  if STATION_FIELDS_D[key].description %}aria-describedby="{{ key|tooltip_content_id }}"{% endif %}>{{ STATION_FIELDS_D[key].name }}
-                                            {%  if STATION_FIELDS_D[key].description %}
-                                                {{ components.QuestionTooltip(key, STATION_FIELDS_D[key].description, True) }}
-                                            {% endif %}
-                                        </th>
-                                        <td class="loc-metadata">
-                                            {% if value.url %}
-                                                <a href="{{ value.url }}">{{ value.name }}</a>
-                                            {% else %}
-                                                {{ value.name }}
-                                            {% endif %}
-                                            {% if value.desc %}
-                                                {{ components.QuestionTooltip(value.code, value.desc, False) }}
-                                            {% endif %}
-                                        </td>
-                                        <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
-                                    </tr>
-                                {% endfor %}
+                            {% for key, value in location_with_values.items() %}
+                                <tr>
+                                    <th scope="row" {%  if STATION_FIELDS_D[key].description %}aria-describedby="{{ key|tooltip_content_id }}"{% endif %}>{{ STATION_FIELDS_D[key].name }}
+                                        {%  if STATION_FIELDS_D[key].description %}
+                                            {{ components.QuestionTooltip(key, STATION_FIELDS_D[key].description, True) }}
+                                        {% endif %}
+                                    </th>
+                                    <td class="loc-metadata">
+                                        {% if value.url %}
+                                            <a href="{{ value.url }}">{{ value.name }}</a>
+                                        {% else %}
+                                            {{ value.name }}
+                                        {% endif %}
+                                        {% if value.desc %}
+                                            {{ components.QuestionTooltip(value.code, value.desc, False) }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
+                                </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>
