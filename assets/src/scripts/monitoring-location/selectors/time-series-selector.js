@@ -33,8 +33,6 @@ export const getCurrentDateRange = (state) => {
 
 export const getLoadingTsKeys = state => state.ivTimeSeriesState.loadingIVTSKeys || [];
 
-export const getShowIVTimeSeries = state => state.ivTimeSeriesState.showIVTimeSeries || {};
-
 export const getNwisTimeZone = state => state.ivTimeSeriesData.timeZones || {};
 
 export const getCustomTimeRange = state => state.ivTimeSeriesState.customIVTimeRange;

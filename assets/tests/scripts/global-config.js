@@ -1,7 +1,6 @@
 var CONFIG = {
     TIMESERIES_AUDIO_ENABLED: true,
     FIM_GIS_ENDPOINT: 'https:/fakelegendservice.com',
-    GRAPH_SERVER_ENDPOINT: 'https:/fake-graph-server',
     NWIS_INVENTORY_ENDPOINT: 'https://fakenwis.usgs.gov/inventory',
     NETWORK_ENDPOINT: 'https://fakeogcservice.com/observations/collections',
     OBSERVATIONS_ENDPOINT: 'https://fakeogcservice.com/observations/collections/monitoring-locations',

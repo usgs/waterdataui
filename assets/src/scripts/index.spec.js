@@ -60,7 +60,6 @@ import 'ivhydrograph/index.spec';
 import 'ivhydrograph/legend.spec';
 import 'ivhydrograph/method-picker.spec';
 import 'ivhydrograph/parameters.spec';
-import 'ivhydrograph/static-graph-image.spec';
 import 'ivhydrograph/time-series-graph.spec';
 import 'ivhydrograph/tooltip.spec';
 
