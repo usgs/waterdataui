@@ -78,61 +78,81 @@
                     <p id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}</p>
                 </div>
 
-                {{ components.TimeSeriesComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
+                {% if request.user_agent.browser == 'msie' %}
+                    {% block javascript %}
+                        <script>
+                            var urlString = window.location.href;
+                            var splitUrl = urlString.split('#')
+                            var siteNumber = splitUrl[0].split('/monitoring-location/')[1].slice(0, -1);
+                            var paramString = splitUrl[1];
+                            var graphServerURL = '{{ config.GRAPH_SERVER_ENDPOINT }}/monitoring-location/' + siteNumber + '/?' + paramString;
+                            var altText = 'hydrograph for monitoring location' + siteNumber;
+                            var monitoringLocationContainer = document.getElementById('monitoring-location-page-container');
 
-                {% if monitoring_camera.exists %}
-                    <div class="usa-accordion" style="margin-top:1em;">
-                        <h2 class="usa-accordion__heading">
-                            <button class="usa-accordion__button" aria-expanded="true" aria-controls="ts-a1a">Monitoring Camera</button>
-                        </h2>
-                        <div id="ts-a1a" class="usa-accordion__content">
-                            <div>Most recent image</div>
-                            <div style="float:left">
-                                <a href="{{ monitoring_camera.video  }}" title="click image to open full-size video" target="_blank" rel="noopener">
-                                    <img width="200" src="{{ monitoring_camera.thumb }}" alt="lastest camera image thumbnail">
-                                </a>
-                            </div>
-                            <div style="float:right">
-                                <div><b>Frames Gallery: </b>
-                                    <a href="{{ monitoring_camera.frame_gallery }}" target="_blank" rel="noopener">
-                                        Last 99 Frames
+                            var staticGraphImage = document.createElement('img');
+                            staticGraphImage.setAttribute('src', graphServerURL);
+                            staticGraphImage.setAttribute('alt', altText);
+
+                            monitoringLocationContainer.appendChild(staticGraphImage);
+                        </script>
+                    {% endblock %}
+                {% else %}
+                    {{ components.TimeSeriesComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
+
+                    {% if monitoring_camera.exists %}
+                        <div class="usa-accordion" style="margin-top:1em;">
+                            <h2 class="usa-accordion__heading">
+                                <button class="usa-accordion__button" aria-expanded="true" aria-controls="ts-a1a">Monitoring Camera</button>
+                            </h2>
+                            <div id="ts-a1a" class="usa-accordion__content">
+                                <div>Most recent image</div>
+                                <div style="float:left">
+                                    <a href="{{ monitoring_camera.video  }}" title="click image to open full-size video" target="_blank" rel="noopener">
+                                        <img width="200" src="{{ monitoring_camera.thumb }}" alt="lastest camera image thumbnail">
                                     </a>
                                 </div>
-                                <div><b>Video Folder: </b>
-                                    <a href="{{ monitoring_camera.video_index }}" target="_blank" rel="noopener">
-                                        Index of videos and images
-                                    </a>
+                                <div style="float:right">
+                                    <div><b>Frames Gallery: </b>
+                                        <a href="{{ monitoring_camera.frame_gallery }}" target="_blank" rel="noopener">
+                                            Last 99 Frames
+                                        </a>
+                                    </div>
+                                    <div><b>Video Folder: </b>
+                                        <a href="{{ monitoring_camera.video_index }}" target="_blank" rel="noopener">
+                                            Index of videos and images
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                {% endif %}
+                    {% endif %}
 
-                {% if config.DAILY_VALUE_HYDROGRAPH_ENABLED %}
-                    <div id="dv-accordion" class="usa-accordion">
-                        <div>
-                            <h3 class="usa-accordion__heading">
-                                <button class="usa-accordion__button" aria-expanded="true" aria-controls="dv-graph-container">Groundwater Data</button>
-                            </h3>
-                            <div id="dv-graph-container">
-                                {{ components.DailyValueTimeSeriesComponent(stations[0].site_no) }}
+                    {% if config.DAILY_VALUE_HYDROGRAPH_ENABLED %}
+                        <div id="dv-accordion" class="usa-accordion">
+                            <div>
+                                <h3 class="usa-accordion__heading">
+                                    <button class="usa-accordion__button" aria-expanded="true" aria-controls="dv-graph-container">Groundwater Data</button>
+                                </h3>
+                                <div id="dv-graph-container">
+                                    {{ components.DailyValueTimeSeriesComponent(stations[0].site_no) }}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {%  endif %}
+                    {%  endif %}
 
-                {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
-                    {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
+                    {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
+                        {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
+                    {% endif %}
+
+                    <div class="usa-accordion">
+                        <h3 class="usa-accordion__heading">
+                            <button class="usa-accordion__button" aria-expanded="true" aria-controls="network-list">Affiliated Networks</button>
+                        </h3>
+                        <div id="network-list" class="usa-accordion__content">
+                            {{ components.NetworkListComponent(stations[0].site_no) }}
+                        </div>
+                    </div>
                 {% endif %}
-
-                <div class="usa-accordion">
-                    <h3 class="usa-accordion__heading">
-                        <button class="usa-accordion__button" aria-expanded="true" aria-controls="network-list">Affiliated Networks</button>
-                    </h3>
-                    <div id="network-list" class="usa-accordion__content">
-                        {{ components.NetworkListComponent(stations[0].site_no) }}
-                    </div>
-                </div>
 
                 {% if parm_grp_summary %}
                     <div class="usa-accordion">
