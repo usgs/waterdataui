@@ -31,7 +31,8 @@ SERVICE_ROOT = 'https://waterservices.usgs.gov'  # Use for client side calls to 
 PAST_SERVICE_ROOT = 'https://nwis.waterservices.usgs.gov'
 NWIS_ENDPOINTS = {
     'INVENTORY': 'https://waterdata.usgs.gov/nwis/inventory',
-    'UV': 'https://waterdata.usgs.gov/nwis/uv'}
+    'UV': 'https://waterdata.usgs.gov/nwis/uv'
+}
 WEATHER_SERVICE_ROOT = 'https://api.weather.gov'
 
 OBSERVATIONS_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections/monitoring-locations'
