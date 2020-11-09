@@ -49,11 +49,11 @@
                 <h3>Please pick a site:</h3>
                 <table class="usa-table usa-table--borderless">
                     <thead>
-                    <tr>
-                        <th scope="col">Agency</th>
-                        <th scope="col">Site number</th>
-                        <th scope="col">Site name</th>
-                    </tr>
+                        <tr>
+                            <th scope="col">Agency</th>
+                            <th scope="col">Site number</th>
+                            <th scope="col">Site name</th>
+                        </tr>
                     </thead>
                     <tbody>
                     {% for site in stations %}
@@ -79,15 +79,22 @@
                 </div>
 
                 {% if request.user_agent.browser == 'msie' %}
-                    {% block javascript %}
-                        <script>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            console.log('in script')
+                            CONFIG.parm_grp_summary = {{ parm_grp_summary | tojson }}
+
+                            var defaultParameterCode = CONFIG.parm_grp_summary[0].parameters[0].parameter_code;
+                            var tempCode = '00060';
+                            console.log('code ', CONFIG.parm_grp_summary[0].parameters[0])
+
                             var urlString = window.location.href;
                             var splitUrl = urlString.split('#')
                             var siteNumber = splitUrl[0].split('/monitoring-location/')[1].slice(0, -1);
                             var paramString = splitUrl[1];
 
                             if (typeof(paramString) === "undefined") {
-                                paramString = 'parameterCode=00060'
+                                paramString = 'parameterCode=' + tempCode;
                             }
                             var graphServerURL = '{{ config.GRAPH_SERVER_ENDPOINT }}/monitoring-location/' + siteNumber + '/?' + paramString;
                             var altText = 'hydrograph for monitoring location ' + siteNumber;
@@ -96,8 +103,8 @@
                             staticGraphImage.setAttribute('src', graphServerURL);
                             staticGraphImage.setAttribute('alt', altText);
                             monitoringLocationContainer.appendChild(staticGraphImage);
-                        </script>
-                    {% endblock %}
+                        });
+                    </script>
                 {% else %}
                     {{ components.TimeSeriesComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
 
@@ -164,12 +171,12 @@
                         <div id="ts-a1" class="usa-accordion__content">
                             <table class="usa-table" id="site-data-summary">
                                 <thead>
-                                <tr>
-                                    <th scope="col">USGS Parameter Group</th>
-                                    <th scope="col">Data Types</th>
-                                    <th scope="col">Start Date</th>
-                                    <th scope="col">End Date</th>
-                                </tr>
+                                    <tr>
+                                        <th scope="col">USGS Parameter Group</th>
+                                        <th scope="col">Data Types</th>
+                                        <th scope="col">Start Date</th>
+                                        <th scope="col">End Date</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                 {% for grp in parm_grp_summary %}
@@ -196,11 +203,11 @@
                     <div id="ts-a2" class="usa-accordion__content">
                         <table class="usa-table" id="site-summary" summary="Descriptive metadata about this monitoring location">
                             <thead>
-                            <tr>
-                                <th scope="col">Metadata Element</th>
-                                <th scope="col">Location Metadata</th>
-                                <th scope="col">Metadata Code</th>
-                            </tr>
+                                <tr>
+                                    <th scope="col">Metadata Element</th>
+                                    <th scope="col">Location Metadata</th>
+                                    <th scope="col">Metadata Code</th>
+                                </tr>
                             </thead>
                             <tbody>
                             {% for key, value in location_with_values.items() %}
