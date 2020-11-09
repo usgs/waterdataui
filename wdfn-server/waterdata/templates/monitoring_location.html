@@ -79,14 +79,17 @@
                 </div>
 
                 {% if request.user_agent.browser == 'msie' %}
-                    <script>
-                        document.addEventListener('DOMContentLoaded', () => {
-                            console.log('in script')
-                            CONFIG.parm_grp_summary = {{ parm_grp_summary | tojson }}
+                    <script type="application/javascript">
+                            var allParameterCodes = Object.keys(CONFIG.uvPeriodOfRecord);
+                            var defaultParameterCode;
 
-                            var defaultParameterCode = CONFIG.parm_grp_summary[0].parameters[0].parameter_code;
-                            var tempCode = '00060';
-                            console.log('code ', CONFIG.parm_grp_summary[0].parameters[0])
+                            if (allParameterCodes.indexOf('00060')  !== -1) {
+                                defaultParameterCode = '00060';
+                            } else if (allParameterCodes.indexOf('00065')  !== -1) {
+                                defaultParameterCode = '00065';
+                            } else {
+                                defaultParameterCode = allParameterCodes[0];
+                            }
 
                             var urlString = window.location.href;
                             var splitUrl = urlString.split('#')
@@ -94,7 +97,7 @@
                             var paramString = splitUrl[1];
 
                             if (typeof(paramString) === "undefined") {
-                                paramString = 'parameterCode=' + tempCode;
+                                paramString = 'parameterCode=' + defaultParameterCode;
                             }
                             var graphServerURL = '{{ config.GRAPH_SERVER_ENDPOINT }}/monitoring-location/' + siteNumber + '/?' + paramString;
                             var altText = 'hydrograph for monitoring location ' + siteNumber;
@@ -103,7 +106,6 @@
                             staticGraphImage.setAttribute('src', graphServerURL);
                             staticGraphImage.setAttribute('alt', altText);
                             monitoringLocationContainer.appendChild(staticGraphImage);
-                        });
                     </script>
                 {% else %}
                     {{ components.TimeSeriesComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
