@@ -149,11 +149,12 @@
     .current-tooltip-text {
       font-weight: bold;
       color: $default-time-series;
-      .approved {
+
+      &.approved {
         color: $approved-time-series;
       }
 
-      .estimated {
+      &.estimated {
         color: $estimated-time-series;
       }
     }
@@ -161,11 +162,12 @@
     .compare-tooltip-text {
       font-weight: normal;
       color: $default-time-series-compare;
-      .approved {
+
+      &.approved {
         color: $approved-time-series-compare;
       }
 
-      .estimated {
+      &.estimated {
         color: $estimated-time-series-compare;
       }
     }
