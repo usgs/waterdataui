@@ -144,23 +144,32 @@
     pointer-events: none;
     position: absolute;
     background: rgba(255, 255, 255, 0.8);
-    color: $default-time-series;
     opacity: 1;
 
     .current-tooltip-text {
       font-weight: bold;
-    }
+      color: $default-time-series;
 
-    .approved {
-      color: $approved-time-series;
-    }
+      &.approved {
+        color: $approved-time-series;
+      }
 
-    .estimated {
-      color: $estimated-time-series;
+      &.estimated {
+        color: $estimated-time-series;
+      }
     }
 
     .compare-tooltip-text {
       font-weight: normal;
+      color: $default-time-series-compare;
+
+      &.approved {
+        color: $approved-time-series-compare;
+      }
+
+      &.estimated {
+        color: $estimated-time-series-compare;
+      }
     }
   }
   svg {

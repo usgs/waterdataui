@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.38.0...master)
 ### Added
+<<<<<<< HEAD
 - Added static image of the Instantaneous Values Hydrograph for users of Internet Explorer 
+=======
+- New colors for the compare line
+>>>>>>> 4f84ae35b4cb21fd61dd022107c929fe9a35a10d
 
 ## [0.38.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.37.0...waerdataui-0.38.0) - 2020-10-30
 ### Added
