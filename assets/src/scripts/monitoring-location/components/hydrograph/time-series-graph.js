@@ -219,7 +219,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
                         .attr('y', 0)
                         .attr('width', layout.width - layout.margin.right)
                         .attr('height', layout.height - layout.margin.bottom);
-            }, getMainLayout))
+        }, getMainLayout))
         .call(link(store, addSVGAccessibility, createStructuredSelector({
             title: getTitle,
             description: getDescription,
@@ -257,7 +257,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
             seriesPoints: getCurrentVariableMedianStatPoints,
             enableClip: () => true
         })))
-       .call(link(store, plotAllFloodLevelPoints, createStructuredSelector({
+        .call(link(store, plotAllFloodLevelPoints, createStructuredSelector({
             visible: isWaterwatchVisible,
             xscale: getBrushXScale('current'),
             yscale: getMainYScale,

@@ -50,20 +50,20 @@ const controlDisplay = function(elem, showElem) {
  * @param {Object} - string properties to set initial state information. The property siteno is required
  */
 export const attachToNode = function(store,
-                                      node,
-                                      {
-                                          siteno,
-                                          latitude,
-                                          longitude,
-                                          parameterCode,
-                                          compare,
-                                          period,
-                                          startDT,
-                                          endDT,
-                                          timeSeriesId, // This must be converted to an integer
-                                          showOnlyGraph = false,
-                                          showMLName = false
-                                      } = {}) {
+                                     node,
+                                     {
+                                         siteno,
+                                         latitude,
+                                         longitude,
+                                         parameterCode,
+                                         compare,
+                                         period,
+                                         startDT,
+                                         endDT,
+                                         timeSeriesId, // This must be converted to an integer
+                                         showOnlyGraph = false,
+                                         showMLName = false
+                                     } = {}) {
     const nodeElem = select(node);
     if (!siteno) {
         select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No data is available.'});
@@ -94,7 +94,7 @@ export const attachToNode = function(store,
         }
     } else {
         // Retrieve all parameter codes for 7 days and median statistics
-         fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno))
+        fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno))
             .then(() => {
                 // Fetch any extended data needed to set initial state
                 const currentParamCode = parameterCode ? parameterCode : getCurrentParmCd(store.getState());

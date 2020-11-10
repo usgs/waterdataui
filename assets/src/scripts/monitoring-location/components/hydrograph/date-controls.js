@@ -118,7 +118,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             .attr('for', (d) => `${d.value}-input`)
             .text((d) => d.text);
         listItemForCustomSelectRadioButtons.call(link(store, (elem, userInputsForSelectingTimespan) => {
-            store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
             elem.select(`#${userInputsForSelectingTimespan.customTimeRangeSelectionButton}`).property('checked', true);
         }, getUserInputsForSelectingTimespan));
     };
@@ -338,7 +337,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
 
                 // Remove any values stored in the form, because they may not match what is shown in the graph until the submit button is pushed
                 store.dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('numberOfDaysFieldValue', ''));
-                store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
 
                 if (selectedVal === 'custom') {
                     selected.attr('aria-expanded', true);
@@ -368,7 +366,6 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             .attr('for', (d) => `${d.period}-input`)
             .text((d) => d.name);
         li.call(link(store, (elem, userInputsForSelectingTimespan) => {
-            store.dispatch(ivTimeSeriesStateActions.setCustomIVTimeRange(null));
             elem.select(`#${userInputsForSelectingTimespan.mainTimeRangeSelectionButton}-input`).property('checked', true);
         }, getUserInputsForSelectingTimespan));
     };
