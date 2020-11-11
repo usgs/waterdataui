@@ -2,12 +2,9 @@
     <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ site_no }}" data-latitude="{{ latitude }}" data-longitude="{{ longitude }}">
         <div class="loading-indicator-container"></div>
         <div class="graph-container"></div>
-        <div class="provisional-data-statement">
-            <p>
-                <span class="usa-tag">Important</span>
-                data may be provisional - <a class="usa-link" href="{{ url_for('provisional_data_statement') }}">learn more</a>
-            </p>
-        </div>
+
+        {% include 'partials/hydrograph_related_links.html' %}
+
         <div class="select-time-series-container"></div>
         <div class="graph-data usa-accordion">
             <h2 class="usa-accordion__heading">
