@@ -118,7 +118,6 @@ describe('monitoring-location/components/hydrograph/legend module', () => {
             component.append('div').attr('class', 'loading-indicator-container');
             component.append('div').attr('class', 'graph-container');
             component.append('div').attr('class', 'select-time-series-container');
-            component.append('div').attr('class', 'provisional-data-alert');
 
             graphNode = document.getElementById('hydrograph');
 

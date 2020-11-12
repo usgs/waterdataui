@@ -163,8 +163,6 @@ export const attachToNode = function(store,
                     .call(drawGraphControls, store);
                 nodeElem.select('#iv-data-table-container')
                     .call(drawDataTable, store);
-                nodeElem.select('.provisional-data-alert')
-                    .attr('hidden', null);
                 //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
                 nodeElem.select('.select-time-series-container')
                     .call(link(store, plotSeriesSelectTable, createStructuredSelector({
@@ -173,7 +171,6 @@ export const attachToNode = function(store,
                         lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
                         timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
                     }), store));
-
 
                 renderTimeSeriesUrlParams(store);
             }

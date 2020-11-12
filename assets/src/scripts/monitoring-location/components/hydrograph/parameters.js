@@ -78,6 +78,10 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
     }
 };
 
+export const addWaterAlertLink = function() {
+    console.log('add link')
+};
+
 /**
  * Draws a table with clickable rows of time series parameter codes. Selecting
  * a row changes the active parameter code.
@@ -103,7 +107,7 @@ export const plotSeriesSelectTable = function(elem,
         return;
     }
 
-    const columnHeaders = ['   ', 'Parameter', 'Preview', '#', 'Period of Record'];
+    const columnHeaders = ['   ', 'Parameter', 'Preview', '#', 'Period of Record', 'Subscribe'];
     const tableContainer = elem.append('div')
         .attr('id', 'select-time-series');
 
@@ -167,6 +171,12 @@ export const plotSeriesSelectTable = function(elem,
             tr.append('td')
                 .style('white-space', 'nowrap')
                 .text(param => `${config.uvPeriodOfRecord[param.parameterCode].begin_date} to ${config.uvPeriodOfRecord[param.parameterCode].end_date}`);
+            tr.append('td')
+                .append('a')
+                    .attr('href', param => `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${param.parameterCode}`)
+                    .append('button')
+                        .attr('class', 'usa-button usa-button--outline')
+                        .text('WaterAlert');
         });
 
 
@@ -177,6 +187,10 @@ export const plotSeriesSelectTable = function(elem,
         const paramCd = d.parameterCode;
         const lineSegments = lineSegmentsByParmCd[paramCd] ? lineSegmentsByParmCd[paramCd] : [];
         for (const seriesLineSegments of lineSegments) {
+            selection.call(addWaterAlertLink, {
+                seriesLineSegments: seriesLineSegments,
+                scales: timeSeriesScalesByParmCd[paramCd]
+            });
             selection.call(addSparkLine, {
                 seriesLineSegments: seriesLineSegments,
                 scales: timeSeriesScalesByParmCd[paramCd]

@@ -101,26 +101,6 @@
                 staticGraphContainer.appendChild(staticGraphImage);
             }
         }
-
-        function addWaterAlertLink(siteNumber, paramString) {
-            // This script creates a link for the WaterAlert service subscription page.
-            // The subscription page requires a site number and a parameter code to work properly.
-            // Most of the time we can get the parameter code from the URL or approximate it from the
-            // uvPeriodOfRecord, but not always. If we can't get a parameter code, we will make a
-            // link that goes to the WaterAlert homepage.
-            var href = '';
-            var elementTarget = document.getElementById('water-alert-link');
-
-            if (CONFIG.uvPeriodOfRecord) {
-                var parameterCode = paramString.split('parameterCode=')[1];
-                href =  '{{ config.WATERALERT_SUBSCRIPTION }}' + '/?site_no=' +
-                    siteNumber + '&parm=' + parameterCode;
-            } else {
-                href = '{{ config.WATERALERT_HOMEPAGE }}';
-            }
-
-            elementTarget.setAttribute('href', href);
-        }
     </script>
 {% endblock page_script %}
 
@@ -164,7 +144,12 @@
                 </div>
                 {% if request.user_agent.browser == 'msie' %}
                     <div id="static-graph-div"></div>
-                    {% include 'partials/hydrograph_related_links.html' %}
+                    <div class="provisional-data-statement">
+                        <p>
+                            <span class="usa-tag">Important</span>
+                            data may be provisional - <a class="usa-link" href="{{ url_for('provisional_data_statement') }}">learn more</a>
+                        </p>
+                    </div>
                 {% endif %}
                 {% if request.user_agent.browser != 'msie' %}
                     {{ components.TimeSeriesComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
