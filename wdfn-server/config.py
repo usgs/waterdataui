@@ -52,6 +52,10 @@ NETWORK_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections
 # Waterwatch
 WATERWATCH_ENDPOINT = 'https://waterwatch.usgs.gov/webservices'
 
+# WaterAlert
+WATERALERT_HOMEPAGE = 'https://maps.waterdata.usgs.gov/mapper/wateralert'
+WATERALERT_SUBSCRIPTION = 'https://water.usgs.gov/wateralert/subscribe2'
+
 # Graph Server
 GRAPH_SERVER_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/graph-images'
 
