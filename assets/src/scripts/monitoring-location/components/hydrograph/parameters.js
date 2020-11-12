@@ -78,10 +78,6 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
     }
 };
 
-export const addWaterAlertLink = function() {
-    console.log('add link')
-};
-
 /**
  * Draws a table with clickable rows of time series parameter codes. Selecting
  * a row changes the active parameter code.
@@ -187,10 +183,6 @@ export const plotSeriesSelectTable = function(elem,
         const paramCd = d.parameterCode;
         const lineSegments = lineSegmentsByParmCd[paramCd] ? lineSegmentsByParmCd[paramCd] : [];
         for (const seriesLineSegments of lineSegments) {
-            selection.call(addWaterAlertLink, {
-                seriesLineSegments: seriesLineSegments,
-                scales: timeSeriesScalesByParmCd[paramCd]
-            });
             selection.call(addSparkLine, {
                 seriesLineSegments: seriesLineSegments,
                 scales: timeSeriesScalesByParmCd[paramCd]
