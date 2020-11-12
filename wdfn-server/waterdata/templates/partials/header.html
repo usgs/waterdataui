@@ -60,5 +60,36 @@
             </div>
         </div>
     </div>
+    <nav aria-label="Primary navigation" role="navigation" class="usa-nav">
+        <div class="usa-nav__inner">
+            <button class="usa-nav__close"><img src="{{ 'img/close.svg' | asset_url }}" alt="close"></button>
+            <ul class="usa-nav__primary usa-accordion">
+                <li class="usa-nav__primary-item">
+                    <a class="usa-nav__link" href="https://www.usgs.gov/mission-areas/water-resources">Water Resources</a>
+                </li>
+                <li class="usa-nav__primary-item">
+                    <a class="usa-nav__link" href="https://dashboard.waterdata.usgs.gov/">National Water Dashboard</a>
+                </li>
+                <li class="usa-nav__primary-item">
+                    <button class="usa-accordion__button usa-nav__link"
+                            aria-expanded="false"
+                            aria-controls="about-section">
+                        <span>About Water Data for the Nation</span>
+                    </button>
+                    <ul id="about-section" class="usa-nav__submenu">
+                        <li class="usa-nav__submenu-item">
+                         <a href="https://waterdata.usgs.gov/blog/">What's New in Water Data for the Nation</a>
+                        </li>
+                        <li class="usa-nav__submenu-item">
+                            <a href="https://labs.waterdata.usgs.gov/index.html">Experimental Water Data tools</a>
+                        </li>
+                        <li class="usa-nav__submenu-item">
+                            <a href="https://www.instagram.com/usgs_streamgages/">Streamgages of Instagram</a>
+                        </li>
+                   </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
 </header>
 
