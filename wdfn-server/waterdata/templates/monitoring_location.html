@@ -87,11 +87,11 @@
                 var message = document.createTextNode('Sorry, the graph cannot be displayed.');
                 var subMessageTag = document.createElement('p');
                 var subMessage = document.createTextNode('Please check the URL used. The URL must have the form of ' +
-                    'https://waterdata.usgs.gov/monitoring-location/{site number}/#parameterCode={the desired parameter code}')
+                    'https://waterdata.usgs.gov/monitoring-location/{site number}/#parameterCode={the desired parameter code}');
                 incompatibleURLMessageTag.appendChild(message);
                 staticGraphContainer.appendChild(incompatibleURLMessageTag);
-                subMessageTag.appendChild(subMessage)
-                staticGraphContainer.appendChild(subMessage)
+                subMessageTag.appendChild(subMessage);
+                staticGraphContainer.appendChild(subMessage);
             } else {
                 var graphServerURL = '{{ config.GRAPH_SERVER_ENDPOINT }}/monitoring-location/' + siteNumber + '/?' + paramString;
                 var altText = 'hydrograph for monitoring location ' + siteNumber;
