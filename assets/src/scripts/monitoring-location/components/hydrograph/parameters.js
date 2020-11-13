@@ -103,7 +103,7 @@ export const plotSeriesSelectTable = function(elem,
         return;
     }
 
-    const columnHeaders = ['   ', 'Parameter', 'Preview', '#', 'Period of Record', 'Subscribe'];
+    const columnHeaders = ['   ', 'Parameter', 'Preview', '#', 'Period of Record', 'WaterAlert'];
     const tableContainer = elem.append('div')
         .attr('id', 'select-time-series');
 
@@ -170,9 +170,7 @@ export const plotSeriesSelectTable = function(elem,
             tr.append('td')
                 .append('a')
                     .attr('href', param => `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${param.parameterCode}`)
-                    .append('button')
-                        .attr('class', 'usa-button usa-button--outline')
-                        .text('WaterAlert');
+                    .text('Subscribe');
         });
 
 
