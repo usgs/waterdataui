@@ -1,4 +1,4 @@
-import {fetchFloodExtent, fetchFloodFeatures,
+import {fetchFloodExtent, fetchFloodFeatures, fetchFIMPublicStatus,
     fetchWaterwatchFloodLevels} from 'ui/web-services/flood-data';
 
 const INITIAL_DATA = {
@@ -27,15 +27,23 @@ const setFloodFeatures = function(stages, extent) {
  */
 const retrieveFloodData = function(siteno) {
     return function(dispatch) {
-        const floodFeatures = fetchFloodFeatures(siteno);
-        const floodExtent = fetchFloodExtent(siteno);
-        return Promise.all([floodFeatures, floodExtent]).then((data) => {
-            const [features, extent] = data;
-            const stages = features.map((feature) => feature.attributes.STAGE).sort(function(a, b) {
-                return a - b;
+        return fetchFIMPublicStatus(siteno)
+            .then((isPublic) => {
+                if (isPublic) {
+                    const floodFeatures = fetchFloodFeatures(siteno);
+                    const floodExtent = fetchFloodExtent(siteno);
+                    return Promise.all([floodFeatures, floodExtent]).then((data) => {
+                        const [features, extent] = data;
+                        const stages = features.map((feature) => feature.attributes.STAGE).sort(function(a, b) {
+                            return a - b;
+                        });
+                        dispatch(setFloodFeatures(stages, extent.extent ? extent.extent : {}));
+                    });
+                } else {
+                    dispatch(setFloodFeatures([], {}));
+                    return Promise.resolve();
+                }
             });
-            dispatch(setFloodFeatures(stages, extent.extent ? extent.extent : {}));
-        });
     };
 };
 
