@@ -174,7 +174,6 @@ export const attachToNode = function(store,
                         timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
                     }), store));
 
-
                 renderTimeSeriesUrlParams(store);
             }
         }

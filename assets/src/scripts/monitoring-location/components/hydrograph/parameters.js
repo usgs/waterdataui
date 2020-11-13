@@ -103,7 +103,7 @@ export const plotSeriesSelectTable = function(elem,
         return;
     }
 
-    const columnHeaders = ['   ', 'Parameter', 'Preview', '#', 'Period of Record'];
+    const columnHeaders = ['   ', 'Parameter', 'Preview', '#', 'Period of Record', 'WaterAlert'];
     const tableContainer = elem.append('div')
         .attr('id', 'select-time-series');
 
@@ -167,8 +167,15 @@ export const plotSeriesSelectTable = function(elem,
             tr.append('td')
                 .style('white-space', 'nowrap')
                 .text(param => `${config.uvPeriodOfRecord[param.parameterCode].begin_date} to ${config.uvPeriodOfRecord[param.parameterCode].end_date}`);
+            tr.append('td')
+                .append('a')
+                    .attr('href', param => `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${param.parameterCode}`)
+                    .attr('class', 'usa-tooltip')
+                    .attr('data-position', 'left')
+                    .attr('data-classes', 'width-full tablet:width-auto')
+                    .attr('title', 'Subscribe to text or email alerts based on thresholds that you set')
+                    .text('Subscribe');
         });
-
 
     table.property('scrollTop', scrollTop);
 
