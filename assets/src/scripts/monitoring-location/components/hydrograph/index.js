@@ -161,6 +161,8 @@ export const attachToNode = function(store,
 
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
+                // nodeElem.select('#')
+                    // .call(drawDownLoadLinks, store);
                 nodeElem.select('#iv-data-table-container')
                     .call(drawDataTable, store);
                 //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
