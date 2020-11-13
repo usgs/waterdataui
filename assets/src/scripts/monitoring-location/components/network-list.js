@@ -26,7 +26,6 @@ const addNetworkRows = function(node, {hasData, networkList}) {
 
         let networkUrl;
         networkList.forEach(function(network) {
-            console.log(network.title);
             networkUrl = buildNetworkURL(network.href);
             input.append('li')
                 .append('a')
