@@ -591,7 +591,7 @@ describe('monitoring-location/components/hydrograph module', () => {
 
         it('should have tooltips for the select series table', () => {
             // one for each of the two parameters
-            expect(selectAll('table .usa-tooltip').size()).toBe(2);
+            expect(selectAll('table .usa-tooltip').size()).toBe(4);
         });
 
         it('should render the data table', (done) => {

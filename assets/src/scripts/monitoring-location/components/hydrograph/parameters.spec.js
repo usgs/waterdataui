@@ -80,9 +80,9 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
             expect(tableDivSelection.selectAll('input').size()).toEqual(3);
         });
 
-         it('creates a WaterAlert subscribe button for each parameter in the table', () => {
+         it('creates a WaterAlert subscribe link each parameter in the table', () => {
              plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
-             expect(tableDivSelection.selectAll('button').size()).toEqual(3);
+             expect(tableDivSelection.selectAll('a').size()).toEqual(3);
          });
 
         it('updates the radio button input checked property for the corresponding selected parameter', () => {
