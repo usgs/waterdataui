@@ -2,7 +2,6 @@ import {utcFormat} from 'd3-time-format';
 import config from '../config';
 import {get} from '../ajax';
 
-
 // Define Water Services root URL - use global variable if defined, otherwise
 // use production.
 const SERVICE_ROOT = config.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
@@ -38,7 +37,7 @@ function getNumberOfDays(period) {
  * @param {String} period
  * @return {Promise} resolves to an array of time series model object, rejects to an error
  */
-export const getTimeSeries = function ({sites, params=null, startDate=null, endDate=null, period=null}) {
+export const getTimeSeries = function({sites, params=null, startDate=null, endDate=null, period=null}) {
     let timeParams;
     let serviceRoot;
 
@@ -64,7 +63,7 @@ export const getTimeSeries = function ({sites, params=null, startDate=null, endD
         });
 };
 
-export const getPreviousYearTimeSeries = function ({site, startTime, endTime}) {
+export const getPreviousYearTimeSeries = function({site, startTime, endTime}) {
     let lastYearStartTime = new Date(startTime);
     let lastYearEndTime = new Date(endTime);
 
@@ -73,7 +72,7 @@ export const getPreviousYearTimeSeries = function ({site, startTime, endTime}) {
     return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
 };
 
-export const queryWeatherService = function (latitude, longitude) {
+export const queryWeatherService = function(latitude, longitude) {
     const url = `${WEATHER_SERVICE_ROOT}/points/${latitude},${longitude}`;
     return get(url)
         .then(response => JSON.parse(response))

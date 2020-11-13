@@ -3,12 +3,54 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
-## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.35.0...master)
 
-## [0.35.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.34.0...waterdataui-0.35.0) - 2020-07-30
+## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.37.0...master)
+<<<<<<< HEAD
+### Added
+- A set of device specific favicons
+=======
+### Changed
+- Now using the new SIFTA service
 
+### Fixed
+- Stopped end of median line from showing outside of graph area.
+- Custom brush handles now reposition when user clicks and holds.
+
+>>>>>>> 11ad75377c2b270f6f338df299b0f75ae08b0d84
+
+## [0.37.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.36.0...waterdataui-0.37.0) - 2020-09-16
+### Added
+- Added custom handles and hint text to  brush graph.
+- Added rel="noopener" attribute to links with target="_blank" attribute.
+
+### Changed 
+- Changed the word 'Toggle' to 'Display' for the 'median' checkbox.
+- Moved the 'provisional data statement' to a separate page--added link below graph.
+
+### Fixed
+- Issue that removed tick marks from main graph's brush area
+- Issue where networks/monitoring-locations/ caused an error
+
+## [0.36.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.35.0...waterdataui-0.36.0) - 2020-08-25
 ### Changed
 - Removed custom tooltips and replaced with USWDS tooltip component.
+- Decreased opacity of the upstream basin polygon.
+- Updated the NWIS time series data graph to display data for entire days of selected custom dates.
+- Changed "Summary" heading to "Summary of All Available Data"
+
+
+### Added
+- Updated monitoring location page custom date range selection to use USWDS date range picker
+- Added basemaps and hydro overlay from The National Map to replace existing basemaps on monitoring location and network pages.
+- Added Meta Tags for Facebook and Twitter images using graph image server.
+
+
+## [0.35.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.34.0...waterdataui-0.35.0) - 2020-07-30
+### Changed
+- Using the latest guidance for the contents of the government banner from USWDS
+
+### Added
+- Parameter selection list now has radio buttons to indicate selection.
 
 ## [0.34.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.33.0...waterdataui-0.34.0) - 2020-07-07
 ### Added

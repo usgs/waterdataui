@@ -2,29 +2,20 @@
     <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ site_no }}" data-latitude="{{ latitude }}" data-longitude="{{ longitude }}">
         <div class="loading-indicator-container"></div>
         <div class="graph-container"></div>
+        <div class="provisional-data-statement">
+            <p>
+                <span class="usa-tag">Important</span>
+                data may be provisional - <a class="usa-link" href="{{ url_for('provisional_data_statement') }}">learn more</a>
+            </p>
+        </div>
         <div class="select-time-series-container"></div>
         <div class="graph-data usa-accordion">
-            <h2 class="usa-acordion__heading">
+            <h2 class="usa-accordion__heading">
                 <button class="usa-accordion__button" aria-expanded="false" aria-controls="iv-data-table-container">
                     Table of hydrograph data
                 </button>
             </h2>
             <div id="iv-data-table-container" class="usa-accordion__content usa-prose"></div>
-        </div>
-        <div class="usa-alert usa-alert--info provisional-data-alert" role="alert" hidden>
-            <div class="usa-alert__body">
-                <h3 class="usa-alert__heading">Provisional Data Statement</h3>
-                <p class="usa-alert__text">
-                    Data are provisional and subject to revision until they have been thoroughly reviewed and received final approval.
-                    Current condition data relayed by satellite or other telemetry are automatically screened to not display improbable
-                    values until they can be verified. Provisional data may be inaccurate due to instrument malfunctions or physical
-                    changes at the measurement site. Subsequent review based on field inspections and measurements may result in
-                    significant revisions to the data. Data users are cautioned to consider carefully the provisional nature of the
-                    information before using it for decisions that concern personal or public safety or the conduct of business that
-                    involves substantial monetary or operational consequences. Information concerning the accuracy and appropriate uses
-                    of these data or concerning other hydrologic data may be obtained from the USGS.
-                </p>
-            </div>
         </div>
     </div>
 {%- endmacro %}
@@ -41,17 +32,52 @@
         <div id="flood-layer-control-container"></div>
         <div id="site-map"></div>
         <div>
-            <a class="usa-link" href="https://waterdata.usgs.gov/blog/nldi-intro/" target="_blank" >About the Network-Linked Data Index (NLDI)</a>
+            <a class="usa-link" href="https://waterdata.usgs.gov/blog/nldi-intro/" target="_blank" rel="noopener" >About the Network-Linked Data Index (NLDI)</a>
         </div>
     </div>
 {%- endmacro %}
 
-{% macro NetworkComponent(network_cd, extent) -%}
+{% macro NetworkComponent(network_cd, extent, collection, narrative) -%}
     <div class="wdfn-component" data-component="network" data-networkcd="{{ network_cd }}" data-extent="{{ extent }}">
-        <h3>Network Map:</h3>
         <p id="overload-map"></p>
         <div id="network-map"></div>
-        <h3>Link Table:</h3>
+        <div id="network-metadata" class="usa-prose">
+            {% if narrative %}
+                <div>{{ narrative|safe }}</div>
+            {% endif %}
+
+            {% if collection.properties.contactInformation %} {# compensates for missing contactInformation attribute in JSON for networks/monitoring-locations #}
+                {% if collection.properties.contactInformation.contactName and collection.properties.contactInformation.contactEmail %}
+                <label class="bold-label" for="contact-info">Network Contact</label><br>
+                <span id="contact-info">
+                    <span id="contact-name">{{ collection.properties.contactInformation.contactName }}</span>
+                    <span><a class="usa-link" href="mailto:{{ collection.properties.contactInformation.contactEmail }}"><i class="fas fa-envelope"></i></a>
+                    <a id="contact-email" class="usa-link" href="mailto:{{ collection.properties.contactInformation.contactEmail }}">{{ collection.properties.contactInformation.contactEmail }}</a></span>
+                </span>
+                {% endif %}
+            {% endif %}
+
+            {% if collection.properties.cooperators %}
+            <div id="network-cooperators">
+                <h3>Cooperators</h3>
+                    <div class="grid-row"> 
+                    {% for cooperator in collection.properties.cooperators %}
+                        <div class="cooperator-row">
+                            {% if cooperator.cooperatorLogo == '' %}
+                                <a class="usa-link" href="{{ cooperator.cooperatorURL}}">{{ cooperator.cooperatorName }}</a>
+                            {% else %}
+                                <figure>
+                                    <a href="{{ cooperator.cooperatorURL}}"><img src="{{ cooperator.cooperatorLogo }}" class="cooperator_logo" alt="Logo for {{ cooperator.cooperatorName }}"></a>
+                                    <figcaption><a class="usa-link" href="{{ cooperator.cooperatorURL}}">{{ cooperator.cooperatorName }}</a></figcaption>
+                                </figure>
+                            {% endif %}
+                        </div>
+                    {% endfor %}  
+                    </div>
+            </div>
+            {% endif %}
+        </div>
+        <h3>Link Table</h3>
         <div id="link-list">
             <p class="overload-table"></p>
             <table id="link-table" class="usa-table">

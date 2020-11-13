@@ -9,7 +9,15 @@
 
         {% include 'partials/google_analytics.html' %}
 
-        <link rel="shortcut icon" type="image/ico" href="{{ 'img/usgs_favicon.ico' | asset_url }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ 'img/favicon_device_specific/apple-touch-icon.png' | asset_url }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ 'img/favicon_device_specific/favicon-32x32.png' | asset_url }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ 'img/favicon_device_specific/favicon-16x16.png' | asset_url }}">
+        <link rel="manifest" href="{{ 'img/favicon_device_specific/site.webmanifest' | asset_url }}">
+        <link rel="mask-icon" href="{{ 'img/favicon_device_specific/safari-pinned-tab.svg" color="#007150' | asset_url }}">
+        <link rel="shortcut icon" href="{{ 'img/favicon_device_specific/favicon.ico' | asset_url }}">
+        <meta name="msapplication-TileColor" content="#2b5797">
+        <meta name="msapplication-config" content="{{ 'img/favicon_device_specific/browserconfig.xml' | asset_url }}">
+        <meta name="theme-color" content="#ffffff">
 
         {% block page_css %}{% endblock %}
         <script type="text/javascript">
@@ -19,6 +27,10 @@
                 'NWIS_INVENTORY_ENDPOINT': '{{ config.NWIS_ENDPOINTS.INVENTORY }}',
                 'OBSERVATIONS_ENDPOINT': '{{ config.OBSERVATIONS_ENDPOINT }}',
                 'HYDRO_ENDPOINT': '{{ config.HYDRO_ENDPOINT }}',
+                'TNM_USGS_TOPO_ENDPOINT' : '{{ config.TNM_USGS_TOPO_ENDPOINT }}',
+                'TNM_USGS_IMAGERY_ONLY_ENDPOINT': '{{ config.TNM_USGS_IMAGERY_ONLY_ENDPOINT }}',
+                'TNM_USGS_IMAGERY_TOPO_ENDPOINT': '{{ config.TNM_USGS_IMAGERY_TOPO_ENDPOINT }}',
+                'TNM_HYDRO_ENDPOINT': '{{ config.TNM_HYDRO_ENDPOINT }}',
                 'FIM_GIS_ENDPOINT': '{{ config.FIM_GIS_ENDPOINT }}',
                 'FIM_ENDPOINT': '{{ config.FIM_ENDPOINT }}',
                 'STATIC_URL': '{{ config.STATIC_ROOT }}',

@@ -14,7 +14,6 @@ from ..views import __version__
 from ..utils import parse_rdb
 from .rdb_snippets import SITE_RDB, PARAMETER_RDB
 
-
 class TestHomeView(TestCase):
     def setUp(self):
         self.app_client = app.test_client()
@@ -24,6 +23,16 @@ class TestHomeView(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(__version__, response.data.decode('utf-8'))
+
+
+class TestProvisionalDataStatementView(TestCase):
+    def setUp(self):
+        self.app_client = app.test_client()
+
+    def test_version(self):
+        response = self.app_client.get('/provisional-data-statement')
+
+        self.assertEqual(response.status_code, 200)
 
 
 class TestMonitoringLocationView(TestCase):

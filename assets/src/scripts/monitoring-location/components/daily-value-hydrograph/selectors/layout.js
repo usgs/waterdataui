@@ -43,7 +43,7 @@ export const getLayout = memoize(kind => createSelector(
             height: height,
             windowWidth: windowWidth,
             margin: {
-                top: kind === 'BRUSH' ? 10 : margin.top,
+                top: kind === 'BRUSH' ? 13 : margin.top,
                 right: margin.right,
                 bottom: margin.bottom,
                 left: margin.left

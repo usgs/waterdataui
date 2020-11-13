@@ -1,5 +1,7 @@
 import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from './models';
+import {utcFormat} from 'd3-time-format';
 
+export const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
 describe('Models module', () => {
     /* eslint no-use-before-define: 0 */
@@ -110,6 +112,7 @@ describe('Models module', () => {
         it('Retrieves data using the startDT and endDT parameters', () => {
             getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate});
             let request = jasmine.Ajax.requests.mostRecent();
+
             expect(request.url).toContain('startDT=2017-01-02T21:00');
             expect(request.url).toContain('endDT=2017-01-02T22:45');
         });

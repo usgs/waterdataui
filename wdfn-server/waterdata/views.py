@@ -5,6 +5,8 @@ import json
 
 from flask import abort, render_template, request, Markup
 
+from markdown import markdown
+
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, \
     get_period_of_record_by_parm_cd
@@ -19,11 +21,16 @@ from .camera import get_monitoring_camera_data
 SERVICE_ROOT = app.config['SERVER_SERVICE_ROOT']
 NWIS = NwisWebServices(SERVICE_ROOT)
 
-
 @app.route('/')
 def home():
     """Render the home page."""
     return render_template('index.html', version=__version__)
+
+
+@app.route('/provisional-data-statement')
+def provisional_data_statement():
+    """Render the provisional data statement page."""
+    return render_template('provisional_data_statement.html')
 
 
 @app.route('/monitoring-location/<site_no>/', methods=['GET'])
@@ -208,9 +215,11 @@ def networks(network_cd):
     if network_cd:
         collection = network_data
         extent = network_data['extent']['spatial']['bbox'][0]
+        narrative = markdown(network_data['properties']['narrative']) if network_data['properties'].get('narrative') else None
     else:
         collection = network_data.get('collections')
         extent = None
+        narrative = None
 
     http_code = 200 if (collection) else 404
 
@@ -219,7 +228,8 @@ def networks(network_cd):
         http_code=http_code,
         network_cd=network_cd,
         collection=collection,
-        extent=extent
+        extent=extent,
+        narrative=narrative
     ), http_code
 
 

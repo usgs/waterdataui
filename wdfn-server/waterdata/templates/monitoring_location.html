@@ -13,11 +13,13 @@
             <meta property="og:type" content="website" />
             <meta property="og:title" content="{{ page_title }}" />
             <meta property="og:description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}" />
+            <meta name="og:image" content="https://labs.waterdata.usgs.gov/api/graph-images/monitoring-location/{{stations[0].site_no}}/?parameterCode={{uv_period_of_record|first}}&width=1000">
             <!-- tags for Twitter Cards -->
-            <meta name="twitter:card" content="summary">
+            <meta name="twitter:card" content="summary_large_image">
             <meta name="twitter:site" content="@USGS">
             <meta name="twitter:title" content="{{ page_title }}">
             <meta name="twitter:description" content="{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}">
+            <meta name="twitter:image" content="https://labs.waterdata.usgs.gov/api/graph-images/monitoring-location/{{stations[0].site_no}}/?parameterCode={{uv_period_of_record|first}}&width=1000">
         {%  endif %}
     {%  endif %}
 {% endblock %}
@@ -70,7 +72,7 @@
                     <h1>{{ stations[0].station_nm }}</h1>
                     <div>
                         <span class="usa-tag">Important</span>
-                        <a id="classic-page-link" class="usa-link" aria-describedby="{{ 'classic'|tooltip_content_id }}" href="{{ config.NWIS_ENDPOINTS.UV}}?site_no={{stations[0].site_no}}" target="_blank">Classic Page</a>
+                        <a id="classic-page-link" class="usa-link" aria-describedby="{{ 'classic'|tooltip_content_id }}" href="{{ config.NWIS_ENDPOINTS.UV}}?site_no={{stations[0].site_no}}" target="_blank" rel="noopener">Classic Page</a>
                         {{ components.QuestionTooltip('classic', 'View all current conditions values on the classic Water Data for the Nation interface.', True) }}
                     </div>
                     <p id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}</p>
@@ -86,18 +88,18 @@
                         <div id="ts-a1a" class="usa-accordion__content">
                             <div>Most recent image</div>
                             <div style="float:left">
-                                <a href="{{ monitoring_camera.video  }}" title="click image to open full-size video" target="_blank">
+                                <a href="{{ monitoring_camera.video  }}" title="click image to open full-size video" target="_blank" rel="noopener">
                                     <img width="200" src="{{ monitoring_camera.thumb }}" alt="lastest camera image thumbnail">
                                 </a>
                             </div>
                             <div style="float:right">
                                 <div><b>Frames Gallery: </b>
-                                    <a href="{{ monitoring_camera.frame_gallery }}" target="_blank">
+                                    <a href="{{ monitoring_camera.frame_gallery }}" target="_blank" rel="noopener">
                                         Last 99 Frames
                                     </a>
                                 </div>
                                 <div><b>Video Folder: </b>
-                                    <a href="{{ monitoring_camera.video_index }}" target="_blank">
+                                    <a href="{{ monitoring_camera.video_index }}" target="_blank" rel="noopener">
                                         Index of videos and images
                                     </a>
                                 </div>
@@ -135,7 +137,7 @@
                 {% if parm_grp_summary %}
                     <div class="usa-accordion">
                         <h2 class="usa-accordion__heading">
-                            <button class="usa-accordion__button" aria-expanded="false" aria-controls="ts-a1">Summary</button>
+                            <button class="usa-accordion__button" aria-expanded="false" aria-controls="ts-a1">Summary of All Available Data</button>
                         </h2>
                         <div id="ts-a1" class="usa-accordion__content">
                             <table class="usa-table" id="site-data-summary">
@@ -158,7 +160,7 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
-                            <a class="usa-link" href="{{ config.NWIS_ENDPOINTS.INVENTORY}}?site_no={{ stations[0].site_no }}" target="_blank">Classic Water Data for the Nation Inventory</a>
+                            <a class="usa-link" href="{{ config.NWIS_ENDPOINTS.INVENTORY}}?site_no={{ stations[0].site_no }}" target="_blank" rel="noopener">Classic Water Data for the Nation Inventory</a>
                         </div>
                     </div>
                 {% endif %}

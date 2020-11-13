@@ -396,7 +396,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 promise.then(() => {
                     const tsState = store.getState().ivTimeSeriesState;
                     expect(Actions.addIVTimeSeriesCollection).toHaveBeenCalledWith({});
-                    expect(tsState.loadingIVTSKeys).not.toContain('current:custom:00060');
+                    expect(tsState.loadingIVTSKeys).not.toContain('current:custom:00060');     
                     done();
                 });
             });
@@ -524,7 +524,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 expect(Actions.retrieveCustomIVTimeSeries).toHaveBeenCalled();
                 expect(Actions.retrieveCustomIVTimeSeries.calls.argsFor(0)[0]).toEqual('12345678');
                 expect(Actions.retrieveCustomIVTimeSeries.calls.argsFor(0)[1]).toEqual(1262325600000);
-                expect(Actions.retrieveCustomIVTimeSeries.calls.argsFor(0)[2]).toEqual(1267423200000);
+                expect(Actions.retrieveCustomIVTimeSeries.calls.argsFor(0)[2]).toEqual(1267509599999);
             });
         });
     });

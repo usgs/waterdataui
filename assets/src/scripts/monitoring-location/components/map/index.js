@@ -2,7 +2,7 @@ import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import config from '../../../config';
-import {createMap, createBaseLayerGroup} from '../../../leaflet-rendering/map';
+import {createMap, createBaseLayer} from '../../../leaflet-rendering/map';
 import {legendControl} from '../../../leaflet-rendering/legend-control';
 import {link} from '../../../lib/d3-redux';
 import {FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT} from '../../../web-services/flood-data';
@@ -33,13 +33,19 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
     });
 
     const baseMapLayers = {
-        'Grayscale': createBaseLayerGroup('Gray', config.HYDRO_ENDPOINT || null),
-        'Satellite': createBaseLayerGroup('ImageryFirefly', null)
+        'USGS Topo': createBaseLayer(config.TNM_USGS_TOPO_ENDPOINT),
+        'Imagery': createBaseLayer(config.TNM_USGS_IMAGERY_ONLY_ENDPOINT),
+        'Imagery+Topo': createBaseLayer(config.TNM_USGS_IMAGERY_TOPO_ENDPOINT)
     };
-    map.addLayer(baseMapLayers['Grayscale']);
+
+    const overlayLayers = {
+        'Hydro': createBaseLayer(config.TNM_HYDRO_ENDPOINT)
+    };
+
+    map.addLayer(baseMapLayers['USGS Topo']);
 
     //add layer control
-    L.control.layers(baseMapLayers).addTo(map);
+    L.control.layers(baseMapLayers,overlayLayers).addTo(map);
 
     const mlLegendControl = legendControl();
     mlLegendControl.addTo(map);
