@@ -1,8 +1,8 @@
 import {select} from 'd3-selection';
 
-import {configureStore} from '../../store';
+import {configureStore} from 'ml/store';
 
-import {drawDataTable} from './data-table';
+import {drawDataTable} from 'ivhydrograph/data-table';
 
 const TEST_DATA = {
     ivTimeSeriesData: {
@@ -101,7 +101,7 @@ const TEST_DATA = {
     },
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
-        currentIVDateRangeKind: 'P7D',
+        currentIVDateRange: 'P7D',
         currentIVMethodID: 69928
     }
 };

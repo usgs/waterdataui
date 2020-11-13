@@ -1,6 +1,6 @@
 // http://www.html5rocks.com/en/tutorials/es6/promises/
 
-export const get = function (url) {
+export const get = function(url) {
     // Return a new promise.
     return new Promise(function(resolve, reject) {
         // Do the usual XHR stuff

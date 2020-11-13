@@ -1,6 +1,6 @@
-import {MOCK_STATISTICS_RDB} from '../mock-service-data';
+import {MOCK_STATISTICS_RDB} from 'ui/mock-service-data';
 
-import {fetchSiteStatistics, fetchSitesStatisticsRDB} from './statistics-data';
+import {fetchSiteStatistics, fetchSitesStatisticsRDB} from 'ui/web-services/statistics-data';
 
 
 describe('statistics-data', () => {

@@ -7,9 +7,9 @@ import {
     getCurrentDVTimeSeriesTimeRange,
     getCurrentDVTimeSeriesValueRange,
     getCurrentDVTimeSeriesData
-} from '../../../selectors/daily-value-time-series-selector';
+} from 'ml/selectors/daily-value-time-series-selector';
 
-import {getLayout} from './layout';
+import {getLayout} from 'dvhydrograph/selectors/layout';
 
 /*
  * Returns a selector function which returns a d3 scale for either the brush,
@@ -35,7 +35,7 @@ export const getXScale = memoize((kind) => createSelector(
 export const getMainXScale = getXScale();
 export const getBrushXScale = getXScale('BRUSH');
 
-const createYScale = function (layout, valueRange) {
+const createYScale = function(layout, valueRange) {
     const PADDING_RATIO = 0.2;
     let yScale = scaleLinear();
     yScale.range([layout.height - layout.margin.top - layout.margin.bottom, 0]);

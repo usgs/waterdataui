@@ -1,7 +1,7 @@
-import {configureStore} from '../../../store';
-import {Actions} from '../../../store/instantaneous-value-time-series-state';
+import {configureStore} from 'ml/store';
+import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {getTsCursorPoints, getCursorOffset, getTooltipPoints} from './cursor';
+import {getTsCursorPoints, getCursorOffset, getTooltipPoints} from 'ivhydrograph/selectors/cursor';
 
 let DATA = [12, 13, 14, 15, 16].map(hour => {
     return {
@@ -195,7 +195,7 @@ const TEST_STATE_THREE_VARS = {
         },
         currentIVVariableID: '45807197',
         currentIVMethodID: 69928,
-        currentIVDateRangeKind: 'P7D',
+        currentIVDateRange: 'P7D',
         audiblePlayId: null
     },
     ui: {
@@ -319,7 +319,7 @@ const TEST_STATE_ONE_VAR = {
         },
         currentIVVariableID: '00060id',
         currentIVMethodID: 69928,
-        currentIVDateRangeKind: 'P7D',
+        currentIVDateRange: 'P7D',
         ivGraphCursorOffset: null
     },
     ui: {

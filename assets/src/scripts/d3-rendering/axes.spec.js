@@ -1,6 +1,6 @@
 import {select} from 'd3-selection';
 
-import {appendXAxis, appendYAxis, appendSecondaryYAxis, appendAxes} from './axes';
+import {appendXAxis, appendYAxis, appendSecondaryYAxis, appendAxes} from 'd3render/axes';
 
 describe('axes module', () => {
     let svg, layout;

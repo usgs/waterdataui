@@ -1,7 +1,7 @@
 import {scaleLinear} from 'd3-scale';
 import {select} from 'd3-selection';
 
-import {drawFocusOverlay, drawFocusLine, drawFocusCircles} from './graph-tooltip';
+import {drawFocusOverlay, drawFocusLine, drawFocusCircles} from 'd3render/graph-tooltip';
 
 describe('graph-tooltip module', () => {
     let svg;

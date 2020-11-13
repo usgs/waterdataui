@@ -1,16 +1,16 @@
-import '../polyfills';
+import 'ui/polyfills';
 
 import wdfnviz from 'wdfn-viz';
 
-import {configureStore} from './store';
+import {configureStore} from 'network/store';
 
-import {attachToNode as NetworkMapComponent} from './components/network-sites';
+import {attachToNode as NetworkMapComponent} from 'network/components/network-sites';
 
 const COMPONENTS = {
     'network': NetworkMapComponent
 };
 
-const load = function () {
+const load = function() {
     let nodes = document.getElementsByClassName('wdfn-component');
     let store = configureStore();
     for (let node of nodes) {

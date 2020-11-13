@@ -1,4 +1,4 @@
-import {fetchAvailableDVTimeSeries, fetchDVTimeSeries} from '../../web-services/observations';
+import {fetchAvailableDVTimeSeries, fetchDVTimeSeries} from 'ui/web-services/observations';
 
 const INITIAL_DAILY_VALUE_TIME_SERIES_DATA= {
     availableDVTimeSeries: [],
@@ -10,7 +10,7 @@ const INITIAL_DAILY_VALUE_TIME_SERIES_DATA= {
  * @param {Object} availableDVTimeSeries
  * @return {Object} Redux action
  */
-const setAvailableDVTimeSeries = function (availableTimeSeries) {
+const setAvailableDVTimeSeries = function(availableTimeSeries) {
     return {
         type: 'SET_AVAILABLE_DV_TIME_SERIES',
         availableTimeSeries
@@ -127,7 +127,7 @@ const retrieveDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
  * Slice reducer for dailyValueTimeSeries data
  */
 export const dailyValueTimeSeriesDataReducer =
-    function (dailyValueTimeSeriesData = INITIAL_DAILY_VALUE_TIME_SERIES_DATA, action) {
+    function(dailyValueTimeSeriesData = INITIAL_DAILY_VALUE_TIME_SERIES_DATA, action) {
         switch (action.type) {
             case 'SET_AVAILABLE_DV_TIME_SERIES': {
                 return {

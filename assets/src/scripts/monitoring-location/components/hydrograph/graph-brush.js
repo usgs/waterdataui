@@ -1,19 +1,18 @@
 import {brushX} from 'd3-brush';
-import {event} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
-import {appendXAxis} from '../../../d3-rendering/axes';
-import {link} from '../../../lib/d3-redux';
-import {Actions} from '../../store/instantaneous-value-time-series-state';
+import {appendXAxis} from 'd3render//axes';
+import {link} from 'ui/lib/d3-redux';
+import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {getBrushXAxis} from './selectors/axes';
-import {getCurrentVariableLineSegments} from './selectors/drawing-data';
-import {getBrushLayout} from './selectors/layout';
-import {getBrushXScale, getBrushYScale} from './selectors/scales';
-import {isVisible} from './selectors/time-series-data';
-import {drawDataLines} from './time-series-lines';
-import {mediaQuery} from '../../../utils';
-import config from '../../../config';
+import {getBrushXAxis} from 'ivhydrograph/selectors/axes';
+import {getCurrentVariableLineSegments} from 'ivhydrograph/selectors/drawing-data';
+import {getBrushLayout} from 'ivhydrograph/selectors/layout';
+import {getBrushXScale, getBrushYScale} from 'ivhydrograph/selectors/scales';
+import {isVisible} from 'ivhydrograph/selectors/time-series-data';
+import {drawDataLines} from 'ivhydrograph/time-series-lines';
+import {mediaQuery} from 'ui/utils';
+import config from 'ui/config';
 
 /*
  * Renders a brush element within container for the main graph
@@ -25,7 +24,7 @@ export const drawGraphBrush = function(container, store) {
     let customHandle;
     let layoutHeight;
 
-    const brushed = function() {
+    const brushed = function(event) {
         const CENTERING_DIVISOR_LARGE_SCREEN = 3.3;
         const CENTERING_DIVISOR_SMALL_SCREEN = 2.5;
 

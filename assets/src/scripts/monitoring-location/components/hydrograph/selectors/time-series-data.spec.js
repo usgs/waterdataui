@@ -1,6 +1,6 @@
 import {
     isVisible, getYLabel, getTitle,
-    getDescription, getTsTimeZone, getSecondaryYLabel} from './time-series-data';
+    getDescription, getTsTimeZone, getSecondaryYLabel} from 'ivhydrograph/selectors/time-series-data';
 
 
 const TEST_DATA = {
@@ -211,7 +211,7 @@ const TEST_DATA = {
     },
     ivTimeSeriesState: {
         currentIVVariableID: '45807197',
-        currentIVDateRangeKind: 'P7D'
+        currentIVDateRange: 'P7D'
     }
 };
 

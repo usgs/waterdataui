@@ -5,22 +5,21 @@
  */
 import {scaleLinear} from 'd3-scale';
 import memoize from 'fast-memoize';
-import {createSelector, createStructuredSelector} from 'reselect';
+import {createStructuredSelector} from 'reselect';
 
-import config from '../../../config';
-import {link} from '../../../lib/d3-redux';
-import {getTimeSeries} from '../../selectors/time-series-selector';
-import {Actions} from '../../store/instantaneous-value-time-series-state';
+import config from 'ui/config';
+import {link} from 'ui/lib/d3-redux';
+import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {isAudiblePlaying, getAudiblePoints} from './selectors/audible-data';
-import {getMainXScale, getMainYScale} from './selectors/scales';
+import {isAudiblePlaying, getAudiblePoints} from 'ivhydrograph/selectors/audible-data';
+import {getMainXScale} from 'ivhydrograph/selectors/scales';
 
 
 // Higher tones get lower volume
 const volumeScale = scaleLinear().range([2, .3]);
 
 const AudioContext = config.TIMESERIES_AUDIO_ENABLED ? window.AudioContext || window.webkitAudioContext : null;
-const getAudioContext = memoize(function () {
+const getAudioContext = memoize(function() {
     return new AudioContext();
 });
 
@@ -51,7 +50,7 @@ export const createSound = memoize(/* eslint no-unused-vars: off */ tsKey => {
     return {oscillator, gainNode, compressor};
 });
 
-export const updateSound = function ({enabled, points}) {
+export const updateSound = function({enabled, points}) {
     const audioCtx = getAudioContext();
     for (const tsKey of Object.keys(points)) {
         const point = points[tsKey];
@@ -80,7 +79,7 @@ export const updateSound = function ({enabled, points}) {
 /*
  * Renders the audible control if enabled.
  */
-export const audibleUI = function (elem, store) {
+export const audibleUI = function(elem, store) {
     if (!config.TIMESERIES_AUDIO_ENABLED) {
         return;
     }
@@ -125,7 +124,7 @@ export const audibleUI = function (elem, store) {
     // Listen for focus changes, and play back the audio representation of
     // the selected points.
     // TODO: This does not correctly handle parameter codes with multiple time series.
-    elem.call(link(store,function (elem, {enabled, points}) {
+    elem.call(link(store,function(elem, {enabled, points}) {
         updateSound({
             points,
             enabled

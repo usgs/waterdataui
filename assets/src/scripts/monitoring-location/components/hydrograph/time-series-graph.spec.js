@@ -1,9 +1,9 @@
 import {select, selectAll} from 'd3-selection';
 
-import {configureStore} from '../../store';
-import {Actions} from '../../store/instantaneous-value-time-series-state';
+import {configureStore} from 'ml/store';
+import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {drawTimeSeriesGraph} from './time-series-graph';
+import {drawTimeSeriesGraph} from 'ivhydrograph/time-series-graph';
 
 
 const TEST_STATE = {
@@ -167,7 +167,7 @@ const TEST_STATE = {
         currentIVVariableID: '45807197',
         ivGraphCursorOffset: 0,
         currentIVMethodID: 1,
-        currentIVDateRangeKind: 'P7D',
+        currentIVDateRange: 'P7D',
         showIVTimeSeries: {
             current: true,
             compare: true,

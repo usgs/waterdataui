@@ -25,7 +25,7 @@ class TranslateToLookupTestCase(TestCase):
                          {'value1': {'name': 'Name1'},
                           'value2': {'name': 'Name2'},
                           'value3': {'name': 'Name3'}}
-                         )
+                        )
 
     def test_with_unmatched_name_key(self):
         self.assertEqual(translate_to_lookup(self.test_dict_iter, 'this_cd', 'that_name', '', ''),

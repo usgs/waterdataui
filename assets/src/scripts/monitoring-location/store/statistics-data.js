@@ -1,4 +1,4 @@
-import {fetchSiteStatistics} from '../../web-services/statistics-data';
+import {fetchSiteStatistics} from 'ui/web-services/statistics-data';
 
 const INITIAL_DATA = {
     median: {}

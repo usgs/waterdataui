@@ -1,7 +1,7 @@
 import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
-import {Actions, dailyValueTimeSeriesDataReducer, dailyValueTimeSeriesStateReducer} from './daily-value-time-series';
+import {Actions, dailyValueTimeSeriesDataReducer, dailyValueTimeSeriesStateReducer} from 'ml/store/daily-value-time-series';
 
 describe('monitoring-location/store/daily-value-time-series module', () => {
     /* eslint no-use-before-define: 0 */

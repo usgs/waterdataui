@@ -62,6 +62,15 @@ svg {
 
   .ts-compare {
     stroke-width: 1px;
+    stroke: $default-time-series-compare;
+
+    &.approved {
+      stroke: $approved-time-series-compare;
+    }
+
+    &.estimated {
+      stroke: $estimated-time-series-compare;
+    }
   }
 
   .axis {

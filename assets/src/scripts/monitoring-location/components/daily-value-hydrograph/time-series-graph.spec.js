@@ -1,9 +1,9 @@
 import {select} from 'd3-selection';
 
-import {configureStore} from '../../store';
-import {Actions} from '../../store/daily-value-time-series';
+import {configureStore} from 'ml/store';
+import {Actions} from 'ml/store/daily-value-time-series';
 
-import {drawTimeSeriesGraph} from './time-series-graph';
+import {drawTimeSeriesGraph} from 'dvhydrograph/time-series-graph';
 
 describe('monitoring-location/components/dailyValueHydrograph/time-series-graph', () => {
     const TEST_STATE = {

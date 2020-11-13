@@ -7,9 +7,9 @@ import {
     MOCK_NLDI_UPSTREAM_SITES_FEATURE,
     MOCK_NLDI_DOWNSTREAM_SITES_FEATURE,
     MOCK_NLDI_UPSTREAM_BASIN_FEATURE
-} from '../../mock-service-data';
+} from 'ui/mock-service-data';
 
-import {Actions, nldiDataReducer} from './nldi-data';
+import {Actions, nldiDataReducer} from 'ml/store/nldi-data';
 
 describe('monitoring-location/store/nldi-data module', () => {
     /* eslint no-use-before-define: 0 */

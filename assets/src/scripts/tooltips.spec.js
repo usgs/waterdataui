@@ -1,5 +1,5 @@
 import {select} from 'd3-selection';
-import {appendTooltip} from './tooltips';
+import {appendTooltip} from 'ui/tooltips';
 
 
 describe('tooltips', () => {

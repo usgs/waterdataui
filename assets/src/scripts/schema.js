@@ -1,6 +1,6 @@
 import memoize from 'fast-memoize';
 import {normalize as normalizr, schema} from 'normalizr';
-import {replaceHtmlEntities} from './utils';
+import {replaceHtmlEntities} from 'ui/utils';
 
 
 // sourceInfo schema
@@ -160,6 +160,6 @@ const request = memoize(tsKey => new schema.Entity('requests', {
  * @param  {String} tsKey  Time series key. eg, "current"
  * @return {Object}        Normalized entities
  */
-export const normalize = function (ivData, tsKey) {
+export const normalize = function(ivData, tsKey) {
     return normalizr(ivData, request(tsKey)).entities;
 };

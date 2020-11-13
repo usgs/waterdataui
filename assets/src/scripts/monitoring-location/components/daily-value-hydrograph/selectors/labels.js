@@ -3,7 +3,7 @@ import {createSelector} from 'reselect';
 import {
     getCurrentDVTimeSeries,
     getCurrentDVTimeSeriesUnitOfMeasure
-} from '../../../selectors/daily-value-time-series-selector';
+} from 'ml/selectors/daily-value-time-series-selector';
 
 /*
  * Returns a selector function that returns a string that can be used as the title of the graph

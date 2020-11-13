@@ -1,13 +1,12 @@
-import {set} from 'd3-collection';
 import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
-import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from '../../../../d3-rendering/markers';
+import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from 'd3render/markers';
 
-import {getWaterwatchFloodLevels, isWaterwatchVisible} from '../../../selectors/flood-data-selector';
-import {getCurrentVariableMedianMetadata} from '../../../selectors/median-statistics-selector';
+import {getWaterwatchFloodLevels, isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
+import {getCurrentVariableMedianMetadata} from 'ml/selectors/median-statistics-selector';
 
-import {getCurrentVariableLineSegments, HASH_ID, MASK_DESC} from './drawing-data';
+import {getCurrentVariableLineSegments, HASH_ID, MASK_DESC} from 'ivhydrograph/selectors/drawing-data';
 
 const TS_LABEL = {
     'current': 'Current: ',
@@ -21,7 +20,7 @@ const TS_LABEL = {
  *      @prop {Boolean} default
  *      @prop {Boolean} approved
  *      @prop {Boolean} estimated
- *      @prop {D3 set} dataMask
+ *      @prop {Set} dataMasks
  */
 const getUniqueClasses = memoize(tsKey => createSelector(
     getCurrentVariableLineSegments(tsKey),
@@ -31,7 +30,7 @@ const getUniqueClasses = memoize(tsKey => createSelector(
             default: classes.some((cls) => !cls.approved && !cls.estimated && !cls.dataMask),
             approved: classes.some((cls) => cls.approved),
             estimated: classes.some((cls) => cls.estimated),
-            dataMasks: set(classes.map((cls) => cls.dataMask).filter((mask) => {
+            dataMasks: new Set(classes.map((cls) => cls.dataMask).filter((mask) => {
                 return mask;
             }))
         };
@@ -65,7 +64,7 @@ const getLegendDisplay = createSelector(
 
 const getTsMarkers = function(tsKey, uniqueClasses) {
     let tsMarkers;
-    const maskMarkers = uniqueClasses.dataMasks.values().map((mask) => {
+    const maskMarkers = Array.from(uniqueClasses.dataMasks.values()).map((mask) => {
         const maskName = MASK_DESC[mask];
         const tsClass = `${maskName.replace(' ', '-').toLowerCase()}-mask`;
         const fill = `url(#${HASH_ID[tsKey]})`;

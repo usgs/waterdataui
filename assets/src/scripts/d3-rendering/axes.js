@@ -1,4 +1,4 @@
-import {wrap} from '../utils';
+import {wrap} from 'ui/utils';
 
 /*
  * The functions assume that the enclosing elem as been translated so that the {0, 0} is

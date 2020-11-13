@@ -1,8 +1,8 @@
 import {select} from 'd3-selection';
 
-import{configureStore} from '../../store';
+import{configureStore} from 'ml/store';
 
-import {drawGraphBrush} from './graph-brush';
+import {drawGraphBrush} from 'ivhydrograph/graph-brush';
 
 describe ('monitoring-location/components/hydrograph/graph-brush module', () => {
 
@@ -137,7 +137,7 @@ describe ('monitoring-location/components/hydrograph/graph-brush module', () => 
         },
         ivTimeSeriesState: {
             currentIVVariableID: '45807197',
-            currentIVDateRangeKind: 'P7D',
+            currentIVDateRange: 'P7D',
             showIVTimeSeries: {
                 current: true,
                 compare: true,

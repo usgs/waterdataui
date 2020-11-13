@@ -59,7 +59,7 @@ export const addNldiLayers = function (map, upstreamFlows, downstreamFlows, upst
     const getPointDataLayer = function(data, markerOptions) {
         return L.geoJson(data, {
             onEachFeature: onEachPointFeatureAddPopUp,
-            pointToLayer: function (feature, latlng) {
+            pointToLayer: function(feature, latlng) {
                 return L.circleMarker(latlng, markerOptions);
             }
         });
@@ -71,7 +71,7 @@ export const addNldiLayers = function (map, upstreamFlows, downstreamFlows, upst
         });
     };
 
-    const getPolygonLayer = function(data, style){
+    const getPolygonLayer = function(data, style) {
       return L.geoJson(data, {
           style: style
       });

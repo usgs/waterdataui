@@ -1,4 +1,4 @@
-import {normalize} from './schema';
+import {normalize} from 'ui/schema';
 
 
 describe('Normalizr schema', () => {

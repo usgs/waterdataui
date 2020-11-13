@@ -13,22 +13,32 @@ var CONFIG = {
             begin_date: '01-02-2001',
             end_date: '10-15-2015'
         },
-        '00067': {
-            begin_date: '04-01-1990',
-            end_date: '10-15-2006'
+        '00060': {
+            begin_date: '04-01-1991',
+            end_date: '10-15-2007'
         },
         '00093': {
             begin_date: '11-25-2001',
             end_date: '03-01-2020'
+        },
+        '00067': {
+            begin_date: '04-01-1990',
+            end_date: '10-15-2006'
         }
     }
 };
 
 var mockOscillator = function() {
-    var connect = function() { return null; };
-    var start = function() { return null; };
+    var connect = function() {
+        return null;
+    };
+    var start = function() {
+        return null;
+    };
     var frequency = {
-        setTargetAtTime : function() { return null; }
+        setTargetAtTime : function() {
+            return null;
+        }
     };
     return {
         type: '',
@@ -39,9 +49,13 @@ var mockOscillator = function() {
 };
 
 var mockGain = function() {
-    var connect = function() { return null; };
+    var connect = function() {
+        return null;
+    };
     var gain = {
-        setTargetAtTime: function() { return null; }
+        setTargetAtTime: function() {
+            return null;
+        }
     };
     return {
         connect: connect,
@@ -50,21 +64,33 @@ var mockGain = function() {
 };
 
 var mockCompressor = function() {
-    var connect = function() { return null; };
+    var connect = function() {
+        return null;
+    };
     var threshold = {
-        setValueAtTime: function() { return null; }
+        setValueAtTime: function() {
+            return null;
+        }
     };
     var knee = {
-        setValueAtTime: function() { return null; }
+        setValueAtTime: function() {
+            return null;
+        }
     };
     var ratio = {
-        setValueAtTime: function() { return null; }
+        setValueAtTime: function() {
+            return null;
+        }
     };
     var attack = {
-        setValueAtTime: function() { return null; }
+        setValueAtTime: function() {
+            return null;
+        }
     };
     var release = {
-        setValueAtTime: function() { return null; }
+        setValueAtTime: function() {
+            return null;
+        }
     };
     return {
         connect: connect,

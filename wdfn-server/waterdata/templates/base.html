@@ -1,7 +1,11 @@
 {% extends 'base_plain.html' %}
 
 {% block page_css %}
-      <link rel="stylesheet" href="{{ 'main.css' | asset_url }}">
+    <link rel="stylesheet" href="{{ 'main.css' | asset_url }}">
+{% endblock %}
+
+{% block page_script %}
+    <script src="{{ 'scripts/uswds.min.js' | asset_url }}"></script>"
 {% endblock %}
 
 {% block body %}

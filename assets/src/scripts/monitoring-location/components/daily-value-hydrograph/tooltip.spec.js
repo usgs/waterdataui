@@ -1,8 +1,8 @@
 import {select} from 'd3-selection';
 
-import {configureStore} from '../../store';
+import {configureStore} from 'ml/store';
 
-import {drawTooltipFocus, drawTooltipText, drawTooltipCursorSlider} from './tooltip';
+import {drawTooltipFocus, drawTooltipText, drawTooltipCursorSlider} from 'dvhydrograph/tooltip';
 
 describe('monitoring-location/components/daily-value-hydrograph/tooltip module', () => {
     const TEST_STATE = {

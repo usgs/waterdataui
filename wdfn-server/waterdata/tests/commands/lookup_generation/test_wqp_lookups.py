@@ -61,7 +61,7 @@ class GetNwisStateLookupTestCase(TestCase):
         self.assertEqual(get_nwis_state_lookup(test_lookup),
                          {'55': {'name': 'Wisconsin'},
                           '01': {'name': 'Alabama'}}
-                         )
+                        )
 
 
 class GetNwisCountyLookupTestCase(TestCase):

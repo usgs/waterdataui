@@ -1,8 +1,8 @@
 import {select} from 'd3-selection';
 
-import {configureStore, Actions} from '../../store';
+import {configureStore, Actions} from 'network/store';
 
-import {attachToNode} from './index';
+import {attachToNode} from 'network/components/network-sites/index';
 
 describe('network map module', () => {
     let componentNode;
@@ -35,7 +35,7 @@ describe('network map module', () => {
     describe('Map creation without Network maps', () => {
         beforeEach(() => {
             store = configureStore();
-            spyOn(Actions, 'retrieveNetworkData').and.returnValue(function () {
+            spyOn(Actions, 'retrieveNetworkData').and.returnValue(function() {
                 return Promise.resolve({});
             });
             attachToNode(store, componentNode, {

@@ -1,5 +1,5 @@
-import config from '../config';
-import {get} from '../ajax';
+import config from 'ui/config';
+import {get} from 'ui/ajax';
 
 const nldiUrl = config.NLDI_SERVICES_ENDPOINT;
 const featureSource = 'nwissite';

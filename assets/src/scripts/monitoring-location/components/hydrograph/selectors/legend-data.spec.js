@@ -1,6 +1,6 @@
-import {lineMarker, rectangleMarker, textOnlyMarker} from '../../../../d3-rendering/markers';
+import {lineMarker, rectangleMarker, textOnlyMarker} from 'd3render//markers';
 
-import {getLegendMarkerRows} from './legend-data';
+import {getLegendMarkerRows} from 'ivhydrograph/selectors/legend-data';
 
 describe('monitoring-location/components/hydrograph/selectors/legend-data', () => {
     const TEST_DATA = {
@@ -82,7 +82,7 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
         },
         ivTimeSeriesState: {
             currentIVVariableID: '45807197',
-            currentIVDateRangeKind: 'P7D',
+            currentIVDateRange: 'P7D',
             showIVTimeSeries: {
                 current: true,
                 compare: true,

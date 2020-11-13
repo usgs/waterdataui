@@ -1,9 +1,9 @@
 import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
-import {MOCK_OBSERVATION_ITEM} from '../../mock-service-data';
+import {MOCK_OBSERVATION_ITEM} from 'ui/mock-service-data';
 
-import {Actions, networkDataReducer} from './network';
+import {Actions, networkDataReducer} from 'ml/store/network';
 
 describe('monitoring-location/store/network module', () => {
     /* eslint no-use-before-define: 0 */
@@ -89,7 +89,7 @@ describe('monitoring-location/store/network module', () => {
                     const networkData = store.getState().networkData;
 
                     expect(networkData.networkList).toEqual(
-                        JSON.parse(MOCK_OBSERVATION_ITEM).links.filter(function (link) {
+                        JSON.parse(MOCK_OBSERVATION_ITEM).links.filter(function(link) {
                             return link['rel'] == 'collection';
                         }));
                     done();

@@ -1,13 +1,13 @@
 import {line} from 'd3-shape';
 import {select} from 'd3-selection';
 
-import config from '../../../config';
-import {appendTooltip} from '../../../tooltips';
+import config from 'ui/config';
+import {appendTooltip} from 'ui/tooltips';
 
-import {Actions} from '../../store/instantaneous-value-time-series-data';
+import {Actions} from 'ml/store/instantaneous-value-time-series-data';
 
-import {MASK_DESC} from './selectors/drawing-data';
-import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from './selectors/layout';
+import {MASK_DESC} from 'ivhydrograph/selectors/drawing-data';
+import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from 'ivhydrograph/selectors/layout';
 
 /**
  * Draw a sparkline in a selected SVG element
@@ -46,7 +46,7 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
             }
         }
     } else {
-        const centerElement = function (svgElement) {
+        const centerElement = function(svgElement) {
             const elementWidth = svgElement.node().getBoundingClientRect().width;
             const xLocation = (SPARK_LINE_DIM.width - elementWidth) / 2;
             svgElement.attr('x', xLocation);
@@ -87,13 +87,13 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
  * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
  * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
  */
-export const plotSeriesSelectTable = function (elem,
+export const plotSeriesSelectTable = function(elem,
     {
         siteno,
         availableParameterCodes,
         lineSegmentsByParmCd,
         timeSeriesScalesByParmCd
-    }, store ){
+    }, store) {
     // Get the position of the scrolled window before removing it so it can be set to the same value.
     const lastTable = elem.select('#select-time-series table');
     const scrollTop = lastTable.size() ? lastTable.property('scrollTop') : null;
@@ -130,13 +130,14 @@ export const plotSeriesSelectTable = function (elem,
         .selectAll('tr')
         .data(availableParameterCodes)
         .enter().append('tr')
+        .attr('id', param => `time-series-select-table-row-${param.parameterCode}`)
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'selectTimeSeries')
         .attr('ga-event-action', (param) => `time-series-parmcd-${param.parameterCode}`)
         .attr('role', 'option')
         .classed('selected', param => param.selected)
         .attr('aria-selected', param => param.selected)
-        .on('click', function (param) {
+        .on('click', function(event, param) {
             if (!param.selected) {
                 store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, param.variableID));
             }
@@ -144,6 +145,7 @@ export const plotSeriesSelectTable = function (elem,
         .call(tr => {
             let paramSelectCol = tr.append('td');
             paramSelectCol.append('input')
+                .attr('id', param => `time-series-select-radio-button-${param.parameterCode}`)
                 .attr('type', 'radio')
                 .attr('name', 'param-select-radio-input')
                 .attr('class', 'usa-radio__input')
@@ -170,7 +172,7 @@ export const plotSeriesSelectTable = function (elem,
 
     table.property('scrollTop', scrollTop);
 
-    table.selectAll('tbody svg').each(function (d) {
+    table.selectAll('tbody svg').each(function(d) {
         let selection = select(this);
         const paramCd = d.parameterCode;
         const lineSegments = lineSegmentsByParmCd[paramCd] ? lineSegmentsByParmCd[paramCd] : [];

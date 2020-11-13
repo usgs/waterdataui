@@ -4,32 +4,33 @@
 import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
-import config from '../../../config.js';
-import {drawWarningAlert, drawInfoAlert} from '../../../d3-rendering/alerts';
-import {drawLoadingIndicator} from '../../../d3-rendering/loading-indicator';
-import {link} from '../../../lib/d3-redux';
+import config from 'ui/config.js';
+import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
+import {drawLoadingIndicator} from 'd3render/loading-indicator';
+import {link} from 'ui/lib/d3-redux';
 
-import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from '../../selectors/time-series-selector';
-import {Actions as ivTimeSeriesDataActions} from '../../store/instantaneous-value-time-series-data';
-import {Actions as ivTimeSeriesStateActions} from '../../store/instantaneous-value-time-series-state';
-import {Actions as statisticsDataActions} from '../../store/statistics-data';
-import {Actions as timeZoneActions} from '../../store/time-zone';
-import {Actions as floodDataActions} from '../../store/flood-inundation';
-import {renderTimeSeriesUrlParams} from '../../url-params';
+import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
+import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
+import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
+import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
+import {Actions as timeZoneActions} from 'ml/store/time-zone';
+import {Actions as floodDataActions} from 'ml/store/flood-inundation';
+import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
-import {drawDateRangeControls} from './date-controls';
-import {drawDataTable} from './data-table';
-import {drawGraphBrush} from './graph-brush';
-import {drawGraphControls} from './graph-controls';
-import {SPARK_LINE_DIM}  from './selectors/layout';
-import {drawTimeSeriesLegend} from './legend';
-import {drawMethodPicker} from './method-picker';
-import {plotSeriesSelectTable} from './parameters';
-import {getLineSegmentsByParmCd} from './selectors/drawing-data';
-import {getAvailableParameterCodes} from './selectors/parameter-data';
-import {getTimeSeriesScalesByParmCd} from './selectors/scales';
-import {drawTimeSeriesGraph} from './time-series-graph';
-import {drawTooltipCursorSlider} from './tooltip';
+import {drawDateRangeControls} from 'ivhydrograph/date-controls';
+import {drawDataTable} from 'ivhydrograph/data-table';
+import {drawGraphBrush} from 'ivhydrograph/graph-brush';
+import {drawGraphControls} from 'ivhydrograph/graph-controls';
+import {SPARK_LINE_DIM}  from 'ivhydrograph/selectors/layout';
+import {drawTimeSeriesLegend} from 'ivhydrograph/legend';
+import {drawMethodPicker} from 'ivhydrograph/method-picker';
+import {plotSeriesSelectTable} from 'ivhydrograph/parameters';
+import {getLineSegmentsByParmCd} from 'ivhydrograph/selectors/drawing-data';
+import {getAvailableParameterCodes} from 'ivhydrograph/selectors/parameter-data';
+import {getTimeSeriesScalesByParmCd} from 'ivhydrograph/selectors/scales';
+import {drawTimeSeriesGraph} from 'ivhydrograph/time-series-graph';
+import {drawTooltipCursorSlider} from 'ivhydrograph/tooltip';
+import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ivhydrograph/hydrograph-utils';
 
 /**
  * Modify styling to hide or display the elem.
@@ -48,21 +49,21 @@ const controlDisplay = function(elem, showElem) {
  * @param {DOM node} node
  * @param {Object} - string properties to set initial state information. The property siteno is required
  */
-export const attachToNode = function (store,
-                                      node,
-                                      {
-                                          siteno,
-                                          latitude,
-                                          longitude,
-                                          parameterCode,
-                                          compare,
-                                          period,
-                                          startDT,
-                                          endDT,
-                                          timeSeriesId, // This must be converted to an integer
-                                          showOnlyGraph = false,
-                                          showMLName = false
-                                      } = {}) {
+export const attachToNode = function(store,
+                                     node,
+                                     {
+                                         siteno,
+                                         latitude,
+                                         longitude,
+                                         parameterCode,
+                                         compare,
+                                         period,
+                                         startDT,
+                                         endDT,
+                                         timeSeriesId, // This must be converted to an integer
+                                         showOnlyGraph = false,
+                                         showMLName = false
+                                     } = {}) {
     const nodeElem = select(node);
     if (!siteno) {
         select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No data is available.'});
@@ -93,12 +94,15 @@ export const attachToNode = function (store,
         }
     } else {
         // Retrieve all parameter codes for 7 days and median statistics
-         fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno))
+        fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno))
             .then(() => {
                 // Fetch any extended data needed to set initial state
                 const currentParamCode = parameterCode ? parameterCode : getCurrentParmCd(store.getState());
-                if (period === 'P30D' || period === 'P1Y') {
-                    store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(siteno, period, currentParamCode));
+                // If there are query parameters present, use them but restrict them to the form of PxD or P1Y
+                if (isPeriodWithinAcceptableRange(period)) {
+                    isPeriodCustom(period) ?
+                        store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(siteno, parameterCode, period)) :
+                        store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(siteno, period, currentParamCode));
                 } else if (startDT && endDT) {
                     fetchTimeZonePromise.then(() => {
                         store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange(siteno, startDT, endDT, currentParamCode));
@@ -107,7 +111,6 @@ export const attachToNode = function (store,
             });
         store.dispatch(statisticsDataActions.retrieveMedianStatistics(siteno));
     }
-
 
     fetchDataPromise.then(() => {
         // Hide the loading indicator
@@ -123,7 +126,7 @@ export const attachToNode = function (store,
         } else {
             //Update time series state
             if (parameterCode) {
-                const isThisParamCode = function (variable) {
+                const isThisParamCode = function(variable) {
                     return variable.variableCode.value === parameterCode;
                 };
                 const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);

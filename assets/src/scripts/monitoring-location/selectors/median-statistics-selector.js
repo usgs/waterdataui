@@ -3,7 +3,7 @@ import memoize from 'fast-memoize';
 import reduce from 'lodash/reduce';
 import {createSelector} from 'reselect';
 
-import {getCurrentParmCd} from './time-series-selector';
+import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
 
 /*
  * Selectors that return properties from the state

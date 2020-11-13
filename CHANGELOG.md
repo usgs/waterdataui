@@ -17,6 +17,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Stopped end of median line from showing outside of graph area.
 - Custom brush handles now reposition when user clicks and holds.
 
+## [0.38.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.37.0...waerdataui-0.38.0) - 2020-10-30
+### Added
+- Cookie to control banner message.
+- Added 'Days from today' custom selection.
+- A set of device specific favicons.
+
+### Changed
+- Using Rollup/plugin-alias for module imports.
+- Now using the new SIFTA service.
+- Changed headers on network page to match monitoring location pages.
+- Moved cooperators section to bottom of page.
+
+### Fixed
+ - Stopped end of median line from showing outside of graph area.
+ - Custom brush handles now reposition when user clicks and holds.
 
 ## [0.37.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.36.0...waterdataui-0.37.0) - 2020-09-16
 ### Added

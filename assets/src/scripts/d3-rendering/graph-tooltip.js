@@ -1,4 +1,4 @@
-import {mouse} from 'd3-selection';
+import {pointer} from 'd3-selection';
 
 /*
  * Draws an overlay rectangle with the given scale and layout and creates mouse events
@@ -19,15 +19,19 @@ export const drawFocusOverlay = function(elem, {xScale, layout}, store, setCurso
         .attr('y', 0)
         .attr('width', layout.width - layout.margin.right)
         .attr('height', layout.height - (layout.margin.top + layout.margin.bottom))
-        .on('mouseover', function() {
-            const selectedTime = xScale.invert(mouse(elem.node())[0]);
-            const startTime = xScale.domain()[0];
-            store.dispatch(setCursorOffsetAction(selectedTime - startTime));
+        .on('mouseover', (event) => {
+            if (event) {
+                const selectedTime = xScale.invert(pointer(event)[0]);
+                const startTime = xScale.domain()[0];
+                store.dispatch(setCursorOffsetAction(selectedTime - startTime));
+            }
         })
-        .on('mousemove', function() {
-            const selectedTime = xScale.invert(mouse(elem.node())[0]);
-            const startTime = xScale.domain()[0];
-            store.dispatch(setCursorOffsetAction(selectedTime - startTime));
+        .on('mousemove', (event) => {
+            if (event) {
+                const selectedTime = xScale.invert(pointer(event)[0]);
+                const startTime = xScale.domain()[0];
+                store.dispatch(setCursorOffsetAction(selectedTime - startTime));
+            }
         });
 };
 
@@ -37,7 +41,7 @@ export const drawFocusOverlay = function(elem, {xScale, layout}, store, setCurso
  * @param {Array of Object} tooltipPoints - Each element contains x and y pixel properties
  * @param {D3 selection for g} - Can be null in which case the a group is appended to elem
  */
-export const drawFocusCircles = function (elem, tooltipPoints, circleContainer) {
+export const drawFocusCircles = function(elem, tooltipPoints, circleContainer) {
     circleContainer = circleContainer || elem.append('g');
     circleContainer.style('pointer-events', 'none');
 

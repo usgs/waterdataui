@@ -9,7 +9,7 @@ import List from 'list.js';
 export const drawSiteTable = function(divId, networkSites) {
     if (networkSites.length > 0 && networkSites.length < 10000) {
         const options = {
-            valueNames: ['name', 'link',  { name: 'linkhref', attr: 'href' }],
+            valueNames: ['name', 'link',  {name: 'linkhref', attr: 'href'}],
             item: '<tr><th scope="row" class="name"></th><td><a class="link linkhref"></a></td></tr>',
             page: 50,
             pagination: [{

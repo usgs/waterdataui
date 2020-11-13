@@ -5,12 +5,12 @@
 import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
-import{link}  from '../../../lib/d3-redux';
+import{link}  from 'ui/lib/d3-redux';
 
-import {getCurrentMethodID, getAllMethodsForCurrentVariable} from '../../selectors/time-series-selector';
-import {Actions} from '../../store/instantaneous-value-time-series-state';
+import {getCurrentMethodID, getAllMethodsForCurrentVariable} from 'ml/selectors/time-series-selector';
+import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import { } from './selectors/time-series-data';
+import { } from 'ivhydrograph/selectors/time-series-data';
 
 export const drawMethodPicker = function(elem, store) {
     const pickerContainer = elem.insert('div', ':nth-child(2)')

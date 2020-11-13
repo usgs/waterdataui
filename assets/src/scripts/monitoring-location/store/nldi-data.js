@@ -3,7 +3,7 @@ import {
     fetchNldiDownstreamSites, fetchNldiUpstreamBasin,
     fetchNldiUpstreamFlow,
     fetchNldiUpstreamSites
-} from '../../web-services/nldi-data';
+} from 'ui/web-services/nldi-data';
 
 const INITIAL_DATA = {
     upstreamFlows: [],
@@ -34,7 +34,7 @@ const setNldiFeatures = function(upstreamFlows, downstreamFlows, upstreamSites, 
 };
 
 const retrieveNldiData = function(siteno) {
-    return function (dispatch) {
+    return function(dispatch) {
         const upstreamFlow = fetchNldiUpstreamFlow(siteno);
         const downstreamFlow = fetchNldiDownstreamFlow(siteno);
         const upstreamSites = fetchNldiUpstreamSites(siteno);

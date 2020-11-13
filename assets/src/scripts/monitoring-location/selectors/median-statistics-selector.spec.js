@@ -1,4 +1,4 @@
-import {getMedianStatistics, getMedianStatisticsByParmCd, getCurrentVariableMedianStatistics, getCurrentVariableMedianMetadata } from './median-statistics-selector';
+import {getMedianStatistics, getMedianStatisticsByParmCd, getCurrentVariableMedianStatistics, getCurrentVariableMedianMetadata} from 'ml/selectors/median-statistics-selector';
 
 describe('monitoring-location/selectors/median-statistics-selector', () => {
     const TEST_VARS = {
@@ -135,7 +135,7 @@ describe('monitoring-location/selectors/median-statistics-selector', () => {
         },
         ivTimeSeriesState: {
             currentIVVariableID: '45807142',
-            currentIVDateRangeKind: 'P7D'
+            currentIVDateRange: 'P7D'
         }
     };
 

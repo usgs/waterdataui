@@ -6,10 +6,10 @@
 import {scaleLinear} from 'd3-scale';
 import {createSelector} from 'reselect';
 
-import {getTimeSeries} from '../../../selectors/time-series-selector';
+import {getTimeSeries} from 'ml/selectors/time-series-selector';
 
-import {getTsCursorPoints} from './cursor';
-import {getMainYScale} from './scales';
+import {getTsCursorPoints} from 'ivhydrograph/selectors/cursor';
+import {getMainYScale} from 'ivhydrograph/selectors/scales';
 
 /*
  * Returns a Redux selector function that returns true if the audible interface is playing.

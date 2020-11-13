@@ -5,7 +5,7 @@ import {
     getNldiDownstreamFlows,
     getNldiUpstreamBasin,
     hasNldiData
-} from './nldi-data-selector';
+} from 'ml/selectors/nldi-data-selector';
 
 describe('monitoring-location/selectors/nldi-data-selector', () => {
 

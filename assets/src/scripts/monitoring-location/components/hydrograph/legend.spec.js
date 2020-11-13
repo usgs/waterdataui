@@ -1,10 +1,10 @@
 import {select, selectAll} from 'd3-selection';
 
 
-import {configureStore} from '../../store';
-import {Actions} from '../../store/instantaneous-value-time-series-state';
+import {configureStore} from 'ml/store';
+import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {drawTimeSeriesLegend} from './legend';
+import {drawTimeSeriesLegend} from 'ivhydrograph/legend';
 
 
 describe('monitoring-location/components/hydrograph/legend module', () => {
@@ -88,7 +88,7 @@ describe('monitoring-location/components/hydrograph/legend module', () => {
         },
         ivTimeSeriesState: {
             currentIVVariableID: '45807197',
-            currentIVDateRangeKind: 'P7D',
+            currentIVDateRange: 'P7D',
             showIVTimeSeries: {
                 current: true,
                 compare: true,

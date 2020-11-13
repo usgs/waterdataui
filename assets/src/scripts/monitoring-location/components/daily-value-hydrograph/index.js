@@ -2,17 +2,17 @@ import {select} from 'd3-selection';
 import groupBy from 'lodash/groupBy';
 import includes from 'lodash/includes';
 
-import {getAvailableDVTimeSeries, getAllDVTimeSeries} from '../../selectors/daily-value-time-series-selector';
-import {Actions} from '../../store/daily-value-time-series';
+import {getAvailableDVTimeSeries, getAllDVTimeSeries} from 'ml/selectors/daily-value-time-series-selector';
+import {Actions} from 'ml/store/daily-value-time-series';
 
-import {drawErrorAlert, drawInfoAlert} from '../../../d3-rendering/alerts';
-import {drawLoadingIndicator} from '../../../d3-rendering/loading-indicator';
+import {drawErrorAlert, drawInfoAlert} from 'd3render/alerts';
+import {drawLoadingIndicator} from 'd3render/loading-indicator';
 
-import {drawGraphBrush} from './graph-brush';
-import {drawGraphControls} from './graph-controls';
-import {drawTimeSeriesLegend} from './legend';
-import {drawTimeSeriesGraph} from './time-series-graph';
-import {drawTooltipCursorSlider} from './tooltip';
+import {drawGraphBrush} from 'dvhydrograph/graph-brush';
+import {drawGraphControls} from 'dvhydrograph/graph-controls';
+import {drawTimeSeriesLegend} from 'dvhydrograph/legend';
+import {drawTimeSeriesGraph} from 'dvhydrograph/time-series-graph';
+import {drawTooltipCursorSlider} from 'dvhydrograph/tooltip';
 
 const GROUND_WATER_LEVELS_PARM_CD  = ['62610', '62611', '72019', '72020', '72150', '72226', '72227', '72228', '72229', '72230', '72231', '72232'];
 const STATISTIC_CODES = {
@@ -48,7 +48,7 @@ const getTSId = function(id) {
  * @param {Object} node - DOM element parent for this component
  * @param {String} siteno - the site number of the monitoring location.
  */
-export const attachToNode = function (store,
+export const attachToNode = function(store,
                                       node,
                                       {
                                           siteno

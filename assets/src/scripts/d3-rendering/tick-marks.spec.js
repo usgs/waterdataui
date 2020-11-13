@@ -1,6 +1,6 @@
 import {DateTime} from 'luxon';
 
-import {generateTimeTicks} from './tick-marks';
+import {generateTimeTicks} from 'd3render/tick-marks';
 
 describe('generateTimeTicks', () => {
     const startTime = 1520538281000;

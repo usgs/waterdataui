@@ -1,4 +1,4 @@
-import {queryWeatherService} from '../../web-services/models';
+import {queryWeatherService} from 'ui/web-services/models';
 
 /*
  * Synchronous Redux action to update the IANA time zone

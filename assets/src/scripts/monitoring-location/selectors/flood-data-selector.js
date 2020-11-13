@@ -1,5 +1,5 @@
 import {createSelector} from 'reselect';
-import {getCurrentParmCd} from './time-series-selector';
+import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
 
 export const getFloodStages = state => state.floodData.stages || [];
 

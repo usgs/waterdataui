@@ -3,16 +3,16 @@ import {default as thunk} from 'redux-thunk';
 
 import {
     floodDataReducer as floodData,
-    floodStateReducer as floodState} from './flood-inundation';
-import {nldiDataReducer as nldiData} from './nldi-data';
-import {dailyValueTimeSeriesDataReducer as dailyValueTimeSeriesData} from './daily-value-time-series';
-import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './daily-value-time-series';
-import {ivTimeSeriesDataReducer as ivTimeSeriesData} from './instantaneous-value-time-series-data';
-import {ivTimeSeriesStateReducer as ivTimeSeriesState} from './instantaneous-value-time-series-state';
-import {statisticsDataReducer as statisticsData} from './statistics-data';
-import {timeZoneReducer as ianaTimeZone} from './time-zone';
-import {uiReducer as ui} from './ui-state';
-import {networkDataReducer as networkData} from './network';
+    floodStateReducer as floodState} from 'ml/store/flood-inundation';
+import {nldiDataReducer as nldiData} from 'ml/store/nldi-data';
+import {dailyValueTimeSeriesDataReducer as dailyValueTimeSeriesData} from 'ml/store/daily-value-time-series';
+import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from 'ml/store/daily-value-time-series';
+import {ivTimeSeriesDataReducer as ivTimeSeriesData} from 'ml/store/instantaneous-value-time-series-data';
+import {ivTimeSeriesStateReducer as ivTimeSeriesState} from 'ml/store/instantaneous-value-time-series-state';
+import {statisticsDataReducer as statisticsData} from 'ml/store/statistics-data';
+import {timeZoneReducer as ianaTimeZone} from 'ml/store/time-zone';
+import {uiReducer as ui} from 'ml/store/ui-state';
+import {networkDataReducer as networkData} from 'ml/store/network';
 
 const appReducer = combineReducers({
     ivTimeSeriesData,
@@ -31,7 +31,7 @@ const appReducer = combineReducers({
 const MIDDLEWARES = [thunk];
 
 
-export const configureStore = function (initialState) {
+export const configureStore = function(initialState) {
     initialState = {
         ivTimeSeriesData: {},
         ianaTimeZone: null,
@@ -55,13 +55,18 @@ export const configureStore = function (initialState) {
                 compare: false,
                 median: false
             },
-            currentIVDateRangeKind: 'P7D',
+            currentIVDateRange: 'P7D',
             customIVTimeRange: null,
             currentIVVariableID: null,
             ivGraphCursorOffset: null,
             audiblePlayId: null,
             loadingIVTSKeys: [],
-            ivGraphBrushOffset: null
+            ivGraphBrushOffset: null,
+            userInputsForTimeRange: {
+                mainTimeRangeSelectionButton: 'P7D',
+                customTimeRangeSelectionButton: 'days-input',
+                numberOfDaysFieldValue: ''
+            }
         },
         dailyValueTimeSeriesState: {
             cursorOffset: null

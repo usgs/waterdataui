@@ -1,5 +1,5 @@
-import {get} from '../ajax';
-import config from '../config';
+import {get} from 'ui/ajax';
+import config from 'ui/config';
 
 /*
  * Fetches the data at using OBSERVATIONS_ENDPOINT + queryUrl. Returns a Promise which

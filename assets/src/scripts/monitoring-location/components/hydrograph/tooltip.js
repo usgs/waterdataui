@@ -1,32 +1,32 @@
-import {set} from 'd3-collection';
 import {select} from 'd3-selection';
 import {transition} from 'd3-transition';
 import {DateTime} from 'luxon';
 import {createSelector, createStructuredSelector} from 'reselect';
 
-import config from '../../../config';
-import {drawCursorSlider} from '../../../d3-rendering/cursor-slider';
-import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from '../../../d3-rendering/graph-tooltip';
-import {link} from '../../../lib/d3-redux';
-import {mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from '../../../utils';
+import config from 'ui/config';
+import {drawCursorSlider} from 'd3render/cursor-slider';
+import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from 'd3render/graph-tooltip';
+import {link} from 'ui/lib/d3-redux';
+import {mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
 
-import {getCurrentParmCd} from '../../selectors/time-series-selector';
-import {Actions} from '../../store/instantaneous-value-time-series-state';
+import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
+import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {getCursorTime, getTsCursorPoints, getTooltipPoints} from './selectors/cursor';
-import {classesForPoint, MASK_DESC} from './selectors/drawing-data';
-import {getMainLayout} from './selectors/layout';
-import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getTsTimeZone, getQualifiers, getCurrentVariableUnitCode, TEMPERATURE_PARAMETERS} from './selectors/time-series-data';
+import {getCursorTime, getTsCursorPoints, getTooltipPoints} from 'ivhydrograph/selectors/cursor';
+import {classesForPoint, MASK_DESC} from 'ivhydrograph/selectors/drawing-data';
+import {getMainLayout} from 'ivhydrograph/selectors/layout';
+import {getMainXScale, getMainYScale} from 'ivhydrograph/selectors/scales';
+import {getTsTimeZone, getQualifiers, getCurrentVariableUnitCode, TEMPERATURE_PARAMETERS} from 'ivhydrograph/selectors/time-series-data';
+
 
 
 const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd) {
     let label = '';
     if (datum && qualifiers) {
         let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
-        const maskKeys = set(Object.keys(MASK_DESC));
-        const qualiferKeysLower = set(datum.qualifiers.map(x => x.toLowerCase()));
-        const maskKeyIntersect = [...qualiferKeysLower.values()].filter(x => maskKeys.has(x));
+        const maskKeys = new Set(Object.keys(MASK_DESC));
+        const qualifierKeysLower = new Set(datum.qualifiers.map(x => x.toLowerCase()));
+        const maskKeyIntersect = Array.from(qualifierKeysLower.values()).filter(x => maskKeys.has(x));
         if (valueStr !== ' ') {
             let convertedValue;
             let convertedUnit;
@@ -44,7 +44,7 @@ const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, curre
         }
         if (maskKeyIntersect.length) {
             // a data point will have at most one masking qualifier
-            valueStr = MASK_DESC[[maskKeyIntersect][0]];
+            valueStr = MASK_DESC[maskKeyIntersect[0]];
         }
         const timeLabel = DateTime.fromMillis(
             datum.dateTime,
@@ -56,9 +56,9 @@ const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, curre
     return label;
 };
 
-const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone, layout, currentParmCd}, textGroup) {
+const createTooltipTextGroup = function(elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone, layout, currentParmCd}, textGroup) {
     // Find the width of the between the y-axis and margin and set the tooltip margin based on that number
-    const adjustMarginOfTooltips = function (elem) {
+    const adjustMarginOfTooltips = function(elem) {
         // set a base number of pixels to bump the tooltips away from y-axis and compensate for slight under reporting
         // of margin width by layout selector on time series with single or double digits on y-axis
         const baseMarginOffsetTextGroup = 27;
@@ -134,7 +134,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
 
     merge
         .text(datum => getTooltipText(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd))
-        .each(function (datum) {
+        .each(function(datum) {
             const classes = classesForPoint(datum);
             const text = select(this);
             text.attr('class', d => `${d.tsKey}-tooltip-text`);
@@ -150,7 +150,7 @@ const createTooltipTextGroup = function (elem, {currentPoints, comparePoints, qu
  * Append a group containing the tooltip text elements to elem
  * @param {Object} elem - D3 selector
  */
-export const drawTooltipText = function (elem, store) {
+export const drawTooltipText = function(elem, store) {
     elem.call(link(store, createTooltipTextGroup, createStructuredSelector({
         currentPoints: getTsCursorPoints('current'),
         comparePoints: getTsCursorPoints('compare'),

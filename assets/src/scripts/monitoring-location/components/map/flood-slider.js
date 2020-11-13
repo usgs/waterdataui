@@ -1,10 +1,10 @@
 import {createStructuredSelector} from 'reselect';
 
-import {link} from '../../../lib/d3-redux';
-import {appendTooltip} from '../../../tooltips';
+import {link} from 'ui/lib/d3-redux';
+import {appendTooltip} from 'ui/tooltips';
 
-import {getFloodStages, getFloodStageHeight, getFloodGageHeightStageIndex, hasFloodData} from '../../selectors/flood-data-selector';
-import {Actions} from '../../store/flood-inundation';
+import {getFloodStages, getFloodStageHeight, getFloodGageHeightStageIndex, hasFloodData} from 'ml/selectors/flood-data-selector';
+import {Actions} from 'ml/store/flood-inundation';
 
 
 const createSlider = function(elem, stages, store) {
@@ -27,7 +27,7 @@ const createSlider = function(elem, stages, store) {
             .attr('step', 1)
             .attr('aria-valuemin', 0)
             .attr('aria-valuemax', stages.length - 1)
-            .on('input', function () {
+            .on('input', function() {
                 const stages = getFloodStages(store.getState());
                 store.dispatch(Actions.setGageHeight(stages[this.value]));
             });

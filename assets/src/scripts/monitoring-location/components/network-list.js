@@ -1,10 +1,10 @@
 import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
-import {link} from '../../lib/d3-redux';
+import {link} from 'ui/lib/d3-redux';
 
-import {Actions as networkActions} from '../store/network';
-import {hasNetworkData, getNetworkList} from '../selectors/network-selector';
+import {Actions as networkActions} from 'ml/store/network';
+import {hasNetworkData, getNetworkList} from 'ml/selectors/network-selector';
 
 /*
  * function to build a network URL from a labs json url
@@ -18,7 +18,7 @@ const buildNetworkURL = function(link) {
     return `${baseURL}networks/${networkTitle}`;
 };
 
-const addNetworkRows = function(node, {hasData, networkList}){
+const addNetworkRows = function(node, {hasData, networkList}) {
     if (hasData){
         let input = node.append('ul')
         .classed('usa-fieldset', true)
@@ -26,7 +26,6 @@ const addNetworkRows = function(node, {hasData, networkList}){
 
         let networkUrl;
         networkList.forEach(function(network) {
-            console.log(network.title);
             networkUrl = buildNetworkURL(network.href);
             input.append('li')
                 .append('a')
@@ -40,7 +39,7 @@ const addNetworkRows = function(node, {hasData, networkList}){
     }
 };
 
-export const attachToNode = function (store,
+export const attachToNode = function(store,
                                       node,
                                       {siteno}) {
 

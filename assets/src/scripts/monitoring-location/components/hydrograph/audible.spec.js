@@ -1,8 +1,8 @@
 import {select} from 'd3-selection';
 
-import {configureStore} from '../../store';
+import {configureStore} from 'ml/store';
 
-import {audibleUI} from './audible';
+import {audibleUI} from 'ivhydrograph/audible';
 
 
 const TEST_STATE = {
