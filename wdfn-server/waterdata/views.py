@@ -33,6 +33,11 @@ def provisional_data_statement():
     """Render the provisional data statement page."""
     return render_template('provisional_data_statement.html')
 
+@app.route('/iv-data-availability-statement')
+def iv_data_availability():
+    """Render the IV data availability statement page."""
+    return "Not yet implemented"
+
 
 @app.route('/monitoring-location/<site_no>/', methods=['GET'])
 def monitoring_location(site_no):
