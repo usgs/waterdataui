@@ -174,7 +174,6 @@ describe('monitoring-location/components/hydrograph module', () => {
         component.append('div').attr('class', 'loading-indicator-container');
         component.append('div').attr('class', 'graph-container');
         component.append('div').attr('class', 'select-time-series-container');
-        component.append('div').attr('class', 'provisional-data-alert');
         component.append('div').attr('id', 'iv-data-table-container');
 
         graphNode = document.getElementById('hydrograph');

@@ -77,6 +77,12 @@
         font-size: size('body', 'sm');
       }
 
+      th:last-child {
+        background-color: color('blue-cool-40');
+        color: color('white');
+        text-align: center;
+      }
+
       th, td {
         background-color: white;
       }
@@ -221,16 +227,6 @@
       position: absolute;
       top: 0;
       right: 0;
-    }
-  }
-}
-
-.provisional-data-alert {
-  p {
-    height: 6em;
-    overflow-y: scroll;
-    @include at-media('mobile-lg') {
-      height: 4em;
     }
   }
 }
