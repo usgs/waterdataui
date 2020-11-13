@@ -16,7 +16,7 @@
     "build:css:network": "sass --load-path node_modules/leaflet/dist --load-path node_modules/wdfn-viz/src/stylesheets --load-path node_modules/uswds/src/stylesheets src/styles/network.scss dist/network.css && postcss dist/network.css --map -o dist/network.css",
     "build:fonts": "mkdir -p dist/fonts && cp -r node_modules/uswds/src/fonts/* dist/fonts && cp node_modules/@fortawesome/fontawesome-free/webfonts/* dist/fonts",
     "build:images": "mkdir -p dist/img && mkdir -p dist/images && cp -r node_modules/uswds/src/img/* dist/img && cp -r node_modules/wdfn-viz/src/img/* dist/img && cp -r node_modules/leaflet/dist/images/* dist/images && cp -r src/img/* dist/img",
-    "build:js": "rollup -c --environment NODE_ENV:production && mkdir -p dist/scripts && cp node_modules/date-time-format-timezone/build/browserified/date-time-format-timezone-complete-min.js dist/scripts",
+    "build:js": "rollup -c --environment NODE_ENV:production && mkdir -p dist/scripts && cp node_modules/date-time-format-timezone/build/browserified/date-time-format-timezone-complete-min.js dist/scripts && cp node_modules/uswds/dist/js/uswds.min.js dist/scripts",
     "build:vendorjs": "mkdir -p dist/scripts && concat -o dist/scripts/vendor.js node_modules/leaflet/dist/leaflet.js node_modules/esri-leaflet/dist/esri-leaflet.js node_modules/leaflet.markercluster/dist/leaflet.markercluster.js",
     "build:autotrack": "uglifyjs --output dist/autotrack.js node_modules/autotrack/autotrack.js",
     "hash-assets": "gulp --gulpfile ./gulpfile.js revall",

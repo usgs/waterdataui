@@ -66,10 +66,19 @@
             <button class="usa-nav__close"><img src="{{ 'img/close.svg' | asset_url }}" alt="close"></button>
             <ul class="usa-nav__primary usa-accordion">
                 <li class="usa-nav__primary-item">
-                    <a class="usa-nav__link" href="https://www.usgs.gov/mission-areas/water-resources">Water Resources</a>
-                </li>
-                <li class="usa-nav__primary-item">
-                    <a class="usa-nav__link" href="https://dashboard.waterdata.usgs.gov/">National Water Dashboard</a>
+                    <button class="usa-accordion__button usa-nav__link"
+                            aria-expanded="false"
+                            aria-controls="data-info-section">
+                        <span>Data Information</span>
+                    </button>
+                    <ul id="data-info-section" class="usa-nav__submenu">
+                        <li class="usa-nav__submenu-item">
+                            <a href="{{ url_for('provisional_data_statement')}}">What is Provisional Data</a>
+                        </li>
+                        <li class="usa-nav__submenu-item">
+                            <a href="">Instantaneous Data Availability</a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="usa-nav__primary-item">
                     <button class="usa-accordion__button usa-nav__link"
@@ -82,7 +91,7 @@
                          <a href="https://waterdata.usgs.gov/blog/">What's New in Water Data for the Nation</a>
                         </li>
                         <li class="usa-nav__submenu-item">
-                         <a href="https://waterservices.usgs.gov/">Water Services</a>
+                            <a href="https://waterservices.usgs.gov/">How to get water data information</a>
                         </li>
                         <li class="usa-nav__submenu-item">
                             <a href="https://labs.waterdata.usgs.gov/index.html">Experimental Water Data tools</a>
@@ -93,6 +102,16 @@
                    </ul>
                 </li>
             </ul>
+            <div class="usa-nav__secondary">
+              <ul class="usa-nav__secondary-links">
+                  <li class="usa-nav__secondary-item">
+                      <a href="https://www.usgs.gov/mission-areas/water-resources">Water Resources</a>
+                  </li>
+                  <li class="usa-nav__secondary-item">
+                      <a href="https://dashboard.waterdata.usgs.gov/">Water Dashboard</a>
+                  </li>
+              </ul>
+            </div>
         </div>
     </nav>
 </header>
