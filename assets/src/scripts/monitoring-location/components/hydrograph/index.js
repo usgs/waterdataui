@@ -4,12 +4,16 @@
 import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
+import {DateTime} from 'luxon';
+
 import config from 'ui/config.js';
 import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
 import {link} from 'ui/lib/d3-redux';
 
-import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange} from 'ml/selectors/time-series-selector';
+import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
+
+import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange, getCustomTimeRange} from 'ml/selectors/time-series-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
 import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
@@ -65,9 +69,39 @@ export const attachToNode = function(store,
                                          showMLName = false
                                      } = {}) {
     const nodeElem = select(node);
-    const stationDataDownloadURL = function() {
-    // going to need a call link here
-        let url =  `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&parameterCd=${parameterCode}&siteStatus=all`;
+
+    /*
+    * Converts a numerical time representation to a calendar date format
+    * @param {Object} customTimeRange - A numerical time indicator than can be converted to date format
+    * @param {String} ianaTimeZone - A geographical reference to the user's timezone
+    * @return {Object} Contains the start and end calendar dates
+    */
+    const convertedTimeToDate = function(customTimeRange, ianaTimeZone) {
+        return {
+            start: DateTime.fromMillis(customTimeRange.start, {zone: ianaTimeZone.timeZone}).toFormat('yyyy-LL-dd'),
+            end: DateTime.fromMillis(customTimeRange.end, {zone: ianaTimeZone.timeZone}).toFormat('yyyy-LL-dd')
+        };
+    };
+
+    /*
+    * Assembles the href/URL needed to contact WaterServices and return data related to the currently showing hydrograph
+    * @param {String} currentIVDateRange - The string will be in the form of P{number of days}D (like P7D) or P1Y or 'custom'
+    * If the value is 'custom', it means that the user selected the timespan in calendar days
+    * @param {Object} customTimeRange - A numerical time indicator than can be converted to date format
+    * This will only have a value if the currentIVDateRange is custom
+    * @param {String} ianaTimeZone - A geographical reference to the user's timezone
+    * @param {String} parameterCode - the five digit code for the current hydrograph parameter
+    * @ return a URL formatted to return data from WaterServices that matches the currently displayed hydrograph
+    */
+    const stationDataDownloadURL = function(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode) {
+        console.log('ianaTimeZone ', ianaTimeZone)
+        let url;
+            if (currentIVDateRange !== 'custom') {
+                url = `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&period=${currentIVDateRange}&parameterCd=${parameterCode}&siteStatus=all`;
+            } else {
+                const convertedTimeDate = convertedTimeToDate(customTimeRange, ianaTimeZone);
+                url = `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&startDT=${convertedTimeDate.start}&endDT=${convertedTimeDate.end}&parameterCd=${parameterCode}&siteStatus=all`;
+            }
 
         return url;
     };
@@ -168,9 +202,20 @@ export const attachToNode = function(store,
 
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
-                // Add the resource parameter which correspond to the current graph to the download links
-                nodeElem.select('#station-data-download-link')
-                    .attr('href', stationDataDownloadURL);
+                // Construct and add the hrefs needed so users can download the data corresponding to the currently displayed hydrograph with the 'download data' links
+                nodeElem.select('#station-data-download-link').call(link(store, (container, {currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode}) => {
+                    container.attr('href', stationDataDownloadURL(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode));
+                },  createStructuredSelector({
+                    currentIVDateRange: getCurrentDateRange,
+                    customTimeRange: getCustomTimeRange,
+                    ianaTimeZone: getIanaTimeZone,
+                    parameterCode: getCurrentParmCd
+                })));
+
+
+
+
+
                 nodeElem.select('#median-data-download-link').attr('href', '//waterservices.usgs.gov/nwis/iv/?format=rdb&sites=01646500&parameterCd=00060&siteStatus=all');
                 nodeElem.select('#metadata-download-link').attr('href', '//waterservices.usgs.gov/nwis/iv/?format=rdb&sites=01646500&parameterCd=00060&siteStatus=all');
                 nodeElem.select('#iv-data-table-container')
