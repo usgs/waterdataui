@@ -11,6 +11,8 @@ import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
  */
 export const getVariables = state => state.ivTimeSeriesData.variables ? state.ivTimeSeriesData.variables : null;
 
+export const getShowIVTimeSeries = state => state.ivTimeSeriesState.showIVTimeSeries  || {};
+
 export const getSourceInfo = state => state.ivTimeSeriesData.sourceInfo || {};
 
 export const getSiteCodes = state => state.ivTimeSeriesData.siteCodes || {};

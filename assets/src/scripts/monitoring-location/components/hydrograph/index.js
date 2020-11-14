@@ -13,7 +13,7 @@ import {link} from 'ui/lib/d3-redux';
 
 import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
 
-import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange, getCustomTimeRange} from 'ml/selectors/time-series-selector';
+import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange, getCustomTimeRange, getShowIVTimeSeries} from 'ml/selectors/time-series-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
 import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
@@ -93,17 +93,17 @@ export const attachToNode = function(store,
     * @param {String} parameterCode - the five digit code for the current hydrograph parameter
     * @ return a URL formatted to return data from WaterServices that matches the currently displayed hydrograph
     */
-    const stationDataDownloadURL = function(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode) {
-        console.log('ianaTimeZone ', ianaTimeZone)
-        let url;
-            if (currentIVDateRange !== 'custom') {
-                url = `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&period=${currentIVDateRange}&parameterCd=${parameterCode}&siteStatus=all`;
-            } else {
-                const convertedTimeDate = convertedTimeToDate(customTimeRange, ianaTimeZone);
-                url = `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&startDT=${convertedTimeDate.start}&endDT=${convertedTimeDate.end}&parameterCd=${parameterCode}&siteStatus=all`;
-            }
+    const stationDataDownloadURL = function(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries) {
 
-        return url;
+        if (currentIVDateRange === 'custom') {
+            const convertedTimeDate = convertedTimeToDate(customTimeRange, ianaTimeZone);
+            return `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&startDT=${convertedTimeDate.start}&endDT=${convertedTimeDate.end}&parameterCd=${parameterCode}&siteStatus=all`;
+        } else if (showIVTimeSeries.compare) {
+            console.log('in compare, need to get the year ago call')
+            return `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&period=${currentIVDateRange}&parameterCd=${parameterCode}&siteStatus=all`;
+        } else {
+            return `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&period=${currentIVDateRange}&parameterCd=${parameterCode}&siteStatus=all`;
+        }
     };
 
     if (!siteno) {
@@ -203,13 +203,14 @@ export const attachToNode = function(store,
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
                 // Construct and add the hrefs needed so users can download the data corresponding to the currently displayed hydrograph with the 'download data' links
-                nodeElem.select('#station-data-download-link').call(link(store, (container, {currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode}) => {
-                    container.attr('href', stationDataDownloadURL(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode));
+                nodeElem.select('#station-data-download-link').call(link(store, (container, {currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries}) => {
+                    container.attr('href', stationDataDownloadURL(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries));
                 },  createStructuredSelector({
                     currentIVDateRange: getCurrentDateRange,
                     customTimeRange: getCustomTimeRange,
                     ianaTimeZone: getIanaTimeZone,
-                    parameterCode: getCurrentParmCd
+                    parameterCode: getCurrentParmCd,
+                    showIVTimeSeries: getShowIVTimeSeries
                 })));
 
 
