@@ -590,7 +590,7 @@ describe('monitoring-location/components/hydrograph module', () => {
         });
 
         it('should have tooltips for the select series table', () => {
-            // one for each of the two parameters
+            // one for each of the two parameters and the WaterAlert links
             expect(selectAll('table .usa-tooltip').size()).toBe(4);
         });
 

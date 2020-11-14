@@ -9,7 +9,7 @@ import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
 import {link} from 'ui/lib/d3-redux';
 
-import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
+import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange} from 'ml/selectors/time-series-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
 import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
@@ -65,6 +65,13 @@ export const attachToNode = function(store,
                                          showMLName = false
                                      } = {}) {
     const nodeElem = select(node);
+    const stationDataDownloadURL = function() {
+    // going to need a call link here
+        let url =  `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&parameterCd=${parameterCode}&siteStatus=all`;
+
+        return url;
+    };
+
     if (!siteno) {
         select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No data is available.'});
         return;
@@ -161,8 +168,11 @@ export const attachToNode = function(store,
 
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
-                // nodeElem.select('#')
-                    // .call(drawDownLoadLinks, store);
+                // Add the resource parameter which correspond to the current graph to the download links
+                nodeElem.select('#station-data-download-link')
+                    .attr('href', stationDataDownloadURL);
+                nodeElem.select('#median-data-download-link').attr('href', '//waterservices.usgs.gov/nwis/iv/?format=rdb&sites=01646500&parameterCd=00060&siteStatus=all');
+                nodeElem.select('#metadata-download-link').attr('href', '//waterservices.usgs.gov/nwis/iv/?format=rdb&sites=01646500&parameterCd=00060&siteStatus=all');
                 nodeElem.select('#iv-data-table-container')
                     .call(drawDataTable, store);
                 //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
