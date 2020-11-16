@@ -95,7 +95,6 @@ export const attachToNode = function(store,
     * @ return a URL formatted to return data from WaterServices that matches the currently displayed hydrograph
     */
     const stationDataDownloadURL = function(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode) {
-        console.log('currentIVDateRange ', currentIVDateRange)
         if (currentIVDateRange === 'custom') {
             const convertedTimeDate = convertedTimeToDate(customTimeRange, ianaTimeZone);
             return `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&startDT=${convertedTimeDate.start}&endDT=${convertedTimeDate.end}&parameterCd=${parameterCode}&siteStatus=all`;
@@ -203,27 +202,36 @@ export const attachToNode = function(store,
                 // Construct and add the hrefs needed so users can download the data corresponding to the currently displayed hydrograph with the 'download data' links
                 nodeElem.select('#iv-download-container').call(link(store, (container, {currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries, queryInformation, userInputsForSelectingTimespan}) => {
 
-
                     nodeElem.select('#station-compare-data-download-link').text('').attr('href', '');
                     nodeElem.select('#median-data-download-link').text('').attr('href', '');
-                    const href = `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&period=${currentIVDateRange}&parameterCd=${parameterCode}&siteStatus=all`;
+
+                    const href = stationDataDownloadURL(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode);
                     nodeElem.select('#station-data-download-link')
                         .attr('href', href);
 
                     if (showIVTimeSeries.compare && currentIVDateRange !== 'custom') {
-                        const objectNameForCompare = `compare:${currentIVDateRange}:${parameterCode}`;
-                        console.log('objectNameForCompare', objectNameForCompare)
-                        // console.log('test ', queryInformation[objectNameForCompare])
-                        //
-                        // let hrefForCurrentStationData = queryInformation[objectNameForCompare].queryURL;
-                        // console.log('query ', hrefForCurrentStationData)
-                        // hrefForCurrentStationData = hrefForCurrentStationData.replace('json', 'rdb');
-                        // console.log('hrefForCurrentStationData ', hrefForCurrentStationData)
-                        // const href = `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&startDT=${convertedTimeDate.start}&endDT=${convertedTimeDate.end}&parameterCd=${parameterCode}&siteStatus=all`;
+                        let compareObjectKey;
+                        if (currentIVDateRange === 'P7D') {
+                            compareObjectKey = `compare:${currentIVDateRange}`;
+                        } else {
+                            compareObjectKey = `compare:${currentIVDateRange}:00060`;
+                            console.log('compareObjectKey ', compareObjectKey)
+                        }
 
+                        const urlObjectFromState = queryInformation[compareObjectKey];
 
-                        nodeElem.select('#station-compare-data-download-link')
-                            .text('Station - compare to last year');
+                        if (urlObjectFromState) {
+                            let url = urlObjectFromState.queryURL;
+
+                            const splitUrl = url.split('http://nwis.waterservices.usgs.gov/nwis/iv/');
+                            url = splitUrl[1];
+                            url = url.replace('json', 'rdb');
+                            url = `${config.WATER_SERVICES}/?${url}&parameterCd=${parameterCode}`;
+
+                            nodeElem.select('#station-compare-data-download-link')
+                                .text('Station - compare to last year')
+                                .attr('href', url);
+                        }
                     }
 
                     if (showIVTimeSeries.median && parameterCode === '00060') {
