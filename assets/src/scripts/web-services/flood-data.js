@@ -1,11 +1,31 @@
 import {get} from 'ui/ajax';
 import config from 'ui/config';
 
+export const FLOOD_SITES_ENDPOINT = `${config.FIM_GIS_ENDPOINT}sites/MapServer/`;
 export const FLOOD_EXTENTS_ENDPOINT = `${config.FIM_GIS_ENDPOINT}floodExtents/MapServer/`;
 export const FLOOD_BREACH_ENDPOINT = `${config.FIM_GIS_ENDPOINT}breach/MapServer/`;
 export const FLOOD_LEVEE_ENDPOINT = `${config.FIM_GIS_ENDPOINT}suppLyrs/MapServer/`;
+
 const WATERWATCH_URL = config.WATERWATCH_ENDPOINT;
 const FORMAT = 'json';
+
+/*
+ * Determine if a site has public FIM data
+ * @param {String} siteno
+ * @return {Promise} resolves to a boolean, true if public, false otherwise
+ */
+export const fetchFIMPublicStatus = function(siteno) {
+    const FIM_SITE_QUERY = `${FLOOD_SITES_ENDPOINT}/0/query?where=SITE_NO%3D%27${siteno}%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=PUBLIC%2CSITE_NO&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson`;
+    return get(FIM_SITE_QUERY)
+        .then((response) => {
+            const respJson = JSON.parse(response);
+            return respJson.features[0].attributes.Public > 0;
+        })
+        .catch(reason => {
+            console.log(`Unable to get FIM Public Status data for ${siteno} with reason: ${reason}`);
+            return false;
+        });
+};
 
 /*
  * Retrieve flood features if any for siteno
@@ -21,11 +41,10 @@ export const fetchFloodFeatures = function(siteno) {
             return respJson.features ? respJson.features : [];
         })
         .catch(reason => {
-            console.log(`Unable to get FIM data for ${siteno} with reason: ${reason}`);
+            console.log(`Unable to get FIM stages for ${siteno} with reason: ${reason}`);
             return [];
         });
 };
-
 /*
  * Retrieve the extent of the flood information for siteno
  * @param {String} siteno
@@ -38,7 +57,7 @@ export const fetchFloodExtent = function(siteno) {
             return JSON.parse(response);
         })
         .catch(reason => {
-            console.log(`Unable to get FIM data for ${siteno} with reason: ${reason}`);
+            console.log(`Unable to get FIM extents for ${siteno} with reason: ${reason}`);
             return {};
         });
 };
