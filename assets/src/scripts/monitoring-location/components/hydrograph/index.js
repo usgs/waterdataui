@@ -13,7 +13,7 @@ import {link} from 'ui/lib/d3-redux';
 
 import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
 
-import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange, getCustomTimeRange, getShowIVTimeSeries} from 'ml/selectors/time-series-selector';
+import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange, getCustomTimeRange, getShowIVTimeSeries, getUserInputsForSelectingTimespan} from 'ml/selectors/time-series-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
 import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
@@ -201,20 +201,32 @@ export const attachToNode = function(store,
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
                 // Construct and add the hrefs needed so users can download the data corresponding to the currently displayed hydrograph with the 'download data' links
-                nodeElem.select('#station-data-download-link').call(link(store, (container, {currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries, queryInformation}) => {
-                    container.attr('href', stationDataDownloadURL(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries, queryInformation));
+                nodeElem.select('#iv-download-container').call(link(store, (container, {currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries, queryInformation, userInputsForSelectingTimespan}) => {
+
 
                     nodeElem.select('#station-compare-data-download-link').text('').attr('href', '');
                     nodeElem.select('#median-data-download-link').text('').attr('href', '');
+                    const href = `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&period=${currentIVDateRange}&parameterCd=${parameterCode}&siteStatus=all`;
+                    nodeElem.select('#station-data-download-link')
+                        .attr('href', href);
+
+                    if (showIVTimeSeries.compare && currentIVDateRange !== 'custom') {
+                        const objectNameForCompare = `compare:${currentIVDateRange}:${parameterCode}`;
+                        console.log('objectNameForCompare', objectNameForCompare)
+                        // console.log('test ', queryInformation[objectNameForCompare])
+                        //
+                        // let hrefForCurrentStationData = queryInformation[objectNameForCompare].queryURL;
+                        // console.log('query ', hrefForCurrentStationData)
+                        // hrefForCurrentStationData = hrefForCurrentStationData.replace('json', 'rdb');
+                        // console.log('hrefForCurrentStationData ', hrefForCurrentStationData)
+                        // const href = `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&startDT=${convertedTimeDate.start}&endDT=${convertedTimeDate.end}&parameterCd=${parameterCode}&siteStatus=all`;
 
 
-
-                    if (showIVTimeSeries.compare) {
                         nodeElem.select('#station-compare-data-download-link')
-                            .text('Station - compare to last year')
-                            .attr('href', '//waterservices.usgs.gov/nwis/iv/?format=rdb&sites=01646500&parameterCd=00060&siteStatus=all');
+                            .text('Station - compare to last year');
                     }
-                    if (showIVTimeSeries.median) {
+
+                    if (showIVTimeSeries.median && parameterCode === '00060') {
                         nodeElem.select('#median-data-download-link')
                             .text('Median')
                             .attr('href', '//waterservices.usgs.gov/nwis/iv/?format=rdb&sites=01646500&parameterCd=00060&siteStatus=all');
@@ -225,7 +237,8 @@ export const attachToNode = function(store,
                     ianaTimeZone: getIanaTimeZone,
                     parameterCode: getCurrentParmCd,
                     showIVTimeSeries: getShowIVTimeSeries,
-                    queryInformation: getQueryInformation
+                    queryInformation: getQueryInformation,
+                    userInputsForSelectingTimespan: getUserInputsForSelectingTimespan
                 })));
 
 
