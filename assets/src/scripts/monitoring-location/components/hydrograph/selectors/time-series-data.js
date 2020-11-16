@@ -126,3 +126,6 @@ export const getCurrentVariableUnitCode = createSelector(
     getCurrentVariable,
     variable => variable ? variable.unit.unitCode : null
 );
+
+export const getQueryInformation = state => state.ivTimeSeriesData.queryInfo  || {};
+

@@ -32,6 +32,7 @@ import {plotSeriesSelectTable} from 'ivhydrograph/parameters';
 import {getLineSegmentsByParmCd} from 'ivhydrograph/selectors/drawing-data';
 import {getAvailableParameterCodes} from 'ivhydrograph/selectors/parameter-data';
 import {getTimeSeriesScalesByParmCd} from 'ivhydrograph/selectors/scales';
+import {getQueryInformation} from 'ivhydrograph/selectors/time-series-data';
 import {drawTimeSeriesGraph} from 'ivhydrograph/time-series-graph';
 import {drawTooltipCursorSlider} from 'ivhydrograph/tooltip';
 import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ivhydrograph/hydrograph-utils';
@@ -93,14 +94,11 @@ export const attachToNode = function(store,
     * @param {String} parameterCode - the five digit code for the current hydrograph parameter
     * @ return a URL formatted to return data from WaterServices that matches the currently displayed hydrograph
     */
-    const stationDataDownloadURL = function(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries) {
-
+    const stationDataDownloadURL = function(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode) {
+        console.log('currentIVDateRange ', currentIVDateRange)
         if (currentIVDateRange === 'custom') {
             const convertedTimeDate = convertedTimeToDate(customTimeRange, ianaTimeZone);
             return `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&startDT=${convertedTimeDate.start}&endDT=${convertedTimeDate.end}&parameterCd=${parameterCode}&siteStatus=all`;
-        } else if (showIVTimeSeries.compare) {
-            console.log('in compare, need to get the year ago call')
-            return `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&period=${currentIVDateRange}&parameterCd=${parameterCode}&siteStatus=all`;
         } else {
             return `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&period=${currentIVDateRange}&parameterCd=${parameterCode}&siteStatus=all`;
         }
@@ -203,21 +201,34 @@ export const attachToNode = function(store,
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
                 // Construct and add the hrefs needed so users can download the data corresponding to the currently displayed hydrograph with the 'download data' links
-                nodeElem.select('#station-data-download-link').call(link(store, (container, {currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries}) => {
-                    container.attr('href', stationDataDownloadURL(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries));
+                nodeElem.select('#station-data-download-link').call(link(store, (container, {currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries, queryInformation}) => {
+                    container.attr('href', stationDataDownloadURL(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries, queryInformation));
+
+                    nodeElem.select('#station-compare-data-download-link').text('').attr('href', '');
+                    nodeElem.select('#median-data-download-link').text('').attr('href', '');
+
+
+
+                    if (showIVTimeSeries.compare) {
+                        nodeElem.select('#station-compare-data-download-link')
+                            .text('Station - compare to last year')
+                            .attr('href', '//waterservices.usgs.gov/nwis/iv/?format=rdb&sites=01646500&parameterCd=00060&siteStatus=all');
+                    }
+                    if (showIVTimeSeries.median) {
+                        nodeElem.select('#median-data-download-link')
+                            .text('Median')
+                            .attr('href', '//waterservices.usgs.gov/nwis/iv/?format=rdb&sites=01646500&parameterCd=00060&siteStatus=all');
+                    }
                 },  createStructuredSelector({
                     currentIVDateRange: getCurrentDateRange,
                     customTimeRange: getCustomTimeRange,
                     ianaTimeZone: getIanaTimeZone,
                     parameterCode: getCurrentParmCd,
-                    showIVTimeSeries: getShowIVTimeSeries
+                    showIVTimeSeries: getShowIVTimeSeries,
+                    queryInformation: getQueryInformation
                 })));
 
 
-
-
-
-                nodeElem.select('#median-data-download-link').attr('href', '//waterservices.usgs.gov/nwis/iv/?format=rdb&sites=01646500&parameterCd=00060&siteStatus=all');
                 nodeElem.select('#metadata-download-link').attr('href', '//waterservices.usgs.gov/nwis/iv/?format=rdb&sites=01646500&parameterCd=00060&siteStatus=all');
                 nodeElem.select('#iv-data-table-container')
                     .call(drawDataTable, store);
