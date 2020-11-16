@@ -184,7 +184,7 @@ const retrieveCustomTimePeriodIVTimeSeries = function(siteno, parameterCd, perio
         dispatch(ivTimeSeriesStateActions.setCurrentIVDateRange(period));
 
         if (isPeriodCustom(period)) {
-            dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('numberOfDaysFieldValue', parsedPeriodCodes.numberOfDaysFieldValue))
+            dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('numberOfDaysFieldValue', parsedPeriodCodes.numberOfDaysFieldValue));
         }
         
         dispatch(ivTimeSeriesStateActions.addIVTimeSeriesToLoadingKeys([tsRequestKey]));

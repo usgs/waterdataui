@@ -15,15 +15,14 @@ const FORMAT = 'json';
  * @return {Promise} resolves to a boolean, true if public, false otherwise
  */
 export const fetchFIMPublicStatus = function(siteno) {
-    const FIM_SITE_QUERY = `${FLOOD_SITES_ENDPOINT}0/query?where=SITE_NO%3D%27${siteno}%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=PUBLIC%2CSITE_NO&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson`;
+    const FIM_SITE_QUERY = `${FLOOD_SITES_ENDPOINT}/0/query?where=SITE_NO%3D%27${siteno}%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=PUBLIC%2CSITE_NO&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson`;
     return get(FIM_SITE_QUERY)
         .then((response) => {
             const respJson = JSON.parse(response);
-
             return respJson.features[0].attributes.Public > 0;
         })
         .catch(reason => {
-            console.log(`Unable to get FIM data for ${siteno} with reason: ${reason}`);
+            console.log(`Unable to get FIM Public Status data for ${siteno} with reason: ${reason}`);
             return false;
         });
 };
@@ -42,7 +41,7 @@ export const fetchFloodFeatures = function(siteno) {
             return respJson.features ? respJson.features : [];
         })
         .catch(reason => {
-            console.log(`Unable to get FIM data for ${siteno} with reason: ${reason}`);
+            console.log(`Unable to get FIM stages for ${siteno} with reason: ${reason}`);
             return [];
         });
 };
@@ -52,13 +51,13 @@ export const fetchFloodFeatures = function(siteno) {
  * @return {Promise} resolves to the extent Object or the empty object if an errors
  */
 export const fetchFloodExtent = function(siteno) {
-    const FIM_QUERY = `${FLOOD_EXTENTS_ENDPOINT}/0/query?where=USGSID+%3D+%27${siteno}%27&returnExtentOnly=true&outSR=4326&f=json`;
+    const FIM_QUERY = `${FLOOD_EXTENTS_ENDPOINT}/ d0/query?where=USGSID+%3D+%27${siteno}%27&returnExtentOnly=true&outSR=4326&f=json`;
     return get(FIM_QUERY)
         .then((response) => {
             return JSON.parse(response);
         })
         .catch(reason => {
-            console.log(`Unable to get FIM data for ${siteno} with reason: ${reason}`);
+            console.log(`Unable to get FIM extents for ${siteno} with reason: ${reason}`);
             return {};
         });
 };
