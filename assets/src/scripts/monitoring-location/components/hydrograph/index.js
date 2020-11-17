@@ -23,6 +23,7 @@ import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
 import {drawDateRangeControls} from 'ivhydrograph/date-controls';
 import {drawDataTable} from 'ivhydrograph/data-table';
+import {convertTimeToDate, createStationDataDownloadURLForWaterServices,  createHrefForDownloadOfCompareData} from 'ivhydrograph/download-links';
 import {drawGraphBrush} from 'ivhydrograph/graph-brush';
 import {drawGraphControls} from 'ivhydrograph/graph-controls';
 import {SPARK_LINE_DIM}  from 'ivhydrograph/selectors/layout';
@@ -77,12 +78,12 @@ export const attachToNode = function(store,
     * @param {String} ianaTimeZone - A geographical reference to the user's timezone
     * @return {Object} Contains the start and end calendar dates
     */
-    const convertedTimeToDate = function(customTimeRange, ianaTimeZone) {
-        return {
-            start: DateTime.fromMillis(customTimeRange.start, {zone: ianaTimeZone.timeZone}).toFormat('yyyy-LL-dd'),
-            end: DateTime.fromMillis(customTimeRange.end, {zone: ianaTimeZone.timeZone}).toFormat('yyyy-LL-dd')
-        };
-    };
+    // const convertTimeToDate = function(customTimeRange, ianaTimeZone) {
+    //     return {
+    //         start: DateTime.fromMillis(customTimeRange.start, {zone: ianaTimeZone.timeZone}).toFormat('yyyy-LL-dd'),
+    //         end: DateTime.fromMillis(customTimeRange.end, {zone: ianaTimeZone.timeZone}).toFormat('yyyy-LL-dd')
+    //     };
+    // };
 
     /*
     * Assembles the href/URL needed to contact WaterServices and return data related to the currently showing hydrograph
@@ -92,16 +93,44 @@ export const attachToNode = function(store,
     * This will only have a value if the currentIVDateRange is custom
     * @param {String} ianaTimeZone - A geographical reference to the user's timezone
     * @param {String} parameterCode - the five digit code for the current hydrograph parameter
-    * @ return a URL formatted to return data from WaterServices that matches the currently displayed hydrograph
+    * @ return {String} a URL formatted to return data from WaterServices that matches the currently displayed hydrograph
     */
-    const stationDataDownloadURL = function(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode) {
-        if (currentIVDateRange === 'custom') {
-            const convertedTimeDate = convertedTimeToDate(customTimeRange, ianaTimeZone);
-            return `${config.WATER_SERVICES_IV}/?format=rdb&sites=${siteno}&startDT=${convertedTimeDate.start}&endDT=${convertedTimeDate.end}&parameterCd=${parameterCode}&siteStatus=all`;
-        } else {
-            return `${config.WATER_SERVICES_IV}/?format=rdb&sites=${siteno}&period=${currentIVDateRange}&parameterCd=${parameterCode}&siteStatus=all`;
-        }
-    };
+    // const createStationDataDownloadURLForWaterServices = function(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode) {
+    //     if (currentIVDateRange === 'custom') {
+    //         const convertedTimeDate = convertTimeToDate(customTimeRange, ianaTimeZone);
+    //         return `${config.WATER_SERVICES_IV}/?format=rdb&sites=${siteno}&startDT=${convertedTimeDate.start}&endDT=${convertedTimeDate.end}&parameterCd=${parameterCode}&siteStatus=all`;
+    //     } else {
+    //         return `${config.WATER_SERVICES_IV}/?format=rdb&sites=${siteno}&period=${currentIVDateRange}&parameterCd=${parameterCode}&siteStatus=all`;
+    //     }
+    // };
+
+    /*
+     * Uses information from the state to structure a URL that will work with WaterServices
+     * @param {String} currentIVDateRange
+     * @param {Object} queryInformation - from the application state under ivTimeSeriesData>queryInfo; contains
+     * URL queries for WaterServices - but they require reformatting to use
+     * @return {String} a URL usable to retrieve station data from WaterServices
+     */
+    // const createHrefForDownloadOfCompareData = function(currentIVDateRange, queryInformation) {
+    //     let compareObjectKey;
+    //     if (currentIVDateRange === 'P7D') {
+    //         compareObjectKey = `compare:${currentIVDateRange}`;
+    //     } else {
+    //         compareObjectKey = `compare:${currentIVDateRange}:00060`;
+    //     }
+    //
+    //     const urlObjectFromState = queryInformation[compareObjectKey];
+    //
+    //     let url = '';
+    //     if (urlObjectFromState) {
+    //         url = urlObjectFromState.queryURL;
+    //         const splitUrl = url.split(config.WATER_SERVICES_IV);
+    //         url = splitUrl[1];
+    //         url = url.replace('json', 'rdb');
+    //         url = `${config.WATER_SERVICES_IV}/?${url}&parameterCd=${parameterCode}`;
+    //     }
+    //     return url;
+    // };
 
     if (!siteno) {
         select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No data is available.'});
@@ -201,36 +230,19 @@ export const attachToNode = function(store,
                     .call(drawGraphControls, store);
                 // Construct and add the hrefs needed so users can download the data corresponding to the currently displayed hydrograph with the 'download data' links
                 nodeElem.select('#iv-download-container').call(link(store, (container, {currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries, queryInformation}) => {
-
+                    // The 'compare' and 'median' links are only available if those options are selected, so remove and replace if needed
                     nodeElem.select('#station-compare-data-download-link').text('').attr('href', '');
                     nodeElem.select('#median-data-download-link').text('').attr('href', '');
 
-                    const href = stationDataDownloadURL(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode);
+                    const href = createStationDataDownloadURLForWaterServices(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, siteno);
                     nodeElem.select('#station-data-download-link')
                         .attr('href', href);
 
                     if (showIVTimeSeries.compare && currentIVDateRange !== 'custom') {
-                        let compareObjectKey;
-                        if (currentIVDateRange === 'P7D') {
-                            compareObjectKey = `compare:${currentIVDateRange}`;
-                        } else {
-                            compareObjectKey = `compare:${currentIVDateRange}:00060`;
-                        }
-
-                        const urlObjectFromState = queryInformation[compareObjectKey];
-
-                        if (urlObjectFromState) {
-                            let url = urlObjectFromState.queryURL;
-
-                            const splitUrl = url.split('http://nwis.waterservices.usgs.gov/nwis/iv/');
-                            url = splitUrl[1];
-                            url = url.replace('json', 'rdb');
-                            url = `${config.WATER_SERVICES_IV}/?${url}&parameterCd=${parameterCode}`;
-
-                            nodeElem.select('#station-compare-data-download-link')
-                                .text('Station - compare to last year')
-                                .attr('href', url);
-                        }
+                        const hrefForCompare = createHrefForDownloadOfCompareData(currentIVDateRange, queryInformation, parameterCode);
+                        nodeElem.select('#station-compare-data-download-link')
+                            .text('Station - compare to last year')
+                            .attr('href', hrefForCompare);
                     }
 
                     if (showIVTimeSeries.median && parameterCode === '00060') {
