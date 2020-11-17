@@ -1,8 +1,8 @@
 import {select} from 'd3-selection';
-import {appendTooltip} from 'ui/tooltips';
+import {appendTooltip} from './tooltips';
 
 
-describe('tooltips', () => {
+describe('d3-rendering/tooltips', () => {
 
     let testDiv;
     beforeEach(() => {

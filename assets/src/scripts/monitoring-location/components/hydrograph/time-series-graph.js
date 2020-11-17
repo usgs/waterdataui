@@ -2,11 +2,13 @@ import {line as d3Line, curveStepAfter} from 'd3-shape';
 import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config';
+import {link} from 'ui/lib/d3-redux';
+import {mediaQuery}  from 'ui/utils';
+
 import {addSVGAccessibility} from 'd3render/accessibility';
 import {appendAxes} from 'd3render/axes';
 import {renderMaskDefs} from 'd3render/data-masks';
-import {link} from 'ui/lib/d3-redux';
-import {mediaQuery}  from 'ui/utils';
+import {appendTooltip} from 'd3render/tooltips';
 
 import {getAgencyCode, getMonitoringLocationName} from 'ml/selectors/time-series-selector';
 import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
@@ -100,7 +102,7 @@ const plotFloodLevelPoints = function(elem, {xscale, yscale, points, classes}) {
         .x(function(_,i) {
             return xscale(xscale.domain()[i]);
         })
-        .y(function (d) {
+        .y(function(d) {
             return yscale(d);
         });
     const floodLevelGrp = elem.append('g');
@@ -160,9 +162,13 @@ const createTitle = function(elem, store, siteNo, showMLName) {
             })));
     }
     titleDiv.append('div')
-        .call(link(store,(elem, title) => {
+        .call(link(store,(elem, {title, description}) => {
             elem.html(title);
-        }, getTitle));
+            elem.call(appendTooltip, description)
+        }, createStructuredSelector({
+            title: getTitle,
+            description: getDescription
+        })));
 };
 
 const watermark = function(elem, store) {

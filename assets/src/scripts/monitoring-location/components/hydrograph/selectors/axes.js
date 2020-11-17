@@ -9,7 +9,7 @@ import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
 import {getYTickDetails} from 'ivhydrograph/selectors/domain';
 import {getLayout} from 'ivhydrograph/selectors/layout';
 import {getXScale, getBrushXScale, getYScale, getSecondaryYScale} from 'ivhydrograph/selectors/scales';
-import {getYLabel, getSecondaryYLabel, getTsTimeZone, TEMPERATURE_PARAMETERS} from 'ivhydrograph/selectors/time-series-data';
+import {getYLabel, getCurrentVariableUnitCode, getSecondaryYLabel, getTsTimeZone, TEMPERATURE_PARAMETERS} from 'ivhydrograph/selectors/time-series-data';
 
 
 const createXAxis = function(xScale, ianaTimeZone) {
@@ -89,7 +89,7 @@ export const getAxes = memoize(kind => createSelector(
     getSecondaryYScale(kind),
     getYTickDetails,
     getLayout(kind),
-    getYLabel,
+    getCurrentVariableUnitCode,
     getTsTimeZone,
     getCurrentParmCd,
     getCurrentDateRange,
