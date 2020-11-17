@@ -1,5 +1,5 @@
-import {mediaQuery} from 'ui/utils';
 import config from 'ui/config';
+import {mediaQuery} from 'ui/utils';
 
 const RECTANGLE_MARKER_WIDTH = 20;
 const RECTANGLE_MARKER_HEIGHT = 10;

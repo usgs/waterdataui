@@ -1,6 +1,6 @@
 import {select} from 'd3-selection';
 
-import {renderMaskDefs} from 'd3render/data-masks';
+import {renderMaskDefs} from './data-masks';
 
 describe('d3-rendering/data-masks', () => {
    describe('renderMaskDefs', () => {

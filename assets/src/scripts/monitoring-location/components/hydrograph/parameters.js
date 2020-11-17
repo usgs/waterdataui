@@ -2,7 +2,8 @@ import {line} from 'd3-shape';
 import {select} from 'd3-selection';
 
 import config from 'ui/config';
-import {appendTooltip} from 'ui/tooltips';
+
+import {appendTooltip} from 'd3render/tooltips';
 
 import {Actions} from 'ml/store/instantaneous-value-time-series-data';
 

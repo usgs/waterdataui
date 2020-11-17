@@ -12,7 +12,6 @@ import 'ui/polyfills';
 
 import 'ui/ajax.spec';
 import 'ui/schema.spec';
-import 'ui/tooltips.spec';
 import 'ui/utils.spec';
 
 import 'd3render/accessibility.spec';
@@ -25,6 +24,7 @@ import 'd3render/legend.spec';
 import 'd3render/loading-indicator.spec';
 import 'd3render/markers.spec';
 import 'd3render/tick-marks.spec';
+import 'd3render/tooltips.spec';
 
 import 'ui/leaflet-rendering/map.spec';
 import 'ui/leaflet-rendering/legend-control.spec';
