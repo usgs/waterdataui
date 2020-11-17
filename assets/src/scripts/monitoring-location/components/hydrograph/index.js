@@ -240,16 +240,18 @@ export const attachToNode = function(store,
                             .attr('href', href);
                     }
                     const hrefMetadata = `${config.WATER_SERVICES_SITE}/?format=rdb&sites=${siteno}&siteStatus=all`;
+                    const hrefMetadataExpanded = `${config.WATER_SERVICES_SITE}/?format=rdb&sites=${siteno}&siteOutput=expanded&siteStatus=all`;
                     nodeElem.select('#metadata-download-link')
                         .attr('href', hrefMetadata);
+                    nodeElem.select('#metadata-expanded-download-link')
+                        .attr('href', hrefMetadataExpanded);
                 },  createStructuredSelector({
                     currentIVDateRange: getCurrentDateRange,
                     customTimeRange: getCustomTimeRange,
                     ianaTimeZone: getIanaTimeZone,
                     parameterCode: getCurrentParmCd,
                     showIVTimeSeries: getShowIVTimeSeries,
-                    queryInformation: getQueryInformation,
-                    userInputsForSelectingTimespan: getUserInputsForSelectingTimespan
+                    queryInformation: getQueryInformation
                 })));
 
                 nodeElem.select('#iv-data-table-container')
