@@ -3,8 +3,8 @@ import {createStructuredSelector} from 'reselect';
 import {drawSimpleLegend} from 'd3render//legend';
 import {link} from 'ui/lib/d3-redux';
 
-import {getMainLayout} from 'ivhydrograph/selectors/layout';
-import {getLegendMarkerRows} from 'ivhydrograph/selectors/legend-data';
+import {getMainLayout} from './selectors/layout';
+import {getLegendMarkerRows} from './selectors/legend-data';
 
 
 export const drawTimeSeriesLegend = function(elem, store) {

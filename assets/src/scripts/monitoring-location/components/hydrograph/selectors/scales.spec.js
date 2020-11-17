@@ -1,7 +1,7 @@
 import {extent} from 'd3-array';
 import {DateTime} from 'luxon';
 
-import {createXScale, createYScale, getMainYScale, getBrushYScale, getSecondaryYScale} from 'ivhydrograph/selectors/scales';
+import {createXScale, createYScale, getMainYScale, getBrushYScale, getSecondaryYScale} from './scales';
 
 
 describe('monitoring-location/components/hydrograph/scales', () => {

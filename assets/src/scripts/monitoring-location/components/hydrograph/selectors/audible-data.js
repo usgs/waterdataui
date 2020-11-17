@@ -8,8 +8,8 @@ import {createSelector} from 'reselect';
 
 import {getTimeSeries} from 'ml/selectors/time-series-selector';
 
-import {getTsCursorPoints} from 'ivhydrograph/selectors/cursor';
-import {getMainYScale} from 'ivhydrograph/selectors/scales';
+import {getTsCursorPoints} from './cursor';
+import {getMainYScale} from './scales';
 
 /*
  * Returns a Redux selector function that returns true if the audible interface is playing.

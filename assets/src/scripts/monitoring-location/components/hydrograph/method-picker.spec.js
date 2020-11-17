@@ -2,7 +2,7 @@ import {select} from 'd3-selection';
 
 import {configureStore} from 'ml/store';
 
-import {drawMethodPicker} from 'ivhydrograph/method-picker';
+import {drawMethodPicker} from './method-picker';
 
 describe('monitoring-location/components/hydrograph/method-picker', () => {
 

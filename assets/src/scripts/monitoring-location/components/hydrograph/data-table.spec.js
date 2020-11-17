@@ -2,7 +2,7 @@ import {select} from 'd3-selection';
 
 import {configureStore} from 'ml/store';
 
-import {drawDataTable} from 'ivhydrograph/data-table';
+import {drawDataTable} from './data-table';
 
 const TEST_DATA = {
     ivTimeSeriesData: {
