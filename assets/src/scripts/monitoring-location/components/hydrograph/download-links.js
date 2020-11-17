@@ -31,8 +31,10 @@ export const convertTimeToDate = function(customTimeRange, ianaTimeZone) {
 export const createStationDataDownloadURLForWaterServices = function(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, siteno) {
     if (currentIVDateRange === 'custom') {
         const convertedTimeDate = convertTimeToDate(customTimeRange, ianaTimeZone);
+
         return `${config.WATER_SERVICES_IV}/?format=rdb&sites=${siteno}&startDT=${convertedTimeDate.start}&endDT=${convertedTimeDate.end}&parameterCd=${parameterCode}&siteStatus=all`;
     } else {
+
         return `${config.WATER_SERVICES_IV}/?format=rdb&sites=${siteno}&period=${currentIVDateRange}&parameterCd=${parameterCode}&siteStatus=all`;
     }
 };
@@ -62,5 +64,6 @@ export const createHrefForDownloadOfCompareData = function(currentIVDateRange, q
         url = url.replace('json', 'rdb');
         url = `${config.WATER_SERVICES_IV}/?${url}&parameterCd=${parameterCode}`;
     }
+
     return url;
 };
