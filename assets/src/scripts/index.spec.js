@@ -6,6 +6,7 @@
  * tests and the application dependencies only need to be compiled a single
  * time, and `karma --watch` tasks are very fast.
  */
+
 import 'ui/mock-service-data';
 import 'ui/polyfills';
 
