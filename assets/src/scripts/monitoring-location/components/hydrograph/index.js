@@ -4,8 +4,6 @@
 import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
-import {DateTime} from 'luxon';
-
 import config from 'ui/config.js';
 import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
@@ -13,7 +11,7 @@ import {link} from 'ui/lib/d3-redux';
 
 import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
 
-import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange, getCustomTimeRange, getShowIVTimeSeries, getUserInputsForSelectingTimespan} from 'ml/selectors/time-series-selector';
+import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange, getCustomTimeRange, getShowIVTimeSeries} from 'ml/selectors/time-series-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
 import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
@@ -23,7 +21,7 @@ import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
 import {drawDateRangeControls} from 'ivhydrograph/date-controls';
 import {drawDataTable} from 'ivhydrograph/data-table';
-import {convertTimeToDate, createStationDataDownloadURLForWaterServices,  createHrefForDownloadOfCompareData} from 'ivhydrograph/download-links';
+import {createStationDataDownloadURLForWaterServices,  createHrefForDownloadOfCompareData} from 'ivhydrograph/download-links';
 import {drawGraphBrush} from 'ivhydrograph/graph-brush';
 import {drawGraphControls} from 'ivhydrograph/graph-controls';
 import {SPARK_LINE_DIM}  from 'ivhydrograph/selectors/layout';
