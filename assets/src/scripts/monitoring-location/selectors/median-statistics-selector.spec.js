@@ -1,4 +1,5 @@
-import {getMedianStatistics, getMedianStatisticsByParmCd, getCurrentVariableMedianStatistics, getCurrentVariableMedianMetadata} from 'ml/selectors/median-statistics-selector';
+import {getMedianStatistics, getMedianStatisticsByParmCd, getCurrentVariableMedianStatistics,
+    getCurrentVariableMedianMetadata} from './median-statistics-selector';
 
 describe('monitoring-location/selectors/median-statistics-selector', () => {
     const TEST_VARS = {

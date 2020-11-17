@@ -2,7 +2,7 @@ import {select} from 'd3-selection';
 
 import {configureStore} from 'ml/store';
 
-import {floodSlider} from 'map/flood-slider';
+import {floodSlider} from './flood-slider';
 
 
 describe('monitoring-location/components/map/flood-slider', () => {

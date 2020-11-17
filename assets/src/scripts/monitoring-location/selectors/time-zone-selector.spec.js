@@ -1,4 +1,4 @@
-import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
+import {getIanaTimeZone} from './time-zone-selector';
 
 describe('monitoring-location/selectors/time-zone-selector', () => {
     describe('getIanaTimeZone', () => {
