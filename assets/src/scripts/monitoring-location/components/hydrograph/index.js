@@ -97,9 +97,9 @@ export const attachToNode = function(store,
     const stationDataDownloadURL = function(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode) {
         if (currentIVDateRange === 'custom') {
             const convertedTimeDate = convertedTimeToDate(customTimeRange, ianaTimeZone);
-            return `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&startDT=${convertedTimeDate.start}&endDT=${convertedTimeDate.end}&parameterCd=${parameterCode}&siteStatus=all`;
+            return `${config.WATER_SERVICES_IV}/?format=rdb&sites=${siteno}&startDT=${convertedTimeDate.start}&endDT=${convertedTimeDate.end}&parameterCd=${parameterCode}&siteStatus=all`;
         } else {
-            return `${config.WATER_SERVICES}/?format=rdb&sites=${siteno}&period=${currentIVDateRange}&parameterCd=${parameterCode}&siteStatus=all`;
+            return `${config.WATER_SERVICES_IV}/?format=rdb&sites=${siteno}&period=${currentIVDateRange}&parameterCd=${parameterCode}&siteStatus=all`;
         }
     };
 
@@ -200,7 +200,7 @@ export const attachToNode = function(store,
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
                 // Construct and add the hrefs needed so users can download the data corresponding to the currently displayed hydrograph with the 'download data' links
-                nodeElem.select('#iv-download-container').call(link(store, (container, {currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries, queryInformation, userInputsForSelectingTimespan}) => {
+                nodeElem.select('#iv-download-container').call(link(store, (container, {currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries, queryInformation}) => {
 
                     nodeElem.select('#station-compare-data-download-link').text('').attr('href', '');
                     nodeElem.select('#median-data-download-link').text('').attr('href', '');
@@ -215,7 +215,6 @@ export const attachToNode = function(store,
                             compareObjectKey = `compare:${currentIVDateRange}`;
                         } else {
                             compareObjectKey = `compare:${currentIVDateRange}:00060`;
-                            console.log('compareObjectKey ', compareObjectKey)
                         }
 
                         const urlObjectFromState = queryInformation[compareObjectKey];
@@ -226,7 +225,7 @@ export const attachToNode = function(store,
                             const splitUrl = url.split('http://nwis.waterservices.usgs.gov/nwis/iv/');
                             url = splitUrl[1];
                             url = url.replace('json', 'rdb');
-                            url = `${config.WATER_SERVICES}/?${url}&parameterCd=${parameterCode}`;
+                            url = `${config.WATER_SERVICES_IV}/?${url}&parameterCd=${parameterCode}`;
 
                             nodeElem.select('#station-compare-data-download-link')
                                 .text('Station - compare to last year')
@@ -235,10 +234,14 @@ export const attachToNode = function(store,
                     }
 
                     if (showIVTimeSeries.median && parameterCode === '00060') {
+                        const href = `${config.WATER_SERVICES_STATISTICS}/?format=rdb&sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=00060`;
                         nodeElem.select('#median-data-download-link')
                             .text('Median')
-                            .attr('href', '//waterservices.usgs.gov/nwis/iv/?format=rdb&sites=01646500&parameterCd=00060&siteStatus=all');
+                            .attr('href', href);
                     }
+                    const hrefMetadata = `${config.WATER_SERVICES_SITE}/?format=rdb&sites=${siteno}&siteStatus=all`;
+                    nodeElem.select('#metadata-download-link')
+                        .attr('href', hrefMetadata);
                 },  createStructuredSelector({
                     currentIVDateRange: getCurrentDateRange,
                     customTimeRange: getCustomTimeRange,
@@ -249,8 +252,6 @@ export const attachToNode = function(store,
                     userInputsForSelectingTimespan: getUserInputsForSelectingTimespan
                 })));
 
-
-                nodeElem.select('#metadata-download-link').attr('href', '//waterservices.usgs.gov/nwis/iv/?format=rdb&sites=01646500&parameterCd=00060&siteStatus=all');
                 nodeElem.select('#iv-data-table-container')
                     .call(drawDataTable, store);
                 //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
