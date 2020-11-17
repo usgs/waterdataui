@@ -6,10 +6,10 @@
 
 .time-series-graph-title {
   @include typeset('ui', 'xs', 2);
-  @include u-text(600);
+  @include u-text('normal');
   @include at-media(tablet) {
     @include typeset('ui', 9, 2);
-    @include u-text('bold');
+    @include u-text('normal');
   }
   text-align: center;
 }
