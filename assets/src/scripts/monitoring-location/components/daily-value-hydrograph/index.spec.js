@@ -3,7 +3,7 @@ import {select} from 'd3-selection';
 import {configureStore} from 'ml/store';
 import {Actions} from 'ml/store/daily-value-time-series';
 
-import {attachToNode} from 'dvhydrograph/index';
+import {attachToNode} from './index';
 
 describe('monitoring-location/components/dailyValueHydrograph/index', () => {
     const TEST_STATE = {

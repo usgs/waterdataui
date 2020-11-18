@@ -1,19 +1,22 @@
 import {brushX} from 'd3-brush';
 import {createStructuredSelector} from 'reselect';
 
-import {appendXAxis} from 'd3render/axes';
+import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
+import {mediaQuery} from 'ui/utils';
+
+import {appendXAxis} from 'd3render/axes';
+
 import {getDVGraphBrushOffset} from 'ml/selectors/daily-value-time-series-selector';
 import {Actions} from 'ml/store/daily-value-time-series';
 
-import {getXAxis} from 'dvhydrograph/selectors/axes';
-import {getBrushLayout} from 'dvhydrograph/selectors/layout';
-import {getBrushXScale, getBrushYScale} from 'dvhydrograph/selectors/scales';
-import {getCurrentTimeSeriesSegments} from 'dvhydrograph/selectors/time-series-data';
+import {getXAxis} from './selectors/axes';
+import {getBrushLayout} from './selectors/layout';
+import {getBrushXScale, getBrushYScale} from './selectors/scales';
+import {getCurrentTimeSeriesSegments} from './selectors/time-series-data';
 
-import {drawDataSegments} from 'dvhydrograph/time-series-graph';
-import {mediaQuery} from 'ui/utils';
-import config from 'ui/config';
+import {drawDataSegments} from './time-series-graph';
+
 
 /*
  * Renders a brush element within container for the daily value graph

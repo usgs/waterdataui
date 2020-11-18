@@ -6,7 +6,7 @@ import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
 import {Actions as timeZoneActions} from 'ml/store/time-zone';
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
-import {attachToNode} from 'ivhydrograph/index';
+import {attachToNode} from './index';
 
 const TEST_STATE = {
     ivTimeSeriesData: {

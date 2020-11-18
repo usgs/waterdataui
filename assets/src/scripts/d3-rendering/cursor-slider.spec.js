@@ -1,7 +1,7 @@
 import {scaleLinear} from 'd3-scale';
 import {select} from 'd3-selection';
 
-import {drawCursorSlider} from 'd3render/cursor-slider';
+import {drawCursorSlider} from './cursor-slider';
 
 describe('cursor-slider', () => {
     describe('drawCursorSlider', () => {

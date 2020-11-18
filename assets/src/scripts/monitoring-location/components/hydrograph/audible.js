@@ -9,10 +9,11 @@ import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
+
 import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {isAudiblePlaying, getAudiblePoints} from 'ivhydrograph/selectors/audible-data';
-import {getMainXScale} from 'ivhydrograph/selectors/scales';
+import {isAudiblePlaying, getAudiblePoints} from './selectors/audible-data';
+import {getMainXScale} from './selectors/scales';
 
 
 // Higher tones get lower volume

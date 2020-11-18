@@ -5,8 +5,8 @@ import {getCurrentVariableMedianStatistics} from 'ml/selectors/median-statistics
 import {getCurrentVariableTimeSeries} from 'ml/selectors/time-series-selector';
 import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {audibleUI} from 'ivhydrograph/audible';
-import {isVisible} from 'ivhydrograph/selectors/time-series-data';
+import {audibleUI} from './audible';
+import {isVisible} from './selectors/time-series-data';
 
 /*
  * Create the show audible toggle, last year toggle, and median toggle for the time series graph.

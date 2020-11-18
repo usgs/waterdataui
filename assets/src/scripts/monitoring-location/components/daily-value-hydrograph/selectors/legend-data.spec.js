@@ -1,6 +1,6 @@
-import {lineMarker, rectangleMarker, textOnlyMarker} from 'd3render//markers';
+import {lineMarker, rectangleMarker, textOnlyMarker} from 'd3render/markers';
 
-import {getLegendMarkers} from 'dvhydrograph/selectors/legend-data';
+import {getLegendMarkers} from './legend-data';
 
 describe('monitoring-location/components/daily-value-hydrograph/legend-data', () => {
 

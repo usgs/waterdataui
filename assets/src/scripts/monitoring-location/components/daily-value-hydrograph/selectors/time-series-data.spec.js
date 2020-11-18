@@ -4,7 +4,7 @@ import {
     getCursorEpochTime,
     getCurrentDataPointsAtCursor,
     getCurrentUniqueDataKinds
-} from 'dvhydrograph/selectors/time-series-data';
+} from './time-series-data';
 
 describe('monitoring-location/components/daily-value-hydrograph/time-series-data module', () => {
     const TEST_STATE = {

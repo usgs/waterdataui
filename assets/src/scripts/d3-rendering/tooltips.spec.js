@@ -1,6 +1,6 @@
 import {select} from 'd3-selection';
-import {appendTooltip} from './tooltips';
 
+import {appendTooltip} from './tooltips';
 
 describe('d3-rendering/tooltips', () => {
 

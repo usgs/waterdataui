@@ -2,14 +2,16 @@ import {axisBottom, axisLeft, axisRight} from 'd3-axis';
 import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
-import {generateTimeTicks} from 'd3render/tick-marks';
-import {getCurrentDateRange, getCurrentParmCd} from 'ml/selectors/time-series-selector';
 import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
 
-import {getYTickDetails} from 'ivhydrograph/selectors/domain';
-import {getLayout} from 'ivhydrograph/selectors/layout';
-import {getXScale, getBrushXScale, getYScale, getSecondaryYScale} from 'ivhydrograph/selectors/scales';
-import {getYLabel, getCurrentVariableUnitCode, getSecondaryYLabel, getTsTimeZone, TEMPERATURE_PARAMETERS} from 'ivhydrograph/selectors/time-series-data';
+import {generateTimeTicks} from 'd3render/tick-marks';
+
+import {getCurrentDateRange, getCurrentParmCd} from 'ml/selectors/time-series-selector';
+
+import {getYTickDetails} from './domain';
+import {getLayout} from './layout';
+import {getXScale, getBrushXScale, getYScale, getSecondaryYScale} from './scales';
+import {getYLabel, getSecondaryYLabel, getTsTimeZone, TEMPERATURE_PARAMETERS} from './time-series-data';
 
 
 const createXAxis = function(xScale, ianaTimeZone) {

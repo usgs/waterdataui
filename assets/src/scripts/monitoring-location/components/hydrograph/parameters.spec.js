@@ -3,8 +3,7 @@ import {select} from 'd3-selection';
 
 import {configureStore} from 'ml/store';
 
-import {addSparkLine, plotSeriesSelectTable} from 'ivhydrograph/parameters';
-
+import {addSparkLine, plotSeriesSelectTable} from './parameters';
 
 describe('monitoring-location/components/hydrograph/parameters module', () => {
 

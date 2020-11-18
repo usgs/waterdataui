@@ -13,17 +13,18 @@ import {appendTooltip} from 'd3render/tooltips';
 import {getAgencyCode, getMonitoringLocationName} from 'ml/selectors/time-series-selector';
 import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
 
-import {getAxes}  from 'ivhydrograph/selectors/axes';
+import {getAxes}  from './selectors/axes';
 import {
     getCurrentVariableLineSegments,
     getCurrentVariableMedianStatPoints,
     HASH_ID
-} from 'ivhydrograph/selectors/drawing-data';
-import {getMainLayout} from 'ivhydrograph/selectors/layout';
-import {getMainXScale, getMainYScale, getBrushXScale} from 'ivhydrograph/selectors/scales';
-import {getDescription, isVisible, getTitle} from 'ivhydrograph/selectors/time-series-data';
-import {drawDataLines} from 'ivhydrograph/time-series-lines';
-import {drawTooltipFocus, drawTooltipText}  from 'ivhydrograph/tooltip';
+} from './selectors/drawing-data';
+import {getMainLayout} from './selectors/layout';
+import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
+import {getDescription, isVisible, getTitle} from './selectors/time-series-data';
+
+import {drawDataLines} from './time-series-lines';
+import {drawTooltipFocus, drawTooltipText}  from './tooltip';
 
 const addDefsPatterns = function(elem) {
     const patterns = [{

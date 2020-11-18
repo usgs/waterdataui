@@ -5,9 +5,9 @@ import {getNearestTime} from 'ui/utils';
 
 import {getCurrentMethodID} from 'ml/selectors/time-series-selector';
 
-import {getCurrentVariablePointsByTsId} from 'ivhydrograph/selectors/drawing-data';
-import {getMainXScale, getMainYScale} from 'ivhydrograph/selectors/scales';
-import {isVisible} from 'ivhydrograph/selectors/time-series-data';
+import {getCurrentVariablePointsByTsId} from './drawing-data';
+import {getMainXScale, getMainYScale} from './scales';
+import {isVisible} from './time-series-data';
 
 
 export const getCursorOffset = createSelector(
