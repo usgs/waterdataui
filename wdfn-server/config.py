@@ -55,11 +55,6 @@ WATERWATCH_ENDPOINT = 'https://waterwatch.usgs.gov/webservices'
 # WaterAlert
 WATERALERT_SUBSCRIPTION = 'https://water.usgs.gov/wateralert/subscribe2'
 
-#WaterServices
-WATER_SERVICES_IV = 'https://waterservices.usgs.gov/nwis/iv'
-WATER_SERVICES_STATISTICS = 'https://waterservices.usgs.gov/nwis/stat'
-WATER_SERVICES_SITE = 'https://waterservices.usgs.gov/nwis/site'
-
 # Graph Server
 GRAPH_SERVER_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/graph-images'
 

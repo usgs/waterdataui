@@ -8,9 +8,7 @@ var CONFIG = {
     TNM_USGS_IMAGERY_ONLY_ENDPOINT: 'https://fakeimageryonly.com',
     TNM_USGS_IMAGERY_TOPO_ENDPOINT: 'https://fakeimagerytopo.com',
     TNM_HYDRO_ENDPOINT: 'https://faketnmhydro.com',
-    WATER_SERVICES_IV: 'https://fakewaterservices.usgs.gov/nwis/iv',
-    WATER_SERVICES_STATISTICS: 'https://fakewaterservices.usgs.gov/nwis/stat',
-    WATER_SERVICES_SITE: 'https://fakewaterservices.usgs.gov/nwis/site',
+    SERVICE_ROOT: 'https://fakeserviceroot.com',
     uvPeriodOfRecord: {
         '00010': {
             begin_date: '01-02-2001',

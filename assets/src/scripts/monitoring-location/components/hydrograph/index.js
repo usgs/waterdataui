@@ -9,9 +9,7 @@ import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
 import {link} from 'ui/lib/d3-redux';
 
-import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
-
-import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange, getCustomTimeRange, getShowIVTimeSeries} from 'ml/selectors/time-series-selector';
+import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange, getShowIVTimeSeries} from 'ml/selectors/time-series-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
 import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
@@ -21,7 +19,7 @@ import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
 import {drawDateRangeControls} from 'ivhydrograph/date-controls';
 import {drawDataTable} from 'ivhydrograph/data-table';
-import {createStationDataDownloadURLForWaterServices,  createHrefForDownloadOfCompareData} from 'ivhydrograph/download-links';
+import {createHrefForDownloadLinks} from 'ivhydrograph/download-links';
 import {drawGraphBrush} from 'ivhydrograph/graph-brush';
 import {drawGraphControls} from 'ivhydrograph/graph-controls';
 import {SPARK_LINE_DIM}  from 'ivhydrograph/selectors/layout';
@@ -166,42 +164,40 @@ export const attachToNode = function(store,
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
                 // Construct and add the hrefs needed so users can download the data corresponding to the currently displayed hydrograph with the 'download data' links
-                nodeElem.select('#iv-download-container').call(link(store, (container, {currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, showIVTimeSeries, queryInformation}) => {
-                    // The 'compare' and 'median' links are only available if those options are selected, so remove and replace if needed
-                    nodeElem.select('#station-compare-data-download-link').text('').attr('href', '');
-                    nodeElem.select('#median-data-download-link').text('').attr('href', '');
-
-                    const href = createStationDataDownloadURLForWaterServices(currentIVDateRange, customTimeRange, ianaTimeZone, parameterCode, siteno);
-                    nodeElem.select('#station-data-download-link')
-                        .attr('href', href);
-
-                    if (showIVTimeSeries.compare && currentIVDateRange !== 'custom') {
-                        const hrefForCompare = createHrefForDownloadOfCompareData(currentIVDateRange, queryInformation, parameterCode);
-                        nodeElem.select('#station-compare-data-download-link')
-                            .text('Station - compare to last year')
-                            .attr('href', hrefForCompare);
-                    }
-
-                    if (showIVTimeSeries.median && parameterCode === '00060') {
-                        const href = `${config.WATER_SERVICES_STATISTICS}/?format=rdb&sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=00060`;
-                        nodeElem.select('#median-data-download-link')
-                            .text('Median')
-                            .attr('href', href);
-                    }
-                    const hrefMetadata = `${config.WATER_SERVICES_SITE}/?format=rdb&sites=${siteno}&siteStatus=all`;
-                    const hrefMetadataExpanded = `${config.WATER_SERVICES_SITE}/?format=rdb&sites=${siteno}&siteOutput=expanded&siteStatus=all`;
-                    nodeElem.select('#metadata-download-link')
-                        .attr('href', hrefMetadata);
-                    nodeElem.select('#metadata-expanded-download-link')
-                        .attr('href', hrefMetadataExpanded);
-                },  createStructuredSelector({
-                    currentIVDateRange: getCurrentDateRange,
-                    customTimeRange: getCustomTimeRange,
-                    ianaTimeZone: getIanaTimeZone,
-                    parameterCode: getCurrentParmCd,
-                    showIVTimeSeries: getShowIVTimeSeries,
-                    queryInformation: getQueryInformation
-                })));
+                // nodeElem.select('#iv-download-container').call(link(store, (container, {currentIVDateRange, parameterCode, showIVTimeSeries, queryInformation}) => {
+                //     // The 'compare' and 'median' links are only available if those options are selected, so remove and replace if needed
+                //     nodeElem.select('#station-compare-data-download-link').text('').attr('href', '');
+                //     nodeElem.select('#median-data-download-link').text('').attr('href', '');
+                //
+                //     const href = createHrefForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current');
+                //     nodeElem.select('#station-data-download-link')
+                //         .attr('href', href);
+                //
+                //     if (showIVTimeSeries.compare) {
+                //         const href = createHrefForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'compare');
+                //         nodeElem.select('#station-compare-data-download-link')
+                //             .text('Data from last year for current timespan')
+                //             .attr('href', href);
+                //     }
+                //
+                //     if (showIVTimeSeries.median && parameterCode === '00060') {
+                //         const href = `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=00060`;
+                //         nodeElem.select('#median-data-download-link')
+                //             .text('Median data')
+                //             .attr('href', href);
+                //     }
+                //     const hrefMetadata = `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteStatus=all`;
+                //     const hrefMetadataExpanded = `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteOutput=expanded&siteStatus=all`;
+                //     nodeElem.select('#metadata-download-link')
+                //         .attr('href', hrefMetadata);
+                //     nodeElem.select('#metadata-expanded-download-link')
+                //         .attr('href', hrefMetadataExpanded);
+                // },  createStructuredSelector({
+                //     currentIVDateRange: getCurrentDateRange,
+                //     parameterCode: getCurrentParmCd,
+                //     showIVTimeSeries: getShowIVTimeSeries,
+                //     queryInformation: getQueryInformation
+                // })));
 
                 nodeElem.select('#iv-data-table-container')
                     .call(drawDataTable, store);
