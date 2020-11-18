@@ -29,7 +29,8 @@ const createXAxis = function(xScale, ianaTimeZone) {
  * Create an x and y axis for hydrograph
  * @param {Object} xScale      D3 Scale object for the x-axis
  * @param {Object} yScale      D3 Scale object for the y-axis
- * @param {Object} secondaryYscale - D3 Scale object for the secondary y-axis
+ * @param {Object} secondaryYScale - D3 Scale object for the secondary y-axis
+ * @param {Object} yTickDetails - Object which has information about tick values and ormat.
  * @param {Number} yTickSize   Size of inner ticks for the y-axis
  * @param {String} parmCd - parameter code of time series to be shown on the graph.
  * @param {String} ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
