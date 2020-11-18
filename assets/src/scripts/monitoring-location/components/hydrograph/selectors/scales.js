@@ -2,13 +2,14 @@ import {scaleLinear, scaleSymlog} from 'd3-scale';
 import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
-import {getVariables, getCurrentParmCd, getRequestTimeRange, getTimeSeriesForTsKey} from 'ml/selectors/time-series-selector';
 import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
 
-import {getYDomain, getYDomainForVisiblePoints, SYMLOG_PARMS} from 'ivhydrograph/selectors/domain';
-import {getPointsByTsKey} from 'ivhydrograph/selectors/drawing-data';
-import {getLayout} from 'ivhydrograph/selectors/layout';
-import {TEMPERATURE_PARAMETERS} from 'ivhydrograph/selectors/time-series-data';
+import {getVariables, getCurrentParmCd, getRequestTimeRange, getTimeSeriesForTsKey} from 'ml/selectors/time-series-selector';
+
+import {getYDomain, getYDomainForVisiblePoints, SYMLOG_PARMS} from './domain';
+import {getPointsByTsKey} from './drawing-data';
+import {getLayout} from './layout';
+import {TEMPERATURE_PARAMETERS} from './time-series-data';
 
 const REVERSE_AXIS_PARMS = [
     '72019',

@@ -4,7 +4,7 @@ import {select, selectAll} from 'd3-selection';
 import {configureStore} from 'ml/store';
 import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {drawTimeSeriesLegend} from 'ivhydrograph/legend';
+import {drawTimeSeriesLegend} from './legend';
 
 
 describe('monitoring-location/components/hydrograph/legend module', () => {

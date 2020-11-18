@@ -6,7 +6,7 @@ import {
     getLowestAbsoluteValueOfTickValues,
     getRoundedTickValues,
     generateNegativeTicks
-} from 'ivhydrograph/selectors/domain';
+} from './domain';
 
 
 describe('monitoring-location/components/hydrograph/selectors/domain module', () => {

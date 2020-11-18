@@ -11,7 +11,7 @@ import {
     getCurrentDVTimeSeriesTimeRange,
     getCurrentDVTimeSeriesValueRange,
     hasMultipleParameterCodes
-} from 'ml/selectors/daily-value-time-series-selector';
+} from './daily-value-time-series-selector';
 
 describe('monitoring-location/selectors/daily-value-time-series-selector', () => {
 

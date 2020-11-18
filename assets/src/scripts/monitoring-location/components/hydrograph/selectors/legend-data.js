@@ -6,7 +6,7 @@ import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from 'd3r
 import {getWaterwatchFloodLevels, isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
 import {getCurrentVariableMedianMetadata} from 'ml/selectors/median-statistics-selector';
 
-import {getCurrentVariableLineSegments, HASH_ID, MASK_DESC} from 'ivhydrograph/selectors/drawing-data';
+import {getCurrentVariableLineSegments, HASH_ID, MASK_DESC} from './drawing-data';
 
 const TS_LABEL = {
     'current': 'Current: ',

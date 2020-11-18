@@ -1,6 +1,6 @@
 import {select} from 'd3-selection';
 
-import {drawInfoAlert, drawErrorAlert, drawSuccessAlert, drawWarningAlert} from 'd3render/alerts';
+import {drawInfoAlert, drawErrorAlert, drawSuccessAlert, drawWarningAlert} from './alerts';
 
 describe('alerts module', () => {
     let container;

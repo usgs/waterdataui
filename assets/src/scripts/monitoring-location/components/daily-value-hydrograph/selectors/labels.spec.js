@@ -1,4 +1,4 @@
-import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesYTitle, getCurrentTimeSeriesTitle} from 'dvhydrograph/selectors/labels';
+import {getCurrentTimeSeriesDescription, getCurrentTimeSeriesYTitle, getCurrentTimeSeriesTitle} from './labels';
 
 describe('monitoring-location/components/daily-value-hydrograph/selectors/label module', () => {
     describe('getCurrentTimeSeriesDescription', () => {
