@@ -10,7 +10,7 @@ import {appendAxes} from 'd3render/axes';
 import {renderMaskDefs} from 'd3render/data-masks';
 import {appendTooltip} from 'd3render/tooltips';
 
-import {getAgencyCode, getMonitoringLocationName} from 'ml/selectors/time-series-selector';
+import {getAgencyCode, getMonitoringLocationName, getCurrentVariable} from 'ml/selectors/time-series-selector';
 import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
 
 import {getAxes}  from './selectors/axes';
@@ -163,12 +163,12 @@ const createTitle = function(elem, store, siteNo, showMLName) {
             })));
     }
     titleDiv.append('div')
-        .call(link(store,(elem, {title, description}) => {
-            elem.html(title);
-            elem.call(appendTooltip, description)
+        .call(link(store,(elem, {title, variable}) => {
+            elem.html(title)
+                .call(appendTooltip, variable ? variable.variableDescription : 'No description available');
         }, createStructuredSelector({
             title: getTitle,
-            description: getDescription
+            variable: getCurrentVariable
         })));
 };
 

@@ -11,7 +11,7 @@ import {getCurrentDateRange, getCurrentParmCd} from 'ml/selectors/time-series-se
 import {getYTickDetails} from './domain';
 import {getLayout} from './layout';
 import {getXScale, getBrushXScale, getYScale, getSecondaryYScale} from './scales';
-import {getYLabel, getSecondaryYLabel, getTsTimeZone, TEMPERATURE_PARAMETERS} from './time-series-data';
+import {getCurrentVariableUnitCode, getSecondaryYLabel, getTsTimeZone, TEMPERATURE_PARAMETERS} from './time-series-data';
 
 
 const createXAxis = function(xScale, ianaTimeZone) {
@@ -94,7 +94,6 @@ export const getAxes = memoize(kind => createSelector(
     getCurrentVariableUnitCode,
     getTsTimeZone,
     getCurrentParmCd,
-    getCurrentDateRange,
     getSecondaryYLabel,
     (xScale, yScale, secondaryYScale, yTickDetails, layout, plotYLabel, ianaTimeZone, parmCd, plotSecondaryYLabel) => {
         return {
