@@ -1,11 +1,12 @@
 import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
+// required to make the USWDS component JS available to init after page load
+import components from 'uswds/src/js/components';
 
 import {link} from 'ui/lib/d3-redux';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
 
-// required to make the USWDS component JS available to init after page load
-import components from '../../../../../node_modules/uswds/src/js/components';
+
 
 import {
     isLoadingTS,
