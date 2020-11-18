@@ -9,7 +9,7 @@ import {getVariables, getCurrentParmCd, getRequestTimeRange, getTimeSeriesForTsK
 import {getYDomain, getYDomainForVisiblePoints, SYMLOG_PARMS} from './domain';
 import {getPointsByTsKey} from './drawing-data';
 import {getLayout} from './layout';
-import {TEMPERATURE_PARAMETERS} from ',/time-series-data';
+import {TEMPERATURE_PARAMETERS} from './time-series-data';
 
 const REVERSE_AXIS_PARMS = [
     '72019',

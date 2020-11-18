@@ -1,6 +1,6 @@
 import {configureStore} from 'ml/store';
 import {Actions} from 'ml/store/instantaneous-value-time-series-state';
-import {getParamString, renderTimeSeriesUrlParams} from './url-params';
+import {getParamString, renderTimeSeriesUrlParams} from 'ml/url-params';
 
 describe('monitoring-location/url-params module', () => {
 

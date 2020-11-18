@@ -2,7 +2,7 @@ import {select} from 'd3-selection';
 
 import {configureStore} from 'network/store';
 
-import {createMapLegend} from 'network/components/network-sites/legend';
+import {createMapLegend} from './legend';
 
 
 describe('component/map/legend module', () => {
