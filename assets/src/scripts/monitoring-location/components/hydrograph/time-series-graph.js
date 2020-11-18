@@ -148,7 +148,7 @@ const plotAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesP
 };
 
 
-const createTitle = function(elem, store, siteNo, showMLName) {
+const createTitle = function(elem, store, siteNo, showMLName, showTooltip) {
     let titleDiv = elem.append('div')
         .classed('time-series-graph-title', true);
 
@@ -164,8 +164,10 @@ const createTitle = function(elem, store, siteNo, showMLName) {
     }
     titleDiv.append('div')
         .call(link(store,(elem, {title, variable}) => {
-            elem.html(title)
-                .call(appendTooltip, variable ? variable.variableDescription : 'No description available');
+            elem.html(title);
+            if (showTooltip) {
+                elem.call(appendTooltip, variable ? variable.variableDescription : 'No description available');
+            }
         }, createStructuredSelector({
             title: getTitle,
             variable: getCurrentVariable
@@ -209,7 +211,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
     graphDiv = elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(watermark, store)
-        .call(createTitle, store, siteNo, showMLName);
+        .call(createTitle, store, siteNo, showMLName, showTooltip);
     if (showTooltip) {
         graphDiv.call(drawTooltipText, store);
     }

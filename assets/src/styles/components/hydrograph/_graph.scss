@@ -9,7 +9,6 @@
   @include u-text('bold');
   @include at-media(tablet) {
     @include typeset('ui', 9, 2);
-    @include u-text('bold');
   }
   text-align: center;
 }
