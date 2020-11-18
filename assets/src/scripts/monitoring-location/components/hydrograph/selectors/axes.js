@@ -6,7 +6,7 @@ import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
 
 import {generateTimeTicks} from 'd3render/tick-marks';
 
-import {getCurrentDateRange, getCurrentParmCd} from 'ml/selectors/time-series-selector';
+import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
 
 import {getYTickDetails} from './domain';
 import {getLayout} from './layout';
