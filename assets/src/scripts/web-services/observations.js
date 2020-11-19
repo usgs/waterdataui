@@ -6,13 +6,23 @@ import config from 'ui/config';
  * resolves to the fetched data or an empty object if the retrieval failed.
  */
 const fetchObservationsData = function(queryUrl) {
-    const url = `${config.OBSERVATIONS_ENDPOINT}/${queryUrl}`;
+    const url = `${config.OBSERVATIONS_ENDPOINT}${queryUrl}`;
     return get(url)
         .then(resp => JSON.parse(resp))
         .catch(reason => {
             console.log(`Unable to fetch data from ${url} with reason: ${reason}`);
             return {};
         });
+};
+
+/*
+ * Retrieve an array of features for the networkCd
+ * @parameter {String} networkCd
+ * @return {Promise} resolves to an Array of feature Objects
+ */
+export const fetchNetworkFeatures = function(networkCd) {
+   return fetchObservationsData(`${networkCd}/items`)
+       .then((response) => response.features ? response.features : []) ;
 };
 
 /*

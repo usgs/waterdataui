@@ -1,7 +1,7 @@
 import {applyMiddleware, createStore, combineReducers, compose} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
-import {fetchNetworkFeatures} from 'ui/web-services/network-data';
+import {fetchNetworkFeatures} from 'ui/web-services/observations';
 
 import {networkDataReducer as networkData} from './network-data-reducer';
 

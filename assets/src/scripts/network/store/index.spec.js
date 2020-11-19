@@ -76,7 +76,7 @@ describe('Network Redux store', () => {
             beforeEach(() => {
                 jasmine.Ajax.install();
 
-                jasmine.Ajax.stubRequest(`${config.NETWORK_ENDPOINT}/${NETWORK_CD}/items`).andReturn({
+                jasmine.Ajax.stubRequest(`${config.OBSERVATIONS_ENDPOINT}${NETWORK_CD}/items`).andReturn({
                     status: 200,
                     response: MOCK_NETWORK_FEATURE,
                     contentType: 'application/json'
@@ -115,7 +115,7 @@ describe('Network Redux store', () => {
             beforeEach(() => {
                 jasmine.Ajax.install();
 
-                jasmine.Ajax.stubRequest(`${config.NETWORK_ENDPOINT}/${NETWORK_CD}/items`).andReturn({
+                jasmine.Ajax.stubRequest(`${config.OBSERVATIONS_ENDPOINT}${NETWORK_CD}/items`).andReturn({
                     status: 500
                 });
 
@@ -141,6 +141,3 @@ describe('Network Redux store', () => {
         });
     });
 });
-
-
-
