@@ -96,6 +96,8 @@ const TEST_STATE = {
                     value: '00010'
                 },
                 oid: '45807190',
+                variableName: 'Test title for 00010',
+                variableDescription: 'Test description for 00010',
                 unit: {
                     unitCode: 'unitCode'
                 }
@@ -544,7 +546,8 @@ describe('monitoring-location/components/hydrograph module', () => {
         it('should have a title div', () => {
             const titleDiv = selectAll('.time-series-graph-title');
             expect(titleDiv.size()).toBe(1);
-            expect(titleDiv.text()).toEqual('Test title for 00060, method description');
+            expect(titleDiv.select('div').text()).toContain('Test title for 00060, method description');
+            expect(titleDiv.select('.usa-tooltip').text()).toEqual('Test description for 00060');
         });
 
         it('should have a defs node', () => {
@@ -591,7 +594,7 @@ describe('monitoring-location/components/hydrograph module', () => {
 
         it('should have tooltips for the select series table', () => {
             // one for each of the two parameters
-            expect(selectAll('table .usa-tooltip').size()).toBe(4);
+            expect(selectAll('table .usa-tooltip').size()).toBe(2);
         });
 
         it('should render the data table', (done) => {

@@ -67,9 +67,9 @@ export const getSecondaryYLabel= createSelector(
     parmCd => {
         let secondaryYLabel = null;
         if (TEMPERATURE_PARAMETERS.celsius.includes(parmCd)) {
-            secondaryYLabel = 'degrees Fahrenheit';
+            secondaryYLabel = 'deg F';
         } else if(TEMPERATURE_PARAMETERS.fahrenheit.includes(parmCd)) {
-            secondaryYLabel = 'degrees Celsius';
+            secondaryYLabel = 'deg C';
         }
         return secondaryYLabel;
     }
