@@ -5,6 +5,8 @@ import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config.js';
+import {appendTooltip} from 'ui/tooltips';
+
 import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
 import {link} from 'ui/lib/d3-redux';
@@ -67,6 +69,7 @@ export const attachToNode = function(store,
                                          showMLName = false
                                      } = {}) {
     const nodeElem = select(node);
+
     if (!siteno) {
         select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No data is available.'});
         return;
@@ -163,11 +166,20 @@ export const attachToNode = function(store,
 
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
+
+                // Add the tooltips that are always on
+                nodeElem.select('#station-tooltip')
+                    .call(appendTooltip, 'Monitoring location data as shown on graph');
+                nodeElem.select('#metadata-tooltip')
+                    .call(appendTooltip, 'Information about this monitoring location');
                 // Construct and add the hrefs needed so users can download the data corresponding to the currently displayed hydrograph with the 'download data' links
                 nodeElem.select('#iv-download-container').call(link(store, (container, {currentIVDateRange, parameterCode, showIVTimeSeries, queryInformation}) => {
                     // The 'compare' and 'median' links are only available if those options are selected, so remove and replace if needed
                     nodeElem.select('#station-compare-data-download-link').text('').attr('href', '');
                     nodeElem.select('#median-data-download-link').text('').attr('href', '');
+
+                    nodeElem.select('#compare-tooltip')
+                    nodeElem.select('#median-tooltip')
 
                     const href = createHrefForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current');
                     nodeElem.select('#station-data-download-link')
@@ -176,8 +188,11 @@ export const attachToNode = function(store,
                     if (showIVTimeSeries.compare) {
                         const href = createHrefForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'compare');
                         nodeElem.select('#station-compare-data-download-link')
-                            .text('Data from last year for current timespan')
+                            .text('Compare')
                             .attr('href', href);
+
+                        nodeElem.select('#compare-tooltip')
+                            .call(appendTooltip, 'Data from last year with the same timespan as in graph');
                     }
 
                     if (showIVTimeSeries.median && parameterCode === '00060') {
@@ -185,6 +200,12 @@ export const attachToNode = function(store,
                         nodeElem.select('#median-data-download-link')
                             .text('Median data')
                             .attr('href', href);
+
+                        if (document.getElementById('myElementId') === null) {
+                            console.log('no find 2')
+                        }
+                        nodeElem.select('#median-tooltip')
+                            .call(appendTooltip, 'Median data for timespan shown on graph');
                     }
                     const hrefMetadata = `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteStatus=all`;
                     const hrefMetadataExpanded = `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteOutput=expanded&siteStatus=all`;
