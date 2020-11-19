@@ -1,5 +1,5 @@
 
-import {getAvailableParameterCodes} from 'ivhydrograph/selectors/parameter-data';
+import {getAvailableParameterCodes} from './parameter-data';
 
 describe('monitoring-location/components/hydrograph/selectors/parameter-data', () => {
     describe('getAvailableParameterCodes', () => {

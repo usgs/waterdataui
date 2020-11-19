@@ -9,7 +9,7 @@ import {
     getCurrentDVTimeSeriesData
 } from 'ml/selectors/daily-value-time-series-selector';
 
-import {getLayout} from 'dvhydrograph/selectors/layout';
+import {getLayout} from './layout';
 
 /*
  * Returns a selector function which returns a d3 scale for either the brush,

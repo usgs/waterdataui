@@ -2,8 +2,7 @@ import {select} from 'd3-selection';
 
 import {configureStore} from 'ml/store';
 
-import {attachToNode} from 'map/index';
-
+import {attachToNode} from './index';
 
 describe('monitoring-location/components/map module', () => {
     let mapNode;

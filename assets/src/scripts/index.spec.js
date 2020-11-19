@@ -12,7 +12,6 @@ import 'ui/polyfills';
 
 import 'ui/ajax.spec';
 import 'ui/schema.spec';
-import 'ui/tooltips.spec';
 import 'ui/utils.spec';
 
 import 'd3render/accessibility.spec';
@@ -25,6 +24,7 @@ import 'd3render/legend.spec';
 import 'd3render/loading-indicator.spec';
 import 'd3render/markers.spec';
 import 'd3render/tick-marks.spec';
+import 'd3render/tooltips.spec';
 
 import 'ui/leaflet-rendering/map.spec';
 import 'ui/leaflet-rendering/legend-control.spec';
@@ -88,6 +88,7 @@ import 'ml/store/time-zone.spec';
 import 'ml/store/ui-state.spec';
 
 import 'ml/url-params.spec';
+
 import 'ui/network/components/network-sites/data-table.spec';
 import 'ui/network/components/network-sites/index.spec';
 import 'ui/network/components/network-sites/legend.spec';

@@ -1,5 +1,7 @@
-import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from 'ui/web-services/models';
 import {utcFormat} from 'd3-time-format';
+
+import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from './models';
+
 
 export const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 

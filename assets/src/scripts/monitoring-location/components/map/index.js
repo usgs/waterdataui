@@ -13,9 +13,9 @@ import {hasNldiData, getNldiDownstreamFlows, getNldiDownstreamSites, getNldiUpst
 import {Actions as nldiDataActions} from 'ml/store/nldi-data';
 import {Actions as floodInundationActions} from 'ml/store/flood-inundation';
 
-import {floodSlider} from 'map/flood-slider';
-import {addMonitoringLocationMarker, createFIMLegend, createNldiLegend} from 'map/legend';
-import {addNldiLayers} from 'map/nldi-mapping';
+import {floodSlider} from './flood-slider';
+import {addMonitoringLocationMarker, createFIMLegend, createNldiLegend} from './legend';
+import {addNldiLayers} from './nldi-mapping';
 
 
 const getLayerDefs = function(layerNo, siteno, stage) {

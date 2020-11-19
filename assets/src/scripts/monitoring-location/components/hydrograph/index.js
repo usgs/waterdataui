@@ -5,11 +5,11 @@ import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config.js';
+import {link} from 'ui/lib/d3-redux';
 import {appendTooltip} from 'ui/tooltips';
 
 import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
-import {link} from 'ui/lib/d3-redux';
 
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange, getShowIVTimeSeries} from 'ml/selectors/time-series-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
@@ -19,22 +19,23 @@ import {Actions as timeZoneActions} from 'ml/store/time-zone';
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
-import {drawDateRangeControls} from 'ivhydrograph/date-controls';
-import {drawDataTable} from 'ivhydrograph/data-table';
-import {createHrefForDownloadLinks} from 'ivhydrograph/download-links';
-import {drawGraphBrush} from 'ivhydrograph/graph-brush';
-import {drawGraphControls} from 'ivhydrograph/graph-controls';
-import {SPARK_LINE_DIM}  from 'ivhydrograph/selectors/layout';
-import {drawTimeSeriesLegend} from 'ivhydrograph/legend';
-import {drawMethodPicker} from 'ivhydrograph/method-picker';
-import {plotSeriesSelectTable} from 'ivhydrograph/parameters';
-import {getLineSegmentsByParmCd} from 'ivhydrograph/selectors/drawing-data';
-import {getAvailableParameterCodes} from 'ivhydrograph/selectors/parameter-data';
-import {getTimeSeriesScalesByParmCd} from 'ivhydrograph/selectors/scales';
-import {getQueryInformation} from 'ivhydrograph/selectors/time-series-data';
-import {drawTimeSeriesGraph} from 'ivhydrograph/time-series-graph';
-import {drawTooltipCursorSlider} from 'ivhydrograph/tooltip';
-import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ivhydrograph/hydrograph-utils';
+import {drawDateRangeControls} from './date-controls';
+import {drawDataTable} from './data-table';
+import {createHrefForDownloadLinks} from './download-links';
+import {drawGraphBrush} from './graph-brush';
+import {drawGraphControls} from './graph-controls';
+import {isPeriodWithinAcceptableRange, isPeriodCustom} from './hydrograph-utils';
+
+import {getLineSegmentsByParmCd} from './selectors/drawing-data';
+import {SPARK_LINE_DIM}  from './selectors/layout';
+import {getAvailableParameterCodes} from './selectors/parameter-data';
+import {getTimeSeriesScalesByParmCd} from './selectors/scales';
+
+import {drawTimeSeriesLegend} from './legend';
+import {drawMethodPicker} from './method-picker';
+import {plotSeriesSelectTable} from './parameters';
+import {drawTimeSeriesGraph} from './time-series-graph';
+import {drawTooltipCursorSlider} from './tooltip';
 
 /**
  * Modify styling to hide or display the elem.
@@ -69,7 +70,6 @@ export const attachToNode = function(store,
                                          showMLName = false
                                      } = {}) {
     const nodeElem = select(node);
-
     if (!siteno) {
         select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No data is available.'});
         return;
@@ -173,7 +173,7 @@ export const attachToNode = function(store,
                     nodeElem.select('#station-compare-data-download-link').text('').attr('href', '');
                     nodeElem.select('#median-data-download-link').text('').attr('href', '');
 
-                    
+
                     // Add the always on tool tips - need to contain in a conditional statement to stop adding nested tips each time code cycles
                     if (document.getElementById('station-tooltip-container') === null) {
                         const tooltipContainer = nodeElem.select('#station-tooltip')

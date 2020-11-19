@@ -1,7 +1,8 @@
 import {createStructuredSelector} from 'reselect';
 
 import {link} from 'ui/lib/d3-redux';
-import {appendTooltip} from 'ui/tooltips';
+
+import {appendTooltip} from 'd3render/tooltips';
 
 import {getFloodStages, getFloodStageHeight, getFloodGageHeightStageIndex, hasFloodData} from 'ml/selectors/flood-data-selector';
 import {Actions} from 'ml/store/flood-inundation';

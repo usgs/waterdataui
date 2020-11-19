@@ -1,6 +1,6 @@
 import {
     isVisible, getYLabel, getTitle,
-    getDescription, getTsTimeZone, getSecondaryYLabel} from 'ivhydrograph/selectors/time-series-data';
+    getDescription, getTsTimeZone, getSecondaryYLabel} from './time-series-data';
 
 
 const TEST_DATA = {
@@ -259,7 +259,7 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
                      ...TEST_DATA.ivTimeSeriesState,
                      currentIVVariableID: '45807196'
                  }
-             })).toEqual('degrees Fahrenheit');
+             })).toEqual('deg F');
         });
 
         it('returns a secondary label when a fahrenheit parameter is selected', () => {
@@ -269,7 +269,7 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
                      ...TEST_DATA.ivTimeSeriesState,
                      currentIVVariableID: '45807195'
                  }
-             })).toEqual('degrees Celsius');
+             })).toEqual('deg C');
         });
 
         it('does not return a secondary when a parameter when a non-temperature parameter is selected', () => {

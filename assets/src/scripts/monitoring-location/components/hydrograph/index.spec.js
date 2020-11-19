@@ -6,7 +6,7 @@ import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
 import {Actions as timeZoneActions} from 'ml/store/time-zone';
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
-import {attachToNode} from 'ivhydrograph/index';
+import {attachToNode} from './index';
 
 const TEST_STATE = {
     ivTimeSeriesData: {
@@ -97,6 +97,8 @@ const TEST_STATE = {
                     value: '00010'
                 },
                 oid: '45807190',
+                variableName: 'Test title for 00010',
+                variableDescription: 'Test description for 00010',
                 unit: {
                     unitCode: 'unitCode'
                 }
@@ -545,7 +547,8 @@ describe('monitoring-location/components/hydrograph module', () => {
         it('should have a title div', () => {
             const titleDiv = selectAll('.time-series-graph-title');
             expect(titleDiv.size()).toBe(1);
-            expect(titleDiv.text()).toEqual('Test title for 00060, method description');
+            expect(titleDiv.select('div').text()).toContain('Test title for 00060, method description');
+            expect(titleDiv.select('.usa-tooltip').text()).toEqual('Test description for 00060');
         });
 
         it('should have a defs node', () => {

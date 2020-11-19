@@ -1,5 +1,6 @@
 import {select} from 'd3-selection';
-import {lineMarker, circleMarker, rectangleMarker, textOnlyMarker} from 'd3render/markers';
+
+import {lineMarker, circleMarker, rectangleMarker, textOnlyMarker} from './markers';
 
 describe('Markers module', () => {
 

@@ -1,7 +1,7 @@
 import {configureStore} from 'ml/store';
 import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {getTsCursorPoints, getCursorOffset, getTooltipPoints} from 'ivhydrograph/selectors/cursor';
+import {getTsCursorPoints, getCursorOffset, getTooltipPoints} from './cursor';
 
 let DATA = [12, 13, 14, 15, 16].map(hour => {
     return {

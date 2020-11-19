@@ -1,5 +1,5 @@
-import config from 'ui/config';
 import {get} from 'ui/ajax';
+import config from 'ui/config';
 
 /*
  * Retrieve json data from the NETWORK_ENDPOINT/${networkQuery}
