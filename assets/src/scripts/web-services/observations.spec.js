@@ -24,11 +24,29 @@ describe('web-services/observations module', () => {
             networkPromise = fetchNetworkFeatures(networkCd );
         });
 
-        it('expect url to contain networkCd', () => {
-           expect(jasmine.Ajax.requests.mostRecent().url).toContain(networkCd);
+        it('expect url to contain networkCd and no additional query parameters', () => {
+            networkPromise = fetchNetworkFeatures(networkCd);
+            const url = jasmine.Ajax.requests.mostRecent().url;
+
+            expect(url).toContain(networkCd);
+            expect(url.split('?')[1]).toEqual('f=json');
         });
 
+        it('Expect url to contain query parameters', () => {
+            networkPromise = fetchNetworkFeatures(networkCd, {active: true, agencyCode: 'USGS'});
+            const url = jasmine.Ajax.requests.mostRecent().url;
+            const queryString = url.split('?')[1];
+
+            expect(url).toContain(networkCd);
+            expect(queryString).toContain('active=true');
+            expect(queryString).toContain('agencyCode=USGS');
+            expect(queryString).toContain('f=json');
+            expect(queryString.split('&').length).toBe(3);
+
+        })
+
         it('expected response is json object with the network sites', () => {
+            networkPromise = fetchNetworkFeatures(networkCd );
             jasmine.Ajax.stubRequest(`${config.OBSERVATIONS_ENDPOINT}/${networkCd}/items`).andReturn({
                 status: 200,
                 responseText: MOCK_NETWORK_FEATURE,

@@ -1,14 +1,21 @@
 import {get} from 'ui/ajax';
 import config from 'ui/config';
 
-const NWIS_COLLECTION_ID = 'monitoring-locations'
+const NWIS_COLLECTION_ID = 'monitoring-locations';
 
 /*
  * Fetches the data at using OBSERVATIONS_ENDPOINT + queryUrl. Returns a Promise which
  * resolves to the fetched data or an empty object if the retrieval failed.
+ * @param {String} queryURL - The part of the url that should be appended to OBSERVATIONS_ENDPOINT
+ * @param {Object} parameters - query parameters. The json format query parameter will be automatically added.
  */
-const fetchObservationsData = function(queryUrl) {
-    const url = `${config.OBSERVATIONS_ENDPOINT}${queryUrl}`;
+const fetchObservationsData = function(queryUrl, parameters={}) {
+    const queryParameters = {
+        ...parameters,
+        f: 'json'
+    };
+    const queryString = Object.keys(queryParameters).map((key) => `${key}=${queryParameters[key]}`).join('&');
+    const url = `${config.OBSERVATIONS_ENDPOINT}${queryUrl}?${queryString}`;
     return get(url)
         .then(resp => JSON.parse(resp))
         .catch(reason => {
@@ -19,13 +26,15 @@ const fetchObservationsData = function(queryUrl) {
 
 /*
  * Retrieve an array of features for the networkCd
- * @parameter {String} networkCd
+ * @param {String} networkCd
+ * @param {Object} queryParameters
  * @return {Promise} resolves to an Array of feature Objects
  */
-export const fetchNetworkFeatures = function(networkCd) {
-   return fetchObservationsData(`collections/${networkCd}/items`)
+export const fetchNetworkFeatures = function(networkCd, queryParameters={}) {
+    return fetchObservationsData(`collections/${networkCd}/items`, queryParameters)
        .then((response) => response.features ? response.features : []) ;
 };
+
 
 /*
  * Fetches the available DV time series and returns a Promise that returns a
