@@ -25,6 +25,10 @@ export const createHrefForDownloadLinks = function(currentIVDateRange, queryInfo
         url = url.replace('json', 'rdb');
         url = `${config.SERVICE_ROOT}/iv/?${url}`;
     }
+    // For the URLs in the state that don't have a parameter code, like the P7Ds, let's add it
+    if (!url.includes('parameterCd')) {
+        url = url + `&parameterCd=${parameterCode}`;
+    }
 
     return url;
 };

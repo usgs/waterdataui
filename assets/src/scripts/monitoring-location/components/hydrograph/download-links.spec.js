@@ -3,7 +3,7 @@ import {createHrefForDownloadLinks} from 'ivhydrograph/download-links';
 describe('createHrefForDownloadOfCompareData', () => {
     const queryInformation = {
         'current:P7D': {
-            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&parameterCd=00060&&period=P7D&siteStatus=all&format=json'
+            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D&siteStatus=all&format=json'
         },
         'compare:P7D': {
             'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&startDT=2019-11-10T19:33Z&endDT=2019-11-17T19:33Z&siteStatus=all&format=json'
@@ -31,11 +31,11 @@ describe('createHrefForDownloadOfCompareData', () => {
         }
     };
 
-    it('will convert a NWIS URL to one compatible with WaterServices download if the period is 7 days', () => {
+    it('will convert a NWIS URL to one compatible with WaterServices download if the period is 7 days (and will add correct parameter code)', () => {
         const parameterCode = '00060';
         const currentIVDateRange = 'P7D';
         expect(createHrefForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current'))
-            .toEqual('https://fakeserviceroot.com/iv/?sites=05370000&parameterCd=00060&&period=P7D&siteStatus=all&format=rdb');
+            .toEqual('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00060');
     });
     it('will convert a NWIS URL one compatible with WaterServices download  if the period is 30 days', () => {
         const parameterCode = '00060';
@@ -59,6 +59,6 @@ describe('createHrefForDownloadOfCompareData', () => {
         const parameterCode = '00065';
         const currentIVDateRange = 'P1Y';
         expect(createHrefForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'compare'))
-            .toEqual('https://fakeserviceroot.com/iv/?sites=05370000&startDT=2018-11-17T19:33Z&endDT=2019-11-17T19:33Z&siteStatus=all&format=rdb');
+            .toEqual('https://fakeserviceroot.com/iv/?sites=05370000&startDT=2018-11-17T19:33Z&endDT=2019-11-17T19:33Z&siteStatus=all&format=rdb&parameterCd=00065');
     });
 });
