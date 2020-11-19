@@ -5,9 +5,10 @@ const INITIAL_STATE = {
 /*
  * Case reducers
  */
-const setNetworkFeatures = function(networkData, action) {
+const setNetworkMonitoringLocations = function(networkData, action) {
     return {
-        networkSites: action.networkSites
+        ...networkData,
+        networkMonitoringLocations: action.networkMonitoringLocations
     };
 };
 
@@ -16,7 +17,7 @@ const setNetworkFeatures = function(networkData, action) {
  */
 export const networkDataReducer = function(networkData=INITIAL_STATE, action) {
     switch(action.type) {
-        case 'SET_NETWORK_FEATURES': return setNetworkFeatures(networkData, action);
+        case 'SET_NETWORK_MONITORING_LOCATIONS': return setNetworkMonitoringLocations(networkData, action);
         default: return networkData;
     }
 };

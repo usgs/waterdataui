@@ -1,7 +1,7 @@
 import config from 'ui/config';
 import {MOCK_OBSERVATION_ITEM} from 'ui/mock-service-data';
 
-import {fetchAvailableDVTimeSeries, fetchDVTimeSeries, fetchNetworkFeatures,
+import {fetchAvailableDVTimeSeries, fetchDVTimeSeries, fetchNetworkMonitoringLocations,
     fetchMonitoringLocationMetaData} from './observations';
 
 describe('web-services/observations module', () => {
@@ -14,18 +14,18 @@ describe('web-services/observations module', () => {
         jasmine.Ajax.uninstall();
     });
 
-    describe('fetchNetworkFeatures', () => {
+    describe('fetchNetworkMonitoringLocations', () => {
         const networkCd = 'AHS';
         let networkPromise;
 
         beforeEach(() => {
             /* eslint no-use-before-define: 0 */
 
-            networkPromise = fetchNetworkFeatures(networkCd );
+            networkPromise = fetchNetworkMonitoringLocations(networkCd );
         });
 
         it('expect url to contain networkCd and no additional query parameters', () => {
-            networkPromise = fetchNetworkFeatures(networkCd);
+            networkPromise = fetchNetworkMonitoringLocations(networkCd);
             const url = jasmine.Ajax.requests.mostRecent().url;
 
             expect(url).toContain(networkCd);
@@ -33,7 +33,7 @@ describe('web-services/observations module', () => {
         });
 
         it('Expect url to contain query parameters', () => {
-            networkPromise = fetchNetworkFeatures(networkCd, {active: true, agencyCode: 'USGS'});
+            networkPromise = fetchNetworkMonitoringLocations(networkCd, {active: true, agencyCode: 'USGS'});
             const url = jasmine.Ajax.requests.mostRecent().url;
             const queryString = url.split('?')[1];
 
@@ -46,7 +46,7 @@ describe('web-services/observations module', () => {
         })
 
         it('expected response is json object with the network sites', () => {
-            networkPromise = fetchNetworkFeatures(networkCd );
+            networkPromise = fetchNetworkMonitoringLocations(networkCd );
             jasmine.Ajax.stubRequest(`${config.OBSERVATIONS_ENDPOINT}/${networkCd}/items`).andReturn({
                 status: 200,
                 responseText: MOCK_NETWORK_FEATURE,

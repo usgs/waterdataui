@@ -57,17 +57,17 @@ const MOCK_NETWORK_FEATURE = `
 `
 ;
 
-describe('Network Redux store', () => {
+describe('network/store', () => {
 
     describe('asynchronous actions', () => {
         const NETWORK_CD = 'AHS';
 
         const TEST_STATE = {networkData: {
-                networkSites: []
+                networkMonitoringLocations: []
             }
         };
 
-        describe('retrieveNetworkSites with good data', () => {
+        describe('retrieveNetworkMonitoringLocations with good data', () => {
             let mockDispatch;
             let mockGetState;
 
@@ -83,15 +83,9 @@ describe('Network Redux store', () => {
                 jasmine.Ajax.uninstall();
             });
 
-            it('fetches data from NWIS reference networks', () => {
-                Actions.retrieveNetworkData(NETWORK_CD)(mockDispatch,mockGetState);
-                console.log('Request url is ' + jasmine.Ajax.requests.mostRecent().url);
-                expect(jasmine.Ajax.requests.mostRecent().url).toContain('items');
-            });
-
-            it('gets the data and sets the network redux store', (done) => {
-                spyOn(Actions, 'setNetworkFeatures');
-                let p = Actions.retrieveNetworkData(NETWORK_CD)(mockDispatch,mockGetState);
+            it('fetches the data and updates the redux store', (done) => {
+                spyOn(Actions, 'setNetworkMonitoringLocations');
+                let p = Actions.retrieveNetworkMonitoringLocations(NETWORK_CD)(mockDispatch, mockGetState);
                 jasmine.Ajax.requests.mostRecent().respondWith({
                     status: 200,
                     response: MOCK_NETWORK_FEATURE,
@@ -99,38 +93,21 @@ describe('Network Redux store', () => {
                 });
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(1);
-                    expect(Actions.setNetworkFeatures.calls.count()).toBe(1);
+                    expect(Actions.setNetworkMonitoringLocations.calls.count()).toBe(1);
                     done();
                 });
             });
-        });
 
-        describe('retrieveNetworkSites with bad data', () => {
-            let mockDispatch;
-            let mockGetState;
-
-            beforeEach(() => {
-                jasmine.Ajax.install();
-
-                mockDispatch = jasmine.createSpy('mockDispatch');
-                mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
-                configureStore();
-            });
-
-            afterEach(() => {
-                jasmine.Ajax.uninstall();
-            });
-
-            it('gets the data and sets the network redux store', (done) => {
-                spyOn(Actions, 'setNetworkFeatures');
-                let p = Actions.retrieveNetworkData(NETWORK_CD)(mockDispatch,mockGetState);
-                 jasmine.Ajax.requests.mostRecent().respondWith({
+            it('a failed fetch sets the save monitoring locations to the empty array', (done) => {
+                spyOn(Actions, 'setNetworkMonitoringLocations');
+                let p = Actions.retrieveNetworkMonitoringLocations(NETWORK_CD)(mockDispatch, mockGetState);
+                jasmine.Ajax.requests.mostRecent().respondWith({
                     status: 500
                 });
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(1);
-                    expect(Actions.setNetworkFeatures.calls.count()).toBe(1);
-                    expect(Actions.setNetworkFeatures).toHaveBeenCalledWith([]);
+                    expect(Actions.setNetworkMonitoringLocations.calls.count()).toBe(1);
+                    expect(Actions.setNetworkMonitoringLocations).toHaveBeenCalledWith([]);
                     done();
                 });
             });

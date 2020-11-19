@@ -35,7 +35,7 @@ describe('network map module', () => {
     describe('Map creation without Network maps', () => {
         beforeEach(() => {
             store = configureStore();
-            spyOn(Actions, 'retrieveNetworkData').and.returnValue(function() {
+            spyOn(Actions, 'retrieveNetworkMonitoringLocations').and.returnValue(function() {
                 return Promise.resolve({});
             });
             attachToNode(store, componentNode, {
@@ -80,7 +80,7 @@ describe('network map module', () => {
         beforeEach(() => {
             store = configureStore({
                 networkData: {
-                    networkSites: [{
+                    networkMonitoringLocations: [{
                         type: 'Feature',
                         id: 'USGS-343048093030401',
                         geometry: {
@@ -135,7 +135,7 @@ describe('network map module', () => {
                     ]
                 }
             });
-            spyOn(Actions, 'retrieveNetworkData').and.returnValue(function () {
+            spyOn(Actions, 'retrieveNetworkMonitoringLocations').and.returnValue(function() {
                 return Promise.resolve({});
             });
             attachToNode(store, componentNode, {

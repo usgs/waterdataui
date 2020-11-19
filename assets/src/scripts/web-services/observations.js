@@ -30,7 +30,7 @@ const fetchObservationsData = function(queryUrl, parameters={}) {
  * @param {Object} queryParameters
  * @return {Promise} resolves to an Array of feature Objects
  */
-export const fetchNetworkFeatures = function(networkCd, queryParameters={}) {
+export const fetchNetworkMonitoringLocations = function(networkCd, queryParameters={}) {
     return fetchObservationsData(`collections/${networkCd}/items`, queryParameters)
        .then((response) => response.features ? response.features : []) ;
 };

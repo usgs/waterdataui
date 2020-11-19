@@ -5,7 +5,7 @@ import {select} from 'd3-selection';
 import {legendControl} from 'ui/leaflet-rendering/legend-control';
 import {listen} from 'ui/lib/d3-redux';
 
-import {hasNetworkData} from 'network/selectors/network-data-selector';
+import {hasNetworkMonitoringLocations} from 'network/selectors/network-data-selector';
 
 import {MARKER_FILL_COLOR, MARKER_FILL_OPACITY} from './map';
 
@@ -20,7 +20,7 @@ export const createMapLegend = function(map, store) {
     });
     map.addControl(networkLegendControl);
 
-    listen(store, hasNetworkData, (showLegend) => {
+    listen(store, hasNetworkMonitoringLocations, (showLegend) => {
             if (showLegend) {
                 const legendListContainer = select(networkLegendControl.getLegendListContainer());
                 const networkLegendList = legendListContainer.append('ul')

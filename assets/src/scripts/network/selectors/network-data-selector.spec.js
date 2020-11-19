@@ -1,42 +1,42 @@
 import {
-    getNetworkSites,
-    hasNetworkData
+    getNetworkMonitoringLocations,
+    hasNetworkMonitoringLocations
 } from './network-data-selector';
 
 describe('network-data-selector', () => {
 
-    describe('getNetworkSites', () => {
+    describe('getNetworkMonitoringLocations', () => {
         it('if network is empty, empty array is returned', () => {
-            expect(getNetworkSites({
+            expect(getNetworkMonitoringLocations({
                 networkData: {
-                    networkSites: []
+                    networkMonitoringLocations: []
                 }
             })).toEqual([]);
         });
 
-        it('if network sites, the data is returned', () => {
-            expect(getNetworkSites({
+        it('if network MonitoringLocations, the data is returned', () => {
+            expect(getNetworkMonitoringLocations({
                 networkData: {
-                    networkSites: [1,2,3]
+                    networkMonitoringLocations: [1,2,3]
                 }
             })).toEqual([1,2,3]);
         });
     });
 
 
-    describe('hasNetworkData', () => {
-        it('if all network data is empty, return false', () => {
-            expect(hasNetworkData({
+    describe('hasNetworkMonitoringLocations', () => {
+        it('if no monitoring locations, return false', () => {
+            expect(hasNetworkMonitoringLocations({
                 networkData: {
-                    networkSites: []
+                    networkMonitoringLocations: []
                 }
             })).toEqual(false);
         });
 
         it('if even one network data has data, return true', () => {
-            expect(hasNetworkData({
+            expect(hasNetworkMonitoringLocations({
                  networkData: {
-                    networkSites: [1]
+                    networkMonitoringLocations: [1]
                 }
             })).toEqual(true);
         });
