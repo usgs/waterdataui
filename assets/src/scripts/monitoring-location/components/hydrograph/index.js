@@ -172,6 +172,8 @@ export const attachToNode = function(store,
                     // The 'compare' and 'median' links are only available if those options are selected, so remove and replace if needed
                     nodeElem.select('#station-compare-data-download-link').text('').attr('href', '');
                     nodeElem.select('#median-data-download-link').text('').attr('href', '');
+
+                    
                     // Add the always on tool tips - need to contain in a conditional statement to stop adding nested tips each time code cycles
                     if (document.getElementById('station-tooltip-container') === null) {
                         const tooltipContainer = nodeElem.select('#station-tooltip')
