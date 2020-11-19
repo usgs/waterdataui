@@ -6,10 +6,10 @@ import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config.js';
 import {link} from 'ui/lib/d3-redux';
-import {appendTooltip} from 'ui/tooltips';
 
 import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
+import {appendTooltip} from 'd3render/tooltips';
 
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange, getShowIVTimeSeries} from 'ml/selectors/time-series-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
@@ -30,6 +30,7 @@ import {getLineSegmentsByParmCd} from './selectors/drawing-data';
 import {SPARK_LINE_DIM}  from './selectors/layout';
 import {getAvailableParameterCodes} from './selectors/parameter-data';
 import {getTimeSeriesScalesByParmCd} from './selectors/scales';
+import {getQueryInformation} from './selectors/time-series-data';
 
 import {drawTimeSeriesLegend} from './legend';
 import {drawMethodPicker} from './method-picker';
