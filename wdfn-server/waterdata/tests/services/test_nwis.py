@@ -5,7 +5,7 @@ Tests for NWISWeb service calls.
 from types import GeneratorType
 from unittest import TestCase, mock
 
-from waterdata.services.nwis import NwisWebServices
+from ...services.nwis import NwisWebServices
 from ..rdb_snippets import SITE_RDB, PARAMETER_RDB
 
 

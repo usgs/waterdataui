@@ -211,7 +211,7 @@ def hydrological_unit_locations(huc_cd):
     return hydrological_unit(huc_cd, show_locations=True)
 
 
-@app.route('/networks/', defaults={'network_cd': None}, methods=['GET'])
+@app.route('/networks/', defaults={'network_cd': ''}, methods=['GET'])
 @app.route('/networks/<network_cd>/', methods=['GET'])
 def networks(network_cd):
     """
