@@ -178,8 +178,8 @@ export const attachToNode = function(store,
                     nodeElem.select('#station-compare-data-download-link').text('').attr('href', '');
                     nodeElem.select('#median-data-download-link').text('').attr('href', '');
 
-                    nodeElem.select('#compare-tooltip')
-                    nodeElem.select('#median-tooltip')
+                    nodeElem.select('#median-tooltip-container').style('display', `${showIVTimeSeries.median ? 'inline' : 'none'}`);
+                    nodeElem.select('#compare-tooltip-container').style('display', `${showIVTimeSeries.compare ? 'inline' : 'none'}`);
 
                     const href = createHrefForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current');
                     nodeElem.select('#station-data-download-link')
@@ -191,8 +191,13 @@ export const attachToNode = function(store,
                             .text('Compare')
                             .attr('href', href);
 
-                        nodeElem.select('#compare-tooltip')
-                            .call(appendTooltip, 'Data from last year with the same timespan as in graph');
+                        if (document.getElementById('compare-tooltip-container') === null) {
+                            const tooltipContainer = nodeElem.select('#compare-tooltip')
+                                .append('span')
+                                .attr('id', 'compare-tooltip-container');
+
+                            tooltipContainer.call(appendTooltip, 'Data from last year with the same timespan as in graph');
+                        }
                     }
 
                     if (showIVTimeSeries.median && parameterCode === '00060') {
@@ -201,11 +206,13 @@ export const attachToNode = function(store,
                             .text('Median data')
                             .attr('href', href);
 
-                        if (document.getElementById('myElementId') === null) {
-                            console.log('no find 2')
+                        if (document.getElementById('median-tooltip-container') === null) {
+                            const tooltipContainer = nodeElem.select('#median-tooltip')
+                                .append('span')
+                                    .attr('id', 'median-tooltip-container');
+
+                            tooltipContainer.call(appendTooltip, 'Median data for timespan shown on graph');
                         }
-                        nodeElem.select('#median-tooltip')
-                            .call(appendTooltip, 'Median data for timespan shown on graph');
                     }
                     const hrefMetadata = `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteStatus=all`;
                     const hrefMetadataExpanded = `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteOutput=expanded&siteStatus=all`;
