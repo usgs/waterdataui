@@ -167,17 +167,28 @@ export const attachToNode = function(store,
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
 
-                // Add the tooltips that are always on
-                nodeElem.select('#station-tooltip')
-                    .call(appendTooltip, 'Monitoring location data as shown on graph');
-                nodeElem.select('#metadata-tooltip')
-                    .call(appendTooltip, 'Information about this monitoring location');
                 // Construct and add the hrefs needed so users can download the data corresponding to the currently displayed hydrograph with the 'download data' links
                 nodeElem.select('#iv-download-container').call(link(store, (container, {currentIVDateRange, parameterCode, showIVTimeSeries, queryInformation}) => {
                     // The 'compare' and 'median' links are only available if those options are selected, so remove and replace if needed
                     nodeElem.select('#station-compare-data-download-link').text('').attr('href', '');
                     nodeElem.select('#median-data-download-link').text('').attr('href', '');
+                    // Add the always on tool tips - need to contain in a conditional statement to stop adding nested tips each time code cycles
+                    if (document.getElementById('station-tooltip-container') === null) {
+                        const tooltipContainer = nodeElem.select('#station-tooltip')
+                            .append('span')
+                            .attr('id', 'station-tooltip-container');
 
+                        tooltipContainer.call(appendTooltip, 'Monitoring location data as shown on graph');
+                    }
+                    if (document.getElementById('metadata-tooltip-container') === null) {
+                        const tooltipContainer = nodeElem.select('#metadata-tooltip')
+                            .append('span')
+                            .attr('id', 'metadata-tooltip-container');
+
+                        tooltipContainer.call(appendTooltip, 'Information about this monitoring location');
+                    }
+
+                    // Toggle the user selected tooltips
                     nodeElem.select('#median-tooltip-container').style('display', `${showIVTimeSeries.median ? 'inline' : 'none'}`);
                     nodeElem.select('#compare-tooltip-container').style('display', `${showIVTimeSeries.compare ? 'inline' : 'none'}`);
 
