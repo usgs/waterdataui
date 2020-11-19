@@ -1,6 +1,8 @@
 import {get} from 'ui/ajax';
 import config from 'ui/config';
 
+const NWIS_COLLECTION_ID = 'monitoring-locations'
+
 /*
  * Fetches the data at using OBSERVATIONS_ENDPOINT + queryUrl. Returns a Promise which
  * resolves to the fetched data or an empty object if the retrieval failed.
@@ -21,7 +23,7 @@ const fetchObservationsData = function(queryUrl) {
  * @return {Promise} resolves to an Array of feature Objects
  */
 export const fetchNetworkFeatures = function(networkCd) {
-   return fetchObservationsData(`${networkCd}/items`)
+   return fetchObservationsData(`collections/${networkCd}/items`)
        .then((response) => response.features ? response.features : []) ;
 };
 
@@ -32,7 +34,7 @@ export const fetchNetworkFeatures = function(networkCd) {
  * @returns {Promise}<Object>
  */
 export const fetchAvailableDVTimeSeries = function(monitoringLocationId) {
-    return fetchObservationsData(`items/${monitoringLocationId}/observations/statistical-time-series`);
+    return fetchObservationsData(`collections/${NWIS_COLLECTION_ID}/items/${monitoringLocationId}/observations/statistical-time-series`);
 };
 
 /*
@@ -43,7 +45,7 @@ export const fetchAvailableDVTimeSeries = function(monitoringLocationId) {
  * @return {Promise}<Object>
  */
 export const fetchDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
-    return fetchObservationsData(`items/${monitoringLocationId}/observations/statistical-time-series/${timeSeriesId}`);
+    return fetchObservationsData(`collections/${NWIS_COLLECTION_ID}/items/${monitoringLocationId}/observations/statistical-time-series/${timeSeriesId}`);
 };
 
 /*
@@ -53,5 +55,5 @@ export const fetchDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
  * @return {Promise}<Object>
  */
 export const fetchMonitoringLocationMetaData = function(monitoringLocationId) {
-    return fetchObservationsData(`items/USGS-${monitoringLocationId}`);
+    return fetchObservationsData(`collections/${NWIS_COLLECTION_ID}/items/USGS-${monitoringLocationId}`);
 };

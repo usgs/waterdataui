@@ -1,5 +1,3 @@
-import config from 'ui/config';
-
 import {Actions, configureStore} from './index';
 
 const MOCK_NETWORK_FEATURE = `
@@ -76,12 +74,6 @@ describe('Network Redux store', () => {
             beforeEach(() => {
                 jasmine.Ajax.install();
 
-                jasmine.Ajax.stubRequest(`${config.OBSERVATIONS_ENDPOINT}${NETWORK_CD}/items`).andReturn({
-                    status: 200,
-                    response: MOCK_NETWORK_FEATURE,
-                    contentType: 'application/json'
-                });
-
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
                 configureStore();
@@ -100,6 +92,11 @@ describe('Network Redux store', () => {
             it('gets the data and sets the network redux store', (done) => {
                 spyOn(Actions, 'setNetworkFeatures');
                 let p = Actions.retrieveNetworkData(NETWORK_CD)(mockDispatch,mockGetState);
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 200,
+                    response: MOCK_NETWORK_FEATURE,
+                    contentType: 'application/json'
+                });
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(1);
                     expect(Actions.setNetworkFeatures.calls.count()).toBe(1);
@@ -115,10 +112,6 @@ describe('Network Redux store', () => {
             beforeEach(() => {
                 jasmine.Ajax.install();
 
-                jasmine.Ajax.stubRequest(`${config.OBSERVATIONS_ENDPOINT}${NETWORK_CD}/items`).andReturn({
-                    status: 500
-                });
-
                 mockDispatch = jasmine.createSpy('mockDispatch');
                 mockGetState = jasmine.createSpy('mockGetState').and.returnValue(TEST_STATE);
                 configureStore();
@@ -131,6 +124,9 @@ describe('Network Redux store', () => {
             it('gets the data and sets the network redux store', (done) => {
                 spyOn(Actions, 'setNetworkFeatures');
                 let p = Actions.retrieveNetworkData(NETWORK_CD)(mockDispatch,mockGetState);
+                 jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 500
+                });
                 p.then(() => {
                     expect(mockDispatch.calls.count()).toBe(1);
                     expect(Actions.setNetworkFeatures.calls.count()).toBe(1);
