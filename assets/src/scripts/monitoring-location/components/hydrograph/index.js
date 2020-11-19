@@ -1,7 +1,7 @@
 /**
  * Hydrograph charting module.
  */
-import {select, selectAll} from 'd3-selection';
+import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config.js';

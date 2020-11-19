@@ -1,6 +1,8 @@
 import {utcFormat} from 'd3-time-format';
-import config from 'ui/config';
+
 import {get} from 'ui/ajax';
+import config from 'ui/config';
+
 
 // Define Water Services root URL - use global variable if defined, otherwise
 // use production.
