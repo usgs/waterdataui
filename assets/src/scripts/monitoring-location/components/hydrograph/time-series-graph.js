@@ -8,9 +8,9 @@ import {mediaQuery}  from 'ui/utils';
 import {addSVGAccessibility} from 'd3render/accessibility';
 import {appendAxes} from 'd3render/axes';
 import {renderMaskDefs} from 'd3render/data-masks';
+import {appendTooltip} from 'd3render/tooltips';
 
-
-import {getAgencyCode, getMonitoringLocationName} from 'ml/selectors/time-series-selector';
+import {getAgencyCode, getMonitoringLocationName, getCurrentVariable} from 'ml/selectors/time-series-selector';
 import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
 
 import {getAxes}  from './selectors/axes';
@@ -148,7 +148,7 @@ const plotAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesP
 };
 
 
-const createTitle = function(elem, store, siteNo, showMLName) {
+const createTitle = function(elem, store, siteNo, showMLName, showTooltip) {
     let titleDiv = elem.append('div')
         .classed('time-series-graph-title', true);
 
@@ -163,9 +163,15 @@ const createTitle = function(elem, store, siteNo, showMLName) {
             })));
     }
     titleDiv.append('div')
-        .call(link(store,(elem, title) => {
+        .call(link(store,(elem, {title, variable}) => {
             elem.html(title);
-        }, getTitle));
+            if (showTooltip) {
+                elem.call(appendTooltip, variable ? variable.variableDescription : 'No description available');
+            }
+        }, createStructuredSelector({
+            title: getTitle,
+            variable: getCurrentVariable
+        })));
 };
 
 const watermark = function(elem, store) {
@@ -205,7 +211,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
     graphDiv = elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(watermark, store)
-        .call(createTitle, store, siteNo, showMLName);
+        .call(createTitle, store, siteNo, showMLName, showTooltip);
     if (showTooltip) {
         graphDiv.call(drawTooltipText, store);
     }

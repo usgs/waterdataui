@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Links for WaterAlert.
 - Added a check to see if FIM sites are public. If not, the sites flood inundation layers are not shown even if available.
 
+### Changed
+- Added a tooltip to the hydrograph title showing the selected variable description and show the short unitCode on the Y axis.
+
 ## [0.38.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.37.0...waerdataui-0.38.0) - 2020-10-30
 ### Added
 - Cookie to control banner message.

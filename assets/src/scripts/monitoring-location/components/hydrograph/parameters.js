@@ -171,7 +171,6 @@ export const plotSeriesSelectTable = function(elem,
             tr.append('td')
                 .append('a')
                     .attr('href', param => `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${param.parameterCode}`)
-                    .attr('class', 'usa-tooltip')
                     .attr('data-position', 'left')
                     .attr('data-classes', 'width-full tablet:width-auto')
                     .attr('title', 'Subscribe to text or email alerts based on thresholds that you set')
