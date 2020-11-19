@@ -1,7 +1,7 @@
 /**
  * Hydrograph charting module.
  */
-import {select} from 'd3-selection';
+import {select, selectAll} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config.js';
@@ -171,47 +171,41 @@ export const attachToNode = function(store,
                 // Construct and add the hrefs needed so users can download the data corresponding to the currently displayed hydrograph with the 'download data' links
                 nodeElem.select('#iv-download-container').call(link(store, (container, {currentIVDateRange, parameterCode, showIVTimeSeries, queryInformation}) => {
                     // The 'compare' and 'median' links are only available if those options are selected, so remove and replace if needed
-                    nodeElem.select('#station-compare-data-download-link').text('').attr('href', '');
+                    nodeElem.select('#compare-data-link').text('').attr('href', '');
                     nodeElem.select('#median-data-download-link').text('').attr('href', '');
 
+                    // Remove any old tooltips. Then add new ones
+                    nodeElem.select('#monitoring-location-download-tooltip').remove();
+                    nodeElem.select('#compare-download-tooltip').remove();
+                    nodeElem.select('#median-download-tooltip').remove();
+                    nodeElem.select('#metadata-download-tooltip').remove();
 
-                    // Add the always on tool tips - need to contain in a conditional statement to stop adding nested tips each time code cycles
-                    if (document.getElementById('station-tooltip-container') === null) {
-                        const tooltipContainer = nodeElem.select('#station-tooltip')
-                            .append('span')
-                            .attr('id', 'station-tooltip-container');
+                    const monitoringLocationTooltipContainer = nodeElem.select('#monitoring-location-download-list-item').append('span')
+                        .attr('id', 'monitoring-location-download-tooltip');
+                    monitoringLocationTooltipContainer.call(appendTooltip, 'Monitoring location data as shown on graph');
 
-                        tooltipContainer.call(appendTooltip, 'Monitoring location data as shown on graph');
-                    }
-                    if (document.getElementById('metadata-tooltip-container') === null) {
-                        const tooltipContainer = nodeElem.select('#metadata-tooltip')
-                            .append('span')
-                            .attr('id', 'metadata-tooltip-container');
-
-                        tooltipContainer.call(appendTooltip, 'Information about this monitoring location');
-                    }
+                    const metaDataTooltipContainer = nodeElem.select('#metadata-download-list-item').append('span')
+                        .attr('id', 'metadata-download-tooltip');
+                    metaDataTooltipContainer.call(appendTooltip, 'Information about this monitoring location');
 
                     // Toggle the user selected tooltips
-                    nodeElem.select('#median-tooltip-container').style('display', `${showIVTimeSeries.median ? 'inline' : 'none'}`);
-                    nodeElem.select('#compare-tooltip-container').style('display', `${showIVTimeSeries.compare ? 'inline' : 'none'}`);
+                    nodeElem.select('#compare-download-tooltip').style('display', `${showIVTimeSeries.compare ? 'inline' : 'none'}`);
+                    nodeElem.select('#median-download-tooltip').style('display', `${showIVTimeSeries.median ? 'inline' : 'none'}`);
 
+                    // Create and  insert the urls that corresponds to the data shown on current graph into the links
                     const href = createHrefForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current');
-                    nodeElem.select('#station-data-download-link')
+                    nodeElem.select('#monitoring-location-link')
                         .attr('href', href);
 
                     if (showIVTimeSeries.compare) {
                         const href = createHrefForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'compare');
-                        nodeElem.select('#station-compare-data-download-link')
+                        nodeElem.select('#compare-data-link')
                             .text('Compare')
                             .attr('href', href);
 
-                        if (document.getElementById('compare-tooltip-container') === null) {
-                            const tooltipContainer = nodeElem.select('#compare-tooltip')
-                                .append('span')
-                                .attr('id', 'compare-tooltip-container');
-
-                            tooltipContainer.call(appendTooltip, 'Data from last year with the same timespan as in graph');
-                        }
+                        const compareTooltipContainer = nodeElem.select('#compare-download-list-item').append('span')
+                            .attr('id', 'compare-download-tooltip');
+                        compareTooltipContainer.call(appendTooltip, 'Data from last year with the same timespan as in graph');
                     }
 
                     if (showIVTimeSeries.median && parameterCode === '00060') {
@@ -220,13 +214,9 @@ export const attachToNode = function(store,
                             .text('Median data')
                             .attr('href', href);
 
-                        if (document.getElementById('median-tooltip-container') === null) {
-                            const tooltipContainer = nodeElem.select('#median-tooltip')
-                                .append('span')
-                                    .attr('id', 'median-tooltip-container');
-
-                            tooltipContainer.call(appendTooltip, 'Median data for timespan shown on graph');
-                        }
+                        const medianTooltipContainer = nodeElem.select('#median-download-list-item').append('span')
+                            .attr('id', 'median-download-tooltip');
+                        medianTooltipContainer.call(appendTooltip, 'Median data for timespan shown on graph');
                     }
                     const hrefMetadata = `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteStatus=all`;
                     const hrefMetadataExpanded = `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteOutput=expanded&siteStatus=all`;
