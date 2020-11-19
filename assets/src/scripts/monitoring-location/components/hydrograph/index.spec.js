@@ -62,6 +62,7 @@ const TEST_STATE = {
         },
         queryInfo: {
             'current:P7D': {
+                queryURL: 'http://waterservices.usgs.gov/nwis/iv/sites=05413500&period=P7D&siteStatus=all&format=json',
                 notes: {
                     'filter:timeRange':  {
                         mode: 'PERIOD',
