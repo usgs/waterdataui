@@ -23,6 +23,8 @@ const getLayerDefs = function(layerNo, siteno, stage) {
    return `${layerNo}: USGSID = '${siteno}'${stageQuery}`;
 };
 
+const updateActiveSitesLayer = function(map, boundingBox)
+
 /*
  * Creates a site map
  */
@@ -30,6 +32,10 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
     const map = createMap('site-map', {
         center: [latitude, longitude],
         zoom: zoom
+    });
+
+    map.on('moveend', () => {
+        console.log('Move end event');
     });
 
     const baseMapLayers = {
@@ -98,7 +104,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
     };
 
 
-    const updateMapExtent = function (node, extent) {
+    const updateMapExtent = function(node, extent) {
         if (Object.keys(extent).length > 0) {
             map.fitBounds(L.esri.Util.extentToBounds(extent).extend([latitude, longitude]));
         }
@@ -113,7 +119,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         createFIMLegend(mlLegendControl, hasFloodData);
     };
 
-    const addFimLink = function (node, hasFloodData) {
+    const addFimLink = function(node, hasFloodData) {
         if (hasFloodData) {
             node.append('a')
                 .attr('id', 'fim-link')

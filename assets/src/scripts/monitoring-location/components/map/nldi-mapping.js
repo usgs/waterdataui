@@ -20,8 +20,8 @@ export const basinFillOpacity = .5;
  * @param upstreamSites nldi upstream sites geojson data
  * @param downstreamSites nldi downstream site geojson data
  */
-export const addNldiLayers = function (map, upstreamFlows, downstreamFlows, upstreamSites, downstreamSites,
-                                       upstreamBasin) {
+export const addNldiLayers = function(map, upstreamFlows, downstreamFlows, upstreamSites, downstreamSites,
+                                      upstreamBasin) {
     const geojsonMarkerOptions = {
         radius: 6,
         fillColor: markerFillColor,
