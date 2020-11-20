@@ -9,7 +9,8 @@ import {link} from 'ui/lib/d3-redux';
 
 import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
-import {appendTooltip} from 'd3render/tooltips';
+import {appendInfoTooltip} from 'd3render/info-tooltip';
+
 
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange, getShowIVTimeSeries} from 'ml/selectors/time-series-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
@@ -21,7 +22,7 @@ import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
 import {drawDateRangeControls} from './date-controls';
 import {drawDataTable} from './data-table';
-import {createHrefForDownloadLinks} from './download-links';
+import {createUrlForDownloadLinks, renderDownloadLinks} from './download-links';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
 import {isPeriodWithinAcceptableRange, isPeriodCustom} from './hydrograph-utils';
@@ -168,68 +169,7 @@ export const attachToNode = function(store,
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
 
-                // Construct and add the hrefs needed so users can download the data corresponding to the currently displayed hydrograph with the 'download data' links
-                nodeElem.select('#iv-download-container').call(link(store, (container, {currentIVDateRange, parameterCode, showIVTimeSeries, queryInformation}) => {
-                    // The 'compare' and 'median' links are only available if those options are selected, so remove and replace if needed
-                    nodeElem.select('#compare-data-link').text('').attr('href', '');
-                    nodeElem.select('#median-data-download-link').text('').attr('href', '');
-
-                    // Remove any old tooltips. Then add new ones
-                    nodeElem.select('#monitoring-location-download-tooltip').remove();
-                    nodeElem.select('#compare-download-tooltip').remove();
-                    nodeElem.select('#median-download-tooltip').remove();
-                    nodeElem.select('#metadata-download-tooltip').remove();
-
-                    const monitoringLocationTooltipContainer = nodeElem.select('#monitoring-location-download-list-item').append('span')
-                        .attr('id', 'monitoring-location-download-tooltip');
-                    monitoringLocationTooltipContainer.call(appendTooltip, 'Monitoring location data as shown on graph');
-
-                    const metaDataTooltipContainer = nodeElem.select('#metadata-download-list-item').append('span')
-                        .attr('id', 'metadata-download-tooltip');
-                    metaDataTooltipContainer.call(appendTooltip, 'Information about this monitoring location');
-
-                    // Toggle the user selected tooltips
-                    nodeElem.select('#compare-download-tooltip').style('display', `${showIVTimeSeries.compare ? 'inline' : 'none'}`);
-                    nodeElem.select('#median-download-tooltip').style('display', `${showIVTimeSeries.median ? 'inline' : 'none'}`);
-
-                    // Create and  insert the urls that corresponds to the data shown on current graph into the links
-                    const href = createHrefForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current');
-                    nodeElem.select('#monitoring-location-link')
-                        .attr('href', href);
-
-                    if (showIVTimeSeries.compare) {
-                        const href = createHrefForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'compare');
-                        nodeElem.select('#compare-data-link')
-                            .text('Compare')
-                            .attr('href', href);
-
-                        const compareTooltipContainer = nodeElem.select('#compare-download-list-item').append('span')
-                            .attr('id', 'compare-download-tooltip');
-                        compareTooltipContainer.call(appendTooltip, 'Data from last year with the same timespan as in graph');
-                    }
-
-                    if (showIVTimeSeries.median && parameterCode === '00060') {
-                        const href = `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=00060`;
-                        nodeElem.select('#median-data-download-link')
-                            .text('Median data')
-                            .attr('href', href);
-
-                        const medianTooltipContainer = nodeElem.select('#median-download-list-item').append('span')
-                            .attr('id', 'median-download-tooltip');
-                        medianTooltipContainer.call(appendTooltip, 'Median data for timespan shown on graph');
-                    }
-                    const hrefMetadata = `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteStatus=all`;
-                    const hrefMetadataExpanded = `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteOutput=expanded&siteStatus=all`;
-                    nodeElem.select('#metadata-download-link')
-                        .attr('href', hrefMetadata);
-                    nodeElem.select('#metadata-expanded-download-link')
-                        .attr('href', hrefMetadataExpanded);
-                },  createStructuredSelector({
-                    currentIVDateRange: getCurrentDateRange,
-                    parameterCode: getCurrentParmCd,
-                    showIVTimeSeries: getShowIVTimeSeries,
-                    queryInformation: getQueryInformation
-                })));
+                nodeElem.call(renderDownloadLinks, store, siteno);
 
                 nodeElem.select('#iv-data-table-container')
                     .call(drawDataTable, store);

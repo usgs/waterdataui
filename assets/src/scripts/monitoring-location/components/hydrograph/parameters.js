@@ -1,3 +1,6 @@
+// Required to initialize USWDS components after page load (WaterAlert ToolTips)
+import components from 'uswds/src/js/components';
+
 import {line} from 'd3-shape';
 import {select} from 'd3-selection';
 
@@ -179,6 +182,8 @@ export const plotSeriesSelectTable = function(elem,
                     .attr('title', 'Subscribe to text or email alerts based on thresholds that you set')
                     .text('Subscribe');
         });
+    // Activate the USWDS toolTips for WaterAlert subscriptions
+    components.tooltip.init(elem.node());
 
     table.property('scrollTop', scrollTop);
 
