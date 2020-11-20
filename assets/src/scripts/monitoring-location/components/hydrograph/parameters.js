@@ -3,7 +3,7 @@ import {select} from 'd3-selection';
 
 import config from 'ui/config';
 
-import {appendTooltip} from 'd3render/tooltips';
+import {appendInfoTooltip} from 'd3render/info-tooltip';
 
 import {Actions} from 'ml/store/instantaneous-value-time-series-data';
 
@@ -158,7 +158,9 @@ export const plotSeriesSelectTable = function(elem,
                 .attr('scope', 'row');
             paramCdCol.append('span')
                 .text(param => param.description)
-                .call(appendTooltip, param => `Parameter code: ${param.parameterCode}`);
+                .each(function(datum) {
+                    appendInfoTooltip(select(this), `Parameter code: ${datum.parameterCode}`);
+                });
             tr.append('td')
                 .append('svg')
                 .attr('width', SPARK_LINE_DIM.width.toString())
