@@ -8,7 +8,7 @@ import {mediaQuery}  from 'ui/utils';
 import {addSVGAccessibility} from 'd3render/accessibility';
 import {appendAxes} from 'd3render/axes';
 import {renderMaskDefs} from 'd3render/data-masks';
-import {appendTooltip} from 'd3render/tooltips';
+import {appendInfoTooltip} from 'd3render/info-tooltip';
 
 import {getAgencyCode, getMonitoringLocationName, getCurrentVariable} from 'ml/selectors/time-series-selector';
 import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
@@ -166,7 +166,7 @@ const createTitle = function(elem, store, siteNo, showMLName, showTooltip) {
         .call(link(store,(elem, {title, variable}) => {
             elem.html(title);
             if (showTooltip) {
-                elem.call(appendTooltip, variable ? variable.variableDescription : 'No description available');
+                elem.call(appendInfoTooltip, variable ? variable.variableDescription : 'No description available');
             }
         }, createStructuredSelector({
             title: getTitle,

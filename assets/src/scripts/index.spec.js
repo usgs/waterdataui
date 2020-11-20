@@ -20,11 +20,11 @@ import 'd3render/axes.spec';
 import 'd3render/cursor-slider.spec';
 import 'd3render/data-masks.spec';
 import 'd3render/graph-tooltip.spec';
+import 'd3render/info-tooltip.spec';
 import 'd3render/legend.spec';
 import 'd3render/loading-indicator.spec';
 import 'd3render/markers.spec';
 import 'd3render/tick-marks.spec';
-import 'd3render/tooltips.spec';
 
 import 'ui/leaflet-rendering/map.spec';
 import 'ui/leaflet-rendering/legend-control.spec';

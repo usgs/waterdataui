@@ -9,7 +9,7 @@
 // Required to initialize USWDS components after page load
 import components from 'uswds/src/js/components';
 
-export const appendTooltip = function(elem, text) {
+export const appendInfoTooltip = function(elem, text) {
 	let tooltip = elem.append('div')
         .attr('class', 'usa-tooltip')
         .attr('data-position', 'right')
@@ -17,6 +17,6 @@ export const appendTooltip = function(elem, text) {
     tooltip.append('i')
         .attr('class', 'fas fa-info-circle');
 
-    // Initialize USWDS tooltip after page load
-    components.tooltip.init();
+    // Need to initialize USWDS tooltip explictly after page load
+    components.tooltip.init(elem.node());
 };
