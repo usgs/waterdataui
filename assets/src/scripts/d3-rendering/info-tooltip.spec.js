@@ -1,6 +1,6 @@
 import {select} from 'd3-selection';
 
-import {appendTooltip} from './tooltips';
+import {appendInfoTooltip} from './info-tooltip';
 
 describe('d3-rendering/tooltips', () => {
 
@@ -16,7 +16,7 @@ describe('d3-rendering/tooltips', () => {
 
     it('Creates a tooltip widget', () => {
         let tooltipItem;
-        testDiv.call(appendTooltip, 'Help text');
+        testDiv.call(appendInfoTooltip, 'Help text');
         tooltipItem = testDiv.select('.usa-tooltip');
         expect(tooltipItem.size()).toBe(1);
         expect(tooltipItem.select('.usa-tooltip__body').html()).toContain('Help text');
@@ -30,7 +30,7 @@ describe('d3-rendering/tooltips', () => {
             }])
             .enter().append('div')
                 .attr('class', 'data-div')
-                .call(appendTooltip, d => d.helpText);
+                .call(appendInfoTooltip, d => d.helpText);
         expect(testDiv.select('.data-div').html()).toContain('Help1');
     });
 });

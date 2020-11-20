@@ -2,7 +2,7 @@ import {createStructuredSelector} from 'reselect';
 
 import {link} from 'ui/lib/d3-redux';
 
-import {appendTooltip} from 'd3render/tooltips';
+import {appendInfoTooltip} from 'd3render/info-tooltip';
 
 import {getFloodStages, getFloodStageHeight, getFloodGageHeightStageIndex, hasFloodData} from 'ml/selectors/flood-data-selector';
 import {Actions} from 'ml/store/flood-inundation';
@@ -50,7 +50,7 @@ export const createSliderHelp = function(elem, hasFloodData) {
             .attr('id', 'fim-tooltip-container')
             .attr('class', 'label-tooltip-container')
             .html('Flood Visualization Control')
-            .call(appendTooltip, 'Move the slider to see flood inundation at different gage heights');
+            .call(appendInfoTooltip, 'Move the slider to see flood inundation at different gage heights');
     }
 };
 
