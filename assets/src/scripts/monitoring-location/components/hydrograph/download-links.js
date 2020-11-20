@@ -1,20 +1,18 @@
 /**
  *  Module with functions for processing and structuring download link URLs
  */
+import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config.js';
 import{link}  from 'ui/lib/d3-redux';
 
 import {appendInfoTooltip} from 'd3render/info-tooltip';
 
-import {select} from 'd3-selection';
-import {createStructuredSelector} from 'reselect';
-
 import {getCurrentParmCd, getCurrentDateRange, getShowIVTimeSeries} from 'ml/selectors/time-series-selector';
 
 import {getQueryInformation} from './selectors/time-series-data';
 
-/*
+/**
  * Uses information from the state to structure a URL that will work with WaterServices
  * @param {String} currentIVDateRange - a string with the form of 'P{a number of days}D, 'P1Y', or 'custom'
  * @param {Object} queryInformation - from the application state, contains
@@ -42,6 +40,13 @@ export const createUrlForDownloadLinks = function(currentIVDateRange, queryInfor
 
     return url;
 };
+
+/**
+* Creates a set of links with dynamically populated URLs so that users can download data that is related to the current
+* @param {Object} elem - The HTML element on which the function was called.
+* @param {store} store - The Redux store, in the form of a JavaScript object
+* @param {String} siteno- a USGS numerical identifier for a specific monitoring location
+*/
 
 export const renderDownloadLinks = function(elem, store, siteno) {
     elem.select('#iv-graph-data-download-container').call(link(store, (container, {currentIVDateRange, parameterCode, showIVTimeSeries, queryInformation}) => {
@@ -98,4 +103,3 @@ export const renderDownloadLinks = function(elem, store, siteno) {
         queryInformation: getQueryInformation
     })));
 };
-

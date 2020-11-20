@@ -9,10 +9,8 @@ import {link} from 'ui/lib/d3-redux';
 
 import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
-import {appendInfoTooltip} from 'd3render/info-tooltip';
 
-
-import {hasAnyTimeSeries, getCurrentParmCd, getVariables, getCurrentDateRange, getShowIVTimeSeries} from 'ml/selectors/time-series-selector';
+import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
 import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
@@ -22,7 +20,7 @@ import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
 import {drawDateRangeControls} from './date-controls';
 import {drawDataTable} from './data-table';
-import {createUrlForDownloadLinks, renderDownloadLinks} from './download-links';
+import {renderDownloadLinks} from './download-links';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
 import {isPeriodWithinAcceptableRange, isPeriodCustom} from './hydrograph-utils';
@@ -31,7 +29,6 @@ import {getLineSegmentsByParmCd} from './selectors/drawing-data';
 import {SPARK_LINE_DIM}  from './selectors/layout';
 import {getAvailableParameterCodes} from './selectors/parameter-data';
 import {getTimeSeriesScalesByParmCd} from './selectors/scales';
-import {getQueryInformation} from './selectors/time-series-data';
 
 import {drawTimeSeriesLegend} from './legend';
 import {drawMethodPicker} from './method-picker';
