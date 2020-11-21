@@ -49,9 +49,9 @@ export const createUrlForDownloadLinks = function(currentIVDateRange, queryInfor
 */
 
 export const renderDownloadLinks = function(elem, store, siteno) {
-    console.log('store ', store.getState())
-    elem.select('#iv-graph-data-download-container').call(link(store, (container, {currentIVDateRange, parameterCode, showIVTimeSeries, queryInformation}) => {
-        container.select('#iv-data-download-list').remove();
+    console.log('in renderDownloadLinks -- elem ', elem)
+    elem.call(link(store, (elem, {currentIVDateRange, parameterCode, showIVTimeSeries, queryInformation}) => {
+        elem.select('#iv-data-download-list').remove();
 
         const addStandardAttributes = function(element) {
             return element.attr('class', 'usa-link')
@@ -59,7 +59,7 @@ export const renderDownloadLinks = function(elem, store, siteno) {
                 .attr('rel', 'noopener');
         };
 
-        const listOfDownloadLinks = container.append('ul')
+        const listOfDownloadLinks = elem.append('ul')
             .attr('id', 'iv-data-download-list')
             .attr('class', 'usa-fieldset usa-list--unstyled');
 

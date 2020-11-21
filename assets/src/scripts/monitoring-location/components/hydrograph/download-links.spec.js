@@ -12,25 +12,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             'ivTimeSeriesData': {
                 'queryInfo': {
                     'current:P7D': {
-                        'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=01646500&period=P7D&siteStatus=all&format=json',
-                        'criteria': {
-                            'locationParam': '[ALL:01646500]',
-                            'variableParam': 'ALL',
-                            'parameter': []
-                        },
-                        'notes': {
-                            'filter:sites': '[ALL:01646500]',
-                            'filter:timeRange': {
-                                'mode': 'PERIOD',
-                                'periodDays': '7',
-                                'modifiedSince': null
-                            },
-                            'filter:methodId': 'methodIds=[ALL]',
-                            'requestDT': 1605963921124,
-                            'requestId': '35e94330-2bfa-11eb-8c63-2cea7f5e5ede',
-                            'disclaimer': 'Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.',
-                            'server': 'sdas01'
-                        }
+                        'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=01646500&period=P7D&siteStatus=all&format=json'
                     }
                 },
                 'siteCodes': {
@@ -39,7 +21,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                         'network': 'NWIS',
                         'agencyCode': 'USGS'
                     }
-                },
+                }
             },
             'ivTimeSeriesState': {
                 'showIVTimeSeries': {
@@ -48,24 +30,12 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                     'median': false
                 },
                 'currentIVDateRange': 'P7D',
-                'customIVTimeRange': null,
-                'currentIVVariableID': '45807197',
-                'ivGraphCursorOffset': null,
-                'audiblePlayId': null,
-                'loadingIVTSKeys': [
-                    'compare:P7D'
-                ],
-                'ivGraphBrushOffset': null,
-                'userInputsForTimeRange': {
-                    'mainTimeRangeSelectionButton': 'P7D',
-                    'customTimeRangeSelectionButton': 'days-input',
-                    'numberOfDaysFieldValue': ''
-                },
-                'currentIVMethodID': 69928
+                'customIVTimeRange': null
             }
         };
 
         let div;
+
         beforeEach(() => {
             div = select('body').append('div');
         });
@@ -74,11 +44,12 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             div.remove();
         });
 
-        it('Creates the download links ', (done) => {
+        fit('Creates the download links ', (done) => {
             let store = configureStore(TEST_STATE);
-            div.call(renderDownloadLinks, store);
+            const siteNumber = '05370000';
+            div.call(renderDownloadLinks, store, siteNumber);
             window.requestAnimationFrame(() => {
-
+console.log('in download test this is div ', div.select('ul'))
                 done();
             });
         });
