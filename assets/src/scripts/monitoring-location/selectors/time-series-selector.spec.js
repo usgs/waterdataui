@@ -583,7 +583,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
             })).toBeNull();
         });
 
-        it('Return selected parm code', () => {
+        fit('Return selected parm code', () => {
             expect(getCurrentParmCd(TEST_STATE)).toEqual('00060');
         });
     });

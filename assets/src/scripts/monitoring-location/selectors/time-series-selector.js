@@ -78,6 +78,8 @@ export const getCurrentVariable = createSelector(
     getVariables,
     getCurrentVariableID,
     (variables, variableID) => {
+        console.log('in getCurrentVariable variables ', variables)
+        console.log('in getCurrentVariable variableID ', variableID)
         return variableID  && variables  && variables[variableID] ? variables[variableID] : null;
     }
 );
@@ -88,6 +90,8 @@ export const getCurrentVariable = createSelector(
 export const getCurrentParmCd = createSelector(
     getCurrentVariable,
     (currentVar) => {
+        console.log('ran getCurrentParmCd ', currentVar && currentVar.variableCode ? currentVar.variableCode.value : null)
+
         return currentVar && currentVar.variableCode ? currentVar.variableCode.value : null;
     }
 );

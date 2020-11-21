@@ -8,32 +8,6 @@ import {renderDownloadLinks, createUrlForDownloadLinks} from 'ivhydrograph/downl
 describe('monitoring-location/components/hydrograph/download-links', () => {
 
     describe('renderDownloadLinks', () => {
-        const TEST_STATE = {
-            'ivTimeSeriesData': {
-                'queryInfo': {
-                    'current:P7D': {
-                        'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=01646500&period=P7D&siteStatus=all&format=json'
-                    }
-                },
-                'siteCodes': {
-                    '01646500': {
-                        'value': '01646500',
-                        'network': 'NWIS',
-                        'agencyCode': 'USGS'
-                    }
-                }
-            },
-            'ivTimeSeriesState': {
-                'showIVTimeSeries': {
-                    'current': true,
-                    'compare': false,
-                    'median': false
-                },
-                'currentIVDateRange': 'P7D',
-                'customIVTimeRange': null
-            }
-        };
-
         let div;
 
         beforeEach(() => {
@@ -44,12 +18,114 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             div.remove();
         });
 
-        fit('Creates the download links ', (done) => {
+        fit('creates an unordered list and the correct number of list items when only current time series is showing', (done) => {
+            const TEST_STATE = {
+                'ivTimeSeriesData': {
+                    'queryInfo': {
+                        'current:P7D': {
+                            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D&siteStatus=all&format=json'
+                        }
+                    }
+                },
+                'ivTimeSeriesState': {
+                    'showIVTimeSeries': {
+                        'current': true,
+                        'compare': false,
+                        'median': false
+                    },
+                    'currentIVDateRange': 'P7D',
+                    'customIVTimeRange': null,
+                    'currentIVVariableID': '45807197'
+                }
+            };
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
             div.call(renderDownloadLinks, store, siteNumber);
             window.requestAnimationFrame(() => {
-console.log('in download test this is div ', div.select('ul'))
+                expect(div.selectAll('ul').size()).toBe(1);
+                expect(div.selectAll('li').size()).toBe(2);
+                expect(div.selectAll('a').size()).toBe(3);
+                const anchorSelection = div.selectAll('a');
+                const anchorElements = anchorSelection.nodes();
+
+                expect(anchorElements[0].getAttribute('href')).toBe('wrong');
+                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+
+                done();
+            });
+        });
+
+        it('creates an unordered list and the correct number of list items when compare is selected', (done) => {
+            const TEST_STATE = {
+                'ivTimeSeriesData': {
+                    'queryInfo': {
+                        'current:P7D': {
+                            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=01646500&period=P7D&siteStatus=all&format=json'
+                        }
+                    }
+                },
+                'ivTimeSeriesState': {
+                    'showIVTimeSeries': {
+                        'current': true,
+                        'compare': true,
+                        'median': false
+                    },
+                    'currentIVDateRange': 'P7D',
+                    'customIVTimeRange': null,
+                    'currentIVVariableID': '45807197'
+                }
+            };
+            let store = configureStore(TEST_STATE);
+            const siteNumber = '05370000';
+            div.call(renderDownloadLinks, store, siteNumber);
+            window.requestAnimationFrame(() => {
+                expect(div.selectAll('ul').size()).toBe(1);
+                expect(div.selectAll('li').size()).toBe(3);
+                expect(div.selectAll('a').size()).toBe(4);
+                done();
+            });
+        });
+
+
+        it('creates an unordered list and the correct number of list items when median is selected', (done) => {
+            const TEST_STATE = {
+                'ivTimeSeriesData': {
+                    'queryInfo': {
+                        'current:P7D': {
+                            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=01646500&period=P7D&siteStatus=all&format=json'
+                        }
+                    }, 'variables': {
+                        '45807042': {
+                            variableCode: {
+                                'value': '00060'
+                            }
+                        },
+                        '450807142': {
+                            variableCode: {
+                                'value': '00010'
+                            }
+                        }
+                    }
+                },
+                'ivTimeSeriesState': {
+                    'showIVTimeSeries': {
+                        'current': true,
+                        'compare': false,
+                        'median': true
+                    },
+                    'currentIVDateRange': 'P7D',
+                    'customIVTimeRange': null,
+                    'currentIVVariableID': '45807197'
+                }
+            };
+            let store = configureStore(TEST_STATE);
+            const siteNumber = '05370000';
+            div.call(renderDownloadLinks, store, siteNumber);
+            window.requestAnimationFrame(() => {
+                expect(div.selectAll('ul').size()).toBe(1);
+                expect(div.selectAll('li').size()).toBe(3);
+                expect(div.selectAll('a').size()).toBe(4);
                 done();
             });
         });
