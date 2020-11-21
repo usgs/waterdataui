@@ -9,45 +9,59 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
 
     describe('renderDownloadLinks', () => {
         const TEST_STATE = {
-            ivTimeSeriesData: {
-                timeSeries: {
-                    '69930:00010:current': {
-                        points: DATA,
-                        tsKey: 'current:P7D',
-                        variable: '00010id',
-                        method: 69930
-                    },
-                    '69931:00010:current': {
-                        points: DATA,
-                        tsKey: 'current:P7D',
-                        variable: '00010id',
-                        method: 69931
-                    }
-                },
-                variables: {
-                    '00010id': {
-                        oid: '00010id',
-                        variableCode: {
-                            value: '00010'
+            'ivTimeSeriesData': {
+                'queryInfo': {
+                    'current:P7D': {
+                        'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=01646500&period=P7D&siteStatus=all&format=json',
+                        'criteria': {
+                            'locationParam': '[ALL:01646500]',
+                            'variableParam': 'ALL',
+                            'parameter': []
                         },
-                        unit: {
-                            unitCode: 'deg C'
+                        'notes': {
+                            'filter:sites': '[ALL:01646500]',
+                            'filter:timeRange': {
+                                'mode': 'PERIOD',
+                                'periodDays': '7',
+                                'modifiedSince': null
+                            },
+                            'filter:methodId': 'methodIds=[ALL]',
+                            'requestDT': 1605963921124,
+                            'requestId': '35e94330-2bfa-11eb-8c63-2cea7f5e5ede',
+                            'disclaimer': 'Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.',
+                            'server': 'sdas01'
                         }
                     }
                 },
-                methods: {
-                    69930: {
-                        methodDescription: 'Description 1',
-                        methodID: 69930
-                    },
-                    69931: {
-                        methodDescription: 'Description 2',
-                        methodID: 69931
+                'siteCodes': {
+                    '01646500': {
+                        'value': '01646500',
+                        'network': 'NWIS',
+                        'agencyCode': 'USGS'
                     }
-                }
+                },
             },
-            ivTimeSeriesState: {
-                currentIVVariableID: '00010id'
+            'ivTimeSeriesState': {
+                'showIVTimeSeries': {
+                    'current': true,
+                    'compare': false,
+                    'median': false
+                },
+                'currentIVDateRange': 'P7D',
+                'customIVTimeRange': null,
+                'currentIVVariableID': '45807197',
+                'ivGraphCursorOffset': null,
+                'audiblePlayId': null,
+                'loadingIVTSKeys': [
+                    'compare:P7D'
+                ],
+                'ivGraphBrushOffset': null,
+                'userInputsForTimeRange': {
+                    'mainTimeRangeSelectionButton': 'P7D',
+                    'customTimeRangeSelectionButton': 'days-input',
+                    'numberOfDaysFieldValue': ''
+                },
+                'currentIVMethodID': 69928
             }
         };
 

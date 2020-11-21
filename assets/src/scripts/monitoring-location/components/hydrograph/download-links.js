@@ -49,6 +49,7 @@ export const createUrlForDownloadLinks = function(currentIVDateRange, queryInfor
 */
 
 export const renderDownloadLinks = function(elem, store, siteno) {
+    console.log('store ', store.getState())
     elem.select('#iv-graph-data-download-container').call(link(store, (container, {currentIVDateRange, parameterCode, showIVTimeSeries, queryInformation}) => {
         container.select('#iv-data-download-list').remove();
 
