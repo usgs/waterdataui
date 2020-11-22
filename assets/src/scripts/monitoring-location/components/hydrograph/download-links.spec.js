@@ -426,11 +426,3 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
         });
     });
 });
-
-
-
-
-
-
-
-
