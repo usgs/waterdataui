@@ -2,7 +2,7 @@ import {select} from 'd3-selection';
 
 import {configureStore} from 'ml/store';
 
-import {renderDownloadLinks, createUrlForDownloadLinks} from 'ivhydrograph/download-links';
+import {renderDownloadLinks} from 'ivhydrograph/download-links';
 
 
 describe('monitoring-location/components/hydrograph/download-links', () => {
@@ -18,12 +18,23 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             div.remove();
         });
 
-        fit('creates an unordered list and the correct number of list items when only current time series is showing', (done) => {
+        it('creates an unordered list and the correct number of list items and hyperlinks when only current time series is showing', (done) => {
             const TEST_STATE = {
                 'ivTimeSeriesData': {
                     'queryInfo': {
                         'current:P7D': {
                             'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D&siteStatus=all&format=json'
+                        }
+                    }, 'variables': {
+                        '45807042': {
+                            'variableCode': {
+                                'value': '00060'
+                            }
+                        },
+                        '450807142': {
+                            'variableCode': {
+                                'value': '00010'
+                            }
                         }
                     }
                 },
@@ -35,7 +46,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                     },
                     'currentIVDateRange': 'P7D',
                     'customIVTimeRange': null,
-                    'currentIVVariableID': '45807197'
+                    'currentIVVariableID': '45807042'
                 }
             };
             let store = configureStore(TEST_STATE);
@@ -48,7 +59,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                 const anchorSelection = div.selectAll('a');
                 const anchorElements = anchorSelection.nodes();
 
-                expect(anchorElements[0].getAttribute('href')).toBe('wrong');
+                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00060');
                 expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
                 expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
 
@@ -56,12 +67,26 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             });
         });
 
-        it('creates an unordered list and the correct number of list items when compare is selected', (done) => {
+        it('creates an unordered list and the correct number of list items and hyperlinks when compare is selected', (done) => {
             const TEST_STATE = {
                 'ivTimeSeriesData': {
                     'queryInfo': {
                         'current:P7D': {
-                            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=01646500&period=P7D&siteStatus=all&format=json'
+                            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D&siteStatus=all&format=json'
+                        },
+                        'compare:P7D': {
+                            'queryURL': 'http://nwis.waterservices.usgs.gov/nwis/iv/sites=01646500&startDT=2019-11-14T23:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=json'
+                        }
+                    }, 'variables': {
+                        '45807042': {
+                            'variableCode': {
+                                'value': '00060'
+                            }
+                        },
+                        '450807142': {
+                            'variableCode': {
+                                'value': '00010'
+                            }
                         }
                     }
                 },
@@ -73,7 +98,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                     },
                     'currentIVDateRange': 'P7D',
                     'customIVTimeRange': null,
-                    'currentIVVariableID': '45807197'
+                    'currentIVVariableID': '45807042'
                 }
             };
             let store = configureStore(TEST_STATE);
@@ -83,26 +108,33 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                 expect(div.selectAll('ul').size()).toBe(1);
                 expect(div.selectAll('li').size()).toBe(3);
                 expect(div.selectAll('a').size()).toBe(4);
+                const anchorSelection = div.selectAll('a');
+                const anchorElements = anchorSelection.nodes();
+
+                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00060');
+                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&startDT=2019-11-14T23:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb&parameterCd=00060');
+                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                expect(anchorElements[3].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+
                 done();
             });
         });
 
-
-        it('creates an unordered list and the correct number of list items when median is selected', (done) => {
+        it('creates an unordered list and the correct number of list items and hyperlinks when median is selected', (done) => {
             const TEST_STATE = {
                 'ivTimeSeriesData': {
                     'queryInfo': {
                         'current:P7D': {
-                            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=01646500&period=P7D&siteStatus=all&format=json'
+                            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D&siteStatus=all&format=json'
                         }
                     }, 'variables': {
                         '45807042': {
-                            variableCode: {
+                            'variableCode': {
                                 'value': '00060'
                             }
                         },
                         '450807142': {
-                            variableCode: {
+                            'variableCode': {
                                 'value': '00010'
                             }
                         }
@@ -116,7 +148,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                     },
                     'currentIVDateRange': 'P7D',
                     'customIVTimeRange': null,
-                    'currentIVVariableID': '45807197'
+                    'currentIVVariableID': '45807042'
                 }
             };
             let store = configureStore(TEST_STATE);
@@ -126,6 +158,269 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                 expect(div.selectAll('ul').size()).toBe(1);
                 expect(div.selectAll('li').size()).toBe(3);
                 expect(div.selectAll('a').size()).toBe(4);
+                const anchorSelection = div.selectAll('a');
+                const anchorElements = anchorSelection.nodes();
+
+                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00060');
+                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/stat/?format=rdb&sites=05370000&statReportType=daily&statTypeCd=median&parameterCd=00060');
+                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                expect(anchorElements[3].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+
+                done();
+            });
+        });
+
+        it('creates an unordered list and the correct number of list items and hyperlinks when both median and compare are selected', (done) => {
+            const TEST_STATE = {
+                'ivTimeSeriesData': {
+                    'queryInfo': {
+                        'current:P7D': {
+                            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D&siteStatus=all&format=json'
+                        },
+                        'compare:P7D': {
+                            'queryURL': 'http://nwis.waterservices.usgs.gov/nwis/iv/sites=01646500&startDT=2019-11-14T23:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=json'
+                        }
+                    }, 'variables': {
+                        '45807042': {
+                            'variableCode': {
+                                'value': '00060'
+                            }
+                        },
+                        '450807142': {
+                            'variableCode': {
+                                'value': '00010'
+                            }
+                        }
+                    }
+                },
+                'ivTimeSeriesState': {
+                    'showIVTimeSeries': {
+                        'current': true,
+                        'compare': true,
+                        'median': true
+                    },
+                    'currentIVDateRange': 'P7D',
+                    'customIVTimeRange': null,
+                    'currentIVVariableID': '45807042'
+                }
+            };
+            let store = configureStore(TEST_STATE);
+            const siteNumber = '05370000';
+            div.call(renderDownloadLinks, store, siteNumber);
+            window.requestAnimationFrame(() => {
+                expect(div.selectAll('ul').size()).toBe(1);
+                expect(div.selectAll('li').size()).toBe(4);
+                expect(div.selectAll('a').size()).toBe(5);
+                const anchorSelection = div.selectAll('a');
+                const anchorElements = anchorSelection.nodes();
+
+                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00060');
+                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&startDT=2019-11-14T23:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb&parameterCd=00060');
+                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/stat/?format=rdb&sites=05370000&statReportType=daily&statTypeCd=median&parameterCd=00060');
+                expect(anchorElements[3].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                expect(anchorElements[4].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+
+                done();
+            });
+        });
+
+        it('creates an unordered list and the correct number of list items and hyperlinks if P30D is selected', (done) => {
+            const TEST_STATE = {
+                'ivTimeSeriesData': {
+                    'queryInfo': {
+                        'current:P30D:00060': {
+                            'queryURL': 'http://nwis.waterservices.usgs.gov/nwis/iv/sites=01646500&startDT=2019-11-14T23:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=json'
+                        },
+                        'compare:P30D:00060': {
+                            'queryURL': 'http://nwis.waterservices.usgs.gov/nwis/iv/sites=01646500&parameterCd=00060&startDT=2019-10-22T22:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=json'
+                        }
+                    }, 'variables': {
+                        '45807042': {
+                            'variableCode': {
+                                'value': '00060'
+                            }
+                        },
+                        '450807142': {
+                            'variableCode': {
+                                'value': '00010'
+                            }
+                        }
+                    }
+                },
+                'ivTimeSeriesState': {
+                    'showIVTimeSeries': {
+                        'current': true,
+                        'compare': true,
+                        'median': true
+                    },
+                    'currentIVDateRange': 'P30D',
+                    'customIVTimeRange': null,
+                    'currentIVVariableID': '45807042'
+                }
+            };
+            let store = configureStore(TEST_STATE);
+            const siteNumber = '05370000';
+            div.call(renderDownloadLinks, store, siteNumber);
+            window.requestAnimationFrame(() => {
+                expect(div.selectAll('ul').size()).toBe(1);
+                expect(div.selectAll('li').size()).toBe(4);
+                expect(div.selectAll('a').size()).toBe(5);
+                const anchorSelection = div.selectAll('a');
+                const anchorElements = anchorSelection.nodes();
+
+                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&startDT=2019-11-14T23:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb&parameterCd=00060');
+                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&parameterCd=00060&startDT=2019-10-22T22:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb');
+                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/stat/?format=rdb&sites=05370000&statReportType=daily&statTypeCd=median&parameterCd=00060');
+                expect(anchorElements[3].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                expect(anchorElements[4].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+
+                done();
+            });
+        });
+
+        it('creates an unordered list and the correct number of list items and hyperlinks when custom days are selected', (done) => {
+            const TEST_STATE = {
+                'ivTimeSeriesData': {
+                    'queryInfo': {
+                        'current:P3D:00060': {
+                            'queryURL': 'http://nwis.waterservices.usgs.gov/nwis/iv/sites=01646500&parameterCd=00060&startDT=2019-10-22T22:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=json'
+                        }
+                    }, 'variables': {
+                        '45807042': {
+                            'variableCode': {
+                                'value': '00060'
+                            }
+                        },
+                        '450807142': {
+                            'variableCode': {
+                                'value': '00010'
+                            }
+                        }
+                    }
+                },
+                'ivTimeSeriesState': {
+                    'showIVTimeSeries': {
+                        'current': true,
+                        'compare': false,
+                        'median': false
+                    },
+                    'currentIVDateRange': 'P3D',
+                    'customIVTimeRange': null,
+                    'currentIVVariableID': '45807042'
+                }
+            };
+            let store = configureStore(TEST_STATE);
+            const siteNumber = '05370000';
+            div.call(renderDownloadLinks, store, siteNumber);
+            window.requestAnimationFrame(() => {
+                expect(div.selectAll('ul').size()).toBe(1);
+                expect(div.selectAll('li').size()).toBe(2);
+                expect(div.selectAll('a').size()).toBe(3);
+                const anchorSelection = div.selectAll('a');
+                const anchorElements = anchorSelection.nodes();
+
+                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&parameterCd=00060&startDT=2019-10-22T22:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb');
+                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+
+                done();
+            });
+        });
+
+        it('creates an unordered list and the correct number of list items and hyperlinks when custom calendar dates are selected', (done) => {
+            const TEST_STATE = {
+                'ivTimeSeriesData': {
+                    'queryInfo': {
+                        'current:custom:00060': {
+                            'queryURL': 'http://nwis.waterservices.usgs.gov/nwis/iv/sites=01646500&parameterCd=00060&startDT=2020-11-01T04:00Z&endDT=2020-11-04T04:59Z&siteStatus=all&format=json'
+                        }
+                    }, 'variables': {
+                        '45807042': {
+                            'variableCode': {
+                                'value': '00060'
+                            }
+                        },
+                        '450807142': {
+                            'variableCode': {
+                                'value': '00010'
+                            }
+                        }
+                    }
+                },
+                'ivTimeSeriesState': {
+                    'showIVTimeSeries': {
+                        'current': true,
+                        'compare': false,
+                        'median': false
+                    },
+                    'currentIVDateRange': 'custom',
+                    'customIVTimeRange': {start: 1604203200000, end: 16044655999999},
+                    'currentIVVariableID': '45807042'
+                }
+            };
+            let store = configureStore(TEST_STATE);
+            const siteNumber = '05370000';
+            div.call(renderDownloadLinks, store, siteNumber);
+            window.requestAnimationFrame(() => {
+                expect(div.selectAll('ul').size()).toBe(1);
+                expect(div.selectAll('li').size()).toBe(2);
+                expect(div.selectAll('a').size()).toBe(3);
+                const anchorSelection = div.selectAll('a');
+                const anchorElements = anchorSelection.nodes();
+
+                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&parameterCd=00060&startDT=2020-11-01T04:00Z&endDT=2020-11-04T04:59Z&siteStatus=all&format=rdb');
+                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+
+                done();
+            });
+        });
+
+        it('creates an unordered list and the correct number of list items and hyperlinks when a parameter other than 00060 is used', (done) => {
+            const TEST_STATE = {
+                'ivTimeSeriesData': {
+                    'queryInfo': {
+                        'current:P7D': {
+                            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D&siteStatus=all&format=json'
+                        }
+                    }, 'variables': {
+                        '45807042': {
+                            'variableCode': {
+                                'value': '00060'
+                            }
+                        },
+                        '450807142': {
+                            'variableCode': {
+                                'value': '00010'
+                            }
+                        }
+                    }
+                },
+                'ivTimeSeriesState': {
+                    'showIVTimeSeries': {
+                        'current': true,
+                        'compare': false,
+                        'median': false
+                    },
+                    'currentIVDateRange': 'P7D',
+                    'customIVTimeRange': null,
+                    'currentIVVariableID': '450807142'
+                }
+            };
+            let store = configureStore(TEST_STATE);
+            const siteNumber = '05370000';
+            div.call(renderDownloadLinks, store, siteNumber);
+            window.requestAnimationFrame(() => {
+                expect(div.selectAll('ul').size()).toBe(1);
+                expect(div.selectAll('li').size()).toBe(2);
+                expect(div.selectAll('a').size()).toBe(3);
+                const anchorSelection = div.selectAll('a');
+                const anchorElements = anchorSelection.nodes();
+
+                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00010');
+                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+
                 done();
             });
         });
@@ -136,65 +431,6 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
 
 
 
-describe('createHrefForDownloadOfCompareData', () => {
-    const queryInformation = {
-        'current:P7D': {
-            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D&siteStatus=all&format=json'
-        },
-        'compare:P7D': {
-            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&startDT=2019-11-10T19:33Z&endDT=2019-11-17T19:33Z&siteStatus=all&format=json'
-        },
-        'current:custom:00060': {
-            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&parameterCd=00060&startDT=2020-11-01T05:00Z&endDT=2020-11-03T05:59Z&siteStatus=all&format=json'
-        },
-        'current:P30D:00060': {
-            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&parameterCd=00060&startDT=2020-10-18T18:33Z&endDT=2020-11-17T19:33Z&siteStatus=all&format=json'
-        },
-        'compare:P30D:00060': {
-            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&startDT=2019-10-18T18:33Z&endDT=2019-11-17T19:33Z&siteStatus=all&format=json'
-        },
-        'current:P1Y:00060': {
-            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&parameterCd=00060&startDT=2019-11-17T19:33Z&endDT=2020-11-17T19:33Z&siteStatus=all&format=json'
-        },
-        'compare:P1Y:00060': {
-            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&startDT=2018-11-17T19:33Z&endDT=2019-11-17T19:33Z&siteStatus=all&format=json'
-        },
-        'current:P1Y:00065': {
-            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&parameterCd=00060&startDT=2019-11-17T19:33Z&endDT=2020-11-17T19:33Z&siteStatus=all&format=json'
-        },
-        'compare:P1Y:00065': {
-            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&startDT=2018-11-17T19:33Z&endDT=2019-11-17T19:33Z&siteStatus=all&format=json'
-        }
-    };
 
-    it('will convert a NWIS URL to one compatible with WaterServices download if the period is 7 days (and will add correct parameter code)', () => {
-        const parameterCode = '00060';
-        const currentIVDateRange = 'P7D';
-        expect(createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current'))
-            .toEqual('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00060');
-    });
-    it('will convert a NWIS URL one compatible with WaterServices download  if the period is 30 days', () => {
-        const parameterCode = '00060';
-        const currentIVDateRange = 'P30D';
-        expect(createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current'))
-            .toEqual('https://fakeserviceroot.com/iv/?sites=05370000&parameterCd=00060&startDT=2020-10-18T18:33Z&endDT=2020-11-17T19:33Z&siteStatus=all&format=rdb');
-    });
-    it('will convert a NWIS URL one compatible with WaterServices download if the period is 1 year', () => {
-        const parameterCode = '00060';
-        const currentIVDateRange = 'P1Y';
-        expect(createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current'))
-            .toEqual('https://fakeserviceroot.com/iv/?sites=05370000&parameterCd=00060&startDT=2019-11-17T19:33Z&endDT=2020-11-17T19:33Z&siteStatus=all&format=rdb');
-    });
-    it('will convert a NWIS URL one compatible with WaterServices download if the period is 1 year and parameter code is 00065', () => {
-        const parameterCode = '00065';
-        const currentIVDateRange = 'P1Y';
-        expect(createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current'))
-            .toEqual('https://fakeserviceroot.com/iv/?sites=05370000&parameterCd=00060&startDT=2019-11-17T19:33Z&endDT=2020-11-17T19:33Z&siteStatus=all&format=rdb');
-    });
-    it('will convert a NWIS URL one compatible with WaterServices download if the period is 1 year, parameter code is 00065, and type is compare', () => {
-        const parameterCode = '00065';
-        const currentIVDateRange = 'P1Y';
-        expect(createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'compare'))
-            .toEqual('https://fakeserviceroot.com/iv/?sites=05370000&startDT=2018-11-17T19:33Z&endDT=2019-11-17T19:33Z&siteStatus=all&format=rdb&parameterCd=00065');
-    });
-});
+
+

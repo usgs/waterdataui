@@ -554,7 +554,18 @@ describe('monitoring-location/selectors/time-series-selector', () => {
     describe('getCurrentParmCd', () => {
         const TEST_STATE = {
             ivTimeSeriesData: {
-                variables: TEST_VARS
+                variables: {
+                    '45807042': {
+                        variableCode: {
+                            'value': '00060'
+                        }
+                    },
+                    '450807142': {
+                        variableCode: {
+                            'value': '00010'
+                        }
+                    }
+                }
             },
             ivTimeSeriesState: {
                 currentIVVariableID: '45807042'
@@ -583,7 +594,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
             })).toBeNull();
         });
 
-        fit('Return selected parm code', () => {
+        it('Return selected parm code', () => {
             expect(getCurrentParmCd(TEST_STATE)).toEqual('00060');
         });
     });
