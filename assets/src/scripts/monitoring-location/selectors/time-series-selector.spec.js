@@ -554,18 +554,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
     describe('getCurrentParmCd', () => {
         const TEST_STATE = {
             ivTimeSeriesData: {
-                variables: {
-                    '45807042': {
-                        variableCode: {
-                            'value': '00060'
-                        }
-                    },
-                    '450807142': {
-                        variableCode: {
-                            'value': '00010'
-                        }
-                    }
-                }
+                variables: TEST_VARS
             },
             ivTimeSeriesState: {
                 currentIVVariableID: '45807042'
