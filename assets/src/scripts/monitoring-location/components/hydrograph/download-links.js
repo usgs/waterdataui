@@ -17,7 +17,7 @@ import {getQueryInformation} from './selectors/time-series-data';
  * @param {String} currentIVDateRange - a string with the form of 'P{a number of days}D, 'P1Y', or 'custom'
  * @param {Object} queryInformation - from the application state, contains
  * URL queries for WaterServices - but they require reformatting to use
- * @param {String} parameterCode - a five digit number indicating the type of time series data
+ * @param {String} parameterCode - a five digit number (in string form) indicating the type of time series data
  * @param {String} timeSeriesType - one of two options, 'current' or 'compare'
  * @return {String} a URL usable to retrieve station data from WaterServices
  */
@@ -42,7 +42,8 @@ const createUrlForDownloadLinks = function(currentIVDateRange, queryInformation,
 };
 
 /**
-* Creates a set of links with dynamically populated URLs so that users can download data that is related to the current
+* Creates a set of links with dynamically populated URLs so that users can download data that is related to the
+* current hydrograph.
 * @param {Object} elem - The HTML element on which the function was called.
 * @param {store} store - The Redux store, in the form of a JavaScript object
 * @param {String} siteno- a USGS numerical identifier for a specific monitoring location
