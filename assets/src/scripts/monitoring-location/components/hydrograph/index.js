@@ -20,6 +20,7 @@ import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
 import {drawDateRangeControls} from './date-controls';
 import {drawDataTable} from './data-table';
+import {renderDownloadLinks} from './download-links';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
 import {isPeriodWithinAcceptableRange, isPeriodCustom} from './hydrograph-utils';
@@ -164,6 +165,10 @@ export const attachToNode = function(store,
 
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
+
+                nodeElem.select('#iv-graph-data-download-container')
+                    .call(renderDownloadLinks, store, siteno);
+
                 nodeElem.select('#iv-data-table-container')
                     .call(drawDataTable, store);
                 //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly

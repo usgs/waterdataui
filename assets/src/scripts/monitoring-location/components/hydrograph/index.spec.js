@@ -62,6 +62,7 @@ const TEST_STATE = {
         },
         queryInfo: {
             'current:P7D': {
+                queryURL: 'http://waterservices.usgs.gov/nwis/iv/sites=05413500&period=P7D&siteStatus=all&format=json',
                 notes: {
                     'filter:timeRange':  {
                         mode: 'PERIOD',
@@ -593,8 +594,8 @@ describe('monitoring-location/components/hydrograph module', () => {
         });
 
         it('should have tooltips for the select series table', () => {
-            // one for each of the two parameters
-            expect(selectAll('table .usa-tooltip').size()).toBe(2);
+            // one for each of the two parameters and the WaterAlert links
+            expect(selectAll('table .usa-tooltip').size()).toBe(4);
         });
 
         it('should render the data table', (done) => {

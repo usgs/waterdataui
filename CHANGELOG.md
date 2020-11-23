@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Navigation bar and other changes to header and footer.
 - Links for WaterAlert.
 - Added a check to see if FIM sites are public. If not, the sites flood inundation layers are not shown even if available.
+- Links to download data related to the currently displayed hydrograph.
 
 ### Changed
 - Added a tooltip to the hydrograph title showing the selected variable description and show the short unitCode on the Y axis.

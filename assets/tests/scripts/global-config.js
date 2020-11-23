@@ -8,6 +8,7 @@ var CONFIG = {
     TNM_USGS_IMAGERY_ONLY_ENDPOINT: 'https://fakeimageryonly.com',
     TNM_USGS_IMAGERY_TOPO_ENDPOINT: 'https://fakeimagerytopo.com',
     TNM_HYDRO_ENDPOINT: 'https://faketnmhydro.com',
+    SERVICE_ROOT: 'https://fakeserviceroot.com',
     uvPeriodOfRecord: {
         '00010': {
             begin_date: '01-02-2001',
