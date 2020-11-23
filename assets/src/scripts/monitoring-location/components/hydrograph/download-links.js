@@ -21,7 +21,7 @@ import {getQueryInformation} from './selectors/time-series-data';
  * @param {String} timeSeriesType - one of two options, 'current' or 'compare'
  * @return {String} a URL usable to retrieve station data from WaterServices
  */
-export const createUrlForDownloadLinks = function(currentIVDateRange, queryInformation, parameterCode, timeSeriesType) {
+const createUrlForDownloadLinks = function(currentIVDateRange, queryInformation, parameterCode, timeSeriesType) {
     let url = '';
     const key = currentIVDateRange === 'P7D' ? `${timeSeriesType}:${currentIVDateRange}` : `${timeSeriesType}:${currentIVDateRange}:${parameterCode}`;
 
