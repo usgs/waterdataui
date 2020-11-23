@@ -1,4 +1,4 @@
-import {legendControl} from 'ui/leaflet-rendering/legend-control';
+import {legendControl} from './legend-control';
 
 describe('leaflet-rendering/legend-control', () => {
     let mapDiv;

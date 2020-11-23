@@ -2,14 +2,16 @@ import {axisBottom, axisLeft, axisRight} from 'd3-axis';
 import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
-import {generateTimeTicks} from 'd3render/tick-marks';
-import {getCurrentDateRange, getCurrentParmCd} from 'ml/selectors/time-series-selector';
 import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
 
-import {getYTickDetails} from 'ivhydrograph/selectors/domain';
-import {getLayout} from 'ivhydrograph/selectors/layout';
-import {getXScale, getBrushXScale, getYScale, getSecondaryYScale} from 'ivhydrograph/selectors/scales';
-import {getYLabel, getSecondaryYLabel, getTsTimeZone, TEMPERATURE_PARAMETERS} from 'ivhydrograph/selectors/time-series-data';
+import {generateTimeTicks} from 'd3render/tick-marks';
+
+import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
+
+import {getYTickDetails} from './domain';
+import {getLayout} from './layout';
+import {getXScale, getBrushXScale, getYScale, getSecondaryYScale} from './scales';
+import {getCurrentVariableUnitCode, getSecondaryYLabel, getTsTimeZone, TEMPERATURE_PARAMETERS} from './time-series-data';
 
 
 const createXAxis = function(xScale, ianaTimeZone) {
@@ -27,7 +29,8 @@ const createXAxis = function(xScale, ianaTimeZone) {
  * Create an x and y axis for hydrograph
  * @param {Object} xScale      D3 Scale object for the x-axis
  * @param {Object} yScale      D3 Scale object for the y-axis
- * @param {Object} secondaryYscale - D3 Scale object for the secondary y-axis
+ * @param {Object} secondaryYScale - D3 Scale object for the secondary y-axis
+ * @param {Object} yTickDetails - Object which has information about tick values and ormat.
  * @param {Number} yTickSize   Size of inner ticks for the y-axis
  * @param {String} parmCd - parameter code of time series to be shown on the graph.
  * @param {String} ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
@@ -89,10 +92,9 @@ export const getAxes = memoize(kind => createSelector(
     getSecondaryYScale(kind),
     getYTickDetails,
     getLayout(kind),
-    getYLabel,
+    getCurrentVariableUnitCode,
     getTsTimeZone,
     getCurrentParmCd,
-    getCurrentDateRange,
     getSecondaryYLabel,
     (xScale, yScale, secondaryYScale, yTickDetails, layout, plotYLabel, ianaTimeZone, parmCd, plotSecondaryYLabel) => {
         return {

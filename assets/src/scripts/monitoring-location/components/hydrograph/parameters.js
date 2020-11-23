@@ -1,13 +1,17 @@
+// Required to initialize USWDS components after page load (WaterAlert ToolTips)
+import components from 'uswds/src/js/components';
+
 import {line} from 'd3-shape';
 import {select} from 'd3-selection';
 
 import config from 'ui/config';
-import {appendTooltip} from 'ui/tooltips';
+
+import {appendInfoTooltip} from 'd3render/info-tooltip';
 
 import {Actions} from 'ml/store/instantaneous-value-time-series-data';
 
-import {MASK_DESC} from 'ivhydrograph/selectors/drawing-data';
-import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from 'ivhydrograph/selectors/layout';
+import {MASK_DESC} from './selectors/drawing-data';
+import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from './selectors/layout';
 
 /**
  * Draw a sparkline in a selected SVG element
@@ -103,7 +107,7 @@ export const plotSeriesSelectTable = function(elem,
         return;
     }
 
-    const columnHeaders = ['   ', 'Parameter', 'Preview', '#', 'Period of Record'];
+    const columnHeaders = ['   ', 'Parameter', 'Preview', '#', 'Period of Record', 'WaterAlert'];
     const tableContainer = elem.append('div')
         .attr('id', 'select-time-series');
 
@@ -157,7 +161,9 @@ export const plotSeriesSelectTable = function(elem,
                 .attr('scope', 'row');
             paramCdCol.append('span')
                 .text(param => param.description)
-                .call(appendTooltip, param => `Parameter code: ${param.parameterCode}`);
+                .each(function(datum) {
+                    appendInfoTooltip(select(this), `Parameter code: ${datum.parameterCode}`);
+                });
             tr.append('td')
                 .append('svg')
                 .attr('width', SPARK_LINE_DIM.width.toString())
@@ -167,8 +173,17 @@ export const plotSeriesSelectTable = function(elem,
             tr.append('td')
                 .style('white-space', 'nowrap')
                 .text(param => `${config.uvPeriodOfRecord[param.parameterCode].begin_date} to ${config.uvPeriodOfRecord[param.parameterCode].end_date}`);
+            tr.append('td')
+                .append('a')
+                    .attr('href', param => `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${param.parameterCode}`)
+                    .attr('class', 'usa-tooltip usa-link')
+                    .attr('data-position', 'left')
+                    .attr('data-classes', 'width-full tablet:width-auto')
+                    .attr('title', 'Subscribe to text or email alerts based on thresholds that you set')
+                    .text('Subscribe');
         });
-
+    // Activate the USWDS toolTips for WaterAlert subscriptions
+    components.tooltip.init(elem.node());
 
     table.property('scrollTop', scrollTop);
 

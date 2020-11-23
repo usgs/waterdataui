@@ -1,6 +1,7 @@
-import {fetchFloodExtent, fetchFloodFeatures,
-    fetchWaterwatchFloodLevels} from 'ui/web-services/flood-data';
 import {MOCK_WATERWATCH_FLOOD_LEVELS} from 'ui/mock-service-data';
+
+import {fetchFIMPublicStatus, fetchFloodExtent, fetchFloodFeatures,
+    fetchWaterwatchFloodLevels} from './flood-data';
 
 
 describe('flood_data module', () => {
@@ -10,6 +11,67 @@ describe('flood_data module', () => {
 
     afterEach(() => {
         jasmine.Ajax.uninstall();
+    });
+
+    describe('web-services/fetchFIMPublicStatus', () => {
+        const siteno = '12345678';
+        describe('with valid response', () => {
+            let promise;
+
+            it('expected response is true', (done) => {
+                promise = fetchFIMPublicStatus(siteno);
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 200,
+                    responseText: `{
+                        "features" :[{
+                            "attributes": {
+                                "Public": 1,
+                                "SITE_NO": "12345678"
+                            }
+                        }]
+                    }`,
+                    contentType: 'application/json'
+                });
+
+                promise.then((resp) => {
+                    expect(resp).toBeTruthy();
+                    done();
+                });
+            });
+
+            it('expected response is False', (done) => {
+                promise = fetchFIMPublicStatus(siteno);
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 200,
+                    responseText: `{
+                        "features": [{
+                            "attributes": {
+                                "Public": 0,
+                                "SITE_NO": "12345678"
+                            }
+                        }]
+                    }`,
+                    contentType: 'application/json'
+                });
+
+                promise.then((resp) => {
+                    expect(resp).toBeFalsy();
+                    done();
+                });
+            });
+        });
+
+        describe('with error response', () => {
+            it('On failed response return false', (done) => {
+                fetchFIMPublicStatus(siteno).then((resp) => {
+                   expect(resp).toBeFalsy();
+                   done();
+                });
+                jasmine.Ajax.requests.mostRecent().respondWith({
+                    status: 500
+                });
+            });
+        });
     });
 
     describe('fetchFloodFeatures', () => {
@@ -50,7 +112,7 @@ describe('flood_data module', () => {
         });
     });
 
-    describe('fetchFloodExtent', () => {
+    describe('web-services/fetchFloodExtent', () => {
         let promise;
         const siteno = '12345678';
 
@@ -94,7 +156,7 @@ describe('flood_data module', () => {
         });
     });
 
-    describe('fetchWaterwatchFloodLevels', () => {
+    describe('web-services/fetchWaterwatchFloodLevels', () => {
         let floodLevelPromise;
         const siteno = '07144100';
 

@@ -1,5 +1,7 @@
-import {addSVGAccessibility, addSROnlyTable} from 'd3render/accessibility';
 import {select} from 'd3-selection';
+
+import {addSVGAccessibility, addSROnlyTable} from './accessibility';
+
 
 describe('svgAccessibility tests', () => {
     describe('addAccessibility tests', () => {

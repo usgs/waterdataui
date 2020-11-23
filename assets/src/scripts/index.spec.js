@@ -6,12 +6,12 @@
  * tests and the application dependencies only need to be compiled a single
  * time, and `karma --watch` tasks are very fast.
  */
+
 import 'ui/mock-service-data';
 import 'ui/polyfills';
 
 import 'ui/ajax.spec';
 import 'ui/schema.spec';
-import 'ui/tooltips.spec';
 import 'ui/utils.spec';
 
 import 'd3render/accessibility.spec';
@@ -20,6 +20,7 @@ import 'd3render/axes.spec';
 import 'd3render/cursor-slider.spec';
 import 'd3render/data-masks.spec';
 import 'd3render/graph-tooltip.spec';
+import 'd3render/info-tooltip.spec';
 import 'd3render/legend.spec';
 import 'd3render/loading-indicator.spec';
 import 'd3render/markers.spec';
@@ -53,6 +54,7 @@ import 'ivhydrograph/selectors/time-series-data.spec';
 import 'ivhydrograph/audible.spec';
 import 'ivhydrograph/date-controls.spec';
 import 'ivhydrograph/data-table.spec';
+import 'ivhydrograph/download-links.spec';
 import 'ivhydrograph/graph-brush.spec';
 import 'ivhydrograph/graph-controls.spec';
 import 'ivhydrograph/hydrograph-utils.spec';
@@ -86,6 +88,7 @@ import 'ml/store/time-zone.spec';
 import 'ml/store/ui-state.spec';
 
 import 'ml/url-params.spec';
+
 import 'ui/network/components/network-sites/data-table.spec';
 import 'ui/network/components/network-sites/index.spec';
 import 'ui/network/components/network-sites/legend.spec';

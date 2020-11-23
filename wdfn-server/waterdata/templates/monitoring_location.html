@@ -48,7 +48,7 @@
                 var urlString = window.location.href;
                 var staticGraphContainer = document.getElementById('static-graph-div');
 
-                if (urlString.indexOf('/?') !== -1) {
+                if (!CONFIG.uvPeriodOfRecord) {
                     var incompatibleURLMessageTag = document.createElement('H2');
                     var message = document.createTextNode('Sorry, the graph cannot be displayed.');
                     var subMessageTag = document.createElement('p');

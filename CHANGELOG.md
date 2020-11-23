@@ -6,9 +6,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.38.0...master)
 ### Added
-- Added static image of the Instantaneous Values Hydrograph for users of Internet Explorer 
-- New colors for the compare line
+- Static image of the Instantaneous Values Hydrograph for users of Internet Explorer. 
+- New colors for the compare line.
 - Navigation bar and other changes to header and footer.
+- Links for WaterAlert.
+- Added a check to see if FIM sites are public. If not, the sites flood inundation layers are not shown even if available.
+- Links to download data related to the currently displayed hydrograph.
+
+### Changed
+- Added a tooltip to the hydrograph title showing the selected variable description and show the short unitCode on the Y axis.
+
+### Fixed
+- Dynamically generated tooltips are now initialized properly by calling init on the node where the tooltip is created rather than on the entire DOM which was causing multiple tooltip markup to be created.
 
 ## [0.38.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.37.0...waerdataui-0.38.0) - 2020-10-30
 ### Added

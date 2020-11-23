@@ -1,7 +1,7 @@
 import {
     getNetworkList,
     hasNetworkData
-} from 'ml/selectors/network-selector';
+} from './network-selector';
 
 describe('monitoring-location/selectors/network-selector', () => {
 

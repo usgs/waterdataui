@@ -5,9 +5,10 @@ import {select} from 'd3-selection';
 import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config.js';
+import {link} from 'ui/lib/d3-redux';
+
 import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
-import {link} from 'ui/lib/d3-redux';
 
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
@@ -17,20 +18,23 @@ import {Actions as timeZoneActions} from 'ml/store/time-zone';
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
-import {drawDateRangeControls} from 'ivhydrograph/date-controls';
-import {drawDataTable} from 'ivhydrograph/data-table';
-import {drawGraphBrush} from 'ivhydrograph/graph-brush';
-import {drawGraphControls} from 'ivhydrograph/graph-controls';
-import {SPARK_LINE_DIM}  from 'ivhydrograph/selectors/layout';
-import {drawTimeSeriesLegend} from 'ivhydrograph/legend';
-import {drawMethodPicker} from 'ivhydrograph/method-picker';
-import {plotSeriesSelectTable} from 'ivhydrograph/parameters';
-import {getLineSegmentsByParmCd} from 'ivhydrograph/selectors/drawing-data';
-import {getAvailableParameterCodes} from 'ivhydrograph/selectors/parameter-data';
-import {getTimeSeriesScalesByParmCd} from 'ivhydrograph/selectors/scales';
-import {drawTimeSeriesGraph} from 'ivhydrograph/time-series-graph';
-import {drawTooltipCursorSlider} from 'ivhydrograph/tooltip';
-import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ivhydrograph/hydrograph-utils';
+import {drawDateRangeControls} from './date-controls';
+import {drawDataTable} from './data-table';
+import {renderDownloadLinks} from './download-links';
+import {drawGraphBrush} from './graph-brush';
+import {drawGraphControls} from './graph-controls';
+import {isPeriodWithinAcceptableRange, isPeriodCustom} from './hydrograph-utils';
+
+import {getLineSegmentsByParmCd} from './selectors/drawing-data';
+import {SPARK_LINE_DIM}  from './selectors/layout';
+import {getAvailableParameterCodes} from './selectors/parameter-data';
+import {getTimeSeriesScalesByParmCd} from './selectors/scales';
+
+import {drawTimeSeriesLegend} from './legend';
+import {drawMethodPicker} from './method-picker';
+import {plotSeriesSelectTable} from './parameters';
+import {drawTimeSeriesGraph} from './time-series-graph';
+import {drawTooltipCursorSlider} from './tooltip';
 
 /**
  * Modify styling to hide or display the elem.
@@ -161,10 +165,12 @@ export const attachToNode = function(store,
 
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
+
+                nodeElem.select('#iv-graph-data-download-container')
+                    .call(renderDownloadLinks, store, siteno);
+
                 nodeElem.select('#iv-data-table-container')
                     .call(drawDataTable, store);
-                nodeElem.select('.provisional-data-alert')
-                    .attr('hidden', null);
                 //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
                 nodeElem.select('.select-time-series-container')
                     .call(link(store, plotSeriesSelectTable, createStructuredSelector({
@@ -173,7 +179,6 @@ export const attachToNode = function(store,
                         lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
                         timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
                     }), store));
-
 
                 renderTimeSeriesUrlParams(store);
             }

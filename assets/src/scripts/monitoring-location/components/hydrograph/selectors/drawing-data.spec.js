@@ -14,7 +14,7 @@ import {
     getCurrentVariableMedianStatPoints,
     MAX_LINE_POINT_GAP,
     getCurrentPointData
-} from 'ivhydrograph/selectors/drawing-data';
+} from './drawing-data';
 
 
 const TEST_DATA = {

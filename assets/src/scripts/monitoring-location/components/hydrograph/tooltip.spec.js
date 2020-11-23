@@ -3,8 +3,7 @@ import {select} from 'd3-selection';
 import {configureStore} from 'ml/store';
 import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {drawTooltipText, drawTooltipFocus, drawTooltipCursorSlider} from 'ivhydrograph/tooltip';
-
+import {drawTooltipText, drawTooltipFocus, drawTooltipCursorSlider} from './tooltip';
 
 describe('monitoring-location/components/hydrograph/tooltip module', () => {
 

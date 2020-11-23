@@ -1,5 +1,7 @@
-import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from 'ui/web-services/models';
 import {utcFormat} from 'd3-time-format';
+
+import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from './models';
+
 
 export const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
@@ -73,13 +75,13 @@ describe('Models module', () => {
         it('Uses current data service root if data requested is less than 120 days old', () => {
             getTimeSeries({sites: [siteID], params: [paramCode]});
             let request = jasmine.Ajax.requests.mostRecent();
-            expect(request.url).toContain('https://waterservices.usgs.gov/nwis');
+            expect(request.url).toContain('https://fakeserviceroot.com');
 
             const startDate = new Date() - 110;
             const endDate = new Date() - 10;
             getTimeSeries({sites: [siteID], params: [paramCode], startDate: startDate, endDate: endDate});
             request = jasmine.Ajax.requests.mostRecent();
-            expect(request.url).toContain('https://waterservices.usgs.gov/nwis');
+            expect(request.url).toContain('https://fakeserviceroot.com');
         });
 
         it('Uses nwis data service root if data requested is more than 120 days old', () => {
@@ -93,7 +95,7 @@ describe('Models module', () => {
         it('Uses current data service root if period requested is less than P120D', () => {
             getTimeSeries({sites: [siteID], params: [paramCode], period: 'P14D'});
             let request = jasmine.Ajax.requests.mostRecent();
-            expect(request.url).toContain('https://waterservices.usgs.gov/nwis');
+            expect(request.url).toContain('https://fakeserviceroot.com');
         });
 
         it('Uses past data service root if period requested is greater than P120D', () => {

@@ -3,7 +3,7 @@ import {select} from 'd3-selection';
 import {configureStore} from 'ml/store';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 
-import {drawDateRangeControls} from 'ivhydrograph/date-controls';
+import {drawDateRangeControls} from './date-controls';
 
 const TEST_STATE = {
     ivTimeSeriesData: {

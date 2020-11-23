@@ -3,8 +3,7 @@ import {select} from 'd3-selection';
 
 import {configureStore} from 'ml/store';
 
-import {addSparkLine, plotSeriesSelectTable} from 'ivhydrograph/parameters';
-
+import {addSparkLine, plotSeriesSelectTable} from './parameters';
 
 describe('monitoring-location/components/hydrograph/parameters module', () => {
 
@@ -79,6 +78,11 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
             plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
             expect(tableDivSelection.selectAll('input').size()).toEqual(3);
         });
+
+         it('creates a WaterAlert subscribe link each parameter in the table', () => {
+             plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
+             expect(tableDivSelection.selectAll('a').size()).toEqual(3);
+         });
 
         it('updates the radio button input checked property for the corresponding selected parameter', () => {
             plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);

@@ -2,7 +2,7 @@ import {select} from 'd3-selection';
 
 import{configureStore} from 'ml/store';
 
-import {drawGraphBrush} from 'ivhydrograph/graph-brush';
+import {drawGraphBrush} from './graph-brush';
 
 describe ('monitoring-location/components/hydrograph/graph-brush module', () => {
 

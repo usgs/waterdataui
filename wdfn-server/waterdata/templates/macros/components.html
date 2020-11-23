@@ -5,10 +5,18 @@
         <div class="provisional-data-statement">
             <p>
                 <span class="usa-tag">Important</span>
-                data may be provisional - <a class="usa-link" href="{{ url_for('provisional_data_statement') }}">learn more</a>
+                Data may be provisional - <a class="usa-link" href="{{ url_for('provisional_data_statement') }}">learn more</a>
             </p>
         </div>
         <div class="select-time-series-container"></div>
+        <div class="iv-graph-data-download usa-accordion">
+            <h2 class="usa-accordion__heading">
+                <button class="usa-accordion__button" aria-expanded="false" aria-controls="iv-graph-data-download-container">
+                    Download this graph's data
+                </button>
+            </h2>
+            <div id="iv-graph-data-download-container" class="usa-accordion__content usa-prose"></div>
+        </div>
         <div class="graph-data usa-accordion">
             <h2 class="usa-accordion__heading">
                 <button class="usa-accordion__button" aria-expanded="false" aria-controls="iv-data-table-container">

@@ -4,12 +4,14 @@ import _includes from 'lodash/includes';
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
-import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
+import {getIanaTimeZone} from './time-zone-selector';
 
 /*
  * Selectors that return properties from the state
  */
 export const getVariables = state => state.ivTimeSeriesData.variables ? state.ivTimeSeriesData.variables : null;
+
+export const getShowIVTimeSeries = state => state.ivTimeSeriesState.showIVTimeSeries  || {};
 
 export const getSourceInfo = state => state.ivTimeSeriesData.sourceInfo || {};
 
@@ -86,6 +88,7 @@ export const getCurrentVariable = createSelector(
 export const getCurrentParmCd = createSelector(
     getCurrentVariable,
     (currentVar) => {
+
         return currentVar && currentVar.variableCode ? currentVar.variableCode.value : null;
     }
 );

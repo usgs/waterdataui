@@ -2,26 +2,29 @@ import {line as d3Line, curveStepAfter} from 'd3-shape';
 import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config';
-import {addSVGAccessibility} from 'd3render/accessibility';
-import {appendAxes} from 'd3render/axes';
-import {renderMaskDefs} from 'd3render/data-masks';
 import {link} from 'ui/lib/d3-redux';
 import {mediaQuery}  from 'ui/utils';
 
-import {getAgencyCode, getMonitoringLocationName} from 'ml/selectors/time-series-selector';
+import {addSVGAccessibility} from 'd3render/accessibility';
+import {appendAxes} from 'd3render/axes';
+import {renderMaskDefs} from 'd3render/data-masks';
+import {appendInfoTooltip} from 'd3render/info-tooltip';
+
+import {getAgencyCode, getMonitoringLocationName, getCurrentVariable} from 'ml/selectors/time-series-selector';
 import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
 
-import {getAxes}  from 'ivhydrograph/selectors/axes';
+import {getAxes}  from './selectors/axes';
 import {
     getCurrentVariableLineSegments,
     getCurrentVariableMedianStatPoints,
     HASH_ID
-} from 'ivhydrograph/selectors/drawing-data';
-import {getMainLayout} from 'ivhydrograph/selectors/layout';
-import {getMainXScale, getMainYScale, getBrushXScale} from 'ivhydrograph/selectors/scales';
-import {getDescription, isVisible, getTitle} from 'ivhydrograph/selectors/time-series-data';
-import {drawDataLines} from 'ivhydrograph/time-series-lines';
-import {drawTooltipFocus, drawTooltipText}  from 'ivhydrograph/tooltip';
+} from './selectors/drawing-data';
+import {getMainLayout} from './selectors/layout';
+import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
+import {getDescription, isVisible, getTitle} from './selectors/time-series-data';
+
+import {drawDataLines} from './time-series-lines';
+import {drawTooltipFocus, drawTooltipText}  from './tooltip';
 
 const addDefsPatterns = function(elem) {
     const patterns = [{
@@ -100,7 +103,7 @@ const plotFloodLevelPoints = function(elem, {xscale, yscale, points, classes}) {
         .x(function(_,i) {
             return xscale(xscale.domain()[i]);
         })
-        .y(function (d) {
+        .y(function(d) {
             return yscale(d);
         });
     const floodLevelGrp = elem.append('g');
@@ -145,7 +148,7 @@ const plotAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesP
 };
 
 
-const createTitle = function(elem, store, siteNo, showMLName) {
+const createTitle = function(elem, store, siteNo, showMLName, showTooltip) {
     let titleDiv = elem.append('div')
         .classed('time-series-graph-title', true);
 
@@ -160,9 +163,15 @@ const createTitle = function(elem, store, siteNo, showMLName) {
             })));
     }
     titleDiv.append('div')
-        .call(link(store,(elem, title) => {
+        .call(link(store,(elem, {title, variable}) => {
             elem.html(title);
-        }, getTitle));
+            if (showTooltip) {
+                elem.call(appendInfoTooltip, variable ? variable.variableDescription : 'No description available');
+            }
+        }, createStructuredSelector({
+            title: getTitle,
+            variable: getCurrentVariable
+        })));
 };
 
 const watermark = function(elem, store) {
@@ -202,7 +211,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
     graphDiv = elem.append('div')
         .attr('class', 'hydrograph-container')
         .call(watermark, store)
-        .call(createTitle, store, siteNo, showMLName);
+        .call(createTitle, store, siteNo, showMLName, showTooltip);
     if (showTooltip) {
         graphDiv.call(drawTooltipText, store);
     }

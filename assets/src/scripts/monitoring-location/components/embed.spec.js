@@ -1,6 +1,6 @@
 import {select} from 'd3-selection';
 
-import {attachToNode} from 'ml/components/embed';
+import {attachToNode} from './embed';
 
 
 describe('monitoring-location/components/embed module', () => {

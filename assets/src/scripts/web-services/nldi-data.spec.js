@@ -4,7 +4,7 @@ import {MOCK_NLDI_UPSTREAM_FLOW_FEATURE, MOCK_NLDI_DOWNSTREAM_FLOW_FEATURE,
     MOCK_NLDI_UPSTREAM_BASIN_FEATURE} from 'ui/mock-service-data';
 
 import {fetchNldiUpstreamSites, fetchNldiUpstreamFlow, fetchNldiDownstreamSites, fetchNldiDownstreamFlow,
-         fetchNldiUpstreamBasin} from 'ui/web-services/nldi-data';
+         fetchNldiUpstreamBasin} from './nldi-data';
 
 describe('nldi-data module', () => {
     beforeEach(() => {

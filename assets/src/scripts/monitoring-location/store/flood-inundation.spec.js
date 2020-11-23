@@ -3,9 +3,9 @@ import {default as thunk} from 'redux-thunk';
 
 import {MOCK_WATERWATCH_FLOOD_LEVELS} from 'ui/mock-service-data';
 
-import {Actions, floodDataReducer, floodStateReducer} from 'ml/store/flood-inundation';
+import {Actions, floodDataReducer, floodStateReducer} from './flood-inundation';
 
-describe('monitoriing-location/store/flood-inundation module', () => {
+describe('monitoring-location/store/flood-inundation module', () => {
     /* eslint no-use-before-define: 0 */
     let store;
 
@@ -50,27 +50,50 @@ describe('monitoriing-location/store/flood-inundation module', () => {
         });
 
         describe('Actions.retrieveFloodData', () => {
-            it('Expects features and extents ajax calls are made', () => {
-                store.dispatch(Actions.retrieveFloodData('1234567'));
+            const PUBLIC_SITE = `{
+                        "features" :[{
+                            "attributes": {
+                                "Public": 1,
+                                "SITE_NO": "12345678"
+                            }
+                        }]
+                    }`;
+            const NOT_PUBLIC_SITE = `{
+                        "features" :[{
+                            "attributes": {
+                                "Public": 0,
+                                "SITE_NO": "12345678"
+                            }
+                        }]
+                    }`;
+            it('Expects call to determine FIM Public Status to occur', () => {
+                store.dispatch(Actions.retrieveFloodData('12345678'));
 
-                expect(jasmine.Ajax.requests.count()).toBe(2);
+                expect(jasmine.Ajax.requests.count()).toBe(3);
                 const req1 = jasmine.Ajax.requests.at(0);
                 const req2 = jasmine.Ajax.requests.at(1);
+                const req3 = jasmine.Ajax.requests.at(2);
+                expect(req1.url).toContain('12345678');
+                expect(req1.url).toContain('outFields=PUBLIC%2CSITE_NO');
 
-                expect(req1.url).toContain('1234567');
                 expect(req2.url).toContain('1234567');
+                expect(req3.url).toContain('1234567');
 
-                expect(req1.url).toContain('outFields=USGSID%2C+STAGE');
-                expect(req2.url).toContain('returnExtentOnly=true');
+                expect(req2.url).toContain('outFields=USGSID%2C+STAGE');
+                expect(req3.url).toContain('returnExtentOnly=true');
             });
 
-            it('Expects successful ajax calls to populate the store', (done) => {
+            it('Expects a public site with successful ajax calls to populate the store', (done) => {
                 let promise = store.dispatch(Actions.retrieveFloodData('1234567'));
                 jasmine.Ajax.requests.at(0).respondWith({
                     status: 200,
-                    responseText: MOCK_STAGES
+                    responseText: PUBLIC_SITE
                 });
                 jasmine.Ajax.requests.at(1).respondWith({
+                    status: 200,
+                    responseText: MOCK_STAGES
+                });
+                jasmine.Ajax.requests.at(2).respondWith({
                     status: 200,
                     responseText: MOCK_EXTENT
                 });
@@ -84,13 +107,17 @@ describe('monitoriing-location/store/flood-inundation module', () => {
                 });
             });
 
-            it('Expects a failed stages call to not populate stages', (done) => {
+            it('Expects a not public site with successful ajax calls to populate the store', (done) => {
                 let promise = store.dispatch(Actions.retrieveFloodData('1234567'));
                 jasmine.Ajax.requests.at(0).respondWith({
-                    status: 500,
-                    responseText: 'Internal server error'
+                    status: 200,
+                    responseText: NOT_PUBLIC_SITE
                 });
                 jasmine.Ajax.requests.at(1).respondWith({
+                    status: 200,
+                    responseText: MOCK_STAGES
+                });
+                jasmine.Ajax.requests.at(2).respondWith({
                     status: 200,
                     responseText: MOCK_EXTENT
                 });
@@ -99,29 +126,9 @@ describe('monitoriing-location/store/flood-inundation module', () => {
                     const floodData = store.getState().floodData;
 
                     expect(floodData.stages).toEqual([]);
-                    expect(floodData.extent).toEqual(JSON.parse(MOCK_EXTENT).extent);
+                    expect(floodData.extent).toEqual({});
                     done();
                 });
-            });
-        });
-
-        it('Expects a failed extent call to not populate extent', (done) => {
-            let promise = store.dispatch(Actions.retrieveFloodData('1234567'));
-            jasmine.Ajax.requests.at(0).respondWith({
-                status: 200,
-                responseText: MOCK_STAGES
-            });
-            jasmine.Ajax.requests.at(1).respondWith({
-                status: 500,
-                responseText: 'Server error'
-            });
-
-            promise.then(() => {
-                const floodData = store.getState().floodData;
-
-                expect(floodData.stages).toEqual([28, 29, 30]);
-                expect(floodData.extent).toEqual({});
-                done();
             });
         });
 

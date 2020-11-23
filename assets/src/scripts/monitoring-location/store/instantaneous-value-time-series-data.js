@@ -139,11 +139,11 @@ const retrieveIVTimeSeries = function(siteno) {
  * @param {Number} endTime - in epoch milliseconds
  * @return {Function} which when dispatched returns a Promise
  */
-const retrieveCompareIVTimeSeries = function(siteno, period, startTime, endTime) {
+const retrieveCompareIVTimeSeries = function(siteno, period, startTime, endTime, parameterCode) {
     return function(dispatch, getState) {
         const tsRequestKey = getTsRequestKey('compare', period)(getState());
         dispatch(ivTimeSeriesStateActions.addIVTimeSeriesToLoadingKeys([tsRequestKey]));
-        return getPreviousYearTimeSeries({site: siteno, startTime, endTime}).then(
+        return getPreviousYearTimeSeries({site: siteno, startTime, endTime, parameterCode}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
                 dispatch(Actions.addIVTimeSeriesCollection(collection));
@@ -184,9 +184,9 @@ const retrieveCustomTimePeriodIVTimeSeries = function(siteno, parameterCd, perio
         dispatch(ivTimeSeriesStateActions.setCurrentIVDateRange(period));
 
         if (isPeriodCustom(period)) {
-            dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('numberOfDaysFieldValue', parsedPeriodCodes.numberOfDaysFieldValue))
+            dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('numberOfDaysFieldValue', parsedPeriodCodes.numberOfDaysFieldValue));
         }
-        
+
         dispatch(ivTimeSeriesStateActions.addIVTimeSeriesToLoadingKeys([tsRequestKey]));
 
         return getTimeSeries({sites: [siteno], params: [parameterCd], period: period}).then(
@@ -295,7 +295,7 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
             }).then(
                 series => {
                     const collection = normalize(series, tsRequestKey);
-                    dispatch(Actions.retrieveCompareIVTimeSeries(siteno, period, startTime, endTime));
+                    dispatch(Actions.retrieveCompareIVTimeSeries(siteno, period, startTime, endTime, thisParamCd));
                     dispatch(Actions.addIVTimeSeriesCollection(collection));
                     dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
                 },

@@ -1,5 +1,6 @@
 import {
     getVariables,
+    getShowIVTimeSeries,
     getSourceInfo,
     getSiteCodes,
     getCurrentVariableID,
@@ -24,7 +25,7 @@ import {
     getAllMethodsForCurrentVariable,
     getCurrentVariableTimeSeries,
     getTimeSeriesForTsKey
-} from 'ml/selectors/time-series-selector';
+} from './time-series-selector';
 
 const TEST_DATA = {
     ivTimeSeriesData: {
@@ -232,6 +233,11 @@ const TEST_DATA = {
         }
     },
     ivTimeSeriesState: {
+        showIVTimeSeries: {
+            current: true,
+            compare: true,
+            median: false
+        },
         currentIVVariableID: '45807197',
         currentIVDateRange: 'P7D'
     }
@@ -829,6 +835,18 @@ describe('monitoring-location/selectors/time-series-selector', () => {
             expect(isLoadingTS('current', 'P7D')(TEST_DATA)).toBe(false);
         });
     });
+
+    describe('getShowIVTimeSeries', () => {
+        const expectedObject = {
+                current: true,
+                compare: true,
+                median: false
+            };
+        it('Expects to return the selections for which time series are active', () => {
+            expect(getShowIVTimeSeries(TEST_DATA)).toEqual(expectedObject);
+        });
+    });
+
 
     describe('getTSRequest', () => {
         const TEST_DATA = {

@@ -6,7 +6,7 @@ import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
 import {Actions as timeZoneActions} from 'ml/store/time-zone';
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
-import {attachToNode} from 'ivhydrograph/index';
+import {attachToNode} from './index';
 
 const TEST_STATE = {
     ivTimeSeriesData: {
@@ -62,6 +62,7 @@ const TEST_STATE = {
         },
         queryInfo: {
             'current:P7D': {
+                queryURL: 'http://waterservices.usgs.gov/nwis/iv/sites=05413500&period=P7D&siteStatus=all&format=json',
                 notes: {
                     'filter:timeRange':  {
                         mode: 'PERIOD',
@@ -96,6 +97,8 @@ const TEST_STATE = {
                     value: '00010'
                 },
                 oid: '45807190',
+                variableName: 'Test title for 00010',
+                variableDescription: 'Test description for 00010',
                 unit: {
                     unitCode: 'unitCode'
                 }
@@ -174,7 +177,6 @@ describe('monitoring-location/components/hydrograph module', () => {
         component.append('div').attr('class', 'loading-indicator-container');
         component.append('div').attr('class', 'graph-container');
         component.append('div').attr('class', 'select-time-series-container');
-        component.append('div').attr('class', 'provisional-data-alert');
         component.append('div').attr('id', 'iv-data-table-container');
 
         graphNode = document.getElementById('hydrograph');
@@ -545,7 +547,8 @@ describe('monitoring-location/components/hydrograph module', () => {
         it('should have a title div', () => {
             const titleDiv = selectAll('.time-series-graph-title');
             expect(titleDiv.size()).toBe(1);
-            expect(titleDiv.text()).toEqual('Test title for 00060, method description');
+            expect(titleDiv.select('div').text()).toContain('Test title for 00060, method description');
+            expect(titleDiv.select('.usa-tooltip').text()).toEqual('Test description for 00060');
         });
 
         it('should have a defs node', () => {
@@ -591,8 +594,8 @@ describe('monitoring-location/components/hydrograph module', () => {
         });
 
         it('should have tooltips for the select series table', () => {
-            // one for each of the two parameters
-            expect(selectAll('table .usa-tooltip').size()).toBe(2);
+            // one for each of the two parameters and the WaterAlert links
+            expect(selectAll('table .usa-tooltip').size()).toBe(4);
         });
 
         it('should render the data table', (done) => {

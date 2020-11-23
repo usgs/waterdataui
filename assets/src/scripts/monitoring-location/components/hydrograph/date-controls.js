@@ -1,11 +1,10 @@
 import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
+// required to make the USWDS component JS available to init after page load
+import components from 'uswds/src/js/components';
 
 import {link} from 'ui/lib/d3-redux';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
-
-// required to make the USWDS component JS available to init after page load
-import components from '../../../../../node_modules/uswds/src/js/components';
 
 import {
     isLoadingTS,
@@ -17,7 +16,8 @@ import {
 import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
-import {MAX_DIGITS_FOR_DAYS_FROM_TODAY} from 'ivhydrograph/hydrograph-utils';
+
+import {MAX_DIGITS_FOR_DAYS_FROM_TODAY} from './hydrograph-utils';
 
 export const drawDateRangeControls = function(elem, store, siteno) {
     const DATE_RANGE = [{
