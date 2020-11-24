@@ -79,9 +79,14 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
             expect(tableDivSelection.selectAll('input').size()).toEqual(3);
         });
 
-         it('creates a WaterAlert subscribe link each parameter in the table', () => {
+         it('creates a WaterAlert subscribe link each parameter in the table supported by WaterAlert', () => {
              plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
-             expect(tableDivSelection.selectAll('a').size()).toEqual(3);
+             expect(tableDivSelection.selectAll('.wateralert-available').size()).toEqual(1);
+         });
+
+         it('creates WaterAlert not available text for each parameter in the table NOT supported by WaterAlert', () => {
+             plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
+             expect(tableDivSelection.selectAll('.wateralert-unavailable').size()).toEqual(2);
          });
 
         it('updates the radio button input checked property for the corresponding selected parameter', () => {

@@ -186,19 +186,19 @@ export const plotSeriesSelectTable = function(elem,
             '72147', '72150', '72192', '72322', '72255','72279', '00010', '00011', '00095', '00300', '00400',
             '00480', '63680', '72213', '99133','31720', '31721', '31722', '31723', '31724', '31725', '31726',
             '31727', '31728', '31729','32319','32321', '00045', '99064', '99067'];
-        
+
         let selection = select(this);
 
         if (acceptableWaterAlertParameterCodes.includes(d.parameterCode)) {
             selection.append('a')
                 .attr('href', `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${d.parameterCode}`)
-                .attr('class', 'usa-tooltip usa-link')
+                .attr('class', 'usa-tooltip usa-link wateralert-available')
                 .attr('data-position', 'left')
                 .attr('data-classes', 'width-full tablet:width-auto')
                 .attr('title', 'Subscribe to text or email alerts based on thresholds that you set')
                 .text('Subscribe');
         } else {
-            selection.attr('class', 'usa-tooltip')
+            selection.attr('class', 'usa-tooltip wateralert-unavailable')
                 .attr('data-position', 'left')
                 .attr('data-classes', 'width-full tablet:width-auto')
                 .attr('title', `Sorry, there are no WaterAlerts for this parameter (${d.parameterCode})`)
