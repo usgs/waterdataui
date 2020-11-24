@@ -6,7 +6,7 @@ import {select} from 'd3-selection';
 import {get} from 'ui/ajax';
 import config from 'ui/config';
 
-import {markerFillColor, markerFillOpacity, downStreamColor, upstreamColor, flowLineOpacity,
+import {downStreamColor, upstreamColor, flowLineOpacity,
          basinFillColor, basinFillOpacity} from './nldi-mapping';
 
 
@@ -34,14 +34,6 @@ const fetchLayerLegend = function(layer, defaultName) {
         });
 };
 
-export const addMonitoringLocationMarker = function(legendControl) {
-        const siteLegendList = select(legendControl.getLegendListContainer()).append('ul')
-            .attr('id', 'site-legend-list')
-            .classed('usa-list--unstyled', true);
-        siteLegendList.append('li')
-            .html(`<img src="${config.STATIC_URL}/images/marker-icon.png" alt="Map marker"/><span>Monitoring Location</span>`);
-
-};
 
 /*
  * Creates the FIM legend if FIM data is available, otherwise removes the FIM legend if it exists.
@@ -98,11 +90,6 @@ export const createNldiLegend = function(legendControl, isNldiAvailable) {
         const nldiDownstream = nldiLegendList.append('li');
         nldiDownstream.append('span').attr('style', `background: ${downStreamColor}; width: 16px; height: 16px; float: left; opacity: ${flowLineOpacity}; margin-right: 2px;`);
         nldiDownstream.append('span').text('Downstream Flowline');
-
-        const nldiMarker = nldiLegendList.append('li');
-        nldiMarker.append('span').attr('style', `color: ${markerFillColor}; width: 16px; height: 16px; float: left; opacity: ${markerFillOpacity}; margin-right: 2px;`)
-            .attr('class', 'fas fa-circle');
-        nldiMarker.append('span').text('Additional Monitoring Locations');
 
         const nldiBasin = nldiLegendList.append('li');
         nldiBasin.append('span').attr('style', `background: ${basinFillColor}; width: 16px; height: 16px; float: left; opacity: ${basinFillOpacity}; margin-right: 2px;`);

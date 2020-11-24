@@ -5,17 +5,19 @@ import config from 'ui/config';
 import {createMap, createBaseLayer} from 'ui/leaflet-rendering/map';
 import {legendControl} from 'ui/leaflet-rendering/legend-control';
 import {link} from 'ui/lib/d3-redux';
+
 import {FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT} from 'ui/web-services/flood-data';
+import {fetchNetworkMonitoringLocations} from 'ui/web-services/observations';
 
 import {hasFloodData, getFloodExtent, getFloodStageHeight} from 'ml/selectors/flood-data-selector';
-import {hasNldiData, getNldiDownstreamFlows, getNldiDownstreamSites, getNldiUpstreamFlows, getNldiUpstreamSites, getNldiUpstreamBasin}
+import {hasNldiData, getNldiDownstreamFlows, getNldiUpstreamFlows, getNldiUpstreamBasin}
     from 'ml/selectors/nldi-data-selector';
 import {Actions as nldiDataActions} from 'ml/store/nldi-data';
 import {Actions as floodInundationActions} from 'ml/store/flood-inundation';
 
 import {floodSlider} from './flood-slider';
-import {addMonitoringLocationMarker, createFIMLegend, createNldiLegend} from './legend';
-import {addNldiLayers} from './nldi-mapping';
+import {createFIMLegend, createNldiLegend} from './legend';
+import {addNldiLayers, markerFillColor, markerFillOpacity} from './nldi-mapping';
 
 
 const getLayerDefs = function(layerNo, siteno, stage) {
@@ -23,7 +25,17 @@ const getLayerDefs = function(layerNo, siteno, stage) {
    return `${layerNo}: USGSID = '${siteno}'${stageQuery}`;
 };
 
-const updateActiveSitesLayer = function(map, boundingBox)
+const geojsonMarkerOptions = {
+        radius: 6,
+        fillColor: markerFillColor,
+        color: '#000',
+        weight: 1,
+        opacity: 1,
+        fillOpacity: markerFillOpacity
+    };
+
+
+
 
 /*
  * Creates a site map
@@ -33,11 +45,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         center: [latitude, longitude],
         zoom: zoom
     });
-
-    map.on('moveend', () => {
-        console.log('Move end event');
-    });
-
+    
     const baseMapLayers = {
         'USGS Topo': createBaseLayer(config.TNM_USGS_TOPO_ENDPOINT),
         'Imagery': createBaseLayer(config.TNM_USGS_IMAGERY_ONLY_ENDPOINT),
@@ -55,7 +63,6 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
 
     const mlLegendControl = legendControl();
     mlLegendControl.addTo(map);
-    addMonitoringLocationMarker(mlLegendControl);
 
     const floodLayer = L.esri.dynamicMapLayer({
         url: FLOOD_EXTENTS_ENDPOINT,
@@ -99,8 +106,8 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         }
     };
 
-    const updateNldiLayers = function(node, {upstreamFlows, downstreamFlows, upstreamSites, downstreamSites, upstreamBasin}) {
-        addNldiLayers(map, upstreamFlows, downstreamFlows, upstreamSites, downstreamSites, upstreamBasin);
+    const updateNldiLayers = function(node, {upstreamFlows, downstreamFlows, upstreamBasin}) {
+        addNldiLayers(map, upstreamFlows, downstreamFlows, upstreamBasin);
     };
 
 
@@ -133,6 +140,55 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         }
     };
 
+    let activeSitesLayer = L.layerGroup([]);
+    const updateActiveSitesLayer = function(bounds) {
+        const queryParams = {
+            active: true,
+            bbox: bounds.toBBoxString()
+        };
+        activeSitesLayer.clearLayers();
+        fetchNetworkMonitoringLocations('RTN', queryParams).then((rtnLocations) => {
+            const locationsToDraw = rtnLocations.filter((feature) => feature.monitoringLocationNumber !== `USGS-${siteno}`)
+            activeSitesLayer.addLayer(L.geoJson(locationsToDraw, {
+                pointToLayer: function(feature, latlng) {
+                    return L.circleMarker(latlng, geojsonMarkerOptions);
+                },
+                onEachFeature: function(feature, layer) {
+                    const url = feature.properties.monitoringLocationUrl;
+                    const name = feature.properties.monitoringLocationName;
+                    const id = feature.properties.monitoringLocationNumber;
+                    const popupText = `Monitoring Location: <a href="${url}">${name}</a>
+                            <br>ID: ${id}`;
+                    layer.bindPopup(popupText);
+                }
+            }));
+        });
+        fetchNetworkMonitoringLocations('RTS', queryParams).then((rtsLocations) => {
+            const locationsToDraw = rtsLocations.filter((feature) => feature.monitoringLocationNumber !== `USGS-${siteno}`);
+            activeSitesLayer.addLayer(L.geoJson(locationsToDraw, {
+                pointToLayer: function(feature, latlng) {
+                    return L.circleMarker(latlng, geojsonMarkerOptions);
+                },
+                onEachFeature: function(feature, layer) {
+                    const url = feature.properties.monitoringLocationUrl;
+                    const name = feature.properties.monitoringLocationName;
+                    const id = feature.properties.monitoringLocationNumber;
+                    const popupText = `Monitoring Location: <a href="${url}">${name}</a>
+                        <br>ID: ${id}`;
+                    layer.bindPopup(popupText);
+                }
+            }));
+        });
+    };
+
+    map.addLayer(activeSitesLayer);
+    updateActiveSitesLayer(map.getBounds());
+
+    map.on('move', function() {
+        updateActiveSitesLayer(map.getBounds());
+    });
+
+
     // Add a marker at the site location
     L.marker([latitude, longitude]).addTo(map);
 
@@ -157,8 +213,6 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         .call(link(store, updateNldiLayers, createStructuredSelector({
             upstreamFlows: getNldiUpstreamFlows,
             downstreamFlows: getNldiDownstreamFlows,
-            upstreamSites: getNldiUpstreamSites,
-            downstreamSites: getNldiDownstreamSites,
             upstreamBasin: getNldiUpstreamBasin
         })));
 };

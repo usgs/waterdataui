@@ -28,19 +28,9 @@ const fetchNldiData = function(nldiQuery, siteno) {
 };
 
 // nldi webservice calls
-export const fetchNldiUpstreamSites = function(siteno) {
-    const upstreamSitesQuery = `${nldiUrl}/${featureSource}/${usgs}${siteno}/navigate/${upstreamNavigation}/${dataSource}${distanceParam}`;
-    return fetchNldiData(upstreamSitesQuery, siteno);
-};
-
 export const fetchNldiUpstreamFlow = function(siteno) {
     const upstreamFlowQuery = `${nldiUrl}/${featureSource}/${usgs}${siteno}/navigate/${upstreamNavigation}${distanceParam}`;
     return fetchNldiData(upstreamFlowQuery, siteno);
-};
-
-export const fetchNldiDownstreamSites = function(siteno) {
-    const downstreamSitesQuery = `${nldiUrl}/${featureSource}/${usgs}${siteno}/navigate/${downstreamNavigation}/${dataSource}${distanceParam}`;
-    return fetchNldiData(downstreamSitesQuery, siteno);
 };
 
 export const fetchNldiDownstreamFlow = function(siteno) {

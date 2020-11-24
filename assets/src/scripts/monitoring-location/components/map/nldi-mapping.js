@@ -17,20 +17,9 @@ export const basinFillOpacity = .5;
  * @param {L.map} map The leaflet map to which the overlay should be added
  * @param upstreamFlows nldi upstream flow geojson data
  * @param downstreamFlows nldi downstream flow geojson data
- * @param upstreamSites nldi upstream sites geojson data
- * @param downstreamSites nldi downstream site geojson data
- */
-export const addNldiLayers = function(map, upstreamFlows, downstreamFlows, upstreamSites, downstreamSites,
-                                      upstreamBasin) {
-    const geojsonMarkerOptions = {
-        radius: 6,
-        fillColor: markerFillColor,
-        color: '#000',
-        weight: 1,
-        opacity: 1,
-        fillOpacity: markerFillOpacity
-    };
-
+ * @param upstreamBasin geojson data
+ * */
+export const addNldiLayers = function(map, upstreamFlows, downstreamFlows, upstreamBasin) {
     const downstreamLineStyle = {
         'color': downStreamColor,
         'weight': 5,
@@ -51,19 +40,14 @@ export const addNldiLayers = function(map, upstreamFlows, downstreamFlows, upstr
     };
 
     const onEachPointFeatureAddPopUp = function(feature, layer) {
-        const popupText = `Monitoring Location: <a href="${feature.properties.uri}">${feature.properties.name}</a>
-            <br>ID: ${feature.properties.identifier}`;
+        const url = feature.properties.monitoringLocationUrl;
+        const name = feature.properties.monitoringLocationName;
+        const id = feature.properties.monitoringLocationNumber;
+        const popupText = `Monitoring Location: <a href="${url}">${name}</a>
+            <br>ID: ${id}`;
         layer.bindPopup(popupText);
     };
 
-    const getPointDataLayer = function(data, markerOptions) {
-        return L.geoJson(data, {
-            onEachFeature: onEachPointFeatureAddPopUp,
-            pointToLayer: function(feature, latlng) {
-                return L.circleMarker(latlng, markerOptions);
-            }
-        });
-    };
 
     const getLineDataLayer = function(data, style) {
         return L.geoJson(data, {
@@ -81,10 +65,6 @@ export const addNldiLayers = function(map, upstreamFlows, downstreamFlows, upstr
         return getLineDataLayer(nldiData, style);
     };
 
-    const fetchNldiPointsLayer = function(nldiData, style) {
-        return getPointDataLayer(nldiData, style);
-    };
-
     const fetchNldiUpstreamBasin = function(nldiData, style) {
         return getPolygonLayer(nldiData, style);
     };
@@ -92,6 +72,4 @@ export const addNldiLayers = function(map, upstreamFlows, downstreamFlows, upstr
     map.addLayer(fetchNldiUpstreamBasin(upstreamBasin, basinStyle));
     map.addLayer(fetchNldiLinesLayer(upstreamFlows, upstreamLineStyle));
     map.addLayer(fetchNldiLinesLayer(downstreamFlows, downstreamLineStyle));
-    map.addLayer(fetchNldiPointsLayer(upstreamSites, geojsonMarkerOptions));
-    map.addLayer(fetchNldiPointsLayer(downstreamSites, geojsonMarkerOptions));
 };

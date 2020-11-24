@@ -32,7 +32,7 @@ const fetchObservationsData = function(queryUrl, parameters={}) {
  */
 export const fetchNetworkMonitoringLocations = function(networkCd, queryParameters={}) {
     return fetchObservationsData(`collections/${networkCd}/items`, queryParameters)
-       .then((response) => response.features ? response.features : []) ;
+       .then((response) => response.features ? response.features : []);
 };
 
 
