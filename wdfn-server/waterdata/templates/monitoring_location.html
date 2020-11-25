@@ -134,15 +134,17 @@
                 </div>
                 {% if request.user_agent.browser == 'msie' %}
                     <div id="static-graph-div"></div>
-                    <div>
-                        <p>
-                            <span class="usa-tag">Important</span>
-                            The internet browser you are using cannot display this graph to its full potential.
-                        </p>
-                        <p>
-                            Please consider downloading a more modern browser and returning to this page for a better
-                            user experience.
-                        </p>
+                    <div class="usa-alert usa-alert--warning">
+                        <div class="usa-alert__body">
+                            <h3 class="usa-alert__heading">Important</h3>
+                            <p class="usa-alert__text">
+                                The internet browser you are using cannot display this graph to its full potential.
+                            </p>
+                            <p class="usa-alert__text">
+                                Please consider downloading a more modern browser and returning to this page for a better
+                                user experience.
+                            </p>
+                        </div>
                     </div>
                 {% endif %}
                 {% if request.user_agent.browser != 'msie' %}
