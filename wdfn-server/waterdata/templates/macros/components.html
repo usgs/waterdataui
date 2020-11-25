@@ -18,11 +18,13 @@
             <div id="iv-graph-data-download-container" class="usa-accordion__content usa-prose">
                 <p>
                     These links download data from the
-                    <a class="usa-link" href="https://waterservices.usgs.gov/">
+                    <a class="usa-link" href="{{ config.SERVICE_ROOT }}"
+                       target="_blank" rel="noopener">
                         USGS Water Data Services
                     </a>
                     in the
-                    <a class="usa-link" href="https://waterdata.usgs.gov/nwis/?tab_delimited_format_info">
+                    <a class="usa-link" href="{{ config.RDB_FORMAT_INFORMATION }}"
+                       target="_blank" rel="noopener">
                         RDB format
                     </a>
                     .
@@ -30,7 +32,8 @@
                 <div id="iv-graph-list-container"></div>
                 <p>
                     If you are an R user, use the
-                        <a class="usa-link" href="https://usgs-r.github.io/dataRetrieval/">
+                        <a class="usa-link" href="{{ config.DATA_RETRIEVAL_PACKAGE_INFORMATION }}"
+                           target="_blank" rel="noopener">
                             USGS dataRetrieval Package
                         </a>
                     to download, analyze, and plot your data.
