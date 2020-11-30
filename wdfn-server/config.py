@@ -64,6 +64,10 @@ TNM_USGS_IMAGERY_ONLY_ENDPOINT = 'https://basemap.nationalmap.gov/arcgis/rest/se
 TNM_USGS_IMAGERY_TOPO_ENDPOINT = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer'
 TNM_HYDRO_ENDPOINT = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSHydroCached/MapServer'
 
+# Download Data related Links
+RDB_FORMAT_INFORMATION = 'https://waterdata.usgs.gov/nwis/?tab_delimited_format_info'
+DATA_RETRIEVAL_PACKAGE_INFORMATION = 'https://usgs-r.github.io/dataRetrieval/'
+
 TOUCHPOINT_SCRIPT = ''
 LOGGING_ENABLED = True
 LOGGING_DIRECTORY = None

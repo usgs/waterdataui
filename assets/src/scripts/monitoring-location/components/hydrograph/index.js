@@ -166,7 +166,7 @@ export const attachToNode = function(store,
                 nodeElem.select('.ts-legend-controls-container')
                     .call(drawGraphControls, store);
 
-                nodeElem.select('#iv-graph-data-download-container')
+                nodeElem.select('#iv-graph-list-container')
                     .call(renderDownloadLinks, store, siteno);
 
                 nodeElem.select('#iv-data-table-container')

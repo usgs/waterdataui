@@ -15,7 +15,30 @@
                     Download this graph's data
                 </button>
             </h2>
-            <div id="iv-graph-data-download-container" class="usa-accordion__content usa-prose"></div>
+            <div id="iv-graph-data-download-container" class="usa-accordion__content usa-prose">
+                <p>
+                    These links download data from the
+                    <a class="usa-link" href="{{ config.SERVICE_ROOT }}"
+                       target="_blank" rel="noopener">
+                        USGS Water Data Services
+                    </a>
+                    in the
+                    <a class="usa-link" href="{{ config.RDB_FORMAT_INFORMATION }}"
+                       target="_blank" rel="noopener">
+                        RDB format
+                    </a>
+                    .
+                </p>
+                <div id="iv-graph-list-container"></div>
+                <p>
+                    If you are an R user, use the
+                        <a class="usa-link" href="{{ config.DATA_RETRIEVAL_PACKAGE_INFORMATION }}"
+                           target="_blank" rel="noopener">
+                            USGS dataRetrieval Package
+                        </a>
+                    to download, analyze, and plot your data.
+                </p>
+            </div>
         </div>
         <div class="graph-data usa-accordion">
             <h2 class="usa-accordion__heading">
