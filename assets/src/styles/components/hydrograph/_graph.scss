@@ -31,7 +31,7 @@ svg {
 
   .focus-line {
     opacity: .5;
-    stroke: color('black');
+    stroke: black;
     stroke-width: 1px;
     stroke-dasharray: 5, 5;
   }
@@ -134,7 +134,7 @@ svg {
 
     &.median-step-0 {
       fill: none;
-      stroke: black;
+      stroke: color('black');
       stroke-width: 2px;
     }
 
