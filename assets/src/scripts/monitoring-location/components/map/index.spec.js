@@ -177,9 +177,7 @@ describe('monitoring-location/components/map module', () => {
         it('Should create a leaf-control-layers class', () => {
             expect(select(mapNode).selectAll('.leaflet-control-layers').size()).toBe(1);
         });
-
     });
-
 
     describe('Map creation with NLDI information', () => {
         beforeEach(() => {

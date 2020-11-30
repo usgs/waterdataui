@@ -43,7 +43,7 @@ export const drawMonitoringLocationMarkerLegend = function(legendListContainer) 
  * Draws a circle marker legend within legencListContainer with color, opacity, and label
  * @param {D3 selection} legendlistContainer
  * @param {String} color
- * @param {String} opacity
+ * @param {Number} opacity
  * @param {String} label
  */
 export const drawCircleMarkerLegend = function(legendListContainer, color, opacity, label) {

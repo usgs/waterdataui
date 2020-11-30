@@ -1,6 +1,6 @@
 import {select} from 'd3-selection';
 
-import {drawFIMLegend} from './legend';
+import {drawMonitoringLocationMarkerLegend, drawCircleMarkerLegend, drawFIMLegend} from './legend';
 
 
 describe('monitoring-location/components/map/legend module', () => {
@@ -14,6 +14,27 @@ describe('monitoring-location/components/map/legend module', () => {
     afterEach(() => {
         listContainer.remove();
         jasmine.Ajax.uninstall();
+    });
+
+    describe('drawMonitoringLocationMarkerLegend', () => {
+        it('Draws an marker image', () => {
+            drawMonitoringLocationMarkerLegend(listContainer);
+
+            expect(listContainer.select('#site-legend-list').size()).toBe(1);
+            expect(listContainer.select('img').size()).toBe(1);
+        });
+    });
+
+    describe('drawCircleMarkerLegend', () => {
+        it('Draws a circle marker legend', () => {
+            drawCircleMarkerLegend(listContainer, 'red', 0.5, 'My circle marker');
+
+            let circleSpan = listContainer.select('.fa-circle');
+            expect(circleSpan.size()).toBe(1);
+            expect(circleSpan.style('color')).toEqual('red');
+            expect(circleSpan.style('opacity')).toEqual('0.5');
+            expect(listContainer.select('span:nth-child(2)').text()).toEqual('My circle marker');
+        });
     });
 
     describe('drawFIMLegend', () => {
