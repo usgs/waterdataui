@@ -3,6 +3,7 @@ import {utcFormat} from 'd3-time-format';
 import {get} from 'ui/ajax';
 import config from 'ui/config';
 
+
 // Define Water Services root URL - use global variable if defined, otherwise
 // use production.
 const SERVICE_ROOT = config.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
@@ -64,13 +65,15 @@ export const getTimeSeries = function({sites, params=null, startDate=null, endDa
         });
 };
 
-export const getPreviousYearTimeSeries = function({site, startTime, endTime}) {
+export const getPreviousYearTimeSeries = function({site, startTime, endTime, parameterCode}) {
+    parameterCode = parameterCode ? [parameterCode] : null;
+
     let lastYearStartTime = new Date(startTime);
     let lastYearEndTime = new Date(endTime);
 
     lastYearStartTime.setFullYear(lastYearStartTime.getFullYear() - 1);
     lastYearEndTime.setFullYear(lastYearEndTime.getFullYear() - 1);
-    return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime});
+    return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime, params: parameterCode});
 };
 
 export const queryWeatherService = function(latitude, longitude) {

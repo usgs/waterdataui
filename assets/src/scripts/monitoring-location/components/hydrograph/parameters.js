@@ -1,3 +1,6 @@
+// Required to initialize USWDS components after page load (WaterAlert ToolTips)
+import components from 'uswds/src/js/components';
+
 import {line} from 'd3-shape';
 import {select} from 'd3-selection';
 
@@ -104,6 +107,7 @@ export const plotSeriesSelectTable = function(elem,
         return;
     }
 
+
     const columnHeaders = ['   ', 'Parameter', 'Preview', '#', 'Period of Record', 'WaterAlert'];
     const tableContainer = elem.append('div')
         .attr('id', 'select-time-series');
@@ -171,13 +175,39 @@ export const plotSeriesSelectTable = function(elem,
                 .style('white-space', 'nowrap')
                 .text(param => `${config.uvPeriodOfRecord[param.parameterCode].begin_date} to ${config.uvPeriodOfRecord[param.parameterCode].end_date}`);
             tr.append('td')
-                .append('a')
-                    .attr('href', param => `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${param.parameterCode}`)
-                    .attr('data-position', 'left')
-                    .attr('data-classes', 'width-full tablet:width-auto')
-                    .attr('title', 'Subscribe to text or email alerts based on thresholds that you set')
-                    .text('Subscribe');
+                .append('div')
+                .attr('class', 'wateralert-link');
         });
+
+    // WaterAlert does not support every parameter code, so lets take that into account when adding the links
+    table.selectAll('.wateralert-link').each(function(d) {
+        const acceptableWaterAlertParameterCodes = ['00060', '00055', '72321', '00062', '00065', '62610', '62614',
+            '62615', '62616','62617', '62619', '62620', '63160', '72020','00095', '62611', '72019', '72020',
+            '72147', '72150', '72192', '72322', '72255','72279', '00010', '00011', '00095', '00300', '00400',
+            '00480', '63680', '72213', '99133','31720', '31721', '31722', '31723', '31724', '31725', '31726',
+            '31727', '31728', '31729','32319','32321', '00045', '99064', '99067'];
+
+        let selection = select(this);
+
+        if (acceptableWaterAlertParameterCodes.includes(d.parameterCode)) {
+            selection.append('a')
+                .attr('href', `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${d.parameterCode}`)
+                .attr('class', 'usa-tooltip usa-link wateralert-available')
+                .attr('data-position', 'left')
+                .attr('data-classes', 'width-full tablet:width-auto')
+                .attr('title', 'Subscribe to text or email alerts based on thresholds that you set')
+                .text('Subscribe');
+        } else {
+            selection.attr('class', 'usa-tooltip wateralert-unavailable')
+                .attr('data-position', 'left')
+                .attr('data-classes', 'width-full tablet:width-auto')
+                .attr('title', `Sorry, there are no WaterAlerts for this parameter (${d.parameterCode})`)
+                .text('N/A');
+        }
+    });
+
+    // Activate the USWDS toolTips for WaterAlert subscriptions
+    components.tooltip.init(elem.node());
 
     table.property('scrollTop', scrollTop);
 

@@ -1,6 +1,6 @@
 import {
     isVisible, getYLabel, getTitle,
-    getDescription, getTsTimeZone, getSecondaryYLabel} from './time-series-data';
+    getDescription, getTsTimeZone, getSecondaryYLabel, getQueryInformation} from './time-series-data';
 
 
 const TEST_DATA = {
@@ -332,6 +332,39 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
                 ianaTimeZone: 'America/New_York'
             });
             expect(result).toEqual('America/New_York');
+        });
+    });
+
+    describe('getQueryInformation', () => {
+        it('Returns the stored query information', () => {
+            const result = getQueryInformation(TEST_DATA);
+            const expectedObject = {
+                'current:P7D': {
+                    notes: {
+                        requestDT: 1483994767572,
+                        'filter:timeRange': {
+                            mode: 'PERIOD',
+                            periodDays: 7,
+                            modifiedSince: null
+                        }
+                    }
+                },
+                'current:P30D:00060': {
+                    notes: {
+                        requestDT: 1483994767572,
+                        'filter:timeRange': {
+                            mode: 'RANGE',
+                            interval: {
+                                start: 1483941600000,
+                                end: 1486533600000
+                            },
+                            modifiedSince: null
+                        }
+                    }
+                }
+            };
+
+            expect(result).toEqual(expectedObject);
         });
     });
 });

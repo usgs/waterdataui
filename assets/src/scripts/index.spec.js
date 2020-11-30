@@ -54,6 +54,7 @@ import 'ivhydrograph/selectors/time-series-data.spec';
 import 'ivhydrograph/audible.spec';
 import 'ivhydrograph/date-controls.spec';
 import 'ivhydrograph/data-table.spec';
+import 'ivhydrograph/download-links.spec';
 import 'ivhydrograph/graph-brush.spec';
 import 'ivhydrograph/graph-controls.spec';
 import 'ivhydrograph/hydrograph-utils.spec';
