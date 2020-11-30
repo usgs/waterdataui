@@ -1,12 +1,31 @@
+import {select} from 'd3-selection';
 
-export const markerFillColor = '#ff7800';
-export const markerFillOpacity = 0.8;
-export const downStreamColor = '#41b6c4';
-export const upstreamColor = '#253494';
-export const flowLineOpacity = 0.65;
-export const basinColor = '#c0c1c2';
-export const basinFillColor = '#d9d9d9';
-export const basinFillOpacity = .5;
+const DOWNSTREAM_COLOR = '#41b6c4';
+const UPSTREAM_COLOR = '#253494';
+const FLOWLINE_OPACITY = 0.65;
+const BASIN_COLOR = '#c0c1c2';
+const BASIN_FILL_COLOR = '#d9d9d9';
+const BASIN_FILL_OPACITY = .5;
+
+const DOWNSTREAM_LINE_STYLE = {
+        'color': DOWNSTREAM_COLOR,
+        'weight': 5,
+        'opacity': FLOWLINE_OPACITY
+    };
+
+    const UPSTREAM_LINE_STYLE = {
+        'color': UPSTREAM_COLOR,
+        'weight': 5,
+        'opacity':FLOWLINE_OPACITY
+    };
+
+    const BASIN_STYLE = {
+        'color': BASIN_COLOR,
+        'fill': true,
+        'fillFolor': BASIN_FILL_COLOR,
+        'fillOpacity': BASIN_FILL_OPACITY
+    };
+
 
 /**
  * Add NLDI layer overlays to a leaflet map. An overlay is added for the flowlines
@@ -20,34 +39,6 @@ export const basinFillOpacity = .5;
  * @param upstreamBasin geojson data
  * */
 export const addNldiLayers = function(map, upstreamFlows, downstreamFlows, upstreamBasin) {
-    const downstreamLineStyle = {
-        'color': downStreamColor,
-        'weight': 5,
-        'opacity': flowLineOpacity
-    };
-
-    const upstreamLineStyle = {
-        'color': upstreamColor,
-        'weight': 5,
-        'opacity':flowLineOpacity
-    };
-
-    const basinStyle = {
-        'color': basinColor,
-        'fill': true,
-        'fillFolor': basinFillColor,
-        'fillOpacity': basinFillOpacity
-    };
-
-    const onEachPointFeatureAddPopUp = function(feature, layer) {
-        const url = feature.properties.monitoringLocationUrl;
-        const name = feature.properties.monitoringLocationName;
-        const id = feature.properties.monitoringLocationNumber;
-        const popupText = `Monitoring Location: <a href="${url}">${name}</a>
-            <br>ID: ${id}`;
-        layer.bindPopup(popupText);
-    };
-
 
     const getLineDataLayer = function(data, style) {
         return L.geoJson(data, {
@@ -61,15 +52,38 @@ export const addNldiLayers = function(map, upstreamFlows, downstreamFlows, upstr
       });
     };
 
-    const fetchNldiLinesLayer = function(nldiData, style) {
+    const getNldiLinesLayer = function(nldiData, style) {
         return getLineDataLayer(nldiData, style);
     };
 
-    const fetchNldiUpstreamBasin = function(nldiData, style) {
+    const getNldiUpstreamBasinLayer = function(nldiData, style) {
         return getPolygonLayer(nldiData, style);
     };
 
-    map.addLayer(fetchNldiUpstreamBasin(upstreamBasin, basinStyle));
-    map.addLayer(fetchNldiLinesLayer(upstreamFlows, upstreamLineStyle));
-    map.addLayer(fetchNldiLinesLayer(downstreamFlows, downstreamLineStyle));
+    map.addLayer(getNldiUpstreamBasinLayer(upstreamBasin, BASIN_STYLE));
+    map.addLayer(getNldiLinesLayer(upstreamFlows, UPSTREAM_LINE_STYLE));
+    map.addLayer(getNldiLinesLayer(downstreamFlows, DOWNSTREAM_LINE_STYLE));
 };
+
+export const drawNldiLegend = function(legendListContainer, isNldiAvailable) {
+    if (isNldiAvailable) {
+        const nldiLegendList = legendListContainer.append('ul')
+                    .attr('id', 'nldi-legend-list')
+                    .attr('class', 'usa-list--unstyled');
+
+        const nldiUpstream = nldiLegendList.append('li');
+        nldiUpstream.append('span').attr('style', `background: ${UPSTREAM_COLOR}; width: 16px; height: 16px; float: left; opacity: ${FLOWLINE_OPACITY}; margin-right: 2px;`);
+        nldiUpstream.append('span').text('Upstream Flowline');
+
+        const nldiDownstream = nldiLegendList.append('li');
+        nldiDownstream.append('span').attr('style', `background: ${DOWNSTREAM_COLOR}; width: 16px; height: 16px; float: left; opacity: ${FLOWLINE_OPACITY}; margin-right: 2px;`);
+        nldiDownstream.append('span').text('Downstream Flowline');
+
+        const nldiBasin = nldiLegendList.append('li');
+        nldiBasin.append('span').attr('style', `background: ${BASIN_FILL_COLOR}; width: 16px; height: 16px; float: left; opacity: ${BASIN_FILL_OPACITY}; margin-right: 2px;`);
+        nldiBasin.append('span').text('Upstream Basin');
+    } else {
+        select(legendListContatine.select('#nldi-legend-list').remove();
+    }
+};
+

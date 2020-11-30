@@ -3,8 +3,6 @@ import config from 'ui/config';
 
 export const FLOOD_SITES_ENDPOINT = `${config.FIM_GIS_ENDPOINT}sites/MapServer/`;
 export const FLOOD_EXTENTS_ENDPOINT = `${config.FIM_GIS_ENDPOINT}floodExtents/MapServer/`;
-export const FLOOD_BREACH_ENDPOINT = `${config.FIM_GIS_ENDPOINT}breach/MapServer/`;
-export const FLOOD_LEVEE_ENDPOINT = `${config.FIM_GIS_ENDPOINT}suppLyrs/MapServer/`;
 
 const WATERWATCH_URL = config.WATERWATCH_ENDPOINT;
 const FORMAT = 'json';
@@ -59,6 +57,38 @@ export const fetchFloodExtent = function(siteno) {
         .catch(reason => {
             console.log(`Unable to get FIM extents for ${siteno} with reason: ${reason}`);
             return {};
+        });
+};
+
+/*
+ * Fetch an image and name for the FIM layerName
+ * @param {String} layerName - should be a valid FIM layer
+ * @param {String} defaultName - will be used as the legend name if none is provided in the fetched data.
+ * @return {Promise} which resolves to an {Array} of {Object} with properties
+ *      @prop {String} url to am image for a legend
+ *      @prop {String} name to use for the legend image
+ */
+export const fetchFIMLayerLegend = function(layerName, defaultName) {
+    return get(`${config.FIM_GIS_ENDPOINT}${layerName}/MapServer/legend?f=json`)
+        .then((responseText) => {
+            const resp = JSON.parse(responseText);
+            if (resp.error) {
+                console.error(resp.error.message);
+                return [];
+            }
+            return resp.layers.map((layer) => {
+                const legendImages = layer.legend.map((legend) => {
+                    return {
+                        imageData: legend.imageData,
+                        name: layer.layerName && layer.layerName !== '.' ? layer.layerName : defaultName
+                    };
+                });
+                return [].concat(...legendImages);
+            });
+        })
+        .catch(reason => {
+            console.error(reason);
+            return [];
         });
 };
 

@@ -17,25 +17,51 @@ import {Actions as floodInundationActions} from 'ml/store/flood-inundation';
 
 import {floodSlider} from './flood-slider';
 import {createFIMLegend, createNldiLegend} from './legend';
-import {addNldiLayers, markerFillColor, markerFillOpacity} from './nldi-mapping';
+import {addNldiLayers} from './nldi-mapping';
 
+const ACTIVE_SITE_COLOR = 'red';
+const ACTIVE_SITE_OPACITY = .5;
+const geojsonMarkerOptions = {
+    radius: 6,
+    fillColor: ACTIVE_SITE_COLOR,
+    color: '#000',
+    weight: 1,
+    opacity: 1,
+    fillOpacity: ACTIVE_SITE_OPACITY
+};
 
+const getESRIFloodLayers = function(layerType) {
+    return `${config.FIM_GIS_ENDPOINT}${layerType}/MapServer/`;
+};
 const getLayerDefs = function(layerNo, siteno, stage) {
    const stageQuery = stage ? ` AND STAGE = ${stage}` : '';
    return `${layerNo}: USGSID = '${siteno}'${stageQuery}`;
 };
 
-const geojsonMarkerOptions = {
-        radius: 6,
-        fillColor: markerFillColor,
-        color: '#000',
-        weight: 1,
-        opacity: 1,
-        fillOpacity: markerFillOpacity
-    };
+const getActiveMonitoringLocationsLayer = function(locations, markerOptions) {
+    return L.geoJson(locations, {
+        pointToLayer: function(feature, latlng) {
+            return L.circleMarker(latlng, markerOptions);
+        },
+        onEachFeature: function(feature, layer) {
+            const url = feature.properties.monitoringLocationUrl;
+            const name = feature.properties.monitoringLocationName;
+            const id = feature.properties.monitoringLocationNumber;
+            const popupText = `Monitoring Location: <a href="${url}">${name}</a>
+                    <br>ID: ${id}`;
+            layer.bindPopup(popupText);
+        }
+    });
+};
 
-
-
+const drawActiveMonitoringLocationsLegend = function(legendListContainer) {
+    const activeMLContainer = legendListContainer.append('li');
+    activeMLContainer.append('span')
+        .attr('style',
+            `color: ${ACTIVE_SITE_COLOR}; width: 16px; height: 16px; float: left; \
+            opacity: ${ACTIVE_SITE_OPACITY}; margin-right: 2px;`)
+        .attr('class', 'fas fa-circle');
+};
 
 /*
  * Creates a site map
@@ -63,27 +89,33 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
 
     const mlLegendControl = legendControl();
     mlLegendControl.addTo(map);
+    mlLegendControl.compressLegendOnSmallDevices();
+    select(mlLegendControl.getContainer()).select('.legend-list-container')
+        .call(drawLegend, store);
 
     const floodLayer = L.esri.dynamicMapLayer({
-        url: FLOOD_EXTENTS_ENDPOINT,
+        url: getESRIFloodLayers('floodExtents'),
         layers: [0],
         f: 'image',
         format: 'png8'
     });
     const breachLayer = L.esri.dynamicMapLayer({
-        url: FLOOD_BREACH_ENDPOINT,
+        url: getESRIFloodLayers('breach'),
         layers: [0],
         f: 'image',
         format: 'png8'
     });
     const leveeLayer = L.esri.dynamicMapLayer({
-        url: FLOOD_LEVEE_ENDPOINT,
+        url: getESRIFloodLayers('levee'),
         layers: [0, 1],
         f: 'image',
         format: 'png8',
         layerDefs: `${getLayerDefs(0, siteno)};${getLayerDefs(1, siteno)}`
     });
 
+    /*
+     * Function to link to redux store to update the flood layers when flood data changes
+     */
     const updateFloodLayers = function(node, {hasFloodData, floodStageHeight}) {
         if (floodStageHeight) {
             const layerDefs = getLayerDefs(0, siteno, floodStageHeight);
@@ -106,11 +138,16 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         }
     };
 
+    /*
+     * Function to link to Redux store when NLDI data changes
+     */
     const updateNldiLayers = function(node, {upstreamFlows, downstreamFlows, upstreamBasin}) {
         addNldiLayers(map, upstreamFlows, downstreamFlows, upstreamBasin);
     };
 
-
+    /*
+     * Function to link to Redux store to set the map extent when flood data is retrieved
+     */
     const updateMapExtent = function(node, extent) {
         if (Object.keys(extent).length > 0) {
             map.fitBounds(L.esri.Util.extentToBounds(extent).extend([latitude, longitude]));
@@ -118,15 +155,10 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
     };
 
     /*
-     * Creates the FIM legend if FIM data is available, otherwise removes the FIM legend if it exists.
-     * @param {HTMLElement} node - element where the map is rendered
-     * @param {Boolean} isFIMAvailable
+     * Function to add the link to the Flood data information if flood data is available
      */
-    const addFIMLegend = function(node, hasFloodData) {
-        createFIMLegend(mlLegendControl, hasFloodData);
-    };
-
     const addFimLink = function(node, hasFloodData) {
+        node.select('#fim-link').remove();
         if (hasFloodData) {
             node.append('a')
                 .attr('id', 'fim-link')
@@ -135,8 +167,6 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
                 .attr('target', '_blank')
                 .attr('rel', 'noopener')
                 .text('Provisional Flood Information');
-        } else {
-            node.select('#fim-link').remove();
         }
     };
 
@@ -148,36 +178,12 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         };
         activeSitesLayer.clearLayers();
         fetchNetworkMonitoringLocations('RTN', queryParams).then((rtnLocations) => {
-            const locationsToDraw = rtnLocations.filter((feature) => feature.monitoringLocationNumber !== `USGS-${siteno}`)
-            activeSitesLayer.addLayer(L.geoJson(locationsToDraw, {
-                pointToLayer: function(feature, latlng) {
-                    return L.circleMarker(latlng, geojsonMarkerOptions);
-                },
-                onEachFeature: function(feature, layer) {
-                    const url = feature.properties.monitoringLocationUrl;
-                    const name = feature.properties.monitoringLocationName;
-                    const id = feature.properties.monitoringLocationNumber;
-                    const popupText = `Monitoring Location: <a href="${url}">${name}</a>
-                            <br>ID: ${id}`;
-                    layer.bindPopup(popupText);
-                }
-            }));
+            const locationsToDraw = rtnLocations.filter((feature) => feature.properties.monitoringLocationNumber !== siteno);
+            activeSitesLayer.addLayer(getActiveMonitoringLocationsLayer(locationsToDraw, geojsonMarkerOptions));
         });
         fetchNetworkMonitoringLocations('RTS', queryParams).then((rtsLocations) => {
-            const locationsToDraw = rtsLocations.filter((feature) => feature.monitoringLocationNumber !== `USGS-${siteno}`);
-            activeSitesLayer.addLayer(L.geoJson(locationsToDraw, {
-                pointToLayer: function(feature, latlng) {
-                    return L.circleMarker(latlng, geojsonMarkerOptions);
-                },
-                onEachFeature: function(feature, layer) {
-                    const url = feature.properties.monitoringLocationUrl;
-                    const name = feature.properties.monitoringLocationName;
-                    const id = feature.properties.monitoringLocationNumber;
-                    const popupText = `Monitoring Location: <a href="${url}">${name}</a>
-                        <br>ID: ${id}`;
-                    layer.bindPopup(popupText);
-                }
-            }));
+            const locationsToDraw = rtsLocations.filter((feature) => feature.properties.monitoringLocationNumber !== siteno);
+            activeSitesLayer.addLayer(getActiveMonitoringLocationsLayer(locationsToDraw, geojsonMarkerOptions));
         });
     };
 
@@ -191,6 +197,10 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
 
     // Add a marker at the site location
     L.marker([latitude, longitude]).addTo(map);
+
+
+    addMonitoringLocationMarker(legendListContainer)
+
 
     /*
      * Creates the NLDI legend if NLDI data is available, otherwise removes the NLDI legend if it exists.
@@ -207,7 +217,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
             floodStageHeight: getFloodStageHeight
         })))
         .call(link(store, updateMapExtent, getFloodExtent))
-        .call(link(store, addFIMLegend, hasFloodData))
+        .call(link(store, createFIMLegend, hasFloodData))
         .call(link(store, addFimLink, hasFloodData))
         .call(link(store, addNldiLegend, hasNldiData))
         .call(link(store, updateNldiLayers, createStructuredSelector({
@@ -215,6 +225,9 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
             downstreamFlows: getNldiDownstreamFlows,
             upstreamBasin: getNldiUpstreamBasin
         })));
+
+        legendListContainer.call(link(store, drawNldiLegend, hasNldiData))
+            .call(link(store, drawFIMLegend, hasFloodData));
 };
 
 /*
