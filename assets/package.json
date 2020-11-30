@@ -102,7 +102,7 @@
     "fast-memoize": "2.5.2",
     "leaflet": "1.7.1",
     "leaflet.markercluster": "1.4.1",
-    "list.js": "1.5.0",
+    "list.js": "2.3.0",
     "lodash": "4.17.20",
     "luxon": "1.25.0",
     "matchmedia-polyfill": "0.3.2",
