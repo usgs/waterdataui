@@ -86,7 +86,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.15.1",
     "autotrack": "2.4.1",
-    "core-js": "3.7.0",
+    "core-js": "3.8.0",
     "d3-array": "2.8.0",
     "d3-axis": "2.0.0",
     "d3-brush": "2.1.0",
