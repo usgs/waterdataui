@@ -241,74 +241,6 @@ describe('monitoring-location/components/map module', () => {
                             }
                         }
                     ],
-                    upstreamSites: [
-                        {
-                            type: 'Feature',
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [-87.4195, 39.465722]
-                            },
-                            properties: {
-                                source: 'nwissite',
-                                sourceName: 'NWIS Sites',
-                                identifier: 'USGS-03341500',
-                                name: 'WABASH RIVER AT TERRE HAUTE, IN',
-                                uri: 'https://waterdata.usgs.gov/nwis/inventory?agency_code=USGS&site_no=03341500',
-                                comid: '10286212',
-                                navigation: 'https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-03341500/navigate'
-                            }
-                        },
-                        {
-                            type: 'Feature',
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [-87.568634, 39.02032]
-                            },
-                            properties: {
-                                source: 'nwissite',
-                                sourceName: 'NWIS Sites',
-                                identifier: 'USGS-03342000',
-                                name: 'WABASH RIVER AT RIVERTON, IN',
-                                uri: 'https://waterdata.usgs.gov/nwis/inventory?agency_code=USGS&site_no=03342000',
-                                comid: '10288896',
-                                navigation: 'https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-03342000/navigate'
-                            }
-                        }
-                    ],
-                    downstreamSites: [
-                        {
-                            type: 'Feature',
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [-85.489778, 40.85325]
-                            },
-                            properties: {
-                                source: 'nwissite',
-                                sourceName: 'NWIS Sites',
-                                identifier: 'USGS-03323500',
-                                name: 'WABASH RIVER AT HUNTINGTON, IN',
-                                uri: 'https://waterdata.usgs.gov/nwis/inventory?agency_code=USGS&site_no=03323500',
-                                comid: '18508614',
-                                navigation: 'https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-03323500/navigate'
-                            }
-                        },
-                        {
-                            type: 'Feature',
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [-85.820263, 40.790877]
-                            },
-                            properties: {
-                                source: 'nwissite',
-                                sourceName: 'NWIS Sites',
-                                identifier: 'USGS-03325000',
-                                name: 'WABASH RIVER AT WABASH, IN',
-                                uri: 'https://waterdata.usgs.gov/nwis/inventory?agency_code=USGS&site_no=03325000',
-                                comid: '18508640',
-                                navigation: 'https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-03325000/navigate'
-                            }
-                        }
-                    ],
                     upstreamBasin: []
                 }
             });
@@ -322,7 +254,7 @@ describe('monitoring-location/components/map module', () => {
 
         it('Should create NLDI layers', () => {
             expect(select(mapNode).selectAll('.leaflet-overlay-pane svg g').size()).toBe(1);
-            expect(select(mapNode).selectAll('.leaflet-overlay-pane svg g path').size()).toBe(8);
+            expect(select(mapNode).selectAll('.leaflet-overlay-pane svg g path').size()).toBe(4);
         });
 
         it('Should create a NLDI Legend', () => {
