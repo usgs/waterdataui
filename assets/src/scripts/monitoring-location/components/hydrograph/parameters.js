@@ -207,7 +207,7 @@ export const plotSeriesSelectTable = function(elem,
     });
 
     // Activate the USWDS toolTips for WaterAlert subscriptions
-    components.tooltip.init(elem.node());
+    components.tooltip.on(elem.node());
 
     table.property('scrollTop', scrollTop);
 
