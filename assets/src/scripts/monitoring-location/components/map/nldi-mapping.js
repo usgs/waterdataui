@@ -1,4 +1,3 @@
-import {select} from 'd3-selection';
 
 const DOWNSTREAM_COLOR = '#41b6c4';
 const UPSTREAM_COLOR = '#253494';
@@ -83,7 +82,7 @@ export const drawNldiLegend = function(legendListContainer, isNldiAvailable) {
         nldiBasin.append('span').attr('style', `background: ${BASIN_FILL_COLOR}; width: 16px; height: 16px; float: left; opacity: ${BASIN_FILL_OPACITY}; margin-right: 2px;`);
         nldiBasin.append('span').text('Upstream Basin');
     } else {
-        select(legendListContatine.select('#nldi-legend-list').remove();
+        legendListContainer.select('#nldi-legend-list').remove();
     }
 };
 

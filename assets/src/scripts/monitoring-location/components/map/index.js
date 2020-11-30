@@ -6,7 +6,6 @@ import {createMap, createBaseLayer} from 'ui/leaflet-rendering/map';
 import {legendControl} from 'ui/leaflet-rendering/legend-control';
 import {link} from 'ui/lib/d3-redux';
 
-import {FLOOD_EXTENTS_ENDPOINT, FLOOD_BREACH_ENDPOINT, FLOOD_LEVEE_ENDPOINT} from 'ui/web-services/flood-data';
 import {fetchNetworkMonitoringLocations} from 'ui/web-services/observations';
 
 import {hasFloodData, getFloodExtent, getFloodStageHeight} from 'ml/selectors/flood-data-selector';
@@ -16,11 +15,11 @@ import {Actions as nldiDataActions} from 'ml/store/nldi-data';
 import {Actions as floodInundationActions} from 'ml/store/flood-inundation';
 
 import {floodSlider} from './flood-slider';
-import {createFIMLegend, createNldiLegend} from './legend';
-import {addNldiLayers} from './nldi-mapping';
+import {drawCircleMarkerLegend, drawFIMLegend, drawMonitoringLocationMarkerLegend} from './legend';
+import {addNldiLayers, drawNldiLegend} from './nldi-mapping';
 
 const ACTIVE_SITE_COLOR = 'red';
-const ACTIVE_SITE_OPACITY = .5;
+const ACTIVE_SITE_OPACITY = .8;
 const geojsonMarkerOptions = {
     radius: 6,
     fillColor: ACTIVE_SITE_COLOR,
@@ -54,15 +53,6 @@ const getActiveMonitoringLocationsLayer = function(locations, markerOptions) {
     });
 };
 
-const drawActiveMonitoringLocationsLegend = function(legendListContainer) {
-    const activeMLContainer = legendListContainer.append('li');
-    activeMLContainer.append('span')
-        .attr('style',
-            `color: ${ACTIVE_SITE_COLOR}; width: 16px; height: 16px; float: left; \
-            opacity: ${ACTIVE_SITE_OPACITY}; margin-right: 2px;`)
-        .attr('class', 'fas fa-circle');
-};
-
 /*
  * Creates a site map
  */
@@ -86,12 +76,6 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
 
     //add layer control
     L.control.layers(baseMapLayers,overlayLayers).addTo(map);
-
-    const mlLegendControl = legendControl();
-    mlLegendControl.addTo(map);
-    mlLegendControl.compressLegendOnSmallDevices();
-    select(mlLegendControl.getContainer()).select('.legend-list-container')
-        .call(drawLegend, store);
 
     const floodLayer = L.esri.dynamicMapLayer({
         url: getESRIFloodLayers('floodExtents'),
@@ -198,18 +182,17 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
     // Add a marker at the site location
     L.marker([latitude, longitude]).addTo(map);
 
+    // add legend and legend elements
+    const mlLegendControl = legendControl();
+    mlLegendControl.addTo(map);
+    mlLegendControl.compressLegendOnSmallDevices();
+    const legendListContainer = select(mlLegendControl.getContainer()).select('.legend-list-container');
+    legendListContainer
+        .call(drawMonitoringLocationMarkerLegend)
+        .call(drawCircleMarkerLegend, ACTIVE_SITE_COLOR, ACTIVE_SITE_OPACITY, 'Active Monitoring Locations')
+        .call(link(store, drawFIMLegend, hasFloodData))
+        .call(link(store, drawNldiLegend, hasNldiData));
 
-    addMonitoringLocationMarker(legendListContainer)
-
-
-    /*
-     * Creates the NLDI legend if NLDI data is available, otherwise removes the NLDI legend if it exists.
-     * @param {HTMLElement} node - element where the map is rendered
-     * @param {Boolean} isNldiAvailable
-     */
-    const addNldiLegend = function(node, isNldiAvailable) {
-        createNldiLegend(mlLegendControl, isNldiAvailable);
-    };
 
     node
         .call(link(store, updateFloodLayers, createStructuredSelector({
@@ -217,17 +200,12 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
             floodStageHeight: getFloodStageHeight
         })))
         .call(link(store, updateMapExtent, getFloodExtent))
-        .call(link(store, createFIMLegend, hasFloodData))
         .call(link(store, addFimLink, hasFloodData))
-        .call(link(store, addNldiLegend, hasNldiData))
         .call(link(store, updateNldiLayers, createStructuredSelector({
             upstreamFlows: getNldiUpstreamFlows,
             downstreamFlows: getNldiDownstreamFlows,
             upstreamBasin: getNldiUpstreamBasin
         })));
-
-        legendListContainer.call(link(store, drawNldiLegend, hasNldiData))
-            .call(link(store, drawFIMLegend, hasFloodData));
 };
 
 /*
