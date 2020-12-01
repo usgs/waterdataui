@@ -46,8 +46,9 @@ const getActiveMonitoringLocationsLayer = function(locations, markerOptions) {
             const url = feature.properties.monitoringLocationUrl;
             const name = feature.properties.monitoringLocationName;
             const id = feature.properties.monitoringLocationNumber;
+            const type = feature.properties.monitoringLocationType;
             const popupText = `Monitoring Location: <a href="${url}">${name}</a>
-                    <br>ID: ${id}`;
+                    <br/>ID: ${id}<br/>Site type: ${type}`;
             layer.bindPopup(popupText);
         }
     });
