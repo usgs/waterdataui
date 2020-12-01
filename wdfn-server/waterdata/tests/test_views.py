@@ -14,6 +14,7 @@ from ..views import __version__
 from ..utils import parse_rdb
 from .rdb_snippets import SITE_RDB, PARAMETER_RDB
 
+
 class TestHomeView(TestCase):
     def setUp(self):
         self.app_client = app.test_client()
@@ -156,7 +157,7 @@ class TestNetworkView(TestCase):
 
     def setUp(self):
         self.app_client = app.test_client()
-        self.test_url = '{0}/'.format(app.config['NETWORK_ENDPOINT'])
+        self.test_url = '{0}/'.format(app.config['OBSERVATIONS_ENDPOINT'])
         self.network = 'monitoring-locations'
         self.format = 'json'
 

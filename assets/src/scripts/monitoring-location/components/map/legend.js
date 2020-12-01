@@ -1,14 +1,6 @@
-// Creates a Leaflet legend control. If the legend contains FIM information than the expand/collapse control
-// will be visible
-
-import {select} from 'd3-selection';
 
 import {get} from 'ui/ajax';
 import config from 'ui/config';
-
-import {markerFillColor, markerFillOpacity, downStreamColor, upstreamColor, flowLineOpacity,
-         basinFillColor, basinFillOpacity} from './nldi-mapping';
-
 
 const fetchLayerLegend = function(layer, defaultName) {
     return get(`${config.FIM_GIS_ENDPOINT}${layer}/MapServer/legend?f=json`)
@@ -34,8 +26,12 @@ const fetchLayerLegend = function(layer, defaultName) {
         });
 };
 
-export const addMonitoringLocationMarker = function(legendControl) {
-        const siteLegendList = select(legendControl.getLegendListContainer()).append('ul')
+/*
+ * Draws a monitoring location marker within the legendListContainer
+ * @param {D3 selection} legendListContainer
+ */
+export const drawMonitoringLocationMarkerLegend = function(legendListContainer) {
+        const siteLegendList = legendListContainer.append('ul')
             .attr('id', 'site-legend-list')
             .classed('usa-list--unstyled', true);
         siteLegendList.append('li')
@@ -44,20 +40,36 @@ export const addMonitoringLocationMarker = function(legendControl) {
 };
 
 /*
+ * Draws a circle marker legend within legencListContainer with color, opacity, and label
+ * @param {D3 selection} legendlistContainer
+ * @param {String} color
+ * @param {Number} opacity
+ * @param {String} label
+ */
+export const drawCircleMarkerLegend = function(legendListContainer, color, opacity, label) {
+    const container = legendListContainer.append('ul')
+        .classed('usa-list--unstyled', true);
+    container.append('li')
+        .append('span')
+        .attr('style',
+            `color: ${color}; width: 16px; height: 16px; float: left; opacity: ${opacity}; margin-right: 2px;`)
+        .attr('class', 'fas fa-circle');
+    container.append('span').text(label);
+};
+
+
+/*
  * Creates the FIM legend if FIM data is available, otherwise removes the FIM legend if it exists.
- * @param {L.Control} legendControl - Leaflet legend control
+ * @param {D3 selection} legendListConatiner - Leaflet legend control
  * @param {Boolean} isFIMAvailable
  */
-export const createFIMLegend = function(legendControl, isFIMAvailable) {
+export const drawFIMLegend = function(legendListContainer, isFIMAvailable) {
     if (isFIMAvailable) {
         // Fetch the images
         let fetchFloodExtentLegend = fetchLayerLegend('floodExtents', 'Flood-inundation area');
         let fetchBreachLegend = fetchLayerLegend('breach', 'Area of uncertainty');
         let fetchSuppLyrs = fetchLayerLegend('suppLyrs', 'supply layers');
 
-        legendControl.compressLegendOnSmallDevices();
-
-        let legendListContainer = select(legendControl.getContainer()).select('.legend-list-container');
         let fimLegendList = legendListContainer.append('ul')
                     .attr('id', 'fim-legend-list')
                     .classed('usa-list--unstyled', true);
@@ -75,42 +87,6 @@ export const createFIMLegend = function(legendControl, isFIMAvailable) {
                         });
             });
     } else {
-        select(legendControl.getContainer()).select('#fim-legend-list').remove();
-    }
-};
-
-/**
- * Creates the NLDI legend if NLDI data is available, otherwise removes the NLDI legend if it exists.
- * @param {L.Control} legendControl - Leaflet legend control
- * @param {Boolean} is NLDI available
- */
-export const createNldiLegend = function(legendControl, isNldiAvailable) {
-    if (isNldiAvailable) {
-        const legendListContainer = select(legendControl.getContainer()).select('.legend-list-container');
-        const nldiLegendList = legendListContainer.append('ul')
-                    .attr('id', 'nldi-legend-list')
-                    .attr('class', 'usa-list--unstyled');
-
-        const nldiUpstream = nldiLegendList.append('li');
-        nldiUpstream.append('span').attr('style', `background: ${upstreamColor}; width: 16px; height: 16px; float: left; opacity: ${flowLineOpacity}; margin-right: 2px;`);
-        nldiUpstream.append('span').text('Upstream Flowline');
-
-        const nldiDownstream = nldiLegendList.append('li');
-        nldiDownstream.append('span').attr('style', `background: ${downStreamColor}; width: 16px; height: 16px; float: left; opacity: ${flowLineOpacity}; margin-right: 2px;`);
-        nldiDownstream.append('span').text('Downstream Flowline');
-
-        const nldiMarker = nldiLegendList.append('li');
-        nldiMarker.append('span').attr('style', `color: ${markerFillColor}; width: 16px; height: 16px; float: left; opacity: ${markerFillOpacity}; margin-right: 2px;`)
-            .attr('class', 'fas fa-circle');
-        nldiMarker.append('span').text('Additional Monitoring Locations');
-
-        const nldiBasin = nldiLegendList.append('li');
-        nldiBasin.append('span').attr('style', `background: ${basinFillColor}; width: 16px; height: 16px; float: left; opacity: ${basinFillOpacity}; margin-right: 2px;`);
-        nldiBasin.append('span').text('Upstream Basin');
-
-        legendControl.compressLegendOnSmallDevices();
-
-    } else {
-        select(legendControl.getContainer()).select('#nldi-legend-list').remove();
+        legendListContainer.select('#fim-legend-list').remove();
     }
 };

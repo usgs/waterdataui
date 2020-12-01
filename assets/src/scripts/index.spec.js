@@ -68,6 +68,7 @@ import 'ivhydrograph/tooltip.spec';
 import 'ml/components/map/flood-slider.spec';
 import 'ml/components/map/index.spec';
 import 'ml/components/map/legend.spec';
+import 'ml/components/map/nldi-mapping.spec';
 
 import 'ml/selectors/daily-value-time-series-selector.spec';
 import 'ml/selectors/flood-data-selector.spec';
@@ -98,7 +99,6 @@ import 'ui/network/store/network-data-reducer.spec';
 
 import 'ui/web-services/flood-data.spec';
 import 'ui/web-services/models.spec';
-import 'ui/web-services/network-data.spec';
 import 'ui/web-services/nldi-data.spec';
 import 'ui/web-services/observations.spec';
 import 'ui/web-services/statistics-data.spec';

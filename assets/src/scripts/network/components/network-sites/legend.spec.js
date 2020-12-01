@@ -21,7 +21,7 @@ describe('component/map/legend module', () => {
 
         store = configureStore({
             networkData: {
-                networkSites: []
+                networkMonitoringLocations: []
             }
         });
         control = createMapLegend(map, store);
@@ -36,7 +36,7 @@ describe('component/map/legend module', () => {
         it('expect to create a legend with no markers if there is no data', () => {
             store = configureStore({
                 networkData: {
-                    networkSites: []
+                    networkMonitoringLocations: []
                 }
             });
             control = createMapLegend(map, store);
@@ -46,7 +46,7 @@ describe('component/map/legend module', () => {
         it('expect to create a legend with a marker is there is data', () => {
             store = configureStore({
                 networkData: {
-                    networkSites: [{
+                    networkMonitoringLocations: [{
                         type: 'Feature',
                         id: 'USGS-343048093030401'
                     }, {

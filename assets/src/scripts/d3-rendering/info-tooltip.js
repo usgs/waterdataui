@@ -18,5 +18,5 @@ export const appendInfoTooltip = function(elem, text) {
         .attr('class', 'fas fa-info-circle');
 
     // Need to initialize USWDS tooltip explictly after page load
-    components.tooltip.init(elem.node());
+    components.tooltip.on(elem.node());
 };

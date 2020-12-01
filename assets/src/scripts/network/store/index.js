@@ -1,23 +1,23 @@
 import {applyMiddleware, createStore, combineReducers, compose} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
-import {fetchNetworkFeatures} from 'ui/web-services/network-data';
+import {fetchNetworkMonitoringLocations} from 'ui/web-services/observations';
 
 import {networkDataReducer as networkData} from './network-data-reducer';
 
 export const Actions = {
-    retrieveNetworkData(networkCd) {
+    retrieveNetworkMonitoringLocations(networkCd) {
         return function(dispatch) {
-            return fetchNetworkFeatures(networkCd)
+            return fetchNetworkMonitoringLocations(networkCd)
                 .then(function(features) {
-                    dispatch(Actions.setNetworkFeatures(features));
+                    dispatch(Actions.setNetworkMonitoringLocations(features));
             });
         };
     },
-    setNetworkFeatures(networkSites) {
+    setNetworkMonitoringLocations(networkMonitoringLocations) {
          return {
-            type: 'SET_NETWORK_FEATURES',
-            networkSites
+            type: 'SET_NETWORK_MONITORING_LOCATIONS',
+            networkMonitoringLocations
         };
     }
 };
@@ -31,7 +31,7 @@ const MIDDLEWARES = [thunk];
 export const configureStore = function(initialState) {
     initialState = {
         networkData: {
-            networkSites: []
+            networkMonitoringLocations: []
         },
         ...initialState
     };

@@ -1,6 +1,6 @@
 
 import {Actions} from 'network/store';
-import {getNetworkSites} from 'network/selectors/network-data-selector';
+import {getNetworkMonitoringLocations} from 'network/selectors/network-data-selector';
 
 import {drawSiteTable} from './data-table';
 import {createMapLegend} from './legend';
@@ -13,15 +13,15 @@ import {createSiteMap, addSitesLayer} from './map';
  * @param {String} networkcd
  */
 export const attachToNode = function(store, node, {networkcd, extent}) {
-    const fetchNetworkSites = store.dispatch(Actions.retrieveNetworkData(networkcd));
+    const fetchNetworkMonitoringLocations = store.dispatch(Actions.retrieveNetworkMonitoringLocations(networkcd));
 
     const map = createSiteMap(extent);
     createMapLegend(map, store);
 
-    fetchNetworkSites.then(() => {
-        const networkSites = getNetworkSites(store.getState());
-        addSitesLayer(map, networkSites);
-        drawSiteTable('link-list', networkSites);
+    fetchNetworkMonitoringLocations.then(() => {
+        const monitoringLocations = getNetworkMonitoringLocations(store.getState());
+        addSitesLayer(map, monitoringLocations);
+        drawSiteTable('link-list', monitoringLocations);
     });
 };
 

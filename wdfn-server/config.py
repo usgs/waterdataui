@@ -26,7 +26,7 @@ SET_COOKIE_TO_HIDE_BANNER_NOTICES = True  # set cookie set to hide banner messag
 
 DEBUG = False
 
-SERVER_SERVICE_ROOT = 'https://waterservices.usgs.gov'  # Used for webserver calls to waterservices. Allows us to use a private url.
+SERVER_SERVICE_ROOT = 'https://waterservices.usgs.gov'  # Used for webserver calls to waterservices.
 SERVICE_ROOT = 'https://waterservices.usgs.gov'  # Use for client side calls to waterservices. Most be a public url.
 PAST_SERVICE_ROOT = 'https://nwis.waterservices.usgs.gov'
 NWIS_ENDPOINTS = {
@@ -35,7 +35,7 @@ NWIS_ENDPOINTS = {
 }
 WEATHER_SERVICE_ROOT = 'https://api.weather.gov'
 
-OBSERVATIONS_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections/monitoring-locations'
+OBSERVATIONS_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/'
 
 FIM_GIS_ENDPOINT = 'https://gis.wim.usgs.gov/arcgis/rest/services/FIMMapper/'
 FIM_ENDPOINT = 'https://fim.wim.usgs.gov/fim/'
@@ -45,9 +45,6 @@ CITIES_ENDPOINT = 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/serv
 
 NLDI_SERVICES_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/nldi/linked-data'
 NLDI_SERVICES_DISTANCE = '322'
-
-# Networks
-NETWORK_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections'
 
 # Waterwatch
 WATERWATCH_ENDPOINT = 'https://waterwatch.usgs.gov/webservices'

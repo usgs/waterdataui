@@ -1,30 +1,43 @@
 import {select} from 'd3-selection';
 
-import {legendControl} from 'ui/leaflet-rendering/legend-control';
-
-import {createFIMLegend, createNldiLegend} from './legend';
+import {drawMonitoringLocationMarkerLegend, drawCircleMarkerLegend, drawFIMLegend} from './legend';
 
 
 describe('monitoring-location/components/map/legend module', () => {
-    let mlLegendControl;
-    let map;
+    let listContainer;
 
     beforeEach(() => {
         jasmine.Ajax.install();
-        select('body').append('div')
-            .attr('id', 'map');
-        map = L.map('map', {
-            center: [43.0, -100.0],
-            zoom: 5
-        });
+        listContainer = select('body').append('div');
     });
 
     afterEach(() => {
-        select('#map').remove();
+        listContainer.remove();
         jasmine.Ajax.uninstall();
     });
 
-    describe('createFIMLegend', () => {
+    describe('drawMonitoringLocationMarkerLegend', () => {
+        it('Draws an marker image', () => {
+            drawMonitoringLocationMarkerLegend(listContainer);
+
+            expect(listContainer.select('#site-legend-list').size()).toBe(1);
+            expect(listContainer.select('img').size()).toBe(1);
+        });
+    });
+
+    describe('drawCircleMarkerLegend', () => {
+        it('Draws a circle marker legend', () => {
+            drawCircleMarkerLegend(listContainer, 'red', 0.5, 'My circle marker');
+
+            let circleSpan = listContainer.select('.fa-circle');
+            expect(circleSpan.size()).toBe(1);
+            expect(circleSpan.style('color')).toEqual('red');
+            expect(circleSpan.style('opacity')).toEqual('0.5');
+            expect(listContainer.select('span:nth-child(2)').text()).toEqual('My circle marker');
+        });
+    });
+
+    describe('drawFIMLegend', () => {
         const MOCK_RESP =
             `{"layers": [{
                 "layerId":0,
@@ -55,10 +68,7 @@ describe('monitoring-location/components/map/legend module', () => {
                     ]}`;
 
         beforeEach(() => {
-            mlLegendControl = legendControl();
-            mlLegendControl.addTo(map);
-
-            createFIMLegend(mlLegendControl, true);
+            drawFIMLegend(listContainer, true);
 
             // Return the same response on all requests
             jasmine.Ajax.stubRequest(/(.*?)/).andReturn({
@@ -68,44 +78,18 @@ describe('monitoring-location/components/map/legend module', () => {
             });
         });
 
-        it('createFIMLegend with FIM available true fetches the three sets of legend info', () => {
+        it('drawFIMLegend with FIM available true fetches the three sets of legend info', () => {
             expect(jasmine.Ajax.requests.count()).toBe(3);
         });
 
-        it('createFIMLegend with FIM available true makes the expand button visible', () =>  {
-            expect(select(mlLegendControl.getContainer()).select('.legend-expand-container').attr('hidden')).toBeNull();
+        it('drawFIMLegend with FIM available add the FIM legend list to the control', () => {
+            expect(listContainer.select('#fim-legend-list').size()).toBe(1);
         });
 
-        it('createFIMLegend with FIM available add the FIM legend list to the control', () => {
-            expect(select(mlLegendControl.getContainer()).select('#fim-legend-list').size()).toBe(1);
-        });
+        it('Calling drawFIMLegend a second time with available set to false cause the fim legend list to be removed', () => {
+            drawFIMLegend(listContainer, false);
 
-        it('Calling createFIMLegend a second time with available set to false cause the fim legend list to be removed', () => {
-            createFIMLegend(mlLegendControl, false);
-
-            expect(select(mlLegendControl.getContainer()).select('#fim-legend-list').size()).toBe(0);
-        });
-    });
-
-    describe('createNldiLegend', () => {
-        beforeEach(() => {
-            mlLegendControl = legendControl();
-            mlLegendControl.addTo(map);
-
-            createNldiLegend(mlLegendControl, true);
-        });
-
-        it('createNldiLegend with NLDI available true makes the expand button visible', () =>  {
-            expect(select(mlLegendControl.getContainer()).select('.legend-expand-container').attr('hidden')).toBeNull();
-        });
-
-        it('createNldiLegend with NLDI available add the NLDI legend list to the control', () => {
-            expect(select(mlLegendControl.getContainer()).select('#nldi-legend-list').size()).toBe(1);
-        });
-
-        it('Calling createNldiLegend a second time with available set to false cause the NLDI legend list to be removed', () => {
-            createNldiLegend(mlLegendControl, false);
-            expect(select(mlLegendControl.getContainer()).select('#nldi-legend-list').size()).toBe(0);
+            expect(listContainer.select('#fim-legend-list').size()).toBe(0);
         });
     });
 });

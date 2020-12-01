@@ -260,10 +260,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             .attr('type', 'text')
             .attr('aria-describedby', 'custom-end-date-label custom-end-date-hint');
 
-        // required to init the USWDS date picker after page load
-        components.datePicker.init(elem.node());
+        // required to init the USWDS date picker after page load before calling the
+        // dateRangePicker on function
+        components.datePicker.init(dateRangePicker.node());
         // required to init the USWDS date range picker after page load
-        components.dateRangePicker.init(elem.node());
+        components.dateRangePicker.on(dateRangePicker.node());
 
         // Adds controls for the calendar day submit button
         const calendarDaysSubmitContainer = containerCustomCalendarDays.append('div')

@@ -1,8 +1,8 @@
 """
 Helpers to retrieve SIFTA cooperator data.
 """
-from waterdata import app
-from waterdata.utils import execute_get_request
+from .. import app
+from ..utils import execute_get_request
 
 
 def get_cooperators(site_no, district_cd):

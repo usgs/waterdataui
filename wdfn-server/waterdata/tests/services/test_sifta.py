@@ -5,7 +5,7 @@ Tests for the cooperator service calls.
 import json
 from unittest import mock
 
-from waterdata.services import sifta
+from ...services import sifta
 
 
 MOCK_RESPONSE = """

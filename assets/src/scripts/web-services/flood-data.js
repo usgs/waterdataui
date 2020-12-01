@@ -3,8 +3,6 @@ import config from 'ui/config';
 
 export const FLOOD_SITES_ENDPOINT = `${config.FIM_GIS_ENDPOINT}sites/MapServer/`;
 export const FLOOD_EXTENTS_ENDPOINT = `${config.FIM_GIS_ENDPOINT}floodExtents/MapServer/`;
-export const FLOOD_BREACH_ENDPOINT = `${config.FIM_GIS_ENDPOINT}breach/MapServer/`;
-export const FLOOD_LEVEE_ENDPOINT = `${config.FIM_GIS_ENDPOINT}suppLyrs/MapServer/`;
 
 const WATERWATCH_URL = config.WATERWATCH_ENDPOINT;
 const FORMAT = 'json';
@@ -61,7 +59,6 @@ export const fetchFloodExtent = function(siteno) {
             return {};
         });
 };
-
 
 /*
  * Retrieve waterwach flood levels any for siteno

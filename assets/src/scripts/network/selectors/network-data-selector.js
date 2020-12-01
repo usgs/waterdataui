@@ -1,13 +1,13 @@
 import {createSelector} from 'reselect';
 
-export const getNetworkSites = state => state.networkData.networkSites;
+export const getNetworkMonitoringLocations = state => state.networkData.networkMonitoringLocations;
 
 /*
  * Provides a function which returns True if network data is not empty.
  */
-export const hasNetworkData = createSelector(
-    getNetworkSites,
+export const hasNetworkMonitoringLocations = createSelector(
+    getNetworkMonitoringLocations,
 
-    (networkSites) =>
-        networkSites.length > 0
+    (networkMonitoringLocations) =>
+        networkMonitoringLocations.length > 0
 );
