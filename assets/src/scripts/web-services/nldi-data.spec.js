@@ -1,6 +1,4 @@
 import {MOCK_NLDI_UPSTREAM_FLOW_FEATURE, MOCK_NLDI_DOWNSTREAM_FLOW_FEATURE,
-    MOCK_NLDI_UPSTREAM_SITES_FEATURE,
-    MOCK_NLDI_DOWNSTREAM_SITES_FEATURE,
     MOCK_NLDI_UPSTREAM_BASIN_FEATURE} from 'ui/mock-service-data';
 
 import {fetchNldiUpstreamFlow, fetchNldiDownstreamFlow, fetchNldiUpstreamBasin} from './nldi-data';
