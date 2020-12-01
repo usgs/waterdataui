@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Added a tooltip to the hydrograph title showing the selected variable description and show the short unitCode on the Y axis.
+- Now using current preferred SIFTA URL
 
 ### Fixed
 - Dynamically generated tooltips are now initialized properly by calling init on the node where the tooltip is created rather than on the entire DOM which was causing multiple tooltip markup to be created.
