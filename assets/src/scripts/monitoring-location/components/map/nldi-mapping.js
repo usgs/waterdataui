@@ -64,6 +64,11 @@ export const addNldiLayers = function(map, upstreamFlows, downstreamFlows, upstr
     map.addLayer(getNldiLinesLayer(downstreamFlows, DOWNSTREAM_LINE_STYLE));
 };
 
+/*
+ * Draws the NLDI legend components in legendListContainer if nldi data is available.
+ * @param {D3 selection} legendListContainer
+ * @param {Boolean} isNldiAvailable
+ */
 export const drawNldiLegend = function(legendListContainer, isNldiAvailable) {
     if (isNldiAvailable) {
         const nldiLegendList = legendListContainer.append('ul')
