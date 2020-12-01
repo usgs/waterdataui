@@ -42,8 +42,7 @@ describe('web-services/observations module', () => {
             expect(queryString).toContain('agencyCode=USGS');
             expect(queryString).toContain('f=json');
             expect(queryString.split('&').length).toBe(3);
-
-        })
+        });
 
         it('expected response is json object with the network sites', () => {
             networkPromise = fetchNetworkMonitoringLocations(networkCd );
