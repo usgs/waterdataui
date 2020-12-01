@@ -32,6 +32,7 @@ const geojsonMarkerOptions = {
 const getESRIFloodLayers = function(layerType) {
     return `${config.FIM_GIS_ENDPOINT}${layerType}/MapServer/`;
 };
+
 const getLayerDefs = function(layerNo, siteno, stage) {
    const stageQuery = stage ? ` AND STAGE = ${stage}` : '';
    return `${layerNo}: USGSID = '${siteno}'${stageQuery}`;
@@ -78,6 +79,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
     //add layer control
     L.control.layers(baseMapLayers,overlayLayers).addTo(map);
 
+    // Add FIM layers
     const floodLayer = L.esri.dynamicMapLayer({
         url: getESRIFloodLayers('floodExtents'),
         layers: [0],
@@ -124,13 +126,6 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
     };
 
     /*
-     * Function to link to Redux store when NLDI data changes
-     */
-    const updateNldiLayers = function(node, {upstreamFlows, downstreamFlows, upstreamBasin}) {
-        addNldiLayers(map, upstreamFlows, downstreamFlows, upstreamBasin);
-    };
-
-    /*
      * Function to link to Redux store to set the map extent when flood data is retrieved
      */
     const updateMapExtent = function(node, extent) {
@@ -155,6 +150,14 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         }
     };
 
+    /*
+     * Function to link to Redux store when NLDI data changes
+     */
+    const updateNldiLayers = function(node, {upstreamFlows, downstreamFlows, upstreamBasin}) {
+        addNldiLayers(map, upstreamFlows, downstreamFlows, upstreamBasin);
+    };
+
+    // Create active site layer and function to update the sites layer with the current map bounds.
     let activeSitesLayer = L.layerGroup([]);
     const updateActiveSitesLayer = function(bounds) {
         const queryParams = {
@@ -179,7 +182,6 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         updateActiveSitesLayer(map.getBounds());
     });
 
-
     // Add a marker at the site location
     L.marker([latitude, longitude]).addTo(map);
 
@@ -194,7 +196,8 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         .call(link(store, drawFIMLegend, hasFloodData))
         .call(link(store, drawNldiLegend, hasNldiData));
 
-
+    // Connect the FIM information and NLDI information from the Redux Store to the
+    // rendering code.
     node
         .call(link(store, updateFloodLayers, createStructuredSelector({
             hasFloodData: hasFloodData,
