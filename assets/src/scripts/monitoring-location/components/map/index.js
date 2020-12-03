@@ -18,7 +18,6 @@ import {floodSlider} from './flood-slider';
 import {drawCircleMarkerLegend, drawFIMLegend, drawMonitoringLocationMarkerLegend} from './legend';
 import {addNldiLayers, drawNldiLegend} from './nldi-mapping';
 
-
 const ACTIVE_SITE_COLOR = 'red';
 const ACTIVE_SITE_OPACITY = .8;
 const geojsonMarkerOptions = {
@@ -66,7 +65,6 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         center: [latitude, longitude],
         zoom: zoom
     });
-
     const baseMapLayers = {
         'USGS Topo': createBaseLayer(config.TNM_USGS_TOPO_ENDPOINT),
         'Imagery': createBaseLayer(config.TNM_USGS_IMAGERY_ONLY_ENDPOINT),
