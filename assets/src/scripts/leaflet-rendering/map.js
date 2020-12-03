@@ -15,7 +15,9 @@ export const createMap = function(divId, {center=[0,0], zoom=1}) {
     const map = L.map(divId, {
         center: center,
         zoom: zoom,
-        scrollWheelZoom: false
+        scrollWheelZoom: false,
+        dragging: !L.Browser.mobile,
+        tap: !L.Browser.mobile
     });
 
     map.on('focus', () => {

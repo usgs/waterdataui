@@ -66,8 +66,6 @@ Disconnect from Virtual Private Network (VPN) or USGS network.
 
 Install a 'tunneling' application (LocalTunnel is an example (this is not an endorsement)).
 
-Start your local Flask and Static Asset server.
-
 Start the tunneling application; make a tunnel for each server
 
 ```bash 
@@ -101,6 +99,8 @@ values for the tunnel URL to your Assets Server.
 In the project root directory run:
 make build
 ```
+
+Start your local Flask and Static Asset server.
 
 Final step -- grab your phone and enter the URL returned for the Flask server. If the stars have aligned, you
 will see your local version of the application running on your phone.

@@ -64,8 +64,7 @@ const getActiveMonitoringLocationsLayer = function(locations, markerOptions) {
 const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
     const map = createMap('site-map', {
         center: [latitude, longitude],
-        zoom: zoom,
-        gestureHandling: true
+        zoom: zoom
     });
 
     const baseMapLayers = {
@@ -235,4 +234,3 @@ export const attachToNode = function(store, node, {siteno, latitude, longitude, 
     select(node)
         .call(siteMap, {siteno, latitude, longitude, zoom}, store);
 };
-
