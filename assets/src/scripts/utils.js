@@ -233,13 +233,14 @@ export const convertCelsiusToFahrenheit = function(celsius) {
  */
 export const sortedParameters = function(variables) {
     const PARAM_PERTINENCE = {
-        '00060': 0,
-        '00065': 1,
+        '00065': 0,
+        '00060': 1,
         '72019': 2
     };
 
     const dataVars = variables ? Object.values(variables) : [];
     const pertinentParmCds = Object.keys(PARAM_PERTINENCE);
+    console.log('in utils pertinentParmCds ', pertinentParmCds)
     const highPertinenceVars = dataVars.filter(x => pertinentParmCds.includes(x.variableCode.value))
         .sort((a, b) => {
             const aPertinence = PARAM_PERTINENCE[a.variableCode.value];
@@ -260,6 +261,7 @@ export const sortedParameters = function(variables) {
                 return 1;
             }
         });
+    console.log('sorted params in utils ', highPertinenceVars.concat(lowPertinenceVars))
     return highPertinenceVars.concat(lowPertinenceVars);
 };
 
