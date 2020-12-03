@@ -63,8 +63,7 @@ const getActiveMonitoringLocationsLayer = function(locations, markerOptions) {
 const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
     const map = createMap('site-map', {
         center: [latitude, longitude],
-        zoom: zoom,
-        dragging: false
+        zoom: zoom
     });
     
     const baseMapLayers = {
