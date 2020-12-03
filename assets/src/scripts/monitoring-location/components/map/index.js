@@ -51,7 +51,9 @@ const getActiveMonitoringLocationsLayer = function(locations, markerOptions) {
             const type = feature.properties.monitoringLocationType;
             const popupText = `Monitoring Location: <a href="${url}">${name}</a>
                     <br/>ID: ${id}<br/>Site type: ${type}`;
-            layer.bindPopup(popupText);
+            layer.bindPopup(popupText, {
+                autoPan: false
+            });
         }
     });
 };
@@ -180,7 +182,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
     map.addLayer(activeSitesLayer);
     updateActiveSitesLayer(map.getBounds());
 
-    map.on('move', function() {
+    map.on('moveend', function() {
         updateActiveSitesLayer(map.getBounds());
     });
 
