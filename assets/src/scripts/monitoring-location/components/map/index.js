@@ -65,6 +65,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
         center: [latitude, longitude],
         zoom: zoom
     });
+    
     const baseMapLayers = {
         'USGS Topo': createBaseLayer(config.TNM_USGS_TOPO_ENDPOINT),
         'Imagery': createBaseLayer(config.TNM_USGS_IMAGERY_ONLY_ENDPOINT),
