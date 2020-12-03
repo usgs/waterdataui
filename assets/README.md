@@ -92,7 +92,8 @@ Once you have changed the STATIC_ROOT, go to 'wdfn-server/config.py' and find th
 ```bash
 if os.getenv('CONTAINER_RUN', False):
 ```
-Change 'False'  to 'True' (noting the capitalization).
+Change 'False'  to 'True' (noting the capitalization). You may need to restart the Flask server for it 
+to process the change.
 
 Then you will need to build the application so that a manifest file is created with the correct hashed 
 values for the tunnel URL to your Assets Server. 
@@ -104,4 +105,7 @@ make build
 Final step -- grab your phone and enter the URL returned for the Flask server. If the stars have aligned, you
 will see your local version of the application running on your phone.
 
-Clean up -- return the values for the STATIC_ROOT and CONTAINER_RUN to their default values.
+Clean up -- when testing is finished, return the values for the STATIC_ROOT and CONTAINER_RUN to their default values.
+
+Note - if you are disconnected from the tunnel, you will need to restart the tunnels, replace the 
+STATIC_ROOT value with the new Static Asset URL, and rebuild the application.
