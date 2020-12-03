@@ -24,7 +24,6 @@ export const getAvailableParameterCodes = createSelector(
 
         const seriesList = Object.values(timeSeries);
         const availableVariableIds = seriesList.map(x => x.variable);
-        console.log('in parameter data availableVariableIds ', availableVariableIds)
 
         return sortedParameters(variables)
             .filter(variable => availableVariableIds.includes(variable.oid))

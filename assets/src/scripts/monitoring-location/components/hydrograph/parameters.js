@@ -102,7 +102,7 @@ export const plotSeriesSelectTable = function(elem,
     const lastTable = elem.select('#select-time-series table');
     const scrollTop = lastTable.size() ? lastTable.property('scrollTop') : null;
     elem.select('#select-time-series').remove();
-console.log('availableParameterCodes ', availableParameterCodes)
+
     if (!availableParameterCodes.length) {
         return;
     }
