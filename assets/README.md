@@ -90,22 +90,32 @@ Once you have changed the STATIC_ROOT, go to 'wdfn-server/config.py' and find th
 ```bash
 if os.getenv('CONTAINER_RUN', False):
 ```
-Change 'False'  to 'True' (noting the capitalization). You may need to restart the Flask server for it 
-to process the change.
-
-Then you will need to build the application so that a manifest file is created with the correct hashed 
-values for the tunnel URL to your Assets Server. 
-```bash
-In the project root directory run:
-make build
-```
+Change 'False'  to 'True' (noting the capitalization).
 
 Start your local Flask and Static Asset server.
+```bash
+Flask server on port 5050 - from the WDFN-server directory run
+env/bin/python run.py
 
-Final step -- grab your phone and enter the URL returned for the Flask server. If the stars have aligned, you
+Static Assets on port 9000 - from the assets direcory run
+npm run watch
+```
+
+Before you grab your phone, save some time and test that everything is working
+as expected on your computer. 
+
+Both, localhost:5050 (Flask server) and the tunnel URL for the Flask server should work, and the application should run as expected.
+
+But, you may end up with a webpage with no CSS or Javascript. If you look in the console, there will 
+be an error about CORS or an incorrect MIME type related to the tunnel URL for the Static Assets server.
+
+The solution to this seems to be, oddly enough, using the tunnel URL for the Static Assets server in the browser.
+If you take the tunnel URL for the Static Assets server and paste it into a browser and then go to the location, 
+you will see a list of all the files on the Static Assets server (assuming all is working). Once, you have poked
+around, you can leave. Upon returning to the tunnel URL for the Flask server, you should find that the CSS and JavaScript
+are now functioning as expected.
+
+Now, grab your phone and enter the URL returned for the Flask server. If the stars have aligned, you
 will see your local version of the application running on your phone.
 
 Clean up -- when testing is finished, return the values for the STATIC_ROOT and CONTAINER_RUN to their default values.
-
-Note - if you are disconnected from the tunnel, you will need to restart the tunnels, replace the 
-STATIC_ROOT value with the new Static Asset URL, and rebuild the application.
