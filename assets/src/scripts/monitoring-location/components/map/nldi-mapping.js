@@ -9,20 +9,23 @@ const BASIN_FILL_OPACITY = .5;
 const DOWNSTREAM_LINE_STYLE = {
         'color': DOWNSTREAM_COLOR,
         'weight': 5,
-        'opacity': FLOWLINE_OPACITY
+        'opacity': FLOWLINE_OPACITY,
+        'interactive': false
     };
 
     const UPSTREAM_LINE_STYLE = {
         'color': UPSTREAM_COLOR,
         'weight': 5,
-        'opacity':FLOWLINE_OPACITY
+        'opacity':FLOWLINE_OPACITY,
+        'interactive': false
     };
 
     const BASIN_STYLE = {
         'color': BASIN_COLOR,
         'fill': true,
         'fillFolor': BASIN_FILL_COLOR,
-        'fillOpacity': BASIN_FILL_OPACITY
+        'fillOpacity': BASIN_FILL_OPACITY,
+        'interactive': false
     };
 
 
@@ -59,9 +62,16 @@ export const addNldiLayers = function(map, upstreamFlows, downstreamFlows, upstr
         return getPolygonLayer(nldiData, style);
     };
 
-    map.addLayer(getNldiUpstreamBasinLayer(upstreamBasin, BASIN_STYLE));
-    map.addLayer(getNldiLinesLayer(upstreamFlows, UPSTREAM_LINE_STYLE));
-    map.addLayer(getNldiLinesLayer(downstreamFlows, DOWNSTREAM_LINE_STYLE));
+    const basinLayer = getNldiUpstreamBasinLayer(upstreamBasin, BASIN_STYLE);
+    const upstreamFlowLayer = getNldiLinesLayer(upstreamFlows, UPSTREAM_LINE_STYLE);
+    const downstreamFlowLayer = getNldiLinesLayer(downstreamFlows, DOWNSTREAM_LINE_STYLE);
+
+    basinLayer.addTo(map);
+    upstreamFlowLayer.addTo(map);
+    downstreamFlowLayer.addTo(map);
+    upstreamFlowLayer.bringToBack();
+    downstreamFlowLayer.bringToBack();
+    basinLayer.bringToBack();
 };
 
 /*
