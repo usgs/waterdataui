@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Added a tooltip to the hydrograph title showing the selected variable description and show the short unitCode on the Y axis.
-- Now using current preferred SIFTA URL
+- Now using current preferred SIFTA URL.
+- Using '00065' (Gage Height) as the default parameter code.
 - On mobile, one finger scrolling of map is disabled; two finger drag and zoom is enabled
 
 ### Fixed
