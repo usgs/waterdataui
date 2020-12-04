@@ -149,7 +149,6 @@
                 {% endif %}
                 {% if request.user_agent.browser != 'msie' %}
                     {{ components.TimeSeriesComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
-
                     {% if monitoring_camera.exists %}
                         <div class="usa-accordion" style="margin-top:1em;">
                             <h2 class="usa-accordion__heading">
