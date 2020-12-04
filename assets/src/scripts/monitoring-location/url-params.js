@@ -64,7 +64,7 @@ export const renderTimeSeriesUrlParams = function(store) {
         if (compare) {
             params.set('compare', true);
         }
-console.log('in url params/renderTimeSeriesUrlParams this is param string ', `#${params.toString()}`)
+
         window.location.hash = `#${params.toString()}`;
     });
 };
