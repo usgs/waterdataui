@@ -69,10 +69,10 @@
                     var allParameterCodes = Object.keys(CONFIG.uvPeriodOfRecord);
                     var defaultParameterCode;
 
-                    if (allParameterCodes.indexOf('00060') !== -1) {
-                        defaultParameterCode = '00060';
-                    } else if (allParameterCodes.indexOf('00065') !== -1) {
+                    if (allParameterCodes.indexOf('00065') !== -1) {
                         defaultParameterCode = '00065';
+                    } else if (allParameterCodes.indexOf('00060') !== -1) {
+                        defaultParameterCode = '00060';
                     } else {
                         defaultParameterCode = allParameterCodes[0];
                     }

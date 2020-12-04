@@ -243,7 +243,7 @@ describe('Utils module', () => {
         };
 
         it('sorts a group of parameters', () => {
-            expect(sortedParameters(testVars).map(x => x.oid)).toEqual(['88450', '20214', '17778', '42', '1701', '501']);
+            expect(sortedParameters(testVars).map(x => x.oid)).toEqual(['20214', '88450', '17778', '42', '1701', '501']);
         });
 
         it('handles the case where variables are empty', () => {

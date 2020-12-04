@@ -233,8 +233,8 @@ export const convertCelsiusToFahrenheit = function(celsius) {
  */
 export const sortedParameters = function(variables) {
     const PARAM_PERTINENCE = {
-        '00060': 0,
-        '00065': 1,
+        '00065': 0,
+        '00060': 1,
         '72019': 2
     };
 
