@@ -153,9 +153,24 @@
 
 {%  macro Description(site_no, loc_vals, param_grp_series) -%}
     {% if loc_vals %}
-        Monitoring location {{ site_no }} is associated with {{ loc_vals.site_tp_cd.name.upper()|indefinite_article }} {{ loc_vals.site_tp_cd.name.upper() }} in {{ loc_vals.county_cd.name.upper() }}, {{ loc_vals.state_cd.name.upper() }}.
-        {% if param_grp_series|readable_param_list %} Current conditions of {{ param_grp_series|readable_param_list }} are available.{% endif %}
-        {% if param_grp_series|data_start_year %} Water data back to {{  param_grp_series|data_start_year }} are available online.{% endif %}
+        <p>
+            Monitoring location {{ site_no }} is associated with {{ loc_vals.site_tp_cd.name.upper()|indefinite_article }} {{ loc_vals.site_tp_cd.name.upper() }} in {{ loc_vals.county_cd.name.upper() }}, {{ loc_vals.state_cd.name.upper() }}.
+            {% if param_grp_series|readable_param_list %} Current conditions of {{ param_grp_series|readable_param_list }} are available.{% endif %}
+            {% if param_grp_series|data_start_year %} Water data back to {{  param_grp_series|data_start_year }} are available online. {% endif %}
+            {% if request.user_agent.browser == 'msie' %}
+                {% if param_grp_series|numerical_parameter_list %}
+                    View available data parameters:
+                    {% for parameter_code in param_grp_series|numerical_parameter_list %}
+                        <a class="usa-link"
+                           href="{{ url_for('monitoring_location', site_no=site_no) }}#parameterCode={{ parameter_code }}"
+                           target="_blank" rel="noopener">
+                            {{ parameter_code }}
+                        </a>
+                        {% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+        </p>
     {% endif %}
 {%- endmacro %}
 
