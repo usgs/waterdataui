@@ -130,7 +130,11 @@
                         <a id="classic-page-link" class="usa-link" aria-describedby="{{ 'classic'|tooltip_content_id }}" href="{{ config.NWIS_ENDPOINTS.UV}}?site_no={{stations[0].site_no}}" target="_blank" rel="noopener">Classic Page</a>
                         {{ components.QuestionTooltip('classic', 'View all current conditions values on the classic Water Data for the Nation interface.', True) }}
                     </div>
-                    <div id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}</div>
+                    <p id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}
+                        {% if request.user_agent.browser == 'msie' %}
+                            {{ components.DescriptionInternetExplorerLinks(stations[0].site_no, location_with_values, parm_grp_summary) }}
+                        {% endif %}
+                    </p>
                 </div>
                 {% if request.user_agent.browser == 'msie' %}
                     <div id="static-graph-div"></div>
@@ -138,11 +142,18 @@
                         <div class="usa-alert__body">
                             <h3 class="usa-alert__heading">Important</h3>
                             <p class="usa-alert__text">
-                                The internet browser you are using cannot display this graph to its full potential.
+                                The internet browser you are using cannot display this graph to its full potential nor can
+                                it fully utilize all the features of this application.
                             </p>
                             <p class="usa-alert__text">
                                 Please consider downloading a more modern browser and returning to this page for a better
                                 user experience.
+                            </p>
+                            <p class="usa-alert__text">
+                                 Other data sampling methods may be available for the time series shown. To view, modify the URL
+                                using the pattern ...&sol;monitoring-location&sol;&lt;your location number
+                                &gt;&sol;&num;parameterCode&equals;&lt;your monitoring location number&gt;&amp;
+                                timeSeriesId&equals;&lt;your time series id&gt;
                             </p>
                         </div>
                     </div>
