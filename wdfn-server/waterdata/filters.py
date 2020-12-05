@@ -138,3 +138,26 @@ def https_url(url):
     if not parsed.netloc:
         parsed = urlparse(f'//{url}')
     return ParseResult('https', parsed.netloc, parsed.path, *parsed[3:]).geturl()
+
+
+@app.template_filter('numerical_parameter_list')
+def numerical_parameter_list(parameter_group_series):
+    """
+    Generate text for a list of parameters in the description meta tag.
+
+    :param list parameter_group_series: list of parameter series grouped by parameter group
+    :return: set of parameter codes
+    :rtype: str or None
+
+    """
+    series = chain.from_iterable([x['parameters'] for x in parameter_group_series])
+    # include only real-time parameters that have recent data
+    print('ran filter parameter_group_series ', parameter_group_series)
+    return set(
+        [
+            s['parameter_code'] for s in series if 'Unit Values' in s['data_types'] and
+                                                                         (datetime.datetime.now().date() - datetime.timedelta(days=8) <=
+                                                                          s['end_date'].date() <= datetime.datetime.now().date() + datetime.timedelta(days=1))
+
+        ]
+    )

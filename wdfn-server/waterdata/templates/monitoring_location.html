@@ -150,7 +150,7 @@
                 {% if request.user_agent.browser != 'msie' %}
                     {{ components.TimeSeriesComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
                     {% if monitoring_camera.exists %}
-                        <div class="usa-accordion" style="margin-top:1em;">
+                        <div class="wdfn-accordion usa-accordion" style="margin-top:1em;">
                             <h2 class="usa-accordion__heading">
                                 <button class="usa-accordion__button" aria-expanded="true" aria-controls="ts-a1a">Monitoring Camera</button>
                             </h2>
@@ -178,7 +178,7 @@
                     {% endif %}
 
                     {% if config.DAILY_VALUE_HYDROGRAPH_ENABLED %}
-                        <div id="dv-accordion" class="usa-accordion">
+                        <div id="dv-accordion" class="wdfn-accordion usa-accordion">
                             <div>
                                 <h3 class="usa-accordion__heading">
                                     <button class="usa-accordion__button" aria-expanded="true" aria-controls="dv-graph-container">Groundwater Data</button>
@@ -195,7 +195,7 @@
                     {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
                {% endif %}
 
-                <div class="usa-accordion">
+                <div class="wdfn-accordion usa-accordion">
                     <h3 class="usa-accordion__heading">
                         <button class="usa-accordion__button" aria-expanded="true" aria-controls="network-list">Affiliated Networks</button>
                     </h3>
@@ -205,7 +205,7 @@
                 </div>
 
                 {% if parm_grp_summary %}
-                    <div class="usa-accordion">
+                    <div class="wdfn-accordion usa-accordion">
                         <h2 class="usa-accordion__heading">
                             <button class="usa-accordion__button" aria-expanded="false" aria-controls="ts-a1">Summary of All Available Data</button>
                         </h2>
@@ -235,7 +235,7 @@
                     </div>
                 {% endif %}
 
-                <div class="usa-accordion">
+                <div class="wdfn-accordion usa-accordion">
                     <h2 class="usa-accordion__heading">
                         <button class="usa-accordion__button" aria-expanded="false" aria-controls="ts-a2">
                             Location Metadata
