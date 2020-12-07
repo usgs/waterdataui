@@ -2,6 +2,9 @@
 
 {% block page_css %}
       <link rel="stylesheet" href="{{ 'network.css' | asset_url }}">
+    {% if request.user_agent.browser == 'msie' %}
+        <script src="{{ 'scripts/wdfnviz.js' | asset_url }}"></script>
+    {% endif %}
 {% endblock %}
 
 {% block page_script %}
