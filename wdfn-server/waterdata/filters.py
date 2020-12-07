@@ -143,7 +143,7 @@ def https_url(url):
 @app.template_filter('numerical_parameter_list')
 def numerical_parameter_list(parameter_group_series):
     """
-    Generate text for a list of parameters in the description meta tag.
+    Generate text for a list of parameter codes.
 
     :param list parameter_group_series: list of parameter series grouped by parameter group
     :return: set of parameter codes
@@ -152,8 +152,7 @@ def numerical_parameter_list(parameter_group_series):
     """
     series = chain.from_iterable([x['parameters'] for x in parameter_group_series])
     # include only real-time parameters that have recent data
-    print('ran filter parameter_group_series ', parameter_group_series)
-    return set(
+    parameter_set = set(
         [
             s['parameter_code'] for s in series if 'Unit Values' in s['data_types'] and
                                                                          (datetime.datetime.now().date() - datetime.timedelta(days=8) <=
@@ -161,3 +160,10 @@ def numerical_parameter_list(parameter_group_series):
 
         ]
     )
+
+    if parameter_set:
+        numerical_parameters = parameter_set
+    else:
+        numerical_parameters = None
+
+    return numerical_parameters
