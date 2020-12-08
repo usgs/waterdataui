@@ -253,3 +253,126 @@ def test_https_url(app):
     with app.test_request_context('http://abc.com/mypage'):
         url = filters.https_url('page.com/image.png')
         assert url == 'https://page.com/image.png'
+
+
+class TestNumericalParameterListFilter(TestCase):
+
+    def setUp(self):
+        self.now = pendulum.now()
+        self.recent = self.now.subtract(days=2)
+        self.long_ago = self.now.subtract(days=10)
+        self.physical_series = [
+            {
+                'start_date': pendulum.datetime(1908, 1, 3),
+                'end_date': self.now,
+                'data_types': ['Unit Values'],
+                'parameter_code': '09001'
+            },
+            {
+                'start_date': pendulum.datetime(1908, 1, 3),
+                'end_date': self.recent,
+                'data_types': ['Unit Values'],
+                'parameter_code': '09002'
+            },
+            {
+                'start_date': pendulum.datetime(1908, 1, 19),
+                'end_date': self.recent,
+                'data_types': ['Unit Values'],
+                'parameter_code': '00060'
+            },
+            {
+                'start_date': pendulum.datetime(1908, 1, 19),
+                'end_date': self.recent,
+                'data_types': ['Unit Values'],
+                'parameter_code': '00010'
+            },
+            {
+                'start_date': pendulum.datetime(1908, 1, 19),
+                'end_date': self.recent,
+                'data_types': ['Daily Values'],
+                'parameter_code': '22140'
+            },
+            {
+                'start_date': pendulum.datetime(1908, 1, 19),
+                'end_date': self.recent,
+                'data_types': ['Daily Values'],
+                'parameter_code': '22140'
+            }
+        ]
+        self.inorganic_series = [
+            {
+                'start_date': pendulum.datetime(1908, 1, 3),
+                'end_date': self.now,
+                'data_types': ['Unit Values', 'Daily Values'],
+                'parameter_code': '07242'
+            },
+            {
+                'start_date': pendulum.datetime(1999, 1, 26),
+                'end_date': self.recent,
+                'data_types': ['Unit Values', 'Daily Values'],
+                'parameter_code': '02220'
+            }
+        ]
+        self.old_inorganic_series = [
+            {
+                'start_date': pendulum.datetime(1908, 1, 3),
+                'end_date': self.long_ago,
+                'data_types': ['Unit Values', 'Daily Values'],
+                'parameter_code': '07242'
+            },
+            {
+                'start_date': pendulum.datetime(1999, 1, 26),
+                'end_date': self.long_ago,
+                'data_types': ['Unit Values', 'Daily Values'],
+                'parameter_code': '02220'
+            }
+        ]
+
+    def test_series_is_empty(self):
+        result = filters.numerical_parameter_list([])
+        # self.assertIsNone(result)
+        self.assertEqual(0, len(result))
+
+    def test_single_measured_parameter(self):
+        result = filters.numerical_parameter_list([{
+            'parameters': self.physical_series[:1]
+        }])
+        expected = {'09001'}
+        self.assertEqual(result, expected)
+
+    def test_two_measured_parameters(self):
+        result = filters.numerical_parameter_list([{
+            'parameters': self.physical_series[:2]
+        }])
+        expected = {'09002', '09001'}
+        self.assertEqual(result, expected)
+
+    def test_three_measured_parameters(self):
+        result = filters.numerical_parameter_list([{
+            'parameters': self.physical_series[:3],
+            'data_types': 'Unit Values, Water Quality',
+            'end_date': datetime.datetime.now()
+        }])
+        expected = {'09002', '09001', '00060'}
+        self.assertEqual(result, expected)
+
+    def test_four_measured_parameters(self):
+        result = filters.numerical_parameter_list([{
+            'parameters': self.physical_series,
+            'data_types': 'Unit Values, Water Quality',
+            'end_date': datetime.datetime.now()
+        }])
+        expected = {'09002', '00060', '00010', '09001'}
+        self.assertEqual(result, expected)
+
+    def test_no_current_data(self):
+        result = filters.numerical_parameter_list([{
+            'parameters': self.old_inorganic_series,
+        }])
+        self.assertEqual(0, len(result))
+
+    def test_no_unit_values(self):
+        result = filters.numerical_parameter_list([{
+            'parameters': self.physical_series[-2:]
+        }])
+        self.assertEqual(0, len(result))

@@ -9,7 +9,7 @@
             </p>
         </div>
         <div class="select-time-series-container"></div>
-        <div class="iv-graph-data-download usa-accordion">
+        <div class="wdfn-accordion iv-graph-data-download usa-accordion">
             <h2 class="usa-accordion__heading">
                 <button class="usa-accordion__button" aria-expanded="false" aria-controls="iv-graph-data-download-container">
                     Download this graph's data
@@ -40,7 +40,7 @@
                 </p>
             </div>
         </div>
-        <div class="graph-data usa-accordion">
+        <div class="wdfn-accordion graph-data usa-accordion">
             <h2 class="usa-accordion__heading">
                 <button class="usa-accordion__button" aria-expanded="false" aria-controls="iv-data-table-container">
                     Table of hydrograph data
@@ -155,10 +155,25 @@
     {% if loc_vals %}
         Monitoring location {{ site_no }} is associated with {{ loc_vals.site_tp_cd.name.upper()|indefinite_article }} {{ loc_vals.site_tp_cd.name.upper() }} in {{ loc_vals.county_cd.name.upper() }}, {{ loc_vals.state_cd.name.upper() }}.
         {% if param_grp_series|readable_param_list %} Current conditions of {{ param_grp_series|readable_param_list }} are available.{% endif %}
-        {% if param_grp_series|data_start_year %} Water data back to {{  param_grp_series|data_start_year }} are available online.{% endif %}
+        {% if param_grp_series|data_start_year %} Water data back to {{  param_grp_series|data_start_year }} are available online. {% endif %}
     {% endif %}
 {%- endmacro %}
 
+{%  macro DescriptionInternetExplorerLinks(site_no, loc_vals, param_grp_series) -%}
+    {% if loc_vals %}
+        {% if param_grp_series|numerical_parameter_list %}
+            View available data parameters:
+            {% for parameter_code in param_grp_series|numerical_parameter_list %}
+                <a class="usa-link"
+                   href="{{ url_for('monitoring_location', site_no=site_no) }}#parameterCode={{ parameter_code }}"
+                   target="_blank" rel="noopener">
+                    {{ parameter_code }}
+                </a>
+                {% if not loop.last %}, {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+{%- endmacro %}
 
 {%  macro QuestionTooltip(text_id, content, external_desc) -%}
     <div class="usa-tooltip" data-position="right" title="{{ content }}" {% if not external_desc %}aria-describedby="{{ text_id|tooltip_content_id }}"{% endif %}>
