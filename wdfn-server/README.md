@@ -36,3 +36,11 @@ The Python tests can be run as follows:
 ```bash
 env/bin/python -m pytest waterdata
 ```
+
+Note - you may find that some tests are setup relative to the root directory, and the above command may produce errors.
+
+If that happens  run . . .
+```bash
+from the root directory
+wdfn-server/env/bin/python -m pytest
+```

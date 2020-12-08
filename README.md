@@ -46,6 +46,48 @@ To run all project tests:
 ```bash
 make test
 ```
+Optionally, you can run the Python and JavaScript tests separately.
+```bash
+from the root directory
+To start the Python tests:
+wdfn-server/env/bin/python -m pytest 
+
+from the assets directory
+npm run test:watch (runs the tests and stays active waiting for changes)
+or
+npm run test (runs the JavaScript tests once and shuts down)
+```
+Debugging JavaScript tests
+
+Creating units for the JavaScript application is greatly enhanced by using the debugging capabilities built into 
+the testing setup.
+
+This works best for debugging single tests using the 'fit' option.
+
+When running the JavaScript tests using 'npm run test:watch' you have the option of debugging using the browser.
+
+When the tests start, a browser tab titled 'Karma' will open, and you will see a green bar at the top with a 'debug' button.
+
+Press the 'debug' button, a new tab titled 'Karma DEBUG RUNNER' will open and show a blank page.
+
+Right click the page and select 'inspect' to bring up the developer tools.
+
+Click 'Console' and you will see a long list of tests that have run.
+
+The long list of tests is awkward to use when working on a single test (or a few select tests),
+so you can run only the tests you choose by adding the letter 'f' at the beginning of any test. Since
+the tests all start with 'it  . . .', this will form the word 'fit'.
+
+Hit the refresh button of the browser to run your 'fit' selected tests. You will find this a much faster
+way to work with a small number of tests.
+
+Note - when working with 'fit' tests in the browser debug window, the terminal that started the process will
+continue cycle as you make changes. Depending on the speed of your system, it may show errors related to timeouts.
+It is safe to ignore any messages in the host terminal until you finish the debugging session. Once the debugging tab is
+closed and the 'Karma' tab of the browser refreshed, the tests in the terminal should run as expected.
+
+Also note - if you don't see the debug button, try a right mouse click and select 'inspect'. This will usually bring the 
+debug button back.
 
 ## Production build
 
