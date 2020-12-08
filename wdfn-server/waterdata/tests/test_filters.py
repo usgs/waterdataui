@@ -330,7 +330,8 @@ class TestNumericalParameterListFilter(TestCase):
 
     def test_series_is_empty(self):
         result = filters.numerical_parameter_list([])
-        self.assertIsNone(result)
+        # self.assertIsNone(result)
+        self.assertEqual(0, len(result))
 
     def test_single_measured_parameter(self):
         result = filters.numerical_parameter_list([{
@@ -368,10 +369,10 @@ class TestNumericalParameterListFilter(TestCase):
         result = filters.numerical_parameter_list([{
             'parameters': self.old_inorganic_series,
         }])
-        self.assertIsNone(result)
+        self.assertEqual(0, len(result))
 
     def test_no_unit_values(self):
         result = filters.numerical_parameter_list([{
             'parameters': self.physical_series[-2:]
         }])
-        self.assertIsNone(result)
+        self.assertEqual(0, len(result))

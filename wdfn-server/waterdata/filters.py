@@ -147,12 +147,12 @@ def numerical_parameter_list(parameter_group_series):
 
     :param list parameter_group_series: list of parameter series grouped by parameter group
     :return: set of parameter codes
-    :rtype: str or None
+    :rtype: set of strings or None
 
     """
     series = chain.from_iterable([x['parameters'] for x in parameter_group_series])
     # include only real-time parameters that have recent data
-    parameter_set = set(
+    return set(
         [
             s['parameter_code'] for s in series if 'Unit Values' in s['data_types'] and
                                                                          (datetime.datetime.now().date() - datetime.timedelta(days=8) <=
@@ -160,10 +160,3 @@ def numerical_parameter_list(parameter_group_series):
 
         ]
     )
-
-    if parameter_set:
-        numerical_parameters = parameter_set
-    else:
-        numerical_parameters = None
-
-    return numerical_parameters
