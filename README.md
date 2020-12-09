@@ -48,14 +48,14 @@ make test
 ```
 Optionally, you can run the Python and JavaScript tests separately.
 ```bash
-from the root directory
-To start the Python tests:
+# from the root directory
+# To start the Python tests:
 wdfn-server/env/bin/python -m pytest 
 
-from the assets directory
-npm run test:watch (runs the tests and stays active waiting for changes)
-or
-npm run test (runs the JavaScript tests once and shuts down)
+# from the assets directory
+npm run test:watch # (runs the tests and stays active waiting for changes)
+# or
+npm run test # (runs the JavaScript tests once and shuts down)
 ```
 Debugging JavaScript tests
 
@@ -113,21 +113,21 @@ make cleanenv   ; clean environment configuration and build artifacts
 
 ### Build Docker Images from Context in DockerFiles
 ```bash
-From the project root directory run
+# From the project root directory run
 docker build -t assets assets 
-(builds a Docker Image for the Static Assets server named 'assets' 
-using the Dockerfile in the 'assets' directory)
+# (builds a Docker Image for the Static Assets server named 'assets' 
+# using the Dockerfile in the 'assets' directory)
 
 docker build -t waterdataui wdfn-server 
-(builds a Docker Image for the Flask server named 'waterdataui'
-using the Dockerfile in the 'wdfn-server' directory)
+# (builds a Docker Image for the Flask server named 'waterdataui'
+# using the Dockerfile in the 'wdfn-server' directory)
 ```
 
 ### Run the Flask Server as a Process in a Docker Container
 ```bash
 docker run -p 5050:5050 waterdataui
-(starts the Flask server in Docker container on port 5050
-using the 'waterdataui' Docker image)
+# (starts the Flask server in Docker container on port 5050
+# using the 'waterdataui' Docker image)
 ```
 ### Is it working?
 When the container is running, the terminal should look something like . . .
@@ -142,9 +142,9 @@ When the container is running, the terminal should look something like . . .
 ```
 ### Access the Flask Server Running in the Container with a Tunnel
 ```bash
-When using LocalTunnel, run (from any directory)
+# When using LocalTunnel, run (from any directory)
 lt --port 5050
-You will get back a URL looking something like -- https://bad-lionfish-7.loca.lt
+# You will get back a URL looking something like -- https://bad-lionfish-7.loca.lt
 ```
 
 Your local version of the application is now ported to the public URL provided by the tunnel. 
@@ -156,14 +156,14 @@ for all the pieces to connect. Sometimes, it helps to restart the container.
 ### Clean up
 When testing is finished, you will want to turn off the Docker container
 ```bash
-run 
-docker ps (shows all Docker containers on your system)
+# run 
+docker ps # (shows all Docker containers on your system)
 then run
 docker stop <the container id> 
-(the container ID will match up an image shown in the 'docker ps' command named 'waterdataui' 
-(which is what you named it earlier))
+# (the container ID will match up an image shown in the 'docker ps' command named 'waterdataui' 
+# (which is what you named it earlier))
 
-If you don't want the images on your system, you can then remove them with 
+# If you don't want the images on your system, you can then remove them with 
 docker rmi <image name>
 ``` 
 
