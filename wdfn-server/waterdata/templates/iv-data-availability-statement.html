@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="iv-data-availability-statement" class="usa-prose">
+        <h1>USGS Water Data for the Nation</h1>
+        <section class="usa-prose">
+            <h2>Current and Historical Instantaneous Data Availability</h2>
+            <p>
+                The available parameters from the Current Conditions and Historical Observations pages on the National
+                Water Information System Web Interface have two categories of instantaneous data availability.
+                For some parameters, historical data are available as far back as October 1, 1950, whereas for
+                others only the most recent 120 days of provisional data are available. The period of
+                availability depends on the intended use of the data and can vary from monitoring location to
+                monitoring location and/or between parameters at a monitoring location as described below.
+            </p>
+        </section>
+        <section class="usa-prose iv-statement-subsection">
+            <h3>Available Historical Instantaneous Data:</h3>
+            <p>
+                Parameters with historical instantaneous data are measured by the USGS Water Science Center (WSC)
+                with the intent to publish and are subject to a thorough review and approval process. Typically,
+                these data have corresponding historical daily values available for the period of record.
+                These instantaneous data are limited to data collected since October 1, 1950.
+            </p>
+            <p>
+                Data are presented as approved or
+                <a href="{{ url_for('provisional_data_statement')}}">PROVISIONAL</a>
+                as appropriate, however provisional data will be provided for only the most recent three years.
+                In cases where data are not approved within a three year period,
+                interested users should contact the local WSC for further information.
+            </p>
+            <h3>Available Operational Instantaneous Data:</h3>
+            <p>
+                These parameters typically are collected by the USGS for the purposes of supporting short-term
+                operational needs of the data network (for example precipitation at some locations) or parameters
+                measured to facilitate the computation of another parameter of interest (for example, stage is
+                used in the computations of streamflow). In either case, these parameters are not necessarily
+                corrected for errors or omissions either because the short-term need for the operational data
+                has passed or because other methods were used to estimate the primary parameter of interest.
+                Operational instantaneous data typically are not intended for publication and therefore are
+                limited to the most recent 120 days.
+            </p>
+        </section>
+        <section class="usa-prose">
+            <p>
+                Please note that the above designations are not uniformly applied from monitoring location to
+                monitoring location for a given parameter. For example, whereas stage data at some monitoring
+                locations are fully quality assured, published, and are historically available, at other monitoring
+                locations they are not quality assured and will only be available for 120 days. The same monitoring
+                location-to-monitoring location variations will exist for precipitation and other parameters
+                depending on the intended uses of the data.
+            </p>
+            <p>
+                Significant gaps in the availability of historical instantaneous data may exist due to instrument
+                problems, environmental conditions or other factors that affect the ability to collect data.
+                For some parameters, especially streamflow and others that are routinely estimated as
+                necessary, a complete record may be available as Daily Data.
+            </p>
+        </section>
+    </div>
+{% endblock content %}
