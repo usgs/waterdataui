@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.38.0...master)
+## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.39.0...master)
+
+## [0.39.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.38.0...waterdataui-0.39.0) - 2020-12-09
 ### Added
 - Static image of the Instantaneous Values Hydrograph for users of Internet Explorer. 
 - New colors for the compare line.
@@ -12,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Links for WaterAlert.
 - Added a check to see if FIM sites are public. If not, the sites flood inundation layers are not shown even if available.
 - Links to download data related to the currently displayed hydrograph.
-- Show active sites in the RTN and RTS networks
+- Show active sites in the RTN and RTS networks in the map
 
 ### Changed
 - Added a tooltip to the hydrograph title showing the selected variable description and show the short unitCode on the Y axis.
