@@ -41,6 +41,6 @@ Note - you may find that some tests are setup relative to the root directory, an
 
 If that happens  run . . .
 ```bash
-from the root directory
+# from the root directory
 wdfn-server/env/bin/python -m pytest
 ```
