@@ -1,0 +1,9 @@
+
+#iv-data-availability-statement {
+  section {
+    @include u-padding-bottom(1);
+  }
+  .iv-statement-subsection {
+    @include u-padding-left(2);
+  }
+}
