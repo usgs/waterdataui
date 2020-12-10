@@ -30,7 +30,7 @@ class TestProvisionalDataStatementView(TestCase):
     def setUp(self):
         self.app_client = app.test_client()
 
-    def test_version(self):
+    def test_successful_view(self):
         response = self.app_client.get('/provisional-data-statement')
 
         self.assertEqual(response.status_code, 200)
@@ -40,7 +40,7 @@ class TestIvDataAvailabilityStatementView(TestCase):
     def setUp(self):
         self.app_client = app.test_client()
 
-    def test_version(self):
+    def test_successful_view(self):
         response = self.app_client.get('/iv-data-availability-statement')
 
         self.assertEqual(response.status_code, 200)
