@@ -1,9 +1,9 @@
 
 #iv-data-availability-statement {
   section {
-    padding-bottom: 1em;
+    @include u-padding-bottom(1);
   }
   .iv-statement-subsection {
-    padding-left: 1em;
+    @include u-padding-left(2);
   }
 }
