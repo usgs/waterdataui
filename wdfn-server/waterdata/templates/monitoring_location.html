@@ -154,7 +154,10 @@
                     {% if monitoring_camera.exists %}
                         <div class="wdfn-accordion usa-accordion" style="margin-top:1em;">
                             <h2 class="usa-accordion__heading">
-                                <button class="usa-accordion__button" aria-expanded="true" aria-controls="ts-a1a">Monitoring Camera</button>
+                                <button class="usa-accordion__button"
+                                        aria-expanded="true" aria-controls="ts-a1a"
+                                        g-on="click" ga-event-category="accordion" ga-event-action="interactionWithCameraAccordion">
+                                    Monitoring Camera</button>
                             </h2>
                             <div id="ts-a1a" class="usa-accordion__content">
                                 <div>Most recent image</div>
@@ -183,7 +186,10 @@
                         <div id="dv-accordion" class="wdfn-accordion usa-accordion">
                             <div>
                                 <h3 class="usa-accordion__heading">
-                                    <button class="usa-accordion__button" aria-expanded="true" aria-controls="dv-graph-container">Groundwater Data</button>
+                                    <button class="usa-accordion__button"
+                                            aria-expanded="true" aria-controls="dv-graph-container"
+                                            g-on="click" ga-event-category="accordion" ga-event-action="interactionWithDVAccordion">
+                                        Groundwater Data</button>
                                 </h3>
                                 <div id="dv-graph-container">
                                     {{ components.DailyValueTimeSeriesComponent(stations[0].site_no) }}
@@ -199,7 +205,12 @@
 
                 <div class="wdfn-accordion usa-accordion">
                     <h3 class="usa-accordion__heading">
-                        <button class="usa-accordion__button" aria-expanded="true" aria-controls="network-list">Affiliated Networks</button>
+                        <button
+                                class="usa-accordion__button"
+                                aria-expanded="true" aria-controls="network-list"
+                                g-on="click" ga-event-category="accordion" ga-event-action="interactionWithAffiliatedNetworkAccordion">
+                            Affiliated Networks
+                        </button>
                     </h3>
                     <div id="network-list" class="usa-accordion__content">
                         {{ components.NetworkListComponent(stations[0].site_no) }}
@@ -209,7 +220,10 @@
                 {% if parm_grp_summary %}
                     <div class="wdfn-accordion usa-accordion">
                         <h2 class="usa-accordion__heading">
-                            <button class="usa-accordion__button" aria-expanded="false" aria-controls="ts-a1">Summary of All Available Data</button>
+                            <button class="usa-accordion__button"
+                                    aria-expanded="false" aria-controls="ts-a1"
+                                    g-on="click" ga-event-category="accordion" ga-event-action="interactionWithDataSummaryAccordion">
+                                Summary of All Available Data</button>
                         </h2>
                         <div id="ts-a1" class="usa-accordion__content">
                             <table class="usa-table" id="site-data-summary">
@@ -239,7 +253,9 @@
 
                 <div class="wdfn-accordion usa-accordion">
                     <h2 class="usa-accordion__heading">
-                        <button class="usa-accordion__button" aria-expanded="false" aria-controls="ts-a2">
+                        <button class="usa-accordion__button"
+                                aria-expanded="false" aria-controls="ts-a2"
+                                g-on="click" ga-event-category="accordion" ga-event-action="interactionWithMetadataAccordion">
                             Location Metadata
                         </button>
                     </h2>

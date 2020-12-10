@@ -169,6 +169,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         daysBeforeTodaySubmitContainer.append('button')
             .attr('class', 'usa-button')
             .attr('id', 'custom-date-submit-days')
+            .attr('ga-on', 'click')
+            .attr('ga-event-category', 'TimeSeriesGraph')
+            .attr('ga-event-action', 'customDaysSubmit')
             .text('Display data on graph')
             .on('click', function() {
                 const userSpecifiedNumberOfDays = document.getElementById('with-hint-input-days-from-today').value;
@@ -273,6 +276,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         calendarDaysSubmitContainer.append('button')
             .attr('class', 'usa-button')
             .attr('id', 'custom-date-submit-calendar')
+            .attr('ga-on', 'click')
+            .attr('ga-event-category', 'TimeSeriesGraph')
+            .attr('ga-event-action', 'customDateSubmit')
             .text('Display data on graph')
             .on('click', function() {
                 let userSpecifiedStart = document.getElementById('custom-start-date').value;
