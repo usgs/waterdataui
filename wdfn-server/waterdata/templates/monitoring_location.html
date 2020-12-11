@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_plain.html' %}
 
 {% import 'macros/components.html' as components %}
 
@@ -22,6 +22,10 @@
             <meta name="twitter:image" content="https://labs.waterdata.usgs.gov/api/graph-images/monitoring-location/{{stations[0].site_no}}/?parameterCode={{uv_period_of_record|first}}&width=1000">
         {%  endif %}
     {%  endif %}
+{% endblock %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{{ 'main.css' | asset_url }}">
 {% endblock %}
 
 {% block page_script %}
@@ -97,215 +101,224 @@
 
 {% set body_id = 'monitoring-location' %}
 
-{% block content %}
-    <div id="monitoring-location-page-container">
-        {% if status_code == 200 %}
-            {% if stations|length > 1 %}
-                <h1>Multiple sites found</h1>
-                <h3>Please pick a site:</h3>
-                <table class="usa-table usa-table--borderless">
-                    <thead>
-                        <tr>
-                            <th scope="col">Agency</th>
-                            <th scope="col">Site number</th>
-                            <th scope="col">Site name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for site in stations %}
-                        <tr>
-                            <td><a class="usa-link" href="{{ url_for('monitoring_location', site_no=site.site_no, agency_cd=site.agency_cd) }}">{{ site.agency_cd }}</a></td>
-                            <td> {{ site.site_no }} </td>
-                            <td> {{ site.station_nm }} </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+{% block body %}
+    {% with stations=stations %}
+        {% include 'partials/monitoring_location_header.html' %}
+    {% endwith %}
 
-            {% else %}
-                <div class="site-header">
-                    {% with site_no=stations[0].site_no %}{% include 'partials/social_share.html' %}{% endwith %}
-                    <h1>{{ stations[0].station_nm }}</h1>
-                    <div>
-                        <span class="usa-tag">Important</span>
-                        <a id="classic-page-link" class="usa-link" aria-describedby="{{ 'classic'|tooltip_content_id }}" href="{{ config.NWIS_ENDPOINTS.UV}}?site_no={{stations[0].site_no}}" target="_blank" rel="noopener">Classic Page</a>
-                        {{ components.QuestionTooltip('classic', 'View all current conditions values on the classic Water Data for the Nation interface.', True) }}
+    <main id="main-content" class="grid-container content-container usa-prose">
+        <div id="monitoring-location-page-container">
+            {% if status_code == 200 %}
+                {% if stations|length > 1 %}
+                    <h1>Multiple sites found</h1>
+                    <h3>Please pick a site:</h3>
+                    <table class="usa-table usa-table--borderless">
+                        <thead>
+                            <tr>
+                                <th scope="col">Agency</th>
+                                <th scope="col">Site number</th>
+                                <th scope="col">Site name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for site in stations %}
+                            <tr>
+                                <td><a class="usa-link" href="{{ url_for('monitoring_location', site_no=site.site_no, agency_cd=site.agency_cd) }}">{{ site.agency_cd }}</a></td>
+                                <td> {{ site.site_no }} </td>
+                                <td> {{ site.station_nm }} </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                {% else %}
+                    <div class="site-header">
+                        {% with site_no=stations[0].site_no %}{% include 'partials/social_share.html' %}{% endwith %}
+                        <h1>{{ stations[0].station_nm }}</h1>
+                        <div>
+                            <span class="usa-tag">Important</span>
+                            <a id="classic-page-link" class="usa-link" aria-describedby="{{ 'classic'|tooltip_content_id }}" href="{{ config.NWIS_ENDPOINTS.UV}}?site_no={{stations[0].site_no}}" target="_blank" rel="noopener">Classic Page</a>
+                            {{ components.QuestionTooltip('classic', 'View all current conditions values on the classic Water Data for the Nation interface.', True) }}
+                        </div>
+                        <p id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}
+                            {% if request.user_agent.browser == 'msie' %}
+                                {{ components.DescriptionInternetExplorerLinks(stations[0].site_no, location_with_values, parm_grp_summary) }}
+                            {% endif %}
+                        </p>
                     </div>
-                    <p id="site-description">{{ components.Description(stations[0].site_no, location_with_values, parm_grp_summary) }}
-                        {% if request.user_agent.browser == 'msie' %}
-                            {{ components.DescriptionInternetExplorerLinks(stations[0].site_no, location_with_values, parm_grp_summary) }}
+                    {% if request.user_agent.browser == 'msie' %}
+                        <div id="static-graph-div"></div>
+                        <div class="usa-alert usa-alert--warning">
+                            <div class="usa-alert__body">
+                                <h3 class="usa-alert__heading">Please switch from Internet Explorer</h3>
+                                <p class="usa-alert__text">
+                                    Internet Explorer is only minimally supported on this website and many features are disabled.
+                                    This page is best viewed in recent versions of Edge, Firefox, Chrome or Safari.
+                                </p>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if request.user_agent.browser != 'msie' %}
+                        {{ components.TimeSeriesComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
+                        {% if monitoring_camera.exists %}
+                            <div class="wdfn-accordion usa-accordion" style="margin-top:1em;">
+                                <h2 class="usa-accordion__heading">
+                                    <button class="usa-accordion__button" aria-expanded="true" aria-controls="ts-a1a">Monitoring Camera</button>
+                                </h2>
+                                <div id="ts-a1a" class="usa-accordion__content">
+                                    <div>Most recent image</div>
+                                    <div style="float:left">
+                                        <a href="{{ monitoring_camera.video  }}" title="click image to open full-size video" target="_blank" rel="noopener">
+                                            <img width="200" src="{{ monitoring_camera.thumb }}" alt="lastest camera image thumbnail">
+                                        </a>
+                                    </div>
+                                    <div style="float:right">
+                                        <div><b>Frames Gallery: </b>
+                                            <a href="{{ monitoring_camera.frame_gallery }}" target="_blank" rel="noopener">
+                                                Last 99 Frames
+                                            </a>
+                                        </div>
+                                        <div><b>Video Folder: </b>
+                                            <a href="{{ monitoring_camera.video_index }}" target="_blank" rel="noopener">
+                                                Index of videos and images
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         {% endif %}
-                    </p>
-                </div>
-                {% if request.user_agent.browser == 'msie' %}
-                    <div id="static-graph-div"></div>
-                    <div class="usa-alert usa-alert--warning">
-                        <div class="usa-alert__body">
-                            <h3 class="usa-alert__heading">Please switch from Internet Explorer</h3>
-                            <p class="usa-alert__text">
-                                Internet Explorer is only minimally supported on this website and many features are disabled.
-                                This page is best viewed in recent versions of Edge, Firefox, Chrome or Safari.
-                            </p>
+
+                        {% if config.DAILY_VALUE_HYDROGRAPH_ENABLED %}
+                            <div id="dv-accordion" class="wdfn-accordion usa-accordion">
+                                <div>
+                                    <h3 class="usa-accordion__heading">
+                                        <button class="usa-accordion__button" aria-expanded="true" aria-controls="dv-graph-container">Groundwater Data</button>
+                                    </h3>
+                                    <div id="dv-graph-container">
+                                        {{ components.DailyValueTimeSeriesComponent(stations[0].site_no) }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
+                        {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
+                   {% endif %}
+
+                    <div class="wdfn-accordion usa-accordion">
+                        <h3 class="usa-accordion__heading">
+                            <button class="usa-accordion__button" aria-expanded="true" aria-controls="network-list">Affiliated Networks</button>
+                        </h3>
+                        <div id="network-list" class="usa-accordion__content">
+                            {{ components.NetworkListComponent(stations[0].site_no) }}
                         </div>
                     </div>
-                {% endif %}
-                {% if request.user_agent.browser != 'msie' %}
-                    {{ components.TimeSeriesComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
-                    {% if monitoring_camera.exists %}
-                        <div class="wdfn-accordion usa-accordion" style="margin-top:1em;">
+
+                    {% if parm_grp_summary %}
+                        <div class="wdfn-accordion usa-accordion">
                             <h2 class="usa-accordion__heading">
-                                <button class="usa-accordion__button" aria-expanded="true" aria-controls="ts-a1a">Monitoring Camera</button>
+                                <button class="usa-accordion__button" aria-expanded="false" aria-controls="ts-a1">Summary of All Available Data</button>
                             </h2>
-                            <div id="ts-a1a" class="usa-accordion__content">
-                                <div>Most recent image</div>
-                                <div style="float:left">
-                                    <a href="{{ monitoring_camera.video  }}" title="click image to open full-size video" target="_blank" rel="noopener">
-                                        <img width="200" src="{{ monitoring_camera.thumb }}" alt="lastest camera image thumbnail">
-                                    </a>
-                                </div>
-                                <div style="float:right">
-                                    <div><b>Frames Gallery: </b>
-                                        <a href="{{ monitoring_camera.frame_gallery }}" target="_blank" rel="noopener">
-                                            Last 99 Frames
-                                        </a>
-                                    </div>
-                                    <div><b>Video Folder: </b>
-                                        <a href="{{ monitoring_camera.video_index }}" target="_blank" rel="noopener">
-                                            Index of videos and images
-                                        </a>
-                                    </div>
-                                </div>
+                            <div id="ts-a1" class="usa-accordion__content">
+                                <table class="usa-table" id="site-data-summary">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">USGS Parameter Group</th>
+                                            <th scope="col">Data Types</th>
+                                            <th scope="col">Start Date</th>
+                                            <th scope="col">End Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for grp in parm_grp_summary %}
+                                            <tr>
+                                                <th scope="row">{% if grp.name %}{{ grp.name }}{% else %}<sub>n/a</sub>{% endif %}</th>
+                                                <td>{{ grp.data_types }}</td>
+                                                <td>{{ grp.start_date|date_to_string }}</td>
+                                                <td>{{ grp.end_date|date_to_string }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                <a class="usa-link" href="{{ config.NWIS_ENDPOINTS.INVENTORY}}?site_no={{ stations[0].site_no }}" target="_blank" rel="noopener">Classic Water Data for the Nation Inventory</a>
                             </div>
                         </div>
                     {% endif %}
 
-                    {% if config.DAILY_VALUE_HYDROGRAPH_ENABLED %}
-                        <div id="dv-accordion" class="wdfn-accordion usa-accordion">
-                            <div>
-                                <h3 class="usa-accordion__heading">
-                                    <button class="usa-accordion__button" aria-expanded="true" aria-controls="dv-graph-container">Groundwater Data</button>
-                                </h3>
-                                <div id="dv-graph-container">
-                                    {{ components.DailyValueTimeSeriesComponent(stations[0].site_no) }}
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                {% endif %}
-
-                {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
-                    {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
-               {% endif %}
-
-                <div class="wdfn-accordion usa-accordion">
-                    <h3 class="usa-accordion__heading">
-                        <button class="usa-accordion__button" aria-expanded="true" aria-controls="network-list">Affiliated Networks</button>
-                    </h3>
-                    <div id="network-list" class="usa-accordion__content">
-                        {{ components.NetworkListComponent(stations[0].site_no) }}
-                    </div>
-                </div>
-
-                {% if parm_grp_summary %}
                     <div class="wdfn-accordion usa-accordion">
                         <h2 class="usa-accordion__heading">
-                            <button class="usa-accordion__button" aria-expanded="false" aria-controls="ts-a1">Summary of All Available Data</button>
+                            <button class="usa-accordion__button" aria-expanded="false" aria-controls="ts-a2">
+                                Location Metadata
+                            </button>
                         </h2>
-                        <div id="ts-a1" class="usa-accordion__content">
-                            <table class="usa-table" id="site-data-summary">
+                        <div id="ts-a2" class="usa-accordion__content">
+                            <table class="usa-table" id="site-summary" summary="Descriptive metadata about this monitoring location">
                                 <thead>
                                     <tr>
-                                        <th scope="col">USGS Parameter Group</th>
-                                        <th scope="col">Data Types</th>
-                                        <th scope="col">Start Date</th>
-                                        <th scope="col">End Date</th>
+                                        <th scope="col">Metadata Element</th>
+                                        <th scope="col">Location Metadata</th>
+                                        <th scope="col">Metadata Code</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for grp in parm_grp_summary %}
+                                    {% for key, value in location_with_values.items() %}
                                         <tr>
-                                            <th scope="row">{% if grp.name %}{{ grp.name }}{% else %}<sub>n/a</sub>{% endif %}</th>
-                                            <td>{{ grp.data_types }}</td>
-                                            <td>{{ grp.start_date|date_to_string }}</td>
-                                            <td>{{ grp.end_date|date_to_string }}</td>
+                                            <th scope="row" {%  if STATION_FIELDS_D[key].description %}aria-describedby="{{ key|tooltip_content_id }}"{% endif %}>{{ STATION_FIELDS_D[key].name }}
+                                                {%  if STATION_FIELDS_D[key].description %}
+                                                    {{ components.QuestionTooltip(key, STATION_FIELDS_D[key].description, True) }}
+                                                {% endif %}
+                                            </th>
+                                            <td class="loc-metadata">
+                                                {% if value.url %}
+                                                    <a href="{{ value.url }}">{{ value.name }}</a>
+                                                {% else %}
+                                                    {{ value.name }}
+                                                {% endif %}
+                                                {% if value.desc %}
+                                                    {{ components.QuestionTooltip(value.code, value.desc, False) }}
+                                                {% endif %}
+                                            </td>
+                                            <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
-                            <a class="usa-link" href="{{ config.NWIS_ENDPOINTS.INVENTORY}}?site_no={{ stations[0].site_no }}" target="_blank" rel="noopener">Classic Water Data for the Nation Inventory</a>
                         </div>
                     </div>
+
+                    {% if questions_link %}
+                        <div>
+                            <a class="usa-link" href="{{ questions_link }}">Email USGS questions about this site</a>
+                        </div>
+                    {% endif %}
+
+                    {% if cooperators %}
+                        <div>
+                            <p>Operated in cooperation with:</p>
+                            {% for cooperator in cooperators | sort(attribute='Name') %}
+                                <figure class="cooperator_logo">
+                                    <a class="usa-class" href="{{ cooperator.URL }}">
+                                        <img src="{{ cooperator.IconURL | https_url }}" alt="logo for {{ cooperator.Name }}" height="50">
+                                    </a>
+                                    <figcaption><a class="usa-class"href="{{ cooperator.URL }}">{{ cooperator.Name }}</a></figcaption>
+                                </figure>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                 {% endif %}
 
-                <div class="wdfn-accordion usa-accordion">
-                    <h2 class="usa-accordion__heading">
-                        <button class="usa-accordion__button" aria-expanded="false" aria-controls="ts-a2">
-                            Location Metadata
-                        </button>
-                    </h2>
-                    <div id="ts-a2" class="usa-accordion__content">
-                        <table class="usa-table" id="site-summary" summary="Descriptive metadata about this monitoring location">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Metadata Element</th>
-                                    <th scope="col">Location Metadata</th>
-                                    <th scope="col">Metadata Code</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for key, value in location_with_values.items() %}
-                                    <tr>
-                                        <th scope="row" {%  if STATION_FIELDS_D[key].description %}aria-describedby="{{ key|tooltip_content_id }}"{% endif %}>{{ STATION_FIELDS_D[key].name }}
-                                            {%  if STATION_FIELDS_D[key].description %}
-                                                {{ components.QuestionTooltip(key, STATION_FIELDS_D[key].description, True) }}
-                                            {% endif %}
-                                        </th>
-                                        <td class="loc-metadata">
-                                            {% if value.url %}
-                                                <a href="{{ value.url }}">{{ value.name }}</a>
-                                            {% else %}
-                                                {{ value.name }}
-                                            {% endif %}
-                                            {% if value.desc %}
-                                                {{ components.QuestionTooltip(value.code, value.desc, False) }}
-                                            {% endif %}
-                                        </td>
-                                        <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {% if questions_link %}
-                    <div>
-                        <a class="usa-link" href="{{ questions_link }}">Email USGS questions about this site</a>
-                    </div>
-                {% endif %}
-
-                {% if cooperators %}
-                    <div>
-                        <p>Operated in cooperation with:</p>
-                        {% for cooperator in cooperators | sort(attribute='Name') %}
-                            <figure class="cooperator_logo">
-                                <a class="usa-class" href="{{ cooperator.URL }}">
-                                    <img src="{{ cooperator.IconURL | https_url }}" alt="logo for {{ cooperator.Name }}" height="50">
-                                </a>
-                                <figcaption><a class="usa-class"href="{{ cooperator.URL }}">{{ cooperator.Name }}</a></figcaption>
-                            </figure>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
+            {% else %}
+                <h1>Error: HTTP {{ status_code }} -- {{ reason }}</h1>
             {% endif %}
+        </div>
 
-        {% else %}
-            <h1>Error: HTTP {{ status_code }} -- {{ reason }}</h1>
-        {% endif %}
-    </div>
+        {%  if config.TOUCHPOINT_SCRIPT %}
+            {{ config.TOUCHPOINT_SCRIPT | safe }}
+        {%  endif %}
+    </main>
 
-    {%  if config.TOUCHPOINT_SCRIPT %}
-        {{ config.TOUCHPOINT_SCRIPT | safe }}
-    {%  endif %}
-{% endblock content %}
+    {% include 'partials/footer.html' %}
+
+{% endblock body %}

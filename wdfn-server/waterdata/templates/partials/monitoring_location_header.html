@@ -1,0 +1,21 @@
+{% extends 'partials/header.html' %}
+
+{% block page_specific_menus %}
+    {% if stations|length == 1 %}
+        <li class="usa-nav__primary-item">
+            <button class="usa-accordion__button usa-nav__link"
+                    aria-expanded="false"
+                    aria-controls="inventory-section">
+                <span>Data Inventory</span>
+            </button>
+            <ul id="inventory-section" class="usa-nav__submenu">
+                <li class="usa-nav__submenu-item">
+                    <a href="https://waterdata.usgs.gov/nwis/inventory/?site_no={{ stations[0].site_no }}&agency_cd={{ stations[0].agency_cd }}"
+                        target="_blank">
+                        Detailed Inventory
+                    </a>
+                </li>
+            </ul>
+        </li>
+    {% endif %}
+{% endblock %}
