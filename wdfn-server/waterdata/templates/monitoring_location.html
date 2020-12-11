@@ -102,9 +102,7 @@
 {% set body_id = 'monitoring-location' %}
 
 {% block body %}
-    {% with stations=stations %}
-        {% include 'partials/monitoring_location_header.html' %}
-    {% endwith %}
+    {% include 'partials/monitoring_location_header.html' %}
 
     <main id="main-content" class="grid-container content-container usa-prose">
         <div id="monitoring-location-page-container">

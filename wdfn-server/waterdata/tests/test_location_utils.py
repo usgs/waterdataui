@@ -362,8 +362,8 @@ class TestBuildLinkedData(TestCase):
         self.agency_code = 'Cat Leadership Academy'
         self.latitude = '-800.12'
         self.longitude = '12.12'
-        self.caps_with_discharge = {'00060', '00065'}
-        self.caps_sans_discharge = {'00065', '00090'}
+        self.parameter_codes_with_discharge = {'00060', '00065'}
+        self.parameter_codes_sans_discharge = {'00065', '00090'}
 
     def test_with_discharge(self):
         result = build_linked_data(self.loc_number,
@@ -371,7 +371,7 @@ class TestBuildLinkedData(TestCase):
                                    self.agency_code,
                                    self.latitude,
                                    self.longitude,
-                                   self.caps_with_discharge
+                                   self.parameter_codes_with_discharge
                                    )
         expected = {'@context': ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
                                  'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'
@@ -397,7 +397,7 @@ class TestBuildLinkedData(TestCase):
                                    self.agency_code,
                                    self.latitude,
                                    self.longitude,
-                                   self.caps_sans_discharge
+                                   self.parameter_codes_sans_discharge
                                    )
         expected = {'@context': ['https://opengeospatial.github.io/ELFIE/json-ld/elf-index.jsonld',
                                  'https://opengeospatial.github.io/ELFIE/json-ld/hyf.jsonld'

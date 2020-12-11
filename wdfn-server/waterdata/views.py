@@ -49,24 +49,24 @@ def monitoring_location(site_no):
 
     """
     agency_cd = request.args.get('agency_cd')
-    resp = NWIS.get_site(site_no, agency_cd)
-    status = resp.status_code
+    site_data_resp = NWIS.get_site(site_no, agency_cd)
+    status = site_data_resp.status_code
     json_ld = None
 
     if status == 200:
-        iter_data = parse_rdb(resp.iter_lines(decode_unicode=True))
-        data_list = list(iter_data)
+        site_data = parse_rdb(site_data_resp.iter_lines(decode_unicode=True))
+        site_data_list = list(site_data)
 
         template = 'monitoring_location.html'
 
         context = {
             'status_code': status,
-            'stations': data_list,
+            'stations': site_data_list,
             'STATION_FIELDS_D': STATION_FIELDS_D
         }
-        station_record = data_list[0]
+        station_record = site_data_list[0]
 
-        if len(data_list) == 1:
+        if len(site_data_list) == 1:
             parameter_data = NWIS.get_site_parameters(site_no, agency_cd)
             if parameter_data:
                 site_dataseries = [
@@ -79,10 +79,12 @@ def monitoring_location(site_no):
                     for param_datum in parameter_data
                 ]
                 grouped_dataseries = rollup_dataseries(site_dataseries)
-                location_capabilities = set(param_datum['parm_cd'] for param_datum in parameter_data)
+                available_parameter_codes = set(param_datum['parm_cd'] for param_datum in parameter_data)
+                available_data_types = set(param_datum['data_type_cd'] for param_datum in parameter_data)
             else:
                 grouped_dataseries = []
-                location_capabilities = {}
+                available_parameter_codes = set()
+                available_data_types = set()
 
             json_ld = build_linked_data(
                 site_no,
@@ -90,7 +92,7 @@ def monitoring_location(site_no):
                 station_record.get('agency_cd'),
                 station_record.get('dec_lat_va', ''),
                 station_record.get('dec_long_va', ''),
-                location_capabilities
+                available_parameter_codes
             )
             location_with_values = get_disambiguated_values(
                 station_record,
@@ -124,10 +126,11 @@ def monitoring_location(site_no):
 
             context = {
                 'status_code': status,
-                'stations': data_list,
+                'stations': site_data_list,
                 'location_with_values': location_with_values,
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
+                'available_data_types': available_data_types,
                 'uv_period_of_record': get_period_of_record_by_parm_cd(parameter_data),
                 'parm_grp_summary': grouped_dataseries,
                 'questions_link': questions_link,
@@ -140,7 +143,7 @@ def monitoring_location(site_no):
         http_code = 200
     elif 400 <= status < 500:
         template = 'monitoring_location.html'
-        context = {'status_code': status, 'reason': resp.reason}
+        context = {'status_code': status, 'reason': site_data_resp.reason}
         http_code = 200
     elif 500 <= status <= 511:
         template = 'errors/500.html'
