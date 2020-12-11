@@ -25,6 +25,9 @@ export const drawCursorSlider = function(svg, {cursorOffset, xScale, layout}, st
     svg.append('g')
         .attr('class', 'cursor-slider-group')
         .attr('transform', `translate(${layout.margin.left},15)`)
+        .attr('ga-on', 'click')
+        .attr('ga-event-category', 'hydrograph-interaction')
+        .attr('ga-event-action', 'clickOnSlider')
         .call(slider);
     slider.silentValue(cursorOffset ? startMillis + cursorOffset : endMillis);
 
