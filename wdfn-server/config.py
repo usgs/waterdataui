@@ -75,7 +75,7 @@ NWIS_CODE_LOOKUP_FILENAME = 'nwis_lookup.json'
 COUNTRY_STATE_COUNTY_LOOKUP_FILENAME = 'nwis_country_state_lookup.json'
 HUC_LOOKUP_FILENAME = 'huc_lookup.json'
 
-GA_TRACKING_CODE = 'UA-113781741-1'
+GA_TRACKING_CODE = ''
 ENABLE_USGS_GA = False
 
 # To use hashed assets, set this to the gulp-rev-all rev-manifest.json path
