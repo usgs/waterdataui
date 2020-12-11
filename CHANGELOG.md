@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.39.0...master)
 ### Added
 - Instantaneous Values data availability information page
+- Added an inventory data menu on the monitoring location page which is context specific for the site.
 
 ## [0.39.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.38.0...waterdataui-0.39.0) - 2020-12-09
 ### Added
