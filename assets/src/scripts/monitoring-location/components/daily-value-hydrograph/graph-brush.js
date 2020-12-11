@@ -60,6 +60,9 @@ export const drawGraphBrush = function(container, store) {
     div.append('svg')
         .classed('brush-svg', true)
         .attr('xmlns', 'http://www.w3.org/2000/svg')
+        .attr('ga-on', 'click')
+        .attr('ga-event-category', 'dv-hydrograph-interaction')
+        .attr('ga-event-action', 'clickOnDVBrush')
         .call(link(store,(elem, layout) => {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} ${layout.height + layout.margin.bottom + layout.margin.top}`);
             }, getBrushLayout
