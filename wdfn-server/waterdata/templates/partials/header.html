@@ -76,7 +76,10 @@
                     </button>
                     <ul id="data-info-section" class="usa-nav__submenu">
                         <li class="usa-nav__submenu-item">
-                            <a href="{{ url_for('provisional_data_statement')}}">What is Provisional Data</a>
+                            <a href="{{ url_for('provisional_data_statement')}}"
+                               ga-on="click" ga-event-category="navigation" ga-event-action="provisionalDataAccordionNav">>
+                                What is Provisional Data
+                            </a>
                         </li>
                         <li class="usa-nav__submenu-item">
                             <a href="{{ url_for('iv_data_availability')}}"
