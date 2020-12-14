@@ -161,7 +161,12 @@
                         {% if monitoring_camera.exists %}
                             <div class="wdfn-accordion usa-accordion" style="margin-top:1em;">
                                 <h2 class="usa-accordion__heading">
-                                    <button class="usa-accordion__button" aria-expanded="true" aria-controls="ts-a1a">Monitoring Camera</button>
+                                    <button class="usa-accordion__button"
+                                            aria-expanded="true"
+                                            aria-controls="ts-a1a"
+                                            ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithCameraAccordion">
+                                        Monitoring Camera
+                                    </button>
                                 </h2>
                                 <div id="ts-a1a" class="usa-accordion__content">
                                     <div>Most recent image</div>
