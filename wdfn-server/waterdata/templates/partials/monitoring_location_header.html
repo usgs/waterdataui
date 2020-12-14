@@ -11,32 +11,37 @@
             <ul id="inventory-section" class="usa-nav__submenu">
                 <li class="usa-nav__submenu-item">
                     <a href="https://waterdata.usgs.gov/nwis/inventory/?site_no={{ stations[0].site_no }}&agency_cd={{ stations[0].agency_cd }}"
-                        target="_blank">
+                       rel="noopener"
+                       target="_blank">
                         Detailed Inventory
                     </a>
                 </li>
                 {% if 'dv' in available_data_types %}
                     <li class="usa-nav__submenu-item">
                         <a href="https://waterdata.usgs.gov/nwis/dv/?site_no={{ stations[0].site_no }}&referred_module=sw"
-                            target="_blank">
+                           rel="noopener"
+                           target="_blank">
                             Daily Data
                         </a>
                     </li>
                     <li class="usa-nav__submenu-item">
                         <a href="https://waterdata.usgs.gov/nwis/dvstat/?site_no={{ stations[0].site_no }}&referred_module=sw&format=sites_selection_links"
-                            target="_blank">
+                           rel="noopener"
+                           target="_blank">
                             Daily Statistical Data
                         </a>
                     </li>
                     <li class="usa-nav__submenu-item">
                         <a href="https://waterdata.usgs.gov/nwis/monthly/?site_no={{ stations[0].site_no }}&referred_module=sw&format=sites_selection_links"
-                            target="_blank">
+                           rel="noopener"
+                           target="_blank">
                             Monthly Statistical Data
                         </a>
                     </li>
                     <li class="usa-nav__submenu-item">
                         <a href="https://waterdata.usgs.gov/nwis/annual/?site_no={{ stations[0].site_no }}&referred_module=sw&format=sites_selection_links"
-                            target="_blank">
+                           rel="noopener"
+                           target="_blank">
                             Annual Statistical Data
                         </a>
                     </li>
@@ -44,7 +49,8 @@
                 {% if 'pk' in available_data_types %}
                     <li class="usa-nav__submenu-item">
                         <a href="https://waterdata.usgs.gov/nwis/peak/?site_no={{ stations[0].site_no }}"
-                            target="_blank">
+                           rel="noopener"
+                           target="_blank">
                             Peak Streamflow
                         </a>
                     </li>
@@ -52,7 +58,8 @@
                 {% if 'sv' in available_data_types %}
                     <li class="usa-nav__submenu-item">
                         <a href="https://waterdata.usgs.gov/nwis/measurements/?site_no={{ stations[0].site_no }}"
-                            target="_blank">
+                           rel="noopener"
+                           target="_blank">
                             Field Measurements
                         </a>
                     </li>
@@ -60,7 +67,8 @@
                 {% if 'gw' in available_data_types %}
                     <li class="usa-nav__submenu-item">
                         <a href="https://waterdata.usgs.gov/nwis/gwlevels/?site_no={{ stations[0].site_no }}"
-                            target="_blank">
+                           rel="noopener"
+                           target="_blank">
                             Field Groundwater Measurements
                         </a>
                     </li>
@@ -68,7 +76,8 @@
                 {% if 'qw' in available_data_types %}
                     <li class="usa-nav__submenu-item">
                         <a href="https://waterdata.usgs.gov/nwis/qwdata/?site_no={{ stations[0].site_no }}"
-                            target="_blank">
+                           rel="noopener"
+                           target="_blank">
                             Field/Lab Water Quality Samples
                         </a>
                     </li>
@@ -76,14 +85,16 @@
                 {% if 'ad' in available_data_types %}
                     <li class="usa-nav__submenu-item">
                         <a href="https://waterdata.usgs.gov/nwis/wys_rpt/?site_no={{ stations[0].site_no }}"
-                            target="_blank">
+                           rel="noopener"
+                           target="_blank">
                             Water Year Summary
                         </a>
                     </li>
                 {% endif %}
                 <li class="usa-nav__submenu-item">
                     <a href="https://waterdata.usgs.gov/nwis/revision/?site_no={{ stations[0].site_no }}"
-                        target="_blank">
+                       rel="noopener"
+                       target="_blank">
                         Revisions
                     </a>
                 </li>
