@@ -98,31 +98,49 @@
                     </button>
                     <ul id="about-section" class="usa-nav__submenu">
                         <li class="usa-nav__submenu-item">
-                         <a href="https://waterdata.usgs.gov/blog/">What's New in Water Data for the Nation</a>
+                            <a href="https://waterdata.usgs.gov/blog/" rel="noopener">What's New in Water Data for the Nation</a>
                         </li>
                         <li class="usa-nav__submenu-item">
-                            <a href="https://waterservices.usgs.gov/">How to get water data information</a>
+                            <a href="https://waterservices.usgs.gov/" rel="noopener">How to get water data information</a>
                         </li>
                         <li class="usa-nav__submenu-item">
-                            <a href="https://labs.waterdata.usgs.gov/index.html">Experimental Water Data tools</a>
+                            <a href="https://labs.waterdata.usgs.gov/index.html" rel="noopener">Experimental Water Data tools</a>
                         </li>
                         <li class="usa-nav__submenu-item">
-                            <a href="https://www.instagram.com/usgs_streamgages/">Streamgages of Instagram</a>
+                            <a href="https://www.instagram.com/usgs_streamgages/" rel="noopener">Streamgages of Instagram</a>
                         </li>
                    </ul>
                 </li>
+
+                {% block page_specific_menus %}{% endblock %}
+
             </ul>
             <div class="usa-nav__secondary">
               <ul class="usa-nav__secondary-links">
                   <li class="usa-nav__secondary-item">
-                      <a href="https://www.usgs.gov/mission-areas/water-resources">Water Resources</a>
+                      <a href="https://www.usgs.gov/mission-areas/water-resources" rel="noopener">Water Resources</a>
                   </li>
                   <li class="usa-nav__secondary-item">
-                      <a href="https://dashboard.waterdata.usgs.gov/">Water Dashboard</a>
+                      <a href="https://dashboard.waterdata.usgs.gov/" rel="noopener">Water Dashboard</a>
                   </li>
               </ul>
             </div>
         </div>
     </nav>
 </header>
-
+<header id="wdfn-alert-banner">
+    <input type="checkbox" id="wdfn-alert-dismiss" hidden/>
+    <div class="wdfn-alert-body content-container">
+        <label title="Close" class="close" for="wdfn-alert-dismiss"><i class="fas fa-times"></i></label>
+        <div>
+            <ul>
+                <li>Beta release. Use <a class="usa-link" target="_blank" rel="noopener" href="https://water.usgs.gov/contact/gsanswers?pemail=gs-w_water_data_for_the_nation&subject=Water%20Data%20for%20the%20Nation%20Feedback&viewnote=%3CH1%3EUSGS+WDFN+TNG+Feedback%3C/H1%3E">this form</a> to provide feedback.</li>
+                {% if not request.cookies.get('no-show-banner-message') %}
+                    {% for notice in config.BANNER_NOTICES %}
+                        <li>{{ notice|safe }}</li>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</header>

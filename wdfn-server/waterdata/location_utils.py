@@ -114,7 +114,7 @@ def get_disambiguated_values(location, code_lookups, country_state_county_lookup
     return transformed_location
 
 
-def build_linked_data(location_number, location_name, agency_code, latitude, longitude, location_capabilities):
+def build_linked_data(location_number, location_name, agency_code, latitude, longitude, available_parameter_codes):
     """
     Given site metadata, construct a dictionary / json-ld for the site.
     The constructed json-ld conforms to the context documents
@@ -126,7 +126,7 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
     :param str agency_code: agency identifier for the agency responsible for the location
     :param str latitude: decimal latitude
     :param str longitude: decimal longitude
-    :param set location_capabilities: set containing parameter codes measured at the location
+    :param set available_parameter_codes: set containing parameter codes measured at the location
     :return: json-ld key value pairs
     :rtype: dict
 
@@ -148,7 +148,7 @@ def build_linked_data(location_number, location_name, agency_code, latitude, lon
             'longitude': longitude
         }
     }
-    if '00060' in location_capabilities:
+    if '00060' in available_parameter_codes:
         linked_data['image'] = (
             'https://waterdata.usgs.gov/nwisweb/graph?'
             'agency_cd={0}&site_no={1}&parm_cd=00060&period=100'
