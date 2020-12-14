@@ -66,14 +66,20 @@ export const renderDownloadLinks = function(elem, store, siteno) {
         const monitoringLocationDownloadLink = listOfDownloadLinks.append('li');
         addStandardAttributes(monitoringLocationDownloadLink.append('a'))
             .text('Current')
-            .attr('href', createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current'));
+            .attr('href', createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current'))
+            .attr('ga-on', 'click')
+            .attr('ga-event-category', 'links')
+            .attr('ga-event-action', 'downloadLinkCurrent');
         monitoringLocationDownloadLink.call(appendInfoTooltip, 'Monitoring location data as shown on graph');
 
         if (showIVTimeSeries.compare) {
             const compareDownloadLink = listOfDownloadLinks.append('li');
             addStandardAttributes(compareDownloadLink.append('a'))
                 .text('Compare')
-                .attr('href', createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'compare'));
+                .attr('href', createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'compare'))
+                .attr('ga-on', 'click')
+                .attr('ga-event-category', 'links')
+                .attr('ga-event-action', 'downloadLinkCompare');
             compareDownloadLink.call(appendInfoTooltip, 'Data from last year with the same duration as in graph');
         }
 
@@ -81,7 +87,10 @@ export const renderDownloadLinks = function(elem, store, siteno) {
             const medianDownloadLink = listOfDownloadLinks.append('li');
             addStandardAttributes(medianDownloadLink.append('a'))
                 .text('Median')
-                .attr('href', `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=00060`);
+                .attr('href', `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=00060`)
+                .attr('ga-on', 'click')
+                .attr('ga-event-category', 'links')
+                .attr('ga-event-action', 'downloadLinkMedian');
             medianDownloadLink.call(appendInfoTooltip, 'Median data for timespan shown on graph');
         }
 
@@ -89,12 +98,18 @@ export const renderDownloadLinks = function(elem, store, siteno) {
             .text('Metadata - ');
         addStandardAttributes(metadataDownloadLink.append('a'))
             .text('standard')
-            .attr('href', `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteStatus=all`);
+            .attr('href', `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteStatus=all`)
+            .attr('ga-on', 'click')
+            .attr('ga-event-category', 'links')
+            .attr('ga-event-action', 'downloadLinkMetadataStandard');
         metadataDownloadLink.append('span')
             .text(' or ');
         addStandardAttributes(metadataDownloadLink.append('a'))
             .text('expanded')
-            .attr('href', `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteOutput=expanded&siteStatus=all`);
+            .attr('href', `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteOutput=expanded&siteStatus=all`)
+            .attr('ga-on', 'click')
+            .attr('ga-event-category', 'links')
+            .attr('ga-event-action', 'downloadLinkMetadataExpanded');
         metadataDownloadLink.call(appendInfoTooltip, 'Information about this monitoring location');
 
     },  createStructuredSelector({

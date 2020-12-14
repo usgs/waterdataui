@@ -140,6 +140,9 @@ export const drawDataSegments = function(elem, {segments, xScale, yScale, enable
 export const drawTimeSeriesGraph = function(elem, store) {
     const svg = elem.append('div')
         .attr('class', 'hydrograph-container')
+        .attr('ga-on', 'click')
+        .attr('ga-event-category', 'hydrograph-interaction')
+        .attr('ga-event-action', 'clickOnDVGraph')
         .call(createTitle, store)
         .call(drawTooltipText, store)
         .append('svg')
