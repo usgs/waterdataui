@@ -1,5 +1,5 @@
 certifi==2020.12.5
-chardet==3.0.4
+chardet==4.0.0
 click==7.1.2
 Flask==1.1.2
 itsdangerous==1.1.0
