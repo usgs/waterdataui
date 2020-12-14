@@ -5,13 +5,20 @@
         <div class="provisional-data-statement">
             <p>
                 <span class="usa-tag">Important</span>
-                Data may be provisional - <a class="usa-link" href="{{ url_for('provisional_data_statement') }}">learn more</a>
+                Data may be provisional -
+                <a class="usa-link"
+                   href="{{ url_for('provisional_data_statement') }}"
+                   ga-on="click" ga-event-category="navigation" ga-event-action="provisonalDataLinkInPage">
+                    learn more
+                </a>
             </p>
         </div>
         <div class="select-time-series-container"></div>
         <div class="wdfn-accordion iv-graph-data-download usa-accordion">
             <h2 class="usa-accordion__heading">
-                <button class="usa-accordion__button" aria-expanded="false" aria-controls="iv-graph-data-download-container">
+                <button class="usa-accordion__button"
+                        aria-expanded="false" aria-controls="iv-graph-data-download-container"
+                        ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithDataDownloadAccordion">
                     Download this graph's data
                 </button>
             </h2>
@@ -42,7 +49,9 @@
         </div>
         <div class="wdfn-accordion graph-data usa-accordion">
             <h2 class="usa-accordion__heading">
-                <button class="usa-accordion__button" aria-expanded="false" aria-controls="iv-data-table-container">
+                <button class="usa-accordion__button"
+                        aria-expanded="false" aria-controls="iv-data-table-container"
+                        ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithHydrographDataTableAccordion">
                     Table of hydrograph data
                 </button>
             </h2>
@@ -61,7 +70,7 @@
 {% macro MapComponent(site_no, latitude, longitude) -%}
     <div class="wdfn-component" data-component="map" data-siteno="{{ site_no }}" data-latitude="{{ latitude }}" data-longitude="{{ longitude }}" data-zoom=12>
         <div id="flood-layer-control-container"></div>
-        <div id="site-map"></div>
+        <div id="site-map" ga-on="click" ga-event-category="siteMap" ga-event-action="interactionWithSiteMap"></div>
         <div>
             <a class="usa-link" href="https://waterdata.usgs.gov/blog/nldi-intro/" target="_blank" rel="noopener" >About the Network-Linked Data Index (NLDI)</a>
         </div>

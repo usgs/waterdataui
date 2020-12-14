@@ -210,6 +210,9 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
 
     graphDiv = elem.append('div')
         .attr('class', 'hydrograph-container')
+        .attr('ga-on', 'click')
+        .attr('ga-event-category', 'hydrograph-interaction')
+        .attr('ga-event-action', 'clickOnTimeSeriesGraph')
         .call(watermark, store)
         .call(createTitle, store, siteNo, showMLName, showTooltip);
     if (showTooltip) {
