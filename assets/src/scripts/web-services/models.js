@@ -71,17 +71,8 @@ export const getTimeSeries = function({sites, params=null, startDate=null, endDa
 
 export const getPreviousYearTimeSeries = function({site, startTime, endTime, parameterCode}) {
     parameterCode = parameterCode ? [parameterCode] : null;
-    console.log('startTime ', startTime)
-    console.log('endTime ', endTime)
-
-    let lastYearStartTime = new DateTime.fromMillis(startTime);
-    let lastYearEndTime = new DateTime.fromMillis(endTime);
-    console.log('lastYearStartTime ', lastYearStartTime.toISODate())
-    console.log('lastYearEndTime ', lastYearEndTime.toISODate())
-    lastYearStartTime = lastYearStartTime.minus({hours: 8760});
-    lastYearEndTime = lastYearEndTime.minus({hours: 8760});
-    console.log('lastYearStartTime after ', lastYearStartTime.toISODate())
-    console.log('lastYearEndTime after', lastYearEndTime.toISODate())
+    let lastYearStartTime = new DateTime.fromMillis(startTime).minus({hours: 8760});
+    let lastYearEndTime = new DateTime.fromMillis(endTime).minus({hours: 8760});
 
     return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime, params: parameterCode});
 };

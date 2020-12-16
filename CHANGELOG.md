@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Additional analytics tracking.
 - Added an inventory data menu on the monitoring location page which is context specific for the site.
 
+### Fixed
+- Now using 365 days for one year graph and comparison -- focus line syncs with both current and compare series.
+
 ## [0.39.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.38.0...waterdataui-0.39.0) - 2020-12-09
 ### Added
 - Static image of the Instantaneous Values Hydrograph for users of Internet Explorer. 

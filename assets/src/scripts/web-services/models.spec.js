@@ -112,7 +112,7 @@ describe('Models module', () => {
         const startDate = 1514872800000;
         const endDate = 1546408800000;
 
-        fit('Retrieves data using the startDT and endDT parameters', () => {
+        it('Retrieves data using the startDT and endDT parameters', () => {
             getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate});
             let request = jasmine.Ajax.requests.mostRecent();
 
