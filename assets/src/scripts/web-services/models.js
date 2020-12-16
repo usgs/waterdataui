@@ -1,5 +1,7 @@
 import {utcFormat} from 'd3-time-format';
 
+import {DateTime} from 'luxon';
+
 import {get} from 'ui/ajax';
 import config from 'ui/config';
 
@@ -67,12 +69,9 @@ export const getTimeSeries = function({sites, params=null, startDate=null, endDa
 
 export const getPreviousYearTimeSeries = function({site, startTime, endTime, parameterCode}) {
     parameterCode = parameterCode ? [parameterCode] : null;
+    let lastYearStartTime = new DateTime.fromMillis(startTime).minus({hours: 8760});
+    let lastYearEndTime = new DateTime.fromMillis(endTime).minus({hours: 8760});
 
-    let lastYearStartTime = new Date(startTime);
-    let lastYearEndTime = new Date(endTime);
-
-    lastYearStartTime.setFullYear(lastYearStartTime.getFullYear() - 1);
-    lastYearEndTime.setFullYear(lastYearEndTime.getFullYear() - 1);
     return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime, params: parameterCode});
 };
 

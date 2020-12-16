@@ -157,15 +157,16 @@ export const calcStartTime = function(period, endTime, ianaTimeZone) {
     const timePeriodCode = period !== null ? period.substr(period.length - 1) : null;
     const timePeriod = period !== null ? period.slice(1,-1) : null;
 
-    let startTime = new DateTime.fromMillis(endTime, {zone: ianaTimeZone});
+     let startTime = new DateTime.fromMillis(endTime, {zone: ianaTimeZone});
 
     if (timePeriodCode === 'D') {
         startTime = startTime.minus({days: timePeriod});
     } else if (timePeriodCode === 'Y') {
-        startTime = startTime.minus({years: timePeriod});
+        startTime = startTime.minus({hours: 8760});
     } else {
         console.log('No known period specified');
     }
+
     return startTime.valueOf();
 };
 
