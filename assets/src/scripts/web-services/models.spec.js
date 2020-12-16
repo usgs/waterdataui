@@ -109,8 +109,8 @@ describe('Models module', () => {
 
     describe('getPreviousYearTimeSeries', () => {
         const siteID = '05413500';
-        const startDate = 1514872800000;
-        const endDate = 1546408800000;
+        const startDate = 1514872800000; // milliSecond version of 01/02/2018
+        const endDate = 1546408800000; // milliSecond version of 01/02/2019
 
         it('Retrieves data using the startDT and endDT parameters', () => {
             getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate});
