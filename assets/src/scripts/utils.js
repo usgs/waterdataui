@@ -162,7 +162,7 @@ export const calcStartTime = function(period, endTime, ianaTimeZone) {
     if (timePeriodCode === 'D') {
         startTime = startTime.minus({days: timePeriod});
     } else if (timePeriodCode === 'Y') {
-        startTime = startTime.minus({hours: 8760});
+        startTime = startTime.minus({hours: 8760 * timePeriod}); // there are 8760 hours in 365 days
     } else {
         console.log('No known period specified');
     }
