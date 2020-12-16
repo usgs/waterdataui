@@ -1,5 +1,7 @@
 import {utcFormat} from 'd3-time-format';
 
+import {DateTime} from 'luxon';
+
 import {getPreviousYearTimeSeries, getTimeSeries, queryWeatherService} from './models';
 
 
@@ -107,16 +109,15 @@ describe('Models module', () => {
 
     describe('getPreviousYearTimeSeries', () => {
         const siteID = '05413500';
+        const startDate = 1514872800000;
+        const endDate = 1546408800000;
 
-        const startDate = new Date('2018-01-02T15:00:00.000-06:00');
-        const endDate = new Date('2018-01-02T16:45:00.000-06:00');
-
-        it('Retrieves data using the startDT and endDT parameters', () => {
+        fit('Retrieves data using the startDT and endDT parameters', () => {
             getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate});
             let request = jasmine.Ajax.requests.mostRecent();
 
-            expect(request.url).toContain('startDT=2017-01-02T21:00');
-            expect(request.url).toContain('endDT=2017-01-02T22:45');
+            expect(request.url).toContain('startDT=2017-01-02T06:00Z');
+            expect(request.url).toContain('endDT=2018-01-02T06:00Z');
         });
 
         it('Parses valid data', () => {
