@@ -120,7 +120,7 @@ describe('Models module', () => {
             expect(request.url).toContain('endDT=2018-01-02T06:00Z');
         });
 
-        it('The difference between start and end dates for normal "compare" year will be 365 days ', () => {
+        it('Expects the difference between start and end dates for normal "compare" year will be 365 days ', () => {
             getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate});
             const request = jasmine.Ajax.requests.mostRecent();
 
@@ -131,7 +131,7 @@ describe('Models module', () => {
             expect(timeSpanInDays.toObject()).toEqual({days: 365});
         });
 
-        it('The difference between start and end dates for leap "compare" year will still be 365 days ', () => {
+        it('Expects the difference between start and end dates for leap "compare" year will still be 365 days ', () => {
             const startDateLeapYearTest = 1483362000000; // milliSecond version of 01/02/2017 (year before a leap year, because we compare to the previous year)
             const endDateLeapYearTest = 1514898000000; // milliSecond version of 01/02/2018
             getPreviousYearTimeSeries({site: siteID, startTime: startDateLeapYearTest, endTime: endDateLeapYearTest});
