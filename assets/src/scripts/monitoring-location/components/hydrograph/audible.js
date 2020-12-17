@@ -82,6 +82,7 @@ export const updateSound = function({enabled, points}) {
  */
 export const audibleUI = function(elem, store) {
     if (!config.TIMESERIES_AUDIO_ENABLED) {
+    console
         return;
     }
 

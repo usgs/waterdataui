@@ -114,17 +114,17 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
             let mockDispatch, mockGetState;
 
             beforeEach(() => {
-                mockDispatch = jasmine.createSpy('mockDispatch');
-                mockGetState = jasmine.createSpy('mockGetState');
+                mockDispatch = jest.fn();
+                mockGetState = jest.fn();
 
-                jasmine.clock().install();
-                spyOn(Actions, 'setIVGraphCursorOffset');
-                spyOn(Actions, 'ivTimeSeriesPlayOn');
-                spyOn(Actions, 'ivTimeSeriesPlayStop');
+                jest.useFakeTimers();
+                jest.spyOn(Actions, 'setIVGraphCursorOffset').mockImplementation(() => {});
+                jest.spyOn(Actions, 'ivTimeSeriesPlayOn').mockImplementation(() => {});
+                jest.spyOn(Actions, 'ivTimeSeriesPlayStop').mockImplementation(() => {});
             });
 
             afterEach(() => {
-                jasmine.clock().uninstall();
+                jest.useRealTimers();
             });
 
             it('Does not reset the cursor offset when current offset is not null or greater than the max offset ', () => {
@@ -160,10 +160,10 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
                     }
                 });
                 Actions.startTimeSeriesPlay(2700000)(mockDispatch, mockGetState);
-                jasmine.clock().tick(11);
+                jest.advanceTimersByTime(11);
 
-                expect(Actions.setIVGraphCursorOffset.calls.count()).toBe(1);
-                expect(Actions.setIVGraphCursorOffset.calls.argsFor(0)[0]).toBe(900000);
+                expect(Actions.setIVGraphCursorOffset.mock.calls.length).toBe(1);
+                expect(Actions.setIVGraphCursorOffset.mock.calls[0][0]).toBe(900000);
             });
 
             it('Expects the cursor to be reset if the cursor offset is greater than the maxCursorOffset', () => {
@@ -189,7 +189,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
                     }
                 });
                 Actions.startTimeSeriesPlay(2700000)(mockDispatch, mockGetState);
-                jasmine.clock().tick(11);
+                jest.advanceTimersByTime(11);
 
                 expect(Actions.ivTimeSeriesPlayStop).toHaveBeenCalled();
             });
@@ -199,15 +199,15 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
             let mockDispatch, mockGetState;
 
             beforeEach(() => {
-                mockDispatch = jasmine.createSpy('mockDispatch');
-                mockGetState = jasmine.createSpy('mockGetState');
+                mockDispatch = jest.fn();
+                mockGetState = jest.fn();
 
-                jasmine.clock().install();
-                spyOn(Actions, 'ivTimeSeriesPlayStop');
+                jest.useFakeTimers();
+                jest.spyOn(Actions, 'ivTimeSeriesPlayStop').mockImplementation(() => {});
             });
 
             afterEach(() => {
-                jasmine.clock().uninstall();
+                jest.useRealTimers();
             });
 
             it('Expects that ivTimeSeriesPlayStop is called', () => {

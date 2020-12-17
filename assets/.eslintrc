@@ -28,6 +28,15 @@
     "space-before-blocks": ["error", "always"],
     "space-before-function-paren": ["error", "never"]
   },
+
+  "overrides": [
+    {
+      "files": ["src/scripts/**/*.test.js"],
+      "rules": {
+        "no-import-assign": "off"
+      }
+    }
+  ],
   "globals": {
     "__dirname": true,
     "console": true,
@@ -36,6 +45,7 @@
     "process": true,
     "XMLHttpRequest": true,
     "window": true,
-    "L": true
+    "L": true,
+    "jest": true
   }
 }

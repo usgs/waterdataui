@@ -187,10 +187,10 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
 
         describe('Actions.retrieveIVTimeSeries', () => {
             beforeEach(() => {
-                spyOn(Actions, 'addIVTimeSeriesCollection').and.callThrough();
-                spyOn(Actions, 'resetIVTimeSeries').and.callThrough();
-                spyOn(Actions, 'retrieveCompareIVTimeSeries').and.callThrough();
-                spyOn(floodStateActions, 'setGageHeight').and.callThrough();
+                jest.spyOn(Actions, 'addIVTimeSeriesCollection');
+                jest.spyOn(Actions, 'resetIVTimeSeries');
+                jest.spyOn(Actions, 'retrieveCompareIVTimeSeries');
+                jest.spyOn(floodStateActions, 'setGageHeight');
             });
 
             it('Service url should contain the siteno and period=P7D', () => {
@@ -244,8 +244,8 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
             const startDT = 1586793994000;
             const endDT = 1587398794000;
             beforeEach(() => {
-                spyOn(Actions, 'addIVTimeSeriesCollection').and.callThrough();
-                spyOn(Actions, 'resetIVTimeSeries').and.callThrough();
+                jest.spyOn(Actions, 'addIVTimeSeriesCollection');
+                jest.spyOn(Actions, 'resetIVTimeSeries');
             });
 
             it('Service url should contain the siteno, startDT, and endDT', () => {
@@ -294,8 +294,8 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
 
         describe('Actions.retrieveCustomTimePeriodIVTimeSeries', () => {
             beforeEach(() => {
-                spyOn(Actions, 'addIVTimeSeriesCollection').and.callThrough();
-                spyOn(Actions, 'resetIVTimeSeries').and.callThrough();
+                jest.spyOn(Actions, 'addIVTimeSeriesCollection');
+                jest.spyOn(Actions, 'resetIVTimeSeries');
             });
 
             it('Service url should contain the siteno, startDT, and endDT', () => {
@@ -350,8 +350,8 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
             const endDT = 1587398794000;
 
             beforeEach(() => {
-                spyOn(Actions, 'addIVTimeSeriesCollection').and.callThrough();
-                spyOn(Actions, 'resetIVTimeSeries').and.callThrough();
+                jest.spyOn(Actions, 'addIVTimeSeriesCollection');
+                jest.spyOn(Actions, 'resetIVTimeSeries');
                 store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable('45807197'));
             });
 
@@ -409,9 +409,9 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
         describe('Actions.retrieveExtendedIVTimeSeries', () => {
             let initialPromise;
             beforeEach(() => {
-                spyOn(Actions, 'addIVTimeSeriesCollection').and.callThrough();
-                spyOn(Actions, 'resetIVTimeSeries').and.callThrough();
-                spyOn(Actions, 'retrieveCompareIVTimeSeries').and.callThrough();
+                jest.spyOn(Actions, 'addIVTimeSeriesCollection');
+                jest.spyOn(Actions, 'resetIVTimeSeries');
+                jest.spyOn(Actions, 'retrieveCompareIVTimeSeries');
                 store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable('45807197'));
                 initialPromise = store.dispatch(Actions.retrieveIVTimeSeries('12345678'));
                 jasmine.Ajax.requests.mostRecent().respondWith({
@@ -479,8 +479,8 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
             const startDT = 1586793994000;
             const endDT = 1587398794000;
             beforeEach(() => {
-                spyOn(Actions, 'retrieveCustomIVTimeSeries').and.callThrough();
-                spyOn(Actions, 'retrieveExtendedIVTimeSeries').and.callThrough();
+                jest.spyOn(Actions, 'retrieveCustomIVTimeSeries');
+                jest.spyOn(Actions, 'retrieveExtendedIVTimeSeries');
             });
 
             it('Expect to retrieve custom time series if date range kind is custom', () => {
@@ -512,12 +512,12 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
             let mockGetState;
 
             beforeEach(() => {
-                mockDispatch = jasmine.createSpy('mockDispatch');
-                mockGetState = jasmine.createSpy('mockGetState').and.returnValue({
+                mockDispatch = jest.fn();
+                mockGetState = jest.fn(() => ({
                     ianaTimeZone: 'America/Chicago'
-                });
+                }));
 
-                spyOn(Actions, 'retrieveCustomIVTimeSeries');
+                jest.spyOn(Actions, 'retrieveCustomIVTimeSeries').mockImplementation(() => {});
             });
 
             afterEach(() => {
@@ -526,9 +526,9 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
             it('Converts time strings to javascript date/time objects correctly', () => {
                 Actions.retrieveUserRequestedIVDataForDateRange('12345678', '2010-01-01', '2010-03-01')(mockDispatch, mockGetState);
                 expect(Actions.retrieveCustomIVTimeSeries).toHaveBeenCalled();
-                expect(Actions.retrieveCustomIVTimeSeries.calls.argsFor(0)[0]).toEqual('12345678');
-                expect(Actions.retrieveCustomIVTimeSeries.calls.argsFor(0)[1]).toEqual(1262325600000);
-                expect(Actions.retrieveCustomIVTimeSeries.calls.argsFor(0)[2]).toEqual(1267509599999);
+                expect(Actions.retrieveCustomIVTimeSeries.mock.calls[0][0]).toEqual('12345678');
+                expect(Actions.retrieveCustomIVTimeSeries.mock.calls[0][1]).toEqual(1262325600000);
+                expect(Actions.retrieveCustomIVTimeSeries.mock.calls[0][2]).toEqual(1267509599999);
             });
         });
     });

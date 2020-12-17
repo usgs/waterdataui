@@ -71,7 +71,7 @@ describe('monitoring-location/components/map/legend module', () => {
             drawFIMLegend(listContainer, true);
 
             // Return the same response on all requests
-            jasmine.Ajax.stubRequest(/(.*?)/).andReturn({
+            jasmine.Ajax.stubRequest(/(.*?)/).mockReturnValue({
                 status: 200,
                 responseText: MOCK_RESP,
                 contentType: 'application/json'

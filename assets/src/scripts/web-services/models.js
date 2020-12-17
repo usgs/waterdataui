@@ -3,13 +3,6 @@ import {utcFormat} from 'd3-time-format';
 import {get} from 'ui/ajax';
 import config from 'ui/config';
 
-
-// Define Water Services root URL - use global variable if defined, otherwise
-// use production.
-const SERVICE_ROOT = config.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
-const PAST_SERVICE_ROOT = config.PAST_SERVICE_ROOT  || 'https://nwis.waterservices.usgs.gov/nwis';
-const WEATHER_SERVICE_ROOT = config.WEATHER_SERVICE_ROOT || 'https://api.weather.gov';
-
 export const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
 
 
@@ -18,7 +11,7 @@ function olderThan120Days(date) {
 }
 
 function tsServiceRoot(date) {
-    return olderThan120Days(date) ? PAST_SERVICE_ROOT : SERVICE_ROOT;
+    return olderThan120Days(date) ? config.PAST_SERVICE_ROOT : config.SERVICE_ROOT;
 }
 
 function getNumberOfDays(period) {
@@ -47,7 +40,7 @@ export const getTimeSeries = function({sites, params=null, startDate=null, endDa
         const timePeriod = period || 'P7D';
         const dayCount = getNumberOfDays(timePeriod);
         timeParams = `period=${timePeriod}`;
-        serviceRoot = dayCount && dayCount < 120 ? SERVICE_ROOT : PAST_SERVICE_ROOT;
+        serviceRoot = dayCount && dayCount < 120 ? config.SERVICE_ROOT : config.PAST_SERVICE_ROOT;
     } else {
         let startString = startDate ? isoFormatTime(startDate) : '';
         let endString = endDate ? isoFormatTime(endDate) : '';
@@ -77,7 +70,7 @@ export const getPreviousYearTimeSeries = function({site, startTime, endTime, par
 };
 
 export const queryWeatherService = function(latitude, longitude) {
-    const url = `${WEATHER_SERVICE_ROOT}/points/${latitude},${longitude}`;
+    const url = `${config.WEATHER_SERVICE_ROOT}/points/${latitude},${longitude}`;
     return get(url)
         .then(response => JSON.parse(response))
         .catch(reason => {

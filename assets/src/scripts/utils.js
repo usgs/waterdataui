@@ -157,7 +157,7 @@ export const calcStartTime = function(period, endTime, ianaTimeZone) {
     const timePeriodCode = period !== null ? period.substr(period.length - 1) : null;
     const timePeriod = period !== null ? period.slice(1,-1) : null;
 
-    let startTime = new DateTime.fromMillis(endTime, {zone: ianaTimeZone});
+    let startTime = DateTime.fromMillis(endTime, {zone: ianaTimeZone});
 
     if (timePeriodCode === 'D') {
         startTime = startTime.minus({days: timePeriod});
@@ -185,7 +185,7 @@ export const callIf = function(condition, func) {
 
 /**
  * Function to parse RDB to Objects
- * @param {String} - containing RDB data
+ * @param {String} rdbData - containing RDB data
  * @returns {Array of Objects} - one for each data line in the RDB.
  */
 export const parseRDB = function(rdbData) {

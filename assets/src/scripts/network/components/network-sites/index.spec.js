@@ -35,7 +35,7 @@ describe('network map module', () => {
     describe('Map creation without Network maps', () => {
         beforeEach(() => {
             store = configureStore();
-            spyOn(Actions, 'retrieveNetworkMonitoringLocations').and.returnValue(function() {
+            jest.spyOn(Actions, 'retrieveNetworkMonitoringLocations').mockReturnValue(function() {
                 return Promise.resolve({});
             });
             attachToNode(store, componentNode, {
@@ -135,7 +135,7 @@ describe('network map module', () => {
                     ]
                 }
             });
-            spyOn(Actions, 'retrieveNetworkMonitoringLocations').and.returnValue(function() {
+            jest.spyOn(Actions, 'retrieveNetworkMonitoringLocations').mockReturnValue(function() {
                 return Promise.resolve({});
             });
             attachToNode(store, componentNode, {
