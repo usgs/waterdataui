@@ -114,10 +114,31 @@ describe('Models module', () => {
 
         it('Retrieves data using the startDT and endDT parameters', () => {
             getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate});
-            let request = jasmine.Ajax.requests.mostRecent();
+            const request = jasmine.Ajax.requests.mostRecent();
 
             expect(request.url).toContain('startDT=2017-01-02T06:00Z');
             expect(request.url).toContain('endDT=2018-01-02T06:00Z');
+        });
+
+        fit('The difference between start and end dates for normal "compare" year will be 365 days ', () => {
+            getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate});
+            const request = jasmine.Ajax.requests.mostRecent();
+
+            const urlStartDate = DateTime.fromISO(request.url.slice(68, 85));
+            const urlEndDate = DateTime.fromISO(request.url.slice(92, 109));
+            const timeSpanInDays = urlEndDate.diff(urlStartDate, 'days');
+
+            expect(timeSpanInDays.toObject()).toEqual({days: 365});
+        });
+
+        it('The difference between start and end dates for leap "compare" year will still be 365 days ', () => {
+            const request = jasmine.Ajax.requests.mostRecent();
+            const startDate = DateTime.fromISO('2016-01-02T06:00Z');
+            const endDate = DateTime.fromISO('2017-01-02T06:00Z');
+
+            let timeSpanInDays = startDate.diff(endDate, 'days');
+
+            expect(timeSpanInDays).toEqual('P-365D');
         });
 
         it('Parses valid data', () => {

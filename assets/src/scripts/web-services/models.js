@@ -70,8 +70,8 @@ export const getTimeSeries = function({sites, params=null, startDate=null, endDa
 export const getPreviousYearTimeSeries = function({site, startTime, endTime, parameterCode}) {
     const hoursInOneYear = 8760;
     parameterCode = parameterCode ? [parameterCode] : null;
-    const lastYearStartTime = new DateTime.fromMillis(startTime).minus({hours: hoursInOneYear});
-    const lastYearEndTime = new DateTime.fromMillis(endTime).minus({hours: hoursInOneYear});
+    const lastYearStartTime = DateTime.fromMillis(startTime).minus({hours: hoursInOneYear});
+    const lastYearEndTime = DateTime.fromMillis(endTime).minus({hours: hoursInOneYear});
 
     return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime, params: parameterCode});
 };
