@@ -43,8 +43,7 @@ describe('axes module', () => {
         });
     });
 
-    // May need to think about how to mock yAxis better.
-    describe.skip('appendYAxis', () => {
+    describe('appendYAxis', () => {
         let yAxis;
         beforeEach(() => {
             yAxis = jest.fn();
@@ -55,12 +54,12 @@ describe('axes module', () => {
 
             expect(svg.selectAll('.y-axis').size()).toBe(1);
             expect(svg.selectAll('.y-axis-label').size()).toBe(1);
-            expect(svg.select('.y-axis-label').select('tspan').html()).toEqual('The Y Axis Title');
+            expect(svg.select('.y-axis-label').text()).toEqual('The Y Axis Title');
             expect(yAxis).toHaveBeenCalled();
         });
     });
 
-    describe.skip('appendSecondaryYAxis', () => {
+    describe('appendSecondaryYAxis', () => {
         let yAxis;
         beforeEach(() => {
             yAxis = jest.fn();
@@ -71,7 +70,7 @@ describe('axes module', () => {
 
             expect(svg.selectAll('.secondary-y-axis').size()).toBe(1);
             expect(svg.select('.secondary-y-axis').selectAll('.y-axis-label').size()).toBe(1);
-            expect(svg.select('.secondary-y-axis').select('.y-axis-label').select('tspan').html()).toEqual('The Secondary Y Axis Title');
+            expect(svg.select('.secondary-y-axis').select('.y-axis-label').text()).toEqual('The Secondary Y Axis Title');
             expect(yAxis).toHaveBeenCalled();
         });
     });
