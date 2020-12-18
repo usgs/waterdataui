@@ -1,17 +1,19 @@
 import {select} from 'd3-selection';
+import sinon from 'sinon';
 
 import {drawNldiLegend} from './nldi-mapping';
 
 describe('monitoring-location/components/map/nldi-mapping', () => {
     let listContainer;
+    let fakeServer;
     beforeEach(() => {
-        jasmine.Ajax.install();
+        fakeServer = sinon.createFakeServer();
         listContainer = select('body').append('div');
     });
 
     afterEach(() => {
         listContainer.remove();
-        jasmine.Ajax.uninstall();
+        fakeServer.restore();
     });
 
     describe('drawNldiLegend', () => {

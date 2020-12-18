@@ -4,10 +4,10 @@
   "description": "Compiled static assets for Water Data For The Nation",
   "main": "src/scripts/monitoring-location/index.js",
   "scripts": {
-    "test:one": "jest --coverage=false src/scripts/monitoring-location/components/hydrograph/index.test.js",
-    "test:onedebug": "node --inspect-brk node_modules/.bin/jest --runInBand --coverage=false src/scripts/monitoring-location/components/hydrograph/index.test.js",
+    "test:one": "jest --coverage=false src/scripts/network/components/network-sites/index.test.js",
+    "test:onedebug": "node --inspect-brk node_modules/.bin/jest --runInBand --coverage=false src/scripts/network/components/network-sites/index.test.js",
     "test": "jest scripts/.*\\.test.js$",
-    "test:watch": "jest --watch scripts/.*\\\\.test.js$\"",
+    "test:watch": "jest --watch --coverage=false scripts/.*\\.test.js$",
     "clean": "rm -rf dist && mkdir dist",
     "build": "npm run clean && run-p build:* && npm run hash-assets",
     "build:css": "run-p build:css:*",
@@ -20,7 +20,6 @@
     "build:wdfnviz": "mkdir -p dist/scripts && cp node_modules/wdfn-viz/dist/wdfnviz.js dist/scripts",
     "build:uswdsjs": "mkdir -p dist/scripts && cp node_modules/uswds/dist/js/uswds.min.js dist/scripts",
     "build:datetimeformatjs": "mkdir -p dist/scripts && cp node_modules/date-time-format-timezone/build/browserified/date-time-format-timezone-complete-min.js dist/scripts",
-    "build:vendorjs": "mkdir -p dist/scripts && concat -o dist/scripts/vendor.js node_modules/leaflet/dist/leaflet.js node_modules/esri-leaflet/dist/esri-leaflet.js node_modules/leaflet.markercluster/dist/leaflet.markercluster.js",
     "build:autotrack": "terser --output dist/autotrack.js node_modules/autotrack/autotrack.js",
     "hash-assets": "gulp --gulpfile ./gulpfile.js revall",
     "serve:static": "live-server --port=9000 --cors --no-browser dist",
@@ -30,7 +29,7 @@
     "watch:css": "nodemon -w src/styles -e scss -x \"npm run build:css\"",
     "watch:fonts": "nodemon -w node_modules/uswds/src/fonts -x \"npm run build:fonts\"",
     "watch:images": "nodemon -w src/img -x \"npm run build:images\"",
-    "watch:js": "mkdir -p dist/scripts && npm run build:vendorjs && npm run build:wdfnviz && npm run build:datetimeformatjs && rollup -c --watch"
+    "watch:js": "mkdir -p dist/scripts && npm run build:wdfnviz && npm run build:datetimeformatjs && rollup -c --watch"
   },
   "engines": {
     "node": "14.15.1"

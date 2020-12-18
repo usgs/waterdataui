@@ -1,4 +1,5 @@
 import {select} from 'd3-selection';
+import sinon from 'sinon';
 
 import {configureStore} from 'network/store';
 
@@ -9,9 +10,10 @@ describe('component/map/legend module', () => {
     let control;
     let map;
     let store;
+    let fakeServer;
 
     beforeEach(() => {
-        jasmine.Ajax.install();
+        fakeServer = sinon.createFakeServer();
         select('body').append('div')
             .attr('id', 'map');
         map = L.map('map', {
@@ -29,7 +31,7 @@ describe('component/map/legend module', () => {
 
     afterEach(() => {
         select('#map').remove();
-        jasmine.Ajax.uninstall();
+        fakeServer.restore();
     });
 
     describe('createMapLegend', () => {

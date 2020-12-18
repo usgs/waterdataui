@@ -1,19 +1,21 @@
 import {select} from 'd3-selection';
+import sinon from 'sinon';
 
 import {drawMonitoringLocationMarkerLegend, drawCircleMarkerLegend, drawFIMLegend} from './legend';
 
 
 describe('monitoring-location/components/map/legend module', () => {
     let listContainer;
+    let fakeServer;
 
     beforeEach(() => {
-        jasmine.Ajax.install();
+        fakeServer = sinon.createFakeServer();
         listContainer = select('body').append('div');
     });
 
     afterEach(() => {
         listContainer.remove();
-        jasmine.Ajax.uninstall();
+        fakeServer.restore();
     });
 
     describe('drawMonitoringLocationMarkerLegend', () => {
@@ -71,15 +73,12 @@ describe('monitoring-location/components/map/legend module', () => {
             drawFIMLegend(listContainer, true);
 
             // Return the same response on all requests
-            jasmine.Ajax.stubRequest(/(.*?)/).mockReturnValue({
-                status: 200,
-                responseText: MOCK_RESP,
-                contentType: 'application/json'
-            });
+            fakeServer.respondWith([200, {'Content-Type': 'application/json'}, MOCK_RESP]);
+            fakeServer.respond();
         });
 
         it('drawFIMLegend with FIM available true fetches the three sets of legend info', () => {
-            expect(jasmine.Ajax.requests.count()).toBe(3);
+            expect(fakeServer.requests).toHaveLength(3);
         });
 
         it('drawFIMLegend with FIM available add the FIM legend list to the control', () => {

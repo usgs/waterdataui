@@ -1,4 +1,5 @@
-
+import * as L from 'leaflet';
+import {tiledMapLayer} from 'esri-leaflet';
 /*
  * Creates a map within divID, sets the center and an initial zoom level of  and sets initialESRIBaseLayer
  * as the initial base layer along with . If no ESRI base layer is desired, set to null
@@ -36,6 +37,6 @@ export const createMap = function(divId, {center=[0,0], zoom=1}) {
  * @return {L.esri.tiledMapLayer}
  */
 export const createBaseLayer = function(tiledMapLayerUrl) {
-    let layer = L.esri.tiledMapLayer({url: tiledMapLayerUrl});
+    let layer = tiledMapLayer({url: tiledMapLayerUrl});
     return layer;
 };

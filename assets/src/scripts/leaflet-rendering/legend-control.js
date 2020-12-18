@@ -1,3 +1,5 @@
+import * as L from 'leaflet';
+
 import config from 'ui/config.js';
 import {mediaQuery} from 'ui/utils';
 
