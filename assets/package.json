@@ -4,10 +4,9 @@
   "description": "Compiled static assets for Water Data For The Nation",
   "main": "src/scripts/monitoring-location/index.js",
   "scripts": {
-    "test:one": "jest --coverage=false src/scripts/network/components/network-sites/index.test.js",
-    "test:onedebug": "node --inspect-brk node_modules/.bin/jest --runInBand --coverage=false src/scripts/network/components/network-sites/index.test.js",
-    "test": "jest scripts/.*\\.test.js$",
-    "test:watch": "jest --watch --coverage=false scripts/.*\\.test.js$",
+    "test": "jest --collectCoverage=true",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
+    "test:watch": "jest --watch",
     "clean": "rm -rf dist && mkdir dist",
     "build": "npm run clean && run-p build:* && npm run hash-assets",
     "build:css": "run-p build:css:*",
@@ -44,31 +43,6 @@
     "url": "https://github.com/usgs/waterdataui/issues"
   },
   "homepage": "https://github.com/usgs/waterdataui#readme",
-  "jest": {
-    "verbose": true,
-    "transform": {
-      "^.+\\.js$": "buble-jest"
-    },
-    "clearMocks": true,
-    "restoreMocks": true,
-    "collectCoverage": true,
-    "moduleNameMapper": {
-      "^ui/(.*)$": "<rootDir>src/scripts/$1",
-      "^ml/(.*)$": "<rootDir>src/scripts/monitoring-location/$1",
-      "^d3render/(.*)$": "<rootDir>src/scripts/d3-rendering/$1",
-      "^map/(.*)$": "<rootDir>src/scripts/monitoring-location/components/map/$1",
-      "^dvhydrograph/(.*)$": "<rootDir>src/scripts/monitoring-location/components/daily-value-hydrograph",
-      "^ivhydrograph/(.*)$": "<rootDir>src/scripts/monitoring-location/components/hydrograph/$1",
-      "^network/(.*)$": "<rootDir>src/scripts/network/$1"
-    }
-  },
-  "buble": {
-    "objectAssign": "Object.assign",
-    "transforms": {
-      "forOf": false,
-      "generator": false
-    }
-  },
   "devDependencies": {
     "@rollup/plugin-alias": "^3.1.1",
     "@rollup/plugin-buble": "^0.21.3",
