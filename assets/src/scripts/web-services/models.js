@@ -1,5 +1,7 @@
 import {utcFormat} from 'd3-time-format';
 
+import {DateTime} from 'luxon';
+
 import {get} from 'ui/ajax';
 import config from 'ui/config';
 
@@ -48,8 +50,8 @@ export const getTimeSeries = function({sites, params=null, startDate=null, endDa
         serviceRoot = tsServiceRoot(startDate);
     }
     let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
-
     let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${paramCds}&${timeParams}&siteStatus=all&format=json`;
+
     return get(url)
         .then(response => JSON.parse(response))
         .catch(reason => {
@@ -59,13 +61,11 @@ export const getTimeSeries = function({sites, params=null, startDate=null, endDa
 };
 
 export const getPreviousYearTimeSeries = function({site, startTime, endTime, parameterCode}) {
+    const hoursInOneYear = 8760;
     parameterCode = parameterCode ? [parameterCode] : null;
+    const lastYearStartTime = DateTime.fromMillis(startTime).minus({hours: hoursInOneYear});
+    const lastYearEndTime = DateTime.fromMillis(endTime).minus({hours: hoursInOneYear});
 
-    let lastYearStartTime = new Date(startTime);
-    let lastYearEndTime = new Date(endTime);
-
-    lastYearStartTime.setFullYear(lastYearStartTime.getFullYear() - 1);
-    lastYearEndTime.setFullYear(lastYearEndTime.getFullYear() - 1);
     return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime, params: parameterCode});
 };
 

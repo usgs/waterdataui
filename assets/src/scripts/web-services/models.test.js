@@ -1,4 +1,5 @@
 import mockConsole from 'jest-mock-console';
+import {DateTime} from 'luxon';
 import sinon from 'sinon';
 
 import config from 'ui/config';
@@ -106,15 +107,25 @@ describe('Models module', () => {
     describe('getPreviousYearTimeSeries', () => {
         const siteID = '05413500';
 
-        const startDate = new Date('2018-01-02T15:00:00.000-06:00');
-        const endDate = new Date('2018-01-02T16:45:00.000-06:00');
+        const startDate = 1514872800000; // milliSecond version of 01/02/2018
+        const endDate = 1546408800000; // milliSecond version of 01/02/2019
 
         it('Retrieves data using the startDT and endDT parameters', () => {
             getPreviousYearTimeSeries({site: siteID, startTime: startDate, endTime: endDate});
             let request = fakeServer.requests[0];
 
-            expect(request.url).toContain('startDT=2017-01-02T21:00');
-            expect(request.url).toContain('endDT=2017-01-02T22:45');
+            expect(request.url).toContain('startDT=2017-01-02T06:00Z');
+            expect(request.url).toContain('endDT=2018-01-02T06:00Z');
+        });
+
+        it('Expects the difference between start and end dates for leap "compare" year will still be 365 days', () => {
+            const startDateLeapYearTest = 1483362000000; // milliSecond version of 01/02/2017 (year before a leap year, because we compare to the previous year)
+            const endDateLeapYearTest = 1514898000000; // milliSecond version of 01/02/2018
+            getPreviousYearTimeSeries({site: siteID, startTime: startDateLeapYearTest, endTime: endDateLeapYearTest});
+            const request = fakeServer.requests[fakeServer.requests.length - 1];
+
+            expect(request.url).toContain('startDT=2016-01-03T13:00Z');
+            expect(request.url).toContain('endDT=2017-01-02T13:00Z');
         });
     });
 
