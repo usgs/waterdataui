@@ -143,11 +143,13 @@ describe('monitoring-location/components/hydrograph/legend module', () => {
             expect(selectAll('.legend g line.median-step').size()).toBe(1);
         });
 
-        it('Should have 4 legend marker after the median time series are removed', (done) => {
+        it('Should have 4 legend marker after the median time series are removed', () => {
             store.dispatch(Actions.setIVTimeSeriesVisibility('median', false));
-            window.requestAnimationFrame(() => {
-                expect(selectAll('.legend g').size()).toBe(4);
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(selectAll('.legend g').size()).toBe(4);
+                    resolve();
+                });
             });
         });
     });

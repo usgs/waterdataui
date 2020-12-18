@@ -21,7 +21,7 @@ describe('flood_data module', () => {
         describe('with valid response', () => {
             let promise;
 
-            it('expected response is true', (done) => {
+            it('expected response is true', () => {
                 promise = fetchFIMPublicStatus(siteno);
                 fakeServer.requests[0].respond(
                     200,
@@ -36,13 +36,12 @@ describe('flood_data module', () => {
                     }`
                 );
 
-                promise.then((resp) => {
+                return promise.then((resp) => {
                     expect(resp).toBeTruthy();
-                    done();
                 });
             });
 
-            it('expected response is False', (done) => {
+            it('expected response is False', () => {
                 promise = fetchFIMPublicStatus(siteno);
                 fakeServer.requests[0].respond(
                     200,
@@ -59,20 +58,19 @@ describe('flood_data module', () => {
                     }`
                 );
 
-                promise.then((resp) => {
+                return promise.then((resp) => {
                     expect(resp).toBeFalsy();
-                    done();
                 });
             });
         });
 
         describe('with error response', () => {
-            it('On failed response return false', (done) => {
-                fetchFIMPublicStatus(siteno).then((resp) => {
-                   expect(resp).toBeFalsy();
-                   done();
-                });
+            it('On failed response return false', () => {
+                const fetchPromise = fetchFIMPublicStatus(siteno);
                 fakeServer.requests[0].respond(500);
+                return fetchPromise.then((resp) => {
+                   expect(resp).toBeFalsy();
+                });
             });
         });
     });
@@ -96,8 +94,8 @@ describe('flood_data module', () => {
             });
 
             it('expected response is json object with the stages', () => {
-                promise.then((resp) => {
-                    expect(resp.length).toBe(3);
+                return promise.then((resp) => {
+                    expect(resp).toHaveLength(3);
                     expect(resp[0].attributes.STAGE).toBe(30);
                     expect(resp[1].attributes.STAGE).toBe(29);
                     expect(resp[2].attributes.STAGE).toBe(28);
@@ -107,10 +105,11 @@ describe('flood_data module', () => {
 
         describe('with error response', () => {
             it('On failed response return an empty feature list', () => {
-                fetchFloodFeatures(siteno).then((resp) => {
-                   expect(resp.length).toBe(0);
-                });
+                const fetchPromise = fetchFloodFeatures(siteno);
                 fakeServer.requests[0].respond(500);
+                return fetchPromise.then((resp) => {
+                   expect(resp).toHaveLength(0);
+                });
             });
         });
     });
@@ -134,7 +133,7 @@ describe('flood_data module', () => {
             });
 
             it('expected response is json object with the extent', () => {
-                promise.then((resp) => {
+                return promise.then((resp) => {
                     expect(resp.extent).toBeDefined();
                     expect(resp.extent.xmin).toBe(-84.353211731250525);
                     expect(resp.extent.xmax).toBe(-84.223456338038901);
@@ -152,7 +151,7 @@ describe('flood_data module', () => {
             });
 
             it('On failed response return an empty feature list', () => {
-               promise.then((resp) => {
+               return promise.then((resp) => {
                    expect(resp).toEqual({});
                });
             });
@@ -180,7 +179,7 @@ describe('flood_data module', () => {
             });
 
             it('expected response is json object with the flood levels', () => {
-                floodLevelPromise.then((resp) => {
+                return floodLevelPromise.then((resp) => {
                     expect(resp).not.toEqual(null);
                     expect(resp.site_no).toBe('07144100');
                 });
@@ -189,10 +188,11 @@ describe('flood_data module', () => {
 
         describe('with error response', () => {
             it('On failed response return an empty flood levels list', () => {
-                fetchWaterwatchFloodLevels(siteno).then((resp) => {
+                const fetchPromise = fetchWaterwatchFloodLevels(siteno);
+                fakeServer.requests[0].respond(500, {}, 'Error');
+                return fetchPromise.then((resp) => {
                     expect(resp).toBeNull();
                 });
-                fakeServer.requests[0].respond(500, {}, 'Error');
             });
         });
     });

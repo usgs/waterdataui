@@ -1,3 +1,4 @@
+import mockConsole from 'jest-mock-console';
 import sinon from 'sinon';
 
 import {MOCK_NLDI_UPSTREAM_FLOW_FEATURE, MOCK_NLDI_DOWNSTREAM_FLOW_FEATURE,
@@ -7,12 +8,15 @@ import {fetchNldiUpstreamFlow, fetchNldiDownstreamFlow, fetchNldiUpstreamBasin} 
 
 describe('nldi-data module', () => {
     let fakeServer;
+    let restoreConsole;
 
     beforeEach(() => {
         fakeServer = sinon.createFakeServer();
+        restoreConsole = mockConsole();
     });
 
     afterEach(() => {
+        restoreConsole();
         fakeServer.restore();
     });
 
@@ -34,23 +38,22 @@ describe('nldi-data module', () => {
                 );
             });
 
-            it('expected response is json object with the upstream flow', (done) => {
-                upstreamFlowPromise.then((resp) => {
-                    expect(resp.length).toBe(2);
+            it('expected response is json object with the upstream flow', () => {
+                return upstreamFlowPromise.then((resp) => {
+                    expect(resp).toHaveLength(2);
                     expect(resp[0].properties.nhdplus_comid).toBe('10286212');
                     expect(resp[1].properties.nhdplus_comid).toBe('10286442');
-                    done();
                 });
             });
         });
 
         describe('with error response', () => {
-            it('On failed response return an empty feature list', (done) => {
-                fetchNldiUpstreamFlow(siteno).then((resp) => {
-                   expect(resp.length).toBe(0);
-                   done();
-                });
+            it('On failed response return an empty feature list', () => {
+                const fetchPromise = fetchNldiUpstreamFlow(siteno);
                 fakeServer.requests[0].respond(500);
+                return fetchPromise.then((resp) => {
+                   expect(resp).toHaveLength(0);
+                });
             });
         });
     });
@@ -73,24 +76,22 @@ describe('nldi-data module', () => {
                 );
             });
 
-            it('expected response is json object with the downstream flow', (done) => {
-                downstreamFlowPromise.then((resp) => {
-                    expect(resp.length).toBe(2);
+            it('expected response is json object with the downstream flow', () => {
+                return downstreamFlowPromise.then((resp) => {
+                    expect(resp).toHaveLength(2);
                     expect(resp[0].properties.nhdplus_comid).toBe('10286213');
                     expect(resp[1].properties.nhdplus_comid).toBe('10286443');
-
-                    done();
                 });
             });
         });
 
         describe('with error response', () => {
-            it('On failed response return an empty feature list', (done) => {
-                fetchNldiDownstreamFlow(siteno).then((resp) => {
-                   expect(resp.length).toBe(0);
-                   done();
-                });
+            it('On failed response return an empty feature list', () => {
+                const fetchPromise = fetchNldiDownstreamFlow(siteno);
                 fakeServer.requests[0].respond(500);
+                return fetchPromise.then((resp) => {
+                   expect(resp).toHaveLength(0);
+                });
             });
         });
     });
@@ -113,21 +114,20 @@ describe('nldi-data module', () => {
                 );
             });
 
-            it('expected response is json object with the upstream basin', (done) => {
-                upstreamBasinPromise.then((resp) => {
-                    expect(resp.length).toBe(1);
-                    done();
+            it('expected response is json object with the upstream basin', () => {
+                return upstreamBasinPromise.then((resp) => {
+                    expect(resp).toHaveLength(1);
                 });
             });
         });
 
         describe('with error response', () => {
-            it('On failed response return an empty feature list', (done) => {
-                fetchNldiUpstreamBasin(siteno).then((resp) => {
-                   expect(resp.length).toBe(0);
-                   done();
-                });
+            it('On failed response return an empty feature list', () => {
+                const fetchPromise = fetchNldiUpstreamBasin(siteno);
                 fakeServer.requests[0].respond(500);
+                return fetchPromise.then((resp) => {
+                   expect(resp).toHaveLength(0);
+                });
             });
         });
     });

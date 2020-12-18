@@ -66,8 +66,8 @@ describe('monitoring-location/components/daily-value-hydrograph/legend-data', ()
         it('Should return markers for the selected variable', () => {
             const result = getLegendMarkers(TEST_STATE);
 
-            expect(result.length).toBe(2);
-            expect(result[0].length).toBe(4);
+            expect(result).toHaveLength(2);
+            expect(result[0]).toHaveLength(4);
             expect(result[0]).toContainEqual({
                 type: textOnlyMarker,
                 domId: null,
@@ -97,7 +97,7 @@ describe('monitoring-location/components/daily-value-hydrograph/legend-data', ()
 
             });
 
-            expect(result[1].length).toEqual(2);
+            expect(result[1]).toHaveLength(2);
             expect(result[1]).toContainEqual({
                 type: textOnlyMarker,
                 domId: null,

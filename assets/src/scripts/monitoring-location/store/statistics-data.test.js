@@ -50,23 +50,21 @@ describe('monitoring-location/store/statistics-data module', () => {
             expect(fakeServer.requests[0].url).toContain('sites=12345678');
         });
 
-        it('Expect that a succesful fetch updates the store', (done) => {
+        it('Expect that a succesful fetch updates the store', () => {
             const promise = store.dispatch(Actions.retrieveMedianStatistics('12345678'));
             fakeServer.requests[0].respond(200, {}, MOCK_STATISTICS_RDB);
 
-            promise.then(() => {
+            return promise.then(() => {
                 expect(store.getState().statisticsData.median['00060']).toBeDefined();
-                done();
             });
         });
 
-        it('Expect that a failed fetch leaves the store with an empty object', (done) => {
+        it('Expect that a failed fetch leaves the store with an empty object', () => {
             const promise = store.dispatch(Actions.retrieveMedianStatistics('12345678'));
             fakeServer.requests[0].respond(500, {}, 'Internal Server error');
 
-            promise.then(() => {
+            return promise.then(() => {
                 expect(store.getState().statisticsData.median).toEqual({});
-                done();
             });
         });
     });

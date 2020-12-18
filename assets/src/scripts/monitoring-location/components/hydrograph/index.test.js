@@ -303,33 +303,37 @@ describe('monitoring-location/components/hydrograph module', () => {
                 });
             });
 
-            it('Expect to not retrieve additional time series if not indicated', (done) => {
+            it('Expect to not retrieve additional time series if not indicated', () => {
                 attachToNode(store, graphNode, {
                     siteno: '12345678',
                     parameterCode: '00065'
                 });
 
-                window.requestAnimationFrame(() => {
-                    expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).not.toHaveBeenCalled();
-                    expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
-                    done();
+                return new Promise(resolve => {
+                    window.requestAnimationFrame(() => {
+                        expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).not.toHaveBeenCalled();
+                        expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
+                        resolve();
+                    });
                 });
             });
-            it('should retrieve extend time series if period set', (done) => {
+            it('should retrieve extend time series if period set', () => {
                 attachToNode(store, graphNode, {
                     siteno: '12345678',
                     parameterCode: '00065',
                     period: 'P30D'
                 });
 
-                window.requestAnimationFrame(() => {
-                    expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).toHaveBeenCalledWith('12345678', 'P30D', '00065');
-                    expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
-                    done();
+                return new Promise(resolve => {
+                    window.requestAnimationFrame(() => {
+                        expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).toHaveBeenCalledWith('12345678', 'P30D', '00065');
+                        expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
+                        resolve();
+                    });
                 });
             });
 
-            it('should not retrieve data for date range if  time zone has not been fetched', (done) => {
+            it('should not retrieve data for date range if  time zone has not been fetched', () => {
                 attachToNode(store, graphNode, {
                     siteno: '12345678',
                     parameterCode: '00065',
@@ -337,14 +341,16 @@ describe('monitoring-location/components/hydrograph module', () => {
                     endDT: '2010-03-01'
                 });
 
-                window.requestAnimationFrame(() => {
-                    expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).not.toHaveBeenCalled();
-                    expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
-                    done();
+                return new Promise(resolve => {
+                    window.requestAnimationFrame(() => {
+                        expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).not.toHaveBeenCalled();
+                        expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
+                        resolve();
+                    });
                 });
             });
 
-            it('should retrieve data for date range if time zone has  been fetched', (done) => {
+            it('should retrieve data for date range if time zone has  been fetched', () => {
                 jest.spyOn(timeZoneActions, 'retrieveIanaTimeZone').mockReturnValue(function() {
                     return Promise.resolve({});
                 });
@@ -355,16 +361,18 @@ describe('monitoring-location/components/hydrograph module', () => {
                     endDT: '2010-03-01'
                 });
 
-                window.requestAnimationFrame(() => {
-                    expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).not. toHaveBeenCalled();
-                    expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).toHaveBeenCalledWith('12345678', '2010-01-01', '2010-03-01', '00065');
-                    done();
+                return new Promise(resolve => {
+                    window.requestAnimationFrame(() => {
+                        expect(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries).not. toHaveBeenCalled();
+                        expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).toHaveBeenCalledWith('12345678', '2010-01-01', '2010-03-01', '00065');
+                        resolve();
+                    });
                 });
             });
         });
     });
 
-    describe('Tests for initial data fetching when showOnlyGraph is true ', () => {
+    describe('Tests for initial data fetching when showOnlyGraph is true', () => {
         let store;
 
         beforeEach(() => {
@@ -385,7 +393,7 @@ describe('monitoring-location/components/hydrograph module', () => {
             });
         });
 
-        it('should retrieve custom time period if period is specified', (done) => {
+        it('should retrieve custom time period if period is specified', () => {
             attachToNode(store, graphNode, {
                 siteno: '12345678',
                 parameterCode: '00065',
@@ -393,17 +401,18 @@ describe('monitoring-location/components/hydrograph module', () => {
                 showOnlyGraph: true
             });
 
-            window.requestAnimationFrame(() => {
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).not.toHaveBeenCalled();
+                    expect(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries).toHaveBeenCalledWith('12345678', '00065', 'P20D');
+                    expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
 
-                expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).not.toHaveBeenCalled();
-                expect(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries).toHaveBeenCalledWith('12345678', '00065', 'P20D');
-                expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
-
-                done();
+                    resolve();
+                });
             });
         });
 
-        it('should not retrieve date range for date range parameters if time zone has not been fetched', (done) => {
+        it('should not retrieve date range for date range parameters if time zone has not been fetched', () => {
             attachToNode(store, graphNode, {
                 siteno: '12345678',
                 parameterCode: '00065',
@@ -412,15 +421,17 @@ describe('monitoring-location/components/hydrograph module', () => {
                 showOnlyGraph: true
             });
 
-            window.requestAnimationFrame(() => {
-                expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).not.toHaveBeenCalled();
-                expect(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries).not.toHaveBeenCalled();
-                expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).not.toHaveBeenCalled();
+                    expect(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries).not.toHaveBeenCalled();
+                    expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
+                    resolve();
+                });
             });
         });
 
-        it('should  retrieve date range for date range parameters if time zone has been fetched', (done) => {
+        it('should  retrieve date range for date range parameters if time zone has been fetched', () => {
             jest.spyOn(timeZoneActions, 'retrieveIanaTimeZone').mockReturnValue(function() {
                 return Promise.resolve({});
             });
@@ -432,26 +443,30 @@ describe('monitoring-location/components/hydrograph module', () => {
                 showOnlyGraph: true
             });
 
-            window.requestAnimationFrame(() => {
-                expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).not.toHaveBeenCalled();
-                expect(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries).not.toHaveBeenCalled();
-                expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).toHaveBeenCalledWith('12345678', '2010-01-01', '2010-03-01', '00065');
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).not.toHaveBeenCalled();
+                    expect(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries).not.toHaveBeenCalled();
+                    expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).toHaveBeenCalledWith('12345678', '2010-01-01', '2010-03-01', '00065');
+                    resolve();
+                });
             });
         });
 
-        it('should retrieve time series if no custom period or date range', (done) => {
+        it('should retrieve time series if no custom period or date range', () => {
             attachToNode(store, graphNode, {
                 siteno: '12345678',
                 parameterCode: '00065',
                 showOnlyGraph: true
             });
 
-            window.requestAnimationFrame(() => {
-                expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).toHaveBeenCalledWith('12345678', ['00065']);
-                expect(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries).not.toHaveBeenCalled();
-                expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).toHaveBeenCalledWith('12345678', ['00065']);
+                    expect(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries).not.toHaveBeenCalled();
+                    expect(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange).not.toHaveBeenCalled();
+                    resolve();
+                });
             });
         });
     });
@@ -459,7 +474,7 @@ describe('monitoring-location/components/hydrograph module', () => {
     describe('graphNode contains the expected elements when no IV time series has been retrieved and showOnlyGraph is false', () => {
         let store;
         config.NWIS_INVENTORY_ENDPOINT = 'https://fakenwis.usgs.gov/inventory';
-        beforeEach((done) => {
+        beforeEach(() => {
             jest.spyOn(floodDataActions, 'retrieveWaterwatchData').mockReturnValue(function() {
                 return Promise.resolve({});
             });
@@ -481,8 +496,10 @@ describe('monitoring-location/components/hydrograph module', () => {
                 }
             });
             attachToNode(store, graphNode, {siteno: '12345678'});
-            window.requestAnimationFrame(() => {
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    resolve();
+                });
             });
         });
 
@@ -498,7 +515,7 @@ describe('monitoring-location/components/hydrograph module', () => {
     describe('graphNode contains the expected elements when showOnlyGraph is false', () => {
         /* eslint no-use-before-define: 0 */
         let store;
-        beforeEach((done) => {
+        beforeEach(() => {
             jest.spyOn(floodDataActions, 'retrieveWaterwatchData').mockReturnValue(function() {
                 return Promise.resolve({});
             });
@@ -551,8 +568,10 @@ describe('monitoring-location/components/hydrograph module', () => {
             });
 
             attachToNode(store, graphNode, {siteno: '12345678'});
-            window.requestAnimationFrame(() => {
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    resolve();
+                });
             });
         });
 
@@ -564,12 +583,14 @@ describe('monitoring-location/components/hydrograph module', () => {
             expect(select('#classic-page-link').attr('href')).not.toContain('https://fakenwis.usgs.gov/inventory');
         });
 
-        it('should render the correct number of svg nodes', (done) => {
-            window.requestAnimationFrame(() => {
+        it('should render the correct number of svg nodes', () => {
+            return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
-                    // one main hydrograph, brush, slider, legend and two sparklines
-                    expect(selectAll('svg').size()).toBe(6);
-                    done();
+                    window.requestAnimationFrame(() => {
+                        // one main hydrograph, brush, slider, legend and two sparklines
+                        expect(selectAll('svg').size()).toBe(6);
+                        resolve();
+                    });
                 });
             });
         });
@@ -628,12 +649,14 @@ describe('monitoring-location/components/hydrograph module', () => {
             expect(selectAll('table .usa-tooltip').size()).toBe(4);
         });
 
-        it('should render the data table', (done) => {
-            window.requestAnimationFrame(() => {
-                const container = select('#iv-data-table-container');
-                expect(container.selectAll('table').size()).toBe(1);
-                expect(container.select('.pagination').size()).toBe(1);
-                done();
+        it('should render the data table', () => {
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    const container = select('#iv-data-table-container');
+                    expect(container.selectAll('table').size()).toBe(1);
+                    expect(container.select('.pagination').size()).toBe(1);
+                    resolve();
+                });
             });
         });
     });

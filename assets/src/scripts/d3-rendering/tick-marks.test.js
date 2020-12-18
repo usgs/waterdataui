@@ -10,7 +10,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({hours: 3}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(4);
+        expect(result.dates).toHaveLength(4);
         expect(result.dates.map(result.format)).toEqual(
             ['Mar 08 02:08 PM', 'Mar 08 02:53 PM', 'Mar 08 03:38 PM', 'Mar 08 04:23 PM']
         );
@@ -21,7 +21,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({hours: 5}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(4);
+        expect(result.dates).toHaveLength(4);
         expect(result.dates.map(result.format)).toEqual(
             ['Mar 08 02:23 PM', 'Mar 08 03:38 PM', 'Mar 08 04:53 PM', 'Mar 08 06:08 PM']
         );
@@ -32,7 +32,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({days: 2}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(4);
+        expect(result.dates).toHaveLength(4);
         expect(result.dates.map(result.format)).toEqual(
             ['Mar 08 07:45 PM', 'Mar 09 07:45 AM', 'Mar 09 07:45 PM', 'Mar 10 07:45 AM']
         );
@@ -43,7 +43,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({days: 7}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(7);
+        expect(result.dates).toHaveLength(7);
         expect(result.dates.map(result.format)).toEqual(
             ['Mar 09', 'Mar 10', 'Mar 11', 'Mar 12', 'Mar 13', 'Mar 14', 'Mar 15']
         );
@@ -54,7 +54,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({days: 3}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(3);
+        expect(result.dates).toHaveLength(3);
         expect(result.dates.map(result.format)).toEqual(
             ['Mar 09', 'Mar 10', 'Mar 11']
         );
@@ -65,7 +65,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({days: 8}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(4);
+        expect(result.dates).toHaveLength(4);
         expect(result.dates.map(result.format)).toEqual(
             ['Mar 09', 'Mar 11', 'Mar 13', 'Mar 15']
         );
@@ -76,7 +76,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({days: 14}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(7);
+        expect(result.dates).toHaveLength(7);
         expect(result.dates.map(result.format)).toEqual(
             ['Mar 09', 'Mar 11', 'Mar 13', 'Mar 15', 'Mar 17', 'Mar 19', 'Mar 21']
         );
@@ -87,7 +87,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({days: 15}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(4);
+        expect(result.dates).toHaveLength(4);
         expect(result.dates.map(result.format)).toEqual(
             ['Mar 09', 'Mar 13', 'Mar 17', 'Mar 21']
         );
@@ -98,7 +98,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({days: 28}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(7);
+        expect(result.dates).toHaveLength(7);
         expect(result.dates.map(result.format)).toEqual(
             ['Mar 09', 'Mar 13', 'Mar 17', 'Mar 21', 'Mar 25', 'Mar 29', 'Apr 02']
         );
@@ -109,7 +109,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({days: 29}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(4);
+        expect(result.dates).toHaveLength(4);
         expect(result.dates.map(result.format)).toEqual(
             ['Mar 11', 'Mar 18', 'Mar 25', 'Apr 01']
         );
@@ -120,7 +120,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({days: 50}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(7);
+        expect(result.dates).toHaveLength(7);
         expect(result.dates.map(result.format)).toEqual(
             ['Mar 11', 'Mar 18', 'Mar 25', 'Apr 01', 'Apr 08', 'Apr 15', 'Apr 22']
         );
@@ -131,7 +131,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({days: 53}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(4);
+        expect(result.dates).toHaveLength(4);
         expect(result.dates.map(result.format)).toEqual(
             ['Mar 15', 'Mar 29', 'Apr 12', 'Apr 26']
         );
@@ -142,7 +142,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({days: 98}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(7);
+        expect(result.dates).toHaveLength(7);
         expect(result.dates.map(result.format)).toEqual(
             ['Mar 15', 'Mar 29', 'Apr 12', 'Apr 26', 'May 10', 'May 24', 'Jun 07']
         );
@@ -153,7 +153,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({days: 126}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(4);
+        expect(result.dates).toHaveLength(4);
         expect(result.dates.map(result.format)).toEqual(
             ['Apr 2018', 'May 2018', 'Jun 2018', 'Jul 2018']
         );
@@ -164,7 +164,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({month: 7, days: 1}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(7);
+        expect(result.dates).toHaveLength(7);
         expect(result.dates.map(result.format)).toEqual(
             ['Apr 2018', 'May 2018', 'Jun 2018', 'Jul 2018', 'Aug 2018', 'Sep 2018', 'Oct 2018']
         );
@@ -175,7 +175,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({month: 8, days: 18}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(4);
+        expect(result.dates).toHaveLength(4);
         expect(result.dates.map(result.format)).toEqual(
             ['Apr 2018', 'Jun 2018', 'Aug 2018', 'Oct 2018']
         );
@@ -186,7 +186,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({month: 14, days: 18}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(7);
+        expect(result.dates).toHaveLength(7);
         expect(result.dates.map(result.format)).toEqual(
             ['Apr 2018', 'Jun 2018', 'Aug 2018', 'Oct 2018', 'Dec 2018', 'Feb 2019', 'Apr 2019']
         );
@@ -197,7 +197,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({month: 15, days: 18}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(4);
+        expect(result.dates).toHaveLength(4);
         expect(result.dates.map(result.format)).toEqual(
             ['May 2018', 'Sep 2018', 'Jan 2019', 'May 2019']
         );
@@ -208,7 +208,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({month: 28, days: 18}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(7);
+        expect(result.dates).toHaveLength(7);
         expect(result.dates.map(result.format)).toEqual(
             ['May 2018', 'Sep 2018', 'Jan 2019', 'May 2019', 'Sep 2019', 'Jan 2020', 'May 2020']
         );
@@ -219,7 +219,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({month: 29, days: 18}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(5);
+        expect(result.dates).toHaveLength(5);
         expect(result.dates.map(result.format)).toEqual(
             ['Jun 2018', 'Dec 2018', 'Jun 2019', 'Dec 2019', 'Jun 2020']
         );
@@ -230,7 +230,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({month: 42, days: 18}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(7);
+        expect(result.dates).toHaveLength(7);
         expect(result.dates.map(result.format)).toEqual(
             ['Jun 2018', 'Dec 2018', 'Jun 2019', 'Dec 2019', 'Jun 2020', 'Dec 2020', 'Jun 2021']
         );
@@ -241,7 +241,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({month: 44, days: 18}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(3);
+        expect(result.dates).toHaveLength(3);
         expect(result.dates.map(result.format)).toEqual(
             ['Jan 2019', 'Jan 2020', 'Jan 2021']
         );
@@ -253,7 +253,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({year: 7}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(7);
+        expect(result.dates).toHaveLength(7);
         expect(result.dates.map(result.format)).toEqual(
             ['Jan 2019', 'Jan 2020', 'Jan 2021', 'Jan 2022', 'Jan 2023', 'Jan 2024', 'Jan 2025']
         );
@@ -264,7 +264,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({year: 9}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(7);
+        expect(result.dates).toHaveLength(7);
         expect(result.dates.map(result.format)).toEqual(
             ['Nov 2018', 'Mar 2020', 'Jun 2021', 'Oct 2022', 'Jan 2024', 'May 2025', 'Aug 2026']
         );
@@ -275,7 +275,7 @@ describe('generateTimeTicks', () => {
         const endTime = DateTime.fromMillis(startTime).plus({year: 20}).toMillis();
         const result = generateTimeTicks(startTime, endTime, timeZone);
 
-        expect(result.dates.length).toBe(7);
+        expect(result.dates).toHaveLength(7);
         expect(result.dates.map(result.format)).toEqual(
             ['Sep 2019', 'Jul 2022', 'May 2025', 'Apr 2028', 'Feb 2031', 'Dec 2033', 'Nov 2036']
         );

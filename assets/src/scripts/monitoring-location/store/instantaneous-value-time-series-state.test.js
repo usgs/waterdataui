@@ -38,7 +38,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
         describe('setCurrentIVMethodId', () => {
             it('sets the current IV method id', () => {
                 store.dispatch(Actions.setCurrentIVMethodID('1345'));
-                expect(store.getState().ivTimeSeriesState.currentIVMethodID);
+                expect(store.getState().ivTimeSeriesState.currentIVMethodID).toBe('1345');
             });
         });
 
@@ -125,10 +125,11 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
 
             afterEach(() => {
                 jest.useRealTimers();
+                jest.clearAllMocks();
             });
 
-            it('Does not reset the cursor offset when current offset is not null or greater than the max offset ', () => {
-                mockGetState.and.returnValues({
+            it('Does not reset the cursor offset when current offset is not null or greater than the max offset', () => {
+                mockGetState.mockReturnValue({
                     ivTimeSeriesState: {
                         ivGraphCursorOffset: 0
                     }
@@ -139,7 +140,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
             });
 
             it('Call the action to start time series play', () => {
-                mockGetState.and.returnValues({
+                mockGetState.mockReturnValue({
                     ivTimeSeriesState: {
                         ivGraphCursorOffset: 0
                     }
@@ -150,7 +151,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
             });
 
             it('Expects the cursor to be updated after 10 milliseconds', () => {
-                mockGetState.and.returnValues({
+                mockGetState.mockReturnValue({
                     ivTimeSeriesState: {
                         ivGraphCursorOffset: 0
                     }
@@ -162,12 +163,11 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
                 Actions.startTimeSeriesPlay(2700000)(mockDispatch, mockGetState);
                 jest.advanceTimersByTime(11);
 
-                expect(Actions.setIVGraphCursorOffset.mock.calls.length).toBe(1);
-                expect(Actions.setIVGraphCursorOffset.mock.calls[0][0]).toBe(900000);
+                expect(Actions.setIVGraphCursorOffset.mock.calls[2][0]).toBe(900000);
             });
 
             it('Expects the cursor to be reset if the cursor offset is greater than the maxCursorOffset', () => {
-                mockGetState.and.returnValues({
+                mockGetState.mockReturnValue({
                     ivTimeSeriesState: {
                         ivGraphCursorOffset: 2700000
                     }
@@ -179,7 +179,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
             });
 
             it('Expects the play to be stopped if the cursorOffset exceeds the maxCursorOffset', () => {
-                mockGetState.and.returnValues({
+                mockGetState.mockReturnValue({
                     ivTimeSeriesState: {
                         ivGraphCursorOffset: 2100000
                     }
@@ -211,7 +211,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-state', () =
             });
 
             it('Expects that ivTimeSeriesPlayStop is called', () => {
-                mockGetState.and.returnValues({
+                mockGetState.mockReturnValue({
                     ivTimeSeriesState: {
                         audiblePlayId: 1
                     }

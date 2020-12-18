@@ -91,7 +91,7 @@ describe('monitoring-location/components/dailyValueHydrograph/time-series-graph'
             expect(group.selectAll('.dv-mask-group').size()).toBe(1);
         });
 
-        it('should render a circle if there is a one element line segment', (done) => {
+        it('should render a circle if there is a one element line segment', () => {
             store.dispatch(Actions.addDVTimeSeries('12345', {
                     type: 'Feature',
                     id: '12345',
@@ -114,14 +114,16 @@ describe('monitoring-location/components/dailyValueHydrograph/time-series-graph'
                         grades: [['50'], ['50'], ['50'], ['50'], ['50'], ['50']]
                     }
                 }));
-            window.requestAnimationFrame(() => {
-                const svg = testDiv.selectAll('svg');
-                const group = svg.selectAll('#daily-values-lines-group');
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    const svg = testDiv.selectAll('svg');
+                    const group = svg.selectAll('#daily-values-lines-group');
 
-                expect(group.selectAll('path').size()).toBe(2);
-                expect(group.selectAll('circle').size()).toBe(1);
+                    expect(group.selectAll('path').size()).toBe(2);
+                    expect(group.selectAll('circle').size()).toBe(1);
 
-                done();
+                    resolve();
+                });
             });
         });
 

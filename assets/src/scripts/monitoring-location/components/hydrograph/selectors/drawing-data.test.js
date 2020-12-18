@@ -207,7 +207,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
 
         const result = getAllPoints(TEST_DATA);
         it('Return three time series', () => {
-            expect(Object.keys(result).length).toBe(3);
+            expect(Object.keys(result)).toHaveLength(3);
             expect(result['69928:00060']).toBeDefined();
             expect(result['69929:00010']).toBeDefined();
             expect(result['69930:00045']).toBeDefined();
@@ -272,7 +272,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
         it('Return the points array for the ts Key selector', () => {
             const result = getPointsByTsKey('current')(TEST_DATA);
 
-            expect(Object.keys(result).length).toBe(2);
+            expect(Object.keys(result)).toHaveLength(2);
             expect(result['69928:00060']).toBeDefined();
             expect(result['69930:00045']).toBeDefined();
         });
@@ -299,7 +299,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
        it('Return the current variable for the tsKey', () => {
            const result = getCurrentVariablePoints('current')(TEST_DATA);
 
-           expect(result.length).toBe(1);
+           expect(result).toHaveLength(1);
            expect(result[0]).toEqual(TEST_DATA.ivTimeSeriesData.timeSeries['69928:00060'].points);
        });
 
@@ -323,7 +323,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
        it('Returns the expected data', () => {
            const result = getCurrentPointData(TEST_DATA);
 
-           expect(result.length).toBe(3);
+           expect(result).toHaveLength(3);
            expect(result[0]).toEqual({
                parameterName: 'Streamflow',
                dateTime: '2018-03-06T09:45-06:00',
@@ -806,7 +806,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
         it('Should return two mappings for current time series', () => {
             const result = getLineSegmentsByParmCd('current')(TEST_DATA);
 
-            expect(Object.keys(result).length).toBe(2);
+            expect(Object.keys(result)).toHaveLength(2);
             expect(result['00060']).toBeDefined();
             expect(result['00045']).toBeDefined();
         });
@@ -816,7 +816,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
         it('Should return a single time series for current', () => {
             const result = getCurrentVariableLineSegments('current')(TEST_DATA);
 
-            expect(Object.keys(result).length).toBe(1);
+            expect(Object.keys(result)).toHaveLength(1);
             expect(result['69928:00060']).toBeDefined();
         });
 
@@ -856,7 +856,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
         };
 
         it('Return two arrays', () => {
-           expect(getVisiblePoints(testData).length).toBe(2);
+           expect(getVisiblePoints(testData)).toHaveLength(2);
         });
 
         it('Expects one array if only median is not visible', () => {
@@ -872,7 +872,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
                 }
             };
 
-            expect(getVisiblePoints(newTestData).length).toBe(1);
+            expect(getVisiblePoints(newTestData)).toHaveLength(1);
         });
 
         it('Expects an empty array if no visible series has the current variable', () => {
@@ -884,7 +884,7 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
                 }
             };
 
-            expect(getVisiblePoints(newTestData).length).toBe(0);
+            expect(getVisiblePoints(newTestData)).toHaveLength(0);
         });
     });
 
@@ -982,8 +982,8 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
 
         it('Return the expected data points', () =>  {
             let result = getCurrentVariableMedianStatPoints(TEST_STATE);
-            expect(result.length).toBe(1);
-            expect(result[0].length).toBe(9);
+            expect(result).toHaveLength(1);
+            expect(result[0]).toHaveLength(9);
             expect(result[0][0]).toEqual({
                 value: 42,
                 date: DateTime.fromObject({

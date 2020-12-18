@@ -147,8 +147,8 @@ describe('monitoring-location/components/daily-value-hydrograph/time-series-data
                 label: 'Provisional',
                 class: 'provisional'
             });
-            expect(meanResult.length).toBe(0);
-            expect(maxResult.length).toBe(9);
+            expect(meanResult).toHaveLength(0);
+            expect(maxResult).toHaveLength(9);
         });
     });
 
@@ -170,7 +170,7 @@ describe('monitoring-location/components/daily-value-hydrograph/time-series-data
             const meanResult = result.mean;
             const maxResult = result.max;
 
-            expect(minResult.length).toBe(5);
+            expect(minResult).toHaveLength(5);
             expect(minResult[0].isMasked).toBe(false);
             expect(minResult[0].label).toBe('Approved');
             expect(minResult[0].class).toBe('approved');
@@ -210,8 +210,8 @@ describe('monitoring-location/components/daily-value-hydrograph/time-series-data
             expect(minResult[4].label).toBe('Provisional');
             expect(minResult[4].class).toBe('provisional');
 
-            expect(meanResult.length).toBe(0);
-            expect(maxResult.length).toBe(5);
+            expect(meanResult).toHaveLength(0);
+            expect(maxResult).toHaveLength(5);
         });
 
         it('Should return a two line segments if time series has two day gap', () => {
@@ -240,10 +240,10 @@ describe('monitoring-location/components/daily-value-hydrograph/time-series-data
                     }
                 }
             });
-            expect(result.min.length).toBe(2);
-            expect(result.min.filter(segment => !segment.isMasked).length).toBe(2);
-            expect(result.min[0].points.length).toBe(1);
-            expect(result.min[1].points.length).toBe(3);
+            expect(result.min).toHaveLength(2);
+            expect(result.min.filter(segment => !segment.isMasked)).toHaveLength(2);
+            expect(result.min[0].points).toHaveLength(1);
+            expect(result.min[1].points).toHaveLength(3);
         });
     });
 
@@ -285,7 +285,7 @@ describe('monitoring-location/components/daily-value-hydrograph/time-series-data
                     }
                 }
             });
-            expect(result.min.length).toBe(2);
+            expect(result.min).toHaveLength(2);
             expect(result.min).toContainEqual({
                 isMasked: true,
                 label: 'Ice affected',
@@ -296,8 +296,8 @@ describe('monitoring-location/components/daily-value-hydrograph/time-series-data
                 label: 'Approved',
                 class: 'approved'
             });
-            expect(result.mean.length).toBe(0);
-            expect(result.max.length).toBe(0);
+            expect(result.mean).toHaveLength(0);
+            expect(result.max).toHaveLength(0);
         });
     });
 

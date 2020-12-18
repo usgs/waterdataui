@@ -1,5 +1,7 @@
+import mockConsole from 'jest-mock-console';
 import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
+import sinon from 'sinon';
 
 import {MOCK_IV_DATA} from 'ui/mock-service-data';
 
@@ -9,8 +11,11 @@ import {Actions as ivTimeSeriesStateActions, ivTimeSeriesStateReducer} from './i
 
 describe('monitoring-location/store/instantaneous-value-time-series-data module', () => {
     let store;
+    let fakeServer;
+    let restoreConsole;
     describe('ivTimeSeriesDataReducer module', () => {
         beforeEach(() => {
+            restoreConsole = mockConsole();
             store = createStore(
                 combineReducers({
                     floodState: floodStateReducer,
@@ -39,11 +44,12 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 },
                 applyMiddleware(thunk)
             );
-            jasmine.Ajax.install();
+            fakeServer = sinon.createFakeServer();
         });
 
         afterEach(() => {
-            jasmine.Ajax.uninstall();
+            restoreConsole();
+            fakeServer.restore();
         });
 
         describe('Actions.addIVTimeSeriesCollection', () => {
@@ -196,7 +202,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
             it('Service url should contain the siteno and period=P7D', () => {
                 store.dispatch(Actions.retrieveIVTimeSeries('12345678'));
 
-                const url = jasmine.Ajax.requests.mostRecent().url;
+                const url = fakeServer.requests[0].url;
                 expect(url).toContain('sites=12345678');
                 expect(url).toContain('period=P7D');
             });
@@ -207,13 +213,11 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 expect(store.getState().ivTimeSeriesState.loadingIVTSKeys).toContain('current:P7D');
             });
 
-            it('Expect that a successful fetch updates the data and sets the state appropriately', (done) => {
+            it('Expect that a successful fetch updates the data and sets the state appropriately', () => {
                 const promise = store.dispatch(Actions.retrieveIVTimeSeries('12345678'));
-                jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 200,
-                    responseText: MOCK_IV_DATA
-                });
-                promise.then(() => {
+                fakeServer.requests[0].respond(200, {}, MOCK_IV_DATA);
+
+                return promise.then(() => {
                     const tsState = store.getState().ivTimeSeriesState;
                     expect(Actions.retrieveCompareIVTimeSeries).toHaveBeenCalled();
                     expect(Actions.addIVTimeSeriesCollection).toHaveBeenCalled();
@@ -221,21 +225,17 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                     expect(tsState.loadingIVTSKeys).not.toContain('current:P7D');
                     expect(tsState.showIVTimeSeries.current).toBe(true);
                     expect(tsState.currentIVVariableID).toBe('45807197');
-                    done();
                 });
             });
 
-            it('Expect that a failed fetch resets the time series and removes the loading key', (done) => {
+            it('Expect that a failed fetch resets the time series and removes the loading key', () => {
                 const promise = store.dispatch(Actions.retrieveIVTimeSeries('12345678'));
-                jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 500,
-                    responseText: 'Internal server error'
-                });
-                promise.then(() => {
+                fakeServer.requests[0].respond(500, {}, 'Internal server error');
+
+                return promise.then(() => {
                     const tsState = store.getState().ivTimeSeriesState;
                     expect(Actions.resetIVTimeSeries).toHaveBeenCalled();
                     expect(tsState.loadingIVTSKeys).not.toContain('current:P7D');
-                    done();
                 });
             });
         });
@@ -251,7 +251,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
             it('Service url should contain the siteno, startDT, and endDT', () => {
                 store.dispatch(Actions.retrieveCompareIVTimeSeries('12345678', 'P7D', startDT, endDT));
 
-                const url = jasmine.Ajax.requests.mostRecent().url;
+                const url = fakeServer.requests[0].url;
                 expect(url).toContain('sites=12345678');
                 expect(url).toContain('startDT=');
                 expect(url).toContain('endDT=');
@@ -263,31 +263,25 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 expect(store.getState().ivTimeSeriesState.loadingIVTSKeys).toContain('compare:P7D');
             });
 
-            it('Expect that a successful fetch updates the data and sets the state appropriately', (done) => {
+            it('Expect that a successful fetch updates the data and sets the state appropriately', () => {
                 const promise = store.dispatch(Actions.retrieveCompareIVTimeSeries('12345678', 'P7D', startDT, endDT));
-                jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 200,
-                    responseText: MOCK_IV_DATA
-                });
-                promise.then(() => {
+                fakeServer.requests[0].respond(200, {}, MOCK_IV_DATA);
+
+                return promise.then(() => {
                     const tsState = store.getState().ivTimeSeriesState;
                     expect(Actions.addIVTimeSeriesCollection).toHaveBeenCalled();
                     expect(tsState.loadingIVTSKeys).not.toContain('compare:P7D');
-                    done();
                 });
             });
 
-            it('Expect that a failed fetch resets the time series and removes the loading key', (done) => {
+            it('Expect that a failed fetch resets the time series and removes the loading key', () => {
                 const promise = store.dispatch(Actions.retrieveCompareIVTimeSeries('12345678', 'P7D', startDT, endDT));
-                jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 500,
-                    responseText: 'Internal server error'
-                });
-                promise.then(() => {
+                fakeServer.requests[0].respond(500, {}, 'Internal server error');
+
+                return promise.then(() => {
                     const tsState = store.getState().ivTimeSeriesState;
                     expect(Actions.resetIVTimeSeries).toHaveBeenCalled();
                     expect(tsState.loadingIVTSKeys).not.toContain('compare:P7D');
-                    done();
                 });
             });
         });
@@ -301,7 +295,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
             it('Service url should contain the siteno, startDT, and endDT', () => {
                 store.dispatch(Actions.retrieveCustomTimePeriodIVTimeSeries('12345678', '00060', 'P14D'));
 
-                const url = jasmine.Ajax.requests.mostRecent().url;
+                const url = fakeServer.requests[0].url;
                 expect(url).toContain('sites=12345678');
                 expect(url).toContain('parameterCd=00060');
                 expect(url).toContain('period=P14D');
@@ -315,32 +309,26 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 expect(tsState.userInputsForTimeRange.mainTimeRangeSelectionButton).toBe('custom');
             });
 
-            it('Expect that a successful fetch updates the data and sets the state appropriately', (done) => {
+            it('Expect that a successful fetch updates the data and sets the state appropriately', () => {
                 const promise = store.dispatch(Actions.retrieveCustomTimePeriodIVTimeSeries('12345678', '00060', 'P14D'));
-                jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 200,
-                    responseText: MOCK_IV_DATA
-                });
-                promise.then(() => {
+                fakeServer.requests[0].respond(200, {}, MOCK_IV_DATA);
+
+                return promise.then(() => {
                     const tsState = store.getState().ivTimeSeriesState;
                     expect(Actions.addIVTimeSeriesCollection).toHaveBeenCalled();
                     expect(tsState.currentIVVariableID).toBe('45807197');
                     expect(tsState.loadingIVTSKeys).not.toContain('current:custom:00060');
-                    done();
                 });
             });
 
-            it('Expect that a failed fetch resets the time series and removes the loading key', (done) => {
+            it('Expect that a failed fetch resets the time series and removes the loading key', () => {
                 const promise = store.dispatch(Actions.retrieveCustomTimePeriodIVTimeSeries('12345678', '00060', 'P14D'));
-                jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 500,
-                    responseText: 'Internal server error'
-                });
-                promise.then(() => {
+                fakeServer.requests[0].respond(500, {}, 'Internal server error');
+
+                return promise.then(() => {
                     const tsState = store.getState().ivTimeSeriesState;
                     expect(Actions.resetIVTimeSeries).toHaveBeenCalled();
                     expect(tsState.loadingIVTSKeys).not.toContain('current:custom:00060');
-                    done();
                 });
             });
         });
@@ -358,7 +346,7 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
             it('Service url should contain the siteno, startDT, and endDT and current parameter code', () => {
                 store.dispatch(Actions.retrieveCustomIVTimeSeries('12345678', startDT, endDT));
 
-                const url = jasmine.Ajax.requests.mostRecent().url;
+                const url = fakeServer.requests[0].url;
                 expect(url).toContain('sites=12345678');
                 expect(url).toContain('parameterCd=00060');
                 expect(url).toContain('startDT=');
@@ -377,31 +365,25 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 expect(tsState.showIVTimeSeries.median).toBe(false);
             });
 
-            it('Expect that a successful fetch updates the data and sets the state appropriately', (done) => {
+            it('Expect that a successful fetch updates the data and sets the state appropriately', () => {
                 const promise = store.dispatch(Actions.retrieveCustomIVTimeSeries('12345678', startDT, endDT));
-                jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 200,
-                    responseText: MOCK_IV_DATA
-                });
-                promise.then(() => {
+                fakeServer.requests[fakeServer.requests.length - 1].respond(200, {}, MOCK_IV_DATA);
+
+                return promise.then(() => {
                     const tsState = store.getState().ivTimeSeriesState;
                     expect(Actions.addIVTimeSeriesCollection).toHaveBeenCalled();
                     expect(tsState.loadingIVTSKeys).not.toContain('current:custom:00060');
-                    done();
                 });
             });
 
-            it('Expect that a failed fetch resets the time series and removes the loading key', (done) => {
+            it('Expect that a failed fetch resets the time series and removes the loading key', () => {
                 const promise = store.dispatch(Actions.retrieveCustomIVTimeSeries('12345678', '00060', 'P14D'));
-                jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 500,
-                    responseText: 'Internal server error'
-                });
-                promise.then(() => {
+                fakeServer.requests[fakeServer.requests.length - 1].respond(500, {}, 'Internal server error');
+
+                return promise.then(() => {
                     const tsState = store.getState().ivTimeSeriesState;
                     expect(Actions.addIVTimeSeriesCollection).toHaveBeenCalledWith({});
                     expect(tsState.loadingIVTSKeys).not.toContain('current:custom:00060');     
-                    done();
                 });
             });
         });
@@ -414,62 +396,51 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 jest.spyOn(Actions, 'retrieveCompareIVTimeSeries');
                 store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable('45807197'));
                 initialPromise = store.dispatch(Actions.retrieveIVTimeSeries('12345678'));
-                jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 200,
-                    responseText: MOCK_IV_DATA
-                });
+                fakeServer.requests[fakeServer.requests.length - 1].respond(200, {}, MOCK_IV_DATA);
             });
 
-            it('Service url should contain the siteno, current parameter code, and period', (done) => {
-                initialPromise.then(() => {
+            it('Service url should contain the siteno, current parameter code, and period', () => {
+                return initialPromise.then(() => {
                     store.dispatch(Actions.retrieveExtendedIVTimeSeries('12345678', 'P30D'));
 
-                    const url = jasmine.Ajax.requests.mostRecent().url;
+                    const url = fakeServer.requests[fakeServer.requests.length - 1].url;
                     expect(url).toContain('sites=12345678');
                     expect(url).toContain('startDT=');
                     expect(url).toContain('endDT=');
-                    done();
                 });
             });
 
-            it('Loading key should be set for this time series before fetch is complete ', (done) => {
-                initialPromise.then(() => {
+            it('Loading key should be set for this time series before fetch is complete', () => {
+                return initialPromise.then(() => {
                     store.dispatch(Actions.retrieveExtendedIVTimeSeries('12345678', 'P30D'));
 
                     expect(store.getState().ivTimeSeriesState.loadingIVTSKeys).toContain('current:P30D:00060');
-                    done();
                 });
             });
 
-            it('Expect that a successful fetch updates the data and sets the state appropriately', (done) => {
-                initialPromise.then(() => {
+            it('Expect that a successful fetch updates the data and sets the state appropriately', () => {
+                return initialPromise.then(() => {
                     const promise = store.dispatch(Actions.retrieveExtendedIVTimeSeries('12345678', 'P30D:00060'));
-                    jasmine.Ajax.requests.mostRecent().respondWith({
-                        status: 200,
-                        responseText: MOCK_IV_DATA
-                    });
-                    promise.then(() => {
+                    fakeServer.requests[fakeServer.requests.length - 1].respond(200, {}, MOCK_IV_DATA);
+
+                    return promise.then(() => {
                         const tsState = store.getState().ivTimeSeriesState;
                         expect(Actions.addIVTimeSeriesCollection).toHaveBeenCalled();
                         expect(Actions.retrieveCompareIVTimeSeries).toHaveBeenCalled();
                         expect(tsState.loadingIVTSKeys).not.toContain('current:P30D');
-                        done();
                     });
                 });
             });
 
-            it('Expect that a failed fetch resets the time series and removes the loading key', (done) => {
-                initialPromise.then(() => {
+            it('Expect that a failed fetch resets the time series and removes the loading key', () => {
+                return initialPromise.then(() => {
                     const promise = store.dispatch(Actions.retrieveExtendedIVTimeSeries('12345678', 'P30D'));
-                    jasmine.Ajax.requests.mostRecent().respondWith({
-                        status: 500,
-                        responseText: 'Internal server error'
-                    });
-                    promise.then(() => {
+                    fakeServer.requests[fakeServer.requests.length - 1].respond(500, {}, 'Internal server error');
+
+                    return promise.then(() => {
                         const tsState = store.getState().ivTimeSeriesState;
                         expect(Actions.addIVTimeSeriesCollection).toHaveBeenCalledWith({});
                         expect(tsState.loadingIVTSKeys).not.toContain('current:P30D:00060');
-                        done();
                     });
                 });
             });
@@ -492,17 +463,14 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                 expect(Actions.retrieveCustomIVTimeSeries).toHaveBeenCalled();
             });
 
-            it('Expect to retrieve extended time series if date range kind is not custom', (done) => {
+            it('Expect to retrieve extended time series if date range kind is not custom', () => {
                 store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable('45807197'));
                 let initialPromise = store.dispatch(Actions.retrieveIVTimeSeries('12345678'));
-                jasmine.Ajax.requests.mostRecent().respondWith({
-                    status: 200,
-                    responseText: MOCK_IV_DATA
-                });
-                initialPromise.then(() => {
+                fakeServer.requests[0].respond(200, {}, MOCK_IV_DATA);
+
+                return initialPromise.then(() => {
                     store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries('12345678', '45807197'));
                     expect(Actions.retrieveExtendedIVTimeSeries).toHaveBeenCalled();
-                    done();
                 });
             });
         });

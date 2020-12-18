@@ -20,7 +20,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             div.remove();
         });
 
-        it('creates an unordered list and the correct number of list items and hyperlinks when only current time series is showing', (done) => {
+        it('creates an unordered list and the correct number of list items and hyperlinks when only current time series is showing', () => {
             const TEST_STATE = {
                 'ivTimeSeriesData': {
                     'queryInfo': {
@@ -54,22 +54,24 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
             div.call(renderDownloadLinks, store, siteNumber);
-            window.requestAnimationFrame(() => {
-                expect(div.selectAll('ul').size()).toBe(1);
-                expect(div.selectAll('li').size()).toBe(2);
-                expect(div.selectAll('a').size()).toBe(3);
-                const anchorSelection = div.selectAll('a');
-                const anchorElements = anchorSelection.nodes();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(div.selectAll('ul').size()).toBe(1);
+                    expect(div.selectAll('li').size()).toBe(2);
+                    expect(div.selectAll('a').size()).toBe(3);
+                    const anchorSelection = div.selectAll('a');
+                    const anchorElements = anchorSelection.nodes();
 
-                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00060');
-                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
-                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+                    expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00060');
+                    expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                    expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
 
-                done();
+                    resolve();
+                });
             });
         });
 
-        it('creates an unordered list and the correct number of list items and hyperlinks when compare is selected', (done) => {
+        it('creates an unordered list and the correct number of list items and hyperlinks when compare is selected', () => {
             const TEST_STATE = {
                 'ivTimeSeriesData': {
                     'queryInfo': {
@@ -106,23 +108,25 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
             div.call(renderDownloadLinks, store, siteNumber);
-            window.requestAnimationFrame(() => {
-                expect(div.selectAll('ul').size()).toBe(1);
-                expect(div.selectAll('li').size()).toBe(3);
-                expect(div.selectAll('a').size()).toBe(4);
-                const anchorSelection = div.selectAll('a');
-                const anchorElements = anchorSelection.nodes();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(div.selectAll('ul').size()).toBe(1);
+                    expect(div.selectAll('li').size()).toBe(3);
+                    expect(div.selectAll('a').size()).toBe(4);
+                    const anchorSelection = div.selectAll('a');
+                    const anchorElements = anchorSelection.nodes();
 
-                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00060');
-                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&startDT=2019-11-14T23:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb&parameterCd=00060');
-                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
-                expect(anchorElements[3].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+                    expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00060');
+                    expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&startDT=2019-11-14T23:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb&parameterCd=00060');
+                    expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                    expect(anchorElements[3].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
 
-                done();
+                    resolve();
+                });
             });
         });
 
-        it('creates an unordered list and the correct number of list items and hyperlinks when median is selected', (done) => {
+        it('creates an unordered list and the correct number of list items and hyperlinks when median is selected', () => {
             const TEST_STATE = {
                 'ivTimeSeriesData': {
                     'queryInfo': {
@@ -156,23 +160,25 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
             div.call(renderDownloadLinks, store, siteNumber);
-            window.requestAnimationFrame(() => {
-                expect(div.selectAll('ul').size()).toBe(1);
-                expect(div.selectAll('li').size()).toBe(3);
-                expect(div.selectAll('a').size()).toBe(4);
-                const anchorSelection = div.selectAll('a');
-                const anchorElements = anchorSelection.nodes();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(div.selectAll('ul').size()).toBe(1);
+                    expect(div.selectAll('li').size()).toBe(3);
+                    expect(div.selectAll('a').size()).toBe(4);
+                    const anchorSelection = div.selectAll('a');
+                    const anchorElements = anchorSelection.nodes();
 
-                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00060');
-                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/stat/?format=rdb&sites=05370000&statReportType=daily&statTypeCd=median&parameterCd=00060');
-                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
-                expect(anchorElements[3].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+                    expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00060');
+                    expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/stat/?format=rdb&sites=05370000&statReportType=daily&statTypeCd=median&parameterCd=00060');
+                    expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                    expect(anchorElements[3].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
 
-                done();
+                    resolve();
+                });
             });
         });
 
-        it('creates an unordered list and the correct number of list items and hyperlinks when both median and compare are selected', (done) => {
+        it('creates an unordered list and the correct number of list items and hyperlinks when both median and compare are selected', () => {
             const TEST_STATE = {
                 'ivTimeSeriesData': {
                     'queryInfo': {
@@ -209,24 +215,26 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
             div.call(renderDownloadLinks, store, siteNumber);
-            window.requestAnimationFrame(() => {
-                expect(div.selectAll('ul').size()).toBe(1);
-                expect(div.selectAll('li').size()).toBe(4);
-                expect(div.selectAll('a').size()).toBe(5);
-                const anchorSelection = div.selectAll('a');
-                const anchorElements = anchorSelection.nodes();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(div.selectAll('ul').size()).toBe(1);
+                    expect(div.selectAll('li').size()).toBe(4);
+                    expect(div.selectAll('a').size()).toBe(5);
+                    const anchorSelection = div.selectAll('a');
+                    const anchorElements = anchorSelection.nodes();
 
-                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00060');
-                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&startDT=2019-11-14T23:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb&parameterCd=00060');
-                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/stat/?format=rdb&sites=05370000&statReportType=daily&statTypeCd=median&parameterCd=00060');
-                expect(anchorElements[3].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
-                expect(anchorElements[4].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+                    expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00060');
+                    expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&startDT=2019-11-14T23:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb&parameterCd=00060');
+                    expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/stat/?format=rdb&sites=05370000&statReportType=daily&statTypeCd=median&parameterCd=00060');
+                    expect(anchorElements[3].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                    expect(anchorElements[4].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
 
-                done();
+                    resolve();
+                });
             });
         });
 
-        it('creates an unordered list and the correct number of list items and hyperlinks if P30D is selected', (done) => {
+        it('creates an unordered list and the correct number of list items and hyperlinks if P30D is selected', () => {
             const TEST_STATE = {
                 'ivTimeSeriesData': {
                     'queryInfo': {
@@ -263,24 +271,26 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
             div.call(renderDownloadLinks, store, siteNumber);
-            window.requestAnimationFrame(() => {
-                expect(div.selectAll('ul').size()).toBe(1);
-                expect(div.selectAll('li').size()).toBe(4);
-                expect(div.selectAll('a').size()).toBe(5);
-                const anchorSelection = div.selectAll('a');
-                const anchorElements = anchorSelection.nodes();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(div.selectAll('ul').size()).toBe(1);
+                    expect(div.selectAll('li').size()).toBe(4);
+                    expect(div.selectAll('a').size()).toBe(5);
+                    const anchorSelection = div.selectAll('a');
+                    const anchorElements = anchorSelection.nodes();
 
-                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&startDT=2019-11-14T23:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb&parameterCd=00060');
-                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&parameterCd=00060&startDT=2019-10-22T22:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb');
-                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/stat/?format=rdb&sites=05370000&statReportType=daily&statTypeCd=median&parameterCd=00060');
-                expect(anchorElements[3].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
-                expect(anchorElements[4].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+                    expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&startDT=2019-11-14T23:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb&parameterCd=00060');
+                    expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&parameterCd=00060&startDT=2019-10-22T22:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb');
+                    expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/stat/?format=rdb&sites=05370000&statReportType=daily&statTypeCd=median&parameterCd=00060');
+                    expect(anchorElements[3].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                    expect(anchorElements[4].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
 
-                done();
+                    resolve();
+                });
             });
         });
 
-        it('creates an unordered list and the correct number of list items and hyperlinks when custom days are selected', (done) => {
+        it('creates an unordered list and the correct number of list items and hyperlinks when custom days are selected', () => {
             const TEST_STATE = {
                 'ivTimeSeriesData': {
                     'queryInfo': {
@@ -314,22 +324,24 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
             div.call(renderDownloadLinks, store, siteNumber);
-            window.requestAnimationFrame(() => {
-                expect(div.selectAll('ul').size()).toBe(1);
-                expect(div.selectAll('li').size()).toBe(2);
-                expect(div.selectAll('a').size()).toBe(3);
-                const anchorSelection = div.selectAll('a');
-                const anchorElements = anchorSelection.nodes();
+            return new Promise (resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(div.selectAll('ul').size()).toBe(1);
+                    expect(div.selectAll('li').size()).toBe(2);
+                    expect(div.selectAll('a').size()).toBe(3);
+                    const anchorSelection = div.selectAll('a');
+                    const anchorElements = anchorSelection.nodes();
 
-                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&parameterCd=00060&startDT=2019-10-22T22:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb');
-                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
-                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+                    expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&parameterCd=00060&startDT=2019-10-22T22:18Z&endDT=2019-11-21T23:18Z&siteStatus=all&format=rdb');
+                    expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                    expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
 
-                done();
+                    resolve();
+                });
             });
         });
 
-        it('creates an unordered list and the correct number of list items and hyperlinks when custom calendar dates are selected', (done) => {
+        it('creates an unordered list and the correct number of list items and hyperlinks when custom calendar dates are selected', () => {
             const TEST_STATE = {
                 'ivTimeSeriesData': {
                     'queryInfo': {
@@ -363,22 +375,24 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
             div.call(renderDownloadLinks, store, siteNumber);
-            window.requestAnimationFrame(() => {
-                expect(div.selectAll('ul').size()).toBe(1);
-                expect(div.selectAll('li').size()).toBe(2);
-                expect(div.selectAll('a').size()).toBe(3);
-                const anchorSelection = div.selectAll('a');
-                const anchorElements = anchorSelection.nodes();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(div.selectAll('ul').size()).toBe(1);
+                    expect(div.selectAll('li').size()).toBe(2);
+                    expect(div.selectAll('a').size()).toBe(3);
+                    const anchorSelection = div.selectAll('a');
+                    const anchorElements = anchorSelection.nodes();
 
-                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&parameterCd=00060&startDT=2020-11-01T04:00Z&endDT=2020-11-04T04:59Z&siteStatus=all&format=rdb');
-                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
-                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+                    expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=01646500&parameterCd=00060&startDT=2020-11-01T04:00Z&endDT=2020-11-04T04:59Z&siteStatus=all&format=rdb');
+                    expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                    expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
 
-                done();
+                    resolve();
+                });
             });
         });
 
-        it('creates an unordered list and the correct number of list items and hyperlinks when a parameter other than 00060 is used', (done) => {
+        it('creates an unordered list and the correct number of list items and hyperlinks when a parameter other than 00060 is used', () => {
             const TEST_STATE = {
                 'ivTimeSeriesData': {
                     'queryInfo': {
@@ -412,18 +426,20 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
             div.call(renderDownloadLinks, store, siteNumber);
-            window.requestAnimationFrame(() => {
-                expect(div.selectAll('ul').size()).toBe(1);
-                expect(div.selectAll('li').size()).toBe(2);
-                expect(div.selectAll('a').size()).toBe(3);
-                const anchorSelection = div.selectAll('a');
-                const anchorElements = anchorSelection.nodes();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(div.selectAll('ul').size()).toBe(1);
+                    expect(div.selectAll('li').size()).toBe(2);
+                    expect(div.selectAll('a').size()).toBe(3);
+                    const anchorSelection = div.selectAll('a');
+                    const anchorElements = anchorSelection.nodes();
 
-                expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00010');
-                expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
-                expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+                    expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00010');
+                    expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                    expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
 
-                done();
+                    resolve();
+                });
             });
         });
     });

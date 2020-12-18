@@ -105,7 +105,7 @@ describe('monitoring-location/url-params module', () => {
             expect(window.location.hash).not.toContain('timeSeriesId');
         });
 
-        it('adds period if current date range is P30D or P1Y', (done) => {
+        it('adds period if current date range is P30D or P1Y', () => {
             let store = configureStore({
                 ...TEST_STATE,
                 ivTimeSeriesState: {
@@ -123,13 +123,15 @@ describe('monitoring-location/url-params module', () => {
             expect(window.location.hash).not.toContain('timeSeriesId');
 
             store.dispatch(Actions.setCurrentIVDateRange('P1Y'));
-            window.requestAnimationFrame(() => {
-                expect(window.location.hash).toContain('period=P1Y');
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(window.location.hash).toContain('period=P1Y');
+                    resolve();
+                });
             });
         });
 
-        it('adds period if current date range not P7D and is in the form of P{some number}{Day or Year code}', (done) => {
+        it('adds period if current date range not P7D and is in the form of P{some number}{Day or Year code}', () => {
             let store = configureStore({
                 ...TEST_STATE,
                 ivTimeSeriesState: {
@@ -147,13 +149,15 @@ describe('monitoring-location/url-params module', () => {
             expect(window.location.hash).not.toContain('timeSeriesId');
 
             store.dispatch(Actions.setCurrentIVDateRange('P1Y'));
-            window.requestAnimationFrame(() => {
-                expect(window.location.hash).toContain('period=P1Y');
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(window.location.hash).toContain('period=P1Y');
+                    resolve();
+                });
             });
         });
 
-        it('does not add period if current date range is P7D', (done) => {
+        it('does not add period if current date range is P7D', () => {
             let store = configureStore({
                 ...TEST_STATE,
                 ivTimeSeriesState: {
@@ -171,9 +175,11 @@ describe('monitoring-location/url-params module', () => {
             expect(window.location.hash).not.toContain('timeSeriesId');
 
             store.dispatch(Actions.setCurrentIVDateRange('P1Y'));
-            window.requestAnimationFrame(() => {
-                expect(window.location.hash).toContain('period=P1Y');
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(window.location.hash).toContain('period=P1Y');
+                    resolve();
+                });
             });
         });
 

@@ -44,21 +44,19 @@ describe('monitoring-location/store/time-zone module', () => {
                 expect(fakeServer.requests[0].url).toContain('45.3,-100.2');
             });
 
-            it('Successful fetch assigns time zone', (done) => {
+            it('Successful fetch assigns time zone', () => {
                 const promise = store.dispatch(Actions.retrieveIanaTimeZone('45.3', '-100.2'));
                 fakeServer.requests[0].respond(200, {}, '{"properties" : {"timeZone" : "America/Chicago"}}');
-                promise.then(() => {
+                return promise.then(() => {
                     expect(store.getState().ianaTimeZone).toBe('America/Chicago');
-                    done();
                 });
             });
 
-            it('Failed fetch assigns time zone to be null', (done) => {
+            it('Failed fetch assigns time zone to be null', () => {
                 const promise = store.dispatch(Actions.retrieveIanaTimeZone('45.3', '-100.2'));
                 fakeServer.requests[0].respond(500, {}, '{"properties" : {}}');
-                promise.then(() => {
+                return promise.then(() => {
                     expect(store.getState().ianaTimeZone).toBeNull();
-                    done();
                 });
             });
         });

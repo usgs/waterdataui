@@ -67,14 +67,16 @@ describe('monitoring-location/components/hydrograph/method-picker', () => {
             div.remove();
         });
 
-        it('Creates a picker and sets the currentMethodID', (done) => {
+        it('Creates a picker and sets the currentMethodID', () => {
             let store = configureStore(TEST_STATE);
             div.call(drawMethodPicker, store);
-            window.requestAnimationFrame(() => {
-                expect(div.select('div').property('hidden')).toEqual(false);
-                expect(div.select('select').property('value')).toEqual('69930');
-                expect(store.getState().ivTimeSeriesState.currentIVMethodID).toEqual(69930);
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(div.select('div').property('hidden')).toEqual(false);
+                    expect(div.select('select').property('value')).toEqual('69930');
+                    expect(store.getState().ivTimeSeriesState.currentIVMethodID).toEqual(69930);
+                    resolve();
+                });
             });
         });
     });

@@ -76,34 +76,32 @@ describe('monitoring-location/store/network module', () => {
             it('Expects that fetching urls have the siteno', () => {
                 store.dispatch(Actions.retrieveNetworkListData('12345678'));
 
-                expect(fakeServer.requests.length).toBe(1);
+                expect(fakeServer.requests).toHaveLength(1);
                 expect(fakeServer.requests[0].url).toContain('USGS-12345678');
             });
 
-            it('Expects the store to be updated on successful fetches', (done) => {
+            it('Expects the store to be updated on successful fetches', () => {
                 const promise = store.dispatch(Actions.retrieveNetworkListData('12345678'));
                 fakeServer.requests[0].respond(200, {}, MOCK_OBSERVATION_ITEM);
 
-                promise.then(() => {
+                return promise.then(() => {
                     const networkData = store.getState().networkData;
 
                     expect(networkData.networkList).toEqual(
                         JSON.parse(MOCK_OBSERVATION_ITEM).links.filter(function(link) {
-                            return link['rel'] == 'collection';
+                            return link['rel'] === 'collection';
                         }));
-                    done();
                 });
             });
 
-            it('Expects the store to contain empty array if calls are unsuccessful', (done) => {
+            it('Expects the store to contain empty array if calls are unsuccessful', () => {
                 const promise = store.dispatch(Actions.retrieveNetworkListData('12345678'));
                 fakeServer.requests[0].respond(500, {}, 'Internal server error');
 
-                promise.then(() => {
+                return promise.then(() => {
                     const networkData = store.getState().networkData;
 
                     expect(networkData.networkList).toEqual([]);
-                    done();
                 });
             });
         });

@@ -109,7 +109,7 @@ describe('monitoring-location/components/dailyValueHydrograph/index', () => {
         attachToNode(configureStore(), testDiv.node());
 
         expect(testDiv.selectAll('.usa-alert--error').size()).toBe(1);
-        expect(fakeServer.requests.length).toBe(0);
+        expect(fakeServer.requests).toHaveLength(0);
     });
 
     it('Expects that if siteno is defined, the available time series is fetched', () => {
@@ -129,34 +129,38 @@ describe('monitoring-location/components/dailyValueHydrograph/index', () => {
             jest.spyOn(Actions, 'retrieveDVTimeSeries');
         });
 
-        it('Expects that once the available time series is fetched and contains a valid time series id, the time series is fetched', (done) => {
+        it('Expects that once the available time series is fetched and contains a valid time series id, the time series is fetched', () => {
             attachToNode(configureStore({
                 dailyValueTimeSeriesData: {
                     availableDVTimeSeries: TEST_STATE.dailyValueTimeSeriesData.availableDVTimeSeries
                 }
             }), testDiv.node(), {siteno: '12345'});
 
-            window.requestAnimationFrame(() => {
-                expect(Actions.retrieveDVTimeSeries.mock.calls.length).toBe(2);
-                expect(Actions.retrieveDVTimeSeries.mock.calls[0]).toEqual(['USGS-12345', '1122']);
-                expect(Actions.retrieveDVTimeSeries.mock.calls[1]).toEqual(['USGS-12345', '1123']);
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(Actions.retrieveDVTimeSeries.mock.calls).toHaveLength(2);
+                    expect(Actions.retrieveDVTimeSeries.mock.calls[0]).toEqual(['USGS-12345', '1122']);
+                    expect(Actions.retrieveDVTimeSeries.mock.calls[1]).toEqual(['USGS-12345', '1123']);
 
-                done();
+                    resolve();
+                });
             });
         });
 
-        it('Expects that if there is not a valid time series that the alert is shown indicating no data', (done) => {
+        it('Expects that if there is not a valid time series that the alert is shown indicating no data', () => {
             attachToNode(configureStore({
                 dailyValueTimeSeriesData: {
                     availableDVTimeSeries: []
                 }
             }), testDiv.node(), {siteno: '12345'});
-            window.requestAnimationFrame(() => {
-                expect(Actions.retrieveDVTimeSeries).not.toHaveBeenCalled();
-                expect(testDiv.selectAll('.usa-alert--info').size()).toBe(1);
-                expect(testDiv.selectAll('.loading-indicator').size()).toBe(0);
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(Actions.retrieveDVTimeSeries).not.toHaveBeenCalled();
+                    expect(testDiv.selectAll('.usa-alert--info').size()).toBe(1);
+                    expect(testDiv.selectAll('.loading-indicator').size()).toBe(0);
 
-                done();
+                    resolve();
+                });
             });
         });
     });
@@ -174,63 +178,73 @@ describe('monitoring-location/components/dailyValueHydrograph/index', () => {
             store = configureStore(TEST_STATE);
         });
 
-        it('Expect that a successful fetch of the dv series removes loading indicator and renders the expected elements', (done) => {
+        it('Expect that a successful fetch of the dv series removes loading indicator and renders the expected elements', () => {
             attachToNode(store, testDiv.node(), {siteno: '12345'});
 
-            window.requestAnimationFrame(() => {
+            return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
-                    expect(testDiv.selectAll('.loading-indicator').size()).toBe(0);
-                    expect(testDiv.selectAll('.usa-alert--info').size()).toBe(0);
+                    window.requestAnimationFrame(() => {
+                        expect(testDiv.selectAll('.loading-indicator').size()).toBe(0);
+                        expect(testDiv.selectAll('.usa-alert--info').size()).toBe(0);
 
-                    done();
+                        resolve();
+                    });
                 });
             });
         });
 
-        it('Expect that the hydrograph svg is rendered', (done) => {
+        it('Expect that the hydrograph svg is rendered', () => {
             attachToNode(store, testDiv.node(), {siteno: '12345'});
 
-            window.requestAnimationFrame(() => {
+            return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
-                    expect(testDiv.select('.graph-container').selectAll('.hydrograph-svg').size()).toBe(1);
+                    window.requestAnimationFrame(() => {
+                        expect(testDiv.select('.graph-container').selectAll('.hydrograph-svg').size()).toBe(1);
 
-                    done();
+                        resolve();
+                    });
                 });
             });
         });
 
-        it('Expect that the legend is rendered', (done) => {
+        it('Expect that the legend is rendered', () => {
             attachToNode(store, testDiv.node(), {siteno: '12345'});
 
-            window.requestAnimationFrame(() => {
+            return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
-                    expect(testDiv.select('.graph-container').selectAll('.dv-legend-container').size()).toBe(1);
+                    window.requestAnimationFrame(() => {
+                        expect(testDiv.select('.graph-container').selectAll('.dv-legend-container').size()).toBe(1);
 
-                    done();
+                        resolve();
+                    });
                 });
             });
         });
 
-        it('Expect that the brush is rendered', (done) => {
+        it('Expect that the brush is rendered', () => {
             attachToNode(store, testDiv.node(), {siteno: '12345'});
 
-            window.requestAnimationFrame(() => {
+            return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
-                    expect(testDiv.select('.graph-container').selectAll('.brush').size()).toBe(1);
+                    window.requestAnimationFrame(() => {
+                        expect(testDiv.select('.graph-container').selectAll('.brush').size()).toBe(1);
 
-                    done();
+                        resolve();
+                    });
                 });
             });
         });
 
-        it('Expect that the cursor slider is rendered', (done) => {
+        it('Expect that the cursor slider is rendered', () => {
             attachToNode(store, testDiv.node(), {siteno: '12345'});
 
-            window.requestAnimationFrame(() => {
+            return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
-                    expect(testDiv.select('.graph-container').selectAll('.cursor-slider-svg').size()).toBe(1);
+                    window.requestAnimationFrame(() => {
+                        expect(testDiv.select('.graph-container').selectAll('.cursor-slider-svg').size()).toBe(1);
 
-                    done();
+                        resolve();
+                    });
                 });
             });
         });

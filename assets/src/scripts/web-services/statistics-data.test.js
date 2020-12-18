@@ -53,8 +53,8 @@ describe('statistics-data', () => {
             expect(request.url).toContain('sites=05370000');
         });
 
-        it('Parses the data as expected', (done) => {
-            promise.then((resp) => {
+        it('Parses the data as expected', () => {
+            return promise.then((resp) => {
                 expect(resp).toEqual({
                     '00060': {
                         '153885': [{
@@ -216,7 +216,6 @@ describe('statistics-data', () => {
                         }]
                     }
                 });
-                done();
             });
         });
     });

@@ -80,16 +80,17 @@ describe('monitoring-location/components/map/flood-slider', () => {
                 .call(floodSlider, store);
         });
 
-        it('Sets the gageHeight when the slider value changes and updates the label', (done) => {
+        it('Sets the gageHeight when the slider value changes and updates the label', () => {
             const slider = select(sliderNode).select('input[type="range"]');
             slider.attr('value', 2)
                 .dispatch('input');
-            window.requestAnimationFrame(() => {
-                expect(store.getState().floodState.gageHeight).toBe(11);
-                expect(select(sliderNode).select('label').html()).toContain('11');
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(store.getState().floodState.gageHeight).toBe(11);
+                    expect(select(sliderNode).select('label').html()).toContain('11');
+                    resolve();
+                });
             });
-
         });
     });
 });

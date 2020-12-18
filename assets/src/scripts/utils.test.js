@@ -28,7 +28,7 @@ describe('Utils module', () => {
            let result = getHtmlFromString('kg * m&#178;/s&#179;');
            expect(result).toContain('&#178;');
            expect(result).toContain('&#179;');
-           expect(result.length).toBe(2);
+           expect(result).toHaveLength(2);
         });
     });
 
@@ -61,7 +61,7 @@ describe('Utils module', () => {
     });
 
     // Can't run this is jsdom because getComputedTextLength needs real DOM.
-    xdescribe('wrap() fits long text', () => {
+    describe.skip('wrap() fits long text', () => {
         const lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
         let elem;
         let maxWordWidth;
@@ -115,7 +115,7 @@ describe('Utils module', () => {
     });
 
     // Can't run this because it requires a real DOM
-    xdescribe('mediaQuery', () => {
+    describe.skip('mediaQuery', () => {
         it('returns a boolean', () => {
             expect(typeof mediaQuery(-100)).toEqual('boolean');
             expect(typeof mediaQuery(0)).toEqual('boolean');
@@ -171,19 +171,19 @@ describe('Utils module', () => {
         /* eslint no-use-before-define: 0 */
         it('parseRDB successfully parses RDB content', () => {
            let result = parseRDB(MOCK_RDB);
-           expect(result.length).toEqual(13);
+           expect(result).toHaveLength(13);
            expect(Object.keys(result[0])).toEqual(['agency_cd', 'site_no', 'parameter_cd', 'ts_id', 'loc_web_ds', 'month_nu',
                'day_nu', 'begin_yr', 'end_yr', 'count_nu', 'p50_va']);
         });
 
         it('parseRDB handles no data', () => {
            let result = parseRDB(MOCK_RDB_NO_DATA);
-           expect(result.length).toEqual(0);
+           expect(result).toHaveLength(0);
         });
 
         it('parseRDB handles no headers', () => {
            let result = parseRDB('#Some Stuff');
-           expect(result.length).toEqual(0);
+           expect(result).toHaveLength(0);
         });
     });
 
@@ -249,11 +249,11 @@ describe('Utils module', () => {
         });
 
         it('handles the case where variables are empty', () => {
-            expect(sortedParameters({}).length).toEqual(0);
+            expect(sortedParameters({})).toHaveLength(0);
         });
 
         it('handles the case where variables are undefined', () => {
-            expect(sortedParameters(undefined).length).toEqual(0);
+            expect(sortedParameters(undefined)).toHaveLength(0);
         });
     });
 

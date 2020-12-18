@@ -95,41 +95,39 @@ describe('monitoring-location/store/nldi-data module', () => {
             it('Expects that fetching urls have the siteno', () => {
                 store.dispatch(Actions.retrieveNldiData('12345678'));
 
-                expect(fakeServer.requests.length).toBe(3);
+                expect(fakeServer.requests).toHaveLength(3);
                 expect(fakeServer.requests[0].url).toContain('USGS-12345678');
                 expect(fakeServer.requests[1].url).toContain('USGS-12345678');
                 expect(fakeServer.requests[2].url).toContain('USGS-12345678');
             });
 
-            it('Expects the store to be updated on successful fetches', (done) => {
+            it('Expects the store to be updated on successful fetches', () => {
                 const promise = store.dispatch(Actions.retrieveNldiData('12345678'));
                 fakeServer.requests[0].respond(200, {}, MOCK_NLDI_UPSTREAM_FLOW_FEATURE);
                 fakeServer.requests[1].respond(200, {}, MOCK_NLDI_DOWNSTREAM_FLOW_FEATURE);
                 fakeServer.requests[2].respond(200, {}, MOCK_NLDI_UPSTREAM_BASIN_FEATURE);
 
-                promise.then(() => {
+                return promise.then(() => {
                     const nldiData = store.getState().nldiData;
 
                     expect(nldiData.upstreamFlows).toEqual(JSON.parse(MOCK_NLDI_UPSTREAM_FLOW_FEATURE).features);
                     expect(nldiData.downstreamFlows).toEqual(JSON.parse(MOCK_NLDI_DOWNSTREAM_FLOW_FEATURE).features);
                     expect(nldiData.upstreamBasin).toEqual(JSON.parse(MOCK_NLDI_UPSTREAM_BASIN_FEATURE).features);
-                    done();
                 });
             });
 
-            it('Expects the store to not contain empty features if calls are unsuccessful', (done) => {
+            it('Expects the store to not contain empty features if calls are unsuccessful', () => {
                 const promise = store.dispatch(Actions.retrieveNldiData('12345678'));
                 fakeServer.requests[0].respond(500, {}, 'Internal server error');
                 fakeServer.requests[1].respond(500, {}, 'Internal server error');
                 fakeServer.requests[2].respond(500, {}, 'Internal server error');
 
-                promise.then(() => {
+                return promise.then(() => {
                     const nldiData = store.getState().nldiData;
 
                     expect(nldiData.upstreamFlows).toEqual([]);
                     expect(nldiData.downstreamFlows).toEqual([]);
                     expect(nldiData.upstreamBasin).toEqual([]);
-                    done();
                 });
             });
         });

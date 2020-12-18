@@ -86,27 +86,25 @@ describe('network/store', () => {
                 fakeServer.restore();
             });
 
-            it('fetches the data and updates the redux store', (done) => {
+            it('fetches the data and updates the redux store', () => {
                 jest.spyOn(Actions, 'setNetworkMonitoringLocations').mockImplementation(() => {});
                 let p = Actions.retrieveNetworkMonitoringLocations(NETWORK_CD)(mockDispatch, mockGetState);
                 fakeServer.requests[0].respond(200, {'Content-Type': 'application/json'}, MOCK_NETWORK_FEATURE);
 
-                p.then(() => {
-                    expect(mockDispatch.mock.calls.length).toBe(1);
-                    expect(Actions.setNetworkMonitoringLocations.mock.calls.length).toBe(1);
-                    done();
+                return p.then(() => {
+                    expect(mockDispatch.mock.calls).toHaveLength(1);
+                    expect(Actions.setNetworkMonitoringLocations.mock.calls).toHaveLength(1);
                 });
             });
 
-            it('a failed fetch sets the save monitoring locations to the empty array', (done) => {
+            it('a failed fetch sets the save monitoring locations to the empty array', () => {
                 jest.spyOn(Actions, 'setNetworkMonitoringLocations').mockImplementation(() => {});
                 let p = Actions.retrieveNetworkMonitoringLocations(NETWORK_CD)(mockDispatch, mockGetState);
                 fakeServer.requests[0].respond(500);
-                p.then(() => {
-                    expect(mockDispatch.mock.calls.length).toBe(1);
-                    expect(Actions.setNetworkMonitoringLocations.mock.calls.length).toBe(1);
+                return p.then(() => {
+                    expect(mockDispatch.mock.calls).toHaveLength(1);
+                    expect(Actions.setNetworkMonitoringLocations.mock.calls).toHaveLength(1);
                     expect(Actions.setNetworkMonitoringLocations).toHaveBeenCalledWith([]);
-                    done();
                 });
             });
         });

@@ -231,7 +231,7 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
             expect(value).toBe('14 deg C (57.2 deg F)');
         });
 
-        it('Text contents are updated when the store is provided with new focus times', (done) => {
+        it('Text contents are updated when the store is provided with new focus times', () => {
             let store = configureStore(Object.assign({}, testState, {
                 ivTimeSeriesState: Object.assign({}, testState.ivTimeSeriesState, {
                     ivGraphCursorOffset: 1
@@ -244,17 +244,19 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
             expect(value).toBe('12 ft3/s');
             store.dispatch(Actions.setIVGraphCursorOffset(3 * 60 * 60 * 1000));
 
-            window.requestAnimationFrame(() => {
-                value = div.select('.current-tooltip-text').text().split(' - ')[0];
-                expect(value).toBe('15 ft3/s');
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    value = div.select('.current-tooltip-text').text().split(' - ')[0];
+                    expect(value).toBe('15 ft3/s');
 
-                value = div.select('.compare-tooltip-text').text().split(' - ')[0];
-                expect(value).toBe('15 ft3/s');
-                done();
+                    value = div.select('.compare-tooltip-text').text().split(' - ')[0];
+                    expect(value).toBe('15 ft3/s');
+                    resolve();
+                });
             });
         });
 
-        it('Shows the qualifier text if focus is near masked data points', (done) => {
+        it('Shows the qualifier text if focus is near masked data points', () => {
             let store = configureStore(Object.assign({}, testState, {
                 ivTimeSeriesState: Object.assign({}, testState.ivTimeSeriesState, {
                     ivGraphCursorOffset: 1
@@ -264,13 +266,15 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
             div.call(drawTooltipText, store);
             store.dispatch(Actions.setIVGraphCursorOffset(299 * 60 * 1000));  // 2018-01-03T16:59:00.000Z
 
-            window.requestAnimationFrame(() => {
-                expect(div.select('.current-tooltip-text').text()).toContain('Flood');
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(div.select('.current-tooltip-text').text()).toContain('Flood');
+                    resolve();
+                });
             });
         });
 
-        it('Creates the correct text for values of zero', (done) => {
+        it('Creates the correct text for values of zero', () => {
             const zeroData = [12, 13, 14, 15, 16].map(hour => {
                 return {
                     dateTime: new Date(`2018-01-03T${hour}:00:00.000Z`).getTime(),
@@ -292,11 +296,13 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
             }));
             div.call(drawTooltipText, store);
             store.dispatch(Actions.setIVGraphCursorOffset(119 * 60 * 1000));
-            window.requestAnimationFrame(() => {
-                let value = div.select('.current-tooltip-text').text().split(' - ')[0];
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    let value = div.select('.current-tooltip-text').text().split(' - ')[0];
 
-                expect(value).toBe('0 ft3/s');
-                done();
+                    expect(value).toBe('0 ft3/s');
+                    resolve();
+                });
             });
         });
     });

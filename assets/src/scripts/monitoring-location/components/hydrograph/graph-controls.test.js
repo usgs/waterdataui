@@ -174,13 +174,15 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             expect(checkbox.property('checked')).toBe(true);
         });
 
-        it('Should render the compare toggle unchecked', (done) => {
+        it('Should render the compare toggle unchecked', () => {
             store.dispatch(Actions.setIVTimeSeriesVisibility('compare', false));
-            window.requestAnimationFrame(() => {
-                const checkbox = select('#last-year-checkbox');
-                expect(checkbox.size()).toBe(1);
-                expect(checkbox.property('checked')).toBe(false);
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    const checkbox = select('#last-year-checkbox');
+                    expect(checkbox.size()).toBe(1);
+                    expect(checkbox.property('checked')).toBe(false);
+                    resolve();
+                });
             });
         });
 
@@ -188,11 +190,13 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             expect(select('#last-year-checkbox').property('disabled')).toBeFalsy();
         });
 
-        it('should be disabled if there are no last year data', (done) => {
+        it('should be disabled if there are no last year data', () => {
             store.dispatch(Actions.setCurrentIVVariable('45807190'));
-            window.requestAnimationFrame(() => {
-                expect(select('#last-year-checkbox').property('disabled')).toBeTruthy();
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(select('#last-year-checkbox').property('disabled')).toBeTruthy();
+                    resolve();
+                });
             });
         });
 
@@ -203,13 +207,15 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             expect(checkbox.property('checked')).toBe(true);
         });
 
-        it('Should render the median toggle unchecked', (done) => {
+        it('Should render the median toggle unchecked', () => {
             store.dispatch(Actions.setIVTimeSeriesVisibility('median', false));
-            window.requestAnimationFrame(() => {
-                const checkbox = select('#median-checkbox');
-                expect(checkbox.size()).toBe(1);
-                expect(checkbox.property('checked')).toBe(false);
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    const checkbox = select('#median-checkbox');
+                    expect(checkbox.size()).toBe(1);
+                    expect(checkbox.property('checked')).toBe(false);
+                    resolve();
+                });
             });
         });
 
@@ -217,11 +223,13 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             expect(select('#median-checkbox').property('disabled')).toBeFalsy();
         });
 
-        it('should be disabled if there are no median statistics data', (done) => {
+        it('should be disabled if there are no median statistics data', () => {
             store.dispatch(Actions.setCurrentIVVariable('45807190'));
-            window.requestAnimationFrame(() => {
-                expect(select('#median-checkbox').property('disabled')).toBeTruthy();
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(select('#median-checkbox').property('disabled')).toBeTruthy();
+                    resolve();
+                });
             });
         });
     });

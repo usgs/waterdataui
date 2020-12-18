@@ -272,11 +272,13 @@ describe('monitoring-location/components/hydrograph/time-series-graph', () => {
             expect(selectAll('#ts-compare-group .line-segment').size()).toBe(1);
         });
 
-        it('Should remove the lines when removing the compare time series', (done) => {
+        it('Should remove the lines when removing the compare time series', () => {
             store.dispatch(Actions.setIVTimeSeriesVisibility('compare', false));
-            window.requestAnimationFrame(() => {
-                expect(selectAll('#ts-compare-group .line-segment').size()).toBe(0);
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(selectAll('#ts-compare-group .line-segment').size()).toBe(0);
+                    resolve();
+                });
             });
         });
     });
@@ -291,11 +293,13 @@ describe('monitoring-location/components/hydrograph/time-series-graph', () => {
             expect(selectAll('#median-points .median-data-series').size()).toBe(1);
         });
 
-        it('Should remove the lines when removing the median statistics data', (done) => {
+        it('Should remove the lines when removing the median statistics data', () => {
             store.dispatch(Actions.setIVTimeSeriesVisibility('median', false));
-            window.requestAnimationFrame(() => {
-                expect(selectAll('#median-points .median-data-series').size()).toBe(0);
-                done();
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(selectAll('#median-points .median-data-series').size()).toBe(0);
+                    resolve();
+                });
             });
         });
     });
@@ -316,10 +320,12 @@ describe('monitoring-location/components/hydrograph/time-series-graph', () => {
         });
 
 
-        it('Should remove the lines when removing the waterwatch flood levels data', (done) => {
-            window.requestAnimationFrame(() => {
-                expect(selectAll('#flood-level-points').size()).toBe(0);
-                done();
+        it('Should remove the lines when removing the waterwatch flood levels data', () => {
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(selectAll('#flood-level-points').size()).toBe(0);
+                    resolve();
+                });
             });
         });
     });
@@ -353,7 +359,7 @@ describe('monitoring-location/components/hydrograph/time-series-graph', () => {
              expect(div.selectAll('.focus-line').size()).toBe(0);
         });
 
-        it('Should not render the tooltip if showTooltip is false', () => {
+        it('Should not render the tooltip if showTooltip is true', () => {
              div.call(drawTimeSeriesGraph, store, '12345678', false, true);
 
              expect(div.selectAll('.tooltip-text-group').size()).toBe(1);

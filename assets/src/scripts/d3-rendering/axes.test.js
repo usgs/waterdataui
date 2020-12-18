@@ -44,7 +44,7 @@ describe('axes module', () => {
     });
 
     // May need to think about how to mock yAxis better.
-    xdescribe('appendYAxis', () => {
+    describe.skip('appendYAxis', () => {
         let yAxis;
         beforeEach(() => {
             yAxis = jest.fn();
@@ -60,7 +60,7 @@ describe('axes module', () => {
         });
     });
 
-    xdescribe('appendSecondaryYAxis', () => {
+    describe.skip('appendSecondaryYAxis', () => {
         let yAxis;
         beforeEach(() => {
             yAxis = jest.fn();

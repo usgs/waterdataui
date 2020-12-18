@@ -259,7 +259,7 @@ describe('monitoring-location/selectors/daily-value-time-series-selector', () =>
             const meanResult = result.mean;
             const maxResult = result.max;
 
-            expect(minResult.length).toBe(9);
+            expect(minResult).toHaveLength(9);
             expect(minResult[0]).toEqual({
                 value: '5.0',
                 dateTime: 1514851200000,
@@ -285,9 +285,9 @@ describe('monitoring-location/selectors/daily-value-time-series-selector', () =>
                 grades: ['50']
             });
 
-            expect(meanResult.length).toBe(0);
+            expect(meanResult).toHaveLength(0);
 
-            expect(maxResult.length).toBe(9);
+            expect(maxResult).toHaveLength(9);
             expect(maxResult[0]).toEqual({
                 value: '5.2',
                 dateTime: 1514851200000,

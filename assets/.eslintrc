@@ -2,16 +2,14 @@
   "env": {
     "commonjs": true,
     "es6": true,
-    "jasmine": true
+    "jest/globals": true
   },
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "plugins": [
-    "jasmine"
-  ],
-  "extends": "eslint:recommended",
+  "plugins": ["jest"],
+  "extends": ["eslint:recommended", "plugin:jest/recommended"],
   "rules": {
     "array-bracket-spacing": ["error", "never"],
     "brace-style": ["error","1tbs", {}],
@@ -26,9 +24,13 @@
     "quotes": ["error", "single"],
     "semi": ["error", "always"],
     "space-before-blocks": ["error", "always"],
-    "space-before-function-paren": ["error", "never"]
+    "space-before-function-paren": ["error", "never"],
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error"
   },
-
   "overrides": [
     {
       "files": ["src/scripts/**/*.test.js"],
@@ -45,7 +47,6 @@
     "process": true,
     "XMLHttpRequest": true,
     "window": true,
-    "L": true,
-    "jest": true
+    "L": true
   }
 }

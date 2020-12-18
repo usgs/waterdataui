@@ -37,7 +37,7 @@ describe('web-services/observations module', () => {
         });
 
         it('Expect url to contain query parameters', () => {
-            networkPromise = fetchNetworkMonitoringLocations(networkCd, {active: true, agencyCode: 'USGS'});
+            fetchNetworkMonitoringLocations(networkCd, {active: true, agencyCode: 'USGS'});
             const url = fakeServer.requests[1].url;
             const queryString = url.split('?')[1];
 
@@ -45,17 +45,19 @@ describe('web-services/observations module', () => {
             expect(queryString).toContain('active=true');
             expect(queryString).toContain('agencyCode=USGS');
             expect(queryString).toContain('f=json');
-            expect(queryString.split('&').length).toBe(3);
+            expect(queryString.split('&')).toHaveLength(3);
         });
 
         it('expected response is json object with the network sites', () => {
-            networkPromise = fetchNetworkMonitoringLocations(networkCd );
-            fakeServer.respondWith(
-                `${config.OBSERVATIONS_ENDPOINT}/${networkCd}/items`,
-                [200, {'Content-Type': 'application/json'}, MOCK_NETWORK_FEATURE]
+            networkPromise = fetchNetworkMonitoringLocations(networkCd);
+            fakeServer.requests[fakeServer.requests.length - 1].respond(
+                200,
+                {'Content-Type': 'application/json'},
+                MOCK_NETWORK_FEATURE
             );
-            networkPromise.then((resp) => {
-                expect(resp.length).toBe(1);
+
+            return networkPromise.then((resp) => {
+                expect(resp).toHaveLength(1);
                 expect(resp).toEqual(JSON.parse(MOCK_NETWORK_FEATURE).features);
             });
         });
@@ -67,30 +69,30 @@ describe('web-services/observations module', () => {
             expect(fakeServer.requests[0].url).toContain('USGS-1234567890');
         });
 
-        it('Expects json response with a valid response', (done) => {
-            fetchAvailableDVTimeSeries('USGS-1234567890')
-                .then((resp) => {
-                    expect(resp).toBeInstanceOf(Object);
-                    expect(resp.timeSeries).toBeDefined;
-                    expect(resp.timeSeries.length).toBe(1);
-
-                    done();
-                });
+        it('Expects json response with a valid response', () => {
+            const fetchPromise = fetchAvailableDVTimeSeries('USGS-1234567890');
             fakeServer.requests[0].respond(
                 200,
                 {'Content-Type': 'application/json'},
                 VALID_AVAILABLE_STATS_RESPONSE
             );
+            return fetchPromise
+                .then((resp) => {
+                    expect(resp).toBeInstanceOf(Object);
+                    expect(resp.timeSeries).toBeDefined();
+                    expect(resp.timeSeries).toHaveLength(1);
+                });
+
         });
 
-        it('Expect empty object with an bad response', (done) => {
-            fetchAvailableDVTimeSeries('USGS-1234567890')
+        it('Expect empty object with an bad response', () => {
+            const fetchPromise = fetchAvailableDVTimeSeries('USGS-1234567890');
+            fakeServer.requests[0].respond(500);
+            return fetchPromise
                 .then((resp) => {
                     expect(resp).toBeInstanceOf(Object);
                     expect(resp).toEqual({});
-                    done();
                 });
-            fakeServer.requests[0].respond(500);
         });
     });
 
@@ -102,30 +104,29 @@ describe('web-services/observations module', () => {
             expect(url).toContain('12345670abcdef');
         });
 
-        it('Expect json response with a valid response', (done) => {
-            fetchDVTimeSeries('USGS-1234567890', '12345670abcdef')
-                .then((resp) => {
-                    expect(resp).toBeInstanceOf(Object);
-                    expect(resp.properties).toBeDefined;
-                    expect(resp.properties.timeStep).toEqual(['2013-10-02', '2013-10-03', '2013-10-04']);
-
-                    done();
-                });
+        it('Expect json response with a valid response', () => {
+            const fetchPromise = fetchDVTimeSeries('USGS-1234567890', '12345670abcdef');
             fakeServer.requests[0].respond(
                 200,
                 {'Content-Type': 'application/json'},
                 VALID_STATS_RESPONSE
             );
+            return fetchPromise.then((resp) => {
+                    expect(resp).toBeInstanceOf(Object);
+                    expect(resp.properties).toBeDefined();
+                    expect(resp.properties.timeStep).toEqual(['2013-10-02', '2013-10-03', '2013-10-04']);
+                });
+
         });
 
-        it('Expect empty object with an bad response', (done) => {
-            fetchDVTimeSeries('1234567890', '12345670abcdef')
+        it('Expect empty object with an bad response', () => {
+            const fetchPromise = fetchDVTimeSeries('1234567890', '12345670abcdef');
+            fakeServer.requests[0].respond(500);
+            return fetchPromise
                 .then((resp) => {
                     expect(resp).toBeInstanceOf(Object);
                     expect(resp).toEqual({});
-                    done();
                 });
-            fakeServer.requests[0].respond(500);
         });
     });
 
@@ -136,30 +137,30 @@ describe('web-services/observations module', () => {
             expect(url).toContain('USGS-1234567890');
         });
 
-        it('Expect json response with a valid response', (done) => {
-            fetchMonitoringLocationMetaData('USGS-1234567890')
-                .then((resp) => {
-                    expect(resp).toBeInstanceOf(Object);
-                    expect(resp.properties).toBeDefined;
-                    expect(resp.links.length).toEqual(6);
-
-                    done();
-                });
+        it('Expect json response with a valid response', () => {
+            const fetchPromise = fetchMonitoringLocationMetaData('USGS-1234567890');
             fakeServer.requests[0].respond(
                 200,
                 {'Content-Type': 'application/json'},
                 MOCK_OBSERVATION_ITEM
             );
+            return fetchPromise
+                .then((resp) => {
+                    expect(resp).toBeInstanceOf(Object);
+                    expect(resp.properties).toBeDefined();
+                    expect(resp.links).toHaveLength(6);
+                });
+
         });
 
-        it('Expect empty object with an bad response', (done) => {
-            fetchMonitoringLocationMetaData('1234567890')
+        it('Expect empty object with an bad response', () => {
+            const fetchPromise = fetchMonitoringLocationMetaData('1234567890');
+            fakeServer.requests[0].respond(500);
+            return fetchPromise
                 .then((resp) => {
                     expect(resp).toBeInstanceOf(Object);
                     expect(resp).toEqual({});
-                    done();
                 });
-            fakeServer.requests[0].respond(500);
         });
     });
 });

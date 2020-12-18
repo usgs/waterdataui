@@ -71,7 +71,7 @@ describe('monitoring-location/store/flood-inundation module', () => {
             it('Expects call to determine FIM Public Status to occur', () => {
                 store.dispatch(Actions.retrieveFloodData('12345678'));
 
-                expect(fakeServer.requests.length).toBe(3);
+                expect(fakeServer.requests).toHaveLength(3);
                 const req1 = fakeServer.requests[0];
                 const req2 = fakeServer.requests[1];
                 const req3 = fakeServer.requests[2];
@@ -85,33 +85,31 @@ describe('monitoring-location/store/flood-inundation module', () => {
                 expect(req3.url).toContain('returnExtentOnly=true');
             });
 
-            it('Expects a public site with successful ajax calls to populate the store', (done) => {
+            it('Expects a public site with successful ajax calls to populate the store', () => {
                 let promise = store.dispatch(Actions.retrieveFloodData('1234567'));
                 fakeServer.requests[0].respond(200, {}, PUBLIC_SITE);
                 fakeServer.requests[1].respond(200, {}, MOCK_STAGES);
                 fakeServer.requests[2].respond(200, {}, MOCK_EXTENT);
 
-                promise.then(() => {
+                return promise.then(() => {
                     const floodData = store.getState().floodData;
 
                     expect(floodData.stages).toEqual([28, 29, 30]);
                     expect(floodData.extent).toEqual(JSON.parse(MOCK_EXTENT).extent);
-                    done();
                 });
             });
 
-            it('Expects a not public site with successful ajax calls to populate the store', (done) => {
+            it('Expects a not public site with successful ajax calls to populate the store', () => {
                 let promise = store.dispatch(Actions.retrieveFloodData('1234567'));
                 fakeServer.requests[0].respond(200, {}, NOT_PUBLIC_SITE);
                 fakeServer.requests[1].respond(200, {}, MOCK_STAGES);
                 fakeServer.requests[2].respond(200, {}, MOCK_EXTENT);
 
-                promise.then(() => {
+                return promise.then(() => {
                     const floodData = store.getState().floodData;
 
                     expect(floodData.stages).toEqual([]);
                     expect(floodData.extent).toEqual({});
-                    done();
                 });
             });
         });
@@ -120,16 +118,16 @@ describe('monitoring-location/store/flood-inundation module', () => {
             it('Expects that fetching urls have the siteno', () => {
                 store.dispatch(Actions.retrieveWaterwatchData('12345678'));
 
-                expect(fakeServer.requests.length).toBe(1);
+                expect(fakeServer.requests).toHaveLength(1);
                 expect(fakeServer.requests[0].url).toContain('12345678');
             });
 
-            it('Expects the store to be updated on successful fetches', (done) => {
+            it('Expects the store to be updated on successful fetches', () => {
                 const promise = store.dispatch(Actions.retrieveWaterwatchData('12345678'));
 
                 fakeServer.requests[0].respond(200, {}, MOCK_WATERWATCH_FLOOD_LEVELS);
 
-                promise.then(() => {
+                return promise.then(() => {
                     const waterwatchData = store.getState().floodData;
                     expect(waterwatchData.floodLevels.action_stage)
                         .toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].action_stage);
@@ -139,21 +137,19 @@ describe('monitoring-location/store/flood-inundation module', () => {
                         .toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].moderate_flood_stage);
                     expect(waterwatchData.floodLevels.major_flood_stage)
                         .toEqual(JSON.parse(MOCK_WATERWATCH_FLOOD_LEVELS).sites[0].major_flood_stage);
-                    done();
                 });
             });
 
-            it('Expects the store to not contain empty features if calls are unsuccessful', (done) => {
+            it('Expects the store to not contain empty features if calls are unsuccessful', () => {
 
                 const promise = store.dispatch(Actions.retrieveWaterwatchData('12345678'));
 
                 fakeServer.requests[0].respond(500, {}, 'Internal server error');
 
-                promise.then(() => {
+                return promise.then(() => {
                     const waterwatchData = store.getState().floodData;
 
                     expect(waterwatchData.floodLevels).toEqual(null);
-                    done();
                 });
             });
         });

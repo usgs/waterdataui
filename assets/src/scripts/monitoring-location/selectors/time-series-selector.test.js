@@ -460,7 +460,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 }
             }
         };
-        it('Returns empty string if state has no siteCodes ', () => {
+        it('Returns empty string if state has no siteCodes', () => {
             expect(getAgencyCode('12345678')({
                 ivTimeSeriesData: {}
             })).toBe('');
@@ -1068,7 +1068,7 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                 }
             };
             const result = getAllMethodsForCurrentVariable(newTestData);
-            expect(result.length).toEqual(2);
+            expect(result).toHaveLength(2);
             expect(result).toContainEqual({
                 methodDescription: '4.1 ft from riverbed (middle)',
                 methodID: 69930

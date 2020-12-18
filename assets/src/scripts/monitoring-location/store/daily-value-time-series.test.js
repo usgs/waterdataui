@@ -56,13 +56,13 @@ describe('monitoring-location/store/daily-value-time-series module', () => {
         });
 
         describe('Actions.retrieveAvailableDVTimeSeries', () => {
-            it('Expects a successful fetch request to update the store', (done) => {
+            it('Expects a successful fetch request to update the store', () => {
                 const promise = store.dispatch(Actions.retrieveAvailableDVTimeSeries('USGS-12345678'));
 
                 expect(fakeServer.requests[0].url).toContain('USGS-12345678');
                 fakeServer.requests[0].respond(200, {}, MOCK_AVAILABLE_TIME_SERIES);
 
-                promise.then(() => {
+                return promise.then(() => {
                     const state = store.getState();
                     expect(state.dailyValueTimeSeriesData.availableDVTimeSeries).toBeDefined();
                     expect(state.dailyValueTimeSeriesData.availableDVTimeSeries).toEqual([
@@ -74,37 +74,32 @@ describe('monitoring-location/store/daily-value-time-series module', () => {
                             'id': 'AGENCY-FEATURE-TIMESERIES'
                         }
                     ]);
-                    done();
                 });
             });
 
-            it('Expects a successful fetch request with no time series sets the store to show empty array', (done) => {
+            it('Expects a successful fetch request with no time series sets the store to show empty array', () => {
                 const promise = store.dispatch(Actions.retrieveAvailableDVTimeSeries('USGS-12345678'));
 
                 fakeServer.requests[0].respond(200, {}, MOCK_EMPTY_AVAILABLE_TIME_SERIES);
 
-                promise.then(() => {
+                return promise.then(() => {
                     expect(store.getState().dailyValueTimeSeriesData.availableDVTimeSeries).toEqual([]);
-
-                    done();
                 });
             });
 
-            it('Expects a bad fetch request to not update the store', (done) => {
+            it('Expects a bad fetch request to not update the store', () => {
                 const promise = store.dispatch(Actions.retrieveAvailableDVTimeSeries('USGS-12345678'));
                 fakeServer.requests[0].respond(500, {}, 'Bad Data');
 
-                promise.then(() => {
+                return promise.then(() => {
                     const state = store.getState();
                     expect(state.dailyValueTimeSeriesData.availableDVTimeSeries).toEqual([]);
-
-                    done();
                 });
             });
         });
 
         describe('Actions.retrieveDVTimeSeries', () => {
-            it('Expects a successful fetch request to update the store', (done) => {
+            it('Expects a successful fetch request to update the store', () => {
                 const promise = store.dispatch(Actions.retrieveDVTimeSeries('USGS-12345678', 'ffff345'));
                 const url = fakeServer.requests[0].url;
                 expect(url).toContain('USGS-12345678');
@@ -112,13 +107,11 @@ describe('monitoring-location/store/daily-value-time-series module', () => {
 
                 fakeServer.requests[0].respond(200, {}, MOCK_DV_TIME_SERIES);
 
-                promise.then(() => {
+                return promise.then(() => {
                     const state = store.getState();
                     expect(state.dailyValueTimeSeriesData.dvTimeSeries).toBeDefined();
                     expect(state.dailyValueTimeSeriesData.dvTimeSeries.ffff345).toBeDefined();
                     expect(state.dailyValueTimeSeriesData.dvTimeSeries.ffff345.id).toEqual('USGS-12345678-ffff345');
-
-                    done();
                 });
             });
 
@@ -126,24 +119,22 @@ describe('monitoring-location/store/daily-value-time-series module', () => {
                 store.dispatch(Actions.addDVTimeSeries('ffff345', {id: 'ffff345'}));
                 store.dispatch(Actions.retrieveDVTimeSeries('USGS-12345678', 'ffff345'));
 
-                expect(fakeServer.requests.length).toBe(0);
+                expect(fakeServer.requests).toHaveLength(0);
             });
 
-            it('Expects a bad fetch request to not add a time series the store', (done) => {
+            it('Expects a bad fetch request to not add a time series the store', () => {
                 const initPromise = store.dispatch(Actions.retrieveDVTimeSeries('USGS-12345678', 'ffff345'));
                 fakeServer.requests[0].respond(200, {}, MOCK_DV_TIME_SERIES);
 
-                initPromise.then(() => {
+                return initPromise.then(() => {
                     const promise = store.dispatch(Actions.retrieveDVTimeSeries('USGS-12345678', 'aaaa345'));
                     fakeServer.requests[1].respond(500, {}, 'Bad Data');
 
-                    promise.then(() => {
+                    return promise.then(() => {
                         const state = store.getState();
                         expect(state.dailyValueTimeSeriesData.dvTimeSeries.ffff345).toBeDefined();
                         expect(state.dailyValueTimeSeriesData.dvTimeSeries.aaaa345).toBeDefined();
                         expect(state.dailyValueTimeSeriesData.dvTimeSeries.aaaa345).toEqual({});
-
-                        done();
                     });
                 });
             });

@@ -119,13 +119,13 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
         it('Should return markers for the selected variable', () => {
             const result = getLegendMarkerRows(TEST_DATA);
 
-            expect(result.length).toBe(2);
-            expect(result[0].length).toBe(4);
+            expect(result).toHaveLength(2);
+            expect(result[0]).toHaveLength(4);
             expect(result[0][0].type).toEqual(textOnlyMarker);
             expect(result[0][1].type).toEqual(lineMarker);
             expect(result[0][2].type).toEqual(rectangleMarker);
             expect(result[0][3].type).toEqual(rectangleMarker);
-            expect(result[1].length).toBe(2);
+            expect(result[1]).toHaveLength(2);
             expect(result[1][0].type).toEqual(textOnlyMarker);
             expect(result[1][1].type).toEqual(lineMarker);
         });
@@ -140,8 +140,8 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
             };
             const result = getLegendMarkerRows(newData);
 
-            expect(result.length).toBe(5);
-            expect(result[0].length).toBe(3);
+            expect(result).toHaveLength(5);
+            expect(result[0]).toHaveLength(3);
             expect(result[0][0].type).toEqual(textOnlyMarker);
             expect(result[0][1].type).toEqual(lineMarker);
             expect(result[0][2].type).toEqual(lineMarker);
@@ -162,8 +162,8 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
 
             const result = getLegendMarkerRows(newData);
 
-            expect(result.length).toBe(1);
-            expect(result[0].length).toBe(4);
+            expect(result).toHaveLength(1);
+            expect(result[0]).toHaveLength(4);
             expect(result[0][0].type).toEqual(textOnlyMarker);
             expect(result[0][1].type).toEqual(lineMarker);
             expect(result[0][2].type).toEqual(rectangleMarker);

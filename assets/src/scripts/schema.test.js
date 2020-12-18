@@ -203,7 +203,7 @@ describe('Normalizr schema', () => {
 });
 
 
-export const MOCK_DATA = `
+const MOCK_DATA = `
 {"name" : "ns1:timeSeriesResponseType",
 "declaredType" : "org.cuahsi.waterml.TimeSeriesResponseType",
 "scope" : "javax.xml.bind.JAXBElement$GlobalScope",
