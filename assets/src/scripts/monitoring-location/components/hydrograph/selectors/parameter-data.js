@@ -24,7 +24,7 @@ export const getAvailableParameterCodes = createSelector(
 
         const seriesList = Object.values(timeSeries);
         const availableVariableIds = seriesList.map(x => x.variable);
-        return sortedParameters(variables)
+        const test = sortedParameters(variables)
             .filter(variable => availableVariableIds.includes(variable.oid))
             .map((variable) => {
                 return {
@@ -37,5 +37,7 @@ export const getAvailableParameterCodes = createSelector(
                     }).length
                 };
             });
+        // console.log('test ', test)
+        return test;
     }
 );

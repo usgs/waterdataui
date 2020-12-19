@@ -74,6 +74,14 @@ const addIVTimeSeriesCollection = function(collection) {
     };
 };
 
+const addCalculatedNWISVariable = function(calculatedNWISVariable) {
+    console.log('this is calculatedNWISVariable ', calculatedNWISVariable)
+    return {
+        type: 'ADD_CALCULATED_NWIS_VARIABLE',
+        calculatedNWISVariable
+    };
+};
+
 /*
  * Synchronous Redux action - removes the time series data from the Redux store for
  * the specific IV time series (may be more than one) represented by the tsRequestKey
@@ -101,6 +109,25 @@ const retrieveIVTimeSeries = function(siteno) {
         return getTimeSeries({sites: [siteno]}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
+
+                const variables = Object.values(collection.variables);
+                const celsiusTemperatureParameters = ['72329', '00010', '00020', '81029', '85583', '99229',
+                    '99230', '45589', '81027 ', '72176', '50011', '45587'];
+                variables.forEach((variable) => {
+                    celsiusTemperatureParameters.forEach((temperatureParameter) => {
+                        if (temperatureParameter === variable.variableCode.value) {
+                            const calculatedVariable = JSON.parse(JSON.stringify(variable));
+
+                            calculatedVariable.variableName = calculatedVariable.variableName.replace('C', 'F (calculated)');
+                            calculatedVariable.variableDescription = calculatedVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
+                            calculatedVariable.unit.unitCode = calculatedVariable.unit.unitCode.replace('C', 'F');
+                            calculatedVariable.variableCode.value = `${calculatedVariable.variableCode.value}F`;
+                            console.log('this is temp variable ', variable)
+                            console.log('this is calculatedVariable ', calculatedVariable)
+                            dispatch(Actions.addCalculatedNWISVariable(calculatedVariable));
+                        }
+                    });
+                });
 
                 // Get the start/end times of this request's range.
                 const notes = collection.queryInfo[tsRequestKey].notes;
@@ -357,6 +384,19 @@ export const ivTimeSeriesDataReducer = function(ivTimeSeriesData={}, action) {
         case 'ADD_IV_TIME_SERIES_COLLECTION':
             return merge({}, ivTimeSeriesData, action.collection);
 
+
+
+
+
+        case 'ADD_CALCULATED_NWIS_VARIABLE': {
+            console.log('ran case ', action.calculatedNWISVariable)
+            return merge({}, ivTimeSeriesData, action.calculatedNWISVariable);
+        }
+
+
+
+
+
         case 'RESET_IV_TIME_SERIES': {
             let newSeries = {
                 ...ivTimeSeriesData,
@@ -377,6 +417,7 @@ export const ivTimeSeriesDataReducer = function(ivTimeSeriesData={}, action) {
 
 export const Actions = {
     addIVTimeSeriesCollection,
+    addCalculatedNWISVariable,
     resetIVTimeSeries,
     retrieveCompareIVTimeSeries,
     retrieveIVTimeSeries,
