@@ -2,7 +2,7 @@ import {createSelector} from 'reselect';
 
 import {sortedParameters} from 'ui/utils';
 
-import {getCurrentVariableID, getTimeSeries, getVariables} from 'ml/selectors/time-series-selector';
+import {getCurrentVariableID, getTimeSeries, getVariables, getVariablesCalculated} from 'ml/selectors/time-series-selector';
 
 /**
  * Returns a Redux selector function which returns an sorted array of metadata
@@ -15,15 +15,24 @@ import {getCurrentVariableID, getTimeSeries, getVariables} from 'ml/selectors/ti
  */
 export const getAvailableParameterCodes = createSelector(
     getVariables,
+    getVariablesCalculated,
     getTimeSeries,
     getCurrentVariableID,
-    (variables, timeSeries, currentVariableID) => {
+    (variables, variablesCalculated, timeSeries, currentVariableID) => {
         if (!variables) {
             return [];
         }
 
         const seriesList = Object.values(timeSeries);
         const availableVariableIds = seriesList.map(x => x.variable);
+        console.log('variables ', variables)
+        console.log('getVariablesCalculated ', variablesCalculated)
+        variables = {
+            ...variables,
+            ...variablesCalculated
+        };
+        console.log('variables after combine ', variables)
+
         const test = sortedParameters(variables)
             .filter(variable => availableVariableIds.includes(variable.oid))
             .map((variable) => {
