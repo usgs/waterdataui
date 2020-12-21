@@ -189,6 +189,7 @@ export const plotSeriesSelectTable = function(elem,
             '00480', '63680', '72213', '99133','31720', '31721', '31722', '31723', '31724', '31725', '31726',
             '31727', '31728', '31729','32319','32321', '00045', '99064', '99067'];
 
+        // Allow the converted temperature codes to have a link to the non-converted Wateralert form
         const temperatureCodes = ['00010', '00020', '85583', '99229', '99230', '45589', '81027', '72176 ', '50011', '45587'];
         const convertedTemperatureCodes = temperatureCodes.map(function(code) {
             return code.replace(`${code}`, `${code}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`);
@@ -198,7 +199,7 @@ export const plotSeriesSelectTable = function(elem,
 
         if (acceptableWaterAlertParameterCodes.includes(d.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, ''))) {
             const waterAlertLink = selection.append('a')
-                .attr('href', `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${d.parameterCode}`)
+                .attr('href', `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${d.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '')}`)
                 .attr('class', 'usa-tooltip usa-link wateralert-available')
                 .attr('data-position', 'left')
                 .attr('data-classes', 'width-full tablet:width-auto')
