@@ -46,7 +46,6 @@
     "Math": true,
     "process": true,
     "XMLHttpRequest": true,
-    "window": true,
-    "L": true
+    "window": true
   }
 }
