@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - Now using 365 days for one year graph and comparison -- focus line syncs with both current and compare series.
+- Use tsID without any parsing when retrieving the statistical time series.
 
 ### Changed
 - Using Jest to run javascript tests rather than karma/jasmine. This means eliminating Browserstack testing but we gain a supported testing ecosystem with built in coverage and better mocking capabilities.
