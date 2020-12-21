@@ -37,7 +37,7 @@ export const getAvailableParameterCodes = createSelector(
             .filter(variable => availableVariableIds.includes(variable.oid))
             .map((variable) => {
                 return {
-                    variableID: variable.variableCode.value.includes(config.CALCULATED_TEMPERATURE_VARIABLE_SUFFIX) ? `${variable.oid}${config.CALCULATED_TEMPERATURE_VARIABLE_SUFFIX}`: variable.oid,
+                    variableID: variable.variableCode.value.includes(config.CALCULATED_TEMPERATURE_VARIABLE_CODE) ? `${variable.oid}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`: variable.oid,
                     parameterCode: variable.variableCode.value,
                     description: variable.variableDescription,
                     selected: currentVariableID === variable.oid,

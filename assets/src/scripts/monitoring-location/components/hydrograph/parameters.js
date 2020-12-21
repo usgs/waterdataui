@@ -174,8 +174,8 @@ export const plotSeriesSelectTable = function(elem,
                 .text(param => param.timeSeriesCount);
             tr.append('td')
                 .style('white-space', 'nowrap')
-                .text(param => `${config.uvPeriodOfRecord[param.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_SUFFIX, '')].begin_date} 
-                        to ${config.uvPeriodOfRecord[param.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_SUFFIX, '')].end_date}`);
+                .text(param => `${config.uvPeriodOfRecord[param.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '')].begin_date} 
+                        to ${config.uvPeriodOfRecord[param.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '')].end_date}`);
             tr.append('td')
                 .append('div')
                 .attr('class', 'wateralert-link');
@@ -189,16 +189,25 @@ export const plotSeriesSelectTable = function(elem,
             '00480', '63680', '72213', '99133','31720', '31721', '31722', '31723', '31724', '31725', '31726',
             '31727', '31728', '31729','32319','32321', '00045', '99064', '99067'];
 
+        const temperatureCodes = ['00010', '00020', '85583', '99229', '99230', '45589', '81027', '72176 ', '50011', '45587'];
+        const convertedTemperatureCodes = temperatureCodes.map(function(code) {
+            return code.replace(`${code}`, `${code}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`);
+        });
+
         let selection = select(this);
 
-        if (acceptableWaterAlertParameterCodes.includes(d.parameterCode)) {
-            selection.append('a')
+        if (acceptableWaterAlertParameterCodes.includes(d.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, ''))) {
+            const waterAlertLink = selection.append('a')
                 .attr('href', `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${d.parameterCode}`)
                 .attr('class', 'usa-tooltip usa-link wateralert-available')
                 .attr('data-position', 'left')
                 .attr('data-classes', 'width-full tablet:width-auto')
-                .attr('title', 'Subscribe to text or email alerts based on thresholds that you set')
-                .text('Subscribe');
+                .attr('title', 'Subscribe to text or email alerts based on thresholds that you set');
+            if (convertedTemperatureCodes.includes(d.parameterCode)) {
+                waterAlertLink.text('Alerts in °C');
+            } else {
+                waterAlertLink.text('Subscribe');
+            }
         } else {
             selection.attr('class', 'usa-tooltip wateralert-unavailable')
                 .attr('data-position', 'left')

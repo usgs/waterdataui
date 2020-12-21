@@ -11,5 +11,5 @@ export default {
     USWDS_SITE_MAX_WIDTH: 1024,
 
     // Indicate a NWIS 'variable' has been modified in the application, such as a conversion from Celsius to Fahrenheit
-    CALCULATED_TEMPERATURE_VARIABLE_SUFFIX: 'F'
+    CALCULATED_TEMPERATURE_VARIABLE_CODE: 'F'
 };
