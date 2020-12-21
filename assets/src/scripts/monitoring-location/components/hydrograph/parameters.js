@@ -101,6 +101,7 @@ export const plotSeriesSelectTable = function(elem,
     // Get the position of the scrolled window before removing it so it can be set to the same value.
     const lastTable = elem.select('#select-time-series table');
     const scrollTop = lastTable.size() ? lastTable.property('scrollTop') : null;
+
     elem.select('#select-time-series').remove();
 
     if (!availableParameterCodes.length) {
@@ -148,7 +149,7 @@ export const plotSeriesSelectTable = function(elem,
             }
         })
         .call(tr => {
-            let paramSelectCol = tr.append('td');
+            const paramSelectCol = tr.append('td');
             paramSelectCol.append('input')
                 .attr('id', param => `time-series-select-radio-button-${param.parameterCode}`)
                 .attr('type', 'radio')
@@ -158,7 +159,7 @@ export const plotSeriesSelectTable = function(elem,
                 .property('checked', param => param.selected ? true : null);
             paramSelectCol.append('label')
                .attr('class', 'usa-radio__label');
-            let paramCdCol = tr.append('th')
+            const paramCdCol = tr.append('th')
                 .attr('scope', 'row');
             paramCdCol.append('span')
                 .text(param => param.description)
@@ -173,7 +174,8 @@ export const plotSeriesSelectTable = function(elem,
                 .text(param => param.timeSeriesCount);
             tr.append('td')
                 .style('white-space', 'nowrap')
-                .text(param => `${config.uvPeriodOfRecord[param.parameterCode].begin_date} to ${config.uvPeriodOfRecord[param.parameterCode].end_date}`);
+                .text(param => `${config.uvPeriodOfRecord[param.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_SUFFIX, '')].begin_date} 
+                        to ${config.uvPeriodOfRecord[param.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_SUFFIX, '')].end_date}`);
             tr.append('td')
                 .append('div')
                 .attr('class', 'wateralert-link');

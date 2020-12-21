@@ -1,7 +1,7 @@
 import {createSelector} from 'reselect';
 
+import config from 'ui/config';
 import {sortedParameters} from 'ui/utils';
-
 import {getCurrentVariableID, getTimeSeries, getVariables, getVariablesCalculated} from 'ml/selectors/time-series-selector';
 
 /**
@@ -37,7 +37,7 @@ export const getAvailableParameterCodes = createSelector(
             .filter(variable => availableVariableIds.includes(variable.oid))
             .map((variable) => {
                 return {
-                    variableID: variable.oid,
+                    variableID: variable.variableCode.value.includes(config.CALCULATED_TEMPERATURE_VARIABLE_SUFFIX) ? `${variable.oid}${config.CALCULATED_TEMPERATURE_VARIABLE_SUFFIX}`: variable.oid,
                     parameterCode: variable.variableCode.value,
                     description: variable.variableDescription,
                     selected: currentVariableID === variable.oid,

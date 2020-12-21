@@ -36,7 +36,7 @@ export const configureStore = function(initialState) {
         ivTimeSeriesData: {
             timeSeriesCalculated: {'57474:current:P7D': {qualifier: []}},
             variablesCalculated: {
-                45807042 : {
+                '45807042_CALCULATED' : {
                     'variableCode': {
                         'value': '00010F',
                         'network': 'NWIS',
@@ -46,28 +46,6 @@ export const configureStore = function(initialState) {
                     },
                     'variableName': 'Temperature, water, °F (calculated)',
                     'variableDescription': 'Temperature, water, degrees Fahrenheit (calculated)',
-                    'valueType': 'Derived Value',
-                    'unit': {
-                        'unitCode': 'deg F'
-                    },
-                    'options': [
-                        '00000'
-                    ],
-                    'note': [],
-                    'noDataValue': -999999,
-                    'variableProperty': [],
-                    'oid': '45807042'
-                },
-                45807043 : {
-                    'variableCode': {
-                        'value': '00020F',
-                        'network': 'NWIS',
-                        'vocabulary': 'NWIS:UnitValues',
-                        'variableID': 45807043,
-                        'default': true
-                    },
-                    'variableName': 'Test Temperature, water, °F (calculated)',
-                    'variableDescription': 'Test Temperature, water, degrees Fahrenheit (calculated)',
                     'valueType': 'Derived Value',
                     'unit': {
                         'unitCode': 'deg F'
