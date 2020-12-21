@@ -359,7 +359,7 @@ describe('monitoring-location/components/hydrograph/time-series-graph', () => {
              expect(div.selectAll('.focus-line').size()).toBe(0);
         });
 
-        it('Should not render the tooltip if showTooltip is true', () => {
+        it('Should render the tooltip if showTooltip is true', () => {
              div.call(drawTimeSeriesGraph, store, '12345678', false, true);
 
              expect(div.selectAll('.tooltip-text-group').size()).toBe(1);
