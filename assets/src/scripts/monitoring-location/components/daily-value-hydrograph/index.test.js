@@ -18,15 +18,15 @@ describe('monitoring-location/components/dailyValueHydrograph/index', () => {
             availableDVTimeSeries: [{
                 parameterCode: '72019',
                 statisticCode: '00001',
-                id: 'USGS-12345-1122'
+                id: '1122'
             },{
                 parameterCode: '72019',
                 statisticCode: '00003',
-                id: 'USGS-12345-1123'
+                id: '1123'
             },{
                 parameterCode: '00060',
                 statisticCode: '00001',
-                id: 'USGS-12345-1124'
+                id: '1124'
             }],
             dvTimeSeries: {
                 '1122' : {

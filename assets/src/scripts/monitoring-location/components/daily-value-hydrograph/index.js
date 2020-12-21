@@ -37,10 +37,6 @@ const getBestAvailableTimeSeriesToUse = function(availableTimeSeries) {
     return bestParamToUse.length ? bestParamToUse[0] : [];
 };
 
-const getTSId = function(id) {
-   return id.split('-')[2];
-};
-
 /*
  * Creates the daily value hydrograph component on the DOM element node for siteno and state
  * information that is stored in the Redux store.
@@ -70,7 +66,7 @@ export const attachToNode = function(store,
         const bestAvailableTimeSeries = getBestAvailableTimeSeriesToUse(getAvailableDVTimeSeries(store.getState()));
         if (bestAvailableTimeSeries.length) {
             const fetchDVTimeSeries = bestAvailableTimeSeries
-                .map(availableTs => getTSId(availableTs.id))
+                .map(availableTs => availableTs.id)
                 .map(id => store.dispatch(Actions.retrieveDVTimeSeries(monitoringLocationId, id)));
             Promise.allSettled(fetchDVTimeSeries).then(() => {
                 let min, mean, max = null;
