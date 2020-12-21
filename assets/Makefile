@@ -16,7 +16,7 @@ clean-assets:
 #
 test-assets:
 	@echo 'Running assets tests...'
-	cd assets && npm run test ./karma.conf.js
+	cd assets && npm run test
 
 watch-assets:
 	cd assets && npm run watch
