@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Now using 365 days for one year graph and comparison -- focus line syncs with both current and compare series.
 
+### Changed
+- Using Jest to run javascript tests rather than karma/jasmine. This means eliminating Browserstack testing but we gain a supported testing ecosystem with built in coverage and better mocking capabilities.
+
 ## [0.39.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.38.0...waterdataui-0.39.0) - 2020-12-09
 ### Added
 - Static image of the Instantaneous Values Hydrograph for users of Internet Explorer. 

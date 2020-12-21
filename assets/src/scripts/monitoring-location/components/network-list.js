@@ -19,7 +19,7 @@ const buildNetworkURL = function(link) {
 };
 
 const addNetworkRows = function(node, {hasData, networkList}) {
-    if (hasData){
+    if (hasData) {
         let input = node.append('ul')
         .classed('usa-fieldset', true)
         .classed('usa-list--unstyled', true);

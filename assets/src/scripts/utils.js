@@ -187,7 +187,7 @@ export const callIf = function(condition, func) {
 
 /**
  * Function to parse RDB to Objects
- * @param {String} - containing RDB data
+ * @param {String} rdbData - containing RDB data
  * @returns {Array of Objects} - one for each data line in the RDB.
  */
 export const parseRDB = function(rdbData) {

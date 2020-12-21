@@ -12,7 +12,7 @@ const json = require('@rollup/plugin-json');
 const resolve = require('@rollup/plugin-node-resolve');
 const replace = require('@rollup/plugin-replace');
 const {terser} = require('rollup-plugin-terser');
-
+const bubleConfig = require('./buble.config');
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -45,13 +45,7 @@ const getBundleConfig = function(src, dest) {
                     'node_modules/symbol-observable/es/index.js'
                 ]
             }),
-            buble({
-                objectAssign: 'Object.assign',
-                transforms: {
-                    forOf: false,
-                    generator: false
-                }
-            }),
+            buble(bubleConfig),
             replace({
                 'process.env.NODE_ENV': JSON.stringify(env)
             }),

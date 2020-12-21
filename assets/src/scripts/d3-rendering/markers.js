@@ -5,7 +5,16 @@ const RECTANGLE_Y_OFFSET = -10;
 
 const markerText = function(group, y, text) {
     if (text) {
-        let groupBBox = group.node().getBBox();
+        let groupBBox;
+        try {
+            groupBBox = group.node().getBBox();
+        } catch(error) {
+            // Set defaults
+            groupBBox = {
+                x: 0,
+                width: 500
+            };
+        }
         group.append('text')
             .attr('x', groupBBox.x + groupBBox.width + TEXT_X_OFFSET)
             .attr('y', y)

@@ -1,3 +1,6 @@
+import * as L from 'leaflet';
+import {MarkerClusterGroup} from 'leaflet.markercluster';
+
 import config from 'ui/config';
 import {createMap, createBaseLayer} from 'ui/leaflet-rendering/map';
 
@@ -46,7 +49,6 @@ export const createSiteMap = function(extent) {
  * @param networkSites network site geojson data
  */
 export const addSitesLayer = function(map, networkSites) {
-
     const geojsonMarkerOptions = {
         radius: 6,
         fillColor: MARKER_FILL_COLOR,
@@ -74,7 +76,7 @@ export const addSitesLayer = function(map, networkSites) {
     if(networkSites.length > 0 && networkSites.length < 10000) {
         const sitesLayer = getSitesLayer(networkSites, geojsonMarkerOptions);
         if (networkSites.length > 50) {
-            const markers = L.markerClusterGroup({chunkedLoading: true});
+            const markers = new MarkerClusterGroup({chunkedLoading: true});
             markers.addLayer(sitesLayer);
             map.addLayer(markers);
         } else {

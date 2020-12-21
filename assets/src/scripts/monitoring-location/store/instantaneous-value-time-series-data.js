@@ -323,8 +323,8 @@ const retrieveUserRequestedIVDataForDateRange = function(siteno, startDateStr, e
     return function(dispatch, getState) {
         const state = getState();
         const locationIanaTimeZone = getIanaTimeZone(state);
-        const startTime = new DateTime.fromISO(startDateStr,{zone: locationIanaTimeZone}).toMillis();
-        const endTime = new DateTime.fromISO(endDateStr, {zone: locationIanaTimeZone}).endOf('day').toMillis();
+        const startTime = DateTime.fromISO(startDateStr,{zone: locationIanaTimeZone}).toMillis();
+        const endTime = DateTime.fromISO(endDateStr, {zone: locationIanaTimeZone}).endOf('day').toMillis();
         return dispatch(Actions.retrieveCustomIVTimeSeries(siteno, startTime, endTime, parmCd));
     };
 };
