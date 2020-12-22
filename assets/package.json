@@ -17,7 +17,7 @@
     "build:images": "mkdir -p dist/img && mkdir -p dist/images && cp -r node_modules/uswds/src/img/* dist/img && cp -r node_modules/wdfn-viz/src/img/* dist/img && cp -r node_modules/leaflet/dist/images/* dist/images && cp -r src/img/* dist/img",
     "build:js": "rollup -c --environment NODE_ENV:production && mkdir -p dist/scripts",
     "build:wdfnviz": "mkdir -p dist/scripts && cp node_modules/wdfn-viz/dist/wdfnviz.js dist/scripts",
-    "build:uswdsjs": "mkdir -p dist/scripts && cp node_modules/uswds/dist/js/uswds.min.js dist/scripts",
+    "build:uswdsjs": "mkdir -p dist/scripts && cp node_modules/uswds/dist/js/uswds.min.js dist/scripts && cp node_modules/uswds/dist/js/uswds-init.min.* dist/scripts",
     "build:datetimeformatjs": "mkdir -p dist/scripts && cp node_modules/date-time-format-timezone/build/browserified/date-time-format-timezone-complete-min.js dist/scripts",
     "build:autotrack": "terser --output dist/autotrack.js node_modules/autotrack/autotrack.js",
     "hash-assets": "gulp --gulpfile ./gulpfile.js revall",
@@ -28,10 +28,10 @@
     "watch:css": "nodemon -w src/styles -e scss -x \"npm run build:css\"",
     "watch:fonts": "nodemon -w node_modules/uswds/src/fonts -x \"npm run build:fonts\"",
     "watch:images": "nodemon -w src/img -x \"npm run build:images\"",
-    "watch:js": "mkdir -p dist/scripts && npm run build:wdfnviz && npm run build:datetimeformatjs && rollup -c --watch"
+    "watch:js": "mkdir -p dist/scripts && npm run build:wdfnviz && npm run build:uswdsjs && npm run build:datetimeformatjs && rollup -c --watch"
   },
   "engines": {
-    "node": "14.15.1"
+    "node": "14.15.3"
   },
   "repository": {
     "type": "git",
@@ -104,6 +104,6 @@
     "redux": "4.0.5",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
-    "wdfn-viz": "1.8.0"
+    "wdfn-viz": "1.9.0"
   }
 }
