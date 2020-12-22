@@ -69,6 +69,7 @@ const getCurrentVariableId = function(timeSeries, variables) {
  * @return {Object} - Redux action
  */
 const addIVTimeSeriesCollection = function(collection) {
+    console.log('collection ', collection)
     return {
         type: 'ADD_IV_TIME_SERIES_COLLECTION',
         collection
@@ -76,7 +77,6 @@ const addIVTimeSeriesCollection = function(collection) {
 };
 
 const addCalculatedNWISVariable = function(calculatedNWISVariable) {
-    console.log('this is calculatedNWISVariable ', calculatedNWISVariable)
     return {
         type: 'ADD_CALCULATED_NWIS_VARIABLE',
         calculatedNWISVariable
@@ -116,7 +116,7 @@ const retrieveIVTimeSeries = function(siteno) {
                 variables.forEach((variable) => {
                    config.CELSIUS_TEMPERATURE_PARAMETERS.forEach((temperatureParameter) => {
                         if (temperatureParameter === variable.variableCode.value) {
-                            const calculatedVariable = JSON.parse(JSON.stringify(variable));
+                            const calculatedVariable = {...variable};
 
                             calculatedVariable.variableName = calculatedVariable.variableName.replace('C', 'F (calculated)');
                             calculatedVariable.variableDescription = calculatedVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
@@ -390,8 +390,11 @@ export const ivTimeSeriesDataReducer = function(ivTimeSeriesData={}, action) {
 
 
         case 'ADD_CALCULATED_NWIS_VARIABLE': {
-            console.log('ran case ', action.calculatedNWISVariable)
-            return merge({}, ivTimeSeriesData, action.calculatedNWISVariable);
+            console.log('ran case merge value !!!!!!!!!!!!!!!!!!!!!!! ', merge(ivTimeSeriesData, action.collection))
+            return {
+                ...ivTimeSeriesData,
+                ...action.calculatedNWISVariable
+            };
         }
 
 

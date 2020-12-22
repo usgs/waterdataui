@@ -36,7 +36,7 @@ export const configureStore = function(initialState) {
         ivTimeSeriesData: {
             timeSeriesCalculated: {'57474:current:P7D': {qualifier: []}},
             variablesCalculated: {
-                '45807042_CALCULATED_F' : {
+                'old_CALCULATED_F' : {
                     'variableCode': {
                         'value': '00010F',
                         'network': 'NWIS',
