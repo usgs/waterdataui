@@ -36,7 +36,7 @@ export const configureStore = function(initialState) {
         ivTimeSeriesData: {
             timeSeriesCalculated: {'57474:current:P7D': {qualifier: []}},
             variablesCalculated: {
-                '45807042_CALCULATED' : {
+                '45807042_CALCULATED_F' : {
                     'variableCode': {
                         'value': '00010F',
                         'network': 'NWIS',
@@ -56,7 +56,7 @@ export const configureStore = function(initialState) {
                     'note': [],
                     'noDataValue': -999999,
                     'variableProperty': [],
-                    'oid': '45807042'
+                    'oid': '45807042_CALCULATED_F'
                 }
             }
         },

@@ -7,6 +7,7 @@ import {DateTime} from 'luxon';
 
 import {isPeriodCustom, parsePeriodCode} from 'ml/components/hydrograph/hydrograph-utils';
 
+import config from 'ui/config';
 import {normalize} from 'ui/schema';
 import {calcStartTime, sortedParameters} from 'ui/utils';
 import {getPreviousYearTimeSeries, getTimeSeries} from 'ui/web-services/models';
@@ -111,10 +112,9 @@ const retrieveIVTimeSeries = function(siteno) {
                 const collection = normalize(series, tsRequestKey);
 
                 const variables = Object.values(collection.variables);
-                const celsiusTemperatureParameters = ['72329', '00010', '00020', '81029', '85583', '99229',
-                    '99230', '45589', '81027 ', '72176', '50011', '45587'];
+
                 variables.forEach((variable) => {
-                    celsiusTemperatureParameters.forEach((temperatureParameter) => {
+                   config.CELSIUS_TEMPERATURE_PARAMETERS.forEach((temperatureParameter) => {
                         if (temperatureParameter === variable.variableCode.value) {
                             const calculatedVariable = JSON.parse(JSON.stringify(variable));
 
@@ -122,6 +122,7 @@ const retrieveIVTimeSeries = function(siteno) {
                             calculatedVariable.variableDescription = calculatedVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
                             calculatedVariable.unit.unitCode = calculatedVariable.unit.unitCode.replace('C', 'F');
                             calculatedVariable.variableCode.value = `${calculatedVariable.variableCode.value}F`;
+                            calculatedVariable.oid = `${calculatedVariable.oid}_CALCULATED_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
                             console.log('this is temp variable ', variable)
                             console.log('this is calculatedVariable ', calculatedVariable)
                             dispatch(Actions.addCalculatedNWISVariable(calculatedVariable));
