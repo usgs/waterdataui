@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Instantaneous Values data availability information page.
 - Additional analytics tracking.
 - Added an inventory data menu on the monitoring location page which is context specific for the site.
+- Added social media icons in the footer
 
 ### Fixed
 - Now using 365 days for one year graph and comparison -- focus line syncs with both current and compare series.
