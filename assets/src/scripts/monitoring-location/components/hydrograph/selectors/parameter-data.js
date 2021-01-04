@@ -25,8 +25,6 @@ export const getAvailableParameterCodes = createSelector(
 
         const seriesList = Object.values(timeSeries);
         const availableVariableIds = seriesList.map(x => x.variable);
-        console.log('timeSeries ', timeSeries)
-        console.log('availableVariableIds ', availableVariableIds)
         console.log('variables ', variables)
         console.log('getVariablesCalculated ', variablesCalculated)
         variables = {

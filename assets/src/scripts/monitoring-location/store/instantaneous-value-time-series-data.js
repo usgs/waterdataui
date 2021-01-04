@@ -69,6 +69,7 @@ const getCurrentVariableId = function(timeSeries, variables) {
  * @return {Object} - Redux action
  */
 const addIVTimeSeriesCollection = function(collection) {
+    console.log('ran addIVTimeSeriesCollection with  collection ', collection)
     return {
         type: 'ADD_IV_TIME_SERIES_COLLECTION',
         collection
@@ -387,7 +388,7 @@ const updateIVCurrentVariableAndRetrieveTimeSeries = function(siteno, variableID
 export const ivTimeSeriesDataReducer = function(ivTimeSeriesData={}, action) {
     switch(action.type) {
         case 'ADD_IV_TIME_SERIES_COLLECTION':
-            console.log('collection ', action.collection)
+            console.log('action.collection ', action.collection)
             return merge({}, ivTimeSeriesData, action.collection);
 
 
@@ -395,14 +396,9 @@ export const ivTimeSeriesDataReducer = function(ivTimeSeriesData={}, action) {
 
 
         case 'ADD_CALCULATED_VARIABLE': {
-
-            return {
-                ...ivTimeSeriesData,
-                variablesCalculated: action.addCalculatedVariable
-            };
+            console.log('action.variablesCalculated ', action.calculatedVariable)
+            return merge({}, ivTimeSeriesData, action.calculatedVariable);
         }
-
-
 
 
 

@@ -34,31 +34,8 @@ const MIDDLEWARES = [thunk];
 export const configureStore = function(initialState) {
     initialState = {
         ivTimeSeriesData: {
-            timeSeriesCalculated: {'57474:current:P7D': {qualifier: []}},
-            variablesCalculated: {
-                'old_45807042_CALCULATED_F' : {
-                    'variableCode': {
-                        'value': '00010F',
-                        'network': 'NWIS',
-                        'vocabulary': 'NWIS:UnitValues',
-                        'variableID': 45807042,
-                        'default': true
-                    },
-                    'variableName': 'Temperature, water, °F (calculated)',
-                    'variableDescription': 'Temperature, water, degrees Fahrenheit (calculated)',
-                    'valueType': 'Derived Value',
-                    'unit': {
-                        'unitCode': 'deg F'
-                    },
-                    'options': [
-                        '00000'
-                    ],
-                    'note': [],
-                    'noDataValue': -999999,
-                    'variableProperty': [],
-                    'oid': '45807042_CALCULATED_F'
-                }
-            }
+            timeSeriesCalculated: {'57474:current:P7D': {qualifier: []}}
+
         },
         ianaTimeZone: null,
         dailyValueTimeSeriesData: {},
