@@ -12,15 +12,26 @@ from . import app
 @app.template_filter('asset_url')
 def asset_url_filter(asset_src):
     """
-    Filter that produces the URL for this project's static assets.
+    Filter that produces the URL for this project's static assets. Should only
+    be used for assets that are hashed.
 
-    :param str asset_src: Static asset location, relative to STATIC_ROOT.
-    :return: complete URL, including STATIC_ROOT and hashed file name
+    :param str asset_src: Static asset location
+    :return: complete URL, including STATIC_ROOT and hashed file name if specified
     :rtype: str
     """
     manifest = app.config.get('ASSET_MANIFEST')
     asset_path = manifest[asset_src] if manifest else asset_src
     return urljoin(app.config.get('STATIC_ROOT'), asset_path)
+
+@app.template_filter('static_url')
+def static_url_filter(asset_src):
+    """
+    Filter that produces the URL for static_urls that do not use hashed assets
+    :param str asset_src: Static asset location
+    :return: complete URL for non hashed asset
+    :rtype: str
+    """
+    return urljoin(app.config.get('STATIC_ROOT'), asset_src)
 
 
 @app.template_filter('indefinite_article')

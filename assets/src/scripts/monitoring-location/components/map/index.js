@@ -1,4 +1,5 @@
 import {select} from 'd3-selection';
+import {dynamicMapLayer, Util} from 'esri-leaflet';
 import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config';
@@ -82,19 +83,19 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
     L.control.layers(baseMapLayers,overlayLayers).addTo(map);
 
     // Add FIM layers
-    const floodLayer = L.esri.dynamicMapLayer({
+    const floodLayer = dynamicMapLayer({
         url: getESRIFloodLayers('floodExtents'),
         layers: [0],
         f: 'image',
         format: 'png8'
     });
-    const breachLayer = L.esri.dynamicMapLayer({
+    const breachLayer = dynamicMapLayer({
         url: getESRIFloodLayers('breach'),
         layers: [0],
         f: 'image',
         format: 'png8'
     });
-    const leveeLayer = L.esri.dynamicMapLayer({
+    const leveeLayer = dynamicMapLayer({
         url: getESRIFloodLayers('levee'),
         layers: [0, 1],
         f: 'image',
@@ -132,7 +133,7 @@ const siteMap = function(node, {siteno, latitude, longitude, zoom}, store) {
      */
     const updateMapExtent = function(node, extent) {
         if (Object.keys(extent).length > 0) {
-            map.fitBounds(L.esri.Util.extentToBounds(extent).extend([latitude, longitude]));
+            map.fitBounds(Util.extentToBounds(extent).extend([latitude, longitude]));
         }
     };
 

@@ -25,6 +25,7 @@
 {% endblock %}
 
 {% block page_css %}
+    <script src="{{ 'scripts/uswds-init.min.js' | asset_url }}"></script>
     <link rel="stylesheet" href="{{ 'main.css' | asset_url }}">
 {% endblock %}
 
@@ -34,7 +35,6 @@
             CONFIG.uvPeriodOfRecord = {{ uv_period_of_record | tojson }};
         </script>
     {% endif %}
-    <script src="{{ 'scripts/vendor.js' | asset_url }}"></script>
     <script src="{{ 'bundle.js' | asset_url }}"></script>
     {% if json_ld %}
         <script type="application/ld+json">

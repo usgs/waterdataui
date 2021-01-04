@@ -6,8 +6,8 @@ from unittest import TestCase
 
 import pendulum
 
-from .. import filters
-
+from ..filters import asset_url_filter, static_url_filter, use_correct_indefinite_article, data_start_year, \
+    readable_param_list, date_to_string, tooltip_content_id, https_url, numerical_parameter_list
 
 def test_asset_url_filter_manifest(app, mocker):
     mocker.patch.dict(app.config, {
@@ -16,12 +16,16 @@ def test_asset_url_filter_manifest(app, mocker):
             'src.css': 'dest.css'
         }
     })
-    assert filters.asset_url_filter('src.css') == 'root/path/dest.css'
+    assert asset_url_filter('src.css') == 'root/path/dest.css'
 
 
 def test_asset_url_filter_no_manifest(app, mocker):
     mocker.patch.dict(app.config, {'STATIC_ROOT': 'root/path/'})
-    assert filters.asset_url_filter('src.css') == 'root/path/src.css'
+    assert asset_url_filter('src.css') == 'root/path/src.css'
+
+def test_static_url_filter(app, mocker):
+    mocker.patch.dict(app.config, {'STATIC_ROOT': 'root/path/'})
+    assert static_url_filter('src.css') == 'root/path/src.css'
 
 
 class TestIndefiniteArticleFilter(TestCase):
@@ -31,10 +35,10 @@ class TestIndefiniteArticleFilter(TestCase):
         self.vowel = 'Apple'
 
     def test_non_vowel(self):
-        self.assertEqual(filters.use_correct_indefinite_article(self.non_vowel), 'a')
+        self.assertEqual(use_correct_indefinite_article(self.non_vowel), 'a')
 
     def test_article_vowel(self):
-        self.assertEqual(filters.use_correct_indefinite_article(self.vowel), 'an')
+        self.assertEqual(use_correct_indefinite_article(self.vowel), 'an')
 
 
 class TestDataStartYearFilter(TestCase):
@@ -62,11 +66,11 @@ class TestDataStartYearFilter(TestCase):
         ]
 
     def test_series_is_empty(self):
-        result = filters.data_start_year([])
+        result = data_start_year([])
         self.assertIsNone(result)
 
     def test_series_has_data(self):
-        result = filters.data_start_year(self.test_series)
+        result = data_start_year(self.test_series)
         expected = '1889'
         self.assertEqual(result, expected)
 
@@ -155,25 +159,25 @@ class TestReadableParmListFilter(TestCase):
         ]
 
     def test_series_is_empty(self):
-        result = filters.readable_param_list([])
+        result = readable_param_list([])
         self.assertIsNone(result)
 
     def test_single_measured_parameter(self):
-        result = filters.readable_param_list([{
+        result = readable_param_list([{
             'parameters': self.physical_series[:1]
         }])
         expected = 'ANTIMATTER'
         self.assertEqual(result, expected)
 
     def test_two_measured_parameters(self):
-        result = filters.readable_param_list([{
+        result = readable_param_list([{
             'parameters': self.physical_series[:2]
         }])
         expected = 'ANTIMATTER and MATTER'
         self.assertEqual(result, expected)
 
     def test_three_measured_parameters(self):
-        result = filters.readable_param_list([{
+        result = readable_param_list([{
             'parameters': self.physical_series[:3],
             'data_types': 'Unit Values, Water Quality',
             'end_date': datetime.datetime.now()
@@ -182,7 +186,7 @@ class TestReadableParmListFilter(TestCase):
         self.assertEqual(result, expected)
 
     def test_four_measured_parameters(self):
-        result = filters.readable_param_list([{
+        result = readable_param_list([{
             'parameters': self.physical_series,
             'data_types': 'Unit Values, Water Quality',
             'end_date': datetime.datetime.now()
@@ -191,19 +195,19 @@ class TestReadableParmListFilter(TestCase):
         self.assertEqual(result, expected)
 
     def test_no_current_data(self):
-        result = filters.readable_param_list([{
+        result = readable_param_list([{
             'parameters': self.old_inorganic_series,
         }])
         self.assertIsNone(result)
 
     def test_no_unit_values(self):
-        result = filters.readable_param_list([{
+        result = readable_param_list([{
             'parameters': self.physical_series[-2:]
         }])
         self.assertIsNone(result)
 
     def test_mixed_data_types(self):
-        result = filters.readable_param_list([
+        result = readable_param_list([
             {
                 'parameters': self.physical_series[-2:]
             },
@@ -222,11 +226,11 @@ class TestDateToStringFilter(TestCase):
         self.test_pen_dt = pendulum.datetime(2018, 3, 25)
 
     def test_year_month_day(self):
-        result = filters.date_to_string(self.test_dt)
+        result = date_to_string(self.test_dt)
         self.assertEqual(result, '2018-03-25')
 
     def test_pendulum_year_month_day(self):
-        result = filters.date_to_string(self.test_pen_dt)
+        result = date_to_string(self.test_pen_dt)
         self.assertEqual(result, '2018-03-25')
 
 
@@ -236,22 +240,22 @@ class TestTooltipContentIdFilter(TestCase):
         self.test_string = 'Blah_Name'
 
     def test_create(self):
-        result = filters.tooltip_content_id(self.test_string)
+        result = tooltip_content_id(self.test_string)
         self.assertEqual(result, 'tooltip-blah-name')
 
 
 def test_https_url(app):
     with app.test_request_context('http://abc.com/mypage'):
-        url = filters.https_url('https://page.com/image.png')
+        url = https_url('https://page.com/image.png')
         assert url == 'https://page.com/image.png'
     with app.test_request_context('https://abc.com/mypage'):
-        url = filters.https_url('https://page.com/image.png')
+        url = https_url('https://page.com/image.png')
         assert url == 'https://page.com/image.png'
     with app.test_request_context('https://abc.com/mypage'):
-        url = filters.https_url('page.com/image.png')
+        url = https_url('page.com/image.png')
         assert url == 'https://page.com/image.png'
     with app.test_request_context('http://abc.com/mypage'):
-        url = filters.https_url('page.com/image.png')
+        url = https_url('page.com/image.png')
         assert url == 'https://page.com/image.png'
 
 
@@ -329,26 +333,26 @@ class TestNumericalParameterListFilter(TestCase):
         ]
 
     def test_series_is_empty(self):
-        result = filters.numerical_parameter_list([])
+        result = numerical_parameter_list([])
         # self.assertIsNone(result)
         self.assertEqual(0, len(result))
 
     def test_single_measured_parameter(self):
-        result = filters.numerical_parameter_list([{
+        result = numerical_parameter_list([{
             'parameters': self.physical_series[:1]
         }])
         expected = {'09001'}
         self.assertEqual(result, expected)
 
     def test_two_measured_parameters(self):
-        result = filters.numerical_parameter_list([{
+        result = numerical_parameter_list([{
             'parameters': self.physical_series[:2]
         }])
         expected = {'09002', '09001'}
         self.assertEqual(result, expected)
 
     def test_three_measured_parameters(self):
-        result = filters.numerical_parameter_list([{
+        result = numerical_parameter_list([{
             'parameters': self.physical_series[:3],
             'data_types': 'Unit Values, Water Quality',
             'end_date': datetime.datetime.now()
@@ -357,7 +361,7 @@ class TestNumericalParameterListFilter(TestCase):
         self.assertEqual(result, expected)
 
     def test_four_measured_parameters(self):
-        result = filters.numerical_parameter_list([{
+        result = numerical_parameter_list([{
             'parameters': self.physical_series,
             'data_types': 'Unit Values, Water Quality',
             'end_date': datetime.datetime.now()
@@ -366,13 +370,13 @@ class TestNumericalParameterListFilter(TestCase):
         self.assertEqual(result, expected)
 
     def test_no_current_data(self):
-        result = filters.numerical_parameter_list([{
+        result = numerical_parameter_list([{
             'parameters': self.old_inorganic_series,
         }])
         self.assertEqual(0, len(result))
 
     def test_no_unit_values(self):
-        result = filters.numerical_parameter_list([{
+        result = numerical_parameter_list([{
             'parameters': self.physical_series[-2:]
         }])
         self.assertEqual(0, len(result))

@@ -5,7 +5,7 @@ import {createSelector} from 'reselect';
 
 
 const getEpochMilliseconds = function(dateStr) {
-   return new DateTime.fromISO(dateStr, {zone: 'UTC'}).toMillis();
+   return DateTime.fromISO(dateStr, {zone: 'UTC'}).toMillis();
 };
 
 /*
@@ -85,7 +85,7 @@ export const getCurrentDVTimeSeriesData = createSelector(
                     let result = zip(
                         thisTimeSeries.properties.result,
                         thisTimeSeries.properties.timeStep.map((timeStep) => {
-                            return new DateTime.fromISO(timeStep, {zone: 'UTC'}).toMillis();
+                            return DateTime.fromISO(timeStep, {zone: 'UTC'}).toMillis();
                         }),
                         thisTimeSeries.properties.nilReason,
                         thisTimeSeries.properties.approvals,

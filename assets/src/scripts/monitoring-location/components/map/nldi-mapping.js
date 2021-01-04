@@ -1,3 +1,4 @@
+import * as L from 'leaflet';
 
 const DOWNSTREAM_COLOR = '#41b6c4';
 const UPSTREAM_COLOR = '#253494';
