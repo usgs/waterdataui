@@ -120,16 +120,20 @@ const retrieveIVTimeSeries = function(siteno) {
                 variables.forEach((variable) => {
                    config.CELSIUS_TEMPERATURE_PARAMETERS.forEach((temperatureParameter) => {
                         if (temperatureParameter === variable.variableCode.value) {
+
                             let calculatedVariable = {...variable};
+
+
 
                             calculatedVariable.variableName = calculatedVariable.variableName.replace('C', 'F (calculated)');
                             calculatedVariable.variableDescription = calculatedVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
                             calculatedVariable.unit.unitCode = calculatedVariable.unit.unitCode.replace('C', 'F');
                             calculatedVariable.variableCode.value = `${calculatedVariable.variableCode.value}F`;
                             calculatedVariable.oid = `${calculatedVariable.oid}_CALCULATED_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-                            calculatedVariable = {variablesCalculated: {...calculatedVariable}};
+                            calculatedVariable = {variablesCalculated: {[calculatedVariable.oid]: {...calculatedVariable}}};
                             console.log('this is temp variable ', variable)
                             console.log('this is calculatedVariable ', calculatedVariable)
+
                             dispatch(Actions.addCalculatedVariable(calculatedVariable));
                         }
                     });

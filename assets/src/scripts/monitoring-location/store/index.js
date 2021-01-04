@@ -34,8 +34,8 @@ const MIDDLEWARES = [thunk];
 export const configureStore = function(initialState) {
     initialState = {
         ivTimeSeriesData: {
-            timeSeriesCalculated: {'57474:current:P7D': {qualifier: []}}
-
+            timeSeriesCalculated: {'57474:current:P7D': {qualifier: []}},
+            variablesCalculated: {}
         },
         ianaTimeZone: null,
         dailyValueTimeSeriesData: {},
