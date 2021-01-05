@@ -262,7 +262,6 @@ export const sortedParameters = function(variables) {
                 return 1;
             }
         });
-
     return highPertinenceVars.concat(lowPertinenceVars);
 };
 

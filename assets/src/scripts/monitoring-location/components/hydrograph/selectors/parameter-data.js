@@ -33,7 +33,7 @@ export const getAvailableParameterCodes = createSelector(
             .filter(variable => availableVariableIds.includes(variable.oid.split('_CALCULATED')[0]))
             .map((variable) => {
                 return {
-                    variableID: variable.variableCode.value,
+                    variableID: variable.oid,
                     parameterCode: variable.variableCode.value,
                     description: variable.variableDescription,
                     selected: currentVariableID === variable.oid,

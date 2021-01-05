@@ -389,15 +389,9 @@ export const ivTimeSeriesDataReducer = function(ivTimeSeriesData={}, action) {
         case 'ADD_IV_TIME_SERIES_COLLECTION':
             return merge({}, ivTimeSeriesData, action.collection);
 
-
-
-
-
         case 'ADD_CALCULATED_VARIABLE': {
             return merge({}, ivTimeSeriesData, action.calculatedVariable);
         }
-
-
 
         case 'RESET_IV_TIME_SERIES': {
             let newSeries = {
