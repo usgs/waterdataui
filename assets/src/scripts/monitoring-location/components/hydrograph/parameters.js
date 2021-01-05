@@ -182,7 +182,7 @@ export const plotSeriesSelectTable = function(elem,
 
     // WaterAlert does not support every parameter code, so lets take that into account when adding the links
     table.selectAll('.wateralert-link').each(function(d) {
-        
+
         // Allow the converted temperature codes to have a link to the non-converted Wateralert form
         const convertedTemperatureCodes = config.ALL_TEMPERATURE_PARAMETERS.map(function(code) {
             return code.replace(`${code}`, `${code}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`);

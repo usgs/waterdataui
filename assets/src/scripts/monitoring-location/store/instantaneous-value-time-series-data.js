@@ -367,6 +367,8 @@ const retrieveUserRequestedIVDataForDateRange = function(siteno, startDateStr, e
 * @return {Function} when returns a promise.
  */
 const updateIVCurrentVariableAndRetrieveTimeSeries = function(siteno, variableID) {
+    console.log('ran updateIVCurrentVariableAndRetrieveTimeSeries siteno ', siteno)
+    console.log('ran updateIVCurrentVariableAndRetrieveTimeSeries variableID ', variableID)
     return function(dispatch, getState) {
         dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(variableID));
         const state = getState();
