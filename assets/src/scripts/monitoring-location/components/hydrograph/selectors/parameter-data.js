@@ -24,17 +24,12 @@ export const getAvailableParameterCodes = createSelector(
 
         const seriesList = Object.values(timeSeries);
         const availableVariableIds = seriesList.map(x => x.variable);
-        console.log('seriesList ', seriesList)
-        console.log('availableVariableIds ', availableVariableIds)
-        console.log('variables ', variables)
-        console.log('getVariablesCalculated ', variablesCalculated)
         variables = {
             ...variables,
             ...variablesCalculated
         };
-        console.log('variables after combine ', variables)
 
-        const test = sortedParameters(variables)
+        return sortedParameters(variables)
             .filter(variable => availableVariableIds.includes(variable.oid.split('_CALCULATED')[0]))
             .map((variable) => {
                 return {
@@ -47,7 +42,5 @@ export const getAvailableParameterCodes = createSelector(
                     }).length
                 };
             });
-        console.log('test ', test)
-        return test;
     }
 );

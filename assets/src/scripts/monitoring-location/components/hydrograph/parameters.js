@@ -108,7 +108,6 @@ export const plotSeriesSelectTable = function(elem,
         return;
     }
 
-console.log('availableParameterCodes ', availableParameterCodes)
     const columnHeaders = ['   ', 'Parameter', 'Preview', '#', 'Period of Record', 'WaterAlert'];
     const tableContainer = elem.append('div')
         .attr('id', 'select-time-series');
@@ -183,21 +182,15 @@ console.log('availableParameterCodes ', availableParameterCodes)
 
     // WaterAlert does not support every parameter code, so lets take that into account when adding the links
     table.selectAll('.wateralert-link').each(function(d) {
-        const acceptableWaterAlertParameterCodes = ['00060', '00055', '72321', '00062', '00065', '62610', '62614',
-            '62615', '62616','62617', '62619', '62620', '63160', '72020','00095', '62611', '72019', '72020',
-            '72147', '72150', '72192', '72322', '72255','72279', '00010', '00011', '00095', '00300', '00400',
-            '00480', '63680', '72213', '99133','31720', '31721', '31722', '31723', '31724', '31725', '31726',
-            '31727', '31728', '31729','32319','32321', '00045', '99064', '99067'];
-
+        
         // Allow the converted temperature codes to have a link to the non-converted Wateralert form
-        const temperatureCodes = ['00010', '00020', '85583', '99229', '99230', '45589', '81027', '72176 ', '50011', '45587'];
-        const convertedTemperatureCodes = temperatureCodes.map(function(code) {
+        const convertedTemperatureCodes = config.ALL_TEMPERATURE_PARAMETERS.map(function(code) {
             return code.replace(`${code}`, `${code}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`);
         });
 
         let selection = select(this);
 
-        if (acceptableWaterAlertParameterCodes.includes(d.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, ''))) {
+        if (config.WATER_ALERT_PARAMETER_CODES.includes(d.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, ''))) {
             const waterAlertLink = selection.append('a')
                 .attr('href', `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${d.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '')}`)
                 .attr('class', 'usa-tooltip usa-link wateralert-available')
