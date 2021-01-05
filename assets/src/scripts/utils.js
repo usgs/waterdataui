@@ -242,7 +242,6 @@ export const sortedParameters = function(variables) {
 
     const dataVars = variables ? Object.values(variables) : [];
     const pertinentParmCds = Object.keys(PARAM_PERTINENCE);
-    console.log('dataVars ', dataVars)
     const highPertinenceVars = dataVars.filter(x => pertinentParmCds.includes(x.variableCode.value))
         .sort((a, b) => {
             const aPertinence = PARAM_PERTINENCE[a.variableCode.value];
@@ -263,6 +262,7 @@ export const sortedParameters = function(variables) {
                 return 1;
             }
         });
+
     return highPertinenceVars.concat(lowPertinenceVars);
 };
 

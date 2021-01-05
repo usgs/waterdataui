@@ -108,7 +108,7 @@ export const plotSeriesSelectTable = function(elem,
         return;
     }
 
-
+console.log('availableParameterCodes ', availableParameterCodes)
     const columnHeaders = ['   ', 'Parameter', 'Preview', '#', 'Period of Record', 'WaterAlert'];
     const tableContainer = elem.append('div')
         .attr('id', 'select-time-series');

@@ -1,6 +1,5 @@
 import {createSelector} from 'reselect';
 
-import config from 'ui/config';
 import {sortedParameters} from 'ui/utils';
 import {getCurrentVariableID, getTimeSeries, getVariables, getVariablesCalculated} from 'ml/selectors/time-series-selector';
 
@@ -25,6 +24,8 @@ export const getAvailableParameterCodes = createSelector(
 
         const seriesList = Object.values(timeSeries);
         const availableVariableIds = seriesList.map(x => x.variable);
+        console.log('seriesList ', seriesList)
+        console.log('availableVariableIds ', availableVariableIds)
         console.log('variables ', variables)
         console.log('getVariablesCalculated ', variablesCalculated)
         variables = {
@@ -34,10 +35,10 @@ export const getAvailableParameterCodes = createSelector(
         console.log('variables after combine ', variables)
 
         const test = sortedParameters(variables)
-            .filter(variable => availableVariableIds.includes(variable.oid))
+            .filter(variable => availableVariableIds.includes(variable.oid.split('_CALCULATED')[0]))
             .map((variable) => {
                 return {
-                    variableID: variable.variableCode.value.includes(config.CALCULATED_TEMPERATURE_VARIABLE_CODE) ? `${variable.oid}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`: variable.oid,
+                    variableID: variable.variableCode.value,
                     parameterCode: variable.variableCode.value,
                     description: variable.variableDescription,
                     selected: currentVariableID === variable.oid,
@@ -46,7 +47,7 @@ export const getAvailableParameterCodes = createSelector(
                     }).length
                 };
             });
-        // console.log('test ', test)
+        console.log('test ', test)
         return test;
     }
 );
