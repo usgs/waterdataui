@@ -3,13 +3,15 @@ import findKey from 'lodash/findKey';
 import last from 'lodash/last';
 import merge from 'lodash/merge';
 import omitBy from 'lodash/omitBy';
+import cloneDeep from 'lodash/cloneDeep';
+
 import {DateTime} from 'luxon';
 
 import {isPeriodCustom, parsePeriodCode} from 'ml/components/hydrograph/hydrograph-utils';
 
 import config from 'ui/config';
 import {normalize} from 'ui/schema';
-import {calcStartTime, sortedParameters} from 'ui/utils';
+import {calcStartTime, convertCelsiusToFahrenheit, sortedParameters} from 'ui/utils';
 import {getPreviousYearTimeSeries, getTimeSeries} from 'ui/web-services/models';
 
 import {
@@ -112,20 +114,36 @@ const retrieveIVTimeSeries = function(siteno) {
         return getTimeSeries({sites: [siteno]}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
-
                 const variables = Object.values(collection.variables);
+
+                Object.entries(collection.timeSeries).forEach((currentInLoopSeries) => {
+                    const currentInLoopVariableCode = currentInLoopSeries[1].variable;
+                    const currentInLoopParameterCode = collection.variables[currentInLoopVariableCode].variableCode.value;
+                    if (config.CELSIUS_TEMPERATURE_PARAMETERS.includes(currentInLoopParameterCode)) {
+                        const points = currentInLoopSeries[1].points;
+                        console.log('currentVariableCode in foreach ', currentInLoopVariableCode)
+                        console.log('collection ', currentInLoopParameterCode)
+                        console.log('points original ', points)
+                        const convertedTemperaturePoints = cloneDeep(points);
+                        convertedTemperaturePoints.forEach(convertedTemperaturePoint => {
+                            convertedTemperaturePoint.value = convertCelsiusToFahrenheit(convertedTemperaturePoint.value);
+                        });
+                        console.log('points original ', points)
+                        console.log('convertedTemperaturePoints ', convertedTemperaturePoints)
+                    }
+                });
 
                 variables.forEach((variable) => {
                    config.CELSIUS_TEMPERATURE_PARAMETERS.forEach((temperatureParameter) => {
                         if (temperatureParameter === variable.variableCode.value) {
-                            let calculatedVariable = {...variable};
+                            let calculatedVariable = cloneDeep(variable);
 
                             calculatedVariable.variableName = calculatedVariable.variableName.replace('C', 'F (calculated)');
                             calculatedVariable.variableDescription = calculatedVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
                             calculatedVariable.unit.unitCode = calculatedVariable.unit.unitCode.replace('C', 'F');
                             calculatedVariable.variableCode.value = `${calculatedVariable.variableCode.value}F`;
                             calculatedVariable.oid = `${calculatedVariable.oid}_CALCULATED_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-                            calculatedVariable = {variablesCalculated: {[calculatedVariable.oid]: {...calculatedVariable}}};
+                            calculatedVariable = {variablesCalculated: {[calculatedVariable.oid]: cloneDeep(calculatedVariable)}};
 
                             dispatch(Actions.addCalculatedVariable(calculatedVariable));
                         }
