@@ -114,6 +114,9 @@ const retrieveIVTimeSeries = function(siteno) {
         return getTimeSeries({sites: [siteno]}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
+                console.log('collection ', collection)
+                console.log('timeSeriesCollections collection ', Object.keys(collection.timeSeriesCollections))
+
                 const variables = Object.values(collection.variables);
 
                 Object.entries(collection.timeSeries).forEach((currentInLoopSeries) => {
@@ -121,15 +124,11 @@ const retrieveIVTimeSeries = function(siteno) {
                     const currentInLoopParameterCode = collection.variables[currentInLoopVariableCode].variableCode.value;
                     if (config.CELSIUS_TEMPERATURE_PARAMETERS.includes(currentInLoopParameterCode)) {
                         const points = currentInLoopSeries[1].points;
-                        console.log('currentVariableCode in foreach ', currentInLoopVariableCode)
-                        console.log('collection ', currentInLoopParameterCode)
-                        console.log('points original ', points)
                         const convertedTemperaturePoints = cloneDeep(points);
+
                         convertedTemperaturePoints.forEach(convertedTemperaturePoint => {
                             convertedTemperaturePoint.value = convertCelsiusToFahrenheit(convertedTemperaturePoint.value);
                         });
-                        console.log('points original ', points)
-                        console.log('convertedTemperaturePoints ', convertedTemperaturePoints)
                     }
                 });
 
