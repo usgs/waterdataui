@@ -117,21 +117,35 @@ const retrieveIVTimeSeries = function(siteno) {
                 console.log('collection ', collection)
                 console.log('timeSeriesCollections collection ', Object.keys(collection.timeSeriesCollections))
 
-                const variables = Object.values(collection.variables);
+
 
                 Object.entries(collection.timeSeries).forEach((currentInLoopSeries) => {
                     const currentInLoopVariableCode = currentInLoopSeries[1].variable;
                     const currentInLoopParameterCode = collection.variables[currentInLoopVariableCode].variableCode.value;
+
                     if (config.CELSIUS_TEMPERATURE_PARAMETERS.includes(currentInLoopParameterCode)) {
+                        const convertedTimeSeries = cloneDeep(currentInLoopSeries);
                         const points = currentInLoopSeries[1].points;
                         const convertedTemperaturePoints = cloneDeep(points);
+                        const calculatedNWISVariable = cloneDeep(collection.variables[currentInLoopVariableCode]);
+                        console.log('calculatedVariable ', calculatedNWISVariable)
+                        // const calculatedVariable = cloneDeep(collection[currentInLoopSeries[1].variables]);
 
                         convertedTemperaturePoints.forEach(convertedTemperaturePoint => {
                             convertedTemperaturePoint.value = convertCelsiusToFahrenheit(convertedTemperaturePoint.value);
                         });
+                        convertedTimeSeries[0] = `${convertedTimeSeries[0].split(':')[0]}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}:${convertedTimeSeries[0].split(':')[1]}:${convertedTimeSeries[0].split(':')[2]}`;
+                        convertedTimeSeries[1].points = convertedTemperaturePoints;
+                        convertedTimeSeries[1].variable =
+                            `${convertedTimeSeries[1].variable}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+                        collection.timeSeries[convertedTimeSeries[0]] = convertedTimeSeries[1];
+                        collection.variables[`${currentInLoopVariableCode}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`] = calculatedNWISVariable;
+                        console.log('collection timeseries ', currentInLoopSeries)
+                        console.log('convertedTimeSeries ', convertedTimeSeries)
                     }
                 });
 
+                const variables = Object.values(collection.variables);
                 variables.forEach((variable) => {
                    config.CELSIUS_TEMPERATURE_PARAMETERS.forEach((temperatureParameter) => {
                         if (temperatureParameter === variable.variableCode.value) {
