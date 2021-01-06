@@ -3,15 +3,13 @@ import findKey from 'lodash/findKey';
 import last from 'lodash/last';
 import merge from 'lodash/merge';
 import omitBy from 'lodash/omitBy';
-import cloneDeep from 'lodash/cloneDeep';
 
 import {DateTime} from 'luxon';
 
-import {isPeriodCustom, parsePeriodCode} from 'ml/components/hydrograph/hydrograph-utils';
+import {convertTemperatureSeriesAndAddToCollection, isPeriodCustom, parsePeriodCode} from 'ml/components/hydrograph/hydrograph-utils';
 
-import config from 'ui/config';
 import {normalize} from 'ui/schema';
-import {calcStartTime, convertCelsiusToFahrenheit, sortedParameters} from 'ui/utils';
+import {calcStartTime, sortedParameters} from 'ui/utils';
 import {getPreviousYearTimeSeries, getTimeSeries} from 'ui/web-services/models';
 
 import {
@@ -100,6 +98,37 @@ const resetIVTimeSeries = function(tsRequestKey) {
     };
 };
 
+// const convertAndStoreTemperatureSeries = function(collection) {
+//     Object.entries(collection.timeSeries).forEach((currentInLoopSeries) => {
+//         const currentInLoopVariableCode = currentInLoopSeries[1].variable;
+//         const currentInLoopParameterCode = collection.variables[currentInLoopVariableCode].variableCode.value;
+//
+//         if (config.CELSIUS_TEMPERATURE_PARAMETERS.includes(currentInLoopParameterCode)) {
+//             const convertedTimeSeries = cloneDeep(currentInLoopSeries);
+//             const points = currentInLoopSeries[1].points;
+//             const convertedTemperaturePoints = cloneDeep(points);
+//             let calculatedNWISVariable = cloneDeep(collection.variables[currentInLoopVariableCode]);
+//
+//             calculatedNWISVariable.variableName = calculatedNWISVariable.variableName.replace('C', 'F (calculated)');
+//             calculatedNWISVariable.variableDescription = calculatedNWISVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
+//             calculatedNWISVariable.unit.unitCode = calculatedNWISVariable.unit.unitCode.replace('C', 'F');
+//             calculatedNWISVariable.variableCode.value = `${calculatedNWISVariable.variableCode.value}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+//             calculatedNWISVariable.oid = `${calculatedNWISVariable.oid}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+//
+//             convertedTemperaturePoints.forEach(convertedTemperaturePoint => {
+//                 convertedTemperaturePoint.value = convertCelsiusToFahrenheit(convertedTemperaturePoint.value);
+//             });
+//             convertedTimeSeries[0] = `${convertedTimeSeries[0].split(':')[0]}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}:${convertedTimeSeries[0].split(':')[1]}:${convertedTimeSeries[0].split(':')[2]}`;
+//             convertedTimeSeries[1].points = convertedTemperaturePoints;
+//             convertedTimeSeries[1].variable =
+//                 `${convertedTimeSeries[1].variable}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+//             collection.timeSeries[convertedTimeSeries[0]] = convertedTimeSeries[1];
+//             collection.variables[`${currentInLoopVariableCode}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`] = calculatedNWISVariable;
+//         }
+//     });
+//     return collection;
+// };
+
 /*
  * Asynchronous Redux action - fetches the IV time series data for all parameter codes for siteno for the
  * last 7 days.
@@ -119,55 +148,6 @@ const retrieveIVTimeSeries = function(siteno) {
 
 
 
-                Object.entries(collection.timeSeries).forEach((currentInLoopSeries) => {
-                    const currentInLoopVariableCode = currentInLoopSeries[1].variable;
-                    const currentInLoopParameterCode = collection.variables[currentInLoopVariableCode].variableCode.value;
-
-                    if (config.CELSIUS_TEMPERATURE_PARAMETERS.includes(currentInLoopParameterCode)) {
-                        const convertedTimeSeries = cloneDeep(currentInLoopSeries);
-                        const points = currentInLoopSeries[1].points;
-                        const convertedTemperaturePoints = cloneDeep(points);
-                        let calculatedNWISVariable = cloneDeep(collection.variables[currentInLoopVariableCode]);
-
-                        calculatedNWISVariable.variableName = calculatedNWISVariable.variableName.replace('C', 'F (calculated)');
-                        calculatedNWISVariable.variableDescription = calculatedNWISVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
-                        calculatedNWISVariable.unit.unitCode = calculatedNWISVariable.unit.unitCode.replace('C', 'F');
-                        calculatedNWISVariable.variableCode.value = `${calculatedNWISVariable.variableCode.value}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-                        calculatedNWISVariable.oid = `${calculatedNWISVariable.oid}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-                        // calculatedNWISVariable = {[calculatedNWISVariable.oid]: cloneDeep(calculatedNWISVariable)};
-                        console.log('calculatedNWISVariable ', calculatedNWISVariable)
-
-                        convertedTemperaturePoints.forEach(convertedTemperaturePoint => {
-                            convertedTemperaturePoint.value = convertCelsiusToFahrenheit(convertedTemperaturePoint.value);
-                        });
-                        convertedTimeSeries[0] = `${convertedTimeSeries[0].split(':')[0]}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}:${convertedTimeSeries[0].split(':')[1]}:${convertedTimeSeries[0].split(':')[2]}`;
-                        convertedTimeSeries[1].points = convertedTemperaturePoints;
-                        convertedTimeSeries[1].variable =
-                            `${convertedTimeSeries[1].variable}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-                        collection.timeSeries[convertedTimeSeries[0]] = convertedTimeSeries[1];
-                        collection.variables[`${currentInLoopVariableCode}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`] = calculatedNWISVariable;
-                        console.log('collection timeseries ', currentInLoopSeries)
-                        console.log('convertedTimeSeries ', convertedTimeSeries)
-                    }
-                });
-
-                const variables = Object.values(collection.variables);
-                variables.forEach((variable) => {
-                   config.CELSIUS_TEMPERATURE_PARAMETERS.forEach((temperatureParameter) => {
-                        if (temperatureParameter === variable.variableCode.value) {
-                            let calculatedVariable = cloneDeep(variable);
-
-                            calculatedVariable.variableName = calculatedVariable.variableName.replace('C', 'F (calculated)');
-                            calculatedVariable.variableDescription = calculatedVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
-                            calculatedVariable.unit.unitCode = calculatedVariable.unit.unitCode.replace('C', 'F');
-                            calculatedVariable.variableCode.value = `${calculatedVariable.variableCode.value}F`;
-                            calculatedVariable.oid = `${calculatedVariable.oid}_CALCULATED_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-                            calculatedVariable = {variablesCalculated: {[calculatedVariable.oid]: cloneDeep(calculatedVariable)}};
-
-                            dispatch(Actions.addCalculatedVariable(calculatedVariable));
-                        }
-                    });
-                });
 
                 // Get the start/end times of this request's range.
                 const notes = collection.queryInfo[tsRequestKey].notes;
@@ -178,7 +158,7 @@ const retrieveIVTimeSeries = function(siteno) {
                 dispatch(Actions.retrieveCompareIVTimeSeries(siteno, 'P7D', startTime, endTime));
 
                 // Update the series data for the 'current' series
-                dispatch(Actions.addIVTimeSeriesCollection(collection));
+                dispatch(Actions.addIVTimeSeriesCollection(convertTemperatureSeriesAndAddToCollection(collection)));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
 
                 // Update the application state
