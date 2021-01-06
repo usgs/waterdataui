@@ -127,14 +127,20 @@ const retrieveIVTimeSeries = function(siteno) {
                         const convertedTimeSeries = cloneDeep(currentInLoopSeries);
                         const points = currentInLoopSeries[1].points;
                         const convertedTemperaturePoints = cloneDeep(points);
-                        const calculatedNWISVariable = cloneDeep(collection.variables[currentInLoopVariableCode]);
-                        console.log('calculatedVariable ', calculatedNWISVariable)
-                        // const calculatedVariable = cloneDeep(collection[currentInLoopSeries[1].variables]);
+                        let calculatedNWISVariable = cloneDeep(collection.variables[currentInLoopVariableCode]);
+
+                        calculatedNWISVariable.variableName = calculatedNWISVariable.variableName.replace('C', 'F (calculated)');
+                        calculatedNWISVariable.variableDescription = calculatedNWISVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
+                        calculatedNWISVariable.unit.unitCode = calculatedNWISVariable.unit.unitCode.replace('C', 'F');
+                        calculatedNWISVariable.variableCode.value = `${calculatedNWISVariable.variableCode.value}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+                        calculatedNWISVariable.oid = `${calculatedNWISVariable.oid}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+                        // calculatedNWISVariable = {[calculatedNWISVariable.oid]: cloneDeep(calculatedNWISVariable)};
+                        console.log('calculatedNWISVariable ', calculatedNWISVariable)
 
                         convertedTemperaturePoints.forEach(convertedTemperaturePoint => {
                             convertedTemperaturePoint.value = convertCelsiusToFahrenheit(convertedTemperaturePoint.value);
                         });
-                        convertedTimeSeries[0] = `${convertedTimeSeries[0].split(':')[0]}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}:${convertedTimeSeries[0].split(':')[1]}:${convertedTimeSeries[0].split(':')[2]}`;
+                        convertedTimeSeries[0] = `${convertedTimeSeries[0].split(':')[0]}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}:${convertedTimeSeries[0].split(':')[1]}:${convertedTimeSeries[0].split(':')[2]}`;
                         convertedTimeSeries[1].points = convertedTemperaturePoints;
                         convertedTimeSeries[1].variable =
                             `${convertedTimeSeries[1].variable}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
