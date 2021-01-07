@@ -20,9 +20,8 @@ const setMedianStats = function(statisticsData) {
     };
 };
 
-
 /*
-*  Helper function that take a group of statistics checks if any of those are temperatures in celsius. If found,
+*  Helper function that takes a group of statistics and checks if any of those are temperatures in celsius. If found,
 * the function will convert to Fahrenheit and add the new temperatures to the statistics group.
 * @param {Object} The median statistics
 * @return {Object} The median statistics, possibly with converted temperatures added

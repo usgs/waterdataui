@@ -7,7 +7,6 @@ import omitBy from 'lodash/omitBy';
 import {DateTime} from 'luxon';
 
 import {convertTemperatureSeriesAndAddToCollection, isPeriodCustom, parsePeriodCode} from 'ml/components/hydrograph/hydrograph-utils';
-import config from 'ui/config';
 import {normalize} from 'ui/schema';
 import {calcStartTime, sortedParameters} from 'ui/utils';
 import {getPreviousYearTimeSeries, getTimeSeries} from 'ui/web-services/models';
