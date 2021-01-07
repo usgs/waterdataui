@@ -89,7 +89,7 @@ export const convertTemperatureSeriesAndAddToCollection = function(collection) {
             convertedTemperaturePoints.forEach(convertedTemperaturePoint => {
                 convertedTemperaturePoint.value = convertCelsiusToFahrenheit(convertedTemperaturePoint.value);
             });
-            convertedTimeSeries[0] = `${convertedTimeSeries[0].split(':')[0]}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}:${convertedTimeSeries[0].split(':')[1]}:${convertedTimeSeries[0].split(':')[2]}`;
+            convertedTimeSeries[0] = `${convertedTimeSeries[0].split(':')[0]}:${convertedTimeSeries[0].split(':')[1]}:${convertedTimeSeries[0].split(':')[2]}:${currentInLoopParameterCode}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
             convertedTimeSeries[1].points = convertedTemperaturePoints;
             convertedTimeSeries[1].variable =
                 `${convertedTimeSeries[1].variable}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;

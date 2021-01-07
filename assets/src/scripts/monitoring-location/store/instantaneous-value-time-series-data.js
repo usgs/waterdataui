@@ -6,11 +6,12 @@ import omitBy from 'lodash/omitBy';
 
 import {DateTime} from 'luxon';
 
-import {convertTemperatureSeriesAndAddToCollection, isPeriodCustom, parsePeriodCode} from 'ml/components/hydrograph/hydrograph-utils';
+import config from 'ui/config';
 import {normalize} from 'ui/schema';
 import {calcStartTime, sortedParameters} from 'ui/utils';
 import {getPreviousYearTimeSeries, getTimeSeries} from 'ui/web-services/models';
 
+import {convertTemperatureSeriesAndAddToCollection, isPeriodCustom, parsePeriodCode} from 'ml/components/hydrograph/hydrograph-utils';
 import {
     getCurrentDateRange,
     getCurrentParmCd, getCustomTimeRange, getRequestTimeRange,
@@ -193,7 +194,9 @@ const retrieveCustomTimePeriodIVTimeSeries = function(siteno, parameterCd, perio
             series => {
                 const collection = normalize(series, tsRequestKey);
                 const variables = Object.values(collection.variables);
-                const variableToDraw = find(variables, v =>  v.variableCode.value === parameterCd);
+                console.log('variables', variables)
+                const variableToDraw = find(variables, v =>  v.variableCode.value === parameterCd.split(config.CALCULATED_TEMPERATURE_VARIABLE_CODE)[0]);
+                console.log('variableToDraw ', variableToDraw)
                 dispatch(Actions.addIVTimeSeriesCollection(collection));
                 dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', 'custom'));
                 dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('customTimeRangeSelectionButton', 'days-input'));

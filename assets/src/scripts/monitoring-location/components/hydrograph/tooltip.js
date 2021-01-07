@@ -5,7 +5,7 @@ import {createSelector, createStructuredSelector} from 'reselect';
 
 import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
-import {mediaQuery, convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
+import {mediaQuery} from 'ui/utils';
 
 import {drawCursorSlider} from 'd3render/cursor-slider';
 import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from 'd3render/graph-tooltip';
@@ -20,7 +20,7 @@ import {getMainXScale, getMainYScale} from './selectors/scales';
 import {getTsTimeZone, getQualifiers, getCurrentVariableUnitCode} from './selectors/time-series-data';
 
 
-const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd) {
+const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone) {
     let label = '';
     if (datum && qualifiers) {
         let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
