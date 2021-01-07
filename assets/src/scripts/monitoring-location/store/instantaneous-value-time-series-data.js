@@ -74,16 +74,6 @@ const addIVTimeSeriesCollection = function(collection) {
     };
 };
 
-
-
-const addCalculatedVariable = function(calculatedVariable) {
-    return {
-        type: 'ADD_CALCULATED_VARIABLE',
-        calculatedVariable
-    };
-};
-
-
 /*
  * Synchronous Redux action - removes the time series data from the Redux store for
  * the specific IV time series (may be more than one) represented by the tsRequestKey
@@ -156,7 +146,6 @@ const retrieveCompareIVTimeSeries = function(siteno, period, startTime, endTime,
         return getPreviousYearTimeSeries({site: siteno, startTime, endTime, parameterCode}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
-
                 dispatch(Actions.addIVTimeSeriesCollection(convertTemperatureSeriesAndAddToCollection(collection)));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
             },
@@ -369,10 +358,6 @@ export const ivTimeSeriesDataReducer = function(ivTimeSeriesData={}, action) {
         case 'ADD_IV_TIME_SERIES_COLLECTION':
             return merge({}, ivTimeSeriesData, action.collection);
 
-        case 'ADD_CALCULATED_VARIABLE': {
-            return merge({}, ivTimeSeriesData, action.calculatedVariable);
-        }
-
         case 'RESET_IV_TIME_SERIES': {
             let newSeries = {
                 ...ivTimeSeriesData,
@@ -393,7 +378,6 @@ export const ivTimeSeriesDataReducer = function(ivTimeSeriesData={}, action) {
 
 export const Actions = {
     addIVTimeSeriesCollection,
-    addCalculatedVariable,
     resetIVTimeSeries,
     retrieveCompareIVTimeSeries,
     retrieveIVTimeSeries,

@@ -33,8 +33,7 @@ const MIDDLEWARES = [thunk];
 
 export const configureStore = function(initialState) {
     initialState = {
-        ivTimeSeriesData: {
-        },
+        ivTimeSeriesData: {},
         ianaTimeZone: null,
         dailyValueTimeSeriesData: {},
         floodData: {

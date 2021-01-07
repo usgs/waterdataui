@@ -50,6 +50,10 @@ export const getTimeSeries = function({sites, params=null, startDate=null, endDa
         serviceRoot = tsServiceRoot(startDate);
     }
 
+    // Normal parameter codes have five numerical digits. If the parameter code has an alphabetical letter
+    // as a suffix, such as 00010F, it means that parameter has been altered in our application.
+    // Parameter codes with such a suffix are for use in our application only, so we need to remove
+    // any suffix before using the parameter code in a web call to a NWIS system.
     if (params) {
         params = params.map(function(param) {
             return param.replace(`${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`, '');
