@@ -49,6 +49,13 @@ export const getTimeSeries = function({sites, params=null, startDate=null, endDa
         timeParams = `startDT=${startString}&endDT=${endString}`;
         serviceRoot = tsServiceRoot(startDate);
     }
+
+    if (params) {
+        params = params.map(function(param) {
+            return param.replace(`${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`, '');
+        });
+    }
+
     let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
     let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${paramCds}&${timeParams}&siteStatus=all&format=json`;
 

@@ -7,7 +7,7 @@ import omitBy from 'lodash/omitBy';
 import {DateTime} from 'luxon';
 
 import {convertTemperatureSeriesAndAddToCollection, isPeriodCustom, parsePeriodCode} from 'ml/components/hydrograph/hydrograph-utils';
-
+import config from 'ui/config';
 import {normalize} from 'ui/schema';
 import {calcStartTime, sortedParameters} from 'ui/utils';
 import {getPreviousYearTimeSeries, getTimeSeries} from 'ui/web-services/models';
@@ -98,37 +98,6 @@ const resetIVTimeSeries = function(tsRequestKey) {
     };
 };
 
-// const convertAndStoreTemperatureSeries = function(collection) {
-//     Object.entries(collection.timeSeries).forEach((currentInLoopSeries) => {
-//         const currentInLoopVariableCode = currentInLoopSeries[1].variable;
-//         const currentInLoopParameterCode = collection.variables[currentInLoopVariableCode].variableCode.value;
-//
-//         if (config.CELSIUS_TEMPERATURE_PARAMETERS.includes(currentInLoopParameterCode)) {
-//             const convertedTimeSeries = cloneDeep(currentInLoopSeries);
-//             const points = currentInLoopSeries[1].points;
-//             const convertedTemperaturePoints = cloneDeep(points);
-//             let calculatedNWISVariable = cloneDeep(collection.variables[currentInLoopVariableCode]);
-//
-//             calculatedNWISVariable.variableName = calculatedNWISVariable.variableName.replace('C', 'F (calculated)');
-//             calculatedNWISVariable.variableDescription = calculatedNWISVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
-//             calculatedNWISVariable.unit.unitCode = calculatedNWISVariable.unit.unitCode.replace('C', 'F');
-//             calculatedNWISVariable.variableCode.value = `${calculatedNWISVariable.variableCode.value}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-//             calculatedNWISVariable.oid = `${calculatedNWISVariable.oid}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-//
-//             convertedTemperaturePoints.forEach(convertedTemperaturePoint => {
-//                 convertedTemperaturePoint.value = convertCelsiusToFahrenheit(convertedTemperaturePoint.value);
-//             });
-//             convertedTimeSeries[0] = `${convertedTimeSeries[0].split(':')[0]}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}:${convertedTimeSeries[0].split(':')[1]}:${convertedTimeSeries[0].split(':')[2]}`;
-//             convertedTimeSeries[1].points = convertedTemperaturePoints;
-//             convertedTimeSeries[1].variable =
-//                 `${convertedTimeSeries[1].variable}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-//             collection.timeSeries[convertedTimeSeries[0]] = convertedTimeSeries[1];
-//             collection.variables[`${currentInLoopVariableCode}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`] = calculatedNWISVariable;
-//         }
-//     });
-//     return collection;
-// };
-
 /*
  * Asynchronous Redux action - fetches the IV time series data for all parameter codes for siteno for the
  * last 7 days.
@@ -143,11 +112,6 @@ const retrieveIVTimeSeries = function(siteno) {
         return getTimeSeries({sites: [siteno]}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
-                console.log('collection ', collection)
-                console.log('timeSeriesCollections collection ', Object.keys(collection.timeSeriesCollections))
-
-
-
 
                 // Get the start/end times of this request's range.
                 const notes = collection.queryInfo[tsRequestKey].notes;
@@ -193,7 +157,8 @@ const retrieveCompareIVTimeSeries = function(siteno, period, startTime, endTime,
         return getPreviousYearTimeSeries({site: siteno, startTime, endTime, parameterCode}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
-                dispatch(Actions.addIVTimeSeriesCollection(collection));
+
+                dispatch(Actions.addIVTimeSeriesCollection(convertTemperatureSeriesAndAddToCollection(collection)));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
             },
             () => {
@@ -289,7 +254,7 @@ const retrieveCustomIVTimeSeries = function(siteno, startTime, endTime, parmCd=n
         }).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
-                dispatch(Actions.addIVTimeSeriesCollection(collection));
+                dispatch(Actions.addIVTimeSeriesCollection(convertTemperatureSeriesAndAddToCollection(collection)));
                 dispatch(ivTimeSeriesStateActions.setCurrentIVDateRange('custom'));
                 dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', 'custom'));
                 dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('customTimeRangeSelectionButton', 'calendar-input'));
@@ -384,8 +349,7 @@ const retrieveUserRequestedIVDataForDateRange = function(siteno, startDateStr, e
 * @return {Function} when returns a promise.
  */
 const updateIVCurrentVariableAndRetrieveTimeSeries = function(siteno, variableID) {
-    console.log('ran updateIVCurrentVariableAndRetrieveTimeSeries siteno ', siteno)
-    console.log('ran updateIVCurrentVariableAndRetrieveTimeSeries variableID ', variableID)
+
     return function(dispatch, getState) {
         dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(variableID));
         const state = getState();
