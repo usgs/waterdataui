@@ -3,37 +3,10 @@ import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
 import {
-    getRequestTimeRange, getCurrentVariable, getCurrentParmCd, getCurrentMethodID,
+    getRequestTimeRange, getCurrentVariable, getCurrentMethodID,
     getMethods
 } from 'ml/selectors/time-series-selector';
 import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
-
-
-export const TEMPERATURE_PARAMETERS = {
-    celsius: [
-        '00010',
-        '00020',
-        '45587',
-        '45589',
-        '50011',
-        '72176',
-        '72282',
-        '72283',
-        '72329',
-        '81027',
-        '81029',
-        '85583',
-        '99229',
-        '99230'
-    ],
-    fahrenheit: [
-        '00011',
-        '00021',
-        '45590'
-    ]
-};
-
-
 
 const formatTime = function(timeInMillis, timeZone) {
     return DateTime.fromMillis(timeInMillis, {zone: timeZone}).toFormat('L/d/yyyy tt ZZZ');
@@ -62,18 +35,9 @@ export const getYLabel = createSelector(
 /*
  * Returns a Redux selector function which returns the label to be used for the secondary y axis
  */
-export const getSecondaryYLabel= createSelector(
-    getCurrentParmCd,
-    parmCd => {
-        let secondaryYLabel = null;
-        if (TEMPERATURE_PARAMETERS.celsius.includes(parmCd)) {
-            secondaryYLabel = 'deg F';
-        } else if(TEMPERATURE_PARAMETERS.fahrenheit.includes(parmCd)) {
-            secondaryYLabel = 'deg C';
-        }
-        return secondaryYLabel;
-    }
-);
+export const getSecondaryYLabel= function() {
+    return ''; // placeholder for ticket WDFN-370
+};
 
 
 /**

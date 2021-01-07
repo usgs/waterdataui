@@ -9,7 +9,7 @@ import {getVariables, getCurrentParmCd, getRequestTimeRange, getTimeSeriesForTsK
 import {getYDomain, getYDomainForVisiblePoints, SYMLOG_PARMS} from './domain';
 import {getPointsByTsKey} from './drawing-data';
 import {getLayout} from './layout';
-import {TEMPERATURE_PARAMETERS} from './time-series-data';
+
 
 const REVERSE_AXIS_PARMS = [
     '72019',
@@ -121,16 +121,9 @@ export const getSecondaryYScale = memoize(kind => createSelector(
     getYDomainForVisiblePoints,
     getCurrentParmCd,
     (layout, yDomain, currentVarParmCd) => {
-        let convertedYDomain;
-        if (TEMPERATURE_PARAMETERS.celsius.includes(currentVarParmCd)) {
-            convertedYDomain = yDomain.map(celsius => convertCelsiusToFahrenheit(celsius));
-        } else if (TEMPERATURE_PARAMETERS.fahrenheit.includes(currentVarParmCd)) {
-            convertedYDomain = yDomain.map(fahrenheit => convertFahrenheitToCelsius(fahrenheit));
-        } else {
-            return null;
-        }
+// leaving constant this as a placeholder for changes upcoming in ticket WDFN-370
         return createYScale(
-            currentVarParmCd, convertedYDomain, layout.height - (layout.margin.top + layout.margin.bottom)
+            currentVarParmCd, layout.height - (layout.margin.top + layout.margin.bottom)
         );
     }
 ));

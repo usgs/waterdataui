@@ -17,7 +17,7 @@ import {getCursorTime, getTsCursorPoints, getTooltipPoints} from './selectors/cu
 import {classesForPoint, MASK_DESC} from './selectors/drawing-data';
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getTsTimeZone, getQualifiers, getCurrentVariableUnitCode, TEMPERATURE_PARAMETERS} from './selectors/time-series-data';
+import {getTsTimeZone, getQualifiers, getCurrentVariableUnitCode} from './selectors/time-series-data';
 
 
 const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd) {
@@ -27,21 +27,7 @@ const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone, curre
         const maskKeys = new Set(Object.keys(MASK_DESC));
         const qualifierKeysLower = new Set(datum.qualifiers.map(x => x.toLowerCase()));
         const maskKeyIntersect = Array.from(qualifierKeysLower.values()).filter(x => maskKeys.has(x));
-        if (valueStr !== ' ') {
-            let convertedValue;
-            let convertedUnit;
-            if (TEMPERATURE_PARAMETERS.celsius.includes(currentParmCd)) {
-                convertedValue = convertCelsiusToFahrenheit(datum.value);
-                convertedUnit = 'deg F';
-            } else if (TEMPERATURE_PARAMETERS.fahrenheit.includes(currentParmCd)) {
-                convertedValue = convertFahrenheitToCelsius(datum.value);
-                convertedUnit = 'deg C';
-            }
-            if (convertedValue) {
-                const secondaryAxisValue = `${convertedValue.toFixed(1)} ${convertedUnit}`;
-                valueStr += ` (${secondaryAxisValue})`;
-            }
-        }
+
         if (maskKeyIntersect.length) {
             // a data point will have at most one masking qualifier
             valueStr = MASK_DESC[maskKeyIntersect[0]];
