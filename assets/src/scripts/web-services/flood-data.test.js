@@ -6,7 +6,7 @@ import {fetchFIMPublicStatus, fetchFloodExtent, fetchFloodFeatures,
     fetchWaterwatchFloodLevels} from './flood-data';
 
 
-describe('flood_data module', () => {
+describe('web-services/flood-data', () => {
     let fakeServer;
     beforeEach(() => {
         fakeServer = sinon.createFakeServer();
@@ -16,7 +16,7 @@ describe('flood_data module', () => {
         fakeServer.restore();
     });
 
-    describe('web-services/fetchFIMPublicStatus', () => {
+    describe('fetchFIMPublicStatus', () => {
         const siteno = '12345678';
         describe('with valid response', () => {
             let promise;
