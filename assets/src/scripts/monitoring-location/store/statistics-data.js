@@ -28,13 +28,16 @@ const setMedianStats = function(statisticsData) {
 */
 export const convertCelsiusToFahrenheitAndAddToStats = function(stats) {
     Object.entries(stats).forEach(stat => {
-
         if (config.TEMPERATURE_PARAMETERS.celsius.includes(stat[0])) {
             const convertedStat = cloneDeep(stat[1]);
-            const dailyStatDetails = Object.entries(convertedStat)[0][1];
-            dailyStatDetails.forEach(detail => {
-                detail.p50_va = convertCelsiusToFahrenheit(detail.p50_va);
+            console.log('entries convertedStat ', Object.entries(convertedStat))
+
+            Object.entries(convertedStat).forEach(statEntry => {
+                statEntry[1].forEach(detail => {
+                    detail.p50_va = convertCelsiusToFahrenheit(detail.p50_va);
+                });
             });
+
             // add the new key value pair to the stats object
             stats[`${stat[0]}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`] = convertedStat;
         }
