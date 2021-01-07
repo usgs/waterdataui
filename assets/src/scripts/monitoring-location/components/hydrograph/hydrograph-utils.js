@@ -74,7 +74,7 @@ export const convertTemperatureSeriesAndAddToCollection = function(collection) {
         const currentInLoopVariableCode = currentInLoopSeries[1].variable;
         const currentInLoopParameterCode = collection.variables[currentInLoopVariableCode].variableCode.value;
 
-        if (config.CELSIUS_TEMPERATURE_PARAMETERS.includes(currentInLoopParameterCode)) {
+        if (config.TEMPERATURE_PARAMETERS.celsius.includes(currentInLoopParameterCode)) {
             const convertedTimeSeries = cloneDeep(currentInLoopSeries);
             const points = currentInLoopSeries[1].points;
             const convertedTemperaturePoints = cloneDeep(points);

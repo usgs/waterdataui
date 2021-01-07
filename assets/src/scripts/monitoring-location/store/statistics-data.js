@@ -29,7 +29,7 @@ const setMedianStats = function(statisticsData) {
 export const convertCelsiusToFahrenheitAndAddToStats = function(stats) {
     Object.entries(stats).forEach(stat => {
 
-        if (config.CELSIUS_TEMPERATURE_PARAMETERS.includes(stat[0])) {
+        if (config.TEMPERATURE_PARAMETERS.celsius.includes(stat[0])) {
             const convertedStat = cloneDeep(stat[1]);
             const dailyStatDetails = Object.entries(convertedStat)[0][1];
             dailyStatDetails.forEach(detail => {
