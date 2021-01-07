@@ -308,7 +308,7 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
                 series => {
                     const collection = normalize(series, tsRequestKey);
                     dispatch(Actions.retrieveCompareIVTimeSeries(siteno, period, startTime, endTime, thisParamCd));
-                    dispatch(Actions.addIVTimeSeriesCollection(collection));
+                    dispatch(Actions.addIVTimeSeriesCollection(convertTemperatureSeriesAndAddToCollection(collection)));
                     dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
                 },
                 () => {
