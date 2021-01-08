@@ -160,11 +160,89 @@ describe('convertTemperatureSeriesAndAddToCollection', () => {
             }
         }
     };
-
-
     const convertedCollection = convertTemperatureSeriesAndAddToCollection(testCollection);
+    const convertedVariableKey = '45807042_F';
+    const convertedTimeSeriesKey = '157775:current:P7D:00010F';
+    const convertedVariableValue = 
+        {'oid': '45807042_F',
+            'unit': {'unitCode': 'deg F'},
+            'variableCode': {'value': '00010F', 'variableID': '45807042F'},
+            'variableDescription': 'Temperature, water, degrees Fahrenheit (calculated)',
+            'variableName': 'Temperature, water, °F (calculated)'
+        };
+    const convertedPoints = [
+        {
+            'dateTime': 1609515000000,
+            'qualifiers': [
+                'P'
+            ],
+            'value': 37.22
+        },
+        {
+            'dateTime': 1609515900000,
+            'qualifiers': [
+                'P'
+            ],
+            'value': 37.4
+        },
+        {
+            'dateTime': 1609516800000,
+            'qualifiers': [
+                'P'
+            ],
+            'value': 37.4
+        },
+        {
+            'dateTime': 1609517700000,
+            'qualifiers': [
+                'P'
+            ],
+            'value': 37.4
+        },
+        {
+            'dateTime': 1609518600000,
+            'qualifiers': [
+                'P'
+            ],
+            'value': 37.58
+        },
+        {
+            'dateTime': 1609519500000,
+            'qualifiers': [
+                'P'
+            ],
+            'value': 37.58
+        },
+        {
+            'dateTime': 1609520400000,
+            'qualifiers': [
+                'P'
+            ],
+            'value': 37.58
+        }
+    ];
 
-    it('will convert a Celsius time series to Fahrenheit and add it to a time series collection', () => {
-        expect({}).toEqual(convertedCollection);
+    it('will create a new variables key with the correct suffix', () => {
+        expect(Object.keys(convertedCollection.variables).includes(convertedVariableKey)).toBeTruthy();
+    });
+
+    it('will create a new variable with the correct properties', () => {
+        expect(convertedCollection.variables[convertedVariableKey]).toStrictEqual(convertedVariableValue);
+    });
+
+    it('adds only the expected number of variables to the collection', () => {
+        expect(Object.entries(convertedCollection.variables)).toHaveLength(4);
+    });
+
+    it('will create a new timeSeries key with the expected name', () => {
+        expect(Object.keys(convertedCollection.timeSeries).includes(convertedTimeSeriesKey)).toBeTruthy();
+    });
+
+    it('will create a new timeSeries with correct variable', () => {
+        expect(convertedCollection.timeSeries[convertedTimeSeriesKey].variable).toEqual(convertedVariableKey);
+    });
+
+    it('will create a new set of converted temperature points', () => {
+        expect(convertedCollection.timeSeries[convertedTimeSeriesKey].points).toStrictEqual(convertedPoints);
     });
 });
