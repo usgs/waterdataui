@@ -26,7 +26,7 @@ const setMedianStats = function(statisticsData) {
 * @param {Object} The median statistics
 * @return {Object} The median statistics, possibly with converted temperatures added
 */
-export const convertCelsiusToFahrenheitAndAddToStats = function(stats) {
+const convertCelsiusToFahrenheitAndAddToStats = function(stats) {
     Object.entries(stats).forEach(stat => {
         if (config.TEMPERATURE_PARAMETERS.celsius.includes(stat[0])) {
             const convertedStat = cloneDeep(stat[1]);
