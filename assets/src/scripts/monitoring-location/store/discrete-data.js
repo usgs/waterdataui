@@ -3,7 +3,7 @@ import {DateTime} from 'luxon';
 import {fetchGroundwaterLevels} from 'ui/web-services/groundwater-levels';
 
 const INITIAL_DATA = {
-    groundwaterLevels : {}
+    groundwaterLevels : null
 };
 
 /*
