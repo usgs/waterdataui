@@ -20,7 +20,6 @@ export const getIVCurrentVariableGroundwaterLevels = createSelector(
     getAllGroundwaterLevels,
     getCurrentParmCd,
     (gwLevels, parameterCode) => {
-
         return gwLevels && parameterCode && gwLevels[parameterCode] ? gwLevels[parameterCode] : {};
     }
 );
