@@ -214,23 +214,6 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
             expect(value).toBe('14 ft3/s');
         });
 
-        it('Creates the text elements with the label for the focus times when there is a second axis', () => {
-            let store = configureStore(Object.assign({}, testState, {
-                ivTimeSeriesState: Object.assign({}, testState.ivTimeSeriesState, {
-                    ivGraphCursorOffset: 2 * 60 * 60 * 1000,
-                    currentIVVariableID: '00010id',
-                    currentIVMethodID: 69929
-                })
-            }));
-
-            div.call(drawTooltipText, store);
-
-            let value = div.select('.current-tooltip-text').text().split(' - ')[0];
-            expect(value).toBe('14 deg C (57.2 deg F)');
-            value = div.select('.compare-tooltip-text').text().split(' - ')[0];
-            expect(value).toBe('14 deg C (57.2 deg F)');
-        });
-
         it('Text contents are updated when the store is provided with new focus times', () => {
             let store = configureStore(Object.assign({}, testState, {
                 ivTimeSeriesState: Object.assign({}, testState.ivTimeSeriesState, {

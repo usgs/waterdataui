@@ -251,32 +251,6 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
         });
     });
 
-    describe('getSecondaryYLabel', () => {
-        it('returns a secondary label when a celsius parameter is selected', () => {
-             expect(getSecondaryYLabel({
-                 ...TEST_DATA,
-                 ivTimeSeriesState: {
-                     ...TEST_DATA.ivTimeSeriesState,
-                     currentIVVariableID: '45807196'
-                 }
-             })).toEqual('deg F');
-        });
-
-        it('returns a secondary label when a fahrenheit parameter is selected', () => {
-             expect(getSecondaryYLabel({
-                 ...TEST_DATA,
-                 ivTimeSeriesState: {
-                     ...TEST_DATA.ivTimeSeriesState,
-                     currentIVVariableID: '45807195'
-                 }
-             })).toEqual('deg C');
-        });
-
-        it('does not return a secondary when a parameter when a non-temperature parameter is selected', () => {
-             expect(getSecondaryYLabel(TEST_DATA)).toBeNull();
-        });
-    });
-
     describe('getTitle', () => {
         it('Returns the string to used for graph title', () => {
             expect(getTitle(TEST_DATA)).toBe('Streamflow');
