@@ -184,7 +184,7 @@ export const plotSeriesSelectTable = function(elem,
     table.selectAll('.wateralert-link').each(function(d) {
 
         // Allow the converted temperature codes to have a link to the non-converted Wateralert form
-        const allTemperatureParameters = config.TEMPERATURE_PARAMETERS.celsius.concat(config.TEMPERATURE_PARAMETERS.fahrenheit)
+        const allTemperatureParameters = config.TEMPERATURE_PARAMETERS.celsius.concat(config.TEMPERATURE_PARAMETERS.fahrenheit);
         const convertedTemperatureCodes = allTemperatureParameters.map(function(code) {
             return code.replace(`${code}`, `${code}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`);
         });

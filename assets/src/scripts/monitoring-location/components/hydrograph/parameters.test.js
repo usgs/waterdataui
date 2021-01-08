@@ -39,6 +39,7 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
 
         const availableParameterCodes = [
             {variableID: '00010ID', parameterCode: '00010', description: 'Temperature', selected: true, timeSeriesCount: 1},
+            {variableID: '00010IDF', parameterCode: '00010F', description: 'Temperature in F', selected: false, timeSeriesCount: 1},
             {variableID: '00067ID', parameterCode: '00067', description: 'Ruthenium (VI) Fluoride', selected: false, timeSeriesCount: 1},
             {variableID: '00093ID', parameterCode: '00093', description: 'Uranium (V) Oxide', selected: false, timeSeriesCount: 1}
         ];
@@ -78,12 +79,12 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
 
         it('creates a row for each parameter in a table', () => {
             plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
-            expect(tableDivSelection.selectAll('tbody tr').size()).toEqual(3);
+            expect(tableDivSelection.selectAll('tbody tr').size()).toEqual(4);
         });
 
         it('creates a the correct number svg sparklines in a table', () => {
             plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
-            expect(tableDivSelection.selectAll('svg').size()).toEqual(3);
+            expect(tableDivSelection.selectAll('svg').size()).toEqual(4);
             expect(tableDivSelection.selectAll('svg path').size()).toEqual(2);
         });
 
@@ -94,12 +95,12 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
 
         it('creates a radio button input for each parameter in the table', () => {
             plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
-            expect(tableDivSelection.selectAll('input').size()).toEqual(3);
+            expect(tableDivSelection.selectAll('input').size()).toEqual(4);
         });
 
          it('creates a WaterAlert subscribe link each parameter in the table supported by WaterAlert', () => {
              plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
-             expect(tableDivSelection.selectAll('.wateralert-available').size()).toEqual(1);
+             expect(tableDivSelection.selectAll('.wateralert-available').size()).toEqual(2);
          });
 
          it('creates WaterAlert not available text for each parameter in the table NOT supported by WaterAlert', () => {

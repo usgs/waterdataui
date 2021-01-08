@@ -56,11 +56,11 @@ describe('statistics-data', () => {
         it('Parses the data as expected', () => {
             return promise.then((resp) => {
                 expect(resp).toEqual({
-                    '00060': {
+                    '00010': {
                         '153885': [{
                             agency_cd: 'USGS',
                             site_no: '05370000',
-                            parameter_cd: '00060',
+                            parameter_cd: '00010',
                             ts_id: '153885',
                             loc_web_ds: '',
                             month_nu: '1',
@@ -72,7 +72,7 @@ describe('statistics-data', () => {
                         }, {
                             agency_cd: 'USGS',
                             site_no: '05370000',
-                            parameter_cd: '00060',
+                            parameter_cd: '00010',
                             ts_id: '153885',
                             loc_web_ds: '',
                             month_nu: '1',
@@ -84,7 +84,7 @@ describe('statistics-data', () => {
                         }, {
                             agency_cd: 'USGS',
                             site_no: '05370000',
-                            parameter_cd: '00060',
+                            parameter_cd: '00010',
                             ts_id: '153885',
                             loc_web_ds: '',
                             month_nu: '1',
@@ -96,7 +96,7 @@ describe('statistics-data', () => {
                         }, {
                             agency_cd: 'USGS',
                             site_no: '05370000',
-                            parameter_cd: '00060',
+                            parameter_cd: '00010',
                             ts_id: '153885',
                             loc_web_ds: '',
                             month_nu: '1',
@@ -108,7 +108,7 @@ describe('statistics-data', () => {
                         }, {
                             agency_cd: 'USGS',
                             site_no: '05370000',
-                            parameter_cd: '00060',
+                            parameter_cd: '00010',
                             ts_id: '153885',
                             loc_web_ds: '',
                             month_nu: '1',
@@ -120,7 +120,7 @@ describe('statistics-data', () => {
                         }, {
                             agency_cd: 'USGS',
                             site_no: '05370000',
-                            parameter_cd: '00060',
+                            parameter_cd: '00010',
                             ts_id: '153885',
                             loc_web_ds: '',
                             month_nu: '1',
@@ -132,7 +132,7 @@ describe('statistics-data', () => {
                         }, {
                             agency_cd: 'USGS',
                             site_no: '05370000',
-                            parameter_cd: '00060',
+                            parameter_cd: '00010',
                             ts_id: '153885',
                             loc_web_ds: '',
                             month_nu: '1',
@@ -144,7 +144,7 @@ describe('statistics-data', () => {
                         }, {
                             agency_cd: 'USGS',
                             site_no: '05370000',
-                            parameter_cd: '00060',
+                            parameter_cd: '00010',
                             ts_id: '153885',
                             loc_web_ds: '',
                             month_nu: '1',
@@ -156,7 +156,7 @@ describe('statistics-data', () => {
                         }, {
                             agency_cd: 'USGS',
                             site_no: '05370000',
-                            parameter_cd: '00060',
+                            parameter_cd: '00010',
                             ts_id: '153885',
                             loc_web_ds: '',
                             month_nu: '1',
@@ -168,7 +168,7 @@ describe('statistics-data', () => {
                         }, {
                             agency_cd: 'USGS',
                             site_no: '05370000',
-                            parameter_cd: '00060',
+                            parameter_cd: '00010',
                             ts_id: '153885',
                             loc_web_ds: '',
                             month_nu: '1',
@@ -180,7 +180,7 @@ describe('statistics-data', () => {
                         }, {
                             agency_cd: 'USGS',
                             site_no: '05370000',
-                            parameter_cd: '00060',
+                            parameter_cd: '00010',
                             ts_id: '153885',
                             loc_web_ds: '',
                             month_nu: '1',
@@ -192,7 +192,7 @@ describe('statistics-data', () => {
                         }, {
                             agency_cd: 'USGS',
                             site_no: '05370000',
-                            parameter_cd: '00060',
+                            parameter_cd: '00010',
                             ts_id: '153885',
                             loc_web_ds: '',
                             month_nu: '1',
@@ -204,7 +204,7 @@ describe('statistics-data', () => {
                         }, {
                             agency_cd: 'USGS',
                             site_no: '05370000',
-                            parameter_cd: '00060',
+                            parameter_cd: '00010',
                             ts_id: '153885',
                             loc_web_ds: '',
                             month_nu: '1',
