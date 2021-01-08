@@ -2,9 +2,12 @@ import 'ui/polyfills';
 
 import wdfnviz from 'wdfn-viz';
 
+import config from 'ui/config';
+
 import {getParamString} from 'ml/url-params';
 
 import {configureStore} from 'ml/store';
+import {retrieveGroundwaterLevels} from 'ml/store/discrete-data';
 import {Actions as uiActions} from 'ml/store/ui-state';
 
 import {attachToNode as EmbedComponent} from 'ml/components/embed';
@@ -21,6 +24,21 @@ const COMPONENTS = {
     'network-list': NetworkListComponent
 };
 
+const loadAllGroundWaterData = function(nodes, store) {
+    const nodesWithGroundWaterLevels =
+        Array.from(nodes).filter(node => node.dataset.componement === 'hydrograph' || node.dataset.component === 'dv-hydrograph');
+    if (!nodesWithGroundWaterLevels.length) {
+        return;
+    }
+
+    const siteno = nodesWithGroundWaterLevels[0].dataset.siteno;
+    Object.keys(config.gwPeriodOfRecord).forEach(function(parameterCode) {
+        const periodOfRecord = config.gwPeriodOfRecord[parameterCode];
+        store.dispatch(
+            retrieveGroundwaterLevels(siteno, parameterCode, periodOfRecord.begin_date, periodOfRecord.end_date));
+    });
+};
+
 const load = function() {
     let pageContainer = document.getElementById('monitoring-location-page-container');
     let store = configureStore({
@@ -30,6 +48,8 @@ const load = function() {
         }
     });
     let nodes = document.getElementsByClassName('wdfn-component');
+    loadAllGroundWaterData(nodes, store);
+
     for (let node of nodes) {
         // If options is specified on the node, expect it to be a JSON string.
         // Otherwise, use the dataset attributes as the component options.

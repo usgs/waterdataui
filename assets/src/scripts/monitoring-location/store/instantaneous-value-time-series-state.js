@@ -6,7 +6,7 @@
  */
 
 /*
- * Synchronous action to toggle the visibility of specific time series (i.e. current, compare, median)
+ * Synchronous action to toggle the visibility of specific time series (i.e. current, compare, median, gwlevels)
  * @param {String} key
  * @param {Boolean} show
  * @return {Object} - Redux action

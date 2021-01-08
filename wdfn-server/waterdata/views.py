@@ -132,6 +132,7 @@ def monitoring_location(site_no):
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'available_data_types': available_data_types,
                 'uv_period_of_record': get_period_of_record_by_parm_cd(parameter_data),
+                'gw_period_of_record': get_period_of_record_by_parm_cd(parameter_data, 'gw'),
                 'parm_grp_summary': grouped_dataseries,
                 'questions_link': questions_link,
                 'cooperators': cooperators
