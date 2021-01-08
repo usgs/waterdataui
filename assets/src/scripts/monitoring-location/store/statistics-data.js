@@ -30,7 +30,6 @@ export const convertCelsiusToFahrenheitAndAddToStats = function(stats) {
     Object.entries(stats).forEach(stat => {
         if (config.TEMPERATURE_PARAMETERS.celsius.includes(stat[0])) {
             const convertedStat = cloneDeep(stat[1]);
-            console.log('entries convertedStat ', Object.entries(convertedStat))
 
             Object.entries(convertedStat).forEach(statEntry => {
                 statEntry[1].forEach(detail => {

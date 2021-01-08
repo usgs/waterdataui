@@ -84,6 +84,7 @@ export const convertTemperatureSeriesAndAddToCollection = function(collection) {
             calculatedNWISVariable.variableDescription = calculatedNWISVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
             calculatedNWISVariable.unit.unitCode = calculatedNWISVariable.unit.unitCode.replace('C', 'F');
             calculatedNWISVariable.variableCode.value = `${calculatedNWISVariable.variableCode.value}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+            calculatedNWISVariable.variableCode.variableID = `${calculatedNWISVariable.variableCode.variableID}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
             calculatedNWISVariable.oid = `${calculatedNWISVariable.oid}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
 
             convertedTemperaturePoints.forEach(convertedTemperaturePoint => {

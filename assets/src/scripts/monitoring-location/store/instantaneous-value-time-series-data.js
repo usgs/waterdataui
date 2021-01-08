@@ -193,14 +193,9 @@ const retrieveCustomTimePeriodIVTimeSeries = function(siteno, parameterCd, perio
         return getTimeSeries({sites: [siteno], params: [parameterCd], period: period}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
-                const variables = Object.values(collection.variables);
-                console.log('variables', variables)
-                const variableToDraw = find(variables, v =>  v.variableCode.value === parameterCd.split(config.CALCULATED_TEMPERATURE_VARIABLE_CODE)[0]);
-                console.log('variableToDraw ', variableToDraw)
-                dispatch(Actions.addIVTimeSeriesCollection(collection));
+                dispatch(Actions.addIVTimeSeriesCollection(convertTemperatureSeriesAndAddToCollection(collection)));
                 dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', 'custom'));
                 dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('customTimeRangeSelectionButton', 'days-input'));
-                dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(variableToDraw.variableCode.variableID.toString()));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
             },
             () => {
