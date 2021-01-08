@@ -40,83 +40,43 @@ describe('convertTemperatureSeriesAndAddToCollection', () => {
             '45807042': {
                 'variableCode': {
                     'value': '00010',
-                    'network': 'NWIS',
-                    'vocabulary': 'NWIS:UnitValues',
-                    'variableID': 45807042,
-                    'default': true
+                    'variableID': 45807042
                 },
                 'variableName': 'Temperature, water, °C',
                 'variableDescription': 'Temperature, water, degrees Celsius',
-                'valueType': 'Derived Value',
                 'unit': {
                     'unitCode': 'deg C'
                 },
-                'options': [
-                    '00000'
-                ],
-                'note': [],
-                'noDataValue': -999999,
-                'variableProperty': [],
                 'oid': '45807042'
             },
             '45807197': {
                 'variableCode': {
                     'value': '00060',
-                    'network': 'NWIS',
-                    'vocabulary': 'NWIS:UnitValues',
-                    'variableID': 45807197,
-                    'default': true
+                    'variableID': 45807197
                 },
                 'variableName': 'Streamflow, ft³/s',
                 'variableDescription': 'Discharge, cubic feet per second',
-                'valueType': 'Derived Value',
                 'unit': {
                     'unitCode': 'ft3/s'
                 },
-                'options': [
-                    '00000'
-                ],
-                'note': [],
-                'noDataValue': -999999,
-                'variableProperty': [],
                 'oid': '45807197'
             },
             '45807202': {
                 'variableCode': {
                     'value': '00065',
-                    'network': 'NWIS',
-                    'vocabulary': 'NWIS:UnitValues',
-                    'variableID': 45807202,
-                    'default': true
+                    'variableID': 45807202
                 },
                 'variableName': 'Gage height, ft',
                 'variableDescription': 'Gage height, feet',
-                'valueType': 'Derived Value',
                 'unit': {
                     'unitCode': 'ft'
                 },
-                'options': [
-                    '00000'
-                ],
-                'note': [],
-                'noDataValue': -999999,
-                'variableProperty': [],
                 'oid': '45807202'
             }
         },
         'timeSeries': {
             '157775:current:P7D': {
-                'qualifier': [
-                    'P'
-                ],
-                'qualityControlLevel': [],
-                'method': 157775,
-                'source': [],
-                'offset': [],
-                'sample': [],
-                'censorCode': [],
                 'variable': '45807042',
-                'tsKey': 'current:P7D',
                 'points': [
                     {
                         'value': 2.9,
@@ -170,37 +130,14 @@ describe('convertTemperatureSeriesAndAddToCollection', () => {
                 ]
             },
             '157776:current:P7D': {
-                'qualifier': [
-                    'P'
-                ],
-                'qualityControlLevel': [],
-                'method': 157776,
-                'source': [],
-                'offset': [],
-                'sample': [],
-                'censorCode': [],
-                'variable': '45807197',
-                'tsKey': 'current:P7D',
-                'points': []
+                'variable': '45807197'
             },
             '237348:current:P7D': {
-                'qualifier': [
-                    'P'
-                ],
-                'qualityControlLevel': [],
-                'method': 237348,
-                'source': [],
-                'offset': [],
-                'sample': [],
-                'censorCode': [],
-                'variable': '45807202',
-                'tsKey': 'current:P7D',
-                'points': []
+                'variable': '45807202'
             }
         },
         'timeSeriesCollections': {
             'USGS:05370000:00010:00000:current:P7D': {
-                'sourceInfo': '05370000',
                 'variable': '45807042',
                 'name': 'USGS:05370000:00010:00000',
                 'timeSeries': [
@@ -208,7 +145,6 @@ describe('convertTemperatureSeriesAndAddToCollection', () => {
                 ]
             },
             'USGS:05370000:00060:00000:current:P7D': {
-                'sourceInfo': '05370000',
                 'variable': '45807197',
                 'name': 'USGS:05370000:00060:00000',
                 'timeSeries': [
@@ -216,7 +152,6 @@ describe('convertTemperatureSeriesAndAddToCollection', () => {
                 ]
             },
             'USGS:05370000:00065:00000:current:P7D': {
-                'sourceInfo': '05370000',
                 'variable': '45807202',
                 'name': 'USGS:05370000:00065:00000',
                 'timeSeries': [
@@ -225,9 +160,11 @@ describe('convertTemperatureSeriesAndAddToCollection', () => {
             }
         }
     };
-    const testCollectionConverted = {};
-    
+
+
+    const convertedCollection = convertTemperatureSeriesAndAddToCollection(testCollection);
+
     it('will convert a Celsius time series to Fahrenheit and add it to a time series collection', () => {
-        expect(convertTemperatureSeriesAndAddToCollection(testCollection)).toEqual(testCollectionConverted);
+        expect({}).toEqual(convertedCollection);
     });
 });

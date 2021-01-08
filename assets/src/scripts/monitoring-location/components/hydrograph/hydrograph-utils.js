@@ -98,5 +98,6 @@ export const convertTemperatureSeriesAndAddToCollection = function(collection) {
             collection.variables[`${currentInLoopVariableCode}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`] = calculatedNWISVariable;
         }
     });
+
     return collection;
 };
