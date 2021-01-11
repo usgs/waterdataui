@@ -21,28 +21,18 @@ const setMedianStats = function(statisticsData) {
 };
 
 /*
-*  Helper function that takes a group of statistics and checks if any of those are temperatures in celsius. If found,
-* the function will convert to Fahrenheit and add the new temperatures to the statistics group.
-* @param {Object} The median statistics
-* @return {Object} The median statistics, possibly with converted temperatures added
+*  Helper function that takes a group of median value Celsius temperature statistics and converts to Fahrenheit.
+* @param {Object} An object grouped by method IDs that contains a cloned copy of temperature value statistics
+* @return {Object} The median statistics with converted temperatures
 */
-const convertCelsiusToFahrenheitAndAddToStats = function(stats) {
-    Object.entries(stats).forEach(stat => {
-        if (config.TEMPERATURE_PARAMETERS.celsius.includes(stat[0])) {
-            const convertedStat = cloneDeep(stat[1]);
-
-            Object.entries(convertedStat).forEach(statEntry => {
-                statEntry[1].forEach(detail => {
-                    detail.p50_va = convertCelsiusToFahrenheit(detail.p50_va);
-                });
+const convertMethodStatsFromCelsiusToFahrenheit = function(clonedStatGroup) {
+        Object.entries(clonedStatGroup).forEach(statEntry => {
+            statEntry[1].forEach(detail => {
+                detail.p50_va = convertCelsiusToFahrenheit(detail.p50_va);
             });
+        });
 
-            // add the new key value pair to the stats object
-            stats[`${stat[0]}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`] = convertedStat;
-        }
-    });
-
-    return stats;
+    return clonedStatGroup;
 };
 
 /*
@@ -53,7 +43,19 @@ const convertCelsiusToFahrenheitAndAddToStats = function(stats) {
 const retrieveMedianStatistics = function(siteno) {
     return function(dispatch) {
         return fetchSiteStatistics({siteno, statType: 'median'}).then((stats) => {
-            stats = convertCelsiusToFahrenheitAndAddToStats(stats);
+            Object.entries(stats).forEach(parameterStatGroup => {
+                const parameterCode = parameterStatGroup[0];
+                const methodGroupings = parameterStatGroup[1];
+                if (config.TEMPERATURE_PARAMETERS.celsius.includes(parameterCode)) {
+                    const convertedStatGroup = convertMethodStatsFromCelsiusToFahrenheit(cloneDeep(methodGroupings));
+
+                    stats = {
+                        ...stats,
+                        [`${parameterCode}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`]: convertedStatGroup
+                    };
+                }
+            });
+
             dispatch(setMedianStats(stats));
         });
     };
