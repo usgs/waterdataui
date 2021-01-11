@@ -33,9 +33,18 @@
     {% if uv_period_of_record %}
         <script type="application/javascript">
             CONFIG.uvPeriodOfRecord = {{ uv_period_of_record | tojson }};
-            CONFIG.gwPeriodOfRecord = {{ gw_period_of_record | tojson }};
         </script>
     {% endif %}
+    {% if gw_period_of_record %}
+        <script type="application/javascript">
+            CONFIG.gwPeriodOfRecord = {{ gw_period_of_record | tojson }};
+        </script>
+    {% else %}
+        <script type="application/javascript">
+           CONFIG.gwPeriodOfRecord = null;
+        </script>
+    {% endif %}
+
     <script src="{{ 'bundle.js' | asset_url }}"></script>
     {% if json_ld %}
         <script type="application/ld+json">

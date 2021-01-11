@@ -32,11 +32,13 @@ const loadAllGroundWaterData = function(nodes, store) {
     }
 
     const siteno = nodesWithGroundWaterLevels[0].dataset.siteno;
-    Object.keys(config.gwPeriodOfRecord).forEach(function(parameterCode) {
-        const periodOfRecord = config.gwPeriodOfRecord[parameterCode];
-        store.dispatch(
-            retrieveGroundwaterLevels(siteno, parameterCode, periodOfRecord.begin_date, periodOfRecord.end_date));
-    });
+    if (config.gwPeriodOfRecord) {
+        Object.keys(config.gwPeriodOfRecord).forEach(function (parameterCode) {
+            const periodOfRecord = config.gwPeriodOfRecord[parameterCode];
+            store.dispatch(
+                retrieveGroundwaterLevels(siteno, parameterCode, periodOfRecord.begin_date, periodOfRecord.end_date));
+        });
+    }
 };
 
 const load = function() {
