@@ -22,8 +22,8 @@ const setMedianStats = function(statisticsData) {
 
 /*
 *  Helper function that takes a group of median value Celsius temperature statistics and converts to Fahrenheit.
-* @param {Object} An object grouped by method IDs that contains a cloned copy of temperature value statistics
-* @return {Object} The median statistics with converted temperatures
+* @param {Object} clonedStatGroup - An object grouped by method IDs that contains a cloned copy of temperature value statistics
+* @return {Object} clonedStatGroup - The median statistics with converted temperatures
 */
 const convertMethodStatsFromCelsiusToFahrenheit = function(clonedStatGroup) {
         Object.entries(clonedStatGroup).forEach(statEntry => {
