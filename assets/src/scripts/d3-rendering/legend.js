@@ -79,7 +79,7 @@ export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
                 width: RECTANGLE_MARKER_WIDTH,
                 height: RECTANGLE_MARKER_HEIGHT,
                 length: LINE_MARKER_WIDTH,
-                r: marker.r,
+                r: marker.radius,
                 fill: marker.fill
             };
 

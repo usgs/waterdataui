@@ -24,7 +24,7 @@ import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
 import {getDescription, isVisible, getTitle} from './selectors/time-series-data';
 
-import {drawGroundWaterLevels} from './discrete-data';
+import {drawGroundwaterLevels} from './discrete-data';
 import {drawDataLines} from './time-series-lines';
 import {drawTooltipFocus, drawTooltipText}  from './tooltip';
 
@@ -271,7 +271,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
             seriesPoints: getCurrentVariableMedianStatPoints,
             enableClip: () => true
         })))
-        .call(link(store, drawGroundWaterLevels, createStructuredSelector({
+        .call(link(store, drawGroundwaterLevels, createStructuredSelector({
             levels: getVisibleGroundWaterLevels,
             xScale: getMainXScale('current'),
             yScale: getMainYScale

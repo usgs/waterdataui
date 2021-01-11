@@ -1,6 +1,6 @@
 import {createStructuredSelector} from 'reselect';
 
-import {drawSimpleLegend} from 'd3render//legend';
+import {drawSimpleLegend} from 'd3render/legend';
 import {link} from 'ui/lib/d3-redux';
 
 import {getMainLayout} from './selectors/layout';

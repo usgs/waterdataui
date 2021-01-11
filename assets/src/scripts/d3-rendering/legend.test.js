@@ -3,7 +3,7 @@ import {select} from 'd3-selection';
 import * as utils from 'ui/utils';
 
 import {drawSimpleLegend} from './legend';
-import {lineMarker, rectangleMarker, textOnlyMarker} from './markers';
+import {circleMarker, lineMarker, rectangleMarker, textOnlyMarker} from './markers';
 
 describe('Legend module', () => {
 
@@ -34,6 +34,12 @@ describe('Legend module', () => {
                 domId: null,
                 domClass: 'some-other-class',
                 text: 'Median Label'
+            }, {
+                type: circleMarker,
+                domId: null,
+                domClass: 'circle-marker-class',
+                text: 'Circle Marker label',
+                radius: 5
             }]
         ];
         const layout = {
@@ -70,7 +76,8 @@ describe('Legend module', () => {
             expect(container.select('svg').size()).toBe(1);
             expect(container.selectAll('line').size()).toBe(2);
             expect(container.selectAll('rect').size()).toBe(1);
-            expect(container.selectAll('text').size()).toBe(4);
+            expect(container.selectAll('text').size()).toBe(5);
+            expect(container.selectAll('circle').size()).toBe(1);
         });
     });
 });

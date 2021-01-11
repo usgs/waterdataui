@@ -1,9 +1,8 @@
-import {getVisibleGroundWaterLevels} from './discrete-data';
+import {getVisibleGroundWaterLevels, anyVisibleGroundWaterLevels} from './discrete-data';
 
 describe('monitoring-location/components/hydrograph/selectors/discrete-data', () => {
 
-    describe('getVisibleGroundWaterLevels', () => {
-        const TEST_STATE = {
+    const TEST_STATE = {
             ianaTimeZone: 'America/Chicago',
             ivTimeSeriesData: {
                 queryInfo: {
@@ -55,6 +54,8 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
             }
         };
 
+    describe('getVisibleGroundWaterLevels', () => {
+
         it('Return empty array if no groundwater levels are defined', () => {
             const testData = {
                 ...TEST_STATE,
@@ -79,6 +80,22 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
         it('Return the ground water levels that are in the 7 day period', () => {
             const result = getVisibleGroundWaterLevels(TEST_STATE);
             expect(result).toHaveLength(2);
+        });
+    });
+
+    describe('anyVisibleGroundWaterLevels', () => {
+        it('Return false if no visible ground water levels', () => {
+            const testData = {
+                ...TEST_STATE,
+                discreteData: {
+                    groundwaterLevels: null
+                }
+            };
+            expect(anyVisibleGroundWaterLevels(testData)).toBe(false);
+        });
+
+        it('Return true if visible ground water levels', () => {
+            expect(anyVisibleGroundWaterLevels(TEST_STATE)).toBe(true);
         });
     });
 });
