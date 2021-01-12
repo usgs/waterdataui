@@ -123,7 +123,7 @@ describe('monitoring-location/store/discrete-data', () => {
                 expect(state.discreteData.groundwaterLevels['72019'].values[0]).toEqual({
                     value: '26.07',
                     qualifiers: [],
-                    dateTime: 1579770360000
+                    dateTime: 1579788360000
                 });
             });
         });
