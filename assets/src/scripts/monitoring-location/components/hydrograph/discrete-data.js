@@ -4,7 +4,7 @@ const GW_LEVEL_RADIUS = 5;
 const GW_LEVEL_CLASS = 'gw-level-point';
 
 /*
- * Render the ground water level symobls on the svg in their own group. If the group exists
+ * Render the ground water level symbols on the svg in their own group. If the group exists, remove
  * it before rendering again.
  * @param {D3 elem} svg (could also be a group)
  * @param {Array of Object} levels - each object, should have dateTime and value properties
