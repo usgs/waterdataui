@@ -239,7 +239,6 @@ export const sortedParameters = function(variables) {
         '00060': 1,
         '72019': 2
     };
-
     const dataVars = variables ? Object.values(variables) : [];
     const pertinentParmCds = Object.keys(PARAM_PERTINENCE);
     const highPertinenceVars = dataVars.filter(x => pertinentParmCds.includes(x.variableCode.value))

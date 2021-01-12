@@ -89,25 +89,39 @@ const resetIVTimeSeries = function(tsRequestKey) {
     };
 };
 
+
+/*
+*
+ */
 const createConvertedVariable = function(NWISVariable) {
     NWISVariable.variableName = NWISVariable.variableName.replace('C', 'F (calculated)');
     NWISVariable.variableDescription = NWISVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
     NWISVariable.unit.unitCode = NWISVariable.unit.unitCode.replace('C', 'F');
     NWISVariable.variableCode.value = `${NWISVariable.variableCode.value}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
     NWISVariable.variableCode.variableID = `${NWISVariable.variableCode.variableID}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-    NWISVariable.oid = `${NWISVariable.oid}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+    NWISVariable.oid = `${NWISVariable.oid}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+
+    return  {
+        [NWISVariable.oid]: NWISVariable
+    };
 };
+
 import {convertCelsiusToFahrenheit} from 'ui/utils';
-const createConvertedTimeSeries = function(timeSeries, tsRequestKey) {
-    // Convert the temperature values (points) in the cloned time series from Celsius to Fahrenheit
-    timeSeries[1].points.forEach(temperaturePoint => {
+/*
+* Converts the temperature values (points) in the cloned time series from Celsius to Fahrenheit
+* @param {Object}
+ */
+const createConvertedTimeSeries = function(timeSeries, tsRequestKey, parameterCode) {
+     timeSeries.points.forEach(temperaturePoint => {
         temperaturePoint.value = convertCelsiusToFahrenheit(temperaturePoint.value);
     });
-    // Change the tsRequestKey of the cloned object to use suffix indicating it is a calculated value
-    timeSeries[0] = `${timeSeries[0].split(':')[0]}:${timeSeries[0].split(':')[1]}:${timeSeries[0].split(':')[2]}:${tsRequestKey}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-    timeSeries[1].variable =
-        `${timeSeries[1].variable}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
 
+    timeSeries.variable = `${timeSeries.variable}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+    const tsRequestKeyValue = `${timeSeries.tsKey}:${parameterCode}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+
+    return {
+        [`${timeSeries.method}:${tsRequestKeyValue}`]: timeSeries
+    };
 };
 
 /*
@@ -125,21 +139,19 @@ const retrieveIVTimeSeries = function(siteno) {
             series => {
                 const collection = normalize(series, tsRequestKey);
 
-
-                Object.entries(collection.timeSeries).forEach((tsRequestKey) => {
-                    const variableCode = tsRequestKey[1].variable;
-                    // Cross reference the 'variableCode' in the 'timeSeries' with the 'variables' in the state to get the corresponding parameter code
+                // Convert Celsius Parameters to Fahrenheit
+                Object.entries(collection.timeSeries).forEach((timeSeries) => {
+                    const tsRequestKey = timeSeries[0];
+                    const timeSeriesDetails = timeSeries[1];
+                    const variableCode = timeSeriesDetails.variable;
+                    // Cross reference the 'variableCode' in the 'timeSeries' with 'variables' in the state
+                    // to get the corresponding parameter code
                     const parameterCode = collection.variables[variableCode].variableCode.value;
+                    // For any Celsius parameter codes, clone the application state variables, 'variables and timeSeries'
+                    // and convert the appropriate properties to Fahrenheit. Then add the cloned objects to the 'collection'
                     if (config.TEMPERATURE_PARAMETERS.celsius.includes(parameterCode)) {
-                        // Clone the temperature 'variable' from the application state and convert for Fahrenheit
-                        const convertedNWISVariable = createConvertedVariable(cloneDeep(collection.variables[variableCode]));
-
-                        // Clone the Celsius temperature times series from the application state and convert values for Fahrenheit
-                        const convertedTimeSeries = createConvertedTimeSeries(cloneDeep(collection.timeSeries[tsRequestKey]), tsRequestKey);
-
-
-                        merge(collection, convertedNWISVariable);
-                        merge(collection, convertedTimeSeries);
+                        merge(collection.variables, createConvertedVariable(cloneDeep(collection.variables[variableCode])));
+                        merge(collection.timeSeries, createConvertedTimeSeries(cloneDeep(collection.timeSeries[tsRequestKey]), tsRequestKey, parameterCode));
                     }
                 });
 
@@ -153,7 +165,7 @@ const retrieveIVTimeSeries = function(siteno) {
                 dispatch(Actions.retrieveCompareIVTimeSeries(siteno, 'P7D', startTime, endTime));
 
                 // Update the series data for the 'current' series
-                dispatch(Actions.addIVTimeSeriesCollection(convertTemperatureSeriesAndAddToCollection(collection)));
+                dispatch(Actions.addIVTimeSeriesCollection(collection));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
 
                 // Update the application state
@@ -188,7 +200,8 @@ const retrieveCompareIVTimeSeries = function(siteno, period, startTime, endTime,
         return getPreviousYearTimeSeries({site: siteno, startTime, endTime, parameterCode}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
-                dispatch(Actions.addIVTimeSeriesCollection(convertTemperatureSeriesAndAddToCollection(collection)));
+                // dispatch(Actions.addIVTimeSeriesCollection(convertTemperatureSeriesAndAddToCollection(collection)));
+                dispatch(Actions.addIVTimeSeriesCollection(collection));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
             },
             () => {
@@ -234,7 +247,8 @@ const retrieveCustomTimePeriodIVTimeSeries = function(siteno, parameterCd, perio
         return getTimeSeries({sites: [siteno], params: [parameterCd], period: period}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
-                dispatch(Actions.addIVTimeSeriesCollection(convertTemperatureSeriesAndAddToCollection(collection)));
+                // dispatch(Actions.addIVTimeSeriesCollection(convertTemperatureSeriesAndAddToCollection(collection)));
+                dispatch(Actions.addIVTimeSeriesCollection(collection));
                 dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', 'custom'));
                 dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('customTimeRangeSelectionButton', 'days-input'));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
