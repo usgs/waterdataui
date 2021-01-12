@@ -29,13 +29,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Links for WaterAlert.
 - Added a check to see if FIM sites are public. If not, the sites flood inundation layers are not shown even if available.
 - Links to download data related to the currently displayed hydrograph.
-- Show active sites in the RTN and RTS networks in the map
+- Show active sites in the RTN and RTS networks in the map.
 
 ### Changed
 - Added a tooltip to the hydrograph title showing the selected variable description and show the short unitCode on the Y axis.
 - Now using current preferred SIFTA URL.
 - Using '00065' (Gage Height) as the default parameter code.
-- On mobile, one finger scrolling of map is disabled; two finger drag and zoom is enabled
+- On mobile, one finger scrolling of map is disabled; two finger drag and zoom is enabled.
 
 ### Fixed
 - Dynamically generated tooltips are now initialized properly by calling init on the node where the tooltip is created rather than on the entire DOM which was causing multiple tooltip markup to be created.

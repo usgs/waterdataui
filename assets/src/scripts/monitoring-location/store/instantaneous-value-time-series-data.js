@@ -3,6 +3,7 @@ import findKey from 'lodash/findKey';
 import last from 'lodash/last';
 import merge from 'lodash/merge';
 import omitBy from 'lodash/omitBy';
+import cloneDeep from 'lodash/cloneDeep';
 
 import {DateTime} from 'luxon';
 
@@ -88,6 +89,27 @@ const resetIVTimeSeries = function(tsRequestKey) {
     };
 };
 
+const createConvertedVariable = function(NWISVariable) {
+    NWISVariable.variableName = NWISVariable.variableName.replace('C', 'F (calculated)');
+    NWISVariable.variableDescription = NWISVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
+    NWISVariable.unit.unitCode = NWISVariable.unit.unitCode.replace('C', 'F');
+    NWISVariable.variableCode.value = `${NWISVariable.variableCode.value}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+    NWISVariable.variableCode.variableID = `${NWISVariable.variableCode.variableID}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+    NWISVariable.oid = `${NWISVariable.oid}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+};
+import {convertCelsiusToFahrenheit} from 'ui/utils';
+const createConvertedTimeSeries = function(timeSeries, tsRequestKey) {
+    // Convert the temperature values (points) in the cloned time series from Celsius to Fahrenheit
+    timeSeries[1].points.forEach(temperaturePoint => {
+        temperaturePoint.value = convertCelsiusToFahrenheit(temperaturePoint.value);
+    });
+    // Change the tsRequestKey of the cloned object to use suffix indicating it is a calculated value
+    timeSeries[0] = `${timeSeries[0].split(':')[0]}:${timeSeries[0].split(':')[1]}:${timeSeries[0].split(':')[2]}:${tsRequestKey}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+    timeSeries[1].variable =
+        `${timeSeries[1].variable}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+
+};
+
 /*
  * Asynchronous Redux action - fetches the IV time series data for all parameter codes for siteno for the
  * last 7 days.
@@ -102,6 +124,25 @@ const retrieveIVTimeSeries = function(siteno) {
         return getTimeSeries({sites: [siteno]}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
+
+
+                Object.entries(collection.timeSeries).forEach((tsRequestKey) => {
+                    const variableCode = tsRequestKey[1].variable;
+                    // Cross reference the 'variableCode' in the 'timeSeries' with the 'variables' in the state to get the corresponding parameter code
+                    const parameterCode = collection.variables[variableCode].variableCode.value;
+                    if (config.TEMPERATURE_PARAMETERS.celsius.includes(parameterCode)) {
+                        // Clone the temperature 'variable' from the application state and convert for Fahrenheit
+                        const convertedNWISVariable = createConvertedVariable(cloneDeep(collection.variables[variableCode]));
+
+                        // Clone the Celsius temperature times series from the application state and convert values for Fahrenheit
+                        const convertedTimeSeries = createConvertedTimeSeries(cloneDeep(collection.timeSeries[tsRequestKey]), tsRequestKey);
+
+
+                        merge(collection, convertedNWISVariable);
+                        merge(collection, convertedTimeSeries);
+                    }
+                });
+
 
                 // Get the start/end times of this request's range.
                 const notes = collection.queryInfo[tsRequestKey].notes;
