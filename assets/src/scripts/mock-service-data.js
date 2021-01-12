@@ -3236,37 +3236,37 @@ export const MOCK_GWLEVEL_DATA =
               {
                 "value": "26.07",
                 "qualifiers": [],
-                "dateTime": "2020-01-23T09:06:00.000-05:00"
+                "dateTime": "2020-01-23T09:06:00.000"
               },
               {
                 "value": "27.27",
                 "qualifiers": [],
-                "dateTime": "2020-03-19T15:11:00.000-06:00"
+                "dateTime": "2020-03-19T15:11:00.000"
               },
               {
                 "value": "27.33",
                 "qualifiers": [],
-                "dateTime": "2020-05-13T11:47:00.000-06:00"
+                "dateTime": "2020-05-13T11:47:00.000"
               },
               {
                 "value": "29.19",
                 "qualifiers": [],
-                "dateTime": "2020-07-23T11:45:00.000-06:00"
+                "dateTime": "2020-07-23T11:45:00.000"
               },
               {
                 "value": "25.55",
                 "qualifiers": [],
-                "dateTime": "2020-08-24T16:04:00.000-06:00"
+                "dateTime": "2020-08-24T16:04:00.000"
               },
               {
                 "value": "25.03",
                 "qualifiers": [],
-                "dateTime": "2020-10-01T18:10:00.000-06:00"
+                "dateTime": "2020-10-01T18:10:00.000"
               },
               {
                 "value": "24.54",
                 "qualifiers": [],
-                "dateTime": "2020-11-17T12:57:00.000-05:00"
+                "dateTime": "2020-11-17T12:57:00.000"
               }
             ],
             "qualifier": [],
