@@ -126,9 +126,9 @@ export const textOnlyMarker = function(elem, {x, y, text, domId=null, domClass=n
 export const defineLineMarker = function(domId=null, domClass=null, text=null) {
     return {
         type: lineMarker,
-        domId: domId,
-        domClass: domClass,
-        text: text
+        domId,
+        domClass,
+        text
     };
 };
 
@@ -136,9 +136,9 @@ export const defineLineMarker = function(domId=null, domClass=null, text=null) {
 export const defineTextOnlyMarker = function(text, domId=null, domClass=null ) {
     return {
         type: textOnlyMarker,
-        domId: domId,
-        domClass: domClass,
-        text: text
+        domId,
+        domClass,
+        text
     };
 };
 
@@ -146,10 +146,21 @@ export const defineTextOnlyMarker = function(text, domId=null, domClass=null ) {
 export const defineRectangleMarker = function(domId=null, domClass=null, text=null, fill=null) {
     return {
         type: rectangleMarker,
-        domId: domId,
-        domClass: domClass,
-        text: text,
-        fill: fill
+        domId,
+        domClass,
+        text,
+        fill
+    };
+};
+
+export const defineCircleMarker = function(domId=null, domClass=null, radius=1, text=null, fill=null) {
+    return {
+        type: circleMarker,
+        domId,
+        domClass,
+        radius,
+        text,
+        fill
     };
 };
 

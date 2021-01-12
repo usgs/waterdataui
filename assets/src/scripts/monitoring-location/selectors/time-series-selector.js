@@ -88,7 +88,6 @@ export const getCurrentVariable = createSelector(
 export const getCurrentParmCd = createSelector(
     getCurrentVariable,
     (currentVar) => {
-
         return currentVar && currentVar.variableCode ? currentVar.variableCode.value : null;
     }
 );

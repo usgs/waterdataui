@@ -7,6 +7,7 @@ import {
 import {nldiDataReducer as nldiData} from './nldi-data';
 import {dailyValueTimeSeriesDataReducer as dailyValueTimeSeriesData} from './daily-value-time-series';
 import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './daily-value-time-series';
+import {discreteDataReducer as discreteData} from './discrete-data';
 import {ivTimeSeriesDataReducer as ivTimeSeriesData} from './instantaneous-value-time-series-data';
 import {ivTimeSeriesStateReducer as ivTimeSeriesState} from './instantaneous-value-time-series-state';
 import {networkDataReducer as networkData} from './network';
@@ -21,6 +22,7 @@ const appReducer = combineReducers({
     statisticsData,
     floodData,
     nldiData,
+    discreteData,
     ivTimeSeriesState,
     dailyValueTimeSeriesState,
     floodState,
@@ -36,6 +38,7 @@ export const configureStore = function(initialState) {
         ivTimeSeriesData: {},
         ianaTimeZone: null,
         dailyValueTimeSeriesData: {},
+        discreteData: {},
         floodData: {
             stages: [],
             extent: {},

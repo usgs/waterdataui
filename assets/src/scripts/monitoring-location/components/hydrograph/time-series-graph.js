@@ -14,6 +14,7 @@ import {getAgencyCode, getMonitoringLocationName, getCurrentVariable} from 'ml/s
 import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
 
 import {getAxes}  from './selectors/axes';
+import {getVisibleGroundWaterLevels} from './selectors/discrete-data';
 import {
     getCurrentVariableLineSegments,
     getCurrentVariableMedianStatPoints,
@@ -23,6 +24,7 @@ import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
 import {getDescription, isVisible, getTitle} from './selectors/time-series-data';
 
+import {drawGroundwaterLevels} from './discrete-data';
 import {drawDataLines} from './time-series-lines';
 import {drawTooltipFocus, drawTooltipText}  from './tooltip';
 
@@ -269,12 +271,18 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
             seriesPoints: getCurrentVariableMedianStatPoints,
             enableClip: () => true
         })))
+        .call(link(store, drawGroundwaterLevels, createStructuredSelector({
+            levels: getVisibleGroundWaterLevels,
+            xScale: getMainXScale('current'),
+            yScale: getMainYScale
+        })))
         .call(link(store, plotAllFloodLevelPoints, createStructuredSelector({
             visible: isWaterwatchVisible,
             xscale: getBrushXScale('current'),
             yscale: getMainYScale,
             seriesPoints: getWaterwatchFloodLevels
         })));
+
     if (showTooltip) {
         dataGroup.call(drawTooltipFocus, store);
     }

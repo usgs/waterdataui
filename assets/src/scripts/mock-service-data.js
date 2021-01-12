@@ -3101,3 +3101,192 @@ export const MOCK_OBSERVATION_ITEM = `{
         }
     ]
 }`;
+
+export const MOCK_GWLEVEL_DATA =
+`{
+  "name": "ns1:timeSeriesResponseType",
+  "declaredType": "org.cuahsi.waterml.TimeSeriesResponseType",
+  "scope": "javax.xml.bind.JAXBElement$GlobalScope",
+  "value": {
+    "queryInfo": {
+      "queryURL": "http://waterservices.usgs.gov/nwis/gwlevels/format=json&sites=354133082042203&parameterCd=72019&startDT=2020-01-01&endDT=2020-11-17",
+      "criteria": {
+        "locationParam": "[ALL:354133082042203]",
+        "variableParam": "[72019]",
+        "timeParam": {
+          "beginDateTime": "2020-01-01T00:00:00.000",
+          "endDateTime": "2020-11-17T23:59:59.000"
+        },
+        "parameter": []
+      },
+      "note": [
+        {
+          "value": "[ALL:354133082042203]",
+          "title": "filter:sites"
+        },
+        {
+          "value": "[mode=RANGE, modifiedSince=null] interval={INTERVAL[2020-01-01T00:00:00.000-05:00/2020-11-17T23:59:59.000Z]}",
+          "title": "filter:timeRange"
+        },
+        {
+          "value": "methodIds=[ALL]",
+          "title": "filter:methodId"
+        },
+        {
+          "value": "2021-01-07T14:03:54.275Z",
+          "title": "requestDT"
+        },
+        {
+          "value": "2d53d020-50f1-11eb-be92-2cea7f58f5ca",
+          "title": "requestId"
+        },
+        {
+          "value": "Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.",
+          "title": "disclaimer"
+        },
+        {
+          "value": "vaas01",
+          "title": "server"
+        }
+      ]
+    },
+    "timeSeries": [
+      {
+        "sourceInfo": {
+          "siteName": "MC-109 NEAR PLEASANT GARDENS, NC (BEDROCK)",
+          "siteCode": [
+            {
+              "value": "354133082042203",
+              "network": "NWIS",
+              "agencyCode": "USGS"
+            }
+          ],
+          "timeZoneInfo": {
+            "defaultTimeZone": {
+              "zoneOffset": "-05:00",
+              "zoneAbbreviation": "EST"
+            },
+            "daylightSavingsTimeZone": {
+              "zoneOffset": "-04:00",
+              "zoneAbbreviation": "EDT"
+            },
+            "siteUsesDaylightSavingsTime": true
+          },
+          "geoLocation": {
+            "geogLocation": {
+              "srs": "EPSG:4326",
+              "latitude": 35.6926111,
+              "longitude": -82.0729444
+            },
+            "localSiteXY": []
+          },
+          "note": [],
+          "siteType": [],
+          "siteProperty": [
+            {
+              "value": "GW",
+              "name": "siteTypeCd"
+            },
+            {
+              "value": "03050101",
+              "name": "hucCd"
+            },
+            {
+              "value": "37",
+              "name": "stateCd"
+            },
+            {
+              "value": "37111",
+              "name": "countyCd"
+            }
+          ]
+        },
+        "variable": {
+          "variableCode": [
+            {
+              "value": "72019",
+              "network": "NWIS",
+              "vocabulary": "NWIS:UnitValues",
+              "variableID": 52331280,
+              "default": true
+            }
+          ],
+          "variableName": "Depth to water level, ft below land surface",
+          "variableDescription": "Depth to water level, feet below land surface",
+          "valueType": "Derived Value",
+          "unit": {
+            "unitCode": "ft"
+          },
+          "options": {
+            "option": [
+              {
+                "name": "Statistic",
+                "optionCode": "00000"
+              }
+            ]
+          },
+          "note": [],
+          "noDataValue": -999999.0,
+          "variableProperty": [],
+          "oid": "52331280"
+        },
+        "values": [
+          {
+            "value": [
+              {
+                "value": "26.07",
+                "qualifiers": [],
+                "dateTime": "2020-01-23T09:06:00.000-05:00"
+              },
+              {
+                "value": "27.27",
+                "qualifiers": [],
+                "dateTime": "2020-03-19T15:11:00.000-06:00"
+              },
+              {
+                "value": "27.33",
+                "qualifiers": [],
+                "dateTime": "2020-05-13T11:47:00.000-06:00"
+              },
+              {
+                "value": "29.19",
+                "qualifiers": [],
+                "dateTime": "2020-07-23T11:45:00.000-06:00"
+              },
+              {
+                "value": "25.55",
+                "qualifiers": [],
+                "dateTime": "2020-08-24T16:04:00.000-06:00"
+              },
+              {
+                "value": "25.03",
+                "qualifiers": [],
+                "dateTime": "2020-10-01T18:10:00.000-06:00"
+              },
+              {
+                "value": "24.54",
+                "qualifiers": [],
+                "dateTime": "2020-11-17T12:57:00.000-05:00"
+              }
+            ],
+            "qualifier": [],
+            "qualityControlLevel": [],
+            "method": [
+              {
+                "methodID": 1
+              }
+            ],
+            "source": [],
+            "offset": [],
+            "sample": [],
+            "censorCode": []
+          }
+        ],
+        "name": "USGS:354133082042203:72019:00000"
+      }
+    ]
+  },
+  "nil": false,
+  "globalScope": true,
+  "typeSubstituted": false
+}`;

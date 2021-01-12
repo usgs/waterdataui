@@ -1,6 +1,5 @@
 import sinon from 'sinon';
 
-import config from 'ui/config';
 import {MOCK_OBSERVATION_ITEM} from 'ui/mock-service-data';
 
 import {fetchAvailableDVTimeSeries, fetchDVTimeSeries, fetchNetworkMonitoringLocations,

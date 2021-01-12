@@ -123,7 +123,6 @@ def monitoring_location(site_no):
                 }
                 questions_link = construct_url('https://water.usgs.gov', 'contact/gsanswers', questions_link_params)
 
-
             context = {
                 'status_code': status,
                 'stations': site_data_list,
@@ -132,6 +131,8 @@ def monitoring_location(site_no):
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'available_data_types': available_data_types,
                 'uv_period_of_record': get_period_of_record_by_parm_cd(parameter_data),
+                'gw_period_of_record': get_period_of_record_by_parm_cd(parameter_data, 'gw') if app.config[
+                    'GROUNDWATER_LEVELS_ENABLED'] else None,
                 'parm_grp_summary': grouped_dataseries,
                 'questions_link': questions_link,
                 'cooperators': cooperators
