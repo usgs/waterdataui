@@ -9,7 +9,7 @@ import {normalize} from 'ui/schema';
 import {calcStartTime, sortedParameters} from 'ui/utils';
 import {getPreviousYearTimeSeries, getTimeSeries} from 'ui/web-services/models';
 
-import {convertTemperatureSeriesAndAddToCollection, isPeriodCustom, parsePeriodCode} from 'ml/components/hydrograph/hydrograph-utils';
+import {isPeriodCustom, parsePeriodCode} from 'ml/components/hydrograph/hydrograph-utils';
 import {convertCelsiusCollectionsToFahrenheitAndMerge} from 'ml/iv-data-utils';
 import {
     getCurrentDateRange,
@@ -104,11 +104,11 @@ const retrieveIVTimeSeries = function(siteno) {
         return getTimeSeries({sites: [siteno]}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
-                convertCelsiusCollectionsToFahrenheitAndMerge(collection);
                 // Get the start/end times of this request's range.
                 const notes = collection.queryInfo[tsRequestKey].notes;
                 const endTime = notes.requestDT;
                 const startTime = calcStartTime('P7D', endTime, 'local');
+                convertCelsiusCollectionsToFahrenheitAndMerge(collection);
 
                 // Trigger a call to get last year's data
                 dispatch(Actions.retrieveCompareIVTimeSeries(siteno, 'P7D', startTime, endTime));
@@ -244,7 +244,8 @@ const retrieveCustomIVTimeSeries = function(siteno, startTime, endTime, parmCd=n
         }).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
-                dispatch(Actions.addIVTimeSeriesCollection(convertTemperatureSeriesAndAddToCollection(collection)));
+                convertCelsiusCollectionsToFahrenheitAndMerge(collection);
+                dispatch(Actions.addIVTimeSeriesCollection(collection));
                 dispatch(ivTimeSeriesStateActions.setCurrentIVDateRange('custom'));
                 dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', 'custom'));
                 dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('customTimeRangeSelectionButton', 'calendar-input'));
@@ -297,8 +298,9 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
             }).then(
                 series => {
                     const collection = normalize(series, tsRequestKey);
+                    convertCelsiusCollectionsToFahrenheitAndMerge(collection);
                     dispatch(Actions.retrieveCompareIVTimeSeries(siteno, period, startTime, endTime, thisParamCd));
-                    dispatch(Actions.addIVTimeSeriesCollection(convertTemperatureSeriesAndAddToCollection(collection)));
+                    dispatch(Actions.addIVTimeSeriesCollection(collection));
                     dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
                 },
                 () => {

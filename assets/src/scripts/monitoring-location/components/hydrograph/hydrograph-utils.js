@@ -1,8 +1,3 @@
-import cloneDeep from 'lodash/cloneDeep';
-
-import config from 'ui/config';
-import {convertCelsiusToFahrenheit} from 'ui/utils';
-
 export const MAX_DIGITS_FOR_DAYS_FROM_TODAY = 5;
 
 /*
@@ -62,42 +57,4 @@ export const parsePeriodCode = function(periodCode) {
             'numberOfDaysFieldValue': ''
         };
     }
-};
-
-/*
- * Converts a celsius time series to fahrenheit and store in collection.
- * @param {Object} time series collection
- * @returns {Object} time series collection with fahrenheit version added
- */
-export const convertTemperatureSeriesAndAddToCollection = function(collection) {
-    Object.entries(collection.timeSeries).forEach((currentInLoopSeries) => {
-        const currentInLoopVariableCode = currentInLoopSeries[1].variable;
-        const currentInLoopParameterCode = collection.variables[currentInLoopVariableCode].variableCode.value;
-
-        if (config.TEMPERATURE_PARAMETERS.celsius.includes(currentInLoopParameterCode)) {
-            const convertedTimeSeries = cloneDeep(currentInLoopSeries);
-            const points = currentInLoopSeries[1].points;
-            const convertedTemperaturePoints = cloneDeep(points);
-            let calculatedNWISVariable = cloneDeep(collection.variables[currentInLoopVariableCode]);
-
-            calculatedNWISVariable.variableName = calculatedNWISVariable.variableName.replace('C', 'F (calculated)');
-            calculatedNWISVariable.variableDescription = calculatedNWISVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
-            calculatedNWISVariable.unit.unitCode = calculatedNWISVariable.unit.unitCode.replace('C', 'F');
-            calculatedNWISVariable.variableCode.value = `${calculatedNWISVariable.variableCode.value}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-            calculatedNWISVariable.variableCode.variableID = `${calculatedNWISVariable.variableCode.variableID}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-            calculatedNWISVariable.oid = `${calculatedNWISVariable.oid}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-
-            convertedTemperaturePoints.forEach(convertedTemperaturePoint => {
-                convertedTemperaturePoint.value = convertCelsiusToFahrenheit(convertedTemperaturePoint.value);
-            });
-            convertedTimeSeries[0] = `${convertedTimeSeries[0].split(':')[0]}:${convertedTimeSeries[0].split(':')[1]}:${convertedTimeSeries[0].split(':')[2]}:${currentInLoopParameterCode}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-            convertedTimeSeries[1].points = convertedTemperaturePoints;
-            convertedTimeSeries[1].variable =
-                `${convertedTimeSeries[1].variable}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-            collection.timeSeries[convertedTimeSeries[0]] = convertedTimeSeries[1];
-            collection.variables[`${currentInLoopVariableCode}_${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`] = calculatedNWISVariable;
-        }
-    });
-
-    return collection;
 };

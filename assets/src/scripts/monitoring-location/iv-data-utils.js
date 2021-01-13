@@ -19,7 +19,6 @@ import {convertCelsiusToFahrenheit} from 'ui/utils';
  */
 const checkForMeasuredFahrenheitParameters = function(parameterCode, NWISVariables) {
     let isParameterMatching;
-
     const allVariableParameterCodes = Object.entries(NWISVariables).map(variable => variable[1].variableCode.value);
     const celsiusTemperatureCodesWithFahrenheitCounterparts = ['00020', '00010', '45589'];
     // If the current parameter code is one that could match a measured Fahrenheit parameter, cross reference the
@@ -79,10 +78,10 @@ const createConvertedTimeSeries = function(timeSeries, tsRequestKey, parameterCo
     });
 
     timeSeries.variable = `${timeSeries.variable}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
-    const tsRequestKeyValue = `${timeSeries.tsKey}:${parameterCode}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+    const tsRequestKeyValue = `${tsRequestKey}:${parameterCode}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
 
     return {
-        [`${timeSeries.method}:${tsRequestKeyValue}`]: timeSeries
+        [`${tsRequestKeyValue}`]: timeSeries
     };
 };
 
@@ -104,10 +103,11 @@ export const convertCelsiusCollectionsToFahrenheitAndMerge = function(collection
         // and convert the appropriate properties to Fahrenheit. Then add the cloned objects to the 'collection'
         if (config.TEMPERATURE_PARAMETERS.celsius.includes(parameterCode)) {
             if (!checkForMeasuredFahrenheitParameters(parameterCode, collection.variables)) {
-                merge(collection.variables,
-                    createConvertedVariable(cloneDeep(collection.variables[variableCode])));
-                merge(collection.timeSeries,
-                    createConvertedTimeSeries(cloneDeep(collection.timeSeries[tsRequestKey]), tsRequestKey, parameterCode));
+                const convertedTimeSeries =  createConvertedTimeSeries(cloneDeep(collection.timeSeries[tsRequestKey]), tsRequestKey, parameterCode);
+                const convertedVariable =  createConvertedVariable(cloneDeep(collection.variables[variableCode]));
+
+                merge(collection.variables, convertedVariable);
+                merge(collection.timeSeries, convertedTimeSeries);
             }
         }
     });
