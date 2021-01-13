@@ -1,12 +1,24 @@
-import {lineMarker, rectangleMarker, textOnlyMarker} from 'd3render/markers';
+import {lineMarker, rectangleMarker, textOnlyMarker, circleMarker} from 'd3render/markers';
 
 import {getLegendMarkerRows} from './legend-data';
 
 describe('monitoring-location/components/hydrograph/selectors/legend-data', () => {
     const TEST_DATA = {
         ivTimeSeriesData: {
+            queryInfo: {
+                    'current:P7D': {
+                        notes: {
+                            requestDT: 1520339792000,
+                            'filter:timeRange': {
+                                mode: 'PERIOD',
+                                periodDays: 7,
+                                modifiedSince: null
+                            }
+                        }
+                    }
+                },
             timeSeries: {
-                '00060:current': {
+                '72019:current:P7D': {
                     tsKey: 'current:P7D',
                     startTime: new Date('2018-03-06T15:45:00.000Z'),
                     endTime: new Date('2018-03-13T13:45:00.000Z'),
@@ -29,10 +41,10 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
                     }]
                 },
 
-                '00060:compare': {
+                '72019:compare': {
                     tsKey: 'compare:P7D',
                     startTime: new Date('2018-03-06T15:45:00.000Z'),
-                    endTime: new Date('2018-03-06T15:45:00.000Z'),
+                    endTime: new Date('2018-03-18T15:45:00.000Z'),
                     variable: '45807202',
                     points: [{
                         value: 1,
@@ -54,9 +66,9 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
             },
             variables: {
                 '45807197': {
-                    variableCode: {value: '00060'},
-                    variableName: 'Streamflow',
-                    variableDescription: 'Discharge, cubic feet per second',
+                    variableCode: {value: '72019'},
+                    variableName: 'Groundwater Levels',
+                    variableDescription: 'Depth to water level, ft below land surface',
                     oid: '45807197'
                 },
                 '45807202': {
@@ -68,7 +80,7 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
         },
         statisticsData: {
             median: {
-                '00060': {
+                '72019': {
                     '1': [{
                         month_nu: '2',
                         day_nu: '25',
@@ -87,6 +99,24 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
                 current: true,
                 compare: true,
                 median: true
+            }
+        },
+        discreteData: {
+            groundwaterLevels: {
+                '72019': {
+                    variable: {
+                        variableCode: {
+                            value: '72019',
+                            variableID: 45807197
+                        }
+                    },
+                    values: [
+                        {value: '14.0', dateTime: 1519942619200},
+                        {value: '14.5', dateTime: 1490882400000},
+                        {value: '13.0', dateTime: 1490536800000},
+                        {value: '12.0', dateTime: 1489672800000}
+                    ]
+                }
             }
         },
         floodData: {
@@ -110,7 +140,8 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
                     timeSeries: {}
                 },
                 statisticsData: {},
-                floodState: {}
+                floodState: {},
+                discreteData: {}
             };
 
             expect(getLegendMarkerRows(newData)).toEqual([]);
@@ -120,11 +151,12 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
             const result = getLegendMarkerRows(TEST_DATA);
 
             expect(result).toHaveLength(2);
-            expect(result[0]).toHaveLength(4);
+            expect(result[0]).toHaveLength(5);
             expect(result[0][0].type).toEqual(textOnlyMarker);
             expect(result[0][1].type).toEqual(lineMarker);
             expect(result[0][2].type).toEqual(rectangleMarker);
             expect(result[0][3].type).toEqual(rectangleMarker);
+            expect(result[0][4].type).toEqual(circleMarker);
             expect(result[1]).toHaveLength(2);
             expect(result[1][0].type).toEqual(textOnlyMarker);
             expect(result[1][1].type).toEqual(lineMarker);
@@ -163,11 +195,13 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
             const result = getLegendMarkerRows(newData);
 
             expect(result).toHaveLength(1);
-            expect(result[0]).toHaveLength(4);
+            expect(result[0]).toHaveLength(5);
             expect(result[0][0].type).toEqual(textOnlyMarker);
             expect(result[0][1].type).toEqual(lineMarker);
             expect(result[0][2].type).toEqual(rectangleMarker);
             expect(result[0][3].type).toEqual(rectangleMarker);
+            expect(result[0][4].type).toEqual(circleMarker);
+
         });
     });
 });

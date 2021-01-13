@@ -23,7 +23,7 @@ MONITORING_CAMERA_ENABLED = True
 MONITORING_CAMERA_PATH = os.path.join(PROJECT_HOME, 'data/monitoring_camera_data.json')
 DAILY_VALUE_HYDROGRAPH_ENABLED = True
 SET_COOKIE_TO_HIDE_BANNER_NOTICES = True  # set cookie set to hide banner messages for the life of the cookie
-
+GROUNDWATER_LEVELS_ENABLED = True
 DEBUG = False
 
 SERVER_SERVICE_ROOT = 'https://waterservices.usgs.gov'  # Used for webserver calls to waterservices.
@@ -36,6 +36,7 @@ NWIS_ENDPOINTS = {
 WEATHER_SERVICE_ROOT = 'https://api.weather.gov'
 
 OBSERVATIONS_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/'
+GROUNDWATER_LEVELS_ENDPOINT = 'https://waterservices.usgs.gov/nwis/gwlevels/'
 
 FIM_GIS_ENDPOINT = 'https://gis.wim.usgs.gov/arcgis/rest/services/FIMMapper/'
 FIM_ENDPOINT = 'https://fim.wim.usgs.gov/fim/'

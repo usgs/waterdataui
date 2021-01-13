@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.40.0...master)
+### Added
+- display of discrete ground water level data on the IV hydrograph.
 - Added a selection for Celsius converted to Fahrenheit to the parameter table.
 
 ## [0.40.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.39.0...waterdataui-0.40.0) - 2021-01-06
@@ -35,7 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added a tooltip to the hydrograph title showing the selected variable description and show the short unitCode on the Y axis.
 - Now using current preferred SIFTA URL.
 - Using '00065' (Gage Height) as the default parameter code.
-- On mobile, one finger scrolling of map is disabled; two finger drag and zoom is enabled.
+- On mobile, one finger scrolling of map is disabled; two finger drag and zoom is enabled
 
 ### Fixed
 - Dynamically generated tooltips are now initialized properly by calling init on the node where the tooltip is created rather than on the entire DOM which was causing multiple tooltip markup to be created.
