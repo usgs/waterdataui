@@ -129,7 +129,6 @@ export const plotSeriesSelectTable = function(elem,
             .enter().append('th')
                 .attr('scope', 'col')
                 .text(d => d);
-console.log('in parameters availableParameterCodes ', availableParameterCodes)
     table.append('tbody')
         .attr('class', 'usa-fieldset')
         .selectAll('tr')
