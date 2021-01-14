@@ -10,6 +10,9 @@ export default {
     USWDS_LARGE_SCREEN:  1025,
     USWDS_SITE_MAX_WIDTH: 1024,
 
+    // Indicates the number digits that we allow users to enter when selecting a custom 'days before today' time span.
+    MAX_DIGITS_FOR_DAYS_FROM_TODAY: 5,
+
     // Indicate a NWIS 'variable' has been modified in the application, such as a conversion from Celsius to Fahrenheit
     CALCULATED_TEMPERATURE_VARIABLE_CODE: 'F',
 
@@ -36,6 +39,12 @@ export default {
             '45590'
         ]
     },
+
+    // Below is a listing of the known temperature codes and counterparts
+    // '00020': '00021' - air temperature C:F
+    // '00010': '00011' - water temperature C:F
+    // '45589': '45590' - Temperature, internal, within equipment shelter C:F
+    CELSIUS_CODES_WITH_FAHRENHEIT_COUNTERPARTS: ['00020', '00010', '45589'],
 
     WATER_ALERT_PARAMETER_CODES: [
         '00060',

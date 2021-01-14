@@ -9,8 +9,7 @@ import {normalize} from 'ui/schema';
 import {calcStartTime, sortedParameters} from 'ui/utils';
 import {getPreviousYearTimeSeries, getTimeSeries} from 'ui/web-services/models';
 
-import {isPeriodCustom, parsePeriodCode} from 'ml/components/hydrograph/hydrograph-utils';
-import {convertCelsiusCollectionsToFahrenheitAndMerge} from 'ml/iv-data-utils';
+import {convertCelsiusCollectionsToFahrenheitAndMerge, isPeriodCustom, parsePeriodCode} from 'ml/iv-data-utils';
 import {
     getCurrentDateRange,
     getCurrentParmCd, getCustomTimeRange, getRequestTimeRange,

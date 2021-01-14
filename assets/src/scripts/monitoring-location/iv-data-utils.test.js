@@ -1,7 +1,43 @@
-import {convertCelsiusCollectionsToFahrenheitAndMerge} from './iv-data-utils';
+import {
+    convertCelsiusCollectionsToFahrenheitAndMerge,
+    isPeriodCustom,
+    isPeriodWithinAcceptableRange,
+    parsePeriodCode
+} from './iv-data-utils';
 import {combineReducers, createStore} from 'redux';
 
 import {ivTimeSeriesDataReducer} from 'ml/store/instantaneous-value-time-series-data';
+
+describe('isPeriodWithinAcceptableRange', () => {
+    it('will return correct boolean value if the url parameters for time period a within an acceptable range', () => {
+        expect(isPeriodWithinAcceptableRange('totalNonsense')).toEqual(false);
+        expect(isPeriodWithinAcceptableRange('P700000D')).toEqual(false);
+        expect(isPeriodWithinAcceptableRange('P2Y')).toEqual(false);
+        expect(isPeriodWithinAcceptableRange('P1Y')).toEqual(true);
+        expect(isPeriodWithinAcceptableRange('P32D')).toEqual(true);
+    });
+});
+
+describe('isCustomPeriod', () => {
+    it('will return correct boolean value is period is custom', () => {
+        expect(isPeriodCustom('P7D')).toEqual(false);
+        expect(isPeriodCustom('P30D')).toEqual(false);
+        expect(isPeriodCustom('P1Y')).toEqual(false);
+        expect(isPeriodCustom('P32D')).toEqual(true);
+    });
+});
+
+describe('parsePeriodCode', () => {
+    it('will break down the period code into input selection button and the number of days the user entered', () => {
+        expect(parsePeriodCode('P32D'))
+            .toEqual({mainTimeRangeSelectionButton: 'custom', numberOfDaysFieldValue: '32'});
+        expect(parsePeriodCode('P1Y'))
+            .toEqual({mainTimeRangeSelectionButton: 'P1Y', numberOfDaysFieldValue: ''});
+        expect(parsePeriodCode(null))
+            .toEqual({'mainTimeRangeSelectionButton' : 'P7D', 'numberOfDaysFieldValue': ''});
+    });
+});
+
 
 describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
     let store;
@@ -157,49 +193,49 @@ describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
             'qualifiers': [
                 'P'
             ],
-            'value': 37.22
+            'value': '37.22'
         },
         {
             'dateTime': 1609515900000,
             'qualifiers': [
                 'P'
             ],
-            'value': 37.4
+            'value': '37.40'
         },
         {
             'dateTime': 1609516800000,
             'qualifiers': [
                 'P'
             ],
-            'value': 37.4
+            'value': '37.40'
         },
         {
             'dateTime': 1609517700000,
             'qualifiers': [
                 'P'
             ],
-            'value': 37.4
+            'value': '37.40'
         },
         {
             'dateTime': 1609518600000,
             'qualifiers': [
                 'P'
             ],
-            'value': 37.58
+            'value': '37.58'
         },
         {
             'dateTime': 1609519500000,
             'qualifiers': [
                 'P'
             ],
-            'value': 37.58
+            'value': '37.58'
         },
         {
             'dateTime': 1609520400000,
             'qualifiers': [
                 'P'
             ],
-            'value': 37.58
+            'value': '37.58'
         }
     ];
 
@@ -248,7 +284,7 @@ describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
         expect(resultingState.includes(keyWithsuffix)).toBeTruthy();
     });
 
-    it('will create a new variable with the correct properties in appication state', () => {
+    it('will create a new variable with the correct properties in application state', () => {
         convertCelsiusCollectionsToFahrenheitAndMerge(TEST_STATE);
         const keyWithsuffix = '45807042F';
         const resultingState = store.getState().ivTimeSeriesData.variables[keyWithsuffix];

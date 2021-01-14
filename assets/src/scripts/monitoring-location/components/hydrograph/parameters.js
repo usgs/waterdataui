@@ -196,12 +196,8 @@ export const plotSeriesSelectTable = function(elem,
                 .attr('class', 'usa-tooltip usa-link wateralert-available')
                 .attr('data-position', 'left')
                 .attr('data-classes', 'width-full tablet:width-auto')
-                .attr('title', 'Subscribe to text or email alerts based on thresholds that you set');
-            if (convertedTemperatureCodes.includes(d.parameterCode)) {
-                waterAlertLink.text('Alerts in °C');
-            } else {
-                waterAlertLink.text('Subscribe');
-            }
+                .attr('title', 'Subscribe to text or email alerts based on thresholds that you set')
+                .text(convertedTemperatureCodes.includes(d.parameterCode) ? 'Alerts in C' : 'Subscribe');
         } else {
             selection.attr('class', 'usa-tooltip wateralert-unavailable')
                 .attr('data-position', 'left')
