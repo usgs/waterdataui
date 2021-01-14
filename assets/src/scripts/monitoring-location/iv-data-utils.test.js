@@ -131,43 +131,6 @@ describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
         }
     };
 
-    const TEST_STATE_WITH_MEASURED_FAHRENHEIT = {
-        'variables': {
-            '1': {
-                'variableCode': {
-                    'value': '00010',
-                    'variableID': 1
-                },
-                'variableName': 'Temperature, water, °C',
-                'variableDescription': 'Temperature, water, degrees Celsius',
-                'unit': {
-                    'unitCode': 'deg C'
-                },
-                'oid': '1'
-            },
-            '2': {
-                'variableCode': {
-                    'value': '00011',
-                    'variableID': 2
-                },
-                'variableName': 'Temperature, water, °F',
-                'variableDescription': 'Temperature, water, degrees Fahrenheit',
-                'unit': {
-                    'unitCode': 'deg F'
-                },
-                'oid': '2'
-            }
-        },
-        'timeSeries': {
-            '157775:current:P7D': {
-                'variable': '1'
-            },
-            '157776:current:P7D': {
-                'variable': '2'
-            }
-        }
-    };
-
     beforeEach(() => {
         store = createStore(
             combineReducers({
@@ -240,6 +203,43 @@ describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
         }
     ];
 
+    const TEST_COLLECTION_WITH_MEASURED_FAHRENHEIT = {
+        'variables': {
+            '1': {
+                'variableCode': {
+                    'value': '00010',
+                    'variableID': 1
+                },
+                'variableName': 'Temperature, water, °C',
+                'variableDescription': 'Temperature, water, degrees Celsius',
+                'unit': {
+                    'unitCode': 'deg C'
+                },
+                'oid': '1'
+            },
+            '2': {
+                'variableCode': {
+                    'value': '00011',
+                    'variableID': 2
+                },
+                'variableName': 'Temperature, water, °F',
+                'variableDescription': 'Temperature, water, degrees Fahrenheit',
+                'unit': {
+                    'unitCode': 'deg F'
+                },
+                'oid': '2'
+            }
+        },
+        'timeSeries': {
+            '157775:current:P7D': {
+                'variable': '1'
+            },
+            '157776:current:P7D': {
+                'variable': '2'
+            }
+        }
+    };
+
 
     it('will create a new variables key with the correct suffix in application state', () => {
         convertCelsiusCollectionsToFahrenheitAndMerge(TEST_STATE);
@@ -275,11 +275,10 @@ describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
         expect(resultingState).toStrictEqual(convertedPoints);
     });
 
-    // it('will not call methods to converted object if a measured Fahrenheit parameter already exists', () => {
-    //     convertCelsiusCollectionsToFahrenheitAndMerge(TEST_STATE_WITH_MEASURED_FAHRENHEIT);
-    //     const resultingState = store.getState().ivTimeSeriesData;
-    //     const originalState = {};
-    //     expect(resultingState).toStrictEqual(originalState);
-    //
-    // });
+    it('will not add new keys if a measured Fahrenheit parameter already exists', () => {
+        convertCelsiusCollectionsToFahrenheitAndMerge(TEST_COLLECTION_WITH_MEASURED_FAHRENHEIT);
+        const convertedTimeSeriesKey = '157775:current:P7D:00010F';
+        const resultingState = store.getState().ivTimeSeriesData;
+        expect(convertedTimeSeriesKey in resultingState).not.toBeTruthy();
+    });
 });

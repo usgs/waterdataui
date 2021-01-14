@@ -87,9 +87,6 @@ const resetIVTimeSeries = function(tsRequestKey) {
     };
 };
 
-
-
-
 /*
  * Asynchronous Redux action - fetches the IV time series data for all parameter codes for siteno for the
  * last 7 days.
