@@ -97,12 +97,14 @@ export const appendSecondaryYAxis = function(elem, {yAxis, layout, yTitle}) {
  *      @prop {String} yTitle - label for the y axis
  *      @prop {String} secondaryYtitle - label for the secondary y axis.
  */
-export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, yTitle, secondaryYTitle}) {
+export const appendAxes = function(elem, {xAxis, yAxis, layout, yTitle}) {
+// export const appendAxes = function(elem, {xAxis, yAxis, secondaryYAxis, layout, yTitle, secondaryYTitle}) {
     elem.call(appendXAxis, {xAxis, layout})
-        .call(appendYAxis, {yAxis, layout, yTitle})
-        .call(appendSecondaryYAxis, {
-            yAxis: secondaryYAxis,
-            layout: layout,
-            yTitle: secondaryYTitle
-        });
+        .call(appendYAxis, {yAxis, layout, yTitle});
+        // will reuse for graphing two parameters
+        // .call(appendSecondaryYAxis, {
+        //     yAxis: secondaryYAxis,
+        //     layout: layout,
+        //     yTitle: secondaryYTitle
+        // });
 };
