@@ -23,7 +23,7 @@ import {drawDataTable} from './data-table';
 import {renderDownloadLinks} from './download-links';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
-import {isPeriodWithinAcceptableRange, isPeriodCustom} from './hydrograph-utils';
+import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ml/iv-data-utils';
 
 import {getLineSegmentsByParmCd} from './selectors/drawing-data';
 import {SPARK_LINE_DIM}  from './selectors/layout';

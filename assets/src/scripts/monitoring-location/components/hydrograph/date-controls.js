@@ -3,6 +3,7 @@ import {createStructuredSelector} from 'reselect';
 // required to make the USWDS component JS available to init after page load
 import components from 'uswds/src/js/components';
 
+import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
 
@@ -17,7 +18,6 @@ import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {MAX_DIGITS_FOR_DAYS_FROM_TODAY} from './hydrograph-utils';
 
 export const drawDateRangeControls = function(elem, store, siteno) {
     const DATE_RANGE = [{
@@ -138,11 +138,11 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         numberOfDaysSelection.append('input')
             .attr('class', 'usa-input usa-character-count__field')
             .attr('id', 'with-hint-input-days-from-today')
-            .attr('maxlength', `${MAX_DIGITS_FOR_DAYS_FROM_TODAY}`)
+            .attr('maxlength', `${config.MAX_DIGITS_FOR_DAYS_FROM_TODAY}`)
             .attr('name', 'with-hint-input-days-from-today')
             .attr('aria-describedby', 'with-hint-input-days-from-today-info with-hint-input-days-from-today-hint');
         numberOfDaysSelection.append('span')
-            .text(`${MAX_DIGITS_FOR_DAYS_FROM_TODAY} digits allowed`)
+            .text(`${config.MAX_DIGITS_FOR_DAYS_FROM_TODAY} digits allowed`)
             .attr('id', 'with-hint-input-days-from-today-info')
             .attr('class', 'usa-hint usa-character-count__message')
             .attr('aria-live', 'polite');
