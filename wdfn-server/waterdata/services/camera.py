@@ -7,16 +7,6 @@ from ..utils import execute_get_request
 
 ML_CAMERA_ENDPOINT = app.config['MONITORING_LOCATION_CAMERA_ENDPOINT']
 
-def fetch_camera_details():
-    result = {}
-    resp = execute_get_request(ML_CAMERA_ENDPOINT,
-                               'php/getAllEnabledCameras.php')
-    if resp.status_code == 200:
-        try:
-            result = resp.json().get('data')
-        except ValueError:
-            pass;
-    return result
 
 def _get_camera_details(data):
     site_no = data['usgsSiteNumber']
@@ -33,6 +23,23 @@ def _get_camera_details(data):
     }
 
 
+def fetch_camera_metadata():
+    """
+    Fetch the camera meta and return the JSON response as a dictionary if successful
+    otherwise return an empty dictionary
+    :return dict
+    """
+    result = {}
+    resp = execute_get_request(ML_CAMERA_ENDPOINT,
+                               'php/getAllEnabledCameras.php')
+    if resp.status_code == 200:
+        try:
+            result = resp.json()
+        except ValueError:
+            pass;
+    return result
+
+
 def get_monitoring_location_camera_details(site_no):
     """
     Returns meta data for the camera images available for site_no
@@ -40,8 +47,8 @@ def get_monitoring_location_camera_details(site_no):
     :return list of dictionaries with keys for links to med_video, small_video, and details
     :rtype list
     """
-    if not app.config.get('MONITORING_LOCATION_CAMERA_METADATA'):
-        app.config['MONITORING_LOCATION_CAMERA_METADATA'] = fetch_camera_details()
+    if 'MONITORING_LOCATION_CAMERA_METADATA' not in app.config:
+        app.config['MONITORING_LOCATION_CAMERA_METADATA'] = fetch_camera_metadata().get('data')
 
     ml_camera_data = list(filter(lambda x: x['usgsSiteNumber'] == site_no,
                                  app.config['MONITORING_LOCATION_CAMERA_METADATA']))
