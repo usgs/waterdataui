@@ -1,7 +1,6 @@
 import {createSelector} from 'reselect';
 
 import {sortedParameters} from 'ui/utils';
-
 import {getCurrentVariableID, getTimeSeries, getVariables} from 'ml/selectors/time-series-selector';
 
 /**

@@ -88,8 +88,8 @@ describe('axes module', () => {
 
             expect(svg.selectAll('.x-axis').size()).toBe(1);
             expect(svg.selectAll('.y-axis').size()).toBe(1);
-            expect(svg.selectAll('.secondary-y-axis').size()).toBe(1);
-            expect(svg.selectAll('.y-axis-label').size()).toBe(2);
+            expect(svg.selectAll('.secondary-y-axis').size()).toBe(0);
+            expect(svg.selectAll('.y-axis-label').size()).toBe(1);
         });
 
         it('should render only one y axis if a secondaryYAxis is not defined', () => {

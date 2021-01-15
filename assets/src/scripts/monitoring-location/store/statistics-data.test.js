@@ -50,12 +50,14 @@ describe('monitoring-location/store/statistics-data module', () => {
             expect(fakeServer.requests[0].url).toContain('sites=12345678');
         });
 
-        it('Expect that a succesful fetch updates the store', () => {
+        it('Expect that a successful fetch updates the store', () => {
             const promise = store.dispatch(Actions.retrieveMedianStatistics('12345678'));
             fakeServer.requests[0].respond(200, {}, MOCK_STATISTICS_RDB);
 
             return promise.then(() => {
-                expect(store.getState().statisticsData.median['00060']).toBeDefined();
+                expect(Object.entries(store.getState().statisticsData.median)).toHaveLength(2);
+                expect(Object.keys(store.getState().statisticsData.median).includes('00010')).toBeTruthy();
+                expect(Object.keys(store.getState().statisticsData.median).includes('00010F')).toBeTruthy();
             });
         });
 

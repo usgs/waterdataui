@@ -1,16 +1,15 @@
-import find from 'lodash/find';
 import findKey from 'lodash/findKey';
 import last from 'lodash/last';
 import merge from 'lodash/merge';
 import omitBy from 'lodash/omitBy';
-import {DateTime} from 'luxon';
 
-import {isPeriodCustom, parsePeriodCode} from 'ml/components/hydrograph/hydrograph-utils';
+import {DateTime} from 'luxon';
 
 import {normalize} from 'ui/schema';
 import {calcStartTime, sortedParameters} from 'ui/utils';
 import {getPreviousYearTimeSeries, getTimeSeries} from 'ui/web-services/models';
 
+import {convertCelsiusCollectionsToFahrenheitAndMerge, isPeriodCustom, parsePeriodCode} from 'ml/iv-data-utils';
 import {
     getCurrentDateRange,
     getCurrentParmCd, getCustomTimeRange, getRequestTimeRange,
@@ -101,11 +100,11 @@ const retrieveIVTimeSeries = function(siteno) {
         return getTimeSeries({sites: [siteno]}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
-
                 // Get the start/end times of this request's range.
                 const notes = collection.queryInfo[tsRequestKey].notes;
                 const endTime = notes.requestDT;
                 const startTime = calcStartTime('P7D', endTime, 'local');
+                convertCelsiusCollectionsToFahrenheitAndMerge(collection);
 
                 // Trigger a call to get last year's data
                 dispatch(Actions.retrieveCompareIVTimeSeries(siteno, 'P7D', startTime, endTime));
@@ -146,6 +145,7 @@ const retrieveCompareIVTimeSeries = function(siteno, period, startTime, endTime,
         return getPreviousYearTimeSeries({site: siteno, startTime, endTime, parameterCode}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
+                convertCelsiusCollectionsToFahrenheitAndMerge(collection);
                 dispatch(Actions.addIVTimeSeriesCollection(collection));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
             },
@@ -192,12 +192,10 @@ const retrieveCustomTimePeriodIVTimeSeries = function(siteno, parameterCd, perio
         return getTimeSeries({sites: [siteno], params: [parameterCd], period: period}).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
-                const variables = Object.values(collection.variables);
-                const variableToDraw = find(variables, v =>  v.variableCode.value === parameterCd);
+                convertCelsiusCollectionsToFahrenheitAndMerge(collection);
                 dispatch(Actions.addIVTimeSeriesCollection(collection));
                 dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', 'custom'));
                 dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('customTimeRangeSelectionButton', 'days-input'));
-                dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(variableToDraw.variableCode.variableID.toString()));
                 dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
             },
             () => {
@@ -242,6 +240,7 @@ const retrieveCustomIVTimeSeries = function(siteno, startTime, endTime, parmCd=n
         }).then(
             series => {
                 const collection = normalize(series, tsRequestKey);
+                convertCelsiusCollectionsToFahrenheitAndMerge(collection);
                 dispatch(Actions.addIVTimeSeriesCollection(collection));
                 dispatch(ivTimeSeriesStateActions.setCurrentIVDateRange('custom'));
                 dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', 'custom'));
@@ -295,6 +294,7 @@ const retrieveExtendedIVTimeSeries = function(siteno, period, paramCd=null) {
             }).then(
                 series => {
                     const collection = normalize(series, tsRequestKey);
+                    convertCelsiusCollectionsToFahrenheitAndMerge(collection);
                     dispatch(Actions.retrieveCompareIVTimeSeries(siteno, period, startTime, endTime, thisParamCd));
                     dispatch(Actions.addIVTimeSeriesCollection(collection));
                     dispatch(ivTimeSeriesStateActions.removeIVTimeSeriesFromLoadingKeys([tsRequestKey]));
@@ -337,6 +337,7 @@ const retrieveUserRequestedIVDataForDateRange = function(siteno, startDateStr, e
 * @return {Function} when returns a promise.
  */
 const updateIVCurrentVariableAndRetrieveTimeSeries = function(siteno, variableID) {
+
     return function(dispatch, getState) {
         dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(variableID));
         const state = getState();

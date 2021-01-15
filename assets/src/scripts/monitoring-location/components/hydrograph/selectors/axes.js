@@ -11,7 +11,7 @@ import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
 import {getYTickDetails} from './domain';
 import {getLayout} from './layout';
 import {getXScale, getBrushXScale, getYScale, getSecondaryYScale} from './scales';
-import {getCurrentVariableUnitCode, getSecondaryYLabel, getTsTimeZone, TEMPERATURE_PARAMETERS} from './time-series-data';
+import {getCurrentVariableUnitCode, getSecondaryYLabel, getTsTimeZone} from './time-series-data';
 
 
 const createXAxis = function(xScale, ianaTimeZone) {
@@ -64,11 +64,7 @@ const createAxes = function(xScale, yScale, secondaryYScale, yTickDetails, yTick
     if (secondaryYScale !== null) {
         let secondaryAxisTicks;
         const primaryAxisTicks = yTickDetails.tickValues;
-        if (TEMPERATURE_PARAMETERS.celsius.includes(parmCd)) {
-            secondaryAxisTicks = primaryAxisTicks.map(celsius => convertCelsiusToFahrenheit(celsius));
-        } else if (TEMPERATURE_PARAMETERS.fahrenheit.includes(parmCd)) {
-            secondaryAxisTicks = primaryAxisTicks.map(fahrenheit => convertFahrenheitToCelsius(fahrenheit));
-        }
+
         secondaryYAxis = createSecondaryYAxis(secondaryAxisTicks, secondaryYScale);
     }
     return {xAxis, yAxis, secondaryYAxis};

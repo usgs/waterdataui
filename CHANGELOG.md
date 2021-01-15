@@ -5,14 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.40.0...master)
-### Added display of discrete ground water level data on the IV hydrograph.
+### Added
+- display of discrete ground water level data on the IV hydrograph.
+- Added a selection for Celsius converted to Fahrenheit to the parameter table.
 
 ## [0.40.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.39.0...waterdataui-0.40.0) - 2021-01-06
 ### Added
 - Instantaneous Values data availability information page.
 - Additional analytics tracking.
 - Added an inventory data menu on the monitoring location page which is context specific for the site.
-- Added social media icons in the footer
+- Added social media icons in the footer.
 
 ### Fixed
 - Now using 365 days for one year graph and comparison -- focus line syncs with both current and compare series.
@@ -29,7 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Links for WaterAlert.
 - Added a check to see if FIM sites are public. If not, the sites flood inundation layers are not shown even if available.
 - Links to download data related to the currently displayed hydrograph.
-- Show active sites in the RTN and RTS networks in the map
+- Show active sites in the RTN and RTS networks in the map.
 
 ### Changed
 - Added a tooltip to the hydrograph title showing the selected variable description and show the short unitCode on the Y axis.
