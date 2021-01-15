@@ -1,4 +1,8 @@
+import logging
+
+
 DEBUG = True
+LOGGING_LEVEL = logging.DEBUG
 
 # The root location of static assets (Javascript, CSS, Images)
 STATIC_ROOT = 'http://localhost:9000'

@@ -48,7 +48,7 @@ def get_monitoring_location_camera_details(site_no):
     :rtype list
     """
     if 'MONITORING_LOCATION_CAMERA_METADATA' not in app.config:
-        app.config['MONITORING_LOCATION_CAMERA_METADATA'] = fetch_camera_metadata().get('data')
+        app.config['MONITORING_LOCATION_CAMERA_METADATA'] = fetch_camera_metadata().get('data', [])
 
     ml_camera_data = list(filter(lambda x: x['usgsSiteNumber'] == site_no,
                                  app.config['MONITORING_LOCATION_CAMERA_METADATA']))

@@ -70,7 +70,7 @@ MONITORING_LOCATION_CAMERA_ENDPOINT = 'https://apps.usgs.gov/sstl/'
 TOUCHPOINT_SCRIPT = ''
 LOGGING_ENABLED = True
 LOGGING_DIRECTORY = None
-LOGGING_LEVEL = logging.DEBUG
+LOGGING_LEVEL = logging.WARNING
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 NWIS_CODE_LOOKUP_FILENAME = 'nwis_lookup.json'
