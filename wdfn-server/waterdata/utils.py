@@ -24,9 +24,10 @@ def execute_get_request(hostname, path=None, params=None):
     """
     target = urljoin(hostname, path)
     try:
+        app.logger.debug(f'Requesting data from {target}')
         resp = r.get(target, params=params)
     except (r.exceptions.Timeout, r.exceptions.ConnectionError) as err:
-        app.logger.debug(repr(err))
+        app.logger.error(repr(err))
         resp = r.Response()  # return an empty response object
     return resp
 
@@ -87,12 +88,13 @@ def parse_rdb(rdb_iter_lines):
         record_values = record.split('\t')
         yield dict(zip(headers, record_values))
 
+
 def defined_when(condition, fallback):
     """
     Decorator that fallsback to a specified function if `condition` is False.
-    :param bool condition: Decorated function will be called if True, otherwise
+    :param condition: bool Decorated function will be called if True, otherwise
                            fallback will be called
-    :param function fallback Fallback function to be called if condition is False
+    :param fallback: function to be called if condition is False
     :return: Decorated function
     :rtype: function
     """

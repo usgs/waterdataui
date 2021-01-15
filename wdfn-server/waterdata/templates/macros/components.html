@@ -153,6 +153,40 @@
     </span>
 {%- endmacro %}
 
+{% macro CameraComponent(cameras) -%}
+    <div class="wdfn-component" data-component="cameras">
+        <div class="wdfn-accordion usa-accordion">
+            <h2 class="usa-accordion__heading">
+                <button class="usa-accordion__button"
+                        aria-expanded="true"
+                        aria-controls="camera-container"
+                        ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithCameraAccordion">
+                    Monitoring Camera
+                </button>
+            </h2>
+            <div id="camera-container" class="usa-accordion__content">
+                {% for camera in cameras %}
+                    <h3>{{ camera.name }}</h3>
+                    <p>{{ camera.description }}</p>
+                    <div>
+                        <video hidden class="med-video camera-video" title="Timelapse Video of {{ camera.name }}" controls="" autoplay="">
+                            <source src="{{ camera.med_video }}" type="video/webm">
+                        </video>
+                        <video hidden class="small-video camera-video" title="Timelapse Video of {{ camera.name }}" controls="" autoplay="">
+                            <source src="{{ camera.small_video }}" type="video/webm">
+                        </video>
+                        <img hidden class="camera-most-recent-image" title="Most recent image at {{ camera.name }}"
+                             src="{{ camera.most_recent_image }}"/>
+                        <div>
+                            <a href="{{ camera.details }}" target="_blank">Details and Download</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{%- endmacro %}
+
 {% macro NetworkListComponent(site_no) -%}
       <div class="wdfn-component" data-component="network-list" data-siteno="{{ site_no }}">
           <div id="network-list-container">

@@ -13,10 +13,10 @@ from .location_utils import build_linked_data, get_disambiguated_values, rollup_
 from .utils import construct_url, defined_when, parse_rdb, set_cookie_for_banner_message
 from .services import sifta, ogc
 from .services.nwis import NwisWebServices
+from .services.camera import get_monitoring_location_camera_details
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
-from .camera import get_monitoring_camera_data
 
 SERVICE_ROOT = app.config['SERVER_SERVICE_ROOT']
 NWIS = NwisWebServices(SERVICE_ROOT)
@@ -135,11 +135,10 @@ def monitoring_location(site_no):
                     'GROUNDWATER_LEVELS_ENABLED'] else None,
                 'parm_grp_summary': grouped_dataseries,
                 'questions_link': questions_link,
-                'cooperators': cooperators
+                'cooperators': cooperators,
+                'cameras': get_monitoring_location_camera_details((site_no)) if app.config[
+                    'MONITORING_LOCATION_CAMERA_ENABLED'] else []
             }
-
-            monitoring_camera = get_monitoring_camera_data(site_no)
-            context['monitoring_camera'] = monitoring_camera
 
         http_code = 200
     elif 400 <= status < 500:
