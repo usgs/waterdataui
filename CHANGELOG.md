@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.40.0...master)
 ### Added
-- display of discrete ground water level data on the IV hydrograph.
+- Display of discrete ground water level data on the IV hydrograph.
 - Added a selection for Celsius converted to Fahrenheit to the parameter table.
+- Added Beta tags for Groundwater Data and Affiliated Networks sections
 
 ## [0.40.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.39.0...waterdataui-0.40.0) - 2021-01-06
 ### Added
