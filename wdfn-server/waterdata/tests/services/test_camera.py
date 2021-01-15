@@ -139,4 +139,4 @@ def test_site_no_with_no_cameras(config):
     config['MONITORING_LOCATION_CAMERA_METADATA'] = json.loads(MOCK_CAMERA_METADATA).get('data')
 
     details = get_monitoring_location_camera_details('425520078535602')
-    assert len(details) == 0, 'Expected number of cameras'
+    assert not details, 'Expected number of cameras'

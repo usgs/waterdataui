@@ -22,6 +22,7 @@ def execute_get_request(hostname, path=None, params=None):
     :rtype: requests.Response
 
     """
+    # pylint: disable=E1101
     target = urljoin(hostname, path)
     try:
         app.logger.debug(f'Requesting data from {target}')
