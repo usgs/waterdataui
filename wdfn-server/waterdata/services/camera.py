@@ -36,7 +36,7 @@ def fetch_camera_metadata():
         try:
             result = resp.json()
         except ValueError:
-            pass;
+            pass
     return result
 
 
