@@ -30,5 +30,5 @@ export const drawGroundwaterLevels = function(svg, {levels, xScale, yScale}) {
  * @return {Object} - see d3-rendering/markers module.
  */
 export const getGroundwaterLevelsMarker = function() {
-    return defineCircleMarker(null, GW_LEVEL_CLASS, GW_LEVEL_RADIUS, 'Groundwater level');
+    return defineCircleMarker(null, GW_LEVEL_CLASS, GW_LEVEL_RADIUS, 'Field visit');
 };
