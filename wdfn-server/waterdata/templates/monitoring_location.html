@@ -30,21 +30,16 @@
 {% endblock %}
 
 {% block page_script %}
-    {% if uv_period_of_record %}
-        <script type="application/javascript">
+    <script type="application/javascript">
+        {% if uv_period_of_record %}
             CONFIG.uvPeriodOfRecord = {{ uv_period_of_record | tojson }};
-        </script>
-    {% endif %}
-    {% if gw_period_of_record %}
-        <script type="application/javascript">
+        {% endif %}
+        {% if gw_period_of_record %}
             CONFIG.gwPeriodOfRecord = {{ gw_period_of_record | tojson }};
-        </script>
-    {% else %}
-        <script type="application/javascript">
+        {% else %}
            CONFIG.gwPeriodOfRecord = null;
-        </script>
-    {% endif %}
-
+        {% endif %}
+    </script>
     <script src="{{ 'bundle.js' | asset_url }}"></script>
     {% if json_ld %}
         <script type="application/ld+json">
@@ -168,153 +163,123 @@
                     {% endif %}
                     {% if request.user_agent.browser != 'msie' %}
                         {{ components.TimeSeriesComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
-                        {% if monitoring_camera.exists %}
-                            <div class="wdfn-accordion usa-accordion" style="margin-top:1em;">
-                                <h2 class="usa-accordion__heading">
-                                    <button class="usa-accordion__button"
-                                            aria-expanded="true"
-                                            aria-controls="ts-a1a"
-                                            ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithCameraAccordion">
-                                        Monitoring Camera
-                                    </button>
-                                </h2>
-                                <div id="ts-a1a" class="usa-accordion__content">
-                                    <div>Most recent image</div>
-                                    <div style="float:left">
-                                        <a href="{{ monitoring_camera.video  }}" title="click image to open full-size video" target="_blank" rel="noopener">
-                                            <img width="200" src="{{ monitoring_camera.thumb }}" alt="lastest camera image thumbnail">
-                                        </a>
-                                    </div>
-                                    <div style="float:right">
-                                        <div><b>Frames Gallery: </b>
-                                            <a href="{{ monitoring_camera.frame_gallery }}" target="_blank" rel="noopener">
-                                                Last 99 Frames
-                                            </a>
-                                        </div>
-                                        <div><b>Video Folder: </b>
-                                            <a href="{{ monitoring_camera.video_index }}" target="_blank" rel="noopener">
-                                                Index of videos and images
-                                            </a>
-                                        </div>
+                        {% if cameras %}
+                            {{ components.CameraComponent(cameras) }}
+                        {% endif %}
+
+                        {% if config.DAILY_VALUE_HYDROGRAPH_ENABLED %}
+                            <div id="dv-accordion" class="wdfn-accordion usa-accordion">
+                                <div>
+                                    <h3 class="usa-accordion__heading">
+                                        <button class="usa-accordion__button"
+                                                aria-expanded="true" aria-controls="dv-graph-container"
+                                                ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithDVAccordion">
+                                            Groundwater Data&nbsp;{{ components.BetaTag() }}
+                                        </button>
+                                    </h3>
+                                    <div id="dv-graph-container">
+                                        {{ components.DailyValueTimeSeriesComponent(stations[0].site_no) }}
                                     </div>
                                 </div>
                             </div>
                         {% endif %}
 
-                    {% if config.DAILY_VALUE_HYDROGRAPH_ENABLED %}
-                        <div id="dv-accordion" class="wdfn-accordion usa-accordion">
-                            <div>
-                                <h3 class="usa-accordion__heading">
+                        {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
+                            {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
+                        {% endif %}
+
+                        <div class="wdfn-accordion usa-accordion">
+                            <h3 class="usa-accordion__heading">
+                                <button
+                                        class="usa-accordion__button"
+                                        aria-expanded="true" aria-controls="network-list"
+                                        ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithAffiliatedNetworkAccordion">
+                                    Affiliated Networks&nbsp;{{ components.BetaTag() }}
+                                </button>
+                            </h3>
+                            <div id="network-list" class="usa-accordion__content">
+                                {{ components.NetworkListComponent(stations[0].site_no) }}
+                            </div>
+                        </div>
+
+                        {% if parm_grp_summary %}
+                            <div class="wdfn-accordion usa-accordion">
+                                <h2 class="usa-accordion__heading">
                                     <button class="usa-accordion__button"
-                                            aria-expanded="true" aria-controls="dv-graph-container"
-                                            ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithDVAccordion">
-                                        Groundwater Data&nbsp;{{ components.BetaTag() }}
+                                            aria-expanded="false" aria-controls="site-data-summary-container"
+                                            ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithDataSummaryAccordion">
+                                        Summary of All Available Data
                                     </button>
-                                </h3>
-                                <div id="dv-graph-container">
-                                    {{ components.DailyValueTimeSeriesComponent(stations[0].site_no) }}
+                                </h2>
+                                <div id="site-data-sumary-container" class="usa-accordion__content">
+                                    <table class="usa-table" id="site-data-summary">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">USGS Parameter Group</th>
+                                                <th scope="col">Data Types</th>
+                                                <th scope="col">Start Date</th>
+                                                <th scope="col">End Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for grp in parm_grp_summary %}
+                                                <tr>
+                                                    <th scope="row">{% if grp.name %}{{ grp.name }}{% else %}<sub>n/a</sub>{% endif %}</th>
+                                                    <td>{{ grp.data_types }}</td>
+                                                    <td>{{ grp.start_date|date_to_string }}</td>
+                                                    <td>{{ grp.end_date|date_to_string }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <a class="usa-link" href="{{ config.NWIS_ENDPOINTS.INVENTORY}}?site_no={{ stations[0].site_no }}" target="_blank" rel="noopener">Classic Water Data for the Nation Inventory</a>
                                 </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="wdfn-accordion usa-accordion">
+                            <h2 class="usa-accordion__heading">
+                                <button class="usa-accordion__button"
+                                        aria-expanded="false" aria-controls="site-summary-container"
+                                        ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithMetadataAccordion">
+                                    Location Metadata
+                                </button>
+                            </h2>
+                            <div id="site-summary-container" class="usa-accordion__content">
+                                <table class="usa-table" id="site-summary" summary="Descriptive metadata about this monitoring location">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Metadata Element</th>
+                                            <th scope="col">Location Metadata</th>
+                                            <th scope="col">Metadata Code</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for key, value in location_with_values.items() %}
+                                            <tr>
+                                                <th scope="row" {%  if STATION_FIELDS_D[key].description %}aria-describedby="{{ key|tooltip_content_id }}"{% endif %}>{{ STATION_FIELDS_D[key].name }}
+                                                    {%  if STATION_FIELDS_D[key].description %}
+                                                        {{ components.QuestionTooltip(key, STATION_FIELDS_D[key].description, True) }}
+                                                    {% endif %}
+                                                </th>
+                                                <td class="loc-metadata">
+                                                    {% if value.url %}
+                                                        <a href="{{ value.url }}">{{ value.name }}</a>
+                                                    {% else %}
+                                                        {{ value.name }}
+                                                    {% endif %}
+                                                    {% if value.desc %}
+                                                        {{ components.QuestionTooltip(value.code, value.desc, False) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     {% endif %}
-                {% endif %}
-
-                    {% if stations[0].dec_lat_va and stations[0].dec_long_va %}
-                        {{ components.MapComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
-                   {% endif %}
-
-                <div class="wdfn-accordion usa-accordion">
-                    <h3 class="usa-accordion__heading">
-                        <button
-                                class="usa-accordion__button"
-                                aria-expanded="true" aria-controls="network-list"
-                                ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithAffiliatedNetworkAccordion">
-                            Affiliated Networks&nbsp;{{ components.BetaTag()}}
-                        </button>
-                    </h3>
-                    <div id="network-list" class="usa-accordion__content">
-                        {{ components.NetworkListComponent(stations[0].site_no) }}
-                    </div>
-                </div>
-
-                {% if parm_grp_summary %}
-                    <div class="wdfn-accordion usa-accordion">
-                        <h2 class="usa-accordion__heading">
-                            <button class="usa-accordion__button"
-                                    aria-expanded="false" aria-controls="ts-a1"
-                                    ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithDataSummaryAccordion">
-                                Summary of All Available Data
-                            </button>
-                        </h2>
-                        <div id="ts-a1" class="usa-accordion__content">
-                            <table class="usa-table" id="site-data-summary">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">USGS Parameter Group</th>
-                                        <th scope="col">Data Types</th>
-                                        <th scope="col">Start Date</th>
-                                        <th scope="col">End Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for grp in parm_grp_summary %}
-                                        <tr>
-                                            <th scope="row">{% if grp.name %}{{ grp.name }}{% else %}<sub>n/a</sub>{% endif %}</th>
-                                            <td>{{ grp.data_types }}</td>
-                                            <td>{{ grp.start_date|date_to_string }}</td>
-                                            <td>{{ grp.end_date|date_to_string }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            <a class="usa-link" href="{{ config.NWIS_ENDPOINTS.INVENTORY}}?site_no={{ stations[0].site_no }}" target="_blank" rel="noopener">Classic Water Data for the Nation Inventory</a>
-                        </div>
-                    </div>
-                {% endif %}
-
-                <div class="wdfn-accordion usa-accordion">
-                    <h2 class="usa-accordion__heading">
-                        <button class="usa-accordion__button"
-                                aria-expanded="false" aria-controls="ts-a2"
-                                ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithMetadataAccordion">
-                            Location Metadata
-                        </button>
-                    </h2>
-                    <div id="ts-a2" class="usa-accordion__content">
-                        <table class="usa-table" id="site-summary" summary="Descriptive metadata about this monitoring location">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Metadata Element</th>
-                                    <th scope="col">Location Metadata</th>
-                                    <th scope="col">Metadata Code</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for key, value in location_with_values.items() %}
-                                    <tr>
-                                        <th scope="row" {%  if STATION_FIELDS_D[key].description %}aria-describedby="{{ key|tooltip_content_id }}"{% endif %}>{{ STATION_FIELDS_D[key].name }}
-                                            {%  if STATION_FIELDS_D[key].description %}
-                                                {{ components.QuestionTooltip(key, STATION_FIELDS_D[key].description, True) }}
-                                            {% endif %}
-                                        </th>
-                                        <td class="loc-metadata">
-                                            {% if value.url %}
-                                                <a href="{{ value.url }}">{{ value.name }}</a>
-                                            {% else %}
-                                                {{ value.name }}
-                                            {% endif %}
-                                            {% if value.desc %}
-                                                {{ components.QuestionTooltip(value.code, value.desc, False) }}
-                                            {% endif %}
-                                        </td>
-                                        <td>{% if value.code != value.name %}{{ value.code }}{% else %}<sub>n/a</sub>{% endif %}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
                     {% if questions_link %}
                         <div>
                             <a class="usa-link" href="{{ questions_link }}">Email USGS questions about this site</a>
@@ -334,7 +299,6 @@
                             {% endfor %}
                         </div>
                     {% endif %}
-
                 {% endif %}
 
             {% else %}
@@ -342,7 +306,7 @@
             {% endif %}
         </div>
 
-        {%  if config.TOUCHPOINT_SCRIPT %}
+        {% if config.TOUCHPOINT_SCRIPT %}
             {{ config.TOUCHPOINT_SCRIPT | safe }}
         {%  endif %}
     </main>

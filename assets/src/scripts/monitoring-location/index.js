@@ -10,6 +10,7 @@ import {configureStore} from 'ml/store';
 import {retrieveGroundwaterLevels} from 'ml/store/discrete-data';
 import {Actions as uiActions} from 'ml/store/ui-state';
 
+import {attachToNode as CameraComponent} from 'ml/components/cameras';
 import {attachToNode as EmbedComponent} from 'ml/components/embed';
 import {attachToNode as DailyValueHydrographComponent} from 'ml/components/daily-value-hydrograph';
 import {attachToNode as HydrographComponent} from 'ml/components/hydrograph';
@@ -17,6 +18,7 @@ import {attachToNode as MapComponent} from 'ml/components/map';
 import {attachToNode as NetworkListComponent} from 'ml/components/network-list';
 
 const COMPONENTS = {
+    cameras: CameraComponent,
     embed: EmbedComponent,
     'dv-hydrograph': DailyValueHydrographComponent,
     hydrograph: HydrographComponent,
