@@ -169,10 +169,10 @@
                     <h3>{{ camera.name }}</h3>
                     <p>{{ camera.description }}</p>
                     <div>
-                        <video hidden class="med-video camera-video" title="Timelapse Video of {{ camera.name }}" controls="" autoplay="">
+                        <video hidden class="med-video camera-video" title="Timelapse Video of {{ camera.name }}" controls autoplay>
                             <source src="{{ camera.med_video }}" type="video/webm">
                         </video>
-                        <video hidden class="small-video camera-video" title="Timelapse Video of {{ camera.name }}" controls="" autoplay="">
+                        <video hidden class="small-video camera-video" title="Timelapse Video of {{ camera.name }}" controls autoplay>
                             <source src="{{ camera.small_video }}" type="video/webm">
                         </video>
                         <img hidden class="camera-most-recent-image" title="Most recent image at {{ camera.name }}"
