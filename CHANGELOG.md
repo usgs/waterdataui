@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - display of discrete ground water level data on the IV hydrograph.
 - Added a selection for Celsius converted to Fahrenheit to the parameter table.
 
+### Changed
+- Camera metadata is now fetched and the client is using html5 video when video format is supported, otherwise the most recent image is shown.
+
 ## [0.40.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.39.0...waterdataui-0.40.0) - 2021-01-06
 ### Added
 - Instantaneous Values data availability information page.

@@ -19,8 +19,7 @@ HYDROLOGIC_PAGES_ENABLED = True
 STATE_COUNTY_PAGES_ENABLED = True
 EMBED_IMAGE_FEATURE_ENABLED = True
 COOPERATOR_LOOKUP_ENABLED = True  # may also be set to a list of district codes
-MONITORING_CAMERA_ENABLED = True
-MONITORING_CAMERA_PATH = os.path.join(PROJECT_HOME, 'data/monitoring_camera_data.json')
+MONITORING_LOCATION_CAMERA_ENABLED = True
 DAILY_VALUE_HYDROGRAPH_ENABLED = True
 SET_COOKIE_TO_HIDE_BANNER_NOTICES = True  # set cookie set to hide banner messages for the life of the cookie
 GROUNDWATER_LEVELS_ENABLED = True
@@ -66,10 +65,12 @@ TNM_HYDRO_ENDPOINT = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSH
 RDB_FORMAT_INFORMATION = 'https://waterdata.usgs.gov/nwis/?tab_delimited_format_info'
 DATA_RETRIEVAL_PACKAGE_INFORMATION = 'https://usgs-r.github.io/dataRetrieval/'
 
+MONITORING_LOCATION_CAMERA_ENDPOINT = 'https://apps.usgs.gov/sstl/'
+
 TOUCHPOINT_SCRIPT = ''
 LOGGING_ENABLED = True
 LOGGING_DIRECTORY = None
-LOGGING_LEVEL = logging.DEBUG
+LOGGING_LEVEL = logging.WARNING
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 NWIS_CODE_LOOKUP_FILENAME = 'nwis_lookup.json'
