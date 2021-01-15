@@ -93,7 +93,9 @@ def test_unparseable_json_fetch_camera_metadata():
         assert camera_metadata == {}
 
 
-def test_fetching_and_returning_camera_details():
+def test_fetching_and_returning_camera_details(config):
+    if 'MONITORING_LOCATION_CAMERA_METADATA' in config:
+        del config['MONITORING_LOCATION_CAMERA_METADATA']
     with mock.patch('waterdata.services.camera.execute_get_request') as r_mock:
         response = mock.Mock()
         response.status_code = 200
