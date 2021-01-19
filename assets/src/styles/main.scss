@@ -52,6 +52,9 @@ body {
     margin-right: auto;
     @include u-maxw('desktop');
   }
+  .beta-tag {
+    @include u-bg('accent-warm-dark');
+  }
 
   @import './partials/alerts';
 
