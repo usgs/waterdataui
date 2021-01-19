@@ -44,6 +44,9 @@ describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
     const TEST_STATE = {
         'variables': {
             '45807042': {
+                'note': [],
+                'options': [],
+                'variableProperty': [],
                 'variableCode': {
                     'value': '00010',
                     'variableID': 45807042
@@ -120,9 +123,9 @@ describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
                         'dateTime': 1609518600000
                     },
                     {
-                        'value': 3.1,
+                        'value': null,
                         'qualifiers': [
-                            'P'
+                            'P', 'Eqp'
                         ],
                         'dateTime': 1609519500000
                     },
@@ -181,7 +184,11 @@ describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
     });
 
     const convertedVariableValue =
-        {'oid': '45807042F',
+        {
+            'note': [],
+            'options': [],
+            'variableProperty': [],
+            'oid': '45807042F',
             'unit': {'unitCode': 'deg F'},
             'variableCode': {'value': '00010F', 'variableID': '45807042F'},
             'variableDescription': 'Temperature, water, degrees Fahrenheit (calculated)',
@@ -226,9 +233,9 @@ describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
         {
             'dateTime': 1609519500000,
             'qualifiers': [
-                'P'
+                'P', 'Eqp'
             ],
-            'value': '37.58'
+            'value': null
         },
         {
             'dateTime': 1609520400000,
