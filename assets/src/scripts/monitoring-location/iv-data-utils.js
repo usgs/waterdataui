@@ -111,6 +111,9 @@ const checkForMeasuredFahrenheitParameters = function(parameterCode, NWISVariabl
 const getConvertedVariable = function(celsiusVariable) {
     const calculatedFahrenheitVariable = {
         ...celsiusVariable,
+        note: [...celsiusVariable.note],
+        options: [...celsiusVariable.options],
+        variableProperty: [...celsiusVariable.variableProperty],
         variableName: celsiusVariable.variableName.replace('C', 'F (calculated)'),
         variableDescription: celsiusVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)'),
         unit: {
@@ -142,10 +145,17 @@ const getConvertedVariable = function(celsiusVariable) {
 const getConvertedTimeSeries = function(timeSeries, tsRequestKey, parameterCode) {
     const fahrenheitTimeSeries = {
         ...timeSeries,
+        censorCode: [...timeSeries.censorCode],
+        offset: [...timeSeries.offset],
+        qualifier: [...timeSeries.qualifier],
+        qualityControlLevel: [...timeSeries.qualityControlLevel],
+        sample: [...timeSeries.sample],
+        source: [...timeSeries.source],
         points: timeSeries.points.map((point) => {
             return {
                 ...point,
-                value: convertCelsiusToFahrenheit(point.value).toFixed(2)
+                qualifiers: [...point.qualifiers],
+                value: point.value ? convertCelsiusToFahrenheit(point.value).toFixed(2) : null
             };
         }),
         variable: `${timeSeries.variable}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`
