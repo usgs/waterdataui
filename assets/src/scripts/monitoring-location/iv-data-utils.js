@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
 
 import config from 'ui/config';
@@ -108,24 +109,16 @@ const checkForMeasuredFahrenheitParameters = function(parameterCode, NWISVariabl
 * @param {Object} NWISVariable - Has various properties related to descriptions of data
 * @return {Object} NWIS variable converted for use with Fahrenheit
  */
-const getConvertedVariable = function(celsiusVariable) {
-    const calculatedFahrenheitVariable = {
-        ...celsiusVariable,
-        variableName: celsiusVariable.variableName.replace('C', 'F (calculated)'),
-        variableDescription: celsiusVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)'),
-        unit: {
-            ...celsiusVariable.unit,
-            unitCode: celsiusVariable.unit.unitCode.replace('C', 'F')
-        },
-        variableCode: {
-            ...celsiusVariable.variableCode,
-            value: `${celsiusVariable.variableCode.value}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`,
-            variableID: `${celsiusVariable.variableCode.variableID}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`
-        },
-        oid: `${celsiusVariable.oid}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`
-    };
-    return {
-        [calculatedFahrenheitVariable.oid]: calculatedFahrenheitVariable
+const createConvertedVariable = function(NWISVariable) {
+    NWISVariable.variableName = NWISVariable.variableName.replace('C', 'F (calculated)');
+    NWISVariable.variableDescription = NWISVariable.variableDescription.replace('Celsius', 'Fahrenheit (calculated)');
+    NWISVariable.unit.unitCode = NWISVariable.unit.unitCode.replace('C', 'F');
+    NWISVariable.variableCode.value = `${NWISVariable.variableCode.value}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+    NWISVariable.variableCode.variableID = `${NWISVariable.variableCode.variableID}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+    NWISVariable.oid = `${NWISVariable.oid}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+
+    return  {
+        [NWISVariable.oid]: NWISVariable
     };
 };
 
@@ -139,20 +132,16 @@ const getConvertedVariable = function(celsiusVariable) {
 *   @prop - {Object) points - An object containing temperature data
 *   @prop - {String} variable - The 'variable' from the NWIS system, will have a suffix indicating a converted value
  */
-const getConvertedTimeSeries = function(timeSeries, tsRequestKey, parameterCode) {
-    const fahrenheitTimeSeries = {
-        ...timeSeries,
-        points: timeSeries.points.map((point) => {
-            return {
-                ...point,
-                value: convertCelsiusToFahrenheit(point.value).toFixed(2)
-            };
-        }),
-        variable: `${timeSeries.variable}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`
-    };
-    const fahrenheitTsRequestKey = `${tsRequestKey}:${parameterCode}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+const createConvertedTimeSeries = function(timeSeries, tsRequestKey, parameterCode) {
+    timeSeries.points.forEach(temperaturePoint => {
+        temperaturePoint.value = convertCelsiusToFahrenheit(temperaturePoint.value).toFixed(2);
+    });
+
+    timeSeries.variable = `${timeSeries.variable}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+    const tsRequestKeyValue = `${tsRequestKey}:${parameterCode}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`;
+
     return {
-        [fahrenheitTsRequestKey]: fahrenheitTimeSeries
+        [`${tsRequestKeyValue}`]: timeSeries
     };
 };
 
@@ -160,10 +149,12 @@ const getConvertedTimeSeries = function(timeSeries, tsRequestKey, parameterCode)
 * Takes a time series collection checks if there are any Celsius parameter codes and calls other methods to convert
 * that series to a new object which is then added to the application state.
 * @param {Object} collection - complex object built with information retrieved from NWIS - contains information about
-* all data that appears in the hydrograph. NOTE: The contents of this parameter are mutated
+* all data that appears in the hydrograph
  */
 export const convertCelsiusCollectionsToFahrenheitAndMerge = function(collection) {
-    Object.entries(collection.timeSeries).forEach(([tsRequestKey, timeSeriesDetails]) => {
+    Object.entries(collection.timeSeries).forEach((timeSeries) => {
+        const tsRequestKey = timeSeries[0];
+        const timeSeriesDetails = timeSeries[1];
         const variableCode = timeSeriesDetails.variable;
         // Cross reference the 'variableCode' in the 'timeSeries' with 'variables' in the state
         // to get the corresponding parameter code
@@ -172,8 +163,8 @@ export const convertCelsiusCollectionsToFahrenheitAndMerge = function(collection
         // and convert the appropriate properties to Fahrenheit. Then add the cloned objects to the 'collection'
         if (config.TEMPERATURE_PARAMETERS.celsius.includes(parameterCode)) {
             if (!checkForMeasuredFahrenheitParameters(parameterCode, collection.variables)) {
-                const convertedTimeSeries =  getConvertedTimeSeries(collection.timeSeries[tsRequestKey], tsRequestKey, parameterCode);
-                const convertedVariable =  getConvertedVariable(collection.variables[variableCode]);
+                const convertedTimeSeries =  createConvertedTimeSeries(cloneDeep(collection.timeSeries[tsRequestKey]), tsRequestKey, parameterCode);
+                const convertedVariable =  createConvertedVariable(cloneDeep(collection.variables[variableCode]));
 
                 merge(collection.variables, convertedVariable);
                 merge(collection.timeSeries, convertedTimeSeries);
@@ -181,3 +172,4 @@ export const convertCelsiusCollectionsToFahrenheitAndMerge = function(collection
         }
     });
 };
+
