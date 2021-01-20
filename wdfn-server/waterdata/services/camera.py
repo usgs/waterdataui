@@ -47,7 +47,7 @@ def get_monitoring_location_camera_details(site_no):
     :return list of dictionaries with keys for links to med_video, small_video, and details
     :rtype list
     """
-    if 'MONITORING_LOCATION_CAMERA_METADATA' not in app.config:
+    if not app.config.get('MONITORING_LOCATION_CAMERA_METADATA', {}):
         app.config['MONITORING_LOCATION_CAMERA_METADATA'] = fetch_camera_metadata().get('data', [])
 
     ml_camera_data = list(filter(lambda x: x['usgsSiteNumber'] == site_no,
