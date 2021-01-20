@@ -15,14 +15,24 @@ describe('monitoring-location/selectors/discrete-data-selector', () => {
 
         it('Return all groundwater levels', () => {
             const TEST_DATA = {
-                '72019': {
-                    variables: {variableID: 1111},
+                '45807042': {
+                    variable: {
+                        variableCode: [{
+                            value: '72019'
+                        }],
+                        oid: '45807042'
+                    },
                     values: [
                         {value: '11.5', qualifiers: [], date: 1586354400000}
                     ]
                 },
-                '65443': {
-                    variables: {variableID: 1111},
+                55807042: {
+                    variable: {
+                        variableCode: [{
+                            value: '65433'
+                        }],
+                        oid: '55807042'
+                    },
                     values: [
                         {value: '15.5', qualifiers: [], date: 1586354400000},
                         {value: '24.3', qualifiers: [], date: 1588946400000}
@@ -46,7 +56,7 @@ describe('monitoring-location/selectors/discrete-data-selector', () => {
                             'value': '72019'
                         }
                     },
-                    '450807142': {
+                    '45807142': {
                         variableCode: {
                             'value': '00010'
                         }
@@ -63,12 +73,12 @@ describe('monitoring-location/selectors/discrete-data-selector', () => {
         const TEST_GROUNDWATER_LEVELS = {
             discreteData : {
                 groundwaterLevels : {
-                    '72019': {
+                    '45807042': {
                         variable: {
-                            variableCode: {
-                                value: '72019',
-                                variableID: '45807042'
-                            }
+                            variableCode: [{
+                                value: '72019'
+                            }],
+                            oid: '45807042'
                         },
                         values: [
                             {
@@ -114,7 +124,7 @@ describe('monitoring-location/selectors/discrete-data-selector', () => {
         it('Should return an empty object if no groundwater levels exist for selected IV variable', () => {
             expect(getIVCurrentVariableGroundwaterLevels({
                 ivTimeSeriesState: {
-                   currenteIVVariableID: 450807142
+                   currentIVVariableID: '45807142'
                 },
                 ...TEST_IV_TIME_SERIES_DATA,
                 ...TEST_GROUNDWATER_LEVELS
@@ -126,7 +136,7 @@ describe('monitoring-location/selectors/discrete-data-selector', () => {
                 ...TEST_IV_TIME_SERIES_DATA,
                 ...TEST_IV_TIME_SERIES_STATE,
                 ...TEST_GROUNDWATER_LEVELS
-            })).toEqual(TEST_GROUNDWATER_LEVELS.discreteData.groundwaterLevels['72019']);
+            })).toEqual(TEST_GROUNDWATER_LEVELS.discreteData.groundwaterLevels['45807042']);
         });
     });
 });

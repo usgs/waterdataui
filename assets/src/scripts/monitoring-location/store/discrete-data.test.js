@@ -33,10 +33,10 @@ describe('monitoring-location/store/discrete-data', () => {
     describe('addGroundwaterLevels action', () => {
         const TEST_DATA = {
             variable: {
-                variableCode: {
-                    value: '72019',
-                    variableID: '12345'
-                }
+                variableCode: [{
+                    value: '72019'
+                }],
+                oid: '12345'
             },
             values: [
                 {
@@ -52,19 +52,19 @@ describe('monitoring-location/store/discrete-data', () => {
             ]
         };
         it('adds the groundwater levels to the store', () => {
-            store.dispatch(addGroundwaterLevels('72019', TEST_DATA));
+            store.dispatch(addGroundwaterLevels('12345', TEST_DATA));
             const state = store.getState();
 
-            expect(state.discreteData.groundwaterLevels['72019']).toEqual(TEST_DATA);
+            expect(state.discreteData.groundwaterLevels['12345']).toEqual(TEST_DATA);
         });
 
         it('add the groundwater levels for the parameter code to the store while retaining data from other parameter codes', () => {
             const testDataOne = {
                 variable: {
-                    variableCode: {
-                        value: '60123',
-                        variableID: '55555'
-                    }
+                    variableCode: [{
+                        value: '60123'
+                    }],
+                    oid: '55555'
                 },
                 values: [
                     {
@@ -79,12 +79,12 @@ describe('monitoring-location/store/discrete-data', () => {
                     }
                 ]
             };
-            store.dispatch(addGroundwaterLevels('60123', testDataOne));
-            store.dispatch(addGroundwaterLevels('72019', TEST_DATA));
+            store.dispatch(addGroundwaterLevels('55555', testDataOne));
+            store.dispatch(addGroundwaterLevels('12345', TEST_DATA));
             const state = store.getState();
 
-            expect(state.discreteData.groundwaterLevels['60123']).toEqual(testDataOne);
-            expect(state.discreteData.groundwaterLevels['72019']).toEqual(TEST_DATA);
+            expect(state.discreteData.groundwaterLevels['55555']).toEqual(testDataOne);
+            expect(state.discreteData.groundwaterLevels['12345']).toEqual(TEST_DATA);
         });
 
         it('replace the existing data for the parameter code', () => {
@@ -101,11 +101,11 @@ describe('monitoring-location/store/discrete-data', () => {
                     datetime: 1607972400000
                 }]
             };
-            store.dispatch(addGroundwaterLevels('72019', TEST_DATA));
-            store.dispatch(addGroundwaterLevels('72019', changedTestData));
+            store.dispatch(addGroundwaterLevels('12345', TEST_DATA));
+            store.dispatch(addGroundwaterLevels('12345', changedTestData));
             const state = store.getState();
             
-            expect(state.discreteData.groundwaterLevels['72019']).toEqual(changedTestData);
+            expect(state.discreteData.groundwaterLevels['12345']).toEqual(changedTestData);
         });
     });
 
@@ -117,10 +117,10 @@ describe('monitoring-location/store/discrete-data', () => {
             return dispatchPromise.then(() => {
                 const state = store.getState();
 
-                expect(state.discreteData.groundwaterLevels['72019']).toBeDefined();
-                expect(state.discreteData.groundwaterLevels['72019'].variable.variableCode[0].value).toEqual('72019');
-                expect(state.discreteData.groundwaterLevels['72019'].values).toHaveLength(7);
-                expect(state.discreteData.groundwaterLevels['72019'].values[0]).toEqual({
+                expect(state.discreteData.groundwaterLevels['52331280']).toBeDefined();
+                expect(state.discreteData.groundwaterLevels['52331280'].variable.variableCode[0].value).toEqual('72019');
+                expect(state.discreteData.groundwaterLevels['52331280'].values).toHaveLength(7);
+                expect(state.discreteData.groundwaterLevels['52331280'].values[0]).toEqual({
                     value: '26.07',
                     qualifiers: [],
                     dateTime: 1579770360000
@@ -133,29 +133,29 @@ describe('monitoring-location/store/discrete-data', () => {
                 value: {
                     timeSeries: [
                         {
-                            variable: {variableId: 11112222},
+                            variable: {oid: '11112222'},
                             values: [{value: []}]
                         }
                     ]
                 }
             };
             fakeServer.respondWith([200, {'Content-Type': 'application/json'}, JSON.stringify(MOCK_DATA)]);
-            const dispatchPromise = store.dispatch(retrieveGroundwaterLevels('12345678', '72019', '2020-01-01', '2020-11-17)'));
+            const dispatchPromise = store.dispatch(retrieveGroundwaterLevels('12345678', '11112222', '2020-01-01', '2020-11-17)'));
             fakeServer.respond();
             return dispatchPromise.then(() => {
                 const state = store.getState();
-                expect(state.discreteData.groundwaterLevels['72019'].values).toHaveLength(0);
+                expect(state.discreteData.groundwaterLevels['11112222'].values).toHaveLength(0);
             });
         });
 
         it('Bad fetch updates groundwater level with empty object', () => {
             fakeServer.respondWith([500, {}, 'Internal server error']);
-            const dispatchPromise = store.dispatch(retrieveGroundwaterLevels('12345678', '72019', '2020-01-01', '2020-11-17)'));
+            const dispatchPromise = store.dispatch(retrieveGroundwaterLevels('12345678', '11112222', '2020-01-01', '2020-11-17)'));
             fakeServer.respond();
             return dispatchPromise.then(() => {
                 const state = store.getState();
 
-                expect(state.discreteData.groundwaterLevels['72019']).toEqual({});
+                expect(state.discreteData.groundwaterLevels).toBeUndefined();
             });
         });
     });

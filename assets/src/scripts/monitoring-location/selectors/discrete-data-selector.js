@@ -1,6 +1,6 @@
 import {createSelector} from 'reselect';
 
-import {getCurrentParmCd} from './time-series-selector';
+import {getCurrentVariableID} from './time-series-selector';
 
 /*
  * Returns selector function which returns all of the groundwater levels.
@@ -18,8 +18,8 @@ export const getAllGroundwaterLevels =
  */
 export const getIVCurrentVariableGroundwaterLevels = createSelector(
     getAllGroundwaterLevels,
-    getCurrentParmCd,
-    (gwLevels, parameterCode) => {
-        return gwLevels && parameterCode && gwLevels[parameterCode] ? gwLevels[parameterCode] : {};
+    getCurrentVariableID,
+    (gwLevels, variableID) => {
+        return gwLevels && variableID && gwLevels[variableID] ? gwLevels[variableID] : {};
     }
 );

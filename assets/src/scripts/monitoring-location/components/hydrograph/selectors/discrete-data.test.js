@@ -36,12 +36,12 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
             },
             discreteData: {
                 groundwaterLevels: {
-                    '72019': {
+                    '45807042': {
                         variable: {
-                            variableCode: {
-                                value: '72019',
-                                variableID: 45807042
-                            }
+                            variableCode: [{
+                                value: '72019'
+                            }],
+                            oid: '45807042'
                         },
                         values: [
                             {value: '14.0', dateTime: 1491055200000},
