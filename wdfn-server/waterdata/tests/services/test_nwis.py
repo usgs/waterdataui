@@ -13,6 +13,7 @@ class TestNwisWebServices(TestCase):
 
     def setUp(self):
         self.service_root = 'https://fake.nwis.url.gov'
+        self.catalog_root= 'https://fake.nwis.catalog.usgs.gov'
         self.path = '/some/path/'
         self.site_no = '029055631'
         self.agency_cd = 'ABYZ'
@@ -20,13 +21,13 @@ class TestNwisWebServices(TestCase):
         self.county_code = '055:213'
 
     def test_default_attributes(self):
-        nwis = NwisWebServices(self.service_root)
+        nwis = NwisWebServices(self.service_root, self.catalog_root)
         self.assertEqual(nwis.path, '/nwis/site/')
         self.assertEqual(nwis.data_format, 'rdb')
 
     @mock.patch('waterdata.services.nwis.execute_get_request')
     def test_get_site(self, r_mock):
-        nwis = NwisWebServices(self.service_root, self.path)
+        nwis = NwisWebServices(self.service_root, self.catalog_root, self.path)
         nwis.get_site(self.site_no, self.agency_cd)
         r_mock.assert_called_with(
             self.service_root,
@@ -46,10 +47,10 @@ class TestNwisWebServices(TestCase):
         mock_resp.iter_lines.return_value = iter(PARAMETER_RDB.split('\n'))
         r_mock.return_value = mock_resp
 
-        nwis = NwisWebServices(self.service_root, self.path)
+        nwis = NwisWebServices(self.service_root, self.catalog_root, self.path)
         data = nwis.get_site_parameters(self.site_no, self.agency_cd)
         r_mock.assert_called_with(
-            self.service_root,
+            self.catalog_root,
             path=self.path,
             params={
                 'sites': self.site_no,
@@ -68,10 +69,10 @@ class TestNwisWebServices(TestCase):
         mock_resp.status_code = 503
         r_mock.return_value = mock_resp
 
-        nwis = NwisWebServices(self.service_root, self.path)
+        nwis = NwisWebServices(self.service_root, self.catalog_root, self.path)
         data = nwis.get_site_parameters(self.site_no, self.agency_cd)
         r_mock.assert_called_with(
-            self.service_root,
+            self.catalog_root,
             path=self.path,
             params={
                 'sites': self.site_no,
@@ -91,7 +92,7 @@ class TestNwisWebServices(TestCase):
         mock_resp.iter_lines.return_value = iter(SITE_RDB.split('\n'))
         r_mock.return_value = mock_resp
 
-        nwis = NwisWebServices(self.service_root, self.path)
+        nwis = NwisWebServices(self.service_root, self.catalog_root, self.path)
         data = nwis.get_huc_sites(self.huc_cd)
         r_mock.assert_called_with(
             self.service_root,
@@ -110,7 +111,7 @@ class TestNwisWebServices(TestCase):
         mock_resp.status_code = 404
         r_mock.return_value = mock_resp
 
-        nwis = NwisWebServices(self.service_root, self.path)
+        nwis = NwisWebServices(self.service_root, self.catalog_root, self.path)
         data = nwis.get_huc_sites(self.huc_cd)
         r_mock.assert_called_with(
             self.service_root,
@@ -130,7 +131,7 @@ class TestNwisWebServices(TestCase):
         mock_resp.iter_lines.return_value = iter(SITE_RDB.split('\n'))
         r_mock.return_value = mock_resp
 
-        nwis = NwisWebServices(self.service_root, self.path)
+        nwis = NwisWebServices(self.service_root, self.catalog_root, self.path)
         data = nwis.get_county_sites(self.county_code)
         r_mock.assert_called_with(
             self.service_root,
@@ -149,7 +150,7 @@ class TestNwisWebServices(TestCase):
         mock_resp.status_code = 500
         r_mock.return_value = mock_resp
 
-        nwis = NwisWebServices(self.service_root, self.path)
+        nwis = NwisWebServices(self.service_root, self.catalog_root, self.path)
         data = nwis.get_county_sites(self.county_code)
         r_mock.assert_called_with(
             self.service_root,

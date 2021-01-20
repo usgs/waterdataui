@@ -125,7 +125,7 @@ export const attachToNode = function(store,
             drawInfoAlert(nodeElem, {body: 'No time series data available for this site'});
             if (!showOnlyGraph) {
                 document.getElementById('classic-page-link')
-                    .setAttribute('href', `${config.NWIS_INVENTORY_ENDPOINT}?site_no=${siteno}`);
+                    .setAttribute('href', `${config.NWIS_INVENTORY_PAGE_URL}?site_no=${siteno}`);
             }
         } else {
             //Update time series state

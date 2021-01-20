@@ -473,7 +473,7 @@ describe('monitoring-location/components/hydrograph module', () => {
 
     describe('graphNode contains the expected elements when no IV time series has been retrieved and showOnlyGraph is false', () => {
         let store;
-        config.NWIS_INVENTORY_ENDPOINT = 'https://fakenwis.usgs.gov/inventory';
+        config.NWIS_INVENTORY_PAGE_URL = 'https://fakenwis.usgs.gov/inventory';
         beforeEach(() => {
             jest.spyOn(floodDataActions, 'retrieveWaterwatchData').mockReturnValue(function() {
                 return Promise.resolve({});

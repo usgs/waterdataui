@@ -28,12 +28,13 @@ DEBUG = False
 SERVER_SERVICE_ROOT = 'https://waterservices.usgs.gov'  # Used for webserver calls to waterservices.
 SERVICE_ROOT = 'https://waterservices.usgs.gov'  # Use for client side calls to waterservices. Most be a public url.
 PAST_SERVICE_ROOT = 'https://nwis.waterservices.usgs.gov'
-NWIS_ENDPOINTS = {
+NWIS_PAGE_URLS = {
     'INVENTORY': 'https://waterdata.usgs.gov/nwis/inventory',
     'UV': 'https://waterdata.usgs.gov/nwis/uv'
 }
 WEATHER_SERVICE_ROOT = 'https://api.weather.gov'
 
+SITE_SERVICE_CATALOG_ROOT = SERVICE_ROOT
 OBSERVATIONS_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/'
 GROUNDWATER_LEVELS_ENDPOINT = 'https://waterservices.usgs.gov/nwis/gwlevels/'
 
