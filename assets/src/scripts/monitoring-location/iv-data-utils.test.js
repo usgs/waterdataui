@@ -283,6 +283,11 @@ describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
         }
     };
 
+    it('Will handle a collection without a time series', () => {
+        let emptyCollection = {};
+        convertCelsiusCollectionsToFahrenheitAndMerge(emptyCollection);
+        expect(emptyCollection).toEqual({});
+    });
 
     it('will create a new variables key with the correct suffix in application state', () => {
         convertCelsiusCollectionsToFahrenheitAndMerge(TEST_STATE);

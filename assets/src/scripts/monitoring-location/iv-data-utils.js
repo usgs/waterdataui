@@ -173,21 +173,23 @@ const getConvertedTimeSeries = function(timeSeries, tsRequestKey, parameterCode)
 * all data that appears in the hydrograph. NOTE: The contents of this parameter are mutated
  */
 export const convertCelsiusCollectionsToFahrenheitAndMerge = function(collection) {
-    Object.entries(collection.timeSeries).forEach(([tsRequestKey, timeSeriesDetails]) => {
-        const variableCode = timeSeriesDetails.variable;
-        // Cross reference the 'variableCode' in the 'timeSeries' with 'variables' in the state
-        // to get the corresponding parameter code
-        const parameterCode = collection.variables[variableCode].variableCode.value;
-        // For any Celsius parameter codes, clone the application state variables, 'variables and timeSeries'
-        // and convert the appropriate properties to Fahrenheit. Then add the cloned objects to the 'collection'
-        if (config.TEMPERATURE_PARAMETERS.celsius.includes(parameterCode)) {
-            if (!checkForMeasuredFahrenheitParameters(parameterCode, collection.variables)) {
-                const convertedTimeSeries =  getConvertedTimeSeries(collection.timeSeries[tsRequestKey], tsRequestKey, parameterCode);
-                const convertedVariable =  getConvertedVariable(collection.variables[variableCode]);
+    if ('timeSeries' in collection) {
+        Object.entries(collection.timeSeries).forEach(([tsRequestKey, timeSeriesDetails]) => {
+            const variableCode = timeSeriesDetails.variable;
+            // Cross reference the 'variableCode' in the 'timeSeries' with 'variables' in the state
+            // to get the corresponding parameter code
+            const parameterCode = collection.variables[variableCode].variableCode.value;
+            // For any Celsius parameter codes, clone the application state variables, 'variables and timeSeries'
+            // and convert the appropriate properties to Fahrenheit. Then add the cloned objects to the 'collection'
+            if (config.TEMPERATURE_PARAMETERS.celsius.includes(parameterCode)) {
+                if (!checkForMeasuredFahrenheitParameters(parameterCode, collection.variables)) {
+                    const convertedTimeSeries = getConvertedTimeSeries(collection.timeSeries[tsRequestKey], tsRequestKey, parameterCode);
+                    const convertedVariable = getConvertedVariable(collection.variables[variableCode]);
 
-                merge(collection.variables, convertedVariable);
-                merge(collection.timeSeries, convertedTimeSeries);
+                    merge(collection.variables, convertedVariable);
+                    merge(collection.timeSeries, convertedTimeSeries);
+                }
             }
-        }
-    });
+        });
+    }
 };
