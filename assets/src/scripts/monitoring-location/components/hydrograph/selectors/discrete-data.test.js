@@ -38,9 +38,9 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
                 groundwaterLevels: {
                     '45807042': {
                         variable: {
-                            variableCode: [{
+                            variableCode: {
                                 value: '72019'
-                            }],
+                            },
                             oid: '45807042'
                         },
                         values: [

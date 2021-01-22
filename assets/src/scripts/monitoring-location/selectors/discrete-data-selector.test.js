@@ -17,9 +17,9 @@ describe('monitoring-location/selectors/discrete-data-selector', () => {
             const TEST_DATA = {
                 '45807042': {
                     variable: {
-                        variableCode: [{
+                        variableCode: {
                             value: '72019'
-                        }],
+                        },
                         oid: '45807042'
                     },
                     values: [
@@ -28,9 +28,9 @@ describe('monitoring-location/selectors/discrete-data-selector', () => {
                 },
                 55807042: {
                     variable: {
-                        variableCode: [{
+                        variableCode: {
                             value: '65433'
-                        }],
+                        },
                         oid: '55807042'
                     },
                     values: [
@@ -75,9 +75,9 @@ describe('monitoring-location/selectors/discrete-data-selector', () => {
                 groundwaterLevels : {
                     '45807042': {
                         variable: {
-                            variableCode: [{
+                            variableCode: {
                                 value: '72019'
-                            }],
+                            },
                             oid: '45807042'
                         },
                         values: [

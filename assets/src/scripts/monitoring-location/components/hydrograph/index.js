@@ -10,41 +10,33 @@ import {link} from 'ui/lib/d3-redux';
 import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
 
+import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ml/iv-data-utils';
+import {renderTimeSeriesUrlParams} from 'ml/url-params';
+
+import {getAllGroundwaterLevels} from 'ml/selectors/discrete-data-selector';
 import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
+
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
 import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
 import {Actions as timeZoneActions} from 'ml/store/time-zone';
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
-import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
 import {drawDateRangeControls} from './date-controls';
 import {drawDataTable} from './data-table';
 import {renderDownloadLinks} from './download-links';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
-import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ml/iv-data-utils';
-
-import {getLineSegmentsByParmCd} from './selectors/drawing-data';
-import {SPARK_LINE_DIM}  from './selectors/layout';
-import {getAvailableParameterCodes} from './selectors/parameter-data';
-import {getTimeSeriesScalesByParmCd} from './selectors/scales';
-
 import {drawTimeSeriesLegend} from './legend';
 import {drawMethodPicker} from './method-picker';
 import {plotSeriesSelectTable} from './parameters';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
 
-/**
- * Modify styling to hide or display the elem.
- *
- * @param elem
- * @param {Boolean} showElem
- */
-const controlDisplay = function(elem, showElem) {
-    elem.attr('hidden', showElem ? null : true);
-};
+import {getLineSegmentsByParmCd} from './selectors/drawing-data';
+import {SPARK_LINE_DIM}  from './selectors/layout';
+import {getAvailableParameterCodes} from './selectors/parameter-data';
+import {getTimeSeriesScalesByParmCd} from './selectors/scales';
 
 /*
  * Renders the hydrograph on the node element using the Redux store for state information. The siteno, latitude, and
@@ -67,7 +59,8 @@ export const attachToNode = function(store,
                                          timeSeriesId, // This must be converted to an integer
                                          showOnlyGraph = false,
                                          showMLName = false
-                                     } = {}) {
+                                     } = {},
+                                     loadPromise) {
     const nodeElem = select(node);
     if (!siteno) {
         select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No data is available.'});
@@ -116,13 +109,14 @@ export const attachToNode = function(store,
         store.dispatch(statisticsDataActions.retrieveMedianStatistics(siteno));
     }
 
-    fetchDataPromise.then(() => {
+    Promise.all([fetchDataPromise, loadPromise]).then(() => {
         // Hide the loading indicator
+        const state = store.getState();
         nodeElem
             .select('.loading-indicator-container')
             .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
-        if (!hasAnyTimeSeries(store.getState())) {
-            drawInfoAlert(nodeElem, {body: 'No time series data available for this site'});
+        if (!hasAnyTimeSeries(state) && getAvailableParameterCodes(state).length == 0) {
+            drawInfoAlert(nodeElem, {body: 'No time series data or discrete data available for this site'});
             if (!showOnlyGraph) {
                 document.getElementById('classic-page-link')
                     .setAttribute('href', `${config.NWIS_INVENTORY_PAGE_URL}?site_no=${siteno}`);
@@ -145,7 +139,6 @@ export const attachToNode = function(store,
             // Initial data has been fetched and initial state set. We can render the hydrograph elements
             // Set up rendering functions for the graph-container
             let graphContainer = nodeElem.select('.graph-container')
-                .call(link(store, controlDisplay, hasAnyTimeSeries))
                 .call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph);
             if (!showOnlyGraph) {
                 graphContainer

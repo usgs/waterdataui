@@ -33,9 +33,9 @@ describe('monitoring-location/store/discrete-data', () => {
     describe('addGroundwaterLevels action', () => {
         const TEST_DATA = {
             variable: {
-                variableCode: [{
+                variableCode: {
                     value: '72019'
-                }],
+                },
                 oid: '12345'
             },
             values: [
@@ -61,9 +61,9 @@ describe('monitoring-location/store/discrete-data', () => {
         it('add the groundwater levels for the parameter code to the store while retaining data from other parameter codes', () => {
             const testDataOne = {
                 variable: {
-                    variableCode: [{
+                    variableCode: {
                         value: '60123'
-                    }],
+                    },
                     oid: '55555'
                 },
                 values: [
@@ -118,7 +118,7 @@ describe('monitoring-location/store/discrete-data', () => {
                 const state = store.getState();
 
                 expect(state.discreteData.groundwaterLevels['52331280']).toBeDefined();
-                expect(state.discreteData.groundwaterLevels['52331280'].variable.variableCode[0].value).toEqual('72019');
+                expect(state.discreteData.groundwaterLevels['52331280'].variable.variableCode.value).toEqual('72019');
                 expect(state.discreteData.groundwaterLevels['52331280'].values).toHaveLength(7);
                 expect(state.discreteData.groundwaterLevels['52331280'].values[0]).toEqual({
                     value: '26.07',
@@ -133,7 +133,12 @@ describe('monitoring-location/store/discrete-data', () => {
                 value: {
                     timeSeries: [
                         {
-                            variable: {oid: '11112222'},
+                            variable: {
+                                variableCode: [{
+                                    value: '60123'
+                                }],
+                                oid: '11112222'
+                            },
                             values: [{value: []}]
                         }
                     ]

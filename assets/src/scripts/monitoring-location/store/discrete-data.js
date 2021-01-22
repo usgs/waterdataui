@@ -62,7 +62,10 @@ export const retrieveGroundwaterLevels = function(monitoringLocationId, paramete
 
                             });
                         }
-                        const variable = timeSeries[0].variable;
+                        const variable = {
+                            ...timeSeries[0].variable,
+                            variableCode: timeSeries[0].variable.variableCode[0]
+                        };
                         dispatch(addGroundwaterLevels(variable.oid, {
                             variable: variable,
                             values: values

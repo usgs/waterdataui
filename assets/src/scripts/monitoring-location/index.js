@@ -26,20 +26,26 @@ const COMPONENTS = {
     'network-list': NetworkListComponent
 };
 
+/*
+ * Returns a promise that is resolved once groundwater levels have been fetched. It is
+ * immediately resolved if no groundwater is fetchd.
+ */
 const loadAllGroundWaterData = function(nodes, store) {
     const nodesWithGroundWaterLevels =
         Array.from(nodes).filter(node => node.dataset.componement === 'hydrograph' || node.dataset.component === 'dv-hydrograph');
     if (!nodesWithGroundWaterLevels.length) {
-        return;
+        return Promise.resolve();
     }
 
     const siteno = nodesWithGroundWaterLevels[0].dataset.siteno;
     if (config.gwPeriodOfRecord) {
-        Object.keys(config.gwPeriodOfRecord).forEach(function (parameterCode) {
+        Object.keys(config.gwPeriodOfRecord).forEach(function(parameterCode) {
             const periodOfRecord = config.gwPeriodOfRecord[parameterCode];
-            store.dispatch(
+            return store.dispatch(
                 retrieveGroundwaterLevels(siteno, parameterCode, periodOfRecord.begin_date, periodOfRecord.end_date));
         });
+    } else {
+        return Promise.resolve();
     }
 };
 
@@ -52,14 +58,14 @@ const load = function() {
         }
     });
     let nodes = document.getElementsByClassName('wdfn-component');
-    loadAllGroundWaterData(nodes, store);
+    const loadPromise = loadAllGroundWaterData(nodes, store);
 
     for (let node of nodes) {
         // If options is specified on the node, expect it to be a JSON string.
         // Otherwise, use the dataset attributes as the component options.
         const options = node.dataset.options ? JSON.parse(node.dataset.options) : node.dataset;
         const hashOptions = Object.fromEntries(new window.URLSearchParams(getParamString()));
-        COMPONENTS[node.dataset.component](store, node, Object.assign({}, options, hashOptions));
+        COMPONENTS[node.dataset.component](store, node, Object.assign({}, options, hashOptions), loadPromise);
     }
 
     window.onresize = function() {

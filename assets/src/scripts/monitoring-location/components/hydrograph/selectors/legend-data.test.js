@@ -105,9 +105,9 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
             groundwaterLevels: {
                 '45807197': {
                     variable: {
-                        variableCode: [{
+                        variableCode: {
                             value: '72019'
-                        }],
+                        },
                         oid: '45807197'
                     },
                     values: [
