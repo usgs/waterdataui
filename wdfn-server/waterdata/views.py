@@ -27,6 +27,11 @@ def home():
     """Render the home page."""
     return render_template('index.html', version=__version__)
 
+@app.route('/questions-comments')
+def questions_comments():
+    """Render the user feedback form."""
+    return render_template('questions_comments.html')
+
 
 @app.route('/provisional-data-statement')
 def provisional_data_statement():
