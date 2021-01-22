@@ -45,3 +45,22 @@ table {
   margin-left: 0;
   margin-top: 0;
 }
+
+#main-content {
+  margin-bottom: 0;
+  .user-feedback {
+    color: white;
+    text-align: center;
+    @include u-bg('blue-60v');
+    position: sticky;
+    bottom: 0;
+    @include u-padding-top(1);
+    @include at-media('tablet') {
+      border-radius: 15px 15px 0 0;
+      display: block;
+      float: right;
+      @include u-padding-left(2);
+      @include u-padding-right(2);
+    }
+  }
+}
