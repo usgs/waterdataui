@@ -300,10 +300,14 @@
                 <h1>Error: HTTP {{ status_code }} -- {{ reason }}</h1>
             {% endif %}
         </div>
-        <div class="user-feedback usa-prose">
-            <p>Questions or Comments</p>
-        </div>
+
     </main>
+    <div class="user-feedback">
+        <a href="{{ url_for('provisional_data_statement') }}"
+           ga-on="click" ga-event-category="navigation" ga-event-action="toFeedBackForm">
+            <p class="usa-prose">Questions or Comments</p>
+        </a>
+    </div>
 
     {% include 'partials/footer.html' %}
 
