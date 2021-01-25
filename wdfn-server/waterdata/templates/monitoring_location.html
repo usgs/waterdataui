@@ -280,11 +280,6 @@
                             </div>
                         </div>
                     {% endif %}
-                    {% if questions_link %}
-                        <div>
-                            <a class="usa-link" href="{{ questions_link }}">Email USGS questions about this site</a>
-                        </div>
-                    {% endif %}
 
                     {% if cooperators %}
                         <div>
@@ -306,10 +301,14 @@
             {% endif %}
         </div>
 
-        {% if config.TOUCHPOINT_SCRIPT %}
-            {{ config.TOUCHPOINT_SCRIPT | safe }}
-        {%  endif %}
     </main>
+
+    <div class="user-feedback">
+        <a href="{{ url_for('questions_comments') }}"
+           ga-on="click" ga-event-category="navigation" ga-event-action="toFeedBackForm">
+            <p class="usa-prose">Questions or Comments</p>
+        </a>
+    </div>
 
     {% include 'partials/footer.html' %}
 

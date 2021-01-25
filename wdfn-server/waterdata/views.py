@@ -27,6 +27,11 @@ def home():
     """Render the home page."""
     return render_template('index.html', version=__version__)
 
+@app.route('/questions-comments')
+def questions_comments():
+    """Render the user feedback form."""
+    return render_template('questions_comments.html')
+
 
 @app.route('/provisional-data-statement')
 def provisional_data_statement():
@@ -100,7 +105,6 @@ def monitoring_location(site_no):
                 app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
                 app.config['HUC_LOOKUP']
             )
-            questions_link = None
             try:
                 site_owner_state = (
                     location_with_values['district_cd']['abbreviation']
@@ -121,7 +125,6 @@ def monitoring_location(site_no):
                         'below that briefly summarizes your request</b></p>'
                     )
                 }
-                questions_link = construct_url('https://water.usgs.gov', 'contact/gsanswers', questions_link_params)
 
             context = {
                 'status_code': status,
@@ -134,7 +137,6 @@ def monitoring_location(site_no):
                 'gw_period_of_record': get_period_of_record_by_parm_cd(parameter_data, 'gw') if app.config[
                     'GROUNDWATER_LEVELS_ENABLED'] else None,
                 'parm_grp_summary': grouped_dataseries,
-                'questions_link': questions_link,
                 'cooperators': cooperators,
                 'cameras': get_monitoring_location_camera_details((site_no)) if app.config[
                     'MONITORING_LOCATION_CAMERA_ENABLED'] else []
