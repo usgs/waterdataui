@@ -7,14 +7,15 @@ import {createStructuredSelector} from 'reselect';
 import config from 'ui/config.js';
 import {link} from 'ui/lib/d3-redux';
 
+import {sortedParameters} from 'ui/utils';
+
 import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
 
 import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ml/iv-data-utils';
 import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
-import {getAllGroundwaterLevels} from 'ml/selectors/discrete-data-selector';
-import {hasAnyTimeSeries, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
+import {hasAnyVariables, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
 
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
@@ -115,8 +116,8 @@ export const attachToNode = function(store,
         nodeElem
             .select('.loading-indicator-container')
             .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
-        if (!hasAnyTimeSeries(state) && getAvailableParameterCodes(state).length == 0) {
-            drawInfoAlert(nodeElem, {body: 'No time series data or discrete data available for this site'});
+        if (!hasAnyVariables(state)) {
+            drawInfoAlert(nodeElem.select('.graph-container'), {body: 'No time series data or discrete data available for this site'});
             if (!showOnlyGraph) {
                 document.getElementById('classic-page-link')
                     .setAttribute('href', `${config.NWIS_INVENTORY_PAGE_URL}?site_no=${siteno}`);
@@ -127,8 +128,14 @@ export const attachToNode = function(store,
                 const isThisParamCode = function(variable) {
                     return variable.variableCode.value === parameterCode;
                 };
-                const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
+                const thisVariable = Object.values(getVariables(state)).find(isThisParamCode);
                 store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
+            } else {
+                //Sort variables and use the first one as the current variable
+                const sortedVars = sortedParameters(getVariables(state));
+                if (sortedVars.length) {
+                    store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(sortedVars[0].oid));
+                }
             }
             if (compare) {
                 store.dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('compare', true));

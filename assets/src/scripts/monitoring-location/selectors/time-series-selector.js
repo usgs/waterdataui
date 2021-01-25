@@ -46,7 +46,14 @@ export const getTimeSeries = state => state.ivTimeSeriesData.timeSeries ? state.
 export const hasAnyTimeSeries = createSelector(
     getTimeSeries,
     (timeSeries) => {
-        return Object.keys(timeSeries).length ? true : false;
+        return !!Object.keys(timeSeries).length ;
+    }
+);
+
+export const hasAnyVariables = createSelector(
+    getVariables,
+    (variables) => {
+        return variables && Object.keys(variables).length;
     }
 );
 

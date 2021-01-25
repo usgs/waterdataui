@@ -17,6 +17,8 @@ import {
 } from 'ml/selectors/time-series-selector';
 import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
 
+import {getVisibleGroundWaterLevels} from './discrete-data';
+
 export const MASK_DESC = {
     ice: 'Ice Affected',
     fld: 'Flood',
@@ -223,9 +225,10 @@ export const getVisiblePoints = createSelector(
     getCurrentVariablePoints('current'),
     getCurrentVariablePoints('compare'),
     getCurrentVariableMedianStatPoints,
+    getVisibleGroundWaterLevels,
     (state) => state.ivTimeSeriesState.showIVTimeSeries,
-    (current, compare, median, showSeries) => {
-        const pointArray = [];
+    (current, compare, median, gwLevels, showSeries) => {
+        const pointArray = [gwLevels];
         if (showSeries['current']) {
             Array.prototype.push.apply(pointArray, current);
 

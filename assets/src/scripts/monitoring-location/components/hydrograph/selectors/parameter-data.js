@@ -1,10 +1,8 @@
-import unionBy from 'lodash/unionBy';
 import {createSelector} from 'reselect';
 
 import config from 'ui/config';
 import {sortedParameters} from 'ui/utils';
 
-import {getAllGroundwaterLevelVariables} from 'ml/selectors/discrete-data-selector';
 import {getCurrentVariableID, getTimeSeries, getVariables} from 'ml/selectors/time-series-selector';
 
 /**
@@ -19,14 +17,11 @@ import {getCurrentVariableID, getTimeSeries, getVariables} from 'ml/selectors/ti
 export const getAvailableParameterCodes = createSelector(
     getVariables,
     getTimeSeries,
-    getAllGroundwaterLevelVariables,
     getCurrentVariableID,
-    (ivVariables, timeSeries, gwLevelVariables, currentVariableID) => {
-        if (!ivVariables && !gwLevelVariables) {
+    (allVariables, timeSeries, currentVariableID) => {
+        if (!allVariables) {
             return [];
         }
-        const allVariables =
-            unionBy(ivVariables ? Object.values(ivVariables) : [], gwLevelVariables, (variable) => variable.oid);
         const seriesList = Object.values(timeSeries);
 
         return sortedParameters(allVariables)

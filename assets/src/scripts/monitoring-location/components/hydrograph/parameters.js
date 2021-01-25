@@ -82,6 +82,7 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
     }
 };
 
+
 /**
  * Draws a table with clickable rows of time series parameter codes. Selecting
  * a row changes the active parameter code.
