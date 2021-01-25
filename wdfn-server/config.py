@@ -67,7 +67,6 @@ DATA_RETRIEVAL_PACKAGE_INFORMATION = 'https://usgs-r.github.io/dataRetrieval/'
 
 MONITORING_LOCATION_CAMERA_ENDPOINT = 'https://apps.usgs.gov/sstl/'
 
-TOUCHPOINT_SCRIPT = ''
 LOGGING_ENABLED = True
 LOGGING_DIRECTORY = None
 LOGGING_LEVEL = logging.WARNING
