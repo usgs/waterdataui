@@ -34,7 +34,7 @@ NWIS_PAGE_URLS = {
 }
 WEATHER_SERVICE_ROOT = 'https://api.weather.gov'
 
-SITE_SERVICE_CATALOG_ROOT = SERVICE_ROOT
+SITE_SERVICE_CATALOG_ROOT = 'https://waterservices.usgs.gov'
 OBSERVATIONS_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/'
 GROUNDWATER_LEVELS_ENDPOINT = 'https://waterservices.usgs.gov/nwis/gwlevels/'
 
