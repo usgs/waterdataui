@@ -39,11 +39,13 @@ const loadAllGroundWaterData = function(nodes, store) {
 
     const siteno = nodesWithGroundWaterLevels[0].dataset.siteno;
     if (config.gwPeriodOfRecord) {
-        Object.keys(config.gwPeriodOfRecord).forEach(function(parameterCode) {
+
+        const loadPromises = Object.keys(config.gwPeriodOfRecord).map(function(parameterCode) {
             const periodOfRecord = config.gwPeriodOfRecord[parameterCode];
             return store.dispatch(
                 retrieveGroundwaterLevels(siteno, parameterCode, periodOfRecord.begin_date, periodOfRecord.end_date));
         });
+        return Promise.all(loadPromises);
     } else {
         return Promise.resolve();
     }

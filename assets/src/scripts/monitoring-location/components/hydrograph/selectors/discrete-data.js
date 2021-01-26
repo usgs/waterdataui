@@ -7,20 +7,27 @@ import {getRequestTimeRange} from 'ml/selectors/time-series-selector';
  * Returns a selector function that returns the groundwater levels that will be visible
  * on the hydrograpnh
  * @return {Function} which returns an {Array} of groundwater level object with properties:
- *      @prop {String} value
+ *      @prop {Float} value
  *      @prop {Array of String} qualifiers
  *      @prop {Number} dateTime
  */
-export const getVisibleGroundWaterLevels = createSelector(
+export const getVisibleGroundWaterLevelPoints = createSelector(
     getRequestTimeRange('current'),
     getIVCurrentVariableGroundwaterLevels,
     (timeRange, gwLevels) => {
         if (!timeRange || !gwLevels.values) {
             return [];
         }
-        return gwLevels.values.filter((data) => {
-            return data.dateTime > timeRange.start && data.dateTime < timeRange.end;
-        });
+        return gwLevels.values
+            .filter((data) => {
+                return data.dateTime > timeRange.start && data.dateTime < timeRange.end;
+            })
+            .map((data) => {
+                return {
+                    ...data,
+                    value: parseFloat(data.value)
+                };
+            });
     }
 );
 
@@ -30,6 +37,6 @@ export const getVisibleGroundWaterLevels = createSelector(
  * @return {Function} which returns {Boolean}
  */
 export const anyVisibleGroundWaterLevels = createSelector(
-    getVisibleGroundWaterLevels,
-    (gwLevels) => gwLevels.length != 0
+    getVisibleGroundWaterLevelPoints,
+    (gwLevels) => gwLevels.length !== 0
 );

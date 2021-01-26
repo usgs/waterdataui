@@ -14,7 +14,7 @@ import {getAgencyCode, getMonitoringLocationName, getCurrentVariable} from 'ml/s
 import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
 
 import {getAxes}  from './selectors/axes';
-import {getVisibleGroundWaterLevels} from './selectors/discrete-data';
+import {getVisibleGroundWaterLevelPoints} from './selectors/discrete-data';
 import {
     getCurrentVariableLineSegments,
     getCurrentVariableMedianStatPoints,
@@ -272,7 +272,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
             enableClip: () => true
         })))
         .call(link(store, drawGroundwaterLevels, createStructuredSelector({
-            levels: getVisibleGroundWaterLevels,
+            levels: getVisibleGroundWaterLevelPoints,
             xScale: getMainXScale('current'),
             yScale: getMainYScale
         })))

@@ -1,4 +1,4 @@
-import {getVisibleGroundWaterLevels, anyVisibleGroundWaterLevels} from './discrete-data';
+import {getVisibleGroundWaterLevelPoints, anyVisibleGroundWaterLevels} from './discrete-data';
 
 describe('monitoring-location/components/hydrograph/selectors/discrete-data', () => {
 
@@ -54,7 +54,7 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
             }
         };
 
-    describe('getVisibleGroundWaterLevels', () => {
+    describe('getVisibleGroundWaterLevelPoints', () => {
 
         it('Return empty array if no groundwater levels are defined', () => {
             const testData = {
@@ -63,7 +63,7 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
                     groundwaterLevels: null
                 }
             };
-            expect(getVisibleGroundWaterLevels(testData)).toHaveLength(0);
+            expect(getVisibleGroundWaterLevelPoints(testData)).toHaveLength(0);
         });
 
         it('Return an empty array if the current variable does not have ground water data', () => {
@@ -74,11 +74,11 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
                     currentIVVariableID: '45807041'
                 }
             };
-            expect(getVisibleGroundWaterLevels(testData)).toHaveLength(0);
+            expect(getVisibleGroundWaterLevelPoints(testData)).toHaveLength(0);
         });
 
         it('Return the ground water levels that are in the 7 day period', () => {
-            const result = getVisibleGroundWaterLevels(TEST_STATE);
+            const result = getVisibleGroundWaterLevelPoints(TEST_STATE);
             expect(result).toHaveLength(2);
         });
     });
