@@ -139,7 +139,6 @@ export const attachToNode = function(store,
                 //Sort variables and use the first one as the current variable
                 const sortedVars = sortedParameters(getVariables(state));
                 if (sortedVars.length) {
-                    console.log('Setting current variable ' + sortedVars[0].oid);
                     store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(sortedVars[0].oid));
                 }
             }
