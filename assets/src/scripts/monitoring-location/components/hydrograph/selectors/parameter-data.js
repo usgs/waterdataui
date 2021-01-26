@@ -28,6 +28,25 @@ export const getAvailableParameterCodes = createSelector(
             .map((variable) => {
                 const parameterCode = variable.variableCode.value;
                 const measuredParameterCode = parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '');
+
+                const uvPeriodOfRecord = config.uvPeriodOfRecord && measuredParameterCode in config.uvPeriodOfRecord ?
+                    config.uvPeriodOfRecord[measuredParameterCode] : null;
+                const gwPeriodOfRecord = config.gwPeriodOfRecord && measuredParameterCode in config.gwPeriodOfRecord ?
+                    config.gwPeriodOfRecord[measuredParameterCode] : null;
+                let periodOfRecord;
+                if (!uvPeriodOfRecord) {
+                    periodOfRecord = gwPeriodOfRecord;
+                } else if (!gwPeriodOfRecord) {
+                    periodOfRecord = uvPeriodOfRecord;
+                } else {
+                    periodOfRecord = {
+                        begin_date: uvPeriodOfRecord.begin_date < gwPeriodOfRecord.begin_date ?
+                            uvPeriodOfRecord.begin_date : gwPeriodOfRecord.begin_date,
+                        end_date: uvPeriodOfRecord.end_date > gwPeriodOfRecord.end_date ?
+                            uvPeriodOfRecord.end_date : gwPeriodOfRecord.end_date
+                    };
+                }
+
                 const hasWaterAlert = config.WATER_ALERT_PARAMETER_CODES.includes(measuredParameterCode);
                 let waterAlertDisplayText;
                 if (hasWaterAlert) {
@@ -48,8 +67,7 @@ export const getAvailableParameterCodes = createSelector(
                     timeSeriesCount: seriesList.filter(ts => {
                         return ts.tsKey === 'current:P7D' && ts.variable === variable.oid;
                     }).length,
-                    periodOfRecord: config.uvPeriodOfRecord && measuredParameterCode in config.uvPeriodOfRecord ?
-                        config.uvPeriodOfRecord[measuredParameterCode] : null,
+                    periodOfRecord: periodOfRecord,
                     waterAlert: {
                         hasWaterAlert,
                         subscriptionParameterCode: hasWaterAlert ? measuredParameterCode : '',
