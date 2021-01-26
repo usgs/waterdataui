@@ -26,6 +26,16 @@ class TestHomeView(TestCase):
         self.assertIn(__version__, response.data.decode('utf-8'))
 
 
+class TestQuestionsCommentsView(TestCase):
+    def setUp(self):
+        self.app_client = app.test_client()
+
+    def test_successful_view(self):
+        response = self.app_client.get('/questions-comments')
+
+        self.assertEqual(response.status_code, 200)
+
+
 class TestProvisionalDataStatementView(TestCase):
     def setUp(self):
         self.app_client = app.test_client()
