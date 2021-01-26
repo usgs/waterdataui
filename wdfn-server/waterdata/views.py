@@ -2,8 +2,9 @@
 Main application views.
 """
 import json
+import datetime
 
-from flask import abort, render_template, request, Markup, make_response
+from flask import abort, render_template, request, redirect, url_for, Markup, make_response
 
 from markdown import markdown
 
@@ -27,10 +28,25 @@ def home():
     """Render the home page."""
     return render_template('index.html', version=__version__)
 
-@app.route('/questions-comments')
+
+@app.route('/questions-comments', methods=["GET", "POST"])
 def questions_comments():
     """Render the user feedback form."""
+    if request.method == 'POST':
+        form_data = request.form
+        timestamp = datetime.datetime.utcnow()
+        print(form_data)
+        print(timestamp)
+        print(request.user_agent.string)
+        
+        return redirect(url_for('submitted'))
     return render_template('questions_comments.html')
+
+
+@app.route('/submitted')
+def submitted():
+    """Render the provisional data statement page."""
+    return render_template('submitted.html')
 
 
 @app.route('/provisional-data-statement')

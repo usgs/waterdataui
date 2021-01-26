@@ -9,25 +9,25 @@
             <p>Water Data for the Nation Feedback</p>
             <p>Questions or Comments</p>
         </section>
-        <form class="usa-form">
+        <form class="usa-form" action="/questions-comments" method="POST">
             <fieldset id="feedback-destination-selection" class="usa-fieldset">
                 <legend class="usa-legend usa-legend">Let us help you to:</legend>
 
                 <div class="usa-radio">
-                    <input class="usa-radio__input" id="feedback-selection-contact" type="radio" name="feedback-type" value="contact-someone" required>
+                    <input class="usa-radio__input" id="feedback-selection-contact" type="radio" name="feedback-type" value="contact" required>
                     <label class="usa-radio__label" for="feedback-selection-contact">Contact someone about data at this location</label>
                 </div>
                 <div class="usa-radio">
-                    <input class="usa-radio__input" id="feedback-selection-report" type="radio" name="feedback-type" value="report-problem">
+                    <input class="usa-radio__input" id="feedback-selection-report" type="radio" name="feedback-type" value="report">
                     <label class="usa-radio__label" for="feedback-selection-report">Report a problem with this location</label>
                 </div>
                 <div class="usa-radio">
-                    <input class="usa-radio__input" id="feedback-selection-comment" type="radio" name="feedback-type" value="leave-comment">
+                    <input class="usa-radio__input" id="feedback-selection-comment" type="radio" name="feedback-type" value="comment">
                     <label class="usa-radio__label" for="feedback-selection-comment">Leave a comment about the website</label>
                 </div>
                 <p id="feedback-subtext" class="usa-tooltip"
                    data-position="top"
-                   title="A real live person will receive and respond to your submission. Your choice here will ensure the person best able to answer is notified">
+                   title="A real live person will receive and respond to your submission. Your choice here will ensure quickest response.">
                     Why is this required?
                 </p>
                 <div>
@@ -47,8 +47,8 @@
                     <legend>Your Contact Information</legend>
                     <label class="usa-label" for="feedback-email-address">Email address*</label>
                     <input class="usa-input" id="feedback-email-address" name="feedback-email-address" type="email" autocapitalize="off" autocorrect="off" required>
-                    <label class="usa-label" for="feedback-first-name">Name</label>
-                    <input class="usa-input" id="feedback-first-name" name="feedback-first-name" type="text">
+                    <label class="usa-label" for="feedback-users-name">Name</label>
+                    <input class="usa-input" id="feedback-users-name" name="feedback-users-name" type="text">
                     <label class="usa-label" for="feedback-phone-number">Phone Number</label>
                     <input class="usa-input" id="feedback-phone-number" name="feedback-phone-number" type="tel">
                     <label class="usa-label" for="feedback-address">Organization or Address</label>
