@@ -45,7 +45,9 @@ import {getTimeSeriesScalesByParmCd} from './selectors/scales';
  * @param {Redux store} store
  * @param {DOM node} node
  * @param {Object} - string properties to set initial state information. The property siteno is required
- */
+ * @param {Promise} loadPromise - will resolve when any data needed by this module
+ *                                that is fetched by the caller has been fetched
+ * */
 export const attachToNode = function(store,
                                      node,
                                      {
