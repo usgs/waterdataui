@@ -222,10 +222,10 @@ export const getCurrentVariableMedianStatPoints = createSelector(
  * @return {Array}            Array of point arrays.
  */
 export const getVisiblePoints = createSelector(
-    getCurrentVariablePoints('current'),
-    getCurrentVariablePoints('compare'),
-    getCurrentVariableMedianStatPoints,
-    getVisibleGroundWaterLevels,
+    getCurrentVariablePoints('current'), // array of array of points
+    getCurrentVariablePoints('compare'), // array of array of points
+    getCurrentVariableMedianStatPoints, // array of array of points
+    getVisibleGroundWaterLevels, // array of points
     (state) => state.ivTimeSeriesState.showIVTimeSeries,
     (current, compare, median, gwLevels, showSeries) => {
         const pointArray = [];
