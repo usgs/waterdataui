@@ -42,7 +42,6 @@ export const getCustomTimeRange = state => state.ivTimeSeriesState.customIVTimeR
 export const getTimeSeries = state => state.ivTimeSeriesData.timeSeries ? state.ivTimeSeriesData.timeSeries : {};
 
 
-
 export const hasAnyTimeSeries = createSelector(
     getTimeSeries,
     (timeSeries) => {
@@ -50,10 +49,13 @@ export const hasAnyTimeSeries = createSelector(
     }
 );
 
+/*
+ * Selector function which returns a function which returns True if the state contains IV variables
+ */
 export const hasAnyVariables = createSelector(
     getVariables,
     (variables) => {
-        return variables && Object.keys(variables).length;
+        return !!(variables && Object.keys(variables).length);
     }
 );
 

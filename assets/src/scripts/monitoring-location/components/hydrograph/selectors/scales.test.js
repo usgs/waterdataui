@@ -121,7 +121,8 @@ describe('monitoring-location/components/hydrograph/scales', () => {
                 ui: {
                     width: 200,
                     windowWidth: 600
-                }
+                },
+                discreteData: {}
             };
             expect(getMainYScale(STATE).name).toBe('scale');
             expect(getBrushYScale(STATE).name).toBe('scale');
@@ -155,7 +156,8 @@ describe('monitoring-location/components/hydrograph/scales', () => {
                 ui: {
                     width: 200,
                     windowWidth: 600
-                }
+                },
+                discreteData: {}
             };
             expect(getMainYScale(STATE).name).toBe('scale');
             expect(getBrushYScale(STATE).name).toBe('scale');

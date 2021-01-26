@@ -7,6 +7,7 @@ import {
     getCurrentDateRange,
     getTimeSeries,
     hasAnyTimeSeries,
+    hasAnyVariables,
     getMonitoringLocationName,
     getAgencyCode,
     getUserInputsForSelectingTimespan,
@@ -314,6 +315,18 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                     }
                 }
             })).toBe(true);
+        });
+    });
+
+    describe('hasAnyVariables', () => {
+        it('Return false if state contains no variables', () => {
+            expect(hasAnyVariables({
+                ivTimeSeriesData: {}
+            })).toBe(false);
+        });
+
+        it('Return true if state contains variables', () => {
+            expect(hasAnyVariables(TEST_DATA)).toBe(true);
         });
     });
 

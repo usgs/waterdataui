@@ -220,7 +220,17 @@ describe('monitoring-location/components/hydrograph/selectors/parameter-data', (
         it('Returns the groundwater variables if no IV time series are available', () => {
             const result = getAvailableParameterCodes({
                 ...TEST_STATE,
-                ivTimeSeriesData: {},
+                ivTimeSeriesData: {
+                    variables: {
+                        '52331280': {
+                            oid: '52331280',
+                            variableDescription: 'code2 desc',
+                            variableCode: {
+                                value: '72019'
+                            }
+                        }
+                    }
+                },
                 ivTimeSeriesState: {
                     currentIVVariableID: '52331280'
                 }

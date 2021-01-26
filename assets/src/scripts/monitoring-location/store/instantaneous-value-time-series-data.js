@@ -69,6 +69,12 @@ const resetIVTimeSeries = function(tsRequestKey) {
     };
 };
 
+/*
+ * Synchronous Redux action - adds the variable to the store. If the variable already
+ * is in the state, it merges the properties of the variable with the existing variables
+ * @param {Object} variables
+ * @return {Object} - Redux action
+ */
 const addVariableToIVVariables = function(variable) {
     return {
         type: 'ADD_VARIABLE_TO_IV_VARIABLES',

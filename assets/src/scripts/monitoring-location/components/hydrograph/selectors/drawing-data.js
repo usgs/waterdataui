@@ -228,7 +228,10 @@ export const getVisiblePoints = createSelector(
     getVisibleGroundWaterLevels,
     (state) => state.ivTimeSeriesState.showIVTimeSeries,
     (current, compare, median, gwLevels, showSeries) => {
-        const pointArray = [gwLevels];
+        const pointArray = [];
+        if (gwLevels.length) {
+            pointArray.push(gwLevels);
+        }
         if (showSeries['current']) {
             Array.prototype.push.apply(pointArray, current);
 

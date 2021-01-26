@@ -15,7 +15,7 @@ import {drawLoadingIndicator} from 'd3render/loading-indicator';
 import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ml/iv-data-utils';
 import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
-import {hasAnyVariables, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
+import {hasAnyVariables, getCurrentVariableID, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
 
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
@@ -129,11 +129,15 @@ export const attachToNode = function(store,
                     return variable.variableCode.value === parameterCode;
                 };
                 const thisVariable = Object.values(getVariables(state)).find(isThisParamCode);
-                store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
-            } else {
+                if (thisVariable) {
+                    store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
+                }
+            }
+            if (!getCurrentVariableID(state)) {
                 //Sort variables and use the first one as the current variable
                 const sortedVars = sortedParameters(getVariables(state));
                 if (sortedVars.length) {
+                    console.log('Setting current variable ' + sortedVars[0].oid);
                     store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(sortedVars[0].oid));
                 }
             }

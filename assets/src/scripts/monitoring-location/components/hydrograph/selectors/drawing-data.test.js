@@ -198,7 +198,8 @@ const TEST_DATA = {
         currentIVVariableID: '45807197',
         currentIVDateRange: 'P7D',
         currentIVMethodID: 69928
-    }
+    },
+    discreteData: {}
 };
 
 describe('monitoring-location/components/hydrograph/drawingData module', () => {
@@ -885,6 +886,30 @@ describe('monitoring-location/components/hydrograph/drawingData module', () => {
             };
 
             expect(getVisiblePoints(newTestData)).toHaveLength(0);
+        });
+
+        it('Expects three arrays if groundwater levels are visible', () => {
+            const newTestData = {
+                ...testData,
+                discreteData: {
+                    groundwaterLevels: {
+                        '45807197': {
+                            variable: {
+                                variableCode: {value: '00060'},
+                                variableName: 'Streamflow',
+                                variableDescription: 'Discharge, cubic feet per second',
+                                oid: '45807197'
+                            },
+                            values: [{
+                                value: 11,
+                                qualifiers: ['A'],
+                                dateTime: 1488083700000
+                            }]
+                        }
+                    }
+                }
+            };
+            expect(getVisiblePoints(newTestData)).toHaveLength(3);
         });
     });
 
