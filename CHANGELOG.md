@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Camera metadata is now fetched and the client is using html5 video when video format is supported, otherwise the most recent image is shown.
+- The parameter selection list now shows parameters that are groundwater field visits only in addition to parameters that have IV data.
 
 ## [0.40.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.39.0...waterdataui-0.40.0) - 2021-01-06
 ### Added

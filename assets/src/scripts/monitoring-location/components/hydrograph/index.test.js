@@ -192,6 +192,7 @@ describe('monitoring-location/components/hydrograph module', () => {
 
     let graphNode;
     let fakeServer;
+    let loadPromise = new Promise(() => null);
 
     beforeEach(() => {
         let body = select('body');
@@ -217,7 +218,7 @@ describe('monitoring-location/components/hydrograph module', () => {
     });
 
     it('expect alert if no siteno defined', () => {
-        attachToNode({}, graphNode, {});
+        attachToNode({}, graphNode, {}, loadPromise);
         expect(graphNode.innerHTML).toContain('No data is available');
     });
 
@@ -235,7 +236,7 @@ describe('monitoring-location/components/hydrograph module', () => {
         it('loading-indicator is shown until initial data has been retrieved', () => {
             attachToNode(store, graphNode, {
                 siteno: '12345678'
-            });
+            }, loadPromise);
 
             expect(select(graphNode).select('.loading-indicator').size()).toBe(1);
         });
@@ -244,7 +245,7 @@ describe('monitoring-location/components/hydrograph module', () => {
             jest.spyOn(timeZoneActions, 'retrieveIanaTimeZone');
             attachToNode(store, graphNode, {
                 siteno: '12345678'
-            });
+            }, loadPromise);
 
             expect(timeZoneActions.retrieveIanaTimeZone).toHaveBeenCalled();
         });
@@ -260,7 +261,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 attachToNode(store, graphNode, {
                     siteno: '12345678',
                     parameterCode: '00065'
-                });
+                }, loadPromise);
 
                 expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).toHaveBeenCalledWith('12345678');
                 expect(statisticsDataActions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
@@ -271,7 +272,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                     siteno: '12345678',
                     parameterCode: '00065',
                     period: 'P30D'
-                });
+                }, loadPromise);
 
                 expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).toHaveBeenCalledWith('12345678');
                 expect(statisticsDataActions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
@@ -283,7 +284,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                     parameterCode: '00065',
                     startDT: '2010-01-01',
                     endDT: '2010-03-01'
-                });
+                }, loadPromise);
 
                 expect(ivTimeSeriesDataActions.retrieveIVTimeSeries).toHaveBeenCalledWith('12345678');
                 expect(statisticsDataActions.retrieveMedianStatistics).toHaveBeenCalledWith('12345678');
@@ -307,7 +308,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 attachToNode(store, graphNode, {
                     siteno: '12345678',
                     parameterCode: '00065'
-                });
+                }, loadPromise);
 
                 return new Promise(resolve => {
                     window.requestAnimationFrame(() => {
@@ -322,7 +323,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                     siteno: '12345678',
                     parameterCode: '00065',
                     period: 'P30D'
-                });
+                }, loadPromise);
 
                 return new Promise(resolve => {
                     window.requestAnimationFrame(() => {
@@ -339,7 +340,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                     parameterCode: '00065',
                     startDT: '2010-01-01',
                     endDT: '2010-03-01'
-                });
+                }, loadPromise);
 
                 return new Promise(resolve => {
                     window.requestAnimationFrame(() => {
@@ -359,7 +360,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                     parameterCode: '00065',
                     startDT: '2010-01-01',
                     endDT: '2010-03-01'
-                });
+                }, loadPromise);
 
                 return new Promise(resolve => {
                     window.requestAnimationFrame(() => {
@@ -399,7 +400,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 parameterCode: '00065',
                 period: 'P20D',
                 showOnlyGraph: true
-            });
+            }, loadPromise);
 
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
@@ -419,7 +420,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 startDT: '2010-01-01',
                 endDT: '2010-03-01',
                 showOnlyGraph: true
-            });
+            }, loadPromise);
 
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
@@ -441,7 +442,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 startDT: '2010-01-01',
                 endDT: '2010-03-01',
                 showOnlyGraph: true
-            });
+            }, loadPromise);
 
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
@@ -458,7 +459,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 siteno: '12345678',
                 parameterCode: '00065',
                 showOnlyGraph: true
-            });
+            }, loadPromise);
 
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
@@ -473,7 +474,8 @@ describe('monitoring-location/components/hydrograph module', () => {
 
     describe('graphNode contains the expected elements when no IV time series has been retrieved and showOnlyGraph is false', () => {
         let store;
-        config.NWIS_INVENTORY_ENDPOINT = 'https://fakenwis.usgs.gov/inventory';
+        config.NWIS_INVENTORY_PAGE_URL = 'https://fakenwis.usgs.gov/inventory';
+        let resolvedLoadPromise = Promise.resolve();
         beforeEach(() => {
             jest.spyOn(floodDataActions, 'retrieveWaterwatchData').mockReturnValue(function() {
                 return Promise.resolve({});
@@ -495,7 +497,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                     width: 400
                 }
             });
-            attachToNode(store, graphNode, {siteno: '12345678'});
+            attachToNode(store, graphNode, {siteno: '12345678'}, resolvedLoadPromise);
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     resolve();
@@ -515,6 +517,7 @@ describe('monitoring-location/components/hydrograph module', () => {
     describe('graphNode contains the expected elements when showOnlyGraph is false', () => {
         /* eslint no-use-before-define: 0 */
         let store;
+        let resolvedLoadPromise = Promise.resolve();
         beforeEach(() => {
             jest.spyOn(floodDataActions, 'retrieveWaterwatchData').mockReturnValue(function() {
                 return Promise.resolve({});
@@ -567,7 +570,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 }
             });
 
-            attachToNode(store, graphNode, {siteno: '12345678'});
+            attachToNode(store, graphNode, {siteno: '12345678'}, resolvedLoadPromise);
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     resolve();
@@ -663,6 +666,7 @@ describe('monitoring-location/components/hydrograph module', () => {
 
     describe('hide elements when showOnlyGraph is set to true', () => {
         let store;
+        let resolvedLoadPromise = Promise.resolve();
         beforeEach(() => {
             jest.spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').mockReturnValue(function() {
                 return Promise.resolve({});
@@ -709,7 +713,7 @@ describe('monitoring-location/components/hydrograph module', () => {
 
             });
 
-            attachToNode(store, graphNode, {siteno: '123456788', showOnlyGraph: true});
+            attachToNode(store, graphNode, {siteno: '123456788', showOnlyGraph: true}, resolvedLoadPromise);
         });
 
         it('should not have brush element for the hydrograph', () => {

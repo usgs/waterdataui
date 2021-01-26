@@ -5,8 +5,10 @@ import components from 'uswds/src/js/components';
 
 import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
+
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
 
+import {getAllGroundwaterLevels} from 'ml/selectors/discrete-data-selector';
 import {
     isLoadingTS,
     hasAnyTimeSeries,
@@ -15,6 +17,7 @@ import {
     getCurrentParmCd
 } from 'ml/selectors/time-series-selector';
 import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
+
 import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
 
@@ -57,7 +60,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('aria-label', 'Time interval select')
         .call(link(store,function(container, showControls) {
             container.attr('hidden', showControls ? null : true);
-        }, hasAnyTimeSeries));
+        }, (state) => {
+            return hasAnyTimeSeries(state) || getAllGroundwaterLevels(state);
+        }));
 
     // Add a container that holds the custom selection radio buttons and the form fields
     const containerRadioGroupAndFormButtons = elem.insert('div', ':nth-child(3)')

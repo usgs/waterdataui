@@ -18,8 +18,7 @@ from .services.camera import get_monitoring_location_camera_details
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
 
-SERVICE_ROOT = app.config['SERVER_SERVICE_ROOT']
-NWIS = NwisWebServices(SERVICE_ROOT)
+NWIS = NwisWebServices(app.config['SERVER_SERVICE_ROOT'], app.config['SITE_SERVICE_CATALOG_ROOT'])
 
 
 @app.route('/')

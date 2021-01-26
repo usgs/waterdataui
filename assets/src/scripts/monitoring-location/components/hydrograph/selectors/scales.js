@@ -2,8 +2,6 @@ import {scaleLinear, scaleSymlog} from 'd3-scale';
 import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
-import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
-
 import {getVariables, getCurrentParmCd, getRequestTimeRange, getTimeSeriesForTsKey} from 'ml/selectors/time-series-selector';
 
 import {getYDomain, getYDomainForVisiblePoints, SYMLOG_PARMS} from './domain';

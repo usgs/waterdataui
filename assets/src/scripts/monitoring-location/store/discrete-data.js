@@ -2,6 +2,7 @@ import {DateTime} from 'luxon';
 
 import {fetchGroundwaterLevels} from 'ui/web-services/groundwater-levels';
 
+import {Actions as IVTimeSeriesDataActions} from './instantaneous-value-time-series-data';
 const INITIAL_DATA = {
     groundwaterLevels : null
 };
@@ -16,10 +17,10 @@ const INITIAL_DATA = {
  *        @prop {Array of String} qualifiers
  *        @prop {Number} dateTime - Unix epoch time
  */
-export const addGroundwaterLevels = function(parameterCode, data) {
+export const addGroundwaterLevels = function(variableID, data) {
     return {
         type: 'ADD_GROUNDWATER_LEVELS',
-        parameterCode,
+        variableID,
         data
     };
 };
@@ -46,9 +47,7 @@ export const retrieveGroundwaterLevels = function(monitoringLocationId, paramete
         })
             .then(
                 (data) => {
-                    if (!data.value || !data.value.timeSeries || !data.value.timeSeries.length) {
-                        dispatch(addGroundwaterLevels(parameterCode, {}));
-                    } else {
+                    if (data.value && data.value.timeSeries && data.value.timeSeries.length) {
                         let values;
                         const timeSeries = data.value.timeSeries;
                         if (!timeSeries[0].values.length || !timeSeries[0].values[0].value.length) {
@@ -64,10 +63,15 @@ export const retrieveGroundwaterLevels = function(monitoringLocationId, paramete
 
                             });
                         }
-                        dispatch(addGroundwaterLevels(parameterCode, {
-                            variable: timeSeries[0].variable,
+                        const variable = {
+                            ...timeSeries[0].variable,
+                            variableCode: timeSeries[0].variable.variableCode[0]
+                        };
+                        dispatch(addGroundwaterLevels(variable.oid, {
+                            variable: variable,
                             values: values
                         }));
+                        dispatch(IVTimeSeriesDataActions.addVariableToIVVariables(variable));
                     }
                 },
                 () => {
@@ -81,7 +85,7 @@ export const discreteDataReducer = function(discreteData = INITIAL_DATA, action)
     switch(action.type) {
         case 'ADD_GROUNDWATER_LEVELS': {
             let newData = {};
-            newData[action.parameterCode] = action.data;
+            newData[action.variableID] = action.data;
             return Object.assign(
                 {},
                 discreteData,

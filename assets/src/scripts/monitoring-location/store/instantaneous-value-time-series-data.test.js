@@ -29,7 +29,8 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                             '45807197': {
                                 variableCode: {
                                     value: '00060'
-                                }
+                                },
+                                oid: '45807197'
                             }
                         }
                     },
@@ -56,12 +57,15 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
             it('Expect data to be added to previously empty collection', () => {
                 store.dispatch(Actions.addIVTimeSeriesCollection({
                     variables: {
-                        'var1': {
-                            value: 'Value 1'
+                        '45807198': {
+                            variableCode: {
+                                value: '72019'
+                            },
+                            oid: '45807198'
                         }
                     },
                     timeSeries: {
-                        'var1:current:P7D': {
+                        '45807198:current:P7D': {
                             values: [1, 2, 3]
                         }
                     }
@@ -69,17 +73,21 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
 
                 expect(store.getState().ivTimeSeriesData).toEqual({
                     variables: {
-                        'var1': {
-                            value: 'Value 1'
+                        '45807198': {
+                            variableCode: {
+                                value: '72019'
+                            },
+                            oid: '45807198'
                         },
                         '45807197': {
                             variableCode: {
                                 value: '00060'
-                            }
+                            },
+                            oid: '45807197'
                         }
                     },
                     timeSeries: {
-                        'var1:current:P7D': {
+                        '45807198:current:P7D': {
                             values: [1, 2, 3]
                         }
                     }
@@ -92,26 +100,33 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                         '45807197': {
                             variableCode: {
                                 value: '00060'
-                            }
+                            },
+                            oid: '45807197'
                         },
-                        'var1': {
-                            value: 'Value 1'
+                        '45807198': {
+                            variableCode: {
+                                value: '72019'
+                            },
+                            oid: '45807198'
                         }
                     },
                     timeSeries: {
-                        'var1:current:P7D': {
+                        '45807198:current:P7D': {
                             values: [1, 2, 3]
                         }
                     }
                 }));
                 store.dispatch(Actions.addIVTimeSeriesCollection({
                     variables: {
-                        'var2': {
-                            value: 'Value 2'
+                        '45807199': {
+                            variableCode: {
+                                value: '00010'
+                            },
+                            oid: '45807199'
                         }
                     },
                     timeSeries: {
-                        'var2:current:P7D': {
+                        '45807199:current:P7D': {
                             values: [5, 6, 7]
                         }
                     }
@@ -122,20 +137,27 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                         '45807197': {
                             variableCode: {
                                 value: '00060'
-                            }
+                            },
+                            oid: '45807197'
                         },
-                        'var1': {
-                            value: 'Value 1'
+                        '45807198': {
+                            variableCode: {
+                                value: '72019'
+                            },
+                            oid: '45807198'
                         },
-                        'var2': {
-                            value: 'Value 2'
+                        '45807199': {
+                            variableCode: {
+                                value: '00010'
+                            },
+                            oid: '45807199'
                         }
                     },
                     timeSeries: {
-                        'var1:current:P7D': {
+                        '45807198:current:P7D': {
                             values: [1, 2, 3]
                         },
-                        'var2:current:P7D': {
+                        '45807199:current:P7D': {
                             values: [5, 6, 7]
                         }
                     }
@@ -147,45 +169,91 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
             it('Expect the specific time series to be cleared', () => {
                 store.dispatch(Actions.addIVTimeSeriesCollection({
                     requests: {
-                        'var1:current:P7D': {
-                            queryInfo: 'var1:current:P7D'
+                        '45807198:current:P7D': {
+                            queryInfo: '45807198:current:P7D'
                         },
-                        'var2:current:P7D': {
-                            queryInfo: 'var2:current:P7D'
+                        '45807199:current:P7D': {
+                            queryInfo: '45807199:current:P7D'
                         }
                     },
                     timeSeries: {
-                        'var1:current:P7D': {
-                            tsKey: 'var1:current:P7D',
+                        '45807198:current:P7D': {
+                            tsKey: '45807198:current:P7D',
                             values: [1, 2, 3]
                         },
-                        'var2:current:P7D': {
-                            tsKey: 'var2:current:P7D',
+                        '45807199:current:P7D': {
+                            tsKey: '45807199:current:P7D',
                             values: [5, 6, 7]
                         }
                     }
                 }));
-                store.dispatch(Actions.resetIVTimeSeries('var2:current:P7D'));
+                store.dispatch(Actions.resetIVTimeSeries('45807199:current:P7D'));
 
                 expect(store.getState().ivTimeSeriesData).toEqual({
                     variables: {
                         '45807197': {
                             variableCode: {
                                 value: '00060'
-                            }
+                            },
+                            oid: '45807197'
                         }
                     },
                     requests: {
-                        'var1:current:P7D': {
-                            queryInfo: 'var1:current:P7D'
+                        '45807198:current:P7D': {
+                            queryInfo: '45807198:current:P7D'
                         },
-                        'var2:current:P7D': {}
+                        '45807199:current:P7D': {}
                     },
                     timeSeries: {
-                        'var1:current:P7D': {
-                            tsKey: 'var1:current:P7D',
+                        '45807198:current:P7D': {
+                            tsKey: '45807198:current:P7D',
                             values: [1, 2, 3]
                         }
+                    }
+                });
+            });
+        });
+
+        describe('Actions.addVariableToIVVariables', () => {
+            it('The variable to added to the state', () => {
+                store.dispatch(Actions.addVariableToIVVariables({
+                    variableCode: {
+                        value: '72019'
+                    },
+                    oid: '45807198'
+                }));
+                expect(store.getState().ivTimeSeriesData.variables).toEqual({
+                    '45807197': {
+                        variableCode: {
+                            value: '00060'
+                        },
+                        oid: '45807197'
+                    },
+                    '45807198': {
+                        variableCode: {
+                            value: '72019'
+                        },
+                        oid: '45807198'
+                    }
+                });
+            });
+
+            it('Merges new data with existing variable', () => {
+                store.dispatch(Actions.addVariableToIVVariables({
+                    variableCode: {
+                        value: '00060',
+                        description: 'Variable 00060'
+                    },
+                    oid: '45807197'
+                }));
+
+                expect(store.getState().ivTimeSeriesData.variables).toEqual({
+                    '45807197': {
+                        variableCode: {
+                            value: '00060',
+                            description: 'Variable 00060'
+                        },
+                        oid: '45807197'
                     }
                 });
             });
@@ -224,7 +292,6 @@ describe('monitoring-location/store/instantaneous-value-time-series-data module'
                     expect(floodStateActions.setGageHeight).toHaveBeenCalled();
                     expect(tsState.loadingIVTSKeys).not.toContain('current:P7D');
                     expect(tsState.showIVTimeSeries.current).toBe(true);
-                    expect(tsState.currentIVVariableID).toBe('45807197');
                 });
             });
 

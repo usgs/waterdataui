@@ -203,7 +203,8 @@ const TEST_STATE_THREE_VARS = {
     ui: {
         windowWidth: 1024,
         width: 800
-    }
+    },
+    discreteData: {}
 };
 
 const TEST_STATE_ONE_VAR = {
@@ -327,7 +328,8 @@ const TEST_STATE_ONE_VAR = {
     ui: {
         windowWidth: 1024,
         width: 800
-    }
+    },
+    discreteData: {}
 };
 
 describe('monitoring-location/components/hydrograph/cursor module', () => {

@@ -1,32 +1,12 @@
 import {scaleLinear} from 'd3-scale';
 import {select} from 'd3-selection';
 
-import config from 'ui/config';
 import {configureStore} from 'ml/store';
 
 import {addSparkLine, plotSeriesSelectTable} from './parameters';
 
 describe('monitoring-location/components/hydrograph/parameters module', () => {
-    config.uvPeriodOfRecord = {
-        '00010': {
-            begin_date: '01-02-2001',
-            end_date: '10-15-2015'
-        },
-        '00060': {
-            begin_date: '04-01-1991',
-            end_date: '10-15-2007'
-        },
-        '00093': {
-            begin_date: '11-25-2001',
-            end_date: '03-01-2020'
-        },
-        '00067': {
-            begin_date: '04-01-1990',
-            end_date: '10-15-2006'
-        }
-    };
-
-     describe('plotSeriesSelectTable', () => {
+    describe('plotSeriesSelectTable', () => {
         let tableDivSelection;
 
         const data = [12, 13, 14, 15, 16].map(day => {
@@ -38,10 +18,74 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
         });
 
         const availableParameterCodes = [
-            {variableID: '00010ID', parameterCode: '00010', description: 'Temperature', selected: true, timeSeriesCount: 1},
-            {variableID: '00010IDF', parameterCode: '00010F', description: 'Temperature in F', selected: false, timeSeriesCount: 1},
-            {variableID: '00067ID', parameterCode: '00067', description: 'Ruthenium (VI) Fluoride', selected: false, timeSeriesCount: 1},
-            {variableID: '00093ID', parameterCode: '00093', description: 'Uranium (V) Oxide', selected: false, timeSeriesCount: 1}
+            {
+                variableID: '00010ID',
+                parameterCode: '00010',
+                description: 'Temperature in C',
+                selected: true,
+                timeSeriesCount: 1,
+                periodOfRecord: {
+                    begin_date: '01-02-2001',
+                    end_date: '10-15-2015'
+                },
+                waterAlert: {
+                    hasWaterAlert: true,
+                    subscriptionParameterCode: '00010',
+                    displayText: '00010 Display Text',
+                    tooltipText: '00010 Tooltip Text'
+                }
+            },
+            {
+                variableID: '00010IDF',
+                parameterCode: '00010F',
+                description: 'Temperature in F',
+                selected: false,
+                timeSeriesCount: 1,
+                periodOfRecord: {
+                    begin_date: '01-02-2001',
+                    end_date: '10-15-2015'
+                },
+                waterAlert: {
+                    hasWaterAlert: true,
+                    subscriptionParameterCode: '00010',
+                    displayText: '00010F Display Text',
+                    tooltipText: '00010F Tooltip Text'
+                }
+            },
+            {
+                variableID: '00067ID',
+                parameterCode: '00067',
+                description: 'Ruthenium (VI) Fluoride',
+                selected: false,
+                timeSeriesCount: 1,
+                periodOfRecord: {
+                    begin_date: '04-01-1990',
+                    end_date: '10-15-2006'
+                },
+                waterAlert: {
+                    hasWaterAlert: false,
+                    subscriptionParameterCode: '',
+                    displayText: '00067 Display Text',
+                    tooltipText: '00067 Tooltip Text'
+                }
+            },
+            {
+                variableID: '00093ID',
+                parameterCode: '00093',
+                description: 'Uranium (V) Oxide',
+                selected: false,
+                timeSeriesCount: 1,
+                periodOfRecord: {
+                    begin_date: '11-25-2001',
+                    end_date: '03-01-2020'
+                },
+                waterAlert: {
+                    hasWaterAlert: false,
+                    subscriptionParameterCode: '',
+                    displayText: '00093 Display Text',
+                    tooltipText: '00093 Tooltip Text'
+                }
+            }
         ];
 
         const lineSegmentsByParmCd = {
@@ -98,15 +142,11 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
             expect(tableDivSelection.selectAll('input').size()).toEqual(4);
         });
 
-         it('creates a WaterAlert subscribe link each parameter in the table supported by WaterAlert', () => {
-             plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
-             expect(tableDivSelection.selectAll('.wateralert-available').size()).toEqual(2);
-         });
-
-         it('creates WaterAlert not available text for each parameter in the table NOT supported by WaterAlert', () => {
-             plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
-             expect(tableDivSelection.selectAll('.wateralert-unavailable').size()).toEqual(2);
-         });
+        it('creates a WaterAlert subscribe link each parameter in the table supported by WaterAlert as appropriate', () => {
+            plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
+            expect(tableDivSelection.selectAll('.water-alert-cell').size()).toEqual(4);
+            expect(tableDivSelection.selectAll('a').size()).toEqual(2);
+        });
 
         it('updates the radio button input checked property for the corresponding selected parameter', () => {
             plotSeriesSelectTable(tableDivSelection, testArgsWithData, store);
@@ -116,9 +156,7 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
             let selectedParamRowInput = selectedParamTD.select('input');
             expect(selectedParamRowInput.property('checked')).toBeTruthy();
         });
-
     });
-
 
     describe('addSparkline', () => {
         let svg;
@@ -275,4 +313,5 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
             expect(svg.selectAll('path').size()).toEqual(2);
         });
     });
-});
+})
+;
