@@ -6,7 +6,7 @@ import omitBy from 'lodash/omitBy';
 import {DateTime} from 'luxon';
 
 import {normalize} from 'ui/schema';
-import {calcStartTime, sortedParameters} from 'ui/utils';
+import {calcStartTime} from 'ui/utils';
 import {getPreviousYearTimeSeries, getTimeSeries} from 'ui/web-services/models';
 
 import {convertCelsiusCollectionsToFahrenheitAndMerge, isPeriodCustom, parsePeriodCode} from 'ml/iv-data-utils';
@@ -41,23 +41,6 @@ const getLatestValue = function(collection, parmCd) {
 };
 
 /*
- * @param {Object} timeSeries - keys are time series id
- * @param {Object} variables  - keys are the variable id
- */
-const getCurrentVariableId = function(timeSeries, variables) {
-    const tsVariablesWithData = Object.values(timeSeries)
-        .filter((ts) => ts.points.length)
-        .map((ts) => variables[ts.variable]);
-    const sortedVarsWithData = sortedParameters(tsVariablesWithData);
-    if (sortedVarsWithData.length) {
-        return sortedVarsWithData[0].oid;
-    } else {
-        const sortedVars = sortedParameters(Object.values(variables));
-        return sortedVars.length ? sortedVars[0].oid : '';
-    }
-};
-
-/*
  * Actions for ivTimeSeriesDataReducer
  */
 /*
@@ -83,6 +66,19 @@ const resetIVTimeSeries = function(tsRequestKey) {
     return {
         type: 'RESET_IV_TIME_SERIES',
         tsRequestKey
+    };
+};
+
+/*
+ * Synchronous Redux action - adds the variable to the store. If the variable already
+ * is in the state, it merges the properties of the variable with the existing variables
+ * @param {Object} variables
+ * @return {Object} - Redux action
+ */
+const addVariableToIVVariables = function(variable) {
+    return {
+        type: 'ADD_VARIABLE_TO_IV_VARIABLES',
+        variable
     };
 };
 
@@ -115,8 +111,6 @@ const retrieveIVTimeSeries = function(siteno) {
 
                 // Update the application state
                 dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('current', true));
-                const variable = getCurrentVariableId(collection.timeSeries || {}, collection.variables || {});
-                dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(variable));
                 dispatch(floodInundationActions.setGageHeight(getLatestValue(collection, GAGE_HEIGHT_CD)));
             },
             () => {
@@ -371,6 +365,13 @@ export const ivTimeSeriesDataReducer = function(ivTimeSeriesData={}, action) {
             return newSeries;
         }
 
+        case 'ADD_VARIABLE_TO_IV_VARIABLES': {
+            let newVariable = {};
+            newVariable[action.variable.oid] = action.variable;
+            const mergedVariables = merge({}, ivTimeSeriesData.variables, newVariable);
+            return merge({}, ivTimeSeriesData, {variables: mergedVariables});
+        }
+
         default:
             return ivTimeSeriesData;
     }
@@ -379,6 +380,7 @@ export const ivTimeSeriesDataReducer = function(ivTimeSeriesData={}, action) {
 export const Actions = {
     addIVTimeSeriesCollection,
     resetIVTimeSeries,
+    addVariableToIVVariables,
     retrieveCompareIVTimeSeries,
     retrieveIVTimeSeries,
     retrieveCustomTimePeriodIVTimeSeries,

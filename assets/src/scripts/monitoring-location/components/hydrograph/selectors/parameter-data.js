@@ -1,6 +1,8 @@
 import {createSelector} from 'reselect';
 
+import config from 'ui/config';
 import {sortedParameters} from 'ui/utils';
+
 import {getCurrentVariableID, getTimeSeries, getVariables} from 'ml/selectors/time-series-selector';
 
 /**
@@ -16,24 +18,46 @@ export const getAvailableParameterCodes = createSelector(
     getVariables,
     getTimeSeries,
     getCurrentVariableID,
-    (variables, timeSeries, currentVariableID) => {
-        if (!variables) {
+    (allVariables, timeSeries, currentVariableID) => {
+        if (!allVariables) {
             return [];
         }
-
         const seriesList = Object.values(timeSeries);
-        const availableVariableIds = seriesList.map(x => x.variable);
-        return sortedParameters(variables)
-            .filter(variable => availableVariableIds.includes(variable.oid))
+
+        return sortedParameters(allVariables)
             .map((variable) => {
+                const parameterCode = variable.variableCode.value;
+                const measuredParameterCode = parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '');
+                const hasWaterAlert = config.WATER_ALERT_PARAMETER_CODES.includes(measuredParameterCode);
+                let waterAlertDisplayText;
+                if (hasWaterAlert) {
+                    if (measuredParameterCode === parameterCode) {
+                        waterAlertDisplayText = 'Subscribe';
+                    } else {
+                        waterAlertDisplayText = 'Alerts in C';
+                    }
+                } else {
+                    waterAlertDisplayText = 'N/A';
+                }
+
                 return {
                     variableID: variable.oid,
-                    parameterCode: variable.variableCode.value,
+                    parameterCode: parameterCode,
                     description: variable.variableDescription,
                     selected: currentVariableID === variable.oid,
                     timeSeriesCount: seriesList.filter(ts => {
                         return ts.tsKey === 'current:P7D' && ts.variable === variable.oid;
-                    }).length
+                    }).length,
+                    periodOfRecord: config.uvPeriodOfRecord && measuredParameterCode in config.uvPeriodOfRecord ?
+                        config.uvPeriodOfRecord[measuredParameterCode] : null,
+                    waterAlert: {
+                        hasWaterAlert,
+                        subscriptionParameterCode: hasWaterAlert ? measuredParameterCode : '',
+                        displayText: waterAlertDisplayText,
+                        tooltipText: hasWaterAlert ? 'Subscribe to text or email alerts based on thresholds that you set' :
+                            `Sorry, there are no WaterAlerts for this parameter (${parameterCode})`
+                    }
+
                 };
             });
     }

@@ -13,7 +13,7 @@ class NwisWebServices:
 
     """
 
-    def __init__(self, service_root, path='/nwis/site/', data_format='rdb'):
+    def __init__(self, service_root, catalog_root, path='/nwis/site/', data_format='rdb'):
         """
         Constructor method.
 
@@ -23,6 +23,7 @@ class NwisWebServices:
 
         """
         self.service_root = service_root
+        self.catalog_root = catalog_root
         self.path = path
         self.data_format = data_format
 
@@ -59,7 +60,7 @@ class NwisWebServices:
 
         """
         resp = execute_get_request(
-            self.service_root,
+            self.catalog_root,
             path=self.path,
             params={
                 'sites': site_no,

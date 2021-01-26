@@ -82,6 +82,7 @@ export const addSparkLine = function(svgSelection, {seriesLineSegments, scales})
     }
 };
 
+
 /**
  * Draws a table with clickable rows of time series parameter codes. Selecting
  * a row changes the active parameter code.
@@ -134,35 +135,35 @@ export const plotSeriesSelectTable = function(elem,
         .selectAll('tr')
         .data(availableParameterCodes)
         .enter().append('tr')
-        .attr('id', param => `time-series-select-table-row-${param.parameterCode}`)
+        .attr('id', d => `time-series-select-table-row-${d.parameterCode}`)
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'selectTimeSeries')
-        .attr('ga-event-action', (param) => `time-series-parmcd-${param.parameterCode}`)
+        .attr('ga-event-action', (d) => `time-series-parmcd-${d.parameterCode}`)
         .attr('role', 'option')
-        .classed('selected', param => param.selected)
-        .attr('aria-selected', param => param.selected)
-        .on('click', function(event, param) {
-            if (!param.selected) {
-                store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, param.variableID));
+        .classed('selected', d => d.selected)
+        .attr('aria-selected', d => d.selected)
+        .on('click', function(event, d) {
+            if (!d.selected) {
+                store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, d.variableID));
             }
         })
         .call(tr => {
             const paramSelectCol = tr.append('td');
             paramSelectCol.append('input')
-                .attr('id', param => `time-series-select-radio-button-${param.parameterCode}`)
+                .attr('id', d => `time-series-select-radio-button-${d.parameterCode}`)
                 .attr('type', 'radio')
                 .attr('name', 'param-select-radio-input')
                 .attr('class', 'usa-radio__input')
-                .attr('value', param => `${param.variableID}`)
-                .property('checked', param => param.selected ? true : null);
+                .attr('value', d => `${d.variableID}`)
+                .property('checked', d => d.selected ? true : null);
             paramSelectCol.append('label')
                .attr('class', 'usa-radio__label');
             const paramCdCol = tr.append('th')
                 .attr('scope', 'row');
             paramCdCol.append('span')
-                .text(param => param.description)
-                .each(function(datum) {
-                    appendInfoTooltip(select(this), `Parameter code: ${datum.parameterCode}`);
+                .text(d => d.description)
+                .each(function(d) {
+                    appendInfoTooltip(select(this), `Parameter code: ${d.parameterCode}`);
                 });
             tr.append('td')
                 .append('svg')
@@ -172,8 +173,8 @@ export const plotSeriesSelectTable = function(elem,
                 .text(param => param.timeSeriesCount);
             tr.append('td')
                 .style('white-space', 'nowrap')
-                .text(param => `${config.uvPeriodOfRecord[param.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '')].begin_date} 
-                        to ${config.uvPeriodOfRecord[param.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '')].end_date}`);
+                .text(d => d.periodOfRecord ?
+                    `${d.periodOfRecord.begin_date} - ${d.periodOfRecord.end_date}` : '');
             tr.append('td')
                 .append('div')
                 .attr('class', 'wateralert-link');
@@ -181,30 +182,20 @@ export const plotSeriesSelectTable = function(elem,
 
     // WaterAlert does not support every parameter code, so lets take that into account when adding the links
     table.selectAll('.wateralert-link').each(function(d) {
-
-        // Allow the converted temperature codes to have a link to the non-converted Wateralert form
-        const allTemperatureParameters = config.TEMPERATURE_PARAMETERS.celsius.concat(config.TEMPERATURE_PARAMETERS.fahrenheit);
-        const convertedTemperatureCodes = allTemperatureParameters.map(function(code) {
-            return code.replace(`${code}`, `${code}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`);
-        });
-
         let selection = select(this);
 
-        if (config.WATER_ALERT_PARAMETER_CODES.includes(d.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, ''))) {
-            const waterAlertLink = selection.append('a')
-                .attr('href', `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${d.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '')}`)
-                .attr('class', 'usa-tooltip usa-link wateralert-available')
-                .attr('data-position', 'left')
-                .attr('data-classes', 'width-full tablet:width-auto')
-                .attr('title', 'Subscribe to text or email alerts based on thresholds that you set')
-                .text(convertedTemperatureCodes.includes(d.parameterCode) ? 'Alerts in C' : 'Subscribe');
+        let waterAlertCell;
+        if (d.waterAlert.hasWaterAlert) {
+            waterAlertCell = selection.append('a')
+                .attr('href', `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${d.waterAlert.subscriptionParameterCode}`);
         } else {
-            selection.attr('class', 'usa-tooltip wateralert-unavailable')
-                .attr('data-position', 'left')
-                .attr('data-classes', 'width-full tablet:width-auto')
-                .attr('title', `Sorry, there are no WaterAlerts for this parameter (${d.parameterCode})`)
-                .text('N/A');
+            waterAlertCell = selection;
         }
+        waterAlertCell.attr('class', 'water-alert-cell usa-tooltip')
+            .attr('data-position', 'left')
+            .attr('data-classes', 'width-full tablet:width-auto')
+            .attr('title', d.waterAlert.tooltipText)
+            .text(d.waterAlert.displayText);
     });
 
     // Activate the USWDS toolTips for WaterAlert subscriptions
