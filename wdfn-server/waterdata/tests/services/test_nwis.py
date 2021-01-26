@@ -13,7 +13,7 @@ class TestNwisWebServices(TestCase):
 
     def setUp(self):
         self.service_root = 'https://fake.nwis.url.gov'
-        self.catalog_root= 'https://fake.nwis.catalog.usgs.gov'
+        self.catalog_root = 'https://fake.nwis.catalog.usgs.gov'
         self.path = '/some/path/'
         self.site_no = '029055631'
         self.agency_cd = 'ABYZ'
