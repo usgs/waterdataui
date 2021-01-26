@@ -3,7 +3,84 @@
 {% set page_title = 'Questions and Comments' %}
 
 {% block content %}
-    <div class="usa-prose">
-        <h1>Questions and comments here</h1>
+    <div id="user-feedback" class="usa-prose">
+        <section id="feedback-title" >
+            <h1>Contact USGS</h1>
+            <p>Water Data for the Nation Feedback</p>
+            <p>Questions or Comments</p>
+        </section>
+        <form class="usa-form">
+            <fieldset id="feedback-destination-selection" class="usa-fieldset">
+                <legend class="usa-legend usa-legend">Let us help you to:</legend>
+
+                <div class="usa-radio">
+                    <input class="usa-radio__input" id="feedback-selection-contact" type="radio" name="feedback-type" value="contact-someone" required>
+                    <label class="usa-radio__label" for="feedback-selection-contact">Contact someone about data at this location</label>
+                </div>
+                <div class="usa-radio">
+                    <input class="usa-radio__input" id="feedback-selection-report" type="radio" name="feedback-type" value="report-problem">
+                    <label class="usa-radio__label" for="feedback-selection-report">Report a problem with this location</label>
+                </div>
+                <div class="usa-radio">
+                    <input class="usa-radio__input" id="feedback-selection-comment" type="radio" name="feedback-type" value="leave-comment">
+                    <label class="usa-radio__label" for="feedback-selection-comment">Leave a comment about the website</label>
+                </div>
+                <p id="feedback-subtext" class="usa-tooltip"
+                   data-position="top"
+                   title="A real live person will receive and respond to your submission. Your choice here will ensure the person best able to answer is notified">
+                    Why is this required?
+                </p>
+                <div>
+                    <label class="usa-label" for="feedback-subject">Subject</label>
+                    <input class="usa-input" id="feedback-subject" name="feedback-subject" type="text">
+                </div>
+                <div>
+                    <label class="usa-label" for="feedback-message">Message*</label>
+                    <textarea class="usa-textarea"
+                              id="feedback-message"
+                              name="feedback-message"
+                              rows="5"
+                              aria-describedby="textarea"
+                              required></textarea>
+                </div>
+                <fieldset>
+                    <legend>Your Contact Information</legend>
+                    <label class="usa-label" for="feedback-email-address">Email address*</label>
+                    <input class="usa-input" id="feedback-email-address" name="feedback-email-address" type="email" autocapitalize="off" autocorrect="off" required>
+                    <label class="usa-label" for="feedback-first-name">Name</label>
+                    <input class="usa-input" id="feedback-first-name" name="feedback-first-name" type="text">
+                    <label class="usa-label" for="feedback-phone-number">Phone Number</label>
+                    <input class="usa-input" id="feedback-phone-number" name="feedback-phone-number" type="tel">
+                    <label class="usa-label" for="feedback-address">Organization or Address</label>
+                    <input class="usa-input" id="feedback-address" name="feedback-address" type="text">
+                </fieldset>
+
+                <div>
+                    <p>* Required field.</p>
+                    <p>See our <a href="http://www.usgs.gov/privacy.html" rel="noopener">privacy statement</a></p>
+                </div>
+
+                <input class="usa-button" type="submit" value="Send">
+            </fieldset>
+        </form>
+
+        <section id="feedback-inputs">
+
+        </section>
+        <section id="feedback-related-contacts">
+            <h2>Get more information</h2>
+            <ul class="usa-list usa-list--unstyled">
+                <li><a href="http://www.usgs.gov/faq" rel="noopener">USGS Frequently Asked Questions</a></li>
+                <li>For general inquiries - 1-888-ASK-USGS (1-888-275-8747)</li>
+                <li><a href="http://www.usgs.gov/socialmedia" rel="noopener">USGS Social Media</a></li>
+            </ul>
+            <h2>Additional Contacts</h2>
+            <ul class="usa-list usa-list--unstyled">
+                <li><a href="http://www.usgs.gov/phonebook/employee/" rel="noopener">USGS Employee Phone Book</a></li>
+                <li><a href="http://www.usgs.gov/newsroom/contacts.asp" rel="noopener">USGS Office of Communications</a></li>
+                <li><a href="http://www.usgs.gov/aboutusgs/organized/key_officials.asp/" rel="noopener">USGS Directory of Key Officials</a></li>
+                <li><a href="http://www.usgs.gov/contact_us/" rel="noopener">USGS Offices and Science Centers</a></li>
+            </ul>
+        </section>
     </div>
 {% endblock content %}
