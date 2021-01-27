@@ -151,6 +151,13 @@
     position: absolute;
     background: rgba(255, 255, 255, 0.8);
     opacity: 1;
+    font-size: .8rem;
+    @include at-media('tablet') {
+      font-size: 1.1rem;
+    }
+    @include at-media('desktop') {
+      font-size: 1.25rem;
+    }
 
     .current-tooltip-text {
       font-weight: bold;

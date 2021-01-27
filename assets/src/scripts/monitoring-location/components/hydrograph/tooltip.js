@@ -13,16 +13,17 @@ import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from 'd3render/graph-
 import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
 import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {getCursorTime, getTsCursorPoints, getTooltipPoints} from './selectors/cursor';
+import {getCursorTime, getTsCursorPoints, getTooltipPoints, getGroundwaterLevelCursorPoint,
+    getGroundwaterLevelTooltipPoint} from './selectors/cursor';
 import {classesForPoint, MASK_DESC} from './selectors/drawing-data';
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getTsTimeZone, getQualifiers, getCurrentVariableUnitCode} from './selectors/time-series-data';
+import {getTsTimeZone, getCurrentVariableUnitCode} from './selectors/time-series-data';
 
 
-const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone) {
+const getTooltipText = function(datum, unitCode, ianaTimeZone) {
     let label = '';
-    if (datum && qualifiers) {
+    if (datum) {
         let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
         const maskKeys = new Set(Object.keys(MASK_DESC));
         const qualifierKeysLower = new Set(datum.qualifiers.map(x => x.toLowerCase()));
@@ -42,29 +43,11 @@ const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone) {
     return label;
 };
 
-const createTooltipTextGroup = function(elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone, layout, currentParmCd}, textGroup) {
-    // Find the width of the between the y-axis and margin and set the tooltip margin based on that number
+const createTooltipTextGroup = function(elem, {currentPoints, comparePoints, unitCode, ianaTimeZone, layout, currentParmCd}, textGroup) {
     const adjustMarginOfTooltips = function(elem) {
-        // set a base number of pixels to bump the tooltips away from y-axis and compensate for slight under reporting
-        // of margin width by layout selector on time series with single or double digits on y-axis
-        const baseMarginOffsetTextGroup = 27;
-        let marginAdjustment = layout.margin.left + baseMarginOffsetTextGroup;
+        let marginAdjustment = layout.margin.left;
         elem.style('margin-left', marginAdjustment + 'px');
     };
-    const currentPointsWithMethod = Object.keys(currentPoints).map((tsKey) => {
-        const methodID = tsKey.split(':')[0];
-        return {
-            ...currentPoints[tsKey],
-            methodID: methodID
-        };
-    });
-    const comparePointsWithMethod = Object.keys(comparePoints).map((tsKey) => {
-        const methodID = tsKey.split(':')[0];
-        return {
-            ...comparePoints[tsKey],
-            methodID: methodID
-        };
-    });
 
     if (!textGroup) {
         textGroup = elem.append('div')
@@ -72,54 +55,24 @@ const createTooltipTextGroup = function(elem, {currentPoints, comparePoints, qua
             .call(adjustMarginOfTooltips);
     }
 
-    const data = Object.values(currentPointsWithMethod).concat(Object.values(comparePointsWithMethod));
+    let data = Object.values(currentPoints).concat(Object.values(comparePoints));
+
     const texts = textGroup
         .selectAll('div')
         .data(data);
 
-    // Remove old text labels after fading them out
+    // Remove old text labels
     texts.exit()
-        .transition(transition().duration(500))
-            .style('opacity', '0')
-            .remove();
+        .remove();
 
     // Add new text labels
     const newTexts = texts.enter()
         .append('div');
 
-    // find how many tooltips are showing and adjust the font size larger if there are few, smaller if there are many
-    const adjustTooltipFontSize = function() {
-        const totalTooltipsShowing = Object.values(currentPoints).length + Object.values(comparePoints).length;
-        let tooltipFontSize = 0;
-        if (mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
-            if (totalTooltipsShowing <= 2) {
-                tooltipFontSize = 1.25;
-            } else if (totalTooltipsShowing <= 4) {
-                tooltipFontSize = 1;
-            } else {
-               tooltipFontSize = 0.8;
-            }
-        } else if (mediaQuery(config.USWDS_SMALL_SCREEN)) {
-            if (totalTooltipsShowing <= 2) {
-                tooltipFontSize = 1.1;
-            } else if (totalTooltipsShowing <= 4) {
-                tooltipFontSize = .9;
-            } else {
-                tooltipFontSize = 0.8;
-            }
-        } else {
-            tooltipFontSize = 0.8;
-        }
-        textGroup.style('font-size', tooltipFontSize + 'rem');
-    };
-
     // Update the text and backgrounds of all tooltip labels
-    const merge = texts.merge(newTexts)
-        .interrupt()
-        .call(adjustTooltipFontSize);
-
+    const merge = texts.merge(newTexts);
     merge
-        .text(datum => getTooltipText(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd))
+        .text(datum => getTooltipText(datum, unitCode, ianaTimeZone, currentParmCd))
         .each(function(datum) {
             const classes = classesForPoint(datum);
             const text = select(this);
@@ -140,7 +93,6 @@ export const drawTooltipText = function(elem, store) {
     elem.call(link(store, createTooltipTextGroup, createStructuredSelector({
         currentPoints: getTsCursorPoints('current'),
         comparePoints: getTsCursorPoints('compare'),
-        qualifiers: getQualifiers,
         unitCode: getCurrentVariableUnitCode,
         layout: getMainLayout,
         ianaTimeZone: getTsTimeZone,

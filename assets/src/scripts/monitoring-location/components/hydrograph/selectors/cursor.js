@@ -42,12 +42,42 @@ export const getCursorTime = memoize(tsKey => createSelector(
     }
 ));
 
+/*
+ * Redux selector function that returns a function that returns the nearest ground water level point
+ * @return {Function] - the function returns an object with dateTime, value, and qualifier attributes. An
+ *      empty object is returned if there are no visible groundwater level points or the cursor is not
+ *      on the graph
+ */
 export const getGroundwaterLevelCursorPoint = createSelector(
     getVisibleGroundWaterLevelPoints,
     getCursorTime('current'),
     (gwLevelPoints, cursorTime) => {
-
+        if (!cursorTime || !gwLevelPoints.length) {
+            return {};
+        }
+        return getNearestTime(gwLevelPoints, cursorTime);
 });
+
+/*
+ * Redux Selector function which returns a function which returns an Object for
+ * the nearest groundwater level containing x and y coordinates
+ * @return {Function} - which returns an empty object if no ground water levels or
+ * an Object containing x and y properties
+ */
+export const getGroundwaterLevelTooltipPoint = createSelector(
+    getGroundwaterLevelCursorPoint,
+    getMainXScale('current'),
+    getMainYScale,
+    (point, xScale, yScale) => {
+        if (point === {}) {
+            return {};
+        }
+        return {
+            x: xScale(point.dateTime),
+            y: yScale(point.value)
+        };
+    }
+);
 
 /*
  * Returns a Redux selector function that returns the time series data point nearest
