@@ -39,7 +39,6 @@ export const getAvailableParameterCodes = createSelector(
                 } else if (!gwPeriodOfRecord) {
                     periodOfRecord = uvPeriodOfRecord;
                 } else {
-                    console.log(`UV: ${uvPeriodOfRecord.begin_date} - ${uvPeriodOfRecord.end_date}, GW: ${gwPeriodOfRecord.begin_date} - ${gwPeriodOfRecord.end_date}`);
                     periodOfRecord = {
                         begin_date: DateTime.fromISO(uvPeriodOfRecord.begin_date) < DateTime.fromISO(gwPeriodOfRecord.begin_date) ?
                             uvPeriodOfRecord.begin_date : gwPeriodOfRecord.begin_date,
