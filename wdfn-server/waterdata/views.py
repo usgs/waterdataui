@@ -28,12 +28,13 @@ def home():
     return render_template('index.html', version=__version__)
 
 
-@app.route('/questions-comments', methods=["GET", "POST"])
-def questions_comments():
+@app.route('/questions-comments/<email>/', methods=["GET", "POST"])
+def questions_comments(email):
     """Render the user feedback form."""
-    email_for_contact_about_data = 'data@usgs.com'
-    email_for_report_problem = 'problem@usgs.com'
-    email_for_website_feedback = 'comment@usgs.com' # will be gs-w-iow_po_team@usgs.gov
+    print('email ' + email)
+    email_for_contact_about_data = 'data@usgs.com' # gs-w-XX_NWISWeb_Data_Inquiries where XX is the two letter distict code
+    email_for_report_problem = 'problem@usgs.com' # will be gs-w_help_nwis@usgs.gov
+    email_for_website_feedback = 'comment@usgs.com' # will be WDFN@usgs.gov
     monitoring_location_url = request.referrer
 
     if request.method == 'POST':
@@ -171,15 +172,9 @@ def monitoring_location(site_no):
 
             # grab the cooperator information from json file so that the logos are added to page, if available
             cooperators = sifta.get_cooperators(site_no, location_with_values.get('district_cd', {}).get('code'))
+            email_for_contact_about_data = None
             if site_owner_state is not None:
-                questions_link_params = {
-                    'pemail': 'gs-w-{}_NWISWeb_Data_Inquiries'.format(site_owner_state.lower()),
-                    'subject': 'Site Number: {}'.format(site_no),
-                    'viewnote': (
-                        '<H1>USGS NWIS Feedback Request</H1><p><b>Please enter a subject in the form '
-                        'below that briefly summarizes your request</b></p>'
-                    )
-                }
+                email_for_contact_about_data = 'gs-w-{}_NWISWeb_Data_Inquiries@usgs.gov'.format(site_owner_state.lower())
 
             context = {
                 'status_code': status,
@@ -193,6 +188,7 @@ def monitoring_location(site_no):
                     'GROUNDWATER_LEVELS_ENABLED'] else None,
                 'parm_grp_summary': grouped_dataseries,
                 'cooperators': cooperators,
+                'email_for_contact_about_data': email_for_contact_about_data,
                 'cameras': get_monitoring_location_camera_details((site_no)) if app.config[
                     'MONITORING_LOCATION_CAMERA_ENABLED'] else []
             }
