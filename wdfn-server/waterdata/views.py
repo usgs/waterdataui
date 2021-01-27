@@ -33,7 +33,7 @@ def questions_comments():
     """Render the user feedback form."""
     email_for_contact_about_data = 'data@usgs.com'
     email_for_report_problem = 'problem@usgs.com'
-    email_for_website_feedback = 'comment@usgs.com'
+    email_for_website_feedback = 'comment@usgs.com' # will be gs-w-iow_po_team@usgs.gov
     monitoring_location_url = request.referrer
 
     if request.method == 'POST':
