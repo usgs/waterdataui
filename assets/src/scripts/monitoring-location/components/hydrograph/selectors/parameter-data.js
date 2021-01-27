@@ -1,3 +1,4 @@
+import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
 import config from 'ui/config';
@@ -29,27 +30,25 @@ export const getAvailableParameterCodes = createSelector(
                 const parameterCode = variable.variableCode.value;
                 const measuredParameterCode = parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '');
                 const isUVParameterCode = config.uvPeriodOfRecord && measuredParameterCode in config.uvPeriodOfRecord;
-                const hasWaterAlert = !!(isUVParameterCode && config.WATER_ALERT_PARAMETER_CODES.includes(measuredParameterCode));
-
-                const uvPeriodOfRecord = config.uvPeriodOfRecord && measuredParameterCode in config.uvPeriodOfRecord ?
-                    config.uvPeriodOfRecord[measuredParameterCode] : null;
-                const gwPeriodOfRecord = config.gwPeriodOfRecord && measuredParameterCode in config.gwPeriodOfRecord ?
-                    config.gwPeriodOfRecord[measuredParameterCode] : null;
+                const isGWParameterCode = config.gwPeriodOfRecord && measuredParameterCode in config.gwPeriodOfRecord;
+                const uvPeriodOfRecord = isUVParameterCode ? config.uvPeriodOfRecord[measuredParameterCode] : null;
+                const gwPeriodOfRecord = isGWParameterCode ? config.gwPeriodOfRecord[measuredParameterCode] : null;
                 let periodOfRecord;
                 if (!uvPeriodOfRecord) {
                     periodOfRecord = gwPeriodOfRecord;
                 } else if (!gwPeriodOfRecord) {
                     periodOfRecord = uvPeriodOfRecord;
                 } else {
+                    console.log(`UV: ${uvPeriodOfRecord.begin_date} - ${uvPeriodOfRecord.end_date}, GW: ${gwPeriodOfRecord.begin_date} - ${gwPeriodOfRecord.end_date}`)l
                     periodOfRecord = {
-                        begin_date: uvPeriodOfRecord.begin_date < gwPeriodOfRecord.begin_date ?
+                        begin_date: DateTime.fromISO(uvPeriodOfRecord.begin_date) < DateTime.fromISO(gwPeriodOfRecord.begin_date) ?
                             uvPeriodOfRecord.begin_date : gwPeriodOfRecord.begin_date,
-                        end_date: uvPeriodOfRecord.end_date > gwPeriodOfRecord.end_date ?
+                        end_date: DateTime.fromISO(uvPeriodOfRecord.end_date) > DateTime.fromISO(gwPeriodOfRecord).end_date ?
                             uvPeriodOfRecord.end_date : gwPeriodOfRecord.end_date
                     };
                 }
 
-                const hasWaterAlert = config.WATER_ALERT_PARAMETER_CODES.includes(measuredParameterCode);
+                const hasWaterAlert = !!(isUVParameterCode && config.WATER_ALERT_PARAMETER_CODES.includes(measuredParameterCode));
                 let waterAlertDisplayText;
                 let waterAlertTooltipText;
                 if (hasWaterAlert) {
