@@ -28,17 +28,56 @@ def home():
     return render_template('index.html', version=__version__)
 
 
-@app.route('/questions-comments?test=test', methods=["GET", "POST"])
+@app.route('/questions-comments', methods=["GET", "POST"])
 def questions_comments():
     """Render the user feedback form."""
-    print ("referrer" + request.referrer)
+    email_for_contact_about_data = 'data@usgs.com'
+    email_for_report_problem = 'problem@usgs.com'
+    email_for_website_feedback = 'comment@usgs.com'
+    monitoring_location_url = request.referrer
+
     if request.method == 'POST':
         form_data = request.form
-        timestamp = datetime.datetime.utcnow()
-        print(form_data)
-        print(timestamp)
-        print(request.user_agent.string)
+        time_submitted = str(datetime.datetime.utcnow())
+        submission_type = form_data['feedback-type']
+        subject = form_data['feedback-subject']
+        message = form_data['feedback-message']
+        user_email = form_data['feedback-email-address']
+        user_phone = form_data['feedback-phone-number']
+        user_address = form_data['feedback-address']
+        user_name = form_data['feedback-users-name']
         
+        if subject == '':
+            subject = 'No Subject'
+        if user_phone == '':
+            user_phone = 'None given'
+        if user_address == '':
+            user_address = 'None given'
+        if user_name == '':
+            user_name = 'None given'
+
+        target_email: str = ''
+        if submission_type == 'contact':
+            target_email = email_for_contact_about_data
+        if submission_type == 'report':
+            target_email = email_for_report_problem
+        if submission_type == 'comment':
+            target_email = email_for_website_feedback
+
+        print(form_data)
+        print('time stamp' + time_submitted)
+        print('submission type ' + submission_type)
+        print('subject ' + subject)
+        print('message ' + message)
+        print('user_email ' + user_email)
+        print('email target ' + target_email)
+        print('user_phone ', user_phone)
+        print('user_address ', user_address)
+        print('user_name ', user_name)
+
+        print(request.user_agent.string)
+
+        print ("referrer" + monitoring_location_url)
         return redirect(url_for('submitted'))
     return render_template('questions_comments.html')
 
