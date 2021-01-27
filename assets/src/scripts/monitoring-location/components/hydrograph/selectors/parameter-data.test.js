@@ -5,22 +5,32 @@ import {getAvailableParameterCodes} from './parameter-data';
 describe('monitoring-location/components/hydrograph/selectors/parameter-data', () => {
     config.uvPeriodOfRecord = {
         '00060': {
-            begin_date: '01-01-1980',
-            end_date: '01-01-2020'
+            begin_date: '1980-01-01',
+            end_date: '2020-01-01'
         },
         '00061': {
-            begin_date: '02-01-1980',
-            end_date: '02-01-2020'
+            begin_date: '1980-02-01',
+            end_date: '2020-02-01'
         },
         '00010': {
-            begin_date: '03-01-1980',
-            end_date: '03-01-2020'
+            begin_date: '1980-03-01',
+            end_date: '2020-03-01'
         },
         '72019': {
-            begin_date: '04-01-1980',
-            end_date: '04-01-2020'
+            begin_date: '1980-04-01',
+            end_date: '2020-04-01'
         }
 
+    };
+    config.gwPeriodOfRecord = {
+        '72019': {
+            begin_date: '1980-03-31',
+            end_date: '2020-03-31'
+        },
+        '62611': {
+            begin_date: '1980-05-01',
+            end_date: '2020-05-01'
+        }
     };
     const TEST_STATE = {
         ivTimeSeriesData: {
@@ -97,6 +107,13 @@ describe('monitoring-location/components/hydrograph/selectors/parameter-data', (
                     variableCode: {
                         value: '72019'
                     }
+                },
+                '52331279': {
+                    oid: '52331279',
+                    variableDescription: 'GW level only 62611',
+                    variableCode: {
+                        value: '62611'
+                    }
                 }
             }
         },
@@ -121,6 +138,28 @@ describe('monitoring-location/components/hydrograph/selectors/parameter-data', (
                     values: [
                         {
                             value: '16.98',
+                            qualifiers: [
+                                '1'
+                            ],
+                            dateTime: 1479320640000
+                        }]
+                },
+                '52331279': {
+                    variable: {
+                        variableCode: {
+                            value: '62611',
+                            variableID: 52331279
+                        },
+                        variableName: 'Groundwater level above NAVD 1988',
+                        variableDescription: 'Groundwater level 62611',
+                        unit: {
+                            unitCode: 'ft'
+                        },
+                        oid: '52331279'
+                    },
+                    values: [
+                        {
+                            value: '15.02',
                             qualifiers: [
                                 '1'
                             ],
