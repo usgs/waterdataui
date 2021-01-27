@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Camera metadata is now fetched and the client is using html5 video when video format is supported, otherwise the most recent image is shown.
 - The parameter selection list now shows parameters that are groundwater field visits only in addition to parameters that have IV data.
+- The period of record in the parameter selection list reflects the period of record of groundwater field visits. If both field visits and IV data are available, the period of record is the union.
 
 ## [0.40.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.39.0...waterdataui-0.40.0) - 2021-01-06
 ### Added
