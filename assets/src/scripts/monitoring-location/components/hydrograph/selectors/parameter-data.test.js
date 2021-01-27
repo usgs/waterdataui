@@ -179,118 +179,9 @@ describe('monitoring-location/components/hydrograph/selectors/parameter-data', (
             })).toHaveLength(0);
         });
 
-        it('Return the IV variables when no discreteData in the correct order', () => {
-            const result = getAvailableParameterCodes({
-                ...TEST_STATE,
-                discreteData: {}
-            });
-            expect(result).toHaveLength(5);
-            expect(result[0]).toEqual(expect.objectContaining({
-                variableID: 'code0',
-                parameterCode: '00060',
-                description:'code0 desc',
-                selected: true,
-                timeSeriesCount: 1,
-                periodOfRecord: {
-                    begin_date: '01-01-1980',
-                    end_date: '01-01-2020'
-                }
-            }));
-            expect(result[0].waterAlert.hasWaterAlert).toBe(true);
-            expect(result[0].waterAlert.subscriptionParameterCode).toEqual('00060');
-
-            expect(result[1]).toEqual(expect.objectContaining({
-                variableID: '52331280',
-                parameterCode: '72019',
-                description: 'code2 desc',
-                selected: false,
-                timeSeriesCount: 1,
-                periodOfRecord: {
-                    begin_date: '04-01-1980',
-                    end_date: '04-01-2020'
-                }
-            }));
-            expect(result[1].waterAlert.hasWaterAlert).toBe(true);
-            expect(result[1].waterAlert.subscriptionParameterCode).toEqual('72019');
-
-
-            expect(result[2]).toEqual(expect.objectContaining({
-                variableID: 'code1',
-                parameterCode: '00061',
-                description:'code1 desc',
-                selected: false,
-                timeSeriesCount: 2,
-                periodOfRecord: {
-                    begin_date: '02-01-1980',
-                    end_date: '02-01-2020'
-                }
-            }));
-            expect(result[2].waterAlert.hasWaterAlert).toBe(false);
-
-            expect(result[3]).toEqual(expect.objectContaining({
-                variableID: '52331281',
-                parameterCode: '00010',
-                description:'Temperature C',
-                selected: false,
-                timeSeriesCount: 1,
-                periodOfRecord: {
-                    begin_date: '03-01-1980',
-                    end_date: '03-01-2020'
-                }
-            }));
-            expect(result[3].waterAlert.hasWaterAlert).toBe(true);
-            expect(result[3].waterAlert.subscriptionParameterCode).toEqual('00010');
-
-            expect(result[4]).toEqual(expect.objectContaining({
-                variableID: '52331281F',
-                parameterCode: '00010F',
-                description:'Temperature F',
-                selected: false,
-                timeSeriesCount: 1,
-                periodOfRecord: {
-                    begin_date: '03-01-1980',
-                    end_date: '03-01-2020'
-                }
-            }));
-            expect(result[4].waterAlert.hasWaterAlert).toBe(true);
-            expect(result[4].waterAlert.subscriptionParameterCode).toEqual('00010');
-        });
-
-        it('Returns the groundwater variables if no IV time series are available', () => {
-            const saveUvPeriodOfRecord = config.uvPeriodOfRecord;
-            config.uvPeriodOfRecord = null;
-            const result = getAvailableParameterCodes({
-                ...TEST_STATE,
-                ivTimeSeriesData: {
-                    variables: {
-                        '52331280': {
-                            oid: '52331280',
-                            variableDescription: 'code2 desc',
-                            variableCode: {
-                                value: '72019'
-                            }
-                        }
-                    }
-                },
-                ivTimeSeriesState: {
-                    currentIVVariableID: '52331280'
-                }
-            });
-            expect(result).toHaveLength(1);
-            expect(result[0]).toEqual(expect.objectContaining({
-                variableID: '52331280',
-                parameterCode: '72019',
-                description: 'code2 desc',
-                selected: true,
-                timeSeriesCount: 0,
-                periodOfRecord: null
-            }));
-            expect(result[0].waterAlert.hasWaterAlert).toBe(false);
-            config.uvPeriodOfRecord = saveUvPeriodOfRecord;
-        });
-
-        it('Returns the merged variables if both IV and groundwater levels are available', () => {
+        it('Returns the appropriate variables and metadata', () => {
             const result = getAvailableParameterCodes(TEST_STATE);
+            expect(result).toHaveLength(6);
             expect(result[0]).toEqual(expect.objectContaining({
                 variableID: 'code0',
                 parameterCode: '00060',
@@ -298,8 +189,8 @@ describe('monitoring-location/components/hydrograph/selectors/parameter-data', (
                 selected: true,
                 timeSeriesCount: 1,
                 periodOfRecord: {
-                    begin_date: '01-01-1980',
-                    end_date: '01-01-2020'
+                    begin_date: '1980-01-01',
+                    end_date: '2020-01-01'
                 }
             }));
             expect(result[0].waterAlert.hasWaterAlert).toBe(true);
@@ -312,8 +203,8 @@ describe('monitoring-location/components/hydrograph/selectors/parameter-data', (
                 selected: false,
                 timeSeriesCount: 1,
                 periodOfRecord: {
-                    begin_date: '04-01-1980',
-                    end_date: '04-01-2020'
+                    begin_date: '1980-03-31',
+                    end_date: '2020-04-01'
                 }
             }));
             expect(result[1].waterAlert.hasWaterAlert).toBe(true);
@@ -327,39 +218,52 @@ describe('monitoring-location/components/hydrograph/selectors/parameter-data', (
                 selected: false,
                 timeSeriesCount: 2,
                 periodOfRecord: {
-                    begin_date: '02-01-1980',
-                    end_date: '02-01-2020'
+                    begin_date: '1980-02-01',
+                    end_date: '2020-02-01'
                 }
             }));
             expect(result[2].waterAlert.hasWaterAlert).toBe(false);
 
             expect(result[3]).toEqual(expect.objectContaining({
+                variableID: '52331279',
+                parameterCode: '62611',
+                description:'GW level only 62611',
+                selected: false,
+                timeSeriesCount: 0,
+                periodOfRecord: {
+                    begin_date: '1980-05-01',
+                    end_date: '2020-05-01'
+                }
+            }));
+            expect(result[3].waterAlert.hasWaterAlert).toBe(false);
+
+            expect(result[4]).toEqual(expect.objectContaining({
                 variableID: '52331281',
                 parameterCode: '00010',
                 description:'Temperature C',
                 selected: false,
                 timeSeriesCount: 1,
                 periodOfRecord: {
-                    begin_date: '03-01-1980',
-                    end_date: '03-01-2020'
+                    begin_date: '1980-03-01',
+                    end_date: '2020-03-01'
                 }
             }));
-            expect(result[3].waterAlert.hasWaterAlert).toBe(true);
-            expect(result[3].waterAlert.subscriptionParameterCode).toEqual('00010');
+            expect(result[4].waterAlert.hasWaterAlert).toBe(true);
+            expect(result[4].waterAlert.subscriptionParameterCode).toEqual('00010');
 
-            expect(result[4]).toEqual(expect.objectContaining({
+            expect(result[5]).toEqual(expect.objectContaining({
                 variableID: '52331281F',
                 parameterCode: '00010F',
                 description:'Temperature F',
                 selected: false,
                 timeSeriesCount: 1,
                 periodOfRecord: {
-                    begin_date: '03-01-1980',
-                    end_date: '03-01-2020'
+                    begin_date: '1980-03-01',
+                    end_date: '2020-03-01'
                 }
             }));
-            expect(result[4].waterAlert.hasWaterAlert).toBe(true);
-            expect(result[4].waterAlert.subscriptionParameterCode).toEqual('00010');
+            expect(result[5].waterAlert.hasWaterAlert).toBe(true);
+            expect(result[5].waterAlert.subscriptionParameterCode).toEqual('00010');
         });
     });
 });
