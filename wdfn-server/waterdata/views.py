@@ -28,9 +28,10 @@ def home():
     return render_template('index.html', version=__version__)
 
 
-@app.route('/questions-comments', methods=["GET", "POST"])
+@app.route('/questions-comments?test=test', methods=["GET", "POST"])
 def questions_comments():
     """Render the user feedback form."""
+    print ("referrer" + request.referrer)
     if request.method == 'POST':
         form_data = request.form
         timestamp = datetime.datetime.utcnow()
