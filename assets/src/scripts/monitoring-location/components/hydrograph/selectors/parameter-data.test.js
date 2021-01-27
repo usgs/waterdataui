@@ -218,6 +218,8 @@ describe('monitoring-location/components/hydrograph/selectors/parameter-data', (
         });
 
         it('Returns the groundwater variables if no IV time series are available', () => {
+            const saveUvPeriodOfRecord = config.uvPeriodOfRecord;
+            config.uvPeriodOfRecord = null;
             const result = getAvailableParameterCodes({
                 ...TEST_STATE,
                 ivTimeSeriesData: {
@@ -242,13 +244,10 @@ describe('monitoring-location/components/hydrograph/selectors/parameter-data', (
                 description: 'code2 desc',
                 selected: true,
                 timeSeriesCount: 0,
-                periodOfRecord: {
-                    begin_date: '04-01-1980',
-                    end_date: '04-01-2020'
-                }
+                periodOfRecord: null
             }));
-            expect(result[0].waterAlert.hasWaterAlert).toBe(true);
-            expect(result[0].waterAlert.subscriptionParameterCode).toEqual('72019');
+            expect(result[0].waterAlert.hasWaterAlert).toBe(false);
+            config.uvPeriodOfRecord = saveUvPeriodOfRecord;
         });
 
         it('Returns the merged variables if both IV and groundwater levels are available', () => {

@@ -28,9 +28,12 @@ export const getAvailableParameterCodes = createSelector(
             .map((variable) => {
                 const parameterCode = variable.variableCode.value;
                 const measuredParameterCode = parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '');
-                const hasWaterAlert = config.WATER_ALERT_PARAMETER_CODES.includes(measuredParameterCode);
+                const isUVParameterCode = config.uvPeriodOfRecord && measuredParameterCode in config.uvPeriodOfRecord;
+                const hasWaterAlert = !!(isUVParameterCode && config.WATER_ALERT_PARAMETER_CODES.includes(measuredParameterCode));
                 let waterAlertDisplayText;
+                let waterAlertTooltipText;
                 if (hasWaterAlert) {
+                    waterAlertTooltipText = 'Subscribe to text or email alerts based on thresholds that you set';
                     if (measuredParameterCode === parameterCode) {
                         waterAlertDisplayText = 'Subscribe';
                     } else {
@@ -38,6 +41,11 @@ export const getAvailableParameterCodes = createSelector(
                     }
                 } else {
                     waterAlertDisplayText = 'N/A';
+                    if (isUVParameterCode) {
+                        waterAlertTooltipText = `Sorry, there are no WaterAlerts for this parameter (${parameterCode})`;
+                    } else {
+                        waterAlertTooltipText = 'Sorry, WaterAlert is only available for parameters that have IV data';
+                    }
                 }
 
                 return {
@@ -54,8 +62,7 @@ export const getAvailableParameterCodes = createSelector(
                         hasWaterAlert,
                         subscriptionParameterCode: hasWaterAlert ? measuredParameterCode : '',
                         displayText: waterAlertDisplayText,
-                        tooltipText: hasWaterAlert ? 'Subscribe to text or email alerts based on thresholds that you set' :
-                            `Sorry, there are no WaterAlerts for this parameter (${parameterCode})`
+                        tooltipText: waterAlertTooltipText
                     }
 
                 };
