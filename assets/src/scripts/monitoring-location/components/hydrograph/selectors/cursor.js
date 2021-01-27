@@ -5,6 +5,7 @@ import {getNearestTime} from 'ui/utils';
 
 import {getCurrentMethodID} from 'ml/selectors/time-series-selector';
 
+import {getVisibleGroundWaterLevelPoints} from './discrete-data';
 import {getCurrentVariablePointsByTsId} from './drawing-data';
 import {getMainXScale, getMainYScale} from './scales';
 import {isVisible} from './time-series-data';
@@ -41,6 +42,13 @@ export const getCursorTime = memoize(tsKey => createSelector(
     }
 ));
 
+export const getGroundwaterLevelCursorPoint = createSelector(
+    getVisibleGroundWaterLevelPoints,
+    getCursorTime('current'),
+    (gwLevelPoints, cursorTime) => {
+
+});
+
 /*
  * Returns a Redux selector function that returns the time series data point nearest
  * the tooltip focus time for the current time series with the current variable and current method
@@ -75,8 +83,9 @@ export const getTsCursorPoints = memoize(tsKey => createSelector(
  * where the y-value is finite; no use in making a point if y is Infinity.
  *
  * @param {Object} state - Redux store
- * @param String} tsKey - Time series key
- * @return {Object}
+ * @param {String} tsKey - Time series key
+ * @return {Function} which returns an {Array of Object} tooltipPoints - Each
+ *      object has x and y properties.
  */
 export const getTooltipPoints = memoize(tsKey => createSelector(
     getMainXScale(tsKey),
