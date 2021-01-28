@@ -32,10 +32,16 @@ def home():
 def questions_comments(email):
     """Render the user feedback form."""
     print('email ' + email)
-    email_for_contact_about_data = 'data@usgs.com' # gs-w-XX_NWISWeb_Data_Inquiries where XX is the two letter distict code
-    email_for_report_problem = 'problem@usgs.com' # will be gs-w_help_nwis@usgs.gov
-    email_for_website_feedback = 'comment@usgs.com' # will be WDFN@usgs.gov
+    email_for_contact_about_data = email
+    email_for_report_problem = 'gs-w_help_nwis@usgs.gov'
+    email_for_website_feedback = 'WDFN@usgs.govm'
     monitoring_location_url = request.referrer
+
+    context = {
+        'email_for_contact_about_data': email,
+        'email_for_report_problem': 'gs-w_help_nwis@usgs.gov',
+        'email_for_website_feedback': 'WDFN@usgs.govm'
+    }
 
     if request.method == 'POST':
         form_data = request.form
@@ -79,8 +85,13 @@ def questions_comments(email):
         print(request.user_agent.string)
 
         print ("referrer" + monitoring_location_url)
-        return redirect(url_for('submitted'))
-    return render_template('questions_comments.html')
+
+    return render_template(
+        'questions_comments.html',
+        email_for_contact_about_data=email,
+        email_for_report_problem='gs-w_help_nwis@usgs.gov',
+        email_for_website_feedback='WDFN@usgs.govm'
+    )
 
 
 @app.route('/submitted')

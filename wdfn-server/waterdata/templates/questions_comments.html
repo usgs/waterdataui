@@ -1,6 +1,22 @@
 {% extends 'base.html' %}
 
 {% set page_title = 'Questions and Comments' %}
+{% block page_script %}
+    <script type="application/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            var radioButtons = document.getElementsByName('feedback-type');
+            var form = document.getElementById('feedback-form');
+            radioButtons.forEach(button => {
+                button.onclick = function() {
+                    var emailTarget = button.value;
+                    form.setAttribute('action', 'mailTo:' + emailTarget);
+                    console.log('button ', button.value)
+                    console.log('form ', form.action)
+                }
+            });
+        });
+    </script>
+{% endblock page_script %}
 
 {% block content %}
     <div id="user-feedback" class="usa-prose">
@@ -9,20 +25,20 @@
             <p>Water Data for the Nation Feedback</p>
             <p>Questions or Comments</p>
         </section>
-        <form class="usa-form" action="mailto:WQX@epa.gov?subject=Water Quality Portal question/comments" method="POST">
+        <form id="feedback-form" class="usa-form" action="" method="POST" enctype="text/plain">
             <fieldset id="feedback-destination-selection" class="usa-fieldset">
                 <legend class="usa-legend usa-legend">Let us help you to:</legend>
 
                 <div class="usa-radio">
-                    <input class="usa-radio__input" id="feedback-selection-contact" type="radio" name="feedback-type" value="contact" required>
+                    <input class="usa-radio__input" id="feedback-selection-contact" type="radio" name="feedback-type" value="{{ email_for_contact_about_data }}" required>
                     <label class="usa-radio__label" for="feedback-selection-contact">Contact someone about data at this location</label>
                 </div>
                 <div class="usa-radio">
-                    <input class="usa-radio__input" id="feedback-selection-report" type="radio" name="feedback-type" value="report">
+                    <input class="usa-radio__input" id="feedback-selection-report" type="radio" name="feedback-type" value="{{ email_for_report_problem }}">
                     <label class="usa-radio__label" for="feedback-selection-report">Report a problem with this location</label>
                 </div>
                 <div class="usa-radio">
-                    <input class="usa-radio__input" id="feedback-selection-comment" type="radio" name="feedback-type" value="comment">
+                    <input class="usa-radio__input" id="feedback-selection-comment" type="radio" name="feedback-type" value="{{ email_for_website_feedback }}">
                     <label class="usa-radio__label" for="feedback-selection-comment">Leave a comment about the website</label>
                 </div>
                 <p id="feedback-subtext" class="usa-tooltip"
