@@ -17,6 +17,7 @@
                 button.onclick = function() {
                     var emailTarget = button.value;
                     form.setAttribute('action', 'mailTo:' + emailTarget + '?subject=WDFN user comment/question' + monitoringLocation);
+                console.log('emailTarget ', emailTarget)
                 }
             });
 
@@ -49,15 +50,15 @@
                 <legend class="usa-legend usa-legend">Let us help you to:</legend>
                 <input type="hidden" name="**********request" value="information**********">
                 <div class="usa-radio">
-                    <input class="usa-radio__input" id="feedback-selection-contact" type="radio" name="target-email" value="{{ email_for_contact_about_data }}" required>
+                    <input class="usa-radio__input" id="feedback-selection-contact" type="radio" name="target-email" value="{{ email_for_data_questions }}" required>
                     <label class="usa-radio__label" for="feedback-selection-contact">Contact someone about data at this location</label>
                 </div>
                 <div class="usa-radio">
-                    <input class="usa-radio__input" id="feedback-selection-report" type="radio" name="target-email" value="{{ email_for_report_problem }}">
+                    <input class="usa-radio__input" id="feedback-selection-report" type="radio" name="target-email" value="{{config.EMAIL_TO_REPORT_PROBLEM }}">
                     <label class="usa-radio__label" for="feedback-selection-report">Report a problem with this location</label>
                 </div>
                 <div class="usa-radio">
-                    <input class="usa-radio__input" id="feedback-selection-comment" type="radio" name="target-email" value="{{ email_for_website_feedback }}">
+                    <input class="usa-radio__input" id="feedback-selection-comment" type="radio" name="target-email" value="{{ config.EMAIL_FOR_COMMENTS }}">
                     <label class="usa-radio__label" for="feedback-selection-comment">Leave a comment about the website</label>
                 </div>
                 <p id="feedback-subtext">

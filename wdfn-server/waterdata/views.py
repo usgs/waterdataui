@@ -32,12 +32,11 @@ def home():
 def questions_comments(email):
     """Render the user feedback form."""
     referring_url = request.referrer
+    print('email ' + email)
 
     return render_template(
         'questions_comments.html',
-        email_for_contact_about_data=email,
-        email_for_report_problem='gs-w_help_nwis@usgs.gov',
-        email_for_website_feedback='WDFN@usgs.gov',
+        email_for_data_questions=email,
         monitoring_location_url=referring_url,
         time_sent=str(datetime.datetime.utcnow())
     )
@@ -125,9 +124,12 @@ def monitoring_location(site_no):
 
             # grab the cooperator information from json file so that the logos are added to page, if available
             cooperators = sifta.get_cooperators(site_no, location_with_values.get('district_cd', {}).get('code'))
-            email_with_region_id = None
+
             if site_owner_state is not None:
-                email_with_region_id = 'gs-w-{}_NWISWeb_Data_Inquiries@usgs.gov'.format(site_owner_state.lower())
+                # email_for_data_questions = 'gs-w-{}_NWISWeb_Data_Inquiries@usgs.gov'.format(site_owner_state.lower())
+                email_for_data_questions = app.config['EMAIL_FOR_DATA_QUESTION'].format(site_owner_state.lower())
+            else:
+                email_for_data_questions = app.config['EMAIL_TO_REPORT_PROBLEM']
 
             context = {
                 'status_code': status,
@@ -141,7 +143,7 @@ def monitoring_location(site_no):
                     'GROUNDWATER_LEVELS_ENABLED'] else None,
                 'parm_grp_summary': grouped_dataseries,
                 'cooperators': cooperators,
-                'email_with_region_id': email_with_region_id,
+                'email_for_data_questions': email_for_data_questions,
                 'cameras': get_monitoring_location_camera_details((site_no)) if app.config[
                     'MONITORING_LOCATION_CAMERA_ENABLED'] else []
             }
