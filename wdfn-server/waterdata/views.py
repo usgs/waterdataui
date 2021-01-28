@@ -4,14 +4,14 @@ Main application views.
 import json
 import datetime
 
-from flask import abort, render_template, request, redirect, url_for, Markup, make_response
+from flask import abort, render_template, request, Markup, make_response
 
 from markdown import markdown
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, \
     get_period_of_record_by_parm_cd
-from .utils import construct_url, defined_when, parse_rdb, set_cookie_for_banner_message
+from .utils import defined_when, parse_rdb, set_cookie_for_banner_message
 from .services import sifta, ogc
 from .services.nwis import NwisWebServices
 from .services.camera import get_monitoring_location_camera_details
@@ -125,9 +125,9 @@ def monitoring_location(site_no):
 
             # grab the cooperator information from json file so that the logos are added to page, if available
             cooperators = sifta.get_cooperators(site_no, location_with_values.get('district_cd', {}).get('code'))
-            email_for_contact_about_data = None
+            email_with_region_id = None
             if site_owner_state is not None:
-                email_for_contact_about_data = 'gs-w-{}_NWISWeb_Data_Inquiries@usgs.gov'.format(site_owner_state.lower())
+                email_with_region_id = 'gs-w-{}_NWISWeb_Data_Inquiries@usgs.gov'.format(site_owner_state.lower())
 
             context = {
                 'status_code': status,
@@ -141,7 +141,7 @@ def monitoring_location(site_no):
                     'GROUNDWATER_LEVELS_ENABLED'] else None,
                 'parm_grp_summary': grouped_dataseries,
                 'cooperators': cooperators,
-                'email_for_contact_about_data': email_for_contact_about_data,
+                'email_with_region_id': email_with_region_id,
                 'cameras': get_monitoring_location_camera_details((site_no)) if app.config[
                     'MONITORING_LOCATION_CAMERA_ENABLED'] else []
             }
