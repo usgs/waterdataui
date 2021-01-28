@@ -1,6 +1,6 @@
 import {defineCircleMarker} from 'd3render/markers';
 
-const GW_LEVEL_RADIUS = 5;
+const GW_LEVEL_RADIUS = 7;
 const GW_LEVEL_CLASS = 'gw-level-point';
 
 /*

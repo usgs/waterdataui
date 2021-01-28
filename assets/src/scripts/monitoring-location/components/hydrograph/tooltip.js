@@ -1,16 +1,11 @@
-import {select} from 'd3-selection';
-import {transition} from 'd3-transition';
 import {DateTime} from 'luxon';
 import {createSelector, createStructuredSelector} from 'reselect';
 
-import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
-import {mediaQuery} from 'ui/utils';
 
 import {drawCursorSlider} from 'd3render/cursor-slider';
 import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from 'd3render/graph-tooltip';
 
-import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
 import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
 import {getCursorTime, getTsCursorPoints, getTooltipPoints, getGroundwaterLevelCursorPoint,
@@ -21,12 +16,12 @@ import {getMainXScale, getMainYScale} from './selectors/scales';
 import {getTsTimeZone, getCurrentVariableUnitCode} from './selectors/time-series-data';
 
 
-const getTooltipText = function(datum, unitCode, ianaTimeZone) {
+const getTsTooltipTextInfo = function(tsPoint, tsKey, unitCode, ianaTimeZone) {
     let label = '';
-    if (datum) {
-        let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
+    if (tsPoint) {
+        let valueStr = tsPoint.value ? `${tsPoint.value} ${unitCode}` : ' ';
         const maskKeys = new Set(Object.keys(MASK_DESC));
-        const qualifierKeysLower = new Set(datum.qualifiers.map(x => x.toLowerCase()));
+        const qualifierKeysLower = new Set(tsPoint.qualifiers.map(x => x.toLowerCase()));
         const maskKeyIntersect = Array.from(qualifierKeysLower.values()).filter(x => maskKeys.has(x));
 
         if (maskKeyIntersect.length) {
@@ -34,16 +29,46 @@ const getTooltipText = function(datum, unitCode, ianaTimeZone) {
             valueStr = MASK_DESC[maskKeyIntersect[0]];
         }
         const timeLabel = DateTime.fromMillis(
-            datum.dateTime,
+            tsPoint.dateTime,
             {zone: ianaTimeZone}
         ).toFormat('MMM dd, yyyy hh:mm:ss a ZZZZ');
         label = `${valueStr} - ${timeLabel}`;
     }
 
-    return label;
+    let classes = [`${tsKey}-tooltip-text`];
+    let qualifierClasses = classesForPoint(tsPoint);
+    if (qualifierClasses.approved) {
+        classes.push('approved');
+    }
+    if (qualifierClasses.estimated) {
+        classes.push('estimated');
+    }
+    return {
+        label,
+        classes
+    };
 };
 
-const createTooltipTextGroup = function(elem, {currentPoints, comparePoints, unitCode, ianaTimeZone, layout, currentParmCd}, textGroup) {
+const getGWLevelTextInfo = function(point, unitCode, ianaTimeZone) {
+    if (!point) {
+        return null;
+    }
+    const valueLabel = point.value ? `${point.value} ${unitCode}` : ' ';
+    const timeLabel = DateTime.fromMillis(point.dateTime, {zone: ianaTimeZone}).toFormat('MMM dd, yyyy hh:mm:ss a ZZZZ');
+    return {
+        label: `${valueLabel} - ${timeLabel}`,
+        classes: ['gwlevel-tooltip-text']
+    };
+};
+
+const createTooltipTextGroup = function(elem, {
+    currentPoints,
+    comparePoints,
+    gwLevelPoint,
+    unitCode,
+    ianaTimeZone,
+    layout
+}, textGroup) {
     const adjustMarginOfTooltips = function(elem) {
         let marginAdjustment = layout.margin.left;
         elem.style('margin-left', marginAdjustment + 'px');
@@ -54,12 +79,21 @@ const createTooltipTextGroup = function(elem, {currentPoints, comparePoints, uni
             .attr('class', 'tooltip-text-group')
             .call(adjustMarginOfTooltips);
     }
+    const currentTooltipData = Object.values(currentPoints).map((tsPoint) => {
+        return getTsTooltipTextInfo(tsPoint, 'current', unitCode, ianaTimeZone);
+    });
+    const compareTooltipData = Object.values(comparePoints).map((tsPoint) => {
+        return getTsTooltipTextInfo(tsPoint, 'compare', unitCode, ianaTimeZone);
+    });
 
-    let data = Object.values(currentPoints).concat(Object.values(comparePoints));
+    let tooltipTextData = currentTooltipData.concat(compareTooltipData);
+    if (gwLevelPoint) {
+        tooltipTextData.push(getGWLevelTextInfo(gwLevelPoint, unitCode, ianaTimeZone));
+    }
 
     const texts = textGroup
         .selectAll('div')
-        .data(data);
+        .data(tooltipTextData);
 
     // Remove old text labels
     texts.exit()
@@ -70,16 +104,10 @@ const createTooltipTextGroup = function(elem, {currentPoints, comparePoints, uni
         .append('div');
 
     // Update the text and backgrounds of all tooltip labels
-    const merge = texts.merge(newTexts);
-    merge
-        .text(datum => getTooltipText(datum, unitCode, ianaTimeZone, currentParmCd))
-        .each(function(datum) {
-            const classes = classesForPoint(datum);
-            const text = select(this);
-            text.attr('class', d => `${d.tsKey}-tooltip-text`);
-            text.classed('approved', classes.approved);
-            text.classed('estimated', classes.estimated);
-        });
+    const allTexts = texts.merge(newTexts);
+    allTexts
+        .text(textData => textData.label)
+        .attr('class', textData => textData.classes.join(' '));
 
     return textGroup;
 };
@@ -93,10 +121,10 @@ export const drawTooltipText = function(elem, store) {
     elem.call(link(store, createTooltipTextGroup, createStructuredSelector({
         currentPoints: getTsCursorPoints('current'),
         comparePoints: getTsCursorPoints('compare'),
+        gwLevelPoint: getGroundwaterLevelCursorPoint,
         unitCode: getCurrentVariableUnitCode,
-        layout: getMainLayout,
         ianaTimeZone: getTsTimeZone,
-        currentParmCd: getCurrentParmCd
+        layout: getMainLayout
     })));
 };
 
@@ -116,8 +144,13 @@ export const drawTooltipFocus = function(elem, store) {
     elem.call(link(store, drawFocusCircles, createSelector(
         getTooltipPoints('current'),
         getTooltipPoints('compare'),
-        (current, compare) => {
-            return current.concat(compare);
+        getGroundwaterLevelTooltipPoint,
+        (current, compare, gwLevel) => {
+            let points = current.concat(compare);
+            if (gwLevel) {
+                points.push(gwLevel);
+            }
+            return points;
         }
     )));
 

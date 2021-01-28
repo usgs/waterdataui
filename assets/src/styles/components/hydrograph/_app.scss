@@ -184,6 +184,10 @@
         color: $estimated-time-series-compare;
       }
     }
+    .gwlevel-tooltip-text {
+      color: red;
+      font-weight: normal;
+    }
   }
   svg {
     .brush-text-hint {
