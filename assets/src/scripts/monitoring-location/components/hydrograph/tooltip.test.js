@@ -170,6 +170,22 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
         ui: {
             windowWidth: 1300,
             width: 990
+        },
+        discreteData: {
+            groundwaterLevels: {
+                '00060id': {
+                    variables: {
+                        oid: '00060id',
+                        variableCode: {
+                            value: '00060'
+                        },
+                        unit: {
+                            unitCode: 'ft3/s'
+                        }
+                    },
+                    values: data
+                }
+            }
         }
     };
 
@@ -212,6 +228,8 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
             expect(value).toBe('14 ft3/s');
             value = div.select('.compare-tooltip-text').text().split(' - ')[0];
             expect(value).toBe('14 ft3/s');
+            value = div.select('.gwlevel-tooltip-text').text().split(' - ')[0];
+            expect(value).toBe('14 ft3/s');
         });
 
         it('Text contents are updated when the store is provided with new focus times', () => {
@@ -233,6 +251,9 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
                     expect(value).toBe('15 ft3/s');
 
                     value = div.select('.compare-tooltip-text').text().split(' - ')[0];
+                    expect(value).toBe('15 ft3/s');
+
+                    value = div.select('.gwlevel-tooltip-text').text().split(' - ')[0];
                     expect(value).toBe('15 ft3/s');
                     resolve();
                 });
@@ -334,7 +355,7 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
             svg.call(drawTooltipFocus, store);
 
             expect(svg.selectAll('.focus-line').size()).toBe(1);
-            expect(svg.selectAll('.focus-circle').size()).toBe(2);
+            expect(svg.selectAll('.focus-circle').size()).toBe(3);
             expect(svg.select('.focus-overlay').size()).toBe(1);
         });
 
@@ -364,7 +385,7 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
             svg.call(drawTooltipFocus, store);
 
             expect(svg.selectAll('.focus-line').size()).toBe(1);
-            expect(svg.selectAll('.focus-circle').size()).toBe(2);
+            expect(svg.selectAll('.focus-circle').size()).toBe(3);
             expect(svg.select('.focus-overlay').size()).toBe(1);
         });
     });

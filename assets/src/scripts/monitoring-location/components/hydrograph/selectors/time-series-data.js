@@ -84,8 +84,6 @@ export const getTsTimeZone= createSelector(
     }
 );
 
-export const getQualifiers = state => state.ivTimeSeriesData.qualifiers;
-
 export const getCurrentVariableUnitCode = createSelector(
     getCurrentVariable,
     variable => variable ? variable.unit.unitCode : null

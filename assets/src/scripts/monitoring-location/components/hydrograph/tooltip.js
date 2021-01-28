@@ -1,31 +1,27 @@
-import {select} from 'd3-selection';
-import {transition} from 'd3-transition';
 import {DateTime} from 'luxon';
 import {createSelector, createStructuredSelector} from 'reselect';
 
-import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
-import {mediaQuery} from 'ui/utils';
 
 import {drawCursorSlider} from 'd3render/cursor-slider';
 import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from 'd3render/graph-tooltip';
 
-import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
 import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {getCursorTime, getTsCursorPoints, getTooltipPoints} from './selectors/cursor';
+import {getCursorTime, getTsCursorPoints, getTooltipPoints, getGroundwaterLevelCursorPoint,
+    getGroundwaterLevelTooltipPoint} from './selectors/cursor';
 import {classesForPoint, MASK_DESC} from './selectors/drawing-data';
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getTsTimeZone, getQualifiers, getCurrentVariableUnitCode} from './selectors/time-series-data';
+import {getTsTimeZone, getCurrentVariableUnitCode} from './selectors/time-series-data';
 
 
-const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone) {
+const getTsTooltipTextInfo = function(tsPoint, tsKey, unitCode, ianaTimeZone) {
     let label = '';
-    if (datum && qualifiers) {
-        let valueStr = datum.value === null ? ' ' : `${datum.value} ${unitCode}`;
+    if (tsPoint) {
+        let valueStr = tsPoint.value !== null ? `${tsPoint.value} ${unitCode}` : ' ';
         const maskKeys = new Set(Object.keys(MASK_DESC));
-        const qualifierKeysLower = new Set(datum.qualifiers.map(x => x.toLowerCase()));
+        const qualifierKeysLower = new Set(tsPoint.qualifiers.map(x => x.toLowerCase()));
         const maskKeyIntersect = Array.from(qualifierKeysLower.values()).filter(x => maskKeys.has(x));
 
         if (maskKeyIntersect.length) {
@@ -33,100 +29,85 @@ const getTooltipText = function(datum, qualifiers, unitCode, ianaTimeZone) {
             valueStr = MASK_DESC[maskKeyIntersect[0]];
         }
         const timeLabel = DateTime.fromMillis(
-            datum.dateTime,
+            tsPoint.dateTime,
             {zone: ianaTimeZone}
         ).toFormat('MMM dd, yyyy hh:mm:ss a ZZZZ');
         label = `${valueStr} - ${timeLabel}`;
     }
 
-    return label;
+    let classes = [`${tsKey}-tooltip-text`];
+    let qualifierClasses = classesForPoint(tsPoint);
+    if (qualifierClasses.approved) {
+        classes.push('approved');
+    }
+    if (qualifierClasses.estimated) {
+        classes.push('estimated');
+    }
+    return {
+        label,
+        classes
+    };
 };
 
-const createTooltipTextGroup = function(elem, {currentPoints, comparePoints, qualifiers, unitCode, ianaTimeZone, layout, currentParmCd}, textGroup) {
-    // Find the width of the between the y-axis and margin and set the tooltip margin based on that number
+const getGWLevelTextInfo = function(point, unitCode, ianaTimeZone) {
+    if (!point) {
+        return null;
+    }
+    const valueLabel = point.value !== null ? `${point.value} ${unitCode}` : ' ';
+    const timeLabel = DateTime.fromMillis(point.dateTime, {zone: ianaTimeZone}).toFormat('MMM dd, yyyy hh:mm:ss a ZZZZ');
+    return {
+        label: `${valueLabel} - ${timeLabel}`,
+        classes: ['gwlevel-tooltip-text']
+    };
+};
+
+const createTooltipTextGroup = function(elem, {
+    currentPoints,
+    comparePoints,
+    gwLevelPoint,
+    unitCode,
+    ianaTimeZone,
+    layout
+}, textGroup) {
     const adjustMarginOfTooltips = function(elem) {
-        // set a base number of pixels to bump the tooltips away from y-axis and compensate for slight under reporting
-        // of margin width by layout selector on time series with single or double digits on y-axis
-        const baseMarginOffsetTextGroup = 27;
-        let marginAdjustment = layout.margin.left + baseMarginOffsetTextGroup;
+        let marginAdjustment = layout.margin.left;
         elem.style('margin-left', marginAdjustment + 'px');
     };
-    const currentPointsWithMethod = Object.keys(currentPoints).map((tsKey) => {
-        const methodID = tsKey.split(':')[0];
-        return {
-            ...currentPoints[tsKey],
-            methodID: methodID
-        };
-    });
-    const comparePointsWithMethod = Object.keys(comparePoints).map((tsKey) => {
-        const methodID = tsKey.split(':')[0];
-        return {
-            ...comparePoints[tsKey],
-            methodID: methodID
-        };
-    });
 
     if (!textGroup) {
         textGroup = elem.append('div')
             .attr('class', 'tooltip-text-group')
             .call(adjustMarginOfTooltips);
     }
+    const currentTooltipData = Object.values(currentPoints).map((tsPoint) => {
+        return getTsTooltipTextInfo(tsPoint, 'current', unitCode, ianaTimeZone);
+    });
+    const compareTooltipData = Object.values(comparePoints).map((tsPoint) => {
+        return getTsTooltipTextInfo(tsPoint, 'compare', unitCode, ianaTimeZone);
+    });
 
-    const data = Object.values(currentPointsWithMethod).concat(Object.values(comparePointsWithMethod));
+    let tooltipTextData = currentTooltipData.concat(compareTooltipData);
+    if (gwLevelPoint) {
+        tooltipTextData.push(getGWLevelTextInfo(gwLevelPoint, unitCode, ianaTimeZone));
+    }
+
     const texts = textGroup
         .selectAll('div')
-        .data(data);
+        .data(tooltipTextData);
 
-    // Remove old text labels after fading them out
+    // Remove old text labels
     texts.exit()
-        .transition(transition().duration(500))
-            .style('opacity', '0')
-            .remove();
+        .remove();
 
     // Add new text labels
     const newTexts = texts.enter()
         .append('div');
 
-    // find how many tooltips are showing and adjust the font size larger if there are few, smaller if there are many
-    const adjustTooltipFontSize = function() {
-        const totalTooltipsShowing = Object.values(currentPoints).length + Object.values(comparePoints).length;
-        let tooltipFontSize = 0;
-        if (mediaQuery(config.USWDS_MEDIUM_SCREEN)) {
-            if (totalTooltipsShowing <= 2) {
-                tooltipFontSize = 1.25;
-            } else if (totalTooltipsShowing <= 4) {
-                tooltipFontSize = 1;
-            } else {
-               tooltipFontSize = 0.8;
-            }
-        } else if (mediaQuery(config.USWDS_SMALL_SCREEN)) {
-            if (totalTooltipsShowing <= 2) {
-                tooltipFontSize = 1.1;
-            } else if (totalTooltipsShowing <= 4) {
-                tooltipFontSize = .9;
-            } else {
-                tooltipFontSize = 0.8;
-            }
-        } else {
-            tooltipFontSize = 0.8;
-        }
-        textGroup.style('font-size', tooltipFontSize + 'rem');
-    };
-
     // Update the text and backgrounds of all tooltip labels
-    const merge = texts.merge(newTexts)
-        .interrupt()
-        .call(adjustTooltipFontSize);
-
-    merge
-        .text(datum => getTooltipText(datum, qualifiers, unitCode, ianaTimeZone, currentParmCd))
-        .each(function(datum) {
-            const classes = classesForPoint(datum);
-            const text = select(this);
-            text.attr('class', d => `${d.tsKey}-tooltip-text`);
-            text.classed('approved', classes.approved);
-            text.classed('estimated', classes.estimated);
-        });
+    const allTexts = texts.merge(newTexts);
+    allTexts
+        .text(textData => textData.label)
+        .attr('class', textData => textData.classes.join(' '));
 
     return textGroup;
 };
@@ -140,11 +121,10 @@ export const drawTooltipText = function(elem, store) {
     elem.call(link(store, createTooltipTextGroup, createStructuredSelector({
         currentPoints: getTsCursorPoints('current'),
         comparePoints: getTsCursorPoints('compare'),
-        qualifiers: getQualifiers,
+        gwLevelPoint: getGroundwaterLevelCursorPoint,
         unitCode: getCurrentVariableUnitCode,
-        layout: getMainLayout,
         ianaTimeZone: getTsTimeZone,
-        currentParmCd: getCurrentParmCd
+        layout: getMainLayout
     })));
 };
 
@@ -164,8 +144,13 @@ export const drawTooltipFocus = function(elem, store) {
     elem.call(link(store, drawFocusCircles, createSelector(
         getTooltipPoints('current'),
         getTooltipPoints('compare'),
-        (current, compare) => {
-            return current.concat(compare);
+        getGroundwaterLevelTooltipPoint,
+        (current, compare, gwLevel) => {
+            let points = current.concat(compare);
+            if (gwLevel) {
+                points.push(gwLevel);
+            }
+            return points;
         }
     )));
 
