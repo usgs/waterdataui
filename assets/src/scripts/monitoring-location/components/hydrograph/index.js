@@ -114,11 +114,10 @@ export const attachToNode = function(store,
 
     Promise.all([fetchDataPromise, loadPromise]).then(() => {
         // Hide the loading indicator
-        const state = store.getState();
         nodeElem
             .select('.loading-indicator-container')
             .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
-        if (!hasAnyVariables(state)) {
+        if (!hasAnyVariables(store.getState())) {
             drawInfoAlert(nodeElem.select('.graph-container'), {body: 'No time series data or discrete data available for this site'});
             if (!showOnlyGraph) {
                 document.getElementById('classic-page-link')
@@ -130,14 +129,14 @@ export const attachToNode = function(store,
                 const isThisParamCode = function(variable) {
                     return variable.variableCode.value === parameterCode;
                 };
-                const thisVariable = Object.values(getVariables(state)).find(isThisParamCode);
+                const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
                 if (thisVariable) {
                     store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
                 }
             }
-            if (!getCurrentVariableID(state)) {
+            if (!getCurrentVariableID(store.getState())) {
                 //Sort variables and use the first one as the current variable
-                const sortedVars = sortedParameters(getVariables(state));
+                const sortedVars = sortedParameters(getVariables(store.getState()));
                 if (sortedVars.length) {
                     store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(sortedVars[0].oid));
                 }

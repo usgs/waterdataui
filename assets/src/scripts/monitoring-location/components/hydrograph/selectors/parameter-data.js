@@ -1,3 +1,4 @@
+import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
 import config from 'ui/config';
@@ -28,9 +29,29 @@ export const getAvailableParameterCodes = createSelector(
             .map((variable) => {
                 const parameterCode = variable.variableCode.value;
                 const measuredParameterCode = parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '');
-                const hasWaterAlert = config.WATER_ALERT_PARAMETER_CODES.includes(measuredParameterCode);
+                const isUVParameterCode = config.uvPeriodOfRecord && measuredParameterCode in config.uvPeriodOfRecord;
+                const isGWParameterCode = config.gwPeriodOfRecord && measuredParameterCode in config.gwPeriodOfRecord;
+                const uvPeriodOfRecord = isUVParameterCode ? config.uvPeriodOfRecord[measuredParameterCode] : null;
+                const gwPeriodOfRecord = isGWParameterCode ? config.gwPeriodOfRecord[measuredParameterCode] : null;
+                let periodOfRecord;
+                if (!uvPeriodOfRecord) {
+                    periodOfRecord = gwPeriodOfRecord;
+                } else if (!gwPeriodOfRecord) {
+                    periodOfRecord = uvPeriodOfRecord;
+                } else {
+                    periodOfRecord = {
+                        begin_date: DateTime.fromISO(uvPeriodOfRecord.begin_date) < DateTime.fromISO(gwPeriodOfRecord.begin_date) ?
+                            uvPeriodOfRecord.begin_date : gwPeriodOfRecord.begin_date,
+                        end_date: DateTime.fromISO(uvPeriodOfRecord.end_date) > DateTime.fromISO(gwPeriodOfRecord.end_date) ?
+                            uvPeriodOfRecord.end_date : gwPeriodOfRecord.end_date
+                    };
+                }
+
+                const hasWaterAlert = !!(isUVParameterCode && config.WATER_ALERT_PARAMETER_CODES.includes(measuredParameterCode));
                 let waterAlertDisplayText;
+                let waterAlertTooltipText;
                 if (hasWaterAlert) {
+                    waterAlertTooltipText = 'Subscribe to text or email alerts based on thresholds that you set';
                     if (measuredParameterCode === parameterCode) {
                         waterAlertDisplayText = 'Subscribe';
                     } else {
@@ -38,6 +59,11 @@ export const getAvailableParameterCodes = createSelector(
                     }
                 } else {
                     waterAlertDisplayText = 'N/A';
+                    if (isUVParameterCode) {
+                        waterAlertTooltipText = `Sorry, there are no WaterAlerts for this parameter (${parameterCode})`;
+                    } else {
+                        waterAlertTooltipText = 'Sorry, WaterAlert is only available for parameters that have IV data';
+                    }
                 }
 
                 return {
@@ -48,14 +74,12 @@ export const getAvailableParameterCodes = createSelector(
                     timeSeriesCount: seriesList.filter(ts => {
                         return ts.tsKey === 'current:P7D' && ts.variable === variable.oid;
                     }).length,
-                    periodOfRecord: config.uvPeriodOfRecord && measuredParameterCode in config.uvPeriodOfRecord ?
-                        config.uvPeriodOfRecord[measuredParameterCode] : null,
+                    periodOfRecord: periodOfRecord,
                     waterAlert: {
                         hasWaterAlert,
                         subscriptionParameterCode: hasWaterAlert ? measuredParameterCode : '',
                         displayText: waterAlertDisplayText,
-                        tooltipText: hasWaterAlert ? 'Subscribe to text or email alerts based on thresholds that you set' :
-                            `Sorry, there are no WaterAlerts for this parameter (${parameterCode})`
+                        tooltipText: waterAlertTooltipText
                     }
 
                 };

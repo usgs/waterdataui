@@ -174,7 +174,7 @@ export const plotSeriesSelectTable = function(elem,
             tr.append('td')
                 .style('white-space', 'nowrap')
                 .text(d => d.periodOfRecord ?
-                    `${d.periodOfRecord.begin_date} - ${d.periodOfRecord.end_date}` : '');
+                    `${d.periodOfRecord.begin_date} to ${d.periodOfRecord.end_date}` : '');
             tr.append('td')
                 .append('div')
                 .attr('class', 'wateralert-link');
