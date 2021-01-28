@@ -37,11 +37,12 @@ def questions_comments(email):
     # email_for_website_feedback = 'WDFN@usgs.govm'
     # monitoring_location_url = request.referrer
 
-    context = {
-        'email_for_contact_about_data': email,
-        'email_for_report_problem': 'gs-w_help_nwis@usgs.gov',
-        'email_for_website_feedback': 'WDFN@usgs.govm'
-    }
+    # context = {
+    #     'email_for_contact_about_data': email,
+    #     'email_for_report_problem': 'gs-w_help_nwis@usgs.gov',
+    #     'email_for_website_feedback': 'WDFN@usgs.govm',
+    #     'monitoring_location_url': request.referrer
+    # }
 
     # if request.method == 'POST':
     #     form_data = request.form
@@ -90,7 +91,9 @@ def questions_comments(email):
         'questions_comments.html',
         email_for_contact_about_data=email,
         email_for_report_problem='gs-w_help_nwis@usgs.gov',
-        email_for_website_feedback='WDFN@usgs.govm'
+        email_for_website_feedback='WDFN@usgs.gov',
+        monitoring_location_url=request.referrer,
+        time_sent=str(datetime.datetime.utcnow())
     )
 
 
