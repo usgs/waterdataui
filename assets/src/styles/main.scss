@@ -13,6 +13,7 @@ $fa-font-path: './fonts' !default;
 @import './partials/tooltip';
 
 @import './pages/iv-data-availability-statement';
+@import './pages/questions_comments';
 
 .wdfn-component {
   &[data-component='hydrograph'] {

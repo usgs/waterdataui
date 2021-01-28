@@ -2,11 +2,13 @@
 
 {% set page_title = 'Questions and Comments' %}
 {% block page_script %}
+    <script src="{{ 'scripts/wdfnviz.js' | asset_url }}"></script>
     <script type="application/javascript">
         document.addEventListener('DOMContentLoaded', function() {
             var radioButtons = document.getElementsByName('target-email');
             var form = document.getElementById('feedback-form');
             var monitoringLocation = document.getElementById('monitoring-location-url');
+            var requiredSubText = document.getElementById('feedback-subtext');
 
             if (monitoringLocation.value !== '') {
                 monitoringLocation = ' for monitoring location ' + monitoringLocation.value
@@ -17,6 +19,15 @@
                     form.setAttribute('action', 'mailTo:' + emailTarget + '?subject=WDFN user comment/question' + monitoringLocation);
                 }
             });
+
+            requiredSubText.addEventListener('click', function() {
+                var textDetails = document.getElementById('required-detail');
+                if (textDetails.hidden === true) {
+                    textDetails.hidden = false;
+                } else {
+                    textDetails.hidden = true;
+                }
+            });
         });
     </script>
 {% endblock page_script %}
@@ -25,8 +36,13 @@
     <div id="user-feedback" class="usa-prose">
         <section id="feedback-title" >
             <h1>Contact USGS</h1>
-            <p>Water Data for the Nation Feedback</p>
-            <p>Questions or Comments</p>
+            <h2>Water Data for the Nation Feedback</h2>
+            <div>
+                <h3 id="questions-comments-subtitle">Questions or Comments</h3>
+                {% if monitoring_location_url %}
+                    <p id="questions-comments-referring-url">for {{ monitoring_location_url }}</p>
+                {% endif %}
+            </div>
         </section>
         <form id="feedback-form" class="usa-form" action="" method="POST" enctype="text/plain">
             <fieldset id="feedback-destination-selection" class="usa-fieldset">
@@ -44,10 +60,8 @@
                     <input class="usa-radio__input" id="feedback-selection-comment" type="radio" name="target-email" value="{{ email_for_website_feedback }}">
                     <label class="usa-radio__label" for="feedback-selection-comment">Leave a comment about the website</label>
                 </div>
-                <p id="feedback-subtext" class="usa-tooltip"
-                   data-position="top"
-                   title="A real live person will receive and respond to your submission. Your choice here will ensure quickest response.">
-                    Why is this required?
+                <p id="feedback-subtext">
+                    Why is this required? <span id="required-detail" hidden>A real live person will receive and respond to your submission. Your choice here will ensure quickest response.</span>
                 </p>
                 <input type="hidden" id="monitoring-location-url" name="monitoring-location-url" value="{{ monitoring_location_url }}">
                 <input type="hidden" id="timestamp" name="sent-at-UTC" value="{{ time_sent }}">
