@@ -3,7 +3,8 @@ import * as utils from 'ui/utils';
 import {configureStore} from 'ml/store';
 import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
-import {getTsCursorPoints, getCursorOffset, getTooltipPoints} from './cursor';
+import {getTsCursorPoints, getCursorOffset, getTooltipPoints, getGroundwaterLevelCursorPoint,
+    getGroundwaterLevelTooltipPoint} from './cursor';
 
 let DATA = [12, 13, 14, 15, 16].map(hour => {
     return {
@@ -204,7 +205,31 @@ const TEST_STATE_THREE_VARS = {
         windowWidth: 1024,
         width: 800
     },
-    discreteData: {}
+    discreteData: {
+        groundwaterLevels: {
+            '45807140': {
+                variable: {
+                    variableCode: {value: '00045'},
+                    variableName: 'Precipitation',
+                    variableDescription: 'Precipitation in inches',
+                    oid: '45807140'
+                },
+                values: [{
+                    value: '10',
+                    qualifiers: [],
+                    dateTime: 1522346400000
+                }, {
+                    value: '20',
+                    qualifiers: [],
+                    dateTime: 1522347300000
+                }, {
+                    value: '30',
+                    qualifiers: [],
+                    dateTime: 1522348200000
+                }]
+            }
+        }
+    }
 };
 
 const TEST_STATE_ONE_VAR = {
@@ -467,4 +492,52 @@ describe('monitoring-location/components/hydrograph/cursor module', () => {
         });
     });
 
+    describe('getGroundwaterLevelCursorPoint', () => {
+        it('Return null if no groundwater levels are defined', () => {
+            const testState = {
+                ...TEST_STATE_THREE_VARS,
+                ivTimeSeriesState: {
+                    ...TEST_STATE_THREE_VARS.ivTimeSeriesState,
+                    currentIVVariableID: '45807140',
+                    ivGraphCursorOffset: 16 * 60 * 1000
+                },
+                discreteData: {}
+            };
+            expect(getGroundwaterLevelCursorPoint(testState)).toBeNull();
+        });
+
+        it('Return the expected nearest point', () => {
+            const testState = {
+                ...TEST_STATE_THREE_VARS,
+                ivTimeSeriesState: {
+                    ...TEST_STATE_THREE_VARS.ivTimeSeriesState,
+                    currentIVVariableID: '45807140',
+                    ivGraphCursorOffset: 16 * 60 * 1000
+                }
+            };
+
+            expect(getGroundwaterLevelCursorPoint(testState)).toEqual({
+                value: 20,
+                qualifiers: [],
+                dateTime: 1522347300000
+            });
+        });
+    });
+
+    describe('getGroundwaterLevelTooltipPoint', () => {
+        const id = (val) => val;
+
+        it('should return the requested time series focus time', () => {
+            expect(getGroundwaterLevelTooltipPoint.resultFunc({
+                dateTime: '1date',
+                value: 1
+            }, id, id)).toEqual({
+                x: '1date',
+                y: 1
+            }, {
+                x: '2date',
+                y: 2
+            });
+        });
+    });
 });

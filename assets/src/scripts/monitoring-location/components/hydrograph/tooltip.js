@@ -19,7 +19,7 @@ import {getTsTimeZone, getCurrentVariableUnitCode} from './selectors/time-series
 const getTsTooltipTextInfo = function(tsPoint, tsKey, unitCode, ianaTimeZone) {
     let label = '';
     if (tsPoint) {
-        let valueStr = tsPoint.value ? `${tsPoint.value} ${unitCode}` : ' ';
+        let valueStr = tsPoint.value !== null ? `${tsPoint.value} ${unitCode}` : ' ';
         const maskKeys = new Set(Object.keys(MASK_DESC));
         const qualifierKeysLower = new Set(tsPoint.qualifiers.map(x => x.toLowerCase()));
         const maskKeyIntersect = Array.from(qualifierKeysLower.values()).filter(x => maskKeys.has(x));
@@ -53,7 +53,7 @@ const getGWLevelTextInfo = function(point, unitCode, ianaTimeZone) {
     if (!point) {
         return null;
     }
-    const valueLabel = point.value ? `${point.value} ${unitCode}` : ' ';
+    const valueLabel = point.value !== null ? `${point.value} ${unitCode}` : ' ';
     const timeLabel = DateTime.fromMillis(point.dateTime, {zone: ianaTimeZone}).toFormat('MMM dd, yyyy hh:mm:ss a ZZZZ');
     return {
         label: `${valueLabel} - ${timeLabel}`,
