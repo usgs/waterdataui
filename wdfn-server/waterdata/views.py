@@ -31,11 +31,11 @@ def home():
 @app.route('/questions-comments/<email>/', methods=["GET", "POST"])
 def questions_comments(email):
     """Render the user feedback form."""
-    print('email ' + email)
-    email_for_contact_about_data = email
-    email_for_report_problem = 'gs-w_help_nwis@usgs.gov'
-    email_for_website_feedback = 'WDFN@usgs.govm'
-    monitoring_location_url = request.referrer
+    # print('email ' + email)
+    # email_for_contact_about_data = email
+    # email_for_report_problem = 'gs-w_help_nwis@usgs.gov'
+    # email_for_website_feedback = 'WDFN@usgs.govm'
+    # monitoring_location_url = request.referrer
 
     context = {
         'email_for_contact_about_data': email,
@@ -43,48 +43,48 @@ def questions_comments(email):
         'email_for_website_feedback': 'WDFN@usgs.govm'
     }
 
-    if request.method == 'POST':
-        form_data = request.form
-        time_submitted = str(datetime.datetime.utcnow())
-        submission_type = form_data['feedback-type']
-        subject = form_data['feedback-subject']
-        message = form_data['feedback-message']
-        user_email = form_data['feedback-email-address']
-        user_phone = form_data['feedback-phone-number']
-        user_address = form_data['feedback-address']
-        user_name = form_data['feedback-users-name']
-        
-        if subject == '':
-            subject = 'No Subject'
-        if user_phone == '':
-            user_phone = 'None given'
-        if user_address == '':
-            user_address = 'None given'
-        if user_name == '':
-            user_name = 'None given'
-
-        target_email: str = ''
-        if submission_type == 'contact':
-            target_email = email_for_contact_about_data
-        if submission_type == 'report':
-            target_email = email_for_report_problem
-        if submission_type == 'comment':
-            target_email = email_for_website_feedback
-
-        print(form_data)
-        print('time stamp' + time_submitted)
-        print('submission type ' + submission_type)
-        print('subject ' + subject)
-        print('message ' + message)
-        print('user_email ' + user_email)
-        print('email target ' + target_email)
-        print('user_phone ', user_phone)
-        print('user_address ', user_address)
-        print('user_name ', user_name)
-
-        print(request.user_agent.string)
-
-        print ("referrer" + monitoring_location_url)
+    # if request.method == 'POST':
+    #     form_data = request.form
+    #     time_submitted = str(datetime.datetime.utcnow())
+    #     submission_type = form_data['feedback-type']
+    #     subject = form_data['feedback-subject']
+    #     message = form_data['feedback-message']
+    #     user_email = form_data['feedback-email-address']
+    #     user_phone = form_data['feedback-phone-number']
+    #     user_address = form_data['feedback-address']
+    #     user_name = form_data['feedback-users-name']
+    #
+    #     if subject == '':
+    #         subject = 'No Subject'
+    #     if user_phone == '':
+    #         user_phone = 'None given'
+    #     if user_address == '':
+    #         user_address = 'None given'
+    #     if user_name == '':
+    #         user_name = 'None given'
+    #
+    #     target_email: str = ''
+    #     if submission_type == 'contact':
+    #         target_email = email_for_contact_about_data
+    #     if submission_type == 'report':
+    #         target_email = email_for_report_problem
+    #     if submission_type == 'comment':
+    #         target_email = email_for_website_feedback
+    #
+    #     print(form_data)
+    #     print('time stamp' + time_submitted)
+    #     print('submission type ' + submission_type)
+    #     print('subject ' + subject)
+    #     print('message ' + message)
+    #     print('user_email ' + user_email)
+    #     print('email target ' + target_email)
+    #     print('user_phone ', user_phone)
+    #     print('user_address ', user_address)
+    #     print('user_name ', user_name)
+    #
+    #     print(request.user_agent.string)
+    #
+    #     print ("referrer" + monitoring_location_url)
 
     return render_template(
         'questions_comments.html',
