@@ -32,7 +32,6 @@ def home():
 def questions_comments(email):
     """Render the user feedback form."""
     referring_url = request.referrer
-    print('email ' + email)
 
     return render_template(
         'questions_comments.html',
