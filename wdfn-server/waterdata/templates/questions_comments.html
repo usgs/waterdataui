@@ -13,12 +13,13 @@
             if (monitoringLocation.value !== '') {
                 monitoringLocation = ' for monitoring location ' + monitoringLocation.value
             }
-            radioButtons.forEach(button => {
+            var index;
+            for (index = 0; index < radioButtons.length; index++) {}
+            radioButtons.forEach(function(button) {
                 button.onclick = function() {
                     var emailTarget = button.value;
                     form.setAttribute('action', 'mailTo:' + emailTarget + '?subject=WDFN user comment/question' + monitoringLocation);
-                console.log('emailTarget ', emailTarget)
-                }
+                }git
             });
 
             requiredSubText.addEventListener('click', function() {
