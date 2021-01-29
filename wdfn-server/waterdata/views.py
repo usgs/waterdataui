@@ -2,6 +2,7 @@
 Main application views.
 """
 import json
+import datetime
 
 from flask import abort, render_template, request, Markup, make_response
 
@@ -10,7 +11,7 @@ from markdown import markdown
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, \
     get_period_of_record_by_parm_cd
-from .utils import construct_url, defined_when, parse_rdb, set_cookie_for_banner_message
+from .utils import defined_when, parse_rdb, set_cookie_for_banner_message
 from .services import sifta, ogc
 from .services.nwis import NwisWebServices
 from .services.camera import get_monitoring_location_camera_details
@@ -26,11 +27,18 @@ def home():
     """Render the home page."""
     return render_template('index.html', version=__version__)
 
-@app.route('/questions-comments')
-def questions_comments():
-    """Render the user feedback form."""
-    return render_template('questions_comments.html')
 
+@app.route('/questions-comments/<email>/', methods=["GET", "POST"])
+def questions_comments(email):
+    """Render the user feedback form."""
+    referring_url = request.referrer
+
+    return render_template(
+        'questions_comments.html',
+        email_for_data_questions=email,
+        monitoring_location_url=referring_url,
+        time_sent=str(datetime.datetime.utcnow())
+    )
 
 @app.route('/provisional-data-statement')
 def provisional_data_statement():
@@ -115,15 +123,12 @@ def monitoring_location(site_no):
 
             # grab the cooperator information from json file so that the logos are added to page, if available
             cooperators = sifta.get_cooperators(site_no, location_with_values.get('district_cd', {}).get('code'))
+
             if site_owner_state is not None:
-                questions_link_params = {
-                    'pemail': 'gs-w-{}_NWISWeb_Data_Inquiries'.format(site_owner_state.lower()),
-                    'subject': 'Site Number: {}'.format(site_no),
-                    'viewnote': (
-                        '<H1>USGS NWIS Feedback Request</H1><p><b>Please enter a subject in the form '
-                        'below that briefly summarizes your request</b></p>'
-                    )
-                }
+                email_for_data_questions = \
+                    app.config['EMAIL_FOR_DATA_QUESTION'].format(state_district_code=site_owner_state.lower())
+            else:
+                email_for_data_questions = app.config['EMAIL_TO_REPORT_PROBLEM']
 
             context = {
                 'status_code': status,
@@ -137,6 +142,7 @@ def monitoring_location(site_no):
                     'GROUNDWATER_LEVELS_ENABLED'] else None,
                 'parm_grp_summary': grouped_dataseries,
                 'cooperators': cooperators,
+                'email_for_data_questions': email_for_data_questions,
                 'cameras': get_monitoring_location_camera_details((site_no)) if app.config[
                     'MONITORING_LOCATION_CAMERA_ENABLED'] else []
             }

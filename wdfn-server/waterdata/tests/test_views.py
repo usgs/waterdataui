@@ -31,9 +31,10 @@ class TestQuestionsCommentsView(TestCase):
         self.app_client = app.test_client()
 
     def test_successful_view(self):
-        response = self.app_client.get('/questions-comments')
+        fake_email = 'test%40test.gov'
+        response = self.app_client.get('/questions-comments/{}/'.format(fake_email))
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(200, response.status_code)
 
 
 class TestProvisionalDataStatementView(TestCase):

@@ -1,9 +1,119 @@
 {% extends 'base.html' %}
 
 {% set page_title = 'Questions and Comments' %}
+{% block page_script %}
+    <script src="{{ 'scripts/wdfnviz.js' | asset_url }}"></script>
+    <script type="application/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            var radioButtons = document.getElementsByName('target-email');
+            var form = document.getElementById('feedback-form');
+            var monitoringLocation = document.getElementById('monitoring-location-url');
+            var requiredSubText = document.getElementById('feedback-subtext');
+
+            if (monitoringLocation.value !== '') {
+                monitoringLocation = ' for monitoring location ' + monitoringLocation.value
+            }
+            var index;
+            for (index = 0; index < radioButtons.length; index++) {}
+            radioButtons.forEach(function(button) {
+                button.onclick = function() {
+                    var emailTarget = button.value;
+                    form.setAttribute('action', 'mailTo:' + emailTarget + '?subject=WDFN user comment/question' + monitoringLocation);
+                }
+            });
+
+            requiredSubText.addEventListener('click', function() {
+                var textDetails = document.getElementById('required-detail');
+                textDetails.hidden = !textDetails.hidden
+            });
+        });
+    </script>
+{% endblock page_script %}
 
 {% block content %}
-    <div class="usa-prose">
-        <h1>Questions and comments here</h1>
+    <div id="user-feedback" class="usa-prose">
+        <section id="feedback-title" >
+            <h1>Contact USGS</h1>
+            <h2>Water Data for the Nation Feedback</h2>
+            <div>
+                <h3 id="questions-comments-subtitle">Questions or Comments</h3>
+                {% if monitoring_location_url %}
+                    <p id="questions-comments-referring-url">for {{ monitoring_location_url }}</p>
+                {% endif %}
+            </div>
+        </section>
+        <form id="feedback-form" class="usa-form" action="" method="POST" enctype="text/plain">
+            <fieldset id="feedback-destination-selection" class="usa-fieldset">
+                <legend class="usa-legend usa-legend">Let us help you to:</legend>
+                <input type="hidden" name="**********request" value="information**********">
+                <div class="usa-radio">
+                    <input class="usa-radio__input" id="feedback-selection-contact" type="radio" name="target-email" value="{{ email_for_data_questions }}" required>
+                    <label class="usa-radio__label" for="feedback-selection-contact">Contact someone about data at this location</label>
+                </div>
+                <div class="usa-radio">
+                    <input class="usa-radio__input" id="feedback-selection-report" type="radio" name="target-email" value="{{config.EMAIL_TO_REPORT_PROBLEM }}">
+                    <label class="usa-radio__label" for="feedback-selection-report">Report a problem with this location</label>
+                </div>
+                <div class="usa-radio">
+                    <input class="usa-radio__input" id="feedback-selection-comment" type="radio" name="target-email" value="{{ config.EMAIL_FOR_COMMENTS }}">
+                    <label class="usa-radio__label" for="feedback-selection-comment">Leave a comment about the website</label>
+                </div>
+                <p id="feedback-subtext">
+                    Why is this required? <span id="required-detail" hidden>A real live person will receive and respond to your submission. Your choice here will ensure quickest response.</span>
+                </p>
+                <input type="hidden" id="monitoring-location-url" name="monitoring-location-url" value="{{ monitoring_location_url }}">
+                <input type="hidden" id="timestamp" name="sent-at-UTC" value="{{ time_sent }}">
+                <div>
+                    <input type="hidden" name="**********user" value="message**********">
+                    <label class="usa-label" for="feedback-subject">Subject</label>
+                    <input class="usa-input" id="feedback-subject" name="subject" type="text">
+                    <label class="usa-label" for="feedback-message">Message*</label>
+                    <textarea class="usa-textarea"
+                              id="feedback-message"
+                              name="message"
+                              rows="5"
+                              aria-describedby="textarea"
+                              required></textarea>
+                </div>
+                <fieldset>
+                    <legend>Your Contact Information</legend>
+                    <input type="hidden" name="**********user" value="information**********">
+                    <label class="usa-label" for="feedback-email-address">Email address*</label>
+                    <input class="usa-input" id="feedback-email-address" name="user-email-address" type="email" autocapitalize="off" autocorrect="off" required>
+                    <label class="usa-label" for="feedback-users-name">Name</label>
+                    <input class="usa-input" id="feedback-users-name" name="user-name" type="text">
+                    <label class="usa-label" for="feedback-phone-number">Phone Number</label>
+                    <input class="usa-input" id="feedback-phone-number" name="user-phone-number" type="tel">
+                    <label class="usa-label" for="feedback-address">Organization or Address</label>
+                    <input class="usa-input" id="feedback-address" name="user-organization-or-address" type="text">
+                </fieldset>
+
+                <div>
+                    <p>* Required field.</p>
+                    <p>See our <a href="http://www.usgs.gov/privacy.html"  target="_blank" rel="noopener">privacy statement</a></p>
+                </div>
+
+                <input class="usa-button" type="submit" value="Send">
+            </fieldset>
+        </form>
+
+        <section id="feedback-inputs">
+
+        </section>
+        <section id="feedback-related-contacts">
+            <h2>Get more information</h2>
+            <ul class="usa-list usa-list--unstyled">
+                <li><a href="http://www.usgs.gov/faq"  target="_blank" rel="noopener">USGS Frequently Asked Questions</a></li>
+                <li>For general inquiries - 1-888-ASK-USGS (1-888-275-8747)</li>
+                <li><a href="http://www.usgs.gov/socialmedia"  target="_blank" rel="noopener">USGS Social Media</a></li>
+            </ul>
+            <h2>Additional Contacts</h2>
+            <ul class="usa-list usa-list--unstyled">
+                <li><a href="http://www.usgs.gov/phonebook/employee/"  target="_blank" rel="noopener">USGS Employee Phone Book</a></li>
+                <li><a href="http://www.usgs.gov/newsroom/contacts.asp"  target="_blank" rel="noopener">USGS Office of Communications</a></li>
+                <li><a href="https://www.usgs.gov/about/key-officials"  target="_blank" rel="noopener">USGS Directory of Key Officials</a></li>
+                <li><a href="http://www.usgs.gov/contact_us/"  target="_blank" rel="noopener">USGS Offices and Science Centers</a></li>
+            </ul>
+        </section>
     </div>
 {% endblock content %}
