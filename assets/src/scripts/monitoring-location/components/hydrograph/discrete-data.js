@@ -11,10 +11,13 @@ const GW_LEVEL_CLASS = 'gw-level-point';
  * @param {D3 scale} xScale
  * @param {D3 scale } yScale
  */
-export const drawGroundwaterLevels = function(svg, {levels, xScale, yScale}) {
+export const drawGroundwaterLevels = function(svg, {levels, xScale, yScale, enableClip}) {
     svg.selectAll('#iv-graph-gw-levels-group').remove();
     const group = svg.append('g')
         .attr('id', 'iv-graph-gw-levels-group');
+    if (enableClip) {
+        group.attr('clip-path', 'url(#graph-clip)');
+    }
 
     levels.forEach((level) => {
         group.append('circle')
