@@ -19,16 +19,12 @@
                 button.onclick = function() {
                     var emailTarget = button.value;
                     form.setAttribute('action', 'mailTo:' + emailTarget + '?subject=WDFN user comment/question' + monitoringLocation);
-                }git
+                }
             });
 
             requiredSubText.addEventListener('click', function() {
                 var textDetails = document.getElementById('required-detail');
-                if (textDetails.hidden === true) {
-                    textDetails.hidden = false;
-                } else {
-                    textDetails.hidden = true;
-                }
+                textDetails.hidden = !textDetails.hidden
             });
         });
     </script>
@@ -94,7 +90,7 @@
 
                 <div>
                     <p>* Required field.</p>
-                    <p>See our <a href="http://www.usgs.gov/privacy.html" rel="noopener">privacy statement</a></p>
+                    <p>See our <a href="http://www.usgs.gov/privacy.html"  target="_blank" rel="noopener">privacy statement</a></p>
                 </div>
 
                 <input class="usa-button" type="submit" value="Send">
@@ -107,16 +103,16 @@
         <section id="feedback-related-contacts">
             <h2>Get more information</h2>
             <ul class="usa-list usa-list--unstyled">
-                <li><a href="http://www.usgs.gov/faq" rel="noopener">USGS Frequently Asked Questions</a></li>
+                <li><a href="http://www.usgs.gov/faq"  target="_blank" rel="noopener">USGS Frequently Asked Questions</a></li>
                 <li>For general inquiries - 1-888-ASK-USGS (1-888-275-8747)</li>
-                <li><a href="http://www.usgs.gov/socialmedia" rel="noopener">USGS Social Media</a></li>
+                <li><a href="http://www.usgs.gov/socialmedia"  target="_blank" rel="noopener">USGS Social Media</a></li>
             </ul>
             <h2>Additional Contacts</h2>
             <ul class="usa-list usa-list--unstyled">
-                <li><a href="http://www.usgs.gov/phonebook/employee/" rel="noopener">USGS Employee Phone Book</a></li>
-                <li><a href="http://www.usgs.gov/newsroom/contacts.asp" rel="noopener">USGS Office of Communications</a></li>
-                <li><a href="http://www.usgs.gov/aboutusgs/organized/key_officials.asp/" rel="noopener">USGS Directory of Key Officials</a></li>
-                <li><a href="http://www.usgs.gov/contact_us/" rel="noopener">USGS Offices and Science Centers</a></li>
+                <li><a href="http://www.usgs.gov/phonebook/employee/"  target="_blank" rel="noopener">USGS Employee Phone Book</a></li>
+                <li><a href="http://www.usgs.gov/newsroom/contacts.asp"  target="_blank" rel="noopener">USGS Office of Communications</a></li>
+                <li><a href="https://www.usgs.gov/about/key-officials"  target="_blank" rel="noopener">USGS Directory of Key Officials</a></li>
+                <li><a href="http://www.usgs.gov/contact_us/"  target="_blank" rel="noopener">USGS Offices and Science Centers</a></li>
             </ul>
         </section>
     </div>

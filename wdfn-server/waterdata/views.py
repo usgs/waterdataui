@@ -125,7 +125,8 @@ def monitoring_location(site_no):
             cooperators = sifta.get_cooperators(site_no, location_with_values.get('district_cd', {}).get('code'))
 
             if site_owner_state is not None:
-                email_for_data_questions = app.config['EMAIL_FOR_DATA_QUESTION'].format(site_owner_state.lower())
+                email_for_data_questions = \
+                    app.config['EMAIL_FOR_DATA_QUESTION'].format(state_district_code=site_owner_state.lower())
             else:
                 email_for_data_questions = app.config['EMAIL_TO_REPORT_PROBLEM']
 
