@@ -8,9 +8,8 @@ import{link}  from 'ui/lib/d3-redux';
 
 import {appendInfoTooltip} from 'd3render/info-tooltip';
 
-import {getCurrentParmCd, getCurrentDateRange, getShowIVTimeSeries} from 'ml/selectors/time-series-selector';
+import {getQueryInfo, getCurrentParmCd, getCurrentDateRange, getShowIVTimeSeries} from 'ml/selectors/time-series-selector';
 
-import {getQueryInformation} from './selectors/time-series-data';
 
 /**
  * Uses information from the state to structure a URL that will work with WaterServices
@@ -116,6 +115,6 @@ export const renderDownloadLinks = function(elem, store, siteno) {
         currentIVDateRange: getCurrentDateRange,
         parameterCode: getCurrentParmCd,
         showIVTimeSeries: getShowIVTimeSeries,
-        queryInformation: getQueryInformation
+        queryInformation: getQueryInfo
     })));
 };
