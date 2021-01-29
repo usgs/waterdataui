@@ -141,7 +141,7 @@
         <label title="Close" class="close" for="wdfn-alert-dismiss"><i class="fas fa-times"></i></label>
         <div>
             <ul>
-                <li>Beta release.</li>
+                <li>Beta release</li>
                 {% if not request.cookies.get('no-show-banner-message') %}
                     {% for notice in config.BANNER_NOTICES %}
                         <li>{{ notice|safe }}</li>
