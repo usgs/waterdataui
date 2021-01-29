@@ -7,9 +7,12 @@ import {getCurrentMethodID} from 'ml/selectors/time-series-selector';
 
 import {getVisibleGroundWaterLevelPoints} from './discrete-data';
 import {getCurrentVariablePointsByTsId} from './drawing-data';
-import {getMainXScale, getMainYScale} from './scales';
+import {getMainXScale, getMainYScale, getTimeRange} from './scales';
 import {isVisible} from './time-series-data';
 
+const isInTimeRange = function(dateTime, timeRange) {
+    return dateTime >= timeRange.start && dateTime <= timeRange.end;
+};
 
 export const getCursorOffset = createSelector(
     getMainXScale('current'),
@@ -54,17 +57,21 @@ export const getTsCursorPoints = memoize(tsKey => createSelector(
     getCurrentMethodID,
     getCursorTime(tsKey),
     isVisible(tsKey),
-    (timeSeries, currentMethodId, cursorTime, isVisible) => {
-        if (!cursorTime || !isVisible) {
+    getTimeRange('MAIN', tsKey),
+    (timeSeries, currentMethodId, cursorTime, isVisible, timeRange) => {
+        if (!cursorTime || !isVisible || !timeRange) {
             return {};
         }
         return Object.keys(timeSeries).reduce((data, tsId) => {
             if (timeSeries[tsId].length && parseInt(tsId.split(':')[0]) === currentMethodId) {
-                const datum = getNearestTime(timeSeries[tsId], cursorTime);
-                data[tsId] = {
-                    ...datum,
-                    tsKey: tsKey
-                };
+                const visiblePoints = timeSeries[tsId].filter(point => isInTimeRange(point.dateTime, timeRange));
+                if (visiblePoints.length) {
+                    const datum = getNearestTime(visiblePoints, cursorTime);
+                    data[tsId] = {
+                        ...datum,
+                        tsKey: tsKey
+                    };
+                }
             }
             return data;
         }, {});
@@ -107,11 +114,17 @@ export const getTooltipPoints = memoize(tsKey => createSelector(
 export const getGroundwaterLevelCursorPoint = createSelector(
     getVisibleGroundWaterLevelPoints,
     getCursorTime('current'),
-    (gwLevelPoints, cursorTime) => {
-        if (!cursorTime || !gwLevelPoints.length) {
+    getTimeRange('MAIN', 'current'),
+    (gwLevelPoints, cursorTime, timeRange) => {
+        if (!cursorTime || !gwLevelPoints.length || !timeRange) {
             return null;
         }
-        return getNearestTime(gwLevelPoints, cursorTime);
+        const visiblePoints = gwLevelPoints.filter(point => isInTimeRange(point.dateTime, timeRange));
+        if (visiblePoints.length) {
+            return getNearestTime(visiblePoints, cursorTime);
+        } else {
+            return null;
+        }
 });
 
 /*
