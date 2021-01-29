@@ -49,7 +49,7 @@ NLDI_SERVICES_DISTANCE = '322'
 
 # Emails Addresses for user feedback
 EMAIL_FOR_COMMENTS = 'WDFN@usgs.gov'
-EMAIL_TO_REPORT_PROBLEM = 'gs-w_help_nwis@usgs.gov'
+EMAIL_TO_REPORT_PROBLEM = 'gs-w_support_nwisweb@usgs.gov'
 EMAIL_FOR_DATA_QUESTION = 'gs-w-{}_NWISWeb_Data_Inquiries@usgs.gov'
 
 # Waterwatch
