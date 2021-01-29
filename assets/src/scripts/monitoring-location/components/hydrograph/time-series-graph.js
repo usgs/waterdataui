@@ -274,7 +274,8 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
         .call(link(store, drawGroundwaterLevels, createStructuredSelector({
             levels: getVisibleGroundWaterLevelPoints,
             xScale: getMainXScale('current'),
-            yScale: getMainYScale
+            yScale: getMainYScale,
+            enableClip: () => true
         })))
         .call(link(store, plotAllFloodLevelPoints, createStructuredSelector({
             visible: isWaterwatchVisible,
