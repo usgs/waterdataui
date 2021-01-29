@@ -9,7 +9,7 @@ import{link}  from 'ui/lib/d3-redux';
 import {appendInfoTooltip} from 'd3render/info-tooltip';
 
 import {getQueryInfo, getCurrentParmCd, getCurrentDateRange, getShowIVTimeSeries} from 'ml/selectors/time-series-selector';
-
+import {getCurrentVariableMedianStatistics} from 'ml/selectors/median-statistics-selector';
 
 /**
  * Uses information from the state to structure a URL that will work with WaterServices
@@ -49,44 +49,59 @@ const createUrlForDownloadLinks = function(currentIVDateRange, queryInformation,
 */
 
 export const renderDownloadLinks = function(elem, store, siteno) {
-    elem.call(link(store, (elem, {currentIVDateRange, parameterCode, showIVTimeSeries, queryInformation}) => {
+    elem.call(link(store, (elem, {currentIVDateRange, parameterCode, showIVTimeSeries, queryInformation, medianData}) => {
+        const hasIVData = config.uvPeriodOfRecord && parameterCode in config.uvPeriodOfRecord;
+        const hasGWData = config.gwPeriodOfRecord && parameterCode in config.gwPeriodOfRecord;
         elem.select('#iv-data-download-list').remove();
-
-        const addStandardAttributes = function(element) {
-            return element.attr('class', 'usa-link')
-                .attr('target', '_blank')
-                .attr('rel', 'noopener');
-        };
 
         const listOfDownloadLinks = elem.append('ul')
             .attr('id', 'iv-data-download-list')
             .attr('class', 'usa-fieldset usa-list--unstyled');
 
-        const monitoringLocationDownloadLink = listOfDownloadLinks.append('li');
-        addStandardAttributes(monitoringLocationDownloadLink.append('a'))
-            .text('Current')
-            .attr('href', createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current'))
-            .attr('ga-on', 'click')
-            .attr('ga-event-category', 'links')
-            .attr('ga-event-action', 'downloadLinkCurrent');
-        monitoringLocationDownloadLink.call(appendInfoTooltip, 'Monitoring location data as shown on graph');
-
-        if (showIVTimeSeries.compare) {
-            const compareDownloadLink = listOfDownloadLinks.append('li');
-            addStandardAttributes(compareDownloadLink.append('a'))
-                .text('Compare')
-                .attr('href', createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'compare'))
+        const createDataDownloadLink = function(displayText, url, gaEventAction, tooltipText) {
+            const listItem = listOfDownloadLinks.append('li');
+            listItem.append('a')
+                .text(displayText)
+                .attr('target', '_blank')
+                .attr('rel', 'noopener')
+                .attr('href', url)
                 .attr('ga-on', 'click')
                 .attr('ga-event-category', 'links')
-                .attr('ga-event-action', 'downloadLinkCompare');
-            compareDownloadLink.call(appendInfoTooltip, 'Data from last year with the same duration as in graph');
+                .attr('ga-event-action', 'gaEventAction')
+                .call(appendInfoTooltip, tooltipText);
+        };
+
+        if (hasIVData) {
+            createDataDownloadLink(
+                'Current IV data',
+                createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current'),
+                'downloadLinkCurrent',
+                'Monitoring location data as shown on graph'
+            );
         }
 
-        if (showIVTimeSeries.median && parameterCode === '00060') {
+        if (hasIVData && showIVTimeSeries.compare) {
+            createDataDownloadLink(
+                'Compare IV data',
+                createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'compare'),
+                'downloadLinkCompare',
+                'Data from last year with the same duration as in graph'
+            );
+        }
+
+        if (hasGWData) {
+            const dateQueryParam =
+            createDataDownloadLink(
+                'Field visit data',
+                `${config.GROUNDWATER_LEVELS_ENDPOINT}/`
+            )
+        }
+
+        if (showIVTimeSeries.median && medianData) {
             const medianDownloadLink = listOfDownloadLinks.append('li');
             addStandardAttributes(medianDownloadLink.append('a'))
-                .text('Median')
-                .attr('href', `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=00060`)
+                .text('Median data')
+                .attr('href', `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=${parameterCode}`)
                 .attr('ga-on', 'click')
                 .attr('ga-event-category', 'links')
                 .attr('ga-event-action', 'downloadLinkMedian');
@@ -115,6 +130,7 @@ export const renderDownloadLinks = function(elem, store, siteno) {
         currentIVDateRange: getCurrentDateRange,
         parameterCode: getCurrentParmCd,
         showIVTimeSeries: getShowIVTimeSeries,
-        queryInformation: getQueryInfo
+        queryInformation: getQueryInfo,
+        medianData: getCurrentVariableMedianStatistics
     })));
 };

@@ -23,7 +23,6 @@ export const isVisible = memoize(tsKey => (state) => {
     return state.ivTimeSeriesState.showIVTimeSeries[tsKey];
 });
 
-
 /**
  * Returns a Redux selector function which returns the label to be used for the Y axis
  */
