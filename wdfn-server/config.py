@@ -107,7 +107,7 @@ MAIL_USE_SSL = False
 MAIL_DEBUG = True
 MAIL_USERNAME = 'aaronsbriggs'
 MAIL_PASSWORD = ''
-MAIL_DEFAULT_SENDER : 'aaronsbriggs@aol.com'
+MAIL_DEFAULT_SENDER : ('WDFN User Questions and Comments', 'aaronsbriggs@aol.com')
 MAIL_MAX_EMAILS = 1
 MAIL_SUPPRESS_SEND : False
 MAIL_ASCII_ATTACHMENTS : False

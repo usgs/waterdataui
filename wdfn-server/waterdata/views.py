@@ -35,74 +35,90 @@ def home():
 def questions_comments(email):
     """Render the user feedback form."""
     referring_url = request.referrer
-    email
-
 
     if request.method == 'POST':
-        # print('email ' + email)
-        email_for_contact_about_data = app.config['EMAIL_FOR_DATA_QUESTION']
+        email_for_contact_about_data = email
         email_for_report_problem = app.config['EMAIL_TO_REPORT_PROBLEM']
         email_for_website_feedback = app.config['EMAIL_FOR_COMMENTS']
         monitoring_location_url = request.referrer
+        user_browser_system_details = request.user_agent.string
+        time_submitted = str(datetime.datetime.utcnow())
 
         form_data = request.form
-        print(form_data)
-        # time_submitted = str(datetime.datetime.utcnow())
-        # submission_type = form_data['feedback-type']
-        # subject = form_data['feedback-subject']
-        # message = form_data['feedback-message']
-        # user_email = form_data['feedback-email-address']
-        # user_phone = form_data['feedback-phone-number']
-        # user_address = form_data['feedback-address']
-        # user_name = form_data['feedback-users-name']
-        #
-        # if subject == '':
-        #     subject = 'No Subject'
-        # if user_phone == '':
-        #     user_phone = 'None given'
-        # if user_address == '':
-        #     user_address = 'None given'
-        # if user_name == '':
-        #     user_name = 'None given'
-        #
-        # target_email: str = ''
-        # if submission_type == 'contact':
-        #     target_email = email_for_contact_about_data
-        # if submission_type == 'report':
-        #     target_email = email_for_report_problem
-        # if submission_type == 'comment':
-        #     target_email = email_for_website_feedback
-        #
-        # print(form_data)
-        # print('time stamp' + time_submitted)
-        # print('submission type ' + submission_type)
-        # print('subject ' + subject)
-        # print('message ' + message)
-        # print('user_email ' + user_email)
-        # print('email target ' + target_email)
-        # print('user_phone ', user_phone)
-        # print('user_address ', user_address)
-        # print('user_name ', user_name)
-        #
-        # print(request.user_agent.string)
-        #
-        # print ("referrer" + monitoring_location_url)
-        # try:
-        #     print('gave it a try')
-        #     message = Message("Hello", sender="aaronsbriggs@aol.com", recipients=["aaronsbriggs@aol.com"])
-        #     mail.send(message)
-        # except Exception as e:
-        #     print(e)
-        #     return('error in send')
+        submission_type = form_data['feedback-type']
+        user_subject = form_data['subject']
+        user_message = form_data['message']
+        user_email = form_data['user-email-address']
+        user_phone = form_data['user-phone-number']
+        user_address = form_data['user-organization-or-address']
+        user_name = form_data['user-name']
 
+        if user_subject == '':
+            user_subject = 'No Subject'
+        if user_phone == '':
+            user_phone = 'None given'
+        if user_address == '':
+            user_address = 'None given'
+        if user_name == '':
+            user_name = 'Name not given'
+
+        target_email: str = ''
+        if submission_type == 'contact':
+            target_email = email_for_contact_about_data
+        if submission_type == 'report':
+            target_email = email_for_report_problem
+        if submission_type == 'comment':
+            target_email = email_for_website_feedback
+
+        print('time stamp' + time_submitted)
+        print('submission type ' + submission_type)
+        print('subject ' + user_subject)
+        print('message ' + user_message)
+        print('user_email ' + user_email)
+        print('email target ' + target_email)
+        print('user_phone ', user_phone)
+        print('user_address ', user_address)
+        print('user_name ', user_name)
+        print("referrer" + monitoring_location_url)
+        print(request.user_agent.string)
+
+        target_email_for_testing = 'aaronsbriggs@aol.com' #remove!!
+        target_email = target_email_for_testing #remove!!
+
+        subject = 'WDFN User Comment/Question for {}'.format(monitoring_location_url)
+        message = Message(subject, recipients=[target_email])
+        message.html = '<p>From: {name}</p>' \
+                       '<p>Subject: {subject}</p>' \
+                       '<p>Location: {location}</p>' \
+                       '<p>Time (UTC): {time}</p>' \
+                       '<hr>' \
+                       '<p>User Message:</p>' \
+                       '<p>{message}</p>' \
+                       '<hr>' \
+                       '<p>Sender Information:</p>' \
+                       '<p>Email: {email}</p>' \
+                       '<p>Phone: {phone}</p>' \
+                       '<p>Organization or Address: {address}</p>' \
+                       '<p>User Browser/System Details: {details}</p>'.format(name=user_name,
+                                                                              subject=user_subject,
+                                                                              location=monitoring_location_url,
+                                                                              time=time_submitted,
+                                                                              message=user_message,
+                                                                              email=user_email,
+                                                                              phone=user_phone,
+                                                                              address=user_address,
+                                                                              details=user_browser_system_details)
         email_sent_successfully = True
-
-
-        return redirect(url_for('feedback_submitted', email_sent_successfully=email_sent_successfully))
-    #     return render_template('questions_comments.html')
-
-
-
+        try:
+            print('gave it a try')
+            # mail.send(message)
+        except Exception as e:
+            print('caught error')
+            print(e)
+            email_sent_successfully = False
+        finally:
+            # return redirect(url_for('feedback_submitted', email_sent_successfully=email_sent_successfully))
+            return message.html
     return render_template(
         'questions_comments.html',
         email_for_data_questions=email,
