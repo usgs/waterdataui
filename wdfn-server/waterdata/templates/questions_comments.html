@@ -5,23 +5,7 @@
     <script src="{{ 'scripts/wdfnviz.js' | asset_url }}"></script>
     <script type="application/javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            var radioButtons = document.getElementsByName('target-email');
-            var form = document.getElementById('feedback-form');
-            var monitoringLocation = document.getElementById('monitoring-location-url');
             var requiredSubText = document.getElementById('feedback-subtext');
-
-            if (monitoringLocation.value !== '') {
-                monitoringLocation = ' for monitoring location ' + monitoringLocation.value
-            }
-            var index;
-            for (index = 0; index < radioButtons.length; index++) {}
-            radioButtons.forEach(function(button) {
-                button.onclick = function() {
-                    var emailTarget = button.value;
-                    {#form.setAttribute('action', 'mailTo:' + emailTarget + '?subject=WDFN user comment/question' + monitoringLocation);#}
-                }
-            });
-
             requiredSubText.addEventListener('click', function() {
                 var textDetails = document.getElementById('required-detail');
                 textDetails.hidden = !textDetails.hidden
@@ -43,7 +27,7 @@
             </div>
         </section>
 
-        <form action="{{ url_for('questions_comments', email=email_for_data_questions) }}" method="post" >
+        <form class="usa-form" action="{{ url_for('questions_comments', email=email_for_data_questions) }}" method="post" >
             <fieldset id="feedback-destination-selection" class="usa-fieldset">
                 <legend class="usa-legend usa-legend">Let us help you to:</legend>
                 <div class="usa-radio">

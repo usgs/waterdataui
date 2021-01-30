@@ -4,7 +4,7 @@ Main application views.
 import json
 import datetime
 
-from flask import abort, render_template, request, Markup, make_response
+from flask import abort, render_template, redirect, request, Markup, make_response, url_for
 from flask_mail import Mail, Message
 
 from markdown import markdown
@@ -95,8 +95,10 @@ def questions_comments(email):
         #     print(e)
         #     return('error in send')
 
+        email_sent_successfully = True
 
-    # return redirect(url_for('submitted'))
+
+        return redirect(url_for('feedback_submitted', email_sent_successfully=email_sent_successfully))
     #     return render_template('questions_comments.html')
 
 
@@ -106,6 +108,14 @@ def questions_comments(email):
         email_for_data_questions=email,
         monitoring_location_url=referring_url,
         time_sent=str(datetime.datetime.utcnow())
+    )
+
+@app.route('/feedback-submitted/<email_sent_successfully>/')
+def feedback_submitted(email_sent_successfully):
+    """Render the provisional data statement page."""
+    return render_template(
+        'feedback_submitted.html',
+        email_sent_successfully=email_sent_successfully
     )
 
 @app.route('/provisional-data-statement')
