@@ -5,6 +5,7 @@ import json
 import datetime
 
 from flask import abort, render_template, request, Markup, make_response
+from flask_mail import Mail, Message
 
 from markdown import markdown
 
@@ -21,6 +22,8 @@ from .constants import STATION_FIELDS_D
 
 NWIS = NwisWebServices(app.config['SERVER_SERVICE_ROOT'], app.config['SITE_SERVICE_CATALOG_ROOT'])
 
+# Load the email configuration
+mail = Mail(app)
 
 @app.route('/')
 def home():
@@ -32,6 +35,71 @@ def home():
 def questions_comments(email):
     """Render the user feedback form."""
     referring_url = request.referrer
+    email
+
+
+    if request.method == 'POST':
+        # print('email ' + email)
+        email_for_contact_about_data = app.config['EMAIL_FOR_DATA_QUESTION']
+        email_for_report_problem = app.config['EMAIL_TO_REPORT_PROBLEM']
+        email_for_website_feedback = app.config['EMAIL_FOR_COMMENTS']
+        monitoring_location_url = request.referrer
+
+        form_data = request.form
+        print(form_data)
+        # time_submitted = str(datetime.datetime.utcnow())
+        # submission_type = form_data['feedback-type']
+        # subject = form_data['feedback-subject']
+        # message = form_data['feedback-message']
+        # user_email = form_data['feedback-email-address']
+        # user_phone = form_data['feedback-phone-number']
+        # user_address = form_data['feedback-address']
+        # user_name = form_data['feedback-users-name']
+        #
+        # if subject == '':
+        #     subject = 'No Subject'
+        # if user_phone == '':
+        #     user_phone = 'None given'
+        # if user_address == '':
+        #     user_address = 'None given'
+        # if user_name == '':
+        #     user_name = 'None given'
+        #
+        # target_email: str = ''
+        # if submission_type == 'contact':
+        #     target_email = email_for_contact_about_data
+        # if submission_type == 'report':
+        #     target_email = email_for_report_problem
+        # if submission_type == 'comment':
+        #     target_email = email_for_website_feedback
+        #
+        # print(form_data)
+        # print('time stamp' + time_submitted)
+        # print('submission type ' + submission_type)
+        # print('subject ' + subject)
+        # print('message ' + message)
+        # print('user_email ' + user_email)
+        # print('email target ' + target_email)
+        # print('user_phone ', user_phone)
+        # print('user_address ', user_address)
+        # print('user_name ', user_name)
+        #
+        # print(request.user_agent.string)
+        #
+        # print ("referrer" + monitoring_location_url)
+        # try:
+        #     print('gave it a try')
+        #     message = Message("Hello", sender="aaronsbriggs@aol.com", recipients=["aaronsbriggs@aol.com"])
+        #     mail.send(message)
+        # except Exception as e:
+        #     print(e)
+        #     return('error in send')
+
+
+    # return redirect(url_for('submitted'))
+    #     return render_template('questions_comments.html')
+
+
 
     return render_template(
         'questions_comments.html',
