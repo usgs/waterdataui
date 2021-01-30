@@ -40,7 +40,6 @@ def questions_comments(email):
         email_for_contact_about_data = email
         email_for_report_problem = app.config['EMAIL_TO_REPORT_PROBLEM']
         email_for_website_feedback = app.config['EMAIL_FOR_COMMENTS']
-        monitoring_location_url = request.referrer
         user_browser_system_details = request.user_agent.string
         time_submitted = str(datetime.datetime.utcnow())
 
@@ -52,6 +51,7 @@ def questions_comments(email):
         user_phone = form_data['user-phone-number']
         user_address = form_data['user-organization-or-address']
         user_name = form_data['user-name']
+        monitoring_location=form_data['monitoring-location-url']
 
         if user_subject == '':
             user_subject = 'No Subject'
@@ -70,22 +70,10 @@ def questions_comments(email):
         if submission_type == 'comment':
             target_email = email_for_website_feedback
 
-        print('time stamp' + time_submitted)
-        print('submission type ' + submission_type)
-        print('subject ' + user_subject)
-        print('message ' + user_message)
-        print('user_email ' + user_email)
-        print('email target ' + target_email)
-        print('user_phone ', user_phone)
-        print('user_address ', user_address)
-        print('user_name ', user_name)
-        print("referrer" + monitoring_location_url)
-        print(request.user_agent.string)
-
         target_email_for_testing = 'aaronsbriggs@aol.com' #remove!!
         target_email = target_email_for_testing #remove!!
 
-        subject = 'WDFN User Comment/Question for {}'.format(monitoring_location_url)
+        subject = 'WDFN User Comment/Question for {}'.format(referring_url)
         message = Message(subject, recipients=[target_email])
         message.html = '<p>From: {name}</p>' \
                        '<p>Subject: {subject}</p>' \
@@ -101,7 +89,7 @@ def questions_comments(email):
                        '<p>Organization or Address: {address}</p>' \
                        '<p>User Browser/System Details: {details}</p>'.format(name=user_name,
                                                                               subject=user_subject,
-                                                                              location=monitoring_location_url,
+                                                                              location=monitoring_location,
                                                                               time=time_submitted,
                                                                               message=user_message,
                                                                               email=user_email,
@@ -111,22 +99,22 @@ def questions_comments(email):
         email_sent_successfully = True
         try:
             print('gave it a try')
-            # mail.send(message)
+            mail.send(message)
         except Exception as e:
             print('caught error')
             print(e)
             email_sent_successfully = False
         finally:
-            # return redirect(url_for('feedback_submitted', email_sent_successfully=email_sent_successfully))
-            return message.html
+            return redirect(url_for('feedback_submitted', email_sent_successfully=email_sent_successfully))
+
     return render_template(
         'questions_comments.html',
         email_for_data_questions=email,
-        monitoring_location_url=referring_url,
-        time_sent=str(datetime.datetime.utcnow())
+        monitoring_location_url=referring_url
     )
 
-@app.route('/feedback-submitted/<email_sent_successfully>/')
+
+@app.route('/feedback-submitted/<email_sent_successfully>')
 def feedback_submitted(email_sent_successfully):
     """Render the provisional data statement page."""
     return render_template(
