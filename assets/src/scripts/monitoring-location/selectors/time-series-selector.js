@@ -149,9 +149,7 @@ export const hasTimeSeries = memoize((tsKey, period, parmCd) => createSelector(
 export const getTsQueryInfo  = memoize((tsKey, period, parmCd) => createSelector(
     getQueryInfo,
     getTsRequestKey(tsKey, period, parmCd),
-    (queryInfos, tsRequestKey) => {
-        return queryInfos[tsRequestKey] ? queryInfos[tsRequestKey] : {};
-    }
+    (queryInfos, tsRequestKey) => queryInfos[tsRequestKey] ? queryInfos[tsRequestKey] : {}
 ));
 
 /*
