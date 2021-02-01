@@ -56,6 +56,7 @@ const drawTableBody = function(table, dataKind, data) {
  * @param {Redux store} store
  */
 const drawDataTable = function(elem, {dataKind, currentData}) {
+debugger;
     elem.select(`#${CONTAINER_ID[dataKind]}`).remove();
     if (!currentData.length) {
         return;

@@ -92,6 +92,7 @@ export const getAllPoints = createSelector(
     getVariables,
     (timeSeries, variables) => {
         let allPoints = {};
+        debugger;
         Object.keys(timeSeries).forEach((tsId) => {
             const ts = timeSeries[tsId];
             const variableId = ts.variable;
@@ -276,6 +277,7 @@ export const getCurrentPointData = createSelector(
     getCurrentVariable,
     getIanaTimeZone,
     (pointsByTsId, currentMethodId, currentVariable, timeZone) => {
+        debugger;
         const pointsKey = Object.keys(pointsByTsId).find((tsId) => {
             return parseInt(tsId.split(':')[0]) === currentMethodId;
         });
