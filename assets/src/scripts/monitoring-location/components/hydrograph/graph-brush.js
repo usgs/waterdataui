@@ -10,13 +10,14 @@ import {appendXAxis} from 'd3render/axes';
 import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
 import {getBrushXAxis} from './selectors/axes';
+import {getVisibleGroundwaterLevelPoints} from './selectors/discrete-data';
 import {getCurrentVariableLineSegments} from './selectors/drawing-data';
 import {getBrushLayout} from './selectors/layout';
-import {getBrushXScale, getBrushYScale, getMainXScale, getMainYScale} from './selectors/scales';
+import {getBrushXScale, getBrushYScale} from './selectors/scales';
 import {isVisible} from './selectors/time-series-data';
+
 import {drawDataLines} from './time-series-lines';
-import {drawGroundwaterLevels} from "./discrete-data";
-import {getVisibleGroundWaterLevelPoints} from "./selectors/discrete-data";
+import {drawGroundwaterLevels} from './discrete-data';
 
 
 /*
@@ -95,7 +96,7 @@ export const drawGraphBrush = function(container, store) {
                     enableClip: () => false
                 })))
                 .call(link(store, drawGroundwaterLevels, createStructuredSelector({
-                    levels: getVisibleGroundWaterLevelPoints,
+                    levels: getVisibleGroundwaterLevelPoints,
                     xScale: getBrushXScale('current'),
                     yScale: getBrushYScale,
                     enableClip: () => false

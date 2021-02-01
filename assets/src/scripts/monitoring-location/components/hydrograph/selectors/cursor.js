@@ -5,7 +5,7 @@ import {getNearestTime} from 'ui/utils';
 
 import {getCurrentMethodID} from 'ml/selectors/time-series-selector';
 
-import {getVisibleGroundWaterLevelPoints} from './discrete-data';
+import {getVisibleGroundwaterLevelPoints} from './discrete-data';
 import {getCurrentVariablePointsByTsId} from './drawing-data';
 import {getMainXScale, getMainYScale, getTimeRange} from './scales';
 import {isVisible} from './time-series-data';
@@ -112,7 +112,7 @@ export const getTooltipPoints = memoize(tsKey => createSelector(
  *      on the graph
  */
 export const getGroundwaterLevelCursorPoint = createSelector(
-    getVisibleGroundWaterLevelPoints,
+    getVisibleGroundwaterLevelPoints,
     getCursorTime('current'),
     getTimeRange('MAIN', 'current'),
     (gwLevelPoints, cursorTime, timeRange) => {

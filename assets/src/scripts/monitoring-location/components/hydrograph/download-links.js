@@ -1,6 +1,7 @@
 /**
  *  Module with functions for processing and structuring download link URLs
  */
+import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config.js';
@@ -8,8 +9,11 @@ import{link}  from 'ui/lib/d3-redux';
 
 import {appendInfoTooltip} from 'd3render/info-tooltip';
 
-import {getQueryInfo, getCurrentParmCd, getCurrentDateRange, getShowIVTimeSeries} from 'ml/selectors/time-series-selector';
+import {getQueryInfo, getCurrentParmCd, getCurrentDateRange, getShowIVTimeSeries,
+    getRequestTimeRange} from 'ml/selectors/time-series-selector';
 import {getCurrentVariableMedianStatistics} from 'ml/selectors/median-statistics-selector';
+
+import {anyVisibleGroundwaterLevels} from './selectors/discrete-data';
 
 /**
  * Uses information from the state to structure a URL that will work with WaterServices
@@ -49,88 +53,104 @@ const createUrlForDownloadLinks = function(currentIVDateRange, queryInformation,
 */
 
 export const renderDownloadLinks = function(elem, store, siteno) {
-    elem.call(link(store, (elem, {currentIVDateRange, parameterCode, showIVTimeSeries, queryInformation, medianData}) => {
+    elem.call(link(store, (elem, {
+        currentIVDateRange,
+        parameterCode,
+        showIVTimeSeries,
+        queryInformation,
+        medianData,
+        anyVisibleGroundwaterLevels,
+        requestTimeRange
+    }) => {
         const hasIVData = config.uvPeriodOfRecord && parameterCode in config.uvPeriodOfRecord;
         const hasGWData = config.gwPeriodOfRecord && parameterCode in config.gwPeriodOfRecord;
+
         elem.select('#iv-data-download-list').remove();
 
         const listOfDownloadLinks = elem.append('ul')
             .attr('id', 'iv-data-download-list')
             .attr('class', 'usa-fieldset usa-list--unstyled');
 
-        const createDataDownloadLink = function(displayText, url, gaEventAction, tooltipText) {
-            const listItem = listOfDownloadLinks.append('li');
-            listItem.append('a')
+        const createDataDownloadLink = function(elem, {displayText, url, gaEventAction, tooltipText}) {
+            elem.append('a')
                 .text(displayText)
                 .attr('target', '_blank')
                 .attr('rel', 'noopener')
                 .attr('href', url)
                 .attr('ga-on', 'click')
                 .attr('ga-event-category', 'links')
-                .attr('ga-event-action', 'gaEventAction')
-                .call(appendInfoTooltip, tooltipText);
+                .attr('ga-event-action', gaEventAction);
+                if (tooltipText) {
+                    elem.call(appendInfoTooltip, tooltipText);
+                }
         };
 
         if (hasIVData) {
-            createDataDownloadLink(
-                'Current IV data',
-                createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current'),
-                'downloadLinkCurrent',
-                'Monitoring location data as shown on graph'
-            );
+            listOfDownloadLinks.append('li')
+                .call(createDataDownloadLink, {
+                    displayText: 'Current IV data',
+                    url: createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current'),
+                    gaEventAction: 'downloadLinkCurrent',
+                    tooltipText: 'Monitoring location data as shown on graph'
+                });
         }
 
         if (hasIVData && showIVTimeSeries.compare) {
-            createDataDownloadLink(
-                'Compare IV data',
-                createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'compare'),
-                'downloadLinkCompare',
-                'Data from last year with the same duration as in graph'
-            );
+            listOfDownloadLinks.append('li')
+                .call(createDataDownloadLink, {
+                    displayText: 'Compare IV data',
+                    url: createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'compare'),
+                    gaEventAction: 'downloadLinkCompare',
+                    tooltipText: 'Data from last year with the same duration as in graph'
+                });
         }
 
-        if (hasGWData) {
-            const dateQueryParam =
-            createDataDownloadLink(
-                'Field visit data',
-                `${config.GROUNDWATER_LEVELS_ENDPOINT}/`
-            )
+        if (hasGWData && anyVisibleGroundwaterLevels) {
+            const startDT = DateTime.fromMillis(requestTimeRange.start).toISO();
+            const endDT = DateTime.fromMillis(requestTimeRange.end).toISO();
+            listOfDownloadLinks.append('li')
+                .call(createDataDownloadLink, {
+                    displayText: 'Field visit data',
+                    url: `${config.GROUNDWATER_LEVELS_ENDPOINT}?sites=${siteno}&parameterCd=${parameterCode}&startDT=${startDT}&endDT=${endDT}&format=rdb`,
+                    gaEventAction: 'downloadLinkGroundwaterLevels',
+                    tooltipText: 'Field visit data as shown on the graph'
+                });
         }
 
         if (showIVTimeSeries.median && medianData) {
-            const medianDownloadLink = listOfDownloadLinks.append('li');
-            addStandardAttributes(medianDownloadLink.append('a'))
-                .text('Median data')
-                .attr('href', `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=${parameterCode}`)
-                .attr('ga-on', 'click')
-                .attr('ga-event-category', 'links')
-                .attr('ga-event-action', 'downloadLinkMedian');
-            medianDownloadLink.call(appendInfoTooltip, 'Median data for timespan shown on graph');
+            listOfDownloadLinks.append('li')
+                .call(createDataDownloadLink, {
+                    displayText: 'Median data',
+                    url: `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=${parameterCode}`,
+                    gaEventAction: 'downloadLinkMedian',
+                    tooltipText: 'Median data for timespan shown on graph'
+                });
         }
 
         const metadataDownloadLink = listOfDownloadLinks.append('li')
-            .text('Metadata - ');
-        addStandardAttributes(metadataDownloadLink.append('a'))
-            .text('standard')
-            .attr('href', `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteStatus=all`)
-            .attr('ga-on', 'click')
-            .attr('ga-event-category', 'links')
-            .attr('ga-event-action', 'downloadLinkMetadataStandard');
+            .text('Metadata - ')
+            .call(createDataDownloadLink, {
+                displayText: 'standard',
+                url: `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteStatus=all`,
+                gaEventAction: 'downloadLinkMetadataStandard',
+                tooltipText: ''
+            });
         metadataDownloadLink.append('span')
             .text(' or ');
-        addStandardAttributes(metadataDownloadLink.append('a'))
-            .text('expanded')
-            .attr('href', `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteOutput=expanded&siteStatus=all`)
-            .attr('ga-on', 'click')
-            .attr('ga-event-category', 'links')
-            .attr('ga-event-action', 'downloadLinkMetadataExpanded');
-        metadataDownloadLink.call(appendInfoTooltip, 'Information about this monitoring location');
-
+        metadataDownloadLink
+            .call(createDataDownloadLink, {
+                displayText: 'expanded',
+                url: `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteOutput=expanded&siteStatus=all`,
+                gaEventAction: 'downloadLinkMetadataExpanded',
+                tooltipText: 'Information about this monitoring location'
+            });
     },  createStructuredSelector({
         currentIVDateRange: getCurrentDateRange,
         parameterCode: getCurrentParmCd,
         showIVTimeSeries: getShowIVTimeSeries,
         queryInformation: getQueryInfo,
-        medianData: getCurrentVariableMedianStatistics
+        medianData: getCurrentVariableMedianStatistics,
+        anyVisibleGroundwaterLevels: anyVisibleGroundwaterLevels,
+        requestTimeRange: getRequestTimeRange('current')
     })));
 };
