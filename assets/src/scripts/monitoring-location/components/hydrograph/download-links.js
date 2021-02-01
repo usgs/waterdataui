@@ -105,6 +105,16 @@ export const renderDownloadLinks = function(elem, store, siteno) {
                 });
         }
 
+        if (showIVTimeSeries.median && medianData) {
+            listOfDownloadLinks.append('li')
+                .call(createDataDownloadLink, {
+                    displayText: 'Median data',
+                    url: `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=${parameterCode}`,
+                    gaEventAction: 'downloadLinkMedian',
+                    tooltipText: 'Median data for timespan shown on graph'
+                });
+        }
+
         if (hasGWData && anyVisibleGroundwaterLevels) {
             const startDT = DateTime.fromMillis(requestTimeRange.start).toISO();
             const endDT = DateTime.fromMillis(requestTimeRange.end).toISO();
@@ -114,16 +124,6 @@ export const renderDownloadLinks = function(elem, store, siteno) {
                     url: `${config.GROUNDWATER_LEVELS_ENDPOINT}?sites=${siteno}&parameterCd=${parameterCode}&startDT=${startDT}&endDT=${endDT}&format=rdb`,
                     gaEventAction: 'downloadLinkGroundwaterLevels',
                     tooltipText: 'Field visit data as shown on the graph'
-                });
-        }
-
-        if (showIVTimeSeries.median && medianData) {
-            listOfDownloadLinks.append('li')
-                .call(createDataDownloadLink, {
-                    displayText: 'Median data',
-                    url: `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=${parameterCode}`,
-                    gaEventAction: 'downloadLinkMedian',
-                    tooltipText: 'Median data for timespan shown on graph'
                 });
         }
 

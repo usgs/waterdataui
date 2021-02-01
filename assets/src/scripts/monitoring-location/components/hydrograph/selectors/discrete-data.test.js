@@ -54,7 +54,7 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
             }
         };
 
-    describe('getVisibleGroundWaterLevelPoints', () => {
+    describe('getVisibleGroundwaterLevelPoints', () => {
 
         it('Return empty array if no groundwater levels are defined', () => {
             const testData = {
@@ -83,7 +83,7 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
         });
     });
 
-    describe('anyVisibleGroundWaterLevels', () => {
+    describe('anyVisibleGroundwaterLevels', () => {
         it('Return false if no visible ground water levels', () => {
             const testData = {
                 ...TEST_STATE,
