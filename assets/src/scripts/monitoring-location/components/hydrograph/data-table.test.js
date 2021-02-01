@@ -2,10 +2,21 @@ import {select} from 'd3-selection';
 
 import {configureStore} from 'ml/store';
 
-import {drawDataTable} from './data-table';
+import {drawDataTables} from './data-table';
 
 const TEST_DATA = {
     ivTimeSeriesData: {
+        queryInfo: {
+            'current:custom:72019': {
+                'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D&siteStatus=all&format=json',
+                notes: {
+                    'filter:timeRange': {
+                        mode: 'RANGE',
+                        interval: {start: 1520351200000, end: 1520353700000}
+                    }
+                }
+            }
+        },
         methods: {
             69928: {
                 methodDescription: '',
@@ -96,6 +107,11 @@ const TEST_DATA = {
                 variableCode: {value: '00045'},
                 variableName: 'Precipitation',
                 variableDescription: 'Precipitation in inches'
+            },
+            '45807141' : {
+                variableCode: {value: '72019'},
+                variableName: 'Depth to water level',
+                variableDescription: 'Dept to water level in feet'
             }
         }
     },
@@ -103,6 +119,34 @@ const TEST_DATA = {
         currentIVVariableID: '45807197',
         currentIVDateRange: 'P7D',
         currentIVMethodID: 69928
+    },
+    discreteData: {
+        groundwaterLevels: {
+            '45807141': {
+                variable: {
+                    variableCode: {value: '72019'},
+                    variableName: 'Depth to water level',
+                    variableDescription: 'Dept to water level in feet'
+                },
+                values: [{
+                    value: '0',
+                    qualifiers: [],
+                    dateTime: 1520351100000
+                }, {
+                    value: '0.01',
+                    qualifiers: [],
+                    dateTime: 1520352000000
+                }, {
+                    value: '0.02',
+                    qualifiers: [],
+                    dateTime: 1520352900000
+                }, {
+                    value: '0.03',
+                    qualifiers: [],
+                    dateTime: 1520353800000
+                }]
+            }
+        }
     }
 };
 
@@ -112,9 +156,6 @@ describe('monitoring-location/components/hydrograph/data-table', () => {
 
     beforeEach(() => {
         testDiv = select('body').append('div');
-        store = configureStore(TEST_DATA);
-
-        drawDataTable(testDiv, store);
     });
 
     afterEach(() => {
@@ -122,7 +163,32 @@ describe('monitoring-location/components/hydrograph/data-table', () => {
     });
 
     it('table with expected data', () => {
+        store = configureStore(TEST_DATA);
+
+        drawDataTables(testDiv, store);
         expect(testDiv.selectAll('table').size()).toBe(1);
+        expect(testDiv.select('#iv-table-container').select('caption').text()).toEqual('Instantaneous value data');
         expect(testDiv.select('tbody').selectAll('tr').size()).toBe(3);
+    });
+
+    it('Expect that changing the variable changes the expected data table', () => {
+        const testData = {
+            ...TEST_DATA,
+            ivTimeSeriesState: {
+                ...TEST_DATA.ivTimeSeriesState,
+                currentIVVariableID: '45807141',
+                currentIVDateRange: 'custom',
+                customIVTimeRange: {
+                    start: 1520351200000,
+                    end: 1520353700000
+                }
+            }
+        };
+        store = configureStore(testData);
+
+        drawDataTables(testDiv, store);
+        expect(testDiv.selectAll('table').size()).toBe(1);
+        expect(testDiv.select('#gw-table-container').select('caption').text()).toEqual('Field visit data');
+        expect(testDiv.select('tbody').selectAll('tr').size()).toBe(2);
     });
 });

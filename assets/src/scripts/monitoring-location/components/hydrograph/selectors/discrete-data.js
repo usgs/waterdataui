@@ -33,7 +33,15 @@ export const getVisibleGroundwaterLevelPoints = createSelector(
     }
 );
 
-export const getCurrentGWTableData = createSelector(
+/*
+ * Selector function which returns a function that returns an array of gw data appropriate
+ * for use in a table.
+ * @return {Function} - Function returns an array of visible ground water values with properties:
+ *      @prop {String} parameterName
+ *      @prop {String} result
+ *      @prop {String} dateTime in site's time zone.
+ */
+export const getVisibleGroundwaterLevelsTableData = createSelector(
     getCurrentVariable,
     getVisibleGroundwaterLevelPoints,
     getIanaTimeZone,

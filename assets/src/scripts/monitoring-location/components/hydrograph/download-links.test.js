@@ -475,7 +475,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             });
         });
 
-        fit('Renders the correct links when only groundwater data is available', () => {
+        it('Renders the correct links when only groundwater data is available', () => {
             const TEST_STATE = {
                 'ivTimeSeriesData': {
                     'queryInfo': {

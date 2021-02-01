@@ -4,7 +4,7 @@ import {createStructuredSelector} from 'reselect';
 
 import {link} from 'ui/lib/d3-redux';
 
-import {getCurrentGWTableData} from './selectors/discrete-data';
+import {getVisibleGroundwaterLevelsTableData} from './selectors/discrete-data';
 import {getCurrentPointData} from './selectors/drawing-data';
 
 const TABLE_CAPTION = {
@@ -91,6 +91,6 @@ export const drawDataTables = function(elem, store) {
     elem.append('div')
         .call(link(store, drawDataTable, createStructuredSelector({
             dataKind: () => 'gw',
-            currentData: getCurrentGWTableData
+            currentData: getVisibleGroundwaterLevelsTableData
         })));
 };
