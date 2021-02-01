@@ -28,65 +28,38 @@ def home():
     return render_template('index.html', version=__version__)
 
 
-@app.route('/questions-comments/<email>/', methods=["GET", "POST"])
-def questions_comments(email):
+@app.route('/questions-comments/<email_for_contact_about_data>/', methods=["GET", "POST"])
+def questions_comments(email_for_contact_about_data):
     """Render the user feedback form."""
     referring_url = request.referrer
 
     if request.method == 'POST':
-        email_for_contact_about_data = email
-        email_for_report_problem = app.config['EMAIL_TO_REPORT_PROBLEM']
-        email_for_website_feedback = app.config['EMAIL_FOR_COMMENTS']
-        user_browser_system_details = request.user_agent.string
-        time_submitted = str(datetime.datetime.utcnow())
+        target_email = email_for_contact_about_data
+        if request.form['feedback-type'] != 'contact':
+            target_email = app.config['EMAIL_TARGET'][request.form['feedback-type']]
 
-        form_data = request.form
-        submission_type = form_data['feedback-type']
-        user_subject = form_data['subject']
-        user_message = form_data['message']
-        user_email = form_data['user-email-address']
-        user_phone = form_data['user-phone-number']
-        user_address = form_data['user-organization-or-address']
-        user_name = form_data['user-name']
-        location_url = form_data['monitoring-location-url']
-
-        if user_subject == '':
-            user_subject = 'No Subject'
-        if user_phone == '':
-            user_phone = 'None given'
-        if user_address == '':
-            user_address = 'None given'
-        if user_name == '':
-            user_name = 'Name not given'
-
-        target_email: str = ''
-        if submission_type == 'contact':
-            target_email = email_for_contact_about_data
-        if submission_type == 'report':
-            target_email = email_for_report_problem
-        if submission_type == 'comment':
-            target_email = email_for_website_feedback
 
         target_email = 'abriggs@contractor.usgs.gov' #remove!!
 
         msg = EmailMessage()
-        msg['Subject'] = 'User Question/Comment for {}'.format(location_url)
+        msg['Subject'] = 'User Question/Comment for {}'.format(request.form['monitoring-location-url'])
         msg['From'] = 'WDFN Comments and Questions'
-        msg['Reply-To'] = user_email
+        msg['Reply-To'] = request.form['user-email-address']
         msg['To'] = target_email
 
         message_body = f"""
-            From: {user_name}
-            Subject: {user_subject}
-            Location: {location_url}
-            Time (UTC): {time_submitted}
+            From: {request.form['user-name'] if request.form['user-name'] else 'Name not given'}
+            Subject: {request.form['subject'] if request.form['subject'] else 'No Subject'}
+            Location: {request.form['monitoring-location-url']}
+            Time (UTC): {str(datetime.datetime.utcnow())}
             *********** Message ***********
-            {user_message}
+            {request.form['message']}
             *********** User Information ***********
-            Email: {user_email}
-            Phone: {user_phone}
-            Organization or Address: {user_address}
-            User Browser/System Details: {user_browser_system_details}
+            Email: {request.form['user-email-address']}
+            Phone: {request.form['user-phone-number'] if request.form['user-phone-number'] else 'None given'}
+            Organization or Address: {request.form['user-organization-or-address']
+                if request.form['user-organization-or-address'] else 'None given'}
+            User Browser/System Details: {request.user_agent.string}
             """
         msg.set_content(message_body)
 
@@ -104,7 +77,7 @@ def questions_comments(email):
 
     return render_template(
         'questions_comments.html',
-        email_for_data_questions=email,
+        email_for_contact_about_data=email_for_contact_about_data,
         monitoring_location_url=referring_url
     )
 
@@ -204,7 +177,7 @@ def monitoring_location(site_no):
 
             if site_owner_state is not None:
                 email_for_data_questions = \
-                    app.config['EMAIL_FOR_DATA_QUESTION'].format(state_district_code=site_owner_state.lower())
+                    app.config['EMAIL_TARGET']['contact'].format(state_district_code=site_owner_state.lower())
             else:
                 email_for_data_questions = app.config['EMAIL_TO_REPORT_PROBLEM']
 
