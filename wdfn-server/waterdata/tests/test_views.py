@@ -42,8 +42,8 @@ class TestFeedbackSubmitted(TestCase):
         self.app_client = app.test_client()
 
     def test_successful_view(self):
-        fake_email_sent_successfully = 'true'
-        response = self.app_client.get('/feedback-submitted')
+        email_send_result = 'success'
+        response = self.app_client.get('/feedback-submitted/{}'.format(email_send_result))
 
         self.assertEqual(200, response.status_code)
 

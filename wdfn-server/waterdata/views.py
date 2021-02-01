@@ -48,7 +48,7 @@ def questions_comments(email):
         user_phone = form_data['user-phone-number']
         user_address = form_data['user-organization-or-address']
         user_name = form_data['user-name']
-        location_url=form_data['monitoring-location-url']
+        location_url = form_data['monitoring-location-url']
 
         if user_subject == '':
             user_subject = 'No Subject'
@@ -111,7 +111,7 @@ def questions_comments(email):
 
 @app.route('/feedback-submitted/<email_send_result>')
 def feedback_submitted(email_send_result):
-    """Render the provisional data statement page."""
+    """Render a page that will show the user if the feedback email sent successfully."""
     return render_template(
         'feedback_submitted.html',
         email_send_result=email_send_result
