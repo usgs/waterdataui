@@ -33,6 +33,8 @@ export const getCurrentDateRange = (state) => {
     return state.ivTimeSeriesState.currentIVDateRange || null;
 };
 
+export const getIVGraphBrushOffset = state => state.ivTimeSeriesState.ivGraphBrushOffset || null;
+
 export const getLoadingTsKeys = state => state.ivTimeSeriesState.loadingIVTSKeys || [];
 
 export const getNwisTimeZone = state => state.ivTimeSeriesData.timeZones || {};

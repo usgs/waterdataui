@@ -23,7 +23,6 @@ export const isVisible = memoize(tsKey => (state) => {
     return state.ivTimeSeriesState.showIVTimeSeries[tsKey];
 });
 
-
 /**
  * Returns a Redux selector function which returns the label to be used for the Y axis
  */
@@ -88,6 +87,3 @@ export const getCurrentVariableUnitCode = createSelector(
     getCurrentVariable,
     variable => variable ? variable.unit.unitCode : null
 );
-
-export const getQueryInformation = state => state.ivTimeSeriesData.queryInfo  || {};
-

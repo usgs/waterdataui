@@ -7,6 +7,7 @@ import {getVariables, getCurrentParmCd, getRequestTimeRange, getTimeSeriesForTsK
 import {getYDomain, getYDomainForVisiblePoints, SYMLOG_PARMS} from './domain';
 import {getPointsByTsKey} from './drawing-data';
 import {getLayout} from './layout';
+import {getIVGraphBrushOffset} from "../../../selectors/time-series-selector";
 
 
 const REVERSE_AXIS_PARMS = [
@@ -62,6 +63,34 @@ export const createYScale = function(parmCd, extent, size) {
     }
 };
 
+/*
+ * Selector function which returns the time range visible for the kind of graph and tsKey
+ * @param {String} kind - "BRUSH" or "MAIN"
+ * @param {String tsKey - 'current' or 'compare'
+ * @return {Function} - which returns an {Object} with properties start, end {Number}.
+ */
+export const getTimeRange = memoize((kind, tsKey) => createSelector(
+    getRequestTimeRange(tsKey),
+    getIVGraphBrushOffset,
+    (timeRange, brushOffset) => {
+        let result;
+
+        if (kind === 'BRUSH') {
+            result = timeRange;
+        } else {
+            if (brushOffset && timeRange) {
+                result = {
+                    'start': timeRange.start + brushOffset.start,
+                    'end': timeRange.end - brushOffset.end
+                };
+            } else {
+                result = timeRange;
+            }
+        }
+        return result;
+    }
+));
+
 
 /**
  * Factory function creates a function that, for a given time series key:
@@ -71,23 +100,8 @@ export const createYScale = function(parmCd, extent, size) {
  */
 export const getXScale = memoize((kind, tsKey) => createSelector(
     getLayout(kind),
-    getRequestTimeRange(tsKey),
-        state => state.ivTimeSeriesState.ivGraphBrushOffset,
-    (layout, requestTimeRange, brushOffset) => {
-        let timeRange;
-
-        if (kind === 'BRUSH') {
-            timeRange = requestTimeRange;
-        } else {
-            if (brushOffset && requestTimeRange) {
-                timeRange = {
-                    'start': requestTimeRange.start + brushOffset.start,
-                    'end': requestTimeRange.end - brushOffset.end
-                };
-            } else {
-                timeRange = requestTimeRange;
-            }
-        }
+    getTimeRange(kind, tsKey),
+    (layout, timeRange) => {
         return createXScale(timeRange, layout.width - layout.margin.right);
     }
 ));

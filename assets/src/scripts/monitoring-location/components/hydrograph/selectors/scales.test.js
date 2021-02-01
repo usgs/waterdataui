@@ -3,7 +3,7 @@ import {DateTime} from 'luxon';
 
 import * as utils from 'ui/utils';
 
-import {createXScale, createYScale, getMainYScale, getBrushYScale, getSecondaryYScale} from './scales';
+import {createXScale, createYScale, getTimeRange, getMainYScale, getBrushYScale} from './scales';
 
 
 describe('monitoring-location/components/hydrograph/scales', () => {
@@ -102,6 +102,62 @@ describe('monitoring-location/components/hydrograph/scales', () => {
 
         expect(linear10 - linear20).toBeCloseTo(linear20 - linear30);
         expect(singleLinear10 - singleLinear20).toBeCloseTo(singleLinear20 - singleLinear30);
+    });
+
+    describe('getTimeRange', () => {
+        const TEST_STATE = {
+            ianaTimeZone: 'America/Chicago',
+            ivTimeSeriesData: {
+                queryInfo: {
+                    'current:P7D': {
+                        notes: {
+                            requestDT: 1490936400000,
+                            'filter:timeRange': {
+                                mode: 'PERIOD',
+                                periodDays: 7,
+                                modifiedSince: null
+                            }
+                        }
+                    }
+                }
+            },
+            ivTimeSeriesState: {
+                currentIVDateRange: 'P7D',
+                ivGraphBrushOffset: null
+            }
+        };
+
+        it('Return full time range if not brush offset is set for both BRUSH and MAIN', () => {
+            expect(getTimeRange('BRUSH', 'current')(TEST_STATE)).toEqual({
+                start: 1490331600000,
+                end: 1490936400000
+            });
+            expect(getTimeRange('MAIN', 'current')(TEST_STATE)).toEqual({
+                start: 1490331600000,
+                end: 1490936400000
+            });
+        });
+
+        it('Return the full time range for BRUSH but reduce MAIN by brush offset', () => {
+            const testState = {
+                ...TEST_STATE,
+                ivTimeSeriesState: {
+                    ...TEST_STATE.ivTimeSeriesState,
+                    ivGraphBrushOffset: {
+                        start: 100000,
+                        end: 900000
+                    }
+                }
+            };
+            expect(getTimeRange('BRUSH', 'current')(testState)).toEqual({
+                start: 1490331600000,
+                end: 1490936400000
+            });
+            expect(getTimeRange('MAIN', 'current')(testState)).toEqual({
+                start: 1490331700000,
+                end: 1490935500000
+            });
+        });
     });
 
     describe('getMainYScale', () => {

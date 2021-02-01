@@ -84,7 +84,7 @@ const TEST_STATE = {
                         mode: 'PERIOD',
                         periodDays: 7
                     },
-                    requestDT: 1522425600000
+                    requestDT: 1514926800000
                 }
             }
         },
@@ -236,8 +236,8 @@ describe('monitoring-location/components/hydrograph/time-series-graph', () => {
 
             expect(svg.select('title').html()).toEqual('Test title for 00060, method description');
             expect(descText).toContain('Test description for 00060');
-            expect(descText).toContain('3/23/2018');
-            expect(descText).toContain('3/30/2018');
+            expect(descText).toContain('12/26/2017');
+            expect(descText).toContain('1/2/2018');
             expect(svg.attr('aria-labelledby')).toContain('title');
             expect(svg.attr('aria-describedby')).toContain('desc');
         });
@@ -364,7 +364,7 @@ describe('monitoring-location/components/hydrograph/time-series-graph', () => {
 
              expect(div.selectAll('.tooltip-text-group').size()).toBe(1);
              expect(div.selectAll('.focus-overlay').size()).toBe(1);
-             expect(div.selectAll('.focus-circle').size()).toBe(2);
+             expect(div.selectAll('.focus-circle').size()).toBe(1);
              expect(div.selectAll('.focus-line').size()).toBe(1);
         });
     });

@@ -6,9 +6,10 @@ import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from 'd3r
 import {getWaterwatchFloodLevels, isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
 import {getCurrentVariableMedianMetadata} from 'ml/selectors/median-statistics-selector';
 
-import {getCurrentVariableLineSegments, HASH_ID, MASK_DESC} from './drawing-data';
-import {anyVisibleGroundWaterLevels} from './discrete-data';
 import {getGroundwaterLevelsMarker} from '../discrete-data';
+
+import {getCurrentVariableLineSegments, HASH_ID, MASK_DESC} from './drawing-data';
+import {anyVisibleGroundwaterLevels} from './discrete-data';
 
 const TS_LABEL = {
     'current': 'Current: ',
@@ -54,7 +55,7 @@ const getLegendDisplay = createSelector(
     getUniqueClasses('compare'),
     isWaterwatchVisible,
     getWaterwatchFloodLevels,
-    anyVisibleGroundWaterLevels,
+    anyVisibleGroundwaterLevels,
     (showSeries, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, showGroundWaterLevels) => {
         return {
             current: showSeries.current ? currentClasses : undefined,

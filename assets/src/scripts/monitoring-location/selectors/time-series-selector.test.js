@@ -5,6 +5,7 @@ import {
     getSiteCodes,
     getCurrentVariableID,
     getCurrentDateRange,
+    getIVGraphBrushOffset,
     getTimeSeries,
     hasAnyTimeSeries,
     hasAnyVariables,
@@ -524,6 +525,28 @@ describe('monitoring-location/selectors/time-series-selector', () => {
                     currentIVDateRange: 'P30D'
                 }
             })).toEqual('P30D');
+        });
+    });
+
+    describe('getIVGraphBrushOffset', () => {
+        it('Return null if no ivGraphBrushOffset defined', () => {
+            expect(getIVGraphBrushOffset({
+                ivTimeSeriesState: {}
+            })).toBeNull();
+        });
+
+        it('Return the current date range', () => {
+            expect(getIVGraphBrushOffset({
+                ivTimeSeriesState: {
+                    ivGraphBrushOffset: {
+                        start:  1580318458000,
+                        end: 1611940858000
+                    }
+                }
+            })).toEqual({
+                start:  1580318458000,
+                end: 1611940858000
+            });
         });
     });
 

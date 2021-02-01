@@ -9,6 +9,23 @@ import {renderDownloadLinks} from 'ivhydrograph/download-links';
 describe('monitoring-location/components/hydrograph/download-links', () => {
 
     config.SERVICE_ROOT = 'https://fakeserviceroot.com';
+    config.GROUNDWATER_LEVELS_ENDPOINT = 'https://fakegroundwater.org/gw/';
+    config.uvPeriodOfRecord = {
+        '00060': {
+            begin_date: '2000-01-01',
+            end_date: '2020-01-01'
+        },
+        '00010': {
+            begin_date: '2000-01-01',
+            end_date: '2020-01-01'
+        }
+    };
+    config.gwPeriodOfRecord = {
+        '72019': {
+            begin_date: '2000-01-01',
+            end_date: '2020-01-01'
+        }
+    };
     describe('renderDownloadLinks', () => {
         let div;
 
@@ -155,6 +172,11 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                     'currentIVDateRange': 'P7D',
                     'customIVTimeRange': null,
                     'currentIVVariableID': '45807042'
+                },
+                statisticsData: {
+                    median: {
+                        '00060': {}
+                    }
                 }
             };
             let store = configureStore(TEST_STATE);
@@ -210,6 +232,11 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                     'currentIVDateRange': 'P7D',
                     'customIVTimeRange': null,
                     'currentIVVariableID': '45807042'
+                },
+                statisticsData: {
+                    median: {
+                        '00060': {}
+                    }
                 }
             };
             let store = configureStore(TEST_STATE);
@@ -266,6 +293,11 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                     'currentIVDateRange': 'P30D',
                     'customIVTimeRange': null,
                     'currentIVVariableID': '45807042'
+                },
+                statisticsData: {
+                    median: {
+                        '00060': {}
+                    }
                 }
             };
             let store = configureStore(TEST_STATE);
@@ -324,7 +356,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
             div.call(renderDownloadLinks, store, siteNumber);
-            return new Promise (resolve => {
+            return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     expect(div.selectAll('ul').size()).toBe(1);
                     expect(div.selectAll('li').size()).toBe(2);
@@ -435,6 +467,78 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                     const anchorElements = anchorSelection.nodes();
 
                     expect(anchorElements[0].getAttribute('href')).toBe('https://fakeserviceroot.com/iv/?sites=05370000&period=P7D&siteStatus=all&format=rdb&parameterCd=00010');
+                    expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
+                    expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
+
+                    resolve();
+                });
+            });
+        });
+
+        fit('Renders the correct links when only groundwater data is available', () => {
+            const TEST_STATE = {
+                'ivTimeSeriesData': {
+                    'queryInfo': {
+                        'current:custom:72019': {
+                            'queryURL': 'http://waterservices.usgs.gov/nwis/iv/sites=05370000&period=P7D&siteStatus=all&format=json',
+                            notes: {
+                                'filter:timeRange': {
+                                    mode: 'RANGE',
+                                    interval: {start: 1580533200000, end: 1612241999999}
+                                }
+                            }
+                        }
+                    },
+                    'variables': {
+                        '45807242': {
+                            'variableCode': {
+                                'value': '72019'
+                            },
+                            oid: '45807242'
+                        }
+                    }
+                },
+                'ivTimeSeriesState': {
+                    'showIVTimeSeries': {
+                        'current': true,
+                        'compare': false,
+                        'median': false
+                    },
+                    'currentIVDateRange': 'custom',
+                    'customIVTimeRange': {start: 1580533200000, end: 1612241999999},
+                    'currentIVVariableID': '45807242'
+                },
+                discreteData: {
+                    groundwaterLevels: {
+                        '45807242': {
+                            variable: {
+                                'variableCode': {
+                                    'value': '72019'
+                                },
+                                oid: '45807242'
+                            },
+                            values: [{
+                                value: '12',
+                                qualifiers: [],
+                                dateTime: 1590533200000
+                            }]
+                        }
+                    }
+                }
+            };
+
+            let store = configureStore(TEST_STATE);
+            const siteNumber = '05370000';
+            div.call(renderDownloadLinks, store, siteNumber);
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(div.selectAll('ul').size()).toBe(1);
+                    expect(div.selectAll('li').size()).toBe(2);
+                    expect(div.selectAll('a').size()).toBe(3);
+                    const anchorSelection = div.selectAll('a');
+                    const anchorElements = anchorSelection.nodes();
+
+                    expect(anchorElements[0].getAttribute('href')).toContain('https://fakegroundwater.org/gw/?sites=05370000&parameterCd=72019');
                     expect(anchorElements[1].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteStatus=all');
                     expect(anchorElements[2].getAttribute('href')).toBe('https://fakeserviceroot.com/site/?format=rdb&sites=05370000&siteOutput=expanded&siteStatus=all');
 

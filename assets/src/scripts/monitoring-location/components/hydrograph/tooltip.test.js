@@ -33,6 +33,7 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
     data = data.concat(maskedData);
 
     const testState = {
+        ianaTimeZone: 'America/Chicago',
         ivTimeSeriesData: {
             timeSeries: {
                 '69928:current:P7D': {
@@ -115,7 +116,7 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
                             mode: 'RANGE',
                             interval: {
                                 start: new Date('2018-01-03T12:00:00.000Z').getTime(),
-                                end: new Date('2018-01-03T16:00:00.000Z').getTime()
+                                end: new Date('2018-01-04T16:00:00.000Z').getTime()
                             }
                         }
                     }
@@ -348,14 +349,14 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
                     })
                 }),
                 ivTimeSeriesState: Object.assign({}, testState.ivTimeSeriesState, {
-                    ivGraphCursorOffset: null
+                    ivGraphCursorOffset: 3 * 60 * 60 * 1000
                 })
             }));
 
             svg.call(drawTooltipFocus, store);
 
             expect(svg.selectAll('.focus-line').size()).toBe(1);
-            expect(svg.selectAll('.focus-circle').size()).toBe(3);
+            expect(svg.selectAll('.focus-circle').size()).toBe(2);
             expect(svg.select('.focus-overlay').size()).toBe(1);
         });
 
@@ -378,14 +379,14 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
                     })
                 }),
                 ivTimeSeriesState: Object.assign({}, testState.ivTimeSeriesState, {
-                    ivGraphCursorOffset: 39 * 60 * 1000
+                    ivGraphCursorOffset: 3 * 60 * 60 * 1000
                 })
             }));
 
             svg.call(drawTooltipFocus, store);
 
             expect(svg.selectAll('.focus-line').size()).toBe(1);
-            expect(svg.selectAll('.focus-circle').size()).toBe(3);
+            expect(svg.selectAll('.focus-circle').size()).toBe(2);
             expect(svg.select('.focus-overlay').size()).toBe(1);
         });
     });

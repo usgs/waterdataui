@@ -11,7 +11,7 @@ import {getRequestTimeRange} from 'ml/selectors/time-series-selector';
  *      @prop {Array of String} qualifiers
  *      @prop {Number} dateTime
  */
-export const getVisibleGroundWaterLevelPoints = createSelector(
+export const getVisibleGroundwaterLevelPoints = createSelector(
     getRequestTimeRange('current'),
     getIVCurrentVariableGroundwaterLevels,
     (timeRange, gwLevels) => {
@@ -36,7 +36,7 @@ export const getVisibleGroundWaterLevelPoints = createSelector(
  * levels are visible.
  * @return {Function} which returns {Boolean}
  */
-export const anyVisibleGroundWaterLevels = createSelector(
-    getVisibleGroundWaterLevelPoints,
+export const anyVisibleGroundwaterLevels = createSelector(
+    getVisibleGroundwaterLevelPoints,
     (gwLevels) => gwLevels.length !== 0
 );
