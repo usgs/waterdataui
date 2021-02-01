@@ -13,8 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added link to the Water Science School.
 - Added tooltips for the field visit circles
 - Added user email form for questions and comments.
-- Added field visit circles to brush
-- Added field visits to the download data section
+- Added field visit circles to brush.
+- Added field visits to the download data section.
+- Added form submit result page and form now uses smtp server. 
 
 ### Changed
 - Camera metadata is now fetched and the client is using html5 video when video format is supported, otherwise the most recent image is shown.
