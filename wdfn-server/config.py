@@ -100,14 +100,4 @@ if os.getenv('CONTAINER_RUN', False):
     STATIC_ROOT = os.environ.get('STATIC_ROOT', '/static/')
 
 # Mail settings for feedback form
-MAIL_SERVER = 'smtp.aol.com'
-MAIL_PORT = 25
-MAIL_USE_TLS = True
-MAIL_USE_SSL = False
-MAIL_DEBUG = True
-MAIL_USERNAME = 'aaronsbriggs'
-MAIL_PASSWORD = ''
-MAIL_DEFAULT_SENDER = ('WDFN User Questions and Comments', 'aaronsbriggs@aol.com')
-MAIL_MAX_EMAILS = 1
-MAIL_SUPPRESS_SEND : False
-MAIL_ASCII_ATTACHMENTS : False
+MAIL_SERVER = 'smtp.usgs.gov'

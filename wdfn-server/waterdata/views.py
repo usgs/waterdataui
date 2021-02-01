@@ -1,11 +1,11 @@
 """
 Main application views.
 """
-import json
-import datetime
+import datetime, json, smtplib
+
+from email.message import EmailMessage
 
 from flask import abort, render_template, redirect, request, Markup, make_response, url_for
-from flask_mail import Mail, Message
 
 from markdown import markdown
 
@@ -21,9 +21,6 @@ from .services.camera import get_monitoring_location_camera_details
 from .constants import STATION_FIELDS_D
 
 NWIS = NwisWebServices(app.config['SERVER_SERVICE_ROOT'], app.config['SITE_SERVICE_CATALOG_ROOT'])
-
-# Load the email configuration
-mail = Mail(app)
 
 @app.route('/')
 def home():
@@ -51,7 +48,7 @@ def questions_comments(email):
         user_phone = form_data['user-phone-number']
         user_address = form_data['user-organization-or-address']
         user_name = form_data['user-name']
-        monitoring_location=form_data['monitoring-location-url']
+        location_url=form_data['monitoring-location-url']
 
         if user_subject == '':
             user_subject = 'No Subject'
@@ -70,40 +67,38 @@ def questions_comments(email):
         if submission_type == 'comment':
             target_email = email_for_website_feedback
 
-        target_email_for_testing = 'aaronsbriggs@aol.com' #remove!!
-        target_email = target_email_for_testing #remove!!
+        target_email = 'abriggs@contractor.usgs.gov' #remove!!
 
-        subject = 'WDFN User Comment/Question for {}'.format(referring_url)
-        message = Message(subject, recipients=[target_email])
-        message.html = '<p>From: {name}</p>' \
-                       '<p>Subject: {subject}</p>' \
-                       '<p>Location: {location}</p>' \
-                       '<p>Time (UTC): {time}</p>' \
-                       '<hr>' \
-                       '<p>User Message:</p>' \
-                       '<p>{message}</p>' \
-                       '<hr>' \
-                       '<p>Sender Information:</p>' \
-                       '<p>Email: {email}</p>' \
-                       '<p>Phone: {phone}</p>' \
-                       '<p>Organization or Address: {address}</p>' \
-                       '<p>User Browser/System Details: {details}</p>'.format(name=user_name,
-                                                                              subject=user_subject,
-                                                                              location=monitoring_location,
-                                                                              time=time_submitted,
-                                                                              message=user_message,
-                                                                              email=user_email,
-                                                                              phone=user_phone,
-                                                                              address=user_address,
-                                                                              details=user_browser_system_details)
-        email_sent_successfully = True
+        msg = EmailMessage()
+        msg['Subject'] = 'User Question/Comment for {}'.format(location_url)
+        msg['From'] = 'WDFN Comments and Questions'
+        msg['Reply-To'] = user_email
+        msg['To'] = target_email
+
+        message_body = f"""
+            From: {user_name}
+            Subject: {user_subject}
+            Location: {location_url}
+            Time (UTC): {time_submitted}
+            *********** Message ***********
+            {user_message}
+            *********** User Information ***********
+            Email: {user_email}
+            Phone: {user_phone}
+            Organization or Address: {user_address}
+            User Browser/System Details: {user_browser_system_details}
+            """
+        msg.set_content(message_body)
+
+        email_sent_successfully = 'true'
         try:
-            print('gave it a try')
-            mail.send(message)
+            server = smtplib.SMTP(app.config['MAIL_SERVER'])
+            server.send_message(msg)
+            server.quit()
+
         except Exception as e:
-            print('caught error')
-            print(e)
-            email_sent_successfully = False
+            print('error when sending feedback email ', e)
+            email_sent_successfully = 'false'
         finally:
             return redirect(url_for('feedback_submitted', email_sent_successfully=email_sent_successfully))
 
