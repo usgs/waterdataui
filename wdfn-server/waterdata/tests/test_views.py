@@ -37,6 +37,17 @@ class TestQuestionsCommentsView(TestCase):
         self.assertEqual(200, response.status_code)
 
 
+class TestFeedbackSubmitted(TestCase):
+    def setUp(self):
+        self.app_client = app.test_client()
+
+    def test_successful_view(self):
+        fake_email_sent_successfully = 'true'
+        response = self.app_client.get('/feedback-submitted')
+
+        self.assertEqual(200, response.status_code)
+
+
 class TestProvisionalDataStatementView(TestCase):
     def setUp(self):
         self.app_client = app.test_client()

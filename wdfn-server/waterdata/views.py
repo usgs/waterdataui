@@ -90,7 +90,7 @@ def questions_comments(email):
             """
         msg.set_content(message_body)
 
-        email_sent_successfully = 'true'
+        email_send_result = 'success'
         try:
             server = smtplib.SMTP(app.config['MAIL_SERVER'])
             server.send_message(msg)
@@ -98,9 +98,9 @@ def questions_comments(email):
 
         except Exception as e:
             print('error when sending feedback email ', e)
-            email_sent_successfully = 'false'
+            email_send_result = 'fail'
         finally:
-            return redirect(url_for('feedback_submitted', email_sent_successfully=email_sent_successfully))
+            return redirect(url_for('feedback_submitted', email_send_result=email_send_result))
 
     return render_template(
         'questions_comments.html',
@@ -109,13 +109,14 @@ def questions_comments(email):
     )
 
 
-@app.route('/feedback-submitted/<email_sent_successfully>')
-def feedback_submitted(email_sent_successfully):
+@app.route('/feedback-submitted/<email_send_result>')
+def feedback_submitted(email_send_result):
     """Render the provisional data statement page."""
     return render_template(
         'feedback_submitted.html',
-        email_sent_successfully=email_sent_successfully
+        email_send_result=email_send_result
     )
+
 
 @app.route('/provisional-data-statement')
 def provisional_data_statement():
