@@ -24,7 +24,7 @@ import {Actions as timeZoneActions} from 'ml/store/time-zone';
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
 import {drawDateRangeControls} from './date-controls';
-import {drawDataTable} from './data-table';
+import {drawDataTables} from './data-table';
 import {renderDownloadLinks} from './download-links';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
@@ -174,7 +174,7 @@ export const attachToNode = function(store,
                     .call(renderDownloadLinks, store, siteno);
 
                 nodeElem.select('#iv-data-table-container')
-                    .call(drawDataTable, store);
+                    .call(drawDataTables, store);
                 //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
                 nodeElem.select('.select-time-series-container')
                     .call(link(store, plotSeriesSelectTable, createStructuredSelector({
