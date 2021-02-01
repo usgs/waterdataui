@@ -28,10 +28,36 @@ def home():
     return render_template('index.html', version=__version__)
 
 
+def create_message(target_email, form_data, user_system_data):
+    msg = EmailMessage()
+    msg['Subject'] = 'User Question/Comment for {}'.format(form_data['monitoring-location-url'])
+    msg['From'] = 'WDFN Comments and Questions'
+    msg['Reply-To'] = form_data['user-email-address']
+    msg['To'] = target_email
+
+    message_body = f"""
+            From: {form_data['user-name'] if form_data['user-name'] else 'Name not given'}
+            Subject: {form_data['subject'] if form_data['subject'] else 'No Subject'}
+            Location: {form_data['monitoring-location-url']}
+            Time (UTC): {str(datetime.datetime.utcnow())}
+            *********** Message ***********
+            {form_data['message']}
+            *********** User Information ***********
+            Email: {form_data['user-email-address']}
+            Phone: {form_data['user-phone-number'] if form_data['user-phone-number'] else 'None given'}
+            Organization or Address: {form_data['user-organization-or-address']
+    if form_data['user-organization-or-address'] else 'None given'}
+            User Browser/System Details: {user_system_data}
+            """
+    msg.set_content(message_body)
+    return msg
+
+
 @app.route('/questions-comments/<email_for_contact_about_data>/', methods=["GET", "POST"])
 def questions_comments(email_for_contact_about_data):
     """Render the user feedback form."""
     referring_url = request.referrer
+    user_system_data = request.user_agent.string
 
     if request.method == 'POST':
         target_email = email_for_contact_about_data
@@ -41,32 +67,13 @@ def questions_comments(email_for_contact_about_data):
 
         target_email = 'abriggs@contractor.usgs.gov' #remove!!
 
-        msg = EmailMessage()
-        msg['Subject'] = 'User Question/Comment for {}'.format(request.form['monitoring-location-url'])
-        msg['From'] = 'WDFN Comments and Questions'
-        msg['Reply-To'] = request.form['user-email-address']
-        msg['To'] = target_email
+        assembled_email = create_message(target_email, request.form, user_system_data)
 
-        message_body = f"""
-            From: {request.form['user-name'] if request.form['user-name'] else 'Name not given'}
-            Subject: {request.form['subject'] if request.form['subject'] else 'No Subject'}
-            Location: {request.form['monitoring-location-url']}
-            Time (UTC): {str(datetime.datetime.utcnow())}
-            *********** Message ***********
-            {request.form['message']}
-            *********** User Information ***********
-            Email: {request.form['user-email-address']}
-            Phone: {request.form['user-phone-number'] if request.form['user-phone-number'] else 'None given'}
-            Organization or Address: {request.form['user-organization-or-address']
-                if request.form['user-organization-or-address'] else 'None given'}
-            User Browser/System Details: {request.user_agent.string}
-            """
-        msg.set_content(message_body)
 
         email_send_result = 'success'
         try:
             server = smtplib.SMTP(app.config['MAIL_SERVER'])
-            server.send_message(msg)
+            server.send_message(assembled_email)
             server.quit()
 
         except Exception as e:
