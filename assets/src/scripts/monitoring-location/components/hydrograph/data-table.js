@@ -91,12 +91,13 @@ const drawDataTable = function(elem, {dataKind, currentData}) {
  */
 export const drawDataTables = function(elem, store) {
     elem.append('div')
-        .attr('id', 'hydrograph-data-tables')
+        .attr('id', 'iv-hydrograph-data-table-container')
         .call(link(store, drawDataTable, createStructuredSelector({
             dataKind: () => 'iv',
             currentData: getCurrentPointData
         })));
     elem.append('div')
+        .attr('id', 'gw-hydrograph-data-table-container')
         .call(link(store, drawDataTable, createStructuredSelector({
             dataKind: () => 'gw',
             currentData: getVisibleGroundwaterLevelsTableData

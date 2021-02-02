@@ -651,8 +651,9 @@ describe('monitoring-location/components/hydrograph module', () => {
         });
 
         it('should have data tables for hydrograph data', () => {
-            expect(select('#hydrograph-data-tables').size()).toBe(1);
-        })
+            expect(select('#iv-hydrograph-data-table-container').size()).toBe(1);
+            expect(select('#gw-hydrograph-data-table-container').size()).toBe(1);
+        });
     });
 
     describe('hide elements when showOnlyGraph is set to true', () => {
