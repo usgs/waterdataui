@@ -65,8 +65,6 @@ def questions_comments(email_for_contact_about_data):
         if request.form['feedback-type'] != 'contact':
             target_email = app.config['EMAIL_TARGET'][request.form['feedback-type']]
 
-        target_email = 'abriggs@contractor.usgs.gov' #remove!!
-
         assembled_email = \
             create_message(target_email, request.form, user_system_data, timestamp=str(datetime.datetime.utcnow()))
         email_send_result = 'success'
