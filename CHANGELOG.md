@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added user email form for questions and comments.
 - Added field visit circles to brush.
 - Added field visits to the download data section.
+- Added field visits to the Table of hydrograph data section.
 - Added form submit result page and form now uses smtp server. 
 
 ### Changed

@@ -28,14 +28,14 @@ def home():
     return render_template('index.html', version=__version__)
 
 
-@app.route('/questions-comments/<email_for_contact_about_data>/', methods=["GET", "POST"])
-def questions_comments(email_for_contact_about_data):
+@app.route('/questions-comments/<email_for_data_questions>/', methods=["GET", "POST"])
+def questions_comments(email_for_data_questions):
     """Render the user feedback form."""
     referring_url = request.referrer
     user_system_data = request.user_agent.string
 
     if request.method == 'POST':
-        target_email = email_for_contact_about_data
+        target_email = email_for_data_questions
         if request.form['feedback-type'] != 'contact':
             target_email = app.config['EMAIL_TARGET'][request.form['feedback-type']]
 
@@ -55,7 +55,7 @@ def questions_comments(email_for_contact_about_data):
 
     return render_template(
         'questions_comments.html',
-        email_for_contact_about_data=email_for_contact_about_data,
+        email_for_data_questions=email_for_data_questions,
         monitoring_location_url=referring_url
     )
 
