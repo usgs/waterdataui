@@ -53,10 +53,10 @@ const drawTableBody = function(table, dataKind, data) {
 /*
  * Renders a table of the currently selected IV Data
  * @param {D3 selection} elem - Table is rendered within elem
- * @param {Redux store} store
+ * @param {String} kind - kind of data, iv or gw
+ * @param {Array of Object} currentData - data that will be rendered in the table.
  */
 const drawDataTable = function(elem, {dataKind, currentData}) {
-debugger;
     elem.select(`#${CONTAINER_ID[dataKind]}`).remove();
     if (!currentData.length) {
         return;
@@ -83,6 +83,12 @@ debugger;
     table.call(drawTableBody, dataKind, currentData);
 };
 
+/*
+ * Create the hydrograph data tables section which will update when the data
+ * displayed on the hydrograph changes.
+ * @param {D3 selection} elem
+ * @param {Redux store} store
+ */
 export const drawDataTables = function(elem, store) {
     elem.append('div')
         .attr('id', 'hydrograph-data-tables')
