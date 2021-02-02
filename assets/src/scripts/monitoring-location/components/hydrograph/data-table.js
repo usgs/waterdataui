@@ -85,6 +85,7 @@ debugger;
 
 export const drawDataTables = function(elem, store) {
     elem.append('div')
+        .attr('id', 'hydrograph-data-tables')
         .call(link(store, drawDataTable, createStructuredSelector({
             dataKind: () => 'iv',
             currentData: getCurrentPointData

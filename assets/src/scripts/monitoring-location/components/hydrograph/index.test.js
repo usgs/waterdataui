@@ -649,7 +649,10 @@ describe('monitoring-location/components/hydrograph module', () => {
             // one for each of the two parameters and the WaterAlert links
             expect(selectAll('table .usa-tooltip').size()).toBe(4);
         });
-        // Removed the data table test which just wasn't working.
+
+        it('should have data tables for hydrograph data', () => {
+            expect(select('#hydrograph-data-tables').size()).toBe(1);
+        })
     });
 
     describe('hide elements when showOnlyGraph is set to true', () => {
