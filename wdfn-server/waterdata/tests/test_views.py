@@ -10,7 +10,7 @@ import pytest
 import requests_mock
 
 from .. import app
-from ..views import __version__
+from ..views import __version__, create_message
 from ..utils import parse_rdb
 from .rdb_snippets import SITE_RDB, PARAMETER_RDB
 
@@ -26,14 +26,55 @@ class TestHomeView(TestCase):
         self.assertIn(__version__, response.data.decode('utf-8'))
 
 
+class TestCreateMessage(TestCase):
+    def test_create_message(self):
+        target_email = 'test@test.com'
+        form_data = {
+            'feedback-type': 'comment',
+            'monitoring-location-url': 'http://localhost:5050/monitoring-location/05413500/',
+            'subject': 'Test Subject',
+            'message': 'test message',
+            'user-email-address': 'test@test.com',
+            'user-name': 'test name',
+            'user-phone-number': 'test number',
+            'user-organization-or-address': 'test organization'
+        }
+        user_system_data = ['Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0']
+        timestamp = '2021-02-01 23:55:21.076754'
+        expected = """Subject:
+ User Question/Comment for http://localhost:5050/monitoring-location/05413500/
+From: WDFN Comments and Questions
+Reply-To: test@test.com
+To: test@test.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+
+
+            From: test name
+            Subject: Test Subject
+            Location: http://localhost:5050/monitoring-location/05413500/
+            Time (UTC): 2021-02-01 23:55:21.076754
+            *********** Message ***********
+            test message
+            *********** User Information ***********
+            Email: test@test.com
+            Phone: test number
+            Organization or Address: test organization
+            User Browser/System Details: ['Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0']
+            
+"""
+        actual = create_message(target_email, form_data, user_system_data, timestamp)
+        self.assertEqual(expected, str(actual))
+
+
 class TestQuestionsCommentsView(TestCase):
     def setUp(self):
         self.app_client = app.test_client()
 
     def test_successful_view(self):
         fake_email = 'test%40test.gov'
-        response = self.app_client.get('/questions-comments/{}'.format(fake_email))
-
+        response = self.app_client.get('/questions-comments/{}/'.format(fake_email))
         self.assertEqual(200, response.status_code)
 
 

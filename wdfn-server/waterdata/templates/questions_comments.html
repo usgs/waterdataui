@@ -46,7 +46,6 @@
                     Why is this required? <span id="required-detail" hidden>A real live person will receive and respond to your submission. Your choice here will ensure quickest response.</span>
                 </p>
                 <input type="hidden" id="monitoring-location-url" name="monitoring-location-url" value="{{ monitoring_location_url }}">
-                <input type="hidden" id="timestamp" name="sent-at-UTC" value="{{ time_sent }}">
                 <div>
                     <label class="usa-label" for="feedback-subject">Subject</label>
                     <input class="usa-input" id="feedback-subject" name="subject" type="text">
@@ -78,62 +77,6 @@
                 <input class="usa-button" type="submit" value="Send">
             </fieldset>
         </form>
-
-{#        <form id="feedback-form" class="usa-form" action="{{ url_for( 'questions_comments' )}}" method="POST" enctype="text/plain">#}
-{#            <fieldset id="feedback-destination-selection" class="usa-fieldset">#}
-{#                <legend class="usa-legend usa-legend">Let us help you to:</legend>#}
-{#                <input type="hidden" name="**********request" value="information**********">#}
-{#                <div class="usa-radio">#}
-{#                    <input class="usa-radio__input" id="feedback-selection-contact" type="radio" name="feedback-type" value="contact" required>#}
-{#                    <label class="usa-radio__label" for="feedback-selection-contact">Contact someone about data at this location</label>#}
-{#                </div>#}
-{#                <div class="usa-radio">#}
-{#                    <input class="usa-radio__input" id="feedback-selection-report" type="radio" name="feedback-type" value="report">#}
-{#                    <label class="usa-radio__label" for="feedback-selection-report">Report a problem with this location</label>#}
-{#                </div>#}
-{#                <div class="usa-radio">#}
-{#                    <input class="usa-radio__input" id="feedback-selection-comment" type="radio" name="feedback-type" value="feedback">#}
-{#                    <label class="usa-radio__label" for="feedback-selection-comment">Leave a comment about the website</label>#}
-{#                </div>#}
-{#                <p id="feedback-subtext">#}
-{#                    Why is this required? <span id="required-detail" hidden>A real live person will receive and respond to your submission. Your choice here will ensure quickest response.</span>#}
-{#                </p>#}
-{#                <input type="hidden" id="monitoring-location-url" name="monitoring-location-url" value="{{ monitoring_location_url }}">#}
-{#                <input type="hidden" id="timestamp" name="sent-at-UTC" value="{{ time_sent }}">#}
-{#                <div>#}
-{#                    <input type="hidden" name="**********user" value="message**********">#}
-{#                    <label class="usa-label" for="feedback-subject">Subject</label>#}
-{#                    <input class="usa-input" id="feedback-subject" name="subject" type="text">#}
-{#                    <label class="usa-label" for="feedback-message">Message*</label>#}
-{#                    <textarea class="usa-textarea"#}
-{#                              id="feedback-message"#}
-{#                              name="message"#}
-{#                              rows="5"#}
-{#                              aria-describedby="textarea"#}
-{#                              required></textarea>#}
-{#                </div>#}
-{#                <fieldset>#}
-{#                    <legend>Your Contact Information</legend>#}
-{#                    <input type="hidden" name="**********user" value="information**********">#}
-{#                    <label class="usa-label" for="feedback-email-address">Email address*</label>#}
-{#                    <input class="usa-input" id="feedback-email-address" name="user-email-address" type="email" autocapitalize="off" autocorrect="off" required>#}
-{#                    <label class="usa-label" for="feedback-users-name">Name</label>#}
-{#                    <input class="usa-input" id="feedback-users-name" name="user-name" type="text">#}
-{#                    <label class="usa-label" for="feedback-phone-number">Phone Number</label>#}
-{#                    <input class="usa-input" id="feedback-phone-number" name="user-phone-number" type="tel">#}
-{#                    <label class="usa-label" for="feedback-address">Organization or Address</label>#}
-{#                    <input class="usa-input" id="feedback-address" name="user-organization-or-address" type="text">#}
-{#                </fieldset>#}
-{##}
-{#                <div>#}
-{#                    <p>* Required field.</p>#}
-{#                    <p>See our <a href="http://www.usgs.gov/privacy.html"  target="_blank" rel="noopener">privacy statement</a></p>#}
-{#                </div>#}
-{##}
-{#                <input class="usa-button" type="submit" value="Send">#}
-{#            </fieldset>#}
-{#        </form>#}
-
         <section id="feedback-related-contacts">
             <h2>Get more information</h2>
             <ul class="usa-list usa-list--unstyled">

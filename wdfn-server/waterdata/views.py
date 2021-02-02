@@ -28,7 +28,8 @@ def home():
     return render_template('index.html', version=__version__)
 
 
-def create_message(target_email, form_data, user_system_data):
+def create_message(target_email, form_data, user_system_data, timestamp):
+    print('timestamp ', timestamp)
     msg = EmailMessage()
     msg['Subject'] = 'User Question/Comment for {}'.format(form_data['monitoring-location-url'])
     msg['From'] = 'WDFN Comments and Questions'
@@ -39,7 +40,7 @@ def create_message(target_email, form_data, user_system_data):
             From: {form_data['user-name'] if form_data['user-name'] else 'Name not given'}
             Subject: {form_data['subject'] if form_data['subject'] else 'No Subject'}
             Location: {form_data['monitoring-location-url']}
-            Time (UTC): {str(datetime.datetime.utcnow())}
+            Time (UTC): {timestamp}
             *********** Message ***********
             {form_data['message']}
             *********** User Information ***********
@@ -64,12 +65,10 @@ def questions_comments(email_for_contact_about_data):
         if request.form['feedback-type'] != 'contact':
             target_email = app.config['EMAIL_TARGET'][request.form['feedback-type']]
 
-
         target_email = 'abriggs@contractor.usgs.gov' #remove!!
 
-        assembled_email = create_message(target_email, request.form, user_system_data)
-
-
+        assembled_email = \
+            create_message(target_email, request.form, user_system_data, timestamp=str(datetime.datetime.utcnow()))
         email_send_result = 'success'
         try:
             server = smtplib.SMTP(app.config['MAIL_SERVER'])
