@@ -26,7 +26,7 @@ export const drawMethodPicker = function(elem, store) {
         .on('change', function() {
             store.dispatch(Actions.setCurrentIVMethodID(parseInt(select(this).property('value'))));
         })
-        .call(link(store,function(elem, {methods, currentMethodId}) {
+        .call(link(store, function(elem, {methods, currentMethodId}) {
             const currentMethodIdString = parseInt(currentMethodId);
             elem.selectAll('option').remove();
             methods.forEach((method) => {

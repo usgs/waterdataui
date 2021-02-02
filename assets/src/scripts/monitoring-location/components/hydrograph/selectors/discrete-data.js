@@ -1,7 +1,9 @@
+import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
 import {getIVCurrentVariableGroundwaterLevels} from 'ml/selectors/discrete-data-selector';
-import {getRequestTimeRange} from 'ml/selectors/time-series-selector';
+import {getRequestTimeRange, getCurrentVariable} from 'ml/selectors/time-series-selector';
+import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
 
 /*
  * Returns a selector function that returns the groundwater levels that will be visible
@@ -28,6 +30,32 @@ export const getVisibleGroundwaterLevelPoints = createSelector(
                     value: parseFloat(data.value)
                 };
             });
+    }
+);
+
+/*
+ * Selector function which returns a function that returns an array of gw data appropriate
+ * for use in a table.
+ * @return {Function} - Function returns an array of visible ground water values with properties:
+ *      @prop {String} parameterName
+ *      @prop {String} result
+ *      @prop {String} dateTime in site's time zone.
+ */
+export const getVisibleGroundwaterLevelsTableData = createSelector(
+    getCurrentVariable,
+    getVisibleGroundwaterLevelPoints,
+    getIanaTimeZone,
+    (currentVariable, gwLevels, timeZone) => {
+        return gwLevels.map((point) => {
+            return {
+                parameterName: currentVariable.variableName,
+                result: point.value.toString(),
+                dateTime: DateTime.fromMillis(point.dateTime, {zone: timeZone}).toISO({
+                    suppressMilliseconds: true,
+                    suppressSeconds: true
+                })
+            };
+        });
     }
 );
 

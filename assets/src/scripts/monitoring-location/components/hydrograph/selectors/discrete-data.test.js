@@ -1,4 +1,5 @@
-import {getVisibleGroundwaterLevelPoints, anyVisibleGroundwaterLevels} from './discrete-data';
+import {getVisibleGroundwaterLevelPoints, getVisibleGroundwaterLevelsTableData,
+    anyVisibleGroundwaterLevels} from './discrete-data';
 
 describe('monitoring-location/components/hydrograph/selectors/discrete-data', () => {
 
@@ -21,12 +22,14 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
                     '45807042': {
                         variableCode: {
                             'value': '72019'
-                        }
+                        },
+                        variableName: 'Depth to water level'
                     },
                     '45807041': {
                         variableCode: {
                             'value': '00060'
-                        }
+                        },
+                        variableName: 'Streamflow'
                     }
                 }
             },
@@ -44,10 +47,10 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
                             oid: '45807042'
                         },
                         values: [
-                            {value: '14.0', dateTime: 1491055200000},
-                            {value: '14.5', dateTime: 1490882400000},
+                            {value: '12.0', dateTime: 1489672800000},
                             {value: '13.0', dateTime: 1490536800000},
-                            {value: '12.0', dateTime: 1489672800000}
+                            {value: '14.5', dateTime: 1490882400000},
+                            {value: '14.0', dateTime: 1491055200000}
                         ]
                     }
                 }
@@ -79,7 +82,56 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
 
         it('Return the ground water levels that are in the 7 day period', () => {
             const result = getVisibleGroundwaterLevelPoints(TEST_STATE);
+
             expect(result).toHaveLength(2);
+            expect(result[0]).toEqual({
+                value: 13.0,
+                dateTime: 1490536800000
+            });
+            expect(result[1]).toEqual({
+                value: 14.5,
+                dateTime: 1490882400000
+            });
+        });
+    });
+
+    describe('getVisibleGroundwaterLevelsTableData', () => {
+
+        it('Return empty array if no groundwater levels are defined', () => {
+            const testData = {
+                ...TEST_STATE,
+                discreteData: {
+                    groundwaterLevels: null
+                }
+            };
+            expect(getVisibleGroundwaterLevelsTableData(testData)).toHaveLength(0);
+        });
+
+        it('Return an empty array if the current variable does not have ground water data', () => {
+            const testData = {
+                ...TEST_STATE,
+                ivTimeSeriesState: {
+                    ...TEST_STATE.ivTimeSeriesState,
+                    currentIVVariableID: '45807041'
+                }
+            };
+            expect(getVisibleGroundwaterLevelsTableData(testData)).toHaveLength(0);
+        });
+
+        it('Return the ground water levels that are in the 7 day period', () => {
+            const result = getVisibleGroundwaterLevelsTableData(TEST_STATE);
+
+            expect(result).toHaveLength(2);
+            expect(result[0]).toEqual({
+                parameterName: 'Depth to water level',
+                result: '13',
+                dateTime: '2017-03-26T09:00-05:00'
+            });
+            expect(result[1]).toEqual({
+                parameterName: 'Depth to water level',
+                result: '14.5',
+                dateTime: '2017-03-30T09:00-05:00'
+            });
         });
     });
 

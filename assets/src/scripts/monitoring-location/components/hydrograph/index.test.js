@@ -15,7 +15,7 @@ import {attachToNode} from './index';
 const TEST_STATE = {
     ivTimeSeriesData: {
         timeSeries: {
-            '00010:current': {
+            'method1:00010:current': {
                 points: [{
                     dateTime: 1514926800000,
                     value: 4,
@@ -25,7 +25,7 @@ const TEST_STATE = {
                 tsKey: 'current:P7D',
                 variable: '45807190'
             },
-            '00060:current': {
+            'method1:00060:current': {
                 points: [{
                     dateTime: 1514926800000,
                     value: 10,
@@ -35,7 +35,7 @@ const TEST_STATE = {
                 tsKey: 'current:P7D',
                 variable: '45807197'
             },
-            '00060:compare': {
+            'method1:00060:compare': {
                 points: [{
                     dateTime: 1514926800000,
                     value: 10,
@@ -531,10 +531,8 @@ describe('monitoring-location/components/hydrograph module', () => {
                     ...TEST_STATE.ivTimeSeriesData,
                     timeSeries: {
                         ...TEST_STATE.ivTimeSeriesData.timeSeries,
-                        '00060:current': {
-                            ...TEST_STATE.ivTimeSeriesData.timeSeries['00060:current'],
-                            startTime: 1514926800000,
-                            endTime: 1514930400000,
+                        'method1:00060:current': {
+                            ...TEST_STATE.ivTimeSeriesData.timeSeries['method1:00060:current'],
                             points: [{
                                 dateTime: 1514926800000,
                                 value: 10,
@@ -652,15 +650,9 @@ describe('monitoring-location/components/hydrograph module', () => {
             expect(selectAll('table .usa-tooltip').size()).toBe(4);
         });
 
-        it('should render the data table', () => {
-            return new Promise(resolve => {
-                window.requestAnimationFrame(() => {
-                    const container = select('#iv-data-table-container');
-                    expect(container.selectAll('table').size()).toBe(1);
-                    expect(container.select('.pagination').size()).toBe(1);
-                    resolve();
-                });
-            });
+        it('should have data tables for hydrograph data', () => {
+            expect(select('#iv-hydrograph-data-table-container').size()).toBe(1);
+            expect(select('#gw-hydrograph-data-table-container').size()).toBe(1);
         });
     });
 
@@ -678,8 +670,8 @@ describe('monitoring-location/components/hydrograph module', () => {
                     ...TEST_STATE.ivTimeSeriesData,
                     timeSeries: {
                         ...TEST_STATE.ivTimeSeriesData.timeSeries,
-                        '00060:current': {
-                            ...TEST_STATE.ivTimeSeriesData.timeSeries['00060:current'],
+                        'method1:00060:current': {
+                            ...TEST_STATE.ivTimeSeriesData.timeSeries['method1:00060:current'],
                             startTime: 1514926800000,
                             endTime: 1514930400000,
                             points: [{
