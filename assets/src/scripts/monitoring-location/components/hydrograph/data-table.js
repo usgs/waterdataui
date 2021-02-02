@@ -51,7 +51,7 @@ const drawTableBody = function(table, dataKind, data) {
 };
 
 /*
- * Renders a table of the currently selected IV Data
+ * Renders a table of currentData
  * @param {D3 selection} elem - Table is rendered within elem
  * @param {String} kind - kind of data, iv or gw
  * @param {Array of Object} currentData - data that will be rendered in the table.
