@@ -1,9 +1,9 @@
 """
 Main application views.
 """
-import datetime, json, smtplib
-
-from email.message import EmailMessage
+import datetime
+import json
+import smtplib
 
 from flask import abort, render_template, redirect, request, Markup, make_response, url_for
 
@@ -12,7 +12,7 @@ from markdown import markdown
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, \
     get_period_of_record_by_parm_cd
-from .utils import defined_when, parse_rdb, set_cookie_for_banner_message
+from .utils import defined_when, parse_rdb, set_cookie_for_banner_message, create_message
 from .services import sifta, ogc
 from .services.nwis import NwisWebServices
 from .services.camera import get_monitoring_location_camera_details
@@ -26,32 +26,6 @@ NWIS = NwisWebServices(app.config['SERVER_SERVICE_ROOT'], app.config['SITE_SERVI
 def home():
     """Render the home page."""
     return render_template('index.html', version=__version__)
-
-
-def create_message(target_email, form_data, user_system_data, timestamp):
-    print('timestamp ', timestamp)
-    msg = EmailMessage()
-    msg['Subject'] = 'User Question/Comment for {}'.format(form_data['monitoring-location-url'])
-    msg['From'] = 'WDFN Comments and Questions'
-    msg['Reply-To'] = form_data['user-email-address']
-    msg['To'] = target_email
-
-    message_body = f"""
-            From: {form_data['user-name'] if form_data['user-name'] else 'Name not given'}
-            Subject: {form_data['subject'] if form_data['subject'] else 'No Subject'}
-            Location: {form_data['monitoring-location-url']}
-            Time (UTC): {timestamp}
-            *********** Message ***********
-            {form_data['message']}
-            *********** User Information ***********
-            Email: {form_data['user-email-address']}
-            Phone: {form_data['user-phone-number'] if form_data['user-phone-number'] else 'None given'}
-            Organization or Address: {form_data['user-organization-or-address']
-    if form_data['user-organization-or-address'] else 'None given'}
-            User Browser/System Details: {user_system_data}
-            """
-    msg.set_content(message_body)
-    return msg
 
 
 @app.route('/questions-comments/<email_for_contact_about_data>/', methods=["GET", "POST"])
