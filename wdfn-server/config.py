@@ -98,3 +98,11 @@ BANNER_NOTICES = []
 # set this if running in a container
 if os.getenv('CONTAINER_RUN', False):
     STATIC_ROOT = os.environ.get('STATIC_ROOT', '/static/')
+
+# Mail settings for feedback form
+MAIL_SERVER = 'smtp.usgs.gov'
+EMAIL_TARGET = {
+    'contact' : 'gs-w-{state_district_code}_NWISWeb_Data_Inquiries@usgs.gov',
+    'report': 'gs-w_support_nwisweb@usgs.gov',
+    'comment': 'WDFN@usgs.gov'
+}

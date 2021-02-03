@@ -33,7 +33,16 @@ class TestQuestionsCommentsView(TestCase):
     def test_successful_view(self):
         fake_email = 'test%40test.gov'
         response = self.app_client.get('/questions-comments/{}/'.format(fake_email))
+        self.assertEqual(200, response.status_code)
 
+
+class TestFeedbackSubmitted(TestCase):
+    def setUp(self):
+        self.app_client = app.test_client()
+
+    def test_successful_view(self):
+        email_send_result = 'success'
+        response = self.app_client.get('/feedback-submitted/{}'.format(email_send_result))
         self.assertEqual(200, response.status_code)
 
 

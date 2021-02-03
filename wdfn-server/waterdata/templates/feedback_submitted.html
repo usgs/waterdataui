@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% set page_title = 'Feedback Submitted' %}
+
+{% block content %}
+    <div class="usa-prose">
+        {% if email_send_result == 'success' %}
+            <h1>Thank you</h1>
+            <p>Your message has been sent.</p>
+            <p>
+                Our goal is to present you with the best  possible user experience. Your comments and feedback are essential
+                tools in reaching that goal.
+            </p>
+        {% else %}
+            <h1>We are sorry,</h1>
+            <p>
+                a failure occurred when attempting to send your message.
+            </p>
+            <p>
+                Please try again later.
+            </p>
+        {% endif %}
+    </div>
+{% endblock content %}

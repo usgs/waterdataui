@@ -5,6 +5,7 @@ Utility functions
 from flask import request
 from functools import update_wrapper
 from urllib.parse import urlencode, urljoin
+from email.message import EmailMessage
 
 import requests as r
 
@@ -31,6 +32,39 @@ def execute_get_request(hostname, path=None, params=None):
         app.logger.error(repr(err))
         resp = r.Response()  # return an empty response object
     return resp
+
+
+def create_message(target_email, form_data, user_system_data, timestamp):
+    """
+    Uses data from a form to create and format a message that can be sent in an email using the Python SMTP library.
+    :param str target_email: The email address for the email destination.
+    :param immutable dict form_data: Part of the HTTP response which contains information submitted by the user
+        in a web form.
+    :param dict user_system_data: Part of the HTTP response containing information about the user's system.
+    :param str timestamp: A timestamp that has been converted to a string.
+    """
+    msg = EmailMessage()
+    msg['Subject'] = 'User Question/Comment for {}'.format(form_data['monitoring-location-url'])
+    msg['From'] = 'WDFN Comments and Questions'
+    msg['Reply-To'] = form_data['user-email-address']
+    msg['To'] = target_email
+
+    message_body = f"""
+        From: {form_data['user-name'] if form_data['user-name'] else 'Name not given'}
+        Subject: {form_data['subject'] if form_data['subject'] else 'No Subject'}
+        Location: {form_data['monitoring-location-url']}
+        Time (UTC): {timestamp}
+        *********** Message ***********
+        {form_data['message']}
+        *********** User Information ***********
+        Email: {form_data['user-email-address']}
+        Phone: {form_data['user-phone-number'] if form_data['user-phone-number'] else 'None given'}
+        Organization or Address: {form_data['user-organization-or-address']
+    if form_data['user-organization-or-address'] else 'None given'}
+        User Browser/System Details: {user_system_data}
+        """
+    msg.set_content(message_body)
+    return msg
 
 
 def construct_url(netloc, path, parameters=()):

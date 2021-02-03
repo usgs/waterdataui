@@ -1,17 +1,18 @@
 """
 Main application views.
 """
-import json
 import datetime
+import json
+import smtplib
 
-from flask import abort, render_template, request, Markup, make_response
+from flask import abort, render_template, redirect, request, Markup, make_response, url_for
 
 from markdown import markdown
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, \
     get_period_of_record_by_parm_cd
-from .utils import defined_when, parse_rdb, set_cookie_for_banner_message
+from .utils import defined_when, parse_rdb, set_cookie_for_banner_message, create_message
 from .services import sifta, ogc
 from .services.nwis import NwisWebServices
 from .services.camera import get_monitoring_location_camera_details
@@ -21,24 +22,52 @@ from .constants import STATION_FIELDS_D
 
 NWIS = NwisWebServices(app.config['SERVER_SERVICE_ROOT'], app.config['SITE_SERVICE_CATALOG_ROOT'])
 
-
 @app.route('/')
 def home():
     """Render the home page."""
     return render_template('index.html', version=__version__)
 
 
-@app.route('/questions-comments/<email>/', methods=["GET", "POST"])
-def questions_comments(email):
+@app.route('/questions-comments/<email_for_data_questions>/', methods=["GET", "POST"])
+def questions_comments(email_for_data_questions):
     """Render the user feedback form."""
     referring_url = request.referrer
+    user_system_data = request.user_agent.string
+
+    if request.method == 'POST':
+        target_email = email_for_data_questions
+        if request.form['feedback-type'] != 'contact':
+            target_email = app.config['EMAIL_TARGET'][request.form['feedback-type']]
+
+        assembled_email = \
+            create_message(target_email, request.form, user_system_data, timestamp=str(datetime.datetime.utcnow()))
+        email_send_result = 'success'
+        try:
+            server = smtplib.SMTP(app.config['MAIL_SERVER'])
+            server.send_message(assembled_email)
+            server.quit()
+
+        except Exception as e:
+            print('error when sending feedback email ', e)
+            email_send_result = 'fail'
+        finally:
+            return redirect(url_for('feedback_submitted', email_send_result=email_send_result))
 
     return render_template(
         'questions_comments.html',
-        email_for_data_questions=email,
-        monitoring_location_url=referring_url,
-        time_sent=str(datetime.datetime.utcnow())
+        email_for_data_questions=email_for_data_questions,
+        monitoring_location_url=referring_url
     )
+
+
+@app.route('/feedback-submitted/<email_send_result>')
+def feedback_submitted(email_send_result):
+    """Render a page that will show the user if the feedback email sent successfully."""
+    return render_template(
+        'feedback_submitted.html',
+        email_send_result=email_send_result
+    )
+
 
 @app.route('/provisional-data-statement')
 def provisional_data_statement():
@@ -126,7 +155,7 @@ def monitoring_location(site_no):
 
             if site_owner_state is not None:
                 email_for_data_questions = \
-                    app.config['EMAIL_FOR_DATA_QUESTION'].format(state_district_code=site_owner_state.lower())
+                    app.config['EMAIL_TARGET']['contact'].format(state_district_code=site_owner_state.lower())
             else:
                 email_for_data_questions = app.config['EMAIL_TO_REPORT_PROBLEM']
 

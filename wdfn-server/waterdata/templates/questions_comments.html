@@ -5,23 +5,7 @@
     <script src="{{ 'scripts/wdfnviz.js' | asset_url }}"></script>
     <script type="application/javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            var radioButtons = document.getElementsByName('target-email');
-            var form = document.getElementById('feedback-form');
-            var monitoringLocation = document.getElementById('monitoring-location-url');
             var requiredSubText = document.getElementById('feedback-subtext');
-
-            if (monitoringLocation.value !== '') {
-                monitoringLocation = ' for monitoring location ' + monitoringLocation.value
-            }
-            var index;
-            for (index = 0; index < radioButtons.length; index++) {}
-            radioButtons.forEach(function(button) {
-                button.onclick = function() {
-                    var emailTarget = button.value;
-                    form.setAttribute('action', 'mailTo:' + emailTarget + '?subject=WDFN user comment/question' + monitoringLocation);
-                }
-            });
-
             requiredSubText.addEventListener('click', function() {
                 var textDetails = document.getElementById('required-detail');
                 textDetails.hidden = !textDetails.hidden
@@ -42,29 +26,27 @@
                 {% endif %}
             </div>
         </section>
-        <form id="feedback-form" class="usa-form" action="" method="POST" enctype="text/plain">
+
+        <form class="usa-form" action="{{ url_for('questions_comments', email_for_data_questions=email_for_data_questions) }}" method="post" >
             <fieldset id="feedback-destination-selection" class="usa-fieldset">
                 <legend class="usa-legend usa-legend">Let us help you to:</legend>
-                <input type="hidden" name="**********request" value="information**********">
                 <div class="usa-radio">
-                    <input class="usa-radio__input" id="feedback-selection-contact" type="radio" name="target-email" value="{{ email_for_data_questions }}" required>
+                    <input class="usa-radio__input" id="feedback-selection-contact" type="radio" name="feedback-type" value="contact" required>
                     <label class="usa-radio__label" for="feedback-selection-contact">Contact someone about data at this location</label>
                 </div>
                 <div class="usa-radio">
-                    <input class="usa-radio__input" id="feedback-selection-report" type="radio" name="target-email" value="{{config.EMAIL_TO_REPORT_PROBLEM }}">
+                    <input class="usa-radio__input" id="feedback-selection-report" type="radio" name="feedback-type" value="report">
                     <label class="usa-radio__label" for="feedback-selection-report">Report a problem with this location</label>
                 </div>
                 <div class="usa-radio">
-                    <input class="usa-radio__input" id="feedback-selection-comment" type="radio" name="target-email" value="{{ config.EMAIL_FOR_COMMENTS }}">
+                    <input class="usa-radio__input" id="feedback-selection-comment" type="radio" name="feedback-type" value="comment">
                     <label class="usa-radio__label" for="feedback-selection-comment">Leave a comment about the website</label>
                 </div>
                 <p id="feedback-subtext">
                     Why is this required? <span id="required-detail" hidden>A real live person will receive and respond to your submission. Your choice here will ensure quickest response.</span>
                 </p>
                 <input type="hidden" id="monitoring-location-url" name="monitoring-location-url" value="{{ monitoring_location_url }}">
-                <input type="hidden" id="timestamp" name="sent-at-UTC" value="{{ time_sent }}">
                 <div>
-                    <input type="hidden" name="**********user" value="message**********">
                     <label class="usa-label" for="feedback-subject">Subject</label>
                     <input class="usa-input" id="feedback-subject" name="subject" type="text">
                     <label class="usa-label" for="feedback-message">Message*</label>
@@ -74,10 +56,9 @@
                               rows="5"
                               aria-describedby="textarea"
                               required></textarea>
-                </div>
+               </div>
                 <fieldset>
                     <legend>Your Contact Information</legend>
-                    <input type="hidden" name="**********user" value="information**********">
                     <label class="usa-label" for="feedback-email-address">Email address*</label>
                     <input class="usa-input" id="feedback-email-address" name="user-email-address" type="email" autocapitalize="off" autocorrect="off" required>
                     <label class="usa-label" for="feedback-users-name">Name</label>
@@ -96,10 +77,6 @@
                 <input class="usa-button" type="submit" value="Send">
             </fieldset>
         </form>
-
-        <section id="feedback-inputs">
-
-        </section>
         <section id="feedback-related-contacts">
             <h2>Get more information</h2>
             <ul class="usa-list usa-list--unstyled">
