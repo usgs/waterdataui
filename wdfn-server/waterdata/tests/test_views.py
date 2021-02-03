@@ -43,7 +43,6 @@ class TestFeedbackSubmitted(TestCase):
     def test_successful_view(self):
         email_send_result = 'success'
         response = self.app_client.get('/feedback-submitted/{}'.format(email_send_result))
-
         self.assertEqual(200, response.status_code)
 
 
