@@ -32,7 +32,7 @@ const COMPONENTS = {
  */
 const loadAllGroundWaterData = function(nodes, store) {
     const nodesWithGroundWaterLevels =
-        Array.from(nodes).filter(node => node.dataset.componement === 'hydrograph' || node.dataset.component === 'dv-hydrograph');
+        Array.from(nodes).filter(node => node.dataset.component === 'hydrograph' || node.dataset.component === 'dv-hydrograph');
     if (!nodesWithGroundWaterLevels.length) {
         return Promise.resolve();
     }
