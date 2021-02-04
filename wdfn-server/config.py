@@ -47,11 +47,6 @@ CITIES_ENDPOINT = 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/serv
 NLDI_SERVICES_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/nldi/linked-data'
 NLDI_SERVICES_DISTANCE = '322'
 
-# Emails Addresses for user feedback
-EMAIL_FOR_COMMENTS = 'WDFN@usgs.gov'
-EMAIL_TO_REPORT_PROBLEM = 'gs-w_support_nwisweb@usgs.gov'
-EMAIL_FOR_DATA_QUESTION = 'gs-w-{state_district_code}_NWISWeb_Data_Inquiries@usgs.gov'
-
 # Waterwatch
 WATERWATCH_ENDPOINT = 'https://waterwatch.usgs.gov/webservices'
 
@@ -102,7 +97,7 @@ if os.getenv('CONTAINER_RUN', False):
 # Mail settings for feedback form
 MAIL_SERVER = 'smtp.usgs.gov'
 EMAIL_TARGET = {
-    'contact' : 'gs-w-{state_district_code}_NWISWeb_Data_Inquiries@usgs.gov',
+    'contact': 'gs-w-{state_district_code}_NWISWeb_Data_Inquiries@usgs.gov',
     'report': 'gs-w_support_nwisweb@usgs.gov',
     'comment': 'WDFN@usgs.gov'
 }

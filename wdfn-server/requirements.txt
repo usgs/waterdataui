@@ -1,3 +1,4 @@
+APScheduler==3.7.0
 certifi==2020.12.5
 chardet==4.0.0
 click==7.1.2
@@ -12,5 +13,6 @@ pytest-mock==3.5.1
 pytest-flask==1.1.0
 requests==2.25.1
 requests-mock==1.8.0
+schedule==1.0.0
 six==1.15.0
 SaltPyLint==2020.9.28

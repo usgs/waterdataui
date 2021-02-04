@@ -5,11 +5,40 @@ import json
 import logging
 import os
 import sys
+import requests
 
 from flask import Flask
 
 
 __version__ = '0.43.0dev'
+
+
+from apscheduler.schedulers.background import BackgroundScheduler
+
+from datetime import datetime
+# !!! Pull lookup files from S3 bucket and save to data directory (then load into app.config)
+
+# !!! Set up a schedule to pull lookup files from the S3 bucket and replace the ones in the data directory
+# (then reload into app.config)
+def get_lookups(value):
+    print('time: {}: {}'.format(value, str(datetime.now())))
+    response = requests.get("http://api.open-notify.org/astros.json")
+    print(response.json())
+
+value ='at start'
+get_lookups(value)
+scheduler = BackgroundScheduler()
+scheduler.start()
+value='after'
+scheduler.add_job(lambda: get_lookups(value), 'interval', seconds=15)
+
+
+
+
+
+
+
+
 
 
 def _create_log_handler(log_directory=None, log_name=__name__):
