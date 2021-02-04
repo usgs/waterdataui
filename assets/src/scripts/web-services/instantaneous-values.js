@@ -34,20 +34,23 @@ function getNumberOfDays(period) {
  * @param {String} period
  * @return {Promise} resolves to an array of time series model object, rejects to an error
  */
-export const getTimeSeries = function({sites, params=null, startDate=null, endDate=null, period=null}) {
+export const fetchTimeSeries = function({sites, params=null, startDate=null, endDate=null, period=null}) {
     let timeParams;
     let serviceRoot;
 
-    if (!startDate && !endDate) {
-        const timePeriod = period || 'P7D';
+    if (period) {
+        const timePeriod = period;
         const dayCount = getNumberOfDays(timePeriod);
         timeParams = `period=${timePeriod}`;
         serviceRoot = dayCount && dayCount < 120 ? config.SERVICE_ROOT : config.PAST_SERVICE_ROOT;
-    } else {
+    } else if (startDate && endDate) {
         let startString = startDate ? isoFormatTime(startDate) : '';
         let endString = endDate ? isoFormatTime(endDate) : '';
         timeParams = `startDT=${startString}&endDT=${endString}`;
         serviceRoot = tsServiceRoot(startDate);
+    } else {
+        timeParams = '';
+        serviceRoot = config.SERVICE_ROOT;
     }
 
     // Normal parameter codes have five numerical digits. If the parameter code has an alphabetical letter
@@ -71,13 +74,13 @@ export const getTimeSeries = function({sites, params=null, startDate=null, endDa
         });
 };
 
-export const getPreviousYearTimeSeries = function({site, startTime, endTime, parameterCode}) {
+export const fetchPreviousYearTimeSeries = function({site, startTime, endTime, parameterCode}) {
     const hoursInOneYear = 8760;
     parameterCode = parameterCode ? [parameterCode] : null;
     const lastYearStartTime = DateTime.fromMillis(startTime).minus({hours: hoursInOneYear});
     const lastYearEndTime = DateTime.fromMillis(endTime).minus({hours: hoursInOneYear});
 
-    return getTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime, params: parameterCode});
+    return fetchTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime, params: parameterCode});
 };
 
 export const queryWeatherService = function(latitude, longitude) {
