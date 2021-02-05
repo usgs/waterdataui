@@ -1,28 +1,22 @@
 import {applyMiddleware, createStore, combineReducers, compose} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
+import {dailyValueTimeSeriesDataReducer as dailyValueTimeSeriesData} from './daily-value-time-series';
+import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './daily-value-time-series';
 import {
     floodDataReducer as floodData,
     floodStateReducer as floodState} from './flood-inundation';
-import {nldiDataReducer as nldiData} from './nldi-data';
-import {dailyValueTimeSeriesDataReducer as dailyValueTimeSeriesData} from './daily-value-time-series';
-import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './daily-value-time-series';
-import {discreteDataReducer as discreteData} from './discrete-data';
-import {ivTimeSeriesDataReducer as ivTimeSeriesData} from './instantaneous-value-time-series-data';
+import {hydrographDataReducer as hydrographData} from './hydrograph-data';
 import {ivTimeSeriesStateReducer as ivTimeSeriesState} from './instantaneous-value-time-series-state';
 import {networkDataReducer as networkData} from './network';
-import {statisticsDataReducer as statisticsData} from './statistics-data';
-import {timeZoneReducer as ianaTimeZone} from './time-zone';
+import {nldiDataReducer as nldiData} from './nldi-data';
 import {uiReducer as ui} from './ui-state';
 
 const appReducer = combineReducers({
-    ivTimeSeriesData,
-    ianaTimeZone,
+    hydrographData,
     dailyValueTimeSeriesData,
-    statisticsData,
     floodData,
     nldiData,
-    discreteData,
     ivTimeSeriesState,
     dailyValueTimeSeriesState,
     floodState,
@@ -35,10 +29,8 @@ const MIDDLEWARES = [thunk];
 
 export const configureStore = function(initialState) {
     initialState = {
-        ivTimeSeriesData: {},
-        ianaTimeZone: null,
+        hydrographData: {},
         dailyValueTimeSeriesData: {},
-        discreteData: {},
         floodData: {
             stages: [],
             extent: {},
@@ -51,7 +43,6 @@ export const configureStore = function(initialState) {
             downstreamSites: [],
             upstreamBasin: []
         },
-        statisticsData: {},
         ivTimeSeriesState: {
             showIVTimeSeries: {
                 current: true,

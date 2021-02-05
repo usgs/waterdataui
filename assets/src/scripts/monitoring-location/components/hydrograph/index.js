@@ -2,6 +2,7 @@
  * Hydrograph charting module.
  */
 import {select} from 'd3-selection';
+import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config.js';
@@ -12,32 +13,33 @@ import {sortedParameters} from 'ui/utils';
 import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
 
-import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ml/iv-data-utils';
-import {renderTimeSeriesUrlParams} from 'ml/url-params';
+//import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ml/iv-data-utils';
+//import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
-import {hasAnyVariables, getCurrentVariableID, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
+//import {hasAnyVariables, getCurrentVariableID, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
 
-import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
-import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
-import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
-import {Actions as timeZoneActions} from 'ml/store/time-zone';
-import {Actions as floodDataActions} from 'ml/store/flood-inundation';
+import {retrieveHydrographData} from 'ml/store/hydrograph-data';
+//import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
+//import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
+//import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
+//import {Actions as timeZoneActions} from 'ml/store/time-zone';
+//import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
-import {drawDateRangeControls} from './date-controls';
-import {drawDataTables} from './data-table';
-import {renderDownloadLinks} from './download-links';
-import {drawGraphBrush} from './graph-brush';
-import {drawGraphControls} from './graph-controls';
-import {drawTimeSeriesLegend} from './legend';
-import {drawMethodPicker} from './method-picker';
-import {plotSeriesSelectTable} from './parameters';
-import {drawTimeSeriesGraph} from './time-series-graph';
-import {drawTooltipCursorSlider} from './tooltip';
+//import {drawDateRangeControls} from './date-controls';
+//import {drawDataTables} from './data-table';
+//import {renderDownloadLinks} from './download-links';
+//import {drawGraphBrush} from './graph-brush';
+//import {drawGraphControls} from './graph-controls';
+//import {drawTimeSeriesLegend} from './legend';
+//import {drawMethodPicker} from './method-picker';
+//import {plotSeriesSelectTable} from './parameters';
+//import {drawTimeSeriesGraph} from './time-series-graph';
+//import {drawTooltipCursorSlider} from './tooltip';
 
-import {getLineSegmentsByParmCd} from './selectors/drawing-data';
-import {SPARK_LINE_DIM}  from './selectors/layout';
-import {getAvailableParameterCodes} from './selectors/parameter-data';
-import {getTimeSeriesScalesByParmCd} from './selectors/scales';
+//import {getLineSegmentsByParmCd} from './selectors/drawing-data';
+//import {SPARK_LINE_DIM}  from './selectors/layout';
+//import {getAvailableParameterCodes} from './selectors/parameter-data';
+//import {getTimeSeriesScalesByParmCd} from './selectors/scales';
 
 /*
  * Renders the hydrograph on the node element using the Redux store for state information. The siteno, latitude, and
@@ -62,8 +64,7 @@ export const attachToNode = function(store,
                                          timeSeriesId, // This must be converted to an integer
                                          showOnlyGraph = false,
                                          showMLName = false
-                                     } = {},
-                                     loadPromise) {
+                                     } = {}) {
     const nodeElem = select(node);
     if (!siteno) {
         select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No data is available.'});
@@ -75,11 +76,19 @@ export const attachToNode = function(store,
         .select('.loading-indicator-container')
         .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
 
-    // Fetch time zone
-    const fetchTimeZonePromise = store.dispatch(timeZoneActions.retrieveIanaTimeZone(latitude, longitude));
     // Fetch waterwatch flood levels
-    store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
-    let fetchDataPromise;
+    //store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
+     // Need to set default parameter code in server and insert in markup */
+    const fetchDataPromise = store.dispatch(retrieveHydrographData(siteno, {
+        parameterCode: parameterCode || '00060',
+        period: startDT && endDT ? null : period || 'P7D',
+        startTime: DateTime.fromISO(startDT, {zone: config.locationTimeZone}),
+        endTime: DateTime.fromISO(endDT, {zone: config.locationTimeZone}),
+        loadCompare: false,
+        loadMedian: false
+    }));
+    fetchDataPromise.then(() => console.log('Finished fetching Hydrograph data'));
+    /*
     if (showOnlyGraph) {
         // Only fetch what is needed
         if (parameterCode && period) {
@@ -188,4 +197,5 @@ export const attachToNode = function(store,
             }
         }
     });
+    */
 };

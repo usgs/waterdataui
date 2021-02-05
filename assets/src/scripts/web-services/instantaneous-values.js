@@ -1,19 +1,14 @@
-import {utcFormat} from 'd3-time-format';
 
 import {DateTime} from 'luxon';
 
 import {get} from 'ui/ajax';
 import config from 'ui/config';
 
-export const isoFormatTime = utcFormat('%Y-%m-%dT%H:%MZ');
-
-
-function olderThan120Days(date) {
-    return date < new Date() - 120;
-}
-
-function tsServiceRoot(date) {
-    return olderThan120Days(date) ? config.PAST_SERVICE_ROOT : config.SERVICE_ROOT;
+/*
+ * Return the past service root if the start dt is more than 120 days from now
+ */
+function tsServiceRoot(dateTime) {
+    return DateTime.local().diff(dateTime).as('days') > 120 ? config.PAST_SERVICE_ROOT : config.SERVICE_ROOT;
 }
 
 function getNumberOfDays(period) {
@@ -27,14 +22,14 @@ function getNumberOfDays(period) {
 
 /**
  * Get a given time series dataset from Water Services.
- * @param  {Array}    sites  Array of site IDs to retrieve.
- * @param  {Array}    params Optional array of parameter codes
- * @param {Date} startDate
- * @param {Date} endData
- * @param {String} period
+ * @param  {Array}   sites  Array of site IDs to retrieve.
+ * @param  {Array}   parameterCodes Optional array of parameter codes
+ * @param {String} period - ISO 8601 Duration
+ * @param {String} startTime - ISO 8601 time
+ * @param {String} endTime - ISO 8601 time
  * @return {Promise} resolves to an array of time series model object, rejects to an error
  */
-export const fetchTimeSeries = function({sites, params=null, startDate=null, endDate=null, period=null}) {
+export const fetchTimeSeries = function({sites, parameterCode, period=null, startTime=null, endTime=null}) {
     let timeParams;
     let serviceRoot;
 
@@ -43,28 +38,17 @@ export const fetchTimeSeries = function({sites, params=null, startDate=null, end
         const dayCount = getNumberOfDays(timePeriod);
         timeParams = `period=${timePeriod}`;
         serviceRoot = dayCount && dayCount < 120 ? config.SERVICE_ROOT : config.PAST_SERVICE_ROOT;
-    } else if (startDate && endDate) {
-        let startString = startDate ? isoFormatTime(startDate) : '';
-        let endString = endDate ? isoFormatTime(endDate) : '';
-        timeParams = `startDT=${startString}&endDT=${endString}`;
-        serviceRoot = tsServiceRoot(startDate);
+    } else if (startTime && endTime) {
+        const startDateTime =  DateTime.fromISO(startTime);
+        timeParams = `startDT=${startTime}&endDT=${endTime}`;
+        serviceRoot = tsServiceRoot(startDateTime);
     } else {
         timeParams = '';
         serviceRoot = config.SERVICE_ROOT;
     }
 
-    // Normal parameter codes have five numerical digits. If the parameter code has an alphabetical letter
-    // as a suffix, such as 00010F, it means that parameter has been altered in our application.
-    // Parameter codes with such a suffix are for use in our application only, so we need to remove
-    // any suffix before using the parameter code in a web call to a NWIS system.
-    if (params) {
-        params = params.map(function(param) {
-            return param.replace(`${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`, '');
-        });
-    }
-
-    let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
-    let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${paramCds}&${timeParams}&siteStatus=all&format=json`;
+    let parameterCodeQuery = parameterCode ? `&parameterCd=${parameterCode}` : '';
+    let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${parameterCodeQuery}&${timeParams}&siteStatus=all&format=json`;
 
     return get(url)
         .then(response => JSON.parse(response))
@@ -74,21 +58,3 @@ export const fetchTimeSeries = function({sites, params=null, startDate=null, end
         });
 };
 
-export const fetchPreviousYearTimeSeries = function({site, startTime, endTime, parameterCode}) {
-    const hoursInOneYear = 8760;
-    parameterCode = parameterCode ? [parameterCode] : null;
-    const lastYearStartTime = DateTime.fromMillis(startTime).minus({hours: hoursInOneYear});
-    const lastYearEndTime = DateTime.fromMillis(endTime).minus({hours: hoursInOneYear});
-
-    return fetchTimeSeries({sites: [site], startDate: lastYearStartTime, endDate: lastYearEndTime, params: parameterCode});
-};
-
-export const queryWeatherService = function(latitude, longitude) {
-    const url = `${config.WEATHER_SERVICE_ROOT}/points/${latitude},${longitude}`;
-    return get(url)
-        .then(response => JSON.parse(response))
-        .catch(reason => {
-            console.error(reason);
-            return {properties: {}};
-        });
-};
