@@ -13,34 +13,6 @@ from flask import Flask
 __version__ = '0.43.0dev'
 
 
-from apscheduler.schedulers.background import BackgroundScheduler
-
-from datetime import datetime
-# !!! Pull lookup files from S3 bucket and save to data directory (then load into app.config)
-
-# !!! Set up a schedule to pull lookup files from the S3 bucket and replace the ones in the data directory
-# (then reload into app.config)
-def get_lookups(value):
-    print('time: {}: {}'.format(value, str(datetime.now())))
-    response = requests.get("http://api.open-notify.org/astros.json")
-    print(response.json())
-
-value ='at start'
-get_lookups(value)
-scheduler = BackgroundScheduler()
-scheduler.start()
-value='after'
-scheduler.add_job(lambda: get_lookups(value), 'interval', seconds=15)
-
-
-
-
-
-
-
-
-
-
 def _create_log_handler(log_directory=None, log_name=__name__):
     """
     Create a handler object. The logs will be streamed
@@ -72,18 +44,36 @@ try:
 except FileNotFoundError:
     pass
 
+from apscheduler.schedulers.background import BackgroundScheduler
+
+
+# Pull lookup files from S3 bucket and load into application context
+def get_lookups():
+    app.config['HUC_LOOKUP'] = \
+        requests.get(app.config['LOOKUP_ENDPOINTS']['hucs']).json()
+    app.config['COUNTRY_STATE_COUNTY_LOOKUP'] =\
+        requests.get(app.config['LOOKUP_ENDPOINTS']['country_state_county']).json()
+    app.config['NWIS_CODE_LOOKUP'] = requests.get(app.config['LOOKUP_ENDPOINTS']['nwis_codes']).json()
+
+
+# Set up a schedule to pull lookup files from the S3 bucket and replace the ones in the data directory
+get_lookups()
+scheduler = BackgroundScheduler()
+scheduler.start()
+scheduler.add_job(lambda: get_lookups(), 'interval', hours=24)
+
 # Read lookup files and save to the app.config
-with open(os.path.join(app.config.get('DATA_DIR'),
-                       app.config.get('NWIS_CODE_LOOKUP_FILENAME')), 'r') as f:
-    app.config['NWIS_CODE_LOOKUP'] = json.loads(f.read())
+# with open(os.path.join(app.config.get('DATA_DIR'),
+#                        app.config.get('NWIS_CODE_LOOKUP_FILENAME')), 'r') as f:
+#     app.config['NWIS_CODE_LOOKUP'] = json.loads(f.read())
+#
+# with open(os.path.join(app.config.get('DATA_DIR'),
+#                        app.config.get('COUNTRY_STATE_COUNTY_LOOKUP_FILENAME')), 'r') as f:
+#     app.config['COUNTRY_STATE_COUNTY_LOOKUP'] = json.loads(f.read())
 
-with open(os.path.join(app.config.get('DATA_DIR'),
-                       app.config.get('COUNTRY_STATE_COUNTY_LOOKUP_FILENAME')), 'r') as f:
-    app.config['COUNTRY_STATE_COUNTY_LOOKUP'] = json.loads(f.read())
-
-with open(os.path.join(app.config.get('DATA_DIR'),
-                       app.config.get('HUC_LOOKUP_FILENAME')), 'r') as f:
-    app.config['HUC_LOOKUP'] = json.loads(f.read())
+# with open(os.path.join(app.config.get('DATA_DIR'),
+#                        app.config.get('HUC_LOOKUP_FILENAME')), 'r') as f:
+#     app.config['HUC_LOOKUP'] = json.loads(f.read())
 
 # Load static assets manifest file, which maps source file names to the
 # corresponding versioned/hashed file name.

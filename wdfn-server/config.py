@@ -96,8 +96,14 @@ if os.getenv('CONTAINER_RUN', False):
 
 # Mail settings for feedback form
 MAIL_SERVER = 'smtp.usgs.gov'
-EMAIL_TARGET = {
+EMAIL_TARGETS = {
     'contact': 'gs-w-{state_district_code}_NWISWeb_Data_Inquiries@usgs.gov',
     'report': 'gs-w_support_nwisweb@usgs.gov',
     'comment': 'WDFN@usgs.gov'
+}
+
+LOOKUP_ENDPOINTS = {
+    'hucs': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/huc-lookup.json',
+    'country_state_county': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/nwis-county-state-lookup.json',
+    'nwis_codes': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/nwis-code-lookup.json'
 }

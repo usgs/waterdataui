@@ -37,7 +37,7 @@ def questions_comments(email_for_data_questions):
     if request.method == 'POST':
         target_email = email_for_data_questions
         if request.form['feedback-type'] != 'contact':
-            target_email = app.config['EMAIL_TARGET'][request.form['feedback-type']]
+            target_email = app.config['EMAIL_TARGETS'][request.form['feedback-type']]
 
         assembled_email = \
             create_message(target_email, request.form, user_system_data, timestamp=str(datetime.datetime.utcnow()))
@@ -155,7 +155,7 @@ def monitoring_location(site_no):
 
             if site_owner_state is not None:
                 email_for_data_questions = \
-                    app.config['EMAIL_TARGET']['contact'].format(state_district_code=site_owner_state.lower())
+                    app.config['EMAIL_TARGETS']['contact'].format(state_district_code=site_owner_state.lower())
             else:
                 email_for_data_questions = app.config['EMAIL_TO_REPORT_PROBLEM']
 
