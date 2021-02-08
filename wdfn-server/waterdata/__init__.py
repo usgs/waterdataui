@@ -113,21 +113,9 @@ def get_lookups():
 # Set up a schedule to pull lookup files from the S3 bucket and replace the ones in the data directory
 get_lookups()
 scheduler = BackgroundScheduler()
-scheduler.start()
+scheduler.start()git
 scheduler.add_job(lambda: get_lookups(), 'interval', hours=24)
 
-# Read lookup files and save to the app.config
-# with open(os.path.join(app.config.get('DATA_DIR'),
-#                        app.config.get('NWIS_CODE_LOOKUP_FILENAME')), 'r') as f:
-#     app.config['NWIS_CODE_LOOKUP'] = json.loads(f.read())
-#
-# with open(os.path.join(app.config.get('DATA_DIR'),
-#                        app.config.get('COUNTRY_STATE_COUNTY_LOOKUP_FILENAME')), 'r') as f:
-#     app.config['COUNTRY_STATE_COUNTY_LOOKUP'] = json.loads(f.read())
-
-# with open(os.path.join(app.config.get('DATA_DIR'),
-#                        app.config.get('HUC_LOOKUP_FILENAME')), 'r') as f:
-#     app.config['HUC_LOOKUP'] = json.loads(f.read())
 
 # Load static assets manifest file, which maps source file names to the
 # corresponding versioned/hashed file name.
