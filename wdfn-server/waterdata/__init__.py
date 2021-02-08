@@ -113,7 +113,7 @@ def get_lookups():
 # Set up a schedule to pull lookup files from the S3 bucket and replace the ones in the data directory
 get_lookups()
 scheduler = BackgroundScheduler()
-scheduler.start()git
+scheduler.start()
 scheduler.add_job(lambda: get_lookups(), 'interval', hours=24)
 
 
