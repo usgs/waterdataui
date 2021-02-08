@@ -46,14 +46,68 @@ except FileNotFoundError:
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
+import smtplib
+from email.message import EmailMessage
+def send_email(message):
+    msg = EmailMessage()
+    msg['Subject'] = 'WDFN - Lookup Error'
+    msg['From'] = 'WDFN Server'
+    msg['To'] = (', ').join(app.config['EMAIL_LIST_DEVELOPERS'].split(','))
+    msg.set_content(message)
+    try:
+        server = smtplib.SMTP(app.config['MAIL_SERVER'])
+        server.send_message(msg)
+        server.quit()
+
+    except Exception as e:
+        app.logger.error('Error when sending email about lookups: ', e)
+
+
+
+def load_lookup_from_backup_file(lookup_name):
+    try:
+        target_file_path = os.path.join(app.config.get('DATA_DIR'), 'lookups/{}.json'.format(lookup_name.lower()))
+        app.logger.debug('loading old file at {}.json'.format(target_file_path))
+        with open(target_file_path, 'r') as f:
+            app.config[lookup_name] = json.loads(f.read())
+            app.logger.debug('Successfully loaded old lookup file for {}.json, '
+                             'but will send email to team as an update.'.format(lookup_name))
+            message = 'The WDFN application could not get the lookup file for {}.json ' \
+                      'but was able to load an older file. This may be caused by an intermittent connection problem ' \
+                      'and should not affect the function of the application. However, if you receive more of these' \
+                      ' emails, an investigation is in order.'.format(lookup_name)
+            send_email(message)
+    except FileNotFoundError:
+        app.logger.error('Sorry, no previous file found. Sending email message for help.')
+        message = 'IMPORTANT - The WDFN application could not get the lookup file for {}.json,' \
+                  ' and could not load an old copy. This will cause the application to fail. ' \
+                  'Send help soon!'.format(lookup_name)
+        send_email(message)
+
 
 # Pull lookup files from S3 bucket and load into application context
 def get_lookups():
-    app.config['HUC_LOOKUP'] = \
-        requests.get(app.config['LOOKUP_ENDPOINTS']['hucs']).json()
-    app.config['COUNTRY_STATE_COUNTY_LOOKUP'] =\
-        requests.get(app.config['LOOKUP_ENDPOINTS']['country_state_county']).json()
-    app.config['NWIS_CODE_LOOKUP'] = requests.get(app.config['LOOKUP_ENDPOINTS']['nwis_codes']).json()
+    if not os.path.exists(os.path.join(app.config.get('DATA_DIR'), 'lookups')):
+        os.makedirs(os.path.join(app.config.get('DATA_DIR'), 'lookups'))
+
+    for lookup in app.config['LOOKUP_ENDPOINTS']:
+        app.logger.debug('Getting lookup from {} '.format(app.config['LOOKUP_ENDPOINTS'].get(lookup)))
+
+        try:
+            request = requests.get(app.config['LOOKUP_ENDPOINTS'].get(lookup))
+            app.config[lookup] = request.json()
+            output_file_path = os.path.join(app.config.get('DATA_DIR'), 'lookups/{}.json'.format(lookup.lower()))
+            with open(output_file_path, 'w') as output_file:
+                json.dump(request.json(), output_file)
+
+        except ValueError as e:
+            app.logger.error('Request succeeded but no Lookup JSON returned, failed with error {}'.format(e))
+            load_lookup_from_backup_file(lookup)
+        except requests.exceptions.RequestException as e:
+            app.logger.error('Request to get lookup file failed for {} with error: {}  '.format(lookup, e))
+            app.logger.error('Looking for existing lookup named {}. If found, I will use the old file and check '
+                             'again later for a new one.'.format(lookup))
+            load_lookup_from_backup_file(lookup)
 
 
 # Set up a schedule to pull lookup files from the S3 bucket and replace the ones in the data directory

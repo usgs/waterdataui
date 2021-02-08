@@ -48,7 +48,7 @@ def questions_comments(email_for_data_questions):
             server.quit()
 
         except Exception as e:
-            print('error when sending feedback email ', e)
+            app.logger.error('Error when sending feedback email ', e)
             email_send_result = 'fail'
         finally:
             return redirect(url_for('feedback_submitted', email_send_result=email_send_result))

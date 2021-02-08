@@ -120,3 +120,6 @@ venv.bak/
 node_modules/
 graph-server/.nyc_output/
 graph-server/src/swagger.json
+
+# The Lookup Files
+wdfn-server/data/lookups

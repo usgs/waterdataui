@@ -103,7 +103,10 @@ EMAIL_TARGETS = {
 }
 
 LOOKUP_ENDPOINTS = {
-    'hucs': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/huc-lookup.json',
-    'country_state_county': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/nwis-county-state-lookup.json',
-    'nwis_codes': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/nwis-code-lookup.json'
+    'HUC_LOOKUP': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/huc-lookup.json',
+    'COUNTRY_STATE_COUNTY_LOOKUP': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/nwis-county-state-lookup.json',
+    'NWIS_CODE_LOOKUP': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/nwis-code-lookup.json'
 }
+
+# Use a comma separated string, with no spaces
+EMAIL_LIST_DEVELOPERS = 'abriggs@contractor.usgs.gov'
