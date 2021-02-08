@@ -65,6 +65,8 @@ def send_email(message):
 
 
 def load_lookup_from_backup_file(lookup_name):
+    app.logger.error('Looking for existing lookup named {}. If found, I will use the old file and check '
+                     'again later for a new one.'.format(lookup_name))
     try:
         target_file_path = os.path.join(app.config.get('DATA_DIR'), 'lookups/{}.json'.format(lookup_name.lower()))
         app.logger.debug('loading old file at {}.json'.format(target_file_path))
@@ -101,12 +103,10 @@ def get_lookups():
                 json.dump(request.json(), output_file)
 
         except ValueError as e:
-            app.logger.error('Request succeeded but no Lookup JSON returned, failed with error {}'.format(e))
+            app.logger.error('No Lookup JSON returned, failed with error {}'.format(e))
             load_lookup_from_backup_file(lookup)
         except requests.exceptions.RequestException as e:
             app.logger.error('Request to get lookup file failed for {} with error: {}  '.format(lookup, e))
-            app.logger.error('Looking for existing lookup named {}. If found, I will use the old file and check '
-                             'again later for a new one.'.format(lookup))
             load_lookup_from_backup_file(lookup)
 
 
