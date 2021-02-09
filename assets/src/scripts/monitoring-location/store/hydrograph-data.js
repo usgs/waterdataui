@@ -14,11 +14,11 @@ const getParameterToFetch = function(parameterCode) {
     return isCalculatedTemperature(parameterCode) ? parameterCode.slice(0, -1) : parameterCode;
 };
 
-export const setHydrographTimeRange = function(timeRange, kind) {
+export const setHydrographTimeRange = function(timeRange, timeRangeKind) {
     return {
         type: 'SET_HYDROGRAPH_TIME_RANGE',
         timeRange,
-        kind
+        timeRangeKind
     };
 };
 
@@ -28,10 +28,10 @@ export const clearHydrographData = function() {
     };
 };
 
-export const addIVHydrographData = function(kind, ivData) {
+export const addIVHydrographData = function(dataKind, ivData) {
     return {
         type: 'ADD_IV_HYDROGRAPH_DATA',
-        kind,
+        dataKind,
         ivData
     };
 };
@@ -53,7 +53,7 @@ export const addGroundwaterLevels = function(gwLevels) {
 /*
  * startTime and endTime should be ISO 8601 time strings for all of these retrieve functions
  */
-export const retrieveIVData = function(siteno, kind, {parameterCode, period, startTime, endTime}) {
+export const retrieveIVData = function(siteno, dataKind, {parameterCode, period, startTime, endTime}) {
     return function(dispatch) {
         const isCalculatedTemperatureCode = isCalculatedTemperature(parameterCode);
 
@@ -96,7 +96,7 @@ export const retrieveIVData = function(siteno, kind, {parameterCode, period, sta
                     return valuesByMethodId;
                 }, {})
             };
-            dispatch(addIVHydrographData(kind, timeSeriesData));
+            dispatch(addIVHydrographData(dataKind, timeSeriesData));
         });
     };
 };
@@ -110,7 +110,7 @@ export const retrievePriorYearIVData = function(siteno, {parameterCode, startTim
             priorYearEndTime === currentPriorYearTimeRange.end) {
             return Promise.resolve();
         } else {
-            dispatch(setHydrographTimeRange({start: priorYearStartTime, end: priorYearEndTime}, 'compare'));
+            dispatch(setHydrographTimeRange({start: priorYearStartTime, end: priorYearEndTime}, 'prioryear'));
             return dispatch(retrieveIVData(siteno, 'compare', {
                 parameterCode: parameterCode,
                 startTime: DateTime.fromMillis(priorYearStartTime).toISO(),
@@ -211,7 +211,7 @@ export const retrieveHydrographData = function(siteno, {parameterCode, period, s
                 end: DateTime.fromISO(startTime).toMillis()
             };
         }
-        dispatch(setHydrographTimeRange(timeRange, 'primary'));
+        dispatch(setHydrographTimeRange(timeRange, 'current'));
 
         let fetchPromises = [];
         if (hasIVData) {
@@ -243,7 +243,7 @@ export const hydrographDataReducer = function(hydrographData = {}, action) {
     switch(action.type) {
         case 'SET_HYDROGRAPH_TIME_RANGE': {
             let newData = {};
-            newData[`${action.kind}TimeRange`] = action.timeRange;
+            newData[`${action.timeRangeKind}TimeRange`] = action.timeRange;
             return Object.assign({}, hydrographData, newData);
         }
         case 'CLEAR_HYDROGRAPH_DATA': {
@@ -251,7 +251,7 @@ export const hydrographDataReducer = function(hydrographData = {}, action) {
         }
         case 'ADD_IV_HYDROGRAPH_DATA': {
             let newData = {};
-            newData[`${action.kind}IVData`] = action.ivData;
+            newData[`${action.dataKind}IVData`] = action.ivData;
             return Object.assign({}, hydrographData, newData);
         }
         case 'ADD_MEDIAN_STATISTICS_DATA': {

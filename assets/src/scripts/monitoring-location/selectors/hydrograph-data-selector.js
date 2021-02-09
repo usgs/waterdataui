@@ -6,16 +6,16 @@ import {createSelector} from 'reselect';
 
 import config from 'ui/config';
 
-export const getTimeRange = memoize((kind) => state => state.hydrographData[`${kind}TimeRange`] || null);
+export const getTimeRange = memoize((timeRangeKind) => state => state.hydrographData[`${timeRangeKind}TimeRange`] || null);
 
-export const getIVData = memoize((kind) => state => state.hydrographData[`${kind}IVData`]) || null;
+export const getIVData = memoize((dataKind) => state => state.hydrographData[`${dataKind}IVData`]) || null;
 
 export const getMedianStatisticsData = state => state.hydrographData.medianStatisticsData || null;
 
 export const getGroundwaterLevels = state => state.hydrographData.groundwaterLevels ||  null;
 
-export const getIVValueRange = memoize(kind => createSelector(
-    getIVData(kind),
+export const getIVValueRange = memoize(dataKind => createSelector(
+    getIVData(dataKind),
     ivData => {
         if (!ivData) {
             return null;
@@ -69,7 +69,7 @@ export const getPrimaryParameter = createSelector(
  * the value at local time for the month/day in the original statistics data
  */
 export const getPrimaryMedianStatisticsData = createSelector(
-    getTimeRange('primary'),
+    getTimeRange('current'),
     getMedianStatisticsData,
     (timeRange, stats) => {
         if (!stats || !timeRange) {
@@ -126,7 +126,7 @@ export const getPrimaryMedianStatisticsValueRange = createSelector(
  * @returns {Function} which returns {Object} with method ID keys and method details.
  */
 export const getPrimaryMethods = createSelector(
-    getIVData('primary'),
+    getIVData('current'),
     (ivData) => {
         if (!ivData) {
             return null;

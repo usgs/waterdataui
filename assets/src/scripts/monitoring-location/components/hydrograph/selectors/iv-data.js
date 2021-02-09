@@ -1,6 +1,5 @@
 import {format} from 'd3-format';
 import memoize from 'fast-memoize';
-import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
 import {getIVData} from 'ml/selectors/hydrograph-data-selector';
@@ -75,6 +74,9 @@ const transformToCumulative = function(points) {
 export const getIVDataPoints = memoize(kind => createSelector(
     getIVData(kind),
     (ivData) => {
+        if (!ivData) {
+            return null;
+        }
         if (PARM_CODES_TO_ACCUMULATE.includes(ivData.parameter.parameterCode)) {
             Object.keys(ivData.values).forEach(methodID => {
                 ivData[methodID].points = transformToCumulative(ivData[methodID].points);
@@ -119,9 +121,12 @@ export const getIVDataPoints = memoize(kind => createSelector(
  * if a segment has a different label, or if two line segments are separated by more than two days.
  * The returned segments represent the currently selected time series
  */
-export const getIVDataSegments = memoize(kind => createSelector(
-    getIVDataPoints(kind),
+export const getIVDataSegments = memoize(dataKind => createSelector(
+    getIVDataPoints(dataKind),
     (pointsByMethodID) => {
+        if (!pointsByMethodID) {
+            return null;
+        }
         const getNewSegment = function(point) {
             return {
                 ...point,

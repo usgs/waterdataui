@@ -37,7 +37,7 @@ export const MASK_DESC = {
 };
 
 export const HASH_ID = {
-    current: 'hash-45',
+    primary: 'hash-45',
     compare: 'hash-135'
 };
 

@@ -16,24 +16,21 @@ import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-
 
 import {getAxes}  from './selectors/axes';
 import {getVisibleGroundwaterLevelPoints} from './selectors/discrete-data';
-//import {
-//    getCurrentVariableLineSegments,
-//    getCurrentVariableMedianStatPoints,
-//    HASH_ID
-//} from './selectors/drawing-data';
-import {HASH_ID} from './selectors/iv-data';
-import {getTitle, getDescription} from './selectors/time-series-data';
+import {getIVDataSegments, HASH_ID} from './selectors/iv-data';
+import {getCurrentMethodID} from 'ml/selectors/time-series-selector';
+
+import {getTitle, getDescription, isVisible} from './selectors/time-series-data';
 import {getMainLayout} from './selectors/layout';
-//import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
+import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
 //import {getDescription, isVisible, getTitle} from './selectors/time-series-data';
 
 import {drawGroundwaterLevels} from './discrete-data';
-//import {drawDataLines} from './time-series-lines';
+import {drawDataSegments} from './time-series-lines';
 //import {drawTooltipFocus, drawTooltipText}  from './tooltip';
 
 const addDefsPatterns = function(elem) {
     const patterns = [{
-        patternId: HASH_ID.current,
+        patternId: HASH_ID.primary,
         patternTransform: 'rotate(45)'
     }, {
         patternId: HASH_ID.compare,
@@ -252,24 +249,26 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, agencyCode, sit
         .call(link(store, (group, layout) => {
             group.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
         }, getMainLayout))
-        .call(link(store, appendAxes, getAxes('MAIN')));
-    /*
-        .call(link(store, drawDataLines, createStructuredSelector({
-            visible: isVisible('current'),
-            tsLinesMap: getCurrentVariableLineSegments('current'),
+        .call(link(store, appendAxes, getAxes('MAIN')))
+        .call(link(store, drawDataSegments, createStructuredSelector({
+            visible: () => true,
+            currentMethodID: getCurrentMethodID,
+            tsSegmentsMap: getIVDataSegments('primary'),
+            dataKind: () => 'primary',
             xScale: getMainXScale('current'),
             yScale: getMainYScale,
-            tsKey: () => 'current',
             enableClip: () => true
         })))
-        .call(link(store, drawDataLines, createStructuredSelector({
+        .call(link(store, drawDataSegments, createStructuredSelector({
             visible: isVisible('compare'),
-            tsLinesMap: getCurrentVariableLineSegments('compare'),
-            xScale: getMainXScale('compare'),
+            currentMethodID: getCurrentMethodID,
+            tsSegmentsMap: getIVDataSegments('compare'),
+            dataKind: () => 'compare',
+            xScale: getMainXScale('prioryear'),
             yScale: getMainYScale,
-            tsKey: () => 'compare',
             enableClip: () => true
-        })))
+        })));
+    /*
         .call(link(store, plotAllMedianPoints, createStructuredSelector({
             visible: isVisible('median'),
             xscale: getMainXScale('current'),

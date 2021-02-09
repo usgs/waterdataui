@@ -59,7 +59,7 @@ export const getTitle = createSelector(
  */
 export const getDescription = createSelector(
     getPrimaryParameter,
-    getTimeRange('primary'),
+    getTimeRange('current'),
     (parameter, timeRange) => {
         let result = parameter ? parameter.description : '';
         if (timeRange) {

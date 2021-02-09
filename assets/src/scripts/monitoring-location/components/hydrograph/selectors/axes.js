@@ -59,11 +59,11 @@ export const getBrushXAxis = createSelector(
 /**
  * Returns a Redux Selection that returns an object with xAxis, yAxis, and secondaryYAxis properties
  */
-export const getAxes = memoize(kind => createSelector(
-    getXScale(kind, 'primary'),
-    getYScale(kind),
+export const getAxes = memoize(graphKind => createSelector(
+    getXScale(graphKind, 'current'),
+    getYScale(graphKind),
     getYTickDetails,
-    getLayout(kind),
+    getLayout(graphKind),
     getPrimaryParameter,
     (xScale, yScale, yTickDetails, layout, parameter) => {
         return {

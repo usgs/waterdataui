@@ -68,7 +68,7 @@ export const createYScale = function(parameterCode, extent, size) {
 /*
  * Selector function which returns the time range visible for the kind of graph and tsKey
  * @param {String} graphKind - "BRUSH" or "MAIN"
- * @param {String} timeRangeKind - 'primary' or 'compare'
+ * @param {String} timeRangeKind - 'current' or 'prioryear'
  * @return {Function} - which returns an {Object} with properties start, end {Number}.
  */
 export const getGraphTimeRange = memoize((graphKind, timeRangeKind) => createSelector(
@@ -96,7 +96,7 @@ export const getGraphTimeRange = memoize((graphKind, timeRangeKind) => createSel
 
 /**
  * Selector function which returns a function which returns the xscale for
- * a D3 graph of graphKind ("BRUSH' or 'MAIN') and timeRangeKind(primary, compare)
+ * a D3 graph of graphKind ("BRUSH' or 'MAIN') and timeRangeKind(current, prioryear)
  * @param  {Object} state       Redux store
  * @return {Function}           D3 scale function
  */
