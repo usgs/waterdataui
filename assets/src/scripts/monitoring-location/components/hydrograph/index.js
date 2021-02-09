@@ -33,7 +33,7 @@ import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 //import {drawTimeSeriesLegend} from './legend';
 //import {drawMethodPicker} from './method-picker';
 //import {plotSeriesSelectTable} from './parameters';
-//import {drawTimeSeriesGraph} from './time-series-graph';
+import {drawTimeSeriesGraph} from './time-series-graph';
 //import {drawTooltipCursorSlider} from './tooltip';
 
 //import {getLineSegmentsByParmCd} from './selectors/drawing-data';
@@ -54,6 +54,8 @@ export const attachToNode = function(store,
                                      node,
                                      {
                                          siteno,
+                                         agencyCode='',//TODO - set these in markup
+                                         sitename='',//TODO - set these in markup
                                          latitude,
                                          longitude,
                                          parameterCode,
@@ -66,8 +68,8 @@ export const attachToNode = function(store,
                                          showMLName = false
                                      } = {}) {
     const nodeElem = select(node);
-    if (!siteno) {
-        select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No data is available.'});
+    if (!siteno && !config.uvPeriodOfRecord && !config.gwPeriodOfRecord) {
+        select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No IV or field visit data is available.'});
         return;
     }
 
@@ -87,52 +89,13 @@ export const attachToNode = function(store,
         loadCompare: false,
         loadMedian: false
     }));
-    fetchDataPromise.then(() => console.log('Finished fetching Hydrograph data'));
-    /*
-    if (showOnlyGraph) {
-        // Only fetch what is needed
-        if (parameterCode && period) {
-            fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(siteno, parameterCode, period));
-        } else if (parameterCode && startDT && endDT) {
-            // Don't fetch until time zone is available
-            fetchDataPromise = fetchTimeZonePromise.then(() => {
-                return store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange(siteno, startDT, endDT, parameterCode));
-            });
-        } else {
-            fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno, parameterCode ? [parameterCode] : null));
-        }
-    } else {
-        // Retrieve all parameter codes for 7 days and median statistics
-        fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno))
-            .then(() => {
-                // Fetch any extended data needed to set initial state
-                const currentParamCode = parameterCode ? parameterCode : getCurrentParmCd(store.getState());
-                // If there are query parameters present, use them but restrict them to the form of PxD or P1Y
-                if (isPeriodWithinAcceptableRange(period)) {
-                    isPeriodCustom(period) ?
-                        store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(siteno, parameterCode, period)) :
-                        store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(siteno, period, currentParamCode));
-                } else if (startDT && endDT) {
-                    fetchTimeZonePromise.then(() => {
-                        store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange(siteno, startDT, endDT, currentParamCode));
-                    });
-                }
-            });
-        store.dispatch(statisticsDataActions.retrieveMedianStatistics(siteno));
-    }
-
-    Promise.all([fetchDataPromise, loadPromise]).then(() => {
-        // Hide the loading indicator
+    fetchDataPromise.then(() => {
+        console.log('Finished fetching Hydrograph data');
         nodeElem
             .select('.loading-indicator-container')
             .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
-        if (!hasAnyVariables(store.getState())) {
-            drawInfoAlert(nodeElem.select('.graph-container'), {body: 'No time series data or discrete data available for this site'});
-            if (!showOnlyGraph) {
-                document.getElementById('classic-page-link')
-                    .setAttribute('href', `${config.NWIS_INVENTORY_PAGE_URL}?site_no=${siteno}`);
-            }
-        } else {
+
+            /* TODO: add this back in
             //Update time series state
             if (parameterCode) {
                 const isThisParamCode = function(variable) {
@@ -156,10 +119,12 @@ export const attachToNode = function(store,
             if (timeSeriesId) {
                 store.dispatch(ivTimeSeriesStateActions.setCurrentIVMethodID(parseInt(timeSeriesId)));
             }
+            */
             // Initial data has been fetched and initial state set. We can render the hydrograph elements
             // Set up rendering functions for the graph-container
             let graphContainer = nodeElem.select('.graph-container')
-                .call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph);
+                .call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);
+            /*
             if (!showOnlyGraph) {
                 graphContainer
                     .call(drawTooltipCursorSlider, store)
@@ -195,7 +160,8 @@ export const attachToNode = function(store,
 
                 renderTimeSeriesUrlParams(store);
             }
-        }
+            */
+
     });
-    */
+
 };

@@ -212,7 +212,7 @@ export const parseRDB = function(rdbData) {
 
 /*
  * Convert a temperature measurement in fahrenheit to celsius.
- * @param {Number} fahrenheit
+ * @param {String or Number} fahrenheit
  * @returns {Number} measurement in celsius
  */
 export const convertFahrenheitToCelsius = function(fahrenheit) {

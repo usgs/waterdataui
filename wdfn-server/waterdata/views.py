@@ -170,7 +170,7 @@ def monitoring_location(site_no):
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'available_data_types': available_data_types,
-                'time_zone': time_zone,
+                'time_zone': time_zone if time_zone else 'local',
                 'uv_period_of_record': get_period_of_record_by_parm_cd(parameter_data),
                 'gw_period_of_record': get_period_of_record_by_parm_cd(parameter_data, 'gw') if app.config[
                     'GROUNDWATER_LEVELS_ENABLED'] else None,

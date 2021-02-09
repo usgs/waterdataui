@@ -65,6 +65,7 @@ export const retrieveIVData = function(siteno, kind, {parameterCode, period, sta
             endTime: endTime
         }).then(data => {
             const tsData = data.value.timeSeries[0];
+            const noDataValue = tsData.variable.noDataValue;
             let parameter = {
                 parameterCode: tsData.variable.variableCode[0].value,
                 name: tsData.variable.variableName,
@@ -79,9 +80,10 @@ export const retrieveIVData = function(siteno, kind, {parameterCode, period, sta
                 values: tsData.values.reduce((valuesByMethodId, value) => {
                     valuesByMethodId[value.method[0].methodID] = {
                         points: value.value.map(point => {
-                            let pointValue = point.value;
+                            let pointValue = parseFloat(point.value);
+                            pointValue = pointValue === noDataValue ? null : pointValue;
                             if (pointValue && isCalculatedTemperatureCode) {
-                                pointValue = convertCelsiusToFahrenheit(pointValue).toFixed(2);
+                                pointValue = parseFloat(convertCelsiusToFahrenheit(pointValue).toFixed(2));
                             }
                             return {
                                 value: pointValue,
@@ -108,7 +110,7 @@ export const retrievePriorYearIVData = function(siteno, {parameterCode, startTim
             priorYearEndTime === currentPriorYearTimeRange.end) {
             return Promise.resolve();
         } else {
-            dispatch(setHydrographTimeRange({startTime: priorYearStartTime, endTime: priorYearEndTime}, 'compare'));
+            dispatch(setHydrographTimeRange({start: priorYearStartTime, end: priorYearEndTime}, 'compare'));
             return dispatch(retrieveIVData(siteno, 'compare', {
                 parameterCode: parameterCode,
                 startTime: DateTime.fromMillis(priorYearStartTime).toISO(),
@@ -160,7 +162,7 @@ export const retrieveGroundwaterLevels = function(site, {parameterCode, period, 
                         values = timeSeries.values[0].value.map((v) => {
                             const dateTime = DateTime.fromISO(v.dateTime, {zone: 'utc'}).toMillis();
                             return {
-                                value: v.value,
+                                point: parseFloat(v.value),
                                 qualifiers: v.qualifiers,
                                 dateTime: dateTime
                             };
@@ -255,7 +257,7 @@ export const hydrographDataReducer = function(hydrographData = {}, action) {
         case 'ADD_MEDIAN_STATISTICS_DATA': {
             return {
                 ...hydrographData,
-                statisticsData: action.statsData
+                medianStatisticsData: action.statsData
             };
         }
         case 'ADD_GROUNDWATER_LEVELS': {

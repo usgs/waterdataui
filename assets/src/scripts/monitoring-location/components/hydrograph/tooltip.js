@@ -123,7 +123,6 @@ export const drawTooltipText = function(elem, store) {
         comparePoints: getTsCursorPoints('compare'),
         gwLevelPoint: getGroundwaterLevelCursorPoint,
         unitCode: getCurrentVariableUnitCode,
-        ianaTimeZone: getTsTimeZone,
         layout: getMainLayout
     })));
 };

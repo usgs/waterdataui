@@ -10,23 +10,26 @@ import {appendAxes} from 'd3render/axes';
 import {renderMaskDefs} from 'd3render/data-masks';
 import {appendInfoTooltip} from 'd3render/info-tooltip';
 
-import {getAgencyCode, getMonitoringLocationName, getCurrentVariable} from 'ml/selectors/time-series-selector';
+import {getPrimaryParameter} from 'ml/selectors/hydrograph-data-selector';
+//import {getAgencyCode, getMonitoringLocationName} from 'ml/selectors/time-series-selector';
 import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
 
 import {getAxes}  from './selectors/axes';
 import {getVisibleGroundwaterLevelPoints} from './selectors/discrete-data';
-import {
-    getCurrentVariableLineSegments,
-    getCurrentVariableMedianStatPoints,
-    HASH_ID
-} from './selectors/drawing-data';
+//import {
+//    getCurrentVariableLineSegments,
+//    getCurrentVariableMedianStatPoints,
+//    HASH_ID
+//} from './selectors/drawing-data';
+import {HASH_ID} from './selectors/iv-data';
+import {getTitle, getDescription} from './selectors/time-series-data';
 import {getMainLayout} from './selectors/layout';
-import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
-import {getDescription, isVisible, getTitle} from './selectors/time-series-data';
+//import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
+//import {getDescription, isVisible, getTitle} from './selectors/time-series-data';
 
 import {drawGroundwaterLevels} from './discrete-data';
-import {drawDataLines} from './time-series-lines';
-import {drawTooltipFocus, drawTooltipText}  from './tooltip';
+//import {drawDataLines} from './time-series-lines';
+//import {drawTooltipFocus, drawTooltipText}  from './tooltip';
 
 const addDefsPatterns = function(elem) {
     const patterns = [{
@@ -150,7 +153,7 @@ const plotAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesP
 };
 
 
-const createTitle = function(elem, store, siteNo, showMLName, showTooltip) {
+const createTitle = function(elem, store, siteNo, showMLName, agencyCode, sitename, showTooltip) {
     let titleDiv = elem.append('div')
         .classed('time-series-graph-title', true);
 
@@ -160,19 +163,19 @@ const createTitle = function(elem, store, siteNo, showMLName, showTooltip) {
                 elem.attr('class', 'monitoring-location-name-div')
                     .html(`${mlName}, ${agencyCode} ${siteNo}`);
             }, createStructuredSelector({
-                mlName: getMonitoringLocationName(siteNo),
-                agencyCode: getAgencyCode(siteNo)
+                mlName: sitename,
+                agencyCode: agencyCode
             })));
     }
     titleDiv.append('div')
-        .call(link(store,(elem, {title, variable}) => {
+        .call(link(store,(elem, {title, parameter}) => {
             elem.html(title);
             if (showTooltip) {
-                elem.call(appendInfoTooltip, variable ? variable.variableDescription : 'No description available');
+                elem.call(appendInfoTooltip, parameter ? parameter.description : 'No description available');
             }
         }, createStructuredSelector({
             title: getTitle,
-            variable: getCurrentVariable
+            parameter: getPrimaryParameter
         })));
 };
 
@@ -207,7 +210,7 @@ const watermark = function(elem, store) {
  * @param {Boolean} showMLName - If true add the monitoring location name to the top of the graph
  * @param {Boolean} showTooltip - If true render the tooltip text and add the tooltip focus element
  */
-export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, showTooltip) {
+export const drawTimeSeriesGraph = function(elem, store, siteNo, agencyCode, sitename, showMLName, showTooltip) {
     let graphDiv;
 
     graphDiv = elem.append('div')
@@ -216,10 +219,12 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
         .attr('ga-event-category', 'hydrograph-interaction')
         .attr('ga-event-action', 'clickOnTimeSeriesGraph')
         .call(watermark, store)
-        .call(createTitle, store, siteNo, showMLName, showTooltip);
+        .call(createTitle, store, siteNo, agencyCode, sitename, showMLName, showTooltip);
+    /*
     if (showTooltip) {
         graphDiv.call(drawTooltipText, store);
     }
+    */
     const graphSvg = graphDiv.append('svg')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .classed('hydrograph-svg', true)
@@ -247,7 +252,8 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
         .call(link(store, (group, layout) => {
             group.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
         }, getMainLayout))
-        .call(link(store, appendAxes, getAxes()))
+        .call(link(store, appendAxes, getAxes('MAIN')));
+    /*
         .call(link(store, drawDataLines, createStructuredSelector({
             visible: isVisible('current'),
             tsLinesMap: getCurrentVariableLineSegments('current'),
@@ -287,4 +293,5 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
     if (showTooltip) {
         dataGroup.call(drawTooltipFocus, store);
     }
+     */
 };
