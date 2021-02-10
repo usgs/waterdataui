@@ -271,7 +271,7 @@ export const ivTimeSeriesStateReducer = function(ivTimeSeriesState={}, action) {
         case 'CLEAR_IV_GRAPH_BRUSH_OFFSET':
             return {
                 ...ivTimeSeriesState,
-                ivGraphBrushOffset: undefined
+                ivGraphBrushOffset: null
             };
 
         case 'ADD_IV_TIME_SERIES_TO_LOADING_KEYS':

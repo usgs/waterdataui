@@ -17,8 +17,8 @@ const formatTime = function(timeInMillis) {
  * @param  {String}  tsKey Time series key
  * @return {Boolean}           Show state of the time series
  */
-export const isVisible = memoize(tsKey => (state) => {
-    return state.ivTimeSeriesState.showIVTimeSeries[tsKey];
+export const isVisible = memoize(dataKind => (state) => {
+    return dataKind === 'primary' ? true : state.ivTimeSeriesState.showIVTimeSeries[dataKind];
 });
 
 /**
@@ -26,7 +26,7 @@ export const isVisible = memoize(tsKey => (state) => {
  */
 export const getYLabel = createSelector(
     getPrimaryParameter,
-    (parameter => parameter ? parameter.description : '')
+    parameter => parameter ? parameter.description : ''
 );
 
 /*

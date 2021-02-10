@@ -109,7 +109,7 @@ export const getXScale = memoize((graphKind, timeRangeKind) => createSelector(
 ));
 
 export const getMainXScale = (timeRangeKind) => getXScale('MAIN', timeRangeKind);
-export const getBrushXScale = getXScale('BRUSH', 'primary');
+export const getBrushXScale = getXScale('BRUSH', 'current');
 
 /**
  * Selector for y-scale

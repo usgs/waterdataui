@@ -3,7 +3,7 @@ import memoize from 'fast-memoize';
 import reduce from 'lodash/reduce';
 import {createSelector} from 'reselect';
 
-import {getCurrentParmCd} from './time-series-selector';
+import {getCurrentParameterCode} from './time-series-selector';
 
 /*
  * Selectors that return properties from the state
@@ -22,7 +22,7 @@ export const getMedianStatisticsByParmCd = memoize(parmCd => createSelector(
  * @return {Object} where keys are TsID and the properties are the median data.
  */
 export const getCurrentVariableMedianStatistics = createSelector(
-    getCurrentParmCd,
+    getCurrentParameterCode,
     getMedianStatistics,
     (parmCd, stats) => stats[parmCd] || null
 );

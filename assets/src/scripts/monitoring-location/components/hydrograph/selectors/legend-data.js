@@ -1,44 +1,21 @@
-import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
 import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from 'd3render/markers';
 
 import {getWaterwatchFloodLevels, isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
-import {getCurrentVariableMedianMetadata} from 'ml/selectors/median-statistics-selector';
+//import {getCurrentVariableMedianMetadata} from 'ml/selectors/median-statistics-selector';
 
 import {getGroundwaterLevelsMarker} from '../discrete-data';
 
-import {getCurrentVariableLineSegments, HASH_ID, MASK_DESC} from './drawing-data';
+import {getIVUniqueDataKinds, HASH_ID} from './iv-data';
 import {anyVisibleGroundwaterLevels} from './discrete-data';
 
 const TS_LABEL = {
-    'current': 'Current: ',
+    'primary': 'Current: ',
     'compare': 'Last year: ',
     'median': 'Median: '
 };
 
-/*
- * Returns a Redux Selector function which returns an Object that represents the unique
- * classes that are visible for the tsKey
- *      @prop {Boolean} default
- *      @prop {Boolean} approved
- *      @prop {Boolean} estimated
- *      @prop {Set} dataMasks
- */
-const getUniqueClasses = memoize(tsKey => createSelector(
-    getCurrentVariableLineSegments(tsKey),
-    (tsLineSegments) => {
-        let classes = [].concat(...Object.values(tsLineSegments)).map((line) => line.classes);
-        return {
-            default: classes.some((cls) => !cls.approved && !cls.estimated && !cls.dataMask),
-            approved: classes.some((cls) => cls.approved),
-            estimated: classes.some((cls) => cls.estimated),
-            dataMasks: new Set(classes.map((cls) => cls.dataMask).filter((mask) => {
-                return mask;
-            }))
-        };
-    }
-));
 
 /**
  * Returns a Redux selector function that returns an object of attributes to be used
@@ -50,16 +27,16 @@ const getUniqueClasses = memoize(tsKey => createSelector(
  */
 const getLegendDisplay = createSelector(
     (state) => state.ivTimeSeriesState.showIVTimeSeries,
-    getCurrentVariableMedianMetadata,
-    getUniqueClasses('current'),
-    getUniqueClasses('compare'),
+    () => null, //getCurrentVariableMedianMetadata,
+    getIVUniqueDataKinds('primary'),
+    getIVUniqueDataKinds('compare'),
     isWaterwatchVisible,
     getWaterwatchFloodLevels,
     anyVisibleGroundwaterLevels,
     (showSeries, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, showGroundWaterLevels) => {
         return {
-            current: showSeries.current ? currentClasses : undefined,
-            compare: showSeries.compare ? compareClasses : undefined,
+            primaryIV: showSeries.current ? currentClasses : undefined,
+            compareIV: showSeries.compare ? compareClasses : undefined,
             median: showSeries.median ? medianSeries : undefined,
             floodLevels: showWaterWatch ? floodLevels : undefined,
             groundwaterLevels: showGroundWaterLevels
@@ -67,30 +44,18 @@ const getLegendDisplay = createSelector(
     }
 );
 
-const getTsMarkers = function(tsKey, uniqueClasses) {
-    let tsMarkers;
-    const maskMarkers = Array.from(uniqueClasses.dataMasks.values()).map((mask) => {
-        const maskName = MASK_DESC[mask];
-        const tsClass = `${maskName.replace(' ', '-').toLowerCase()}-mask`;
-        const fill = `url(#${HASH_ID[tsKey]})`;
-        return defineRectangleMarker(null, `mask ${tsClass}`, maskName, fill);
-    });
-
+const getIVMarkers = function(dataKind, uniqueIVKinds) {
+    let maskMarkers = [];
     let lineMarkers = [];
-    if (uniqueClasses.default) {
-        lineMarkers.push(defineLineMarker(null, `line-segment ts-${tsKey}`, 'Provisional'));
-    }
-    if (uniqueClasses.approved) {
-        lineMarkers.push(defineLineMarker(null, `line-segment approved ts-${tsKey}`, 'Approved'));
-    }
-    if (uniqueClasses.estimated) {
-        lineMarkers.push(defineLineMarker(null, `line-segment estimated ts-${tsKey}`, 'Estimated'));
-    }
-
-    if (lineMarkers.length || maskMarkers.length) {
-        tsMarkers = [defineTextOnlyMarker(TS_LABEL[tsKey]), ...lineMarkers, ...maskMarkers];
-    }
-    return tsMarkers;
+    const textMarker = defineTextOnlyMarker(TS_LABEL[dataKind]);
+    uniqueIVKinds.forEach(ivKind => {
+        if (ivKind.isMasked) {
+            maskMarkers.push(defineRectangleMarker(null, `mask ${ivKind.class}`, ivKind.label, `url(#${HASH_ID[dataKind]})`));
+        } else {
+            return lineMarkers.push(defineLineMarker(null, `line-segment ${ivKind.class} ts-${dataKind}`, ivKind.label));
+        }
+    });
+    return [textMarker, ...lineMarkers, ...maskMarkers];
 };
 
 /*
@@ -159,8 +124,8 @@ export const getLegendMarkerRows = createSelector(
     getLegendDisplay,
     (displayItems) => {
         const markerRows = [];
-        let currentTsMarkerRow = displayItems.current ? getTsMarkers('current', displayItems.current) : undefined;
-        const compareTsMarkerRow = displayItems.compare ? getTsMarkers('compare', displayItems.compare) : undefined;
+        let currentTsMarkerRow = displayItems.primaryIV ? getIVMarkers('primary', displayItems.primaryIV) : undefined;
+        const compareTsMarkerRow = displayItems.compareIV ? getIVMarkers('compare', displayItems.compareIV) : undefined;
         const medianMarkerRows = displayItems.median ? getMedianMarkers(displayItems.median) : [];
         const floodMarkerRows = displayItems.floodLevels ? getFloodLevelMarkers(displayItems.floodLevels) : [];
         /* Add groundwater marker to current row */

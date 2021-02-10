@@ -7,16 +7,17 @@ import {mediaQuery} from 'ui/utils';
 
 import {appendXAxis} from 'd3render/axes';
 
+import {getCurrentMethodID} from 'ml/selectors/time-series-selector';
+
 import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
 import {getBrushXAxis} from './selectors/axes';
-import {getVisibleGroundwaterLevelPoints} from './selectors/discrete-data';
-import {getCurrentVariableLineSegments} from './selectors/drawing-data';
+import {getGroundwaterLevelPoints} from './selectors/discrete-data';
+import {getIVDataSegments} from './selectors/iv-data';
 import {getBrushLayout} from './selectors/layout';
 import {getBrushXScale, getBrushYScale} from './selectors/scales';
-import {isVisible} from './selectors/time-series-data';
 
-import {drawDataLines} from './time-series-lines';
+import {drawDataSegments} from './time-series-lines';
 import {drawGroundwaterLevels} from './discrete-data';
 
 
@@ -45,7 +46,7 @@ export const drawGraphBrush = function(container, store) {
             return;
         }
 
-        const xScale = getBrushXScale('current')(store.getState());
+        const xScale = getBrushXScale(store.getState());
         const brushRange = event.selection || xScale.range();
 
         // Only adjust the main hydrograph when user is done adjusting the time range.
@@ -87,17 +88,18 @@ export const drawGraphBrush = function(container, store) {
                     xAxis: getBrushXAxis,
                     layout: getBrushLayout
                 })))
-                .call(link(store, drawDataLines, createStructuredSelector({
-                    visible: isVisible('current'),
-                    tsLinesMap: getCurrentVariableLineSegments('current'),
-                    xScale: getBrushXScale('current'),
+                .call(link(store, drawDataSegments, createStructuredSelector({
+                    visible: () => true,
+                    currentMethodID: getCurrentMethodID,
+                    tsSegmentsMap: getIVDataSegments('primary'),
+                    dataKind: () => 'primary',
+                    xScale: getBrushXScale,
                     yScale: getBrushYScale,
-                    tsKey: () => 'current',
                     enableClip: () => false
                 })))
                 .call(link(store, drawGroundwaterLevels, createStructuredSelector({
-                    levels: getVisibleGroundwaterLevelPoints,
-                    xScale: getBrushXScale('current'),
+                    levels: getGroundwaterLevelPoints,
+                    xScale: getBrushXScale,
                     yScale: getBrushYScale,
                     enableClip: () => false
                 })));
@@ -165,6 +167,6 @@ export const drawGraphBrush = function(container, store) {
         }, createStructuredSelector({
             layout: getBrushLayout,
             hydrographBrushOffset: (state) => state.ivTimeSeriesState.ivGraphBrushOffset,
-            xScale: getBrushXScale('current')
+            xScale: getBrushXScale
         })));
 };

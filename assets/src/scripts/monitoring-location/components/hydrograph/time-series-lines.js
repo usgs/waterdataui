@@ -1,10 +1,13 @@
 import {line as d3Line} from 'd3-shape';
 
-import {HASH_ID} from './selectors/drawing-data';
+export const HASH_ID = {
+    primary: 'hash-45',
+    compare: 'hash-135'
+};
 
 const CIRCLE_RADIUS_SINGLE_PT = 1;
 
-const drawLineSegment = function(group, {segment, isCurrentMethod, dateKind, xScale, yScale}) {
+const drawLineSegment = function(group, {segment, isCurrentMethod, dataKind, xScale, yScale}) {
     let lineElem;
     if (segment.points.length === 1) {
         lineElem = group.append('circle')
@@ -24,11 +27,11 @@ const drawLineSegment = function(group, {segment, isCurrentMethod, dateKind, xSc
     lineElem
         .classed('line-segment', true)
         .classed(segment.class, true)
-        .classed(dateKind, true)
+        .classed(dataKind, true)
         .classed('not-current-method', !isCurrentMethod);
 };
 
-const drawMaskSegment = function(group, {segment, isCurrentMethod, dateKind, xScale, yScale}) {
+const drawMaskSegment = function(group, {segment, isCurrentMethod, dataKind, xScale, yScale}) {
     const [yRangeStart, yRangeEnd] = yScale.range();
     const xRangeStart = xScale(segment.points[0].dateTime);
     const xRangeEnd = xScale(segment.points[segment.points.length - 1].dateTime);
@@ -56,7 +59,7 @@ const drawMaskSegment = function(group, {segment, isCurrentMethod, dateKind, xSc
         .attr('y', yRangeEnd)
         .attr('width', rectWidth)
         .attr('height', rectHeight)
-        .attr('fill', `url(#${HASH_ID[dateKind]}`);
+        .attr('fill', `url(#${HASH_ID[dataKind]}`);
 };
 /*
  * Render lines if visible using the scales. The tsKey string is used for various class names so that this element
@@ -69,11 +72,11 @@ const drawMaskSegment = function(group, {segment, isCurrentMethod, dateKind, xSc
  * @param {Object} xScale - D3 scale for the x axis
  * @param {Object} yScale - D3 scale for the y axis
  */
-export const drawDataSegment = function(group, {segment, isCurrentMethod, dateKind, xScale, yScale}) {
+export const drawDataSegment = function(group, {segment, isCurrentMethod, dataKind, xScale, yScale}) {
     if (segment.isMasked) {
-        drawMaskSegment(group, {segment, isCurrentMethod, dateKind, xScale, yScale});
+        drawMaskSegment(group, {segment, isCurrentMethod, dataKind, xScale, yScale});
     } else {
-        drawLineSegment(group, {segment, isCurrentMethod, dateKind, xScale, yScale});
+        drawLineSegment(group, {segment, isCurrentMethod, dataKind, xScale, yScale});
     }
 };
 /*

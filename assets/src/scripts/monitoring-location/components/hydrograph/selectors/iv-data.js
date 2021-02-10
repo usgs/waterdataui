@@ -1,5 +1,7 @@
 import {format} from 'd3-format';
 import memoize from 'fast-memoize';
+import isEqual from 'lodash/isEqual';
+import uniqWith from 'lodash/uniqWith';
 import {createSelector} from 'reselect';
 
 import {getIVData} from 'ml/selectors/hydrograph-data-selector';
@@ -22,13 +24,12 @@ const MASKED_QUALIFIERS = {
 };
 
 const LINE_QUALIFIERS = {
-    A: {label: 'Approved', class: 'approved'},
-    E: {label: 'Estimated', class: 'estimated'},
-    P: {label: 'Provisional', class: 'provisional'}
+    a: {label: 'Approved', class: 'approved'},
+    e: {label: 'Estimated', class: 'estimated'}
 };
 
 export const HASH_ID = {
-    current: 'hash-45',
+    primary: 'hash-45',
     compare: 'hash-135'
 };
 
@@ -71,8 +72,8 @@ const transformToCumulative = function(points) {
  * Note that some parameter codes accumulate data across the time range. For those
  * parameter codes the values are adjusted so that they accumulate
  */
-export const getIVDataPoints = memoize(kind => createSelector(
-    getIVData(kind),
+export const getIVDataPoints = memoize(dataKind => createSelector(
+    getIVData(dataKind),
     (ivData) => {
         if (!ivData) {
             return null;
@@ -87,14 +88,18 @@ export const getIVDataPoints = memoize(kind => createSelector(
                 // We will only receive one masked qualifier
                 let label = 'Default';
                 let pointClass = '';
-                const maskedQualifier = point.qualifiers.find(qualifier => qualifier in MASKED_QUALIFIERS);
-                const lineQualifier = point.qualifiers.find(qualifier => qualifier in LINE_QUALIFIERS);
+                const pointQualifiers = point.qualifiers.map(qualifier => qualifier.toLowerCase());
+                const maskedQualifier = pointQualifiers.find(qualifier => qualifier in MASKED_QUALIFIERS);
+                const lineQualifier = pointQualifiers.find(qualifier => qualifier in LINE_QUALIFIERS);
                 if (maskedQualifier) {
                     label = MASKED_QUALIFIERS[maskedQualifier].label;
                     pointClass = MASKED_QUALIFIERS[maskedQualifier].class;
                 } else if (lineQualifier) {
                     label = LINE_QUALIFIERS[lineQualifier].label;
                     pointClass = LINE_QUALIFIERS[lineQualifier].class;
+                } else { //default to provisional
+                    label = 'Provisional';
+                    pointClass = 'provisional';
                 }
                 return {
                     value: point.value,
@@ -186,3 +191,32 @@ export const getIVDataSegments = memoize(dataKind => createSelector(
     }
 ));
 
+/*
+ * Return a selector function that returns an
+ * Array of Objects. The array represents the unique kinds of
+ * data that are being currently displayed. Each Object has the following properties:
+ *      @prop {Boolean} isMasked
+ *      @prop {String} label
+ *      @prop {String} class
+ */
+
+export const getIVUniqueDataKinds = memoize(dataKind => createSelector(
+    getIVDataSegments(dataKind),
+    byMethodSegments => {
+        if (!byMethodSegments) {
+            return [];
+        }
+        let allSegments = [];
+        Object.values(byMethodSegments).forEach(segments => {
+            allSegments.push(...segments);
+        });
+        const mappedSegments = allSegments.map(segment => {
+            return {
+                isMasked: segment.isMasked,
+                label: segment.label,
+                class: segment.class
+            };
+        });
+        return uniqWith(mappedSegments, isEqual);
+    }
+));

@@ -23,7 +23,7 @@ export const getIVValueRange = memoize(dataKind => createSelector(
 
         let values = [];
         Object.values(ivData.values).forEach(byMethodID => {
-            values.push(...byMethodID.points.map(point => point.value));
+            values.push(...byMethodID.points.filter(point => point.value !== null).map(point => point.value));
         });
         if (values.length) {
             return [Math.min(...values), Math.max(...values)];
@@ -33,14 +33,14 @@ export const getIVValueRange = memoize(dataKind => createSelector(
     }
 ));
 
-export const getGroundWaterLevelsValueRange = createSelector(
+export const getGroundwaterLevelsValueRange = createSelector(
     getGroundwaterLevels,
     gwLevels => {
         if (!gwLevels) {
             return null;
         }
 
-        const values = gwLevels.values.map(value => value.point);
+        const values = gwLevels.values.filter(data => data.value !== null).map(data => data.value);
         if (values.length) {
             return [Math.min(...values), Math.max(...values)];
         }

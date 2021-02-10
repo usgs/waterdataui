@@ -162,7 +162,7 @@ export const retrieveGroundwaterLevels = function(site, {parameterCode, period, 
                         values = timeSeries.values[0].value.map((v) => {
                             const dateTime = DateTime.fromISO(v.dateTime, {zone: 'utc'}).toMillis();
                             return {
-                                point: parseFloat(v.value),
+                                value: parseFloat(v.value),
                                 qualifiers: v.qualifiers,
                                 dateTime: dateTime
                             };
@@ -170,7 +170,7 @@ export const retrieveGroundwaterLevels = function(site, {parameterCode, period, 
                         });
                     }
                     const parameter = {
-                        parameterCode: timeSeries.variable.variableCode.value,
+                        parameterCode: timeSeries.variable.variableCode[0].value,
                         name: timeSeries.variable.variableName,
                         description: timeSeries.variable.variableDescription,
                         unit: timeSeries.variable.unit.unitCode

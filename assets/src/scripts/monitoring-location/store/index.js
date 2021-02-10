@@ -51,7 +51,7 @@ export const configureStore = function(initialState) {
             },
             currentIVDateRange: 'P7D',
             customIVTimeRange: null,
-            currentIVVariableID: null,
+            currentParameterCode: null,
             ivGraphCursorOffset: null,
             audiblePlayId: null,
             loadingIVTSKeys: [],

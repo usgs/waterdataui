@@ -28,13 +28,13 @@ import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 //import {drawDateRangeControls} from './date-controls';
 //import {drawDataTables} from './data-table';
 //import {renderDownloadLinks} from './download-links';
-//import {drawGraphBrush} from './graph-brush';
+import {drawGraphBrush} from './graph-brush';
 //import {drawGraphControls} from './graph-controls';
-//import {drawTimeSeriesLegend} from './legend';
+import {drawTimeSeriesLegend} from './legend';
 //import {drawMethodPicker} from './method-picker';
 //import {plotSeriesSelectTable} from './parameters';
 import {drawTimeSeriesGraph} from './time-series-graph';
-//import {drawTooltipCursorSlider} from './tooltip';
+import {drawTooltipCursorSlider} from './tooltip';
 
 //import {getLineSegmentsByParmCd} from './selectors/drawing-data';
 //import {SPARK_LINE_DIM}  from './selectors/layout';
@@ -124,18 +124,17 @@ export const attachToNode = function(store,
             // Set up rendering functions for the graph-container
             let graphContainer = nodeElem.select('.graph-container')
                 .call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);
-            /*
+
             if (!showOnlyGraph) {
                 graphContainer
                     .call(drawTooltipCursorSlider, store)
                     .call(drawGraphBrush, store);
             }
-
             graphContainer.append('div')
                 .classed('ts-legend-controls-container', true)
                 .call(drawTimeSeriesLegend, store);
-
             // Add UI interactive elements, data table  and the provisional data alert.
+            /*
             if (!showOnlyGraph) {
                 nodeElem
                     .call(drawMethodPicker, store)

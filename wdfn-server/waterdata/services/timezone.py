@@ -9,4 +9,5 @@ def get_iana_time_zone(latitude, longitude):
     if resp.status_code != 200:
         return None
 
-    return resp.properties.get('timeZone', None) if 'properties' in resp else None
+    jsonData = resp.json()
+    return jsonData['properties'].get('timeZone', None) if 'properties' in jsonData else None

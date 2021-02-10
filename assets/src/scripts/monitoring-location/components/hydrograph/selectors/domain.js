@@ -7,7 +7,7 @@ import {mediaQuery} from 'ui/utils';
 
 import {
     getIVValueRange,
-    getGroundWaterLevelsValueRange,
+    getGroundwaterLevelsValueRange,
     getPrimaryMedianStatisticsValueRange,
     getPrimaryParameter
 } from 'ml/selectors/hydrograph-data-selector';
@@ -180,7 +180,7 @@ export const getPrimaryValueRange = createSelector(
     getIVValueRange('primary'),
     getIVValueRange('compare'),
     getPrimaryMedianStatisticsValueRange,
-    getGroundWaterLevelsValueRange,
+    getGroundwaterLevelsValueRange,
     getPrimaryParameter,
     (showCompare, showMedian, primaryRange, compareRange, medianRange, gwLevelsRange, parameter) => {
         const valueExtent = [];
