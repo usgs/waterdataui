@@ -14,7 +14,15 @@ const getParameterToFetch = function(parameterCode) {
     return isCalculatedTemperature(parameterCode) ? parameterCode.slice(0, -1) : parameterCode;
 };
 
-export const setHydrographTimeRange = function(timeRange, timeRangeKind) {
+/*
+ * Synchronous Redux action which sets the time range for the timeRangeKind
+ * @param {Object} timeRange
+ *      @prop {Number} start = Unix epoch in milliseconds
+ *      @prop {Number} end - Unix epoch in milliseconds
+ * @param {String} timeRangeKind - expected values: 'current', 'prioryear'
+ * @return {Object} Redux action
+ */
+const setHydrographTimeRange = function(timeRange, timeRangeKind) {
     return {
         type: 'SET_HYDROGRAPH_TIME_RANGE',
         timeRange,
@@ -22,13 +30,24 @@ export const setHydrographTimeRange = function(timeRange, timeRangeKind) {
     };
 };
 
-export const clearHydrographData = function() {
+/*
+ * Synchronous Redux action which clears all data
+ * @return {Object} Redux action
+ */
+const clearHydrographData = function() {
     return {
         type: 'CLEAR_HYDROGRAPH_DATA'
     };
 };
 
-export const addIVHydrographData = function(dataKind, ivData) {
+/*
+ * Synchronous Redux action which sets the IV data  for the dataKind
+ * @param {Object} ivData
+ *      @prop {Object} parameter
+ *      @prop {Object} values - Keys are the method ids.
+ * @return {Object} Redux action
+ */
+const addIVHydrographData = function(dataKind, ivData) {
     return {
         type: 'ADD_IV_HYDROGRAPH_DATA',
         dataKind,
@@ -36,14 +55,26 @@ export const addIVHydrographData = function(dataKind, ivData) {
     };
 };
 
-export const addMedianStatisticsData = function(statsData) {
+/*
+ * Synchronous Redux action which sets the median data
+ * @param {Object} statsData
+ * @return {Object} Redux action
+ */
+const addMedianStatisticsData = function(statsData) {
     return {
         type: 'ADD_MEDIAN_STATISTICS_DATA',
         statsData
     };
 };
 
-export const addGroundwaterLevels = function(gwLevels) {
+/*
+ * Synchronous Redux action which sets the median data
+ * @param {Object} gwLevels
+ *      @prop {Object} parameter
+ *      @prop {Array} values
+ * @return {Object} Redux action
+ */
+const addGroundwaterLevels = function(gwLevels) {
     return {
         type: 'ADD_GROUNDWATER_LEVELS',
         gwLevels
@@ -51,9 +82,17 @@ export const addGroundwaterLevels = function(gwLevels) {
 };
 
 /*
- * startTime and endTime should be ISO 8601 time strings for all of these retrieve functions
+ * Asynchronous Redux action to fetch the IV data for siteno, parameterCode, period or startTime/endTime
+ * for the dataKind
+ * @param {String} siteno
+ * @param {String} dataKind - expected values: 'primary', 'compare'
+ * @param {String} parameterCode
+ * @param {String} period - ISO 8601 duration
+ * @param {String} startTime - ISO 8601 time string
+ * @param {String} endTie - ISO 8601 time string
+ * @return {Function} that returns a Promise
  */
-export const retrieveIVData = function(siteno, dataKind, {parameterCode, period, startTime, endTime}) {
+const retrieveIVData = function(siteno, dataKind, {parameterCode, period, startTime, endTime}) {
     return function(dispatch) {
         const isCalculatedTemperatureCode = isCalculatedTemperature(parameterCode);
 
@@ -65,7 +104,7 @@ export const retrieveIVData = function(siteno, dataKind, {parameterCode, period,
             endTime: endTime
         }).then(data => {
             const tsData = data.value.timeSeries[0];
-            const noDataValue = tsData.variable.noDataValue;
+            // Create parameter object and adjust data if parameter code is calculated
             let parameter = {
                 parameterCode: tsData.variable.variableCode[0].value,
                 name: tsData.variable.variableName,
@@ -75,32 +114,45 @@ export const retrieveIVData = function(siteno, dataKind, {parameterCode, period,
             if (isCalculatedTemperatureCode) {
                 parameter = getConvertedTemperatureParameter(parameter);
             }
-            const timeSeriesData = {
-                parameter : parameter,
-                values: tsData.values.reduce((valuesByMethodId, value) => {
-                    valuesByMethodId[value.method[0].methodID] = {
-                        points: value.value.map(point => {
-                            let pointValue = parseFloat(point.value);
-                            pointValue = pointValue === noDataValue ? null : pointValue;
-                            if (pointValue && isCalculatedTemperatureCode) {
-                                pointValue = parseFloat(convertCelsiusToFahrenheit(pointValue).toFixed(2));
-                            }
-                            return {
-                                value: pointValue,
-                                qualifiers: point.qualifiers,
-                                dateTime: DateTime.fromISO(point.dateTime).toMillis()
-                            };
-                        }),
-                        method: value.method[0]
-                    };
-                    return valuesByMethodId;
-                }, {})
-            };
-            dispatch(addIVHydrographData(dataKind, timeSeriesData));
+
+            // Convert values from strings to float and set to null if they have the noDataValue.
+            // If calculated parameter code, update the value.
+            const noDataValue = tsData.variable.noDataValue;
+            const values = tsData.values.reduce((valuesByMethodId, value) => {
+                valuesByMethodId[value.method[0].methodID] = {
+                    points: value.value.map(point => {
+                        let pointValue = parseFloat(point.value);
+                        pointValue = pointValue === noDataValue ? null : pointValue;
+                        if (pointValue && isCalculatedTemperatureCode) {
+                            pointValue = parseFloat(convertCelsiusToFahrenheit(pointValue).toFixed(2));
+                        }
+                        return {
+                            value: pointValue,
+                            qualifiers: point.qualifiers,
+                            dateTime: DateTime.fromISO(point.dateTime).toMillis()
+                        };
+                    }),
+                    method: value.method[0]
+                };
+                return valuesByMethodId;
+            }, {});
+
+            dispatch(addIVHydrographData(dataKind, {
+                parameter,
+                values
+            }));
         });
     };
 };
 
+/*
+ * Asynchronous Redux action to fetch the IV data for siteno, parameterCode and startTime/endTime
+ * @param {String} siteno
+ * @param {String} parameterCode
+ * @param {String} startTime - ISO 8601 time string
+ * @param {String} endTime - ISO 8601 time string
+ * @return {Function} that returns a Promise
+ */
 export const retrievePriorYearIVData = function(siteno, {parameterCode, startTime, endTime}) {
     return function(dispatch, getState) {
         const priorYearStartTime = DateTime.fromISO(startTime).minus({days: 365}).toMillis();
@@ -120,6 +172,12 @@ export const retrievePriorYearIVData = function(siteno, {parameterCode, startTim
     };
 };
 
+/*
+ * Asynchronous Redux action to fetch the median for siteno and parameterCode
+ * @param {String} siteno
+ * @param {String} parameterCode
+ * @return {Function} that returns a Promise
+ */
 export const retrieveMedianStatistics = function(siteno, parameterCode) {
     return function(dispatch, getState) {
         if ('medianStatistics' in getState().hydrographData) {
@@ -149,7 +207,17 @@ export const retrieveMedianStatistics = function(siteno, parameterCode) {
     };
 };
 
-export const retrieveGroundwaterLevels = function(site, {parameterCode, period, startTime, endTime}) {
+/*
+ * Asynchronous Redux action to fetch the groundwater levels data for siteno, parameterCode, period or startTime/endTime
+ * for the dataKind
+ * @param {String} siteno
+ * @param {String} parameterCode
+ * @param {String} period - ISO 8601 duration
+ * @param {String} startTime - ISO 8601 time string
+ * @param {String} endTie - ISO 8601 time string
+ * @return {Function} that returns a Promise
+ */
+const retrieveGroundwaterLevels = function(site, {parameterCode, period, startTime, endTime}) {
     return function(dispatch) {
         return fetchGroundwaterLevels({site, parameterCode, period, startTime, endTime})
             .then(data => {
@@ -185,11 +253,17 @@ export const retrieveGroundwaterLevels = function(site, {parameterCode, period, 
 };
 
 /*
+ * Asynchronous Redux action which clears all data and then retrieves all of the data needed to display the hydrograph.
+ * The IV and groundwater levels are automatically loaded if available. Compare and median data
+ * are loaded if requested
  * @param {String} siteno
- * @param {String} parameterCode}
- * @param {String} period
+ * @param {String} parameterCode
+ * @param {String} period - ISO 8601 duration
  * @param {String} startTime - ISO 8601 time string
- * @param {String} endTime
+ * @param {String} endTime - ISO 8601 time string
+ * @param {Boolean} loadCompare
+ * @param {Boolean} loadMedian
+ * @return {Function} that returns a promise
  */
 export const retrieveHydrographData = function(siteno, {parameterCode, period, startTime, endTime, loadCompare, loadMedian}) {
     return function(dispatch) {

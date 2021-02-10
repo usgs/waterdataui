@@ -7,17 +7,19 @@ import {
     floodDataReducer as floodData,
     floodStateReducer as floodState} from './flood-inundation';
 import {hydrographDataReducer as hydrographData} from './hydrograph-data';
-import {ivTimeSeriesStateReducer as ivTimeSeriesState} from './instantaneous-value-time-series-state';
+import {hydrographStateReducer as hydrographState,
+    INITIAL_STATE as HYDROGRAPH_INITIAL_STATE
+} from './hydrograph-state';
 import {networkDataReducer as networkData} from './network';
 import {nldiDataReducer as nldiData} from './nldi-data';
 import {uiReducer as ui} from './ui-state';
 
 const appReducer = combineReducers({
     hydrographData,
+    hydrographState,
     dailyValueTimeSeriesData,
     floodData,
     nldiData,
-    ivTimeSeriesState,
     dailyValueTimeSeriesState,
     floodState,
     ui,
@@ -30,6 +32,7 @@ const MIDDLEWARES = [thunk];
 export const configureStore = function(initialState) {
     initialState = {
         hydrographData: {},
+        hydrographState: HYDROGRAPH_INITIAL_STATE,
         dailyValueTimeSeriesData: {},
         floodData: {
             stages: [],
@@ -42,25 +45,6 @@ export const configureStore = function(initialState) {
             upstreamSites: [],
             downstreamSites: [],
             upstreamBasin: []
-        },
-        ivTimeSeriesState: {
-            showIVTimeSeries: {
-                current: true,
-                compare: false,
-                median: false
-            },
-            currentIVDateRange: 'P7D',
-            customIVTimeRange: null,
-            currentParameterCode: null,
-            ivGraphCursorOffset: null,
-            audiblePlayId: null,
-            loadingIVTSKeys: [],
-            ivGraphBrushOffset: null,
-            userInputsForTimeRange: {
-                mainTimeRangeSelectionButton: 'P7D',
-                customTimeRangeSelectionButton: 'days-input',
-                numberOfDaysFieldValue: ''
-            }
         },
         dailyValueTimeSeriesState: {
             cursorOffset: null
