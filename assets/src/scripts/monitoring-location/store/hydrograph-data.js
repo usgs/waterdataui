@@ -132,7 +132,10 @@ const retrieveIVData = function(siteno, dataKind, {parameterCode, period, startT
                             dateTime: DateTime.fromISO(point.dateTime).toMillis()
                         };
                     }),
-                    method: value.method[0]
+                    method: {
+                        ...value.method[0],
+                        methodID: value.method[0].methodID.toString()
+                    }
                 };
                 return valuesByMethodId;
             }, {});

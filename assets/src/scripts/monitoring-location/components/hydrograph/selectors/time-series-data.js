@@ -59,8 +59,11 @@ export const getTitle = createSelector(
     getPrimaryMethods,
     (parameter, methodID, methods) => {
         let title = parameter ? parameter.name : '';
-        if (methodID && methods && methods[methodID].methodDescription) {
-            title = `${title}, ${methods[methodID].methodDescription}`;
+        if (methodID && methods.length) {
+            const thisMethod = methods.find(method => method.methodID === methodID);
+            if (thisMethod.methodDescription) {
+                title = `${title}, $${thisMethod.methodDescription}`;
+            }
         }
         return title;
     }

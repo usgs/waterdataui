@@ -4,7 +4,7 @@ export const INITIAL_STATE = {
     selectedDateRange: 'P7D',
     selectedCustomTimeRange: null,
     selectedParameterCode: null,
-    selectedIVMethodId: null,
+    selectedIVMethodID: null,
     graphCursorOffset: null,
     graphBrushOffset: null,
     userInputsForTimeRange: {

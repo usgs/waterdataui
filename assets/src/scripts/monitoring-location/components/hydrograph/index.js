@@ -31,7 +31,7 @@ import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 import {drawGraphBrush} from './graph-brush';
 //import {drawGraphControls} from './graph-controls';
 import {drawTimeSeriesLegend} from './legend';
-//import {drawMethodPicker} from './method-picker';
+import {drawMethodPicker} from './method-picker';
 //import {plotSeriesSelectTable} from './parameters';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
@@ -63,13 +63,13 @@ export const attachToNode = function(store,
                                          period,
                                          startDT,
                                          endDT,
-                                         timeSeriesId, // This must be converted to an integer
+                                         timeSeriesId,
                                          showOnlyGraph = false,
                                          showMLName = false
                                      } = {}) {
     const nodeElem = select(node);
-    if (!siteno && !config.ivPeriodOfRecord && !config.gwPeriodOfRecord) {
-        select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No IV or field visit data is available.'});
+    if (!config.ivPeriodOfRecord && !config.gwPeriodOfRecord) {
+        select(node).select('.graph-container').call(drawInfoAlert, {title: 'Hydrograph Alert', body: 'No IV or field visit data is available.'});
         return;
     }
 
@@ -95,34 +95,10 @@ export const attachToNode = function(store,
             .select('.loading-indicator-container')
             .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
 
-            /* TODO: add this back in
-            //Update time series state
-            if (parameterCode) {
-                const isThisParamCode = function(variable) {
-                    return variable.variableCode.value === parameterCode;
-                };
-                const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
-                if (thisVariable) {
-                    store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
-                }
-            }
-            if (!getCurrentVariableID(store.getState())) {
-                //Sort variables and use the first one as the current variable
-                const sortedVars = sortedParameters(getVariables(store.getState()));
-                if (sortedVars.length) {
-                    store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(sortedVars[0].oid));
-                }
-            }
-            if (compare) {
-                store.dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('compare', true));
-            }
-            if (timeSeriesId) {
-                store.dispatch(ivTimeSeriesStateActions.setCurrentIVMethodID(parseInt(timeSeriesId)));
-            }
-            */
-            // Initial data has been fetched and initial state set. We can render the hydrograph elements
-            // Set up rendering functions for the graph-container
+            // Initial data has been fetched. We can render the hydrograph elements
+            // Initialize method picker before rendering time series
             let graphContainer = nodeElem.select('.graph-container')
+                .call(drawMethodPicker, store, timeSeriesId)
                 .call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);
 
             if (!showOnlyGraph) {
