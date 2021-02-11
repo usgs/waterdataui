@@ -3,7 +3,7 @@ import {createSelector} from 'reselect';
 
 import {getNearestTime} from 'ui/utils';
 
-import {getCurrentMethodID} from 'ml/selectors/time-series-selector';
+import {getSelectedIVMethodID, getGraphCursorOffset} from 'ml/selectors/hydrograph-state-selector';
 
 import {getGroundwaterLevelPoints} from './discrete-data';
 import {getIVDataPoints} from './iv-data';
@@ -16,7 +16,7 @@ const isInTimeRange = function(dateTime, timeRange) {
 
 export const getCursorOffset = createSelector(
     getMainXScale('current'),
-    state => state.ivTimeSeriesState.ivGraphCursorOffset,
+    getGraphCursorOffset,
     (xScale, cursorOffset) => {
         // If cursorOffset is false, don't show it
         if (cursorOffset === false) {
@@ -54,7 +54,7 @@ export const getCursorTime = memoize(timeRangeKind => createSelector(
  */
 export const getIVDataCursorPoints = memoize((dataRange, timeRangeKind) => createSelector(
     getIVDataPoints(dataRange),
-    getCurrentMethodID,
+    getSelectedIVMethodID,
     getCursorTime(timeRangeKind),
     isVisible(dataRange),
     getGraphTimeRange('MAIN', timeRangeKind),

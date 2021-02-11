@@ -61,6 +61,16 @@ export const getPrimaryParameter = createSelector(
     }
 );
 
+export const getPrimaryMethods = createSelector(
+    getIVData('primary'),
+    ivData => {
+        if (!ivData) {
+            return null;
+        }
+        return Object.values(ivData.values).map(value => value.method);
+    }
+);
+
 /*
  * @return {Function} which returns an Object with keys by tsId. Each property
  * is an {Object} as follows:
@@ -119,21 +129,5 @@ export const getPrimaryMedianStatisticsValueRange = createSelector(
         } else {
             return null;
         }
-    }
-);
-
-/*
- * @returns {Function} which returns {Object} with method ID keys and method details.
- */
-export const getPrimaryMethods = createSelector(
-    getIVData('current'),
-    (ivData) => {
-        if (!ivData) {
-            return null;
-        }
-        return Object.keys(ivData.values).reduce((byMethodId, methodID) => {
-            byMethodId[methodID] = ivData.values[methodID].method;
-            return byMethodId;
-        }, {});
     }
 );

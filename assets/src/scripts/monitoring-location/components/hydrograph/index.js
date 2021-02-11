@@ -54,8 +54,8 @@ export const attachToNode = function(store,
                                      node,
                                      {
                                          siteno,
-                                         agencyCode='',//TODO - set these in markup
-                                         sitename='',//TODO - set these in markup
+                                         agencyCode,
+                                         sitename,
                                          latitude,
                                          longitude,
                                          parameterCode,
@@ -68,7 +68,7 @@ export const attachToNode = function(store,
                                          showMLName = false
                                      } = {}) {
     const nodeElem = select(node);
-    if (!siteno && !config.uvPeriodOfRecord && !config.gwPeriodOfRecord) {
+    if (!siteno && !config.ivPeriodOfRecord && !config.gwPeriodOfRecord) {
         select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No IV or field visit data is available.'});
         return;
     }
@@ -82,7 +82,7 @@ export const attachToNode = function(store,
     //store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
      // Need to set default parameter code in server and insert in markup */
     const fetchDataPromise = store.dispatch(retrieveHydrographData(siteno, {
-        parameterCode: parameterCode || '00060',
+        parameterCode: parameterCode,
         period: startDT && endDT ? null : period || 'P7D',
         startTime: DateTime.fromISO(startDT, {zone: config.locationTimeZone}),
         endTime: DateTime.fromISO(endDT, {zone: config.locationTimeZone}),

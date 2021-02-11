@@ -8,7 +8,8 @@ import {drawCursorSlider} from 'd3render/cursor-slider';
 import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from 'd3render/graph-tooltip';
 
 import {getPrimaryParameter} from 'ml/selectors/hydrograph-data-selector';
-import {Actions} from 'ml/store/instantaneous-value-time-series-state';
+import {getGraphCursorOffset} from 'ml/selectors/hydrograph-state-selector';
+import {setGraphCursorOffset} from 'ml/store/hydrograph-state';
 
 import {getCursorTime, getIVDataCursorPoints, getIVDataTooltipPoints, getGroundwaterLevelCursorPoint,
     getGroundwaterLevelTooltipPoint
@@ -140,7 +141,7 @@ export const drawTooltipFocus = function(elem, store) {
             layout: getMainLayout
         }),
         store,
-        Actions.setIVGraphCursorOffset)
+        setGraphCursorOffset)
     );
 };
 
@@ -157,8 +158,8 @@ export const drawTooltipCursorSlider = function(elem, store) {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} 25`);
             }, getMainLayout))
         .call(link(store, drawCursorSlider, createStructuredSelector({
-            cursorOffset: (state) => state.ivTimeSeriesState.ivGraphCursorOffset,
+            cursorOffset: getGraphCursorOffset,
             xScale: getMainXScale('current'),
             layout: getMainLayout
-        }), store, Actions.setIVGraphCursorOffset));
+        }), store, setGraphCursorOffset));
 };

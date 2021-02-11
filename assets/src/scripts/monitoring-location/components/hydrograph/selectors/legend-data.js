@@ -3,6 +3,8 @@ import {createSelector} from 'reselect';
 import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from 'd3render/markers';
 
 import {getWaterwatchFloodLevels, isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
+import {isCompareIVDataVisible, isMedianDataVisible} from 'ml/selectors/hydrograph-state-selector';
+
 //import {getCurrentVariableMedianMetadata} from 'ml/selectors/median-statistics-selector';
 
 import {getGroundwaterLevelsMarker} from '../discrete-data';
@@ -26,18 +28,19 @@ const TS_LABEL = {
  *      @prop floodLevels {Object} -
  */
 const getLegendDisplay = createSelector(
-    (state) => state.ivTimeSeriesState.showIVTimeSeries,
+    isCompareIVDataVisible,
+    isMedianDataVisible,
     () => null, //getCurrentVariableMedianMetadata,
     getIVUniqueDataKinds('primary'),
     getIVUniqueDataKinds('compare'),
     isWaterwatchVisible,
     getWaterwatchFloodLevels,
     anyVisibleGroundwaterLevels,
-    (showSeries, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, showGroundWaterLevels) => {
+    (showCompare, showMedian, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, showGroundWaterLevels) => {
         return {
-            primaryIV: showSeries.current ? currentClasses : undefined,
-            compareIV: showSeries.compare ? compareClasses : undefined,
-            median: showSeries.median ? medianSeries : undefined,
+            primaryIV: currentClasses,
+            compareIV: showCompare ? compareClasses : undefined,
+            median: showMedian ? medianSeries : undefined,
             floodLevels: showWaterWatch ? floodLevels : undefined,
             groundwaterLevels: showGroundWaterLevels
         };

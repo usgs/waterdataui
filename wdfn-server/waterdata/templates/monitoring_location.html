@@ -32,13 +32,11 @@
 {% block page_script %}
     <script type="application/javascript">
         CONFIG.locationTimeZone = "{{ time_zone }}"
-        {% if uv_period_of_record %}
-            CONFIG.uvPeriodOfRecord = {{ uv_period_of_record | tojson }};
+        {% if iv_period_of_record %}
+            CONFIG.ivPeriodOfRecord = {{ iv_period_of_record | tojson }};
         {% endif %}
         {% if gw_period_of_record %}
             CONFIG.gwPeriodOfRecord = {{ gw_period_of_record | tojson }};
-        {% else %}
-           CONFIG.gwPeriodOfRecord = null;
         {% endif %}
     </script>
     <script src="{{ 'bundle.js' | asset_url }}"></script>
@@ -163,7 +161,7 @@
                         </div>
                     {% endif %}
                     {% if request.user_agent.browser != 'msie' %}
-                        {{ components.TimeSeriesComponent(stations[0].site_no, stations[0].dec_lat_va, stations[0].dec_long_va) }}
+                        {{ components.TimeSeriesComponent(stations[0], default_parameter_code) }}
                         {% if cameras %}
                             {{ components.CameraComponent(cameras) }}
                         {% endif %}

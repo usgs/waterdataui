@@ -51,7 +51,7 @@ describe('monitoring-location/store/hydrograph-data', () => {
     describe('retrieveHydrographData', () => {
         describe('The correct web services are called', () => {
             it('Expects to retrieve groundwater and IV data if both are in the period of record', () => {
-                config.uvPeriodOfRecord = {
+                config.ivPeriodOfRecord = {
                     '00060': {begin_date: '2010-01-01', end_date: '2020-01-01'}
                 };
                 config.gwPeriodOfRecord = {
@@ -90,7 +90,7 @@ describe('monitoring-location/store/hydrograph-data', () => {
             });
 
             it('Expects to retrieve all data when all are available or requested', () => {
-                config.uvPeriodOfRecord = {
+                config.ivPeriodOfRecord = {
                     '00060': {begin_date: '2010-01-01', end_date: '2020-01-01'}
                 };
                 config.gwPeriodOfRecord = {
@@ -176,7 +176,7 @@ describe('monitoring-location/store/hydrograph-data', () => {
             });
 
             it('Only gw if no parameter iv in the period of record', () => {
-                config.uvPeriodOfRecord = {};
+                config.ivPeriodOfRecord = {};
                 config.gwPeriodOfRecord = {
                     '00060': {begin_date: '2010-01-01', end_date: '2020-01-01'}
                 };

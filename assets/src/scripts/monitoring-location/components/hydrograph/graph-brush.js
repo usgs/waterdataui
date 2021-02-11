@@ -7,9 +7,9 @@ import {mediaQuery} from 'ui/utils';
 
 import {appendXAxis} from 'd3render/axes';
 
-import {getCurrentMethodID} from 'ml/selectors/time-series-selector';
+import {getSelectedIVMethodID, getGraphBrushOffset} from 'ml/selectors/hydrograph-state-selector';
 
-import {Actions} from 'ml/store/instantaneous-value-time-series-state';
+import {setGraphBrushOffset} from 'ml/store/hydrograph-state';
 
 import {getBrushXAxis} from './selectors/axes';
 import {getGroundwaterLevelPoints} from './selectors/discrete-data';
@@ -53,7 +53,7 @@ export const drawGraphBrush = function(container, store) {
         if (event.sourceEvent.type === 'mouseup' || event.sourceEvent.type === 'touchend') {
             const adjustedBrush = brushRange.map(xScale.invert, xScale);
 
-            store.dispatch(Actions.setIVGraphBrushOffset(
+            store.dispatch(setGraphBrushOffset(
                 adjustedBrush[0]- xScale.domain()[0],
                 xScale.domain()[1] - adjustedBrush[1]));
         }
@@ -90,7 +90,7 @@ export const drawGraphBrush = function(container, store) {
                 })))
                 .call(link(store, drawDataSegments, createStructuredSelector({
                     visible: () => true,
-                    currentMethodID: getCurrentMethodID,
+                    currentMethodID: getSelectedIVMethodID,
                     tsSegmentsMap: getIVDataSegments('primary'),
                     dataKind: () => 'primary',
                     xScale: getBrushXScale,
@@ -166,7 +166,7 @@ export const drawGraphBrush = function(container, store) {
 
         }, createStructuredSelector({
             layout: getBrushLayout,
-            hydrographBrushOffset: (state) => state.ivTimeSeriesState.ivGraphBrushOffset,
+            hydrographBrushOffset: getGraphBrushOffset,
             xScale: getBrushXScale
         })));
 };

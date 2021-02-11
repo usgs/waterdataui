@@ -341,3 +341,23 @@ def get_period_of_record_by_parm_cd(site_records, data_type_cd='uv'):
             }
 
     return records_by_parm_cd
+
+
+def get_default_parameter_code(iv_parameters, gw_parameters):
+    """
+    Return the default parameter code to use to retrieve data if no other parameter code is specified
+    :param iv_parameters: dict - where parameter codes are the keys
+    :param gw_parameters :dict - wher parameter codes are the keys
+    :return str
+    """
+    preference = ['00065', '00060', '72019']
+    for parameter_code in preference:
+        if parameter_code in iv_parameters or parameter_code in gw_parameters:
+            return parameter_code
+
+    if iv_parameters:
+        return list(iv_parameters)[0]
+    elif gw_parameters:
+        return list(gw_parameters)[0]
+    else:
+        return ''

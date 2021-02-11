@@ -268,7 +268,7 @@ const retrieveGroundwaterLevels = function(site, {parameterCode, period, startTi
 export const retrieveHydrographData = function(siteno, {parameterCode, period, startTime, endTime, loadCompare, loadMedian}) {
     return function(dispatch) {
         const parameterToFetch = getParameterToFetch(parameterCode);
-        const hasIVData = config.uvPeriodOfRecord && parameterToFetch in config.uvPeriodOfRecord;
+        const hasIVData = config.ivPeriodOfRecord && parameterToFetch in config.ivPeriodOfRecord;
         const hasGWData = config.gwPeriodOfRecord && parameterToFetch in config.gwPeriodOfRecord;
         dispatch(clearHydrographData());
 

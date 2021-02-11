@@ -6,7 +6,7 @@ import {
     getPrimaryParameter,
     getTimeRange
 } from 'ml/selectors/hydrograph-data-selector';
-import {getIVGraphBrushOffset} from 'ml/selectors/time-series-selector';
+import {getGraphBrushOffset} from 'ml/selectors/hydrograph-state-selector';
 
 import {SYMLOG_PARMS, getPrimaryValueRange} from './domain';
 import {getLayout} from './layout';
@@ -73,7 +73,7 @@ export const createYScale = function(parameterCode, extent, size) {
  */
 export const getGraphTimeRange = memoize((graphKind, timeRangeKind) => createSelector(
     getTimeRange(timeRangeKind),
-    getIVGraphBrushOffset,
+    getGraphBrushOffset,
     (timeRange, brushOffset) => {
         let result;
 

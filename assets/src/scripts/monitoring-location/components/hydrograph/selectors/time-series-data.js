@@ -5,7 +5,7 @@ import {createSelector} from 'reselect';
 import config from 'ui/config';
 
 import {getPrimaryMethods, getPrimaryParameter, getTimeRange} from 'ml/selectors/hydrograph-data-selector';
-import {getCurrentMethodID} from 'ml/selectors/time-series-selector';
+import {getSelectedIVMethodID, isCompareIVDataVisible, isMedianDataVisible} from 'ml/selectors/hydrograph-state-selector';
 
 const formatTime = function(timeInMillis) {
     return DateTime.fromMillis(timeInMillis, {zone: config.locationTimeZone}).toFormat('L/d/yyyy tt ZZZ');
@@ -17,9 +17,22 @@ const formatTime = function(timeInMillis) {
  * @param  {String}  tsKey Time series key
  * @return {Boolean}           Show state of the time series
  */
-export const isVisible = memoize(dataKind => (state) => {
-    return dataKind === 'primary' ? true : state.ivTimeSeriesState.showIVTimeSeries[dataKind];
-});
+export const isVisible = memoize(dataKind => createSelector(
+    isCompareIVDataVisible,
+    isMedianDataVisible,
+    (compareVisible, medianVisible) => {
+        switch (dataKind) {
+            case 'primary':
+                return true;
+            case 'compare':
+                return compareVisible;
+            case 'median':
+                return medianVisible;
+            default:
+                return false;
+        }
+    })
+);
 
 /**
  * Returns a Redux selector function which returns the label to be used for the Y axis
@@ -42,7 +55,7 @@ export const getSecondaryYLabel= function() {
  */
 export const getTitle = createSelector(
     getPrimaryParameter,
-    getCurrentMethodID,
+    getSelectedIVMethodID,
     getPrimaryMethods,
     (parameter, methodID, methods) => {
         let title = parameter ? parameter.name : '';

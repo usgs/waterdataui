@@ -16,7 +16,7 @@ import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-
 import {getAxes}  from './selectors/axes';
 import {getGroundwaterLevelPoints} from './selectors/discrete-data';
 import {getIVDataSegments, HASH_ID} from './selectors/iv-data';
-import {getCurrentMethodID} from 'ml/selectors/time-series-selector';
+import {getSelectedIVMethodID} from 'ml/selectors/hydrograph-state-selector';
 
 import {getTitle, getDescription, isVisible} from './selectors/time-series-data';
 import {getMainLayout} from './selectors/layout';
@@ -248,7 +248,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, agencyCode, sit
         .call(link(store, appendAxes, getAxes('MAIN')))
         .call(link(store, drawDataSegments, createStructuredSelector({
             visible: () => true,
-            currentMethodID: getCurrentMethodID,
+            currentMethodID: getSelectedIVMethodID,
             tsSegmentsMap: getIVDataSegments('primary'),
             dataKind: () => 'primary',
             xScale: getMainXScale('current'),
@@ -257,7 +257,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, agencyCode, sit
         })))
         .call(link(store, drawDataSegments, createStructuredSelector({
             visible: isVisible('compare'),
-            currentMethodID: getCurrentMethodID,
+            currentMethodID: getSelectedIVMethodID,
             tsSegmentsMap: getIVDataSegments('compare'),
             dataKind: () => 'compare',
             xScale: getMainXScale('prioryear'),

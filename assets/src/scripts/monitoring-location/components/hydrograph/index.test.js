@@ -171,7 +171,7 @@ const TEST_STATE = {
 describe('monitoring-location/components/hydrograph module', () => {
     utils.mediaQuery = jest.fn().mockReturnValue(true);
     utils.wrap = jest.fn();
-    config.uvPeriodOfRecord = {
+    config.ivPeriodOfRecord = {
         '00010': {
             begin_date: '01-02-2001',
             end_date: '10-15-2015'
