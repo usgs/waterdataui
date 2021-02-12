@@ -359,5 +359,4 @@ def get_default_parameter_code(iv_parameters, gw_parameters):
         return list(iv_parameters)[0]
     elif gw_parameters:
         return list(gw_parameters)[0]
-    else:
-        return ''
+    return ''

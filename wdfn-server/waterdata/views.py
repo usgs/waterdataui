@@ -112,7 +112,7 @@ def monitoring_location(site_no):
             parameter_data = NWIS.get_site_parameters(site_no, agency_cd)
             iv_period_of_record = get_period_of_record_by_parm_cd(parameter_data)
             gw_period_of_record = get_period_of_record_by_parm_cd(parameter_data, 'gw') if app.config[
-                    'GROUNDWATER_LEVELS_ENABLED'] else {}
+                'GROUNDWATER_LEVELS_ENABLED'] else {}
             if parameter_data:
                 site_dataseries = [
                     get_disambiguated_values(
