@@ -113,8 +113,6 @@ def get_lookups():
         try:
             request = requests.get(app.config['LOOKUP_ENDPOINTS'].get(lookup))
             app.config[lookup] = request.json()
-            test = app.config[lookup]
-            print('test ', test)
             output_file_path = os.path.join(app.config.get('DATA_DIR'), 'lookups/{}.json'.format(lookup.lower()))
             with open(output_file_path, 'w') as output_file:
                 json.dump(request.json(), output_file)
