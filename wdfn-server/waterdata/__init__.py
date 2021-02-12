@@ -49,6 +49,11 @@ except FileNotFoundError:
 
 
 def send_email(message):
+    """
+    Sends an message to the team.
+    :param message: The message body of the email
+    :return: None
+    """
     msg = EmailMessage()
     msg['Subject'] = 'WDFN - Lookup Error'
     msg['From'] = 'WDFN Server'
@@ -63,8 +68,12 @@ def send_email(message):
         app.logger.error('Error when sending email about lookups: ', e)
 
 
-
 def load_lookup_from_backup_file(lookup_name):
+    """
+    Loads the lookup information from a file
+    :param lookup_name: The name of the file we would like to open
+    :return: None
+    """
     app.logger.error('Looking for existing lookup named {}. If found, I will use the old file and check '
                      'again later for a new one.'.format(lookup_name))
     try:
@@ -89,10 +98,16 @@ def load_lookup_from_backup_file(lookup_name):
 
 # Pull lookup files from S3 bucket and load into application context
 def get_lookups():
+    """
+    Makes requests to an AWS Simple Storage Solutions Bucket (S3) to get various 'lookup' files
+    :return: None
+    """
+    print('running get lookup')
     if not os.path.exists(os.path.join(app.config.get('DATA_DIR'), 'lookups')):
         os.makedirs(os.path.join(app.config.get('DATA_DIR'), 'lookups'))
 
     for lookup in app.config['LOOKUP_ENDPOINTS']:
+        print('run with lookup ', lookup)
         app.logger.debug('Getting lookup from {} '.format(app.config['LOOKUP_ENDPOINTS'].get(lookup)))
 
         try:
@@ -112,9 +127,9 @@ def get_lookups():
 
 # When the application is first started, there will be no backup files saved for the lookups and the lookups
 # will not be in memory. So, let's get them.
-# If the lookup files already exist, then we can skip this step.
+# If the backup lookup files already exist, then we can skip this step.
 # NOTE: The lookup files are saved locally but not committed to Git. This stops the application from pulling the
-# lookups from S3 each time the # local server is restarted.
+# lookups from S3 each time the local server is restarted.
 for lookup in app.config.get('LOOKUP_ENDPOINTS'):
     file_path = os.path.join(app.config.get('DATA_DIR'), f'lookups/{lookup.lower()}.json')
     if os.path.isfile(file_path):
