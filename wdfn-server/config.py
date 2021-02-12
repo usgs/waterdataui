@@ -103,9 +103,9 @@ EMAIL_TARGETS = {
 }
 
 LOOKUP_ENDPOINTS = {
-    'HUC_LOOKUP': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/huc-lookup.json',
-    'COUNTRY_STATE_COUNTY_LOOKUP': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/nwis-county-state-lookup.json',
-    'NWIS_CODE_LOOKUP': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/nwis-code-lookup.json'
+    'HUC_LOOKUP': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/huc_lookup.json',
+    'COUNTRY_STATE_COUNTY_LOOKUP': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/country_state_county_lookup.json',
+    'NWIS_CODE_LOOKUP': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/nwis_code_lookup.json'
 }
 
 # Use a comma separated string, with no spaces
